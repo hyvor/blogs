@@ -27,11 +27,12 @@ import formsiteIcon from './icons/formsite.png';
 import paperformIcon from './icons/paperform.png';
 import zohoFormsIcon from './icons/zoho-forms.png';
 
-import GoogleAnalytics from './content/google-analytics/GoogleAnalytics.svelte';
-
 import type { ComponentType } from "svelte";
+
+import GoogleAnalytics from './content/google-analytics/GoogleAnalytics.svelte';
 import CloudflareAnalytics from './content/cloudflare-anaytics/CloudflareAnalytics.svelte';
 import HyvorTalkComments from './content/hyvor-talk-comments/HyvorTalkComments.svelte';
+import Mailchimp from './content/mailchimp/Mailchimp.svelte';
 type CategoryName = 'analytics' | 'comments' | 'newsletters' | 'ads' | 'memberships' | 'forms';
 
 
@@ -220,7 +221,8 @@ export const integrations : Integration[] = [
         title: 'Add Mailchimp to your blog',
         description: 'Mailchimp is an all-in-one marketing platform that offers advanced email marketing and automation features for growing your newsletter list. Learn how to integrate Mailchimp with your Hyvor Blogs blog.',
         category: 'newsletters',
-        color: '#fae2c4'
+        color: '#fae2c4',
+        component: Mailchimp
     },
 
     //emailoctopus
