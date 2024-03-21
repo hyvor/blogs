@@ -31,6 +31,7 @@ import GoogleAnalytics from './content/google-analytics/GoogleAnalytics.svelte';
 
 import type { ComponentType } from "svelte";
 import CloudflareAnalytics from './content/cloudflare-anaytics/CloudflareAnalytics.svelte';
+import HyvorTalkComments from './content/hyvor-talk-comments/HyvorTalkComments.svelte';
 type CategoryName = 'analytics' | 'comments' | 'newsletters' | 'ads' | 'memberships' | 'forms';
 
 
@@ -151,7 +152,8 @@ export const integrations : Integration[] = [
         title: 'Add Hyvor Talk Comments to your blog',
         description: 'Hyvor Talks is a privacy-focused, feature-rich commenting system for websites, offering real-time discussions with spam protection and user-friendly interface. Learn how to integrate Hyvor Talk Comments with your Hyvor Blogs blog.',
         category: 'comments',
-        color: '#ffe6a4'
+        color: '#ffe6a4',
+        component: HyvorTalkComments
     },
 
     //disqus

@@ -70,7 +70,7 @@
             as="a" 
             size="small" 
             href="/integrations" 
-            variant={$page.url.pathname === '/integrations' ? 'fill-light' : 'invisible'}
+            variant={$page.url.pathname.startsWith ('/integrations') ? 'fill-light' : 'invisible'}
         >
             Integrations
         </Button>

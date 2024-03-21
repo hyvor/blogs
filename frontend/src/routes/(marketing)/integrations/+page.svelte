@@ -1,12 +1,5 @@
 <script lang="ts">
     import FeatureSectionTitle from "../@homepage/FeatureSectionTitle.svelte";
-    // import { 
-    //     Docs, 
-    //     DocsNav as Nav, 
-    //     DocsNavCategory as NavCategory, 
-    //     DocsNavItem as NavItem, 
-    //     DocsContent as Content
-    // } from '@hyvor/design/marketing';
     import { Box } from "@hyvor/design/components";
     import { categories } from "./integrations";  
 
