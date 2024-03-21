@@ -40,7 +40,24 @@
     </Link>
 </div>
 
-<style>
+<div class="dev">
+    <h2>OR</h2>
+</div>
+
+<div class="dev-theme">
+    We will develop a theme for you at your request for your requirements.
+    <!-- <Link href="/theme-service" target="_blank">
+        Learn more
+        <IconBoxArrowUpRight slot="end" size={12} />
+    </Link> -->
+    <div class="themes-dev">
+        <Button as="a" href="/theme-service" variant="fill" size="medium" color="gray">
+            Request a Theme Now &rarr;
+        </Button>
+    </div>
+</div>
+
+<style lang="scss">
     .preview {
         margin-top: 50px;
         width: 1300px;
@@ -58,5 +75,19 @@
         width: 500px;
         max-width: 100%;
         margin: auto;
+    }
+
+    .dev-theme {
+        text-align: center;
+        color: var(--text-light);
+        width: 500px;
+        max-width: 100%;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        
+        .themes-dev {
+            margin-top: 20px;
+        }
     }
 </style>
