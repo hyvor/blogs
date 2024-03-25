@@ -9,17 +9,17 @@
 
 <div class="guide-content">
     <Callout type="info">
-        <p><b>Requirements</b>: You should have,</p>
+        <p><b>Requirements</b>:</p>
             <ul>
                 <li>a <a href="https://hyvor.com/login">HYVOR account</a>. This is the same account you used for create a blog at Hyvor Blogs.</li>
-                <li>a <a href="/pricing">Growth Plan</a>subscription for Hyvor Blogs</li>
+                <li>a <a href="/pricing">Growth Plan</a> subscription for Hyvor Blogs</li>
             </ul>
     </Callout>
 
 
     <ol>
         <li>Go to <a href="/console">Hyvor Blogs Console</a></li>
-        <li>Go to <b>Integrations -&lt; Hyvor Talk</b></li>
+        <li>Go to <b>Integrations -&gt; Hyvor Talk</b></li>
         <li>Click on <b>Connect Hyvor Talk</b></li>
         <DocsImage src={connectHyvorTalkImg} alt="Connect Hyvor Talk" />
         <p>Then it will generate you a code snippet as shown above. There are two methods you can try to add this code for this integration.</p>

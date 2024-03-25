@@ -15,7 +15,12 @@
 
 <div class="guide-content">
     <Callout type="info">
-        <p><b>Requirements: </b>You should have a <a href="https://myaccount.google.com">Google account</a> to use the Google Analytics tools.</p>
+        <p><b>Requirements: </b></p>
+            <ul>
+                <li>a <a href="https://myaccount.google.com">Google account</a> to use the Google Analytics tools.</li>
+                <li>a blog on <a href="/console">Hyvor Blogs</a></li>
+            </ul>
+        
     </Callout>
 
     <h2 id="google-analytics-account-creation">Step 1 - Google Analytics account setup</h2>

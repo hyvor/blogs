@@ -14,13 +14,18 @@
 
 <div class="guide-content">
     <Callout type="info">
-        <p><b>Requirements: </b>You should have a <a href="https://www.cloudflare.com">Cloudflare account</a> to use the Cloudflare Analytics tools.</p>
+        <p><b>Requirements</b>:</p>
+        <ul>
+            <li>a <a href="https://www.cloudflare.com">Cloudflare account</a> to use the Cloudflare Analytics tools.</li>
+            <li>a blog on <a href="/console">Hyvor Blogs</a></li>
+        </ul>
+            
     </Callout>
 
     <p>Two different processes are carried out if you are,</p>
         <ul>
             <li><a href="#not-using-cloudflare">already using Cloudflare CDN for your blog</a>,</li>
-            <li><a href="#already-use-cloudflare">using Cloudflare CDN</a></li>
+            <li><a href="#already-use-cloudflare">not using Cloudflare CDN</a></li>
         </ul>
 
     
