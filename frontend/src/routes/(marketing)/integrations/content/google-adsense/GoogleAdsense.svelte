@@ -18,13 +18,13 @@
 				a Google AdSense account. If you don't have one, you can create one from <a
 					href="https://www.google.com/adsense/start/"
 					target="_blank">here</a
-				>.
+				>
 			</li>
 			<li>a blog on <a href="/console">Hyvor Blogs</a></li>
 		</ul>
 	</Callout>
 
-	<h2 id="">Step 1 - Add your blog to Google AdSense.</h2>
+	<h2 id="">Step 1 - Add your blog to Google AdSense</h2>
 	<ol>
 		<li>On the AdSense Dashboard, go to <b>Site &rarr; New site</b>.</li>
 		<li>Enter your blog's URL and click <b>Save</b>.</li>
@@ -66,7 +66,7 @@
 
 	<p>Wait for Adsense approval.</p>
 
-	<h2 id="adding-ads">Adding Ads to your Blog</h2>
+	<h2 id="adding-ads">Step 2 - Adding Ads to your Blog</h2>
 	<p>After you created ads,</p>
 	<ol>
 		<li>Copy the code snippet you get just after you created an ad.</li>

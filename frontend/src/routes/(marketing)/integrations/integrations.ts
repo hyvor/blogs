@@ -37,6 +37,8 @@ import HyvorTalkComments from './content/hyvor-talk-comments/HyvorTalkComments.s
 import Mailchimp from './content/mailchimp/Mailchimp.svelte';
 import Ezoic from './content/ezoic/Ezoic.svelte';
 import GoogleAdsense from './content/google-adsense/GoogleAdsense.svelte';
+import GoogleForms from './content/google-forms/GoogleForms.svelte';
+import Memberstack from './content/memberstack/Memberstack.svelte';
 
 
 type CategoryName = 'analytics' | 'comments' | 'newsletters' | 'ads' | 'memberships' | 'forms';
@@ -278,15 +280,16 @@ export const integrations : Integration[] = [
     // },
 
     //memberstack
-    {
-        slug: 'memberstack',
-        name: 'Memberstack',
-        icon: memberstackIcon,
-        title: 'Add Memberstack to your blog',
-        description: 'Memberstack is a membership platform that offers advanced automation and segmentation features for growing your newsletter list. Learn how to integrate Memberstack with your Hyvor Blogs blog.',
-        category: 'memberships',
-        color: '#e2f3ff'
-    },
+    // {
+    //     slug: 'memberstack',
+    //     name: 'Memberstack',
+    //     icon: memberstackIcon,
+    //     title: 'Add Memberstack to your blog',
+    //     description: 'Memberstack is a membership platform that offers advanced automation and segmentation features for growing your newsletter list. Learn how to integrate Memberstack with your Hyvor Blogs blog.',
+    //     category: 'memberships',
+    //     color: '#e2f3ff',
+    //     component: Memberstack
+    // },
 
     //memberspace
     // {
@@ -308,7 +311,8 @@ export const integrations : Integration[] = [
         title: 'Add Google Forms to your blog',
         description: 'Google Forms is a widely-used web forms service offered by Google for creating and managing online forms and surveys. Learn how to integrate Google Forms with your Hyvor Blogs blog.',
         category: 'forms',
-        color: '#d1b8e7'
+        color: '#d1b8e7',
+        component: GoogleForms
     },
 
     //microsft forms
@@ -415,16 +419,16 @@ export const integrations : Integration[] = [
     },
 
     //ezoic
-    {
-        slug: 'ezoic',
-        name: 'Ezoic',
-        icon: ezoicImg,
-        title: 'Add Ezoic to your blog',
-        description: 'Ezoic focuses on intelligent technology to enhance online content, aiming to improve revenue, performance, and traffic for publishers. Learn how to integrate Ezoic with your Hyvor Blogs blog.',
-        category: 'ads',
-        color: '#d2f4b4',
-        component: Ezoic
-    },
+    // {
+    //     slug: 'ezoic',
+    //     name: 'Ezoic',
+    //     icon: ezoicImg,
+    //     title: 'Add Ezoic to your blog',
+    //     description: 'Ezoic focuses on intelligent technology to enhance online content, aiming to improve revenue, performance, and traffic for publishers. Learn how to integrate Ezoic with your Hyvor Blogs blog.',
+    //     category: 'ads',
+    //     color: '#d2f4b4',
+    //     component: Ezoic
+    // },
 
 
 
@@ -461,11 +465,11 @@ export const categories : Catergory[] = [
         integrations: integrations.filter(integration => integration.category === 'ads')
     },
 
-    {
-        name: 'memberships',
-        title: 'Memberships',
-        integrations: integrations.filter(integration => integration.category === 'memberships')
-    },
+    // {
+    //     name: 'memberships',
+    //     title: 'Memberships',
+    //     integrations: integrations.filter(integration => integration.category === 'memberships')
+    // },
 
     {
         name: 'forms',
