@@ -1,21 +1,16 @@
 version: '3.3'
 services:
-  mysql:
-    # mysql 8.0
-    image: mysql:8.0
+  pgsql:
+    image: postgres:16
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
-      MYSQL_DATABASE: hyvor_blogs_testing
     ports:
-      - "3306:3306"
-    expose:
-      -   3306
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: hyvor_blogs_testing
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - ~/mysql:/var/lib/mysql:delegated
-      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+      - pgsql:/var/lib/postgresql/data
 
   meilisearch:
     image: getmeili/meilisearch:v1.0
@@ -24,5 +19,4 @@ services:
       - '7700:7700'
 
 volumes:
-  mysql:
-  redis:
+  pgsql:
