@@ -1,8 +1,37 @@
 <script lang="ts">
-	import { Switch, SplitControl, Caption, Label } from '@hyvor/design/components';
+	import { Switch, Button, Caption } from '@hyvor/design/components';
 	import FeatureSectionTitle from '../@homepage/FeatureSectionTitle.svelte';
 	import ThemeService from './ThemeService.svelte';
-	//import { Switch } from "@hyvor/design/components";
+	import { Crisp } from 'crisp-sdk-web';
+
+	let Oprice = 1000;
+	let price = Oprice;
+	let d20 = 0.2;
+	let d30 = 0.3;
+
+	// variables for switches
+	let switch1 = false;
+	let switch2 = false;
+
+	// function to update price
+	function updatePrice() {
+		price = 1000;
+		if (switch1) {
+			price = Oprice - Oprice * d20;
+		}
+		if (switch2) {
+			price = Oprice - Oprice * d30;
+		}
+
+		if (switch1 && switch2) {
+			price = Oprice - Oprice * (d20 + d30);
+		}
+	}
+
+	// function to open crisp
+	function openCrisp() {
+		window.$crisp.push(['do', 'chat:open']);
+	}
 </script>
 
 <svelte:head>
@@ -18,217 +47,131 @@
 
 <ThemeService />
 
-<!-- <div class="price hds-container">
-	<div class="pricing">
-	<div class="price-head">1000€/Theme</div>
-	</div>
-	<div class="situations">
-		<h3>Our Offers</h3>
-		<ul>
-            <li>
-                <div class="item">
-                    <div class="switch"><Switch>Provide Your Design</Switch></div>
-                    <div class="description">
-                        You get a 20% discount
-                    </div>
-                </div>
-            </li>
-           
-            <li>
-                <div class="item">
-                    <div class="switch"><Switch /> 
-                        <div class="paragraphs">Publish in Our Theme Catalogue</div>
-                    </div>
-                    <div class="description">
-                        <div class="paragraphs">You get a 50% discount</div>
-                    </div>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <div class="switch"><Switch /> <div class="paragraphs">You are a Non-Profit Organization</div></div>
-                    <div class="description">
-                        <div class="paragraphs">You get a 20% discount</div>
-                    </div>
-                </div>
-                
-        </ul>
-		<SplitControl>
-			<Switch />
-			<Label slot="label">Spam Detection</Label>
-			<Caption slot="caption">Check for spam in comments</Caption>
-		</SplitControl>
-	</div>
-</div> -->
 <div class="price hds-container">
-	<div class="main-price">1000€/Theme</div>
+	<div class="title">Pricing</div>
+	<div class="subtitle">Design & Developement Included!</div>
+
+	<div class="main-price">${price}&nbsp;<Caption>per theme</Caption></div>
 
 	<div class="instances">
-		<SplitControl>
-			<Switch />
-			<Label slot="label">Provide Your Design</Label>
-			<Caption slot="caption">You get a 20% discount</Caption>
-		</SplitControl>
+		<div class="mid-box">
+			<div class="switch">
+				<Switch bind:checked={switch1} on:change={updatePrice}
+					>You Provide the design (ex: Figma) <Caption>20% discount</Caption></Switch
+				>
+			</div>
 
-		<SplitControl>
-			<Switch />
-			<Label slot="label">Publish in Our Theme Catalogue</Label>
-			<Caption slot="caption">You get a 50% discount</Caption>
-		</SplitControl>
-
-		<SplitControl>
-			<Switch />
-			<Label slot="label">You are a Non-Profit Organization</Label>
-			<Caption slot="caption">You get a 20% discount</Caption>
-		</SplitControl>
+			<div class="switch">
+				<Switch bind:checked={switch2} on:change={updatePrice}
+					>Publish your theme in our theme directory <Caption>30% discount</Caption></Switch
+				>
+			</div>
+		</div>
 	</div>
 </div>
 
-<FeatureSectionTitle
-	title="Theme Customization Service"
-	subtitle="By the Hyvor Blogs Team"
-	wrapStyle="margin-top:60px"
-/>
+<div class="buttons">
+	<div class="cta">
+		<Button on:click={openCrisp} variant="fill" size="large" color="gray">
+			Request a Theme Now &rarr;
+		</Button>
+	</div>
+
+	<div class="or">OR</div>
+
+	<div class="cta">
+		<Button as="a" href="mailto:blogs.support@hyvor.com" variant="outline" size="large" color="gray"
+			>Email Us</Button
+		>
+	</div>
+</div>
 
 <style lang="scss">
-	// .price {
-	// 	display: flex;
-	// 	justify-content: center;
-	// 	align-items: center;
-	// 	margin-top: 60px;
-	// 	padding: 60px 20px;
-	// 	border-radius: 20px;
+	.title {
+		font-size: 38px;
+		font-weight: 700;
+		margin-bottom: 10px;
+		margin-top: 30px;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-	// 	background-color: white;
-	// 	box-shadow: var(--box-shadow);
-
-	// 	.pricing {
-	// 		display: flex;
-	// 		justify-content: center;
-	// 		align-items: center;
-	// 		width: 40%;
-	// 		padding: 20px;
-	// 		margin-inline-end: 30px;
-
-	// 		border-inline-end: 1px solid var(--blue-light);
-	// 	}
-
-	// 	.price-head {
-	// 		font-size: 2.5rem;
-	// 		color: var(--text);
-	// 		font-weight: 700;
-	// 	}
-
-	// 	// .situations {
-	// 	// 	display: flex;
-	// 	// 	flex-direction: row;
-	// 	// 	width: 60%;
-
-	// 	// 	ul {
-	// 	// 		list-style: none;
-	// 	// 		padding: 0;
-	// 	// 		margin: 0;
-	// 	// 		display: flex;
-	// 	// 		flex-direction: column;
-	// 	// 		justify-content: center;
-	// 	// 		align-items: center;
-	// 	// 		width: 100%;
-
-	// 	// 		li {
-	// 	// 			display: flex;
-	// 	// 			width: 100%;
-	// 	// 			border-radius: 20px;
-	// 	// 			color: rgb(0, 0, 0);
-	// 	// 			font-size: 1.5rem;
-	// 	// 			font-weight: 500;
-	// 	// 			transition: all 0.3s ease;
-	// 	// 			cursor: pointer;
-	// 	// 			margin: 30px 0;
-
-	// 	// 			&:hover {
-	// 	// 				// background-color: var(--blue-dark);
-	// 	// 			}
-
-	// 	// 			.item {
-	// 	// 				display: flex;
-	// 	// 				justify-content: center;
-	// 	// 				align-items: center;
-
-	// 	// 				flex-direction: column;
-	// 	// 				.description {
-	// 	// 					font-size: 1rem;
-	// 	// 					color: var(--text-light);
-	// 	// 				}
-
-	// 	// 				.switch {
-	// 	// 					display: flex;
-	// 	// 					justify-content: center;
-	// 	// 					align-items: center;
-	// 	// 					flex-direction: row;
-	// 	// 					font-size: 1rem;
-	// 	// 					.paragraphs {
-	// 	// 						font-size: 1.3rem;
-	// 	// 						color: var(--text);
-	// 	// 						margin-inline-start: 20px;
-	// 	// 						display: flex;
-	// 	// 						align-items: center;
-	// 	// 					}
-	// 	// 				}
-	// 	// 			}
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-	// }
-
-	// @media (max-width: 768px) {
-	// 	.price {
-	// 		flex-direction: column;
-	// 		padding: 20px;
-	// 		.pricing {
-	// 			width: 100%;
-	// 			margin-inline-end: 0;
-	// 			border-inline-end: none;
-	// 			padding: 0;
-	// 			margin-bottom: 20px;
-	// 		}
-
-	// 		// .situations {
-	// 		// 	//center align
-
-	// 		// 	width: 100%;
-	// 		// 	ul {
-	// 		// 		li {
-	// 		// 			margin: 20px 0;
-	// 		// 		}
-	// 		// 	}
-	// 		// }
-	// 	}
-	// }
+	.subtitle {
+		font-size: 20px;
+		width: 650px;
+		max-width: 100%;
+		margin: 0 auto;
+		font-weight: normal;
+		line-height: 1.4;
+		text-align: center;
+		margin-bottom: 40px;
+		color: var(--text-light);
+	}
 
 	.price {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		background: white;
 		border-radius: 20px;
-		padding: 40px 0;
+		padding: 0 0;
+		width: 700px;
 
 		.main-price {
-			font-size: 2.5rem;
+			font-size: 2rem;
 			color: var(--text);
-			font-weight: 700;
-			margin-bottom: 20px;
-			width: 50%;
+			font-weight: 600;
+
+			width: 100%;
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			background-color: var(--green-light);
+			padding: 20px;
 		}
 
 		.instances {
-			width: 50%;
+			width: 100%;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			padding: 20px 0;
+
+			.mid-box {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				margin: 0 auto;
+
+				div {
+					align-self: self-start;
+					padding: 20px 0;
+				}
+			}
+		}
+	}
+
+	.buttons {
+		display: flex;
+		justify-content: center;
+		margin-top: 30px;
+		flex-direction: column;
+
+		.cta {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 30px;
+			margin-top: 30px;
+		}
+
+		.or {
+			font-size: 20px;
+			font-weight: 600;
+			text-align: center;
+			color: var(--text-light);
 		}
 	}
 </style>
