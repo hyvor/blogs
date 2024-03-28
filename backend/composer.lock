@@ -2711,16 +2711,16 @@
         },
         {
             "name": "hyvor/phrosemirror",
-            "version": "1.0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/phrosemirror.git",
-                "reference": "6d88b23ebc8cb8bc9586381e22aec2a3b22525b3"
+                "reference": "0f4769c1baf44050a063fa8ad98067b0f738920f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/6d88b23ebc8cb8bc9586381e22aec2a3b22525b3",
-                "reference": "6d88b23ebc8cb8bc9586381e22aec2a3b22525b3",
+                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/0f4769c1baf44050a063fa8ad98067b0f738920f",
+                "reference": "0f4769c1baf44050a063fa8ad98067b0f738920f",
                 "shasum": ""
             },
             "require": {
@@ -2730,7 +2730,7 @@
                 "php": "^8.1"
             },
             "require-dev": {
-                "pestphp/pest": "^1.22",
+                "pestphp/pest": "^2.0",
                 "phpstan/phpstan": "^1.8"
             },
             "type": "library",
@@ -2752,9 +2752,9 @@
             "description": "Prosemirror in PHP",
             "support": {
                 "issues": "https://github.com/hyvor/phrosemirror/issues",
-                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.1"
+                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.4"
             },
-            "time": "2024-02-13T16:30:57+00:00"
+            "time": "2024-03-28T16:26:08+00:00"
         },
         {
             "name": "hyvor/scssphp",

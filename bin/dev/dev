@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+(
+  trap 'kill 0' SIGINT;
+  npm run dev --prefix ./frontend &
+  composer serve --working-dir=./backend &
+  caddy run --config ./bin/dev/Caddyfile.dev &
+  wait
+)

@@ -80,3 +80,17 @@ it('validates URLs', function () {
         ->assertUnprocessable()
         ->assertSee(['valid', 'URL']);
 });
+
+// #368
+it('returns an error when custom domain is taken', function() {
+
+    $blog = blogWithAccess();
+    $blog->update(['hosting_domain' => 'hyvor.com']);
+
+    consoleApi($blog, 'PATCH', '/blog', [
+        'hosting_domain' => 'hyvor.com',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('error', 'domain_taken');
+
+});

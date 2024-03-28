@@ -1,0 +1,9 @@
+blogs.hyvor.dev {
+    tls ./bin/dev/blogs.hyvor.dev.pem ./bin/dev/blogs.hyvor.dev-key.pem
+    handle /api/* {
+        reverse_proxy localhost:2211
+    }
+    handle {
+        reverse_proxy localhost:2210
+    }
+}

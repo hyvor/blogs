@@ -55,6 +55,14 @@
 		>
 			Customers
 		</Button>
+		<Button
+			as="a"
+			size="small"
+			href="/integrations"
+			variant={$page.url.pathname.startsWith('/integrations') ? 'fill-light' : 'invisible'}
+		>
+			Integrations
+		</Button>
 	</div>
 
 	<div slot="end">
@@ -73,6 +81,20 @@
 		display: flex;
 		align-items: center;
 		gap: 5px;
+	}
+
+	/* mobile styles */
+	@media (max-width: 768px) {
+		div[slot='center'] {
+			display: flex;
+			flex-direction: column;
+		}
+
+		div[slot='end'] {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
 	}
 
 	@media (max-width: 992px) {
