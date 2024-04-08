@@ -2,10 +2,9 @@
 	import type { ComponentType } from "svelte";
 
     export let icon: ComponentType;
-    export let number: number | string;
+    export let number: number
     export let title: string;
     export let description: string;
-    export let topLine: boolean = true;
 </script>
 
 <div class="step">
@@ -14,9 +13,7 @@
         <div class="icon">
             <svelte:component this={icon} size={50} />
         </div>
-        {#if topLine}
-            <div class="top-line"></div>
-        {/if}
+        <div class="top-line"></div>
         <div class="number">{number}</div>
     </div>
 
@@ -58,7 +55,7 @@
     .title {
         font-size: 20px;
         font-weight: 600;
-        // margin-top: 10px;
+        margin-top: 10px;
     }
     .description {
         margin-top: 10px;
