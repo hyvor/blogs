@@ -229,6 +229,8 @@ it('adds tag code', function() {
     $otherTag = addTag($blog, ['code_head' => 'Not tag']);
 
     $content = '{{ _head | template }}';
+
+    // post page
     ThemeFilesRepository::createOrUpdateFile(
         $blog,
         ThemeFileFolderEnum::TEMPLATES,
@@ -242,5 +244,32 @@ it('adds tag code', function() {
 
     expect($content)->toContain('This is tag code head for ' . $post->variants[0]->slug);
     expect($content)->not->toContain('Not tag');
+
+});
+
+it('does not add tag code to other pages', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+
+    $post = addPublishedPost($blog);
+    $tag = addTag($blog, [
+        'code_head' => 'This is tag code head for {{ _post.slug }}'
+    ]);
+    addTagToPost($post, $tag);
+
+    $content = '{{ _head | template }}';
+    // index page
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    $content = $responseObject->content;
+
+    expect($content)->not->toContain('This is tag code head for');
 
 });
