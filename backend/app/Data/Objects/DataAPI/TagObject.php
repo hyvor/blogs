@@ -22,6 +22,9 @@ class TagObject
 
     public ?string $description;
 
+    public ?string $code_head;
+    public ?string $code_foot;
+
     public int $posts_count;
 
     public LanguageObject $language;
@@ -42,6 +45,9 @@ class TagObject
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
         $this->description = VariantsHelper::getVariantValue('description', $variants, $language);
         $this->posts_count = $tag->posts_count ?? 0;
+
+        $this->code_head = $tag->code_head;
+        $this->code_foot = $tag->code_foot;
 
         $this->language = new LanguageObject($language);
 

@@ -215,3 +215,32 @@ it('adds fonts', function() {
     expect($content)->toContain("<link rel=\"stylesheet\" href=\"https://{$blog->subdomain}.hyvorblogs.io/fonts/css/mulish:400\" />");
 
 });
+
+it('adds tag code', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+
+    $post = addPublishedPost($blog);
+    $tag = addTag($blog, [
+        'code_head' => 'This is tag code head for {{ _post.slug }}'
+    ]);
+    addTagToPost($post, $tag);
+
+    $otherTag = addTag($blog, ['code_head' => 'Not tag']);
+
+    $content = '{{ _head | template }}';
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'post.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
+    $responseObject = $pathMatcher->getResponseObject();
+    $content = $responseObject->content;
+
+    expect($content)->toContain('This is tag code head for ' . $post->variants[0]->slug);
+    expect($content)->not->toContain('Not tag');
+
+});
