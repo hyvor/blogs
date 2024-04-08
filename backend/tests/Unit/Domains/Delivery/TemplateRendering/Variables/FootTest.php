@@ -110,6 +110,35 @@ it('sets flashload basepath to /blog/page', function() {
 
 });
 
+it('adds tag code', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+
+    $post = addPublishedPost($blog);
+    $tag = addTag($blog, [
+        'code_foot' => 'This is tag code head for {{ _post.slug }}'
+    ]);
+    addTagToPost($post, $tag);
+
+    $otherTag = addTag($blog, ['code_foot' => 'Not tag']);
+
+    $content = '{{ _foot | template }}';
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'post.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
+    $responseObject = $pathMatcher->getResponseObject();
+    $content = $responseObject->content;
+
+    expect($content)->toContain('This is tag code head for ' . $post->variants[0]->slug);
+    expect($content)->not->toContain('Not tag');
+
+});
+
 /*it('adds powered by for free plan blogs', function() {
 
     $blog = blogWithLanguageAndRoutes();

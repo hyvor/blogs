@@ -22,4 +22,10 @@
     {{ _post.code_foot | template }}
 {% endif %}
 
-{# TODO: ADD TAGS CODE #}
+{% if _post %}
+    {% for tag in _post.tags %}
+        {% if tag.code_foot %}
+            {{ tag.code_foot | template }}
+        {% endif %}
+    {% endfor %}
+{% endif %}

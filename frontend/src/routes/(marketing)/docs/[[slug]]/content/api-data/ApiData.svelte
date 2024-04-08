@@ -749,6 +749,8 @@ published_at>'-7 days'
     "slug": "hello-world",
     "url": "https://subdomain.hyvorblogs.io/tag/hello-world",
     "posts_count": 20,
+    "code_head": null,
+    "code_foot": "<p>some code</p>",
 
     "language": language object,
     "variants": [ variant objects ],

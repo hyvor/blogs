@@ -72,6 +72,13 @@
 {% if _post.code_head %}
     {{ _post.code_head | template }}
 {% endif %}
+{% if _post %}
+    {% for tag in _post.tags %}
+        {% if tag.code_head %}
+            {{ tag.code_head | template }}
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
 <link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
 <meta name="generator" content="Hyvor Blogs" />
