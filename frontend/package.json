@@ -39,7 +39,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@excalidraw/excalidraw": "^0.17.2",
+		"@excalidraw/excalidraw": "^0.17.6",
 		"@hyvor/design": "^0.0.52",
 		"@hyvor/icons": "^0.0.3",
 		"@joeattardi/emoji-button": "^4.6.4",
