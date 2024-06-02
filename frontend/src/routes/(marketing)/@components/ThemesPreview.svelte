@@ -68,6 +68,7 @@
         </a>
 
         <div class="nav hds-box" bind:this={navEl}>
+            <div>
             {#each [originalThemes, portedThemes] as group, i}
                 <div class="section">
                     {#if i === 0}
@@ -92,14 +93,15 @@
                     {/if}
                 {/each}
             {/each}
+            </div>
 
             <div class="open-source">
                 <div class="text">
                     <Text small>Themes are open-source</Text>
                 </div>
-                <Button size="small">
+                <Button size="small" as="a" href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank">
                     View Source
-                    <IconGithub slot="end" size={18} />
+                    <IconGithub slot="end" size={14} />
                 </Button>
             </div>
         </div>
@@ -213,13 +215,12 @@
 
     .nav {
         padding-bottom: 15px;
+        display: flex;
+        flex-direction: column;
     }
     
     .open-source {
-        position: absolute;
-        bottom: 0;
-        padding-left: 10px;
-        padding-bottom: 30px;
+        margin-top: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -310,6 +311,15 @@
             margin-bottom: 15px;
             display: none;
         }
+
+        .open-source{
+            border-top: 1px solid var(--border);
+            flex-direction: row;
+            justify-content:space-around;
+            margin-top: 5%;
+            padding-top: 15px;
+        }
+
         .preview {
             height: 600px;
         }
