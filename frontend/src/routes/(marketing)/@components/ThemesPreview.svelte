@@ -92,6 +92,7 @@
                     {/if}
                 {/each}
             {/each}
+
             <div class="open-source">
                 <div class="text">
                     <Text small>Themes are open-source</Text>
@@ -220,7 +221,8 @@
         padding-left: 10px;
         padding-bottom: 30px;
         .text {
-            margin-bottom: 2px;
+            color: var(--text-light);
+            margin-bottom: 5px;
         }
     }
 
