@@ -220,6 +220,9 @@
         bottom: 0;
         padding-left: 10px;
         padding-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         .text {
             color: var(--text-light);
             margin-bottom: 5px;
