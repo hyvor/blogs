@@ -3,8 +3,8 @@
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
-	import { IconButton, IconMessage, Link, Loader, NavLink } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots } from "@hyvor/icons";
+	import { IconButton, IconMessage, Link, Loader, NavLink, Text, Button } from "@hyvor/design/components";
+	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots, IconGithub } from "@hyvor/icons";
 
     export let lockScroll = false;
 
@@ -92,6 +92,16 @@
                     {/if}
                 {/each}
             {/each}
+
+            <div class="open-source">
+                <div class="text">
+                    <Text small>Themes are open-source</Text>
+                </div>
+                <Button size="small">
+                    View Source
+                    <IconGithub slot="end" size={18} />
+                </Button>
+            </div>
         </div>
 
         <div class="preview hds-box">
@@ -203,6 +213,20 @@
 
     .nav {
         padding-bottom: 15px;
+    }
+    
+    .open-source {
+        position: absolute;
+        bottom: 0;
+        padding-left: 10px;
+        padding-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .text {
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
     }
 
     .nav :global(a) {

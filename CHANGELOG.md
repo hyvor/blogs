@@ -1,4 +1,6 @@
 ## Unreleased
+## [0.0.4] - 2024-06-02
+- Added open source theme notice
 
 ## [0.0.3] - 2024-03-28
 - Phrosemirror updated to 1.0.4
