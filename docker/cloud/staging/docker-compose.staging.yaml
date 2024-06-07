@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+    mysql:
+        image: "mysql:latest"
+        environment:
+            MYSQL_USER: "mysql"
+            MYSQL_PASSWORD: "mysql" 
+            MYSQL_DATABASE: "hyvor-blogs"
+        volumes:
+            - mysql:/var/lib/mysql
+
+    meilisearch:
+        image: "meilisearch/meilisearch:latest"
+
+    app:
+        image: "hyvor/hyvor-blogs:latest"
+        ports:
+            - "127.0.0.1:5000:5000"
+        env_file:
+            - .env
+        depends_on:
+            - mysql
+            - meilisearch
+        command: "sh -c 'php /var/www/app/backend/artisan migrate --force && /usr/bin/supervisord'"
+
+volumes:
+    mysql:
