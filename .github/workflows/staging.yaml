@@ -54,8 +54,6 @@ jobs:
                       # docker-compose
                       cp docker-compose.staging.yaml docker-compose.yaml
                       # fresh pull
-                      docker pull mysql:latest
-                      docker pull meilisearch/meilisearch:latest
                       docker pull $DOCKERHUB_USERNAME/hyvor-blogs:$IMAGE_VERSION
                       # fresh up
                       docker compose down

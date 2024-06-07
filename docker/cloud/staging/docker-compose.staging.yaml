@@ -3,17 +3,15 @@ services:
     mysql:
         image: "mysql:latest"
         environment:
-            POSTGRES_USER: "mysql"
-            POSTGRES_PASSWORD: "mysql"
-            POSTGRES_DB: "hyvor-blogs"
-        # volumes: 
-        #     - pgsql:/var/lib/postgresql/data
+            MYSQL_USER: "mysql"
+            MYSQL_PASSWORD: "mysql" 
+            MYSQL_DATABASE: "hyvor-blogs"
+        volumes:
+            - mysql:/var/lib/mysql
 
     meilisearch:
         image: "meilisearch/meilisearch:latest"
-        depends_on:
-            - mysql
-            
+
     app:
         image: "hyvor/hyvor-blogs:latest"
         ports:
@@ -21,8 +19,9 @@ services:
         env_file:
             - .env
         depends_on:
+            - mysql
             - meilisearch
         command: "sh -c 'php /var/www/app/backend/artisan migrate --force && /usr/bin/supervisord'"
 
-# volumes:
-#     pgsql:
+volumes:
+    mysql:
