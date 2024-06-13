@@ -37,11 +37,7 @@ class RedirectRepository
             'to' => $to,
             'type' => $type,
         ]);
-
-        if ($dynamic)
-            DynamicRedirectChangedEvent::dispatch($redirect);
-        else 
-            RedirectChangedEvent::dispatch($redirect);
+        RedirectChangedEvent::dispatch($redirect);
 
         return $redirect;
     }
@@ -52,21 +48,14 @@ class RedirectRepository
     public static function updateRedirect(Redirect $redirect, array $updates) : Redirect
     {
         $redirect->update($updates);
-        if ($redirect->dynamic)
-            DynamicRedirectChangedEvent::dispatch($redirect);
-        else 
-            RedirectChangedEvent::dispatch($redirect);
+        RedirectChangedEvent::dispatch($redirect);
         return $redirect;
     }
 
     public static function deleteRedirect(Redirect $redirect): void
     {
         $redirect->delete();
-
-        if ($redirect->dynamic)
-            DynamicRedirectChangedEvent::dispatch($redirect);
-        else 
-            RedirectChangedEvent::dispatch($redirect);
+        RedirectChangedEvent::dispatch($redirect);
     }
 
     /**
