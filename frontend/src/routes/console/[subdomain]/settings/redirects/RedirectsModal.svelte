@@ -5,8 +5,8 @@
 	import { createEventDispatcher } from "svelte";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
     import { IconBoxArrowUpRight } from '@hyvor/icons';
+    import { dynamicRedirectsStore } from "../../../lib/stores/dynamicRedirect";
 
-    export let dynamicRedirects;    
     export let redirect: Redirect | null = null;
     export let show = false;
     let loading = false;
@@ -30,7 +30,7 @@
             return false;
         }
     }
-    
+
     function handleClick() {
         fromError = null;
         toError = null;
@@ -117,10 +117,10 @@
             <FormControl>
             <Switch 
             bind:checked={dynamic}
-            disabled={isCreating ? dynamicRedirects >= 5 : dynamicRedirects > 5}
+            disabled={isCreating ? $dynamicRedirectsStore >= 5 : $dynamicRedirectsStore > 5}
             />
             </FormControl>
-            <Text small light style="margin-left:15px; margin-bottom: 2%">{5 - dynamicRedirects}/5 remaining </Text>
+            <Text small light style="margin-left:15px; margin-bottom: 2%">{5 - $dynamicRedirectsStore}/5 remaining </Text>
             
         </div>
         

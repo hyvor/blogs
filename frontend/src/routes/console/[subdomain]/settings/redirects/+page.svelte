@@ -7,18 +7,18 @@
 	import { getRedirect } from "./redirectActions";
 	import { onMount } from "svelte";
 	import RedirectRow from "./RedirectRow.svelte";
+    import { dynamicRedirectsStore } from "../../../lib/stores/dynamicRedirect";
 
     let isCreating = false;
 
     let redirects : Redirect[] = [];
-    let dynamicRedirects : number = 0; 
     let isLoading = true;
     
     function loadRedirect() {
         getRedirect()
             .then(res => {
                 redirects = res;
-                dynamicRedirects = countDynamicRedirects(redirects)
+                dynamicRedirectsStore.set(countDynamicRedirects(redirects));
             })
             .catch(err => {
                 toast.error(err.message);
@@ -29,22 +29,22 @@
         }
 
     function countDynamicRedirects(redirects: Redirect[]) {
-        return redirects.filter(r => r.dynamic).length
+        return redirects.filter(r => r.dynamic).length;
     }
 
     function handleCreate(e: CustomEvent<Redirect>) {
         redirects = [e.detail, ...redirects];
-        loadRedirect();
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     function handleDelete(e: CustomEvent<number>) {
         redirects = redirects.filter(t => t.id !== e.detail);
-        loadRedirect();
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     function handleUpdate(e: CustomEvent<Redirect>) {
         redirects = redirects.map(t => t.id === e.detail.id ? e.detail : t);
-        loadRedirect();
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     onMount(loadRedirect)
@@ -76,7 +76,6 @@
             {#each redirects as redirect (redirect.id)}
                 <RedirectRow 
                     {redirect}
-                    {dynamicRedirects}
                     on:delete={handleDelete}
                     on:update={handleUpdate}
                 />
@@ -89,7 +88,6 @@
 {#if isCreating}
     <RedirectsModal
         bind:show={isCreating}
-        {dynamicRedirects}
         on:create={handleCreate}
         on:updated={handleUpdate}
     />

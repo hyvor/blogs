@@ -8,7 +8,6 @@
 	import RedirectsModal from "./RedirectsModal.svelte";
 
     export let redirect: Redirect;
-    export let dynamicRedirects: number;
 
     let isEditing = false;
 
@@ -86,6 +85,5 @@
         bind:show={isEditing}
         on:update
         {redirect}
-        {dynamicRedirects}
     />
 {/if}
