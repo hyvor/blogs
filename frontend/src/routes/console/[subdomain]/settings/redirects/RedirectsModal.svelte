@@ -103,10 +103,10 @@
             <FormControl>
             <Switch 
             bind:checked={dynamic}
-            disabled={dynamicRedirects >= 5}
+            disabled={isCreating ? dynamicRedirects >= 5 : dynamicRedirects > 5}
             />
             </FormControl>
-            <Text small light style="margin-left:15px; margin-bottom: 2%">{dynamicRedirects}/5 remaining </Text>
+            <Text small light style="margin-left:15px; margin-bottom: 2%">{5 - dynamicRedirects}/5 remaining </Text>
             
         </div>
         
