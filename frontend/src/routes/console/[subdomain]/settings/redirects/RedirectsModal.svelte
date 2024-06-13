@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Button, ButtonGroup, FormControl, InputGroup, Modal, Radio, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
+	import { Button, ButtonGroup, FormControl, InputGroup, Link, Modal, Radio, SplitControl, Switch, Text, TextInput, Validation, toast } from "@hyvor/design/components";
     import type { Redirect } from "../../../lib/types";
 	import { createRedirect, updateRedirect } from "./redirectActions"
 	import { createEventDispatcher } from "svelte";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
+    import { IconBoxArrowUpRight } from '@hyvor/icons';
 
     export let redirect: Redirect | null = null;
     export let show = false;
@@ -13,6 +14,7 @@
 
     const dispatch = createEventDispatcher();
 
+    let dynamic = redirect ? redirect.dynamic : false;
     let from = redirect ? redirect.path : '';
     let to = redirect ? redirect.to : '';
     let type : 'permanent' | 'temporary' = redirect ? redirect.type : 'permanent';
@@ -47,7 +49,7 @@
 
         if (isCreating) {
             loading = true;
-            createRedirect(from, to, type)
+            createRedirect(dynamic, from, to, type)
                 .then(res => {
                     toast.success('Redirect created successfully');
                     dispatch('create', res);
@@ -62,7 +64,7 @@
         }   
         else {
             loading = true;
-            updateRedirect(redirect!.id, from, to, type)
+            updateRedirect(redirect!.id, dynamic, from, to, type)
                 .then(res => {
                     toast.success('Redirect updated.');
                     dispatch('update', res);
@@ -79,7 +81,8 @@
     }
 
     $: isButtonDisabled = !(isCreating ||
-            (from !== redirect!.path || 
+            (dynamic !== redirect!.dynamic ||
+                from !== redirect!.path || 
                 to !== redirect!.to || 
                 type !== redirect!.type))
 
@@ -92,6 +95,24 @@
 >
 
     <SplitControl
+        label="Dynamic"
+        caption="Match a path dynamically using a pattern."
+    >
+
+        <div style="display: flex; align-items: center;">
+            <FormControl>
+            <Switch 
+                bind:checked={dynamic}
+            />
+            </FormControl>
+            <Text small light style="margin-left:15px; margin-bottom: 2%">4/5 remaining</Text>
+        </div>
+        
+        <Link href="https://docs.hyvor.com/redirects" color="accent" style="font-size:small" target="_blank">Refer Docs for more details.<IconBoxArrowUpRight slot="end" /></Link>
+    
+    </SplitControl>
+    
+    <SplitControl
         label="From"
         caption="Which path to match"
     >
@@ -99,7 +120,7 @@
         <FormControl>
             <TextInput 
                 bind:value={from}
-                placeholder="/welcome"
+                placeholder={dynamic ? "/welcome(.*)" : "/welcome"}
                 block
                 state={fromError ? 'error' : undefined}
                 autofocus
@@ -121,7 +142,7 @@
         <FormControl>
             <TextInput 
                 bind:value={to}
-                placeholder="https://hyvor.com"
+                placeholder={dynamic ? "https://hyvor.com/$1" : "https://hyvor.com"}
                 block
                 state={toError ? 'error' : undefined}
             />

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { IconButton, Link, TableRow, Tooltip, confirm, toast } from "@hyvor/design/components";
+	import { IconButton, Link, TableRow, Tooltip, confirm, toast, Tag } from "@hyvor/design/components";
 	import type { Redirect } from "../../../lib/types";
 	import { primaryLanguageStore } from "../../../lib/stores/languagesStore";
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
@@ -37,7 +37,12 @@
 </script>
 
 <TableRow>
-    <div>{redirect.path}</div>
+    <div>
+        {redirect.path}
+        {#if redirect.dynamic}
+            <Tag size="small" color="orange">Dynamic</Tag>
+        {/if}
+    </div>
     <div>
         <Link
             href={redirect.to}

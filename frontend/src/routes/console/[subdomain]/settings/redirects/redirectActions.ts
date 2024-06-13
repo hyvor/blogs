@@ -16,17 +16,17 @@ export function getRedirect({limit, offset} : GetRedirectProps = {}) {
     })
 }
 
-export function createRedirect(path: string, to: string, type: 'temporary' | 'permanent') {
+export function createRedirect(dynamic: boolean, path: string, to: string, type: 'temporary' | 'permanent') {
     return consoleApi.post<Redirect>({
         endpoint: '/redirect',
-        data: {path, to, type}
+        data: {dynamic, path, to, type}
     })
 }
 
-export function updateRedirect(id: number, path: string, to: string, type: 'temporary' | 'permanent') {
+export function updateRedirect(id: number, dynamic: boolean, path: string, to: string, type: 'temporary' | 'permanent') {
     return consoleApi.put<Redirect>({
         endpoint: `/redirect/${id}`,
-        data: {path, to, type}
+        data: {dynamic, path, to, type}
     })
 }
 
