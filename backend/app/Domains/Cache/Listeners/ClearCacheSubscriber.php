@@ -259,12 +259,15 @@ class ClearCacheSubscriber
     public function onRedirectEvent(RedirectChangedEvent $event) : void
     {   
         $redirect = $event->redirect;
+        $blog = $redirect->blog;
+
+        if (!$blog) return;
 
         if ($redirect->dynamic) {
             $cacheService = new CacheService();
-            $cacheService->blog($redirect->blog)->clearAllCache();
+            $cacheService->blog($blog)->clearAllCache();
         }
-        elseif ($blog = $redirect->blog) 
+        else
             $this->clearSingleCache($blog, $redirect->path);
     }
 }
