@@ -61,7 +61,7 @@ class RedirectRepository
     /**
      * TODO: Update this to match wildcards
      */
-    public static function findRedirectForPath(Blog $blog, string $path): Redirect|null
+    public static function findRedirectForPath(Blog $blog, string $path): array|null
     {
         $dynamicRedirects = $blog->redirects()
                                 ->where('dynamic', true)
@@ -76,8 +76,11 @@ class RedirectRepository
 
                 if (preg_match(self::getRegex($dynamicPath), $path)) {
                     try {
-                        $dynamicRedirect->to = preg_replace(self::getRegex($dynamicPath), $to, $path);
-                        return $dynamicRedirect;
+                        $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
+                        return [
+                            'to' => $dynamicTo,
+                            'type' => $dynamicRedirect->type,
+                        ];
                     } catch (\Exception $e) {
                         throw new SafetyException('Dynamic link parsing failed');
                     }
@@ -85,9 +88,13 @@ class RedirectRepository
             }
         }
 
-        return $blog->redirects()
-            ->where('path', $path)
-            ->first();
+        $staticRedirects = $blog->redirects()
+                                ->where('path', $path)
+                                ->first();
+        return $staticRedirects ? [
+            'to' => $staticRedirects->to,
+            'type' => $staticRedirects->type,
+        ] : null;
     }
 
     public static function hasRedirectForPath(Blog $blog, string $path): bool
