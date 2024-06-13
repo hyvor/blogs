@@ -76,13 +76,10 @@ class RedirectRepository
                 $dynamicPath = $dynamicRedirect->path;
                 $to = $dynamicRedirect->to;
 
-                if (preg_match($this->getRegex($dynamicPath), $path)){
-
+                if (preg_match(self::getRegex($dynamicPath), $path)) {
                     try {
-
-                        $dynamicRedirect->to = preg_replace($this->getRegex($dynamicPath), $to, $path);
+                        $dynamicRedirect->to = preg_replace(self::getRegex($dynamicPath), $to, $path);
                         return $dynamicRedirect;
-
                     } catch (\Exception $e) {
                         throw new SafetyException('Dynamic link parsing failed');
                     }
@@ -102,7 +99,7 @@ class RedirectRepository
             ->exists();
     }
 
-    public static function getRegex(string $path): string
+    private static function getRegex(string $path): string
     {
         return ('~^' . $path . '~');
     }
