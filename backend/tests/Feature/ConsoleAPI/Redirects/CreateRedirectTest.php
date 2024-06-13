@@ -7,7 +7,7 @@ use App\Models\Redirect;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a redirect', function () {
+it('creates a static redirect', function () {
     Event::fake();
 
     $blog = blogWithAccess();
@@ -17,6 +17,7 @@ it('creates a redirect', function () {
     $type = 'permanent';
 
     consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => false,
         'path' => $path,
         'to' => $to,
         'type' => $type,
@@ -32,7 +33,33 @@ it('creates a redirect', function () {
     Event::assertDispatched(RedirectChangedEvent::class);
 });
 
-it('does not create a redirect when path is taken', function () {
+it('creates a dynamic redirect', function () {
+    Event::fake();
+
+    $blog = blogWithAccess();
+
+    $path = '/example/(.*)';
+    $to = 'https://example.com/$1';
+    $type = 'temporary';
+
+    consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => true,
+        'path' => $path,
+        'to' => $to,
+        'type' => $type,
+    ])
+        ->assertOk()
+        ->assertJson(
+            fn (AssertableJson $json) => $json->where('path', $path)
+                ->where('to', $to)
+                ->where('type', $type)
+                ->etc()
+        );
+
+    Event::assertDispatched(RedirectChangedEvent::class);
+});
+
+it('does not create a static redirect when path is taken', function () {
 
     $blog = blogWithAccess();
 
@@ -43,6 +70,27 @@ it('does not create a redirect when path is taken', function () {
     Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
 
     consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => false,
+        'path' => $path,
+        'to' => $to,
+        'type' => $type,
+    ])
+        ->assertUnprocessable()
+        ->assertSee(['path', 'exists']);
+});
+
+it('does not create a dynamic redirect when path is taken', function () {
+
+    $blog = blogWithAccess();
+
+    $path = '/example/(.*)';
+    $to = 'https://example.com/$1';
+    $type = 'temporary';
+
+    Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
+
+    consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => true,
         'path' => $path,
         'to' => $to,
         'type' => $type,
