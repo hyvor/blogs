@@ -38,10 +38,12 @@ class ConsoleRedirectController extends Controller
     public function create(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
+            'dynamic' => ['required', 'boolean'],
             'path' => ['required', new RedirectPath($blog)],
             'to' => ['required', 'url'],
             'type' => ['required', new Enum(RedirectTypeEnum::class)],
         ]);
+        $dynamic = (bool) $request->boolean('dynamic');
         $path = (string) $request->string('path');
         $to = (string) $request->string('to');
         $type = RedirectTypeEnum::from((string) $request->string('type'));
@@ -50,7 +52,7 @@ class ConsoleRedirectController extends Controller
             throw new TrustedException('Redirect already exists for path');
         }
 
-        $redirect = RedirectRepository::createRedirect($blog, $path, $to, $type);
+        $redirect = RedirectRepository::createRedirect($dynamic, $blog, $path, $to, $type);
 
         return response()->json(new RedirectObject($redirect));
     }
@@ -59,6 +61,7 @@ class ConsoleRedirectController extends Controller
     {
         sleep(1);
         $request->validate([
+            'dynamic' => ['boolean'],
             'path' => [new RedirectPath($blog)],
             'to' => ['url'],
             'type' => [new Enum(RedirectTypeEnum::class)],
@@ -66,6 +69,10 @@ class ConsoleRedirectController extends Controller
 
         $updates = [];
 
+        if ($request->has('dynamic')) {
+            $updates['dynamic'] = (bool) $request->boolean('dynamic');
+        }
+        
         if ($request->has('path')) {
             $path = (string) $request->string('path');
 

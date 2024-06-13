@@ -11,6 +11,8 @@ class RedirectObject
 
     public int $created_at;
 
+    public bool $dynamic;
+
     public string $path;
 
     public string $to;
@@ -21,6 +23,7 @@ class RedirectObject
     {
         $this->id = $redirect->id;
         $this->created_at = $redirect->created_at->getTimestamp();
+        $this->dynamic = $redirect->dynamic;
         $this->path = $redirect->path;
         $this->to = $redirect->to;
         $this->type = $redirect->type;

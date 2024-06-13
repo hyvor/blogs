@@ -24,11 +24,13 @@ class RedirectRepository
 
     public static function createRedirect(
         Blog $blog,
+        boolean $dynamic,
         string $path,
         string $to,
         RedirectTypeEnum $type
     ): Redirect {
         $redirect = $blog->redirects()->create([
+            'dynamic' => $dynamic,
             'path' => $path,
             'to' => $to,
             'type' => $type,
