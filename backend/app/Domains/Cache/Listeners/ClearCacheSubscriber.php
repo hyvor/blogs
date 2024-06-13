@@ -268,6 +268,6 @@ class ClearCacheSubscriber
             $cacheService->blog($blog)->clearAllCache();
         }
         else
-            $this->clearSingleCache($blog, $redirect->path);
+            $this->clearSingleCache($blog, $redirect->getOriginal('path'));
     }
 }
