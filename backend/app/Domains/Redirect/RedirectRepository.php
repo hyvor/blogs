@@ -18,13 +18,14 @@ class RedirectRepository
         return $blog->redirects()
             ->limit($limit)
             ->offset($offset)
+            ->orderBy('dynamic', 'desc')
             ->latest()
             ->get();
     }
 
     public static function createRedirect(
         Blog $blog,
-        boolean $dynamic,
+        bool $dynamic,
         string $path,
         string $to,
         RedirectTypeEnum $type
