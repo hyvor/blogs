@@ -52,7 +52,7 @@ class ConsoleRedirectController extends Controller
             throw new TrustedException('Redirect already exists for path');
         }
 
-        $redirect = RedirectRepository::createRedirect($dynamic, $blog, $path, $to, $type);
+        $redirect = RedirectRepository::createRedirect($blog, $dynamic, $path, $to, $type);
 
         return response()->json(new RedirectObject($redirect));
     }
@@ -72,7 +72,7 @@ class ConsoleRedirectController extends Controller
         if ($request->has('dynamic')) {
             $updates['dynamic'] = (bool) $request->boolean('dynamic');
         }
-        
+
         if ($request->has('path')) {
             $path = (string) $request->string('path');
 
