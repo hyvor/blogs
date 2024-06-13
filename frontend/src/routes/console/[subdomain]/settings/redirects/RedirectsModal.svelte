@@ -110,7 +110,7 @@
             
         </div>
         
-        <Link href="https://docs.hyvor.com/redirects" color="accent" style="font-size:small" target="_blank">Refer Docs for more details.<IconBoxArrowUpRight slot="end" /></Link>
+        <Link href="https://docs.hyvor.com/redirects#dynamic" color="accent" style="font-size:small" target="_blank">Refer Docs for more details.<IconBoxArrowUpRight slot="end" /></Link>
         
         </SplitControl>
     <SplitControl
