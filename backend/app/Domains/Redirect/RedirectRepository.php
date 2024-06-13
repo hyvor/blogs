@@ -7,6 +7,7 @@ use App\Domains\Redirect\Events\RedirectChangedEvent;
 use App\Models\Blog;
 use App\Models\Redirect;
 use Illuminate\Support\Collection;
+use App\Exceptions\SafetyException;
 
 class RedirectRepository
 {
@@ -64,6 +65,31 @@ class RedirectRepository
      */
     public static function findRedirectForPath(Blog $blog, string $path): Redirect|null
     {
+        $dynamicRedirects = $blog->redirects()
+                                ->where('dynamic', true)
+                                ->get();
+
+        if ($dynamicRedirects->count() > 0) {
+
+            foreach ($dynamicRedirects as $dynamicRedirect) {
+
+                $dynamicPath = $dynamicRedirect->path;
+                $to = $dynamicRedirect->to;
+
+                if (preg_match($this->getRegex($dynamicPath), $path)){
+
+                    try {
+
+                        $dynamicRedirect->to = preg_replace($this->getRegex($dynamicPath), $to, $path);
+                        return $dynamicRedirect;
+
+                    } catch (\Exception $e) {
+                        throw new SafetyException('Dynamic link parsing failed');
+                    }
+                }
+            }
+        }
+
         return $blog->redirects()
             ->where('path', $path)
             ->first();
@@ -74,5 +100,10 @@ class RedirectRepository
         return $blog->redirects()
             ->where('path', $path)
             ->exists();
+    }
+
+    public static function getRegex(string $path): string
+    {
+        return ('~^' . $path . '~');
     }
 }
