@@ -6,10 +6,10 @@
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
     import { IconBoxArrowUpRight } from '@hyvor/icons';
 
+    export let dynamicRedirects;    
     export let redirect: Redirect | null = null;
     export let show = false;
     let loading = false;
-
     const isCreating = redirect === null;
 
     const dispatch = createEventDispatcher();
@@ -102,16 +102,17 @@
         <div style="display: flex; align-items: center;">
             <FormControl>
             <Switch 
-                bind:checked={dynamic}
+            bind:checked={dynamic}
+            disabled={dynamicRedirects >= 5}
             />
             </FormControl>
-            <Text small light style="margin-left:15px; margin-bottom: 2%">4/5 remaining</Text>
+            <Text small light style="margin-left:15px; margin-bottom: 2%">{dynamicRedirects}/5 remaining </Text>
+            
         </div>
         
         <Link href="https://docs.hyvor.com/redirects" color="accent" style="font-size:small" target="_blank">Refer Docs for more details.<IconBoxArrowUpRight slot="end" /></Link>
-    
-    </SplitControl>
-    
+        
+        </SplitControl>
     <SplitControl
         label="From"
         caption="Which path to match"
