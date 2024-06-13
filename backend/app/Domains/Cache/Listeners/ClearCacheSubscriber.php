@@ -18,6 +18,7 @@ use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\PostRepository;
 use App\Domains\Redirect\Events\RedirectChangedEvent;
+use App\Domains\Redirect\Events\DynamicRedirectChangedEvent;
 use App\Domains\Route\Events\RouteChangedEvent;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\Events\TagCreatedEvent;
@@ -103,6 +104,7 @@ class ClearCacheSubscriber
         $events->listen(StylesEditedEvent::class, [static::class, 'onStylesEdit']);
 
         $events->listen(RedirectChangedEvent::class, [static::class, 'onRedirectEvent']);
+        $events->listen(DynamicRedirectChangedEvent::class, [static::class, 'onDynamicRedirectEvent']);
     }
 
     private function subscribeAllEvents(Dispatcher $event): void
@@ -260,5 +262,11 @@ class ClearCacheSubscriber
     {
         if ($blog = $event->redirect->blog)
             $this->clearSingleCache($blog, $event->redirect->path);
+    }
+
+    public function onDynamicRedirectEvent(DynamicRedirectChangedEvent $event) : void
+    {
+        $cacheService = new CacheService();
+        $cacheService->blog($event->redirect->blog)->clearAllCache();
     }
 }
