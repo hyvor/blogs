@@ -29,14 +29,7 @@
         }
 
     function countDynamicRedirects(redirects: Redirect[]) {
-        let count = 0;
-        for (let i = 0; i < (redirects ?? []).length; i++) {
-            if (!redirects[i]?.dynamic) {
-                break;
-            }
-            count++;
-        }
-        return count;
+        return redirects.filter(r => r.dynamic).length
     }
 
     function handleCreate(e: CustomEvent<Redirect>) {
