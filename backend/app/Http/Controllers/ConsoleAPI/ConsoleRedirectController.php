@@ -16,7 +16,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleRedirectController extends Controller
 {
-    public function get(Request $request, Blog $blog) : JsonResponse
+    public function get(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'limit' => 'integer',
@@ -35,7 +35,7 @@ class ConsoleRedirectController extends Controller
         return response()->json($redirects);
     }
 
-    public function create(Request $request, Blog $blog) : JsonResponse
+    public function create(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'dynamic' => ['required', 'boolean'],
@@ -50,24 +50,24 @@ class ConsoleRedirectController extends Controller
 
         if ($dynamic) {
             if (!RedirectRepository::validateRegex($path)) {
-                throw new TrustedException('Invalid regular expression for path');
+                throw new TrustedException('invalid_path_regex');
             }
         }
 
         if (RedirectRepository::hasRedirectForPath($blog, $path)) {
-            throw new TrustedException('Redirect already exists for path');
+            throw new TrustedException('path_already_exists');
         }
 
         if ($dynamic && !(RedirectRepository::getDynamicRedirectCount($blog) < 5)) {
             throw new TrustedException('Maximum number of dynamic redirects reached');
         }
-        
+
         $redirect = RedirectRepository::createRedirect($blog, $dynamic, $path, $to, $type);
 
         return response()->json(new RedirectObject($redirect));
     }
 
-    public function update(Request $request, Blog $blog, Redirect $redirect) : JsonResponse
+    public function update(Request $request, Blog $blog, Redirect $redirect): JsonResponse
     {
         $request->validate([
             'path' => [new RedirectPath($blog)],
@@ -107,7 +107,7 @@ class ConsoleRedirectController extends Controller
         return response()->json(new RedirectObject($redirect));
     }
 
-    public function delete(Redirect $redirect) : JsonResponse
+    public function delete(Redirect $redirect): JsonResponse
     {
         RedirectRepository::deleteRedirect($redirect);
 
