@@ -48,6 +48,12 @@ class ConsoleRedirectController extends Controller
         $to = (string) $request->string('to');
         $type = RedirectTypeEnum::from((string) $request->string('type'));
 
+        if ($dynamic) {
+            if (!RedirectRepository::validateRegex($path)) {
+                throw new TrustedException('Invalid regular expression for path');
+            }
+        }
+
         if (RedirectRepository::hasRedirectForPath($blog, $path)) {
             throw new TrustedException('Redirect already exists for path');
         }
@@ -60,17 +66,12 @@ class ConsoleRedirectController extends Controller
     public function update(Request $request, Blog $blog, Redirect $redirect) : JsonResponse
     {
         $request->validate([
-            'dynamic' => ['boolean'],
             'path' => [new RedirectPath($blog)],
             'to' => ['url'],
             'type' => [new Enum(RedirectTypeEnum::class)],
         ]);
 
         $updates = [];
-
-        if ($request->has('dynamic')) {
-            $updates['dynamic'] = $request->boolean('dynamic');
-        }
 
         if ($request->has('path')) {
             $path = (string) $request->string('path');
@@ -89,6 +90,12 @@ class ConsoleRedirectController extends Controller
 
         if ($request->has('type')) {
             $updates['type'] = RedirectTypeEnum::from((string) $request->string('type'));
+        }
+
+        if ($redirect->dynamic && isset($updates['path'])) {
+            if (!RedirectRepository::validateRegex($updates['path'])) {
+                throw new TrustedException('Invalid regular expression for Path');
+            }
         }
 
         $redirect = RedirectRepository::updateRedirect($redirect, $updates);

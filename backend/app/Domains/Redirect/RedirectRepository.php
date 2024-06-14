@@ -33,10 +33,6 @@ class RedirectRepository
         RedirectTypeEnum $type
     ): Redirect {
 
-        if ($dynamic) {
-            self::validateRegex(self::getRegex($path));
-        }
-
         $redirect = $blog->redirects()->create([
             'dynamic' => $dynamic,
             'path' => $path,
@@ -53,11 +49,6 @@ class RedirectRepository
      */
     public static function updateRedirect(Redirect $redirect, array $updates) : Redirect
     {
-
-        if ($redirect->dynamic && isset($updates['path'])) {
-            self::validateRegex(self::getRegex($updates['path']));
-        }
-
         $redirect->update($updates);
         RedirectChangedEvent::dispatch($redirect);
         return $redirect;
@@ -87,18 +78,20 @@ class RedirectRepository
             $dynamicPath = $dynamicRedirect->path;
             $to = $dynamicRedirect->to;
 
-            if (preg_match(self::getRegex($dynamicPath), $path)) {
-                try {
+            try {
+                if (preg_match(self::getRegex($dynamicPath), $path)) {
+
                     $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
+                        
                     return [
                         'to' => $dynamicTo,
                         'type' => $dynamicRedirect->type,
                     ];
-                } catch (\Exception $e) {
+                }
+             } catch (\Exception $e) {
                     throw new SafetyException('Dynamic link parsing failed');
                 }
             }
-        }
 
         $staticRedirect = $blog->redirects()
                                 ->where('path', $path)
@@ -118,13 +111,13 @@ class RedirectRepository
 
     private static function getRegex(string $path): string
     {
-        return ('~^' . $path . '~');
+        return ('~' . $path . '~');
     }
 
-    private static function validateRegex(string $regex): void
+    public static function validateRegex(string $regex): bool
     {
-        if (@preg_match($regex, '') === false) {
-            throw new TrustedException('Invalid regular expression');
-        }
+        if (@preg_match(self::getRegex($regex), '') === false)
+            return false;
+        return true;
     }
 }
