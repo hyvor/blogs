@@ -5,7 +5,7 @@
 	import { createEventDispatcher } from "svelte";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
     import { IconBoxArrowUpRight } from '@hyvor/icons';
-    import { dynamicRedirectsStore } from "../../../lib/stores/dynamicRedirect";
+    import { dynamicRedirectsStore } from "./dynamicRedirect";
 
     export let redirect: Redirect | null = null;
     export let show = false;

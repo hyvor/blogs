@@ -7,7 +7,7 @@
 	import { getRedirect } from "./redirectActions";
 	import { onMount } from "svelte";
 	import RedirectRow from "./RedirectRow.svelte";
-    import { dynamicRedirectsStore } from "../../../lib/stores/dynamicRedirect";
+    import { dynamicRedirectsStore } from "./dynamicRedirect";
 
     let isCreating = false;
 
