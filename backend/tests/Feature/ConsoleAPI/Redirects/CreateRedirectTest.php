@@ -50,8 +50,8 @@ it('creates a dynamic redirect', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('path', $path)
-                ->where('to', $to)
+            fn (AssertableJson $json) => $json->where('path', '/example/123')
+                ->where('to', 'https://example.com/123')
                 ->where('type', $type)
                 ->etc()
         );
