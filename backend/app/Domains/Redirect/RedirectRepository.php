@@ -65,22 +65,27 @@ class RedirectRepository
     * array{
     *   to: string,
     *   type: RedirectTypeEnum
-    * }|null
+    * } | null
     */
     public static function findRedirectForPath(Blog $blog, string $path): array|null
     {
+        // first check for dynamic redirects
         $dynamicRedirects = $blog->redirects()
                                 ->where('dynamic', true)
                                 ->get();
 
+        // iterates through all dynamic redirects for the blog
         foreach ($dynamicRedirects as $dynamicRedirect) {
 
             $dynamicPath = $dynamicRedirect->path;
             $to = $dynamicRedirect->to;
 
             try {
+
+                // checks if path matches the regex pattern of the dynamic path
                 if (preg_match(self::getRegex($dynamicPath), $path)) {
 
+                    // generates dynamic to path using the regex pattern
                     $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
                         
                     return [
@@ -88,14 +93,17 @@ class RedirectRepository
                         'type' => $dynamicRedirect->type,
                     ];
                 }
-             } catch (\Exception $e) {
-                    throw new SafetyException('Dynamic link parsing failed');
-                }
             }
-
+            catch (\Exception $e) {
+                throw new SafetyException('Dynamic link parsing failed');
+            }
+        }
+        
+        // if no dynamic redirect is found, check for static redirects
         $staticRedirect = $blog->redirects()
                                 ->where('path', $path)
                                 ->first();
+
         return $staticRedirect ? [
             'to' => $staticRedirect->to,
             'type' => $staticRedirect->type,
