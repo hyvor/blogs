@@ -89,12 +89,12 @@ class RedirectRepository
             }
         }
 
-        $staticRedirects = $blog->redirects()
+        $staticRedirect = $blog->redirects()
                                 ->where('path', $path)
                                 ->first();
-        return $staticRedirects ? [
-            'to' => $staticRedirects->to,
-            'type' => $staticRedirects->type,
+        return $staticRedirect ? [
+            'to' => $staticRedirect->to,
+            'type' => $staticRedirect->type,
         ] : null;
     }
 
