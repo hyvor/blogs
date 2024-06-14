@@ -58,7 +58,7 @@ class ConsoleRedirectController extends Controller
             throw new TrustedException('Redirect already exists for path');
         }
 
-        if ($dynamic && !(RedirectRepository::getDynamicRedirectsCount($blog) < 5)) {
+        if ($dynamic && !(RedirectRepository::getDynamicRedirectCount($blog) < 5)) {
             throw new TrustedException('Maximum number of dynamic redirects reached');
         }
         
