@@ -24,7 +24,6 @@ class CreateRedirectsTable extends Migration
             $table->bigInteger('blog_id')->index();
 
             $table->boolean('dynamic')->default(false);
-            $table->enum('redirect_type', ['static', 'dynamic'])->default('static');
             $table->string('path');
             $table->string('to');
 
