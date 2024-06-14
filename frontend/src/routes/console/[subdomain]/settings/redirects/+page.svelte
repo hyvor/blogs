@@ -7,16 +7,18 @@
 	import { getRedirect } from "./redirectActions";
 	import { onMount } from "svelte";
 	import RedirectRow from "./RedirectRow.svelte";
+    import { dynamicRedirectsStore } from "./dynamicRedirect";
 
     let isCreating = false;
 
     let redirects : Redirect[] = [];
     let isLoading = true;
-
+    
     function loadRedirect() {
         getRedirect()
             .then(res => {
                 redirects = res;
+                dynamicRedirectsStore.set(countDynamicRedirects(redirects));
             })
             .catch(err => {
                 toast.error(err.message);
@@ -26,16 +28,23 @@
             })
         }
 
+    function countDynamicRedirects(redirects: Redirect[]) {
+        return redirects.filter(r => r.dynamic).length;
+    }
+
     function handleCreate(e: CustomEvent<Redirect>) {
         redirects = [e.detail, ...redirects];
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     function handleDelete(e: CustomEvent<number>) {
         redirects = redirects.filter(t => t.id !== e.detail);
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     function handleUpdate(e: CustomEvent<Redirect>) {
         redirects = redirects.map(t => t.id === e.detail.id ? e.detail : t);
+        dynamicRedirectsStore.set(countDynamicRedirects(redirects));
     }
 
     onMount(loadRedirect)

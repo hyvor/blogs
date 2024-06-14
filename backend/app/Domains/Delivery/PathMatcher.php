@@ -83,8 +83,8 @@ class PathMatcher
         if ($redirect) {
             $this->setMatched(
                 DeliveryAPIResponseObject::forRedirect(
-                    $redirect->to,
-                    $redirect->type
+                    $redirect['to'],
+                    $redirect['type']
                 )
             );
         }

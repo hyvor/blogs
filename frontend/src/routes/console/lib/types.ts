@@ -263,6 +263,7 @@ export interface UnsplashImage {
 export interface Redirect {
     id: number;
     created_at: number;
+    dynamic: boolean;
     path: string;
     to: string;
     type: 'temporary' | 'permanent'

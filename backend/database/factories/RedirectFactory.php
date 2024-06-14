@@ -12,7 +12,8 @@ class RedirectFactory extends Factory
     {
         return [
             'blog_id' => Blog::factory(),
-            'path' => '/'.$this->faker->unique()->word(),
+            'dynamic' => false,
+            'path' => '/' . $this->faker->unique()->word(),
             'to' => $this->faker->url(),
             'type' => RedirectTypeEnum::TEMPORARY,
         ];
