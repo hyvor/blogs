@@ -22,15 +22,6 @@
     let fromError : null | string = null;
     let toError : null | string = null;
 
-    function validateRegex(string: string) {
-        try {
-            new RegExp(string);
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
-
     function handleClick() {
         fromError = null;
         toError = null;
@@ -42,11 +33,6 @@
 
         if (!from.startsWith('/')) {
             fromError = 'From value should be a relative path starting with /';
-            return;
-        }
-
-        if (dynamic && validateRegex(from) === false){
-            fromError = 'From value should be a valid regular expression.';
             return;
         }
 

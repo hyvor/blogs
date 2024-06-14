@@ -8,6 +8,7 @@ use App\Models\Blog;
 use App\Models\Redirect;
 use Illuminate\Support\Collection;
 use App\Exceptions\SafetyException;
+use App\Exceptions\TrustedException;
 
 class RedirectRepository
 {
@@ -31,6 +32,11 @@ class RedirectRepository
         string $to,
         RedirectTypeEnum $type
     ): Redirect {
+
+        if ($dynamic) {
+            self::validateRegex(self::getRegex($path));
+        }
+
         $redirect = $blog->redirects()->create([
             'dynamic' => $dynamic,
             'path' => $path,
@@ -47,6 +53,11 @@ class RedirectRepository
      */
     public static function updateRedirect(Redirect $redirect, array $updates) : Redirect
     {
+
+        if ($redirect->dynamic && isset($updates['path'])) {
+            self::validateRegex(self::getRegex($updates['path']));
+        }
+
         $redirect->update($updates);
         RedirectChangedEvent::dispatch($redirect);
         return $redirect;
@@ -108,5 +119,12 @@ class RedirectRepository
     private static function getRegex(string $path): string
     {
         return ('~^' . $path . '~');
+    }
+
+    private static function validateRegex(string $regex): void
+    {
+        if (@preg_match($regex, '') === false) {
+            throw new TrustedException('Invalid regular expression');
+        }
     }
 }
