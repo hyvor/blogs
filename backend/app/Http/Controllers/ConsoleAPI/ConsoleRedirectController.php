@@ -43,7 +43,7 @@ class ConsoleRedirectController extends Controller
             'to' => ['required', 'url'],
             'type' => ['required', new Enum(RedirectTypeEnum::class)],
         ]);
-        $dynamic = (bool) $request->boolean('dynamic');
+        $dynamic = $request->boolean('dynamic');
         $path = (string) $request->string('path');
         $to = (string) $request->string('to');
         $type = RedirectTypeEnum::from((string) $request->string('type'));
@@ -59,7 +59,6 @@ class ConsoleRedirectController extends Controller
 
     public function update(Request $request, Blog $blog, Redirect $redirect) : JsonResponse
     {
-        sleep(1);
         $request->validate([
             'dynamic' => ['boolean'],
             'path' => [new RedirectPath($blog)],
@@ -70,7 +69,7 @@ class ConsoleRedirectController extends Controller
         $updates = [];
 
         if ($request->has('dynamic')) {
-            $updates['dynamic'] = (bool) $request->boolean('dynamic');
+            $updates['dynamic'] = $request->boolean('dynamic');
         }
 
         if ($request->has('path')) {
