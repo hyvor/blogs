@@ -1,34 +1,40 @@
 FROM ubuntu:22.04
 
-RUN apt-get -y update
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
+RUN add-apt-repository -y ppa:ondrej/php
+
+
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     apt-get install -y \
     git \
     curl \
     openssh-client \
     ca-certificates \
-    php8.1 \
-    php8.1-bcmath \
-    php8.1-ctype \
-    php8.1-curl \
-    php8.1-dom \
-    php8.1-fpm \
-    php8.1-gd \
-    php8.1-intl \
-    php8.1-mbstring \
-    php8.1-mysqli \
-    php8.1-opcache \
-    php8.1-phar \
-    php8.1-xml \
-    php8.1-xmlreader \
-    php8.1-pdo \
-    php8.1-simplexml \
-    php8.1-intl \
-    php8.1-fileinfo \
-    php8.1-tokenizer \
-    php8.1-xmlwriter \
-    php8.1-posix \
-    php8.1-zip \
+    php8.3 \
+    php8.3-bcmath \
+    php8.3-ctype \
+    php8.3-curl \
+    php8.3-dom \
+    php8.3-fpm \
+    php8.3-gd \
+    php8.3-intl \
+    php8.3-mbstring \
+    php8.3-mysqli \
+    php8.3-opcache \
+    php8.3-phar \
+    php8.3-xml \
+    php8.3-xmlreader \
+    php8.3-pdo \
+    php8.3-simplexml \
+    php8.3-intl \
+    php8.3-fileinfo \
+    php8.3-tokenizer \
+    php8.3-xmlwriter \
+    php8.3-posix \
+    php8.3-zip \
     supervisor \
     make
 
@@ -39,15 +45,15 @@ RUN apt install -y debian-keyring debian-archive-keyring apt-transport-https && 
     apt update && \
     apt install caddy
 
-COPY docker/image/Caddyfile /etc/caddy/Caddyfile
+COPY meta/image/Caddyfile /etc/caddy/Caddyfile
 
-COPY docker/image/php-fpm.conf /etc/php/8.1/fpm/pool.d/www.conf
-COPY docker/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY meta/image/php-fpm.conf /etc/php/8.3/fpm/pool.d/www.conf
+COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # update PHP ini
-RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 128M/g' /etc/php/8.1/fpm/php.ini && \
-    sed -i 's/post_max_size = 8M/post_max_size = 140M/g' /etc/php/8.1/fpm/php.ini && \
-    sed -i 's/memory_limit = 128M/memory_limit = 256M/g' /etc/php/8.1/fpm/php.ini
+RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 128M/g' /etc/php/8.3/fpm/php.ini && \
+    sed -i 's/post_max_size = 8M/post_max_size = 140M/g' /etc/php/8.3/fpm/php.ini && \
+    sed -i 's/memory_limit = 128M/memory_limit = 256M/g' /etc/php/8.3/fpm/php.ini
 
 COPY ./ /var/www/app
 
