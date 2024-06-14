@@ -61,23 +61,3 @@ it('does not match if the redirect is not found', function () {
 
     expect($responseObject->status)->toBe(404);
 });
-
-it('validates an invalid regular expression', function () {
-    $from = '/redirect/(.*';
-
-    $blog = blog();
-
-    RedirectRepository::createRedirect(
-        $blog,
-        true,
-        $from,
-        'https://somewhere.com/$1',
-        RedirectTypeEnum::TEMPORARY
-    );
-
-    $pathMatcher = new PathMatcher($blog, '/redirect/123/456');
-    $responseObject = $pathMatcher->getResponseObject();
-
-    expect($responseObject->status)->toBe(422);
-    expect($responseObject->message)->toBe('Invalid regular expression');
-});

@@ -7,12 +7,12 @@ use App\Models\Redirect;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a redirect', function () {
+it('updates a static redirect', function () {
     Event::fake();
 
     $blog = blogWithAccess();
 
-    $redirect = Redirect::factory()->create(['blog_id' => $blog]);
+    $redirect = Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => false]);
 
     $path = '/example';
     $to = 'https://example.com';
@@ -34,7 +34,7 @@ it('updates a redirect', function () {
     Event::assertDispatched(RedirectChangedEvent::class);
 });
 
-it('does not create a redirect when path is taken', function () {
+it('does not update a static redirect when path is taken', function () {
 
     $blog = blogWithAccess();
 
@@ -42,8 +42,8 @@ it('does not create a redirect when path is taken', function () {
     $to = 'https://example.com';
     $type = 'permanent';
 
-    $r1 = Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
-    $r2 = Redirect::factory()->create(['blog_id' => $blog]);
+    $r1 = Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => false, 'path' => $path]);
+    $r2 = Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => false]);
 
     consoleApi($blog, 'PUT', "/redirect/$r2->id", [
         'path' => $path,
@@ -52,4 +52,23 @@ it('does not create a redirect when path is taken', function () {
     ])
         ->assertUnprocessable()
         ->assertSee(['path', 'exists']);
+});
+
+it('validates the regular expression for dynamic redirects', function () {
+
+    $blog = blogWithAccess();
+
+    $path = '/example/([0-9+)';
+    $to = 'https://example.com/$1';
+    $type = 'temporary';
+
+    $redirect = Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => true]);
+
+    consoleApi($blog, 'PUT', "/redirect/$redirect->id", [
+        'path' => $path,
+        'to' => $to,
+        'type' => $type,
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Invalid regular expression for path');
 });

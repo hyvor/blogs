@@ -67,7 +67,7 @@ it('does not create a static redirect when path is taken', function () {
     $to = 'https://example.com';
     $type = 'permanent';
 
-    Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
+    Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => false, 'path' => $path]);
 
     consoleApi($blog, 'POST', '/redirect', [
         'dynamic' => false,
@@ -87,7 +87,7 @@ it('does not create a dynamic redirect when path is taken', function () {
     $to = 'https://example.com/$1';
     $type = 'temporary';
 
-    Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
+    Redirect::factory()->create(['blog_id' => $blog, 'dynamic' => true, 'path' => $path]);
 
     consoleApi($blog, 'POST', '/redirect', [
         'dynamic' => true,
@@ -97,6 +97,44 @@ it('does not create a dynamic redirect when path is taken', function () {
     ])
         ->assertUnprocessable()
         ->assertSee(['path', 'exists']);
+});
+
+it('validates the regular expression for dynamic redirects', function () {
+
+    $blog = blogWithAccess();
+
+    $path = '/example/([0-9+)';
+    $to = 'https://example.com/$1';
+    $type = 'temporary';
+
+    consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => true,
+        'path' => $path,
+        'to' => $to,
+        'type' => $type,
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Invalid regular expression for path');
+});
+
+it('validates the dynamic redirect count when creating a dynamic redirect', function () {
+
+    $blog = blogWithAccess();
+
+    $path = '/example/(.*)';
+    $to = 'https://example.com/$1';
+    $type = 'temporary';
+
+    Redirect::factory()->count(5)->create(['blog_id' => $blog, 'dynamic' => true]);
+
+    consoleApi($blog, 'POST', '/redirect', [
+        'dynamic' => true,
+        'path' => $path,
+        'to' => $to,
+        'type' => $type,
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Maximum number of dynamic redirects reached');
 });
 
 /*
