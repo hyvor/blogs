@@ -71,23 +71,20 @@ class RedirectRepository
                                 ->where('dynamic', true)
                                 ->get();
 
-        if ($dynamicRedirects->count() > 0) {
+        foreach ($dynamicRedirects as $dynamicRedirect) {
 
-            foreach ($dynamicRedirects as $dynamicRedirect) {
+            $dynamicPath = $dynamicRedirect->path;
+            $to = $dynamicRedirect->to;
 
-                $dynamicPath = $dynamicRedirect->path;
-                $to = $dynamicRedirect->to;
-
-                if (preg_match(self::getRegex($dynamicPath), $path)) {
-                    try {
-                        $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
-                        return [
-                            'to' => $dynamicTo,
-                            'type' => $dynamicRedirect->type,
-                        ];
-                    } catch (\Exception $e) {
-                        throw new SafetyException('Dynamic link parsing failed');
-                    }
+            if (preg_match(self::getRegex($dynamicPath), $path)) {
+                try {
+                    $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
+                    return [
+                        'to' => $dynamicTo,
+                        'type' => $dynamicRedirect->type,
+                    ];
+                } catch (\Exception $e) {
+                    throw new SafetyException('Dynamic link parsing failed');
                 }
             }
         }
