@@ -120,4 +120,11 @@ class RedirectRepository
             return false;
         return true;
     }
+
+    public static function getDynamicRedirectCount(Blog $blog): int
+    {
+        return $blog->redirects()
+            ->where('dynamic', true)
+            ->count();
+    }
 }
