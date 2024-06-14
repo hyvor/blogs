@@ -1,3 +1,0 @@
-# Life Insurance Policy
-
-Work in progress...
