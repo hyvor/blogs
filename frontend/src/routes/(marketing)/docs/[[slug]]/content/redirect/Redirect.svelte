@@ -75,7 +75,7 @@
 <h3 id="dynamic-examples">Dynamic Redirect Examples</h3>
 
 <p>
-	To redirect all requests starting with <code>/author/</code> to an external site:
+	1. To redirect all requests starting with <code>/author/</code> to an external site:
 </p>
 
 <ul>
@@ -88,7 +88,7 @@
 </ul>
 
 <p>
-	To redirect all requests starting with <code>/author/</code> to an external site, keeping the rest
+	2. To redirect all requests starting with <code>/author/</code> to an external site, keeping the rest
 	of the path:
 </p>
 
@@ -102,7 +102,7 @@
 </ul>
 
 <p>
-	To redirect all requests starting with <code>/author/</code> followed by another
+	3. To redirect all requests starting with <code>/author/</code> followed by another
 	<code>/</code> to an external site, with some changes in the original structure of the path:
 </p>
 
@@ -112,6 +112,19 @@
 	</li>
 	<li>
 		<strong>To:</strong> <code>https://externalsite.com/$1/somedirectory/$2</code>
+	</li>
+</ul>
+
+<p>
+	4. Redirect paths ending with <code>/</code> to the same path without the trailing slash:
+</p>
+
+<ul>
+	<li>
+		<strong>From:</strong> <code>/(.*)/$</code>
+	</li>
+	<li>
+		<strong>To:</strong> <code>https://yourblog.com/$1</code>
 	</li>
 </ul>
 

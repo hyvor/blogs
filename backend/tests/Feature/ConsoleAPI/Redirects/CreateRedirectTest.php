@@ -24,7 +24,7 @@ it('creates a static redirect', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('path', $path)
+            fn(AssertableJson $json) => $json->where('path', $path)
                 ->where('to', $to)
                 ->where('type', $type)
                 ->etc()
@@ -50,7 +50,7 @@ it('creates a dynamic redirect', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('path', $path)
+            fn(AssertableJson $json) => $json->where('path', $path)
                 ->where('to', $to)
                 ->where('type', $type)
                 ->etc()
@@ -114,7 +114,7 @@ it('validates the regular expression for dynamic redirects', function () {
         'type' => $type,
     ])
         ->assertUnprocessable()
-        ->assertSee('Invalid regular expression for path');
+        ->assertSee('invalid_path_regex');
 });
 
 it('validates the dynamic redirect count when creating a dynamic redirect', function () {
@@ -136,28 +136,3 @@ it('validates the dynamic redirect count when creating a dynamic redirect', func
         ->assertUnprocessable()
         ->assertSee('Maximum number of dynamic redirects reached');
 });
-
-/*
- * Path redirects were removed because we need the full URL when
- * generating redirect responses
- *
- * it('creates a redirect to another path', function() {
-
-    $path = '/example';
-    $to = '/example2';
-    $type = 'temporary';
-
-    $this->callConsoleApi('POST', '/redirect', [
-        'path' => $path,
-        'to' => $to,
-        'type' => $type
-    ])
-        ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
-        $json->where('path', $path)
-            ->where('to', $to)
-            ->where('type', $type)
-            ->etc()
-        );
-
-});*/
