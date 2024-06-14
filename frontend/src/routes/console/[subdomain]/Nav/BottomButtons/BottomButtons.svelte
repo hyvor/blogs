@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Text } from '@hyvor/design/components';
 	import TruspilotIcon from './TruspilotIcon.svelte';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import { IconBoxArrowUpRight, IconChat, IconChatFill } from '@hyvor/icons';
 	import G2Icon from './G2Icon.svelte';
 	import { ActionListItem } from '@hyvor/design/components';
 	import { ActionList } from '@hyvor/design/components';
@@ -40,15 +40,15 @@
 
 	<Button
 		as="a"
-		href="https://discord.gg/2WRJxQB"
+		href="https://hyvor.community"
 		target="_blank"
 		block
 		variant="invisible"
 		color="accent"
 		align="start"
 	>
-		<IconDiscord slot="start" />
-		Join our Discord
+		<IconChatFill slot="start" />
+		Join community
 	</Button>
 
 	<Button
