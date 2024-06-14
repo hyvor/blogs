@@ -40,6 +40,13 @@ use Illuminate\Events\Dispatcher;
 
 class ClearCacheSubscriber
 {
+
+    private function clearAllCache(Blog $blog): void
+    {
+        $cache = app(CacheService::class);
+        $cache->blog($blog)->clearAllCache();
+    }
+
     private function clearTemplateCache(Blog $blog): void
     {
         $cache = app(CacheService::class);
@@ -112,7 +119,16 @@ class ClearCacheSubscriber
 
     public function onBlogUpdate(BlogUpdatedEvent $event): void
     {
-        $this->clearTemplateCache($event->blog);
+
+        $hostingChanged = $event->blogOriginal->hosting_at !== $event->blog->hosting_at ||
+            $event->blogOriginal->hosting_domain !== $event->blog->hosting_domain ||
+            $event->blogOriginal->hosting_url !== $event->blog->hosting_url;
+
+        if ($hostingChanged) {
+            $this->clearAllCache($event->blog);
+        } else {
+            $this->clearTemplateCache($event->blog);
+        }
     }
 
     public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event): void
@@ -281,8 +297,7 @@ class ClearCacheSubscriber
             return;
 
         if ($redirect->dynamic) {
-            $cacheService = new CacheService();
-            $cacheService->blog($blog)->clearAllCache();
+            $this->clearAllCache($blog);
         } else {
             $this->clearSingleCache($blog, $redirect->getOriginal('path'));
         }
