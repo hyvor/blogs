@@ -98,7 +98,7 @@ class ConsoleRedirectController extends Controller
 
         if ($redirect->dynamic && isset($updates['path'])) {
             if (!RedirectRepository::validateRegex($updates['path'])) {
-                throw new TrustedException('Invalid regular expression for Path');
+                throw new TrustedException('Invalid regular expression for path');
             }
         }
 
