@@ -1,5 +1,8 @@
 <script>
 	import { DocsImage } from "@hyvor/design/marketing";
+    import { Callout } from "@hyvor/design/components";
+    import { IconExclamationOctagonFill } from "@hyvor/icons";
+
 
     import createRedirectImg from './create-redirect.png';
     import example1Img from './example-1.png';
@@ -33,6 +36,13 @@
     Dynamic redirects allows to identify patterns and re-route requests in a flexible and automated manner. This approach contrasts with static redirects, which require specifying exact source and destination URLs. Dynamic behavior in redirects is primarily achieved through the use of regular expressions (regex), which allow for the matching of URL patterns instead of fixed URLs.
 </p>
 
+<DocsImage src={example1Img} alt="Example 1" />
+
+<Callout type="info">
+    <IconExclamationOctagonFill slot="icon" />
+    You can only have 5 dynamic redirects per blog.
+</Callout>
+
 <h3 id='how-it-works'>How it works</h3>
 
 <ul>
@@ -40,8 +50,7 @@
         Turn on <strong>Dynamic Redirects</strong>
     </li>
     <li>
-        Specify the dynamic <strong>From</strong> slug using regular expressions. Note that we support <code>PCRE2</code> regex syntax. 
-        (You can test your regex patterns using <a href="https://regex101.com/" rel="nofollow" target="_blank">regex101.com</a>.)
+        Specify the dynamic <strong>From</strong> slug using regular expressions. Note that we support <code>PCRE2</code> regex syntax.
     </li>
     <li>
         Specify the <strong>To</strong> slug. You can use the captured groups in the <strong>From</strong> slug in the <strong>To</strong> slug.
@@ -52,50 +61,46 @@
 </ul>
 
 <h3 id='examples'>Examples</h3>
+<Callout type="soft">
+<ol>
+    <li>
+        To redirect all requests starting with <code>/author/</code> to an external site:
+    </li>
+    <ul>
+        <li>
+            <strong>Path:</strong> <code>/author/(.*)</code>
+        </li>
+        <li>
+            <strong>To:</strong> <code>https://externalsite.com</code>
+        </li>
+    </ul>
 
-<h4>Example 1</h4>
+    <br>
 
-<DocsImage src={example1Img} alt="Example 1" />
+    <li>
+        To redirect all requests starting with <code>/author/</code> to an external site, keeping the rest of the path:
+    </li>
+    <ul>
+        <li>
+            <strong>Path:</strong> <code>/author/(.*)</code>
+        </li>
+        <li>
+            <strong>To:</strong> <code>https://externalsite.com/$1</code>
+        </li>
+    </ul>
 
-<p>
-    In the above example, the regex <code>/slug/(.*)</code> matches any path that starts with <code>/slug</code> and captures the rest of the path. 
-    The captured path is then used in the redirect destination as <code>https://redirecthere.com/rest-of-the-path</code>, allowing for dynamic redirection based on the original URL.
+    <br>
 
-</p>
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<p>
-    For example, you can use the following regex to match all paths that start with <code>/blog</code> and redirect them to <code>/posts</code>:
-</p>
-
-<pre>
-    <code>
-        ^/blog/(.*)$
-    </code>
-</pre>
-
-<p>
-    In the above example, the regex <code>^/blog/(.*)$</code> matches any path that starts with <code>/blog</code> and captures the rest of the path. The captured path is then used in the redirect destination, allowing for dynamic redirection based on the original URL.
-</p>
-
-<p>
-    Regular expressions can be complex and powerful tools for matching patterns in URLs. However, they can also be challenging to write and debug. If you are unfamiliar with regular expressions, we recommend consulting resources such as <a href="https://regex101.com/" rel="nofollow" target="_blank">regex101.com</a> to test and refine your regex patterns.
-</p>
-
+    <li>
+        To redirect all requests starting with <code>/author/</code> followed by another <code>/</code> to an external site, with some changes in the original structure of the path:
+    </li>
+    <ul>
+        <li>
+            <strong>Path:</strong> <code>/author/([^/]+)/(.*)</code>
+        </li>
+        <li>
+            <strong>To:</strong> <code>https://externalsite.com/$1/somedirectory/$2</code>
+        </li>
+    </ul>
+</ol>
+</Callout>
