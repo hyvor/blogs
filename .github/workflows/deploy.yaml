@@ -4,9 +4,9 @@ on:
     workflow_dispatch:
         inputs:
             tag:
-                description: 'Tag to deploy'
+                description: "Tag to deploy"
                 required: false
-                default: 'latest'
+                default: "latest"
 
 jobs:
     deploy:
@@ -21,42 +21,42 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
-            -   name: Upload docker-compose.yaml and prod.env
-                uses: appleboy/scp-action@master
-                with:
-                    host: ${{ matrix.server.ip }}
-                    username: root
-                    key: ${{ secrets.DEPLOY_SSH_KEY }}
-                    source: "docker/cloud/docker-compose.yaml,docker/cloud/prod.env"
-                    target: /root
-                    overwrite: true
-                    strip_components: 2
+            - name: Upload docker-compose.yaml and prod.env
+              uses: appleboy/scp-action@master
+              with:
+                  host: ${{ matrix.server.ip }}
+                  username: root
+                  key: ${{ secrets.DEPLOY_SSH_KEY }}
+                  source: "meta/cloud/docker-compose.yaml,meta/cloud/prod.env"
+                  target: /root
+                  overwrite: true
+                  strip_components: 2
 
-            -   name: Deploy to Cloud
-                uses: appleboy/ssh-action@master
-                env:
-                    IMAGE_VERSION: ${{ github.event.inputs.tag }}
-                    DOCKERHUB_USERNAME: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
-                    DOCKERHUB_TOKEN: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
-                    ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN: ${{ secrets.HYVOR_ORG_ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN }}
-                    ENV_FILE: ${{ secrets.LARAVEL_ENV }}
-                with:
-                    host: ${{ matrix.server.ip }}
-                    username: root
-                    key: ${{ secrets.DEPLOY_SSH_KEY }}
-                    envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN, ENV_FILE
-                    script: |
-                        set -e
+            - name: Deploy to Cloud
+              uses: appleboy/ssh-action@master
+              env:
+                  IMAGE_VERSION: ${{ github.event.inputs.tag }}
+                  DOCKERHUB_USERNAME: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
+                  DOCKERHUB_TOKEN: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
+                  ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN: ${{ secrets.HYVOR_ORG_ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN }}
+                  ENV_FILE: ${{ secrets.LARAVEL_ENV }}
+              with:
+                  host: ${{ matrix.server.ip }}
+                  username: root
+                  key: ${{ secrets.DEPLOY_SSH_KEY }}
+                  envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN, ENV_FILE
+                  script: |
+                      set -e
 
-                        # docker
-                        echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                      # docker
+                      echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
-                        # 1password
-                        export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN
-                        op user get --me
-                        op inject --force --in-file prod.env --out-file .env
+                      # 1password
+                      export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN
+                      op user get --me
+                      op inject --force --in-file prod.env --out-file .env
 
-                        # fresh pull
-                        docker pull $DOCKERHUB_USERNAME/blogs:$IMAGE_VERSION
-                        # docker rollout
-                        docker rollout hyvor-blogs
+                      # fresh pull
+                      docker pull $DOCKERHUB_USERNAME/blogs:$IMAGE_VERSION
+                      # docker rollout
+                      docker rollout hyvor-blogs

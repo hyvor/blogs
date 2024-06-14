@@ -1,4 +1,3 @@
-
 name: "Deploy to Staging"
 
 on:
@@ -23,7 +22,7 @@ jobs:
                   host: ${{ secrets.HYVOR_ORG_STAGING_SERVER_IP }}
                   username: root
                   key: ${{ secrets.HYVOR_ORG_STAGING_SSH_KEY }}
-                  source: "docker/cloud/staging/docker-compose.staging.yaml,docker/cloud/staging/.env.staging"
+                  source: "meta/cloud/staging/docker-compose.staging.yaml,meta/cloud/staging/.env.staging"
                   target: /root
                   overwrite: true
                   strip_components: 3
