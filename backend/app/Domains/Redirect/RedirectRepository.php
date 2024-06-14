@@ -59,8 +59,12 @@ class RedirectRepository
     }
 
     /**
-     * TODO: Update this to match wildcards
-     */
+    * @return
+    * array{
+    *   to: string,
+    *   type: RedirectTypeEnum
+    * }|null
+    */
     public static function findRedirectForPath(Blog $blog, string $path): array|null
     {
         $dynamicRedirects = $blog->redirects()
