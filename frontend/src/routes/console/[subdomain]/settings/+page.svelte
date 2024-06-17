@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { SplitControl, TextInput, Switch, Text, Link } from "@hyvor/design/components";
 	import BlogSettingsSave from "./BlogSettingsSave.svelte";
-	import type { Blog, BlogVariant } from "../../lib/types";
+	import type { Blog } from "../../lib/types";
 	import { blogStore, updateBlogStoreVariantValue } from "../../lib/stores/blogStore";
 	import VariantInput from "./@components/VariantInput/VariantInput.svelte";
-	import ImageUploader from "../../lib/components/ImageUploader/ImageUploader.svelte";
 	import ImageSetting from "./@components/ImageSetting.svelte";
-    import { subscriptionStore } from "../../lib/stores/subscriptionStore";
     import { consoleUrlWithBlog } from "../../lib/consoleUrl";
     import { minPlanCheck } from "../billing/minPlanCheck";
 

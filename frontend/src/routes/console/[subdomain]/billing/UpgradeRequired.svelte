@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { IconArrowUpCircle } from "@hyvor/icons";
-	import { isInTrial, subscriptionStore } from "../../lib/stores/subscriptionStore";
 	import type { SubscriptionPlan } from "../../lib/types";
 	import { Button } from "@hyvor/design/components";
-	import { blogStore } from "../../lib/stores/blogStore";
 	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
     import { minPlanCheck } from "./minPlanCheck";
 
@@ -11,7 +9,7 @@
     export let minPlan : SubscriptionPlan;
     export let trialAllowed = false;
     export let allow = false;
-    
+
     $: hasMinPlan = minPlanCheck(minPlan, trialAllowed);
 
 </script>
