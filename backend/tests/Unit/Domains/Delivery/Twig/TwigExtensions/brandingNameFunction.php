@@ -9,6 +9,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 dataset('brandingNames', [
     ['Test-Placeholder', 'Test-Placeholder'],
     ['', 'Powered by Hyvor Blogs'],
+    [' ', 'Powered by Hyvor Blogs'],
 ]);
 
 test('branding_name', function ($placeholder, $expected) {

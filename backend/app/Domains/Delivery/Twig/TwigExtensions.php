@@ -289,7 +289,7 @@ class TwigExtensions extends AbstractExtension
     public function brandingNameFunction($context)
     {
         $langResult = $this->langFilter($context, 'hb_branding');
-        if ($langResult === null || $langResult === '') {
+        if ($langResult === null || trim($langResult) === '') {
             return 'Powered by Hyvor Blogs';
         }
         return $langResult;
