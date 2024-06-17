@@ -8,8 +8,9 @@
 	import ImageSetting from "./@components/ImageSetting.svelte";
     import { subscriptionStore } from "../../lib/stores/subscriptionStore";
     import { consoleUrlWithBlog } from "../../lib/consoleUrl";
+    import { minPlanCheck } from "../billing/minPlanCheck";
 
-    let brandingDisabled = $subscriptionStore?.plan !== ('growth' || 'premium' || 'team' || 'business' || 'enterprise');
+    let brandingDisabled = !minPlanCheck('growth');
 
     function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
         updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);

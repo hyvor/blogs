@@ -5,29 +5,19 @@
 	import { Button } from "@hyvor/design/components";
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
+    import { minPlanCheck } from "./minPlanCheck";
 
-    const allPlanTypes : SubscriptionPlan[] = [
-        'starter',
-        'growth',
-        'premium',
-        'team',
-        'business',
-        'enterprise'
-    ];
 
     export let minPlan : SubscriptionPlan;
     export let trialAllowed = false;
     export let allow = false;
-
-    const inTrial = isInTrial();
-
-    $: hasMinPlan = $subscriptionStore && 
-        allPlanTypes.indexOf($subscriptionStore.plan) >= allPlanTypes.indexOf(minPlan);
+    
+    $: hasMinPlan = minPlanCheck(minPlan, trialAllowed);
 
 </script>
 
 
-{#if hasMinPlan || (trialAllowed && inTrial) || allow}
+{#if hasMinPlan || allow}
     <slot />
 {:else}
 
