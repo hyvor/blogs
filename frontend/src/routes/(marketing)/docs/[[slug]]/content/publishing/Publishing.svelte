@@ -123,6 +123,13 @@
     </InputGroup>
 </div>
 
+<div class="checklist-main" id="mult-line">
+    <div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
+    <div class="checklist-main-text">
+        Should support branding.
+    </div>
+</div>
+
 <h2 id="config">Config</h2>
 
 <p>As explained in the <a href="/docs/themes-config">configurations</a> page, the following configurations are required when publishing your theme.</p>

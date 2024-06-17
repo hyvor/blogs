@@ -4,7 +4,7 @@
 
 </script>
 
-<h1 id="api-data">API Data</h1>
+<h1 id="api-data">Data API</h1>
 
 <p>The Data API returns the public data of the blog.</p>
 
@@ -967,10 +967,12 @@ published_at>'-7 days'
     "posts_count": 200,
 
     // the following are blog settings
-    // which are used for generating header code and color themes
+    // which are used for generating header code, color themes
+    // and footer branding
     "seo_indexing": true,
     "color_modes": "light",
-    "color_mode_default": "light"
+    "color_mode_default": "light",
+    "hb_branding": true
 }
 `} />
 
