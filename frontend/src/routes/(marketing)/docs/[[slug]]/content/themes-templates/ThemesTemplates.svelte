@@ -192,14 +192,6 @@
                     {{ icon('bootstrap', 'arrow-down', 20, 20) }}
                     `} />
 
-                <ul>
-                    <li><code>branding_url</code> - a function to get the URL of the blog's branding.</li>
-                </ul>
-
-                    <CodeBlock code={`
-                    // Something should be written here !
-                    `} />
-
                 <p>Function definition: <code>icon(iconLibrary, iconName, width, height)</code></p>
                     <ul>
                         <li>All icon names are lowercase, and words are separated by <code>-</code> (<code>arrow-down</code>).</li>
@@ -230,6 +222,10 @@
                                 </Callout>
                             </ul>
                     </ul>
+
+                <ul>
+                    <li><code>branding_url</code> and <code>branding_name</code> - functions related to branding.</li>
+                </ul>
 
             <h3 id="helper-filters">Filters</h3>
                 
