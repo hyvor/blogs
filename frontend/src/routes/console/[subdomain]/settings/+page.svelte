@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { SplitControl, TextInput, Switch, Text, Link } from "@hyvor/design/components";
-    import { IconBoxArrowUpRight } from '@hyvor/icons';
 	import BlogSettingsSave from "./BlogSettingsSave.svelte";
 	import type { Blog, BlogVariant } from "../../lib/types";
 	import { blogStore, updateBlogStoreVariantValue } from "../../lib/stores/blogStore";
@@ -8,6 +7,7 @@
 	import ImageUploader from "../../lib/components/ImageUploader/ImageUploader.svelte";
 	import ImageSetting from "./@components/ImageSetting.svelte";
     import { subscriptionStore } from "../../lib/stores/subscriptionStore";
+    import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 
     let brandingDisabled = $subscriptionStore?.plan !== ('growth' || 'premium' || 'team' || 'business' || 'enterprise');
 
@@ -208,9 +208,8 @@
         {#if brandingDisabled}
             <div style="display: flex; margin-top: 5px; margin-left:1px">
                 <Text small light><strong>Growth or a higher plan</strong> is required to disable branding.&nbsp</Text>
-                <Link href="/pricing" target="_blank">
+                <Link href={consoleUrlWithBlog('/billing')}>
                     <small>Upgrade Now!</small>
-                    <IconBoxArrowUpRight slot="end" />
                 </Link>
             </div>
         {/if}
