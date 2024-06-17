@@ -72,6 +72,13 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
             ]),
+            new TwigFunction('branding_url', [$this, 'brandingUrlFunction'], [
+                'needs_context' => true,
+                'is_safe' => ['html']
+            ]),
+            new TwigFunction('branding_name', [$this, 'brandingNameFunction'], [
+                'needs_context' => true,
+            ])
         ];
     }
 
@@ -265,6 +272,28 @@ class TwigExtensions extends AbstractExtension
             return trim($url, '/') === $currentPath;
         }
     }
+
+    public function brandingUrlFunction($context): string
+    {
+        $blogUrl = $context['_blog']['base_url'];
+
+        try{
+            $parsedUrl = parse_url($blogUrl);
+            $domain = $parsedUrl['host'];
+        } catch (\Exception $e) {
+            $domain = '';
+        }
+        return "https://blogs.hyvor.com?source=branding&ref={$domain}";
+    }
+
+    public function brandingNameFunction($context)
+    {
+        $langResult = $this->langFilter($context, 'hb_branding');
+        if ($langResult === null || $langResult === '') {
+            return 'Powered by Hyvor Blogs';
+        }
+        return $langResult;
+    }  
 
     public function tocFilter(string $content, null|array|string $levels = null): string
     {
