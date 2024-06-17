@@ -4,6 +4,6 @@
   trap 'kill 0' SIGINT;
   npm run dev --prefix ./frontend &
   composer serve --working-dir=./backend &
-  caddy run --config ./bin/dev/Caddyfile.dev &
+  caddy run --config ./meta/dev/Caddyfile.dev &
   wait
 )
