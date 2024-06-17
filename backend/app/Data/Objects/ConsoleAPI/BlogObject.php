@@ -88,6 +88,8 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReportEnum $link_analysis_email_report;
 
+    public bool $hb_branding;
+
     /**
      * @var BlogVariantObject[]
      */
