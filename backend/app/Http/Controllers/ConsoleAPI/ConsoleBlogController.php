@@ -115,7 +115,9 @@ class ConsoleBlogController extends Controller
             'heading_anchors' => 'boolean',
 
             'link_analysis_enabled' => 'boolean',
-            'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class)
+            'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class),
+
+            'hb_branding' => 'boolean'
         ];
         $request->validate($validate);
 
