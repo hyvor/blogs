@@ -7,9 +7,10 @@ use App\Domains\Blog\BlogService;
 use App\Domains\Theme\ThemeFilesRepository;
 
 dataset('brandingNames', [
-    ['Test-Placeholder', 'Test-Placeholder'],
+    ['hb_branding: Test-Placeholder', 'Test-Placeholder'],
+    ['hb_branding:', 'Powered by Hyvor Blogs'],
+    ['hb_branding:    ', 'Powered by Hyvor Blogs'],
     ['', 'Powered by Hyvor Blogs'],
-    [' ', 'Powered by Hyvor Blogs'],
 ]);
 
 test('branding_name', function ($placeholder, $expected) {
@@ -20,7 +21,7 @@ test('branding_name', function ($placeholder, $expected) {
         $blog,
         ThemeFileFolderEnum::LANG,
         'en.yaml',
-        'hb_branding: ' . $placeholder
+        $placeholder
     );
 
     testTwigRendering(
