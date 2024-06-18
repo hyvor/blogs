@@ -9,16 +9,21 @@ use App\Domains\Cache\Events\CacheClearTemplatesEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
+use App\Domains\Navigation\Events\NavigationChangedEvent;
+use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostVariantCreatedEvent;
 use App\Domains\Route\Events\RouteChangedEvent;
 use App\Domains\Route\RouteRepository;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
+use App\Models\Navigation;
+use App\Models\NavigationVariant;
 use App\Models\PostVariant;
 use App\Models\Route;
 use Database\Factories\LanguageFactory;
 use Database\Factories\MediaFactory;
+use Database\Factories\NavigationVariantFactory;
 use Database\Factories\PostFactory;
 use Database\Factories\PostVariantFactory;
 use Database\Factories\RouteFactory;
@@ -157,7 +162,53 @@ it('calls webhook delivery job on media deleted event', function () {
     });
 });
 
-it('calls webhook delivery job on route change event', function () {
+it('calls webhook delivery job on navigation changed event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $navigation = Navigation::factory()->create([
+        'blog_id' => $blog->id,
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::NAVIGATION_CHANGED);
+
+    $event = new NavigationChangedEvent($navigation);
+    $listener = new WebhookSubscriber();
+    $listener->onNavigationChangedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($navigation){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::NAVIGATION_CHANGED);
+        expect($job->delivery->data['navigation'][0]['id'])->toBe($navigation->id);
+        return true;
+    });
+});
+
+// it('calls webhook delivery job on navigation variant changed event', function () {
+//     Queue::fake();
+
+//     $blog = blog();
+//     $navigation = Navigation::factory()->create([
+//         'blog_id' => $blog->id,
+//     ]);
+//     $navigationVariant = NavigationVariant::factory()->create([
+//         'navigation_id' => $navigation->id,
+//     ]);
+
+//     createWebhookFor($blog, WebhookEventEnum::NAVIGATION_CHANGED);
+
+//     $event = new NavigationVariantChangedEvent($navigationVariant);
+//     $listener = new WebhookSubscriber();
+//     $listener->onNavigationVariantChangedEvent($event);
+
+//     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($navigation){
+//         expect($job->delivery->event)->toBe(WebhookEventEnum::NAVIGATION_CHANGED);
+//         expect($job->delivery->data['navigation'][0]['id'])->toBe($navigation->id);
+//         return true;
+//     });
+
+// });
+
+it('calls webhook delivery job on route changed event', function () {
     Queue::fake();
 
     $blog = blog();

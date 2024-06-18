@@ -82,8 +82,8 @@ class WebhookSubscriber
         $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
 
-        // $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        // $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
+        $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
+        $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantChangedEvent']);
         $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
         $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
 
@@ -204,6 +204,18 @@ class WebhookSubscriber
         }
 
         $this->call($event->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, [
+            'navigation' => $navigationObjects,
+        ]);
+    }
+    public function onNavigationVariantChangedEvent(NavigationVariantChangedEvent $event)
+    {
+        $navigations = NavigationRepository::getNavigations($event->variant->blog);
+        $navigationObjects = [];
+        foreach ($navigations as $navigation) {
+            $navigationObjects[] = (array) new NavigationObject($navigation);
+        }
+
+        $this->call($event->variant->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, [
             'navigation' => $navigationObjects,
         ]);
     }
