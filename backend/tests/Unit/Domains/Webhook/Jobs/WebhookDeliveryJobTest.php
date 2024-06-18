@@ -50,7 +50,7 @@ it('delivers a webhook', function () {
     expect($delivery->response)->toBe('ok');
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::SUCCESS);
     expect($delivery->http_status)->toBe(200);
-    expect($delivery->event)->toBe('cache.single');
+    expect($delivery->event)->toBe(WebhookEventEnum::CACHE_SINGLE);
     expect($delivery->data['path'])->toBe('/test');
     expect($delivery->url)->toBe($url);
 });
