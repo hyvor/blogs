@@ -83,7 +83,7 @@ class WebhookSubscriber
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
 
         $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantChangedEvent']);
+        // $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantChangedEvent']);
         $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
         $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
 
