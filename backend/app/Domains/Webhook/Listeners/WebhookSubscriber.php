@@ -55,37 +55,37 @@ class WebhookSubscriber
 {
     public function subscribe(Dispatcher $events)
     {
-        $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
-        $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogUpdatedEvent']);
+        // $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
+        // $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogUpdatedEvent']);
 
-        $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
-        $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostUpdatedEvent']);
-        $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
-        $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostUpdatedEvent']);
-        $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
-        $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
+        // $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
+        // $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostUpdatedEvent']);
+        // $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
+        // $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostUpdatedEvent']);
+        // $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
+        // $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
 
-        $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
-        $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagUpdatedEvent']);
-        $events->listen(TagUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
-        $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
-        $events->listen(TagDeletedEvent::class, [static::class, 'onTagDeletedEvent']);
-        $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagUpdatedEvent']);
+        // $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
+        // $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagUpdatedEvent']);
+        // $events->listen(TagUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
+        // $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
+        // $events->listen(TagDeletedEvent::class, [static::class, 'onTagDeletedEvent']);
+        // $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagUpdatedEvent']);
 
-        $events->listen(UserCreatedEvent::class, [static::class,'onUserCreatedEvent']);
-        $events->listen(UserVariantCreatedEvent::class, [static::class,'onUserUpdatedEvent']);
-        $events->listen(UserUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
-        $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
-        $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
-        $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserUpdatedEvent']);
+        // $events->listen(UserCreatedEvent::class, [static::class,'onUserCreatedEvent']);
+        // $events->listen(UserVariantCreatedEvent::class, [static::class,'onUserUpdatedEvent']);
+        // $events->listen(UserUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
+        // $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
+        // $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
+        // $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserUpdatedEvent']);
 
-        $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
-        $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
+        // $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
+        // $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
 
-        $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
-        $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
+        // $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
+        // $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
+        // $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
+        // $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
 
         $events->listen(CacheClearSingleEvent::class, [static::class, 'onCacheClearSingleEvent']);
         $events->listen(CacheClearTemplatesEvent::class, [static::class, 'onCacheClearTemplatesEvent']);

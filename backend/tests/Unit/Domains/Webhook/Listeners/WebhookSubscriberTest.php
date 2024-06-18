@@ -2,11 +2,14 @@
 
 namespace Tests\Unit\Domains\Webhook\Listeners;
 
+use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Cache\Events\CacheClearAllEvent;
 use App\Domains\Cache\Events\CacheClearSingleEvent;
 use App\Domains\Cache\Events\CacheClearTemplatesEvent;
+use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
+use Database\Factories\PostFactory;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use App\Data\Enums\WebhookEventEnum;
@@ -30,6 +33,47 @@ it('does not call delivery job when webhooks are not registered', function () {
     $listener->onCacheClearSingleEvent($event);
 
     Queue::assertNotPushed(WebhookDeliveryJob::class);
+});
+
+// it('calls webhook delivery job on blog updated event', function () {
+//     Event::fake();
+
+//     $blogOriginal = blog();
+//     $blog = $blogOriginal;
+//     $blog->subdomain = 'new-subdomain';
+
+//     createWebhookFor($blog, WebhookEventEnum::BLOGS_UPDATED);
+
+//     $event = new BlogUpdatedEvent($blog, $blogOriginal);
+//     $listener = new WebhookSubscriber();
+//     $listener->onBlogUpdatedEvent($event);
+
+//     Queue::assertNotPushed(function (WebhookDeliveryJob $job) {
+//         expect($job->delivery->event)->toBe(WebhookEventEnum::CACHE_TEMPLATES);
+//         // expect($job->delivery->data['blog']['id'])->toBe($blogOriginal->id);
+//         return true;
+//     });
+// });
+
+it('calls webhook delivery job on post created event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $post = PostFactory::new()->create();
+    createWebhookFor($blog, WebhookEventEnum::POST_CREATED);
+
+    $event = new PostCreatedEvent($post);
+    $listener = new WebhookSubscriber();
+    $listener->onPostCreatedEvent($event);
+
+    // dd(WebhookDeliveryJob::class);
+    // Queue::assertPushed(fn (WebhookDeliveryJob $job) => $job->delivery->event === WebhookEventEnum::POST_CREATED);
+
+    // Queue::assertPushed(function (WebhookDeliveryJob $job) {
+    //     expect($job->delivery->event)->toBe(WebhookEventEnum::POST_CREATED);
+    //     // expect($job->delivery->data['post']['id'])->toBe($post->id);
+    //     return true;
+    // });
 });
 
 it('calls webhook delivery job on cache clear single event', function () {
