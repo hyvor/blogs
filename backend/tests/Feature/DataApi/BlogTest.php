@@ -14,6 +14,7 @@ it('fetches blog', function () {
         ->assertJson(function (AssertableJson $json) {
             $json->has('subdomain')
                ->has('name')
+               ->where('hb_branding', true)
                ->etc();
         });
 

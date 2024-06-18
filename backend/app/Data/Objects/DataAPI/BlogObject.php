@@ -66,6 +66,8 @@ class BlogObject
 
     public ColorModeDefaultEnum $color_mode_default;
 
+    public bool $hb_branding;
+
     public function __construct(Blog $blog, Language $language)
     {
         $variants = $blog->variants;
@@ -103,6 +105,8 @@ class BlogObject
 
         $this->code_head = $meta->code_head;
         $this->code_foot = $meta->code_foot;
+
+        $this->hb_branding = $meta->hb_branding;
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);

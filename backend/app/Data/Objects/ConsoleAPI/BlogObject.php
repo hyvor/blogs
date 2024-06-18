@@ -88,6 +88,8 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReportEnum $link_analysis_email_report;
 
+    public bool $hb_branding;
+
     /**
      * @var BlogVariantObject[]
      */
@@ -150,6 +152,8 @@ class BlogObject
 
         $this->link_analysis_enabled = (bool) $meta->link_analysis_enabled;
         $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report);
+
+        $this->hb_branding = (bool) $meta->hb_branding;
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
             return new BlogVariantObject($variant);

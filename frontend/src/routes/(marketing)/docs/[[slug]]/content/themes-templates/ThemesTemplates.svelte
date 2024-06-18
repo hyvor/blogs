@@ -223,6 +223,10 @@
                             </ul>
                     </ul>
 
+                <ul>
+                    <li><code>branding_url</code> and <code>branding_name</code> - functions related to branding.</li>
+                </ul>
+
             <h3 id="helper-filters">Filters</h3>
                 
                 <ul>

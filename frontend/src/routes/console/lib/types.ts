@@ -100,6 +100,7 @@ export interface Blog {
     link_analysis_enabled: boolean,
     link_analysis_email_report: 'always' | 'broken' | 'never',
 
+    hb_branding: boolean,
 }
 
 export interface BlogCounts {
