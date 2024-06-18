@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Data\Enums\WebhookEventEnum;
 
 class WebhookFactory extends Factory
 {
@@ -11,7 +12,7 @@ class WebhookFactory extends Factory
         return [
             'url' => $this->faker->url,
             'events' => [
-                'cache.single'
+                WebhookEventEnum::CACHE_SINGLE
             ],
             'secret' => 'test'
         ];

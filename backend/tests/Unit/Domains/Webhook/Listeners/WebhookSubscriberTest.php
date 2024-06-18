@@ -9,6 +9,7 @@ use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
+use App\Data\Enums\WebhookEventEnum;
 
 it('listens', function () {
     Event::fake();
@@ -22,7 +23,7 @@ it('does not call delivery job when webhooks are not registered', function () {
     Queue::fake();
 
     $blog = blog();
-    createWebhookFor($blog, 'cache.templates'); // wrong event
+    createWebhookFor($blog, WebhookEventEnum::CACHE_TEMPLATES); // wrong event
 
     $event = new CacheClearSingleEvent($blog, '/test');
     $listener = new WebhookSubscriber();
@@ -35,7 +36,7 @@ it('calls webhook delivery job on cache clear single event', function () {
     Queue::fake();
 
     $blog = blog();
-    createWebhookFor($blog, 'cache.single');
+    createWebhookFor($blog, WebhookEventEnum::CACHE_SINGLE);
 
     $event = new CacheClearSingleEvent($blog, '/test');
     $listener = new WebhookSubscriber();
@@ -55,7 +56,7 @@ it('calls webhook delivery job on cache clear templates event', function () {
     Queue::fake();
 
     $blog = blog();
-    createWebhookFor($blog, 'cache.templates');
+    createWebhookFor($blog, WebhookEventEnum::CACHE_TEMPLATES);
 
     $event = new CacheClearTemplatesEvent($blog);
     $listener = new WebhookSubscriber();
@@ -68,7 +69,7 @@ it('calls webhook delivery job on cache clear all event', function () {
     Queue::fake();
 
     $blog = blog();
-    createWebhookFor($blog, 'cache.all');
+    createWebhookFor($blog, WebhookEventEnum::CACHE_ALL);
 
     $event = new CacheClearAllEvent($blog);
     $listener = new WebhookSubscriber();

@@ -8,14 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class WebhookService
 {
-    public const EVENTS = [
-
-        // CACHE
-        'cache.single',
-        'cache.templates',
-        'cache.all'
-    ];
-
     public static function getWebhooks(Blog $blog): Collection
     {
         return $blog->webhooks;

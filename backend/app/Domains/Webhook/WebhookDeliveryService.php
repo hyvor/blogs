@@ -4,6 +4,7 @@ namespace App\Domains\Webhook;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use App\Domains\Webhook\Exceptions\DeliveryFailedException;
+use App\Data\Enums\WebhookEventEnum;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
 use Exception;
@@ -13,7 +14,7 @@ class WebhookDeliveryService
 {
     public static function createDelivery(
         Webhook $webhook,
-        string $eventName,
+        WebhookEventEnum $eventName,
         array $data
     ) {
         return WebhookDelivery::create([

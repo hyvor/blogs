@@ -9,6 +9,7 @@ use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\WebhookDeliveryService;
 use App\Domains\Webhook\WebhookService;
 use App\Models\Blog;
+use App\Data\Enums\WebhookEventEnum;
 use Exception;
 use Illuminate\Events\Dispatcher;
 
@@ -21,12 +22,8 @@ class WebhookSubscriber
         $events->listen(CacheClearAllEvent::class, [static::class, 'onCacheClearAllEvent']);
     }
 
-    private function call(Blog $blog, string $eventName, array $data = [])
+    private function call(Blog $blog, WebhookEventEnum $eventName, array $data = [])
     {
-        if (!in_array($eventName, WebhookService::EVENTS)) { // to be safe
-            throw new Exception('Invalid webhook event name');
-        }
-
         $webhooks = $blog->webhooks;
 
         foreach ($webhooks as $webhook) {
@@ -39,16 +36,16 @@ class WebhookSubscriber
 
     public function onCacheClearSingleEvent(CacheClearSingleEvent $event)
     {
-        $this->call($event->blog, 'cache.single', [
+        $this->call($event->blog, WebhookEventEnum::CACHE_SINGLE, [
             'path' => $event->path
         ]);
     }
     public function onCacheClearTemplatesEvent(CacheClearTemplatesEvent $event)
     {
-        $this->call($event->blog, 'cache.templates');
+        $this->call($event->blog, WebhookEventEnum::CACHE_TEMPLATES);
     }
     public function onCacheClearAllEvent(CacheClearAllEvent $event)
     {
-        $this->call($event->blog, 'cache.all');
+        $this->call($event->blog, WebhookEventEnum::CACHE_ALL);
     }
 }
