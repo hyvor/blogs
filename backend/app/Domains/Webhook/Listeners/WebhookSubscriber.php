@@ -64,7 +64,6 @@ class WebhookSubscriber
         $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostUpdatedEvent']);
         $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
         $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
-        // PostTagsChangedEvent | PostAuthorsChangedEvent -> remove from docs
 
         $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
         $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagUpdatedEvent']);
@@ -220,7 +219,7 @@ class WebhookSubscriber
         foreach ($languages as $language) {
             $languageObjects[] = (array) new LanguageObject($language);
         }
-        
+
         $this->call($event->language->blog, WebhookEventEnum::LANGUAGES_CHANGED);
     }
 
