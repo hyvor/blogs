@@ -13,11 +13,6 @@
     <li>Each webhook can subscribe to one or more events</li>
 </ul>
 
-<Callout type="warning">
-    <IconExclamationCircle slot="icon" />
-    Currently, only cache events are enabled. They can be used for <a href="/docs/subdirectory">subdirectory hosting</a>. The other events will be enabled in February 2024.
-</Callout>
-
 <Table columns="1fr 2fr 1fr">
     <TableRow head>
         <div>Event</div>
@@ -53,33 +48,6 @@
         <div><code>post.authors.changed</code></div>
         <div>Authors assigned to a post are changed</div>
     </TableRow>
-
-    <div class="separator"></div>
-
-    <div class="title">Pages</div>
-
-    <!-- all with page. -->
-    <TableRow>
-        <div><code>page.created</code></div>
-        <div>A new page is created</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.updated</code></div>
-        <div>A page is updated</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.deleted</code></div>
-        <div>A page is deleted</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.tags.changed</code></div>
-        <div>Tags assigned to a page are changed</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.authors.changed</code></div>
-        <div>Authors assigned to a page are changed</div>
-    </TableRow>
-    
 
     <div class="separator"></div>
 
