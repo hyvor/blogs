@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, ButtonGroup, Checkbox, FormControl, InputGroup, Modal, Radio, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
 	import { createEventDispatcher } from "svelte";
-	import { WebhookEventNames, createWebhook, updateWebhook } from "./webhookActions";
+	import { WebhookEventType, createWebhook, updateWebhook } from "./webhookActions";
 	import type { Webhook, WebhookEvent } from "../../../lib/types";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
     
@@ -152,7 +152,7 @@
 
             <InputGroup>
 
-                {#each WebhookEventNames as name (name)}
+                {#each Object.values(WebhookEventType) as name}
                     <Checkbox 
                         value={name}
                         checked={isEventChecked(name)}
