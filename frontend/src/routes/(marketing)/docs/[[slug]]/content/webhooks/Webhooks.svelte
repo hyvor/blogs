@@ -1,5 +1,5 @@
 <script>
-	import { Callout, CodeBlock, Table, TableRow, Text } from "@hyvor/design/components";
+	import { Callout, CodeBlock, Link, Table, TableRow, Text } from "@hyvor/design/components";
 	import { IconExclamationCircle } from "@hyvor/icons";
 </script>
 <h1>Webhooks</h1>
@@ -22,6 +22,10 @@
     <TableRow>
         <div><code>blog.updated</code></div>
         <div>Any setting of the blog is updated</div>
+        <div>
+            <Link href="/docs/api-console#blog"><code>{`{blog: Blog}`}</code></Link>
+            
+        </div>
     </TableRow>
     
     <div class="separator"></div>
@@ -31,22 +35,23 @@
     <TableRow>
         <div><code>post.created</code></div>
         <div>A new post is created</div>
+        <div>
+            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>post.updated</code></div>
         <div>A post is updated</div>
+        <div>
+            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>post.deleted</code></div>
         <div>A post is deleted</div>
-    </TableRow>
-    <TableRow>
-        <div><code>post.tags.changed</code></div>
-        <div>Tags assigned to a post are changed</div>
-    </TableRow>
-    <TableRow>
-        <div><code>post.authors.changed</code></div>
-        <div>Authors assigned to a post are changed</div>
+        <div>
+            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -58,14 +63,23 @@
     <TableRow>
         <div><code>tag.created</code></div>
         <div>A new tag is created</div>
+        <div>
+            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>tag.updated</code></div>
         <div>A tag is updated</div>
+        <div>
+            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>tag.deleted</code></div>
         <div>A tag is deleted</div>
+        <div>
+            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -77,14 +91,23 @@
     <TableRow>
         <div><code>user.created</code></div>
         <div>A new user is created</div>
+        <div>
+            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+        </div>
     </TableRow> 
     <TableRow>
         <div><code>user.updated</code></div>
         <div>A user is updated</div>
+        <div>
+            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>user.deleted</code></div>
         <div>A user is deleted</div>
+        <div>
+            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -93,11 +116,17 @@
     <TableRow>
         <div><code>media.created</code></div>
         <div>A media item is added</div>
+        <div>
+            <Link href="/docs/api-console#media"><code>{`{media: Media}`}</code></Link>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>media.deleted</code></div>
         <div>A media item is deleted</div>
+        <div>
+            <Link href="/docs/api-console#media"><code>{`{media: Media}`}</code></Link>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -107,16 +136,25 @@
     <TableRow>
         <div><code>navigation.changed</code></div>
         <div><a href="/docs/navigation">Blog navigation</a> changed</div>
+        <div>
+            <Link href="/docs/api-console#navigation"><code>{`{navigation: Navigation}`}</code></Link>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>routes.changed</code></div>
         <div><a href="/docs/routes">Blog routes</a> changed</div>
+        <div>
+            <Link href="/docs/api-console#routes"><code>{`{routes: Routes}`}</code></Link>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>languages.changed</code></div>
         <div><a href="/docs/languages">Blog languages</a> changed</div>
+        <div>
+            <Link href="/docs/api-console#languages"><code>{`{languages: Languages}`}</code></Link>
+        </div>
     </TableRow>
 
 
