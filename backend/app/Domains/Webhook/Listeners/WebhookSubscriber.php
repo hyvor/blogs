@@ -58,8 +58,8 @@ class WebhookSubscriber
         // $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
         // $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogUpdatedEvent']);
 
-        // $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
-        // $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostUpdatedEvent']);
+        $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
+        // $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostVariantCreatedEvent']);
         // $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
         // $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostUpdatedEvent']);
         // $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
@@ -79,13 +79,13 @@ class WebhookSubscriber
         // $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
         // $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserUpdatedEvent']);
 
-        // $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
-        // $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
+        $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
+        $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
 
         // $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
         // $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        // $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
-        // $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
+        $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
+        $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
 
         $events->listen(CacheClearSingleEvent::class, [static::class, 'onCacheClearSingleEvent']);
         $events->listen(CacheClearTemplatesEvent::class, [static::class, 'onCacheClearTemplatesEvent']);
@@ -95,7 +95,6 @@ class WebhookSubscriber
     private function call(Blog $blog, WebhookEventEnum $eventName, array $data = [])
     {
         $webhooks = $blog->webhooks;
-
         foreach ($webhooks as $webhook) {
             if (in_array($eventName->value, $webhook->events)) {
                 $delivery = WebhookDeliveryService::createDelivery($webhook, $eventName, $data);
@@ -115,6 +114,14 @@ class WebhookSubscriber
     {
         $this->call($event->post->blog, WebhookEventEnum::POST_CREATED, [
             'post' => (array) new PostObject($event->post, $event->post->blog),
+        ]);
+    }
+
+    public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event)
+    {
+        // dd($event->variant->post->blog);
+        $this->call($event->variant->blog, WebhookEventEnum::POST_UPDATED, [
+            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
         ]);
     }
 
@@ -209,7 +216,9 @@ class WebhookSubscriber
             $routeObjects[] = (array) new RouteObject($route);
         }
 
-        $this->call($event->route->blog, WebhookEventEnum::ROUTES_CHANGED);
+        $this->call($event->route->blog, WebhookEventEnum::ROUTES_CHANGED, [
+            'routes' => $routeObjects,
+        ]);
     }
 
     public function onLanguageChangedEvent(LanguageChangedEvent $event)
@@ -220,7 +229,9 @@ class WebhookSubscriber
             $languageObjects[] = (array) new LanguageObject($language);
         }
 
-        $this->call($event->language->blog, WebhookEventEnum::LANGUAGES_CHANGED);
+        $this->call($event->language->blog, WebhookEventEnum::LANGUAGES_CHANGED, [
+            'languages' => $languageObjects,
+        ]);
     }
 
     public function onCacheClearSingleEvent(CacheClearSingleEvent $event)
