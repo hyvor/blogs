@@ -45,7 +45,7 @@ it('calls webhook delivery job on cache clear single event', function () {
     Queue::assertPushed(function (WebhookDeliveryJob $job) {
 
         // convert above to expect
-        expect($job->delivery->event)->toBe('cache.single');
+        expect($job->delivery->event)->toBe(WebhookEventEnum::CACHE_SINGLE);
         expect($job->delivery->data['path'])->toBe('/test');
 
         return true;
@@ -62,7 +62,7 @@ it('calls webhook delivery job on cache clear templates event', function () {
     $listener = new WebhookSubscriber();
     $listener->onCacheClearTemplatesEvent($event);
 
-    Queue::assertPushed(fn (WebhookDeliveryJob $job) => $job->delivery->event === 'cache.templates');
+    Queue::assertPushed(fn (WebhookDeliveryJob $job) => $job->delivery->event === WebhookEventEnum::CACHE_TEMPLATES);
 });
 
 it('calls webhook delivery job on cache clear all event', function () {
@@ -75,5 +75,5 @@ it('calls webhook delivery job on cache clear all event', function () {
     $listener = new WebhookSubscriber();
     $listener->onCacheClearAllEvent($event);
 
-    Queue::assertPushed(fn (WebhookDeliveryJob $job) => $job->delivery->event === 'cache.all');
+    Queue::assertPushed(fn (WebhookDeliveryJob $job) => $job->delivery->event === WebhookEventEnum::CACHE_ALL);
 });

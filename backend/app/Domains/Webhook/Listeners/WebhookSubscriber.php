@@ -27,7 +27,7 @@ class WebhookSubscriber
         $webhooks = $blog->webhooks;
 
         foreach ($webhooks as $webhook) {
-            if (in_array($eventName, $webhook->events)) {
+            if (in_array($eventName->value, $webhook->events)) {
                 $delivery = WebhookDeliveryService::createDelivery($webhook, $eventName, $data);
                 WebhookDeliveryJob::dispatch($delivery);
             }
