@@ -110,11 +110,9 @@ class WebhookSubscriber
 
     public function onBlogUpdatedEvent(BlogUpdatedEvent $event)
     {
-        $this->call(
-            $event->blog,
-            WebhookEventEnum::BLOGS_UPDATED,
-            fn() => ['blog' => (array) new BlogObject($event->blog)]
-        );
+        $this->call($event->blog, WebhookEventEnum::BLOGS_UPDATED, fn() => [
+            'blog' => (array) new BlogObject($event->blog)
+        ]);
     }
 
     public function onBlogVariantUpdatedEvent(BlogVariantUpdatedEvent $event)
