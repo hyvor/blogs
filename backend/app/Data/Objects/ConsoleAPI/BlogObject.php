@@ -100,7 +100,7 @@ class BlogObject
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->getTimestamp();
         $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
-        $this->is_blocked = $blog->is_blocked ?? false;
+        $this->is_blocked = $blog->is_blocked;
         $this->theme_version_id = $blog->theme_version_id;
 
         $this->subdomain = $blog->subdomain;
@@ -108,7 +108,7 @@ class BlogObject
         $this->hosting_at = $blog->hosting_at;
         $this->hosting_domain = $blog->hosting_domain;
         $this->hosting_url = $blog->hosting_url;
-        $this->hosting_redirect_subdomain = $blog->hosting_redirect_subdomain ?? false;
+        $this->hosting_redirect_subdomain = $blog->hosting_redirect_subdomain;
 
         $this->url = $blog->url();
 

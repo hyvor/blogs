@@ -23,7 +23,7 @@
         <div><code>blog.updated</code></div>
         <div>Any setting of the blog is updated</div>
         <div>
-            <code>{'{ post: '}<a href="/docs/api-console#blog">Blog</a>{' }'}</code>            
+            <code>{'{ blog: '}<a href="/docs/api-console#blog">Blog</a>{' }'}</code>            
         </div>
     </TableRow>
     

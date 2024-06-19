@@ -77,14 +77,14 @@ it('calls webhook delivery job on blog updated event', function () {
     $blogOriginal = $blog;
     $blog->subdomain = 'new-subdomain';
 
-    createWebhookFor($blog, WebhookEventEnum::BLOGS_UPDATED);
+    createWebhookFor($blog, WebhookEventEnum::BLOG_UPDATED);
 
     $event = new BlogUpdatedEvent($blog, $blogOriginal);
     $listener = new WebhookSubscriber();
     $listener->onBlogUpdatedEvent($event);
 
     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($blog){
-        expect($job->delivery->event)->toBe(WebhookEventEnum::BLOGS_UPDATED);
+        expect($job->delivery->event)->toBe(WebhookEventEnum::BLOG_UPDATED);
         expect($job->delivery->data['blog']['id'])->toBe($blog->id);
         return true;
     });
@@ -98,14 +98,14 @@ it('calls webhook delivery job on blog variant updated event', function () {
         'blog_id' => $blog->id,
     ]);
 
-    createWebhookFor($blog, WebhookEventEnum::BLOGS_UPDATED);
+    createWebhookFor($blog, WebhookEventEnum::BLOG_UPDATED);
 
     $event = new BlogVariantUpdatedEvent($blogVariant);
     $listener = new WebhookSubscriber();
     $listener->onBlogVariantUpdatedEvent($event);
 
     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($blog){
-        expect($job->delivery->event)->toBe(WebhookEventEnum::BLOGS_UPDATED);
+        expect($job->delivery->event)->toBe(WebhookEventEnum::BLOG_UPDATED);
         expect($job->delivery->data['blog']['id'])->toBe($blog->id);
         return true;
     });

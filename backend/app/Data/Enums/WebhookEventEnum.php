@@ -4,13 +4,11 @@ namespace App\Data\Enums;
 
 enum WebhookEventEnum: string
 {
-    case BLOGS_UPDATED = 'blogs.updated';
+    case BLOG_UPDATED = 'blog.updated';
 
     case POST_CREATED = 'post.created';
     case POST_UPDATED = 'post.updated';
     case POST_DELETED = 'post.deleted';
-    case POST_TAGS_CHANGED = 'post.tags.changed';
-    case POST_AUTHORS_CHANGED = 'post.authors.changed';
 
     case TAG_CREATED = 'tag.created';
     case TAG_UPDATED = 'tag.updated';
