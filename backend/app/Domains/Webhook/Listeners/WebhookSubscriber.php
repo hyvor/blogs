@@ -46,10 +46,8 @@ use App\Domains\Cache\Events\CacheClearSingleEvent;
 use App\Domains\Cache\Events\CacheClearTemplatesEvent;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\WebhookDeliveryService;
-use App\Domains\Webhook\WebhookService;
 use App\Models\Blog;
 use App\Data\Enums\WebhookEventEnum;
-use Exception;
 use Illuminate\Events\Dispatcher;
 
 

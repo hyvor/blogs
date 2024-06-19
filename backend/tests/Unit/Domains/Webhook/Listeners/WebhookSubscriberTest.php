@@ -19,7 +19,6 @@ use App\Domains\Post\Events\PostVariantCreatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Route\Events\RouteChangedEvent;
-use App\Domains\Route\RouteRepository;
 use App\Domains\Tag\Events\TagCreatedEvent;
 use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
@@ -36,12 +35,9 @@ use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
 use App\Models\Navigation;
 use App\Models\NavigationVariant;
-use App\Models\PostVariant;
-use App\Models\Route;
 use Database\Factories\BlogVariantFactory;
 use Database\Factories\LanguageFactory;
 use Database\Factories\MediaFactory;
-use Database\Factories\NavigationVariantFactory;
 use Database\Factories\PostFactory;
 use Database\Factories\PostVariantFactory;
 use Database\Factories\RouteFactory;
@@ -101,7 +97,7 @@ it('calls webhook delivery job on blog variant updated event', function () {
     $blogVariant = BlogVariantFactory::new()->create([
         'blog_id' => $blog->id,
     ]);
-    
+
     createWebhookFor($blog, WebhookEventEnum::BLOGS_UPDATED);
 
     $event = new BlogVariantUpdatedEvent($blogVariant);
@@ -139,11 +135,16 @@ it('calls webhook delivery job on post variant created event', function () {
     Queue::fake();
 
     $blog = blog();
+    $language = LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
     $post = PostFactory::new()->create([
         'blog_id' => $blog->id,
     ]);
     $postVariant = PostVariantFactory::new()->create([
         'post_id' => $post->id,
+        'language_id' => $language->id,
     ]);
     RouteFactory::new()->create([
         'blog_id' => $blog->id,
