@@ -12,7 +12,6 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\App\AppContext\AppContext;
 use App\Domains\App\AppContext\AppContextType;
-use App\Domains\Blog\BlogService;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Language\LanguageRepository;
@@ -49,6 +48,9 @@ use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\WebhookDeliveryService;
 use App\Models\Blog;
 use App\Data\Enums\WebhookEventEnum;
+use App\Models\PostVariant;
+use App\Models\TagVariant;
+use App\Models\UserVariant;
 use Illuminate\Events\Dispatcher;
 
 
@@ -93,6 +95,13 @@ class WebhookSubscriber
         $events->listen(CacheClearAllEvent::class, [static::class, 'onCacheClearAllEvent']);
     }
 
+    private function isPrimaryLanguage(
+        PostVariant | TagVariant | UserVariant $variant,
+        Blog $blog): bool
+    {
+        return $variant->language_id === LanguageRepository::getPrimaryLanguage($blog)->id;
+    }
+
     private function call(Blog $blog, WebhookEventEnum $eventName, callable $dataFunc)
     {
         if (AppContext::in(AppContextType::SEEDING_BLOG)) {
@@ -132,9 +141,9 @@ class WebhookSubscriber
 
     public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event)
     {
-        if ($event->variant->language_id == LanguageRepository::getPrimaryLanguage($event->variant->post->blog)->id) {
+        // checks if it is the post variant created event initaiated at the post created event
+        if ($this->isPrimaryLanguage($event->variant, $event->variant->post->blog))
             return;
-        }
         
         $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
             'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
@@ -178,6 +187,10 @@ class WebhookSubscriber
 
     public function onTagVariantCreatedEvent(TagVariantCreatedEvent $event)
     {
+        // checks if it is the tag variant created event initaiated at the tag created event
+        if ($this->isPrimaryLanguage($event->variant->tag, $event->variant->tag->blog))
+            return;
+
         $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
             'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
         ]);
@@ -220,6 +233,10 @@ class WebhookSubscriber
 
     public function onUserVariantCreatedEvent(UserVariantCreatedEvent $event)
     {
+        // checks if it is the user variant created event initaiated at the user created event
+        if ($this->isPrimaryLanguage($event->variant, $event->variant->user->blog))
+            return;
+
         $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, fn() => [
             'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
         ]);
@@ -269,53 +286,37 @@ class WebhookSubscriber
 
     public function onNavigationChangedEvent(NavigationChangedEvent $event)
     {
-        $navigations = NavigationRepository::getNavigations($event->navigation->blog);
-        $navigationObjects = [];
-        foreach ($navigations as $navigation) {
-            $navigationObjects[] = (array) new NavigationObject($navigation);
-        }
+        $navigations = NavigationRepository::getNavigations($event->navigation->blog)->mapInto(NavigationObject::class);
 
         $this->call($event->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
-            'navigation' => $navigationObjects,
+            'navigation' => $navigations,
         ]);
     }
 
     public function onNavigationVariantChangedEvent(NavigationVariantChangedEvent $event)
     {
-        $navigations = NavigationRepository::getNavigations($event->variant->navigation->blog);
-        $navigationObjects = [];
-        foreach ($navigations as $navigation) {
-            $navigationObjects[] = (array) new NavigationObject($navigation);
-        }
+        $navigations = NavigationRepository::getNavigations($event->variant->navigation->blog)->mapInto(NavigationObject::class);
 
         $this->call($event->variant->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
-            'navigation' => $navigationObjects,
+            'navigation' => $navigations,
         ]);
     }
 
     public function onRouteChangedEvent(RouteChangedEvent $event)
     {
-        $routes = RouteRepository::getRoutes($event->route->blog);
-        $routeObjects = [];
-        foreach ($routes as $route) {
-            $routeObjects[] = (array) new RouteObject($route);
-        }
+        $routes = RouteRepository::getRoutes($event->route->blog)->mapInto(RouteObject::class);
 
         $this->call($event->route->blog, WebhookEventEnum::ROUTES_CHANGED, fn() => [
-            'routes' => $routeObjects,
+            'routes' => $routes,
         ]);
     }
 
     public function onLanguageChangedEvent(LanguageChangedEvent $event)
     {
-        $languages = LanguageRepository::getAllLanguages($event->language->blog);
-        $languageObjects = [];
-        foreach ($languages as $language) {
-            $languageObjects[] = (array) new LanguageObject($language);
-        }
+        $languages = LanguageRepository::getAllLanguages($event->language->blog)->mapInto(LanguageObject::class);
 
         $this->call($event->language->blog, WebhookEventEnum::LANGUAGES_CHANGED, fn() => [
-            'languages' => $languageObjects,
+            'languages' => $languages,
         ]);
     }
 
