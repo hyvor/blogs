@@ -12,7 +12,11 @@ use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Navigation\Events\NavigationChangedEvent;
 use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
+use App\Domains\Post\Events\PostDeletedEvent;
+use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantCreatedEvent;
+use App\Domains\Post\Events\PostVariantDeletedEvent;
+use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Route\Events\RouteChangedEvent;
 use App\Domains\Route\RouteRepository;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
@@ -92,34 +96,134 @@ it('calls webhook delivery job on post created event', function () {
     });
 });
 
-// it('calls webhook delivery job on post variant created event', function () {
-//     Queue::fake();
+it('calls webhook delivery job on post variant created event', function () {
+    Queue::fake();
 
-//     $blog = blog();
-//     $post = PostFactory::new()->create([
-//         'blog_id' => $blog->id,
-//     ]);
-//     $postVariant = PostVariantFactory::new()->create([
-//         'post_id' => $post->id,
-//     ]);
-//     RouteFactory::new()->create([
-//         'blog_id' => $blog->id,
-//         'name' => 'post',
-//     ]);
+    $blog = blog();
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $postVariant = PostVariantFactory::new()->create([
+        'post_id' => $post->id,
+    ]);
+    RouteFactory::new()->create([
+        'blog_id' => $blog->id,
+        'name' => 'post',
+    ]);
 
-//     createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
+    createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
 
-//     $event = new PostVariantCreatedEvent($postVariant);
-//     $listener = new WebhookSubscriber();
-//     $listener->onPostVariantCreatedEvent($event);
+    $event = new PostVariantCreatedEvent($postVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onPostVariantCreatedEvent($event);
 
-//     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
-//         expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
-//         expect($job->delivery->data['post']['id'])->toBe($post->id);
-//         return true;
-//     });
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
 
-// });
+});
+
+it('calls webhook delivery job on post updated event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
+
+    $event = new PostUpdatedEvent($post);
+    $listener = new WebhookSubscriber();
+    $listener->onPostUpdatedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
+});
+
+it('calls webhook delivery job on post variant updated event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $postVariant = PostVariantFactory::new()->create([
+        'post_id' => $post->id,
+    ]);
+        RouteFactory::new()->create([
+        'blog_id' => $blog->id,
+        'name' => 'post',
+    ]);
+    $postVariantOld = $postVariant;
+    $postVariant->content = 'new content';
+
+    createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
+
+    $event = new PostVariantUpdatedEvent($postVariant, $postVariantOld);
+    $listener = new WebhookSubscriber();
+    $listener->onPostVariantUpdatedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
+});
+
+it('call webhook delivery job on post deleted event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::POST_DELETED);
+
+    $event = new PostDeletedEvent($post);
+    $listener = new WebhookSubscriber();
+    $listener->onPostDeletedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_DELETED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
+});
+
+it('call webhook delivery job on post variant deleted event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $postVariant = PostVariantFactory::new()->create([
+        'post_id' => $post->id,
+    ]);
+        RouteFactory::new()->create([
+        'blog_id' => $blog->id,
+        'name' => 'post',
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
+
+    $event = new PostVariantDeletedEvent($postVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onPostVariantDeletedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
+});
 
 it('calls webhook delivery job on media created event', function () {
     Queue::fake();
@@ -183,30 +287,29 @@ it('calls webhook delivery job on navigation changed event', function () {
     });
 });
 
-// it('calls webhook delivery job on navigation variant changed event', function () {
-//     Queue::fake();
+it('calls webhook delivery job on navigation variant changed event', function () {
+    Queue::fake();
 
-//     $blog = blog();
-//     $navigation = Navigation::factory()->create([
-//         'blog_id' => $blog->id,
-//     ]);
-//     $navigationVariant = NavigationVariant::factory()->create([
-//         'navigation_id' => $navigation->id,
-//     ]);
+    $blog = blog();
+    $navigation = Navigation::factory()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $navigationVariant = NavigationVariant::factory()->create([
+        'navigation_id' => $navigation->id,
+    ]);
 
-//     createWebhookFor($blog, WebhookEventEnum::NAVIGATION_CHANGED);
+    createWebhookFor($blog, WebhookEventEnum::NAVIGATION_CHANGED);
 
-//     $event = new NavigationVariantChangedEvent($navigationVariant);
-//     $listener = new WebhookSubscriber();
-//     $listener->onNavigationVariantChangedEvent($event);
+    $event = new NavigationVariantChangedEvent($navigationVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onNavigationVariantChangedEvent($event);
 
-//     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($navigation){
-//         expect($job->delivery->event)->toBe(WebhookEventEnum::NAVIGATION_CHANGED);
-//         expect($job->delivery->data['navigation'][0]['id'])->toBe($navigation->id);
-//         return true;
-//     });
-
-// });
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($navigation){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::NAVIGATION_CHANGED);
+        expect($job->delivery->data['navigation'][0]['id'])->toBe($navigation->id);
+        return true;
+    });
+});
 
 it('calls webhook delivery job on route changed event', function () {
     Queue::fake();

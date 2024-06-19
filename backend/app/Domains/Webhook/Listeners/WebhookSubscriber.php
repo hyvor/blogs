@@ -59,11 +59,11 @@ class WebhookSubscriber
         // $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogUpdatedEvent']);
 
         $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
-        // $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostVariantCreatedEvent']);
-        // $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
-        // $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostUpdatedEvent']);
-        // $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
-        // $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
+        $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostVariantCreatedEvent']);
+        $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
+        $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostVariantUpdatedEvent']);
+        $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
+        $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
 
         // $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
         // $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagUpdatedEvent']);
@@ -83,7 +83,7 @@ class WebhookSubscriber
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
 
         $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationChangedEvent']);
-        // $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantChangedEvent']);
+        $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantChangedEvent']);
         $events->listen(RouteChangedEvent::class, [static::class, 'onRouteChangedEvent']);
         $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageChangedEvent']);
 
@@ -119,8 +119,7 @@ class WebhookSubscriber
 
     public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event)
     {
-        // dd($event->variant->post->blog);
-        $this->call($event->variant->blog, WebhookEventEnum::POST_UPDATED, [
+        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, [
             'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
         ]);
     }
@@ -132,13 +131,26 @@ class WebhookSubscriber
         ]);
     }
 
-    public function onPostDeleted(PostDeletedEvent $event)
+    public function onPostVariantUpdatedEvent(PostVariantUpdatedEvent $event)
+    {
+        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, [
+            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
+        ]);
+    }
+
+    public function onPostDeletedEvent(PostDeletedEvent $event)
     {
         $this->call($event->post->blog, WebhookEventEnum::POST_DELETED, [
             'post' => (array) new PostObject($event->post, $event->post->blog),
         ]);
     }
 
+    public function onPostVariantDeletedEvent(PostVariantDeletedEvent $event)
+    {
+        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, [
+            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
+        ]);
+    }
     public function onTagCreatedEvent(TagCreatedEvent $event)
     {
         $this->call($event->tag->blog, WebhookEventEnum::TAG_CREATED, [
@@ -209,7 +221,7 @@ class WebhookSubscriber
     }
     public function onNavigationVariantChangedEvent(NavigationVariantChangedEvent $event)
     {
-        $navigations = NavigationRepository::getNavigations($event->variant->blog);
+        $navigations = NavigationRepository::getNavigations($event->variant->navigation->blog);
         $navigationObjects = [];
         foreach ($navigations as $navigation) {
             $navigationObjects[] = (array) new NavigationObject($navigation);
