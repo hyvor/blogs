@@ -8,6 +8,7 @@ use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\WebhookDeliveryService;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
+use App\Data\Enums\WebhookEventEnum;
 use Exception;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -24,7 +25,7 @@ it('delivers a webhook', function () {
         'url' => $url,
     ]);
 
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, ['path' => '/test']);
     $job = new WebhookDeliveryJob($delivery);
     $job->handle();
 
@@ -35,7 +36,7 @@ it('delivers a webhook', function () {
         expect($request->hasHeader('X-Signature'))->toBeTrue();
         expect($request['subdomain'])->toBe($blog->subdomain);
         expect(is_int($request['timestamp']))->toBeTrue();
-        expect($request['event'])->toBe('cache.single');
+        expect($request['event'])->toBe(WebhookEventEnum::CACHE_SINGLE);
         expect($request['data']['path'])->toBe('/test');
 
         return true;
@@ -49,7 +50,7 @@ it('delivers a webhook', function () {
     expect($delivery->response)->toBe('ok');
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::SUCCESS);
     expect($delivery->http_status)->toBe(200);
-    expect($delivery->event)->toBe('cache.single');
+    expect($delivery->event)->toBe(WebhookEventEnum::CACHE_SINGLE);
     expect($delivery->data['path'])->toBe('/test');
     expect($delivery->url)->toBe($url);
 });
@@ -67,7 +68,7 @@ it('handles failures', function () {
     ]);
 
 
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, ['path' => '/test']);
     $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();
@@ -101,7 +102,7 @@ it('handles http client exceptions', function () {
     ]);
 
 
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', []);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, []);
     $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();

@@ -6,6 +6,8 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\App\AppContext\AppContext;
+use App\Domains\App\AppContext\AppContextType;
 use App\Domains\Blog\Deleters\LanguageDeleter;
 use App\Domains\Blog\Deleters\MediaDeleter;
 use App\Domains\Blog\Deleters\NavigationDeleter;
@@ -76,6 +78,7 @@ class BlogService
             'name' => $name,
         ]);
 
+
         // other fillers
         $fillers = [
             UserFiller::class,
@@ -86,9 +89,13 @@ class BlogService
             ThemeFiller::class,
         ];
 
+        AppContext::start(AppContextType::SEEDING_BLOG);
+
         foreach ($fillers as $filler) {
             app($filler, ['blog' => $blog])->fill();
         }
+        
+        AppContext::end(AppContextType::SEEDING_BLOG);
 
         return $blog;
     }

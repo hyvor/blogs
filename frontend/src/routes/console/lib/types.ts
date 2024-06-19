@@ -1,4 +1,3 @@
-import { WebhookEventNames } from "../[subdomain]/settings/webhooks/webhookActions";
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance';
 
@@ -312,13 +311,38 @@ export interface ApiKey {
 
 // WEBHOOK
 
-export type WebhookEvent = keyof typeof WebhookEventNames;
+export enum WebhookEventType {
+	BLOG_UPDATED = 'blog.updated',
+
+	POST_CREATED = 'post.created',
+	POST_UPDATED = 'post.updated',
+	POST_DELETED = 'post.deleted',
+
+	TAG_CREATED = 'tag.created',
+	TAG_UPDATED = 'tag.updated',
+	TAG_DELETED = 'tag.deleted',
+
+	USER_CREATED = 'user.created',
+	USER_UPDATED = 'user.updated',
+	USER_DELETED = 'user.deleted',
+
+	MEDIA_CREATED = 'media.created',
+	MEDIA_DELETED = 'media.deleted',
+
+	NAVIGATION_CHANGED = 'navigation.changed',
+	ROUTES_CHANGED = 'routes.changed',
+	LANGUAGES_CHANGED = 'languages.changed',
+
+	CACHE_SINGLE = 'cache.single',
+	CACHE_TEMPLATES = 'cache.templates',
+	CACHE_ALL = 'cache.all'
+}
 
 
 export interface Webhook {
     id: number,
     url: string,
-    events: WebhookEvent[],
+    events: WebhookEventType[],
     secret: string
 }
 

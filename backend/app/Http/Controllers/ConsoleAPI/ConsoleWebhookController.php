@@ -10,6 +10,7 @@ use App\Models\Blog;
 use App\Models\Webhook;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Data\Enums\WebhookEventEnum;
 
 class ConsoleWebhookController extends Controller
 {
@@ -20,11 +21,11 @@ class ConsoleWebhookController extends Controller
     }
 
     public function createWebhook(Request $request, Blog $blog)
-    {
+    {        
         $validated = $request->validate([
             'url' => 'required|url',
             'events' => 'required|array',
-            'events.*' => Rule::in(WebhookService::EVENTS)
+            'events.*' => Rule::in(array_map(fn($case) => $case->value, WebhookEventEnum::cases()))
         ]);
 
         $url = $validated['url'];
@@ -46,7 +47,7 @@ class ConsoleWebhookController extends Controller
         $validated = $request->validate([
             'url' => 'url',
             'events' => 'array',
-            'events.*' => Rule::in(WebhookService::EVENTS)
+            'events.*' => Rule::in(array_map(fn($case) => $case->value, WebhookEventEnum::cases()))
         ]);
 
         $url = $validated['url'] ?? null;

@@ -17,6 +17,8 @@ class BlogFactory extends Factory
             'subdomain' => Str::random(20),
             'trial_ends_at' => Carbon::now()->addDays(7),
             'hosting_at' => 'subdomain',
+            'is_blocked' => false,
+            'hosting_redirect_subdomain' => true,
 
             'meta' => json_encode([
                 'social_facebook' => $this->faker->url(),
