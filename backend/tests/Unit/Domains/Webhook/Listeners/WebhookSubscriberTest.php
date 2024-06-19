@@ -322,11 +322,18 @@ it('calls webhook delivery job on tag variant created event', function () {
     Queue::fake();
 
     $blog = blog();
+    LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
     $tag = TagFactory::new()->create([
         'blog_id' => $blog->id,
     ]);
     $tagVariant = TagVariantFactory::new()->create([
         'tag_id' => $tag->id,
+        'language_id' => LanguageFactory::new()->create([
+            'blog_id' => $blog->id,
+        ])->id,
     ]);
     RouteFactory::new()->create([
         'blog_id' => $blog->id,
@@ -342,6 +349,33 @@ it('calls webhook delivery job on tag variant created event', function () {
     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($tag){
         expect($job->delivery->event)->toBe(WebhookEventEnum::TAG_UPDATED);
         expect($job->delivery->data['tag']['id'])->toBe($tag->id);
+        return true;
+    });
+});
+
+it('does not call webhook delivery job of tag variant created event on a tag created event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    $language = LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
+    $tag = TagFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $tagVariant = TagVariantFactory::new()->create([
+        'tag_id' => $tag->id,
+        'language_id' => $language->id,
+    ]);
+    
+    createWebhookFor($blog, WebhookEventEnum::TAG_UPDATED);
+
+    $event = new TagVariantCreatedEvent($tagVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onTagVariantCreatedEvent($event);
+
+    Queue::assertNotPushed(function (WebhookDeliveryJob $job) {
         return true;
     });
 });
@@ -469,11 +503,18 @@ it('calls webhook delivery job on user variant created event', function () {
     Queue::fake();
 
     $blog = blog();
+    LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
     $user = UserFactory::new()->create([
         'blog_id' => $blog->id,
     ]);
     $userVariant = UserVariantFactory::new()->create([
         'user_id' => $user->id,
+        'language_id' => LanguageFactory::new()->create([
+            'blog_id' => $blog->id,
+        ])->id,
     ]);
     RouteFactory::new()->create([
         'blog_id' => $blog->id,
@@ -489,6 +530,39 @@ it('calls webhook delivery job on user variant created event', function () {
     Queue::assertPushed(function (WebhookDeliveryJob $job) use ($user){
         expect($job->delivery->event)->toBe(WebhookEventEnum::USER_UPDATED);
         expect($job->delivery->data['user']['id'])->toBe($user->id);
+        return true;
+    });
+});
+
+it('does not call webhook delivery job of user variant created event on a user created event', function () {
+    Queue::fake();
+
+    $blog = blog();
+    LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
+   $user = UserFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $userVariant = UserVariantFactory::new()->create([
+        'user_id' => $user->id,
+        'language_id' => LanguageFactory::new()->create([
+            'blog_id' => $blog->id,
+        ])->id,
+    ]);
+    RouteFactory::new()->create([
+        'blog_id' => $blog->id,
+        'name' => 'author',
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::TAG_UPDATED);
+
+    $event = new UserVariantCreatedEvent($userVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onUserVariantCreatedEvent($event);
+
+    Queue::assertNotPushed(function (WebhookDeliveryJob $job) {
         return true;
     });
 });

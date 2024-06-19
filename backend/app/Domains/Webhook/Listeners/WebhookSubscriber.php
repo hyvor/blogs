@@ -66,7 +66,7 @@ class WebhookSubscriber
         $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdatedEvent']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class,'onPostVariantUpdatedEvent']);
         $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
-        $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
+        $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostVariantDeletedEvent']);
 
         $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
         $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagVariantCreatedEvent']);
@@ -188,7 +188,7 @@ class WebhookSubscriber
     public function onTagVariantCreatedEvent(TagVariantCreatedEvent $event)
     {
         // checks if it is the tag variant created event initaiated at the tag created event
-        if ($this->isPrimaryLanguage($event->variant->tag, $event->variant->tag->blog))
+        if ($this->isPrimaryLanguage($event->variant, $event->variant->tag->blog))
             return;
 
         $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
