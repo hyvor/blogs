@@ -135,6 +135,41 @@ it('calls webhook delivery job on post variant created event', function () {
     Queue::fake();
 
     $blog = blog();
+    LanguageFactory::new()->create([
+        'blog_id' => $blog->id,
+        'is_primary' => true,
+    ]);
+    $post = PostFactory::new()->create([
+        'blog_id' => $blog->id,
+    ]);
+    $postVariant = PostVariantFactory::new()->create([
+        'post_id' => $post->id,
+        'language_id' => LanguageFactory::new()->create([
+            'blog_id' => $blog->id,
+        ])->id,
+    ]);
+    RouteFactory::new()->create([
+        'blog_id' => $blog->id,
+        'name' => 'post',
+    ]);
+
+    createWebhookFor($blog, WebhookEventEnum::POST_UPDATED);
+
+    $event = new PostVariantCreatedEvent($postVariant);
+    $listener = new WebhookSubscriber();
+    $listener->onPostVariantCreatedEvent($event);
+
+    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
+        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
+        expect($job->delivery->data['post']['id'])->toBe($post->id);
+        return true;
+    });
+});
+
+it('does not call webhook delivery job of post variant created event on a post created event', function () {
+    Queue::fake();
+
+    $blog = blog();
     $language = LanguageFactory::new()->create([
         'blog_id' => $blog->id,
         'is_primary' => true,
@@ -157,12 +192,9 @@ it('calls webhook delivery job on post variant created event', function () {
     $listener = new WebhookSubscriber();
     $listener->onPostVariantCreatedEvent($event);
 
-    Queue::assertPushed(function (WebhookDeliveryJob $job) use ($post){
-        expect($job->delivery->event)->toBe(WebhookEventEnum::POST_UPDATED);
-        expect($job->delivery->data['post']['id'])->toBe($post->id);
+    Queue::assertNotPushed(function (WebhookDeliveryJob $job) {
         return true;
     });
-
 });
 
 it('calls webhook delivery job on post updated event', function () {

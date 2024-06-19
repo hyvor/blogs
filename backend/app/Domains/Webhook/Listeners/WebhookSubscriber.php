@@ -12,6 +12,7 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\App\AppContext\AppContext;
 use App\Domains\App\AppContext\AppContextType;
+use App\Domains\Blog\BlogService;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Language\LanguageRepository;
@@ -131,6 +132,10 @@ class WebhookSubscriber
 
     public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event)
     {
+        if ($event->variant->language_id == LanguageRepository::getPrimaryLanguage($event->variant->post->blog)->id) {
+            return;
+        }
+        
         $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
             'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
         ]);
