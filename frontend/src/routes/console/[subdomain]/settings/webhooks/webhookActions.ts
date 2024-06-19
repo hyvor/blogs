@@ -1,32 +1,5 @@
 import consoleApi from '../../../lib/consoleApi';
-import type { Webhook, WebhookEvent } from '../../../lib/types';
-
-export enum WebhookEventType {
-	BLOG_UPDATED = 'blog.updated',
-
-	POST_CREATED = 'post.created',
-	POST_UPDATED = 'post.updated',
-	POST_DELETED = 'post.deleted',
-
-	TAG_CREATED = 'tag.created',
-	TAG_UPDATED = 'tag.updated',
-	TAG_DELETED = 'tag.deleted',
-
-	USER_CREATED = 'user.created',
-	USER_UPDATED = 'user.updated',
-	USER_DELETED = 'user.deleted',
-
-	MEDIA_CREATED = 'media.created',
-	MEDIA_DELETED = 'media.deleted',
-
-	NAVIGATION_CHANGED = 'navigation.changed',
-	ROUTES_CHANGED = 'routes.changed',
-	LANGUAGES_CHANGED = 'languages.changed',
-
-	CACHE_SINGLE = 'cache.single',
-	CACHE_TEMPLATES = 'cache.templates',
-	CACHE_ALL = 'cache.all'
-}
+import type { Webhook, WebhookEventType } from '../../../lib/types';
 
 export function getWebhooks() {
 	return consoleApi.get<Webhook[]>({
@@ -34,7 +7,7 @@ export function getWebhooks() {
 	});
 }
 
-export function createWebhook(url: string, events: WebhookEvent[]) {
+export function createWebhook(url: string, events: WebhookEventType[]) {
 	return consoleApi.post<Webhook>({
 		endpoint: '/webhook',
 		data: {
