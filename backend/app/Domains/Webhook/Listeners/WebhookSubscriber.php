@@ -55,8 +55,8 @@ class WebhookSubscriber
 {
     public function subscribe(Dispatcher $events)
     {
-        // $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
-        // $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogUpdatedEvent']);
+        $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
+        $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogVariantUpdatedEvent']);
 
         $events->listen(PostCreatedEvent::class, [static::class,'onPostCreatedEvent']);
         $events->listen(PostVariantCreatedEvent::class, [static::class,'onPostVariantCreatedEvent']);
@@ -65,19 +65,19 @@ class WebhookSubscriber
         $events->listen(PostDeletedEvent::class, [static::class,'onPostDeletedEvent']);
         $events->listen(PostVariantDeletedEvent::class, [static::class,'onPostUpdatedEvent']);
 
-        // $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
-        // $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagUpdatedEvent']);
-        // $events->listen(TagUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
-        // $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
-        // $events->listen(TagDeletedEvent::class, [static::class, 'onTagDeletedEvent']);
-        // $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagUpdatedEvent']);
+        $events->listen(TagCreatedEvent::class, [static::class,'onTagCreatedEvent']);
+        $events->listen(TagVariantCreatedEvent::class, [static::class,'onTagVariantCreatedEvent']);
+        $events->listen(TagUpdatedEvent::class, [static::class, 'onTagUpdatedEvent']);
+        $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagVariantUpdatedEvent']);
+        $events->listen(TagDeletedEvent::class, [static::class, 'onTagDeletedEvent']);
+        $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagVariantDeletedEvent']);
 
-        // $events->listen(UserCreatedEvent::class, [static::class,'onUserCreatedEvent']);
-        // $events->listen(UserVariantCreatedEvent::class, [static::class,'onUserUpdatedEvent']);
-        // $events->listen(UserUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
-        // $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
-        // $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
-        // $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserUpdatedEvent']);
+        $events->listen(UserCreatedEvent::class, [static::class,'onUserCreatedEvent']);
+        $events->listen(UserVariantCreatedEvent::class, [static::class,'onUserVariantCreatedEvent']);
+        $events->listen(UserUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
+        $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUseVariantUpdatedEvent']);
+        $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
+        $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserVariantDeletedEvent']);
 
         $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaCreatedEvent']);
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaDeletedEvent']);
@@ -107,6 +107,13 @@ class WebhookSubscriber
     {
         $this->call($event->blog, WebhookEventEnum::BLOGS_UPDATED, [
             'blog' => (array) new BlogObject($event->blog),
+        ]);
+    }
+
+    public function onBlogVariantUpdatedEvent(BlogVariantUpdatedEvent $event)
+    {
+        $this->call($event->variant->blog, WebhookEventEnum::BLOGS_UPDATED, [
+            'blog' => (array) new BlogObject($event->variant->blog),
         ]);
     }
 
@@ -158,10 +165,24 @@ class WebhookSubscriber
         ]);
     }
 
+    public function onTagVariantCreatedEvent(TagVariantCreatedEvent $event)
+    {
+        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, [
+            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
+        ]);
+    }
+
     public function onTagUpdatedEvent(TagUpdatedEvent $event)
     {
         $this->call($event->tag->blog, WebhookEventEnum::TAG_UPDATED, [
             'tag' => (array) new TagObject($event->tag, $event->tag->blog),
+        ]);
+    }
+
+    public function onTagVariantUpdatedEvent(TagVariantUpdatedEvent $event)
+    {
+        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, [
+            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
         ]);
     }
 
@@ -172,10 +193,24 @@ class WebhookSubscriber
         ]);
     }
 
+    public function onTagVariantDeletedEvent(TagVariantDeletedEvent $event)
+    {
+        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, [
+            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
+        ]);
+    }
+
     public function onUserCreatedEvent(UserCreatedEvent $event)
     {
         $this->call($event->user->blog, WebhookEventEnum::USER_CREATED, [
             'user' => (array) new UserObject($event->user, $event->user->blog),
+        ]);
+    }
+
+    public function onUserVariantCreatedEvent(UserVariantCreatedEvent $event)
+    {
+        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, [
+            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
         ]);
     }
 
@@ -186,10 +221,24 @@ class WebhookSubscriber
         ]);
     }
 
+    public function onUserVariantUpdatedEvent(UserVariantUpdatedEvent $event)
+    {
+        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, [
+            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
+        ]);
+    }
+
     public function onUserDeletedEvent(UserDeletedEvent $event)
     {
         $this->call($event->user->blog, WebhookEventEnum::USER_DELETED, [
             'user' => (array) new UserObject($event->user, $event->user->blog),
+        ]);
+    }
+
+    public function onUserVariantDeletedEvent(UserVariantDeletedEvent $event)
+    {
+        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, [
+            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
         ]);
     }
 
