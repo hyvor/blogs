@@ -244,7 +244,10 @@ class PostRepository
      *     is_featured?: bool,
      * } $attrs
      */
-    public static function createPost(Blog $blog, array $attrs = []) : Post
+    public static function createPost(
+        Blog $blog,
+        array $attrs = [],
+    ) : Post
     {
 
         // create post

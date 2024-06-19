@@ -10,6 +10,8 @@ use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\RouteObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
+use App\Domains\App\AppContext\AppContext;
+use App\Domains\App\AppContext\AppContextType;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Language\LanguageRepository;
@@ -92,11 +94,15 @@ class WebhookSubscriber
         $events->listen(CacheClearAllEvent::class, [static::class, 'onCacheClearAllEvent']);
     }
 
-    private function call(Blog $blog, WebhookEventEnum $eventName, array $data = [])
+    private function call(Blog $blog, WebhookEventEnum $eventName, callable $dataFunc)
     {
+        if (AppContext::in(AppContextType::SEEDING_BLOG)) {
+            return; // TODO
+        }
         $webhooks = $blog->webhooks;
         foreach ($webhooks as $webhook) {
             if (in_array($eventName->value, $webhook->events)) {
+                $data = $dataFunc();
                 $delivery = WebhookDeliveryService::createDelivery($webhook, $eventName, $data);
                 WebhookDeliveryJob::dispatch($delivery);
             }
@@ -105,9 +111,11 @@ class WebhookSubscriber
 
     public function onBlogUpdatedEvent(BlogUpdatedEvent $event)
     {
-        $this->call($event->blog, WebhookEventEnum::BLOGS_UPDATED, [
-            'blog' => (array) new BlogObject($event->blog),
-        ]);
+        $this->call(
+            $event->blog,
+            WebhookEventEnum::BLOGS_UPDATED,
+            fn() => ['blog' => (array) new BlogObject($event->blog)]
+        );
     }
 
     public function onBlogVariantUpdatedEvent(BlogVariantUpdatedEvent $event)
