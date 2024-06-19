@@ -90,9 +90,11 @@ class BlogService
         ];
 
         AppContext::start(AppContextType::SEEDING_BLOG);
+
         foreach ($fillers as $filler) {
             app($filler, ['blog' => $blog])->fill();
         }
+        
         AppContext::end(AppContextType::SEEDING_BLOG);
 
         return $blog;
