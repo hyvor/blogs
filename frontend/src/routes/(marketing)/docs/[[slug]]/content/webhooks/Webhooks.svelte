@@ -23,8 +23,7 @@
         <div><code>blog.updated</code></div>
         <div>Any setting of the blog is updated</div>
         <div>
-            <Link href="/docs/api-console#blog"><code>{`{blog: Blog}`}</code></Link>
-            
+            <code>{'{post: '}<a href="/docs/api-console#blog">Blog</a>{'}'}</code>            
         </div>
     </TableRow>
     
@@ -36,21 +35,21 @@
         <div><code>post.created</code></div>
         <div>A new post is created</div>
         <div>
-            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+            <code>{'{post: '}<a href="/docs/api-console#posts">Post</a>{'}'}</code>
         </div>
     </TableRow>
     <TableRow>
         <div><code>post.updated</code></div>
         <div>A post is updated</div>
         <div>
-            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+            <code>{'{post: '}<a href="/docs/api-console#posts">Post</a>{'}'}</code>
         </div>
     </TableRow>
     <TableRow>
         <div><code>post.deleted</code></div>
         <div>A post is deleted</div>
         <div>
-            <Link href="/docs/api-console#posts"><code>{`{post: Post}`}</code></Link>
+            <code>{'{post: '}<a href="/docs/api-console#posts">Post</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -64,21 +63,21 @@
         <div><code>tag.created</code></div>
         <div>A new tag is created</div>
         <div>
-            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+            <code>{'{tag: '}<a href="/docs/api-console#tags">Tag</a>{'}'}</code>
         </div>
     </TableRow>
     <TableRow>
         <div><code>tag.updated</code></div>
         <div>A tag is updated</div>
         <div>
-            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+            <code>{'{tag: '}<a href="/docs/api-console#tags">Tag</a>{'}'}</code>
         </div>
     </TableRow>
     <TableRow>
         <div><code>tag.deleted</code></div>
         <div>A tag is deleted</div>
         <div>
-            <Link href="/docs/api-console#tags"><code>{`{tag: Tag}`}</code></Link>
+            <code>{'{tag: '}<a href="/docs/api-console#tags">Tag</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -92,21 +91,21 @@
         <div><code>user.created</code></div>
         <div>A new user is created</div>
         <div>
-            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+            <code>{'{user: '}<a href="/docs/api-console#users">User</a>{'}'}</code>
         </div>
     </TableRow> 
     <TableRow>
         <div><code>user.updated</code></div>
         <div>A user is updated</div>
         <div>
-            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+            <code>{'{user: '}<a href="/docs/api-console#users">User</a>{'}'}</code>
         </div>
     </TableRow>
     <TableRow>
         <div><code>user.deleted</code></div>
         <div>A user is deleted</div>
         <div>
-            <Link href="/docs/api-console#users"><code>{`{user: User}`}</code></Link>
+            <code>{'{user: '}<a href="/docs/api-console#users">User</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -117,7 +116,7 @@
         <div><code>media.created</code></div>
         <div>A media item is added</div>
         <div>
-            <Link href="/docs/api-console#media"><code>{`{media: Media}`}</code></Link>
+            <code>{'{media: '}<a href="/docs/api-console#media">Media</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -125,7 +124,7 @@
         <div><code>media.deleted</code></div>
         <div>A media item is deleted</div>
         <div>
-            <Link href="/docs/api-console#media"><code>{`{media: Media}`}</code></Link>
+            <code>{'{media: '}<a href="/docs/api-console#media">Media</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -137,7 +136,7 @@
         <div><code>navigation.changed</code></div>
         <div><a href="/docs/navigation">Blog navigation</a> changed</div>
         <div>
-            <Link href="/docs/api-console#navigation"><code>{`{navigation: Navigation}`}</code></Link>
+            <code>{'{navigation: '}<a href="/docs/api-console#navigation">Navigation</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -145,7 +144,7 @@
         <div><code>routes.changed</code></div>
         <div><a href="/docs/routes">Blog routes</a> changed</div>
         <div>
-            <Link href="/docs/api-console#routes"><code>{`{routes: Routes}`}</code></Link>
+            <code>{'{routes: '}<a href="/docs/api-console#routes">Routes</a>{'}'}</code>
         </div>
     </TableRow>
 
@@ -153,7 +152,7 @@
         <div><code>languages.changed</code></div>
         <div><a href="/docs/languages">Blog languages</a> changed</div>
         <div>
-            <Link href="/docs/api-console#languages"><code>{`{languages: Languages}`}</code></Link>
+            <code>{'{languages: '}<a href="/docs/api-console#languages">Languages</a>{'}'}</code>
         </div>
     </TableRow>
 
