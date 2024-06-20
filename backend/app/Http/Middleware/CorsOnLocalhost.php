@@ -9,15 +9,14 @@ use Illuminate\Support\Facades\App;
 class CorsOnLocalhost
 {
 
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (App::environment('local', 'testing')) {
             $response = $next($request);
-            if (method_exists($response, 'header'))
+            if ($response instanceof Response && method_exists($response, 'header')) {
                 $response->header('Access-Control-Allow-Origin', '*');
+            }
             return $response;
         }
         return $next($request);
     }
-
-}
