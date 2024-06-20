@@ -78,7 +78,7 @@ class WebhookSubscriber
         $events->listen(UserCreatedEvent::class, [static::class,'onUserCreatedEvent']);
         $events->listen(UserVariantCreatedEvent::class, [static::class,'onUserVariantCreatedEvent']);
         $events->listen(UserUpdatedEvent::class, [static::class, 'onUserUpdatedEvent']);
-        $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUseVariantUpdatedEvent']);
+        $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserVariantUpdatedEvent']);
         $events->listen(UserDeletedEvent::class, [static::class, 'onUserDeletedEvent']);
         $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserVariantDeletedEvent']);
 
