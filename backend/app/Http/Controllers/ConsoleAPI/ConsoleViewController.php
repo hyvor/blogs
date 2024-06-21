@@ -23,7 +23,7 @@ class ConsoleViewController extends Controller
             return $isSignup ? Redirect::toSignup() : Redirect::toLogin();
         }
 
-        $blogs = UserBlogRepository::getBlogsOfUser($hyvorUser)->mapInto(UserBlogObject::class);
+        $blogs = UserBlogRepository::getBlogsOfUser($hyvorUser->id)->mapInto(UserBlogObject::class);
 
         $config = [
             // state
