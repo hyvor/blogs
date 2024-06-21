@@ -4,6 +4,7 @@ namespace App\Domains\Blog\Deleters;
 
 use App\Models\Blog;
 use App\Models\ThemeFile;
+use Illuminate\Database\Eloquent\Model;
 
 class ThemeDeleter implements DeleterInterface
 {
@@ -11,7 +12,7 @@ class ThemeDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : ?Model
     {
         ThemeFile::where('blog_id', $this->blog->id)->delete();
     }

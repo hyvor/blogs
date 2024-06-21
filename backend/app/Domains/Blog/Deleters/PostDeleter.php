@@ -5,6 +5,7 @@ namespace App\Domains\Blog\Deleters;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostVariant;
+use Illuminate\Database\Eloquent\Model;
 
 class PostDeleter implements DeleterInterface
 {
@@ -12,7 +13,7 @@ class PostDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : ?Model
     {
         PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
             ->where('posts.blog_id', $this->blog->id)

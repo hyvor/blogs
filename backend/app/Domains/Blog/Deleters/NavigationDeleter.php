@@ -5,6 +5,8 @@ namespace App\Domains\Blog\Deleters;
 use App\Models\Blog;
 use App\Models\Navigation;
 use App\Models\NavigationVariant;
+use Illuminate\Database\Eloquent\Model;
+
 
 class NavigationDeleter implements DeleterInterface
 {
@@ -12,7 +14,7 @@ class NavigationDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : ?Model
     {
         NavigationVariant::join('navigations', 'navigations.id', '=', 'navigation_variants.navigation_id')
             ->where('navigations.blog_id', $this->blog->id)

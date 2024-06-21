@@ -4,6 +4,7 @@ namespace App\Domains\Blog\Deleters;
 
 use App\Models\Blog;
 use App\Models\Language;
+use Illuminate\Database\Eloquent\Model;
 
 class LanguageDeleter implements DeleterInterface
 {
@@ -11,7 +12,7 @@ class LanguageDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : ?Model
     {
         Language::where('blog_id', $this->blog->id)->delete();
     }
