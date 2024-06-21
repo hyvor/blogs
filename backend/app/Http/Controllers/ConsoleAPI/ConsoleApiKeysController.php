@@ -7,19 +7,20 @@ use App\Data\Objects\ConsoleAPI\ApiKeyObject;
 use App\Domains\Api\ApiKeysRepository;
 use App\Models\ApiKey;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
 class ConsoleApiKeysController
 {
-    public function getApiKeys(Blog $blog)
+    public function getApiKeys(Blog $blog) : JsonResponse
     {
         $keys = ApiKeysRepository::get($blog)->mapInto(ApiKeyObject::class);
 
         return response()->json($keys);
     }
 
-    public function createApiKey(Blog $blog, Request $request)
+    public function createApiKey(Blog $blog, Request $request) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -34,13 +35,13 @@ class ConsoleApiKeysController
         return response()->json(new ApiKeyObject($apiKey));
     }
 
-    public function updateApiKey(ApiKey $apiKey)
+    public function updateApiKey(ApiKey $apiKey) : JsonResponse
     {
         ApiKeysRepository::regenerate($apiKey);
         return response()->json(new ApiKeyObject($apiKey));
     }
 
-    public function deleteApiKey(ApiKey $apiKey)
+    public function deleteApiKey(ApiKey $apiKey) : JsonResponse
     {
         ApiKeysRepository::delete($apiKey);
 

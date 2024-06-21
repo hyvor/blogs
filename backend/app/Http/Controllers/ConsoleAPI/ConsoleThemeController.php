@@ -11,20 +11,23 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\ThemeFile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Http\UploadedFile;
 
 class ConsoleThemeController extends Controller
 {
-    public function getAllThemes()
+    public function getAllThemes() : JsonResponse
     {
         $all = ThemeRepository::getAllThemesWithLatestVersions();
 
         return response()->json($all->mapInto(ThemeObject::class));
     }
 
-    public function changeTheme(Request $request, Blog $blog)
+    public function changeTheme(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'name' => 'required',
@@ -37,25 +40,27 @@ class ConsoleThemeController extends Controller
         return response()->json(ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class));
     }
 
-    public function uploadTheme(Request $request, Blog $blog)
+    public function uploadTheme(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'zip' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
         ]);
 
         $zip = $request->file('zip');
-        $content = $zip->getContent();
 
-        $success = ThemeFilesRepository::updateThemeFromZip($blog, $content);
+        if ($zip instanceof UploadedFile) {
+            $content = $zip->getContent();
 
-        if (! $success) {
-            throw new TrustedException('Unable to import the theme');
+            $success = ThemeFilesRepository::updateThemeFromZip($blog, $content);
+
+            if (!$success) {
+                throw new TrustedException('Unable to import the theme');
+            }
         }
-
         return response()->json(ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class));
     }
 
-    public function downloadTheme(Blog $blog)
+    public function downloadTheme(Blog $blog) : Response
     {
         $zip = ThemeFilesRepository::getZip($blog);
 
@@ -64,7 +69,7 @@ class ConsoleThemeController extends Controller
         return $zip->outputAsSymfonyResponse($filename, 'application/zip');
     }
 
-    public function createFile(Request $request, Blog $blog)
+    public function createFile(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'folder' => ['nullable', new Enum(ThemeFileFolderEnum::class)],
@@ -79,7 +84,9 @@ class ConsoleThemeController extends Controller
 
         if ($request->has('file')) {
             $file = $request->file('file');
-            $content = $file->get();
+
+            if ($file instanceof UploadedFile)
+                $content = $file->get();
         }
 
         if (ThemeFilesRepository::getFile($blog, $name, $folder)) {
@@ -96,7 +103,7 @@ class ConsoleThemeController extends Controller
         return response()->json(new FileObject($file));
     }
 
-    public function updateFile(Request $request, Blog $blog, ThemeFile $file)
+    public function updateFile(Request $request, Blog $blog, ThemeFile $file) : JsonResponse
     {
         $request->validate([
             'name' => 'string',
@@ -117,14 +124,14 @@ class ConsoleThemeController extends Controller
         return response()->json(new FileObject($file));
     }
 
-    public function deleteFile(ThemeFile $file)
+    public function deleteFile(ThemeFile $file) : JsonResponse
     {
         ThemeFilesRepository::deleteFile($file);
 
         return response()->json();
     }
 
-    public function isFileNameAvailable(Request $request, Blog $blog)
+    public function isFileNameAvailable(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -141,7 +148,7 @@ class ConsoleThemeController extends Controller
         ]);
     }
 
-    public function getAllFiles(Blog $blog)
+    public function getAllFiles(Blog $blog) : JsonResponse
     {
         $files = ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class);
 

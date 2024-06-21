@@ -16,7 +16,8 @@ class WebhookDeliveryService
         Webhook $webhook,
         WebhookEventEnum $eventName,
         array $data
-    ) {
+    ) : WebhookDelivery 
+    {
         return WebhookDelivery::create([
             'url' => $webhook->url,
             'status' => WebhookDeliveryStatusEnum::PENDING,
@@ -26,7 +27,7 @@ class WebhookDeliveryService
         ]);
     }
 
-    public static function deliver(WebhookDelivery $delivery)
+    public static function deliver(WebhookDelivery $delivery) : void
     {
         $webhook = $delivery->webhook;
         $blog = $webhook->blog;
