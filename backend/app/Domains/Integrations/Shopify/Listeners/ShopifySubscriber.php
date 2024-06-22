@@ -8,12 +8,12 @@ use Illuminate\Events\Dispatcher;
 
 class ShopifySubscriber
 {
-    public function subscribe(Dispatcher $events)
+    public function subscribe(Dispatcher $events) : void
     {
         $events->listen(BlogDeletedEvent::class, [static::class, 'onBlogDelete']);
     }
 
-    public function onBlogDelete(BlogDeletedEvent $event)
+    public function onBlogDelete(BlogDeletedEvent $event) : void
     {
 
         /**

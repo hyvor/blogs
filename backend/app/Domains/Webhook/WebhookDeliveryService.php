@@ -29,7 +29,16 @@ class WebhookDeliveryService
 
     public static function deliver(WebhookDelivery $delivery) : void
     {
+        if (!$delivery instanceof WebhookDelivery)
+            return;
+
         $webhook = $delivery->webhook;
+
+        if (!$webhook) {
+            self::fail($delivery);
+            return;
+        }
+
         $blog = $webhook->blog;
 
         if (!$blog) {
@@ -39,10 +48,14 @@ class WebhookDeliveryService
 
         $payload = [
             'subdomain' => $blog->subdomain,
-            'timestamp' => $delivery->created_at->timestamp,
+            'timestamp' => $delivery->created_at ? $delivery->created_at->timestamp : null,
             'event' => $delivery->event,
             'data' => $delivery->data
         ];
+
+
+        if (!json_encode($payload))
+            return;
 
         $signature = hash_hmac('sha256', json_encode($payload), $webhook->secret);
 
@@ -50,6 +63,7 @@ class WebhookDeliveryService
             $response = Http::withHeaders(['X-Signature' => $signature])->post($delivery->url, $payload);
         } catch (Exception) {
             self::tempFail($delivery);
+            return;
         }
 
         $delivery->http_status = $response->status();
@@ -63,14 +77,14 @@ class WebhookDeliveryService
         }
     }
 
-    private static function tempFail(WebhookDelivery $delivery)
+    private static function tempFail(WebhookDelivery $delivery) : void
     {
         $delivery->status = WebhookDeliveryStatusEnum::RETRYING;
         $delivery->save();
         throw new DeliveryFailedException();
     }
 
-    public static function fail(WebhookDelivery $delivery)
+    public static function fail(WebhookDelivery $delivery) : void
     {
         $delivery->status = WebhookDeliveryStatusEnum::FAILED;
         $delivery->save();

@@ -7,7 +7,7 @@ use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Exceptions\TrustedException;
 use App\Models\UrlData;
 
-function _safe_length($str, $len = 255)
+function _safe_length(string $str, int $len = 255) : string
 {
     if (! $str) {
         return $str; // null
@@ -18,7 +18,7 @@ function _safe_length($str, $len = 255)
 
 class UrlDataRepository
 {
-    public static function fetch($url, UrlDataFetchTypeEnum $fetchType): UrlData
+    public static function fetch(string $url, UrlDataFetchTypeEnum $fetchType): UrlData
     {
         $embed = UrlData::where('url', $url)
             ->where('fetch_type', $fetchType)

@@ -14,12 +14,12 @@ class UniqueBlogItemSlugGenerator extends UniqueBlogItemSlugGeneratorAbstract
         return User::where('blog_id', $this->blog->id)->where('slug', $slug)->exists();
     }
 
-    public static function forHyvorUser(Blog $blog, HyvorUser $hyvorUser)
+    public static function forHyvorUser(Blog $blog, HyvorUser $hyvorUser) : string
     {
         return static::generate($blog, [$hyvorUser->name, $hyvorUser->username, $hyvorUser->email]);
     }
 
-    public static function forGuestUser(Blog $blog, string $name)
+    public static function forGuestUser(Blog $blog, string $name) : string
     {
         return static::generate($blog, [$name]);
     }
