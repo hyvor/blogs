@@ -14,7 +14,7 @@ class NavigationDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         NavigationVariant::join('navigations', 'navigations.id', '=', 'navigation_variants.navigation_id')
             ->where('navigations.blog_id', $this->blog->id)

@@ -12,7 +12,7 @@ class LanguageDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         Language::where('blog_id', $this->blog->id)->delete();
     }

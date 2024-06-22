@@ -13,7 +13,7 @@ class UserDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         UserVariant::join('users', 'users.id', '=', 'user_variants.user_id')
             ->where('users.blog_id', $this->blog->id)

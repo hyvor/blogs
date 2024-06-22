@@ -12,7 +12,7 @@ class RedirectDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         Redirect::where('blog_id', $this->blog->id)->delete();
     }

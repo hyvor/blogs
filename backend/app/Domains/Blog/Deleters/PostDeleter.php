@@ -13,7 +13,7 @@ class PostDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
             ->where('posts.blog_id', $this->blog->id)

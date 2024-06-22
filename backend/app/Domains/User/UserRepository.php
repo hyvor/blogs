@@ -27,6 +27,7 @@ use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\FilterQ;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,7 +37,7 @@ class UserRepository
      * @param  Blog  $blog
      * @param  int  $limit
      * @param  int  $offset
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public static function getUsers(Blog $blog, int $limit, int $offset = 0)
     {
@@ -62,7 +63,7 @@ class UserRepository
      * @param  Blog  $blog
      * @param  string  $search
      * @param  int  $limit
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public static function searchUsers(Blog $blog, string $search, int $limit)
     {

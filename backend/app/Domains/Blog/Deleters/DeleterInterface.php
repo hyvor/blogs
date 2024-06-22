@@ -9,5 +9,5 @@ interface DeleterInterface
 {
     public function __construct(Blog $blog);
 
-    public function delete() : ?Model;
+    public function delete() : void;
 }

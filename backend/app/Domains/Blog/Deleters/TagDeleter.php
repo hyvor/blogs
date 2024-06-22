@@ -13,7 +13,7 @@ class TagDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         TagVariant::join('tags', 'tags.id', '=', 'tag_variants.tag_id')
             ->where('tags.blog_id', $this->blog->id)

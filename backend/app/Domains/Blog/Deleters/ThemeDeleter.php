@@ -12,7 +12,7 @@ class ThemeDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         ThemeFile::where('blog_id', $this->blog->id)->delete();
     }

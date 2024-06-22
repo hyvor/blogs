@@ -30,7 +30,7 @@ class Navigation extends Model
     }
 
     /**
-     * @return BelongsTo<Blog, Navigation>
+     * @return BelongsTo<Blog, self>
      */
     public function blog()
     {

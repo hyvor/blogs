@@ -13,7 +13,7 @@ class MediaDeleter implements DeleterInterface
     {
     }
 
-    public function delete() : ?Model
+    public function delete() : void
     {
         Media::where('blog_id', $this->blog->id)
             ->chunk(100, function ($medias) {
