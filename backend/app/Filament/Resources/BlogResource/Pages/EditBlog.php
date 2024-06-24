@@ -10,6 +10,9 @@ class EditBlog extends EditRecord
 {
     protected static string $resource = BlogResource::class;
 
+    /**
+     * @return Actions\Action[]
+     */
     protected function getActions(): array
     {
         return [

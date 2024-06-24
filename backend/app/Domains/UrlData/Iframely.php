@@ -12,6 +12,7 @@ class Iframely
     /**
      * Fetches data from iframely's oembed endpoint
      * https://iframely.com/docs/oembed-api
+     * @return array<string, mixed>
      */
     public static function fetch(string $url) : array
     {

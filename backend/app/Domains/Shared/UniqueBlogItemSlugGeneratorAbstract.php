@@ -19,10 +19,9 @@ abstract class UniqueBlogItemSlugGeneratorAbstract
      * @param  Blog  $blog
      * @param  string[]  $checks
      */
-    public static function generate(Blog $blog, array $checks)
+    public static function generate(Blog $blog, array $checks) : string
     {
         $generator = new static($blog);
-
         return $generator->generateSlug($checks);
     }
 }

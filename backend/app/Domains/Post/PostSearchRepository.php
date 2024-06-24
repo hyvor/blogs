@@ -11,9 +11,9 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Support\Collection;
-use MeiliSearch\Client;
-use MeiliSearch\Endpoints\Indexes;
-use MeiliSearch\Search\SearchResult;
+use Meilisearch\Client;
+use Meilisearch\Endpoints\Indexes;
+use Meilisearch\Search\SearchResult;
 
 class PostSearchRepository
 {
@@ -107,7 +107,7 @@ class PostSearchRepository
 
             return is_numeric($value)
                             ? sprintf('%s=%s', $key, $value)
-                            : sprintf('%s="%s"', $key, $value); // @phpstan-ignore-line
+                            : sprintf('%s="%s"', $key, $value);
         });
 
         return $filters->values()->implode(' AND ');
