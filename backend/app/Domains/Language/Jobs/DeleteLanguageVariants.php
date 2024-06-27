@@ -41,7 +41,7 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
         NavigationVariant::where('language_id', $languageId)->delete();
     }
 
-    public function uniqueId()
+    public function uniqueId() : int
     {
         return $this->language->id;
     }

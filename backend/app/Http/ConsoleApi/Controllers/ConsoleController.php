@@ -64,6 +64,9 @@ class ConsoleController
         return response()->json($this->config());
     }
 
+    /**
+     * @return string[] 
+     */
     private function config() : array
     {
         return [
