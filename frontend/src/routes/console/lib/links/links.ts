@@ -65,7 +65,7 @@ export function getLinksFromContent(content: string | null, baseUrl: string) : L
                 href: 
                     isValidUrlAnyProtocol(href) ? 
                         href : // absolute url
-                        getFullUrl(href, baseUrl).toString(),
+                        getFullUrl(href, baseUrl)?.toString() || href, 
                 anchor: node.textContent ? node.textContent : null,
 
                 pos,
@@ -87,7 +87,9 @@ export function getLinkType(href: string, baseUrl: string) : LinkType {
 
     // const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
     const hrefFullUrl = getFullUrl(href, baseUrl);
+    if (!hrefFullUrl) return 'other';
 
+    
     if (hrefFullUrl.toString().startsWith(baseUrl)) return 'internal-blog';
     if (hrefFullUrl.protocol !== 'https:' && hrefFullUrl.protocol !== 'http:') return 'other';
 
@@ -125,9 +127,13 @@ export function focusLinkInEditor(link: Link, editorView: EditorView | null) {
 
 }
 
-export function getFullUrl(href: string, baseUrl: string) : URL {
+export function getFullUrl(href: string, baseUrl: string) : URL|null {
     // const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
-    return new URL(href, baseUrl);
+    try {
+        return new URL(href, baseUrl);
+    } catch (e) {
+        return null;
+    }
 }
 
 export function calculateLinkAnalysis(variant: PostVariant) : Record<string, number> {
