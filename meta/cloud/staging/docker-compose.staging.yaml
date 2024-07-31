@@ -2,34 +2,36 @@ version: "3.3"
 services:
     hb-mysql:
         image: "mysql:latest"
+        restart: always
         environment:
-            MYSQL_USER: "mysql"
-            MYSQL_PASSWORD: "mysql"
-            MYSQL_DATABASE: "hyvor-blogs"
+            MYSQL_ROOT_PASSWORD: ""
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            MYSQL_DATABASE: hyvor_blogs
         expose:
-            - "3306"
+            - 3306
         volumes:
-            - mysql:/var/lib/mysql
+            - hb-mysql-data:/var/lib/mysql
 
     hb-meilisearch:
-        image: "meilisearch/meilisearch:latest"
+        image: "getmeili/meilisearch:latest"
         expose:
             - "7700"
         volumes:
-            - meilisearch-data:/data.ms
+            - hb-meilisearch-data:/data.ms
         environment:
             MEILI_MASTER_KEY: "MASTER_KEY"
 
     hb-app:
-        image: "hyvor/hyvor-blogs:latest"
+        image: "hyvor/blogs:latest"
         ports:
-            - "127.0.0.1:5000:5000"
+            - "127.0.0.1:5000:80"
         env_file:
-            - .env
+            - .env.hb
         depends_on:
             - hb-mysql
             - hb-meilisearch
 
 volumes:
-    mysql:
-    meilisearch-data:
+    hb-mysql-data:
+    hb-meilisearch-data:
