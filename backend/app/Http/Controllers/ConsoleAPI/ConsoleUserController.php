@@ -6,19 +6,16 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Data\Objects\ConsoleAPI\User\UserVariantObject;
-use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Tag;
 use App\Models\User;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
-use Illuminate\View\View;
 
 class ConsoleUserController extends Controller
 {
@@ -66,9 +63,9 @@ class ConsoleUserController extends Controller
         $role = UserRoleEnum::from($request->input('role'));
 
         if (str_contains($usernameOrEmail, '@')) {
-            $hyvorUser = Userbase::fromEmail($usernameOrEmail);
+            $hyvorUser = AuthUser::fromEmail($usernameOrEmail);
         } else {
-            $hyvorUser = Userbase::fromUsername($usernameOrEmail);
+            $hyvorUser = AuthUser::fromUsername($usernameOrEmail);
         }
 
         if (! $hyvorUser) {

@@ -1,22 +1,13 @@
 <?php
 
-use App\Data\Enums\BlogTypeEnum;
-use App\Data\Objects\DataAPI\BlogObject;
-use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Media\MediaRepository;
-use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
-use App\Models\BlogVariant;
 use App\Models\Media;
-use App\Models\Post;
-use App\Models\PostVariant;
 use App\Models\User;
 use Faker\Factory;
-use Hyvor\HyvorConnecter\HyvorUser;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 use Mockery\MockInterface;
@@ -31,7 +22,7 @@ uses()->beforeEach(function () {
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
     // reset userbase
-    Userbase::$FAKE = null;
+    FakeProvider::databaseClear();
 
     Cache::flush();
 

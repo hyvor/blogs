@@ -6,14 +6,14 @@ use App\Domains\App\Marketing\Trial\TrialEmailsJob;
 use App\Domains\App\Marketing\Trial\TrialEndedMail;
 use App\Domains\App\Marketing\Trial\TrialEndingMail;
 use App\Models\Blog;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Mail;
 
 it('sends trial ending emails', function() {
 
     Mail::fake();
 
-    Userbase::fake([
+    FakeProvider::databaseSet([
         [
             'id' => 10,
             'email' => 'test@hyvor.com',
@@ -55,7 +55,7 @@ it('sends trial ended email', function() {
 
     Mail::fake();
 
-    Userbase::fake([
+    FakeProvider::databaseSet([
         [
             'id' => 10,
             'email' => 'test@hyvor.com',

@@ -4,7 +4,7 @@ namespace App\Filament\Auth;
 
 use Closure;
 use Filament\Facades\Filament;
-use Hyvor\HyvorConnecter\Login;
+use Hyvor\Internal\Auth\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -15,7 +15,7 @@ class DashboardAuth
     public function handle(Request $request, Closure $next) : mixed
     {
 
-        $user = Login::check();
+        $user = Auth::check();
 
         if (!$user) {
             return redirect('/');

@@ -8,6 +8,11 @@ on:
                 required: false
                 default: "latest"
 
+    workflow_run:
+        workflows: ["Build"]
+        types:
+            - completed
+
 jobs:
     deploy:
         name: "Deploying ${{ github.event.inputs.tag }}"
@@ -30,7 +35,7 @@ jobs:
             - name: Deploy to Cloud
               uses: appleboy/ssh-action@master
               env:
-                  IMAGE_VERSION: ${{ github.event.inputs.tag }}
+                  IMAGE_VERSION: ${{ github.event.inputs.tag || 'latest' }}
                   DOCKERHUB_USERNAME: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
                   DOCKERHUB_TOKEN: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
                   ONE_PASSWORD_TOKEN: ${{ secrets.HYVOR_ORG_STAGING_ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN }}
@@ -51,9 +56,9 @@ jobs:
                       op inject --force --in-file .env.staging --out-file .env
 
                       # docker-compose
-                      cp docker-compose.staging.yaml docker-compose.yaml
+                      cp docker-compose.staging.yaml docker-compose-hyvor-blogs.yaml
                       # fresh pull
-                      docker pull $DOCKERHUB_USERNAME/hyvor-blogs:$IMAGE_VERSION
+                      docker pull $DOCKERHUB_USERNAME/blogs:$IMAGE_VERSION
                       # fresh up
-                      docker compose down
-                      docker compose up -d
+                      docker compose -f docker-compose-hyvor-blogs.yaml down
+                      docker compose -f docker-compose-hyvor-blogs.yaml up -d

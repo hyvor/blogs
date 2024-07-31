@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Hyvor\HyvorConnecter\Login;
+use Hyvor\Internal\Auth\Auth;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
@@ -35,7 +35,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     protected function gate()
     {
         Gate::define('viewHorizon', function ($user = null) {
-            $user = Login::check();
+            $user = Auth::check();
             return $user && in_array($user->email, [
                 'hi@supun.io',
                 'supun@hyvor.com',

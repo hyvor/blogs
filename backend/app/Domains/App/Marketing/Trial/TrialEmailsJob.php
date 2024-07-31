@@ -4,7 +4,7 @@ namespace App\Domains\App\Marketing\Trial;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Support\Facades\Mail;
 
 class TrialEmailsJob
@@ -22,7 +22,7 @@ class TrialEmailsJob
         foreach ($endingBlogs as $endingBlog) {
             if (!$endingBlog->hyvor_user_id)
                 continue;
-            $user = Userbase::fromId($endingBlog->hyvor_user_id, true);
+            $user = AuthUser::fromId($endingBlog->hyvor_user_id, true);
             if (!$user)
                 continue;
 
@@ -39,7 +39,7 @@ class TrialEmailsJob
         foreach ($endedBlogs as $endedBlog) {
             if (!$endedBlog->hyvor_user_id)
                 continue;
-            $user = Userbase::fromId($endedBlog->hyvor_user_id, true);
+            $user = AuthUser::fromId($endedBlog->hyvor_user_id, true);
             if (!$user)
                 continue;
 

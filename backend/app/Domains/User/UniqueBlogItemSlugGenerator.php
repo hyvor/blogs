@@ -5,7 +5,7 @@ namespace App\Domains\User;
 use App\Domains\Shared\UniqueBlogItemSlugGeneratorAbstract;
 use App\Models\Blog;
 use App\Models\User;
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Auth\AuthUser;
 
 class UniqueBlogItemSlugGenerator extends UniqueBlogItemSlugGeneratorAbstract
 {
@@ -14,7 +14,7 @@ class UniqueBlogItemSlugGenerator extends UniqueBlogItemSlugGeneratorAbstract
         return User::where('blog_id', $this->blog->id)->where('slug', $slug)->exists();
     }
 
-    public static function forHyvorUser(Blog $blog, HyvorUser $hyvorUser)
+    public static function forHyvorUser(Blog $blog, AuthUser $hyvorUser)
     {
         return static::generate($blog, [$hyvorUser->name, $hyvorUser->username, $hyvorUser->email]);
     }

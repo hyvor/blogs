@@ -8,7 +8,6 @@ use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
 use App\Models\User;
-use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
 

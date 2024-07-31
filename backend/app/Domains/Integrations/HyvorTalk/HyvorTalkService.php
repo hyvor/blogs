@@ -18,7 +18,7 @@ class HyvorTalkService
     {
 
         $endpoint = ltrim($endpoint, '/');
-        $url = strval(config('services.hyvor_talk.url')) . '/integrations/hyvorblogs/' . $endpoint;
+        $url = strval(config('services.hyvor_talk.url')) . '/api/integrations/hyvor-blogs/' . $endpoint;
 
         $response = Http::withHeaders([
             'X-Api-Key' => strval(config('services.hyvor_talk.api_key'))
