@@ -27,7 +27,7 @@ jobs:
                   host: ${{ secrets.HYVOR_ORG_STAGING_SERVER_IP }}
                   username: root
                   key: ${{ secrets.HYVOR_ORG_STAGING_SSH_KEY }}
-                  source: "meta/cloud/staging/docker-compose.staging.yaml,meta/cloud/staging/.env.staging"
+                  source: "meta/cloud/staging/docker-compose.staging.yaml,meta/cloud/staging/.env.hb.staging"
                   target: /root
                   overwrite: true
                   strip_components: 3
@@ -53,7 +53,7 @@ jobs:
                       # 1password
                       export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_TOKEN
                       op user get --me
-                      op inject --force --in-file .env.staging --out-file .env
+                      op inject --force --in-file .env.hb.staging --out-file .env.hb
 
                       # docker-compose
                       cp docker-compose.staging.yaml docker-compose-hyvor-blogs.yaml
