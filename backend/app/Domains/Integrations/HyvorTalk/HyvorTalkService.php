@@ -5,6 +5,7 @@ namespace App\Domains\Integrations\HyvorTalk;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\HyvorTalkWebsite;
+use Hyvor\Internal\InternalApi\ComponentType;
 use Illuminate\Support\Facades\Http;
 
 class HyvorTalkService
@@ -18,7 +19,8 @@ class HyvorTalkService
     {
 
         $endpoint = ltrim($endpoint, '/');
-        $url = strval(config('services.hyvor_talk.url')) . '/api/integrations/hyvor-blogs/' . $endpoint;
+        $hyvorTalkUrl = ComponentType::fromConfig()->getUrlOf(ComponentType::TALK);
+        $url = $hyvorTalkUrl . '/api/integrations/hyvor-blogs/' . $endpoint;
 
         $response = Http::withHeaders([
             'X-Api-Key' => strval(config('services.hyvor_talk.api_key'))
@@ -33,12 +35,12 @@ class HyvorTalkService
         return (array) $json;
     }
 
-    public static function getHyvorTalkWebsite(Blog $blog) : ?HyvorTalkWebsite
+    public static function getHyvorTalkWebsite(Blog $blog): ?HyvorTalkWebsite
     {
         return HyvorTalkWebsite::where('blog_id', $blog->id)->first();
     }
 
-    public static function createHyvorTalkWebsite(Blog $blog) : HyvorTalkWebsite
+    public static function createHyvorTalkWebsite(Blog $blog): HyvorTalkWebsite
     {
 
         $domain = PermalinkRepository::getBlogDomain($blog);
@@ -56,7 +58,7 @@ class HyvorTalkService
 
     }
 
-    public static function deleteHyvorTalkWebsite(HyvorTalkWebsite $website) : void
+    public static function deleteHyvorTalkWebsite(HyvorTalkWebsite $website): void
     {
         $website->delete();
     }
@@ -64,7 +66,7 @@ class HyvorTalkService
     /**
      * @param string[] $domains
      */
-    public static function updateDomains(HyvorTalkWebsite $website, array $domains) : void
+    public static function updateDomains(HyvorTalkWebsite $website, array $domains): void
     {
         self::callApi('set-domains', [
             'website_id' => $website->website_id,
