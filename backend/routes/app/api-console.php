@@ -22,21 +22,17 @@ use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
-use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Controllers\ConsoleAPI\Misc\ConsoleMiscProsemirrorController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
-use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
-use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
-use Hyvor\Helper\Http\Middleware\AuthMiddleware;
-use Illuminate\Session\Middleware\StartSession;
+use Hyvor\Internal\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/api/console/v0')

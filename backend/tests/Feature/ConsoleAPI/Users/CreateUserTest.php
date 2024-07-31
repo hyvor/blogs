@@ -5,8 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Users;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
-use Hyvor\HyvorConnecter\Userbase;
-use Illuminate\Http\UploadedFile;
+use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -26,7 +25,7 @@ beforeEach(function () {
     $this->location = 'France';
     $this->websiteUrl = 'https://hyvor.com';
 
-    Userbase::fake([
+    FakeProvider::databaseSet([
         [
             'id' => 1239,
             'username' => $this->username,

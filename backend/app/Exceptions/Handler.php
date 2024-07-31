@@ -3,7 +3,7 @@
 namespace App\Exceptions;
 
 use Hyvor\FilterQ\Exceptions\FilterQException;
-use Hyvor\Helper\Http\Exceptions\HttpException;
+use Hyvor\Internal\Http\Exceptions\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;

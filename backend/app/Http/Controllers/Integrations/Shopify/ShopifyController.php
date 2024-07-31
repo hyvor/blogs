@@ -15,8 +15,7 @@ use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Subscription\SubscriptionService;
 use App\Exceptions\TrustedException;
-use Hyvor\HyvorConnecter\Login;
-use Hyvor\HyvorConnecter\Redirect;
+use Hyvor\Internal\Auth\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Enum;
@@ -101,10 +100,10 @@ class ShopifyController
             throw new TrustedException('Shop already assigned to a blog');
         }
 
-        $hyvorUser = Login::check();
+        $hyvorUser = Auth::check();
 
         if (!$hyvorUser) {
-            return Redirect::toSignup("/integrations/shopify/complete?domain=$domain");
+            return Auth::signup("/integrations/shopify/complete?domain=$domain");
         }
 
         ['name' => $shopName, 'url' => $shopUrl] = $shopifyService->getShopData($shop);

@@ -2,7 +2,8 @@
 
 namespace App\Http\ConsoleApi\Objects\User;
 
-use Hyvor\Helper\Auth\AuthUser;
+
+use Hyvor\Internal\Auth\AuthUser;
 
 class AuthUserObject
 {
