@@ -19,7 +19,8 @@ class HyvorTalkService
     {
 
         $endpoint = ltrim($endpoint, '/');
-        $hyvorTalkUrl = ComponentType::fromConfig()->getUrlOf(ComponentType::TALK);
+        // $hyvorTalkUrl = ComponentType::fromConfig()->getUrlOf(ComponentType::TALK);
+        $hyvorTalkUrl = 'https://talk.hyvor.com';
         $url = $hyvorTalkUrl . '/api/integrations/hyvor-blogs/' . $endpoint;
 
         $response = Http::withHeaders([
