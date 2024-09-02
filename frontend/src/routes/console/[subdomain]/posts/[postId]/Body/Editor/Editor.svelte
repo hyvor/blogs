@@ -36,16 +36,13 @@
         handleEditorEventHandlers(e.detail.name, e.detail.event);
     }
 
-    let isRtl;
-    $: isRtl = $postLanguageStore.direction === 'rtl'; 
-
 </script>
 
 <div class="editor hds-box">
     <EditorTop />
 
     {#key uniqueKey}
-        <div class="wrap" style="font-family: {isRtl ? 'sans-serif' : 'inherit'};">
+        <div class="wrap">
             <Prosemirror 
                 value={$postCurrentContentStore} 
                 on:change={handleChange}
@@ -65,4 +62,4 @@
     .wrap {
         position: relative;
     }
-</style>
+</style>z
