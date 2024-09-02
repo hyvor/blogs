@@ -12,6 +12,7 @@
     style="
         dir: {$postLanguageStore.direction};
         text-align: {$postLanguageStore.direction === 'rtl' ? 'right' : 'left'};
+        font-family: {$postLanguageStore.direction === 'rtl' ? 'sans-serif' : 'inherit'};
     "
 >
     <Top />
