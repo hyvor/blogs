@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EditorView } from "prosemirror-view";
-	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
+	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postLanguageStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import EditorTop from "./EditorTop/EditorTop.svelte";
     import Prosemirror from "./Prosemirror.svelte";
 	import PublishedOverlay from "./PublishedOverlay.svelte";
@@ -36,13 +36,16 @@
         handleEditorEventHandlers(e.detail.name, e.detail.event);
     }
 
+    let isRtl;
+    $: isRtl = $postLanguageStore.direction === 'rtl'; 
+
 </script>
 
 <div class="editor hds-box">
     <EditorTop />
 
     {#key uniqueKey}
-        <div class="wrap">
+        <div class="wrap" style="font-family: {isRtl ? 'sans-serif' : 'inherit'};">
             <Prosemirror 
                 value={$postCurrentContentStore} 
                 on:change={handleChange}
