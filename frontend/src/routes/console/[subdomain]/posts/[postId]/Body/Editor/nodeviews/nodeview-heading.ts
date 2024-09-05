@@ -14,6 +14,29 @@ export default class HeadingNodeView implements NodeView {
         this.dom = document.createElement("div");
         this.dom.className = "heading-wrap";
 
+        const headingSelectorsWrap = document.createElement('div');
+		headingSelectorsWrap.classList.add('heading-selectors-wrap');
+		[1, 2, 3, 4, 5, 6].map((level) => {
+			const selector = document.createElement('button');
+			selector.type = 'button';
+			selector.classList.add('heading-selector');
+			selector.textContent = 'H' + level;
+			selector.addEventListener('click', () => {
+				const { state, dispatch } = view;
+				const { tr } = state;
+				tr.setNodeMarkup(getPos()!, null, { level });
+				dispatch(tr);
+			});
+
+			if (node.attrs.level === level) {
+				selector.classList.add('selected');
+			}
+
+			headingSelectorsWrap.appendChild(selector);
+			return selector;
+		});
+		this.dom.appendChild(headingSelectorsWrap);
+
         this.contentDOM = document.createElement("h" + node.attrs.level)
         const id = node.attrs.id || "";
         this.contentDOM.id = id
@@ -23,12 +46,8 @@ export default class HeadingNodeView implements NodeView {
         this.inputWrap.contentEditable = "false";
         this.dom.appendChild(this.inputWrap)
 
-        const type = document.createElement("span");
-        type.innerHTML = "h" + node.attrs.level + "#"
-        this.inputWrap.appendChild(type)
-
         // id input
-        this.input = document.createElement("input");
+        this.input = document.createElement("div");
         this.input.value = id;
 
         this.input.oninput = function(e) {
