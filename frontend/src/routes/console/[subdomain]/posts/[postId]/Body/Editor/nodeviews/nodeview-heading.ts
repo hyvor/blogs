@@ -1,5 +1,6 @@
 import {EditorView, type NodeView} from "prosemirror-view";
 import type {Node as ProsemirrorNode} from 'prosemirror-model';
+import { TextSelection } from "prosemirror-state";
 
 export default class HeadingNodeView implements NodeView {
 
@@ -8,6 +9,7 @@ export default class HeadingNodeView implements NodeView {
 
     private inputWrap: HTMLDivElement;
     private input: HTMLInputElement;
+    private selection: any;
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
 
@@ -21,12 +23,25 @@ export default class HeadingNodeView implements NodeView {
 			selector.type = 'button';
 			selector.classList.add('heading-selector');
 			selector.textContent = 'H' + level;
+            selector.addEventListener('mouseover', () => {
+                this.selection = view.state.tr.selection;
+            });
 			selector.addEventListener('click', () => {
-				const { state, dispatch } = view;
-				const { tr } = state;
-				tr.setNodeMarkup(getPos()!, null, { level });
-				dispatch(tr);
-			});
+                let { state, dispatch } = view;
+                let { tr } = state;
+            
+                tr.setNodeMarkup(getPos()!, null, { level });
+                dispatch(tr);
+                this.updateContentDOM(node.attrs.level, level);
+                
+                const posInNode = this.selection.from - getPos()!;
+
+                let mappedPos = view.state.tr.mapping.map(getPos()! + posInNode);
+
+                const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
+                dispatch(view.state.tr.setSelection(newSelection));
+                view.focus();
+            });
 
 			if (node.attrs.level === level) {
 				selector.classList.add('selected');
@@ -66,6 +81,16 @@ export default class HeadingNodeView implements NodeView {
         }
 
         this.inputWrap.appendChild(this.input);
+    }
+
+    updateContentDOM(oldLevel: number, newLevel: number) {
+        if (oldLevel !== newLevel) {
+            const newContentDOM = document.createElement("h" + newLevel);
+            newContentDOM.id = this.contentDOM.id;
+            newContentDOM.append(...this.contentDOM.childNodes);
+            this.dom.replaceChild(newContentDOM, this.contentDOM);
+            this.contentDOM = newContentDOM;
+        }
     }
 
     update(node: ProsemirrorNode) {
