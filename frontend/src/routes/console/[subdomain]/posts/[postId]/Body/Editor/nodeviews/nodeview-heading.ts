@@ -8,7 +8,7 @@ export default class HeadingNodeView implements NodeView {
     contentDOM: HTMLElement;
 
     private inputWrap: HTMLDivElement;
-    private input: HTMLInputElement;
+    private input: HTMLDivElement;
     private selection: any;
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
@@ -63,7 +63,6 @@ export default class HeadingNodeView implements NodeView {
 
         // id input
         this.input = document.createElement("div");
-        this.input.value = id;
 
         this.input.oninput = function(e) {
             const pos = getPos();
@@ -96,7 +95,6 @@ export default class HeadingNodeView implements NodeView {
     update(node: ProsemirrorNode) {
         if (node.type.name === 'heading') {
             this.contentDOM.id = node.attrs.id;
-            this.input.value = node.attrs.id;
             return true;
         }
 
