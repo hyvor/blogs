@@ -1,67 +1,51 @@
-import {EditorView, type NodeView} from "prosemirror-view";
-import type {Node as ProsemirrorNode} from 'prosemirror-model';
+import type { Node } from 'prosemirror-model';
+import { EditorView, type NodeView } from 'prosemirror-view';
 
 export default class HeadingNodeView implements NodeView {
+	dom: HTMLElement;
+	contentDOM: HTMLElement;
 
-    dom: HTMLElement;
-    contentDOM: HTMLElement;
+    private selection: any;
 
-    private inputWrap: HTMLDivElement;
-    private input: HTMLInputElement;
+	constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
+		this.dom = document.createElement('div');
+		this.dom.classList.add('heading-wrap');
 
-    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
+		const headingSelectorsWrap = document.createElement('div');
+		headingSelectorsWrap.classList.add('heading-selectors-wrap');
+		[1, 2, 3, 4, 5, 6].map((level) => {
+			const selector = document.createElement('button');
+			selector.type = 'button';
+			selector.classList.add('heading-selector');
+			selector.textContent = 'H' + level;
+            selector.addEventListener('mouseover', () => {
+                this.selection = view.state.tr.selection;
+            });
+			selector.addEventListener('click', () => {
+                const { state, dispatch } = view;
+                const { tr } = state;
+            
+                tr.setNodeMarkup(getPos()!, null, { level });
+                dispatch(tr);
 
-        this.dom = document.createElement("div");
-        this.dom.className = "heading-wrap";
+                // Restore selection
+                const posInNode = this.selection.from;
+                let mappedPos = view.state.tr.mapping.map(posInNode);
+                const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
+                dispatch(view.state.tr.setSelection(newSelection));
+                view.focus();
+            });
 
-        this.contentDOM = document.createElement("h" + node.attrs.level)
-        const id = node.attrs.id || "";
-        this.contentDOM.id = id
-        this.dom.appendChild(this.contentDOM);
+			if (node.attrs.level === level) {
+				selector.classList.add('selected');
+			}
 
-        this.inputWrap = document.createElement("div");
-        this.inputWrap.contentEditable = "false";
-        this.dom.appendChild(this.inputWrap)
+			headingSelectorsWrap.appendChild(selector);
+			return selector;
+		});
+		this.dom.appendChild(headingSelectorsWrap);
 
-        const type = document.createElement("span");
-        type.innerHTML = "h" + node.attrs.level + "#"
-        this.inputWrap.appendChild(type)
-
-        // id input
-        this.input = document.createElement("input");
-        this.input.value = id;
-
-        this.input.oninput = function(e) {
-            const pos = getPos();
-
-            if (pos === undefined)
-                return;
-
-            view.dispatch(
-                view.state.tr.setNodeMarkup(
-                    pos,
-                    null,
-                    {...node.attrs, id: (e.target as HTMLInputElement).value }
-                )
-            )
-        }
-
-        this.inputWrap.appendChild(this.input);
-    }
-
-    update(node: ProsemirrorNode) {
-        if (node.type.name === 'heading') {
-            this.contentDOM.id = node.attrs.id;
-            this.input.value = node.attrs.id;
-            return true;
-        }
-
-        return false;
-    }
-
-    stopEvent(e: Event) {
-        return (e.target as Node).isEqualNode(this.input)
-    }
-
-
+		this.contentDOM = document.createElement('h' + node.attrs.level);
+		this.dom.appendChild(this.contentDOM);
+	}
 }

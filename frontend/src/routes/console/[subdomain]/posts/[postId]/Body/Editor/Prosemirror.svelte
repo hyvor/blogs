@@ -228,6 +228,29 @@
             }
         }
 
+        :global(.heading-selectors-wrap) {
+			margin-bottom: 3px;
+			:global(button) {
+				font-size: 10px;
+				background-color: var(--input);
+				padding: 2px 4px;
+				margin-right: 2px;
+				border-radius: 2px;
+				opacity: 0.3;
+				transition: 0.2s opacity;
+			}
+			&:hover :global(button) {
+				opacity: 0.5;
+			}
+			:global(button:hover) {
+				opacity: 0.7;
+			}
+			:global(button.selected) {
+				background-color: var(--gray-light);
+				opacity: 1;
+			}
+		}
+
         :global(h1),
         :global(h2),
         :global(h3),
