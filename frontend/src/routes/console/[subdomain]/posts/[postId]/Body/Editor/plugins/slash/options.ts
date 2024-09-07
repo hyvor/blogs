@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
-import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
 import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
@@ -59,6 +59,13 @@ const options: SlashOption[] = [
             "codepen",
         ],
         node: createEmbed,
+    },
+    {
+        name: "Audio",
+        description: "Add an audio",
+        icon: IconSoundwave,
+        keywords: ["audio", "sound", "upload"],
+        node: 'audio',
     },
     {
         name: "Code Block",
