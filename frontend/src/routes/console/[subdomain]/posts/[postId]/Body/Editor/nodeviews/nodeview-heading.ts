@@ -9,6 +9,7 @@ export default class HeadingNodeView implements NodeView {
 	private selection: any;
 	private input: HTMLInputElement;
 	private inputWrap: HTMLDivElement;
+    private anchor: any;
 
 	constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
 		this.dom = document.createElement('div');
@@ -29,7 +30,7 @@ export default class HeadingNodeView implements NodeView {
 				const { state, dispatch } = view;
 				const { tr } = state;
 
-				tr.setNodeMarkup(getPos()!, null, { level });
+				tr.setNodeMarkup(getPos()!, null, { ...node.attrs, level });
 				dispatch(tr);
 
 				// Restore selection
@@ -87,7 +88,7 @@ export default class HeadingNodeView implements NodeView {
 	}
 
     update(node: ProsemirrorNode) {
-        if (node.type.name === 'heading') {
+        if (node.type.name === 'heading' && node.attrs.level === this.contentDOM.tagName[1]) {
             this.contentDOM.id = node.attrs.id;
             this.input.value = node.attrs.id;
             
