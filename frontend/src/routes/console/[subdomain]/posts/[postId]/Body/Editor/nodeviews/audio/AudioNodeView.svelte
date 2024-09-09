@@ -16,6 +16,8 @@
     let audioEl: HTMLAudioElement;
 	let fileInputEl: HTMLInputElement;
 
+    let loading = false;
+
     function updateProps(props: Partial<{
         src?: string | null,
     }>) {
@@ -36,12 +38,8 @@
         )
     }
 
-    function handleChangeClick() {
-        console.log('change audio');
-		fileInputEl.click(); // Trigger the file input click to open the file browser
-    }
-
 	function handleFiles(files: FileList | null) {
+        loading = true;
         if (!files || files.length === 0) {
             toast.error('No file selected')
             return
@@ -75,18 +73,33 @@
         var formData = new FormData();
         formData.append('file', file, file.name);
         try {
-            
+            // TODO: Add loading state
+
             const media = await uploadMedia(file);
+            loading = false;
+            //console.log(media);
             // Replace the node with the new one
+            const { tr } = view.state;
+            const pos = getPos();
+
+            if (pos === undefined) {
+                return;
+            }
+            else {
+                tr.replaceWith(pos, pos + 1, schema.nodes.audio!.create({ src: media.url }));
+            }
+            view.dispatch(tr);
+
+        } catch (e) {
+            console.error(e);
+            toast.error('Error uploading file');
+            // Delete the node if the upload fails
             const { tr } = view.state;
             const pos = getPos();
             if (pos === undefined)
                 return;
-            tr.replaceWith(pos, pos + 1, schema.nodes.audio!.create({ src: media.url }));
+            tr.delete(pos, pos + 1);
             view.dispatch(tr);
-
-        } catch (e) {
-            toast.error('Error uploading file');
         }
     }
 
@@ -105,6 +118,11 @@
             view.dispatch(tr);
         }
     }
+
+    function handleChangeClick() {
+        fileInputEl.click();
+    }
+
 	onMount(() => {
 		if (!src) {
 			fileInputEl.click(); // Trigger the file input if no audio is selected initially
