@@ -28,11 +28,12 @@ export function searchTags(data: SearchTagsProps) {
     })
 }
 
-export function createTag(name: string) {
+export function createTag(name: string, isPrivate: boolean = false) {
     return consoleApi.post<Tag>({
         endpoint: '/tag',
         data: {
-            name
+            name,
+            is_private: isPrivate
         }
     })
 }

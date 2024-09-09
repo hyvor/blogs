@@ -14,6 +14,8 @@ class TagObject
 
     public int $created_at;
 
+    public bool $is_private;
+
     public string $slug;
 
     public string $url;
@@ -40,6 +42,7 @@ class TagObject
 
         $this->id = $tag->id;
         $this->created_at = $tag->created_at->timestamp;
+        $this->is_private = $tag->is_private;
         $this->slug = $tag->slug;
         $this->url = PermalinkRepository::getTagPermalink($tag, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);

@@ -43,6 +43,7 @@ class TagRepository
 
     /**
      * @param array<string[]> $orderBys
+     * @param 'public'|'private'|'any' $visibility
      * @return CollectionWithTotal<Tag>
      */
     public static function getTagsWithFilterQ(
@@ -53,6 +54,7 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
+        string $visibility = 'public'
     ): CollectionWithTotal
     {
 
@@ -85,6 +87,8 @@ class TagRepository
 
         $tags = $builder
             ->where('tags.blog_id', $blog->id)
+            ->when($visibility === 'public', fn ($query) => $query->where('tags.is_private', false))
+            ->when($visibility === 'private', fn ($query) => $query->where('tags.is_private', true))
             ->select('tags.*')
             ->limit($limit)
             ->offset($offset)
@@ -119,10 +123,11 @@ class TagRepository
 
     }
 
-    public static function createTag(Blog $blog, string $name): Tag
+    public static function createTag(Blog $blog, string $name, bool $isPrivate = false): Tag
     {
         $tag = Tag::create([
             'blog_id' => $blog->id,
+            'is_private' => $isPrivate,
             'slug' => UniqueBlogItemSlugGenerator::generate($blog, [$name]),
         ]);
 
