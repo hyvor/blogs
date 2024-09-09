@@ -27,12 +27,6 @@
 	let dropdownOpen = false;
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = 'none';
 
-	function getTagName(tag: TagType) {
-		const primaryLang = getPrimaryLanguage();
-		const variant = tag.variants.find((v) => v.language_id === primaryLang.id);
-		return variant?.name || 'Unknown tag';
-	}
-
 	function saveTags() {
 		loaderState = 'loading';
 
