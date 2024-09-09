@@ -60,6 +60,11 @@ class PostObject
     public array $tags;
 
     /**
+     * @var TagObject[]
+     */
+    public array $tags_private;
+
+    /**
      * @var AuthorObject[]
      */
     public array $authors;
@@ -102,9 +107,19 @@ class PostObject
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 
-        $this->tags = $post->tags->map(function ($tag) use ($blog, $language) {
-            return new TagObject($tag, $blog, $language);
-        })->toArray();
+        $this->tags = $post
+            ->tags
+            ->filter(fn ($tag) => $tag->is_private === false)
+            ->map(function ($tag) use ($blog, $language) {
+                return new TagObject($tag, $blog, $language);
+            })->toArray();
+
+        $this->tags_private = $post
+            ->tags
+            ->filter(fn ($tag) => $tag->is_private === true)
+            ->map(function ($tag) use ($blog, $language) {
+                return new TagObject($tag, $blog, $language);
+            })->toArray();
 
         $this->authors = $post->authors->map(function ($author) use ($blog, $language) {
             return new AuthorObject($author, $blog, $language);

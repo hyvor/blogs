@@ -42,9 +42,13 @@
 <TableRow>
 	<div><TagName {tag} /></div>
 	<div>
-		<Link href={variant?.url || ''} target="_blank">
+		{#if tag.is_private}
 			{tag.slug}
-		</Link>
+		{:else}
+			<Link href={variant?.url || ''} target="_blank">
+				{tag.slug}
+			</Link>
+		{/if}
 	</div>
 	<div>{variant?.description || ''}</div>
 	<div>{tag.posts_count}</div>

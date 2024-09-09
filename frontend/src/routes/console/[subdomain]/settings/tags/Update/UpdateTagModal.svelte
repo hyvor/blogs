@@ -2,6 +2,7 @@
 	import {
 		Button,
 		ButtonGroup,
+		Caption,
 		FormControl,
 		Link,
 		Modal,
@@ -100,6 +101,10 @@
 
 <Modal title="Edit tag" bind:show>
 	<SplitControl label="Private">
+		<Caption slot="caption">
+			<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
+			- only for internal use.
+		</Caption>
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
