@@ -229,7 +229,9 @@
         }
 
         :global(.heading-selectors-wrap) {
-			margin-bottom: 3px;
+            top: -50px;
+            display: flex;
+			margin-bottom: 8px;
 			:global(button) {
 				font-size: 10px;
 				background-color: var(--input);
