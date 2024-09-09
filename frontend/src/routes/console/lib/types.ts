@@ -206,6 +206,7 @@ export type Tag = {
     id: number;
     created_at: number;
     updated_at: number;
+    is_private: boolean;
 
     slug: string;
 

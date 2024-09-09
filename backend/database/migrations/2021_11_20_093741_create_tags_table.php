@@ -29,6 +29,8 @@ class CreateTagsTable extends Migration
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
 
+            $table->boolean('is_private')->default(false);
+
             $table->unique(['blog_id', 'slug']);
         });
     }

@@ -119,10 +119,11 @@ class TagRepository
 
     }
 
-    public static function createTag(Blog $blog, string $name): Tag
+    public static function createTag(Blog $blog, string $name, bool $isPrivate = false): Tag
     {
         $tag = Tag::create([
             'blog_id' => $blog->id,
+            'is_private' => $isPrivate,
             'slug' => UniqueBlogItemSlugGenerator::generate($blog, [$name]),
         ]);
 

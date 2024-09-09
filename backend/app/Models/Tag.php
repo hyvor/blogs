@@ -16,6 +16,10 @@ class Tag extends Model
         'variants',
     ];
 
+    protected $casts = [
+        'is_private' => 'boolean'
+    ];
+
     /**
      * @return BelongsTo<Blog, self>
      */
