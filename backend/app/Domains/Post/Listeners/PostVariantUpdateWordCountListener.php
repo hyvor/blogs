@@ -7,7 +7,7 @@ use App\Domains\Post\Events\PostVariantUpdatedEvent;
 
 class PostVariantUpdateWordCountListener
 {
-    public function handle(PostVariantUpdatedEvent $event)
+    public function handle(PostVariantUpdatedEvent $event) : void
     {
         $variant = $event->variant;
 
@@ -16,7 +16,16 @@ class PostVariantUpdateWordCountListener
         }
 
         $post = $variant->post;
+
+        if (! $post) {
+            return;
+        }
         $blog = $post->blog;
+
+        if (!$blog) {
+            return;
+        }
+
         $text = PostContentService::getText($variant->content, $blog);
 
         $words = str_word_count($text);

@@ -37,12 +37,13 @@ class Image extends NodeType
 
         if (
             $mediaName &&
-            ($media = MediaRepository::getByBlogIdAndName($blog->id, $mediaName))
+            ($media = MediaRepository::getByBlogIdAndName($blog->id, $mediaName)) &&
+            $media->extension
         ) {
 
             $mimeType = MimeTypes::getMimeFromExtension($media->extension);
 
-            if (ImageResizeService::isMimeTypeSupported($mimeType)) {
+            if (ImageResizeService::isMimeTypeSupported($mimeType) && MediaRepository::getContents($media)) {
 
                 $width = ImageResizeService::getImageWidth(MediaRepository::getContents($media));
 

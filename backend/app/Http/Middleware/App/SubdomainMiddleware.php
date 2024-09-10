@@ -12,9 +12,10 @@ use Illuminate\Http\Request;
 class SubdomainMiddleware
 {
 
-    public function handle(Request $request, Closure $next) : mixed
+    public function handle(Request $request, Closure $next): mixed
     {
-        $subdomain = strval($request->route('subdomain'));
+        $subdomainValue = $request->route('subdomain');
+        $subdomain = is_scalar($subdomainValue) ? strval($subdomainValue) : null;
 
         if (!$subdomain) {
             throw new TrustedException('Subdomain missing', TrustedException::ERROR_NOT_FOUND);
@@ -22,7 +23,7 @@ class SubdomainMiddleware
 
         $blog = BlogService::getBlogBySubdomain($subdomain);
 
-        if (! $blog) {
+        if (!$blog) {
             throw new SubdomainNotFoundException('Subdomain not found', TrustedException::ERROR_NOT_FOUND);
         }
 

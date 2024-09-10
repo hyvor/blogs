@@ -14,7 +14,7 @@ use Illuminate\Events\Dispatcher;
 
 class CountSubscriber
 {
-    public function subscribe(Dispatcher $events)
+    public function subscribe(Dispatcher $events) : void
     {
         $events->listen(PostCreatedEvent::class, [static::class, 'onPostCreateOrDelete']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostCreateOrDelete']);
@@ -27,32 +27,37 @@ class CountSubscriber
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaEvent']);
     }
 
-    public function onPostCreateOrDelete(PostCreatedEvent|PostDeletedEvent $event)
+    public function onPostCreateOrDelete(PostCreatedEvent|PostDeletedEvent $event) : void
     {
         $blog = $event->post->blog;
-        $this->dispatchPostCountJobs($blog);
+        if ($blog)
+            $this->dispatchPostCountJobs($blog);
     }
 
-    public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
+    public function onPostVariantUpdate(PostVariantUpdatedEvent $event) : void
     {
-        if ($event->variant->status !== $event->variantOld->status) {
-            $this->dispatchPostCountJobs($event->variant->post->blog);
+        $post = $event->variant->post;
+        $blog = $post ? $post->blog : null;
+        if ($blog && ($event->variant->status !== $event->variantOld->status)) {
+            $this->dispatchPostCountJobs($blog);
         }
     }
 
-    public function onUserEvent(UserCreatedEvent | UserDeletedEvent $event)
+    public function onUserEvent(UserCreatedEvent | UserDeletedEvent $event) : void
     {
         $blog = $event->user->blog;
-        BlogUsersCountsJob::dispatch($blog);
+        if ($blog)
+            BlogUsersCountsJob::dispatch($blog);
     }
 
-    public function onMediaEvent(MediaCreatedEvent | MediaDeletedEvent $event)
+    public function onMediaEvent(MediaCreatedEvent | MediaDeletedEvent $event) : void
     {
         $blog = $event->media->blog;
-        BlogMediaCountsJob::dispatch($blog);
+        if ($blog)
+            BlogMediaCountsJob::dispatch($blog);
     }
 
-    private function dispatchPostCountJobs(Blog $blog)
+    private function dispatchPostCountJobs(Blog $blog) : void
     {
         BlogPostsCountsJob::dispatch($blog);
         AuthorCountsJob::dispatch($blog);

@@ -84,6 +84,10 @@ trait Countable
     {
         $meta = $this->counts;
 
+        if ($meta === null) {
+            return new stdClass();
+        }
+
         if (is_string($meta)) {
             return json_decode($meta) ?? new stdClass();
         } elseif (is_array($meta)) {

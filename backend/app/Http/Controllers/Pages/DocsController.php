@@ -14,7 +14,7 @@ class DocsController extends Controller
 {
     public function handle(Request $request) : View
     {
-        $page = $request->route('page') ?? 'index';
+        $page = is_string($request->route('page')) ? strval($request->route('page')) : 'index';
         $content = $this->getContentFromName($page);
 
         if (is_null($content)) {
@@ -37,19 +37,20 @@ class DocsController extends Controller
         ]);
     }
 
-    private function getContentFromName($name) : ?string
+    private function getContentFromName(string $name) : ?string
     {
         $name = $name ? $name : 'index';
         $file = resource_path("docs/$name.md");
 
         if (file_exists($file)) {
-            return file_get_contents($file);
-        } else {
-            return null;
+            $fileContent = file_get_contents($file);
+            if ($fileContent)
+                return $fileContent;
         }
+        return null;
     }
 
-    private function replaceDynamicData($page, $markdown)
+    private function replaceDynamicData(string $page, string $markdown) : string
     {
         if ($page === 'syntax-highlighting') {
 

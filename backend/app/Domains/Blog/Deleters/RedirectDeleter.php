@@ -4,6 +4,7 @@ namespace App\Domains\Blog\Deleters;
 
 use App\Models\Blog;
 use App\Models\Redirect;
+use Illuminate\Database\Eloquent\Model;
 
 class RedirectDeleter implements DeleterInterface
 {
@@ -11,7 +12,7 @@ class RedirectDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : void
     {
         Redirect::where('blog_id', $this->blog->id)->delete();
     }

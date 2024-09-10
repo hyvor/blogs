@@ -7,18 +7,19 @@ use App\Domains\Route\RouteRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Route;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ConsoleRouteController extends Controller
 {
-    public function get(Blog $blog)
+    public function get(Blog $blog) : JsonResponse
     {
         $routes = RouteRepository::getRoutes($blog)->mapInto(RouteObject::class);
 
         return response()->json($routes);
     }
 
-    public function create(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -39,7 +40,7 @@ class ConsoleRouteController extends Controller
         return response()->json(new RouteObject($route));
     }
 
-    public function update(Request $request, Route $route)
+    public function update(Request $request, Route $route) : JsonResponse
     {
         $validations = [
             'name' => 'string',
@@ -65,7 +66,7 @@ class ConsoleRouteController extends Controller
         return response()->json(new RouteObject($route));
     }
 
-    public function delete(Route $route)
+    public function delete(Route $route) : JsonResponse
     {
         RouteRepository::deleteRoute($route);
 

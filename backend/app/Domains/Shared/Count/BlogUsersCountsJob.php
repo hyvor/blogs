@@ -16,13 +16,13 @@ class BlogUsersCountsJob implements ShouldQueue, ShouldBeUnique
     {
     }
 
-    public function handle()
+    public function handle() : void
     {
         $users = User::where('blog_id', $this->blog->id)->count();
         $this->blog->setCount('users', $users);
     }
 
-    public function uniqueId()
+    public function uniqueId() : int
     {
         return $this->blog->id;
     }

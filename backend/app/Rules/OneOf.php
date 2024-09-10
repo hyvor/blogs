@@ -50,8 +50,10 @@ class OneOf implements Rule
      */
     public function message()
     {
-        return $this->failedRules[0] instanceof Rule ?
-            strval($this->failedRules[0]->message()) :
-            'The :attribute is invalid.';
+        if ($this->failedRules[0] instanceof Rule) {
+            $message = $this->failedRules[0]->message();
+            return is_array($message) ? implode(', ', $message) : strval($message);
+        }
+        return 'The :attribute is invalid.';
     }
 }

@@ -131,7 +131,6 @@ class ThemeFilesRepository
             ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file),
             ThemeFileFolderEnum::LANG => LangEditedEvent::dispatch($file),
             null => $file->name === 'config.yaml' ? ConfigEditedEvent::dispatch($file) : null,
-            default => null
         };
     }
 

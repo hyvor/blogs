@@ -14,7 +14,7 @@ class CliAPIMiddleware
 
     public function handle(Request $request, Closure $next) : mixed
     {
-        $subdomain = strval($request->route('subdomain'));
+        $subdomain = is_string($request->route('subdomain')) ? strval($request->route('subdomain')) : null;
 
         if (!$subdomain) {
             throw new TrustedException('The subdomain should be set');

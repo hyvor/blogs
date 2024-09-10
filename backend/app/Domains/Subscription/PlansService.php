@@ -7,7 +7,7 @@ use App\Data\Enums\SubscriptionPlanEnum;
 
 class PlansService
 {
-    public static function getPlanPrice(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency)
+    public static function getPlanPrice(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency) : int
     {
         $price = config('blogs.pricing')[$plan->value];
         return $price * ($frequency === SubscriptionFrequencyEnum::YEARLY ? 10 : 1);

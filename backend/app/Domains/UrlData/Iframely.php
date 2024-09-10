@@ -2,6 +2,7 @@
 
 namespace App\Domains\UrlData;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
 class Iframely
@@ -9,12 +10,11 @@ class Iframely
     private const ENDPOINT = 'https://iframe.ly/api/iframely';
 
     /**
-     * @var string - URL to fetch data from
-     *
      * Fetches data from iframely's oembed endpoint
      * https://iframely.com/docs/oembed-api
+     * @return array<string, mixed>
      */
-    public static function fetch(string $url)
+    public static function fetch(string $url) : array
     {
         $params = http_build_query([
             'url' => $url,

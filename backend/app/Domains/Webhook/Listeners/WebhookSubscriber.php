@@ -56,7 +56,7 @@ use Illuminate\Events\Dispatcher;
 
 class WebhookSubscriber
 {
-    public function subscribe(Dispatcher $events)
+    public function subscribe(Dispatcher $events) : void
     {
         $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdatedEvent']);
         $events->listen(BlogVariantUpdatedEvent::class, [static::class,'onBlogVariantUpdatedEvent']);
@@ -102,7 +102,7 @@ class WebhookSubscriber
         return $variant->language_id === LanguageRepository::getPrimaryLanguage($blog)->id;
     }
 
-    private function call(Blog $blog, WebhookEventEnum $eventName, callable $dataFunc)
+    private function call(Blog $blog, WebhookEventEnum $eventName, callable $dataFunc) : void
     {
         if (AppContext::in(AppContextType::SEEDING_BLOG)) {
             return;
@@ -118,221 +118,311 @@ class WebhookSubscriber
         }
     }
 
-    public function onBlogUpdatedEvent(BlogUpdatedEvent $event)
+    public function onBlogUpdatedEvent(BlogUpdatedEvent $event) : void
     {
-        $this->call($event->blog, WebhookEventEnum::BLOG_UPDATED, fn() => [
-            'blog' => (array) new BlogObject($event->blog)
-        ]);
+        $blog = $event->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::BLOG_UPDATED, fn() => [
+                'blog' => (array) new BlogObject($event->blog)
+            ]);
+        }
     }
 
-    public function onBlogVariantUpdatedEvent(BlogVariantUpdatedEvent $event)
+    public function onBlogVariantUpdatedEvent(BlogVariantUpdatedEvent $event) : void
     {
-        $this->call($event->variant->blog, WebhookEventEnum::BLOG_UPDATED, fn() => [
-            'blog' => (array) new BlogObject($event->variant->blog)
-        ]);
+        $blog = $event->variant->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::BLOG_UPDATED, fn() => [
+                'blog' => (array) new BlogObject($blog) 
+            ]);
+        }
     }
 
-    public function onPostCreatedEvent(PostCreatedEvent $event)
+    public function onPostCreatedEvent(PostCreatedEvent $event) : void
     {
-        $this->call($event->post->blog, WebhookEventEnum::POST_CREATED,fn() => [
-            'post' => (array) new PostObject($event->post, $event->post->blog)
-        ]);
+        $blog = $event->post->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::POST_CREATED, fn() => [
+                'post' => (array) new PostObject($event->post, $blog)
+            ]);
+        }
     }
 
-    public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event)
+    public function onPostVariantCreatedEvent(PostVariantCreatedEvent $event) : void
     {
-        // checks if it is the post variant created event initaiated at the post created event
-        if ($this->isPrimaryLanguage($event->variant, $event->variant->post->blog))
-            return;
-        
-        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
-            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
-        ]);
+        $post = $event->variant->post ?? null;
+        $blog = $post  ? $post->blog : null;
+        if ($post && $blog) {
+            // checks if it is the post variant created event initaiated at the post created event
+            if ($this->isPrimaryLanguage($event->variant, $blog))
+                return;
+
+            $this->call($blog, WebhookEventEnum::POST_UPDATED, fn() => [
+                'post' => (array) new PostObject($post, $blog),
+            ]);
+        }
     }
  
-    public function onPostUpdatedEvent(PostUpdatedEvent $event)
+    public function onPostUpdatedEvent(PostUpdatedEvent $event) : void
     {
-        $this->call($event->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
-            'post' => (array) new PostObject($event->post, $event->post->blog),
-        ]);
+        $blog = $event->post->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::POST_UPDATED, fn() => [
+                'post' => (array) new PostObject($event->post, $blog),
+            ]);
+        }
     }
 
-    public function onPostVariantUpdatedEvent(PostVariantUpdatedEvent $event)
+    public function onPostVariantUpdatedEvent(PostVariantUpdatedEvent $event) : void
     {
-        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
-            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
-        ]);
+        $post = $event->variant->post ?? null;
+        $blog = $post ? $post->blog : null;
+        if ($post && $blog) {
+            $this->call($blog, WebhookEventEnum::POST_UPDATED, fn() => [
+                'post' => (array) new PostObject($post, $blog),
+            ]);
+        }
     }
 
-    public function onPostDeletedEvent(PostDeletedEvent $event)
+    public function onPostDeletedEvent(PostDeletedEvent $event) : void
     {
-        $this->call($event->post->blog, WebhookEventEnum::POST_DELETED, fn() => [
-            'post' => (array) new PostObject($event->post, $event->post->blog),
-        ]);
+        $blog = $event->post->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::POST_DELETED, fn() => [
+                'post' => (array) new PostObject($event->post, $blog),
+            ]);
+        }
     }
 
-    public function onPostVariantDeletedEvent(PostVariantDeletedEvent $event)
+    public function onPostVariantDeletedEvent(PostVariantDeletedEvent $event) : void
     {
-        $this->call($event->variant->post->blog, WebhookEventEnum::POST_UPDATED, fn() => [
-            'post' => (array) new PostObject($event->variant->post, $event->variant->post->blog),
-        ]);
+        $post = $event->variant->post ?? null;
+        $blog = $post ? $post->blog : null;
+        if ($post && $blog) {
+            $this->call($blog, WebhookEventEnum::POST_UPDATED, fn() => [
+                'post' => (array) new PostObject($post, $blog),
+            ]);
+        }
     }
 
-    public function onTagCreatedEvent(TagCreatedEvent $event)
+    public function onTagCreatedEvent(TagCreatedEvent $event) : void
     {
-        $this->call($event->tag->blog, WebhookEventEnum::TAG_CREATED, fn() => [
-            'tag' => (array) new TagObject($event->tag, $event->tag->blog),
-        ]);
+        $blog = $event->tag->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::TAG_CREATED, fn() => [
+                'tag' => (array) new TagObject($event->tag, $blog),
+            ]);
+        }
     }
 
-    public function onTagVariantCreatedEvent(TagVariantCreatedEvent $event)
+    public function onTagVariantCreatedEvent(TagVariantCreatedEvent $event) : void
     {
-        // checks if it is the tag variant created event initaiated at the tag created event
-        if ($this->isPrimaryLanguage($event->variant, $event->variant->tag->blog))
-            return;
+        $tag = $event->variant->tag ?? null;
+        $blog = $tag ? $tag->blog : null;
+        if ($tag && $blog) {
+            // checks if it is the tag variant created event initaiated at the tag created event
+            if ($this->isPrimaryLanguage($event->variant, $blog))
+                return;
 
-        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
-            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
-        ]);
+            $this->call($blog, WebhookEventEnum::TAG_UPDATED, fn() => [
+                'tag' => (array) new TagObject($tag, $blog),
+            ]);
+        }
     }
 
-    public function onTagUpdatedEvent(TagUpdatedEvent $event)
+    public function onTagUpdatedEvent(TagUpdatedEvent $event) : void
     {
-        $this->call($event->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
-            'tag' => (array) new TagObject($event->tag, $event->tag->blog),
-        ]);
+        $blog = $event->tag->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::TAG_UPDATED, fn() => [
+                'tag' => (array) new TagObject($event->tag, $blog),
+            ]);
+        }
     }
 
-    public function onTagVariantUpdatedEvent(TagVariantUpdatedEvent $event)
+    public function onTagVariantUpdatedEvent(TagVariantUpdatedEvent $event) : void
     {
-        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
-            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
-        ]);
+        $tag = $event->variant->tag ?? null;
+        $blog = $tag ? $tag->blog : null;
+        if ($tag && $blog) {
+            $this->call($blog, WebhookEventEnum::TAG_UPDATED, fn() => [
+                'tag' => (array) new TagObject($tag, $blog),
+            ]);
+        }
     }
 
-    public function onTagDeletedEvent(TagDeletedEvent $event)
+    public function onTagDeletedEvent(TagDeletedEvent $event) : void
     {
-        $this->call($event->tag->blog, WebhookEventEnum::TAG_DELETED, fn() => [
-            'tag' => (array) new TagObject($event->tag, $event->tag->blog),
-        ]);
+        $blog = $event->tag->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::TAG_DELETED, fn() => [
+                'tag' => (array) new TagObject($event->tag, $blog),
+            ]);
+        }
     }
 
-    public function onTagVariantDeletedEvent(TagVariantDeletedEvent $event)
+    public function onTagVariantDeletedEvent(TagVariantDeletedEvent $event) : void
     {
-        $this->call($event->variant->tag->blog, WebhookEventEnum::TAG_UPDATED, fn() => [
-            'tag' => (array) new TagObject($event->variant->tag, $event->variant->tag->blog),
-        ]);
+        $tag = $event->variant->tag ?? null;
+        $blog = $tag ? $tag->blog : null;
+        if ($tag && $blog) {
+            $this->call($blog, WebhookEventEnum::TAG_UPDATED, fn() => [
+                'tag' => (array) new TagObject($tag, $blog),
+            ]);
+        }
     }
 
-    public function onUserCreatedEvent(UserCreatedEvent $event)
+    public function onUserCreatedEvent(UserCreatedEvent $event) : void
     {
-        $this->call($event->user->blog, WebhookEventEnum::USER_CREATED, fn() => [
-            'user' => (array) new UserObject($event->user, $event->user->blog),
-        ]);
+        $blog = $event->user->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::USER_CREATED, fn() => [
+                'user' => (array) new UserObject($event->user, $blog),
+            ]);
+        }
     }
 
-    public function onUserVariantCreatedEvent(UserVariantCreatedEvent $event)
+    public function onUserVariantCreatedEvent(UserVariantCreatedEvent $event) : void
     {
-        // checks if it is the user variant created event initaiated at the user created event
-        if ($this->isPrimaryLanguage($event->variant, $event->variant->user->blog))
-            return;
+        $user = $event->variant->user ?? null;
+        $blog = $user ? $user->blog : null;
+        if ($user && $blog) {
+            // checks if it is the user variant created event initaiated at the user created event
+            if ($this->isPrimaryLanguage($event->variant, $blog))
+                return;
 
-        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, fn() => [
-            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
-        ]);
+            $this->call($blog, WebhookEventEnum::USER_UPDATED, fn() => [
+                'user' => (array) new UserObject($user, $blog),
+            ]);
+        }
     }
 
-    public function onUserUpdatedEvent(UserUpdatedEvent $event)
+    public function onUserUpdatedEvent(UserUpdatedEvent $event) : void
     {
-        $this->call($event->user->blog, WebhookEventEnum::USER_UPDATED, fn() => [
-            'user' => (array) new UserObject($event->user, $event->user->blog),
-        ]);
+        $blog = $event->user->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::USER_UPDATED, fn() => [
+                'user' => (array) new UserObject($event->user, $blog),
+            ]);
+        }
     }
 
-    public function onUserVariantUpdatedEvent(UserVariantUpdatedEvent $event)
+    public function onUserVariantUpdatedEvent(UserVariantUpdatedEvent $event) : void
     {
-        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, fn() => [
-            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
-        ]);
+        $user = $event->variant->user ?? null;
+        $blog = $user ? $user->blog : null;
+        if ($user && $blog) {
+            $this->call($blog, WebhookEventEnum::USER_UPDATED, fn() => [
+                'user' => (array) new UserObject($user, $blog),
+            ]);
+        }
     }
 
-    public function onUserDeletedEvent(UserDeletedEvent $event)
+    public function onUserDeletedEvent(UserDeletedEvent $event) : void
     {
-        $this->call($event->user->blog, WebhookEventEnum::USER_DELETED, fn() => [
-            'user' => (array) new UserObject($event->user, $event->user->blog),
-        ]);
+        $blog = $event->user->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::USER_DELETED, fn() => [
+                'user' => (array) new UserObject($event->user, $blog),
+            ]);
+        }
     }
 
-    public function onUserVariantDeletedEvent(UserVariantDeletedEvent $event)
+    public function onUserVariantDeletedEvent(UserVariantDeletedEvent $event) : void
     {
-        $this->call($event->variant->user->blog, WebhookEventEnum::USER_UPDATED, fn() => [
-            'user' => (array) new UserObject($event->variant->user, $event->variant->user->blog),
-        ]);
+        $user = $event->variant->user ?? null;
+        $blog = $user ? $user->blog : null;
+        if ($user && $blog) {
+            $this->call($blog, WebhookEventEnum::USER_UPDATED, fn() => [
+                'user' => (array) new UserObject($user, $blog),
+            ]);
+        }
     }
 
-    public function onMediaCreatedEvent(MediaCreatedEvent $event)
+    public function onMediaCreatedEvent(MediaCreatedEvent $event) : void
     {
-        $this->call($event->media->blog, WebhookEventEnum::MEDIA_CREATED, fn() => [
-            'media' => (array) new MediaObject($event->media, $event->media->blog),
-        ]);
+        $blog = $event->media->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::MEDIA_CREATED, fn() => [
+                'media' => (array) new MediaObject($event->media, $blog),
+            ]);
+        }
     }
 
-    public function onMediaDeletedEvent(MediaDeletedEvent $event)
+    public function onMediaDeletedEvent(MediaDeletedEvent $event) : void
     {
-        $this->call($event->media->blog, WebhookEventEnum::MEDIA_DELETED, fn() => [
-            'media' => (array) new MediaObject($event->media, $event->media->blog),
-        ]);
+        $blog = $event->media->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::MEDIA_DELETED, fn() => [
+                'media' => (array) new MediaObject($event->media, $blog),
+            ]);
+        }
     }
 
-    public function onNavigationChangedEvent(NavigationChangedEvent $event)
+    public function onNavigationChangedEvent(NavigationChangedEvent $event) : void
     {
-        $navigations = NavigationRepository::getNavigations($event->navigation->blog)->mapInto(NavigationObject::class);
+        $blog = $event->navigation->blog ?? null;
+        if ($blog) {
+            $navigations = NavigationRepository::getNavigations($blog)->mapInto(NavigationObject::class);
 
-        $this->call($event->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
-            'navigation' => $navigations,
-        ]);
+            $this->call($blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
+                'navigation' => $navigations,
+            ]);
+        }
     }
 
-    public function onNavigationVariantChangedEvent(NavigationVariantChangedEvent $event)
+    public function onNavigationVariantChangedEvent(NavigationVariantChangedEvent $event) : void
     {
-        $navigations = NavigationRepository::getNavigations($event->variant->navigation->blog)->mapInto(NavigationObject::class);
+        $blog = $event->variant->navigation->blog ?? null;
+        if ($blog) {
+            $navigations = NavigationRepository::getNavigations($blog)->mapInto(NavigationObject::class);
 
-        $this->call($event->variant->navigation->blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
-            'navigation' => $navigations,
-        ]);
+            $this->call($blog, WebhookEventEnum::NAVIGATION_CHANGED, fn() => [
+                'navigation' => $navigations,
+            ]);
+        }
     }
 
-    public function onRouteChangedEvent(RouteChangedEvent $event)
+    public function onRouteChangedEvent(RouteChangedEvent $event) : void
     {
-        $routes = RouteRepository::getRoutes($event->route->blog)->mapInto(RouteObject::class);
+        $blog = $event->route->blog ?? null;
+        if ($blog) {
+            $routes = RouteRepository::getRoutes($blog)->mapInto(RouteObject::class);
 
-        $this->call($event->route->blog, WebhookEventEnum::ROUTES_CHANGED, fn() => [
-            'routes' => $routes,
-        ]);
+            $this->call($blog, WebhookEventEnum::ROUTES_CHANGED, fn() => [
+                'routes' => $routes,
+            ]);
+        }
     }
 
-    public function onLanguageChangedEvent(LanguageChangedEvent $event)
+    public function onLanguageChangedEvent(LanguageChangedEvent $event) : void
     {
-        $languages = LanguageRepository::getAllLanguages($event->language->blog)->mapInto(LanguageObject::class);
+        $blog = $event->language->blog ?? null;
+        if ($blog) {
+            $languages = LanguageRepository::getAllLanguages($blog)->mapInto(LanguageObject::class);
 
-        $this->call($event->language->blog, WebhookEventEnum::LANGUAGES_CHANGED, fn() => [
-            'languages' => $languages,
-        ]);
+            $this->call($blog, WebhookEventEnum::LANGUAGES_CHANGED, fn() => [
+                'languages' => $languages,
+            ]);
+        }
     }
 
-    public function onCacheClearSingleEvent(CacheClearSingleEvent $event)
+    public function onCacheClearSingleEvent(CacheClearSingleEvent $event) : void
     {
-        $this->call($event->blog, WebhookEventEnum::CACHE_SINGLE, fn() => [
-            'path' => $event->path
-        ]);
+        $blog = $event->blog ?? null;
+        if ($blog) {
+            $this->call($blog, WebhookEventEnum::CACHE_SINGLE, fn() => [
+                'path' => $event->path
+            ]);
+        }
     }
 
-    public function onCacheClearTemplatesEvent(CacheClearTemplatesEvent $event)
+    public function onCacheClearTemplatesEvent(CacheClearTemplatesEvent $event) : void
     {
         $this->call($event->blog, WebhookEventEnum::CACHE_TEMPLATES, fn() => []);
     }
 
-    public function onCacheClearAllEvent(CacheClearAllEvent $event)
+    public function onCacheClearAllEvent(CacheClearAllEvent $event) : void
     {
         $this->call($event->blog, WebhookEventEnum::CACHE_ALL, fn() => []);
     }
