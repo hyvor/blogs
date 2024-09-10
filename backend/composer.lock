@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b767ca6ea660eed82587d6246ca2ca19",
+    "content-hash": "d836f99bfe82560262973c752018585b",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2412,23 +2412,23 @@
             "time": "2017-12-14T13:08:42+00:00"
         },
         {
-            "name": "hyvor/helper-laravel",
-            "version": "0.0.10",
+            "name": "hyvor/internal",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/hyvor/hyvor-helper-laravel.git",
-                "reference": "26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd"
+                "url": "https://github.com/hyvor/hyvor-internal.git",
+                "reference": "656b54c6b34837c5f13c6856de2244468df13229"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-helper-laravel/zipball/26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd",
-                "reference": "26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd",
+                "url": "https://api.github.com/repos/hyvor/hyvor-internal/zipball/656b54c6b34837c5f13c6856de2244468df13229",
+                "reference": "656b54c6b34837c5f13c6856de2244468df13229",
                 "shasum": ""
             },
             "require": {
                 "ext-intl": "*",
                 "guzzlehttp/guzzle": "^7.8",
-                "php": "^8.1|^8.2"
+                "php": "^8.1|^8.2|^8.3"
             },
             "require-dev": {
                 "orchestra/testbench": "^8.0",
@@ -2439,14 +2439,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Hyvor\\Helper\\HelperServiceProvider",
-                        "Hyvor\\Helper\\Internationalization\\InternationalizationServiceProvider"
+                        "Hyvor\\Internal\\InternalServiceProvider",
+                        "Hyvor\\Internal\\Internationalization\\InternationalizationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Hyvor\\Helper\\": "src/"
+                    "Hyvor\\Internal\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2459,12 +2459,12 @@
                     "email": "supun@hyvor.com"
                 }
             ],
-            "description": "Helper Package for HYVOR Applications",
+            "description": "Internal Package for HYVOR Applications",
             "support": {
-                "issues": "https://github.com/hyvor/hyvor-helper-laravel/issues",
-                "source": "https://github.com/hyvor/hyvor-helper-laravel/tree/0.0.10"
+                "issues": "https://github.com/hyvor/hyvor-internal/issues",
+                "source": "https://github.com/hyvor/hyvor-internal/tree/1.0.1"
             },
-            "time": "2024-02-25T09:08:47+00:00"
+            "time": "2024-06-18T11:50:49+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
@@ -2514,63 +2514,6 @@
                 "source": "https://github.com/hyvor/laravel-filterq/tree/1.0.1"
             },
             "time": "2022-04-11T10:21:22+00:00"
-        },
-        {
-            "name": "hyvor/laravel-hyvor-connecter",
-            "version": "1.1.7",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:hyvor/laravel-hyvor-connecter.git",
-                "reference": "a733abd3897cf0dc64c9ad5379b2f76a9996ed60"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/laravel-hyvor-connecter/zipball/a733abd3897cf0dc64c9ad5379b2f76a9996ed60",
-                "reference": "a733abd3897cf0dc64c9ad5379b2f76a9996ed60",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://hyvor.repo.repman.io/dists/%package%/%version%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require-dev": {
-                "orchestra/testbench": "^7.4",
-                "pestphp/pest": "^1.21",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Hyvor\\HyvorConnecter\\HyvorConnecterServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Hyvor\\HyvorConnecter\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Hyvor\\HyvorConnecter\\Tests\\": "tests/"
-                }
-            },
-            "notification-url": "https://hyvor.repo.repman.io/downloads",
-            "authors": [
-                {
-                    "name": "SupunKavinda",
-                    "email": "supun@hyvor.com"
-                }
-            ],
-            "description": "Connecting Hyvor applications to Hyvor auth",
-            "support": {
-                "source": "https://github.com/hyvor/laravel-hyvor-connecter/tree/1.1.7",
-                "issues": "https://github.com/hyvor/laravel-hyvor-connecter/issues"
-            },
-            "time": "2023-01-12T01:35:07+00:00"
         },
         {
             "name": "hyvor/laravel-json-meta",

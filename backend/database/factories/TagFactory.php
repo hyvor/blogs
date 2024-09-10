@@ -19,6 +19,7 @@ class TagFactory extends Factory
     {
         return [
             'blog_id' => config('test.blog_id'),
+            'is_private' => false,
             'slug' => Str::slug(Str::random(25)),
             'posts_count' => 0,
         ];

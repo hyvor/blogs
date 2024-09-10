@@ -23,7 +23,7 @@ jobs:
 
             - name: Set up services
               run: |
-                  docker-compose -f meta/ci/docker-compose.ci.yaml up -d
+                  docker compose -f meta/ci/docker-compose.ci.yaml up -d
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v2

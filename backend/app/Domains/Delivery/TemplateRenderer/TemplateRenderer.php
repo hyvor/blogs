@@ -317,6 +317,11 @@ class TemplateRenderer
         if ($this->matchedRoute->name === 'tag') {
             $model = TagRepository::getTagByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
+            // private pages do not have public pages
+            if ($model?->is_private === true) {
+                return false;
+            }
+
             return $model !== null ? $model : false;
         } elseif ($this->matchedRoute->name === 'author') {
             $model = UserRepository::getUserByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);

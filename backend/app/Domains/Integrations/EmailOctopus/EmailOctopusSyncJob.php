@@ -4,7 +4,7 @@ namespace App\Domains\Integrations\EmailOctopus;
 
 use App\Models\Blog;
 use App\Models\NewsletterSyncedUser;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\AuthUser;
 
 class EmailOctopusSyncJob
 {
@@ -25,7 +25,7 @@ class EmailOctopusSyncJob
             ->pluck('hyvor_user_id')
             ->toArray();
 
-        $users = Userbase::fromIds($userIds, true);
+        $users = AuthUser::fromIds($userIds);
 
         foreach ($users as $user) {
 

@@ -2,18 +2,15 @@
 
 namespace App\Http\ConsoleApi\Controllers;
 
-use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
-use Hyvor\Helper\Http\Middleware\AccessAuthUser;
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ConsoleController
 {

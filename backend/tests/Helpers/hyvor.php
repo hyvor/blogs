@@ -1,8 +1,8 @@
 <?php
 
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 
 function hyvorUser($fill = [])
 {
-    return HyvorUser::dummy($fill);
+    return FakeProvider::fakeLoginUser($fill);
 }

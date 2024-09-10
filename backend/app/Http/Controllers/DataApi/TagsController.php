@@ -55,6 +55,7 @@ class TagsController extends Controller
             'filter' => 'string',
             'sort' => 'string',
             'keys' => 'string',
+            'visibility' => 'in:public,private,any|nullable',
         ]);
 
         $language = Helper::getLanguage(
@@ -68,6 +69,8 @@ class TagsController extends Controller
         $keys = $request->has('keys') ? (string) $request->string('keys') : null;
         $sort = $request->has('sort') ? (string) $request->string('sort') : null;;
         $orderBys = Helper::getSort($sort, self::ALLOWED_SORTS);
+        /** @var 'public' | 'private' | 'any' $visibility */
+        $visibility = $request->input('visibility', 'public');
 
         $data = TagRepository::getTagsWithFilterQ(
             blog: $blog,
@@ -75,6 +78,7 @@ class TagsController extends Controller
             limit: $limit,
             offset: $offset,
             orderBys: $orderBys,
+            visibility: $visibility,
         );
 
         $tags = $data->collection->map(function ($tag) use ($blog, $language) {

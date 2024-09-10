@@ -41,4 +41,7 @@ test('get link type', () => {
     expect(getLinkType('ftp://ftp.example.com/file.zip', baseUrl)).toBe('other');
     expect(getLinkType('data:image/png;base64,iVBORw0KG', baseUrl)).toBe('other');
 
+    // bug #438
+    expect(getLinkType('https://killedbygoogle.com "https://killedbygoogle.com"', baseUrl)).toBe('other');
+
 });

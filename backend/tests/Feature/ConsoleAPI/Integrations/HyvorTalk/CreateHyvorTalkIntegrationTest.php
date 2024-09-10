@@ -23,7 +23,7 @@ it('does not allow creating if already exists', function() {
 it('creates an integration', function() {
 
     Http::fake([
-        'https://talk.hyvor.com/integrations/hyvorblogs/create-website' => Http::response([
+        'https://talk.hyvor.com/api/integrations/hyvor-blogs/create-website' => Http::response([
             'id' => 23
         ])
     ]);

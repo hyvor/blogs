@@ -3,7 +3,7 @@
 namespace App\Domains\App\Marketing\Trial;
 
 use App\Models\Blog;
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
@@ -14,7 +14,7 @@ class TrialEndedMail extends Mailable
 
     public function __construct(
         public Blog $blog,
-        public HyvorUser $user
+        public AuthUser $user
     ) {}
 
     public function envelope() : Envelope

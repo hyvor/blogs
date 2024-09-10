@@ -6,7 +6,7 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail;
 use App\Models\LinkAnalyzerCheck;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tests\Helper\Generator\PostContentGenerator;
@@ -15,7 +15,7 @@ it('job works', function() {
 
     Mail::fake();
 
-    Userbase::fake([
+    FakeProvider::databaseSet([
         ['id' => 12, 'email' => 'test@hyvor.com']
     ]);
 
