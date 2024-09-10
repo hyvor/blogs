@@ -27,9 +27,9 @@ export default class HeadingNodeView implements NodeView {
 			selector.type = 'button';
 			selector.classList.add('heading-selector');
 			selector.textContent = 'H' + level;
-			// selector.addEventListener('mouseover', () => {
-			// 	this.selection = view.state.tr.selection;
-			// });
+			selector.addEventListener('mouseover', () => {
+				this.selection = view.state.tr.selection;
+			});
 			console.log('event adding')
 			selector.addEventListener('click', () => {
 				const { state, dispatch } = view;
@@ -40,10 +40,10 @@ export default class HeadingNodeView implements NodeView {
 				dispatch(tr);
 
 				// Restore selection
-				//const posInNode = this.selection.from;
-				//let mappedPos = view.state.tr.mapping.map(posInNode);
-				//const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
-				//dispatch(view.state.tr.setSelection(newSelection));
+				const posInNode = this.selection.from;
+				let mappedPos = view.state.tr.mapping.map(posInNode);
+				const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
+				dispatch(view.state.tr.setSelection(newSelection));
 				view.focus();
 			});
 
