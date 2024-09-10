@@ -201,16 +201,18 @@
 
         :global(.heading-wrap) {
             position: relative;
-            :global(div) {
+            :global(.heading-details) {
                 position: absolute;
                 bottom:100%;
                 left:0;
                 color: var(--text-light);
                 font-size:12px;
-                margin-bottom: -2px;
+                margin-bottom: 4px;
                 display: flex;
+                flex-direction: row;
                 width:100%;
                 align-items: center;
+
             }
             :global(input) {
                 padding: 0;
@@ -222,16 +224,22 @@
                 display:block;
                 font-family: inherit;
                 font-size: inherit;
+                margin-left: 2px;
+            }
+            :global(.input-wrap) {
+                display: flex;
+                flex: 1;
+                margin-left: 4px;
             }
             :global(+ *) {
-                margin-top: 10px;
+                
             }
         }
 
         :global(.heading-selectors-wrap) {
-            top: -50px;
+           
             display: flex;
-			margin-bottom: 8px;
+		
 			:global(button) {
 				font-size: 10px;
 				background-color: var(--input);

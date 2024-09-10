@@ -19,6 +19,9 @@ export default class HeadingNodeView implements NodeView {
 		this.dom = document.createElement('div');
 		this.dom.classList.add('heading-wrap');
 
+		const headingDetails = document.createElement('div');
+		headingDetails.classList.add('heading-details');	
+
 		// Create headingSelectorsWrap before inputWrap
 		const headingSelectorsWrap = document.createElement('div');
 		headingSelectorsWrap.classList.add('heading-selectors-wrap');
@@ -54,7 +57,14 @@ export default class HeadingNodeView implements NodeView {
 			headingSelectorsWrap.appendChild(selector);
 			return selector;
 		});
-		this.dom.appendChild(headingSelectorsWrap);
+		headingDetails.appendChild(headingSelectorsWrap);
+
+		// Create inputWrap for the input field
+		this.inputWrap = document.createElement("div");
+		this.inputWrap.classList.add("input-wrap");
+		this.inputWrap.contentEditable = "false";
+		headingDetails.appendChild(this.inputWrap);
+		this.dom.appendChild(headingDetails);
 
 		// Create contentDOM
 		this.contentDOM = document.createElement('h' + this.node.attrs.level);
@@ -62,13 +72,9 @@ export default class HeadingNodeView implements NodeView {
 		this.contentDOM.id = id;
 		this.dom.appendChild(this.contentDOM);
 
-		// Create inputWrap for the input field
-		this.inputWrap = document.createElement("div");
-		this.inputWrap.contentEditable = "false";
-		this.dom.appendChild(this.inputWrap);
-
+		
 		const type = document.createElement("span");
-		type.innerHTML = "h" + this.node.attrs.level + "#";
+		type.innerHTML = "#";
 		this.inputWrap.appendChild(type);
 
 		// ID input
@@ -91,6 +97,7 @@ export default class HeadingNodeView implements NodeView {
 		};
 
 		this.inputWrap.appendChild(this.input);
+		
 	}
 
     update(node: ProsemirrorNode) {
