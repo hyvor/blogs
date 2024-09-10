@@ -46,6 +46,33 @@ jobs:
               working-directory: backend
               run: vendor/bin/pest
 
+    static_analysis:
+        name: PHP Static analysis
+        runs-on: ubuntu-22.04
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Configure PHP 8.3
+              uses: shivammathur/setup-php@master
+              with:
+                  php-version: 8.3
+                  extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+                  ini-file: development
+
+            - name: Install dependencies
+              working-directory: backend
+              run: |
+                  # npm ci --ignore-scripts
+                  # npm run build
+                  npm ci
+                  composer install --ansi --no-progress
+
+            - name: Run tests
+              working-directory: backend
+              run: vendor/bin/pest
+
     svelte-check:
         name: "Svelte Check"
         runs-on: ubuntu-latest
