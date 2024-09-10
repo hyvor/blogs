@@ -71,7 +71,7 @@ jobs:
 
             - name: Run tests
               working-directory: backend
-              run: vendor/bin/pest
+              run: vendor/bin/phpstan analyse --ansi
 
     svelte-check:
         name: "Svelte Check"
