@@ -9,9 +9,13 @@ export default class HeadingNodeView implements NodeView {
 	private selection: any;
 	private input: HTMLInputElement;
 	private inputWrap: HTMLDivElement;
-    private anchor: any;
+
+	private node: ProsemirrorNode;
 
 	constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
+
+		this.node = node;
+
 		this.dom = document.createElement('div');
 		this.dom.classList.add('heading-wrap');
 
@@ -23,21 +27,23 @@ export default class HeadingNodeView implements NodeView {
 			selector.type = 'button';
 			selector.classList.add('heading-selector');
 			selector.textContent = 'H' + level;
-			selector.addEventListener('mouseover', () => {
-				this.selection = view.state.tr.selection;
-			});
+			// selector.addEventListener('mouseover', () => {
+			// 	this.selection = view.state.tr.selection;
+			// });
+			console.log('event adding')
 			selector.addEventListener('click', () => {
 				const { state, dispatch } = view;
 				const { tr } = state;
 
-				tr.setNodeMarkup(getPos()!, null, { ...node.attrs, level });
+				console.log(this.node.attrs);
+				tr.setNodeMarkup(getPos()!, null, { ...this.node.attrs, level });
 				dispatch(tr);
 
 				// Restore selection
-				const posInNode = this.selection.from;
-				let mappedPos = view.state.tr.mapping.map(posInNode);
-				const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
-				dispatch(view.state.tr.setSelection(newSelection));
+				//const posInNode = this.selection.from;
+				//let mappedPos = view.state.tr.mapping.map(posInNode);
+				//const newSelection = this.selection.constructor.create(view.state.tr.doc, mappedPos);
+				//dispatch(view.state.tr.setSelection(newSelection));
 				view.focus();
 			});
 
@@ -51,8 +57,8 @@ export default class HeadingNodeView implements NodeView {
 		this.dom.appendChild(headingSelectorsWrap);
 
 		// Create contentDOM
-		this.contentDOM = document.createElement('h' + node.attrs.level);
-		const id = node.attrs.id || "";
+		this.contentDOM = document.createElement('h' + this.node.attrs.level);
+		const id = this.node.attrs.id || "";
 		this.contentDOM.id = id;
 		this.dom.appendChild(this.contentDOM);
 
@@ -62,14 +68,14 @@ export default class HeadingNodeView implements NodeView {
 		this.dom.appendChild(this.inputWrap);
 
 		const type = document.createElement("span");
-		type.innerHTML = "h" + node.attrs.level + "#";
+		type.innerHTML = "h" + this.node.attrs.level + "#";
 		this.inputWrap.appendChild(type);
 
 		// ID input
 		this.input = document.createElement("input");
 		this.input.value = id;
 
-		this.input.oninput = function (e) {
+		this.input.oninput = (e) => {
 			const pos = getPos();
 
 			if (pos === undefined)
@@ -79,7 +85,7 @@ export default class HeadingNodeView implements NodeView {
 				view.state.tr.setNodeMarkup(
 					pos,
 					null,
-					{ ...node.attrs, id: (e.target as HTMLInputElement).value }
+					{ ...this.node.attrs, id: (e.target as HTMLInputElement).value }
 				)
 			);
 		};
@@ -88,10 +94,18 @@ export default class HeadingNodeView implements NodeView {
 	}
 
     update(node: ProsemirrorNode) {
-        if (node.type.name === 'heading' && node.attrs.level === this.contentDOM.tagName[1]) {
-            this.contentDOM.id = node.attrs.id;
+
+		if (node.type.name !== 'heading') {
+			return false;
+		}
+
+		this.node = node;
+
+        if (Number(node.attrs.level) === Number(this.contentDOM.tagName[1])) {
+            // changing ID
+			
+			this.contentDOM.id = node.attrs.id;
             this.input.value = node.attrs.id;
-            
             return true;
         }
 
