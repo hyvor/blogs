@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, IconButton, TextInput, Tooltip, confirm, toast } from "@hyvor/design/components";
+	import { Button, IconButton, Loader, TextInput, Tooltip, confirm, toast } from "@hyvor/design/components";
 	import type { EditorView } from "prosemirror-view";
 	import { NodeSelection } from "prosemirror-state";
 	import schema from "../../../../../../../lib/prosemirror/schema";
@@ -49,6 +49,7 @@
         }
 
         const file = files[0];
+        loading = true;
         handleFileUpload(file!);
     }
 
@@ -56,6 +57,7 @@
 
         if (file.size > 50 * 1000 * 1000) {
             toast.error("Max size is 50MB");
+            deleteNodeAudio();
             return;
         }
 
@@ -67,17 +69,18 @@
         ];
         if (!validTypes.includes(file.type)) {
             toast.error('Only mp3, ogg, wav and webm files are allowed');
+            deleteNodeAudio();
             return;
         }
 
         var formData = new FormData();
         formData.append('file', file, file.name);
         try {
-            // TODO: Add loading state
 
             const media = await uploadMedia(file);
-            loading = false;
-            //console.log(media);
+            console.log(media);
+            if (media)
+                loading = false;
             // Replace the node with the new one
             const { tr } = view.state;
             const pos = getPos();
@@ -91,15 +94,10 @@
             view.dispatch(tr);
 
         } catch (e) {
-            console.error(e);
             toast.error('Error uploading file');
+
             // Delete the node if the upload fails
-            const { tr } = view.state;
-            const pos = getPos();
-            if (pos === undefined)
-                return;
-            tr.delete(pos, pos + 1);
-            view.dispatch(tr);
+            deleteNodeAudio();
         }
     }
 
@@ -110,13 +108,17 @@
             confirmText: 'Yes, remove it',
             danger: true,
         })) {
-            const { tr } = view.state;
-            const pos = getPos();
-            if (pos === undefined)
-                return;
-            tr.delete(pos, pos + 1);
-            view.dispatch(tr);
+            deleteNodeAudio();
         }
+    }
+
+    function deleteNodeAudio() {
+        const { tr } = view.state;
+        const pos = getPos();
+        if (pos === undefined)
+            return;
+        tr.delete(pos, pos + 1);
+        view.dispatch(tr);
     }
 
     function handleChangeClick() {
@@ -131,85 +133,68 @@
 
 </script>
 
-<div class="image-node-wrap">
-    <div class="top">
-        <div class="right">
-            <div>
-                <Tooltip text="Change audio">
-                    <IconButton 
-                        size="small" 
-                        color="input"
-                        on:click={handleChangeClick}
-                    >
-                        <IconPencil size={12} />
-                    </IconButton>
-                </Tooltip>
+<div class="audio-wrap">
+    <div class="audio-actions">
+        <Tooltip text="Change audio">
+            <IconButton 
+                size="small" 
+                color="input"
+                on:click={handleChangeClick}
+            >
+                <IconPencil size={12} />
+            </IconButton>
+        </Tooltip>
 
-                <Tooltip text="Remove audio">
-                    <IconButton 
-                        size="small" 
-                        color="input"
-                        on:click={handleDelete}
-                    >
-                        <IconTrash size={12} />
-                    </IconButton>
-                </Tooltip>
-            </div>
-        </div>
+        <Tooltip text="Remove audio">
+            <IconButton 
+                size="small" 
+                color="input"
+                on:click={handleDelete}
+                
+            >
+                <IconTrash size={12} />
+            </IconButton>
+        </Tooltip>
     </div>
-    <div class="audio-wrap">
-        {#if src}
-            <audio
-                src={src}
-                bind:this={audioEl}
-                controls
-            />
+    <div>
+        {#if loading}
+            <p><Loader /></p>
         {:else}
-            <p>No audio selected.</p>
+            {#if src}
+                <audio
+                    src={src}
+                    bind:this={audioEl}
+                    controls
+                />
+            {:else}
+                <p>No audio selected.</p>
+            {/if}
         {/if}
         <input
             type="file"
             accept="audio/*"
             bind:this={fileInputEl}
             on:change={() => handleFiles(fileInputEl.files)}
-            style="display: none;"
+            class="audio-input"
         />
     </div>
 </div>
 
 <style>
-    .image-node-wrap {
-        background-color: #fafafa;
-        border-radius: 20px;
-        display: flex;
-        flex-direction: column;
+    .audio-wrap {
+    display: flex;
+    flex-direction: column;
     }
-    .top {
-        border-bottom: 1px solid #eee;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+    .audio-input {
+        display: none;
     }
-    .left {
-        flex: 1;
-    }
-    .right {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .img-wrap {
-        padding: 15px;
-    }
-    .range-wrap {
-        display: inline-flex;
-        align-items: center;
+    .audio-actions {
         position: relative;
+        align-self: flex-end;
+        margin-bottom: 5px;
     }
-    .size {
-        font-size: 10px;
-        color: var(--text-light);
-        margin-right: 5px;
+    audio {
+        width: 100%;
     }
+
 </style>

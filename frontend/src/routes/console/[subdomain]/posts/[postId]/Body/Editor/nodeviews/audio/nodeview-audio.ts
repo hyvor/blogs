@@ -19,7 +19,6 @@ export default class AudioView implements NodeView {
         this.getPos = getPos;
 
         this.dom = document.createElement('div');
-        this.dom.className = 'image-wrap';
 
         this.component = new AudioNodeView({
             target: this.dom,
@@ -31,9 +30,6 @@ export default class AudioView implements NodeView {
     private getPropsFromNode(node: Node) {
         return {
             src: node.attrs.src,
-            alt: node.attrs.alt,
-            width: node.attrs.width,
-            height: node.attrs.height,
             getPos: this.getPos,
             view: this.view,
         }
@@ -49,9 +45,6 @@ export default class AudioView implements NodeView {
 
 
     stopEvent(e: Event) {
-        /*if (e.target instanceof HTMLElement && e.target.closest('.image-node-wrap .top')) {
-            return true;
-        }*/
         return false;
     }
 
