@@ -19,6 +19,7 @@
 	import { onMount } from 'svelte';
 	import Newsletter from './Newsletter/Newsletter.svelte';
 	import Comments from './Comments/Comments.svelte';
+	import Memberships from './Memberships/Memberships.svelte';
 
 	let isLoading = true;
 	let data: HyvorTalkIntegrationData;
@@ -122,6 +123,7 @@
 					<div slot="nested">
 						<Comments websiteId={data.data.website_id} />
 						<Newsletter websiteId={data.data.website_id} />
+						<Memberships websiteId={data.data.website_id} />
 					</div>
 				</SplitControl>
 			</div>
