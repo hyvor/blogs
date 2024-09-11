@@ -6,34 +6,26 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\HyvorTalkWebsite;
 use Hyvor\Internal\InternalApi\ComponentType;
-use Illuminate\Support\Facades\Http;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
+use Hyvor\Internal\InternalApi\InternalApi;
 
 class HyvorTalkService
 {
 
     /**
+     * @param 'create-website'|'set-domains' $endpoint
      * @param array<string, mixed> $data
      * @return array<mixed>
+     * @throws InternalApiCallFailedException
      */
     private static function callApi(string $endpoint, array $data)
     {
-
-        $endpoint = ltrim($endpoint, '/');
-        // $hyvorTalkUrl = ComponentType::fromConfig()->getUrlOf(ComponentType::TALK);
-        $hyvorTalkUrl = 'https://talk.hyvor.com';
-        $url = $hyvorTalkUrl . '/api/integrations/hyvor-blogs/' . $endpoint;
-
-        $response = Http::withHeaders([
-            'X-Api-Key' => strval(config('services.hyvor_talk.api_key'))
-        ])->post($url, $data);
-        $json = $response->json();
-
-        if (!$response->successful()) {
-            $error = is_array($json) ? $json['error'] ?? null : null;
-            throw new HyvorTalkApiException('Hyvor Talk API error: ' . $error);
-        }
-
-        return (array) $json;
+        return InternalApi::call(
+            ComponentType::TALK,
+            'POST',
+            '/blogs/integration/' . $endpoint,
+            $data,
+        );
     }
 
     public static function getHyvorTalkWebsite(Blog $blog): ?HyvorTalkWebsite

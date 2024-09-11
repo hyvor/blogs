@@ -3,7 +3,6 @@
 		Button,
 		ButtonGroup,
 		Callout,
-		CodeBlock,
 		Link,
 		Loader,
 		Modal,
@@ -18,17 +17,14 @@
 		deleteHyvorTalkIntegration
 	} from './hyvorTalkActions';
 	import { onMount } from 'svelte';
-	import { blogStore } from '../../../lib/stores/blogStore';
-	import AddCommentsEmbedCode from './AddCommentsEmbedCode.svelte';
-	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import Newsletter from './Newsletter/Newsletter.svelte';
+	import Comments from './Comments/Comments.svelte';
 
 	let isLoading = true;
 	let data: HyvorTalkIntegrationData;
 
 	let isConnecting = false;
 	let isDisconnecting = false;
-
-	let addingCommentsEmbedCode = false;
 
 	function handleConnect() {
 		isConnecting = false;
@@ -57,23 +53,6 @@
 				toast.success('Hyvor Talk disconnected successfully', { id: toastId });
 			})
 			.catch((_) => toast.error('Failed to disconnect from Hyvor Talk', { id: toastId }));
-	}
-
-	$: embedCode =
-		data && data.connected
-			? `<` +
-				`script async src="https://talk.hyvor.com/embed/embed.js" type="module"></` +
-				`script>
-<hyvor-talk-comments 
-    website-id="${data.data.website_id}" 
-    page-id="{{ _post.id }}"
-    page-url="{{ _post.url }}"
-></hyvor-talk-comments>`
-			: '';
-
-	async function handleCopy() {
-		await navigator.clipboard.writeText(embedCode);
-		toast.success('Copied to clipboard');
 	}
 
 	onMount(() => {
@@ -141,58 +120,8 @@
 			<div class="embed-code">
 				<SplitControl label="Embed Codes">
 					<div slot="nested">
-						<SplitControl label="Comments" column>
-							<p style="margin-top:0;">
-								Add the comments code to <Link
-									style="display:inline;"
-									underline
-									href={consoleUrlWithBlog('/settings/comments')}>Comments Embed Code</Link
-								> setting to load the Hyvor Talk comments on all posts.
-							</p>
-
-							<CodeBlock code={embedCode} />
-
-							<div>
-								<Button size="small" on:click={() => (addingCommentsEmbedCode = true)}>
-									Add to "Comments Embed Code"
-								</Button>
-
-								<Button size="small" on:click={handleCopy}>Copy code</Button>
-							</div>
-
-							<p>
-								You can also add it directly into your theme files. Feel free to customize the code
-								(see <Link underline href="https://talk.hyvor.com/docs/install" target="_blank"
-									>Hyvor Talk docs</Link
-								>).
-							</p>
-						</SplitControl>
-						<SplitControl label="Newsletter" column>
-							<p style="margin-top:0;">
-								Add the newsletter code to <Link
-									style="display:inline;"
-									underline
-									href={consoleUrlWithBlog('/settings/comments')}>Newsletter Signup Form Code</Link
-								> setting to load the Hyvor Talk newsletter form on all posts.
-							</p>
-
-							<CodeBlock code={embedCode} />
-
-							<div>
-								<Button size="small" on:click={() => (addingCommentsEmbedCode = true)}>
-									Add to "Newsletter Signup Form Code"
-								</Button>
-
-								<Button size="small" on:click={handleCopy}>Copy code</Button>
-							</div>
-
-							<p>
-								You can also add it directly into your theme files. Feel free to customize the code
-								(see <Link underline href="https://talk.hyvor.com/docs/install" target="_blank"
-									>Hyvor Talk docs</Link
-								>).
-							</p>
-						</SplitControl>
+						<Comments websiteId={data.data.website_id} />
+						<Newsletter websiteId={data.data.website_id} />
 					</div>
 				</SplitControl>
 			</div>
@@ -239,10 +168,6 @@
 			</ButtonGroup>
 		</svelte:fragment>
 	</Modal>
-{/if}
-
-{#if addingCommentsEmbedCode}
-	<AddCommentsEmbedCode bind:open={addingCommentsEmbedCode} code={embedCode} />
 {/if}
 
 <style>

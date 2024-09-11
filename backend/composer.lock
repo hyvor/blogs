@@ -2413,16 +2413,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "1.0.1",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/hyvor-internal.git",
-                "reference": "656b54c6b34837c5f13c6856de2244468df13229"
+                "reference": "9de14efb31aeaf87d23922a8904b41f6cb551e64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-internal/zipball/656b54c6b34837c5f13c6856de2244468df13229",
-                "reference": "656b54c6b34837c5f13c6856de2244468df13229",
+                "url": "https://api.github.com/repos/hyvor/hyvor-internal/zipball/9de14efb31aeaf87d23922a8904b41f6cb551e64",
+                "reference": "9de14efb31aeaf87d23922a8904b41f6cb551e64",
                 "shasum": ""
             },
             "require": {
@@ -2462,9 +2462,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/hyvor-internal/issues",
-                "source": "https://github.com/hyvor/hyvor-internal/tree/1.0.1"
+                "source": "https://github.com/hyvor/hyvor-internal/tree/1.1.3"
             },
-            "time": "2024-06-18T11:50:49+00:00"
+            "time": "2024-08-05T12:22:55+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
