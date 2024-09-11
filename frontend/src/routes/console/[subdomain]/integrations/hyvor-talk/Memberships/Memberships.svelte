@@ -23,7 +23,7 @@
 <SplitControl column>
 	<Label slot="label">
 		Memberships <ConfiguredTag
-			configured={$blogStore.code_head?.includes('<hyvor-talk-memberships') || false}
+			configured={$blogStore.code_foot?.includes('<hyvor-talk-memberships') || false}
 		/>
 	</Label>
 
@@ -33,14 +33,14 @@
 		>
 			Hyvor Talk Console
 		</Link>, add the following code to <Link href={consoleUrlWithBlog('/settings/code')}>
-			Head Code
+			Foot Code
 		</Link> setting to load Hyvor Talk Memberships on all pages.
 	</p>
 
 	<CodeBlock {code} />
 
 	<div>
-		<Button size="small" on:click={() => (adding = true)}>Append to "Head Code"</Button>
+		<Button size="small" on:click={() => (adding = true)}>Append to "Foot Code"</Button>
 		<Button size="small" color="input" on:click={handleCopy}>Copy code</Button>
 	</div>
 </SplitControl>
