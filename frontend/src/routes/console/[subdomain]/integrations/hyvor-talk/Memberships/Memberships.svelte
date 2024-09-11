@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Button, CodeBlock, Link, SplitControl } from '@hyvor/design/components';
+	import { Button, CodeBlock, Label, Link, SplitControl } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import AddMembershipsCode from './AddMembershipsCode.svelte';
+	import ConfiguredTag from '../ConfiguredTag.svelte';
+	import { blogStore } from '../../../../lib/stores/blogStore';
 
 	export let websiteId: number;
 
@@ -18,7 +20,13 @@
 	}
 </script>
 
-<SplitControl label="Memberships" column>
+<SplitControl column>
+	<Label slot="label">
+		Memberships <ConfiguredTag
+			configured={$blogStore.code_head?.includes('<hyvor-talk-memberships') || false}
+		/>
+	</Label>
+
 	<p style="margin-top:0;">
 		After setting up Memberships in the <Link
 			href={'https://talk.hyvor.com/console/' + websiteId + '/settings/memberships'}

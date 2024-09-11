@@ -180,4 +180,8 @@
 	.embed-code :global(.split-control .right) {
 		min-width: 0;
 	}
+
+	.embed-code {
+		margin-bottom: 20px;
+	}
 </style>

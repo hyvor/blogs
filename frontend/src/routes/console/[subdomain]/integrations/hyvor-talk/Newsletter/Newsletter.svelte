@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Button, CodeBlock, Link, SplitControl } from '@hyvor/design/components';
+	import { Button, CodeBlock, Label, Link, SplitControl } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import AddNewsletterCode from './AddNewsletterCode.svelte';
+	import ConfiguredTag from '../ConfiguredTag.svelte';
+	import { blogStore } from '../../../../lib/stores/blogStore';
 
 	export let websiteId: number;
 
@@ -18,7 +20,13 @@
 	}
 </script>
 
-<SplitControl label="Newsletter" column>
+<SplitControl column>
+	<Label slot="label">
+		Newsletter <ConfiguredTag
+			configured={$blogStore.newsletter_code?.includes('<hyvor-talk-newsletter') || false}
+		/>
+	</Label>
+
 	<p style="margin-top:0;">
 		Add the newsletter code to <Link
 			style="display:inline;"

@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Button, CodeBlock, Link, SplitControl } from '@hyvor/design/components';
+	import { Button, CodeBlock, Label, Link, SplitControl } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import AddCommentsEmbedCode from './AddCommentsEmbedCode.svelte';
+	import ConfiguredTag from '../ConfiguredTag.svelte';
+	import { blogStore } from '../../../../lib/stores/blogStore';
 
 	export let websiteId: number;
 
@@ -22,7 +24,13 @@
 	}
 </script>
 
-<SplitControl label="Comments" column>
+<SplitControl column>
+	<Label slot="label">
+		Comments <ConfiguredTag
+			configured={$blogStore.comments_code?.includes('<hyvor-talk-comments') || false}
+		/>
+	</Label>
+
 	<p style="margin-top:0;">
 		Add the comments code to <Link
 			style="display:inline;"
