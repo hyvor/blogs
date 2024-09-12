@@ -284,6 +284,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
             Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
             Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
+            Route::get('/hyvor-talk/gated-content-rules', [IntegrationHyvorTalkController::class, 'getGatedContentRules']);
+            Route::post('/hyvor-talk/gated-content-rule', [IntegrationHyvorTalkController::class, 'createGatedContentRule']);
+            Route::patch('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'updateGatedContentRule']);
+            Route::delete('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']);
 
         });
 

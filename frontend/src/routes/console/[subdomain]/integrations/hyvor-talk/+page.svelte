@@ -20,6 +20,7 @@
 	import Newsletter from './Newsletter/Newsletter.svelte';
 	import Comments from './Comments/Comments.svelte';
 	import Memberships from './Memberships/Memberships.svelte';
+	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
 
 	let isLoading = true;
 	let data: HyvorTalkIntegrationData;
@@ -127,6 +128,7 @@
 					</div>
 				</SplitControl>
 			</div>
+			<GatedContentRules />
 		{/if}
 	{/if}
 </UpgradeRequired>

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\ConsoleAPI\Integrations;
 
+use App\Data\Objects\ConsoleAPI\Integration\HyvorTalk\GatedContentRuleObject;
 use App\Data\Objects\ConsoleAPI\Integration\HyvorTalk\HyvorTalkIntegrationObject;
+use App\Domains\Integrations\HyvorTalk\HyvorTalkGatedContentService;
 use App\Domains\Integrations\HyvorTalk\HyvorTalkService;
+use App\Domains\Tag\TagRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
-use App\Models\HyvorTalkWebsite;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class IntegrationHyvorTalkController
 {
@@ -58,6 +61,55 @@ class IntegrationHyvorTalkController
         HyvorTalkService::deleteHyvorTalkWebsite($hyvorTalkWebsite);
 
         return response()->json();
+    }
+
+    public function getGatedContentRules(Blog $blog) : JsonResponse
+    {
+
+        $rules = HyvorTalkGatedContentService::getGatedContentRules($blog, withTag: true)
+            ->map(fn($rule) => new GatedContentRuleObject($rule, $blog));
+
+        return response()->json($rules);
+
+    }
+
+    public function createGatedContentRule(Blog $blog, Request $request) : JsonResponse
+    {
+
+        $request->validate([
+            'tag_id' => 'integer|nullable',
+            'new_tag_name' => 'string|nullable',
+            'minimum_plan' => 'string',
+            'gate' => 'string|nullable'
+        ]);
+
+        if (
+            HyvorTalkGatedContentService::getGatedContentRulesCount($blog) >=
+            HyvorTalkGatedContentService::MAX_GATED_CONTENT_RULES
+        ) {
+            throw new TrustedException('Maximum number of gated content rules reached');
+        }
+
+        /** @var ?int $tagId */
+        $tagId = $request->input('tag_id');
+        /** @var bool $createTag */
+        $newTagName = $request->input('new_tag_name');
+        $minimumPlan = (string) $request->string('minimum_plan');
+        /** @var ?string $gate */
+        $gate = $request->input('gate');
+
+        if ($newTagName) {
+            $tagId = TagRepository::createTag($blog, $newTagName)->id;
+        }
+
+        $rule = HyvorTalkGatedContentService::createGatedContentRule(
+            $blog,
+            $tagId,
+            $minimumPlan,
+            $gate
+        );
+
+        return response()->json(new GatedContentRuleObject($rule, $blog));
     }
 
 }
