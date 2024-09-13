@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Twig;
 
+use App\Exceptions\TrustedException;
 use Illuminate\Support\Facades\App;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
@@ -12,12 +13,21 @@ use Twig\Loader\ArrayLoader;
 
 class TwigRenderer
 {
-    public static function renderFile(string $file, array $vars)
+    /**
+     * @param string[] $vars
+     */
+    public static function renderFile(string $file, array $vars) : string
     {
+        if (!file_get_contents($file)) {
+            throw new TrustedException('Error in fetching file content');
+        }
         return self::renderString(file_get_contents($file), $vars);
     }
 
-    public static function renderString(string $string, array $vars)
+    /**
+     * @param string[] $vars
+     */
+    public static function renderString(string $string, array $vars) : string
     {
         $fakeFileName = 'index.twig';
 
@@ -30,7 +40,11 @@ class TwigRenderer
         return $twig->render($fakeFileName, $vars);
     }
 
-    public static function renderFromFiles(array $files, array $vars, string $fileName)
+    /**
+     * @param string[] $files
+     * @param string[] $vars
+     */
+    public static function renderFromFiles(array $files, array $vars, string $fileName) : string
     {
         $loader = new ArrayLoader($files);
 
@@ -39,7 +53,7 @@ class TwigRenderer
         return $twig->render($fileName, $vars);
     }
 
-    private static function getEnvironment(ArrayLoader $loader)
+    private static function getEnvironment(ArrayLoader $loader) : Environment
     {
         $isLocal = App::environment('local') || App::environment('testing');
 

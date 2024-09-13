@@ -18,12 +18,17 @@ class WebhookDeliveryJob implements ShouldQueue
     {
     }
 
-    public function handle()
+    public function handle() : void
     {
         WebhookDeliveryService::deliver($this->delivery);
     }
 
-    public function backoff()
+    /**
+     * Summary of backoff
+    * @return int[]
+
+     */
+    public function backoff() : array
     {
         return [
             // 1 minute
@@ -35,7 +40,7 @@ class WebhookDeliveryJob implements ShouldQueue
         ];
     }
 
-    public function failed(Throwable $e)
+    public function failed(Throwable $e) : void
     {
         WebhookDeliveryService::fail($this->delivery);
     }

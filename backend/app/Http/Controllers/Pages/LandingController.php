@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pages;
 
 use App\Domains\Theme\ThemeRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class LandingController 
 {
@@ -31,7 +32,7 @@ class LandingController
     public function for(Request $request) : mixed
     {
 
-        $type = strval($request->route('type'));
+        $type = is_string($request->route('type')) ? strval($request->route('type')) : '';
 
         if (!array_key_exists($type, self::FOR)) {
             return abort(404);
@@ -45,7 +46,7 @@ class LandingController
     }
 
 
-    public function sitemap() 
+    public function sitemap() : Response
     {
 
         $slugs = [

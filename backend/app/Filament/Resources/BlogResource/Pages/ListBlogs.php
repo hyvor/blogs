@@ -11,6 +11,9 @@ class ListBlogs extends ListRecords
 {
     protected static string $resource = BlogResource::class;
 
+    /**
+     * @return Actions\Action[]
+     */
     protected function getActions(): array
     {
         return [
@@ -23,6 +26,9 @@ class ListBlogs extends ListRecords
         return null;
     }
 
+    /**
+     * @return array<int, int>
+     */
     protected function getTableRecordsPerPageSelectOptions(): array
     {
         return [100, 200];

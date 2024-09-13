@@ -13,11 +13,10 @@ class Export extends Model
     use HasFactory;
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     protected $casts = [
         'status' => JobStatusEnum::class,
         'format' => ExportFormatEnum::class,
     ];
-
 }

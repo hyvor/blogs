@@ -14,6 +14,9 @@ use Illuminate\Support\Collection;
 
 class NavigationRepository
 {
+    /**
+     * @return Collection<int, Navigation>
+     */
     public static function getNavigations(Blog $blog): Collection
     {
         return $blog->navigations()->get();
@@ -61,7 +64,7 @@ class NavigationRepository
         return $navigation;
     }
 
-    public static function deleteNavigation(Navigation $navigation)
+    public static function deleteNavigation(Navigation $navigation) : void
     {
         $navigation->variants->map(fn ($variant) => self::deleteNavigationVariant($variant));
         $navigation->delete();
@@ -102,7 +105,7 @@ class NavigationRepository
         return $variant;
     }
 
-    public static function deleteNavigationVariant(NavigationVariant $variant)
+    public static function deleteNavigationVariant(NavigationVariant $variant) : void
     {
         $variant->delete();
         NavigationVariantChangedEvent::dispatch($variant);
@@ -115,7 +118,10 @@ class NavigationRepository
             ->count();
     }
 
-    public static function updateSort(Blog $blog, array $navIds)
+    /**
+     * @param int[] $navIds
+     */
+    public static function updateSort(Blog $blog, array $navIds) : void
     {
         $i = 1;
         foreach ($navIds as $navId) {

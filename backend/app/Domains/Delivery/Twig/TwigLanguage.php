@@ -9,9 +9,14 @@ use App\Models\Blog;
 use App\Models\Language;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
+use Illuminate\Support\Collection;
+use App\Models\ThemeFile;
 
 class TwigLanguage
 {
+    /**
+     * @var string[]
+     */
     private array $languageStrings;
 
     public function __construct(Blog $blog, Language $language)
@@ -37,8 +42,10 @@ class TwigLanguage
          * Missing language strings will be filled with the fallback or English
          */
 
-        // set strings to default (en)
-        $this->setStrings($files[$defaultFileName]);
+        if ($files[$defaultFileName]) {
+            // set strings to default (en)
+            $this->setStrings($files[$defaultFileName]);
+        }
 
         // then extend with fallback
 //        if (isset($files[$fallbackFileName]) && $fallbackFileName !== $defaultFileName) {
@@ -51,28 +58,38 @@ class TwigLanguage
         }
     }
 
-    private function setStrings($file)
+    private function setStrings(ThemeFile $file) : void
     {
-        $this->languageStrings = $this->parseYaml($file->content) ?? [];
-    }
-
-    private function extendStrings($file)
-    {
-        $newStrings = $this->parseYaml($file->content);
-
-        foreach ($this->languageStrings as $key => &$value) {
-            if (isset($newStrings[$key])) {
-                $value = $newStrings[$key];
-            }
+        if ($file->content) {
+            $this->languageStrings = $this->parseYaml($file->content);            
         }
     }
 
-    private function parseYaml(string $content)
+    private function extendStrings(ThemeFile $file) : void
+    {
+        if ($file->content) {
+            $newStrings = $this->parseYaml($file->content);
+
+            foreach ($this->languageStrings as $key => &$value) {
+                if (isset($newStrings[$key])) {
+                    $value = $newStrings[$key];
+                }
+            }   
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function parseYaml(string $content) : array
     {
         return Yaml::parse($content);
     }
 
-    public function get($key, $args)
+    /**
+     * @param string[] $args
+     */
+    public function get(string $key, array $args) : ?string
     {
         $val = $this->languageStrings[$key] ?? '';
 
