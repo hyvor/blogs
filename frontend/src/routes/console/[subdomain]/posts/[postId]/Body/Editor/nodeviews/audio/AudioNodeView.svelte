@@ -5,8 +5,6 @@
 	import schema from "../../../../../../../lib/prosemirror/schema";
 	import { IconPencil, IconTrash } from "@hyvor/icons";
 	import { onMount } from "svelte";
-	import { getConfig } from "../../../../../../../lib/config";
-	import byteFormatter from "../../../../../../../lib/helper/byte-formatter";
 	import { uploadMedia } from "../../../../../../tools/media/mediaActions";
 
     export let src: string | null;
@@ -76,9 +74,7 @@
         var formData = new FormData();
         formData.append('file', file, file.name);
         try {
-
             const media = await uploadMedia(file);
-            console.log(media);
             if (media)
                 loading = false;
             // Replace the node with the new one
@@ -133,43 +129,48 @@
 
 </script>
 
-<div class="audio-wrap">
-    <div class="audio-actions">
-        <Tooltip text="Change audio">
-            <IconButton 
-                size="small" 
-                color="input"
-                on:click={handleChangeClick}
-            >
-                <IconPencil size={12} />
-            </IconButton>
-        </Tooltip>
 
-        <Tooltip text="Remove audio">
-            <IconButton 
-                size="small" 
-                color="input"
-                on:click={handleDelete}
-                
-            >
-                <IconTrash size={12} />
-            </IconButton>
-        </Tooltip>
-    </div>
-    <div>
-        {#if loading}
-            <p><Loader /></p>
-        {:else}
-            {#if src}
-                <audio
-                    src={src}
-                    bind:this={audioEl}
-                    controls
-                />
-            {:else}
-                <p>No audio selected.</p>
-            {/if}
-        {/if}
+<div class="audio-wrap">
+    {#if src}
+        <div class="audio-actions">
+            <Tooltip text="Change audio">
+                <IconButton 
+                    size="small" 
+                    color="input"
+                    on:click={handleChangeClick}
+                >
+                    <IconPencil size={12} />
+                </IconButton>
+            </Tooltip>
+
+            <Tooltip text="Remove audio">
+                <IconButton 
+                    size="small" 
+                    color="input"
+                    on:click={handleDelete}
+                    
+                >
+                    <IconTrash size={12} />
+                </IconButton>
+            </Tooltip>
+        </div>
+            <div>
+                {#if loading}
+                    <p><Loader /></p>
+                {:else}
+                    {#if src}
+                        <audio
+                            src={src}
+                            bind:this={audioEl}
+                            controls
+                        />
+                    {:else}
+                        <p>No audio selected.</p>
+                    {/if}
+                {/if}
+            
+        </div>
+    {/if}
         <input
             type="file"
             accept="audio/*"
@@ -177,7 +178,6 @@
             on:change={() => handleFiles(fileInputEl.files)}
             class="audio-input"
         />
-    </div>
 </div>
 
 <style>
