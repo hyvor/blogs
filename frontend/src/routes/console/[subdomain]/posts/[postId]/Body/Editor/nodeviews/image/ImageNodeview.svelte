@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, IconButton, TextInput, Tooltip, confirm } from "@hyvor/design/components";
-	import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
-	import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
+	import ImageUploader from "../../../../../../../lib/components/FileUploader/ImageUploader.svelte";
+	import type { SelectedImage } from "../../../../../../../lib/components/FileUploader/image-uploader";
 	import type { EditorView } from "prosemirror-view";
 	import { NodeSelection } from "prosemirror-state";
 	import schema from "../../../../../../../lib/prosemirror/schema";

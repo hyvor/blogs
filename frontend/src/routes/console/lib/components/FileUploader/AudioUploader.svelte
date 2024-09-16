@@ -1,34 +1,31 @@
 <script lang="ts">
-	import type { SelectedImage as SelectedImageType } from './image-uploader.ts';
+	import type { SelectedAudio as SelectedAudioType } from './image-uploader.js';
 	import { Button, Modal, TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconCardImage, IconCaretLeft, IconCloudUpload } from "@hyvor/icons";
-	import TabUpload from "./TabUpload.svelte";
-	import SelectedImage from "./PreviewSelected/SelectedImage.svelte";
-	import ExcalidrawIcon from "./Excalidraw/ExcalidrawIcon.svelte";
-	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
-	import Unsplash from "./Unsplash/Unsplash.svelte";
 	import Media from "./Media/Media.svelte";
 	import { createEventDispatcher } from "svelte";
+	import TabUploadAudio from './TabUploadAudio.svelte';
+	import SelectedAudio from './PreviewSelected/SelectedAudio.svelte';
     
     let tab = 'upload';
 
     export let show = true;
-    let backImage: null | SelectedImageType = null;
-    let selectedImage: null | SelectedImageType = null;
+    let backAudio: null | SelectedAudioType = null;
+    let selectedAudio: null | SelectedAudioType = null;
 
-    function handleSelect(e: CustomEvent<SelectedImageType>) {
-        selectedImage = e.detail;
-        backImage = null;
+    function handleSelect(e: CustomEvent<SelectedAudioType>) {
+        selectedAudio = e.detail;
+        backAudio = null;
     }
 
     function handleBack() {
-        backImage = selectedImage;
-        selectedImage = null;
+        backAudio = selectedAudio;
+        selectedAudio = null;
     }
 
 
     const dispatch = createEventDispatcher<{
-        select: SelectedImageType,
+        select: SelectedAudioType,
         close: undefined
     }>();
 
@@ -37,7 +34,7 @@
     }
 
 
-    function handleFinish(e: CustomEvent<SelectedImageType>) {
+    function handleFinish(e: CustomEvent<SelectedAudioType>) {
         dispatch('select', e.detail);
         show = false;
     }
@@ -54,8 +51,7 @@
 
         <div slot="title">
 
-            {#if selectedImage}
-
+            {#if selectedAudio}
                 <Button 
                     on:click={handleBack}
                     color="input"
@@ -75,22 +71,7 @@
                         <IconCardImage slot="start" />
                         Media Library
                     </TabNavItem>
-                    <TabNavItem name="unsplash">
-                        <svg 
-                            role="img" 
-                            width="1em" 
-                            height="1em" 
-                            fill="currentColor" 
-                            viewBox="0 0 24 24" 
-                            xmlns="http://www.w3.org/2000/svg"
-                            slot="start"
-                        ><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"/></svg>
-                        Unsplash
-                    </TabNavItem>
-                    <TabNavItem name="excalidraw">
-                        <ExcalidrawIcon slot="start" />
-                        Excalidraw
-                    </TabNavItem>
+                    
                 </TabNav>
 
             {/if}
@@ -100,22 +81,18 @@
 
         <div 
             class="body"
-            style:position={selectedImage ? 'relative' : undefined}
+            style:position={selectedAudio ? 'relative' : undefined}
         >
 
             {#if tab === 'upload'}
-                <TabUpload on:select={handleSelect} />
+                <TabUploadAudio on:select={handleSelect} />
             {:else if tab === 'media'}
                 <Media on:select={handleSelect} />
-            {:else if tab === 'unsplash'}
-                <Unsplash on:select={handleSelect} />
-            {:else if tab === 'excalidraw'}
-                <Excalidraw on:select={handleSelect} />
             {/if}
 
-            {#if selectedImage}
-                <SelectedImage 
-                    image={selectedImage} 
+            {#if selectedAudio}
+                <SelectedAudio 
+                    audio={selectedAudio} 
                     on:select={handleFinish}
                 />
             {/if}

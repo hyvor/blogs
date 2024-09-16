@@ -2,10 +2,11 @@ import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
-import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
-import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
+import ImageUploader from "../../../../../../../lib/components/FileUploader/ImageUploader.svelte";
+import type { SelectedImage, SelectedAudio } from "../../../../../../../lib/components/FileUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
 import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
+import AudioUploader from "../../../../../../../lib/components/FileUploader/AudioUploader.svelte";
 
 export interface SlashOption {
     name: string,
@@ -65,7 +66,7 @@ const options: SlashOption[] = [
         description: "Add an audio",
         icon: IconSoundwave,
         keywords: ["audio", "sound", "upload"],
-        node: 'audio',
+        node: selectAudio,
     },
     {
         name: "Code Block",
@@ -189,6 +190,38 @@ function selectImage() {
                     schema.nodes.image!.create({ src: e.detail.url }),
                     schema.nodes.figcaption!.create()
                 ])
+            )
+        });
+
+    });
+
+}
+
+function selectAudio() {
+
+    return new Promise<Node | null>((resolve, reject) => {
+
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+
+        const selector = new AudioUploader({
+            target: div,
+        });
+
+        function destroy() {
+            selector.$destroy();
+            div.remove();
+        }
+
+        selector.$on('close', () => {
+            destroy();
+            resolve(null);
+        })
+
+        selector.$on('select', (e: CustomEvent<SelectedAudio>) => {
+            destroy();
+            return resolve(
+                schema.nodes.audio!.create({ src: e.detail.src })
             )
         });
 

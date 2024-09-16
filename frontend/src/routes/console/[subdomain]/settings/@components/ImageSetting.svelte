@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, ButtonGroup } from "@hyvor/design/components";
-	import ImageUploader from "../../../lib/components/ImageUploader/ImageUploader.svelte";
-	import type { SelectedImage } from "../../../lib/components/ImageUploader/image-uploader";
+	import ImageUploader from "../../../lib/components/FileUploader/ImageUploader.svelte";
+	import type { SelectedImage } from "../../../lib/components/FileUploader/image-uploader";
 	import { createEventDispatcher } from "svelte";
 
     export let src: string | null = null;

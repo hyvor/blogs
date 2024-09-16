@@ -21,7 +21,6 @@ export interface SelectedImage {
     media?: Media,
 }
 
-
 export const VALID_MIME_TYPES = [
     'image/gif', 
     'image/jpeg', 
