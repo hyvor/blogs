@@ -14,7 +14,6 @@
     let selectedAudio: null | SelectedAudioType = null;
 
     function handleSelect(e: CustomEvent<SelectedAudioType>) {
-        console.log(e.detail);
         selectedAudio = e.detail;
         backAudio = null;
     }
