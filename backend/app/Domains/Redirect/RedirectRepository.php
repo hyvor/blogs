@@ -61,8 +61,7 @@ class RedirectRepository
     }
 
     /**
-    * @return
-    * array{
+    * @return array{
     *   to: string,
     *   type: RedirectTypeEnum
     * } | null
@@ -87,11 +86,13 @@ class RedirectRepository
 
                     // generates dynamic to path using the regex pattern
                     $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
-                        
-                    return [
-                        'to' => $dynamicTo,
-                        'type' => $dynamicRedirect->type,
-                    ];
+
+                    if ($dynamicTo) {
+                        return [
+                            'to' => $dynamicTo,
+                            'type' => $dynamicRedirect->type,
+                        ];
+                    }                        
                 }
             }
             catch (\Exception $e) {

@@ -13,7 +13,7 @@ class VerifyWebhookSignature
 {
     public const SIGNATURE_KEY = 'p_signature';
 
-    public static function verify(Request $request)
+    public static function verify(Request $request) : void
     {
         $fields = self::extractFields($request);
         $signature = $request->get(self::SIGNATURE_KEY);
@@ -23,6 +23,9 @@ class VerifyWebhookSignature
         }
     }
 
+    /**
+     * @return string[]
+     */
     private static function extractFields(Request $request): array
     {
         $fields = $request->except(self::SIGNATURE_KEY);
@@ -38,12 +41,19 @@ class VerifyWebhookSignature
         return $fields;
     }
 
+    /**
+     * @param string[] $fields
+     */
     private static function isInvalidSignature(array $fields, string $signature): bool
     {
+        $publicKey = openssl_get_publickey(config('services.paddle.public_key'));
+        if (!$publicKey) {
+            throw new TrustedException('Failed to get the public key.');
+        }
         return openssl_verify(
             serialize($fields),
             base64_decode($signature),
-            openssl_get_publickey(config('services.paddle.public_key')),
+            $publicKey,
             OPENSSL_ALGO_SHA1
         ) !== 1;
     }

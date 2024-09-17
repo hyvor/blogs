@@ -17,7 +17,7 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
     {
     }
 
-    public function handle()
+    public function handle() : void
     {
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
@@ -37,7 +37,7 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
         ', [$language->id, $this->blog->id]);
     }
 
-    public function uniqueId()
+    public function uniqueId() : int
     {
         return $this->blog->id;
     }

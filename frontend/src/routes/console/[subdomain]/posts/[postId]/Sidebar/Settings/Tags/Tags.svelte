@@ -22,15 +22,10 @@
 	import UnsavedTag from '../UnsavedTag.svelte';
 	import OnlyPrimaryVariant from '../OnlyPrimaryVariant.svelte';
 	import { updatePostTags } from '../../../../postActions';
+	import TagName from '../../../../../settings/tags/TagName.svelte';
 
 	let dropdownOpen = false;
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = 'none';
-
-	function getTagName(tag: TagType) {
-		const primaryLang = getPrimaryLanguage();
-		const variant = tag.variants.find((v) => v.language_id === primaryLang.id);
-		return variant?.name || 'Unknown tag';
-	}
 
 	function saveTags() {
 		loaderState = 'loading';
@@ -77,7 +72,7 @@
 				{#if $postStore.tags.length}
 					{#each $postStore.tags as tag}
 						<Tag size="small" bg="#f1f1f1">
-							{getTagName(tag)}
+							<TagName {tag} small />
 
 							<IconButton
 								color="red"

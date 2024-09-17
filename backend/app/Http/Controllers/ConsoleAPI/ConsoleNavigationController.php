@@ -12,19 +12,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Navigation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
 class ConsoleNavigationController extends Controller
 {
-    public function get(Blog $blog)
+    public function get(Blog $blog) : JsonResponse
     {
         $navs = NavigationRepository::getNavigations($blog)->mapInto(NavigationObject::class);
 
         return response()->json($navs);
     }
 
-    public function create(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'url' => 'required|string',
@@ -47,7 +48,7 @@ class ConsoleNavigationController extends Controller
         return response()->json(new NavigationObject($navigation));
     }
 
-    public function update(Request $request, Navigation $navigation)
+    public function update(Request $request, Navigation $navigation) : JsonResponse
     {
         $request->validate([
             'url' => 'required|string',
@@ -62,14 +63,14 @@ class ConsoleNavigationController extends Controller
         return response()->json(new NavigationObject($navigation));
     }
 
-    public function delete(Navigation $navigation)
+    public function delete(Navigation $navigation) : JsonResponse
     {
         NavigationRepository::deleteNavigation($navigation);
 
         return response()->json();
     }
 
-    public static function createVariant(Request $request, Blog $blog, Navigation $navigation)
+    public static function createVariant(Request $request, Blog $blog, Navigation $navigation) : JsonResponse
     {
         $request->validate([
             'language_id' => 'required|integer',
@@ -90,7 +91,7 @@ class ConsoleNavigationController extends Controller
         return response()->json(new NavigationVariantObject($variant));
     }
 
-    public static function updateVariant(Request $request, Navigation $navigation, Language $language)
+    public static function updateVariant(Request $request, Navigation $navigation, Language $language) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -108,7 +109,7 @@ class ConsoleNavigationController extends Controller
         return response()->json(new NavigationVariantObject($variant));
     }
 
-    public static function deleteVariant(Navigation $navigation, Language $language)
+    public static function deleteVariant(Navigation $navigation, Language $language) : JsonResponse
     {
         $variant = NavigationRepository::getNavigationVariant($navigation, $language);
         if (! $variant) {
@@ -120,7 +121,7 @@ class ConsoleNavigationController extends Controller
         return response()->json();
     }
 
-    public function updateSort(Request $request, Blog $blog)
+    public function updateSort(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'ids' => 'array',

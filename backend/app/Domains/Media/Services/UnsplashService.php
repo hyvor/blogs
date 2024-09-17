@@ -17,6 +17,9 @@ class UnsplashService
         ]);
     }
 
+    /**
+     * @return Collection<int, string>
+     */
     public function search(string $search, int $page = 1): Collection
     {
         $limit = 30;

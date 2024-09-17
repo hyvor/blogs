@@ -43,8 +43,8 @@ class ThemeRepository
         foreach ($themes as $theme) {
             $theme->setRelation(
                 'versions',
-                collect([$versions->firstWhere('id', $theme->latest_version_id)])
-            ); // @phpstan-ignore-line
+                collect([$versions->firstWhere('id', $theme->latest_version_id)]) // @phpstan-ignore-line
+            );
         }
 
         return $themes;

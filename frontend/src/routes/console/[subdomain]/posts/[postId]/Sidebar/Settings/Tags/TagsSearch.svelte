@@ -13,6 +13,7 @@
 	import type { Tag as TagType } from '../../../../../../lib/types';
 	import { createTag, getTags, searchTags } from '../../../../../settings/tags/tagActions';
 	import { IconPlus } from '@hyvor/icons';
+	import TagName from '../../../../../settings/tags/TagName.svelte';
 
 	export let postTags: TagType[] = [];
 
@@ -97,9 +98,8 @@
 						disabled={!!postTags.find((t) => t.id === tag.id)}
 					>
 						<Tag size="small">
-							{tag.variants[0]?.name || ''}
+							<TagName {tag} small />
 						</Tag>
-
 						<Text slot="end" small light>
 							{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
 						</Text>

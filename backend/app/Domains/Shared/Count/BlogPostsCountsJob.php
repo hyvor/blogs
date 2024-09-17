@@ -19,7 +19,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
     {
     }
 
-    public function handle()
+    public function handle() : void
     {
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
@@ -47,7 +47,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
         ]);
     }
 
-    public function uniqueId()
+    public function uniqueId() : int
     {
         return $this->blog->id;
     }

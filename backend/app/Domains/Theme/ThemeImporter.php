@@ -24,7 +24,7 @@ class ThemeImporter
     {
     }
 
-    public function import()
+    public function import() : void
     {
         try {
             $zip = new ZipFile();
@@ -33,7 +33,7 @@ class ThemeImporter
             foreach ($zip as $entry => $content) {
                 // $entry = assets/image.svg
 
-                $split = explode('/', $entry);
+                $split = explode('/', $entry ? $entry : '');
 
                 $folder = isset($split[1]) ? $split[0] : null;
                 $fileName = isset($split[1]) ? $split[1] : $split[0];
@@ -55,6 +55,10 @@ class ThemeImporter
                     continue;
                 }
 
+                if ($content === null) {
+                    $this->addTrace("$entry skipped because it has no content");
+                    continue;
+                }
                 ThemeFilesRepository::createOrUpdateFile($this->blog, $folder, $fileName, $content);
             }
         } catch (ZipException $e) {
@@ -75,21 +79,22 @@ class ThemeImporter
         } elseif ($folder === ThemeFileFolderEnum::ASSETS) {
             return true;
         }
-
-        return false;
     }
 
-    private function addTrace(string $skipTrace)
+    private function addTrace(string $skipTrace) : void
     {
         $this->skipTraces[] = $skipTrace;
     }
 
-    public function skipTraces()
+    /**
+     * @return string[]
+     */
+    public function skipTraces() : array
     {
         return $this->skipTraces;
     }
 
-    public function success()
+    public function success() : bool
     {
         return $this->success;
     }

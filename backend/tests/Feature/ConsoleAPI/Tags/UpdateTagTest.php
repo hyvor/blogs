@@ -21,13 +21,15 @@ it('updates a tag', function () {
     $codeFoot = 'var y = foot';
 
     consoleApi($blog, 'PATCH', "/tag/$tag->id", [
+        'is_private' => true,
         'slug' => $slug,
         'code_head' => $codeHead,
         'code_foot' => $codeFoot,
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('slug', $slug)
+            fn (AssertableJson $json) => $json->where('is_private', true)
+                ->where('slug', $slug)
                 ->where('code_head', $codeHead)
                 ->where('code_foot', $codeFoot)
                 ->etc()

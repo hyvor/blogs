@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class RouteRepository
 {
-    public static function getRoute(Blog $blog, string $name)
+    public static function getRoute(Blog $blog, string $name) : ?Route
     {
 
         /**
@@ -22,6 +22,9 @@ class RouteRepository
         return $routes->where('name', $name)->first();
     }
 
+    /**
+     * @return Collection<int, Route>
+     */
     public static function getRoutes(Blog $blog): Collection
     {
         return Route::where('blog_id', '=', $blog->id)
@@ -50,6 +53,9 @@ class RouteRepository
         return $route;
     }
 
+    /**
+     * @param  string[]  $updates
+     */
     public static function updateRoute(Route $route, array $updates): Route
     {
         foreach ($updates as $key => $value) {
@@ -62,7 +68,7 @@ class RouteRepository
         return $route;
     }
 
-    public static function deleteRoute(Route $route)
+    public static function deleteRoute(Route $route) : void
     {
         $route->delete();
 

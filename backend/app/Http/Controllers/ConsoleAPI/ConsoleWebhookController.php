@@ -8,19 +8,20 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Webhook;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Data\Enums\WebhookEventEnum;
 
 class ConsoleWebhookController extends Controller
 {
-    public function getWebhooks(Blog $blog)
+    public function getWebhooks(Blog $blog) : JsonResponse
     {
         $webhooks = WebhookService::getWebhooks($blog)->mapInto(WebhookObject::class);
         return response()->json($webhooks);
     }
 
-    public function createWebhook(Request $request, Blog $blog)
+    public function createWebhook(Request $request, Blog $blog) : JsonResponse
     {        
         $validated = $request->validate([
             'url' => 'required|url',
@@ -42,7 +43,7 @@ class ConsoleWebhookController extends Controller
         return response()->json(new WebhookObject($webhook));
     }
 
-    public function updateWebhook(Request $request, Webhook $webhook)
+    public function updateWebhook(Request $request, Webhook $webhook) : JsonResponse
     {
         $validated = $request->validate([
             'url' => 'url',
@@ -58,13 +59,13 @@ class ConsoleWebhookController extends Controller
         return response()->json(new WebhookObject($webhook));
     }
 
-    public function deleteWebhook(Webhook $webhook)
+    public function deleteWebhook(Webhook $webhook) : JsonResponse
     {
         WebhookService::deleteWebhook($webhook);
         return response()->json();
     }
 
-    public function getWebhookDeliveries(Webhook $webhook, Request $request)
+    public function getWebhookDeliveries(Webhook $webhook, Request $request) : void
     {
         $request->validate([
             'page' => 'integer'

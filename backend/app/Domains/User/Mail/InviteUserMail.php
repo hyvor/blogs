@@ -27,7 +27,7 @@ class InviteUserMail extends Mailable
         $this->link = DomainService::getAppUrl() . $route;
     }
 
-    public function build()
+    public function build() : static
     {
         return $this->view('emails.invite-user');
     }

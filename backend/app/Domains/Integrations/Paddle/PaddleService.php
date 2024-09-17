@@ -41,7 +41,8 @@ class PaddleService
         Subscription $subscription,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ) {
+    ) : void 
+    {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
@@ -54,7 +55,7 @@ class PaddleService
         ]);
     }
 
-    public function cancelSubscription(Subscription $subscription)
+    public function cancelSubscription(Subscription $subscription) : void
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
