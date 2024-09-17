@@ -33,7 +33,7 @@ class HyvorTalkGatedContentService
 
     public static function createGatedContentRule(
         Blog $blog,
-        ?int $tagId,
+        int $tagId,
         string $minimumPlan,
         ?string $gate,
     )

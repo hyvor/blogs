@@ -87,9 +87,8 @@ class IntegrationHyvorTalkController
     {
 
         $request->validate([
-            'tag_id' => 'integer|nullable',
-            'new_tag_name' => 'string|nullable',
-            'minimum_plan' => 'string',
+            'tag_id' => 'required|integer',
+            'minimum_plan' => 'required|string',
             'gate' => 'string|nullable'
         ]);
 
@@ -100,17 +99,10 @@ class IntegrationHyvorTalkController
             throw new TrustedException('Maximum number of gated content rules reached');
         }
 
-        /** @var ?int $tagId */
-        $tagId = $request->input('tag_id');
-        /** @var bool $createTag */
-        $newTagName = $request->input('new_tag_name');
+        $tagId = $request->integer('tag_id');
         $minimumPlan = (string) $request->string('minimum_plan');
         /** @var ?string $gate */
         $gate = $request->input('gate');
-
-        if ($newTagName) {
-            $tagId = TagRepository::createTag($blog, $newTagName)->id;
-        }
 
         $rule = HyvorTalkGatedContentService::createGatedContentRule(
             $blog,

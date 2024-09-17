@@ -3,6 +3,7 @@
 	import type { Tag } from '../../../../lib/types';
 	import { IconCaretDown } from '@hyvor/icons';
 	import TagsSearch from '../../../posts/[postId]/Sidebar/Settings/Tags/TagsSearch.svelte';
+	import TagName from '../../../settings/tags/TagName.svelte';
 
 	let showDropdown = false;
 	export let tag: Tag;
@@ -16,7 +17,7 @@
 <Dropdown bind:show={showDropdown} width={300}>
 	<Button slot="trigger" color="input" size="small">
 		{#if tag}
-			{tag.variants[0]?.name || 'Select Tag'}
+			<TagName {tag} />
 		{:else}
 			Select Tag
 		{/if}
@@ -24,6 +25,6 @@
 	</Button>
 
 	<div slot="content">
-		<TagsSearch on:select={onSelect} />
+		<TagsSearch on:select={onSelect} createPrivate={true} />
 	</div>
 </Dropdown>

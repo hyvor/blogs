@@ -16,9 +16,11 @@ return new class extends Migration
             $table->timestamps();
 
             $table->bigInteger('blog_id')->unsigned();
-            $table->bigInteger('tag_id')->unsigned()->nullable();
+            $table->bigInteger('tag_id')->unsigned();
             $table->string('minimum_plan');
             $table->text('gate')->nullable();
+
+            $table->index('blog_id');
         });
     }
 

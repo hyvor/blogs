@@ -43,6 +43,34 @@ export function getGatedContentRules() {
 
 }
 
+export function createGatedContentRule(tagId: number, planName: string, gate: string | null) {
+    return consoleApi.post<HyvorTalkGatedContentRule>({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule`,
+        data: {
+            tag_id: tagId,
+            minimum_plan: planName,
+            gate,
+        }
+    })
+}
+
+export function updateGatedContentRule(ruleId: number, tagId: number, planName: string, gate: string | null) {
+    return consoleApi.patch<HyvorTalkGatedContentRule>({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
+        data: {
+            tag_id: tagId,
+            minimum_plan: planName,
+            gate,
+        }
+    })
+}
+
+export function deleteGatedContentRule(ruleId: number) {
+    return consoleApi.delete({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
+    })
+}
+
 export function getMembershipPlans() {
 
     return consoleApi.get<{

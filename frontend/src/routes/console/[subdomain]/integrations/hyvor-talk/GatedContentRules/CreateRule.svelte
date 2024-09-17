@@ -1,7 +1,14 @@
 <script lang="ts">
-	import { FormControl, Modal, Radio, SplitControl } from '@hyvor/design/components';
+	import {
+		FormControl,
+		Modal,
+		Radio,
+		SplitControl,
+		Textarea,
+		Validation
+	} from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import { getMembershipPlans } from '../hyvorTalkActions';
+	import { createGatedContentRule, getMembershipPlans } from '../hyvorTalkActions';
 	import TagSelector from './TagSelector.svelte';
 	import type { Tag } from '../../../../lib/types';
 
@@ -11,7 +18,10 @@
 	let error = '';
 
 	let tag: Tag;
+	let tagError = '';
+
 	let gateType = 'default';
+	let gateContent = '';
 	let minimumPlan: string;
 
 	let currency: string;
@@ -25,8 +35,23 @@
 		return c.toUpperCase();
 	}
 
-	function onTagSelect(e: CustomEvent<Tag>) {
-		tag = e.detail;
+	function handleConfirm() {
+		tagError = '';
+
+		if (!tag) {
+			tagError = 'Please select a tag.';
+			return;
+		}
+
+		loading = true;
+
+		createGatedContentRule(tag.id, minimumPlan, gateType === 'default' ? null : gateContent)
+			.then(() => {
+				show = false;
+			})
+			.finally(() => {
+				loading = false;
+			});
 	}
 
 	onMount(() => {
@@ -55,9 +80,15 @@
 	}}
 	{loading}
 	closeOnOutsideClick={false}
+	on:confirm={handleConfirm}
 >
 	<SplitControl label="Tag" caption="Posts with this tag will be gated.">
-		<TagSelector bind:tag />
+		<FormControl>
+			<TagSelector bind:tag />
+			{#if tagError}
+				<Validation type="error">{tagError}</Validation>
+			{/if}
+		</FormControl>
 	</SplitControl>
 	<SplitControl
 		label="Minimum Plan"
@@ -77,9 +108,12 @@
 		caption="The content to show when the user is not allowed to view the content."
 	>
 		<FormControl>
-			<Radio bind:group={gateType} value="default" name="gate">Default Gate (from Hyvor Talk)</Radio
-			>
+			<Radio bind:group={gateType} value="default" name="gate">Default Gate</Radio>
 			<Radio bind:group={gateType} value="custom" name="gate">Custom Gate</Radio>
+
+			{#if gateType === 'custom'}
+				<Textarea bind:value={gateContent} placeholder="Custom gate name or HTML" />
+			{/if}
 		</FormControl>
 	</SplitControl>
 </Modal>

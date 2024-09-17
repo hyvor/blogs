@@ -16,7 +16,7 @@ class HyvorTalkGatedContentRuleFactory extends Factory
     {
         return [
             'blog_id' => Blog::factory(),
-            'tag_id' => null,
+            'tag_id' => rand(),
             'minimum_plan' => 'Premium',
             'gate' => null
         ];
