@@ -157,7 +157,7 @@ export const nodes = {
           }
         }],
         toDOM(node: Node) {
-          return ["img", {...node.attrs}]; 
+          return ["audio", {...node.attrs}]; 
         }
     },
     embed: {
