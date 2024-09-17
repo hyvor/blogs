@@ -3,11 +3,14 @@
 	import { IconArrowReturnLeft } from "@hyvor/icons";
 	import { createEventDispatcher, onMount } from "svelte";
 	import { VALID_MIME_TYPES, type SelectedImage, VALID_MIME_TYPES_NAMES } from "./image-uploader";
+    import { VALID_MIME_TYPES_AUDIO, type SelectedAudio, VALID_MIME_TYPES_NAMES_AUDIO } from "./audio-uploader";
 	import { isValidUrl } from "../../helper/is-valid-url";
 	import { getConfig } from "../../config";
 	import byteFormatter from "../../helper/byte-formatter";
 
+
     export let isUploading = false;
+    export let isAudio = false;
 
     let inputEl: HTMLInputElement;
     let byUrlInputEl: HTMLInputElement;
@@ -20,7 +23,7 @@
         return platform.match(/mac/i) ? '⌘' : 'Ctrl';
     }
 
-    const dispatch = createEventDispatcher<{select: SelectedImage}>();
+    const dispatch = createEventDispatcher<{select: SelectedImage, audioSelect: SelectedAudio}>();
 
     function handleFetch() {
         isUploading = true;
@@ -28,23 +31,41 @@
         fetch(byUrl)
             .then(res => res.blob())
             .then(blob => {
-                // check if valid image
-                if (blob.type.indexOf('image') !== 0) {
+                // check if valid image or audio
+                if (!isAudio && blob.type.indexOf('image') !== 0) {
                     toast.error('The URL is not an image');
                     return;
                 }
 
-                dispatch('select', {
-                    url: blob,
-                    from: 'upload',
-                    upload: {
-                        type: 'url',
-                        originalUrl: byUrl
-                    }
-                });
+                if (isAudio && blob.type.indexOf('audio') !== 0) {
+                    toast.error('The URL is not an audio');
+                    return;
+                }
+                
+                if (isAudio) {
+                    dispatch('audioSelect', {
+                        src: blob,
+                        from: 'upload',
+                        upload: {
+                            type: 'url',
+                            originalSrc: byUrl
+                        }
+                    });
+                    return;
+                }
+                else {
+                    dispatch('select', {
+                        url: blob,
+                        from: 'upload',
+                        upload: {
+                            type: 'url',
+                            originalUrl: byUrl
+                        }
+                    });
+                }
             })
             .catch(err => {
-                toast.error('Failed to fetch image');
+                toast.error(isAudio ? 'Failed to fetch audio' : 'Failed to fetch image');
             })
             .finally(() => {
                 isUploading = false;
@@ -69,11 +90,21 @@
             if (item.type.indexOf('image') === 0) {
                 const blob = item.getAsFile();
                 if (!blob) continue;
-                dispatch('select', {
-                    url: blob,
-                    from: 'upload',
-                    upload: {type: 'paste'}
-                });
+                if (isAudio) {
+                    dispatch('audioSelect', {
+                        src: blob,
+                        from: 'upload',
+                        upload: {type: 'paste'}
+                    });
+                    return;
+                }
+                else {
+                    dispatch('select', {
+                        url: blob,
+                        from: 'upload',
+                        upload: {type: 'paste'}
+                    });
+                }
                 break;
             }
         }
@@ -103,11 +134,21 @@
         const file = getFileFromFiles(files);
         if (!file) return;
 
-        dispatch('select', {
-            url: file,
-            from: 'upload',
-            upload: {type: 'dnd'}
-        });
+        if (isAudio) {
+            dispatch('audioSelect', {
+                src: file,
+                from: 'upload',
+                upload: {type: 'dnd'}
+            });
+            return;
+        }
+        else {
+            dispatch('select', {
+                url: file,
+                from: 'upload',
+                upload: {type: 'dnd'}
+            });
+        }
     }
 
     function handleUploadClick() {
@@ -117,11 +158,21 @@
     function handleInputChange(e: any) {
         const file = getFileFromFiles(e.target.files);
         if (!file) return;
-        dispatch('select', {
-            url: file,
-            from: 'upload',
-            upload: {type: 'browse'}
-        });
+        if (isAudio) {
+            dispatch('audioSelect', {
+                src: file,
+                from: 'upload',
+                upload: {type: 'browse'}
+            });
+            return;
+        }
+        else {
+            dispatch('select', {
+                url: file,
+                from: 'upload',
+                upload: {type: 'browse'}
+            });
+        }
     }
 
     function getFileFromFiles(files: FileList | null) : File | null {
@@ -141,9 +192,15 @@
             return null;
         }
 
-        if (!VALID_MIME_TYPES.includes(file.type)) {
+        if (!isAudio && !VALID_MIME_TYPES.includes(file.type)) {
             const names = VALID_MIME_TYPES_NAMES.join(', ').toUpperCase();
             toast.error(`Only ${names} images are allowed`);
+            return null;
+        }
+
+        if (isAudio && !VALID_MIME_TYPES_AUDIO.includes(file.type)) {
+            const names = VALID_MIME_TYPES_NAMES_AUDIO.join(', ').toUpperCase();
+            toast.error(`Only ${names} audio are allowed`);
             return null;
         }
 
@@ -170,7 +227,7 @@
 
     <input
         type="file"
-        accept="image/*"
+        accept={isAudio ? 'audio/*' : "image/*"}
         style="display:none"
         bind:this={inputEl}
         on:change={handleInputChange}
@@ -197,27 +254,29 @@
             </div>
         </div>
 
-        <div class="by-url-wrap">
-            <div class="title">
-                or, Upload by URL
-            </div>
+        {#if !isAudio}
+            <div class="by-url-wrap">
+                <div class="title">
+                    or, Upload by URL
+                </div>
 
-            <div class="input-button">
-                <TextInput
-                    block 
-                    placeholder="Enter image URL"
-                    bind:value={byUrl}
-                    on:keyup={e => e.key === 'Enter' && handleFetch()}
-                    bind:input={byUrlInputEl}
-                />
-                <Button
-                    disabled={byUrl.trim() === ''}
-                    on:click={handleFetch}
-                >
-                    Fetch <IconArrowReturnLeft slot="end" />
-                </Button>
+                <div class="input-button">
+                    <TextInput
+                        block 
+                        placeholder="Enter image URL"
+                        bind:value={byUrl}
+                        on:keyup={e => e.key === 'Enter' && handleFetch()}
+                        bind:input={byUrlInputEl}
+                    />
+                    <Button
+                        disabled={byUrl.trim() === ''}
+                        on:click={handleFetch}
+                    >
+                        Fetch <IconArrowReturnLeft slot="end" />
+                    </Button>
+                </div>
             </div>
-        </div>
+        {/if}
 
         <!-- <div
             class="upload-area" 

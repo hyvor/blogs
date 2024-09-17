@@ -12,10 +12,6 @@
     export let audio: SelectedAudio;
     
     const audioSrc: string = audio.src instanceof Blob ? URL.createObjectURL(audio.src) : audio.src;
-    const imageName = 
-        audio.src instanceof File ? audio.src.name : 
-        audio.media ? audio.media.original_name : 
-        null;
 
     let audioEl : HTMLAudioElement;
 
@@ -51,8 +47,10 @@
                     isUploading = false;
                 });
         }
+        else {
+            handleSelect();
+        }
     }
-
 
 </script>
 
@@ -137,7 +135,7 @@
         min-width: 0;
         margin-bottom: 20px;
     }
-    
+
     .upload-switch {
         display: inline-flex;
         align-items: center;

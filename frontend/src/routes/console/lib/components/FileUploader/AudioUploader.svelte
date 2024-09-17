@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { SelectedAudio as SelectedAudioType } from './image-uploader.js';
+	import type { SelectedAudio as SelectedAudioType } from './audio-uploader.js';
 	import { Button, Modal, TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconCardImage, IconCaretLeft, IconCloudUpload } from "@hyvor/icons";
 	import Media from "./Media/Media.svelte";
 	import { createEventDispatcher } from "svelte";
-	import TabUploadAudio from './TabUploadAudio.svelte';
 	import SelectedAudio from './PreviewSelected/SelectedAudio.svelte';
+	import TabUpload from './TabUpload.svelte';
     
     let tab = 'upload';
 
@@ -14,6 +14,7 @@
     let selectedAudio: null | SelectedAudioType = null;
 
     function handleSelect(e: CustomEvent<SelectedAudioType>) {
+        console.log(e.detail);
         selectedAudio = e.detail;
         backAudio = null;
     }
@@ -85,9 +86,9 @@
         >
 
             {#if tab === 'upload'}
-                <TabUploadAudio on:select={handleSelect} />
+                <TabUpload isAudio={true} on:audioSelect={handleSelect} />
             {:else if tab === 'media'}
-                <Media on:select={handleSelect} />
+                <Media isAudio={true} on:audioSelect={handleSelect} />
             {/if}
 
             {#if selectedAudio}
