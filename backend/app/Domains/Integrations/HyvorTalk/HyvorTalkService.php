@@ -67,4 +67,18 @@ class HyvorTalkService
         ]);
     }
 
+    /**
+     * @return mixed[]
+     * @throws InternalApiCallFailedException
+     */
+    public static function callConsoleApi(HyvorTalkWebsite $website, string $method, string $endpoint, array $data = [])
+    {
+        return self::callApi('console-api', [
+            'website_id' => $website->website_id,
+            'method' => $method,
+            'endpoint' => $endpoint,
+            'data' => $data,
+        ]);
+    }
+
 }

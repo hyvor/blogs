@@ -289,6 +289,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::patch('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'updateGatedContentRule']);
             Route::delete('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']);
 
+            Route::get('/hyvor-talk/membership-plans', [IntegrationHyvorTalkController::class, 'getMembershipPlans']);
+
         });
 
         /**

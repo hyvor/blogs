@@ -9,6 +9,9 @@ use App\Domains\Integrations\HyvorTalk\HyvorTalkService;
 use App\Domains\Tag\TagRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\HyvorTalkWebsite;
+use Hyvor\Internal\Http\Exceptions\HttpException;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -29,6 +32,17 @@ class IntegrationHyvorTalkController
             'connected' => true,
             'data' => new HyvorTalkIntegrationObject($hyvorTalkWebsite)
         ]);
+    }
+
+    private function getHyvorTalkWebsite(Blog $blog): HyvorTalkWebsite
+    {
+        $hyvorTalkWebsite = HyvorTalkWebsite::where('blog_id', $blog->id)->first();
+
+        if (!$hyvorTalkWebsite) {
+            throw new HttpException('hyvor_talk_not_connected');
+        }
+
+        return $hyvorTalkWebsite;
     }
 
     public function createIntegration(Blog $blog) : JsonResponse
@@ -52,11 +66,7 @@ class IntegrationHyvorTalkController
 
     public function deleteIntegration(Blog $blog) : JsonResponse
     {
-        $hyvorTalkWebsite = HyvorTalkService::getHyvorTalkWebsite($blog);
-
-        if (!$hyvorTalkWebsite) {
-            throw new TrustedException('Hyvor Talk integration does not exist');
-        }
+        $hyvorTalkWebsite = $this->getHyvorTalkWebsite($blog);
 
         HyvorTalkService::deleteHyvorTalkWebsite($hyvorTalkWebsite);
 
@@ -110,6 +120,33 @@ class IntegrationHyvorTalkController
         );
 
         return response()->json(new GatedContentRuleObject($rule, $blog));
+    }
+
+    public function getMembershipPlans(Blog $blog) : JsonResponse
+    {
+
+        $htWebsite = $this->getHyvorTalkWebsite($blog);
+
+        try {
+            $website = HyvorTalkService::callConsoleApi($htWebsite, 'GET', '/website');
+
+            if ($website['memberships_enabled'] !== true) {
+                throw new HttpException('memberships_not_enabled');
+            }
+
+            $plans = HyvorTalkService::callConsoleApi($htWebsite, 'GET', '/membership-plans');
+        } catch (InternalApiCallFailedException $e) {
+            throw new HttpException('Failed to get membership plans');
+        }
+
+        return response()->json([
+            'currency' => $website['memberships_currency'],
+            'plans' => collect($plans)->map(fn ($plan) => [
+                'name' => $plan['name'],
+                'monthly_price' => $plan['monthly_price'],
+            ])
+        ]);
+
     }
 
 }

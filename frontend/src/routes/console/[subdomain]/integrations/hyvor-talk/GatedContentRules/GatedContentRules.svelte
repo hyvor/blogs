@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { Button, IconMessage, Label, Loader, SplitControl } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import { getGatedContentRules } from './gatedContentRulesActions';
 	import type { HyvorTalkGatedContentRule } from '../../../../lib/types';
+	import CreateRule from './CreateRule.svelte';
+	import { getGatedContentRules } from '../hyvorTalkActions';
 
 	let loading = true;
 	let error: null | string = null;
 	let rules: HyvorTalkGatedContentRule[] = [];
+
+	let creating = false;
 
 	onMount(() => {
 		getGatedContentRules()
@@ -24,7 +27,7 @@
 
 <SplitControl column>
 	<Label slot="label">
-		Gated Content Rules <Button size="small">+ Create</Button>
+		Gated Content Rules <Button size="small" on:click={() => (creating = true)}>+ Create</Button>
 	</Label>
 
 	{#if loading}
@@ -39,3 +42,7 @@
 		{/each}
 	{/if}
 </SplitControl>
+
+{#if creating}
+	<CreateRule bind:show={creating} />
+{/if}
