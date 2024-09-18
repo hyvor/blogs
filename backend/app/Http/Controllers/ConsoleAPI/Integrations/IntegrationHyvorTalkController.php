@@ -164,7 +164,7 @@ class IntegrationHyvorTalkController
 
             $plans = HyvorTalkService::callConsoleApi($htWebsite, 'GET', '/membership-plans');
         } catch (InternalApiCallFailedException $e) {
-            throw new HttpException('Failed to get membership plans');
+            throw new HttpException('Failed to get membership plans from Hyvor Talk');
         }
 
         return response()->json([
