@@ -48,7 +48,10 @@ export function getMedia(
 
 }
 
-function toSnakeCase(str: string): string {
+export function toSnakeCase(str: string | null): string {
+    if (!str) {
+        return '';
+    }
     return str
     .replace(/\s+/g, '-')             // Replace spaces with hyphens
     .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)  // Add hyphen before capital letters and convert them to lowercase
@@ -56,6 +59,13 @@ function toSnakeCase(str: string): string {
     .replace(/--+/g, '-')             // Replace multiple hyphens with a single one
     .replace(/^-|-$|^-+|-+$/g, '')    // Remove leading and trailing hyphens
     .toLowerCase();                   // Ensure everything is in lowercase
+}
+
+export function isSnakeCase(str: string | null): boolean {
+    if (!str) {
+        return false;
+    }
+    return str === toSnakeCase(str);
 }
 
 export function uploadMedia(file: File | Blob, name: string | null = null) {

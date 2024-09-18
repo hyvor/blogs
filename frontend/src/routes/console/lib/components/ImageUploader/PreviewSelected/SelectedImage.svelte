@@ -7,16 +7,16 @@
 	import { IconCheckAll, IconCloudUpload } from "@hyvor/icons";
 	import byteFormatter from "../../../helper/byte-formatter";
 	import { createEventDispatcher, onDestroy, onMount } from "svelte";
-	import { uploadMedia } from "../../../../[subdomain]/tools/media/mediaActions";
+	import { toSnakeCase, uploadMedia } from "../../../../[subdomain]/tools/media/mediaActions";
 
     export let image: SelectedImage;
     
     const imageUrl = image.url instanceof Blob ? URL.createObjectURL(image.url) : image.url;
     let imageSize = image.url instanceof File ? image.url.size : null;
-    const imageName = 
+    const imageName =  toSnakeCase(
         image.url instanceof File ? image.url.name : 
         image.media ? image.media.original_name : 
-        null;
+        null);
 
     let imgEl : HTMLImageElement;
 
