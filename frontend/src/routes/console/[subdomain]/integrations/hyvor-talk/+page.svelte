@@ -85,8 +85,7 @@
 
 				<p>
 					When you connect Hyvor Talk to your blog, we will automatically create a new website ID in
-					Hyvor Talk for this blog under your account. You can manage the comments from the Hyvor
-					Talk Console.
+					Hyvor Talk for this blog under your account.
 				</p>
 			</div>
 		</SplitControl>
@@ -95,7 +94,7 @@
 			{#if data.connected}
 				<div class="connection-status">
 					This blog is connected to website ID <strong>{data.data.website_id}</strong> in Hyvor Talk.
-					You can manage comments from the Hyvor Talk Console.
+					Visit the Hyvor Talk Console to manage comments, newsletters, and memberships.
 				</div>
 
 				<Button
