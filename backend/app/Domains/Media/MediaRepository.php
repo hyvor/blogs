@@ -77,17 +77,26 @@ class MediaRepository
             ->first();
     }
 
-    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null): Media
+    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null, ?string $fileName = null): Media
     {
+        if ($fileName === null) {
+            $fileName = Str::random().'.'.$file->extension();
+        }
         try {
             $prefix = self::getPathPrefix($blog->id);
-            $path = Storage::putFile($prefix, $file);
+            
+            // Check if the file already exists and append a random suffix to the file name
+            if (Storage::exists($prefix . '/' . $fileName)) {
+                $randomString = Str::random();
+                $fileName = $fileName . '_' . $randomString;
+            }
+
+            $path = Storage::putFileAs($prefix, $file, $fileName);
 
             if (!$path) {
                 throw new UploadException('Error while uploading from storage');
             }
 
-            $fileName = self::getFileNameFromPath($path);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             throw new UploadException("Error while uploading: $errorMessage");

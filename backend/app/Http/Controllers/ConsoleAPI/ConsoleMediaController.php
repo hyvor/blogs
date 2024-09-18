@@ -33,6 +33,7 @@ class ConsoleMediaController extends Controller
         $search = $request->has('search') ?
             (string) $request->string('search') :
             null;
+            
 
         /** @var string[]|null $extensions */
         $extensions = $request->input('extensions');
@@ -51,7 +52,6 @@ class ConsoleMediaController extends Controller
             $search,
         )
             ->map(fn ($media) => new MediaObject($media, $blog));
-
         return response()->json($media);
     }
 
@@ -59,7 +59,8 @@ class ConsoleMediaController extends Controller
     {
         $request->validate([
             'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
-            'post_id' => 'integer'
+            'post_id' => 'integer',
+            'file_name' => 'string|nullable'
         ]);
 
         if (MediaRepository::hasLimitsExceeded($blog)) {
@@ -69,8 +70,9 @@ class ConsoleMediaController extends Controller
         /** @var \Illuminate\Http\UploadedFile $file */
         $file = $request->file('file');
         $postId = $request->has('post_id') ? $request->integer('post_id') : null;
-
-        $media = MediaRepository::upload($blog, $file, $postId);
+        $file_name = $request->has('file_name') ? $request->input('file_name') : null;
+   
+        $media = MediaRepository::upload($blog, $file, $postId, $file_name);
 
         return response()->json(new MediaObject($media, $blog));
     }

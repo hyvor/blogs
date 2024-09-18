@@ -36,7 +36,6 @@ export function getMedia(
     limit: number = 50,
     offset: number = 0,
 ) {
-
     return consoleApi.get<Media[]>({
         endpoint: '/media',
         data: {
@@ -49,9 +48,21 @@ export function getMedia(
 
 }
 
+function toSnakeCase(str: string): string {
+    return str
+    .replace(/\s+/g, '-')             // Replace spaces with hyphens
+    .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)  // Add hyphen before capital letters and convert them to lowercase
+    .replace(/_+/g, '-')              // Replace underscores with hyphens
+    .replace(/--+/g, '-')             // Replace multiple hyphens with a single one
+    .replace(/^-|-$|^-+|-+$/g, '')    // Remove leading and trailing hyphens
+    .toLowerCase();                   // Ensure everything is in lowercase
+}
+
 export function uploadMedia(file: File | Blob, name: string | null = null) {
     const formData = new FormData();
-    formData.append('file', file, name || (file instanceof File ? file.name : 'file'));
+    formData.append('file', file);
+    const fileName = toSnakeCase(name || (file instanceof File ? file.name : 'file'));
+    formData.append('file_name', fileName);
     return consoleApi.post<Media>({
         endpoint: '/media',
         data: formData
