@@ -48,7 +48,7 @@ export function getMedia(
 
 }
 
-export function toSnakeCase(str: string | null): string {
+export function toKebabCase(str: string | null): string {
     if (!str) {
         return '';
     }
@@ -61,18 +61,11 @@ export function toSnakeCase(str: string | null): string {
     .toLowerCase();                   // Ensure everything is in lowercase
 }
 
-export function isSnakeCase(str: string | null): boolean {
-    if (!str) {
-        return false;
-    }
-    return str === toSnakeCase(str);
-}
 
 export function uploadMedia(file: File | Blob, name: string | null = null) {
     const formData = new FormData();
     formData.append('file', file);
-    const fileName = toSnakeCase(name || (file instanceof File ? file.name : 'file'));
-    formData.append('file_name', fileName);
+    formData.append('file_name', name || (file instanceof File ? file.name : 'file'));
     return consoleApi.post<Media>({
         endpoint: '/media',
         data: formData

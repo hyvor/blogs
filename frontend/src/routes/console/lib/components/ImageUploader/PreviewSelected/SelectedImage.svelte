@@ -3,17 +3,17 @@
     import 'cropperjs/dist/cropper.css';
 	import Meta from "./Meta.svelte";
 	import type { SelectedImage } from "../image-uploader";
-	import { Button, Loader, Switch, toast } from "@hyvor/design/components";
+	import { Button, Loader, Switch, toast, TextInput } from "@hyvor/design/components";
 	import { IconCheckAll, IconCloudUpload } from "@hyvor/icons";
 	import byteFormatter from "../../../helper/byte-formatter";
 	import { createEventDispatcher, onDestroy, onMount } from "svelte";
-	import { toSnakeCase, uploadMedia } from "../../../../[subdomain]/tools/media/mediaActions";
+	import { toKebabCase, uploadMedia } from "../../../../[subdomain]/tools/media/mediaActions";
 
     export let image: SelectedImage;
     
     const imageUrl = image.url instanceof Blob ? URL.createObjectURL(image.url) : image.url;
     let imageSize = image.url instanceof File ? image.url.size : null;
-    const imageName =  toSnakeCase(
+    let imageName =  toKebabCase(
         image.url instanceof File ? image.url.name : 
         image.media ? image.media.original_name : 
         null);
@@ -82,9 +82,20 @@
     
     let isUploading = false;
 
+    function isValidImageName(name: string | null) {
+        if (!name || name.length == 0) return false;
+        if (name.includes(' ')) return false;
+        return true;
+    }
+
     function handleUpload() {
         if (shouldUpload && image.url instanceof Blob) {
             isUploading = true;
+            if (!isValidImageName(imageName)) {
+                toast.error('Image name cannot be empty and should not contain spaces');
+                isUploading = false;
+                return;
+            }
             uploadMedia(image.url, imageName)
                 .then(res => {
                     handleSelect({
@@ -150,11 +161,15 @@
                         Unknown
                     {/if}
                 </Meta>
-                {#if imageName}
-                    <Meta name="Name">
-                        { imageName }
-                    </Meta>
-                {/if}
+                
+                <div class="name-editor">
+                    <div class="name">Name</div>
+                    <TextInput 
+                        bind:value={imageName}
+                        placeholder="Image Name" 
+                        state={isValidImageName(imageName) ? 'success' : 'error'}
+                    />
+                </div>
                 {#if hosting}
                     <Meta name="Hosting">
                         {hosting}
@@ -248,5 +263,16 @@
         padding: 5px 25px;
         padding-top: 15px;
         text-align: center;
+    }
+    .name-editor {
+        display: flex;
+        flex-direction: column;
+        padding: 0 15px;
+    }
+
+    .name {
+        font-size: 13px;
+        color: var(--text-light);
+        margin-bottom: 2px;
     }
 </style>
