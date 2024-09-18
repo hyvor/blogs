@@ -159,7 +159,7 @@ export const nodes = {
         toDOM(node: Node) {
           return ["audio", {...node.attrs}]; 
         }
-    },
+    } as NodeSpec,
     embed: {
         attrs: {
             url: {default: null}

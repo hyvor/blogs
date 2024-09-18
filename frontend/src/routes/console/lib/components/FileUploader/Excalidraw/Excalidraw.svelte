@@ -58,6 +58,7 @@
         }); */
 
 		dispatch('select', {
+			type: 'image',
 			url: blob,
 			from: 'excalidraw',
 			excalidraw: {
