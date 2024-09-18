@@ -7,6 +7,7 @@ use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Navigation\Events\NavigationChangedEvent;
 use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
@@ -87,6 +88,9 @@ it('is attached', function () {
     Event::assertListening(TemplateEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
     Event::assertListening(ConfigEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
     Event::assertListening(LangEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
+
+    // integrations (hyvor talk)
+    Event::assertListening(GatedContentChangedEvent::class, [ClearCacheSubscriber::class, 'onGatedContentChangedEvent']);
 });
 
 beforeEach(function () {
@@ -369,4 +373,14 @@ it('clears cache when a language file is updated', function() {
     $listener = new ClearCacheSubscriber();
     $listener->onFileEditedEvent($event);
 
+});
+
+it('clears cache when gated content is changed', function() {
+    ($this->templateMock)();
+
+    $blog = blog();
+    $event = new GatedContentChangedEvent($blog);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onGatedContentChangedEvent($event);
 });

@@ -137,16 +137,15 @@ class IntegrationHyvorTalkController
             $updates['gate'] = $request->input('gate');
         }
 
-        $rule = HyvorTalkGatedContentService::updateGatedContentRule($rule, $updates);
+        $rule = HyvorTalkGatedContentService::updateGatedContentRule($blog, $rule, $updates);
 
         return response()->json(new GatedContentRuleObject($rule, $blog));
     }
 
 
-
-    public function deleteGatedContentRule(HyvorTalkGatedContentRule $rule) : JsonResponse
+    public function deleteGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog) : JsonResponse
     {
-        HyvorTalkGatedContentService::deleteGatedContentRule($rule);
+        HyvorTalkGatedContentService::deleteGatedContentRule($blog, $rule);
         return response()->json();
     }
 

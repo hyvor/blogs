@@ -17,4 +17,5 @@ class HyvorTalkGatedContentRule extends Model
     {
         return $this->belongsTo(Tag::class);
     }
+
 }

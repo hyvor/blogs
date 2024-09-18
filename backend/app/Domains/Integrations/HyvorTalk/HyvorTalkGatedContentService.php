@@ -2,6 +2,7 @@
 
 namespace App\Domains\Integrations\HyvorTalk;
 
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Models\Blog;
 use App\Models\HyvorTalkGatedContentRule;
 use App\Models\Post;
@@ -46,27 +47,33 @@ class HyvorTalkGatedContentService
     )
     {
 
-        return HyvorTalkGatedContentRule::create([
+        $rule = HyvorTalkGatedContentRule::create([
             'blog_id' => $blog->id,
             'tag_id' => $tagId,
             'minimum_plan' => $minimumPlan,
             'gate' => $gate
         ]);
 
+        event(new GatedContentChangedEvent($blog));
+
+        return $rule;
+
     }
 
     /**
      * @param array{ minimum_plan: string, gate: string|null } $updates
      */
-    public static function updateGatedContentRule(HyvorTalkGatedContentRule $rule, array $updates) : HyvorTalkGatedContentRule
+    public static function updateGatedContentRule(Blog $blog, HyvorTalkGatedContentRule $rule, array $updates) : HyvorTalkGatedContentRule
     {
         $rule->update($updates);
+        event(new GatedContentChangedEvent($blog));
         return $rule;
     }
 
-    public static function deleteGatedContentRule(HyvorTalkGatedContentRule $rule) : void
+    public static function deleteGatedContentRule(Blog $blog, HyvorTalkGatedContentRule $rule) : void
     {
         $rule->delete();
+        event(new GatedContentChangedEvent($blog));
     }
 
     public static function gatePostIfNeeded(Blog $blog, Post $post) : bool

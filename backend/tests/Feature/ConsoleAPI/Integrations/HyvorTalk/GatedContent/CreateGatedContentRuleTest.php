@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\ConsoleAPI\Integrations\HyvorTalk\GatedContent;
 
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Models\HyvorTalkGatedContentRule;
+use Illuminate\Support\Facades\Event;
 
 it('creates a gated content with given tag', function() {
+
+    Event::fake();
 
     $blog = blogWithAccess();
     $tag = addTag($blog);
@@ -27,6 +31,8 @@ it('creates a gated content with given tag', function() {
     expect($rule->tag_id)->toBe($tagId);
     expect($rule->minimum_plan)->toBe($minimumPlan);
     expect($rule->gate)->toBe($gate);
+
+    Event::assertDispatched(GatedContentChangedEvent::class);
 
 });
 

@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\ConsoleAPI\Integrations\HyvorTalk\GatedContent;
 
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Models\HyvorTalkGatedContentRule;
+use Illuminate\Support\Facades\Event;
 
 it('deletes a gated content rule', function() {
+
+    Event::fake();
 
 
     $blog = blogWithAccess();
@@ -17,5 +21,7 @@ it('deletes a gated content rule', function() {
         ->assertOk();
 
     expect(HyvorTalkGatedContentRule::find($rule->id))->toBeNull();
+
+    Event::assertDispatched(GatedContentChangedEvent::class);
 
 });
