@@ -2,12 +2,10 @@ import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
-import ImageUploader from "../../../../../../../lib/components/FileUploader/ImageUploader.svelte";
-import type { SelectedImage } from "../../../../../../../lib/components/FileUploader/image-uploader";
+import FileUploader from "../../../../../../../lib/components/FileUploader/FileUploader.svelte";
+import type { SelectedFile } from "../../../../../../../lib/components/FileUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
 import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
-import AudioUploader from "../../../../../../../lib/components/FileUploader/AudioUploader.svelte";
-import type { SelectedAudio } from "../../../../../../../lib/components/FileUploader/audio-uploader";
 
 export interface SlashOption {
     name: string,
@@ -170,7 +168,7 @@ function selectImage() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new ImageUploader({
+        const selector = new FileUploader({
             target: div,
         });
 
@@ -184,7 +182,7 @@ function selectImage() {
             resolve(null);
         })
 
-        selector.$on('select', (e: CustomEvent<SelectedImage>) => {
+        selector.$on('select', (e: CustomEvent<SelectedFile>) => {
             destroy();
             return resolve(
                 schema.nodes.figure!.create({}, [
@@ -205,8 +203,11 @@ function selectAudio() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new AudioUploader({
+        const selector = new FileUploader({
             target: div,
+            props: {
+                type: 'audio'
+            }
         });
 
         function destroy() {
@@ -219,10 +220,10 @@ function selectAudio() {
             resolve(null);
         })
 
-        selector.$on('select', (e: CustomEvent<SelectedAudio>) => {
+        selector.$on('select', (e) => {
             destroy();
             return resolve(
-                schema.nodes.audio!.create({ src: e.detail.src })
+                schema.nodes.audio!.create({ src: e.detail.url })
             )
         });
 

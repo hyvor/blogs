@@ -1,38 +1,28 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
-	import MediaLibrary from "../../../../[subdomain]/tools/media/MediaLibrary.svelte";
-	import type { SelectedImage } from "../image-uploader";
-	import type { SelectedAudio } from "../audio-uploader";
-	import type { Media } from "../../../types";
+	import { createEventDispatcher } from 'svelte';
+	import MediaLibrary from '../../../../[subdomain]/tools/media/MediaLibrary.svelte';
+	import type { SelectedFile } from '../image-uploader';
+	import type { Media } from '../../../types';
 
-	const dispatch = createEventDispatcher<{select: SelectedImage, audioSelect: SelectedAudio}>();
+	const dispatch = createEventDispatcher<{ select: SelectedFile }>();
 
-	export let isAudio = false;
+	export let type: 'image' | 'audio' = 'image';
 
 	function handleSelect(e: CustomEvent<Media>) {
 		const media = e.detail;
 		dispatch('select', {
+			type,
 			url: media.url,
 			from: 'media',
 			media
 		});
 	}
-
-	function handleAudioSelect(e: CustomEvent<Media>) {
-		const media = e.detail;
-		dispatch('audioSelect', {
-			src: media.url,
-			from: 'media',
-			media
-		});
-	}
-
 </script>
 
-<MediaLibrary 
-	filterDefaultType={isAudio ? 'audio' : 'images'}
+<MediaLibrary
+	filterDefaultType={type === 'audio' ? 'audio' : 'images'}
 	filterTypeDisabled={true}
 	showUpload={false}
 	selecting={true}
-	on:select={isAudio ? handleAudioSelect : handleSelect}
+	on:select={handleSelect}
 />
