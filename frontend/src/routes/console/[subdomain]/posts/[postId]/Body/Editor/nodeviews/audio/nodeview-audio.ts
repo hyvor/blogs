@@ -44,7 +44,7 @@ export default class AudioView implements NodeView {
     }
 
 
-    stopEvent(e: Event) {
+    stopEvent() {
         return false;
     }
 
