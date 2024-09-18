@@ -30,6 +30,27 @@ it('creates a gated content with given tag', function() {
 
 });
 
+it('does not create if there are rules for tag id', function() {
+
+    $blog = blogWithAccess();
+    $minimumPlan = 'pro';
+    $gate = 'email';
+
+    HyvorTalkGatedContentRule::factory()->create([
+        'blog_id' => $blog->id,
+        'tag_id' => 10
+    ]);
+
+    $response = consoleApi($blog, 'POST', '/integrations/hyvor-talk/gated-content-rule', [
+        'tag_id' => 10,
+        'minimum_plan' => $minimumPlan,
+        'gate' => $gate
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Gated content rule already exists for this tag');
+
+});
+
 
 it('does not create after the max limit', function() {
 

@@ -524,7 +524,7 @@ export interface UrlData {
 
 export interface HyvorTalkGatedContentRule {
     id: number,
-    tag: Tag | null,
+    tag: Tag,
     minimum_plan: string | null,
     gate: string | null
 }

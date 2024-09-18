@@ -4,12 +4,24 @@
 	import type { HyvorTalkGatedContentRule } from '../../../../lib/types';
 	import CreateRule from './CreateRule.svelte';
 	import { getGatedContentRules } from '../hyvorTalkActions';
+	import RuleRow from './RuleRow.svelte';
 
 	let loading = true;
 	let error: null | string = null;
 	let rules: HyvorTalkGatedContentRule[] = [];
 
 	let creating = false;
+
+	function onDelete(e: CustomEvent<number>) {
+		const id = e.detail;
+		rules = rules.filter((r) => r.id !== id);
+	}
+
+	function onCreate(e: CustomEvent<HyvorTalkGatedContentRule>) {
+		rules = [...rules, e.detail];
+	}
+
+	const MAX_RULES = 10;
 
 	onMount(() => {
 		getGatedContentRules()
@@ -27,7 +39,13 @@
 
 <SplitControl column>
 	<Label slot="label">
-		Gated Content Rules <Button size="small" on:click={() => (creating = true)}>+ Create</Button>
+		Gated Content Rules <Button
+			size="small"
+			on:click={() => (creating = true)}
+			disabled={rules.length >= MAX_RULES}
+		>
+			+ Create
+		</Button>
 	</Label>
 
 	{#if loading}
@@ -38,11 +56,15 @@
 		<IconMessage iconSize={60} padding={40} empty message="No gated content rules found." />
 	{:else}
 		{#each rules as rule}
-			<div>{rule.id}</div>
+			<RuleRow {rule} on:delete={onDelete} />
 		{/each}
 	{/if}
 </SplitControl>
 
 {#if creating}
-	<CreateRule bind:show={creating} />
+	<CreateRule
+		bind:show={creating}
+		selectedTags={rules.map((r) => r.tag).filter((t) => t)}
+		on:create={onCreate}
+	/>
 {/if}

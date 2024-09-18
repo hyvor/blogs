@@ -15,7 +15,7 @@
 	import { IconPlus, IconLock } from '@hyvor/icons';
 	import TagName from '../../../../../settings/tags/TagName.svelte';
 
-	export let postTags: TagType[] = [];
+	export let selectedTags: TagType[] = [];
 	export let createPrivate = false;
 
 	let isLoading = true;
@@ -96,7 +96,7 @@
 				{#each availableTags as tag (tag.id)}
 					<ActionListItem
 						on:click={() => handleSelect(tag)}
-						disabled={!!postTags.find((t) => t.id === tag.id)}
+						disabled={!!selectedTags.find((t) => t.id === tag.id)}
 					>
 						<Tag size="small">
 							<TagName {tag} small />

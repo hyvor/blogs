@@ -9,6 +9,7 @@ use App\Domains\Integrations\HyvorTalk\HyvorTalkService;
 use App\Domains\Tag\TagRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\HyvorTalkGatedContentRule;
 use App\Models\HyvorTalkWebsite;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
@@ -104,6 +105,10 @@ class IntegrationHyvorTalkController
         /** @var ?string $gate */
         $gate = $request->input('gate');
 
+        if (HyvorTalkGatedContentService::ruleByBlogAndTagId($blog, $tagId)) {
+            throw new TrustedException('Gated content rule already exists for this tag');
+        }
+
         $rule = HyvorTalkGatedContentService::createGatedContentRule(
             $blog,
             $tagId,
@@ -112,6 +117,37 @@ class IntegrationHyvorTalkController
         );
 
         return response()->json(new GatedContentRuleObject($rule, $blog));
+    }
+
+    public function updateGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog, Request $request) : JsonResponse
+    {
+
+        $request->validate([
+            'minimum_plan' => 'required|string',
+            'gate' => 'string|nullable'
+        ]);
+
+        $updates = [];
+
+        if ($request->has('minimum_plan')) {
+            $updates['minimum_plan'] = (string) $request->string('minimum_plan');
+        }
+
+        if ($request->has('gate')) {
+            $updates['gate'] = $request->input('gate');
+        }
+
+        $rule = HyvorTalkGatedContentService::updateGatedContentRule($rule, $updates);
+
+        return response()->json(new GatedContentRuleObject($rule, $blog));
+    }
+
+
+
+    public function deleteGatedContentRule(HyvorTalkGatedContentRule $rule) : JsonResponse
+    {
+        HyvorTalkGatedContentService::deleteGatedContentRule($rule);
+        return response()->json();
     }
 
     public function getMembershipPlans(Blog $blog) : JsonResponse

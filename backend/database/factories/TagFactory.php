@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Blog;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -18,7 +19,7 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'blog_id' => config('test.blog_id'),
+            'blog_id' => Blog::factory(),
             'is_private' => false,
             'slug' => Str::slug(Str::random(25)),
             'posts_count' => 0,

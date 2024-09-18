@@ -21,6 +21,10 @@ return new class extends Migration
             $table->text('gate')->nullable();
 
             $table->index('blog_id');
+            $table->unique(['blog_id', 'tag_id']);
+
+            $table->foreign('blog_id')->references('id')->on('blogs')->onDelete('cascade');
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });
     }
 

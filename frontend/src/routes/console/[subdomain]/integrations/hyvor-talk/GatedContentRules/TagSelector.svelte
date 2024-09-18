@@ -6,6 +6,8 @@
 	import TagName from '../../../settings/tags/TagName.svelte';
 
 	let showDropdown = false;
+
+	export let selectedTags: Tag[] = [];
 	export let tag: Tag;
 
 	function onSelect(e: CustomEvent<Tag>) {
@@ -25,6 +27,6 @@
 	</Button>
 
 	<div slot="content">
-		<TagsSearch on:select={onSelect} createPrivate={true} />
+		<TagsSearch on:select={onSelect} createPrivate={true} {selectedTags} />
 	</div>
 </Dropdown>

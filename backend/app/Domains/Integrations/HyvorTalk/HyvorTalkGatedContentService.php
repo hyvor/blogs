@@ -12,6 +12,13 @@ class HyvorTalkGatedContentService
 
     public const MAX_GATED_CONTENT_RULES = 5;
 
+    public static function ruleByBlogAndTagId(Blog $blog, int $tagId) : ?HyvorTalkGatedContentRule
+    {
+        return HyvorTalkGatedContentRule::where('blog_id', $blog->id)
+            ->where('tag_id', $tagId)
+            ->first();
+    }
+
     public static function getGatedContentRulesCount(Blog $blog) : int
     {
         return HyvorTalkGatedContentRule::where('blog_id', $blog->id)->count();
@@ -46,6 +53,20 @@ class HyvorTalkGatedContentService
             'gate' => $gate
         ]);
 
+    }
+
+    /**
+     * @param array{ minimum_plan: string, gate: string|null } $updates
+     */
+    public static function updateGatedContentRule(HyvorTalkGatedContentRule $rule, array $updates) : HyvorTalkGatedContentRule
+    {
+        $rule->update($updates);
+        return $rule;
+    }
+
+    public static function deleteGatedContentRule(HyvorTalkGatedContentRule $rule) : void
+    {
+        $rule->delete();
     }
 
     public static function gatePostIfNeeded(Blog $blog, Post $post) : bool

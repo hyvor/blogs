@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Blog;
 use App\Models\HyvorTalkGatedContentRule;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,7 +17,7 @@ class HyvorTalkGatedContentRuleFactory extends Factory
     {
         return [
             'blog_id' => Blog::factory(),
-            'tag_id' => rand(),
+            'tag_id' => Tag::factory(),
             'minimum_plan' => 'Premium',
             'gate' => null
         ];

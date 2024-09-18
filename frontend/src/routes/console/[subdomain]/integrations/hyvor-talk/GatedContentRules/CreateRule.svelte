@@ -7,11 +7,12 @@
 		Textarea,
 		Validation
 	} from '@hyvor/design/components';
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { createGatedContentRule, getMembershipPlans } from '../hyvorTalkActions';
 	import TagSelector from './TagSelector.svelte';
 	import type { Tag } from '../../../../lib/types';
 
+	export let selectedTags: Tag[] = [];
 	export let show = false;
 
 	let loading = true;
@@ -35,6 +36,8 @@
 		return c.toUpperCase();
 	}
 
+	const dispatch = createEventDispatcher();
+
 	function handleConfirm() {
 		tagError = '';
 
@@ -46,8 +49,9 @@
 		loading = true;
 
 		createGatedContentRule(tag.id, minimumPlan, gateType === 'default' ? null : gateContent)
-			.then(() => {
+			.then((res) => {
 				show = false;
+				dispatch('create', res);
 			})
 			.finally(() => {
 				loading = false;
@@ -84,7 +88,7 @@
 >
 	<SplitControl label="Tag" caption="Posts with this tag will be gated.">
 		<FormControl>
-			<TagSelector bind:tag />
+			<TagSelector bind:tag {selectedTags} />
 			{#if tagError}
 				<Validation type="error">{tagError}</Validation>
 			{/if}
