@@ -54,11 +54,10 @@ export function createGatedContentRule(tagId: number, planName: string, gate: st
     })
 }
 
-export function updateGatedContentRule(ruleId: number, tagId: number, planName: string, gate: string | null) {
+export function updateGatedContentRule(ruleId: number, planName: string, gate: string | null) {
     return consoleApi.patch<HyvorTalkGatedContentRule>({
         endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
         data: {
-            tag_id: tagId,
             minimum_plan: planName,
             gate,
         }

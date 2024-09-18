@@ -8,7 +8,8 @@
 	let showDropdown = false;
 
 	export let selectedTags: Tag[] = [];
-	export let tag: Tag;
+	export let tag: Tag | null;
+	export let disabled = false;
 
 	function onSelect(e: CustomEvent<Tag>) {
 		tag = e.detail;
@@ -17,7 +18,7 @@
 </script>
 
 <Dropdown bind:show={showDropdown} width={300}>
-	<Button slot="trigger" color="input" size="small">
+	<Button slot="trigger" color="input" size="small" {disabled}>
 		{#if tag}
 			<TagName {tag} />
 		{:else}

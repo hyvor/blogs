@@ -5,8 +5,11 @@
 	import { IconPencil, IconTrash } from '@hyvor/icons';
 	import { deleteGatedContentRule } from '../hyvorTalkActions';
 	import { createEventDispatcher } from 'svelte';
+	import CreateRule from './CreateRule.svelte';
 
 	export let rule: HyvorTalkGatedContentRule;
+
+	let updating = false;
 
 	const dispatch = createEventDispatcher<{
 		delete: number;
@@ -73,7 +76,7 @@
 		<div class="bottom">Gate</div>
 	</div>
 	<div class="actions">
-		<IconButton color="input" size="small">
+		<IconButton color="input" size="small" on:click={() => (updating = true)}>
 			<IconPencil size={12} />
 		</IconButton>
 		<IconButton color="input" size="small" on:click={onDelete}>
@@ -81,6 +84,10 @@
 		</IconButton>
 	</div>
 </div>
+
+{#if updating}
+	<CreateRule bind:show={updating} {rule} on:update />
+{/if}
 
 <style>
 	.row {

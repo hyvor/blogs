@@ -5,25 +5,33 @@
 		Radio,
 		SplitControl,
 		Textarea,
-		Validation
+		Validation,
+		toast
 	} from '@hyvor/design/components';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { createGatedContentRule, getMembershipPlans } from '../hyvorTalkActions';
+	import {
+		createGatedContentRule,
+		getMembershipPlans,
+		updateGatedContentRule
+	} from '../hyvorTalkActions';
 	import TagSelector from './TagSelector.svelte';
-	import type { Tag } from '../../../../lib/types';
+	import type { HyvorTalkGatedContentRule, Tag } from '../../../../lib/types';
 
 	export let selectedTags: Tag[] = [];
 	export let show = false;
+	export let rule: HyvorTalkGatedContentRule | null = null;
+
+	const isUpdate = rule !== null;
 
 	let loading = true;
 	let error = '';
 
-	let tag: Tag;
+	let tag: Tag | null = rule ? rule.tag : null;
 	let tagError = '';
 
-	let gateType = 'default';
-	let gateContent = '';
-	let minimumPlan: string;
+	let gateType = rule ? (rule.gate !== null ? 'custom' : 'default') : 'default';
+	let gateContent = rule?.gate || '';
+	let minimumPlan = rule?.minimum_plan || '';
 
 	let currency: string;
 	let plans: { name: string; monthly_price: number }[] = [];
@@ -48,14 +56,33 @@
 
 		loading = true;
 
-		createGatedContentRule(tag.id, minimumPlan, gateType === 'default' ? null : gateContent)
-			.then((res) => {
-				show = false;
-				dispatch('create', res);
-			})
-			.finally(() => {
-				loading = false;
-			});
+		if (isUpdate) {
+			updateGatedContentRule(rule!.id, minimumPlan, gateType === 'default' ? null : gateContent)
+				.then((res) => {
+					show = false;
+					dispatch('update', res);
+					toast.success('Rule updated successfully');
+				})
+				.catch((e) => {
+					toast.error(e.message);
+				})
+				.finally(() => {
+					loading = false;
+				});
+		} else {
+			createGatedContentRule(tag.id, minimumPlan, gateType === 'default' ? null : gateContent)
+				.then((res) => {
+					show = false;
+					dispatch('create', res);
+					toast.success('Rule created successfully');
+				})
+				.catch((e) => {
+					toast.error(e.message);
+				})
+				.finally(() => {
+					loading = false;
+				});
+		}
 	}
 
 	onMount(() => {
@@ -63,7 +90,7 @@
 			.then((res) => {
 				currency = res.currency;
 				plans = res.plans;
-				minimumPlan = plans[0]?.name || '';
+				if (!isUpdate) minimumPlan = plans[0]?.name || '';
 			})
 			.catch((err) => {
 				error = err.message;
@@ -76,10 +103,10 @@
 
 <Modal
 	bind:show
-	title="Create Gated Content Rule"
+	title={isUpdate ? 'Update Gated Content Rule' : 'Create Gated Content Rule'}
 	footer={{
 		confirm: {
-			text: 'Create Rule'
+			text: isUpdate ? 'Update Rule' : 'Create Rule'
 		}
 	}}
 	{loading}
@@ -88,7 +115,7 @@
 >
 	<SplitControl label="Tag" caption="Posts with this tag will be gated.">
 		<FormControl>
-			<TagSelector bind:tag {selectedTags} />
+			<TagSelector bind:tag {selectedTags} disabled={isUpdate} />
 			{#if tagError}
 				<Validation type="error">{tagError}</Validation>
 			{/if}

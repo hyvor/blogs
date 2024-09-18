@@ -21,6 +21,11 @@
 		rules = [...rules, e.detail];
 	}
 
+	function onUpdate(e: CustomEvent<HyvorTalkGatedContentRule>) {
+		const updatedRule = e.detail;
+		rules = rules.map((r) => (r.id === updatedRule.id ? updatedRule : r));
+	}
+
 	const MAX_RULES = 10;
 
 	onMount(() => {
@@ -56,7 +61,7 @@
 		<IconMessage iconSize={60} padding={40} empty message="No gated content rules found." />
 	{:else}
 		{#each rules as rule}
-			<RuleRow {rule} on:delete={onDelete} />
+			<RuleRow {rule} on:delete={onDelete} on:update={onUpdate} />
 		{/each}
 	{/if}
 </SplitControl>
