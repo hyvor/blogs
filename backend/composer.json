@@ -64,7 +64,6 @@
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.6",
         "friendsofphp/php-cs-fixer": "^3.8",
         "laravel/pint": "^1.1",
         "laravel/sail": "^1.0.1",

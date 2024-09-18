@@ -22,6 +22,8 @@ return new class extends Migration
             $table->bigInteger('blog_id')->unsigned()->unique();
             // integration
             $table->bigInteger('website_id');
+
+            $table->string('encryption_key')->nullable();
         });
     }
 

@@ -3,10 +3,14 @@
 namespace App\Domains\Integrations\HyvorTalk;
 
 use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
+use App\Domains\Integrations\HyvorTalk\Exception\EncryptionKeyMissingException;
 use App\Models\Blog;
 use App\Models\HyvorTalkGatedContentRule;
+use App\Models\HyvorTalkWebsite;
 use App\Models\Post;
+use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class HyvorTalkGatedContentService
 {
@@ -44,18 +48,25 @@ class HyvorTalkGatedContentService
         int $tagId,
         string $minimumPlan,
         ?string $gate,
-    )
+    ) : HyvorTalkGatedContentRule
     {
 
-        $rule = HyvorTalkGatedContentRule::create([
-            'blog_id' => $blog->id,
-            'tag_id' => $tagId,
-            'minimum_plan' => $minimumPlan,
-            'gate' => $gate
-        ]);
+        $rule = null;
 
-        event(new GatedContentChangedEvent($blog));
+        DB::transaction(function() use (&$rule, $blog, $tagId, $minimumPlan, $gate) {
 
+            $rule = HyvorTalkGatedContentRule::create([
+                'blog_id' => $blog->id,
+                'tag_id' => $tagId,
+                'minimum_plan' => $minimumPlan,
+                'gate' => $gate
+            ]);
+
+            event(new GatedContentChangedEvent($blog));
+
+        });
+
+        /** @var HyvorTalkGatedContentRule $rule */
         return $rule;
 
     }
@@ -65,22 +76,71 @@ class HyvorTalkGatedContentService
      */
     public static function updateGatedContentRule(Blog $blog, HyvorTalkGatedContentRule $rule, array $updates) : HyvorTalkGatedContentRule
     {
-        $rule->update($updates);
-        event(new GatedContentChangedEvent($blog));
+
+        DB::transaction(function() use (&$rule, $updates, $blog) {
+
+            $rule->update($updates);
+            event(new GatedContentChangedEvent($blog));
+
+        });
+
         return $rule;
     }
 
     public static function deleteGatedContentRule(Blog $blog, HyvorTalkGatedContentRule $rule) : void
     {
-        $rule->delete();
-        event(new GatedContentChangedEvent($blog));
+        DB::transaction(function() use ($rule, $blog) {
+            $rule->delete();
+            event(new GatedContentChangedEvent($blog));
+        });
     }
 
-    public static function gatePostIfNeeded(Blog $blog, Post $post) : bool
+    public static function getPostContentHtml(Blog $blog, Post $post, PostVariant $variant) : string
     {
 
-        //
+        $hyvorTalkWebsite = $blog->hyvorTalkWebsite;
 
+        if ($hyvorTalkWebsite) {
+            $rules = $blog->hyvorTalkGatedContentRules;
+
+            foreach ($rules as $rule) {
+                // Check if the post has the tag that is gated
+                if ($post->tags->contains($rule->tag_id)) {
+                    try {
+                        $secure = self::calculateGatedSecure($hyvorTalkWebsite, $rule, $variant->content_html);
+                    } catch (EncryptionKeyMissingException) {
+                        return 'Error: Hyvor Talk encryption key is missing.';
+                    }
+                    return '<hyvor-talk-gated-content secure="' . $secure . '"></hyvor-talk-gated-content>';
+                }
+            }
+        }
+
+        return $variant->content_html ?? '';
+
+    }
+
+    private static function calculateGatedSecure(HyvorTalkWebsite $hyvorTalkWebsite, HyvorTalkGatedContentRule $rule, ?string $content) : string
+    {
+
+        $key = $hyvorTalkWebsite->encryption_key;
+
+        if (!$key) {
+            throw new EncryptionKeyMissingException();
+        }
+
+        $data = [
+            'timestamp' => time(),
+            'content' => $content ?? '',
+            'minimum-plan' => $rule->minimum_plan,
+            'gate' => $rule->gate,
+        ];
+
+        $data = json_encode($data);
+        $iv = openssl_random_pseudo_bytes(16);
+        $encrypted = openssl_encrypt($data, 'aes-256-cbc', base64_decode($key), OPENSSL_RAW_DATA, $iv);
+
+        return base64_encode($encrypted) . ':' . base64_encode($iv);
     }
 
 }

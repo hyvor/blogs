@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class Blog extends Model
@@ -224,6 +225,22 @@ class Blog extends Model
     public function isInTrial() : bool
     {
         return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
+    }
+
+    /**
+     * @return HasOne<HyvorTalkWebsite>
+     */
+    public function hyvorTalkWebsite()
+    {
+        return $this->hasOne(HyvorTalkWebsite::class);
+    }
+
+    /**
+     * @return HasMany<HyvorTalkGatedContentRule>
+     */
+    public function hyvorTalkGatedContentRules()
+    {
+        return $this->hasMany(HyvorTalkGatedContentRule::class);
     }
 
 }

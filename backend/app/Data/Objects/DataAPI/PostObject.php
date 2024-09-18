@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Integrations\HyvorTalk\HyvorTalkGatedContentService;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
@@ -85,14 +86,13 @@ class PostObject
         $this->slug = $variant->slug ?? '';
 
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
-        $this->content = $variant->content_html ?? '';
+        $this->content = HyvorTalkGatedContentService::getPostContentHtml($blog, $post, $variant);
         $this->words = $variant->words ?? 0;
         $this->title = $variant->title ?? null;
         $this->description = $variant->description ?? null;
         $this->featured_image_url = $post->featured_image_url;
         $this->canonical_url = $post->canonical_url;
 
-        // TODO: Add Tag code
         $this->code_head = $post->code_head ?? '';
         $this->code_foot = $post->code_foot ?? '';
 

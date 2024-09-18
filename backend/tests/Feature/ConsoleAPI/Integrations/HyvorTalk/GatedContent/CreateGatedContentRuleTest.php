@@ -39,16 +39,18 @@ it('creates a gated content with given tag', function() {
 it('does not create if there are rules for tag id', function() {
 
     $blog = blogWithAccess();
+    $tag = addTag($blog);
+    $tagId = $tag->id;
     $minimumPlan = 'pro';
     $gate = 'email';
 
     HyvorTalkGatedContentRule::factory()->create([
         'blog_id' => $blog->id,
-        'tag_id' => 10
+        'tag_id' => $tagId
     ]);
 
     $response = consoleApi($blog, 'POST', '/integrations/hyvor-talk/gated-content-rule', [
-        'tag_id' => 10,
+        'tag_id' => $tagId,
         'minimum_plan' => $minimumPlan,
         'gate' => $gate
     ])
