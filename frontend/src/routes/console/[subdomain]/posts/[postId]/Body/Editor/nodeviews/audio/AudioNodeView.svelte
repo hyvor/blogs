@@ -79,6 +79,7 @@
 		if (pos === undefined) return;
 		tr.delete(pos, pos + 1);
 		view.dispatch(tr);
+		view.focus();
 	}
 
 	onMount(() => {
