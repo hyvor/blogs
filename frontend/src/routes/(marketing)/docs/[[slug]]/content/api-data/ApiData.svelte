@@ -1163,8 +1163,7 @@ published_at>'-7 days'
     // and footer branding
     "seo_indexing": true,
     "color_modes": "light",
-    "color_mode_default": "light",
-    "hb_branding": true
+    "color_mode_default": "light"
 }
 `}
 />
