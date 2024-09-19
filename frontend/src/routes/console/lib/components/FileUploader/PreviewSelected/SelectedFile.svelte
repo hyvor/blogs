@@ -3,18 +3,18 @@
 	// import 'cropperjs/dist/cropper.css';
 	import Meta from './Meta.svelte';
 	import type { SelectedFile } from '../image-uploader';
-	import { Button, Loader, Switch, toast } from '@hyvor/design/components';
+	import { Button, Loader, Switch, toast, TextInput } from '@hyvor/design/components';
 	import { IconCheckAll, IconCloudUpload } from '@hyvor/icons';
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-	import { uploadMedia } from '../../../../[subdomain]/tools/media/mediaActions';
+	import { toKebabCase, uploadMedia } from '../../../../[subdomain]/tools/media/mediaActions';
 
 	export let file: SelectedFile;
 
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
 	let imageSize = file.url instanceof File ? file.url.size : null;
-	const imageName =
-		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null;
+	let imageName = toKebabCase(
+		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null);
 
 	let imgEl: HTMLImageElement;
 
@@ -81,6 +81,11 @@
 	function handleUpload() {
 		if (shouldUpload && file.url instanceof Blob) {
 			isUploading = true;
+			if (imageName.length > 255) {
+                toast.error('Image name is too long');
+                isUploading = false;
+                return;
+            }
 			uploadMedia(file.url, imageName)
 				.then((res) => {
 					handleSelect({
@@ -139,11 +144,14 @@
 						Unknown
 					{/if}
 				</Meta>
-				{#if imageName}
-					<Meta name="Name">
-						{imageName}
-					</Meta>
-				{/if}
+				<div class="name-editor">
+                    <div class="name">Name</div>
+                    <TextInput 
+                        bind:value={imageName}
+                        placeholder="Image Name"
+                        state={imageName.length < 255 ? 'default' : 'error'}
+                	/>
+				</div>
 				{#if hosting}
 					<Meta name="Hosting">
 						{hosting}
@@ -230,4 +238,16 @@
 		padding-top: 15px;
 		text-align: center;
 	}
+
+	.name-editor {
+        display: flex;
+        flex-direction: column;
+        padding: 0 15px;
+    }
+
+    .name {
+        font-size: 13px;
+        color: var(--text-light);
+        margin-bottom: 5px;
+    }
 </style>
