@@ -85,6 +85,11 @@
     function handleUpload() {
         if (shouldUpload && image.url instanceof Blob) {
             isUploading = true;
+            if (imageName.length > 255) {
+                toast.error('Image name is too long');
+                isUploading = false;
+                return;
+            }
             uploadMedia(image.url, imageName)
                 .then(res => {
                     handleSelect({
@@ -156,6 +161,7 @@
                     <TextInput 
                         bind:value={imageName}
                         placeholder="Image Name"
+                        state={imageName.length < 255 ? 'default' : 'error'}
                     />
                 </div>
                 {#if hosting}
