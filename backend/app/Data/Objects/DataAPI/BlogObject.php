@@ -37,7 +37,6 @@ class BlogObject
 
     public SocialMediaObject $social;
 
-    public bool $is_free;
 
     /**
      * @var NavObject[]
@@ -140,6 +139,11 @@ HTML;
     private function shouldAddBranding(Blog $blog, ?Subscription $subscription, ?bool $brandingMeta) : bool
     {
 
+        // if explicitly set, return the value
+        if (is_bool($brandingMeta)) {
+            return $brandingMeta;
+        }
+
         // no branding on dev and preview blogs
         if ($blog->type === BlogTypeEnum::DEV || $blog->type === BlogTypeEnum::PREVIEW) {
             return false;
@@ -153,7 +157,7 @@ HTML;
         // if it has a subscription, respect the branding meta
         // if branding meta is null, no branding
         if ($subscription->plan->isAtLeast(SubscriptionPlanEnum::GROWTH)) {
-            return is_bool($brandingMeta) ? $brandingMeta : false;
+            return false;
         }
 
         return true;
