@@ -129,7 +129,7 @@ class BlogObject
         }
 
         $hbBranding = <<<HTML
-<a href="https://blogs.hyvor.com?source=branding&subdomain=$blog->subdomain" target="_blank" style="position:fixed;bottom:15px;left:15px;font-size:12px;padding:6px 14px;background-color:#ececec;color:inherit;border-radius:20px;font-weight:600;z-index:10;text-decoration:none;">Published with Hyvor Blogs</a><style>a[href^="https://blogs.hyvor.com?source=branding"]:hover{opacity: 0.9;}.mode-dark a[href^="https://blogs.hyvor.com?source=branding"]{background-color:#2b2b2f!important}body{padding-bottom:25px;}</style>
+<a href="https://blogs.hyvor.com?source=branding&subdomain=$blog->subdomain" target="_blank" style="position:fixed;bottom:15px;left:15px;font-size:12px;padding:6px 14px;background-color:#ececec;color:inherit;border-radius:20px;font-weight:600;z-index:10;text-decoration:none;line-height: 16px;">Published with Hyvor Blogs</a><style>a[href^="https://blogs.hyvor.com?source=branding"]:hover{opacity: 0.9;}.mode-dark a[href^="https://blogs.hyvor.com?source=branding"]{background-color:#2b2b2f!important}body{padding-bottom:25px;}</style>
 HTML;
 
         return ($codeFoot ? $codeFoot . "\n" : '') . $hbBranding;
