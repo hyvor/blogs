@@ -82,20 +82,9 @@
     
     let isUploading = false;
 
-    function isValidImageName(name: string | null) {
-        if (!name || name.length == 0) return false;
-        if (name.includes(' ')) return false;
-        return true;
-    }
-
     function handleUpload() {
         if (shouldUpload && image.url instanceof Blob) {
             isUploading = true;
-            if (!isValidImageName(imageName)) {
-                toast.error('Image name cannot be empty and should not contain spaces');
-                isUploading = false;
-                return;
-            }
             uploadMedia(image.url, imageName)
                 .then(res => {
                     handleSelect({
@@ -166,8 +155,7 @@
                     <div class="name">Name</div>
                     <TextInput 
                         bind:value={imageName}
-                        placeholder="Image Name" 
-                        state={isValidImageName(imageName) ? 'success' : 'error'}
+                        placeholder="Image Name"
                     />
                 </div>
                 {#if hosting}
@@ -273,6 +261,6 @@
     .name {
         font-size: 13px;
         color: var(--text-light);
-        margin-bottom: 2px;
+        margin-bottom: 5px;
     }
 </style>

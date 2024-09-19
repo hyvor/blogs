@@ -65,7 +65,7 @@ export function toKebabCase(str: string | null): string {
 export function uploadMedia(file: File | Blob, name: string | null = null) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('file_name', name || (file instanceof File ? file.name : 'file'));
+    formData.append('file_name', name || '');
     return consoleApi.post<Media>({
         endpoint: '/media',
         data: formData
