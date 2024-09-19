@@ -10,4 +10,11 @@ enum SubscriptionPlanEnum: string
     case TEAM = 'team';
     case BUSINESS = 'business';
     case ENTERPRISE = 'enterprise';
+
+    public function isAtLeast(SubscriptionPlanEnum $plan): bool
+    {
+        $cases = self::cases();
+        return array_search($this, $cases) >= array_search($plan, $cases);
+    }
+
 }

@@ -8,7 +8,13 @@
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';
 	import { minPlanCheck } from '../billing/minPlanCheck';
 
-	let brandingDisabled = !minPlanCheck('growth');
+	let hasGrowthPlan = minPlanCheck('growth');
+
+	/**
+	 * null = default value (no on growth+ plans)
+	 * true/false = user's value
+	 */
+	$: brandingValue = $blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding;
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
@@ -98,6 +104,23 @@
 		/>
 	</SplitControl>
 
+	<SplitControl label="Hyvor Blogs Branding" caption={'Show "Published with Hyvor Blogs" message'}>
+		<div class="branding-wrap" class:disabled={!hasGrowthPlan}>
+			<Switch checked={brandingValue} disabled={!hasGrowthPlan} on:change={handleBrandingChange} />
+		</div>
+
+		{#if !hasGrowthPlan}
+			<div style="display: flex; margin-top: 5px; margin-left:1px">
+				<Text small light
+					><strong>Growth or a higher plan</strong> is required to disable branding.&nbsp</Text
+				>
+				<Link href={consoleUrlWithBlog('/billing')}>
+					<small>Upgrade Now!</small>
+				</Link>
+			</div>
+		{/if}
+	</SplitControl>
+
 	<SplitControl
 		label="Social Media"
 		caption="Links to your social media channels (use full URLs with https://)"
@@ -165,25 +188,6 @@
 			</SplitControl>
 		</div>
 	</SplitControl>
-
-	<SplitControl label="Powered By" caption="Hyvor Blogs Branding displayed in the footer">
-		<Switch
-			checked={$blogStore.hb_branding}
-			disabled={brandingDisabled}
-			on:change={handleBrandingChange}
-		/>
-
-		{#if brandingDisabled}
-			<div style="display: flex; margin-top: 5px; margin-left:1px">
-				<Text small light
-					><strong>Growth or a higher plan</strong> is required to disable branding.&nbsp</Text
-				>
-				<Link href={consoleUrlWithBlog('/billing')}>
-					<small>Upgrade Now!</small>
-				</Link>
-			</div>
-		{/if}
-	</SplitControl>
 </div>
 
 <style>
@@ -195,5 +199,10 @@
 
 	.settings :global(.CodeMirror) {
 		min-height: 200px;
+	}
+
+	.branding-wrap.disabled {
+		opacity: 0.7;
+		pointer-events: none;
 	}
 </style>
