@@ -5,7 +5,8 @@ import type { AppState } from "@excalidraw/excalidraw/types/types";
 export type SelectFromType = 'upload' | 'media' | 'unsplash' | 'excalidraw';
 export type UploadType = 'paste' | 'dnd' | 'browse' | 'url';
 
-export interface SelectedImage {
+export interface SelectedFile {
+    type: 'image' | 'audio',
     from: SelectFromType,
     url: string | Blob,
 
@@ -20,7 +21,6 @@ export interface SelectedImage {
     },
     media?: Media,
 }
-
 
 export const VALID_MIME_TYPES = [
     'image/gif', 

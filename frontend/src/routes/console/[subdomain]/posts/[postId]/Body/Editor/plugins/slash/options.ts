@@ -1,9 +1,9 @@
 import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
-import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
-import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
-import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
+import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import FileUploader from "../../../../../../../lib/components/FileUploader/FileUploader.svelte";
+import type { SelectedFile } from "../../../../../../../lib/components/FileUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
 import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
 
@@ -13,7 +13,7 @@ export interface SlashOption {
     icon: ComponentType,
     keywords: string[],
     node: string | (() => Promise<Node | null>),
-    attrs?: Record<string, any>,
+    attrs?: Record<string, unknown>,
 }
 
 const options: SlashOption[] = [
@@ -59,6 +59,13 @@ const options: SlashOption[] = [
             "codepen",
         ],
         node: createEmbed,
+    },
+    {
+        name: "Audio",
+        description: "Add an audio",
+        icon: IconSoundwave,
+        keywords: ["audio", "sound", "upload"],
+        node: selectAudio,
     },
     {
         name: "Code Block",
@@ -128,12 +135,12 @@ export function findOptions(match: string) : SlashOption[] {
     
     const matched = [];
 
-    for (var i = 0; i < options.length; i++) {
-        let { keywords } = options[i]!;
+    for (let i = 0; i < options.length; i++) {
+        const { keywords } = options[i]!;
 
-        for (var x = 0, l = keywords.length; x < l; x++) {
+        for (let x = 0, l = keywords.length; x < l; x++) {
             for (
-                var y = 0, yLen = match ? matchWords.length : 1;
+                let y = 0, yLen = match ? matchWords.length : 1;
                 y < yLen;
                 y++
             ) {
@@ -156,12 +163,12 @@ export function findOptions(match: string) : SlashOption[] {
 
 function selectImage() {
 
-    return new Promise<Node | null>((resolve, reject) => {
+    return new Promise<Node | null>((resolve) => {
 
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new ImageUploader({
+        const selector = new FileUploader({
             target: div,
         });
 
@@ -175,13 +182,48 @@ function selectImage() {
             resolve(null);
         })
 
-        selector.$on('select', (e: CustomEvent<SelectedImage>) => {
+        selector.$on('select', (e: CustomEvent<SelectedFile>) => {
             destroy();
             return resolve(
                 schema.nodes.figure!.create({}, [
                     schema.nodes.image!.create({ src: e.detail.url }),
                     schema.nodes.figcaption!.create()
                 ])
+            )
+        });
+
+    });
+
+}
+
+function selectAudio() {
+
+    return new Promise<Node | null>((resolve) => {
+
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+
+        const selector = new FileUploader({
+            target: div,
+            props: {
+                type: 'audio'
+            }
+        });
+
+        function destroy() {
+            selector.$destroy();
+            div.remove();
+        }
+
+        selector.$on('close', () => {
+            destroy();
+            resolve(null);
+        })
+
+        selector.$on('select', (e) => {
+            destroy();
+            return resolve(
+                schema.nodes.audio!.create({ src: e.detail.url })
             )
         });
 
@@ -197,7 +239,7 @@ function createQuote() {
 
 function createEmbed() {
 
-    return new Promise<Node | null>((resolve, reject) => {
+    return new Promise<Node | null>((resolve) => {
 
         const div = document.createElement("div");
         document.body.appendChild(div);
@@ -232,7 +274,7 @@ function createEmbed() {
 
 function createBookmark() {
 
-    return new Promise<Node | null>((resolve, reject) => {
+    return new Promise<Node | null>((resolve) => {
 
         const div = document.createElement("div");
         document.body.appendChild(div);
