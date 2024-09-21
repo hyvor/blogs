@@ -4,7 +4,6 @@ import Writing from "./content/writing/Writing.svelte";
 import CustomDomain from "./content/custom-domain/CustomDomain.svelte";
 import SubDirectoryHosting from "./content/subdirectory/SubDirectoryHosting.svelte";
 import Services from "./content/services/Services.svelte";
-import PrivacyPolicy from "./content/privacy-policy/PrivacyPolicy.svelte";
 import Seo from "./content/seo/Seo.svelte";
 import Fonts from "./content/fonts/Fonts.svelte";
 import Redirect from "./content/redirect/Redirect.svelte";
@@ -228,17 +227,6 @@ export const categories: Category[] = [
 
         ]
     },
-
-    {
-        name: 'Legal',
-        pages: [
-            {
-                slug: 'privacy-policy',
-                name: 'Privacy Policy',
-                component: PrivacyPolicy,
-            }
-        ]
-    },   
     
 ];
 
