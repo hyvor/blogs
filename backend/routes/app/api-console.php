@@ -127,6 +127,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/media/from-url', [ConsoleMediaController::class, 'uploadFileFromUrl']);
             Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
             Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
+            Route::patch('/media/{id}', [ConsoleMediaController::class, 'updateMedia']);
 
             // url data
             Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);

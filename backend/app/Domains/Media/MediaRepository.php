@@ -212,4 +212,27 @@ class MediaRepository
         $limit = UsageRepository::getLimitsOf($blog, 'media');
         return $usage >= $limit;
     }
+
+    public static function update(Media $media, ?string $name, ?int $postId) : Media
+    {
+        // Replace spaces with hyphens
+        $fileName = str_replace(' ', '-', $name);
+        $prefix = self::getPathPrefix($media->blog_id);
+        
+        // Check if the file already exists and append a random suffix to the file name
+        if (Storage::exists($prefix . '/' . $fileName)) {
+            $randomString = Str::random();
+            $fileName = $fileName . '_' . $randomString;
+        }
+
+        $oldPath = self::getPath($media->blog_id, $media->name);
+        $newPath = self::getPath($media->blog_id, $fileName);
+        
+        Storage::move($oldPath, $newPath);
+
+        $media->name = $fileName;
+        $media->save();
+
+        return $media;
+    }
 }

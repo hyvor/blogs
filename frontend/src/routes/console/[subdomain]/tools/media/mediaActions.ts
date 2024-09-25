@@ -72,6 +72,13 @@ export function uploadMedia(file: File | Blob, name: string | null = null) {
     })
 }
 
+export function updateMedia(id: number, data: Partial<Media>) {
+    return consoleApi.patch<Media>({
+        endpoint: `/media/${id}`,
+        data
+    })
+}
+
 
 export function deleteMedia(id: number) {
     return consoleApi.delete({

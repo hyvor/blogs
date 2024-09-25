@@ -1,10 +1,12 @@
 <script lang="ts">
 	import dayjs from "dayjs";
 	import type { Media } from "../../../lib/types";
-	import { IMAGE_EXTENSIONS, deleteMedia } from "./mediaActions";
+	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from "./mediaActions";
 	import { IconButton, confirm, toast } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
+    import { Modal, TextInput , Button, ButtonGroup, FormControl } from "@hyvor/design/components";
+	import MediaModal from "./MediaModal.svelte";
     
     export let media: Media;
 
@@ -13,10 +15,18 @@
     // an event will be fired when the user selects a media file
     export let selecting = false;
 
+    let isEditingFileName = false;
+
+
     const dispatch = createEventDispatcher<{
         select: Media,
         delete: Media,
+        rename: Media,
     }>();
+
+    function handleFileNameClick() {
+        isEditingFileName = true;
+    }
 
     function handleClick(e: any) {
         if (selecting) {
@@ -44,12 +54,54 @@
         }
     }
 
+    async function handleChangeName() {
+        if (await confirm({
+            title: 'Update Media Name',
+            content: 'Are you sure you want to rename this media file?',
+            confirmText: 'Yes, Rename',
+            danger: true,
+        })) {
+            const toastId = toast.loading('Renaming...');
+            updateMedia(media.id, {name: media.name})
+                .then(() => {
+                    toast.success('Renamed sucessfull', {id: toastId});
+                    dispatch('rename', media);
+                })
+                .catch(err => toast.error(err.message, {id: toastId}));
+
+        }
+        isEditingFileName = false;
+    }
+
     const isImage = IMAGE_EXTENSIONS.indexOf(media.extension) !== -1;
     const uploadedAt = dayjs.unix(media.uploaded_at);
 
 </script>
 
 <div class="media-file">
+
+    {#if isEditingFileName}
+        <Modal bind:show={isEditingFileName} closeOnEscape={false} title="Media name edition">
+            <FormControl>
+                <TextInput bind:value={media.name} label="File Name"/>
+            </FormControl>
+            <svelte:fragment slot="footer">
+                <ButtonGroup>
+                    <Button
+                        variant="invisible"
+                        on:click={() => isEditingFileName = false}
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button on:click={handleChangeName}>
+                        Change
+                    </Button>
+                </ButtonGroup>
+
+            </svelte:fragment>
+        </Modal>
+    {/if}
 
     <a
         class="body"
@@ -70,10 +122,11 @@
 
     <div class="footer">
 
-        <div 
+        <button
             class="media-name"
             title={media.original_name}
-        >{media.original_name}</div>
+            on:click={handleFileNameClick}
+        >{media.original_name}</button>
         <time 
             class="media-at"
             datetime={uploadedAt.format()}
@@ -147,5 +200,5 @@
         max-width: 100%;
         max-height: 100%;
     }
-
+    
 </style>

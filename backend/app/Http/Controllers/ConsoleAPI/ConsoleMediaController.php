@@ -119,4 +119,19 @@ class ConsoleMediaController extends Controller
 
         return response()->json($images);
     }
+
+    public static function updateMedia(Request $request, Media $media) : JsonResponse
+    {
+        $request->validate([
+            'name' => 'string|nullable',
+            'post_id' => 'integer|nullable'
+        ]);
+
+        $name = $request->has('name') ? $request->input('name') : null;
+        $postId = $request->has('post_id') ? $request->input('post_id') : null;
+
+        $media = MediaRepository::update($media, $name, $postId);
+
+        return response()->json(new MediaObject($media, $media->blog));
+    }
 }
