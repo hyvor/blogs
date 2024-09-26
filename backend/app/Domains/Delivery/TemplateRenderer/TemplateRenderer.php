@@ -191,10 +191,6 @@ class TemplateRenderer
                         $this->pathMatcher->blog
                     );
                 }
-            } else {
-
-                
-
             }
 
             $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
