@@ -81,14 +81,16 @@ class PermalinkRepository
 
     private static function getBlogBasePathWithProtocol(Blog $blog) : ?string
     {
-        $isLocal = app()->environment('local') || app()->environment('staging');
-        $protocol = $isLocal ? 'http://' : 'https://';
-
         if ($blog->hosting_at === BlogHostingAtEnum::SUBDOMAIN) {
-            $deliveryDomain = config('blogs.domain_delivery');
-            $port = $isLocal ? ':2211' : '';
 
-            return "$protocol$blog->subdomain.$deliveryDomain$port";
+            $deliveryUrl = config('blogs.delivery_url');
+            $scheme = parse_url($deliveryUrl, PHP_URL_SCHEME);
+            $domain = parse_url($deliveryUrl, PHP_URL_HOST);
+
+            $port = parse_url($deliveryUrl, PHP_URL_PORT);
+            $port = $port ? ":$port" : '';
+
+            return "$scheme://$blog->subdomain.$domain$port";
         } elseif ($blog->hosting_at === BlogHostingAtEnum::DOMAIN) {
             return 'https://'.$blog->hosting_domain;
         } elseif ($blog->hosting_at === BlogHostingAtEnum::SELF) {
