@@ -6,6 +6,7 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Events\MediaCreatedEvent;
@@ -98,6 +99,9 @@ class ClearCacheSubscriber
         $events->listen(ConfigEditedEvent::class, [static::class, 'onFileEditedEvent']);
         $events->listen(TemplateEditedEvent::class, [static::class, 'onFileEditedEvent']);
         $events->listen(LangEditedEvent::class, [static::class, 'onFileEditedEvent']);
+
+        // integrations
+        $events->listen(GatedContentChangedEvent::class, [static::class, 'onGatedContentChangedEvent']);
 
     }
 
@@ -301,5 +305,10 @@ class ClearCacheSubscriber
         } else {
             $this->clearSingleCache($blog, $redirect->getOriginal('path'));
         }
+    }
+
+    public function onGatedContentChangedEvent(GatedContentChangedEvent $event): void
+    {
+        $this->clearTemplateCache($event->blog);
     }
 }

@@ -81,7 +81,7 @@ class PermalinkRepository
 
     private static function getBlogBasePathWithProtocol(Blog $blog) : ?string
     {
-        $isLocal = app()->environment('local');
+        $isLocal = app()->environment('local') || app()->environment('staging');
         $protocol = $isLocal ? 'http://' : 'https://';
 
         if ($blog->hosting_at === BlogHostingAtEnum::SUBDOMAIN) {
