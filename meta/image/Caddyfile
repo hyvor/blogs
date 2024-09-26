@@ -5,7 +5,7 @@
 }
 
 # hyvorblogs.io subdomain
-*.{$DOMAIN_DELIVERY}:80 {
+*.{$DELIVERY_DOMAIN}:80 {
 	root * /var/www/app/backend/public
 	encode zstd gzip
 	php_fastcgi unix//run/php-fpm.sock
