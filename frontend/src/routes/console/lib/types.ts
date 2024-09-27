@@ -518,3 +518,13 @@ export interface UrlData {
     icon_url: string | null,
     site: string | null,
 }
+
+
+// === Hyvor Talk
+
+export interface HyvorTalkGatedContentRule {
+    id: number,
+    tag: Tag,
+    minimum_plan: string | null,
+    gate: string | null
+}

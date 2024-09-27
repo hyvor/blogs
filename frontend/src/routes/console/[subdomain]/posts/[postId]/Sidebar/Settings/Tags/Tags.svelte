@@ -96,7 +96,7 @@
 						<IconPlus size={14} />
 					</IconButton>
 
-					<TagsSearch slot="content" on:select={handleAddTag} />
+					<TagsSearch slot="content" selectedTags={$postStore.tags} on:select={handleAddTag} />
 				</Dropdown>
 			</div>
 		</div>

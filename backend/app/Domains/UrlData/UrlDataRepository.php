@@ -7,7 +7,7 @@ use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Exceptions\TrustedException;
 use App\Models\UrlData;
 
-function _safe_length(string $str, int $len = 255) : string
+function _safe_length(?string $str, int $len = 255) : ?string
 {
     if (! $str) {
         return $str; // null

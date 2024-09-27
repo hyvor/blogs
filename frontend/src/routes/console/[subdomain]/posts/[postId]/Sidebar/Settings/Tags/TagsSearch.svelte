@@ -10,11 +10,13 @@
 		toast
 	} from '@hyvor/design/components';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import type { User, Tag as TagType } from '../../../../../../lib/types';
+	import type { Tag as TagType } from '../../../../../../lib/types';
 	import { createTag, getTags, searchTags } from '../../../../../settings/tags/tagActions';
-	import { IconPlus } from '@hyvor/icons';
-	import { postStore } from '../../../../postStore';
+	import { IconPlus, IconLock } from '@hyvor/icons';
 	import TagName from '../../../../../settings/tags/TagName.svelte';
+
+	export let selectedTags: TagType[] = [];
+	export let createPrivate = false;
 
 	let isLoading = true;
 	let tags: TagType[] = [];
@@ -53,10 +55,10 @@
 		dispatch('select', tag);
 	}
 
-	function handleCreateIcon() {
+	function handleCreateTag() {
 		isLoading = true;
 
-		createTag(search.trim())
+		createTag(search.trim(), createPrivate)
 			.then((res) => {
 				handleSelect(res);
 			})
@@ -89,38 +91,39 @@
 	<div class="results">
 		{#if isLoading}
 			<Loader block padding={30} size="small" />
-		{:else if availableTags.length}
+		{:else}
 			<ActionList>
 				{#each availableTags as tag (tag.id)}
 					<ActionListItem
 						on:click={() => handleSelect(tag)}
-						disabled={!!$postStore.tags.find((t) => t.id === tag.id)}
+						disabled={!!selectedTags.find((t) => t.id === tag.id)}
 					>
 						<Tag size="small">
 							<TagName {tag} small />
 						</Tag>
-
 						<Text slot="end" small light>
 							{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
 						</Text>
 					</ActionListItem>
 				{/each}
+
+				{#if search !== '' && availableTags.some((t) => t.variants[0]?.name === search) === false}
+					<ActionListItem>
+						<Button
+							size="small"
+							variant="outline"
+							style="font-weight:normal;font-size:12px;"
+							on:click={handleCreateTag}
+						>
+							<IconPlus size={15} slot="start" />
+							Create tag&nbsp;<b>{search}</b>
+							{#if createPrivate}
+								<IconLock size={12} style="margin-left:4px;" />
+							{/if}
+						</Button>
+					</ActionListItem>
+				{/if}
 			</ActionList>
-		{:else}
-			<div style="padding:30px;text-align:center">
-				<Text small light>No tags</Text>
-			</div>
-			<div style="text-align:center;padding-bottom:5px;">
-				<Button
-					size="small"
-					variant="outline"
-					style="font-weight:normal;font-size:12px;"
-					on:click={handleCreateIcon}
-				>
-					<IconPlus size={15} slot="start" />
-					Create tag&nbsp;<b>{search}</b>
-				</Button>
-			</div>
 		{/if}
 	</div>
 </div>
