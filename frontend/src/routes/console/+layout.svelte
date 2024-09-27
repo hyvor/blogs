@@ -4,7 +4,7 @@
 	import consoleApi from './lib/consoleApi';
 	import type { AuthUser, BlogList } from './lib/types';
 	import { authUserStore, blogListStore } from './lib/stores';
-	import { Loader, toast } from '@hyvor/design/components';
+	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { setConfig, type Config } from './lib/config';
@@ -81,7 +81,11 @@
 			</Loader>
 		</div>
 	{:else}
-		<Bar />
+		<HyvorBar
+			product="blogs"
+			userName={$authUserStore.name}
+			userPicture={$authUserStore.picture_url}
+		/>
 		<slot />
 	{/if}
 </main>
