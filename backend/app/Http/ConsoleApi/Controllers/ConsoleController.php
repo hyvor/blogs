@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ConsoleController
 {
 
-    public function init(AccessAuthUser $user) : JsonResponse
+    public function init(AccessAuthUser $user): JsonResponse
     {
 
         $blogs = UserBlogRepository::getBlogsOfUser($user->id)
@@ -30,7 +30,7 @@ class ConsoleController
 
     }
 
-    public function initTemp(Request $request) : JsonResponse
+    public function initTemp(Request $request): JsonResponse
     {
 
         $tempSubdomain = $request->input('temp_subdomain');
@@ -56,7 +56,7 @@ class ConsoleController
 
     }
 
-    public function getConfig() : JsonResponse
+    public function getConfig(): JsonResponse
     {
         return response()->json($this->config());
     }
@@ -64,12 +64,12 @@ class ConsoleController
     /**
      * @return string[] 
      */
-    private function config() : array
+    private function config(): array
     {
         return [
             'domains' => [
                 'app' => config('blogs.domain_app'),
-                'delivery' => config('blogs.domain_delivery'),
+                'delivery' => config('blogs.delivery_domain'),
             ],
             'limits' => [
                 'max_upload_size' => config('limits.max_media_upload_size_kb') * 1000,
@@ -87,7 +87,7 @@ class ConsoleController
         ];
     }
 
-    public function changeBlogSort(Request $request, AccessAuthUser $user) : JsonResponse
+    public function changeBlogSort(Request $request, AccessAuthUser $user): JsonResponse
     {
         $request->validate([
             'blog_ids' => 'required|array',
