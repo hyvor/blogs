@@ -5,9 +5,11 @@ namespace App\Domains\Media;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
+use App\Domains\Post\PostRepository;
 use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use App\Models\Media;
+use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
@@ -230,8 +232,22 @@ class MediaRepository
         
         Storage::move($oldPath, $newPath);
 
+        $oldLink = "/media/$media->name";
+        $newLink = "/media/$fileName";
+        
+        $posts = PostVariant::where('content', 'LIKE', "%$oldLink%")
+            ->orWhere('content_unsaved', 'LIKE', "%$newLink%")
+            ->get();
+
+        foreach ($posts as $post) {
+            $post->content = str_replace($oldLink, $newLink, $post->content);
+            $post->content_unsaved = str_replace($oldLink, $newLink, $post->content_unsaved);
+            $post->save();
+        }
+
         $media->name = $fileName;
         $media->save();
+
 
         return $media;
     }

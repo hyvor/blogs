@@ -1,18 +1,30 @@
 <script lang="ts">
-	import { Modal, TextInput } from "@hyvor/design/components";
-    import type { Media } from "../../../lib/types";
+     import { Modal, TextInput, FormControl } from "@hyvor/design/components";
 
-    export let show = true;
-    export let media : Media;
-    export let handleChangeName;
+     export let show : boolean;
+     export let handleChangeName : () => void;
+     export let media : any;
 </script>
 
 <div>
-    <Modal bind:show={show} size="large" closeOnEscape={false}>
-        <TextInput bind:value={media.name} label="File Name" />
-        <button on:click={handleChangeName}>
-            Change
-        </button>
-    </Modal>
+<Modal
+    bind:show={show} 
+    closeOnEscape={false} 
+    title="Media name edition"
+    footer={{
+        cancel: {
+            text: 'Cancel',
+        },
+        confirm: {
+            text: 'Change',
+            danger: true
+        }
+    }}
+    on:cancel={() => show = false}
+    on:confirm={handleChangeName}
+    >
+    <FormControl>
+        <TextInput bind:value={media.name} label="File Name"/>
+    </FormControl>
+</Modal>
 </div>
-

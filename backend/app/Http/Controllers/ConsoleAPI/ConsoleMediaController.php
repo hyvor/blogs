@@ -70,9 +70,9 @@ class ConsoleMediaController extends Controller
         /** @var \Illuminate\Http\UploadedFile $file */
         $file = $request->file('file');
         $postId = $request->has('post_id') ? $request->integer('post_id') : null;
-        $file_name = $request->has('file_name') ? $request->input('file_name') : null;
+        $fileName = $request->has('file_name') ? $request->input('file_name') : null;
    
-        $media = MediaRepository::upload($blog, $file, $postId, $file_name);
+        $media = MediaRepository::upload($blog, $file, $postId, $fileName);
 
         return response()->json(new MediaObject($media, $blog));
     }

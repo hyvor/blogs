@@ -5,9 +5,9 @@
 	import { IconButton, confirm, toast } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
-    import { Modal, TextInput , Button, ButtonGroup, FormControl } from "@hyvor/design/components";
 	import MediaModal from "./MediaModal.svelte";
-    
+
+
     export let media: Media;
 
     // If the user is selecting media files
@@ -81,26 +81,7 @@
 <div class="media-file">
 
     {#if isEditingFileName}
-        <Modal bind:show={isEditingFileName} closeOnEscape={false} title="Media name edition">
-            <FormControl>
-                <TextInput bind:value={media.name} label="File Name"/>
-            </FormControl>
-            <svelte:fragment slot="footer">
-                <ButtonGroup>
-                    <Button
-                        variant="invisible"
-                        on:click={() => isEditingFileName = false}
-                    >
-                        Cancel
-                    </Button>
-
-                    <Button on:click={handleChangeName}>
-                        Change
-                    </Button>
-                </ButtonGroup>
-
-            </svelte:fragment>
-        </Modal>
+        <MediaModal bind:show={isEditingFileName} handleChangeName={handleChangeName} bind:media={media}/>
     {/if}
 
     <a
