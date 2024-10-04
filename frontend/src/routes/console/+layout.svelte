@@ -7,7 +7,7 @@
 	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { setConfig, type Config } from './lib/config';
+	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { APP_URL } from '../../lib';
 	import Bar from './Bar.svelte';
@@ -82,9 +82,11 @@
 		</div>
 	{:else}
 		<HyvorBar
+			instance={getConfig().hyvor.instance}
 			product="blogs"
-			userName={$authUserStore.name}
-			userPicture={$authUserStore.picture_url}
+			config={{
+				twitter: 'https://twitter.com/HyvorBlogs'
+			}}
 		/>
 		<slot />
 	{/if}

@@ -14,7 +14,10 @@ export default defineConfig({
 		environment: 'happy-dom'
 	},
 	server: {
-		port: 2210
+		port: 2210,
+		fs: {
+			strict: false
+		}
 	},
 	envDir: '../',
 
