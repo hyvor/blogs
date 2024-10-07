@@ -5,14 +5,11 @@ namespace App\Domains\Import\Sitemap\PageScraper;
 use App\Domains\Import\Sitemap\PageScraper\Enums\PageScrapeErrorEnum;
 use App\Domains\Import\Sitemap\PageScraper\Enums\SelectTypeEnum;
 use App\Domains\Import\Sitemap\PageScraper\Exceptions\PageScrapperException;
-use App\Domains\Post\Content\PostContentService;
+use App\Domains\Post\Content\HtmlParser;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
-use Closure;
 use DOMDocument;
-use DOMElement;
-use DOMText;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -193,11 +190,9 @@ class PageScraper
         $content = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . $content;
 
         $content = $this->filterOutExcluded($content);
-        $content = $this->fixCodeBlocks($content);
-        $content = $this->convertIframesToEmbed($content);
-        $content = $this->convertPImgToImg($content);
 
-        $this->content = PostContentService::getJsonFromHtml($content, $this->blog);
+        $htmlParser = new HtmlParser($content);
+        $this->content = $htmlParser->parse($this->blog)->toJson();
 
     }
 
@@ -227,124 +222,6 @@ class PageScraper
 
         return $content;
 
-    }
-
-    /**
-     * Converts elements inside <pre><code> into a single text element
-     */
-    private function fixCodeBlocks(string $content) : string
-    {
-
-        $doc = new DOMDocument;
-        $doc->loadHTML($content);
-
-        $crawler = new Crawler();
-        $crawler->addDocument($doc);
-
-        $crawler
-            ->filter('pre > code')
-            ->each(function (Crawler $preCrawler) use ($doc) {
-                foreach ($preCrawler as $node) {
-                    $textNode = $doc->createTextNode($node->textContent);
-                    $node->parentNode?->replaceChild($textNode, $node);
-                }
-            });
-
-        $html = $doc->saveHTML();
-
-        return $html ?: $content;
-
-    }
-
-    private function convertIframesToEmbed(string $content) : string
-    {
-
-        $doc = new DOMDocument;
-        $doc->loadHTML($content);
-
-        $crawler = new Crawler();
-        $crawler->addDocument($doc);
-
-        $crawler
-            ->filter('iframe')
-            ->each(function (Crawler $iframeCrawler) use ($doc) {
-                foreach ($iframeCrawler as $iframe) {
-                    if (!$iframe instanceof DOMElement)
-                        continue;
-
-                    $src = $iframe->getAttribute('src');
-                    if (!$src)
-                        continue;
-
-                    $embed = $doc->createElement('x-embed');
-                    $embed->setAttribute('data-url', $src);
-                    $iframe->parentNode?->replaceChild($embed, $iframe);
-
-                }
-            });
-
-        $html = $doc->saveHTML();
-
-        return $html ?: $content;
-
-    }
-
-    // <p><img></p> => <img>
-    private function convertPImgToImg(string $content) : string
-    {
-
-        return $this->filterAndRun($content, 'p > img', function (Crawler $crawler, DOMDocument $doc) {
-
-            foreach ($crawler as $node) {
-
-                if (!$node instanceof DOMElement)
-                    continue;
-
-                if (!$node->parentNode)
-                    continue;
-
-                if (!$node->parentNode->parentNode)
-                    continue;
-
-
-                $count = 0;
-                foreach ($node->parentNode->childNodes as $child) {
-                    // count if not text node with only whitespaces
-                    if (!$child instanceof DOMText || trim($child->textContent) !== '') {
-                        $count++;
-                    }
-                }
-
-                if ($count !== 1)
-                    continue;
-
-                $node->parentNode->parentNode->replaceChild($node, $node->parentNode);
-
-            }
-
-        });
-
-    }
-
-    /**
-     * @param callable(Crawler, DOMDocument) : void $callback
-     */
-    private function filterAndRun(string $content, string $filter, callable $callback) : string
-    {
-
-        $doc = new DOMDocument;
-        $doc->loadHTML($content);
-
-        $crawler = new Crawler();
-        $crawler->addDocument($doc);
-
-        $crawler
-            ->filter($filter)
-            ->each(fn (Crawler $crawler) => $callback($crawler, $doc));
-
-        $html = $doc->saveHTML();
-
-        return $html ?: $content;
     }
 
     private function setError(PageScrapeErrorEnum $error) : void

@@ -19,6 +19,8 @@
         "ext-pdo": "*",
         "ext-tokenizer": "*",
         "ext-xml": "*",
+        "ext-xmlreader": "*",
+        "ext-simplexml": "*",
         "doctrine/dbal": "^3.6",
         "erusev/parsedown-extra": "^0.8.1",
         "fakerphp/faker": "^1.9.1",

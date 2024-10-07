@@ -117,10 +117,13 @@ class Importer
 
     }
 
-    private function tryToUploadImage(string $url) : string
+    private function tryToUploadImage(string $url) : ?string
     {
         if (!$this->importImages)
             return $url;
+
+        if (str_starts_with($url, 'file://'))
+            return $this->uploadLocalImage($url);
 
         $media = app(MediaRepository::class);
         try {
@@ -135,6 +138,27 @@ class Importer
             );
         }
         return $url;
+    }
+
+    private function uploadLocalImage(string $localUrl) : ?string
+    {
+        $path = str_replace('file://', '', $localUrl);
+        if (!file_exists($path))
+            return null;
+
+        $media = app(MediaRepository::class);
+        try {
+            $image = $media->uploadFromLocal($this->blog, $path);
+        } catch (UploadException) {
+            $image = null;
+        }
+        if ($image) {
+            return PermalinkRepository::getMediaPermalink(
+                $image,
+                $this->blog
+            );
+        }
+        return null;
     }
 
 }

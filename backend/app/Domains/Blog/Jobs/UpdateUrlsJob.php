@@ -3,7 +3,8 @@
 namespace App\Domains\Blog\Jobs;
 
 use App\Domains\Cache\CacheService;
-use App\Domains\Post\Content\ProsemirrorHelper;
+use App\Domains\Post\Content\PostContentService;
+use App\Domains\Post\Content\UrlUpdater;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -106,15 +107,11 @@ class UpdateUrlsJob implements ShouldQueue
                 foreach ($variants as $variant) {
 
                     if ($variant->content) {
-                        $variant->content = strval(json_encode(
-                            ProsemirrorHelper::updateUrls($variant->content, $this->oldUrl, $this->newUrl)
-                        ));
+                        $variant->content = $this->updateContentUrl($variant->content);
                     }
 
                     if ($variant->content_unsaved) {
-                        $variant->content_unsaved = strval(json_encode(
-                            ProsemirrorHelper::updateUrls($variant->content_unsaved, $this->oldUrl, $this->newUrl)
-                        ));
+                        $variant->content_unsaved = $this->updateContentUrl($variant->content_unsaved);
                     }
 
                     $variant->save();
@@ -122,6 +119,14 @@ class UpdateUrlsJob implements ShouldQueue
 
             });
 
+    }
+
+    private function updateContentUrl(string $content) : string
+    {
+        $doc = PostContentService::getDocumentFromJson($content, $this->blog);
+        return (new UrlUpdater($doc))
+            ->updateFromOldToNew($this->oldUrl, $this->newUrl)
+            ->toJson();
     }
 
     private function updateAuthorsUrls() : void
