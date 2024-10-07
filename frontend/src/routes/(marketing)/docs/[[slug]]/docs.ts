@@ -16,7 +16,7 @@ import ThemesStyles from "./content/themes-styles/ThemesStyles.svelte";
 import Scripts from "./content/scripts/Scripts.svelte";
 import Languages from "./content/languages/Languages.svelte";
 import Export from "./content/export/Export.svelte";
-import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
+import ImportSitemap from "./content/import/ImportSitemap.svelte";
 import Webhooks from "./content/webhooks/Webhooks.svelte";
 import ApiDelivery from "./content/api-delivery/ApiDelivery.svelte";
 import Theme from "./content/theme/Theme.svelte";
@@ -29,6 +29,8 @@ import Users from "./content/users/Users.svelte";
 import SyntaxHighlighting from "./content/syntax-highlighting/SyntaxHighlighting.svelte";
 import Tags from "./content/tags/Tags.svelte";
 import NavigationLinks from "./content/navigation/NavigationLinks.svelte";
+import Import from "./content/import/Import.svelte";
+import ImportWordPress from "./content/import/ImportWordPress.svelte";
 
 export const categories: Category[] = [
 
@@ -173,9 +175,21 @@ export const categories: Category[] = [
                 component: Export,
             },
             {
+                slug: 'import',
+                name: 'Import Data',
+                component: Import,
+            },
+            {
                 slug: 'import-sitemap',
-                name: 'Import from Sitemap',
+                name: 'Sitemap',
                 component: ImportSitemap,
+                parent: 'import'
+            },
+            {
+                slug: 'import-wordpress',
+                name: 'WordPress',
+                component: ImportWordPress,
+                parent: 'import'
             }
         ]
     },
@@ -241,5 +255,6 @@ interface Category {
 interface Page {
     slug: string,
     name: string,
-    component: ComponentType
+    component: ComponentType,
+    parent?: string
 }
