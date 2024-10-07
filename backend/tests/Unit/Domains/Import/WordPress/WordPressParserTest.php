@@ -5,6 +5,7 @@ namespace Tests\Unit\Domains\Import\WordPress;
 use App\Domains\App\JobMessageLog;
 use App\Domains\Import\WordPress\WordPressParser;
 use App\Domains\Post\Content\Nodes\Audio\Audio;
+use App\Domains\Post\Content\Nodes\Embed\Embed;
 use App\Domains\Post\Content\Nodes\Image\Image;
 use App\Domains\Post\Content\PostContentService;
 use Illuminate\Support\Facades\Http;
@@ -53,5 +54,11 @@ it('parses wordpress file', function() {
     $audio = $contentDoc->getNodes(Audio::class);
     expect($audio)->toHaveCount(1);
     expect($audio[0]->attrs->src)->toBe('file://' . __DIR__ . '/example/uploads/2024/04/dream-big.mp3');
+
+    $embeds = $contentDoc->getNodes(Embed::class);
+    expect($embeds)->toHaveCount(2);
+
+    expect($embeds[0]->attrs->url)->toBe('https://www.youtube.com/watch?v=Z_88MJ2dwts');
+    expect($embeds[1]->attrs->url)->toBe('https://twitter.com/HyvorBlogs/status/1839476390309023989');
 
 });

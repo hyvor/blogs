@@ -134,11 +134,7 @@ class WordPressParser extends ParserAbstract
         $slug = (string) $this->element($post, 'wp:post_name');
 
         $contentHtml = (string) $this->element($post, 'content:encoded');
-
-        $startTime = microtime(true);
         $content = $this->getContent($contentHtml);
-        $endTime = microtime(true);
-        dump('Time: ' . ($endTime - $startTime) . PHP_EOL, strlen($contentHtml), $slug);
 
         $featuredImageUrl = null;
         $thumbnailId = (string) $this->elementOptional($post, 'wp:postmeta[wp:meta_key="_thumbnail_id"]/wp:meta_value');
@@ -247,8 +243,6 @@ class WordPressParser extends ParserAbstract
     private function getContent(string $contentHtml) : string
     {
 
-        return PostContentService::getJsonFromHtml($contentHtml, $this->blog);
-
         $parser = new HtmlParser($contentHtml);
 
         // audio
@@ -273,12 +267,25 @@ class WordPressParser extends ParserAbstract
             }
         );
 
-//        $parser->registerCustomFilter(
-//            'figure.wp-block-embed',
-//            function (Crawler $crawler) {
-//                //
-//            }
-//        );
+        // embed -> iframe
+        $parser->registerCustomFilter(
+            'figure.wp-block-embed',
+            function (Crawler $crawler, \DOMDocument $doc) {
+
+                foreach ($crawler as $figure) {
+                    if (!$figure instanceof \DOMElement)
+                        continue;
+
+                    $text = trim($figure->textContent);
+
+                    $iframe = $doc->createElement('iframe');
+                    $iframe->setAttribute('src', $text);
+
+                    $figure->parentNode?->replaceChild($iframe, $figure);
+                }
+
+            }
+        );
 
         $document = $parser->parse($this->blog);
 
