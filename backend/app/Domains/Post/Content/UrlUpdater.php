@@ -33,7 +33,9 @@ class UrlUpdater
                 }
 
                 $oldMediaPrefix = $oldUrl . '/media/';
-                $src = $media->attrs->src;
+
+                /** @var string $src */
+                $src = $media->attrs->get('src',false);
 
                 if (!$src) {
                     return false;
@@ -50,7 +52,8 @@ class UrlUpdater
                     return false;
                 }
 
-                $href = $link->attrs->href;
+                /** @var string $href */
+                $href = $link->attrs->get('href',false);
 
                 if (!$href) {
                     return false;
@@ -67,12 +70,12 @@ class UrlUpdater
     /**
      * in callbacks, false = no update, string = new url
      *
-     * @param callable(Node): false|string $mediaUpdater
-     * @param callable(Mark): false|string $linkUpdater
+     * @param (callable(Node): (false|string))|null $mediaUpdater
+     * @param (callable(Mark): (false|string))|null $linkUpdater
      */
     public function update(
-        callable $mediaUpdater = null,
-        callable $linkUpdater = null,
+        ?callable $mediaUpdater = null,
+        ?callable $linkUpdater = null,
     ) : Node
     {
 
