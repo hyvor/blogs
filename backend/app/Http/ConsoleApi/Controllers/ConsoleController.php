@@ -69,7 +69,7 @@ class ConsoleController
         return [
             'domains' => [
                 'app' => config('blogs.domain_app'),
-                'delivery' => config('blogs.domain_delivery'),
+                'delivery' => config('blogs.delivery_domain'),
             ],
             'limits' => [
                 'max_upload_size' => config('limits.max_media_upload_size_kb') * 1000,

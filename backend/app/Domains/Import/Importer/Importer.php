@@ -14,6 +14,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use Hyvor\Phrosemirror\Document\Node;
+use Illuminate\Support\Facades\DB;
 
 class Importer
 {
@@ -29,7 +30,10 @@ class Importer
     public function import() : void
     {
         $this->parser->parse();
-        $this->importPosts();
+
+        DB::transaction(function() {
+            $this->importPosts();
+        });
     }
 
     private function importPosts() : void
@@ -107,7 +111,13 @@ class Importer
 
                 $src = strval($node->attr('src'));
 
-                if ($src && str_starts_with($src, 'http')) {
+                if (
+                    $src &&
+                    (
+                        str_starts_with($src, 'http') ||
+                        str_starts_with($src, 'file://')
+                    )
+                ) {
                     $node->attrs->set('src', $this->tryToUploadImage($src));
                 }
 
@@ -121,11 +131,12 @@ class Importer
 
     private function tryToUploadImage(string $url) : ?string
     {
-        if (!$this->importImages)
-            return $url;
 
         if (str_starts_with($url, 'file://'))
             return $this->uploadLocalImage($url);
+
+        if (!$this->importImages)
+            return $url;
 
         $media = app(MediaRepository::class);
         try {

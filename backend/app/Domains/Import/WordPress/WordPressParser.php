@@ -113,6 +113,19 @@ class WordPressParser extends ParserAbstract
 
     }
 
+    public function getMissingUploadsCount(): int
+    {
+        $missingCount = 0;
+        foreach ($this->uploads as $path) {
+            $fullPath = $this->uploadsPath . '/' . $path;
+            if (!file_exists($fullPath)) {
+                $this->log->warn('Upload not found: ' . $path);
+                $missingCount++;
+            }
+        }
+        return $missingCount;
+    }
+
     private function parsePost(string $postXml): void
     {
         try {
@@ -182,7 +195,7 @@ class WordPressParser extends ParserAbstract
         $attachmentUrl = (string) $this->element($post, 'wp:attachment_url');
         $path = preg_replace('/^.*wp-content\/uploads\//', '', $attachmentUrl);
 
-        $this->attachments[$id] = $path;
+        $this->attachments[$id] = (string) $path;
     }
 
     /**
@@ -302,20 +315,36 @@ class WordPressParser extends ParserAbstract
 
         $urlUpdater->update(
             mediaUpdater: function (Node $media) {
-                $src = $media->attrs->src;
+
+                /** @var ?string $src */
+                $src = $media->attrs->get('src', false);
                 if (!$src) {
                     return false;
                 }
 
-                if (!str_starts_with($src, $this->wpBaseUrl . '/wp-content/uploads/')) {
+                // sometimes http is used instead of https
+                // so, we only check the domain
+                $srcDomain = parse_url($src, PHP_URL_HOST);
+                $wpDomain = parse_url($this->wpBaseUrl, PHP_URL_HOST);
+
+                // not the same domain
+                if ($srcDomain !== $wpDomain) {
+                    return false;
+                }
+
+                // not an upload
+                // we don't check wpBaseUrl + /wp-content/uploads/ together because
+                // sometimes there are issues with multiple slashes (blog.com//wp-content/uploads)
+                if (!str_contains($src, 'wp-content/uploads/')) {
                     return false;
                 }
 
                 $path = preg_replace('/^.*wp-content\/uploads\//', '', $src);
 
                 if (!in_array($path, $this->uploads)) {
-                    $this->uploads[] = $path;
+                    $this->uploads[] = (string) $path;
                 }
+
 
                 return 'file://' . $this->uploadsPath . '/' . $path;
             },

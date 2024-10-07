@@ -15,22 +15,22 @@ class JobMessageLog
     )
     {}
 
-    public function info($message) : void
+    public function info(string $message) : void
     {
         $this->handleMessage('info', $message);
     }
 
-    public function warning($message) : void
+    public function warn(string $message) : void
     {
-        $this->handleMessage('warning', $message);
+        $this->handleMessage('warn', $message);
     }
 
-    public function error($message)   : void
+    public function error(string $message)   : void
     {
         $this->handleMessage('error', $message);
     }
 
-    private function handleMessage($type, $message) : void
+    private function handleMessage(string $type, string $message) : void
     {
         if ($this->command) {
             $this->outputToConsole($type, $message);
@@ -39,13 +39,13 @@ class JobMessageLog
         }
     }
 
-    private function outputToConsole($type, $message) : void
+    private function outputToConsole(string $type, string $message) : void
     {
         $message = '[' . now()->format('Y-m-d H:i:s') . '] ' . $message;
         $this->command->{$type}($message);
     }
 
-    private function storeMessage($type, $message) : void
+    private function storeMessage(string $type, string $message) : void
     {
         $this->messages[] = [
             'type' => $type,

@@ -6,7 +6,7 @@ namespace Tests\Unit\Domains\Post\Content;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Content\UrlUpdater;
 
-it('url updater test', function() {
+describe('url updater test', function() {
 
     it('updates from old url to new url', function() {
 
@@ -47,13 +47,16 @@ it('url updater test', function() {
         $updater = new UrlUpdater($doc);
         $updated = $updater->updateFromOldToNew($oldUrl, $newUrl);
 
-        expect(json_encode($updated->toJson(), true))->toBe([
+        expect(json_decode($updated->toJson(), true))->toBe([
             'type' => 'doc',
             'content' => [
                 [
                     'type' => 'image',
                     'attrs' => [
-                        'src' => 'https://new.com/media/image.jpg'
+                        'src' => 'https://new.com/media/image.jpg',
+                        'alt' => null,
+                        'width' => null,
+                        'height' => null,
                     ]
                 ],
                 [

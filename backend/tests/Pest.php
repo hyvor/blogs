@@ -27,10 +27,10 @@ uses()->beforeEach(function () {
     Cache::flush();
 
     // disable uploading profile picture
-    $this->mock(MediaRepository::class, function (MockInterface $mock) {
-        $mock->shouldReceive('uploadFromUrl')
-            ->andReturn(Media::factory()->create(['blog_id' => 0]));
-    });
+//    $this->mock(MediaRepository::class, function (MockInterface $mock) {
+//        $mock->shouldReceive('uploadFromUrl')
+//            ->andReturn(Media::factory()->create(['blog_id' => 0]));
+//    });
 
 
     Http::fake([
