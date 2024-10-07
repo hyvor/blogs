@@ -6,4 +6,4 @@ parameters:
         - app/Stale
 
 includes:
-    - vendor/nunomaduro/larastan/extension.neon
+    - vendor/larastan/larastan/extension.neon

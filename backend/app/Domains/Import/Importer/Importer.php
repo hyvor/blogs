@@ -5,6 +5,7 @@ namespace App\Domains\Import\Importer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
+use App\Domains\Post\Content\Nodes\Audio\Audio;
 use App\Domains\Post\Content\Nodes\Image\Image;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\PostRepository;
@@ -13,7 +14,6 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use Hyvor\Phrosemirror\Document\Node;
-use Illuminate\Support\Facades\Log;
 
 class Importer
 {
@@ -28,7 +28,6 @@ class Importer
 
     public function import() : void
     {
-        // echo('Parsing started' . "\n");
         $this->parser->parse();
         $this->importPosts();
     }
@@ -62,7 +61,7 @@ class Importer
 
             foreach ($importingPost->variants as $importingVariant) {
 
-                $content = $this->importImagesOfContent($importingVariant->content);
+                $content = $this->importMediaOfContent($importingVariant->content);
 
                 $variant = PostRepository::getPostVariantByPostIdAndLanguageId(
                     $post->id,
@@ -91,7 +90,7 @@ class Importer
 
     }
 
-    private function importImagesOfContent(string $content) : string
+    private function importMediaOfContent(string $content) : string
     {
 
         if (!$this->importImages)
@@ -101,7 +100,10 @@ class Importer
 
         $document->traverse(function (Node $node) {
 
-            if ($node->isOfType(Image::class)) {
+            if (
+                $node->isOfType(Image::class) ||
+                $node->isOfType(Audio::class)
+            ) {
 
                 $src = strval($node->attr('src'));
 

@@ -8,12 +8,10 @@ use App\Domains\Import\Importer\ImportingPostVariant;
 use App\Domains\Import\Importer\ParserAbstract;
 use App\Domains\Import\Importer\ParserException;
 use App\Domains\Post\Content\HtmlParser;
-use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Content\UrlUpdater;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use Carbon\Carbon;
-use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
 use SimpleXMLElement;
 use Symfony\Component\DomCrawler\Crawler;
@@ -26,7 +24,7 @@ class WordPressParser extends ParserAbstract
     public string $uploadsPath;
 
     /**
-     * @var array<int, string> $attachments
+     * @var array<string, string> $attachments
      */
     private array $attachments = [];
 
@@ -57,7 +55,13 @@ class WordPressParser extends ParserAbstract
             throw new ParserException('Export file not found');
         }
 
-        $this->xml = file_get_contents($exportFile);
+        $xml = file_get_contents($exportFile);
+
+        if ($xml === false) {
+            throw new ParserException('Could not read export file');
+        }
+
+        $this->xml = $xml;
         $this->uploadsPath = $path . '/uploads';
 
         $this->blogUrl = PermalinkRepository::getBaseUrl($this->blog);
@@ -78,8 +82,7 @@ class WordPressParser extends ParserAbstract
             if (
                 $fileReader->nodeType === XMLREADER::ELEMENT &&
                 $fileReader->localName === 'base_site_url' &&
-                $fileReader->read() &&
-                $fileReader->nodeType === XMLREADER::TEXT
+                $fileReader->read()
             ) {
                 $this->wpBaseUrl = $fileReader->value;
             }
