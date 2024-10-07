@@ -325,6 +325,20 @@
 			}
 		}
 
+		:global(.button-wrap) {
+			position: relative;
+			
+			display: inline-block;
+			text-decoration: none;
+			background-color: #bbbaba;
+			border-radius: 10px;
+			padding: 10px 10px 10px 10px;
+
+			:global(.content-div) {
+	
+			}
+		}
+
 		// figure (embed and image)
 		:global(figure) {
 			margin-top: 45px;

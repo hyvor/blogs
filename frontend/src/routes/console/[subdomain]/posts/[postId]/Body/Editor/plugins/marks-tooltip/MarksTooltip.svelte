@@ -58,7 +58,7 @@
     }
 
     function isMarkActive(state: EditorState, type: MarkType) {
-        const sel = state.selection
+        const sel = state.selection;
         if (sel.empty) return type.isInSet(state.storedMarks || sel.$from.marks())
         else return state.doc.rangeHasMark(sel.from, sel.to, type)
     }

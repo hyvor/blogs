@@ -1,11 +1,12 @@
 import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
-import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHandIndex, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import FileUploader from "../../../../../../../lib/components/FileUploader/FileUploader.svelte";
 import type { SelectedFile } from "../../../../../../../lib/components/FileUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
 import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
+import { IconButton } from "@hyvor/design/components";
 
 export interface SlashOption {
     name: string,
@@ -122,6 +123,14 @@ const options: SlashOption[] = [
         icon: IconTable,
         keywords: ["table", "spreadsheet"],
         node: createTable,
+    },
+    {
+        name: "Button",
+        description: "Add a button",
+        icon: IconHandIndex,
+        keywords: ["button", "action"],
+        node: "button",
+        attrs: { href: "", size: "medium", align: "center" },
     },
 ];
 

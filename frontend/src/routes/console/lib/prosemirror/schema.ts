@@ -250,6 +250,39 @@ export const nodes = {
         toDOM() { return ['br'] }
     } as NodeSpec,
 
+    button : {
+        attrs: {
+            href: {default: ""},
+            align: {default: "center"},
+            size: {default: "medium"},
+            bg: {default: "#f1f1ef"},
+            fg: {default: "#000000"}
+        },
+        content: "text*",
+        group: "block",
+        defining: true,
+        selectable: false,
+        marks: "",
+        parseDOM: [{
+            tag: "button",
+            getAttrs(button: HTMLElement) {
+                return {
+                    href: button.dataset.href,
+                    align: button.dataset.align,
+                    size: button.dataset.size,
+                    bg: button.style.backgroundColor,
+                    fg: button.style.color
+                }
+            }
+        }],
+        toDOM(node: Node) { return ["a", {
+            'href': node.attrs.href,
+            'align': node.attrs.align,
+            'size': node.attrs.size,
+            style: `background-color: ${node.attrs.bg}; color: ${node.attrs.fg}`
+        }, 0] }
+    } as NodeSpec,
+
     toc: {
         attrs: { 
             levels: {default: [1,2,3,4,5,6]} 
