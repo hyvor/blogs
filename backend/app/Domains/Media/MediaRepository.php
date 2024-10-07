@@ -77,6 +77,7 @@ class MediaRepository
             ->first();
     }
 
+
     public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null): Media
     {
         try {
@@ -107,6 +108,13 @@ class MediaRepository
         return $media;
     }
 
+    public function uploadFromLocal(Blog $blog, string $path, ?int $postId = null): Media
+    {
+        $file = File::get($path);
+        $size = File::size($path);
+        return $this->createMediaFor($path, $blog, $file, $postId, $size);
+    }
+
     public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
 
@@ -133,24 +141,7 @@ class MediaRepository
 
         $size = (int) $response->header('content-size');
 
-        $extension = File::extension($url);
-        $name = self::getPathPrefix($blog->id).'/'.Str::random().($extension ? ".$extension" : '');
-        Storage::put($name, $file);
-
-        $fileName = self::getFileNameFromPath($name);
-
-        $media = Media::create([
-            'blog_id' => $blog->id,
-            'post_id' => $postId,
-            'name' => $fileName,
-            'size' => $size,
-            'original_name' => $fileName,
-            'extension' => $extension
-        ]);
-
-        MediaCreatedEvent::dispatch($media);
-
-        return $media;
+        return $this->createMediaFor($url, $blog, $file, $postId, $size);
     }
 
     public static function getContents(Media $media) : ?string
@@ -200,5 +191,35 @@ class MediaRepository
         $usage = $blog->getCount('media');
         $limit = UsageRepository::getLimitsOf($blog, 'media');
         return $usage >= $limit;
+    }
+
+    /**
+     * @param string $path
+     * @param Blog $blog
+     * @param string $file
+     * @param int|null $postId
+     * @param int $size
+     * @return mixed
+     */
+    public function createMediaFor(string $path, Blog $blog, string $file, ?int $postId, int $size)
+    {
+        $extension = File::extension($path);
+        $name = self::getPathPrefix($blog->id) . '/' . Str::random() . ($extension ? ".$extension" : '');
+        Storage::put($name, $file);
+
+        $fileName = self::getFileNameFromPath($name);
+
+        $media = Media::create([
+            'blog_id' => $blog->id,
+            'post_id' => $postId,
+            'name' => $fileName,
+            'size' => $size,
+            'original_name' => $fileName,
+            'extension' => $extension
+        ]);
+
+        MediaCreatedEvent::dispatch($media);
+
+        return $media;
     }
 }
