@@ -18,7 +18,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-static": "^3.0.1",
-		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/kit": "^2.6.2",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
@@ -43,7 +43,7 @@
 		"@hyvor/design": "^0.0.68",
 		"@hyvor/icons": "^0.0.3",
 		"@joeattardi/emoji-button": "^4.6.4",
-		"@sentry/sveltekit": "^7.107.0",
+		"@sentry/sveltekit": "^8.33.1",
 		"@types/react-dom": "^18.2.18",
 		"codemirror": "^5.0.0",
 		"crisp-sdk-web": "^1.0.21",

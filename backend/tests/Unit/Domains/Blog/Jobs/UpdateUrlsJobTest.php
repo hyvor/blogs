@@ -37,6 +37,24 @@ it('updates URLs in content and content_unsaved', function() {
                             'attrs' => [
                                 'src' => $oldUrl . '/media/image.png'
                             ]
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => 'Hello',
+                            'marks' => [
+                                [
+                                    'type' => 'link',
+                                    'attrs' => [
+                                        'href' => $oldUrl . '/link'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'audio',
+                            'attrs' => [
+                                'src' => $oldUrl . '/media/audio.mp3'
+                            ]
                         ]
                     ]
                 ]),
@@ -110,6 +128,11 @@ it('updates URLs in content and content_unsaved', function() {
     expect(json_decode($post->variants[0]->content, true)['content'][0]['attrs']['src'])
         ->toBe($newUrl . '/media/image.png');
 
+    expect(json_decode($post->variants[0]->content, true)['content'][1]['marks'][0]['attrs']['href'])
+        ->toBe($newUrl . '/link');
+
+    expect(json_decode($post->variants[0]->content, true)['content'][2]['attrs']['src'])
+        ->toBe($newUrl . '/media/audio.mp3');
 
     expect(json_decode($post->variants[0]->content_unsaved, true)['content'][0]['attrs']['src'])
         ->toBe($newUrl . '/media/image.png');
