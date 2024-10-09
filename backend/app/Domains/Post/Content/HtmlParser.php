@@ -21,6 +21,9 @@ class HtmlParser
         private string $html
     )
     {
+        // https://stackoverflow.com/a/8218649/9059939
+        $contentType = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+        $this->html = $contentType . $this->html;
     }
 
     /**

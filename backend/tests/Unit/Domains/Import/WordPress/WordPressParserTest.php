@@ -62,3 +62,31 @@ it('parses wordpress file', function() {
     expect($embeds[1]->attrs->url)->toBe('https://twitter.com/HyvorBlogs/status/1839476390309023989');
 
 });
+
+it('bug: it parses non-ASCII correctly', function() {
+
+    $path = __DIR__ . '/exampleutf';
+    $blog = blogWithLanguageAndRoutes();
+
+    $messages = new JobMessageLog();
+    $parser = new WordPressParser(
+        $blog,
+        $path,
+        $messages,
+    );
+    $parser->parse();
+
+    $posts = $parser->posts;
+    expect($posts)->toHaveCount(1);
+
+    $post = $posts[0];
+    expect($post->variants[0]->title)->toBe('Bard ou ChatGPT: qual é o melhor?');
+
+    $variant= $post->variants[0];
+    $content = $variant->content;
+
+    $html = PostContentService::getHtml($content, $blog);
+    expect($html)->toBe('<p>De modo geral, os usuários ainda não têm como acessar o Google Bard. Isso porque a ferramenta de inteligência artificial ainda está em faze experimental.  </p>');
+
+    
+});
