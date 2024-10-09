@@ -21,7 +21,7 @@ class HtmlParser
         private string $html
     )
     {
-        $this->html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . trim($this->html) . '</body>';
+        $this->html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . trim($this->html) . '</body></html>';
     }
 
     /**
