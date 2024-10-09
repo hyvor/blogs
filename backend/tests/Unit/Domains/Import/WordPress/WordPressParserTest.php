@@ -86,7 +86,7 @@ it('bug: it parses non-ASCII correctly', function() {
     $content = $variant->content;
 
     $html = PostContentService::getHtml($content, $blog);
-    expect($html)->toBe('<p>De modo geral, os usuários ainda não têm como acessar o Google Bard. Isso porque a ferramenta de inteligência artificial ainda está em faze experimental.  </p>');
+    expect($html)->toBe('<p>De modo geral, os usuários ainda não têm como acessar o Google Bard. Isso porque a ferramenta de inteligência artificial ainda está em faze experimental.</p>');
 
     
 });
