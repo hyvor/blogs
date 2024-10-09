@@ -130,6 +130,7 @@
 			height: initial;
 		}
 		#nav {
+			margin-top: 15px;
 			padding: 0;
 			width: 100%;
 		}
