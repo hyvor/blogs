@@ -16,7 +16,6 @@ class Navigation extends Model
         'type' => NavigationTypeEnum::class,
     ];
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];

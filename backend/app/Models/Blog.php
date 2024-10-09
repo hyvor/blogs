@@ -102,7 +102,6 @@ class Blog extends Model
         ];
     }
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];

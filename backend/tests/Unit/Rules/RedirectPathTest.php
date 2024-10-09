@@ -9,7 +9,7 @@ use App\Rules\RedirectPath;
 function pathPasses($val, Blog $blog = null)
 {
     $blog ??= blog();
-    $rule = new RedirectPath($blog);
+    $rule = new RedirectPath();
 
     return $rule->passes('path', $val);
 }

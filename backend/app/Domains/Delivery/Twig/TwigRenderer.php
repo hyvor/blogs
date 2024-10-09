@@ -14,18 +14,18 @@ use Twig\Loader\ArrayLoader;
 class TwigRenderer
 {
     /**
-     * @param string[] $vars
+     * @param array<string, mixed> $vars
      */
     public static function renderFile(string $file, array $vars) : string
     {
         if (!file_get_contents($file)) {
             throw new TrustedException('Error in fetching file content');
         }
-        return self::renderString(file_get_contents($file), $vars);
+        return self::renderString((string) file_get_contents($file), $vars);
     }
 
     /**
-     * @param string[] $vars
+     * @param array<string, mixed> $vars
      */
     public static function renderString(string $string, array $vars) : string
     {

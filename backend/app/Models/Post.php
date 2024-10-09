@@ -12,7 +12,6 @@ class Post extends Model
 {
     use HasFactory;
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
         'tags',

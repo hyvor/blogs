@@ -39,7 +39,7 @@ class ConsoleRedirectController extends Controller
     {
         $request->validate([
             'dynamic' => ['required', 'boolean'],
-            'path' => ['required', new RedirectPath($blog)],
+            'path' => ['required', new RedirectPath()],
             'to' => ['required', 'url'],
             'type' => ['required', new Enum(RedirectTypeEnum::class)],
         ]);
@@ -70,7 +70,7 @@ class ConsoleRedirectController extends Controller
     public function update(Request $request, Blog $blog, Redirect $redirect): JsonResponse
     {
         $request->validate([
-            'path' => [new RedirectPath($blog)],
+            'path' => [new RedirectPath()],
             'to' => ['url'],
             'type' => [new Enum(RedirectTypeEnum::class)],
         ]);

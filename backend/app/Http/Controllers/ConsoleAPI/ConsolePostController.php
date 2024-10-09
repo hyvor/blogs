@@ -123,7 +123,9 @@ class ConsolePostController extends Controller
     // Get all the post from the database
     public function getPost(Request $request, Blog $blog) : JsonResponse
     {
-        $postId = intval($request->route('id'));
+        /** @var string $postId */
+        $postId = $request->route('id');
+        $postId = intval($postId);
         $post = PostRepository::getPostById($postId);
 
         if (! $post) {
@@ -374,6 +376,10 @@ class ConsolePostController extends Controller
         $slug = (string) $request->string('slug');
 
         $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        if (!$language) {
+            throw new TrustedException('Language not found');
+        }
 
         $slugPost = PostRepository::getPostByLanguageAndSlug(
             $language,
