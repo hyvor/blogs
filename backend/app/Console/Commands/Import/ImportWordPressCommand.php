@@ -21,7 +21,7 @@ class ImportWordPressCommand extends Command
         parent::__construct();
     }
 
-    public function handle() : void
+    public function handle(): void
     {
         $test = $this->option('test');
 
@@ -50,8 +50,10 @@ class ImportWordPressCommand extends Command
         }
 
         if ($test) {
+            $this->info('Testing import. Parsing file...');
             $parser->parse();
 
+            $this->info('Checking for missing uploads...');
             $missingUploads = $parser->getMissingUploadsCount();
             if ($missingUploads > 0) {
                 $this->error($missingUploads . ' uploads are missing');
@@ -61,6 +63,7 @@ class ImportWordPressCommand extends Command
 
             $this->info((string) json_encode([
                 'posts' => count($parser->posts),
+                'uploads' => count($parser->uploads),
             ]));
 
             return;
