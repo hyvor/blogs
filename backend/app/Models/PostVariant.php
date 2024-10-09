@@ -21,9 +21,6 @@ class PostVariant extends Model
         'link_analysis' => 'array',
     ];
 
-    /**
-     * @var array<mixed>
-     */
     protected $with = [
         'language',
     ];

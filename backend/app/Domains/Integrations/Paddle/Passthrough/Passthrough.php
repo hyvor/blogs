@@ -19,9 +19,9 @@ class Passthrough
      * Summary of decode
      * @param string $passthrough
      * @throws InvalidPassthroughException
-     * @return Blog|Collection<int,Blog>
+     * @return Blog
      */
-    public static function decode(string $passthrough): Blog | Collection
+    public static function decode(string $passthrough): Blog
     {
         $json = json_decode($passthrough);
 
@@ -35,6 +35,7 @@ class Passthrough
             throw new InvalidPassthroughException();
         }
 
+        /** @var ?Blog $blog */
         $blog = Blog::find($blogId);
 
         if (!$blog) {

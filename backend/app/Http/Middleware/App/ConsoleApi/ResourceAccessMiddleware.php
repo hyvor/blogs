@@ -74,7 +74,7 @@ class ResourceAccessMiddleware
             preg_match('~api/console/v0/blog/[^/]+(/[a-z/-]+)/\d+~', $path, $matches);
 
             // ex: /post
-            $routePrefix = $matches[1];
+            $routePrefix = $matches[1] ?? '';
 
             if (! array_key_exists($routePrefix, $this->models)) {
                 throw new TrustedException("Unable to find the $routePrefix to verify blog relationship");

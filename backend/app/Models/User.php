@@ -19,9 +19,6 @@ class User extends Model
         'role' => UserRoleEnum::class,
     ];
 
-    /**
-     * @var array<mixed>
-     */
     protected $with = [
         'variants',
     ];

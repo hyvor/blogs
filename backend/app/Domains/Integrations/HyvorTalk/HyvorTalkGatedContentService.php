@@ -29,6 +29,9 @@ class HyvorTalkGatedContentService
         return HyvorTalkGatedContentRule::where('blog_id', $blog->id)->count();
     }
 
+    /**
+     * @return Collection<int, HyvorTalkGatedContentRule>
+     */
     public static function getGatedContentRules(
         Blog $blog,
         bool $withTag = false
@@ -72,7 +75,7 @@ class HyvorTalkGatedContentService
     }
 
     /**
-     * @param array{ minimum_plan: string, gate: string|null } $updates
+     * @param array{ minimum_plan?: string, gate?: string|null } $updates
      */
     public static function updateGatedContentRule(Blog $blog, HyvorTalkGatedContentRule $rule, array $updates) : HyvorTalkGatedContentRule
     {

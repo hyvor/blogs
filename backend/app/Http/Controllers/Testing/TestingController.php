@@ -13,12 +13,12 @@ class TestingController extends Controller
     
     public function truncate() : JsonResponse
     {
-        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+        /*$tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
         Schema::disableForeignKeyConstraints();
         foreach ($tables as $table) {
             DB::table($table)->truncate();
         }
-        Schema::enableForeignKeyConstraints();
+        Schema::enableForeignKeyConstraints();*/
 
         return response()->json();
     }
