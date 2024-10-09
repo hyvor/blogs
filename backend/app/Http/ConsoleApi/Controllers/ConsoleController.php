@@ -67,6 +67,9 @@ class ConsoleController
     private function config(): array
     {
         return [
+            'hyvor' => [
+                'instance' => config('internal.instance'),
+            ],
             'domains' => [
                 'app' => config('blogs.domain_app'),
                 'delivery' => config('blogs.delivery_domain'),
