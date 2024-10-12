@@ -50,7 +50,6 @@ export default class ButtonNodeView implements NodeView {
     }
 
     private getButtonProps() {
-        console.log('showEditMenu', this.showEditMenu);
         return {
             href: this.node.attrs.href,
             align: this.node.attrs.align,
@@ -58,13 +57,17 @@ export default class ButtonNodeView implements NodeView {
             bg: this.node.attrs.bg,
             fg: this.node.attrs.fg,
             changeAttr: this.changeAttr.bind(this),
+            deleteNode: this.deleteNode.bind(this)
         }
     }
 
-    triggerEditMenu() {
-        this.showEditMenu = !this.showEditMenu;
-        console.log('Trigger menu', this.showEditMenu)
-        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
+    deleteNode() {
+        const pos = this.getPos();
+        if (pos !== undefined) {
+            const tr = this.view.state.tr;
+            tr.delete(pos, pos + this.node.nodeSize);
+            this.view.dispatch(tr);
+        }
     }
 
     updateFromAttrs() {
