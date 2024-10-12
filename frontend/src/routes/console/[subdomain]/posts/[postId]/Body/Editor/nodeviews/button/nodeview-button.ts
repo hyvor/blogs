@@ -75,6 +75,20 @@ export default class ButtonNodeView implements NodeView {
         this.link.style.padding = padding
     }
 
+    changeAlign() {
+        let align = "";
+        if (this.node.attrs.align === "left") {
+            align = "start"
+        }
+        if (this.node.attrs.align === "center") {
+            align = "center"
+        }
+        if (this.node.attrs.align === "right") {
+            align = "end"
+        }
+        this.dom.style.textAlign = align;
+    }
+
     deleteNode() {
         const pos = this.getPos();
         if (pos !== undefined) {
@@ -91,6 +105,7 @@ export default class ButtonNodeView implements NodeView {
         this.link.style.color = this.node.attrs.fg;
         this.buttonEditor.$set(this.getButtonProps())
         this.changeSize();
+        this.changeAlign();
     }
 
     update(node: ProsemirrorNode) {

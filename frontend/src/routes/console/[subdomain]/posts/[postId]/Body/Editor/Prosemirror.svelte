@@ -329,6 +329,7 @@
 			position: relative;
 			display: inline-block;
 			text-decoration: none;
+			width: 100%;
 			:global(.button-link) {
 				display: inline-block;
 				background-color: #bbbaba;

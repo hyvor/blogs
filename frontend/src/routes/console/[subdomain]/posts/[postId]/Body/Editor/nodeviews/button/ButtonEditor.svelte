@@ -2,7 +2,7 @@
     import { TextInput } from '@hyvor/design/components';
     import type { EditorView } from 'prosemirror-view';
     import { IconButton, Modal } from "@hyvor/design/components";
-    import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash } from '@hyvor/icons';
+    import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash, IconAlignStart, IconAlignMiddle, IconAlignEnd } from '@hyvor/icons';
 
     export let href: string;
     export let align: string;
@@ -30,6 +30,10 @@
 
     const handleSizeChange = (newSize: string) => {
         changeAttr('size', newSize);
+    }
+
+    const handleAlignChange = (newAlign: string) => {
+        changeAttr('align', newAlign);
     }
 
 </script>
@@ -77,6 +81,16 @@
             </IconButton>
             <IconButton size="small" color="accent" on:click={() => handleSizeChange('large')}>
                 <IconArrowsAngleExpand size={14} />
+            </IconButton>
+
+            <IconButton size="small" color="accent" on:click={() => handleAlignChange('left')}>
+                <IconAlignStart size={14} />
+            </IconButton>
+            <IconButton size="small" color="accent" on:click={() => handleAlignChange('center')}>
+                <IconAlignMiddle size={14} />
+            </IconButton>
+            <IconButton size="small" color="accent" on:click={() => handleAlignChange('right')}>
+                <IconAlignEnd size={14} />
             </IconButton>
 
 
