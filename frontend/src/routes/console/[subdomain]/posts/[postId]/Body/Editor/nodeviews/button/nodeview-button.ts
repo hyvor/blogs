@@ -61,6 +61,20 @@ export default class ButtonNodeView implements NodeView {
         }
     }
 
+    changeSize() {
+        let padding = "";
+        if (this.node.attrs.size === "small") {
+            padding = "10px 10px 10px 10px"
+        }
+        if (this.node.attrs.size === "medium") {
+            padding = "20px 20px 20px 20px"
+        }
+        if (this.node.attrs.size === "large") {
+            padding = "30px 30px 30px 30px"
+        }
+        this.link.style.padding = padding
+    }
+
     deleteNode() {
         const pos = this.getPos();
         if (pos !== undefined) {
@@ -76,6 +90,7 @@ export default class ButtonNodeView implements NodeView {
         this.link.style.backgroundColor = this.node.attrs.bg;
         this.link.style.color = this.node.attrs.fg;
         this.buttonEditor.$set(this.getButtonProps())
+        this.changeSize();
     }
 
     update(node: ProsemirrorNode) {

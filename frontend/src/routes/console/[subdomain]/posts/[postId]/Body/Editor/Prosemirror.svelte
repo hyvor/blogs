@@ -333,7 +333,7 @@
 				display: inline-block;
 				background-color: #bbbaba;
 				border-radius: 10px;
-				padding: 10px 10px 10px 10px;
+				
 			}
 		}
 

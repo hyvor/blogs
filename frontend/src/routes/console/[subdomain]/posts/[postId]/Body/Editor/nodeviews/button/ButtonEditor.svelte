@@ -2,7 +2,7 @@
     import { TextInput } from '@hyvor/design/components';
     import type { EditorView } from 'prosemirror-view';
     import { IconButton, Modal } from "@hyvor/design/components";
-    import { IconPencil, IconTrash, IconLink45deg } from '@hyvor/icons';
+    import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash } from '@hyvor/icons';
 
     export let href: string;
     export let align: string;
@@ -26,6 +26,10 @@
     const handleLinkChange = () => {
         changeAttr('href', href);
         toggleLinkInput();
+    }
+
+    const handleSizeChange = (newSize: string) => {
+        changeAttr('size', newSize);
     }
 
 </script>
@@ -64,6 +68,18 @@
             <IconButton size="small" color="accent" on:click={toggleLinkInput}>
                 <IconLink45deg size={14} />
             </IconButton>
+
+            <IconButton size="small" color="accent" on:click={() => handleSizeChange('small')}>
+                <IconArrowsAngleContract size={14} />
+            </IconButton>
+            <IconButton size="small" color="accent" on:click={() => handleSizeChange('medium')}>
+                <IconDash size={14} />
+            </IconButton>
+            <IconButton size="small" color="accent" on:click={() => handleSizeChange('large')}>
+                <IconArrowsAngleExpand size={14} />
+            </IconButton>
+
+
             <IconButton size="small" color="accent" on:click={deleteNode}>
                 <IconTrash size={14} />
             </IconButton>
