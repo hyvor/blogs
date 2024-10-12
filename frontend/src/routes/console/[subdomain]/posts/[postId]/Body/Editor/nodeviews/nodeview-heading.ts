@@ -38,7 +38,6 @@ export default class HeadingNodeView implements NodeView {
 				const { state, dispatch } = view;
 				const { tr } = state;
 
-				console.log(this.node.attrs);
 				tr.setNodeMarkup(getPos()!, null, { ...this.node.attrs, level });
 				dispatch(tr);
 

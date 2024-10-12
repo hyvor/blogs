@@ -327,15 +327,13 @@
 
 		:global(.button-wrap) {
 			position: relative;
-			
 			display: inline-block;
 			text-decoration: none;
-			background-color: #bbbaba;
-			border-radius: 10px;
-			padding: 10px 10px 10px 10px;
-
-			:global(.content-div) {
-	
+			:global(.button-link) {
+				display: inline-block;
+				background-color: #bbbaba;
+				border-radius: 10px;
+				padding: 10px 10px 10px 10px;
 			}
 		}
 

@@ -1,5 +1,7 @@
 import type { EditorView, NodeView } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
+import type { SvelteComponent } from "svelte";
+import ButtonEditor from "./ButtonEditor.svelte";
 
 export default class ButtonNodeView implements NodeView {
     node: ProsemirrorNode;
@@ -9,6 +11,10 @@ export default class ButtonNodeView implements NodeView {
     dom: HTMLElement;
     contentDOM: HTMLElement;
     link: HTMLAnchorElement;
+    buttonEditorWrap: HTMLDivElement;
+
+    private buttonEditor: SvelteComponent;
+    showEditMenu: boolean | undefined;
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -19,21 +25,54 @@ export default class ButtonNodeView implements NodeView {
         this.dom.className = "button-wrap";
 
         this.link = document.createElement("a");
+        this.link.className = "button-link";
         this.link.target = "_blank";
         this.link.href = node.attrs.href || "https://example.com";
-        this.dom.appendChild(this.link);
 
         this.contentDOM = document.createElement("div");
         this.contentDOM.className = "content-div";
 
         this.link.appendChild(this.contentDOM);
 
+        this.buttonEditorWrap = document.createElement("div");
+        this.buttonEditorWrap.contentEditable = "false";
+        this.buttonEditorWrap.className = "button-editor-wrap";
+        this.dom.appendChild(this.buttonEditorWrap)
+
+        this.buttonEditor = new ButtonEditor({
+            target: this.buttonEditorWrap,
+            props: this.getButtonProps()
+        })
+
+        this.dom.appendChild(this.link);
+
         this.updateFromAttrs();
     }
 
+    private getButtonProps() {
+        console.log('showEditMenu', this.showEditMenu);
+        return {
+            href: this.node.attrs.href,
+            align: this.node.attrs.align,
+            size: this.node.attrs.size,
+            bg: this.node.attrs.bg,
+            fg: this.node.attrs.fg,
+            changeAttr: this.changeAttr.bind(this),
+        }
+    }
+
+    triggerEditMenu() {
+        this.showEditMenu = !this.showEditMenu;
+        console.log('Trigger menu', this.showEditMenu)
+        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
+    }
+
     updateFromAttrs() {
-        // Update the link href from the node's attributes
         this.link.href = this.node.attrs.href || "https://example.com";
+        this.link.style.textAlign = this.node.attrs.align;
+        this.link.style.backgroundColor = this.node.attrs.bg;
+        this.link.style.color = this.node.attrs.fg;
+        this.buttonEditor.$set(this.getButtonProps())
     }
 
     update(node: ProsemirrorNode) {
@@ -56,6 +95,13 @@ export default class ButtonNodeView implements NodeView {
         }
 
         return false;
+    }
+
+    ignoreMutation(mutation: MutationRecord) {
+        if (mutation.target === this.contentDOM) {
+            return false;
+        }
+        return true;
     }
 
     changeAttr(name: string, value: string) {
