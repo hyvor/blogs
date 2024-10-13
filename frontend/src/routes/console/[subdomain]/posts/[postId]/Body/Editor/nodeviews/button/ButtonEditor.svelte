@@ -61,7 +61,7 @@
                     danger: true
                 }
             }}
-             on:cancel={toggleLinkInput}
+             on:cancel={() => showLinkInput = false}
              on:confirm={handleLinkChange}
         >
             <FormControl>
