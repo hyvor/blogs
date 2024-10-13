@@ -42,6 +42,13 @@ class MarksTooltipPlugin implements PluginView {
     }
 
     private show() {
+        const selection = this.view.state.selection
+        const anchorNode = selection?.anchor ? this.view.state.doc.resolve(selection.anchor) : null;
+        const parentNode = anchorNode ? anchorNode.node() : null;
+
+        // Disable tooltip for buttons
+        if (parentNode && parentNode.type.name === "button")
+            return;
         this.tooltip.$set(this.getProps(true))
     }
 
