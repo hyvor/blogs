@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { TextInput } from '@hyvor/design/components';
-    import type { EditorView } from 'prosemirror-view';
-    import { IconButton, Modal } from "@hyvor/design/components";
+    import { IconButton, Modal, TextInput, ColorPicker } from "@hyvor/design/components";
     import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash, IconAlignStart, IconAlignMiddle, IconAlignEnd } from '@hyvor/icons';
 
     export let href: string;
@@ -34,6 +32,14 @@
 
     const handleAlignChange = (newAlign: string) => {
         changeAttr('align', newAlign);
+    }
+
+    function handleBgChange(e: CustomEvent<string>) {
+        changeAttr('bg', e.detail)
+    }
+
+    function handleFgChange(e: CustomEvent<string>) {
+        changeAttr('fg', e.detail)
     }
 
 </script>
@@ -89,6 +95,18 @@
             <IconButton size="small" color="accent" on:click={() => handleAlignChange('center')}>
                 <IconAlignMiddle size={14} />
             </IconButton>
+
+            <ColorPicker 
+                size={20}
+                color={bg}
+                on:input={handleBgChange}
+            />
+            <ColorPicker 
+                size={20}
+                color={fg}
+                on:input={handleFgChange}
+            />
+
             <IconButton size="small" color="accent" on:click={() => handleAlignChange('right')}>
                 <IconAlignEnd size={14} />
             </IconButton>
