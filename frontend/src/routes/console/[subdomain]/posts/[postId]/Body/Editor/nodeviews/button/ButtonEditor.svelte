@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { IconButton, Modal, TextInput, ColorPicker } from "@hyvor/design/components";
+    import { IconButton, Modal, TextInput, ColorPicker, FormControl } from "@hyvor/design/components";
     import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash, IconAlignStart, IconAlignMiddle, IconAlignEnd } from '@hyvor/icons';
 
     export let href: string;
@@ -48,6 +48,7 @@
     {#if showLinkInput}
         <Modal 
             bind:show={showLinkInput}
+            size="medium"
             closeOnOutsideClick={true} 
             closeOnEscape={true}
             title="Edit button link"
@@ -63,7 +64,9 @@
              on:cancel={toggleLinkInput}
              on:confirm={handleLinkChange}
         >
-            <TextInput bind:value={href} placeholder="Link" />
+            <FormControl>
+                <TextInput bind:value={href} placeholder="Link" />
+            </FormControl>
 
         </Modal>
     {/if}

@@ -334,7 +334,6 @@
 				display: inline-block;
 				background-color: #bbbaba;
 				border-radius: 10px;
-				
 			}
 		}
 
