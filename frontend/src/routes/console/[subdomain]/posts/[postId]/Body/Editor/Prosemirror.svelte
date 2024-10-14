@@ -331,9 +331,15 @@
 			text-decoration: none;
 			width: 100%;
 			:global(.button-link) {
-				display: inline-block;
-				background-color: #bbbaba;
-				border-radius: 10px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 20px;
+				height: 26px;
+				padding: 0 12px;
+				text-decoration: none;
+				font-size: 14px;
+				font-weight: 600;
 			}
 		}
 

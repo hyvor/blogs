@@ -37,12 +37,12 @@ export default class ButtonNodeView implements NodeView {
         this.buttonEditorWrap = document.createElement("div");
         this.buttonEditorWrap.contentEditable = "false";
         this.buttonEditorWrap.className = "button-editor-wrap";
-        this.dom.appendChild(this.buttonEditorWrap)
+        this.dom.appendChild(this.buttonEditorWrap);
 
         this.buttonEditor = new ButtonEditor({
             target: this.buttonEditorWrap,
             props: this.getButtonProps()
-        })
+        });
 
         this.dom.appendChild(this.link);
 
@@ -59,33 +59,33 @@ export default class ButtonNodeView implements NodeView {
             fg: this.node.attrs.fg,
             changeAttr: this.changeAttr.bind(this),
             deleteNode: this.deleteNode.bind(this)
-        }
+        };
     }
 
     changeSize() {
         let padding = "";
         if (this.node.attrs.size === "small") {
-            padding = "10px 10px 10px 10px"
+            padding = "10px 10px 10px 10px";
         }
         if (this.node.attrs.size === "medium") {
-            padding = "20px 20px 20px 20px"
+            padding = "20px 20px 20px 20px";
         }
         if (this.node.attrs.size === "large") {
-            padding = "30px 30px 30px 30px"
+            padding = "30px 30px 30px 30px";
         }
-        this.link.style.padding = padding
+        this.link.style.padding = padding;
     }
 
     changeAlign() {
         let align = "";
         if (this.node.attrs.align === "left") {
-            align = "start"
+            align = "start";
         }
         if (this.node.attrs.align === "center") {
-            align = "center"
+            align = "center";
         }
         if (this.node.attrs.align === "right") {
-            align = "end"
+            align = "end";
         }
         this.dom.style.textAlign = align;
     }
@@ -104,18 +104,18 @@ export default class ButtonNodeView implements NodeView {
         this.link.style.textAlign = this.node.attrs.align;
         this.link.style.backgroundColor = this.node.attrs.bg;
         this.link.style.color = this.node.attrs.fg;
-        this.buttonEditor.$set(this.getButtonProps())
+        this.buttonEditor.$set(this.getButtonProps());
         this.changeSize();
         this.changeAlign();
+        this.showEditMenu = true;
     }
 
     update(node: ProsemirrorNode) {
         if (node.type.name === 'button') {
             this.node = node;
             this.updateFromAttrs();
-
             // Delete the node if it's empty
-            if (node.content.size == 0) {
+            if (node.content.size === 0) {
                 const pos = this.getPos();
                 if (pos !== undefined) {
                     const tr = this.view.state.tr;
@@ -145,12 +145,7 @@ export default class ButtonNodeView implements NodeView {
         if (pos === undefined) return;
 
         this.view.dispatch(
-            this.view.state.tr.setNodeMarkup(
-                pos,
-                undefined,
-                attrs
-            )
+            this.view.state.tr.setNodeMarkup(pos, undefined, attrs)
         );
     }
-
 }
