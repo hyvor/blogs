@@ -14,7 +14,7 @@ export default class ButtonNodeView implements NodeView {
     buttonEditorWrap: HTMLDivElement;
 
     private buttonEditor: SvelteComponent;
-    showEditMenu: boolean | undefined;
+    showEditMenu: boolean = false;
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -51,6 +51,7 @@ export default class ButtonNodeView implements NodeView {
 
     private getButtonProps() {
         return {
+            showEditMenu: this.showEditMenu,
             href: this.node.attrs.href,
             align: this.node.attrs.align,
             size: this.node.attrs.size,

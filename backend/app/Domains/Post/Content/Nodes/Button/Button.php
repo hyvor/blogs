@@ -14,8 +14,8 @@ class Button extends NodeType
 
     public function toHtml(Node $node, $children): string
     {
-        // TODO: Implement toHtml() method.
-        return '';
+        $href = $node->attr('href');
+        return "<div class=\"button-wrap\"><a href=$href>$children</a></div>";
     }
 
     public function fromHtml(): array
