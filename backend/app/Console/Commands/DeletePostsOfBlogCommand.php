@@ -20,7 +20,7 @@ class DeletePostsOfBlogCommand extends Command
             return;
         }
         if ($this->confirm('Are you sure you want to delete all posts of the blog:' . $blog->subdomain . '?')) {
-            DeletePosts::dispatch($blog);
+            app(DeletePosts::class, ['blog' => $blog])->handle();
             $this->info('Posts deleted');
         }
     }
