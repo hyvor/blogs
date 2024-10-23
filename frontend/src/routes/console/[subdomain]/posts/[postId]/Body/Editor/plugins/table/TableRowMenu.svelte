@@ -125,8 +125,8 @@
     class:show={show}
     class="wrap"
 >
-    <Dropdown bind:show={showDropdown}>
-        <button slot="trigger">
+    <Dropdown bind:show={showDropdown} relative={true}>
+        <button slot="trigger" style="display: {showDropdown ? 'none' : 'inline-flex'}">
             <IconThreeDotsVertical size={14} />
         </button>
 
