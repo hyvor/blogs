@@ -73,7 +73,7 @@ class ConsoleMediaController extends Controller
         $fileName = $request->has('name') ? $request->input('name') : null;
 
         if ($fileName) {
-            $this->validateFilename();
+            $this->validateFilename($fileName);
         }
    
         $media = MediaRepository::upload($blog, $file, $postId, $fileName);
