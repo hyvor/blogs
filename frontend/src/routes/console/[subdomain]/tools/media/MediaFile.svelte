@@ -1,185 +1,147 @@
 <script lang="ts">
-	import dayjs from "dayjs";
-	import type { Media } from "../../../lib/types";
-	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from "./mediaActions";
-	import { IconButton, confirm, toast } from "@hyvor/design/components";
-	import { IconTrash } from "@hyvor/icons";
-	import { createEventDispatcher } from "svelte";
-	import MediaModal from "./MediaModal.svelte";
+	import dayjs from 'dayjs';
+	import type { Media } from '../../../lib/types';
+	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from './mediaActions';
+	import { IconButton, confirm, toast } from '@hyvor/design/components';
+	import { IconTrash } from '@hyvor/icons';
+	import { createEventDispatcher } from 'svelte';
+	import MediaUpdateFileName from './MediaUpdateFileName.svelte';
 
+	export let media: Media;
 
-    export let media: Media;
+	// If the user is selecting media files
+	// delete button will not be shown
+	// an event will be fired when the user selects a media file
+	export let selecting = false;
 
-    // If the user is selecting media files
-    // delete button will not be shown
-    // an event will be fired when the user selects a media file
-    export let selecting = false;
+	let isEditingFileName = false;
 
-    let isEditingFileName = false;
+	const dispatch = createEventDispatcher<{
+		select: Media;
+		delete: Media;
+		update: Media;
+	}>();
 
+	function handleFileNameClick() {
+		isEditingFileName = true;
+	}
 
-    const dispatch = createEventDispatcher<{
-        select: Media,
-        delete: Media,
-        rename: Media,
-    }>();
+	function handleClick(e: any) {
+		if (selecting) {
+			e.preventDefault();
+			dispatch('select', media);
+		}
+	}
 
-    function handleFileNameClick() {
-        isEditingFileName = true;
-    }
+	async function handleDelete() {
+		if (
+			await confirm({
+				title: 'Delete Media',
+				content: 'Are you sure you want to delete this media file? This action cannot be undone!',
+				confirmText: 'Yes, Delete',
+				danger: true
+			})
+		) {
+			const toastId = toast.loading('Deleting...');
 
-    function handleClick(e: any) {
-        if (selecting) {
-            e.preventDefault();
-            dispatch('select', media);
-        }
-    }
+			deleteMedia(media.id)
+				.then(() => {
+					toast.success('Deleted', { id: toastId });
+					dispatch('delete', media);
+				})
+				.catch((err) => toast.error(err.message, { id: toastId }));
+		}
+	}
 
-    async function handleDelete() {
-        if (await confirm({
-            title: 'Delete Media',
-            content: 'Are you sure you want to delete this media file? This action cannot be undone!',
-            confirmText: 'Yes, Delete',
-            danger: true,
-        })) {
-            const toastId = toast.loading('Deleting...');
-
-            deleteMedia(media.id)
-                .then(() => {
-                    toast.success('Deleted', {id: toastId});
-                    dispatch('delete', media);
-                })
-                .catch(err => toast.error(err.message, {id: toastId}));
-
-        }
-    }
-
-    async function handleChangeName() {
-        if (await confirm({
-            title: 'Update Media Name',
-            content: 'Are you sure you want to rename this media file?',
-            confirmText: 'Yes, Rename',
-            danger: true,
-        })) {
-            const toastId = toast.loading('Renaming...');
-            updateMedia(media.id, {name: media.name})
-                .then(() => {
-                    toast.success('Renamed sucessfull', {id: toastId});
-                    dispatch('rename', media);
-                })
-                .catch(err => toast.error(err.message, {id: toastId}));
-
-        }
-        isEditingFileName = false;
-    }
-
-    const isImage = IMAGE_EXTENSIONS.indexOf(media.extension) !== -1;
-    const uploadedAt = dayjs.unix(media.uploaded_at);
-
+	const isImage = IMAGE_EXTENSIONS.indexOf(media.extension) !== -1;
+	const uploadedAt = dayjs.unix(media.uploaded_at);
 </script>
 
 <div class="media-file">
+	{#if isEditingFileName}
+		<MediaUpdateFileName bind:show={isEditingFileName} bind:media on:update />
+	{/if}
 
-    {#if isEditingFileName}
-        <MediaModal bind:show={isEditingFileName} handleChangeName={handleChangeName} bind:media={media}/>
-    {/if}
+	<a class="body" href={media.url} target="_blank" on:click={handleClick}>
+		{#if isImage}
+			<img src={media.url} alt={media.name} />
+		{:else}
+			<div class="extension">
+				{media.extension}
+			</div>
+		{/if}
+	</a>
 
-    <a
-        class="body"
-        href={media.url}
-        target="_blank"
-        on:click={handleClick}
-    >
+	<div class="footer">
+		<button class="media-name" title={media.name} on:click={handleFileNameClick}
+			>{media.name}</button
+		>
+		<time
+			class="media-at"
+			datetime={uploadedAt.format()}
+			title={uploadedAt.format('YYYY-MM-DD HH:mm:ss')}>{uploadedAt.format('YYYY-MM-DD')}</time
+		>
+	</div>
 
-        {#if isImage}
-            <img src={media.url} alt={media.name} />
-        {:else}
-            <div class="extension">
-                {media.extension}
-            </div>
-        {/if}
-
-    </a>
-
-    <div class="footer">
-
-        <button
-            class="media-name"
-            title={media.original_name}
-            on:click={handleFileNameClick}
-        >{media.original_name}</button>
-        <time 
-            class="media-at"
-            datetime={uploadedAt.format()}
-            title={uploadedAt.format('YYYY-MM-DD HH:mm:ss')}
-        >{ uploadedAt.format('YYYY-MM-DD') }</time>
-
-    </div>
-
-    {#if !selecting}
-        <span class="media-delete">
-            <IconButton 
-                on:click={handleDelete}
-                size="small"
-                color="red"
-                variant="invisible"
-            >
-                <IconTrash size={10} />
-            </IconButton>
-        </span>
-    {/if}
-
+	{#if !selecting}
+		<span class="media-delete">
+			<IconButton on:click={handleDelete} size="small" color="red" variant="invisible">
+				<IconTrash size={10} />
+			</IconButton>
+		</span>
+	{/if}
 </div>
 
 <style>
+	.media-file {
+		width: calc(25% - 10px);
+		height: 240px;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+	}
 
-    .media-file {
-        width: calc(25% - 10px);
-        height: 240px;
-        display: flex;
-        flex-direction: column;
-        position: relative
-    }
+	.body {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		background-color: var(--input);
+		border-radius: var(--box-radius);
+		min-height: 0;
+	}
 
-    .body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 1;
-        background-color: var(--input);
-        border-radius: var(--box-radius);
-        min-height: 0;
-    }
+	.footer {
+		font-size: 12px;
+		color: var(--text-light);
+		text-align: center;
+		margin-top: 5px;
+		padding: 0 5px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .footer {
-        font-size: 12px;
-        color: var(--text-light);
-        text-align: center;
-        margin-top: 5px;
-        padding: 0 5px;
-    }
+	.media-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-weight: 600;
+	}
 
-    .media-name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 600;
-    }
+	.media-delete {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+	}
 
-    .media-delete {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
+	.extension {
+		font-size: 24px;
+		font-weight: 600;
+		color: var(--text-light);
+	}
 
-    .extension {
-        font-size: 24px;
-        font-weight: 600;
-        color: var(--text-light);
-    }
-
-    img {
-        max-width: 100%;
-        max-height: 100%;
-    }
-    
+	img {
+		max-width: 100%;
+		max-height: 100%;
+	}
 </style>
