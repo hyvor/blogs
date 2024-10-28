@@ -82,10 +82,12 @@ class MediaRepository
     {
         if ($fileName === null) {
             $fileName = Str::random().'.'.$file->extension();
-        }
-        try {
+        } else {
             // Replace spaces with hyphens
             $fileName = str_replace(' ', '-', $fileName);
+        }
+        try {
+
             $prefix = self::getPathPrefix($blog->id);
             
             // Check if the file already exists and append a random suffix to the file name
