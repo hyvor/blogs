@@ -51,7 +51,7 @@ export function getMedia(
 export function uploadMedia(file: File | Blob, name: string | null = null) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('file_name', name || '');
+    formData.append('name', name || '');
     return consoleApi.post<Media>({
         endpoint: '/media',
         data: formData

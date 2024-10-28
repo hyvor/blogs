@@ -17,19 +17,20 @@ it('uploads', function () {
 
     consoleApi($blog, 'POST', '/media', [
         'file' => $file,
-        'file_name' => 'image.png'
+        'name' => 'image.png'
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json
-            ->has('id')
-            ->etc()
+        ->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('id')
+                ->etc()
         );
 
     Event::assertDispatched(MediaCreatedEvent::class);
     Storage::has('blog/' . $blog->id . '/image.png');
 });
 
-it('uploads with duplicate name', function() {
+it('uploads with duplicate name', function () {
 
     Storage::fake();
     $blog = blogWithAccess();
@@ -39,7 +40,7 @@ it('uploads with duplicate name', function() {
 
     $media = consoleApi($blog, 'POST', '/media', [
         'file' => $file,
-        'file_name' => 'image.png'
+        'name' => 'image.png'
     ])
         ->assertOk()
         ->json();
@@ -48,7 +49,7 @@ it('uploads with duplicate name', function() {
 
 });
 
-it('uploads with post ID', function() {
+it('uploads with post ID', function () {
 
     $blog = blogWithAccess();
     consoleApi($blog, 'POST', '/media', [
@@ -56,7 +57,7 @@ it('uploads with post ID', function() {
         'post_id' => 2
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->where('post_id', 2)->etc());
+        ->assertJson(fn(AssertableJson $json) => $json->where('post_id', 2)->etc());
 
 });
 
@@ -71,10 +72,10 @@ it('limits file size', function () {
         ->assertSee(['must', 'not', 'kilobytes']);
 });
 
-it('throws error when media size exceeded', function() {
+it('throws error when media size exceeded', function () {
 
     $blog = blogWithAccess();
-    $blog->setCount('media', 10**9*2);
+    $blog->setCount('media', 10 ** 9 * 2);
 
     consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),

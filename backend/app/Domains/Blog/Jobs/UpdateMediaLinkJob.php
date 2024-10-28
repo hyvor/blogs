@@ -13,26 +13,14 @@ class UpdateMediaLinkJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $oldLink;
-    protected $newLink;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct($oldLink, $newLink)
+    public function __construct(
+        public string $oldLink,
+        public string $newLink
+    )
     {
-        $this->oldLink = $oldLink;
-        $this->newLink = $newLink;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         $posts = PostVariant::where('content', 'LIKE', "%{$this->oldLink}%")
             ->orWhere('content_unsaved', 'LIKE', "%{$this->newLink}%")

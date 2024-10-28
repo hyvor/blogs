@@ -12,6 +12,7 @@ use App\Domains\Blog\Jobs\UpdateMediaLinkJob;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -89,13 +90,10 @@ class MediaRepository
             // Replace spaces with hyphens
             $fileName = str_replace(' ', '-', $fileName);
         }
-        try {
 
-            // Check if the file already exists and append a random suffix to the file name
-            if (Storage::exists(self::getPath($blog->id, $fileName))) {
-                $randomString = Str::random();
-                $fileName = pathinfo($fileName, PATHINFO_FILENAME) . '-' . $randomString . '.' . $file->extension();
-            }
+        $fileName = self::getUniqueFilename($blog->id, $fileName);
+
+        try {
 
             $path = Storage::putFileAs(
                 self::getPathPrefix($blog->id),
@@ -241,31 +239,44 @@ class MediaRepository
         return $media;
     }
 
-    public static function update(Media $media, ?string $name, ?int $postId): Media
+    public static function updateName(Media $media, string $name): Media
     {
-        // Replace spaces with hyphens
         $fileName = str_replace(' ', '-', $name);
-        $prefix = self::getPathPrefix($media->blog_id);
+        $fileName = self::getUniqueFilename($media->blog_id, $fileName);
 
-        // Check if the file already exists and append a random suffix to the file name
-        if (Storage::exists($prefix . '/' . $fileName)) {
-            $randomString = Str::random();
-            $fileName = $fileName . '_' . $randomString;
-        }
+        DB::transaction(function() use ($media, $fileName) {
 
-        $oldPath = self::getPath($media->blog_id, $media->name);
-        $newPath = self::getPath($media->blog_id, $fileName);
+            $oldPath = self::getPath($media->blog_id, $media->name);
+            $newPath = self::getPath($media->blog_id, $fileName);
 
-        Storage::move($oldPath, $newPath);
+            $media->name = $fileName;
+            $media->save();
 
-        $oldLink = "/media/$media->name";
-        $newLink = "/media/$fileName";
+            Storage::move($oldPath, $newPath);
 
-        UpdateMediaLinkJob::dispatch($oldLink, $newLink);
+            $oldLink = "/media/$media->name";
+            $newLink = "/media/$fileName";
 
-        $media->name = $fileName;
-        $media->save();
+            UpdateMediaLinkJob::dispatch($oldLink, $newLink);
+
+        });
 
         return $media;
+    }
+
+    public static function getUniqueFilename(int $blogId, string $name): string
+    {
+        $fileName = $name;
+
+        $start = pathinfo($name, PATHINFO_FILENAME);
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
+
+        $i = 1;
+        while (Storage::exists(self::getPath($blogId, $fileName))) {
+            $fileName = $start . '-' . $i . '.' . $ext;
+            $i++;
+        }
+
+        return $fileName;
     }
 }
