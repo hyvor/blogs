@@ -12,7 +12,7 @@ use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class UpdateUrlsJob implements ShouldQueue
+class UpdateUrlsInBlogJob implements ShouldQueue
 {
 
     use Dispatchable;

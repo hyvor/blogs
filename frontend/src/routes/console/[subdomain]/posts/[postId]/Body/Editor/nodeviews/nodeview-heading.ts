@@ -33,7 +33,6 @@ export default class HeadingNodeView implements NodeView {
 			selector.addEventListener('mouseover', () => {
 				this.selection = view.state.tr.selection;
 			});
-			console.log('event adding')
 			selector.addEventListener('click', () => {
 				const { state, dispatch } = view;
 				const { tr } = state;

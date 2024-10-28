@@ -84,6 +84,10 @@
 	function handleDelete(e: CustomEvent<Media>) {
 		mediaFiles = mediaFiles.filter((media) => media.id !== e.detail.id);
 	}
+
+	function handleUpdate(e: CustomEvent<Media>) {
+		mediaFiles = mediaFiles.map((media) => (media.id === e.detail.id ? e.detail : media));
+	}
 </script>
 
 <div class="wrap">
@@ -110,7 +114,13 @@
 			<IconMessage empty message="No Media Found" />
 		{:else}
 			{#each mediaFiles as media (media.id)}
-				<MediaFile {media} {selecting} on:select on:delete={handleDelete} />
+				<MediaFile
+					{media}
+					{selecting}
+					on:select
+					on:delete={handleDelete}
+					on:update={handleUpdate}
+				/>
 			{/each}
 		{/if}
 	</div>

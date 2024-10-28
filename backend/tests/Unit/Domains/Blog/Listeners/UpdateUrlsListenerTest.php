@@ -5,7 +5,7 @@ namespace Tests\Unit\Domains\Blog\Listeners;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogUrlChangedEvent;
-use App\Domains\Blog\Jobs\UpdateUrlsJob;
+use App\Domains\Blog\Jobs\UpdateUrlsInBlogJob;
 use App\Domains\Blog\Listeners\UpdateUrlsListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -34,5 +34,5 @@ it('calls the job', function() {
     $listener = new UpdateUrlsListener();
     $listener->handle($event);
 
-    Queue::assertPushed(UpdateUrlsJob::class);
+    Queue::assertPushed(UpdateUrlsInBlogJob::class);
 });

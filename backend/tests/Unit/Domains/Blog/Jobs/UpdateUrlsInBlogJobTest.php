@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Domains\Blog\Jobs;
 
-use App\Domains\Blog\Jobs\UpdateUrlsJob;
+use App\Domains\Blog\Jobs\UpdateUrlsInBlogJob;
 use App\Domains\Cache\CacheService;
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -104,7 +104,7 @@ it('updates URLs in content and content_unsaved', function() {
         'picture_url' => $oldUrl . '/media/user.png'
     ]);
 
-    $job = new UpdateUrlsJob($blog, $oldUrl, $newUrl);
+    $job = new UpdateUrlsInBlogJob($blog, $oldUrl, $newUrl);
     $job->handle();
 
     /**
