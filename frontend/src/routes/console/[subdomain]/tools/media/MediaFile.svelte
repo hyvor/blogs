@@ -1,11 +1,13 @@
 <script lang="ts">
 	import dayjs from "dayjs";
 	import type { Media } from "../../../lib/types";
-	import { IMAGE_EXTENSIONS, deleteMedia } from "./mediaActions";
+	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from "./mediaActions";
 	import { IconButton, confirm, toast } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
-    
+	import MediaModal from "./MediaModal.svelte";
+
+
     export let media: Media;
 
     // If the user is selecting media files
@@ -13,10 +15,18 @@
     // an event will be fired when the user selects a media file
     export let selecting = false;
 
+    let isEditingFileName = false;
+
+
     const dispatch = createEventDispatcher<{
         select: Media,
         delete: Media,
+        rename: Media,
     }>();
+
+    function handleFileNameClick() {
+        isEditingFileName = true;
+    }
 
     function handleClick(e: any) {
         if (selecting) {
@@ -44,12 +54,35 @@
         }
     }
 
+    async function handleChangeName() {
+        if (await confirm({
+            title: 'Update Media Name',
+            content: 'Are you sure you want to rename this media file?',
+            confirmText: 'Yes, Rename',
+            danger: true,
+        })) {
+            const toastId = toast.loading('Renaming...');
+            updateMedia(media.id, {name: media.name})
+                .then(() => {
+                    toast.success('Renamed sucessfull', {id: toastId});
+                    dispatch('rename', media);
+                })
+                .catch(err => toast.error(err.message, {id: toastId}));
+
+        }
+        isEditingFileName = false;
+    }
+
     const isImage = IMAGE_EXTENSIONS.indexOf(media.extension) !== -1;
     const uploadedAt = dayjs.unix(media.uploaded_at);
 
 </script>
 
 <div class="media-file">
+
+    {#if isEditingFileName}
+        <MediaModal bind:show={isEditingFileName} handleChangeName={handleChangeName} bind:media={media}/>
+    {/if}
 
     <a
         class="body"
@@ -70,10 +103,11 @@
 
     <div class="footer">
 
-        <div 
+        <button
             class="media-name"
             title={media.original_name}
-        >{media.original_name}</div>
+            on:click={handleFileNameClick}
+        >{media.original_name}</button>
         <time 
             class="media-at"
             datetime={uploadedAt.format()}
@@ -147,5 +181,5 @@
         max-width: 100%;
         max-height: 100%;
     }
-
+    
 </style>

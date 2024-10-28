@@ -8,6 +8,7 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use App\Models\Media;
+use App\Domains\Blog\Jobs\UpdateMediaLinkJob;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
@@ -29,7 +30,11 @@ class MediaRepository
     // /docs/writing
     public const IMAGE_EXTENSIONS = [
         'png',
-        'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp',
+        'jpg',
+        'jpeg',
+        'jfif',
+        'pjpeg',
+        'pjp',
         'gif',
         'apng',
         'avif',
@@ -47,14 +52,13 @@ class MediaRepository
         int $offset = 0,
         array|null $extensions = null,
         string|null $search = null,
-    ): Collection
-    {
+    ): Collection {
         return Media::where('blog_id', $blog->id)
             ->when($extensions, function ($query) use ($extensions) {
                 $query->whereIn('extension', $extensions);
             })
             ->when($search, function ($query) use ($search) {
-                $query->where(function($query) use ($search) {
+                $query->where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', "%$search%")
                         ->orWhere('original_name', 'LIKE', "%$search%");
                 });
@@ -65,30 +69,42 @@ class MediaRepository
             ->get();
     }
 
-    public static function getOne(int $id) : ?Media
+    public static function getOne(int $id): ?Media
     {
         return Media::find($id);
     }
 
-    public static function getByBlogIdAndName(int $blogId, string $name) : ?Media
+    public static function getByBlogIdAndName(int $blogId, string $name): ?Media
     {
         return Media::where('blog_id', $blogId)
             ->where('name', $name)
             ->first();
     }
 
-
-    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null): Media
+    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null, ?string $fileName = null): Media
     {
+        if ($fileName === null) {
+            $fileName = Str::random() . '.' . $file->extension();
+        } else {
+            // Replace spaces with hyphens
+            $fileName = str_replace(' ', '-', $fileName);
+        }
         try {
+
             $prefix = self::getPathPrefix($blog->id);
-            $path = Storage::putFile($prefix, $file);
+
+            // Check if the file already exists and append a random suffix to the file name
+            if (Storage::exists($prefix . '/' . $fileName)) {
+                $randomString = Str::random();
+                $fileName = $fileName . '_' . $randomString;
+            }
+
+            $path = Storage::putFileAs($prefix, $file, $fileName);
 
             if (!$path) {
                 throw new UploadException('Error while uploading from storage');
             }
 
-            $fileName = self::getFileNameFromPath($path);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             throw new UploadException("Error while uploading: $errorMessage");
@@ -124,7 +140,7 @@ class MediaRepository
             throw new UploadException('Error while fetching image file');
         }
 
-        if (! $response->successful()) {
+        if (!$response->successful()) {
             throw new UploadException();
         }
 
@@ -135,7 +151,7 @@ class MediaRepository
             throw new UploadException('File size is too large');
         }
 
-        if (! $file) {
+        if (!$file) {
             throw new UploadException();
         }
 
@@ -144,7 +160,7 @@ class MediaRepository
         return $this->createMediaFor($url, $blog, $file, $postId, $size);
     }
 
-    public static function getContents(Media $media) : ?string
+    public static function getContents(Media $media): ?string
     {
         $name = $media->name;
         if (!$name)
@@ -153,7 +169,7 @@ class MediaRepository
         return Storage::get(self::getPath($media->blog_id, $name));
     }
 
-    public static function delete(Media $media) : void
+    public static function delete(Media $media): void
     {
         if (!$media->name)
             return;
@@ -169,24 +185,24 @@ class MediaRepository
         MediaDeletedEvent::dispatch($media);
     }
 
-    private static function getPathPrefix(int $blogId) : string
+    private static function getPathPrefix(int $blogId): string
     {
         return "blog/$blogId";
     }
 
-    private static function getPath(int $blogId, string $filName) : string
+    private static function getPath(int $blogId, string $filName): string
     {
-        return self::getPathPrefix($blogId).'/'.$filName;
+        return self::getPathPrefix($blogId) . '/' . $filName;
     }
 
-    private static function getFileNameFromPath(string $path) : string
+    private static function getFileNameFromPath(string $path): string
     {
         $split = explode('/', $path);
 
         return $split[count($split) - 1];
     }
 
-    public static function hasLimitsExceeded(Blog $blog) : bool
+    public static function hasLimitsExceeded(Blog $blog): bool
     {
         $usage = $blog->getCount('media');
         $limit = UsageRepository::getLimitsOf($blog, 'media');
@@ -219,6 +235,33 @@ class MediaRepository
         ]);
 
         MediaCreatedEvent::dispatch($media);
+
+    }
+
+    public static function update(Media $media, ?string $name, ?int $postId): Media
+    {
+        // Replace spaces with hyphens
+        $fileName = str_replace(' ', '-', $name);
+        $prefix = self::getPathPrefix($media->blog_id);
+
+        // Check if the file already exists and append a random suffix to the file name
+        if (Storage::exists($prefix . '/' . $fileName)) {
+            $randomString = Str::random();
+            $fileName = $fileName . '_' . $randomString;
+        }
+
+        $oldPath = self::getPath($media->blog_id, $media->name);
+        $newPath = self::getPath($media->blog_id, $fileName);
+
+        Storage::move($oldPath, $newPath);
+
+        $oldLink = "/media/$media->name";
+        $newLink = "/media/$fileName";
+
+        UpdateMediaLinkJob::dispatch($oldLink, $newLink);
+
+        $media->name = $fileName;
+        $media->save();
 
         return $media;
     }

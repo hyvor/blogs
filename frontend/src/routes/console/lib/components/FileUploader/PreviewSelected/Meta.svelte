@@ -17,7 +17,7 @@
     .name {
         font-size: 13px;
         color: var(--text-light);
-        margin-bottom: 2px;
+        margin-bottom: 10px;
     }
     .value {
         font-weight: 600;

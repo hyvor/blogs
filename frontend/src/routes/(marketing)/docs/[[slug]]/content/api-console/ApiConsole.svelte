@@ -594,6 +594,7 @@ type Response = {}
 	<li><code>POST /media/from-url</code> - Create a media from URL</li>
 	<li><code>DELETE /media/{`{id}`}</code> - Delete a navigation</li>
 	<li><code>GET /media/unsplash/search</code> - Get media from unsplash</li>
+	<li><code>PATCH /media</code> - Patch media</li>
 </ul>
 
 <p>Objects:</p>
@@ -650,6 +651,16 @@ type Response = Media
 	code={`
 type Request = {}
 type Response = {}
+`}
+/>
+
+<h4 id="update-media">Patch a media</h4>
+<p><code>PATCH /media/{`{id}`}</code></p>
+<CodeBlock
+	language="ts"
+	code={`
+type Request = Partial<Media>
+type Response = Media
 `}
 />
 
