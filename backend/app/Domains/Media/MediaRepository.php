@@ -5,10 +5,11 @@ namespace App\Domains\Media;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
+use App\Domains\Route\PermalinkRepository;
 use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use App\Models\Media;
-use App\Domains\Blog\Jobs\UpdateMediaLinkJob;
+use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
@@ -239,26 +240,26 @@ class MediaRepository
         return $media;
     }
 
-    public static function updateName(Media $media, string $name): Media
+    public static function updateName(Media $media, string $name, Blog $blog): Media
     {
         $fileName = str_replace(' ', '-', $name);
         $fileName = self::getUniqueFilename($media->blog_id, $fileName);
 
-        DB::transaction(function() use ($media, $fileName) {
+        DB::transaction(function() use ($media, $fileName, $blog) {
 
             $oldPath = self::getPath($media->blog_id, $media->name);
             $newPath = self::getPath($media->blog_id, $fileName);
 
+            $oldLink = PermalinkRepository::getMediaPermalink($media, $blog);
+
             $media->name = $fileName;
             $media->save();
 
+            $newLink = PermalinkRepository::getMediaPermalink($media, $blog);
+
             Storage::move($oldPath, $newPath);
 
-            $oldLink = "/media/$media->name";
-            $newLink = "/media/$fileName";
-
-            UpdateMediaLinkJob::dispatch($oldLink, $newLink);
-
+            UpdateMediaUrlsInPostsJob::dispatch($blog, $oldLink, $newLink);
         });
 
         return $media;

@@ -131,7 +131,7 @@ class ConsoleMediaController extends Controller
         ]);
 
         $name = (string) $request->string('name');
-        $media = MediaRepository::updateName($media, $name);
+        $media = MediaRepository::updateName($media, $name, $blog);
 
         $this->validateFilename($name);
 

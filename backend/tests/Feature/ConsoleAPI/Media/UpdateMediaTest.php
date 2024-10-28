@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Media;
 
-use App\Domains\Blog\Jobs\UpdateMediaLinkJob;
+use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
 use App\Models\Media;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
@@ -32,6 +32,10 @@ it('updates name and moves file',function() {
     Storage::assertMissing('blog/' . $blog->id . '/test.png');
     Storage::assertExists('blog/' . $blog->id . '/new-name.png');
 
-    Queue::assertPushed(UpdateMediaLinkJob::class);
+    Queue::assertPushed(UpdateMediaUrlsInPostsJob::class, function (UpdateMediaUrlsInPostsJob $job) {
+        expect($job->oldUrl)->toEndWith('/media/test.png');
+        expect($job->newUrl)->toEndWith('/media/new-name.png');
+        return true;
+    });
 
 });
