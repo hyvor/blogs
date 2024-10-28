@@ -2,8 +2,10 @@
 
 namespace App\Domains\Blog\Jobs;
 
+use App\Domains\Cache\CacheService;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Content\UrlUpdater;
+use App\Domains\Post\PostRepository;
 use App\Models\Blog;
 use App\Models\PostVariant;
 use Hyvor\Phrosemirror\Document\Node;
@@ -36,17 +38,22 @@ class UpdateMediaUrlsInPostsJob implements ShouldQueue
                  * @var PostVariant $variant
                  */
                 foreach ($posts as $variant) {
+                    $updates = [];
+
                     if ($variant->content) {
-                        $variant->content = $this->updateContentUrl($variant->content);
+                        $updates['content'] = $this->updateContentUrl($variant->content);
                     }
-
                     if ($variant->content_unsaved) {
-                        $variant->content_unsaved = $this->updateContentUrl($variant->content_unsaved);
+                        $updates['content_unsaved'] = $this->updateContentUrl($variant->content_unsaved);
                     }
 
-                    $variant->save();
+                    if ($updates) {
+                        PostRepository::updatePostVariant($variant, $updates);
+                    }
                 }
             });
+
+        app(CacheService::class, ['blog' => $this->blog])->clearTemplateCache();
     }
 
     private function updateContentUrl(string $content): string
