@@ -5,16 +5,19 @@ namespace Tests\Feature\ConsoleAPI\Media;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('uploads', function () {
     Event::fake();
+    Storage::fake();
 
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
 
     consoleApi($blog, 'POST', '/media', [
         'file' => $file,
+        'file_name' => 'image.png'
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json
@@ -23,6 +26,26 @@ it('uploads', function () {
         );
 
     Event::assertDispatched(MediaCreatedEvent::class);
+    Storage::has('blog/' . $blog->id . '/image.png');
+});
+
+it('uploads with duplicate name', function() {
+
+    Storage::fake();
+    $blog = blogWithAccess();
+    Storage::put('blog/' . $blog->id . '/image.png', 'content');
+
+    $file = UploadedFile::fake()->image('image.png')->size(100);
+
+    $media = consoleApi($blog, 'POST', '/media', [
+        'file' => $file,
+        'file_name' => 'image.png'
+    ])
+        ->assertOk()
+        ->json();
+
+    expect($media['name'])->toMatch('/image-\w+\.png/');
+
 });
 
 it('uploads with post ID', function() {

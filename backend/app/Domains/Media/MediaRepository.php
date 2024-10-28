@@ -91,15 +91,17 @@ class MediaRepository
         }
         try {
 
-            $prefix = self::getPathPrefix($blog->id);
-
             // Check if the file already exists and append a random suffix to the file name
-            if (Storage::exists($prefix . '/' . $fileName)) {
+            if (Storage::exists(self::getPath($blog->id, $fileName))) {
                 $randomString = Str::random();
-                $fileName = $fileName . '_' . $randomString;
+                $fileName = pathinfo($fileName, PATHINFO_FILENAME) . '-' . $randomString . '.' . $file->extension();
             }
 
-            $path = Storage::putFileAs($prefix, $file, $fileName);
+            $path = Storage::putFileAs(
+                self::getPathPrefix($blog->id),
+                $file,
+                $fileName
+            );
 
             if (!$path) {
                 throw new UploadException('Error while uploading from storage');
@@ -236,6 +238,7 @@ class MediaRepository
 
         MediaCreatedEvent::dispatch($media);
 
+        return $media;
     }
 
     public static function update(Media $media, ?string $name, ?int $postId): Media
