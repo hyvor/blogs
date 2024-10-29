@@ -53,6 +53,7 @@ export const nodes = {
         content: "inline*",
         group: "block",
         defining: true,
+        draggable: true,
         selectable: false,
         parseDOM: [
             {tag: "h1", getAttrs(h: HTMLElement) {return {id: h.id, level: 1}}},
