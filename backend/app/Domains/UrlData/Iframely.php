@@ -5,6 +5,9 @@ namespace App\Domains\UrlData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @deprecated
+ */
 class Iframely
 {
     private const ENDPOINT = 'https://iframe.ly/api/iframely';
