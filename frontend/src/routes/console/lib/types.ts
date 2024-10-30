@@ -507,6 +507,9 @@ export interface GptPrompt {
     gpt_response: string,
 }
 
+/**
+ * @deprecated
+ */
 export interface UrlData {
     url: string,
     original_url: string,
@@ -517,6 +520,28 @@ export interface UrlData {
     thumbnail_url: string | null,
     icon_url: string | null,
     site: string | null,
+}
+
+export interface UnfoldedLink {
+    url: string;
+    lastUrl: string;
+    title: string | null;
+    description: string | null;
+    authors: unknown[];
+    tags: unknown[];
+    siteName: string | null;
+    siteUrl: string | null;
+    canonicalUrl: string | null;
+    publishedTime: number | null;
+    modifiedTime: number | null;
+    thumbnailUrl: string | null;
+    iconUrl: string | null;
+    locale: string | null;
+}
+
+export interface UnfoldedEmbed {
+    url: string,
+    embed: string;
 }
 
 
