@@ -33,7 +33,7 @@
 	{:else if error}
 		<IconMessage error padding={60} message={error} iconSize={70} />
 	{:else if type === 'embed'}
-		<EmbedHtmlDisplay html={unfolded.embed} />
+		<EmbedHtmlDisplay url={unfolded.url} html={unfolded.embed} />
 	{:else}
 		<BookmarkDisplay link={unfolded} />
 	{/if}

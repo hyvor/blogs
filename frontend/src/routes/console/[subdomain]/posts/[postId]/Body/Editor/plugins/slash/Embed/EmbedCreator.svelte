@@ -116,7 +116,7 @@
 
 	{#if urlData}
 		<div class="display">
-			<EmbedHtmlDisplay html={urlData.embed || ''} />
+			<EmbedHtmlDisplay url={urlData.url} />
 		</div>
 	{/if}
 </Modal>
