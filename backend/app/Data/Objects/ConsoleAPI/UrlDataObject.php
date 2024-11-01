@@ -7,37 +7,38 @@ use App\Models\UrlData;
 // either a link or embed media
 class UrlDataObject
 {
-    public string $url; // final URL
-
-    public string $original_url;
-
     public string $domain;
 
-    public ?string $html;
-
-    public string $title;
-
-    public string $description;
-
-    public ?string $thumbnail_url;
-
-    public ?string $icon_url;
-
-    public ?string $site;
-
-    public function __construct(UrlData $urlData)
+    public function __construct(
+        public string $url, // final URL
+        public string $original_url,
+        public ?string $title,
+        public ?string $description,
+        public ?string $thumbnail_url,
+        public ?string $icon_url,
+        public ?string $site,
+    )
     {
-        $this->url = $urlData->final_url ?? '';
-        $this->original_url = $urlData->url;
-
         $domain = parse_url($this->url, PHP_URL_HOST);
-        $this->domain = $domain ? $domain : '';
-
-        $this->html = $urlData->html;
-        $this->title = $urlData->title ?? '';
-        $this->description = $urlData->description ?? '';
-        $this->thumbnail_url = $urlData->thumbnail_url;
-        $this->icon_url = $urlData->icon_url;
-        $this->site = $urlData->site;
+        $this->domain = is_string($domain) ? $domain : '';
     }
+
+    /**
+     * @param array<mixed> $unfolded
+     */
+    public static function fromUnfolded(array $unfolded) : self
+    {
+
+        return new self(
+            $unfolded['lastUrl'],
+            $unfolded['url'],
+            $unfolded['title'],
+            $unfolded['description'],
+            $unfolded['thumbnailUrl'],
+            $unfolded['iconUrl'],
+            $unfolded['siteName'],
+        );
+
+    }
+
 }

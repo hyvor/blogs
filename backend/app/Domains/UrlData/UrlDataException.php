@@ -4,6 +4,6 @@ namespace App\Domains\UrlData;
 
 use App\Exceptions\TrustedException;
 
-class IframelyException extends TrustedException
+class UrlDataException extends TrustedException
 {
 }
