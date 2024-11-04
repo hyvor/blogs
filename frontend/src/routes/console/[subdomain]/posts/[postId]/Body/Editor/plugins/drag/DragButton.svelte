@@ -2,7 +2,7 @@
 	import { IconThreeDotsVertical } from "@hyvor/icons";
 	import { onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
-	import { TextSelection, type Selection } from "prosemirror-state";
+	import { NodeSelection, TextSelection, type Selection } from "prosemirror-state";
 	import { ActionList, ActionListItem, Dropdown } from "@hyvor/design/components";
 	import { addColumnAfter, addColumnBefore, deleteColumn, deleteTable, toggleHeaderColumn } from "prosemirror-tables";
 	import schema from "../../../../../../../lib/prosemirror/schema";
@@ -47,23 +47,30 @@
             wrapEl.style.left = `${left}px`;
 
         } else {
-            show = false;
+            wrapEl.style.display = "none";
         }
 
     }
 
     onMount(position);
 
+    function onMouseDown(event: MouseEvent) {
+        editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, editorView.state.selection.$anchor.pos)));
+    }
+
 </script>
+
+<svelte:window on:scroll|capture={position} />
 
 <span 
     bind:this={wrapEl}
     class:show={show}
     class="wrap"
 >
-
-    <IconThreeDotsVertical size={14} />
-
+    <button on:mousedown={onMouseDown}>
+        <IconThreeDotsVertical size={14} />
+    </button>
+    
 </span>
 
 <style>
@@ -73,4 +80,5 @@
         align-items: center;
         justify-content: center;
     }
+
 </style>
