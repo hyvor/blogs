@@ -64,6 +64,7 @@ class ImportWordPressCommand extends Command
             $this->info((string) json_encode([
                 'posts' => count($parser->posts),
                 'uploads' => count($parser->uploads),
+                'duplicates ignored' =>$parser->duplicateCount
             ]));
 
             return;

@@ -40,6 +40,15 @@ class WordPressParser extends ParserAbstract
 
     private string $blogUrl;
 
+    /**
+     * Caches the slugs of imported posts
+     * Used to ignore duplicates
+     * @var string[]
+     */
+    private array $importedPostSlugs = [];
+
+    public int $duplicateCount = 0;
+
     public function __construct(
         private Blog $blog,
 
@@ -145,10 +154,20 @@ class WordPressParser extends ParserAbstract
         }
 
         $isPage = $type === 'page';
+
+        $status = (string) $this->element($post, 'wp:status');
+        if ($status !== 'publish') return;
+
         $title = (string) $this->element($post, 'title');
         $pubDate = new Carbon((string) $this->element($post, 'pubDate'));
         $description = (string) $this->element($post, 'description');
-        $slug = (string) $this->element($post, 'wp:post_name');
+        $slug = trim((string) $this->element($post, 'wp:post_name'));
+        if (!$slug) return;
+
+        if (in_array($slug, $this->importedPostSlugs)) {
+            $this->duplicateCount++;
+            return;
+        }
 
         $contentHtml = (string) $this->element($post, 'content:encoded');
         $content = $this->getContent($contentHtml);
