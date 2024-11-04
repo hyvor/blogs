@@ -12,6 +12,7 @@ use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ConsoleMediaController extends Controller
 {
@@ -131,6 +132,7 @@ class ConsoleMediaController extends Controller
         ]);
 
         $name = (string) $request->string('name');
+        $name = Str::kebab($name);
         $this->validateFilename($name);
 
         $media = MediaRepository::updateName($media, $name, $blog);

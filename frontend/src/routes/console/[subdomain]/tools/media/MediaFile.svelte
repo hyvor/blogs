@@ -59,7 +59,7 @@
 
 <div class="media-file">
 	{#if isEditingFileName}
-		<MediaUpdateFileName bind:show={isEditingFileName} bind:media on:update />
+		<MediaUpdateFileName bind:show={isEditingFileName} {media} on:update />
 	{/if}
 
 	<a class="body" href={media.url} target="_blank" on:click={handleClick}>
@@ -126,6 +126,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		font-weight: 600;
+		word-break: break-all;
 	}
 
 	.media-delete {

@@ -39,3 +39,63 @@ it('updates name and moves file',function() {
     });
 
 });
+
+it('updates to kebab case', function() {
+
+    Queue::fake();
+
+    $blog = blogWithAccess();
+
+    Storage::fake();
+    Storage::put('blog/' . $blog->id . '/test.png', 'content');
+
+    $media = Media::factory()->create([
+        'blog_id' => $blog->id,
+        'name' => 'test.png',
+    ]);
+
+    consoleApi($blog, 'PATCH', '/media/' . $media->id, [
+        'name' => 'New Name.png'
+    ])
+        ->assertOk()
+        ->assertJsonPath('name', 'new-name.png');
+
+    expect($media->refresh()->name)->toBe('new-name.png');
+
+    Storage::assertMissing('blog/' . $blog->id . '/test.png');
+    Storage::assertExists('blog/' . $blog->id . '/new-name.png');
+
+    Queue::assertPushed(UpdateMediaUrlsInPostsJob::class, function (UpdateMediaUrlsInPostsJob $job) {
+        expect($job->oldUrl)->toEndWith('/media/test.png');
+        expect($job->newUrl)->toEndWith('/media/new-name.png');
+        return true;
+    });
+
+});
+
+it('handles duplicates', function() {
+
+    $blog = blogWithAccess();
+
+    Storage::fake();
+    Storage::put('blog/' . $blog->id . '/test.png', 'content');
+    Storage::put('blog/' . $blog->id . '/new-name.png', 'content');
+
+    $media = Media::factory()->create([
+        'blog_id' => $blog->id,
+        'name' => 'test.png',
+    ]);
+
+    consoleApi($blog, 'PATCH', '/media/' . $media->id, [
+        'name' => 'new-name.png'
+    ])
+        ->assertOk()
+        ->assertJsonPath('name', 'new-name-1.png');
+
+    expect($media->refresh()->name)->toBe('new-name-1.png');
+
+    Storage::assertMissing('blog/' . $blog->id . '/test.png');
+    Storage::assertExists('blog/' . $blog->id . '/new-name.png');
+    Storage::assertExists('blog/' . $blog->id . '/new-name-1.png');
+
+});
