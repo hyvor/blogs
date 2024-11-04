@@ -245,7 +245,7 @@ class MediaRepository
         $fileName = str_replace(' ', '-', $name);
         $fileName = self::getUniqueFilename($media->blog_id, $fileName);
 
-        DB::transaction(function() use ($media, $fileName, $blog) {
+        DB::transaction(function() use (&$media, $fileName, $blog) {
 
             $oldPath = self::getPath($media->blog_id, $media->name);
             $newPath = self::getPath($media->blog_id, $fileName);

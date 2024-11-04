@@ -9,20 +9,22 @@
 	const dispatch = createEventDispatcher();
 
 	async function handleChangeName() {
-		updateMedia(media.id, { name: media.name })
-			.then(() => {
+		updateMedia(media.id, { name })
+			.then((res) => {
 				toast.success('File name updated');
-				dispatch('update', media);
+				dispatch('update', res);
+				show = false;
 			})
 			.catch((err) => toast.error(err.message))
 			.finally(() => {
-				show = false;
 				loading = false;
 			});
 	}
 
 	export let show: boolean;
 	export let media: Media;
+
+	let name = media.name;
 </script>
 
 <div>
@@ -42,7 +44,7 @@
 		on:confirm={handleChangeName}
 	>
 		<FormControl>
-			<TextInput bind:value={media.name} label="File Name" />
+			<TextInput bind:value={name} label="File Name" />
 		</FormControl>
 	</Modal>
 </div>
