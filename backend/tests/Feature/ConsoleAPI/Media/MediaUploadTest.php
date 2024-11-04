@@ -45,7 +45,24 @@ it('uploads with duplicate name', function () {
         ->assertOk()
         ->json();
 
-    expect($media['name'])->toMatch('/image-\w+\.png/');
+    expect($media['name'])->toBe('image-1.png');
+    Storage::assertExists('blog/' . $blog->id . '/image.png');
+
+});
+
+it('converts to kebab case', function() {
+
+    $blog = blogWithAccess();
+    $file = UploadedFile::fake()->image('image.png')->size(100);
+
+    $media = consoleApi($blog, 'POST', '/media', [
+        'file' => $file,
+        'name' => 'My Imagé.png'
+    ])
+        ->assertOk()
+        ->json();
+
+    expect($media['name'])->toBe('my-imagé.png');
 
 });
 

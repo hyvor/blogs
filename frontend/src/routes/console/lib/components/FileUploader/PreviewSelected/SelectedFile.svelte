@@ -169,6 +169,7 @@
 						on:input={handleNameChange}
 						placeholder="Image Name"
 						state={nameError ? 'error' : 'default'}
+						disabled={!shouldUpload}
 					/>
 				</div>
 				{#if hosting}
@@ -177,10 +178,12 @@
 					</Meta>
 				{/if}
 			</div>
-			<div class="upload-switch">
-				Upload to Media Library
-				<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
-			</div>
+			{#if file.from !== 'media'}
+				<div class="upload-switch">
+					Upload to Media Library
+					<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
+				</div>
+			{/if}
 		</div>
 
 		<div class="footer">
