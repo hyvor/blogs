@@ -19,6 +19,7 @@
             <description></description>
             <wp:post_type><![CDATA[post]]></wp:post_type>
             <wp:post_name><![CDATA[nasso]]></wp:post_name>
+            <wp:status><![CDATA[publish]]></wp:status>
             <content:encoded><![CDATA[
 <!-- wp:paragraph -->
 <p>De modo geral, os usuários ainda não têm como acessar o Google Bard. Isso porque a ferramenta de inteligência artificial ainda está em faze experimental.</p>

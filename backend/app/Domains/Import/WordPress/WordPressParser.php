@@ -45,7 +45,7 @@ class WordPressParser extends ParserAbstract
      * Used to ignore duplicates
      * @var string[]
      */
-    private array $importedPostSlugs = [];
+    private array $parsedPostSlugs = [];
 
     public int $duplicateCount = 0;
 
@@ -164,10 +164,12 @@ class WordPressParser extends ParserAbstract
         $slug = trim((string) $this->element($post, 'wp:post_name'));
         if (!$slug) return;
 
-        if (in_array($slug, $this->importedPostSlugs)) {
+        if (in_array($slug, $this->parsedPostSlugs)) {
             $this->duplicateCount++;
             return;
         }
+
+        $this->parsedPostSlugs[] = $slug;
 
         $contentHtml = (string) $this->element($post, 'content:encoded');
         $content = $this->getContent($contentHtml);
