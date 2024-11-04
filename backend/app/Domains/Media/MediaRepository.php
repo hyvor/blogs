@@ -88,8 +88,7 @@ class MediaRepository
         if ($fileName === null) {
             $fileName = Str::random() . '.' . $file->extension();
         } else {
-            // Replace spaces with hyphens
-            $fileName = str_replace(' ', '-', $fileName);
+            $fileName = Str::kebab($fileName);
         }
 
         $fileName = self::getUniqueFilename($blog->id, $fileName);
@@ -242,7 +241,7 @@ class MediaRepository
 
     public static function updateName(Media $media, string $name, Blog $blog): Media
     {
-        $fileName = str_replace(' ', '-', $name);
+        $fileName = Str::kebab($name);
         $fileName = self::getUniqueFilename($media->blog_id, $fileName);
 
         DB::transaction(function() use (&$media, $fileName, $blog) {
