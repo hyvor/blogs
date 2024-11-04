@@ -2,7 +2,7 @@
 	import dayjs from 'dayjs';
 	import type { Media } from '../../../lib/types';
 	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from './mediaActions';
-	import { IconButton, confirm, toast } from '@hyvor/design/components';
+	import { IconButton, Tooltip, confirm, toast } from '@hyvor/design/components';
 	import { IconTrash } from '@hyvor/icons';
 	import { createEventDispatcher } from 'svelte';
 	import MediaUpdateFileName from './MediaUpdateFileName.svelte';
@@ -73,9 +73,11 @@
 	</a>
 
 	<div class="footer">
-		<button class="media-name" title={media.name} on:click={handleFileNameClick}
-			>{media.name}</button
-		>
+		<Tooltip text="Click to edit">
+			<button class="media-name" title={media.name} on:click={handleFileNameClick}
+				>{media.name}</button
+			>
+		</Tooltip>
 		<time
 			class="media-at"
 			datetime={uploadedAt.format()}
@@ -127,6 +129,9 @@
 		text-overflow: ellipsis;
 		font-weight: 600;
 		word-break: break-all;
+	}
+	.media-name:hover {
+		text-decoration: underline;
 	}
 
 	.media-delete {
