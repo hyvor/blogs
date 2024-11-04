@@ -7,6 +7,7 @@ use App\Domains\Import\Importer\ImportingPost;
 use App\Domains\Import\Importer\ImportingPostVariant;
 use App\Domains\Import\Importer\ParserAbstract;
 use App\Domains\Import\Importer\ParserException;
+use App\Domains\Import\XmlHelper;
 use App\Domains\Post\Content\HtmlParser;
 use App\Domains\Post\Content\UrlUpdater;
 use App\Domains\Route\PermalinkRepository;
@@ -61,7 +62,7 @@ class WordPressParser extends ParserAbstract
             throw new ParserException('Could not read export file');
         }
 
-        $this->xml = $xml;
+        $this->xml = XmlHelper::validUtf8($xml);
         $this->uploadsPath = $path . '/uploads';
 
         $this->blogUrl = PermalinkRepository::getBaseUrl($this->blog);
@@ -72,7 +73,7 @@ class WordPressParser extends ParserAbstract
 
         $fileReader = new XMLReader();
 
-        if (!$fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING)) {
+        if (!$fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_PARSEHUGE)) {
             throw new ParserException('Invalid XML file');
         }
 
@@ -99,7 +100,7 @@ class WordPressParser extends ParserAbstract
         }
 
         // parse posts
-        $fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_PARSEHUGE);
 
         while ($fileReader->read()) {
             if (
