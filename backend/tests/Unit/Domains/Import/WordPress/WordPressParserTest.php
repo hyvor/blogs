@@ -26,7 +26,8 @@ it('parses wordpress file', function() {
     $parser->parse();
 
     $posts = $parser->posts;
-    expect($posts)->toHaveCount(4);
+    expect($posts)->toHaveCount(3);
+    expect($parser->duplicateCount)->toBe(1);
 
     // thumbnail
     $helloWorldPost = null;
