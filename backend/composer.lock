@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7862a1519b83afb80153890d758272c",
+    "content-hash": "4a1a5b280999c6941825a2c235e9da27",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1815,20 +1815,20 @@
         },
         {
             "name": "hyvor/unfold",
-            "version": "0.0.1",
+            "version": "0.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/unfold.git",
-                "reference": "6a13fab980e1c821ac07c1ea172e6c3002db2757"
+                "reference": "591f645d8893cff3c9fa3014c07e95470b1db0d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/unfold/zipball/6a13fab980e1c821ac07c1ea172e6c3002db2757",
-                "reference": "6a13fab980e1c821ac07c1ea172e6c3002db2757",
+                "url": "https://api.github.com/repos/hyvor/unfold/zipball/591f645d8893cff3c9fa3014c07e95470b1db0d4",
+                "reference": "591f645d8893cff3c9fa3014c07e95470b1db0d4",
                 "shasum": ""
             },
             "require": {
-                "league/uri": "^7.0",
+                "league/uri": "^7.4",
                 "php": ">=8.2",
                 "php-http/client-common": "^2.7",
                 "php-http/discovery": "^1.20",
@@ -1863,9 +1863,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hyvor/unfold/issues",
-                "source": "https://github.com/hyvor/unfold/tree/0.0.1"
+                "source": "https://github.com/hyvor/unfold/tree/0.0.5"
             },
-            "time": "2024-10-28T10:05:44+00:00"
+            "time": "2024-11-05T02:42:46+00:00"
         },
         {
             "name": "intervention/image",
