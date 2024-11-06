@@ -10,7 +10,7 @@
 	import Media from './Media/Media.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let type: 'image' | 'audio' = 'image';
+	export let type: 'image' | 'audio' | 'all' = 'image';
 
 	let tab = 'upload';
 
@@ -52,54 +52,80 @@
 					Back
 				</Button>
 			{:else}
-				<TabNav bind:active={tab}>
-					<TabNavItem name="upload">
-						<IconCloudUpload slot="start" />
-						Upload
-					</TabNavItem>
-					<TabNavItem name="media">
-						<IconCardImage slot="start" />
-						Media Library
-					</TabNavItem>
+				{#if type === 'all'}
+					<TabNav bind:active={tab}>
+						<TabNavItem name="upload">
+							<IconCloudUpload slot="start" />
+							Upload Image
+						</TabNavItem>
+						<TabNavItem name="upload-audio">
+							<IconCloudUpload slot="start" />
+							Upload Audio
+						</TabNavItem>
+					</TabNav>
+				{:else}
+					<TabNav bind:active={tab}>
+						<TabNavItem name="upload">
+							<IconCloudUpload slot="start" />
+							Upload
+						</TabNavItem>
+						<TabNavItem name="media">
+							<IconCardImage slot="start" />
+							Media Library
+						</TabNavItem>
 
-					{#if type === 'image'}
-						<TabNavItem name="unsplash">
-							<svg
-								role="img"
-								width="1em"
-								height="1em"
-								fill="currentColor"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-								slot="start"
-								><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" /></svg
-							>
-							Unsplash
-						</TabNavItem>
-						<TabNavItem name="excalidraw">
-							<ExcalidrawIcon slot="start" />
-							Excalidraw
-						</TabNavItem>
-					{/if}
-				</TabNav>
+						{#if type === 'image'}
+							<TabNavItem name="unsplash">
+								<svg
+									role="img"
+									width="1em"
+									height="1em"
+									fill="currentColor"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									slot="start"
+									><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" /></svg
+								>
+								Unsplash
+							</TabNavItem>
+							<TabNavItem name="excalidraw">
+								<ExcalidrawIcon slot="start" />
+								Excalidraw
+							</TabNavItem>
+						{/if}
+					</TabNav>
+				{/if}
 			{/if}
 		</div>
 
-		<div class="body" style:position={selectedFile ? 'relative' : undefined}>
-			{#if tab === 'upload'}
-				<TabUpload {type} on:select={handleSelect} />
-			{:else if tab === 'media'}
-				<Media {type} on:select={handleSelect} />
-			{:else if tab === 'unsplash'}
-				<Unsplash on:select={handleSelect} />
-			{:else if tab === 'excalidraw'}
-				<Excalidraw on:select={handleSelect} />
-			{/if}
+		{#if type === 'all'}
+			<div class="body" style:position={selectedFile ? 'relative' : undefined}>
+				{#if tab === 'upload'}
+					<TabUpload type='image' on:select={handleSelect} />
+				{:else if tab === 'upload-audio'}
+					<TabUpload type='audio' on:select={handleSelect} />
+				{/if}
+				{#if selectedFile}
+					<SelectedFile file={selectedFile} on:select={handleFinish} />
+				{/if}
+			</div>
+		{:else}
+			<div class="body" style:position={selectedFile ? 'relative' : undefined}>
+				{#if tab === 'upload'}
+					<TabUpload {type} on:select={handleSelect} />
+				{:else if tab === 'media'}
+					<Media {type} on:select={handleSelect} />
+				{:else if tab === 'unsplash'}
+					<Unsplash on:select={handleSelect} />
+				{:else if tab === 'excalidraw'}
+					<Excalidraw on:select={handleSelect} />
+				{/if}
 
-			{#if selectedFile}
-				<SelectedFile file={selectedFile} on:select={handleFinish} />
-			{/if}
-		</div>
+				{#if selectedFile}
+					<SelectedFile file={selectedFile} on:select={handleFinish} />
+				{/if}
+			</div>
+		{/if}
 	</Modal>
 </div>
 
