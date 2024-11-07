@@ -72,6 +72,9 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
             ]),
+            new TwigFunction('get_rich_schema', [$this, 'getRichSchema'], [
+                'needs_context' => true,
+            ]),
         ];
     }
 
@@ -300,6 +303,22 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
+    public function getRichSchema(array $context)
+    {
+        return json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $context['_meta']['title'],
+            'image' => [$context['_meta']['featured_image']],
+            'datePublished' => $context['_post']['published_at'],
+            'dateModified' => $context['_post']['updated_at'],
+            'authors' => array_map(fn($author) => [
+                    '@type' => 'Person',
+                    'name' => $author['name'] ?? '',
+                    'url' => $author['url'] ?? ''
+                ], $context['_post']['authors'])
+        ]);
+    }
     private function getBlogFromContext($context)
     {
         if (! isset($this->blog)) {
