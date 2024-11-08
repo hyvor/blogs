@@ -136,10 +136,12 @@
 		<Loader full>Uploading...</Loader>
 	{:else}
 		<div class="img-wrap">
-			{#if file.type === 'audio'}
+			{#if file.url.type.includes('audio')}
 				<audio src={fileUrl} controls />
-			{:else}
+			{:else if file.url.type.includes('image')}
 				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
+			{:else}
+				No preview available
 			{/if}
 		</div>
 

@@ -9,7 +9,7 @@
 	import byteFormatter from '../../helper/byte-formatter';
 
 	export let isUploading = false;
-	export let type: 'image' | 'audio' = 'image';
+	export let type: 'image' | 'audio' | 'all' = 'image';
 
 	let inputEl: HTMLInputElement;
 	let byUrlInputEl: HTMLInputElement;
@@ -187,7 +187,7 @@
 <div class="tab">
 	<input
 		type="file"
-		accept={type === 'audio' ? 'audio/*' : 'image/*'}
+		accept={type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : '*'}
 		style="display:none"
 		bind:this={inputEl}
 		on:change={handleInputChange}

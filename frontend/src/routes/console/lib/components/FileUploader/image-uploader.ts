@@ -6,7 +6,7 @@ export type SelectFromType = 'upload' | 'media' | 'unsplash' | 'excalidraw';
 export type UploadType = 'paste' | 'dnd' | 'browse' | 'url';
 
 export interface SelectedFile {
-    type: 'image' | 'audio',
+    type: 'image' | 'audio' | 'all',
     from: SelectFromType,
     url: string | Blob,
 
