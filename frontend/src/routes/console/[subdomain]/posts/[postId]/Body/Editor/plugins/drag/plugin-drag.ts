@@ -1,7 +1,8 @@
-import { EditorState, Plugin, type PluginView } from "prosemirror-state";
+import { EditorState, Plugin, NodeSelection, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { SvelteComponent } from "svelte";
 import DragButton from "./DragButton.svelte";
+import { selectParentNode } from "prosemirror-commands";
 
 export default function dragPlugin() {
     return new Plugin({
@@ -30,7 +31,7 @@ export class DragPlugin implements PluginView {
             this.dragButton.$destroy();
         }
         this.dragButton = new DragButton({
-            target: this.wrap
+            target: this.wrap,
         });
     }
 

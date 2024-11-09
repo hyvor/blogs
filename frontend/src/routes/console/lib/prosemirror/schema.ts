@@ -21,6 +21,7 @@ export const nodes = {
         content: "inline*",
         group: "block",
         selectable: false,
+        draggable: true,
         parseDOM: [{tag: "p"}],
         toDOM() { return ['p', 0] }
     } as NodeSpec,
@@ -53,7 +54,7 @@ export const nodes = {
         content: "inline*",
         group: "block",
         defining: true,
-        draggable: true,
+        draggable: false,
         selectable: false,
         parseDOM: [
             {tag: "h1", getAttrs(h: HTMLElement) {return {id: h.id, level: 1}}},

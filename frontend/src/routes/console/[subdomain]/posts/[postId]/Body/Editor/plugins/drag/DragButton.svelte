@@ -6,10 +6,10 @@
 	import { ActionList, ActionListItem, Dropdown } from "@hyvor/design/components";
 	import { addColumnAfter, addColumnBefore, deleteColumn, deleteTable, toggleHeaderColumn } from "prosemirror-tables";
 	import schema from "../../../../../../../lib/prosemirror/schema";
+	import { selectParentNode } from "prosemirror-commands";
 
     let show = false;
     let wrapEl: HTMLSpanElement;
-    let showDropdown = false;
 
     $: editorView = $postEditingStatusStore.editorView!;
 
@@ -58,6 +58,10 @@
         editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, editorView.state.selection.$anchor.pos)));
     }
 
+    function onClick(event: MouseEvent) {
+        selectParentNode(editorView.state, editorView.dispatch);
+    }
+
 </script>
 
 <svelte:window on:scroll|capture={position} />
@@ -67,7 +71,7 @@
     class:show={show}
     class="wrap"
 >
-    <button on:mousedown={onMouseDown}>
+    <button on:mousedown={onMouseDown} on:click={onClick}>
         <IconThreeDotsVertical size={14} />
     </button>
     
