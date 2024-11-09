@@ -12,6 +12,18 @@
 
 	export let file: SelectedFile;
 
+	let fileType = ''
+	if (file.type === 'all' && file.url instanceof Blob) {
+		if (file.url.type.includes('image')) {
+			fileType = 'image';
+		} else if (file.url.type.includes('audio')) {
+			fileType = 'audio';
+		}
+	}
+	else {
+		fileType = file.type;
+	}
+
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
 	let imageSize = file.url instanceof File ? file.url.size : null;
 	let imageName = toKebabCase(
@@ -136,9 +148,9 @@
 		<Loader full>Uploading...</Loader>
 	{:else}
 		<div class="img-wrap">
-			{#if file.url.type.includes('audio')}
+			{#if fileType === 'audio'}
 				<audio src={fileUrl} controls />
-			{:else if file.url.type.includes('image')}
+			{:else if fileType === 'image'}
 				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
 			{:else}
 				No preview available
