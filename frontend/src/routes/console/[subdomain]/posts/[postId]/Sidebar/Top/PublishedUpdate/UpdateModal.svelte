@@ -20,7 +20,7 @@
     $: $postStore, $postOriginalStore, changes = getPublishedChanges();
 
     $: disabled = changes.variant.slug !== undefined &&
-        (changes.variant.slug || '').trim() === '';
+        ((changes.variant.slug || '').trim() === '' || (changes.variant.slug || '').includes('/'));
 
     let isLoading = false;
 
@@ -124,6 +124,11 @@
                 {#if (changes.variant.slug || '').trim() === ''}
                     <Validation state="error">
                         Slug cannot be empty.
+                    </Validation>
+                {/if}
+                {#if (changes.variant.slug || '').includes('/')}
+                    <Validation state="error">
+                        Slug cannot contains "/"
                     </Validation>
                 {/if}
             </div>
