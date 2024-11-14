@@ -72,8 +72,9 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
             ]),
-            new TwigFunction('get_rich_schema', [$this, 'getRichSchema'], [
+            new TwigFunction('rich_schema', [$this, 'richSchema'], [
                 'needs_context' => true,
+                'is_safe' => ['html'],
             ]),
         ];
     }
@@ -303,7 +304,7 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
-    public function getRichSchema(array $context)
+    public function richSchema(array $context)
     {
         return json_encode([
             '@context' => 'https://schema.org',
@@ -312,12 +313,12 @@ class TwigExtensions extends AbstractExtension
             'image' => [$context['_meta']['featured_image']],
             'datePublished' => $context['_post']['published_at'],
             'dateModified' => $context['_post']['updated_at'],
-            'authors' => array_map(fn($author) => [
-                    '@type' => 'Person',
-                    'name' => $author['name'] ?? '',
-                    'url' => $author['url'] ?? ''
-                ], $context['_post']['authors'])
-        ]);
+            'authors' => array_map(fn($author) => array_merge(
+                ['type' => '@Person'],
+                !empty($author['name']) ? ['name' => $author['name']] : [],
+                !empty($author['url']) ? ['url' => $author['url']] : []
+            ), $context['_post']['authors'])
+        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
     private function getBlogFromContext($context)
     {

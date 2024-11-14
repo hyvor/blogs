@@ -6,7 +6,7 @@ use App\Domains\Delivery\Twig\TwigExtensions;
 
 it('gets rich schema', function () {
     testTwigRendering(
-        "{{ get_rich_schema() }}",
+        "{{ rich_schema() }}",
         [
             '_meta' => [
                 'title' => 'Some Title',
@@ -18,11 +18,14 @@ it('gets rich schema', function () {
                 'authors' => [
                     [
                         'name' => 'John Doe',
-                        'email' => 'johndoe1@email.com'
+                        'url' => 'johndoe1@email.com'
                     ],
                     [
                         'name' => 'Jane Doe',
-                        'email' => 'janedoe@email.com'
+                        'url' => ''
+                    ],
+                    [
+                        'name' => 'John Doe 2'
                     ]
                 ]
             ]
