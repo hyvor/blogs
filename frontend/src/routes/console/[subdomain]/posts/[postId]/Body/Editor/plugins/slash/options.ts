@@ -265,6 +265,21 @@ function createEmbed() {
             )
         });
 
+        creator.$on('createBookmark', (e: CustomEvent<string>) => {
+            destroy();
+            return createBookmark();
+        });
+
+        creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
+            destroy();
+            return resolve(
+                schema.nodes.figure!.create({}, [
+                    schema.nodes.custom_html!.create({ html: e.detail }),
+                    schema.nodes.figcaption!.create()
+                ])
+            )
+        });
+
     });
 
 }

@@ -16,6 +16,8 @@
 	const dispatch = createEventDispatcher<{
 		close: void;
 		create: string;
+		createBookmark: string;
+		createHtmlBlock: string;
 	}>();
 
 	$: if (!show) {
@@ -64,6 +66,16 @@
 	function handleCreate() {
 		dispatch('create', url);
 	}
+
+
+	function handleCreateBookmark(): void {
+		dispatch('createBookmark', url);
+	}
+
+	function handleCreateHtmlBlock(): void {
+		dispatch('createHtmlBlock', url);
+	}
+
 </script>
 
 <Modal
@@ -107,6 +119,17 @@
 			<Validation state="error">
 				{error}
 			</Validation>
+			<div class="link-alternatives">
+				Alternatively, you can add a link link Bookmark or a custom HTML/Twig block and paste the link.
+				<div class="alternatives-button">
+					<Button on:click={handleCreateBookmark}>
+						Create link Bookmark
+					</Button>
+					<Button on:click={handleCreateHtmlBlock}>
+						Create HTML/Twig block
+					</Button>
+				</div>
+			</div>
 		</div>
 	{/if}
 
@@ -131,5 +154,11 @@
 		margin-top: 20px;
 		overflow: auto;
 		max-height: 400px;
+	}
+	.link-alternatives {
+		margin-top: 10px;
+	}
+	.alternatives-button {
+		margin-top: 10px;
 	}
 </style>
