@@ -1,13 +1,8 @@
 <script lang="ts">
-	import { IconThreeDotsVertical } from "@hyvor/icons";
 	import { createEventDispatcher, onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
-	import { NodeSelection, TextSelection, type Selection } from "prosemirror-state";
-	import { ActionList, ActionListItem, Dropdown } from "@hyvor/design/components";
-	import { addColumnAfter, addColumnBefore, deleteColumn, deleteTable, toggleHeaderColumn } from "prosemirror-tables";
-	import schema from "../../../../../../../lib/prosemirror/schema";
-	import { selectParentNode } from "prosemirror-commands";
-
+	import { NodeSelection, type Selection } from "prosemirror-state";
+    
     let show = false;
     let wrapEl: HTMLSpanElement;
 
@@ -76,7 +71,7 @@
     class="wrap"
 >
     <button on:mousedown={onMouseDown} on:click={onClick}>
-        <IconThreeDotsVertical size={14} />
+        ::
     </button>
     
 </span>
@@ -93,7 +88,11 @@
         background-color: transparent;
         border: none;
         cursor: pointer;
-
+        font-size: 16px;
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-bottom: 2px;
+        color: var(--gray);
     }
 
     button:hover {
