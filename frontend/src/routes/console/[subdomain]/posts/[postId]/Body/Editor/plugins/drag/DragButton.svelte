@@ -45,7 +45,7 @@
             let { left, top, height } = domNode.getBoundingClientRect();
 
             left -= 20;
-            //top += height / 2;
+            top += height / 2 - 10;
 
             wrapEl.style.top = `${top}px`;
             wrapEl.style.left = `${left}px`;
@@ -87,6 +87,18 @@
         z-index: 100;
         align-items: center;
         justify-content: center;
+    }
+
+    button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+
+    }
+
+    button:hover {
+        background-color: var(--gray-light);
+        transform: scale(1.1);
     }
 
 </style>
