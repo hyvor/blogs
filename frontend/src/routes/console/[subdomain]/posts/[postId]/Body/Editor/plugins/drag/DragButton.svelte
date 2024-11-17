@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { IconThreeDotsVertical } from "@hyvor/icons";
-	import { onMount } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { NodeSelection, TextSelection, type Selection } from "prosemirror-state";
 	import { ActionList, ActionListItem, Dropdown } from "@hyvor/design/components";
@@ -12,6 +12,10 @@
     let wrapEl: HTMLSpanElement;
 
     $: editorView = $postEditingStatusStore.editorView!;
+
+    const dispatch = createEventDispatcher<{
+        drag: void;
+    }>();
 
     function isSelectionDragable(selection: Selection) {
         if (!editorView) return;
@@ -59,7 +63,7 @@
     }
 
     function onClick(event: MouseEvent) {
-        selectParentNode(editorView.state, editorView.dispatch);
+        dispatch('drag');
     }
 
 </script>

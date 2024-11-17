@@ -33,6 +33,10 @@ export class DragPlugin implements PluginView {
         this.dragButton = new DragButton({
             target: this.wrap,
         });
+
+        this.dragButton.$on('drag', (e: CustomEvent) => {
+            selectParentNode(this.view.state, this.view.dispatch, this.view);
+        });
     }
 
     update(view: EditorView, prevState: EditorState) {
