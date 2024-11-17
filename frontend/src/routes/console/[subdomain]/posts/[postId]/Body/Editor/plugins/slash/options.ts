@@ -267,7 +267,7 @@ function createEmbed() {
 
         creator.$on('createBookmark', (e: CustomEvent<string>) => {
             destroy();
-            return createBookmark();
+            resolve(createBookmark());
         });
 
         creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
