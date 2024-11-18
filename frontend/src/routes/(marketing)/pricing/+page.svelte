@@ -176,9 +176,12 @@
 	</Faq>
 
 	<Faq q="Do I have to pay for themes?" icon={IconBrush}>
-		No, all official themes are <strong>free and open-source</strong>. They can be easily installed
-		on your blog with a few clicks. If you want to build your own theme, you will have to cover the
-		development costs.
+		No, all official themes are <strong
+			>free and <Link href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank"
+				>open-source</Link
+			></strong
+		>. They can be easily installed on your blog with a few clicks. If you want to build your own
+		theme, you will have to cover the development costs.
 	</Faq>
 
 	<Faq q="Do you offer discounts?" icon={IconPercent}>

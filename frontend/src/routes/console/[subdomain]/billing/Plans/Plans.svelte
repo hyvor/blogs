@@ -48,7 +48,7 @@
 	</div>
 
 	<div class="section-desc">
-		Prices are shown in USD, including all VAT charges <br />
+		Prices are shown in EUR, including all VAT charges <br />
 		<div>
 			<Link href="/pricing" target="_blank">
 				<span>Pricing</span>
