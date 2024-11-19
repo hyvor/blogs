@@ -180,6 +180,11 @@ class PermalinkRepository
         $path = $path ?? '';
         $path = str_replace('{slug}', $variant?->slug ?? '', $path);
 
+        // If path is empty add slug
+        if (empty($path)) {
+            $path = $variant?->slug ?? '';
+        }
+
         if (str_contains($path, '{tag}')) {
             $path = str_replace('{tag}', $post->tags[0]?->slug ?? '', $path);
         }
@@ -194,7 +199,6 @@ class PermalinkRepository
         if (! $language->is_primary) {
             $path = "/{$language->code}".$path;
         }
-
         return  $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
