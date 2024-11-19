@@ -12,10 +12,13 @@
         updateBlogStore({ seo_external_links_follow: value });
     }
 
+    function handleRichSchemaChange(e: any) {
+        updateBlogStore({ seo_rich_schema: e.target.checked });
+    }
 </script>
 
 <BlogSettingsSave 
-    keys={['seo_indexing', 'seo_external_links_follow', 'seo_robots_txt']}
+    keys={['seo_indexing', 'seo_external_links_follow', 'seo_rich_schema', 'seo_robots_txt']}
 />
 
 <div class="settings">
@@ -63,6 +66,18 @@
             </Radio>
 
         </FormControl>
+
+    </SplitControl>
+
+    <SplitControl
+        label="Rich Schema Tags"
+        caption="Adds rich schema tags to your blog"
+    >
+
+        <Switch
+            checked={$blogStore.seo_rich_schema ?? true}
+            on:change={handleRichSchemaChange}
+        />
 
     </SplitControl>
 
