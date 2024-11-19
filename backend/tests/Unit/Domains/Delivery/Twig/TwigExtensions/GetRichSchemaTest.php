@@ -30,8 +30,30 @@ it('gets rich schema', function () {
                 ]
             ]
         ],
-        'hi'
+        '<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Some Title",
+    "image": [
+        "https://example.com/image.jpg"
+    ],
+    "datePublished": "2024-11-06 12:10:20",
+    "dateModified": "2024-11-06 12:10:20",
+    "authors": [
+        {
+            "type": "@Person",
+            "name": "John Doe",
+            "url": "johndoe1@email.com"
+        },
+        {
+            "type": "@Person",
+            "name": "Jane Doe"
+        },
+        {
+            "type": "@Person",
+            "name": "John Doe 2"
+        }
+    ]
+}</script>'
     );
-//    expect(TwigExtensions::getRichSchema(['https://example.com']))->toBe('hi');
-
 });

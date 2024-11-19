@@ -306,7 +306,7 @@ class TwigExtensions extends AbstractExtension
 
     public function richSchema(array $context)
     {
-        return json_encode([
+        return '<script type="application/ld+json">' . json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
             'headline' => $context['_meta']['title'],
@@ -318,7 +318,7 @@ class TwigExtensions extends AbstractExtension
                 !empty($author['name']) ? ['name' => $author['name']] : [],
                 !empty($author['url']) ? ['url' => $author['url']] : []
             ), $context['_post']['authors'])
-        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script>';
     }
     private function getBlogFromContext($context)
     {
