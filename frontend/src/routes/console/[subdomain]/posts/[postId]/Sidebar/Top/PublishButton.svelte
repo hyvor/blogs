@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Caption, FormControl, Label, Modal, Radio, TextInput, toast } from "@hyvor/design/components";
+	import { Button, Caption, FormControl, Label, Modal, Radio, TextInput, toast, Validation } from "@hyvor/design/components";
 	import { IconSendFill } from "@hyvor/icons";
 	import { postVariantStore } from "../../../postStore";
 	import dayjs from "dayjs";
@@ -9,6 +9,8 @@
     let type : 'published' | 'scheduled' = 'published';
 
     let scheduleDate = dayjs().format('YYYY-MM-DD');
+
+    $: publishDisabled = $postVariantStore.slug?.includes('/');
 
     async function handlePublish() {
         modalOpen = false;
@@ -79,6 +81,14 @@
 
         </div>
 
+        {#if ($postVariantStore.slug || '').includes('/')}
+        <div class="slug-warning">
+            <Validation state="error">
+                Slug cannot contains "/"
+            </Validation>
+        </div>
+        {/if}
+
 
         <div slot="footer">
             <Button 
@@ -89,6 +99,7 @@
             </Button>
             <Button 
                 color="accent" 
+                disabled={publishDisabled}
                 on:click={handlePublish}
             >
                 {type === 'published' ? 'Publish' : 'Schedule'}
@@ -99,3 +110,11 @@
     </Modal>
 
 {/if}
+
+<style>
+    .slug-warning {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+</style>
