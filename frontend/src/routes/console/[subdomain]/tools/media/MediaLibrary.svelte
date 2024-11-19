@@ -61,7 +61,7 @@
 		const selector = new FileUploader({
 			target: div,
 			props: {
-				type: 'all'
+				type: 'any'
 			}
 		});
 

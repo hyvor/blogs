@@ -10,7 +10,7 @@
 	import Media from './Media/Media.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let type: 'image' | 'audio' | 'all' = 'image';
+	export let type: 'image' | 'audio' | 'any' = 'image';
 
 	let tab = 'upload';
 
@@ -51,8 +51,7 @@
 					<IconCaretLeft slot="start" va />
 					Back
 				</Button>
-			{:else}
-			{#if type === 'all'}
+			{:else if type === 'any'}
 				<TabNav bind:active={tab}>
 					<TabNavItem name="upload">
 						<IconCloudUpload slot="start" />
@@ -91,12 +90,11 @@
 					{/if}
 				</TabNav>
 			{/if}
-		{/if}
 		</div>
 		<div class="body" style:position={selectedFile ? 'relative' : undefined}>
 			{#if tab === 'upload'}
 				<TabUpload {type} on:select={handleSelect} />
-			{:else if tab === 'media' && type !== 'all'}
+			{:else if tab === 'media' && type !== 'any'}
 				<Media {type} on:select={handleSelect} />
 			{:else if tab === 'unsplash'}
 				<Unsplash on:select={handleSelect} />
