@@ -40,7 +40,9 @@
             <meta property="article:section" content="{{ tag.name }}" />
         {% endfor %}
 
-        // add 
+        {% if not _blog.seo_rich_schema or _blog.seo_rich_schema == true %}
+            {{ rich_schema() }}
+        {% endif %}
     {% endif %}
 
     {# Twitter Tags ========== #}
