@@ -6,6 +6,8 @@
 	import type { Media } from '../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
 	import { getConfig } from '../../../lib/config';
+	import type { SelectedFile } from '../../../lib/components/FileUploader/image-uploader';
+	import FileUploader from '../../../lib/components/FileUploader/FileUploader.svelte';
 
 	export let showUpload = true;
 	export let filterDefaultType = null as null | FileType;
@@ -53,7 +55,29 @@
 	}
 
 	function handleClickUpload() {
-		uploadInput?.click();
+		const div = document.createElement('div');
+		document.body.appendChild(div);
+
+		const selector = new FileUploader({
+			target: div,
+			props: {
+				type: 'any'
+			}
+		});
+
+		function destroy() {
+			selector.$destroy();
+			div.remove();
+		}
+
+		selector.$on('close', () => {
+			destroy();
+		});
+
+		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
+			destroy();
+			load();
+		});
 	}
 
 	const limit = 50;

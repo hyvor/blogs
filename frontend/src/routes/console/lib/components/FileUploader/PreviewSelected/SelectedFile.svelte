@@ -138,8 +138,10 @@
 		<div class="img-wrap">
 			{#if file.type === 'audio'}
 				<audio src={fileUrl} controls />
-			{:else}
+			{:else if file.type === 'image'}
 				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
+			{:else}
+				No preview available
 			{/if}
 		</div>
 

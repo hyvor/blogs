@@ -9,7 +9,7 @@
 	import byteFormatter from '../../helper/byte-formatter';
 
 	export let isUploading = false;
-	export let type: 'image' | 'audio' = 'image';
+	export let type: 'image' | 'audio' | 'any' = 'image';
 
 	let inputEl: HTMLInputElement;
 	let byUrlInputEl: HTMLInputElement;
@@ -24,6 +24,14 @@
 	}
 
 	const dispatch = createEventDispatcher<{ select: SelectedFile }>();
+
+	function getSelectedType(blob: Blob | null = null): 'image' | 'audio' | 'other' {
+		if (type === 'any' && blob) {
+			if (blob.type.indexOf('image') === 0) return 'image';
+			if (blob.type.indexOf('audio') === 0) return 'audio';
+		}
+		return type === 'any' ? 'other' : type;
+	}
 
 	function handleFetch() {
 		isUploading = true;
@@ -43,7 +51,7 @@
 				}
 
 				dispatch('select', {
-					type,
+					type: getSelectedType(blob),
 					url: blob,
 					from: 'upload',
 					upload: {
@@ -80,7 +88,7 @@
 				const blob = item.getAsFile();
 				if (!blob) continue;
 				dispatch('select', {
-					type,
+					type: getSelectedType(blob),
 					url: blob,
 					from: 'upload',
 					upload: { type: 'paste' }
@@ -114,7 +122,7 @@
 		if (!file) return;
 
 		dispatch('select', {
-			type,
+			type: getSelectedType(file),
 			url: file,
 			from: 'upload',
 			upload: { type: 'dnd' }
@@ -130,7 +138,7 @@
 		if (!file) return;
 
 		dispatch('select', {
-			type,
+			type: getSelectedType(file),
 			url: file,
 			from: 'upload',
 			upload: { type: 'browse' }
@@ -187,7 +195,7 @@
 <div class="tab">
 	<input
 		type="file"
-		accept={type === 'audio' ? 'audio/*' : 'image/*'}
+		accept={type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : '*'}
 		style="display:none"
 		bind:this={inputEl}
 		on:change={handleInputChange}
