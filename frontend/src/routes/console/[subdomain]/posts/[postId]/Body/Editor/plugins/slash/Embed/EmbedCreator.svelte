@@ -26,6 +26,7 @@
 
 	let isFetching = false;
 	let error: null | string = null;
+	let embedFailed = false;
 
 	let urlData: null | UnfoldedEmbed = null;
 
@@ -36,6 +37,7 @@
 
 		error = null;
 		urlData = null;
+		embedFailed = false;
 
 		if (url.trim() === '') {
 			error = 'URL is required';
@@ -57,6 +59,7 @@
 			})
 			.catch((_) => {
 				error = 'Failed to embed this URL';
+				embedFailed = true;
 			})
 			.finally(() => {
 				isFetching = false;
@@ -67,7 +70,6 @@
 		dispatch('create', url);
 	}
 
-
 	function handleCreateBookmark(): void {
 		dispatch('createBookmark', url);
 	}
@@ -75,7 +77,6 @@
 	function handleCreateHtmlBlock(): void {
 		dispatch('createHtmlBlock', url);
 	}
-
 </script>
 
 <Modal
@@ -119,16 +120,20 @@
 			<Validation state="error">
 				{error}
 			</Validation>
-			<div class="link-alternatives">
-				Alternatively, you can add a link link Bookmark or a custom HTML/Twig block and paste the link.
-				<div class="alternatives-button">
-					<Button on:click={handleCreateBookmark}>
-						Create link Bookmark
-					</Button>
-					<Button on:click={handleCreateHtmlBlock}>
-						Create HTML/Twig block
-					</Button>
-				</div>
+		</div>
+	{/if}
+
+	{#if embedFailed}
+		<div class="link-alternatives">
+			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL or
+			create a custom HTML block and paste the embed code manually.
+			<div class="alternatives-button">
+				<Button variant="outline" color="gray" size="small" on:click={handleCreateBookmark}
+					>Create Link Bookmark</Button
+				>
+				<Button variant="outline" color="gray" size="small" on:click={handleCreateHtmlBlock}
+					>Create Custom HTML</Button
+				>
 			</div>
 		</div>
 	{/if}
@@ -157,6 +162,9 @@
 	}
 	.link-alternatives {
 		margin-top: 10px;
+		padding: 20px 25px;
+		background-color: var(--red-light);
+		border-radius: 20px;
 	}
 	.alternatives-button {
 		margin-top: 10px;
