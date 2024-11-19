@@ -265,11 +265,21 @@ function createEmbed() {
             )
         });
 
+        creator.$on('createBookmark', async (e: CustomEvent<string>) => {
+            destroy();
+            resolve(await createBookmark(e.detail));
+        });
+
+        creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
+            destroy();
+            return resolve(schema.nodes.custom_html!.create({ html: e.detail }))
+        });
+
     });
 
 }
 
-function createBookmark() {
+function createBookmark(url: string = '') {
 
     return new Promise<Node | null>((resolve) => {
 
@@ -278,6 +288,9 @@ function createBookmark() {
 
         const creator = new BookmarkCreator({
             target: div,
+            props: {
+                url
+            }
         });
 
         function destroy() {

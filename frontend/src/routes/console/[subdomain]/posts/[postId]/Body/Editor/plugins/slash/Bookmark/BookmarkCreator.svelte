@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { getUnfold } from '../../../../../../../../lib/actions/urlDataActions';
 	import type { UnfoldedLink } from '../../../../../../../../lib/types';
 	import { IconArrowReturnLeft } from '@hyvor/icons';
@@ -8,7 +8,8 @@
 	import BookmarkDisplay from './BookmarkDisplay.svelte';
 
 	let show = true;
-	let url = '';
+
+	export let url = '';
 
 	let inputEl: HTMLInputElement;
 	let inputStarted = false;
@@ -64,6 +65,13 @@
 	function handleCreate() {
 		dispatch('create', urlData!.url);
 	}
+
+	onMount(() => {
+		if (url !== '') {
+			inputStarted = true;
+			handleFetch();
+		}
+	});
 </script>
 
 <Modal

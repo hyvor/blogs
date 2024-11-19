@@ -16,6 +16,8 @@
 	const dispatch = createEventDispatcher<{
 		close: void;
 		create: string;
+		createBookmark: string;
+		createHtmlBlock: string;
 	}>();
 
 	$: if (!show) {
@@ -24,6 +26,7 @@
 
 	let isFetching = false;
 	let error: null | string = null;
+	let embedFailed = false;
 
 	let urlData: null | UnfoldedEmbed = null;
 
@@ -34,6 +37,7 @@
 
 		error = null;
 		urlData = null;
+		embedFailed = false;
 
 		if (url.trim() === '') {
 			error = 'URL is required';
@@ -55,6 +59,7 @@
 			})
 			.catch((_) => {
 				error = 'Failed to embed this URL';
+				embedFailed = true;
 			})
 			.finally(() => {
 				isFetching = false;
@@ -63,6 +68,14 @@
 
 	function handleCreate() {
 		dispatch('create', url);
+	}
+
+	function handleCreateBookmark(): void {
+		dispatch('createBookmark', url);
+	}
+
+	function handleCreateHtmlBlock(): void {
+		dispatch('createHtmlBlock', url);
 	}
 </script>
 
@@ -110,6 +123,21 @@
 		</div>
 	{/if}
 
+	{#if embedFailed}
+		<div class="link-alternatives">
+			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL or
+			create a custom HTML block and paste the embed code manually.
+			<div class="alternatives-button">
+				<Button variant="outline" color="gray" size="small" on:click={handleCreateBookmark}
+					>Create Link Bookmark</Button
+				>
+				<Button variant="outline" color="gray" size="small" on:click={handleCreateHtmlBlock}
+					>Create Custom HTML</Button
+				>
+			</div>
+		</div>
+	{/if}
+
 	{#if isFetching}
 		<Loader block padding={50} />
 	{/if}
@@ -131,5 +159,14 @@
 		margin-top: 20px;
 		overflow: auto;
 		max-height: 400px;
+	}
+	.link-alternatives {
+		margin-top: 10px;
+		padding: 20px 25px;
+		background-color: var(--red-light);
+		border-radius: 20px;
+	}
+	.alternatives-button {
+		margin-top: 10px;
 	}
 </style>
