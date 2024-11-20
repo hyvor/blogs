@@ -102,6 +102,7 @@ class ConsoleBlogController extends Controller
             'seo_indexing' => 'boolean',
             'seo_robots_txt' => 'string|nullable',
             'seo_external_links_follow' => new Enum(SeoExternalLinksFollowEnum::class),
+            'seo_rich_schema' => 'boolean',
 
             'comments_code' => 'string|nullable',
             'newsletter_code' => 'string|nullable',

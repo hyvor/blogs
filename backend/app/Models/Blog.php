@@ -65,6 +65,7 @@ class Blog extends Model
         TEXT
         );
         $definer->add('seo_external_links_follow')->default('follow');
+        $definer->add('seo_rich_schema')->default(true);
 
 
         $definer->add('comments_code')->default(null);
