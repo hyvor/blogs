@@ -21,6 +21,7 @@ use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use DateTime;
 
 /**
  * Defines three filters
@@ -311,8 +312,8 @@ class TwigExtensions extends AbstractExtension
             '@type' => 'BlogPosting',
             'headline' => $context['_meta']['title'],
             'image' => [$context['_meta']['featured_image']],
-            'datePublished' => $context['_post']['published_at'],
-            'dateModified' => $context['_post']['updated_at'],
+            'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
+            'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
             'authors' => array_map(fn($author) => array_merge(
                 ['type' => '@Person'],
                 !empty($author['name']) ? ['name' => $author['name']] : [],
@@ -328,5 +329,10 @@ class TwigExtensions extends AbstractExtension
         }
 
         return $this->blog;
+    }
+
+    private function getDateTimeString(int $timestamp): string
+    {
+        return (new DateTime('@' . $timestamp))->format('Y-m-d\TH:i:sP');
     }
 }
