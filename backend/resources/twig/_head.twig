@@ -40,7 +40,7 @@
             <meta property="article:section" content="{{ tag.name }}" />
         {% endfor %}
 
-        {% if not _blog.seo_rich_schema or _blog.seo_rich_schema == true %}
+        {% if _blog.seo_rich_schema %}
             {{ rich_schema() }}
         {% endif %}
     {% endif %}
