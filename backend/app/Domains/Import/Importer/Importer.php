@@ -5,6 +5,7 @@ namespace App\Domains\Import\Importer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
+use App\Domains\Post\Content\Nodes\Audio\Audio;
 use App\Domains\Post\Content\Nodes\Image\Image;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\PostRepository;
@@ -13,7 +14,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use Hyvor\Phrosemirror\Document\Node;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class Importer
 {
@@ -28,9 +29,11 @@ class Importer
 
     public function import() : void
     {
-        // echo('Parsing started' . "\n");
         $this->parser->parse();
-        $this->importPosts();
+
+        DB::transaction(function() {
+            $this->importPosts();
+        });
     }
 
     private function importPosts() : void
@@ -62,7 +65,7 @@ class Importer
 
             foreach ($importingPost->variants as $importingVariant) {
 
-                $content = $this->importImagesOfContent($importingVariant->content);
+                $content = $this->importMediaOfContent($importingVariant->content);
 
                 $variant = PostRepository::getPostVariantByPostIdAndLanguageId(
                     $post->id,
@@ -91,7 +94,7 @@ class Importer
 
     }
 
-    private function importImagesOfContent(string $content) : string
+    private function importMediaOfContent(string $content) : string
     {
 
         if (!$this->importImages)
@@ -101,11 +104,20 @@ class Importer
 
         $document->traverse(function (Node $node) {
 
-            if ($node->isOfType(Image::class)) {
+            if (
+                $node->isOfType(Image::class) ||
+                $node->isOfType(Audio::class)
+            ) {
 
                 $src = strval($node->attr('src'));
 
-                if ($src && str_starts_with($src, 'http')) {
+                if (
+                    $src &&
+                    (
+                        str_starts_with($src, 'http') ||
+                        str_starts_with($src, 'file://')
+                    )
+                ) {
                     $node->attrs->set('src', $this->tryToUploadImage($src));
                 }
 
@@ -117,8 +129,12 @@ class Importer
 
     }
 
-    private function tryToUploadImage(string $url) : string
+    private function tryToUploadImage(string $url) : ?string
     {
+
+        if (str_starts_with($url, 'file://'))
+            return $this->uploadLocalImage($url);
+
         if (!$this->importImages)
             return $url;
 
@@ -135,6 +151,27 @@ class Importer
             );
         }
         return $url;
+    }
+
+    private function uploadLocalImage(string $localUrl) : ?string
+    {
+        $path = str_replace('file://', '', $localUrl);
+        if (!file_exists($path))
+            return null;
+
+        $media = app(MediaRepository::class);
+        try {
+            $image = $media->uploadFromLocal($this->blog, $path);
+        } catch (UploadException) {
+            $image = null;
+        }
+        if ($image) {
+            return PermalinkRepository::getMediaPermalink(
+                $image,
+                $this->blog
+            );
+        }
+        return null;
     }
 
 }

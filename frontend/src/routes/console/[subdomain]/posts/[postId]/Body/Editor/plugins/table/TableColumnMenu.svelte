@@ -43,7 +43,7 @@
             const td = domNode.closest("td, th");
             const table = domNode.closest("table");
             if (!td || !table) return;
-
+            
             const { left, width } = td.getBoundingClientRect();
             const { top } = table.getBoundingClientRect();
 
@@ -183,8 +183,8 @@
     class:show={show}
     class="wrap"
 >
-    <Dropdown bind:show={showDropdown} align="center">
-        <button slot="trigger">
+    <Dropdown bind:show={showDropdown} align="center" relative={true}>
+        <button slot="trigger" style="display: {showDropdown ? 'none' : 'inline-flex'}">
             <IconThreeDots size={14} />
         </button>
 

@@ -3,18 +3,21 @@
 	// import 'cropperjs/dist/cropper.css';
 	import Meta from './Meta.svelte';
 	import type { SelectedFile } from '../image-uploader';
-	import { Button, Loader, Switch, toast } from '@hyvor/design/components';
+	import { Button, Loader, Switch, toast, TextInput, Validation } from '@hyvor/design/components';
 	import { IconCheckAll, IconCloudUpload } from '@hyvor/icons';
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { uploadMedia } from '../../../../[subdomain]/tools/media/mediaActions';
+	import { toKebabCase } from '../../../../[subdomain]/tools/media/mediaUtils';
 
 	export let file: SelectedFile;
 
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
 	let imageSize = file.url instanceof File ? file.url.size : null;
-	const imageName =
-		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null;
+	let imageName = toKebabCase(
+		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null
+	);
+	let nameError = '';
 
 	let imgEl: HTMLImageElement;
 
@@ -81,6 +84,11 @@
 	function handleUpload() {
 		if (shouldUpload && file.url instanceof Blob) {
 			isUploading = true;
+			if (imageName.length > 255) {
+				toast.error('Image name is too long');
+				isUploading = false;
+				return;
+			}
 			uploadMedia(file.url, imageName)
 				.then((res) => {
 					handleSelect({
@@ -102,6 +110,16 @@
 		}
 	}
 
+	function handleNameChange() {
+		nameError = '';
+		if (imageName.length > 255) {
+			nameError = 'Too long';
+		} else if (imageName.includes('/')) {
+			nameError = '/ is not allowed';
+		}
+		console.log(imageName);
+	}
+
 	onMount(() => {
 		if (imageSize === null) {
 			tryGetSize();
@@ -120,8 +138,10 @@
 		<div class="img-wrap">
 			{#if file.type === 'audio'}
 				<audio src={fileUrl} controls />
-			{:else}
+			{:else if file.type === 'image'}
 				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
+			{:else}
+				No preview available
 			{/if}
 		</div>
 
@@ -139,21 +159,33 @@
 						Unknown
 					{/if}
 				</Meta>
-				{#if imageName}
-					<Meta name="Name">
-						{imageName}
-					</Meta>
-				{/if}
+				<div class="name-editor">
+					<div class="name">
+						Name
+						{#if nameError}
+							<span class="name-error">Error: {nameError}</span>
+						{/if}
+					</div>
+					<TextInput
+						bind:value={imageName}
+						on:input={handleNameChange}
+						placeholder="Image Name"
+						state={nameError ? 'error' : 'default'}
+						disabled={!shouldUpload}
+					/>
+				</div>
 				{#if hosting}
 					<Meta name="Hosting">
 						{hosting}
 					</Meta>
 				{/if}
 			</div>
-			<div class="upload-switch">
-				Upload to Media Library
-				<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
-			</div>
+			{#if file.from !== 'media'}
+				<div class="upload-switch">
+					Upload to Media Library
+					<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
+				</div>
+			{/if}
 		</div>
 
 		<div class="footer">
@@ -229,5 +261,23 @@
 		padding: 5px 25px;
 		padding-top: 15px;
 		text-align: center;
+	}
+
+	.name-editor {
+		display: flex;
+		flex-direction: column;
+		padding: 0 15px;
+	}
+
+	.name {
+		font-size: 13px;
+		color: var(--text-light);
+		margin-bottom: 5px;
+		display: inline-flex;
+		gap: 4px;
+	}
+	.name .name-error {
+		color: var(--red-dark);
+		font-size: 12px;
 	}
 </style>

@@ -19,11 +19,11 @@ class RoleMiddleware
                 ->map(fn ($role) => UserRoleEnum::from($role))
                 ->toArray();
 
-        $role = app(ConsoleApiAccessingUser::class)->user->role;
-
-        if (!$role) {
-            throw new TrustedException('Accessing user not found');
+        if (!app()->bound(ConsoleApiAccessingUser::class)) {
+            throw new TrustedException("ConsoleApiAccessingUser not bound to container");
         }
+
+        $role = app(ConsoleApiAccessingUser::class)->user->role;
 
         if (!in_array($role, $checkRoles, true)) {
             throw new TrustedException("Your user role ({$role->value}) does not have access to this route");

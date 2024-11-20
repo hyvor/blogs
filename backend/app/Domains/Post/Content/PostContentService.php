@@ -79,7 +79,7 @@ class PostContentService
     /**
      * @param array<mixed>|string $json
      */
-    public static function getDocumentFromJson(array|string $json, Blog $blog) : Node
+    public static function getDocumentFromJson(array|string $json, Blog $blog) : Document
     {
         return Document::fromJson(self::getSchema($blog), $json);
     }

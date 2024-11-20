@@ -52,7 +52,7 @@ class Embed extends NodeType
                  * It is a simple database call
                  */
                 $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
-                $embedContent = $urlData->html;
+                $embedContent = $urlData['embed'];
             }
 
         } catch (Exception) {

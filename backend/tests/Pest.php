@@ -27,15 +27,14 @@ uses()->beforeEach(function () {
     Cache::flush();
 
     // disable uploading profile picture
-    $this->mock(MediaRepository::class, function (MockInterface $mock) {
-        $mock->shouldReceive('uploadFromUrl')
-            ->andReturn(Media::factory()->create(['blog_id' => 0]));
-    });
+//    $this->mock(MediaRepository::class, function (MockInterface $mock) {
+//        $mock->shouldReceive('uploadFromUrl')
+//            ->andReturn(Media::factory()->create(['blog_id' => 0]));
+//    });
 
-
-    Http::fake([
-        'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
-    ]);
+//    Http::fake([
+//        'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
+//    ]);
 
     $this->artisan('scout:flush "App\\\\Models\\\\PostVariant"');
     $this->artisan('scout:sync-index-settings');

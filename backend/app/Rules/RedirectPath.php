@@ -12,13 +12,11 @@ use Illuminate\Contracts\Validation\Rule;
  */
 class RedirectPath implements Rule
 {
-    private Blog $blog;
 
     private string $message;
 
-    public function __construct(Blog $blog)
+    public function __construct()
     {
-        $this->blog = $blog;
     }
 
     public function passes($attribute, $value): bool

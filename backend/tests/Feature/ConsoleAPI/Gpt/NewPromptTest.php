@@ -17,7 +17,7 @@ it('creates a new prompt', function() {
                     ]
                 ]
             ],
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4o-mini',
             'usage' => [
                 'prompt_tokens' => 100,
                 'completion_tokens' => 200,
@@ -45,7 +45,7 @@ it('creates a new prompt', function() {
 
     expect($gptPrompt->prompt)->toBe('This is a test prompt');
     expect($gptPrompt->gpt_response)->toBe('This is a test response');
-    expect($gptPrompt->model_name)->toBe('gpt-3.5-turbo');
+    expect($gptPrompt->model_name)->toBe('gpt-4o-mini');
 
     expect($gptPrompt->tokens_prompt)->toBe(100);
     expect($gptPrompt->tokens_response)->toBe(200);

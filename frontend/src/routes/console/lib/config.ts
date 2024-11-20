@@ -1,6 +1,9 @@
 import { APP_URL } from "../../../lib";
 
 export interface Config {
+    hyvor: {
+        instance: string;
+    }
     domains: {
         app: string,
         delivery: string

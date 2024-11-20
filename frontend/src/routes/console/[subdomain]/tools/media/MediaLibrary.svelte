@@ -6,6 +6,8 @@
 	import type { Media } from '../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
 	import { getConfig } from '../../../lib/config';
+	import type { SelectedFile } from '../../../lib/components/FileUploader/image-uploader';
+	import FileUploader from '../../../lib/components/FileUploader/FileUploader.svelte';
 
 	export let showUpload = true;
 	export let filterDefaultType = null as null | FileType;
@@ -53,7 +55,29 @@
 	}
 
 	function handleClickUpload() {
-		uploadInput?.click();
+		const div = document.createElement('div');
+		document.body.appendChild(div);
+
+		const selector = new FileUploader({
+			target: div,
+			props: {
+				type: 'any'
+			}
+		});
+
+		function destroy() {
+			selector.$destroy();
+			div.remove();
+		}
+
+		selector.$on('close', () => {
+			destroy();
+		});
+
+		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
+			destroy();
+			load();
+		});
 	}
 
 	const limit = 50;
@@ -84,6 +108,10 @@
 	function handleDelete(e: CustomEvent<Media>) {
 		mediaFiles = mediaFiles.filter((media) => media.id !== e.detail.id);
 	}
+
+	function handleUpdate(e: CustomEvent<Media>) {
+		mediaFiles = mediaFiles.map((media) => (media.id === e.detail.id ? e.detail : media));
+	}
 </script>
 
 <div class="wrap">
@@ -110,7 +138,13 @@
 			<IconMessage empty message="No Media Found" />
 		{:else}
 			{#each mediaFiles as media (media.id)}
-				<MediaFile {media} {selecting} on:select on:delete={handleDelete} />
+				<MediaFile
+					{media}
+					{selecting}
+					on:select
+					on:delete={handleDelete}
+					on:update={handleUpdate}
+				/>
 			{/each}
 		{/if}
 	</div>
