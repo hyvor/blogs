@@ -255,8 +255,8 @@ export const nodes = {
             href: {default: ""},
             align: {default: "center"},
             size: {default: "medium"},
-            bg: {default: "#896c6b"},
-            fg: {default: "#ffffff"}
+            bg: {default: "default"},
+            fg: {default: "default"}
         },
         content: "text*",
         group: "block",

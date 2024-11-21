@@ -1,6 +1,6 @@
 <script lang="ts">
     import { IconButton, Modal, TextInput, ColorPicker, FormControl, Tooltip } from "@hyvor/design/components";
-    import { IconPencil, IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash, IconAlignStart, IconAlignMiddle, IconAlignEnd } from '@hyvor/icons';
+    import { IconTrash, IconLink45deg, IconArrowsAngleContract, IconArrowsAngleExpand, IconDash, IconTextLeft, IconTextCenter, IconTextRight, IconSquareHalf, IconSquare } from '@hyvor/icons';
 
     export let showEditMenu = false;
     export let href: string;
@@ -85,17 +85,17 @@
 
             <Tooltip text="Size small">
                 <IconButton size="small" color={size == 'small' ? 'accent' : 'input'} on:click={() => handleSizeChange('small')}>
-                    <IconArrowsAngleContract size={14} />
+                    <IconSquare size={8} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Size medium">
                 <IconButton size="small" color={size == 'medium' ? 'accent' : 'input'} on:click={() => handleSizeChange('medium')}>
-                    <IconDash size={14} />
+                    <IconSquare size={11} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Size large">
                 <IconButton size="small" color={size == 'large' ? 'accent' : 'input'} on:click={() => handleSizeChange('large')}>
-                    <IconArrowsAngleExpand size={14} />
+                    <IconSquare size={14} />
                 </IconButton>
             </Tooltip>
 
@@ -103,17 +103,17 @@
 
             <Tooltip text="Align start">
                 <IconButton size="small" color={align == 'left' ? 'accent' : 'input'} on:click={() => handleAlignChange('left')}>
-                    <IconAlignStart size={14} />
+                    <IconTextLeft size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Align center">
                 <IconButton size="small" color={align == 'center' ? 'accent' : 'input'} on:click={() => handleAlignChange('center')}>
-                    <IconAlignMiddle size={14} />
+                    <IconTextCenter size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Align end">
                 <IconButton size="small" color={align == 'right' ? 'accent' : 'input'} on:click={() => handleAlignChange('right')}>
-                    <IconAlignEnd size={14} />
+                    <IconTextRight size={14} />
                 </IconButton>
             </Tooltip>
 
