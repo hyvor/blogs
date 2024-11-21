@@ -334,7 +334,6 @@ class TwigExtensions extends AbstractExtension
 
     private function getDateTimeString(string $timestamp): string
     {
-//        return $timestamp;
         return Carbon::createFromTimestamp($timestamp)->toIso8601String();
     }
 }
