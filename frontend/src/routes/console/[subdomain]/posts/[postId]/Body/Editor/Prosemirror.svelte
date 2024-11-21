@@ -331,6 +331,7 @@
 			text-decoration: none;
 			width: 100%;
 			:global(.button-link) {
+				min-width: 100px;
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;

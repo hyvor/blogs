@@ -47,6 +47,9 @@ export default class ButtonNodeView implements NodeView {
         this.dom.appendChild(this.link);
 
         this.updateFromAttrs();
+
+        // Add focus and blur event listeners
+        this.addFocusHandlers();
     }
 
     private getButtonProps() {
@@ -60,6 +63,23 @@ export default class ButtonNodeView implements NodeView {
             changeAttr: this.changeAttr.bind(this),
             deleteNode: this.deleteNode.bind(this)
         };
+    }
+
+    private addFocusHandlers() {
+        this.dom.addEventListener("click", this.handleFocus.bind(this), true);
+        this.dom.addEventListener("blur", this.handleBlur.bind(this), true);
+    }
+
+    private handleFocus() {
+        console.log("Button node focused");
+        this.showEditMenu = true;
+        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
+    }
+
+    private handleBlur() {
+        console.log("Button node lost focus");
+        //this.showEditMenu = false;
+        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
     }
 
     changeSize() {
@@ -107,11 +127,10 @@ export default class ButtonNodeView implements NodeView {
         this.buttonEditor.$set(this.getButtonProps());
         this.changeSize();
         this.changeAlign();
-        this.showEditMenu = true;
     }
 
     update(node: ProsemirrorNode) {
-        if (node.type.name === 'button') {
+        if (node.type.name === "button") {
             this.node = node;
             this.updateFromAttrs();
             // Delete the node if it's empty

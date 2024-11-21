@@ -13,10 +13,6 @@
 
     let showLinkInput = false;
 
-    const toggleEditMenu = () => {
-        showEditMenu = !showEditMenu;
-    };
-
     const toggleLinkInput = () => {
         showLinkInput = !showLinkInput;
     };
@@ -76,13 +72,7 @@
 
         </Modal>
     {/if}
-    {#if !showEditMenu}
-        <div class="menu-button">
-            <IconButton size="small" color="input" on:click={toggleEditMenu}>
-                <IconPencil size={14} />
-            </IconButton>
-        </div>
-    {:else}
+    {#if showEditMenu}
         <div class="button-editor-menu">
             
             <Tooltip text="Change button link">
@@ -90,38 +80,44 @@
                     <IconLink45deg size={14} />
                 </IconButton>
             </Tooltip>
+            
+            <div class="separator"></div>
 
             <Tooltip text="Size small">
-                <IconButton size="small" color="input" on:click={() => handleSizeChange('small')}>
+                <IconButton size="small" color={size == 'small' ? 'accent' : 'input'} on:click={() => handleSizeChange('small')}>
                     <IconArrowsAngleContract size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Size medium">
-                <IconButton size="small" color="input" on:click={() => handleSizeChange('medium')}>
+                <IconButton size="small" color={size == 'medium' ? 'accent' : 'input'} on:click={() => handleSizeChange('medium')}>
                     <IconDash size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Size large">
-                <IconButton size="small" color="input" on:click={() => handleSizeChange('large')}>
+                <IconButton size="small" color={size == 'large' ? 'accent' : 'input'} on:click={() => handleSizeChange('large')}>
                     <IconArrowsAngleExpand size={14} />
                 </IconButton>
             </Tooltip>
 
+            <div class="separator"></div>
+
             <Tooltip text="Align start">
-                <IconButton size="small" color="input" on:click={() => handleAlignChange('left')}>
+                <IconButton size="small" color={align == 'left' ? 'accent' : 'input'} on:click={() => handleAlignChange('left')}>
                     <IconAlignStart size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Align center">
-                <IconButton size="small" color="input" on:click={() => handleAlignChange('center')}>
+                <IconButton size="small" color={align == 'center' ? 'accent' : 'input'} on:click={() => handleAlignChange('center')}>
                     <IconAlignMiddle size={14} />
                 </IconButton>
             </Tooltip>
             <Tooltip text="Align end">
-                <IconButton size="small" color="input" on:click={() => handleAlignChange('right')}>
+                <IconButton size="small" color={align == 'right' ? 'accent' : 'input'} on:click={() => handleAlignChange('right')}>
                     <IconAlignEnd size={14} />
                 </IconButton>
             </Tooltip>
+
+            <div class="separator"></div>
 
             <Tooltip text="Change background color">
                 <ColorPicker 
@@ -137,6 +133,8 @@
                     on:input={handleFgChange}
                 />
             </Tooltip>
+
+            <div class="separator"></div>
            
             <Tooltip text="Remove button">
                 <IconButton size="small" color="input" on:click={deleteNode}>
@@ -149,18 +147,26 @@
 </div>
 
 <style>
-    .menu-button {
-        position: absolute;
-        top: -5px;
-        right: 0;
-    }
     .button-editor-menu {
         position: absolute;
-        top: -5px;
+        top: -15px;
         right: 0;
+        background-color: var(--gray-light);
+        padding: 4px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2px;
     }
     .current-link {
         margin-bottom: 10px;
         font-size: 12px;
+    }
+    .separator {
+        height: 25px;
+        width: 1px;
+        background-color: var(--gray); 
+        margin: 0 6px;
     }
 </style>
