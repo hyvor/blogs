@@ -12,6 +12,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Carbon\Carbon;
 use Hyvor\SvgIcons\Exception\IconNotFoundException;
 use Hyvor\SvgIcons\Exception\InvalidLibraryException;
 use Hyvor\SvgIcons\Exception\SvgIconException;
@@ -307,19 +308,19 @@ class TwigExtensions extends AbstractExtension
 
     public function richSchema(array $context)
     {
-        return '<script type="application/ld+json">' . json_encode([
+        return '<script type="application/ld+json">' . "\n" . json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
             'headline' => $context['_meta']['title'],
             'image' => [$context['_meta']['featured_image']],
             'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
             'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
-            'authors' => array_map(fn($author) => array_merge(
+            'author' => array_map(fn($author) => array_merge(
                 ['type' => '@Person'],
                 !empty($author['name']) ? ['name' => $author['name']] : [],
                 !empty($author['url']) ? ['url' => $author['url']] : []
             ), $context['_post']['authors'])
-        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script>';
+        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
     }
     private function getBlogFromContext($context)
     {
@@ -331,8 +332,9 @@ class TwigExtensions extends AbstractExtension
         return $this->blog;
     }
 
-    private function getDateTimeString(int $timestamp): string
+    private function getDateTimeString(string $timestamp): string
     {
-        return (new DateTime('@' . $timestamp))->format('Y-m-d\TH:i:sP');
+//        return $timestamp;
+        return Carbon::createFromTimestamp($timestamp)->toIso8601String();
     }
 }

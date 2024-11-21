@@ -13,8 +13,8 @@ it('gets rich schema', function () {
                 'featured_image' => 'https://example.com/image.jpg',
             ],
             '_post' => [
-                'published_at' => '2024-11-06 12:10:20',
-                'updated_at' => '2024-11-06 12:10:20',
+                'published_at' => '1732204950',
+                'updated_at' => '1732204950',
                 'authors' => [
                     [
                         'name' => 'John Doe',
@@ -30,16 +30,17 @@ it('gets rich schema', function () {
                 ]
             ]
         ],
-        '<script type="application/ld+json">{
+        '<script type="application/ld+json">
+{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Some Title",
     "image": [
         "https://example.com/image.jpg"
     ],
-    "datePublished": "2024-11-06 12:10:20",
-    "dateModified": "2024-11-06 12:10:20",
-    "authors": [
+    "datePublished": "2024-11-21T16:02:30+00:00",
+    "dateModified": "2024-11-21T16:02:30+00:00",
+    "author": [
         {
             "type": "@Person",
             "name": "John Doe",
@@ -54,6 +55,7 @@ it('gets rich schema', function () {
             "name": "John Doe 2"
         }
     ]
-}</script>'
+}
+</script>'
     );
 });
