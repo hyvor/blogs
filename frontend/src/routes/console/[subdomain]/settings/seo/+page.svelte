@@ -75,7 +75,7 @@
     >
 
         <Switch
-            checked={$blogStore.seo_rich_schema ?? true}
+            checked={$blogStore.seo_rich_schema}
             on:change={handleRichSchemaChange}
         />
 
