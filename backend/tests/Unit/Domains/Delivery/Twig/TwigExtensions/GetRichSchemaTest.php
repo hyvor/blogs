@@ -35,9 +35,6 @@ it('gets rich schema', function () {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Some Title",
-    "image": [
-        "https://example.com/image.jpg"
-    ],
     "datePublished": "2024-11-21T16:02:30+00:00",
     "dateModified": "2024-11-21T16:02:30+00:00",
     "author": [
@@ -54,6 +51,9 @@ it('gets rich schema', function () {
             "type": "@Person",
             "name": "John Doe 2"
         }
+    ],
+    "image": [
+        "https://example.com/image.jpg"
     ]
 }
 </script>'

@@ -308,11 +308,10 @@ class TwigExtensions extends AbstractExtension
 
     public function richSchema(array $context)
     {
-        return '<script type="application/ld+json">' . "\n" . json_encode([
+        $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
             'headline' => $context['_meta']['title'],
-            'image' => [$context['_meta']['featured_image']],
             'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
             'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
             'author' => array_map(fn($author) => array_merge(
@@ -320,7 +319,13 @@ class TwigExtensions extends AbstractExtension
                 !empty($author['name']) ? ['name' => $author['name']] : [],
                 !empty($author['url']) ? ['url' => $author['url']] : []
             ), $context['_post']['authors'])
-        ],JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
+        ];
+
+        if (!empty($context['_meta']['featured_image'])) {
+            $schema['image'] = [$context['_meta']['featured_image']];
+        }
+
+        return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
     }
     private function getBlogFromContext($context)
     {
