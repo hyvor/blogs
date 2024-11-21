@@ -43,21 +43,18 @@ const options: SlashOption[] = [
     },
     {
         name: "Embed",
-        description: "Embed content from 1500+ platforms",
+        description: "Embed content from YouTube, Twitter, etc.",
         icon: IconLink45deg,
         keywords: [
             "embed",
             "rich",
             "video",
-            "audio",
-            "file",
             "youtube",
             "twitter",
-            "soundcloud",
-            "spotify",
+            "facebook",
+            "instagram",
+            "reddit",
             "github",
-            "maps",
-            "codepen",
         ],
         node: createEmbed,
     },
@@ -277,11 +274,21 @@ function createEmbed() {
             )
         });
 
+        creator.$on('createBookmark', async (e: CustomEvent<string>) => {
+            destroy();
+            resolve(await createBookmark(e.detail));
+        });
+
+        creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
+            destroy();
+            return resolve(schema.nodes.custom_html!.create({ html: e.detail }))
+        });
+
     });
 
 }
 
-function createBookmark() {
+function createBookmark(url: string = '') {
 
     return new Promise<Node | null>((resolve) => {
 
@@ -290,6 +297,9 @@ function createBookmark() {
 
         const creator = new BookmarkCreator({
             target: div,
+            props: {
+                url
+            }
         });
 
         function destroy() {

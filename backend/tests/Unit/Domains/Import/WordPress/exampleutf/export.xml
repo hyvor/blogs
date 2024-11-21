@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:wp="http://wordpress.org/export/1.2/"
+>
+
+    <channel>
+        <wp:base_site_url>https://hyvor.com/blog</wp:base_site_url>
+
+        <item>
+            <title><![CDATA[Bard ou ChatGPT: qual é o melhor?]]></title>
+            <link>https://nossosaber.com.br/como-acessar-o-google-bard/</link>
+            <pubDate>Thu, 23 Mar 2023 03:47:23 +0000</pubDate>
+            <dc:creator><![CDATA[Karina]]></dc:creator>
+            <guid isPermaLink="false">https://nossosaber.com.br/?p=5450</guid>
+            <description></description>
+            <wp:post_type><![CDATA[post]]></wp:post_type>
+            <wp:post_name><![CDATA[nasso]]></wp:post_name>
+            <wp:status><![CDATA[publish]]></wp:status>
+            <content:encoded><![CDATA[
+<!-- wp:paragraph -->
+<p>De modo geral, os usuários ainda não têm como acessar o Google Bard. Isso porque a ferramenta de inteligência artificial ainda está em faze experimental.</p>
+<!-- /wp:paragraph -->
+]]></content:encoded>
+        </item>
+    </channel>
+</rss>

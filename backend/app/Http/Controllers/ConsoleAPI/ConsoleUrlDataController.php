@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\UrlDataFetchTypeEnum;
-use App\Data\Objects\ConsoleAPI\UrlDataObject;
 use App\Domains\UrlData\UrlDataRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -20,13 +19,9 @@ class ConsoleUrlDataController extends Controller
         $url = $request->input('url');
         $type = $request->input('type');
 
-        $embed = new UrlDataObject(
-            UrlDataRepository::fetch(
-                $url,
-                UrlDataFetchTypeEnum::from($type)
-            )
-        );
-
-        return response()->json($embed);
+        return response()->json(UrlDataRepository::fetch(
+            $url,
+            UrlDataFetchTypeEnum::from($type)
+        ));
     }
 }

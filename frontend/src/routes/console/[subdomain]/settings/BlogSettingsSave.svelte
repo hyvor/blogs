@@ -112,6 +112,10 @@
 			}
 		}
 	}
+
+	function handleDiscard() {
+		$blogStore = { ...$blogOriginalStore };
+	}
 </script>
 
 <div class="save">
@@ -120,7 +124,7 @@
 	</span>
 
 	<ButtonGroup>
-		<Button color="gray" disabled={!should} variant="invisible">Discard</Button>
+		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}>Discard</Button>
 
 		<Button disabled={!should} on:click={handleSave}>Save</Button>
 	</ButtonGroup>

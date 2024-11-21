@@ -20,7 +20,7 @@ it('returns sitemap', function () {
     // only pages sitemap
     $sitemaps = $crawler->filter('sitemap');
     expect($sitemaps->count())->toBe(1);
-    expect($sitemaps->first()->innerText())->toEndWith('/sitemap-pages.xml');
+    expect($sitemaps->first()->filter('loc')->first()->innerText())->toEndWith('/sitemap-pages.xml');
 });
 
 it('adds posts sitemap', function () {
@@ -37,6 +37,6 @@ it('adds posts sitemap', function () {
     $sitemaps = $crawler->filter('sitemap');
 
     expect($sitemaps->count())->toBe(2);
-    expect($sitemaps->eq(0)->innerText())->toEndWith('/sitemap-pages.xml');
-    expect($sitemaps->eq(1)->innerText())->toEndWith('/sitemap-posts-1.xml');
+    expect($sitemaps->eq(0)->filter('loc')->first()->innerText())->toEndWith('/sitemap-pages.xml');
+    expect($sitemaps->eq(1)->filter('loc')->first()->innerText())->toEndWith('/sitemap-posts-1.xml');
 });

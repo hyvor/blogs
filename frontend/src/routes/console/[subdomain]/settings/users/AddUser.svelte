@@ -143,7 +143,7 @@
                     </span>
                 </div>
                 <div>
-                    <Radio bind:group={role} value="moderator">Editor</Radio>
+                    <Radio bind:group={role} value="editor">Editor</Radio>
                     <span>
                         can edit everyone's posts
                     </span>

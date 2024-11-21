@@ -10,7 +10,7 @@
 	import type { SelectedFile } from '../image-uploader';
 	import { IconArrowRight, IconArrowRightCircle, IconSendFill } from '@hyvor/icons';
 
-	if (browser) window.process = { env: { IS_PREACT: false } };
+	if (browser) (window as any).process = { env: { IS_PREACT: false } };
 
 	export let initialData: ExcalidrawInitialDataState = {};
 

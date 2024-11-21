@@ -11,7 +11,6 @@ class Tag extends Model
 {
     use HasFactory;
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];

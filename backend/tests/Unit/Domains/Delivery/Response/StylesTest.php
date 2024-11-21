@@ -33,6 +33,37 @@ it('matches styles.css', function () {
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
 });
 
+it('works with imports', function() {
+
+    $blog = blog();
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::STYLES,
+        'index.scss',
+        '@import "imported.scss";',
+    );
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::STYLES,
+        'imported.scss',
+        'body {color: red;}',
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/styles.css');
+
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->status)->toBe(200);
+    expect($responseObject->content)->toBe('body {
+  color: red;
+}
+');
+
+});
+
+
 it('shows an error when scss is wrong', function() {
 
     $file = 'index.scss';
