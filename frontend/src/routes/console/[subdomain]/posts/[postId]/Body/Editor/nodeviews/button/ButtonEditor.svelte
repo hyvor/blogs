@@ -137,5 +137,7 @@
 
     .link-editor {
         height: 10px;
+        color: var(--link);
+        text-decoration: underline;
     }
 </style>

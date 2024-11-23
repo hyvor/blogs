@@ -261,7 +261,7 @@ export const nodes = {
         content: "text*",
         group: "block",
         defining: true,
-        selectable: false,
+        selectable: true,
         marks: "",
         parseDOM: [{
             tag: "button",

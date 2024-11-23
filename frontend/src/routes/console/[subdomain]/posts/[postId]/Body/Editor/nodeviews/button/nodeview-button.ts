@@ -31,6 +31,7 @@ export default class ButtonNodeView implements NodeView {
 
         this.contentDOM = document.createElement("div");
         this.contentDOM.className = "content-div";
+        this.contentDOM.setAttribute("tabindex", "0");
 
         this.link.appendChild(this.contentDOM);
 
@@ -43,9 +44,6 @@ export default class ButtonNodeView implements NodeView {
             target: this.buttonEditorWrap,
             props: this.getButtonProps()
         });
-
-
-        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
 
         this.dom.appendChild(this.link);
 
@@ -81,7 +79,7 @@ export default class ButtonNodeView implements NodeView {
 
     private handleBlur() {
         console.log("Button node lost focus");
-        //this.showEditMenu = false;
+        this.showEditMenu = false;
         this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
     }
 
