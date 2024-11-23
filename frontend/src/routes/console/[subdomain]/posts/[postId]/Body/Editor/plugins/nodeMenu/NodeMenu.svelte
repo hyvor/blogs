@@ -2,14 +2,19 @@
 	import { createEventDispatcher, onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { NodeSelection, type Selection } from "prosemirror-state";
+	import { Button } from "@hyvor/design/components";
+	import { IconCopy, IconTrash } from "@hyvor/icons";
     
     let show = false;
+    let showMenu = false;
     let wrapEl: HTMLSpanElement;
 
     $: editorView = $postEditingStatusStore.editorView!;
 
     const dispatch = createEventDispatcher<{
         drag: void;
+        delete: void;
+        duplicate: void;
     }>();
 
     function isSelectionDragable(selection: Selection) {
@@ -58,6 +63,7 @@
     }
 
     function onClick(event: MouseEvent) {
+        showMenu = !showMenu;
         dispatch('drag');
     }
 
@@ -70,7 +76,19 @@
     class:show={show}
     class="wrap"
 >
-    <button on:mousedown={onMouseDown} on:click={onClick}>
+    {#if showMenu}
+        <div class="node-menu">
+            <button class="node-menu-action" on:click={() => dispatch('duplicate')}>
+                <IconCopy />
+                Duplicate
+            </button>
+            <button class="node-menu-action" on:click={() => dispatch('delete')}>
+                <IconTrash />
+                Delete
+            </button>
+        </div>
+    {/if}
+    <button class="dots-button" on:mousedown={onMouseDown} on:click={onClick}>
         ::
     </button>
     
@@ -84,7 +102,32 @@
         justify-content: center;
     }
 
-    button {
+    .node-menu {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        border: 1px solid var(--gray-light);
+        background-color: white;
+        border-radius: 5px;
+        padding: 5px;
+        left: -120px;
+        border-radius: 20px;
+    }
+
+    .node-menu-action {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        gap: 10px;
+        cursor: pointer;
+        border-radius: 20px;
+    }
+
+    .node-menu-action:hover {
+        background-color: var(--gray-light);
+    }
+
+    .dots-button {
         background-color: transparent;
         border: none;
         cursor: pointer;
@@ -95,7 +138,7 @@
         color: var(--gray);
     }
 
-    button:hover {
+    .dots-button:hover {
         background-color: var(--gray-light);
         transform: scale(1.1);
     }

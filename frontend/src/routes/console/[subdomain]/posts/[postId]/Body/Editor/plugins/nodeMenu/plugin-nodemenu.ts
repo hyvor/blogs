@@ -35,8 +35,27 @@ export class NodeMenuPlugin implements PluginView {
         });
 
         this.dragButton.$on('drag', (e: CustomEvent) => {
-            selectParentNode(this.view.state, this.view.dispatch, this.view);
+            //selectParentNode(this.view.state, this.view.dispatch, this.view);
         });
+
+        this.dragButton.$on('delete', (e: CustomEvent) => {
+            this.deleteNode();
+        });
+
+        this.dragButton.$on('duplicate', (e: CustomEvent) => {
+            this.duplicateNode();
+        });
+    }
+
+    deleteNode() {
+        const { state, dispatch } = this.view;
+        const { $from } = state.selection as NodeSelection;
+        const tr = state.tr.delete($from.before(), $from.after());
+        dispatch(tr);
+    }
+
+    duplicateNode() {
+        
     }
 
     update(view: EditorView, prevState: EditorState) {
