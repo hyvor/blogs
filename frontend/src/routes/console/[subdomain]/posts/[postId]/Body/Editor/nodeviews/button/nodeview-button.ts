@@ -44,6 +44,9 @@ export default class ButtonNodeView implements NodeView {
             props: this.getButtonProps()
         });
 
+
+        this.buttonEditor.$set({ showEditMenu: this.showEditMenu });
+
         this.dom.appendChild(this.link);
 
         this.updateFromAttrs();
