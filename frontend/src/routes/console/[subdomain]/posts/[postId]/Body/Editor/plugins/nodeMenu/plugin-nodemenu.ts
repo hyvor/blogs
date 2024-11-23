@@ -1,16 +1,16 @@
 import { EditorState, Plugin, NodeSelection, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { SvelteComponent } from "svelte";
-import DragButton from "./DragButton.svelte";
 import { selectParentNode } from "prosemirror-commands";
+import NodeMenu from "./NodeMenu.svelte";
 
-export default function dragPlugin() {
+export default function nodeMenuPlugin() {
     return new Plugin({
-        view(editorView) { return new DragPlugin(editorView) }
+        view(editorView) { return new NodeMenuPlugin(editorView) }
     })
 }
 
-export class DragPlugin implements PluginView {
+export class NodeMenuPlugin implements PluginView {
 
     public view: EditorView;
     private wrap: HTMLElement;
@@ -30,7 +30,7 @@ export class DragPlugin implements PluginView {
         if (this.dragButton) {
             this.dragButton.$destroy();
         }
-        this.dragButton = new DragButton({
+        this.dragButton = new NodeMenu({
             target: this.wrap,
         });
 

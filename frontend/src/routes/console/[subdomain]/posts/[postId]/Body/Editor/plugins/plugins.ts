@@ -13,7 +13,7 @@ import wordCountPlugin from "./plugin-wordcount";
 import slashPlugin from "./slash/plugin-slash";
 import slashTipPlugin from "./slash/plugin-slash-tip";
 import tableMenuPlugin from "./table/plugin-table-menu";
-import pluginDrag from './drag/plugin-drag';
+import nodeMenuPlugin from './nodeMenu/plugin-nodemenu';
 
 export function getPlugins() {
 
@@ -44,7 +44,7 @@ export function getPlugins() {
         tableEditing(),
         tableMenuPlugin(),
 
-        pluginDrag(),
+        nodeMenuPlugin(),
     ]
 
 }
