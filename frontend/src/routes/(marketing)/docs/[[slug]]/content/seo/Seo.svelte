@@ -3,6 +3,7 @@
 	import { DocsImage } from "@hyvor/design/marketing";
 
     import canonicalImg from './canonical-setting.png';
+    import richSchemaTagsImg from './rich-schema-tags.png';
 </script>
 <h1>SEO</h1>
 
@@ -85,9 +86,32 @@
     Rich Schema
 </h2>
 
+<CodeBlock code={`
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "title",
+        "datePublished": "published date",
+        "dateModified": "modified date",
+        "author": [
+            {
+                "type": "@Person",
+                "name": "author_name",
+                "url": "author_url"
+            }   // this block will be repeated for each author
+        ],
+        "image": [
+            "image_url"
+        ]
+    }
+    </script>
+`} />
 <p>
-    Rich schema support is coming very soon!
+    Rich schema is added to all posts by default, but you can turn it off at <strong>Console &rarr; Settings &rarr; SEO</strong>
 </p>
+
+<DocsImage src={richSchemaTagsImg} alt="Rich Schema Tags" style="max-height:400px" />
 
 
 <h2 id="canonical">

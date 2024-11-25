@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Callout, FormControl, Radio, SplitControl, Switch } from "@hyvor/design/components";
+	import { Callout, FormControl, Link, Radio, SplitControl, Switch } from "@hyvor/design/components";
 	import { blogStore, updateBlogStore } from "../../../lib/stores/blogStore";
 	import CodemirrorEditor from "../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
 	import BlogSettingsSave from "../BlogSettingsSave.svelte";
+	import { IconBoxArrowUpRight } from "@hyvor/icons";
 
     function handleAllowIndexingChange(e: any) {
         updateBlogStore({ seo_indexing: e.target.checked });
@@ -78,6 +79,14 @@
             checked={$blogStore.seo_rich_schema}
             on:change={handleRichSchemaChange}
         />
+        <Link
+            href="/docs/seo#rich-schema"
+            target="_blank"
+            style="font-size:14px;margin-left:10px;"
+        >
+            Docs
+            <IconBoxArrowUpRight slot="end" size={10} />
+        </Link>
 
     </SplitControl>
 
