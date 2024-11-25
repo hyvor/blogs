@@ -55,8 +55,39 @@ export class NodeMenuPlugin implements PluginView {
     }
 
     duplicateNode() {
-        
+        const { state, dispatch } = this.view;
+        const { selection } = state;
+    
+        if (!(selection instanceof NodeSelection)) {
+            return;
+        }
+    
+        const { $from } = selection;
+        const nodeToDuplicate = $from.node();
+    
+        if (!nodeToDuplicate) {
+            return;
+        }
+    
+        const tr = state.tr;
+
+        const duplicatedNode = nodeToDuplicate.type.create(
+            nodeToDuplicate.attrs,
+            nodeToDuplicate.content,
+            nodeToDuplicate.marks
+        );
+    
+        const insertionPos = $from.after();
+        tr.insert(insertionPos, duplicatedNode);
+    
+        // Set the selection to the duplicated node
+        const duplicatedNodePos = insertionPos;
+        const newSelection = NodeSelection.create(tr.doc, duplicatedNodePos);
+        tr.setSelection(newSelection);
+    
+        dispatch(tr);
     }
+    
 
     update(view: EditorView, prevState: EditorState) {
         if (prevState.selection.eq(view.state.selection)) return;

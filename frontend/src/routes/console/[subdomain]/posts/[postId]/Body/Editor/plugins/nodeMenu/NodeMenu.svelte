@@ -2,7 +2,7 @@
 	import { createEventDispatcher, onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { NodeSelection, type Selection } from "prosemirror-state";
-	import { Button } from "@hyvor/design/components";
+	import { Button, Tooltip } from "@hyvor/design/components";
 	import { IconCopy, IconTrash } from "@hyvor/icons";
     
     let show = false;
@@ -82,15 +82,17 @@
                 <IconCopy />
                 Duplicate
             </button>
-            <button class="node-menu-action" on:click={() => dispatch('delete')}>
+            <button class="node-menu-action-delete" on:click={() => dispatch('delete')}>
                 <IconTrash />
                 Delete
             </button>
         </div>
     {/if}
-    <button class="dots-button" on:mousedown={onMouseDown} on:click={onClick}>
-        ::
-    </button>
+    <Tooltip text="Click to open menu">
+        <button class="dots-button" on:mousedown={onMouseDown} on:click={onClick}>
+            ::
+        </button>
+    </Tooltip>
     
 </span>
 
@@ -114,7 +116,7 @@
         border-radius: 20px;
     }
 
-    .node-menu-action {
+    .node-menu-action, .node-menu-action-delete {
         display: flex;
         align-items: center;
         padding: 5px;
@@ -127,6 +129,11 @@
         background-color: var(--gray-light);
     }
 
+    .node-menu-action-delete:hover {
+        background-color: var(--gray-light);
+        color: var(--red);
+    }
+
     .dots-button {
         background-color: transparent;
         border: none;
@@ -136,6 +143,7 @@
         padding-right: 2px;
         padding-bottom: 2px;
         color: var(--gray);
+        border-radius: 5px;
     }
 
     .dots-button:hover {
