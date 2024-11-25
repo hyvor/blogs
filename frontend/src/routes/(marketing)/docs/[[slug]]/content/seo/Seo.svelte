@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { CodeBlock, Table, TableRow } from "@hyvor/design/components";
 	import { DocsImage } from "@hyvor/design/marketing";
 
@@ -86,8 +86,10 @@
     Rich Schema
 </h2>
 
-<CodeBlock code={`
-    <script type="application/ld+json">
+<CodeBlock 
+    language="ts"
+    code={`
+    <\script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
