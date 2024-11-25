@@ -2,7 +2,7 @@
 	import { createEventDispatcher, onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { NodeSelection, type Selection } from "prosemirror-state";
-	import { Button, Tooltip } from "@hyvor/design/components";
+	import { ActionList, ActionListItem, Button, Tooltip, Text } from "@hyvor/design/components";
 	import { IconCopy, IconTrash } from "@hyvor/icons";
     
     let show = false;
@@ -63,7 +63,7 @@
     }
 
     function onClick(event: MouseEvent) {
-        showMenu = !showMenu;
+        showMenu = true;
         dispatch('drag');
     }
 
@@ -78,18 +78,22 @@
 >
     {#if showMenu}
         <div class="node-menu">
-            <button class="node-menu-action" on:click={() => dispatch('duplicate')}>
-                <IconCopy />
-                Duplicate
-            </button>
-            <button class="node-menu-action-delete" on:click={() => dispatch('delete')}>
-                <IconTrash />
-                Delete
-            </button>
+            <ActionList>
+                <ActionListItem on:click={() => dispatch('duplicate')}>
+                    <IconCopy slot="start" />
+                    Duplicate
+                    <div slot="description">Duplicate the current node.</div>
+                </ActionListItem>
+                <ActionListItem type="danger" on:click={() => dispatch('delete')}>
+                    <IconTrash slot="start" />
+                    Delete
+                    <div slot="description">Delete the current node.</div>
+                </ActionListItem>
+            </ActionList>
         </div>
     {/if}
     <Tooltip text="Click to open menu">
-        <button class="dots-button" on:mousedown={onMouseDown} on:click={onClick}>
+        <button class="dots-button" on:click={onClick}>
             ::
         </button>
     </Tooltip>
@@ -106,32 +110,14 @@
 
     .node-menu {
         display: flex;
+        width: 220px;
         flex-direction: column;
         position: absolute;
         border: 1px solid var(--gray-light);
         background-color: white;
         border-radius: 5px;
-        padding: 5px;
-        left: -120px;
+        left: -220px;
         border-radius: 20px;
-    }
-
-    .node-menu-action, .node-menu-action-delete {
-        display: flex;
-        align-items: center;
-        padding: 5px;
-        gap: 10px;
-        cursor: pointer;
-        border-radius: 20px;
-    }
-
-    .node-menu-action:hover {
-        background-color: var(--gray-light);
-    }
-
-    .node-menu-action-delete:hover {
-        background-color: var(--gray-light);
-        color: var(--red);
     }
 
     .dots-button {
