@@ -59,7 +59,13 @@
     onMount(position);
 
     function setSelection(event: MouseEvent) {
-        editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, editorView.state.selection.$anchor.pos)));
+        const selection = editorView.state.selection;
+        // Handle selection of the first node of the document
+        if (selection.$anchor.pos - selection.$anchor.parentOffset <= 1) {
+            editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, 1)));
+            return;
+        }
+        editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, selection.$anchor.pos)));
     }
 
     function onClick(event: MouseEvent) {
