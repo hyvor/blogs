@@ -58,11 +58,13 @@
 
     onMount(position);
 
-    function onMouseDown(event: MouseEvent) {
+    function setSelection(e: MouseEvent) {
         editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, editorView.state.selection.$anchor.pos)));
+        e.stopPropagation();
     }
 
-    function onClick(event: MouseEvent) {
+    function onClick(e: MouseEvent) {
+        setSelection(e);
         showMenu = true;
         dispatch('drag');
     }

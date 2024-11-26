@@ -55,10 +55,12 @@ export class NodeMenuPlugin implements PluginView {
     }
 
     duplicateNode() {
+        console.log('duplicateNode');
         const { state, dispatch } = this.view;
         const { selection } = state;
     
         if (!(selection instanceof NodeSelection)) {
+            console.log('selection is not NodeSelection');
             return;
         }
     
@@ -66,6 +68,7 @@ export class NodeMenuPlugin implements PluginView {
         const nodeToDuplicate = $from.node();
     
         if (!nodeToDuplicate) {
+            console.log('nodeToDuplicate is not found');
             return;
         }
     
