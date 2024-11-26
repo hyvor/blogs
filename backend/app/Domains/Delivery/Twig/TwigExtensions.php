@@ -12,6 +12,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Carbon\Carbon;
 use Hyvor\SvgIcons\Exception\IconNotFoundException;
 use Hyvor\SvgIcons\Exception\InvalidLibraryException;
 use Hyvor\SvgIcons\Exception\SvgIconException;
@@ -21,6 +22,7 @@ use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use DateTime;
 
 /**
  * Defines three filters
@@ -71,6 +73,10 @@ class TwigExtensions extends AbstractExtension
             ]),
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
+            ]),
+            new TwigFunction('rich_schema', [$this, 'richSchema'], [
+                'needs_context' => true,
+                'is_safe' => ['html'],
             ]),
         ];
     }
@@ -300,6 +306,27 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
+    public function richSchema(array $context)
+    {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $context['_meta']['title'],
+            'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
+            'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
+            'author' => array_map(fn($author) => array_merge(
+                ['type' => '@Person'],
+                !empty($author['name']) ? ['name' => $author['name']] : [],
+                !empty($author['url']) ? ['url' => $author['url']] : []
+            ), $context['_post']['authors'])
+        ];
+
+        if (!empty($context['_meta']['featured_image'])) {
+            $schema['image'] = [$context['_meta']['featured_image']];
+        }
+
+        return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
+    }
     private function getBlogFromContext($context)
     {
         if (! isset($this->blog)) {
@@ -308,5 +335,10 @@ class TwigExtensions extends AbstractExtension
         }
 
         return $this->blog;
+    }
+
+    private function getDateTimeString(string $timestamp): string
+    {
+        return Carbon::createFromTimestamp($timestamp)->toIso8601String();
     }
 }

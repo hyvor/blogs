@@ -80,6 +80,7 @@ export interface Blog {
     code_foot: string | null,
 
     seo_indexing: boolean,
+    seo_rich_schema: boolean,
     seo_robots_txt: string | null,
     seo_external_links_follow: 'follow' | 'nofollow',
     comments_code: string | null,
