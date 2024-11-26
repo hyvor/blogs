@@ -58,13 +58,11 @@
 
     onMount(position);
 
-    function setSelection(e: MouseEvent) {
+    function setSelection(event: MouseEvent) {
         editorView.dispatch(editorView.state.tr.setSelection(NodeSelection.create(editorView.state.doc, editorView.state.selection.$anchor.pos)));
-        e.stopPropagation();
     }
 
-    function onClick(e: MouseEvent) {
-        setSelection(e);
+    function onClick(event: MouseEvent) {
         showMenu = true;
         dispatch('drag');
     }
@@ -95,7 +93,7 @@
         </div>
     {/if}
     <Tooltip text="Click to open menu">
-        <button class="dots-button" on:click={onClick}>
+        <button class="dots-button" on:mouseenter={setSelection} on:click={onClick}>
             ::
         </button>
     </Tooltip>
