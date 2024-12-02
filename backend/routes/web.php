@@ -17,6 +17,7 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/special.php';
     include 'app/integrations/integrations.php';
     include 'blog.php';
+    include 'internal/api-internal.php';
 });
 
 include 'app/api-delivery.php';
