@@ -13,7 +13,7 @@ Route::prefix('/api/internal')
             ->group(function () {
                 Route::prefix('/sudo')->group(function () {
                     Route::get('/overview', [SudoController::class, 'overview']);
-                    
+                    Route::get('/blogs', [SudoController::class, 'getBlogs']);
                 });
             });
     });
