@@ -2,7 +2,9 @@
 
 namespace App\Domains\Sudo;
 
+
 use App\Models\Blog;
+use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 
 class SudoAnalyticsService
 {
@@ -26,13 +28,13 @@ class SudoAnalyticsService
             ->count();
     }
 
-    public static function getBlogByMonth(): array
+    public static function getBlogByMonth(): mixed
     {
-        return Blog::selectRaw('YEAR(created_at) year, MONTH(created_at) month, COUNT(*) count')
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
+        return Blog::selectRaw('count(*) as count, DATE_FORMAT(created_at, "%Y-%m") as month')
+            ->groupBy('month')
+            ->orderBy('month')
             ->get()
-            ->toArray();
+            ->keyBy('month')
+            ->map(fn ($blog) => $blog->count);
     }
 }
