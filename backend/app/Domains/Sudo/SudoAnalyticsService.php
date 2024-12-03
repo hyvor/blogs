@@ -15,6 +15,11 @@ class SudoAnalyticsService
         return Blog::count();
     }
 
+    public static function getBlog30DaysChange(): int
+    {
+        return Blog::where('created_at', '>', now()->subDays(30))->count();
+    }
+
     public static function getTrialBlogs(): int
     {
         return Blog::where('trial_ends_at', '>', now())->count();
@@ -25,6 +30,13 @@ class SudoAnalyticsService
         // Join with subscriptions table to get only blogs with active subscriptions
         return Blog::join('subscriptions', 'blogs.id', '=', 'subscriptions.blog_id')
             ->where('subscriptions.ends_at', '>', now())
+            ->count();
+    }
+
+    public static function getPaidBlogs30DaysChange(): int
+    {
+        return Blog::join('subscriptions', 'blogs.id', '=', 'subscriptions.blog_id')
+            ->where('subscriptions.ends_at', '>', now()->subDays(30))
             ->count();
     }
 

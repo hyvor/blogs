@@ -13,8 +13,6 @@ class SudoDataService
         int $offset
     ): mixed {
         $sortBy = match ($sortBy) {
-            'credits_this_month' => 'this_month_pageviews_count',
-            'credits_last_month' => 'month_1_ago_pageviews_count',
             default => 'id',
         };
 
