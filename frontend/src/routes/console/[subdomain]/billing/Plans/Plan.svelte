@@ -20,9 +20,7 @@
 			starter: 9,
 			growth: 19,
 			premium: 49,
-			team: 299,
-			business: 699,
-			enterprise: 1299
+			team: 299
 		}[type];
 	}
 
