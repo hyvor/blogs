@@ -17,6 +17,7 @@ class SudoDataService
         };
 
         return Blog::with('variants', 'subscriptions')
+            ->withCount('posts')
             ->orderBy($sortBy, $sort)
             ->limit($limit)
             ->offset($offset)
