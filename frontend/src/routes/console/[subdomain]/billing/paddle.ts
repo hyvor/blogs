@@ -1,6 +1,8 @@
 import { getConfig } from "../../lib/config";
 
-
+/**
+ * @deprecated
+ */
 export function initPaddle() {
 
     return new Promise<void>((resolve, reject) => {

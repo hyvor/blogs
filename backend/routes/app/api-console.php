@@ -255,6 +255,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             // general
             Route::get('/billing', [ConsoleBillingController::class, 'getBillingData']);
+            Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
             Route::delete('/billing/subscription', [ConsoleBillingController::class, 'forceCancelSubscription']);
 
             Route::middleware('billing-type:paddle')->group(function () {
@@ -266,13 +267,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                 Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);
             });
 
-            Route::middleware('billing-type:shopify')->group(function () {
-
-                // shopify
-                Route::get('/billing/shopify', [ConsoleBillingShopifyController::class, 'getData']);
-                Route::post('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'createSubscription']);
-                Route::delete('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'cancelSubscription']);
-            });
         });
 
         /**

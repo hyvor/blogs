@@ -21,11 +21,11 @@ export function loadPaddleData() {
 
 export function createSubscription(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
 
-    return consoleApi.post<{ link: string }>({
-        endpoint: '/billing/paddle/subscription',
+    return consoleApi.post<{ redirect: string }>({
+        endpoint: '/billing/subscription',
         data: {
             plan,
-            frequency
+            is_annual: frequency === 'yearly'
         }
     })
 
