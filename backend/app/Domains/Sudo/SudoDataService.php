@@ -7,6 +7,7 @@ use App\Models\Blog;
 class SudoDataService
 {
     public static function Blogs(
+        ?int $blogId,
         string $sortBy,
         string $sort,
         int $limit,
@@ -17,6 +18,8 @@ class SudoDataService
         };
 
         return Blog::with('variants', 'subscriptions')
+            ->select('blogs.*')
+            ->when($blogId, fn($query, $blogId) => $query->where('blogs.id', $blogId))
             ->withCount('posts')
             ->orderBy($sortBy, $sort)
             ->limit($limit)

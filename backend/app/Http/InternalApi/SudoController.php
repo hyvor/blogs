@@ -6,6 +6,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Domains\Sudo\SudoAnalyticsService;
 use App\Domains\Sudo\SudoDataService;
+use App\Domains\Sudo\SudoActionsService;
+use App\Models\Blog;
+use Hyvor\Internal\Http\Exceptions\HttpException;
 
 
 class SudoController
@@ -27,6 +30,7 @@ class SudoController
     public function getBlogs(Request $request): JsonResponse
     {
         $data = $request->validate([
+            'blog_id' => 'integer|nullable',
             'sort' => 'in:asc,desc|nullable',
             'filter' => 'in:in_trial,starter,growth,premium,business,enterprise|nullable',
             'limit' => 'integer|nullable',
@@ -38,11 +42,43 @@ class SudoController
 
         return response()->json(
             SudoDataService::blogs(
+                $data['blog_id'] ?? null,
                 $sortBy,
                 $sort,
                 $data['limit'] ?? 10,
                 $data['offset'] ?? 0
             ),
         );
+    }
+
+    public function blogAction(Request $request, int $id): JsonResponse
+    {
+        $blog = Blog::find($id);
+        if (!$blog) {
+            throw new HttpException('Blog not found');
+        }
+
+        $data = $request->validate([
+            'action' => 'required|string',
+        ]);
+
+        $action = $data['action'];
+
+        if ($action === 'update_trial') {
+            $trialEndsAt = $request->input('trial_ends_at');
+            if (!$trialEndsAt) {
+                throw new HttpException('trial_ends_at is required for update_trial action');
+            }
+            SudoActionsService::updateBlogTrial($blog, $trialEndsAt);
+        } else if ($action === 'block') {
+            SudoActionsService::blockBlog($blog);
+        } else if ($action === 'unblock') {
+            SudoActionsService::unblockBlog($blog);
+        }
+        else {
+            throw new HttpException('Invalid action');
+        }
+
+        return response()->json();
     }
 }

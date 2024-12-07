@@ -14,6 +14,7 @@ Route::prefix('/api/internal')
                 Route::prefix('/sudo')->group(function () {
                     Route::get('/overview', [SudoController::class, 'overview']);
                     Route::get('/blogs', [SudoController::class, 'getBlogs']);
+                    Route::post('/blogs/{id}', [SudoController::class, 'blogAction']);
                 });
             });
     });
