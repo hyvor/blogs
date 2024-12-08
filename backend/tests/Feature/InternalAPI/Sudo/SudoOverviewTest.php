@@ -11,7 +11,7 @@ it('gets overview', function () {
     // blogs
     $blog1 = Blog::factory()->create([
         'id' => 2001,
-        'created_at' => now()->subDays(31),
+        'created_at' => now()->subDays(value: 31),
         'trial_ends_at' => now()->addDays(10)
     ]);
 
@@ -41,7 +41,7 @@ it('gets overview', function () {
 
         // blogs
         ->assertJsonPath('blogs.total', 3)
-        ->assertJsonPath('blogs.30d_change', 2)
+        ->assertJsonPath('blogs.total_30_days_change', 2)
         ->assertJsonPath('blogs.in_trial', 1)
         ->assertJsonPath('blogs.by_month', [
             ['month' => now()->subDays(31)->format('F'), 'count' => 1],
