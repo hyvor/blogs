@@ -31,22 +31,22 @@ it('filters blog by id', function () {
 });
 
 
-it('filters blog by subomain', function () {
+it('filters blog by subdomain', function () {
     $blog1 = Blog::factory()->create([
         'id' => 2001,
         'created_at' => now()->subDays(value: 31),
         'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
+        'subdomain' => 'sub1'
     ]);
 
     InternalApiTesting::call(
         'GET',
         '/core/sudo/blogs',
-        ['subdomain' => $blog1->subomain]
+        ['subdomain' => $blog1->subdomain]
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('0.subdomain', $blog1->subomain);
+        ->assertJsonPath('0.subdomain', $blog1->subdomain);
 });
 
 it('filters by in trial', function () {
@@ -54,14 +54,12 @@ it('filters by in trial', function () {
         'id' => 2001,
         'created_at' => now()->subDays(value: 31),
         'trial_ends_at' => now()->addDays(10),
-        'subomain' => 'sub1'
     ]);
 
     $blog2 = Blog::factory()->create([
         'id' => 2002,
         'created_at' => now()->subDays(value: 31),
         'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
     ]);
 
     InternalApiTesting::call(
@@ -160,6 +158,25 @@ it('filter by entreprise plan ', function () {
         'GET',
         '/core/sudo/blogs',
         ['filter' => 'entreprise']
+    )
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $blogs[0]->id);
+
+});
+
+it('filter by team plan ', function () {
+    $blogs = Blog::factory()->count(3)->create();
+
+    Subscription::factory()->create([
+        'blog_id' => $blogs[0]->id,
+        'plan' => 'team'
+    ]);
+
+    InternalApiTesting::call(
+        'GET',
+        '/core/sudo/blogs',
+        ['filter' => 'team']
     )
         ->assertOk()
         ->assertJsonCount(1)
