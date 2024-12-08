@@ -29,10 +29,10 @@ it('gets overview', function () {
 
     // subscriptions
     Subscription::factory()->count(2)->create(
-        ['status' => 'active', 'plan' => 'starter', 'blog_id' => $blog1->id, 'frequency' => 'monthly']
+        ['status' => 'active', 'plan' => 'starter', 'blog_id' => $blog1->id, 'frequency' => 'monthly', 'ends_at' => now()->addDays(30)]
     );
     Subscription::factory()->count(3)->create(
-        ['status' => 'active', 'plan' => 'growth', 'blog_id' => $blog2->id, 'frequency' => 'monthly']
+        ['status' => 'active', 'plan' => 'growth', 'blog_id' => $blog2->id, 'frequency' => 'monthly', 'ends_at' => now()->addDays(30)]
     );
 
 

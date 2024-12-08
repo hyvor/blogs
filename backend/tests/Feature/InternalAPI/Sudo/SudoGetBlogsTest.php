@@ -22,7 +22,7 @@ it('filters blog by id', function () {
 
     InternalApiTesting::call(
         'GET',
-        '/core/sudo/users',
+        '/core/sudo/blogs',
         ['blog_id' => $blogs[1]->id]
     )
         ->assertOk()
