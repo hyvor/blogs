@@ -12,19 +12,19 @@ it('gets overview', function () {
     $blog1 = Blog::factory()->create([
         'id' => 2001,
         'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->addDays(10)
+        'trial_ends_at' => now()->subDays(10)
     ]);
 
     $blog2 = Blog::factory()->create([
         'id' => 2002,
         'created_at' => now()->subDays(10),
-        'trial_ends_at' => now()->addDays(5)
+        'trial_ends_at' => now()->subDays(5)
     ]);
 
     $blog3 = Blog::factory()->create([
         'id' => 2003,
         'created_at' => now()->subDays(18),
-        'trial_ends_at' => now()->subDays(18)
+        'trial_ends_at' => now()->addDays(18)
     ]);
 
     // subscriptions
