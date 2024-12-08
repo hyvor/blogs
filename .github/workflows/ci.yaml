@@ -44,8 +44,7 @@ jobs:
 
             - name: Run tests
               working-directory: backend
-              run: vendor/bin/pest --filter InternalAPI
-
+              run: vendor/bin/pest
     static_analysis:
         name: PHP Static analysis
         runs-on: ubuntu-22.04
