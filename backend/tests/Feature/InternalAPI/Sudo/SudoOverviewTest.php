@@ -44,5 +44,5 @@ it('gets overview', function () {
         ->assertJsonPath('blogs.total_30_days_change', 2)
         ->assertJsonPath('blogs.in_trial', 1)
         ->assertJsonPath('blogs.paid', 2)
-        ->assertJsonPath('blogs.paid_30d_change', 2);
+        ->assertJsonPath('blogs.paid_30_days_change', 2);
 });

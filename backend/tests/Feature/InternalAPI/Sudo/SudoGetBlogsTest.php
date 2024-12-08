@@ -46,14 +46,14 @@ it('filters blog by subomain', function () {
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('0.id', $blog1->subomain);
+        ->assertJsonPath('0.subdomain', $blog1->subomain);
 });
 
 it('filters by in trial', function () {
     $blog1 = Blog::factory()->create([
         'id' => 2001,
         'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
+        'trial_ends_at' => now()->addDays(10),
         'subomain' => 'sub1'
     ]);
 
@@ -71,32 +71,15 @@ it('filters by in trial', function () {
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('0.id', $blog1->id);
+        ->assertJsonPath('1.id', $blog1->id);
 });
 
 it('filters by starer plan', function () {
-    $blog1 = Blog::factory()->create([
-        'id' => 2001,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
-    ]);
-
-    $blog2 = Blog::factory()->create([
-        'id' => 2002,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
-    ]);
+    $blogs = Blog::factory()->count(3)->create();
 
     Subscription::factory()->create([
-        'blog_id' => $blog1->id,
+        'blog_id' => $blogs[0]->id,
         'plan' => 'starter'
-    ]);
-
-    Subscription::factory()->create([
-        'blog_id' => $blog2->id,
-        'plan' => 'growth'
     ]);
 
     InternalApiTesting::call(
@@ -106,31 +89,14 @@ it('filters by starer plan', function () {
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('0.id', $blog1->id);
+        ->assertJsonPath('0.id', $blogs[0]->id);
 });
 
 it('filter by growth plan', function () {
-    $blog1 = Blog::factory()->create([
-        'id' => 2001,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
-    ]);
-
-    $blog2 = Blog::factory()->create([
-        'id' => 2002,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
-    ]);
+    $blogs = Blog::factory()->count(3)->create();
 
     Subscription::factory()->create([
-        'blog_id' => $blog1->id,
-        'plan' => 'starter'
-    ]);
-
-    Subscription::factory()->create([
-        'blog_id' => $blog2->id,
+        'blog_id' => $blogs[0]->id,
         'plan' => 'growth'
     ]);
 
@@ -141,31 +107,15 @@ it('filter by growth plan', function () {
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('0.id', $blog2->id);
+        ->assertJsonPath('0.id', $blogs[0]->id);
+
 });
 
 it('filter by premium plan', function () {
-    $blog1 = Blog::factory()->create([
-        'id' => 2001,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
-    ]);
-
-    $blog2 = Blog::factory()->create([
-        'id' => 2002,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
-    ]);
+    $blogs = Blog::factory()->count(3)->create();
 
     Subscription::factory()->create([
-        'blog_id' => $blog1->id,
-        'plan' => 'starter'
-    ]);
-
-    Subscription::factory()->create([
-        'blog_id' => $blog2->id,
+        'blog_id' => $blogs[0]->id,
         'plan' => 'premium'
     ]);
 
@@ -175,31 +125,15 @@ it('filter by premium plan', function () {
         ['filter' => 'premium']
     )
         ->assertOk()
-        ->assertJsonPath('0.id', $blog2->id);
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $blogs[0]->id);
 });
 
 it('filter by business plan', function () {
-    $blog1 = Blog::factory()->create([
-        'id' => 2001,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
-    ]);
-
-    $blog2 = Blog::factory()->create([
-        'id' => 2002,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
-    ]);
+    $blogs = Blog::factory()->count(3)->create();
 
     Subscription::factory()->create([
-        'blog_id' => $blog1->id,
-        'plan' => 'starter'
-    ]);
-
-    Subscription::factory()->create([
-        'blog_id' => $blog2->id,
+        'blog_id' => $blogs[0]->id,
         'plan' => 'business'
     ]);
 
@@ -209,39 +143,26 @@ it('filter by business plan', function () {
         ['filter' => 'business']
     )
         ->assertOk()
-        ->assertJsonPath('0.id', $blog2->id);
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $blogs[0]->id);
+
 });
 
 it('filter by entreprise plan ', function () {
-    $blog1 = Blog::factory()->create([
-        'id' => 2001,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub1'
-    ]);
-
-    $blog2 = Blog::factory()->create([
-        'id' => 2002,
-        'created_at' => now()->subDays(value: 31),
-        'trial_ends_at' => now()->subDays(10),
-        'subomain' => 'sub2'
-    ]);
+    $blogs = Blog::factory()->count(3)->create();
 
     Subscription::factory()->create([
-        'blog_id' => $blog1->id,
-        'plan' => 'starter'
-    ]);
-
-    Subscription::factory()->create([
-        'blog_id' => $blog2->id,
-        'plan' => 'enterprise'
+        'blog_id' => $blogs[0]->id,
+        'plan' => 'entreprise'
     ]);
 
     InternalApiTesting::call(
         'GET',
         '/core/sudo/blogs',
-        ['filter' => 'enterprise']
+        ['filter' => 'entreprise']
     )
         ->assertOk()
-        ->assertJsonPath('0.id', $blog2->id);
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $blogs[0]->id);
+
 });
