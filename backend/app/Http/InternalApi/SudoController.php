@@ -31,6 +31,7 @@ class SudoController
     {
         $data = $request->validate([
             'blog_id' => 'integer|nullable',
+            'subdomain' => 'string|nullable',
             'sort' => 'in:asc,desc|nullable',
             'filter' => 'in:in_trial,starter,growth,premium,business,enterprise|nullable',
             'limit' => 'integer|nullable',
@@ -43,8 +44,10 @@ class SudoController
         return response()->json(
             SudoDataService::blogs(
                 $data['blog_id'] ?? null,
+                $data['subdomain'] ?? null,
                 $sortBy,
                 $sort,
+                $data['filter'] ?? null,
                 $data['limit'] ?? 10,
                 $data['offset'] ?? 0
             ),
