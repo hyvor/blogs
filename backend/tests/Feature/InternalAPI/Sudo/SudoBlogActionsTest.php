@@ -13,7 +13,7 @@ it('updates trial date', function () {
 
     InternalApiTesting::call(
         'POST',
-        '/core/sudo/post/' . $blog->id,
+        '/core/sudo/blogs/' . $blog->id,
         [
             'action' => 'update_trial',
             'trial_ends_at' => $tmsp,
@@ -31,7 +31,7 @@ it('block blog', function () {
 
     InternalApiTesting::call(
         'POST',
-        '/core/sudo/post/' . $blog->id,
+        '/core/sudo/blogs/' . $blog->id,
         [
             'action' => 'block',
         ]
@@ -48,7 +48,7 @@ it('unlock blog', function () {
 
     InternalApiTesting::call(
         'POST',
-        '/core/sudo/post/' . $blog->id,
+        '/core/sudo/blogs/' . $blog->id,
         [
             'action' => 'unlock',
         ]
