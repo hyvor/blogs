@@ -50,7 +50,7 @@ it('unlock blog', function () {
         'POST',
         '/core/sudo/blogs/' . $blog->id,
         [
-            'action' => 'unlock',
+            'action' => 'unblock',
         ]
     )
         ->assertOk();
