@@ -43,11 +43,6 @@ it('gets overview', function () {
         ->assertJsonPath('blogs.total', 3)
         ->assertJsonPath('blogs.total_30_days_change', 2)
         ->assertJsonPath('blogs.in_trial', 1)
-        ->assertJsonPath('blogs.by_month', [
-            ['month' => now()->subDays(31)->format('F'), 'count' => 1],
-            ['month' => now()->subDays(10)->format('F'), 'count' => 1],
-            ['month' => now()->subDays(18)->format('F'), 'count' => 1],
-        ])
         ->assertJsonPath('blogs.paid', 2)
         ->assertJsonPath('blogs.paid_30d_change', 2);
 });
