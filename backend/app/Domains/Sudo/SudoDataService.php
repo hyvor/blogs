@@ -27,7 +27,7 @@ class SudoDataService
                 $query->whereNotNull('trial_ends_at')
                     ->where('trial_ends_at', '>', now());
             })
-            ->when($filter === 'starter' || $filter === 'growth' || $filter === 'premium' || $filter === 'business' || $filter === 'team'|| $filter === 'entreprise', function ($query) use ($filter) {
+            ->when($filter === 'starter' || $filter === 'growth' || $filter === 'premium' || $filter === 'business' || $filter === 'team'|| $filter === 'enterprise', function ($query) use ($filter) {
                 $query->join('subscriptions', 'subscriptions.blog_id', '=', 'blogs.id')
                     ->where('subscriptions.plan', 'LIKE', "$filter%");
             })

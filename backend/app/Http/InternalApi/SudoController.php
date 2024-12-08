@@ -33,7 +33,7 @@ class SudoController
             'blog_id' => 'integer|nullable',
             'subdomain' => 'string|nullable',
             'sort' => 'in:asc,desc|nullable',
-            'filter' => 'in:in_trial,starter,growth,premium,business,enterprise|nullable',
+            'filter' => 'in:in_trial,starter,growth,premium,business,team,enterprise|nullable',
             'limit' => 'integer|nullable',
             'offset' => 'integer|nullable',
         ]);

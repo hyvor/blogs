@@ -69,7 +69,7 @@ it('filters by in trial', function () {
     )
         ->assertOk()
         ->assertJsonCount(1)
-        ->assertJsonPath('1.id', $blog1->id);
+        ->assertJsonPath('0.id', $blog1->id);
 });
 
 it('filters by starer plan', function () {
@@ -151,13 +151,13 @@ it('filter by entreprise plan ', function () {
 
     Subscription::factory()->create([
         'blog_id' => $blogs[0]->id,
-        'plan' => 'entreprise'
+        'plan' => 'enterprise'
     ]);
 
     InternalApiTesting::call(
         'GET',
         '/core/sudo/blogs',
-        ['filter' => 'entreprise']
+        ['filter' => 'enterprise']
     )
         ->assertOk()
         ->assertJsonCount(1)
