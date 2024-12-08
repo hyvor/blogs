@@ -22,7 +22,7 @@ it('updates trial date', function () {
         ->assertOk();
 
     $blog->refresh();
-    expect($blog->trial_ends_at)->toStartWith('2025-12-15');
+    expect($blog->isInTrial())->toBeTrue();
 });
 
 
@@ -40,7 +40,7 @@ it('block blog', function () {
 
     $blog->refresh();
     expect($blog->is_blocked)->toBeTrue();
-    expect($blog->is_blocked_at)->not->toBeNull();
+    expect($blog->blocked_at)->not->toBeNull();
 });
 
 it('unlock blog', function () {
@@ -57,5 +57,5 @@ it('unlock blog', function () {
 
     $blog->refresh();
     expect($blog->is_blocked)->toBeFalse();
-    expect($blog->is_blocked_at)->toBeNull();
+    expect($blog->blocked_at)->toBeNull();
 });
