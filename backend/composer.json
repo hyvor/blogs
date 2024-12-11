@@ -91,7 +91,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../../../hyvor-internal"
+            "url": "../../internal"
         }
     ],
     "scripts": {

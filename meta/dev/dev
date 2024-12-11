@@ -9,12 +9,12 @@ cleanup() {
 }
 
 (
-    trap cleanup SIGINT SIGTERM;
+    trap cleanup INT TERM;
 
     # Check if --no-caddy is passed as an argument
     no_caddy=false
     for arg in "$@"; do
-        if [ "$arg" == "--no-caddy" ]; then
+        if [ "$arg" = "--no-caddy" ]; then
             no_caddy=true
         break
         fi
@@ -23,7 +23,7 @@ cleanup() {
     npm run dev --prefix ./frontend &
     composer serve --working-dir=./backend &
 
-    if [ "$no_caddy" == false ]; then
+    if [ "$no_caddy" = false ]; then
         caddy run --config ./meta/dev/Caddyfile.dev &
     fi
 
