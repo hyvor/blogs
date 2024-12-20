@@ -40,6 +40,7 @@ class ConsoleBillingController
 
         $subscription = Billing::newSubscription(
             (int) $blog->hyvor_user_id,
+            'blog',
             $blog->id,
             $blog->subdomain,
             PlansService::getMonthlyPrice($plan),
