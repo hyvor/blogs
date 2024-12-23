@@ -6,6 +6,7 @@ use App\Domains\App\Marketing\Trial\TrialEmailsJob;
 use App\Domains\App\Marketing\Trial\TrialEndedMail;
 use App\Domains\App\Marketing\Trial\TrialEndingMail;
 use App\Models\Blog;
+use App\Models\Subscription;
 use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,6 +37,15 @@ it('sends trial ending emails', function() {
     Blog::factory()->create([
         'trial_ends_at' => now()->addHours(25),
         'hyvor_user_id' => 10
+    ]);
+
+    // blog with subscription
+    $blogWithSubscription = Blog::factory()->create([
+        'trial_ends_at' => now()->addHours(16),
+        'hyvor_user_id' => 10
+    ]);
+    Subscription::factory()->create([
+        'blog_id' => $blogWithSubscription->id
     ]);
 
     $job = new TrialEmailsJob();
@@ -78,6 +88,15 @@ it('sends trial ended email', function() {
     Blog::factory()->create([
         'trial_ends_at' => now()->subHours(25),
         'hyvor_user_id' => 10
+    ]);
+
+    // blog with subscription
+    $blogWithSubscription = Blog::factory()->create([
+        'trial_ends_at' => now()->subHours(2),
+        'hyvor_user_id' => 10
+    ]);
+    Subscription::factory()->create([
+        'blog_id' => $blogWithSubscription->id
     ]);
 
     $job = new TrialEmailsJob();
