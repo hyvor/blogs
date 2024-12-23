@@ -26,7 +26,6 @@
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="SCOUT_DRIVER" value="meilisearch"/>
     <server name="FILESYSTEM_DRIVER" value="local"/>
     <server name="HYVOR_DUMMY" value="true"/>
     <server name="PADDLE_SANDBOX" value="false"/>
