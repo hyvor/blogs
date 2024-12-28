@@ -38,7 +38,7 @@ class ConsoleBillingController
         $plan = SubscriptionPlanEnum::from((string) $request->string('plan'));
         $isAnnual = $request->boolean('is_annual');
 
-        $subscription = Billing::newSubscription(
+        $subscription = Billing::subscriptionIntent(
             (int) $blog->hyvor_user_id,
             'blog',
             $blog->id,
@@ -51,7 +51,7 @@ class ConsoleBillingController
         );
 
         return response()->json([
-            'redirect' => $subscription['redirect']
+            'redirect' => $subscription['urlNew']
         ]);
 
     }

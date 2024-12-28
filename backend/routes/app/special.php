@@ -19,3 +19,5 @@ Route::prefix('/api/special')->group(function () {
 
     Route::get('/syntax', [SyntaxController::class, 'getData']);
 });
+
+// TODO: Migrate these to public API
