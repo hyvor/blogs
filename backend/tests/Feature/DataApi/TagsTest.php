@@ -222,3 +222,30 @@ it('sends total correctly', function () {
     dataApi($this->blog, '/tags')
         ->assertJsonPath('pagination.total', $count);
 });
+
+it('visibility test', function() {
+    
+    $tag = addTag($this->blog, [
+        'is_private' => true,
+    ]);
+
+    // public only
+    dataApi($this->blog, '/tags')
+        ->assertOk()
+        ->assertJsonCount(4, 'data')
+        ->assertJsonPath('data.0.is_private', false);
+
+    dataApi($this->blog, '/tags', [
+        'visibility' => 'private',
+    ])
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.is_private', true)
+        ->assertJsonPath('data.0.id', $tag->id);
+
+
+    dataApi($this->blog, '/tags', ['visibility' => 'any'])
+        ->assertOk()
+        ->assertJsonCount(5, 'data');
+    
+});

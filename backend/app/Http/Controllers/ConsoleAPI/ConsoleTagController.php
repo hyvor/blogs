@@ -50,11 +50,13 @@ class ConsoleTagController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
+            'is_private' => 'boolean',
         ]);
 
         $name = (string) $request->string('name');
+        $isPrivate = $request->boolean('is_private');
 
-        $tag = TagRepository::createTag($blog, $name);
+        $tag = TagRepository::createTag($blog, $name, $isPrivate);
 
         return response()->json(new TagObject($tag, $blog));
     }
@@ -62,6 +64,7 @@ class ConsoleTagController extends Controller
     public function update(Request $request, Tag $tag, Blog $blog) : JsonResponse
     {
         $validates = [
+            'is_private' => 'boolean',
             'slug' => 'string',
             'code_head' => 'string|nullable',
             'code_foot' => 'string|nullable',

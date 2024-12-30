@@ -5,12 +5,15 @@ namespace App\Domains\Media;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
+use App\Domains\Route\PermalinkRepository;
 use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use App\Models\Media;
+use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +32,11 @@ class MediaRepository
     // /docs/writing
     public const IMAGE_EXTENSIONS = [
         'png',
-        'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp',
+        'jpg',
+        'jpeg',
+        'jfif',
+        'pjpeg',
+        'pjp',
         'gif',
         'apng',
         'avif',
@@ -47,14 +54,13 @@ class MediaRepository
         int $offset = 0,
         array|null $extensions = null,
         string|null $search = null,
-    ): Collection
-    {
+    ): Collection {
         return Media::where('blog_id', $blog->id)
             ->when($extensions, function ($query) use ($extensions) {
                 $query->whereIn('extension', $extensions);
             })
             ->when($search, function ($query) use ($search) {
-                $query->where(function($query) use ($search) {
+                $query->where(function ($query) use ($search) {
                     $query->where('name', 'LIKE', "%$search%")
                         ->orWhere('original_name', 'LIKE', "%$search%");
                 });
@@ -65,29 +71,40 @@ class MediaRepository
             ->get();
     }
 
-    public static function getOne(int $id) : ?Media
+    public static function getOne(int $id): ?Media
     {
         return Media::find($id);
     }
 
-    public static function getByBlogIdAndName(int $blogId, string $name) : ?Media
+    public static function getByBlogIdAndName(int $blogId, string $name): ?Media
     {
         return Media::where('blog_id', $blogId)
             ->where('name', $name)
             ->first();
     }
 
-    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null): Media
+    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null, ?string $fileName = null): Media
     {
+        if ($fileName === null) {
+            $fileName = Str::random() . '.' . $file->extension();
+        } else {
+            $fileName = Str::kebab($fileName);
+        }
+
+        $fileName = self::getUniqueFilename($blog->id, $fileName);
+
         try {
-            $prefix = self::getPathPrefix($blog->id);
-            $path = Storage::putFile($prefix, $file);
+
+            $path = Storage::putFileAs(
+                self::getPathPrefix($blog->id),
+                $file,
+                $fileName
+            );
 
             if (!$path) {
                 throw new UploadException('Error while uploading from storage');
             }
 
-            $fileName = self::getFileNameFromPath($path);
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             throw new UploadException("Error while uploading: $errorMessage");
@@ -107,6 +124,13 @@ class MediaRepository
         return $media;
     }
 
+    public function uploadFromLocal(Blog $blog, string $path, ?int $postId = null): Media
+    {
+        $file = File::get($path);
+        $size = File::size($path);
+        return $this->createMediaFor($path, $blog, $file, $postId, $size);
+    }
+
     public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
 
@@ -116,7 +140,7 @@ class MediaRepository
             throw new UploadException('Error while fetching image file');
         }
 
-        if (! $response->successful()) {
+        if (!$response->successful()) {
             throw new UploadException();
         }
 
@@ -127,14 +151,76 @@ class MediaRepository
             throw new UploadException('File size is too large');
         }
 
-        if (! $file) {
+        if (!$file) {
             throw new UploadException();
         }
 
         $size = (int) $response->header('content-size');
 
-        $extension = File::extension($url);
-        $name = self::getPathPrefix($blog->id).'/'.Str::random().($extension ? ".$extension" : '');
+        return $this->createMediaFor($url, $blog, $file, $postId, $size);
+    }
+
+    public static function getContents(Media $media): ?string
+    {
+        $name = $media->name;
+        if (!$name)
+            return null;
+
+        return Storage::get(self::getPath($media->blog_id, $name));
+    }
+
+    public static function delete(Media $media): void
+    {
+        if (!$media->name)
+            return;
+
+        $path = self::getPath($media->blog_id, $media->name);
+
+        if ($path) {
+            Storage::delete($path);
+        }
+
+        $media->delete();
+
+        MediaDeletedEvent::dispatch($media);
+    }
+
+    private static function getPathPrefix(int $blogId): string
+    {
+        return "blog/$blogId";
+    }
+
+    private static function getPath(int $blogId, string $filName): string
+    {
+        return self::getPathPrefix($blogId) . '/' . $filName;
+    }
+
+    private static function getFileNameFromPath(string $path): string
+    {
+        $split = explode('/', $path);
+
+        return $split[count($split) - 1];
+    }
+
+    public static function hasLimitsExceeded(Blog $blog): bool
+    {
+        $usage = $blog->getCount('media');
+        $limit = UsageRepository::getLimitsOf($blog, 'media');
+        return $usage >= $limit;
+    }
+
+    /**
+     * @param string $path
+     * @param Blog $blog
+     * @param string $file
+     * @param int|null $postId
+     * @param int $size
+     * @return mixed
+     */
+    public function createMediaFor(string $path, Blog $blog, string $file, ?int $postId, int $size)
+    {
+        $extension = File::extension($path);
+        $name = self::getPathPrefix($blog->id) . '/' . Str::random() . ($extension ? ".$extension" : '');
         Storage::put($name, $file);
 
         $fileName = self::getFileNameFromPath($name);
@@ -153,52 +239,44 @@ class MediaRepository
         return $media;
     }
 
-    public static function getContents(Media $media) : ?string
+    public static function updateName(Media $media, string $name, Blog $blog): Media
     {
-        $name = $media->name;
-        if (!$name)
-            return null;
+        $fileName = Str::kebab($name);
+        $fileName = self::getUniqueFilename($media->blog_id, $fileName);
 
-        return Storage::get(self::getPath($media->blog_id, $name));
+        DB::transaction(function() use (&$media, $fileName, $blog) {
+
+            $oldPath = self::getPath($media->blog_id, $media->name);
+            $newPath = self::getPath($media->blog_id, $fileName);
+
+            $oldLink = PermalinkRepository::getMediaPermalink($media, $blog);
+
+            $media->name = $fileName;
+            $media->save();
+
+            $newLink = PermalinkRepository::getMediaPermalink($media, $blog);
+
+            Storage::move($oldPath, $newPath);
+
+            UpdateMediaUrlsInPostsJob::dispatch($blog, $oldLink, $newLink);
+        });
+
+        return $media;
     }
 
-    public static function delete(Media $media) : void
+    public static function getUniqueFilename(int $blogId, string $name): string
     {
-        if (!$media->name)
-            return;
+        $fileName = $name;
 
-        $path = self::getPath($media->blog_id, $media->name);
+        $start = pathinfo($name, PATHINFO_FILENAME);
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
 
-        if ($path) {
-            Storage::delete($path);
+        $i = 1;
+        while (Storage::exists(self::getPath($blogId, $fileName))) {
+            $fileName = $start . '-' . $i . '.' . $ext;
+            $i++;
         }
 
-        $media->delete();
-
-        MediaDeletedEvent::dispatch($media);
-    }
-
-    private static function getPathPrefix(int $blogId) : string
-    {
-        return "blog/$blogId";
-    }
-
-    private static function getPath(int $blogId, string $filName) : string
-    {
-        return self::getPathPrefix($blogId).'/'.$filName;
-    }
-
-    private static function getFileNameFromPath(string $path) : string
-    {
-        $split = explode('/', $path);
-
-        return $split[count($split) - 1];
-    }
-
-    public static function hasLimitsExceeded(Blog $blog) : bool
-    {
-        $usage = $blog->getCount('media');
-        $limit = UsageRepository::getLimitsOf($blog, 'media');
-        return $usage >= $limit;
+        return $fileName;
     }
 }

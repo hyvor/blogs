@@ -10,12 +10,14 @@
   </testsuites>
   <coverage/>
   <php>
+    <server name="HYVOR_INSTANCE" value="https://hyvor.com" />
     <server name="APP_ENV" value="testing"/>
     <server name="APP_DEBUG" value="false"/>
     <server name="APP_URL" value="https://blogs.hyvor.com"/>
     <server name="APP_KEY" value="base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="/>
     <server name="DOMAIN_APP" value="blogs.hyvor.com"/>
-    <server name="DOMAIN_DELIVERY" value="hyvorblogs.io"/>
+    <server name="DELIVERY_DOMAIN" value="hyvorblogs.io"/>
+    <server name="DELIVERY_URL" value="https://hyvorblogs.io"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="database"/>
     <server name="DB_CONNECTION" value="pgsql"/>
@@ -24,7 +26,6 @@
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="SCOUT_DRIVER" value="meilisearch"/>
     <server name="FILESYSTEM_DRIVER" value="local"/>
     <server name="HYVOR_DUMMY" value="true"/>
     <server name="PADDLE_SANDBOX" value="false"/>

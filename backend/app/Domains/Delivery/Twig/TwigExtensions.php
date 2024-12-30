@@ -12,6 +12,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Carbon\Carbon;
 use Hyvor\SvgIcons\Exception\IconNotFoundException;
 use Hyvor\SvgIcons\Exception\InvalidLibraryException;
 use Hyvor\SvgIcons\Exception\SvgIconException;
@@ -21,6 +22,7 @@ use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use DateTime;
 
 /**
  * Defines three filters
@@ -72,10 +74,17 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
             ]),
+            new TwigFunction('rich_schema', [$this, 'richSchema'], [
+                'needs_context' => true,
+                'is_safe' => ['html'],
+            ]),
         ];
     }
 
-    public function assetUrlFilter($context, $assetName)
+    /**
+     * @param string[] $context
+     */
+    public function assetUrlFilter(array $context, string $assetName) : string
     {
 
         /**
@@ -88,7 +97,10 @@ class TwigExtensions extends AbstractExtension
         return $context['_blog']['base_url'] . '/assets/' . $assetName;
     }
 
-    public function assetFilter($context, $assetName)
+    /**
+     * @param string[] $context
+     */
+    public function assetFilter(array $context, string $assetName) : string
     {
         $blog = $this->getBlogFromContext($context);
         $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
@@ -96,19 +108,27 @@ class TwigExtensions extends AbstractExtension
         return $file?->content ?? '';
     }
 
-    public function langFilter($context, $key, array $args = [])
+    /**
+     * @param string[] $context
+     * @param string[] $args
+     */
+    public function langFilter(array $context, string $key, array $args = []) : ?string
     {
         $blog = $this->getBlogFromContext($context);
         $currentLanguage = LanguageRepository::getLanguageByCode($blog, $context['_lang']['code']);
 
-        if (! isset($this->twigLanguageHandler)) {
+        if (! isset($this->twigLanguageHandler) && $currentLanguage) {
             $this->twigLanguageHandler = new TwigLanguage($blog, $currentLanguage);
         }
 
         return $this->twigLanguageHandler->get($key, $args);
     }
 
-    public function langByNumberFilter($context, $value, array $args = [])
+    /**
+     * @param string[] $context
+     * @param string[] $args
+     */
+    public function langByNumberFilter(array $context, string $value, array $args = []) : ?string
     {
         $zero = $args['zero'] ?? null;
         $one = $args['one'] ?? null;
@@ -126,7 +146,10 @@ class TwigExtensions extends AbstractExtension
         return $this->langFilter($context, $key, [$value]);
     }
 
-    public function templateFilter(Environment $env, $context, $string)
+    /**
+     * @param string[] $context
+     */
+    public function templateFilter(Environment $env, array $context, string $string) : string
     {
         $template = $env->createTemplate($string);
         $html = $template->render($context);
@@ -134,7 +157,10 @@ class TwigExtensions extends AbstractExtension
         return $html;
     }
 
-    public function paginationPageUrlFilter($context, ?int $pageNumber)
+    /**
+     * @param string[] $context
+     */
+    public function paginationPageUrlFilter(array $context, ?int $pageNumber) : string
     {
         $pageNumber ??= 1;
 
@@ -201,7 +227,11 @@ class TwigExtensions extends AbstractExtension
         );
     }
 
-    public function dataFunction($context, array $params = [])
+    /**
+     * @param string[] $context
+     * @param string[] $params
+     */
+    public function dataFunction(array $context, array $params = []) : mixed
     {
         $blog = $this->getBlogFromContext($context);
 
@@ -223,7 +253,7 @@ class TwigExtensions extends AbstractExtension
         return $response;
     }
 
-    public function iconFunction($library, $iconName, $width = null, $height = null): string
+    public function iconFunction(string $library, ?string $iconName, int $width = null, int $height = null): string
     {
 
         if (!$iconName) {
@@ -241,8 +271,11 @@ class TwigExtensions extends AbstractExtension
         }
     }
 
-    // checks if a given URL is the current one
-    public function isCurrentUrlFunction($context, string $url): bool
+    /**
+     * checks if a given URL is the current one
+     * @param string[] $context
+     */
+    public function isCurrentUrlFunction(array $context, string $url): bool
     {
         $currentUrl = $context['_meta']['url'];
         $blogBaseUrl = $context['_blog']['base_url'];
@@ -273,6 +306,27 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
+    public function richSchema(array $context)
+    {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $context['_meta']['title'],
+            'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
+            'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
+            'author' => array_map(fn($author) => array_merge(
+                ['type' => '@Person'],
+                !empty($author['name']) ? ['name' => $author['name']] : [],
+                !empty($author['url']) ? ['url' => $author['url']] : []
+            ), $context['_post']['authors'])
+        ];
+
+        if (!empty($context['_meta']['featured_image'])) {
+            $schema['image'] = [$context['_meta']['featured_image']];
+        }
+
+        return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
+    }
     private function getBlogFromContext($context)
     {
         if (! isset($this->blog)) {
@@ -281,5 +335,10 @@ class TwigExtensions extends AbstractExtension
         }
 
         return $this->blog;
+    }
+
+    private function getDateTimeString(string $timestamp): string
+    {
+        return Carbon::createFromTimestamp($timestamp)->toIso8601String();
     }
 }

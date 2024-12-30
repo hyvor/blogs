@@ -6,6 +6,7 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
+use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Events\MediaCreatedEvent;
@@ -40,6 +41,13 @@ use Illuminate\Events\Dispatcher;
 
 class ClearCacheSubscriber
 {
+
+    private function clearAllCache(Blog $blog): void
+    {
+        $cache = app(CacheService::class);
+        $cache->blog($blog)->clearAllCache();
+    }
+
     private function clearTemplateCache(Blog $blog): void
     {
         $cache = app(CacheService::class);
@@ -92,6 +100,9 @@ class ClearCacheSubscriber
         $events->listen(TemplateEditedEvent::class, [static::class, 'onFileEditedEvent']);
         $events->listen(LangEditedEvent::class, [static::class, 'onFileEditedEvent']);
 
+        // integrations
+        $events->listen(GatedContentChangedEvent::class, [static::class, 'onGatedContentChangedEvent']);
+
     }
 
     private function subscribeSingleEvents(Dispatcher $events): void
@@ -110,18 +121,28 @@ class ClearCacheSubscriber
     }
 
 
-    public function onBlogUpdate(BlogUpdatedEvent $event) : void
+    public function onBlogUpdate(BlogUpdatedEvent $event): void
     {
-        $this->clearTemplateCache($event->blog);
+
+        $hostingChanged = $event->blogOriginal->hosting_at !== $event->blog->hosting_at ||
+            $event->blogOriginal->hosting_domain !== $event->blog->hosting_domain ||
+            $event->blogOriginal->hosting_url !== $event->blog->hosting_url;
+
+        if ($hostingChanged) {
+            $this->clearAllCache($event->blog);
+        } else {
+            $this->clearTemplateCache($event->blog);
+        }
     }
 
-    public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event) : void
+    public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event): void
     {
         $blog = $event->variant->blog;
-        if ($blog) $this->clearTemplateCache($blog);
+        if ($blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onPostUpdate(PostUpdatedEvent $event) : void
+    public function onPostUpdate(PostUpdatedEvent $event): void
     {
         $post = $event->post;
         $blog = $post->blog;
@@ -142,19 +163,22 @@ class ClearCacheSubscriber
         $this->clearTemplateCache($blog);
     }
 
-    public function onPostDelete(PostDeletedEvent $event) : void
+    public function onPostDelete(PostDeletedEvent $event): void
     {
-        if ($blog = $event->post->blog) $this->clearTemplateCache($blog);
+        if ($blog = $event->post->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onPostVariantUpdate(PostVariantUpdatedEvent $event) : void
+    public function onPostVariantUpdate(PostVariantUpdatedEvent $event): void
     {
         $variant = $event->variant;
         $post = $variant->post;
-        if (!$post) return;
+        if (!$post)
+            return;
 
         $blog = $post->blog;
-        if (!$blog) return;
+        if (!$blog)
+            return;
 
         $variantOld = $event->variantOld;
 
@@ -171,94 +195,120 @@ class ClearCacheSubscriber
         }
     }
 
-    public function onPostVariantDelete(PostVariantDeletedEvent $event) : void
+    public function onPostVariantDelete(PostVariantDeletedEvent $event): void
     {
         $post = $event->variant->post;
-        if (!$post) return;
-        if ($blog = $post->blog) $this->clearTemplateCache($blog);
+        if (!$post)
+            return;
+        if ($blog = $post->blog)
+            $this->clearTemplateCache($blog);
     }
 
     public function onUserEvent(
         UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event
-    ) : void
-    {
-        if ($blog = $event->user->blog) $this->clearTemplateCache($blog);
+    ): void {
+        if ($blog = $event->user->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event) : void
+    public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event): void
     {
         $user = $event->variant->user;
-        if (!$user) return;
-        if ($blog = $user->blog) $this->clearTemplateCache($blog);
+        if (!$user)
+            return;
+        if ($blog = $user->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event) : void
+    public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event): void
     {
-        if ($blog = $event->tag->blog) $this->clearTemplateCache($blog);
+        if ($blog = $event->tag->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event) : void
+    public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event): void
     {
         $tag = $event->variant->tag;
-        if (!$tag) return;
-        if ($blog = $tag->blog) $this->clearTemplateCache($blog);
+        if (!$tag)
+            return;
+        if ($blog = $tag->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onNavigationEvent(NavigationChangedEvent $event) : void
+    public function onNavigationEvent(NavigationChangedEvent $event): void
     {
-        if ($blog = $event->navigation->blog) $this->clearTemplateCache($blog);
+        if ($blog = $event->navigation->blog)
+            $this->clearTemplateCache($blog);
     }
-    public function onNavigationVariantEvent(NavigationVariantChangedEvent $event) : void
+    public function onNavigationVariantEvent(NavigationVariantChangedEvent $event): void
     {
         $nav = $event->variant->navigation;
-        if (!$nav) return;
-        if ($blog = $nav->blog) $this->clearTemplateCache($blog);
+        if (!$nav)
+            return;
+        if ($blog = $nav->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onLanguageEvent(LanguageChangedEvent $event) : void
+    public function onLanguageEvent(LanguageChangedEvent $event): void
     {
-        if ($blog = $event->language->blog) $this->clearTemplateCache($blog);
+        if ($blog = $event->language->blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onRouteEvent(RouteChangedEvent $event) : void
+    public function onRouteEvent(RouteChangedEvent $event): void
     {
-        if ($blog = $event->route->blog) $this->clearTemplateCache($blog);
+        if ($blog = $event->route->blog)
+            $this->clearTemplateCache($blog);
     }
 
     public function onFileEditedEvent(
-        TemplateEditedEvent | ConfigEditedEvent | LangEditedEvent $event
-    ) : void
-    {
+        TemplateEditedEvent|ConfigEditedEvent|LangEditedEvent $event
+    ): void {
         $blog = $event->file->blog;
         if ($blog)
             $this->clearTemplateCache($blog);
     }
 
-    public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event) : void
+    public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event): void
     {
         $media = $event->media;
         $blog = $media->blog;
 
-        if (!$blog) return;
+        if (!$blog)
+            return;
 
         $path = PermalinkRepository::getMediaPermalink($media, $blog, true);
         $this->clearSingleCache($blog, $path);
     }
 
-    public function onAssetEdit(AssetEditedEvent $event) : void
+    public function onAssetEdit(AssetEditedEvent $event): void
     {
         $path = PermalinkRepository::getAssetPermalink($event->name, $event->blog, true);
         $this->clearSingleCache($event->blog, $path);
     }
 
-    public function onStylesEdit(StylesEditedEvent $event) : void
+    public function onStylesEdit(StylesEditedEvent $event): void
     {
         $this->clearSingleCache($event->blog, '/styles.css');
     }
 
-    public function onRedirectEvent(RedirectChangedEvent $event) : void
+    public function onRedirectEvent(RedirectChangedEvent $event): void
     {
-        if ($blog = $event->redirect->blog)
-            $this->clearSingleCache($blog, $event->redirect->path);
+        $redirect = $event->redirect;
+        $blog = $redirect->blog;
+
+        if (!$blog)
+            return;
+
+        if ($redirect->dynamic) {
+            $this->clearAllCache($blog);
+        } else {
+            $this->clearSingleCache($blog, $redirect->getOriginal('path'));
+        }
+    }
+
+    public function onGatedContentChangedEvent(GatedContentChangedEvent $event): void
+    {
+        $this->clearTemplateCache($event->blog);
     }
 }

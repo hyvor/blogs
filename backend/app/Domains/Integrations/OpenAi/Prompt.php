@@ -20,7 +20,7 @@ class Prompt
         'Reply in markdown format.' .
         'First level of headings is h2.';
 
-    const GPT_MODEL = 'gpt-3.5-turbo';
+    const GPT_MODEL = 'gpt-4o-mini';
 
     public function __construct(
         private ?Post $post,

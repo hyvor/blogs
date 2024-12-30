@@ -7,6 +7,7 @@ use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Models\ApiKey;
 use App\Models\Blog;
+use App\Models\HyvorTalkGatedContentRule;
 use App\Models\Language;
 use App\Models\Media;
 use App\Models\Navigation;
@@ -41,6 +42,7 @@ class ResourceAccessMiddleware
         '/api-key' => ApiKey::class,
         '/webhook' => Webhook::class,
         '/theme/file' => ThemeFile::class,
+        '/integrations/hyvor-talk/gated-content-rule' => HyvorTalkGatedContentRule::class,
     ];
 
     public function __construct(Blog $blog)
@@ -72,7 +74,7 @@ class ResourceAccessMiddleware
             preg_match('~api/console/v0/blog/[^/]+(/[a-z/-]+)/\d+~', $path, $matches);
 
             // ex: /post
-            $routePrefix = $matches[1];
+            $routePrefix = $matches[1] ?? '';
 
             if (! array_key_exists($routePrefix, $this->models)) {
                 throw new TrustedException("Unable to find the $routePrefix to verify blog relationship");

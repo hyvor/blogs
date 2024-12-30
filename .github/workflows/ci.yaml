@@ -2,9 +2,9 @@ name: Test
 
 on:
     push:
-        branches: [ main ]
+        branches: [main]
     pull_request:
-        branches: [ main ]
+        branches: [main]
     workflow_dispatch:
 
 jobs:
@@ -13,61 +13,87 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   name: Checkout
-                uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
-            -   name: Setup Node
-                uses: actions/setup-node@v3
-                with:
-                    node-version: 18
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
 
-            -   name: Set up services
-                run: |
-                    docker-compose -f docker/ci/docker-compose.ci.yaml up -d
+            - name: Set up services
+              run: |
+                  docker compose -f meta/ci/docker-compose.ci.yaml up -d
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    coverage: "none"
-                    php-version: "8.1"
-                    ini-file: development
-                    tools: composer:v2
-                    extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  coverage: "none"
+                  php-version: "8.3"
+                  ini-file: development
+                  tools: composer:v2
+                  extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
 
-            -   name: Install dependencies
-                working-directory: backend
-                run: |
-                    # npm ci --ignore-scripts
-                    # npm run build
-                    npm ci
-                    composer install --ansi --no-progress
+            - name: Install dependencies
+              working-directory: backend
+              run: |
+                  # npm ci --ignore-scripts
+                  # npm run build
+                  npm ci
+                  composer install --ansi --no-progress
 
-            -   name: Run tests
-                working-directory: backend
-                run: vendor/bin/pest
+            - name: Run tests
+              working-directory: backend
+              run: vendor/bin/pest
+
+    static_analysis:
+        name: PHP Static analysis
+        runs-on: ubuntu-22.04
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Configure PHP 8.3
+              uses: shivammathur/setup-php@master
+              with:
+                  php-version: 8.3
+                  extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+                  ini-file: development
+
+            - name: Install dependencies
+              working-directory: backend
+              run: |
+                  # npm ci --ignore-scripts
+                  # npm run build
+                  npm ci
+                  composer install --ansi --no-progress
+
+            - name: Run tests
+              working-directory: backend
+              run: vendor/bin/phpstan analyse --ansi
 
     svelte-check:
         name: "Svelte Check"
         runs-on: ubuntu-latest
 
         steps:
-            -   name: Checkout
-                uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
-            -   name: Setup Node
-                uses: actions/setup-node@v3
-                with:
-                    node-version: 18
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
 
-            -   name: Install dependencies
-                working-directory: frontend
-                run: |
-                    npm ci
+            - name: Install dependencies
+              working-directory: frontend
+              run: |
+                  npm ci
 
-            -   name: Run tests
-                working-directory: frontend
-                run: npm run check
-
+            - name: Run tests
+              working-directory: frontend
+              run: npm run check
 
     # e2e:
     #     name: "E2E Tests"
@@ -166,7 +192,7 @@ jobs:
     #                 npm install
     #                 npm ci --ignore-scripts
     #                 npm run build
-            
+
     #         -   name: Run unit tests
     #             run:
     #                 npx vitest

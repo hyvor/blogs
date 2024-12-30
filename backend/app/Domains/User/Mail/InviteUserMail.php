@@ -4,7 +4,7 @@ namespace App\Domains\User\Mail;
 
 use App\Domains\App\DomainService;
 use App\Models\User;
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -19,7 +19,7 @@ class InviteUserMail extends Mailable
 
     public function __construct(
         public User $user,
-        public HyvorUser $hyvorUser
+        public AuthUser $hyvorUser
     ) {
         $route = URL::temporarySignedRoute('user-accept-invite', now()->addHours(24), [
             'user_id' => $user->id,
@@ -27,7 +27,7 @@ class InviteUserMail extends Mailable
         $this->link = DomainService::getAppUrl() . $route;
     }
 
-    public function build()
+    public function build() : static
     {
         return $this->view('emails.invite-user');
     }

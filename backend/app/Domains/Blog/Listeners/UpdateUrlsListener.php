@@ -3,14 +3,14 @@
 namespace App\Domains\Blog\Listeners;
 
 use App\Domains\Blog\Events\BlogUrlChangedEvent;
-use App\Domains\Blog\Jobs\UpdateUrlsJob;
+use App\Domains\Blog\Jobs\UpdateUrlsInBlogJob;
 
 class UpdateUrlsListener
 {
 
     public function handle(BlogUrlChangedEvent $event) : void
     {
-        UpdateUrlsJob::dispatch($event->blog, $event->oldUrl, $event->newUrl);
+        UpdateUrlsInBlogJob::dispatch($event->blog, $event->oldUrl, $event->newUrl);
     }
 
 }

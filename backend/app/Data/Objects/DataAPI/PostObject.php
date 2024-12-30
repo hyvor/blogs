@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Integrations\HyvorTalk\HyvorTalkGatedContentService;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
@@ -60,6 +61,11 @@ class PostObject
     public array $tags;
 
     /**
+     * @var TagObject[]
+     */
+    public array $tags_private;
+
+    /**
      * @var AuthorObject[]
      */
     public array $authors;
@@ -80,14 +86,13 @@ class PostObject
         $this->slug = $variant->slug ?? '';
 
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
-        $this->content = $variant->content_html ?? '';
+        $this->content = HyvorTalkGatedContentService::getPostContentHtml($blog, $post, $variant);
         $this->words = $variant->words ?? 0;
         $this->title = $variant->title ?? null;
         $this->description = $variant->description ?? null;
         $this->featured_image_url = $post->featured_image_url;
         $this->canonical_url = $post->canonical_url;
 
-        // TODO: Add Tag code
         $this->code_head = $post->code_head ?? '';
         $this->code_foot = $post->code_foot ?? '';
 
@@ -102,9 +107,19 @@ class PostObject
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 
-        $this->tags = $post->tags->map(function ($tag) use ($blog, $language) {
-            return new TagObject($tag, $blog, $language);
-        })->toArray();
+        $this->tags = $post
+            ->tags
+            ->filter(fn ($tag) => $tag->is_private === false)
+            ->map(function ($tag) use ($blog, $language) {
+                return new TagObject($tag, $blog, $language);
+            })->toArray();
+
+        $this->tags_private = $post
+            ->tags
+            ->filter(fn ($tag) => $tag->is_private === true)
+            ->map(function ($tag) use ($blog, $language) {
+                return new TagObject($tag, $blog, $language);
+            })->toArray();
 
         $this->authors = $post->authors->map(function ($author) use ($blog, $language) {
             return new AuthorObject($author, $blog, $language);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EditorView } from "prosemirror-view";
-	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
+	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postLanguageStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import EditorTop from "./EditorTop/EditorTop.svelte";
     import Prosemirror from "./Prosemirror.svelte";
 	import PublishedOverlay from "./PublishedOverlay.svelte";

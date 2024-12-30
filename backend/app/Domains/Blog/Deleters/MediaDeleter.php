@@ -5,6 +5,7 @@ namespace App\Domains\Blog\Deleters;
 use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
 use App\Models\Media;
+use Illuminate\Database\Eloquent\Model;
 
 class MediaDeleter implements DeleterInterface
 {
@@ -12,7 +13,7 @@ class MediaDeleter implements DeleterInterface
     {
     }
 
-    public function delete()
+    public function delete() : void
     {
         Media::where('blog_id', $this->blog->id)
             ->chunk(100, function ($medias) {

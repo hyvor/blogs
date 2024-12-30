@@ -102,6 +102,7 @@ class ConsoleBlogController extends Controller
             'seo_indexing' => 'boolean',
             'seo_robots_txt' => 'string|nullable',
             'seo_external_links_follow' => new Enum(SeoExternalLinksFollowEnum::class),
+            'seo_rich_schema' => 'boolean',
 
             'comments_code' => 'string|nullable',
             'newsletter_code' => 'string|nullable',
@@ -115,7 +116,9 @@ class ConsoleBlogController extends Controller
             'heading_anchors' => 'boolean',
 
             'link_analysis_enabled' => 'boolean',
-            'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class)
+            'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class),
+
+            'hb_branding' => 'boolean'
         ];
         $request->validate($validate);
 

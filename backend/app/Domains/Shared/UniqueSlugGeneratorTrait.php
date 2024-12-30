@@ -29,6 +29,10 @@ trait UniqueSlugGeneratorTrait
         }
     }
 
+    /**
+     * @param  string[]  $checks
+     * @return string
+     */
     public static function generate(array $checks): string
     {
         $generator = new static();

@@ -5,11 +5,12 @@ namespace App\Http\Controllers\CliAPI;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CliAPIController
 {
-    public function updateFiles(Request $request, Blog $blog)
+    public function updateFiles(Request $request, Blog $blog) : JsonResponse
     {
         $files = (array) $request->input('files');
         $reset = (bool) $request->input('reset');
@@ -23,7 +24,7 @@ class CliAPIController
             $split = explode('/', $path);
 
             $file = $split[1] ?? $split[0] ?? null;
-            $folder = ThemeFileFolderEnum::tryFrom(isset($split[1]) ? $split[0] : null);
+            $folder = ThemeFileFolderEnum::tryFrom(isset($split[1]) ? $split[0] : '');
 
             if ($file) {
                 ThemeFilesRepository::createOrUpdateFile(

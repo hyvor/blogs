@@ -9,7 +9,7 @@ use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
-use Hyvor\HyvorConnecter\Login;
+use Hyvor\Internal\Auth\Auth;
 use Illuminate\Http\Request;
 
 class ConsoleApiAccessMiddleware
@@ -55,7 +55,7 @@ class ConsoleApiAccessMiddleware
             );
 
         } else {
-            $hyvorUser = Login::check();
+            $hyvorUser = Auth::check();
             if (! $hyvorUser) {
                 throw new TrustedException('You are not logged in');
             }

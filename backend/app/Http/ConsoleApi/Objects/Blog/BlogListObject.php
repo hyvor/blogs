@@ -42,7 +42,7 @@ class BlogListObject
 
     }
 
-    private function setBlogAttrs(Blog $blog)
+    private function setBlogAttrs(Blog $blog) : void
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
@@ -56,6 +56,7 @@ class BlogListObject
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
 
+        // TODO: Seems like a bug
         $this->subscription = $blog->subscription ?
             new SubscriptionObject($blog->subscription) :
             null;

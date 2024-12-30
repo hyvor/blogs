@@ -14,7 +14,7 @@ Route::domain(config('blogs.domain_app'))
     ->get('/api/delivery/v0/{subdomain}', [DeliveryAPIController::class, 'handle']);
 
 // subdomain
-Route::domain('{subdomain}.'.config('blogs.domain_delivery'))
+Route::domain('{subdomain}.'.config('blogs.delivery_domain'))
     ->middleware([
         SubdomainMiddleware::class,
         RedirectIfNotOnSubdomainMiddleware::class,

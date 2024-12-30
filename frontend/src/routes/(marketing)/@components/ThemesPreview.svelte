@@ -3,8 +3,8 @@
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
-	import { IconButton, IconMessage, Link, Loader, NavLink } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots } from "@hyvor/icons";
+	import { IconButton, IconMessage, Link, Loader, NavLink, Text, Button } from "@hyvor/design/components";
+	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots, IconGithub } from "@hyvor/icons";
 
     export let lockScroll = false;
 
@@ -68,6 +68,7 @@
         </a>
 
         <div class="nav hds-box" bind:this={navEl}>
+            <div>
             {#each [originalThemes, portedThemes] as group, i}
                 <div class="section">
                     {#if i === 0}
@@ -92,6 +93,17 @@
                     {/if}
                 {/each}
             {/each}
+            </div>
+
+            <div class="open-source">
+                <div class="text">
+                    <Text small>Themes are open-source</Text>
+                </div>
+                <Button size="small" as="a" href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank">
+                    View Source
+                    <IconGithub slot="end" size={14} />
+                </Button>
+            </div>
         </div>
 
         <div class="preview hds-box">
@@ -203,6 +215,19 @@
 
     .nav {
         padding-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .open-source {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .text {
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
     }
 
     .nav :global(a) {
@@ -286,6 +311,15 @@
             margin-bottom: 15px;
             display: none;
         }
+
+        .open-source{
+            border-top: 1px solid var(--border);
+            flex-direction: row;
+            justify-content:space-around;
+            margin-top: 5%;
+            padding-top: 15px;
+        }
+
         .preview {
             height: 600px;
         }

@@ -9,12 +9,13 @@ use App\Models\Blog;
 use App\Models\Subscription;
 use DateTimeInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
 
 class SubscriptionService
 {
     /**
      * @param Blog $blog
-     * @return Collection<Subscription>
+     * @return Collection<int, Subscription>
      */
     public static function getAllSubscriptions(Blog $blog): Collection
     {
@@ -106,7 +107,7 @@ class SubscriptionService
 
     public static function cancelSubscription(Subscription $subscription, DateTimeInterface $date): Subscription
     {
-        $subscription->ends_at = $date;
+        $subscription->ends_at = Carbon::instance($date);
         $subscription->status = SubscriptionStatusEnum::DELETED;
         $subscription->save();
 

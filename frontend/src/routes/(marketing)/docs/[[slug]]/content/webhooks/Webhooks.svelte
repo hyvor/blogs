@@ -1,5 +1,5 @@
 <script>
-	import { Callout, CodeBlock, Table, TableRow, Text } from "@hyvor/design/components";
+	import { Callout, CodeBlock, Link, Table, TableRow, Text } from "@hyvor/design/components";
 	import { IconExclamationCircle } from "@hyvor/icons";
 </script>
 <h1>Webhooks</h1>
@@ -13,11 +13,6 @@
     <li>Each webhook can subscribe to one or more events</li>
 </ul>
 
-<Callout type="warning">
-    <IconExclamationCircle slot="icon" />
-    Currently, only cache events are enabled. They can be used for <a href="/docs/subdirectory">subdirectory hosting</a>. The other events will be enabled in February 2024.
-</Callout>
-
 <Table columns="1fr 2fr 1fr">
     <TableRow head>
         <div>Event</div>
@@ -27,6 +22,9 @@
     <TableRow>
         <div><code>blog.updated</code></div>
         <div>Any setting of the blog is updated</div>
+        <div>
+            <code>{'{ blog: '}<a href="/docs/api-console#blog-object">Blog</a>{' }'}</code>            
+        </div>
     </TableRow>
     
     <div class="separator"></div>
@@ -36,50 +34,24 @@
     <TableRow>
         <div><code>post.created</code></div>
         <div>A new post is created</div>
+        <div>
+            <code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>post.updated</code></div>
         <div>A post is updated</div>
+        <div>
+            <code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>post.deleted</code></div>
         <div>A post is deleted</div>
+        <div>
+            <code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+        </div>
     </TableRow>
-    <TableRow>
-        <div><code>post.tags.changed</code></div>
-        <div>Tags assigned to a post are changed</div>
-    </TableRow>
-    <TableRow>
-        <div><code>post.authors.changed</code></div>
-        <div>Authors assigned to a post are changed</div>
-    </TableRow>
-
-    <div class="separator"></div>
-
-    <div class="title">Pages</div>
-
-    <!-- all with page. -->
-    <TableRow>
-        <div><code>page.created</code></div>
-        <div>A new page is created</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.updated</code></div>
-        <div>A page is updated</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.deleted</code></div>
-        <div>A page is deleted</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.tags.changed</code></div>
-        <div>Tags assigned to a page are changed</div>
-    </TableRow>
-    <TableRow>
-        <div><code>page.authors.changed</code></div>
-        <div>Authors assigned to a page are changed</div>
-    </TableRow>
-    
 
     <div class="separator"></div>
 
@@ -90,14 +62,23 @@
     <TableRow>
         <div><code>tag.created</code></div>
         <div>A new tag is created</div>
+        <div>
+            <code>{'{ tag: '}<a href="/docs/api-console#tag-object">Tag</a>{' }'}</code>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>tag.updated</code></div>
         <div>A tag is updated</div>
+        <div>
+            <code>{'{ tag: '}<a href="/docs/api-console#tag-object">Tag</a>{' }'}</code>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>tag.deleted</code></div>
         <div>A tag is deleted</div>
+        <div>
+            <code>{'{ tag: '}<a href="/docs/api-console#tag-object">Tag</a>{' }'}</code>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -109,14 +90,23 @@
     <TableRow>
         <div><code>user.created</code></div>
         <div>A new user is created</div>
+        <div>
+            <code>{'{ user: '}<a href="/docs/api-console#user-object">User</a>{' }'}</code>
+        </div>
     </TableRow> 
     <TableRow>
         <div><code>user.updated</code></div>
         <div>A user is updated</div>
+        <div>
+            <code>{'{ user: '}<a href="/docs/api-console#user-object">User</a>{' }'}</code>
+        </div>
     </TableRow>
     <TableRow>
         <div><code>user.deleted</code></div>
         <div>A user is deleted</div>
+        <div>
+            <code>{'{ user: '}<a href="/docs/api-console#user-object">User</a>{' }'}</code>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -125,11 +115,17 @@
     <TableRow>
         <div><code>media.created</code></div>
         <div>A media item is added</div>
+        <div>
+            <code>{'{ media: '}<a href="/docs/api-console#media-object">Media</a>{' }'}</code>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>media.deleted</code></div>
         <div>A media item is deleted</div>
+        <div>
+            <code>{'{ media: '}<a href="/docs/api-console#media-object">Media</a>{' }'}</code>
+        </div>
     </TableRow>
 
     <div class="separator"></div>
@@ -139,16 +135,25 @@
     <TableRow>
         <div><code>navigation.changed</code></div>
         <div><a href="/docs/navigation">Blog navigation</a> changed</div>
+        <div>
+            <code>{'{ navigation: '}<a href="/docs/api-console#navigation-object">Navigation</a>{'[] }'}</code>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>routes.changed</code></div>
         <div><a href="/docs/routes">Blog routes</a> changed</div>
+        <div>
+            <code>{'{ routes: '}<a href="/docs/api-console#route-object">Route</a>{'[] }'}</code>
+        </div>
     </TableRow>
 
     <TableRow>
         <div><code>languages.changed</code></div>
         <div><a href="/docs/languages">Blog languages</a> changed</div>
+        <div>
+            <code>{'{ languages: '}<a href="/docs/api-console#language-object">Language</a>{'[] }'}</code>
+        </div>
     </TableRow>
 
 
@@ -161,7 +166,7 @@
             When cache of a single path should be cleared (styles.css, assets, media, etc.)
         </div>
         <div>
-            <code>{`{path: string}`}</code>
+            <code>{`{ path: string }`}</code>
         </div>
     </TableRow>
     <TableRow>

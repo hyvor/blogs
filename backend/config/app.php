@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Hyvor Blogs'),
 
     /*
     |--------------------------------------------------------------------------
@@ -177,11 +177,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         // \Hyvor\Auth\HyvorAuthServiceProvider::class,
-
-        /*
-        * 3rd Party Providers
-        */
-        App\Providers\TelescopeServiceProvider::class,
 
     ],
 

@@ -3,6 +3,8 @@
 namespace Tests\Feature\DataAPI;
 
 use App\Models\Blog;
+use App\Models\HyvorTalkGatedContentRule;
+use App\Models\HyvorTalkWebsite;
 use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
@@ -392,4 +394,44 @@ it('filters by author slug', function () {
         'filter' => "author.slug='$user->slug'",
     ]);
     $response->assertJsonPath('data.0.authors.0.slug', $user->slug);
+});
+
+it('fetches with ht gated content', function() {
+
+    HyvorTalkWebsite::create([
+        'blog_id' => $this->blog->id,
+        'website_id' => 10,
+        'encryption_key' => 'my-key'
+    ]);
+
+    $tag = addTag($this->blog);
+    HyvorTalkGatedContentRule::factory()->create([
+        'blog_id' => $this->blog->id,
+        'tag_id' => $tag->id,
+    ]);
+    addTagToPost($this->posts[0], $tag);
+    $this->posts[1]->variants[0]->update(['content_html' => 'my-content']);
+
+    DB::enableQueryLog();
+
+    $response = dataApi($this->blog, '/posts', [
+        'sort' => 'id ASC',
+        ])
+        ->assertOk()
+        ->json();
+
+    $posts = $response['data'];
+
+    expect($posts[0]['id'])->toBe($this->posts[0]->id);
+    expect($posts[0]['content'])->toContain('<hyvor-talk-gated-content');
+
+    expect($posts[1]['id'])->toBe($this->posts[1]->id);
+    expect($posts[1]['content'])->toBe('my-content');
+
+    $queries = collect(DB::getQueryLog());
+
+    // make sure fetching gated content does not cause n+1 queries
+    expect($queries->where(fn ($q) => str_contains($q['query'], 'hyvor_talk_gated_content_rules'))->count())->toBe(1);
+    expect($queries->where(fn ($q) => str_contains($q['query'], 'inter_hyvor_talk_websites'))->count())->toBe(1);
+
 });

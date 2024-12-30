@@ -65,6 +65,8 @@ class BlogObject
 
     public ?string $seo_robots_txt;
 
+    public bool $seo_rich_schema;
+
     public SeoExternalLinksFollowEnum $seo_external_links_follow;
 
     public ?string $comments_code;
@@ -87,6 +89,8 @@ class BlogObject
 
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReportEnum $link_analysis_email_report;
+
+    public ?bool $hb_branding;
 
     /**
      * @var BlogVariantObject[]
@@ -136,7 +140,7 @@ class BlogObject
         $this->seo_indexing = (bool) $meta->seo_indexing;
         $this->seo_robots_txt = $meta->seo_robots_txt;
         $this->seo_external_links_follow = SeoExternalLinksFollowEnum::from($meta->seo_external_links_follow);
-
+        $this->seo_rich_schema = (bool) $meta->seo_rich_schema;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
@@ -150,6 +154,8 @@ class BlogObject
 
         $this->link_analysis_enabled = (bool) $meta->link_analysis_enabled;
         $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report);
+
+        $this->hb_branding = $meta->hb_branding;
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
             return new BlogVariantObject($variant);

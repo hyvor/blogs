@@ -4,18 +4,26 @@ namespace App\Domains\Webhook;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use App\Domains\Webhook\Exceptions\DeliveryFailedException;
+use App\Data\Enums\WebhookEventEnum;
+use App\Domains\Webhook\Exceptions\DeliveryPanicException;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
-use Exception;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class WebhookDeliveryService
 {
+
+    /**
+     * @param array<mixed> $data
+     */
     public static function createDelivery(
         Webhook $webhook,
-        string $eventName,
+        WebhookEventEnum $eventName,
         array $data
-    ) {
+    ) : WebhookDelivery 
+    {
         return WebhookDelivery::create([
             'url' => $webhook->url,
             'status' => WebhookDeliveryStatusEnum::PENDING,
@@ -25,50 +33,59 @@ class WebhookDeliveryService
         ]);
     }
 
-    public static function deliver(WebhookDelivery $delivery)
+    public static function deliver(WebhookDelivery $delivery) : void
     {
         $webhook = $delivery->webhook;
+
+        if (!$webhook) {
+            throw new DeliveryPanicException();
+        }
+
         $blog = $webhook->blog;
 
         if (!$blog) {
-            self::fail($delivery);
-            return;
+            throw new DeliveryPanicException();
         }
 
         $payload = [
             'subdomain' => $blog->subdomain,
-            'timestamp' => $delivery->created_at->timestamp,
+            'timestamp' => $delivery->created_at ? $delivery->created_at->timestamp : null,
             'event' => $delivery->event,
             'data' => $delivery->data
         ];
+
+
+        if (!json_encode($payload))
+            return;
 
         $signature = hash_hmac('sha256', json_encode($payload), $webhook->secret);
 
         try {
             $response = Http::withHeaders(['X-Signature' => $signature])->post($delivery->url, $payload);
-        } catch (Exception) {
-            self::tempFail($delivery);
+        } catch (ConnectionException|RequestException $e) {
+            throw new DeliveryFailedException($e->getMessage());
         }
 
         $delivery->http_status = $response->status();
-        $delivery->response = substr($response->body(), 0, 1024);
+        $responseBody = substr($response->body(), 0, 1024);
+        $delivery->response = $responseBody;
 
         if ($response->successful()) {
             $delivery->status = WebhookDeliveryStatusEnum::SUCCESS;
             $delivery->save();
         } else {
-            self::tempFail($delivery);
+            throw new DeliveryFailedException($responseBody);
         }
     }
 
-    private static function tempFail(WebhookDelivery $delivery)
+    public static function setRetrying(WebhookDelivery $delivery, string $error) : void
     {
+        $delivery->response = $error;
         $delivery->status = WebhookDeliveryStatusEnum::RETRYING;
         $delivery->save();
-        throw new DeliveryFailedException();
     }
 
-    public static function fail(WebhookDelivery $delivery)
+    public static function setFailed(WebhookDelivery $delivery) : void
     {
         $delivery->status = WebhookDeliveryStatusEnum::FAILED;
         $delivery->save();

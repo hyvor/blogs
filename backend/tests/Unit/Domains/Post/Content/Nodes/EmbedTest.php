@@ -6,18 +6,25 @@ use App\Data\Enums\ResultEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Domains\Post\Content\PostContentService;
 use App\Models\UrlData;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->url = 'https://example.com';
     $this->html = '<div>Hello World</div>';
 
     // add URL data first
-    UrlData::create([
-        'fetch_type' => UrlDataFetchTypeEnum::EMBED,
-        'url' => $this->url,
-        'final_url' => $this->url,
-        'result' => ResultEnum::OK,
-        'html' => $this->html,
+//    UrlData::create([
+//        'fetch_type' => UrlDataFetchTypeEnum::EMBED,
+//        'url' => $this->url,
+//        'final_url' => $this->url,
+//        'result' => ResultEnum::OK,
+//        'html' => $this->html,
+//    ]);
+
+    Http::fake([
+        'https://hyvor.com/api/internal/unfold/unfold*' => Http::response([
+            'embed' => $this->html,
+        ])
     ]);
 });
 

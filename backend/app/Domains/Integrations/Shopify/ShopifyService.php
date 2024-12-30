@@ -55,8 +55,12 @@ class ShopifyService
      */
     public function hasValidProxySignature(array $params): bool
     {
-        $signature = strval($params['signature']);
-
+        if (is_array($params['signature'])) {
+            $signature = implode(',', $params['signature']);
+        } else {
+            $signature = strval($params['signature']);
+        }
+        
         $data = collect($params)
             ->sortKeys()
             ->filter(fn ($val, $key) => $key !== 'signature')
@@ -120,7 +124,7 @@ class ShopifyService
         }
 
         /** @var string $accessToken */
-        $accessToken = $response->json()['access_token']; // @phpstan-ignore-line
+        $accessToken = $response->json()['access_token'];
 
         return $accessToken;
     }
@@ -186,9 +190,9 @@ class ShopifyService
 
         if ($response->successful()) {
             /** @var string $name */
-            $name = $response->json()['data']['shop']['name']; // @phpstan-ignore-line
+            $name = $response->json()['data']['shop']['name'];
             /** @var string $url */
-            $url = $response->json()['data']['shop']['primaryDomain']['url'] ?? $default; // @phpstan-ignore-line
+            $url = $response->json()['data']['shop']['primaryDomain']['url'] ?? $default;
         }
 
         return [

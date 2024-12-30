@@ -1,4 +1,3 @@
-import { WebhookEventNames } from "../[subdomain]/settings/webhooks/webhookActions";
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance';
 
@@ -81,6 +80,7 @@ export interface Blog {
     code_foot: string | null,
 
     seo_indexing: boolean,
+    seo_rich_schema: boolean,
     seo_robots_txt: string | null,
     seo_external_links_follow: 'follow' | 'nofollow',
     comments_code: string | null,
@@ -100,6 +100,7 @@ export interface Blog {
     link_analysis_enabled: boolean,
     link_analysis_email_report: 'always' | 'broken' | 'never',
 
+    hb_branding: boolean | null,
 }
 
 export interface BlogCounts {
@@ -206,6 +207,7 @@ export type Tag = {
     id: number;
     created_at: number;
     updated_at: number;
+    is_private: boolean;
 
     slug: string;
 
@@ -263,6 +265,7 @@ export interface UnsplashImage {
 export interface Redirect {
     id: number;
     created_at: number;
+    dynamic: boolean;
     path: string;
     to: string;
     type: 'temporary' | 'permanent'
@@ -310,13 +313,38 @@ export interface ApiKey {
 
 // WEBHOOK
 
-export type WebhookEvent = keyof typeof WebhookEventNames;
+export enum WebhookEventType {
+	BLOG_UPDATED = 'blog.updated',
+
+	POST_CREATED = 'post.created',
+	POST_UPDATED = 'post.updated',
+	POST_DELETED = 'post.deleted',
+
+	TAG_CREATED = 'tag.created',
+	TAG_UPDATED = 'tag.updated',
+	TAG_DELETED = 'tag.deleted',
+
+	USER_CREATED = 'user.created',
+	USER_UPDATED = 'user.updated',
+	USER_DELETED = 'user.deleted',
+
+	MEDIA_CREATED = 'media.created',
+	MEDIA_DELETED = 'media.deleted',
+
+	NAVIGATION_CHANGED = 'navigation.changed',
+	ROUTES_CHANGED = 'routes.changed',
+	LANGUAGES_CHANGED = 'languages.changed',
+
+	CACHE_SINGLE = 'cache.single',
+	CACHE_TEMPLATES = 'cache.templates',
+	CACHE_ALL = 'cache.all'
+}
 
 
 export interface Webhook {
     id: number,
     url: string,
-    events: WebhookEvent[],
+    events: WebhookEventType[],
     secret: string
 }
 
@@ -480,6 +508,9 @@ export interface GptPrompt {
     gpt_response: string,
 }
 
+/**
+ * @deprecated
+ */
 export interface UrlData {
     url: string,
     original_url: string,
@@ -490,4 +521,36 @@ export interface UrlData {
     thumbnail_url: string | null,
     icon_url: string | null,
     site: string | null,
+}
+
+export interface UnfoldedLink {
+    url: string;
+    lastUrl: string;
+    title: string | null;
+    description: string | null;
+    authors: unknown[];
+    tags: unknown[];
+    siteName: string | null;
+    siteUrl: string | null;
+    canonicalUrl: string | null;
+    publishedTime: number | null;
+    modifiedTime: number | null;
+    thumbnailUrl: string | null;
+    iconUrl: string | null;
+    locale: string | null;
+}
+
+export interface UnfoldedEmbed {
+    url: string,
+    embed: string;
+}
+
+
+// === Hyvor Talk
+
+export interface HyvorTalkGatedContentRule {
+    id: number,
+    tag: Tag,
+    minimum_plan: string | null,
+    gate: string | null
 }

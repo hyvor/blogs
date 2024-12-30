@@ -17,7 +17,6 @@ use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
-use App\Exceptions\SafetyException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\BlockedUser;
 use App\Models\Blog;
@@ -26,7 +25,7 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\FilterQ;
-use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,7 +35,7 @@ class UserRepository
      * @param  Blog  $blog
      * @param  int  $limit
      * @param  int  $offset
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public static function getUsers(Blog $blog, int $limit, int $offset = 0)
     {
@@ -62,7 +61,7 @@ class UserRepository
      * @param  Blog  $blog
      * @param  string  $search
      * @param  int  $limit
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public static function searchUsers(Blog $blog, string $search, int $limit)
     {
@@ -141,7 +140,7 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
-        $hyvorUser = Userbase::fromId($hyvorUserId, true);
+        $hyvorUser = AuthUser::fromId($hyvorUserId, true);
 
         if (! $hyvorUser) {
             throw new Exception('User not found');
@@ -326,7 +325,7 @@ class UserRepository
         if (!$blog->hyvor_user_id) {
             return null;
         }
-        $hyvorUser = Userbase::fromId($blog->hyvor_user_id, true);
+        $hyvorUser = AuthUser::fromId($blog->hyvor_user_id);
 
         if (!$hyvorUser) {
             return null;
@@ -337,7 +336,7 @@ class UserRepository
 
     public static function sendInviteEmail(User $user)
     {
-        $hyvorUser = Userbase::fromId($user->hyvor_user_id, true);
+        $hyvorUser = AuthUser::fromId($user->hyvor_user_id);
 
         Mail::to($hyvorUser->email)->send(new InviteUserMail($user, $hyvorUser));
     }

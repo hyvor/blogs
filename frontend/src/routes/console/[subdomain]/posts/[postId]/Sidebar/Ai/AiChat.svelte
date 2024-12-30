@@ -235,7 +235,7 @@
                 </Button>
             </div>
             <div class="disclaimer">
-                This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
+                This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate results.
             </div>
         </div>
 

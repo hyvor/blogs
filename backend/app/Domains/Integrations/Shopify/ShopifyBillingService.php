@@ -77,44 +77,50 @@ class ShopifyBillingService
         return strval($chargeId);
     }
 
-    public static function cancelSubscription(ShopifyShop $shop)
+    public static function cancelSubscription(ShopifyShop $shop) : void
     {
-        $subscription = SubscriptionService::getActiveBlogSubscription($shop->blog);
 
-        if (!$subscription) {
-            return;
-        }
+      $blog = $shop->blog;
 
-        $chargeId = $subscription->getMeta('shopify_charge_id');
-        $gid = "gid://shopify/AppSubscription/$chargeId";
+      if (!$blog)
+          return;
 
-        $query = <<<GQL
-        mutation {
-          appSubscriptionCancel(
-            id: "$gid"
-          ) {
-            userErrors {
-              field
-              message
-            }
-            appSubscription {
-              id
-              status
-            }
+      $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+
+      if (!$subscription) {
+          return;
+      }
+
+      $chargeId = $subscription->getMeta('shopify_charge_id');
+      $gid = "gid://shopify/AppSubscription/$chargeId";
+
+      $query = <<<GQL
+      mutation {
+        appSubscriptionCancel(
+          id: "$gid"
+        ) {
+          userErrors {
+            field
+            message
+          }
+          appSubscription {
+            id
+            status
           }
         }
-        GQL;
+      }
+      GQL;
 
-        $response = ShopifyService::callApi($shop, $query);
+      $response = ShopifyService::callApi($shop, $query);
 
-        if (!$response->successful()) {
-            throw new TrustedException('Failed to cancel the subscription (HTTP ERROR)');
-        }
+      if (!$response->successful()) {
+          throw new TrustedException('Failed to cancel the subscription (HTTP ERROR)');
+      }
 
-        if ($response->json()['data']['appSubscriptionCancel']['appSubscription']['status'] !== 'CANCELLED') {
-            throw new TrustedException('Failed to cancel the subscription (SHOPIFY ERROR)');
-        }
+      if ($response->json()['data']['appSubscriptionCancel']['appSubscription']['status'] !== 'CANCELLED') {
+          throw new TrustedException('Failed to cancel the subscription (SHOPIFY ERROR)');
+      }
 
-        SubscriptionService::cancelSubscription($subscription, now());
+      SubscriptionService::cancelSubscription($subscription, now());
     }
 }

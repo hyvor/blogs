@@ -15,11 +15,13 @@ use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Subscription\SubscriptionService;
 use App\Exceptions\TrustedException;
-use Hyvor\HyvorConnecter\Login;
-use Hyvor\HyvorConnecter\Redirect;
+use Hyvor\Internal\Auth\Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 
 class ShopifyController
 {
@@ -50,7 +52,7 @@ class ShopifyController
      * If all is good, the user is redirected to the /complete endpoint to check Hyvor login
      * and create the blog
      */
-    public function installed(Request $request, ShopifyService $shopify)
+    public function installed(Request $request, ShopifyService $shopify) : Redirector | RedirectResponse
     {
         $request->validate([
             'code' => 'required|string',
@@ -101,10 +103,10 @@ class ShopifyController
             throw new TrustedException('Shop already assigned to a blog');
         }
 
-        $hyvorUser = Login::check();
+        $hyvorUser = Auth::check();
 
         if (!$hyvorUser) {
-            return Redirect::toSignup("/integrations/shopify/complete?domain=$domain");
+            return Auth::signup("/integrations/shopify/complete?domain=$domain");
         }
 
         ['name' => $shopName, 'url' => $shopUrl] = $shopifyService->getShopData($shop);
@@ -156,12 +158,12 @@ class ShopifyController
             throw new TrustedException('No blog is assigned to this shop');
         }
 
-        $path = strval($request->route('path') ?? '');
+        $path = is_string($request->route('path')) ? strval($request->route('path')) : '';
         return DeliveryService::getLaravelResponse($blog, $path);
 
     }
 
-    public function confirmSubscription(Request $request)
+    public function confirmSubscription(Request $request) : Redirector | RedirectResponse
     {
         if (!$request->hasValidSignatureWhileIgnoring(['charge_id'])) {
             throw new TrustedException('Invalid signature');
@@ -203,7 +205,7 @@ class ShopifyController
         return redirect("/console/$blog->subdomain/billing");
     }
 
-    public function deleteShop(Request $request, ShopifyService $shopifyService)
+    public function deleteShop(Request $request, ShopifyService $shopifyService) : JsonResponse
     {
 
         $request->validate([
@@ -211,7 +213,7 @@ class ShopifyController
         ]);
 
         if (!$shopifyService->hasValidWebhookSignature(
-            $request->header('X-Shopify-Hmac-SHA256'),
+            $request->header('X-Shopify-Hmac-SHA256') ?? '',
             $request->getContent()
         )) {
             abort(401);

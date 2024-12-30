@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class Blog extends Model
@@ -64,6 +65,7 @@ class Blog extends Model
         TEXT
         );
         $definer->add('seo_external_links_follow')->default('follow');
+        $definer->add('seo_rich_schema')->default(true);
 
 
         $definer->add('comments_code')->default(null);
@@ -83,6 +85,7 @@ class Blog extends Model
         $definer->add('link_analysis_enabled')->default(true);
         $definer->add('link_analysis_email_report')->default('broken');
 
+        $definer->add('hb_branding')->default(null);
     }
 
     /**
@@ -100,7 +103,6 @@ class Blog extends Model
         ];
     }
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];
@@ -223,6 +225,22 @@ class Blog extends Model
     public function isInTrial() : bool
     {
         return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
+    }
+
+    /**
+     * @return HasOne<HyvorTalkWebsite>
+     */
+    public function hyvorTalkWebsite()
+    {
+        return $this->hasOne(HyvorTalkWebsite::class);
+    }
+
+    /**
+     * @return HasMany<HyvorTalkGatedContentRule>
+     */
+    public function hyvorTalkGatedContentRules()
+    {
+        return $this->hasMany(HyvorTalkGatedContentRule::class);
     }
 
 }

@@ -12,6 +12,7 @@ use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ConsoleMediaController extends Controller
 {
@@ -33,6 +34,7 @@ class ConsoleMediaController extends Controller
         $search = $request->has('search') ?
             (string) $request->string('search') :
             null;
+            
 
         /** @var string[]|null $extensions */
         $extensions = $request->input('extensions');
@@ -51,15 +53,15 @@ class ConsoleMediaController extends Controller
             $search,
         )
             ->map(fn ($media) => new MediaObject($media, $blog));
-
         return response()->json($media);
     }
 
-    public static function uploadFile(Request $request, Blog $blog) : JsonResponse
+    public function uploadFile(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
-            'post_id' => 'integer'
+            'post_id' => 'integer',
+            'name' => 'string|nullable'
         ]);
 
         if (MediaRepository::hasLimitsExceeded($blog)) {
@@ -69,8 +71,13 @@ class ConsoleMediaController extends Controller
         /** @var \Illuminate\Http\UploadedFile $file */
         $file = $request->file('file');
         $postId = $request->has('post_id') ? $request->integer('post_id') : null;
+        $fileName = $request->has('name') ? $request->input('name') : null;
 
-        $media = MediaRepository::upload($blog, $file, $postId);
+        if ($fileName) {
+            $this->validateFilename($fileName);
+        }
+   
+        $media = MediaRepository::upload($blog, $file, $postId, $fileName);
 
         return response()->json(new MediaObject($media, $blog));
     }
@@ -116,5 +123,26 @@ class ConsoleMediaController extends Controller
         $images = $unsplash->search($search, $page)->mapInto(UnsplashImageObject::class);
 
         return response()->json($images);
+    }
+
+    public function updateMedia(Request $request, Blog $blog, Media $media) : JsonResponse
+    {
+        $request->validate([
+            'name' => 'string|required',
+        ]);
+
+        $name = (string) $request->string('name');
+        $this->validateFilename($name);
+
+        $media = MediaRepository::updateName($media, $name, $blog);
+
+        return response()->json(new MediaObject($media, $blog));
+    }
+
+    private function validateFilename(string $name): void
+    {
+        if (str_contains($name, '/')) {
+            throw new TrustedException('Invalid filename: / is not allowed');
+        }
     }
 }

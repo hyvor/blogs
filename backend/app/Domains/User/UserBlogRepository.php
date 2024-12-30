@@ -3,8 +3,7 @@
 namespace App\Domains\User;
 
 use App\Models\User;
-use Hyvor\Helper\Auth\AuthUser;
-use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Support\Collection;
 
 /**
@@ -13,6 +12,9 @@ use Illuminate\Support\Collection;
  */
 class UserBlogRepository
 {
+    /**
+     * @return Collection<int, User>
+     */
     public static function getBlogsOfUser(int $userId): Collection
     {
         return User::where('hyvor_user_id', $userId)

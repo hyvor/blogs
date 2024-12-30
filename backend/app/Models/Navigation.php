@@ -16,7 +16,6 @@ class Navigation extends Model
         'type' => NavigationTypeEnum::class,
     ];
 
-    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];
@@ -30,7 +29,7 @@ class Navigation extends Model
     }
 
     /**
-     * @return BelongsTo<Blog>
+     * @return BelongsTo<Blog, self>
      */
     public function blog()
     {

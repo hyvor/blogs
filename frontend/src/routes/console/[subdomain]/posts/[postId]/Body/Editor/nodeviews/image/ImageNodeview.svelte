@@ -1,294 +1,259 @@
 <script lang="ts">
-	import { Button, IconButton, TextInput, Tooltip, confirm } from "@hyvor/design/components";
-	import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
-	import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
-	import type { EditorView } from "prosemirror-view";
-	import { NodeSelection } from "prosemirror-state";
-	import schema from "../../../../../../../lib/prosemirror/schema";
-	import { IconPencil, IconTrash } from "@hyvor/icons";
-	import { onMount } from "svelte";
+	import { Button, IconButton, TextInput, Tooltip, confirm } from '@hyvor/design/components';
+	import FileUploader from '../../../../../../../lib/components/FileUploader/FileUploader.svelte';
+	import type { SelectedFile } from '../../../../../../../lib/components/FileUploader/image-uploader';
+	import type { EditorView } from 'prosemirror-view';
+	import { NodeSelection } from 'prosemirror-state';
+	import schema from '../../../../../../../lib/prosemirror/schema';
+	import { IconPencil, IconTrash } from '@hyvor/icons';
+	import { onMount } from 'svelte';
 
-    export let src: string | null;
-    export let alt: string | null;
-    export let width: number | null;
-    export let height: number | null;
-    export let getPos: () => number | undefined;
-    export let view: EditorView;
+	export let src: string | null;
+	export let alt: string | null;
+	export let width: number | null;
+	export let height: number | null;
+	export let getPos: () => number | undefined;
+	export let view: EditorView;
 
-    let imgEl: HTMLImageElement;
+	let imgEl: HTMLImageElement;
 
-    let displayWidth : string = '0';
-    let displayHeight : string = '0'
+	let displayWidth: string = '0';
+	let displayHeight: string = '0';
 
-    $: width, height, setDisplaySize();
+	$: width, height, setDisplaySize();
 
-    function setDisplaySize() {
-        displayWidth = Math.floor(width ? width : imgEl?.naturalWidth).toString();
-        displayHeight = Math.floor(height ? height : imgEl?.naturalHeight).toString();
-    }
+	function setDisplaySize() {
+		displayWidth = Math.floor(width ? width : imgEl?.naturalWidth).toString();
+		displayHeight = Math.floor(height ? height : imgEl?.naturalHeight).toString();
+	}
 
-    function handleLoad() {
-        setDisplaySize();
-    }
+	function handleLoad() {
+		setDisplaySize();
+	}
 
-    function updateProps(props: Partial<{
-        src?: string | null,
-        alt?: string | null,
-        width?: number | null,
-        height?: number | null,
-    }>) {
-        const pos = getPos();
-        if (pos === undefined) return;
+	function updateProps(
+		props: Partial<{
+			src?: string | null;
+			alt?: string | null;
+			width?: number | null;
+			height?: number | null;
+		}>
+	) {
+		const pos = getPos();
+		if (pos === undefined) return;
 
-        view.dispatch(
-            view.state.tr.setNodeMarkup(
-                pos,
-                undefined,
-                {
-                    ...{
-                        src,
-                        alt,
-                        width,
-                        height,
-                    },
-                    ...props,
-                }
-            )
-        )
-    }
+		view.dispatch(
+			view.state.tr.setNodeMarkup(pos, undefined, {
+				...{
+					src,
+					alt,
+					width,
+					height
+				},
+				...props
+			})
+		);
+	}
 
-    function handleAltInput(e: any) {
-        const pos = getPos();
-        if (pos === undefined) return;
-        updateProps({
-            alt: e.target.value,
-        })
-    }
-    
-    function handleRangeInput(e: any) {
-        const value = parseInt(e.target.value);
-        let width: number | null, height : number | null;
+	function handleAltInput(e: any) {
+		const pos = getPos();
+		if (pos === undefined) return;
+		updateProps({
+			alt: e.target.value
+		});
+	}
 
-        if (value === 100) {
-            width = null;
-            height = null;
-        } else {
-            width = imgEl.naturalWidth * value / 100
-            height = imgEl.naturalHeight * value / 100
-        }
+	function handleRangeInput(e: any) {
+		const value = parseInt(e.target.value);
+		let width: number | null, height: number | null;
 
-        updateProps({
-            width,
-            height,
-        });
-    }
+		if (value === 100) {
+			width = null;
+			height = null;
+		} else {
+			width = (imgEl.naturalWidth * value) / 100;
+			height = (imgEl.naturalHeight * value) / 100;
+		}
 
-    function handleChangeClick() {
-        const div = document.createElement("div");
-        document.body.appendChild(div);
+		updateProps({
+			width,
+			height
+		});
+	}
 
-        const selector = new ImageUploader({
-            target: div,
-        });
+	function handleChangeClick() {
+		const div = document.createElement('div');
+		document.body.appendChild(div);
 
-        function destroy() {
-            selector.$destroy();
-            div.remove();
-        }
+		const selector = new FileUploader({
+			target: div
+		});
 
-        selector.$on('close', () => {
-            destroy();
-        })
+		function destroy() {
+			selector.$destroy();
+			div.remove();
+		}
 
-        selector.$on('select', (e: CustomEvent<SelectedImage>) => {
-            destroy();
-            changeImage(e.detail);
-        });
-    }
+		selector.$on('close', () => {
+			destroy();
+		});
 
-    async function handleDelete() {
+		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
+			destroy();
+			changeImage(e.detail);
+		});
+	}
 
-        if (await confirm({
-            title: 'Remove image',
-            content: 'Are you sure you want to remove this image? It will not be deleted from the media library.',
-            confirmText: 'Yes, remove it',
-            danger: true,
-        })) {
+	async function handleDelete() {
+		if (
+			await confirm({
+				title: 'Remove image',
+				content:
+					'Are you sure you want to remove this image? It will not be deleted from the media library.',
+				confirmText: 'Yes, remove it',
+				danger: true
+			})
+		) {
+			const pos = getPos();
 
-            const pos = getPos();
+			if (pos === undefined) return;
 
-            if (pos === undefined)
-                return;
+			// figure
+			const figureSel = NodeSelection.create(view.state.doc, pos - 1);
 
-            // figure
-            const figureSel = NodeSelection.create(view.state.doc, pos - 1);
+			view.dispatch(view.state.tr.delete(figureSel.from, figureSel.to));
 
-            view.dispatch(
-                view.state.tr.delete(
-                    figureSel.from,
-                    figureSel.to
-                )
-            );
+			view.focus();
+		}
+	}
 
-            view.focus();
+	function changeImage(image: SelectedFile) {
+		const pos = getPos();
 
-        }
+		if (pos === undefined) return;
 
-    }
+		updateProps({
+			src: image.url as string,
+			alt: image.unsplash?.alt || ''
+		});
 
-    function changeImage(image: SelectedImage) {
-        const pos = getPos()
+		if (image.from === 'unsplash' && image.unsplash) {
+			const nodeSel = NodeSelection.create(view.state.doc, pos + 1);
 
-        if (pos === undefined)
-            return;
+			const utm = '?utm_source=hyvor_blogs&utm_medium=referral';
 
-        updateProps({
-            src: image.url as string,
-            alt: image.unsplash?.alt || ''
-        });
+			const tr = view.state.tr;
+			const newNode = schema.nodes.figcaption!.create({}, [
+				schema.text('Photo by '),
+				schema.text(image.unsplash.author, [
+					schema.marks.link!.create({
+						href: image.unsplash.author_url + utm
+					})
+				]),
+				schema.text(' on '),
+				schema.text('Unsplash', [
+					schema.marks.link!.create({
+						href: 'https://unsplash.com/' + utm
+					})
+				])
+			]);
 
+			tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
 
-        if (image.from === 'unsplash' && image.unsplash) {
-            const nodeSel = NodeSelection.create(view.state.doc, pos + 1)
+			view.dispatch(tr);
+		}
+	}
 
-            const utm = "?utm_source=hyvor_blogs&utm_medium=referral"
-
-            const tr = view.state.tr;
-            const newNode = schema.nodes.figcaption!.create({}, [
-                schema.text("Photo by "),
-                schema.text(image.unsplash.author, [
-                    schema.marks.link!.create({
-                        href: image.unsplash.author_url + utm
-                    })
-                ]),
-                schema.text(" on "),
-                schema.text("Unsplash", [
-                    schema.marks.link!.create({
-                        href: "https://unsplash.com/" + utm
-                    })
-                ])
-            ]);
-
-            tr.replaceWith(
-                nodeSel.from,
-                nodeSel.to,
-                newNode
-            );
-        
-            view.dispatch(tr);
-        }
-
-    }
-
-    onMount(() => {
-        setDisplaySize();
-    });
-
+	onMount(() => {
+		setDisplaySize();
+	});
 </script>
 
 <div class="image-node-wrap">
-    <div class="top">
+	<div class="top">
+		<div class="left">
+			<TextInput size="small" placeholder="Add alt text..." on:input={handleAltInput} value={alt}>
+				<span slot="start">ALT</span>
+			</TextInput>
+		</div>
 
-        <div class="left">
-            <TextInput 
-                size="small"
-                placeholder="Add alt text..."
-                on:input={handleAltInput}
-                value={alt}
-            >
-                <span slot="start">ALT</span>
-            </TextInput>
-        </div>
+		<div class="right">
+			{#if imgEl}
+				<div class="range-wrap">
+					<span class="size">
+						Size ({displayWidth} x {displayHeight})
+					</span>
+					<input
+						type="range"
+						min={1}
+						max={100}
+						step={1}
+						on:input={handleRangeInput}
+						value={width ? (width / imgEl.naturalWidth) * 100 : 100}
+					/>
+				</div>
+			{/if}
 
-        <div class="right">
+			<div>
+				<Tooltip text="Change image">
+					<IconButton size="small" color="input" on:click={handleChangeClick}>
+						<IconPencil size={12} />
+					</IconButton>
+				</Tooltip>
 
-            {#if imgEl}
-                <div class="range-wrap">
-                    <span class="size">
-                        Size ({displayWidth} x {displayHeight})
-                    </span>
-                    <input
-                        type="range"
-                        min={1}
-                        max={100}
-                        step={1}
-                        on:input={handleRangeInput}
-                        value={width ? width / imgEl.naturalWidth * 100 : 100}
-                    />
-                </div>
-            {/if}
-
-            <div>
-                <Tooltip text="Change image">
-                    <IconButton 
-                        size="small" 
-                        color="input"
-                        on:click={handleChangeClick}
-                    >
-                        <IconPencil size={12} />
-                    </IconButton>
-                </Tooltip>
-
-
-                <Tooltip text="Remove image">
-                    <IconButton 
-                        size="small" 
-                        color="input"
-                        on:click={handleDelete}
-                    >
-                        <IconTrash size={12} />
-                    </IconButton>
-                </Tooltip>
-            </div>
-
-        </div>
-
-    </div>
-    <div class="img-wrap">
-        <img
-            src={src} 
-            alt={alt}
-            bind:this={imgEl}
-            width={width ? width : undefined}
-            height={height ? height : undefined}
-            on:load={handleLoad}
-        />
-    </div>
+				<Tooltip text="Remove image">
+					<IconButton size="small" color="input" on:click={handleDelete}>
+						<IconTrash size={12} />
+					</IconButton>
+				</Tooltip>
+			</div>
+		</div>
+	</div>
+	<div class="img-wrap">
+		<img
+			{src}
+			{alt}
+			bind:this={imgEl}
+			width={width ? width : undefined}
+			height={height ? height : undefined}
+			on:load={handleLoad}
+		/>
+	</div>
 </div>
 
 <style>
-    .image-node-wrap {
-        background-color: #fafafa;
-        border-radius: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-    .top {
-        border-bottom: 1px solid #eee;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .left {
-        flex: 1;
-    }
-    .right {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .img-wrap {
-        padding: 15px;
-    }
-    .range-wrap {
-        display: inline-flex;
-        align-items: center;
-        position: relative;
-    }
-    .size {
-        font-size: 10px;
-        color: var(--text-light);
-        margin-right: 5px;
-    }
+	.image-node-wrap {
+		background-color: #fafafa;
+		border-radius: 20px;
+		display: flex;
+		flex-direction: column;
+	}
+	.top {
+		border-bottom: 1px solid #eee;
+		padding: 15px;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+	.left {
+		flex: 1;
+	}
+	.right {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	.img-wrap {
+		padding: 15px;
+	}
+	.range-wrap {
+		display: inline-flex;
+		align-items: center;
+		position: relative;
+	}
+	.size {
+		font-size: 10px;
+		color: var(--text-light);
+		margin-right: 5px;
+	}
 </style>

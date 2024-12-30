@@ -9,6 +9,7 @@ import BookmarkView from "./nodeview-bookmark";
 import TableNodeView from "./table/nodeview-table";
 import ImageView from "./image/nodeview-image";
 import TocView from "./toc/nodeview-toc";
+import AudioView from "./audio/nodeview-audio";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -43,6 +44,9 @@ export function getNodeViews() : NodeViewsType {
         },
         image(node, view, getPos) {
             return new ImageView(node, view, getPos)
+        },
+        audio(node, view, getPos) {
+            return new AudioView(node, view, getPos)
         },
         toc(node, view, getPos) {
             return new TocView(node, view, getPos);

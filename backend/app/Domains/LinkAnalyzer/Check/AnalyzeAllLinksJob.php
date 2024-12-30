@@ -28,7 +28,7 @@ class AnalyzeAllLinksJob implements ShouldQueue
     )
     {
         $this->check = LinkAnalyzerCheckService::createCheck($blog);
-        $this->onQueue(AppQueues::reports());
+        // $this->onQueue(AppQueues::reports());
     }
 
     public function handle() : void

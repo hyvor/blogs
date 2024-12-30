@@ -3,14 +3,15 @@
 namespace Tests\Unit\Domains\Webhook\Jobs;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
-use App\Domains\Webhook\Exceptions\DeliveryFailedException;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
 use App\Domains\Webhook\WebhookDeliveryService;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
-use Exception;
+use App\Data\Enums\WebhookEventEnum;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 it('delivers a webhook', function () {
     $url = 'https://webhook.com';
@@ -24,7 +25,7 @@ it('delivers a webhook', function () {
         'url' => $url,
     ]);
 
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, ['path' => '/test']);
     $job = new WebhookDeliveryJob($delivery);
     $job->handle();
 
@@ -35,7 +36,7 @@ it('delivers a webhook', function () {
         expect($request->hasHeader('X-Signature'))->toBeTrue();
         expect($request['subdomain'])->toBe($blog->subdomain);
         expect(is_int($request['timestamp']))->toBeTrue();
-        expect($request['event'])->toBe('cache.single');
+        expect($request['event'])->toBe(WebhookEventEnum::CACHE_SINGLE);
         expect($request['data']['path'])->toBe('/test');
 
         return true;
@@ -49,7 +50,7 @@ it('delivers a webhook', function () {
     expect($delivery->response)->toBe('ok');
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::SUCCESS);
     expect($delivery->http_status)->toBe(200);
-    expect($delivery->event)->toBe('cache.single');
+    expect($delivery->event)->toBe(WebhookEventEnum::CACHE_SINGLE);
     expect($delivery->data['path'])->toBe('/test');
     expect($delivery->url)->toBe($url);
 });
@@ -59,6 +60,7 @@ it('handles failures', function () {
     Http::fake([
         $url => Http::response('failed', 500)
     ]);
+    Queue::fake();
 
     $blog = blog();
     $webhook = Webhook::factory()->create([
@@ -67,30 +69,30 @@ it('handles failures', function () {
     ]);
 
 
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, ['path' => '/test']);
+
     $job = new WebhookDeliveryJob($delivery);
-    try {
+    $job->withFakeQueueInteractions();
+
+    foreach (range(1, 4) as $i) {
         $job->handle();
-    } catch (DeliveryFailedException) {
+
+        $delivery = WebhookDelivery::where('webhook_id', $webhook->id)->first();
+        expect($delivery)->toBeInstanceOf(WebhookDelivery::class);
+        expect($delivery->response)->toBe('failed');
+        expect($delivery->http_status)->toBe(500);
+        expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::RETRYING);
+
+        $job->assertReleased(60); // doesn't seem to have a way to test release time coorectly
     }
 
-    $delivery = WebhookDelivery::where('webhook_id', $webhook->id)->first();
-    expect($delivery)->toBeInstanceOf(WebhookDelivery::class);
-    expect($delivery->response)->toBe('failed');
-    expect($delivery->http_status)->toBe(500);
-    expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::RETRYING);
-
-    $job->failed(new DeliveryFailedException());
-
-    $delivery->refresh();
-    expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::FAILED);
 });
 
 it('handles http client exceptions', function () {
     $url = 'https://webhook.com';
     Http::fake([
         $url => function () {
-            throw new Exception();
+            throw new ConnectionException('connection failed');
         }
     ]);
 
@@ -100,17 +102,13 @@ it('handles http client exceptions', function () {
         'url' => $url,
     ]);
 
-
-    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', []);
+    $delivery = WebhookDeliveryService::createDelivery($webhook, WebhookEventEnum::CACHE_SINGLE, []);
     $job = new WebhookDeliveryJob($delivery);
-    try {
-        $job->handle();
-    } catch (DeliveryFailedException) {
-    }
+    $job->handle();
 
     $delivery = WebhookDelivery::where('webhook_id', $webhook->id)->first();
     expect($delivery)->toBeInstanceOf(WebhookDelivery::class);
-    expect($delivery->response)->toBeNull();
+    expect($delivery->response)->toBe('connection failed');
     expect($delivery->http_status)->toBeNull();
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::RETRYING);
 });

@@ -15,10 +15,12 @@ it('imports posts and uploads images', function() {
 
     $this->mock(MediaRepository::class, function ($mock) {
         $mock->shouldReceive('uploadFromUrl')
-            ->twice()
-            ->andReturn(new Media([
-                'name' => 'default.png'
-            ]));
+            ->times(3)
+            ->andReturn(
+                new Media(['name' => 'image.jpg']),
+                new Media(['name' => 'default.png']),
+                new Media(['name' => 'audio.mp3'])
+            );
     });
 
     $publishTime = now();
@@ -59,6 +61,12 @@ it('imports posts and uploads images', function() {
                                 'src' => 'https://example.com/default.png',
                                 'alt' => 'Image',
                             ]
+                        ],
+                        [
+                            'type' => 'audio',
+                            'attrs' => [
+                                'src' => 'https://example.com/audio.mp3',
+                            ]
                         ]
                     ]
                 ]);
@@ -92,7 +100,7 @@ it('imports posts and uploads images', function() {
     $post = $blog->posts()->first();
 
     expect($post->published_at->toDateTimeString())->toBe($publishTime->toDateTimeString());
-    expect($post->featured_image_url)->toBe($blog->url() . '/media/default.png');
+    expect($post->featured_image_url)->toBe($blog->url() . '/media/image.jpg');
     expect($post->is_page)->toBe(false);
     expect($post->is_featured)->toBe(true);
 
@@ -124,6 +132,12 @@ it('imports posts and uploads images', function() {
                     'alt' => 'Image',
                     'width' => null,
                     'height' => null,
+                ]
+            ],
+            [
+                'type' => 'audio',
+                'attrs' => [
+                    'src' => $blog->url() . '/media/audio.mp3',
                 ]
             ]
         ]

@@ -97,7 +97,7 @@ class PaddleWebhookController
     /**
      * @param array{subscription_id: string, cancellation_effective_date: string} $payload
      */
-    private function handleSubscriptionCancelled(array $payload) : void
+    private function handleSubscriptionCancelled(array $payload): void
     {
         $paddleSubscriptionId = (int) $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
@@ -106,7 +106,11 @@ class PaddleWebhookController
             throw new TrustedException('Subscription not found');
         }
 
-        $date = Carbon::createFromFormat('Y-m-d', $payload['cancellation_effective_date'], 'UTC')->endOfDay();
-        SubscriptionService::cancelSubscription($subscription, $date);
+        $formattedDate = Carbon::createFromFormat('Y-m-d', $payload['cancellation_effective_date'], 'UTC');
+
+        if ($formattedDate) {
+            $date = $formattedDate->endOfDay();
+            SubscriptionService::cancelSubscription($subscription, $date);
+        }
     }
 }

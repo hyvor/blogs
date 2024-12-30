@@ -29,3 +29,26 @@ it('matches tag page', function () {
     $this->assertEquals($content, $responseObject->content);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
 });
+
+it('do not match private tag pages', function() {
+
+    $content = 'I am a tag';
+
+    $blog = blogWithLanguageAndRoutes();
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'tag.twig',
+        $content,
+    );
+
+    $tag = addTag($blog, ['is_private' => true]);
+
+    $pathMatcher = new PathMatcher($blog, "/tag/$tag->slug");
+    $responseObject = $pathMatcher->getResponseObject();
+
+    $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
+    expect($responseObject->status)->toBe(404);
+
+});

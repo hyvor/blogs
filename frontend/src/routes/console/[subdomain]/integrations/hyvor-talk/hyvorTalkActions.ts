@@ -1,4 +1,5 @@
 import consoleApi from "../../../lib/consoleApi";
+import type { HyvorTalkGatedContentRule } from "../../../lib/types";
 
 interface HyvorTalkIntegration {
     id: number,
@@ -31,4 +32,54 @@ export function deleteHyvorTalkIntegration() {
     return consoleApi.delete({
         endpoint: '/integrations/hyvor-talk',
     })
+}
+
+
+export function getGatedContentRules() {
+
+    return consoleApi.get<HyvorTalkGatedContentRule[]>({
+        endpoint: `/integrations/hyvor-talk/gated-content-rules`,
+    })
+
+}
+
+export function createGatedContentRule(tagId: number, planName: string, gate: string | null) {
+    return consoleApi.post<HyvorTalkGatedContentRule>({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule`,
+        data: {
+            tag_id: tagId,
+            minimum_plan: planName,
+            gate,
+        }
+    })
+}
+
+export function updateGatedContentRule(ruleId: number, planName: string, gate: string | null) {
+    return consoleApi.patch<HyvorTalkGatedContentRule>({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
+        data: {
+            minimum_plan: planName,
+            gate,
+        }
+    })
+}
+
+export function deleteGatedContentRule(ruleId: number) {
+    return consoleApi.delete({
+        endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
+    })
+}
+
+export function getMembershipPlans() {
+
+    return consoleApi.get<{
+        currency: string,
+        plans: {
+            name: string;
+            monthly_price: number;
+        }[]
+    }>({
+        endpoint: `/integrations/hyvor-talk/membership-plans`,
+    })
+
 }

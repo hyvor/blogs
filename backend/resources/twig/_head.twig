@@ -39,6 +39,10 @@
         {% for tag in _post.tags %}
             <meta property="article:section" content="{{ tag.name }}" />
         {% endfor %}
+
+        {% if _blog.seo_rich_schema %}
+            {{ rich_schema() }}
+        {% endif %}
     {% endif %}
 
     {# Twitter Tags ========== #}
@@ -71,6 +75,13 @@
 {% endif %}
 {% if _post.code_head %}
     {{ _post.code_head | template }}
+{% endif %}
+{% if _post %}
+    {% for tag in _post.tags %}
+        {% if tag.code_head %}
+            {{ tag.code_head | template }}
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
 <link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />

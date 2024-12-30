@@ -23,6 +23,9 @@ return new class () extends Migration {
             $table->string('url');
             $table->json('events'); // comma separated event names
             $table->string('secret', 32);
+
+            // index
+            $table->index('blog_id');
         });
     }
 

@@ -82,7 +82,12 @@ trait Countable
 
     private function getCountsAsObject(): object
     {
+        /** @var mixed $meta */
         $meta = $this->counts;
+
+        if ($meta === null) {
+            return new stdClass();
+        }
 
         if (is_string($meta)) {
             return json_decode($meta) ?? new stdClass();

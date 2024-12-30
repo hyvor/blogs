@@ -14,6 +14,8 @@ class TagObject
 
     public int $created_at;
 
+    public bool $is_private;
+
     public string $slug;
 
     public string $url;
@@ -21,6 +23,9 @@ class TagObject
     public string $name;
 
     public ?string $description;
+
+    public ?string $code_head;
+    public ?string $code_foot;
 
     public int $posts_count;
 
@@ -37,11 +42,15 @@ class TagObject
 
         $this->id = $tag->id;
         $this->created_at = $tag->created_at->timestamp;
+        $this->is_private = $tag->is_private;
         $this->slug = $tag->slug;
         $this->url = PermalinkRepository::getTagPermalink($tag, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
         $this->description = VariantsHelper::getVariantValue('description', $variants, $language);
         $this->posts_count = $tag->posts_count ?? 0;
+
+        $this->code_head = $tag->code_head;
+        $this->code_foot = $tag->code_foot;
 
         $this->language = new LanguageObject($language);
 

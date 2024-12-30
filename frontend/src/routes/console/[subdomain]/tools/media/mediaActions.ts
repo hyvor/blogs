@@ -36,7 +36,6 @@ export function getMedia(
     limit: number = 50,
     offset: number = 0,
 ) {
-
     return consoleApi.get<Media[]>({
         endpoint: '/media',
         data: {
@@ -51,10 +50,18 @@ export function getMedia(
 
 export function uploadMedia(file: File | Blob, name: string | null = null) {
     const formData = new FormData();
-    formData.append('file', file, name || (file instanceof File ? file.name : 'file'));
+    formData.append('file', file);
+    formData.append('name', name || '');
     return consoleApi.post<Media>({
         endpoint: '/media',
         data: formData
+    })
+}
+
+export function updateMedia(id: number, data: Partial<Media>) {
+    return consoleApi.patch<Media>({
+        endpoint: `/media/${id}`,
+        data
     })
 }
 

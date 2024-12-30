@@ -39,10 +39,7 @@ class Bookmark extends NodeType
         }
 
         try {
-            $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
-            if ($urlData->result === ResultEnum::ERR) {
-                return '';
-            }
+            $unfolded = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
         } catch (Exception) {
             return '';
         }
@@ -58,7 +55,7 @@ class Bookmark extends NodeType
         }
 
         return TwigRenderer::renderString($template, [
-            'data' => new UrlDataObject($urlData),
+            'data' => UrlDataObject::fromUnfolded($unfolded),
         ]);
 
     }
