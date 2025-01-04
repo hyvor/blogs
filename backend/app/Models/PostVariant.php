@@ -8,12 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Scout\Searchable;
 
 class PostVariant extends Model
 {
     use HasFactory;
-    use Searchable;
+    //use Searchable;
 
     protected $casts = [
         'status' => PostStatusEnum::class,
@@ -60,5 +59,13 @@ class PostVariant extends Model
     public function toSearchableArray()
     {
         return PostSearchRepository::getSearchDocument($this);
+    }
+
+    public function scopeSearch($query, $search)
+    {
+        if (!$search) {
+            return $query;
+        }
+        return $query->whereRaw("searchtext @@ to_tsquery('english', ?)", ["$search:*"]);
     }
 }
