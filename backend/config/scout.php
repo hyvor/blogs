@@ -19,7 +19,6 @@ return [
     */
 
     // 'driver' => env('SCOUT_DRIVER', 'algolia'),
-    'driver' => env('SCOUT_DRIVER', 'meilisearch'),
 
     /*
     |--------------------------------------------------------------------------
@@ -132,16 +131,5 @@ return [
     | See: https://docs.meilisearch.com/guides/advanced_guides/configuration.html
     |
     */
-
-    'meilisearch' => [
-        'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
-        'key' => env('MEILISEARCH_KEY', null),
-        'index-settings' => [
-            PostVariant::class => [
-                'filterableAttributes'=> PostSearchRepository::FILTERABLE_ATTRIBUTES,
-                'sortableAttributes' => PostSearchRepository::SEARCHABLE_ATTRIBUTES,
-            ],
-        ],
-    ],
 
 ];

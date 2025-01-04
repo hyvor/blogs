@@ -35,7 +35,7 @@ class TagObject
         $this->id = $tag->id;
         $this->created_at = $tag->created_at->getTimestamp();
         $this->updated_at = $tag->updated_at->getTimestamp();
-        $this->is_private = $tag->is_private;
+        $this->is_private = $tag->is_private || false;
         
         $this->slug = $tag->slug;
         $this->posts_count = $tag->posts_count;

@@ -83,26 +83,6 @@ class PostSearchRepository
     }
 
     /**
-     * from https://github.com/laravel/scout/blob/9.x/src/Engines/MeiliSearchEngine.php
-     *
-     * @param array<string, mixed> $conditions
-     */
-    private static function getSearchFilter($conditions) : string
-    {
-        $filters = collect($conditions)->map(function ($value, $key) {
-            if (is_bool($value)) {
-                return sprintf('%s=%s', $key, $value ? 'true' : 'false');
-            }
-
-            return is_numeric($value)
-                            ? sprintf('%s=%s', $key, $value)
-                            : sprintf('%s="%s"', $key, $value);
-        });
-
-        return $filters->values()->implode(' AND ');
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public static function getSearchDocument(PostVariant $postVariant): array
@@ -144,8 +124,4 @@ class PostSearchRepository
         return App::environment('testing') ? 'posts_testing' : 'posts';
     }
 
-    private static function isMeilisearch() : bool
-    {
-        return config('scout.driver') === 'meilisearch';
-    }
 }
