@@ -48,17 +48,11 @@ class PostSearchRepository
         ?bool $isPublished = null
     ): CollectionWithTotal {
 
-        $conditions = [
-            'blog_id' => $blog->id,
-            'language_id' => $language->id,
-            'is_page' => $isPage,
-        ];
-        if ($isPublished !== null) {
-            $conditions['is_published'] = $isPublished;
-        }
-
         $post_variants = PostVariant::search($search)
-            ->where('language_id', $language->id)
+            //->where('language_id', $language->id)
+            ->when($isPublished, function ($query) {
+                $query->where('status', 'published');
+            })
             ->limit($limit)
             ->offset($offset)
             ->get();
