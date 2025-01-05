@@ -2,9 +2,6 @@
 
 namespace App\Domains\Post;
 
-use App;
-use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\Content\PostContentService;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -80,48 +77,6 @@ class PostSearchRepository
         }
 
         return new CollectionWithTotal($posts, count($posts));
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public static function getSearchDocument(PostVariant $postVariant): array
-    {
-
-        /** @var Post $post */
-        $post = $postVariant->post;
-        /** @var Blog $blog */
-        $blog = $post->blog;
-
-        return [
-
-            // identifier
-            'id' => $postVariant->id,
-            'post_id' => $postVariant->post_id,
-
-            /**
-             * Search data
-             */
-            'title' => $postVariant->title,
-            'description' => $postVariant->description,
-            'content' => $postVariant->content ? PostContentService::getText($postVariant->content, $blog) : '',
-            'slug' => $postVariant->slug,
-
-            /**
-             * Reference and filtering
-             */
-            'blog_id' => $blog->id,
-            'language_id' => $postVariant->language_id,
-            'is_published' => $postVariant->status === PostStatusEnum::PUBLISHED, // search only needs to know if the post is published
-            // (data API vs console API search)
-            'is_page' => $post->is_page,
-
-        ];
-    }
-
-    public static function getIndexName() : string
-    {
-        return App::environment('testing') ? 'posts_testing' : 'posts';
     }
 
 }

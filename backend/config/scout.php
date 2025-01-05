@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
 
-use App\Domains\Post\PostSearchRepository;
-use App\Models\PostVariant;
 
 return [
 

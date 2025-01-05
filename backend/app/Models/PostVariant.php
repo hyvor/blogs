@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\PostSearchRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PostVariant extends Model
 {
     use HasFactory;
-    //use Searchable;
 
     protected $casts = [
         'status' => PostStatusEnum::class,
@@ -46,19 +44,6 @@ class PostVariant extends Model
     public function history()
     {
         return $this->hasMany(PostVariantHistory::class);
-    }
-
-    public function searchableAs() : string
-    {
-        return PostSearchRepository::getIndexName();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toSearchableArray()
-    {
-        return PostSearchRepository::getSearchDocument($this);
     }
 
     public function scopeSearch($query, $search)
