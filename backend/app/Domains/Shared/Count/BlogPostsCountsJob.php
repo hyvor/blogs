@@ -31,9 +31,9 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
             ->groupBy('post_variants.status')
             ->get();
 
-        $published = $statusCounts->firstWhere('status', 'published')->count ?? 0;
-        $drafts = $statusCounts->firstWhere('status', PostStatusEnum::DRAFT->value)->count ?? 0;
-        $scheduled = $statusCounts->firstWhere('status', PostStatusEnum::SCHEDULED->value)->count ?? 0;
+        $published = $statusCounts->firstWhere('status', PostStatusEnum::PUBLISHED)->count ?? 0;
+        $drafts = $statusCounts->firstWhere('status', PostStatusEnum::DRAFT)->count ?? 0;
+        $scheduled = $statusCounts->firstWhere('status', PostStatusEnum::SCHEDULED)->count ?? 0;
 
         $featured = Post::where('blog_id', $this->blog->id)
             ->where('is_featured', true)

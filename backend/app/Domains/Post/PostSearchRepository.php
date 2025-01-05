@@ -49,7 +49,7 @@ class PostSearchRepository
     ): CollectionWithTotal {
 
         $post_variants = PostVariant::search($search)
-            //->where('language_id', $language->id)
+            ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');
             })
