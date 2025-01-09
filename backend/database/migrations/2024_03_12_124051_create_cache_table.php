@@ -12,12 +12,12 @@ return new class extends Migration {
     {
         Schema::create('cache', function (Blueprint $table) {
             $table->string('key')->primary();
-            // $table->mediumText('value');
+            $table->mediumText('value');
             $table->integer('expiration');
         });
 
         // MEDIUMBLOB vlaue
-        DB::statement('ALTER TABLE cache ADD value bytea');
+        //DB::statement('ALTER TABLE cache ADD value bytea');
 
         Schema::create('cache_locks', function (Blueprint $table) {
             $table->string('key')->primary();
