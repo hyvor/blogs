@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI\Helpers;
 
 use App\Models\Language;
+use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Collection;
 
 class VariantsHelper
@@ -73,6 +74,7 @@ class VariantsHelper
                 break;
             }
         }
+
         return $ts_language;
     }
 }
