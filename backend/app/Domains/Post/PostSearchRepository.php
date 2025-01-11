@@ -50,7 +50,7 @@ class PostSearchRepository
 
         // Compute FTS on the fly
         $post_variants = PostVariant::
-            whereRaw("to_tsvector(ts_language::regconfig, title || ' ' || COALESCE(description, '')) @@ to_tsquery(ts_language::regconfig, ?)", ["$search:*"])
+            whereRaw("to_tsvector(ts_language::regconfig, title || '' || description) @@ to_tsquery(ts_language::regconfig, ?)", ["$search:*"])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');
@@ -59,13 +59,13 @@ class PostSearchRepository
             ->offset($offset)
             ->get();
 
-
+        //dd($post_variants[0]->post_id);
+            
         if (count($post_variants) > 0) {
             $postIds = $post_variants->pluck('post_id')->toArray();
             $posts = Post::whereIn('id', $postIds)
                 ->where('blog_id', $blog->id)
                 ->where('is_page', $isPage ? 'true' : 'false')
-                
                 ->get();
         } else {
             /** @var Collection<int, Post> $posts */
