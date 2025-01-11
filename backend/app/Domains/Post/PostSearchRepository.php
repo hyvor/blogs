@@ -48,7 +48,7 @@ class PostSearchRepository
         ?bool $isPublished = null
     ): CollectionWithTotal {
 
-        $post_variants = PostVariant::search($search)
+        $post_variants = PostVariant::whereRaw("searchtext @@ to_tsquery('english', ?)", ["$search:*"])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');

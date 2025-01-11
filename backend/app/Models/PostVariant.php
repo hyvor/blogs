@@ -45,12 +45,4 @@ class PostVariant extends Model
     {
         return $this->hasMany(PostVariantHistory::class);
     }
-
-    public function scopeSearch($query, $search)
-    {
-        if (!$search) {
-            return $query;
-        }
-        return $query->whereRaw("searchtext @@ to_tsquery('english', ?)", ["$search:*"]);
-    }
 }
