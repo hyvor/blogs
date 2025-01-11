@@ -3,6 +3,7 @@
 namespace App\Domains\Post;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Events\PostCreatedEvent;
@@ -323,6 +324,7 @@ class PostRepository
         $variant = PostVariant::create([
             'post_id' => $post->id,
             'language_id' => $language->id,
+            'ts_language' => VariantsHelper::getVariantTsLanguage($language)
         ]);
 
         PostVariantCreatedEvent::dispatch($variant);
