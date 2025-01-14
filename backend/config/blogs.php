@@ -10,6 +10,7 @@ return [
     // domains
     'domain_app' => env('DOMAIN_APP', 'localhost'),
 
+    // @deprecated Use delivery_url
     'delivery_domain' => env('DELIVERY_DOMAIN', 'localhost'),
     'delivery_url' => env('DELIVERY_URL', 'https://localhost:2211'),
 
