@@ -93,8 +93,8 @@ class DeepLService
             SubscriptionPlanEnum::GROWTH => 100000,
             SubscriptionPlanEnum::PREMIUM => 300000,
             SubscriptionPlanEnum::TEAM => 1000000,
-            SubscriptionPlanEnum::BUSINESS => 5000000,
-            SubscriptionPlanEnum::ENTERPRISE => 10000000,
+            //SubscriptionPlanEnum::BUSINESS => 5000000,
+            //SubscriptionPlanEnum::ENTERPRISE => 10000000,
             default => 0,
         };
     }

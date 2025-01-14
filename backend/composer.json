@@ -24,7 +24,7 @@
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/internal": "^1.0",
+        "hyvor/internal": "@dev",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",
@@ -88,10 +88,18 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": {
+        "local": {
+            "type": "path",
+            "url": "./packages/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    },
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi"

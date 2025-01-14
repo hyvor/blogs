@@ -6,7 +6,6 @@
 	import { isManuallyUpgraded, subscriptionStore } from '../../../lib/stores/subscriptionStore';
 	import { cancelSubscription, createSubscription, updateSubscription } from '../paddleActions';
 	import CheckoutSuccessToast from './Success/CheckoutSuccessToast.svelte';
-	import { initPaddle as initPaddleBase } from '../paddle';
 	import { forceCancelSubscription } from '../billingActions';
 	import SwitchConfirm from './Confirm/SwitchConfirm.svelte';
 
@@ -20,9 +19,7 @@
 			starter: 9,
 			growth: 19,
 			premium: 49,
-			team: 299,
-			business: 699,
-			enterprise: 1299
+			team: 299
 		}[type];
 	}
 
@@ -113,30 +110,12 @@
 		}
 	}
 
-	async function initPaddle() {
-		try {
-			await initPaddleBase();
-		} catch (e) {
-			checkoutLoading = false;
-			toast.error('Failed to load checkout. Please try again later.');
-			return;
-		}
-	}
-
 	async function handleUpgrade() {
 		checkoutLoading = true;
 
-		await initPaddle();
-
 		createSubscription(name, frequency)
-			.then(({ link }) => {
-				(window as any).Paddle.Checkout.open({
-					override: link,
-					loadCallback: () => {
-						checkoutLoading = false;
-					},
-					successCallback: handleUpgradeComplete
-				});
+			.then(({ redirect }) => {
+				window.location.href = redirect;
 			})
 			.catch((e) => {
 				checkoutLoading = false;

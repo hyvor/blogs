@@ -371,7 +371,7 @@ export interface ThemeFile {
 
 // === BILLING
 
-export type SubscriptionPlan = 'starter' | 'growth' | 'premium' | 'team' | 'business' | 'enterprise';
+export type SubscriptionPlan = 'starter' | 'growth' | 'premium' | 'team';
 export type SubscriptionFrequency = 'monthly' | 'yearly';
 
 export interface Subscription {

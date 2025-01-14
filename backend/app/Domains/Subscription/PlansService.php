@@ -12,4 +12,9 @@ class PlansService
         $price = config('blogs.pricing')[$plan->value];
         return $price * ($frequency === SubscriptionFrequencyEnum::YEARLY ? 10 : 1);
     }
+
+    public static function getMonthlyPrice(SubscriptionPlanEnum $plan) : int
+    {
+        return self::getPlanPrice($plan, SubscriptionFrequencyEnum::MONTHLY);
+    }
 }

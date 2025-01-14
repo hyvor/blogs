@@ -42,8 +42,6 @@ class UsageRepository
             SubscriptionPlanEnum::GROWTH => 5,
             SubscriptionPlanEnum::PREMIUM => 15,
             SubscriptionPlanEnum::TEAM => 100,
-            SubscriptionPlanEnum::BUSINESS => 1000,
-            SubscriptionPlanEnum::ENTERPRISE => 10000,
             default => 2
         };
 
@@ -53,8 +51,6 @@ class UsageRepository
             SubscriptionPlanEnum::GROWTH => 40 * $gb,
             SubscriptionPlanEnum::PREMIUM => 250 * $gb,
             SubscriptionPlanEnum::TEAM => 1000 * $gb,
-            SubscriptionPlanEnum::BUSINESS => 2000 * $gb,
-            SubscriptionPlanEnum::ENTERPRISE => 5000 * $gb,
             default => $gb
         };
 

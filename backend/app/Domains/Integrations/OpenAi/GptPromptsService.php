@@ -72,8 +72,8 @@ class GptPromptsService
             SubscriptionPlanEnum::GROWTH => 100000,
             SubscriptionPlanEnum::PREMIUM => 1000000,
             SubscriptionPlanEnum::TEAM => 3000000,
-            SubscriptionPlanEnum::BUSINESS => 15000000,
-            SubscriptionPlanEnum::ENTERPRISE => 30000000,
+            //SubscriptionPlanEnum::BUSINESS => 15000000,
+           // SubscriptionPlanEnum::ENTERPRISE => 30000000,
             default => 0,
         };
     }
