@@ -30,8 +30,8 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
                 WHERE
                       post_author.user_id = u.id AND
                       post_variants.language_id = ? AND 
-                      post_variants.status = "published" AND
-                      posts.is_page = 0
+                      post_variants.status = \'published\' AND
+                      posts.is_page = false
             )
             WHERE u.blog_id = ?
         ', [$language->id, $this->blog->id]);

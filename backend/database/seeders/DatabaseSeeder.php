@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Domains\Blog\Fillers\RouteFiller;
-use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
@@ -177,9 +176,6 @@ class DatabaseSeeder extends Seeder
                 $blog->routes()->create($route);
             }
         }
-
-        PostSearchRepository::setFilterableAttributes();
-        PostSearchRepository::setSearchableAttributes();
 
         /*$this->call([
             BlogThemeFilesSeeder::class

@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
-
 set -e
-
 cleanup() {
     echo "Cleaning up..."
     jobs -p | xargs -r kill
@@ -19,12 +17,11 @@ cleanup() {
         break
         fi
     done
-
     npm run dev --prefix ./frontend &
     composer serve --working-dir=./backend &
 
     if [ "$no_caddy" = false ]; then
-        caddy run --config ./meta/dev/Caddyfile.dev &
+        caddy run --config ./meta/dev/Caddyfile.dev --adapter=caddyfile &
     fi
 
     wait

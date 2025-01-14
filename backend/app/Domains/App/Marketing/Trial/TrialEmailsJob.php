@@ -3,6 +3,7 @@
 namespace App\Domains\App\Marketing\Trial;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Support\Facades\Mail;
@@ -26,6 +27,9 @@ class TrialEmailsJob
             if (!$user)
                 continue;
 
+            if (SubscriptionService::getActiveBlogSubscription($endingBlog))
+                continue;
+
             Mail::to($user->email)
                 ->send(new TrialEndingMail($endingBlog, $user));
         }
@@ -41,6 +45,9 @@ class TrialEmailsJob
                 continue;
             $user = AuthUser::fromId($endedBlog->hyvor_user_id, true);
             if (!$user)
+                continue;
+
+            if (SubscriptionService::getActiveBlogSubscription($endedBlog))
                 continue;
 
             Mail::to($user->email)

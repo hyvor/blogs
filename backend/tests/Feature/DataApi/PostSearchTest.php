@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\DataAPI;
 
-use Tests\MeilisearchInefficient;
 
 /**
  * Testing search is not easy
@@ -24,7 +23,6 @@ beforeEach(function () {
 
 it('searches posts', function () {
 
-    MeilisearchInefficient::waitForAllTasks();
 
     dataApi($this->blog, '/posts/search', [
             'search' => 'English',

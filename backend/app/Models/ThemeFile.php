@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Models\Cast\BinaryCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class ThemeFile extends Model
 
     protected $casts = [
         'folder' => ThemeFileFolderEnum::class,
+        'content' => BinaryCast::class,
     ];
 
     /**

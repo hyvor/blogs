@@ -20,13 +20,12 @@
     <server name="DELIVERY_URL" value="https://hyvorblogs.io"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="database"/>
-    <server name="DB_CONNECTION" value="mysql"/>
+    <server name="DB_CONNECTION" value="pgsql"/>
     <server name="DB_DATABASE" value="hyvor_blogs_testing"/>
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="SCOUT_DRIVER" value="null"/>
     <server name="FILESYSTEM_DRIVER" value="local"/>
     <server name="HYVOR_DUMMY" value="true"/>
     <server name="PADDLE_SANDBOX" value="false"/>
