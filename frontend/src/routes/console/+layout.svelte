@@ -5,12 +5,9 @@
 	import type { AuthUser, BlogList } from './lib/types';
 	import { authUserStore, blogListStore } from './lib/stores';
 	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
-	import { APP_URL } from '../../lib';
-	import Bar from './Bar.svelte';
 
 	interface InitResponse {
 		user: AuthUser;
@@ -55,8 +52,7 @@
 			.catch((err) => {
 				if (err.code === 401) {
 					const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
-					location.href =
-						APP_URL + `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+					location.href = `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
 				} else {
 					toast.error(err.message);
 				}

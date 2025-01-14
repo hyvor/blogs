@@ -39,7 +39,7 @@ services:
             watch:
                 -   path: backend
                     action: sync
-                    target: /app
+                    target: /app/backend
                 -   path: backend/composer.json
                     action: rebuild
                 -   path: backend/composer.lock
@@ -48,7 +48,7 @@ services:
                     action: rebuild
                 -   path: ../internal
                     action: sync
-                    target: /app/packages/internal
+                    target: /app/backend/packages/internal
         env_file:
             - .env
         labels:

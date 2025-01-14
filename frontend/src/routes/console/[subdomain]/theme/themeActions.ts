@@ -1,4 +1,3 @@
-import { APP_URL } from "../../../../lib";
 import consoleApi from "../../lib/consoleApi";
 import type { Theme, ThemeFile, ThemeFolder } from "../../lib/types";
 
@@ -9,7 +8,7 @@ export function loadThemeFiles() {
 }
 
 export async function loadThemes() {
-    const response = await fetch(APP_URL + '/api/special/themes');
+    const response = await fetch('/api/special/themes');
 
     if (!response.ok) {
         throw new Error('Failed to load themes');

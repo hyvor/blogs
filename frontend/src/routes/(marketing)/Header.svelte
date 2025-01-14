@@ -4,12 +4,11 @@
 	import { Button, DarkToggle } from '@hyvor/design/components';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { APP_URL } from '$lib';
 
 	let loggedIn = false;
 
 	onMount(() => {
-		fetch(APP_URL + '/api/auth/check', {
+		fetch('/api/auth/check', {
 			method: 'POST'
 		})
 			.then<{ is_logged_in: boolean }>((res) => res.json())
