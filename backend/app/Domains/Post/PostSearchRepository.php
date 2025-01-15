@@ -52,7 +52,7 @@ class PostSearchRepository
 
         // Compute FTS on the fly
         $post_variants = PostVariant::
-            whereRaw("to_tsvector(ts_language::regconfig, title || '' || description) @@ to_tsquery(ts_language::regconfig, ?)", ["$searchQuery:*"])
+            whereRaw("to_tsvector(ts_language::regconfig, title || '' || description || '' || slug || '' || content_text) @@ to_tsquery(ts_language::regconfig, ?)", ["$searchQuery:*"])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');

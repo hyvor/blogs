@@ -484,7 +484,9 @@ class PostRepository
         if (!$blog) return;
 
         $html = PostContentService::getHtml($variant->content, $blog);
+        $text = PostContentService::getText($variant->content, $blog);
 
+        $variant->content_text = $text;
         $variant->content_html = $html;
         $variant->save();
     }
