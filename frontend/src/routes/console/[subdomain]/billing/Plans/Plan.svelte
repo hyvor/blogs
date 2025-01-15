@@ -16,10 +16,9 @@
 
 	function getPriceFromPlan(type: SubscriptionPlan) {
 		return {
-			starter: 9,
-			growth: 19,
-			premium: 49,
-			team: 299
+			starter: 12,
+			growth: 40,
+			premium: 125
 		}[type];
 	}
 

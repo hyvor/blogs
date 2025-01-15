@@ -8,7 +8,7 @@
 
 	let frequency: SubscriptionFrequency = $subscriptionStore?.frequency || 'monthly';
 
-	const planNames = ['starter', 'growth', 'premium', 'team'] as SubscriptionPlan[];
+	const planNames = ['starter', 'growth', 'premium'] as SubscriptionPlan[];
 </script>
 
 <div class="title">

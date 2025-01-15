@@ -24,12 +24,12 @@
 		{
 			name: 'Users',
 			description: 'Total number of users who writes for your blog (your team members)',
-			values: [2, 5, 15, 100, 1000, 'Unlimited']
+			values: [2, 10, 50]
 		},
 		{
 			name: 'Storage',
 			description: 'Total storage used for blog media (mostly uploaded images)',
-			values: ['1GB', '40GB', '250GB', '1TB', '2TB', '5TB']
+			values: ['2GB', '100GB', '500GB']
 		},
 		{
 			name: 'Custom Themes',
@@ -106,18 +106,18 @@
 		}
 	];
 
-	const integrations = [
+	const integrations: Feature[] = [
 		{
-			name: 'Hyvor Talk Comments',
+			name: 'Hyvor Talk',
+			under: 'Commenting Platform',
 			description: 'Add Hyvor Talk commenting system for FREE',
-			values: [
-				false,
-				'100k credits/month (Premium)',
-				'250k credits/month (Business)',
-				'1m credits/month (Business)',
-				'2m credits/month (Business)',
-				'5m credits/month (Business)'
-			]
+			values: [false, '100k credits/month (Premium)', '250k credits/month (Business)']
+		},
+		{
+			name: 'Hyvor Post',
+			under: 'Newsletter Platform',
+			description: 'Add Hyvor Post newsletter system for FREE',
+			values: [false, '25k emails/month', '100k emails/month']
 		}
 	];
 

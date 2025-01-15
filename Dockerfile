@@ -1,7 +1,7 @@
 ###################################################
 # Alias for deppendencies
 FROM node:22.12.0 AS node
-FROM composer:lts AS composer
+FROM composer:2.8.4 AS composer
 FROM php:8.3-fpm AS php-fpm
 FROM mlocati/php-extension-installer:2.7.13 AS php-extension-installer
 #FROM caddy:2.8.4 AS caddy
