@@ -9,6 +9,7 @@ use App\Domains\Subscription\SubscriptionService;
 use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\Plan\BlogsPlans;
 use Hyvor\Internal\InternalApi\ComponentType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,11 +32,11 @@ class ConsoleBillingController
     {
 
         $request->validate([
-            'plan' => ['required', new Enum(SubscriptionPlanEnum::class)],
+            'plan' => ['required', new Enum(BlogsPlans::class)],
             'is_annual' => 'required|boolean'
         ]);
 
-        $plan = SubscriptionPlanEnum::from((string) $request->string('plan'));
+        $plan = BlogsPlans::from((string) $request->string('plan'));
         $isAnnual = $request->boolean('is_annual');
 
         $subscription = Billing::subscriptionIntent(
@@ -43,10 +44,10 @@ class ConsoleBillingController
             'blog',
             $blog->id,
             $blog->subdomain,
-            PlansService::getMonthlyPrice($plan),
+            $plan->getMonthlyPrice(),
             $isAnnual,
             $plan->value,
-            $plan->toHumanReadable(),
+            $plan->toReadableString(),
             ComponentType::BLOGS
         );
 

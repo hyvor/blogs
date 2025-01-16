@@ -15,6 +15,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
+/**
+ * @deprecated
+ */
 class ConsoleBillingPaddleController extends Controller
 {
     public function getData(Blog $blog, PaddleService $paddleService): JsonResponse

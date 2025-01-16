@@ -18,12 +18,4 @@ return [
 
     'logo' => '/img/logo.png',
 
-    // monthly
-    'pricing' => [
-        'starter' => 9,
-        'growth' => 19,
-        'premium' => 49,
-        'team' => 299,
-    ],
-
 ];
