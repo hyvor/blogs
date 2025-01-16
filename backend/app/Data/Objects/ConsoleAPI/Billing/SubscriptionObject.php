@@ -9,6 +9,9 @@ use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Integrations\Shopify\ShopifyBillingService;
 use App\Models\Subscription;
 
+/**
+ * @deprecated
+ */
 class SubscriptionObject
 {
     public int $id;

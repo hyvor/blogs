@@ -376,15 +376,11 @@ export type SubscriptionFrequency = 'monthly' | 'yearly';
 
 export interface Subscription {
 
-    id: number,
-    status: 'active' | 'past_due' | 'deleted',
-    plan: SubscriptionPlan,
-    frequency: SubscriptionFrequency,
-    created_at: number,
-    ends_at: number | null,
-
-    paddle_subscription_id: number | null,
-    shopify_subscription_id: string | null,
+    plan: null | SubscriptionPlan,
+    features: {},
+    monthlyPrice: number,
+    annualPrice: number,
+    isAnnual: boolean,
 
 }
 

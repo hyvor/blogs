@@ -25,6 +25,8 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Subscription;
 use App\Rules\Subdomain;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\InternalApi\ComponentType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -40,14 +42,12 @@ class ConsoleBlogController extends Controller
     public function getBlogData(Blog $blog)
     {
 
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+        $subscription = Billing::getSubscriptionOfResource(ComponentType::BLOGS, $blog->id);
         $usage = UsageRepository::getUsage($blog);
 
         return response()->json([
             'blog' => new BlogObject($blog),
-            'subscription' => $subscription ?
-                new SubscriptionObject($subscription) :
-                null,
+            'subscription' => $subscription,
             'counts' => [
                 'posts' => [
                     'published' => $blog->getCount('posts'),

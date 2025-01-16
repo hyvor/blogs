@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { Link, Switch, Tag } from '@hyvor/design/components';
+	import { Button, Link, Switch, Tag } from '@hyvor/design/components';
 	import type { SubscriptionFrequency, SubscriptionPlan } from '../../../lib/types';
 	import PlanNotices from './PlanNotices.svelte';
 	import { IconBoxArrowUpRight } from '@hyvor/icons';
 	import Plan from './Plan.svelte';
 	import { subscriptionStore } from '../../../lib/stores/subscriptionStore';
+	import CurrentSubscription from './CurrentSubscription.svelte';
 
-	let frequency: SubscriptionFrequency = $subscriptionStore?.frequency || 'monthly';
+	let frequency: SubscriptionFrequency = $subscriptionStore?.isAnnual ? 'yearly' : 'monthly';
 
 	const planNames = ['starter', 'growth', 'premium'] as SubscriptionPlan[];
 </script>

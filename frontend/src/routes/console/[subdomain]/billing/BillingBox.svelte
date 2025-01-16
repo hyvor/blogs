@@ -1,31 +1,32 @@
 <script lang="ts">
-    export let title: null | string = null;
+	export let title: null | string = null;
+	export let style: undefined | string = undefined;
 </script>
 
-<div class="wrap hds-box">
-    {#if title}
-        <div class="title">{title}</div>
-    {/if}
+<div class="wrap hds-box" {style}>
+	{#if title}
+		<div class="title">{title}</div>
+	{/if}
 
-    <slot />
+	<slot />
 </div>
 
 <style>
-    .wrap {
-        margin:0 5px;
-        margin-bottom:10px;
-        padding:30px;
-    }
-    .title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
+	.wrap {
+		margin: 0 5px;
+		margin-bottom: 10px;
+		padding: 30px;
+	}
+	.title {
+		font-size: 20px;
+		font-weight: 600;
+		margin-bottom: 15px;
+	}
 
-    @media (max-width: 992px) {
-        .wrap {
-            margin:0;
-            margin-bottom:10px;
-        }
-    }
+	@media (max-width: 992px) {
+		.wrap {
+			margin: 0;
+			margin-bottom: 10px;
+		}
+	}
 </style>

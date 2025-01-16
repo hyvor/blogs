@@ -1,13 +1,8 @@
 <script lang="ts">
-	import UpdateSuccessToast from './Success/UpdateSuccessToast.svelte';
-	import CancelSuccessToast from './Success/CancelSuccessToast.svelte';
-	import { Button, Loader, Tag, confirm, toast } from '@hyvor/design/components';
+	import { Button, Loader, Tag, toast } from '@hyvor/design/components';
 	import type { SubscriptionFrequency, SubscriptionPlan } from '../../../lib/types';
-	import { isManuallyUpgraded, subscriptionStore } from '../../../lib/stores/subscriptionStore';
-	import { cancelSubscription, createSubscription, updateSubscription } from '../paddleActions';
-	import CheckoutSuccessToast from './Success/CheckoutSuccessToast.svelte';
-	import { forceCancelSubscription } from '../billingActions';
-	import SwitchConfirm from './Confirm/SwitchConfirm.svelte';
+	import { subscriptionStore } from '../../../lib/stores/subscriptionStore';
+	import { createSubscription } from '../paddleActions';
 
 	export let name: SubscriptionPlan;
 	export let frequency: SubscriptionFrequency;
@@ -28,85 +23,18 @@
 		price = getPriceFromPlan(name);
 		if (frequency === 'yearly') price *= 10;
 
-		isCurrent = $subscriptionStore?.plan === name && $subscriptionStore?.frequency === frequency;
+		isCurrent =
+			$subscriptionStore?.plan === name &&
+			(($subscriptionStore?.isAnnual && frequency === 'yearly') ||
+				(!$subscriptionStore?.isAnnual && frequency === 'monthly'));
 	}
 
 	async function handleCancel() {
-		if ($subscriptionStore?.status === 'deleted') {
-			if (
-				await confirm({
-					title: 'Force Cancel Subscription',
-					content: 'Are you sure you want to cancel the subscription now?',
-					confirmText: 'Yes, cancel',
-					cancelText: 'No, keep it',
-					danger: true
-				})
-			) {
-				const toastId = toast.loading('Cancelling subscription...');
-
-				forceCancelSubscription()
-					.then(() => {
-						toast.success('Subscription cancelled successfully.', { id: toastId });
-						setTimeout(() => {
-							window.location.reload();
-						}, 2000);
-					})
-					.catch((e) => {
-						toast.error(e.message, { id: toastId });
-					});
-			}
-		} else {
-			if (
-				await confirm({
-					title: 'Cancel Subscription',
-					content: 'Are you sure you want to cancel your subscription?',
-					confirmText: 'Yes, cancel',
-					cancelText: 'No, keep it',
-					danger: true
-				})
-			) {
-				const toastId = toast.loading('Cancelling subscription...');
-
-				cancelSubscription()
-					.then(() => {
-						toast.success(CancelSuccessToast, {
-							id: toastId,
-							duration: 12000
-						});
-					})
-					.catch((e) => {
-						toast.error(e.message, { id: toastId });
-					});
-			}
-		}
+		// todo: handle cancel
 	}
 
 	async function handleSwitch() {
-		if (
-			await confirm({
-				title: 'Update Subscription',
-				content: SwitchConfirm,
-				contentProps: {
-					name,
-					frequency
-				},
-				confirmText: 'Yes, update',
-				cancelText: 'No, keep it'
-			})
-		) {
-			const toastId = toast.loading('Updating subscription...');
-
-			updateSubscription(name, frequency)
-				.then(() => {
-					toast.success(UpdateSuccessToast, {
-						id: toastId,
-						duration: 12000
-					});
-				})
-				.catch((e) => {
-					toast.error(e.message);
-				});
-		}
+		// todo: handle switch
 	}
 
 	async function handleUpgrade() {
@@ -120,21 +48,6 @@
 				checkoutLoading = false;
 				toast.error(e.message);
 			});
-	}
-
-	function handleUpgradeComplete() {
-		const event = new CustomEvent('console:subscription:created', {
-			detail: {
-				price: getPriceFromPlan(name),
-				plan: name,
-				frequency
-			}
-		});
-		window.dispatchEvent(event);
-
-		toast.success(CheckoutSuccessToast, {
-			duration: 12000
-		});
 	}
 </script>
 
@@ -155,10 +68,9 @@
 		<div class="plan-right-button-wrap">
 			{#if isCurrent}
 				<Button color="red" size="small" on:click={handleCancel}>Cancel</Button>
-			{:else if $subscriptionStore?.status !== 'deleted'}
+			{:else}
 				<Button
 					size="small"
-					disabled={isManuallyUpgraded()}
 					on:click={() => ($subscriptionStore ? handleSwitch() : handleUpgrade())}
 				>
 					{$subscriptionStore ? 'Switch' : 'Upgrade'}
