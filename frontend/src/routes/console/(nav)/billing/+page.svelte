@@ -11,9 +11,9 @@
 	</div>
 
 	<div class="column">
-		<!-- <BillingBox title="Usage">
-			<Usage />
-		</BillingBox> -->
+		<BillingBox title="Usage">
+<!--			<Usage />-->
+		</BillingBox>
 	</div>
 </div>
 
