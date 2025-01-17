@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Callout } from '@hyvor/design/components';
 	import { isInTrial, subscriptionStore } from '../../../lib/stores/subscriptionStore';
-	import { IconClock, IconExclamationCircle, IconLightbulb } from '@hyvor/icons';
+	import { IconClock, IconExclamationCircle } from '@hyvor/icons';
 
 	const trialDays = 5 as number;
 </script>

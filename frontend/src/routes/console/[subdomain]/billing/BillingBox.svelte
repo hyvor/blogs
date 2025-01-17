@@ -1,9 +1,10 @@
 <script lang="ts">
 	export let title: null | string = null;
 	export let style: undefined | string = undefined;
+	export let padding = 30;
 </script>
 
-<div class="wrap hds-box" {style}>
+<div class="wrap hds-box" {style} style:padding="{padding}px">
 	{#if title}
 		<div class="title">{title}</div>
 	{/if}
@@ -15,7 +16,6 @@
 	.wrap {
 		margin: 0 5px;
 		margin-bottom: 10px;
-		padding: 30px;
 	}
 	.title {
 		font-size: 20px;

@@ -1,58 +1,23 @@
 <script lang="ts">
-	import { Button, Link, Switch, Tag } from '@hyvor/design/components';
-	import type { SubscriptionFrequency, SubscriptionPlan } from '../../../lib/types';
-	import PlanNotices from './PlanNotices.svelte';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
-	import Plan from './Plan.svelte';
-	import { subscriptionStore } from '../../../lib/stores/subscriptionStore';
-	import CurrentSubscription from './CurrentSubscription.svelte';
+	import { getConfig } from '../../../lib/config';
+	import { onMount } from 'svelte';
 
-	let frequency: SubscriptionFrequency = $subscriptionStore?.isAnnual ? 'yearly' : 'monthly';
+	let wrap: HTMLDivElement;
 
-	const planNames = ['starter', 'growth', 'premium'] as SubscriptionPlan[];
+	onMount(() => {
+		const script = document.createElement('script');
+		script.src = getConfig().hyvor.instance + '/js/billing-component-iframe.js?component=blogs';
+		wrap.appendChild(script);
+
+		return () => {
+			wrap.removeChild(script);
+		};
+	});
 </script>
 
-<div class="title">
-	<div class="left">Plans</div>
+<div class="content" bind:this={wrap}></div>
 
-	<div class="right">
-		<span class="yearly">
-			Pay Yearly
-			<span class="yearly-tag">
-				<Tag color="blue" size="x-small">17% off</Tag>
-			</span>
-		</span>
-
-		<Switch
-			checked={frequency === 'yearly'}
-			on:change={() => {
-				frequency = frequency === 'monthly' ? 'yearly' : 'monthly';
-			}}
-		/>
-	</div>
-</div>
-
-<div class="content">
-	<PlanNotices />
-
-	<div class="plans">
-		{#each planNames as plan}
-			<Plan name={plan} {frequency} />
-		{/each}
-	</div>
-
-	<div class="section-desc">
-		Prices are shown in EUR, including all VAT charges <br />
-		<div>
-			<Link href="/pricing" target="_blank">
-				<span>Pricing</span>
-				<IconBoxArrowUpRight slot="end" />
-			</Link>
-		</div>
-	</div>
-</div>
-
-<style>
+<!-- <style>
 	.title {
 		margin-bottom: 15px;
 		display: flex;
@@ -85,4 +50,4 @@
 		padding: 10px;
 		color: var(--text-light);
 	}
-</style>
+</style> -->
