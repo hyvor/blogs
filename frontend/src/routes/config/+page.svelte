@@ -1,5 +1,5 @@
 <script>
-	import ConfigUi from "../console/[subdomain]/theme/Editor/ConfigUi/ConfigUi.svelte";
+	import ConfigUi from "../console/(nav)/[subdomain]/theme/Editor/ConfigUi/ConfigUi.svelte";
 	import CodemirrorEditor from "../console/lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
 
     let config = 'name: my-theme';
