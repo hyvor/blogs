@@ -1,6 +1,6 @@
 <script>
 	import { IconMessage } from "@hyvor/design/components";
-import { isTempStore } from "../../../lib/temp.js";
+import { isTempStore } from "../../../lib/temp";
 	import { IconLock } from "@hyvor/icons";
 
 </script>

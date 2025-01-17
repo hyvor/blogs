@@ -1,6 +1,6 @@
 <script>
 	import { Button, Radio, SplitControl, confirm, toast } from "@hyvor/design/components";
-	import { startExport } from "./exportActions.js";
+	import { startExport } from "./exportActions";
 	import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();

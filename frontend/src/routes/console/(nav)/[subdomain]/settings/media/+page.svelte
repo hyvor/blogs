@@ -1,7 +1,7 @@
 <script>
 	import { Callout, Link } from "@hyvor/design/components";
-	import { blogStore } from "../../../../lib/stores/blogStore.js";
-	import { consoleUrlWithBlog } from "../../../../lib/consoleUrl.js";
+	import { blogStore } from "../../../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../../../lib/consoleUrl";
 
 </script>
 

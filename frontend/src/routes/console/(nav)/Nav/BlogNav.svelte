@@ -1,19 +1,20 @@
-<script>
+<script lang="ts">
 	import { IconBoxArrowUpRight, IconChevronExpand, IconCoin, IconFiles, IconGear, IconHouse, IconPalette, IconPencil, IconPlugin, IconTools } from "@hyvor/icons";
 	import { page } from "$app/stores";
-	import { blogStore } from "../../../lib/stores/blogStore";
 	import { NavLink } from "@hyvor/design/components";
-	import { consoleUrl } from "../../../lib/consoleUrl";
+	import { consoleUrl } from "../../lib/consoleUrl";
+    import type {BlogList} from "../../lib/types";
+    export let listItem : BlogList;
 </script>
 
 <a class="current-blog" href={consoleUrl('/select')}>
 
     <div class="name-url">
         <div class="name">
-            { $blogStore.variants[0]?.name || 'Unnamed' }
+            { listItem.name || 'Unnamed' }
         </div>
         <div class="url">
-            { $blogStore.url.replace(/https?:\/\//, '') }
+            { listItem.url.replace(/https?:\/\//, '') }
         </div>
     </div>
 
@@ -27,8 +28,8 @@
 <div class="nav-items">
 
     <NavLink
-        href={consoleUrl($blogStore.subdomain)}
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}`}
+        href={consoleUrl(listItem.subdomain)}
+        active={$page.url.pathname === `/console/${listItem.subdomain}`}
     >
         <IconHouse slot="start" />
 
@@ -37,7 +38,7 @@
         <a
             class="home-link"
             slot="end"
-            href={$blogStore.url}
+            href={listItem.url}
             target="_blank"
         >
             <IconBoxArrowUpRight size={12} />
@@ -48,16 +49,16 @@
     <div class="section-div"></div>
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/posts`)}
-        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/posts`)}
+        href={consoleUrl(`${listItem.subdomain}/posts`)}
+        active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/posts`)}
     >
         <IconPencil slot="start" />
         Posts
     </NavLink>
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/pages`)}
-        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/pages`)}
+        href={consoleUrl(`${listItem.subdomain}/pages`)}
+        active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/pages`)}
     >
         <IconFiles slot="start" />
         Pages
@@ -67,8 +68,8 @@
     <div class="section-div"></div>
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/theme`)} 
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}/theme`}
+        href={consoleUrl(`${listItem.subdomain}/theme`)}
+        active={$page.url.pathname === `/console/${listItem.subdomain}/theme`}
     >
         <IconPalette slot="start" />
         Theme
@@ -76,33 +77,24 @@
 
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/billing`)}
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}/billing`}
-    >
-        <IconCoin slot="start" />
-        Billing
-    </NavLink>
-
-
-    <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/integrations`)}
-        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/integrations`)}
+        href={consoleUrl(`${listItem.subdomain}/integrations`)}
+        active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
     >
         <IconPlugin slot="start" />
         Integrations
     </NavLink>
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/tools`)}
-        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/tools`)}
+        href={consoleUrl(`${listItem.subdomain}/tools`)}
+        active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/tools`)}
     >
         <IconTools slot="start" />
         Tools
     </NavLink>
 
     <NavLink
-        href={consoleUrl(`${$blogStore.subdomain}/settings`)}
-        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/settings`)}
+        href={consoleUrl(`${listItem.subdomain}/settings`)}
+        active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/settings`)}
     >
         <IconGear slot="start" />
         Settings

@@ -2,8 +2,8 @@
 	import { NavLink } from "@hyvor/design/components";
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
 	import { page } from "$app/stores";
-	import { blogStore } from "../../../lib/stores/blogStore.js";
-	import { consoleUrl, consoleUrlWithBlog } from "../../../lib/consoleUrl.js";
+	import { blogStore } from "../../../lib/stores/blogStore";
+	import { consoleUrl, consoleUrlWithBlog } from "../../../lib/consoleUrl";
 	import DisabledOnTemp from "../Temp/DisabledOnTemp.svelte";
 </script>
 

@@ -1,6 +1,6 @@
 <script>
 	import { NavLink } from '@hyvor/design/components';
-	import { consoleUrl } from '../../../lib/consoleUrl';
+	import { consoleUrl } from '../../lib/consoleUrl';
 	import { page } from '$app/stores';
 	import { IconCoin } from '@hyvor/icons';
 </script>

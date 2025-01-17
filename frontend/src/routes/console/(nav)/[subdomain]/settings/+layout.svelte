@@ -1,9 +1,9 @@
 <script>
 	import { NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
-	import { blogStore } from "../../../lib/stores/blogStore.js";
+	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconChatText, IconCodeSlash, IconCursorText, IconDatabase, IconExclamationTriangle, IconGlobe, IconImage, IconKey, IconLightbulb, IconLink45deg, IconList, IconPeople, IconSearchHeart, IconSend, IconSignTurnRight, IconSignTurnSlightRight, IconSignpost2, IconSlash, IconTag } from "@hyvor/icons";
-	import { consoleUrlWithBlog } from "../../../lib/consoleUrl.js";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 
     const prefix = `/console/${$blogStore.subdomain}/settings`;
 </script>

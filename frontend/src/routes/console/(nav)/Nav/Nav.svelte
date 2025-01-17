@@ -2,15 +2,23 @@
 	import BottomButtons from './BottomButtons/BottomButtons.svelte';
 	import BlogNav from './BlogNav.svelte';
 	import AccountNav from './AccountNav.svelte';
+	import { blogStore } from '../../lib/stores/blogStore';
+	import {blogListStore} from "../../lib/stores";
+
+	$: blogListItemId = $blogStore ? $blogStore.id : $blogListStore[0]?.id;
+	$: blogListItem = $blogListStore.find(blog => blog.id === blogListItemId);
 </script>
 
 <div id="nav-wrap">
 	<div class="nav account">
 		<AccountNav />
 	</div>
-	<div class="nav">
-		<BlogNav />
-	</div>
+
+	{#if blogListItem}
+		<div class="nav">
+			<BlogNav listItem={blogListItem} />
+		</div>
+	{/if}
 
 	<BottomButtons />
 </div>
@@ -27,6 +35,7 @@
 		background: var(--box-background);
 		box-shadow: var(--box-shadow);
 	}
+
 	.nav.account {
 		margin-bottom: 15px;
 	}

@@ -1,10 +1,9 @@
 <script>
 	import { NavLink } from "@hyvor/design/components";
-    import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
 	import { page } from "$app/stores";
-	import { blogStore } from "../../../lib/stores/blogStore.js";
+	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconDownload, IconImage, IconLink45deg, IconUpload } from "@hyvor/icons";
-	import { consoleUrlWithBlog } from "../../../lib/consoleUrl.js";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 </script>
 
 <div class="tools">

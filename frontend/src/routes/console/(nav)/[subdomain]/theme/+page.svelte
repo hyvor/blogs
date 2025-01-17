@@ -1,7 +1,7 @@
 <script>
 	import Editor from "./Editor/Editor.svelte";
     import ThemeNav from "./ThemeNav.svelte";
-	import { useIsFileEditingCheck } from "./theme.js";
+	import { useIsFileEditingCheck } from "./theme";
 
     useIsFileEditingCheck();
 </script>

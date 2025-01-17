@@ -1,7 +1,7 @@
 <script>
 	import { Button, Tooltip, confirm } from '@hyvor/design/components';
 	import { IconCloudDownload } from '@hyvor/icons';
-	import { blogStore } from '../../../lib/stores/blogStore.js';
+	import { blogStore } from '../../../lib/stores/blogStore';
 
 	async function handleDownload() {
 		if (

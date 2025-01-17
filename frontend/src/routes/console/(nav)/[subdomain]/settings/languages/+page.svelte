@@ -2,7 +2,7 @@
 	import LanguageRow from './LanguageRow.svelte';
 	import { Button, IconButton, Table, TableRow } from "@hyvor/design/components";
 	import { IconPlus } from "@hyvor/icons";
-	import { languagesStore } from "../../../../lib/stores/languagesStore.js";
+	import { languagesStore } from "../../../../lib/stores/languagesStore";
 	import LanguageModal from './LanguageModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
 
