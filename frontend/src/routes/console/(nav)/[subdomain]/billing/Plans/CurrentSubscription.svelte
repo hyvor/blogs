@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import type { Subscription } from '../../../../lib/types';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 
 	interface Props {
 		subscription: Subscription;
@@ -20,8 +20,8 @@
 		<Button as="a" href="https://hyvor.com/account/billing" target="_blank" color="blue">
 			Manage Billing
 			{#snippet end()}
-						<IconBoxArrowUpRight  size={14} />
-					{/snippet}
+				<IconBoxArrowUpRight size={14} />
+			{/snippet}
 		</Button>
 	</div>
 </div>

@@ -8,7 +8,7 @@
 	import logoUniverbal from '$lib/img/customers/univerbal.svg';
 
 	import { Button } from '@hyvor/design/components';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 
 	interface Props {
 		button?: boolean;
@@ -137,8 +137,8 @@
 			>
 				View reviews on G2
 				{#snippet end()}
-								<IconBoxArrowUpRight  size={12} />
-							{/snippet}
+					<IconBoxArrowUpRight size={12} />
+				{/snippet}
 			</Button>
 		</div>
 	{/if}

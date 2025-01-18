@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { IconArrowUpCircle } from '@hyvor/icons';
+	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
 	import type { SubscriptionPlan } from '../../../lib/types';
 	import { Button } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Loader, TextInput, toast } from '@hyvor/design/components';
-	import { IconArrowReturnLeft } from '@hyvor/icons';
+	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { VALID_MIME_TYPES, type SelectedFile, VALID_MIME_TYPES_NAMES } from './image-uploader';
 	import { VALID_MIME_TYPES_AUDIO, VALID_MIME_TYPES_NAMES_AUDIO } from './audio-uploader';
@@ -239,8 +239,8 @@
 					/>
 					<Button disabled={byUrl.trim() === ''} on:click={handleFetch}>
 						Fetch {#snippet end()}
-												<IconArrowReturnLeft  />
-											{/snippet}
+							<IconArrowReturnLeft />
+						{/snippet}
 					</Button>
 				</div>
 			</div>

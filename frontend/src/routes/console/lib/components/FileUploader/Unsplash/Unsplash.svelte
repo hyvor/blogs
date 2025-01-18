@@ -10,7 +10,7 @@
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
-	import { IconArrowReturnLeft } from '@hyvor/icons';
+	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import type { UnsplashImage } from '../../../types';
 	import { searchUnsplash } from './unsplashActions';
 	import { createEventDispatcher } from 'svelte';
@@ -93,8 +93,8 @@
 		/>
 		<Button on:click={() => performSearch()}>
 			Search {#snippet end()}
-						<IconArrowReturnLeft  size={14} />
-					{/snippet}
+				<IconArrowReturnLeft size={14} />
+			{/snippet}
 		</Button>
 	</div>
 

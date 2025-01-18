@@ -18,7 +18,7 @@
 	import { createRedirect, updateRedirect } from './redirectActions';
 	import { createEventDispatcher } from 'svelte';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 
 	interface Props {
@@ -103,13 +103,15 @@
 		}
 	}
 
-	let isButtonDisabled = $derived(!(
-		isCreating ||
-		dynamic !== redirect!.dynamic ||
-		from !== redirect!.path ||
-		to !== redirect!.to ||
-		type !== redirect!.type
-	));
+	let isButtonDisabled = $derived(
+		!(
+			isCreating ||
+			dynamic !== redirect!.dynamic ||
+			from !== redirect!.path ||
+			to !== redirect!.to ||
+			type !== redirect!.type
+		)
+	);
 </script>
 
 <Modal title={isCreating ? 'Add new redirect' : 'Edit redirect'} {loading} bind:show>
@@ -125,8 +127,8 @@
 
 		<Link href="/docs/redirects#dynamic" color="accent" style="font-size:small" target="_blank"
 			>Refer docs for more details.{#snippet end()}
-						<IconBoxArrowUpRight  />
-					{/snippet}</Link
+				<IconBoxArrowUpRight />
+			{/snippet}</Link
 		>
 	</SplitControl>
 	<SplitControl label="From" caption="Which path to match">
@@ -172,14 +174,12 @@
 	</SplitControl>
 
 	{#snippet footer()}
-	
-			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<ButtonGroup>
+			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-				<Button on:click={handleClick} disabled={isButtonDisabled}>
-					{isCreating ? 'Add' : 'Save'}
-				</Button>
-			</ButtonGroup>
-		
+			<Button on:click={handleClick} disabled={isButtonDisabled}>
+				{isCreating ? 'Add' : 'Save'}
+			</Button>
+		</ButtonGroup>
 	{/snippet}
 </Modal>

@@ -11,7 +11,7 @@
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 	import { updateBlog } from '../../../../../lib/actions/blogActions';
 	import { onMount } from 'svelte';
-	import { IconExclamationCircle } from '@hyvor/icons';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	interface Props {
 		open?: boolean;
@@ -57,20 +57,18 @@
 		{#if ($blogStore.code_foot || '').includes('<hyvor-talk-memberships')}
 			<Callout type="warning">
 				{#snippet icon()}
-								<IconExclamationCircle  />
-							{/snippet}
+					<IconExclamationCircle />
+				{/snippet}
 				It seems that you already have the memberships code added.
 			</Callout>
 		{/if}
 
 		{#snippet footer()}
-			
-				<ButtonGroup>
-					<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
-					<Button on:click={handleUpdate}>Update</Button>
-				</ButtonGroup>
-			
-			{/snippet}
+			<ButtonGroup>
+				<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
+				<Button on:click={handleUpdate}>Update</Button>
+			</ButtonGroup>
+		{/snippet}
 	</Modal>
 {/if}
 

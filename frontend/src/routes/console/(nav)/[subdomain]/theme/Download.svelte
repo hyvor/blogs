@@ -1,6 +1,6 @@
 <script>
 	import { Button, Tooltip, confirm } from '@hyvor/design/components';
-	import { IconCloudDownload } from '@hyvor/icons';
+	import IconCloudDownload from '@hyvor/icons/IconCloudDownload';
 	import { blogStore } from '../../../lib/stores/blogStore';
 
 	async function handleDownload() {
@@ -22,8 +22,8 @@
 <Tooltip text="Download your theme files">
 	<Button color="input" size="small" style="font-size:13px" on:click={handleDownload}>
 		{#snippet start()}
-				<IconCloudDownload size={16}  />
-			{/snippet}
+			<IconCloudDownload size={16} />
+		{/snippet}
 		Download
 	</Button>
 </Tooltip>

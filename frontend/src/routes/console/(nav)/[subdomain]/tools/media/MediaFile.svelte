@@ -3,14 +3,13 @@
 	import type { Media } from '../../../../lib/types';
 	import { IMAGE_EXTENSIONS, deleteMedia, updateMedia } from './mediaActions';
 	import { IconButton, Tooltip, confirm, toast } from '@hyvor/design/components';
-	import { IconTrash } from '@hyvor/icons';
+	import IconTrash from '@hyvor/icons/IconTrash';
 	import { createEventDispatcher } from 'svelte';
 	import MediaUpdateFileName from './MediaUpdateFileName.svelte';
 
-
 	// If the user is selecting media files
 	// delete button will not be shown
-	
+
 	interface Props {
 		media: Media;
 		// an event will be fired when the user selects a media file

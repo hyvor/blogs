@@ -1,7 +1,7 @@
 <script>
 	import { Callout } from '@hyvor/design/components';
 	import { Document } from '@hyvor/design/marketing';
-	import { IconCardChecklist } from '@hyvor/icons';
+	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
 </script>
 
 <svelte:head>

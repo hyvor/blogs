@@ -11,7 +11,7 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 
 	function handleAllowIndexingChange(e: any) {
 		updateBlogStore({ seo_indexing: e.target.checked });
@@ -67,10 +67,10 @@
 
 	<SplitControl label="Rich Schema">
 		{#snippet caption()}
-				<Caption 
+			<Caption
 				>Add <Link href="/docs/seo#rich-schema" target="_blank">rich schema</Link> to posts</Caption
 			>
-			{/snippet}
+		{/snippet}
 
 		<Switch checked={$blogStore.seo_rich_schema} on:change={handleRichSchemaChange} />
 	</SplitControl>

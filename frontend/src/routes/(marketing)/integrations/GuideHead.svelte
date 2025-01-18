@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { IconBoxes } from '@hyvor/icons';
+	import IconBoxes from '@hyvor/icons/IconBoxes';
 	import hyvorblogsIcon from './icons/hyvorblogs.png';
 	import { Button } from '@hyvor/design/components';
 	interface Props {
@@ -16,8 +16,8 @@
 		<div class="button">
 			<Button as="a" href="/integrations" size="large" variant="outline">
 				{#snippet start()}
-								<IconBoxes  />
-							{/snippet} View All Integrations
+					<IconBoxes />
+				{/snippet} View All Integrations
 			</Button>
 		</div>
 	</div>

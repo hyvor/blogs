@@ -2,13 +2,13 @@
 	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
 	import MediaFilter from './MediaFilter.svelte';
 	import { getMedia, type FileType, uploadMedia } from './mediaActions';
-	import { IconCloudUpload } from '@hyvor/icons';
+	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	import type { Media } from '../../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
 	import { getConfig } from '../../../../lib/config';
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
-import { mount, unmount } from "svelte";
+	import { mount, unmount } from 'svelte';
 
 	interface Props {
 		showUpload?: boolean;
@@ -69,11 +69,11 @@ import { mount, unmount } from "svelte";
 		document.body.appendChild(div);
 
 		const selector = mount(FileUploader, {
-        			target: div,
-        			props: {
-        				type: 'any'
-        			}
-        		});
+			target: div,
+			props: {
+				type: 'any'
+			}
+		});
 
 		function destroy() {
 			unmount(selector);
@@ -136,8 +136,8 @@ import { mount, unmount } from "svelte";
 			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
 			<Button on:click={handleClickUpload}>
 				{#snippet start()}
-								<IconCloudUpload  />
-							{/snippet}
+					<IconCloudUpload />
+				{/snippet}
 				Upload
 			</Button>
 		{/if}

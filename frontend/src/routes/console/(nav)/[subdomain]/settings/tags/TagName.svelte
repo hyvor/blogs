@@ -2,7 +2,7 @@
 	import { Tooltip } from '@hyvor/design/components';
 	import { primaryLanguageStore } from '../../../../lib/stores/languagesStore';
 	import type { Tag } from '../../../../lib/types';
-	import { IconLock } from '@hyvor/icons';
+	import IconLock from '@hyvor/icons/IconLock';
 
 	interface Props {
 		tag: Tag;

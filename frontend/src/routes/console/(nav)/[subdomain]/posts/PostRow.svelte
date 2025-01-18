@@ -8,7 +8,7 @@
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
 	import SeoAnalysisTag from './Tags/SeoAnalysisTag.svelte';
 	import VariantLangTag from './Tags/VariantLangTag.svelte';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import TagName from '../settings/tags/TagName.svelte';
 

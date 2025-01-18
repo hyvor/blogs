@@ -1,7 +1,7 @@
 <script>
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout } from '@hyvor/design/components';
-	import { IconExclamationOctagonFill } from '@hyvor/icons';
+	import IconExclamationOctagonFill from '@hyvor/icons/IconExclamationOctagonFill';
 
 	import createRedirectImg from './create-redirect.png';
 	import example1Img from './dynamic-redirect.png';
@@ -49,7 +49,7 @@
 
 <Callout type="info">
 	{#snippet icon()}
-		<IconExclamationOctagonFill  />
+		<IconExclamationOctagonFill />
 	{/snippet}
 	You can only have up to 5 dynamic redirects per blog.
 </Callout>

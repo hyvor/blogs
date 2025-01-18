@@ -5,7 +5,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
 	import type { UnfoldedEmbed } from '../../../../../../../../../lib/types';
-	import { IconArrowReturnLeft } from '@hyvor/icons';
+	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import EmbedHtmlDisplay from './EmbedHtmlDisplay.svelte';
 
@@ -116,8 +116,8 @@
 		/>
 		<Button on:click={handleFetch}>
 			Fetch {#snippet end()}
-						<IconArrowReturnLeft  />
-					{/snippet}
+				<IconArrowReturnLeft />
+			{/snippet}
 		</Button>
 	</div>
 

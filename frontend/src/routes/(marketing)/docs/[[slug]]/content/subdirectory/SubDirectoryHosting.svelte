@@ -3,7 +3,7 @@
 	import { Table } from '@hyvor/design/components';
 	import { Divider } from '@hyvor/design/components';
 	import { Text } from '@hyvor/design/components';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { Tag, Button } from '@hyvor/design/components';
 </script>
 
