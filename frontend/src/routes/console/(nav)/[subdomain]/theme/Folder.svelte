@@ -1,14 +1,20 @@
 <script lang="ts">
-	import { IconCaretDownFill, IconCaretRightFill } from "@hyvor/icons";
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
+
 	import type { ThemeFolder } from "../../../lib/types";
 	import { selectedThemeFileIdStore, themeFilesStore } from "./themeStore";
 	import NewFileCreator from "./Editor/NewFileCreator.svelte";
-    export let name: ThemeFolder;
+    interface Props {
+        name: ThemeFolder;
+    }
 
-    $: files = $themeFilesStore;
-    $: filesOfFolder = files.filter(file => file.folder === name);
+    let { name }: Props = $props();
 
-    let open = false;
+    let files = $derived($themeFilesStore);
+    let filesOfFolder = $derived(files.filter(file => file.folder === name));
+
+    let open = $state(false);
 </script>
 
 
@@ -16,7 +22,7 @@
 
     {#if name}
 
-        <button class="folder-name" on:click={() => open = !open}>
+        <button class="folder-name" onclick={() => open = !open}>
 
             <span class="fold-icon">
                 {#if open}
@@ -37,7 +43,7 @@
         {#each filesOfFolder as file (file.id)}
             <button
                 class={"file" + ($selectedThemeFileIdStore === file.id ? " active" : "")}
-                on:click={() => selectedThemeFileIdStore.set(file.id)}
+                onclick={() => selectedThemeFileIdStore.set(file.id)}
             >
                 {file.name}
             </button>

@@ -3,12 +3,21 @@
     import type {Usage} from "../../../lib/types";
     import byteFormatter from "../../../lib/helper/byte-formatter";
 
-    export let name: string;
-    export let data: Usage;
-    export let bytes = false;
-    export let zero = false;
+    interface Props {
+        name: string;
+        data: Usage;
+        bytes?: boolean;
+        zero?: boolean;
+    }
 
-    let width = "0%";
+    let {
+        name,
+        data,
+        bytes = false,
+        zero = false
+    }: Props = $props();
+
+    let width = $state("0%");
     const calcWidth = data.percentage + "%";
 
     onMount(() => {
@@ -17,14 +26,14 @@
         }, 200);
     });
 
-    let current = data.current as number | string;
-    let total = data.total as number | string;
+    let current = $state(data.current as number | string);
+    let total = $state(data.total as number | string);
     if (bytes) {
         current = byteFormatter(data.current);
         total = byteFormatter(data.total);
     }
 
-    let color = "var(--accent)";
+    let color = $state("var(--accent)");
     if (data.percentage > 99) {
         color = "var(--red-dark)";
     } else if (data.percentage > 85) {

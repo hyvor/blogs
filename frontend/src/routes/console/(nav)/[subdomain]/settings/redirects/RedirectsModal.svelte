@@ -18,23 +18,27 @@
 	import { createRedirect, updateRedirect } from './redirectActions';
 	import { createEventDispatcher } from 'svelte';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 
-	export let redirect: Redirect | null = null;
-	export let show = false;
-	let loading = false;
+	interface Props {
+		redirect?: Redirect | null;
+		show?: boolean;
+	}
+
+	let { redirect = null, show = $bindable(false) }: Props = $props();
+	let loading = $state(false);
 	const isCreating = redirect === null;
 
 	const dispatch = createEventDispatcher();
 
-	let dynamic = redirect ? redirect.dynamic : false;
-	let from = redirect ? redirect.path : '';
-	let to = redirect ? redirect.to : '';
-	let type: 'permanent' | 'temporary' = redirect ? redirect.type : 'permanent';
+	let dynamic = $state(redirect ? redirect.dynamic : false);
+	let from = $state(redirect ? redirect.path : '');
+	let to = $state(redirect ? redirect.to : '');
+	let type: 'permanent' | 'temporary' = $state(redirect ? redirect.type : 'permanent');
 
-	let fromError: null | string = null;
-	let toError: null | string = null;
+	let fromError: null | string = $state(null);
+	let toError: null | string = $state(null);
 
 	function handleClick() {
 		fromError = null;
@@ -99,12 +103,14 @@
 		}
 	}
 
-	$: isButtonDisabled = !(
-		isCreating ||
-		dynamic !== redirect!.dynamic ||
-		from !== redirect!.path ||
-		to !== redirect!.to ||
-		type !== redirect!.type
+	let isButtonDisabled = $derived(
+		!(
+			isCreating ||
+			dynamic !== redirect!.dynamic ||
+			from !== redirect!.path ||
+			to !== redirect!.to ||
+			type !== redirect!.type
+		)
 	);
 </script>
 
@@ -120,7 +126,9 @@
 		</div>
 
 		<Link href="/docs/redirects#dynamic" color="accent" style="font-size:small" target="_blank"
-			>Refer docs for more details.<IconBoxArrowUpRight slot="end" /></Link
+			>Refer docs for more details.{#snippet end()}
+				<IconBoxArrowUpRight />
+			{/snippet}</Link
 		>
 	</SplitControl>
 	<SplitControl label="From" caption="Which path to match">
@@ -165,7 +173,7 @@
 		</InputGroup>
 	</SplitControl>
 
-	<svelte:fragment slot="footer">
+	{#snippet footer()}
 		<ButtonGroup>
 			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
@@ -173,5 +181,5 @@
 				{isCreating ? 'Add' : 'Save'}
 			</Button>
 		</ButtonGroup>
-	</svelte:fragment>
+	{/snippet}
 </Modal>

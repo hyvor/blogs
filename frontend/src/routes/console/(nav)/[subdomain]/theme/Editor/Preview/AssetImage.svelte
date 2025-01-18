@@ -2,9 +2,13 @@
 	import { blogStore } from "../../../../../lib/stores/blogStore";
 	import type { ThemeFile } from "../../../../../lib/types";
 
-    export let file: ThemeFile;    
+    interface Props {
+        file: ThemeFile;
+    }
 
-    $: url = $blogStore.url + "/assets/" + file.name;
+    let { file }: Props = $props();
+
+    let url = $derived($blogStore.url + "/assets/" + file.name);
 </script>
 
 <div class="asset-image-preview">

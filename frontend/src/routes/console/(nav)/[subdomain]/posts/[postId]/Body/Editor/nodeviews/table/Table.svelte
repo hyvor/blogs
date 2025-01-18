@@ -2,8 +2,8 @@
 	import { createEventDispatcher, onMount } from "svelte";
 
 
-    let colgroup : HTMLTableColElement | null = null;
-    let tbody : HTMLTableSectionElement | null = null;
+    let colgroup : HTMLTableColElement | null = $state(null);
+    let tbody : HTMLTableSectionElement | null = $state(null);
 
     const dispatch = createEventDispatcher<{
         load: {
@@ -25,7 +25,7 @@
 
 <table>
 
-    <colgroup bind:this={colgroup} />
-    <tbody bind:this={tbody} />
+    <colgroup bind:this={colgroup}></colgroup>
+    <tbody bind:this={tbody}></tbody>
 
 </table>

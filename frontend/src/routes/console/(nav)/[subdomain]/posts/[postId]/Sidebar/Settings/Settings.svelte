@@ -10,12 +10,14 @@
 	import CoverImage from "./CoverImage.svelte";
 	import Featured from "./Featured.svelte";
 	import Delete from "./Delete.svelte";
-	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+
 	import CanonicalUrl from "./CanonicalUrl.svelte";
 	import CodeHead from "./CodeHead.svelte";
 	import CodeFoot from "./CodeFoot.svelte";
 
-    let showAdvanced = false;
+    let showAdvanced = $state(false);
 </script>
 
 <div class="settings-wrap">
@@ -37,11 +39,13 @@
                 size="small"
                 on:click={() => showAdvanced = !showAdvanced}
             >
-                <svelte:component 
-                    this={showAdvanced ? IconCaretDown : IconCaretRight} 
-                    size={12} 
-                    slot="end" 
-                />
+                {#snippet end()}
+                                {@const SvelteComponent = showAdvanced ? IconCaretDown : IconCaretRight}
+                <SvelteComponent 
+                        size={12} 
+                         
+                    />
+                            {/snippet}
                 Advanced
             </Button>
         </div>

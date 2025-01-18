@@ -7,11 +7,11 @@
 	import type { PostVariant } from "../../../../../../lib/types";
 	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
 
-    $: uniqueKey = `${$postVariantStore.id}` +
+    let uniqueKey = $derived(`${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
         `-key-${$postCurrentContentKey}` + 
         `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
-        `-version-${$postEditingStatusStore.editorVersion}`;
+        `-version-${$postEditingStatusStore.editorVersion}`);
 
     function handleChange(e: CustomEvent<string>) {
 

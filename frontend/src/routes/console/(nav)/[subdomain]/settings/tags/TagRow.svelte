@@ -2,17 +2,23 @@
 	import { IconButton, Link, TableRow, Tooltip, confirm, toast } from '@hyvor/design/components';
 	import type { Tag } from '../../../../lib/types';
 	import { primaryLanguageStore } from '../../../../lib/stores/languagesStore';
-	import { IconPencilFill, IconTrash } from '@hyvor/icons';
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteTag } from './tagActions';
 	import { createEventDispatcher } from 'svelte';
 	import UpdateTagModal from './Update/UpdateTagModal.svelte';
 	import TagName from './TagName.svelte';
 
-	export let tag: Tag;
+	interface Props {
+		tag: Tag;
+	}
 
-	$: variant = tag.variants.find((v) => v.language_id === $primaryLanguageStore.id);
+	let { tag }: Props = $props();
 
-	let isEditing = false;
+	let variant = $derived(tag.variants.find((v) => v.language_id === $primaryLanguageStore.id));
+
+	let isEditing = $state(false);
 
 	const dispatch = createEventDispatcher();
 

@@ -1,20 +1,34 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import type { EditorView } from "prosemirror-view";
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 	import { tick } from "svelte";
 	import { IconButton } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCode, IconLink45deg, IconPencil, IconTrash, IconTypeBold, IconTypeItalic, IconTypeStrikethrough } from "@hyvor/icons";
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconCode from '@hyvor/icons/IconCode';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconPencil from '@hyvor/icons/IconPencil';
+import IconTrash from '@hyvor/icons/IconTrash';
+import IconTypeBold from '@hyvor/icons/IconTypeBold';
+import IconTypeItalic from '@hyvor/icons/IconTypeItalic';
+import IconTypeStrikethrough from '@hyvor/icons/IconTypeStrikethrough';
+
 	import { Mark, type MarkType } from "prosemirror-model";
 	import type { EditorState } from "prosemirror-state";
 	import { toggleMark } from "prosemirror-commands";
 	import LinkSelector from "./LinkSelector/LinkSelector.svelte";
 	import { markExtend } from "./mark-helpers";
 
-    export let view: EditorView;
-    export let show = false;
+    interface Props {
+        view: EditorView;
+        show?: boolean;
+    }
 
-    let tooltip: HTMLSpanElement;
-    let linkSelectorOpen = false;
+    let { view, show = false }: Props = $props();
+
+    let tooltip: HTMLSpanElement = $state();
+    let linkSelectorOpen = $state(false);
 
     function getLink() {
         const sel = view.state.selection;
@@ -28,8 +42,10 @@
         return link;
     }
 
-    let  link: Mark | null;
-    $: if (view) link = getLink();
+    let  link: Mark | null = $state();
+    run(() => {
+        if (view) link = getLink();
+    });
 
     function updatePosition() {
         if (!tooltip) return;
@@ -65,12 +81,14 @@
 
 
     // position when show/view is changed
-    $: if (view && show) {
-        (async () => {
-            await tick()
-            updatePosition()
-        })();
-    }
+    run(() => {
+        if (view && show) {
+            (async () => {
+                await tick()
+                updatePosition()
+            })();
+        }
+    });
 
     type MarkName = 'link' | 'strong' | 'em' | 'code' | 'strike'
 

@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { ActionList, ActionListItem, Button, Dropdown, IconButton, Text } from "@hyvor/design/components";
-	import { IconCaretDown, IconX } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconX from '@hyvor/icons/IconX';
+
 	import { postListFiltersStore, setFilter } from "../../postListStore";
 	import dayjs from "dayjs";
 	import { OPTIONS, dateFilterStore } from "./date";
     
     const options = Object.entries(OPTIONS) as [keyof typeof OPTIONS, string][];
 
-    let showDropdown = false;
+    let showDropdown = $state(false);
 
     function handleSelect(item: keyof typeof OPTIONS) {
         dateFilterStore.set(item);
@@ -53,43 +55,51 @@
 
 <Dropdown align="end" bind:show={showDropdown}>
 
-    <Button slot="trigger" color="input">
-        <Text bold slot="start">Date</Text>
+    {#snippet trigger()}
+        <Button  color="input">
+            {#snippet start()}
+                <Text bold >Date</Text>
+            {/snippet}
 
-        <span class="text">
-            {$dateFilterStore ? OPTIONS[$dateFilterStore] : 'Any'}
-        </span>
+            <span class="text">
+                {$dateFilterStore ? OPTIONS[$dateFilterStore] : 'Any'}
+            </span>
 
-        {#if $dateFilterStore}
-            <IconButton 
-                size={14} 
-                style="margin-left:6px;"
-                on:click={handleX}
-            >
-                <IconX size={12} />
-            </IconButton>
-        {/if}
+            {#if $dateFilterStore}
+                <IconButton 
+                    size={14} 
+                    style="margin-left:6px;"
+                    on:click={handleX}
+                >
+                    <IconX size={12} />
+                </IconButton>
+            {/if}
 
-        <IconCaretDown slot="end" size={14} />
-    </Button>
+            {#snippet end()}
+                <IconCaretDown  size={14} />
+            {/snippet}
+        </Button>
+    {/snippet}
 
-    <ActionList 
-        slot="content" 
-    >
+    {#snippet content()}
+        <ActionList 
+             
+        >
 
-        {#each options as [key, label] (key)}
-            <ActionListItem
-                on:select={() => handleSelect(key)}
-                style="
-                    text-transform:capitalize;
-                    {$dateFilterStore === key ? 'background-color: var(--accent-light-mid)' : ''}
-                "
-            >
-                {label}
-            </ActionListItem>
-        {/each}
+            {#each options as [key, label] (key)}
+                <ActionListItem
+                    on:select={() => handleSelect(key)}
+                    style="
+                        text-transform:capitalize;
+                        {$dateFilterStore === key ? 'background-color: var(--accent-light-mid)' : ''}
+                    "
+                >
+                    {label}
+                </ActionListItem>
+            {/each}
 
-    </ActionList>
+        </ActionList>
+    {/snippet}
 
 </Dropdown>
 

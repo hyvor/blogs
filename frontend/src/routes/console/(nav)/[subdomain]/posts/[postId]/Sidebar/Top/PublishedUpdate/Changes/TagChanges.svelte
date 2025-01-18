@@ -4,7 +4,11 @@
 	import { postOriginalStore, postStore } from '../../../../../postStore';
 	import TagName from '../../../../../../settings/tags/TagName.svelte';
 
-	export let diff: boolean;
+	interface Props {
+		diff: boolean;
+	}
+
+	let { diff }: Props = $props();
 
 	let allTags: TagType[] = [];
 

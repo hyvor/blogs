@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { Button, IconButton, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { Webhook } from "../../../../lib/types";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteWebhook } from "./webhookActions";
 	import { createEventDispatcher } from "svelte";
 	import CreateUpdateWebhookModal from "./CreateUpdateWebhookModal.svelte";
     
-    export let webhook: Webhook;
+    interface Props {
+        webhook: Webhook;
+    }
+
+    let { webhook }: Props = $props();
 
     function handleCopy() {
         navigator.clipboard.writeText(webhook.secret);
@@ -15,7 +21,7 @@
 
     const dispatch = createEventDispatcher();
 
-    let isUpdating = false;
+    let isUpdating = $state(false);
 
     async function handleDelete() {
         if (await confirm({

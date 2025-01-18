@@ -1,5 +1,5 @@
 import type { EditorView, NodeView } from "prosemirror-view";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponent, mount } from "svelte";
 import Toc from "./Toc.svelte";
 import type { Node } from "prosemirror-model";
 
@@ -21,10 +21,10 @@ export default class TocView implements NodeView {
         this.dom = document.createElement('div');
         this.dom.className = 'toc-wrap';
 
-        this.component = new Toc({
-            target: this.dom,
-            props: this.getPropsFromNode(node)
-        });
+        this.component = mount(Toc, {
+                    target: this.dom,
+                    props: this.getPropsFromNode(node)
+                });
 
     }   
 

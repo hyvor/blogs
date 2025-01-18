@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import type { Subscription } from '../../../../lib/types';
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 
-	export let subscription: Subscription;
+	interface Props {
+		subscription: Subscription;
+	}
+
+	let { subscription }: Props = $props();
 </script>
 
 <div class="current-subscription">
@@ -15,7 +19,9 @@
 	<div class="button-wrap">
 		<Button as="a" href="https://hyvor.com/account/billing" target="_blank" color="blue">
 			Manage Billing
-			<IconBoxArrowUpRight slot="end" size={14} />
+			{#snippet end()}
+				<IconBoxArrowUpRight size={14} />
+			{/snippet}
 		</Button>
 	</div>
 </div>

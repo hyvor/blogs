@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type { Language } from "../../../../lib/types";
 
-    export let language: Language;
+    interface Props {
+        language: Language;
+    }
+
+    let { language }: Props = $props();
 </script>
 
 Are you sure to delete the {language.name} ({language.code}) language? This will <strong>permanently</strong> delete all {language.name} translations in:

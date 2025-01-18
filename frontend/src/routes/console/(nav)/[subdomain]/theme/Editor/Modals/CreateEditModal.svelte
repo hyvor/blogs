@@ -5,16 +5,20 @@
 	import { onMount } from "svelte";
 	import { addThemeFileToStore, selectedThemeFileIdStore, updateThemeFileStore } from "../../themeStore";
 
-    export let open = false;
-    export let file: {id: number | null, name: string, folder: ThemeFolder};
+    interface Props {
+        open?: boolean;
+        file: {id: number | null, name: string, folder: ThemeFolder};
+    }
 
-    $: isCreate = file.id === null;
+    let { open = $bindable(false), file }: Props = $props();
 
-    let fileName = '';
+    let isCreate = $derived(file.id === null);
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
-    let inputState : 'default' | 'success' | 'error' = 'default'
-    let error : string | null = null;
+    let fileName = $state('');
+
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
+    let inputState : 'default' | 'success' | 'error' = $state('default')
+    let error : string | null = $state(null);
 
     function handleUpdate() {
         const toastId = toast.loading('Updating file name...');
@@ -172,7 +176,9 @@
                 bind:value={fileName}
                 state={inputState}
             >
-                <Loader state={loaderState} slot="end" size="small" duration={10000} />
+                {#snippet end()}
+                                <Loader state={loaderState}  size="small" duration={10000} />
+                            {/snippet}
             </TextInput>
             {#if error}
                 <Validation state="error">{error}</Validation>
@@ -182,24 +188,26 @@
 
     </SplitControl>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button variant="invisible" on:click={() => open = false}>
-                Cancel
-            </Button>
+                <Button variant="invisible" on:click={() => open = false}>
+                    Cancel
+                </Button>
 
-            <Button 
-                color="accent" 
-                on:click={() => isCreate ? handleCreate() : handleUpdate()}
-                disabled={inputState !== 'success'}
-            >
-                {isCreate ? 'Create' : 'Update'}
-            </Button>
+                <Button 
+                    color="accent" 
+                    on:click={() => isCreate ? handleCreate() : handleUpdate()}
+                    disabled={inputState !== 'success'}
+                >
+                    {isCreate ? 'Create' : 'Update'}
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

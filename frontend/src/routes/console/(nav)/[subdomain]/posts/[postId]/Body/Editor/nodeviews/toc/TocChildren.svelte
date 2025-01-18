@@ -1,4 +1,8 @@
 <script lang="ts">
+    import TocChildren from './TocChildren.svelte';
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { Tag } from "@hyvor/design/components";
     import type { TocEntry } from "./toc";
 	import { get } from "svelte/store";
@@ -7,8 +11,12 @@
 	import { positionSelectionInMiddleOfScreen } from "../../../../../../../../lib/prosemirror/helpers";
 	import HeadingId from "./HeadingId.svelte";
     
-    export let children: TocEntry[];
-    export let top = false;
+    interface Props {
+        children: TocEntry[];
+        top?: boolean;
+    }
+
+    let { children, top = false }: Props = $props();
 
     function handleHeadingClick(entry: TocEntry) {
 
@@ -42,8 +50,8 @@
 
             <div 
                 class="heading"
-                on:click={e => handleHeadingClick(child)}
-                on:keyup
+                onclick={e => handleHeadingClick(child)}
+                onkeyup={bubble('keyup')}
                 role="button"
                 tabindex="0"
             >
@@ -63,7 +71,7 @@
 
 
             {#if child.children.length > 0}
-                <svelte:self children={child.children} />
+                <TocChildren children={child.children} />
             {/if}
         </div>
     {/each}

@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { Button, IconButton, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { Route } from "../../../../lib/types";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteRoute } from "./routeActions";
 	import { createEventDispatcher } from "svelte";
 	import CreateUpdateRouteModal from "./CreateUpdateRouteModal.svelte";
     
-    export let route: Route;
+    interface Props {
+        route: Route;
+    }
+
+    let { route }: Props = $props();
 
     const dispatch = createEventDispatcher();
 
-    let isUpdating = false;
+    let isUpdating = $state(false);
 
     async function handleDelete() {
         if (await confirm({
@@ -34,7 +40,7 @@
         }
     }
 
-    $: isDefaultRoute = ['post', 'page', 'index', 'tag', 'author'].indexOf(route.name) >= 0;
+    let isDefaultRoute = $derived(['post', 'page', 'index', 'tag', 'author'].indexOf(route.name) >= 0);
 
 </script>
 

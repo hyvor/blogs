@@ -2,10 +2,14 @@
 	import { Button, ButtonGroup, InputGroup, Modal, Radio, SplitControl, Textarea, toast } from "@hyvor/design/components";
 	import { clearBlogCache } from "./dangerActions";
 
-    export let show = false;
+    interface Props {
+        show?: boolean;
+    }
 
-    let type : 'template' | 'paths' | 'all' = 'template';
-    let paths = '';
+    let { show = $bindable(false) }: Props = $props();
+
+    let type : 'template' | 'paths' | 'all' = $state('template');
+    let paths = $state('');
 
     function handleClick() {
 
@@ -86,25 +90,27 @@
         </SplitControl>
     {/if}
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleClick}
-            >
-                Clear Cache
-            </Button>
+                <Button
+                    on:click={handleClick}
+                >
+                    Clear Cache
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

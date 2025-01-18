@@ -6,7 +6,7 @@
 	import CodemirrorWithPreview from "../../../../../../lib/components/CodemirrorEditor/CodemirrorWithPreview.svelte";
 	import { updatePost } from "../../../postActions";
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function handleChange(e: CustomEvent<string>) {
         updatePostStore({code_head: e.detail});
@@ -34,16 +34,18 @@
 
 <SplitControl>
 
-    <span slot="label">
-        <LabelWithInfo 
-            label="Code Head" 
-            info="Custom code to be added to <head> tag of the post."
-        />
-        <UnsavedTag
-            show={$postStore.code_head !== $postOriginalStore.code_head}
-            loaderState={loaderState}
-        />
-    </span>
+    {#snippet label()}
+        <span >
+            <LabelWithInfo 
+                label="Code Head" 
+                info="Custom code to be added to <head> tag of the post."
+            />
+            <UnsavedTag
+                show={$postStore.code_head !== $postOriginalStore.code_head}
+                loaderState={loaderState}
+            />
+        </span>
+    {/snippet}
 
     <CodemirrorWithPreview 
         value={$postStore.code_head || ''}

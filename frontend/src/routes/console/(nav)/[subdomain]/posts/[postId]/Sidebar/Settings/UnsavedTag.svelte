@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { Loader, Tag } from "@hyvor/design/components";
 
-    export let show : boolean = true;
-    export let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
-    export let size: 'x-small' | 'small' = 'x-small'
-    export let addMarginTop: boolean = true;
+    interface Props {
+        show?: boolean;
+        loaderState?: 'none' | 'loading' | 'success' | 'error';
+        size?: 'x-small' | 'small';
+        addMarginTop?: boolean;
+    }
+
+    let {
+        show = true,
+        loaderState = 'none',
+        size = 'x-small',
+        addMarginTop = true
+    }: Props = $props();
 
 </script>
 

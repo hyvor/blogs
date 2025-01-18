@@ -1,9 +1,14 @@
 <script lang="ts">
 	import LinkStatusTag from "../Links/LinkStatusTag.svelte";
 
-    /* export let name: string; */
-    export let value: number;
-    export let status: number;
+    
+    interface Props {
+        /* export let name: string; */
+        value: number;
+        status: number;
+    }
+
+    let { value, status }: Props = $props();
 
 </script>
 

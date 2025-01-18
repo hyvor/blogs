@@ -16,7 +16,9 @@
 	} from '../../../../postStore';
 	import type { Tag as TagType } from '../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
-	import { IconPlus, IconX } from '@hyvor/icons';
+	import IconPlus from '@hyvor/icons/IconPlus';
+import IconX from '@hyvor/icons/IconX';
+
 	import TagsSearch from './TagsSearch.svelte';
 	import { hasIdArrayChanged } from '../settingsHelpers';
 	import UnsavedTag from '../UnsavedTag.svelte';
@@ -24,8 +26,8 @@
 	import { updatePostTags } from '../../../../postActions';
 	import TagName from '../../../../../settings/tags/TagName.svelte';
 
-	let dropdownOpen = false;
-	let loaderState: 'none' | 'loading' | 'success' | 'error' = 'none';
+	let dropdownOpen = $state(false);
+	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
 	function saveTags() {
 		loaderState = 'loading';
@@ -56,16 +58,18 @@
 		if ($postVariantStore.status !== 'published') saveTags();
 	}
 
-	$: hasChanged = hasIdArrayChanged($postStore.tags, $postOriginalStore.tags);
+	let hasChanged = $derived(hasIdArrayChanged($postStore.tags, $postOriginalStore.tags));
 </script>
 
 <OnlyPrimaryVariant>
 	<SplitControl>
-		<span slot="label">
-			Tags
+		{#snippet label()}
+				<span >
+				Tags
 
-			<UnsavedTag show={hasChanged} {loaderState} />
-		</span>
+				<UnsavedTag show={hasChanged} {loaderState} />
+			</span>
+			{/snippet}
 
 		<div class="tags">
 			<div class="left">
@@ -74,15 +78,17 @@
 						<Tag size="small" bg="#f1f1f1">
 							<TagName {tag} small />
 
-							<IconButton
-								color="red"
-								variant="invisible"
-								on:click={() => handleRemoveTag(tag.id)}
-								size={14}
-								slot="end"
-							>
-								<IconX size={10} />
-							</IconButton>
+							{#snippet end()}
+														<IconButton
+									color="red"
+									variant="invisible"
+									on:click={() => handleRemoveTag(tag.id)}
+									size={14}
+									
+								>
+									<IconX size={10} />
+								</IconButton>
+													{/snippet}
 						</Tag>
 					{/each}
 				{:else}
@@ -92,11 +98,15 @@
 
 			<div class="right">
 				<Dropdown position="bottom" align="end" width={300} bind:show={dropdownOpen}>
-					<IconButton color="input" size={22} slot="trigger">
-						<IconPlus size={14} />
-					</IconButton>
+					{#snippet trigger()}
+										<IconButton color="input" size={22} >
+							<IconPlus size={14} />
+						</IconButton>
+									{/snippet}
 
-					<TagsSearch slot="content" selectedTags={$postStore.tags} on:select={handleAddTag} />
+					{#snippet content()}
+										<TagsSearch  selectedTags={$postStore.tags} on:select={handleAddTag} />
+									{/snippet}
 				</Dropdown>
 			</div>
 		</div>

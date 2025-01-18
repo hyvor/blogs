@@ -17,18 +17,22 @@
 	import { type Webhook, WebhookEventType } from '../../../../lib/types';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 
-	export let show: boolean;
-	export let webhook: undefined | Webhook = undefined;
+	interface Props {
+		show: boolean;
+		webhook?: undefined | Webhook;
+	}
 
-	let url = webhook?.url || '';
-	let urlError: null | string = null;
+	let { show = $bindable(), webhook = undefined }: Props = $props();
 
-	let events: WebhookEventType[] = webhook?.events || [];
-	let eventsError: null | string = null;
+	let url = $state(webhook?.url || '');
+	let urlError: null | string = $state(null);
 
-	$: isButtonDisabled = webhook
+	let events: WebhookEventType[] = $state(webhook?.events || []);
+	let eventsError: null | string = $state(null);
+
+	let isButtonDisabled = $derived(webhook
 		? url === webhook.url && JSON.stringify(events) === JSON.stringify(webhook.events)
-		: url.trim().length === 0;
+		: url.trim().length === 0);
 
 	const dispatch = createEventDispatcher();
 
@@ -44,7 +48,7 @@
 		return events.includes(name as WebhookEventType);
 	}
 
-	let isCreating: boolean | string = false;
+	let isCreating: boolean | string = $state(false);
 
 	function handleClick() {
 		urlError = null;

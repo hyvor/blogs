@@ -8,7 +8,7 @@
         updatePostVariantStore({description: e.target.value});
     }
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function handleBlur(e: any) {
 
@@ -36,13 +36,15 @@
 
 
 <SplitControl>
-    <span slot="label">
-        Description
-        <UnsavedTag 
-            show={$postVariantStore.description !== $postOriginalVariantStore.description}
-            loaderState={loaderState}
-        />
-    </span>
+    {#snippet label()}
+        <span >
+            Description
+            <UnsavedTag 
+                show={$postVariantStore.description !== $postOriginalVariantStore.description}
+                loaderState={loaderState}
+            />
+        </span>
+    {/snippet}
     <Textarea
         block
         rows={4}

@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { Button, IconButton, TableRow, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { ApiKey } from "../../../../lib/types";
-	import { IconArrowCounterclockwise, IconCopy, IconTrash } from "@hyvor/icons";
+	import IconArrowCounterclockwise from '@hyvor/icons/IconArrowCounterclockwise';
+import IconCopy from '@hyvor/icons/IconCopy';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteApiKey, regenerateApiKey } from "./apiKeysActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let apiKey: ApiKey;
+    interface Props {
+        apiKey: ApiKey;
+    }
+
+    let { apiKey }: Props = $props();
 
     const dispatch = createEventDispatcher();
 

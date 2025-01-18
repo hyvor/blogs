@@ -1,19 +1,25 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { onMount } from "svelte";
 	import type { LinkAnalysisLink } from "../../../../../lib/types";
 	import { getLinks, type FilterType, type Stats } from "../linkAnalysisActions";
 	import { Button, ButtonGroup, Loader, Table, TableRow, toast, LoadButton, IconMessage } from "@hyvor/design/components";
 	import LinkRow from "./LinkRow.svelte";
-    export let stats: Stats;
+    interface Props {
+        stats: Stats;
+    }
 
-    let type : FilterType = null;
+    let { stats }: Props = $props();
+
+    let type : FilterType = $state(null);
 
     const types = [null, 'ok', 'broken', 'redirect', 'ignored'] as FilterType[];
 
-    let isLoading = true;
-    let isMoreLoading = false;
-    let hasMore = false;
-    let links : LinkAnalysisLink[] = [];
+    let isLoading = $state(true);
+    let isMoreLoading = $state(false);
+    let hasMore = $state(false);
+    let links : LinkAnalysisLink[] = $state([]);
 
     const limit = 40;
 
@@ -36,7 +42,9 @@
         });
     }
 
-    $: type, loadLinks();
+    run(() => {
+        type, loadLinks();
+    });
 
     function getButtonLabel(t: FilterType) {
 

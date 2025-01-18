@@ -1,8 +1,12 @@
 <script lang="ts">
 	import type { BlogList } from "../lib/types";
 
-    export let blog: BlogList;
+    interface Props {
+        blog: BlogList; // const name = blog.subscription ? blog.subscription.plan
+    }
 
-    // const name = blog.subscription ? blog.subscription.plan
+    let { blog }: Props = $props();
+
+    
 </script>
 

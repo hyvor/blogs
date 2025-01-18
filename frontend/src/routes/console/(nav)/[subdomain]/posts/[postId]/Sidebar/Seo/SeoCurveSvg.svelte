@@ -1,10 +1,14 @@
 <script lang="ts">
 
-    export let perc: number;
-    export let gradient = false;
+    interface Props {
+        perc: number;
+        gradient?: boolean;
+    }
+
+    let { perc, gradient = false }: Props = $props();
 
     const radius = 65;
-    $: dashArray = Math.PI * radius * perc / 100;
+    let dashArray = $derived(Math.PI * radius * perc / 100);
 
 </script>
 

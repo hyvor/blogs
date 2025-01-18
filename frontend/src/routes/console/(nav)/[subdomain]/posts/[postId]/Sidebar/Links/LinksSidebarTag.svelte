@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { Loader, Tag } from "@hyvor/design/components";
     import { variantLinkCountsStore } from "./linksStore";
-	import { IconCheckCircleFill, IconExclamationCircleFill, IconXCircleFill } from "@hyvor/icons";
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+
     
-    $: counts = $variantLinkCountsStore;
+    let counts = $derived($variantLinkCountsStore);
 </script>
 
 <span>
@@ -12,17 +15,23 @@
     {:else if counts.broken > 0}
         <Tag size="small" color="red">
             {counts.broken}
-            <IconXCircleFill slot="end" size={10} />
+            {#snippet end()}
+                                <IconXCircleFill  size={10} />
+                            {/snippet}
         </Tag>
     {:else if counts.redirect > 0}
         <Tag size="small" color="orange">
             {counts.redirect}
-            <IconExclamationCircleFill slot="end" size={10} />
+            {#snippet end()}
+                                        <IconExclamationCircleFill  size={10} />
+                                    {/snippet}
         </Tag>
     {:else if counts.ok > 0}
         <Tag size="small" color="green" >
             {counts.ok}
-            <IconCheckCircleFill slot="end" size={10} />
+            {#snippet end()}
+                                                <IconCheckCircleFill  size={10} />
+                                            {/snippet}
         </Tag>
     {/if}
 </span>

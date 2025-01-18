@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { ActionList, Button, Dropdown, IconButton, Text } from "@hyvor/design/components";
-	import { IconCaretDown, IconX } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconX from '@hyvor/icons/IconX';
+
 	import { postListFiltersStore, setFilter } from "../../postListStore";
 	import { primaryLanguageStore } from "../../../../../lib/stores/languagesStore";
 	import AuthorSearch from "./AuthorSearch.svelte";
 	import type { User } from "../../../../../lib/types";
 
-    let showDropdown = false;
+    let showDropdown = $state(false);
 
     function handleSelect(e: CustomEvent<User>) {
         setFilter('author', e.detail);
@@ -24,35 +26,43 @@
 
 <Dropdown align="end" bind:show={showDropdown} width={350}>
 
-    <Button slot="trigger" color="input">
-        <Text bold slot="start">Author</Text>
+    {#snippet trigger()}
+        <Button  color="input">
+            {#snippet start()}
+                <Text bold >Author</Text>
+            {/snippet}
 
-        <span class="text">
-            {
-                $postListFiltersStore.author ?
-                    $postListFiltersStore.author.variants[0]?.name || 'Unnamed' :
-                    'Any'
-            }
-        </span>
+            <span class="text">
+                {
+                    $postListFiltersStore.author ?
+                        $postListFiltersStore.author.variants[0]?.name || 'Unnamed' :
+                        'Any'
+                }
+            </span>
 
-        {#if $postListFiltersStore.author}
-            <IconButton 
-                size={14} 
-                style="margin-left:6px;"
-                on:click={handleX}
-            >
-                <IconX size={12} />
-            </IconButton>
-        {/if}
+            {#if $postListFiltersStore.author}
+                <IconButton 
+                    size={14} 
+                    style="margin-left:6px;"
+                    on:click={handleX}
+                >
+                    <IconX size={12} />
+                </IconButton>
+            {/if}
 
-        <IconCaretDown slot="end" size={14} />
-    </Button>
+            {#snippet end()}
+                <IconCaretDown  size={14} />
+            {/snippet}
+        </Button>
+    {/snippet}
 
-    <ActionList slot="content">
-        <AuthorSearch 
-            on:select={handleSelect}
-        />
-    </ActionList>
+    {#snippet content()}
+        <ActionList >
+            <AuthorSearch 
+                on:select={handleSelect}
+            />
+        </ActionList>
+    {/snippet}
 
 </Dropdown>
 

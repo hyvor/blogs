@@ -1,14 +1,23 @@
 <script lang="ts">
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { Tag, TextInput, Tooltip } from "@hyvor/design/components";
 	import type { TocEntry } from "./toc";
 	import { get } from "svelte/store";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { tick } from "svelte";
-	import { IconExclamation, IconExclamationCircle } from "@hyvor/icons";
+	import IconExclamation from '@hyvor/icons/IconExclamation';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
-    export let heading: TocEntry;
 
-    let input: HTMLInputElement;
+    interface Props {
+        heading: TocEntry;
+    }
+
+    let { heading }: Props = $props();
+
+    let input: HTMLInputElement = $state();
 
     function handleClick(e: any) {
         e.stopPropagation();
@@ -49,14 +58,14 @@
         input && input.focus();
     }
 
-    let editing = false;
+    let editing = $state(false);
 
 </script>
 
 <div 
     class="heading-id"
-    on:click={handleClick}
-    on:keyup
+    onclick={handleClick}
+    onkeyup={bubble('keyup')}
     role="button"
     tabindex="0"    
 >
@@ -74,20 +83,24 @@
                 bind:input={input}
             >
         
-                <span slot="start">
-                    ID #
-                </span>
+                {#snippet start()}
+                                <span >
+                        ID #
+                    </span>
+                            {/snippet}
         
             </TextInput>
         </div>
     {:else}
         <Tooltip text="Click to edit ID">
-            <button on:click={startEditing}>
+            <button onclick={startEditing}>
                 {#if heading.id}
                     <span class="id">#{heading.id}</span>
                 {:else}
                     <Tag color="red" size="x-small">
-                        <IconExclamationCircle slot="start" size={10} />
+                        {#snippet start()}
+                                                <IconExclamationCircle  size={10} />
+                                            {/snippet}
                         No ID
                     </Tag>
                 {/if}

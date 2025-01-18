@@ -2,7 +2,7 @@
 	import { TextInput } from "@hyvor/design/components";
 	import { postListFiltersStore, setFilter } from "../postListStore";
 
-    let value = $postListFiltersStore.search;
+    let value = $state($postListFiltersStore.search);
 
     let timeout : null | ReturnType<typeof setTimeout> = null;
 

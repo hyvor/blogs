@@ -6,6 +6,8 @@
 
 
 <SplitControl>
-    <span slot="label">Status</span>
+    {#snippet label()}
+		<span >Status</span>
+	{/snippet}
     <PostStatusTag status={$postVariantStore.status} />
 </SplitControl>

@@ -1,18 +1,28 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { Tag, Tooltip } from "@hyvor/design/components";
-	import { IconCheckCircleFill, IconExclamationCircleFill, IconEyeSlashFill, IconXCircleFill } from "@hyvor/icons";
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
+import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+
 	import { getStatusType } from "../../../../../lib/links/links";
 
-    export let status: number;
-    export let isAnchor = false;
-    export let showTooltip = true;
+    interface Props {
+        status: number;
+        isAnchor?: boolean;
+        showTooltip?: boolean;
+    }
 
-    $: statusType = getStatusType(status);
-    let statusDisplay = "";
-    let tooltip = "";
-    let color : any = 'default';
+    let { status, isAnchor = false, showTooltip = true }: Props = $props();
 
-    $: {
+    let statusType = $derived(getStatusType(status));
+    let statusDisplay = $state("");
+    let tooltip = $state("");
+    let color : any = $state('default');
+
+    run(() => {
 
 
         if (statusType === "ok") {
@@ -41,7 +51,7 @@
             color = 'red';
         }
 
-    }
+    });
 
 </script>
 
@@ -55,19 +65,21 @@
 
         {statusDisplay}
 
-        <span slot="end" class="icon">
-            {#if statusType === "ok"}
-                <IconCheckCircleFill size={12} />
-            {:else if statusType === "redirect"}
-                <IconExclamationCircleFill size={12} />
-            {:else if statusType === "broken"}
-                <IconXCircleFill size={12} />
-            {:else if statusType === "ignored"}
-                <IconEyeSlashFill size={12} />
-            {:else if statusType === "error"}
-                <IconXCircleFill size={12} />
-            {/if}
-        </span>
+        {#snippet end()}
+                <span  class="icon">
+                {#if statusType === "ok"}
+                    <IconCheckCircleFill size={12} />
+                {:else if statusType === "redirect"}
+                    <IconExclamationCircleFill size={12} />
+                {:else if statusType === "broken"}
+                    <IconXCircleFill size={12} />
+                {:else if statusType === "ignored"}
+                    <IconEyeSlashFill size={12} />
+                {:else if statusType === "error"}
+                    <IconXCircleFill size={12} />
+                {/if}
+            </span>
+            {/snippet}
 
     </Tag>
     

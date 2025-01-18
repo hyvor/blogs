@@ -1,18 +1,28 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { Loader, Tag, Tooltip } from "@hyvor/design/components";
-	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
+	import IconCheck from '@hyvor/icons/IconCheck';
+import IconHourglass from '@hyvor/icons/IconHourglass';
+import IconJournalText from '@hyvor/icons/IconJournalText';
+
 	import type { PostVariant } from "../../../../lib/types";
 	import { languagesStore } from "../../../../lib/stores/languagesStore";
 
-    export let variant: PostVariant;
+    interface Props {
+        variant: PostVariant;
+        [key: string]: any
+    }
 
-    $: language = $languagesStore.find(v => v.id === variant.language_id);
+    let { variant, ...rest }: Props = $props();
 
-    let tooltip = '';
-    let icon: any;
-    let iconProps = {};
+    let language = $derived($languagesStore.find(v => v.id === variant.language_id));
 
-    $: {
+    let tooltip = $state('');
+    let icon: any = $state();
+    let iconProps = $state({});
+
+    run(() => {
         iconProps = {};
 
         if (language) {
@@ -27,7 +37,7 @@
                 tooltip = `${language.name} - Scheduled`;
             }
         }
-    }
+    });
 
 </script>
 
@@ -40,15 +50,17 @@
             size="small"
             interactive 
             color="default"
-            {...$$restProps}
+            {...rest}
         >
             {language.code}
-            <svelte:component 
-                this={icon} 
-                size={10}
-                slot="end" 
-                {...iconProps} 
-            />
+            {#snippet end()}
+                        {@const SvelteComponent = icon}
+            <SvelteComponent 
+                    size={10}
+                     
+                    {...iconProps} 
+                />
+                    {/snippet}
         </Tag>
 
     </Tooltip>

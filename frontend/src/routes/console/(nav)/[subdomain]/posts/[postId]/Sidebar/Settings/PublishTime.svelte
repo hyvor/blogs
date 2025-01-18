@@ -12,7 +12,7 @@
 	import OnlyPrimaryVariant from './OnlyPrimaryVariant.svelte';
 	import dayjs from 'dayjs';
 
-	let loaderState: 'none' | 'loading' | 'success' | 'error' = 'none';
+	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
 	function getUnixTimestamp(date: string) {
 		return Math.floor(new Date(date).getTime() / 1000);
@@ -52,14 +52,16 @@
 
 <OnlyPrimaryVariant>
 	<SplitControl>
-		<span slot="label">
-			Publish Time
+		{#snippet label()}
+				<span >
+				Publish Time
 
-			<UnsavedTag
-				show={$postStore.published_at !== $postOriginalStore.published_at}
-				{loaderState}
-			/>
-		</span>
+				<UnsavedTag
+					show={$postStore.published_at !== $postOriginalStore.published_at}
+					{loaderState}
+				/>
+			</span>
+			{/snippet}
 
 		{#if $postVariantStore.status !== 'draft' || $postStore.published_at !== null}
 			<TextInput

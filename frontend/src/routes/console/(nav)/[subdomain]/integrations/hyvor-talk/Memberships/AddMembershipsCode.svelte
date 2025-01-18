@@ -11,10 +11,14 @@
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 	import { updateBlog } from '../../../../../lib/actions/blogActions';
 	import { onMount } from 'svelte';
-	import { IconExclamationCircle } from '@hyvor/icons';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
-	export let open = false;
-	export let code: string;
+	interface Props {
+		open?: boolean;
+		code: string;
+	}
+
+	let { open = $bindable(false), code }: Props = $props();
 
 	function handleUpdate() {
 		open = false;
@@ -52,17 +56,19 @@
 
 		{#if ($blogStore.code_foot || '').includes('<hyvor-talk-memberships')}
 			<Callout type="warning">
-				<IconExclamationCircle slot="icon" />
+				{#snippet icon()}
+					<IconExclamationCircle />
+				{/snippet}
 				It seems that you already have the memberships code added.
 			</Callout>
 		{/if}
 
-		<svelte:fragment slot="footer">
+		{#snippet footer()}
 			<ButtonGroup>
 				<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
 				<Button on:click={handleUpdate}>Update</Button>
 			</ButtonGroup>
-		</svelte:fragment>
+		{/snippet}
 	</Modal>
 {/if}
 

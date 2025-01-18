@@ -3,7 +3,7 @@
 	import NewImport from "./NewImport/NewImport.svelte";
 	import ImportHistory from "./History/ImportHistory.svelte";
 
-    let tab: 'new' | 'history' = 'new';
+    let tab: 'new' | 'history' = $state('new');
 
     function handleComplete() {
         tab = 'history';

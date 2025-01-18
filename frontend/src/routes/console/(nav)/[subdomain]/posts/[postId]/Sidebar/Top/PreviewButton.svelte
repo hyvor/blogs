@@ -1,74 +1,63 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Dropdown } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight } from "@hyvor/icons";
-	import { blogStore } from "../../../../../../lib/stores/blogStore";
-	import { postLanguageStore, postStore, postVariantStore } from "../../../postStore";
+	import { ActionList, ActionListItem, Button, Dropdown } from '@hyvor/design/components';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import { blogStore } from '../../../../../../lib/stores/blogStore';
+	import { postLanguageStore, postStore, postVariantStore } from '../../../postStore';
 
-    let showDropdown = false;
+	let showDropdown = $state(false);
 
-    function handleOpenNewTab(url: string) {
-        window.open(url, '_blank');
-    }
+	function handleOpenNewTab(url: string) {
+		window.open(url, '_blank');
+	}
 
-    $: previewUrl = $blogStore.url +
-        '/p/' + $postStore.preview_id +
-        "/" + $postLanguageStore.code;
+	let previewUrl = $derived(
+		$blogStore.url + '/p/' + $postStore.preview_id + '/' + $postLanguageStore.code
+	);
 
-    function handleClick(e: MouseEvent) {
+	function handleClick(e: MouseEvent) {
+		e.stopPropagation();
 
-        e.stopPropagation();
-
-        if ($postVariantStore.status === 'published') {
-            showDropdown = true;
-        } else {
-            handleOpenNewTab(previewUrl);
-        }
-
-    }
-
+		if ($postVariantStore.status === 'published') {
+			showDropdown = true;
+		} else {
+			handleOpenNewTab(previewUrl);
+		}
+	}
 </script>
 
 <Dropdown align="center" bind:show={showDropdown} width={200}>
+	{#snippet trigger()}
+		<Button size="small" color="input" on:click={handleClick}>
+			{$postVariantStore.status === 'published' ? 'View' : 'Preview'}
+			{#snippet end()}
+				<IconBoxArrowUpRight size={14} />
+			{/snippet}
+		</Button>
+	{/snippet}
 
-    <Button 
-        size="small" 
-        color="input" 
-        slot="trigger"
-        on:click={handleClick}
-    >
-        { $postVariantStore.status === 'published' ? 'View' : 'Preview' }
-        <IconBoxArrowUpRight slot="end" size={14} />
-    </Button>
+	{#snippet content()}
+		<div class="dropdown-content">
+			<Button block color="input" on:click={() => handleOpenNewTab(previewUrl)}>
+				Preview
+				{#snippet end()}
+					<IconBoxArrowUpRight size={14} />
+				{/snippet}
+			</Button>
 
-    <div class="dropdown-content" slot="content">
-
-        <Button 
-            block 
-            color="input"
-            on:click={() => handleOpenNewTab(previewUrl)}
-        >
-            Preview
-            <IconBoxArrowUpRight slot="end" size={14} />
-        </Button>
-
-        <Button 
-            block
-            on:click={() => handleOpenNewTab($postVariantStore.url)}
-        >
-            Published Post
-            <IconBoxArrowUpRight slot="end" size={14} />
-        </Button>
-
-    </div>
-
+			<Button block on:click={() => handleOpenNewTab($postVariantStore.url)}>
+				Published Post
+				{#snippet end()}
+					<IconBoxArrowUpRight size={14} />
+				{/snippet}
+			</Button>
+		</div>
+	{/snippet}
 </Dropdown>
 
 <style>
-
-    .dropdown-content :global(button:nth-child(2)) {
-        margin-top: 8px;
-        background-color: var(--green-light)!important;
-        color: var(--green-dark)!important;
-    }
-
+	.dropdown-content :global(button:nth-child(2)) {
+		margin-top: 8px;
+		background-color: var(--green-light) !important;
+		color: var(--green-dark) !important;
+	}
 </style>

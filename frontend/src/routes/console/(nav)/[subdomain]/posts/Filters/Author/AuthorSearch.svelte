@@ -5,11 +5,11 @@
 	import { getUsers, searchUsers } from "../../../settings/users/userActions";
 	import { postListFiltersStore } from "../../postListStore";
 
-    let isLoading = true;
-    let users : User[] = [];
-    let search = '';
+    let isLoading = $state(true);
+    let users : User[] = $state([]);
+    let search = $state('');
 
-    let err = false;
+    let err = $state(false);
 
     function loadUsers() {
         isLoading = true;
@@ -79,18 +79,22 @@
                 on:click={() => handleSelect(user)}
                 selected={$postListFiltersStore.author?.id === user.id}
             >
-                <Avatar 
-                    src={user.picture_url} 
-                    alt={user.variants[0]?.name || 'Unnamed'}
-                    size={20}
-                    slot="start"
-                />
+                {#snippet start()}
+                                                <Avatar 
+                        src={user.picture_url} 
+                        alt={user.variants[0]?.name || 'Unnamed'}
+                        size={20}
+                        
+                    />
+                                            {/snippet}
                 <span class="text">
                     {user.variants[0]?.name || 'Unnamed'}
                 </span>
-                <Text light slot="end" small>
-                    {user.posts_count} post{user.posts_count === 1 ? '' : 's'}
-                </Text>
+                {#snippet end()}
+                                                <Text light  small>
+                        {user.posts_count} post{user.posts_count === 1 ? '' : 's'}
+                    </Text>
+                                            {/snippet}
             </ActionListItem>
         {/each}
     {/if}

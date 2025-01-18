@@ -4,9 +4,13 @@
 	import ExportRow from "./ExportRow.svelte";
 	import { getExports } from "../exportActions";
 
-    let isLoading = true;
+    let isLoading = $state(true);
 
-    export let exports: Export[] = [];
+    interface Props {
+        exports?: Export[];
+    }
+
+    let { exports = $bindable([]) }: Props = $props();
 
     getExports()
         .then(res => {

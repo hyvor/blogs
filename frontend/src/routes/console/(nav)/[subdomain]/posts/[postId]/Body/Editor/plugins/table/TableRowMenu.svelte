@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { IconArrowDown, IconArrowUp, IconBackspace, IconCardHeading, IconThreeDotsVertical, IconTrash } from "@hyvor/icons";
+	import IconArrowDown from '@hyvor/icons/IconArrowDown';
+import IconArrowUp from '@hyvor/icons/IconArrowUp';
+import IconBackspace from '@hyvor/icons/IconBackspace';
+import IconCardHeading from '@hyvor/icons/IconCardHeading';
+import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { Node } from "prosemirror-model";
 	import { onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";
@@ -8,11 +14,11 @@
 	import { addRowAfter, addRowBefore, deleteRow, deleteTable, toggleHeaderRow } from "prosemirror-tables";
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 
-    let show = false;
-    let wrapEl: HTMLSpanElement;
-    let showDropdown = false;
+    let show = $state(false);
+    let wrapEl: HTMLSpanElement = $state();
+    let showDropdown = $state(false);
 
-    $: editorView = $postEditingStatusStore.editorView!;
+    let editorView = $derived($postEditingStatusStore.editorView!);
 
     function isSelectionInTable(selection: Selection) {
         const pos = selection.$anchor;
@@ -118,7 +124,7 @@
     onMount(position);
 </script>
 
-<svelte:window on:scroll|capture={position} />
+<svelte:window onscrollcapture={position} />
 
 <span 
     bind:this={wrapEl}
@@ -126,32 +132,46 @@
     class="wrap"
 >
     <Dropdown bind:show={showDropdown} relative={true}>
-        <button slot="trigger" style="display: {showDropdown ? 'none' : 'inline-flex'}">
-            <IconThreeDotsVertical size={14} />
-        </button>
+        {#snippet trigger()}
+                <button  style="display: {showDropdown ? 'none' : 'inline-flex'}">
+                <IconThreeDotsVertical size={14} />
+            </button>
+            {/snippet}
 
-        <ActionList slot="content">
-            <ActionListItem on:click={handleHeader}>
-                <IconCardHeading slot="start" />
-                Header row
-            </ActionListItem>
-            <ActionListItem on:click={handleInsertAbove}>
-                <IconArrowUp slot="start" />
-                Insert above
-            </ActionListItem>
-            <ActionListItem on:click={handleInsertBelow}>
-                <IconArrowDown slot="start" />
-                Insert below
-            </ActionListItem>
-            <ActionListItem on:click={handleDelete}>
-                <IconTrash slot="start" />
-                Delete row
-            </ActionListItem>
-            <ActionListItem on:click={handleClearContent}>
-                <IconBackspace slot="start" />
-                Clear content
-            </ActionListItem>
-        </ActionList>
+        {#snippet content()}
+                <ActionList >
+                <ActionListItem on:click={handleHeader}>
+                    {#snippet start()}
+                                <IconCardHeading  />
+                            {/snippet}
+                    Header row
+                </ActionListItem>
+                <ActionListItem on:click={handleInsertAbove}>
+                    {#snippet start()}
+                                <IconArrowUp  />
+                            {/snippet}
+                    Insert above
+                </ActionListItem>
+                <ActionListItem on:click={handleInsertBelow}>
+                    {#snippet start()}
+                                <IconArrowDown  />
+                            {/snippet}
+                    Insert below
+                </ActionListItem>
+                <ActionListItem on:click={handleDelete}>
+                    {#snippet start()}
+                                <IconTrash  />
+                            {/snippet}
+                    Delete row
+                </ActionListItem>
+                <ActionListItem on:click={handleClearContent}>
+                    {#snippet start()}
+                                <IconBackspace  />
+                            {/snippet}
+                    Clear content
+                </ActionListItem>
+            </ActionList>
+            {/snippet}
 
     </Dropdown>
 </span>

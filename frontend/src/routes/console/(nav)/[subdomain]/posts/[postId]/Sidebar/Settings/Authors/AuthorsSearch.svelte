@@ -5,12 +5,12 @@
 	import type { User } from "../../../../../../../lib/types";
 	import { getUsers, searchUsers } from "../../../../../settings/users/userActions";
 
-    let isLoading = true;
-    let users : User[] = [];
-    let searchedUsers : User[] = [];
-    let search = '';
+    let isLoading = $state(true);
+    let users : User[] = $state([]);
+    let searchedUsers : User[] = $state([]);
+    let search = $state('');
 
-    $: availableUsers = search.trim() !== '' ? searchedUsers : users;
+    let availableUsers = $derived(search.trim() !== '' ? searchedUsers : users);
 
     let searchTimeout : null | ReturnType<typeof setTimeout> = null;
 

@@ -1,5 +1,8 @@
 <script>
-	import { IconBoxSeam, IconCodeSlash, IconEye } from "@hyvor/icons";
+	import IconBoxSeam from '@hyvor/icons/IconBoxSeam';
+import IconCodeSlash from '@hyvor/icons/IconCodeSlash';
+import IconEye from '@hyvor/icons/IconEye';
+
 	import Step from "../@homepage/MultiLanguage/Step.svelte";
 </script>
 

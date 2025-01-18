@@ -4,23 +4,23 @@
 	import dayjs from "dayjs";
 	import { createEventDispatcher } from "svelte";
 
-    let importFrom = 'sitemap';
+    let importFrom = $state('sitemap');
 
-    let sitemapUrl = '';
+    let sitemapUrl = $state('');
     
-    let titleCssSelector = '';
-    let descriptionCssSelector = '';
-    let contentCssSelector = '';
-    let contentExcludeCssSelector = '';
-    let publishedDateCssSelector = '';
+    let titleCssSelector = $state('');
+    let descriptionCssSelector = $state('');
+    let contentCssSelector = $state('');
+    let contentExcludeCssSelector = $state('');
+    let publishedDateCssSelector = $state('');
 
-    let importImages = true;
-    let slugExclude = '';
-    let testUrl = '';
+    let importImages = $state(true);
+    let slugExclude = $state('');
+    let testUrl = $state('');
 
-    let testData : TestSitemapResponse | null = null;
+    let testData : TestSitemapResponse | null = $state(null);
 
-    let isTestLoading = false;
+    let isTestLoading = $state(false);
 
     function startTesting() {
 
@@ -111,50 +111,52 @@
     caption="Add CSS selectors to find data in your HTML pages."
 >
 
-    <div slot="nested">
+    {#snippet nested()}
+        <div >
 
-        <SplitControl 
-            label="Post Content"
-            caption="Required"
-        >
-            <TextInput 
-                block
-                bind:value={contentCssSelector}
-            />
-        </SplitControl>
+            <SplitControl 
+                label="Post Content"
+                caption="Required"
+            >
+                <TextInput 
+                    block
+                    bind:value={contentCssSelector}
+                />
+            </SplitControl>
 
-        <SplitControl label="Post Title">
-            <TextInput 
-                block
-                bind:value={titleCssSelector}
-            />
-        </SplitControl>
+            <SplitControl label="Post Title">
+                <TextInput 
+                    block
+                    bind:value={titleCssSelector}
+                />
+            </SplitControl>
 
-        <SplitControl label="Post Description">
-            <TextInput 
-                block
-                bind:value={descriptionCssSelector}
-            />
-        </SplitControl>
+            <SplitControl label="Post Description">
+                <TextInput 
+                    block
+                    bind:value={descriptionCssSelector}
+                />
+            </SplitControl>
 
-        <SplitControl 
-            label="Post Content Exclude"
-            caption="To exclude elements from post content"
-        >
-            <TextInput 
-                block
-                bind:value={contentExcludeCssSelector}
-            />
-        </SplitControl>
+            <SplitControl 
+                label="Post Content Exclude"
+                caption="To exclude elements from post content"
+            >
+                <TextInput 
+                    block
+                    bind:value={contentExcludeCssSelector}
+                />
+            </SplitControl>
 
-        <SplitControl label="Post Published Date">
-            <TextInput 
-                block
-                bind:value={publishedDateCssSelector}
-            />
-        </SplitControl>
+            <SplitControl label="Post Published Date">
+                <TextInput 
+                    block
+                    bind:value={publishedDateCssSelector}
+                />
+            </SplitControl>
 
-    </div>
+        </div>
+    {/snippet}
 
 </SplitControl>
 
@@ -198,13 +200,15 @@
             size="small"
             on:click={startTesting}
         >
-            Test <Loader 
-                slot="end" 
-                state={isTestLoading ? 'loading' : 'none'} 
-                size="small"
-                colorTrack="transparent"
-                color="white"
-            />
+            Test {#snippet end()}
+                        <Loader 
+                     
+                    state={isTestLoading ? 'loading' : 'none'} 
+                    size="small"
+                    colorTrack="transparent"
+                    color="white"
+                />
+                    {/snippet}
         </Button>
     </div>
 

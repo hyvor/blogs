@@ -28,9 +28,11 @@
             label="Head Code"
         >
 
-            <div slot="caption">
-                Added right before the &lt;/head&gt; tag. Best place for styles and meta tags.
-            </div>
+            {#snippet caption()}
+                        <div >
+                    Added right before the &lt;/head&gt; tag. Best place for styles and meta tags.
+                </div>
+                    {/snippet}
 
             <CodemirrorEditor
                 value={$blogStore.code_head || ''}
@@ -45,9 +47,11 @@
             label="Foot Code"
         >
 
-            <div slot="caption">
-                Added right before the &lt;/body&gt; tag. Best place for scripts (analytics, etc.).
-            </div>
+            {#snippet caption()}
+                        <div >
+                    Added right before the &lt;/body&gt; tag. Best place for scripts (analytics, etc.).
+                </div>
+                    {/snippet}
 
             <CodemirrorEditor
                 value={$blogStore.code_foot || ''}
@@ -64,12 +68,14 @@
         label="Flashload"
     >
 
-        <div slot="caption">
-            <Link
-                href="https://github.com/hyvor/flashload"
-                target="_blank"
-            >Flashload</Link> adds a script to make navigation between pages faster by preloading pages when hovering over links. You may want to disable this if you are using other Javascript-heavy features.
-        </div>
+        {#snippet caption()}
+                <div >
+                <Link
+                    href="https://github.com/hyvor/flashload"
+                    target="_blank"
+                >Flashload</Link> adds a script to make navigation between pages faster by preloading pages when hovering over links. You may want to disable this if you are using other Javascript-heavy features.
+            </div>
+            {/snippet}
 
         <Switch
             checked={$blogStore.flashload}

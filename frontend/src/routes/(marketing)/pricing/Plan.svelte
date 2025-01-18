@@ -1,6 +1,10 @@
 <script lang="ts">
-	export let name: string;
-	export let price: number;
+	interface Props {
+		name: string;
+		price: number;
+	}
+
+	let { name, price }: Props = $props();
 </script>
 
 <div class="plan hds-box">

@@ -2,9 +2,18 @@
 	import { Tooltip } from "@hyvor/design/components";
     import { calculateLinkAnalysis, getCountsByStatus } from "../../../../lib/links/links";
 	import type { PostVariant } from "../../../../lib/types";
-	import { IconCheckCircleFill, IconExclamationCircleFill, IconQuestionCircle, IconQuestionCircleFill, IconXCircleFill } from "@hyvor/icons";
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
+import IconQuestionCircle from '@hyvor/icons/IconQuestionCircle';
+import IconQuestionCircleFill from '@hyvor/icons/IconQuestionCircleFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
 
-    export let postVariant: PostVariant;
+
+    interface Props {
+        postVariant: PostVariant;
+    }
+
+    let { postVariant }: Props = $props();
     const linkAnalysis = calculateLinkAnalysis(postVariant);
     const counts = getCountsByStatus(linkAnalysis);
 </script>

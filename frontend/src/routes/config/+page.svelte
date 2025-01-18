@@ -1,11 +1,15 @@
 <script>
+    import { run } from 'svelte/legacy';
+
 	import ConfigUi from "../console/(nav)/[subdomain]/theme/Editor/ConfigUi/ConfigUi.svelte";
 	import CodemirrorEditor from "../console/lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
 
-    let config = 'name: my-theme';
-    let configDef = '';
+    let config = $state('name: my-theme');
+    let configDef = $state('');
 
-    $: console.log(configDef)
+    run(() => {
+        console.log(configDef)
+    });
 </script>
 
 

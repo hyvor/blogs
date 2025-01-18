@@ -4,22 +4,26 @@
 	import { createRoute, updateRoute } from "./routeActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let show = false;
-    export let route: null | Route = null;
+    interface Props {
+        show?: boolean;
+        route?: null | Route;
+    }
 
-    let name = route?.name || '';
-    let match = route?.match || '';
-    let template = route?.template || '';
-    let postsFilter = route?.posts_filter || '';
-    let contentType = route?.content_type || '';
+    let { show = $bindable(false), route = null }: Props = $props();
 
-    let nameError : null | string = null;
-    let matchError : null | string = null;
-    let templateError : null | string = null;
+    let name = $state(route?.name || '');
+    let match = $state(route?.match || '');
+    let template = $state(route?.template || '');
+    let postsFilter = $state(route?.posts_filter || '');
+    let contentType = $state(route?.content_type || '');
+
+    let nameError : null | string = $state(null);
+    let matchError : null | string = $state(null);
+    let templateError : null | string = $state(null);
     let postsFilterError : null | string = null;
     let contentTypeError : null | string = null;
 
-    let isCreating = false;
+    let isCreating = $state(false);
 
     function validate() {
         let isValid = true;

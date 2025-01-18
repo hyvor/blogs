@@ -2,7 +2,7 @@ import type { EditorView, NodeView } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
 import { EmojiButton } from '@joeattardi/emoji-button';
 import CalloutColors from "./CalloutColors.svelte";
-import type { SvelteComponent } from "svelte";
+import { type SvelteComponent, mount } from "svelte";
 
 export class CalloutNodeView implements NodeView {
 
@@ -74,10 +74,10 @@ export class CalloutNodeView implements NodeView {
         this.colorPickersWrap.className = "color-pickers-wrap";
         this.dom.appendChild(this.colorPickersWrap)
 
-        this.colorsComponent = new CalloutColors({
-            target: this.colorPickersWrap,
-            props: this.getColorsProps()
-        })
+        this.colorsComponent = mount(CalloutColors, {
+                    target: this.colorPickersWrap,
+                    props: this.getColorsProps()
+                })
         
         this.updateFromAttrs();
     }

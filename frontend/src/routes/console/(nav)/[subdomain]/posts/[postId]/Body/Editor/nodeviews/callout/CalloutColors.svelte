@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { ColorPicker } from "@hyvor/design/components";
 
-    export let bg: string;
-    export let fg: string;
-    export let changeAttr: (name: string, value: string) => void;
+    interface Props {
+        bg: string;
+        fg: string;
+        changeAttr: (name: string, value: string) => void;
+    }
+
+    let { bg, fg, changeAttr }: Props = $props();
 
     function handleBgChange(e: CustomEvent<string>) {
         changeAttr('bg', e.detail)

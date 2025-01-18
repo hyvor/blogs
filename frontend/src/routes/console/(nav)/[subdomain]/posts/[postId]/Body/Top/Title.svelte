@@ -12,7 +12,7 @@
         });
     };
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function handleBlur(e: any) {
 
@@ -32,7 +32,7 @@
         }
     }
 
-    let textarea: HTMLTextAreaElement;
+    let textarea: HTMLTextAreaElement = $state();
 
     function handleResize() {
         if (!textarea)
@@ -68,23 +68,23 @@
         }
     });
 
-    $: hasChanged = ($postVariantStore.title?.trim() || '') !==
-        ($postOriginalVariantStore.title || '');
+    let hasChanged = $derived(($postVariantStore.title?.trim() || '') !==
+        ($postOriginalVariantStore.title || ''));
 
 </script>
 
 <div class="title-wrap">
 
-    <!-- svelte-ignore a11y-autofocus -->
+    <!-- svelte-ignore a11y_autofocus -->
     <textarea
         placeholder="Title..."
         autoFocus={($postVariantStore.title || "") === ""}
         value={$postVariantStore.title}
-        on:keydown={handleKeydown}
-        on:input={handleInput}
+        onkeydown={handleKeydown}
+        oninput={handleInput}
         bind:this={textarea}
-        on:blur={handleBlur}
-    />
+        onblur={handleBlur}
+></textarea>
 
     <!-- <div class="loader-wrap">
         <Loader state={loaderState} size="small" />

@@ -6,7 +6,11 @@
 
 	const dispatch = createEventDispatcher<{ select: SelectedFile }>();
 
-	export let type: 'image' | 'audio' = 'image';
+	interface Props {
+		type?: 'image' | 'audio';
+	}
+
+	let { type = 'image' }: Props = $props();
 
 	function handleSelect(e: CustomEvent<Media>) {
 		const media = e.detail;

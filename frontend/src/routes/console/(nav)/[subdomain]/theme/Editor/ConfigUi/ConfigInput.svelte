@@ -1,12 +1,18 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { ColorPicker, Radio, Switch, TextInput, Textarea } from "@hyvor/design/components";
     import { getInputType } from "./configUi";
 	import { createEventDispatcher } from "svelte";
 
-    export let value: any;
-    export let configDef: Record<string, any>;
+    interface Props {
+        value: any;
+        configDef: Record<string, any>;
+    }
 
-    $: type = getInputType(configDef);
+    let { value = $bindable(), configDef }: Props = $props();
+
+    let type = $derived(getInputType(configDef));
 
     const dispatch = createEventDispatcher<{change: any}>();
 
@@ -22,7 +28,9 @@
         value = e.detail;
     }
 
-    $: value, handleChange();
+    run(() => {
+        value, handleChange();
+    });
 
 </script>
 

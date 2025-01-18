@@ -3,7 +3,11 @@
 	import { getConfig } from '../../../../../../../../../lib/config';
 	import { addParentResizeEvent } from './iframeParentResize';
 
-	export let url: string;
+	interface Props {
+		url: string;
+	}
+
+	let { url }: Props = $props();
 
 	onMount(() => {
 		addParentResizeEvent();

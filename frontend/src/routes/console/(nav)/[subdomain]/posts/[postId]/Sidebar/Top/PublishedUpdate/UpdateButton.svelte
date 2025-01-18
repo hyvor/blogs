@@ -1,13 +1,17 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { Button } from "@hyvor/design/components";
     import { postOriginalStore, postStore, postVariantStore } from "../../../../postStore";
 	import UpdateModal from "./UpdateModal.svelte";
 	import { hasPublishedChanges } from "./published-changes";
 
-    let hasChanges = false;
-    let isUpdating = false;
+    let hasChanges = $state(false);
+    let isUpdating = $state(false);
 
-    $: $postStore, $postOriginalStore, hasChanges = hasPublishedChanges();
+    run(() => {
+        $postStore, $postOriginalStore, hasChanges = hasPublishedChanges();
+    });
 
 </script>
 

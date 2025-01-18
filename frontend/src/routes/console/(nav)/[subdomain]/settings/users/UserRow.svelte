@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { Button, IconButton, Link, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { User } from "../../../../lib/types";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { createEventDispatcher } from "svelte";
 	import { deleteUser, resendInvitation } from "./userActions";
 	import UpdateUser from "./Update/UpdateUser.svelte";
 
-    export let user: User;
+    interface Props {
+        user: User;
+    }
 
-    $: variant = user.variants[0];
+    let { user }: Props = $props();
 
-    let isEditing = false;
+    let variant = $derived(user.variants[0]);
+
+    let isEditing = $state(false);
 
     const dispatch = createEventDispatcher<{delete: number, update: User}>();
 

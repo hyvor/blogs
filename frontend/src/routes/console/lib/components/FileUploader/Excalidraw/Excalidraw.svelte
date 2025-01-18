@@ -8,13 +8,20 @@
 	import { exportToBlob, exportToCanvas, exportToSvg } from '@excalidraw/excalidraw';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { SelectedFile } from '../image-uploader';
-	import { IconArrowRight, IconArrowRightCircle, IconSendFill } from '@hyvor/icons';
+	import IconArrowRight from '@hyvor/icons/IconArrowRight';
+import IconArrowRightCircle from '@hyvor/icons/IconArrowRightCircle';
+import IconSendFill from '@hyvor/icons/IconSendFill';
+
 
 	if (browser) (window as any).process = { env: { IS_PREACT: false } };
 
-	export let initialData: ExcalidrawInitialDataState = {};
+	interface Props {
+		initialData?: ExcalidrawInitialDataState;
+	}
 
-	let excalidrawAPI: ExcalidrawImperativeAPI;
+	let { initialData = {} }: Props = $props();
+
+	let excalidrawAPI: ExcalidrawImperativeAPI = $state();
 
 	const dispatch = createEventDispatcher<{
 		select: SelectedFile;
@@ -71,12 +78,14 @@
 
 {#await import('./ExcalidrawComponent.svelte')}
 	<Loader full />
-{:then { default: ExcalidrawComponent }}
+{:then {default: ExcalidrawComponent }}
 	<div class="display">
-		<svelte:component this={ExcalidrawComponent} bind:excalidrawAPI {initialData} />
+		<ExcalidrawComponent bind:excalidrawAPI {initialData} />
 		<div class="footer">
 			<Button size="large" on:click={handleFinish}>
-				Finalize <IconArrowRightCircle slot="end" />
+				Finalize {#snippet end()}
+								<IconArrowRightCircle  />
+							{/snippet}
 			</Button>
 		</div>
 	</div>

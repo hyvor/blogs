@@ -1,15 +1,22 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { createEventDispatcher, onMount } from "svelte";
     import './codemirror';
 	import { CODEMIRROR_MODES, importCodemirrorAll } from "./codemirror";
 
-    export let value: string;
-    export let ext: keyof typeof CODEMIRROR_MODES;
-    export let id: string | number = '';
+    interface Props {
+        value: string;
+        ext: keyof typeof CODEMIRROR_MODES;
+        id?: string | number;
+        [key: string]: any
+    }
 
-    $: tabSize = ext === 'yaml' ? 2 : 4;
+    let { value = $bindable(), ext, id = '', ...rest }: Props = $props();
 
-    let editorDiv: HTMLDivElement;
+    let tabSize = $derived(ext === 'yaml' ? 2 : 4);
+
+    let editorDiv: HTMLDivElement = $state();
     let cm: any;
 
     const dispatch = createEventDispatcher<{
@@ -67,9 +74,11 @@
     onMount(initCm);
 
     // re-create codemirror instance when id changes
-    $: if (id) {
-        initCm();
-    }
+    run(() => {
+        if (id) {
+            initCm();
+        }
+    });
 
 </script>
 
@@ -78,7 +87,7 @@
 <div 
     class="editor"
     bind:this={editorDiv}
-    {...$$restProps}
+    {...rest}
 ></div>
 
 <style lang="scss">

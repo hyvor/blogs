@@ -1,15 +1,19 @@
 <script lang="ts">
 	import { Button, Dropdown } from '@hyvor/design/components';
 	import type { Tag } from '../../../../../lib/types';
-	import { IconCaretDown } from '@hyvor/icons';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import TagsSearch from '../../../posts/[postId]/Sidebar/Settings/Tags/TagsSearch.svelte';
 	import TagName from '../../../settings/tags/TagName.svelte';
 
-	let showDropdown = false;
+	let showDropdown = $state(false);
 
-	export let selectedTags: Tag[] = [];
-	export let tag: Tag | null;
-	export let disabled = false;
+	interface Props {
+		selectedTags?: Tag[];
+		tag: Tag | null;
+		disabled?: boolean;
+	}
+
+	let { selectedTags = [], tag = $bindable(), disabled = false }: Props = $props();
 
 	function onSelect(e: CustomEvent<Tag>) {
 		tag = e.detail;
@@ -18,16 +22,22 @@
 </script>
 
 <Dropdown bind:show={showDropdown} width={300}>
-	<Button slot="trigger" color="input" size="small" {disabled}>
-		{#if tag}
-			<TagName {tag} />
-		{:else}
-			Select Tag
-		{/if}
-		<IconCaretDown slot="end" size={14} />
-	</Button>
+	{#snippet trigger()}
+		<Button color="input" size="small" {disabled}>
+			{#if tag}
+				<TagName {tag} />
+			{:else}
+				Select Tag
+			{/if}
+			{#snippet end()}
+				<IconCaretDown size={14} />
+			{/snippet}
+		</Button>
+	{/snippet}
 
-	<div slot="content">
-		<TagsSearch on:select={onSelect} createPrivate={true} {selectedTags} />
-	</div>
+	{#snippet content()}
+		<div>
+			<TagsSearch on:select={onSelect} createPrivate={true} {selectedTags} />
+		</div>
+	{/snippet}
 </Dropdown>

@@ -7,7 +7,7 @@
 	import { onMount } from "svelte";
     import { linkAnalysisChecks } from "../linkAnalysisActions";
 
-    let isLoading = true;
+    let isLoading = $state(true);
 
     onMount(() => {
         getChecks()

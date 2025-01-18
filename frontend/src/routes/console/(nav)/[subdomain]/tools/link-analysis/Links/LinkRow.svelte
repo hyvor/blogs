@@ -5,14 +5,21 @@
 	import LinkStatusTag from "./LinkStatusTag.svelte";
 	import { getLanguageById } from "../../../../../lib/actions/languageActions";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
-	import { IconArrowClockwise, IconEyeSlashFill, IconPencilFill } from "@hyvor/icons";
+	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
+import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
+import IconPencilFill from '@hyvor/icons/IconPencilFill';
+
 	import { callIgnoreLink, callLinkAnalysisApi } from "../linkAnalysisActions";
 	import { createEventDispatcher } from "svelte";
 	import { consoleUrlWithBlog } from "../../../../../lib/consoleUrl";
     
-    export let link: LinkAnalysisLink;
+    interface Props {
+        link: LinkAnalysisLink;
+    }
 
-    let isRechecking = false;
+    let { link }: Props = $props();
+
+    let isRechecking = $state(false);
 
     const language = getLanguageById(link.post_variant_language_id);
     const postEditUrl = consoleUrlWithBlog(`/posts/${link.post_id}`);

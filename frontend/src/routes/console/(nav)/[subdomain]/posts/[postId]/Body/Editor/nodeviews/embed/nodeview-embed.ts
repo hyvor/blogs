@@ -1,6 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { NodeView } from "prosemirror-view";
 import EmbedNodeview from "./EmbedNodeview.svelte";
+import { mount } from "svelte";
 
 export default class EmbedView implements NodeView {
 
@@ -14,12 +15,12 @@ export default class EmbedView implements NodeView {
 
         const url = node.attrs.url;
 
-        new EmbedNodeview({
-            target: this.dom,
-            props: {
-                url
-            }
-        })
+        mount(EmbedNodeview, {
+                    target: this.dom,
+                    props: {
+                        url
+                    }
+                })
 
     }
 

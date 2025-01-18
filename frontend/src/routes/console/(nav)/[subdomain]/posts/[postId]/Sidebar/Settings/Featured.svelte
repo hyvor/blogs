@@ -6,7 +6,7 @@
 	import { updatePost } from "../../../postActions";
 	import LabelWithInfo from "./LabelWithInfo.svelte";
     
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function handleChange(e: any) {
         const checked = e.target.checked;
@@ -35,18 +35,20 @@
 <OnlyPrimaryVariant>
 
     <SplitControl>
-        <span slot="label">
+        {#snippet label()}
+                <span >
 
-            <LabelWithInfo 
-                label="Featured"
-                info="Featured posts are shown on the top of the home page"
-            />
+                <LabelWithInfo 
+                    label="Featured"
+                    info="Featured posts are shown on the top of the home page"
+                />
 
-            <UnsavedTag
-                show={$postStore.is_featured !== $postOriginalStore.is_featured}   
-                loaderState={loaderState} 
-            />
-        </span>
+                <UnsavedTag
+                    show={$postStore.is_featured !== $postOriginalStore.is_featured}   
+                    loaderState={loaderState} 
+                />
+            </span>
+            {/snippet}
         <Checkbox 
             checked={$postStore.is_featured}
             on:change={handleChange}

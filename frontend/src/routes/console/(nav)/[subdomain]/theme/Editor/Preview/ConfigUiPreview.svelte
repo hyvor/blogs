@@ -5,18 +5,22 @@
 	import ConfigUi from "../ConfigUi/ConfigUi.svelte";
 	import TextEditor from "./TextEditor.svelte";
 
-    export let file: ThemeFile;
+    interface Props {
+        file: ThemeFile;
+    }
 
-    $: files = $themeFilesStore;
+    let { file }: Props = $props();
 
-    $: configYaml = files.find(f => f.folder === null && f.name === 'config.yaml')?.content || '';
-    $: configDefYaml = files.find(f => f.folder === null && f.name === 'config.def.yaml')?.content || '';
+    let files = $derived($themeFilesStore);
+
+    let configYaml = $derived(files.find(f => f.folder === null && f.name === 'config.yaml')?.content || '');
+    let configDefYaml = $derived(files.find(f => f.folder === null && f.name === 'config.def.yaml')?.content || '');
 
     function handleChange(e: CustomEvent<string>) {
         updateThemeFileStore(file.id, {content: e.detail}, false);
     }
 
-    let showYaml = false;
+    let showYaml = $state(false);
 </script>
 
 <div class="switch-wrap">

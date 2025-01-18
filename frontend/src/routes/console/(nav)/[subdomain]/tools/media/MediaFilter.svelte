@@ -1,149 +1,154 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Dropdown, Text, TextInput } from "@hyvor/design/components";
-	import { IconCaretDown } from "@hyvor/icons";
-	import { getExtensionsByFileType, type FileType } from "./mediaActions";
-	import { createEventDispatcher, onMount } from "svelte";
+	import {
+		ActionList,
+		ActionListItem,
+		Button,
+		Dropdown,
+		Text,
+		TextInput
+	} from '@hyvor/design/components';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+	import { getExtensionsByFileType, type FileType } from './mediaActions';
+	import { createEventDispatcher, onMount } from 'svelte';
 
-    export let defaultType: null | FileType = null;
-    export let typeDisabled = false;
+	interface Props {
+		defaultType?: null | FileType;
+		typeDisabled?: boolean;
+	}
 
-    let type: FileType = defaultType || 'all';
-    let showFileTypesDropdown = false;
-    let customExtension = '';
-    let search = '';
+	let { defaultType = null, typeDisabled = false }: Props = $props();
 
-    const dispatch = createEventDispatcher();
+	let type: FileType = $state(defaultType || 'all');
+	let showFileTypesDropdown = $state(false);
+	let customExtension = $state('');
+	let search = $state('');
 
-    let fileTypes = [
-        { name: 'All', value: 'all', extensions: '' },
-        { name: 'Images', value: 'images', extensions: 'jpg, png...' },
-        { name: 'Videos', value: 'videos', extensions: 'mp4, avi...' },
-        { name: 'Documents', value: 'documents', extensions: 'pdf, doc...' },
-        { name: 'Audio', value: 'audio', extensions: 'mp3, wav...' },
-        { name: 'Archives', value: 'archives', extensions: 'zip, rar...' },
-        { name: 'Custom Extension', value: 'custom', extensions: 'You choose' }
-    ] as {name: string, value: FileType, extensions: string}[];
+	const dispatch = createEventDispatcher();
 
-    $: selectedFileName = fileTypes.find(f => f.value === type)!.name;
+	let fileTypes = [
+		{ name: 'All', value: 'all', extensions: '' },
+		{ name: 'Images', value: 'images', extensions: 'jpg, png...' },
+		{ name: 'Videos', value: 'videos', extensions: 'mp4, avi...' },
+		{ name: 'Documents', value: 'documents', extensions: 'pdf, doc...' },
+		{ name: 'Audio', value: 'audio', extensions: 'mp3, wav...' },
+		{ name: 'Archives', value: 'archives', extensions: 'zip, rar...' },
+		{ name: 'Custom Extension', value: 'custom', extensions: 'You choose' }
+	] as { name: string; value: FileType; extensions: string }[];
 
-    function closeAndDispatch() {
-        showFileTypesDropdown = false;
-        dispatchChange();
-    }
+	let selectedFileName = $derived(fileTypes.find((f) => f.value === type)!.name);
 
-    function dispatchChange() {
-        const customExtensionsArray = customExtension.split(',')
-            .map(ext => ext.trim())
-            .filter(ext => ext.length > 0);
-        
-        const searchVal = search.trim() ? search.trim() : null;
+	function closeAndDispatch() {
+		showFileTypesDropdown = false;
+		dispatchChange();
+	}
 
-        dispatch('change', {
-            extensions: getExtensionsByFileType(type, customExtensionsArray),
-            search: searchVal
-        });
-    }
+	function dispatchChange() {
+		const customExtensionsArray = customExtension
+			.split(',')
+			.map((ext) => ext.trim())
+			.filter((ext) => ext.length > 0);
 
-    function selectFileType(fileType: FileType) {
-        type = fileType;
+		const searchVal = search.trim() ? search.trim() : null;
 
-        if (fileType !== 'custom') {
-            closeAndDispatch();
-        }
-    }
+		dispatch('change', {
+			extensions: getExtensionsByFileType(type, customExtensionsArray),
+			search: searchVal
+		});
+	}
 
-    function handleChooseCustomExt() {
-        closeAndDispatch();
-    }
+	function selectFileType(fileType: FileType) {
+		type = fileType;
 
-    let searchTimeout : null | ReturnType<typeof setTimeout> = null;
+		if (fileType !== 'custom') {
+			closeAndDispatch();
+		}
+	}
 
-    function handleSearchInput() {
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
+	function handleChooseCustomExt() {
+		closeAndDispatch();
+	}
 
-        searchTimeout = setTimeout(dispatchChange, 400);
-    }
+	let searchTimeout: null | ReturnType<typeof setTimeout> = null;
 
-    onMount(dispatchChange);
+	function handleSearchInput() {
+		if (searchTimeout) {
+			clearTimeout(searchTimeout);
+		}
 
+		searchTimeout = setTimeout(dispatchChange, 400);
+	}
+
+	onMount(dispatchChange);
 </script>
 
-
 <div class="toolbar">
+	<Dropdown width={300} bind:show={showFileTypesDropdown}>
+		{#snippet trigger()}
+			<Button color="input" disabled={typeDisabled}>
+				{#snippet start()}
+					<Text small light>File type</Text>
+				{/snippet}
+				{selectedFileName}
 
-    <Dropdown width={300} bind:show={showFileTypesDropdown}>
-        <Button 
-            slot="trigger" 
-            color="input"
-            disabled={typeDisabled}
-        >
-            <Text small light slot="start">File type</Text>
-            { selectedFileName }
+				{#if type === 'custom' && customExtension}
+					- {customExtension}
+				{/if}
 
-            {#if type === 'custom' && customExtension}
-                - { customExtension }
-            {/if}
+				{#snippet end()}
+					<IconCaretDown size={12} />
+				{/snippet}
+			</Button>
+		{/snippet}
 
-            <IconCaretDown slot="end" size={12} />
-        </Button>
+		{#snippet content()}
+			<ActionList selection="single">
+				{#each fileTypes as f (f.value)}
+					<ActionListItem on:select={() => selectFileType(f.value)} selected={type === f.value}>
+						{f.name}
 
-        <ActionList slot="content" selection="single">
-            {#each fileTypes as f (f.value)}
-                <ActionListItem 
-                    on:select={() => selectFileType(f.value)}
-                    selected={type === f.value}
-                >
-                    { f.name }
+						{#snippet end()}
+							<Text small light>
+								{f.extensions}
+							</Text>
+						{/snippet}
+					</ActionListItem>
+				{/each}
 
-                    <Text small light slot="end">
-                        { f.extensions }
-                    </Text>
-                </ActionListItem>
-            {/each}
+				{#if type === 'custom'}
+					<div class="custom-ext">
+						<TextInput
+							bind:value={customExtension}
+							size="x-small"
+							autofocus
+							placeholder="svg, gif..."
+						/>
+						<Button size="small" on:click={handleChooseCustomExt}>Choose</Button>
+					</div>
+				{/if}
+			</ActionList>
+		{/snippet}
+	</Dropdown>
 
-            {#if type === 'custom'}
-                <div class="custom-ext">
-                    <TextInput 
-                        bind:value={customExtension}
-                        size="x-small"
-                        autofocus
-                        placeholder="svg, gif..."
-                    />
-                    <Button size="small" on:click={handleChooseCustomExt}>
-                        Choose
-                    </Button>
-                </div>
-            {/if}
-                
-        </ActionList>
-
-    </Dropdown>
-
-    <TextInput 
-        placeholder="Search..." 
-        style="width: 130px"
-        bind:value={search}
-        on:input={handleSearchInput}
-    />
-
+	<TextInput
+		placeholder="Search..."
+		style="width: 130px"
+		bind:value={search}
+		on:input={handleSearchInput}
+	/>
 </div>
 
 <style>
+	.custom-ext {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		padding-top: 5px;
+		padding-bottom: 10px;
+		padding-left: 40px;
+	}
 
-    .custom-ext {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding-top: 5px;
-        padding-bottom: 10px;
-        padding-left: 40px;
-    }
-
-    .toolbar {
-        display: flex;
-        gap: 8px;
-    }
-
+	.toolbar {
+		display: flex;
+		gap: 8px;
+	}
 </style>

@@ -29,7 +29,7 @@
 {#if $postEditingStatusStore.isEditingPublished}
 
     <span>
-        Editing published. <button on:click={handleClick}>Discard</button>
+        Editing published. <button onclick={handleClick}>Discard</button>
     </span>
 
 {/if}

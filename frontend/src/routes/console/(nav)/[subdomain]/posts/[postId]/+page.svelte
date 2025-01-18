@@ -9,7 +9,7 @@
 	import PostBody from './Body/PostBody.svelte';
 	import PostSidebar from './Sidebar/PostSidebar.svelte';
 	import { blogStore } from '../../../../lib/stores/blogStore';
-	import { IconCaretLeftFill } from '@hyvor/icons';
+	import IconCaretLeftFill from '@hyvor/icons/IconCaretLeftFill';
 	import { initEditorEventHandlers } from './Body/Editor/editorEvents';
 	import { isTempStore } from '../../../../lib/temp';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
@@ -18,9 +18,9 @@
 
 	const postId = $page.params.postId;
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
-	let postView: HTMLDivElement;
+	let postView: HTMLDivElement = $state();
 
 	onMount(() => {
 		let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;

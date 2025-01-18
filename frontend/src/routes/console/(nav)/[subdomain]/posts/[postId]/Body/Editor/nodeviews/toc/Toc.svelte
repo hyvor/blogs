@@ -6,13 +6,17 @@
 	import TocLevels from "./TocLevels.svelte";
 	import { IconMessage } from "@hyvor/design/components";
 
-    export let view: EditorView;
-    export let levels : number[] = [1,2,3,4];
-    export let getPos : () => number | undefined;
+    interface Props {
+        view: EditorView;
+        levels?: number[];
+        getPos: () => number | undefined;
+    }
 
-    let doc = view.state.doc;
+    let { view, levels = $bindable([1,2,3,4]), getPos }: Props = $props();
 
-    $: toc = generateToc(doc, levels);
+    let doc = $state(view.state.doc);
+
+    let toc = $derived(generateToc(doc, levels));
 
     function handleTransaction(e: any) {
         doc = e.detail.doc;

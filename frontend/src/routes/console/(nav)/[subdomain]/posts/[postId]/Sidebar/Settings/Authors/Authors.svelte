@@ -3,16 +3,18 @@
     import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../../postStore";
 	import type { User } from "../../../../../../../lib/types";
 	import { getPrimaryLanguage } from "../../../../../../../lib/stores/languagesStore";
-	import { IconPlus, IconX } from "@hyvor/icons";
+	import IconPlus from '@hyvor/icons/IconPlus';
+import IconX from '@hyvor/icons/IconX';
+
 	import AuthorsSearch from "./AuthorsSearch.svelte";
 	import UnsavedTag from "../UnsavedTag.svelte";
 	import { updatePost, updatePostAuthors } from "../../../../postActions";
 	import OnlyPrimaryVariant from "../OnlyPrimaryVariant.svelte";
 	import { hasIdArrayChanged } from "../settingsHelpers";
 
-    let dropdownOpen = false;
+    let dropdownOpen = $state(false);
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function getAuthorName(user: User) {
         const primaryLang = getPrimaryLanguage()
@@ -52,22 +54,24 @@
 
     }
 
-    $: hasAuthorsChanged  = hasIdArrayChanged($postStore.authors, $postOriginalStore.authors);
+    let hasAuthorsChanged  = $derived(hasIdArrayChanged($postStore.authors, $postOriginalStore.authors));
 
 </script>
 
 <OnlyPrimaryVariant>
 
     <SplitControl>
-        <span slot="label">
-            Authors
+        {#snippet label()}
+                <span >
+                Authors
 
-            <UnsavedTag
-                show={hasAuthorsChanged}
-                loaderState={loaderState}
-            />
+                <UnsavedTag
+                    show={hasAuthorsChanged}
+                    loaderState={loaderState}
+                />
 
-        </span>
+            </span>
+            {/snippet}
 
         <div class="authors">
 
@@ -77,23 +81,27 @@
 
                     {#each $postStore.authors as author}
                         <Tag size="small" style="padding: 4px 8px" bg="#f1f1f1">
-                            <Avatar 
-                                src={author.picture_url} 
-                                alt={getAuthorName(author)} 
-                                slot="start"
-                                size={16}
-                            />
+                            {#snippet start()}
+                                                        <Avatar 
+                                    src={author.picture_url} 
+                                    alt={getAuthorName(author)} 
+                                    
+                                    size={16}
+                                />
+                                                    {/snippet}
                             { getAuthorName(author) }
 
-                            <IconButton 
-                                color="red"
-                                variant="invisible"
-                                on:click={() => handleRemoveAuthor(author.id)}
-                                size={16}
-                                slot="end"
-                            >
-                                <IconX size={12} />
-                            </IconButton>
+                            {#snippet end()}
+                                                        <IconButton 
+                                    color="red"
+                                    variant="invisible"
+                                    on:click={() => handleRemoveAuthor(author.id)}
+                                    size={16}
+                                    
+                                >
+                                    <IconX size={12} />
+                                </IconButton>
+                                                    {/snippet}
                         </Tag>
                     {/each}
 
@@ -111,18 +119,22 @@
                     width={300}
                     bind:show={dropdownOpen}
                 >
-                    <IconButton
-                        color="input"
-                        size={22}
-                        slot="trigger"
-                    >
-                        <IconPlus size={14} />
-                    </IconButton>
+                    {#snippet trigger()}
+                                        <IconButton
+                            color="input"
+                            size={22}
+                            
+                        >
+                            <IconPlus size={14} />
+                        </IconButton>
+                                    {/snippet}
 
-                    <AuthorsSearch 
-                        slot="content"
-                        on:select={handleAddAuthor}
-                    />
+                    {#snippet content()}
+                                        <AuthorsSearch 
+                            
+                            on:select={handleAddAuthor}
+                        />
+                                    {/snippet}
                 
                 </Dropdown>
 

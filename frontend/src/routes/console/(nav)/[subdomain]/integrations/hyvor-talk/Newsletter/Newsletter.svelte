@@ -5,15 +5,19 @@
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 
-	export let websiteId: number;
+	interface Props {
+		websiteId: number;
+	}
 
-	$: code =
-		`<` +
+	let { websiteId }: Props = $props();
+
+	let code =
+		$derived(`<` +
 		`script async src="https://talk.hyvor.com/embed/newsletter.js" type="module"><` +
 		`/script>
-<hyvor-talk-newsletter website-id="${websiteId}"></hyvor-talk-newsletter>`;
+<hyvor-talk-newsletter website-id="${websiteId}"></hyvor-talk-newsletter>`);
 
-	let adding = false;
+	let adding = $state(false);
 
 	function handleCopy() {
 		navigator.clipboard.writeText(code);
@@ -21,11 +25,13 @@
 </script>
 
 <SplitControl column>
-	<Label slot="label">
-		Newsletter <ConfiguredTag
-			configured={$blogStore.newsletter_code?.includes('<hyvor-talk-newsletter') || false}
-		/>
-	</Label>
+	{#snippet label()}
+		<Label >
+			Newsletter <ConfiguredTag
+				configured={$blogStore.newsletter_code?.includes('<hyvor-talk-newsletter') || false}
+			/>
+		</Label>
+	{/snippet}
 
 	<p style="margin-top:0;">
 		Add the newsletter code to <Link

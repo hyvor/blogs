@@ -1,32 +1,40 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
 	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
-	import { IconArrowReturnLeft } from '@hyvor/icons';
+	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import BookmarkDisplay from './BookmarkDisplay.svelte';
 
-	let show = true;
+	let show = $state(true);
 
-	export let url = '';
+	interface Props {
+		url?: string;
+	}
 
-	let inputEl: HTMLInputElement;
-	let inputStarted = false;
+	let { url = $bindable('') }: Props = $props();
+
+	let inputEl: HTMLInputElement = $state();
+	let inputStarted = $state(false);
 
 	const dispatch = createEventDispatcher<{
 		close: void;
 		create: string;
 	}>();
 
-	$: if (!show) {
-		dispatch('close');
-	}
+	run(() => {
+		if (!show) {
+			dispatch('close');
+		}
+	});
 
-	let isFetching = false;
-	let error: null | string = null;
+	let isFetching = $state(false);
+	let error: null | string = $state(null);
 
-	let urlData: null | UnfoldedLink = null;
+	let urlData: null | UnfoldedLink = $state(null);
 
 	function handleFetch() {
 		if (!inputStarted) {
@@ -106,7 +114,9 @@
 			bind:input={inputEl}
 		/>
 		<Button on:click={handleFetch}>
-			Fetch <IconArrowReturnLeft slot="end" />
+			Fetch {#snippet end()}
+				<IconArrowReturnLeft />
+			{/snippet}
 		</Button>
 	</div>
 

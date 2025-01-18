@@ -1,10 +1,17 @@
 <script lang="ts">
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { Avatar } from "@hyvor/design/components";
 	import type { User } from "../../../../../../../lib/types";
 	import { getPrimaryLanguage } from "../../../../../../../lib/stores/languagesStore";
 	import { postStore } from "../../../../postStore";
 
-    export let user: User;
+    interface Props {
+        user: User;
+    }
+
+    let { user }: Props = $props();
 
     const primaryLanguage = getPrimaryLanguage();
     const variant = user.variants.find(v => v.language_id === primaryLanguage.id)!;
@@ -15,8 +22,8 @@
 <div 
     class="author-row" 
     class:already={alreadyAuthor}
-    on:click
-    on:keyup={e => e.key === 'Enter' && e.currentTarget.click()}
+    onclick={bubble('click')}
+    onkeyup={e => e.key === 'Enter' && e.currentTarget.click()}
     role="button"
     tabindex="0"
 >

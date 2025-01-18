@@ -1,7 +1,20 @@
 import type { Node } from "prosemirror-model";
-import type { ComponentType } from "svelte";
+import { type Component, mount, unmount } from "svelte";
 import schema from "../../../../../../../../lib/prosemirror/schema";
-import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import IconBookmark from '@hyvor/icons/IconBookmark';
+import IconCardImage from '@hyvor/icons/IconCardImage';
+import IconCode from '@hyvor/icons/IconCode';
+import IconCodeSlash from '@hyvor/icons/IconCodeSlash';
+import IconHr from '@hyvor/icons/IconHr';
+import IconLightbulb from '@hyvor/icons/IconLightbulb';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconListUl from '@hyvor/icons/IconListUl';
+import IconQuote from '@hyvor/icons/IconQuote';
+import IconSoundwave from '@hyvor/icons/IconSoundwave';
+import IconTable from '@hyvor/icons/IconTable';
+import IconTypeH2 from '@hyvor/icons/IconTypeH2';
+import IconTypeH3 from '@hyvor/icons/IconTypeH3';
+
 import FileUploader from "../../../../../../../../lib/components/FileUploader/FileUploader.svelte";
 import type { SelectedFile } from "../../../../../../../../lib/components/FileUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
@@ -10,7 +23,7 @@ import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
 export interface SlashOption {
     name: string,
     description: string,
-    icon: ComponentType,
+    icon: Component,
     keywords: string[],
     node: string | (() => Promise<Node | null>),
     attrs?: Record<string, unknown>,
@@ -165,12 +178,12 @@ function selectImage() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new FileUploader({
-            target: div,
-        });
+        const selector = mount(FileUploader, {
+                    target: div,
+                });
 
         function destroy() {
-            selector.$destroy();
+            unmount(selector);
             div.remove();
         }
 
@@ -200,15 +213,15 @@ function selectAudio() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new FileUploader({
-            target: div,
-            props: {
-                type: 'audio'
-            }
-        });
+        const selector = mount(FileUploader, {
+                    target: div,
+                    props: {
+                        type: 'audio'
+                    }
+                });
 
         function destroy() {
-            selector.$destroy();
+            unmount(selector);
             div.remove();
         }
 
@@ -241,12 +254,12 @@ function createEmbed() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const creator = new EmbedCreator({
-            target: div,
-        });
+        const creator = mount(EmbedCreator, {
+                    target: div,
+                });
 
         function destroy() {
-            creator.$destroy();
+            unmount(creator);
             div.remove();
         }
 
@@ -286,15 +299,15 @@ function createBookmark(url: string = '') {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const creator = new BookmarkCreator({
-            target: div,
-            props: {
-                url
-            }
-        });
+        const creator = mount(BookmarkCreator, {
+                    target: div,
+                    props: {
+                        url
+                    }
+                });
 
         function destroy() {
-            creator.$destroy();
+            unmount(creator);
             div.remove();
         }
 

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Modal, TabNav, TabNavItem } from "@hyvor/design/components";
-	import { IconHash, IconLink45deg, IconSearch } from "@hyvor/icons";
+	import IconHash from '@hyvor/icons/IconHash';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconSearch from '@hyvor/icons/IconSearch';
+
 	import Paste from "./Paste.svelte";
 	import SearchPosts from "./SearchPosts.svelte";
 	import type { EditorView } from "prosemirror-view";
@@ -9,11 +12,15 @@
 	import { TextSelection } from "prosemirror-state";
 	import Anchors from "./Anchors.svelte";
 
-    export let show: boolean;
-    export let view: EditorView;
-    export let edit : null | string = null;
+    interface Props {
+        show: boolean;
+        view: EditorView;
+        edit?: null | string;
+    }
 
-    let activeTab: 'paste' | 'anchors' | 'posts' = 'paste';
+    let { show = $bindable(), view, edit = null }: Props = $props();
+
+    let activeTab: 'paste' | 'anchors' | 'posts' = $state('paste');
 
     function handleAdd(e: CustomEvent<string>) {
         if (edit) {
@@ -43,20 +50,28 @@
     bind:show
 >
 
-    <TabNav bind:active={activeTab} slot="title">
-        <TabNavItem name="paste">
-            <IconLink45deg slot="start" />
-            Paste Link
-        </TabNavItem>
-        <TabNavItem name="anchors">
-            <IconHash slot="start" />
-            Anchors
-        </TabNavItem>
-        <TabNavItem name="posts">
-            <IconSearch slot="start" size={13} />
-            Posts
-        </TabNavItem>
-    </TabNav>
+    {#snippet title()}
+        <TabNav bind:active={activeTab} >
+            <TabNavItem name="paste">
+                {#snippet start()}
+                        <IconLink45deg  />
+                    {/snippet}
+                Paste Link
+            </TabNavItem>
+            <TabNavItem name="anchors">
+                {#snippet start()}
+                        <IconHash  />
+                    {/snippet}
+                Anchors
+            </TabNavItem>
+            <TabNavItem name="posts">
+                {#snippet start()}
+                        <IconSearch  size={13} />
+                    {/snippet}
+                Posts
+            </TabNavItem>
+        </TabNav>
+    {/snippet}
 
     {#if activeTab === 'paste'}
         <Paste on:add={handleAdd} input={edit || ''} />

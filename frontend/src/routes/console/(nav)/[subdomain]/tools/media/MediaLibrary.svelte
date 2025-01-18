@@ -2,24 +2,34 @@
 	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
 	import MediaFilter from './MediaFilter.svelte';
 	import { getMedia, type FileType, uploadMedia } from './mediaActions';
-	import { IconCloudUpload } from '@hyvor/icons';
+	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	import type { Media } from '../../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
 	import { getConfig } from '../../../../lib/config';
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
+	import { mount, unmount } from 'svelte';
 
-	export let showUpload = true;
-	export let filterDefaultType = null as null | FileType;
-	export let filterTypeDisabled = false;
-	export let selecting = false;
+	interface Props {
+		showUpload?: boolean;
+		filterDefaultType?: any;
+		filterTypeDisabled?: boolean;
+		selecting?: boolean;
+	}
 
-	let isLoading = true;
-	let isLoadingMore = false;
-	let hasMore = false;
-	let mediaFiles: Media[] = [];
+	let {
+		showUpload = true,
+		filterDefaultType = null as null | FileType,
+		filterTypeDisabled = false,
+		selecting = false
+	}: Props = $props();
 
-	let uploadInput: HTMLInputElement;
+	let isLoading = $state(true);
+	let isLoadingMore = $state(false);
+	let hasMore = $state(false);
+	let mediaFiles: Media[] = $state([]);
+
+	let uploadInput: HTMLInputElement = $state();
 	let isUploading = false;
 
 	let extensions: string[] = [];
@@ -58,7 +68,7 @@
 		const div = document.createElement('div');
 		document.body.appendChild(div);
 
-		const selector = new FileUploader({
+		const selector = mount(FileUploader, {
 			target: div,
 			props: {
 				type: 'any'
@@ -66,7 +76,7 @@
 		});
 
 		function destroy() {
-			selector.$destroy();
+			unmount(selector);
 			div.remove();
 		}
 
@@ -123,9 +133,11 @@
 		/>
 
 		{#if showUpload}
-			<input type="file" bind:this={uploadInput} style="display:none" on:change={handleUpload} />
+			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
 			<Button on:click={handleClickUpload}>
-				<IconCloudUpload slot="start" />
+				{#snippet start()}
+					<IconCloudUpload />
+				{/snippet}
 				Upload
 			</Button>
 		{/if}

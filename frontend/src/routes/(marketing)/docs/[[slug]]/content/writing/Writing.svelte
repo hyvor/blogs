@@ -171,7 +171,9 @@
 <DocsImage src={anchorsImg} alt="Adding anchor links" width={400} />
 
 <Callout type="info">
-	<div slot="icon">💡</div>
+	{#snippet icon()}
+		<div>💡</div>
+	{/snippet}
 	<p>
 		Anchor list contains all the headlines of your content showing whether they have IDs or not.
 	</p>
@@ -190,7 +192,7 @@
 <h4 id="markdown-inline-styles">Markdown for Inline Styles</h4>
 <p>You can also use Markdown shortcuts to create inline styles.</p>
 <Table columns="2fr 3fr" hover>
-	<TableRow header>
+	<TableRow head>
 		<div>Inline Style</div>
 		<div>Markdown Shortcut</div>
 	</TableRow>
@@ -290,7 +292,7 @@
 
 <h4 id="lists">Lists</h4>
 <Table columns="2fr 3fr" hover>
-	<TableRow header>
+	<TableRow head>
 		<div>Action</div>
 		<div>Command</div>
 	</TableRow>
@@ -714,7 +716,7 @@
 <h3 id="link-types">Link Types</h3>
 <p>Hyvor Blogs categorizes links into the following types.</p>
 <Table columns="2fr 3fr" hover>
-	<TableRow header>
+	<TableRow head>
 		<div>Link Type</div>
 		<div>Description</div>
 	</TableRow>

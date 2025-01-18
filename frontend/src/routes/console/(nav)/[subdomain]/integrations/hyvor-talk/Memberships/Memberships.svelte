@@ -5,15 +5,19 @@
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 
-	export let websiteId: number;
+	interface Props {
+		websiteId: number;
+	}
 
-	$: code =
-		`<` +
+	let { websiteId }: Props = $props();
+
+	let code =
+		$derived(`<` +
 		`script async src="https://talk.hyvor.com/embed/memberships.js" type="module"><` +
 		`/script>
-<hyvor-talk-memberships website-id="${websiteId}"></hyvor-talk-memberships>`;
+<hyvor-talk-memberships website-id="${websiteId}"></hyvor-talk-memberships>`);
 
-	let adding = false;
+	let adding = $state(false);
 
 	function handleCopy() {
 		navigator.clipboard.writeText(code);
@@ -21,11 +25,13 @@
 </script>
 
 <SplitControl column>
-	<Label slot="label">
-		Memberships <ConfiguredTag
-			configured={$blogStore.code_foot?.includes('<hyvor-talk-memberships') || false}
-		/>
-	</Label>
+	{#snippet label()}
+		<Label >
+			Memberships <ConfiguredTag
+				configured={$blogStore.code_foot?.includes('<hyvor-talk-memberships') || false}
+			/>
+		</Label>
+	{/snippet}
 
 	<p style="margin-top:0;">
 		After setting up Memberships in the <Link

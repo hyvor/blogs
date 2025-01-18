@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Button, Loader, Table, TableRow } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import { IconCaretDown, IconCaretRight } from '@hyvor/icons';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+
 
 	interface DataType {
 		languageTags: string;
@@ -11,8 +13,8 @@
 		previews: string;
 	}
 
-	let data: null | DataType = null;
-	let showPreview = false;
+	let data: null | DataType = $state(null);
+	let showPreview = $state(false);
 
 	onMount(() => {
 		fetch('/api/special/syntax')
@@ -71,13 +73,15 @@
 		<p>
 			<Button size="small" on:click={() => (showPreview = !showPreview)}>
 				Show theme previews
-				<svelte:fragment slot="end">
-					{#if showPreview}
-						<IconCaretDown size={12} />
-					{:else}
-						<IconCaretRight size={12} />
-					{/if}
-				</svelte:fragment>
+				{#snippet end()}
+							
+						{#if showPreview}
+							<IconCaretDown size={12} />
+						{:else}
+							<IconCaretRight size={12} />
+						{/if}
+					
+							{/snippet}
 			</Button>
 		</p>
 

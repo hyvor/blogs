@@ -13,23 +13,29 @@
 	} from '@hyvor/design/components';
 	import type { Tag, TagVariant } from '../../../../../lib/types';
 	import CodemirrorEditor from '../../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
-	import { IconCaretDownFill, IconCaretRightFill } from '@hyvor/icons';
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
+
 	import VariantInput from '../../@components/VariantInput/VariantInput.svelte';
 	import { updateTag, updateTagVariant } from '../tagActions';
 	import { createEventDispatcher } from 'svelte';
 	import TagSlug from './TagSlug.svelte';
 
-	export let show = false;
-	export let tag: Tag;
+	interface Props {
+		show?: boolean;
+		tag: Tag;
+	}
 
-	let isPrivate = tag.is_private;
-	let slug = tag.slug;
-	let codeHead = tag.code_head || '';
+	let { show = $bindable(false), tag }: Props = $props();
+
+	let isPrivate = $state(tag.is_private);
+	let slug = $state(tag.slug);
+	let codeHead = $state(tag.code_head || '');
 	let codeFoot = tag.code_foot || '';
 
-	let customCode = false;
+	let customCode = $state(false);
 
-	const variantChanges: Record<number, Partial<TagVariant>> = {};
+	const variantChanges: Record<number, Partial<TagVariant>> = $state({});
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		variantChanges[e.detail.languageId] = {
@@ -44,15 +50,15 @@
 		};
 	}
 
-	$: hasChanges =
-		Object.keys(variantChanges).length !== 0 ||
+	let hasChanges =
+		$derived(Object.keys(variantChanges).length !== 0 ||
 		slug !== tag.slug ||
 		codeHead !== (tag.code_head || '') ||
-		codeFoot !== (tag.code_foot || '');
+		codeFoot !== (tag.code_foot || ''));
 
 	const dispatch = createEventDispatcher();
 
-	let isUpdating = false;
+	let isUpdating = $state(false);
 
 	async function handleUpdate() {
 		isUpdating = true;
@@ -101,10 +107,12 @@
 
 <Modal title="Edit tag" bind:show>
 	<SplitControl label="Private">
-		<Caption slot="caption">
-			<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
-			- only for internal use.
-		</Caption>
+		{#snippet caption()}
+				<Caption >
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
+				- only for internal use.
+			</Caption>
+			{/snippet}
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
@@ -142,13 +150,15 @@
 		>
 			Custom Code
 
-			<span slot="end">
-				{#if customCode}
-					<IconCaretDownFill />
-				{:else}
-					<IconCaretRightFill />
-				{/if}
-			</span>
+			{#snippet end()}
+						<span >
+					{#if customCode}
+						<IconCaretDownFill />
+					{:else}
+						<IconCaretRightFill />
+					{/if}
+				</span>
+					{/snippet}
 		</Link>
 
 		{#if customCode}
@@ -181,13 +191,15 @@
 		</div>
 	{/if}
 
-	<svelte:fragment slot="footer">
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+	{#snippet footer()}
+	
+			<ButtonGroup>
+				<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
-		</ButtonGroup>
-	</svelte:fragment>
+				<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
+			</ButtonGroup>
+		
+	{/snippet}
 </Modal>
 
 <style>

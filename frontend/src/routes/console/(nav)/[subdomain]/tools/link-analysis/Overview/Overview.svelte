@@ -4,11 +4,15 @@
 	import Stat from "./Stat.svelte";
 	import { createEventDispatcher } from "svelte";
 	import Analyses from "./Analyses.svelte";
-    export let stats: Stats;
+    interface Props {
+        stats: Stats;
+    }
+
+    let { stats }: Props = $props();
 
     const dispatch = createEventDispatcher();
 
-    let isStartingNewAnalysis = false;
+    let isStartingNewAnalysis = $state(false);
 
     function handleStartNewAnalysis() {
         isStartingNewAnalysis = true;

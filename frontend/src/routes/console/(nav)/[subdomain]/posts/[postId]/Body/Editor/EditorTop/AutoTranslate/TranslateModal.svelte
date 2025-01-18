@@ -1,122 +1,139 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Callout, Dropdown, Modal, SplitControl, toast } from "@hyvor/design/components";
-	import UpgradeRequired from "../../../../../../billing/UpgradeRequired.svelte";
-	import { languagesStore, primaryLanguageStore } from "../../../../../../../../lib/stores/languagesStore";
-	import type { Language, PostVariant } from "../../../../../../../../lib/types";
-	import { IconCaretDown, IconExclamation, IconExclamationCircle } from "@hyvor/icons";
-	import { increaseEditorVersion, postCurrentContentKey, postLanguageStore, postStore, postVariantStore, updatePostVariantStore } from "../../../../../postStore";
-	import { DEEPL_SOURCE_LANGUAGES, DEEPL_TARGET_LANGUAGES, findMatchingLanguage } from "./deepl";
-	import { autoTranslate } from "./autoTranslateActions";
-	import { updatePostVariant } from "../../../../../postActions";
-	import { tick } from "svelte";
-    
-    export let show: boolean;
+	import {
+		ActionList,
+		ActionListItem,
+		Button,
+		Callout,
+		Dropdown,
+		Modal,
+		SplitControl,
+		toast
+	} from '@hyvor/design/components';
+	import UpgradeRequired from '../../../../../../billing/UpgradeRequired.svelte';
+	import {
+		languagesStore,
+		primaryLanguageStore
+	} from '../../../../../../../../lib/stores/languagesStore';
+	import type { Language, PostVariant } from '../../../../../../../../lib/types';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconExclamation from '@hyvor/icons/IconExclamation';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
-    let sourceVariantLanguage: Language = $primaryLanguageStore;
-    let sourceVariantDropdownShow = false;
+	import {
+		increaseEditorVersion,
+		postCurrentContentKey,
+		postLanguageStore,
+		postStore,
+		postVariantStore,
+		updatePostVariantStore
+	} from '../../../../../postStore';
+	import { DEEPL_SOURCE_LANGUAGES, DEEPL_TARGET_LANGUAGES, findMatchingLanguage } from './deepl';
+	import { autoTranslate } from './autoTranslateActions';
+	import { updatePostVariant } from '../../../../../postActions';
+	import { tick } from 'svelte';
 
-    let sourceDeepLLanguage  = findMatchingLanguage(
-        $primaryLanguageStore.code, 
-        DEEPL_SOURCE_LANGUAGES
-    );
+	interface Props {
+		show: boolean;
+	}
 
-    let targetDeepLLanguage = findMatchingLanguage(
-        $postLanguageStore.code,
-        DEEPL_TARGET_LANGUAGES
-    );
+	let { show = $bindable() }: Props = $props();
 
-    let dropdownSource = false;
-    let dropdownTarget = false;
-    
-    function handleSourceClick(key: any) {
-        sourceDeepLLanguage = key;
-        dropdownSource = false;
-    }
+	let sourceVariantLanguage: Language = $primaryLanguageStore;
+	let sourceVariantDropdownShow = false;
 
-    function handleTargetClick(key: any) {
-        targetDeepLLanguage = key;
-        dropdownTarget = false;
-    }
+	let sourceDeepLLanguage = $state(
+		findMatchingLanguage($primaryLanguageStore.code, DEEPL_SOURCE_LANGUAGES)
+	);
 
-    let isTranslating = false;
+	let targetDeepLLanguage = $state(
+		findMatchingLanguage($postLanguageStore.code, DEEPL_TARGET_LANGUAGES)
+	);
 
-    function handleTranslate() {
-        isTranslating = true;
+	let dropdownSource = $state(false);
+	let dropdownTarget = $state(false);
 
-        const variant = $postStore.variants.find(v => v.language_id === sourceVariantLanguage.id)!;
-        
-        autoTranslate(
-            sourceDeepLLanguage,
-            targetDeepLLanguage,
-            variant.content,
-            variant.title,
-            variant.description,
-            variant.slug,
-        ).then(res => {
+	function handleSourceClick(key: any) {
+		sourceDeepLLanguage = key;
+		dropdownSource = false;
+	}
 
-            const updates = {
-                title: res.title,
-                description: res.description,
-                [$postCurrentContentKey]: res.content,
-            } as Partial<PostVariant>;
+	function handleTargetClick(key: any) {
+		targetDeepLLanguage = key;
+		dropdownTarget = false;
+	}
 
-            if ($postVariantStore.slug === null) {
-                updates.slug = res.slug;
-            }
+	let isTranslating = $state(false);
 
-            updatePostVariantStore(updates);
-            increaseEditorVersion();
+	function handleTranslate() {
+		isTranslating = true;
 
-            toast.success('Successfully translated');
+		const variant = $postStore.variants.find((v) => v.language_id === sourceVariantLanguage.id)!;
 
-            show = false;
+		autoTranslate(
+			sourceDeepLLanguage,
+			targetDeepLLanguage,
+			variant.content,
+			variant.title,
+			variant.description,
+			variant.slug
+		)
+			.then((res) => {
+				const updates = {
+					title: res.title,
+					description: res.description,
+					[$postCurrentContentKey]: res.content
+				} as Partial<PostVariant>;
 
-        }).catch(e => {
-            toast.error(e.message);
-        })
-        .finally(() => {
-            isTranslating = false;
-        })
+				if ($postVariantStore.slug === null) {
+					updates.slug = res.slug;
+				}
 
-    }
+				updatePostVariantStore(updates);
+				increaseEditorVersion();
 
+				toast.success('Successfully translated');
+
+				show = false;
+			})
+			.catch((e) => {
+				toast.error(e.message);
+			})
+			.finally(() => {
+				isTranslating = false;
+			});
+	}
 </script>
 
 <Modal
-    title="Auto-Translate"
-    bind:show={show}
-    footer={{
-        confirm: {
-            text: 'Translate'
-        }
-    }}
-    closeOnEscape={false}
-    closeOnOutsideClick={false}
-    on:confirm={handleTranslate}
-    loading={isTranslating}
+	title="Auto-Translate"
+	bind:show
+	footer={{
+		confirm: {
+			text: 'Translate'
+		}
+	}}
+	closeOnEscape={false}
+	closeOnOutsideClick={false}
+	on:confirm={handleTranslate}
+	loading={isTranslating}
 >
+	<UpgradeRequired trialAllowed={true} minPlan="growth">
+		{#snippet upgradeText()}
+			<div>
+				Auto-translation is available in the Growth and higher plans. Upgrade now to easily
+				translate your posts into multiple languages.
+			</div>
+		{/snippet}
 
-    <UpgradeRequired
-        trialAllowed={true}
-        minPlan="growth"
-    >
+		<div class="note">
+			Automatically translate your posts using DeepL. Make sure to review the translations before
+			publishing.
+		</div>
 
-        <div slot="upgrade-text">
-            Auto-translation is available in the Growth and higher plans. Upgrade now to easily translate your posts into multiple languages.
-        </div>
+		<SplitControl label="Source Variant" caption="The variant you want to translate from">
+			{sourceVariantLanguage.name}
 
-        <div class="note">
-            Automatically translate your posts using DeepL. Make sure to review the translations before publishing.
-        </div>
-
-        <SplitControl 
-            label="Source Variant"
-            caption="The variant you want to translate from"
-        >
-
-            { sourceVariantLanguage.name }
-
-            <!-- <Dropdown bind:show={sourceVariantDropdownShow}>
+			<!-- <Dropdown bind:show={sourceVariantDropdownShow}>
 
                 <Button 
                     color="input"
@@ -143,91 +160,77 @@
                 </ActionList>
 
             </Dropdown> -->
+		</SplitControl>
 
-        </SplitControl>
+		<SplitControl
+			label="Source Language"
+			caption="Choose the language of the source variant (29 supported)"
+		>
+			<Dropdown bind:show={dropdownSource}>
+				{#snippet trigger()}
+					<Button color="input" size="small">
+						{DEEPL_SOURCE_LANGUAGES[sourceDeepLLanguage]}
+						{#snippet end()}
+							<IconCaretDown size={12} />
+						{/snippet}
+					</Button>
+				{/snippet}
 
-        <SplitControl
-            label="Source Language"
-            caption="Choose the language of the source variant (29 supported)"
-        >
+				{#snippet content()}
+					<ActionList style="max-height: 250px; overflow-y: auto;">
+						{#each Object.entries(DEEPL_SOURCE_LANGUAGES) as [key, value] (key)}
+							<ActionListItem on:click={() => handleSourceClick(key)}>
+								{value}
+							</ActionListItem>
+						{/each}
+					</ActionList>
+				{/snippet}
+			</Dropdown>
+		</SplitControl>
 
-            <Dropdown bind:show={dropdownSource}>
+		<SplitControl
+			label="Target Language"
+			caption="Choose the language you want to translate to (31 supported)"
+		>
+			<Dropdown bind:show={dropdownTarget}>
+				{#snippet trigger()}
+					<Button color="input" size="small">
+						{DEEPL_TARGET_LANGUAGES[targetDeepLLanguage]}
+						{#snippet end()}
+							<IconCaretDown size={12} />
+						{/snippet}
+					</Button>
+				{/snippet}
 
-                <Button 
-                    color="input"
-                    slot="trigger"
-                    size="small"
-                >
-                    { DEEPL_SOURCE_LANGUAGES[sourceDeepLLanguage] }
-                    <IconCaretDown slot="end" size={12} />
-                </Button>
+				{#snippet content()}
+					<ActionList style="max-height: 250px; overflow-y: auto;">
+						{#each Object.entries(DEEPL_TARGET_LANGUAGES) as [key, value] (key)}
+							<ActionListItem on:click={() => handleTargetClick(key)}>
+								{value}
+							</ActionListItem>
+						{/each}
+					</ActionList>
+				{/snippet}
+			</Dropdown>
+		</SplitControl>
 
-                <ActionList 
-                    slot="content"
-                    style="max-height: 250px; overflow-y: auto;"
-                >
-                    {#each Object.entries(DEEPL_SOURCE_LANGUAGES) as [key, value] (key)}
-                        <ActionListItem
-                            on:click={() => handleSourceClick(key)}
-                        >
-                            {value}
-                        </ActionListItem>
-                    {/each}
-                </ActionList>
-
-            </Dropdown>
-
-        </SplitControl>
-
-        <SplitControl
-            label="Target Language"
-            caption="Choose the language you want to translate to (31 supported)"
-        >
-
-            <Dropdown bind:show={dropdownTarget}>
-
-                <Button 
-                    color="input"
-                    slot="trigger"
-                    size="small"
-                >
-                    { DEEPL_TARGET_LANGUAGES[targetDeepLLanguage] }
-                    <IconCaretDown slot="end" size={12} />
-                </Button>
-
-                <ActionList 
-                    slot="content"
-                    style="max-height: 250px; overflow-y: auto;"
-                >
-                    {#each Object.entries(DEEPL_TARGET_LANGUAGES) as [key, value] (key)}
-                        <ActionListItem
-                            on:click={() => handleTargetClick(key)}
-                        >
-                            {value}
-                        </ActionListItem>
-                    {/each}
-                </ActionList>
-
-            </Dropdown>
-
-        </SplitControl>
-
-        <Callout type="warning" style="margin-top:10px;">
-            <IconExclamationCircle slot="icon" />
-            <div slot="title">
-                Important
-            </div>
-            The title, content, description, and the slug of the <strong>{ $postLanguageStore.name } variant</strong> will be replaced with the translated version.
-        </Callout>
-
-
-    </UpgradeRequired>
+		<Callout type="warning" style="margin-top:10px;">
+			{#snippet icon()}
+				<IconExclamationCircle />
+			{/snippet}
+			{#snippet title()}
+				<div>Important</div>
+			{/snippet}
+			The title, content, description, and the slug of the
+			<strong>{$postLanguageStore.name} variant</strong> will be replaced with the translated version.
+		</Callout>
+	</UpgradeRequired>
 </Modal>
 
 <style>
-    .note {
-        margin-bottom: 15px;
-        color:var(--text-light);
-        font-size:14px;
-    }
+	.note {
+		margin-bottom: 15px;
+		color: var(--text-light);
+		font-size: 14px;
+	}
 </style>

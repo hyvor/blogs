@@ -4,7 +4,11 @@
 	import JobStatusTag from "../../../../../lib/components/Tags/JobStatusTag.svelte";
 	import dayjs from "dayjs";
 
-    export let data: Export;
+    interface Props {
+        data: Export;
+    }
+
+    let { data }: Props = $props();
 
     function fileNameFromUrl(url: string) {
         const parts = url.split('/');

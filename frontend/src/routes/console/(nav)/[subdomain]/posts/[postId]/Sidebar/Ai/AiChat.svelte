@@ -2,7 +2,10 @@
 	import { Button, Divider, IconMessage, Link, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../../lib/types";
 	import { postStore, postVariantStore } from "../../../postStore";
-	import { IconArrowClockwise, IconMagic, IconRobot } from "@hyvor/icons";
+	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
+import IconMagic from '@hyvor/icons/IconMagic';
+import IconRobot from '@hyvor/icons/IconRobot';
+
 	import { getPrompts, resetChat, sendPrompt } from "./aiActions";
 	import { onMount, tick } from "svelte";
 	import { tab } from "../sidebar";
@@ -75,17 +78,17 @@
         }
     ];
 
-    let isLoading = true;
+    let isLoading = $state(true);
 
-    let prompts : GptPrompt[] = [];
-    let prompt = '';
+    let prompts : GptPrompt[] = $state([]);
+    let prompt = $state('');
     
-    let pendingPrompt : string | null = null;
-    let pendingPromptError : string | null = null;
+    let pendingPrompt : string | null = $state(null);
+    let pendingPromptError : string | null = $state(null);
 
-    $: title = $postVariantStore.title;
-    $: primaryKeyword = $postVariantStore.seo_primary_keyword;
-    $: secondaryKeywords = $postVariantStore.seo_secondary_keywords;
+    let title = $derived($postVariantStore.title);
+    let primaryKeyword = $derived($postVariantStore.seo_primary_keyword);
+    let secondaryKeywords = $derived($postVariantStore.seo_secondary_keywords);
 
     function loadPrompts() {
         getPrompts($postStore.id)
@@ -176,7 +179,9 @@
 
                 <div class="reset-button">
                     <Button size="small" color="input" on:click={() => resetPrompts()}>
-                        <IconArrowClockwise slot="start" />
+                        {#snippet start()}
+                                                <IconArrowClockwise  />
+                                            {/snippet}
                         Reset chat
                     </Button>
                 </div>

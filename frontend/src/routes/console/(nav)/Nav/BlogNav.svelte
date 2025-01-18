@@ -1,10 +1,24 @@
 <script lang="ts">
-	import { IconBoxArrowUpRight, IconChevronExpand, IconCoin, IconFiles, IconGear, IconHouse, IconPalette, IconPencil, IconPlugin, IconTools } from "@hyvor/icons";
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconChevronExpand from '@hyvor/icons/IconChevronExpand';
+import IconCoin from '@hyvor/icons/IconCoin';
+import IconFiles from '@hyvor/icons/IconFiles';
+import IconGear from '@hyvor/icons/IconGear';
+import IconHouse from '@hyvor/icons/IconHouse';
+import IconPalette from '@hyvor/icons/IconPalette';
+import IconPencil from '@hyvor/icons/IconPencil';
+import IconPlugin from '@hyvor/icons/IconPlugin';
+import IconTools from '@hyvor/icons/IconTools';
+
 	import { page } from "$app/stores";
 	import { NavLink } from "@hyvor/design/components";
 	import { consoleUrl } from "../../lib/consoleUrl";
     import type {BlogList} from "../../lib/types";
-    export let listItem : BlogList;
+    interface Props {
+        listItem: BlogList;
+    }
+
+    let { listItem }: Props = $props();
 </script>
 
 <a class="current-blog" href={consoleUrl('/select')}>
@@ -31,18 +45,22 @@
         href={consoleUrl(listItem.subdomain)}
         active={$page.url.pathname === `/console/${listItem.subdomain}`}
     >
-        <IconHouse slot="start" />
+        {#snippet start()}
+                <IconHouse  />
+            {/snippet}
 
         Home
 
-        <a
-            class="home-link"
-            slot="end"
-            href={listItem.url}
-            target="_blank"
-        >
-            <IconBoxArrowUpRight size={12} />
-        </a>
+        {#snippet end()}
+                <a
+                class="home-link"
+                
+                href={listItem.url}
+                target="_blank"
+            >
+                <IconBoxArrowUpRight size={12} />
+            </a>
+            {/snippet}
 
     </NavLink>
 
@@ -52,7 +70,9 @@
         href={consoleUrl(`${listItem.subdomain}/posts`)}
         active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/posts`)}
     >
-        <IconPencil slot="start" />
+        {#snippet start()}
+                <IconPencil  />
+            {/snippet}
         Posts
     </NavLink>
 
@@ -60,7 +80,9 @@
         href={consoleUrl(`${listItem.subdomain}/pages`)}
         active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/pages`)}
     >
-        <IconFiles slot="start" />
+        {#snippet start()}
+                <IconFiles  />
+            {/snippet}
         Pages
     </NavLink>
 
@@ -71,7 +93,9 @@
         href={consoleUrl(`${listItem.subdomain}/theme`)}
         active={$page.url.pathname === `/console/${listItem.subdomain}/theme`}
     >
-        <IconPalette slot="start" />
+        {#snippet start()}
+                <IconPalette  />
+            {/snippet}
         Theme
     </NavLink>
 
@@ -80,7 +104,9 @@
         href={consoleUrl(`${listItem.subdomain}/integrations`)}
         active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
     >
-        <IconPlugin slot="start" />
+        {#snippet start()}
+                <IconPlugin  />
+            {/snippet}
         Integrations
     </NavLink>
 
@@ -88,7 +114,9 @@
         href={consoleUrl(`${listItem.subdomain}/tools`)}
         active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/tools`)}
     >
-        <IconTools slot="start" />
+        {#snippet start()}
+                <IconTools  />
+            {/snippet}
         Tools
     </NavLink>
 
@@ -96,7 +124,9 @@
         href={consoleUrl(`${listItem.subdomain}/settings`)}
         active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/settings`)}
     >
-        <IconGear slot="start" />
+        {#snippet start()}
+                <IconGear  />
+            {/snippet}
         Settings
     </NavLink>
 

@@ -22,11 +22,11 @@
 	import Memberships from './Memberships/Memberships.svelte';
 	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
 
-	let isLoading = true;
-	let data: HyvorTalkIntegrationData;
+	let isLoading = $state(true);
+	let data: HyvorTalkIntegrationData = $state();
 
-	let isConnecting = false;
-	let isDisconnecting = false;
+	let isConnecting = $state(false);
+	let isDisconnecting = $state(false);
 
 	function handleConnect() {
 		isConnecting = false;
@@ -66,14 +66,16 @@
 </script>
 
 <UpgradeRequired minPlan="growth" trialAllowed={false}>
-	<div slot="upgrade-text">
-		This integration allows you to use <a
-			href="https://talk.hyvor.com"
-			target="_blank"
-			style="text-decoration:underline">Hyvor Talk</a
-		> on your blog for FREE. Upgrade to the Growth plan or higher to use this integration. This integration
-		is not available in the trial period.
-	</div>
+	{#snippet upgradeText()}
+		<div>
+			This integration allows you to use <a
+				href="https://talk.hyvor.com"
+				target="_blank"
+				style="text-decoration:underline">Hyvor Talk</a
+			> on your blog for FREE. Upgrade to the Growth plan or higher to use this integration. This integration
+			is not available in the trial period.
+		</div>
+	{/snippet}
 
 	{#if isLoading}
 		<Loader full />
@@ -120,11 +122,13 @@
 		{#if data.connected}
 			<div class="embed-code">
 				<SplitControl label="Embed Codes">
-					<div slot="nested">
-						<Comments websiteId={data.data.website_id} />
-						<Newsletter websiteId={data.data.website_id} />
-						<Memberships websiteId={data.data.website_id} />
-					</div>
+					{#snippet nested()}
+						<div>
+							<Comments websiteId={data.data.website_id} />
+							<Newsletter websiteId={data.data.website_id} />
+							<Memberships websiteId={data.data.website_id} />
+						</div>
+					{/snippet}
 				</SplitControl>
 			</div>
 			<GatedContentRules />
@@ -146,12 +150,12 @@
 			</ul>
 		</div>
 
-		<svelte:fragment slot="footer">
+		{#snippet footer()}
 			<ButtonGroup>
 				<Button variant="invisible" on:click={() => (isConnecting = false)}>Cancel</Button>
 				<Button on:click={handleConnect}>Confirm</Button>
 			</ButtonGroup>
-		</svelte:fragment>
+		{/snippet}
 	</Modal>
 {/if}
 
@@ -164,12 +168,12 @@
 			Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
 		</p>
 
-		<svelte:fragment slot="footer">
+		{#snippet footer()}
 			<ButtonGroup>
 				<Button variant="invisible" on:click={() => (isDisconnecting = false)}>Cancel</Button>
 				<Button color="red" on:click={handleDisconnect}>Disconnect</Button>
 			</ButtonGroup>
-		</svelte:fragment>
+		{/snippet}
 	</Modal>
 {/if}
 

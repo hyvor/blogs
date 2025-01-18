@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { postLanguageStore } from "../../../postStore";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 <div
     class:disabled={!$postLanguageStore.is_primary}
 >
-    <slot />
+    {@render children?.()}
 </div>
 
 <style>

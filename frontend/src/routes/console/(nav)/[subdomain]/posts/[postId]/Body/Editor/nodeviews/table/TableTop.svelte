@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { IconButton, Tooltip } from "@hyvor/design/components";
-	import { IconArrowsCollapse, IconArrowsExpand, IconTrash } from "@hyvor/icons";
+	import IconArrowsCollapse from '@hyvor/icons/IconArrowsCollapse';
+import IconArrowsExpand from '@hyvor/icons/IconArrowsExpand';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteTable, mergeCells, splitCell } from "prosemirror-tables";
 	import { postEditingStatusStore } from "../../../../../postStore";
 

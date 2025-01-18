@@ -14,10 +14,14 @@
 	import { createTag } from './tagActions';
 	import { createEventDispatcher } from 'svelte';
 
-	export let show: boolean;
+	interface Props {
+		show: boolean;
+	}
 
-	let name: string = '';
-	let isPrivate = false;
+	let { show = $bindable() }: Props = $props();
+
+	let name: string = $state('');
+	let isPrivate = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -36,7 +40,7 @@
 			});
 	}
 
-	$: isButtonDisabled = name.trim().length === 0;
+	let isButtonDisabled = $derived(name.trim().length === 0);
 </script>
 
 <Modal title="Create Tag" bind:show>
@@ -47,18 +51,22 @@
 	</SplitControl>
 
 	<SplitControl label="Private">
-		<Caption slot="caption">
-			<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
-			- only for internal use.
-		</Caption>
+		{#snippet caption()}
+				<Caption >
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
+				- only for internal use.
+			</Caption>
+			{/snippet}
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
-	<svelte:fragment slot="footer">
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+	{#snippet footer()}
+	
+			<ButtonGroup>
+				<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
-		</ButtonGroup>
-	</svelte:fragment>
+				<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
+			</ButtonGroup>
+		
+	{/snippet}
 </Modal>

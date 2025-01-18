@@ -3,7 +3,11 @@
 	import type { User as UserType } from "../../../../../../../../lib/types";
 	import { postOriginalStore, postStore } from "../../../../../postStore";
 
-    export let diff: boolean;
+    interface Props {
+        diff: boolean;
+    }
+
+    let { diff }: Props = $props();
 
     let allAuthors : UserType[] = [];
 

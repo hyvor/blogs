@@ -2,16 +2,20 @@
 	import { FormControl, Loader, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
 	import { checkSlugAvailability } from "../userActions";
 
-    export let id: number;
-    export let slug: string;
-    export let slugOriginal: string;
+    interface Props {
+        id: number;
+        slug: string;
+        slugOriginal: string;
+    }
 
-    let isLoading = false;
+    let { id, slug = $bindable(), slugOriginal }: Props = $props();
+
+    let isLoading = $state(false);
 
     let validation : null | {
         state: 'success' | 'error',
         message: string
-    } = null;
+    } = $state(null);
 
     let timeout: null | ReturnType<typeof setTimeout> = null;
     let abortController : AbortController | null = null;
@@ -89,12 +93,14 @@
             state={validation?.state || 'default'}
             on:input={handleInput}
         >
-            <Loader
-                slot="end"
-                size="small"
-                colorTrack="transparent"
-                state={isLoading ? 'loading' : (validation?.state || 'none')}
-            />
+            {#snippet end()}
+                        <Loader
+                    
+                    size="small"
+                    colorTrack="transparent"
+                    state={isLoading ? 'loading' : (validation?.state || 'none')}
+                />
+                    {/snippet}
         </TextInput>
 
         {#if validation}

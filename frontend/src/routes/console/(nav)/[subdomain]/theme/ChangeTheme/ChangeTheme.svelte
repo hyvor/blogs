@@ -2,7 +2,7 @@
 	import { Button } from "@hyvor/design/components";
 	import SelectThemeModal from "./SelectThemeModal.svelte";
     
-    let show = false;
+    let show = $state(false);
 </script>
 
 <Button 

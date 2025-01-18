@@ -5,15 +5,19 @@
 	import { updateNagivation, updateNavigationVariant } from "./navigationActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let show = false;
-    export let navigation: Navigation;
+    interface Props {
+        show?: boolean;
+        navigation: Navigation;
+    }
 
-    let url = navigation.url;
-    let type = navigation.type;
+    let { show = $bindable(false), navigation }: Props = $props();
 
-    let urlError : null | string = null;
+    let url = $state(navigation.url);
+    let type = $state(navigation.type);
 
-    const variantChanges : Record<number, Partial<NavigationVariant>> = {};
+    let urlError : null | string = $state(null);
+
+    const variantChanges : Record<number, Partial<NavigationVariant>> = $state({});
 
     function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
         variantChanges[e.detail.languageId] = {
@@ -21,12 +25,12 @@
         }
     }
 
-    $: hasChanges = Object.keys(variantChanges).length !== 0 ||
-        url !== navigation.url || type !== navigation.type;
+    let hasChanges = $derived(Object.keys(variantChanges).length !== 0 ||
+        url !== navigation.url || type !== navigation.type);
 
     const dispatch = createEventDispatcher();
 
-    let isUpdating = false;
+    let isUpdating = $state(false);
 
     async function handleUpdate() {
 
@@ -132,26 +136,28 @@
         </InputGroup>
     </SplitControl>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleUpdate}
-                disabled={!hasChanges || isUpdating}
-            >
-                Update
-            </Button>
+                <Button
+                    on:click={handleUpdate}
+                    disabled={!hasChanges || isUpdating}
+                >
+                    Update
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
+            
         
-    </svelte:fragment>
+    {/snippet}
 
 </Modal>

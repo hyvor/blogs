@@ -4,7 +4,7 @@
 	import PublishedEditingStatus from "./PublishedEditingStore/PublishedEditingStatus.svelte";
 	import AutoTranslate from "./AutoTranslate/AutoTranslate.svelte";
 
-    let el: HTMLDivElement;
+    let el: HTMLDivElement = $state();
     let parent: HTMLDivElement;
 
     function positionEl() {
@@ -29,7 +29,7 @@
     });
 </script>
 
-<svelte:window on:scroll|capture={positionEl} />
+<svelte:window onscrollcapture={positionEl} />
 
 <div 
     class="editor-top"
@@ -44,7 +44,7 @@
     <div class="right">
         <AutoTranslate />
         <!-- see plugin-wordocount.ts -->
-        <span id="pm-word-count" />
+        <span id="pm-word-count"></span>
     </div>
 
 </div>

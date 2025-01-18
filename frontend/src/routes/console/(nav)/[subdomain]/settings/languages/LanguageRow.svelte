@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { IconPencilFill, IconTrash } from "@hyvor/icons";
+    import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
     import type { Language } from "../../../../lib/types";
 	import { IconButton, Modal, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
 	import LanguageModal from "./LanguageModal.svelte";
@@ -7,9 +9,13 @@
 	import { languageStoreRemove } from "../../../../lib/stores/languagesStore";
 	import DeleteConfirm from "./DeleteConfirm.svelte";
     
-    export let language: Language;
+    interface Props {
+        language: Language;
+    }
 
-    let isEditing = false;
+    let { language }: Props = $props();
+
+    let isEditing = $state(false);
 
     async function handleDelete() {
 

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { EditorState } from 'prosemirror-state';
 	import schema from '../../../../../../lib/prosemirror/schema';
 	import { EditorView, type DOMEventMap } from 'prosemirror-view';
@@ -10,9 +13,13 @@
 	import { postEditingStatusStore } from '../../../postStore';
 	import { Loader } from '@hyvor/design/components';
 
-	export let value: string | null;
+	interface Props {
+		value: string | null;
+	}
 
-	let wrap: HTMLDivElement;
+	let { value }: Props = $props();
+
+	let wrap: HTMLDivElement = $state();
 
 	const dispatch = createEventDispatcher<{
 		change: string;
@@ -20,7 +27,7 @@
 		event: ProsemirrorEventDispatchType;
 	}>();
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
 	async function createEditor() {
 		isLoading = true;
@@ -92,12 +99,12 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="pm-editor"
 	bind:this={wrap}
-	on:click={handleWrapClick}
-	on:keyup
+	onclick={handleWrapClick}
+	onkeyup={bubble('keyup')}
 	class:loaded={!isLoading}
 >
 	{#if isLoading}
