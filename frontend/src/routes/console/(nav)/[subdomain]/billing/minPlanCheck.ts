@@ -6,9 +6,6 @@ const allPlanTypes: SubscriptionPlan[] = [
 	'starter',
 	'growth',
 	'premium',
-	'team',
-	'business',
-	'enterprise'
 ];
 
 export function minPlanCheck(minPlan: SubscriptionPlan, trialAllowed = false) {

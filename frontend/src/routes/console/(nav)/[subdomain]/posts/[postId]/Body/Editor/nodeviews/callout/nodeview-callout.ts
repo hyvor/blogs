@@ -2,7 +2,7 @@ import type { EditorView, NodeView } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
 import { EmojiButton } from '@joeattardi/emoji-button';
 import CalloutColors from "./CalloutColors.svelte";
-import type { SvelteComponent, mount } from "svelte";
+import { type SvelteComponent, mount } from "svelte";
 
 export class CalloutNodeView implements NodeView {
 

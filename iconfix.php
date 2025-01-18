@@ -6,7 +6,10 @@ function getAllSvelteFiles($dir, &$results = array()) {
     foreach ($files as $key => $value) {
         $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
         if (!is_dir($path)) {
-            if (pathinfo($path, PATHINFO_EXTENSION) == "svelte") {
+            if (
+                pathinfo($path, PATHINFO_EXTENSION) == "svelte" ||
+                pathinfo($path, PATHINFO_EXTENSION) == "ts"
+            ) {
                 $results[] = $path;
             }
         } else if ($value != "." && $value != "..") {
