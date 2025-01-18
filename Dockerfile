@@ -26,6 +26,7 @@ COPY frontend/static /app/frontend/static
 FROM frontend-base AS frontend-dev
 EXPOSE 36201
 RUN npm install
+RUN if [ -d "src/design" ]; then cd src/design && npm link && cd ../.. && npm link @hyvor/design; fi
 CMD npm run dev
 
 ###################################################
@@ -73,8 +74,7 @@ RUN composer install --no-interaction
 # set up code and install composer packages
 COPY backend /app/backend/
 
-# link the internal package locally
-COPY internal /app/backend/packages/internal
+# use local internal library
 RUN composer require hyvor/internal:@dev
 
 EXPOSE 36202
