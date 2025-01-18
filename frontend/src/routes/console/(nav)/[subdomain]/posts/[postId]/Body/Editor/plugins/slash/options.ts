@@ -1,5 +1,5 @@
 import type { Node } from "prosemirror-model";
-import type { ComponentType, mount, unmount } from "svelte";
+import { type Component, mount, unmount } from "svelte";
 import schema from "../../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import FileUploader from "../../../../../../../../lib/components/FileUploader/FileUploader.svelte";
@@ -10,7 +10,7 @@ import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
 export interface SlashOption {
     name: string,
     description: string,
-    icon: ComponentType,
+    icon: Component,
     keywords: string[],
     node: string | (() => Promise<Node | null>),
     attrs?: Record<string, unknown>,
