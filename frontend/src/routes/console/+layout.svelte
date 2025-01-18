@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
+	import {loadBlog} from "./(nav)/[subdomain]/blogLoader";
 
 	interface InitResponse {
 		user: AuthUser;

@@ -42,12 +42,12 @@ class ConsoleBlogController extends Controller
     public function getBlogData(Blog $blog)
     {
 
-        $subscription = Billing::getSubscriptionOfResource(ComponentType::BLOGS, $blog->id);
+        // $subscription = Billing::getSubscriptionOfResource(ComponentType::BLOGS, $blog->id);
         $usage = UsageRepository::getUsage($blog);
 
         return response()->json([
             'blog' => new BlogObject($blog),
-            'subscription' => $subscription,
+            'subscription' => null,
             'counts' => [
                 'posts' => [
                     'published' => $blog->getCount('posts'),

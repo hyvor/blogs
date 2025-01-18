@@ -7,8 +7,8 @@
 	import { IconCheckAll, IconCloudUpload } from '@hyvor/icons';
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-	import { uploadMedia } from '../../../../[subdomain]/tools/media/mediaActions';
-	import { toKebabCase } from '../../../../[subdomain]/tools/media/mediaUtils';
+	import { uploadMedia } from '../../../../(nav)/[subdomain]/tools/media/mediaActions';
+	import { toKebabCase } from '../../../../(nav)/[subdomain]/tools/media/mediaUtils';
 
 	export let file: SelectedFile;
 

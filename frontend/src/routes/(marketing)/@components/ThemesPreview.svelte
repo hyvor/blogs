@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { Theme } from "../../console/lib/types";
-	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
+	import { loadThemes } from "../../console/(nav)/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
 	import { IconButton, IconMessage, Link, Loader, NavLink, Text, Button } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots, IconGithub } from "@hyvor/icons";
