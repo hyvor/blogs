@@ -5,7 +5,7 @@
 	import TagSearch from "./TagSearch.svelte";
 	import type { Tag } from "../../../../../lib/types";
 
-    let showDropdown = false;
+    let showDropdown = $state(false);
 
     function handleSelect(e: CustomEvent<Tag>) {
         setFilter('tag', e.detail);
@@ -23,35 +23,43 @@
 
 <Dropdown align="end" bind:show={showDropdown} width={350}>
 
-    <Button slot="trigger" color="input">
-        <Text bold slot="start">Tag</Text>
+    {#snippet trigger()}
+        <Button  color="input">
+            {#snippet start()}
+                <Text bold >Tag</Text>
+            {/snippet}
 
-        <span class="text">
-            {
-                $postListFiltersStore.tag ?
-                    $postListFiltersStore.tag.variants[0]?.name || 'Unnamed' :
-                    'Any'
-            }
-        </span>
+            <span class="text">
+                {
+                    $postListFiltersStore.tag ?
+                        $postListFiltersStore.tag.variants[0]?.name || 'Unnamed' :
+                        'Any'
+                }
+            </span>
 
-        {#if $postListFiltersStore.tag}
-            <IconButton 
-                size={14} 
-                style="margin-left:6px;"
-                on:click={handleX}
-            >
-                <IconX size={12} />
-            </IconButton>
-        {/if}
+            {#if $postListFiltersStore.tag}
+                <IconButton 
+                    size={14} 
+                    style="margin-left:6px;"
+                    on:click={handleX}
+                >
+                    <IconX size={12} />
+                </IconButton>
+            {/if}
 
-        <IconCaretDown slot="end" size={14} />
-    </Button>
+            {#snippet end()}
+                <IconCaretDown  size={14} />
+            {/snippet}
+        </Button>
+    {/snippet}
 
-    <ActionList slot="content">
-        <TagSearch 
-            on:select={handleSelect}
-        />
-    </ActionList>
+    {#snippet content()}
+        <ActionList >
+            <TagSearch 
+                on:select={handleSelect}
+            />
+        </ActionList>
+    {/snippet}
 
 </Dropdown>
 

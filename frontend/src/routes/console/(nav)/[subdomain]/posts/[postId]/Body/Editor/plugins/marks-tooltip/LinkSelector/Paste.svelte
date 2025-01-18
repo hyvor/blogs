@@ -5,12 +5,16 @@
 	import { getHeadingsFromContent } from "../../../../../../../../../lib/prosemirror/helpers";
 	import { postCurrentContentStore } from "../../../../../../postStore";
 
-    export let input = '';
+    interface Props {
+        input?: string;
+    }
 
-    $: isRelative = !/^[a-zA-Z0-9]+:\/\//.test(input);
-    $: isAnchor = /^#/.test(input);
-    $: headings = getHeadingsFromContent($postCurrentContentStore);
-    $: isAnchorAvailable = headings.find((heading) => heading.id === input.replace('#', ''));
+    let { input = $bindable('') }: Props = $props();
+
+    let isRelative = $derived(!/^[a-zA-Z0-9]+:\/\//.test(input));
+    let isAnchor = $derived(/^#/.test(input));
+    let headings = $derived(getHeadingsFromContent($postCurrentContentStore));
+    let isAnchorAvailable = $derived(headings.find((heading) => heading.id === input.replace('#', '')));
 
     const dispatch = createEventDispatcher();
 
@@ -67,7 +71,9 @@
         disabled={input.trim().length === 0}
         on:click={handleClick}
     >
-        Add Link <IconArrowReturnLeft slot="end" size={12} />
+        Add Link {#snippet end()}
+                <IconArrowReturnLeft  size={12} />
+            {/snippet}
     </Button>
 </div>
 

@@ -4,10 +4,10 @@
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
 	import { slide } from "svelte/transition";
 
-    let mainEl : HTMLDivElement;
-    let fixedEl : HTMLDivElement;
+    let mainEl : HTMLDivElement = $state();
+    let fixedEl : HTMLDivElement = $state();
 
-    let showFixed = false;
+    let showFixed = $state(false);
 
     function handleScroll() {
 
@@ -23,7 +23,7 @@
 
 </script>
 
-<svelte:window on:scroll={handleScroll} />
+<svelte:window onscroll={handleScroll} />
 
 <div 
     class="hds-box hurry"
@@ -39,7 +39,9 @@
     <div class="temp-button">
         <Button as="a" href="/console?temp" target="_blank">
             Create a temporary blog
-            <IconBoxArrowUpRight slot="end" size={10} />
+            {#snippet end()}
+                        <IconBoxArrowUpRight  size={10} />
+                    {/snippet}
         </Button>
     </div>
     <div class="temp-note">
@@ -77,7 +79,9 @@
                 <span class="mobile">
                     Create temp blog
                 </span>
-                <IconBoxArrowUpRight slot="end" size={10} />
+                {#snippet end()}
+                                <IconBoxArrowUpRight  size={10} />
+                            {/snippet}
             </Button>
 
         </div>

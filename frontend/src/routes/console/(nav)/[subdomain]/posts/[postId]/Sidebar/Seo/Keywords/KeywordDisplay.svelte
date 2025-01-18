@@ -5,10 +5,14 @@
 	import KeywordAdder from './KeywordAdder.svelte';
 	import { createEventDispatcher } from "svelte";
 
-    export let keyword: string;
-    export let onUpdate: (keyword: string) => boolean;
+    interface Props {
+        keyword: string;
+        onUpdate: (keyword: string) => boolean;
+    }
 
-    let isUpdating = false;
+    let { keyword = $bindable(), onUpdate }: Props = $props();
+
+    let isUpdating = $state(false);
 
     const dispatch = createEventDispatcher<{remove: void}>();
 

@@ -6,7 +6,11 @@
 	import { createEventDispatcher } from "svelte";
 	import CreateUpdateWebhookModal from "./CreateUpdateWebhookModal.svelte";
     
-    export let webhook: Webhook;
+    interface Props {
+        webhook: Webhook;
+    }
+
+    let { webhook }: Props = $props();
 
     function handleCopy() {
         navigator.clipboard.writeText(webhook.secret);
@@ -15,7 +19,7 @@
 
     const dispatch = createEventDispatcher();
 
-    let isUpdating = false;
+    let isUpdating = $state(false);
 
     async function handleDelete() {
         if (await confirm({

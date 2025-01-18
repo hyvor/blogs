@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { IconCheck } from "@hyvor/icons";
 
-    export let features: string[];
+    interface Props {
+        features: string[];
+    }
+
+    let { features }: Props = $props();
 </script>
 
 <div class="features">  

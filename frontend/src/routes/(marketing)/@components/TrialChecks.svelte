@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import { IconCheckCircleFill } from "@hyvor/icons";
+    interface Props {
+        [key: string]: any
+    }
+
+    let { ...rest }: Props = $props();
 </script>
 
-<div class="checks" {...$$restProps}>
+<div class="checks" {...rest}>
 
     <div class="check">
         <IconCheckCircleFill />

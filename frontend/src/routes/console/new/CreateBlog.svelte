@@ -1,22 +1,28 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { goto } from "$app/navigation";
 	import { Button, Callout, FormControl, Link, Loader, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
 	import { IconCaretLeft, IconExclamationCircle } from "@hyvor/icons";
 	import { addToBlogList, blogListStore } from "../lib/stores";
 	import { createBlog, getSubdomainAvailable } from "../lib/actions/blogActions";
 
-    export let dev = false;
+    interface Props {
+        dev?: boolean;
+    }
 
-    let name = '';
-    let subdomain = '';
+    let { dev = false }: Props = $props();
+
+    let name = $state('');
+    let subdomain = $state('');
 
     let subdomainEdited = false;
 
-    let nameError : string | null = null;
-    let subdomainError : string | null = null;
-    let subdomainSuccess : string | null = null;
+    let nameError : string | null = $state(null);
+    let subdomainError : string | null = $state(null);
+    let subdomainSuccess : string | null = $state(null);
 
-    let isCreating = false;
+    let isCreating = $state(false);
 
     let subdomainCheckTimeout : null | ReturnType<typeof setTimeout> = null;
     let subdomainCheckAbortController : AbortController | null = null;
@@ -51,7 +57,9 @@
         }, 500);
     }
 
-    $: subdomain, checkSubdomain();
+    run(() => {
+        subdomain, checkSubdomain();
+    });
 
     function handleBack() {
         if ($blogListStore.length > 0) {
@@ -131,7 +139,9 @@
                 on:click={handleBack}
                 disabled={isCreating}
             >
-                <IconCaretLeft slot="start" size={14} />
+                {#snippet start()}
+                                <IconCaretLeft  size={14} />
+                            {/snippet}
                 Back
             </Button>
         </div>
@@ -150,8 +160,12 @@
 
                 {#if dev}
                     <Callout type="warning" style="margin-bottom:20px;">
-                        <IconExclamationCircle slot="icon" />
-                        <div slot="title">Development Blog</div>
+                        {#snippet icon()}
+                                                <IconExclamationCircle  />
+                                            {/snippet}
+                        {#snippet title()}
+                                                <div >Development Blog</div>
+                                            {/snippet}
                         <div>
                             You are creating a development blog, which can only be used for theme development. Click <Link href="/console/new">here</Link> to create a production blog.
                         </div>
@@ -197,9 +211,11 @@
                                     undefined    
                                 }
                             >
-                                <svelte:fragment slot="end">
-                                    .hyvorblogs.io
-                                </svelte:fragment>
+                                {#snippet end()}
+                                                            
+                                        .hyvorblogs.io
+                                    
+                                                            {/snippet}
                             </TextInput>
 
                             {#if subdomainError}

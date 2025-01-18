@@ -9,10 +9,10 @@
 	import RedirectRow from "./RedirectRow.svelte";
     import { dynamicRedirectsStore } from "./dynamicRedirect";
 
-    let isCreating = false;
+    let isCreating = $state(false);
 
-    let redirects : Redirect[] = [];
-    let isLoading = true;
+    let redirects : Redirect[] = $state([]);
+    let isLoading = $state(true);
     
     function loadRedirect() {
         getRedirect()
@@ -52,7 +52,9 @@
 
 <SettingsTop>
     <Button on:click={() => isCreating = true}>
-        Add Redirect <IconPlus slot="end" />
+        Add Redirect {#snippet end()}
+                <IconPlus  />
+            {/snippet}
     </Button>
 </SettingsTop>
 

@@ -53,9 +53,11 @@
 </script>
 
 <SplitControl>
-    <span slot="label">
-        Delete
-    </span>
+    {#snippet label()}
+        <span >
+            Delete
+        </span>
+    {/snippet}
     <Button 
         color="red" 
         size="small"
@@ -66,6 +68,8 @@
         {:else}
             Delete {$postLanguageStore.name} Variant
         {/if}
-        <IconTrash slot="start" />
+        {#snippet start()}
+                <IconTrash  />
+            {/snippet}
     </Button>
 </SplitControl>

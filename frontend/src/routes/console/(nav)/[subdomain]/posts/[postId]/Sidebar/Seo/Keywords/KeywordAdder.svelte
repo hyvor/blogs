@@ -6,9 +6,13 @@
 	import { IconCheck } from '@hyvor/icons';
 	import { IconButton, Button } from '@hyvor/design/components';
     
-    export let keyword = '';
+    interface Props {
+        keyword?: string;
+    }
 
-    let isAdding = !!keyword;
+    let { keyword = $bindable('') }: Props = $props();
+
+    let isAdding = $state(!!keyword);
     
     const dispatch = createEventDispatcher<{add: string, close: void}>();
 
@@ -72,7 +76,9 @@
             color="input"
             on:click={() => isAdding = true}
         >
-            <IconPlus slot="start" />
+            {#snippet start()}
+                        <IconPlus  />
+                    {/snippet}
             Add
         </Button>
 

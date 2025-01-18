@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: Element with a slot='...' attribute must be a child of a component or a descendant of a custom element
+https://svelte.dev/e/slot_attribute_invalid_placement -->
 <script>
 	import { Callout } from '@hyvor/design/components';
 	import { Document } from '@hyvor/design/marketing';

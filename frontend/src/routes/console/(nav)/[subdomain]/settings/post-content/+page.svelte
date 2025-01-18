@@ -22,7 +22,7 @@
         showSyntaxThemes = false;
     }
 
-    let showSyntaxThemes = false;
+    let showSyntaxThemes = $state(false);
 
 </script>
 
@@ -37,54 +37,62 @@
         caption="Highlight code blocks in your posts."
     >
 
-        <div slot="nested">
+        {#snippet nested()}
+                <div >
 
-            <SplitControl
-                label="Enabled"
-            >
-                <Switch
-                    checked={$blogStore.syntax_on}
-                    on:change={handleSyntaxOnChange}
-                />
-            </SplitControl>
+                <SplitControl
+                    label="Enabled"
+                >
+                    <Switch
+                        checked={$blogStore.syntax_on}
+                        on:change={handleSyntaxOnChange}
+                    />
+                </SplitControl>
 
-            <SplitControl
-                label="Theme"
-            >
-                <Dropdown width={275} bind:show={showSyntaxThemes}>
+                <SplitControl
+                    label="Theme"
+                >
+                    <Dropdown width={275} bind:show={showSyntaxThemes}>
 
-                    <Button slot="trigger" color="input">
-                        { $blogStore.syntax_theme || 'nord' }
-                        <IconCaretDown slot="end" />
-                    </Button>
+                        {#snippet trigger()}
+                                        <Button  color="input">
+                                { $blogStore.syntax_theme || 'nord' }
+                                {#snippet end()}
+                                                <IconCaretDown  />
+                                            {/snippet}
+                            </Button>
+                                    {/snippet}
 
-                    <ActionList 
-                        slot="content" 
-                        style="max-height:300px;overflow:auto"
-                    >
-                        {#each getConfig().highlight_themes as theme}
-                            <ActionListItem
-                                on:select={() => handleHighlightThemeSelect(theme)}
-                                style="background-color: {($blogStore.syntax_theme || 'nord') === theme ? 'var(--accent-light-mid)' : 'transparent'}"
+                        {#snippet content()}
+                                        <ActionList 
+                                 
+                                style="max-height:300px;overflow:auto"
                             >
-                                {theme}
-                            </ActionListItem>
-                        {/each}
-                    </ActionList>
+                                {#each getConfig().highlight_themes as theme}
+                                    <ActionListItem
+                                        on:select={() => handleHighlightThemeSelect(theme)}
+                                        style="background-color: {($blogStore.syntax_theme || 'nord') === theme ? 'var(--accent-light-mid)' : 'transparent'}"
+                                    >
+                                        {theme}
+                                    </ActionListItem>
+                                {/each}
+                            </ActionList>
+                                    {/snippet}
 
-                </Dropdown>
-            </SplitControl>
+                    </Dropdown>
+                </SplitControl>
 
-            <SplitControl
-                label="Line Numbers"
-            >
-                <Switch
-                    checked={$blogStore.syntax_line_numbers}
-                    on:change={handleSyntaxLineNumbersOnChange}
-                />
-            </SplitControl>
+                <SplitControl
+                    label="Line Numbers"
+                >
+                    <Switch
+                        checked={$blogStore.syntax_line_numbers}
+                        on:change={handleSyntaxLineNumbersOnChange}
+                    />
+                </SplitControl>
 
-        </div>
+            </div>
+            {/snippet}
 
 
     </SplitControl>

@@ -21,7 +21,9 @@
 
 <Tooltip text="Download your theme files">
 	<Button color="input" size="small" style="font-size:13px" on:click={handleDownload}>
-		<IconCloudDownload size={16} slot="start" />
+		{#snippet start()}
+				<IconCloudDownload size={16}  />
+			{/snippet}
 		Download
 	</Button>
 </Tooltip>

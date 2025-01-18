@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { EditorView, NodeView } from "prosemirror-view";
 import ImageNodeview from "./ImageNodeview.svelte";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponent, mount } from "svelte";
 
 export default class ImageView implements NodeView {
 
@@ -21,10 +21,10 @@ export default class ImageView implements NodeView {
         this.dom = document.createElement('div');
         this.dom.className = 'image-wrap';
 
-        this.component = new ImageNodeview({
-            target: this.dom,
-            props: this.getPropsFromNode(node),
-        });
+        this.component = mount(ImageNodeview, {
+                    target: this.dom,
+                    props: this.getPropsFromNode(node),
+                });
 
     }   
 

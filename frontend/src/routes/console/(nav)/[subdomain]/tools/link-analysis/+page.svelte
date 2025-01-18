@@ -7,7 +7,7 @@
 	import { getStats } from "./linkAnalysisActions";
 	import Overview from "./Overview/Overview.svelte";
 
-    let tab: 'overview' | 'links' | 'settings' = 'overview';
+    let tab: 'overview' | 'links' | 'settings' = $state('overview');
 
     const statsPromise = getStats();
     
@@ -19,7 +19,8 @@
         trialAllowed={true}
     >
 
-        <div slot="upgrade-text">
+        <!-- @migration-task: migrate this slot by hand, `upgrade-text` is an invalid identifier -->
+    <div slot="upgrade-text">
             Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze all links in your blog and receive email reports.
         </div>
 
@@ -27,17 +28,23 @@
         <TabNav bind:active={tab}>
             
             <TabNavItem name="overview">
-                <IconCardChecklist slot="start" />
+                {#snippet start()}
+                                <IconCardChecklist  />
+                            {/snippet}
                 Overview
             </TabNavItem>
 
             <TabNavItem name="links">
-                <IconLink45deg slot="start" />
+                {#snippet start()}
+                                <IconLink45deg  />
+                            {/snippet}
                 Links
             </TabNavItem>
 
             <TabNavItem name="settings">
-                <IconGear slot="start" />
+                {#snippet start()}
+                                <IconGear  />
+                            {/snippet}
                 Settings
             </TabNavItem>
             

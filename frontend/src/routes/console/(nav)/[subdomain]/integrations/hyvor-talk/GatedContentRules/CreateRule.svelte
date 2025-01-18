@@ -18,24 +18,28 @@
 	import TagSelector from './TagSelector.svelte';
 	import type { HyvorTalkGatedContentRule, Tag } from '../../../../../lib/types';
 
-	export let selectedTags: Tag[] = [];
-	export let show = false;
-	export let rule: HyvorTalkGatedContentRule | null = null;
+	interface Props {
+		selectedTags?: Tag[];
+		show?: boolean;
+		rule?: HyvorTalkGatedContentRule | null;
+	}
+
+	let { selectedTags = [], show = $bindable(false), rule = null }: Props = $props();
 
 	const isUpdate = rule !== null;
 
-	let loading = true;
-	let error = '';
+	let loading = $state(true);
+	let error = $state('');
 
-	let tag: Tag | null = rule ? rule.tag : null;
-	let tagError = '';
+	let tag: Tag | null = $state(rule ? rule.tag : null);
+	let tagError = $state('');
 
-	let gateType = rule ? (rule.gate !== null ? 'custom' : 'default') : 'default';
-	let gateContent = rule?.gate || '';
-	let minimumPlan = rule?.minimum_plan || '';
+	let gateType = $state(rule ? (rule.gate !== null ? 'custom' : 'default') : 'default');
+	let gateContent = $state(rule?.gate || '');
+	let minimumPlan = $state(rule?.minimum_plan || '');
 
-	let currency: string;
-	let plans: { name: string; monthly_price: number }[] = [];
+	let currency: string = $state();
+	let plans: { name: string; monthly_price: number }[] = $state([]);
 
 	function prettyCurrency(c: string) {
 		c = c.toLowerCase();

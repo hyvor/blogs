@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import type { SelectedFile as SelectedImageType } from './image-uploader';
 	import { Button, Modal, TabNav, TabNavItem } from '@hyvor/design/components';
 	import { IconCardImage, IconCaretLeft, IconCloudUpload } from '@hyvor/icons';
@@ -10,13 +12,17 @@
 	import Media from './Media/Media.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let type: 'image' | 'audio' | 'any' = 'image';
 
-	let tab = 'upload';
+	let tab = $state('upload');
 
-	export let show = true;
+	interface Props {
+		type?: 'image' | 'audio' | 'any';
+		show?: boolean;
+	}
+
+	let { type = 'image', show = $bindable(true) }: Props = $props();
 	let backImage: null | SelectedImageType = null;
-	let selectedFile: null | SelectedImageType = null;
+	let selectedFile: null | SelectedImageType = $state(null);
 
 	function handleSelect(e: CustomEvent<SelectedImageType>) {
 		selectedFile = e.detail;
@@ -33,9 +39,11 @@
 		close: undefined;
 	}>();
 
-	$: if (!show) {
-		dispatch('close');
-	}
+	run(() => {
+		if (!show) {
+			dispatch('close');
+		}
+	});
 
 	function handleFinish(e: CustomEvent<SelectedImageType>) {
 		dispatch('select', e.detail);
@@ -45,52 +53,66 @@
 
 <div class="image-uploader">
 	<Modal bind:show size="large" closeOnEscape={false} closeOnOutsideClick={false}>
-		<div slot="title">
-			{#if selectedFile}
-				<Button on:click={handleBack} color="input">
-					<IconCaretLeft slot="start" va />
-					Back
-				</Button>
-			{:else if type === 'any'}
-				<TabNav bind:active={tab}>
-					<TabNavItem name="upload">
-						<IconCloudUpload slot="start" />
-						Upload
-					</TabNavItem>
-				</TabNav>
-			{:else}
-				<TabNav bind:active={tab}>
-					<TabNavItem name="upload">
-						<IconCloudUpload slot="start" />
-						Upload
-					</TabNavItem>
-					<TabNavItem name="media">
-						<IconCardImage slot="start" />
-						Media Library
-					</TabNavItem>
+		{#snippet title()}
+				<div >
+				{#if selectedFile}
+					<Button on:click={handleBack} color="input">
+						{#snippet start()}
+										<IconCaretLeft  va />
+									{/snippet}
+						Back
+					</Button>
+				{:else if type === 'any'}
+					<TabNav bind:active={tab}>
+						<TabNavItem name="upload">
+							{#snippet start()}
+														<IconCloudUpload  />
+													{/snippet}
+							Upload
+						</TabNavItem>
+					</TabNav>
+				{:else}
+					<TabNav bind:active={tab}>
+						<TabNavItem name="upload">
+							{#snippet start()}
+														<IconCloudUpload  />
+													{/snippet}
+							Upload
+						</TabNavItem>
+						<TabNavItem name="media">
+							{#snippet start()}
+														<IconCardImage  />
+													{/snippet}
+							Media Library
+						</TabNavItem>
 
-					{#if type === 'image'}
-						<TabNavItem name="unsplash">
-							<svg
-								role="img"
-								width="1em"
-								height="1em"
-								fill="currentColor"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-								slot="start"
-								><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" /></svg
-							>
-							Unsplash
-						</TabNavItem>
-						<TabNavItem name="excalidraw">
-							<ExcalidrawIcon slot="start" />
-							Excalidraw
-						</TabNavItem>
-					{/if}
-				</TabNav>
-			{/if}
-		</div>
+						{#if type === 'image'}
+							<TabNavItem name="unsplash">
+								{#snippet start()}
+																<svg
+										role="img"
+										width="1em"
+										height="1em"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+										xmlns="http://www.w3.org/2000/svg"
+										
+										><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" /></svg
+									>
+															{/snippet}
+								Unsplash
+							</TabNavItem>
+							<TabNavItem name="excalidraw">
+								{#snippet start()}
+																<ExcalidrawIcon  />
+															{/snippet}
+								Excalidraw
+							</TabNavItem>
+						{/if}
+					</TabNav>
+				{/if}
+			</div>
+			{/snippet}
 		<div class="body" style:position={selectedFile ? 'relative' : undefined}>
 			{#if tab === 'upload'}
 				<TabUpload {type} on:select={handleSelect} />

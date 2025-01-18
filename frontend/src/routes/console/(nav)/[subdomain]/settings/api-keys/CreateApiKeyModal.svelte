@@ -3,12 +3,16 @@
 	import { createApiKey } from "./apiKeysActions";
 	import { createEventDispatcher } from "svelte";
     
-    export let show: boolean
+    interface Props {
+        show: boolean;
+    }
 
-    let api: 'console' | 'delivery' = 'console';
-    let name = '';
+    let { show = $bindable() }: Props = $props();
 
-    $: isButtonDisabled = name.trim().length === 0;
+    let api: 'console' | 'delivery' = $state('console');
+    let name = $state('');
+
+    let isButtonDisabled = $derived(name.trim().length === 0);
 
     const dispatch = createEventDispatcher();
 
@@ -76,26 +80,28 @@
 
     </SplitControl>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleClick}
-                disabled={isButtonDisabled}
-            >
-                Create
-            </Button>
+                <Button
+                    on:click={handleClick}
+                    disabled={isButtonDisabled}
+                >
+                    Create
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

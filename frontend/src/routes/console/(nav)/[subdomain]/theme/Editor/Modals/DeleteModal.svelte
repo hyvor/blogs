@@ -4,8 +4,12 @@
 	import { deleteFile } from "../../themeActions";
 	import { removeThemeFileStore, selectedThemeFileIdStore } from "../../themeStore";
 
-    export let open = false;
-    export let file: ThemeFile;
+    interface Props {
+        open?: boolean;
+        file: ThemeFile;
+    }
+
+    let { open = $bindable(false), file }: Props = $props();
 
     function handleDelete() {
         open = false;
@@ -25,23 +29,25 @@
 
     Are you sure to delete this file?
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button variant="invisible" on:click={() => open = false}>
-                Cancel
-            </Button>
+                <Button variant="invisible" on:click={() => open = false}>
+                    Cancel
+                </Button>
 
-            <Button
-                color="red" 
-                on:click={handleDelete}
-            >
-                Delete
-            </Button>
+                <Button
+                    color="red" 
+                    on:click={handleDelete}
+                >
+                    Delete
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

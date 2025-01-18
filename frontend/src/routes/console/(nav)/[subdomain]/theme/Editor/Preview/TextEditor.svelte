@@ -5,8 +5,12 @@
 	import type { ThemeFile } from "../../../../../lib/types";
 	import { saveCurrentFile } from "../../theme";
 
-    export let file: ThemeFile;
-    export let ext: CodeMirrorMode;
+    interface Props {
+        file: ThemeFile;
+        ext: CodeMirrorMode;
+    }
+
+    let { file, ext }: Props = $props();
 
     function handleChange(val: string) {
         updateThemeFileStore(file.id, {content: val});
@@ -24,7 +28,7 @@
 
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="text-editor">
     <CodemirrorEditor 

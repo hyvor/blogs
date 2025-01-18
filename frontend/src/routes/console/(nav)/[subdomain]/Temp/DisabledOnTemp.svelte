@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
 	import { IconMessage } from "@hyvor/design/components";
 import { isTempStore } from "../../../lib/temp";
 	import { IconLock } from "@hyvor/icons";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 
 </script>
 
@@ -11,7 +16,7 @@ import { isTempStore } from "../../../lib/temp";
     class:is-temp={$isTempStore}
 >
 
-    <slot />
+    {@render children?.()}
 
     {#if $isTempStore}
         <div class="temp-notice">

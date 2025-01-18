@@ -28,7 +28,9 @@
         <div class="lower">
             {#if $plansStart > 0}
                 <Button size="small" variant="outline" on:click={handleLower}>
-                    <IconCaretLeft size={12} slot="start" />
+                    {#snippet start()}
+                                        <IconCaretLeft size={12}  />
+                                    {/snippet}
                     Lower {$plansMax === 1 ? '' : 'plans'}
                 </Button>
             {/if}
@@ -38,7 +40,9 @@
             {#if $plansStart < PLANS.length - $plansMax}
                 <Button size="small" variant="outline" on:click={handleHigher}>
                     Higher {$plansMax === 1 ? '' : 'plans'}
-                    <IconCaretRight size={12} slot="end" />
+                    {#snippet end()}
+                                        <IconCaretRight size={12}  />
+                                    {/snippet}
                 </Button>
             {/if}
         </div>

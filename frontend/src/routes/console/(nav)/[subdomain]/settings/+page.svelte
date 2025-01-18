@@ -14,7 +14,7 @@
 	 * null = default value (no on growth+ plans)
 	 * true/false = user's value
 	 */
-	$: brandingValue = $blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding;
+	let brandingValue = $derived($blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding);
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
@@ -125,68 +125,70 @@
 		label="Social Media"
 		caption="Links to your social media channels (use full URLs with https://)"
 	>
-		<div slot="nested">
-			<SplitControl label="Facebook">
-				<TextInput
-					block
-					value={$blogStore.social_facebook}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_facebook')}
-				/>
-			</SplitControl>
+		{#snippet nested()}
+				<div >
+				<SplitControl label="Facebook">
+					<TextInput
+						block
+						value={$blogStore.social_facebook}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_facebook')}
+					/>
+				</SplitControl>
 
-			<SplitControl label="X (Twitter)">
-				<TextInput
-					block
-					value={$blogStore.social_twitter}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_twitter')}
-				/>
-			</SplitControl>
+				<SplitControl label="X (Twitter)">
+					<TextInput
+						block
+						value={$blogStore.social_twitter}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_twitter')}
+					/>
+				</SplitControl>
 
-			<!-- Linkedin -->
-			<SplitControl label="Linkedin">
-				<TextInput
-					block
-					value={$blogStore.social_linkedin}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_linkedin')}
-				/>
-			</SplitControl>
+				<!-- Linkedin -->
+				<SplitControl label="Linkedin">
+					<TextInput
+						block
+						value={$blogStore.social_linkedin}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_linkedin')}
+					/>
+				</SplitControl>
 
-			<!-- Youtube -->
-			<SplitControl label="Youtube">
-				<TextInput
-					block
-					value={$blogStore.social_youtube}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_youtube')}
-				/>
-			</SplitControl>
+				<!-- Youtube -->
+				<SplitControl label="Youtube">
+					<TextInput
+						block
+						value={$blogStore.social_youtube}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_youtube')}
+					/>
+				</SplitControl>
 
-			<!-- TikTok -->
-			<SplitControl label="TikTok">
-				<TextInput
-					block
-					value={$blogStore.social_tiktok}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_tiktok')}
-				/>
-			</SplitControl>
+				<!-- TikTok -->
+				<SplitControl label="TikTok">
+					<TextInput
+						block
+						value={$blogStore.social_tiktok}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_tiktok')}
+					/>
+				</SplitControl>
 
-			<!-- Instagram -->
-			<SplitControl label="Instagram">
-				<TextInput
-					block
-					value={$blogStore.social_instagram}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_instagram')}
-				/>
-			</SplitControl>
+				<!-- Instagram -->
+				<SplitControl label="Instagram">
+					<TextInput
+						block
+						value={$blogStore.social_instagram}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_instagram')}
+					/>
+				</SplitControl>
 
-			<!-- Github -->
-			<SplitControl label="Github">
-				<TextInput
-					block
-					value={$blogStore.social_github}
-					on:input={(e) => handleBlogValueChangeEvent(e, 'social_github')}
-				/>
-			</SplitControl>
-		</div>
+				<!-- Github -->
+				<SplitControl label="Github">
+					<TextInput
+						block
+						value={$blogStore.social_github}
+						on:input={(e) => handleBlogValueChangeEvent(e, 'social_github')}
+					/>
+				</SplitControl>
+			</div>
+			{/snippet}
 	</SplitControl>
 </div>
 

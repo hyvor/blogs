@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	let loggedIn = false;
+	let loggedIn = $state(false);
 
 	onMount(() => {
 		fetch('/api/auth/check', {
@@ -21,58 +21,62 @@
 </script>
 
 <Header {logo} subName="Blogs" darkToggle={false}>
-	<div slot="center">
-		<Button
-			as="a"
-			size="small"
-			href="/pricing"
-			variant={$page.url.pathname === '/pricing' ? 'fill-light' : 'invisible'}
-		>
-			Pricing
-		</Button>
-		<Button
-			as="a"
-			size="small"
-			href="/docs"
-			variant={$page.url.pathname.startsWith('/docs') ? 'fill-light' : 'invisible'}
-		>
-			Docs
-		</Button>
-		<Button
-			as="a"
-			size="small"
-			href="/themes"
-			variant={$page.url.pathname === '/themes' ? 'fill-light' : 'invisible'}
-		>
-			Themes
-		</Button>
-		<Button
-			as="a"
-			size="small"
-			href="/customers"
-			variant={$page.url.pathname === '/customers' ? 'fill-light' : 'invisible'}
-		>
-			Customers
-		</Button>
-		<Button
-			as="a"
-			size="small"
-			href="/integrations"
-			variant={$page.url.pathname.startsWith('/integrations') ? 'fill-light' : 'invisible'}
-		>
-			Integrations
-		</Button>
-	</div>
+	{#snippet center()}
+		<div >
+			<Button
+				as="a"
+				size="small"
+				href="/pricing"
+				variant={$page.url.pathname === '/pricing' ? 'fill-light' : 'invisible'}
+			>
+				Pricing
+			</Button>
+			<Button
+				as="a"
+				size="small"
+				href="/docs"
+				variant={$page.url.pathname.startsWith('/docs') ? 'fill-light' : 'invisible'}
+			>
+				Docs
+			</Button>
+			<Button
+				as="a"
+				size="small"
+				href="/themes"
+				variant={$page.url.pathname === '/themes' ? 'fill-light' : 'invisible'}
+			>
+				Themes
+			</Button>
+			<Button
+				as="a"
+				size="small"
+				href="/customers"
+				variant={$page.url.pathname === '/customers' ? 'fill-light' : 'invisible'}
+			>
+				Customers
+			</Button>
+			<Button
+				as="a"
+				size="small"
+				href="/integrations"
+				variant={$page.url.pathname.startsWith('/integrations') ? 'fill-light' : 'invisible'}
+			>
+				Integrations
+			</Button>
+		</div>
+	{/snippet}
 
-	<div slot="end">
-		{#if loggedIn}
-			<Button as="a" size="small" href="/console">Go to Console &rarr;</Button>
-		{:else}
-			<!-- <DarkToggle /> -->
-			<Button as="a" size="small" href="/console" variant="invisible">Login</Button>
-			<Button as="a" size="small" href="/console?signup">Start a Blog</Button>
-		{/if}
-	</div>
+	{#snippet end()}
+		<div >
+			{#if loggedIn}
+				<Button as="a" size="small" href="/console">Go to Console &rarr;</Button>
+			{:else}
+				<!-- <DarkToggle /> -->
+				<Button as="a" size="small" href="/console" variant="invisible">Login</Button>
+				<Button as="a" size="small" href="/console?signup">Start a Blog</Button>
+			{/if}
+		</div>
+	{/snippet}
 </Header>
 
 <style>

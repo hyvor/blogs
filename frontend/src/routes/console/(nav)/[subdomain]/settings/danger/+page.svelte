@@ -4,8 +4,8 @@
 	import ClearCacheModal from "./ClearCacheModal.svelte";
 	import DeleteBlogModal from "./DeleteBlogModal.svelte";
 
-    let isCacheClearing = false;
-    let isDeleting = false;
+    let isCacheClearing = $state(false);
+    let isDeleting = $state(false);
 </script>
 
 <div class="danger">
@@ -13,9 +13,11 @@
     <SplitControl
         label="Clear Cache"
     >
-        <div slot="caption">
-            Clear the cache of your blog. This will <strong>not</strong> delete any data.
-        </div>
+        {#snippet caption()}
+                <div >
+                Clear the cache of your blog. This will <strong>not</strong> delete any data.
+            </div>
+            {/snippet}
 
         <Button
             on:click={() => isCacheClearing = true}
@@ -28,15 +30,19 @@
     <SplitControl
         label="Delete Blog"
     >
-        <div slot="caption">
-            Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
-        </div>
+        {#snippet caption()}
+                <div >
+                Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
+            </div>
+            {/snippet}
 
         <Button
             color="red"
             on:click={() => isDeleting = true}
         >
-            <IconTrash slot="start" />
+            {#snippet start()}
+                        <IconTrash  />
+                    {/snippet}
             Delete Blog
         </Button>
 

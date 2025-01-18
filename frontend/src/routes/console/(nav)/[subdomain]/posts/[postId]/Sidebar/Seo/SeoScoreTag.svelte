@@ -1,10 +1,18 @@
 <script lang="ts">
-    export let score: number;
-    export let ignore = false;
-    export let percentage = false;
+    import { run } from 'svelte/legacy';
 
-    $: score = Math.round(score);
-    $: color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
+    interface Props {
+        score: number;
+        ignore?: boolean;
+        percentage?: boolean;
+    }
+
+    let { score = $bindable(), ignore = false, percentage = false }: Props = $props();
+
+    run(() => {
+        score = Math.round(score);
+    });
+    let color = $derived(score < 50 ? 'red' : score < 80 ? 'orange' : 'green');
 
 </script>
 

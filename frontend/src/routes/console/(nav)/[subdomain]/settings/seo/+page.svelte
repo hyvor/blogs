@@ -66,9 +66,11 @@
 	</SplitControl>
 
 	<SplitControl label="Rich Schema">
-		<Caption slot="caption"
-			>Add <Link href="/docs/seo#rich-schema" target="_blank">rich schema</Link> to posts</Caption
-		>
+		{#snippet caption()}
+				<Caption 
+				>Add <Link href="/docs/seo#rich-schema" target="_blank">rich schema</Link> to posts</Caption
+			>
+			{/snippet}
 
 		<Switch checked={$blogStore.seo_rich_schema} on:change={handleRichSchemaChange} />
 	</SplitControl>

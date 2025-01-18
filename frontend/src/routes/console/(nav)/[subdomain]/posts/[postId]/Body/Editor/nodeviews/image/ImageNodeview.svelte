@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Button, IconButton, TextInput, Tooltip, confirm } from '@hyvor/design/components';
 	import FileUploader from '../../../../../../../../lib/components/FileUploader/FileUploader.svelte';
 	import type { SelectedFile } from '../../../../../../../../lib/components/FileUploader/image-uploader';
@@ -6,21 +8,31 @@
 	import { NodeSelection } from 'prosemirror-state';
 	import schema from '../../../../../../../../lib/prosemirror/schema';
 	import { IconPencil, IconTrash } from '@hyvor/icons';
-	import { onMount } from 'svelte';
+	import { onMount, mount, unmount } from 'svelte';
 
-	export let src: string | null;
-	export let alt: string | null;
-	export let width: number | null;
-	export let height: number | null;
-	export let getPos: () => number | undefined;
-	export let view: EditorView;
+	interface Props {
+		src: string | null;
+		alt: string | null;
+		width: number | null;
+		height: number | null;
+		getPos: () => number | undefined;
+		view: EditorView;
+	}
 
-	let imgEl: HTMLImageElement;
+	let {
+		src,
+		alt,
+		width,
+		height,
+		getPos,
+		view
+	}: Props = $props();
 
-	let displayWidth: string = '0';
-	let displayHeight: string = '0';
+	let imgEl: HTMLImageElement = $state();
 
-	$: width, height, setDisplaySize();
+	let displayWidth: string = $state('0');
+	let displayHeight: string = $state('0');
+
 
 	function setDisplaySize() {
 		displayWidth = Math.floor(width ? width : imgEl?.naturalWidth).toString();
@@ -85,12 +97,12 @@
 		const div = document.createElement('div');
 		document.body.appendChild(div);
 
-		const selector = new FileUploader({
-			target: div
-		});
+		const selector = mount(FileUploader, {
+        			target: div
+        		});
 
 		function destroy() {
-			selector.$destroy();
+			unmount(selector);
 			div.remove();
 		}
 
@@ -167,13 +179,18 @@
 	onMount(() => {
 		setDisplaySize();
 	});
+	run(() => {
+		width, height, setDisplaySize();
+	});
 </script>
 
 <div class="image-node-wrap">
 	<div class="top">
 		<div class="left">
 			<TextInput size="small" placeholder="Add alt text..." on:input={handleAltInput} value={alt}>
-				<span slot="start">ALT</span>
+				{#snippet start()}
+								<span >ALT</span>
+							{/snippet}
 			</TextInput>
 		</div>
 
@@ -188,7 +205,7 @@
 						min={1}
 						max={100}
 						step={1}
-						on:input={handleRangeInput}
+						oninput={handleRangeInput}
 						value={width ? (width / imgEl.naturalWidth) * 100 : 100}
 					/>
 				</div>
@@ -216,7 +233,7 @@
 			bind:this={imgEl}
 			width={width ? width : undefined}
 			height={height ? height : undefined}
-			on:load={handleLoad}
+			onload={handleLoad}
 		/>
 	</div>
 </div>

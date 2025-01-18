@@ -18,9 +18,9 @@
 
 	const postId = $page.params.postId;
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
-	let postView: HTMLDivElement;
+	let postView: HTMLDivElement = $state();
 
 	onMount(() => {
 		let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;

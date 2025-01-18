@@ -8,12 +8,12 @@
 	import { IconInfo, IconInfoCircle } from "@hyvor/icons";
 	import LabelWithInfo from "./LabelWithInfo.svelte";
 
-    let error: null | string = null;
-    let warning: null | string = null;
+    let error: null | string = $state(null);
+    let warning: null | string = $state(null);
 
     let isSaving = false;
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
 
     function setErrorWarning(val: string) {
@@ -85,14 +85,16 @@
 
 
 <SplitControl>
-    <span slot="label">
-        <LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
+    {#snippet label()}
+        <span >
+            <LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
 
-        <UnsavedTag 
-            show={$postVariantStore.slug !== $postOriginalVariantStore.slug}
-            loaderState={loaderState}
-        />
-    </span>
+            <UnsavedTag 
+                show={$postVariantStore.slug !== $postOriginalVariantStore.slug}
+                loaderState={loaderState}
+            />
+        </span>
+    {/snippet}
 
     <FormControl>
         <TextInput

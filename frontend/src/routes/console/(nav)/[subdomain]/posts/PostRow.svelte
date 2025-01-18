@@ -12,9 +12,13 @@
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import TagName from '../settings/tags/TagName.svelte';
 
-	export let post: Post;
+	interface Props {
+		post: Post;
+	}
 
-	$: variant = post.variants[0]!;
+	let { post }: Props = $props();
+
+	let variant = $derived(post.variants[0]!);
 
 	const publishedAtDate = dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY');
 	const createdAtDate = dayjs.unix(post.created_at).format('MMM D, YYYY');

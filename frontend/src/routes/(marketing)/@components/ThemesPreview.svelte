@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/(nav)/[subdomain]/theme/themeActions";
@@ -6,21 +8,21 @@
 	import { IconButton, IconMessage, Link, Loader, NavLink, Text, Button } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots, IconGithub } from "@hyvor/icons";
 
-    export let lockScroll = false;
+    interface Props {
+        lockScroll?: boolean;
+    }
 
-    let isLoaded = false;
-    let themes: Theme[] = [];
+    let { lockScroll = $bindable(false) }: Props = $props();
 
-    $: originalThemes = themes.filter((theme) => theme.type === "original" && theme.name !== 'blank');
-    $: portedThemes = themes.filter((theme) => theme.type === "ported");
+    let isLoaded = $state(false);
+    let themes: Theme[] = $state([]);
 
-    $: currentTheme = originalThemes[0];
-    $: currentThemeUrl = `//${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`;
 
-    let port: string = "";
-    let type : 'laptop' | 'tablet' = 'laptop';
 
-    let isLoading = true;
+    let port: string = $state("");
+    let type : 'laptop' | 'tablet' = $state('laptop');
+
+    let isLoading = $state(true);
 
     const dispatch = createEventDispatcher();
 
@@ -36,7 +38,7 @@
         port = window.location.port ? `:${Number(window.location.port) + 1}` : "";
     })
 
-    let navEl: HTMLDivElement;
+    let navEl: HTMLDivElement = $state();
 
     function handleMobileNavClick() {
         if (!navEl) return;
@@ -45,6 +47,13 @@
         navEl.style.display = navEl.style.display !== 'block' ? 'block' : 'none';
     }
 
+    let originalThemes = $derived(themes.filter((theme) => theme.type === "original" && theme.name !== 'blank'));
+    let portedThemes = $derived(themes.filter((theme) => theme.type === "ported"));
+    let currentTheme;
+    run(() => {
+        currentTheme = originalThemes[0];
+    });
+    let currentThemeUrl = $derived(`//${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`);
 </script>
 
 
@@ -52,11 +61,11 @@
 
     <div class="wrap">
 
-        <!-- svelte-ignore a11y-missing-attribute -->
+        <!-- svelte-ignore a11y_missing_attribute -->
         <a 
             class="mobile-nav"
-            on:click={handleMobileNavClick}
-            on:keyup={e => e.key === 'Enter' && handleMobileNavClick()}
+            onclick={handleMobileNavClick}
+            onkeyup={e => e.key === 'Enter' && handleMobileNavClick()}
             role="button"
             tabindex="0"
         >
@@ -101,7 +110,9 @@
                 </div>
                 <Button size="small" as="a" href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank">
                     View Source
-                    <IconGithub slot="end" size={14} />
+                    {#snippet end()}
+                                        <IconGithub  size={14} />
+                                    {/snippet}
                 </Button>
             </div>
         </div>
@@ -117,7 +128,9 @@
                         color="text"
                     >
                         Open in new tab
-                        <IconBoxArrowUpRight slot="end" size={14} />
+                        {#snippet end()}
+                                                <IconBoxArrowUpRight  size={14} />
+                                            {/snippet}
                     </Link>
                 </div>
                 <div class="right">
@@ -147,16 +160,16 @@
                         title={currentTheme.name}
                         style:width={type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360) + "px"}
                         style:height={type === 'laptop' ? "100%" : 740 + "px"}
-                        on:load={() => isLoading = false}
+                        onload={() => isLoading = false}
                         style:display={isLoading ? "none" : "block"}
-                    />
+></iframe>
 
                     {#if lockScroll}
                         <button 
                             class="lock-scroll"
-                            on:click={() => lockScroll = false}
+                            onclick={() => lockScroll = false}
                         >
-                            <div class="overlay" />
+                            <div class="overlay"></div>
                             <IconMessage
                                 icon={IconLock}
                                 iconSize={50}

@@ -15,15 +15,19 @@
 	import { IconPlus, IconLock } from '@hyvor/icons';
 	import TagName from '../../../../../settings/tags/TagName.svelte';
 
-	export let selectedTags: TagType[] = [];
-	export let createPrivate = false;
+	interface Props {
+		selectedTags?: TagType[];
+		createPrivate?: boolean;
+	}
 
-	let isLoading = true;
-	let tags: TagType[] = [];
-	let searchedTags: TagType[] = [];
-	let search = '';
+	let { selectedTags = [], createPrivate = false }: Props = $props();
 
-	$: availableTags = search.trim() !== '' ? searchedTags : tags;
+	let isLoading = $state(true);
+	let tags: TagType[] = $state([]);
+	let searchedTags: TagType[] = $state([]);
+	let search = $state('');
+
+	let availableTags = $derived(search.trim() !== '' ? searchedTags : tags);
 
 	let searchTimeout: null | ReturnType<typeof setTimeout> = null;
 
@@ -101,9 +105,11 @@
 						<Tag size="small">
 							<TagName {tag} small />
 						</Tag>
-						<Text slot="end" small light>
-							{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
-						</Text>
+						{#snippet end()}
+												<Text  small light>
+								{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
+							</Text>
+											{/snippet}
 					</ActionListItem>
 				{/each}
 
@@ -115,7 +121,9 @@
 							style="font-weight:normal;font-size:12px;"
 							on:click={handleCreateTag}
 						>
-							<IconPlus size={15} slot="start" />
+							{#snippet start()}
+														<IconPlus size={15}  />
+													{/snippet}
 							Create tag&nbsp;<b>{search}</b>
 							{#if createPrivate}
 								<IconLock size={12} style="margin-left:4px;" />

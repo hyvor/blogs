@@ -148,7 +148,11 @@
         }
     ];
 
-    export let max : number | null = null;
+    interface Props {
+        max?: number | null;
+    }
+
+    let { max = null }: Props = $props();
     if (max) {
         customers.splice(max);
     }

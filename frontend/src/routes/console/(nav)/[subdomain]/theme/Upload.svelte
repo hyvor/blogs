@@ -6,7 +6,7 @@
 	import { uploadTheme } from "./themeActions";
 	import { setThemeFiles } from "./themeStore";
 
-    let inputEl : HTMLInputElement;
+    let inputEl : HTMLInputElement = $state();
 
     function handleClick() {
         inputEl.click()
@@ -49,7 +49,9 @@
         style="font-size:13px"
         on:click={handleClick}
     >
-        <IconCloudUpload size={16} slot="start" />
+        {#snippet start()}
+                <IconCloudUpload size={16}  />
+            {/snippet}
         Upload
     </Button>
 
@@ -57,7 +59,7 @@
         bind:this={inputEl}
         type="file"
         accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
-        on:change={handleUpload}
+        onchange={handleUpload}
         style="display:none"
     />
 

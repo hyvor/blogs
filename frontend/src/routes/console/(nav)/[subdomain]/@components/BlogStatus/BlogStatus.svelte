@@ -2,18 +2,29 @@
 	import { Button } from "@hyvor/design/components";
 import type { ComponentType } from "svelte";
 
-    export let title: string;
-    export let description: string;
-    export let icon: ComponentType;
-    export let cta: string | null = null;
+    interface Props {
+        title: string;
+        description: string;
+        icon: ComponentType;
+        cta?: string | null;
+    }
 
+    let {
+        title,
+        description,
+        icon,
+        cta = null
+    }: Props = $props();
+
+
+    const SvelteComponent = $derived(icon);
 </script>
 
 <div class="hds-box wrap">
     <div class="inner">
 
         <div class="icon">
-            <svelte:component this={icon} size={60} />
+            <SvelteComponent size={60} />
         </div>
 
         <div class="title" role="heading" aria-level={2}>

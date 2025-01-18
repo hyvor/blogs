@@ -5,17 +5,27 @@
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
 	import { beforeNavigate } from '$app/navigation';
 
-	export let keys: (keyof Blog)[] = [];
-	export let variantKeys: (keyof BlogVariant)[] = [];
 
-	export let outsideChanges: Partial<Blog> = {};
-	export let beforeSave: null | (() => boolean) = null;
-	export let afterSave: null | ((b: Blog) => void) = null;
-	export let onError: null | ((message: string, code: number) => void) = null;
+	interface Props {
+		keys?: (keyof Blog)[];
+		variantKeys?: (keyof BlogVariant)[];
+		outsideChanges?: Partial<Blog>;
+		beforeSave?: null | (() => boolean);
+		afterSave?: null | ((b: Blog) => void);
+		onError?: null | ((message: string, code: number) => void);
+	}
 
-	let loadingState: 'none' | 'loading' | 'success' | 'error' = 'none';
+	let {
+		keys = [],
+		variantKeys = [],
+		outsideChanges = {},
+		beforeSave = null,
+		afterSave = null,
+		onError = null
+	}: Props = $props();
 
-	$: should = getShouldSave($blogStore, $blogOriginalStore, outsideChanges);
+	let loadingState: 'none' | 'loading' | 'success' | 'error' = $state('none');
+
 
 	beforeNavigate((navigation) => {
 		if (should) {
@@ -116,6 +126,7 @@
 	function handleDiscard() {
 		$blogStore = { ...$blogOriginalStore };
 	}
+	let should = $derived(getShouldSave($blogStore, $blogOriginalStore, outsideChanges));
 </script>
 
 <div class="save">

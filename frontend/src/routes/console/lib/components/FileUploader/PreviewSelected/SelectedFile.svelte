@@ -10,19 +10,23 @@
 	import { uploadMedia } from '../../../../(nav)/[subdomain]/tools/media/mediaActions';
 	import { toKebabCase } from '../../../../(nav)/[subdomain]/tools/media/mediaUtils';
 
-	export let file: SelectedFile;
+	interface Props {
+		file: SelectedFile;
+	}
+
+	let { file }: Props = $props();
 
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
-	let imageSize = file.url instanceof File ? file.url.size : null;
-	let imageName = toKebabCase(
+	let imageSize = $state(file.url instanceof File ? file.url.size : null);
+	let imageName = $state(toKebabCase(
 		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null
-	);
-	let nameError = '';
+	));
+	let nameError = $state('');
 
-	let imgEl: HTMLImageElement;
+	let imgEl: HTMLImageElement = $state();
 
-	let width = 0;
-	let height = 0;
+	let width = $state(0);
+	let height = $state(0);
 
 	function getShouldUpload() {
 		if (file.from === 'excalidraw' || file.from == 'upload') return true;
@@ -53,7 +57,7 @@
 		return null;
 	}
 
-	let shouldUpload = getShouldUpload();
+	let shouldUpload = $state(getShouldUpload());
 	const canChangeUpload = getCanChangeUpload();
 	const hosting = getHosting();
 
@@ -79,7 +83,7 @@
 		dispatch('select', img);
 	}
 
-	let isUploading = false;
+	let isUploading = $state(false);
 
 	function handleUpload() {
 		if (shouldUpload && file.url instanceof Blob) {
@@ -137,9 +141,9 @@
 	{:else}
 		<div class="img-wrap">
 			{#if file.type === 'audio'}
-				<audio src={fileUrl} controls />
+				<audio src={fileUrl} controls></audio>
 			{:else if file.type === 'image'}
-				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
+				<img src={fileUrl} alt="Editing" bind:this={imgEl} onload={handleImageLoad} />
 			{:else}
 				No preview available
 			{/if}
@@ -191,13 +195,15 @@
 		<div class="footer">
 			<Button on:click={handleUpload}>
 				{shouldUpload ? 'Upload' : 'Select'}
-				<svelte:fragment slot="end">
-					{#if shouldUpload}
-						<IconCloudUpload />
-					{:else}
-						<IconCheckAll />
-					{/if}
-				</svelte:fragment>
+				{#snippet end()}
+							
+						{#if shouldUpload}
+							<IconCloudUpload />
+						{:else}
+							<IconCheckAll />
+						{/if}
+					
+							{/snippet}
 			</Button>
 		</div>
 	{/if}

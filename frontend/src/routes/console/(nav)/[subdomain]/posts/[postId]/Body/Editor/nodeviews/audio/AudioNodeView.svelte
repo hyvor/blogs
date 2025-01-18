@@ -2,14 +2,18 @@
 	import { IconButton, Loader, Tooltip, confirm } from '@hyvor/design/components';
 	import type { EditorView } from 'prosemirror-view';
 	import { IconPencil, IconTrash } from '@hyvor/icons';
-	import { onMount } from 'svelte';
+	import { onMount, mount, unmount } from 'svelte';
 	import FileUploader from '../../../../../../../../lib/components/FileUploader/FileUploader.svelte';
 
-	export let src: string;
-	export let getPos: () => number | undefined;
-	export let view: EditorView;
+	interface Props {
+		src: string;
+		getPos: () => number | undefined;
+		view: EditorView;
+	}
 
-	let audioEl: HTMLAudioElement;
+	let { src, getPos, view }: Props = $props();
+
+	let audioEl: HTMLAudioElement = $state();
 	let fileInputEl: HTMLInputElement;
 
 	let loading = false;
@@ -36,15 +40,15 @@
 		const div = document.createElement('div');
 		document.body.appendChild(div);
 
-		const selector = new FileUploader({
-			target: div,
-			props: {
-				type: 'audio'
-			}
-		});
+		const selector = mount(FileUploader, {
+        			target: div,
+        			props: {
+        				type: 'audio'
+        			}
+        		});
 
 		function destroy() {
-			selector.$destroy();
+			unmount(selector);
 			div.remove();
 		}
 
@@ -108,7 +112,7 @@
 			{#if loading}
 				<p><Loader /></p>
 			{:else if src}
-				<audio {src} bind:this={audioEl} controls />
+				<audio {src} bind:this={audioEl} controls></audio>
 			{:else}
 				<p>No audio selected.</p>
 			{/if}

@@ -5,21 +5,25 @@
 	import { createGuestUser, createHyvorUser } from "./userActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let show: boolean
+    interface Props {
+        show: boolean;
+    }
 
-    let type: 'hyvor' | 'guest' = 'hyvor';
+    let { show = $bindable() }: Props = $props();
 
-    let hyvorUsernameOrEmail: string = '';
-    let hyvorUsernameOrEmailError: null | string = null;
-    let hyvorUsernameOrEmailEl: HTMLInputElement;
+    let type: 'hyvor' | 'guest' = $state('hyvor');
 
-    let role: UserRole = 'admin';
+    let hyvorUsernameOrEmail: string = $state('');
+    let hyvorUsernameOrEmailError: null | string = $state(null);
+    let hyvorUsernameOrEmailEl: HTMLInputElement = $state();
+
+    let role: UserRole = $state('admin');
     
-    let guestName = '';
-    let guestNameError: null | string = null;
-    let guestNameEl: HTMLInputElement;
+    let guestName = $state('');
+    let guestNameError: null | string = $state(null);
+    let guestNameEl: HTMLInputElement = $state();
 
-    let isLoading = false;
+    let isLoading = $state(false);
 
     const dispatch = createEventDispatcher<{add: User}>()
 
@@ -173,7 +177,9 @@
                     target="_blank"
                 >
                     roles
-                    <IconBoxArrowUpRight size={12} slot="end" />
+                    {#snippet end()}
+                                        <IconBoxArrowUpRight size={12}  />
+                                    {/snippet}
                 </Link>
             </div>
         </SplitControl>

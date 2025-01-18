@@ -4,16 +4,20 @@
 	import { getWordsCount } from "../../../../../../../../lib/seo/words";
 	import { postLanguageStore } from "../../../../../postStore";
 
-    export let contentOld: string | null;
-    export let contentNew: string | null;
-    export let diff: boolean;
+    interface Props {
+        contentOld: string | null;
+        contentNew: string | null;
+        diff: boolean;
+    }
 
-    $: changedWords = getDiffWordsCount(
+    let { contentOld, contentNew, diff }: Props = $props();
+
+    let changedWords = $derived(getDiffWordsCount(
         getTextFromContent(contentOld),
         getTextFromContent(contentNew)
-    );
+    ));
 
-    $: totalWords = getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code);
+    let totalWords = $derived(getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code));
 
 </script>
 

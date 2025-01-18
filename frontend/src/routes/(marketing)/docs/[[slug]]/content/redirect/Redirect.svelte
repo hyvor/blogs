@@ -48,7 +48,9 @@
 </p>
 
 <Callout type="info">
-	<IconExclamationOctagonFill slot="icon" />
+	{#snippet icon()}
+		<IconExclamationOctagonFill  />
+	{/snippet}
 	You can only have up to 5 dynamic redirects per blog.
 </Callout>
 

@@ -171,7 +171,9 @@
 <DocsImage src={anchorsImg} alt="Adding anchor links" width={400} />
 
 <Callout type="info">
-	<div slot="icon">💡</div>
+	{#snippet icon()}
+		<div >💡</div>
+	{/snippet}
 	<p>
 		Anchor list contains all the headlines of your content showing whether they have IDs or not.
 	</p>

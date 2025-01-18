@@ -1,10 +1,15 @@
-<script>
+<script lang="ts">
 	import { NavLink } from "@hyvor/design/components";
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { consoleUrl, consoleUrlWithBlog } from "../../../lib/consoleUrl";
 	import DisabledOnTemp from "../Temp/DisabledOnTemp.svelte";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 
 <div class="integrations">
@@ -14,14 +19,16 @@
             href={consoleUrlWithBlog('/integrations/hyvor-talk')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
         >
-            <img src={hyvorTalkLogo} alt="Hyvor Talk" slot="start" />
+            {#snippet start()}
+                        <img src={hyvorTalkLogo} alt="Hyvor Talk"  />
+                    {/snippet}
             Hyvor Talk
         </NavLink>
     </div>
 
     <div class="content hds-box">
         <DisabledOnTemp>
-            <slot />
+            {@render children?.()}
         </DisabledOnTemp>
     </div>
 

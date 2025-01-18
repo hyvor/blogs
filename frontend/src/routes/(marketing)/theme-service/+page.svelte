@@ -5,13 +5,13 @@
 	import { Crisp } from 'crisp-sdk-web';
 
 	let Oprice = 1000;
-	let price = Oprice;
+	let price = $state(Oprice);
 	let d20 = 0.2;
 	let d30 = 0.3;
 
 	// variables for switches
-	let switch1 = false;
-	let switch2 = false;
+	let switch1 = $state(false);
+	let switch2 = $state(false);
 
 	// function to update price
 	function updatePrice() {

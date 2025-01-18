@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { getConfig } from '../../lib/config';
 
-	let wrap: HTMLDivElement;
+	let wrap: HTMLDivElement = $state();
 
 	onMount(() => {
 		const script = document.createElement('script');

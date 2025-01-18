@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { Tag } from "@hyvor/design/components";
     import type { JobStatus } from "../../types";
-    export let status: JobStatus;
+    interface Props {
+        status: JobStatus;
+    }
+
+    let { status }: Props = $props();
 
     const color = {
         pending: 'blue',

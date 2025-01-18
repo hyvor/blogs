@@ -1,13 +1,16 @@
 <script lang="ts">
+    import { run, createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { onMount, tick } from "svelte";
 	import { postEditingStatusStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import { IconLock, IconUnlock } from "@hyvor/icons";
 
-    $: show = $postVariantStore.status === 'published' && 
-        !$postEditingStatusStore.isEditingPublished;
+    let show = $derived($postVariantStore.status === 'published' && 
+        !$postEditingStatusStore.isEditingPublished);
 
-    let messageEl : HTMLDivElement;
-    let overlayEl : HTMLDivElement;
+    let messageEl : HTMLDivElement = $state();
+    let overlayEl : HTMLDivElement = $state();
 
     function positionMessage() {
         if (!messageEl || !overlayEl) return;
@@ -20,7 +23,9 @@
 
     onMount(positionMessage);
 
-    $: show, positionMessage();
+    run(() => {
+        show, positionMessage();
+    });
 
     async function handleClick() {
         updatePostEditingStatusValue('isEditingPublished', true);
@@ -32,17 +37,17 @@
 
 </script>
 
-<svelte:window on:scroll|capture={positionMessage} />
+<svelte:window onscrollcapture={positionMessage} />
 
 {#if show}
     <div 
         class="overlay" 
         bind:this={overlayEl}
-        on:click={handleClick}
+        onclick={handleClick}
         role="button"
         tabindex="0"
-        on:keyup
-    />
+        onkeyup={bubble('keyup')}
+></div>
     <div 
         class="message"
         bind:this={messageEl}

@@ -4,17 +4,21 @@
 	import { createLanguage, updateLanguage } from "./languageActions";
 	import { languageStoreAdd, languageStoreUpdate, languagesStore } from "../../../../lib/stores/languagesStore";
 
-    export let language: Language | null = null;
-    export let show = false;
+    interface Props {
+        language?: Language | null;
+        show?: boolean;
+    }
+
+    let { language = null, show = $bindable(false) }: Props = $props();
 
     const isCreating = language === null;
 
-    let name = language ? language.name : '';
-    let code = language ? language.code : '';
-    let direction : 'ltr' | 'rtl' = language ? language.direction : 'ltr';
+    let name = $state(language ? language.name : '');
+    let code = $state(language ? language.code : '');
+    let direction : 'ltr' | 'rtl' = $state(language ? language.direction : 'ltr');
 
-    let nameError : null | string = null;
-    let codeError : null | string = null;
+    let nameError : null | string = $state(null);
+    let codeError : null | string = $state(null);
 
     function handleClick() {
 
@@ -76,10 +80,10 @@
 
     }
 
-    $: isButtonDisabled = !(isCreating ||
+    let isButtonDisabled = $derived(!(isCreating ||
             (name !== language!.name || 
                 code !== language!.code || 
-                direction !== language!.direction))
+                direction !== language!.direction)))
 
 </script>
 
@@ -152,26 +156,28 @@
         </InputGroup>
     </SplitControl>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button 
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button 
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleClick}
-                disabled={isButtonDisabled}
-            >
-                {isCreating ? 'Add' : 'Save'}
-            </Button>
+                <Button
+                    on:click={handleClick}
+                    disabled={isButtonDisabled}
+                >
+                    {isCreating ? 'Add' : 'Save'}
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

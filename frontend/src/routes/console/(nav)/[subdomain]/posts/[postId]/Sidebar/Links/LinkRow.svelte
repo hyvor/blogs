@@ -12,11 +12,8 @@
     import { variantLinkAnalysisStore } from './linksStore';
 	import { callIgnoreLink, callLinkAnalysisApi } from "../../../../tools/link-analysis/linkAnalysisActions";
 
-    $: linkStatus = $variantLinkAnalysisStore[link.originalHref] || LINK_STATUS.ERROR;
-    $: linkStatusType = getStatusType(linkStatus);
-    $: isHttp = isHttpLink(link);
 
-    let isReloading = false;
+    let isReloading = $state(false);
 
     function handleReload() {
 
@@ -77,7 +74,14 @@
 
     }
 
-    export let link: Link;
+    interface Props {
+        link: Link;
+    }
+
+    let { link }: Props = $props();
+    let linkStatus = $derived($variantLinkAnalysisStore[link.originalHref] || LINK_STATUS.ERROR);
+    let linkStatusType = $derived(getStatusType(linkStatus));
+    let isHttp = $derived(isHttpLink(link));
 </script>
 
 <div class="link-wrap type-{linkStatusType}">

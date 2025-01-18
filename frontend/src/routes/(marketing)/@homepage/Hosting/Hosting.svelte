@@ -57,7 +57,7 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
                 margin-left:-25px;
                 margin-right:-25px;
             "
-        />
+></div>
 
         <div class="sub-dir-note">
             Use one of the following methods to host your blog in a sub-directory:

@@ -1,9 +1,19 @@
 <script lang="ts">
-    export let title: string;
-    export let subtitle: string | undefined = undefined;
-    export let icon: null | string = null;
-    export let h2Style: string | undefined = undefined;
-    export let wrapStyle: string | undefined = undefined;
+    interface Props {
+        title: string;
+        subtitle?: string | undefined;
+        icon?: null | string;
+        h2Style?: string | undefined;
+        wrapStyle?: string | undefined;
+    }
+
+    let {
+        title,
+        subtitle = undefined,
+        icon = null,
+        h2Style = undefined,
+        wrapStyle = undefined
+    }: Props = $props();
 </script>
 
 <div 

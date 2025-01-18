@@ -8,10 +8,10 @@
 	import CreateWebhookModal from "./CreateUpdateWebhookModal.svelte";
     import WebhookRow from "./WebhookRow.svelte";
 
-    let isLoading = true;
-    let isCreating = false;
+    let isLoading = $state(true);
+    let isCreating = $state(false);
 
-    let webhooks : Webhook[] = [];
+    let webhooks : Webhook[] = $state([]);
 
     onMount(() => {
 
@@ -52,7 +52,9 @@
 <SettingsTop>
 
     <Button on:click={() => isCreating = true}>
-        Create Webhook <IconPlus slot="end" />
+        Create Webhook {#snippet end()}
+                <IconPlus  />
+            {/snippet}
     </Button>
 
 </SettingsTop>
@@ -71,7 +73,7 @@
                     <div>URL</div>
                     <div>Events</div>
                     <div>Secret</div>
-                    <div/>
+                    <div></div>
                 </TableRow>
 
                 {#each webhooks as webhook (webhook.id)}

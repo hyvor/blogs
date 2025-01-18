@@ -2,7 +2,11 @@
 	import { getHostname } from 'tldts';
 	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
 
-	export let link: UnfoldedLink;
+	interface Props {
+		link: UnfoldedLink;
+	}
+
+	let { link }: Props = $props();
 </script>
 
 <div class="wrap">

@@ -1,28 +1,40 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { SplitControl } from "@hyvor/design/components";
 	import Object from "./Object.svelte";
 	import ConfigInput from "./ConfigInput.svelte";
 	import { createEventDispatcher } from "svelte";
 
-    // export let config: object;
-    export let configDef: object;
-    export let parentKeys : string[] = [];
-    export let value: any;
-    export let key: string;
+    
+    interface Props {
+        // export let config: object;
+        configDef: object;
+        parentKeys?: string[];
+        value: any;
+        key: string;
+    }
 
-    let currentDef: Record<string, any>;
-    let name: string;
-    let description: string;
-    let hasChildren: boolean;
-    let parentKeysWithCurrentKey: string[];
+    let {
+        configDef,
+        parentKeys = [],
+        value,
+        key
+    }: Props = $props();
 
-    $: {
+    let currentDef: Record<string, any> = $state();
+    let name: string = $state();
+    let description: string = $state();
+    let hasChildren: boolean = $state();
+    let parentKeysWithCurrentKey: string[] = $state();
+
+    run(() => {
         currentDef = configDef[key as keyof typeof configDef] || {};
         name = currentDef.$name || key;
         description = currentDef.$description || '';
         hasChildren = typeof value === 'object' && value !== null;
         parentKeysWithCurrentKey = [...parentKeys, key];
-    }
+    });
 
     const dispatch = createEventDispatcher<{change: {
         parentKeys: string[],
@@ -48,9 +60,11 @@
     label={name}
 >
 
-    <div slot="caption">
-        {@html description}
-    </div>
+    {#snippet caption()}
+        <div >
+            {@html description}
+        </div>
+    {/snippet}
 
     {#if !hasChildren}
         <ConfigInput 
@@ -60,16 +74,18 @@
         />
     {/if}
 
-    <div slot="nested">
-        {#if hasChildren}
-            <Object 
-                config={value} 
-                configDef={currentDef}
-                parentKeys={parentKeysWithCurrentKey}
-                on:change={handleObjectChange}
-            />
-        {/if}
-    </div>
+    {#snippet nested()}
+        <div >
+            {#if hasChildren}
+                <Object 
+                    config={value} 
+                    configDef={currentDef}
+                    parentKeys={parentKeysWithCurrentKey}
+                    on:change={handleObjectChange}
+                />
+            {/if}
+        </div>
+    {/snippet}
     
 </SplitControl>
 

@@ -2,9 +2,13 @@
 	import { SplitControl, Text } from "@hyvor/design/components";
     import { IconArrowRight } from "@hyvor/icons";
 
-    export let canonicalUrlOld: string | null;
-    export let canonicalUrlNew: string | null;
-    export let diff: boolean;
+    interface Props {
+        canonicalUrlOld: string | null;
+        canonicalUrlNew: string | null;
+        diff: boolean;
+    }
+
+    let { canonicalUrlOld, canonicalUrlNew, diff }: Props = $props();
 </script>
 
 <SplitControl label="Canonical URL">

@@ -8,10 +8,10 @@
 	import CreateNavigationModal from "./CreateNavigationModal.svelte";
 	import NavTable from "./NavTable.svelte";
 
-    let isCreating = false;
+    let isCreating = $state(false);
     
-    let items : Navigation[] = [];
-    let isLoading = true;
+    let items : Navigation[] = $state([]);
+    let isLoading = $state(true);
 
   
     function loadNavigation() {
@@ -51,7 +51,7 @@
 
     onMount(loadNavigation);
 
-    let activeTab: 'header' | 'footer' = 'header';
+    let activeTab: 'header' | 'footer' = $state('header');
 
 </script>
 
@@ -60,7 +60,9 @@
 
     <SettingsTop>
         <Button on:click={() => isCreating = true}>
-            Create Navigation <IconPlus slot="end" />
+            Create Navigation {#snippet end()}
+            <IconPlus  />
+          {/snippet}
         </Button>
     </SettingsTop>
 

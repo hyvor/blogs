@@ -1,9 +1,14 @@
-<script>
+<script lang="ts">
 	import { NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconDownload, IconImage, IconLink45deg, IconUpload } from "@hyvor/icons";
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 
 <div class="tools">
@@ -13,7 +18,9 @@
             href={consoleUrlWithBlog('/tools/media')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/media`}
         >
-            <IconImage slot="start" />
+            {#snippet start()}
+                        <IconImage  />
+                    {/snippet}
             Media Library
         </NavLink>
 
@@ -21,17 +28,21 @@
             href={consoleUrlWithBlog('/tools/link-analysis')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
         >
-            <IconLink45deg slot="start" />
+            {#snippet start()}
+                        <IconLink45deg  />
+                    {/snippet}
             Link Analysis
         </NavLink>
 
-        <div class="div" />
+        <div class="div"></div>
 
         <NavLink 
             href={consoleUrlWithBlog('/tools/import')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
         >
-            <IconDownload slot="start" />
+            {#snippet start()}
+                        <IconDownload  />
+                    {/snippet}
             Import
         </NavLink>
 
@@ -39,13 +50,15 @@
             href={consoleUrlWithBlog('/tools/export')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
         >
-            <IconUpload slot="start" />
+            {#snippet start()}
+                        <IconUpload  />
+                    {/snippet}
             Export
         </NavLink>
     </div>
 
     <div class="content">
-        <slot />
+        {@render children?.()}
     </div>
 
 </div>

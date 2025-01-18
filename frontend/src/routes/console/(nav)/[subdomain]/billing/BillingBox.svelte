@@ -1,7 +1,17 @@
 <script lang="ts">
-	export let title: null | string = null;
-	export let style: undefined | string = undefined;
-	export let padding = 30;
+	interface Props {
+		title?: null | string;
+		style?: undefined | string;
+		padding?: number;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		title = null,
+		style = undefined,
+		padding = 30,
+		children
+	}: Props = $props();
 </script>
 
 <div class="wrap hds-box" {style} style:padding="{padding}px">
@@ -9,7 +19,7 @@
 		<div class="title">{title}</div>
 	{/if}
 
-	<slot />
+	{@render children?.()}
 </div>
 
 <style>

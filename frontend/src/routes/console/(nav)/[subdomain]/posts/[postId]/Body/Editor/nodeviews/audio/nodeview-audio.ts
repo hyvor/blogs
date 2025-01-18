@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { EditorView, NodeView } from "prosemirror-view";
 import AudioNodeView from "./AudioNodeView.svelte";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponent, mount } from "svelte";
 
 export default class AudioView implements NodeView {
 
@@ -20,10 +20,10 @@ export default class AudioView implements NodeView {
 
         this.dom = document.createElement('div');
 
-        this.component = new AudioNodeView({
-            target: this.dom,
-            props: this.getPropsFromNode(node),
-        });
+        this.component = mount(AudioNodeView, {
+                    target: this.dom,
+                    props: this.getPropsFromNode(node),
+                });
 
     }   
 

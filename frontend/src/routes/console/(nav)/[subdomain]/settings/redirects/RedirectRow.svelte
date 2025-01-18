@@ -7,9 +7,13 @@
 	import { createEventDispatcher } from "svelte";;
 	import RedirectsModal from "./RedirectsModal.svelte";
 
-    export let redirect: Redirect;
+    interface Props {
+        redirect: Redirect;
+    }
 
-    let isEditing = false;
+    let { redirect }: Props = $props();
+
+    let isEditing = $state(false);
 
     const dispatch = createEventDispatcher();
 

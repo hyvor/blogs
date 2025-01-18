@@ -7,8 +7,8 @@
 	import UnsavedTag from "../../../Sidebar/Settings/UnsavedTag.svelte";
 	import { addEditorEventListener } from "../editorEvents";
 
-    $: key = $postCurrentContentKey as 'content' | 'content_unsaved';
-    $: hasChanged = $postVariantStore[key] !== $postOriginalVariantStore[key];
+    let key = $derived($postCurrentContentKey as 'content' | 'content_unsaved');
+    let hasChanged = $derived($postVariantStore[key] !== $postOriginalVariantStore[key]);
 
 
     function save() {
@@ -58,7 +58,7 @@
 
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <span class="save-text">
 

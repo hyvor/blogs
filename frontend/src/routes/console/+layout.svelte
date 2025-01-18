@@ -9,6 +9,11 @@
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import {loadBlog} from "./(nav)/[subdomain]/blogLoader";
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	interface InitResponse {
 		user: AuthUser;
@@ -17,7 +22,7 @@
 		config: Config;
 	}
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
 	onMount(() => {
 		const isTemp = $page.url.searchParams.has('temp');
@@ -86,7 +91,7 @@
 				g2: 'https://www.g2.com/products/hyvor-blogs/reviews'
 			}}
 		/>
-		<slot />
+		{@render children?.()}
 	{/if}
 </main>
 

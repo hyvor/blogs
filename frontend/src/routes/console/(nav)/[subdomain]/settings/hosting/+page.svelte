@@ -20,10 +20,10 @@
 	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
 
 	const originalSubdomain = $blogStore.subdomain;
-	let subdomain = $blogStore.subdomain;
+	let subdomain = $state($blogStore.subdomain);
 
-	let subdomainError: null | string = null;
-	let hostingUrlError: null | string = null;
+	let subdomainError: null | string = $state(null);
+	let hostingUrlError: null | string = $state(null);
 
 	function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
 		blogStore.update((b) => {
@@ -126,11 +126,11 @@
 		}
 	}
 
-	$: hasUrlChanged =
-		$blogStore.subdomain !== subdomain ||
+	let hasUrlChanged =
+		$derived($blogStore.subdomain !== subdomain ||
 		$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
 		$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
-		$blogOriginalStore.hosting_url !== $blogStore.hosting_url;
+		$blogOriginalStore.hosting_url !== $blogStore.hosting_url);
 </script>
 
 <DisabledOnTemp>
@@ -178,7 +178,9 @@
 						style="font-size:14px;"
 					>
 						Docs
-						<IconBoxArrowUpRight slot="end" size={10} />
+						{#snippet end()}
+												<IconBoxArrowUpRight  size={10} />
+											{/snippet}
 					</Link>
 				</Radio>
 				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
@@ -188,7 +190,9 @@
 						style="font-size:14px;"
 					>
 						Docs
-						<IconBoxArrowUpRight slot="end" size={10} />
+						{#snippet end()}
+												<IconBoxArrowUpRight  size={10} />
+											{/snippet}
 					</Link>
 				</Radio>
 			</InputGroup>
@@ -243,8 +247,12 @@
 
 		{#if hasUrlChanged}
 			<Callout type="warning" style="margin-top: 20px;">
-				<IconExclamationCircle slot="icon" size={18} />
-				<div slot="title">URL Change</div>
+				{#snippet icon()}
+								<IconExclamationCircle  size={18} />
+							{/snippet}
+				{#snippet title()}
+								<div >URL Change</div>
+							{/snippet}
 				You are about to change the URL of your blog!
 				<ul>
 					<li>

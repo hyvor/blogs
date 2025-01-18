@@ -3,9 +3,19 @@
 	import { IconCheck, IconLock } from "@hyvor/icons";
 	import CheckFeatures from "../../@components/CheckFeatures.svelte";
 
-    export let name: string;
-    export let domain: string;
-    export let features : string[];
+    interface Props {
+        name: string;
+        domain: string;
+        features: string[];
+        children?: import('svelte').Snippet;
+    }
+
+    let {
+        name,
+        domain,
+        features,
+        children
+    }: Props = $props();
 
 </script>
 
@@ -18,7 +28,7 @@
 
     <CheckFeatures {features} />
 
-    <slot />
+    {@render children?.()}
 
 </div>
 

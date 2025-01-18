@@ -5,7 +5,11 @@
 	import { deleteApiKey, regenerateApiKey } from "./apiKeysActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let apiKey: ApiKey;
+    interface Props {
+        apiKey: ApiKey;
+    }
+
+    let { apiKey }: Props = $props();
 
     const dispatch = createEventDispatcher();
 

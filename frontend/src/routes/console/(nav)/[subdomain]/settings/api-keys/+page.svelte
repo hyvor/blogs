@@ -8,10 +8,10 @@
 	import { onMount } from "svelte";
 	import { getApiKeys } from "./apiKeysActions";
 
-    let isCreating = false;
+    let isCreating = $state(false);
 
-    let isLoading = true;
-    let apiKeys : ApiKey[] = [];
+    let isLoading = $state(true);
+    let apiKeys : ApiKey[] = $state([]);
 
     function handleCreate(e: CustomEvent<ApiKey>) {
         apiKeys = [e.detail, ...apiKeys];
@@ -48,7 +48,9 @@
 <SettingsTop>
 
     <Button on:click={() => isCreating = true}>
-        Create API Key <IconPlus slot="end" />
+        Create API Key {#snippet end()}
+                <IconPlus  />
+            {/snippet}
     </Button>
 
 </SettingsTop>
@@ -67,7 +69,7 @@
                 <TableRow head>
                     <div>Name</div>
                     <div>API</div>
-                    <div/>
+                    <div></div>
                 </TableRow>
 
                 {#each apiKeys as apiKey (apiKey.id)}

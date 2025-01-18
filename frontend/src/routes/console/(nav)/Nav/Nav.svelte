@@ -5,8 +5,8 @@
 	import { blogStore } from '../../lib/stores/blogStore';
 	import {blogListStore} from "../../lib/stores";
 
-	$: blogListItemId = $blogStore ? $blogStore.id : $blogListStore[0]?.id;
-	$: blogListItem = $blogListStore.find(blog => blog.id === blogListItemId);
+	let blogListItemId = $derived($blogStore ? $blogStore.id : $blogListStore[0]?.id);
+	let blogListItem = $derived($blogListStore.find(blog => blog.id === blogListItemId));
 </script>
 
 <div id="nav-wrap">

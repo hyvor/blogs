@@ -4,7 +4,7 @@
 	import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../postStore";
 	import { updatePost } from "../../../postActions";
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
 
     function handleInput(e: any) {
         updatePostStore({canonical_url: e.target.value});
@@ -34,14 +34,16 @@
 </script>
 
 <SplitControl>
-    <span slot="label">
-        Canonical URL
+    {#snippet label()}
+        <span >
+            Canonical URL
 
-        <UnsavedTag
-            show={($postStore.canonical_url || '') !== ($postOriginalStore.canonical_url || '')}
-            loaderState={loaderState}
-        />
-    </span>
+            <UnsavedTag
+                show={($postStore.canonical_url || '') !== ($postOriginalStore.canonical_url || '')}
+                loaderState={loaderState}
+            />
+        </span>
+    {/snippet}
     <TextInput
         block
         value={$postStore.canonical_url}

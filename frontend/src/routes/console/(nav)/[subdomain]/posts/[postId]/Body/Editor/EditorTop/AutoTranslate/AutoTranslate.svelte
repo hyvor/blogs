@@ -4,7 +4,7 @@
 	import { IconMagic } from "@hyvor/icons";
 	import TranslateModal from "./TranslateModal.svelte"
     
-    let show = false;
+    let show = $state(false);
 </script>
 
 {#if !$postLanguageStore.is_primary}
@@ -15,7 +15,9 @@
         on:click={() => show = true}
         disabled={$postVariantStore.status === 'published' && !$postEditingStatusStore.isEditingPublished}
     >
-        Auto-Translate <IconMagic slot="end" />
+        Auto-Translate {#snippet end()}
+                <IconMagic  />
+            {/snippet}
     </Button>
 {/if}
 

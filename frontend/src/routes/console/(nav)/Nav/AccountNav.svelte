@@ -7,7 +7,9 @@
 
 <div class="wrap">
 	<NavLink href={consoleUrl('/billing')} active={$page.url.pathname === `/console/billing`}>
-		<IconCoin slot="start" />
+		{#snippet start()}
+				<IconCoin  />
+			{/snippet}
 		Billing
 	</NavLink>
 </div>

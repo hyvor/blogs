@@ -1,5 +1,10 @@
-<script>
+<script lang="ts">
     import Nav from "./Nav/Nav.svelte";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 
 <main id="blog-main">
@@ -7,7 +12,7 @@
         <Nav />
     </div>
     <div id="content">
-        <slot />
+        {@render children?.()}
     </div>
 </main>
 

@@ -7,21 +7,25 @@
 	import { updateUser, updateUserVariant } from "../userActions";
 	import { createEventDispatcher } from "svelte";
 
-    export let user: User;
-    export let show: boolean;
+    interface Props {
+        user: User;
+        show: boolean;
+    }
 
-    let pictureUrl: string | null = user.picture_url;
-    let slug = user.slug;
-    let email = user.email;
-    let websiteUrl = user.website_url;
+    let { user, show = $bindable() }: Props = $props();
 
-    let socialFacebook = user.social_facebook;
-    let socialTwitter = user.social_twitter;
-    let socialLinkedin = user.social_linkedin;
-    let socialYoutube = user.social_youtube;
-    let socialTiktok = user.social_tiktok;
-    let socialInstagram = user.social_instagram;
-    let socialGithub = user.social_github;
+    let pictureUrl: string | null = $state(user.picture_url);
+    let slug = $state(user.slug);
+    let email = $state(user.email);
+    let websiteUrl = $state(user.website_url);
+
+    let socialFacebook = $state(user.social_facebook);
+    let socialTwitter = $state(user.social_twitter);
+    let socialLinkedin = $state(user.social_linkedin);
+    let socialYoutube = $state(user.social_youtube);
+    let socialTiktok = $state(user.social_tiktok);
+    let socialInstagram = $state(user.social_instagram);
+    let socialGithub = $state(user.social_github);
 
     const variantChanges : Record<number, Partial<UserVariant>> = {};
 
@@ -32,7 +36,7 @@
         }
     }
 
-    let isUpdating = false;
+    let isUpdating = $state(false);
 
     const dispatch = createEventDispatcher<{update: User}>();
 
@@ -198,84 +202,86 @@
         caption="Add absolute URLs with protocol (https://)"
     >
 
-        <div slot="nested">
+        {#snippet nested()}
+                <div >
 
-            <SplitControl
-                label="Facebook"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialFacebook}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <SplitControl
+                    label="Facebook"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialFacebook}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-            <SplitControl
-                label="Twitter (X)"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialTwitter}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <SplitControl
+                    label="Twitter (X)"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialTwitter}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-            <!-- Linkedin -->
-            <SplitControl
-                label="Linkedin"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialLinkedin}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <!-- Linkedin -->
+                <SplitControl
+                    label="Linkedin"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialLinkedin}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-            <!-- Youtube -->
-            <SplitControl
-                label="Youtube"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialYoutube}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <!-- Youtube -->
+                <SplitControl
+                    label="Youtube"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialYoutube}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-            <!-- TikTok -->
-            <SplitControl
-                label="TikTok"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialTiktok}
-                    maxlength={255}
-                />
-            </SplitControl>
-           
-            <!-- Instagram -->
-            <SplitControl
-                label="Instagram"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialInstagram}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <!-- TikTok -->
+                <SplitControl
+                    label="TikTok"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialTiktok}
+                        maxlength={255}
+                    />
+                </SplitControl>
+               
+                <!-- Instagram -->
+                <SplitControl
+                    label="Instagram"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialInstagram}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-            <!-- Github -->
-            <SplitControl
-                label="Github"
-            >
-                <TextInput 
-                    block
-                    bind:value={socialGithub}
-                    maxlength={255}
-                />
-            </SplitControl>
+                <!-- Github -->
+                <SplitControl
+                    label="Github"
+                >
+                    <TextInput 
+                        block
+                        bind:value={socialGithub}
+                        maxlength={255}
+                    />
+                </SplitControl>
 
-        </div>
+            </div>
+            {/snippet}
 
     </SplitControl>
 

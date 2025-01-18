@@ -11,8 +11,13 @@
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';
 	import BlogBannedStatus from './@components/BlogStatus/BlogBannedStatus.svelte';
 	import {loadBlog} from "./blogLoader";
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
 
-	let isLoading = true;
+	let { children }: Props = $props();
+
+	let isLoading = $state(true);
 
 	onMount(() => {
 		const subdomain = $page.params.subdomain;
@@ -26,10 +31,10 @@
 			});
 	});
 
-	$: forcedShow =
-		!isLoading &&
+	let forcedShow =
+		$derived(!isLoading &&
 		($page.url.pathname === consoleUrlWithBlog('billing') ||
-			$page.url.pathname.startsWith(consoleUrlWithBlog('settings')));
+			$page.url.pathname.startsWith(consoleUrlWithBlog('settings'))));
 </script>
 
 <svelte:head>
@@ -50,7 +55,7 @@
 	{:else if $blogStore.is_blocked && !forcedShow}
 		<BlogBannedStatus />
 	{:else}
-		<slot />
+		{@render children?.()}
 	{/if}
 {/if}
 

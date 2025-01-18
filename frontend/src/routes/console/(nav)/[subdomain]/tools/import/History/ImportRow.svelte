@@ -4,9 +4,13 @@
 	import JobStatusTag from "../../../../../lib/components/Tags/JobStatusTag.svelte";
 	import dayjs from "dayjs";
 	import { IconThreeDots } from "@hyvor/icons";
-    let showMore = false;
+    let showMore = $state(false);
 
-    export let data: Import;
+    interface Props {
+        data: Import;
+    }
+
+    let { data }: Props = $props();
 </script>
 
 <TableRow>

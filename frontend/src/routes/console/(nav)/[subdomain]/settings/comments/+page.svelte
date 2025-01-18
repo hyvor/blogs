@@ -10,16 +10,18 @@
 
 <div class="settings">
 	<SplitControl label="Comments Embed Code">
-		<div slot="caption">
-			Paste the embed code from your commenting system here. You can use Twig <Link
-				href="/docs/themes-templates#variables"
-				style="display:inline"
-				target="_blank">route variables</Link
-			> if needed. To connect Hyvor Talk, go to <Link
-				href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-				style="display:inline">Integrations &rarr; Hyvor Talk</Link
-			>.
-		</div>
+		{#snippet caption()}
+				<div >
+				Paste the embed code from your commenting system here. You can use Twig <Link
+					href="/docs/themes-templates#variables"
+					style="display:inline"
+					target="_blank">route variables</Link
+				> if needed. To connect Hyvor Talk, go to <Link
+					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
+					style="display:inline">Integrations &rarr; Hyvor Talk</Link
+				>.
+			</div>
+			{/snippet}
 
 		<CodemirrorEditor
 			value={$blogStore.comments_code || ''}
@@ -36,17 +38,19 @@
 	</SplitControl>
 
 	<SplitControl label="Newsletter Signup Form Code">
-		<div slot="caption">
-			Paste the embed code provided by a email newsletter service here (for the sign up form). You
-			can use Twig <Link
-				style="display:inline;"
-				href="/docs/themes-templates#variables"
-				target="_blank">route variables</Link
-			> if needed. To connect Hyvor Talk, go to <Link
-				href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-				style="display:inline">Integrations &rarr; Hyvor Talk</Link
-			>.
-		</div>
+		{#snippet caption()}
+				<div >
+				Paste the embed code provided by a email newsletter service here (for the sign up form). You
+				can use Twig <Link
+					style="display:inline;"
+					href="/docs/themes-templates#variables"
+					target="_blank">route variables</Link
+				> if needed. To connect Hyvor Talk, go to <Link
+					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
+					style="display:inline">Integrations &rarr; Hyvor Talk</Link
+				>.
+			</div>
+			{/snippet}
 
 		<CodemirrorEditor
 			value={$blogStore.newsletter_code || ''}

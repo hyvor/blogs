@@ -5,10 +5,10 @@
 	import dayjs from "dayjs";
 	import { updatePost, updatePostVariant } from "../../../postActions";
 
-    let modalOpen = false;
-    let type : 'published' | 'scheduled' = 'published';
+    let modalOpen = $state(false);
+    let type : 'published' | 'scheduled' = $state('published');
 
-    let scheduleDate = dayjs().format('YYYY-MM-DD');
+    let scheduleDate = $state(dayjs().format('YYYY-MM-DD'));
 
     async function handlePublish() {
         modalOpen = false;
@@ -47,7 +47,9 @@
         size="small"
     >
         Publish
-        <IconSendFill slot="end" size={12} />
+        {#snippet end()}
+                <IconSendFill  size={12} />
+            {/snippet}
     </Button>
 
 
@@ -80,20 +82,22 @@
         </div>
 
 
-        <div slot="footer">
-            <Button 
-                variant="invisible" 
-                on:click={() => modalOpen = false}
-            >
-                Cancel
-            </Button>
-            <Button 
-                color="accent" 
-                on:click={handlePublish}
-            >
-                {type === 'published' ? 'Publish' : 'Schedule'}
-            </Button>
-        </div>
+        {#snippet footer()}
+                <div >
+                <Button 
+                    variant="invisible" 
+                    on:click={() => modalOpen = false}
+                >
+                    Cancel
+                </Button>
+                <Button 
+                    color="accent" 
+                    on:click={handlePublish}
+                >
+                    {type === 'published' ? 'Publish' : 'Schedule'}
+                </Button>
+            </div>
+            {/snippet}
 
 
     </Modal>

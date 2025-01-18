@@ -8,12 +8,12 @@
 	import TagRow from "./TagRow.svelte";
 	import CreateTagModal from "./CreateTagModal.svelte";
 
-    let isCreating = false;
+    let isCreating = $state(false);
     
-    let tags : Tag[] = [];
-    let isLoading = true;
-    let isLoadingMore = true;
-    let hasMore = false;
+    let tags : Tag[] = $state([]);
+    let isLoading = $state(true);
+    let isLoadingMore = $state(true);
+    let hasMore = $state(false);
 
     const limit = 40;
 
@@ -68,7 +68,9 @@
 
     <SettingsTop>
         <Button on:click={() => isCreating = true}>
-            Create Tag <IconPlus slot="end" />
+            Create Tag {#snippet end()}
+                        <IconPlus  />
+                    {/snippet}
         </Button>
     </SettingsTop>
 
@@ -92,7 +94,7 @@
                         <div>Slug/URL</div>
                         <div>Description</div>
                         <div>Posts</div>
-                        <div />
+                        <div></div>
                     </TableRow>
 
                     {#each tags as tag (tag.id)}

@@ -10,9 +10,13 @@
 	import { createEventDispatcher } from "svelte";
 	import { consoleUrlWithBlog } from "../../../../../lib/consoleUrl";
     
-    export let link: LinkAnalysisLink;
+    interface Props {
+        link: LinkAnalysisLink;
+    }
 
-    let isRechecking = false;
+    let { link }: Props = $props();
+
+    let isRechecking = $state(false);
 
     const language = getLanguageById(link.post_variant_language_id);
     const postEditUrl = consoleUrlWithBlog(`/posts/${link.post_id}`);

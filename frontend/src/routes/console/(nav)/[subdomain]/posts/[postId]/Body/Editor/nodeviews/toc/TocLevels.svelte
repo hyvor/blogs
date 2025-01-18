@@ -2,7 +2,11 @@
 	import { Checkbox } from "@hyvor/design/components";
 	import { createEventDispatcher } from "svelte";
 
-    export let levels : number[];
+    interface Props {
+        levels: number[];
+    }
+
+    let { levels = $bindable() }: Props = $props();
 
     const dispatch = createEventDispatcher();
 

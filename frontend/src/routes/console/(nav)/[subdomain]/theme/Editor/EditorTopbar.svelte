@@ -7,12 +7,12 @@
 	import DeleteModal from "./Modals/DeleteModal.svelte";
 	import { fileSavingState, saveCurrentFile } from "../theme";
 
-    let isUpdating = false;
-    let isDeleting = false;
+    let isUpdating = $state(false);
+    let isDeleting = $state(false);
 
-    $: currentFile = $selectedThemeFileStore!;
-    $: currentOriginalFile = $selectedThemeFileOriginalStore;
-    $: contentChanged = currentFile.content !== currentOriginalFile?.content;
+    let currentFile = $derived($selectedThemeFileStore!);
+    let currentOriginalFile = $derived($selectedThemeFileOriginalStore);
+    let contentChanged = $derived(currentFile.content !== currentOriginalFile?.content);
 
     let updatingFileName = '';
 

@@ -6,14 +6,16 @@
 	import LanguageModal from './LanguageModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
 
-    let isCreating = false;
+    let isCreating = $state(false);
 </script>
 
 <div class="languages">
 
     <SettingsTop>
         <Button on:click={() => isCreating = true}>
-            Add Language <IconPlus slot="end" />
+            Add Language {#snippet end()}
+                        <IconPlus  />
+                    {/snippet}
         </Button>
     </SettingsTop>
 

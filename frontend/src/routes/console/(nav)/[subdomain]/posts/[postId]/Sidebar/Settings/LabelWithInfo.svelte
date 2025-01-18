@@ -2,8 +2,12 @@
 	import { Tooltip } from "@hyvor/design/components";
 	import { IconInfoCircle } from "@hyvor/icons";
 
-    export let label: string;
-    export let info: string;
+    interface Props {
+        label: string;
+        info: string;
+    }
+
+    let { label, info }: Props = $props();
 </script>
 
 <span class="label">

@@ -10,8 +10,12 @@
 	<!-- In Trial -->
 	{#if !$subscriptionStore && isInTrial()}
 		<Callout type="info">
-			<div slot="title">Trial in Progress</div>
-			<IconClock slot="icon" />
+			{#snippet title()}
+						<div >Trial in Progress</div>
+					{/snippet}
+			{#snippet icon()}
+						<IconClock  />
+					{/snippet}
 			Trial ends in <b>{trialDays} day{trialDays !== 1 ? 's' : ''}</b>. Upgrade now to continue
 			using your blog.
 		</Callout>
@@ -20,8 +24,12 @@
 	<!-- Trial Ended -->
 	{#if !$subscriptionStore && !isInTrial()}
 		<Callout type="warning">
-			<div slot="title">Trial Ended</div>
-			<IconExclamationCircle slot="icon" />
+			{#snippet title()}
+						<div >Trial Ended</div>
+					{/snippet}
+			{#snippet icon()}
+						<IconExclamationCircle  />
+					{/snippet}
 			Your trial has ended. Upgrade now to continue using your blog.
 		</Callout>
 	{/if}

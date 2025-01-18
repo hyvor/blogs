@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import {
 		Button,
 		IconMessage,
@@ -13,16 +16,20 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { SelectedFile } from '../image-uploader';
 
-	export let search = '';
+	interface Props {
+		search?: string;
+	}
 
-	let isLoading = false;
-	let isLoadingMore = false;
-	let hasMore = false;
-	let images: UnsplashImage[] = [];
+	let { search = $bindable('') }: Props = $props();
 
-	let hasLoaded = false;
+	let isLoading = $state(false);
+	let isLoadingMore = $state(false);
+	let hasMore = $state(false);
+	let images: UnsplashImage[] = $state([]);
 
-	let inputError = false;
+	let hasLoaded = $state(false);
+
+	let inputError = $state(false);
 
 	const limit = 30;
 
@@ -85,7 +92,9 @@
 			state={inputError ? 'error' : undefined}
 		/>
 		<Button on:click={() => performSearch()}>
-			Search <IconArrowReturnLeft slot="end" size={14} />
+			Search {#snippet end()}
+						<IconArrowReturnLeft  size={14} />
+					{/snippet}
 		</Button>
 	</div>
 
@@ -102,8 +111,8 @@
 							{#if i % 3 === col}
 								<div
 									class="img-wrap"
-									on:click={() => handleSelect(image)}
-									on:keyup
+									onclick={() => handleSelect(image)}
+									onkeyup={bubble('keyup')}
 									role="button"
 									tabindex="0"
 								>

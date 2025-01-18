@@ -8,10 +8,14 @@
 	import RouteRow from "./RouteRow.svelte";
 	import CreateUpdateRouteModal from "./CreateUpdateRouteModal.svelte";
 
-    export let isLoading = true;
-    export let isCreating = false;
+    interface Props {
+        isLoading?: boolean;
+        isCreating?: boolean;
+    }
 
-    let routes : Route[] = [];
+    let { isLoading = $bindable(true), isCreating = $bindable(false) }: Props = $props();
+
+    let routes : Route[] = $state([]);
 
     onMount(() => {
 
@@ -51,7 +55,9 @@
 <SettingsTop>
 
     <Button on:click={() => isCreating = true}>
-        Create Route <IconPlus slot="end" />
+        Create Route {#snippet end()}
+                <IconPlus  />
+            {/snippet}
     </Button>
 
 </SettingsTop>
@@ -72,7 +78,7 @@
                     <div>Template</div>
                     <div>Posts Filter</div>
                     <div>Content Type</div>
-                    <div/>
+                    <div></div>
                 </TableRow>
 
                 {#each routes as route (route.id)}

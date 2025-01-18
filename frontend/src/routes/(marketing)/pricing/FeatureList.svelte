@@ -7,8 +7,12 @@
 	} from '@hyvor/icons';
 	import { plansMax, type Feature, plansStart } from './pricing';
 	import { Tooltip } from '@hyvor/design/components';
-	export let features: Feature[];
-	export let title: string;
+	interface Props {
+		features: Feature[];
+		title: string;
+	}
+
+	let { features, title }: Props = $props();
 </script>
 
 <div class="title">{title}</div>

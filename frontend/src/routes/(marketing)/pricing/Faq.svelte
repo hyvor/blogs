@@ -1,15 +1,22 @@
 <script lang="ts">
 	import type { ComponentType } from "svelte";
 
-    export let q: string;
-    export let icon: ComponentType;
+    interface Props {
+        q: string;
+        icon: ComponentType;
+        children?: import('svelte').Snippet;
+    }
+
+    let { q, icon, children }: Props = $props();
+
+    const SvelteComponent = $derived(icon);
 </script>
 
 <div class="faq">
 
-    <svelte:component this={icon} size={26} />
+    <SvelteComponent size={26} />
     <div class="q">{q}</div>
-    <div class="a"><slot /></div>
+    <div class="a">{@render children?.()}</div>
 
 </div>
 

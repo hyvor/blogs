@@ -3,8 +3,8 @@
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { IconButton, Link, Loader } from "@hyvor/design/components";
 
-    let type : 'laptop' | 'tablet' = 'laptop';
-    let isLoading = true;
+    let type : 'laptop' | 'tablet' = $state('laptop');
+    let isLoading = $state(true);
 </script>
 
 <div class="preview">
@@ -12,7 +12,9 @@
     <div class="navi">
         <div class="left">
             <Link href={$blogStore.url} target="_blank" underline={false} color="text">
-                {$blogStore.url.replace(/https?:\/\//, '')} <IconBoxArrowUpRight slot="end" size={14} />
+                {$blogStore.url.replace(/https?:\/\//, '')} {#snippet end()}
+                                <IconBoxArrowUpRight  size={14} />
+                            {/snippet}
             </Link>
         </div>
         <div class="right">
@@ -41,9 +43,9 @@
             style:width={type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360) + "px"}
             style:height={type === 'laptop' ? "100%" : 740 + "px"}
             style:display={isLoading ? "none" : "block"}
-            on:load={() => isLoading = false}
+            onload={() => isLoading = false}
             title="Preview"
-        />
+></iframe>
     </div>
 
 </div>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import FullTrialSignup from './../../@components/FullTrialSignup.svelte';
 	import HomepageCustomers from './../../@homepage/Customers/HomepageCustomers.svelte';
 	import AllFeatures from './../../@homepage/AllFeatures/AllFeatures.svelte';
@@ -9,7 +9,7 @@
     import Hosting from "../../@homepage/Hosting/Hosting.svelte";
     import Seo from "../../@homepage/Seo/Seo.svelte";
 
-    export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>

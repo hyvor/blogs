@@ -7,8 +7,8 @@
 	import { createPostVariant } from "../../../postActions";
 	import { goto } from "$app/navigation";
 
-    let showDropdown = false;
-    let isCreatingVariant = false;
+    let showDropdown = $state(false);
+    let isCreatingVariant = $state(false);
 
     function handleSelect(lang: Language) {
         if (lang.id === $postLanguageStore.id) return;
@@ -57,39 +57,47 @@
             width={250}
         >
 
-            <Button
-                slot="trigger"
-                color="input"
-                disabled={isCreatingVariant}
-            >
-                {$postLanguageStore.name}
-                <IconCaretDown slot="end" size={12} />
-            </Button>
+            {#snippet trigger()}
+                        <Button
+                    
+                    color="input"
+                    disabled={isCreatingVariant}
+                >
+                    {$postLanguageStore.name}
+                    {#snippet end()}
+                                <IconCaretDown  size={12} />
+                            {/snippet}
+                </Button>
+                    {/snippet}
 
-            <ActionList 
-                slot="content"
-            >
+            {#snippet content()}
+                        <ActionList 
+                    
+                >
 
-                {#each $languagesStore as language}
-                    <ActionListItem
-                        on:select={() => handleSelect(language)}
-                        disabled={language.id === $postLanguageStore.id}
-                        style="
-                            {language.id === $postLanguageStore.id && 'background-color:var(--accent-light-mid)'}
-                        "
-                    >
-                        {language.name}
+                    {#each $languagesStore as language}
+                        <ActionListItem
+                            on:select={() => handleSelect(language)}
+                            disabled={language.id === $postLanguageStore.id}
+                            style="
+                                {language.id === $postLanguageStore.id && 'background-color:var(--accent-light-mid)'}
+                            "
+                        >
+                            {language.name}
 
-                        <span slot="end" class="status">
-                            <Text small light>
-                                {getVariantOfLanguage(language.id)?.status || 'Missing'}
-                            </Text>
-                        </span>
+                            {#snippet end()}
+                                                <span  class="status">
+                                    <Text small light>
+                                        {getVariantOfLanguage(language.id)?.status || 'Missing'}
+                                    </Text>
+                                </span>
+                                            {/snippet}
 
-                    </ActionListItem>
-                {/each}
+                        </ActionListItem>
+                    {/each}
 
-            </ActionList>
+                </ActionList>
+                    {/snippet}
 
         </Dropdown>
 

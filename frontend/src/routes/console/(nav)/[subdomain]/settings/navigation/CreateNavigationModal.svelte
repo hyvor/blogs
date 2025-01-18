@@ -5,17 +5,21 @@
 	import { createEventDispatcher } from "svelte";
 	import { isValidUrl } from "../../../../lib/helper/is-valid-url";
 
-    export let show = false;
-    let loading = false;
+    interface Props {
+        show?: boolean;
+    }
+
+    let { show = $bindable(false) }: Props = $props();
+    let loading = $state(false);
 
     const dispatch = createEventDispatcher();
 
-    let name = '';
-    let url = '';
-    let type : 'header' | 'footer' = 'header';
+    let name = $state('');
+    let url = $state('');
+    let type : 'header' | 'footer' = $state('header');
 
-    let nameError : null | string = null;
-    let urlError : null | string = null;
+    let nameError : null | string = $state(null);
+    let urlError : null | string = $state(null);
 
     function handleClick() {
         nameError = null;
@@ -47,8 +51,8 @@
     }   
 
 
-    $: isButtonDisabled = (
-            (name == '' || url == ''))
+    let isButtonDisabled = (
+            ($derived(name == '' || url == '')))
 
 </script>
 
@@ -120,26 +124,28 @@
         </InputGroup>
     </SplitControl>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button 
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button 
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleClick}
-                disabled={isButtonDisabled}
-            >
-                Add
-            </Button>
+                <Button
+                    on:click={handleClick}
+                    disabled={isButtonDisabled}
+                >
+                    Add
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>

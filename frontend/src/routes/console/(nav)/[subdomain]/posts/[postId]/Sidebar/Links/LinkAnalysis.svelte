@@ -16,11 +16,11 @@
 	import { postVariantStore, updatePostVariantStore } from "../../../postStore";
 	import { getResultObjectFromLinks } from "./linkLoader";
 
-    $: linksCount = $variantLinksStore.length;
+    let linksCount = $derived($variantLinksStore.length);
 
-    let isReloadingAll = false;
+    let isReloadingAll = $state(false);
 
-    let linksEl: HTMLDivElement;
+    let linksEl: HTMLDivElement = $state();
 
     function handleJump(type: 'ok' | 'broken' | 'redirect' | 'ignored') {
         const el = linksEl.querySelector('.link-wrap.type-' + type);
@@ -71,9 +71,13 @@
                     on:click={handleReloadAll}
                     disabled={isReloadingAll}
                 >
-                    <IconArrowClockwise size={14} slot="start" />
+                    {#snippet start()}
+                                        <IconArrowClockwise size={14}  />
+                                    {/snippet}
                     Recheck All
-                    <Loader slot="end" size={12} state={isReloadingAll ? 'loading' : 'none'} />
+                    {#snippet end()}
+                                        <Loader  size={12} state={isReloadingAll ? 'loading' : 'none'} />
+                                    {/snippet}
                 </Button>
             {/if}
         </div>
@@ -84,33 +88,49 @@
 
         {#if $variantLinkCountsStore.ok > 0}
             <Tag size="small" color="green" interactive on:click={() => handleJump('ok')}>
-                <Text bold slot="start">{$variantLinkCountsStore.ok}</Text>
+                {#snippet start()}
+                                <Text bold >{$variantLinkCountsStore.ok}</Text>
+                            {/snippet}
                 OK
-                <IconCheckCircleFill slot="end" size={12} />
+                {#snippet end()}
+                                <IconCheckCircleFill  size={12} />
+                            {/snippet}
             </Tag>
         {/if}
 
         {#if $variantLinkCountsStore.broken > 0}
             <Tag size="small" color="red" interactive on:click={() => handleJump('broken')}>
-                <Text bold slot="start">{$variantLinkCountsStore.broken}</Text>
+                {#snippet start()}
+                                <Text bold >{$variantLinkCountsStore.broken}</Text>
+                            {/snippet}
                 Broken
-                <IconXCircleFill slot="end" size={12} />
+                {#snippet end()}
+                                <IconXCircleFill  size={12} />
+                            {/snippet}
             </Tag>
         {/if}
 
         {#if $variantLinkCountsStore.redirect > 0}
             <Tag size="small" color="orange" interactive on:click={() => handleJump('redirect')}>
-                <Text bold slot="start">{$variantLinkCountsStore.redirect}</Text>
+                {#snippet start()}
+                                <Text bold >{$variantLinkCountsStore.redirect}</Text>
+                            {/snippet}
                 Redirect
-                <IconExclamationCircleFill slot="end" size={12} />
+                {#snippet end()}
+                                <IconExclamationCircleFill  size={12} />
+                            {/snippet}
             </Tag>
         {/if}
 
         {#if $variantLinkCountsStore.ignored > 0}
             <Tag size="small" color="default" interactive on:click={() => handleJump('ignored')}>
-                <Text bold slot="start">{$variantLinkCountsStore.ignored}</Text>
+                {#snippet start()}
+                                <Text bold >{$variantLinkCountsStore.ignored}</Text>
+                            {/snippet}
                 Ignored
-                <IconEyeSlashFill slot="end" size={12} />
+                {#snippet end()}
+                                <IconEyeSlashFill  size={12} />
+                            {/snippet}
             </Tag>
         {/if}
 

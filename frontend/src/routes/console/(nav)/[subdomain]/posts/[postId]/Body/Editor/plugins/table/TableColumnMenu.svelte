@@ -8,11 +8,11 @@
 	import { addColumnAfter, addColumnBefore, deleteColumn, deleteTable, toggleHeaderColumn } from "prosemirror-tables";
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 
-    let show = false;
-    let wrapEl: HTMLSpanElement;
-    let showDropdown = false;
+    let show = $state(false);
+    let wrapEl: HTMLSpanElement = $state();
+    let showDropdown = $state(false);
 
-    $: editorView = $postEditingStatusStore.editorView!;
+    let editorView = $derived($postEditingStatusStore.editorView!);
 
     function isSelectionInTable(selection: Selection) {
         const pos = selection.$anchor;
@@ -176,7 +176,7 @@
     onMount(position);
 </script>
 
-<svelte:window on:scroll|capture={position} />
+<svelte:window onscrollcapture={position} />
 
 <span 
     bind:this={wrapEl}
@@ -184,32 +184,44 @@
     class="wrap"
 >
     <Dropdown bind:show={showDropdown} align="center" relative={true}>
-        <button slot="trigger" style="display: {showDropdown ? 'none' : 'inline-flex'}">
-            <IconThreeDots size={14} />
-        </button>
+        {#snippet trigger()}
+                <button  style="display: {showDropdown ? 'none' : 'inline-flex'}">
+                <IconThreeDots size={14} />
+            </button>
+            {/snippet}
 
-        <ActionList slot="content">
-            <ActionListItem on:click={handleHeader}>
-                <IconCardHeading slot="start" />
-                Header column
-            </ActionListItem>
-            <ActionListItem on:click={handleInsertBefore}>
-                <IconArrowLeft slot="start" />
-                Insert before
-            </ActionListItem>
-            <ActionListItem on:click={handleInsertBelow}>
-                <IconArrowRight slot="start" />
-                Insert after
-            </ActionListItem>
-            <ActionListItem on:click={handleDelete}>
-                <IconTrash slot="start" />
-                Delete column
-            </ActionListItem>
-            <!-- <ActionListItem on:click={handleClearContent}>
-                <IconBackspace slot="start" />
-                Clear content
-            </ActionListItem> -->
-        </ActionList>
+        {#snippet content()}
+                <ActionList >
+                <ActionListItem on:click={handleHeader}>
+                    {#snippet start()}
+                                <IconCardHeading  />
+                            {/snippet}
+                    Header column
+                </ActionListItem>
+                <ActionListItem on:click={handleInsertBefore}>
+                    {#snippet start()}
+                                <IconArrowLeft  />
+                            {/snippet}
+                    Insert before
+                </ActionListItem>
+                <ActionListItem on:click={handleInsertBelow}>
+                    {#snippet start()}
+                                <IconArrowRight  />
+                            {/snippet}
+                    Insert after
+                </ActionListItem>
+                <ActionListItem on:click={handleDelete}>
+                    {#snippet start()}
+                                <IconTrash  />
+                            {/snippet}
+                    Delete column
+                </ActionListItem>
+                <!-- <ActionListItem on:click={handleClearContent}>
+                    <IconBackspace slot="start" />
+                    Clear content
+                </ActionListItem> -->
+            </ActionList>
+            {/snippet}
 
     </Dropdown>
 </span>

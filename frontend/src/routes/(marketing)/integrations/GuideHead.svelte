@@ -1,17 +1,23 @@
 <script lang="ts">
 	import { IconBoxes } from '@hyvor/icons';
 	import hyvorblogsIcon from './icons/hyvorblogs.png';
-	export let title: string;
-	export let description: string | null = '';
-	export let integrationIcon: string | null = '';
 	import { Button } from '@hyvor/design/components';
+	interface Props {
+		title: string;
+		description?: string | null;
+		integrationIcon?: string | null;
+	}
+
+	let { title, description = '', integrationIcon = '' }: Props = $props();
 </script>
 
 <div class="hds-container guide-head">
 	<div class="hds-container buttons">
 		<div class="button">
 			<Button as="a" href="/integrations" size="large" variant="outline">
-				<IconBoxes slot="start" /> View All Integrations
+				{#snippet start()}
+								<IconBoxes  />
+							{/snippet} View All Integrations
 			</Button>
 		</div>
 	</div>

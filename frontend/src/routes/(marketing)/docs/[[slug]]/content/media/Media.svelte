@@ -40,7 +40,9 @@
 </p>
 
 <Callout type="info">
-    <IconLightbulb slot="icon" />
+    {#snippet icon()}
+        <IconLightbulb  />
+    {/snippet}
     Note that the extension in the URL will not change (ex: <code>/media/image.jpg</code> or <code>/media/image.png</code>), but the image will be served as WebP with correct HTTP headers. You can verify this by checking your page in <a href="https://pagespeed.web.dev/" target="_blank" rel="nofollow">PageSpeed Insights</a>.
 </Callout>
 

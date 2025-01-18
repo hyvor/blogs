@@ -1,4 +1,10 @@
 <script lang="ts">
+    interface Props {
+        left?: import('svelte').Snippet;
+        right?: import('svelte').Snippet;
+    }
+
+    let { left, right }: Props = $props();
 
 
 </script>
@@ -6,11 +12,11 @@
 <div class="wrap">
 
     <div class="left">
-        <slot name="left" />
+        {@render left?.()}
     </div>
 
     <div class="right">
-        <slot name="right" />
+        {@render right?.()}
     </div>
 
 </div>

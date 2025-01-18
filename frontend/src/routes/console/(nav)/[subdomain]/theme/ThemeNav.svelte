@@ -9,7 +9,7 @@
 	import ChangeTheme from "./ChangeTheme/ChangeTheme.svelte";
 	import { loadThemeFiles } from "./themeActions";
 
-    let isLoading = true;
+    let isLoading = $state(true);
 
     onMount(() => {
         loadThemeFiles()

@@ -5,7 +5,7 @@
 	import type { Media } from '../../../../lib/types';
 	import { toKebabCase } from './mediaUtils';
 
-	let loading = false;
+	let loading = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -23,20 +23,24 @@
 			});
 	}
 
-	export let show: boolean;
-	export let media: Media;
+	interface Props {
+		show: boolean;
+		media: Media;
+	}
 
-	let name = media.name;
+	let { show = $bindable(), media }: Props = $props();
+
+	let name = $state(media.name);
 
 	const startExt = getExtension(name);
-	$: ext = getExtension(name);
 
-	$: kebabName = toKebabCase(name);
 
 	function getExtension(n: string) {
 		const parts = n.split('.');
 		return (parts[parts.length - 1] || '').trim();
 	}
+	let ext = $derived(getExtension(name));
+	let kebabName = $derived(toKebabCase(name));
 </script>
 
 <div>

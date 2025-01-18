@@ -4,10 +4,14 @@
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import { createEventDispatcher } from 'svelte';
 
-	export let src: string | null = null;
-	export let uploadText = 'Upload';
+	interface Props {
+		src?: string | null;
+		uploadText?: string;
+	}
 
-	let isUploading = false;
+	let { src = null, uploadText = 'Upload' }: Props = $props();
+
+	let isUploading = $state(false);
 
 	const dispatch = createEventDispatcher<{ change: string | null }>();
 

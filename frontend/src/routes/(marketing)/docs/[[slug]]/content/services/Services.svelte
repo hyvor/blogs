@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Callout, TabNav, TabNavItem, Table, TableRow, Link } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight } from '@hyvor/icons';
-    let active = 'comments';
+    let active = $state('comments');
 </script>
 <h1>Services</h1>
 
@@ -82,11 +82,15 @@
 
             <TableRow>
                 <div><a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a></div>
-                <div><Link href="https://hyvor.com/blog/add-convertkit" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/add-convertkit" target="_blank">{#snippet end()}
+                                                        <IconBoxArrowUpRight  />
+                                                    {/snippet}View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://mailchimp.com/en-gb/" rel="nofollow" target="_blank">MailChimp</a></div>
-                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp" target="_blank">{#snippet end()}
+                                                        <IconBoxArrowUpRight  />
+                                                    {/snippet}View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://emailoctopus.com/" rel="nofollow" target="_blank">EmailOctopus</a></div>
@@ -120,7 +124,9 @@
 
             <TableRow>
                 <div><a href="https://analytics.google.com/analytics" rel="nofollow" target="_blank">Google Analytics</a></div>
-                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog" target="_blank">{#snippet end()}
+                                                                <IconBoxArrowUpRight  />
+                                                            {/snippet}View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://www.cloudflare.com/analytics" rel="nofollow" target="_blank">Cloudflare Analytics</a></div>
@@ -156,7 +162,9 @@
 
                 <TableRow>
                     <div><a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-memberstack" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-memberstack" target="_blank">{#snippet end()}
+                                                                        <IconBoxArrowUpRight  />
+                                                                    {/snippet}View</Link></div>
                 </TableRow>
 
                 <TableRow>
@@ -193,22 +201,30 @@
 
                 <TableRow>
                     <div><a href="https://www.google.com/forms" rel="nofollow" target="_blank">Google Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-google-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-google-forms" target="_blank">{#snippet end()}
+                                                                        <IconBoxArrowUpRight  />
+                                                                    {/snippet}View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://forms.office.com/" rel="nofollow" target="_blank">Microsoft Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank">{#snippet end()}
+                                                                        <IconBoxArrowUpRight  />
+                                                                    {/snippet}View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank">{#snippet end()}
+                                                                        <IconBoxArrowUpRight  />
+                                                                    {/snippet}View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://www.wufoo.com/" rel="nofollow" target="_blank">Wufoo</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-wufoo" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-wufoo" target="_blank">{#snippet end()}
+                                                                        <IconBoxArrowUpRight  />
+                                                                    {/snippet}View</Link></div>
                 </TableRow>
 
                 <TableRow>

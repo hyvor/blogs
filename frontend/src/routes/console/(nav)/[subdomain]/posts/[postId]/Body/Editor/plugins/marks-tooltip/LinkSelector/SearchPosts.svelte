@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { createBubbler, stopPropagation } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { ActionList, ActionListItem, Button, Dropdown, IconMessage, Loader, TextInput, toast } from "@hyvor/design/components";
 	import { IconCaretDown } from "@hyvor/icons";
 	import { createEventDispatcher, tick } from "svelte";
@@ -6,12 +9,12 @@
 	import type { Language, Post } from "../../../../../../../../../lib/types";
 	import { languagesStore, primaryLanguageStore } from "../../../../../../../../../lib/stores/languagesStore";
 
-    let input = '';
-    let currentLanguage = $primaryLanguageStore;
-    let languageDropdownShow = false;
+    let input = $state('');
+    let currentLanguage = $state($primaryLanguageStore);
+    let languageDropdownShow = $state(false);
 
-    let isLoading = false;
-    let posts : Post[] = [];
+    let isLoading = $state(false);
+    let posts : Post[] = $state([]);
 
     const dispatch = createEventDispatcher();
 
@@ -87,30 +90,36 @@
 
     {#if $languagesStore.length > 1}
 
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div on:click|stopPropagation>
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={stopPropagation(bubble('click'))}>
             <Dropdown
                 align="end"
                 bind:show={languageDropdownShow}
             >
-                <Button slot="trigger" color="gray">
-                    { currentLanguage.name }
-                    <IconCaretDown size={12} slot="end" />
-                </Button>
-                <ActionList 
-                    slot="content"
-                    selection="single"
-                >
-                    {#each $languagesStore as language}
-                        <ActionListItem
-                            selected={language.id === currentLanguage.id}
-                            on:select={() => handleDropdownSelect(language)}
-                        >
-                            { language.name }
-                        </ActionListItem>
-                    {/each}
-                </ActionList>
+                {#snippet trigger()}
+                                <Button  color="gray">
+                        { currentLanguage.name }
+                        {#snippet end()}
+                                        <IconCaretDown size={12}  />
+                                    {/snippet}
+                    </Button>
+                            {/snippet}
+                {#snippet content()}
+                                <ActionList 
+                        
+                        selection="single"
+                    >
+                        {#each $languagesStore as language}
+                            <ActionListItem
+                                selected={language.id === currentLanguage.id}
+                                on:select={() => handleDropdownSelect(language)}
+                            >
+                                { language.name }
+                            </ActionListItem>
+                        {/each}
+                    </ActionList>
+                            {/snippet}
             </Dropdown>
         </div>
 
@@ -143,8 +152,8 @@
                         class="post"
                         role="button"
                         tabindex="0"
-                        on:click={() => handleClick(post)}
-                        on:keyup
+                        onclick={() => handleClick(post)}
+                        onkeyup={bubble('keyup')}
                     >
 
                         <div class="title">

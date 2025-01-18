@@ -8,11 +8,15 @@
 	import { createFile } from "../themeActions";
 	import { addThemeFileToStore, selectedThemeFileIdStore } from "../themeStore";
 
-    export let folder: ThemeFolder;
+    interface Props {
+        folder: ThemeFolder;
+    }
 
-    let uploadInput: HTMLInputElement;
+    let { folder }: Props = $props();
+
+    let uploadInput: HTMLInputElement = $state();
     
-    let isCreating = false;
+    let isCreating = $state(false);
 
     function handleUpload() {
         const files = uploadInput.files;
@@ -55,7 +59,7 @@
         type="file"
         bind:this={uploadInput}
         style="display: none;"
-        on:change={handleUpload}
+        onchange={handleUpload}
     />
 
     <Button 
@@ -63,7 +67,9 @@
         variant="invisible"
         on:click={() => isCreating = true}
     >
-        <IconPlus size={11} slot="start" />
+        {#snippet start()}
+                <IconPlus size={11}  />
+            {/snippet}
         New
     </Button>
 
@@ -73,7 +79,9 @@
             variant="invisible"
             on:click={handleUploadClick}
         >
-            <IconCloudUpload size={11} slot="start" />
+            {#snippet start()}
+                        <IconCloudUpload size={11}  />
+                    {/snippet}
             Upload
         </Button>
     {/if}

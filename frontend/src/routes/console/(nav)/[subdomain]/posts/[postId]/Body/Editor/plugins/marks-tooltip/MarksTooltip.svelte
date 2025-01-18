@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import type { EditorView } from "prosemirror-view";
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 	import { tick } from "svelte";
@@ -10,11 +12,15 @@
 	import LinkSelector from "./LinkSelector/LinkSelector.svelte";
 	import { markExtend } from "./mark-helpers";
 
-    export let view: EditorView;
-    export let show = false;
+    interface Props {
+        view: EditorView;
+        show?: boolean;
+    }
 
-    let tooltip: HTMLSpanElement;
-    let linkSelectorOpen = false;
+    let { view, show = false }: Props = $props();
+
+    let tooltip: HTMLSpanElement = $state();
+    let linkSelectorOpen = $state(false);
 
     function getLink() {
         const sel = view.state.selection;
@@ -28,8 +34,10 @@
         return link;
     }
 
-    let  link: Mark | null;
-    $: if (view) link = getLink();
+    let  link: Mark | null = $state();
+    run(() => {
+        if (view) link = getLink();
+    });
 
     function updatePosition() {
         if (!tooltip) return;
@@ -65,12 +73,14 @@
 
 
     // position when show/view is changed
-    $: if (view && show) {
-        (async () => {
-            await tick()
-            updatePosition()
-        })();
-    }
+    run(() => {
+        if (view && show) {
+            (async () => {
+                await tick()
+                updatePosition()
+            })();
+        }
+    });
 
     type MarkName = 'link' | 'strong' | 'em' | 'code' | 'strike'
 

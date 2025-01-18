@@ -137,7 +137,7 @@
 	<link rel="canonical" href="https://blogs.hyvor.com/pricing" />
 </svelte:head>
 
-<svelte:window on:resize={handleResize} />
+<svelte:window onresize={handleResize} />
 
 <FeatureSectionTitle
 	title="Simple & transparent pricing"

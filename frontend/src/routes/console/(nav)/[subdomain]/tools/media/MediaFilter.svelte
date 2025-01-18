@@ -4,13 +4,17 @@
 	import { getExtensionsByFileType, type FileType } from "./mediaActions";
 	import { createEventDispatcher, onMount } from "svelte";
 
-    export let defaultType: null | FileType = null;
-    export let typeDisabled = false;
+    interface Props {
+        defaultType?: null | FileType;
+        typeDisabled?: boolean;
+    }
 
-    let type: FileType = defaultType || 'all';
-    let showFileTypesDropdown = false;
-    let customExtension = '';
-    let search = '';
+    let { defaultType = null, typeDisabled = false }: Props = $props();
+
+    let type: FileType = $state(defaultType || 'all');
+    let showFileTypesDropdown = $state(false);
+    let customExtension = $state('');
+    let search = $state('');
 
     const dispatch = createEventDispatcher();
 
@@ -24,7 +28,7 @@
         { name: 'Custom Extension', value: 'custom', extensions: 'You choose' }
     ] as {name: string, value: FileType, extensions: string}[];
 
-    $: selectedFileName = fileTypes.find(f => f.value === type)!.name;
+    let selectedFileName = $derived(fileTypes.find(f => f.value === type)!.name);
 
     function closeAndDispatch() {
         showFileTypesDropdown = false;
@@ -74,50 +78,60 @@
 <div class="toolbar">
 
     <Dropdown width={300} bind:show={showFileTypesDropdown}>
-        <Button 
-            slot="trigger" 
-            color="input"
-            disabled={typeDisabled}
-        >
-            <Text small light slot="start">File type</Text>
-            { selectedFileName }
+        {#snippet trigger()}
+                <Button 
+                 
+                color="input"
+                disabled={typeDisabled}
+            >
+                {#snippet start()}
+                        <Text small light >File type</Text>
+                    {/snippet}
+                { selectedFileName }
 
-            {#if type === 'custom' && customExtension}
-                - { customExtension }
-            {/if}
+                {#if type === 'custom' && customExtension}
+                    - { customExtension }
+                {/if}
 
-            <IconCaretDown slot="end" size={12} />
-        </Button>
+                {#snippet end()}
+                        <IconCaretDown  size={12} />
+                    {/snippet}
+            </Button>
+            {/snippet}
 
-        <ActionList slot="content" selection="single">
-            {#each fileTypes as f (f.value)}
-                <ActionListItem 
-                    on:select={() => selectFileType(f.value)}
-                    selected={type === f.value}
-                >
-                    { f.name }
+        {#snippet content()}
+                <ActionList  selection="single">
+                {#each fileTypes as f (f.value)}
+                    <ActionListItem 
+                        on:select={() => selectFileType(f.value)}
+                        selected={type === f.value}
+                    >
+                        { f.name }
 
-                    <Text small light slot="end">
-                        { f.extensions }
-                    </Text>
-                </ActionListItem>
-            {/each}
+                        {#snippet end()}
+                                        <Text small light >
+                                { f.extensions }
+                            </Text>
+                                    {/snippet}
+                    </ActionListItem>
+                {/each}
 
-            {#if type === 'custom'}
-                <div class="custom-ext">
-                    <TextInput 
-                        bind:value={customExtension}
-                        size="x-small"
-                        autofocus
-                        placeholder="svg, gif..."
-                    />
-                    <Button size="small" on:click={handleChooseCustomExt}>
-                        Choose
-                    </Button>
-                </div>
-            {/if}
-                
-        </ActionList>
+                {#if type === 'custom'}
+                    <div class="custom-ext">
+                        <TextInput 
+                            bind:value={customExtension}
+                            size="x-small"
+                            autofocus
+                            placeholder="svg, gif..."
+                        />
+                        <Button size="small" on:click={handleChooseCustomExt}>
+                            Choose
+                        </Button>
+                    </div>
+                {/if}
+                    
+            </ActionList>
+            {/snippet}
 
     </Dropdown>
 

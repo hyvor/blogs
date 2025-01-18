@@ -7,9 +7,13 @@
 	import { createEventDispatcher } from 'svelte';
 	import CreateRule from './CreateRule.svelte';
 
-	export let rule: HyvorTalkGatedContentRule;
+	interface Props {
+		rule: HyvorTalkGatedContentRule;
+	}
 
-	let updating = false;
+	let { rule }: Props = $props();
+
+	let updating = $state(false);
 
 	const dispatch = createEventDispatcher<{
 		delete: number;

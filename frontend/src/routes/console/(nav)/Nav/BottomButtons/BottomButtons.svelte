@@ -9,7 +9,7 @@
 	import { Button } from '@hyvor/design/components';
 	import { IconInfoCircleFill, IconDiscord, IconStarFill } from '@hyvor/icons';
 
-	let ratingShown = false;
+	let ratingShown = $state(false);
 </script>
 
 <div id="nav-bottom">
@@ -34,7 +34,9 @@
 		align="start"
 		on:click={() => (ratingShown = true)}
 	>
-		<IconStarFill slot="start" />
+		{#snippet start()}
+				<IconStarFill  />
+			{/snippet}
 		Rate us
 	</Button>
 
@@ -47,7 +49,9 @@
 		color="accent"
 		align="start"
 	>
-		<IconChatFill slot="start" />
+		{#snippet start()}
+				<IconChatFill  />
+			{/snippet}
 		Join community
 	</Button>
 
@@ -60,7 +64,9 @@
 		color="accent"
 		align="start"
 	>
-		<IconInfoCircleFill slot="start" />
+		{#snippet start()}
+				<IconInfoCircleFill  />
+			{/snippet}
 		Docs
 	</Button>
 </div>
@@ -84,19 +90,27 @@
 		<ActionList>
 			<a href="https://www.g2.com/products/hyvor-blogs/reviews" target="_blank">
 				<ActionListItem>
-					<G2Icon slot="start" />
+					{#snippet start()}
+										<G2Icon  />
+									{/snippet}
 					<span>Rate us on G2</span>
 					<Text small light>How is our product?</Text>
-					<IconBoxArrowUpRight slot="end" size={14} />
+					{#snippet end()}
+										<IconBoxArrowUpRight  size={14} />
+									{/snippet}
 				</ActionListItem>
 			</a>
 
 			<a href="https://www.trustpilot.com/review/hyvor.com" target="_blank">
 				<ActionListItem>
-					<TruspilotIcon slot="start" />
+					{#snippet start()}
+										<TruspilotIcon  />
+									{/snippet}
 					<span>Rate us on Trustpilot</span>
 					<Text small light>How is our customer service?</Text>
-					<IconBoxArrowUpRight slot="end" size={14} />
+					{#snippet end()}
+										<IconBoxArrowUpRight  size={14} />
+									{/snippet}
 				</ActionListItem>
 			</a>
 		</ActionList>

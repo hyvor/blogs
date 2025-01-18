@@ -1,6 +1,6 @@
 import { EditorState, Plugin, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponent, mount } from "svelte";
 import TableRowMenu from "./TableRowMenu.svelte";
 import TableColumnMenu from "./TableColumnMenu.svelte";
 
@@ -33,18 +33,18 @@ export class PluginTableMenu implements PluginView {
         if (this.rowMenu) {
             this.rowMenu.$destroy();
         }
-        this.rowMenu = new TableRowMenu({
-            target: this.wrap
-        });
+        this.rowMenu = mount(TableRowMenu, {
+                    target: this.wrap
+                });
     }
 
     private createColumnMenuComponent() {
         if (this.columnMenu) {
             this.columnMenu.$destroy();
         }
-        this.columnMenu = new TableColumnMenu({
-            target: this.wrap
-        });
+        this.columnMenu = mount(TableColumnMenu, {
+                    target: this.wrap
+                });
     }
 
     update(view: EditorView, prevState: EditorState) {

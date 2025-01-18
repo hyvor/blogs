@@ -1,5 +1,5 @@
 import type { Node } from "prosemirror-model";
-import type { ComponentType } from "svelte";
+import type { ComponentType, mount, unmount } from "svelte";
 import schema from "../../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconSoundwave, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import FileUploader from "../../../../../../../../lib/components/FileUploader/FileUploader.svelte";
@@ -165,12 +165,12 @@ function selectImage() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new FileUploader({
-            target: div,
-        });
+        const selector = mount(FileUploader, {
+                    target: div,
+                });
 
         function destroy() {
-            selector.$destroy();
+            unmount(selector);
             div.remove();
         }
 
@@ -200,15 +200,15 @@ function selectAudio() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const selector = new FileUploader({
-            target: div,
-            props: {
-                type: 'audio'
-            }
-        });
+        const selector = mount(FileUploader, {
+                    target: div,
+                    props: {
+                        type: 'audio'
+                    }
+                });
 
         function destroy() {
-            selector.$destroy();
+            unmount(selector);
             div.remove();
         }
 
@@ -241,12 +241,12 @@ function createEmbed() {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const creator = new EmbedCreator({
-            target: div,
-        });
+        const creator = mount(EmbedCreator, {
+                    target: div,
+                });
 
         function destroy() {
-            creator.$destroy();
+            unmount(creator);
             div.remove();
         }
 
@@ -286,15 +286,15 @@ function createBookmark(url: string = '') {
         const div = document.createElement("div");
         document.body.appendChild(div);
 
-        const creator = new BookmarkCreator({
-            target: div,
-            props: {
-                url
-            }
-        });
+        const creator = mount(BookmarkCreator, {
+                    target: div,
+                    props: {
+                        url
+                    }
+                });
 
         function destroy() {
-            creator.$destroy();
+            unmount(creator);
             div.remove();
         }
 

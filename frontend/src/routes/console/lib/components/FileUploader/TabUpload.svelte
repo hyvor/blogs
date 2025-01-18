@@ -8,14 +8,18 @@
 	import { getConfig } from '../../config';
 	import byteFormatter from '../../helper/byte-formatter';
 
-	export let isUploading = false;
-	export let type: 'image' | 'audio' | 'any' = 'image';
+	interface Props {
+		isUploading?: boolean;
+		type?: 'image' | 'audio' | 'any';
+	}
 
-	let inputEl: HTMLInputElement;
-	let byUrlInputEl: HTMLInputElement;
+	let { isUploading = $bindable(false), type = 'image' }: Props = $props();
 
-	let byUrl = '';
-	let isDragging = false;
+	let inputEl: HTMLInputElement = $state();
+	let byUrlInputEl: HTMLInputElement = $state();
+
+	let byUrl = $state('');
+	let isDragging = $state(false);
 
 	function getCtrl() {
 		const platform =
@@ -185,11 +189,11 @@
 </script>
 
 <svelte:window
-	on:paste={handlePaste}
-	on:dragenter={handleDragEnter}
-	on:dragover={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:dragexit={handleDragLeave}
+	onpaste={handlePaste}
+	ondragenter={handleDragEnter}
+	ondragover={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondragexit={handleDragLeave}
 />
 
 <div class="tab">
@@ -198,7 +202,7 @@
 		accept={type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : '*'}
 		style="display:none"
 		bind:this={inputEl}
-		on:change={handleInputChange}
+		onchange={handleInputChange}
 	/>
 
 	{#if isUploading}
@@ -207,11 +211,11 @@
 		<div class="upload-wrap">
 			<div
 				class="upload-area"
-				on:click={handleUploadClick}
-				on:drop={handleDragDrop}
+				onclick={handleUploadClick}
+				ondrop={handleDragDrop}
 				role="button"
 				tabindex="0"
-				on:keyup={(e) => e.key === 'Enter' && handleUploadClick()}
+				onkeyup={(e) => e.key === 'Enter' && handleUploadClick()}
 			>
 				{#if isDragging}
 					Drop here!
@@ -234,7 +238,9 @@
 						bind:input={byUrlInputEl}
 					/>
 					<Button disabled={byUrl.trim() === ''} on:click={handleFetch}>
-						Fetch <IconArrowReturnLeft slot="end" />
+						Fetch {#snippet end()}
+												<IconArrowReturnLeft  />
+											{/snippet}
 					</Button>
 				</div>
 			</div>

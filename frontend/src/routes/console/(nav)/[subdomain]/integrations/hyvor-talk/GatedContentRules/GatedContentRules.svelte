@@ -6,11 +6,11 @@
 	import { getGatedContentRules } from '../hyvorTalkActions';
 	import RuleRow from './RuleRow.svelte';
 
-	let loading = true;
-	let error: null | string = null;
-	let rules: HyvorTalkGatedContentRule[] = [];
+	let loading = $state(true);
+	let error: null | string = $state(null);
+	let rules: HyvorTalkGatedContentRule[] = $state([]);
 
-	let creating = false;
+	let creating = $state(false);
 
 	function onDelete(e: CustomEvent<number>) {
 		const id = e.detail;
@@ -43,15 +43,17 @@
 </script>
 
 <SplitControl column>
-	<Label slot="label">
-		Gated Content Rules <Button
-			size="small"
-			on:click={() => (creating = true)}
-			disabled={rules.length >= MAX_RULES}
-		>
-			+ Create
-		</Button>
-	</Label>
+	{#snippet label()}
+		<Label >
+			Gated Content Rules <Button
+				size="small"
+				on:click={() => (creating = true)}
+				disabled={rules.length >= MAX_RULES}
+			>
+				+ Create
+			</Button>
+		</Label>
+	{/snippet}
 
 	{#if loading}
 		<Loader padding={40} />

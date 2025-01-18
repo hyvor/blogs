@@ -8,11 +8,15 @@
 	import { createNavigationVariant } from "../../navigation/navigationActions";
 	import { createUserVariant } from "../../users/userActions";
 
-    export let obj: AcceptableTypes;
-    export let type: AcceptableTypesNames;
-    export let language: Language;
+    interface Props {
+        obj: AcceptableTypes;
+        type: AcceptableTypesNames;
+        language: Language;
+    }
 
-    let isCreating = false;
+    let { obj, type, language }: Props = $props();
+
+    let isCreating = $state(false);
 
     const dispatch = createEventDispatcher();
 

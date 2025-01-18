@@ -4,10 +4,14 @@
 	import type { Tag } from '../../../../lib/types';
 	import { IconLock } from '@hyvor/icons';
 
-	export let tag: Tag;
-	export let small = false;
+	interface Props {
+		tag: Tag;
+		small?: boolean;
+	}
 
-	$: variant = tag.variants.find((v) => v.language_id === $primaryLanguageStore.id);
+	let { tag, small = false }: Props = $props();
+
+	let variant = $derived(tag.variants.find((v) => v.language_id === $primaryLanguageStore.id));
 </script>
 
 <span>

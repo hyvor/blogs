@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import type { EditorView } from "prosemirror-view";
 	import type { SlashOption } from "./options";
 	import { postLanguageStore } from "../../../../../postStore";
@@ -7,14 +9,20 @@
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 	import { NodeSelection, TextSelection } from "prosemirror-state";
 
-    export let view: EditorView;
-    export let show = false;
-    export let options: SlashOption[] = [];
+    interface Props {
+        view: EditorView;
+        show?: boolean;
+        options?: SlashOption[];
+    }
 
-    let active : SlashOption | undefined = options[0];
-    $: options, active = options[0];
+    let { view, show = $bindable(false), options = [] }: Props = $props();
 
-    let slashEl: HTMLDivElement | undefined = undefined;
+    let active : SlashOption | undefined = $state(options[0]);
+    run(() => {
+        options, active = options[0];
+    });
+
+    let slashEl: HTMLDivElement | undefined = $state(undefined);
 
     async function updatePosition() {
 
@@ -52,7 +60,9 @@
 
     }
 
-    $: show, updatePosition();
+    run(() => {
+        show, updatePosition();
+    });
 
     function houseMouseOver(option: SlashOption) {
         active = option;
@@ -174,10 +184,10 @@
         {#each options as option (option.name)}
             <div 
                 class="option"
-                on:click={() => handleClick(option)}
-                on:mouseover={() => houseMouseOver(option)}
-                on:focus={() => houseMouseOver(option)}
-                on:keyup={e => {
+                onclick={() => handleClick(option)}
+                onmouseover={() => houseMouseOver(option)}
+                onfocus={() => houseMouseOver(option)}
+                onkeyup={e => {
                     if (e.key === "Enter") {
                         e.stopPropagation();
                         handleClick(option)
@@ -188,7 +198,7 @@
                 class:active={option.name === active?.name}
             >
                 <div class="icon">
-                    <svelte:component this={option.icon} />
+                    <option.icon />
                 </div>
                 <div class="name-desc">
                     <div class="name">{option.name}</div>

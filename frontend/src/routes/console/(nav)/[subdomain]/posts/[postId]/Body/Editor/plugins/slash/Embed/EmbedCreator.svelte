@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
 	import { createEventDispatcher } from 'svelte';
 	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
@@ -7,11 +9,11 @@
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import EmbedHtmlDisplay from './EmbedHtmlDisplay.svelte';
 
-	let show = true;
-	let url = '';
+	let show = $state(true);
+	let url = $state('');
 
-	let inputEl: HTMLInputElement;
-	let inputStarted = false;
+	let inputEl: HTMLInputElement = $state();
+	let inputStarted = $state(false);
 
 	const dispatch = createEventDispatcher<{
 		close: void;
@@ -20,15 +22,17 @@
 		createHtmlBlock: string;
 	}>();
 
-	$: if (!show) {
-		dispatch('close');
-	}
+	run(() => {
+		if (!show) {
+			dispatch('close');
+		}
+	});
 
-	let isFetching = false;
-	let error: null | string = null;
-	let embedFailed = false;
+	let isFetching = $state(false);
+	let error: null | string = $state(null);
+	let embedFailed = $state(false);
 
-	let urlData: null | UnfoldedEmbed = null;
+	let urlData: null | UnfoldedEmbed = $state(null);
 
 	function handleFetch() {
 		if (!inputStarted) {
@@ -111,7 +115,9 @@
 			bind:input={inputEl}
 		/>
 		<Button on:click={handleFetch}>
-			Fetch <IconArrowReturnLeft slot="end" />
+			Fetch {#snippet end()}
+						<IconArrowReturnLeft  />
+					{/snippet}
 		</Button>
 	</div>
 

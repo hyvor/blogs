@@ -7,13 +7,17 @@
     import logo from '$lib/img/logo.png';
 	import { postEditingStatusStore } from "../../../postStore";
  
-    export let prompt: string;
-    export let response: null | string = null;
-    export let error: null | string | boolean = null;
+    interface Props {
+        prompt: string;
+        response?: null | string;
+        error?: null | string | boolean;
+    }
 
-    let htmlEl: HTMLDivElement;
+    let { prompt, response = null, error = null }: Props = $props();
 
-    $: responseHtml = getHtmlFromMarkdownResponse(response);
+    let htmlEl: HTMLDivElement = $state();
+
+    let responseHtml = $derived(getHtmlFromMarkdownResponse(response));
 
     function handleCopy() {
         copyHtmlToClipboard(htmlEl);
@@ -47,11 +51,15 @@
                 </div>
                 <ButtonGroup>
                     <Button color="input" on:click={handleCopy} size="small">
-                        <IconClipboard slot="start" size={14} />
+                        {#snippet start()}
+                                                <IconClipboard  size={14} />
+                                            {/snippet}
                         Copy
                     </Button>
                     <Button color="input" on:click={addToEditor} size="small">
-                        <IconFileEarmark slot="start" size={14} />
+                        {#snippet start()}
+                                                <IconFileEarmark  size={14} />
+                                            {/snippet}
                         Add to Editor
                     </Button>
                 </ButtonGroup>

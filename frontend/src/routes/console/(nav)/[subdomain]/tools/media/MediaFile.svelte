@@ -7,14 +7,19 @@
 	import { createEventDispatcher } from 'svelte';
 	import MediaUpdateFileName from './MediaUpdateFileName.svelte';
 
-	export let media: Media;
 
 	// If the user is selecting media files
 	// delete button will not be shown
-	// an event will be fired when the user selects a media file
-	export let selecting = false;
+	
+	interface Props {
+		media: Media;
+		// an event will be fired when the user selects a media file
+		selecting?: boolean;
+	}
 
-	let isEditingFileName = false;
+	let { media, selecting = false }: Props = $props();
+
+	let isEditingFileName = $state(false);
 
 	const dispatch = createEventDispatcher<{
 		select: Media;
@@ -62,7 +67,7 @@
 		<MediaUpdateFileName bind:show={isEditingFileName} {media} on:update />
 	{/if}
 
-	<a class="body" href={media.url} target="_blank" on:click={handleClick}>
+	<a class="body" href={media.url} target="_blank" onclick={handleClick}>
 		{#if isImage}
 			<img src={media.url} alt={media.name} />
 		{:else}
@@ -74,7 +79,7 @@
 
 	<div class="footer">
 		<Tooltip text="Click to edit">
-			<button class="media-name" title={media.name} on:click={handleFileNameClick}
+			<button class="media-name" title={media.name} onclick={handleFileNameClick}
 				>{media.name}</button
 			>
 		</Tooltip>

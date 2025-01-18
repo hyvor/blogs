@@ -8,10 +8,14 @@
 	import { flip } from "svelte/animate";
 	import UpdateNavigationModal from "./UpdateNavigationModal.svelte";
 
-    export let items: Navigation[];
+    interface Props {
+        items: Navigation[];
+    }
 
-    let isEditing = false;
-    let editingNavigation : null | Navigation = null;
+    let { items = $bindable() }: Props = $props();
+
+    let isEditing = $state(false);
+    let editingNavigation : null | Navigation = $state(null);
 
     const flipDurationMs = 200;
 
@@ -40,7 +44,7 @@
     }
 
 
-	let dragDisabled = true;
+	let dragDisabled = $state(true);
 
     function startDrag(e: any) {
 		// preventing default to prevent lag on touch devices (because of the browser checking for screen scrolling)
@@ -82,7 +86,7 @@
     <Table columns="70px 1fr 1fr 70px">
 
         <TableRow head>
-            <div />
+            <div></div>
             <div>Name</div>
             <div>URL</div>
             <div></div>
@@ -99,8 +103,8 @@
                     background: 'var(--hover)',
                 }
             }}"
-            on:finalize={handleFinalize}
-            on:consider={handleConsider}
+            onfinalize={handleFinalize}
+            onconsider={handleConsider}
         >        
             {#each items as item (item.id)}
                 <div 
@@ -112,10 +116,10 @@
                         style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
                         tabindex={dragDisabled? 0 : -1} 
                         aria-label="drag-handle"
-                        on:mousedown={startDrag}
-                        on:touchstart={startDrag}
-                        on:keydown={handleKeyDown}
-                        on:click={e => e.preventDefault()}
+                        onmousedown={startDrag}
+                        ontouchstart={startDrag}
+                        onkeydown={handleKeyDown}
+                        onclick={e => e.preventDefault()}
                     >
                         <IconGripVertical />
                     </button>

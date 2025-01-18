@@ -10,23 +10,27 @@
 	import { updatePostVariant } from "../../../../../postActions";
 	import { tick } from "svelte";
     
-    export let show: boolean;
+    interface Props {
+        show: boolean;
+    }
+
+    let { show = $bindable() }: Props = $props();
 
     let sourceVariantLanguage: Language = $primaryLanguageStore;
     let sourceVariantDropdownShow = false;
 
-    let sourceDeepLLanguage  = findMatchingLanguage(
+    let sourceDeepLLanguage  = $state(findMatchingLanguage(
         $primaryLanguageStore.code, 
         DEEPL_SOURCE_LANGUAGES
-    );
+    ));
 
-    let targetDeepLLanguage = findMatchingLanguage(
+    let targetDeepLLanguage = $state(findMatchingLanguage(
         $postLanguageStore.code,
         DEEPL_TARGET_LANGUAGES
-    );
+    ));
 
-    let dropdownSource = false;
-    let dropdownTarget = false;
+    let dropdownSource = $state(false);
+    let dropdownTarget = $state(false);
     
     function handleSourceClick(key: any) {
         sourceDeepLLanguage = key;
@@ -38,7 +42,7 @@
         dropdownTarget = false;
     }
 
-    let isTranslating = false;
+    let isTranslating = $state(false);
 
     function handleTranslate() {
         isTranslating = true;
@@ -101,7 +105,8 @@
         minPlan="growth"
     >
 
-        <div slot="upgrade-text">
+        <!-- @migration-task: migrate this slot by hand, `upgrade-text` is an invalid identifier -->
+    <div slot="upgrade-text">
             Auto-translation is available in the Growth and higher plans. Upgrade now to easily translate your posts into multiple languages.
         </div>
 
@@ -153,27 +158,33 @@
 
             <Dropdown bind:show={dropdownSource}>
 
-                <Button 
-                    color="input"
-                    slot="trigger"
-                    size="small"
-                >
-                    { DEEPL_SOURCE_LANGUAGES[sourceDeepLLanguage] }
-                    <IconCaretDown slot="end" size={12} />
-                </Button>
+                {#snippet trigger()}
+                                <Button 
+                        color="input"
+                        
+                        size="small"
+                    >
+                        { DEEPL_SOURCE_LANGUAGES[sourceDeepLLanguage] }
+                        {#snippet end()}
+                                        <IconCaretDown  size={12} />
+                                    {/snippet}
+                    </Button>
+                            {/snippet}
 
-                <ActionList 
-                    slot="content"
-                    style="max-height: 250px; overflow-y: auto;"
-                >
-                    {#each Object.entries(DEEPL_SOURCE_LANGUAGES) as [key, value] (key)}
-                        <ActionListItem
-                            on:click={() => handleSourceClick(key)}
-                        >
-                            {value}
-                        </ActionListItem>
-                    {/each}
-                </ActionList>
+                {#snippet content()}
+                                <ActionList 
+                        
+                        style="max-height: 250px; overflow-y: auto;"
+                    >
+                        {#each Object.entries(DEEPL_SOURCE_LANGUAGES) as [key, value] (key)}
+                            <ActionListItem
+                                on:click={() => handleSourceClick(key)}
+                            >
+                                {value}
+                            </ActionListItem>
+                        {/each}
+                    </ActionList>
+                            {/snippet}
 
             </Dropdown>
 
@@ -186,37 +197,47 @@
 
             <Dropdown bind:show={dropdownTarget}>
 
-                <Button 
-                    color="input"
-                    slot="trigger"
-                    size="small"
-                >
-                    { DEEPL_TARGET_LANGUAGES[targetDeepLLanguage] }
-                    <IconCaretDown slot="end" size={12} />
-                </Button>
+                {#snippet trigger()}
+                                <Button 
+                        color="input"
+                        
+                        size="small"
+                    >
+                        { DEEPL_TARGET_LANGUAGES[targetDeepLLanguage] }
+                        {#snippet end()}
+                                        <IconCaretDown  size={12} />
+                                    {/snippet}
+                    </Button>
+                            {/snippet}
 
-                <ActionList 
-                    slot="content"
-                    style="max-height: 250px; overflow-y: auto;"
-                >
-                    {#each Object.entries(DEEPL_TARGET_LANGUAGES) as [key, value] (key)}
-                        <ActionListItem
-                            on:click={() => handleTargetClick(key)}
-                        >
-                            {value}
-                        </ActionListItem>
-                    {/each}
-                </ActionList>
+                {#snippet content()}
+                                <ActionList 
+                        
+                        style="max-height: 250px; overflow-y: auto;"
+                    >
+                        {#each Object.entries(DEEPL_TARGET_LANGUAGES) as [key, value] (key)}
+                            <ActionListItem
+                                on:click={() => handleTargetClick(key)}
+                            >
+                                {value}
+                            </ActionListItem>
+                        {/each}
+                    </ActionList>
+                            {/snippet}
 
             </Dropdown>
 
         </SplitControl>
 
         <Callout type="warning" style="margin-top:10px;">
-            <IconExclamationCircle slot="icon" />
-            <div slot="title">
-                Important
-            </div>
+            {#snippet icon()}
+                        <IconExclamationCircle  />
+                    {/snippet}
+            {#snippet title()}
+                        <div >
+                    Important
+                </div>
+                    {/snippet}
             The title, content, description, and the slug of the <strong>{ $postLanguageStore.name } variant</strong> will be replaced with the translated version.
         </Callout>
 

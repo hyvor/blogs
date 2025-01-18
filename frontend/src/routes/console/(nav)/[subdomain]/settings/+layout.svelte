@@ -1,9 +1,14 @@
-<script>
+<script lang="ts">
 	import { NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconChatText, IconCodeSlash, IconCursorText, IconDatabase, IconExclamationTriangle, IconGlobe, IconImage, IconKey, IconLightbulb, IconLink45deg, IconList, IconPeople, IconSearchHeart, IconSend, IconSignTurnRight, IconSignTurnSlightRight, IconSignpost2, IconSlash, IconTag } from "@hyvor/icons";
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 
     const prefix = `/console/${$blogStore.subdomain}/settings`;
 </script>
@@ -16,7 +21,9 @@
             href={consoleUrlWithBlog('/settings')}
             active={$page.url.pathname === `${prefix}`}
         >
-            <IconList slot="start" />
+            {#snippet start()}
+                        <IconList  />
+                    {/snippet}
             General
         </NavLink>
 
@@ -24,7 +31,9 @@
             href={consoleUrlWithBlog('/settings/users')}
             active={$page.url.pathname === `${prefix}/users`}
         >
-            <IconPeople slot="start" />
+            {#snippet start()}
+                        <IconPeople  />
+                    {/snippet}
             Users
         </NavLink>
 
@@ -32,7 +41,9 @@
             href={consoleUrlWithBlog('/settings/tags')}
             active={$page.url.pathname === `${prefix}/tags`}
         >
-            <IconTag slot="start" />
+            {#snippet start()}
+                        <IconTag  />
+                    {/snippet}
             Tags
         </NavLink>
 
@@ -40,7 +51,9 @@
             href={consoleUrlWithBlog('/settings/languages')}
             active={$page.url.pathname === `${prefix}/languages`}
         >
-            <IconGlobe slot="start" />
+            {#snippet start()}
+                        <IconGlobe  />
+                    {/snippet}
             Languages
         </NavLink>
 
@@ -50,7 +63,9 @@
             href={consoleUrlWithBlog('/settings/hosting')}
             active={$page.url.pathname === `${prefix}/hosting`}
         >
-            <IconDatabase slot="start" />
+            {#snippet start()}
+                        <IconDatabase  />
+                    {/snippet}
             Hosting
         </NavLink>
 
@@ -58,7 +73,9 @@
             href={consoleUrlWithBlog('/settings/seo')}
             active={$page.url.pathname === `${prefix}/seo`}
         >
-            <IconSearchHeart slot="start" />
+            {#snippet start()}
+                        <IconSearchHeart  />
+                    {/snippet}
             SEO
         </NavLink>
 
@@ -66,7 +83,9 @@
             href={consoleUrlWithBlog('/settings/color-mode')}
             active={$page.url.pathname === `${prefix}/color-mode`}
         >
-            <IconLightbulb slot="start" />
+            {#snippet start()}
+                        <IconLightbulb  />
+                    {/snippet}
             Light & Dark Modes
         </NavLink>
 
@@ -74,7 +93,9 @@
             href={consoleUrlWithBlog('/settings/post-content')}
             active={$page.url.pathname === `${prefix}/post-content`}
         >
-            <IconCursorText slot="start" />
+            {#snippet start()}
+                        <IconCursorText  />
+                    {/snippet}
             Post Content
         </NavLink>
 
@@ -82,7 +103,9 @@
             href={consoleUrlWithBlog('/settings/navigation')}
             active={$page.url.pathname === `${prefix}/navigation`}
         >
-            <IconLink45deg slot="start" />
+            {#snippet start()}
+                        <IconLink45deg  />
+                    {/snippet}
             Navigation Links
         </NavLink>
 
@@ -90,7 +113,9 @@
             href={consoleUrlWithBlog('/settings/media')}
             active={$page.url.pathname === `${prefix}/media`}
         >
-            <IconImage slot="start" />
+            {#snippet start()}
+                        <IconImage  />
+                    {/snippet}
             Media
         </NavLink>
 
@@ -98,7 +123,9 @@
             href={consoleUrlWithBlog('/settings/redirects')}
             active={$page.url.pathname === `${prefix}/redirects`}
         >
-            <IconSignTurnSlightRight slot="start" />
+            {#snippet start()}
+                        <IconSignTurnSlightRight  />
+                    {/snippet}
             Redirects
         </NavLink>
 
@@ -106,7 +133,9 @@
             href={consoleUrlWithBlog('/settings/routes')}
             active={$page.url.pathname === `${prefix}/routes`}
         >
-            <IconSignpost2 slot="start" />
+            {#snippet start()}
+                        <IconSignpost2  />
+                    {/snippet}
             Routes
         </NavLink>
 
@@ -116,28 +145,36 @@
             href={consoleUrlWithBlog('/settings/comments')}
             active={$page.url.pathname === `${prefix}/comments`}
         >
-            <IconChatText slot="start" />
+            {#snippet start()}
+                        <IconChatText  />
+                    {/snippet}
             Comments & Newsletter
         </NavLink>
         <NavLink 
             href={consoleUrlWithBlog('/settings/code')}
             active={$page.url.pathname === `${prefix}/code`}
         >
-            <IconCodeSlash slot="start" />
+            {#snippet start()}
+                        <IconCodeSlash  />
+                    {/snippet}
             Custom Code
         </NavLink>
         <NavLink 
             href={consoleUrlWithBlog('/settings/api-keys')}
             active={$page.url.pathname === `${prefix}/api-keys`}
         >
-            <IconKey slot="start" />
+            {#snippet start()}
+                        <IconKey  />
+                    {/snippet}
             API Keys
         </NavLink>
         <NavLink 
             href={consoleUrlWithBlog('/settings/webhooks')}
             active={$page.url.pathname === `${prefix}/webhooks`}
         >
-            <IconSend slot="start" />
+            {#snippet start()}
+                        <IconSend  />
+                    {/snippet}
             Webhooks
         </NavLink>
 
@@ -147,13 +184,15 @@
             href={consoleUrlWithBlog('/settings/danger')}
             active={$page.url.pathname === `${prefix}/danger`}
         >
-            <IconExclamationTriangle slot="start" />
+            {#snippet start()}
+                        <IconExclamationTriangle  />
+                    {/snippet}
             Danger Zone
         </NavLink>
     </div>
 
     <div class="content hds-box">
-        <slot />
+        {@render children?.()}
     </div>
 
 </div>

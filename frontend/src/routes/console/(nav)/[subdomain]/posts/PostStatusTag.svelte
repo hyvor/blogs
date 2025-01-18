@@ -3,20 +3,24 @@
     import type { PostStatus } from "../../../lib/types";
 	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
     
-    export let status: PostStatus;
-    export let size: 'x-small' | 'small' | 'medium' = 'small';
+    interface Props {
+        status: PostStatus;
+        size?: 'x-small' | 'small' | 'medium';
+    }
 
-    $: color = {
+    let { status, size = 'small' }: Props = $props();
+
+    let color = $derived({
         draft: 'orange',
         published: 'green',
         scheduled: 'blue',
-    }[status] as any;
+    }[status] as any);
 
-    $: icon = {
+    let icon = $derived({
         draft: IconJournalText,
         published: IconCheck,
         scheduled: IconHourglass,
-    }[status] as any;
+    }[status] as any);
 
 </script>
 
@@ -26,7 +30,10 @@
     size={size}
 >
 
-    <svelte:component this={icon} slot="start" size={12} />
+    {#snippet start()}
+        {@const SvelteComponent = icon}
+    <SvelteComponent  size={12} />
+    {/snippet}
 
     {status.toUpperCase()}
 </Tag>

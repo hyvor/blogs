@@ -1,6 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { NodeView } from "prosemirror-view";
 import EmbedNodeview from "./embed/EmbedNodeview.svelte";
+import { mount } from "svelte";
 
 export default class BookmarkView implements NodeView {
 
@@ -14,13 +15,13 @@ export default class BookmarkView implements NodeView {
 
         const url = node.attrs.url;
 
-        new EmbedNodeview({
-            target: this.dom,
-            props: {
-                url,
-                type: 'link'
-            }
-        })
+        mount(EmbedNodeview, {
+                    target: this.dom,
+                    props: {
+                        url,
+                        type: 'link'
+                    }
+                })
 
     }
 

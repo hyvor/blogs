@@ -1,5 +1,9 @@
 <script lang="ts">
-    export let words = 0;
+    interface Props {
+        words?: number;
+    }
+
+    let { words = 0 }: Props = $props();
 </script>
 
 Are you sure you want to discard the unpublished changes.

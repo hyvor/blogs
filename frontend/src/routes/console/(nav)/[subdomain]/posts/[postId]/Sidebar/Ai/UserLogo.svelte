@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: Declaration cannot be empty
+https://svelte.dev/e/css_empty_declaration -->
 <script lang="ts">
 	import { blogStore } from "../../../../../../lib/stores/blogStore";
     export let url: string | null;

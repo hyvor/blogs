@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import FeaturedChange from './Changes/FeaturedChange.svelte';
 	import { postEditingStatusStore, postLanguageStore, updatePostEditingStatusValue } from '../../../../postStore';
 	import { Button, ButtonGroup, Modal, SplitControl, Switch, Tag, Validation, toast } from "@hyvor/design/components";
@@ -12,17 +14,23 @@
 	import CanonicalUrlChange from "./Changes/CanonicalUrlChange.svelte";
 	import TagChanges from "./Changes/TagChanges.svelte";
 	import AuthorChanges from "./Changes/AuthorChanges.svelte";
-    export let show = false;
+    interface Props {
+        show?: boolean;
+    }
 
-    let changes: ReturnType<typeof getPublishedChanges>;
-    let diff = true;
+    let { show = $bindable(false) }: Props = $props();
+
+    let changes: ReturnType<typeof getPublishedChanges> = $state();
+    let diff = $state(true);
     
-    $: $postStore, $postOriginalStore, changes = getPublishedChanges();
+    run(() => {
+        $postStore, $postOriginalStore, changes = getPublishedChanges();
+    });
 
-    $: disabled = changes.variant.slug !== undefined &&
-        (changes.variant.slug || '').trim() === '';
+    let disabled = $derived(changes.variant.slug !== undefined &&
+        (changes.variant.slug || '').trim() === '');
 
-    let isLoading = false;
+    let isLoading = $state(false);
 
     async function handleUpdate() {
         isLoading = true;
@@ -227,23 +235,25 @@
         </SplitControl>
     {/if}
     
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button 
-                variant="invisible"
-                on:click={() => show = false}
-            >Cancel</Button>
+                <Button 
+                    variant="invisible"
+                    on:click={() => show = false}
+                >Cancel</Button>
 
-            <Button
-                on:click={handleUpdate}
-                disabled={disabled}
-            >Update</Button>
+                <Button
+                    on:click={handleUpdate}
+                    disabled={disabled}
+                >Update</Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>
 

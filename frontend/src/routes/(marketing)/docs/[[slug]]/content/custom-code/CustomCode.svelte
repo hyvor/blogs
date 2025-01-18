@@ -81,6 +81,8 @@
 <Divider margin={30} color="var(--border)" />
 
 <Callout type="info">
-    <IconBrush slot="icon" />
+    {#snippet icon()}
+        <IconBrush  />
+    {/snippet}
     You can also <a href="/docs/theme#editing">edit your theme</a> to add custom code to your blog.
 </Callout>

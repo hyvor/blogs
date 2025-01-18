@@ -7,9 +7,13 @@
 	import { languageStoreRemove } from "../../../../lib/stores/languagesStore";
 	import DeleteConfirm from "./DeleteConfirm.svelte";
     
-    export let language: Language;
+    interface Props {
+        language: Language;
+    }
 
-    let isEditing = false;
+    let { language }: Props = $props();
+
+    let isEditing = $state(false);
 
     async function handleDelete() {
 

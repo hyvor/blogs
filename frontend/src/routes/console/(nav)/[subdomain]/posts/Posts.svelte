@@ -14,13 +14,17 @@
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 
-    export let pages = false;
+    interface Props {
+        pages?: boolean;
+    }
 
-    let isLoading = true;
-    let isLoadingMore = false;
-    let hasMore = false;
-    let posts: Post[] = [];
-    let error : null | string = null;
+    let { pages = false }: Props = $props();
+
+    let isLoading = $state(true);
+    let isLoadingMore = $state(false);
+    let hasMore = $state(false);
+    let posts: Post[] = $state([]);
+    let error : null | string = $state(null);
 
     function getTime(date: Date | null) {
         if (!date)
@@ -77,7 +81,7 @@
         }
     }
 
-    let isCreating = false;
+    let isCreating = $state(false);
 
     function handleCreate() {
         const toastId = toast.loading(`Creating ${pages ? 'page' : 'post'}...`);
@@ -115,7 +119,9 @@
                     on:click={handleCreate}
                     disabled={isCreating}
                 >
-                    <IconPlus slot="start" />
+                    {#snippet start()}
+                                        <IconPlus  />
+                                    {/snippet}
                     New
                 </Button>
             </div>

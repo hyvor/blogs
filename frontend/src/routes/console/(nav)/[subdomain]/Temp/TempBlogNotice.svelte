@@ -4,9 +4,9 @@
 	import { isTempStore } from "../../../lib/temp";
 	import { Button } from "@hyvor/design/components";
 
-    let timeRemaining = 0;
+    let timeRemaining = $state(0);
 
-    $: timeRemainingFormatted = new Date(timeRemaining * 1000).toISOString().substring(11, 19)
+    let timeRemainingFormatted = $derived(new Date(timeRemaining * 1000).toISOString().substring(11, 19))
 
     /* beforeNavigate(navigation => {
         if ($isTempStore) {

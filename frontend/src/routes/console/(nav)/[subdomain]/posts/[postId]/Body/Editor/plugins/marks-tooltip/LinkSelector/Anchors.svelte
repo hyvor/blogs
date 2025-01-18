@@ -1,10 +1,13 @@
 <script lang="ts">
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
 	import { createEventDispatcher } from "svelte";
 	import { getHeadingsFromContent } from "../../../../../../../../../lib/prosemirror/helpers";
 	import { postCurrentContentStore } from "../../../../../../postStore";
 	import { IconMessage, Tag } from "@hyvor/design/components";
 
-    $: headings = getHeadingsFromContent($postCurrentContentStore);
+    let headings = $derived(getHeadingsFromContent($postCurrentContentStore));
 
     const dispatch = createEventDispatcher();
 
@@ -32,9 +35,9 @@
         {#each headings as heading}
             <div
                 class="heading"
-                on:click={() => handleAdd(heading.id)}
+                onclick={() => handleAdd(heading.id)}
                 role="button"
-                on:keyup
+                onkeyup={bubble('keyup')}
                 tabindex="0"
                 class:has-id={!!heading.id}
             >

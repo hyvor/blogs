@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	import { createEventDispatcher } from "svelte";
     // @ts-ignore
     import yaml from 'js-yaml';
@@ -7,14 +9,18 @@
 	import { addDefaultDefs } from "./configUi";
 	import Object from "./Object.svelte";
 
-    export let config: string;
-    export let configDef: string;
+    interface Props {
+        config: string;
+        configDef: string;
+    }
 
-    let configYaml : object;
-    let configDefYaml : object;
-    let error : null | string = null;
+    let { config, configDef }: Props = $props();
 
-    $: {
+    let configYaml : object = $state();
+    let configDefYaml : object = $state();
+    let error : null | string = $state(null);
+
+    run(() => {
 
         error = null;
 
@@ -36,7 +42,7 @@
 
         configDefYaml = addDefaultDefs(configDefYaml || {});
 
-    }
+    });
 
     const dispatch = createEventDispatcher<{change: string}>();
 

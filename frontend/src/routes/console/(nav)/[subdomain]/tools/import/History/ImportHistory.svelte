@@ -4,9 +4,13 @@
 	import { getImports } from "../importActions";
 	import ImportRow from "./ImportRow.svelte";
 
-    let isLoading = true;
+    let isLoading = $state(true);
 
-    export let imports: Import[] = [];
+    interface Props {
+        imports?: Import[];
+    }
+
+    let { imports = $bindable([]) }: Props = $props();
 
     getImports()
         .then(res => {

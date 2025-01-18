@@ -1,16 +1,27 @@
 <script lang="ts">
 	import type { ComponentType } from "svelte";
 
-    export let icon: ComponentType;
-    export let title: string;
-    export let description: string;
-    export let color: 'green' | 'blue' | 'orange' | 'red';
+    interface Props {
+        icon: ComponentType;
+        title: string;
+        description: string;
+        color: 'green' | 'blue' | 'orange' | 'red';
+    }
+
+    let {
+        icon,
+        title,
+        description,
+        color
+    }: Props = $props();
+
+    const SvelteComponent = $derived(icon);
 </script>   
 
 <div class="feature">
 
     <div class="icon {color}">
-        <svelte:component this={icon} size={40} />
+        <SvelteComponent size={40} />
     </div>
     <div class="title">{title}</div>
     <div class="description">{description}</div>

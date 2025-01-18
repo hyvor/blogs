@@ -10,12 +10,12 @@
 	import DisabledOnTemp from "../../Temp/DisabledOnTemp.svelte";
 	import AddUser from "./AddUser.svelte";
 
-    let isLoading = true;
-    let isCreating = false;
-    let hasMore = false;
-    let isLoadingMore = false;
+    let isLoading = $state(true);
+    let isCreating = $state(false);
+    let hasMore = $state(false);
+    let isLoadingMore = $state(false);
 
-    let users: User[] = [];
+    let users: User[] = $state([]);
 
     const limit = 20;
 
@@ -71,7 +71,9 @@
     <SettingsTop>
 
         <Button on:click={() => isCreating = true}>
-            Add User <IconPlus slot="end" />
+            Add User {#snippet end()}
+                        <IconPlus  />
+                    {/snippet}
         </Button>
 
     </SettingsTop>
@@ -93,7 +95,7 @@
                         <div>Status</div>
                         <div>Role</div>
                         <div>Posts</div>
-                        <div />
+                        <div></div>
                     </TableRow>
 
                     {#each users as user}

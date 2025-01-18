@@ -1,18 +1,30 @@
 <script lang="ts">
 	import type { ComponentType } from "svelte";
 
-    export let icon: ComponentType;
-    export let number: number | string;
-    export let title: string;
-    export let description: string;
-    export let topLine: boolean = true;
+    interface Props {
+        icon: ComponentType;
+        number: number | string;
+        title: string;
+        description: string;
+        topLine?: boolean;
+    }
+
+    let {
+        icon,
+        number,
+        title,
+        description,
+        topLine = true
+    }: Props = $props();
+
+    const SvelteComponent = $derived(icon);
 </script>
 
 <div class="step">
 
     <div class="top">
         <div class="icon">
-            <svelte:component this={icon} size={50} />
+            <SvelteComponent size={50} />
         </div>
         {#if topLine}
             <div class="top-line"></div>

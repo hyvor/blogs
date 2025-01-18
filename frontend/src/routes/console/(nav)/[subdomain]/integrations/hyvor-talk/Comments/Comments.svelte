@@ -5,19 +5,23 @@
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 
-	export let websiteId: number;
+	interface Props {
+		websiteId: number;
+	}
 
-	$: code =
-		`<` +
+	let { websiteId }: Props = $props();
+
+	let code =
+		$derived(`<` +
 		`script async src="https://talk.hyvor.com/embed/embed.js" type="module"></` +
 		`script>
 <hyvor-talk-comments 
     website-id="${websiteId}" 
     page-id="{{ _post.id }}"
     page-url="{{ _post.url }}"
-></hyvor-talk-comments>`;
+></hyvor-talk-comments>`);
 
-	let adding = false;
+	let adding = $state(false);
 
 	function handleCopy() {
 		navigator.clipboard.writeText(code);
@@ -25,11 +29,13 @@
 </script>
 
 <SplitControl column>
-	<Label slot="label">
-		Comments <ConfiguredTag
-			configured={$blogStore.comments_code?.includes('<hyvor-talk-comments') || false}
-		/>
-	</Label>
+	{#snippet label()}
+		<Label >
+			Comments <ConfiguredTag
+				configured={$blogStore.comments_code?.includes('<hyvor-talk-comments') || false}
+			/>
+		</Label>
+	{/snippet}
 
 	<p style="margin-top:0;">
 		Add the comments code to <Link

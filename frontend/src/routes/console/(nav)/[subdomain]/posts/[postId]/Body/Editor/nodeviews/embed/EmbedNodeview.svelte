@@ -5,13 +5,17 @@
 	import EmbedHtmlDisplay from '../../plugins/slash/Embed/EmbedHtmlDisplay.svelte';
 	import BookmarkDisplay from '../../plugins/slash/Bookmark/BookmarkDisplay.svelte';
 
-	export let url: string;
 
-	export let type = 'embed' as T;
+	interface Props {
+		url: string;
+		type?: any;
+	}
 
-	let isLoading = true;
-	let unfolded: any;
-	let error: null | string = null;
+	let { url, type = 'embed' as T }: Props = $props();
+
+	let isLoading = $state(true);
+	let unfolded: any = $state();
+	let error: null | string = $state(null);
 
 	onMount(() => {
 		getUnfold(url, type)

@@ -6,10 +6,14 @@
 	import { IconBoxArrowUpRight, IconExclamation, IconExclamationCircle } from "@hyvor/icons";
 	import { setThemeFiles } from "../themeStore";
 
-    export let show = false;
+    interface Props {
+        show?: boolean;
+    }
 
-    let isLoading = true;
-    let themes : Theme[] = [];
+    let { show = $bindable(false) }: Props = $props();
+
+    let isLoading = $state(true);
+    let themes : Theme[] = $state([]);
 
     onMount(() => {
 
@@ -55,23 +59,29 @@
     closeOnOutsideClick={false}
     size="small"
 >
-    <div slot="title" class="title">
-        Choose a theme <Button
-            as="a"
-            href="/themes"
-            target="_blank"
-            size="small"
-        >
-            Preview Themes <IconBoxArrowUpRight slot="end" size={12} />
-        </Button>
-    </div>
+    {#snippet title()}
+        <div  class="title">
+            Choose a theme <Button
+                as="a"
+                href="/themes"
+                target="_blank"
+                size="small"
+            >
+                Preview Themes {#snippet end()}
+                        <IconBoxArrowUpRight  size={12} />
+                    {/snippet}
+            </Button>
+        </div>
+    {/snippet}
 
     {#if isLoading}
         <Loader block padding={150} />
     {:else}
 
         <Callout type="warning" style="text-align:initial;margin-bottom:20px;font-size:14px">
-            <IconExclamationCircle slot="icon" size={16} />
+            {#snippet icon()}
+                        <IconExclamationCircle  size={16} />
+                    {/snippet}
             Changing the theme will reset any changes you made to the current theme.
         </Callout>
 
@@ -82,9 +92,11 @@
                 >
                     {theme.name}
 
-                    <Text light slot="end">
-                        v{theme.latest_version}
-                    </Text>
+                    {#snippet end()}
+                                        <Text light >
+                            v{theme.latest_version}
+                        </Text>
+                                    {/snippet}
                 </ActionListItem>
             {/each}
         </ActionList>

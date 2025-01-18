@@ -12,7 +12,7 @@
 	import { tab } from "./sidebar";
 	import LinksSidebarTag from "./Links/LinksSidebarTag.svelte";
 
-    let div: HTMLDivElement;
+    let div: HTMLDivElement = $state();
 
     function handleClick() {
         div.style.zIndex = Z_INDEX + 1 + "";
@@ -21,11 +21,11 @@
 
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div 
     class="post-sidebar"
-    on:click={handleClick}
+    onclick={handleClick}
     bind:this={div}
 >
 
@@ -38,24 +38,36 @@
             <TabNav bind:active={$tab}>
 
                 <TabNavItem name="settings">
-                    <IconGear slot="start" />
+                    {#snippet start()}
+                                        <IconGear  />
+                                    {/snippet}
                     Settings
                 </TabNavItem>
 
                 <TabNavItem name="seo">
-                    <IconSearchHeart slot="start" />
+                    {#snippet start()}
+                                        <IconSearchHeart  />
+                                    {/snippet}
                     SEO
-                    <SeoScoreTag score={$variantSeoStore.average} percentage slot="end" />
+                    {#snippet end()}
+                                        <SeoScoreTag score={$variantSeoStore.average} percentage  />
+                                    {/snippet}
                 </TabNavItem>
 
                 <TabNavItem name="links">
-                    <IconLink45deg slot="start" />
+                    {#snippet start()}
+                                        <IconLink45deg  />
+                                    {/snippet}
                     Links
-                    <LinksSidebarTag slot="end" />
+                    {#snippet end()}
+                                        <LinksSidebarTag  />
+                                    {/snippet}
                 </TabNavItem>
 
                 <TabNavItem name="ai">
-                    <IconMagic slot="start" />
+                    {#snippet start()}
+                                        <IconMagic  />
+                                    {/snippet}
                     AI
                 </TabNavItem>
 

@@ -4,7 +4,11 @@
 	import type { PostVariant } from "../../../../lib/types";
 	import { IconCheckCircleFill, IconExclamationCircleFill, IconQuestionCircle, IconQuestionCircleFill, IconXCircleFill } from "@hyvor/icons";
 
-    export let postVariant: PostVariant;
+    interface Props {
+        postVariant: PostVariant;
+    }
+
+    let { postVariant }: Props = $props();
     const linkAnalysis = calculateLinkAnalysis(postVariant);
     const counts = getCountsByStatus(linkAnalysis);
 </script>

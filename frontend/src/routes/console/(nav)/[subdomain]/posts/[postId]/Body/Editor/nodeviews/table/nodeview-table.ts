@@ -2,7 +2,7 @@ import type { Node } from "prosemirror-model";
 import type { EditorView, NodeView } from "prosemirror-view";
 import TableTop from "./TableTop.svelte";
 import { updateColumnsOnResize } from "prosemirror-tables";
-import type { SvelteComponent } from "svelte";
+import type { SvelteComponent, mount } from "svelte";
 import RowMenu from "../../plugins/table/TableRowMenu.svelte";
 import type { EditorState } from "prosemirror-state";
 
@@ -38,7 +38,7 @@ export default class TableNodeView implements NodeView {
         this.top.className = "table-top";
         this.top.contentEditable = "false";
         
-        this.componentTop = new TableTop({target: this.top});
+        this.componentTop = mount(TableTop, {target: this.top});
         // this.createRowMenuComponent();
 
         this.middle = this.dom.appendChild(document.createElement("div"));

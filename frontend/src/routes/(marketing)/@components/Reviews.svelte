@@ -10,7 +10,11 @@
 	import { Button } from '@hyvor/design/components';
 	import { IconBoxArrowUpRight } from '@hyvor/icons';
 
-	export let button = true;
+	interface Props {
+		button?: boolean;
+	}
+
+	let { button = true }: Props = $props();
 
 	const customers = [
 		{
@@ -132,7 +136,9 @@
 				target="_blank"
 			>
 				View reviews on G2
-				<IconBoxArrowUpRight slot="end" size={12} />
+				{#snippet end()}
+								<IconBoxArrowUpRight  size={12} />
+							{/snippet}
 			</Button>
 		</div>
 	{/if}

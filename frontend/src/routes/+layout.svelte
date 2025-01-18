@@ -5,6 +5,11 @@
     import relativeTime from 'dayjs/plugin/relativeTime'
 	import dayjs from "dayjs";
 	import { setUpMarketing } from "./marketing";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 
     dayjs.extend(relativeTime);
 
@@ -12,5 +17,5 @@
 </script>
 
 <Base>
-    <slot />
+    {@render children?.()}
 </Base>

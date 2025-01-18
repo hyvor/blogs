@@ -4,9 +4,13 @@
 	import TrialChecks from '../@components/TrialChecks.svelte';
     import hbIcon from '$lib/img/logo-social.png';
 
-    export let title: string
-    export let subtitle: string;
-    export let integrationIcon: string | undefined = undefined;
+    interface Props {
+        title: string;
+        subtitle: string;
+        integrationIcon?: string | undefined;
+    }
+
+    let { title, subtitle, integrationIcon = undefined }: Props = $props();
 </script>
 
 <div class="hds-container above-fold">

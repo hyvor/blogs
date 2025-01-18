@@ -1,13 +1,19 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Button, Loader, Tag, toast } from '@hyvor/design/components';
 	import type { SubscriptionFrequency, SubscriptionPlan } from '../../../../lib/types';
 	import { subscriptionStore } from '../../../../lib/stores/subscriptionStore';
 	import { createSubscription } from '../paddleActions';
 
-	export let name: SubscriptionPlan;
-	export let frequency: SubscriptionFrequency;
+	interface Props {
+		name: SubscriptionPlan;
+		frequency: SubscriptionFrequency;
+	}
 
-	let checkoutLoading = false;
+	let { name, frequency }: Props = $props();
+
+	let checkoutLoading = $state(false);
 
 	function getPriceFromPlan(type: SubscriptionPlan) {
 		return {
@@ -17,9 +23,9 @@
 		}[type];
 	}
 
-	let price: number;
-	let isCurrent = false;
-	$: {
+	let price: number = $state();
+	let isCurrent = $state(false);
+	run(() => {
 		price = getPriceFromPlan(name);
 		if (frequency === 'yearly') price *= 10;
 
@@ -27,7 +33,7 @@
 			$subscriptionStore?.plan === name &&
 			(($subscriptionStore?.isAnnual && frequency === 'yearly') ||
 				(!$subscriptionStore?.isAnnual && frequency === 'monthly'));
-	}
+	});
 
 	async function handleCancel() {
 		// todo: handle cancel

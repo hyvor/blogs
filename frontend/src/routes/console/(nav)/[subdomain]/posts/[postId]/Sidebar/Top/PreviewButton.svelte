@@ -4,15 +4,15 @@
 	import { blogStore } from "../../../../../../lib/stores/blogStore";
 	import { postLanguageStore, postStore, postVariantStore } from "../../../postStore";
 
-    let showDropdown = false;
+    let showDropdown = $state(false);
 
     function handleOpenNewTab(url: string) {
         window.open(url, '_blank');
     }
 
-    $: previewUrl = $blogStore.url +
+    let previewUrl = $derived($blogStore.url +
         '/p/' + $postStore.preview_id +
-        "/" + $postLanguageStore.code;
+        "/" + $postLanguageStore.code);
 
     function handleClick(e: MouseEvent) {
 
@@ -30,36 +30,46 @@
 
 <Dropdown align="center" bind:show={showDropdown} width={200}>
 
-    <Button 
-        size="small" 
-        color="input" 
-        slot="trigger"
-        on:click={handleClick}
-    >
-        { $postVariantStore.status === 'published' ? 'View' : 'Preview' }
-        <IconBoxArrowUpRight slot="end" size={14} />
-    </Button>
-
-    <div class="dropdown-content" slot="content">
-
+    {#snippet trigger()}
         <Button 
-            block 
-            color="input"
-            on:click={() => handleOpenNewTab(previewUrl)}
+            size="small" 
+            color="input" 
+            
+            on:click={handleClick}
         >
-            Preview
-            <IconBoxArrowUpRight slot="end" size={14} />
+            { $postVariantStore.status === 'published' ? 'View' : 'Preview' }
+            {#snippet end()}
+                <IconBoxArrowUpRight  size={14} />
+            {/snippet}
         </Button>
+    {/snippet}
 
-        <Button 
-            block
-            on:click={() => handleOpenNewTab($postVariantStore.url)}
-        >
-            Published Post
-            <IconBoxArrowUpRight slot="end" size={14} />
-        </Button>
+    {#snippet content()}
+        <div class="dropdown-content" >
 
-    </div>
+            <Button 
+                block 
+                color="input"
+                on:click={() => handleOpenNewTab(previewUrl)}
+            >
+                Preview
+                {#snippet end()}
+                        <IconBoxArrowUpRight  size={14} />
+                    {/snippet}
+            </Button>
+
+            <Button 
+                block
+                on:click={() => handleOpenNewTab($postVariantStore.url)}
+            >
+                Published Post
+                {#snippet end()}
+                        <IconBoxArrowUpRight  size={14} />
+                    {/snippet}
+            </Button>
+
+        </div>
+    {/snippet}
 
 </Dropdown>
 

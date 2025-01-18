@@ -5,7 +5,7 @@
 	import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
     import logo from "./custom-themes.svg";
 
-    let isLoading = true;
+    let isLoading = $state(true);
 </script>
 
 <FeatureSectionTitle 
@@ -36,7 +36,9 @@
     Are you familiar with HTML and CSS? Have a web developer in your team? You can create your own theme from scratch! 
     <Link href="https://blogs.hyvor.com/docs/themes-overview" target="_blank">
         Learn more
-        <IconBoxArrowUpRight slot="end" size={12} />
+        {#snippet end()}
+                <IconBoxArrowUpRight  size={12} />
+            {/snippet}
     </Link>
 </div>
 

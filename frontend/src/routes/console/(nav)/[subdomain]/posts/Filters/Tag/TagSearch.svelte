@@ -13,11 +13,11 @@
 	import { getTags, searchTags } from '../../../settings/tags/tagActions';
 	import TagName from '../../../settings/tags/TagName.svelte';
 
-	let isLoading = true;
-	let tags: Tag[] = [];
-	let search = '';
+	let isLoading = $state(true);
+	let tags: Tag[] = $state([]);
+	let search = $state('');
 
-	let err = false;
+	let err = $state(false);
 
 	function loadUsers() {
 		isLoading = true;
@@ -79,9 +79,11 @@
 				<TagComponent size="small">
 					<TagName {tag} small />
 				</TagComponent>
-				<Text light slot="end" small>
-					{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
-				</Text>
+				{#snippet end()}
+												<Text light  small>
+						{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
+					</Text>
+											{/snippet}
 			</ActionListItem>
 		{/each}
 	{/if}

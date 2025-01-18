@@ -4,7 +4,7 @@
 	import { updatePostVariant } from "../../../postActions";
 	import { IconEyeSlash } from "@hyvor/icons";
 
-    let modalOpen = false;
+    let modalOpen = $state(false);
 
     function handleUnpublish() {
 
@@ -25,19 +25,23 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
-    <Button
-        size="small"
-        color="input"
-        slot="trigger"
-        on:click={() => modalOpen = true}
-    >
-        <IconEyeSlash slot="start" size={12} />
-        {#if $postVariantStore.status === 'scheduled'}
-            Unschedule
-        {:else}
-            Unpublish
-        {/if}
-    </Button>
+    {#snippet trigger()}
+        <Button
+            size="small"
+            color="input"
+            
+            on:click={() => modalOpen = true}
+        >
+            {#snippet start()}
+                <IconEyeSlash  size={12} />
+            {/snippet}
+            {#if $postVariantStore.status === 'scheduled'}
+                Unschedule
+            {:else}
+                Unpublish
+            {/if}
+        </Button>
+    {/snippet}
 
     <Modal 
         title={$postVariantStore.status === 'scheduled' ? 'Unschedule Post' : 'Unpublish Post'} 
@@ -47,12 +51,14 @@
 
         Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this post? It's status will be changed to draft.
 
-        <div slot="footer">
-            <Button variant="invisible" on:click={() => modalOpen = false}>Cancel</Button>
-            <Button color="red" on:click={handleUnpublish}>
-                {$postVariantStore.status === 'scheduled' ? 'Unschedule' : 'Unpublish'}
-            </Button>
-        </div>
+        {#snippet footer()}
+                <div >
+                <Button variant="invisible" on:click={() => modalOpen = false}>Cancel</Button>
+                <Button color="red" on:click={handleUnpublish}>
+                    {$postVariantStore.status === 'scheduled' ? 'Unschedule' : 'Unpublish'}
+                </Button>
+            </div>
+            {/snippet}
 
     </Modal>
 

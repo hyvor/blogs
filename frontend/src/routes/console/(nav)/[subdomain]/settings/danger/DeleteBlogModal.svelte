@@ -3,10 +3,14 @@
 	import { blogStore } from "../../../../lib/stores/blogStore";
 	import { deleteBlogDangerous } from "./dangerActions";
 
-    export let show = false;
+    interface Props {
+        show?: boolean;
+    }
 
-    let subdomain = '';
-    let error : null | string = null
+    let { show = $bindable(false) }: Props = $props();
+
+    let subdomain = $state('');
+    let error : null | string = $state(null)
 
     function handleDelete() {
 
@@ -70,26 +74,28 @@
 
     </div>
 
-    <svelte:fragment slot="footer">
+    {#snippet footer()}
+    
 
-        <ButtonGroup>
+            <ButtonGroup>
 
-            <Button
-                variant="invisible"
-                on:click={() => show = false}
-            >
-                Cancel
-            </Button>
+                <Button
+                    variant="invisible"
+                    on:click={() => show = false}
+                >
+                    Cancel
+                </Button>
 
-            <Button
-                on:click={handleDelete}
-                color="red"
-            >
-                Goodbye, Blog
-            </Button>
+                <Button
+                    on:click={handleDelete}
+                    color="red"
+                >
+                    Goodbye, Blog
+                </Button>
 
-        </ButtonGroup>
+            </ButtonGroup>
 
-    </svelte:fragment>
+        
+    {/snippet}
 
 </Modal>
