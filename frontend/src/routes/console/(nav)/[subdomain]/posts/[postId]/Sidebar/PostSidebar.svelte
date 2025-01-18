@@ -1,7 +1,11 @@
 <script lang="ts">
 	import Links from './Links/Links.svelte';
 	import { TabNav, TabNavItem } from "@hyvor/design/components";
-	import { IconGear, IconLink45deg, IconMagic, IconSearchHeart } from "@hyvor/icons";
+	import IconGear from '@hyvor/icons/IconGear';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconMagic from '@hyvor/icons/IconMagic';
+import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
+
 	import Settings from "./Settings/Settings.svelte";
 	import SeoScoreTag from "./Seo/SeoScoreTag.svelte";
 	import Seo from "./Seo/Seo.svelte";

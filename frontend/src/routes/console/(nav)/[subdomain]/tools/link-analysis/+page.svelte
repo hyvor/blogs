@@ -1,7 +1,10 @@
 <script lang="ts">
 	import Links from './Links/Links.svelte';
 	import { Loader, TabNav, TabNavItem } from '@hyvor/design/components';
-	import { IconCardChecklist, IconGear, IconLink45deg } from '@hyvor/icons';
+	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
+import IconGear from '@hyvor/icons/IconGear';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+
 	import UpgradeRequired from '../../billing/UpgradeRequired.svelte';
 	import Settings from './Settings.svelte';
 	import { getStats } from './linkAnalysisActions';

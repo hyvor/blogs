@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Modal, TabNav, TabNavItem } from "@hyvor/design/components";
-	import { IconHash, IconLink45deg, IconSearch } from "@hyvor/icons";
+	import IconHash from '@hyvor/icons/IconHash';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconSearch from '@hyvor/icons/IconSearch';
+
 	import Paste from "./Paste.svelte";
 	import SearchPosts from "./SearchPosts.svelte";
 	import type { EditorView } from "prosemirror-view";

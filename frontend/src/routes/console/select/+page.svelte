@@ -2,8 +2,8 @@
 	import { Button } from '@hyvor/design/components';
 	import { authUserStore, blogListStore } from '../lib/stores';
 	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
-import IconCaretRight from '@hyvor/icons/IconCaretRight';
-import IconGripVertical from '@hyvor/icons/IconGripVertical';
+	import IconCaretRight from '@hyvor/icons/IconCaretRight';
+	import IconGripVertical from '@hyvor/icons/IconGripVertical';
 
 	import { flip } from 'svelte/animate';
 	import { dndzone, SOURCES, TRIGGERS } from 'svelte-dnd-action';

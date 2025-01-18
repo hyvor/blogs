@@ -10,7 +10,10 @@ import IconChatFill from '@hyvor/icons/IconChatFill';
 	import { ActionList } from '@hyvor/design/components';
 	import { Modal } from '@hyvor/design/components';
 	import { Button } from '@hyvor/design/components';
-	import { IconInfoCircleFill, IconDiscord, IconStarFill } from '@hyvor/icons';
+	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
+import IconDiscord from '@hyvor/icons/IconDiscord';
+import IconStarFill from '@hyvor/icons/IconStarFill';
+
 
 	let ratingShown = $state(false);
 </script>

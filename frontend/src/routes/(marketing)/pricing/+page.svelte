@@ -9,16 +9,15 @@
 	import Plan from './Plan.svelte';
 	import PlanSwitcher from './PlanSwitcher.svelte';
 	import Faq from './Faq.svelte';
-	import {
-		IconBrush,
-		IconCreditCard,
-		IconHourglass,
-		IconPercent,
-		IconCCircle,
-		IconSpeedometer2,
-		IconChat,
-		IconBadgeAd
-	} from '@hyvor/icons';
+	import IconBrush from '@hyvor/icons/IconBrush';
+import IconCreditCard from '@hyvor/icons/IconCreditCard';
+import IconHourglass from '@hyvor/icons/IconHourglass';
+import IconPercent from '@hyvor/icons/IconPercent';
+import IconCCircle from '@hyvor/icons/IconCCircle';
+import IconSpeedometer2 from '@hyvor/icons/IconSpeedometer2';
+import IconChat from '@hyvor/icons/IconChat';
+import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
+
 
 	const basicFeatures: Feature[] = [
 		{

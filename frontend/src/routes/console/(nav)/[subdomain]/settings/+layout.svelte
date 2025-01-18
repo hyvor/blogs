@@ -2,7 +2,26 @@
 	import { NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
-	import { IconChatText, IconCodeSlash, IconCursorText, IconDatabase, IconExclamationTriangle, IconGlobe, IconImage, IconKey, IconLightbulb, IconLink45deg, IconList, IconPeople, IconSearchHeart, IconSend, IconSignTurnRight, IconSignTurnSlightRight, IconSignpost2, IconSlash, IconTag } from "@hyvor/icons";
+	import IconChatText from '@hyvor/icons/IconChatText';
+import IconCodeSlash from '@hyvor/icons/IconCodeSlash';
+import IconCursorText from '@hyvor/icons/IconCursorText';
+import IconDatabase from '@hyvor/icons/IconDatabase';
+import IconExclamationTriangle from '@hyvor/icons/IconExclamationTriangle';
+import IconGlobe from '@hyvor/icons/IconGlobe';
+import IconImage from '@hyvor/icons/IconImage';
+import IconKey from '@hyvor/icons/IconKey';
+import IconLightbulb from '@hyvor/icons/IconLightbulb';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconList from '@hyvor/icons/IconList';
+import IconPeople from '@hyvor/icons/IconPeople';
+import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
+import IconSend from '@hyvor/icons/IconSend';
+import IconSignTurnRight from '@hyvor/icons/IconSignTurnRight';
+import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
+import IconSignpost2 from '@hyvor/icons/IconSignpost2';
+import IconSlash from '@hyvor/icons/IconSlash';
+import IconTag from '@hyvor/icons/IconTag';
+
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
     interface Props {
         children?: import('svelte').Snippet;

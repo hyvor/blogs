@@ -2,7 +2,11 @@
 	import { NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
-	import { IconDownload, IconImage, IconLink45deg, IconUpload } from "@hyvor/icons";
+	import IconDownload from '@hyvor/icons/IconDownload';
+import IconImage from '@hyvor/icons/IconImage';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconUpload from '@hyvor/icons/IconUpload';
+
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
     interface Props {
         children?: import('svelte').Snippet;

@@ -23,7 +23,7 @@ $count = 0;
 foreach ($files as $file) {
     $content = file_get_contents($file);
 
-    $regex = "/import\s*{([\sa-zA-Z,]+)}\s*from\s+['\"]@hyvor\/icons['\"];?/";
+    $regex = "/import\s*{([\sa-z0-9A-Z,]+)}\s*from\s+['\"]@hyvor\/icons['\"];?/";
     $regex = trim($regex);
 
     if (preg_match($regex, $content, $matches)) {

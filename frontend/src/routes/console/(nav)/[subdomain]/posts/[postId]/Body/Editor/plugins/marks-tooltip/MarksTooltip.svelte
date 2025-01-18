@@ -5,7 +5,15 @@
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 	import { tick } from "svelte";
 	import { IconButton } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCode, IconLink45deg, IconPencil, IconTrash, IconTypeBold, IconTypeItalic, IconTypeStrikethrough } from "@hyvor/icons";
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconCode from '@hyvor/icons/IconCode';
+import IconLink45deg from '@hyvor/icons/IconLink45deg';
+import IconPencil from '@hyvor/icons/IconPencil';
+import IconTrash from '@hyvor/icons/IconTrash';
+import IconTypeBold from '@hyvor/icons/IconTypeBold';
+import IconTypeItalic from '@hyvor/icons/IconTypeItalic';
+import IconTypeStrikethrough from '@hyvor/icons/IconTypeStrikethrough';
+
 	import { Mark, type MarkType } from "prosemirror-model";
 	import type { EditorState } from "prosemirror-state";
 	import { toggleMark } from "prosemirror-commands";

@@ -1,5 +1,24 @@
 <script>
-	import { IconArrowsAngleContract, IconBraces, IconCode, IconController, IconDatabase, IconDiagram3, IconHourglass, IconImage, IconLightning, IconMarkdown, IconPencil, IconPeople, IconRegex, IconRss, IconSearchHeart, IconSend, IconSignTurnSlightRight, IconSignpost2, IconTag } from "@hyvor/icons";
+	import IconArrowsAngleContract from '@hyvor/icons/IconArrowsAngleContract';
+import IconBraces from '@hyvor/icons/IconBraces';
+import IconCode from '@hyvor/icons/IconCode';
+import IconController from '@hyvor/icons/IconController';
+import IconDatabase from '@hyvor/icons/IconDatabase';
+import IconDiagram3 from '@hyvor/icons/IconDiagram3';
+import IconHourglass from '@hyvor/icons/IconHourglass';
+import IconImage from '@hyvor/icons/IconImage';
+import IconLightning from '@hyvor/icons/IconLightning';
+import IconMarkdown from '@hyvor/icons/IconMarkdown';
+import IconPencil from '@hyvor/icons/IconPencil';
+import IconPeople from '@hyvor/icons/IconPeople';
+import IconRegex from '@hyvor/icons/IconRegex';
+import IconRss from '@hyvor/icons/IconRss';
+import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
+import IconSend from '@hyvor/icons/IconSend';
+import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
+import IconSignpost2 from '@hyvor/icons/IconSignpost2';
+import IconTag from '@hyvor/icons/IconTag';
+
 	import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
 	import Feature from "./Feature.svelte";
 	import FeatureSection from "./FeatureSection.svelte";
