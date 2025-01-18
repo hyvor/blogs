@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Button, IconButton, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { Route } from "../../../../lib/types";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteRoute } from "./routeActions";
 	import { createEventDispatcher } from "svelte";
 	import CreateUpdateRouteModal from "./CreateUpdateRouteModal.svelte";

@@ -2,7 +2,11 @@
     import { run } from 'svelte/legacy';
 
 	import { Tag, Tooltip } from "@hyvor/design/components";
-	import { IconCheckCircleFill, IconExclamationCircleFill, IconEyeSlashFill, IconXCircleFill } from "@hyvor/icons";
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
+import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+
 	import { getStatusType } from "../../../../../lib/links/links";
 
     interface Props {

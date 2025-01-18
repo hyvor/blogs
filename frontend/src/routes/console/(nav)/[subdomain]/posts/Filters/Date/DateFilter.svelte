@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { ActionList, ActionListItem, Button, Dropdown, IconButton, Text } from "@hyvor/design/components";
-	import { IconCaretDown, IconX } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconX from '@hyvor/icons/IconX';
+
 	import { postListFiltersStore, setFilter } from "../../postListStore";
 	import dayjs from "dayjs";
 	import { OPTIONS, dateFilterStore } from "./date";

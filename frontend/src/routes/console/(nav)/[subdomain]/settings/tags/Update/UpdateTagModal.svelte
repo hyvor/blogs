@@ -13,7 +13,9 @@
 	} from '@hyvor/design/components';
 	import type { Tag, TagVariant } from '../../../../../lib/types';
 	import CodemirrorEditor from '../../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
-	import { IconCaretDownFill, IconCaretRightFill } from '@hyvor/icons';
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
+
 	import VariantInput from '../../@components/VariantInput/VariantInput.svelte';
 	import { updateTag, updateTagVariant } from '../tagActions';
 	import { createEventDispatcher } from 'svelte';

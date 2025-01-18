@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { IconButton, Loader, Tooltip, confirm } from '@hyvor/design/components';
 	import type { EditorView } from 'prosemirror-view';
-	import { IconPencil, IconTrash } from '@hyvor/icons';
+	import IconPencil from '@hyvor/icons/IconPencil';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { onMount, mount, unmount } from 'svelte';
 	import FileUploader from '../../../../../../../../lib/components/FileUploader/FileUploader.svelte';
 

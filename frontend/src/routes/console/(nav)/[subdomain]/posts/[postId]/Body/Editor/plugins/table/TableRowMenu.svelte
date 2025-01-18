@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { IconArrowDown, IconArrowUp, IconBackspace, IconCardHeading, IconThreeDotsVertical, IconTrash } from "@hyvor/icons";
+	import IconArrowDown from '@hyvor/icons/IconArrowDown';
+import IconArrowUp from '@hyvor/icons/IconArrowUp';
+import IconBackspace from '@hyvor/icons/IconBackspace';
+import IconCardHeading from '@hyvor/icons/IconCardHeading';
+import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { Node } from "prosemirror-model";
 	import { onMount } from "svelte";
 	import { postEditingStatusStore } from "../../../../../postStore";

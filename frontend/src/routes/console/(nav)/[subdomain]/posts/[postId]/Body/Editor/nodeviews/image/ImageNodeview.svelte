@@ -7,7 +7,9 @@
 	import type { EditorView } from 'prosemirror-view';
 	import { NodeSelection } from 'prosemirror-state';
 	import schema from '../../../../../../../../lib/prosemirror/schema';
-	import { IconPencil, IconTrash } from '@hyvor/icons';
+	import IconPencil from '@hyvor/icons/IconPencil';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { onMount, mount, unmount } from 'svelte';
 
 	interface Props {

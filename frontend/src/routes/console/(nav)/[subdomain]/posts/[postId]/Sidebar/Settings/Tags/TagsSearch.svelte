@@ -12,7 +12,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Tag as TagType } from '../../../../../../../lib/types';
 	import { createTag, getTags, searchTags } from '../../../../../settings/tags/tagActions';
-	import { IconPlus, IconLock } from '@hyvor/icons';
+	import IconPlus from '@hyvor/icons/IconPlus';
+import IconLock from '@hyvor/icons/IconLock';
+
 	import TagName from '../../../../../settings/tags/TagName.svelte';
 
 	interface Props {

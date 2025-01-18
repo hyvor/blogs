@@ -1,6 +1,9 @@
 <script>
 	import { Button } from "@hyvor/design/components";
-	import { IconCaretLeft, IconCaretRight, IconChevronLeft } from "@hyvor/icons";
+	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+import IconChevronLeft from '@hyvor/icons/IconChevronLeft';
+
 	import { PLANS, plansMax, plansStart } from "./pricing";
 
     function handleLower() {

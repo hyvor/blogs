@@ -6,7 +6,15 @@
 	import { loadThemes } from "../../console/(nav)/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
 	import { IconButton, IconMessage, Link, Loader, NavLink, Text, Button } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots, IconGithub } from "@hyvor/icons";
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconLaptop from '@hyvor/icons/IconLaptop';
+import IconList from '@hyvor/icons/IconList';
+import IconLock from '@hyvor/icons/IconLock';
+import IconTablet from '@hyvor/icons/IconTablet';
+import IconThreeDots from '@hyvor/icons/IconThreeDots';
+import IconGithub from '@hyvor/icons/IconGithub';
+
 
     interface Props {
         lockScroll?: boolean;

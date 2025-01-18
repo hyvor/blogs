@@ -10,7 +10,9 @@
 	import CoverImage from "./CoverImage.svelte";
 	import Featured from "./Featured.svelte";
 	import Delete from "./Delete.svelte";
-	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+
 	import CanonicalUrl from "./CanonicalUrl.svelte";
 	import CodeHead from "./CodeHead.svelte";
 	import CodeFoot from "./CodeFoot.svelte";

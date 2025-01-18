@@ -3,7 +3,10 @@
 
 	import type { SelectedFile as SelectedImageType } from './image-uploader';
 	import { Button, Modal, TabNav, TabNavItem } from '@hyvor/design/components';
-	import { IconCardImage, IconCaretLeft, IconCloudUpload } from '@hyvor/icons';
+	import IconCardImage from '@hyvor/icons/IconCardImage';
+import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+
 	import TabUpload from './TabUpload.svelte';
 	import SelectedFile from './PreviewSelected/SelectedFile.svelte';
 	import ExcalidrawIcon from './Excalidraw/ExcalidrawIcon.svelte';

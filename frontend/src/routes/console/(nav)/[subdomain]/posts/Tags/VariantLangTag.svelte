@@ -2,7 +2,10 @@
     import { run } from 'svelte/legacy';
 
 	import { Loader, Tag, Tooltip } from "@hyvor/design/components";
-	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
+	import IconCheck from '@hyvor/icons/IconCheck';
+import IconHourglass from '@hyvor/icons/IconHourglass';
+import IconJournalText from '@hyvor/icons/IconJournalText';
+
 	import type { PostVariant } from "../../../../lib/types";
 	import { languagesStore } from "../../../../lib/stores/languagesStore";
 

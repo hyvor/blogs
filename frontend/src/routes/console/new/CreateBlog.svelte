@@ -3,7 +3,9 @@
 
 	import { goto } from "$app/navigation";
 	import { Button, Callout, FormControl, Link, Loader, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
-	import { IconCaretLeft, IconExclamationCircle } from "@hyvor/icons";
+	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+
 	import { addToBlogList, blogListStore } from "../lib/stores";
 	import { createBlog, getSubdomainAvailable } from "../lib/actions/blogActions";
 

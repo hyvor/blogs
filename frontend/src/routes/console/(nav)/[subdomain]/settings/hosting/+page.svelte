@@ -13,7 +13,9 @@
 	} from '@hyvor/design/components';
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
-	import { IconBoxArrowUpRight, IconExclamationCircle } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';

@@ -2,7 +2,9 @@
 	import { Button, ButtonGroup, Loader, toast } from "@hyvor/design/components";
     import UserLogo from "./UserLogo.svelte";
     import { appendHtml, copyHtmlToClipboard, getHtmlFromMarkdownResponse } from './ai';
-	import { IconClipboard, IconFileEarmark } from "@hyvor/icons";
+	import IconClipboard from '@hyvor/icons/IconClipboard';
+import IconFileEarmark from '@hyvor/icons/IconFileEarmark';
+
 	import { blogStore } from "../../../../../../lib/stores/blogStore";
     import logo from '$lib/img/logo.png';
 	import { postEditingStatusStore } from "../../../postStore";

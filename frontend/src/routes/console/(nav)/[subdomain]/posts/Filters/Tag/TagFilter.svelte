@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { ActionList, Button, Dropdown, IconButton, Text } from "@hyvor/design/components";
-	import { IconCaretDown, IconX } from "@hyvor/icons";
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconX from '@hyvor/icons/IconX';
+
 	import { postListFiltersStore, setFilter } from "../../postListStore";
 	import TagSearch from "./TagSearch.svelte";
 	import type { Tag } from "../../../../../lib/types";

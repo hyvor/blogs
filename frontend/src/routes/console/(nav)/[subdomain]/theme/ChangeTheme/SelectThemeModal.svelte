@@ -3,7 +3,10 @@
 	import { onMount } from "svelte";
 	import { changeTheme, loadThemes } from "../themeActions";
 	import type { Theme } from "../../../../lib/types";
-	import { IconBoxArrowUpRight, IconExclamation, IconExclamationCircle } from "@hyvor/icons";
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconExclamation from '@hyvor/icons/IconExclamation';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+
 	import { setThemeFiles } from "../themeStore";
 
     interface Props {

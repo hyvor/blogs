@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Loader, Tag } from "@hyvor/design/components";
     import { variantLinkCountsStore } from "./linksStore";
-	import { IconCheckCircleFill, IconExclamationCircleFill, IconXCircleFill } from "@hyvor/icons";
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+
     
     let counts = $derived($variantLinkCountsStore);
 </script>

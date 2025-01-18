@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Tag, TextInput } from "@hyvor/design/components";
-	import { IconCheck, IconLock } from "@hyvor/icons";
+	import IconCheck from '@hyvor/icons/IconCheck';
+import IconLock from '@hyvor/icons/IconLock';
+
 	import CheckFeatures from "../../@components/CheckFeatures.svelte";
 
     interface Props {

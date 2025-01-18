@@ -16,7 +16,9 @@
 	} from '../../../../postStore';
 	import type { Tag as TagType } from '../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
-	import { IconPlus, IconX } from '@hyvor/icons';
+	import IconPlus from '@hyvor/icons/IconPlus';
+import IconX from '@hyvor/icons/IconX';
+
 	import TagsSearch from './TagsSearch.svelte';
 	import { hasIdArrayChanged } from '../settingsHelpers';
 	import UnsavedTag from '../UnsavedTag.svelte';

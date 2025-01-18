@@ -15,7 +15,10 @@
 		primaryLanguageStore
 	} from '../../../../../../../../lib/stores/languagesStore';
 	import type { Language, PostVariant } from '../../../../../../../../lib/types';
-	import { IconCaretDown, IconExclamation, IconExclamationCircle } from '@hyvor/icons';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconExclamation from '@hyvor/icons/IconExclamation';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+
 	import {
 		increaseEditorVersion,
 		postCurrentContentKey,

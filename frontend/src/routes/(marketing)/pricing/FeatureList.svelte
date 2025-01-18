@@ -1,10 +1,9 @@
 <script lang="ts">
-	import {
-		IconCheckCircleFill,
-		IconInfoCircle,
-		IconInfoCircleFill,
-		IconXCircleFill
-	} from '@hyvor/icons';
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
+import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
+import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+
 	import { plansMax, type Feature, plansStart } from './pricing';
 	import { Tooltip } from '@hyvor/design/components';
 	interface Props {

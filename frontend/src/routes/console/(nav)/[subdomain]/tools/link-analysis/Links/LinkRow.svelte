@@ -5,7 +5,10 @@
 	import LinkStatusTag from "./LinkStatusTag.svelte";
 	import { getLanguageById } from "../../../../../lib/actions/languageActions";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
-	import { IconArrowClockwise, IconEyeSlashFill, IconPencilFill } from "@hyvor/icons";
+	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
+import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
+import IconPencilFill from '@hyvor/icons/IconPencilFill';
+
 	import { callIgnoreLink, callLinkAnalysisApi } from "../linkAnalysisActions";
 	import { createEventDispatcher } from "svelte";
 	import { consoleUrlWithBlog } from "../../../../../lib/consoleUrl";

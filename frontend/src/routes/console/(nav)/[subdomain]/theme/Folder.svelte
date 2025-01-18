@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { IconCaretDownFill, IconCaretRightFill } from "@hyvor/icons";
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
+
 	import type { ThemeFolder } from "../../../lib/types";
 	import { selectedThemeFileIdStore, themeFilesStore } from "./themeStore";
 	import NewFileCreator from "./Editor/NewFileCreator.svelte";

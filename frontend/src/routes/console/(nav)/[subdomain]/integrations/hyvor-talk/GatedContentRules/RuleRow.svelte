@@ -2,7 +2,9 @@
 	import { IconButton, Tag, confirm, toast } from '@hyvor/design/components';
 	import type { HyvorTalkGatedContentRule } from '../../../../../lib/types';
 	import TagName from '../../../settings/tags/TagName.svelte';
-	import { IconPencil, IconTrash } from '@hyvor/icons';
+	import IconPencil from '@hyvor/icons/IconPencil';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteGatedContentRule } from '../hyvorTalkActions';
 	import { createEventDispatcher } from 'svelte';
 	import CreateRule from './CreateRule.svelte';

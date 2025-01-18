@@ -8,13 +8,12 @@
 		Dropdown
 	} from '@hyvor/design/components';
 	import { authUserStore } from './lib/stores';
-	import {
-		IconCaretDownFill,
-		IconBell,
-		IconBoxArrowUpRight,
-		IconChatFill,
-		IconDiscord
-	} from '@hyvor/icons';
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconBell from '@hyvor/icons/IconBell';
+import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconChatFill from '@hyvor/icons/IconChatFill';
+import IconDiscord from '@hyvor/icons/IconDiscord';
+
 </script>
 
 <div id="bar">

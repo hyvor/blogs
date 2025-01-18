@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Tag } from "@hyvor/design/components";
     import type { PostStatus } from "../../../lib/types";
-	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
+	import IconCheck from '@hyvor/icons/IconCheck';
+import IconHourglass from '@hyvor/icons/IconHourglass';
+import IconJournalText from '@hyvor/icons/IconJournalText';
+
     
     interface Props {
         status: PostStatus;

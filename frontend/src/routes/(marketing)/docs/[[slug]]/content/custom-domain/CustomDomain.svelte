@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Button, Callout, TabNav, TabNavItem, Table, TableRow, Tag, toast } from "@hyvor/design/components";
-	import { IconCopy, IconLightbulb } from "@hyvor/icons";
+	import IconCopy from '@hyvor/icons/IconCopy';
+import IconLightbulb from '@hyvor/icons/IconLightbulb';
+
     
     import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from "@hyvor/design/marketing";

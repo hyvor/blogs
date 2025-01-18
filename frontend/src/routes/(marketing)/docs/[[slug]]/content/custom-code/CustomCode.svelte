@@ -5,7 +5,9 @@
     import customCodePost from './custom-code-post.png'
     import customCodeTag from './custom-code-tag.png'
 
-	import { IconBrush, IconPencil } from "@hyvor/icons";
+	import IconBrush from '@hyvor/icons/IconBrush';
+import IconPencil from '@hyvor/icons/IconPencil';
+
 	import { Callout, Divider, Tag } from "@hyvor/design/components";
 </script>
 

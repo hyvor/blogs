@@ -2,7 +2,10 @@
 	import { Button, Divider, IconMessage, Link, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../../lib/types";
 	import { postStore, postVariantStore } from "../../../postStore";
-	import { IconArrowClockwise, IconMagic, IconRobot } from "@hyvor/icons";
+	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
+import IconMagic from '@hyvor/icons/IconMagic';
+import IconRobot from '@hyvor/icons/IconRobot';
+
 	import { getPrompts, resetChat, sendPrompt } from "./aiActions";
 	import { onMount, tick } from "svelte";
 	import { tab } from "../sidebar";

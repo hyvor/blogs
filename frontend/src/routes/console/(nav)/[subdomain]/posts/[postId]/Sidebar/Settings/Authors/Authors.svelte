@@ -3,7 +3,9 @@
     import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../../postStore";
 	import type { User } from "../../../../../../../lib/types";
 	import { getPrimaryLanguage } from "../../../../../../../lib/stores/languagesStore";
-	import { IconPlus, IconX } from "@hyvor/icons";
+	import IconPlus from '@hyvor/icons/IconPlus';
+import IconX from '@hyvor/icons/IconX';
+
 	import AuthorsSearch from "./AuthorsSearch.svelte";
 	import UnsavedTag from "../UnsavedTag.svelte";
 	import { updatePost, updatePostAuthors } from "../../../../postActions";

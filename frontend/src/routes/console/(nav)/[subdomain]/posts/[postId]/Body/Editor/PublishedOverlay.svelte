@@ -4,7 +4,9 @@
     const bubble = createBubbler();
 	import { onMount, tick } from "svelte";
 	import { postEditingStatusStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
-	import { IconLock, IconUnlock } from "@hyvor/icons";
+	import IconLock from '@hyvor/icons/IconLock';
+import IconUnlock from '@hyvor/icons/IconUnlock';
+
 
     let show = $derived($postVariantStore.status === 'published' && 
         !$postEditingStatusStore.isEditingPublished);

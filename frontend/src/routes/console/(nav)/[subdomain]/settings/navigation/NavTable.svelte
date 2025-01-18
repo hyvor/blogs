@@ -2,7 +2,10 @@
 	import { SOURCES, TRIGGERS, dndzone } from 'svelte-dnd-action';
 	import { IconButton, Table, TableRow, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { Navigation } from "../../../../lib/types";
-	import { IconGripVertical, IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconGripVertical from '@hyvor/icons/IconGripVertical';
+import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteNavigation, saveSort } from "./navigationActions";
 	import { createEventDispatcher } from "svelte";
 	import { flip } from "svelte/animate";

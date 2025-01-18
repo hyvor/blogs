@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Text } from '@hyvor/design/components';
 	import TruspilotIcon from './TruspilotIcon.svelte';
-	import { IconBoxArrowUpRight, IconChat, IconChatFill } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconChat from '@hyvor/icons/IconChat';
+import IconChatFill from '@hyvor/icons/IconChatFill';
+
 	import G2Icon from './G2Icon.svelte';
 	import { ActionListItem } from '@hyvor/design/components';
 	import { ActionList } from '@hyvor/design/components';

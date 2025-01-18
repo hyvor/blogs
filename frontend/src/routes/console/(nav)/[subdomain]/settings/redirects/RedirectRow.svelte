@@ -2,7 +2,9 @@
 	import { IconButton, Link, TableRow, Tooltip, confirm, toast, Tag } from "@hyvor/design/components";
 	import type { Redirect } from "../../../../lib/types";
 	import { primaryLanguageStore } from "../../../../lib/stores/languagesStore";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteRedirect } from "./redirectActions";
 	import { createEventDispatcher } from "svelte";;
 	import RedirectsModal from "./RedirectsModal.svelte";

@@ -5,7 +5,9 @@
 	import { onMount } from "svelte";
 	import consoleApi from "../../../../../../lib/consoleApi";
 	import { updatePostVariant } from "../../../postActions";
-	import { IconInfo, IconInfoCircle } from "@hyvor/icons";
+	import IconInfo from '@hyvor/icons/IconInfo';
+import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
+
 	import LabelWithInfo from "./LabelWithInfo.svelte";
 
     let error: null | string = $state(null);

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Button, Caption, FormControl, IconButton, Loader, Modal, TextInput, Tooltip } from "@hyvor/design/components";
-	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { selectedThemeFileOriginalStore, selectedThemeFileStore } from "../themeStore";
 	import { onMount } from "svelte";
 	import EditModal from "./Modals/CreateEditModal.svelte";

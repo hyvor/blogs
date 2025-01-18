@@ -6,7 +6,9 @@
 	import TextEditor from './Preview/TextEditor.svelte';
 	import AssetImage from './Preview/AssetImage.svelte';
 	import { IconMessage, Link } from '@hyvor/design/components';
-	import { IconBoxArrowUpRight, IconEyeSlash } from '@hyvor/icons';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
+
 	import { blogStore } from '../../../../lib/stores/blogStore';
 
 	let currentFile = $derived($selectedThemeFileStore!);

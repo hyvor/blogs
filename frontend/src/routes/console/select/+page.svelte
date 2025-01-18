@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import { authUserStore, blogListStore } from '../lib/stores';
-	import { IconCaretLeft, IconCaretRight, IconGripVertical } from '@hyvor/icons';
+	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+import IconGripVertical from '@hyvor/icons/IconGripVertical';
+
 	import { flip } from 'svelte/animate';
 	import { dndzone, SOURCES, TRIGGERS } from 'svelte-dnd-action';
 	import type { BlogList } from '../lib/types';

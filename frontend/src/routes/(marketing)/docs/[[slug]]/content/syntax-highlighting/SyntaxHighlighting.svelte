@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Button, Loader, Table, TableRow } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import { IconCaretDown, IconCaretRight } from '@hyvor/icons';
+	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+
 
 	interface DataType {
 		languageTags: string;

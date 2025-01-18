@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Button, toast } from "@hyvor/design/components";
 	import type { ThemeFolder } from "../../../../lib/types";
-	import { IconCloudUpload, IconPlus } from "@hyvor/icons";
+	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+import IconPlus from '@hyvor/icons/IconPlus';
+
 	import CreateEditModal from "./Modals/CreateEditModal.svelte";
 	import { getConfig } from "../../../../lib/config";
 	import byteFormatter from "../../../../lib/helper/byte-formatter";

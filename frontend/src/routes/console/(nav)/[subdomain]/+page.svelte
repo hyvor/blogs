@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
+    import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconLaptop from '@hyvor/icons/IconLaptop';
+import IconTablet from '@hyvor/icons/IconTablet';
+
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { IconButton, Link, Loader } from "@hyvor/design/components";
 

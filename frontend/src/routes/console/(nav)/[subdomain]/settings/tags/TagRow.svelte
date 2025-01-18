@@ -2,7 +2,9 @@
 	import { IconButton, Link, TableRow, Tooltip, confirm, toast } from '@hyvor/design/components';
 	import type { Tag } from '../../../../lib/types';
 	import { primaryLanguageStore } from '../../../../lib/stores/languagesStore';
-	import { IconPencilFill, IconTrash } from '@hyvor/icons';
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+import IconTrash from '@hyvor/icons/IconTrash';
+
 	import { deleteTag } from './tagActions';
 	import { createEventDispatcher } from 'svelte';
 	import UpdateTagModal from './Update/UpdateTagModal.svelte';

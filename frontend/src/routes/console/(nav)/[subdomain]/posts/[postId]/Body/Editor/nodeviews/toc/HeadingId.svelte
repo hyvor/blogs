@@ -7,7 +7,9 @@
 	import { get } from "svelte/store";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { tick } from "svelte";
-	import { IconExclamation, IconExclamationCircle } from "@hyvor/icons";
+	import IconExclamation from '@hyvor/icons/IconExclamation';
+import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+
 
     interface Props {
         heading: TocEntry;

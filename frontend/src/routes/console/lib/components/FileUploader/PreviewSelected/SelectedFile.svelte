@@ -4,7 +4,9 @@
 	import Meta from './Meta.svelte';
 	import type { SelectedFile } from '../image-uploader';
 	import { Button, Loader, Switch, toast, TextInput, Validation } from '@hyvor/design/components';
-	import { IconCheckAll, IconCloudUpload } from '@hyvor/icons';
+	import IconCheckAll from '@hyvor/icons/IconCheckAll';
+import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { uploadMedia } from '../../../../(nav)/[subdomain]/tools/media/mediaActions';
