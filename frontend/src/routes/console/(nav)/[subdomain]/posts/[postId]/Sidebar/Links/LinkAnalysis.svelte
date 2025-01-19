@@ -20,10 +20,10 @@
 
 	let isReloadingAll = $state(false);
 
-	let linksEl: HTMLDivElement = $state();
+	let linksEl: HTMLDivElement | undefined = $state();
 
 	function handleJump(type: 'ok' | 'broken' | 'redirect' | 'ignored') {
-		const el = linksEl.querySelector('.link-wrap.type-' + type);
+		const el = linksEl?.querySelector('.link-wrap.type-' + type);
 		if (el) {
 			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}

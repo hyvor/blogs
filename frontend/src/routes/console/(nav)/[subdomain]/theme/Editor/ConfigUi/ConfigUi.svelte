@@ -16,8 +16,8 @@
 
     let { config, configDef }: Props = $props();
 
-    let configYaml : object = $state();
-    let configDefYaml : object = $state();
+    let configYaml : object = $state({});
+    let configDefYaml : object = $state({});
     let error : null | string = $state(null);
 
     run(() => {

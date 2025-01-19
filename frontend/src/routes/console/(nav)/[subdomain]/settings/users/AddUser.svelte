@@ -25,13 +25,13 @@
 
 	let hyvorUsernameOrEmail: string = $state('');
 	let hyvorUsernameOrEmailError: null | string = $state(null);
-	let hyvorUsernameOrEmailEl: HTMLInputElement = $state();
+	let hyvorUsernameOrEmailEl: HTMLInputElement | undefined = $state();
 
 	let role: UserRole = $state('admin');
 
 	let guestName = $state('');
 	let guestNameError: null | string = $state(null);
-	let guestNameEl: HTMLInputElement = $state();
+	let guestNameEl: HTMLInputElement | undefined = $state();
 
 	let isLoading = $state(false);
 
@@ -46,7 +46,7 @@
 
 		if (hyvorUsernameOrEmail.trim() === '') {
 			hyvorUsernameOrEmailError = 'Username or email is required';
-			hyvorUsernameOrEmailEl.focus();
+			hyvorUsernameOrEmailEl?.focus();
 			return;
 		}
 
@@ -71,7 +71,7 @@
 
 		if (guestName.trim() === '') {
 			guestNameError = 'Name is required';
-			guestNameEl.focus();
+			guestNameEl?.focus();
 			return;
 		}
 

@@ -15,8 +15,8 @@
 
 	let { isUploading = $bindable(false), type = 'image' }: Props = $props();
 
-	let inputEl: HTMLInputElement = $state();
-	let byUrlInputEl: HTMLInputElement = $state();
+	let inputEl: HTMLInputElement | undefined= $state();
+	let byUrlInputEl: HTMLInputElement | undefined = $state();
 
 	let byUrl = $state('');
 	let isDragging = $state(false);
@@ -134,7 +134,7 @@
 	}
 
 	function handleUploadClick() {
-		inputEl.click();
+		inputEl?.click();
 	}
 
 	function handleInputChange(e: any) {

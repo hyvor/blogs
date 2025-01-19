@@ -11,7 +11,7 @@
 <div class="danger">
 	<SplitControl label="Clear Cache">
 		{#snippet caption()}
-			<div>
+			<div class="caption">
 				Clear the cache of your blog. This will <strong>not</strong> delete any data.
 			</div>
 		{/snippet}
@@ -21,7 +21,7 @@
 
 	<SplitControl label="Delete Blog">
 		{#snippet caption()}
-			<div>
+			<div class="caption">
 				Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
 			</div>
 		{/snippet}
@@ -47,7 +47,7 @@
 	.danger {
 		padding: 20px 30px;
 	}
-	div[slot='caption'] {
+	.caption{
 		color: var(--text-light);
 		font-size: 14px;
 	}

@@ -148,12 +148,12 @@
 								{blog.name}
 								<BlogPlanTag {blog} />
 							</div>
-							<div class="url">
+							<!-- <div class="url"> -->
 								<!-- TODO: Add this again (descendant error) -->
 								<!-- <a href={blog.url} target="_blank">
 									{blog.url.replace(/https?:\/\//, '')}
 								</a> -->
-							</div>
+							<!-- </div> -->
 						</div>
 
 						<div class="right">
@@ -359,11 +359,11 @@
 	.name {
 		font-weight: 600;
 	}
-	.url {
-		font-size: 0.9rem;
-		color: var(--text-light);
-	}
-	.url a:hover {
-		text-decoration: underline;
-	}
+	// .url {
+	// 	font-size: 0.9rem;
+	// 	color: var(--text-light);
+	// }
+	// .url a:hover {
+	// 	text-decoration: underline;
+	// }
 </style>

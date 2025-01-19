@@ -22,7 +22,7 @@
 
 <Header {logo} subName="Blogs" darkToggle={false}>
 	{#snippet center()}
-		<div >
+		<div class="center">
 			<Button
 				as="a"
 				size="small"
@@ -67,7 +67,7 @@
 	{/snippet}
 
 	{#snippet end()}
-		<div >
+		<div class="end">
 			{#if loggedIn}
 				<Button as="a" size="small" href="/console">Go to Console &rarr;</Button>
 			{:else}
@@ -80,7 +80,7 @@
 </Header>
 
 <style>
-	div[slot='end'] {
+	.end {
 		display: flex;
 		align-items: center;
 		gap: 5px;
@@ -88,12 +88,12 @@
 
 	/* mobile styles */
 	@media (max-width: 768px) {
-		div[slot='center'] {
+		.center {
 			display: flex;
 			flex-direction: column;
 		}
 
-		div[slot='end'] {
+		.center {
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
@@ -101,13 +101,13 @@
 	}
 
 	@media (max-width: 992px) {
-		div[slot='center'] {
+		.center {
 			display: flex;
 			flex-direction: column;
 			gap: 5px;
 		}
 
-		div[slot='end'] {
+		.end {
 			flex-direction: column;
 			gap: 5px;
 			align-items: center;

@@ -17,7 +17,7 @@
 
 	let { url = $bindable('') }: Props = $props();
 
-	let inputEl: HTMLInputElement = $state();
+	let inputEl: HTMLInputElement | undefined = $state();
 	let inputStarted = $state(false);
 
 	const dispatch = createEventDispatcher<{
@@ -46,13 +46,13 @@
 
 		if (url.trim() === '') {
 			error = 'URL is required';
-			inputEl.focus();
+			inputEl?.focus();
 			return;
 		}
 
 		if (!isValidUrl(url)) {
 			error = 'Invalid URL';
-			inputEl.focus();
+			inputEl?.focus();
 			return;
 		}
 

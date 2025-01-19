@@ -4,7 +4,7 @@
 	import PublishedEditingStatus from "./PublishedEditingStore/PublishedEditingStatus.svelte";
 	import AutoTranslate from "./AutoTranslate/AutoTranslate.svelte";
 
-    let el: HTMLDivElement = $state();
+    let el: HTMLDivElement | undefined = $state();
     let parent: HTMLDivElement;
 
     function positionEl() {
@@ -24,7 +24,7 @@
     }
 
     onMount(() => {
-        parent = el.parentElement as HTMLDivElement;
+        parent = el?.parentElement as HTMLDivElement;
         positionEl();
     });
 </script>

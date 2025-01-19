@@ -20,7 +20,7 @@
 
 	let isLoading = $state(true);
 
-	let postView: HTMLDivElement = $state();
+	let postView: HTMLDivElement | undefined = $state();
 
 	onMount(() => {
 		let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
@@ -31,7 +31,9 @@
 			})
 			.then((res) => {
 				setPostAndPostOriginalStore(res);
-				initPostEditingState(postView);
+				if (postView) {
+					initPostEditingState(postView);
+				}
 				initEditorEventHandlers();
 
 				linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();

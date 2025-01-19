@@ -17,7 +17,7 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
     let { heading }: Props = $props();
 
-    let input: HTMLInputElement = $state();
+    let input: HTMLInputElement | undefined = $state();
 
     function handleClick(e: any) {
         e.stopPropagation();

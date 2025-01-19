@@ -46,7 +46,7 @@ import IconGithub from '@hyvor/icons/IconGithub';
         port = window.location.port ? `:${Number(window.location.port) + 1}` : "";
     })
 
-    let navEl: HTMLDivElement = $state();
+    let navEl: HTMLDivElement | undefined = $state();
 
     function handleMobileNavClick() {
         if (!navEl) return;

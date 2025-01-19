@@ -30,13 +30,14 @@ import IconTrash from '@hyvor/icons/IconTrash';
 		view
 	}: Props = $props();
 
-	let imgEl: HTMLImageElement = $state();
+	let imgEl: HTMLImageElement | undefined = $state();
 
 	let displayWidth: string = $state('0');
 	let displayHeight: string = $state('0');
 
 
 	function setDisplaySize() {
+		if (!imgEl) return;
 		displayWidth = Math.floor(width ? width : imgEl?.naturalWidth).toString();
 		displayHeight = Math.floor(height ? height : imgEl?.naturalHeight).toString();
 	}
@@ -80,7 +81,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
 	function handleRangeInput(e: any) {
 		const value = parseInt(e.target.value);
 		let width: number | null, height: number | null;
-
+		if (!imgEl) return;
 		if (value === 100) {
 			width = null;
 			height = null;
@@ -181,8 +182,10 @@ import IconTrash from '@hyvor/icons/IconTrash';
 	onMount(() => {
 		setDisplaySize();
 	});
-	run(() => {
-		width, height, setDisplaySize();
+	$effect(() => {
+		width;
+		height;
+		setDisplaySize();
 	});
 </script>
 

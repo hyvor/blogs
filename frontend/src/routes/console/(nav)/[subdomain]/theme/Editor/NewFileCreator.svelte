@@ -16,12 +16,12 @@ import IconPlus from '@hyvor/icons/IconPlus';
 
     let { folder }: Props = $props();
 
-    let uploadInput: HTMLInputElement = $state();
+    let uploadInput: HTMLInputElement | undefined = $state();
     
     let isCreating = $state(false);
 
     function handleUpload() {
-        const files = uploadInput.files;
+        const files = uploadInput?.files;
         const file = files?.[0] || null;
         if (!file) {
             return toast.error('Please select a file to upload');
@@ -49,7 +49,7 @@ import IconPlus from '@hyvor/icons/IconPlus';
     }
 
     function handleUploadClick() {
-        uploadInput.click();
+        uploadInput?.click();
     }
 
 </script>

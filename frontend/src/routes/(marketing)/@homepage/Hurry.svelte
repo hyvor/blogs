@@ -3,8 +3,8 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { slide } from 'svelte/transition';
 
-	let mainEl: HTMLDivElement = $state();
-	let fixedEl: HTMLDivElement = $state();
+	let mainEl: HTMLDivElement | undefined = $state();
+	let fixedEl: HTMLDivElement | undefined = $state();
 
 	let showFixed = $state(false);
 

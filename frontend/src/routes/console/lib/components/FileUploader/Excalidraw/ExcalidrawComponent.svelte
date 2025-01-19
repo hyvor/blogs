@@ -12,7 +12,7 @@
 
 	interface Props {
 		initialData?: ExcalidrawInitialDataState;
-		excalidrawAPI: ExcalidrawImperativeAPI;
+		excalidrawAPI: ExcalidrawImperativeAPI | undefined;
 	}
 
 	let { initialData = {}, excalidrawAPI = $bindable() }: Props = $props();

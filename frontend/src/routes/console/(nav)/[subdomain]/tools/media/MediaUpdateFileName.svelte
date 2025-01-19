@@ -32,7 +32,7 @@
 
 	let name = $state(media.name);
 
-	const startExt = getExtension(name);
+	let startExt = $derived(getExtension(name));
 
 
 	function getExtension(n: string) {

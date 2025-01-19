@@ -6,14 +6,14 @@
 	import { uploadTheme } from './themeActions';
 	import { setThemeFiles } from './themeStore';
 
-	let inputEl: HTMLInputElement = $state();
+	let inputEl: HTMLInputElement | undefined = $state();
 
 	function handleClick() {
-		inputEl.click();
+		inputEl?.click();
 	}
 
 	function handleUpload() {
-		const file = inputEl.files?.[0];
+		const file = inputEl?.files?.[0];
 
 		if (!file) {
 			return toast.error('Please select a file');

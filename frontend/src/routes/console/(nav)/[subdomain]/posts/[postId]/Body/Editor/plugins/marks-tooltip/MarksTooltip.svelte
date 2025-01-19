@@ -27,7 +27,7 @@ import IconTypeStrikethrough from '@hyvor/icons/IconTypeStrikethrough';
 
     let { view, show = false }: Props = $props();
 
-    let tooltip: HTMLSpanElement = $state();
+    let tooltip: HTMLSpanElement | undefined = $state();
     let linkSelectorOpen = $state(false);
 
     function getLink() {
@@ -42,7 +42,7 @@ import IconTypeStrikethrough from '@hyvor/icons/IconTypeStrikethrough';
         return link;
     }
 
-    let  link: Mark | null = $state();
+    let link: Mark | null = $state(null);
     run(() => {
         if (view) link = getLink();
     });

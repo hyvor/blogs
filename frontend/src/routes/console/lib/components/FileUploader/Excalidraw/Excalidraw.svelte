@@ -21,7 +21,7 @@ import IconSendFill from '@hyvor/icons/IconSendFill';
 
 	let { initialData = {} }: Props = $props();
 
-	let excalidrawAPI: ExcalidrawImperativeAPI = $state();
+	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 
 	const dispatch = createEventDispatcher<{
 		select: SelectedFile;

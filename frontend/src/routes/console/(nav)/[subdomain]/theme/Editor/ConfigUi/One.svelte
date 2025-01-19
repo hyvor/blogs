@@ -22,11 +22,11 @@
         key
     }: Props = $props();
 
-    let currentDef: Record<string, any> = $state();
-    let name: string = $state();
-    let description: string = $state();
-    let hasChildren: boolean = $state();
-    let parentKeysWithCurrentKey: string[] = $state();
+    let currentDef: Record<string, any>= $state({});
+    let name: string = $state('');
+    let description: string = $state('');
+    let hasChildren: boolean = $state(false);
+    let parentKeysWithCurrentKey: string[] = $state([]);
 
     run(() => {
         currentDef = configDef[key as keyof typeof configDef] || {};
@@ -61,7 +61,7 @@
 >
 
     {#snippet caption()}
-        <div >
+        <div class="caption">
             {@html description}
         </div>
     {/snippet}
@@ -90,7 +90,7 @@
 </SplitControl>
 
 <style lang="scss">
-    div[slot="caption"] {
+    .caption {
         font-size: 14px;
         color: var(--text-light);
         :global(a) {

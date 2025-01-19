@@ -15,8 +15,8 @@ import IconTrash from '@hyvor/icons/IconTrash';
 
 	let { src, getPos, view }: Props = $props();
 
-	let audioEl: HTMLAudioElement = $state();
-	let fileInputEl: HTMLInputElement;
+	let audioEl: HTMLAudioElement | undefined = $state();
+	//let fileInputEl: HTMLInputElement;
 
 	let loading = false;
 
@@ -58,7 +58,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
 			destroy();
 		});
 
-		selector.$on('select', (e) => {
+		selector.$on('select', (e: any) => {
 			destroy();
 			updateProps({
 				src: e.detail.url
@@ -90,7 +90,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
 
 	onMount(() => {
 		if (!src) {
-			fileInputEl.click(); // Trigger the file input if no audio is selected initially
+			// fileInputEl.click(); // Trigger the file input if no audio is selected initially
 		}
 	});
 </script>

@@ -15,7 +15,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 
     let show = $state(false);
-    let wrapEl: HTMLSpanElement = $state();
+    let wrapEl: HTMLSpanElement | undefined = $state();
     let showDropdown = $state(false);
 
     let editorView = $derived($postEditingStatusStore.editorView!);
@@ -53,6 +53,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
             const { left, width } = td.getBoundingClientRect();
             const { top } = table.getBoundingClientRect();
 
+            if (!wrapEl) return;
             wrapEl.style.top = `${top}px`;
             wrapEl.style.left = `${left}px`;
             wrapEl.style.width = width + "px";

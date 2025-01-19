@@ -25,7 +25,7 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	));
 	let nameError = $state('');
 
-	let imgEl: HTMLImageElement = $state();
+	let imgEl: HTMLImageElement | undefined = $state();
 
 	let width = $state(0);
 	let height = $state(0);
@@ -64,6 +64,7 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	const hosting = getHosting();
 
 	function handleImageLoad() {
+		if (!imgEl) return;
 		width = imgEl.naturalWidth;
 		height = imgEl.naturalHeight;
 	}

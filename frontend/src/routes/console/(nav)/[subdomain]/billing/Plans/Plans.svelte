@@ -2,15 +2,15 @@
 	import { getConfig } from '../../../../lib/config';
 	import { onMount } from 'svelte';
 
-	let wrap: HTMLDivElement = $state();
+	let wrap: HTMLDivElement | undefined = $state();
 
 	onMount(() => {
 		const script = document.createElement('script');
 		script.src = getConfig().hyvor.instance + '/js/billing-component-iframe.js?component=blogs';
-		wrap.appendChild(script);
+		wrap?.appendChild(script);
 
 		return () => {
-			wrap.removeChild(script);
+			wrap?.removeChild(script);
 		};
 	});
 </script>

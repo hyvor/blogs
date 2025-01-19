@@ -29,7 +29,7 @@
 	let hasMore = $state(false);
 	let mediaFiles: Media[] = $state([]);
 
-	let uploadInput: HTMLInputElement = $state();
+	let uploadInput: HTMLInputElement | undefined = $state();
 	let isUploading = false;
 
 	let extensions: string[] = [];
