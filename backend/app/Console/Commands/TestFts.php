@@ -4,22 +4,7 @@ namespace App\Console\Commands;
 
 use App\Domains\Post\PostSearchRepository;
 use Illuminate\Console\Command;
-use App\Domains\Blog\Fillers\RouteFiller;
 use App\Models\Blog;
-use App\Models\BlogVariant;
-use App\Models\Language;
-use App\Models\Post;
-use App\Models\PostAuthor;
-use App\Models\PostTag;
-use App\Models\PostVariant;
-use App\Models\Route;
-use App\Models\Tag;
-use App\Models\TagVariant;
-use App\Models\User;
-use App\Models\UserVariant;
-use Faker\Factory;
-use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Database\Seeder;
 use App\Http\Controllers\DataApi\Helper;
 use Illuminate\Support\Facades\DB;
 
