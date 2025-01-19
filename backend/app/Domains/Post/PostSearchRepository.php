@@ -81,8 +81,6 @@ class PostSearchRepository
             ->limit($limit)
             ->offset($offset)
             ->get();
-
-        //dd($post_variants[0]->post_id);
             
         if (count($post_variants) > 0) {
             $postIds = $post_variants->pluck('post_id')->toArray();
