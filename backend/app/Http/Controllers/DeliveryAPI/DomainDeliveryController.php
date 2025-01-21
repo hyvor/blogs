@@ -4,7 +4,6 @@ namespace App\Http\Controllers\DeliveryAPI;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Delivery\DeliveryService;
-use App\Domains\Subscription\SubscriptionService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
@@ -18,11 +17,15 @@ class DomainDeliveryController extends Controller
             return redirect('https://blogs.hyvor.com');
         }
 
-        if ($blog->type === BlogTypeEnum::DEFAULT && $blog->trial_ends_at->lessThan(now())) {
-            $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-            if (!$subscription) {
-                return view('errors.trial-ended', ['subdomain' => $blog->subdomain]);
-            }
+        if (
+            $blog->type === BlogTypeEnum::DEFAULT &&
+            $blog->trial_ends_at->lessThan(now())
+        ) {
+//            $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+//            if (!$subscription) {
+//                return view('errors.trial-ended', ['subdomain' => $blog->subdomain]);
+//            }
+            // TODO: Finalize strategy for trial ended
         }
 
         /**

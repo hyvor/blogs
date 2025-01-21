@@ -5,11 +5,11 @@ use Illuminate\Support\Str;
 $pgsql = [
     'driver' => 'pgsql',
     'url' => env('DATABASE_URL'),
-    'host' => env('DB_HOST', '127.0.0.1'),
+    'host' => env('DB_HOST', 'hyvor-service-citus'),
     'port' => env('DB_PORT', '5432'),
     'database' => env('DB_DATABASE', 'hyvor_blogs'),
     'username' => env('DB_USERNAME', 'postgres'),
-    'password' => env('DB_PASSWORD', ''),
+    'password' => env('DB_PASSWORD', 'postgres'),
     'charset' => 'utf8',
     'prefix' => '',
     'prefix_indexes' => true,

@@ -10,14 +10,13 @@
 	import PlanSwitcher from './PlanSwitcher.svelte';
 	import Faq from './Faq.svelte';
 	import IconBrush from '@hyvor/icons/IconBrush';
-import IconCreditCard from '@hyvor/icons/IconCreditCard';
-import IconHourglass from '@hyvor/icons/IconHourglass';
-import IconPercent from '@hyvor/icons/IconPercent';
-import IconCCircle from '@hyvor/icons/IconCCircle';
-import IconSpeedometer2 from '@hyvor/icons/IconSpeedometer2';
-import IconChat from '@hyvor/icons/IconChat';
-import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
-
+	import IconCreditCard from '@hyvor/icons/IconCreditCard';
+	import IconHourglass from '@hyvor/icons/IconHourglass';
+	import IconPercent from '@hyvor/icons/IconPercent';
+	import IconCCircle from '@hyvor/icons/IconCCircle';
+	import IconSpeedometer2 from '@hyvor/icons/IconSpeedometer2';
+	import IconChat from '@hyvor/icons/IconChat';
+	import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 
 	const basicFeatures: Feature[] = [
 		{
@@ -47,7 +46,8 @@ import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 		},
 		{
 			name: 'Data Ownership',
-			description: 'You own everything you write. Export and move to another platform anytime.',
+			description:
+				'You own everything you write. Export and move to another platform anytime.',
 			values: [true, true, true, true, true, true]
 		},
 		{
@@ -72,13 +72,13 @@ import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 			name: 'GPT Writing',
 			description:
 				'Use OpenAI GPT 3.5 for content writing, keyword generation, and more. Usually, 1000 tokens is about 750 words.',
-			values: [false, '100k tokens/m', '1m tokens/m', '3m tokens/m', '15m tokens/m', '30m tokens/m']
+			values: [false, '100k tokens/m', '1m tokens/m']
 		},
 		{
 			name: 'Auto-Translations',
 			description:
 				'Automatically translate your posts into multiple languages using DeepL. Monthly characters limit on each plan.',
-			values: [false, '100k chars/m', '300k chars/m', '1m chars/m', '5m chars/m', '15m chars/m']
+			values: [false, '100k chars/m', '500k chars/m']
 		}
 	];
 
@@ -169,9 +169,10 @@ import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 
 <div class="faqs hds-container">
 	<Faq q="How does the free trial work?" icon={IconHourglass}>
-		Anyone can signup for the <strong>7-day free trial</strong> to test Hyvor Blogs. No credit card required.
-		All features are available during the trial (except Hyvor Talk integration). After the trial, you
-		can upgrade to a paid plan to continue using Hyvor Blogs. Each blog needs a separate subscription.
+		Anyone can signup for the <strong>7-day free trial</strong> to test Hyvor Blogs. No credit card
+		required. All features are available during the trial (except Hyvor Talk integration). After
+		the trial, you can upgrade to a paid plan to continue using Hyvor Blogs. Each blog needs a separate
+		subscription.
 	</Faq>
 
 	<Faq q="Do I have to pay for themes?" icon={IconBrush}>
@@ -179,8 +180,8 @@ import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 			>free and <Link href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank"
 				>open-source</Link
 			></strong
-		>. They can be easily installed on your blog with a few clicks. If you want to build your own
-		theme, you will have to cover the development costs.
+		>. They can be easily installed on your blog with a few clicks. If you want to build your
+		own theme, you will have to cover the development costs.
 	</Faq>
 
 	<Faq q="Do you offer discounts?" icon={IconPercent}>
@@ -209,8 +210,8 @@ import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 
 	<Faq q="Can I display ads on my blog?" icon={IconBadgeAd}>
 		You decide! You are in control of your blog and the theme. You can add any ad code to your
-		theme. You can easily add Google AdSense or any other ad network to your blog by adding the ad
-		code to your blog/theme.
+		theme. You can easily add Google AdSense or any other ad network to your blog by adding the
+		ad code to your blog/theme.
 	</Faq>
 
 	<Faq q="How to add a commenting system?" icon={IconChat}>

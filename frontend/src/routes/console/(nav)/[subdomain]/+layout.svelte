@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { Loader, toast } from '@hyvor/design/components';
-	import {
-		hasTrialEndedAndNotSubscribed,
-	} from '../../lib/stores/subscriptionStore';
+	import { hasTrialEndedAndNotSubscribed } from '../../lib/stores/subscriptionStore';
 	import { blogStore } from '../../lib/stores/blogStore';
 	import TempBlogNotice from './Temp/TempBlogNotice.svelte';
 	import TrialEndedStatus from './@components/BlogStatus/TrialEndedStatus.svelte';
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';
 	import BlogBannedStatus from './@components/BlogStatus/BlogBannedStatus.svelte';
-	import {loadBlog} from "./blogLoader";
+	import { loadBlog } from './blogLoader';
+	import { page } from '$app/stores';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -31,10 +29,11 @@
 			});
 	});
 
-	let forcedShow =
-		$derived(!isLoading &&
-		($page.url.pathname === consoleUrlWithBlog('billing') ||
-			$page.url.pathname.startsWith(consoleUrlWithBlog('settings'))));
+	let forcedShow = $derived(
+		!isLoading &&
+			($page.url.pathname === consoleUrlWithBlog('billing') ||
+				$page.url.pathname.startsWith(consoleUrlWithBlog('settings')))
+	);
 </script>
 
 <svelte:head>
@@ -60,25 +59,6 @@
 {/if}
 
 <style>
-	main#blog-main {
-		display: flex;
-		width: 100%;
-		height: calc(100vh - var(--top-offset, 0));
-		flex: 1;
-		min-height: 0;
-	}
-	#nav {
-		width: 280px;
-		padding: 15px;
-		padding-right: 0;
-	}
-	.content {
-		padding: 15px;
-		flex: 1;
-		height: 100%;
-		min-width: 0;
-		overflow: auto;
-	}
 	.full-loader {
 		width: 100%;
 		height: 100%;

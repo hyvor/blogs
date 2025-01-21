@@ -42,9 +42,6 @@ services:
                     target: /app/backend
                 -   path: backend/composer.lock
                     action: rebuild
-                -   path: ../internal
-                    action: sync
-                    target: /app/backend/packages/internal
         env_file:
             - .env
         labels:

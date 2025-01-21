@@ -33,8 +33,8 @@ class UsageRepository
      */
     private static function getLimits(Blog $blog): array
     {
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-        $plan = $subscription?->plan;
+
+        $license = LicenseService::getLicense($blog);
 
         $gb = (10 ** 9);
 
@@ -58,7 +58,7 @@ class UsageRepository
         $gptTokens = GptPromptsService::getMaxMonthlyGptTokens($blog, $plan);
 
         return [
-            'users' => $users,
+            'users' => $license->users,
             'media' => $media,
             'auto_translate' => $autoTranslateChars,
             'gpt' => $gptTokens

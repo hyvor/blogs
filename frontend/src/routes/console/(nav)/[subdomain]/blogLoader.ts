@@ -11,8 +11,6 @@ interface BlogResponse {
 	blog: Blog;
 	languages: Language[];
 	users: User[];
-	subscription: Subscription | null;
-	usage: UsageTypes;
 	counts: BlogCounts;
 }
 

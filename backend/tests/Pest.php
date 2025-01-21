@@ -1,16 +1,13 @@
 <?php
 
 use App\Domains\Delivery\Twig\TwigRenderer;
-use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
-use App\Models\Media;
 use App\Models\User;
 use Faker\Factory;
 use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
+use Hyvor\Internal\Billing\Billing;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
-use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Tests\TestCase;
 
@@ -23,6 +20,7 @@ uses()->beforeEach(function () {
 
     // reset userbase
     FakeProvider::databaseClear();
+    Billing::fake();
 
     Cache::flush();
 

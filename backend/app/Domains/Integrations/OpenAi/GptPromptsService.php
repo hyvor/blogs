@@ -2,12 +2,11 @@
 
 namespace App\Domains\Integrations\OpenAi;
 
-use App\Data\Enums\SubscriptionPlanEnum;
-use App\Domains\Subscription\SubscriptionService;
-use App\Models\AutoTranslation;
+use App\Domains\Subscription\LicenseService;
 use App\Models\Blog;
 use App\Models\GptPrompt;
 use App\Models\Post;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Database\Eloquent\Collection;
 
 class GptPromptsService
@@ -63,28 +62,21 @@ class GptPromptsService
             ->sum('tokens_total'));
     }
 
-    public static function getMaxMonthlyGptTokens(Blog $blog, ?SubscriptionPlanEnum $plan) : int
+    public static function getMaxMonthlyGptTokens(BlogsLicense $blogsLicense) : int
     {
-        if ($plan === null && $blog->trial_ends_at->isFuture())
-            return 1000;
-
-        return match ($plan) {
-            SubscriptionPlanEnum::GROWTH => 100000,
-            SubscriptionPlanEnum::PREMIUM => 1000000,
-            SubscriptionPlanEnum::TEAM => 3000000,
-            //SubscriptionPlanEnum::BUSINESS => 15000000,
-           // SubscriptionPlanEnum::ENTERPRISE => 30000000,
-            default => 0,
-        };
+        return $blogsLicense->aiTokensK * 1000;
     }
 
     public static function hasLimitsExceeded(Blog $blog) : bool
     {
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-        $plan = $subscription?->plan;
 
+        $license = LicenseService::getLicense($blog);
+        if (!$license) {
+            return true;
+        }
+
+        $maxUsage = self::getMaxMonthlyGptTokens($license);
         $usage = self::getThisMonthUsage($blog);
-        $maxUsage = self::getMaxMonthlyGptTokens($blog, $plan);
 
         return $usage >= $maxUsage;
     }

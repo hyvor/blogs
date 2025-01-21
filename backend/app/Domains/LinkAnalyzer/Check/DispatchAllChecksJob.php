@@ -2,8 +2,7 @@
 
 namespace App\Domains\LinkAnalyzer\Check;
 
-use App\Data\Enums\SubscriptionPlanEnum;
-use App\Domains\Subscription\SubscriptionService;
+use App\Domains\Subscription\LicenseService;
 use App\Models\Blog;
 
 class DispatchAllChecksJob
@@ -28,11 +27,21 @@ class DispatchAllChecksJob
                 continue;
             }
 
-            // Skip if blog is not at least on Growth plan
-            if (!SubscriptionService::hasAtLeast($blog, SubscriptionPlanEnum::GROWTH))
+            $license = LicenseService::getLicense($blog);
+
+            // no license
+            if (!$license) {
                 continue;
+            }
+            // analyses are not available in the blog's plan
+            if ($license->analyses === false) {
+                continue;
+            }
 
             dispatch(new AnalyzeAllLinksJob($blog));
+
+            // 100ms
+            usleep(100000);
 
         }
 

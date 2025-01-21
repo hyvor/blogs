@@ -5,4 +5,4 @@
 .DS_Store
 testing/*
 data.ms/
-/internal
+/backend/packages/internal

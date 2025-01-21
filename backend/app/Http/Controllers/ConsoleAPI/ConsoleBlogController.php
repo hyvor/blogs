@@ -15,7 +15,6 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Subscription\SubscriptionService;
 use App\Domains\Subscription\UsageRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
@@ -23,10 +22,7 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Subscription;
 use App\Rules\Subdomain;
-use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\InternalApi\ComponentType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -41,10 +37,6 @@ class ConsoleBlogController extends Controller
      */
     public function getBlogData(Blog $blog)
     {
-
-        // $subscription = Billing::getSubscriptionOfResource(ComponentType::BLOGS, $blog->id);
-        $usage = UsageRepository::getUsage($blog);
-
         return response()->json([
             'blog' => new BlogObject($blog),
             'subscription' => null,
@@ -59,7 +51,6 @@ class ConsoleBlogController extends Controller
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
             'languages' => LanguageRepository::getAllLanguages($blog)->map(fn ($language) => new LanguageObject($language)),
-            'usage' => $usage,
         ]);
     }
 

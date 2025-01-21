@@ -5,9 +5,7 @@ namespace App\Data\Objects\ConsoleAPI\UserBlog;
 use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
-use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 
 class UserBlogBlogObject
@@ -38,8 +36,6 @@ class UserBlogBlogObject
 
     // public int $trial_ends_at;
 
-    public ?SubscriptionObject $subscription = null;
-
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
@@ -57,11 +53,5 @@ class UserBlogBlogObject
 
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
-
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-
-        if ($subscription) {
-            $this->subscription = new SubscriptionObject($subscription);
-        }
     }
 }
