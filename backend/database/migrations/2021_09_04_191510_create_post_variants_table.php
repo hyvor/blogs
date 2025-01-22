@@ -27,6 +27,7 @@ return new class () extends Migration {
             $table->mediumText('content')->nullable();
             $table->mediumText('content_unsaved')->nullable();
             $table->mediumText('content_html')->nullable();
+            $table->mediumText('content_text')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->nullable();
             $table->integer('words')->nullable();
