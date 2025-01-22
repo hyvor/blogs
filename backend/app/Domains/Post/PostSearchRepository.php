@@ -8,7 +8,6 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class PostSearchRepository
 {
@@ -44,16 +43,16 @@ class PostSearchRepository
                 $query->where('status', 'published');
             })
             ->select('post_id')
+            ->join('posts', 'post_variants.post_id', '=', 'posts.id')
+            ->where('posts.blog_id', $blog->id)
+            ->where('is_page', $isPage)
             ->limit($limit)
             ->offset($offset)
             ->get();
 
         if (count($postVariants) > 0) {
             $postIds = $postVariants->pluck('post_id')->toArray();
-            $posts = Post::whereIn('id', $postIds)
-                ->where('blog_id', $blog->id)
-                ->where('is_page', $isPage ? 'true' : 'false')
-                ->get();
+            $posts = Post::whereIn('id', $postIds)->get();
         } else {
             /** @var Collection<int, Post> $posts */
             $posts = collect();

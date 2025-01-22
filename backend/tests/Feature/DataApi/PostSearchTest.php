@@ -20,6 +20,15 @@ it('searches posts in English', function () {
         'ts_language' => 'english'
     ]);
 
+    // page, not included
+    $post = addPost($blog, [
+        'is_page' => true
+    ], [
+        'title' => 'How to make a pie',
+        'status' => 'published',
+        'ts_language' => 'english'
+    ]);
+
     // cake
     dataApi($blog, '/posts/search', [
             'search' => 'cake',
