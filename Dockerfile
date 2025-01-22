@@ -67,7 +67,7 @@ RUN npm install
 FROM backend-base AS backend-dev
 
 # pcov for debugging
-RUN install-php-extensions pcov
+RUN install-php-extensions pcov gd
 COPY backend/composer.json backend/composer.lock /app/backend/
 RUN composer install --no-interaction
 

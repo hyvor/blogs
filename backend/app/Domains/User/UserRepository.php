@@ -9,6 +9,7 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\Subscription\LicenseService;
 use App\Domains\Subscription\UsageRepository;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
@@ -349,9 +350,15 @@ class UserRepository
 
     public static function hasLimitsExceeded(Blog $blog) : bool
     {
+        // TODO: This is wrong. Check user level limits
         $usage = $blog->getCount('users');
-        $limit = UsageRepository::getLimitsOf($blog, 'users');
-        return $usage >= $limit;
+
+        $license = LicenseService::getLicense($blog);
+        if (!$license) {
+            return true;
+        }
+
+        return $usage >= $license->users;
     }
 
 

@@ -210,6 +210,7 @@ class MediaRepository
 
     public static function hasLimitsExceeded(Blog $blog): bool
     {
+        // TODO: This is wrong, get user-level usage
         $usage = $blog->getCount('media');
 
         $license = LicenseService::getLicense($blog);
