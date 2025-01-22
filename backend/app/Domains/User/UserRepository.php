@@ -4,13 +4,13 @@ namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Domains\Billing\Usage\UsersUsage;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\LicenseService;
-use App\Domains\Subscription\UsageRepository;
+use App\Domains\Billing\LicenseService;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -32,6 +32,13 @@ use Illuminate\Support\Facades\Mail;
 
 class UserRepository
 {
+
+    public function __construct(
+        private UsersUsage $usersUsage,
+    )
+    {
+    }
+
     /**
      * @param  Blog  $blog
      * @param  int  $limit
@@ -348,17 +355,20 @@ class UserRepository
         $user->save();
     }
 
-    public static function hasLimitsExceeded(Blog $blog) : bool
+    public function hasLimitsReached(Blog $blog) : bool
     {
-        // TODO: This is wrong. Check user level limits
-        $usage = $blog->getCount('users');
-
         $license = LicenseService::getLicense($blog);
+
         if (!$license) {
             return true;
         }
 
-        return $usage >= $license->users;
+        if ($blog->hyvor_user_id === null) {
+            // this should be a temp, dev, or preview blog
+            return false;
+        }
+
+        return $this->usersUsage->hasReached($license, $blog->hyvor_user_id, $blog->id);
     }
 
 

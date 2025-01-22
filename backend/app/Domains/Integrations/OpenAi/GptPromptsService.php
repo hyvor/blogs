@@ -2,7 +2,7 @@
 
 namespace App\Domains\Integrations\OpenAi;
 
-use App\Domains\Subscription\LicenseService;
+use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\GptPrompt;
 use App\Models\Post;

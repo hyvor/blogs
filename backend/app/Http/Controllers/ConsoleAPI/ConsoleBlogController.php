@@ -15,7 +15,7 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Subscription\UsageRepository;
+use App\Domains\Billing\UsageRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;

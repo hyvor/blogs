@@ -6,7 +6,7 @@ use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\LicenseService;
+use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;

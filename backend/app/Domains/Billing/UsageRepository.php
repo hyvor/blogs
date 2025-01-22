@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Subscription;
+namespace App\Domains\Billing;
 
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\Billing\UsageObject;

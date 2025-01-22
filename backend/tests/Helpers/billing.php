@@ -6,6 +6,9 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Models\Blog;
 use App\Models\Subscription;
 
+/**
+ * @deprecated
+ */
 function createSubscription(
     Blog $blog,
     SubscriptionPlanEnum $plan = SubscriptionPlanEnum::STARTER,

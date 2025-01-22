@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\ConsoleAPI\Users;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
 use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -101,7 +102,7 @@ it('does not create if the user is not found', function () {
 it('does not create if the user already exists', function () {
 
     $blog = blogWithAccessLanguageAndRoutes();
-    createSubscription($blog, SubscriptionPlanEnum::PREMIUM);
+    Billing::fake(license: new BlogsLicense(users: 3));
 
     consoleApi($blog, 'POST', '/user', [
         'username_or_email' => $this->username,

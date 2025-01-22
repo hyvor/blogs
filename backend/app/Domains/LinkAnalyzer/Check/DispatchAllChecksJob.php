@@ -2,7 +2,7 @@
 
 namespace App\Domains\LinkAnalyzer\Check;
 
-use App\Domains\Subscription\LicenseService;
+use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 
 class DispatchAllChecksJob

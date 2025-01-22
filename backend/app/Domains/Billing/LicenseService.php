@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Subscription;
+namespace App\Domains\Billing;
 
 use App\Models\Blog;
 use Hyvor\Internal\Billing\Billing;

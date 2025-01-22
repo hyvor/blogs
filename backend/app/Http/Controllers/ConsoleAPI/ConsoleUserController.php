@@ -48,14 +48,18 @@ class ConsoleUserController extends Controller
         return response()->json($users);
     }
 
-    public static function create(Request $request, Blog $blog) : JsonResponse
+    public static function create(
+        Request $request,
+        Blog $blog,
+        UserRepository $userService,
+    ) : JsonResponse
     {
         $request->validate([
             'username_or_email' => 'required|string',
             'role' => ['required', new Enum(UserRoleEnum::class)],
         ]);
 
-        if (UserRepository::hasLimitsExceeded($blog)) {
+        if ($userService->hasLimitsReached($blog)) {
             throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
         }
 
@@ -87,13 +91,17 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function createGuest(Request $request, Blog $blog) : JsonResponse
+    public static function createGuest(
+        Request $request,
+        Blog $blog,
+        UserRepository $userService,
+    ) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
         ]);
 
-        if (UserRepository::hasLimitsExceeded($blog)) {
+        if ($userService->hasLimitsReached($blog)) {
             throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
         }
 
