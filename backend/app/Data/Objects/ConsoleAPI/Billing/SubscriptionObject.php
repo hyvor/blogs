@@ -6,7 +6,6 @@ use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
-use App\Domains\Integrations\Shopify\ShopifyBillingService;
 use App\Models\Subscription;
 
 class SubscriptionObject
@@ -23,7 +22,6 @@ class SubscriptionObject
 
     public ?int $ends_at;
     public ?int $paddle_subscription_id;
-    public ?string $shopify_subscription_id;
 
     public function __construct(Subscription $subscription)
     {
@@ -35,6 +33,5 @@ class SubscriptionObject
         $this->ends_at = $subscription->ends_at?->getTimestamp();
 
         $this->paddle_subscription_id = (new PaddleService())->getPaddleSubscriptionId($subscription);
-        $this->shopify_subscription_id = ShopifyBillingService::getShopifySubscriptionId($subscription);
     }
 }

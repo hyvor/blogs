@@ -2,9 +2,6 @@
 
 namespace Tests\Feature\DeliveryApi;
 
-use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Subscription\SubscriptionService;
-use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Redirect;
 use App\Models\Subscription;
 
