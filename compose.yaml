@@ -1,0 +1,67 @@
+services:
+
+  hyvor-blogs-frontend:
+    container_name: hyvor-blogs-frontend
+    build:
+      context: .
+      target: frontend-dev
+    develop:
+      watch:
+        -   path: frontend/src
+            action: sync
+            target: /app/frontend/src
+        -   path: frontend/static
+            action: sync
+            target: /app/frontend/static
+        -   path: frontend/package.json
+            action: rebuild
+        -   path: frontend/package-lock.json
+            action: rebuild
+    labels:
+      traefik.enable: true
+      traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.dev`)
+      traefik.http.routers.hyvor-blogs-frontend.entrypoints: https
+      traefik.http.routers.hyvor-blogs-frontend.tls: true
+      traefik.http.routers.hyvor-blogs-frontend.middlewares: vite-retry@file
+      traefik.http.services.hyvor-blogs-frontend.loadbalancer.server.port: 36201
+
+    networks:
+      - hyvor-network
+
+    profiles: [ dev ]
+
+  hyvor-blogs-backend:
+    container_name: hyvor-blogs-backend
+    build:
+      context: .
+      target: backend-dev
+    develop:
+      watch:
+        -   path: backend
+            action: sync
+            target: /app/backend
+        -   path: backend/composer.lock
+            action: rebuild
+    env_file:
+      - .env
+    labels:
+      traefik.enable: true
+      # backend
+      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.dev`) && PathPrefix(`/api`)
+      traefik.http.routers.hyvor-blogs-backend.entrypoints: https
+      traefik.http.routers.hyvor-blogs-backend.tls: true
+      traefik.http.routers.hyvor-blogs-backend.service: hyvor-blogs-backend
+      # subdirectory hosting
+      traefik.http.routers.hyvor-blogs-subdir.rule: HostRegexp(`^.+\.hyvorblogs\.localhost$`)
+
+      traefik.http.routers.hyvor-blogs-subdir.entrypoints: http
+      traefik.http.routers.hyvor-blogs-subdir.service: hyvor-blogs-backend
+      # service
+      traefik.http.services.hyvor-blogs-backend.loadbalancer.server.port: 36202
+    networks:
+      - hyvor-network
+    profiles: [ dev ]
+
+networks:
+  hyvor-network:
+    external: true
