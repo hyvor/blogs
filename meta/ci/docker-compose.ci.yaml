@@ -1,22 +1,17 @@
 version: '3.3'
 services:
-  mysql:
-    # mysql 8.0
-    image: mysql:8.0
+  hyvor-service-citus:
+    container_name: hyvor-service-citus
+    image: citusdata/citus:12.1
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
-      MYSQL_DATABASE: hyvor_blogs_testing
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hyvor_blogs_testing
     ports:
-      - "3306:3306"
-    expose:
-      -   3306
+      - "5432:5432"
     volumes:
-      - ~/mysql:/var/lib/mysql:delegated
-      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+      - pgsql:/var/lib/postgresql/data
 
 volumes:
-  mysql:
-  redis:
+  pgsql:
