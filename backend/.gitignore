@@ -7,6 +7,7 @@
 /storage/*.key
 /storage/debugbar
 /--coverage-php
+packages/internal
 vendor
 .env
 .env.backup
