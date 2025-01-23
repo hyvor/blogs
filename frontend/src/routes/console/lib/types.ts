@@ -1,4 +1,15 @@
 
+export interface License {
+    users: number,
+    storage: number,
+    aiTokens: number,
+    autoTranslationsChars: number,
+    talkCredits: number,
+    postCredits: number,
+    analyses: boolean,
+    noBranding: boolean,
+}
+
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance';
 
 export type BlogType = 'default' | 'dev' | 'temp';

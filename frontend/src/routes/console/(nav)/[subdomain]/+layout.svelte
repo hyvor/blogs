@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Loader, toast } from '@hyvor/design/components';
-	import { hasTrialEndedAndNotSubscribed } from '../../lib/stores/subscriptionStore';
-	import { blogStore } from '../../lib/stores/blogStore';
+	import { blogStore, licenseStore } from '../../lib/stores/blogStore';
 	import TempBlogNotice from './Temp/TempBlogNotice.svelte';
-	import TrialEndedStatus from './@components/BlogStatus/TrialEndedStatus.svelte';
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';
 	import BlogBannedStatus from './@components/BlogStatus/BlogBannedStatus.svelte';
 	import { loadBlog } from './blogLoader';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -18,9 +17,9 @@
 	let isLoading = $state(true);
 
 	onMount(() => {
-		const subdomain = $page.params.subdomain;
+		const subdomain = page.params.subdomain;
 
-		loadBlog(subdomain)
+		loadBlog(subdomain!)
 			.then(() => {
 				isLoading = false;
 			})
@@ -31,8 +30,8 @@
 
 	let forcedShow = $derived(
 		!isLoading &&
-			($page.url.pathname === consoleUrlWithBlog('billing') ||
-				$page.url.pathname.startsWith(consoleUrlWithBlog('settings')))
+			(page.url.pathname === consoleUrlWithBlog('billing') ||
+				page.url.pathname.startsWith(consoleUrlWithBlog('settings')))
 	);
 </script>
 
@@ -49,8 +48,8 @@
 {:else}
 	<TempBlogNotice />
 
-	{#if hasTrialEndedAndNotSubscribed() && !forcedShow}
-		<TrialEndedStatus />
+	{#if $licenseStore == null && !forcedShow}
+		<LicenseExpiredNotice />
 	{:else if $blogStore.is_blocked && !forcedShow}
 		<BlogBannedStatus />
 	{:else}

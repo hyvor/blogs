@@ -2,17 +2,17 @@
 	import IconClock from '@hyvor/icons/IconClock';
 	import BlogStatus from './BlogStatus.svelte';
 	import { goto } from '$app/navigation';
-	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
+	import { consoleUrl } from '../../../../lib/consoleUrl';
 
 	function handleUpgradeClick() {
-		goto(consoleUrlWithBlog('/billing'));
+		goto(consoleUrl('/billing'));
 	}
 </script>
 
 <BlogStatus
 	icon={IconClock}
-	title="Trial Ended"
-	description="Your 7-days trial has ended. Upgrade to a paid plan to continue using your blog. If you have any questions, feel free to contact us."
+	title="License Expired"
+	description="Your license has expired. Please renew or upgrade to continue using the service."
 	cta="Upgrade Now"
 	on:click={handleUpgradeClick}
 />

@@ -2,7 +2,7 @@
 	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
 	import type { SubscriptionPlan } from '../../../lib/types';
 	import { Button } from '@hyvor/design/components';
-	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { consoleUrl } from '../../../lib/consoleUrl';
 	import { minPlanCheck } from './minPlanCheck';
 	import type { Snippet } from 'svelte';
 
@@ -33,7 +33,7 @@
 			</div>
 
 			<div class="upgrade-cta">
-				<Button as="a" href={consoleUrlWithBlog('/billing')}>Upgrade Now</Button>
+				<Button as="a" href={consoleUrl('/billing')}>Upgrade Now</Button>
 			</div>
 		</div>
 	</div>

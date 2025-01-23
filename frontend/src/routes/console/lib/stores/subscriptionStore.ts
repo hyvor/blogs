@@ -1,5 +1,4 @@
-import { get, writable } from "svelte/store";
-import type { UsageTypes, Subscription } from "../types";
+import { get } from "svelte/store";
 import { blogStore } from "./blogStore";
 import dayjs from "dayjs";
 
@@ -7,14 +6,4 @@ import dayjs from "dayjs";
 export function isInTrial() {
     const blog = get(blogStore);
     return blog.trial_ends_at > dayjs().unix();
-}
-
-export function hasTrialEndedAndNotSubscribed() {
-    const blog = get(blogStore);
-    const subscription = get(subscriptionStore);
-
-    if (blog.type === 'dev')
-        return false;
-
-    return !isInTrial() && subscription === null;
 }

@@ -1,9 +1,8 @@
 import consoleApi from '../../lib/consoleApi';
-import { blogCountsStore, blogOriginalStore, blogStore } from '../../lib/stores/blogStore';
+import { blogCountsStore, blogOriginalStore, blogStore, licenseStore } from '../../lib/stores/blogStore';
 import { languagesStore } from '../../lib/stores/languagesStore';
 import { usersStore } from '../../lib/stores/usersStore';
-import { subscriptionStore, usageStore } from '../../lib/stores/subscriptionStore';
-import type { Blog, BlogCounts, Language, Subscription, UsageTypes, User } from '../../lib/types';
+import type { Blog, BlogCounts, Language, License, User } from '../../lib/types';
 import { isTempStore } from '../../lib/temp';
 import { get } from 'svelte/store';
 
@@ -12,6 +11,7 @@ interface BlogResponse {
 	languages: Language[];
 	users: User[];
 	counts: BlogCounts;
+	license: License | null
 }
 
 // to prevent multiple requests for the same subdomain
@@ -38,8 +38,7 @@ export function loadBlog(subdomain: string) {
 				blogCountsStore.set(res.counts);
 				languagesStore.set(res.languages);
 				usersStore.set(res.users);
-				subscriptionStore.set(res.subscription);
-				usageStore.set(res.usage);
+				licenseStore.set(res.license);
 
 				resolve(res);
 			})
