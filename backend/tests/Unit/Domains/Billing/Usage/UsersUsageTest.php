@@ -33,7 +33,7 @@ class UsersUsageTest extends TestCase
     }
 
 
-    public function testUsageOfResource()
+    public function testUsageOfResource(): void
     {
         $usage = $this->app->make(UsersUsage::class);
         $blog = Blog::factory()->create(['counts' => ['users' => 5]]);

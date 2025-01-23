@@ -203,25 +203,6 @@ class MediaRepository
         return $split[count($split) - 1];
     }
 
-    public static function getStorageLimitBytes(BlogsLicense $blogsLicense) : int
-    {
-        return $blogsLicense->storageGb * (10 ** 9);
-    }
-
-    public static function hasLimitsExceeded(Blog $blog): bool
-    {
-        // TODO: This is wrong, get user-level usage
-        $usage = $blog->getCount('media');
-
-        $license = LicenseService::getLicense($blog);
-        if (!$license) {
-            return true;
-        }
-
-        $limit = self::getStorageLimitBytes($license);
-        return $usage >= $limit;
-    }
-
     /**
      * @param string $path
      * @param Blog $blog

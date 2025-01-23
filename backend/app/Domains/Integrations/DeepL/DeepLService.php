@@ -88,17 +88,4 @@ class DeepLService
         return $license->autoTranslationsCharsK * 1000;
     }
 
-    public static function hasReachedLimit(Blog $blog) : bool
-    {
-        $license = LicenseService::getLicense($blog);
-        if (!$license) {
-            return true;
-        }
-
-        $maxChars = self::getMaxCharsPerMonth($license);
-        $usage = self::getThisMonthUsage($blog);
-
-        return $usage >= $maxChars;
-    }
-
 }

@@ -6,6 +6,7 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Data\Objects\ConsoleAPI\User\UserVariantObject;
+use App\Domains\Billing\UsageService;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -51,7 +52,7 @@ class ConsoleUserController extends Controller
     public static function create(
         Request $request,
         Blog $blog,
-        UserRepository $userService,
+        UsageService $usageService,
     ) : JsonResponse
     {
         $request->validate([
@@ -59,7 +60,7 @@ class ConsoleUserController extends Controller
             'role' => ['required', new Enum(UserRoleEnum::class)],
         ]);
 
-        if ($userService->hasLimitsReached($blog)) {
+        if ($usageService->usersLimitReached($blog)) {
             throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
         }
 
@@ -94,14 +95,14 @@ class ConsoleUserController extends Controller
     public static function createGuest(
         Request $request,
         Blog $blog,
-        UserRepository $userService,
+        UsageService $usageService,
     ) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
         ]);
 
-        if ($userService->hasLimitsReached($blog)) {
+        if ($usageService->usersLimitReached($blog)) {
             throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
         }
 

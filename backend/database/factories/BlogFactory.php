@@ -3,10 +3,14 @@
 namespace Database\Factories;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<Blog>
+ */
 class BlogFactory extends Factory
 {
     public function definition()

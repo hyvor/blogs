@@ -3,9 +3,13 @@
 namespace App\Domains\Billing\Usage;
 
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\Usage\UsageAbstract;
 use Illuminate\Database\Connection;
 
-class MediaUsage
+/**
+ * @extends UsageAbstract<BlogsLicense>
+ */
+class StorageUsage extends UsageAbstract
 {
 
     public function __construct(private Connection $db)
@@ -20,14 +24,14 @@ class MediaUsage
 
     public function getKey(): string
     {
-        return 'users';
+        return 'storage';
     }
 
     public function usageOfUser(int $userId): int
     {
         $result = $this->db->selectOne(<<<SQL
             SELECT SUM(
-                COALESCE((counts->>'users')::INT, 0)
+                COALESCE((counts->>'media')::INT, 0)
             ) AS count
             FROM blogs
             WHERE hyvor_user_id = ? 
@@ -39,7 +43,7 @@ class MediaUsage
     public function usageOfResource(int $resourceId): int
     {
         $result = $this->db->selectOne(<<<SQL
-            SELECT COALESCE((counts->>'users')::INT, 0) AS count
+            SELECT COALESCE((counts->>'media')::INT, 0) AS count
             FROM blogs
             WHERE id = ?
         SQL, [$resourceId]);

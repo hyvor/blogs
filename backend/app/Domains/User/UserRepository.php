@@ -33,11 +33,6 @@ use Illuminate\Support\Facades\Mail;
 class UserRepository
 {
 
-    public function __construct(
-        private UsersUsage $usersUsage,
-    )
-    {
-    }
 
     /**
      * @param  Blog  $blog
@@ -353,22 +348,6 @@ class UserRepository
     {
         $user->status = UserStatusEnum::ACTIVE;
         $user->save();
-    }
-
-    public function hasLimitsReached(Blog $blog) : bool
-    {
-        $license = LicenseService::getLicense($blog);
-
-        if (!$license) {
-            return true;
-        }
-
-        if ($blog->hyvor_user_id === null) {
-            // this should be a temp, dev, or preview blog
-            return false;
-        }
-
-        return $this->usersUsage->hasReached($license, $blog->hyvor_user_id, $blog->id);
     }
 
 

@@ -2,11 +2,9 @@
 
 namespace App\Domains\Integrations\OpenAi;
 
-use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\GptPrompt;
 use App\Models\Post;
-use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Database\Eloquent\Collection;
 
 class GptPromptsService
@@ -52,33 +50,6 @@ class GptPromptsService
     {
         GptPrompt::where('post_id', $post->id)
             ->delete();
-    }
-
-    public static function getThisMonthUsage(Blog $blog) : int
-    {
-        return intval(GptPrompt::withTrashed()
-            ->where('blog_id', $blog->id)
-            ->where('created_at', '>=', now()->startOfMonth())
-            ->sum('tokens_total'));
-    }
-
-    public static function getMaxMonthlyGptTokens(BlogsLicense $blogsLicense) : int
-    {
-        return $blogsLicense->aiTokensK * 1000;
-    }
-
-    public static function hasLimitsExceeded(Blog $blog) : bool
-    {
-
-        $license = LicenseService::getLicense($blog);
-        if (!$license) {
-            return true;
-        }
-
-        $maxUsage = self::getMaxMonthlyGptTokens($license);
-        $usage = self::getThisMonthUsage($blog);
-
-        return $usage >= $maxUsage;
     }
 
 }
