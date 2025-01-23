@@ -59,10 +59,11 @@ return new class () extends Migration {
                 
             );
 
-            CREATE INDEX post_id_idx ON post_variants (post_id);
-            CREATE INDEX language_id_idx ON post_variants (language_id);
-            CREATE INDEX status_idx ON post_variants (status);
-            CREATE INDEX words_idx ON post_variants (words);
+            CREATE INDEX post_variants_post_id_index ON post_variants (post_id);
+            CREATE INDEX post_variants_language_id_index ON post_variants (language_id);
+            CREATE INDEX post_variants_status_index ON post_variants (status);
+            CREATE INDEX post_variants_words_index ON post_variants (words);
+
             CREATE INDEX ts_idx ON post_variants USING GIN (ts);
 
         SQL;

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTagsTable extends Migration
@@ -13,26 +14,29 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id();
+        $query = <<<SQL
+            CREATE TABLE tags (
+                id serial PRIMARY KEY,
+                created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+                updated_at timestamp DEFAULT CURRENT_TIMESTAMP,
+                
+                blog_id bigint NOT NULL,
+                
+                slug citext NOT NULL,
+                
+                posts_count integer DEFAULT 0,
+                
+                code_head text NULL,
+                code_foot text NULL,
+                
+                is_private boolean DEFAULT false,
+                
+                UNIQUE (blog_id, slug)
+            );
+            CREATE INDEX tags_blog_id_index ON tags (blog_id);
+        SQL;
 
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
-
-            // connections
-            $table->bigInteger('blog_id')->index();
-
-            $table->string('slug');
-
-            $table->integer('posts_count')->default(0);
-
-            $table->text('code_head')->nullable();
-            $table->text('code_foot')->nullable();
-
-            $table->boolean('is_private')->default(false);
-
-            $table->unique(['blog_id', 'slug']);
-        });
+        DB::unprepared($query);
     }
 
     /**
