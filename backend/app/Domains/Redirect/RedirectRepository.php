@@ -15,9 +15,12 @@ class RedirectRepository
     /**
      * @return Collection<int, Redirect>
      */
-    public static function getRedirects(Blog $blog, int $limit, int $offset = 0): Collection
+    public static function getRedirects(Blog $blog, string $search, int $limit, int $offset = 0): Collection
     {
         return $blog->redirects()
+            ->when($search, function ($query, $search) {
+                $query->where('path', 'like', "%$search%");
+            })
             ->limit($limit)
             ->offset($offset)
             ->orderBy('dynamic', 'desc')
