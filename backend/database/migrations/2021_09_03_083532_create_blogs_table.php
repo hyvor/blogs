@@ -74,7 +74,7 @@ class CreateBlogsTable extends Migration
             type blog_type DEFAULT 'default',
             
             hosting_at blog_hosting_at DEFAULT 'subdomain' NOT NULL,
-            hosting_domain varchar(255) UNIQUE,
+            hosting_domain citext UNIQUE,
             hosting_url varchar(255),
             hosting_redirect_subdomain boolean DEFAULT true,
             
