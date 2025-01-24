@@ -23,22 +23,4 @@ class Subscription extends Model
         'status' => SubscriptionStatusEnum::class,
         'ends_at' => 'datetime'
     ];
-
-    public function metaDefinition(Definer $definer) : void
-    {
-
-        /**
-         * PADDLE
-         */
-        $definer->add('paddle_subscription_id')
-            ->type('int|null')
-            ->default(null);
-
-        /**
-         * SHOPIFY
-         */
-        $definer->add('shopify_charge_id')
-            ->type('int|null')
-            ->default(null);
-    }
 }

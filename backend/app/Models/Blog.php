@@ -2,16 +2,12 @@
 
 namespace App\Models;
 
-use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
-use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Concerns\Countable;
-use Carbon\Carbon;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,8 +24,6 @@ class Blog extends Model
     protected $casts = [
         'is_blocked' => 'bool',
         'type' => BlogTypeEnum::class,
-        'billing_type' => BlogBillingTypeEnum::class,
-        'integration' => BlogIntegrationEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
         'hosting_redirect_subdomain' => 'bool',
         'trial_ends_at' => 'datetime'
