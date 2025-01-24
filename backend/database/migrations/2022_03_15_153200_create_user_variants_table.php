@@ -14,7 +14,7 @@ return new class () extends Migration {
     {
         Schema::create('user_variants', function (Blueprint $table) {
             $table->id();
-            // $table->timestamps();
+             $table->timestamp('updated_at')->useCurrent();
 
             // connection
             $table->bigInteger('user_id')->index(); // The id from the users table.
