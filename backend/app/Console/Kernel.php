@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\Domains\App\Marketing\Trial\TrialEmailsJob;
-use App\Domains\Integrations\EmailOctopus\EmailOctopusSyncJob;
 use App\Domains\LinkAnalyzer\Check\DispatchAllChecksJob;
 use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Illuminate\Console\Scheduling\Schedule;
@@ -23,7 +22,6 @@ class Kernel extends ConsoleKernel
         $schedule->job(new DispatchAllChecksJob())->daily();
 
         // marketing
-        $schedule->job(EmailOctopusSyncJob::class)->daily();
         $schedule->job(TrialEmailsJob::class)->daily();
     }
 

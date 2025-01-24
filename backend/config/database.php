@@ -17,6 +17,20 @@ $pgsql = [
     'sslmode' => 'prefer',
 ];
 
+$mysql = [
+    'driver' => 'mysql',
+    'host' => env('MYSQL_DB_HOST', '127.0.0.1'),
+    'port' => env('MYSQL_DB_PORT', '3306'),
+    'database' => env('MYSQL_DB_DATABASE', 'hyvor_blogs'),
+    'username' => env('MYSQL_DB_USERNAME', 'root'),
+    'password' => env('MYSQL_DB_PASSWORD', 'root'),
+    'charset' => 'utf8',
+    'prefix' => '',
+    'prefix_indexes' => true,
+    'schema' => 'public',
+    'sslmode' => 'prefer',
+];
+
 return [
 
     /*
@@ -57,6 +71,8 @@ return [
          * See https://github.com/laravel/framework/issues/36280
          */
         'pgsql-cache' => $pgsql,
+
+        'mysql' => $mysql,
 
     ],
 

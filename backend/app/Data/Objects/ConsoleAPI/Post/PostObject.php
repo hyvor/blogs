@@ -70,7 +70,7 @@ class PostObject
         /** @var PostVariantObject[] $variants */
         $variants = $post->variants->map(function ($variant) use ($blog, $post, $setHtml) {
             return new PostVariantObject($variant, $post, $blog, $setHtml);
-        })->sortBy('language_id')->toArray();
+        })->sortBy('language_id')->values()->toArray();
 
 
         /** @var TagObject[] $tags */

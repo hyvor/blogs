@@ -24,7 +24,8 @@ services:
       traefik.http.routers.hyvor-blogs-frontend.tls: true
       traefik.http.routers.hyvor-blogs-frontend.middlewares: vite-retry@file
       traefik.http.services.hyvor-blogs-frontend.loadbalancer.server.port: 36201
-
+    env_file:
+      - .env
     networks:
       - hyvor-network
 

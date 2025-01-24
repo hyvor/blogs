@@ -42,18 +42,8 @@ return [
         'sandbox' => env('PADDLE_SANDBOX', false),
     ],
 
-    'shopify' => [
-        'api_key' => env('SHOPIFY_API_KEY'),
-        'api_secret_key' => env('SHOPIFY_API_SECRET_KEY')
-    ],
-
     'github' => [
         'themes_publish_key' => env('GITHUB_THEMES_PUBLISH_KEY'),
-    ],
-
-    'email_octopus' => [
-        'api_key' => env('EMAIL_OCTOPUS_API_KEY'),
-        'list_id' => "7b95c9e8-9e4f-11ed-b3ed-47583ae33f24"
     ],
 
     'deepl' => [
