@@ -51,11 +51,6 @@ return [
         'themes_publish_key' => env('GITHUB_THEMES_PUBLISH_KEY'),
     ],
 
-    'email_octopus' => [
-        'api_key' => env('EMAIL_OCTOPUS_API_KEY'),
-        'list_id' => "7b95c9e8-9e4f-11ed-b3ed-47583ae33f24"
-    ],
-
     'deepl' => [
         'api_key' => env('DEEPL_API_KEY'),
     ],
