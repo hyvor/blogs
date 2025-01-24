@@ -12,7 +12,7 @@ class BinaryCast implements CastsAttributes
 
     public function get($model, $key, $value, array $attributes)
     {
-        
+
         if ($value === null) {
             return null;
         }

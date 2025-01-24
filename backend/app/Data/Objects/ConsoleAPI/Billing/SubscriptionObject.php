@@ -25,7 +25,6 @@ class SubscriptionObject
 
     public ?int $ends_at;
     public ?int $paddle_subscription_id;
-    public ?string $shopify_subscription_id;
 
     public function __construct(Subscription $subscription)
     {

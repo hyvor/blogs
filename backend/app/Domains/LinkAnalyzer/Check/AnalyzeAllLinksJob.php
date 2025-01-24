@@ -23,12 +23,14 @@ class AnalyzeAllLinksJob implements ShouldQueue
 
     public LinkAnalyzerCheck $check;
 
+    public $timeout = 3600;
+
     public function __construct(
         public Blog $blog
     )
     {
         $this->check = LinkAnalyzerCheckService::createCheck($blog);
-        // $this->onQueue(AppQueues::reports());
+        $this->onQueue(AppQueues::reports());
     }
 
     public function handle() : void

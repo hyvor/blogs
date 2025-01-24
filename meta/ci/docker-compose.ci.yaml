@@ -1,22 +1,17 @@
 version: '3.3'
 services:
-  pgsql:
-    image: postgres:16
+  hyvor-service-citus:
+    container_name: hyvor-service-citus
+    image: citusdata/citus:12.1
     restart: always
-    ports:
-      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: hyvor_blogs_testing
-      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
     volumes:
       - pgsql:/var/lib/postgresql/data
-
-  meilisearch:
-    image: getmeili/meilisearch:v1.0
-    restart: unless-stopped
-    ports:
-      - '7700:7700'
 
 volumes:
   pgsql:

@@ -167,13 +167,13 @@ it('searches posts by language', function() {
     // correct language
     $post1 = postWithVariant(
         ['blog_id' => $this->blog->id],
-        ['language_id' => $language2->id, 'title' => 'Henry VIII', 'ts_language' => 'english']
+        ['language_id' => $language2->id, 'title' => 'Henry VIII']
     );
 
     // primary language
     $post2 = postWithVariant(
         ['blog_id' => $this->blog->id],
-        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'ts_language' => 'english']
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII']
     );
 
 
@@ -198,13 +198,13 @@ it('searches with published', function() {
     // correct language
     $post1 = postWithVariant(
         ['blog_id' => $this->blog->id],
-        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'draft', 'ts_language' => 'english']
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'draft']
     );
 
     // primary language
     $post2 = postWithVariant(
         ['blog_id' => $this->blog->id],
-        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'published', 'ts_language' => 'english']
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'published']
     );
 
     consoleApi($this->blog, 'GET', $this->endpoint, [

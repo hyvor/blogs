@@ -151,11 +151,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         /**
          * Tags
          */
+        Route::get('/tags', [ConsoleTagController::class, 'get']);
+        Route::get('/tags/search', [ConsoleTagController::class, 'search']);
+
         Route::middleware('role:owner|admin|editor')->group(function () {
 
             // tags
-            Route::get('/tags', [ConsoleTagController::class, 'get']);
-            Route::get('/tags/search', [ConsoleTagController::class, 'search']);
             Route::post('/tag', [ConsoleTagController::class, 'create']);
             Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
             Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);

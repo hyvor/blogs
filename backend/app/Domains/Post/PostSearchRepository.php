@@ -12,23 +12,6 @@ use Illuminate\Support\Collection;
 class PostSearchRepository
 {
 
-    public const FILTERABLE_ATTRIBUTES = [
-        'blog_id',
-        'language_id',
-        'is_published',
-        'is_page',
-    ];
-
-    /**
-     * These are ordered by relevancy
-     */
-    public const SEARCHABLE_ATTRIBUTES = [
-        'title',
-        'description',
-        'content',
-        'slug',
-    ];
-
     /**
      * Better to use named arguments when using this function
      * @return CollectionWithTotal<Post>
@@ -41,34 +24,35 @@ class PostSearchRepository
         int $offset,
         bool $isPage,
         /**
-         * null = don't care
+         * null = any type
          * true = only published
-         * false = only unpublished
          */
-        ?bool $isPublished = null
+        null|true $isPublished = null
     ): CollectionWithTotal {
 
         $searchQuery = implode(' & ', explode(' ', $search));
 
-        // Compute FTS on the fly
-        $post_variants = PostVariant::
-            whereRaw("to_tsvector(ts_language::regconfig, title || '' || description) @@ to_tsquery(ts_language::regconfig, ?)", ["$searchQuery:*"])
+        /**
+         * We are using websearch_to_tsquery since most of the calls are from end users
+         * searching for posts
+         */
+        $postVariants = PostVariant::whereRaw("ts @@ websearch_to_tsquery(ts_language, ?)", [$searchQuery])
+            ->orderByRaw("ts_rank(ts, websearch_to_tsquery(ts_language, ?)) DESC", [$searchQuery])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');
             })
+            ->select('post_id')
+            ->join('posts', 'post_variants.post_id', '=', 'posts.id')
+            ->where('posts.blog_id', $blog->id)
+            ->where('is_page', $isPage)
             ->limit($limit)
             ->offset($offset)
             ->get();
 
-        //dd($post_variants[0]->post_id);
-            
-        if (count($post_variants) > 0) {
-            $postIds = $post_variants->pluck('post_id')->toArray();
-            $posts = Post::whereIn('id', $postIds)
-                ->where('blog_id', $blog->id)
-                ->where('is_page', $isPage ? 'true' : 'false')
-                ->get();
+        if (count($postVariants) > 0) {
+            $postIds = $postVariants->pluck('post_id')->toArray();
+            $posts = Post::whereIn('id', $postIds)->get();
         } else {
             /** @var Collection<int, Post> $posts */
             $posts = collect();

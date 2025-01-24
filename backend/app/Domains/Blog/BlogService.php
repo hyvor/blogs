@@ -52,8 +52,8 @@ class BlogService
             'ip' => $ip,
             'subdomain' => $subdomain,
             'type' => $type,
-            'billing_type' => $billingType,
-            'integration' => $integration,
+           // 'billing_type' => $billingType,
+            // 'integration' => $integration,
             'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
         ]);
         $blog->refresh(); // fetch default columns

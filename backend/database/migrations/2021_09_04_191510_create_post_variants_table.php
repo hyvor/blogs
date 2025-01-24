@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
@@ -27,6 +28,7 @@ return new class () extends Migration {
             $table->mediumText('content')->nullable();
             $table->mediumText('content_unsaved')->nullable();
             $table->mediumText('content_html')->nullable();
+            $table->mediumText('content_text')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->nullable();
             $table->integer('words')->nullable();
@@ -44,6 +46,26 @@ return new class () extends Migration {
             $table->index('status');
             $table->index('words');
         });
+
+        # add columns for full text search
+        DB::unprepared("
+            ALTER TABLE post_variants ADD COLUMN ts_language regconfig DEFAULT 'simple';
+            
+            ALTER TABLE post_variants
+            ADD COLUMN ts tsvector
+            GENERATED ALWAYS AS
+            (
+                to_tsvector(
+                    ts_language,
+                    COALESCE(title, '') || ' ' ||
+                    COALESCE(description, '') || ' ' ||
+                    COALESCE(slug, '') || ' ' ||
+                    COALESCE(content_text, '') 
+                )
+            ) STORED;
+
+            CREATE INDEX ts_idx ON post_variants USING GIN (ts);
+        ");
     }
 
     /**

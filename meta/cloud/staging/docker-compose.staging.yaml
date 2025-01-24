@@ -13,15 +13,6 @@ services:
         volumes:
             - hb-mysql-data:/var/lib/mysql
 
-    hb-meilisearch:
-        image: "getmeili/meilisearch:latest"
-        expose:
-            - "7700"
-        volumes:
-            - hb-meilisearch-data:/data.ms
-        environment:
-            MEILI_MASTER_KEY: "MASTER_KEY"
-
     hb-app:
         image: "hyvor/blogs:latest"
         ports:
@@ -30,8 +21,6 @@ services:
             - .env.hb
         depends_on:
             - hb-mysql
-            - hb-meilisearch
 
 volumes:
     hb-mysql-data:
-    hb-meilisearch-data:

@@ -17,7 +17,7 @@ return new class extends Migration {
         });
 
         // MEDIUMBLOB vlaue
-        //DB::statement('ALTER TABLE cache ADD value bytea');
+        // DB::statement('ALTER TABLE cache ADD value MEDIUMBLOB');
 
         Schema::create('cache_locks', function (Blueprint $table) {
             $table->string('key')->primary();
