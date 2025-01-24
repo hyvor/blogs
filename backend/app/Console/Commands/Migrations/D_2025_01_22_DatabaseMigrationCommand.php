@@ -17,6 +17,7 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
             'cache',
             'cache_locks',
             'failed_jobs',
+            'jobs',
 
             // Pending Issues
             'theme_files'
@@ -31,7 +32,6 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
 
         while (true){
             $currentRun = now()->toImmutable();
-            $recordsProcessed = false;
 
             foreach ($tables as $table) {
 
@@ -46,16 +46,11 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                 $columns = DB::select('SELECT column_name FROM information_schema.columns WHERE table_name = ?', [$table->table_name]);
                 $columnNames = array_map(fn($column) => $column->column_name, $columns);
 
-
                 DB::connection('mysql')
                     ->table($table->table_name)
                     ->when($lastRun, fn($query) => $query->where('updated_at', '>=', $lastRun))
                     ->orderBy('id')
-                    ->chunk(1000, function ($rows) use ($table, $columnNames, &$recordsProcessed) {
-
-                        if ($rows->isNotEmpty()) {
-                            $recordsProcessed = true;
-                        }
+                    ->chunk(1000, function ($rows) use ($table, $columnNames) {
 
                         foreach ($rows as $row) {
                             $data = (array) $row;
@@ -71,10 +66,6 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                                 );
                         }
                     });
-            }
-
-            if (!$recordsProcessed) {
-                break;
             }
 
             $lastRun = clone $currentRun;
