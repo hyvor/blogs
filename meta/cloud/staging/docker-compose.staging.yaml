@@ -36,3 +36,4 @@ services:
 
 volumes:
     hb-mysql-data:
+    hb-pgsql-data:
