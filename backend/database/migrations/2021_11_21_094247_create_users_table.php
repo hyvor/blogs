@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->bigInteger('blog_id');
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user ID
 
-            $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
+            $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor']);
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
 
             // user data

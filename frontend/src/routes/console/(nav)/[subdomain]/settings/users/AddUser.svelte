@@ -148,10 +148,6 @@
 					<Radio bind:group={role} value="contributor">Contributor</Radio>
 					<span> can write posts, but cannot publish </span>
 				</div>
-				<div>
-					<Radio bind:group={role} value="finance">Finance</Radio>
-					<span> access to billing only </span>
-				</div>
 			</div>
 			<div class="signup-note">
 				Learn more about <Link href="/docs/users#roles" target="_blank">
