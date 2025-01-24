@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
-use Carbon\Carbon;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,4 +22,16 @@ class Subscription extends Model
         'status' => SubscriptionStatusEnum::class,
         'ends_at' => 'datetime'
     ];
+
+    public function metaDefinition(Definer $definer) : void
+    {
+
+        /**
+         * PADDLE
+         */
+        $definer->add('paddle_subscription_id')
+            ->type('int|null')
+            ->default(null);
+
+    }
 }

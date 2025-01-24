@@ -18,9 +18,7 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
             'cache_locks',
             'failed_jobs',
             'jobs',
-
-            // Pending Issues
-            'theme_files'
+            'hyvor_talk_gated_content_rules',
         ];
 
 //        if (!$this->confirm('Are you sure you want to migrate the database?')) {
@@ -46,26 +44,37 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                 $columns = DB::select('SELECT column_name FROM information_schema.columns WHERE table_name = ?', [$table->table_name]);
                 $columnNames = array_map(fn($column) => $column->column_name, $columns);
 
+
+
                 DB::connection('mysql')
                     ->table($table->table_name)
                     ->when($lastRun, fn($query) => $query->where('updated_at', '>=', $lastRun))
                     ->orderBy('id')
                     ->chunk(1000, function ($rows) use ($table, $columnNames) {
 
-                        foreach ($rows as $row) {
-                            $data = (array) $row;
+                        DB::transaction(function() use ($rows, $table, $columnNames) {
+                            foreach ($rows as $row) {
+                                $data = (array)$row;
 
-                            // Filter data to only include existing columns
-                            $filteredData = array_filter($data, fn($key) => in_array($key, $columnNames), ARRAY_FILTER_USE_KEY);
+                                // Filter data to only include existing columns
+                                $filteredData = array_filter($data, fn($key) => in_array($key, $columnNames), ARRAY_FILTER_USE_KEY);
 
-                            DB::connection('pgsql')
-                                ->table($table->table_name)
-                                ->updateOrInsert(
-                                    ['id' => $data['id']],
-                                    $filteredData
-                                );
-                        }
+                                if ($table->table_name === 'theme_files') {
+                                    $filteredData['content'] = bin2hex($filteredData['content']);
+                                }
+
+                                DB::connection('pgsql')
+                                    ->table($table->table_name)
+                                    ->updateOrInsert(
+                                        ['id' => $data['id']],
+                                        $filteredData
+                                    );
+                            }
+                        });
                     });
+
+                DB::connection('pgsql')
+                    ->statement("SELECT setval('{$table->table_name}_id_seq', (SELECT MAX(id) FROM {$table->table_name}))");
             }
 
             $lastRun = clone $currentRun;
