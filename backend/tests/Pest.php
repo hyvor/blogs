@@ -6,6 +6,7 @@ use App\Models\User;
 use Faker\Factory;
 use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -20,7 +21,7 @@ uses()->beforeEach(function () {
 
     // reset userbase
     FakeProvider::databaseClear();
-    Billing::fake();
+    Billing::fake(new BlogsLicense());
 
     Cache::flush();
 

@@ -30,6 +30,7 @@ it('creates a new prompt', function() {
 
     $blog = blogWithAccess();
     $post = addPost($blog);
+    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
 
     $json = consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -59,6 +60,8 @@ it('does not allow creating a prompt for a post of other blog', function() {
 
     $blog = blogWithAccess();
     $post = addPost(blog());
+
+    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
 
     consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,

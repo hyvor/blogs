@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ConsoleAPI\Ai;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Models\AutoTranslation;
@@ -25,7 +24,7 @@ it('translates', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -64,7 +63,7 @@ it('translates with code block', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -115,7 +114,7 @@ it('translates with code block with HTML', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -156,7 +155,7 @@ it('throws API error', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
