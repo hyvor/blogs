@@ -13,6 +13,18 @@ services:
         volumes:
             - hb-mysql-data:/var/lib/mysql
 
+    hb-pgsql:
+        image: "postgres:16.6"
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: hyvor_blogs
+        expose:
+            - 5432
+        volumes:
+            - hb-pgsql-data:/var/lib/postgresql/data
+
     hb-app:
         image: "hyvor/blogs:latest"
         ports:
