@@ -52,6 +52,7 @@ Route::prefix('/api/console/v0')
     ])
     ->group(function () {
         Route::get('/init', [ConsoleController::class, 'init']);
+        Route::get('/usage', [ConsoleController::class, 'getUsage']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
         Route::patch('/blogs/sort', [ConsoleController::class, 'changeBlogSort']);
         Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);

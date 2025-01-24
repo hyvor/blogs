@@ -1,6 +1,7 @@
 <script>
 	import BillingBox from './BillingBox.svelte';
 	import Plans from './Plans.svelte';
+	import Usage from './Usage/Usage.svelte';
 </script>
 
 <div class="view">
@@ -12,7 +13,7 @@
 
 	<div class="column">
 		<BillingBox title="Usage">
-<!--			<Usage />-->
+			<Usage />
 		</BillingBox>
 	</div>
 </div>

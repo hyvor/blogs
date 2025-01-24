@@ -2,11 +2,19 @@
 
 namespace App\Http\ConsoleApi\Controllers;
 
+use App\Domains\Billing\LicenseService;
+use App\Domains\Billing\Usage\AiTokensUsage;
+use App\Domains\Billing\Usage\AutoTranslateCharsUsage;
+use App\Domains\Billing\Usage\StorageUsage;
+use App\Domains\Billing\Usage\UsersUsage;
 use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\Usage\UsageAbstract;
 use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
@@ -88,6 +96,42 @@ class ConsoleController
                 ]
             ]
         ];
+    }
+
+    public function getUsage(
+        AccessAuthUser $user,
+        Billing $billing,
+        UsersUsage $usersUsage,
+        StorageUsage $storageUsage,
+        AutoTranslateCharsUsage $autoTranslateCharsUsage,
+        AiTokensUsage $aiTokensUsage
+    ): JsonResponse
+    {
+
+        $license = $billing->license($user->id, null);
+
+        return response()->json([
+            'users' => $this->usageOf($usersUsage, $license, $user->id),
+            'storage' => $this->usageOf($storageUsage, $license, $user->id),
+            'auto_translate_chars' => $this->usageOf($autoTranslateCharsUsage, $license, $user->id),
+            'ai_tokens' => $this->usageOf($aiTokensUsage, $license, $user->id),
+        ]);
+    }
+
+    /**
+     * @return array{used: int, limit: int}
+     */
+    private function usageOf(UsageAbstract $usage, ?License $license, int $userId): array
+    {
+
+        $used = $usage->usageOfUser($userId);
+        $limit = $license ? $license->{$usage->getKey()} : 0;
+
+        return [
+            'used' => $used,
+            'limit' => $limit,
+        ];
+
     }
 
     public function changeBlogSort(Request $request, AccessAuthUser $user): JsonResponse

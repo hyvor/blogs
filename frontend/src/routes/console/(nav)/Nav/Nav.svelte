@@ -1,12 +1,11 @@
 <script>
-	import BottomButtons from './BottomButtons/BottomButtons.svelte';
 	import BlogNav from './BlogNav.svelte';
 	import AccountNav from './AccountNav.svelte';
 	import { blogStore } from '../../lib/stores/blogStore';
-	import {blogListStore} from "../../lib/stores";
+	import { blogListStore } from '../../lib/stores';
 
 	let blogListItemId = $derived($blogStore ? $blogStore.id : $blogListStore[0]?.id);
-	let blogListItem = $derived($blogListStore.find(blog => blog.id === blogListItemId));
+	let blogListItem = $derived($blogListStore.find((blog) => blog.id === blogListItemId));
 </script>
 
 <div id="nav-wrap">
@@ -19,8 +18,6 @@
 			<BlogNav listItem={blogListItem} />
 		</div>
 	{/if}
-
-	<BottomButtons />
 </div>
 
 <style lang="scss">
