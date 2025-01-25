@@ -62,6 +62,9 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                                 if ($table->table_name === 'theme_files') {
                                     $filteredData['content'] = bin2hex($filteredData['content']);
                                 }
+                                if ($table->table_name === 'theme_versions') {
+                                    $filteredData['zip'] = bin2hex($filteredData['zip']);
+                                }
 
                                 DB::connection('pgsql')
                                     ->table($table->table_name)
