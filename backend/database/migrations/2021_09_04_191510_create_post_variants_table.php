@@ -34,11 +34,11 @@ return new class () extends Migration {
                 content_unsaved text NULL,
                 content_html text NULL,
                 content_text text NULL,
-                title text NULL,
-                description text NULL,              -- Originally 350 char limit
+                title varchar(255) NULL,
+                description varchar(350) NULL,              -- Originally 350 char limit
                 words integer NULL,
                 
-                seo_primary_keyword text NULL,
+                seo_primary_keyword varchar(255) NULL,
                 seo_secondary_keywords jsonb NULL,
                 
                 link_analysis jsonb NULL,
