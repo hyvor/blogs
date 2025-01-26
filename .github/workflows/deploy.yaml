@@ -10,15 +10,15 @@ on:
 
 jobs:
     deploy:
-        name: "Deploying ${{ github.event.inputs.tag }}"
+        name: "Deploying to ${{ matrix.server.name }}"
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 server:
-                    - name: hyvor-blogs-server-1
-                      ip: 188.245.253.182
-#                    - name: hyvor-blogs-server-2
-#                      ip: 88.99.224.18
+#                    - name: hyvor-blogs-server-1
+#                      ip: 188.245.253.182
+                    - name: hyvor-blogs-server-2
+                      ip: 88.99.224.18
 
         steps:
             - uses: actions/checkout@v3
