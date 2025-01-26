@@ -20,8 +20,8 @@ services:
             - "traefik.tcp.routers.custom-domain.tls.passthrough=true"
             - "traefik.tcp.routers.custom-domain.service=custom-domain-service"
             - "traefik.tcp.services.custom-domain-service.loadbalancer.server.port=443"
-        healthcheck:
-            test: 'curl -f http://localhost || exit 1 && curl -f http://localhost/api/special/health || exit 1'
+#        healthcheck:
+#            test: 'curl -f http://localhost || exit 1 && curl -f http://localhost/api/special/health || exit 1'
 
         volumes:
             # caddy data
