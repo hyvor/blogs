@@ -32,6 +32,5 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'role' => Middleware\App\ConsoleApi\RoleMiddleware::class,
-        'billing-type' => BillingTypeMiddleware::class,
     ];
 }

@@ -23,6 +23,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     php8.3-intl \
     php8.3-mbstring \
     php8.3-mysqli \
+    php8.3-pgsql \
     php8.3-opcache \
     php8.3-phar \
     php8.3-xml \

@@ -36,9 +36,6 @@ uses()->beforeEach(function () {
 //        'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
 //    ]);
 
-    $this->artisan('scout:flush "App\\\\Models\\\\PostVariant"');
-    $this->artisan('scout:sync-index-settings');
-
 })->in('Feature', 'Unit');
 
 function faker()

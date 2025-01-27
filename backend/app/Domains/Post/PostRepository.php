@@ -320,9 +320,13 @@ class PostRepository
 
     public static function createPostVariant(Post $post, Language $language): PostVariant
     {
+
+        $fts = new FullTextSearchService();
+
         $variant = PostVariant::create([
             'post_id' => $post->id,
             'language_id' => $language->id,
+            'ts_language' => $fts->findClosestRegconfigByLanguageCode($language->code),
         ]);
 
         PostVariantCreatedEvent::dispatch($variant);
@@ -482,8 +486,10 @@ class PostRepository
         if (!$blog) return;
 
         $html = PostContentService::getHtml($variant->content, $blog);
+        $text = PostContentService::getText($variant->content, $blog);
 
         $variant->content_html = $html;
+        $variant->content_text = $text;
         $variant->save();
     }
 }

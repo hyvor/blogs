@@ -3,13 +3,11 @@
 namespace Tests\Feature\ConsoleAPI\ApiUser;
 
 use App\Data\Enums\BlogTypeEnum;
-use App\Data\Enums\UserRoleEnum;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
 

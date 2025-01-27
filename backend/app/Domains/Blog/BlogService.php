@@ -2,9 +2,7 @@
 
 namespace App\Domains\Blog;
 
-use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
-use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\App\AppContext\AppContext;
 use App\Domains\App\AppContext\AppContextType;
@@ -42,8 +40,6 @@ class BlogService
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
-        BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE,
-        BlogIntegrationEnum $integration = null,
         ?string $ip = null
     ): Blog
     {
@@ -52,8 +48,6 @@ class BlogService
             'ip' => $ip,
             'subdomain' => $subdomain,
             'type' => $type,
-            'billing_type' => $billingType,
-            'integration' => $integration,
             'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
         ]);
         $blog->refresh(); // fetch default columns

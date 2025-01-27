@@ -1,7 +1,8 @@
 .idea
 .vscode
 .env
-.env
 .DS_Store
 testing/*
 data.ms/
+tests.html
+tmp

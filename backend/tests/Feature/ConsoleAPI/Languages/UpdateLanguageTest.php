@@ -4,11 +4,15 @@ namespace Tests\Feature\ConsoleAPI\Languages;
 
 use App\Data\Enums\LanguageDirectionEnum;
 use App\Domains\Language\Events\LanguageChangedEvent;
+use App\Domains\Post\Jobs\PostVariantUpdateTsLanguageJob;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates the language', function () {
+
     Event::fake();
+    Queue::fake();
 
     $blog = blogWithAccess();
     $language = addPrimaryLanguage($blog);
@@ -34,6 +38,7 @@ it('updates the language', function () {
     expect($language->name)->toBe($name);
 
     Event::assertDispatched(LanguageChangedEvent::class);
+    Queue::assertPushed(PostVariantUpdateTsLanguageJob::class);
 });
 
 it('updates RTL', function() {

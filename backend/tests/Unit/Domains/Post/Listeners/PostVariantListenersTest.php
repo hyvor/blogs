@@ -22,13 +22,32 @@ it('is attached', function () {
 });
 
 it('updates content HTML', function () {
-    $variant = PostVariant::factory()->create(['content_html' => null]);
+    $variant = PostVariant::factory()->create([
+        'content' => json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Hello World',
+                        ],
+                    ],
+                ],
+            ],
+        ]),
+        'content_html' => null
+    ]);
 
     $event = new PostVariantUpdatedEvent($variant, $variant);
     $listener = new PostVariantUpdateContentHtmlListener();
     $listener->handle($event);
 
-    expect($variant->refresh()->content_html)->toBeString();
+    $variant->refresh();
+    expect($variant->content_html)->toBe('<p>Hello World</p>');
+    expect($variant->content_text)->toBe('Hello World');
+
 });
 
 it('updates words count', function () {
