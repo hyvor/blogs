@@ -16,6 +16,10 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
 
         $nuke = $this->option('nuke');
 
+        /**
+         * This selects post_variants that were created before we ran the migration
+         * and also contains '?' in the content which is a sign of UTF8 encoding issue
+         */
         $affectedRows = DB::connection('pgsql')
             ->table('post_variants')
             ->where('created_at', '<', '2025-01-26 19:43:51')
@@ -23,6 +27,13 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             ->select(['id', 'content'])
             ->get();
 
+        if (!$this->confirm('Do you want to fix ' . $affectedRows->count() . ' rows?')) {
+            return;
+        }
+
+        /**
+         * Takes the values from the old MYSQL database. These values should be correct.
+         */
         $unaffectedRows = DB::connection('mysql')
             ->table('post_variants')
             ->whereIn('id', $affectedRows->pluck('id')->toArray())
@@ -52,16 +63,17 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             if ($unaffectedRow) {
                 $lengthDifference = strlen($affectedRow->content) - strlen($unaffectedRow->content);
 
-                if ($lengthDifference > 10) {
-                    $data = [
-                        'id' => $affectedRow->id,
-                        'length_difference' => $lengthDifference,
-                        'unaffected_content' => $unaffectedRow->content,
-                        'affected_content' => $affectedRow->content,
-                    ];
-                    dump($data);
-                    $results[] = $data;
-                }
+                $data = [
+                    'id' => $affectedRow->id,
+                    'length_difference' => $lengthDifference,
+                    'unaffected_content' => $unaffectedRow->content,
+                    'affected_content' => $affectedRow->content,
+                ];
+
+                $results[] = $data;
+
+            } else {
+                $this->info('Unaffected row not found for id: ' . $affectedRow->id);
             }
         }
 
