@@ -15,8 +15,8 @@ jobs:
         strategy:
             matrix:
                 server:
-#                    - name: hyvor-blogs-server-1
-#                      ip: 188.245.253.182
+                    - name: hyvor-blogs-server-1
+                      ip: 188.245.253.182
                     - name: hyvor-blogs-server-2
                       ip: 88.99.224.18
 
