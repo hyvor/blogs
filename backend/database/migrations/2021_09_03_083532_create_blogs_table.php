@@ -14,39 +14,6 @@ class CreateBlogsTable extends Migration
      */
     public function up()
     {
-//        Schema::create('blogs', function (Blueprint $table) {
-//            $table->id();
-//
-//            $table->timestamp('created_at')->useCurrent();
-//            $table->timestamp('updated_at')->nullable();
-//
-//            $table->string('ip')->nullable();
-//
-//            $table->boolean('is_blocked')->default(false);
-//            $table->timestamp('blocked_at')->nullable();
-//
-//            // connections
-//            $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)
-//            $table->bigInteger('theme_version_id')->nullable();
-//
-//            // data
-//            $table->addColumn('citext', 'subdomain')->unique();
-//            $table->timestamp('trial_ends_at');
-//            $table->enum('billing_type', ['paddle', 'shopify'])->default('paddle');
-//            $table->enum('integration', ['shopify'])->nullable();
-//            $table->enum('type', ['default', 'dev', 'preview', 'temp'])->default('default');
-//
-//            $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
-//            $table->string('hosting_domain')->nullable()->unique(); // for domain
-//            $table->string('hosting_url')->nullable(); // for self
-//            $table->boolean('hosting_redirect_subdomain')->default(true);
-//
-//            $table->json('meta')->nullable();
-//            $table->json('counts')->nullable();
-//
-//            // index
-//            $table->index('type');
-//        });
 
         $query = <<<SQL
         

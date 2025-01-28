@@ -4,10 +4,6 @@ parameters:
         - app
     excludePaths:
         - app/Stale
-    ignoreErrors:
-        -
-            message: '#Class [a-zA-Z0-9\\_]+ uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory#'
-            path: app/Models/*
 
 includes:
     - vendor/larastan/larastan/extension.neon

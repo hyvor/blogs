@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Data\Enums\PostStatusEnum;
+use Carbon\Carbon;
 use Database\Factories\PostVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,10 +12,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
+ * @property int $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property int $post_id
+ * @property int $language_id
+ * @property ?string $slug
+ * @property PostStatusEnum $status
  * @property ?string $content
+ * @property ?string $content_unsaved
  * @property ?string $content_html
  * @property ?string $content_text
- * @property ?string $content_unsaved
+ * @property ?string $title
+ * @property ?string $description
+ * @property ?int $words
+ *
+ * @property ?string $seo_primary_keyword
+ * @property ?array $seo_secondary_keywords
+ * @property ?array $link_analysis
  */
 class PostVariant extends Model
 {

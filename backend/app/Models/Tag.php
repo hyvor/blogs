@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $blog_id
+ * @property string $slug
+ * @property int $posts_count
+ * @property string|null $code_head
+ * @property string|null $code_foot
+ * @property bool $is_private
+ */
 class Tag extends Model
 {
     use HasFactory;
