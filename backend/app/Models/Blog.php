@@ -6,6 +6,7 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Concerns\Countable;
+use Database\Factories\BlogFactory;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,8 +15,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
+/**
+ * @property string $subdomain
+ */
 class Blog extends Model
 {
+
+    /**
+     * @use HasFactory<BlogFactory>
+     */
     use HasFactory;
     use Countable;
     use Metable;

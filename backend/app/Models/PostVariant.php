@@ -3,14 +3,25 @@
 namespace App\Models;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\PostSearchRepository;
+use Database\Factories\PostVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
+/**
+ * @property ?string $content
+ * @property ?string $content_html
+ * @property ?string $content_text
+ * @property ?string $content_unsaved
+ */
 class PostVariant extends Model
 {
+
+    /**
+     * @use HasFactory<PostVariantFactory>
+     */
     use HasFactory;
 
     protected $casts = [
@@ -24,7 +35,7 @@ class PostVariant extends Model
     ];
 
     /**
-     * @return BelongsTo<Post, self>
+     * @return BelongsTo<Post, $this>
      */
     public function post()
     {
@@ -32,7 +43,7 @@ class PostVariant extends Model
     }
 
     /**
-     * @return BelongsTo<Language, self>
+     * @return BelongsTo<Language, $this>
      */
     public function language()
     {
@@ -40,7 +51,7 @@ class PostVariant extends Model
     }
 
     /**
-     * @return HasMany<PostVariantHistory>
+     * @return HasMany<PostVariantHistory, $this>
      */
     public function history()
     {

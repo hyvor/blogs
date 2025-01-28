@@ -14,7 +14,13 @@ class UpdateContentHtmlOfAllPostsJob implements ShouldQueue
 
     use Dispatchable;
 
-    public function __construct(public Blog $blog) {}
+    public function __construct(
+        public Blog $blog,
+        /**
+         * @var (callable(int $count, int $firstId, int $lastId) : void)|null
+         */
+        public $onProgress = null
+    ) {}
 
     public function handle() : void
     {
@@ -28,8 +34,11 @@ class UpdateContentHtmlOfAllPostsJob implements ShouldQueue
             ->chunk(100, function($variants) {
 
                 foreach ($variants as $variant) {
-
                     PostRepository::updateVariantHtml($variant);
+                }
+
+                if ($this->onProgress) {
+                    ($this->onProgress)($variants->count(), (int) $variants->first()?->id, (int) $variants->last()?->id);
                 }
 
             });
