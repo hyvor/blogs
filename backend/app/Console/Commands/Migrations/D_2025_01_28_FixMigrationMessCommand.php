@@ -24,7 +24,7 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             ->table('post_variants')
             ->where('created_at', '<', '2025-01-26 19:43:51')
             ->where('content', 'like', '%?%')
-            ->select(['id', 'content'])
+            ->select(['id', 'content', 'content_unsaved'])
             ->get();
 
         if (!$this->confirm('Do you want to fix ' . $affectedRows->count() . ' rows?')) {
@@ -43,6 +43,21 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
         if ($nuke) {
             foreach ($affectedRows as $affectedRow) {
                 $unaffectedRow = $unaffectedRows->firstWhere('id', $affectedRow->id);
+
+                if (!$unaffectedRow) {
+                    $this->info('Unaffected row not found for id: ' . $affectedRow->id);
+                    continue;
+                }
+
+                if (
+                    $affectedRow->content === $unaffectedRow->content &&
+                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved
+                ) {
+                    continue;
+                }
+
+                $this->info('Updating id: ' . $affectedRow->id);
+
                 DB::connection('pgsql')
                     ->table('post_variants')
                     ->where('id', $affectedRow->id)
@@ -63,6 +78,14 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             if ($unaffectedRow) {
                 $lengthDifference = strlen($affectedRow->content) - strlen($unaffectedRow->content);
 
+                if (
+                    $affectedRow->content === $unaffectedRow->content &&
+                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved
+                ) {
+                    $this->info('Content is already correct for id: ' . $affectedRow->id);
+                    continue;
+                }
+
                 $data = [
                     'id' => $affectedRow->id,
                     'length_difference' => $lengthDifference,
@@ -82,6 +105,7 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             dump('JSON encoding failed');
             return;
         }
+        $this->info('Total changing rows: ' . count($results));
         File::put('results.json', $json);
     }
 }
