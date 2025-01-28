@@ -44,8 +44,6 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                 $columns = DB::select('SELECT column_name FROM information_schema.columns WHERE table_name = ?', [$table->table_name]);
                 $columnNames = array_map(fn($column) => $column->column_name, $columns);
 
-
-
                 DB::connection('mysql')
                     ->table($table->table_name)
                     ->when($lastRun, fn($query) => $query->where('updated_at', '>=', $lastRun))
@@ -53,6 +51,9 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
                     ->chunk(1000, function ($rows) use ($table, $columnNames) {
 
                         DB::transaction(function() use ($rows, $table, $columnNames) {
+//                            echo $rows[0]->content;
+//                            file_put_contents('test.txt', $rows[0]->content);
+//                            die;
                             foreach ($rows as $row) {
                                 $data = (array)$row;
 
