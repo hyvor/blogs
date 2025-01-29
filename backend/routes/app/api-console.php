@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 use App\Http\ConsoleApi\Controllers\ConsoleController;
-use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
-use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
