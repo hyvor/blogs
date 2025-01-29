@@ -1,17 +1,13 @@
-version: '3.3'
 services:
-  hyvor-service-citus:
-    container_name: hyvor-service-citus
-    image: citusdata/citus:12.1
-    restart: always
+  postgres:
+    image: postgres:16.6
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: hyvor_blogs_testing
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgsql:/var/lib/postgresql/data
+      POSTGRES_DB: hyvor_testing
+    networks:
+      - ci
 
-volumes:
-  pgsql:
+networks:
+  ci:
+    external: true
