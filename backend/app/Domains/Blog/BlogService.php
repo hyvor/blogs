@@ -223,25 +223,30 @@ class BlogService
 
     public function deleteBlog(Blog $blog): void
     {
-        $deleters = [
-            LanguageDeleter::class,
-            MediaDeleter::class,
-            NavigationDeleter::class,
-            PostDeleter::class,
-            RedirectDeleter::class,
-            RouteDeleter::class,
-            TagDeleter::class,
-            ThemeDeleter::class,
-            UserDeleter::class,
-        ];
+        DB::transaction(function () use ($blog) {
+            $deleters = [
+                LanguageDeleter::class,
+                MediaDeleter::class,
+                NavigationDeleter::class,
+                PostDeleter::class,
+                RedirectDeleter::class,
+                RouteDeleter::class,
+                TagDeleter::class,
+                ThemeDeleter::class,
+                UserDeleter::class,
+            ];
 
-        foreach ($deleters as $deleter) {
-            app($deleter, ['blog' => $blog])->delete();
-        }
+            foreach ($deleters as $deleter) {
+                app($deleter, ['blog' => $blog])->delete();
+            }
 
-        $blog->delete();
+            $blog->delete();
 
-        BlogDeletedEvent::dispatch($blog);
+            
+            $this->resource->delete($blog->id);
+
+            BlogDeletedEvent::dispatch($blog);
+        });
     }
 
     public static function canUserCreateBlog(int $hyvorUserId): bool
