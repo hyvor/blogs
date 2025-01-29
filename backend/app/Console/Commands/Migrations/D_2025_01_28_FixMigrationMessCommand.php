@@ -24,7 +24,7 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
             ->table('post_variants')
             ->where('created_at', '<', '2025-01-26 19:43:51')
             ->where('content', 'like', '%?%')
-            ->select(['id', 'content', 'content_unsaved'])
+            ->select(['id', 'content', 'content_unsaved', 'title', 'description'])
             ->get();
 
         if (!$this->confirm('Do you want to fix ' . $affectedRows->count() . ' rows?')) {
@@ -37,7 +37,7 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
         $unaffectedRows = DB::connection('mysql')
             ->table('post_variants')
             ->whereIn('id', $affectedRows->pluck('id')->toArray())
-            ->select(['id', 'content', 'content_html', 'content_unsaved'])
+            ->select(['id', 'content', 'content_html', 'content_unsaved', 'title', 'description'])
             ->get();
 
         if ($nuke) {
@@ -51,7 +51,9 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
 
                 if (
                     $affectedRow->content === $unaffectedRow->content &&
-                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved
+                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved &&
+                    $affectedRow->title === $unaffectedRow->title &&
+                    $affectedRow->description === $unaffectedRow->description
                 ) {
                     continue;
                 }
@@ -65,6 +67,8 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
                         'content' => $unaffectedRow->content,
                         'content_html' => $unaffectedRow->content_html,
                         'content_unsaved' => $unaffectedRow->content_unsaved,
+                        'title' => $unaffectedRow->title,
+                        'description' => $unaffectedRow->description,
                     ]);
             }
         }
@@ -80,7 +84,9 @@ class D_2025_01_28_FixMigrationMessCommand extends Command
 
                 if (
                     $affectedRow->content === $unaffectedRow->content &&
-                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved
+                    $affectedRow->content_unsaved === $unaffectedRow->content_unsaved &&
+                    $affectedRow->title === $unaffectedRow->title &&
+                    $affectedRow->description === $unaffectedRow->description
                 ) {
                     $this->info('Content is already correct for id: ' . $affectedRow->id);
                     continue;
