@@ -57,6 +57,7 @@ it('uploads with duplicate name', function () {
 
 it('converts to kebab case', function() {
 
+    Storage::fake();
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
     Billing::fake(license: new BlogsLicense(storage: 1000));
@@ -74,6 +75,7 @@ it('converts to kebab case', function() {
 
 it('uploads with post ID', function () {
 
+    Storage::fake();
     $blog = blogWithAccess();
     Billing::fake(license: new BlogsLicense(storage: 1000));
     consoleApi($blog, 'POST', '/media', [
@@ -86,6 +88,8 @@ it('uploads with post ID', function () {
 });
 
 it('limits file size', function () {
+
+    Storage::fake();
     $file = UploadedFile::fake()->image('image.png')->size(config('limits.max_media_upload_size_kb') + 1);
 
     $blog = blogWithAccess();

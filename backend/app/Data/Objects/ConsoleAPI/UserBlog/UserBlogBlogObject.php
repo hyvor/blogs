@@ -2,8 +2,6 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
-use App\Data\Enums\BlogBillingTypeEnum;
-use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -21,10 +19,6 @@ class UserBlogBlogObject
     public string $subdomain;
 
     public BlogTypeEnum $type;
-
-    public BlogBillingTypeEnum $billing_type;
-
-    public ?BlogIntegrationEnum $integration;
 
     public string $base_url;
 
@@ -44,8 +38,6 @@ class UserBlogBlogObject
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
-        $this->billing_type = $blog->billing_type;
-        $this->integration = $blog->integration;
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
 
         $logoUrl = $blog->getMeta('logo_url');

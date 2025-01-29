@@ -37,3 +37,18 @@ it('works with offset', function () {
         ->assertOk()
         ->assertJsonCount(1);
 });
+
+it('searches', function () {
+    $blog = blogWithAccess();
+    Redirect::factory()->create([
+        'blog_id' => $blog,
+        'path' => 'this/is/search/parameter',
+    ]);
+
+    consoleApi($blog, 'GET', '/redirects', [
+        'search' => 'search',
+    ])
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.path', 'this/is/search/parameter');
+});

@@ -2,14 +2,16 @@ import consoleApi from "../../../../lib/consoleApi";
 import type { Redirect } from "../../../../lib/types";
 
 interface GetRedirectProps {
+    search?: string,
     limit?: number,
     offset?: number
 }
 
-export function getRedirect({limit, offset} : GetRedirectProps = {}) {
+export function getRedirect({search, limit, offset} : GetRedirectProps = {}) {
     return consoleApi.get<Redirect[]>({
         endpoint: '/redirects',
         data: {
+            search,
             limit,
             offset
         }

@@ -28,24 +28,17 @@ jobs:
                   username: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
                   password: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
 
+            - name: Extract metadata (tags, labels) for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                images: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}/blogs
+
             - name: Build and push
               uses: docker/build-push-action@v4
               with:
                   context: .
                   push: true
-                  tags: |
-                      ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}/blogs:${{ github.ref_name }}
-                      ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}/blogs:latest
-                  cache-from: type=local,src=/tmp/.buildx-cache
-                  cache-to: type=local,dest=/tmp/.buildx-cache-new
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
                   file: ./meta/image/Dockerfile
-
-            # This ugly bit is necessary if you don't want your cache to grow forever
-            # until it hits GitHub's limit of 5GB.
-            # Temp fix
-            # https://github.com/docker/build-push-action/issues/252
-            # https://github.com/moby/buildkit/issues/1896
-            - name: Move cache
-              run: |
-                  rm -rf /tmp/.buildx-cache
-                  mv /tmp/.buildx-cache-new /tmp/.buildx-cache

@@ -3,13 +3,40 @@
 namespace App\Models;
 
 use App\Data\Enums\PostStatusEnum;
+use Carbon\Carbon;
+use Database\Factories\PostVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
+/**
+ * @property int $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property int $post_id
+ * @property int $language_id
+ * @property ?string $slug
+ * @property PostStatusEnum $status
+ * @property ?string $content
+ * @property ?string $content_unsaved
+ * @property ?string $content_html
+ * @property ?string $content_text
+ * @property ?string $title
+ * @property ?string $description
+ * @property ?int $words
+ *
+ * @property ?string $seo_primary_keyword
+ * @property ?array $seo_secondary_keywords
+ * @property ?array $link_analysis
+ */
 class PostVariant extends Model
 {
+
+    /**
+     * @use HasFactory<PostVariantFactory>
+     */
     use HasFactory;
 
     protected $casts = [
@@ -23,7 +50,7 @@ class PostVariant extends Model
     ];
 
     /**
-     * @return BelongsTo<Post, self>
+     * @return BelongsTo<Post, $this>
      */
     public function post()
     {
@@ -31,7 +58,7 @@ class PostVariant extends Model
     }
 
     /**
-     * @return BelongsTo<Language, self>
+     * @return BelongsTo<Language, $this>
      */
     public function language()
     {
@@ -39,7 +66,7 @@ class PostVariant extends Model
     }
 
     /**
-     * @return HasMany<PostVariantHistory>
+     * @return HasMany<PostVariantHistory, $this>
      */
     public function history()
     {
