@@ -6,15 +6,15 @@
 	import VariantInput from './@components/VariantInput/VariantInput.svelte';
 	import ImageSetting from './@components/ImageSetting.svelte';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-	import { minPlanCheck } from '../billing/minPlanCheck';
-
-	let hasGrowthPlan = minPlanCheck('growth');
 
 	/**
 	 * null = default value (no on growth+ plans)
 	 * true/false = user's value
 	 */
-	let brandingValue = $derived($blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding);
+	let brandingValue = false;
+	// $derived(
+	// 	$blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding
+	// );
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
@@ -104,9 +104,16 @@
 		/>
 	</SplitControl>
 
-	<SplitControl label="Hyvor Blogs Branding" caption={'Show "Published with Hyvor Blogs" message'}>
+	<SplitControl
+		label="Hyvor Blogs Branding"
+		caption={'Show "Published with Hyvor Blogs" message'}
+	>
 		<div class="branding-wrap" class:disabled={!hasGrowthPlan}>
-			<Switch checked={brandingValue} disabled={!hasGrowthPlan} on:change={handleBrandingChange} />
+			<Switch
+				checked={brandingValue}
+				disabled={!hasGrowthPlan}
+				on:change={handleBrandingChange}
+			/>
 		</div>
 
 		{#if !hasGrowthPlan}
@@ -126,7 +133,7 @@
 		caption="Links to your social media channels (use full URLs with https://)"
 	>
 		{#snippet nested()}
-				<div >
+			<div>
 				<SplitControl label="Facebook">
 					<TextInput
 						block
@@ -188,7 +195,7 @@
 					/>
 				</SplitControl>
 			</div>
-			{/snippet}
+		{/snippet}
 	</SplitControl>
 </div>
 

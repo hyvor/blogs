@@ -3,7 +3,6 @@
 	import type { SubscriptionPlan } from '../../../lib/types';
 	import { Button } from '@hyvor/design/components';
 	import { consoleUrl } from '../../../lib/consoleUrl';
-	import { minPlanCheck } from './minPlanCheck';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
