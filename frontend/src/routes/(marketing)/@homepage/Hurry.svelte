@@ -9,7 +9,7 @@
 	let showFixed = $state(false);
 
 	function handleScroll() {
-		const { bottom } = mainEl.getBoundingClientRect();
+		const { bottom } = mainEl!.getBoundingClientRect();
 
 		if (bottom - 55 <= 0) {
 			showFixed = true;

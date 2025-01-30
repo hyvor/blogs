@@ -1,6 +1,6 @@
 import { EditorState, Plugin, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { SvelteComponent, mount } from "svelte";
+import { mount, unmount } from "svelte";
 import TableRowMenu from "./TableRowMenu.svelte";
 import TableColumnMenu from "./TableColumnMenu.svelte";
 
@@ -15,8 +15,8 @@ export class PluginTableMenu implements PluginView {
     public view: EditorView;
     private wrap: HTMLElement;
 
-    private rowMenu: SvelteComponent | null = null;
-    private columnMenu: SvelteComponent | null = null;
+    private rowMenu: Record<string, any> | null = null;
+    private columnMenu: Record<string, any> | null = null;
 
     constructor(view: EditorView) {
         this.view = view;
@@ -31,20 +31,20 @@ export class PluginTableMenu implements PluginView {
 
     private createRowMenuComponent() {
         if (this.rowMenu) {
-            this.rowMenu.$destroy();
+            unmount(this.rowMenu);
         }
         this.rowMenu = mount(TableRowMenu, {
-                    target: this.wrap
-                });
+            target: this.wrap
+        });
     }
 
     private createColumnMenuComponent() {
         if (this.columnMenu) {
-            this.columnMenu.$destroy();
+            unmount(this.columnMenu);
         }
         this.columnMenu = mount(TableColumnMenu, {
-                    target: this.wrap
-                });
+            target: this.wrap
+        });
     }
 
     update(view: EditorView, prevState: EditorState) {
@@ -54,7 +54,8 @@ export class PluginTableMenu implements PluginView {
     }
 
     destroy() {
-        this.rowMenu?.$destroy();
+        this.rowMenu && unmount(this.rowMenu);
+        this.columnMenu && unmount(this.columnMenu);
         this.wrap.remove();
     }
 

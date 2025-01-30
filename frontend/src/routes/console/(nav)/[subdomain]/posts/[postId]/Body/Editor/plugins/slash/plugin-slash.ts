@@ -1,6 +1,6 @@
 import { EditorState, Plugin, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { SvelteComponent, mount } from "svelte";
+import  { mount } from "svelte";
 import Slash from "./Slash.svelte";
 import { findOptions } from "./options";
 
@@ -28,12 +28,12 @@ class SlashPlugin implements PluginView {
         view.dom!.parentNode!.appendChild(this.wrap);
 
         this.component = mount(Slash, {
-                    target: this.wrap,
-                    props: {
-                        view: this.view,
-                        show: false
-                    }
-                });
+            target: this.wrap,
+            props: {
+                view: this.view,
+                show: false
+            }
+        });
     }
 
     private show() {

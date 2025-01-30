@@ -12,7 +12,7 @@ export function getHtmlFromMarkdownResponse(response: string | null) {
     renderer.link = function(href, title, text) {
         return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
     }
-    return DOMPurify.sanitize(marked(response || '', {renderer}));
+    return DOMPurify.sanitize(marked(response || '', {renderer}) as string);
 }
 
 export function copyHtmlToClipboard(el: HTMLElement) {
