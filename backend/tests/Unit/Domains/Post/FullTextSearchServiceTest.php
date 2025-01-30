@@ -3,14 +3,13 @@
 namespace Tests\Unit\Domains\Post;
 
 use App\Domains\Post\FullTextSearchService;
-use Tests\BaseTestCase;
+use Tests\Case\AppTestCase;
 
-class FullTextSearchServiceTest extends BaseTestCase
+class FullTextSearchServiceTest extends AppTestCase
 {
 
     public function testGetsRegConfig(): void
     {
-
         $fts = new FullTextSearchService();
 
         // english
@@ -28,7 +27,6 @@ class FullTextSearchServiceTest extends BaseTestCase
         $this->assertEquals('simple', $fts->findClosestRegconfigByLanguageCode('unknown'));
         $this->assertEquals('simple', $fts->findClosestRegconfigByLanguageCode(''));
         $this->assertEquals('simple', $fts->findClosestRegconfigByLanguageCode(null));
-
     }
 
 }

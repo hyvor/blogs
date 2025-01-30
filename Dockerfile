@@ -69,13 +69,14 @@ FROM backend-base AS backend-dev
 # pcov for debugging
 RUN install-php-extensions pcov gd
 COPY backend/composer.json backend/composer.lock /app/backend/
-RUN composer install --no-interaction
+RUN composer install --no-interaction \
+    && touch ../.env # needed in CI
 
 # set up code and install composer packages
 COPY backend /app/backend/
 
 # use local internal library
-RUN composer require hyvor/internal:@dev
+RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
 
 EXPOSE 36202
 CMD php artisan serve --host=0.0.0.0 --port=36202

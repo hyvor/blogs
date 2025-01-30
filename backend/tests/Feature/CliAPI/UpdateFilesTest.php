@@ -14,6 +14,7 @@ beforeEach(function () {
 });
 
 it('creates files', function () {
+
     $blog = devBlog();
     $content = Str::random();
 

@@ -207,7 +207,6 @@ it('searches with published', function() {
         ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'published']
     );
 
-
     consoleApi($this->blog, 'GET', $this->endpoint, [
         'search' => 'henry',
         'status' => 'published'

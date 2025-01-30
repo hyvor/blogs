@@ -8,6 +8,9 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Models\Subscription;
 
+/**
+ * @deprecated
+ */
 class SubscriptionObject
 {
     public int $id;

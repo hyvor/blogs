@@ -2,10 +2,11 @@
 
 namespace Tests\Feature\ConsoleAPI\Ai;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Models\AutoTranslation;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Http;
 use Tests\Helper\Generator\PostContentGenerator;
 
@@ -23,7 +24,7 @@ it('translates', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -62,7 +63,7 @@ it('translates with code block', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -113,7 +114,7 @@ it('translates with code block with HTML', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -154,7 +155,7 @@ it('throws API error', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -170,13 +171,14 @@ it('throws API error', function() {
 it('throws an error when limits reached', function() {
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+
+    Billing::fake(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     AutoTranslation::create([
         'blog_id' => $blog->id,
         'source_lang' => DeepLSourceLangEnum::EN,
         'target_lang' => DeepLTargetLangEnum::FR,
-        'chars' => 100000000,
+        'chars' => 1001,
     ]);
 
     consoleApi($blog, 'post', '/ai/translate', [
@@ -186,6 +188,6 @@ it('throws an error when limits reached', function() {
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()
-        ->assertSee('This blog has reached the limit of auto-translations for this month');
+        ->assertSee('You have reached the limit of auto-translations for this month. Please upgrade your subscription plan.');
 
 });

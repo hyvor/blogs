@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Blog;
 
@@ -32,66 +34,78 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
 use App\Models\Subscription;
+use Hyvor\Internal\Resource\Resource;
+use Illuminate\Support\Facades\DB;
 
 class BlogService
 {
+
+    public function __construct(
+        private Resource $resource
+    ) {
+    }
+
     public function createBlog(
         ?int $userId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         ?string $ip = null
-    ): Blog
-    {
-        $blog = Blog::create([
-            'hyvor_user_id' => $userId,
-            'ip' => $ip,
-            'subdomain' => $subdomain,
-            'type' => $type,
-            'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
-        ]);
-        $blog->refresh(); // fetch default columns
-
-        (new LanguageFiller($blog))->fill();
-
-        if ($type === BlogTypeEnum::PREVIEW) {
-            $blog->setMeta([
-                'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
+    ): Blog {
+        return DB::transaction(function () use ($userId, $name, $subdomain, $type, $ip) {
+            $blog = Blog::create([
+                'hyvor_user_id' => $userId,
+                'ip' => $ip,
+                'subdomain' => $subdomain,
+                'type' => $type,
+                'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
             ]);
-        }
+            $blog->refresh(); // fetch default columns
 
-        /**
-         * Creating the variant is important because all functions are designed assuming primary variant is there
-         * Other fillers can be risky (theme copying for example)
-         * So, first create the languages and variant
-         * THen, we are running the other fillers.
-         */
-        BlogVariant::create([
-            'blog_id' => $blog->id,
-            'language_id' => intval($blog->languages[0]?->id),
-            'name' => $name,
-        ]);
+            if ($userId) {
+                $this->resource->register($userId, $blog->id);
+            }
 
+            (new LanguageFiller($blog))->fill();
 
-        // other fillers
-        $fillers = [
-            UserFiller::class,
-            TagFiller::class,
-            PostFiller::class,
-            RouteFiller::class,
-            NavigationFiller::class,
-            ThemeFiller::class,
-        ];
+            if ($type === BlogTypeEnum::PREVIEW) {
+                $blog->setMeta([
+                    'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
+                ]);
+            }
 
-        AppContext::start(AppContextType::SEEDING_BLOG);
+            /**
+             * Creating the variant is important because all functions are designed assuming primary variant is there
+             * Other fillers can be risky (theme copying for example)
+             * So, first create the languages and variant
+             * THen, we are running the other fillers.
+             */
+            BlogVariant::create([
+                'blog_id' => $blog->id,
+                'language_id' => intval($blog->languages[0]?->id),
+                'name' => $name,
+            ]);
 
-        foreach ($fillers as $filler) {
-            app($filler, ['blog' => $blog])->fill();
-        }
-        
-        AppContext::end(AppContextType::SEEDING_BLOG);
+            // other fillers
+            $fillers = [
+                UserFiller::class,
+                TagFiller::class,
+                PostFiller::class,
+                RouteFiller::class,
+                NavigationFiller::class,
+                ThemeFiller::class,
+            ];
 
-        return $blog;
+            AppContext::start(AppContextType::SEEDING_BLOG);
+
+            foreach ($fillers as $filler) {
+                app($filler, ['blog' => $blog])->fill();
+            }
+
+            AppContext::end(AppContextType::SEEDING_BLOG);
+
+            return $blog;
+        });
     }
 
     public static function getBlogById(int $id): ?Blog
@@ -110,13 +124,12 @@ class BlogService
     }
 
     /**
-     * @param  Blog  $blog
-     * @param  array<string, mixed> $updates
+     * @param Blog $blog
+     * @param array<string, mixed> $updates
      * @return Blog
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
     {
-
         $blogOriginal = $blog->replicate();
 
         $metaKeys = $blog->getMetaKeys();
@@ -143,7 +156,6 @@ class BlogService
         }
 
         if (count($realUpdates)) {
-
             // free up custom domains
             if (
                 array_key_exists('hosting_at', $realUpdates) &&
@@ -180,9 +192,9 @@ class BlogService
     }
 
     /**
-     * @param  Blog  $blog
-     * @param  Language  $language
-     * @param  array{name?: string, description?: string|null}  $updates
+     * @param Blog $blog
+     * @param Language $language
+     * @param array{name?: string, description?: string|null} $updates
      * @return BlogVariant
      */
     public static function updateBlogVariant(Blog $blog, Language $language, array $updates)
@@ -191,8 +203,9 @@ class BlogService
             ->where('language_id', $language->id)
             ->first();
 
-        if (!$variant)
+        if (!$variant) {
             throw new SafetyException('Variant not found');
+        }
 
         if (array_key_exists('name', $updates)) {
             $variant->name = $updates['name'];
@@ -208,32 +221,36 @@ class BlogService
         return $variant;
     }
 
-    public function deleteBlog(Blog $blog) : void
+    public function deleteBlog(Blog $blog): void
     {
-        $deleters = [
-            LanguageDeleter::class,
-            MediaDeleter::class,
-            NavigationDeleter::class,
-            PostDeleter::class,
-            RedirectDeleter::class,
-            RouteDeleter::class,
-            TagDeleter::class,
-            ThemeDeleter::class,
-            UserDeleter::class,
-        ];
+        DB::transaction(function () use ($blog) {
+            $deleters = [
+                LanguageDeleter::class,
+                MediaDeleter::class,
+                NavigationDeleter::class,
+                PostDeleter::class,
+                RedirectDeleter::class,
+                RouteDeleter::class,
+                TagDeleter::class,
+                ThemeDeleter::class,
+                UserDeleter::class,
+            ];
 
-        foreach ($deleters as $deleter) {
-            app($deleter, ['blog' => $blog])->delete();
-        }
+            foreach ($deleters as $deleter) {
+                app($deleter, ['blog' => $blog])->delete();
+            }
 
-        $blog->delete();
+            $blog->delete();
 
-        BlogDeletedEvent::dispatch($blog);
+            
+            $this->resource->delete($blog->id);
+
+            BlogDeletedEvent::dispatch($blog);
+        });
     }
 
-    public static function canUserCreateBlog(int $hyvorUserId) : bool
+    public static function canUserCreateBlog(int $hyvorUserId): bool
     {
-
         /**
          * User should have had at least one subscription
          * on any of his blogs
@@ -248,6 +265,5 @@ class BlogService
 
         $blogsCount = Blog::where('hyvor_user_id', $hyvorUserId)->count();
         return $blogsCount < 2;
-
     }
 }

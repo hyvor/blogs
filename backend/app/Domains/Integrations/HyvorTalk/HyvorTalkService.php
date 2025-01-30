@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\HyvorTalkWebsite;
 use Hyvor\Internal\InternalApi\ComponentType;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
+use Hyvor\Internal\InternalApi\InstanceUrl;
 use Hyvor\Internal\InternalApi\InternalApi;
 
 class HyvorTalkService

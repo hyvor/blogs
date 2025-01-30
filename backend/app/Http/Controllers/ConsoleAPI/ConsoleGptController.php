@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Gpt\GptPromptObject;
+use App\Domains\Billing\UsageService;
 use App\Domains\Integrations\OpenAi\GptPromptsService;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
@@ -27,7 +28,7 @@ class ConsoleGptController
         return $post;
     }
 
-    public function newPrompt(Request $request, Blog $blog) : JsonResponse
+    public function newPrompt(Request $request, Blog $blog, UsageService $usageService) : JsonResponse
     {
 
         $request->validate([
@@ -35,8 +36,8 @@ class ConsoleGptController
             'prompt' => 'required|string|max:1000'
         ]);
 
-        if (GptPromptsService::hasLimitsExceeded($blog)) {
-            throw new TrustedException('Monthly limit exceeded');
+        if ($usageService->aiTokensLimitReached($blog)) {
+            throw new TrustedException('Monthly AI tokens limit reached. Please upgrade your plan.');
         }
 
         $post = $this->getPost($request);

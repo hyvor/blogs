@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 use App\Http\ConsoleApi\Controllers\ConsoleController;
-use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
-use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
@@ -54,6 +52,7 @@ Route::prefix('/api/console/v0')
     ])
     ->group(function () {
         Route::get('/init', [ConsoleController::class, 'init']);
+        Route::get('/usage', [ConsoleController::class, 'getUsage']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
         Route::patch('/blogs/sort', [ConsoleController::class, 'changeBlogSort']);
         Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
@@ -246,23 +245,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
 
             Route::get('/build', []);
-        });
-
-        /**
-         * Billing
-         */
-        Route::middleware('role:owner|admin|finance')->group(function () {
-
-            // general
-            Route::get('/billing', [ConsoleBillingController::class, 'getBillingData']);
-            Route::delete('/billing/subscription', [ConsoleBillingController::class, 'forceCancelSubscription']);
-
-            // paddle
-            Route::get('/billing/paddle', [ConsoleBillingPaddleController::class, 'getData']);
-            Route::post('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'createSubscription']);
-            Route::patch('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'updateSubscription']);
-            Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);
-
         });
 
         /**

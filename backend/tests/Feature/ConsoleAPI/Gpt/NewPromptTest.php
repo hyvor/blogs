@@ -3,6 +3,8 @@
 namespace Tests\Feature\ConsoleAPI\Gpt;
 
 use App\Models\GptPrompt;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
 
@@ -28,6 +30,7 @@ it('creates a new prompt', function() {
 
     $blog = blogWithAccess();
     $post = addPost($blog);
+    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
 
     $json = consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -58,11 +61,34 @@ it('does not allow creating a prompt for a post of other blog', function() {
     $blog = blogWithAccess();
     $post = addPost(blog());
 
+    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
+
     consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
         'prompt' => 'This is a test prompt'
     ])
         ->assertUnprocessable()
         ->assertSee('Post does not belong to blog');
+
+});
+
+it('does not allow when limit is exceeded', function() {
+
+    $blog = blogWithAccess();
+    $post = addPost($blog);
+
+    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
+
+    GptPrompt::factory()->create([
+        'blog_id' => $blog->id,
+        'tokens_total' => 1000,
+    ]);
+
+    consoleApi($blog, 'post', '/gpt/prompt', [
+        'post_id' => $post->id,
+        'prompt' => 'This is a test prompt'
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Monthly AI tokens limit reached. Please upgrade your plan.');
 
 });

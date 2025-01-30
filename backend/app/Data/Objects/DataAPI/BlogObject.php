@@ -6,13 +6,10 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\NavigationTypeEnum;
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Subscription;
 
 class BlogObject
 {
@@ -81,7 +78,6 @@ class BlogObject
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
 
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;
@@ -105,7 +101,7 @@ class BlogObject
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
         $this->code_head = $meta->code_head;
-        $this->code_foot = $this->getFooterCode($blog, $subscription, $meta->code_foot, $meta->hb_branding);
+        $this->code_foot = $this->getFooterCode($blog, $meta->code_foot, $meta->hb_branding);
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);
@@ -122,10 +118,10 @@ class BlogObject
     }
 
 
-    private function getFooterCode(Blog $blog, ?Subscription $subscription, ?string $codeFoot, ?bool $brandingMeta): ?string
+    private function getFooterCode(Blog $blog, ?string $codeFoot, ?bool $brandingMeta): ?string
     {
 
-        $addBranding = $this->shouldAddBranding($blog, $subscription, $brandingMeta);
+        $addBranding = $this->shouldAddBranding($blog, $brandingMeta);
 
         if (!$addBranding) {
             return $codeFoot;
@@ -139,31 +135,20 @@ HTML;
 
     }
 
-    private function shouldAddBranding(Blog $blog, ?Subscription $subscription, ?bool $brandingMeta) : bool
+    private function shouldAddBranding(Blog $blog, ?bool $brandingMeta) : bool
     {
-
-        // if explicitly set, return the value
-        if (is_bool($brandingMeta)) {
-            return $brandingMeta;
-        }
 
         // no branding on dev and preview blogs
         if ($blog->type === BlogTypeEnum::DEV || $blog->type === BlogTypeEnum::PREVIEW) {
             return false;
         }
 
-        // show on all free/trial blogs
-        if ($subscription === null) {
+        // show by default
+        if ($brandingMeta === null) {
             return true;
         }
 
-        // if it has a subscription, respect the branding meta
-        // if branding meta is null, no branding
-        if ($subscription->plan->isAtLeast(SubscriptionPlanEnum::GROWTH)) {
-            return false;
-        }
-
-        return true;
+        return $brandingMeta;
 
     }
 }

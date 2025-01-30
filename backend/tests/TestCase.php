@@ -7,6 +7,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * @deprecated
+ */
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;

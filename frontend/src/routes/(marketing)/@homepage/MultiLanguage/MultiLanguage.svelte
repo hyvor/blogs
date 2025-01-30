@@ -1,5 +1,10 @@
 <script>
-	import { IconGear, IconGlobe, IconPencil, IconPlusCircle, IconTranslate } from "@hyvor/icons";
+	import IconGear from '@hyvor/icons/IconGear';
+import IconGlobe from '@hyvor/icons/IconGlobe';
+import IconPencil from '@hyvor/icons/IconPencil';
+import IconPlusCircle from '@hyvor/icons/IconPlusCircle';
+import IconTranslate from '@hyvor/icons/IconTranslate';
+
 	import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
 	import Step from "./Step.svelte";
 

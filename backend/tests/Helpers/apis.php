@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
 
 if (!function_exists('consoleApi')) {
+    /**
+     * @deprecated use DatabaseTestCase::consoleApi
+     */
     function consoleApi(Blog|string $blog, string $method, string $endpoint, $data = []): TestResponse
     {
         $endpoint = trim($endpoint, '/');
@@ -14,6 +17,9 @@ if (!function_exists('consoleApi')) {
 }
 
 if (!function_exists('consoleUserApi')) {
+    /**
+     * @deprecated use DatabaseTestCase::consoleUserApi
+     */
     function consoleUserApi(string $method, string $endpoint, $data = []): TestResponse
     {
         return test()->call($method, URL::to('/api/console/v0' . $endpoint), $data);
@@ -23,7 +29,6 @@ if (!function_exists('consoleUserApi')) {
 if (!function_exists('dataApi')) {
     function dataApi(Blog|string $subdomain, string $endpoint, array $data = []): TestResponse
     {
-
         if ($subdomain instanceof Blog) {
             $subdomain = $subdomain->subdomain;
         }
@@ -31,7 +36,6 @@ if (!function_exists('dataApi')) {
         $endpoint = trim($endpoint, '/');
 
         return test()->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
-
     }
 }
 

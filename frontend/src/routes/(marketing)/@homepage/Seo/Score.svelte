@@ -1,8 +1,12 @@
 <script lang="ts">
-    export let name: string;
-    export let score: number;
 
-    export let our = false;
+   interface Props {
+      name: string;
+      score: number;
+      our?: boolean;
+   }
+
+   let { name, score, our = false }: Props = $props();
 </script>
 
 <div class="wrap" class:our={our}>

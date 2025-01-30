@@ -2,12 +2,21 @@
     // @ts-ignore
     import { diffChars, diffSentences } from 'diff';
 
-    export let strOld: string;
-    export let strNew: string;
-    export let sentences = false;
-    export let onlyChanged = false;
+    interface Props {
+        strOld: string;
+        strNew: string;
+        sentences?: boolean;
+        onlyChanged?: boolean;
+    }
 
-    $: diff = sentences ? diffSentences(strOld, strNew) : diffChars(strOld, strNew);
+    let {
+        strOld,
+        strNew,
+        sentences = false,
+        onlyChanged = false
+    }: Props = $props();
+
+    let diff = $derived(sentences ? diffSentences(strOld, strNew) : diffChars(strOld, strNew));
 
     function getColor(part: { added: boolean; removed: boolean }) {
         if (part.added) {

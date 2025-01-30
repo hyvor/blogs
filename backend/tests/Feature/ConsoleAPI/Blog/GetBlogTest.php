@@ -11,11 +11,9 @@ it('gets blog', function () {
     consoleApi($blog, 'GET', '/blog')
         ->assertOk()
         ->assertJsonPath('blog.subdomain', $blog->subdomain)
-        ->assertJsonPath('subscription', null)
         ->assertJsonIsObject('counts')
         ->assertJsonIsArray('users')
         ->assertJsonIsArray('tags')
-        ->assertJsonIsArray('languages')
-        ->assertJsonIsObject('usage');
+        ->assertJsonIsArray('languages');
 
 });

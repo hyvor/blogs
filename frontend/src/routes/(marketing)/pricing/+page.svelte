@@ -9,27 +9,25 @@
 	import Plan from './Plan.svelte';
 	import PlanSwitcher from './PlanSwitcher.svelte';
 	import Faq from './Faq.svelte';
-	import {
-		IconBrush,
-		IconCreditCard,
-		IconHourglass,
-		IconPercent,
-		IconCCircle,
-		IconSpeedometer2,
-		IconChat,
-		IconBadgeAd
-	} from '@hyvor/icons';
+	import IconBrush from '@hyvor/icons/IconBrush';
+	import IconCreditCard from '@hyvor/icons/IconCreditCard';
+	import IconHourglass from '@hyvor/icons/IconHourglass';
+	import IconPercent from '@hyvor/icons/IconPercent';
+	import IconCCircle from '@hyvor/icons/IconCCircle';
+	import IconSpeedometer2 from '@hyvor/icons/IconSpeedometer2';
+	import IconChat from '@hyvor/icons/IconChat';
+	import IconBadgeAd from '@hyvor/icons/IconBadgeAd';
 
 	const basicFeatures: Feature[] = [
 		{
 			name: 'Users',
 			description: 'Total number of users who writes for your blog (your team members)',
-			values: [2, 5, 15, 100, 1000, 'Unlimited']
+			values: [2, 10, 50]
 		},
 		{
 			name: 'Storage',
 			description: 'Total storage used for blog media (mostly uploaded images)',
-			values: ['1GB', '40GB', '250GB', '1TB', '2TB', '5TB']
+			values: ['2GB', '100GB', '500GB']
 		},
 		{
 			name: 'Custom Themes',
@@ -48,7 +46,8 @@
 		},
 		{
 			name: 'Data Ownership',
-			description: 'You own everything you write. Export and move to another platform anytime.',
+			description:
+				'You own everything you write. Export and move to another platform anytime.',
 			values: [true, true, true, true, true, true]
 		},
 		{
@@ -73,13 +72,13 @@
 			name: 'GPT Writing',
 			description:
 				'Use OpenAI GPT 3.5 for content writing, keyword generation, and more. Usually, 1000 tokens is about 750 words.',
-			values: [false, '100k tokens/m', '1m tokens/m', '3m tokens/m', '15m tokens/m', '30m tokens/m']
+			values: [false, '100k tokens/m', '1m tokens/m']
 		},
 		{
 			name: 'Auto-Translations',
 			description:
 				'Automatically translate your posts into multiple languages using DeepL. Monthly characters limit on each plan.',
-			values: [false, '100k chars/m', '300k chars/m', '1m chars/m', '5m chars/m', '15m chars/m']
+			values: [false, '100k chars/m', '500k chars/m']
 		}
 	];
 
@@ -106,18 +105,18 @@
 		}
 	];
 
-	const integrations = [
+	const integrations: Feature[] = [
 		{
-			name: 'Hyvor Talk Comments',
+			name: 'Hyvor Talk',
+			under: 'Commenting Platform',
 			description: 'Add Hyvor Talk commenting system for FREE',
-			values: [
-				false,
-				'100k credits/month (Premium)',
-				'250k credits/month (Business)',
-				'1m credits/month (Business)',
-				'2m credits/month (Business)',
-				'5m credits/month (Business)'
-			]
+			values: [false, '100k credits/month (Premium)', '250k credits/month (Business)']
+		},
+		{
+			name: 'Hyvor Post',
+			under: 'Newsletter Platform',
+			description: 'Add Hyvor Post newsletter system for FREE',
+			values: [false, '25k emails/month', '100k emails/month']
 		}
 	];
 
@@ -137,7 +136,7 @@
 	<link rel="canonical" href="https://blogs.hyvor.com/pricing" />
 </svelte:head>
 
-<svelte:window on:resize={handleResize} />
+<svelte:window onresize={handleResize} />
 
 <FeatureSectionTitle
 	title="Simple & transparent pricing"
@@ -170,9 +169,10 @@
 
 <div class="faqs hds-container">
 	<Faq q="How does the free trial work?" icon={IconHourglass}>
-		Anyone can signup for the <strong>7-day free trial</strong> to test Hyvor Blogs. No credit card required.
-		All features are available during the trial (except Hyvor Talk integration). After the trial, you
-		can upgrade to a paid plan to continue using Hyvor Blogs. Each blog needs a separate subscription.
+		Anyone can signup for the <strong>7-day free trial</strong> to test Hyvor Blogs. No credit card
+		required. All features are available during the trial (except Hyvor Talk integration). After
+		the trial, you can upgrade to a paid plan to continue using Hyvor Blogs. Each blog needs a separate
+		subscription.
 	</Faq>
 
 	<Faq q="Do I have to pay for themes?" icon={IconBrush}>
@@ -180,8 +180,8 @@
 			>free and <Link href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank"
 				>open-source</Link
 			></strong
-		>. They can be easily installed on your blog with a few clicks. If you want to build your own
-		theme, you will have to cover the development costs.
+		>. They can be easily installed on your blog with a few clicks. If you want to build your
+		own theme, you will have to cover the development costs.
 	</Faq>
 
 	<Faq q="Do you offer discounts?" icon={IconPercent}>
@@ -210,8 +210,8 @@
 
 	<Faq q="Can I display ads on my blog?" icon={IconBadgeAd}>
 		You decide! You are in control of your blog and the theme. You can add any ad code to your
-		theme. You can easily add Google AdSense or any other ad network to your blog by adding the ad
-		code to your blog/theme.
+		theme. You can easily add Google AdSense or any other ad network to your blog by adding the
+		ad code to your blog/theme.
 	</Faq>
 
 	<Faq q="How to add a commenting system?" icon={IconChat}>

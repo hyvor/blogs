@@ -10,21 +10,12 @@ return [
     // domains
     'domain_app' => env('DOMAIN_APP', 'localhost'),
 
+    // @deprecated Use delivery_url
     'delivery_domain' => env('DELIVERY_DOMAIN', 'localhost'),
     'delivery_url' => env('DELIVERY_URL', 'https://localhost:2211'),
 
     'domain_hyvor' => env('DOMAIN_HYVOR', 'hyvor.com'),
 
     'logo' => '/img/logo.png',
-
-    // monthly
-    'pricing' => [
-        'starter' => 9,
-        'growth' => 19,
-        'premium' => 49,
-        'team' => 299,
-        'business' => 699,
-        'enterprise' => 1299
-    ],
 
 ];

@@ -11,6 +11,7 @@
   <coverage/>
   <php>
     <server name="HYVOR_INSTANCE" value="https://hyvor.com" />
+    <server name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.cluster" />
     <server name="APP_ENV" value="testing"/>
     <server name="APP_DEBUG" value="false"/>
     <server name="APP_URL" value="https://blogs.hyvor.com"/>
@@ -27,6 +28,7 @@
     <server name="TELESCOPE_ENABLED" value="false"/>
     <server name="FILESYSTEM_DRIVER" value="local"/>
     <server name="AUTH_PROVIDER" value="fake"/>
+    <server name="HYVOR_DUMMY" value="true"/>
     <server name="PADDLE_SANDBOX" value="false"/>
     <server name="HYVOR_TALK_URL" value="https://talk.hyvor.com"/>
   </php>

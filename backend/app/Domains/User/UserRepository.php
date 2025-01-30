@@ -4,12 +4,13 @@ namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Domains\Billing\Usage\UsersUsage;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\UsageRepository;
+use App\Domains\Billing\LicenseService;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -31,6 +32,8 @@ use Illuminate\Support\Facades\Mail;
 
 class UserRepository
 {
+
+
     /**
      * @param  Blog  $blog
      * @param  int  $limit
@@ -345,13 +348,6 @@ class UserRepository
     {
         $user->status = UserStatusEnum::ACTIVE;
         $user->save();
-    }
-
-    public static function hasLimitsExceeded(Blog $blog) : bool
-    {
-        $usage = $blog->getCount('users');
-        $limit = UsageRepository::getLimitsOf($blog, 'users');
-        return $usage >= $limit;
     }
 
 

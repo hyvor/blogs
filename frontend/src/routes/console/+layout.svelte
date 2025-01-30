@@ -5,12 +5,15 @@
 	import type { AuthUser, BlogList } from './lib/types';
 	import { authUserStore, blogListStore } from './lib/stores';
 	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
-	import { APP_URL } from '../../lib';
-	import Bar from './Bar.svelte';
+	import {loadBlog} from "./(nav)/[subdomain]/blogLoader";
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	interface InitResponse {
 		user: AuthUser;
@@ -19,7 +22,7 @@
 		config: Config;
 	}
 
-	let isLoading = true;
+	let isLoading = $state(true);
 
 	onMount(() => {
 		const isTemp = $page.url.searchParams.has('temp');
@@ -55,8 +58,7 @@
 			.catch((err) => {
 				if (err.code === 401) {
 					const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
-					location.href =
-						APP_URL + `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+					location.href = `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
 				} else {
 					toast.error(err.message);
 				}
@@ -89,7 +91,7 @@
 				g2: 'https://www.g2.com/products/hyvor-blogs/reviews'
 			}}
 		/>
-		<slot />
+		{@render children?.()}
 	{/if}
 </main>
 

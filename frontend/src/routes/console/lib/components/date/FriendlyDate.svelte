@@ -1,9 +1,13 @@
 <script lang="ts">
 	import dayjs from "dayjs";
 
-    export let time: number; // Unix timestamp
+    interface Props {
+        time: number; // Unix timestamp
+    }
 
-    $: day = dayjs.unix(time);
+    let { time }: Props = $props();
+
+    let day = $derived(dayjs.unix(time));
 </script>
 
 

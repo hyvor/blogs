@@ -5,7 +5,6 @@ namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Check\DispatchAllChecksJob;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\LinkAnalyzerCheck;
 use Illuminate\Support\Facades\Queue;
 

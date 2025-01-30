@@ -31,11 +31,11 @@
                         <div 
                             class="overlay" 
                             style:background-color={integration.color} 
-                        />
+></div>
                         <img src="{integration.icon}" style="max-width: 50px; max-height:50px;" alt="{integration.name}">
                         <div class="name-wrapper">
                             <div role="heading" aria-level="3" class="name">{integration.name}</div>
-                            {#if integration.subname }
+                            {#if integration.subname}
                                 <div class="subname" role="heading" aria-level="4">{integration.subname}</div>
                             {/if}
                         </div>

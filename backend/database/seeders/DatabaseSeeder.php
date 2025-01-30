@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Domains\Blog\Fillers\RouteFiller;
-use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
@@ -55,7 +54,9 @@ class DatabaseSeeder extends Seeder
                     'hosting_url' => 'http://127.0.0.1:8885',
                 ]
             ))
-            ->create();
+            ->create([
+                'hyvor_user_id' => 1
+            ]);
 
         // Add additional 20 blogs
         /*$blogs->push(
@@ -119,7 +120,7 @@ class DatabaseSeeder extends Seeder
                     'variants'
                 )
                 ->state(new Sequence(
-                    ['role' => 'owner', 'hyvor_user_id' => config('test.hyvor_user_id')],
+                    ['role' => 'owner', 'hyvor_user_id' => 1],
                     ['role' => 'admin', 'hyvor_user_id' => 2]
                 ))
                 ->create([

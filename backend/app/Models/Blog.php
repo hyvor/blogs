@@ -49,7 +49,8 @@ class Blog extends Model
         'type' => BlogTypeEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
         'hosting_redirect_subdomain' => 'bool',
-        'trial_ends_at' => 'datetime'
+        'trial_ends_at' => 'datetime',
+        'counts' => 'array',
     ];
 
     // meta

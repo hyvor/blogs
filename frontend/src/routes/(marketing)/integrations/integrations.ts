@@ -29,7 +29,7 @@ import zohoFormsIcon from './icons/zoho-forms.png';
 import googleAdsenseIcon from './icons/google-adsense.svg';
 import ezoicImg from './icons/ezoic.png';
 
-import type { ComponentType } from "svelte";
+import type { Component } from "svelte";
 
 import GoogleAnalytics from './content/google-analytics/GoogleAnalytics.svelte';
 import CloudflareAnalytics from './content/cloudflare-anaytics/CloudflareAnalytics.svelte';
@@ -53,7 +53,7 @@ interface Integration {
     description: string,
     category: CategoryName,
     color: string,
-    component?: ComponentType
+    component?: Component
 }
 
 

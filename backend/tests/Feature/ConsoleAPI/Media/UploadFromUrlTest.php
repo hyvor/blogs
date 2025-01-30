@@ -3,6 +3,8 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 
@@ -11,6 +13,8 @@ it('uploads from url', function() {
     $blog = blogWithAccess();
     $blogUrl = PermalinkRepository::getBaseUrl($blog);
     $url = 'https://example.com/image.txt';
+
+    Billing::fake(license: new BlogsLicense(storage: 1000));
 
     Http::fake([
         $url => Http::response('test', 200, ['Content-Type' => 'text/plain']),
@@ -32,6 +36,7 @@ it('rejects uploading larger files', function() {
     $blog = blogWithAccess();
     $url = 'https://example.com/image.txt';
 
+    Billing::fake(license: new BlogsLicense(storage: 1000));
     config(['limits.max_media_upload_size_kb' => 1]);
 
     Http::fake([
@@ -55,6 +60,8 @@ it('throws error when media size exceeded', function() {
 
     $blog = blogWithAccess();
     $blog->setCount('media', 10**9*2);
+
+    Billing::fake(license: new BlogsLicense(storage: 1000));
 
     consoleApi($blog, 'POST', '/media/from-url', [
         'url' => 'https://test.com'

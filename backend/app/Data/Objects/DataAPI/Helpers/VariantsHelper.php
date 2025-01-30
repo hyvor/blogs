@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI\Helpers;
 
 use App\Models\Language;
+use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Collection;
 
 class VariantsHelper
@@ -28,5 +29,52 @@ class VariantsHelper
             $variantCorrectLanguage?->{$name} ?? // first, the correct one
             $variantFallbackLanguage?->{$name} ?? // otherwise, the fallback
             $variantPrimaryLanguage->{$name}; // finally, the primary language.
+    }
+
+    public static function getVariantTsLanguage(Language $language): string
+    {
+        
+        $language_code_dict = [
+            'en' => 'english',
+            'ar' => 'arabic',
+            'hy' => 'armenian',
+            'eu' => 'basque',
+            'ca' => 'catalan',
+            'da' => 'danish',
+            'nl' => 'dutch',
+            'fi' => 'finnish',
+            'fr' => 'french',
+            'de' => 'german',
+            'el' => 'greek',
+            'hi' => 'hindi',
+            'hu' => 'hungarian',
+            'id' => 'indonesian',
+            'ga' => 'irish',
+            'it' => 'italian',
+            'lt' => 'lithuanian',
+            'ne' => 'nepali',
+            'no' => 'norwegian',
+            'pt' => 'portuguese',
+            'ro' => 'romanian',
+            'ru' => 'russian',
+            'sr' => 'serbian',
+            'es' => 'spanish',
+            'sv' => 'swedish',
+            'ta' => 'tamil',
+            'tr' => 'turkish',
+            'yi' => 'yiddish'
+        ];
+
+        # Init default language to 'simple'
+        $ts_language = "simple";
+        foreach ($language_code_dict as $key => $value) {
+            $firstTwoChars = substr($language->code, 0, 2);
+            if ($firstTwoChars === $key) {
+                $ts_language = $value;
+                break;
+            }
+        }
+
+        return $ts_language;
     }
 }
