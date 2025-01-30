@@ -32,8 +32,6 @@ export interface BlogList {
 	logo_url: string | null;
 	posts_count: number;
 	users_count: number;
-
-	subscription: Subscription | null;
 }
 
 export interface Filters {
@@ -363,46 +361,6 @@ export interface ThemeFile {
 	name: string;
 	content: string | null;
 	folder: ThemeFolder;
-}
-
-// === BILLING
-
-export type SubscriptionPlan = 'starter' | 'growth' | 'premium';
-export type SubscriptionFrequency = 'monthly' | 'yearly';
-
-export interface Subscription {
-	plan: null | SubscriptionPlan;
-	features: {};
-	monthlyPrice: number;
-	annualPrice: number;
-	isAnnual: boolean;
-}
-
-export interface PaddlePayment {
-	id: number;
-	paid_at: number;
-	amount: number;
-	currency: number;
-	receipt_url: string;
-}
-
-export interface PaddleSubscriptionInfo {
-	email: string;
-
-	card_brand: string;
-	card_last_four: string | null;
-	card_expiration: string | null;
-
-	update_url: string;
-
-	last_payment: PaddleSubscriptionInfoPayment;
-	next_payment: PaddleSubscriptionInfoPayment | null;
-}
-
-export interface PaddleSubscriptionInfoPayment {
-	amount: number;
-	currency: string;
-	at: number;
 }
 
 export type JobStatus = 'pending' | 'completed' | 'failed';

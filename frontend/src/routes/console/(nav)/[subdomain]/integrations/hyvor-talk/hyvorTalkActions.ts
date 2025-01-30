@@ -1,17 +1,15 @@
 import consoleApi from "../../../../lib/consoleApi";
 import type { HyvorTalkGatedContentRule } from "../../../../lib/types";
 
-interface HyvorTalkIntegration {
+export interface HyvorTalkIntegration {
     id: number,
     created_at: number,
     website_id: number,
 }
 
-export type HyvorTalkIntegrationData = {
-    connected: false
-} | {
-    connected: true,
-    data: HyvorTalkIntegration
+export type HyvorTalkIntegrationData<Connected extends boolean = boolean> = {
+    connected: Connected,
+    data: Connected extends true ? HyvorTalkIntegration : undefined
 }
 
 export function loadHyvorTalk() {

@@ -1,13 +1,14 @@
 <script lang="ts">
 	import IconArrowRight from '@hyvor/icons/IconArrowRight';
 
-	const current = !old;
 	interface Props {
 		old: boolean;
 		diff: boolean;
 	}
 
 	let { old, diff }: Props = $props();
+
+	const current = $derived(!old);
 </script>
 
 <div class="wrap">

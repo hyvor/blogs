@@ -19,7 +19,7 @@
 
 	let { value }: Props = $props();
 
-	let wrap: HTMLDivElement = $state();
+	let wrap: HTMLDivElement | undefined = $state();
 
 	const dispatch = createEventDispatcher<{
 		change: string;
@@ -35,7 +35,7 @@
 		isLoading = false;
 
 		const jsonParsedValue = value ? JSON.parse(value) : null;
-		wrap.innerHTML = '';
+		wrap!.innerHTML = '';
 
 		let state = EditorState.create({
 			schema: schema,
@@ -50,7 +50,10 @@
 				(obj, e) => {
 					return {
 						...obj,
-						[e]: <T extends keyof DOMEventMap>(view: EditorView, event: DOMEventMap[T]) =>
+						[e]: <T extends keyof DOMEventMap>(
+							view: EditorView,
+							event: DOMEventMap[T]
+						) =>
 							dispatch('event', {
 								view,
 								name: e,
@@ -62,7 +65,7 @@
 			);
 		}
 
-		const view = new EditorView(wrap, {
+		const view = new EditorView(wrap!, {
 			state: state,
 			nodeViews: getNodeViews(),
 			handleDOMEvents: getDomEvents(),
@@ -230,8 +233,6 @@
 				display: flex;
 				flex: 1;
 				margin-left: 4px;
-			}
-			:global(+ *) {
 			}
 		}
 

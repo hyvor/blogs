@@ -27,11 +27,7 @@
 	<div class="usage">
 		<UsageBar name="Users" data={usage.users} />
 		<UsageBar name="Media Storage" data={usage.storage} bytes={true} />
-		<UsageBar
-			name="Auto-Translate Characters (this month)"
-			data={usage.auto_translate_chars}
-			zero={true}
-		/>
-		<UsageBar name="GPT Tokens (this month)" data={usage.ai_tokens} zero={true} />
+		<UsageBar name="Auto-Translate Characters (this month)" data={usage.auto_translate_chars} />
+		<UsageBar name="GPT Tokens (this month)" data={usage.ai_tokens} />
 	</div>
 {/if}
