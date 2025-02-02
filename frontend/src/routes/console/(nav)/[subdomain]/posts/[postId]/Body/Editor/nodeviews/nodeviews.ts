@@ -7,9 +7,9 @@ import CustomHtmlNodeView from "./nodeview-custom-html";
 import EmbedView from "./embed/nodeview-embed";
 import BookmarkView from "./nodeview-bookmark";
 import TableNodeView from "./table/nodeview-table";
-import ImageView from "./image/nodeview-image";
-import TocView from "./toc/nodeview-toc";
-import AudioView from "./audio/nodeview-audio";
+import ImageView from "./image/nodeview-image.svelte";
+import TocView from "./toc/nodeview-toc.svelte";
+import AudioView from "./audio/nodeview-audio.svelte";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor

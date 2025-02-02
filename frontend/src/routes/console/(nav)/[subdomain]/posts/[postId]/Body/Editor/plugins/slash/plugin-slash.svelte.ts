@@ -2,7 +2,7 @@ import { EditorState, Plugin, type PluginView } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import  { mount } from "svelte";
 import Slash from "./Slash.svelte";
-import { findOptions } from "./options";
+import { findOptions, type SlashOption } from "./options";
 
 export default function slashPlugin() {
     return new Plugin({
@@ -16,9 +16,9 @@ class SlashPlugin implements PluginView {
 
     private view: EditorView;
     private wrap: HTMLDivElement;
-    private component: SvelteComponent;
-
-    private isShow = false;
+    
+    private isShow: boolean = $state(false);
+    private options: SlashOption[]|undefined = $state(undefined);
 
     constructor(view: EditorView) {
         this.view = view;
@@ -27,24 +27,23 @@ class SlashPlugin implements PluginView {
         this.wrap.id = "pm-slash-view";
         view.dom!.parentNode!.appendChild(this.wrap);
 
-        this.component = mount(Slash, {
+        mount(Slash, {
             target: this.wrap,
             props: {
                 view: this.view,
-                show: false
+                show: this.isShow,
+                options: this.options,
             }
         });
     }
 
     private show() {
         if (!this.isShow) {
-            this.component.$set({ show: true });
             this.isShow = true;
         }
     }
     private hide() {
         if (this.isShow) {
-            this.component.$set({ show: false });
             this.isShow = false;
         }
     }
@@ -58,9 +57,7 @@ class SlashPlugin implements PluginView {
 
         if (selection.from !== selection.to) return this.hide();
 
-        let { $from } = selection;
-
-        const parent = $from.parent;
+        const parent = selection.$from.parent;
 
         if (!parent || parent.type.name !== "paragraph") {
             return this.hide();
@@ -79,9 +76,7 @@ class SlashPlugin implements PluginView {
             this.show();
         }
 
-        this.component.$set({
-            options
-        });
+        this.options = options;
 
     }
 

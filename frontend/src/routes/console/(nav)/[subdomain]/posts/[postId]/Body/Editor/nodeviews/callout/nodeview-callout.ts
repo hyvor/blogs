@@ -1,8 +1,8 @@
-import type { EditorView, NodeView } from "prosemirror-view";
+import type { EditorView, NodeView, ViewMutationRecord } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
 import { EmojiButton } from '@joeattardi/emoji-button';
 import CalloutColors from "./CalloutColors.svelte";
-import { type SvelteComponent, mount } from "svelte";
+import { mount } from "svelte";
 
 export class CalloutNodeView implements NodeView {
 
@@ -16,7 +16,8 @@ export class CalloutNodeView implements NodeView {
     emoji: HTMLSpanElement;
     colorPickersWrap: HTMLDivElement;
 
-    private colorsComponent: SvelteComponent;
+    bg = $state('');
+    fg = $state('');
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -74,23 +75,22 @@ export class CalloutNodeView implements NodeView {
         this.colorPickersWrap.className = "color-pickers-wrap";
         this.dom.appendChild(this.colorPickersWrap)
 
-        this.colorsComponent = mount(CalloutColors, {
-                    target: this.colorPickersWrap,
-                    props: this.getColorsProps()
-                })
+        this.bg = this.node.attrs.bg;
+        this.fg = this.node.attrs.fg;
+
+        mount(CalloutColors, {
+            target: this.colorPickersWrap,
+            props: {
+                bg: this.bg,
+                fg: this.fg,
+                changeAttr: this.changeAttr.bind(this)
+            }
+        })
         
         this.updateFromAttrs();
     }
 
-    private getColorsProps() {
-        return {
-            bg: this.node.attrs.bg,
-            fg: this.node.attrs.fg,
-            changeAttr: this.changeAttr.bind(this)
-        }
-    }
-
-    ignoreMutation(mutation: MutationRecord) {
+    ignoreMutation(mutation: ViewMutationRecord) {
         if (mutation.target === this.contentDOM) {
             return false;
         }
@@ -118,7 +118,9 @@ export class CalloutNodeView implements NodeView {
     changeColors(bg: string, fg: string) {
         this.dom.style.backgroundColor = bg;
         this.dom.style.color = fg;
-        this.colorsComponent.$set(this.getColorsProps())
+
+        this.bg = bg;
+        this.fg = fg;
     }
 
     changeAttr(name: string, value: string) {

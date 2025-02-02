@@ -1,7 +1,7 @@
 import { EditorState, NodeSelection, Plugin, type PluginView } from "prosemirror-state"
 import type { EditorView } from "prosemirror-view";
 import MarksTooltip from "./MarksTooltip.svelte";
-import type { SvelteComponent, mount } from "svelte";
+import  { mount } from "svelte";
 
 
 export default function marksTooltipPlugin() {
@@ -14,7 +14,8 @@ class MarksTooltipPlugin implements PluginView {
 
     view: EditorView;
     wrap: HTMLElement;
-    tooltip: SvelteComponent;
+
+    private show = $state(false);
 
     constructor(view: EditorView) {
         this.view = view;
@@ -23,26 +24,14 @@ class MarksTooltipPlugin implements PluginView {
         this.wrap.className = "pm-tooltip"
         view.dom!.parentNode!.appendChild(this.wrap);
 
-        this.tooltip = mount(MarksTooltip, {
-                    target: this.wrap,
-                    props: this.getProps()
-                });
+        mount(MarksTooltip, {
+            target: this.wrap,
+            props: {
+                view: this.view,
+                show: this.show
+            }
+        });
 
-    }
-
-    private getProps(show = false) {
-        return {
-            view: this.view,
-            show
-        }
-    }
-
-    private hide() {
-        this.tooltip.$set(this.getProps(false))
-    }
-
-    private show() {
-        this.tooltip.$set(this.getProps(true))
     }
 
     update(view: EditorView, lastState: EditorState): void {
@@ -61,11 +50,11 @@ class MarksTooltipPlugin implements PluginView {
             state.doc.cut(state.selection.from, state.selection.to).textContent === "" ||
             state.selection instanceof NodeSelection
         ) {
-            this.hide();
+            this.show = false;
             return
         }
 
-        this.show();
+        this.show = true;
 
     }
 

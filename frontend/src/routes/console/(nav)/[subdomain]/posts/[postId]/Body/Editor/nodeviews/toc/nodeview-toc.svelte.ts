@@ -1,5 +1,5 @@
 import type { EditorView, NodeView } from "prosemirror-view";
-import type { SvelteComponent, mount } from "svelte";
+import { mount } from "svelte";
 import Toc from "./Toc.svelte";
 import type { Node } from "prosemirror-model";
 
@@ -11,7 +11,7 @@ export default class TocView implements NodeView {
 
     public dom: HTMLDivElement;
 
-    private component: SvelteComponent;
+    private levels : undefined|number[] = $state(undefined)
 
     constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -21,10 +21,16 @@ export default class TocView implements NodeView {
         this.dom = document.createElement('div');
         this.dom.className = 'toc-wrap';
 
-        this.component = mount(Toc, {
-                    target: this.dom,
-                    props: this.getPropsFromNode(node)
-                });
+        this.levels = node.attrs.levels;
+
+        mount(Toc, {
+            target: this.dom,
+            props: {
+                getPos: this.getPos,
+                view: this.view,
+                levels: this.levels,
+            }
+        });
 
     }   
 
@@ -34,7 +40,7 @@ export default class TocView implements NodeView {
 
     update(node: Node) {
         if (node.type.name === 'toc') {
-            this.component.$set(this.getPropsFromNode(node));
+            this.levels = node.attrs.levels;
             return true;
         }
         return false;
@@ -42,24 +48,6 @@ export default class TocView implements NodeView {
 
     /* ignoreMutation() {
         return true;
-    } */
-
-    private getPropsFromNode(node: Node) {
-        return {
-            getPos: this.getPos,
-            view: this.view,
-            levels: node.attrs.levels,
-        }
-    }
-
-    /* update(node: Node) {
-        console.log('update called');
-        return false;
-        if (node.type.name === 'image') {
-            this.component.$set(this.getPropsFromNode(node));
-            return true;
-        }
-        return false;
     } */
 
 } 

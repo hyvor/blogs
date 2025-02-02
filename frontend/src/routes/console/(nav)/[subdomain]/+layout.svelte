@@ -65,19 +65,4 @@
 		justify-content: center;
 		align-items: center;
 	}
-
-	@media (max-width: 992px) {
-		main#blog-main {
-			flex-direction: column;
-			height: initial;
-		}
-		#nav {
-			margin-top: 15px;
-			padding: 0;
-			width: 100%;
-		}
-		#content {
-			padding: 15px 0;
-		}
-	}
 </style>
