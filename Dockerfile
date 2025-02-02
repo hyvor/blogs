@@ -82,60 +82,30 @@ EXPOSE 36202
 CMD php artisan serve --host=0.0.0.0 --port=36202
 
 ###################################################
-#FROM backend-base AS backend-prod
-#
-## supervisor & caddy
-#RUN apt update && apt install -y supervisor
-#COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
-#
-## copy files
-#COPY backend /app/backend
-#COPY locales /app/locales
-#COPY --from=frontend-prod /frontend/build /app/static
-#
-## install composer
-#RUN cd backend && composer install --no-interaction --no-dev --optimize-autoloader
-#
-## copy configs
-#COPY meta/image/Caddyfile /etc/caddy/Caddyfile
-#COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
-#COPY meta/image/php-fpm.conf /usr/local/etc/php-fpm.conf
-#COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-#COPY meta/image/run /app/run
-#
-## laravel directories
-#RUN touch /app/backend/storage/logs/laravel.log \
-#    && chown -R www-data:www-data /app/backend/storage /app/backend/bootstrap/cache /var/www \
-#    && chmod -R 775 /app/backend/storage /app/backend/bootstrap/cache
-#
-#EXPOSE 80
-#CMD ["/app/run"]
-#
-####################################################
-#FROM backend-prod AS e2e-dev
-#
-## install dependencies
-#COPY e2e/package.json e2e/package-lock.json e2e/playwright.config.ts /app/e2e/
-#COPY internal /app/backend/packages/internal
-#RUN cd /app/e2e \
-#    && npm install \
-#    && npm run install:chromium
-#
-## install all composer packages
-## we need dev dependencies for testing
-#RUN cd /app/backend  \
-#    && composer install --no-interaction \
-#    && composer require hyvor/internal:@dev
-#
-## copy code
-#COPY e2e/tests /app/e2e/tests
-#COPY e2e/e2e.supervisor.conf /etc/supervisor/conf.d/e2e.conf
-#
-## we need frontend code to run tests
-#COPY --from=frontend-base /frontend /app/frontend
-#RUN cd /app/frontend && npm install
+FROM backend-base AS final
 
-#ENV DB_DATABASE=hyvor_e2e
-#ENV E2E=true
-#
-#CMD ["/app/run"]
+# supervisor & caddy
+RUN apt update && apt install -y supervisor
+COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
+
+# copy files
+COPY backend /app/backend
+COPY --from=frontend-prod /app/frontend/build /app/static
+
+# install composer
+RUN cd backend && composer install --no-interaction --no-dev --optimize-autoloader
+
+# copy configs
+COPY meta/image/Caddyfile /etc/caddy/Caddyfile
+COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
+COPY meta/image/php-fpm.conf /usr/local/etc/php-fpm.conf
+COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY meta/image/run /app/run
+
+# laravel directories
+RUN touch /app/backend/storage/logs/laravel.log \
+    && chown -R www-data:www-data /app/backend/storage /app/backend/bootstrap/cache /var/www \
+    && chmod -R 775 /app/backend/storage /app/backend/bootstrap/cache
+
+EXPOSE 80
+CMD ["/app/run"]

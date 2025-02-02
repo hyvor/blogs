@@ -1,15 +1,15 @@
 <script>
-	import UpgradeRequired from '../../../../billing/UpgradeRequired.svelte';
+	import LicenseRequired from '../../../../../billing/LicenseRequired.svelte';
 	import LinkAnalysis from './LinkAnalysis.svelte';
 </script>
 
-<UpgradeRequired minPlan="growth" trialAllowed={true}>
+<LicenseRequired license="analyses">
 	{#snippet upgradeText()}
 		<div>
-			Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to analyze links in
-			your posts and say goodbye to broken links.
+			Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to analyze links
+			in your posts and say goodbye to broken links.
 		</div>
 	{/snippet}
 
 	<LinkAnalysis />
-</UpgradeRequired>
+</LicenseRequired>

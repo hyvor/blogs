@@ -4,9 +4,8 @@ export interface License {
 	aiTokens: number;
 	autoTranslationsChars: number;
 	talkCredits: number;
-	postCredits: number;
+	postEmails: number;
 	analyses: boolean;
-	noBranding: boolean;
 }
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
