@@ -231,38 +231,41 @@ function createEmbed() {
 		document.body.appendChild(div);
 
 		const creator = mount(EmbedCreator, {
-			target: div
+			target: div,
+			props: {
+				onclose: () => {
+					destroy();
+					resolve(null);
+				},
+				oncreate: (url: string) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.embed!.create({ url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				oncreatebookmark: (url: string) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.bookmark!.create({ url: url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				oncreatehtmlblock: (html: string) => {
+					destroy();
+					resolve(schema.nodes.custom_html!.create({ html }));
+				}
+			}
 		});
 
 		function destroy() {
 			unmount(creator);
 			div.remove();
 		}
-
-		creator.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		creator.$on('create', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.embed!.create({ url: e.detail }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
-
-		creator.$on('createBookmark', async (e: CustomEvent<string>) => {
-			destroy();
-			resolve(await createBookmark(e.detail));
-		});
-
-		creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(schema.nodes.custom_html!.create({ html: e.detail }));
-		});
 	});
 }
 
