@@ -97,12 +97,12 @@ class BlogObject
 
         $this->seo_indexing = $meta->seo_indexing;
         $this->seo_rich_schema = $meta->seo_rich_schema;
-        $this->flashload = (bool) $meta->flashload;
+        $this->flashload = (bool)$meta->flashload;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
         $this->code_head = $meta->code_head;
-        $this->code_foot = $this->getFooterCode($blog, $meta->code_foot, $meta->hb_branding);
+        $this->code_foot = $meta->code_foot;
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);
@@ -118,38 +118,4 @@ class BlogObject
         $this->languages = $blog->languages->mapInto(LanguageObject::class)->toArray();
     }
 
-
-    private function getFooterCode(Blog $blog, ?string $codeFoot, ?bool $brandingMeta): ?string
-    {
-
-        $addBranding = $this->shouldAddBranding($blog, $brandingMeta);
-
-        if (!$addBranding) {
-            return $codeFoot;
-        }
-
-        $hbBranding = <<<HTML
-<a href="https://blogs.hyvor.com?source=branding&subdomain=$blog->subdomain" target="_blank" style="position:fixed;bottom:15px;left:15px;font-size:12px;padding:6px 14px;background-color:#ececec;color:inherit;border-radius:20px;font-weight:600;z-index:10;text-decoration:none;line-height: 16px;">Published with Hyvor Blogs</a><style>a[href^="https://blogs.hyvor.com?source=branding"]:hover{opacity: 0.9;}.mode-dark a[href^="https://blogs.hyvor.com?source=branding"]{background-color:#2b2b2f!important}body{padding-bottom:25px;}</style>
-HTML;
-
-        return ($codeFoot ? $codeFoot . "\n" : '') . $hbBranding;
-
-    }
-
-    private function shouldAddBranding(Blog $blog, ?bool $brandingMeta) : bool
-    {
-
-        // no branding on dev and preview blogs
-        if ($blog->type === BlogTypeEnum::DEV || $blog->type === BlogTypeEnum::PREVIEW) {
-            return false;
-        }
-
-        // show by default
-        if ($brandingMeta === null) {
-            return true;
-        }
-
-        return $brandingMeta;
-
-    }
 }

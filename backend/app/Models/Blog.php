@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -55,7 +56,7 @@ class Blog extends Model
     ];
 
     // meta
-    protected function metaDefinition(Definer $definer) : void
+    protected function metaDefinition(Definer $definer): void
     {
         $definer->add('embeddable')->default(false);
         $definer->add('embedding_domains')->default(null);
@@ -103,8 +104,6 @@ class Blog extends Model
 
         $definer->add('link_analysis_enabled')->default(true);
         $definer->add('link_analysis_email_report')->default('broken');
-
-        $definer->add('hb_branding')->default(null);
     }
 
     /**
@@ -230,18 +229,18 @@ class Blog extends Model
         return $this->hasMany(Export::class);
     }
 
-    public function url() : string
+    public function url(): string
     {
         return PermalinkRepository::getBaseUrl($this);
     }
 
-    public function urlWithoutProtocol() : string
+    public function urlWithoutProtocol(): string
     {
         $url = $this->url();
         return strval(preg_replace('/^https?:\/\//', '', $url));
     }
 
-    public function isInTrial() : bool
+    public function isInTrial(): bool
     {
         return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
     }
