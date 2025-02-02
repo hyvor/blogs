@@ -5,14 +5,22 @@ namespace App\Models;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
+use Database\Factories\SubscriptionFactory;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @deprecated
+ */
 class Subscription extends Model
 {
+
+    /**
+     * @use HasFactory<SubscriptionFactory>
+     */
     use HasFactory;
     use Metable;
 

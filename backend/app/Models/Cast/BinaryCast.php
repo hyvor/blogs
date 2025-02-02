@@ -6,6 +6,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 /**
  * from https://github.com/jBernavaPrah/eloquent-binary-cast/blob/master/src/Casts/BinaryCast.php
+ * @implements CastsAttributes<string, string>
  */
 class BinaryCast implements CastsAttributes
 {

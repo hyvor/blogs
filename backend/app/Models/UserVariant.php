@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
+use Database\Factories\UserVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserVariant extends Model
 {
+
+    /**
+     * @use HasFactory<UserVariantFactory>
+     */
     use HasFactory;
 
     public $timestamps = false;
 
     /**
-     * @return BelongsTo<User, self>
+     * @return BelongsTo<User, $this>
      */
     public function user()
     {
@@ -21,7 +26,7 @@ class UserVariant extends Model
     }
 
     /**
-     * @return BelongsTo<Language, self>
+     * @return BelongsTo<Language, $this>
      */
     public function language()
     {
@@ -29,7 +34,7 @@ class UserVariant extends Model
     }
 
     /**
-     * @return BelongsTo<Blog, self>
+     * @return BelongsTo<Blog, $this>
      */
     public function blog()
     {

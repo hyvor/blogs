@@ -3,12 +3,17 @@
 namespace App\Models;
 
 use App\Data\Enums\ThemeCreationTypeEnum;
+use Database\Factories\ThemeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Theme extends Model
 {
+
+    /**
+     * @use HasFactory<ThemeFactory>
+     */
     use HasFactory;
 
     protected $casts = [
@@ -16,7 +21,7 @@ class Theme extends Model
     ];
 
     /**
-     * @return HasMany<ThemeVersion>
+     * @return HasMany<ThemeVersion, $this>
      */
     public function versions()
     {

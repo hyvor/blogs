@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model
 {
+
+    /**
+     * @use HasFactory<PostFactory>
+     */
     use HasFactory;
 
     protected $with = [
@@ -25,7 +30,7 @@ class Post extends Model
     ];
 
     /**
-     * @return BelongsTo<Blog, self>
+     * @return BelongsTo<Blog, $this>
      */
     public function blog()
     {
@@ -33,7 +38,7 @@ class Post extends Model
     }
 
     /**
-     * @return HasMany<PostVariant>
+     * @return HasMany<PostVariant, $this>
      */
     public function variants()
     {
@@ -41,7 +46,7 @@ class Post extends Model
     }
 
     /**
-     * @return BelongsToMany<Tag>
+     * @return BelongsToMany<Tag, $this>
      */
     public function tags()
     {
@@ -52,7 +57,7 @@ class Post extends Model
     }
 
     /**
-     * @return BelongsToMany<User>
+     * @return BelongsToMany<User, $this>
      */
     public function authors()
     {

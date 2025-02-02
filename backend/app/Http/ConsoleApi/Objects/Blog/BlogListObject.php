@@ -26,8 +26,6 @@ class BlogListObject
     public int $posts_count;
     public int $users_count;
 
-    public ?SubscriptionObject $subscription;
-
     public function __construct(User $user)
     {
 
@@ -55,11 +53,6 @@ class BlogListObject
 
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
-
-        // TODO: Seems like a bug
-        $this->subscription = $blog->subscription ?
-            new SubscriptionObject($blog->subscription) :
-            null;
     }
 
     public static function fromTempBlog(Blog $blog) : self
