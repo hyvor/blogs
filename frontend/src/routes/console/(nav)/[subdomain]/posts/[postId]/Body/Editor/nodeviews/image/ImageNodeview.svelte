@@ -8,7 +8,7 @@
 	import { NodeSelection } from 'prosemirror-state';
 	import schema from '../../../../../../../../lib/prosemirror/schema';
 	import IconPencil from '@hyvor/icons/IconPencil';
-import IconTrash from '@hyvor/icons/IconTrash';
+	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { onMount, mount, unmount } from 'svelte';
 
@@ -21,20 +21,12 @@ import IconTrash from '@hyvor/icons/IconTrash';
 		view: EditorView;
 	}
 
-	let {
-		src,
-		alt,
-		width,
-		height,
-		getPos,
-		view
-	}: Props = $props();
+	let { src, alt, width, height, getPos, view }: Props = $props();
 
 	let imgEl: HTMLImageElement | undefined = $state();
 
 	let displayWidth: string = $state('0');
 	let displayHeight: string = $state('0');
-
 
 	function setDisplaySize() {
 		if (!imgEl) return;
@@ -101,22 +93,23 @@ import IconTrash from '@hyvor/icons/IconTrash';
 		document.body.appendChild(div);
 
 		const selector = mount(FileUploader, {
-        			target: div
-        		});
+			target: div,
+			props: {
+				type: 'image',
+				onselect: (file) => {
+					destroy();
+					changeImage(file);
+				},
+				onclose: () => {
+					destroy();
+				}
+			}
+		});
 
 		function destroy() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-		});
-
-		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
-			destroy();
-			changeImage(e.detail);
-		});
 	}
 
 	async function handleDelete() {
@@ -192,10 +185,15 @@ import IconTrash from '@hyvor/icons/IconTrash';
 <div class="image-node-wrap">
 	<div class="top">
 		<div class="left">
-			<TextInput size="small" placeholder="Add alt text..." on:input={handleAltInput} value={alt}>
+			<TextInput
+				size="small"
+				placeholder="Add alt text..."
+				on:input={handleAltInput}
+				value={alt}
+			>
 				{#snippet start()}
-								<span >ALT</span>
-							{/snippet}
+					<span>ALT</span>
+				{/snippet}
 			</TextInput>
 		</div>
 

@@ -18,7 +18,7 @@
 		type?: 'image' | 'audio' | 'any';
 		show?: boolean;
 		onselect: (type: SelectedFileInterface) => void;
-		onclose: () => void;
+		onclose?: () => void;
 	}
 
 	let { type = 'image', show = $bindable(true), onselect, onclose }: Props = $props();
@@ -37,7 +37,7 @@
 
 	$effect(() => {
 		if (!show) {
-			onclose();
+			onclose?.();
 		}
 	});
 

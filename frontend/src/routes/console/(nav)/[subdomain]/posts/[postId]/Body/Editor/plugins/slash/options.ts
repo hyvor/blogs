@@ -283,11 +283,11 @@ function createBookmark(url: string = '') {
 					destroy();
 					resolve(null);
 				},
-				oncreate: (e: CustomEvent<string>) => {
+				oncreate: (url: string) => {
 					destroy();
 					resolve(
 						schema.nodes.figure!.create({}, [
-							schema.nodes.bookmark!.create({ url: e.detail }),
+							schema.nodes.bookmark!.create({ url }),
 							schema.nodes.figcaption!.create()
 						])
 					);

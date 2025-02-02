@@ -18,7 +18,7 @@
 	let show = $state(true);
 	let url = $state('');
 
-	let inputEl: HTMLInputElement;
+	let inputEl: HTMLInputElement | undefined = $state();
 	let inputStarted = $state(false);
 
 	$effect(() => {
@@ -44,13 +44,13 @@
 
 		if (url.trim() === '') {
 			error = 'URL is required';
-			inputEl.focus();
+			inputEl?.focus();
 			return;
 		}
 
 		if (!isValidUrl(url)) {
 			error = 'Invalid URL';
-			inputEl.focus();
+			inputEl?.focus();
 			return;
 		}
 

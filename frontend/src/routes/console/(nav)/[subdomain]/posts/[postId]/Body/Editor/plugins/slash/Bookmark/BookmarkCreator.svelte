@@ -17,7 +17,7 @@
 
 	let { url = $bindable(''), onclose, oncreate }: Props = $props();
 
-	let inputEl: HTMLInputElement;
+	let inputEl: HTMLInputElement | undefined = $state();
 	let inputStarted = $state(false);
 
 	$effect(() => {
