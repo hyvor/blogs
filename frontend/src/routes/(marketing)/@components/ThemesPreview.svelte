@@ -61,7 +61,7 @@
 		themes.filter((theme) => theme.type === 'original' && theme.name !== 'blank')
 	);
 	let portedThemes = $derived(themes.filter((theme) => theme.type === 'ported'));
-	let currentTheme: any;
+	let currentTheme: any = $state(null);
 	run(() => {
 		currentTheme = originalThemes[0];
 	});

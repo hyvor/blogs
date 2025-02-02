@@ -1,20 +1,10 @@
 <script lang="ts">
-	import { SplitControl, TextInput, Switch, Text, Link } from '@hyvor/design/components';
+	import { SplitControl, TextInput } from '@hyvor/design/components';
 	import BlogSettingsSave from './BlogSettingsSave.svelte';
 	import type { Blog } from '../../../lib/types';
 	import { blogStore, updateBlogStoreVariantValue } from '../../../lib/stores/blogStore';
 	import VariantInput from './@components/VariantInput/VariantInput.svelte';
 	import ImageSetting from './@components/ImageSetting.svelte';
-	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-
-	/**
-	 * null = default value (no on growth+ plans)
-	 * true/false = user's value
-	 */
-	let brandingValue = false;
-	// $derived(
-	// 	$blogStore.hb_branding === null ? !hasGrowthPlan : $blogStore.hb_branding
-	// );
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
@@ -104,7 +94,7 @@
 		/>
 	</SplitControl>
 
-	<SplitControl
+	<!-- <SplitControl
 		label="Hyvor Blogs Branding"
 		caption={'Show "Published with Hyvor Blogs" message'}
 	>
@@ -126,7 +116,7 @@
 				</Link>
 			</div>
 		{/if}
-	</SplitControl>
+	</SplitControl> -->
 
 	<SplitControl
 		label="Social Media"
@@ -210,8 +200,8 @@
 		min-height: 200px;
 	}
 
-	.branding-wrap.disabled {
+	/* .branding-wrap.disabled {
 		opacity: 0.7;
 		pointer-events: none;
-	}
+	} */
 </style>

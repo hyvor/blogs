@@ -2,7 +2,7 @@
 	import { IconButton, Loader, Tooltip, confirm } from '@hyvor/design/components';
 	import type { EditorView } from 'prosemirror-view';
 	import IconPencil from '@hyvor/icons/IconPencil';
-import IconTrash from '@hyvor/icons/IconTrash';
+	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { onMount, mount, unmount } from 'svelte';
 	import FileUploader from '../../../../../../../../lib/components/FileUploader/FileUploader.svelte';
@@ -43,27 +43,25 @@ import IconTrash from '@hyvor/icons/IconTrash';
 		document.body.appendChild(div);
 
 		const selector = mount(FileUploader, {
-        			target: div,
-        			props: {
-        				type: 'audio'
-        			}
-        		});
+			target: div,
+			props: {
+				type: 'audio',
+				onselect: (file: any) => {
+					updateProps({
+						src: file.url
+					});
+					destroy();
+				},
+				onclose: () => {
+					destroy();
+				}
+			}
+		});
 
 		function destroy() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-		});
-
-		selector.$on('select', (e: any) => {
-			destroy();
-			updateProps({
-				src: e.detail.url
-			});
-		});
 	}
 
 	async function handleDelete() {

@@ -1,7 +1,7 @@
 import type { Node } from 'prosemirror-model';
 import type { EditorView, NodeView } from 'prosemirror-view';
 import AudioNodeView from './AudioNodeView.svelte';
-import { type SvelteComponent, mount } from 'svelte';
+import { mount } from 'svelte';
 
 export default class AudioView implements NodeView {
 	private node: Node;
@@ -10,7 +10,11 @@ export default class AudioView implements NodeView {
 
 	public dom: HTMLDivElement;
 
-	private component: SvelteComponent;
+	private props: {
+		src: string;
+		getPos: () => number | undefined;
+		view: EditorView;
+	} = $state({} as any);
 
 	constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
 		this.node = node;
@@ -19,23 +23,21 @@ export default class AudioView implements NodeView {
 
 		this.dom = document.createElement('div');
 
-		this.component = mount(AudioNodeView, {
-			target: this.dom,
-			props: this.getPropsFromNode(node)
-		});
-	}
-
-	private getPropsFromNode(node: Node) {
-		return {
-			src: node.attrs.src,
+		this.props = {
 			getPos: this.getPos,
-			view: this.view
+			view: this.view,
+			src: node.attrs.src
 		};
+
+		mount(AudioNodeView, {
+			target: this.dom,
+			props: this.props
+		});
 	}
 
 	update(node: Node) {
 		if (node.type.name === 'audio') {
-			this.component.$set(this.getPropsFromNode(node));
+			this.props.src = node.attrs.src;
 			return true;
 		}
 		return false;

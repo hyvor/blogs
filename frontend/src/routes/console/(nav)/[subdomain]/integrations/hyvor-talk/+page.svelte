@@ -9,7 +9,6 @@
 		SplitControl,
 		toast
 	} from '@hyvor/design/components';
-	import UpgradeRequired from '../../billing/UpgradeRequired.svelte';
 	import {
 		loadHyvorTalk,
 		type HyvorTalkIntegrationData,
@@ -21,6 +20,7 @@
 	import Comments from './Comments/Comments.svelte';
 	import Memberships from './Memberships/Memberships.svelte';
 	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
+	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
 
 	let isLoading = $state(true);
 	let data: HyvorTalkIntegrationData | undefined = $state();
@@ -66,7 +66,7 @@
 	});
 </script>
 
-<UpgradeRequired minPlan="growth" trialAllowed={false}>
+<LicenseRequired license="talkCredits">
 	{#snippet upgradeText()}
 		<div>
 			This integration allows you to use <a
@@ -145,7 +145,7 @@
 			<GatedContentRules />
 		{/if}
 	{/if}
-</UpgradeRequired>
+</LicenseRequired>
 
 {#if isConnecting}
 	<Modal title="Connect Hyvor Talk" bind:show={isConnecting}>

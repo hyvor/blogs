@@ -15,9 +15,9 @@
 
 	const dispatch = createEventDispatcher<{ change: string | null }>();
 
-	function handleSelect(e: CustomEvent<SelectedFile>) {
+	function handleSelect(file: SelectedFile) {
 		isUploading = false;
-		dispatch('change', e.detail.url as string);
+		dispatch('change', file.url as string);
 	}
 
 	function handleRemove() {
@@ -47,7 +47,7 @@
 {/if}
 
 {#if isUploading}
-	<FileUploader on:select={handleSelect} bind:show={isUploading} />
+	<FileUploader onselect={handleSelect} bind:show={isUploading} />
 {/if}
 
 <style>

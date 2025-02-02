@@ -2,13 +2,12 @@
 	import Links from './Links/Links.svelte';
 	import { Loader, TabNav, TabNavItem } from '@hyvor/design/components';
 	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
-import IconGear from '@hyvor/icons/IconGear';
-import IconLink45deg from '@hyvor/icons/IconLink45deg';
-
-	import UpgradeRequired from '../../billing/UpgradeRequired.svelte';
+	import IconGear from '@hyvor/icons/IconGear';
+	import IconLink45deg from '@hyvor/icons/IconLink45deg';
 	import Settings from './Settings.svelte';
 	import { getStats } from './linkAnalysisActions';
 	import Overview from './Overview/Overview.svelte';
+	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
 
 	let tab: 'overview' | 'links' | 'settings' = $state('overview');
 
@@ -16,7 +15,7 @@ import IconLink45deg from '@hyvor/icons/IconLink45deg';
 </script>
 
 <div class="link-analysis hds-box">
-	<UpgradeRequired minPlan="growth" trialAllowed={true}>
+	<LicenseRequired license="analyses">
 		{#snippet upgradeText()}
 			<div>
 				Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically
@@ -60,7 +59,7 @@ import IconLink45deg from '@hyvor/icons/IconLink45deg';
 				{/if}
 			{/await}
 		</div>
-	</UpgradeRequired>
+	</LicenseRequired>
 </div>
 
 <style>

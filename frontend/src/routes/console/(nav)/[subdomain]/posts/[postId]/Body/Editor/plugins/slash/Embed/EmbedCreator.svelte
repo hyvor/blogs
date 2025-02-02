@@ -1,13 +1,19 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
-	import { createEventDispatcher } from 'svelte';
 	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
 	import type { UnfoldedEmbed } from '../../../../../../../../../lib/types';
 	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import EmbedHtmlDisplay from './EmbedHtmlDisplay.svelte';
+
+	interface Props {
+		onclose: () => void;
+		oncreate: (url: string) => void;
+		oncreatebookmark: (url: string) => void;
+		oncreatehtmlblock: (url: string) => void;
+	}
+
+	let { onclose, oncreate, oncreatebookmark, oncreatehtmlblock }: Props = $props();
 
 	let show = $state(true);
 	let url = $state('');
@@ -15,16 +21,9 @@
 	let inputEl: HTMLInputElement | undefined = $state();
 	let inputStarted = $state(false);
 
-	const dispatch = createEventDispatcher<{
-		close: void;
-		create: string;
-		createBookmark: string;
-		createHtmlBlock: string;
-	}>();
-
-	run(() => {
+	$effect(() => {
 		if (!show) {
-			dispatch('close');
+			onclose();
 		}
 	});
 
@@ -71,15 +70,15 @@
 	}
 
 	function handleCreate() {
-		dispatch('create', url);
+		oncreate(url);
 	}
 
 	function handleCreateBookmark(): void {
-		dispatch('createBookmark', url);
+		oncreatebookmark(url);
 	}
 
 	function handleCreateHtmlBlock(): void {
-		dispatch('createHtmlBlock', url);
+		oncreatehtmlblock(url);
 	}
 </script>
 
@@ -131,8 +130,8 @@
 
 	{#if embedFailed}
 		<div class="link-alternatives">
-			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL or
-			create a custom HTML block and paste the embed code manually.
+			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL
+			or create a custom HTML block and paste the embed code manually.
 			<div class="alternatives-button">
 				<Button variant="outline" color="gray" size="small" on:click={handleCreateBookmark}
 					>Create Link Bookmark</Button

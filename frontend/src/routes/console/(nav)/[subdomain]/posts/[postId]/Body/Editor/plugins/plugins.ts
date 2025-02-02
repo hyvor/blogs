@@ -6,11 +6,11 @@ import inputRulesPlugin from './plugin-inputrules';
 import keymapPlugins from "./plugin-keymap";
 import codemark from 'prosemirror-codemark';
 import pasteImagesPlugin from "./plugin-paste-images";
-import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
-import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip";
+import { columnResizing, tableEditing } from 'prosemirror-tables';
+import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip.svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
 import wordCountPlugin from "./plugin-wordcount";
-import slashPlugin from "./slash/plugin-slash";
+import slashPlugin from "./slash/plugin-slash.svelte";
 import slashTipPlugin from "./slash/plugin-slash-tip";
 import tableMenuPlugin from "./table/plugin-table-menu";
 

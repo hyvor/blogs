@@ -169,28 +169,29 @@ function selectImage() {
 		document.body.appendChild(div);
 
 		const selector = mount(FileUploader, {
-			target: div
+			target: div,
+			props: {
+				type: 'image',
+				onselect: (selected) => {
+					destroy();
+					return resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.image!.create({ src: selected.url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				onclose: () => {	
+					destroy();
+					resolve(null);
+				}
+			}
 		});
 
 		function destroy() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.image!.create({ src: e.detail.url }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
 	});
 }
 
@@ -202,7 +203,15 @@ function selectAudio() {
 		const selector = mount(FileUploader, {
 			target: div,
 			props: {
-				type: 'audio'
+				type: 'audio',
+				onselect: (selected) => {
+					destroy();
+					return resolve(schema.nodes.audio!.create({ src: selected.url }));
+				},
+				onclose: () => {
+					destroy();
+					resolve(null);
+				}
 			}
 		});
 
@@ -210,16 +219,6 @@ function selectAudio() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		selector.$on('select', (e: any) => {
-			destroy();
-			return resolve(schema.nodes.audio!.create({ src: e.detail.url }));
-		});
 	});
 }
 
@@ -233,38 +232,41 @@ function createEmbed() {
 		document.body.appendChild(div);
 
 		const creator = mount(EmbedCreator, {
-			target: div
+			target: div,
+			props: {
+				onclose: () => {
+					destroy();
+					resolve(null);
+				},
+				oncreate: (url: string) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.embed!.create({ url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				oncreatebookmark: (url: string) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.bookmark!.create({ url: url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				oncreatehtmlblock: (html: string) => {
+					destroy();
+					resolve(schema.nodes.custom_html!.create({ html }));
+				}
+			}
 		});
 
 		function destroy() {
 			unmount(creator);
 			div.remove();
 		}
-
-		creator.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		creator.$on('create', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.embed!.create({ url: e.detail }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
-
-		creator.$on('createBookmark', async (e: CustomEvent<string>) => {
-			destroy();
-			resolve(await createBookmark(e.detail));
-		});
-
-		creator.$on('createHtmlBlock', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(schema.nodes.custom_html!.create({ html: e.detail }));
-		});
 	});
 }
 
@@ -276,7 +278,20 @@ function createBookmark(url: string = '') {
 		const creator = mount(BookmarkCreator, {
 			target: div,
 			props: {
-				url
+				url,
+				onclose: () => {
+					destroy();
+					resolve(null);
+				},
+				oncreate: (url: string) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.bookmark!.create({ url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				}
 			}
 		});
 
@@ -285,20 +300,6 @@ function createBookmark(url: string = '') {
 			div.remove();
 		}
 
-		creator.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		creator.$on('create', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.bookmark!.create({ url: e.detail }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
 	});
 }
 

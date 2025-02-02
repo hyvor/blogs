@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { EditorView, NodeView } from "prosemirror-view";
 import ImageNodeview from "./ImageNodeview.svelte";
-import type { SvelteComponent, mount } from "svelte";
+import { mount } from "svelte";
 
 export default class ImageView implements NodeView {
 
@@ -11,7 +11,15 @@ export default class ImageView implements NodeView {
 
     public dom: HTMLDivElement;
 
-    private component: SvelteComponent;
+    private props: {
+        view: EditorView;
+        getPos: () => number | undefined;
+        src: string;
+        alt: string;
+        width: number|null;
+        height: number|null;
+    } = $state({} as any);
+
 
     constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -21,27 +29,29 @@ export default class ImageView implements NodeView {
         this.dom = document.createElement('div');
         this.dom.className = 'image-wrap';
 
-        this.component = mount(ImageNodeview, {
-                    target: this.dom,
-                    props: this.getPropsFromNode(node),
-                });
+        this.setPropsFromNode(node);
+
+        this.props.view = this.view;
+        this.props.getPos = this.getPos;
+        this.setPropsFromNode(node);
+
+        mount(ImageNodeview, {
+            target: this.dom,
+            props: this.props
+        });
 
     }   
 
-    private getPropsFromNode(node: Node) {
-        return {
-            src: node.attrs.src,
-            alt: node.attrs.alt,
-            width: node.attrs.width,
-            height: node.attrs.height,
-            getPos: this.getPos,
-            view: this.view,
-        }
+    private setPropsFromNode(node: Node) {
+        this.props.src = node.attrs.src;
+        this.props.alt = node.attrs.alt;
+        this.props.width = node.attrs.width;
+        this.props.height = node.attrs.height;
     }
 
     update(node: Node) {
         if (node.type.name === 'image') {
-            this.component.$set(this.getPropsFromNode(node));
+            this.setPropsFromNode(node);
             return true;
         }
         return false;

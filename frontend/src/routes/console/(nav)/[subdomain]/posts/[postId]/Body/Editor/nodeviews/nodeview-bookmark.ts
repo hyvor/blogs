@@ -16,12 +16,12 @@ export default class BookmarkView implements NodeView {
         const url = node.attrs.url;
 
         mount(EmbedNodeview, {
-                    target: this.dom,
-                    props: {
-                        url,
-                        type: 'link'
-                    }
-                })
+            target: this.dom,
+            props: {
+                url,
+                type: 'link'
+            }
+        })
 
     }
 

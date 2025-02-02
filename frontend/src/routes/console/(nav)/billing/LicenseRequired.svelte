@@ -1,23 +1,31 @@
 <script lang="ts">
-	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
-	import type { SubscriptionPlan } from '../../../lib/types';
-	import { Button } from '@hyvor/design/components';
-	import { consoleUrl } from '../../../lib/consoleUrl';
 	import type { Snippet } from 'svelte';
+	import { licenseStore } from '../../lib/stores/blogStore';
+	import type { License } from '../../lib/types';
+	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
+	import { Button } from '@hyvor/design/components';
+	import { consoleUrl } from '../../lib/consoleUrl';
 
 	interface Props {
-		minPlan: SubscriptionPlan;
-		trialAllowed?: boolean;
-		allow?: boolean;
+		license: keyof License;
 		children: Snippet;
 		upgradeText: Snippet;
 	}
 
-	let { minPlan, trialAllowed = false, allow = false, children, upgradeText }: Props = $props();
-	let hasMinPlan = $derived(minPlanCheck(minPlan, trialAllowed));
+	let { license, children, upgradeText }: Props = $props();
+
+	let hasLicense = $derived(licenseCheck(license));
+
+	function licenseCheck(license: keyof License) {
+		return (
+			$licenseStore && // sanity
+			$licenseStore[license] !== false && // feature not enabled
+			$licenseStore[license] !== 0 // int feature (limit) is zero, so not enabled again
+		);
+	}
 </script>
 
-{#if hasMinPlan || allow}
+{#if hasLicense}
 	{@render children()}
 {:else}
 	<div class="upgrade-required">
@@ -28,7 +36,7 @@
 			</div>
 
 			<div class="upgrade-required-content">
-				{@html upgradeText}
+				{@render upgradeText()}
 			</div>
 
 			<div class="upgrade-cta">

@@ -9,15 +9,10 @@
 		SplitControl,
 		toast
 	} from '@hyvor/design/components';
-	import UpgradeRequired from '../../../../../../billing/UpgradeRequired.svelte';
-	import {
-		languagesStore,
-		primaryLanguageStore
-	} from '../../../../../../../../lib/stores/languagesStore';
+	import { primaryLanguageStore } from '../../../../../../../../lib/stores/languagesStore';
 	import type { Language, PostVariant } from '../../../../../../../../lib/types';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-import IconExclamation from '@hyvor/icons/IconExclamation';
-import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import {
 		increaseEditorVersion,
@@ -31,6 +26,7 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	import { autoTranslate } from './autoTranslateActions';
 	import { updatePostVariant } from '../../../../../postActions';
 	import { tick } from 'svelte';
+	import LicenseRequired from '../../../../../../../billing/LicenseRequired.svelte';
 
 	interface Props {
 		show: boolean;
@@ -67,7 +63,9 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	function handleTranslate() {
 		isTranslating = true;
 
-		const variant = $postStore.variants.find((v) => v.language_id === sourceVariantLanguage.id)!;
+		const variant = $postStore.variants.find(
+			(v) => v.language_id === sourceVariantLanguage.id
+		)!;
 
 		autoTranslate(
 			sourceDeepLLanguage,
@@ -117,7 +115,7 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	on:confirm={handleTranslate}
 	loading={isTranslating}
 >
-	<UpgradeRequired trialAllowed={true} minPlan="growth">
+	<LicenseRequired license="autoTranslationsChars">
 		{#snippet upgradeText()}
 			<div>
 				Auto-translation is available in the Growth and higher plans. Upgrade now to easily
@@ -126,8 +124,8 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 		{/snippet}
 
 		<div class="note">
-			Automatically translate your posts using DeepL. Make sure to review the translations before
-			publishing.
+			Automatically translate your posts using DeepL. Make sure to review the translations
+			before publishing.
 		</div>
 
 		<SplitControl label="Source Variant" caption="The variant you want to translate from">
@@ -224,7 +222,7 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 			The title, content, description, and the slug of the
 			<strong>{$postLanguageStore.name} variant</strong> will be replaced with the translated version.
 		</Callout>
-	</UpgradeRequired>
+	</LicenseRequired>
 </Modal>
 
 <style>

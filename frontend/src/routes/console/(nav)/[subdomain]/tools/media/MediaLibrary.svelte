@@ -71,7 +71,14 @@
 		const selector = mount(FileUploader, {
 			target: div,
 			props: {
-				type: 'any'
+				type: 'any',
+				onselect: () => {
+					destroy();
+					load();
+				},
+				onclose: () => {
+					destroy();
+				}
 			}
 		});
 
@@ -79,15 +86,6 @@
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-		});
-
-		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
-			destroy();
-			load();
-		});
 	}
 
 	const limit = 50;
@@ -133,7 +131,12 @@
 		/>
 
 		{#if showUpload}
-			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
+			<input
+				type="file"
+				bind:this={uploadInput}
+				style="display:none"
+				onchange={handleUpload}
+			/>
 			<Button on:click={handleClickUpload}>
 				{#snippet start()}
 					<IconCloudUpload />
@@ -161,7 +164,12 @@
 		{/if}
 	</div>
 
-	<LoadButton text="Load More" loading={isLoadingMore} show={hasMore} on:click={() => load(true)} />
+	<LoadButton
+		text="Load More"
+		loading={isLoadingMore}
+		show={hasMore}
+		on:click={() => load(true)}
+	/>
 </div>
 
 <style>
