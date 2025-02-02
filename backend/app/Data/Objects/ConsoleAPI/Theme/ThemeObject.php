@@ -26,7 +26,7 @@ class ThemeObject
 
         if ($version) {
             $this->latest_version = $version->version;
-            $this->preview_subdomain = $version->preview_subdomain;
+            $this->preview_subdomain = $version->preview_subdomain ?? '';
         }
     }
 }

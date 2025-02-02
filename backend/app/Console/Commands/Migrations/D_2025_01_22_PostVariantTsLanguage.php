@@ -21,6 +21,7 @@ class D_2025_01_22_PostVariantTsLanguage extends Command
             $fts = new FullTextSearchService();
 
             foreach ($postVariants as $postVariant) {
+                // @phpstan-ignore-next-line
                 $tsLanguage = $fts->findClosestRegconfigByLanguageCode($postVariant->language->code);
                 $postVariant->update([
                     'ts_language' => $tsLanguage

@@ -3,12 +3,17 @@
 namespace App\Models;
 
 use App\Data\Enums\LanguageDirectionEnum;
+use Database\Factories\LanguageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Language extends Model
 {
+
+    /**
+     * @use HasFactory<LanguageFactory>
+     */
     use HasFactory;
 
     protected $casts = [
@@ -22,7 +27,7 @@ class Language extends Model
     }*/
 
     /**
-     * @return BelongsTo<Blog, self>
+     * @return BelongsTo<Blog, $this>
      */
     public function blog()
     {

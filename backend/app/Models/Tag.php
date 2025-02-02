@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property int $blog_id
  * @property string $slug
  * @property int $posts_count
@@ -18,6 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Tag extends Model
 {
+
+    /**
+     * @use HasFactory<TagFactory>
+     */
     use HasFactory;
 
     protected $with = [
@@ -29,7 +37,7 @@ class Tag extends Model
     ];
 
     /**
-     * @return BelongsTo<Blog, self>
+     * @return BelongsTo<Blog, $this>
      */
     public function blog()
     {
@@ -37,7 +45,7 @@ class Tag extends Model
     }
 
     /**
-     * @return HasMany<TagVariant>
+     * @return HasMany<TagVariant, $this>
      */
     public function variants()
     {

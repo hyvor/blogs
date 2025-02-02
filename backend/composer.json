@@ -34,7 +34,6 @@
         "hyvor/unfold": "^0.0.5",
         "intervention/image": "^2.7",
         "laravel/framework": "^11.0",
-        "laravel/horizon": "^5.10",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nelexa/zip": "^4.0",
         "openai-php/laravel": "^0.10.1",

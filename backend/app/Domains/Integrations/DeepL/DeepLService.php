@@ -5,7 +5,6 @@ namespace App\Domains\Integrations\DeepL;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
-use App\Domains\Billing\LicenseService;
 use App\Models\AutoTranslation;
 use App\Models\Blog;
 use Hyvor\Internal\Billing\License\BlogsLicense;
@@ -85,7 +84,7 @@ class DeepLService
 
     public static function getMaxCharsPerMonth(BlogsLicense $license) : int
     {
-        return $license->autoTranslationsCharsK * 1000;
+        return $license->autoTranslationsChars;
     }
 
 }

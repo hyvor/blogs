@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
+use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -53,6 +54,7 @@ class ConsoleUserController extends Controller
         Request $request,
         Blog $blog,
         UsageService $usageService,
+        Auth $auth,
     ) : JsonResponse
     {
         $request->validate([
@@ -68,9 +70,9 @@ class ConsoleUserController extends Controller
         $role = UserRoleEnum::from($request->input('role'));
 
         if (str_contains($usernameOrEmail, '@')) {
-            $hyvorUser = AuthUser::fromEmail($usernameOrEmail);
+            $hyvorUser = $auth->fromEmail($usernameOrEmail);
         } else {
-            $hyvorUser = AuthUser::fromUsername($usernameOrEmail);
+            $hyvorUser = $auth->fromUsername($usernameOrEmail);
         }
 
         if (! $hyvorUser) {

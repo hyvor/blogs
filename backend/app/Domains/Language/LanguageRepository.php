@@ -9,7 +9,7 @@ use App\Domains\Post\Jobs\PostVariantUpdateTsLanguageJob;
 use App\Models\Blog;
 use App\Models\Language;
 use Exception;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class LanguageRepository
 {

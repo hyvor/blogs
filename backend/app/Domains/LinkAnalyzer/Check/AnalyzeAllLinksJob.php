@@ -23,7 +23,7 @@ class AnalyzeAllLinksJob implements ShouldQueue
 
     public LinkAnalyzerCheck $check;
 
-    public $timeout = 3600;
+    public int $timeout = 3600;
 
     public function __construct(
         public Blog $blog

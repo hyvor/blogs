@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 class WebhookService
 {
+
+    /**
+     * @return Collection<int, Webhook>
+     */
     public static function getWebhooks(Blog $blog): Collection
     {
         return $blog->webhooks;
@@ -18,6 +22,9 @@ class WebhookService
         return $blog->webhooks()->count();
     }
 
+    /**
+     * @param string[] $events
+     */
     public static function createWebhook(Blog $blog, string $url, array $events): Webhook
     {
         $secret = bin2hex(random_bytes(16));
@@ -28,6 +35,9 @@ class WebhookService
         ]);
     }
 
+    /**
+     * @param string[] $events
+     */
     public static function updateWebhook(Webhook $webhook, string $url = null, array $events = null): Webhook
     {
         if ($url) {
@@ -43,7 +53,7 @@ class WebhookService
         return $webhook;
     }
 
-    public static function deleteWebhook(Webhook $webhook)
+    public static function deleteWebhook(Webhook $webhook): void
     {
         $webhook->delete();
     }

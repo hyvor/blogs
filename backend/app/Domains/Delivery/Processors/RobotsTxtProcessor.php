@@ -11,13 +11,21 @@ use App\Domains\Delivery\Twig\TwigRenderer;
 
 class RobotsTxtProcessor extends RouteProcessorAbstract
 {
+
+    // @phpstan-ignore constructor.unusedParameter
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $blog = $pathMatcher->blog;
         $robots = $blog->getMeta('seo_robots_txt') ?? '';
 
+        $primaryLanguage = $blog->languages[0];
+
+        if (!$primaryLanguage) {
+            return;
+        }
+
         $rendered = TwigRenderer::renderString($robots, [
-            '_blog' => new BlogObject($blog, $blog->languages[0])
+            '_blog' => new BlogObject($blog, $primaryLanguage)
         ]);
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(

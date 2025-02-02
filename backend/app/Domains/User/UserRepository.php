@@ -4,13 +4,11 @@ namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Domains\Billing\Usage\UsersUsage;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Billing\LicenseService;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -26,6 +24,7 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\FilterQ;
+use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthUser;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -124,6 +123,7 @@ class UserRepository
             $builder->orderBy($orderBy[0], $orderBy[1]);
         }
 
+        /** @var Collection<int, User> $tags */
         $tags = $builder
             ->where('users.blog_id', $blog->id)
             ->where('users.posts_count', '>', 0)
@@ -143,7 +143,9 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
-        $hyvorUser = AuthUser::fromId($hyvorUserId, true);
+
+        $auth = app(Auth::class);
+        $hyvorUser = $auth->fromId($hyvorUserId);
 
         if (! $hyvorUser) {
             throw new Exception('User not found');
@@ -211,6 +213,9 @@ class UserRepository
         return $user;
     }
 
+    /**
+     * @param array<mixed> $updates
+     */
     public static function updateUser(
         User $user,
         array $updates,
@@ -260,6 +265,9 @@ class UserRepository
         return $variant;
     }
 
+    /**
+     * @param array<mixed> $updates
+     */
     public static function updateUserVariant(UserVariant $variant, array $updates): UserVariant
     {
         foreach ($updates as $key => $value) {
@@ -272,7 +280,7 @@ class UserRepository
         return $variant;
     }
 
-    public static function deleteUserVariant(UserVariant $variant)
+    public static function deleteUserVariant(UserVariant $variant): void
     {
         $variant->delete();
 
@@ -328,7 +336,9 @@ class UserRepository
         if (!$blog->hyvor_user_id) {
             return null;
         }
-        $hyvorUser = AuthUser::fromId($blog->hyvor_user_id);
+
+        $auth = app(Auth::class);
+        $hyvorUser = $auth->fromId($blog->hyvor_user_id);
 
         if (!$hyvorUser) {
             return null;
@@ -337,14 +347,21 @@ class UserRepository
         return $hyvorUser->email;
     }
 
-    public static function sendInviteEmail(User $user)
+    public static function sendInviteEmail(User $user): void
     {
-        $hyvorUser = AuthUser::fromId($user->hyvor_user_id);
+        $auth = app(Auth::class);
+        if (!$user->hyvor_user_id) {
+            return;
+        }
+        $hyvorUser = $auth->fromId($user->hyvor_user_id);
+        if (!$hyvorUser) {
+            return;
+        }
 
         Mail::to($hyvorUser->email)->send(new InviteUserMail($user, $hyvorUser));
     }
 
-    public static function activateUser(User $user)
+    public static function activateUser(User $user): void
     {
         $user->status = UserStatusEnum::ACTIVE;
         $user->save();

@@ -45,7 +45,7 @@ class AuthorObject
         $variants = $user->variants;
 
         $this->id = $user->id;
-        $this->created_at = $user->created_at->getTimestamp();
+        $this->created_at = $user->created_at?->getTimestamp() ?? 0;
         $this->slug = $user->slug;
         $this->url = PermalinkRepository::getAuthorPermalink($user, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language) ?? '';

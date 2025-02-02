@@ -82,7 +82,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param array<mixed> $context
      */
     public function assetUrlFilter(array $context, string $assetName) : string
     {
@@ -109,7 +109,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      * @param string[] $args
      */
     public function langFilter(array $context, string $key, array $args = []) : ?string
@@ -125,7 +125,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      * @param string[] $args
      */
     public function langByNumberFilter(array $context, string $value, array $args = []) : ?string
@@ -143,11 +143,11 @@ class TwigExtensions extends AbstractExtension
             $key = $one;
         }
 
-        return $this->langFilter($context, $key, [$value]);
+        return $this->langFilter($context, (string) $key, [(string) $value]);
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function templateFilter(Environment $env, array $context, string $string) : string
     {
@@ -158,7 +158,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function paginationPageUrlFilter(array $context, ?int $pageNumber) : string
     {
@@ -273,7 +273,7 @@ class TwigExtensions extends AbstractExtension
 
     /**
      * checks if a given URL is the current one
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function isCurrentUrlFunction(array $context, string $url): bool
     {
@@ -299,6 +299,9 @@ class TwigExtensions extends AbstractExtension
         }
     }
 
+    /**
+     * @param array<mixed>|string|null $levels
+     */
     public function tocFilter(string $content, null|array|string $levels = null): string
     {
         $levels = TocHeading::getLevels($levels);
@@ -306,7 +309,10 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
-    public function richSchema(array $context)
+    /**
+     * @param array<mixed> $context
+     */
+    public function richSchema(array $context): string
     {
         $schema = [
             '@context' => 'https://schema.org',
@@ -327,11 +333,19 @@ class TwigExtensions extends AbstractExtension
 
         return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
     }
-    private function getBlogFromContext($context)
+
+    /**
+     * @param array<mixed> $context
+     */
+    private function getBlogFromContext($context): Blog
     {
         if (! isset($this->blog)) {
             $subdomain = $context['_blog']['subdomain'];
-            $this->blog = BlogService::getBlogBySubdomain($subdomain);
+            $blog = BlogService::getBlogBySubdomain($subdomain);
+            if (!$blog) {
+                throw new Error('Blog not found');
+            }
+            $this->blog = $blog;
         }
 
         return $this->blog;

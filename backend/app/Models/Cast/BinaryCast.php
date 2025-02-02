@@ -6,6 +6,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 /**
  * from https://github.com/jBernavaPrah/eloquent-binary-cast/blob/master/src/Casts/BinaryCast.php
+ * @implements CastsAttributes<string, string>
  */
 class BinaryCast implements CastsAttributes
 {
@@ -22,7 +23,7 @@ class BinaryCast implements CastsAttributes
             $value = stream_get_contents($value);
         }
 
-        return hex2bin($value);
+        return (string) hex2bin($value);
     }
 
     public function set($model, $key, $value, array $attributes)

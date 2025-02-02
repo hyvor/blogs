@@ -21,21 +21,29 @@ class RouteMatcher
 
     public string $path;
 
-    public $routeModels = []; // name=>route
+    /**
+     * @var array<string, ModelsRoute>
+     */
+    public array $routeModels = []; // name=>route
 
-    public function __construct($path)
+    public function __construct(string $path)
     {
         $this->collection = new RouteCollection();
         $this->path = $path;
     }
 
+    /**
+     * @param array<string, ?string> $defaults
+     * @param array<string, string> $requirements
+     */
     public function add(
         string $routeName,
         string $match,
         array $defaults = [],
         array $requirements = [],
         ModelsRoute $routeModel = null
-    ) {
+    ) : void
+    {
         $route = new Route($match, $defaults, $requirements);
         $this->collection->add($routeName, $route);
 

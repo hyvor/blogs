@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\LinkAnalyzerLinkFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LinkAnalyzerLink extends Model
 {
+
+    /**
+     * @use HasFactory<LinkAnalyzerLinkFactory>
+     */
     use HasFactory;
 
     const UPDATED_AT = null;
@@ -18,7 +23,7 @@ class LinkAnalyzerLink extends Model
     ];
 
     /**
-     * @return BelongsTo<PostVariant, self>
+     * @return BelongsTo<PostVariant, $this>
      */
     public function postVariant() : BelongsTo
     {

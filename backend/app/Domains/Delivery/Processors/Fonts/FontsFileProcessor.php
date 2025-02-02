@@ -15,7 +15,11 @@ use Illuminate\Support\Facades\Http;
 class FontsFileProcessor extends RouteProcessorAbstract
 {
 
-    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
+    // @phpstan-ignore constructor.unusedParameter
+    public function __construct(
+        PathMatcher $pathMatcher,
+        MatchedRoute $matchedRoute
+    )
     {
 
         $path = $matchedRoute->param('path');

@@ -14,7 +14,7 @@ class NavObject
 
     public function __construct(Navigation $navigation, Language $language)
     {
-        $this->name = VariantsHelper::getVariantValue('name', $navigation->variants, $language);
+        $this->name = VariantsHelper::getVariantValue('name', $navigation->variants, $language) ?? '';
         $this->url = $navigation->url;
     }
 }

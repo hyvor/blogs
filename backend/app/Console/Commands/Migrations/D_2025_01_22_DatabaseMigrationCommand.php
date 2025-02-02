@@ -28,6 +28,7 @@ class D_2025_01_22_DatabaseMigrationCommand extends Command
         $tables = DB::select('SELECT table_name FROM information_schema.tables WHERE table_schema = \'public\'');
         $lastRun = null;
 
+        // @phpstan-ignore-next-line
         while (true){
             $currentRun = now()->toImmutable();
 

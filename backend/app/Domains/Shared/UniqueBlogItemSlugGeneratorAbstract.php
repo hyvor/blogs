@@ -11,7 +11,7 @@ abstract class UniqueBlogItemSlugGeneratorAbstract
 {
     use UniqueSlugGeneratorTrait;
 
-    public function __construct(protected Blog $blog)
+    final public function __construct(protected Blog $blog)
     {
     }
 

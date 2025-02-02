@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Domains\App\Marketing\Trial\TrialEmailsJob;
 use App\Domains\LinkAnalyzer\Check\DispatchAllChecksJob;
 use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Illuminate\Console\Scheduling\Schedule;
@@ -20,9 +19,6 @@ class Kernel extends ConsoleKernel
         // app
         $schedule->job(new PublishScheduledPosts())->everyFiveMinutes();
         $schedule->job(new DispatchAllChecksJob())->daily();
-
-        // marketing
-        $schedule->job(TrialEmailsJob::class)->daily();
     }
 
     protected function commands()
