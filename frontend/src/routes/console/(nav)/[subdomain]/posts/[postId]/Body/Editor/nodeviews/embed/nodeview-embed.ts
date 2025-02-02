@@ -16,11 +16,11 @@ export default class EmbedView implements NodeView {
         const url = node.attrs.url;
 
         mount(EmbedNodeview, {
-                    target: this.dom,
-                    props: {
-                        url
-                    }
-                })
+            target: this.dom,
+            props: {
+                url
+            }
+        })
 
     }
 

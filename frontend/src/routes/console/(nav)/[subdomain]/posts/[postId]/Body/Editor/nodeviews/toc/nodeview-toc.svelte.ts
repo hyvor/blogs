@@ -13,6 +13,12 @@ export default class TocView implements NodeView {
 
     private levels : undefined|number[] = $state(undefined)
 
+    private props: {
+        getPos: () => number | undefined;
+        view: EditorView;
+        levels: undefined|number[];
+    } = $state({} as any)
+
     constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
         this.view = view;
@@ -21,15 +27,15 @@ export default class TocView implements NodeView {
         this.dom = document.createElement('div');
         this.dom.className = 'toc-wrap';
 
-        this.levels = node.attrs.levels;
+        this.props = {
+            getPos: this.getPos,
+            view: this.view,
+            levels: this.levels
+        }
 
         mount(Toc, {
             target: this.dom,
-            props: {
-                getPos: this.getPos,
-                view: this.view,
-                levels: this.levels,
-            }
+            props: this.props
         });
 
     }   
@@ -40,7 +46,7 @@ export default class TocView implements NodeView {
 
     update(node: Node) {
         if (node.type.name === 'toc') {
-            this.levels = node.attrs.levels;
+            this.props.levels = node.attrs.levels;
             return true;
         }
         return false;

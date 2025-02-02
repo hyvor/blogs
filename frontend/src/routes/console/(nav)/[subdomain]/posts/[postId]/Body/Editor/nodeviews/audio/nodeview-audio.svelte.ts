@@ -10,7 +10,11 @@ export default class AudioView implements NodeView {
 
 	public dom: HTMLDivElement;
 
-	private src = $state('');
+	private props: {
+		src: string;
+		getPos: () => number | undefined;
+		view: EditorView;
+	} = $state({} as any);
 
 	constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
 		this.node = node;
@@ -18,21 +22,22 @@ export default class AudioView implements NodeView {
 		this.getPos = getPos;
 
 		this.dom = document.createElement('div');
-		this.src = node.attrs.src;
+
+		this.props = {
+			getPos: this.getPos,
+			view: this.view,
+			src: node.attrs.src
+		};
 
 		mount(AudioNodeView, {
 			target: this.dom,
-			props: {
-				src: this.src,
-				getPos: this.getPos,
-				view: this.view
-			}
+			props: this.props
 		});
 	}
 
 	update(node: Node) {
 		if (node.type.name === 'audio') {
-			this.src = node.attrs.src;
+			this.props.src = node.attrs.src;
 			return true;
 		}
 		return false;
