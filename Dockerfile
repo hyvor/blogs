@@ -93,7 +93,7 @@ COPY backend /app/backend
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN cd backend && composer install --no-interaction --no-dev --optimize-autoloader
+RUN composer install --no-interaction --no-dev --optimize-autoloader
 
 # copy configs
 COPY meta/image/Caddyfile /etc/caddy/Caddyfile
