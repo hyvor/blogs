@@ -3,18 +3,16 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
-use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 
-it('uploads from url', function() {
-
+it('uploads from url', function () {
     $blog = blogWithAccess();
     $blogUrl = PermalinkRepository::getBaseUrl($blog);
     $url = 'https://example.com/image.txt';
 
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     Http::fake([
         $url => Http::response('test', 200, ['Content-Type' => 'text/plain']),
@@ -28,15 +26,13 @@ it('uploads from url', function() {
 
     expect($media['id'])->toBeGreaterThan(0)
         ->and($media['url'])->toStartWith($blogUrl . '/media');
-
 });
 
-it('rejects uploading larger files', function() {
-
+it('rejects uploading larger files', function () {
     $blog = blogWithAccess();
     $url = 'https://example.com/image.txt';
 
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
     config(['limits.max_media_upload_size_kb' => 1]);
 
     Http::fake([
@@ -52,21 +48,18 @@ it('rejects uploading larger files', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('File size is too large');
-
 });
 
 
-it('throws error when media size exceeded', function() {
-
+it('throws error when media size exceeded', function () {
     $blog = blogWithAccess();
-    $blog->setCount('media', 10**9*2);
+    $blog->setCount('media', 10 ** 9 * 2);
 
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     consoleApi($blog, 'POST', '/media/from-url', [
         'url' => 'https://test.com'
     ])
         ->assertUnprocessable()
         ->assertSee('Total storage limit exceeded. Please upgrade your plan.');
-
 });

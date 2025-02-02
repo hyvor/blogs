@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
@@ -21,7 +23,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleUserController extends Controller
 {
-    public static function get(Request $request, Blog $blog) : JsonResponse
+    public static function get(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'limit' => 'integer',
@@ -31,12 +33,12 @@ class ConsoleUserController extends Controller
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
 
-        $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn ($user) => new UserObject($user, $blog));
+        $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn($user) => new UserObject($user, $blog));
 
         return response()->json($users);
     }
 
-    public static function search(Request $request, Blog $blog) : JsonResponse
+    public static function search(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'search' => 'required|string',
@@ -45,7 +47,7 @@ class ConsoleUserController extends Controller
         $search = $request->input('search');
 
         $users = UserRepository::searchUsers($blog, $search, limit: 10)
-            ->map(fn ($user) => new UserObject($user, $blog));
+            ->map(fn($user) => new UserObject($user, $blog));
 
         return response()->json($users);
     }
@@ -55,8 +57,7 @@ class ConsoleUserController extends Controller
         Blog $blog,
         UsageService $usageService,
         Auth $auth,
-    ) : JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'username_or_email' => 'required|string',
             'role' => ['required', new Enum(UserRoleEnum::class)],
@@ -75,7 +76,7 @@ class ConsoleUserController extends Controller
             $hyvorUser = $auth->fromUsername($usernameOrEmail);
         }
 
-        if (! $hyvorUser) {
+        if (!$hyvorUser) {
             throw new TrustedException('Unable to find the user');
         }
 
@@ -98,8 +99,7 @@ class ConsoleUserController extends Controller
         Request $request,
         Blog $blog,
         UsageService $usageService,
-    ) : JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'name' => 'required|string',
         ]);
@@ -115,7 +115,7 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function update(Request $request, User $user, Blog $blog) : JsonResponse
+    public static function update(Request $request, User $user, Blog $blog): JsonResponse
     {
         $validators = [
             'hyvor_user_id' => 'integer|nullable',
@@ -182,9 +182,8 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function delete(User $user) : JsonResponse
+    public static function delete(User $user): JsonResponse
     {
-
         if ($user->role === UserRoleEnum::OWNER) {
             throw new TrustedException('Cannot delete the owner');
         }
@@ -194,13 +193,13 @@ class ConsoleUserController extends Controller
         return response()->json();
     }
 
-    public function checkSlugAvailability(Request $request, Blog $blog, User $user) : JsonResponse
+    public function checkSlugAvailability(Request $request, Blog $blog, User $user): JsonResponse
     {
         $request->validate([
             'slug' => 'required|string',
         ]);
 
-        $slug = (string) $request->string('slug');
+        $slug = (string)$request->string('slug');
 
         $slugUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $slug);
 
@@ -209,18 +208,18 @@ class ConsoleUserController extends Controller
         ]);
     }
 
-    public static function createVariant(Blog $blog, User $user, Language $language) : JsonResponse
+    public static function createVariant(Blog $blog, User $user, Language $language): JsonResponse
     {
         $variant = UserRepository::createUserVariant($user, $language);
 
         return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
-    public static function updateVariant(Request $request, Blog $blog, User $user, Language $language) : JsonResponse
+    public static function updateVariant(Request $request, Blog $blog, User $user, Language $language): JsonResponse
     {
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
 
-        if (! $variant) {
+        if (!$variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -246,7 +245,7 @@ class ConsoleUserController extends Controller
         return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
-    public static function deleteVariant(User $user, Language $language) : JsonResponse
+    public static function deleteVariant(User $user, Language $language): JsonResponse
     {
         if ($language->is_primary) {
             throw new TrustedException(
@@ -257,7 +256,7 @@ class ConsoleUserController extends Controller
 
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
 
-        if (! $variant) {
+        if (!$variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -266,7 +265,7 @@ class ConsoleUserController extends Controller
         return response()->json();
     }
 
-    public static function acceptInvite(Request $request) : mixed
+    public static function acceptInvite(Request $request): mixed
     {
         $request->validate([
             'user_id' => 'required|integer',
@@ -300,7 +299,7 @@ class ConsoleUserController extends Controller
         ]);
     }
 
-    public function resendInvite(User $user) : JsonResponse
+    public function resendInvite(User $user): JsonResponse
     {
         if ($user->status !== UserStatusEnum::INVITED) {
             throw new TrustedException('User is not invited');

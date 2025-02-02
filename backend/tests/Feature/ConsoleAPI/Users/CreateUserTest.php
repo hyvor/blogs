@@ -4,15 +4,14 @@ namespace Tests\Feature\ConsoleAPI\Users;
 
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
-use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
-use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-
     $this->blog = blogWithAccess();
     addPrimaryLanguage($this->blog);
     addDefaultRoutes($this->blog, 'author');
@@ -26,7 +25,7 @@ beforeEach(function () {
     $this->location = 'France';
     $this->websiteUrl = 'https://hyvor.com';
 
-    FakeProvider::databaseSet([
+    AuthFake::databaseSet([
         [
             'id' => 1239,
             'username' => $this->username,
@@ -49,7 +48,7 @@ it('creates a user from username and email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
+            fn(AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
                 ->where('role', 'admin')
                 ->where('website_url', $this->websiteUrl)
                 ->where('variants.0.name', $this->name)
@@ -71,13 +70,13 @@ it('creates a user from email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
-            ->where('role', 'contributor')
-            ->where('website_url', $this->websiteUrl)
-            ->where('variants.0.name', $this->name)
-            ->where('variants.0.bio', $this->bio)
-            ->where('variants.0.location', $this->location)
-            ->etc()
+            fn(AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
+                ->where('role', 'contributor')
+                ->where('website_url', $this->websiteUrl)
+                ->where('variants.0.name', $this->name)
+                ->where('variants.0.bio', $this->bio)
+                ->where('variants.0.location', $this->location)
+                ->etc()
         );
 });
 
@@ -100,9 +99,8 @@ it('does not create if the user is not found', function () {
 });
 
 it('does not create if the user already exists', function () {
-
     $blog = blogWithAccessLanguageAndRoutes();
-    Billing::fake(license: new BlogsLicense(users: 3));
+    BillingFake::enable(license: new BlogsLicense(users: 3));
 
     consoleApi($blog, 'POST', '/user', [
         'username_or_email' => $this->username,
@@ -116,7 +114,7 @@ it('does not create if the user already exists', function () {
         ->assertSee('User already exists');
 });
 
-it('fails when limits are exceeded', function() {
+it('fails when limits are exceeded', function () {
     $blog = blogWithAccess();
     $blog->setCount('users', 2);
 
