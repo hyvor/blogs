@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
 	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
 	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
@@ -13,21 +11,18 @@
 
 	interface Props {
 		url?: string;
+		onclose: () => void;
+		oncreate: (url: string) => void;
 	}
 
-	let { url = $bindable('') }: Props = $props();
+	let { url = $bindable(''), onclose, oncreate }: Props = $props();
 
-	let inputEl: HTMLInputElement | undefined = $state();
+	let inputEl: HTMLInputElement;
 	let inputStarted = $state(false);
 
-	const dispatch = createEventDispatcher<{
-		close: void;
-		create: string;
-	}>();
-
-	run(() => {
+	$effect(() => {
 		if (!show) {
-			dispatch('close');
+			onclose();
 		}
 	});
 
@@ -71,7 +66,7 @@
 	}
 
 	function handleCreate() {
-		dispatch('create', urlData!.url);
+		oncreate(urlData!.url);
 	}
 
 	onMount(() => {

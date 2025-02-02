@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import type { SelectedFile as SelectedImageType } from './image-uploader';
+	import type { SelectedFile as SelectedFileInterface } from './image-uploader';
 	import { Button, Modal, TabNav, TabNavItem } from '@hyvor/design/components';
 	import IconCardImage from '@hyvor/icons/IconCardImage';
-import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
-import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 
 	import TabUpload from './TabUpload.svelte';
 	import SelectedFile from './PreviewSelected/SelectedFile.svelte';
@@ -13,21 +11,21 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	import Excalidraw from './Excalidraw/Excalidraw.svelte';
 	import Unsplash from './Unsplash/Unsplash.svelte';
 	import Media from './Media/Media.svelte';
-	import { createEventDispatcher } from 'svelte';
-
 
 	let tab = $state('upload');
 
 	interface Props {
 		type?: 'image' | 'audio' | 'any';
 		show?: boolean;
+		onselect: (type: SelectedFileInterface) => void;
+		onclose: () => void;
 	}
 
-	let { type = 'image', show = $bindable(true) }: Props = $props();
-	let backImage: null | SelectedImageType = null;
-	let selectedFile: null | SelectedImageType = $state(null);
+	let { type = 'image', show = $bindable(true), onselect, onclose }: Props = $props();
+	let backImage: null | SelectedFileInterface = null;
+	let selectedFile: null | SelectedFileInterface = $state(null);
 
-	function handleSelect(e: CustomEvent<SelectedImageType>) {
+	function handleSelect(e: CustomEvent<SelectedFileInterface>) {
 		selectedFile = e.detail;
 		backImage = null;
 	}
@@ -37,19 +35,14 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 		selectedFile = null;
 	}
 
-	const dispatch = createEventDispatcher<{
-		select: SelectedImageType;
-		close: undefined;
-	}>();
-
-	run(() => {
+	$effect(() => {
 		if (!show) {
-			dispatch('close');
+			onclose();
 		}
 	});
 
-	function handleFinish(e: CustomEvent<SelectedImageType>) {
-		dispatch('select', e.detail);
+	function handleFinish(e: CustomEvent<SelectedFileInterface>) {
+		onselect(e.detail);
 		show = false;
 	}
 </script>
@@ -57,20 +50,20 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 <div class="image-uploader">
 	<Modal bind:show size="large" closeOnEscape={false} closeOnOutsideClick={false}>
 		{#snippet title()}
-				<div >
+			<div>
 				{#if selectedFile}
 					<Button on:click={handleBack} color="input">
 						{#snippet start()}
-										<IconCaretLeft  va />
-									{/snippet}
+							<IconCaretLeft va />
+						{/snippet}
 						Back
 					</Button>
 				{:else if type === 'any'}
 					<TabNav bind:active={tab}>
 						<TabNavItem name="upload">
 							{#snippet start()}
-														<IconCloudUpload  />
-													{/snippet}
+								<IconCloudUpload />
+							{/snippet}
 							Upload
 						</TabNavItem>
 					</TabNav>
@@ -78,44 +71,45 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 					<TabNav bind:active={tab}>
 						<TabNavItem name="upload">
 							{#snippet start()}
-														<IconCloudUpload  />
-													{/snippet}
+								<IconCloudUpload />
+							{/snippet}
 							Upload
 						</TabNavItem>
 						<TabNavItem name="media">
 							{#snippet start()}
-														<IconCardImage  />
-													{/snippet}
+								<IconCardImage />
+							{/snippet}
 							Media Library
 						</TabNavItem>
 
 						{#if type === 'image'}
 							<TabNavItem name="unsplash">
 								{#snippet start()}
-																<svg
+									<svg
 										role="img"
 										width="1em"
 										height="1em"
 										fill="currentColor"
 										viewBox="0 0 24 24"
 										xmlns="http://www.w3.org/2000/svg"
-										
-										><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" /></svg
+										><path
+											d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"
+										/></svg
 									>
-															{/snippet}
+								{/snippet}
 								Unsplash
 							</TabNavItem>
 							<TabNavItem name="excalidraw">
 								{#snippet start()}
-																<ExcalidrawIcon  />
-															{/snippet}
+									<ExcalidrawIcon />
+								{/snippet}
 								Excalidraw
 							</TabNavItem>
 						{/if}
 					</TabNav>
 				{/if}
 			</div>
-			{/snippet}
+		{/snippet}
 		<div class="body" style:position={selectedFile ? 'relative' : undefined}>
 			{#if tab === 'upload'}
 				<TabUpload {type} on:select={handleSelect} />

@@ -17,8 +17,12 @@ class SlashPlugin implements PluginView {
     private view: EditorView;
     private wrap: HTMLDivElement;
     
-    private isShow: boolean = $state(false);
-    private options: SlashOption[]|undefined = $state(undefined);
+    
+    private props: {
+        view: EditorView;
+        show: boolean;
+        options: SlashOption[]|undefined;
+    } = $state({} as any);
 
     constructor(view: EditorView) {
         this.view = view;
@@ -27,25 +31,23 @@ class SlashPlugin implements PluginView {
         this.wrap.id = "pm-slash-view";
         view.dom!.parentNode!.appendChild(this.wrap);
 
+        this.props = {
+            view: this.view,
+            show: false,
+            options: undefined,
+        }
+
         mount(Slash, {
             target: this.wrap,
-            props: {
-                view: this.view,
-                show: this.isShow,
-                options: this.options,
-            }
+            props: this.props
         });
     }
 
     private show() {
-        if (!this.isShow) {
-            this.isShow = true;
-        }
+        this.props.show = true;
     }
     private hide() {
-        if (this.isShow) {
-            this.isShow = false;
-        }
+        this.props.show = false;
     }
 
     update(view: EditorView, prevState: EditorState) {
@@ -76,7 +78,7 @@ class SlashPlugin implements PluginView {
             this.show();
         }
 
-        this.options = options;
+        this.props.options = options;
 
     }
 

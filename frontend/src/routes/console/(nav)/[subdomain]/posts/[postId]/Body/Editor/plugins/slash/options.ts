@@ -202,7 +202,15 @@ function selectAudio() {
 		const selector = mount(FileUploader, {
 			target: div,
 			props: {
-				type: 'audio'
+				type: 'audio',
+				onselect: (selected) => {
+					destroy();
+					return resolve(schema.nodes.audio!.create({ src: selected.url }));
+				},
+				onclose: () => {
+					destroy();
+					resolve(null);
+				}
 			}
 		});
 
@@ -210,16 +218,6 @@ function selectAudio() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		selector.$on('select', (e: any) => {
-			destroy();
-			return resolve(schema.nodes.audio!.create({ src: e.detail.url }));
-		});
 	});
 }
 
@@ -276,7 +274,20 @@ function createBookmark(url: string = '') {
 		const creator = mount(BookmarkCreator, {
 			target: div,
 			props: {
-				url
+				url,
+				onclose: () => {
+					destroy();
+					resolve(null);
+				},
+				oncreate: (e: CustomEvent<string>) => {
+					destroy();
+					resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.bookmark!.create({ url: e.detail }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				}
 			}
 		});
 
@@ -285,20 +296,6 @@ function createBookmark(url: string = '') {
 			div.remove();
 		}
 
-		creator.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		creator.$on('create', (e: CustomEvent<string>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.bookmark!.create({ url: e.detail }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
 	});
 }
 
