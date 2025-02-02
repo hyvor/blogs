@@ -13,22 +13,33 @@ class PreviewProcessor extends RouteProcessorAbstract
 {
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-        $id = PostPreviewSecretEncryptor::decryptPreviewSecret($matchedRoute->param('id'));
 
-        if (! $id) {
+        $id = $matchedRoute->param('id');
+
+        if (!$id) {
+            return;
+        }
+
+        $id = PostPreviewSecretEncryptor::decryptPreviewSecret($id);
+
+        if (!$id) {
             return;
         }
 
         $languageCode = $matchedRoute->param('lang');
         $language = LanguageRepository::getLanguageByCode($pathMatcher->blog, $languageCode);
 
-        if (! $language) {
+        if (!$language) {
             return;
         }
 
         $pathMatcher->setCustomLanguage($language);
 
         $post = PostRepository::getPostById($id);
+
+        if (!$post) {
+            return;
+        }
 
         $blog = $pathMatcher->blog;
         $routes = $blog->routes;
@@ -47,6 +58,11 @@ class PreviewProcessor extends RouteProcessorAbstract
         $templateRenderer->setModel($post);
 
         $responseObject = $templateRenderer->getResponseObject();
+
+        if (!$responseObject) {
+            return;
+        }
+
         $responseObject->cache = false;
         $this->setResponseObject($responseObject);
     }

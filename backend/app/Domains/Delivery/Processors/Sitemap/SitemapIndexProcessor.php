@@ -19,6 +19,7 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
 
     private Language $primaryLanguage;
 
+    // @phpstan-ignore constructor.unusedParameter
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $this->blog = $pathMatcher->blog;
@@ -27,7 +28,7 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
         $postSitemaps = $this->getPostSitemaps();
 
         /**
-         * @var $sitemaps IndexEntry[]
+         * @var IndexEntry[] $sitemaps
          */
         $sitemaps = [
             new IndexEntry('sitemap-pages.xml'),

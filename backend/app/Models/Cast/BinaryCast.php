@@ -23,7 +23,7 @@ class BinaryCast implements CastsAttributes
             $value = stream_get_contents($value);
         }
 
-        return hex2bin($value);
+        return (string) hex2bin($value);
     }
 
     public function set($model, $key, $value, array $attributes)

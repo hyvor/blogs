@@ -78,6 +78,7 @@ class BlogObject
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
 
+        /** @var mixed $meta */
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;

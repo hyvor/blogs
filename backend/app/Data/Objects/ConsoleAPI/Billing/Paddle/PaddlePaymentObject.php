@@ -17,12 +17,12 @@ class PaddlePaymentObject
 
     public string $receipt_url;
 
-    public function __construct($payment)
+    public function __construct(mixed $payment)
     {
         $payment = (object) $payment;
 
         $this->id = $payment->id;
-        $this->paid_at = Carbon::createFromFormat('Y-m-d', $payment->payout_date)->timestamp;
+        $this->paid_at = Carbon::createFromFormat('Y-m-d', $payment->payout_date)?->getTimestamp() ?? 0;
         $this->amount = $payment->amount;
         $this->currency = $payment->currency;
         $this->receipt_url = $payment->receipt_url;

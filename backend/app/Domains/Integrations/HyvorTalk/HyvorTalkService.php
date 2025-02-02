@@ -14,7 +14,7 @@ class HyvorTalkService
 {
 
     /**
-     * @param 'create-website'|'set-domains' $endpoint
+     * @param 'create-website'|'set-domains'|'console-api' $endpoint
      * @param array<string, mixed> $data
      * @return array<mixed>
      * @throws InternalApiCallFailedException

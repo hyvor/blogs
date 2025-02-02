@@ -2,12 +2,20 @@
 
 namespace App\Data\Objects\DataAPI\Helpers;
 
+use App\Models\BlogVariant;
 use App\Models\Language;
+use App\Models\NavigationVariant;
 use App\Models\PostVariant;
+use App\Models\TagVariant;
+use App\Models\UserVariant;
 use Illuminate\Database\Eloquent\Collection;
 
 class VariantsHelper
 {
+
+    /**
+     * @param Collection<int,PostVariant>|Collection<int,UserVariant>|Collection<int,TagVariant>|Collection<int,BlogVariant>|Collection<int,NavigationVariant> $variants
+     */
     public static function getVariantValue(string $name, Collection $variants, Language $language): ?string
     {
         $variantCorrectLanguage = $variants->firstWhere('language_id', $language->id);

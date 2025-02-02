@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\App\ConsoleApi\BillingTypeMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Http\Middleware\HandleCors;
 

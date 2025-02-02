@@ -19,7 +19,7 @@ class Sep2024DisableBlogBrandingForCurrentCustomers extends Command
     }
 
 
-    public function handle()
+    public function handle(): void
     {
         $this->info('Disabling blog branding for current customers...');
 

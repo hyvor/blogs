@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 
 class DataAPICaller
 {
-    public function callApi(string $subdomain, string $endpoint, $query = [])
+
+    /**
+     * @param array<mixed> $query
+     */
+    public function callApi(string $subdomain, string $endpoint, array $query = []): mixed
     {
         $domain = config('blogs.domain_app');
         $endpoint = trim($endpoint, '/');
@@ -20,6 +24,7 @@ class DataAPICaller
 
         $response = app()->handle($request);
         $data = $response->getContent();
+        $data = (string) $data;
 
         if ($response->isSuccessful()) {
             return json_decode($data);

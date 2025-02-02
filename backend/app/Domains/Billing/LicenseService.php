@@ -22,7 +22,10 @@ class LicenseService
 
         $billing = app(Billing::class);
 
-        return $billing->license($userId, $blog->id);
+        /** @var ?BlogsLicense $license */
+        $license = $billing->license($userId, $blog->id);
+
+        return $license;
     }
 
 }

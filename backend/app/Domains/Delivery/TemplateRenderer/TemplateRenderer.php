@@ -7,14 +7,12 @@ use App\Data\Enums\PostStatusEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\BlogObject;
-use App\Data\Objects\DataAPI\LanguageObject;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Data\Objects\DeliveryAPI\RouteObject;
-use App\Domains\App\DomainService;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
@@ -24,15 +22,11 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\User\UserRepository;
-use App\Exceptions\SafetyException;
-use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 use Twig\Error\Error;
 
 class TemplateRenderer
@@ -94,7 +88,7 @@ class TemplateRenderer
 
         $loaderArray = [];
         foreach ($templateFiles as $file) {
-            $loaderArray[$file->name] = $file->content;
+            $loaderArray[$file->name] = $file->content ?? '';
         }
 
         $this->setTemplateName(array_keys($loaderArray));
@@ -314,6 +308,10 @@ class TemplateRenderer
     {
         $slug = $this->matchedRoute->param('slug');
 
+        if (!$slug) {
+            return null;
+        }
+
         if ($this->matchedRoute->name === 'tag') {
             $model = TagRepository::getTagByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
@@ -352,6 +350,10 @@ class TemplateRenderer
                 }
 
                 $variant = $post->variants->firstWhere('language_id', $this->pathMatcher->language->id);
+
+                if ($variant === null) {
+                    return false;
+                }
 
                 if ($variant->status !== PostStatusEnum::PUBLISHED) {
                     return false;

@@ -9,15 +9,15 @@ use Faker\Factory;
 
 class TagFiller implements FillerInterface
 {
-    private array $data = [
-
-        [
-            'slug' => 'welcome',
-            'name' => 'Welcome',
-            'description' => 'Welcome to Hyvor Blogs',
-        ],
-
-    ];
+//    private array $data = [
+//
+//        [
+//            'slug' => 'welcome',
+//            'name' => 'Welcome',
+//            'description' => 'Welcome to Hyvor Blogs',
+//        ],
+//
+//    ];
 
     public function __construct(private Blog $blog)
     {
