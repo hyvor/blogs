@@ -169,28 +169,29 @@ function selectImage() {
 		document.body.appendChild(div);
 
 		const selector = mount(FileUploader, {
-			target: div
+			target: div,
+			props: {
+				type: 'image',
+				onselect: (selected) => {
+					destroy();
+					return resolve(
+						schema.nodes.figure!.create({}, [
+							schema.nodes.image!.create({ src: selected.url }),
+							schema.nodes.figcaption!.create()
+						])
+					);
+				},
+				onclose: () => {	
+					destroy();
+					resolve(null);
+				}
+			}
 		});
 
 		function destroy() {
 			unmount(selector);
 			div.remove();
 		}
-
-		selector.$on('close', () => {
-			destroy();
-			resolve(null);
-		});
-
-		selector.$on('select', (e: CustomEvent<SelectedFile>) => {
-			destroy();
-			return resolve(
-				schema.nodes.figure!.create({}, [
-					schema.nodes.image!.create({ src: e.detail.url }),
-					schema.nodes.figcaption!.create()
-				])
-			);
-		});
 	});
 }
 

@@ -16,8 +16,11 @@ export class CalloutNodeView implements NodeView {
     emoji: HTMLSpanElement;
     colorPickersWrap: HTMLDivElement;
 
-    bg = $state('');
-    fg = $state('');
+    props: {
+        bg: string,
+        fg: string,
+        changeAttr: (name: string, value: string) => void
+    } = $state({} as any)
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -75,16 +78,15 @@ export class CalloutNodeView implements NodeView {
         this.colorPickersWrap.className = "color-pickers-wrap";
         this.dom.appendChild(this.colorPickersWrap)
 
-        this.bg = this.node.attrs.bg;
-        this.fg = this.node.attrs.fg;
+        this.props = {
+            bg: this.node.attrs.bg,
+            fg: this.node.attrs.fg,
+            changeAttr: this.changeAttr.bind(this)
+        }
 
         mount(CalloutColors, {
             target: this.colorPickersWrap,
-            props: {
-                bg: this.bg,
-                fg: this.fg,
-                changeAttr: this.changeAttr.bind(this)
-            }
+            props: this.props
         })
         
         this.updateFromAttrs();
@@ -119,8 +121,8 @@ export class CalloutNodeView implements NodeView {
         this.dom.style.backgroundColor = bg;
         this.dom.style.color = fg;
 
-        this.bg = bg;
-        this.fg = fg;
+        this.props.bg = bg;
+        this.props.fg = fg;
     }
 
     changeAttr(name: string, value: string) {

@@ -11,10 +11,14 @@ export default class ImageView implements NodeView {
 
     public dom: HTMLDivElement;
 
-    private src = $state('');
-    private alt = $state('');
-    private width: null|number = $state(null);
-    private height: null|number = $state(null);
+    private props: {
+        view: EditorView;
+        getPos: () => number | undefined;
+        src: string;
+        alt: string;
+        width: number|null;
+        height: number|null;
+    } = $state({} as any);
 
 
     constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
@@ -27,25 +31,22 @@ export default class ImageView implements NodeView {
 
         this.setPropsFromNode(node);
 
+        this.props.view = this.view;
+        this.props.getPos = this.getPos;
+        this.setPropsFromNode(node);
+
         mount(ImageNodeview, {
             target: this.dom,
-            props: {
-                view: this.view,
-                getPos: this.getPos,
-                src: this.src,
-                alt: this.alt,
-                width: this.width,
-                height: this.height,
-            }
+            props: this.props
         });
 
     }   
 
     private setPropsFromNode(node: Node) {
-        this.src = node.attrs.src;
-        this.alt = node.attrs.alt;
-        this.width = node.attrs.width;
-        this.height = node.attrs.height;
+        this.props.src = node.attrs.src;
+        this.props.alt = node.attrs.alt;
+        this.props.width = node.attrs.width;
+        this.props.height = node.attrs.height;
     }
 
     update(node: Node) {
