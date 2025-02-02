@@ -180,7 +180,7 @@ class LinkAnalyzeService
      */
     public static function getLinksOfBlog(
         Blog $blog,
-        ?LinkStatusTypeEnum $type = null,
+        ?LinkStatusTypeEnum $type,
         int $limit,
         int $offset
     ) : Collection

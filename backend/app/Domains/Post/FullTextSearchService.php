@@ -40,7 +40,7 @@ class FullTextSearchService
         'yi' => 'yiddish'
     ];
 
-    public function findClosestRegconfigByLanguageCode(?string $languageCode)
+    public function findClosestRegconfigByLanguageCode(?string $languageCode): string
     {
 
         if (!$languageCode) {

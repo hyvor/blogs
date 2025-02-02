@@ -69,6 +69,7 @@ class HyvorTalkService
     }
 
     /**
+     * @param array<string, mixed> $data
      * @return mixed[]
      * @throws InternalApiCallFailedException
      */

@@ -5,7 +5,7 @@ namespace App\Domains\Blog;
 use App\Domains\Shared\UniqueSlugGeneratorTrait;
 use App\Models\Blog;
 
-class UniqueSubdomainGenerator
+final class UniqueSubdomainGenerator
 {
     use UniqueSlugGeneratorTrait;
 

@@ -204,29 +204,29 @@ class PaddleService
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
-            new PaddlePlan(
-                !App::environment('production') ? 32103 : 790133,
-                SubscriptionPlanEnum::BUSINESS,
-                SubscriptionFrequencyEnum::MONTHLY,
-            ),
-
-            new PaddlePlan(
-                !App::environment('production') ? 32104 : 790134,
-                SubscriptionPlanEnum::BUSINESS,
-                SubscriptionFrequencyEnum::YEARLY,
-            ),
-
-            new PaddlePlan(
-                !App::environment('production') ? 32105 : 790135,
-                SubscriptionPlanEnum::ENTERPRISE,
-                SubscriptionFrequencyEnum::MONTHLY,
-            ),
-
-            new PaddlePlan(
-                !App::environment('production') ? 32106 : 790136,
-                SubscriptionPlanEnum::ENTERPRISE,
-                SubscriptionFrequencyEnum::YEARLY,
-            ),
+//            new PaddlePlan(
+//                !App::environment('production') ? 32103 : 790133,
+//                SubscriptionPlanEnum::BUSINESS,
+//                SubscriptionFrequencyEnum::MONTHLY,
+//            ),
+//
+//            new PaddlePlan(
+//                !App::environment('production') ? 32104 : 790134,
+//                SubscriptionPlanEnum::BUSINESS,
+//                SubscriptionFrequencyEnum::YEARLY,
+//            ),
+//
+//            new PaddlePlan(
+//                !App::environment('production') ? 32105 : 790135,
+//                SubscriptionPlanEnum::ENTERPRISE,
+//                SubscriptionFrequencyEnum::MONTHLY,
+//            ),
+//
+//            new PaddlePlan(
+//                !App::environment('production') ? 32106 : 790136,
+//                SubscriptionPlanEnum::ENTERPRISE,
+//                SubscriptionFrequencyEnum::YEARLY,
+//            ),
 
         ]);
     }

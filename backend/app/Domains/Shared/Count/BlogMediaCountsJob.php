@@ -18,7 +18,7 @@ class BlogMediaCountsJob implements ShouldQueue, ShouldBeUnique
 
     public function handle() : void
     {
-        $size = Media::where('blog_id', $this->blog->id)->sum('size');
+        $size = (int) Media::where('blog_id', $this->blog->id)->sum('size');
         $this->blog->setCount('media', $size);
     }
 
