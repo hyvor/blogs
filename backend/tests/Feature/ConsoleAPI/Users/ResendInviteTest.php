@@ -5,7 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Users;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\User\Mail\InviteUserMail;
 use App\Models\User;
-use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
+use Hyvor\Internal\Auth\AuthFake;
 use Illuminate\Support\Facades\Mail;
 
 it('resends an invite', function () {
@@ -19,7 +19,7 @@ it('resends an invite', function () {
     ]);
 
     $email = 'hyvor@hyvor.com';
-    FakeProvider::databaseSet([
+    AuthFake::databaseSet([
         [
             'id' => $user->hyvor_user_id,
             'email' => $email,

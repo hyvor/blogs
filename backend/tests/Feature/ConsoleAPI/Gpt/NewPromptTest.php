@@ -4,12 +4,12 @@ namespace Tests\Feature\ConsoleAPI\Gpt;
 
 use App\Models\GptPrompt;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
 
-it('creates a new prompt', function() {
-
+it('creates a new prompt', function () {
     OpenAI::fake([
         CreateResponse::fake([
             'choices' => [
@@ -30,7 +30,7 @@ it('creates a new prompt', function() {
 
     $blog = blogWithAccess();
     $post = addPost($blog);
-    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
+    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
 
     $json = consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -53,15 +53,13 @@ it('creates a new prompt', function() {
     expect($gptPrompt->tokens_prompt)->toBe(100);
     expect($gptPrompt->tokens_response)->toBe(200);
     expect($gptPrompt->tokens_total)->toBe(300);
-
 });
 
-it('does not allow creating a prompt for a post of other blog', function() {
-
+it('does not allow creating a prompt for a post of other blog', function () {
     $blog = blogWithAccess();
     $post = addPost(blog());
 
-    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
+    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
 
     consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -69,15 +67,13 @@ it('does not allow creating a prompt for a post of other blog', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Post does not belong to blog');
-
 });
 
-it('does not allow when limit is exceeded', function() {
-
+it('does not allow when limit is exceeded', function () {
     $blog = blogWithAccess();
     $post = addPost($blog);
 
-    Billing::fake(license: new BlogsLicense(aiTokens: 1000));
+    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
 
     GptPrompt::factory()->create([
         'blog_id' => $blog->id,
@@ -90,5 +86,4 @@ it('does not allow when limit is exceeded', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Monthly AI tokens limit reached. Please upgrade your plan.');
-
 });

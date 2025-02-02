@@ -22,7 +22,7 @@ beforeEach(function () {
 //    ]);
 
     Http::fake([
-        'https://hyvor.com/api/internal/unfold/unfold*' => Http::response([
+        'https://hyvor.cluster/api/internal/unfold/unfold*' => Http::response([
             'embed' => $this->html,
         ])
     ]);
@@ -46,8 +46,7 @@ test('json to HTML', function () {
     expect($post)->toBe("<x-embed data-url=\"$this->url\">$this->html</x-embed>");
 });
 
-it('handles when URL is null', function() {
-
+it('handles when URL is null', function () {
     $json = [
         'type' => 'doc',
         'content' => [
@@ -63,7 +62,6 @@ it('handles when URL is null', function() {
     $post = PostContentService::getHtml($json, blog());
 
     expect($post)->toBe('');
-
 });
 
 test('HTML to JSON', function () {

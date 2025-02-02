@@ -1,8 +1,14 @@
 ## Unreleased
+
+- Removes branding in blogs
+- Central billing
+
 ## [0.0.4] - 2024-06-02
+
 - Added open source theme notice
 
 ## [0.0.3] - 2024-03-28
+
 - Phrosemirror updated to 1.0.4
 - Integrations page
 
@@ -14,4 +20,5 @@
 - Added +error.svelte
 
 ## [0.0.1] - 2024-03-05
+
 - Added changelog and versioning

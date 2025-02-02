@@ -26,10 +26,6 @@
 			};
 		});
 	}
-
-	function handleBrandingChange(e: any) {
-		changeBlogValue('hb_branding', e.target.checked);
-	}
 </script>
 
 <BlogSettingsSave
@@ -43,8 +39,7 @@
 		'social_youtube',
 		'social_tiktok',
 		'social_instagram',
-		'social_github',
-		'hb_branding'
+		'social_github'
 	]}
 	variantKeys={['name', 'description']}
 />

@@ -31,12 +31,11 @@ class ConsoleBlogController extends Controller
     /**
      * Get initial data of a blog that is required to load it in the Console.
      *
-     * @param  Blog  $blog
+     * @param Blog $blog
      * @return JsonResponse
      */
     public function getBlogData(Blog $blog, Billing $billing)
     {
-
         $license = $blog->hyvor_user_id ?
             $billing->license($blog->hyvor_user_id, $blog->id) :
             null;
@@ -52,17 +51,19 @@ class ConsoleBlogController extends Controller
                     'featured' => $blog->getCount('posts_featured'),
                 ]
             ],
-            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
-            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
-            'languages' => LanguageRepository::getAllLanguages($blog)->map(fn ($language) => new LanguageObject($language)),
+            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn($user) => new UserObject($user, $blog)),
+            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn($tag) => new TagObject($tag, $blog)),
+            'languages' => LanguageRepository::getAllLanguages($blog)->map(
+                fn($language) => new LanguageObject($language)
+            ),
         ]);
     }
 
     /**
      * Updates a blog.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      */
     public static function updateBlog(Request $request, Blog $blog)
@@ -112,8 +113,6 @@ class ConsoleBlogController extends Controller
 
             'link_analysis_enabled' => 'boolean',
             'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class),
-
-            'hb_branding' => 'boolean'
         ];
         $request->validate($validate);
 
@@ -135,8 +134,8 @@ class ConsoleBlogController extends Controller
     /**
      * Creates a blog variant.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      *
      * @throws TrustedException
@@ -155,8 +154,8 @@ class ConsoleBlogController extends Controller
     /**
      * Updates a blog variant.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      *
      * @throws TrustedException

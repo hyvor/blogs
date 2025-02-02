@@ -3,7 +3,7 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Media\Events\MediaCreatedEvent;
-use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
@@ -17,7 +17,7 @@ it('uploads', function () {
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
 
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -35,13 +35,12 @@ it('uploads', function () {
 });
 
 it('uploads with duplicate name', function () {
-
     Storage::fake();
     $blog = blogWithAccess();
     Storage::put('blog/' . $blog->id . '/image.png', 'content');
 
     $file = UploadedFile::fake()->image('image.png')->size(100);
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     $media = consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -52,15 +51,13 @@ it('uploads with duplicate name', function () {
 
     expect($media['name'])->toBe('image-1.png');
     Storage::assertExists('blog/' . $blog->id . '/image.png');
-
 });
 
-it('converts to kebab case', function() {
-
+it('converts to kebab case', function () {
     Storage::fake();
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     $media = consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -70,25 +67,21 @@ it('converts to kebab case', function() {
         ->json();
 
     expect($media['name'])->toBe('my-imagé.png');
-
 });
 
 it('uploads with post ID', function () {
-
     Storage::fake();
     $blog = blogWithAccess();
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
     consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),
         'post_id' => 2
     ])
         ->assertOk()
         ->assertJson(fn(AssertableJson $json) => $json->where('post_id', 2)->etc());
-
 });
 
 it('limits file size', function () {
-
     Storage::fake();
     $file = UploadedFile::fake()->image('image.png')->size(config('limits.max_media_upload_size_kb') + 1);
 
@@ -101,15 +94,13 @@ it('limits file size', function () {
 });
 
 it('throws error when media size exceeded', function () {
-
     $blog = blogWithAccess();
     $blog->setCount('media', 10 ** 9 * 2);
-    Billing::fake(license: new BlogsLicense(storage: 1000));
+    BillingFake::enable(license: new BlogsLicense(storage: 1000));
 
     consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),
     ])
         ->assertUnprocessable()
         ->assertSee('Total storage limit exceeded. Please upgrade your plan.');
-
 });

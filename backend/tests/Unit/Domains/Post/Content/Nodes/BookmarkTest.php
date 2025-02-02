@@ -16,7 +16,7 @@ beforeEach(function () {
     $this->site = 'Youtube';
 
     Http::fake([
-        'https://hyvor.com/api/internal/unfold/unfold*' => Http::response([
+        'https://hyvor.cluster/api/internal/unfold/unfold*' => Http::response([
             'lastUrl' => $this->url,
             'url' => $this->url,
             'title' => $this->title,
@@ -65,8 +65,7 @@ test('JSON to HTML', function () {
     $this->assertStringNotContainsString($this->site, $html);
 });
 
-test('html to json', function() {
-
+test('html to json', function () {
     $html = <<<HTML
     <a class="bookmark" data-url="https://talk.hyvor.com"></a>
     HTML;
@@ -84,7 +83,6 @@ test('html to json', function() {
             ],
         ],
     ]));
-
 });
 
 test('custom template', function () {
