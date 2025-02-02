@@ -6,16 +6,15 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail;
 use App\Models\LinkAnalyzerCheck;
-use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
+use Hyvor\Internal\Auth\AuthFake;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Tests\Helper\Generator\PostContentGenerator;
 
-it('job works', function() {
-
+it('job works', function () {
     Mail::fake();
 
-    FakeProvider::databaseSet([
+    AuthFake::databaseSet([
         ['id' => 12, 'email' => 'test@hyvor.com']
     ]);
 
@@ -54,15 +53,13 @@ it('job works', function() {
     expect($check->links_broken_count)->toBe(0);
     expect($check->links_redirect_count)->toBe(1);
 
-    Mail::assertSent(LinkAnalyzeReportMail::class, function(LinkAnalyzeReportMail $mail) {
+    Mail::assertSent(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {
         expect($mail->hasTo('test@hyvor.com'))->toBeTrue();
         return true;
     });
-
 });
 
-it('does not send mail when the option is disabled', function() {
-
+it('does not send mail when the option is disabled', function () {
     Mail::fake();
 
     $blog = blogWithLanguage();
@@ -71,11 +68,9 @@ it('does not send mail when the option is disabled', function() {
     $job->handle();
 
     Mail::assertNothingSent();
-
 });
 
-it('does not send mail when broken', function() {
-
+it('does not send mail when broken', function () {
     Mail::fake();
 
     $blog = blogWithLanguage();
@@ -84,11 +79,9 @@ it('does not send mail when broken', function() {
     $job->handle();
 
     Mail::assertNothingSent();
-
 });
 
-it('sends email when broken and there are broken links', function() {
-
+it('sends email when broken and there are broken links', function () {
     Http::fake([
         'hyvor.com/*' => Http::response('', 404),
     ]);
@@ -109,5 +102,4 @@ it('sends email when broken and there are broken links', function() {
     $job->handle();
 
     Mail::assertSent(LinkAnalyzeReportMail::class);
-
 });
