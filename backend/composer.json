@@ -24,7 +24,7 @@
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/internal": "dev-billing || @dev",
+        "hyvor/internal": "^2.0.1",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",
@@ -70,16 +70,12 @@
             "Project\\": "src/",
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-
             "Database\\Seeders\\": "database/seeders/",
-
             "Hyvor\\SyntaxHighlighter\\": "packages/highlighter/src/"
         },
-
         "Database\\Seeders\\": "database/seeders/",
         "Hyvor\\Auth\\": "packages/hyvor/auth/src/",
         "Hyvor\\FilterQ\\": "packages/hyvor/filter-q"
-        
     },
     "autoload-dev": {
         "psr-4": {
@@ -108,9 +104,7 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-
         "serve": "php artisan serve --port=2211",
-
         "expose": "ngrok http 2211",
         "test": "vendor/bin/pest -p",
         "coverage": "vendor/bin/pest --coverage -p",
