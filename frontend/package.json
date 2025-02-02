@@ -40,7 +40,7 @@
 	"type": "module",
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.2",
-		"@hyvor/design": "^1.0.9",
+		"@hyvor/design": "^1.0.10",
 		"@hyvor/icons": "^1.0.0",
 		"@joeattardi/emoji-button": "^4.6.4",
 		"@sentry/sveltekit": "^8.33.1",
