@@ -7,7 +7,7 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { Node } from 'prosemirror-model';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { postEditingStatusStore } from '../../../../../postStore';
 	import { TextSelection, type Selection } from 'prosemirror-state';
 	import { ActionList, ActionListItem, Dropdown } from '@hyvor/design/components';
@@ -19,6 +19,8 @@
 		toggleHeaderRow
 	} from 'prosemirror-tables';
 	import schema from '../../../../../../../../lib/prosemirror/schema';
+
+	let { updateId }: { updateId: number } = $props();
 
 	let show = $state(false);
 	let wrapEl: HTMLSpanElement | undefined = $state(undefined);
@@ -38,7 +40,7 @@
 		return false;
 	}
 
-	function position() {
+	async function position() {
 		const view = $postEditingStatusStore.editorView;
 		if (!view) return;
 
@@ -47,6 +49,8 @@
 
 		if (selectionInTable) {
 			show = true;
+
+			await tick();
 
 			let domNode = view.domAtPos(selection.$anchor.pos).node;
 			if (domNode.nodeType === 3) domNode = domNode.parentNode!;
@@ -58,8 +62,9 @@
 			const { top, left, height } = tr.getBoundingClientRect();
 
 			if (wrapEl) {
+				const wrapElRect = wrapEl.getBoundingClientRect();
 				wrapEl.style.top = `${top}px`;
-				wrapEl.style.left = `${left}px`;
+				wrapEl.style.left = left - wrapElRect.width / 2 + 'px';
 				wrapEl.style.height = height + 'px';
 			}
 		} else {
@@ -126,15 +131,18 @@
 		}
 	}
 
-	onMount(position);
+	$effect(() => {
+		updateId;
+		position();
+	});
 </script>
 
 <svelte:window onscrollcapture={position} />
 
 <span bind:this={wrapEl} class:show class="wrap">
-	<Dropdown bind:show={showDropdown} relative={true}>
+	<Dropdown bind:show={showDropdown} position="right">
 		{#snippet trigger()}
-			<button style="display: {showDropdown ? 'none' : 'inline-flex'}">
+			<button>
 				<IconThreeDotsVertical size={14} />
 			</button>
 		{/snippet}
@@ -183,7 +191,6 @@
 		display: none;
 		align-items: center;
 		justify-content: center;
-		transform: translateX(-50%);
 	}
 	.wrap.show {
 		display: inline-flex;

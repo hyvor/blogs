@@ -18,39 +18,31 @@ export class PluginTableMenu implements PluginView {
     private rowMenu: Record<string, any> | null = null;
     private columnMenu: Record<string, any> | null = null;
 
+    private props:{
+        updateId: number;
+    } = $state({ updateId: 0 });
+
     constructor(view: EditorView) {
         this.view = view;
 
         this.wrap = document.createElement("div")
         view.dom!.parentNode!.appendChild(this.wrap);
 
-        this.createRowMenuComponent();
-        this.createColumnMenuComponent();
-
-    }
-
-    private createRowMenuComponent() {
-        if (this.rowMenu) {
-            unmount(this.rowMenu);
-        }
         this.rowMenu = mount(TableRowMenu, {
-            target: this.wrap
+            target: this.wrap,
+            props: this.props
         });
-    }
 
-    private createColumnMenuComponent() {
-        if (this.columnMenu) {
-            unmount(this.columnMenu);
-        }
         this.columnMenu = mount(TableColumnMenu, {
-            target: this.wrap
+            target: this.wrap,
+            props: this.props
         });
+
     }
 
     update(view: EditorView, prevState: EditorState) {
         if (prevState.selection.eq(view.state.selection)) return;
-        this.createRowMenuComponent();
-        this.createColumnMenuComponent();
+        this.props.updateId++;
     }
 
     destroy() {
