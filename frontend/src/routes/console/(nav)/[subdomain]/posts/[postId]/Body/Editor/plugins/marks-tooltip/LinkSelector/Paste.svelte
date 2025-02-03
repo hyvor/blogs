@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, TextInput, Validation } from '@hyvor/design/components';
 	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { getHeadingsFromContent } from '../../../../../../../../../lib/prosemirror/helpers';
 	import { postCurrentContentStore } from '../../../../../../postStore';
 
@@ -29,13 +29,19 @@
 			handleClick();
 		}
 	}
+
+	let inputEl: HTMLInputElement | undefined = $state();
+
+	onMount(() => {
+		inputEl?.focus();
+	});
 </script>
 
 <TextInput
 	placeholder="Paste a link..."
 	block
-	autofocus
 	bind:value={input}
+	bind:input={inputEl}
 	on:keyup={handleKeyup}
 />
 
