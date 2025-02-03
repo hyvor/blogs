@@ -17,16 +17,16 @@ class RegisterResourcesOnCoreCommandTest extends DatabaseTestCase
         ResourceFake::enable();
 
         // id 1, user ID 1
-        $blog1 = Blog::factory(['hyvor_user_id' => 1])->create();
+        $blog1 = Blog::factory(['hyvor_user_id' => 1, 'created_at' => '2025-01-01'])->create();
 
         // id 2, user ID 2
-        $blog2 = Blog::factory(['hyvor_user_id' => 2])->create();
+        $blog2 = Blog::factory(['hyvor_user_id' => 2, 'created_at' => '2025-01-02'])->create();
 
         // id 3, user ID null
         $blog3 = Blog::factory(['hyvor_user_id' => null])->create();
 
         // id 4, user ID 1
-        $blog4 = Blog::factory(['hyvor_user_id' => 1])->create();
+        $blog4 = Blog::factory(['hyvor_user_id' => 1, 'created_at' => '2025-01-05'])->create();
 
         $command = $this->artisan('migrations:register-resources-on-core');
         $this->assertIsNotInt($command);
@@ -37,10 +37,12 @@ class RegisterResourcesOnCoreCommandTest extends DatabaseTestCase
             ->expectsOutput('Registering blog: ' . $blog4->id)
             ->assertExitCode(0);
 
+        $command->run();
+
         // cannot test because it looks like a different container
-//        ResourceFake::assertRegistered(1, $blog1->id);
-//        ResourceFake::assertRegistered(2, $blog2->id);
-//        ResourceFake::assertRegistered(1, $blog4->id);
+        ResourceFake::assertRegistered(1, $blog1->id, $blog1->created_at);
+        ResourceFake::assertRegistered(2, $blog2->id, $blog2->created_at);
+        ResourceFake::assertRegistered(1, $blog4->id, $blog4->created_at);
     }
 
 }
