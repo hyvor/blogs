@@ -1,99 +1,93 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
+	import { createEventDispatcher } from 'svelte';
+	// @ts-ignore
+	import yaml from 'js-yaml';
+	import deepmerge from 'deepmerge';
+	import { Callout } from '@hyvor/design/components';
+	import { addDefaultDefs } from './configUi';
+	import Object from './Object.svelte';
 
-	import { createEventDispatcher } from "svelte";
-    // @ts-ignore
-    import yaml from 'js-yaml';
-    import deepmerge from 'deepmerge';
-	import { Callout } from "@hyvor/design/components";
-	import { addDefaultDefs } from "./configUi";
-	import Object from "./Object.svelte";
+	interface Props {
+		config: string;
+		configDef: string;
+	}
 
-    interface Props {
-        config: string;
-        configDef: string;
-    }
+	let { config, configDef }: Props = $props();
 
-    let { config, configDef }: Props = $props();
+	let { configYaml, configDefYaml, error } = $derived.by(() => {
+		let configYaml: object = {};
+		let configDefYaml: object = {};
+		let error: null | string = null;
 
-    let configYaml : object = $state({});
-    let configDefYaml : object = $state({});
-    let error : null | string = $state(null);
+		try {
+			configYaml = yaml.load(config);
+		} catch (e: any) {
+			error = 'Unable to parse config.yaml: ' + e.message;
+		}
 
-    run(() => {
+		try {
+			configDefYaml = yaml.load(configDef);
+		} catch (e: any) {
+			error = 'Unable to parse config.def.yaml: ' + e.message;
+		}
 
-        error = null;
+		if (!error && (!configYaml || typeof configYaml !== 'object')) {
+			error = 'Invalid data type in config.yaml. Object required.';
+		}
 
-        try {
-            configYaml = yaml.load(config);
-        } catch (e: any) {
-            error = 'Unable to parse config.yaml: ' + e.message
-        }
+		configDefYaml = addDefaultDefs(configDefYaml || {});
 
-        try {
-            configDefYaml = yaml.load(configDef);
-        } catch (e: any) {
-            error = 'Unable to parse config.def.yaml: ' + e.message;
-        }
+		return { configYaml, configDefYaml, error };
+	});
 
-        if (!error && (!configYaml || typeof configYaml !== 'object')) {
-            error = 'Invalid data type in config.yaml. Object required.';
-        }
+	const dispatch = createEventDispatcher<{ change: string }>();
 
-        configDefYaml = addDefaultDefs(configDefYaml || {});
+	function handleChange(
+		e: CustomEvent<{
+			parentKeys: string[];
+			key: string;
+			value: any;
+		}>
+	) {
+		function createUpdatingObject(parentKeys: string[], key: string, value: any) {
+			let updatingObject: any = {};
 
-    });
+			if (parentKeys.length === 0) {
+				updatingObject[key] = value;
+			} else {
+				updatingObject = {
+					[parentKeys[0]!]: createUpdatingObject(parentKeys.slice(1), key, value)
+				};
+			}
+			return updatingObject;
+		}
 
-    const dispatch = createEventDispatcher<{change: string}>();
+		function getNewConfig(
+			configState: object,
+			parentKeys: string[],
+			key: string,
+			value: any
+		): object {
+			const updatingObject = createUpdatingObject(parentKeys, key, value);
+			return deepmerge(configState, updatingObject);
+		}
 
-    function handleChange(e: CustomEvent<{
-        parentKeys: string[],
-        key: string,
-        value: any
-    }>) {
+		const newConfig = getNewConfig(
+			configYaml,
+			e.detail.parentKeys,
+			e.detail.key,
+			e.detail.value
+		);
 
-        function createUpdatingObject(parentKeys: string[], key: string, value: any) {
-            let updatingObject : any = {};
-
-            if (parentKeys.length === 0) {
-                updatingObject[key] = value;
-            } else {
-                updatingObject = {
-                    [parentKeys[0]!]: createUpdatingObject(parentKeys.slice(1), key, value)
-                }
-            }
-            return updatingObject;
-        }
-
-        function getNewConfig(configState: object, parentKeys: string[], key: string, value: any) : object {
-            const updatingObject = createUpdatingObject(parentKeys, key, value);
-            return deepmerge(configState, updatingObject);
-        }
-
-        const newConfig = getNewConfig(
-            configYaml, 
-            e.detail.parentKeys, 
-            e.detail.key, 
-            e.detail.value
-        );
-
-        configYaml = newConfig;
-        dispatch('change', yaml.dump(newConfig));
-
-    }
-
+		// configYaml = newConfig;
+		dispatch('change', yaml.dump(newConfig));
+	}
 </script>
 
 {#if error}
-    <Callout type="danger">
-        {error}
-    </Callout>
+	<Callout type="danger">
+		{error}
+	</Callout>
 {:else}
-    <Object 
-        config={configYaml} 
-        configDef={configDefYaml}
-        on:change={handleChange}
-    />
+	<Object config={configYaml} configDef={configDefYaml} on:change={handleChange} />
 {/if}
-
-

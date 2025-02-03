@@ -14,30 +14,39 @@
 
 	const dispatch = createEventDispatcher<{ change: any }>();
 
-	function handleChange() {
+	function dispatchChange() {
 		dispatch('change', value);
 	}
 
 	function handleNumberInput(e: Event) {
 		value = Number((e.target as HTMLInputElement).value);
+		dispatchChange();
 	}
 
 	function handleColorChange(e: CustomEvent<string>) {
 		value = e.detail;
+		dispatchChange();
 	}
-
-	$effect(() => {
-		value;
-		handleChange();
-	});
 </script>
 
 {#if type === 'none'}
 	{value}
 {:else if type === 'text'}
-	<TextInput maxlength={configDef.$maxlength} minlength={configDef.$minlength} bind:value block />
+	<TextInput
+		maxlength={configDef.$maxlength}
+		minlength={configDef.$minlength}
+		bind:value
+		on:input={dispatchChange}
+		block
+	/>
 {:else if type === 'textarea'}
-	<Textarea maxlength={configDef.$maxlength} minlength={configDef.$minlength} bind:value block />
+	<Textarea
+		maxlength={configDef.$maxlength}
+		minlength={configDef.$minlength}
+		bind:value
+		on:input={dispatchChange}
+		block
+	/>
 {:else if type === 'number'}
 	<TextInput
 		type="number"
@@ -48,10 +57,10 @@
 		block
 	/>
 {:else if type === 'checkbox'}
-	<Switch bind:checked={value} />
+	<Switch bind:checked={value} on:change={dispatch} />
 {:else if type === 'radio'}
 	{#each Object.entries(configDef.$options) as [key, label]}
-		<Radio name={configDef.$name} value={key} bind:group={value}>
+		<Radio name={configDef.$name} value={key} bind:group={value} on:change={dispatchChange}>
 			{label}
 		</Radio>
 	{/each}
