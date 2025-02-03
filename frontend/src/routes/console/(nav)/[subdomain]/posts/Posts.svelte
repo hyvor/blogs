@@ -8,10 +8,9 @@
 	import TagFilter from './Filters/Tag/TagFilter.svelte';
 	import DateFilter from './Filters/Date/DateFilter.svelte';
 	import SearchFilter from './Filters/SearchFilter.svelte';
-	import { postListFiltersStore } from './postListStore';
+	import { postListFiltersStore, type PostListFilters } from './postListStore';
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
-	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 
 	interface Props {
@@ -33,7 +32,9 @@
 
 	const limit = 50;
 
-	function loadPosts(more = false) {
+	function loadPosts(more = false, filters: PostListFilters | null = null) {
+		filters = filters || $postListFiltersStore;
+
 		more ? (isLoadingMore = true) : (isLoading = true);
 		if (!more) posts = [];
 		error = null;
@@ -51,12 +52,12 @@
 				});
 		} else {
 			getPosts({
-				status: $postListFiltersStore.status || undefined,
-				author_id: $postListFiltersStore.author?.id || undefined,
-				tag_id: $postListFiltersStore.tag?.id || undefined,
-				start_timestamp: getTime($postListFiltersStore.startDate),
-				end_timestamp: getTime($postListFiltersStore.endDate),
-				search: $postListFiltersStore.search || undefined,
+				status: filters.status || undefined,
+				author_id: filters.author?.id || undefined,
+				tag_id: filters.tag?.id || undefined,
+				start_timestamp: getTime(filters.startDate),
+				end_timestamp: getTime(filters.endDate),
+				search: filters.search || undefined,
 				limit,
 				offset: more ? posts.length : 0
 			})
@@ -94,7 +95,7 @@
 			});
 	}
 
-	postListFiltersStore.subscribe(() => loadPosts());
+	postListFiltersStore.subscribe((filters) => loadPosts(false, filters));
 </script>
 
 <div id="posts">
