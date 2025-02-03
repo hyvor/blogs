@@ -12,7 +12,6 @@ class UserBlogBlogObject
 
     public bool $is_blocked;
 
-    public int $trial_ends_at;
 
     public string $name;
 
@@ -28,13 +27,11 @@ class UserBlogBlogObject
 
     public int $users_count;
 
-    // public int $trial_ends_at;
 
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
-        $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;

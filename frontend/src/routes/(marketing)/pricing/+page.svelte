@@ -169,7 +169,7 @@
 
 <div class="faqs hds-container">
 	<Faq q="How does the free trial work?" icon={IconHourglass}>
-		Anyone can signup for the <strong>7-day free trial</strong> to test Hyvor Blogs. No credit card
+		Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card
 		required. All features are available during the trial (except Hyvor Talk integration). After
 		the trial, you can upgrade to a paid plan to continue using Hyvor Blogs. Each blog needs a separate
 		subscription.

@@ -17,7 +17,6 @@ class BlogListObject
     public UserRoleEnum $role;
     public bool $is_blocked;
     public int $created_at;
-    public int $trial_ends_at;
     public string $name;
     public string $subdomain;
     public BlogTypeEnum $type;
@@ -44,7 +43,6 @@ class BlogListObject
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
-        $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;

@@ -10,7 +10,7 @@
 <div class="checks" {...rest}>
 	<div class="check">
 		<IconCheckCircleFill />
-		7-day free trial
+		14-day free trial
 	</div>
 
 	<div class="check">

@@ -27,7 +27,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property ?int $hyvor_user_id
  * @property ?int $theme_version_id
  * @property string $subdomain
- * @property Carbon $trial_ends_at
  * @property BlogTypeEnum $type
  * @property BlogHostingAtEnum $hosting_at
  * @property ?string $hosting_domain
@@ -51,7 +50,6 @@ class Blog extends Model
         'type' => BlogTypeEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
         'hosting_redirect_subdomain' => 'bool',
-        'trial_ends_at' => 'datetime',
         'counts' => 'array',
     ];
 
@@ -238,11 +236,6 @@ class Blog extends Model
     {
         $url = $this->url();
         return strval(preg_replace('/^https?:\/\//', '', $url));
-    }
-
-    public function isInTrial(): bool
-    {
-        return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
     }
 
     /**
