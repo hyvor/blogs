@@ -14,11 +14,10 @@ class ExportSubscriptions extends Command
     protected $signature = 'export:subscriptions';
 
     /**
-     * @codeCoverageIgnore 
+     * @codeCoverageIgnore
      */
     public function handle(): void
     {
-
         $subscriptions = $this->getSubscriptions();
 
         file_put_contents(
@@ -27,7 +26,6 @@ class ExportSubscriptions extends Command
         );
 
         $this->info('Exported ' . count($subscriptions) . ' subscriptions at storage/app/subscriptions.json');
-
     }
 
     /**
@@ -35,7 +33,6 @@ class ExportSubscriptions extends Command
      */
     public function getSubscriptions(): array
     {
-
         $exported = [];
 
         $subscriptions = Subscription::with('blog')->get();
@@ -47,27 +44,25 @@ class ExportSubscriptions extends Command
         $selected = [];
 
         foreach ($subscriptions as $subscription) {
-
             if (
                 $subscription->status === SubscriptionStatusEnum::DELETED &&
                 ($subscription->ends_at === null || $subscription->ends_at->isPast())
-            )
-            {
+            ) {
+                // $this->info('Skipping subscription ' . $subscription->id . ' (deleted)');
                 continue;
             }
 
             $userId = $subscription->blog?->hyvor_user_id;
 
             if (!$userId) {
+                // $this->warn('Skipping subscription ' . $subscription->id . ' (no user ID)');
                 continue;
             }
 
             $selected[$userId] = $this->selectSubscription($subscription, $selected[$userId] ?? null);
-
         }
 
         foreach ($selected as $userId => $subscription) {
-
             $exported[] = new MigratingSubscription(
                 userId: $userId,
                 planVersion: 1,
@@ -76,16 +71,13 @@ class ExportSubscriptions extends Command
                 cancelAt: $subscription->ends_at?->getTimestamp(),
                 paddleSubscriptionId: $subscription->getMeta('paddle_subscription_id')
             );
-
         }
 
         return $exported;
-
     }
 
     private function selectSubscription(Subscription $new, ?Subscription $existing): Subscription
     {
-
         if ($existing === null) {
             return $new;
         }
