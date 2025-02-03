@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import type { PostStatus, Tag, User } from '../../../lib/types';
 
-interface PostListFilters {
+export interface PostListFilters {
     status: PostStatus | 'featured' | null,
     author: User | null,
     tag: Tag | null,
