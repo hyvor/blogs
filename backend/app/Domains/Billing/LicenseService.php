@@ -15,9 +15,7 @@ class LicenseService
 
         if (!$userId) {
             // this is a temp or a dev blog
-            return new BlogsLicense(
-                noBranding: true
-            );
+            return new BlogsLicense();
         }
 
         $billing = app(Billing::class);

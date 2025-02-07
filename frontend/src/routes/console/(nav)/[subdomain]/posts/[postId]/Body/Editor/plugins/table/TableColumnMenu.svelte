@@ -1,261 +1,263 @@
 <script lang="ts">
 	import IconArrowLeft from '@hyvor/icons/IconArrowLeft';
-import IconArrowRight from '@hyvor/icons/IconArrowRight';
-import IconBackspace from '@hyvor/icons/IconBackspace';
-import IconCardHeading from '@hyvor/icons/IconCardHeading';
-import IconThreeDots from '@hyvor/icons/IconThreeDots';
-import IconTrash from '@hyvor/icons/IconTrash';
+	import IconArrowRight from '@hyvor/icons/IconArrowRight';
+	import IconCardHeading from '@hyvor/icons/IconCardHeading';
+	import IconThreeDots from '@hyvor/icons/IconThreeDots';
+	import IconTrash from '@hyvor/icons/IconTrash';
 
-	import { Node } from "prosemirror-model";
-	import { onMount } from "svelte";
-	import { postEditingStatusStore } from "../../../../../postStore";
-	import { TextSelection, type Selection } from "prosemirror-state";
-	import { ActionList, ActionListItem, Dropdown } from "@hyvor/design/components";
-	import { addColumnAfter, addColumnBefore, deleteColumn, deleteTable, toggleHeaderColumn } from "prosemirror-tables";
-	import schema from "../../../../../../../../lib/prosemirror/schema";
+	import { Node } from 'prosemirror-model';
+	import { onMount, tick } from 'svelte';
+	import { postEditingStatusStore } from '../../../../../postStore';
+	import { type Selection } from 'prosemirror-state';
+	import { ActionList, ActionListItem, Dropdown } from '@hyvor/design/components';
+	import {
+		addColumnAfter,
+		addColumnBefore,
+		deleteColumn,
+		deleteTable,
+		toggleHeaderColumn
+	} from 'prosemirror-tables';
+	import schema from '../../../../../../../../lib/prosemirror/schema';
 
-    let show = $state(false);
-    let wrapEl: HTMLSpanElement | undefined = $state();
-    let showDropdown = $state(false);
+	let { updateId }: { updateId: number } = $props();
 
-    let editorView = $derived($postEditingStatusStore.editorView!);
+	let show = $state(false);
+	let wrapEl: HTMLSpanElement | undefined = $state();
+	let showDropdown = $state(false);
 
-    function isSelectionInTable(selection: Selection) {
-        const pos = selection.$anchor;
-        let index = pos.depth;
-        while (index > 0) {
-            if (pos.node(index).type.name === "table") {
-                return true;
-            }
-            index--;
-        }
-        return false;
-    }
+	let editorView = $derived($postEditingStatusStore.editorView!);
 
-    function position() {
-        const view = $postEditingStatusStore.editorView;
-        if (!view) return;
+	function isSelectionInTable(selection: Selection) {
+		const pos = selection.$anchor;
+		let index = pos.depth;
+		while (index > 0) {
+			if (pos.node(index).type.name === 'table') {
+				return true;
+			}
+			index--;
+		}
+		return false;
+	}
 
-        const selection = view.state.selection;
-        const selectionInTable = isSelectionInTable(selection);
+	async function position() {
+		const view = $postEditingStatusStore.editorView;
+		if (!view) return;
 
-        if (selectionInTable) {
-            show = true;
+		const selection = view.state.selection;
+		const selectionInTable = isSelectionInTable(selection);
 
-            let domNode = view.domAtPos(selection.$anchor.pos).node;
-            if (domNode.nodeType === 3) domNode = domNode.parentNode!;
-            if (!(domNode instanceof HTMLElement)) return;
+		if (selectionInTable) {
+			show = true;
 
-            const td = domNode.closest("td, th");
-            const table = domNode.closest("table");
-            if (!td || !table) return;
-            
-            const { left, width } = td.getBoundingClientRect();
-            const { top } = table.getBoundingClientRect();
+			await tick();
 
-            if (!wrapEl) return;
-            wrapEl.style.top = `${top}px`;
-            wrapEl.style.left = `${left}px`;
-            wrapEl.style.width = width + "px";
+			let domNode = view.domAtPos(selection.$anchor.pos).node;
+			if (domNode.nodeType === 3) domNode = domNode.parentNode!;
+			if (!(domNode instanceof HTMLElement)) return;
 
-        } else {
-            show = false;
-        }
-    }
+			const td = domNode.closest('td, th');
+			const table = domNode.closest('table');
+			if (!td || !table) return;
 
-    function close() {
-        showDropdown = false;
-        editorView.focus();
-    }
+			const { left, width } = td.getBoundingClientRect();
+			const { top } = table.getBoundingClientRect();
 
-    function handleHeader() {
-        toggleHeaderColumn(editorView.state, editorView.dispatch);
-        close();
-    }
+			if (!wrapEl) return;
+			const wrapElRect = wrapEl.getBoundingClientRect();
+			wrapEl.style.top = top - wrapElRect.height / 2 + 'px';
+			wrapEl.style.left = `${left}px`;
+			wrapEl.style.width = width + 'px';
+		} else {
+			show = false;
+		}
+	}
 
-    function handleInsertBefore() {
-        addColumnBefore(editorView.state, editorView.dispatch);
-        close();
-    }
+	function close() {
+		showDropdown = false;
+		editorView.focus();
+	}
 
-    function handleInsertBelow() {
-        addColumnAfter(editorView.state, editorView.dispatch);
-        close();
-    }
+	function handleHeader() {
+		toggleHeaderColumn(editorView.state, editorView.dispatch);
+		close();
+	}
 
-    function handleDelete() {
+	function handleInsertBefore() {
+		addColumnBefore(editorView.state, editorView.dispatch);
+		close();
+	}
 
-        function hasOnlyOneColumn(table: HTMLTableElement) {
-            const rows = table.getElementsByTagName("tr");
-            // Iterate through the rows
-            for (var i = 0; i < rows.length; i++) {
-                var cells = rows[i]!.getElementsByTagName("td");
-                // Check if the row has exactly one cell
-                if (cells.length !== 1) {
-                    return false;
-                }
-            }
-            // If all rows have only one cell, return true
-            return true;
-        }
+	function handleInsertBelow() {
+		addColumnAfter(editorView.state, editorView.dispatch);
+		close();
+	}
 
-        const domNode = editorView.domAtPos(editorView.state.selection.$anchor.pos).node;
-        if (domNode instanceof HTMLElement) {
-            const table = domNode.closest("table");
-            if (hasOnlyOneColumn(table!)) {
-                deleteTable(editorView.state, editorView.dispatch);
-                close();
-                return;
-            }
-        }
+	function handleDelete() {
+		function hasOnlyOneColumn(table: HTMLTableElement) {
+			const rows = table.getElementsByTagName('tr');
+			// Iterate through the rows
+			for (var i = 0; i < rows.length; i++) {
+				var cells = rows[i]!.getElementsByTagName('td');
+				// Check if the row has exactly one cell
+				if (cells.length !== 1) {
+					return false;
+				}
+			}
+			// If all rows have only one cell, return true
+			return true;
+		}
 
-        deleteColumn(editorView.state, editorView.dispatch);
-        close();
-    }
+		const domNode = editorView.domAtPos(editorView.state.selection.$anchor.pos).node;
+		if (domNode instanceof HTMLElement) {
+			const table = domNode.closest('table');
+			if (hasOnlyOneColumn(table!)) {
+				deleteTable(editorView.state, editorView.dispatch);
+				close();
+				return;
+			}
+		}
 
-    function handleClearContent() {
-        
-        // TODO: This function is not working properly.
-        // So, the button is disabled for now
+		deleteColumn(editorView.state, editorView.dispatch);
+		close();
+	}
 
-        function findColumnIndex() {
+	function handleClearContent() {
+		// TODO: This function is not working properly.
+		// So, the button is disabled for now
 
-            let domNode = editorView.domAtPos(editorView.state.selection.$anchor.pos).node;
-            if (domNode.nodeType === 3) domNode = domNode.parentNode!;
-            if (domNode instanceof HTMLElement) {
-                const td = domNode.closest("td, th");
-                if (!td) return;
-                const tr = td.closest("tr");
-                if (!tr) return;
-                const columnIndex = Array.from(tr.children).indexOf(td);
-                return columnIndex;
-            }
+		function findColumnIndex() {
+			let domNode = editorView.domAtPos(editorView.state.selection.$anchor.pos).node;
+			if (domNode.nodeType === 3) domNode = domNode.parentNode!;
+			if (domNode instanceof HTMLElement) {
+				const td = domNode.closest('td, th');
+				if (!td) return;
+				const tr = td.closest('tr');
+				if (!tr) return;
+				const columnIndex = Array.from(tr.children).indexOf(td);
+				return columnIndex;
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        let columnIndex = findColumnIndex();
-        if (columnIndex === null) return;
-        
-        const pos = editorView.state.selection.$anchor;
-        let index = pos.depth;
-        let node : Node;
-        let table : Node | null = null;
-        while (index > 0) {
-            node = pos.node(index);
-            if (node.type.name === "table") {
-                table = node;
-                break;
-            }
-            index--;
-        }
-        if (!table) return;
+		let columnIndex = findColumnIndex();
+		if (columnIndex === null) return;
 
-        const tablePos = pos.before(index);
+		const pos = editorView.state.selection.$anchor;
+		let index = pos.depth;
+		let node: Node;
+		let table: Node | null = null;
+		while (index > 0) {
+			node = pos.node(index);
+			if (node.type.name === 'table') {
+				table = node;
+				break;
+			}
+			index--;
+		}
+		if (!table) return;
 
-        const tr = editorView.state.tr;
-        table.descendants((row, pos) => {
-            if (row.type.name !== 'table_row') return;
-            const rowPos = tablePos + pos;
+		const tablePos = pos.before(index);
 
-            //console.log(rowPos, pos);
+		const tr = editorView.state.tr;
+		table.descendants((row, pos) => {
+			if (row.type.name !== 'table_row') return;
+			const rowPos = tablePos + pos;
 
-            row.descendants((cell, pos, _, cellIndex) => {
-                if (cell.type.name !== 'table_cell') return;
-                if (cellIndex === columnIndex) {
-                    const cellPos = rowPos + pos;
-                    console.log('called', cellPos, pos)
-                    tr.replaceWith(
-                        cellPos, cellPos + cell.nodeSize,
-                        schema.nodes.table_cell!.createAndFill()!
-                    );
-                }
-            });
+			//console.log(rowPos, pos);
 
-        });
+			row.descendants((cell, pos, _, cellIndex) => {
+				if (cell.type.name !== 'table_cell') return;
+				if (cellIndex === columnIndex) {
+					const cellPos = rowPos + pos;
+					console.log('called', cellPos, pos);
+					tr.replaceWith(
+						cellPos,
+						cellPos + cell.nodeSize,
+						schema.nodes.table_cell!.createAndFill()!
+					);
+				}
+			});
+		});
 
-        editorView.dispatch(tr);
+		editorView.dispatch(tr);
 
-        close();
+		close();
+	}
 
-    }
-
-    onMount(position);
+	$effect(() => {
+		updateId;
+		position();
+	});
 </script>
 
 <svelte:window onscrollcapture={position} />
 
-<span 
-    bind:this={wrapEl}
-    class:show={show}
-    class="wrap"
->
-    <Dropdown bind:show={showDropdown} align="center" relative={true}>
-        {#snippet trigger()}
-                <button  style="display: {showDropdown ? 'none' : 'inline-flex'}">
-                <IconThreeDots size={14} />
-            </button>
-            {/snippet}
+<span bind:this={wrapEl} class:show class="wrap">
+	<Dropdown bind:show={showDropdown} align="center">
+		{#snippet trigger()}
+			<button>
+				<IconThreeDots size={14} />
+			</button>
+		{/snippet}
 
-        {#snippet content()}
-                <ActionList >
-                <ActionListItem on:click={handleHeader}>
-                    {#snippet start()}
-                                <IconCardHeading  />
-                            {/snippet}
-                    Header column
-                </ActionListItem>
-                <ActionListItem on:click={handleInsertBefore}>
-                    {#snippet start()}
-                                <IconArrowLeft  />
-                            {/snippet}
-                    Insert before
-                </ActionListItem>
-                <ActionListItem on:click={handleInsertBelow}>
-                    {#snippet start()}
-                                <IconArrowRight  />
-                            {/snippet}
-                    Insert after
-                </ActionListItem>
-                <ActionListItem on:click={handleDelete}>
-                    {#snippet start()}
-                                <IconTrash  />
-                            {/snippet}
-                    Delete column
-                </ActionListItem>
-                <!-- <ActionListItem on:click={handleClearContent}>
+		{#snippet content()}
+			<ActionList>
+				<ActionListItem on:click={handleHeader}>
+					{#snippet start()}
+						<IconCardHeading />
+					{/snippet}
+					Header column
+				</ActionListItem>
+				<ActionListItem on:click={handleInsertBefore}>
+					{#snippet start()}
+						<IconArrowLeft />
+					{/snippet}
+					Insert before
+				</ActionListItem>
+				<ActionListItem on:click={handleInsertBelow}>
+					{#snippet start()}
+						<IconArrowRight />
+					{/snippet}
+					Insert after
+				</ActionListItem>
+				<ActionListItem on:click={handleDelete}>
+					{#snippet start()}
+						<IconTrash />
+					{/snippet}
+					Delete column
+				</ActionListItem>
+				<!-- <ActionListItem on:click={handleClearContent}>
                     <IconBackspace slot="start" />
                     Clear content
                 </ActionListItem> -->
-            </ActionList>
-            {/snippet}
-
-    </Dropdown>
+			</ActionList>
+		{/snippet}
+	</Dropdown>
 </span>
 
 <style>
-    .wrap {
-        position: fixed;
-        z-index: 100;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        transform: translateY(-50%);
-    }
-    .wrap.show {
-        display: inline-flex;
-    }
-    button {
-        background-color: var(--input);
-        width: 28px;
-        height: 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        transition: .2s box-shadow;
-    }
-    button:hover {
-        box-shadow: 0 0 0 2px var(--gray-light);
-    }
+	.wrap {
+		position: fixed;
+		z-index: 100;
+		display: none;
+		align-items: center;
+		justify-content: center;
+	}
+	.wrap.show {
+		display: inline-flex;
+	}
+	button {
+		background-color: var(--input);
+		width: 28px;
+		height: 16px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 5px;
+		transition: 0.2s box-shadow;
+	}
+	button:hover {
+		box-shadow: 0 0 0 2px var(--gray-light);
+	}
 </style>

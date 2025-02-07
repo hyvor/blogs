@@ -15,7 +15,11 @@ class MarksTooltipPlugin implements PluginView {
     view: EditorView;
     wrap: HTMLElement;
 
-    private show = $state(false);
+    private props: {
+        view: EditorView,
+        show: boolean,
+        updateId: number
+    } = $state({} as any);
 
     constructor(view: EditorView) {
         this.view = view;
@@ -24,12 +28,15 @@ class MarksTooltipPlugin implements PluginView {
         this.wrap.className = "pm-tooltip"
         view.dom!.parentNode!.appendChild(this.wrap);
 
+        this.props = {
+            view: this.view,
+            show: false,
+            updateId: 0
+        }
+
         mount(MarksTooltip, {
             target: this.wrap,
-            props: {
-                view: this.view,
-                show: this.show
-            }
+            props: this.props
         });
 
     }
@@ -50,11 +57,12 @@ class MarksTooltipPlugin implements PluginView {
             state.doc.cut(state.selection.from, state.selection.to).textContent === "" ||
             state.selection instanceof NodeSelection
         ) {
-            this.show = false;
+            this.props.show = false;
             return
         }
 
-        this.show = true;
+        this.props.show = true;
+        this.props.updateId++;
 
     }
 

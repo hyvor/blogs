@@ -1,6 +1,5 @@
 import type { EditorView, NodeView, ViewMutationRecord } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
-import { EmojiButton } from '@joeattardi/emoji-button';
 import CalloutColors from "./CalloutColors.svelte";
 import { mount } from "svelte";
 
@@ -39,15 +38,11 @@ export class CalloutNodeView implements NodeView {
         this.dom.appendChild(emoji)
         this.dom.appendChild(this.contentDOM)
 
-        const picker = new EmojiButton();
-        
-        let lastSelection = null;
         emoji.onclick = function(e) {
-            picker.togglePicker(emoji);
-            lastSelection = view.state.selection;
+            // TODO
         }
         emoji.onmousedown = function(e) {
-            e.preventDefault();
+            //
         }
 
         /**
@@ -62,13 +57,13 @@ export class CalloutNodeView implements NodeView {
             (window as any).getSelection().removeAllRanges()
         }
         
-        picker.on('emoji', selection => {
-            this.changeAttr('emoji', selection.emoji)
-            blurFocus()
-        });
-        picker.on("hidden", () => {
-            blurFocus();
-        });
+        // picker.on('emoji', selection => {
+        //     this.changeAttr('emoji', selection.emoji)
+        //     blurFocus()
+        // });
+        // picker.on("hidden", () => {
+        //     blurFocus();
+        // });
         
         this.emoji = emoji;
         

@@ -12,7 +12,7 @@ import schema from "../../../../../../../lib/prosemirror/schema";
 import wordCountPlugin from "./plugin-wordcount";
 import slashPlugin from "./slash/plugin-slash.svelte";
 import slashTipPlugin from "./slash/plugin-slash-tip";
-import tableMenuPlugin from "./table/plugin-table-menu";
+import tableMenuPlugin from "./table/plugin-table-menu.svelte";
 
 export function getPlugins() {
 

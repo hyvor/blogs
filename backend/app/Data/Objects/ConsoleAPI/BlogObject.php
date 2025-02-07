@@ -16,7 +16,6 @@ class BlogObject
 {
     public int $id;
 
-    public int $trial_ends_at;
     public int $created_at;
     public bool $is_blocked;
     public ?int $theme_version_id;
@@ -101,7 +100,6 @@ class BlogObject
     {
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->getTimestamp();
-        $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->is_blocked = $blog->is_blocked;
         $this->theme_version_id = $blog->theme_version_id;
 

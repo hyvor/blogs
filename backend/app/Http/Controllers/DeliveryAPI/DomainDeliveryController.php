@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\DeliveryAPI;
 
@@ -10,23 +11,22 @@ use Illuminate\Http\Request;
 
 class DomainDeliveryController extends Controller
 {
-    public function handle(Request $request, Blog $blog) : mixed
+    public function handle(Request $request, Blog $blog): mixed
     {
-
         if ($blog->is_blocked) {
             return redirect('https://blogs.hyvor.com');
         }
 
-        if (
-            $blog->type === BlogTypeEnum::DEFAULT &&
-            $blog->trial_ends_at->lessThan(now())
-        ) {
+//        if (
+//            $blog->type === BlogTypeEnum::DEFAULT &&
+//            $blog->trial_ends_at->lessThan(now())
+//        ) {
 //            $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 //            if (!$subscription) {
 //                return view('errors.trial-ended', ['subdomain' => $blog->subdomain]);
 //            }
-            // TODO: Finalize strategy for trial ended
-        }
+        // TODO: Finalize strategy for trial ended
+//        }
 
         /**
          * We cannot use $request->path() because laravel has logic to remove trailing slash

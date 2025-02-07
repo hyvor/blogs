@@ -17,7 +17,7 @@ class D_2025_02_03_RegisterResourcesOnCoreCommand extends Command
     {
         $this->info('Registering resources on core...');
 
-        $blogs = Blog::all();
+        $blogs = Blog::orderBy('id')->get();
         /** @var Resource $resource */
         $resource = app(Resource::class);
 
@@ -30,7 +30,7 @@ class D_2025_02_03_RegisterResourcesOnCoreCommand extends Command
             $this->info('Registering blog: ' . $blog->id);
 
             // Register blog on core
-            $resource->register($blog->hyvor_user_id, $blog->id);
+            $resource->register($blog->hyvor_user_id, $blog->id, $blog->created_at);
         }
     }
 

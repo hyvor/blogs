@@ -23,7 +23,6 @@ export interface BlogList {
 	id: number;
 	role: UserRole;
 	is_blocked: boolean;
-	trial_ends_at: number;
 	name: string;
 	subdomain: string;
 	type: BlogType;
@@ -53,7 +52,6 @@ export interface BlogVariant {
 export interface Blog {
 	id: number;
 	created_at: number;
-	trial_ends_at: number;
 
 	is_blocked: boolean;
 	subdomain: string;
