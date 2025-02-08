@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
@@ -21,19 +23,17 @@ class LinkAnalyzeService
 
     /**
      * @param string[] $urls
-     * @return AnalyzedLink[]
+     * @return AnalyzedLinkDto[]
      */
     public static function analyzePostVariantLinks(
         Blog $blog,
         PostVariant $variant,
         array $urls
-    ) : array
-    {
-
+    ): array {
         $post = $variant->post;
         $language = $variant->language;
 
-        if (!$post || !$language) {
+        if (!$post) {
             throw new SafetyException('Post or language not found');
         }
 
@@ -44,94 +44,30 @@ class LinkAnalyzeService
 
         foreach ($urls as $url) {
             $fullUrl = FullUrl::getFullUrl($url, $variantUrl);
-            if (!$fullUrl)
+            if (!$fullUrl) {
                 continue;
+            }
             $urlMap[$fullUrl] = $url;
             $fullUrls[] = $fullUrl;
         }
 
         $results = self::analyze($fullUrls);
 
-        return array_map(fn (string $key, int $status) => new AnalyzedLink(
+        return array_map(fn(string $key, int $status) => new AnalyzedLinkDto(
             $urlMap[$key],
             $key,
             $status,
         ), array_keys($results), array_values($results));
-
     }
 
-
     /**
-     * When given a list of complete URLs, returns an array with the status code of each URL
+     * Adds the ignore code to the results
+     * This is the object shape that is used in the frontend
      *
-     * @param string[] $urls
-     * @return array<string, int>
-     */
-    public static function analyze(array $urls)
-    {
-
-        if (count($urls) > 100) {
-            throw new SafetyException('Too many urls to analyze');
-        }
-
-        $results = [];
-
-        /**
-         * Important note:
-         * on errors, pool() method sets the response to that error (weird)
-         * that's why we need to check if the response is an instance of Response
-         * if it's not, then it's an error
-         *
-         * tested with:
-         *  \GuzzleHttp\Exception\ConnectException (DNS error)
-         *  \GuzzleHttp\Exception\ConnectException (connection error)
-         *  \GuzzleHttp\Exception\ConnectException (timeout error)
-         *  \GuzzleHttp\Exception\RequestException (SSL error)
-         */
-
-        /** @var array<string, mixed> $responses */
-        $responses = Http::pool(function (Pool $pool) use ($urls) {
-            foreach ($urls as $url) {
-                $pool
-                    ->as($url)
-                    ->withOptions([
-                        'allow_redirects' => false,
-                        'on_headers' => function () {
-                            // throw an exception to prevent request from downloading the body
-                            // we only need the headers
-                            throw new Exception();
-                        }
-                    ])
-                    ->timeout(5) // I guess 5 seconds is enough for HEAD
-                    ->get($url);
-            }
-        });
-
-        foreach ($urls as $url) {
-            $response = $responses[$url] ?? null;
-            if (!$response) {
-                throw new SafetyException('Response not found for url: ' . $url);
-            }
-
-            if ($response instanceof Response) {
-                $status = $response->status();
-            } else {
-                $status = 500;
-            }
-
-            $results[$url] = $status;
-        }
-
-        return $results;
-
-    }
-
-
-    /**
      * @param Collection<int, LinkAnalyzerLink> $links
      * @return array<string, int>
      */
-    public static function getResultsFromLinks(Collection $links) : array
+    public static function getFrontendResultsFromLinks(Collection $links): array
     {
         $results = [];
 
@@ -146,16 +82,17 @@ class LinkAnalyzeService
      * @param Blog $blog
      * @return array{ok: integer, redirect: integer, broken: integer, ignored: integer}
      */
-    public static function getCountsByStatus(Blog $blog) : array
+    public static function getCountsByStatus(Blog $blog): array
     {
-
         $counts = LinkAnalyzerLink::where('blog_id', $blog->id)
-            ->selectRaw('
+            ->selectRaw(
+                '
                 SUM(CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END) AS ok,
                 SUM(CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END) AS redirect,
                 SUM(CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END) AS broken,
                 SUM(CASE WHEN ignore = true THEN 1 ELSE 0 END) AS ignored
-            ')
+            '
+            )
             ->first();
 
         if (!$counts) {
@@ -168,10 +105,10 @@ class LinkAnalyzeService
         $counts = $counts->toArray();
 
         return [
-            'ok' => (int) $counts['ok'],
-            'redirect' => (int) $counts['redirect'],
-            'broken' => (int) $counts['broken'],
-            'ignored' => (int) $counts['ignored'],
+            'ok' => (int)$counts['ok'],
+            'redirect' => (int)$counts['redirect'],
+            'broken' => (int)$counts['broken'],
+            'ignored' => (int)$counts['ignored'],
         ];
     }
 
@@ -183,19 +120,19 @@ class LinkAnalyzeService
         ?LinkStatusTypeEnum $type,
         int $limit,
         int $offset
-    ) : Collection
-    {
-
+    ): Collection {
         return LinkAnalyzerLink::where('blog_id', $blog->id)
             ->with('postVariant')
-            ->selectRaw('
+            ->selectRaw(
+                '
                 *,
                 CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END AS ok,
                 CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END AS redirect,
                 CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END AS broken,
                 CASE WHEN ignore = true THEN 1 ELSE 0 END AS ignored
-            ')
-            ->when($type, function($query) use ($type) {
+            '
+            )
+            ->when($type, function ($query) use ($type) {
                 switch ($type) {
                     case LinkStatusTypeEnum::OK:
                         $query
@@ -229,7 +166,6 @@ class LinkAnalyzeService
             ->limit($limit)
             ->offset($offset)
             ->get();
-
     }
 
 }

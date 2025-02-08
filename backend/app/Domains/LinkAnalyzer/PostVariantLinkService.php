@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
@@ -11,14 +13,14 @@ use Illuminate\Database\Eloquent\Collection;
 class PostVariantLinkService
 {
 
-    public static function getLink(PostVariant $variant, string $url) : ?LinkAnalyzerLink
+    public static function getLink(PostVariant $variant, string $url): ?LinkAnalyzerLink
     {
         return LinkAnalyzerLink::where('post_variant_id', $variant->id)
             ->where('url', $url)
             ->first();
     }
 
-    public static function ignoreLink(LinkAnalyzerLink $link, bool $status) : void
+    public static function ignoreLink(LinkAnalyzerLink $link, bool $status): void
     {
         $link->ignore = $status;
         $link->save();
@@ -27,7 +29,7 @@ class PostVariantLinkService
     /**
      * @return Collection<int, LinkAnalyzerLink>
      */
-    public static function getIgnoredLinks(PostVariant $variant) : Collection
+    public static function getIgnoredLinks(PostVariant $variant): Collection
     {
         return LinkAnalyzerLink::where('post_variant_id', $variant->id)
             ->where('ignore', true)
@@ -36,7 +38,7 @@ class PostVariantLinkService
 
     /**
      * @param PostVariant $variant
-     * @param AnalyzedLink[] $results
+     * @param AnalyzedLinkDto[] $results
      * @param string[] $ignoreUrls
      * @return Collection<int, LinkAnalyzerLink>
      */
@@ -46,9 +48,7 @@ class PostVariantLinkService
         array $results,
         bool $shouldClear = false,
         array $ignoreUrls = [],
-    ) : Collection
-    {
-
+    ): Collection {
         $now = now();
 
         if ($shouldClear) {
@@ -59,7 +59,6 @@ class PostVariantLinkService
         $links = [];
 
         foreach ($results as $result) {
-
             $link = LinkAnalyzerLink::updateOrCreate(
                 [
                     'post_variant_id' => $variant->id,
@@ -90,8 +89,7 @@ class PostVariantLinkService
         PostVariant $variant,
         array $results,
         bool $append = false
-    ) : void
-    {
+    ): void {
         $currentVariantResults = $variant->link_analysis ?? [];
         PostRepository::updatePostVariant($variant, [
             'link_analysis' => $append ? array_merge(

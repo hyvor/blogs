@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -30,6 +31,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?string $seo_primary_keyword
  * @property ?array $seo_secondary_keywords
  * @property ?array $link_analysis
+ *
+ * @property Language $language
  */
 class PostVariant extends Model
 {

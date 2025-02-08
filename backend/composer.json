@@ -42,7 +42,7 @@
         "spatie/laravel-ignition": "^2.0",
         "symfony/css-selector": "^6.0",
         "symfony/dom-crawler": "^7.1",
-        "symfony/http-client": "^6.1",
+        "symfony/http-client": "^7.2",
         "symfony/http-foundation": "^7.0",
         "symfony/mailgun-mailer": "^6.1",
         "symfony/process": "^7.0",

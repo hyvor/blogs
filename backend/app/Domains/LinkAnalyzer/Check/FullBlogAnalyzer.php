@@ -1,11 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\LinkAnalyzer\AnalyzedLinkDto;
 use App\Domains\LinkAnalyzer\FullUrl;
-use App\Domains\LinkAnalyzer\PostVariantLinkService;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
+use App\Domains\LinkAnalyzer\LinkStatusCheck\LinkStatusCheckService;
+use App\Domains\LinkAnalyzer\PostVariantLinkService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\Post\Content\Marks\Link;
 use App\Domains\Post\Content\PostContentService;
@@ -14,6 +18,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Hyvor\Phrosemirror\Document\Mark;
+use Illuminate\Database\Eloquent\Collection;
 
 class FullBlogAnalyzer
 {
@@ -29,88 +34,140 @@ class FullBlogAnalyzer
     public int $linksRedirectCount = 0;
     public int $linksIgnoredCount = 0;
 
-    private string $baseUrl;
-
     public function __construct(
-        private Blog $blog
+        private Blog $blog,
     ) {
-       $this->baseUrl = PermalinkRepository::getBaseUrl($blog);
     }
 
-    public function analyze() : void
+    public function analyze(): void
     {
-
         Post::where('blog_id', $this->blog->id)
             ->orderBy('id')
-            ->chunk(1000, function ($posts) {
-                foreach ($posts as $post) {
-                    $this->analyzePost($post);
-                }
+            ->chunk(100, function ($posts) {
+                $this->analyzeChunk($posts);
             });
-
     }
 
-
-    private function analyzePost(Post $post) : void
+    /**
+     * @param Collection<int, Post> $posts
+     */
+    private function analyzeChunk(Collection $posts): void
     {
-        if ($post->is_page) {
-            $this->pagesCount++;
-        } else {
-            $this->postsCount++;
-        }
-        foreach ($post->variants as $variant) {
-            $this->analyzeVariant($post, $variant);
+        // [variantId => [ResolvedUrl, ResolvedUrl, ...]]
+        $variantIndexedUrls = $this->getUrlsFromPosts($posts);
+        $allFinalUrls = $variantIndexedUrls->map(fn($urls) => array_map(
+            fn($url) => $url->fullUrl,
+            $urls
+        ))->toArray();
+        $allFinalUrls = array_merge(...$allFinalUrls);
+
+        // check HTTP statuses
+        $statusCheck = app(LinkStatusCheckService::class);
+        $statuses = $statusCheck->check($allFinalUrls);
+
+        foreach ($posts as $post) {
+            foreach ($post->variants as $variant) {
+                if ($variantIndexedUrls->has($variant->id) === false) {
+                    continue;
+                }
+
+                $urls = $variantIndexedUrls[$variant->id] ?? [];
+
+                // combine the results with the urls
+                $results = array_map(
+                    fn(ResolvedUrl $url) => new AnalyzedLinkDto(
+                        $url->originalUrl,
+                        $url->fullUrl,
+                        $statuses[$url->fullUrl] ?? 500,
+                    ),
+                    $urls
+                );
+
+                $this->finalizeVariant($variant, $results);
+            }
         }
     }
 
-    private function analyzeVariant(Post $post, PostVariant $variant) : void
+    /**
+     * @param Collection<int, Post> $posts
+     * @return \Illuminate\Support\Collection<int, array<int, ResolvedUrl>>
+     */
+    private function getUrlsFromPosts(Collection $posts)
     {
-        if ($variant->status !== PostStatusEnum::PUBLISHED) {
-            return;
-        }
+        $variantIndexedUrls = collect();
 
-        $content = $variant->content;
-        if (!$content) {
-            return;
-        }
-
-        if ($post->is_page) {
-            $this->pageVariantsCount++;
-        } else {
-            $this->postVariantsCount++;
-        }
-
-        $doc = PostContentService::getDocumentFromJson($content, $this->blog);
-        $linkMarks = $doc->getMarks(Link::class);
-
-        $urls = [];
-
-        foreach ($linkMarks as $linkMark) {
-            $url = self::getWebUrlFromLinkMark($linkMark, $this->baseUrl);
-
-            if (!$url)
-                continue;
-
-            if (mb_strlen($url) > 255) {
-                continue;
+        foreach ($posts as $post) {
+            if ($post->is_page) {
+                $this->pagesCount++;
+            } else {
+                $this->postsCount++;
             }
 
-            $urls[] = $url;
+            foreach ($post->variants as $variant) {
+                $urls = [];
+
+                if ($variant->status !== PostStatusEnum::PUBLISHED) {
+                    continue;
+                }
+
+                $content = $variant->content;
+                if (!$content) {
+                    continue;
+                }
+
+                if ($post->is_page) {
+                    $this->pageVariantsCount++;
+                } else {
+                    $this->postVariantsCount++;
+                }
+
+                $doc = PostContentService::getDocumentFromJson($content, $this->blog);
+                $linkMarks = $doc->getMarks(Link::class);
+                $variantUrl = PermalinkRepository::getPostPermalink($post, $this->blog, $variant->language);
+
+                foreach ($linkMarks as $linkMark) {
+                    $originalUrl = $this->getHrefFromLinkMark($linkMark);
+
+                    if (!$originalUrl) {
+                        continue;
+                    }
+
+                    if (mb_strlen($originalUrl) > 255) {
+                        continue;
+                    }
+
+                    $fullUrl = FullUrl::getFullUrl($originalUrl, $variantUrl);
+
+                    if (!$fullUrl) {
+                        continue;
+                    }
+
+                    $urls[] = new ResolvedUrl($originalUrl, $fullUrl);
+                }
+
+                if (count($urls) === 0) {
+                    continue;
+                }
+
+
+                $variantIndexedUrls[$variant->id] = $urls;
+            }
         }
 
-        // who has more than 100 links in a post?
-        $urls = array_slice($urls, 0, 100);
+        return $variantIndexedUrls;
+    }
 
-        $results = LinkAnalyzeService::analyzePostVariantLinks(
-            $this->blog,
-            $variant,
-            $urls,
-        );
-
+    /**
+     * @param PostVariant $variant
+     * @param AnalyzedLinkDto[] $results
+     */
+    private function finalizeVariant(PostVariant $variant, array $results): void
+    {
         /** @var string[] $ignoredLinksUrls */
         $ignoredLinksUrls = PostVariantLinkService::getIgnoredLinks($variant)
             ->pluck('url')
             ->toArray();
+
 
         $links = PostVariantLinkService::updateLinksFromResults(
             $this->blog,
@@ -119,34 +176,41 @@ class FullBlogAnalyzer
             true,
             $ignoredLinksUrls
         );
+
         $this->linksCount += $links->count();
 
+        // update the counts
         foreach ($links as $link) {
             $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
 
             if ($link->ignore) {
                 $this->linksIgnoredCount++;
-            } else if ($statusType === LinkStatusTypeEnum::OK) {
+            } elseif ($statusType === LinkStatusTypeEnum::OK) {
                 $this->linksOkCount++;
-            } else if ($statusType === LinkStatusTypeEnum::BROKEN) {
+            } elseif ($statusType === LinkStatusTypeEnum::BROKEN) {
                 $this->linksBrokenCount++;
-            } else if ($statusType === LinkStatusTypeEnum::REDIRECT) {
+            } elseif ($statusType === LinkStatusTypeEnum::REDIRECT) {
                 $this->linksRedirectCount++;
             }
-
         }
 
         PostVariantLinkService::updatePostVariantCache(
             $variant,
-            LinkAnalyzeService::getResultsFromLinks($links)
+            LinkAnalyzeService::getFrontendResultsFromLinks($links)
         );
+    }
 
+    private function getHrefFromLinkMark(Mark $linkMark): ?string
+    {
+        $href = $linkMark->attr('href', false);
+        return is_string($href) ? $href : null;
     }
 
     /**
+     * @deprecated
      * This should mirror link.ts in the frontend
      */
-    public static function getWebUrlFromLinkMark(Mark $linkMark, string $baseUrl) : ?string
+    public static function getWebUrlFromLinkMark(Mark $linkMark, string $baseUrl): ?string
     {
         $baseUrl = rtrim($baseUrl, '/');
 

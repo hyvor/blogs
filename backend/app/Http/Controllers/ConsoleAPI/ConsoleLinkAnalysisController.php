@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
@@ -20,9 +21,8 @@ use Illuminate\Validation\Rules\Enum;
 class ConsoleLinkAnalysisController
 {
 
-    public function checkPostVariantLinks(Request $request, Blog $blog, PostVariant $postVariant) : JsonResponse
+    public function checkPostVariantLinks(Request $request, Blog $blog, PostVariant $postVariant): JsonResponse
     {
-
         $request->validate([
             'post_variant_id' => 'required|integer',
             'urls' => 'required|array',
@@ -36,28 +36,28 @@ class ConsoleLinkAnalysisController
 
         $fromHttp = LinkAnalyzeService::analyzePostVariantLinks($blog, $postVariant, $urls);
         $links = PostVariantLinkService::updateLinksFromResults($blog, $postVariant, $fromHttp);
-        $results = LinkAnalyzeService::getResultsFromLinks($links);
+        $results = LinkAnalyzeService::getFrontendResultsFromLinks($links);
 
         PostVariantLinkService::updatePostVariantCache($postVariant, $results, true);
 
         return response()->json($links->mapInto(LinkObject::class));
     }
 
-    public function ignoreLink(Request $request, Blog $blog, PostVariant $postVariant) : JsonResponse
+    public function ignoreLink(Request $request, Blog $blog, PostVariant $postVariant): JsonResponse
     {
-
         $request->validate([
             'post_variant_id' => 'required|integer',
             'url' => 'required|url',
             'status' => 'required|boolean'
         ]);
 
-        $url = (string) $request->string('url');
+        $url = (string)$request->string('url');
         $status = $request->boolean('status');
         $link = PostVariantLinkService::getLink($postVariant, $url);
 
-        if (!$link)
+        if (!$link) {
             throw new TrustedException('Link not found');
+        }
 
         PostVariantLinkService::ignoreLink($link, $status);
 
@@ -69,27 +69,24 @@ class ConsoleLinkAnalysisController
         return response()->json(new LinkObject($link));
     }
 
-    public function getStats(Blog $blog) : JsonResponse
+    public function getStats(Blog $blog): JsonResponse
     {
-
         $counts = LinkAnalyzeService::getCountsByStatus($blog);
 
         return response()->json([
             'counts' => $counts
         ]);
-
     }
 
-    public function getLinks(Request $request, Blog $blog) : JsonResponse
+    public function getLinks(Request $request, Blog $blog): JsonResponse
     {
-
         $request->validate([
             'type' => [new Enum(LinkStatusTypeEnum::class), 'nullable'],
             'limit' => 'integer',
             'offset' => 'integer',
         ]);
 
-        $type = LinkStatusTypeEnum::tryFrom((string) $request->string('type'));
+        $type = LinkStatusTypeEnum::tryFrom((string)$request->string('type'));
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
 
@@ -101,12 +98,10 @@ class ConsoleLinkAnalysisController
         )->mapInto(LinkObject::class);
 
         return response()->json($links);
-
     }
 
-    public function getChecks(Request $request, Blog $blog) : JsonResponse
+    public function getChecks(Request $request, Blog $blog): JsonResponse
     {
-
         $request->validate([
             'limit' => 'integer',
             'offset' => 'integer',
@@ -119,12 +114,10 @@ class ConsoleLinkAnalysisController
             ->mapInto(CheckObject::class);
 
         return response()->json($checks);
-
     }
 
-    public function startCheck(Blog $blog) : JsonResponse
+    public function startCheck(Blog $blog): JsonResponse
     {
-
         $lastCheck = LinkAnalyzerCheckService::getLastCheck($blog);
 
         if ($lastCheck && $lastCheck->status === JobStatusEnum::PENDING) {
@@ -139,7 +132,6 @@ class ConsoleLinkAnalysisController
         dispatch($job);
 
         return response()->json(new CheckObject($job->check));
-
     }
 
 }

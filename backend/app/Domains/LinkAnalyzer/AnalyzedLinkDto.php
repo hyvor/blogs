@@ -1,14 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
-class AnalyzedLink
+class AnalyzedLinkDto
 {
 
     public function __construct(
         public string $originalUrl,
         public string $url,
         public int $status,
-    ) {}
+    ) {
+    }
 
 }
