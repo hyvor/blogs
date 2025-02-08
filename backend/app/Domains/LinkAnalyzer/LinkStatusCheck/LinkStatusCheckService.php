@@ -17,7 +17,7 @@ class LinkStatusCheckService
     }
 
     /**
-     * @param string[] $urls
+     * @param string[] $urls Absolute HTTP/HTTPS URLs to check
      * @param Blog|null $blog set this to analyze some URLs as internal links
      * @return array<string, int> URLs as keys and HTTP status codes as values
      */
@@ -29,10 +29,11 @@ class LinkStatusCheckService
 
         [$internalUrls, $externalUrls] = $this->separateInternalAndExternalUrls($urls, $blog);
 
+        $internalStatus = [];
         if ($blog) {
             $this->internalStatusCheck->setBlog($blog);
+            $internalStatus = $this->internalStatusCheck->check($internalUrls);
         }
-        $internalStatus = $this->internalStatusCheck->check($internalUrls);
         $externalStatus = $this->externalStatusCheck->check($externalUrls);
 
         return array_merge($internalStatus, $externalStatus);

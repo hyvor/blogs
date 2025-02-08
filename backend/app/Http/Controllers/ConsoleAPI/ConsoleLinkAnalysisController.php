@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
@@ -8,6 +9,7 @@ use App\Data\Objects\ConsoleAPI\LinkAnalysis\CheckObject;
 use App\Data\Objects\ConsoleAPI\LinkAnalysis\LinkObject;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Check\LinkAnalyzerCheckService;
+use App\Domains\LinkAnalyzer\Check\PostsCheck;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
@@ -21,8 +23,12 @@ use Illuminate\Validation\Rules\Enum;
 class ConsoleLinkAnalysisController
 {
 
-    public function checkPostVariantLinks(Request $request, Blog $blog, PostVariant $postVariant): JsonResponse
-    {
+    public function checkPostVariantLinks(
+        Request $request,
+        Blog $blog,
+        PostVariant $postVariant,
+        PostVariantLinkService $postVariantLinkService
+    ): JsonResponse {
         $request->validate([
             'post_variant_id' => 'required|integer',
             'urls' => 'required|array',
@@ -34,11 +40,16 @@ class ConsoleLinkAnalysisController
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        $fromHttp = LinkAnalyzeService::analyzePostVariantLinks($blog, $postVariant, $urls);
-        $links = PostVariantLinkService::updateLinksFromResults($blog, $postVariant, $fromHttp);
-        $results = LinkAnalyzeService::getFrontendResultsFromLinks($links);
+        $links = collect();
+        $postsCheck = new PostsCheck(
+            $blog,
+            onLinksUpdate: function (PostVariant $variant, $addedLinks) use (&$links) {
+                $links = $links->merge($addedLinks);
+            },
+        );
+        $postsCheck->check([$postVariant->post]);
 
-        PostVariantLinkService::updatePostVariantCache($postVariant, $results, true);
+        $links = $postVariantLinkService->checkAndUpdateLinks($blog, $postVariant, $urls);
 
         return response()->json($links->mapInto(LinkObject::class));
     }

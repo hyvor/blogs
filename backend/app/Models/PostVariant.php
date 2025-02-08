@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?array $link_analysis
  *
  * @property Language $language
+ * @property Post $post
  */
 class PostVariant extends Model
 {

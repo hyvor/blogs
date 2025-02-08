@@ -3,8 +3,12 @@
 namespace Tests\Unit\Domains\LinkAnalyzer\LinkStatusCheck;
 
 use App\Domains\LinkAnalyzer\LinkStatusCheck\ExternalStatusCheck;
+use App\Domains\LinkAnalyzer\LinkStatusCheck\InternalStatusCheck;
 use App\Domains\LinkAnalyzer\LinkStatusCheck\LinkStatusCheckService;
 use App\Models\Blog;
+use Database\Factories\BlogFactory;
+use Database\Factories\PostFactory;
+use Database\Factories\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -13,6 +17,7 @@ use Tests\Case\DatabaseTestCase;
 
 #[CoversClass(LinkStatusCheckService::class)]
 #[CoversClass(ExternalStatusCheck::class)]
+#[CoversClass(InternalStatusCheck::class)]
 class LinkStatusCheckServiceTest extends DatabaseTestCase
 {
 
@@ -98,6 +103,35 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
         $this->assertSame(301, $result['https://supun.io/about-old']);
         $this->assertSame(500, $result['https://500.com']);
         $this->assertSame(500, $result['https://invalid-host.com']);
+    }
+
+    public function testGetsStatusOfInternalLinks(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes();
+        ThemeFileFactory::templateFor($blog, 'Hello!');
+        ThemeFileFactory::templateFor($blog, 'Page', 'post.twig');
+
+        PostFactory::oneFor($blog, variantAttr: [
+            'slug' => 'about',
+            'status' => 'published',
+        ]);
+
+        $blogUrl = "https://{$blog->subdomain}.hyvorblogs.io";
+
+        $urls = [
+            $blogUrl,
+            "$blogUrl/about",
+            "$blogUrl/otherpage",
+            "$blogUrl/assets/image.jpg",
+        ];
+
+        $service = $this->app->make(LinkStatusCheckService::class);
+        $result = $service->check($urls, $blog);
+
+        $this->assertSame(200, $result[$blogUrl]);
+        $this->assertSame(200, $result["$blogUrl/about"]);
+        $this->assertSame(404, $result["$blogUrl/otherpage"]);
+        $this->assertSame(404, $result["$blogUrl/assets/image.jpg"]);
     }
 
 }

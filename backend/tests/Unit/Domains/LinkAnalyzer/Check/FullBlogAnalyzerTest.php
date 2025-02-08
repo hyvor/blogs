@@ -4,15 +4,19 @@ namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
+use App\Domains\LinkAnalyzer\Check\PostsCheck;
 use App\Models\LinkAnalyzerLink;
 use Database\Factories\BlogFactory;
 use Database\Factories\PostFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Tests\Case\DatabaseTestCase;
 use Tests\Helper\Generator\PostContentGenerator;
 
+#[CoversClass(FullBlogAnalyzer::class)]
+#[CoversClass(PostsCheck::class)]
 class FullBlogAnalyzerTest extends DatabaseTestCase
 {
 

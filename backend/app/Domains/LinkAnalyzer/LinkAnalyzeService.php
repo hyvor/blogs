@@ -4,61 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
-// checks if the given links are broken or not
-use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
-use App\Models\PostVariant;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 
 class LinkAnalyzeService
 {
 
     const IGNORE_CODE = -2;
-
-    /**
-     * @param string[] $urls
-     * @return AnalyzedLinkDto[]
-     */
-    public static function analyzePostVariantLinks(
-        Blog $blog,
-        PostVariant $variant,
-        array $urls
-    ): array {
-        $post = $variant->post;
-        $language = $variant->language;
-
-        if (!$post) {
-            throw new SafetyException('Post or language not found');
-        }
-
-        $variantUrl = PermalinkRepository::getPostPermalink($post, $blog, $language);
-
-        $urlMap = [];
-        $fullUrls = [];
-
-        foreach ($urls as $url) {
-            $fullUrl = FullUrl::getFullUrl($url, $variantUrl);
-            if (!$fullUrl) {
-                continue;
-            }
-            $urlMap[$fullUrl] = $url;
-            $fullUrls[] = $fullUrl;
-        }
-
-        $results = self::analyze($fullUrls);
-
-        return array_map(fn(string $key, int $status) => new AnalyzedLinkDto(
-            $urlMap[$key],
-            $key,
-            $status,
-        ), array_keys($results), array_values($results));
-    }
 
     /**
      * Adds the ignore code to the results
@@ -67,7 +21,7 @@ class LinkAnalyzeService
      * @param Collection<int, LinkAnalyzerLink> $links
      * @return array<string, int>
      */
-    public static function getFrontendResultsFromLinks(Collection $links): array
+    public static function getIgnoreAwareStatusFromLinks(Collection $links): array
     {
         $results = [];
 
