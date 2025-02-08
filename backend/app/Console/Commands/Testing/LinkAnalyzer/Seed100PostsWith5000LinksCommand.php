@@ -62,7 +62,7 @@ class Seed100PostsWith5000LinksCommand extends Command
             ];
         }
 
-        return json_encode([
+        return (string)json_encode([
             'type' => 'doc',
             'content' => [
                 [

@@ -3,6 +3,7 @@
 namespace Tests\Feature\ConsoleAPI\LinkAnalysis;
 
 use App\Data\Enums\PostStatusEnum;
+use Database\Factories\ThemeFileFactory;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -66,6 +67,7 @@ it('checks with relative URL', function () {
     $blog = blogWithAccessLanguageAndRoutes([
         'subdomain' => 'my-subdomain'
     ]);
+    ThemeFileFactory::templateFor($blog, 'Hello!', 'post.twig');
     $post = addPost($blog, [], [
         'status' => PostStatusEnum::PUBLISHED,
         'slug' => 'post-slug'
@@ -73,11 +75,6 @@ it('checks with relative URL', function () {
     $postVariant = $post->variants()->first();
 
     $fullUrl = "https://my-subdomain.hyvorblogs.io/post-slug";
-
-    $this->app->bind(
-        HttpClientInterface::class,
-        fn() => new MockHttpClient(new MockResponse('', ['http_code' => 200]))
-    );
 
     consoleApi($blog, 'POST', '/link-analysis/check-urls', [
         'post_variant_id' => $postVariant->id,
