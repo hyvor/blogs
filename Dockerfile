@@ -50,7 +50,7 @@ WORKDIR /app/backend
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql
+RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd
 
 # install npm and dependencies
 COPY --from=node /usr/local/include/node /usr/local/include/node
@@ -67,7 +67,7 @@ RUN npm install
 FROM backend-base AS backend-dev
 
 # pcov for debugging
-RUN install-php-extensions pcov gd
+RUN install-php-extensions pcov
 COPY backend/composer.json backend/composer.lock /app/backend/
 RUN composer install --no-interaction \
     && touch ../.env # needed in CI
