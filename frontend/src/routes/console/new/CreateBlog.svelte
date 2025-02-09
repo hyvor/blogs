@@ -222,7 +222,13 @@
 			</div>
 
 			<div class="footer">
-				<Button size="large" on:click={handleCreate}>Create Blog</Button>
+				<Button
+					size="large"
+					on:click={handleCreate}
+					disabled={isCreating || name.trim() === '' || subdomain.trim() === ''}
+				>
+					Create Blog
+				</Button>
 			</div>
 		{/if}
 	</div>
