@@ -45,16 +45,25 @@
 		<div class="usage-name">
 			{name}
 		</div>
-		<div class="usage-number">
-			<span class="usage-now" style:color={color === 'var(--accent)' ? 'var(--text)' : color}
-				>{current}</span
-			>
-			<span class="usage-full">/ {limit}</span>
+		{#if data.limit > 0}
+			<div class="usage-number">
+				<span
+					class="usage-now"
+					style:color={color === 'var(--accent)' ? 'var(--text)' : color}
+					>{current.toLocaleString()}</span
+				>
+				<span class="usage-full">/ {limit.toLocaleString()}</span>
+			</div>
+		{/if}
+	</div>
+
+	{#if data.limit === 0}
+		<div class="feature-not-included">Your license does not include this feature.</div>
+	{:else}
+		<div class="usage-bar-bar">
+			<div class="usage-bar-fill" style:width style:background={color}></div>
 		</div>
-	</div>
-	<div class="usage-bar-bar">
-		<div class="usage-bar-fill" style:width style:background={color}></div>
-	</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -93,5 +102,11 @@
 		background: var(--accent);
 		border-radius: 20px;
 		transition: 0.3s width ease-out;
+	}
+
+	.feature-not-included {
+		color: var(--text-light);
+		font-size: 12px;
+		margin: 5px 0 15px;
 	}
 </style>

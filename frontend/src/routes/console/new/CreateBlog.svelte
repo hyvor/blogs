@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { goto } from '$app/navigation';
 	import {
 		Button,
@@ -11,7 +9,8 @@
 		SplitControl,
 		TextInput,
 		Validation,
-		toast
+		toast,
+		hyvorBar
 	} from '@hyvor/design/components';
 	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
@@ -124,6 +123,7 @@
 				window.dispatchEvent(event);
 
 				goto('/console/' + res.subdomain);
+				hyvorBar.reload();
 			})
 			.catch((e) => {
 				toast.error(e.message);
@@ -222,7 +222,13 @@
 			</div>
 
 			<div class="footer">
-				<Button size="large" on:click={handleCreate}>Create Blog</Button>
+				<Button
+					size="large"
+					on:click={handleCreate}
+					disabled={isCreating || name.trim() === '' || subdomain.trim() === ''}
+				>
+					Create Blog
+				</Button>
 			</div>
 		{/if}
 	</div>

@@ -19,7 +19,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
     {
     }
 
-    public function handle() : void
+    public function handle(): void
     {
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
@@ -37,6 +37,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
 
         $featured = Post::where('blog_id', $this->blog->id)
             ->where('is_featured', true)
+            ->where('is_page', false)
             ->count();
 
         $this->blog->setCounts([
@@ -47,7 +48,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
         ]);
     }
 
-    public function uniqueId() : int
+    public function uniqueId(): int
     {
         return $this->blog->id;
     }
