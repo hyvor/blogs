@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { createEventDispatcher, onMount } from 'svelte';
 	import './codemirror';
 	import { CODEMIRROR_MODES, importCodemirrorAll } from './codemirror';
@@ -13,6 +11,8 @@
 	}
 
 	let { value = $bindable(), ext, id = '', ...rest }: Props = $props();
+
+	let lastId = id;
 
 	let tabSize = $derived(ext === 'yaml' ? 2 : 4);
 
@@ -77,9 +77,10 @@
 	onMount(initCm);
 
 	// re-create codemirror instance when id changes
-	run(() => {
-		if (id) {
+	$effect(() => {
+		if (lastId !== id) {
 			initCm();
+			lastId = id;
 		}
 	});
 </script>

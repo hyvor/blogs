@@ -7,7 +7,7 @@
 	import AssetImage from './Preview/AssetImage.svelte';
 	import { IconMessage, Link } from '@hyvor/design/components';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
+	import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
 
 	import { blogStore } from '../../../../lib/stores/blogStore';
 
