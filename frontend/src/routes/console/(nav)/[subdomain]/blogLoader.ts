@@ -40,6 +40,18 @@ export function loadBlog(subdomain: string) {
 				usersStore.set(res.users);
 				licenseStore.set(res.license);
 
+				if (get(isTempStore)) {
+					licenseStore.set({
+						users: 2,
+						storage: 10 * 1024 * 1024,
+						aiTokens: 500,
+						autoTranslationsChars: 500,
+						talkCredits: 0,
+						postEmails: 0,
+						analyses: true,
+					})
+				}
+
 				resolve(res);
 			})
 			.catch((err) => {
