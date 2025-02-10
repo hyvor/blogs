@@ -6,6 +6,7 @@ use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
+use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
@@ -18,6 +19,7 @@ class CountSubscriber
     {
         $events->listen(PostCreatedEvent::class, [static::class, 'onPostCreateOrDelete']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostCreateOrDelete']);
+        $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdate']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class, 'onPostVariantUpdate']);
 
         $events->listen(UserCreatedEvent::class, [static::class, 'onUserEvent']);
@@ -31,6 +33,14 @@ class CountSubscriber
     {
         $blog = $event->post->blog;
         if ($blog) {
+            $this->dispatchPostCountJobs($blog);
+        }
+    }
+
+    public function onPostUpdate(PostUpdatedEvent $event): void
+    {
+        $blog = $event->post->blog;
+        if ($blog && ($event->post->is_featured !== $event->postOld->is_featured)) {
             $this->dispatchPostCountJobs($blog);
         }
     }

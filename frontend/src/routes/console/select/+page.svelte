@@ -148,12 +148,11 @@
 								{blog.name}
 								<BlogPlanTag {blog} />
 							</div>
-							<!-- <div class="url"> -->
-								<!-- TODO: Add this again (descendant error) -->
-								<!-- <a href={blog.url} target="_blank">
+							<div class="url">
+								<span>
 									{blog.url.replace(/https?:\/\//, '')}
-								</a> -->
-							<!-- </div> -->
+								</span>
+							</div>
 						</div>
 
 						<div class="right">
@@ -179,29 +178,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="user-account">
-		<div class="inner">
-			<div class="left">
-				<img src={$authUserStore.picture_url} alt="{$authUserStore.name}'s profile picture" />
-
-				<div class="name-username">
-					<div class="name">
-						{$authUserStore.name}
-					</div>
-					{#if $authUserStore.username}
-						<div class="username">
-							@{$authUserStore.username}
-						</div>
-					{/if}
-				</div>
-			</div>
-
-			<div>
-				<Button as="a" href="/api/auth/logout" variant="fill-light">Logout</Button>
-			</div>
-		</div>
-	</div>
 </div>
 
 <span class="drag-note" bind:this={dragNoteEl}>
@@ -209,7 +185,7 @@
 	<span class="note"> Drag to reorder </span>
 </span>
 
-<style lang="scss">
+<style>
 	.wrap {
 		display: flex;
 		justify-content: center;
@@ -217,40 +193,6 @@
 		flex-direction: column;
 		height: 100vh;
 		width: 100%;
-	}
-
-	.user-account {
-		padding: 15px;
-		border-top: 1px solid var(--border);
-		width: 100%;
-		.inner {
-			width: 600px;
-			max-width: 100%;
-			margin: auto;
-			display: flex;
-			align-items: center;
-		}
-	}
-	.user-account .left {
-		flex: 1;
-		display: flex;
-		align-items: center;
-	}
-
-	.user-account img {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-	}
-	.name-username {
-		display: flex;
-		justify-content: center;
-		margin-left: 10px;
-		flex-direction: column;
-	}
-	.username {
-		font-size: 0.8rem;
-		color: var(--text-light);
 	}
 
 	.selector {
@@ -359,11 +301,8 @@
 	.name {
 		font-weight: 600;
 	}
-	// .url {
-	// 	font-size: 0.9rem;
-	// 	color: var(--text-light);
-	// }
-	// .url a:hover {
-	// 	text-decoration: underline;
-	// }
+	.url {
+		font-size: 0.9rem;
+		color: var(--text-light);
+	}
 </style>

@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Migrations;
 
 use App\Models\Blog;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\Resource\Resource;
 use Illuminate\Console\Command;
 
@@ -30,7 +31,17 @@ class D_2025_02_03_RegisterResourcesOnCoreCommand extends Command
             $this->info('Registering blog: ' . $blog->id);
 
             // Register blog on core
-            $resource->register($blog->hyvor_user_id, $blog->id, $blog->created_at);
+            try {
+                $resource->register($blog->hyvor_user_id, $blog->id, $blog->created_at);
+            } catch (InternalApiCallFailedException $e) {
+                $message = $e->getMessage();
+
+                if (str_contains($message, 'User not found')) {
+                    $this->info('Skipping blog: ' . $blog->id . ' (user not found)');
+                } else {
+                    throw $e;
+                }
+            }
         }
     }
 

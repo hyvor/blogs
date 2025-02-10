@@ -13,6 +13,7 @@
 	import { postVariantStore } from '../../../postStore';
 	import dayjs from 'dayjs';
 	import { updatePost, updatePostVariant } from '../../../postActions';
+	import PublishedToast from './Toast/PublishedToast.svelte';
 
 	let modalOpen = $state(false);
 	let type: 'published' | 'scheduled' = $state('published');
@@ -33,11 +34,16 @@
 			return;
 		}
 
-		updatePostVariant({
-			status: type
-		})
-			.then(() => {
-				toast.success('Post published', { id: toastId });
+		updatePostVariant(
+			{
+				status: type
+			},
+			true,
+			['url']
+		)
+			.then((res) => {
+				console.log(res);
+				toast.success(PublishedToast, { id: toastId, duration: 5000 });
 			})
 			.catch(() => {
 				toast.error('Failed to publish post', { id: toastId });

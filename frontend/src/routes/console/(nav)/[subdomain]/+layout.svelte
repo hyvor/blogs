@@ -8,6 +8,7 @@
 	import { loadBlog } from './blogLoader';
 	import { page } from '$app/state';
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
+	import { isTempStore } from '../../lib/temp';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -28,11 +29,21 @@
 			});
 	});
 
-	let forcedShow = $derived(
-		!isLoading &&
-			(page.url.pathname === consoleUrlWithBlog('billing') ||
-				page.url.pathname.startsWith(consoleUrlWithBlog('settings')))
-	);
+	let forcedShow = $derived.by(() => {
+		if ($isTempStore) {
+			return true;
+		}
+
+		if (page.url.pathname === consoleUrlWithBlog('billing')) {
+			return true;
+		}
+
+		if (page.url.pathname.startsWith(consoleUrlWithBlog('settings'))) {
+			return true;
+		}
+
+		return false;
+	});
 </script>
 
 <svelte:head>

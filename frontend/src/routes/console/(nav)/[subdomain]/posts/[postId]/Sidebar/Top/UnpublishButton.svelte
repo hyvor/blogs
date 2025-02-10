@@ -24,26 +24,24 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
-	{#snippet trigger()}
-		<Button size="small" color="input" on:click={() => (modalOpen = true)}>
-			{#snippet start()}
-				<IconEyeSlash size={12} />
-			{/snippet}
-			{#if $postVariantStore.status === 'scheduled'}
-				Unschedule
-			{:else}
-				Unpublish
-			{/if}
-		</Button>
-	{/snippet}
+	<Button size="small" color="input" on:click={() => (modalOpen = true)}>
+		{#snippet start()}
+			<IconEyeSlash size={12} />
+		{/snippet}
+		{#if $postVariantStore.status === 'scheduled'}
+			Unschedule
+		{:else}
+			Unpublish
+		{/if}
+	</Button>
 
 	<Modal
 		title={$postVariantStore.status === 'scheduled' ? 'Unschedule Post' : 'Unpublish Post'}
 		bind:show={modalOpen}
 		size="small"
 	>
-		Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this post?
-		It's status will be changed to draft.
+		Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this
+		post? It's status will be changed to draft.
 
 		{#snippet footer()}
 			<div>

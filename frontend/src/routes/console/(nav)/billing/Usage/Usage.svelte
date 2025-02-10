@@ -22,7 +22,7 @@
 </script>
 
 {#if loading}
-	<Loader padding={150} />
+	<Loader padding={100} block />
 {:else}
 	<div class="usage">
 		<UsageBar name="Users" data={usage.users} />

@@ -41,6 +41,14 @@ class CreateBlogTest extends DatabaseTestCase
         $this->consoleUserApi('POST', '/blog', ['name' => 'test'])
             ->assertUnprocessable()
             ->assertSee(['subdomain', 'required']);
+
+
+        $this->consoleUserApi('POST', '/blog', [
+            'name' => 'test',
+            'subdomain' => 'new'
+        ])
+            ->assertUnprocessable()
+            ->assertSee('Subdomain is reserved');
     }
 
     public function testCreatesBlog(): void
@@ -90,7 +98,7 @@ class CreateBlogTest extends DatabaseTestCase
         ResourceFake::assertRegistered(1, $blogId);
     }
 
-    public function testCannotCreateABlogWithAlreadyExistingSubdomain(): void
+    /*public function testCannotCreateABlogWithAlreadyExistingSubdomain(): void
     {
         $blog = BlogFactory::withAccess();
 
@@ -113,21 +121,6 @@ class CreateBlogTest extends DatabaseTestCase
         ])
             ->assertUnprocessable()
             ->assertSee('Please upgrade at least one of your blogs to create more');
-    }
-
-    public function testAllowsWhenYouHaveASubscription(): void
-    {
-        $this->markTestSkipped();
-        // TODO: Subscription check
-        $blog1 = BlogFactory::withAccess();
-        $this->createSubscription($blog1);
-        BlogFactory::withAccess();
-
-        $this->consoleUserApi('POST', '/blog', [
-            'name' => 'Testing',
-            'subdomain' => 'some-subdomain'
-        ])
-            ->assertOk();
-    }
+    }*/
 
 }

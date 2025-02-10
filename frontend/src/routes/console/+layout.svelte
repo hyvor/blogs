@@ -8,7 +8,7 @@
 	import { page } from '$app/stores';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
-	import {loadBlog} from "./(nav)/[subdomain]/blogLoader";
+	import { loadBlog } from './(nav)/[subdomain]/blogLoader';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -48,7 +48,9 @@
 					const subdomain = res.blogs[0].subdomain;
 					setTempSubdomain(subdomain);
 					if (!tempSubdomain) {
-						const event = new CustomEvent('console:temp_blog:created', { detail: { subdomain } });
+						const event = new CustomEvent('console:temp_blog:created', {
+							detail: { subdomain }
+						});
 						window.dispatchEvent(event);
 					}
 				}
@@ -58,7 +60,8 @@
 			.catch((err) => {
 				if (err.code === 401) {
 					const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
-					location.href = `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+					location.href =
+						`/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
 				} else {
 					toast.error(err.message);
 				}
@@ -83,14 +86,17 @@
 			</Loader>
 		</div>
 	{:else}
-		<HyvorBar
-			instance={getConfig().hyvor.instance}
-			product="blogs"
-			config={{
-				twitter: 'https://twitter.com/HyvorBlogs',
-				g2: 'https://www.g2.com/products/hyvor-blogs/reviews'
-			}}
-		/>
+		{#if !$isTempStore}
+			<HyvorBar
+				instance={getConfig().hyvor.instance}
+				product="blogs"
+				config={{
+					twitter: 'https://twitter.com/HyvorBlogs',
+					g2: 'https://www.g2.com/products/hyvor-blogs/reviews'
+				}}
+			/>
+		{/if}
+
 		{@render children?.()}
 	{/if}
 </main>
