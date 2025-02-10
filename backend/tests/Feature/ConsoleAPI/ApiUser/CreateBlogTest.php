@@ -41,6 +41,14 @@ class CreateBlogTest extends DatabaseTestCase
         $this->consoleUserApi('POST', '/blog', ['name' => 'test'])
             ->assertUnprocessable()
             ->assertSee(['subdomain', 'required']);
+
+
+        $this->consoleUserApi('POST', '/blog', [
+            'name' => 'test',
+            'subdomain' => 'new'
+        ])
+            ->assertUnprocessable()
+            ->assertSee('Subdomain is reserved');
     }
 
     public function testCreatesBlog(): void
