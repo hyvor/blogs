@@ -58,7 +58,7 @@ class ConsoleLinkAnalysisController
     {
         $request->validate([
             'post_variant_id' => 'required|integer',
-            'url' => 'required|url',
+            'url' => 'required|string',
             'status' => 'required|boolean'
         ]);
 

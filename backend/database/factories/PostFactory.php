@@ -83,4 +83,13 @@ class PostFactory extends Factory
         return $post;
     }
 
+    /**
+     * @param array<mixed> $attr
+     * @param array<mixed>|null $variantAttr
+     */
+    public static function publishedFor(Blog $blog, array $attr = [], ?array $variantAttr = []): Post
+    {
+        return self::oneFor($blog, $attr, $variantAttr + ['status' => 'published']);
+    }
+
 }
