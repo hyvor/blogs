@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Dropdown } from '@hyvor/design/components';
+	import { Button, Dropdown } from '@hyvor/design/components';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { blogStore } from '../../../../../../lib/stores/blogStore';
 	import { postLanguageStore, postStore, postVariantStore } from '../../../postStore';

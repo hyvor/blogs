@@ -45,6 +45,18 @@ class BlogService
     ) {
     }
 
+    public static function isSubdomainReserved(string $subdomain): bool
+    {
+        $reserved = [
+            // these clashes with console frontend routes
+            'new',
+            'billing',
+            'select',
+        ];
+
+        return in_array($subdomain, $reserved);
+    }
+
     public function createBlog(
         ?int $userId,
         string $name,
@@ -242,28 +254,11 @@ class BlogService
 
             $blog->delete();
 
-            
+
             $this->resource->delete($blog->id);
 
             BlogDeletedEvent::dispatch($blog);
         });
     }
 
-    public static function canUserCreateBlog(int $hyvorUserId): bool
-    {
-        /**
-         * User should have had at least one subscription
-         * on any of his blogs
-         */
-        $hasSubscription = Subscription::join('blogs', 'blogs.id', '=', 'subscriptions.blog_id')
-            ->where('hyvor_user_id', $hyvorUserId)
-            ->exists();
-
-        if ($hasSubscription) {
-            return true;
-        }
-
-        $blogsCount = Blog::where('hyvor_user_id', $hyvorUserId)->count();
-        return $blogsCount < 2;
-    }
 }

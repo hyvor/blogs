@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class ConsoleUserBlogController extends Controller
 {
-    public function createBlog(Request $request, AccessAuthUser $hyvorUser) : JsonResponse
+    public function createBlog(Request $request, AccessAuthUser $hyvorUser): JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -30,12 +30,16 @@ class ConsoleUserBlogController extends Controller
         $ip = $request->ip();
 
         if ($isDev) {
-            $subdomain = 'dev-'.((string) Str::uuid());
+            $subdomain = 'dev-' . ((string)Str::uuid());
         }
 
-        if (!BlogService::canUserCreateBlog($hyvorUser->id)) {
-            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
+        if (BlogService::isSubdomainReserved($subdomain)) {
+            throw new TrustedException('Subdomain is reserved');
         }
+
+//        if (!BlogService::canUserCreateBlog($hyvorUser->id)) {
+//            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
+//        }
 
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
@@ -55,7 +59,7 @@ class ConsoleUserBlogController extends Controller
     }
 
 
-    public function checkSubdomain(Request $request) : JsonResponse
+    public function checkSubdomain(Request $request): JsonResponse
     {
         $request->validate([
             'subdomain' => 'required|string',
@@ -63,10 +67,21 @@ class ConsoleUserBlogController extends Controller
 
         $subdomain = $request->input('subdomain');
 
+        $available = true;
+        $isReserved = BlogService::isSubdomainReserved($subdomain);
+
+        if ($isReserved) {
+            $available = false;
+        }
+
         $blog = BlogService::getBlogBySubdomain($subdomain);
 
+        if ($blog) {
+            $available = false;
+        }
+
         return response()->json([
-            'available' => $blog === null,
+            'available' => $available,
         ]);
     }
 }
