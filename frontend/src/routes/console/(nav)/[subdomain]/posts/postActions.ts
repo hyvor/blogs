@@ -115,7 +115,11 @@ export function updatePostTags(tags: Tag[], updateStore = true) {
 
 
 // updates current post variant
-export function updatePostVariant(data: Partial<PostVariant>, updateStore = true) {
+export function updatePostVariant(
+    data: Partial<PostVariant>, 
+    updateStore = true,
+    additionalKeysToUpdate: (keyof PostVariant)[] = []
+) {
 
     const postId = get(postStore).id;
     const languageId = get(postLanguageStore).id;
@@ -134,6 +138,9 @@ export function updatePostVariant(data: Partial<PostVariant>, updateStore = true
             Object.keys(data).forEach(key => 
                 (update as any)[key] = (res as any)[key]
             );
+            additionalKeysToUpdate.forEach(key => {
+                (update as any)[key] = (res as any)[key]
+            });
             updatePostVariantStore(update, true);
         }
 
