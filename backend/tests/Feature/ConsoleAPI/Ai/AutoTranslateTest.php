@@ -1,16 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\ConsoleAPI\Ai;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Models\AutoTranslation;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Http;
 use Tests\Helper\Generator\PostContentGenerator;
 
-it('translates', function() {
-
+it('translates', function () {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
@@ -23,7 +25,7 @@ it('translates', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -48,8 +50,7 @@ it('translates', function() {
 
 });
 
-it('translates with code block', function() {
-
+it('translates with code block', function () {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
@@ -62,7 +63,7 @@ it('translates with code block', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -88,19 +89,20 @@ it('translates with code block', function() {
     ])
         ->assertOk()
         ->assertJsonPath('title', '')
-        ->assertJsonPath('content', json_encode([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Bonjour']]],
-                $codeBlock
-            ]
-        ]));
-
+        ->assertJsonPath(
+            'content',
+            json_encode([
+                'type' => 'doc',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Bonjour']]],
+                    $codeBlock
+                ]
+            ])
+        );
 });
 
 // #190
-it('translates with code block with HTML', function() {
-
+it('translates with code block with HTML', function () {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
@@ -113,7 +115,7 @@ it('translates with code block with HTML', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     $codeBlock = [
         'type' => 'code_block',
@@ -138,23 +140,24 @@ it('translates with code block with HTML', function() {
     ])
         ->assertOk()
         ->assertJsonPath('title', '')
-        ->assertJsonPath('content', json_encode([
-            'type' => 'doc',
-            'content' => [
-                $codeBlock
-            ]
-        ]));
-
+        ->assertJsonPath(
+            'content',
+            json_encode([
+                'type' => 'doc',
+                'content' => [
+                    $codeBlock
+                ]
+            ])
+        );
 });
 
-it('throws API error', function() {
-
+it('throws API error', function () {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([], 500),
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -164,19 +167,18 @@ it('throws API error', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('DeepL API error: status code 500');
-
 });
 
-it('throws an error when limits reached', function() {
-
+it('throws an error when limits reached', function () {
     $blog = blogWithAccess();
-    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+
+    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
 
     AutoTranslation::create([
         'blog_id' => $blog->id,
         'source_lang' => DeepLSourceLangEnum::EN,
         'target_lang' => DeepLTargetLangEnum::FR,
-        'chars' => 100000000,
+        'chars' => 1001,
     ]);
 
     consoleApi($blog, 'post', '/ai/translate', [
@@ -186,6 +188,7 @@ it('throws an error when limits reached', function() {
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()
-        ->assertSee('This blog has reached the limit of auto-translations for this month');
-
+        ->assertSee(
+            'You have reached the limit of auto-translations for this month. Please upgrade your subscription plan.'
+        );
 });

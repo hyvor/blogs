@@ -5,7 +5,9 @@
     import customCodePost from './custom-code-post.png'
     import customCodeTag from './custom-code-tag.png'
 
-	import { IconBrush, IconPencil } from "@hyvor/icons";
+	import IconBrush from '@hyvor/icons/IconBrush';
+import IconPencil from '@hyvor/icons/IconPencil';
+
 	import { Callout, Divider, Tag } from "@hyvor/design/components";
 </script>
 
@@ -81,6 +83,8 @@
 <Divider margin={30} color="var(--border)" />
 
 <Callout type="info">
-    <IconBrush slot="icon" />
+    {#snippet icon()}
+        <IconBrush  />
+    {/snippet}
     You can also <a href="/docs/theme#editing">edit your theme</a> to add custom code to your blog.
 </Callout>

@@ -12,11 +12,15 @@ class MatchedRoute
     public ?Route $route;
 
     // params key=>value
+    /**
+     * @var array<string, mixed>
+     */
     public array $params = [];
 
     /**
      * $props from Symfony\Component\Routing\Matcher\UrlMatcher::match
      * $route is null for special routes
+     * @param array<string, mixed> $props
      */
     public function __construct($props, ?Route $route)
     {
@@ -31,7 +35,7 @@ class MatchedRoute
         }
     }
 
-    public function param($key)
+    public function param(string $key): ?string
     {
         return $this->params[$key] ?? null;
     }

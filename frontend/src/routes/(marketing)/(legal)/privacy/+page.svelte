@@ -1,7 +1,7 @@
 <script>
 	import { Callout } from '@hyvor/design/components';
 	import { Document } from '@hyvor/design/marketing';
-	import { IconCardChecklist } from '@hyvor/icons';
+	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
 </script>
 
 <svelte:head>
@@ -21,7 +21,7 @@
 	<Callout type="info">
 		<div slot="title">Non-binding Summary</div>
 		<span slot="icon" style="display:inline-flex;align-items:center;margin-top:8px;">
-			<IconCardChecklist slot="icon" size={30} />
+			<IconCardChecklist size={30} />
 		</span>
 		<ul>
 			<li>You own the content you publish.</li>

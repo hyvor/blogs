@@ -5,7 +5,6 @@ namespace App\Domains\Delivery\TemplateRenderer;
 // shared between TemplateRenderer and DirectTemplateRenderer
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\LanguageObject;
-use App\Data\Objects\DeliveryAPI\RouteObject;
 use App\Domains\App\DomainService;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
@@ -17,9 +16,12 @@ use Twig\Error\Error;
 trait TemplateRendererTrait
 {
 
+    /**
+     * @var array<string, mixed>|null
+     */
     private ?array $config = null;
 
-    private function setConfig(Blog $blog)
+    private function setConfig(Blog $blog): void
     {
         $configFile = ThemeFilesRepository::getFile($blog, 'config.yaml');
 
@@ -29,13 +31,16 @@ trait TemplateRendererTrait
         }
 
         try {
-            $this->config = Yaml::parse($configFile->content) ?? [];
+            $this->config = Yaml::parse($configFile->content ?? '') ?? [];
         } catch (ParseException) {
             throw new Error('Unable to parse config.yaml');
         }
     }
 
-    public function getDefaultVariables(Blog $blog, Language $language)
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDefaultVariables(Blog $blog, Language $language): array
     {
 
         if ($this->config === null) {
@@ -60,14 +65,14 @@ trait TemplateRendererTrait
 
     }
 
-    private function getHeadCode()
+    private function getHeadCode(): string
     {
-        return file_get_contents(resource_path('twig/_head.twig'));
+        return (string) file_get_contents(resource_path('twig/_head.twig'));
     }
 
-    private function getFootCode()
+    private function getFootCode(): string
     {
-        return file_get_contents(resource_path('twig/_foot.twig'));
+        return (string) file_get_contents(resource_path('twig/_foot.twig'));
     }
 
 }

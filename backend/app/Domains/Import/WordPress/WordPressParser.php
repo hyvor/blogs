@@ -7,6 +7,7 @@ use App\Domains\Import\Importer\ImportingPost;
 use App\Domains\Import\Importer\ImportingPostVariant;
 use App\Domains\Import\Importer\ParserAbstract;
 use App\Domains\Import\Importer\ParserException;
+use App\Domains\Import\XmlHelper;
 use App\Domains\Post\Content\HtmlParser;
 use App\Domains\Post\Content\UrlUpdater;
 use App\Domains\Route\PermalinkRepository;
@@ -39,6 +40,15 @@ class WordPressParser extends ParserAbstract
 
     private string $blogUrl;
 
+    /**
+     * Caches the slugs of imported posts
+     * Used to ignore duplicates
+     * @var string[]
+     */
+    private array $parsedPostSlugs = [];
+
+    public int $duplicateCount = 0;
+
     public function __construct(
         private Blog $blog,
 
@@ -61,7 +71,7 @@ class WordPressParser extends ParserAbstract
             throw new ParserException('Could not read export file');
         }
 
-        $this->xml = $xml;
+        $this->xml = XmlHelper::validUtf8($xml);
         $this->uploadsPath = $path . '/uploads';
 
         $this->blogUrl = PermalinkRepository::getBaseUrl($this->blog);
@@ -72,7 +82,7 @@ class WordPressParser extends ParserAbstract
 
         $fileReader = new XMLReader();
 
-        if (!$fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING)) {
+        if (!$fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_PARSEHUGE)) {
             throw new ParserException('Invalid XML file');
         }
 
@@ -99,7 +109,7 @@ class WordPressParser extends ParserAbstract
         }
 
         // parse posts
-        $fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_PARSEHUGE);
 
         while ($fileReader->read()) {
             if (
@@ -144,10 +154,22 @@ class WordPressParser extends ParserAbstract
         }
 
         $isPage = $type === 'page';
+
+        $status = (string) $this->element($post, 'wp:status');
+        if ($status !== 'publish') return;
+
         $title = (string) $this->element($post, 'title');
         $pubDate = new Carbon((string) $this->element($post, 'pubDate'));
         $description = (string) $this->element($post, 'description');
-        $slug = (string) $this->element($post, 'wp:post_name');
+        $slug = trim((string) $this->element($post, 'wp:post_name'));
+        if (!$slug) return;
+
+        if (in_array($slug, $this->parsedPostSlugs)) {
+            $this->duplicateCount++;
+            return;
+        }
+
+        $this->parsedPostSlugs[] = $slug;
 
         $contentHtml = (string) $this->element($post, 'content:encoded');
         $content = $this->getContent($contentHtml);

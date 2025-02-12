@@ -39,6 +39,10 @@
         {% for tag in _post.tags %}
             <meta property="article:section" content="{{ tag.name }}" />
         {% endfor %}
+
+        {% if _blog.seo_rich_schema %}
+            {{ rich_schema() }}
+        {% endif %}
     {% endif %}
 
     {# Twitter Tags ========== #}

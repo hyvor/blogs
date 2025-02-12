@@ -13,8 +13,8 @@ it('creates a post variant', function () {
     addDefaultRoutes($blog);
 
     $post = addPost($blog);
-    $language = addPrimaryLanguage($blog);
-    $language2 = addLanguage($blog);
+    $language = addPrimaryLanguage($blog, attr: ['code' => 'en']);
+    $language2 = addLanguage($blog, attr: ['code' => 'es']);
 
     $this->assertEquals(0, $post->variants()->count());
 
@@ -32,6 +32,16 @@ it('creates a post variant', function () {
         ->assertJson(fn (AssertableJson $json) => $json->has('status')->etc());
 
     $this->assertEquals(2, $post->variants()->count());
+
+    $variants = $post->variants;
+
+    $firstVariant = $variants->first();
+    expect($firstVariant->language_id)->toBe($language->id);
+    expect($firstVariant->ts_language)->toBe('english');
+
+    $secondVariant = $variants->last();
+    expect($secondVariant->language_id)->toBe($language2->id);
+    expect($secondVariant->ts_language)->toBe('spanish');
 
     Event::assertDispatched(PostVariantCreatedEvent::class);
 });

@@ -11,6 +11,7 @@
   <coverage/>
   <php>
     <server name="HYVOR_INSTANCE" value="https://hyvor.com" />
+    <server name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.cluster" />
     <server name="APP_ENV" value="testing"/>
     <server name="APP_DEBUG" value="false"/>
     <server name="APP_URL" value="https://blogs.hyvor.com"/>
@@ -20,14 +21,13 @@
     <server name="DELIVERY_URL" value="https://hyvorblogs.io"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="database"/>
-    <server name="DB_CONNECTION" value="mysql"/>
     <server name="DB_DATABASE" value="hyvor_blogs_testing"/>
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
-    <server name="SCOUT_DRIVER" value="meilisearch"/>
     <server name="FILESYSTEM_DRIVER" value="local"/>
+    <server name="AUTH_PROVIDER" value="fake"/>
     <server name="HYVOR_DUMMY" value="true"/>
     <server name="PADDLE_SANDBOX" value="false"/>
     <server name="HYVOR_TALK_URL" value="https://talk.hyvor.com"/>

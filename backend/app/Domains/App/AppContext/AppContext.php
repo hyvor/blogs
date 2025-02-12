@@ -8,7 +8,7 @@ class AppContext
 {
 
     /**
-     * @var AppContextType[]
+     * @var string[]
      */
     static array $contexts = [];
 

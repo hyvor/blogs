@@ -4,12 +4,16 @@ namespace App\Models;
 
 use App\Data\Enums\ExportFormatEnum;
 use App\Data\Enums\JobStatusEnum;
+use Database\Factories\ExportFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Export extends Model
 {
 
+    /**
+     * @use HasFactory<ExportFactory>
+     */
     use HasFactory;
 
     /**

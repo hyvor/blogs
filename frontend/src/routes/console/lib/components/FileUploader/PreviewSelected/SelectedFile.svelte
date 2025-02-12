@@ -4,25 +4,31 @@
 	import Meta from './Meta.svelte';
 	import type { SelectedFile } from '../image-uploader';
 	import { Button, Loader, Switch, toast, TextInput, Validation } from '@hyvor/design/components';
-	import { IconCheckAll, IconCloudUpload } from '@hyvor/icons';
+	import IconCheckAll from '@hyvor/icons/IconCheckAll';
+import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-	import { uploadMedia } from '../../../../[subdomain]/tools/media/mediaActions';
-	import { toKebabCase } from '../../../../[subdomain]/tools/media/mediaUtils';
+	import { uploadMedia } from '../../../../(nav)/[subdomain]/tools/media/mediaActions';
+	import { toKebabCase } from '../../../../(nav)/[subdomain]/tools/media/mediaUtils';
 
-	export let file: SelectedFile;
+	interface Props {
+		file: SelectedFile;
+	}
+
+	let { file }: Props = $props();
 
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
-	let imageSize = file.url instanceof File ? file.url.size : null;
-	let imageName = toKebabCase(
+	let imageSize = $state(file.url instanceof File ? file.url.size : null);
+	let imageName = $state(toKebabCase(
 		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null
-	);
-	let nameError = '';
+	));
+	let nameError = $state('');
 
-	let imgEl: HTMLImageElement;
+	let imgEl: HTMLImageElement | undefined = $state();
 
-	let width = 0;
-	let height = 0;
+	let width = $state(0);
+	let height = $state(0);
 
 	function getShouldUpload() {
 		if (file.from === 'excalidraw' || file.from == 'upload') return true;
@@ -53,11 +59,12 @@
 		return null;
 	}
 
-	let shouldUpload = getShouldUpload();
+	let shouldUpload = $state(getShouldUpload());
 	const canChangeUpload = getCanChangeUpload();
 	const hosting = getHosting();
 
 	function handleImageLoad() {
+		if (!imgEl) return;
 		width = imgEl.naturalWidth;
 		height = imgEl.naturalHeight;
 	}
@@ -79,7 +86,7 @@
 		dispatch('select', img);
 	}
 
-	let isUploading = false;
+	let isUploading = $state(false);
 
 	function handleUpload() {
 		if (shouldUpload && file.url instanceof Blob) {
@@ -137,9 +144,11 @@
 	{:else}
 		<div class="img-wrap">
 			{#if file.type === 'audio'}
-				<audio src={fileUrl} controls />
+				<audio src={fileUrl} controls></audio>
+			{:else if file.type === 'image'}
+				<img src={fileUrl} alt="Editing" bind:this={imgEl} onload={handleImageLoad} />
 			{:else}
-				<img src={fileUrl} alt="Editing" bind:this={imgEl} on:load={handleImageLoad} />
+				No preview available
 			{/if}
 		</div>
 
@@ -169,6 +178,7 @@
 						on:input={handleNameChange}
 						placeholder="Image Name"
 						state={nameError ? 'error' : 'default'}
+						disabled={!shouldUpload}
 					/>
 				</div>
 				{#if hosting}
@@ -177,22 +187,26 @@
 					</Meta>
 				{/if}
 			</div>
-			<div class="upload-switch">
-				Upload to Media Library
-				<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
-			</div>
+			{#if file.from !== 'media'}
+				<div class="upload-switch">
+					Upload to Media Library
+					<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
+				</div>
+			{/if}
 		</div>
 
 		<div class="footer">
 			<Button on:click={handleUpload}>
 				{shouldUpload ? 'Upload' : 'Select'}
-				<svelte:fragment slot="end">
-					{#if shouldUpload}
-						<IconCloudUpload />
-					{:else}
-						<IconCheckAll />
-					{/if}
-				</svelte:fragment>
+				{#snippet end()}
+							
+						{#if shouldUpload}
+							<IconCloudUpload />
+						{:else}
+							<IconCheckAll />
+						{/if}
+					
+							{/snippet}
 			</Button>
 		</div>
 	{/if}

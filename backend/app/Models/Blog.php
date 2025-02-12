@@ -1,25 +1,45 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
-use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Concerns\Countable;
 use Carbon\Carbon;
+use Database\Factories\BlogFactory;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
+/**
+ * @property int $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property string $ip
+ * @property bool $is_blocked
+ * @property ?Carbon $blocked_at
+ * @property ?int $hyvor_user_id
+ * @property ?int $theme_version_id
+ * @property string $subdomain
+ * @property BlogTypeEnum $type
+ * @property BlogHostingAtEnum $hosting_at
+ * @property ?string $hosting_domain
+ * @property ?string $hosting_url
+ * @property bool $hosting_redirect_subdomain
+ * @property mixed $counts
+ */
 class Blog extends Model
 {
+
+    /**
+     * @use HasFactory<BlogFactory>
+     */
     use HasFactory;
     use Countable;
     use Metable;
@@ -28,15 +48,13 @@ class Blog extends Model
     protected $casts = [
         'is_blocked' => 'bool',
         'type' => BlogTypeEnum::class,
-        'billing_type' => BlogBillingTypeEnum::class,
-        'integration' => BlogIntegrationEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
         'hosting_redirect_subdomain' => 'bool',
-        'trial_ends_at' => 'datetime'
+        'counts' => 'array',
     ];
 
     // meta
-    protected function metaDefinition(Definer $definer) : void
+    protected function metaDefinition(Definer $definer): void
     {
         $definer->add('embeddable')->default(false);
         $definer->add('embedding_domains')->default(null);
@@ -65,6 +83,7 @@ class Blog extends Model
         TEXT
         );
         $definer->add('seo_external_links_follow')->default('follow');
+        $definer->add('seo_rich_schema')->default(true);
 
 
         $definer->add('comments_code')->default(null);
@@ -83,8 +102,6 @@ class Blog extends Model
 
         $definer->add('link_analysis_enabled')->default(true);
         $definer->add('link_analysis_email_report')->default('broken');
-
-        $definer->add('hb_branding')->default(null);
     }
 
     /**
@@ -107,7 +124,7 @@ class Blog extends Model
     ];
 
     /**
-     * @return HasMany<BlogVariant>
+     * @return HasMany<BlogVariant, $this>
      */
     public function variants()
     {
@@ -115,7 +132,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Post>
+     * @return HasMany<Post, $this>
      */
     public function posts()
     {
@@ -123,7 +140,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<User>
+     * @return HasMany<User, $this>
      */
     public function users()
     {
@@ -131,7 +148,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Tag>
+     * @return HasMany<Tag, $this>
      */
     public function tags()
     {
@@ -139,7 +156,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Route>
+     * @return HasMany<Route, $this>
      */
     public function routes()
     {
@@ -147,7 +164,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Language>
+     * @return HasMany<Language, $this>
      */
     public function languages()
     {
@@ -155,7 +172,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Redirect>
+     * @return HasMany<Redirect, $this>
      */
     public function redirects()
     {
@@ -163,7 +180,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Navigation>
+     * @return HasMany<Navigation, $this>
      */
     public function navigations()
     {
@@ -171,7 +188,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Webhook>
+     * @return HasMany<Webhook, $this>
      */
     public function webhooks()
     {
@@ -179,7 +196,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<ThemeFile>
+     * @return HasMany<ThemeFile, $this>
      */
     public function themeFiles()
     {
@@ -187,7 +204,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Media>
+     * @return HasMany<Media, $this>
      */
     public function medias()
     {
@@ -195,7 +212,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Subscription>
+     * @return HasMany<Subscription, $this>
      */
     public function subscriptions()
     {
@@ -203,31 +220,26 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<Export>
+     * @return HasMany<Export, $this>
      */
     public function exports()
     {
         return $this->hasMany(Export::class);
     }
 
-    public function url() : string
+    public function url(): string
     {
         return PermalinkRepository::getBaseUrl($this);
     }
 
-    public function urlWithoutProtocol() : string
+    public function urlWithoutProtocol(): string
     {
         $url = $this->url();
         return strval(preg_replace('/^https?:\/\//', '', $url));
     }
 
-    public function isInTrial() : bool
-    {
-        return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
-    }
-
     /**
-     * @return HasOne<HyvorTalkWebsite>
+     * @return HasOne<HyvorTalkWebsite, $this>
      */
     public function hyvorTalkWebsite()
     {
@@ -235,7 +247,7 @@ class Blog extends Model
     }
 
     /**
-     * @return HasMany<HyvorTalkGatedContentRule>
+     * @return HasMany<HyvorTalkGatedContentRule, $this>
      */
     public function hyvorTalkGatedContentRules()
     {

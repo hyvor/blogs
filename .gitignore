@@ -1,8 +1,9 @@
 .idea
 .vscode
-.env
+!.vscode/settings.json
 .env
 .DS_Store
 testing/*
 data.ms/
-tmp/
+/backend/packages/internal
+tmp

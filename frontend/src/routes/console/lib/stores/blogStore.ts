@@ -1,8 +1,10 @@
 import { writable } from "svelte/store";
-import type { Blog, BlogCounts, BlogVariant } from "../types";
+import type { Blog, BlogCounts, BlogVariant, License } from "../types";
 
 export const blogStore = writable<Blog>();
 export const blogOriginalStore = writable<Blog>();
+
+export const licenseStore = writable<License | null>();
 
 export const blogCountsStore = writable<BlogCounts>();
 

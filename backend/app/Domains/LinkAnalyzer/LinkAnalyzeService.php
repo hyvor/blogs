@@ -151,10 +151,10 @@ class LinkAnalyzeService
 
         $counts = LinkAnalyzerLink::where('blog_id', $blog->id)
             ->selectRaw('
-                SUM(IF(`ignore` = 0 AND status_code >= 200 AND status_code < 300, 1, 0)) AS ok,
-                SUM(IF(`ignore` = 0 AND status_code >= 300 AND status_code < 400, 1, 0)) AS redirect,
-                SUM(IF(`ignore` = 0 AND (status_code >= 400 OR status_code < 200), 1, 0)) AS broken,
-                SUM(IF(`ignore` = 1, 1, 0)) AS ignored
+                SUM(CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END) AS ok,
+                SUM(CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END) AS redirect,
+                SUM(CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END) AS broken,
+                SUM(CASE WHEN ignore = true THEN 1 ELSE 0 END) AS ignored
             ')
             ->first();
 
@@ -180,7 +180,7 @@ class LinkAnalyzeService
      */
     public static function getLinksOfBlog(
         Blog $blog,
-        ?LinkStatusTypeEnum $type = null,
+        ?LinkStatusTypeEnum $type,
         int $limit,
         int $offset
     ) : Collection
@@ -190,10 +190,10 @@ class LinkAnalyzeService
             ->with('postVariant')
             ->selectRaw('
                 *,
-                IF(`ignore` = 0 AND status_code >= 200 AND status_code < 300, 1, 0) AS ok,
-                IF(`ignore` = 0 AND status_code >= 300 AND status_code < 400, 1, 0) AS redirect,
-                IF(`ignore` = 0 AND (status_code >= 400 OR status_code < 200), 1, 0) AS broken,
-                IF(`ignore` = 1, 1, 0) AS ignored
+                CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END AS ok,
+                CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END AS redirect,
+                CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END AS broken,
+                CASE WHEN ignore = true THEN 1 ELSE 0 END AS ignored
             ')
             ->when($type, function($query) use ($type) {
                 switch ($type) {

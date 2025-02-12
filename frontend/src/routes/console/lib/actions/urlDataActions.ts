@@ -1,10 +1,9 @@
 import consoleApi from "../consoleApi";
-import type { UrlData } from "../types";
+import type { UnfoldedEmbed, UnfoldedLink } from "../types";
 
+export function getUnfold<T extends 'embed' | 'link'>(url: string, type: T) {
 
-export function getUrlData(url: string, type: 'embed' | 'link') {
-
-    return consoleApi.get<UrlData>({
+    return consoleApi.get<T extends 'embed' ? UnfoldedEmbed : UnfoldedLink>({
         endpoint: '/url-data',
         data: {
             url,

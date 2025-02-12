@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('link_analyzer_links', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
             $table->timestamp('last_checked_at');
 
             $table->integer('blog_id');

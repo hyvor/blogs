@@ -8,7 +8,6 @@ use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Tests\MeilisearchInefficient;
 
 beforeEach(function () {
 
@@ -152,7 +151,6 @@ it('searches posts', function() {
 
     $posts = addPosts($this->blog, 2, [], ['title' => 'Henry VIII']);
 
-    MeilisearchInefficient::waitForAllTasks();
 
     consoleApi($this->blog, 'GET', $this->endpoint, ['search' => 'henry'])
         ->assertJsonCount(2)
@@ -178,7 +176,6 @@ it('searches posts by language', function() {
         ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII']
     );
 
-    MeilisearchInefficient::waitForAllTasks();
 
     consoleApi($this->blog, 'GET', $this->endpoint, [
         'search' => 'henry',
@@ -209,8 +206,6 @@ it('searches with published', function() {
         ['blog_id' => $this->blog->id],
         ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'published']
     );
-
-    MeilisearchInefficient::waitForAllTasks();
 
     consoleApi($this->blog, 'GET', $this->endpoint, [
         'search' => 'henry',

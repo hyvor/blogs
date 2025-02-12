@@ -57,7 +57,7 @@ it('analyzes a blog', function() {
     $links = LinkAnalyzerLink::get();
     expect($links->count())->toBe(5);
 
-    $post1Links = $links->filter(fn($link) => $link->post_variant_id === $post1->variants[0]->id);
+    $post1Links = $links->filter(fn($link) => $link->post_variant_id === $post1->variants[0]->id)->sortBy('id')->values();
 
     $post1Link1 = $post1Links[0];
     expect($post1Link1->url)->toBe('https://hyvor.com/about');

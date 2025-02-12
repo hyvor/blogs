@@ -1,32 +1,41 @@
 <script lang="ts">
-    // @ts-ignore
-    import { diffChars, diffSentences } from 'diff';
+	// @ts-ignore
+	import { diffChars, diffSentences } from 'diff';
 
-    export let strOld: string;
-    export let strNew: string;
-    export let sentences = false;
-    export let onlyChanged = false;
+	interface Props {
+		strOld: string;
+		strNew: string;
+		sentences?: boolean;
+		onlyChanged?: boolean;
+	}
 
-    $: diff = sentences ? diffSentences(strOld, strNew) : diffChars(strOld, strNew);
+	let { strOld, strNew, sentences = false, onlyChanged = false }: Props = $props();
 
-    function getColor(part: { added: boolean; removed: boolean }) {
-        if (part.added) {
-            return 'var(--green)';
-        }
+	let diff = $derived(sentences ? diffSentences(strOld, strNew) : diffChars(strOld, strNew));
 
-        if (part.removed) {
-            return 'var(--red)';
-        }
+	function getColor(part: { added: boolean; removed: boolean }) {
+		if (part.added) {
+			return 'var(--green)';
+		}
 
-        return 'inherit';
-    }
+		if (part.removed) {
+			return 'var(--red)';
+		}
 
+		return 'inherit';
+	}
 </script>
 
 <span>
-    {#each diff as part}
-        {#if !onlyChanged || (part.added || part.removed)}
-            <span style="color: {getColor(part)}">{part.value}</span>
-        {/if}
-    {/each}
+	{#each diff as part}
+		{#if !onlyChanged || part.added || part.removed}
+			<span style="color: {getColor(part)}">{part.value}</span>
+		{/if}
+	{/each}
 </span>
+
+<style>
+	span {
+		word-break: break-all;
+	}
+</style>

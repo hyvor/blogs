@@ -2,13 +2,12 @@
 
 namespace App\Domains\Integrations\DeepL;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\AutoTranslation;
 use App\Models\Blog;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Http;
 
 class DeepLService
@@ -83,29 +82,9 @@ class DeepLService
             ->sum('chars'));
     }
 
-    public static function getMaxCharsPerMonth(Blog $blog, ?SubscriptionPlanEnum $plan) : int
+    public static function getMaxCharsPerMonth(BlogsLicense $license) : int
     {
-
-        if ($plan === null && $blog->trial_ends_at->isFuture())
-            return 10000;
-
-        return match ($plan) {
-            SubscriptionPlanEnum::GROWTH => 100000,
-            SubscriptionPlanEnum::PREMIUM => 300000,
-            SubscriptionPlanEnum::TEAM => 1000000,
-            SubscriptionPlanEnum::BUSINESS => 5000000,
-            SubscriptionPlanEnum::ENTERPRISE => 10000000,
-            default => 0,
-        };
-    }
-
-    public static function hasReachedLimit(Blog $blog) : bool
-    {
-        $plan = SubscriptionService::getActiveBlogSubscription($blog)?->plan;
-        $maxChars = self::getMaxCharsPerMonth($blog, $plan);
-        $usage = self::getThisMonthUsage($blog);
-
-        return $usage >= $maxChars;
+        return $license->autoTranslationsChars;
     }
 
 }

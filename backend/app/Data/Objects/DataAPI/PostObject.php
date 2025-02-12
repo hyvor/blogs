@@ -74,6 +74,7 @@ class PostObject
     {
         $variants = $post->variants;
         $variant = $variants->firstWhere('language_id', $language->id);
+        assert($variant !== null, 'Post variant not found for the current language');
 
         $this->id = $post->id;
         $this->created_at = $post->created_at->getTimestamp();
@@ -102,8 +103,8 @@ class PostObject
             ->where('status', PostStatusEnum::PUBLISHED)
             ->map(function ($variant) use ($post, $blog) {
                 $variantLanguage = $variant->language;
+                assert($variantLanguage !== null, 'Language not found for the variant');
                 $url = PermalinkRepository::getPostPermalink($post, $blog, $variantLanguage);
-
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 

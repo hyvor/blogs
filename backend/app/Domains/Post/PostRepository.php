@@ -11,7 +11,6 @@ use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantCreatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
-use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -218,6 +217,7 @@ class PostRepository
             $builder->orderBy($orderBy[0], $orderBy[1]);
         }
 
+        /** @var \Illuminate\Support\Collection<int, Post> $posts */
         $posts = $builder
             ->join('post_variants', function ($join) use ($language) {
                 $join->on('post_variants.post_id', '=', 'posts.id');
@@ -320,9 +320,13 @@ class PostRepository
 
     public static function createPostVariant(Post $post, Language $language): PostVariant
     {
+
+        $fts = new FullTextSearchService();
+
         $variant = PostVariant::create([
             'post_id' => $post->id,
             'language_id' => $language->id,
+            'ts_language' => $fts->findClosestRegconfigByLanguageCode($language->code),
         ]);
 
         PostVariantCreatedEvent::dispatch($variant);
@@ -482,8 +486,10 @@ class PostRepository
         if (!$blog) return;
 
         $html = PostContentService::getHtml($variant->content, $blog);
+        $text = PostContentService::getText($variant->content, $blog);
 
         $variant->content_html = $html;
+        $variant->content_text = $text;
         $variant->save();
     }
 }

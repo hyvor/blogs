@@ -7,7 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PostAuthor extends Model
 {
-    use HasFactory;
-
     protected $table = 'post_author';
 }

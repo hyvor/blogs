@@ -1,4 +1,3 @@
-import type { ComponentType } from "svelte";
 import Introduction from "./content/Introduction.svelte";
 import Writing from "./content/writing/Writing.svelte";
 import CustomDomain from "./content/custom-domain/CustomDomain.svelte";
@@ -31,6 +30,7 @@ import Tags from "./content/tags/Tags.svelte";
 import NavigationLinks from "./content/navigation/NavigationLinks.svelte";
 import Import from "./content/import/Import.svelte";
 import ImportWordPress from "./content/import/ImportWordPress.svelte";
+import type { Component } from "svelte";
 
 export const categories: Category[] = [
 
@@ -255,6 +255,6 @@ interface Category {
 interface Page {
     slug: string,
     name: string,
-    component: ComponentType,
+    component: Component,
     parent?: string
 }

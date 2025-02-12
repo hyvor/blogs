@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Media\MediaObject;
 use App\Data\Objects\ConsoleAPI\Media\UnsplashImageObject;
+use App\Domains\Billing\UsageService;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Media\Services\UnsplashService;
 use App\Exceptions\TrustedException;
@@ -12,6 +13,7 @@ use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ConsoleMediaController extends Controller
 {
@@ -55,7 +57,7 @@ class ConsoleMediaController extends Controller
         return response()->json($media);
     }
 
-    public function uploadFile(Request $request, Blog $blog) : JsonResponse
+    public function uploadFile(Request $request, Blog $blog, UsageService $usageService) : JsonResponse
     {
         $request->validate([
             'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
@@ -63,7 +65,7 @@ class ConsoleMediaController extends Controller
             'name' => 'string|nullable'
         ]);
 
-        if (MediaRepository::hasLimitsExceeded($blog)) {
+        if ($usageService->storageLimitReached($blog)) {
             throw new TrustedException('Total storage limit exceeded. Please upgrade your plan.');
         }
 
@@ -81,7 +83,7 @@ class ConsoleMediaController extends Controller
         return response()->json(new MediaObject($media, $blog));
     }
 
-    public function uploadFileFromUrl(Request $request, Blog $blog) : JsonResponse
+    public function uploadFileFromUrl(Request $request, Blog $blog, UsageService $usageService) : JsonResponse
     {
 
         $request->validate([
@@ -89,7 +91,7 @@ class ConsoleMediaController extends Controller
             'post_id' => 'integer|nullable'
         ]);
 
-        if (MediaRepository::hasLimitsExceeded($blog)) {
+        if ($usageService->storageLimitReached($blog)) {
             throw new TrustedException('Total storage limit exceeded. Please upgrade your plan.');
         }
 
@@ -131,9 +133,9 @@ class ConsoleMediaController extends Controller
         ]);
 
         $name = (string) $request->string('name');
-        $media = MediaRepository::updateName($media, $name, $blog);
-
         $this->validateFilename($name);
+
+        $media = MediaRepository::updateName($media, $name, $blog);
 
         return response()->json(new MediaObject($media, $blog));
     }

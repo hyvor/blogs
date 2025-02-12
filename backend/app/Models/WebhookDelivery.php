@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WebhookDelivery extends Model
 {
-    use HasFactory;
+    // use HasFactory;
 
     protected $casts = [
         'data' => 'array',
@@ -20,7 +20,7 @@ class WebhookDelivery extends Model
     ];
 
     /**
-     * @return BelongsTo<Webhook, self>
+     * @return BelongsTo<Webhook, $this>
      */
     public function webhook()
     {

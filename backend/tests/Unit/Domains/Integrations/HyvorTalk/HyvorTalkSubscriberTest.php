@@ -9,16 +9,15 @@ use App\Models\HyvorTalkWebsite;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 
-it('updates domains', function() {
+it('updates domains', function () {
     Event::fake();
     Event::assertListening(BlogUrlChangedEvent::class, [HyvorTalkSubscriber::class, 'onBlogUrlUpdate']);
     Event::assertListening(GatedContentChangedEvent::class, [HyvorTalkSubscriber::class, 'onGatedContentChange']);
 });
 
-it('updates encryption key on gated content change - creates encryption key', function() {
-
+it('updates encryption key on gated content change - creates encryption key', function () {
     Http::fake([
-        'talk.hyvor.com/*' => Http::sequence()
+        'talk.hyvor.cluster/*' => Http::sequence()
             ->push(['encryption_key' => null])
             ->push(['encryption_key' => 'encryption-key'])
     ]);
@@ -35,5 +34,4 @@ it('updates encryption key on gated content change - creates encryption key', fu
     $listener->onGatedContentChange($event);
 
     expect($htWebsite->refresh()->encryption_key)->toBe('encryption-key');
-
 });

@@ -1,4 +1,3 @@
-import { APP_URL } from "../../../lib";
 
 export interface Config {
     hyvor: {
@@ -38,7 +37,7 @@ export async function loadConfig() {
         return;
     }
 
-    const response = await fetch(APP_URL + '/api/special/config');
+    const response = await fetch('/api/special/config');
     const data = await response.json();
 
     setConfig(data);

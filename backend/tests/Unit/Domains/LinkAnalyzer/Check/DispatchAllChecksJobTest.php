@@ -1,39 +1,43 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 
-use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Check\DispatchAllChecksJob;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\LinkAnalyzerCheck;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches all jbos', function() {
-
+it('dispatches all jbos', function () {
     Queue::fake();
 
-    $blog = blog();
+    BillingFake::enable(license: function (int $userId) {
+        if ($userId === 2) {
+            return null;
+        }
+        if ($userId === 3) {
+            return new BlogsLicense(analyses: false);
+        }
+        return new BlogsLicense();
+    });
+
+    $blog = blog(['hyvor_user_id' => 1]);
 
     $blogWithoutLinkAnalysis = blog();
     $blogWithoutLinkAnalysis->setMeta('link_analysis_enabled', false);
 
     $blogWithRecentCheck = blog();
     LinkAnalyzerCheck::create([
-        'blog_id' =>  $blogWithRecentCheck->id,
+        'blog_id' => $blogWithRecentCheck->id,
         'created_at' => now()->subDays(13)
     ]);
 
     $allBlogs = collect([$blog, $blogWithoutLinkAnalysis, $blogWithRecentCheck]);
-
-    foreach ($allBlogs as $eachBlog) {
-        SubscriptionService::createSubscription(
-            $eachBlog,
-            SubscriptionPlanEnum::GROWTH
-        );
-    }
-
-    $blogWithNoSubscription = blog();
+    $blogWithNoLicense = blog(['hyvor_user_id' => 2]);
+    $blogWithNoAnalysesLicense = blog(['hyvor_user_id' => 3]);
 
     (new DispatchAllChecksJob())->handle();
 
@@ -41,5 +45,4 @@ it('dispatches all jbos', function() {
         expect($job->blog->id)->toBe($blog->id);
         return true;
     });
-
 });

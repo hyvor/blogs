@@ -7,6 +7,7 @@ use App\Models\Language;
 use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Arr;
+use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 
 function addPosts(Blog $blog, int $count, $state = [], $variantState = [])
 {
@@ -21,6 +22,7 @@ function addPosts(Blog $blog, int $count, $state = [], $variantState = [])
                 ->state(new Sequence(
                     ...$languages->map(fn ($language) => [
                         'language_id' => $language->id,
+                        'ts_language' => VariantsHelper::getVariantTsLanguage($language),
                     ])->toArray()
                 ))
                 ->state($variantState),

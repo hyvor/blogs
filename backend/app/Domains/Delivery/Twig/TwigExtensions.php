@@ -12,6 +12,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Carbon\Carbon;
 use Hyvor\SvgIcons\Exception\IconNotFoundException;
 use Hyvor\SvgIcons\Exception\InvalidLibraryException;
 use Hyvor\SvgIcons\Exception\SvgIconException;
@@ -21,6 +22,7 @@ use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use DateTime;
 
 /**
  * Defines three filters
@@ -72,11 +74,15 @@ class TwigExtensions extends AbstractExtension
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
             ]),
+            new TwigFunction('rich_schema', [$this, 'richSchema'], [
+                'needs_context' => true,
+                'is_safe' => ['html'],
+            ]),
         ];
     }
 
     /**
-     * @param string[] $context
+     * @param array<mixed> $context
      */
     public function assetUrlFilter(array $context, string $assetName) : string
     {
@@ -103,7 +109,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      * @param string[] $args
      */
     public function langFilter(array $context, string $key, array $args = []) : ?string
@@ -119,7 +125,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      * @param string[] $args
      */
     public function langByNumberFilter(array $context, string $value, array $args = []) : ?string
@@ -137,11 +143,11 @@ class TwigExtensions extends AbstractExtension
             $key = $one;
         }
 
-        return $this->langFilter($context, $key, [$value]);
+        return $this->langFilter($context, (string) $key, [(string) $value]);
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function templateFilter(Environment $env, array $context, string $string) : string
     {
@@ -152,7 +158,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function paginationPageUrlFilter(array $context, ?int $pageNumber) : string
     {
@@ -267,7 +273,7 @@ class TwigExtensions extends AbstractExtension
 
     /**
      * checks if a given URL is the current one
-     * @param string[] $context
+     * @param mixed[] $context
      */
     public function isCurrentUrlFunction(array $context, string $url): bool
     {
@@ -293,6 +299,9 @@ class TwigExtensions extends AbstractExtension
         }
     }
 
+    /**
+     * @param array<mixed>|string|null $levels
+     */
     public function tocFilter(string $content, null|array|string $levels = null): string
     {
         $levels = TocHeading::getLevels($levels);
@@ -300,13 +309,50 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
-    private function getBlogFromContext($context)
+    /**
+     * @param array<mixed> $context
+     */
+    public function richSchema(array $context): string
+    {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => $context['_meta']['title'],
+            'datePublished' => $this->getDateTimeString($context['_post']['published_at']),
+            'dateModified' => $this->getDateTimeString($context['_post']['updated_at']),
+            'author' => array_map(fn($author) => array_merge(
+                ['type' => '@Person'],
+                !empty($author['name']) ? ['name' => $author['name']] : [],
+                !empty($author['url']) ? ['url' => $author['url']] : []
+            ), $context['_post']['authors'])
+        ];
+
+        if (!empty($context['_meta']['featured_image'])) {
+            $schema['image'] = [$context['_meta']['featured_image']];
+        }
+
+        return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
+    }
+
+    /**
+     * @param array<mixed> $context
+     */
+    private function getBlogFromContext($context): Blog
     {
         if (! isset($this->blog)) {
             $subdomain = $context['_blog']['subdomain'];
-            $this->blog = BlogService::getBlogBySubdomain($subdomain);
+            $blog = BlogService::getBlogBySubdomain($subdomain);
+            if (!$blog) {
+                throw new Error('Blog not found');
+            }
+            $this->blog = $blog;
         }
 
         return $this->blog;
+    }
+
+    private function getDateTimeString(string $timestamp): string
+    {
+        return Carbon::createFromTimestamp($timestamp)->toIso8601String();
     }
 }

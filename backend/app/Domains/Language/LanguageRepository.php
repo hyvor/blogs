@@ -5,10 +5,11 @@ namespace App\Domains\Language;
 use App\Data\Enums\LanguageDirectionEnum;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\Jobs\DeleteLanguageVariants;
+use App\Domains\Post\Jobs\PostVariantUpdateTsLanguageJob;
 use App\Models\Blog;
 use App\Models\Language;
 use Exception;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class LanguageRepository
 {
@@ -50,6 +51,9 @@ class LanguageRepository
         LanguageDirectionEnum $direction
     ) : Language
     {
+
+        $isCodeChanging = $language->code !== $code;
+
         $language->code = $code;
         $language->name = $name;
         $language->direction = $direction;
@@ -57,6 +61,10 @@ class LanguageRepository
         $language->save();
 
         LanguageChangedEvent::dispatch($language);
+
+        if ($isCodeChanging) {
+            dispatch(new PostVariantUpdateTsLanguageJob($language));
+        }
 
         return $language;
     }

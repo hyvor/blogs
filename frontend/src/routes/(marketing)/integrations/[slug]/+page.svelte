@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { DocsContent } from '@hyvor/design/marketing';
 
-	export let data;
 	// import { integrations } from '../integrations';
 	import GuideHead from '../GuideHead.svelte';
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -16,7 +16,7 @@
 
 <div class="content-wrap">
 	<DocsContent>
-		<svelte:component this={data.component} />
+		<data.component />
 	</DocsContent>
 </div>
 

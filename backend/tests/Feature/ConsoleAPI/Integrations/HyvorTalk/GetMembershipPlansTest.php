@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 it('gets membership plan names', function() {
 
     Http::fake([
-        'https://talk.hyvor.com/api/internal/blogs/integration/console-api' => Http::sequence()
+        'https://talk.hyvor.cluster/api/internal/blogs/integration/console-api' => Http::sequence()
             ->push([
                 'memberships_enabled' => true,
                 'memberships_currency' => 'USD',

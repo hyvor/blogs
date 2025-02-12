@@ -8,13 +8,12 @@
 		Dropdown
 	} from '@hyvor/design/components';
 	import { authUserStore } from './lib/stores';
-	import {
-		IconCaretDownFill,
-		IconBell,
-		IconBoxArrowUpRight,
-		IconChatFill,
-		IconDiscord
-	} from '@hyvor/icons';
+	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
+import IconBell from '@hyvor/icons/IconBell';
+import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+import IconChatFill from '@hyvor/icons/IconChatFill';
+import IconDiscord from '@hyvor/icons/IconDiscord';
+
 </script>
 
 <div id="bar">
@@ -27,53 +26,89 @@
 		</div>
 		<div class="right">
 			<Dropdown align="end" width={300}>
-				<Button slot="trigger" variant="invisible" color="input" size="small">
-					Community
-					<IconCaretDownFill size={10} slot="end" />
-				</Button>
-				<ActionList slot="content">
-					<a href="https://hyvor.community" target="_blank">
-						<ActionListItem>
-							Community Forum
-							<div slot="description">hyvor.community</div>
-							<IconChatFill slot="start" style="color:#666666" />
-							<IconBoxArrowUpRight slot="end" size={12} />
-						</ActionListItem>
-					</a>
-					<a href="https://hyvor.com/api/go/discord" target="_blank">
-						<ActionListItem>
-							Discord
-							<div slot="description">HYVOR Discord Server</div>
-							<IconDiscord slot="start" style="color:#7289da" />
-							<IconBoxArrowUpRight slot="end" size={12} />
-						</ActionListItem>
-					</a>
-				</ActionList>
+				{#snippet trigger()}
+								<Button  variant="invisible" color="input" size="small">
+						Community
+						{#snippet end()}
+										<IconCaretDownFill size={10}  />
+									{/snippet}
+					</Button>
+							{/snippet}
+				{#snippet content()}
+								<ActionList >
+						<a href="https://hyvor.community" target="_blank">
+							<ActionListItem>
+								Community Forum
+								{#snippet description()}
+														<div >hyvor.community</div>
+													{/snippet}
+								{#snippet start()}
+														<IconChatFill  style="color:#666666" />
+													{/snippet}
+								{#snippet end()}
+														<IconBoxArrowUpRight  size={12} />
+													{/snippet}
+							</ActionListItem>
+						</a>
+						<a href="https://hyvor.com/api/go/discord" target="_blank">
+							<ActionListItem>
+								Discord
+								{#snippet description()}
+														<div >HYVOR Discord Server</div>
+													{/snippet}
+								{#snippet start()}
+														<IconDiscord  style="color:#7289da" />
+													{/snippet}
+								{#snippet end()}
+														<IconBoxArrowUpRight  size={12} />
+													{/snippet}
+							</ActionListItem>
+						</a>
+					</ActionList>
+							{/snippet}
 			</Dropdown>
 
 			<Dropdown align="end" width={300}>
-				<Button slot="trigger" variant="invisible" color="input" size="small">
-					Products
-					<IconCaretDownFill size={10} slot="end" />
-				</Button>
-				<ActionList slot="content">
-					<a href="https://blogs.hyvor.com" target="_blank">
-						<ActionListItem>
-							Hyvor Blogs
-							<div slot="description">blogs.hyvor.com</div>
-							<IconChatFill slot="start" />
-							<IconBoxArrowUpRight slot="end" size={12} />
-						</ActionListItem>
-					</a>
-					<a href="https://hyvor.com/api/go/discord" target="_blank">
-						<ActionListItem>
-							Discord
-							<div slot="description">HYVOR Discord Server</div>
-							<IconDiscord slot="start" />
-							<IconBoxArrowUpRight slot="end" size={12} />
-						</ActionListItem>
-					</a>
-				</ActionList>
+				{#snippet trigger()}
+								<Button  variant="invisible" color="input" size="small">
+						Products
+						{#snippet end()}
+										<IconCaretDownFill size={10}  />
+									{/snippet}
+					</Button>
+							{/snippet}
+				{#snippet content()}
+								<ActionList >
+						<a href="https://blogs.hyvor.com" target="_blank">
+							<ActionListItem>
+								Hyvor Blogs
+								{#snippet description()}
+														<div >blogs.hyvor.com</div>
+													{/snippet}
+								{#snippet start()}
+														<IconChatFill  />
+													{/snippet}
+								{#snippet end()}
+														<IconBoxArrowUpRight  size={12} />
+													{/snippet}
+							</ActionListItem>
+						</a>
+						<a href="https://hyvor.com/api/go/discord" target="_blank">
+							<ActionListItem>
+								Discord
+								{#snippet description()}
+														<div >HYVOR Discord Server</div>
+													{/snippet}
+								{#snippet start()}
+														<IconDiscord  />
+													{/snippet}
+								{#snippet end()}
+														<IconBoxArrowUpRight  size={12} />
+													{/snippet}
+							</ActionListItem>
+						</a>
+					</ActionList>
+							{/snippet}
 			</Dropdown>
 
 			<div class="notifications">

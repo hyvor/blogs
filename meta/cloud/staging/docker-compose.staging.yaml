@@ -13,14 +13,17 @@ services:
         volumes:
             - hb-mysql-data:/var/lib/mysql
 
-    hb-meilisearch:
-        image: "getmeili/meilisearch:latest"
-        expose:
-            - "7700"
-        volumes:
-            - hb-meilisearch-data:/data.ms
+    hb-pgsql:
+        image: "postgres:16.6"
+        restart: always
         environment:
-            MEILI_MASTER_KEY: "MASTER_KEY"
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: hyvor_blogs
+        expose:
+            - 5432
+        volumes:
+            - hb-pgsql-data:/var/lib/postgresql/data
 
     hb-app:
         image: "hyvor/blogs:latest"
@@ -30,8 +33,7 @@ services:
             - .env.hb
         depends_on:
             - hb-mysql
-            - hb-meilisearch
 
 volumes:
     hb-mysql-data:
-    hb-meilisearch-data:
+    hb-pgsql-data:

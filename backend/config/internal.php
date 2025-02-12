@@ -2,5 +2,8 @@
 
 return [
     'component' => 'blogs',
-    'domain' => env('APP_DOMAIN', '{any}'), // needed to restrict domain
+    'auth' => [
+        'routes' => true,
+        'routes_domain' => env('DOMAIN_APP', 'blogs.hyvor.com'),
+    ]
 ];

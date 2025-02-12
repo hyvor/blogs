@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Laravel optimization
+php /app/backend/artisan optimize
+
+# Run supervisor
+/usr/bin/supervisord

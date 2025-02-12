@@ -6,6 +6,10 @@ use Closure;
 
 class ProsemirrorHelper
 {
+
+    /**
+     * @return array<mixed>
+     */
     public static function getArrayJson(mixed $json): array
     {
         if (is_string($json) && ! empty($json)) {
@@ -26,6 +30,9 @@ class ProsemirrorHelper
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function findBlocks(mixed $json, string $blockType): array
     {
         $obj = self::getArrayJson($json);
@@ -51,8 +58,8 @@ class ProsemirrorHelper
 
     /**
      * @param mixed $json
-     * @param Closure $matchAndUpdate a function to match and update a node (return falsy if not updating)
-     * @return array
+     * @param Closure $update a function to match and update a node (return falsy if not updating)
+     * @return array<mixed>
      */
     public static function updateBlocks(mixed $json, Closure $update) : array
     {
@@ -72,6 +79,9 @@ class ProsemirrorHelper
 
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function updateUrls(mixed $json, string $oldUrl, string $newUrl) : array
     {
         return ProsemirrorHelper::updateBlocks($json, function (array $node) use ($oldUrl, $newUrl) {

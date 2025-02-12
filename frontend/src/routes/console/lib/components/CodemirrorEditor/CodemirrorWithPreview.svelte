@@ -3,10 +3,14 @@
 	import CodemirrorEditor from "./CodemirrorEditor.svelte";
 	import { createEventDispatcher } from "svelte";
 
-    export let value: string
-    export let title: string;
+    interface Props {
+        value: string;
+        title: string;
+    }
 
-    let modalOpen = false;
+    let { value, title }: Props = $props();
+
+    let modalOpen = $state(false);
 
     const dispatch = createEventDispatcher<{
         change: string,
@@ -34,11 +38,11 @@
     />
     <div 
         class="overlay" 
-        on:click={() => modalOpen = true}
-        on:keyup={e => e.key === 'Enter' && (modalOpen = true)}
+        onclick={() => modalOpen = true}
+        onkeyup={e => e.key === 'Enter' && (modalOpen = true)}
         role="button"
         tabindex="0"
-    />
+></div>
 </div>
 
 {#if modalOpen}

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HyvorTalkWebsite extends Model
 {
-    use HasFactory;
+    // use HasFactory;
 
     protected $table = 'inter_hyvor_talk_websites';
 }

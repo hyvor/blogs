@@ -7,5 +7,4 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlockedUser extends Model
 {
-    use HasFactory;
 }

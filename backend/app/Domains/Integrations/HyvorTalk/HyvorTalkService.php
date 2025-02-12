@@ -7,13 +7,14 @@ use App\Models\Blog;
 use App\Models\HyvorTalkWebsite;
 use Hyvor\Internal\InternalApi\ComponentType;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
+use Hyvor\Internal\InternalApi\InstanceUrl;
 use Hyvor\Internal\InternalApi\InternalApi;
 
 class HyvorTalkService
 {
 
     /**
-     * @param 'create-website'|'set-domains' $endpoint
+     * @param 'create-website'|'set-domains'|'console-api' $endpoint
      * @param array<string, mixed> $data
      * @return array<mixed>
      * @throws InternalApiCallFailedException
@@ -68,6 +69,7 @@ class HyvorTalkService
     }
 
     /**
+     * @param array<string, mixed> $data
      * @return mixed[]
      * @throws InternalApiCallFailedException
      */

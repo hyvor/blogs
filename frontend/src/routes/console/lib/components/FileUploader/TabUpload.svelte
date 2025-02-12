@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Loader, TextInput, toast } from '@hyvor/design/components';
-	import { IconArrowReturnLeft } from '@hyvor/icons';
+	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { VALID_MIME_TYPES, type SelectedFile, VALID_MIME_TYPES_NAMES } from './image-uploader';
 	import { VALID_MIME_TYPES_AUDIO, VALID_MIME_TYPES_NAMES_AUDIO } from './audio-uploader';
@@ -8,14 +8,18 @@
 	import { getConfig } from '../../config';
 	import byteFormatter from '../../helper/byte-formatter';
 
-	export let isUploading = false;
-	export let type: 'image' | 'audio' = 'image';
+	interface Props {
+		isUploading?: boolean;
+		type?: 'image' | 'audio' | 'any';
+	}
+
+	let { isUploading = $bindable(false), type = 'image' }: Props = $props();
 
 	let inputEl: HTMLInputElement;
-	let byUrlInputEl: HTMLInputElement;
+	let byUrlInputEl: HTMLInputElement | undefined = $state();
 
-	let byUrl = '';
-	let isDragging = false;
+	let byUrl = $state('');
+	let isDragging = $state(false);
 
 	function getCtrl() {
 		const platform =
@@ -24,6 +28,14 @@
 	}
 
 	const dispatch = createEventDispatcher<{ select: SelectedFile }>();
+
+	function getSelectedType(blob: Blob | null = null): 'image' | 'audio' | 'other' {
+		if (type === 'any' && blob) {
+			if (blob.type.indexOf('image') === 0) return 'image';
+			if (blob.type.indexOf('audio') === 0) return 'audio';
+		}
+		return type === 'any' ? 'other' : type;
+	}
 
 	function handleFetch() {
 		isUploading = true;
@@ -43,7 +55,7 @@
 				}
 
 				dispatch('select', {
-					type,
+					type: getSelectedType(blob),
 					url: blob,
 					from: 'upload',
 					upload: {
@@ -80,7 +92,7 @@
 				const blob = item.getAsFile();
 				if (!blob) continue;
 				dispatch('select', {
-					type,
+					type: getSelectedType(blob),
 					url: blob,
 					from: 'upload',
 					upload: { type: 'paste' }
@@ -114,7 +126,7 @@
 		if (!file) return;
 
 		dispatch('select', {
-			type,
+			type: getSelectedType(file),
 			url: file,
 			from: 'upload',
 			upload: { type: 'dnd' }
@@ -122,7 +134,7 @@
 	}
 
 	function handleUploadClick() {
-		inputEl.click();
+		inputEl?.click();
 	}
 
 	function handleInputChange(e: any) {
@@ -130,7 +142,7 @@
 		if (!file) return;
 
 		dispatch('select', {
-			type,
+			type: getSelectedType(file),
 			url: file,
 			from: 'upload',
 			upload: { type: 'browse' }
@@ -177,20 +189,20 @@
 </script>
 
 <svelte:window
-	on:paste={handlePaste}
-	on:dragenter={handleDragEnter}
-	on:dragover={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:dragexit={handleDragLeave}
+	onpaste={handlePaste}
+	ondragenter={handleDragEnter}
+	ondragover={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondragexit={handleDragLeave}
 />
 
 <div class="tab">
 	<input
 		type="file"
-		accept={type === 'audio' ? 'audio/*' : 'image/*'}
+		accept={type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : '*'}
 		style="display:none"
 		bind:this={inputEl}
-		on:change={handleInputChange}
+		onchange={handleInputChange}
 	/>
 
 	{#if isUploading}
@@ -199,11 +211,11 @@
 		<div class="upload-wrap">
 			<div
 				class="upload-area"
-				on:click={handleUploadClick}
-				on:drop={handleDragDrop}
+				onclick={handleUploadClick}
+				ondrop={handleDragDrop}
 				role="button"
 				tabindex="0"
-				on:keyup={(e) => e.key === 'Enter' && handleUploadClick()}
+				onkeyup={(e) => e.key === 'Enter' && handleUploadClick()}
 			>
 				{#if isDragging}
 					Drop here!
@@ -226,7 +238,9 @@
 						bind:input={byUrlInputEl}
 					/>
 					<Button disabled={byUrl.trim() === ''} on:click={handleFetch}>
-						Fetch <IconArrowReturnLeft slot="end" />
+						Fetch {#snippet end()}
+							<IconArrowReturnLeft />
+						{/snippet}
 					</Button>
 				</div>
 			</div>

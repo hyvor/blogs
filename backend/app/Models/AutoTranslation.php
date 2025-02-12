@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AutoTranslation extends Model
 {
-    use HasFactory;
+    // use HasFactory;
 
     protected $casts = [
         'source_lang' => DeepLSourceLangEnum::class,

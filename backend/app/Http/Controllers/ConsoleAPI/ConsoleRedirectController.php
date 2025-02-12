@@ -19,15 +19,18 @@ class ConsoleRedirectController extends Controller
     public function get(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
+            'search' => 'string|nullable',
             'limit' => 'integer',
             'offset' => 'integer',
         ]);
 
+        $search = (string) $request->string('search');
         $limit = $request->integer('limit', 25);
         $offset = $request->integer('offset', 0);
 
         $redirects = RedirectRepository::getRedirects(
             $blog,
+            $search,
             $limit,
             $offset
         )->mapInto(RedirectObject::class);

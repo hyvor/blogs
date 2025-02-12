@@ -1,28 +1,23 @@
 <?php
 
 use App\Domains\Delivery\Twig\TwigRenderer;
-use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
-use App\Models\Media;
 use App\Models\User;
 use Faker\Factory;
-use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
-use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Tests\TestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
-
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
     // reset userbase
-    FakeProvider::databaseClear();
+    \Hyvor\Internal\Auth\AuthFake::enable(['id' => 1]);
+    \Hyvor\Internal\Billing\BillingFake::enable(license: new \Hyvor\Internal\Billing\License\BlogsLicense());
 
     Cache::flush();
 
@@ -32,13 +27,10 @@ uses()->beforeEach(function () {
 //            ->andReturn(Media::factory()->create(['blog_id' => 0]));
 //    });
 
+//    Http::fake([
+//        'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
+//    ]);
 
-    Http::fake([
-        'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
-    ]);
-
-    $this->artisan('scout:flush "App\\\\Models\\\\PostVariant"');
-    $this->artisan('scout:sync-index-settings');
 
 })->in('Feature', 'Unit');
 
@@ -49,13 +41,14 @@ function faker()
 
 function test_unit_data_path($path = '')
 {
-    return base_path('tests/Unit/__DATA__/'.$path);
+    return base_path('tests/Unit/__DATA__/' . $path);
 }
+
 function jsonData(string $filename)
 {
     $filename = trim($filename, '/');
 
-    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/'.$filename)), true);
+    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/' . $filename)), true);
 }
 
 // https://www.youtube.com/watch?v=l3kioTuYt98

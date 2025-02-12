@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { Tag } from "@hyvor/design/components";
     
-    export let color: 'green' | 'blue' | 'orange' | 'red';
+    interface Props {
+        color: 'green' | 'blue' | 'orange' | 'red';
+        children?: import('svelte').Snippet;
+    }
+
+    let { color, children }: Props = $props();
 </script>
 
 <div class="feature-section">
     <Tag size="large" {color}>
-        <slot />
+        {@render children?.()}
     </Tag>
 </div>
 

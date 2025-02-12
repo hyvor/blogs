@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Button, Callout, TabNav, TabNavItem, Table, TableRow, Tag, toast } from "@hyvor/design/components";
-	import { IconCopy, IconLightbulb } from "@hyvor/icons";
+	import IconCopy from '@hyvor/icons/IconCopy';
+import IconLightbulb from '@hyvor/icons/IconLightbulb';
+
     
     import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from "@hyvor/design/marketing";
@@ -8,7 +10,7 @@
     const CUSTOM_DOMAIN_IP = '116.202.185.2';
     const CNAME_DOMAIN = 'hyvorblogs.io';
 
-    let dnsMethod : 'cname' | 'a' = 'cname';
+    let dnsMethod : 'cname' | 'a' = $state('cname');
 </script>
 <h1>Custom Domain</h1>
 
@@ -17,7 +19,9 @@
 </p>
 
 <Callout type="info">
-    <IconLightbulb slot="icon" />
+    {#snippet icon()}
+        <IconLightbulb  />
+    {/snippet}
     Setting up a custom domain will help you to <strong>build your brand</strong> and <strong>prevent locking into our platform</strong>  in case you want to move to another platform in the future.
 </Callout>
 
@@ -54,9 +58,11 @@
 
 <TabNav bind:active={dnsMethod}>
     <TabNavItem name="cname">
-        CNAME <Tag size="small" color="blue" slot="end">
-            Preferred
-        </Tag>
+        CNAME {#snippet end()}
+                <Tag size="small" color="blue" >
+                Preferred
+            </Tag>
+            {/snippet}
     </TabNavItem>
     <TabNavItem name="a">A Record</TabNavItem>
 </TabNav>
@@ -98,7 +104,9 @@
                     style="margin-left:5px;"
                     color="input"
                 >
-                    Copy <IconCopy slot="end" size={12} />
+                    Copy {#snippet end()}
+                                        <IconCopy  size={12} />
+                                    {/snippet}
                 </Button>
             </div>
         </TableRow>
@@ -141,7 +149,9 @@
                     style="margin-left:5px;"
                     color="input"
                 >
-                    Copy <IconCopy slot="end" size={12} />
+                    Copy {#snippet end()}
+                                        <IconCopy  size={12} />
+                                    {/snippet}
                 </Button>
             </div>
         </TableRow>

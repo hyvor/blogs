@@ -3,10 +3,15 @@
 namespace Database\Factories;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Models\Blog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<Blog>
+ */
 class BlogFactory extends Factory
 {
     public function definition()
@@ -30,5 +35,23 @@ class BlogFactory extends Factory
                 'social_github' => $this->faker->url(),
             ]),
         ];
+    }
+
+    public static function one($attrs = []): Blog
+    {
+        return Blog::factory()->create($attrs);
+    }
+
+    public static function withAccess($attrs = [])
+    {
+        $blog = self::one($attrs + ['hyvor_user_id' => 1]);
+
+        User::factory()->create([
+            'blog_id' => $blog->id,
+            'hyvor_user_id' => 1,
+            'role' => 'owner',
+        ]);
+
+        return $blog;
     }
 }

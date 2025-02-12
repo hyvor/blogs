@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UrlData extends Model
 {
-    use HasFactory;
+    // use HasFactory;
 
     protected $casts = [
         'result' => ResultEnum::class,

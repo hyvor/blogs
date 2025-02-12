@@ -1,208 +1,62 @@
-name: Test
+name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    php-tests:
-        name: "PHP Tests"
-        runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+  frontend-check:
+    name: "Frontend Check"
+    runs-on: ubuntu-latest
 
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Set up services
-              run: |
-                  docker compose -f meta/ci/docker-compose.ci.yaml up -d
+      - name: Build Docker image
+        run: docker build -t frontend-dev . --target frontend-dev
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  coverage: "none"
-                  php-version: "8.3"
-                  ini-file: development
-                  tools: composer:v2
-                  extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+      - name: Run Svelte Check
+        run: docker run frontend-dev npm run check
 
-            - name: Install dependencies
-              working-directory: backend
-              run: |
-                  # npm ci --ignore-scripts
-                  # npm run build
-                  npm ci
-                  composer install --ansi --no-progress
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
 
-            - name: Run tests
-              working-directory: backend
-              run: vendor/bin/pest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    static_analysis:
-        name: PHP Static analysis
-        runs-on: ubuntu-22.04
+      - name: Build Docker image
+        run: docker build -t backend-dev . --target backend-dev
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+      - name: Run PHPStan
+        run: docker run backend-dev ./vendor/bin/phpstan analyse --memory-limit=1G --ansi
 
-            - name: Configure PHP 8.3
-              uses: shivammathur/setup-php@master
-              with:
-                  php-version: 8.3
-                  extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
-                  ini-file: development
+  php-tests:
+    name: "PHP Tests"
+    runs-on: ubuntu-latest
 
-            - name: Install dependencies
-              working-directory: backend
-              run: |
-                  # npm ci --ignore-scripts
-                  # npm run build
-                  npm ci
-                  composer install --ansi --no-progress
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Run tests
-              working-directory: backend
-              run: vendor/bin/phpstan analyse --ansi
+      - name: Set up services
+        run: |
+          docker network create ci
+          docker compose -f meta/ci/compose.ci.yaml up -d
 
-    svelte-check:
-        name: "Svelte Check"
-        runs-on: ubuntu-latest
+      - name: Build Docker image
+        run: docker build -t backend-dev . --target backend-dev
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
-
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 18
-
-            - name: Install dependencies
-              working-directory: frontend
-              run: |
-                  npm ci
-
-            - name: Run tests
-              working-directory: frontend
-              run: npm run check
-
-    # e2e:
-    #     name: "E2E Tests"
-    #     runs-on: ubuntu-latest
-
-    #     steps:
-    #         -   name: Checkout
-    #             uses: actions/checkout@v3
-
-    #         -   name: Set up services
-    #             run: |
-    #                 docker-compose up -d
-
-    #         -   name: Setup Node
-    #             uses: actions/setup-node@v3
-    #             with:
-    #                 node-version: 16
-
-    #         -   name: Cache dependencies
-    #             uses: actions/cache@v3
-    #             with:
-    #                 path: ~/.npm
-    #                 key: npm-${{ hashFiles('package-lock.json') }}
-    #                 restore-keys: npm-
-
-    #         -   name: Setup PHP
-    #             uses: shivammathur/setup-php@v2
-    #             with:
-    #                 coverage: "none"
-    #                 php-version: "8.1"
-    #                 ini-file: development
-    #                 tools: composer:v2
-    #                 extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
-
-    #         -   name: Install dependencies
-    #             env:
-    #                 REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
-    #             run: |
-    #                 composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
-    #                 composer install
-    #                 npm ci --ignore-scripts
-    #                 npx vite build --mode testing
-
-    #         -   name: Run PHP Server
-    #             env:
-    #                 APP_ENV: testing
-    #                 APP_DEBUG: true
-    #                 APP_KEY: "base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="
-    #                 FILESYSTEM_DRIVER: local
-    #             run: |
-    #                 php artisan config:cache
-    #                 php artisan serve --port=8080 &
-
-    #         -   name: Run Migrations
-    #             run: |
-    #                 php artisan migrate
-
-    #         -   name: Run e2e tests
-    #             run: |
-    #                 npx playwright install --with-deps
-    #                 npx playwright test
-    #         -   uses: actions/upload-artifact@v3
-    #             if: always()
-    #             with:
-    #                 name: playwright-report
-    #                 path: playwright-report/
-    #                 retention-days: 5
-    # unit:
-    #     name: JS Unit Tests
-    #     runs-on: ubuntu-latest
-
-    #     steps:
-    #         -   name: Checkout
-    #             uses: actions/checkout@v3
-
-    #         -   name: Set up services
-    #             run: |
-    #                 docker-compose up -d
-
-    #         -   name: Setup Node
-    #             uses: actions/setup-node@v3
-    #             with:
-    #                 node-version: 16
-
-    #         -   name: Cache dependencies
-    #             uses: actions/cache@v3
-    #             with:
-    #                 path: ~/.npm
-    #                 key: npm-${{ hashFiles('package-lock.json') }}
-    #                 restore-keys: npm-
-
-    #         -   name: Install dependencies
-    #             env:
-    #                 REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
-    #             run: |
-    #                 npm install
-    #                 npm ci --ignore-scripts
-    #                 npm run build
-
-    #         -   name: Run unit tests
-    #             run:
-    #                 npx vitest
-    # ts:
-    #     name: TypeScript Validation
-    #     runs-on: ubuntu-22.04
-
-    #     steps:
-    #         -   name: Checkout
-    #             uses: actions/checkout@v3
-
-    #         -   name: Editor
-    #             run: npm ci && npm run kea:build && tsc --noEmit
+      - name: Run Tests
+        run: |
+          docker run \
+          -e DB_HOST=postgres \
+          --network ci \
+          backend-dev php -d memory_limit=1024M ./vendor/bin/pest

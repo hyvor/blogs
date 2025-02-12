@@ -1,8 +1,6 @@
 import { get } from "svelte/store";
 import { blogStore } from "./stores/blogStore";
-import { APP_URL } from "../../../lib";
 import { tempSubdomainStore } from "./temp";
-// import { currentProjectIdStore } from "./stores";
 
 export interface ConsoleApiOptions {
     endpoint: string,
@@ -18,7 +16,7 @@ interface CallOptions extends ConsoleApiOptions {
 
 function getConsoleApi() {
 
-    const baseUrl = APP_URL + "/api/console/v0";
+    const baseUrl = "/api/console/v0";
 
     async function call<T>({ 
         endpoint, 
