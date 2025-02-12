@@ -1,14 +1,30 @@
-import { writable } from "svelte/store";
+import type { ResolvedPos } from "prosemirror-model";
+import type { NodeSelection } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
+import { get, writable } from "svelte/store";
 
 export const nodeMenuUpdateId = writable(0);
 export const nodeMenuPos = writable<null | number>(null);
 
-// deleteNode() {
-//     const { state, dispatch } = this.view;
-//     const selection = state.selection as NodeSelection;
-//     const tr = state.tr.delete(selection.$from.before(), selection.$from.after());
-//     dispatch(tr);
-// }
+/**
+ * In an image node, it does not make sense to show the node menu near the caption,
+ * we always want to show it near the <figure> element.
+ * This function resolves the current position to the most appropriate position to show the node menu.
+ */
+export function resolveNodeMenuPos(current: ResolvedPos): number {
+    if (current.parent.type.name === "figcaption") {
+        return current.before(current.depth - 1);
+    }
+    return current.pos;
+}
+
+export function deleteNode(view: EditorView, pos: number) {
+    const { state, dispatch } = view;
+    const resolvedPos = state.doc.resolve(pos);
+    const tr = state.tr.delete(resolvedPos.before(), resolvedPos.after());
+    dispatch(tr);
+    view.focus();
+}
 
 // duplicateNode() {
 //     console.log('duplicateNode');

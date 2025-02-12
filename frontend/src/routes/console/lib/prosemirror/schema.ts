@@ -258,8 +258,8 @@ export const nodes = {
         },
         group: "block",
         inline: false,
-        draggable: false,
-        selectable: false,
+        draggable: true,
+        selectable: true,
         atom: true,
     },
 
