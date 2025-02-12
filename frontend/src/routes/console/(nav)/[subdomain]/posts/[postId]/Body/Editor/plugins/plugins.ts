@@ -13,7 +13,7 @@ import wordCountPlugin from "./plugin-wordcount";
 import slashPlugin from "./slash/plugin-slash.svelte";
 import slashTipPlugin from "./slash/plugin-slash-tip";
 import tableMenuPlugin from "./table/plugin-table-menu.svelte";
-import nodeMenuPlugin from './nodeMenu/plugin-nodemenu';
+import nodeMenuPlugin from './nodeMenu/plugin-nodemenu.svelte';
 
 export function getPlugins() {
 
