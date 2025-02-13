@@ -78,8 +78,8 @@ COPY backend /app/backend/
 # use local internal library
 RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
 
-EXPOSE 36202
-CMD php artisan serve --host=0.0.0.0 --port=36202
+EXPOSE 80
+CMD php artisan serve --host=0.0.0.0 --port=80
 
 ###################################################
 FROM backend-base AS final
