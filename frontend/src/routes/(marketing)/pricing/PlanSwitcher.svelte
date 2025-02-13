@@ -1,6 +1,9 @@
 <script>
 	import { Button } from "@hyvor/design/components";
-	import { IconCaretLeft, IconCaretRight, IconChevronLeft } from "@hyvor/icons";
+	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
+import IconCaretRight from '@hyvor/icons/IconCaretRight';
+import IconChevronLeft from '@hyvor/icons/IconChevronLeft';
+
 	import { PLANS, plansMax, plansStart } from "./pricing";
 
     function handleLower() {
@@ -28,7 +31,9 @@
         <div class="lower">
             {#if $plansStart > 0}
                 <Button size="small" variant="outline" on:click={handleLower}>
-                    <IconCaretLeft size={12} slot="start" />
+                    {#snippet start()}
+                                        <IconCaretLeft size={12}  />
+                                    {/snippet}
                     Lower {$plansMax === 1 ? '' : 'plans'}
                 </Button>
             {/if}
@@ -38,7 +43,9 @@
             {#if $plansStart < PLANS.length - $plansMax}
                 <Button size="small" variant="outline" on:click={handleHigher}>
                     Higher {$plansMax === 1 ? '' : 'plans'}
-                    <IconCaretRight size={12} slot="end" />
+                    {#snippet end()}
+                                        <IconCaretRight size={12}  />
+                                    {/snippet}
                 </Button>
             {/if}
         </div>

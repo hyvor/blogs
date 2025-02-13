@@ -489,7 +489,7 @@ type Response = User[]
 	code={`
 type Request = {
     username_or_email: string,
-    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
 }
 type Response = User
 `}
@@ -514,7 +514,7 @@ type Response = User
 	code={`
 type Request = {
     hyvor_user_id?: number,
-    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
     status: 'active' | 'blocked',
     slug: string,
     email?: string,
@@ -1418,7 +1418,7 @@ interface User {
     hyvor_user_id: number | null,
 
     status: 'invited' | 'active' | 'blocked',
-    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
     slug: string,
     posts_count: number,
     email: string,

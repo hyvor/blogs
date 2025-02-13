@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\App\ConsoleApi\BillingTypeMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Http\Middleware\HandleCors;
 
@@ -32,6 +31,5 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'role' => Middleware\App\ConsoleApi\RoleMiddleware::class,
-        'billing-type' => BillingTypeMiddleware::class,
     ];
 }

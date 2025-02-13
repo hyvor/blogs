@@ -4,7 +4,9 @@ namespace Tests\Unit\Domains\Themes\GithubSync;
 
 use App\Domains\Theme\GithubSync\GithubSyncService;
 use App\Models\Theme;
+use App\Models\ThemeFile;
 use App\Models\ThemeVersion;
+use Illuminate\Support\Facades\DB;
 
 /**
  * ZIP Contents

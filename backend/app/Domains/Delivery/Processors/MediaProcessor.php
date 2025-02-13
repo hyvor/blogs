@@ -20,6 +20,9 @@ class MediaProcessor extends RouteProcessorAbstract
     {
         $fileName = $matchedRoute->param('file_name');
 
+        if (!$fileName)
+            return;
+
         /**
          * Supports additional parameters like: resizing images
          */

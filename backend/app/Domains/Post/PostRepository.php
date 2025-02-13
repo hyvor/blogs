@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Post;
 
@@ -11,7 +13,6 @@ use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantCreatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
-use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -36,8 +37,9 @@ class PostRepository
             ->where('slug', $slug)
             ->first();
 
-        if (!$variant)
+        if (!$variant) {
             return null;
+        }
 
         return $variant->post;
     }
@@ -84,8 +86,8 @@ class PostRepository
                             COALESCE(posts.published_at, posts.created_at) < ?
                         ',
                         [
-                            Carbon::createFromTimestamp((int) $startTimestamp)->toDateTimeString(),
-                            Carbon::createFromTimestamp((int) $endTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int)$startTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int)$endTimestamp)->toDateTimeString(),
                         ]
                     );
             })
@@ -140,7 +142,6 @@ class PostRepository
         ],
         bool $isPages = false
     ): CollectionWithTotal {
-
         $builder = (new FilterQ)->expression($filter)
             ->builder(Post::class)
             ->keys(function ($keys) {
@@ -218,6 +219,7 @@ class PostRepository
             $builder->orderBy($orderBy[0], $orderBy[1]);
         }
 
+        /** @var \Illuminate\Support\Collection<int, Post> $posts */
         $posts = $builder
             ->join('post_variants', function ($join) use ($language) {
                 $join->on('post_variants.post_id', '=', 'posts.id');
@@ -244,9 +246,8 @@ class PostRepository
      *     is_featured?: bool,
      * } $attrs
      */
-    public static function createPost(Blog $blog, array $attrs = []) : Post
+    public static function createPost(Blog $blog, array $attrs = []): Post
     {
-
         // create post
         $post = Post::create(array_merge([
             'blog_id' => $blog->id
@@ -278,11 +279,10 @@ class PostRepository
      *     canonical_url?: ?string,
      *     code_head?: ?string,
      *     code_foot?: ?string,
-     * }  $updates
+     * } $updates
      */
-    public static function updatePost(Post $post, array $updates) : Post
+    public static function updatePost(Post $post, array $updates): Post
     {
-
         // published_at
         if (array_key_exists('published_at', $updates)) {
             $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
@@ -310,9 +310,9 @@ class PostRepository
         return $post;
     }
 
-    public static function deletePost(Post $post) : void
+    public static function deletePost(Post $post): void
     {
-        $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
+        $post->variants->map(fn($variant) => self::deletePostVariant($post, $variant->language_id));
         $post->delete();
 
         PostDeletedEvent::dispatch($post);
@@ -320,9 +320,12 @@ class PostRepository
 
     public static function createPostVariant(Post $post, Language $language): PostVariant
     {
+        $fts = new FullTextSearchService();
+
         $variant = PostVariant::create([
             'post_id' => $post->id,
             'language_id' => $language->id,
+            'ts_language' => $fts->findClosestRegconfigByLanguageCode($language->code),
         ]);
 
         PostVariantCreatedEvent::dispatch($variant);
@@ -346,9 +349,8 @@ class PostRepository
      *     link_analysis?: array<string, number>
      * } $updates
      */
-    public static function updatePostVariant(PostVariant $variant, array $updates) : PostVariant
+    public static function updatePostVariant(PostVariant $variant, array $updates): PostVariant
     {
-
         if (array_key_exists('slug', $updates)) {
             $variant->slug = $updates['slug'];
         }
@@ -359,10 +361,9 @@ class PostRepository
             $variant->status = $status;
 
             if ($status === PostStatusEnum::PUBLISHED) {
-
                 $post = $variant->post;
 
-                if ($post && $post->published_at === null) {
+                if ($post->published_at === null) {
                     $post->published_at = now();
                     $post->save();
                 }
@@ -373,16 +374,12 @@ class PostRepository
                     $slug = $title ? Str::slug($title) : Str::random();
 
                     // if the slug is already taken, generate a random slug
-                    if (
-                        $variant->language &&
-                        self::getPostByLanguageAndSlug($variant->language, $slug)
-                    ) {
+                    if (self::getPostByLanguageAndSlug($variant->language, $slug)) {
                         $slug = Str::random();
                     }
 
                     $variant->slug = $slug;
                 }
-
             }
         }
 
@@ -437,7 +434,7 @@ class PostRepository
             $variant->link_analysis = $updates['link_analysis'];
         }
 
-        $original = new PostVariant((array) $variant->getOriginal());
+        $original = new PostVariant((array)$variant->getOriginal());
         $variant->save();
         PostVariantUpdatedEvent::dispatch($variant, $original);
 
@@ -456,14 +453,15 @@ class PostRepository
         return PostVariant::find($id);
     }
 
-    public static function deletePostVariant(Post $post, int $languageId) : void
+    public static function deletePostVariant(Post $post, int $languageId): void
     {
         $variant = PostVariant::where('language_id', $languageId)
             ->where('post_id', $post->id)
             ->first();
 
-        if (!$variant)
+        if (!$variant) {
             return;
+        }
 
         $variant->delete();
         PostVariantDeletedEvent::dispatch($variant);
@@ -476,14 +474,17 @@ class PostRepository
         }
 
         $post = $variant->post;
-        if (!$post) return;
 
         $blog = $post->blog;
-        if (!$blog) return;
+        if (!$blog) {
+            return;
+        }
 
         $html = PostContentService::getHtml($variant->content, $blog);
+        $text = PostContentService::getText($variant->content, $blog);
 
         $variant->content_html = $html;
+        $variant->content_text = $text;
         $variant->save();
     }
 }

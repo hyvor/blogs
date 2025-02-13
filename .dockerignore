@@ -1,6 +1,10 @@
 # backend/vendor
 frontend/node_modules
 frontend/.svelte-kit
+frontend/vite.config.ts.timestamp-*
+backend/node_modules
+backend/vendor
 github
 .idea
 .vscode
+.phpunit.cache

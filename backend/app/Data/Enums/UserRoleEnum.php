@@ -9,5 +9,4 @@ enum UserRoleEnum: string
     case EDITOR = 'editor';
     case WRITER = 'writer';
     case CONTRIBUTOR = 'contributor';
-    case FINANCE = 'finance';
 }

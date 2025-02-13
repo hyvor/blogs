@@ -9,7 +9,6 @@ use App\Domains\Blog\Listeners\UpdateContentHtmlOfAllPostsListener;
 use App\Domains\Blog\Listeners\UpdateUrlsListener;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
 use App\Domains\Integrations\HyvorTalk\HyvorTalkSubscriber;
-use App\Domains\Integrations\Shopify\Listeners\ShopifySubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
@@ -50,7 +49,6 @@ class EventServiceProvider extends ServiceProvider
         WebhookSubscriber::class,
 
         // integrations
-        ShopifySubscriber::class,
         HyvorTalkSubscriber::class,
 
     ];

@@ -10,6 +10,7 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -17,8 +18,10 @@ class SitemapPagesProcessor extends RouteProcessorAbstract
 {
     private Blog $blog;
 
+    /** @var Collection<int, Language>  */
     private Collection $languages;
 
+    // @phpstan-ignore constructor.unusedParameter
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $this->blog = $pathMatcher->blog;
@@ -54,7 +57,11 @@ class SitemapPagesProcessor extends RouteProcessorAbstract
             'post_variants',
             fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
-                    ->where('post_variants.language_id', '=', $this->languages->firstWhere('is_primary', true)->id)
+                    ->where(
+                        'post_variants.language_id',
+                        '=',
+                        $this->languages->firstWhere('is_primary', true)?->id ?? 0
+                    )
         )
             ->where('post_variants.status', 'published')
             ->where('posts.blog_id', $this->blog->id)

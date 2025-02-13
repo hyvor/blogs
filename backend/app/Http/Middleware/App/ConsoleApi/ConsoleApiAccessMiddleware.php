@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -17,17 +19,18 @@ class ConsoleApiAccessMiddleware
 
     private Blog $blog;
 
-    public function __construct(Blog $blog)
-    {
+    public function __construct(
+        Blog $blog,
+        private Auth $auth,
+    ) {
         $this->blog = $blog;
     }
 
-    public function handle(Request $request, Closure $next) : mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         $apiKey = $request->header('X-API-KEY');
 
         if ($this->blog->type === BlogTypeEnum::TEMP) {
-
             $owner = UserRepository::getOwnerOfBlog($this->blog);
             if (!$owner) {
                 throw new TrustedException('Blog owner not found');
@@ -37,42 +40,41 @@ class ConsoleApiAccessMiddleware
                 ConsoleApiAccessingUser::class,
                 new ConsoleApiAccessingUser($owner)
             );
-
-        } else if ($apiKey) {
-
-            if (!ApiKeysRepository::hasKey($this->blog, ApiKeysTypeEnum::CONSOLE, $apiKey)) {
-                throw new TrustedException('Invalid API key');
-            }
-
-            $owner = UserRepository::getOwnerOfBlog($this->blog);
-            if (!$owner) {
-                throw new TrustedException('Blog owner not found');
-            }
-
-            app()->instance(
-                ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser($owner)
-            );
-
         } else {
-            $hyvorUser = Auth::check();
-            if (! $hyvorUser) {
-                throw new TrustedException('You are not logged in');
-            }
+            if ($apiKey) {
+                if (!ApiKeysRepository::hasKey($this->blog, ApiKeysTypeEnum::CONSOLE, $apiKey)) {
+                    throw new TrustedException('Invalid API key');
+                }
 
-            $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
+                $owner = UserRepository::getOwnerOfBlog($this->blog);
+                if (!$owner) {
+                    throw new TrustedException('Blog owner not found');
+                }
 
-            if (! $user) {
-                throw new TrustedException(
-                    'You do not have access to this blog',
-                    TrustedException::ERROR_UNAUTHORIZED
+                app()->instance(
+                    ConsoleApiAccessingUser::class,
+                    new ConsoleApiAccessingUser($owner)
+                );
+            } else {
+                $hyvorUser = $this->auth->check();
+                if (!$hyvorUser) {
+                    throw new TrustedException('You are not logged in');
+                }
+
+                $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
+
+                if (!$user) {
+                    throw new TrustedException(
+                        'You do not have access to this blog',
+                        TrustedException::ERROR_UNAUTHORIZED
+                    );
+                }
+
+                app()->instance(
+                    ConsoleApiAccessingUser::class,
+                    new ConsoleApiAccessingUser($user)
                 );
             }
-
-            app()->instance(
-                ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser($user)
-            );
         }
 
         return $next($request);

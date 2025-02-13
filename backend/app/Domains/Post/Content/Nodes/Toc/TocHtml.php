@@ -6,13 +6,13 @@ use App\Domains\Post\Content\Nodes\Heading\Heading;
 use Hyvor\Phrosemirror\Document\Node;
 
 /**
- * @phpstan-type TocEntry {title: string, id: string | null, level: int, children: TocEntry[]}
+ * @phpstan-type TocEntry array{title: string, id: string|null, level: int, children: mixed[]}
  */
 class TocHtml
 {
 
     public function __construct(
-        /** int[] */
+        /** @var int[] */
         private array $levels,
     ) {}
 
@@ -35,6 +35,9 @@ class TocHtml
         return $this->buildToc($headings);
     }
 
+    /**
+     * @param TocHeading[] $headings
+     */
     private function headingsToHtml(array $headings) : string
     {
         $levelsString = implode(',', $this->levels);

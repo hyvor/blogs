@@ -139,11 +139,11 @@ class HyvorTalkGatedContentService
             'gate' => $rule->gate,
         ];
 
-        $data = json_encode($data);
+        $data = (string) json_encode($data);
         $iv = openssl_random_pseudo_bytes(16);
         $encrypted = openssl_encrypt($data, 'aes-256-cbc', base64_decode($key), OPENSSL_RAW_DATA, $iv);
 
-        return base64_encode($encrypted) . ':' . base64_encode($iv);
+        return base64_encode((string) $encrypted) . ':' . base64_encode($iv);
     }
 
 }

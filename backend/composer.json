@@ -24,7 +24,7 @@
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/internal": "^1.0",
+        "hyvor/internal": "^2.0.3",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",
@@ -34,10 +34,7 @@
         "hyvor/unfold": "^0.0.5",
         "intervention/image": "^2.7",
         "laravel/framework": "^11.0",
-        "laravel/horizon": "^5.10",
-        "laravel/scout": "^10.11.4",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "meilisearch/meilisearch-php": "1.1.1",
         "nelexa/zip": "^4.0",
         "openai-php/laravel": "^0.10.1",
         "predis/predis": "^1.1",
@@ -45,7 +42,7 @@
         "spatie/laravel-ignition": "^2.0",
         "symfony/css-selector": "^6.0",
         "symfony/dom-crawler": "^7.1",
-        "symfony/http-client": "^6.1",
+        "symfony/http-client": "^7.2",
         "symfony/http-foundation": "^7.0",
         "symfony/mailgun-mailer": "^6.1",
         "symfony/process": "^7.0",
@@ -72,26 +69,30 @@
             "Project\\": "src/",
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-
             "Database\\Seeders\\": "database/seeders/",
-
             "Hyvor\\SyntaxHighlighter\\": "packages/highlighter/src/"
         },
-
         "Database\\Seeders\\": "database/seeders/",
         "Hyvor\\Auth\\": "packages/hyvor/auth/src/",
         "Hyvor\\FilterQ\\": "packages/hyvor/filter-q"
-        
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
     },
+    "repositories": {
+        "local": {
+            "type": "path",
+            "url": "./packages/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    },
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi"
@@ -102,9 +103,7 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-
         "serve": "php artisan serve --port=2211",
-
         "expose": "ngrok http 2211",
         "test": "vendor/bin/pest -p",
         "coverage": "vendor/bin/pest --coverage -p",

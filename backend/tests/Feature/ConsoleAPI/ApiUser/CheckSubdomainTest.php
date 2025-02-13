@@ -22,3 +22,13 @@ it('returns error for taken subdomain', function () {
             'available' => false,
         ]);
 });
+
+it('returns error for reserved subdomain', function () {
+    consoleUserApi('GET', '/blog/check-subdomain', [
+        'subdomain' => 'new',
+    ])->assertOk()
+        ->assertJson([
+            'available' => false,
+        ]);
+});
+

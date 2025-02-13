@@ -29,7 +29,7 @@ class ApiKeysRepository
         ]);
     }
 
-    public static function regenerate(ApiKey $key)
+    public static function regenerate(ApiKey $key): void
     {
         $key->api_key = bin2hex(random_bytes(16));
         $key->save();

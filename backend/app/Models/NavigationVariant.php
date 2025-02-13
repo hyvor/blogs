@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
+use Database\Factories\NavigationVariantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NavigationVariant extends Model
 {
+
+    /**
+     * @use HasFactory<NavigationVariantFactory>
+     */
     use HasFactory;
 
     public $timestamps = false;
 
     /**
-     * @return BelongsTo<Navigation, self>
+     * @return BelongsTo<Navigation, $this>
      */
     public function navigation()
     {
@@ -21,7 +26,7 @@ class NavigationVariant extends Model
     }
 
     /**
-     * @return BelongsTo<Language, self>
+     * @return BelongsTo<Language, $this>
      */
     public function language()
     {

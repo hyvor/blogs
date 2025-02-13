@@ -30,8 +30,8 @@ class TagCountsJob implements ShouldQueue, ShouldBeUnique
                 WHERE
                       post_tag.tag_id = t.id AND
                       post_variants.language_id = ? AND
-                      post_variants.status = "published" AND
-                      posts.is_page = 0
+                      post_variants.status = \'published\' AND
+                      posts.is_page = false
             )
             WHERE t.blog_id = ?
         ', [$language->id, $this->blog->id]);

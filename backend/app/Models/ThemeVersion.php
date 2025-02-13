@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Cast\BinaryCast;
+use Database\Factories\ThemeVersionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,5 +12,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ThemeVersion extends Model
 {
+    /**
+     * @use HasFactory<ThemeVersionFactory>
+     */
     use HasFactory;
+
+    protected $casts = [
+        'zip' => BinaryCast::class
+    ];
 }

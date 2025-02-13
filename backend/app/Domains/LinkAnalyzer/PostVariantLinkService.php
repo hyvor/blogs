@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
+use App\Domains\LinkAnalyzer\LinkStatusCheck\LinkStatusCheckService;
 use App\Domains\Post\PostRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
 use App\Models\PostVariant;
@@ -11,14 +15,59 @@ use Illuminate\Database\Eloquent\Collection;
 class PostVariantLinkService
 {
 
-    public static function getLink(PostVariant $variant, string $url) : ?LinkAnalyzerLink
+    /**
+     * @param string[] $urls this is the URLs from the frontend
+     * @return Collection<int, LinkAnalyzerLink>
+     */
+    public function checkAndUpdateLinks(
+        Blog $blog,
+        PostVariant $variant,
+        array $urls,
+        bool $appendToPostVariantCache = true,
+    ): Collection {
+        $variantUrl = PermalinkRepository::getPostPermalink($variant->post, $blog, $variant->language);
+
+        $finalUrls = [];
+
+        foreach ($urls as $url) {
+            $fullUrl = RelativeUrlResolver::resolve($url, $variantUrl);
+            if (!$fullUrl) {
+                continue;
+            }
+            $finalUrls[$url] = $fullUrl;
+        }
+
+        // check HTTP statuses
+        $statusCheck = app(LinkStatusCheckService::class);
+        $statuses = $statusCheck->check($finalUrls, $blog);
+
+        $results = [];
+        foreach ($finalUrls as $originalUrl => $fullUrl) {
+            $results[] = new AnalyzedLinkDto(
+                $originalUrl,
+                $fullUrl,
+                $statuses[$fullUrl] ?? 500,
+            );
+        }
+
+        $links = self::updateLinksFromResults($blog, $variant, $results);
+        self::updatePostVariantCache(
+            $variant,
+            LinkAnalyzeService::getIgnoreAwareStatusFromLinks($links),
+            $appendToPostVariantCache
+        );
+
+        return $links;
+    }
+
+    public static function getLink(PostVariant $variant, string $url): ?LinkAnalyzerLink
     {
         return LinkAnalyzerLink::where('post_variant_id', $variant->id)
             ->where('url', $url)
             ->first();
     }
 
-    public static function ignoreLink(LinkAnalyzerLink $link, bool $status) : void
+    public static function ignoreLink(LinkAnalyzerLink $link, bool $status): void
     {
         $link->ignore = $status;
         $link->save();
@@ -27,7 +76,7 @@ class PostVariantLinkService
     /**
      * @return Collection<int, LinkAnalyzerLink>
      */
-    public static function getIgnoredLinks(PostVariant $variant) : Collection
+    public static function getIgnoredLinks(PostVariant $variant): Collection
     {
         return LinkAnalyzerLink::where('post_variant_id', $variant->id)
             ->where('ignore', true)
@@ -36,7 +85,7 @@ class PostVariantLinkService
 
     /**
      * @param PostVariant $variant
-     * @param AnalyzedLink[] $results
+     * @param AnalyzedLinkDto[] $results
      * @param string[] $ignoreUrls
      * @return Collection<int, LinkAnalyzerLink>
      */
@@ -46,9 +95,7 @@ class PostVariantLinkService
         array $results,
         bool $shouldClear = false,
         array $ignoreUrls = [],
-    ) : Collection
-    {
-
+    ): Collection {
         $now = now();
 
         if ($shouldClear) {
@@ -59,7 +106,6 @@ class PostVariantLinkService
         $links = [];
 
         foreach ($results as $result) {
-
             $link = LinkAnalyzerLink::updateOrCreate(
                 [
                     'post_variant_id' => $variant->id,
@@ -90,8 +136,7 @@ class PostVariantLinkService
         PostVariant $variant,
         array $results,
         bool $append = false
-    ) : void
-    {
+    ): void {
         $currentVariantResults = $variant->link_analysis ?? [];
         PostRepository::updatePostVariant($variant, [
             'link_analysis' => $append ? array_merge(

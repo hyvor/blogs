@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI;
 
@@ -14,7 +16,6 @@ class BlogObject
 {
     public int $id;
 
-    public int $trial_ends_at;
     public int $created_at;
     public bool $is_blocked;
     public ?int $theme_version_id;
@@ -90,8 +91,6 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReportEnum $link_analysis_email_report;
 
-    public ?bool $hb_branding;
-
     /**
      * @var BlogVariantObject[]
      */
@@ -101,7 +100,6 @@ class BlogObject
     {
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->getTimestamp();
-        $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->is_blocked = $blog->is_blocked;
         $this->theme_version_id = $blog->theme_version_id;
 
@@ -114,6 +112,7 @@ class BlogObject
 
         $this->url = $blog->url();
 
+        /** @var mixed $meta */
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;
@@ -137,27 +136,26 @@ class BlogObject
         $this->comments_code = $meta->comments_code;
         $this->newsletter_code = $meta->newsletter_code;
 
-        $this->seo_indexing = (bool) $meta->seo_indexing;
+        $this->seo_indexing = (bool)$meta->seo_indexing;
         $this->seo_robots_txt = $meta->seo_robots_txt;
         $this->seo_external_links_follow = SeoExternalLinksFollowEnum::from($meta->seo_external_links_follow);
-        $this->seo_rich_schema = (bool) $meta->seo_rich_schema;
+        $this->seo_rich_schema = (bool)$meta->seo_rich_schema;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
-        $this->syntax_on = (bool) $meta->syntax_on;
-        $this->syntax_line_numbers = (bool) $meta->syntax_line_numbers;
+        $this->syntax_on = (bool)$meta->syntax_on;
+        $this->syntax_line_numbers = (bool)$meta->syntax_line_numbers;
         $this->syntax_theme = $meta->syntax_theme;
 
-        $this->heading_anchors = (bool) $meta->heading_anchors;
+        $this->heading_anchors = (bool)$meta->heading_anchors;
 
-        $this->flashload = (bool) $meta->flashload;
+        $this->flashload = (bool)$meta->flashload;
 
-        $this->link_analysis_enabled = (bool) $meta->link_analysis_enabled;
-        $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report);
+        $this->link_analysis_enabled = (bool)$meta->link_analysis_enabled;
+        $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report) ??
+            LinkAnalysisEmailReportEnum::NEVER;
 
-        $this->hb_branding = $meta->hb_branding;
-
-        $this->variants = $blog->variants->map(function ($variant) use ($blog) {
+        $this->variants = $blog->variants->map(function ($variant) {
             return new BlogVariantObject($variant);
         })->sortBy('language_id')->toArray();
     }

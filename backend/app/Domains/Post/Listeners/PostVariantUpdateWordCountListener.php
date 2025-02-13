@@ -7,19 +7,15 @@ use App\Domains\Post\Events\PostVariantUpdatedEvent;
 
 class PostVariantUpdateWordCountListener
 {
-    public function handle(PostVariantUpdatedEvent $event) : void
+    public function handle(PostVariantUpdatedEvent $event): void
     {
         $variant = $event->variant;
 
-        if (! $variant->content) {
+        if (!$variant->content) {
             return;
         }
 
         $post = $variant->post;
-
-        if (! $post) {
-            return;
-        }
         $blog = $post->blog;
 
         if (!$blog) {

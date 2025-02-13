@@ -15,17 +15,13 @@ class UrlPostEntry
     {
     }
 
-    public function toXML() : string
+    public function toXML(): string
     {
         $entry = new UrlEntry();
         /** @var Blog $blog */
         $blog = $this->post->blog;
 
         foreach ($this->post->variants as $variant) {
-
-            if (!$variant->language)
-                continue;
-
             $url = PermalinkRepository::getPostPermalink(
                 $this->post,
                 $blog,
@@ -41,12 +37,12 @@ class UrlPostEntry
                 foreach ($images as $image) {
                     $src = $image['attrs']['src'] ?? null;
 
-                    if (! $src) {
+                    if (!$src) {
                         continue;
                     }
 
                     // external images
-                    if (! PermalinkRepository::isLinkInBlog($src, $blog)) {
+                    if (!PermalinkRepository::isLinkInBlog($src, $blog)) {
                         continue;
                     }
 

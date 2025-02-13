@@ -37,7 +37,9 @@ class Toc extends NodeType
             $template = '{{ toc | raw }}';
         }
 
-        $tocHtml = new TocHtml($context->node->attrs->levels);
+        /** @var int[] $levels */
+        $levels = $context->node->attrs->get('levels') ?: self::DEFAULT_LEVELS;
+        $tocHtml = new TocHtml($levels);
         $toc = $tocHtml->htmlFromNode($context->topNode);
 
         return TwigRenderer::renderString($template, [
@@ -57,7 +59,7 @@ class Toc extends NodeType
 
                     $levels = $node->getAttribute('data-levels');
 
-                    $levels = @explode(',', $levels) ?: [1,2,3,4,5,6];
+                    $levels = @explode(',', $levels);
                     $levels = array_map('intval', $levels);
 
                     return TocAttrs::fromArray([

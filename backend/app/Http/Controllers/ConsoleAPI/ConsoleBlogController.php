@@ -7,7 +7,6 @@ use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\LinkAnalysisEmailReportEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
-use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\BlogVariantObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
@@ -15,16 +14,14 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Subscription\SubscriptionService;
-use App\Domains\Subscription\UsageRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Subscription;
 use App\Rules\Subdomain;
+use Hyvor\Internal\Billing\Billing;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -34,20 +31,18 @@ class ConsoleBlogController extends Controller
     /**
      * Get initial data of a blog that is required to load it in the Console.
      *
-     * @param  Blog  $blog
+     * @param Blog $blog
      * @return JsonResponse
      */
-    public function getBlogData(Blog $blog)
+    public function getBlogData(Blog $blog, Billing $billing)
     {
-
-        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-        $usage = UsageRepository::getUsage($blog);
+        $license = $blog->hyvor_user_id ?
+            $billing->license($blog->hyvor_user_id, $blog->id) :
+            null;
 
         return response()->json([
             'blog' => new BlogObject($blog),
-            'subscription' => $subscription ?
-                new SubscriptionObject($subscription) :
-                null,
+            'license' => $license,
             'counts' => [
                 'posts' => [
                     'published' => $blog->getCount('posts'),
@@ -56,18 +51,19 @@ class ConsoleBlogController extends Controller
                     'featured' => $blog->getCount('posts_featured'),
                 ]
             ],
-            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
-            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
-            'languages' => LanguageRepository::getAllLanguages($blog)->map(fn ($language) => new LanguageObject($language)),
-            'usage' => $usage,
+            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn($user) => new UserObject($user, $blog)),
+            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn($tag) => new TagObject($tag, $blog)),
+            'languages' => LanguageRepository::getAllLanguages($blog)->map(
+                fn($language) => new LanguageObject($language)
+            ),
         ]);
     }
 
     /**
      * Updates a blog.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      */
     public static function updateBlog(Request $request, Blog $blog)
@@ -117,8 +113,6 @@ class ConsoleBlogController extends Controller
 
             'link_analysis_enabled' => 'boolean',
             'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class),
-
-            'hb_branding' => 'boolean'
         ];
         $request->validate($validate);
 
@@ -140,8 +134,8 @@ class ConsoleBlogController extends Controller
     /**
      * Creates a blog variant.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      *
      * @throws TrustedException
@@ -160,8 +154,8 @@ class ConsoleBlogController extends Controller
     /**
      * Updates a blog variant.
      *
-     * @param  Request  $request
-     * @param  Blog  $blog
+     * @param Request $request
+     * @param Blog $blog
      * @return JsonResponse
      *
      * @throws TrustedException

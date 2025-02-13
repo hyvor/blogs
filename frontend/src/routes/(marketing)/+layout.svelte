@@ -2,11 +2,16 @@
 	import Footer from './Footer.svelte';
 	import Header from './Header.svelte';
 	import { page } from "$app/stores";
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 
 <Header />
 
-<slot />
+{@render children?.()}
 
 {#if $page.url.pathname !== '/themes'}
 

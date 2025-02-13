@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Domains\Billing\UsageService;
 use App\Domains\Integrations\DeepL\DeepLPostTranslator;
 use App\Domains\Integrations\DeepL\DeepLService;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
@@ -18,7 +19,7 @@ use Illuminate\Validation\Rules\Enum;
 class ConsoleAiController
 {
 
-    public function translate(Request $request, Blog $blog) : JsonResponse
+    public function translate(Request $request, Blog $blog, UsageService $usageService) : JsonResponse
     {
 
         $request->validate([
@@ -30,8 +31,10 @@ class ConsoleAiController
             'target_lang' => ['required', new Enum(DeepLTargetLangEnum::class)],
         ]);
 
-        if (DeeplService::hasReachedLimit($blog)) {
-            throw new TrustedException('This blog has reached the limit of auto-translations for this month. Please upgrade your subscription plan.');
+        if ($usageService->autoTranslationCharsLimitReached($blog)) {
+            throw new TrustedException(
+                'You have reached the limit of auto-translations for this month. Please upgrade your subscription plan.'
+            );
         }
 
         $slug = (string) $request->string('slug');

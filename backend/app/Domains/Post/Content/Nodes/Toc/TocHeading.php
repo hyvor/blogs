@@ -38,7 +38,15 @@ class TocHeading
         $xpath = new \DOMXPath($dom);
         $headingsInHtml = $xpath->query('//h1|//h2|//h3|//h4|//h5|//h6');
 
+        if ($headingsInHtml === false) {
+            return [];
+        }
+
         foreach ($headingsInHtml as $heading) {
+            if (!$heading instanceof \DOMElement) {
+                continue;
+            }
+
             $level = (int) substr($heading->tagName, 1);
             if (!in_array($level, $levels)) {
                 continue;
@@ -67,14 +75,14 @@ class TocHeading
 
         $node->traverse(function (Node $node) use (&$headings, $levels) {
             if ($node->type->name === 'heading') {
-                $level = $node->attrs->level;
+                $level = (int) $node->attrs->get('level');
                 if (!in_array($level, $levels)) {
                     return;
                 }
                 $headings[] = new self(
                     title: $node->allText(),
                     id: $node->attrs->id ?? null,
-                    level: $node->attrs->level,
+                    level: $level,
                 );
             }
         });

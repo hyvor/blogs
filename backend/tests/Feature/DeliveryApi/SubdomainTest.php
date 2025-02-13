@@ -2,14 +2,10 @@
 
 namespace Tests\Feature\DeliveryApi;
 
-use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Subscription\SubscriptionService;
-use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Redirect;
 use App\Models\Subscription;
 
 it('works with subdomain', function () {
-
     $blog = blog();
     addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
@@ -23,7 +19,6 @@ it('works with subdomain', function () {
 });
 
 it('works with redirect', function () {
-
     $blog = blog();
     $redirect = Redirect::factory()->create(['blog_id' => $blog->id]);
 
@@ -32,10 +27,8 @@ it('works with redirect', function () {
 });
 
 it('redirects to homepage if the blog is blocked', function () {
-
     $blog = blog(['is_blocked' => true]);
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
-
 });
 
 /*it('redirects to homepage if the blog trial is ended', function() {
@@ -45,8 +38,7 @@ it('redirects to homepage if the blog is blocked', function () {
 
 });*/
 
-it('redirects to other domain if not hosted on subdomain', function() {
-
+it('redirects to other domain if not hosted on subdomain', function () {
     $blog = blog([
         'hosting_at' => 'domain',
         'hosting_domain' => 'hyvorblogs.com'
@@ -55,11 +47,9 @@ it('redirects to other domain if not hosted on subdomain', function() {
     $this
         ->get("http://$blog->subdomain.hyvorblogs.io/any")
         ->assertRedirect("https://hyvorblogs.com/any");
-
 });
 
-it('does not redirect if it is disabled', function() {
-
+it('does not redirect if it is disabled', function () {
     $blog = blogWithAccessLanguageAndRoutes([
         'hosting_at' => 'domain',
         'hosting_domain' => 'hyvorblogs.com',
@@ -71,12 +61,10 @@ it('does not redirect if it is disabled', function() {
         ->get("http://$blog->subdomain.hyvorblogs.io")
         ->assertOk()
         ->assertSee('hello world');
-
 });
 
 // bug #197
-it('redirects to homepage correctly', function() {
-
+it('redirects to homepage correctly', function () {
     $blog = blog([
         'hosting_at' => 'domain',
         'hosting_domain' => 'hyvorblogs.com'
@@ -85,20 +73,16 @@ it('redirects to homepage correctly', function() {
     $this
         ->get("http://$blog->subdomain.hyvorblogs.io")
         ->assertRedirect("https://hyvorblogs.com");
-
 });
 
-it('shows error when trial has ended', function() {
-
+it('shows error when trial has ended', function () {
     $blog = blog(['trial_ends_at' => now()->subDay()]);
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")
         ->assertSee('trial has ended')
         ->assertSee('/console/' . $blog->subdomain . '/billing');
+})->skip('Currently the trial is not checked, so skipped');
 
-});
-
-it('does now show an error when trial is ended but there is a subscription', function() {
-
+it('does now show an error when trial is ended but there is a subscription', function () {
     $blog = blogWithAccessLanguageAndRoutes(['trial_ends_at' => now()->subDay()]);
     Subscription::factory()->create(['blog_id' => $blog]);
 
@@ -108,13 +92,10 @@ it('does now show an error when trial is ended but there is a subscription', fun
     $this->get("http://$blog->subdomain.hyvorblogs.io")
         ->assertOk()
         ->assertSee($content, false);
-
 });
 
-it('does not show trial error for non-default blogs', function() {
-
+it('does not show trial error for non-default blogs', function () {
     $blog = blog(['trial_ends_at' => now()->subDay(), 'type' => 'dev']);
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")
         ->assertDontSee('trial has ended');
-
 });

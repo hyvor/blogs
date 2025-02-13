@@ -6,10 +6,11 @@ use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Subscription\UsageRepository;
+use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
@@ -200,13 +201,6 @@ class MediaRepository
         $split = explode('/', $path);
 
         return $split[count($split) - 1];
-    }
-
-    public static function hasLimitsExceeded(Blog $blog): bool
-    {
-        $usage = $blog->getCount('media');
-        $limit = UsageRepository::getLimitsOf($blog, 'media');
-        return $usage >= $limit;
     }
 
     /**

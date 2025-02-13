@@ -8,7 +8,8 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Arr;
 
-function blog($attrs = []) : Blog {
+function blog($attrs = []): Blog
+{
     $blog = Blog::factory()
         // ->has(BlogVariant::factory(), 'variants')
         ->create($attrs);
@@ -16,7 +17,11 @@ function blog($attrs = []) : Blog {
     return $blog;
 }
 
-function blogWithAccess($attrs = []) {
+/**
+ * @deprecated Use BlogFactory
+ */
+function blogWithAccess($attrs = [])
+{
     $blog = blog($attrs + ['hyvor_user_id' => 1]);
 
     User::factory()->create([
@@ -28,7 +33,8 @@ function blogWithAccess($attrs = []) {
     return $blog;
 }
 
-function blogWithAccessLanguageAndRoutes($attrs = []) {
+function blogWithAccessLanguageAndRoutes($attrs = [])
+{
     $blog = blogWithAccess($attrs);
     addPrimaryLanguage($blog);
     addBlogVariants($blog);
@@ -36,14 +42,16 @@ function blogWithAccessLanguageAndRoutes($attrs = []) {
     return $blog;
 }
 
-function blogWithLanguage($attrs = []) {
+function blogWithLanguage($attrs = [])
+{
     $blog = blog($attrs);
     addPrimaryLanguage($blog);
     addBlogVariants($blog);
     return $blog;
 }
 
-function blogWithLanguageAndRoutes($attrs = []) {
+function blogWithLanguageAndRoutes($attrs = [])
+{
     $blog = blog($attrs);
     addPrimaryLanguage($blog);
     addBlogVariants($blog);
@@ -51,24 +59,28 @@ function blogWithLanguageAndRoutes($attrs = []) {
     return $blog;
 }
 
-function addBlogVariants(Blog $blog, $languages = null) {
-
+function addBlogVariants(Blog $blog, $languages = null)
+{
     $languages = $languages ? collect(Arr::wrap($languages)) : $blog->languages;
 
     return BlogVariant::factory()
         ->count($languages->count())
-        ->state(new Sequence(
-            ...$languages->map(fn($lang) => ['language_id' => $lang->id])
-        ))
+        ->state(
+            new Sequence(
+                ...$languages->map(fn($lang) => ['language_id' => $lang->id])
+            )
+        )
         ->create([
             'blog_id' => $blog
         ]);
-
 }
 
-function devBlog() : Blog {
+function devBlog(): Blog
+{
     return blog(['type' => BlogTypeEnum::DEV]);
 }
-function previewBlog() : Blog {
+
+function previewBlog(): Blog
+{
     return blog(['type' => BlogTypeEnum::PREVIEW]);
 }

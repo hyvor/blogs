@@ -1,14 +1,17 @@
 <script lang="ts">
-	import * as React from "react";
-	import { createRoot } from "react-dom/client";
-	import { afterUpdate, onDestroy } from "svelte";
+	import * as React from 'react';
+	import { createRoot } from 'react-dom/client';
+	import { onDestroy } from 'svelte';
 
 	let container: HTMLElement;
 
 	let root: ReturnType<typeof createRoot>;
-	afterUpdate(() => {
+
+	let componentProps = $props();
+
+	$effect(() => {
 		root = createRoot(container);
-		const { this: component, children, ...props } = $$props;
+		const { this: component, children, ...props } = componentProps;
 
 		root.render(React.createElement(component, props, children));
 	});
@@ -18,8 +21,7 @@
 	});
 </script>
 
-
-<div class="reactComponent" bind:this={container} />
+<div class="reactComponent" bind:this={container}></div>
 
 <style>
 	.reactComponent {

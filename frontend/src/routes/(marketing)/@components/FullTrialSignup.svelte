@@ -1,13 +1,18 @@
-<script>
+<script lang="ts">
 	import { Button } from "@hyvor/design/components";
 	import TrialChecks from "./TrialChecks.svelte";
 
-    export let title = "Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?";
+    interface Props {
+        title?: string;
+        [key: string]: any
+    }
+
+    let { title = "Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?", ...rest }: Props = $props();
 
 </script>
 
 
-<div class="wrap" {...$$restProps}>
+<div class="wrap" {...rest}>
 
     <div class="hds-container inner">
 

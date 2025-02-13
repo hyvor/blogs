@@ -10,8 +10,12 @@
 	import React from "react";
 	import { createEventDispatcher } from "svelte";
 
-	export let initialData: ExcalidrawInitialDataState = {};
-	export let excalidrawAPI: ExcalidrawImperativeAPI;
+	interface Props {
+		initialData?: ExcalidrawInitialDataState;
+		excalidrawAPI: ExcalidrawImperativeAPI | undefined;
+	}
+
+	let { initialData = {}, excalidrawAPI = $bindable() }: Props = $props();
 
 	const dispatcher = createEventDispatcher<{
 		init: void;

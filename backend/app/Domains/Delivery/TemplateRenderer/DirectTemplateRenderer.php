@@ -36,13 +36,13 @@ class DirectTemplateRenderer
             canonical_url: $url,
         );
 
-        $vars = json_decode(json_encode($vars), true);
+        $vars = json_decode((string) json_encode($vars), true);
 
         $allTemplates = ThemeFilesRepository::getFilesInFolder($this->blog,ThemeFileFolderEnum::TEMPLATES);
 
         $loaderArray = [];
         foreach ($allTemplates as $file) {
-            $loaderArray[$file->name] = $file->content;
+            $loaderArray[$file->name] = $file->content ?? '';
         }
 
         return TwigRenderer::renderFromFiles($loaderArray, $vars, $this->templateName);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Model
 {
+
+    /**
+     * @use HasFactory<UserFactory>
+     */
     use HasFactory;
 
     protected $casts = [
@@ -24,7 +29,7 @@ class User extends Model
     ];
 
     /**
-     * @return HasMany<UserVariant>
+     * @return HasMany<UserVariant, $this>
      */
     public function variants()
     {
@@ -32,7 +37,7 @@ class User extends Model
     }
 
     /**
-     * @return BelongsTo<Blog, self>
+     * @return BelongsTo<Blog, $this>
      */
     public function blog()
     {
@@ -40,7 +45,7 @@ class User extends Model
     }
 
     /**
-     * @return HasOne<Media>
+     * @return HasOne<Media, $this>
      */
     public function media()
     {

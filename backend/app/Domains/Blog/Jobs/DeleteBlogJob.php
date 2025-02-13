@@ -15,7 +15,7 @@ class DeleteBlogJob implements ShouldQueue
     {
     }
 
-    public function handle()
+    public function handle(): void
     {
         app(BlogService::class)->deleteBlog($this->blog);
     }

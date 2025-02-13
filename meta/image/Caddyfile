@@ -6,7 +6,7 @@
 
 # hyvorblogs.io subdomain
 *.{$DELIVERY_DOMAIN}:80 {
-	root * /var/www/app/backend/public
+	root * /app/backend/public
 	encode zstd gzip
 	php_fastcgi unix//run/php-fpm.sock
 	try_files index.php
@@ -15,12 +15,12 @@
 # main app
 {$DOMAIN_APP}:80 {
 	handle /api/* {
-		root * /var/www/app/backend/public
+		root * /app/backend/public
 		php_fastcgi unix//run/php-fpm.sock
 		try_files index.php
 	}
 	handle {
-		root * /var/www/app/frontend/build
+		root * /app/static
 		file_server {
 			pass_thru
 		}
@@ -28,7 +28,7 @@
 		try_files {path} {path}.html
 	}
 	handle {
-		root * /var/www/app/frontend/build
+		root * /app/static
 		encode zstd gzip
 		file_server
 		rewrite * /200.html
@@ -41,7 +41,7 @@ http://, https:// {
 		on_demand
 	}
 
-	root * /var/www/app/backend/public
+	root * /app/backend/public
 	encode zstd gzip
 	php_fastcgi unix//run/php-fpm.sock
 	try_files index.php

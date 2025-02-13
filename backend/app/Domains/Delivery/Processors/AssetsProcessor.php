@@ -13,7 +13,6 @@ use App\Helpers\MimeTypes;
 
 class AssetsProcessor extends RouteProcessorAbstract
 {
-    private ?DeliveryAPIResponseObject $responseObject = null;
 
     private const DEFAULT_ASSETS = [
         'flashload.js',
@@ -22,6 +21,10 @@ class AssetsProcessor extends RouteProcessorAbstract
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $fileName = $matchedRoute->param('file_name');
+
+        if (!is_string($fileName))
+            return;
+
         $file = ThemeFilesRepository::getFile(
             $pathMatcher->blog,
             $fileName,

@@ -23,4 +23,28 @@ class LanguageFactory extends Factory
             'direction' => LanguageDirectionEnum::LTR
         ];
     }
+
+    /**
+     * @param array<mixed> $attr
+     */
+    public static function oneFor(
+        Blog $blog,
+        array $attr = [],
+        bool $isPrimary = false
+    ): Language {
+        return Language::factory()->create(
+            [
+                'blog_id' => $blog->id,
+                'is_primary' => $isPrimary,
+            ] + $attr
+        );
+    }
+
+    /**
+     * @param array<mixed> $attr
+     */
+    public static function primaryFor(Blog $blog, array $attr = []): Language
+    {
+        return self::oneFor($blog, $attr, true);
+    }
 }

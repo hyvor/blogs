@@ -7,6 +7,7 @@ use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
+use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Shared\Count\BlogMediaCountsJob;
 use App\Domains\Shared\Count\BlogPostsCountsJob;
@@ -47,7 +48,7 @@ it('calls update blog counts on post creating', function () {
     $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
-    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls update when post variant status changes for primary variant', function () {
@@ -65,7 +66,7 @@ it('calls update when post variant status changes for primary variant', function
     $listener = new CountSubscriber();
     $listener->onPostVariantUpdate($event);
 
-    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('does not call blog count update when other properties of variant is called', function () {
@@ -85,6 +86,38 @@ it('does not call blog count update when other properties of variant is called',
     Queue::assertNothingPushed();
 });
 
+it('calls blog counts job on post is_featured update', function () {
+    Queue::fake();
+
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    $post = addPublishedPost($blog);
+
+    $post->is_featured = true;
+
+    $event = new PostUpdatedEvent($post);
+    $listener = new CountSubscriber();
+    $listener->onPostUpdate($event);
+
+    Queue::assertPushed(fn(BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
+});
+
+it('does not call on other updates', function () {
+    Queue::fake();
+
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    $post = addPublishedPost($blog);
+
+    $post->featured_image_url = 'Changed';
+
+    $event = new PostUpdatedEvent($post);
+    $listener = new CountSubscriber();
+    $listener->onPostUpdate($event);
+
+    Queue::assertNothingPushed();
+});
+
 it('calls blog counts job on post delete', function () {
     Queue::fake();
 
@@ -97,8 +130,9 @@ it('calls blog counts job on post delete', function () {
     $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
-    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
 });
+
 
 it('calls blog users counts job on user create', function () {
     Queue::fake();
@@ -110,7 +144,7 @@ it('calls blog users counts job on user create', function () {
     $listener = new CountSubscriber();
     $listener->onUserEvent($event);
 
-    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 
@@ -123,7 +157,7 @@ it('calls blog users counts job on user delete', function () {
     $listener = new CountSubscriber();
     $listener->onUserEvent($event);
 
-    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls blog media counts job on media create', function () {
@@ -136,7 +170,7 @@ it('calls blog media counts job on media create', function () {
     $listener = new CountSubscriber();
     $listener->onMediaEvent($event);
 
-    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls blog media counts job on media delete', function () {
@@ -149,5 +183,5 @@ it('calls blog media counts job on media delete', function () {
     $listener = new CountSubscriber();
     $listener->onMediaEvent($event);
 
-    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
+    Queue::assertPushed(fn(BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
 });

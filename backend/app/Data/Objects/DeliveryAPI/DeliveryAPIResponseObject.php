@@ -58,7 +58,7 @@ class DeliveryAPIResponseObject
         return $obj;
     }
 
-    public static function forRedirect(string $to, RedirectTypeEnum $type)
+    public static function forRedirect(string $to, RedirectTypeEnum $type): self
     {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->to = $to;
@@ -72,7 +72,7 @@ class DeliveryAPIResponseObject
         DeliveryAPIFileTypeEnum $type,
         string $content = '',
         int $status = 500,
-    )
+    ) : self
     {
         return self::forFile(
             $type,

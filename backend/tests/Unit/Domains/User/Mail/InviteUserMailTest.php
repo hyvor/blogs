@@ -4,11 +4,11 @@ namespace Tests\Unit\Domains\User\Mail;
 
 use App\Domains\User\Mail\InviteUserMail;
 use App\Models\User;
-use Hyvor\Internal\Auth\Providers\Fake\FakeProvider;
+use Hyvor\Internal\Auth\AuthFake;
 
 it('has content', function () {
     $user = User::factory()->create();
-    $hyvorUser = FakeProvider::fakeLoginUser();
+    $hyvorUser = AuthFake::generateUser();
     $blog = $user->blog;
 
     $mailable = new InviteUserMail($user, $hyvorUser);

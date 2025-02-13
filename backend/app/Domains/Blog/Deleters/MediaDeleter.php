@@ -5,7 +5,6 @@ namespace App\Domains\Blog\Deleters;
 use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
 use App\Models\Media;
-use Illuminate\Database\Eloquent\Model;
 
 class MediaDeleter implements DeleterInterface
 {
@@ -19,7 +18,7 @@ class MediaDeleter implements DeleterInterface
             ->chunk(100, function ($medias) {
 
                 /**
-                 * @var $media Media
+                 * @var Media $media
                  */
                 foreach ($medias as $media) {
                     MediaRepository::delete($media);
