@@ -2,12 +2,14 @@
 
 namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
 use App\Domains\LinkAnalyzer\Check\PostsCheck;
 use App\Models\LinkAnalyzerLink;
 use Database\Factories\BlogFactory;
 use Database\Factories\PostFactory;
+use Database\Factories\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -180,6 +182,47 @@ class FullBlogAnalyzerTest extends DatabaseTestCase
         $this->assertIsArray($linkAnalysisCache);
         $this->assertSame(-2, $linkAnalysisCache['https://hyvor.com/about']);
         $this->assertSame(301, $linkAnalysisCache['https://example.com/1']);
+    }
+
+    public function testAnalyzesSubdomainBlogWithInternalLinks(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes([
+            'hosting_at' => BlogHostingAtEnum::SELF,
+            'hosting_url' => 'https://hypotheticalwebsite.com/blog'
+        ]);
+        ThemeFileFactory::templateFor($blog, 'hello', 'post.twig');
+
+        $post1 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'slug' => 'post-1',
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hypotheticalwebsite.com/blog/wrong',
+            ])
+        ]);
+
+        $post2 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'slug' => 'post-2',
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hypotheticalwebsite.com/blog/post-1',
+            ])
+        ]);
+
+        $analyze = new FullBlogAnalyzer($blog);
+        $analyze->analyze();
+
+        $links = LinkAnalyzerLink::all();
+        $this->assertCount(2, $links);
+
+        $link1 = $links->first();
+        $this->assertNotNull($link1);
+        $this->assertSame('https://hypotheticalwebsite.com/blog/wrong', $link1->url);
+        $this->assertSame(404, $link1->status_code);
+
+        $link2 = $links->last();
+        $this->assertNotNull($link2);
+        $this->assertSame('https://hypotheticalwebsite.com/blog/post-1', $link2->url);
+        $this->assertSame(200, $link2->status_code);
     }
 
 }
