@@ -24,7 +24,6 @@ class SudoDataService
         };
 
         return Blog::with('variants')
-            ->select('blogs.*')
             ->when($blogId, fn($query, $blogId) => $query->where('blogs.id', $blogId))
             ->when($subdomain, fn($query, $subdomain) => $query->where('blogs.subdomain', $subdomain))
             ->withCount('posts')

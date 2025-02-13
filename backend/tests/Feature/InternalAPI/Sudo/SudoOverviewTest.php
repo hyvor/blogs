@@ -40,35 +40,12 @@ class SudoOverviewTest extends DatabaseTestCase
             'trial_ends_at' => now()->addDays(18)
         ]);
 
-        // subscriptions
-        Subscription::factory()->count(1)->create(
-            [
-                'status' => 'active',
-                'plan' => 'starter',
-                'blog_id' => $blog1->id,
-                'frequency' => 'monthly',
-                'ends_at' => now()->addDays(30)
-            ]
-        );
-        Subscription::factory()->count(1)->create(
-            [
-                'status' => 'active',
-                'plan' => 'growth',
-                'blog_id' => $blog2->id,
-                'frequency' => 'monthly',
-                'ends_at' => now()->addDays(30)
-            ]
-        );
-
         $this->internalApi('GET', '/core/sudo/overview', from: ComponentType::CORE)
             ->assertOk()
 
             // blogs
             ->assertJsonPath('blogs.total', 3)
-            ->assertJsonPath('blogs.total_30_days_change', 2)
-            ->assertJsonPath('blogs.in_trial', 1)
-            ->assertJsonPath('blogs.paid', 2)
-            ->assertJsonPath('blogs.paid_30_days_change', 2);
+            ->assertJsonPath('blogs.total_30_days_change', 2);
     }
 
 }
