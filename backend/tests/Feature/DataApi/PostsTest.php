@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-
     $blog = blog();
 
     $this->primaryLanguage = addPrimaryLanguage($blog);
@@ -26,7 +25,6 @@ beforeEach(function () {
     $this->pages = addPosts($blog, 3, ['is_page' => true], ['status' => 'published']);
 
     $this->blog = $blog;
-
 });
 
 it('fetches posts without params', function () {
@@ -36,17 +34,19 @@ it('fetches posts without params', function () {
             $json
                 ->count('data', 4)
                 ->has('data')
-                ->has('data.0', fn (AssertableJson $json) =>
-                    $json->where('language.code', $this->primaryLanguage->code)->etc())
+                ->has(
+                    'data.0',
+                    fn(AssertableJson $json) => $json->where('language.code', $this->primaryLanguage->code)->etc()
+                )
                 ->has('pagination');
         });
 });
 
 it('fetches pages', function () {
     dataApi($this->blog, '/posts', [
-            'limit' => 2,
-            'pages' => true,
-        ])
+        'limit' => 2,
+        'pages' => true,
+    ])
         ->assertJson(function (AssertableJson $json) {
             $json->has('data', 2, function (AssertableJson $json) {
                 $json->where('is_page', true)
@@ -57,13 +57,15 @@ it('fetches pages', function () {
 
 it('works with language', function () {
     dataApi($this->blog, '/posts', [
-            'language' => $this->secondaryLanguage->code,
-        ])
+        'language' => $this->secondaryLanguage->code,
+    ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data')
-                ->has('data.0', fn (AssertableJson $json) =>
-                    $json->where('language.code', $this->secondaryLanguage->code)->etc())
+                ->has(
+                    'data.0',
+                    fn(AssertableJson $json) => $json->where('language.code', $this->secondaryLanguage->code)->etc()
+                )
                 ->has('pagination');
         });
 });
@@ -76,8 +78,8 @@ it('does not work with wrong language', function () {
 
 it('gives correct limit', function () {
     dataApi($this->blog, '/posts', [
-            'limit' => 3,
-        ])
+        'limit' => 3,
+    ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data', 3)
@@ -86,7 +88,6 @@ it('gives correct limit', function () {
 });
 
 it('gives correct page for pagination', function () {
-
     $response = dataApi($this->blog, '/posts', [
         'limit' => 2,
         'page' => 2,
@@ -188,7 +189,6 @@ it('sorts by id DESC correctly', function () {
 });
 
 it('sorts by is_featured DESC correctly', function () {
-
     $post = $this->posts->random();
     $post->is_featured = true;
     $post->save();
@@ -243,8 +243,8 @@ it('filters posts by id', function () {
     $post = $this->posts->random();
 
     dataApi($this->blog, '/posts', [
-            'filter' => "id=$post->id",
-        ])
+        'filter' => "id=$post->id",
+    ])
         ->assertJsonPath('data.0.id', $post->id)
         ->assertJsonCount(1, 'data');
 });
@@ -296,8 +296,8 @@ it('filters_by_is_featured', function () {
         'filter' => 'is_featured=true',
     ]);
     $response
-        ->assertJsonPath('data.0.slug', $post->variants[0]->slug)
-        ->assertJsonCount(1, 'data');
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $post->id);
 });
 
 it('filters by slug', function () {
@@ -308,8 +308,8 @@ it('filters by slug', function () {
         'filter' => "slug=some-new-slug",
     ]);
     $response
-        ->assertJsonPath('data.0.slug', $post->variants[0]->slug)
-        ->assertJsonCount(1, 'data');
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $post->id);
 });
 
 it('filters by featured image', function () {
@@ -330,7 +330,6 @@ it('filters by canonical url', function () {
 });
 
 it('filters by words', function () {
-
     // make sure there's at least one post with 20+ words
     $post = $this->posts->random();
     $post->variants()->update(['words' => 21]);
@@ -340,14 +339,13 @@ it('filters by words', function () {
     ]);
     $response->assertJson(function ($json) {
         $json->has('data.0', function ($json) {
-            $json->where('words', fn ($val) => $val > 20)
+            $json->where('words', fn($val) => $val > 20)
                 ->etc();
         })->etc();
     });
 });
 
 it('filters by tag ID', function () {
-
     $tag = addTag($this->blog);
     $post = $this->posts->random();
     addTagToPost($post, $tag);
@@ -360,7 +358,6 @@ it('filters by tag ID', function () {
 });
 
 it('filters by tag slug', function () {
-
     $tag = addTag($this->blog);
     $post = $this->posts->random();
     addTagToPost($post, $tag);
@@ -372,7 +369,6 @@ it('filters by tag slug', function () {
 });
 
 it('filters by author ID', function () {
-
     $post = $this->posts->random();
     $user = addUser($this->blog);
     addAuthorToPost($post, $user);
@@ -381,11 +377,9 @@ it('filters by author ID', function () {
         'filter' => "author.id=$user->id",
     ]);
     $response->assertJsonPath('data.0.authors.0.id', $user->id);
-
 });
 
 it('filters by author slug', function () {
-
     $post = $this->posts->random();
     $user = addUser($this->blog);
     addAuthorToPost($post, $user);
@@ -396,8 +390,7 @@ it('filters by author slug', function () {
     $response->assertJsonPath('data.0.authors.0.slug', $user->slug);
 });
 
-it('fetches with ht gated content', function() {
-
+it('fetches with ht gated content', function () {
     HyvorTalkWebsite::create([
         'blog_id' => $this->blog->id,
         'website_id' => 10,
@@ -416,7 +409,7 @@ it('fetches with ht gated content', function() {
 
     $response = dataApi($this->blog, '/posts', [
         'sort' => 'id ASC',
-        ])
+    ])
         ->assertOk()
         ->json();
 
@@ -431,7 +424,6 @@ it('fetches with ht gated content', function() {
     $queries = collect(DB::getQueryLog());
 
     // make sure fetching gated content does not cause n+1 queries
-    expect($queries->where(fn ($q) => str_contains($q['query'], 'hyvor_talk_gated_content_rules'))->count())->toBe(1);
-    expect($queries->where(fn ($q) => str_contains($q['query'], 'inter_hyvor_talk_websites'))->count())->toBe(1);
-
+    expect($queries->where(fn($q) => str_contains($q['query'], 'hyvor_talk_gated_content_rules'))->count())->toBe(1);
+    expect($queries->where(fn($q) => str_contains($q['query'], 'inter_hyvor_talk_websites'))->count())->toBe(1);
 });

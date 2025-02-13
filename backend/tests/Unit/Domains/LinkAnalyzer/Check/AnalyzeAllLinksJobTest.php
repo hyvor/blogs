@@ -60,7 +60,7 @@ it('job works', function () {
     expect($check->links_broken_count)->toBe(0);
     expect($check->links_redirect_count)->toBe(1);
 
-    Mail::assertSent(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {
+    Mail::assertQueued(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {
         expect($mail->hasTo('test@hyvor.com'))->toBeTrue();
         return true;
     });
@@ -74,7 +74,7 @@ it('does not send mail when the option is disabled', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
 });
 
 it('does not send mail when broken', function () {
@@ -85,7 +85,7 @@ it('does not send mail when broken', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
 });
 
 it('sends email when broken and there are broken links', function () {
@@ -108,5 +108,5 @@ it('sends email when broken and there are broken links', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertSent(LinkAnalyzeReportMail::class);
+    Mail::assertQueued(LinkAnalyzeReportMail::class);
 });
