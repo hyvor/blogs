@@ -21,11 +21,6 @@ class SudoAnalyticsService
         return Blog::where('created_at', '>', now()->subDays(30))->count();
     }
 
-    public static function getTrialBlogs(): int
-    {
-        return Blog::where('trial_ends_at', '>', now())->count();
-    }
-
     public static function getBlogByMonth(): mixed
     {
         return DB::table('blogs')

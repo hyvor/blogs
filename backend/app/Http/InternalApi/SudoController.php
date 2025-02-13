@@ -19,7 +19,6 @@ class SudoController
             'blogs' => [
                 'total' => SudoAnalyticsService::getBlogTotal(),
                 'total_30_days_change' => SudoAnalyticsService::getBlog30DaysChange(),
-                'in_trial' => SudoAnalyticsService::getTrialBlogs(),
                 'by_month' => SudoAnalyticsService::getBlogByMonth(),
             ],
         ]);
