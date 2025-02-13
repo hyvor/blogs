@@ -21,8 +21,6 @@ class SudoController
                 'total_30_days_change' => SudoAnalyticsService::getBlog30DaysChange(),
                 'in_trial' => SudoAnalyticsService::getTrialBlogs(),
                 'by_month' => SudoAnalyticsService::getBlogByMonth(),
-                'paid'  => SudoAnalyticsService::getPaidBlogs(),
-                'paid_30_days_change' => SudoAnalyticsService::getPaidBlogs30DaysChange(),
             ],
         ]);
     }
@@ -33,7 +31,6 @@ class SudoController
             'blog_id' => 'integer|nullable',
             'subdomain' => 'string|nullable',
             'sort' => 'in:asc,desc|nullable',
-            'filter' => 'in:in_trial,starter,growth,premium,business,team,enterprise|nullable',
             'limit' => 'integer|nullable',
             'offset' => 'integer|nullable',
         ]);
@@ -47,7 +44,6 @@ class SudoController
                 $data['subdomain'] ?? null,
                 $sortBy,
                 $sort,
-                $data['filter'] ?? null,
                 $data['limit'] ?? 10,
                 $data['offset'] ?? 0
             ),
@@ -57,6 +53,7 @@ class SudoController
     public function blogAction(Request $request, int $id): JsonResponse
     {
         $blog = Blog::find($id);
+
         if (!$blog) {
             throw new HttpException('Blog not found');
         }
@@ -67,18 +64,11 @@ class SudoController
 
         $action = $data['action'];
 
-        if ($action === 'update_trial') {
-            $trialEndsAt = $request->input('trial_ends_at');
-            if (!$trialEndsAt) {
-                throw new HttpException('trial_ends_at is required for update_trial action');
-            }
-            SudoActionsService::updateBlogTrial($blog, $trialEndsAt);
-        } else if ($action === 'block') {
+        if ($action === 'block') {
             SudoActionsService::blockBlog($blog);
-        } else if ($action === 'unblock') {
+        } elseif ($action === 'unblock') {
             SudoActionsService::unblockBlog($blog);
-        }
-        else {
+        } else {
             throw new HttpException('Invalid action');
         }
 

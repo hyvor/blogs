@@ -5,6 +5,7 @@ namespace App\Domains\Sudo;
 
 use App\Models\Blog;
 use Hyvor\Internal\Http\Middleware\AccessAuthUser;
+use Illuminate\Support\Facades\DB;
 
 class SudoAnalyticsService
 {
@@ -25,28 +26,14 @@ class SudoAnalyticsService
         return Blog::where('trial_ends_at', '>', now())->count();
     }
 
-    public static function getPaidBlogs(): int
-    {
-        // Join with subscriptions table to get only blogs with active subscriptions
-        return Blog::join('subscriptions', 'blogs.id', '=', 'subscriptions.blog_id')
-            ->where('subscriptions.ends_at', '>', now())
-            ->count();
-    }
-
-    public static function getPaidBlogs30DaysChange(): int
-    {
-        return Blog::join('subscriptions', 'blogs.id', '=', 'subscriptions.blog_id')
-            ->where('subscriptions.ends_at', '>', now()->subDays(30))
-            ->count();
-    }
-
     public static function getBlogByMonth(): mixed
     {
-        return Blog::selectRaw('count(*) as count, DATE_FORMAT(created_at, "%Y-%m") as month')
+        return DB::table('blogs')
+            ->selectRaw('count(*) as count, TO_CHAR(created_at, \'YYYY-MM\') AS month')
             ->groupBy('month')
             ->orderBy('month')
             ->get()
             ->keyBy('month')
-            ->map(fn ($blog) => $blog->count);
+            ->map(fn(mixed $blog) => $blog->count);
     }
 }

@@ -1,61 +1,55 @@
 <?php
 
-namespace Feature\InternalApi\Sudo;
+namespace Tests\Feature\InternalAPI\Sudo;
 
+use App\Domains\Sudo\SudoActionsService;
+use App\Http\InternalApi\SudoController;
 use App\Models\Blog;
-use Carbon\Carbon;
-use Hyvor\Internal\InternalApi\Testing\InternalApiTesting;
+use Hyvor\Internal\InternalApi\Testing\CallsInternalApi;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Tests\Case\DatabaseTestCase;
 
-it('updates trial date', function () {
-    $blog = Blog::factory()->create();
+#[CoversClass(SudoController::class)]
+#[CoversClass(SudoActionsService::class)]
+class SudoBlogActionsTest extends DatabaseTestCase
+{
 
-    $tmsp = Carbon::parse('2025-12-15')->getTimestamp();
+    use CallsInternalApi;
 
-    InternalApiTesting::call(
-        'POST',
-        '/core/sudo/blogs/' . $blog->id,
-        [
-            'action' => 'update_trial',
-            'trial_ends_at' => $tmsp,
-        ]
-    )
-        ->assertOk();
+    public function testBlocksBlog(): void
+    {
+        $blog = Blog::factory()->create();
 
-    $blog->refresh();
-    expect($blog->isInTrial())->toBeTrue();
-});
+        $this->internalApi(
+            'POST',
+            '/core/sudo/blogs/' . $blog->id,
+            [
+                'action' => 'block',
+            ]
+        )
+            ->assertOk();
 
+        $blog->refresh();
+        $this->assertTrue($blog->is_blocked);
+        $this->assertNotNull($blog->blocked_at);
+    }
 
-it('block blog', function () {
-    $blog = Blog::factory()->create();
+    public function testUnblocksBlog(): void
+    {
+        $blog = Blog::factory()->create(['is_blocked' => true]);
 
-    InternalApiTesting::call(
-        'POST',
-        '/core/sudo/blogs/' . $blog->id,
-        [
-            'action' => 'block',
-        ]
-    )
-        ->assertOk();
+        $this->internalApi(
+            'POST',
+            '/core/sudo/blogs/' . $blog->id,
+            [
+                'action' => 'unblock',
+            ]
+        )
+            ->assertOk();
 
-    $blog->refresh();
-    expect($blog->is_blocked)->toBeTrue();
-    expect($blog->blocked_at)->not->toBeNull();
-});
+        $blog->refresh();
+        $this->assertFalse($blog->is_blocked);
+        $this->assertNull($blog->blocked_at);
+    }
 
-it('unlock blog', function () {
-    $blog = Blog::factory()->create(['is_blocked' => true]);
-
-    InternalApiTesting::call(
-        'POST',
-        '/core/sudo/blogs/' . $blog->id,
-        [
-            'action' => 'unblock',
-        ]
-    )
-        ->assertOk();
-
-    $blog->refresh();
-    expect($blog->is_blocked)->toBeFalse();
-    expect($blog->blocked_at)->toBeNull();
-});
+}
