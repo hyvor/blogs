@@ -37,12 +37,18 @@ class BlogFactory extends Factory
         ];
     }
 
+    /**
+     * @param array<mixed> $attrs
+     */
     public static function one($attrs = []): Blog
     {
         return Blog::factory()->create($attrs);
     }
 
-    public static function withAccess($attrs = [])
+    /**
+     * @param array<mixed> $attrs
+     */
+    public static function withAccess($attrs = []): Blog
     {
         $blog = self::one($attrs + ['hyvor_user_id' => 1]);
 
@@ -52,6 +58,18 @@ class BlogFactory extends Factory
             'role' => 'owner',
         ]);
 
+        return $blog;
+    }
+
+    /**
+     * @param array<mixed> $attrs
+     */
+    public static function withLanguageAndRoutes($attrs = []): Blog
+    {
+        $blog = self::withAccess($attrs);
+        LanguageFactory::primaryFor($blog);
+        BlogVariantFactory::allFor($blog);
+        RouteFactory::defaultsFor($blog);
         return $blog;
     }
 }

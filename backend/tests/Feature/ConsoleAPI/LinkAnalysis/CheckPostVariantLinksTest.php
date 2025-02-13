@@ -3,10 +3,12 @@
 namespace Tests\Feature\ConsoleAPI\LinkAnalysis;
 
 use App\Data\Enums\PostStatusEnum;
-use Illuminate\Support\Facades\Http;
+use Database\Factories\ThemeFileFactory;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-it('does not allow updating posts of other blogs', function() {
-
+it('does not allow updating posts of other blogs', function () {
     $blog = blogWithAccess();
 
     $otherBlog = blogWithLanguage();
@@ -20,15 +22,17 @@ it('does not allow updating posts of other blogs', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Post variant does not belong to this blog');
-
 });
 
-it('checks post variant links', function() {
-
-    Http::fake([
-        'https://hyvor.com' => Http::response('', 200),
-        'https://endpoint.com' => Http::response('', 404),
-    ]);
+it('checks post variant links', function () {
+    $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+        if (str_contains($url, 'hyvor.com')) {
+            return new MockResponse('', ['http_code' => 200]);
+        }
+        if (str_contains($url, 'endpoint.com')) {
+            return new MockResponse('', ['http_code' => 404]);
+        }
+    }));
 
     $blog = blogWithAccessLanguageAndRoutes();
 
@@ -57,14 +61,13 @@ it('checks post variant links', function() {
         'https://hyvor.com' => 200,
         'https://endpoint.com' => 404
     ]);
-
 });
 
-it('checks with relative URL', function() {
-
+it('checks with relative URL', function () {
     $blog = blogWithAccessLanguageAndRoutes([
         'subdomain' => 'my-subdomain'
     ]);
+    ThemeFileFactory::templateFor($blog, 'Hello!', 'post.twig');
     $post = addPost($blog, [], [
         'status' => PostStatusEnum::PUBLISHED,
         'slug' => 'post-slug'
@@ -72,10 +75,6 @@ it('checks with relative URL', function() {
     $postVariant = $post->variants()->first();
 
     $fullUrl = "https://my-subdomain.hyvorblogs.io/post-slug";
-
-    Http::fake([
-        $fullUrl => Http::response('', 200),
-    ]);
 
     consoleApi($blog, 'POST', '/link-analysis/check-urls', [
         'post_variant_id' => $postVariant->id,
@@ -94,5 +93,4 @@ it('checks with relative URL', function() {
     expect($postVariant->link_analysis)->toBe([
         'post-slug' => 200,
     ]);
-
 });

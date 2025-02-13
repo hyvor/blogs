@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -8,6 +10,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelIgnition\Facades\Flare;
+use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Throwable;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // symfony http client
+        $this->app->bind(HttpClientInterface::class, fn() => new CurlHttpClient());
     }
 
     /**

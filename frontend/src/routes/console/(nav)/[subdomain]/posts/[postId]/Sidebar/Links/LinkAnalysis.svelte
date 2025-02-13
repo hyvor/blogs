@@ -32,7 +32,9 @@
 	function handleReloadAll() {
 		isReloadingAll = true;
 
-		const allLinks = $variantLinksStore.filter((link) => isHttpLink(link)).map((link) => link.href);
+		const allLinks = $variantLinksStore
+			.filter((link) => isHttpLink(link))
+			.map((link) => link.originalHref);
 
 		callLinkAnalysisApi($postVariantStore.id, allLinks)
 			.then((res) => {

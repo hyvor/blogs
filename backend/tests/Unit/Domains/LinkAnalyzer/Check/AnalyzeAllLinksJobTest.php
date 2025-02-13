@@ -9,6 +9,9 @@ use App\Models\LinkAnalyzerCheck;
 use Hyvor\Internal\Auth\AuthFake;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Tests\Helper\Generator\PostContentGenerator;
 
 it('job works', function () {
@@ -18,10 +21,14 @@ it('job works', function () {
         ['id' => 12, 'email' => 'test@hyvor.com']
     ]);
 
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 200),
-        'example.com/*' => Http::response('', 301),
-    ]);
+    $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+        if (str_contains($url, 'hyvor.com')) {
+            return new MockResponse(info: ['http_code' => 200]);
+        }
+        if (str_contains($url, 'example.com')) {
+            return new MockResponse(info: ['http_code' => 301]);
+        }
+    }));
 
     $blog = blogWithLanguageAndRoutes([
         'hyvor_user_id' => 12
@@ -82,9 +89,9 @@ it('does not send mail when broken', function () {
 });
 
 it('sends email when broken and there are broken links', function () {
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 404),
-    ]);
+    $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+        return new MockResponse(info: ['http_code' => 404]);
+    }));
 
     Mail::fake();
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -50,9 +51,8 @@ class ResourceAccessMiddleware
         $this->blog = $blog;
     }
 
-    public function handle(Request $request, Closure $next) : mixed
+    public function handle(Request $request, Closure $next): mixed
     {
-
         /**
          * If there's an ID in the route,
          * it means that we are accesing a model that belongs to the current blog
@@ -76,7 +76,7 @@ class ResourceAccessMiddleware
             // ex: /post
             $routePrefix = $matches[1] ?? '';
 
-            if (! array_key_exists($routePrefix, $this->models)) {
+            if (!array_key_exists($routePrefix, $this->models)) {
                 throw new TrustedException("Unable to find the $routePrefix to verify blog relationship");
             }
 
@@ -84,7 +84,7 @@ class ResourceAccessMiddleware
             $modelClass = $this->models[$routePrefix];
             $model = $modelClass::find($id);
 
-            if (! $model) {
+            if (!$model) {
                 throw new TrustedException(
                     "Unable to find the $routePrefix",
                     TrustedException::ERROR_NOT_FOUND
@@ -137,7 +137,7 @@ class ResourceAccessMiddleware
                 throw new TrustedException('Post variant not found');
             }
 
-            $blogId = $postVariant->post?->blog_id;
+            $blogId = $postVariant->post->blog_id;
 
             if (!$blogId || $blogId !== $this->blog->id) {
                 throw new TrustedException('Post variant does not belong to this blog');
