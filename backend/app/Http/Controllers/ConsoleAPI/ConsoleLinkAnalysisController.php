@@ -9,7 +9,6 @@ use App\Data\Objects\ConsoleAPI\LinkAnalysis\CheckObject;
 use App\Data\Objects\ConsoleAPI\LinkAnalysis\LinkObject;
 use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Check\LinkAnalyzerCheckService;
-use App\Domains\LinkAnalyzer\Check\PostsCheck;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
@@ -33,21 +32,11 @@ class ConsoleLinkAnalysisController
             'post_variant_id' => 'required|integer',
             'urls' => 'required|array',
             'urls.*' => 'required|string',
-            'force' => 'boolean',
         ]);
 
         /** @var string[] $urls */
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
-
-        $links = collect();
-        $postsCheck = new PostsCheck(
-            $blog,
-            onLinksUpdate: function (PostVariant $variant, $addedLinks) use (&$links) {
-                $links = $links->merge($addedLinks);
-            },
-        );
-        $postsCheck->check([$postVariant->post]);
 
         $links = $postVariantLinkService->checkAndUpdateLinks($blog, $postVariant, $urls);
 
@@ -135,7 +124,11 @@ class ConsoleLinkAnalysisController
             throw new TrustedException('A check is already running');
         }
 
-        if ($lastCheck && $lastCheck->created_at->diffInHours() < 24) {
+        if (
+            $lastCheck &&
+            $lastCheck->status === JobStatusEnum::COMPLETED &&
+            $lastCheck->created_at->diffInHours() < 24
+        ) {
             throw new TrustedException('A check was already run in the last 24 hours');
         }
 
