@@ -397,6 +397,7 @@ export interface LinkAnalysisLink {
 	post_variant_id: number;
 	post_variant_language_id: number;
 	post_variant_title: string | null;
+	post_variant_url: string | null;
 }
 
 export interface LinkAnalysisCheck {

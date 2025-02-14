@@ -76,7 +76,7 @@ class LinkAnalyzeService
         int $offset
     ): Collection {
         return LinkAnalyzerLink::where('blog_id', $blog->id)
-            ->with('postVariant')
+            ->with('postVariant', 'postVariant.language')
             ->selectRaw(
                 '
                 *,

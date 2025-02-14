@@ -18,7 +18,7 @@ class ExternalStatusCheckTest extends DatabaseTestCase
     {
         // https://symfony.com/doc/current/http_client.html#testing-network-transport-exceptions
         return new MockHttpClient([
-            new MockResponse('Unauthorized', $info),
+            new MockResponse($body, $info),
         ]);
     }
 
@@ -40,5 +40,16 @@ class ExternalStatusCheckTest extends DatabaseTestCase
         $this->assertSame(IgnoreReasonEnum::KNOWN_FIREWALL, $urlResult->ignoreReason);
         $this->assertSame('firewall: cloudflare_challenge', $urlResult->comment);
     }
+
+//    public function testLive(): void
+//    {
+//        $url = 'https://growthmarketinggenie.com/blog/make-your-website-authority-higher/#:~:text=Website%20authority%2C%20also%20known%20as,respect%20to%20a%20specific%20topic.';
+//
+//        $service = $this->app->make(ExternalStatusCheck::class);
+//        $this->assertInstanceOf(ExternalStatusCheck::class, $service);
+//        $result = $service->check([$url]);
+//
+//        dd($result);
+//    }
 
 }

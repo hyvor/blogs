@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\LinkAnalysis;
 
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
+use App\Domains\Route\PermalinkRepository;
+use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
 
 class LinkObject
@@ -21,10 +25,10 @@ class LinkObject
     public int $post_variant_id;
     public int $post_variant_language_id;
     public ?string $post_variant_title;
+    public string $post_variant_url;
 
-    public function __construct(LinkAnalyzerLink $link)
+    public function __construct(Blog $blog, LinkAnalyzerLink $link)
     {
-
         $this->id = $link->id;
         $this->url = $link->url;
         $this->full_url = $link->full_url;
@@ -43,8 +47,8 @@ class LinkObject
             $this->post_variant_id = $postVariant->id;
             $this->post_variant_language_id = $postVariant->language_id;
             $this->post_variant_title = $postVariant->title;
+            $this->post_variant_url = PermalinkRepository::getPostVariantPermalink($blog, $postVariant);
         }
-
     }
 
 }

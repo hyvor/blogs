@@ -68,15 +68,14 @@
 
 <TableRow>
 	<div>
-		<div>
+		<a href={link.post_variant_url} target="_blank" class="post-url">
 			{link.post_variant_title || '(No title)'}
-
-			{#if $languagesStore.length > 1 && language}
-				<div class="language-tag">
-					<Tag size="small">{language.code}</Tag>
-				</div>
-			{/if}
-		</div>
+		</a>
+		{#if $languagesStore.length > 1 && language}
+			<div class="language-tag">
+				<Tag size="small">{language.code}</Tag>
+			</div>
+		{/if}
 	</div>
 
 	<div class="link">
@@ -143,5 +142,8 @@
 	}
 	.language-tag {
 		margin-top: 2px;
+	}
+	.post-url:hover {
+		text-decoration: underline;
 	}
 </style>

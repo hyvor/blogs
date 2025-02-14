@@ -40,7 +40,7 @@ class ConsoleLinkAnalysisController
 
         $links = $postVariantLinkService->checkAndUpdateLinks($blog, $postVariant, $urls);
 
-        return response()->json($links->mapInto(LinkObject::class));
+        return response()->json($links->map(fn($link) => new LinkObject($blog, $link)));
     }
 
     public function ignoreLink(Request $request, Blog $blog, PostVariant $postVariant): JsonResponse
@@ -66,7 +66,7 @@ class ConsoleLinkAnalysisController
             $url => $newCode
         ], true);
 
-        return response()->json(new LinkObject($link));
+        return response()->json(new LinkObject($blog, $link));
     }
 
     public function getStats(Blog $blog): JsonResponse
@@ -95,7 +95,7 @@ class ConsoleLinkAnalysisController
             $type,
             $limit,
             $offset
-        )->mapInto(LinkObject::class);
+        )->map(fn($link) => new LinkObject($blog, $link));
 
         return response()->json($links);
     }
