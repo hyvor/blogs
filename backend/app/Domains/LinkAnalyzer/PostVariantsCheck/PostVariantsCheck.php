@@ -6,7 +6,10 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\AnalyzedLinkDto;
 use App\Domains\LinkAnalyzer\Check\ResolvedUrl;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
+use App\Domains\LinkAnalyzer\LinkStatusCheck\IgnoreReasonEnum;
 use App\Domains\LinkAnalyzer\LinkStatusCheck\LinkStatusCheckService;
+use App\Domains\LinkAnalyzer\LinkStatusCheck\StatusCheckType;
+use App\Domains\LinkAnalyzer\LinkStatusCheck\StatusResult;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
 use App\Domains\LinkAnalyzer\RelativeUrlResolver;
 use App\Domains\Post\Content\Marks\Link;
@@ -66,7 +69,13 @@ class PostVariantsCheck
                 fn(ResolvedUrl $url) => new AnalyzedLinkDto(
                     $url->originalUrl,
                     $url->fullUrl,
-                    $statuses[$url->fullUrl] ?? 500,
+                    status: $statuses[$url->fullUrl] ??
+                    new StatusResult(
+                        type: StatusCheckType::EXTERNAL,
+                        ignored: true,
+                        ignoreReason: IgnoreReasonEnum::INTERNAL_ERROR,
+                        comment: 'No status found'
+                    ),
                 ),
                 $urls
             );

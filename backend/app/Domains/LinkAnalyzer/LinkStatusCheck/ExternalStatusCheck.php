@@ -28,7 +28,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
 
     /**
      * @param string[] $urls
-     * @return array<string, int>
+     * @return array<string, StatusResult>
      */
     public function checkChunk(array $urls, int $index): array
     {
@@ -39,7 +39,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
 
         foreach ($urls as $url) {
             try {
-                $responses[$url] = $this->client->request('GET', $url, [
+                $responses[$url] = $this->client->request('HEAD', $url, [
                     'max_redirects' => 0,
                     'timeout' => 2.5, // seconds
                     'max_duration' => 5, // seconds
@@ -51,7 +51,11 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
                     'url' => $url,
                     'exception' => $e,
                 ]);
-                $statuses[$url] = 500;
+                $statuses[$url] = new StatusResult(
+                    StatusCheckType::EXTERNAL,
+                    httpStatus: 500,
+                    comment: 'Unsupported option passed to the HTTP client'
+                );
                 // @codeCoverageIgnoreEnd
             }
         }
@@ -59,9 +63,18 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
 
         foreach ($responses as $url => $response) {
             try {
-                $statuses[$url] = $response->getStatusCode();
+                $httpStatusCode = $response->getStatusCode();
+
+                $statuses[$url] = new StatusResult(
+                    StatusCheckType::EXTERNAL,
+                    httpStatus: $httpStatusCode,
+                );
             } catch (TransportExceptionInterface $e) {
-                $statuses[$url] = 500;
+                $statuses[$url] = new StatusResult(
+                    StatusCheckType::EXTERNAL,
+                    httpStatus: 500,
+                    comment: 'network error'
+                );
             }
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
@@ -62,7 +63,11 @@ class AnalyzeAllLinksJob implements ShouldQueue
             return;
         }
 
-        Mail::to($email)->send(new LinkAnalyzeReportMail($this->blog, $analyze));
+        try {
+            Mail::to($email)->queue(new LinkAnalyzeReportMail($this->blog, $analyze));
+        } catch (Throwable $e) {
+            // ignore
+        }
     }
 
     public function failed(Throwable $exception): void

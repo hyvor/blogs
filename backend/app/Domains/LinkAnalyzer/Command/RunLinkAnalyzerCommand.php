@@ -41,15 +41,12 @@ class RunLinkAnalyzerCommand extends Command
         $analyze = new FullBlogAnalyzer($blog);
         $analyze->analyze();
 
+        $this->info("Posts: {$analyze->postsCount}");
         $this->info("Links: {$analyze->linksCount}");
         $this->info("Links OK: {$analyze->linksOkCount}");
         $this->info("Links broken: {$analyze->linksBrokenCount}");
         $this->info("Links redirect: {$analyze->linksRedirectCount}");
         $this->info("Links ignored: {$analyze->linksIgnoredCount}");
-        $this->info("Posts: {$analyze->postsCount}");
-        $this->info("Pages: {$analyze->pagesCount}");
-        $this->info("Post variants: {$analyze->postVariantsCount}");
-        $this->info("Page variants: {$analyze->pageVariantsCount}");
 
         $end = microtime(true);
         $this->info("Time: " . ($end - $start) . " seconds");

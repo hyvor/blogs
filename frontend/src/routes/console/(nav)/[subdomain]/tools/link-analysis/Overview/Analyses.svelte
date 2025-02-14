@@ -26,7 +26,7 @@
 {#if isLoading}
 	<Loader padding={60} block />
 {:else if $linkAnalysisChecks.length}
-	<Table columns="2fr 2fr 3fr 2fr 2fr 2fr 2fr">
+	<Table columns="2fr 2fr 2fr 2fr 2fr 2fr 2fr">
 		<TableRow head>
 			<div>Date</div>
 			<div>Status</div>
