@@ -17,7 +17,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
      * Historical values:
      * 250 - sometimes caused some URLs to block the crawler
      */
-    private const CHUNK_SIZE = 10;
+    private const CHUNK_SIZE = 100;
 
     // source: https://www.whatismybrowser.com/guides/the-latest-user-agent/chrome
     private const CHROME_HEADER = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36';
@@ -57,12 +57,12 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
                     $url,
                     (new HttpOptions)
                         ->setMaxRedirects(0)
-                        ->setTimeout(2.5) // seconds
-                        ->setMaxDuration(5) // seconds
+                        ->setTimeout(5) // seconds
+                        ->setMaxDuration(10) // seconds
                         ->setHeaders([
                             'User-Agent' => self::CHROME_HEADER,
                             'Accept-Language' => 'en-US,en;q=0.9',
-                            'Referer' => 'https://hyvor.com',
+                            'Referer' => 'https://google.com',
                             'Connection' => 'keep-alive',
                         ])
                         ->toArray()

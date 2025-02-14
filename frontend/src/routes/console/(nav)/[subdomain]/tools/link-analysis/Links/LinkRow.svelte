@@ -84,7 +84,7 @@
 		</Link>
 	</div>
 
-	<div>
+	<div title={link.comment}>
 		{#if isRechecking}
 			<Loader size="small" />
 		{:else}

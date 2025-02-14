@@ -392,6 +392,7 @@ export interface LinkAnalysisLink {
 	status_code: number;
 	status_type: 'ok' | 'redirect' | 'broken' | 'ignored';
 	ignored: boolean;
+	comment: string | null;
 
 	post_id: number;
 	post_variant_id: number;

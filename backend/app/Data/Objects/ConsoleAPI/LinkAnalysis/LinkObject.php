@@ -20,6 +20,7 @@ class LinkObject
     public int $status_code;
     public LinkStatusTypeEnum $status_type;
     public bool $ignored;
+    public ?string $comment;
 
     public int $post_id;
     public int $post_variant_id;
@@ -39,6 +40,7 @@ class LinkObject
             LinkStatusTypeEnum::fromStatus($link->status_code);
 
         $this->ignored = $link->ignore;
+        $this->comment = $link->comment;
 
         $postVariant = $link->postVariant;
 
