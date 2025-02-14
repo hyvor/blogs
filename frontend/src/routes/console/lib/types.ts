@@ -407,9 +407,6 @@ export interface LinkAnalysisCheck {
 	error: string | null;
 
 	posts_count: number;
-	post_variants_count: number;
-	pages_count: number;
-	page_variants_count: number;
 
 	links_total_count: number;
 	links_ok_count: number;
