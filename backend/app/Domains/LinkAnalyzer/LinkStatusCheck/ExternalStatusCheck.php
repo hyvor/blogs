@@ -4,11 +4,23 @@ namespace App\Domains\LinkAnalyzer\LinkStatusCheck;
 
 use App\Domains\LinkAnalyzer\LinkStatusCheck\Ignore\KnownFirewall;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ExternalStatusCheck implements LinkStatusCheckInterface
 {
+
+    /**
+     * Number of URLs to concurrently check
+     *
+     * Historical values:
+     * 250 - sometimes caused some URLs to block the crawler
+     */
+    private const CHUNK_SIZE = 10;
+
+    // source: https://www.whatismybrowser.com/guides/the-latest-user-agent/chrome
+    private const CHROME_HEADER = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36';
 
     public function __construct(
         private HttpClientInterface $client
@@ -19,7 +31,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
     {
         $statuses = [];
 
-        foreach (array_chunk($urls, 250) as $i => $chunk) {
+        foreach (array_chunk($urls, self::CHUNK_SIZE) as $i => $chunk) {
             $chunkStatuses = $this->checkChunk($chunk, $i);
             $statuses = array_merge($statuses, $chunkStatuses);
         }
@@ -40,11 +52,21 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
 
         foreach ($urls as $url) {
             try {
-                $responses[$url] = $this->client->request('HEAD', $url, [
-                    'max_redirects' => 0,
-                    'timeout' => 2.5, // seconds
-                    'max_duration' => 5, // seconds
-                ]);
+                $responses[$url] = $this->client->request(
+                    'HEAD',
+                    $url,
+                    (new HttpOptions)
+                        ->setMaxRedirects(0)
+                        ->setTimeout(2.5) // seconds
+                        ->setMaxDuration(5) // seconds
+                        ->setHeaders([
+                            'User-Agent' => self::CHROME_HEADER,
+                            'Accept-Language' => 'en-US,en;q=0.9',
+                            'Referer' => 'https://hyvor.com',
+                            'Connection' => 'keep-alive',
+                        ])
+                        ->toArray()
+                );
             } // @codeCoverageIgnoreStart
             catch (TransportExceptionInterface $e) {
                 // this is thrown when an unsupported option is passed

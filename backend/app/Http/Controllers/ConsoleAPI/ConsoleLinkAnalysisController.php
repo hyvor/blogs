@@ -12,6 +12,7 @@ use App\Domains\LinkAnalyzer\Check\LinkAnalyzerCheckService;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\PostVariant;
@@ -38,7 +39,8 @@ class ConsoleLinkAnalysisController
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        $links = $postVariantLinkService->checkAndUpdateLinks($blog, $postVariant, $urls);
+        $checker = new PostVariantsCheck($blog);
+        $links = $checker->checkOne($postVariant, $urls);
 
         return response()->json($links->map(fn($link) => new LinkObject($blog, $link)));
     }

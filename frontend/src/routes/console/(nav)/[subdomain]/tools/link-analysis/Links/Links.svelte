@@ -77,7 +77,7 @@
 		const link = e.detail;
 
 		links = links.map((l) => {
-			if (l.id === link.id) {
+			if (l.post_variant_id === link.post_variant_id && l.url === link.url) {
 				return {
 					...l,
 					...link
@@ -115,7 +115,7 @@
 				<div>Actions</div>
 			</TableRow>
 
-			{#each links as link (link.id)}
+			{#each links as link (link.post_variant_id + link.url)}
 				<LinkRow {link} on:update={handelLinkUpdate} />
 			{/each}
 		</Table>

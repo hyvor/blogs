@@ -17,9 +17,11 @@ use App\Domains\Post\Content\PostContentService;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
+use App\Models\LinkAnalyzerLink;
 use App\Models\PostVariant;
 use Hyvor\Phrosemirror\Document\Mark;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Event;
 
 class PostVariantsCheck
 {
@@ -31,7 +33,6 @@ class PostVariantsCheck
 
     public function __construct(private readonly Blog $blog)
     {
-        $this->languages = $blog->languages;
     }
 
     /**
@@ -42,11 +43,14 @@ class PostVariantsCheck
      * - language_id
      *
      * @param iterable<PostVariant> $variants
+     * @param \Illuminate\Support\Collection<int, ResolvedUrl[]>|null $urls indexed by variant ID
      */
-    public function check(iterable $variants): void
-    {
+    public function check(
+        iterable $variants,
+        $urls = null
+    ): void {
         // [variantId => [ResolvedUrl, ResolvedUrl, ...]]
-        $variantIndexedUrls = $this->getUrlsFromVariants($variants);
+        $variantIndexedUrls = $urls ?? $this->getUrlsFromVariants($variants);
         $allFinalUrls = $variantIndexedUrls->map(fn($urls) => array_map(
             fn($url) => $url->fullUrl,
             $urls
@@ -85,6 +89,40 @@ class PostVariantsCheck
     }
 
     /**
+     * @param PostVariant $variant
+     * @param array<string>|null $urls
+     * @return Collection<int, LinkAnalyzerLink>
+     */
+    public function checkOne(
+        PostVariant $variant,
+        ?array $urls = null
+    ) {
+        $variantUrl = PermalinkRepository::getPostVariantPermalink(
+            $this->blog,
+            $variant,
+            $this->findLanguageById($variant->language_id)
+        );
+        $links = null;
+
+        Event::listen(OnLinkUpdateEvent::class, function (OnLinkUpdateEvent $event) use (&$links) {
+            $links = $event->links;
+        });
+
+        $resolvedUrls = $urls ?
+            array_map(fn(string $url) => $this->resolveUrl($url, $variantUrl), $urls) :
+            null;
+        $resolvedUrls = $resolvedUrls ? array_filter($resolvedUrls) : null;
+        $resolvedUrls = $resolvedUrls ? collect([
+            $variant->id => $resolvedUrls
+        ]) : null;
+
+        $this->check([$variant], $resolvedUrls);
+
+        assert($links !== null);
+        return $links;
+    }
+
+    /**
      * @param iterable<PostVariant> $variants
      * @return \Illuminate\Support\Collection<int, array<int, ResolvedUrl>>
      */
@@ -113,27 +151,13 @@ class PostVariantsCheck
 
             foreach ($linkMarks as $linkMark) {
                 $originalUrl = $this->getHrefFromLinkMark($linkMark);
+                $resolvedUrl = $this->resolveUrl($originalUrl, $variantUrl);
 
-                if (!$originalUrl) {
+                if ($resolvedUrl === null) {
                     continue;
                 }
 
-                if (mb_strlen($originalUrl) > 255) {
-                    continue;
-                }
-
-                // ignore anchor links
-                if (str_starts_with($originalUrl, '#')) {
-                    continue;
-                }
-
-                $fullUrl = RelativeUrlResolver::resolve($originalUrl, $variantUrl);
-
-                if (!$fullUrl) {
-                    continue;
-                }
-
-                $urls[] = new ResolvedUrl($originalUrl, $fullUrl);
+                $urls[] = $resolvedUrl;
             }
 
             if (count($urls) === 0) {
@@ -145,6 +169,30 @@ class PostVariantsCheck
         }
 
         return $variantIndexedUrls;
+    }
+
+    private function resolveUrl(string $originalUrl, string $variantUrl): ?ResolvedUrl
+    {
+        if (!$originalUrl) {
+            return null;
+        }
+
+        if (mb_strlen($originalUrl) > 255) {
+            return null;
+        }
+
+        // ignore anchor links
+        if (str_starts_with($originalUrl, '#')) {
+            return null;
+        }
+
+        $fullUrl = RelativeUrlResolver::resolve($originalUrl, $variantUrl);
+
+        if (!$fullUrl) {
+            return null;
+        }
+
+        return new ResolvedUrl($originalUrl, $fullUrl);
     }
 
     /**
@@ -190,6 +238,10 @@ class PostVariantsCheck
 
     private function findLanguageById(int $languageId): ?Language
     {
+        if (!isset($this->languages)) {
+            $this->languages = $this->blog->languages;
+        }
+
         return $this->languages->first(fn(Language $language) => $language->id === $languageId);
     }
 
