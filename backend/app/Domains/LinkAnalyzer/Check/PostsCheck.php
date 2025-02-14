@@ -129,6 +129,11 @@ class PostsCheck
                         continue;
                     }
 
+                    // ignore anchor links
+                    if (str_starts_with($originalUrl, '#')) {
+                        continue;
+                    }
+
                     $fullUrl = RelativeUrlResolver::resolve($originalUrl, $variantUrl);
 
                     if (!$fullUrl) {

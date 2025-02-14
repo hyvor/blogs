@@ -71,13 +71,18 @@ class FullBlogAnalyzerTest extends DatabaseTestCase
             'status' => PostStatusEnum::PUBLISHED,
             'content' => PostContentGenerator::generateWithLinks(['']),
         ]);
+        // ignored: only links with fragment
+        PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks(['#fragment']),
+        ]);
 
         $analyze = new FullBlogAnalyzer($blog);
         $analyze->analyze();
 
-        $this->assertSame(5, $analyze->postsCount);
+        $this->assertSame(6, $analyze->postsCount);
         $this->assertSame(1, $analyze->pagesCount);
-        $this->assertSame(4, $analyze->postVariantsCount);
+        $this->assertSame(5, $analyze->postVariantsCount);
         $this->assertSame(5, $analyze->linksCount);
         $this->assertSame(3, $analyze->linksOkCount);
         $this->assertSame(1, $analyze->linksBrokenCount);

@@ -82,20 +82,4 @@ class FullBlogAnalyzer
         $postsCheck->check($posts);
     }
 
-    /**
-     * @deprecated
-     * This should mirror link.ts in the frontend
-     */
-//    public static function getWebUrlFromLinkMark(Mark $linkMark, string $baseUrl): ?string
-//    {
-//        $baseUrl = rtrim($baseUrl, '/');
-//
-//        $href = $linkMark->attr('href', false);
-//        if (!is_string($href)) {
-//            return null;
-//        }
-//
-//        return FullUrl::getFullUrl($href, $baseUrl);
-//    }
-
 }
