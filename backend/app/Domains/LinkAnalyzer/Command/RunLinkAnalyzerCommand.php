@@ -19,6 +19,8 @@ class RunLinkAnalyzerCommand extends Command
 
     public function handle(): void
     {
+        ini_set('memory_limit', '1024M');
+
         $subdomain = $this->argument('subdomain');
         assert(is_string($subdomain));
         $blog = BlogService::getBlogBySubdomain($subdomain);
@@ -36,6 +38,10 @@ class RunLinkAnalyzerCommand extends Command
             $this->info(
                 "External check done for chunk {$event->chunkIndex} of size {$event->chunkSize} in {$event->durationSeconds} seconds"
             );
+
+            $memoryUsage = memory_get_usage();
+            $memoryUsageInMb = $memoryUsage / 1024 / 1024;
+            $this->info("Memory usage: $memoryUsageInMb MB");
         });
 
         $analyze = new FullBlogAnalyzer($blog);
