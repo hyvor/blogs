@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\OnStartEvent;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Models\Blog;
-use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Event;
 
 class FullBlogAnalyzer
 {
@@ -31,19 +34,30 @@ class FullBlogAnalyzer
 
     public function analyze(): void
     {
-        Post::where('blog_id', $this->blog->id)
-            ->orderBy('id')
-            ->chunk(100, function ($posts) {
-                $this->checkPosts($posts);
+        PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
+            ->where('posts.blog_id', $this->blog->id)
+            ->where('post_variants.status', PostStatusEnum::PUBLISHED)
+            ->orderBy('post_variants.id')
+            ->select(
+                'post_variants.id',
+                'post_variants.content',
+                'post_variants.language_id',
+            )
+            ->chunk(1000, function ($variants) {
+                $this->checkPostVariants($variants);
             });
     }
 
     /**
-     * @param Collection<int, Post> $posts
+     * @param Collection<int, PostVariant> $variants
      */
-    private function checkPosts(Collection $posts): void
+    private function checkPostVariants(Collection $variants): void
     {
-        $postsCheck = new PostsCheck(
+        Event::listen(OnStartEvent::class, function (OnStartEvent $event) {
+            //
+        });
+
+        $postsCheck = new PostVariantsCheck(
             $this->blog,
             onPostStart: function (Post $post) {
                 if ($post->is_page) {

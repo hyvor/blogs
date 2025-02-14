@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Route>
+ * @phpstan-import-type RouteDef from RouteFiller
  */
 class RouteFactory extends Factory
 {
@@ -26,17 +27,20 @@ class RouteFactory extends Factory
     /**
      * @return Collection<int, Route>
      */
-    public static function defaultsFor(Blog $blog, ?string $name = null): Collection
+    public static function defaultsFor(Blog $blog): Collection
     {
-        $routes = new Collection();
-        foreach (RouteFiller::ROUTES as $route) {
-            if ($name !== null && $route['name'] !== $name) {
-                continue;
-            }
+        return self::fromArray($blog, RouteFiller::ROUTES);
+    }
 
-            $routes->push($blog->routes()->create($route));
+    /**
+     * @return Collection<int, Route>
+     */
+    public static function fromArray(Blog $blog, array $routes): Collection
+    {
+        $routesReturn = new Collection();
+        foreach ($routes as $route) {
+            $routesReturn->push($blog->routes()->create($route));
         }
-
-        return $routes;
+        return $routesReturn;
     }
 }

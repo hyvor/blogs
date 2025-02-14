@@ -5,7 +5,7 @@ namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
-use App\Domains\LinkAnalyzer\Check\PostsCheck;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Models\LinkAnalyzerLink;
 use Database\Factories\BlogFactory;
 use Database\Factories\PostFactory;
@@ -18,7 +18,7 @@ use Tests\Case\DatabaseTestCase;
 use Tests\Helper\Generator\PostContentGenerator;
 
 #[CoversClass(FullBlogAnalyzer::class)]
-#[CoversClass(PostsCheck::class)]
+#[CoversClass(PostVariantsCheck::class)]
 class FullBlogAnalyzerTest extends DatabaseTestCase
 {
 

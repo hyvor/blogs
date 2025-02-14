@@ -1,57 +1,46 @@
 <?php
 
-namespace App\Domains\LinkAnalyzer\Check;
+namespace App\Domains\LinkAnalyzer\PostVariantsCheck;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\AnalyzedLinkDto;
-use App\Domains\LinkAnalyzer\RelativeUrlResolver;
+use App\Domains\LinkAnalyzer\Check\ResolvedUrl;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusCheck\LinkStatusCheckService;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
+use App\Domains\LinkAnalyzer\RelativeUrlResolver;
 use App\Domains\Post\Content\Marks\Link;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
-use App\Models\Post;
+use App\Models\Language;
 use App\Models\PostVariant;
 use Hyvor\Phrosemirror\Document\Mark;
+use Illuminate\Database\Eloquent\Collection;
 
-
-class PostsCheck
+class PostVariantsCheck
 {
 
-    public function __construct(
+    private Collection $languages;
 
-        private Blog $blog,
-
-        /**
-         * Called when a post is about to be analyzed
-         * @var null|callable(Post): void
-         */
-        private $onPostStart = null,
-
-        /**
-         * Called when a post variant is chosen to be analyzed soon
-         * @var null|callable(PostVariant, Post): void
-         */
-        private $onPostVariantStart = null,
-
-        /**
-         * Called when links are updated for a certain variant
-         * @var null|callable(PostVariant, Collection<int, LinkAnalyzerLink> AnalyzedLinkDto[]): void
-         */
-        private $onLinksUpdate = null,
-
-    ) {
+    public function __construct(private readonly Blog $blog)
+    {
+        $this->languages = $blog->languages;
     }
 
     /**
-     * @param iterable<Post> $posts
+     * Each variant model should have at least the following fields:
+     *
+     * - id
+     * - content
+     * - language_id
+     *
+     * @param iterable<PostVariant> $variants
      */
-    public function check(iterable $posts): void
+    public function check(iterable $variants): void
     {
         // [variantId => [ResolvedUrl, ResolvedUrl, ...]]
-        $variantIndexedUrls = $this->getUrlsFromPosts($posts);
+        $variantIndexedUrls = $this->getUrlsFromVariants($variants);
         $allFinalUrls = $variantIndexedUrls->map(fn($urls) => array_map(
             fn($url) => $url->fullUrl,
             $urls
@@ -60,7 +49,7 @@ class PostsCheck
 
         // check HTTP statuses
         $statusCheck = app(LinkStatusCheckService::class);
-        $statuses = $statusCheck->check($allFinalUrls, $this->blog);
+        $statuses = $statusCheck->check($allFinalUrls, $blog);
 
         foreach ($posts as $post) {
             foreach ($post->variants as $variant) {
@@ -86,70 +75,63 @@ class PostsCheck
     }
 
     /**
-     * @param iterable<Post> $posts
+     * @param iterable<PostVariant> $variants
      * @return \Illuminate\Support\Collection<int, array<int, ResolvedUrl>>
      */
-    private function getUrlsFromPosts(iterable $posts)
+    private function getUrlsFromVariants(iterable $variants)
     {
         $variantIndexedUrls = collect();
 
-        foreach ($posts as $post) {
-            if ($this->onPostStart) {
-                ($this->onPostStart)($post);
+        foreach ($variants as $variant) {
+            $urls = [];
+
+            $content = $variant->content;
+            if (!$content) {
+                continue;
             }
 
-            foreach ($post->variants as $variant) {
-                $urls = [];
-
-                if ($variant->status !== PostStatusEnum::PUBLISHED) {
-                    continue;
-                }
-
-                $content = $variant->content;
-                if (!$content) {
-                    continue;
-                }
-
-                if ($this->onPostVariantStart) {
-                    ($this->onPostVariantStart)($variant, $post);
-                }
-
-                $doc = PostContentService::getDocumentFromJson($content, $this->blog);
-                $linkMarks = $doc->getMarks(Link::class);
-                $variantUrl = PermalinkRepository::getPostPermalink($post, $this->blog, $variant->language);
-
-                foreach ($linkMarks as $linkMark) {
-                    $originalUrl = $this->getHrefFromLinkMark($linkMark);
-
-                    if (!$originalUrl) {
-                        continue;
-                    }
-
-                    if (mb_strlen($originalUrl) > 255) {
-                        continue;
-                    }
-
-                    // ignore anchor links
-                    if (str_starts_with($originalUrl, '#')) {
-                        continue;
-                    }
-
-                    $fullUrl = RelativeUrlResolver::resolve($originalUrl, $variantUrl);
-
-                    if (!$fullUrl) {
-                        continue;
-                    }
-
-                    $urls[] = new ResolvedUrl($originalUrl, $fullUrl);
-                }
-
-                if (count($urls) === 0) {
-                    continue;
-                }
-
-
-                $variantIndexedUrls[$variant->id] = $urls;
+            $language = $this->findLanguageById($variant->language_id);
+            if (!$language) {
+                continue;
             }
+
+            event(new OnStartEvent($variant));
+
+            $doc = PostContentService::getDocumentFromJson($content, $this->blog);
+            $linkMarks = $doc->getMarks(Link::class);
+            $variantUrl = PermalinkRepository::getPostPermalink($post, $this->blog, $language);
+
+            foreach ($linkMarks as $linkMark) {
+                $originalUrl = $this->getHrefFromLinkMark($linkMark);
+
+                if (!$originalUrl) {
+                    continue;
+                }
+
+                if (mb_strlen($originalUrl) > 255) {
+                    continue;
+                }
+
+                // ignore anchor links
+                if (str_starts_with($originalUrl, '#')) {
+                    continue;
+                }
+
+                $fullUrl = RelativeUrlResolver::resolve($originalUrl, $variantUrl);
+
+                if (!$fullUrl) {
+                    continue;
+                }
+
+                $urls[] = new ResolvedUrl($originalUrl, $fullUrl);
+            }
+
+            if (count($urls) === 0) {
+                continue;
+            }
+
+
+            $variantIndexedUrls[$variant->id] = $urls;
         }
 
         return $variantIndexedUrls;
@@ -190,6 +172,11 @@ class PostsCheck
     {
         $href = $linkMark->attr('href', false);
         return is_string($href) ? $href : null;
+    }
+
+    private function findLanguageById(int $languageId): ?Language
+    {
+        return $this->languages->first(fn(Language $language) => $language->id === $languageId);
     }
 
 }
