@@ -2,7 +2,6 @@
 	import { Switch, Button, Caption } from '@hyvor/design/components';
 	import FeatureSectionTitle from '../@homepage/FeatureSectionTitle.svelte';
 	import ThemeService from './ThemeService.svelte';
-	import { Crisp } from 'crisp-sdk-web';
 
 	let Oprice = 1000;
 	let price = $state(Oprice);
@@ -26,11 +25,6 @@
 		if (switch1 && switch2) {
 			price = Oprice - Oprice * (d20 + d30);
 		}
-	}
-
-	// function to open crisp
-	function openCrisp() {
-		window.$crisp.push(['do', 'chat:open']);
 	}
 </script>
 
@@ -63,7 +57,8 @@
 
 			<div class="switch">
 				<Switch bind:checked={switch2} on:change={updatePrice}
-					>Publish your theme in our theme directory <Caption>30% discount</Caption></Switch
+					>Publish your theme in our theme directory <Caption>30% discount</Caption
+					></Switch
 				>
 			</div>
 		</div>
@@ -72,7 +67,14 @@
 
 <div class="buttons">
 	<div class="cta">
-		<Button on:click={openCrisp} variant="fill" size="large" color="gray">
+		<Button
+			as="a"
+			href="https://hyvor.com/support"
+			target="_blank"
+			variant="fill"
+			size="large"
+			color="gray"
+		>
 			Request a Theme Now &rarr;
 		</Button>
 	</div>
@@ -80,8 +82,12 @@
 	<div class="or">OR</div>
 
 	<div class="cta">
-		<Button as="a" href="mailto:blogs.support@hyvor.com" variant="outline" size="large" color="gray"
-			>Email Us</Button
+		<Button
+			as="a"
+			href="mailto:blogs.support@hyvor.com"
+			variant="outline"
+			size="large"
+			color="gray">Email Us</Button
 		>
 	</div>
 </div>
