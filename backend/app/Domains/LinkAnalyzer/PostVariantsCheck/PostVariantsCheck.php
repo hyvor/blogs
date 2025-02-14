@@ -21,6 +21,9 @@ use Illuminate\Database\Eloquent\Collection;
 class PostVariantsCheck
 {
 
+    /**
+     * @var Collection<int, Language>
+     */
     private Collection $languages;
 
     public function __construct(private readonly Blog $blog)
@@ -49,28 +52,26 @@ class PostVariantsCheck
 
         // check HTTP statuses
         $statusCheck = app(LinkStatusCheckService::class);
-        $statuses = $statusCheck->check($allFinalUrls, $blog);
+        $statuses = $statusCheck->check($allFinalUrls, $this->blog);
 
-        foreach ($posts as $post) {
-            foreach ($post->variants as $variant) {
-                if ($variantIndexedUrls->has($variant->id) === false) {
-                    continue;
-                }
-
-                $urls = $variantIndexedUrls[$variant->id] ?? [];
-
-                // combine the results with the urls
-                $results = array_map(
-                    fn(ResolvedUrl $url) => new AnalyzedLinkDto(
-                        $url->originalUrl,
-                        $url->fullUrl,
-                        $statuses[$url->fullUrl] ?? 500,
-                    ),
-                    $urls
-                );
-
-                $this->finalizeVariant($variant, $results);
+        foreach ($variants as $variant) {
+            if ($variantIndexedUrls->has($variant->id) === false) {
+                continue;
             }
+
+            $urls = $variantIndexedUrls[$variant->id] ?? [];
+
+            // combine the results with the urls
+            $results = array_map(
+                fn(ResolvedUrl $url) => new AnalyzedLinkDto(
+                    $url->originalUrl,
+                    $url->fullUrl,
+                    $statuses[$url->fullUrl] ?? 500,
+                ),
+                $urls
+            );
+
+            $this->finalizeVariant($variant, $results);
         }
     }
 
@@ -99,7 +100,7 @@ class PostVariantsCheck
 
             $doc = PostContentService::getDocumentFromJson($content, $this->blog);
             $linkMarks = $doc->getMarks(Link::class);
-            $variantUrl = PermalinkRepository::getPostPermalink($post, $this->blog, $language);
+            $variantUrl = PermalinkRepository::getPostVariantPermalink($this->blog, $variant, $language);
 
             foreach ($linkMarks as $linkMark) {
                 $originalUrl = $this->getHrefFromLinkMark($linkMark);
@@ -157,9 +158,13 @@ class PostVariantsCheck
             $ignoredLinksUrls
         );
 
-        if ($this->onLinksUpdate) {
-            ($this->onLinksUpdate)($variant, $links, $results);
-        }
+        event(
+            new OnLinkUpdateEvent(
+                $variant,
+                $links,
+                $results,
+            )
+        );
 
         // update post_variants table to cache the results
         PostVariantLinkService::updatePostVariantCache(

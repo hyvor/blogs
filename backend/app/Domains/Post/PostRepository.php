@@ -349,8 +349,11 @@ class PostRepository
      *     link_analysis?: array<string, number>
      * } $updates
      */
-    public static function updatePostVariant(PostVariant $variant, array $updates): PostVariant
-    {
+    public static function updatePostVariant(
+        PostVariant $variant,
+        array $updates,
+        bool $event = true,
+    ): PostVariant {
         if (array_key_exists('slug', $updates)) {
             $variant->slug = $updates['slug'];
         }
@@ -436,7 +439,10 @@ class PostRepository
 
         $original = new PostVariant((array)$variant->getOriginal());
         $variant->save();
-        PostVariantUpdatedEvent::dispatch($variant, $original);
+
+        if ($event) {
+            PostVariantUpdatedEvent::dispatch($variant, $original);
+        }
 
         return $variant;
     }

@@ -138,12 +138,16 @@ class PostVariantLinkService
         bool $append = false
     ): void {
         $currentVariantResults = $variant->link_analysis ?? [];
-        PostRepository::updatePostVariant($variant, [
-            'link_analysis' => $append ? array_merge(
-                $currentVariantResults,
-                $results
-            ) : $results
-        ]);
+        PostRepository::updatePostVariant(
+            $variant,
+            [
+                'link_analysis' => $append ? array_merge(
+                    $currentVariantResults,
+                    $results
+                ) : $results
+            ],
+            event: false
+        );
     }
 
 }

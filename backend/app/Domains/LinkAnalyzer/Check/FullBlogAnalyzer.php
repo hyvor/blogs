@@ -6,6 +6,7 @@ namespace App\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\OnLinkUpdateEvent;
 use App\Domains\LinkAnalyzer\PostVariantsCheck\OnStartEvent;
 use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Models\Blog;
@@ -17,9 +18,6 @@ class FullBlogAnalyzer
 {
 
     public int $postsCount = 0;
-    public int $pagesCount = 0;
-    public int $postVariantsCount = 0;
-    public int $pageVariantsCount = 0;
 
     public int $linksCount = 0;
     public int $linksOkCount = 0;
@@ -54,46 +52,30 @@ class FullBlogAnalyzer
     private function checkPostVariants(Collection $variants): void
     {
         Event::listen(OnStartEvent::class, function (OnStartEvent $event) {
-            //
+            $this->postsCount++;
         });
 
-        $postsCheck = new PostVariantsCheck(
-            $this->blog,
-            onPostStart: function (Post $post) {
-                if ($post->is_page) {
-                    $this->pagesCount++;
-                } else {
-                    $this->postsCount++;
-                }
-            },
-            onPostVariantStart: function (PostVariant $variant, Post $post) {
-                if ($post->is_page) {
-                    $this->pageVariantsCount++;
-                } else {
-                    $this->postVariantsCount++;
-                }
-            },
-            onLinksUpdate: function (PostVariant $variant, $links) {
-                $this->linksCount += $links->count();
+        Event::listen(OnLinkUpdateEvent::class, function (OnLinkUpdateEvent $event) {
+            $this->linksCount += $event->links->count();
 
-                // update the counts
-                foreach ($links as $link) {
-                    $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
+            // update the counts
+            foreach ($event->links as $link) {
+                $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
 
-                    if ($link->ignore) {
-                        $this->linksIgnoredCount++;
-                    } elseif ($statusType === LinkStatusTypeEnum::OK) {
-                        $this->linksOkCount++;
-                    } elseif ($statusType === LinkStatusTypeEnum::BROKEN) {
-                        $this->linksBrokenCount++;
-                    } elseif ($statusType === LinkStatusTypeEnum::REDIRECT) {
-                        $this->linksRedirectCount++;
-                    }
+                if ($link->ignore) {
+                    $this->linksIgnoredCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::OK) {
+                    $this->linksOkCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::BROKEN) {
+                    $this->linksBrokenCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::REDIRECT) {
+                    $this->linksRedirectCount++;
                 }
             }
-        );
+        });
 
-        $postsCheck->check($posts);
+        $postsCheck = new PostVariantsCheck($this->blog);
+        $postsCheck->check($variants);
     }
 
 }

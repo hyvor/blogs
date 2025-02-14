@@ -164,54 +164,25 @@ class PermalinkRepository
     ): string {
         $variant = $post
             ->variants
-            ->firstWhere('language_id', $language->id) ??
-            $post->variants->first();
+            ->firstWhere('language_id', $language->id) ?? $post->variants->first();
 
         // posts should have at least one variant
         assert($variant instanceof PostVariant);
 
+        $variant->post = $post;
+
         return self::getPostVariantPermalink($blog, $variant, $language, $onlyPath);
-
-        $route = RouteRepository::getRoute($blog, 'post');
-        $path = $route ? $route->match : '';
-
-        // build regex for matching dates
-        $keys = array_keys(self::DATE_FORMATTERS);
-        $regex = '/\{(' . implode('|', $keys) . ')\}/';
-
-        $path = preg_replace_callback($regex, function ($matches) use ($post) {
-            if ($post->published_at) {
-                return $post->published_at->format(self::DATE_FORMATTERS[$matches[1]]);
-            }
-        }, $path);
-
-        $variant = $post->variants->firstWhere('language_id', $language->id);
-        $path = $path ?? '';
-        $path = str_replace('{slug}', $variant?->slug ?? '', $path);
-
-        if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', $post->tags[0]?->slug ?? '', $path);
-        }
-
-        if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', $post->authors[0]?->slug ?? '', $path);
-        }
-
-        /**
-         * Add language
-         */
-        if (!$language->is_primary) {
-            $path = "/{$language->code}" . $path;
-        }
-
-        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
+    /**
+     * Note: this may run a query to get the post in some cases,
+     * so it is advisable to set the $postVariant->post relationship before calling this function if possible
+     */
     public static function getPostVariantPermalink(
         Blog $blog,
         PostVariant $variant,
         ?Language $language = null, // send already loaded language
-        bool $path = false
+        bool $onlyPath = false
     ): string {
         $language ??= $variant->language;
 
@@ -232,11 +203,11 @@ class PermalinkRepository
         $path = str_replace('{slug}', $variant?->slug ?? '', $path);
 
         if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', $post->tags[0]?->slug ?? '', $path);
+            $path = str_replace('{tag}', $variant->post->tags[0]?->slug ?? '', $path);
         }
 
         if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', $post->authors[0]?->slug ?? '', $path);
+            $path = str_replace('{author}', $variant->post->authors[0]?->slug ?? '', $path);
         }
 
         /**
@@ -246,7 +217,7 @@ class PermalinkRepository
             $path = "/{$language->code}" . $path;
         }
 
-        return $path ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
     public static function getTagPermalink(Tag $tag, Blog $blog, Language $language, bool $onlyPath = false): string

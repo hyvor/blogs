@@ -7,7 +7,6 @@ use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail;
 use App\Models\LinkAnalyzerCheck;
 use Hyvor\Internal\Auth\AuthFake;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -51,10 +50,7 @@ it('job works', function () {
     $check = LinkAnalyzerCheck::first();
 
     expect($check->blog_id)->toBe($blog->id);
-    expect($check->posts_count)->toBe(1);
-    expect($check->post_variants_count)->toBe(1);
-    expect($check->pages_count)->toBe(1);
-    expect($check->page_variants_count)->toBe(1);
+    expect($check->posts_count)->toBe(2);
     expect($check->links_total_count)->toBe(2);
     expect($check->links_ok_count)->toBe(1);
     expect($check->links_broken_count)->toBe(0);
@@ -65,6 +61,7 @@ it('job works', function () {
         return true;
     });
 });
+
 
 it('does not send mail when the option is disabled', function () {
     Mail::fake();
