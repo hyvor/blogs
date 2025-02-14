@@ -2,10 +2,10 @@
 
 namespace App\Domains\LinkAnalyzer\LinkStatusCheck;
 
-enum StatusCheckType
+enum StatusCheckType: string
 {
 
-    case INTERNAL; // internal links
-    case EXTERNAL; // external links
+    case INTERNAL = 'internal'; // internal links
+    case EXTERNAL = 'external'; // external links
 
 }

@@ -115,8 +115,12 @@ class PostVariantLinkService
                     'full_url' => $result->url,
                     'blog_id' => $blog->id,
                     'last_checked_at' => $now,
-                    'status_code' => $result->status->httpStatus,
-                    'ignore' => in_array($result->originalUrl, $ignoreUrls),
+                    'status_code' => $result->status->httpStatus ?? 0,
+                    'ignore' => in_array($result->originalUrl, $ignoreUrls) || $result->status->ignored,
+
+                    'check_type' => $result->status->type->value,
+                    'ignore_reason' => $result->status->ignored ? $result->status->ignoreReason?->value : null,
+                    'comment' => $result->status->comment
                 ]
             );
 

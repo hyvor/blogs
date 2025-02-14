@@ -2,6 +2,7 @@
 
 namespace App\Domains\LinkAnalyzer\LinkStatusCheck;
 
+use App\Domains\LinkAnalyzer\LinkStatusCheck\Ignore\KnownFirewall;
 use Illuminate\Support\Facades\Log;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -64,6 +65,26 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
         foreach ($responses as $url => $response) {
             try {
                 $httpStatusCode = $response->getStatusCode();
+
+                // on unauthorized, check for known firewalls
+                if ($httpStatusCode === 401 || $httpStatusCode === 403) {
+                    $headers = $response->getHeaders(false);
+
+                    $headers = array_map(fn($header) => $header[0], $headers);
+                    $headers = array_change_key_case($headers, CASE_LOWER);
+
+                    $firewall = KnownFirewall::isKnownFirewall($headers);
+                    if ($firewall) {
+                        $statuses[$url] = new StatusResult(
+                            StatusCheckType::EXTERNAL,
+                            httpStatus: $httpStatusCode,
+                            ignored: true,
+                            ignoreReason: IgnoreReasonEnum::KNOWN_FIREWALL,
+                            comment: 'firewall: ' . $firewall->value
+                        );
+                        continue;
+                    }
+                }
 
                 $statuses[$url] = new StatusResult(
                     StatusCheckType::EXTERNAL,

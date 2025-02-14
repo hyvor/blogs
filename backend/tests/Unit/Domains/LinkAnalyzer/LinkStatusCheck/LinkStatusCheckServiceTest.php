@@ -97,12 +97,13 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
         ];
 
         $service = $this->app->make(LinkStatusCheckService::class);
+        $this->assertInstanceOf(LinkStatusCheckService::class, $service);
         $result = $service->check($urls);
 
-        $this->assertSame(200, $result['https://hyvor.com']);
-        $this->assertSame(301, $result['https://supun.io/about-old']);
-        $this->assertSame(500, $result['https://500.com']);
-        $this->assertSame(500, $result['https://invalid-host.com']);
+        $this->assertSame(200, $result['https://hyvor.com']->httpStatus);
+        $this->assertSame(301, $result['https://supun.io/about-old']->httpStatus);
+        $this->assertSame(500, $result['https://500.com']->httpStatus);
+        $this->assertSame(500, $result['https://invalid-host.com']->httpStatus);
     }
 
     public function testGetsStatusOfInternalLinks(): void
@@ -126,12 +127,13 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
         ];
 
         $service = $this->app->make(LinkStatusCheckService::class);
+        $this->assertInstanceOf(LinkStatusCheckService::class, $service);
         $result = $service->check($urls, $blog);
 
-        $this->assertSame(200, $result[$blogUrl]);
-        $this->assertSame(200, $result["$blogUrl/about"]);
-        $this->assertSame(404, $result["$blogUrl/otherpage"]);
-        $this->assertSame(404, $result["$blogUrl/assets/image.jpg"]);
+        $this->assertSame(200, $result[$blogUrl]->httpStatus);
+        $this->assertSame(200, $result["$blogUrl/about"]->httpStatus);
+        $this->assertSame(404, $result["$blogUrl/otherpage"]->httpStatus);
+        $this->assertSame(404, $result["$blogUrl/assets/image.jpg"]->httpStatus);
     }
 
 }
