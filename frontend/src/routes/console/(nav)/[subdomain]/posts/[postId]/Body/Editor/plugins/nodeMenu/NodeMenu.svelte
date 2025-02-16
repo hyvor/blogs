@@ -12,6 +12,7 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import type { EditorView } from 'prosemirror-view';
 	import IconGripVertical from '@hyvor/icons/IconGripVertical';
+	import IconChatRight from '@hyvor/icons/IconChatRight';
 	import { deleteNode, nodeMenuPos } from './node-menu';
 
 	interface Props {
@@ -184,13 +185,19 @@
 			<ActionList>
 				<ActionListItem>
 					{#snippet start()}
-						<IconCopy />
+						<IconChatRight size={14} />
+					{/snippet}
+					Comment
+				</ActionListItem>
+				<ActionListItem>
+					{#snippet start()}
+						<IconCopy size={14} />
 					{/snippet}
 					Duplicate
 				</ActionListItem>
 				<ActionListItem type="danger" on:click={onDelete}>
 					{#snippet start()}
-						<IconTrash />
+						<IconTrash size={14} />
 					{/snippet}
 					Delete
 				</ActionListItem>
