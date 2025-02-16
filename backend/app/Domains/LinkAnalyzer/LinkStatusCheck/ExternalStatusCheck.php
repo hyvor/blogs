@@ -17,7 +17,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
      * Historical values:
      * 250 - sometimes caused some URLs to block the crawler
      */
-    private const CHUNK_SIZE = 100;
+    private const CHUNK_SIZE = 1;
 
     // source: https://www.whatismybrowser.com/guides/the-latest-user-agent/chrome
     private const CHROME_HEADER = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36';
