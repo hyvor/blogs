@@ -136,7 +136,7 @@ export const categories: Category[] = [
                 slug: 'syntax-highlighting',
                 name: 'Syntax Highlighting',
                 component: SyntaxHighlighting
-            }
+            },
         ]
     },
 

@@ -38,7 +38,6 @@
 
 		callLinkAnalysisApi(link.post_variant_id, [link.url])
 			.then((res) => {
-				console.log(res[0]?.status_code);
 				dispatch('update', res[0]);
 			})
 			.catch((e) => {
@@ -55,8 +54,8 @@
 		const newIgnore = !link.ignored;
 
 		callIgnoreLink(link.post_variant_id, link.url, newIgnore)
-			.then(() => {
-				dispatch('update', { id: link.id, ignored: newIgnore });
+			.then((link) => {
+				dispatch('update', link);
 			})
 			.catch((e) => {
 				toast.error(e.message || 'Failed to ignore link.');

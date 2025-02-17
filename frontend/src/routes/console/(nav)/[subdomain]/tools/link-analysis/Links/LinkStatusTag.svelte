@@ -12,14 +12,14 @@
 	interface Props {
 		status?: number;
 		type?: LinkAnalysisStatusType;
-		ignoreReason?: LinkAnalysisIgnoreReason;
+		ignoreReason?: LinkAnalysisIgnoreReason | null;
 		isAnchor?: boolean;
 		showTooltip?: boolean;
 	}
 
 	let { status, type, ignoreReason, isAnchor = false, showTooltip = true }: Props = $props();
 
-	let statusType = $derived(type || (status && getStatusType(status)));
+	let statusType = $derived(type || (status !== undefined && getStatusType(status)));
 	let statusDisplay = $state('');
 	let tooltip = $state('');
 	let color: any = $state('default');
