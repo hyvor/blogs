@@ -39,7 +39,7 @@ class ConsoleLinkAnalysisController
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        $checker = new PostVariantsCheck($blog);
+        $checker = new PostVariantsCheck($blog, clearVariantCache: false);
         $links = $checker->checkOne($postVariant, $urls);
 
         return response()->json($links->map(fn($link) => new LinkObject($blog, $link)));

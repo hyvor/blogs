@@ -38,6 +38,7 @@
 
 		callLinkAnalysisApi(link.post_variant_id, [link.url])
 			.then((res) => {
+				console.log(res[0]?.status_code);
 				dispatch('update', res[0]);
 			})
 			.catch((e) => {

@@ -31,8 +31,10 @@ class PostVariantsCheck
      */
     private Collection $languages;
 
-    public function __construct(private readonly Blog $blog)
-    {
+    public function __construct(
+        private readonly Blog $blog,
+        private readonly bool $clearVariantCache = true,
+    ) {
     }
 
     /**
@@ -211,7 +213,7 @@ class PostVariantsCheck
             $this->blog,
             $variant,
             $results,
-            true,
+            $this->clearVariantCache,
             $ignoredLinksUrls
         );
 
