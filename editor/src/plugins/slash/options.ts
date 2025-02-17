@@ -15,8 +15,8 @@ import IconTable from '@hyvor/icons/IconTable';
 import IconTypeH2 from '@hyvor/icons/IconTypeH2';
 import IconTypeH3 from '@hyvor/icons/IconTypeH3';
 
-import FileUploader from '../../../../routes/console/lib/components/FileUploader/FileUploader.svelte';
-import type { SelectedFile } from '../../../../routes/console/lib/components/FileUploader/image-uploader';
+// import FileUploader from '../../../../routes/console/lib/components/FileUploader/FileUploader.svelte';
+// import type { SelectedFile } from '../../../../routes/console/lib/components/FileUploader/image-uploader';
 import EmbedCreator from './Embed/EmbedCreator.svelte';
 import BookmarkCreator from './Bookmark/BookmarkCreator.svelte';
 
@@ -164,62 +164,68 @@ export function findOptions(match: string): SlashOption[] {
 }
 
 function selectImage() {
-	return new Promise<Node | null>((resolve) => {
-		const div = document.createElement('div');
-		document.body.appendChild(div);
+	// TODO: abstract this
+	return; 
+	
+	// return new Promise<Node | null>((resolve) => {
+	// 	const div = document.createElement('div');
+	// 	document.body.appendChild(div);
 
-		const selector = mount(FileUploader, {
-			target: div,
-			props: {
-				type: 'image',
-				onselect: (selected) => {
-					destroy();
-					return resolve(
-						schema.nodes.figure!.create({}, [
-							schema.nodes.image!.create({ src: selected.url }),
-							schema.nodes.figcaption!.create()
-						])
-					);
-				},
-				onclose: () => {
-					destroy();
-					resolve(null);
-				}
-			}
-		});
+	// 	const selector = mount(FileUploader, {
+	// 		target: div,
+	// 		props: {
+	// 			type: 'image',
+	// 			onselect: (selected) => {
+	// 				destroy();
+	// 				return resolve(
+	// 					schema.nodes.figure!.create({}, [
+	// 						schema.nodes.image!.create({ src: selected.url }),
+	// 						schema.nodes.figcaption!.create()
+	// 					])
+	// 				);
+	// 			},
+	// 			onclose: () => {
+	// 				destroy();
+	// 				resolve(null);
+	// 			}
+	// 		}
+	// 	});
 
-		function destroy() {
-			unmount(selector);
-			div.remove();
-		}
-	});
+	// 	function destroy() {
+	// 		unmount(selector);
+	// 		div.remove();
+	// 	}
+	// });
 }
 
 function selectAudio() {
-	return new Promise<Node | null>((resolve) => {
-		const div = document.createElement('div');
-		document.body.appendChild(div);
 
-		const selector = mount(FileUploader, {
-			target: div,
-			props: {
-				type: 'audio',
-				onselect: (selected) => {
-					destroy();
-					return resolve(schema.nodes.audio!.create({ src: selected.url }));
-				},
-				onclose: () => {
-					destroy();
-					resolve(null);
-				}
-			}
-		});
+	// TODO: abstract this
 
-		function destroy() {
-			unmount(selector);
-			div.remove();
-		}
-	});
+	// return new Promise<Node | null>((resolve) => {
+	// 	const div = document.createElement('div');
+	// 	document.body.appendChild(div);
+
+	// 	const selector = mount(FileUploader, {
+	// 		target: div,
+	// 		props: {
+	// 			type: 'audio',
+	// 			onselect: (selected) => {
+	// 				destroy();
+	// 				return resolve(schema.nodes.audio!.create({ src: selected.url }));
+	// 			},
+	// 			onclose: () => {
+	// 				destroy();
+	// 				resolve(null);
+	// 			}
+	// 		}
+	// 	});
+
+	// 	function destroy() {
+	// 		unmount(selector);
+	// 		div.remove();
+	// 	}
+	// });
 }
 
 function createQuote() {

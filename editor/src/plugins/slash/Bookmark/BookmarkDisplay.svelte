@@ -1,27 +1,27 @@
 <script lang="ts">
-    import {getHostname} from 'tldts';
-    import type {UnfoldedLink} from '../../../../../routes/console/lib/types';
+  import { getHostname } from "tldts";
+  import type { UnfoldedLink } from "../../../../../routes/console/lib/types";
 
-    interface Props {
-        link: UnfoldedLink;
-    }
+  interface Props {
+    link: UnfoldedLink;
+  }
 
-    let {link}: Props = $props();
+  let { link }: Props = $props();
 </script>
 
 <div class="wrap">
-    <div class="link-details">
-        <div class="link-title">{link.title || '(No Title)'}</div>
-        <div class="link-description">{link.description || ''}</div>
-        {#if link.siteUrl}
-            <div class="link-domain">{getHostname(link.siteUrl)}</div>
-        {/if}
-    </div>
-    {#if link.thumbnailUrl}
-        <div class="link-thumbnail">
-            <img alt="Thumbnail" src={link.thumbnailUrl}/>
-        </div>
+  <div class="link-details">
+    <div class="link-title">{link.title || "(No Title)"}</div>
+    <div class="link-description">{link.description || ""}</div>
+    {#if link.siteUrl}
+      <div class="link-domain">{getHostname(link.siteUrl)}</div>
     {/if}
+  </div>
+  {#if link.thumbnailUrl}
+    <div class="link-thumbnail">
+      <img alt="Thumbnail" src={link.thumbnailUrl} />
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">

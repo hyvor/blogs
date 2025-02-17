@@ -1,30 +1,17 @@
 <script lang="ts">
-  import { createBubbler } from "svelte/legacy";
-
-  const bubble = createBubbler();
   import { EditorState } from "prosemirror-state";
   import schema from "./schema";
-  import { EditorView, type DOMEventMap } from "prosemirror-view";
-  import { createEventDispatcher, onMount } from "svelte";
+  import { EditorView } from "prosemirror-view";
+  import { onMount } from "svelte";
   import { getNodeViews } from "./nodeviews/nodeviews";
   // import { importCodemirrorAll } from '../../routes/console/lib/components/CodemirrorEditor/codemirror';
   import { getPlugins } from "./plugins/plugins";
-  import type { ProsemirrorEventDispatchType } from "../../routes/console/(nav)/[subdomain]/posts/[postId]/Body/Editor/editorEvents";
   import { Loader } from "@hyvor/design/components";
+  import { editorContent, editorStore, type Props } from "./store";
 
-  interface Props {
-    value: string | null;
-  }
-
-  let { value }: Props = $props();
+  let props: Props = $props();
 
   let wrap: HTMLDivElement | undefined = $state();
-
-  const dispatch = createEventDispatcher<{
-    change: string;
-    view: EditorView;
-    event: ProsemirrorEventDispatchType;
-  }>();
 
   let isLoading = $state(true);
   let view: EditorView | undefined;
@@ -35,17 +22,19 @@
     // await importCodemirrorAll();
     isLoading = false;
 
-    const jsonParsedValue = value ? JSON.parse(value) : null;
+    const jsonParsedValue = props.value ? JSON.parse(props.value) : null;
     wrap!.innerHTML = "";
 
     let state = EditorState.create({
       schema: schema,
       plugins: getPlugins(),
-      doc: value ? schema.nodeFromJSON(jsonParsedValue) : undefined,
+      doc: props.value ? schema.nodeFromJSON(jsonParsedValue) : undefined,
     });
 
     function getDomEvents() {
-      const events: (keyof HTMLElementEventMap)[] = ["blur", "focus"];
+      return {};
+      // TODO: Fix this
+      /* const events: (keyof HTMLElementEventMap)[] = ["blur", "focus"];
 
       return events.reduce(
         (obj, e) => {
@@ -63,7 +52,7 @@
           };
         },
         {} as Record<keyof DOMEventMap, any>
-      );
+      ); */
     }
 
     view = new EditorView(wrap!, {
@@ -73,7 +62,10 @@
       // handleClickOn,
       // handleKeyDown,
       dispatchTransaction: (tr) => {
-        dispatch("change", JSON.stringify(tr.doc.toJSON()));
+        const docJson = JSON.stringify(tr.doc.toJSON());
+        editorContent.set(docJson);
+
+        // dispatch("change", JSON.stringify(tr.doc.toJSON()));
 
         // dispatch a transaction event
         // this event is used by Toc to update itself
@@ -89,7 +81,7 @@
       },
     });
 
-    dispatch("view", view);
+    editorStore.set({ view, props });
 
     return view;
   }
@@ -98,7 +90,7 @@
     createEditor();
   });
 
-  function handleWrapClick(e: MouseEvent) {
+  function handleWrapClick(e: MouseEvent | KeyboardEvent) {
     if (e.target === wrap) view?.focus();
   }
 </script>
@@ -108,7 +100,7 @@
   class="pm-editor"
   bind:this={wrap}
   onclick={handleWrapClick}
-  onkeyup={bubble("keyup")}
+  onkeyup={(e) => e.key === "Enter" && handleWrapClick(e)}
   class:loaded={!isLoading}
 >
   {#if isLoading}

@@ -1,79 +1,71 @@
 <script lang="ts">
-    import TocChildren from './TocChildren.svelte';
-    import {createBubbler} from 'svelte/legacy';
+  import TocChildren from "./TocChildren.svelte";
+  import { createBubbler } from "svelte/legacy";
 
-    const bubble = createBubbler();
-    import {Tag} from "@hyvor/design/components";
-    import type {TocEntry} from "./toc";
-    import {get} from "svelte/store";
-    import {postEditingStatusStore} from "../../../../routes/console/(nav)/[subdomain]/posts/postStore";
-    import {TextSelection} from "prosemirror-state";
-    import {positionSelectionInMiddleOfScreen} from "../../helpers";
-    import HeadingId from "./HeadingId.svelte";
+  const bubble = createBubbler();
+  import { Tag } from "@hyvor/design/components";
+  import type { TocEntry } from "./toc";
+  import { get } from "svelte/store";
+  import { TextSelection } from "prosemirror-state";
+  import { positionSelectionInMiddleOfScreen } from "../../helpers";
+  import HeadingId from "./HeadingId.svelte";
+  import { editorStore } from "../../store";
 
-    interface Props {
-        children: TocEntry[];
-        top?: boolean;
-    }
+  interface Props {
+    children: TocEntry[];
+    top?: boolean;
+  }
 
-    let {children, top = false}: Props = $props();
+  let { children, top = false }: Props = $props();
 
-    function handleHeadingClick(entry: TocEntry) {
+  function handleHeadingClick(entry: TocEntry) {
+    const editorView = $editorStore.view;
+    if (!editorView) return;
 
-        const editorView = get(postEditingStatusStore).editorView;
-        if (!editorView)
-            return;
+    const doc = editorView.state.doc;
+    const pos = entry.pos;
 
-        const doc = editorView.state.doc;
-        const pos = entry.pos;
+    const resolvedPos = doc.resolve(pos);
+    const selection = TextSelection.create(
+      doc,
+      pos + resolvedPos.nodeAfter!.nodeSize - 1
+    );
 
-        const resolvedPos = doc.resolve(pos);
-        const selection = TextSelection.create(
-            doc,
-            pos + resolvedPos.nodeAfter!.nodeSize - 1
-        );
+    editorView.dispatch(
+      editorView.state.tr.setSelection(selection).scrollIntoView()
+    );
+    editorView.focus();
 
-        editorView.dispatch(
-            editorView.state.tr
-                .setSelection(selection)
-                .scrollIntoView()
-        );
-        editorView.focus();
-
-        positionSelectionInMiddleOfScreen(editorView);
-    }
+    positionSelectionInMiddleOfScreen(editorView);
+  }
 </script>
 
 <div class="toc-ul" class:top>
-    {#each children as child}
-        <div class="toc-li">
+  {#each children as child}
+    <div class="toc-li">
+      <div
+        class="heading"
+        onclick={(e) => handleHeadingClick(child)}
+        onkeyup={bubble("keyup")}
+        role="button"
+        tabindex="0"
+      >
+        <Tag size="x-small">
+          <strong>H{child.level}</strong>
+        </Tag>
 
-            <div
-                    class="heading"
-                    onclick={e => handleHeadingClick(child)}
-                    onkeyup={bubble('keyup')}
-                    role="button"
-                    tabindex="0"
-            >
+        <div class="title">{child.title}</div>
 
-                <Tag size="x-small">
-                    <strong>H{child.level}</strong>
-                </Tag>
+        <div class="dots"></div>
 
-                <div class="title">{child.title}</div>
+        <HeadingId heading={child} />
+      </div>
 
-                <div class="dots"></div>
-
-                <HeadingId heading={child}/>
-
-            </div>
-
-
-            {#if child.children.length > 0}
-                <TocChildren children={child.children}/>
-            {/if}
-        </div>
-    {/each}
+      {#if child.children.length > 0}
+        <TocChildren children={child.children} />
+      {/if}
+    </div>
+  {/each}
 </div>
 
 <style lang="scss">
@@ -107,5 +99,4 @@
     flex: 1;
     border-top: 1px dashed #ccc;
   }
-
 </style>

@@ -26,7 +26,7 @@ export function getTextFromDoc(doc: Node): string {
     return text;
 }
 
-interface Heading {
+export interface Heading {
     level: number,
     text: string,
     id: string | null,
