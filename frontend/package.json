@@ -2,6 +2,9 @@
 	"name": "frontend",
 	"version": "0.0.1",
 	"private": true,
+	"workspaces": [
+		"packages/*"
+	],
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -39,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"editor": "workspace:*",
 		"@excalidraw/excalidraw": "^0.17.2",
 		"@hyvor/design": "^1.0.13",
 		"@hyvor/icons": "^1.0.0",

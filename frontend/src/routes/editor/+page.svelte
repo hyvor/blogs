@@ -1,15 +1,15 @@
 <script>
-    import Prosemirror from '$lib/Prosemirror/Prosemirror.svelte';
+	import { Editor } from 'editor';
 </script>
 
 <div class="wrap hds-box">
-    <Prosemirror value={null}/>
+	<Editor />
 </div>
 
 <style>
-    .wrap {
-        width: 650px;
-        margin: 20px auto;
-        height: calc(100vh - 40px);
-    }
+	.wrap {
+		width: 650px;
+		margin: 20px auto;
+		height: calc(100vh - 40px);
+	}
 </style>

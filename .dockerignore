@@ -1,7 +1,7 @@
 # backend/vendor
-frontend/node_modules
-frontend/.svelte-kit
-frontend/vite.config.ts.timestamp-*
+node_modules
+.svelte-kit
+vite.config.ts.timestamp-*
 backend/node_modules
 backend/vendor
 github
