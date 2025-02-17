@@ -13,8 +13,6 @@ FROM mlocati/php-extension-installer:2.7.13 AS php-extension-installer
 ###################################################
 FROM node AS frontend-base
 WORKDIR /app/frontend
-# copy packages
-COPY frontend/packages /app/frontend/packages
 # install dependencies
 COPY frontend/package.json frontend/package-lock.json \
     frontend/svelte.config.js \
@@ -23,6 +21,7 @@ COPY frontend/package.json frontend/package-lock.json \
 # copy code
 COPY frontend/src /app/frontend/src
 COPY frontend/static /app/frontend/static
+COPY frontend/packages /app/frontend/packages
 
 ###################################################
 FROM frontend-base AS frontend-dev

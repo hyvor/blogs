@@ -23,9 +23,10 @@
 	}
 
 	onMount(() => {
-		document.addEventListener('prosemirror:transaction', handleTransaction);
+		// TODO: change this without prosemirror:transaction
+		// document.addEventListener('prosemirror:transaction', handleTransaction);
 		return () => {
-			document.removeEventListener('prosemirror:transaction', handleTransaction);
+			// document.removeEventListener('prosemirror:transaction', handleTransaction);
 		};
 	});
 
@@ -34,9 +35,7 @@
 		if (pos === undefined) return;
 
 		view.dispatch(
-			view.state.tr
-				.setMeta('addToHistory', false)
-				.setNodeMarkup(pos, null, { levels: e.detail })
+			view.state.tr.setMeta('addToHistory', false).setNodeMarkup(pos, null, { levels: e.detail })
 		);
 	}
 </script>

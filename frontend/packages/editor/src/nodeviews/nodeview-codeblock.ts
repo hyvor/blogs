@@ -1,12 +1,10 @@
 // @ts-nocheck
-
-import CodeMirror from 'codemirror';
+import CodeMirror from 'codemirror'; // eslint-disable-line
 import { exitCode, joinBackward } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
 import { TextSelection, Selection } from 'prosemirror-state';
 import schema from '../schema';
 import type { NodeView } from 'prosemirror-view';
-// import schema from "./schema";
 
 // https://prosemirror.net/examples/codemirror/
 

@@ -2,7 +2,25 @@ import type { EditorView } from "prosemirror-view";
 import { writable } from "svelte/store";
 
 export interface Props {
+
+    /**
+     * The initial value of the editor.
+     */
     value?: string | null;
+
+    /**
+     * Listen to DOM events of the Prosemirror editor.
+     * Only focus and blur are supported.
+     */
+    onDomEvent?: (name: keyof HTMLElementEventMap, event: Event) => void;
+
+
+    /**
+     * Whether the current language is right-to-left.
+     */
+    rtl?: boolean;
+    
+
 }
 
 export interface Store {

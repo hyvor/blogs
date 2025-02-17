@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { EditorState } from 'prosemirror-state';
 	import schema from './schema';
-	import { EditorView } from 'prosemirror-view';
+	import { EditorView, type DOMEventMap } from 'prosemirror-view';
 	import { onMount } from 'svelte';
 	import { getNodeViews } from './nodeviews/nodeviews';
-	// import { importCodemirrorAll } from '../../routes/console/lib/components/CodemirrorEditor/codemirror';
 	import { getPlugins } from './plugins/plugins';
 	import { Loader } from '@hyvor/design/components';
 	import { editorContent, editorStore, type Props } from './store';
+	import { importCodemirrorAll } from './codemirror';
 
 	let props: Props = $props();
 
@@ -18,8 +18,7 @@
 
 	async function createEditor() {
 		isLoading = true;
-		// TODO: Fix this
-		// await importCodemirrorAll();
+		await importCodemirrorAll();
 		isLoading = false;
 
 		const jsonParsedValue = props.value ? JSON.parse(props.value) : null;
@@ -32,27 +31,17 @@
 		});
 
 		function getDomEvents() {
-			return {};
-			// TODO: Fix this
-			/* const events: (keyof HTMLElementEventMap)[] = ["blur", "focus"];
-
-      return events.reduce(
-        (obj, e) => {
-          return {
-            ...obj,
-            [e]: <T extends keyof DOMEventMap>(
-              view: EditorView,
-              event: DOMEventMap[T]
-            ) =>
-              dispatch("event", {
-                view,
-                name: e,
-                event,
-              }),
-          };
-        },
-        {} as Record<keyof DOMEventMap, any>
-      ); */
+			const events: (keyof HTMLElementEventMap)[] = ['blur', 'focus'];
+			return events.reduce(
+				(obj, e) => {
+					return {
+						...obj,
+						[e]: <T extends keyof DOMEventMap>(view: EditorView, event: DOMEventMap[T]) =>
+							props.onDomEvent?.(e, event)
+					};
+				},
+				{} as Record<keyof DOMEventMap, any>
+			);
 		}
 
 		view = new EditorView(wrap!, {
@@ -64,17 +53,6 @@
 			dispatchTransaction: (tr) => {
 				const docJson = JSON.stringify(tr.doc.toJSON());
 				editorContent.set(docJson);
-
-				// dispatch("change", JSON.stringify(tr.doc.toJSON()));
-
-				// dispatch a transaction event
-				// this event is used by Toc to update itself
-				const customEvent = new CustomEvent('prosemirror:transaction', {
-					detail: {
-						doc: tr.doc
-					}
-				});
-				document.dispatchEvent(customEvent);
 
 				const state = view!.state.apply(tr);
 				view!.updateState(state);
