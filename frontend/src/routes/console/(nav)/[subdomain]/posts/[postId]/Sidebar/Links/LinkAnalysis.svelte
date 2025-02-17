@@ -15,6 +15,7 @@
 	import { callLinkAnalysisApi } from '../../../../tools/link-analysis/linkAnalysisActions';
 	import { postVariantStore, updatePostVariantStore } from '../../../postStore';
 	import { getResultObjectFromLinks } from './linkLoader';
+	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 
 	let linksCount = $derived($variantLinksStore.length);
 
@@ -100,14 +101,26 @@
 			</Tag>
 		{/if}
 
+		{#if $variantLinkCountsStore.risky > 0}
+			<Tag size="small" color="orange" interactive on:click={() => handleJump('risky')}>
+				{#snippet start()}
+					<Text bold>{$variantLinkCountsStore.risky}</Text>
+				{/snippet}
+				Risky
+				{#snippet end()}
+					<IconExclamationCircleFill size={12} />
+				{/snippet}
+			</Tag>
+		{/if}
+
 		{#if $variantLinkCountsStore.redirect > 0}
-			<Tag size="small" color="orange" interactive on:click={() => handleJump('redirect')}>
+			<Tag size="small" color="blue" interactive on:click={() => handleJump('redirect')}>
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.redirect}</Text>
 				{/snippet}
 				Redirect
 				{#snippet end()}
-					<IconExclamationCircleFill size={12} />
+					<IconSignTurnSlightRight size={12} />
 				{/snippet}
 			</Tag>
 		{/if}
