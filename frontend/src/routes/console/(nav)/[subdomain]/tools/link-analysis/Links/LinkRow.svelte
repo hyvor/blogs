@@ -89,7 +89,10 @@
 		{#if isRechecking}
 			<Loader size="small" />
 		{:else}
-			<LinkStatusTag status={link.ignored ? -2 : link.status_code} />
+			<LinkStatusTag
+				status={link.ignored ? -2 : link.status_code}
+				ignoreReason={link.ignore_reason}
+			/>
 		{/if}
 	</div>
 

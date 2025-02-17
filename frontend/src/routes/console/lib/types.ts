@@ -386,6 +386,7 @@ export interface Import {
 }
 
 export type LinkAnalysisStatusType = 'ok' | 'redirect' | 'broken' | 'risky' | 'ignored';
+export type LinkAnalysisIgnoreReason = 'known_firewall' | 'robots_txt' | 'internal_error';
 
 export interface LinkAnalysisLink {
 	id: number;
@@ -394,6 +395,7 @@ export interface LinkAnalysisLink {
 	status_code: number;
 	status_type: 'ok' | 'redirect' | 'broken' | 'ignored';
 	ignored: boolean;
+	ignore_reason: LinkAnalysisIgnoreReason | null;
 	comment: string | null;
 
 	post_id: number;

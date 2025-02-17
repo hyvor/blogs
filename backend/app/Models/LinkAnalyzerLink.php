@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Domains\LinkAnalyzer\LinkStatusCheck\IgnoreReasonEnum;
 use Database\Factories\LinkAnalyzerLinkFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,8 @@ class LinkAnalyzerLink extends Model
 
     protected $casts = [
         'status_code' => 'integer',
-        'ignore' => 'boolean'
+        'ignore' => 'boolean',
+        'ignore_reason' => IgnoreReasonEnum::class
     ];
 
     /**

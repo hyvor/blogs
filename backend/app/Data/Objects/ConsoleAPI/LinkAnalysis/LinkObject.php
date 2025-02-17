@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\LinkAnalysis;
 
+use App\Domains\LinkAnalyzer\LinkStatusCheck\IgnoreReasonEnum;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -20,6 +21,7 @@ class LinkObject
     public int $status_code;
     public LinkStatusTypeEnum $status_type;
     public bool $ignored;
+    public ?IgnoreReasonEnum $ignore_reason;
     public ?string $comment;
 
     public int $post_id;
@@ -40,6 +42,7 @@ class LinkObject
             LinkStatusTypeEnum::fromStatus($link->status_code);
 
         $this->ignored = $link->ignore;
+        $this->ignore_reason = $link->ignore_reason;
         $this->comment = $link->comment;
 
         $postVariant = $link->postVariant;

@@ -6,35 +6,63 @@
 	import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
 
 	import { getStatusType } from '../../../../../lib/links/links';
-	import type { LinkAnalysisStatusType } from '../../../../../lib/types';
+	import type { LinkAnalysisIgnoreReason, LinkAnalysisStatusType } from '../../../../../lib/types';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 
 	interface Props {
 		status?: number;
 		type?: LinkAnalysisStatusType;
+		ignoreReason?: LinkAnalysisIgnoreReason;
 		isAnchor?: boolean;
 		showTooltip?: boolean;
 	}
 
-	let { status, type, isAnchor = false, showTooltip = true }: Props = $props();
+	let { status, type, ignoreReason, isAnchor = false, showTooltip = true }: Props = $props();
 
 	let statusType = $derived(type || (status && getStatusType(status)));
 	let statusDisplay = $state('');
 	let tooltip = $state('');
 	let color: any = $state('default');
 
+	function getReadableIgnoreReason(reason: LinkAnalysisIgnoreReason): string {
+		switch (reason) {
+			case 'known_firewall':
+				return 'Known firewall';
+			case 'robots_txt':
+				return 'Blocked by robots.txt';
+			case 'internal_error':
+				return 'Internal error';
+		}
+	}
+
 	$effect(() => {
 		if (statusType === 'ok') {
 			statusDisplay = 'OK';
-			tooltip = isAnchor ? 'Heading ID found' : 'OK - HTTP status ' + status;
+
+			if (isAnchor) {
+				tooltip = 'Heading ID found';
+			} else if (status) {
+				tooltip = 'OK - HTTP status ' + status;
+			} else {
+				tooltip = 'Link is OK';
+			}
+
 			color = 'green';
 		} else if (statusType === 'redirect') {
 			statusDisplay = 'Redirect';
-			tooltip = 'Redirect status ' + status;
+			tooltip = status ? 'Redirect status ' + status : 'Redirecting to another page';
 			color = 'blue';
 		} else if (statusType === 'broken') {
 			statusDisplay = 'Broken';
-			tooltip = isAnchor ? 'Heading ID not found' : 'HTTP status ' + status;
+
+			if (isAnchor) {
+				tooltip = 'Heading ID not found';
+			} else if (status) {
+				tooltip = status === 0 ? 'Broken - Connection issue' : 'Broken - HTTP status ' + status;
+			} else {
+				tooltip = 'Link is broken';
+			}
+
 			color = 'red';
 		} else if (statusType === 'risky') {
 			statusDisplay = 'Risky';
@@ -44,7 +72,8 @@
 			color = 'orange';
 		} else if (statusType === 'ignored') {
 			statusDisplay = 'Ignored';
-			tooltip = 'Link Ignored';
+			tooltip =
+				'Link Ignored' + (ignoreReason ? ' (' + getReadableIgnoreReason(ignoreReason) + ')' : '');
 			color = 'default';
 		} else if (statusType === 'error') {
 			statusDisplay = 'Error';

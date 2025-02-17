@@ -64,6 +64,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
             } // @codeCoverageIgnoreStart
             catch (TransportExceptionInterface $e) {
                 // this is thrown when an unsupported option is passed
+                // this should not usually happen
                 Log::critical('Unsupported option passed to the HTTP client in external status check', [
                     'url' => $url,
                     'exception' => $e,
@@ -109,8 +110,8 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
             } catch (TransportExceptionInterface $e) {
                 $statuses[$url] = new StatusResult(
                     StatusCheckType::EXTERNAL,
-                    httpStatus: 500,
-                    comment: 'network error'
+                    httpStatus: 0,
+                    comment: 'connection error'
                 );
             }
         }
