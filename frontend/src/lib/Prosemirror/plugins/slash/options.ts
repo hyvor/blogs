@@ -1,6 +1,6 @@
 import type { Node } from 'prosemirror-model';
 import { type Component, mount, unmount } from 'svelte';
-import schema from '../../../../../../../../lib/prosemirror/schema';
+import schema from '../../schema';
 import IconBookmark from '@hyvor/icons/IconBookmark';
 import IconCardImage from '@hyvor/icons/IconCardImage';
 import IconCode from '@hyvor/icons/IconCode';
@@ -15,8 +15,8 @@ import IconTable from '@hyvor/icons/IconTable';
 import IconTypeH2 from '@hyvor/icons/IconTypeH2';
 import IconTypeH3 from '@hyvor/icons/IconTypeH3';
 
-import FileUploader from '../../../../../../../../lib/components/FileUploader/FileUploader.svelte';
-import type { SelectedFile } from '../../../../../../../../lib/components/FileUploader/image-uploader';
+import FileUploader from '../../../../routes/console/lib/components/FileUploader/FileUploader.svelte';
+import type { SelectedFile } from '../../../../routes/console/lib/components/FileUploader/image-uploader';
 import EmbedCreator from './Embed/EmbedCreator.svelte';
 import BookmarkCreator from './Bookmark/BookmarkCreator.svelte';
 
@@ -181,7 +181,7 @@ function selectImage() {
 						])
 					);
 				},
-				onclose: () => {	
+				onclose: () => {
 					destroy();
 					resolve(null);
 				}
@@ -299,7 +299,6 @@ function createBookmark(url: string = '') {
 			unmount(creator);
 			div.remove();
 		}
-
 	});
 }
 

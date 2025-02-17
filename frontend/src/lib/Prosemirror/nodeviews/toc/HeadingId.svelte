@@ -1,21 +1,21 @@
 <script lang="ts">
-    import { createBubbler } from 'svelte/legacy';
+    import {createBubbler} from 'svelte/legacy';
 
     const bubble = createBubbler();
-	import { Tag, TextInput, Tooltip } from "@hyvor/design/components";
-	import type { TocEntry } from "./toc";
-	import { get } from "svelte/store";
-	import { postEditingStatusStore } from "../../../../../postStore";
-	import { tick } from "svelte";
-	import IconExclamation from '@hyvor/icons/IconExclamation';
-import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+    import {Tag, TextInput, Tooltip} from "@hyvor/design/components";
+    import type {TocEntry} from "./toc";
+    import {get} from "svelte/store";
+    import {postEditingStatusStore} from "../../../../routes/console/(nav)/[subdomain]/posts/postStore";
+    import {tick} from "svelte";
+    import IconExclamation from '@hyvor/icons/IconExclamation';
+    import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 
     interface Props {
         heading: TocEntry;
     }
 
-    let { heading }: Props = $props();
+    let {heading}: Props = $props();
 
     let input: HTMLInputElement | undefined = $state();
 
@@ -62,33 +62,33 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 </script>
 
-<div 
-    class="heading-id"
-    onclick={handleClick}
-    onkeyup={bubble('keyup')}
-    role="button"
-    tabindex="0"    
+<div
+        class="heading-id"
+        onclick={handleClick}
+        onkeyup={bubble('keyup')}
+        role="button"
+        tabindex="0"
 >
 
 
     {#if editing}
         <div class="text-input">
-            <TextInput 
-                size="x-small"
-                value={heading.id || ""}
-                style="width:100px"
-                autofocus
-                on:blur={() => editing = false}
-                on:keyup={handleKeyup}
-                bind:input={input}
+            <TextInput
+                    size="x-small"
+                    value={heading.id || ""}
+                    style="width:100px"
+                    autofocus
+                    on:blur={() => editing = false}
+                    on:keyup={handleKeyup}
+                    bind:input={input}
             >
-        
+
                 {#snippet start()}
-                                <span >
+                                <span>
                         ID #
                     </span>
-                            {/snippet}
-        
+                {/snippet}
+
             </TextInput>
         </div>
     {:else}
@@ -99,8 +99,8 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
                 {:else}
                     <Tag color="red" size="x-small">
                         {#snippet start()}
-                                                <IconExclamationCircle  size={10} />
-                                            {/snippet}
+                            <IconExclamationCircle size={10}/>
+                        {/snippet}
                         No ID
                     </Tag>
                 {/if}
@@ -111,10 +111,9 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 </div>
 
 
-
 <style>
     .text-input :global(.start) {
-        margin-right: 1px!important;
+        margin-right: 1px !important;
     }
 
     .id {

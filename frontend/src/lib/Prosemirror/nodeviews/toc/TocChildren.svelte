@@ -1,22 +1,22 @@
 <script lang="ts">
     import TocChildren from './TocChildren.svelte';
-    import { createBubbler } from 'svelte/legacy';
+    import {createBubbler} from 'svelte/legacy';
 
     const bubble = createBubbler();
-	import { Tag } from "@hyvor/design/components";
-    import type { TocEntry } from "./toc";
-	import { get } from "svelte/store";
-	import { postEditingStatusStore } from "../../../../../postStore";
-	import { TextSelection } from "prosemirror-state";
-	import { positionSelectionInMiddleOfScreen } from "../../../../../../../../lib/prosemirror/helpers";
-	import HeadingId from "./HeadingId.svelte";
-    
+    import {Tag} from "@hyvor/design/components";
+    import type {TocEntry} from "./toc";
+    import {get} from "svelte/store";
+    import {postEditingStatusStore} from "../../../../routes/console/(nav)/[subdomain]/posts/postStore";
+    import {TextSelection} from "prosemirror-state";
+    import {positionSelectionInMiddleOfScreen} from "../../helpers";
+    import HeadingId from "./HeadingId.svelte";
+
     interface Props {
         children: TocEntry[];
         top?: boolean;
     }
 
-    let { children, top = false }: Props = $props();
+    let {children, top = false}: Props = $props();
 
     function handleHeadingClick(entry: TocEntry) {
 
@@ -29,7 +29,7 @@
 
         const resolvedPos = doc.resolve(pos);
         const selection = TextSelection.create(
-            doc, 
+            doc,
             pos + resolvedPos.nodeAfter!.nodeSize - 1
         );
 
@@ -48,12 +48,12 @@
     {#each children as child}
         <div class="toc-li">
 
-            <div 
-                class="heading"
-                onclick={e => handleHeadingClick(child)}
-                onkeyup={bubble('keyup')}
-                role="button"
-                tabindex="0"
+            <div
+                    class="heading"
+                    onclick={e => handleHeadingClick(child)}
+                    onkeyup={bubble('keyup')}
+                    role="button"
+                    tabindex="0"
             >
 
                 <Tag size="x-small">
@@ -64,47 +64,48 @@
 
                 <div class="dots"></div>
 
-                <HeadingId heading={child} />
+                <HeadingId heading={child}/>
 
             </div>
 
 
-
             {#if child.children.length > 0}
-                <TocChildren children={child.children} />
+                <TocChildren children={child.children}/>
             {/if}
         </div>
     {/each}
 </div>
 
 <style lang="scss">
-    .toc-ul:not(.top) {
-        padding-left: 25px;
-    }
-    .toc-li {
-        display: flex;
-        flex-direction: column;
-    }
+  .toc-ul:not(.top) {
+    padding-left: 25px;
+  }
 
-    .heading {
-        display: flex;
-        align-items: center;
-        gap:6px;
-        padding: 8px 10px;
-        border-radius: 20px;
-        cursor: pointer;
-        &:hover {
-            background-color: var(--hover);
-        }
-    }
+  .toc-li {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .title {
-        font-size: 16px;
-    }
+  .heading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 20px;
+    cursor: pointer;
 
-    .dots {
-        flex: 1;
-        border-top: 1px dashed #ccc;
+    &:hover {
+      background-color: var(--hover);
     }
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .dots {
+    flex: 1;
+    border-top: 1px dashed #ccc;
+  }
 
 </style>

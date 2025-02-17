@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { confirm } from "@hyvor/design/components";
-    import { postEditingStatusStore, postVariantStore, updatePostEditingStatusValue } from "../../../../../postStore";
-	import { getDiffWordsCount } from "$lib/components/Diff/diff";
-	import { getTextFromContent } from "../../../../../../../../lib/prosemirror/helpers";
-	import ConfirmModal from "./ConfirmModal.svelte";
-	import { updatePostVariant } from "../../../../../postActions";
+    import {confirm} from "@hyvor/design/components";
+    import {postEditingStatusStore, postVariantStore, updatePostEditingStatusValue} from "../../../../../postStore";
+    import {getDiffWordsCount} from "$lib/components/Diff/diff";
+    import {getTextFromContent} from "$lib/Prosemirror/helpers";
+    import ConfirmModal from "./ConfirmModal.svelte";
+    import {updatePostVariant} from "../../../../../postActions";
 
     async function handleClick() {
 
@@ -39,6 +39,7 @@
         font-size: 13px;
         color: var(--red-dark);
     }
+
     button {
         text-decoration: underline;
     }

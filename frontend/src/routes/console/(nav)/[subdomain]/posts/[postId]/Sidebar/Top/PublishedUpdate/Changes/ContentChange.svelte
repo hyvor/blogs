@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { getDiffWordsCount } from "$lib/components/Diff/diff";
-	import { getTextFromContent } from "../../../../../../../../lib/prosemirror/helpers";
-	import { getWordsCount } from "../../../../../../../../lib/seo/words";
-	import { postLanguageStore } from "../../../../../postStore";
+    import {getDiffWordsCount} from "$lib/components/Diff/diff";
+    import {getTextFromContent} from "$lib/Prosemirror/helpers";
+    import {getWordsCount} from "../../../../../../../../lib/seo/words";
+    import {postLanguageStore} from "../../../../../postStore";
 
     interface Props {
         contentOld: string | null;
@@ -10,7 +10,7 @@
         diff: boolean;
     }
 
-    let { contentOld, contentNew, diff }: Props = $props();
+    let {contentOld, contentNew, diff}: Props = $props();
 
     let changedWords = $derived(getDiffWordsCount(
         getTextFromContent(contentOld),

@@ -1,86 +1,86 @@
 <script lang="ts">
-	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
-	import { onMount } from 'svelte';
-	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
-	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
-	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
-	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
-	import BookmarkDisplay from './BookmarkDisplay.svelte';
+    import {Loader, Modal, TextInput, Button, Validation} from '@hyvor/design/components';
+    import {onMount} from 'svelte';
+    import {getUnfold} from '../../../../../routes/console/lib/actions/urlDataActions';
+    import type {UnfoldedLink} from '../../../../../routes/console/lib/types';
+    import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
+    import {isValidUrl} from '../../../../../routes/console/lib/helper/is-valid-url';
+    import BookmarkDisplay from './BookmarkDisplay.svelte';
 
-	let show = $state(true);
+    let show = $state(true);
 
-	interface Props {
-		url?: string;
-		onclose: () => void;
-		oncreate: (url: string) => void;
-	}
+    interface Props {
+        url?: string;
+        onclose: () => void;
+        oncreate: (url: string) => void;
+    }
 
-	let { url = $bindable(''), onclose, oncreate }: Props = $props();
+    let {url = $bindable(''), onclose, oncreate}: Props = $props();
 
-	let inputEl: HTMLInputElement | undefined = $state();
-	let inputStarted = $state(false);
+    let inputEl: HTMLInputElement | undefined = $state();
+    let inputStarted = $state(false);
 
-	$effect(() => {
-		if (!show) {
-			onclose();
-		}
-	});
+    $effect(() => {
+        if (!show) {
+            onclose();
+        }
+    });
 
-	let isFetching = $state(false);
-	let error: null | string = $state(null);
+    let isFetching = $state(false);
+    let error: null | string = $state(null);
 
-	let urlData: null | UnfoldedLink = $state(null);
+    let urlData: null | UnfoldedLink = $state(null);
 
-	function handleFetch() {
-		if (!inputStarted) {
-			return;
-		}
+    function handleFetch() {
+        if (!inputStarted) {
+            return;
+        }
 
-		error = null;
-		urlData = null;
+        error = null;
+        urlData = null;
 
-		if (url.trim() === '') {
-			error = 'URL is required';
-			inputEl?.focus();
-			return;
-		}
+        if (url.trim() === '') {
+            error = 'URL is required';
+            inputEl?.focus();
+            return;
+        }
 
-		if (!isValidUrl(url)) {
-			error = 'Invalid URL';
-			inputEl?.focus();
-			return;
-		}
+        if (!isValidUrl(url)) {
+            error = 'Invalid URL';
+            inputEl?.focus();
+            return;
+        }
 
-		isFetching = true;
+        isFetching = true;
 
-		getUnfold(url, 'link')
-			.then((data) => {
-				urlData = data;
-			})
-			.catch((_) => {
-				error = 'Failed to load URL';
-			})
-			.finally(() => {
-				isFetching = false;
-			});
-	}
+        getUnfold(url, 'link')
+            .then((data) => {
+                urlData = data;
+            })
+            .catch((_) => {
+                error = 'Failed to load URL';
+            })
+            .finally(() => {
+                isFetching = false;
+            });
+    }
 
-	function handleCreate() {
-		oncreate(urlData!.url);
-	}
+    function handleCreate() {
+        oncreate(urlData!.url);
+    }
 
-	onMount(() => {
-		if (url !== '') {
-			inputStarted = true;
-			handleFetch();
-		}
-	});
+    onMount(() => {
+        if (url !== '') {
+            inputStarted = true;
+            handleFetch();
+        }
+    });
 </script>
 
 <Modal
-	bind:show
-	title="Create Bookmark"
-	footer={{
+        bind:show
+        title="Create Bookmark"
+        footer={{
 		confirm: urlData
 			? {
 					text: 'Create Bookmark'
@@ -90,59 +90,61 @@
 			text: 'Close'
 		}
 	}}
-	on:confirm={handleCreate}
+        on:confirm={handleCreate}
 >
-	<div class="input-wrap">
-		<TextInput
-			placeholder="Enter any URL..."
-			autofocus
-			block
-			bind:value={url}
-			on:keyup={(e) => {
+    <div class="input-wrap">
+        <TextInput
+                placeholder="Enter any URL..."
+                autofocus
+                block
+                bind:value={url}
+                on:keyup={(e) => {
 				if (e.key === 'Enter') {
 					handleFetch();
 				} else {
 					inputStarted = true;
 				}
 			}}
-			state={error ? 'error' : undefined}
-			bind:input={inputEl}
-		/>
-		<Button on:click={handleFetch}>
-			Fetch {#snippet end()}
-				<IconArrowReturnLeft />
-			{/snippet}
-		</Button>
-	</div>
+                state={error ? 'error' : undefined}
+                bind:input={inputEl}
+        />
+        <Button on:click={handleFetch}>
+            Fetch
+            {#snippet end()}
+                <IconArrowReturnLeft/>
+            {/snippet}
+        </Button>
+    </div>
 
-	{#if error}
-		<div style="margin-top:10px;">
-			<Validation state="error">
-				{error}
-			</Validation>
-		</div>
-	{/if}
+    {#if error}
+        <div style="margin-top:10px;">
+            <Validation state="error">
+                {error}
+            </Validation>
+        </div>
+    {/if}
 
-	{#if isFetching}
-		<Loader block padding={50} />
-	{/if}
+    {#if isFetching}
+        <Loader block padding={50}/>
+    {/if}
 
-	{#if urlData}
-		<div class="display">
-			<BookmarkDisplay link={urlData} />
-		</div>
-	{/if}
+    {#if urlData}
+        <div class="display">
+            <BookmarkDisplay link={urlData}/>
+        </div>
+    {/if}
 </Modal>
 
 <style>
-	.input-wrap {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-	.display {
-		margin-top: 20px;
-		overflow: auto;
-		max-height: 400px;
-	}
+    .input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .display {
+        margin-top: 20px;
+        overflow: auto;
+        max-height: 400px;
+    }
 </style>

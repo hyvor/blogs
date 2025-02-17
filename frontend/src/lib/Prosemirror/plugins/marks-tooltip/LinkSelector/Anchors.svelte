@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { createBubbler } from 'svelte/legacy';
+    import {createBubbler} from 'svelte/legacy';
 
     const bubble = createBubbler();
-	import { createEventDispatcher } from "svelte";
-	import { getHeadingsFromContent } from "../../../../../../../../../lib/prosemirror/helpers";
-	import { postCurrentContentStore } from "../../../../../../postStore";
-	import { IconMessage, Tag } from "@hyvor/design/components";
+    import {createEventDispatcher} from "svelte";
+    import {getHeadingsFromContent} from "../../../helpers";
+    import {postCurrentContentStore} from "../../../../../routes/console/(nav)/[subdomain]/posts/postStore";
+    import {IconMessage, Tag} from "@hyvor/design/components";
 
     let headings = $derived(getHeadingsFromContent($postCurrentContentStore));
 
@@ -13,7 +13,7 @@
 
     function handleAdd(id: string | null) {
         if (!id) return
-        dispatch('add', "#" + id); 
+        dispatch('add', "#" + id);
     }
 
 </script>
@@ -21,11 +21,11 @@
 
 {#if !headings.length}
 
-    <IconMessage 
-        padding={50} 
-        empty 
-        message="No headings in your post" 
-        iconSize={50}
+    <IconMessage
+            padding={50}
+            empty
+            message="No headings in your post"
+            iconSize={50}
     />
 
 {:else}
@@ -34,12 +34,12 @@
 
         {#each headings as heading}
             <div
-                class="heading"
-                onclick={() => handleAdd(heading.id)}
-                role="button"
-                onkeyup={bubble('keyup')}
-                tabindex="0"
-                class:has-id={!!heading.id}
+                    class="heading"
+                    onclick={() => handleAdd(heading.id)}
+                    role="button"
+                    onkeyup={bubble('keyup')}
+                    tabindex="0"
+                    class:has-id={!!heading.id}
             >
 
                 <span class="type">
@@ -72,35 +72,41 @@
 
 <style lang="scss">
 
-    .headings {
-        max-height: 400px;
-        overflow: auto;
-        .type {
-            margin-right: 8px;
-        }
-        .heading {
-            display: flex;
-            padding: 6px 15px;
-            align-items: center;
-            border-radius: var(--box-radius);
-            cursor: not-allowed;
-            &.has-id {
-                cursor: pointer;
-                &:hover {
-                    background: var(--hover);
-                }
-            }
-        }
-        .text {
-            flex: 1;
-            font-weight: 600;
-        }
-        margin-bottom: 25px;
+  .headings {
+    max-height: 400px;
+    overflow: auto;
+
+    .type {
+      margin-right: 8px;
     }
 
-    .missing {
-        color: var(--text-light);
-        font-size: 12px;
+    .heading {
+      display: flex;
+      padding: 6px 15px;
+      align-items: center;
+      border-radius: var(--box-radius);
+      cursor: not-allowed;
+
+      &.has-id {
+        cursor: pointer;
+
+        &:hover {
+          background: var(--hover);
+        }
+      }
     }
+
+    .text {
+      flex: 1;
+      font-weight: 600;
+    }
+
+    margin-bottom: 25px;
+  }
+
+  .missing {
+    color: var(--text-light);
+    font-size: 12px;
+  }
 
 </style>
