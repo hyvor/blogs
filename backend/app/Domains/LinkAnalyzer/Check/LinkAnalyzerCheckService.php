@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
@@ -55,6 +56,7 @@ class LinkAnalyzerCheckService
             'links_total_count' => $analyze->linksCount,
             'links_ok_count' => $analyze->linksOkCount,
             'links_broken_count' => $analyze->linksBrokenCount,
+            'links_risky_count' => $analyze->linksRiskyCount,
             'links_redirect_count' => $analyze->linksRedirectCount,
             'links_ignored_count' => $analyze->linksIgnoredCount,
         ]);

@@ -26,22 +26,25 @@
 {#if isLoading}
 	<Loader padding={60} block />
 {:else if $linkAnalysisChecks.length}
-	<Table columns="2fr 2fr 2fr 2fr 2fr 2fr 2fr">
+	<Table columns="2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr">
 		<TableRow head>
 			<div>Date</div>
 			<div>Status</div>
 			<div>No. Posts</div>
 			<div>
-				<LinkStatusTag status={200} showTooltip={false} />
+				<LinkStatusTag type="ok" showTooltip={false} />
 			</div>
 			<div>
-				<LinkStatusTag status={404} showTooltip={false} />
+				<LinkStatusTag type="broken" showTooltip={false} />
 			</div>
 			<div>
-				<LinkStatusTag status={301} showTooltip={false} />
+				<LinkStatusTag type="risky" showTooltip={false} />
 			</div>
 			<div>
-				<LinkStatusTag status={-2} showTooltip={false} />
+				<LinkStatusTag type="redirect" showTooltip={false} />
+			</div>
+			<div>
+				<LinkStatusTag type="ignored" showTooltip={false} />
 			</div>
 		</TableRow>
 
@@ -67,6 +70,10 @@
 
 				<div>
 					{check.links_broken_count}
+				</div>
+
+				<div>
+					{check.links_risky_count}
 				</div>
 
 				<div>

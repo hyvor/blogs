@@ -19,6 +19,9 @@ return new class extends Migration {
                 ADD COLUMN check_type link_analyzer_link_check_types NOT NULL DEFAULT 'internal',
                 ADD COLUMN ignore_reason VARCHAR(255) NULL,
                 ADD COLUMN comment TEXT NULL;
+
+            ALTER TABLE link_analyzer_checks
+                ADD COLUMN links_risky_count INT DEFAULT 0;
         SQL
         );
     }

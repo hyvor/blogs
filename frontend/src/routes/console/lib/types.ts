@@ -385,6 +385,8 @@ export interface Import {
 	};
 }
 
+export type LinkAnalysisStatusType = 'ok' | 'redirect' | 'broken' | 'risky' | 'ignored';
+
 export interface LinkAnalysisLink {
 	id: number;
 	url: string;
@@ -413,6 +415,7 @@ export interface LinkAnalysisCheck {
 	links_total_count: number;
 	links_ok_count: number;
 	links_broken_count: number;
+	links_risky_count: number;
 	links_redirect_count: number;
 	links_ignored_count: number;
 }

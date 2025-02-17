@@ -2,7 +2,7 @@ import { EditorView } from "prosemirror-view";
 import { getDocFromContent, positionSelectionInMiddleOfScreen } from "../prosemirror/helpers";
 import { TextSelection } from "prosemirror-state";
 import {parse} from 'tldts';
-import type { PostVariant } from "../types";
+import type { LinkAnalysisStatusType, PostVariant } from "../types";
 
 export const LINK_STATUS = {
     LOADING: -1,
@@ -193,14 +193,15 @@ export function isHttpLink(link: Link) {
 }
 
 export function getStatusType(status: number) : 
-    'loading' | 'ok' | 'redirect' | 'broken' | 'ignored' | 'error'
+    'loading' | 'error' | LinkAnalysisStatusType
 {
     if (status === LINK_STATUS.LOADING) return 'loading';
     if (status === LINK_STATUS.IGNORED) return 'ignored';
     if (status === LINK_STATUS.ERROR) return 'error';
     if (status >= 200 && status < 300) return 'ok';
     if (status >= 300 && status < 400) return 'redirect';
-    return 'broken';
+    if (status === 404 || status === 0) return 'broken';
+    return 'risky';
 }
 
 export function getCountsByStatus(statuses: Record<string, number>) {
@@ -209,6 +210,7 @@ export function getCountsByStatus(statuses: Record<string, number>) {
         total: 0,
         ok: 0,
         redirect: 0,
+        risky: 0,
         broken: 0,
         ignored: 0,
         loading: 0,
@@ -225,193 +227,3 @@ export function getCountsByStatus(statuses: Record<string, number>) {
     return counts;
 
 }
-
-
-/* 
-export function useUpdateLinkAnalysis(id: number) {
-
-    const { updateCurrentPostVariantValue } = usePostActions(id);
-    const { currentVariant, currentVariantLinkAnalysis, currentVariantLinks } = usePostValues(id);
-
-    const links = currentVariantLinks;
-    let linksCount = links.length;
-
-    let okCount = 0;
-    let redirectCount = 0;
-    let brokenCount = 0;
-    let ignoreCount = 0;
-    let loadingCount = 0;
-
-    links.forEach(link => {
-        const status = currentVariantLinkAnalysis[link.originalHref];
-        const statusType = getStatusType(status);
-
-        if (statusType === "ok") {
-            okCount++;
-        } else if (statusType === "redirect") {
-            redirectCount++;
-        } else if (statusType === "broken") {
-            brokenCount++;
-        } else if (statusType === "ignored") {
-            ignoreCount++;
-        } else if (statusType === "loading") {
-            loadingCount++;
-        }
-    });
-
-    const lastLoadedLinksRef = useRef<string>('');
-
-    function getResultObjectFromLinks(links: LinkAnalysisLink[]) {
-        const obj : Record<string, number> = {}
-        links.forEach(link => {
-            obj[link.url] = link.ignored ? LINK_STATUS.IGNORED : link.status_code;
-        })
-        return obj;
-    }
-
-    useEffect(() => {
-
-        const loadingLinks : string[] = [];
-
-        for (const link in currentVariantLinkAnalysis) {
-            if (currentVariantLinkAnalysis[link] === LINK_STATUS.LOADING) {
-                loadingLinks.push(link);
-            }
-        }
-
-        if (lastLoadedLinksRef.current === loadingLinks.join(',')) return;
-        if (loadingLinks.length === 0) return;
-
-        callLinkAnalysisApi(currentVariant.id, loadingLinks)
-            .then(res => {
-                updateCurrentPostVariantValue('link_analysis', {
-                    ...currentVariantLinkAnalysis,
-                    ...getResultObjectFromLinks(res),
-                })
-            })
-            .catch(() => {
-
-                updateCurrentPostVariantValue('link_analysis', {
-                    ...currentVariantLinkAnalysis,
-                    ...loadingLinks.reduce((acc, link) => {
-                        acc[link] = LINK_STATUS.ERROR;
-                        return acc;
-                    }, {} as Record<string, number>)
-                });
-
-            });
-
-        lastLoadedLinksRef.current = loadingLinks.join(',');
-
-    }, [currentVariantLinkAnalysis]);
-
-    return {
-
-        reloadLink: (link: Link, onReload: (status: number) => void) => {
-
-            callLinkAnalysisApi(
-                currentVariant.id, 
-                [link.originalHref], 
-                // true
-            ).then(res => {
-
-                const status = res.find(l => l.url === link.originalHref)?.status_code || LINK_STATUS.ERROR;
-
-                updateCurrentPostVariantValue('link_analysis', {
-                    ...currentVariantLinkAnalysis,
-                    [link.originalHref]: status,
-                })
-
-                onReload(status);
-
-            }).catch(() => {
-                    
-                updateCurrentPostVariantValue('link_analysis', {
-                    ...currentVariantLinkAnalysis,
-                    [link.originalHref]: LINK_STATUS.ERROR,
-                })
-
-                onReload(LINK_STATUS.ERROR);
-    
-            })
-
-        },
-
-        reloadAllLinks: (onReload: Function) => {
-
-            // updateCurrentPostVariantValue('link_analysis', {})
-            // return;
-
-            const allLinks = links
-                .filter(link => isHttpLink(link))
-                .map(link => link.href)
-
-            callLinkAnalysisApi(
-                currentVariant.id,
-                allLinks,
-                // true,
-            ).then(res => {  
-                updateCurrentPostVariantValue('link_analysis', {
-                    ...currentVariantLinkAnalysis,
-                    ...getResultObjectFromLinks(res),
-                })
-            })
-            .catch(e => {
-                toast.error(e);
-            })
-            .finally(() => {
-                onReload();
-            })
-
-        },
-
-        ignoreLink: (link: Link, status: boolean = true) => {
-            
-            return callIgnoreLink(currentVariant.id, link.href, status)
-                .then(res => {
-                    updateCurrentPostVariantValue('link_analysis', {
-                        ...currentVariantLinkAnalysis,
-                        [link.href]: status ? LINK_STATUS.IGNORED : res.status_code
-                    })
-                })
-
-        },
-
-        counts: {
-            total: linksCount,
-            ok: okCount,
-            redirect: redirectCount,
-            broken: brokenCount,
-            ignored: ignoreCount,
-            loading: loadingCount,
-        }
-
-    }
-
-}
-
-export function callLinkAnalysisApi(
-    postVariantId: number,
-    urls: string[], // originalUrls
-    // force: boolean = false
-) {
-
-    const subdomain = getSubdomain();
-
-    return api.post<LinkAnalysisLink[]>(subdomain, '/link-analysis/check-urls', {
-        post_variant_id: postVariantId,
-        urls
-    })
-
-}
-
-export function callIgnoreLink(postVariantId: number, url: string, status: boolean) {
-
-    const subdomain = getSubdomain();
-    return api.patch<LinkAnalysisLink>(subdomain, '/link-analysis/ignore-link', {
-        post_variant_id: postVariantId,
-        url,
-        status: status ? 1 : 0,
-    });
-
-}  */

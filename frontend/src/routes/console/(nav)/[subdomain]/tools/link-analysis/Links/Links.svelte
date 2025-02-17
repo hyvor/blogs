@@ -20,7 +20,7 @@
 
 	let type: FilterType = $state(null);
 
-	const types = [null, 'ok', 'broken', 'redirect', 'ignored'] as FilterType[];
+	const types = [null, 'ok', 'broken', 'risky', 'redirect', 'ignored'] as FilterType[];
 
 	let isLoading = $state(true);
 	let isMoreLoading = $state(false);
@@ -64,6 +64,8 @@
 				return `OK (${stats.counts.ok})`;
 			case 'broken':
 				return `Broken (${stats.counts.broken})`;
+			case 'risky':
+				return `Risky (${stats.counts.risky})`;
 			case 'redirect':
 				return `Redirect (${stats.counts.redirect})`;
 			case 'ignored':

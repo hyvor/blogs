@@ -43,8 +43,9 @@ class RunLinkAnalyzerCommand extends Command
 
         $this->info("Posts: {$analyze->postsCount}");
         $this->info("Links: {$analyze->linksCount}");
-        $this->info("Links OK: {$analyze->linksOkCount}");
+        $this->info("Links ok: {$analyze->linksOkCount}");
         $this->info("Links broken: {$analyze->linksBrokenCount}");
+        $this->info("Links risky: {$analyze->linksRiskyCount}");
         $this->info("Links redirect: {$analyze->linksRedirectCount}");
         $this->info("Links ignored: {$analyze->linksIgnoredCount}");
 

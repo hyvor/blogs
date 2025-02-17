@@ -22,6 +22,7 @@ class FullBlogAnalyzer
     public int $linksCount = 0;
     public int $linksOkCount = 0;
     public int $linksBrokenCount = 0;
+    public int $linksRiskyCount = 0;
     public int $linksRedirectCount = 0;
     public int $linksIgnoredCount = 0;
 
@@ -68,6 +69,8 @@ class FullBlogAnalyzer
                     $this->linksOkCount++;
                 } elseif ($statusType === LinkStatusTypeEnum::BROKEN) {
                     $this->linksBrokenCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::RISKY) {
+                    $this->linksRiskyCount++;
                 } elseif ($statusType === LinkStatusTypeEnum::REDIRECT) {
                     $this->linksRedirectCount++;
                 }

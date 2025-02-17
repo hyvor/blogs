@@ -1,28 +1,30 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer;
 
-enum LinkStatusTypeEnum : string
+enum LinkStatusTypeEnum: string
 {
 
     case OK = 'ok';
     case BROKEN = 'broken';
+    case RISKY = 'risky';
     case REDIRECT = 'redirect';
     case IGNORED = 'ignored';
 
-    public static function fromStatus(int $status) : self
+    public static function fromStatus(int $status): self
     {
-
         if ($status === LinkAnalyzeService::IGNORE_CODE) {
             return self::IGNORED;
-        } else if ($status >= 200 && $status < 300) {
+        } elseif ($status >= 200 && $status < 300) {
             return self::OK;
-        } else if ($status >= 300 && $status < 400) {
+        } elseif ($status >= 300 && $status < 400) {
             return self::REDIRECT;
-        } else {
+        } elseif ($status === 404 || $status === 0) {
             return self::BROKEN;
         }
-
+        return self::RISKY;
     }
 
 }
