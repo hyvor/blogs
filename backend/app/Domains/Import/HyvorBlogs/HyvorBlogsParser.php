@@ -22,7 +22,7 @@ class HyvorBlogsParser extends MediaAwareParserAbstract
     private array $data;
 
     public function __construct(
-        private Blog $blog,
+        private Blog $blog, // @phpstan-ignore-line
 
         // where data is at
         // - export.json
