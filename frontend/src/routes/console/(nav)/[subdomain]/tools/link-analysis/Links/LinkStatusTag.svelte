@@ -57,7 +57,7 @@
 
 			if (isAnchor) {
 				tooltip = 'Heading ID not found';
-			} else if (status) {
+			} else if (status !== undefined) {
 				tooltip = status === 0 ? 'Broken - Connection issue' : 'Broken - HTTP status ' + status;
 			} else {
 				tooltip = 'Link is broken';

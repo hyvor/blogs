@@ -146,7 +146,11 @@ export function calculateLinkAnalysis(variant: PostVariant) : Record<string, num
 
     links.forEach((link, i) => {
 
-        let status = linkAnalysis[link.originalHref] || LINK_STATUS.LOADING;
+        let status = linkAnalysis[link.originalHref];
+        
+        if (status === undefined) {
+            status = LINK_STATUS.LOADING;
+        }
 
         if (link.type === 'anchor') {
 

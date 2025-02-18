@@ -25,6 +25,7 @@ interface GetLinksData {
     type: FilterType,
     limit?: number,
     offset?: number,
+    post_variant_id?: number,
 }
 
 export function getLinks(data: GetLinksData) {

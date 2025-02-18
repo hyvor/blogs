@@ -86,15 +86,19 @@ class ConsoleLinkAnalysisController
             'type' => [new Enum(LinkStatusTypeEnum::class), 'nullable'],
             'limit' => 'integer',
             'offset' => 'integer',
+            'post_variant_id' => 'integer|nullable',
         ]);
 
         $type = LinkStatusTypeEnum::tryFrom((string)$request->string('type'));
-        $limit = $request->integer('limit', 50);
+        /** @var ?int $postVariantId */
+        $postVariantId = $request->has('post_variant_id') ? $request->integer('post_variant_id') : null;
+        $limit = $request->integer('limit', 100);
         $offset = $request->integer('offset');
 
         $links = LinkAnalyzeService::getLinksOfBlog(
             $blog,
             $type,
+            $postVariantId,
             $limit,
             $offset
         )->map(fn($link) => new LinkObject($blog, $link));

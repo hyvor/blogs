@@ -1,7 +1,8 @@
-import { derived } from "svelte/store";
+import { derived, writable } from "svelte/store";
 import { postCurrentContentStore, postVariantStore } from "../../../postStore";
 import { blogStore } from "../../../../../../lib/stores/blogStore";
 import { calculateLinkAnalysis, getLinksFromContent, getStatusType, LINK_STATUS, type Link } from "../../../../../../lib/links/links";
+import type { LinkAnalysisLink } from "../../../../../../lib/types";
 
 export const variantLinksStore = derived(
     [postCurrentContentStore, blogStore],
@@ -18,6 +19,11 @@ export const variantLinkCountsStore = derived(
     ([analysis, links]) => getLinkCounts(analysis, links)
 );
 
+/**
+ * This saves the full link objects from the API
+ */
+export const linksStore = writable<LinkAnalysisLink[]>([]);
+
 function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
 
     let okCount = 0;
@@ -29,7 +35,11 @@ function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
 
     links.forEach(link => {
 
-        const status = analysis[link.originalHref] || LINK_STATUS.ERROR;
+        let status = analysis[link.originalHref]; 
+        if (status === undefined) {
+            status = LINK_STATUS.ERROR;
+        }
+
         const statusType = getStatusType(status);
 
         if (statusType === 'ok') {

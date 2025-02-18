@@ -74,7 +74,8 @@ class LinkAnalyzeService
     public static function getLinksOfBlog(
         Blog $blog,
         ?LinkStatusTypeEnum $type,
-        int $limit,
+        ?int $postVariantId,
+        ?int $limit,
         int $offset
     ): Collection {
         return LinkAnalyzerLink::where('blog_id', $blog->id)
@@ -89,6 +90,7 @@ class LinkAnalyzeService
                 CASE WHEN ignore = true THEN 1 ELSE 0 END AS ignored
             '
             )
+            ->when($postVariantId, fn($query, $postVariantId) => $query->where('post_variant_id', $postVariantId))
             ->when($type, function ($query) use ($type) {
                 switch ($type) {
                     case LinkStatusTypeEnum::OK:
@@ -131,7 +133,7 @@ class LinkAnalyzeService
             ->orderBy('redirect', 'desc')
             ->orderBy('last_checked_at', 'desc')
             ->orderBy('id', 'desc')
-            ->limit($limit)
+            ->when($limit, fn($query, $limit) => $query->limit($limit))
             ->offset($offset)
             ->get();
     }
