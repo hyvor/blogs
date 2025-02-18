@@ -5,7 +5,7 @@ namespace App\Domains\Import\WordPress;
 use App\Domains\App\JobMessageLog;
 use App\Domains\Import\Importer\ImportingPost;
 use App\Domains\Import\Importer\ImportingPostVariant;
-use App\Domains\Import\Importer\ParserAbstract;
+use App\Domains\Import\Importer\MediaAwareParserAbstract;
 use App\Domains\Import\Importer\ParserException;
 use App\Domains\Import\XmlHelper;
 use App\Domains\Post\Content\HtmlParser;
@@ -18,7 +18,7 @@ use SimpleXMLElement;
 use Symfony\Component\DomCrawler\Crawler;
 use XMLReader;
 
-class WordPressParser extends ParserAbstract
+class WordPressParser extends MediaAwareParserAbstract
 {
 
     private string $xml;
@@ -79,7 +79,6 @@ class WordPressParser extends ParserAbstract
 
     public function parse(): void
     {
-
         $fileReader = new XMLReader();
 
         if (!$fileReader->xml($this->xml, null, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_PARSEHUGE)) {
@@ -120,7 +119,6 @@ class WordPressParser extends ParserAbstract
                 $this->parsePost($postXml);
             }
         }
-
     }
 
     public function getMissingUploadsCount(): int
@@ -147,7 +145,7 @@ class WordPressParser extends ParserAbstract
             return;
         }
 
-        $type = (string) $this->element($post, 'wp:post_type');
+        $type = (string)$this->element($post, 'wp:post_type');
 
         if ($type !== 'post' && $type !== 'page') {
             return;
@@ -155,14 +153,18 @@ class WordPressParser extends ParserAbstract
 
         $isPage = $type === 'page';
 
-        $status = (string) $this->element($post, 'wp:status');
-        if ($status !== 'publish') return;
+        $status = (string)$this->element($post, 'wp:status');
+        if ($status !== 'publish') {
+            return;
+        }
 
-        $title = (string) $this->element($post, 'title');
-        $pubDate = new Carbon((string) $this->element($post, 'pubDate'));
-        $description = (string) $this->element($post, 'description');
-        $slug = trim((string) $this->element($post, 'wp:post_name'));
-        if (!$slug) return;
+        $title = (string)$this->element($post, 'title');
+        $pubDate = new Carbon((string)$this->element($post, 'pubDate'));
+        $description = (string)$this->element($post, 'description');
+        $slug = trim((string)$this->element($post, 'wp:post_name'));
+        if (!$slug) {
+            return;
+        }
 
         if (in_array($slug, $this->parsedPostSlugs)) {
             $this->duplicateCount++;
@@ -171,28 +173,30 @@ class WordPressParser extends ParserAbstract
 
         $this->parsedPostSlugs[] = $slug;
 
-        $contentHtml = (string) $this->element($post, 'content:encoded');
+        $contentHtml = (string)$this->element($post, 'content:encoded');
         $content = $this->getContent($contentHtml);
 
         $featuredImageUrl = null;
-        $thumbnailId = (string) $this->elementOptional($post, 'wp:postmeta[wp:meta_key="_thumbnail_id"]/wp:meta_value');
+        $thumbnailId = (string)$this->elementOptional($post, 'wp:postmeta[wp:meta_key="_thumbnail_id"]/wp:meta_value');
         if ($thumbnailId && $this->hasAttachment($thumbnailId)) {
             $featuredImageUrl = $this->getUploadFileUrlFromAttachmentId($thumbnailId);
         }
 
-        $this->addPost(new ImportingPost(
-            publishedAt: $pubDate,
-            isPage: $isPage,
-            featuredImageUrl: $featuredImageUrl,
-            variants: [
-                new ImportingPostVariant(
-                    slug: $slug,
-                    content: $content,
-                    title: $title,
-                    description: $description,
-                )
-            ]
-        ));
+        $this->addPost(
+            new ImportingPost(
+                publishedAt: $pubDate,
+                isPage: $isPage,
+                featuredImageUrl: $featuredImageUrl,
+                variants: [
+                    new ImportingPostVariant(
+                        slug: $slug,
+                        content: $content,
+                        title: $title,
+                        description: $description,
+                    )
+                ]
+            )
+        );
     }
 
     private function parseAttachment(string $xml): void
@@ -206,18 +210,18 @@ class WordPressParser extends ParserAbstract
             return;
         }
 
-        $type = (string) $this->element($post, 'wp:post_type');
+        $type = (string)$this->element($post, 'wp:post_type');
 
         if ($type !== 'attachment') {
             return;
         }
 
-        $id = (string) $this->element($post, 'wp:post_id');
+        $id = (string)$this->element($post, 'wp:post_id');
 
-        $attachmentUrl = (string) $this->element($post, 'wp:attachment_url');
+        $attachmentUrl = (string)$this->element($post, 'wp:attachment_url');
         $path = preg_replace('/^.*wp-content\/uploads\//', '', $attachmentUrl);
 
-        $this->attachments[$id] = (string) $path;
+        $this->attachments[$id] = (string)$path;
     }
 
     /**
@@ -261,7 +265,7 @@ class WordPressParser extends ParserAbstract
         return isset($this->attachments[$id]);
     }
 
-    private function getUploadFileUrlFromAttachmentId(string $id) : string
+    private function getUploadFileUrlFromAttachmentId(string $id): string
     {
         $path = $this->attachments[$id] ?? null;
         if (!$path) {
@@ -270,7 +274,7 @@ class WordPressParser extends ParserAbstract
         return $this->getUploadFileUrl($path);
     }
 
-    private function getUploadFileUrl(string $path) : string
+    private function getUploadFileUrl(string $path): string
     {
         if (!in_array($path, $this->uploads)) {
             $this->uploads[] = $path;
@@ -278,30 +282,28 @@ class WordPressParser extends ParserAbstract
         return 'file://' . $this->uploadsPath . '/' . $path;
     }
 
-    private function getContent(string $contentHtml) : string
+    private function getContent(string $contentHtml): string
     {
-
         $parser = new HtmlParser($contentHtml);
 
         // audio
         $parser->registerCustomFilter(
             'figure.wp-block-audio',
             function (Crawler $crawler, \DOMDocument $doc) {
-
                 foreach ($crawler as $figure) {
-
-                    if (!$figure instanceof \DOMElement)
+                    if (!$figure instanceof \DOMElement) {
                         continue;
+                    }
 
                     $audio = $figure->getElementsByTagName('audio')->item(0);
 
-                    if (!$audio)
+                    if (!$audio) {
                         continue;
+                    }
 
                     // replace figure with audio
                     $figure->parentNode?->replaceChild($audio, $figure);
                 }
-
             }
         );
 
@@ -309,10 +311,10 @@ class WordPressParser extends ParserAbstract
         $parser->registerCustomFilter(
             'figure.wp-block-embed',
             function (Crawler $crawler, \DOMDocument $doc) {
-
                 foreach ($crawler as $figure) {
-                    if (!$figure instanceof \DOMElement)
+                    if (!$figure instanceof \DOMElement) {
                         continue;
+                    }
 
                     $text = trim($figure->textContent);
 
@@ -321,7 +323,6 @@ class WordPressParser extends ParserAbstract
 
                     $figure->parentNode?->replaceChild($iframe, $figure);
                 }
-
             }
         );
 
@@ -337,7 +338,6 @@ class WordPressParser extends ParserAbstract
 
         $urlUpdater->update(
             mediaUpdater: function (Node $media) {
-
                 /** @var ?string $src */
                 $src = $media->attrs->get('src', false);
                 if (!$src) {
@@ -364,7 +364,7 @@ class WordPressParser extends ParserAbstract
                 $path = preg_replace('/^.*wp-content\/uploads\//', '', $src);
 
                 if (!in_array($path, $this->uploads)) {
-                    $this->uploads[] = (string) $path;
+                    $this->uploads[] = (string)$path;
                 }
 
 
@@ -373,6 +373,5 @@ class WordPressParser extends ParserAbstract
         );
 
         return $document->toJson();
-
     }
 }

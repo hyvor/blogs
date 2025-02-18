@@ -3,16 +3,17 @@
 namespace App\Console\Commands\Import;
 
 use App\Domains\App\JobMessageLog;
+use App\Domains\Import\HyvorBlogs\HyvorBlogsParser;
 use App\Domains\Import\Importer\Importer;
 use App\Domains\Import\Importer\ParserException;
 use App\Domains\Import\WordPress\WordPressParser;
 use App\Models\Blog;
 use Illuminate\Console\Command;
 
-class ImportWordPressCommand extends Command
+class ImportCommand extends Command
 {
 
-    protected $signature = 'import:wordpress {--path=} {--subdomain=} {--test}';
+    protected $signature = 'import {--from=} {--path=} {--subdomain=} {--test} {--noImages}';
 
     protected $description = 'Import WordPress XML. Path must be in the storage/app directory';
 
@@ -23,6 +24,7 @@ class ImportWordPressCommand extends Command
 
     public function handle(): void
     {
+        $from = $this->option('from');
         $test = $this->option('test');
 
         $subdomain = $this->option('subdomain');
@@ -42,8 +44,14 @@ class ImportWordPressCommand extends Command
 
         $messageLog = new JobMessageLog($this);
 
+        $parserClass = match ($from) {
+            'wordpress' => WordPressParser::class,
+            'hb' => HyvorBlogsParser::class,
+            default => throw new \Exception('Invalid import source')
+        };
+
         try {
-            $parser = new WordPressParser($blog, $path, $messageLog);
+            $parser = new $parserClass($blog, $path, $messageLog);
         } catch (ParserException $e) {
             $this->error($e->getMessage());
             return;
@@ -61,16 +69,18 @@ class ImportWordPressCommand extends Command
                 $this->info('All uploads exist');
             }
 
-            $this->info((string) json_encode([
-                'posts' => count($parser->posts),
-                'uploads' => count($parser->uploads),
-                'duplicates_ignored' =>$parser->duplicateCount
-            ]));
+            $this->info(
+                (string)json_encode([
+                    'posts' => count($parser->posts),
+                    'uploads' => $parser->uploadsCount,
+                    'duplicates_ignored' => $parser->duplicateCount
+                ])
+            );
 
             return;
         }
 
-        $importer = new Importer($blog, $parser, true);
+        $importer = new Importer($blog, $parser, false);
         $importer->import();
     }
 
