@@ -41,15 +41,4 @@ class ExternalStatusCheckTest extends DatabaseTestCase
         $this->assertSame('firewall: cloudflare_challenge', $urlResult->comment);
     }
 
-//    public function testLive(): void
-//    {
-//        $url = 'https://growthmarketinggenie.com/blog/make-your-website-authority-higher/#:~:text=Website%20authority%2C%20also%20known%20as,respect%20to%20a%20specific%20topic.';
-//
-//        $service = $this->app->make(ExternalStatusCheck::class);
-//        $this->assertInstanceOf(ExternalStatusCheck::class, $service);
-//        $result = $service->check([$url]);
-//
-//        dd($result);
-//    }
-
 }

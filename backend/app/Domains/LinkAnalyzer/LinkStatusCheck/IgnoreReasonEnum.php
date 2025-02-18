@@ -9,9 +9,10 @@ enum IgnoreReasonEnum: string
     case KNOWN_FIREWALL = 'known_firewall';
 
     // blocked by robots.txt
-    // TODO: this is not used
+    // this is not used currently, but may implement later
     case ROBOTS_TXT = 'robots_txt';
 
+    // something went wrong on our side
     case INTERNAL_ERROR = 'internal_error';
 
 }

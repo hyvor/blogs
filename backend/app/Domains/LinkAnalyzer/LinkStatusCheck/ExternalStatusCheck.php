@@ -72,6 +72,8 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
                 $statuses[$url] = new StatusResult(
                     StatusCheckType::EXTERNAL,
                     httpStatus: 500,
+                    ignored: true,
+                    ignoreReason: IgnoreReasonEnum::INTERNAL_ERROR,
                     comment: 'Unsupported option passed to the HTTP client'
                 );
                 // @codeCoverageIgnoreEnd

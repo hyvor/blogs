@@ -32,9 +32,15 @@ return new class extends Migration {
     public function down(): void
     {
         \Illuminate\Support\Facades\DB::unprepared(
-            '
-             
-        '
+            <<<SQL
+            ALTER TABLE link_analyzer_links
+                DROP COLUMN check_type,
+                DROP COLUMN ignore_reason,
+                DROP COLUMN comment;
+                     
+            ALTER TABLE link_analyzer_checks
+                DROP COLUMN links_risky_count;
+            SQL
         );
     }
 };

@@ -7,12 +7,11 @@ class StatusResult
 
     public function __construct(
         public StatusCheckType $type,
-        public ?int $httpStatus = null,
+        public int $httpStatus,
         public bool $ignored = false,
         public ?IgnoreReasonEnum $ignoreReason = null, // if ignored
-        public ?string $comment = null, // internal
-    )
-    {
+        public ?string $comment = null,
+    ) {
     }
 
 }

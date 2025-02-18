@@ -34,7 +34,7 @@ class LinkAnalyzeService
 
     /**
      * @param Blog $blog
-     * @return array{ok: integer, redirect: integer, broken: integer, ignored: integer}
+     * @return array{ok: integer, redirect: integer, broken: integer, risky: integer, ignored: integer}
      */
     public static function getCountsByStatus(Blog $blog): array
     {
@@ -75,7 +75,7 @@ class LinkAnalyzeService
         Blog $blog,
         ?LinkStatusTypeEnum $type,
         ?int $postVariantId,
-        ?int $limit,
+        int $limit,
         int $offset
     ): Collection {
         return LinkAnalyzerLink::where('blog_id', $blog->id)
@@ -133,7 +133,7 @@ class LinkAnalyzeService
             ->orderBy('redirect', 'desc')
             ->orderBy('last_checked_at', 'desc')
             ->orderBy('id', 'desc')
-            ->when($limit, fn($query, $limit) => $query->limit($limit))
+            ->limit($limit)
             ->offset($offset)
             ->get();
     }
