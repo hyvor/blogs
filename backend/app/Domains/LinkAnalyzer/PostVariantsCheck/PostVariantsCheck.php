@@ -78,6 +78,7 @@ class PostVariantsCheck
                     status: $statuses[$url->fullUrl] ??
                     new StatusResult(
                         type: StatusCheckType::EXTERNAL,
+                        httpStatus: 0,
                         ignored: true,
                         ignoreReason: IgnoreReasonEnum::INTERNAL_ERROR,
                         comment: 'No status found'
