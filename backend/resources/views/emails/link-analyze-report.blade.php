@@ -32,8 +32,12 @@
                 <span style="font-weight:600;color:#db7474">{{ $analyzer->linksBrokenCount  }}</span>
             </div>
             <div style="padding:5px;display:flex;">
+                <span style="flex:1;">Risky</span>
+                <span style="font-weight:600;color:#f1c40f">{{ $analyzer->linksRiskyCount  }}</span>
+            </div>
+            <div style="padding:5px;display:flex;">
                 <span style="flex:1;">Redirect</span>
-                <span style="font-weight:600;color:#f1c40f">{{ $analyzer->linksRedirectCount  }}</span>
+                <span style="font-weight:600;color:#5875b9">{{ $analyzer->linksRedirectCount  }}</span>
             </div>
             <div style="padding:5px;display:flex;">
                 <span style="flex:1;">Ignored</span>
@@ -43,7 +47,7 @@
         </div>
 
         <p>
-            We analyzed <b>{{ $analyzer->postsCount }}</b> posts and <b>{{ $analyzer->pagesCount }}</b> pages on your blog.
+            We analyzed <b>{{ $analyzer->postsCount }}</b> posts on your blog.
         </p>
 
         <div style="text-align:center;padding:10px">
@@ -57,7 +61,7 @@
 
         <p style="font-size: 14px;color:#999;">
             You can disable email reports in <a
-                href="{{ $linkAnalysisUrl }}"
+                    href="{{ $linkAnalysisUrl }}"
             >Link Analysis</a> &rarr; Settings.
         </p>
     </div>

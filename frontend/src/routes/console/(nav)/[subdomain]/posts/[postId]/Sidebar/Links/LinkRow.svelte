@@ -143,7 +143,7 @@
 				size={22}
 				color={linkStatusType === 'ignored' ? 'accent' : 'input'}
 				on:click={handleIgnore}
-				disabled={!isHttp || isReloading}
+				disabled={!isHttp || isReloading || linkObject?.ignore_reason}
 			>
 				<IconEyeSlashFill size={12} />
 			</IconButton>

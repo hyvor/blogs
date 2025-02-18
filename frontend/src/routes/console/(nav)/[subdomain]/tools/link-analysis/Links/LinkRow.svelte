@@ -127,6 +127,7 @@
 				color={link.ignored ? 'accent' : 'gray'}
 				variant="fill-light"
 				size="small"
+				disabled={link.ignore_reason}
 			>
 				<IconEyeSlashFill size={14} />
 			</IconButton>
