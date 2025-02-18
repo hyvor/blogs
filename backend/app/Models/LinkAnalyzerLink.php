@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property ?string $comment
+ * @property ?IgnoreReasonEnum $ignore_reason
  */
 class LinkAnalyzerLink extends Model
 {

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
@@ -23,9 +24,8 @@ use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-    public function getPosts(Request $request, Blog $blog) : JsonResponse
+    public function getPosts(Request $request, Blog $blog): JsonResponse
     {
-
         $request->validate([
             'status' => 'string|in:featured,published,draft,scheduled',
             'author_id' => 'integer',
@@ -41,8 +41,8 @@ class ConsolePostController extends Controller
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
 
-        $search = (string) $request->string('search');
-        $status = $request->has('status') ? (string) $request->string('status') : null;
+        $search = (string)$request->string('search');
+        $status = $request->has('status') ? (string)$request->string('status') : null;
 
         $languageId = $request->has('language_id') ?
             $request->integer('language_id') : null;
@@ -55,7 +55,6 @@ class ConsolePostController extends Controller
         }
 
         if ($search) {
-
             $posts = PostSearchRepository::search(
                 $blog,
                 $language,
@@ -66,10 +65,9 @@ class ConsolePostController extends Controller
                 $status === 'published' ? true : null
             )
                 ->collection
-                ->map(fn ($post) => new PostObject($post, $blog));
+                ->map(fn($post) => new PostObject($post, $blog));
 
             return response()->json($posts);
-
         }
 
         $authorId = $request->has('author_id') ? $request->integer('author_id') : null;
@@ -77,7 +75,7 @@ class ConsolePostController extends Controller
 
         $startTimestamp = $request->has('start_timestamp') ? $request->integer('start_timestamp') : null;
         $endTimestamp = $request->has('end_timestamp') ? $request->integer('end_timestamp') : null;
-        $search = $request->has('search') ? (string) $request->string('search') : null;
+        $search = $request->has('search') ? (string)$request->string('search') : null;
 
         $posts = PostRepository::getPosts(
             $blog,
@@ -96,7 +94,7 @@ class ConsolePostController extends Controller
         return response()->json($posts);
     }
 
-    public function getPages(Blog $blog) : JsonResponse
+    public function getPages(Blog $blog): JsonResponse
     {
         $pages = PostRepository::getPages($blog)
             ->map(function ($page) use ($blog) {
@@ -106,9 +104,12 @@ class ConsolePostController extends Controller
         return response()->json($pages);
     }
 
-    public function createPost(Request $request, Blog $blog, ConsoleApiAccessingUser $consoleApiAccessingUser) : JsonResponse
-    {
-        $isPage = (bool) $request->input('is_page');
+    public function createPost(
+        Request $request,
+        Blog $blog,
+        ConsoleApiAccessingUser $consoleApiAccessingUser
+    ): JsonResponse {
+        $isPage = (bool)$request->input('is_page');
         $post = PostRepository::createPost($blog, [
             'is_page' => $isPage
         ]);
@@ -121,31 +122,31 @@ class ConsolePostController extends Controller
     }
 
     // Get all the post from the database
-    public function getPost(Request $request, Blog $blog) : JsonResponse
+    public function getPost(Request $request, Blog $blog): JsonResponse
     {
         /** @var string $postId */
         $postId = $request->route('id');
         $postId = intval($postId);
         $post = PostRepository::getPostById($postId);
 
-        if (! $post) {
+        if (!$post) {
             throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
         }
 
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function deletePost(Post $post) : JsonResponse
+    public function deletePost(Post $post): JsonResponse
     {
         PostRepository::deletePost($post);
 
         return response()->json();
     }
 
-    public function updatePost(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function updatePost(Request $request, Blog $blog, Post $post): JsonResponse
     {
         $request->validate([
-           // 'slug' => 'string|max:255|nullable',
+            // 'slug' => 'string|max:255|nullable',
             'is_featured' => 'boolean',
             'canonical_url' => 'string|max:255|nullable',
             'featured_image_url' => 'string|max:255|nullable',
@@ -156,7 +157,7 @@ class ConsolePostController extends Controller
 
         $postUpdates = [];
         $postUpdatables = [
-           // 'slug',
+            // 'slug',
             'is_featured',
             'canonical_url',
             'featured_image_url',
@@ -172,7 +173,6 @@ class ConsolePostController extends Controller
         }
 
         if (count($postUpdates) > 0) {
-
             /*if (array_key_exists('slug', $postUpdates)) {
                 $bySlugPost = PostRepository::getPostByBlogIdAndSlug($blog->id, strval($postUpdates['slug']));
                 if ($bySlugPost && $bySlugPost->id !== $post->id) {
@@ -188,7 +188,7 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function createPostVariant(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function createPostVariant(Request $request, Blog $blog, Post $post): JsonResponse
     {
         $request->validate([
             'language_id' => 'required|integer',
@@ -197,7 +197,7 @@ class ConsolePostController extends Controller
         $languageId = $request->integer('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (! $language) {
+        if (!$language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
@@ -210,11 +210,11 @@ class ConsolePostController extends Controller
         $variant = PostRepository::createPostVariant($post, $language);
 
         return response()->json(
-            new PostVariantObject($variant, $post, $blog)
+            new PostVariantObject($variant, $post->refresh(), $blog)
         );
     }
 
-    public function updatePostVariant(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function updatePostVariant(Request $request, Blog $blog, Post $post): JsonResponse
     {
         $request->validate([
             'language_id' => 'required|integer',
@@ -245,48 +245,53 @@ class ConsolePostController extends Controller
 
         $variantUpdates = [];
 
-        if ($request->has('slug'))
+        if ($request->has('slug')) {
             $variantUpdates['slug'] = $request->input('slug') !== null ?
-                (string) $request->string('slug') :
+                (string)$request->string('slug') :
                 null;
+        }
 
-        if ($request->has('status'))
+        if ($request->has('status')) {
             $variantUpdates['status'] = PostStatusEnum::from((string)$request->string('status'));
+        }
 
-        if ($request->has('content'))
+        if ($request->has('content')) {
             $variantUpdates['content'] = $request->input('content') !== null ?
-                (string) $request->string('content') :
+                (string)$request->string('content') :
                 null;
+        }
 
-        if ($request->has('content_unsaved'))
+        if ($request->has('content_unsaved')) {
             $variantUpdates['content_unsaved'] = $request->input('content_unsaved') !== null ?
-                (string) $request->string('content_unsaved') :
+                (string)$request->string('content_unsaved') :
                 null;
+        }
 
-        if ($request->has('title'))
+        if ($request->has('title')) {
             $variantUpdates['title'] = $request->input('title') !== null ?
-                (string) $request->string('title') :
+                (string)$request->string('title') :
                 null;
+        }
 
-        if ($request->has('description'))
+        if ($request->has('description')) {
             $variantUpdates['description'] = $request->input('description') !== null ?
-                (string) $request->string('description') :
+                (string)$request->string('description') :
                 null;
+        }
 
         if ($request->has('seo_primary_keyword')) {
             $variantUpdates['seo_primary_keyword'] = $request->input('seo_primary_keyword') !== null ?
-                (string) $request->string('seo_primary_keyword') :
+                (string)$request->string('seo_primary_keyword') :
                 null;
         }
 
         if ($request->has('seo_secondary_keywords')) {
             /** @var string[] $secondaryKeywords */
-            $secondaryKeywords =  (array) $request->input('seo_secondary_keywords');
+            $secondaryKeywords = (array)$request->input('seo_secondary_keywords');
             $variantUpdates['seo_secondary_keywords'] = $secondaryKeywords;
         }
 
         if (count($variantUpdates) > 0) {
-
             if (array_key_exists('slug', $variantUpdates)) {
                 $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, strval($variantUpdates['slug']));
 
@@ -306,10 +311,9 @@ class ConsolePostController extends Controller
         return response()->json(
             new PostVariantObject($variant, $post, $blog)
         );
-
     }
 
-    public function deletePostVariant(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function deletePostVariant(Request $request, Blog $blog, Post $post): JsonResponse
     {
         $request->validate([
             'language_id' => 'required|integer',
@@ -318,7 +322,7 @@ class ConsolePostController extends Controller
         $languageId = $request->integer('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (! $language) {
+        if (!$language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
@@ -334,7 +338,7 @@ class ConsolePostController extends Controller
         return response()->json();
     }
 
-    public function updateTags(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function updateTags(Request $request, Blog $blog, Post $post): JsonResponse
     {
         $request->validate([
             'ids' => 'array',
@@ -349,7 +353,7 @@ class ConsolePostController extends Controller
         return response()->json();
     }
 
-    public function updateAuthors(Request $request, Post $post) : JsonResponse
+    public function updateAuthors(Request $request, Post $post): JsonResponse
     {
         $request->validate([
             'ids' => 'array',
@@ -364,16 +368,15 @@ class ConsolePostController extends Controller
         return response()->json();
     }
 
-    public function checkSlugAvailability(Request $request, Blog $blog, Post $post) : JsonResponse
+    public function checkSlugAvailability(Request $request, Blog $blog, Post $post): JsonResponse
     {
-
         $request->validate([
             'language_id' => 'required|integer',
             'slug' => 'required|string',
         ]);
 
         $languageId = $request->integer('language_id');
-        $slug = (string) $request->string('slug');
+        $slug = (string)$request->string('slug');
 
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
@@ -391,6 +394,5 @@ class ConsolePostController extends Controller
         return response()->json([
             'available' => $available
         ]);
-
     }
 }

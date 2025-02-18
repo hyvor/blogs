@@ -7,6 +7,9 @@ use Database\Factories\LinkAnalyzerCheckFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $links_risky_count
+ */
 class LinkAnalyzerCheck extends Model
 {
 

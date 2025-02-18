@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -66,7 +67,7 @@ class AnalyzeAllLinksJob implements ShouldQueue
         try {
             Mail::to($email)->queue(new LinkAnalyzeReportMail($this->blog, $analyze));
         } catch (Throwable $e) {
-            // ignore
+            Log::error('Link analyze report email failed', ['error' => $e->getMessage()]);
         }
     }
 
