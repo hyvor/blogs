@@ -13,7 +13,7 @@
 	import { focusLinkInEditor, isHttpLink, LINK_STATUS } from '../../../../../../lib/links/links';
 	import { Loader } from '@hyvor/design/components';
 	import { getStatusType, type Link } from '../../../../../../lib/links/links';
-	import { variantLinkAnalysisStore } from './linksStore';
+	import { linksStore, variantLinkAnalysisStore } from './linksStore';
 	import {
 		callIgnoreLink,
 		callLinkAnalysisApi
@@ -26,8 +26,10 @@
 
 		callLinkAnalysisApi($postVariantStore.id, [link.originalHref])
 			.then((res) => {
-				const status =
-					res.find((l) => l.url === link.originalHref)?.status_code || LINK_STATUS.ERROR;
+				let status = res.find((l) => l.url === link.originalHref)?.status_code;
+				if (status === undefined) {
+					status = LINK_STATUS.ERROR;
+				}
 
 				updatePostVariantStore({
 					link_analysis: {
@@ -76,9 +78,18 @@
 	}
 
 	let { link }: Props = $props();
-	let linkStatus = $derived($variantLinkAnalysisStore[link.originalHref] || LINK_STATUS.ERROR);
+	let linkStatus = $derived.by(() => {
+		let status = $variantLinkAnalysisStore[link.originalHref];
+		if (status === undefined) {
+			return LINK_STATUS.ERROR;
+		}
+		return status;
+	});
+
 	let linkStatusType = $derived(getStatusType(linkStatus));
 	let isHttp = $derived(isHttpLink(link));
+
+	let linkObject = $derived($linksStore.find((l) => l.url === link.originalHref));
 </script>
 
 <div class="link-wrap type-{linkStatusType}">
@@ -102,7 +113,11 @@
 		{#if linkStatusType === 'loading' || isReloading}
 			<Loader size="small" />
 		{:else}
-			<LinkStatusTag status={linkStatus} isAnchor={link.type === 'anchor'} />
+			<LinkStatusTag
+				status={linkStatus}
+				isAnchor={link.type === 'anchor'}
+				ignoreReason={linkObject?.ignore_reason}
+			/>
 		{/if}
 	</div>
 
@@ -128,7 +143,7 @@
 				size={22}
 				color={linkStatusType === 'ignored' ? 'accent' : 'input'}
 				on:click={handleIgnore}
-				disabled={!isHttp || isReloading}
+				disabled={!isHttp || isReloading || linkObject?.ignore_reason}
 			>
 				<IconEyeSlashFill size={12} />
 			</IconButton>

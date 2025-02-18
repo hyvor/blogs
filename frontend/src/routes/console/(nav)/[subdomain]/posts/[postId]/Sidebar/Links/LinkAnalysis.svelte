@@ -9,12 +9,17 @@
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import { Loader } from '@hyvor/design/components';
 	import { Button } from '@hyvor/design/components';
-	import { variantLinksStore, variantLinkCountsStore } from './linksStore';
+	import { variantLinksStore, variantLinkCountsStore, linksStore } from './linksStore';
 	import LinkRow from './LinkRow.svelte';
 	import { isHttpLink } from '../../../../../../lib/links/links';
-	import { callLinkAnalysisApi } from '../../../../tools/link-analysis/linkAnalysisActions';
+	import {
+		callLinkAnalysisApi,
+		getLinks
+	} from '../../../../tools/link-analysis/linkAnalysisActions';
 	import { postVariantStore, updatePostVariantStore } from '../../../postStore';
 	import { getResultObjectFromLinks } from './linkLoader';
+	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
+	import { onMount } from 'svelte';
 
 	let linksCount = $derived($variantLinksStore.length);
 
@@ -22,7 +27,7 @@
 
 	let linksEl: HTMLDivElement | undefined = $state();
 
-	function handleJump(type: 'ok' | 'broken' | 'redirect' | 'ignored') {
+	function handleJump(type: 'ok' | 'broken' | 'redirect' | 'risky' | 'ignored') {
 		const el = linksEl?.querySelector('.link-wrap.type-' + type);
 		if (el) {
 			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -52,6 +57,19 @@
 				isReloadingAll = false;
 			});
 	}
+
+	onMount(() => {
+		getLinks({
+			type: null,
+			post_variant_id: $postVariantStore.id
+		})
+			.then((res) => {
+				linksStore.set(res);
+			})
+			.catch(() => {
+				toast.error('Failed to load links');
+			});
+	});
 </script>
 
 <div class="wrap">
@@ -100,14 +118,26 @@
 			</Tag>
 		{/if}
 
+		{#if $variantLinkCountsStore.risky > 0}
+			<Tag size="small" color="orange" interactive on:click={() => handleJump('risky')}>
+				{#snippet start()}
+					<Text bold>{$variantLinkCountsStore.risky}</Text>
+				{/snippet}
+				Risky
+				{#snippet end()}
+					<IconExclamationCircleFill size={12} />
+				{/snippet}
+			</Tag>
+		{/if}
+
 		{#if $variantLinkCountsStore.redirect > 0}
-			<Tag size="small" color="orange" interactive on:click={() => handleJump('redirect')}>
+			<Tag size="small" color="blue" interactive on:click={() => handleJump('redirect')}>
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.redirect}</Text>
 				{/snippet}
 				Redirect
 				{#snippet end()}
-					<IconExclamationCircleFill size={12} />
+					<IconSignTurnSlightRight size={12} />
 				{/snippet}
 			</Tag>
 		{/if}

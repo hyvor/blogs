@@ -20,16 +20,16 @@ it('creates a post variant', function () {
 
 
     consoleApi($blog, 'POST', "/post/$post->id/variant", [
-            'language_id' => $language->id,
-        ])
+        'language_id' => $language->id,
+    ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->has('status')->etc());
+        ->assertJson(fn(AssertableJson $json) => $json->has('status')->etc());
 
     consoleApi($blog, 'POST', "/post/$post->id/variant", [
-            'language_id' => $language2->id,
-        ])
+        'language_id' => $language2->id,
+    ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->has('status')->etc());
+        ->assertJson(fn(AssertableJson $json) => $json->has('status')->etc());
 
     $this->assertEquals(2, $post->variants()->count());
 

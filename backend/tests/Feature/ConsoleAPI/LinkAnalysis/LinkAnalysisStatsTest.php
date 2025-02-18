@@ -1,11 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\ConsoleAPI\LinkAnalysis;
 
 use App\Models\LinkAnalyzerLink;
 
-it('returns counts', function() {
-
+it('returns counts', function () {
     $blog = blogWithAccess();
 
 
@@ -13,6 +14,7 @@ it('returns counts', function() {
     LinkAnalyzerLink::factory()->count(3)->create(['blog_id' => $blog, 'status_code' => 200]);
     LinkAnalyzerLink::factory()->count(2)->create(['blog_id' => $blog, 'status_code' => 404]);
     LinkAnalyzerLink::factory()->count(1)->create(['blog_id' => $blog, 'status_code' => 500]);
+    LinkAnalyzerLink::factory()->count(1)->create(['blog_id' => $blog, 'status_code' => 0]);
 
     LinkAnalyzerLink::factory()->count(2)->create(['blog_id' => $blog, 'status_code' => 301]);
     LinkAnalyzerLink::factory()->count(4)->create(['blog_id' => $blog, 'status_code' => 302]);
@@ -26,7 +28,7 @@ it('returns counts', function() {
         ->assertOk()
         ->assertJsonPath('counts.ok', 3)
         ->assertJsonPath('counts.redirect', 6)
-        ->assertJsonPath('counts.broken', 4)
+        ->assertJsonPath('counts.broken', 3)
+        ->assertJsonPath('counts.risky', 2)
         ->assertJsonPath('counts.ignored', 4);
-
 });

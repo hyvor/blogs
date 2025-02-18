@@ -27,7 +27,10 @@ class InternalStatusCheck implements LinkStatusCheckInterface
 
             $restPath = substr($url, strlen($blogBasePath));
             $deliveryObject = DeliveryService::getResponseObject($this->blog, $restPath);
-            $statuses[$url] = $deliveryObject->status;
+            $statuses[$url] = new StatusResult(
+                type: StatusCheckType::INTERNAL,
+                httpStatus: $deliveryObject->status,
+            );
 
             usleep(100); // sleep for 100 microseconds to prevent database overload
         }

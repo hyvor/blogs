@@ -3,15 +3,17 @@
 <head>
     <title>@yield('title')</title>
     <style>
-        * {box-sizing:border-box;}
+        * {
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color:#fffaf8;margin:0;font-size:16px;">
 
 <div style="text-align:left;padding:20px 0;width:500px;max-width:100%;margin:auto;">
     <img
-            src="https://blogs.hyvor.com/img/logo.png"
-            style="width:40px;vertical-align:middle;margin-right:10px;border-radius:50%;"
+            src="https://hyvor.com/api/public/logo/blogs.svg"
+            style="width:35px;vertical-align:middle;margin-right:10px;border-radius:50%;"
             alt="Hyvor Blogs Logo"
     >
     <span style="font-size:26px;color:black;font-weight:800;vertical-align:middle;">HYVOR BLOGS</span>

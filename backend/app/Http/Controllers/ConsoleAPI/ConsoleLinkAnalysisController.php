@@ -12,6 +12,7 @@ use App\Domains\LinkAnalyzer\Check\LinkAnalyzerCheckService;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\PostVariant;
@@ -38,9 +39,10 @@ class ConsoleLinkAnalysisController
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        $links = $postVariantLinkService->checkAndUpdateLinks($blog, $postVariant, $urls);
+        $checker = new PostVariantsCheck($blog, clearVariantCache: false);
+        $links = $checker->checkOne($postVariant, $urls);
 
-        return response()->json($links->mapInto(LinkObject::class));
+        return response()->json($links->map(fn($link) => new LinkObject($blog, $link)));
     }
 
     public function ignoreLink(Request $request, Blog $blog, PostVariant $postVariant): JsonResponse
@@ -66,7 +68,7 @@ class ConsoleLinkAnalysisController
             $url => $newCode
         ], true);
 
-        return response()->json(new LinkObject($link));
+        return response()->json(new LinkObject($blog, $link));
     }
 
     public function getStats(Blog $blog): JsonResponse
@@ -84,18 +86,22 @@ class ConsoleLinkAnalysisController
             'type' => [new Enum(LinkStatusTypeEnum::class), 'nullable'],
             'limit' => 'integer',
             'offset' => 'integer',
+            'post_variant_id' => 'integer|nullable',
         ]);
 
         $type = LinkStatusTypeEnum::tryFrom((string)$request->string('type'));
-        $limit = $request->integer('limit', 50);
+        /** @var ?int $postVariantId */
+        $postVariantId = $request->has('post_variant_id') ? $request->integer('post_variant_id') : null;
+        $limit = $request->integer('limit', 100);
         $offset = $request->integer('offset');
 
         $links = LinkAnalyzeService::getLinksOfBlog(
             $blog,
             $type,
+            $postVariantId,
             $limit,
             $offset
-        )->mapInto(LinkObject::class);
+        )->map(fn($link) => new LinkObject($blog, $link));
 
         return response()->json($links);
     }

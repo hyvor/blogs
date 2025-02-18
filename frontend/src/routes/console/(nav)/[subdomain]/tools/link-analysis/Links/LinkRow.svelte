@@ -54,8 +54,8 @@
 		const newIgnore = !link.ignored;
 
 		callIgnoreLink(link.post_variant_id, link.url, newIgnore)
-			.then(() => {
-				dispatch('update', { id: link.id, ignored: newIgnore });
+			.then((link) => {
+				dispatch('update', link);
 			})
 			.catch((e) => {
 				toast.error(e.message || 'Failed to ignore link.');
@@ -68,15 +68,14 @@
 
 <TableRow>
 	<div>
-		<div>
+		<a href={link.post_variant_url} target="_blank" class="post-url">
 			{link.post_variant_title || '(No title)'}
-
-			{#if $languagesStore.length > 1 && language}
-				<div class="language-tag">
-					<Tag size="small">{language.code}</Tag>
-				</div>
-			{/if}
-		</div>
+		</a>
+		{#if $languagesStore.length > 1 && language}
+			<div class="language-tag">
+				<Tag size="small">{language.code}</Tag>
+			</div>
+		{/if}
 	</div>
 
 	<div class="link">
@@ -85,11 +84,14 @@
 		</Link>
 	</div>
 
-	<div>
+	<div title={link.comment}>
 		{#if isRechecking}
 			<Loader size="small" />
 		{:else}
-			<LinkStatusTag status={link.ignored ? -2 : link.status_code} />
+			<LinkStatusTag
+				status={link.ignored ? -2 : link.status_code}
+				ignoreReason={link.ignore_reason}
+			/>
 		{/if}
 	</div>
 
@@ -125,6 +127,7 @@
 				color={link.ignored ? 'accent' : 'gray'}
 				variant="fill-light"
 				size="small"
+				disabled={link.ignore_reason}
 			>
 				<IconEyeSlashFill size={14} />
 			</IconButton>
@@ -143,5 +146,8 @@
 	}
 	.language-tag {
 		margin-top: 2px;
+	}
+	.post-url:hover {
+		text-decoration: underline;
 	}
 </style>

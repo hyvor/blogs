@@ -385,6 +385,9 @@ export interface Import {
 	};
 }
 
+export type LinkAnalysisStatusType = 'ok' | 'redirect' | 'broken' | 'risky' | 'ignored';
+export type LinkAnalysisIgnoreReason = 'known_firewall' | 'robots_txt' | 'internal_error';
+
 export interface LinkAnalysisLink {
 	id: number;
 	url: string;
@@ -392,11 +395,14 @@ export interface LinkAnalysisLink {
 	status_code: number;
 	status_type: 'ok' | 'redirect' | 'broken' | 'ignored';
 	ignored: boolean;
+	ignore_reason: LinkAnalysisIgnoreReason | null;
+	comment: string | null;
 
 	post_id: number;
 	post_variant_id: number;
 	post_variant_language_id: number;
 	post_variant_title: string | null;
+	post_variant_url: string | null;
 }
 
 export interface LinkAnalysisCheck {
@@ -407,13 +413,11 @@ export interface LinkAnalysisCheck {
 	error: string | null;
 
 	posts_count: number;
-	post_variants_count: number;
-	pages_count: number;
-	page_variants_count: number;
 
 	links_total_count: number;
 	links_ok_count: number;
 	links_broken_count: number;
+	links_risky_count: number;
 	links_redirect_count: number;
 	links_ignored_count: number;
 }

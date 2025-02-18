@@ -34,7 +34,7 @@ class LinkAnalyzeService
 
     /**
      * @param Blog $blog
-     * @return array{ok: integer, redirect: integer, broken: integer, ignored: integer}
+     * @return array{ok: integer, redirect: integer, broken: integer, risky: integer, ignored: integer}
      */
     public static function getCountsByStatus(Blog $blog): array
     {
@@ -43,7 +43,8 @@ class LinkAnalyzeService
                 '
                 SUM(CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END) AS ok,
                 SUM(CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END) AS redirect,
-                SUM(CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END) AS broken,
+                SUM(CASE WHEN ignore = false AND (status_code = 404 OR status_code = 0) THEN 1 ELSE 0 END) AS broken,
+                SUM(CASE WHEN ignore = false AND (status_code != 404 AND status_code != 0 AND (status_code >= 400 OR status_code < 200)) THEN 1 ELSE 0 END) AS risky,
                 SUM(CASE WHEN ignore = true THEN 1 ELSE 0 END) AS ignored
             '
             )
@@ -54,7 +55,7 @@ class LinkAnalyzeService
         }
 
         /**
-         * @var array{ok: integer, redirect: integer, broken: integer, ignored: integer} $counts
+         * @var array{ok: integer, redirect: integer, broken: integer, risky: integer, ignored: integer} $counts
          */
         $counts = $counts->toArray();
 
@@ -62,6 +63,7 @@ class LinkAnalyzeService
             'ok' => (int)$counts['ok'],
             'redirect' => (int)$counts['redirect'],
             'broken' => (int)$counts['broken'],
+            'risky' => (int)$counts['risky'],
             'ignored' => (int)$counts['ignored'],
         ];
     }
@@ -72,20 +74,23 @@ class LinkAnalyzeService
     public static function getLinksOfBlog(
         Blog $blog,
         ?LinkStatusTypeEnum $type,
+        ?int $postVariantId,
         int $limit,
         int $offset
     ): Collection {
         return LinkAnalyzerLink::where('blog_id', $blog->id)
-            ->with('postVariant')
+            ->with('postVariant', 'postVariant.language')
             ->selectRaw(
                 '
                 *,
                 CASE WHEN ignore = false AND status_code >= 200 AND status_code < 300 THEN 1 ELSE 0 END AS ok,
                 CASE WHEN ignore = false AND status_code >= 300 AND status_code < 400 THEN 1 ELSE 0 END AS redirect,
-                CASE WHEN ignore = false AND (status_code >= 400 OR status_code < 200) THEN 1 ELSE 0 END AS broken,
+                CASE WHEN ignore = false AND (status_code = 404 OR status_code = 0) THEN 1 ELSE 0 END AS broken,
+                CASE WHEN ignore = false AND (status_code != 404 AND status_code != 0 AND (status_code >= 400 OR status_code < 200)) THEN 1 ELSE 0 END AS risky,
                 CASE WHEN ignore = true THEN 1 ELSE 0 END AS ignored
             '
             )
+            ->when($postVariantId, fn($query, $postVariantId) => $query->where('post_variant_id', $postVariantId))
             ->when($type, function ($query) use ($type) {
                 switch ($type) {
                     case LinkStatusTypeEnum::OK:
@@ -104,6 +109,16 @@ class LinkAnalyzeService
                         $query
                             ->where('ignore', false)
                             ->where(function ($q) {
+                                $q->where('status_code', 404)
+                                    ->orWhere('status_code', 0);
+                            });
+                        break;
+                    case LinkStatusTypeEnum::RISKY:
+                        $query
+                            ->where('ignore', false)
+                            ->where('status_code', '!=', 404)
+                            ->where('status_code', '!=', 0)
+                            ->where(function ($q) {
                                 $q->where('status_code', '<', 200)
                                     ->orWhere('status_code', '>=', 400);
                             });
@@ -114,6 +129,7 @@ class LinkAnalyzeService
                 }
             })
             ->orderBy('broken', 'desc')
+            ->orderBy('risky', 'desc')
             ->orderBy('redirect', 'desc')
             ->orderBy('last_checked_at', 'desc')
             ->orderBy('id', 'desc')

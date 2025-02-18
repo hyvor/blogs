@@ -19,7 +19,7 @@ class LinkStatusCheckService
     /**
      * @param string[] $urls Absolute HTTP/HTTPS URLs to check
      * @param Blog|null $blog set this to analyze some URLs as internal links
-     * @return array<string, int> URLs as keys and HTTP status codes as values
+     * @return array<string, StatusResult> URLs as keys and HTTP status codes as values
      */
     public function check(
         array $urls,

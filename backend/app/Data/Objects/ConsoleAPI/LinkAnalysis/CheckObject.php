@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\LinkAnalysis;
 
@@ -23,12 +24,12 @@ class CheckObject
     public int $links_total_count;
     public int $links_ok_count;
     public int $links_broken_count;
+    public int $links_risky_count;
     public int $links_redirect_count;
     public int $links_ignored_count;
 
     public function __construct(LinkAnalyzerCheck $check)
     {
-
         $this->id = $check->id;
         $this->created_at = $check->created_at->getTimestamp();
 
@@ -43,9 +44,9 @@ class CheckObject
         $this->links_total_count = $check->links_total_count;
         $this->links_ok_count = $check->links_ok_count;
         $this->links_broken_count = $check->links_broken_count;
+        $this->links_risky_count = $check->links_risky_count;
         $this->links_redirect_count = $check->links_redirect_count;
         $this->links_ignored_count = $check->links_ignored_count;
-
     }
 
 }

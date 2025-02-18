@@ -1,4 +1,6 @@
-## Unreleased
+## [0.0.55] - 2025-02-15
+
+## [0.0.50] - 2025-02-14
 
 - Removes branding in blogs
 - Central billing

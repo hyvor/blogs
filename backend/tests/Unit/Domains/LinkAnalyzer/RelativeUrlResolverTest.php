@@ -73,5 +73,17 @@ class RelativeUrlResolverTest extends TestCase
 
         // malformed URL
         $this->assertNull(RelativeUrlResolver::resolve('http://example.com:80:80', 'https://blog.com'));
+
+        // URL with query and fragment
+        $this->assertSame(
+            'https://blog.com/about?query=1#fragment',
+            RelativeUrlResolver::resolve('about?query=1#fragment', 'https://blog.com/my-post')
+        );
+
+        // just fragment
+        $this->assertSame(
+            'https://blog.com/my-post#fragment',
+            RelativeUrlResolver::resolve('#fragment', 'https://blog.com/my-post')
+        );
     }
 }

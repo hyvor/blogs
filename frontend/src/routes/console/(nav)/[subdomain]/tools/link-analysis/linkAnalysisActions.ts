@@ -1,11 +1,12 @@
 import { writable } from "svelte/store";
 import consoleApi from "../../../../lib/consoleApi";
-import type { LinkAnalysisCheck, LinkAnalysisLink } from "../../../../lib/types";
+import type { LinkAnalysisCheck, LinkAnalysisLink, LinkAnalysisStatusType } from "../../../../lib/types";
 
 export interface Stats {
     counts: {
         ok: number,
         broken: number,
+        risky: number,
         redirect: number,
         ignored: number
     }
@@ -18,12 +19,13 @@ export function getStats() {
 }
 
 
-export type FilterType = null | 'ok' | 'broken' | 'redirect' | 'ignored';
+export type FilterType = null | LinkAnalysisStatusType;
 
 interface GetLinksData {
     type: FilterType,
     limit?: number,
     offset?: number,
+    post_variant_id?: number,
 }
 
 export function getLinks(data: GetLinksData) {

@@ -15,6 +15,10 @@ class PostVariantUpdateWordCountListener
             return;
         }
 
+        if ($variant->content === $event->variantOld->content) {
+            return;
+        }
+
         $post = $variant->post;
         $blog = $post->blog;
 
