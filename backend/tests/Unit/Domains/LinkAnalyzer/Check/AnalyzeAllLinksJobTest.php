@@ -27,6 +27,7 @@ it('job works', function () {
         if (str_contains($url, 'example.com')) {
             return new MockResponse(info: ['http_code' => 301]);
         }
+        return new MockResponse(info: ['http_code' => 500]);
     }));
 
     $blog = blogWithLanguageAndRoutes([
@@ -39,6 +40,7 @@ it('job works', function () {
         'content' => PostContentGenerator::generateWithLinks([
             'https://hyvor.com/about',
             'https://example.com/1',
+            'https://invalidwebsite.com'
         ])
     ]);
 
@@ -51,9 +53,10 @@ it('job works', function () {
 
     expect($check->blog_id)->toBe($blog->id);
     expect($check->posts_count)->toBe(2);
-    expect($check->links_total_count)->toBe(2);
+    expect($check->links_total_count)->toBe(3);
     expect($check->links_ok_count)->toBe(1);
     expect($check->links_broken_count)->toBe(0);
+    expect($check->links_risky_count)->toBe(1);
     expect($check->links_redirect_count)->toBe(1);
 
     Mail::assertQueued(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {

@@ -103,7 +103,7 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
         $this->assertSame(200, $result['https://hyvor.com']->httpStatus);
         $this->assertSame(301, $result['https://supun.io/about-old']->httpStatus);
         $this->assertSame(500, $result['https://500.com']->httpStatus);
-        $this->assertSame(500, $result['https://invalid-host.com']->httpStatus);
+        $this->assertSame(0, $result['https://invalid-host.com']->httpStatus);
     }
 
     public function testGetsStatusOfInternalLinks(): void

@@ -23,6 +23,8 @@ use Hyvor\Phrosemirror\Document\Mark;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Event;
 
+use function PHPStan\dumpType;
+
 class PostVariantsCheck
 {
 
@@ -110,13 +112,15 @@ class PostVariantsCheck
             $links = $event->links;
         });
 
-        $resolvedUrls = $urls ?
-            array_map(fn(string $url) => $this->resolveUrl($url, $variantUrl), $urls) :
-            null;
-        $resolvedUrls = $resolvedUrls ? array_filter($resolvedUrls) : null;
-        $resolvedUrls = $resolvedUrls ? collect([
-            $variant->id => $resolvedUrls
-        ]) : null;
+        $resolvedUrls = null;
+
+        if ($urls) {
+            $resolvedUrls = array_map(fn(string $url) => $this->resolveUrl($url, $variantUrl), $urls);
+            $resolvedUrls = array_filter($resolvedUrls);
+            $resolvedUrls = collect([
+                $variant->id => $resolvedUrls
+            ]);
+        }
 
         $this->check([$variant], $resolvedUrls);
 
@@ -153,6 +157,11 @@ class PostVariantsCheck
 
             foreach ($linkMarks as $linkMark) {
                 $originalUrl = $this->getHrefFromLinkMark($linkMark);
+
+                if ($originalUrl === null) {
+                    continue;
+                }
+
                 $resolvedUrl = $this->resolveUrl($originalUrl, $variantUrl);
 
                 if ($resolvedUrl === null) {
