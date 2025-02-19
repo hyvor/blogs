@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Domains\Delivery\Response;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -29,12 +32,12 @@ it('matches styles.css', function () {
     // SCSS processing alters the format, so do not test this
     // $this->assertEquals($content, $responseObject->content);
     $this->assertEquals(MimeTypes::getMimeFromExtension('css'), $responseObject->mime_type);
+    $this->assertEquals(DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR, $responseObject->cache_control);
 
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
 });
 
-it('works with imports', function() {
-
+it('works with imports', function () {
     $blog = blog();
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -56,16 +59,16 @@ it('works with imports', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(200);
-    expect($responseObject->content)->toBe('body {
+    expect($responseObject->content)->toBe(
+        'body {
   color: red;
 }
-');
-
+'
+    );
 });
 
 
-it('shows an error when scss is wrong', function() {
-
+it('shows an error when scss is wrong', function () {
     $file = 'index.scss';
     $content = '{';
 
@@ -83,5 +86,4 @@ it('shows an error when scss is wrong', function() {
 
     expect($responseObject->status)->toBe(500);
     expect($responseObject->content)->toContain('SCSS Error');
-
 });

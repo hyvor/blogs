@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -33,7 +36,6 @@ class StylesProcessor extends RouteProcessorAbstract
          * Step 1: SCSS -> CSS
          */
         try {
-
             $compiled = $scssCompiler->compileFile('index.scss');
 
             if ($compiled === null) {
@@ -41,7 +43,6 @@ class StylesProcessor extends RouteProcessorAbstract
             }
 
             $css = $compiled->getCss();
-
         } catch (SassException|SafetyException $e) {
             $this->setResponseObject(
                 DeliveryAPIResponseObject::forFile(
@@ -64,10 +65,13 @@ class StylesProcessor extends RouteProcessorAbstract
         /*$autoprefixer = new Autoprefixer($css);
         $css = $autoprefixer->compile();*/
 
-        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
-            DeliveryAPIFileTypeEnum::ASSET,
-            $css,
-            'text/css'
-        ));
+        $this->setResponseObject(
+            DeliveryAPIResponseObject::forFile(
+                DeliveryAPIFileTypeEnum::ASSET,
+                $css,
+                'text/css',
+                browserCache: DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
+            )
+        );
     }
 }
