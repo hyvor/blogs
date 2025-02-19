@@ -44,6 +44,8 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
                 'https://example.hyvorblogs.io',
                 'https://example.hyvorblogs.io/blog',
                 'https://example.hyvorblogs.io/assets/image.jpg',
+                'https://example.hyvorblogs.io/about?utm_source=hyvor',
+                'https://example.hyvorblogs.io/about#contact',
             ],
             $blog,
         ]);
@@ -52,6 +54,8 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
             'https://example.hyvorblogs.io',
             'https://example.hyvorblogs.io/blog',
             'https://example.hyvorblogs.io/assets/image.jpg',
+            'https://example.hyvorblogs.io/about?utm_source=hyvor',
+            'https://example.hyvorblogs.io/about#contact',
         ], $internal);
 
         $this->assertSame([
@@ -122,6 +126,8 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
         $urls = [
             $blogUrl,
             "$blogUrl/about",
+            "$blogUrl/about?utm_source=hyvor",
+            "$blogUrl/about#contact",
             "$blogUrl/otherpage",
             "$blogUrl/assets/image.jpg",
         ];
@@ -132,6 +138,8 @@ class LinkStatusCheckServiceTest extends DatabaseTestCase
 
         $this->assertSame(200, $result[$blogUrl]->httpStatus);
         $this->assertSame(200, $result["$blogUrl/about"]->httpStatus);
+        $this->assertSame(200, $result["$blogUrl/about?utm_source=hyvor"]->httpStatus);
+        $this->assertSame(200, $result["$blogUrl/about#contact"]->httpStatus);
         $this->assertSame(404, $result["$blogUrl/otherpage"]->httpStatus);
         $this->assertSame(404, $result["$blogUrl/assets/image.jpg"]->httpStatus);
     }
