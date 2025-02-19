@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -70,7 +71,9 @@ class StylesProcessor extends RouteProcessorAbstract
                 DeliveryAPIFileTypeEnum::ASSET,
                 $css,
                 'text/css',
-                browserCache: DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
+                browserCache: $pathMatcher->blog->type === BlogTypeEnum::DEV ?
+                    DeliveryAPICacheControlHeaderEnum::NO_CACHE :
+                    DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
             )
         );
     }

@@ -87,3 +87,21 @@ it('shows an error when scss is wrong', function () {
     expect($responseObject->status)->toBe(500);
     expect($responseObject->content)->toContain('SCSS Error');
 });
+
+it('no cache for dev blogs', function () {
+    $file = 'index.scss';
+    $content = 'body {color: red;}';
+
+    $blog = blog(['type' => 'dev']);
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::STYLES,
+        $file,
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/styles.css');
+    $responseObject = $pathMatcher->getResponseObject();
+    $this->assertEquals(DeliveryAPICacheControlHeaderEnum::NO_CACHE, $responseObject->cache_control);
+});
