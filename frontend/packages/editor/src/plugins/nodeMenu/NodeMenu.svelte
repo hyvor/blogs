@@ -88,7 +88,6 @@
 		if (!$nodeMenuPos) return;
 
 		const tr = view.state.tr;
-		console.log($nodeMenuPos);
 		view.dispatch(tr.setSelection(NodeSelection.create(tr.doc, $nodeMenuPos - 1)));
 	}
 
@@ -101,7 +100,6 @@
 
 	function positionDrag(event: MouseEvent) {
 		if (!dragEl) return;
-		console.log(event.clientX, event.clientY);
 		dragEl.style.left = `${event.clientX + 15}px`;
 		dragEl.style.top = `${event.clientY - 15}px`;
 	}

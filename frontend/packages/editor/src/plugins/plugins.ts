@@ -14,6 +14,7 @@ import slashPlugin from './slash/plugin-slash.svelte.js';
 import slashTipPlugin from './slash/plugin-slash-tip';
 import tableMenuPlugin from './table/plugin-table-menu.svelte.js';
 import nodeMenuPlugin from './nodeMenu/plugin-nodemenu.svelte.js';
+import commentTicksPlugin from './comment-ticks/plugin-comment-ticks';
 
 export function getPlugins() {
 	return [
@@ -42,6 +43,7 @@ export function getPlugins() {
 		tableEditing(),
 		tableMenuPlugin(),
 
-		nodeMenuPlugin()
+		nodeMenuPlugin(),
+		commentTicksPlugin(),
 	];
 }

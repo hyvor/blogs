@@ -340,6 +340,11 @@ export const marks = {
         parseDOM: [{tag: "sub"}],
         toDOM() { return ["sub", 0] }
     } as MarkSpec,
+
+    comment: {
+        parseDOM: [{tag: "comment"}],
+        toDOM() { return ["comment", 0] }
+    } as MarkSpec,
 }
 
 // :: Schema

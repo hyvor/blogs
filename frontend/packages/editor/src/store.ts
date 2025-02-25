@@ -12,7 +12,12 @@ export interface Props {
      * Listen to DOM events of the Prosemirror editor.
      * Only focus and blur are supported.
      */
-    onDomEvent?: (name: keyof HTMLElementEventMap, event: Event) => void;
+    ondomevent?: (name: keyof HTMLElementEventMap, event: Event) => void;
+
+    /**
+     * Called when the editor's content changes. value is in ProseMirror JSON format.
+     */
+    onvaluechange?: (value: string) => void;
 
 
     /**

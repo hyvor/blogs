@@ -20,7 +20,6 @@ function markInputRule(regexp: RegExp, markType: MarkType, getAttrs?: any, skipS
 			let skipLen = 0;
 
 			if ((skipMatch = skipStart && match[0].match(skipStart))) {
-				console.log(skipMatch);
 				skipLen = skipMatch[0].length;
 				start += skipLen;
 			}

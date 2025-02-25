@@ -8,6 +8,7 @@
 	import { Loader } from '@hyvor/design/components';
 	import { editorContent, editorStore, type Props } from './store';
 	import { importCodemirrorAll } from './codemirror';
+	import { getMarkViews } from './markviews/markviews';
 
 	let props: Props = $props();
 
@@ -37,7 +38,7 @@
 					return {
 						...obj,
 						[e]: <T extends keyof DOMEventMap>(view: EditorView, event: DOMEventMap[T]) =>
-							props.onDomEvent?.(e, event)
+							props.ondomevent?.(e, event)
 					};
 				},
 				{} as Record<keyof DOMEventMap, any>
@@ -47,12 +48,15 @@
 		view = new EditorView(wrap!, {
 			state: state,
 			nodeViews: getNodeViews(),
+			markViews: getMarkViews(),
 			handleDOMEvents: getDomEvents(),
 			// handleClickOn,
 			// handleKeyDown,
 			dispatchTransaction: (tr) => {
 				const docJson = JSON.stringify(tr.doc.toJSON());
 				editorContent.set(docJson);
+
+				props.onvaluechange?.(docJson);
 
 				const state = view!.state.apply(tr);
 				view!.updateState(state);
@@ -519,5 +523,19 @@
 		background: rgba(200, 200, 255, 0.4);
 		pointer-events: none;
 		cursor: default;
+	}
+
+	.pm-editor :global(.user-comment) {
+		border-bottom: 3px solid #e0d32e;
+		cursor: pointer;
+	}
+
+	.pm-editor :global(.comment-tick) {
+		position: fixed;
+		width: 16px;
+		height: 16px;
+		border: 8px solid transparent;
+		border-left-color: #e0d32e;
+		transform: translateY(-50%);
 	}
 </style>
