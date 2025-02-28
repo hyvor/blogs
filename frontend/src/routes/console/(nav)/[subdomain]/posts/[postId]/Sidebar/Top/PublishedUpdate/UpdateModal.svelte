@@ -37,6 +37,7 @@
 	import CanonicalUrlChange from './Changes/CanonicalUrlChange.svelte';
 	import TagChanges from './Changes/TagChanges.svelte';
 	import AuthorChanges from './Changes/AuthorChanges.svelte';
+	import { slugGetInvalidCharater } from '../../Settings/slug';
 	interface Props {
 		show?: boolean;
 	}
@@ -142,8 +143,10 @@
 				{#if (changes.variant.slug || '').trim() === ''}
 					<Validation state="error">Slug cannot be empty.</Validation>
 				{/if}
-				{#if (changes.variant.slug || '').indexOf('/') !== -1}
-					<Validation state="error">Slug cannot contain /.</Validation>
+				{#if slugGetInvalidCharater(changes.variant.slug || '')}
+					<Validation state="error"
+						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
+					>
 				{/if}
 			</div>
 		</SplitControl>
