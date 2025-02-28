@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Post;
 
@@ -12,11 +14,16 @@ use Illuminate\Support\Collection;
 class PostSearchRepository
 {
 
+    public function __construct(
+        private FullTextSearchService $fullTextSearchService,
+    ) {
+    }
+
     /**
      * Better to use named arguments when using this function
      * @return CollectionWithTotal<Post>
      */
-    public static function search(
+    public function search(
         Blog $blog,
         Language $language,
         string $search,
@@ -29,15 +36,10 @@ class PostSearchRepository
          */
         null|true $isPublished = null
     ): CollectionWithTotal {
+        $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
 
-        $searchQuery = implode(' & ', explode(' ', $search));
-
-        /**
-         * We are using websearch_to_tsquery since most of the calls are from end users
-         * searching for posts
-         */
-        $postVariants = PostVariant::whereRaw("ts @@ websearch_to_tsquery(ts_language, ?)", [$searchQuery])
-            ->orderByRaw("ts_rank(ts, websearch_to_tsquery(ts_language, ?)) DESC", [$searchQuery])
+        $postVariants = PostVariant::whereRaw("calculated_ts @@ to_tsquery(ts_language, ?)", [$searchQuery])
+            ->orderByRaw("ts_rank(calculated_ts, to_tsquery(ts_language, ?)) DESC", [$searchQuery])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');

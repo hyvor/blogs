@@ -26,6 +26,12 @@ use Illuminate\Support\Str;
 
 class PostRepository
 {
+
+    public function __construct(
+        private FullTextSearchService $fullTextSearchService
+    ) {
+    }
+
     public static function getPostById(int $postId): ?Post
     {
         return Post::find($postId);
@@ -47,18 +53,19 @@ class PostRepository
     /**
      * @return Collection<int, Post>
      */
-    public static function getPosts(
+    public function getPosts(
         Blog $blog,
         ?string $status,
-        ?int $authorId,
-        ?int $tagId,
-        ?int $startTimestamp,
-        ?int $endTimestamp,
-        ?string $search,
-        int $limit,
-        int $offset = 0
+        ?int $authorId = null,
+        ?int $tagId = null,
+        ?int $startTimestamp = null,
+        ?int $endTimestamp = null,
+        ?string $search = null,
+        int $limit = 10,
+        int $offset = 0,
+        ?Language $language = null,
     ): Collection {
-        $language = LanguageRepository::getPrimaryLanguage($blog);
+        $language ??= LanguageRepository::getPrimaryLanguage($blog);
 
         return Post::where('posts.blog_id', $blog->id)
             ->join('post_variants', function ($join) use ($language) {
@@ -98,14 +105,21 @@ class PostRepository
                     $query->where('post_variants.status', $status);
                 }
             })
-            ->when($search, function ($query) use ($search) {
-                $query->where('posts.title', 'LIKE', "$search%");
-            })
-            // to prevent selecting post_variants data
-            ->select('posts.*')
-            ->orderByRaw("CASE post_variants.status WHEN 'draft' THEN 1 ELSE 2 END") // drafts first
-            ->orderBy('posts.published_at', 'desc')
-            ->orderBy('posts.created_at', 'desc')
+            ->when(
+                $search,
+                function ($query, $search) {
+                    $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
+
+                    $query->whereRaw("calculated_ts @@ to_tsquery(ts_language, ?)", [$searchQuery])
+                        ->orderByRaw("ts_rank(calculated_ts, to_tsquery(ts_language, ?)) DESC", [$searchQuery]);
+                },
+                function ($query) {
+                    $query->orderByRaw("CASE post_variants.status WHEN 'draft' THEN 1 ELSE 2 END")
+                        ->orderBy('posts.published_at', 'desc')
+                        ->orderBy('posts.created_at', 'desc');
+                }
+            )
+            ->select('posts.*') // to prevent selecting post_variants data
             ->limit($limit)
             ->offset($offset)
             ->get();

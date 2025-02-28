@@ -42,7 +42,6 @@ class FullTextSearchService
 
     public function findClosestRegconfigByLanguageCode(?string $languageCode): string
     {
-
         if (!$languageCode) {
             return self::DEFAULT_REGCONFIG;
         }
@@ -57,7 +56,16 @@ class FullTextSearchService
         }
 
         return self::DEFAULT_REGCONFIG;
+    }
 
+
+    /**
+     * Converts a search string (usually from a user) into a query that can be used with tsquery
+     */
+    public function getSearchQuery(string $search): string
+    {
+        $replaced = (string)preg_replace('/\s+/', ':* | ', $search);
+        return $replaced . ':*';
     }
 
 }

@@ -26,8 +26,13 @@ use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-    public function getPosts(Request $request, Blog $blog): JsonResponse
-    {
+
+
+    public function getPosts(
+        Request $request,
+        Blog $blog,
+        PostRepository $postRepository
+    ): JsonResponse {
         $request->validate([
             'status' => 'string|in:featured,published,draft,scheduled',
             'author_id' => 'integer',
@@ -42,8 +47,6 @@ class ConsolePostController extends Controller
 
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
-
-        $search = (string)$request->string('search');
         $status = $request->has('status') ? (string)$request->string('status') : null;
 
         $languageId = $request->has('language_id') ?
@@ -56,22 +59,6 @@ class ConsolePostController extends Controller
             throw new TrustedException('Language not found');
         }
 
-        if ($search) {
-            $posts = PostSearchRepository::search(
-                $blog,
-                $language,
-                $search,
-                $limit,
-                $offset,
-                false,
-                $status === 'published' ? true : null
-            )
-                ->collection
-                ->map(fn($post) => new PostObject($post, $blog));
-
-            return response()->json($posts);
-        }
-
         $authorId = $request->has('author_id') ? $request->integer('author_id') : null;
         $tagId = $request->has('tag_id') ? $request->integer('tag_id') : null;
 
@@ -79,7 +66,7 @@ class ConsolePostController extends Controller
         $endTimestamp = $request->has('end_timestamp') ? $request->integer('end_timestamp') : null;
         $search = $request->has('search') ? (string)$request->string('search') : null;
 
-        $posts = PostRepository::getPosts(
+        $posts = $postRepository->getPosts(
             $blog,
             $status,
             $authorId,
@@ -88,7 +75,8 @@ class ConsolePostController extends Controller
             $endTimestamp,
             $search,
             $limit,
-            $offset
+            $offset,
+            $language
         )->map(function ($post) use ($blog) {
             return new PostObject($post, $blog);
         });

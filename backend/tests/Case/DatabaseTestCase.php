@@ -6,6 +6,7 @@ use App\Models\Blog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Testing\TestResponse;
 
 class DatabaseTestCase extends AppTestCase
 {
@@ -40,5 +41,24 @@ class DatabaseTestCase extends AppTestCase
     ): \Illuminate\Testing\TestResponse {
         $endpoint = trim($endpoint, '/');
         return $this->call($method, URL::to("/api/console/v0/$endpoint"), $data);
+    }
+
+
+    /**
+     * @param array<string, mixed> $data
+     * @return TestResponse<JsonResponse>
+     */
+    public function dataApi(
+        Blog|string $subdomain,
+        string $endpoint,
+        array $data = []
+    ): TestResponse {
+        if ($subdomain instanceof Blog) {
+            $subdomain = $subdomain->subdomain;
+        }
+
+        $endpoint = trim($endpoint, '/');
+
+        return $this->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -53,6 +55,12 @@ return new class () extends Migration {
                         COALESCE(content_text, '') 
                     )
                 ) STORED,
+                calculated_ts tsvector GENERATED ALWAYS AS (
+                    setweight(to_tsvector(ts_language, coalesce(title,'')), 'A') ||
+                    setweight(to_tsvector(ts_language, coalesce(slug,'')), 'B') ||
+                    setweight(to_tsvector(ts_language, coalesce(description,'')), 'C') ||
+                    setweight(to_tsvector(ts_language, coalesce(content_text,'')), 'D')
+                ) STORED,
                     
                 UNIQUE (post_id, language_id),
                 UNIQUE (language_id, slug)
@@ -65,6 +73,7 @@ return new class () extends Migration {
             CREATE INDEX post_variants_words_index ON post_variants (words);
 
             CREATE INDEX ts_idx ON post_variants USING GIN (ts);
+            CREATE INDEX calculated_ts_idx ON post_variants USING GIN (calculated_ts);
 
         SQL;
 
