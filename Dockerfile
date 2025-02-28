@@ -50,7 +50,7 @@ WORKDIR /app/backend
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd
+RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache
 
 # install npm and dependencies
 COPY --from=node /usr/local/include/node /usr/local/include/node
