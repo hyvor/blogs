@@ -58,22 +58,6 @@ class ConsolePostController extends Controller
             throw new TrustedException('Language not found');
         }
 
-        /*if ($search) {
-            $posts = $postSearchRepository->search(
-                $blog,
-                $language,
-                $search,
-                $limit,
-                $offset,
-                false,
-                $status === 'published' ? true : null
-            )
-                ->collection
-                ->map(fn($post) => new PostObject($post, $blog));
-
-            return response()->json($posts);
-        }*/
-
         $authorId = $request->has('author_id') ? $request->integer('author_id') : null;
         $tagId = $request->has('tag_id') ? $request->integer('tag_id') : null;
 
@@ -90,7 +74,8 @@ class ConsolePostController extends Controller
             $endTimestamp,
             $search,
             $limit,
-            $offset
+            $offset,
+            $language
         )->map(function ($post) use ($blog) {
             return new PostObject($post, $blog);
         });
