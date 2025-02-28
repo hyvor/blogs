@@ -64,12 +64,7 @@ class FullTextSearchService
      */
     public function getSearchQuery(string $search): string
     {
-        $replaced = preg_replace('/\s+/', ':* | ', $search);
-
-        if (!is_string($replaced)) {
-            return $search;
-        }
-
+        $replaced = (string)preg_replace('/\s+/', ':* | ', $search);
         return $replaced . ':*';
     }
 

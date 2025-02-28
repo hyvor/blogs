@@ -25,10 +25,12 @@ use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
+
+
     public function getPosts(
         Request $request,
         Blog $blog,
-        PostSearchRepository $postSearchRepository
+        PostRepository $postRepository
     ): JsonResponse {
         $request->validate([
             'status' => 'string|in:featured,published,draft,scheduled',
@@ -44,8 +46,6 @@ class ConsolePostController extends Controller
 
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
-
-        $search = (string)$request->string('search');
         $status = $request->has('status') ? (string)$request->string('status') : null;
 
         $languageId = $request->has('language_id') ?
@@ -58,7 +58,7 @@ class ConsolePostController extends Controller
             throw new TrustedException('Language not found');
         }
 
-        if ($search) {
+        /*if ($search) {
             $posts = $postSearchRepository->search(
                 $blog,
                 $language,
@@ -72,7 +72,7 @@ class ConsolePostController extends Controller
                 ->map(fn($post) => new PostObject($post, $blog));
 
             return response()->json($posts);
-        }
+        }*/
 
         $authorId = $request->has('author_id') ? $request->integer('author_id') : null;
         $tagId = $request->has('tag_id') ? $request->integer('tag_id') : null;
@@ -81,7 +81,7 @@ class ConsolePostController extends Controller
         $endTimestamp = $request->has('end_timestamp') ? $request->integer('end_timestamp') : null;
         $search = $request->has('search') ? (string)$request->string('search') : null;
 
-        $posts = PostRepository::getPosts(
+        $posts = $postRepository->getPosts(
             $blog,
             $status,
             $authorId,

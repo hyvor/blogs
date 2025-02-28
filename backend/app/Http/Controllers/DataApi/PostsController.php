@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
@@ -7,7 +8,6 @@ use App\Data\Enums\PostStatusEnum;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Domains\Post\PostRepository;
-use App\Domains\Post\PostSearchRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -125,7 +125,7 @@ class PostsController extends Controller
     public function postsSearch(
         Request $request,
         Blog $blog,
-        PostSearchRepository $postSearchRepository
+        PostRepository $postRepository,
     ): JsonResponse {
         $request->validate([
             'search' => 'string|required',
@@ -146,17 +146,16 @@ class PostsController extends Controller
         $offset = Helper::getOffset($page, $limit);
         $keys = $request->has('keys') ? (string)$request->string('keys') : null;
 
-        $searchData = $postSearchRepository->search(
+        $searchData = $postRepository->getPosts(
             blog: $blog,
-            language: $language,
+            status: PostStatusEnum::PUBLISHED->value,
             search: $search,
             limit: $limit,
             offset: $offset,
-            isPage: false,
-            isPublished: true,
+            language: $language,
         );
 
-        $posts = $searchData->collection->map(function ($post) use ($blog, $language) {
+        $posts = $searchData->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
 
@@ -164,7 +163,7 @@ class PostsController extends Controller
 
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $searchData->total),
+            'pagination' => new PaginationObject($limit, $page, $searchData->count()),
         ]);
     }
 }

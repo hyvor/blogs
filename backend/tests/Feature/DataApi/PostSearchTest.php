@@ -25,6 +25,12 @@ class PostSearchTest extends DatabaseTestCase
             'ts_language' => 'english'
         ]);
 
+        // not published
+        PostFactory::oneFor($blog, [], [
+            'title' => 'How to make a cake',
+            'status' => 'draft',
+        ]);
+
         // page, not included
         $post = PostFactory::oneFor(
             $blog,
@@ -102,6 +108,45 @@ class PostSearchTest extends DatabaseTestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $post->id);
+    }
+
+    public function testPriorityTitleSlugDescriptionContent(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes();
+
+        $inContent = PostFactory::oneFor($blog, [], [
+            'content_text' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inTitle = PostFactory::oneFor($blog, [], [
+            'title' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inDescription = PostFactory::oneFor($blog, [], [
+            'description' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inSlug = PostFactory::oneFor($blog, [], [
+            'slug' => 'hyvor-is-good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $this->dataApi($blog, '/posts/search', [
+            'search' => 'hyvor is good',
+        ])
+            ->assertOk()
+            ->assertJsonCount(4, 'data')
+            ->assertJsonPath('data.0.id', $inTitle->id)
+            ->assertJsonPath('data.1.id', $inSlug->id)
+            ->assertJsonPath('data.2.id', $inDescription->id)
+            ->assertJsonPath('data.3.id', $inContent->id);
     }
 
     public function testDoesNotWorkWithoutSearchQuery(): void

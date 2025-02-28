@@ -38,8 +38,8 @@ class PostSearchRepository
     ): CollectionWithTotal {
         $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
 
-        $postVariants = PostVariant::whereRaw("ts @@ to_tsquery(ts_language, ?)", [$searchQuery])
-            ->orderByRaw("ts_rank(ts, to_tsquery(ts_language, ?)) DESC", [$searchQuery])
+        $postVariants = PostVariant::whereRaw("calculated_ts @@ to_tsquery(ts_language, ?)", [$searchQuery])
+            ->orderByRaw("ts_rank(calculated_ts, to_tsquery(ts_language, ?)) DESC", [$searchQuery])
             ->where('language_id', $language->id)
             ->when($isPublished, function ($query) {
                 $query->where('status', 'published');
