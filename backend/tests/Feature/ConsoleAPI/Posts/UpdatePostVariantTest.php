@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
@@ -33,20 +35,20 @@ it('updates post variant', function () {
     $secondaryKeywords = ['secondary keyword 1', 'secondary keyword 2'];
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
-            'language_id' => $language->id,
-            'slug' => $slug,
-            'status' => $status,
-            'content' => $content,
-            'content_unsaved' => $contentUnsaved,
-            'title' => $title,
-            'description' => $description,
+        'language_id' => $language->id,
+        'slug' => $slug,
+        'status' => $status,
+        'content' => $content,
+        'content_unsaved' => $contentUnsaved,
+        'title' => $title,
+        'description' => $description,
 
-            'seo_primary_keyword' => $primaryKeyword,
-            'seo_secondary_keywords' => $secondaryKeywords,
-        ])
+        'seo_primary_keyword' => $primaryKeyword,
+        'seo_secondary_keywords' => $secondaryKeywords,
+    ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json
+            fn(AssertableJson $json) => $json
                 ->where('slug', $slug)
                 ->where('status', $status)
                 ->where('content', $content)
@@ -61,8 +63,7 @@ it('updates post variant', function () {
     Event::assertDispatched(PostVariantUpdatedEvent::class);
 });
 
-it('prevents updating content when prosemirror doc is invalid', function() {
-
+it('prevents updating content when prosemirror doc is invalid', function () {
     $blog = blogWithAccessLanguageAndRoutes();
     $post = addPost($blog);
     $variant = $post->variants[0];
@@ -74,11 +75,9 @@ it('prevents updating content when prosemirror doc is invalid', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Unable to decode JSON');
-
 });
 
 it('updates post published_at when post status is changed to published', function () {
-
     $blog = blogWithAccess();
     addPrimaryLanguage($blog);
     addDefaultRoutes($blog);
@@ -94,9 +93,9 @@ it('updates post published_at when post status is changed to published', functio
     ]);
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
-            'language_id' => $blog->languages[0]->id,
-            'status' => 'published',
-        ])
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published',
+    ])
         ->assertOk();
 
     expect($post->refresh()->published_at)->not->toBeNull();
@@ -104,8 +103,7 @@ it('updates post published_at when post status is changed to published', functio
 
 
 // bug#134
-it('does not update published_at if it is already set', function() {
-
+it('does not update published_at if it is already set', function () {
     $blog = blogWithAccessLanguageAndRoutes();
 
     $publishedAt = now()->subDay();
@@ -127,11 +125,9 @@ it('does not update published_at if it is already set', function() {
         ->assertOk();
 
     expect($post->refresh()->published_at->getTimestamp())->toBe($publishedAt->getTimestamp());
-
 });
 
-it('sets the slug if it is empty when publishing the primary language post', function() {
-
+it('sets the slug if it is empty when publishing the primary language post', function () {
     $blog = blogWithAccess();
     addPrimaryLanguage($blog);
     addDefaultRoutes($blog);
@@ -147,18 +143,16 @@ it('sets the slug if it is empty when publishing the primary language post', fun
     ]);
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
-            'language_id' => $blog->languages[0]->id,
-            'status' => 'published',
-        ])
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published',
+    ])
         ->assertOk();
 
     expect($variant->refresh()->slug)->not->toBeNull();
-
 });
 
 // bug#89
-it('updates slug when title is empty', function() {
-
+it('updates slug when title is empty', function () {
     $blog = blogWithAccessLanguageAndRoutes();
 
     $post = Post::factory()->create([
@@ -180,11 +174,10 @@ it('updates slug when title is empty', function() {
         ->assertOk();
 
     expect($variant->refresh()->slug)->not->toBeNull();
-
 });
 
-it('checks for duplicates when generating the slug from the title', function() {
 
+it('checks for duplicates when generating the slug from the title', function () {
     $blog = blogWithAccessLanguageAndRoutes();
 
     addPublishedPost($blog, [], [
@@ -211,11 +204,9 @@ it('checks for duplicates when generating the slug from the title', function() {
 
     expect($variant->refresh()->slug)->not->toBe('my-post-1');
     expect($variant->refresh()->slug)->toBeString();
-
 });
 
-it('creates a history if post content has changed', function() {
-
+it('creates a history if post content has changed', function () {
     $blog = blogWithAccessLanguageAndRoutes();
 
     $post = Post::factory()->create([
@@ -237,11 +228,9 @@ it('creates a history if post content has changed', function() {
         ->assertOk();
 
     expect($variant->history()->first()->content)->toBe($para);
-
 });
 
-it('does not update if the content is the same', function() {
-
+it('does not update if the content is the same', function () {
     $blog = blogWithAccessLanguageAndRoutes();
     $para = PostContentGenerator::generateParagraph('Test content');
 
@@ -263,12 +252,10 @@ it('does not update if the content is the same', function() {
         ->assertOk();
 
     expect($variant->history()->count())->toBe(0);
-
 });
 
 
-it('deletes old histories', function() {
-
+it('deletes old histories', function () {
     $blog = blogWithAccessLanguageAndRoutes();
 
     $post = Post::factory()->create([
@@ -298,11 +285,23 @@ it('deletes old histories', function() {
     expect($variant->history()->orderBy('id', 'desc')->first()->content)->toBe($para);
 
     expect(PostVariantHistory::count())->toBe(25);
-
 });
 
-it('checks for duplicates when updating slug', function() {
+it('does not allow slashes in the slug', function () {
+    $blog = blogWithAccessLanguageAndRoutes();
+    $post = addPost($blog, [], [
+        'slug' => 'hello-world'
+    ]);
 
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'slug' => 'hello/world',
+    ])
+        ->assertStatus(422)
+        ->assertSee('Slug cannot contain \/');
+});
+
+it('checks for duplicates when updating slug', function () {
     $blog = blogWithAccessLanguageAndRoutes();
     $language1 = addLanguage($blog);
     $post = addPost($blog, [], [
@@ -320,11 +319,9 @@ it('checks for duplicates when updating slug', function() {
     ])
         ->assertStatus(422)
         ->assertSee('Slug has already been taken');
-
 });
 
-it('updates to null', function() {
-
+it('updates to null', function () {
     $blog = blogWithAccessLanguageAndRoutes();
     $language1 = LanguageRepository::getPrimaryLanguage($blog);
     $post = addPost($blog, [], [
@@ -344,5 +341,4 @@ it('updates to null', function() {
         ->assertJsonPath('title', null)
         ->assertJsonPath('description', null)
         ->assertJsonPath('seo_primary_keyword', null);
-
 });

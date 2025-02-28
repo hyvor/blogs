@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
@@ -297,6 +298,10 @@ class ConsolePostController extends Controller
 
                 if ($bySlugPost && $bySlugPost->id !== $post->id) {
                     throw new TrustedException('Slug has already been taken');
+                }
+
+                if ($variantUpdates['slug'] && str_contains($variantUpdates['slug'], '/')) {
+                    throw new TrustedException('Slug cannot contain /');
                 }
             }
 

@@ -69,6 +69,7 @@
 					...changes.variant
 				});
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -79,6 +80,7 @@
 					...changes.post
 				});
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -87,6 +89,7 @@
 			try {
 				await updatePostAuthors(changes.authors);
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -95,6 +98,7 @@
 			try {
 				await updatePostTags(changes.tags);
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -137,6 +141,9 @@
 			<div style="margin-top:15px;">
 				{#if (changes.variant.slug || '').trim() === ''}
 					<Validation state="error">Slug cannot be empty.</Validation>
+				{/if}
+				{#if (changes.variant.slug || '').indexOf('/') !== -1}
+					<Validation state="error">Slug cannot contain /.</Validation>
 				{/if}
 			</div>
 		</SplitControl>
