@@ -18,6 +18,7 @@ export const SLUG_INVALID_CHARACTERS = [
     ",", 
     ";", 
     "=",
+    "%",
 ];
 
 export function slugGetInvalidCharater(slug: string): string|null {

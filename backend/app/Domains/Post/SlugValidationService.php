@@ -25,6 +25,7 @@ class SlugValidationService
         ',',
         ';',
         '=',
+        '%',
     ];
 
     public function getFirstInvalidCharacter(string $slug): ?string
