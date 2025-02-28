@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -16,17 +17,17 @@ use Illuminate\Http\Request;
 class PostsController extends Controller
 {
     public const ALLOWED_SORTS =
-    [
-        'published_at' => 'posts.published_at',
-        'created_at' => 'posts.created_at',
-        'id' => 'posts.id',
-        'updated_at' => 'posts.updated_at',
-        'is_featured' => 'posts.is_featured',
-        'title' => 'post_variants.title',
-        'words' => 'post_variants.words',
-    ];
+        [
+            'published_at' => 'posts.published_at',
+            'created_at' => 'posts.created_at',
+            'id' => 'posts.id',
+            'updated_at' => 'posts.updated_at',
+            'is_featured' => 'posts.is_featured',
+            'title' => 'post_variants.title',
+            'words' => 'post_variants.words',
+        ];
 
-    public function post(Request $request, Blog $blog) : JsonResponse
+    public function post(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'id' => 'int|required_without:slug',
@@ -36,12 +37,12 @@ class PostsController extends Controller
         ]);
 
         $id = $request->has('id') ? $request->integer('id') : null;
-        $slug = $request->has('slug') ? (string) $request->string('slug') : null;
+        $slug = $request->has('slug') ? (string)$request->string('slug') : null;
         $language = Helper::getLanguage(
             $blog,
-            $request->has('language') ? (string) $request->string('language') : null
+            $request->has('language') ? (string)$request->string('language') : null
         );
-        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
+        $keys = $request->has('keys') ? (string)$request->string('keys') : null;
 
         $post = null;
         if ($id) {
@@ -56,7 +57,7 @@ class PostsController extends Controller
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
-        if (! $variant) {
+        if (!$variant) {
             throw new TrustedException('Post variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -70,7 +71,7 @@ class PostsController extends Controller
         );
     }
 
-    public function posts(Request $request, Blog $blog) : JsonResponse
+    public function posts(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'language' => 'string',
@@ -84,14 +85,14 @@ class PostsController extends Controller
 
         $language = Helper::getLanguage(
             $blog,
-            $request->has('language') ? (string) $request->string('language') : null
+            $request->has('language') ? (string)$request->string('language') : null
         );
         $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
         $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $filter = $request->has('filter') ? (string) $request->string('filter') : null;
-        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
-        $sort = $request->has('sort') ? (string) $request->string('sort') : null;
+        $filter = $request->has('filter') ? (string)$request->string('filter') : null;
+        $keys = $request->has('keys') ? (string)$request->string('keys') : null;
+        $sort = $request->has('sort') ? (string)$request->string('sort') : null;
         $pages = $request->boolean('pages');
 
         $orderBys = Helper::getSort(
@@ -121,8 +122,11 @@ class PostsController extends Controller
         ]);
     }
 
-    public function postsSearch(Request $request, Blog $blog) : JsonResponse
-    {
+    public function postsSearch(
+        Request $request,
+        Blog $blog,
+        PostSearchRepository $postSearchRepository
+    ): JsonResponse {
         $request->validate([
             'search' => 'string|required',
             'language' => 'string',
@@ -131,18 +135,18 @@ class PostsController extends Controller
             'keys' => 'string',
         ]);
 
-        $search = (string) $request->string('search');
+        $search = (string)$request->string('search');
 
         $language = Helper::getLanguage(
             $blog,
-            $request->has('language') ? (string) $request->string('language') : null
+            $request->has('language') ? (string)$request->string('language') : null
         );
         $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
         $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
+        $keys = $request->has('keys') ? (string)$request->string('keys') : null;
 
-        $searchData = PostSearchRepository::search(
+        $searchData = $postSearchRepository->search(
             blog: $blog,
             language: $language,
             search: $search,

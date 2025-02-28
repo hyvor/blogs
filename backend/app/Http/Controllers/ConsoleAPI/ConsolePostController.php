@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
@@ -24,8 +25,11 @@ use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-    public function getPosts(Request $request, Blog $blog): JsonResponse
-    {
+    public function getPosts(
+        Request $request,
+        Blog $blog,
+        PostSearchRepository $postSearchRepository
+    ): JsonResponse {
         $request->validate([
             'status' => 'string|in:featured,published,draft,scheduled',
             'author_id' => 'integer',
@@ -55,7 +59,7 @@ class ConsolePostController extends Controller
         }
 
         if ($search) {
-            $posts = PostSearchRepository::search(
+            $posts = $postSearchRepository->search(
                 $blog,
                 $language,
                 $search,
