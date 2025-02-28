@@ -11,97 +11,105 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
+use Database\Factories\BlogFactory;
+use Tests\Case\DatabaseTestCase;
 
-it('matches styles.css', function () {
-    $file = 'index.scss';
-    $content = 'body {color: red;}';
+class StylesTest extends DatabaseTestCase
+{
 
-    $blog = blog();
+    public function testMatchesStylesCss(): void
+    {
+        $file = 'index.scss';
+        $content = 'body {color: red;}';
 
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::STYLES,
-        $file,
-        $content,
-    );
+        $blog = BlogFactory::one();
 
-    $pathMatcher = new PathMatcher($blog, '/styles.css');
-    $responseObject = $pathMatcher->getResponseObject();
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            $file,
+            $content,
+        );
 
-    $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
-    // SCSS processing alters the format, so do not test this
-    // $this->assertEquals($content, $responseObject->content);
-    $this->assertEquals(MimeTypes::getMimeFromExtension('css'), $responseObject->mime_type);
-    $this->assertEquals(DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR, $responseObject->cache_control);
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
+        $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
-});
+        $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
+        // SCSS processing alters the format, so do not test this
+        // $this->assertEquals($content, $responseObject->content);
+        $this->assertEquals(MimeTypes::getMimeFromExtension('css'), $responseObject->mime_type);
+        $this->assertEquals(DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR, $responseObject->cache_control);
 
-it('works with imports', function () {
-    $blog = blog();
+        expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
+    }
 
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::STYLES,
-        'index.scss',
-        '@import "imported.scss";',
-    );
+    public function testWorksWithImports(): void
+    {
+        $blog = BlogFactory::one();
 
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::STYLES,
-        'imported.scss',
-        'body {color: red;}',
-    );
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            'index.scss',
+            '@import "imported.scss";',
+        );
 
-    $pathMatcher = new PathMatcher($blog, '/styles.css');
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            'imported.scss',
+            'body {color: red;}',
+        );
 
-    $responseObject = $pathMatcher->getResponseObject();
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
 
-    expect($responseObject->status)->toBe(200);
-    expect($responseObject->content)->toBe(
-        'body {
-  color: red;
+        $responseObject = $pathMatcher->getResponseObject();
+
+        expect($responseObject->status)->toBe(200);
+        expect($responseObject->content)->toBe(
+            'body{color:red}'
+        );
+    }
+
+
+    public function testShowsErrorOnInvalidScss(): void
+    {
+        $file = 'index.scss';
+        $content = '{';
+
+        $blog = BlogFactory::one();
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            $file,
+            $content,
+        );
+
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
+        $responseObject = $pathMatcher->getResponseObject();
+
+        expect($responseObject->status)->toBe(500);
+        expect($responseObject->content)->toContain('SCSS Error');
+    }
+
+    public function testNoCacheForDev(): void
+    {
+        $file = 'index.scss';
+        $content = 'body {color: red;}';
+
+        $blog = BlogFactory::one(['type' => 'dev']);
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            $file,
+            $content,
+        );
+
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
+        $responseObject = $pathMatcher->getResponseObject();
+        $this->assertEquals(DeliveryAPICacheControlHeaderEnum::NO_CACHE, $responseObject->cache_control);
+    }
+
 }
-'
-    );
-});
-
-
-it('shows an error when scss is wrong', function () {
-    $file = 'index.scss';
-    $content = '{';
-
-    $blog = blog();
-
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::STYLES,
-        $file,
-        $content,
-    );
-
-    $pathMatcher = new PathMatcher($blog, '/styles.css');
-    $responseObject = $pathMatcher->getResponseObject();
-
-    expect($responseObject->status)->toBe(500);
-    expect($responseObject->content)->toContain('SCSS Error');
-});
-
-it('no cache for dev blogs', function () {
-    $file = 'index.scss';
-    $content = 'body {color: red;}';
-
-    $blog = blog(['type' => 'dev']);
-
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::STYLES,
-        $file,
-        $content,
-    );
-
-    $pathMatcher = new PathMatcher($blog, '/styles.css');
-    $responseObject = $pathMatcher->getResponseObject();
-    $this->assertEquals(DeliveryAPICacheControlHeaderEnum::NO_CACHE, $responseObject->cache_control);
-});

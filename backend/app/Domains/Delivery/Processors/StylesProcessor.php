@@ -15,6 +15,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\SafetyException;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\SassException;
+use MatthiasMullie\Minify;
 
 class StylesProcessor extends RouteProcessorAbstract
 {
@@ -56,15 +57,7 @@ class StylesProcessor extends RouteProcessorAbstract
             return;
         }
 
-        // Note: Autoprefixer caused a bug that --fontSize is changed to --fontsize
-        // Therefore, removed it
-        // Also, don't see a point using it
-
-        /**
-         * Step 2: Auto-prefix
-         */
-        /*$autoprefixer = new Autoprefixer($css);
-        $css = $autoprefixer->compile();*/
+        $css = $this->minify($css);
 
         $this->setResponseObject(
             DeliveryAPIResponseObject::forFile(
@@ -76,5 +69,15 @@ class StylesProcessor extends RouteProcessorAbstract
                     DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
             )
         );
+    }
+
+    private function minify(string $css): string
+    {
+        $minifier = new Minify\CSS();
+        /**
+         * the comment at the start is a fix for a security issue that allows reading any file
+         */
+        $minifier->add('/**/' . $css);
+        return $minifier->minify();
     }
 }

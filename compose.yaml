@@ -35,13 +35,10 @@ services:
     build:
       context: .
       target: backend-dev
-    develop:
-      watch:
-        - path: backend
-          action: sync
-          target: /app/backend
-        - path: backend/composer.lock
-          action: rebuild
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /app/backend
     env_file:
       - .env
     labels:
