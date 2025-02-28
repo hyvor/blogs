@@ -12,6 +12,7 @@ use App\Domains\Post\PostRepository;
 use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Post\Rules\ProsemirrorJsonRule;
+use App\Domains\Post\SlugValidationService;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
@@ -215,8 +216,12 @@ class ConsolePostController extends Controller
         );
     }
 
-    public function updatePostVariant(Request $request, Blog $blog, Post $post): JsonResponse
-    {
+    public function updatePostVariant(
+        Request $request,
+        Blog $blog,
+        Post $post,
+        SlugValidationService $slugValidationService
+    ): JsonResponse {
         $request->validate([
             'language_id' => 'required|integer',
             'slug' => 'string|max:255|nullable',
@@ -293,15 +298,16 @@ class ConsolePostController extends Controller
         }
 
         if (count($variantUpdates) > 0) {
-            if (array_key_exists('slug', $variantUpdates)) {
-                $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, strval($variantUpdates['slug']));
+            if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
+                $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
 
                 if ($bySlugPost && $bySlugPost->id !== $post->id) {
                     throw new TrustedException('Slug has already been taken');
                 }
 
-                if ($variantUpdates['slug'] && str_contains($variantUpdates['slug'], '/')) {
-                    throw new TrustedException('Slug cannot contain /');
+                $invalidCharacter = $slugValidationService->getFirstInvalidCharacter($variantUpdates['slug']);
+                if ($invalidCharacter) {
+                    throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
                 }
             }
 
