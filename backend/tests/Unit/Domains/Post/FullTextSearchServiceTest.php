@@ -41,6 +41,13 @@ class FullTextSearchServiceTest extends AppTestCase
         // french
         $this->assertSame('éclair:*', $service->getSearchQuery('éclair'));
         $this->assertSame('éclair:* | tarte:*', $service->getSearchQuery('éclair tarte'));
+
+        // bug with special chars
+        $this->assertSame('what:* | is:* | a:* | cord:*', $service->getSearchQuery('what is a cord:'));
+        $this->assertSame(
+            'test:* | what:* | open?:*',
+            $service->getSearchQuery('(test | what) : open?')
+        );
     }
 
 }
