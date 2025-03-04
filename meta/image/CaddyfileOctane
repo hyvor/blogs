@@ -4,7 +4,7 @@
 
 {
 	frankenphp {
-		worker "{$APP_PUBLIC_PATH}/frankenphp-worker.php" {$CADDY_SERVER_WORKER_COUNT}
+		worker "/app/backend/public/frankenphp-worker.php" {$CADDY_SERVER_WORKER_COUNT}
 	}
 
 	on_demand_tls {
@@ -12,7 +12,7 @@
     }
 
     log {
-        level {$CADDY_SERVER_LOG_LEVEL}
+        level ERROR
     }
 }
 
@@ -20,7 +20,10 @@
 *.{$DELIVERY_DOMAIN}:80 {
 	root * /app/backend/public
 	encode zstd gzip
-	php_server
+	php_server {
+        file_server off
+        try_files frankenphp-worker.php
+    }
 }
 
 # main app
@@ -28,7 +31,10 @@
 	handle /api/* {
 		root * /app/backend/public
 		encode zstd gzip
-		php_server
+		php_server {
+            file_server off
+            try_files {path} frankenphp-worker.php
+        }
 	}
 	handle {
 		root * /app/static
@@ -54,5 +60,8 @@ http://, https:// {
 
 	root * /app/backend/public
 	encode zstd gzip
-	php_server
+	php_server {
+       file_server off
+       try_files frankenphp-worker.php
+    }
 }
