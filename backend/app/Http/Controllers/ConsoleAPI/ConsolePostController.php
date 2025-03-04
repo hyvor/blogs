@@ -308,7 +308,7 @@ class ConsolePostController extends Controller
 
         PostRepository::updatePostVariant($variant, $variantUpdates);
 
-        if ($autoRedirects && $oldSlug) {
+        if ($autoRedirects && $oldSlug && $variantUpdates['slug']) {
 
             if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
                 throw new TrustedException('Redirect already exists for the old slug');
