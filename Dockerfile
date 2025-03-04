@@ -4,7 +4,6 @@ FROM node:22.12.0 AS node
 FROM composer:2.8.4 AS composer
 FROM dunglas/frankenphp:1.4.4-php8.3 AS frankenphp
 FROM mlocati/php-extension-installer:2.7.13 AS php-extension-installer
-#FROM caddy:2.8.4 AS caddy
 
 ###################################################
 ################  FRONTEND STAGES  ################
@@ -85,19 +84,17 @@ FROM backend-base AS final
 
 # supervisor & caddy
 RUN apt update && apt install -y supervisor
-COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
 
 # copy files
 COPY backend /app/backend
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
 
 # copy configs
-COPY meta/image/Caddyfile /etc/caddy/Caddyfile
+COPY meta/image/CaddyfileOctane /etc/caddy/Caddyfile
 COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
-COPY meta/image/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run
 
