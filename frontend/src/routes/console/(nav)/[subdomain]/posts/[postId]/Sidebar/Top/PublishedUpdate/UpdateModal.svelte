@@ -46,6 +46,7 @@
 
 	let changes: ReturnType<typeof getPublishedChanges> = $state(getPublishedChanges());
 	let diff = $state(true);
+	let autoRedirects = $state(false);
 
 	$effect(() => {
 		$postStore;
@@ -67,7 +68,8 @@
 			try {
 				await updatePostVariant({
 					language_id: $postLanguageStore.id,
-					...changes.variant
+					...changes.variant,
+					auto_redirects: autoRedirects
 				});
 			} catch (e: any) {
 				isLoading = false;
@@ -149,6 +151,13 @@
 					>
 				{/if}
 			</div>
+			<div class="auto-redirects">
+				<span>Add redirects automatically</span>
+				<Switch bind:checked={autoRedirects} />
+			</div>
+			<!-- <Switch bind:checked={autoRedirects}>
+				Add redirects automatically
+			</Switch> -->
 		</SplitControl>
 	{/if}
 
@@ -247,6 +256,13 @@
 		color: var(--text-light);
 	}
 	.diff span {
+		margin-right: 10px;
+	}
+	.auto-redirects {
+		color: var(--text-light);
+		font-size: 14px;
+	}
+	.auto-redirects span {
 		margin-right: 10px;
 	}
 </style>

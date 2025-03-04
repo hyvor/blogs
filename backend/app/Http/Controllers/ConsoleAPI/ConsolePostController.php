@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
-use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Post\Rules\ProsemirrorJsonRule;
 use App\Domains\Post\SlugValidationService;
+use App\Domains\Redirect\RedirectRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
 use App\Models\Blog;
 use App\Models\Post;
-use App\Models\PostVariant;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -213,6 +211,7 @@ class ConsolePostController extends Controller
         $request->validate([
             'language_id' => 'required|integer',
             'slug' => 'string|max:255|nullable',
+            'auto_redirects' => 'boolean',
             'status' => 'string|in:draft,published,scheduled',
             'content' => ['string', 'nullable', new ProsemirrorJsonRule],
             'content_unsaved' => ['string', 'nullable', new ProsemirrorJsonRule],
@@ -238,11 +237,13 @@ class ConsolePostController extends Controller
         }
 
         $variantUpdates = [];
+        $autoRedirects = false;
 
         if ($request->has('slug')) {
             $variantUpdates['slug'] = $request->input('slug') !== null ?
                 (string)$request->string('slug') :
                 null;
+            $autoRedirects = $variantUpdates['slug'] && $request->boolean('auto_redirects');
         }
 
         if ($request->has('status')) {
@@ -285,21 +286,40 @@ class ConsolePostController extends Controller
             $variantUpdates['seo_secondary_keywords'] = $secondaryKeywords;
         }
 
-        if (count($variantUpdates) > 0) {
-            if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
-                $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
+        if (count($variantUpdates) === 0) {
+            throw new TrustedException('No updates provided');
+        }
 
-                if ($bySlugPost && $bySlugPost->id !== $post->id) {
-                    throw new TrustedException('Slug has already been taken');
-                }
+        if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
+            $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
 
-                $invalidCharacter = $slugValidationService->getFirstInvalidCharacter($variantUpdates['slug']);
-                if ($invalidCharacter) {
-                    throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
-                }
+            if ($bySlugPost && $bySlugPost->id !== $post->id) {
+                throw new TrustedException('Slug has already been taken');
             }
 
-            PostRepository::updatePostVariant($variant, $variantUpdates);
+            $invalidCharacter = $slugValidationService->getFirstInvalidCharacter($variantUpdates['slug']);
+            if ($invalidCharacter) {
+                throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
+            }
+        }
+
+        $oldSlug = $variant->slug;
+
+        PostRepository::updatePostVariant($variant, $variantUpdates);
+
+        if ($autoRedirects) {
+
+            if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
+                throw new TrustedException('Redirect already exists for the old slug');
+            }
+
+            RedirectRepository::createRedirect(
+                $blog,
+                false,
+                $oldSlug,
+                $variantUpdates['slug'],
+                RedirectTypeEnum::PERMANENT
+            );
         }
 
         $variant->refresh();
