@@ -8,16 +8,15 @@
 *.{$DELIVERY_DOMAIN}:80 {
 	root * /app/backend/public
 	encode zstd gzip
-	php_fastcgi unix//run/php-fpm.sock
-	try_files index.php
+	reverse_proxy localhost:8080
 }
 
 # main app
 {$DOMAIN_APP}:80 {
 	handle /api/* {
 		root * /app/backend/public
-		php_fastcgi unix//run/php-fpm.sock
-		try_files index.php
+		encode zstd gzip
+		reverse_proxy localhost:8080
 	}
 	handle {
 		root * /app/static
@@ -43,6 +42,5 @@ http://, https:// {
 
 	root * /app/backend/public
 	encode zstd gzip
-	php_fastcgi unix//run/php-fpm.sock
-	try_files index.php
+	reverse_proxy localhost:8080
 }
