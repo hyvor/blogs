@@ -66,5 +66,5 @@ jobs:
         with:
           token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
           slug: hyvor/blogs.hyvor.com
-          files: ./backend/coverage.xml
+          files: .app/backend/coverage.xml
 
