@@ -21,6 +21,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\assertNotNull;
 
 class ConsolePostController extends Controller
 {
@@ -307,7 +308,7 @@ class ConsolePostController extends Controller
 
         PostRepository::updatePostVariant($variant, $variantUpdates);
 
-        if ($autoRedirects) {
+        if ($autoRedirects && $oldSlug) {
 
             if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
                 throw new TrustedException('Redirect already exists for the old slug');
