@@ -155,9 +155,6 @@
 				<span>Add redirects automatically</span>
 				<Switch bind:checked={autoRedirects} />
 			</div>
-			<!-- <Switch bind:checked={autoRedirects}>
-				Add redirects automatically
-			</Switch> -->
 		</SplitControl>
 	{/if}
 
