@@ -67,6 +67,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
-          slug: hyvor/blogs.hyvor.com
+          slug: hyvor/blogs
           files: /app/coverage.xml
 
