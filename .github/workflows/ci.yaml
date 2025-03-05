@@ -59,6 +59,7 @@ jobs:
           docker run \
           -e DB_HOST=postgres \
           --network ci \
+          --mount type=bind,src=./coverage.xml,dst=./coverage.xml \
           backend-dev php -d memory_limit=1024M ./vendor/bin/pest --coverage-clover ./coverage.xml
 
       - name: Upload coverage reports to Codecov
