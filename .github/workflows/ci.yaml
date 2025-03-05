@@ -56,7 +56,17 @@ jobs:
 
       - name: Run Tests
         run: |
+          touch coverage.xml
           docker run \
           -e DB_HOST=postgres \
           --network ci \
-          backend-dev php -d memory_limit=1024M ./vendor/bin/pest
+          --mount type=bind,source=$(pwd)/coverage.xml,target=/app/coverage.xml \
+          backend-dev php -d memory_limit=1024M ./vendor/bin/pest --coverage-clover /app/coverage.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
+          slug: hyvor/blogs
+          files: /app/coverage.xml
+
