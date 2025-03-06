@@ -201,7 +201,7 @@ class PermalinkRepository
         }, $path);
 
         $path = $path ?? '';
-        $variantSlug = $customVariantSlug ?? $variant->slug ?? '';      // TODO: update tests
+        $variantSlug = $customVariantSlug ?? $variant->slug ?? '';
         $path = str_replace('{slug}', $variantSlug, $path);
 
         if (str_contains($path, '{tag}')) {
