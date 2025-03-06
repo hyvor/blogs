@@ -14,6 +14,7 @@ use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Post\Rules\ProsemirrorJsonRule;
 use App\Domains\Post\SlugValidationService;
 use App\Domains\Redirect\RedirectRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
@@ -288,6 +289,7 @@ class ConsolePostController extends Controller
         }
 
         if (count($variantUpdates) > 0) {
+
             if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
                 $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
 
@@ -299,27 +301,40 @@ class ConsolePostController extends Controller
                 if ($invalidCharacter) {
                     throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
                 }
+
+                $newPath = PermalinkRepository::getPostVariantPermalink($blog, $variant, customVariantSlug: $variantUpdates['slug']);
+            } else {
+                $newPath = null;
             }
 
-            $oldSlug = $variant->slug;
+            $oldPath = PermalinkRepository::getPostVariantPermalink($blog, $variant, onlyPath: true);
 
             PostRepository::updatePostVariant($variant, $variantUpdates);
 
-            if ($redirectOnSlugChange && $oldSlug && $variantUpdates['slug']) {
+            if ($redirectOnSlugChange && $oldPath && $newPath && $oldPath !== $newPath) {
 
-                if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
-                    throw new TrustedException('Redirect already exists for the old slug');
-                }
-
-                RedirectRepository::createRedirect(
+                $redirect = RedirectRepository::getRedirects(
                     $blog,
-                    false,
-                    $oldSlug,
-                    $variantUpdates['slug'],
-                    RedirectTypeEnum::PERMANENT
-                );
+                    $oldPath,
+                    1
+                )->first();
+
+                if ($redirect) {
+                    RedirectRepository::updateRedirect($redirect, [
+                        'to' => $newPath
+                    ]);
+                } else {
+                    RedirectRepository::createRedirect(
+                        $blog,
+                        false,
+                        $oldPath,
+                        $newPath,
+                        RedirectTypeEnum::PERMANENT
+                    );
+                }
             }
         }
+
         $variant->refresh();
 
         // update post and refresh variants

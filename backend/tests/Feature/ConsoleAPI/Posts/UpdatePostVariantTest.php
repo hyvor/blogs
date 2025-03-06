@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Tests\Feature\ConsoleAPI\Posts;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Data\Enums\RedirectTypeEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Redirect\RedirectRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\PostVariantHistory;
+use App\Models\Redirect;
+use Database\Factories\RedirectFactory;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\Helper\Generator\PostContentGenerator;
@@ -370,5 +374,41 @@ it('adds a redirect automatically', function () {
         );
 
     $redirect = RedirectRepository::getRedirects($blog, $variant->slug, 1)->first();
-    expect($redirect->to)->toBe($slug);
+    expect($redirect->to)->toBe(PermalinkRepository::getPostVariantPermalink($blog, $variant->refresh()));
+});
+
+it('updates the redirect when a redirect exists', function () {
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+    $post = addPost($blog);
+    $variant = $post->variants[0];
+    $language = $variant->language;
+    $slug = 'newSlug';
+
+    $path = PermalinkRepository::getPostVariantPermalink($blog, $variant, onlyPath: true);
+
+    $redirect = Redirect::factory()->create([
+        'blog_id' => $blog->id,
+        'path' => $path,
+        'to' => 'https://example.com/redirect',
+        'type' => RedirectTypeEnum::PERMANENT,
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $language->id,
+        'slug' => $slug,
+        'redirect_on_slug_change' => true,
+    ])
+        ->assertOk()
+        ->assertJson(
+            fn(AssertableJson $json) => $json
+                ->where('slug', $slug)
+                ->etc()
+        );
+
+    $redirect->refresh();
+    expect($redirect->path)->toBe($path);
+    expect($redirect->to)->toBe(PermalinkRepository::getPostVariantPermalink($blog, $variant->refresh()));
 });
