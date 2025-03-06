@@ -46,7 +46,7 @@
 
 	let changes: ReturnType<typeof getPublishedChanges> = $state(getPublishedChanges());
 	let diff = $state(true);
-	let autoRedirects = $state(false);
+	let redirectOnSlugChange = $state(false);
 
 	$effect(() => {
 		$postStore;
@@ -69,7 +69,7 @@
 				await updatePostVariant({
 					language_id: $postLanguageStore.id,
 					...changes.variant,
-					auto_redirects: autoRedirects
+					redirect_on_slug_change: redirectOnSlugChange
 				});
 			} catch (e: any) {
 				isLoading = false;
@@ -153,7 +153,7 @@
 			</div>
 			<div class="auto-redirects">
 				<span>Add redirects automatically</span>
-				<Switch bind:checked={autoRedirects} />
+				<Switch bind:checked={redirectOnSlugChange} />
 			</div>
 		</SplitControl>
 	{/if}

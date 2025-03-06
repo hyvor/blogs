@@ -212,7 +212,6 @@ class ConsolePostController extends Controller
         $request->validate([
             'language_id' => 'required|integer',
             'slug' => 'string|max:255|nullable',
-            'auto_redirects' => 'boolean',
             'status' => 'string|in:draft,published,scheduled',
             'content' => ['string', 'nullable', new ProsemirrorJsonRule],
             'content_unsaved' => ['string', 'nullable', new ProsemirrorJsonRule],
@@ -222,6 +221,7 @@ class ConsolePostController extends Controller
             'seo_primary_keyword' => 'string|max:255|nullable',
             'seo_secondary_keywords' => 'array',
             'seo_secondary_keywords.*' => 'string',
+            'redirect_on_slug_change' => 'boolean',
         ]);
 
         $languageId = $request->integer('language_id');
@@ -238,13 +238,13 @@ class ConsolePostController extends Controller
         }
 
         $variantUpdates = [];
-        $autoRedirects = false;
+        $redirectOnSlugChange = false;
 
         if ($request->has('slug')) {
             $variantUpdates['slug'] = $request->input('slug') !== null ?
                 (string)$request->string('slug') :
                 null;
-            $autoRedirects = $variantUpdates['slug'] && $request->boolean('auto_redirects');
+            $redirectOnSlugChange = $variantUpdates['slug'] && $request->boolean('redirect_on_slug_change');
         }
 
         if ($request->has('status')) {
@@ -287,42 +287,39 @@ class ConsolePostController extends Controller
             $variantUpdates['seo_secondary_keywords'] = $secondaryKeywords;
         }
 
-        if (count($variantUpdates) === 0) {
-            throw new TrustedException('No updates provided');
-        }
+        if (count($variantUpdates) > 0) {
+            if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
+                $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
 
-        if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
-            $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
+                if ($bySlugPost && $bySlugPost->id !== $post->id) {
+                    throw new TrustedException('Slug has already been taken');
+                }
 
-            if ($bySlugPost && $bySlugPost->id !== $post->id) {
-                throw new TrustedException('Slug has already been taken');
+                $invalidCharacter = $slugValidationService->getFirstInvalidCharacter($variantUpdates['slug']);
+                if ($invalidCharacter) {
+                    throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
+                }
             }
 
-            $invalidCharacter = $slugValidationService->getFirstInvalidCharacter($variantUpdates['slug']);
-            if ($invalidCharacter) {
-                throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
+            $oldSlug = $variant->slug;
+
+            PostRepository::updatePostVariant($variant, $variantUpdates);
+
+            if ($redirectOnSlugChange && $oldSlug && $variantUpdates['slug']) {
+
+                if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
+                    throw new TrustedException('Redirect already exists for the old slug');
+                }
+
+                RedirectRepository::createRedirect(
+                    $blog,
+                    false,
+                    $oldSlug,
+                    $variantUpdates['slug'],
+                    RedirectTypeEnum::PERMANENT
+                );
             }
         }
-
-        $oldSlug = $variant->slug;
-
-        PostRepository::updatePostVariant($variant, $variantUpdates);
-
-        if ($autoRedirects && $oldSlug && $variantUpdates['slug']) {
-
-            if (RedirectRepository::hasRedirectForPath($blog, $oldSlug)) {
-                throw new TrustedException('Redirect already exists for the old slug');
-            }
-
-            RedirectRepository::createRedirect(
-                $blog,
-                false,
-                $oldSlug,
-                $variantUpdates['slug'],
-                RedirectTypeEnum::PERMANENT
-            );
-        }
-
         $variant->refresh();
 
         // update post and refresh variants

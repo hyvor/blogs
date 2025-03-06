@@ -116,7 +116,7 @@ export function updatePostTags(tags: Tag[], updateStore = true) {
 
 // updates current post variant
 export function updatePostVariant(
-    data: Partial<PostVariant> & { auto_redirects?: boolean }, 
+    data: Partial<PostVariant> & { redirect_on_slug_change?: boolean }, 
     updateStore = true,
     additionalKeysToUpdate: (keyof PostVariant)[] = []
 ) {

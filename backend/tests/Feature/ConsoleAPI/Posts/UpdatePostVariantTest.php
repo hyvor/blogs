@@ -360,7 +360,7 @@ it('adds a redirect automatically', function () {
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
         'language_id' => $language->id,
         'slug' => $slug,
-        'auto_redirects' => true,
+        'redirect_on_slug_change' => true,
     ])
         ->assertOk()
         ->assertJson(
