@@ -1,0 +1,67 @@
+# Taken from here:
+# https://github.com/laravel/octane/blob/2.x/src/Commands/stubs/Caddyfile
+# ENV variables are coming from here: https://github.com/laravel/octane/blob/2.x/src/Commands/StartFrankenPhpCommand.php#L92
+
+{
+	frankenphp {
+		worker "/app/backend/public/frankenphp-worker.php" {$CADDY_SERVER_WORKER_COUNT}
+	}
+
+	on_demand_tls {
+        ask https://{$DOMAIN_APP}/api/special/caddy/allowed-domain
+    }
+
+    log {
+        level ERROR
+    }
+}
+
+# hyvorblogs.io subdomain
+*.{$DELIVERY_DOMAIN}:80 {
+	root * /app/backend/public
+	encode zstd gzip
+	php_server {
+        file_server off
+        try_files frankenphp-worker.php
+    }
+}
+
+# main app
+{$DOMAIN_APP}:80 {
+	handle /api/* {
+		root * /app/backend/public
+		encode zstd gzip
+		php_server {
+            file_server off
+            try_files {path} frankenphp-worker.php
+        }
+	}
+	handle {
+		root * /app/static
+		file_server {
+			pass_thru
+		}
+		encode zstd gzip
+		try_files {path} {path}.html
+	}
+	handle {
+		root * /app/static
+		encode zstd gzip
+		file_server
+		rewrite * /200.html
+	}
+}
+
+# custom domain
+http://, https:// {
+	tls {
+		on_demand
+	}
+
+	root * /app/backend/public
+	encode zstd gzip
+	php_server {
+       file_server off
+       try_files frankenphp-worker.php
+    }
+}

@@ -2,9 +2,8 @@
 # Alias for deppendencies
 FROM node:22.12.0 AS node
 FROM composer:2.8.4 AS composer
-FROM php:8.3-fpm AS php-fpm
+FROM dunglas/frankenphp:1.4.4-php8.3 AS frankenphp
 FROM mlocati/php-extension-installer:2.7.13 AS php-extension-installer
-#FROM caddy:2.8.4 AS caddy
 
 ###################################################
 ################  FRONTEND STAGES  ################
@@ -43,13 +42,12 @@ RUN  npm install \
 
 
 ###################################################
-FROM php-fpm AS backend-base
+FROM frankenphp AS backend-base
 
 WORKDIR /app/backend
 
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache
 
 # install npm and dependencies
@@ -79,26 +77,24 @@ COPY backend /app/backend/
 RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
 
 EXPOSE 80
-CMD php artisan serve --host=0.0.0.0 --port=80
+CMD php artisan octane:frankenphp --workers=1 --max-requests=1 --host=0.0.0.0 --port=80
 
 ###################################################
 FROM backend-base AS final
 
 # supervisor & caddy
 RUN apt update && apt install -y supervisor
-COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
 
 # copy files
 COPY backend /app/backend
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
 
 # copy configs
-COPY meta/image/Caddyfile /etc/caddy/Caddyfile
+COPY meta/image/CaddyfileOctane /etc/caddy/Caddyfile
 COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
-COPY meta/image/php-fpm.conf /usr/local/etc/php-fpm.conf
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run
 
