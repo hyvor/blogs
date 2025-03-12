@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\DataAPI;
 
 use Carbon\Carbon;
@@ -13,7 +14,6 @@ beforeEach(function () {
 });
 
 it('fetches authors without params', function () {
-
     addUsers(
         $this->blog,
         4,
@@ -27,16 +27,14 @@ it('fetches authors without params', function () {
                 ->has(
                     'data',
                     4,
-                    fn (AssertableJson $json) => $json->where('language.code', $this->lang1->code)
-                    ->etc()
+                    fn(AssertableJson $json) => $json->where('language.code', $this->lang1->code)
+                        ->etc()
                 )
                 ->has('pagination');
         });
-
 });
 
 it('works with language', function () {
-
     addUsers(
         $this->blog,
         2,
@@ -44,34 +42,28 @@ it('works with language', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'language' => $this->lang2->code,
-        ])
+        'language' => $this->lang2->code,
+    ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->has(
                     'data',
                     2,
-                    fn (AssertableJson $json) => $json->where('language.code', $this->lang2->code)
-                    ->etc()
+                    fn(AssertableJson $json) => $json->where('language.code', $this->lang2->code)
+                        ->etc()
                 )
                 ->has('pagination');
         });
-
 });
 
 it('does not work with wrong language', function () {
-
-
     dataApi($this->blog, '/authors', [
         'language' => 'jp',
     ])->assertUnprocessable();
-
-
 });
 
 it('gives correct limit', function () {
-
     addUsers(
         $this->blog,
         2,
@@ -79,8 +71,8 @@ it('gives correct limit', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'limit' => 1,
-        ])
+        'limit' => 1,
+    ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data', 1)
@@ -89,7 +81,6 @@ it('gives correct limit', function () {
 });
 
 it('gives correct page for pagination', function () {
-
     $authors = addUsers(
         $this->blog,
         2,
@@ -100,16 +91,15 @@ it('gives correct page for pagination', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'limit' => 1,
-            'page' => 2,
-        ])
+        'limit' => 1,
+        'page' => 2,
+    ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($authors) {
             $json->has('data', 1)
                 ->where('data.0.id', $authors[1]->id)
                 ->etc();
         });
-
 });
 
 it('does not work for invalid limit', function () {
@@ -137,7 +127,6 @@ it('does not work for invalid sort method', function () {
 });
 
 it('sorts by posts_count DESC correctly', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -153,12 +142,9 @@ it('sorts by posts_count DESC correctly', function () {
         $response['data'][0]['posts_count'] >= $response['data'][1]['posts_count'] &&
         $response['data'][1]['posts_count'] >= $response['data'][2]['posts_count']
     );
-
-
 });
 
 it('sorts by posts_count ASC correctly', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -174,11 +160,9 @@ it('sorts by posts_count ASC correctly', function () {
         $response['data'][0]['posts_count'] <= $response['data'][1]['posts_count'] &&
         $response['data'][1]['posts_count'] <= $response['data'][2]['posts_count']
     );
-
 });
 
 it('sorts by created_at DESC correctly', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -194,11 +178,9 @@ it('sorts by created_at DESC correctly', function () {
         $response['data'][0]['created_at'] >= $response['data'][1]['created_at'] &&
         $response['data'][1]['created_at'] >= $response['data'][2]['created_at']
     );
-
 });
 
 it('sorts by created_at ASC correctly', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -217,7 +199,6 @@ it('sorts by created_at ASC correctly', function () {
 });
 
 it('filters keys', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -235,11 +216,9 @@ it('filters keys', function () {
                 ->missing('slug');
         })->etc();
     });
-
 });
 
 it('filters by id', function () {
-
     $authors = addUsers(
         $this->blog,
         2,
@@ -247,16 +226,14 @@ it('filters by id', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'filter' => "id={$authors[0]->id}",
-        ])
+        'filter' => "id={$authors[0]->id}",
+    ])
         ->assertOk()
         ->assertJsonPath('data.0.id', $authors[0]->id)
         ->assertJsonCount(1, 'data');
-
 });
 
 it('filters by slug', function () {
-
     $authors = addUsers(
         $this->blog,
         2,
@@ -264,17 +241,14 @@ it('filters by slug', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'filter' => "slug='{$authors[0]->slug}'",
-        ])
+        'filter' => "slug='{$authors[0]->slug}'",
+    ])
         ->assertOk()
         ->assertJsonPath('data.0.slug', $authors[0]->slug)
         ->assertJsonCount(1, 'data');
-
-
 });
 
 it('filters by posts_count', function () {
-
     addUsers(
         $this->blog,
         3,
@@ -286,14 +260,12 @@ it('filters by posts_count', function () {
     );
 
     dataApi($this->blog, '/authors', [
-            'filter' => 'posts_count>100',
-        ])
+        'filter' => 'posts_count>100',
+    ])
         ->assertJsonCount(2, 'data');
-
 });
 
 it('filters by created_at', function () {
-
     $tomorrow = new Carbon('tomorrow');
     addUsers(
         $this->blog,
@@ -310,11 +282,9 @@ it('filters by created_at', function () {
         ->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.created_at', $tomorrow->timestamp);
-
 });
 
 it('sends total correctly', function () {
-
     addUsers(
         $this->blog,
         3,
