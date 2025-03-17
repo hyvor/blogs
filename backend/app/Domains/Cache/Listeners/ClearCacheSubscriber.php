@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Domains\Cache\Listeners;
@@ -7,6 +8,7 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
+use App\Domains\Cache\CacheVersion;
 use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\LanguageRepository;
@@ -305,6 +307,7 @@ class ClearCacheSubscriber
     public function onStylesEdit(StylesEditedEvent $event): void
     {
         $this->clearSingleCache($event->blog, '/styles.css');
+        CacheVersion::updateStyleVersion($event->blog);
     }
 
     public function onRedirectEvent(RedirectChangedEvent $event): void
