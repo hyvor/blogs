@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -236,6 +237,14 @@ class Blog extends Model
     {
         $url = $this->url();
         return strval(preg_replace('/^https?:\/\//', '', $url));
+    }
+
+    /**
+     * @return HasOne<S3Storage, $this>
+     */
+    public function s3Storage(): HasOne
+    {
+        return $this->hasOne(S3Storage::class);
     }
 
     /**
