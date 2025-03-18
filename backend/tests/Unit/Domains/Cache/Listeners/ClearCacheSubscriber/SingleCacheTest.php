@@ -78,10 +78,16 @@ it('clears cache when asset updates', function () {
 it('clears cache when styles updates', function () {
     $this->mock(
         CacheService::class,
-        fn(MockInterface $mock) => $mock
-            ->shouldReceive('clearSingleCache')
-            ->once()
-            ->with('/styles.css')
+        function (MockInterface $mock) {
+            $mock
+                ->shouldReceive('clearSingleCache')
+                ->once()
+                ->with('/styles.css');
+
+            $mock
+                ->shouldReceive('clearTemplateCache')
+                ->once();
+        }
     )->makePartial();
 
     $blog = blog();

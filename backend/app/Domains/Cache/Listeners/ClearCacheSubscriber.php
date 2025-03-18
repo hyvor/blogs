@@ -308,6 +308,8 @@ class ClearCacheSubscriber
     {
         $this->clearSingleCache($event->blog, '/styles.css');
         CacheVersion::updateStyleVersion($event->blog);
+        // to increase the version in HTML, we have to clear template cache
+        $this->clearTemplateCache($event->blog);
     }
 
     public function onRedirectEvent(RedirectChangedEvent $event): void
