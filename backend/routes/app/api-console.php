@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Http\ConsoleApi\Controllers\ConsoleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
@@ -37,7 +39,7 @@ Route::prefix('/api/console/v0')
     ->middleware([
         CorsOnLocalhost::class,
     ])
-    ->group(function() {
+    ->group(function () {
         Route::get('/init-temp', [ConsoleController::class, 'initTemp']);
     });
 
@@ -82,12 +84,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         CorsOnLocalhost::class
     ])
     ->group(function () {
-
         /**
          * Posts and media
          */
         Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
-
             // blog
             Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
             Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
@@ -148,7 +148,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/gpt/prompt', [ConsoleGptController::class, 'newPrompt']);
             Route::get('/gpt/post-history', [ConsoleGptController::class, 'getPostChatHistory']);
             Route::delete('/gpt/post-history', [ConsoleGptController::class, 'deletePostChatHistory']);
-
         });
 
         /**
@@ -175,7 +174,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Settings, users, and theme
          */
         Route::middleware('role:owner|admin')->group(function () {
-
             // webhooks
             Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
             Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
@@ -257,15 +255,29 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          */
         Route::middleware('role:owner|admin')
             ->prefix('integrations')
-            ->group(function() {
+            ->group(function () {
+                Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
+                Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
+                Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
+                Route::get(
+                    '/hyvor-talk/gated-content-rules',
+                    [IntegrationHyvorTalkController::class, 'getGatedContentRules']
+                );
+                Route::post(
+                    '/hyvor-talk/gated-content-rule',
+                    [IntegrationHyvorTalkController::class, 'createGatedContentRule']
+                );
+                Route::patch(
+                    '/hyvor-talk/gated-content-rule/{id}',
+                    [IntegrationHyvorTalkController::class, 'updateGatedContentRule']
+                );
+                Route::delete(
+                    '/hyvor-talk/gated-content-rule/{id}',
+                    [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']
+                );
 
-            Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
-            Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
-            Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
-            Route::get('/hyvor-talk/gated-content-rules', [IntegrationHyvorTalkController::class, 'getGatedContentRules']);
-            Route::post('/hyvor-talk/gated-content-rule', [IntegrationHyvorTalkController::class, 'createGatedContentRule']);
-            Route::patch('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'updateGatedContentRule']);
-            Route::delete('/hyvor-talk/gated-content-rule/{id}', [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']);
+                Route::get('/s3', [S3StorageController::class, 'get']);
+                Route::post('/s3', [S3StorageController::class, 'set']);
 
                 Route::get('/s3', [S3StorageController::class, 'get']);
                 Route::post('/s3/test-connection', [S3StorageController::class, 'testConnection']);
@@ -279,10 +291,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         /**
          * Misc
          */
-        Route::prefix('misc')->group(function() {
-
+        Route::prefix('misc')->group(function () {
             Route::get('/prosemirror/json', [ConsoleMiscProsemirrorController::class, 'getJson']);
-
         });
 
         /**
@@ -293,7 +303,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
             Route::delete('/blog/cache', [ConsoleDangerController::class, 'deleteCache']);
         });
-
     });
 
 // SPECIAL
