@@ -66,6 +66,8 @@ class BlogObject
 
     public ColorModeDefaultEnum $color_mode_default;
 
+    public int $cache_version_styles;
+
     public function __construct(Blog $blog, Language $language)
     {
         $variants = $blog->variants;
@@ -116,6 +118,8 @@ class BlogObject
         $this->posts_count = $blog->getCount('posts');
 
         $this->languages = $blog->languages->mapInto(LanguageObject::class)->toArray();
+
+        $this->cache_version_styles = intval($meta->cache_version_styles);
     }
 
 }

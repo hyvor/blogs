@@ -87,7 +87,7 @@
 <link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
 <meta name="generator" content="Hyvor Blogs" />
 
-<link rel="stylesheet" href="{{ _blog.base_url }}/styles.css" />
+<link rel="stylesheet" href="{{ _blog.base_url }}/styles.css?v={{ _blog.cache_version_styles }}" />
 
 {% if _config.THEME_FONTS %}
 <link rel="stylesheet" href="{{ _blog.base_url }}/fonts/css/{{ _config.THEME_FONTS }}" />
