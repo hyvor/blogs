@@ -280,6 +280,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                     '/hyvor-talk/gated-content-rule/{id}',
                     [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']
                 );
+<<<<<<< HEAD
+=======
+
+                Route::get('/s3', [S3StorageController::class, 'get']);
+                Route::post('/s3', [S3StorageController::class, 'set']);
+>>>>>>> afd5652e (S3 wip)
 
                 Route::get('/s3', [S3StorageController::class, 'get']);
                 Route::post('/s3', [S3StorageController::class, 'set']);
