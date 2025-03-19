@@ -351,13 +351,14 @@ it('updates to null', function () {
 });
 
 it('adds a redirect automatically', function () {
-
     $blog = blogWithAccess();
     addPrimaryLanguage($blog);
     addDefaultRoutes($blog);
-    $post = addPost($blog);
+    $post = addPost($blog, variantState: ['slug' => 'old-slug']);
     $variant = $post->variants[0];
     $language = $variant->language;
+
+    $blogUrl = "https://$blog->subdomain.hyvorblogs.io";
 
     $slug = 'newSlug';
 
@@ -373,12 +374,11 @@ it('adds a redirect automatically', function () {
                 ->etc()
         );
 
-    $redirect = RedirectRepository::getRedirects($blog, $variant->slug, 1)->first();
-    expect($redirect->to)->toBe(PermalinkRepository::getPostVariantPermalink($blog, $variant->refresh()));
+    $redirect = RedirectRepository::getRedirectByPath($blog, "/old-slug");
+    expect($redirect->to)->toBe("$blogUrl/$slug");
 });
 
 it('updates the redirect when a redirect exists', function () {
-
     $blog = blogWithAccess();
     addPrimaryLanguage($blog);
     addDefaultRoutes($blog);

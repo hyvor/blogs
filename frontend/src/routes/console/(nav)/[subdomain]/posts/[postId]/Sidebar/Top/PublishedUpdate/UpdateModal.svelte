@@ -14,6 +14,7 @@
 		SplitControl,
 		Switch,
 		Tag,
+		Tooltip,
 		Validation,
 		toast
 	} from '@hyvor/design/components';
@@ -38,6 +39,7 @@
 	import TagChanges from './Changes/TagChanges.svelte';
 	import AuthorChanges from './Changes/AuthorChanges.svelte';
 	import { slugGetInvalidCharater } from '../../Settings/slug';
+	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
 	interface Props {
 		show?: boolean;
 	}
@@ -46,7 +48,7 @@
 
 	let changes: ReturnType<typeof getPublishedChanges> = $state(getPublishedChanges());
 	let diff = $state(true);
-	let redirectOnSlugChange = $state(false);
+	let redirectOnSlugChange = $state(true);
 
 	$effect(() => {
 		$postStore;
@@ -152,7 +154,14 @@
 				{/if}
 			</div>
 			<div class="auto-redirects">
-				<span>Add redirects automatically</span>
+				<span style="display:inline-flex;align-items:center;gap:5px;">
+					Create redirect
+					<Tooltip
+						text="Automatically create a permanent redirect from the old URL to the new URL."
+					>
+						<IconInfoCircleFill />
+					</Tooltip>
+				</span>
 				<Switch bind:checked={redirectOnSlugChange} />
 			</div>
 		</SplitControl>
@@ -256,7 +265,6 @@
 		margin-right: 10px;
 	}
 	.auto-redirects {
-		color: var(--text-light);
 		font-size: 14px;
 	}
 	.auto-redirects span {

@@ -22,7 +22,6 @@ use App\Models\Blog;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use function PHPUnit\Framework\assertNotNull;
 
 class ConsolePostController extends Controller
 {
@@ -289,7 +288,6 @@ class ConsolePostController extends Controller
         }
 
         if (count($variantUpdates) > 0) {
-
             if (array_key_exists('slug', $variantUpdates) && $variantUpdates['slug'] !== null) {
                 $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, $variantUpdates['slug']);
 
@@ -302,7 +300,11 @@ class ConsolePostController extends Controller
                     throw new TrustedException('Slug cannot contain ' . $invalidCharacter);
                 }
 
-                $newPath = PermalinkRepository::getPostVariantPermalink($blog, $variant, customVariantSlug: $variantUpdates['slug']);
+                $newPath = PermalinkRepository::getPostVariantPermalink(
+                    $blog,
+                    $variant,
+                    customVariantSlug: $variantUpdates['slug']
+                );
             } else {
                 $newPath = null;
             }
@@ -312,12 +314,7 @@ class ConsolePostController extends Controller
             PostRepository::updatePostVariant($variant, $variantUpdates);
 
             if ($redirectOnSlugChange && $oldPath && $newPath && $oldPath !== $newPath) {
-
-                $redirect = RedirectRepository::getRedirects(
-                    $blog,
-                    $oldPath,
-                    1
-                )->first();
+                $redirect = RedirectRepository::getRedirectByPath($blog, $oldPath);
 
                 if ($redirect) {
                     RedirectRepository::updateRedirect($redirect, [
