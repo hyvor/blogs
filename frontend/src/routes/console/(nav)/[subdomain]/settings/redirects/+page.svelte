@@ -20,17 +20,17 @@
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 	import type { Redirect } from '../../../../lib/types';
 
-	let isCreating = false;
+	let isCreating = $state(false);
 
-	let redirects: Redirect[] = [];
-	let isLoading = true;
-	let hasMore = false;
-	let isLoadingMore = false;
+	let redirects: Redirect[] = $state([]);
+	let isLoading = $state(true);
+	let hasMore = $state(false);
+	let isLoadingMore = $state(false);
 
 	const limit = 25;
 
-	let searchVal = '';
-	let search = '';
+	let searchVal = $state('');
+	let search = $state('');
 
 	const searchActions = {
 		onKeydown: (e: KeyboardEvent) => {
@@ -94,10 +94,6 @@
 </script>
 
 <SettingsTop>
-	<Button size="small" on:click={() => (isCreating = true)}>
-		Add Redirect <IconPlus slot="end" />
-	</Button>
-
 	<div class="search-wrap">
 		<TextInput
 			bind:value={searchVal}
@@ -106,24 +102,25 @@
 			on:keydown={searchActions.onKeydown}
 			size="small"
 		>
-			<svelte:fragment slot="end">
+			{#snippet end()}
 				{#if searchVal.trim() !== ''}
-					<IconButton
-						variant="invisible"
-						color="gray"
-						size={16}
-						on:click={searchActions.onClear}
-					>
+					<IconButton variant="invisible" color="gray" size={16} on:click={searchActions.onClear}>
 						<IconX size={12} />
 					</IconButton>
 				{/if}
-			</svelte:fragment>
+			{/snippet}
 		</TextInput>
 
 		{#if search !== searchVal}
 			<span class="press-enter"> ⏎ </span>
 		{/if}
 	</div>
+
+	<Button size="small" on:click={() => (isCreating = true)}>
+		Add Redirect {#snippet end()}
+			<IconPlus />
+		{/snippet}
+	</Button>
 </SettingsTop>
 
 <div class="redirects">
@@ -166,7 +163,7 @@
 	}
 	.search-wrap {
 		display: flex;
-		margin-left: 6px;
+		margin-right: 6px;
 		.press-enter {
 			color: var(--text-light);
 			font-size: 14px;

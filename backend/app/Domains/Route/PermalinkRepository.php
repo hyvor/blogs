@@ -182,7 +182,8 @@ class PermalinkRepository
         Blog $blog,
         PostVariant $variant,
         ?Language $language = null, // send already loaded language
-        bool $onlyPath = false
+        bool $onlyPath = false,
+        ?string $customVariantSlug = null
     ): string {
         $language ??= $variant->language;
 
@@ -200,7 +201,8 @@ class PermalinkRepository
         }, $path);
 
         $path = $path ?? '';
-        $path = str_replace('{slug}', $variant?->slug ?? '', $path);
+        $variantSlug = $customVariantSlug ?? $variant->slug ?? '';
+        $path = str_replace('{slug}', $variantSlug, $path);
 
         if (str_contains($path, '{tag}')) {
             $path = str_replace('{tag}', $variant->post->tags[0]?->slug ?? '', $path);
