@@ -31,7 +31,7 @@ services:
 
     volumes:
       # caddy data
-      - caddy_data:/root/.local/share/caddy
+      - caddy_data:/data/caddy
 
   traefik:
     image: traefik:v2.9

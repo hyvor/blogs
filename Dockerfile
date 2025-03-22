@@ -3,7 +3,6 @@
 FROM node:22.12.0 AS node
 FROM composer:2.8.4 AS composer
 FROM dunglas/frankenphp:1.4.4-php8.3 AS frankenphp
-FROM mlocati/php-extension-installer:2.7.13 AS php-extension-installer
 
 ###################################################
 ################  FRONTEND STAGES  ################
