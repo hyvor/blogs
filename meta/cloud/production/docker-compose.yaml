@@ -20,6 +20,12 @@ services:
       - "traefik.tcp.routers.custom-domain.tls.passthrough=true"
       - "traefik.tcp.routers.custom-domain.service=custom-domain-service"
       - "traefik.tcp.services.custom-domain-service.loadbalancer.server.port=443"
+
+      # metrics
+      - "traefik.http.routers.metrics.entrypoints=metrics"
+      - "traefik.http.routers.metrics.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.metrics.service=metrics-service"
+      - "traefik.http.services.metrics-service.loadbalancer.server.port=9666"
     healthcheck:
       test: 'curl -f --header "Host: $DOMAIN_APP" http://localhost || exit 1 && curl -f --header "Host: $DOMAIN_APP" http://localhost/api/special/health || exit 1'
 
@@ -36,12 +42,14 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.metrics.address=:9666"
       - "--log=true"
       - "--log.level=ERROR"
       - "--log.filePath=/var/log/traefik.log"
     ports:
       - "80:80"
       - "443:443"
+      - "9666:9666" # Caddy Metrics
       # - "8080:8080" # Traefik dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
