@@ -49,7 +49,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "9666:9666" # Caddy Metrics
+      - "${METRICS_IP:-127.0.0.1}:9666:9666" # Caddy Metrics
       # - "8080:8080" # Traefik dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
