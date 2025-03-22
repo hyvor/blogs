@@ -1,51 +1,59 @@
 version: "3.9"
 
 services:
-    hyvor-blogs:
-        image: hyvor/blogs:${IMAGE_VERSION:-latest}
-        env_file: .env
-        labels:
-            - "traefik.enable=true"
+  hyvor-blogs:
+    image: hyvor/blogs:${IMAGE_VERSION:-latest}
+    env_file: .env
+    labels:
+      - "traefik.enable=true"
 
-            # blogs.hyvor.com and hyvorblogs.io (Cloudflare SSL)
-            - "traefik.http.routers.hyvorblogs.entrypoints=web"
-            - "traefik.http.routers.hyvorblogs.rule=PathPrefix(`/`)"
-            - "traefik.http.routers.hyvorblogs.service=hyvorblogs-service"
-            - "traefik.http.services.hyvorblogs-service.loadbalancer.server.port=80"
-            
-            # custom domain (with SSL support)
-            - "traefik.tcp.routers.custom-domain.rule=HostSNI(`*`)"
-            - "traefik.tcp.routers.custom-domain.entrypoints=websecure"
-            - "traefik.tcp.routers.custom-domain.tls=true"
-            - "traefik.tcp.routers.custom-domain.tls.passthrough=true"
-            - "traefik.tcp.routers.custom-domain.service=custom-domain-service"
-            - "traefik.tcp.services.custom-domain-service.loadbalancer.server.port=443"
-        healthcheck:
-            test: 'curl -f --header "Host: $DOMAIN_APP" http://localhost || exit 1 && curl -f --header "Host: $DOMAIN_APP" http://localhost/api/special/health || exit 1'
+      # blogs.hyvor.com and hyvorblogs.io (Cloudflare SSL)
+      - "traefik.http.routers.hyvorblogs.entrypoints=web"
+      - "traefik.http.routers.hyvorblogs.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.hyvorblogs.service=hyvorblogs-service"
+      - "traefik.http.services.hyvorblogs-service.loadbalancer.server.port=80"
 
-        volumes:
-            # caddy data
-            -  caddy_data:/root/.local/share/caddy
+      # custom domain (with SSL support)
+      - "traefik.tcp.routers.custom-domain.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.custom-domain.entrypoints=websecure"
+      - "traefik.tcp.routers.custom-domain.tls=true"
+      - "traefik.tcp.routers.custom-domain.tls.passthrough=true"
+      - "traefik.tcp.routers.custom-domain.service=custom-domain-service"
+      - "traefik.tcp.services.custom-domain-service.loadbalancer.server.port=443"
 
-    traefik:
-        image: traefik:v2.9
-        container_name: traefik
-        command:
-            # - "--api.insecure=true"
-            - "--providers.docker=true"
-            - "--providers.docker.exposedbydefault=false"
-            - "--entrypoints.web.address=:80"
-            - "--entrypoints.websecure.address=:443"
-            - "--log=true"
-            - "--log.level=ERROR"
-            - "--log.filePath=/var/log/traefik.log"
-        ports:
-            - "80:80"
-            - "443:443"
-            # - "8080:8080" # Traefik dashboard
-        volumes:
-            - "/var/run/docker.sock:/var/run/docker.sock"
-            - "./traefik/log:/var/log"
+      # metrics
+      - "traefik.http.routers.metrics.entrypoints=metrics"
+      - "traefik.http.routers.metrics.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.metrics.service=metrics-service"
+      - "traefik.http.services.metrics-service.loadbalancer.server.port=9666"
+    healthcheck:
+      test: 'curl -f --header "Host: $DOMAIN_APP" http://localhost || exit 1 && curl -f --header "Host: $DOMAIN_APP" http://localhost/api/special/health || exit 1'
+
+    volumes:
+      # caddy data
+      - caddy_data:/root/.local/share/caddy
+
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    command:
+      # - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.metrics.address=:9666"
+      - "--log=true"
+      - "--log.level=ERROR"
+      - "--log.filePath=/var/log/traefik.log"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9666:9666" # Caddy Metrics
+      # - "8080:8080" # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik/log:/var/log"
 
 volumes:
-    caddy_data:
+  caddy_data:
