@@ -47,7 +47,7 @@ WORKDIR /app/backend
 
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache
+RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache apcu
 
 # install npm and dependencies
 COPY --from=node /usr/local/include/node /usr/local/include/node
@@ -71,6 +71,7 @@ RUN composer install --no-interaction \
 
 # set up code and install composer packages
 COPY backend /app/backend/
+COPY meta/dev/php.dev.ini /usr/local/etc/php/conf.d/app.ini
 
 # use local internal library
 RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
@@ -81,7 +82,7 @@ CMD php artisan octane:frankenphp --workers=1 --max-requests=1 --host=0.0.0.0 --
 ###################################################
 FROM backend-base AS final
 
-# supervisor & caddy
+# supervisor
 RUN apt update && apt install -y supervisor
 
 # copy files
