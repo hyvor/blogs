@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8f39e45e7cf2cdef5ed241fe98bf2d5",
+    "content-hash": "af771f69c9bd69ee8a4f60addd0619b3",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1451,7 +1451,7 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "2.0.5",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
@@ -1502,7 +1502,7 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/2.0.5"
+                "source": "https://github.com/hyvor/internal/tree/2.1.0"
             },
             "time": "2025-03-23T05:43:56+00:00"
         },
