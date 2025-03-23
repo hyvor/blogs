@@ -22,6 +22,15 @@
     metrics
 }
 
+:9667 {
+    root * /app/backend/public
+    php_server {
+        file_server off
+        env HYVOR_METRICS_SERVER 1
+        try_files frankenphp-worker.php
+    }
+}
+
 # hyvorblogs.io subdomain
 *.{$DELIVERY_DOMAIN}:80 {
 	root * /app/backend/public
