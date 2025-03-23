@@ -71,6 +71,7 @@ RUN composer install --no-interaction \
 
 # set up code and install composer packages
 COPY backend /app/backend/
+COPY meta/dev/php.dev.ini /usr/local/etc/php/conf.d/app.ini
 
 # use local internal library
 RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
