@@ -60,7 +60,7 @@ jobs:
             
             # tailscale ip for metrics
             METRICS_IP=$(ip -4 -o addr show dev tailscale0 | awk '{print $4}' | cut -d/ -f1)
-            export METRICS_IP
+            sed -i "s/\${METRICS_IP:-127.0.0.1}/$METRICS_IP/g" docker-compose.yaml
             
             # fresh pull
             docker pull $DOCKERHUB_USERNAME/blogs:$IMAGE_VERSION
