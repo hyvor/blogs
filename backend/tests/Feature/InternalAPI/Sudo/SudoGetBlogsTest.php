@@ -55,5 +55,24 @@ class SudoGetBlogsTest extends DatabaseTestCase
             ->assertJsonCount(1)
             ->assertJsonPath('0.subdomain', $blog1->subdomain);
     }
+    
+    public function testFiltersBlogsByUserId(): void
+    {
+        $blog1 = Blog::factory()->create([
+            'id' => 2001,
+            'created_at' => now()->subDays(31),
+            'trial_ends_at' => now()->subDays(10),
+            'hyvor_user_id' => 1001
+        ]);
+
+        $this->internalApi(
+            'GET',
+            '/core/sudo/blogs',
+            ['user_id' => $blog1->hyvor_user_id]
+        )
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.hyvor_user_id', $blog1->hyvor_user_id);
+    }
 
 }

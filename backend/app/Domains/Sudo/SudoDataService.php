@@ -14,6 +14,7 @@ class SudoDataService
     public static function Blogs(
         ?int $blogId,
         ?string $subdomain,
+        ?int $userId,
         string $sortBy,
         string $sort,
         int $limit,
@@ -26,6 +27,7 @@ class SudoDataService
         return Blog::with('variants')
             ->when($blogId, fn($query, $blogId) => $query->where('blogs.id', $blogId))
             ->when($subdomain, fn($query, $subdomain) => $query->where('blogs.subdomain', $subdomain))
+            ->when($userId, fn($query, $userId) => $query->where('blogs.hyvor_user_id', $userId))
             ->withCount('posts')
             ->orderBy($sortBy, $sort)
             ->limit($limit)
