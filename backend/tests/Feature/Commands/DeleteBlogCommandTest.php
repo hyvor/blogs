@@ -10,7 +10,7 @@ class DeleteBlogCommandTest extends DatabaseTestCase
     public function testDeleteBlogsByUserId(): void
     {
         $userId = 1;
-        $blogs = Blog::factory()->count(2)->create(['user_id' => $userId]);
+        $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
 
         $this->artisan('delete:blog', ['--userId' => $userId])
@@ -29,7 +29,7 @@ class DeleteBlogCommandTest extends DatabaseTestCase
     public function testDeleteABlog(): void
     {
         $userId = 1;
-        $blogs = Blog::factory()->count(2)->create(['user_id' => $userId]);
+        $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
 
         $this->artisan('delete:blog', ['--blogId' => $blogs[0]->id])

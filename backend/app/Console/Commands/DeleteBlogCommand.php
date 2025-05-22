@@ -24,7 +24,7 @@ class DeleteBlogCommand extends Command
             return;
         }
 
-        $blogs = $userId ? Blog::where('user_id', $userId)->get() : Blog::where('id', $blogId)->get();
+        $blogs = $userId ? Blog::where('hyvor_user_id', $userId)->get() : Blog::where('id', $blogId)->get();
 
         if ($blogs->isEmpty()) {
             $this->error('No blogs to delete!');
