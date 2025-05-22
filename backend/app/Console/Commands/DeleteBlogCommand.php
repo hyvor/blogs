@@ -20,7 +20,7 @@ class DeleteBlogCommand extends Command
             return;
         }
 
-        if (!$this->confirm('Are you sure you want to delete all the blogs of the user with ID: ' . $userId . '?')) {
+        if ($userId && !$this->confirm('Are you sure you want to delete all the blogs of the user with ID: ' . $userId . '?')) {
             return;
         }
 
@@ -30,7 +30,7 @@ class DeleteBlogCommand extends Command
             $this->error('No blogs to delete!');
         }
 
-        if (!$this->confirm('Are you sure you want to delete blogs with following : ' . $blogs->pluck('subdomain')->implode(', ') . '?')) {
+        if (!$this->confirm('Are you sure you want to delete blogs with following subdomains: ' . $blogs->pluck('subdomain')->implode(', ') . '?')) {
             return;
         }
 

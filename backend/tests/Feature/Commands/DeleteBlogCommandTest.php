@@ -3,19 +3,22 @@
 namespace Tests\Feature\Commands;
 
 use App\Models\Blog;
+use Hyvor\Internal\Resource\ResourceFake;
 use Tests\Case\DatabaseTestCase;
 
 class DeleteBlogCommandTest extends DatabaseTestCase
 {
     public function testDeleteBlogsByUserId(): void
     {
+        ResourceFake::enable();
+
         $userId = 1;
         $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
 
         $this->artisan('delete:blog', ['--userId' => $userId])
             ->expectsConfirmation('Are you sure you want to delete all the blogs of the user with ID: ' . $userId . '?', 'yes')
-            ->expectsConfirmation('Are you sure you want to delete blogs with following : ' . $blogs->pluck('subdomain')->implode(', ') . '?', 'yes')
+            ->expectsConfirmation('Are you sure you want to delete blogs with following subdomains: ' . $blogs->pluck('subdomain')->implode(', ') . '?', 'yes')
             ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[0]->subdomain)
             ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[1]->subdomain)
             ->assertExitCode(0);
@@ -28,12 +31,14 @@ class DeleteBlogCommandTest extends DatabaseTestCase
 
     public function testDeleteABlog(): void
     {
+        ResourceFake::enable();
+
         $userId = 1;
         $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
 
         $this->artisan('delete:blog', ['--blogId' => $blogs[0]->id])
-            ->expectsConfirmation('Are you sure you want to delete blogs with following : ' . $blogs[0]->subdomain . '?', 'yes')
+            ->expectsConfirmation('Are you sure you want to delete blogs with following subdomains: ' . $blogs[0]->subdomain . '?', 'yes')
             ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[0]->subdomain)
             ->assertExitCode(0);
 
