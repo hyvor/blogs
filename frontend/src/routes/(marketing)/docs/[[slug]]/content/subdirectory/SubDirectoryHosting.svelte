@@ -35,6 +35,8 @@
 	<Text small light style="margin-left:5px">on hyvor.com/blog</Text>
 </p>
 
+<Divider color="var(--border)" margin={40} />
+
 <h2 id="cloudflare-workers">
 	2. Cloudflare Workers <Tag color="blue">#nocode</Tag>
 </h2>
