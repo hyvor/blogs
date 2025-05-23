@@ -16,7 +16,7 @@ class DeleteBlogCommand extends Command
         $blogId = $this->option('blogId');
 
         if (!$userId && !$blogId) {
-            $this->error('You must provide either a userId or a blogId.');
+            $this->error('You must provide either a userId or a blogId.');     // @codeCoverageIgnore
             return;     // @codeCoverageIgnore
         }
 
