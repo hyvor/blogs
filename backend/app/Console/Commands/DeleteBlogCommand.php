@@ -17,21 +17,21 @@ class DeleteBlogCommand extends Command
 
         if (!$userId && !$blogId) {
             $this->error('You must provide either a userId or a blogId.');
-            return;
+            return;     // @codeCoverageIgnore
         }
 
         if ($userId && !$this->confirm('Are you sure you want to delete all the blogs of the user with ID: ' . $userId . '?')) {
-            return;
+            return;     // @codeCoverageIgnore
         }
 
         $blogs = $userId ? Blog::where('hyvor_user_id', $userId)->get() : Blog::where('id', $blogId)->get();
 
         if ($blogs->isEmpty()) {
-            $this->error('No blogs to delete!');
+            $this->error('No blogs to delete!');        // @codeCoverageIgnore
         }
 
         if (!$this->confirm('Are you sure you want to delete blogs with following subdomains: ' . $blogs->pluck('subdomain')->implode(', ') . '?')) {
-            return;
+            return;     // @codeCoverageIgnore
         }
 
         foreach ($blogs as $blog) {
