@@ -5,6 +5,7 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
     import logoCfWorkers from './cf-workers.svg';
     import logoLaravel from './laravel.svg';
     import logoNext from './next.svg';
+    import logoDocker from './docker.svg';
     import logoSymfony from './symfony.svg';
 	import Type from "./Type.svelte";
     import iconHosting from './host-anywhere.svg';
@@ -64,6 +65,13 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
         </div>
 
         <div class="methods">
+            <a href="https://hyvor.com/blog/docker-subdirectory-blog" target="_blank">
+                <img src={logoDocker} alt="Docker Logo" />
+                <span>
+                    Docker
+                </span>
+            </a>
+
             <a href="https://hyvor.com/blog/cloudflare-workers-blog" target="_blank">
                 <img src={logoCfWorkers} alt="Cloudflare Workers Logo" />
                 <span>
