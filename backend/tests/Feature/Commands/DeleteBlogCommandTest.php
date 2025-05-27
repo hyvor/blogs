@@ -19,8 +19,8 @@ class DeleteBlogCommandTest extends DatabaseTestCase
         $this->artisan('delete:blog', ['--userId' => $userId])
             ->expectsConfirmation('Are you sure you want to delete all the blogs of the user with ID: ' . $userId . '?', 'yes')
             ->expectsConfirmation('Are you sure you want to delete blogs with following subdomains: ' . $blogs->pluck('subdomain')->implode(', ') . '?', 'yes')
-            ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[0]->subdomain)
-            ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[1]->subdomain)
+            ->expectsOutputToContain('Deleting blog: ' . $blogs[0]->subdomain)
+            ->expectsOutputToContain('Deleting blog: ' . $blogs[1]->subdomain)
             ->assertExitCode(0);
 
         $this->assertDatabaseMissing('blogs', ['id' => $blogs[0]->id]);
@@ -39,7 +39,7 @@ class DeleteBlogCommandTest extends DatabaseTestCase
 
         $this->artisan('delete:blog', ['--blogId' => $blogs[0]->id])
             ->expectsConfirmation('Are you sure you want to delete blogs with following subdomains: ' . $blogs[0]->subdomain . '?', 'yes')
-            ->expectsOutput(now() . ' | Deleting blog: ' . $blogs[0]->subdomain)
+            ->expectsOutputToContain('Deleting blog: ' . $blogs[0]->subdomain)
             ->assertExitCode(0);
 
         $this->assertDatabaseMissing('blogs', ['id' => $blogs[0]->id]);

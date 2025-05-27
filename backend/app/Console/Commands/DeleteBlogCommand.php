@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class DeleteBlogCommand extends Command
 {
-    protected $signature = 'delete:blog {--userId} {--blogId}';
+    protected $signature = 'delete:blog {--userId=} {--blogId=}';
 
     public function handle(): void
     {
