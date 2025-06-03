@@ -5,8 +5,7 @@ namespace Tests\Feature\InternalAPI\Sudo;
 use App\Domains\Sudo\SudoAnalyticsService;
 use App\Http\InternalApi\SudoController;
 use App\Models\Blog;
-use App\Models\Subscription;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\Testing\CallsInternalApi;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -40,7 +39,7 @@ class SudoOverviewTest extends DatabaseTestCase
             'trial_ends_at' => now()->addDays(18)
         ]);
 
-        $this->internalApi('GET', '/core/sudo/overview', from: ComponentType::CORE)
+        $this->internalApi('/core/sudo/overview', from: Component::CORE)
             ->assertOk()
 
             // blogs

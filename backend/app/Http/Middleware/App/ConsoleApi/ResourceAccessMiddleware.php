@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
@@ -21,6 +22,7 @@ use App\Models\ThemeFile;
 use App\Models\User;
 use App\Models\Webhook;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class ResourceAccessMiddleware
@@ -29,7 +31,7 @@ class ResourceAccessMiddleware
     private Blog $blog;
 
     /**
-     * @var array<string, class-string>
+     * @var array<string, class-string<Model>>
      */
     private $models = [
         '/post' => Post::class,
@@ -82,6 +84,7 @@ class ResourceAccessMiddleware
 
             // ex: Post model
             $modelClass = $this->models[$routePrefix];
+            /** @var null|mixed $model */
             $model = $modelClass::find($id);
 
             if (!$model) {

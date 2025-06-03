@@ -2,7 +2,6 @@
 
 namespace App\Domains\Post\Content\Nodes\Bookmark;
 
-use App\Data\Enums\ResultEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Data\Objects\ConsoleAPI\UrlDataObject;
@@ -19,67 +18,66 @@ use Hyvor\Phrosemirror\Types\NodeType;
 
 class Bookmark extends NodeType
 {
+    public string $name = "bookmark";
 
-    public string $name = 'bookmark';
-    
     public string $attrs = BookmarkAttrs::class;
-    public string $group = 'block';
+    public string $group = "block";
 
     public function __construct(public Blog $blog) {}
 
     public function toHtml(Node $node, string $children): string
     {
-
         $blog = $this->blog;
 
-        $url = $node->attr('url');
+        $url = $node->attr("url");
 
         if (!$url) {
-            return '';
+            return "";
         }
 
         try {
-            $unfolded = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
+            $unfolded = app(UrlDataRepository::class)->fetch(
+                $url,
+                UrlDataFetchTypeEnum::LINK
+            );
         } catch (Exception) {
-            return '';
+            return "";
         }
 
         $template = ThemeFilesRepository::getFile(
             $blog,
-            'node-bookmark.twig',
+            "node-bookmark.twig",
             ThemeFileFolderEnum::TEMPLATES
         )?->content;
 
         if (!$template) {
-            $template = PostContentService::getDefaultBlockTemplate('bookmark');
+            $template = PostContentService::getDefaultBlockTemplate("bookmark");
         }
 
         return TwigRenderer::renderString($template, [
-            'data' => UrlDataObject::fromUnfolded($unfolded),
+            "data" => UrlDataObject::fromUnfolded($unfolded),
         ]);
-
     }
 
     public function fromHtml(): array
     {
         return [
             new ParserRule(
-                tag: 'a',
+                tag: "a",
                 getAttrs: function (DOMElement $node) {
-                    if ($node->getAttribute('class') !== 'bookmark') {
+                    if ($node->getAttribute("class") !== "bookmark") {
                         return false;
                     }
 
-                    if (!$node->getAttribute('data-url')) {
+                    if (!$node->getAttribute("data-url")) {
                         return false;
                     }
 
                     return BookmarkAttrs::fromArray([
-                        'url' => $node->getAttribute('data-url'),
+                        "url" => $node->getAttribute("data-url"),
                     ]);
-                },
-            )
+                }
+            ),
         ];
     }
-
 }
