@@ -21,7 +21,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Rules\Subdomain;
-use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -34,7 +34,7 @@ class ConsoleBlogController extends Controller
      * @param Blog $blog
      * @return JsonResponse
      */
-    public function getBlogData(Blog $blog, Billing $billing)
+    public function getBlogData(Blog $blog, BillingInterface $billing)
     {
         $license = $blog->hyvor_user_id ?
             $billing->license($blog->hyvor_user_id, $blog->id) :

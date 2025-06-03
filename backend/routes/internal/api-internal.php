@@ -12,8 +12,8 @@ Route::prefix('/api/internal')
             ->middleware(InternalApiFromMiddleware::class . ':core')
             ->group(function () {
                 Route::prefix('/sudo')->group(function () {
-                    Route::get('/overview', [SudoController::class, 'overview']);
-                    Route::get('/blogs', [SudoController::class, 'getBlogs']);
+                    Route::post('/overview', [SudoController::class, 'overview']);
+                    Route::post('/blogs', [SudoController::class, 'getBlogs']);
                     Route::post('/blogs/{id}', [SudoController::class, 'blogAction']);
                 });
             });

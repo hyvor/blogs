@@ -4,6 +4,9 @@ use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Models\Blog;
 use App\Models\User;
 use Faker\Factory;
+use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -16,8 +19,8 @@ uses()->beforeEach(function () {
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
     // reset userbase
-    \Hyvor\Internal\Auth\AuthFake::enable(['id' => 1]);
-    \Hyvor\Internal\Billing\BillingFake::enable(license: new \Hyvor\Internal\Billing\License\BlogsLicense());
+    AuthFake::enable(['id' => 1]);
+    BillingFake::enable(license: new BlogsLicense());
 
     Cache::flush();
 

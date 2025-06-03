@@ -16,7 +16,6 @@ class SudoGetBlogsTest extends DatabaseTestCase
         Blog::factory()->count(3)->create();
 
         $this->internalApi(
-            'GET',
             '/core/sudo/blogs',
         )
             ->assertOk()
@@ -28,7 +27,6 @@ class SudoGetBlogsTest extends DatabaseTestCase
         $blogs = Blog::factory()->count(3)->create();
 
         $this->internalApi(
-            'GET',
             '/core/sudo/blogs',
             ['blog_id' => $blogs[1]?->id]
         )
@@ -47,7 +45,6 @@ class SudoGetBlogsTest extends DatabaseTestCase
         ]);
 
         $this->internalApi(
-            'GET',
             '/core/sudo/blogs',
             ['subdomain' => $blog1->subdomain]
         )
@@ -55,7 +52,7 @@ class SudoGetBlogsTest extends DatabaseTestCase
             ->assertJsonCount(1)
             ->assertJsonPath('0.subdomain', $blog1->subdomain);
     }
-    
+
     public function testFiltersBlogsByUserId(): void
     {
         $blog1 = Blog::factory()->create([
@@ -66,7 +63,6 @@ class SudoGetBlogsTest extends DatabaseTestCase
         ]);
 
         $this->internalApi(
-            'GET',
             '/core/sudo/blogs',
             ['user_id' => $blog1->hyvor_user_id]
         )

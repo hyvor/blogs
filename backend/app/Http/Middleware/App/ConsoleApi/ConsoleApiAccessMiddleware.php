@@ -12,6 +12,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
 use Hyvor\Internal\Auth\Auth;
+use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Http\Request;
 
 class ConsoleApiAccessMiddleware
@@ -21,7 +22,7 @@ class ConsoleApiAccessMiddleware
 
     public function __construct(
         Blog $blog,
-        private Auth $auth,
+        private AuthInterface $auth,
     ) {
         $this->blog = $blog;
     }
