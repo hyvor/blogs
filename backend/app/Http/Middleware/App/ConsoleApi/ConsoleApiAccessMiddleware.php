@@ -56,7 +56,9 @@ class ConsoleApiAccessMiddleware
                     new ConsoleApiAccessingUser($owner)
                 );
             } else {
-                $hyvorUser = $this->auth->check();
+                $hyvorUser = $this->auth->check(
+                    (string)$request->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME)
+                );
                 if (!$hyvorUser) {
                     throw new TrustedException('You are not logged in');
                 }

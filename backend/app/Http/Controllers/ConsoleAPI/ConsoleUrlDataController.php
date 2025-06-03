@@ -10,7 +10,11 @@ use Illuminate\Http\Request;
 
 class ConsoleUrlDataController extends Controller
 {
-    public static function getData(Request $request) : JsonResponse
+    public function __construct(
+        private readonly UrlDataRepository $urlDataRepository
+    ) {}
+
+    public function getData(Request $request) : JsonResponse
     {
         $request->validate([
             'url' => 'required|url',
@@ -19,7 +23,7 @@ class ConsoleUrlDataController extends Controller
         $url = $request->input('url');
         $type = $request->input('type');
 
-        return response()->json(UrlDataRepository::fetch(
+        return response()->json($this->urlDataRepository->fetch(
             $url,
             UrlDataFetchTypeEnum::from($type)
         ));
