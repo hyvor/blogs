@@ -1,16 +1,16 @@
 {% if _blog.flashload %}
-<script data-flashload-skip-script src="{{ 'flashload.js' | asset_url }}"></script>
+<script data-flashload-skip-script src="{{ 'flashload.js' | asset_url }}" async onload="__initFlashload()"></script>
 <script data-flashload-skip-script>
 
     {# Calculate base path for Flashload #}
     {% set url_pieces = _blog.base_url | split('/', 4) %}
     {% set basePath = url_pieces | length > 3 ? url_pieces[3] : "" %}
 
-    window.addEventListener("DOMContentLoaded", function() {
+    function __initFlashload() {
         Flashload.start({
             basePath: "{{ basePath }}"
         })
-    });
+    }
 </script>
 {% endif %}
 

@@ -20,7 +20,7 @@
 
 	let type: FilterType = $state(null);
 
-	const types = [null, 'ok', 'broken', 'redirect', 'ignored'] as FilterType[];
+	const types = [null, 'ok', 'broken', 'risky', 'redirect', 'ignored'] as FilterType[];
 
 	let isLoading = $state(true);
 	let isMoreLoading = $state(false);
@@ -64,6 +64,8 @@
 				return `OK (${stats.counts.ok})`;
 			case 'broken':
 				return `Broken (${stats.counts.broken})`;
+			case 'risky':
+				return `Risky (${stats.counts.risky})`;
 			case 'redirect':
 				return `Redirect (${stats.counts.redirect})`;
 			case 'ignored':
@@ -77,7 +79,7 @@
 		const link = e.detail;
 
 		links = links.map((l) => {
-			if (l.id === link.id) {
+			if (l.post_variant_id === link.post_variant_id && l.url === link.url) {
 				return {
 					...l,
 					...link
@@ -115,7 +117,7 @@
 				<div>Actions</div>
 			</TableRow>
 
-			{#each links as link (link.id)}
+			{#each links as link (link.post_variant_id + link.url)}
 				<LinkRow {link} on:update={handelLinkUpdate} />
 			{/each}
 		</Table>

@@ -35,3 +35,7 @@ cypress/videos/
 /playwright-report/
 /playwright/.cache/
 packages/internal
+
+**/caddy
+frankenphp
+frankenphp-worker.php

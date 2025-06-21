@@ -19,9 +19,13 @@ use Illuminate\Http\Request;
 class IntegrationHyvorTalkController
 {
 
+    public function __construct(
+        private readonly HyvorTalkService $hyvorTalkService
+    ) {}
+
     public function getIntegration(Blog $blog) : JsonResponse
     {
-        $hyvorTalkWebsite = HyvorTalkService::getHyvorTalkWebsite($blog);
+        $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($blog);
 
         if (!$hyvorTalkWebsite) {
             return response()->json([
@@ -49,7 +53,7 @@ class IntegrationHyvorTalkController
     public function createIntegration(Blog $blog) : JsonResponse
     {
 
-        $hyvorTalkWebsite = HyvorTalkService::getHyvorTalkWebsite($blog);
+        $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($blog);
 
         if ($hyvorTalkWebsite) {
             throw new TrustedException('Hyvor Talk integration already exists');
@@ -59,7 +63,7 @@ class IntegrationHyvorTalkController
             throw new TrustedException('Hyvor Talk integration requires Hyvor Talk user ID');
         }
 
-        $hyvorTalkWebsite = HyvorTalkService::createHyvorTalkWebsite($blog);
+        $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite($blog);
 
         return response()->json(new HyvorTalkIntegrationObject($hyvorTalkWebsite));
 
@@ -69,7 +73,7 @@ class IntegrationHyvorTalkController
     {
         $hyvorTalkWebsite = $this->getHyvorTalkWebsite($blog);
 
-        HyvorTalkService::deleteHyvorTalkWebsite($hyvorTalkWebsite);
+        $this->hyvorTalkService->deleteHyvorTalkWebsite($hyvorTalkWebsite);
 
         return response()->json();
     }
@@ -155,13 +159,13 @@ class IntegrationHyvorTalkController
         $htWebsite = $this->getHyvorTalkWebsite($blog);
 
         try {
-            $website = HyvorTalkService::callConsoleApi($htWebsite, 'GET', '/website');
+            $website = $this->hyvorTalkService->callConsoleApi($htWebsite, 'GET', '/website');
 
             if ($website['memberships_enabled'] !== true) {
                 throw new HttpException('memberships_not_enabled');
             }
 
-            $plans = HyvorTalkService::callConsoleApi($htWebsite, 'GET', '/membership-plans');
+            $plans = $this->hyvorTalkService->callConsoleApi($htWebsite, 'GET', '/membership-plans');
         } catch (InternalApiCallFailedException $e) {
             throw new HttpException('Failed to get membership plans from Hyvor Talk');
         }

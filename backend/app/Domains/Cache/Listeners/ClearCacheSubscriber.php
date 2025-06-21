@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Cache\Listeners;
 
@@ -6,6 +8,7 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
+use App\Domains\Cache\CacheVersion;
 use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\LanguageRepository;
@@ -102,7 +105,6 @@ class ClearCacheSubscriber
 
         // integrations
         $events->listen(GatedContentChangedEvent::class, [static::class, 'onGatedContentChangedEvent']);
-
     }
 
     private function subscribeSingleEvents(Dispatcher $events): void
@@ -123,7 +125,6 @@ class ClearCacheSubscriber
 
     public function onBlogUpdate(BlogUpdatedEvent $event): void
     {
-
         $hostingChanged = $event->blogOriginal->hosting_at !== $event->blog->hosting_at ||
             $event->blogOriginal->hosting_domain !== $event->blog->hosting_domain ||
             $event->blogOriginal->hosting_url !== $event->blog->hosting_url;
@@ -138,8 +139,9 @@ class ClearCacheSubscriber
     public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event): void
     {
         $blog = $event->variant->blog;
-        if ($blog)
+        if ($blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onPostUpdate(PostUpdatedEvent $event): void
@@ -147,14 +149,16 @@ class ClearCacheSubscriber
         $post = $event->post;
         $blog = $post->blog;
 
-        if (!$blog)
+        if (!$blog) {
             return;
+        }
 
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
         $primaryVariant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $primaryLanguage->id);
 
-        if (!$primaryVariant)
+        if (!$primaryVariant) {
             return;
+        }
 
         if ($primaryVariant->status !== PostStatusEnum::PUBLISHED) {
             return;
@@ -165,20 +169,20 @@ class ClearCacheSubscriber
 
     public function onPostDelete(PostDeletedEvent $event): void
     {
-        if ($blog = $event->post->blog)
+        if ($blog = $event->post->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event): void
     {
         $variant = $event->variant;
         $post = $variant->post;
-        if (!$post)
-            return;
 
         $blog = $post->blog;
-        if (!$blog)
+        if (!$blog) {
             return;
+        }
 
         $variantOld = $event->variantOld;
 
@@ -198,75 +202,87 @@ class ClearCacheSubscriber
     public function onPostVariantDelete(PostVariantDeletedEvent $event): void
     {
         $post = $event->variant->post;
-        if (!$post)
-            return;
-        if ($blog = $post->blog)
+        if ($blog = $post->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onUserEvent(
         UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event
     ): void {
-        if ($blog = $event->user->blog)
+        if ($blog = $event->user->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event): void
     {
         $user = $event->variant->user;
-        if (!$user)
+        if (!$user) {
             return;
-        if ($blog = $user->blog)
+        }
+        if ($blog = $user->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event): void
     {
-        if ($blog = $event->tag->blog)
+        if ($blog = $event->tag->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event): void
     {
         $tag = $event->variant->tag;
-        if (!$tag)
+        if (!$tag) {
             return;
-        if ($blog = $tag->blog)
+        }
+        if ($blog = $tag->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onNavigationEvent(NavigationChangedEvent $event): void
     {
-        if ($blog = $event->navigation->blog)
+        if ($blog = $event->navigation->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
+
     public function onNavigationVariantEvent(NavigationVariantChangedEvent $event): void
     {
         $nav = $event->variant->navigation;
-        if (!$nav)
+        if (!$nav) {
             return;
-        if ($blog = $nav->blog)
+        }
+        if ($blog = $nav->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onLanguageEvent(LanguageChangedEvent $event): void
     {
-        if ($blog = $event->language->blog)
+        if ($blog = $event->language->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onRouteEvent(RouteChangedEvent $event): void
     {
-        if ($blog = $event->route->blog)
+        if ($blog = $event->route->blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onFileEditedEvent(
         TemplateEditedEvent|ConfigEditedEvent|LangEditedEvent $event
     ): void {
         $blog = $event->file->blog;
-        if ($blog)
+        if ($blog) {
             $this->clearTemplateCache($blog);
+        }
     }
 
     public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event): void
@@ -274,8 +290,9 @@ class ClearCacheSubscriber
         $media = $event->media;
         $blog = $media->blog;
 
-        if (!$blog)
+        if (!$blog) {
             return;
+        }
 
         $path = PermalinkRepository::getMediaPermalink($media, $blog, true);
         $this->clearSingleCache($blog, $path);
@@ -290,6 +307,9 @@ class ClearCacheSubscriber
     public function onStylesEdit(StylesEditedEvent $event): void
     {
         $this->clearSingleCache($event->blog, '/styles.css');
+        CacheVersion::updateStyleVersion($event->blog);
+        // to increase the version in HTML, we have to clear template cache
+        $this->clearTemplateCache($event->blog);
     }
 
     public function onRedirectEvent(RedirectChangedEvent $event): void
@@ -297,8 +317,9 @@ class ClearCacheSubscriber
         $redirect = $event->redirect;
         $blog = $redirect->blog;
 
-        if (!$blog)
+        if (!$blog) {
             return;
+        }
 
         if ($redirect->dynamic) {
             $this->clearAllCache($blog);

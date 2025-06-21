@@ -1,142 +1,233 @@
 <?php
 
-namespace Tests\Unit\Domains\LinkAnalyzer;
+namespace Tests\Unit\Domains\LinkAnalyzer\Check;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Models\LinkAnalyzerLink;
-use Illuminate\Support\Facades\Http;
+use Database\Factories\BlogFactory;
+use Database\Factories\PostFactory;
+use Database\Factories\ThemeFileFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Tests\Case\DatabaseTestCase;
 use Tests\Helper\Generator\PostContentGenerator;
 
-it('analyzes a blog', function() {
+#[CoversClass(FullBlogAnalyzer::class)]
+#[CoversClass(PostVariantsCheck::class)]
+class FullBlogAnalyzerTest extends DatabaseTestCase
+{
 
-    $blog = blogWithLanguageAndRoutes();
+    public function testAnalyzesABlog(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes();
 
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 200),
-        'example.com/*' => Http::response('', 301),
-        '*.hyvorblogs.io/*' => Http::response('', 200),
-        'https://broken.com/*' => Http::response('', 404),
-    ]);
+        $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+            if (str_contains($url, 'hyvor.com')) {
+                return new MockResponse(info: ['http_code' => 200]);
+            }
+            if (str_contains($url, 'example.com')) {
+                return new MockResponse(info: ['http_code' => 301]);
+            }
+            if (str_contains($url, 'hyvorblogs.io')) {
+                return new MockResponse(info: ['http_code' => 200]);
+            }
+            if (str_contains($url, 'broken.com')) {
+                return new MockResponse(info: ['http_code' => 404]);
+            }
+        }));
 
-    $post1 = addPost($blog, [], [
-        'status' => PostStatusEnum::PUBLISHED,
-        'content' => PostContentGenerator::generateWithLinks([
-            'https://hyvor.com/about',
-            'https://example.com/1',
-            'ftp://example.com/2',
-            '/about',
+        $post1 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hyvor.com/about',
+                'https://example.com/1',
+                'ftp://example.com/2',
+                '/about',
+                str_pad('https://too-long.com/', 256, 'a'),
+            ])
+        ]);
 
-            // ignored (too long)
-            str_pad('https://too-long.com/', 256, 'a'),
-        ])
-    ]);
+        $post2 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hyvor.com/pricing',
+                'https://broken.com/1',
+            ])
+        ]);
 
-    $post2 = addPost($blog, [], [
-        'status' => PostStatusEnum::PUBLISHED,
-        'content' => PostContentGenerator::generateWithLinks([
-            'https://hyvor.com/pricing',
-            'https://broken.com/1',
-        ])
-    ]);
+        $page1 = PostFactory::oneFor($blog, ['is_page' => true], ['status' => PostStatusEnum::PUBLISHED]);
 
-    $post3 = addPost($blog, [], ['status' => PostStatusEnum::DRAFT]);
+        // ignored: draft
+        PostFactory::oneFor($blog, variantAttr: ['status' => PostStatusEnum::DRAFT]);
+        // ignore: no links
+        PostFactory::oneFor($blog, variantAttr: ['status' => PostStatusEnum::PUBLISHED]);
+        // ignored: empty link
+        PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks(['']),
+        ]);
+        // ignored: only links with fragment
+        PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks(['#fragment']),
+        ]);
 
-    $analyze = new FullBlogAnalyzer($blog);
-    $analyze->analyze();
+        $analyze = new FullBlogAnalyzer($blog);
+        $analyze->analyze();
 
+        $this->assertSame(6, $analyze->postsCount);
+//        $this->assertSame(1, $analyze->pagesCount);
+//        $this->assertSame(5, $analyze->postVariantsCount);
+        $this->assertSame(5, $analyze->linksCount);
+        $this->assertSame(3, $analyze->linksOkCount);
+        $this->assertSame(1, $analyze->linksBrokenCount);
+        $this->assertSame(1, $analyze->linksRedirectCount);
 
-    expect($analyze->postsCount)->toBe(3);
-    expect($analyze->postVariantsCount)->toBe(2);
+        $links = LinkAnalyzerLink::all();
+        $this->assertCount(5, $links);
 
-    expect($analyze->linksCount)->toBe(5);
-    expect($analyze->linksOkCount)->toBe(3);
-    expect($analyze->linksBrokenCount)->toBe(1);
-    expect($analyze->linksRedirectCount)->toBe(1);
+        $post1Links = $links->filter(fn($link) => $link->post_variant_id === $post1->variants[0]?->id)->sortBy(
+            'id'
+        )->values();
 
-    $links = LinkAnalyzerLink::get();
-    expect($links->count())->toBe(5);
+        $post1Link1 = $post1Links[0];
+        $this->assertNotNull($post1Link1);
+        $this->assertSame('https://hyvor.com/about', $post1Link1->url);
+        $this->assertSame(200, $post1Link1->status_code);
 
-    $post1Links = $links->filter(fn($link) => $link->post_variant_id === $post1->variants[0]->id)->sortBy('id')->values();
+        $post1Link2 = $post1Links[1];
+        $this->assertNotNull($post1Link2);
+        $this->assertSame('https://example.com/1', $post1Link2->url);
+        $this->assertSame(301, $post1Link2->status_code);
 
-    $post1Link1 = $post1Links[0];
-    expect($post1Link1->url)->toBe('https://hyvor.com/about');
-    expect($post1Link1->status_code)->toBe(200);
+        $post1Link3 = $post1Links[2];
+        $this->assertNotNull($post1Link3);
+        $this->assertSame("/about", $post1Link3->url);
+        $this->assertSame(200, $post1Link3->status_code);
 
-    $post1Link2 = $post1Links[1];
-    expect($post1Link2->url)->toBe('https://example.com/1');
-    expect($post1Link2->status_code)->toBe(301);
+        $post2Links = $links
+            ->filter(fn($link) => $link->post_variant_id === $post2->variants[0]?->id)
+            ->values();
 
-    $post1Link3 = $post1Links[2];
-    expect($post1Link3->url)->toContain('hyvorblogs.io/about');
-    expect($post1Link3->status_code)->toBe(200);
+        $post2Link1 = $post2Links[0];
+        $this->assertNotNull($post2Link1);
+        $this->assertSame('https://hyvor.com/pricing', $post2Link1->url);
+        $this->assertSame(200, $post2Link1->status_code);
 
-    $post2Links = $links
-        ->filter(fn($link) => $link->post_variant_id === $post2->variants[0]->id)
-        ->values();
+        $post2Link2 = $post2Links[1];
+        $this->assertNotNull($post2Link2);
+        $this->assertSame('https://broken.com/1', $post2Link2->url);
+        $this->assertSame(404, $post2Link2->status_code);
 
-    $post2Link1 = $post2Links[0];
-    expect($post2Link1->url)->toBe('https://hyvor.com/pricing');
-    expect($post2Link1->status_code)->toBe(200);
+        // updates variant cachee
+        $linkAnalysisCache = $post1->variants[0]?->link_analysis;
+        $this->assertIsArray($linkAnalysisCache);
+        $this->assertSame(200, $linkAnalysisCache['https://hyvor.com/about']);
+        $this->assertSame(301, $linkAnalysisCache['https://example.com/1']);
+        $this->assertSame(200, $linkAnalysisCache["/about"]);
+    }
 
-    $post2Link2 = $post2Links[1];
-    expect($post2Link2->url)->toBe('https://broken.com/1');
-    expect($post2Link2->status_code)->toBe(404);
+    public function testItClearsOldLinksButKeepsIgnoredLinksAsIgnored(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes();
 
-    // updates variant cachee
-    $linkAnalysisCache = $post1->variants[0]->link_analysis;
-    expect($linkAnalysisCache['https://hyvor.com/about'])->toBe(200);
-    expect($linkAnalysisCache['https://example.com/1'])->toBe(301);
-    expect($linkAnalysisCache["https://{$blog->subdomain}.hyvorblogs.io/about"])->toBe(200);
+        $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+            if (str_contains($url, 'hyvor.com')) {
+                return new MockResponse(info: ['http_code' => 200]);
+            }
+            if (str_contains($url, 'example.com')) {
+                return new MockResponse(info: ['http_code' => 301]);
+            }
+        }));
 
-});
+        $post = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hyvor.com/about',
+                'https://example.com/1',
+            ])
+        ]);
 
-it('it clears old links but keeps ignored links as ignored', function() {
+        $links = LinkAnalyzerLink::factory()->count(5)->create([
+            'blog_id' => $blog->id,
+            'post_variant_id' => $post->variants[0]?->id,
+        ]);
+        $links[0]?->update([
+            'url' => 'https://hyvor.com/about',
+            'ignore' => true
+        ]);
 
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 200),
-        'example.com/*' => Http::response('', 301),
-    ]);
+        $analyze = new FullBlogAnalyzer($blog);
+        $analyze->analyze();
 
-    $blog = blogWithLanguageAndRoutes();
+        $this->assertSame(1, $analyze->linksIgnoredCount);
 
-    $post = addPost($blog, [], [
-        'status' => PostStatusEnum::PUBLISHED,
-        'content' => PostContentGenerator::generateWithLinks([
-            'https://hyvor.com/about',
-            'https://example.com/1',
-        ])
-    ]);
+        $this->assertCount(2, LinkAnalyzerLink::all());
 
+        $links = LinkAnalyzerLink::all();
 
-    $links =LinkAnalyzerLink::factory()->count(5)->create([
-        'blog_id' => $blog->id,
-        'post_variant_id' => $post->variants[0]->id,
-    ]);
-    $links[0]->update([
-        'url' => 'https://hyvor.com/about',
-        'ignore' => true
-    ]);
+        $this->assertNotNull($links[0]);
+        $this->assertSame('https://hyvor.com/about', $links[0]->url);
+        $this->assertTrue($links[0]->ignore);
+        $this->assertSame(200, $links[0]->status_code);
 
-    $analyze = new FullBlogAnalyzer($blog);
-    $analyze->analyze();
+        $this->assertNotNull($links[1]);
+        $this->assertSame('https://example.com/1', $links[1]->url);
+        $this->assertFalse($links[1]->ignore);
+        $this->assertSame(301, $links[1]->status_code);
 
-    expect($analyze->linksIgnoredCount)->toBe(1);
+        $variant = $post->variants[0]?->refresh();
+        $this->assertNotNull($variant);
+        $linkAnalysisCache = $variant->link_analysis;
+        $this->assertIsArray($linkAnalysisCache);
+        $this->assertSame(-2, $linkAnalysisCache['https://hyvor.com/about']);
+        $this->assertSame(301, $linkAnalysisCache['https://example.com/1']);
+    }
 
-    expect(LinkAnalyzerLink::count())->toBe(2);
+    public function testAnalyzesSubdomainBlogWithInternalLinks(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes([
+            'hosting_at' => BlogHostingAtEnum::SELF,
+            'hosting_url' => 'https://hypotheticalwebsite.com/blog'
+        ]);
+        ThemeFileFactory::templateFor($blog, 'hello', 'post.twig');
 
-    $links = LinkAnalyzerLink::get();
-    expect($links[0]->url)->toBe('https://hyvor.com/about');
-    expect($links[0]->ignore)->toBe(true);
-    expect($links[0]->status_code)->toBe(200);
+        $post1 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'slug' => 'post-1',
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hypotheticalwebsite.com/blog/wrong',
+            ])
+        ]);
 
-    expect($links[1]->url)->toBe('https://example.com/1');
-    expect($links[1]->ignore)->toBe(false);
-    expect($links[1]->status_code)->toBe(301);
+        $post2 = PostFactory::oneFor($blog, variantAttr: [
+            'status' => PostStatusEnum::PUBLISHED,
+            'slug' => 'post-2',
+            'content' => PostContentGenerator::generateWithLinks([
+                'https://hypotheticalwebsite.com/blog/post-1',
+            ])
+        ]);
 
-    $variant = $post->variants[0]->refresh();
-    $linkAnalysisCache = $variant->link_analysis;
-    expect($linkAnalysisCache['https://hyvor.com/about'])->toBe(-2);
-    expect($linkAnalysisCache['https://example.com/1'])->toBe(301);
+        $analyze = new FullBlogAnalyzer($blog);
+        $analyze->analyze();
 
-});
+        $links = LinkAnalyzerLink::all();
+        $this->assertCount(2, $links);
+
+        $link1 = $links->first();
+        $this->assertNotNull($link1);
+        $this->assertSame('https://hypotheticalwebsite.com/blog/wrong', $link1->url);
+        $this->assertSame(404, $link1->status_code);
+
+        $link2 = $links->last();
+        $this->assertNotNull($link2);
+        $this->assertSame('https://hypotheticalwebsite.com/blog/post-1', $link2->url);
+        $this->assertSame(200, $link2->status_code);
+    }
+
+}

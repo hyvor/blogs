@@ -2,11 +2,10 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
-use App\Data\Enums\ResultEnum;
-use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Domains\Post\Content\PostContentService;
-use App\Models\UrlData;
-use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 beforeEach(function () {
     $this->url = 'https://example.com';
@@ -21,11 +20,10 @@ beforeEach(function () {
 //        'html' => $this->html,
 //    ]);
 
-    Http::fake([
-        'https://hyvor.cluster/api/internal/unfold/unfold*' => Http::response([
-            'embed' => $this->html,
-        ])
-    ]);
+    $mockHttpClient = new MockHttpClient(new JsonMockResponse([
+        'embed' => $this->html,
+    ]));
+    $this->app->bind(HttpClientInterface::class, fn() => $mockHttpClient);
 });
 
 test('json to HTML', function () {

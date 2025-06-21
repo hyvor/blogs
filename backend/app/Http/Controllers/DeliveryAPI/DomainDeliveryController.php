@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\DeliveryAPI;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Billing\LicenseService;
 use App\Domains\Delivery\DeliveryService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -17,16 +19,17 @@ class DomainDeliveryController extends Controller
             return redirect('https://blogs.hyvor.com');
         }
 
-//        if (
-//            $blog->type === BlogTypeEnum::DEFAULT &&
-//            $blog->trial_ends_at->lessThan(now())
-//        ) {
-//            $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-//            if (!$subscription) {
-//                return view('errors.trial-ended', ['subdomain' => $blog->subdomain]);
-//            }
-        // TODO: Finalize strategy for trial ended
-//        }
+        // check license
+        if (
+            $blog->type === BlogTypeEnum::DEFAULT &&
+            LicenseService::hasLicenseCached($blog) === false
+        ) {
+            return redirect('https://blogs.hyvor.com', 302, [
+                'X-Blog-Subdomain' => $blog->subdomain,
+                'X-Redirect-Reason' => 'No license',
+                'Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store, private',
+            ]);
+        }
 
         /**
          * We cannot use $request->path() because laravel has logic to remove trailing slash

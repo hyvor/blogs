@@ -1,7 +1,8 @@
-import { derived } from "svelte/store";
+import { derived, writable } from "svelte/store";
 import { postCurrentContentStore, postVariantStore } from "../../../postStore";
 import { blogStore } from "../../../../../../lib/stores/blogStore";
 import { calculateLinkAnalysis, getLinksFromContent, getStatusType, LINK_STATUS, type Link } from "../../../../../../lib/links/links";
+import type { LinkAnalysisLink } from "../../../../../../lib/types";
 
 export const variantLinksStore = derived(
     [postCurrentContentStore, blogStore],
@@ -18,17 +19,27 @@ export const variantLinkCountsStore = derived(
     ([analysis, links]) => getLinkCounts(analysis, links)
 );
 
+/**
+ * This saves the full link objects from the API
+ */
+export const linksStore = writable<LinkAnalysisLink[]>([]);
+
 function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
 
     let okCount = 0;
     let redirectCount = 0;
     let brokenCount = 0;
+    let riskyCount = 0;
     let ignoreCount = 0;
     let loadingCount = 0;
 
     links.forEach(link => {
 
-        const status = analysis[link.originalHref] || LINK_STATUS.ERROR;
+        let status = analysis[link.originalHref]; 
+        if (status === undefined) {
+            status = LINK_STATUS.ERROR;
+        }
+
         const statusType = getStatusType(status);
 
         if (statusType === 'ok') {
@@ -37,6 +48,8 @@ function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
             redirectCount++;
         } else if (statusType === 'broken') {
             brokenCount++;
+        } else if (statusType === 'risky') {
+            riskyCount++;
         } else if (statusType === "ignored") {
             ignoreCount++;
         } else if (statusType === "loading") {
@@ -50,6 +63,7 @@ function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
         ok: okCount,
         redirect: redirectCount,
         broken: brokenCount,
+        risky: riskyCount,
         ignored: ignoreCount,
         loading: loadingCount,
     }

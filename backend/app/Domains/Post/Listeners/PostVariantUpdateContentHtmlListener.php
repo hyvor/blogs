@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Post\Listeners;
 
@@ -8,8 +10,13 @@ use App\Domains\Post\PostRepository;
 
 class PostVariantUpdateContentHtmlListener
 {
-    public function handle(PostVariantUpdatedEvent $event) : void
+    public function handle(PostVariantUpdatedEvent $event): void
     {
+        // content has not changed
+        if ($event->variant->content === $event->variantOld->content) {
+            return;
+        }
+
         PostRepository::updateVariantHtml($event->variant);
     }
 }

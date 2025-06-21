@@ -48,7 +48,7 @@ class CountSubscriber
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event): void
     {
         $post = $event->variant->post;
-        $blog = $post ? $post->blog : null;
+        $blog = $post->blog;
         if ($blog && ($event->variant->status !== $event->variantOld->status)) {
             $this->dispatchPostCountJobs($blog);
         }

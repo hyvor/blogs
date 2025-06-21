@@ -709,8 +709,8 @@
 <h2 id="link-analysis">Link Analysis</h2>
 <p>
 	The link analysis tool in the post editor analyzes the status of the links in your post as you
-	write. It will show you warding if there are any broken or redirect links in your post. It also
-	shows you the <a href="/docs/writing#link-types">type of each link</a>.
+	write. It will show you a warning if there are any broken, risky, or redirect links in your post.
+	It also shows you the <a href="/docs/writing#link-types">type of each link</a>.
 </p>
 <DocsImage src={linkAnalysisImg} alt="Link Analysis" width={400} />
 <h3 id="link-types">Link Types</h3>
@@ -768,6 +768,16 @@
 	<li>view results of bi-weekly link analysis</li>
 	<li>change email report settings</li>
 </ul>
+
+<h3 id="link-analysis-accuracy">Link Analysis Accuracy</h3>
+
+<p>
+	Our link analyzer is simple: it sends HTTP requests via curl to check the status of the links.
+	This approach allows for a fast and accurate analysis. However, some servers and firewalls may
+	block these requests, which may result in false positives. If you find a link that is marked as
+	broken but is actually working, you can click the ignore button to ignore the link in future
+	analyses.
+</p>
 
 <h2 id="gpt-writing">GPT Writing</h2>
 <p>

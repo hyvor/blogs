@@ -7,8 +7,10 @@ use App\Domains\LinkAnalyzer\Check\AnalyzeAllLinksJob;
 use App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail;
 use App\Models\LinkAnalyzerCheck;
 use Hyvor\Internal\Auth\AuthFake;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Tests\Helper\Generator\PostContentGenerator;
 
 it('job works', function () {
@@ -18,10 +20,15 @@ it('job works', function () {
         ['id' => 12, 'email' => 'test@hyvor.com']
     ]);
 
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 200),
-        'example.com/*' => Http::response('', 301),
-    ]);
+    $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+        if (str_contains($url, 'hyvor.com')) {
+            return new MockResponse(info: ['http_code' => 200]);
+        }
+        if (str_contains($url, 'example.com')) {
+            return new MockResponse(info: ['http_code' => 301]);
+        }
+        return new MockResponse(info: ['http_code' => 500]);
+    }));
 
     $blog = blogWithLanguageAndRoutes([
         'hyvor_user_id' => 12
@@ -33,6 +40,7 @@ it('job works', function () {
         'content' => PostContentGenerator::generateWithLinks([
             'https://hyvor.com/about',
             'https://example.com/1',
+            'https://invalidwebsite.com'
         ])
     ]);
 
@@ -44,20 +52,19 @@ it('job works', function () {
     $check = LinkAnalyzerCheck::first();
 
     expect($check->blog_id)->toBe($blog->id);
-    expect($check->posts_count)->toBe(1);
-    expect($check->post_variants_count)->toBe(1);
-    expect($check->pages_count)->toBe(1);
-    expect($check->page_variants_count)->toBe(1);
-    expect($check->links_total_count)->toBe(2);
+    expect($check->posts_count)->toBe(2);
+    expect($check->links_total_count)->toBe(3);
     expect($check->links_ok_count)->toBe(1);
     expect($check->links_broken_count)->toBe(0);
+    expect($check->links_risky_count)->toBe(1);
     expect($check->links_redirect_count)->toBe(1);
 
-    Mail::assertSent(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {
+    Mail::assertQueued(LinkAnalyzeReportMail::class, function (LinkAnalyzeReportMail $mail) {
         expect($mail->hasTo('test@hyvor.com'))->toBeTrue();
         return true;
     });
 });
+
 
 it('does not send mail when the option is disabled', function () {
     Mail::fake();
@@ -67,7 +74,7 @@ it('does not send mail when the option is disabled', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
 });
 
 it('does not send mail when broken', function () {
@@ -78,13 +85,13 @@ it('does not send mail when broken', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertNothingSent();
+    Mail::assertNothingQueued();
 });
 
 it('sends email when broken and there are broken links', function () {
-    Http::fake([
-        'hyvor.com/*' => Http::response('', 404),
-    ]);
+    $this->app->bind(HttpClientInterface::class, fn() => new MockHttpClient(function ($method, $url, $options) {
+        return new MockResponse(info: ['http_code' => 404]);
+    }));
 
     Mail::fake();
 
@@ -101,5 +108,5 @@ it('sends email when broken and there are broken links', function () {
     $job = new AnalyzeAllLinksJob($blog);
     $job->handle();
 
-    Mail::assertSent(LinkAnalyzeReportMail::class);
+    Mail::assertQueued(LinkAnalyzeReportMail::class);
 });

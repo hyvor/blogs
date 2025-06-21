@@ -14,6 +14,7 @@
 		SplitControl,
 		Switch,
 		Tag,
+		Tooltip,
 		Validation,
 		toast
 	} from '@hyvor/design/components';
@@ -37,6 +38,8 @@
 	import CanonicalUrlChange from './Changes/CanonicalUrlChange.svelte';
 	import TagChanges from './Changes/TagChanges.svelte';
 	import AuthorChanges from './Changes/AuthorChanges.svelte';
+	import { slugGetInvalidCharater } from '../../Settings/slug';
+	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
 	interface Props {
 		show?: boolean;
 	}
@@ -45,6 +48,7 @@
 
 	let changes: ReturnType<typeof getPublishedChanges> = $state(getPublishedChanges());
 	let diff = $state(true);
+	let redirectOnSlugChange = $state(true);
 
 	$effect(() => {
 		$postStore;
@@ -66,9 +70,11 @@
 			try {
 				await updatePostVariant({
 					language_id: $postLanguageStore.id,
-					...changes.variant
+					...changes.variant,
+					redirect_on_slug_change: redirectOnSlugChange
 				});
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -79,6 +85,7 @@
 					...changes.post
 				});
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -87,6 +94,7 @@
 			try {
 				await updatePostAuthors(changes.authors);
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -95,6 +103,7 @@
 			try {
 				await updatePostTags(changes.tags);
 			} catch (e: any) {
+				isLoading = false;
 				return toast.error(e.message);
 			}
 		}
@@ -138,6 +147,22 @@
 				{#if (changes.variant.slug || '').trim() === ''}
 					<Validation state="error">Slug cannot be empty.</Validation>
 				{/if}
+				{#if slugGetInvalidCharater(changes.variant.slug || '')}
+					<Validation state="error"
+						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
+					>
+				{/if}
+			</div>
+			<div class="auto-redirects">
+				<span style="display:inline-flex;align-items:center;gap:5px;">
+					Create redirect
+					<Tooltip
+						text="Automatically create a permanent redirect from the old URL to the new URL."
+					>
+						<IconInfoCircleFill />
+					</Tooltip>
+				</span>
+				<Switch bind:checked={redirectOnSlugChange} />
 			</div>
 		</SplitControl>
 	{/if}
@@ -237,6 +262,12 @@
 		color: var(--text-light);
 	}
 	.diff span {
+		margin-right: 10px;
+	}
+	.auto-redirects {
+		font-size: 14px;
+	}
+	.auto-redirects span {
 		margin-right: 10px;
 	}
 </style>

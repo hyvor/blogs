@@ -12,6 +12,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
 use Hyvor\Internal\Auth\Auth;
+use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Http\Request;
 
 class ConsoleApiAccessMiddleware
@@ -21,7 +22,7 @@ class ConsoleApiAccessMiddleware
 
     public function __construct(
         Blog $blog,
-        private Auth $auth,
+        private AuthInterface $auth,
     ) {
         $this->blog = $blog;
     }
@@ -56,7 +57,9 @@ class ConsoleApiAccessMiddleware
                     new ConsoleApiAccessingUser($owner)
                 );
             } else {
-                $hyvorUser = $this->auth->check();
+                $hyvorUser = $this->auth->check(
+                    (string)$request->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME)
+                );
                 if (!$hyvorUser) {
                     throw new TrustedException('You are not logged in');
                 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
 
@@ -13,7 +15,7 @@ class LinkAnalyzerCheckService
     /**
      * @return Collection<int, LinkAnalyzerCheck>
      */
-    public static function getChecks(Blog $blog, int $limit, int $offfset) : Collection
+    public static function getChecks(Blog $blog, int $limit, int $offfset): Collection
     {
         return LinkAnalyzerCheck::where('blog_id', $blog->id)
             ->orderBy('id', 'desc')
@@ -22,14 +24,14 @@ class LinkAnalyzerCheckService
             ->get();
     }
 
-    public static function getLastCheck(Blog $blog) : ?LinkAnalyzerCheck
+    public static function getLastCheck(Blog $blog): ?LinkAnalyzerCheck
     {
         return LinkAnalyzerCheck::where('blog_id', $blog->id)
             ->orderBy('id', 'desc')
             ->first();
     }
 
-    public static function createCheck(Blog $blog) : LinkAnalyzerCheck
+    public static function createCheck(Blog $blog): LinkAnalyzerCheck
     {
         $pending = LinkAnalyzerCheck::where('blog_id', $blog->id)
             ->where('status', JobStatusEnum::PENDING)
@@ -46,22 +48,21 @@ class LinkAnalyzerCheckService
         return $check->refresh();
     }
 
-    public static function completeCheck(LinkAnalyzerCheck $check, FullBlogAnalyzer $analyze) : void
+    public static function completeCheck(LinkAnalyzerCheck $check, FullBlogAnalyzer $analyze): void
     {
         $check->update([
             'status' => JobStatusEnum::COMPLETED,
             'posts_count' => $analyze->postsCount,
-            'post_variants_count' => $analyze->postVariantsCount,
-            'pages_count' => $analyze->pagesCount,
-            'page_variants_count' => $analyze->pageVariantsCount,
             'links_total_count' => $analyze->linksCount,
             'links_ok_count' => $analyze->linksOkCount,
             'links_broken_count' => $analyze->linksBrokenCount,
+            'links_risky_count' => $analyze->linksRiskyCount,
             'links_redirect_count' => $analyze->linksRedirectCount,
             'links_ignored_count' => $analyze->linksIgnoredCount,
         ]);
     }
-    public static function failCheck(LinkAnalyzerCheck $check, string $error) : void
+
+    public static function failCheck(LinkAnalyzerCheck $check, string $error): void
     {
         $check->update([
             'status' => JobStatusEnum::FAILED,

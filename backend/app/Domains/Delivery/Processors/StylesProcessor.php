@@ -1,7 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\BlogTypeEnum;
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -11,6 +15,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\SafetyException;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\SassException;
+use MatthiasMullie\Minify;
 
 class StylesProcessor extends RouteProcessorAbstract
 {
@@ -33,7 +38,6 @@ class StylesProcessor extends RouteProcessorAbstract
          * Step 1: SCSS -> CSS
          */
         try {
-
             $compiled = $scssCompiler->compileFile('index.scss');
 
             if ($compiled === null) {
@@ -41,7 +45,6 @@ class StylesProcessor extends RouteProcessorAbstract
             }
 
             $css = $compiled->getCss();
-
         } catch (SassException|SafetyException $e) {
             $this->setResponseObject(
                 DeliveryAPIResponseObject::forFile(
@@ -54,20 +57,27 @@ class StylesProcessor extends RouteProcessorAbstract
             return;
         }
 
-        // Note: Autoprefixer caused a bug that --fontSize is changed to --fontsize
-        // Therefore, removed it
-        // Also, don't see a point using it
+        $css = $this->minify($css);
 
+        $this->setResponseObject(
+            DeliveryAPIResponseObject::forFile(
+                DeliveryAPIFileTypeEnum::ASSET,
+                $css,
+                'text/css',
+                browserCache: $pathMatcher->blog->type === BlogTypeEnum::DEV ?
+                    DeliveryAPICacheControlHeaderEnum::NO_CACHE :
+                    DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
+            )
+        );
+    }
+
+    private function minify(string $css): string
+    {
+        $minifier = new Minify\CSS();
         /**
-         * Step 2: Auto-prefix
+         * the comment at the start is a fix for a security issue that allows reading any file
          */
-        /*$autoprefixer = new Autoprefixer($css);
-        $css = $autoprefixer->compile();*/
-
-        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
-            DeliveryAPIFileTypeEnum::ASSET,
-            $css,
-            'text/css'
-        ));
+        $minifier->add('/**/' . $css);
+        return $minifier->minify();
     }
 }

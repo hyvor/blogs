@@ -7,7 +7,9 @@ use App\Domains\Integrations\HyvorTalk\Event\GatedContentChangedEvent;
 use App\Domains\Integrations\HyvorTalk\HyvorTalkSubscriber;
 use App\Models\HyvorTalkWebsite;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 it('updates domains', function () {
     Event::fake();
@@ -16,11 +18,11 @@ it('updates domains', function () {
 });
 
 it('updates encryption key on gated content change - creates encryption key', function () {
-    Http::fake([
-        'talk.hyvor.cluster/*' => Http::sequence()
-            ->push(['encryption_key' => null])
-            ->push(['encryption_key' => 'encryption-key'])
+    $mockHttpClient = new MockHttpClient([
+        new JsonMockResponse(['encryption_key' => null]),
+        new JsonMockResponse(['encryption_key' => 'encryption-key'])
     ]);
+    $this->app->bind(HttpClientInterface::class, fn() => $mockHttpClient);
 
     $blog = blog();
     $event = new GatedContentChangedEvent($blog);
@@ -30,7 +32,7 @@ it('updates encryption key on gated content change - creates encryption key', fu
         'website_id' => 12,
     ]);;
 
-    $listener = new HyvorTalkSubscriber();
+    $listener = app(HyvorTalkSubscriber::class);
     $listener->onGatedContentChange($event);
 
     expect($htWebsite->refresh()->encryption_key)->toBe('encryption-key');

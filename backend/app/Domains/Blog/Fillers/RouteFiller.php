@@ -1,12 +1,21 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
 use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
 
+/**
+ * @phpstan-type RouteDef array{name: string, match: string, template: string, posts_filter?: string}
+ */
 class RouteFiller implements FillerInterface
 {
+
+    /**
+     * @var RouteDef[]
+     */
     public const ROUTES = [
         // post
         [
@@ -47,7 +56,7 @@ class RouteFiller implements FillerInterface
     {
     }
 
-    public function fill() : void
+    public function fill(): void
     {
         foreach (self::ROUTES as $route) {
             RouteRepository::createRoute(

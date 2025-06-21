@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { LINK_STATUS, type Link } from "../../../../../../lib/links/links";
 import { callLinkAnalysisApi } from "../../../../tools/link-analysis/linkAnalysisActions";
-import { variantLinkAnalysisStore } from "./linksStore";
+import { linksStore, variantLinkAnalysisStore } from "./linksStore";
 import { postVariantStore, updatePostVariantStore } from "../../../postStore";
 import type { LinkAnalysisLink } from "../../../../../../lib/types";
 
@@ -32,6 +32,11 @@ function handleChange(analysis: Record<string, number>) {
                 ...analysis,
                 ...getResultObjectFromLinks(res),
             }
+        });
+
+        // add to the link store
+        linksStore.update(links => {
+            return links.concat(res);
         });
 
     }).catch(() => {

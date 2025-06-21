@@ -1,161 +1,84 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\LinkAnalyzer\FullUrl;
-use App\Domains\LinkAnalyzer\PostVariantLinkService;
-use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
-use App\Domains\Post\Content\Marks\Link;
-use App\Domains\Post\Content\PostContentService;
-use App\Domains\Route\PermalinkRepository;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\OnLinkUpdateEvent;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\OnStartEvent;
+use App\Domains\LinkAnalyzer\PostVariantsCheck\PostVariantsCheck;
 use App\Models\Blog;
-use App\Models\Post;
 use App\Models\PostVariant;
-use Hyvor\Phrosemirror\Document\Mark;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Event;
 
 class FullBlogAnalyzer
 {
 
     public int $postsCount = 0;
-    public int $pagesCount = 0;
-    public int $postVariantsCount = 0;
-    public int $pageVariantsCount = 0;
 
     public int $linksCount = 0;
     public int $linksOkCount = 0;
     public int $linksBrokenCount = 0;
+    public int $linksRiskyCount = 0;
     public int $linksRedirectCount = 0;
     public int $linksIgnoredCount = 0;
 
-    private string $baseUrl;
-
     public function __construct(
-        private Blog $blog
+        private Blog $blog,
     ) {
-       $this->baseUrl = PermalinkRepository::getBaseUrl($blog);
     }
 
-    public function analyze() : void
+    public function analyze(): void
     {
-
-        Post::where('blog_id', $this->blog->id)
-            ->orderBy('id')
-            ->chunk(1000, function ($posts) {
-                foreach ($posts as $post) {
-                    $this->analyzePost($post);
-                }
+        PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
+            ->where('posts.blog_id', $this->blog->id)
+            ->where('post_variants.status', PostStatusEnum::PUBLISHED)
+            ->orderBy('post_variants.id')
+            ->select(
+                'post_variants.id',
+                'post_variants.content',
+                'post_variants.language_id',
+            )
+            ->chunk(1000, function ($variants) {
+                $this->checkPostVariants($variants);
             });
-
-    }
-
-
-    private function analyzePost(Post $post) : void
-    {
-        if ($post->is_page) {
-            $this->pagesCount++;
-        } else {
-            $this->postsCount++;
-        }
-        foreach ($post->variants as $variant) {
-            $this->analyzeVariant($post, $variant);
-        }
-    }
-
-    private function analyzeVariant(Post $post, PostVariant $variant) : void
-    {
-        if ($variant->status !== PostStatusEnum::PUBLISHED) {
-            return;
-        }
-
-        $content = $variant->content;
-        if (!$content) {
-            return;
-        }
-
-        if ($post->is_page) {
-            $this->pageVariantsCount++;
-        } else {
-            $this->postVariantsCount++;
-        }
-
-        $doc = PostContentService::getDocumentFromJson($content, $this->blog);
-        $linkMarks = $doc->getMarks(Link::class);
-
-        $urls = [];
-
-        foreach ($linkMarks as $linkMark) {
-            $url = self::getWebUrlFromLinkMark($linkMark, $this->baseUrl);
-
-            if (!$url)
-                continue;
-
-            if (mb_strlen($url) > 255) {
-                continue;
-            }
-
-            $urls[] = $url;
-        }
-
-        // who has more than 100 links in a post?
-        $urls = array_slice($urls, 0, 100);
-
-        $results = LinkAnalyzeService::analyzePostVariantLinks(
-            $this->blog,
-            $variant,
-            $urls,
-        );
-
-        /** @var string[] $ignoredLinksUrls */
-        $ignoredLinksUrls = PostVariantLinkService::getIgnoredLinks($variant)
-            ->pluck('url')
-            ->toArray();
-
-        $links = PostVariantLinkService::updateLinksFromResults(
-            $this->blog,
-            $variant,
-            $results,
-            true,
-            $ignoredLinksUrls
-        );
-        $this->linksCount += $links->count();
-
-        foreach ($links as $link) {
-            $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
-
-            if ($link->ignore) {
-                $this->linksIgnoredCount++;
-            } else if ($statusType === LinkStatusTypeEnum::OK) {
-                $this->linksOkCount++;
-            } else if ($statusType === LinkStatusTypeEnum::BROKEN) {
-                $this->linksBrokenCount++;
-            } else if ($statusType === LinkStatusTypeEnum::REDIRECT) {
-                $this->linksRedirectCount++;
-            }
-
-        }
-
-        PostVariantLinkService::updatePostVariantCache(
-            $variant,
-            LinkAnalyzeService::getResultsFromLinks($links)
-        );
-
     }
 
     /**
-     * This should mirror link.ts in the frontend
+     * @param Collection<int, PostVariant> $variants
      */
-    public static function getWebUrlFromLinkMark(Mark $linkMark, string $baseUrl) : ?string
+    private function checkPostVariants(Collection $variants): void
     {
-        $baseUrl = rtrim($baseUrl, '/');
+        Event::listen(OnStartEvent::class, function (OnStartEvent $event) {
+            $this->postsCount++;
+        });
 
-        $href = $linkMark->attr('href', false);
-        if (!is_string($href)) {
-            return null;
-        }
+        Event::listen(OnLinkUpdateEvent::class, function (OnLinkUpdateEvent $event) {
+            $this->linksCount += $event->links->count();
 
-        return FullUrl::getFullUrl($href, $baseUrl);
+            // update the counts
+            foreach ($event->links as $link) {
+                $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
+
+                if ($link->ignore) {
+                    $this->linksIgnoredCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::OK) {
+                    $this->linksOkCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::BROKEN) {
+                    $this->linksBrokenCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::RISKY) {
+                    $this->linksRiskyCount++;
+                } elseif ($statusType === LinkStatusTypeEnum::REDIRECT) {
+                    $this->linksRedirectCount++;
+                }
+            }
+        });
+
+        $postsCheck = new PostVariantsCheck($this->blog);
+        $postsCheck->check($variants);
     }
 
 }

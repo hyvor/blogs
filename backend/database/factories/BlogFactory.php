@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Blog\Fillers\RouteFiller;
 use App\Models\Blog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Blog>
+ * @phpstan-import-type RouteDef from RouteFiller
  */
 class BlogFactory extends Factory
 {
@@ -37,12 +39,18 @@ class BlogFactory extends Factory
         ];
     }
 
+    /**
+     * @param array<mixed> $attrs
+     */
     public static function one($attrs = []): Blog
     {
         return Blog::factory()->create($attrs);
     }
 
-    public static function withAccess($attrs = [])
+    /**
+     * @param array<mixed> $attrs
+     */
+    public static function withAccess($attrs = []): Blog
     {
         $blog = self::one($attrs + ['hyvor_user_id' => 1]);
 
@@ -52,6 +60,26 @@ class BlogFactory extends Factory
             'role' => 'owner',
         ]);
 
+        return $blog;
+    }
+
+    /**
+     * @param array<mixed> $attrs
+     * @param array<RouteDef>|null $routes
+     */
+    public static function withLanguageAndRoutes(
+        array $attrs = [],
+        ?array $routes = null
+    ): Blog {
+        $blog = self::withAccess($attrs);
+        LanguageFactory::primaryFor($blog);
+        BlogVariantFactory::allFor($blog);
+
+        if ($routes === null) {
+            RouteFactory::defaultsFor($blog);
+        } else {
+            RouteFactory::fromArray($blog, $routes);
+        }
         return $blog;
     }
 }

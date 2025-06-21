@@ -40,14 +40,16 @@ it('updates content HTML', function () {
         'content_html' => null
     ]);
 
-    $event = new PostVariantUpdatedEvent($variant, $variant);
+    $oldVariant = clone $variant;
+    $oldVariant->content = null;
+
+    $event = new PostVariantUpdatedEvent($variant, $oldVariant);
     $listener = new PostVariantUpdateContentHtmlListener();
     $listener->handle($event);
 
     $variant->refresh();
     expect($variant->content_html)->toBe('<p>Hello World</p>');
     expect($variant->content_text)->toBe('Hello World');
-
 });
 
 it('updates words count', function () {
@@ -68,7 +70,10 @@ it('updates words count', function () {
         ]),
     ]);
 
-    $event = new PostVariantUpdatedEvent($variant, $variant);
+    $oldVariant = clone $variant;
+    $oldVariant->content = null;
+
+    $event = new PostVariantUpdatedEvent($variant, $oldVariant);
     $listener = new PostVariantUpdateWordCountListener();
     $listener->handle($event);
 

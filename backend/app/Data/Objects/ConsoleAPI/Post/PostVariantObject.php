@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\Post;
 
@@ -48,13 +49,8 @@ class PostVariantObject
         Blog $blog,
 
         bool $setHtml = false
-    )
-    {
+    ) {
         $language = $variant->language;
-
-        if (!$language) {
-            throw new SafetyException('PostVariantObject: Language not found');
-        }
 
         $this->id = $variant->id;
         $this->language_id = $language->id;
