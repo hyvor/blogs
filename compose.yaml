@@ -19,7 +19,7 @@ services:
           action: rebuild
     labels:
       traefik.enable: true
-      traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.dev`)
+      traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)
       traefik.http.routers.hyvor-blogs-frontend.entrypoints: https
       traefik.http.routers.hyvor-blogs-frontend.tls: true
       traefik.http.routers.hyvor-blogs-frontend.middlewares: vite-retry@file
@@ -43,7 +43,7 @@ services:
     labels:
       traefik.enable: true
       # backend
-      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.dev`) && PathPrefix(`/api`)
+      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.localhost`) && PathPrefix(`/api`)
       traefik.http.routers.hyvor-blogs-backend.entrypoints: https
       traefik.http.routers.hyvor-blogs-backend.tls: true
       traefik.http.routers.hyvor-blogs-backend.service: hyvor-blogs-backend
@@ -58,7 +58,7 @@ services:
     networks:
       hyvor-network:
         aliases:
-          - blogs.hyvor.dev
+          - blogs.hyvor.localhost
     profiles: [ dev ]
     healthcheck:
       disable: true
