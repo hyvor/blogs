@@ -2,16 +2,9 @@
 	import { FooterLinkList, Footer } from '@hyvor/design/marketing';
 </script>
 
-<Footer
-	email="blogs.support@hyvor.com"
-	social={{
-		x: 'https://x.com/HyvorBlogs',
-		youtube: null,
-		discord: null
-	}}
->
+<Footer email="blogs.support@hyvor.com">
 	{#snippet center()}
-		<div >
+		<div>
 			<div class="row first">
 				<FooterLinkList title="Product">
 					<a href="/console">Console</a>
@@ -48,8 +41,12 @@
 					<a href="https://hyvor.com/blog/wordpress-alternatives" target="_blank"
 						>WordPress Alternatives</a
 					>
-					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank">Ghost Alternatives</a>
-					<a href="https://hyvor.com/blog/medium-alternatives" target="_blank">Medium Alternatives</a>
+					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank"
+						>Ghost Alternatives</a
+					>
+					<a href="https://hyvor.com/blog/medium-alternatives" target="_blank"
+						>Medium Alternatives</a
+					>
 					<a href="https://hyvor.com/blog/blogger-alternatives" target="_blank"
 						>Blogger Alternatives</a
 					>
