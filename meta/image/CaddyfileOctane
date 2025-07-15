@@ -51,6 +51,14 @@
             try_files {path} frankenphp-worker.php
         }
 	}
+
+	@static {
+		file
+		path *.ico *.css *.js *.gif *.webp *.avif *.jpg *.jpeg *.png *.svg *.woff *.woff2 *.mov
+	}
+	header @static Cache-Control max-age=5184000
+
+	# static files
 	handle {
 		root * /app/static
 		file_server {
@@ -59,10 +67,13 @@
 		encode zstd gzip
 		try_files {path} {path}.html
 	}
+
+	# fallback
 	handle {
 		root * /app/static
 		encode zstd gzip
 		file_server
+		header Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
 		rewrite * /200.html
 	}
 }
