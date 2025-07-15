@@ -199,8 +199,7 @@
 				src="https://res.cloudinary.com/dqabfne6s/image/upload/c_scale,w_800/v1687716078/blogs.hyvor.com/customer-screenshots/{customer.image}"
 				alt={customer.url}
 				loading="lazy"
-				width="400"
-				height="225"
+				style="aspect-ratio: 16 / 9"
 			/>
 
 			<div class="data">
