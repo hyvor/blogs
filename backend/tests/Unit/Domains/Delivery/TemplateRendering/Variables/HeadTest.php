@@ -184,7 +184,9 @@ it('adds favicon from logo when icon is not set', function () {
     expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
 });
 
-it('adds fonts', function () {
+/*
+ * font CSS embedded in styles.css now
+ * it('adds fonts', function () {
     $blog = blogWithLanguageAndRoutes();
 
     $content = '{{ _head | template }}';
@@ -211,7 +213,7 @@ it('adds fonts', function () {
     expect($content)->toContain(
         "<link rel=\"stylesheet\" href=\"https://{$blog->subdomain}.hyvorblogs.io/fonts/css/mulish:400\" />"
     );
-});
+});*/
 
 it('adds tag code', function () {
     $blog = blogWithLanguageAndRoutes();

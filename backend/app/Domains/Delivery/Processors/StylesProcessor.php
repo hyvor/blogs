@@ -11,8 +11,13 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
+use App\Domains\Integrations\Bunny\BunnyService;
+use App\Domains\Integrations\Bunny\UnableToFetchBunnyException;
+use App\Domains\Theme\Exception\UnableToParseConfigException;
+use App\Domains\Theme\ThemeConfig;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\SafetyException;
+use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\SassException;
 use MatthiasMullie\Minify;
@@ -57,6 +62,7 @@ class StylesProcessor extends RouteProcessorAbstract
             return;
         }
 
+        $css = $this->addFontCss($pathMatcher->blog, $css);
         $css = $this->minify($css);
 
         $this->setResponseObject(
@@ -79,5 +85,28 @@ class StylesProcessor extends RouteProcessorAbstract
          */
         $minifier->add('/**/' . $css);
         return $minifier->minify();
+    }
+
+    private function addFontCss(Blog $blog, string $css): string
+    {
+        try {
+            $config = ThemeConfig::getConfig($blog);
+        } catch (UnableToParseConfigException) {
+            return $css;
+        }
+
+        $themeFonts = $config['THEME_FONTS'] ?? null;
+
+        if (!is_string($themeFonts)) {
+            return $css;
+        }
+
+        try {
+            $bunnyCss = BunnyService::getCss($blog->url(), $themeFonts);
+        } catch (UnableToFetchBunnyException) {
+            return $css;
+        }
+
+        return $css . "\n" . $bunnyCss;
     }
 }

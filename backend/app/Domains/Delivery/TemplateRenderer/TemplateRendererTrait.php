@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Delivery\TemplateRenderer;
 
@@ -6,11 +8,10 @@ namespace App\Domains\Delivery\TemplateRenderer;
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\LanguageObject;
 use App\Domains\App\DomainService;
-use App\Domains\Theme\ThemeFilesRepository;
+use App\Domains\Theme\Exception\UnableToParseConfigException;
+use App\Domains\Theme\ThemeConfig;
 use App\Models\Blog;
 use App\Models\Language;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 use Twig\Error\Error;
 
 trait TemplateRendererTrait
@@ -23,16 +24,9 @@ trait TemplateRendererTrait
 
     private function setConfig(Blog $blog): void
     {
-        $configFile = ThemeFilesRepository::getFile($blog, 'config.yaml');
-
-        if (!$configFile) {
-            $this->config = [];
-            return;
-        }
-
         try {
-            $this->config = Yaml::parse($configFile->content ?? '') ?? [];
-        } catch (ParseException) {
+            $this->config = ThemeConfig::getConfig($blog);
+        } catch (UnableToParseConfigException) {
             throw new Error('Unable to parse config.yaml');
         }
     }
@@ -42,7 +36,6 @@ trait TemplateRendererTrait
      */
     public function getDefaultVariables(Blog $blog, Language $language): array
     {
-
         if ($this->config === null) {
             $this->setConfig($blog);
         }
@@ -62,17 +55,16 @@ trait TemplateRendererTrait
             '_head' => $this->getHeadCode(),
             '_foot' => $this->getFootCode(),
         ];
-
     }
 
     private function getHeadCode(): string
     {
-        return (string) file_get_contents(resource_path('twig/_head.twig'));
+        return (string)file_get_contents(resource_path('twig/_head.twig'));
     }
 
     private function getFootCode(): string
     {
-        return (string) file_get_contents(resource_path('twig/_foot.twig'));
+        return (string)file_get_contents(resource_path('twig/_foot.twig'));
     }
 
 }

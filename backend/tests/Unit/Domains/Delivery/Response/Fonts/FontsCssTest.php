@@ -6,9 +6,11 @@ use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\Delivery\PathMatcher;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-it('returns font css', function() {
+it('returns font css', function () {
+    Cache::clear();
 
     $response = "@font-face {
   font-family: 'Mulish';
@@ -50,10 +52,13 @@ it('returns font css', function() {
         return true;
     });
 
+    expect(Cache::has('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap'))->toBeTrue();
+    $cachedValue = Cache::get('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap');
+    expect($cachedValue)->toBe($replaced);
 });
 
-it('on fail', function() {
-
+it('on fail', function () {
+    Cache::clear();
     Http::fake([
         'https://fonts.bunny.net/css*' => Http::response('', 500)
     ]);
@@ -66,5 +71,5 @@ it('on fail', function() {
     expect($responseObject->status)->toBe(500);
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
 
-
+    expect(Cache::has('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap'))->toBeFalse();
 });

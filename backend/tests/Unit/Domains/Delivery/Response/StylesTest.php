@@ -12,6 +12,8 @@ use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
 use Database\Factories\BlogFactory;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Tests\Case\DatabaseTestCase;
 
 class StylesTest extends DatabaseTestCase
@@ -110,6 +112,66 @@ class StylesTest extends DatabaseTestCase
         $pathMatcher = new PathMatcher($blog, '/styles.css');
         $responseObject = $pathMatcher->getResponseObject();
         $this->assertEquals(DeliveryAPICacheControlHeaderEnum::NO_CACHE, $responseObject->cache_control);
+    }
+
+    public function test_adds_bunny_font_css(): void
+    {
+        Cache::clear();
+        $file = 'index.scss';
+        $content = 'body {color: red;}';
+
+        $blog = BlogFactory::one();
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            $file,
+            $content,
+        );
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            null,
+            'config.yaml',
+            "THEME_FONTS: roboto:400,600",
+        );
+
+        Http::fake([
+            'https://fonts.bunny.net/css*' => Http::response('body{font-family:Roboto}')
+        ]);
+
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
+        $responseObject = $pathMatcher->getResponseObject();
+        $this->assertSame("body{color:red}body{font-family:Roboto}", $responseObject->content);
+    }
+
+    public function test_adds_comment_when_bunny_fails(): void
+    {
+        Cache::clear();
+
+        $blog = BlogFactory::one();
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            ThemeFileFolderEnum::STYLES,
+            'index.scss',
+            'body {color: red;}',
+        );
+
+        ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            null,
+            'config.yaml',
+            "THEME_FONTS: roboto:400,600",
+        );
+
+        Http::fake([
+            'https://fonts.bunny.net/css*' => Http::response('', 500)
+        ]);
+
+        $pathMatcher = new PathMatcher($blog, '/styles.css');
+        $responseObject = $pathMatcher->getResponseObject();
+        $this->assertSame("body{color:red}", $responseObject->content);
     }
 
 }
