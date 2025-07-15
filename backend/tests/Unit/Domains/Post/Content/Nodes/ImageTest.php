@@ -30,11 +30,10 @@ test('json to HTML', function () {
 
     $html = PostContentService::getHtml($json, blog());
 
-    expect($html)->toBe("<img src=\"$src\" alt=\"$alt\" width=\"$width\" height=\"$height\">");
+    expect($html)->toBe("<img src=\"$src\" loading=\"lazy\" alt=\"$alt\" width=\"$width\" height=\"$height\">");
 });
 
-it('adds srcset for images in media', function() {
-
+it('adds srcset for images in media', function () {
     $blog = blog();
     $file = UploadedFile::fake()->image('image.png', 2000);
     $media = MediaRepository::upload($blog, $file);
@@ -62,12 +61,12 @@ it('adds srcset for images in media', function() {
 
     $html = PostContentService::getHtml($json, $blog);
 
-    expect($html)->toBe("<img src=\"$src\" alt=\"$alt\" width=\"$width\" height=\"$height\" srcset=\"$src 2000w, $src/500w 500w, $src/750w 750w, $src/1000w 1000w, $src/1500w 1500w\">");
-
+    expect($html)->toBe(
+        "<img src=\"$src\" loading=\"lazy\" alt=\"$alt\" width=\"$width\" height=\"$height\" srcset=\"$src 2000w, $src/500w 500w, $src/750w 750w, $src/1000w 1000w, $src/1500w 1500w\">"
+    );
 });
 
-it('doesnt add larger widths to srcset', function() {
-
+it('doesnt add larger widths to srcset', function () {
     $blog = blog();
     $file = UploadedFile::fake()->image('image.png', 850);
     $media = MediaRepository::upload($blog, $file);
@@ -95,8 +94,9 @@ it('doesnt add larger widths to srcset', function() {
 
     $html = PostContentService::getHtml($json, $blog);
 
-    expect($html)->toBe("<img src=\"$src\" alt=\"$alt\" width=\"$width\" height=\"$height\" srcset=\"$src 850w, $src/500w 500w, $src/750w 750w\">");
-
+    expect($html)->toBe(
+        "<img src=\"$src\" loading=\"lazy\" alt=\"$alt\" width=\"$width\" height=\"$height\" srcset=\"$src 850w, $src/500w 500w, $src/750w 750w\">"
+    );
 });
 
 test('json to HTML with figure', function () {
@@ -133,12 +133,13 @@ test('json to HTML with figure', function () {
 
     $html = PostContentService::getHtml($json, blog());
 
-    expect($html)->toBe("<figure><img src=\"$src\" alt=\"$alt\"><figcaption>$caption</figcaption></figure>");
+    expect($html)->toBe(
+        "<figure><img src=\"$src\" loading=\"lazy\" alt=\"$alt\"><figcaption>$caption</figcaption></figure>"
+    );
 });
 
 
-test('html to json', function() {
-
+test('html to json', function () {
     $src = 'https://example.com/image.png';
 
     $html = "<img src=\"$src\">";
@@ -164,11 +165,9 @@ test('html to json', function() {
             ]
         ],
     ]));
-
 });
 
-test('html to json with all attributes', function() {
-
+test('html to json with all attributes', function () {
     $src = 'https://example.com/image.png';
     $alt = 'ALT';
     $width = 100;
@@ -189,13 +188,12 @@ test('html to json with all attributes', function() {
                         'attrs' => [
                             'src' => $src,
                             'alt' => $alt,
-                            'width' => (string) $width,
-                            'height' => (string) $height,
+                            'width' => (string)$width,
+                            'height' => (string)$height,
                         ],
                     ],
                 ]
             ]
         ],
     ]));
-
 });
