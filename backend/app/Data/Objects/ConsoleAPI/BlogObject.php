@@ -91,6 +91,8 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReportEnum $link_analysis_email_report;
 
+    public bool $integration_simple_analytics_enabled;
+
     /**
      * @var BlogVariantObject[]
      */
@@ -154,6 +156,8 @@ class BlogObject
         $this->link_analysis_enabled = (bool)$meta->link_analysis_enabled;
         $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report) ??
             LinkAnalysisEmailReportEnum::NEVER;
+
+        $this->integration_simple_analytics_enabled = (bool)$meta->integration_simple_analytics_enabled;
 
         $this->variants = $blog->variants->map(function ($variant) {
             return new BlogVariantObject($variant);

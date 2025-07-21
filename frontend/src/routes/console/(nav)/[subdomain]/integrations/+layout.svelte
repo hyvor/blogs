@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { NavLink } from "@hyvor/design/components";
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
+    import simpleAnalyticsLogo from '$lib/img/services/simple-analytics.svg';
 	import { page } from "$app/stores";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { consoleUrl, consoleUrlWithBlog } from "../../../lib/consoleUrl";
@@ -23,6 +24,16 @@
                         <img src={hyvorTalkLogo} alt="Hyvor Talk"  />
                     {/snippet}
             Hyvor Talk
+        </NavLink>
+
+        <NavLink
+            href={consoleUrlWithBlog('/integrations/simple-analytics')}
+            active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/simple-analytics`}
+        >
+            {#snippet start()}
+                       <img src={simpleAnalyticsLogo} alt="Simple Analytics" />
+                    {/snippet}
+            Simple Analytics
         </NavLink>
     </div>
 
@@ -60,7 +71,6 @@
         flex: 1;
         min-width: 0;
         height: 100%;
-        padding: 25px 45px;
         overflow: auto;
     }
 

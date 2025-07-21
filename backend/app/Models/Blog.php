@@ -105,6 +105,9 @@ class Blog extends Model
         $definer->add('link_analysis_email_report')->default('broken');
 
         $definer->add('cache_version_styles')->default(1);
+
+        $definer->add('integration_simple_analytics_enabled')->default(false);
+
     }
 
     /**
