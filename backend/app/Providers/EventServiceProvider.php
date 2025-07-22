@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -9,6 +10,7 @@ use App\Domains\Blog\Listeners\UpdateContentHtmlOfAllPostsListener;
 use App\Domains\Blog\Listeners\UpdateUrlsListener;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
 use App\Domains\Integrations\HyvorTalk\HyvorTalkSubscriber;
+use App\Domains\Integrations\SimpleAnalytics\SimplyAnalyticsEventSubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
@@ -50,6 +52,7 @@ class EventServiceProvider extends ServiceProvider
 
         // integrations
         HyvorTalkSubscriber::class,
+        SimplyAnalyticsEventSubscriber::class
 
     ];
 
