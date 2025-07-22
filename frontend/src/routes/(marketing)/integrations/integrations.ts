@@ -33,6 +33,7 @@ import type { Component } from "svelte";
 
 import GoogleAnalytics from './content/google-analytics/GoogleAnalytics.svelte';
 import CloudflareAnalytics from './content/cloudflare-anaytics/CloudflareAnalytics.svelte';
+import Matomo from "./content/matomo/Matomo.svelte";
 import HyvorTalkComments from './content/hyvor-talk-comments/HyvorTalkComments.svelte';
 import Mailchimp from './content/mailchimp/Mailchimp.svelte';
 import Ezoic from './content/ezoic/Ezoic.svelte';
@@ -84,17 +85,18 @@ export const integrations : Integration[] = [
         component: CloudflareAnalytics
     },
 
-    //matomo
-    // {
-    //     slug: 'matomo',
-    //     name: 'Matomo',
-    //     icon: matomoIcon,
-    //     title: 'Add Matomo Analytics to your blog',
-    //     description: 'Matomo Analytics is a privacy-focused, open-source web analytics platform for tracking and analyzing website visitor data. Learn how to integrate Matomo Analytics with your Hyvor Blogs blog.',
-    //     category: 'analytics',
-    //     color: '#dbe5ff',
+    // matomo
+    {
+        slug: 'matomo',
+        name: 'Matomo',
+        icon: matomoIcon,
+        title: 'Add Matomo Analytics to your blog',
+        description: 'Matomo Analytics is an open-source web analytics platform for tracking and analyzing website visitor data. Learn how to integrate Matomo Analytics with your Hyvor Blogs blog.',
+        category: 'analytics',
+        color: '#dbe5ff',
+        component: Matomo
         
-    // },
+    },
 
     //fathom
     // {
