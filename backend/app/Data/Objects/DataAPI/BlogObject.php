@@ -7,6 +7,7 @@ use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\NavigationTypeEnum;
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
+use App\Domains\Hook\BlogCustomCodeHookEvent;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
@@ -103,8 +104,10 @@ class BlogObject
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
-        $this->code_head = $meta->code_head;
-        $this->code_foot = $meta->code_foot;
+        $event = new BlogCustomCodeHookEvent($blog, $meta->code_head, $meta->code_foot);
+        event($event);
+        $this->code_head = $event->getCodeHead();
+        $this->code_foot = $event->getCodeFoot();
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);

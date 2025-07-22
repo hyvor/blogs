@@ -6,6 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
+use Tests\Case\AppTestCase;
 
 it('sets _head in index', function () {
     $blog = blogWithLanguageAndRoutes();
