@@ -69,7 +69,7 @@
 
 	<h2 id="create-data-stream">Step 2 - Create a data stream</h2>
 	<p>
-		After you accepted Google Analytics Terms of Searvice Agreement, you will be directed to
+		After you accepted Google Analytics Terms of Service Agreement, you will be directed to
 		creating a data stream step.
 	</p>
 	<ol>

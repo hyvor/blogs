@@ -39,6 +39,7 @@ import Ezoic from './content/ezoic/Ezoic.svelte';
 import GoogleAdsense from './content/google-adsense/GoogleAdsense.svelte';
 import GoogleForms from './content/google-forms/GoogleForms.svelte';
 import Memberstack from './content/memberstack/Memberstack.svelte';
+import SimpleAnalytics from "./content/simple-analytics/SimpleAnalytics.svelte";
 
 
 type CategoryName = 'analytics' | 'comments' | 'newsletters' | 'ads' | 'memberships' | 'forms';
@@ -96,6 +97,18 @@ export const integrations : Integration[] = [
         
     // },
 
+    // simple analytics
+    {
+        slug: 'simple-analytics',
+        name: 'Simple Analytics',
+        icon: simpleAnalyticsIcon,
+        title: 'Add Simple Analytics to your blog',
+        description: 'Simple Analytics is a privacy-friendly web analytics tool that provides basic website traffic metrics while prioritizing user anonymity and data protection. Learn how to integrate Simple Analytics with your Hyvor Blogs blog.',
+        category: 'analytics',
+        color: '#ffd6da',
+        component: SimpleAnalytics
+    },
+
     //fathom
     // {
     //     slug: 'fathom',
@@ -116,17 +129,6 @@ export const integrations : Integration[] = [
     //     description: 'Plausible is a lightweight, privacy-friendly alternative to Google Analytics, offering simple yet insightful website analytics with a focus on user privacy. Learn how to integrate Plausible Analytics with your Hyvor Blogs blog.',
     //     category: 'analytics',
     //     color: '#eceeff'
-    // },
-
-    //simple analytics
-    // {
-    //     slug: 'simple-analytics',
-    //     name: 'Simple Analytics',
-    //     icon: simpleAnalyticsIcon,
-    //     title: 'Add Simple Analytics to your blog',
-    //     description: 'Simple Analytics is a privacy-friendly web analytics tool that provides basic website traffic metrics while prioritizing user anonymity and data protection. Learn how to integrate Simple Analytics with your Hyvor Blogs blog.',
-    //     category: 'analytics',
-    //     color: '#ffd6da'
     // },
 
     //posthog
