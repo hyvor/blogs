@@ -22,7 +22,7 @@
 
 				<FooterLinkList title="HYVOR">
 					<a href="https://hyvor.com" target="_blank">hyvor.com</a>
-					<a href="https://hyvor.com/about" target="_blank">About</a>
+					<a href="https://hyvor.com/#letter" target="_blank">About</a>
 					<a href="https://hyvor.com/security" target="_blank">Security</a>
 					<a href="https://status.hyvor.com" target="_blank">System Status</a>
 				</FooterLinkList>
