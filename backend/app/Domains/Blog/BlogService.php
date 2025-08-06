@@ -260,5 +260,4 @@ class BlogService
             BlogDeletedEvent::dispatch($blog);
         });
     }
-
 }

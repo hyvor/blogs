@@ -2,15 +2,18 @@
 	import dayjs from 'dayjs';
 	import type { Post, PostVariant } from '../../../lib/types';
 	import { getLanguageById } from '../../../lib/actions/languageActions';
-	import { Avatar, Link, Tag } from '@hyvor/design/components';
+	import { Avatar, Link, Tag, Dropdown, ActionList, ActionListItem, IconButton, toast, Button } from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
 	import SeoAnalysisTag from './Tags/SeoAnalysisTag.svelte';
 	import VariantLangTag from './Tags/VariantLangTag.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import TagName from '../settings/tags/TagName.svelte';
+	import { clonePost } from './postActions';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		post: Post;
@@ -19,12 +22,38 @@
 	let { post }: Props = $props();
 
 	let variant = $derived(post.variants[0]!);
+	let showDropdown = $state(false);
+	let isCloning = $state(false);
 
 	const publishedAtDate = dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY');
 	const createdAtDate = dayjs.unix(post.created_at).format('MMM D, YYYY');
 
 	function getVariantLanguage(v: PostVariant) {
 		return getLanguageById(v.language_id);
+	}
+
+	function handleClone(e: Event) {
+		e.preventDefault();
+		e.stopPropagation();
+		
+		if (isCloning) return;
+		
+		showDropdown = false;
+		isCloning = true;
+		
+		const toastId = toast.loading('Cloning post...');
+		
+		clonePost(post.id)
+			.then((clonedPost) => {
+				toast.success('Post cloned successfully', { id: toastId });
+				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}`));
+			})
+			.catch((error) => {
+				toast.error(error.message || 'Failed to clone post', { id: toastId });
+			})
+			.finally(() => {
+				isCloning = false;
+			});
 	}
 </script>
 
@@ -108,13 +137,38 @@
 	<div class="post-status-wrap">
 		<PostStatusTag status={variant?.status || 'draft'} />
 	</div>
+
+	<div class="post-actions-wrap">
+		<div on:click={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+			<Dropdown bind:show={showDropdown} align="end" width={150}>
+			{#snippet trigger()}
+				<Button 
+					size="small" 
+					color="input" 
+					variant="invisible"
+					disabled={isCloning}
+				>
+					<IconThreeDotsVertical size={16} />
+				</Button>
+			{/snippet}
+
+			{#snippet content()}
+				<ActionList>
+					<ActionListItem on:click={handleClone} disabled={isCloning}>
+						Clone post
+					</ActionListItem>
+				</ActionList>
+			{/snippet}
+		</Dropdown>
+		</div>
+	</div>
 </a>
 
 <style lang="scss">
 	.post-list-item {
 		display: grid;
 		align-items: center;
-		grid-template-columns: 1fr 1fr 1fr 1fr 100px 120px;
+		grid-template-columns: 1fr 1fr 1fr 1fr 100px 120px 40px;
 		padding: 20px;
 		border-left: 3px solid transparent;
 		position: relative;
@@ -218,6 +272,17 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
+	}
+
+	.post-actions-wrap {
+		text-align: right;
+		padding-right: 0;
+		position: relative;
+		z-index: 1;
+	}
+
+	.post-actions-wrap :global(.dropdown) {
+		z-index: 1000;
 	}
 
 	@media (max-width: 992px) {

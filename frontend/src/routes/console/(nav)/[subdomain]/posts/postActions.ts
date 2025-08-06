@@ -167,3 +167,9 @@ export function deletePostVariant() {
         data: { language_id: languageId }
     });
 }
+
+export function clonePost(postId: number) {
+    return consoleApi.post<Post>({
+        endpoint: `/post/${postId}/clone`
+    });
+}
