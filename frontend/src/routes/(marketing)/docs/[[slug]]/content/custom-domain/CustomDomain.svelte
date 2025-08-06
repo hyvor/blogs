@@ -180,7 +180,7 @@ import IconLightbulb from '@hyvor/icons/IconLightbulb';
     {#snippet icon()}
         <IconLightbulb  />
     {/snippet}
-    <strong>Recommendation:</strong> Choose one version (www or non-www) as your primary domain and set up DNS records only for that version. The automatic redirect ensures visitors reach your blog regardless of which variant they type.
+    <strong>DNS Setup:</strong> For the best user experience, set up DNS records for <strong>both</strong> the www and non-www versions of your domain, pointing them to the same target (using the same CNAME or A record values as shown above). This ensures both variants work properly before the redirect happens.
 </Callout>
 
 <p>
