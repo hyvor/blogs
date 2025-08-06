@@ -159,6 +159,30 @@ import IconLightbulb from '@hyvor/icons/IconLightbulb';
 
 {/if}
 
+<h2 id="www-handling">
+    WWW vs Non-WWW Domains
+</h2>
+
+<p>
+    You can point either the <strong>www</strong> or <strong>non-www</strong> version of your domain to Hyvor Blogs. Our system automatically handles both variants intelligently:
+</p>
+
+<ul>
+    <li>
+        If you configure your blog with <code>example.com</code> but a visitor accesses <code>www.example.com</code>, they will be automatically redirected to <code>example.com</code>.
+    </li>
+    <li>
+        If you configure your blog with <code>www.example.com</code> but a visitor accesses <code>example.com</code>, they will be automatically redirected to <code>www.example.com</code>.
+    </li>
+</ul>
+
+<Callout type="info">
+    {#snippet icon()}
+        <IconLightbulb  />
+    {/snippet}
+    <strong>Recommendation:</strong> Choose one version (www or non-www) as your primary domain and set up DNS records only for that version. The automatic redirect ensures visitors reach your blog regardless of which variant they type.
+</Callout>
+
 <p>
     Voila! Your blog is now available at your custom domain.
 </p>

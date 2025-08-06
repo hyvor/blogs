@@ -15,6 +15,14 @@ class CustomDomainMiddleware
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (!$blog) {
+            $hasWww = str_contains($host, 'www.');
+            $normalizedHost = str_replace('www.', '', $host);
+            $alternativeHost = $hasWww ? $normalizedHost : 'www.' . $normalizedHost;
+
+            $blog = BlogService::getBlogByCustomDomain($alternativeHost);
+            if ($blog) {
+                return redirect()->to('https://' . $alternativeHost . $request->getRequestUri());
+            }
             return redirect('https://blogs.hyvor.com');
         }
 
