@@ -286,7 +286,7 @@ class Highlighter
 
         $numberDisplay = str_repeat(' ', $diffLength).($number === false ? '' : $number);
 
-        return "<span class=\"line-number\" style=\"$styles\">$numberDisplay</span>";
+        return "<span class=\"line-number\" style=\"$styles\" aria-hidden=\"true\">$numberDisplay</span>";
     }
 
     private function getStylesArrayAsCssString(array $styles)
