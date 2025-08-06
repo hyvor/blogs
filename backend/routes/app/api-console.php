@@ -118,6 +118,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                 Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
 
                 Route::get('/post/{id}/slug-available', [ConsolePostController::class, 'checkSlugAvailability']);
+
+                Route::post('/post/{id}/clone', [ConsolePostController::class, 'clonePost']);
             });
 
             // media CRD
