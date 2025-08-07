@@ -142,14 +142,14 @@
 		<div on:click={(e) => { e.preventDefault(); e.stopPropagation(); }}>
 			<Dropdown bind:show={showDropdown} align="end" width={150}>
 			{#snippet trigger()}
-				<Button 
+				<IconButton 
 					size="small" 
 					color="input" 
 					variant="invisible"
 					disabled={isCloning}
 				>
 					<IconThreeDotsVertical size={16} />
-				</Button>
+				</IconButton>
 			{/snippet}
 
 			{#snippet content()}
