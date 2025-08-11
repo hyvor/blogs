@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Models\Post;
 use Database\Factories\BlogFactory;
 use Database\Factories\PostFactory;
 use Database\Factories\PostVariantFactory;
@@ -26,5 +27,11 @@ class ClonePostTest extends DatabaseTestCase
         $variants = $data['variants'];
         $this->assertIsArray($variants);
         $this->assertCount(1, $variants);
+
+        $post = Post::where('id', $data['id'])->first();
+        $this->assertNotNull($post);
+
+        $postVariant = $post->variants->first();
+        $this->assertNotNull($postVariant);
     }
 }
