@@ -12,6 +12,12 @@ class CustomDomainMiddleware
     public function handle(Request $request, Closure $next) : mixed
     {
         $host = $request->getHost();
+
+        if (!$request->isSecure()) {
+            $fullUrl = 'https://' . $host . $request->getRequestUri();
+            return redirect()->to($fullUrl);
+        }
+
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (!$blog) {
