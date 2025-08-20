@@ -16,9 +16,9 @@
 	<link rel="canonical" href="https://blogs.hyvor.com">
 </svelte:head>
 
-<AboveFold 
+<AboveFold
 	title="All-in-one Blogging Platform"
-	subtitle="Hyvor Blogs is a platform to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff."
+	subtitle="Create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains, and many more features included!"
 />
 <Reviews />
 <CustomThemes />
@@ -28,3 +28,8 @@
 <AllFeatures />
 <HomepageCustomers />
 <FullTrialSignup />
+
+
+<style>
+
+</style>

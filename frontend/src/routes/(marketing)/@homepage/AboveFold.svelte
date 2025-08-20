@@ -3,6 +3,9 @@
 	import Hurry from './Hurry.svelte';
 	import TrialChecks from '../@components/TrialChecks.svelte';
     import hbIcon from '$lib/img/logo-social.png';
+    import Browser from "./new-home/Browser.svelte";
+    import  TestSS from './new-home/test-ss.png';
+    import BlogPage from './new-home/blog-page.png';
 
     interface Props {
         title: string;
@@ -13,7 +16,7 @@
     let { title, subtitle, integrationIcon = undefined }: Props = $props();
 </script>
 
-<div class="hds-container above-fold">
+<div class="above-fold">
 
     <div class="left">
 
@@ -53,18 +56,30 @@
     </div>
 
     <div class="right">
-        <Hurry />
+          <div class="main-browser">
+              <Browser image={TestSS} />
+          </div>
+          <div class="another-browser">
+              <Browser image={BlogPage} />
+          </div>
+
     </div>
 
 </div>
 
 
 <style lang="scss">
+    :global(body) {
+        overflow-x: hidden;
+    }
 
     .above-fold {
 
         display: flex;
         padding-top: 75px;
+        padding-right: 50px;
+        padding-left: 50px;
+        padding-bottom: 75px;
 
         .left {
             flex: 1;
@@ -73,6 +88,22 @@
         .right {
             flex: 1;
             padding-left: 25px;
+            position: relative;
+
+            .main-browser {
+                width: 150%; /* did this to make it extend over the screen edge */
+                max-width: none; /* did this to remove max-width thing */
+                margin-left: 0;
+
+            }
+
+            .another-browser {
+                position: absolute;
+                top: 270px;
+                right: 250px;
+                width: 90%;
+
+            }
         }
 
         .int {
@@ -100,7 +131,7 @@
         h2 {
             font-weight: normal;
             font-size: 20px;
-            color: var(--text-light);
+            color: var(--grey-dark);
             margin: 0;
             padding-top: 20px;
         }

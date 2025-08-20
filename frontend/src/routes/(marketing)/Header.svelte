@@ -80,7 +80,13 @@
 </Header>
 
 <style>
-	.end {
+    :global(.container){
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 50px !important;
+        margin: 0 !important;
+    }
+    .end {
 		display: flex;
 		align-items: center;
 		gap: 5px;
