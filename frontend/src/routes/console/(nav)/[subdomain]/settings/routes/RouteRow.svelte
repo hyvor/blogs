@@ -49,7 +49,15 @@ import IconTrash from '@hyvor/icons/IconTrash';
     <div>{route.name}</div>
     <div>{route.match}</div>
     <div>{route.template}</div>
-    <div>{route.posts_filter || ''}</div>
+    <div>
+        {#if route.posts_filter === null}
+            <span class="text-gray-500 italic">Disabled</span>
+        {:else if route.posts_filter === ''}
+            <span class="text-gray-600">All posts</span>
+        {:else}
+            {route.posts_filter}
+        {/if}
+    </div>
     <div>{route.content_type || 'text/html'}</div>
 
     
