@@ -110,7 +110,7 @@
 			name: 'Hyvor Talk',
 			under: 'Commenting Platform',
 			description: 'Add Hyvor Talk commenting system for FREE',
-			values: [false, '100k credits/month (Premium)', '250k credits/month (Business)']
+			values: ['25k credits/month (Premium)', '100k credits/month (Premium)', '250k credits/month (Business)']
 		}
 		// {
 		// 	name: 'Hyvor Post',
