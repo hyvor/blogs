@@ -24,11 +24,11 @@
 <div class="hds-box hurry" bind:this={mainEl}>
 	<div class="title">In a hurry?</div>
 
-	Try Hyvor Blogs with a free temporary blog created in a few seconds.
+    Try for free with a temporary blog.
 	<strong>No sign up required</strong>.
 
 	<div class="temp-button">
-		<Button as="a" href="/console?temp" target="_blank">
+		<Button as="a" href="/console?temp" target="_blank" variant="outline" color="input">
 			Create a temporary blog
 			{#snippet end()}
 				<IconBoxArrowUpRight size={10} />
@@ -68,6 +68,7 @@
 <style lang="scss">
 	.hurry {
 		padding: 25px 30px;
+        width: 400px;
 
 		.title {
 			font-weight: 600;

@@ -29,7 +29,6 @@ let { image = null }: Props = $props();
         overflow: hidden;
         box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         background: #fff;
-
     }
 
     .browser-header {

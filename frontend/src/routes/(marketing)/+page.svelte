@@ -3,11 +3,13 @@
 	import Reviews from './@components/Reviews.svelte';
 	import AboveFold from './@homepage/AboveFold.svelte';
 	import Hosting from './@homepage/Hosting/Hosting.svelte';
-	import Seo from './@homepage/Seo/Seo.svelte';
 	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
 	import FullTrialSignup from './@components/FullTrialSignup.svelte';
 	import AllFeatures from './@homepage/AllFeatures/AllFeatures.svelte';
 	import HomepageCustomers from './@homepage/Customers/HomepageCustomers.svelte';
+    import NoPlugins from "./@homepage/new-home/NoPlugins.svelte";
+    import SEO from "./@homepage/new-home/SEO.svelte";
+    import MultiLingual from "./@homepage/new-home/MultiLingual.svelte";
 </script>
 
 <svelte:head>
@@ -18,18 +20,21 @@
 
 <AboveFold
 	title="All-in-one Blogging Platform"
-	subtitle="Create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains, and many more features included!"
+	subtitle="For Content Marketing Teams and Businesses"
 />
-<Reviews />
-<CustomThemes />
-<Hosting />
-<Seo />
-<MultiLanguage />
-<AllFeatures />
-<HomepageCustomers />
-<FullTrialSignup />
 
 
-<style>
+<NoPlugins />
+<!--<Reviews />-->
+<!--<CustomThemes />-->
+<SEO />
+<MultiLingual />
+<!--<Hosting />-->
 
-</style>
+<!--<MultiLanguage />-->
+<!--<AllFeatures />-->
+<!--<HomepageCustomers />-->
+<!--<FullTrialSignup />-->
+
+
+
