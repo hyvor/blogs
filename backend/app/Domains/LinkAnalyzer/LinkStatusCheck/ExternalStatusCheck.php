@@ -2,6 +2,7 @@
 
 namespace App\Domains\LinkAnalyzer\LinkStatusCheck;
 
+use App\Domains\App\HttpBot;
 use App\Domains\LinkAnalyzer\LinkStatusCheck\Ignore\KnownFirewall;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpClient\HttpOptions;
@@ -57,7 +58,7 @@ class ExternalStatusCheck implements LinkStatusCheckInterface
                         ->setTimeout(5) // seconds
                         ->setMaxDuration(10) // seconds
                         ->setHeaders([
-                            'User-Agent' => 'Hyvor Blogs Link Analyzer',
+                            'User-Agent' => HttpBot::USER_AGENT,
                         ])
                         ->toArray()
                 );

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Import\Sitemap;
 
+use App\Domains\App\HttpBot;
 use App\Domains\Import\Importer\ImportingPost;
 use App\Domains\Import\Importer\ImportingPostVariant;
 use App\Domains\Import\Importer\ParserAbstract;
@@ -27,7 +28,8 @@ class SitemapParser extends ParserAbstract
     public function parse() : void
     {
 
-        $sitemap = Http::get($this->sitemapUrl);
+        $sitemap = Http::withHeaders(['User-Agent' => HttpBot::USER_AGENT])
+            ->get($this->sitemapUrl);
 
         if (!$sitemap->ok()) {
             throw new ParserException('Cannot fetch sitemap');

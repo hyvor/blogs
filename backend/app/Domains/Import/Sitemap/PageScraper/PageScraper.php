@@ -2,6 +2,7 @@
 
 namespace App\Domains\Import\Sitemap\PageScraper;
 
+use App\Domains\App\HttpBot;
 use App\Domains\Import\Sitemap\PageScraper\Enums\PageScrapeErrorEnum;
 use App\Domains\Import\Sitemap\PageScraper\Enums\SelectTypeEnum;
 use App\Domains\Import\Sitemap\PageScraper\Exceptions\PageScrapperException;
@@ -40,7 +41,9 @@ class PageScraper
     public function scrape() : void
     {
 
-        $response = Http::get($this->url);
+        $response = Http::withHeaders([
+            'User-Agent' => HttpBot::USER_AGENT,
+        ])->get($this->url);
 
         if (!$response->ok()) {
             $this->setError(PageScrapeErrorEnum::CANNOT_FETCH);
