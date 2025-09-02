@@ -39,7 +39,7 @@ class HtmlParser
         $this->runCustomFilters();
         $this->fixCodeBlocks();
         $this->convertIframesToEmbed();
-        $this->convertPImgToImg();
+        $this->convertAOrPImgToImg();
 
         return PostContentService::getDocumentFromHtml($this->html, $blog);
 
@@ -129,12 +129,11 @@ class HtmlParser
         $this->html = $html === false ? $this->html : $html;
     }
 
-    // <p><img></p> => <img>
-    private function convertPImgToImg() : void
+    // <a><img></a> || <p><img></p> => <img>
+    private function convertAOrPImgToImg() : void
     {
 
-        $this->html = $this->filterAndRun($this->html, 'p > img', function (Crawler $crawler, DOMDocument $doc) {
-
+        $replacer = function (Crawler $crawler, DOMDocument $doc) {
             foreach ($crawler as $node) {
 
                 if (!$node instanceof DOMElement)
@@ -146,24 +145,31 @@ class HtmlParser
                 if (!$node->parentNode->parentNode)
                     continue;
 
-
-                $count = 0;
-                foreach ($node->parentNode->childNodes as $child) {
-                    // count if not text node with only whitespaces
-                    if (!$child instanceof DOMText || trim($child->textContent) !== '') {
-                        $count++;
-                    }
-                }
-
-                if ($count !== 1)
-                    continue;
+// This ensures (ed) that the img is the only child of the p
+//                $count = 0;
+//                foreach ($node->parentNode->childNodes as $child) {
+//                    // count if not text node with only whitespaces
+//                    if (!$child instanceof DOMText || trim($child->textContent) !== '') {
+//                        $count++;
+//                    }
+//                }
+//
+//                if ($count !== 1)
+//                    continue;
 
                 $node->parentNode->parentNode->replaceChild($node, $node->parentNode);
 
             }
+        };
 
-        });
+        // it is very likely that images are nested p > a > img
+        // hence the a > img to img conversion first
 
+        // first a > img to img
+        $this->html = $this->filterAndRun($this->html, 'a > img', $replacer);
+
+        // then p > img to img
+        $this->html = $this->filterAndRun($this->html, 'p > img', $replacer);
     }
 
     /**
