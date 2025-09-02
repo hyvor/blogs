@@ -210,7 +210,7 @@ it('converts p img to just img', function() {
 
 });
 
-it('does not convert when p img has other elements', function() {
+it('prepends when p img has other elements', function() {
 
     Http::fake([
         'https://example.com/page' => Http::response(<<<HTML
@@ -230,6 +230,20 @@ it('does not convert when p img has other elements', function() {
     expect($scraper->content)->toBe(json_encode([
         'type' => 'doc',
         'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://example.com/image.jpg',
+                            'alt' => null,
+                            'width' => null,
+                            'height' => null,
+                        ]
+                    ]
+                ]
+            ],
             [
                 'type' => 'paragraph',
                 'content' => [
