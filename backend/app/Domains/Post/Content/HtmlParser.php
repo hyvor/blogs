@@ -145,19 +145,26 @@ class HtmlParser
                 if (!$node->parentNode->parentNode)
                     continue;
 
-// This ensures (ed) that the img is the only child of the p
-//                $count = 0;
-//                foreach ($node->parentNode->childNodes as $child) {
-//                    // count if not text node with only whitespaces
-//                    if (!$child instanceof DOMText || trim($child->textContent) !== '') {
-//                        $count++;
-//                    }
-//                }
-//
-//                if ($count !== 1)
-//                    continue;
+                $isOnlyChild = true;
+                foreach ($node->parentNode->childNodes as $child) {
+                    if ($child instanceof DOMText && trim($child->textContent) === '') {
+                        continue;
+                    }
 
-                $node->parentNode->parentNode->replaceChild($node, $node->parentNode);
+                    if ($child === $node) {
+                        continue;
+                    }
+
+                    $isOnlyChild = false;
+                    break;
+                }
+
+                // replace if only child, otherwise prepend the image before the p
+                if ($isOnlyChild) {
+                    $node->parentNode->parentNode->replaceChild($node, $node->parentNode);
+                } else {
+                    $node->parentNode->parentNode->insertBefore($node, $node->parentNode);
+                }
 
             }
         };

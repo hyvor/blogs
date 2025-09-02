@@ -89,8 +89,10 @@ class PageScraper
 
     private function tryParsingDate(?string $date) : ?Carbon
     {
-        if (!$date)
+        if (!$date) {
             return null;
+        }
+
         try {
             return Carbon::parse($date);
         } catch (InvalidFormatException) {
@@ -156,6 +158,12 @@ class PageScraper
             $slug = trim($slug, '/');
         }
 
+        if (str_contains($slug, '/')) {
+            // get the last part only
+            $parts = explode('/', $slug);
+            $slug = end($parts);
+        }
+
         $this->slug = $slug;
     }
 
@@ -182,9 +190,10 @@ class PageScraper
 
         $filtered = $crawler->filter($this->options->contentSelector);
 
-        $content = $filtered->count() > 0 ?
-            $filtered->first()->html() :
-            null;
+        $content = '';
+        $filtered->each(function (Crawler $node) use (&$content) {
+            $content .= $node->html();
+        });
 
         if (!$content || trim($content) === "") {
             throw new PageScrapperException(PageScrapeErrorEnum::CANNOT_GET_CONTENT);
