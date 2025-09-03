@@ -15,7 +15,10 @@ class CaddyController
         ]);
 
         $domain = strval($request->input('domain'));
-        $blog = BlogService::getBlogByCustomDomain($domain);
+        $hasWww = str_contains($domain, 'www.');
+        $normalizedHost = str_replace('www.', '', $domain);
+        $alternativeHost = $hasWww ? $normalizedHost : 'www.' . $normalizedHost;
+        $blog = BlogService::getBlogByCustomDomain($alternativeHost);
 
         if (!$blog) {
             abort(500);
