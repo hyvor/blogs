@@ -85,7 +85,7 @@ it('updates content to empty', function () {
         'content' => '',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->where('content', '')->etc());
+        ->assertJson(fn (AssertableJson $json) => $json->where('content', null)->etc());
 });
 
 it('updates styles with event', function () {
