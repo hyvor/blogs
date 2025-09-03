@@ -33,6 +33,9 @@ class TypepadEntry
         }
     }
 
+    /**
+     * @param string[] $multilineSections
+     */
     private function parseMultiline(array $multilineSections): void
     {
         foreach ($multilineSections as $section) {
