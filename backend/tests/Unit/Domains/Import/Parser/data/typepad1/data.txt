@@ -1,0 +1,28 @@
+TITLE: Commenting Platforms
+BASENAME: commenting-platforms
+
+UNIQUE URL: https://supun.typepad.fr/accueil/2025/05/commenting-platforms.html
+DATE: 05/25/2025 04:16:02 PM
+-----
+BODY:
+<p>Hyvor Talk is a commenting platform</p>
+
+-----
+EXTENDED BODY:
+<p>It is a simple, fast, and secure</p>
+
+--------
+TITLE: Blogging Platforms
+BASENAME: blogging-platforms
+
+UNIQUE URL: https://supun.typepad.fr/blogging-platforms.html
+DATE: 05/25/2023 04:16:02 PM
+-----
+BODY:
+<p>Hyvor Blogs is a blogging platform</p>
+<img src="https://supun.typepad.fr/.a/image1-200wi" alt="Image 1"/>
+<img src="https://external.com/image.png" alt="Image 1"/>
+
+-----
+EXTENDED BODY:
+<p>It is a simple, fast, and secure</p>

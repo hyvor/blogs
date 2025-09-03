@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Import\WordPress;
+namespace App\Domains\Import\Parser;
 
 use App\Domains\App\JobMessageLog;
 use App\Domains\Import\Importer\ImportingPost;
