@@ -15,13 +15,17 @@ class CaddyController
         ]);
 
         $domain = strval($request->input('domain'));
-        $hasWww = str_contains($domain, 'www.');
-        $normalizedHost = str_replace('www.', '', $domain);
-        $alternativeHost = $hasWww ? $normalizedHost : 'www.' . $normalizedHost;
-        $blog = BlogService::getBlogByCustomDomain($alternativeHost);
+        $blog = BlogService::getBlogByCustomDomain($domain);
 
         if (!$blog) {
-            abort(500);
+            $hasWww = str_contains($domain, 'www.');
+            $normalizedHost = str_replace('www.', '', $domain);
+            $alternativeHost = $hasWww ? $normalizedHost : 'www.' . $normalizedHost;
+            $blog = BlogService::getBlogByCustomDomain($alternativeHost);
+            if (!$blog)
+                abort(500);
+            else
+                return response('OK');
         }
 
         return response('OK');
