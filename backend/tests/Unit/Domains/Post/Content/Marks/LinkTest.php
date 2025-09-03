@@ -1,61 +1,15 @@
 <?php
 
-namespace App\Domains\Post\Content\_Marks;
+namespace Tests\Unit\Domains\Post\Content\Marks;
 
-use App\Domains\Post\Content\FromHtmlOptions;
 use App\Domains\Post\Content\PostContentService;
+use Database\Factories\BlogFactory;
+use Tests\Case\DatabaseTestCase;
 
-beforeEach(function () {
-    $this->link = 'https://example.com/page';
-    $this->text = 'Example Text';
-    $this->document = [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'text',
-                'text' => $this->text,
-                'marks' => [
-                    [
-                        'type' => 'link',
-                        'attrs' => [
-                            'href' => $this->link,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ];
-});
+class LinkTest extends DatabaseTestCase
+{
 
-test('code JSON to HTML', function () {
-    $result = PostContentService::getHtml($this->document, blog());
-    expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer\">$this->text</a>");
-});
-
-test('internal link', function () {
-    $blog = blog();
-    $blog->update([
-        'hosting_at' => 'self',
-        'hosting_url' => 'https://example.com',
-    ]);
-
-    $result = PostContentService::getHtml($this->document, $blog);
-    expect($result)->toEqual("<a href=\"$this->link\" rel=\"noopener noreferrer\">$this->text</a>");
-});
-
-test('nofollow meta', function () {
-    $blog = blog();
-    $blog->setMeta('seo_external_links_follow', 'nofollow');
-    $result = PostContentService::getHtml($this->document, $blog);
-    expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">$this->text</a>");
-});
-
-test('from HTML', function() {
-    $html = '<a href="https://exmaple.com">Example Text</a>';
-
-    $result = PostContentService::getDocumentFromHtml($html, blog(), false);
-
-    expect($result->toArray())->toEqual([
+    private const array DEFAULT_DOC = [
         'type' => 'doc',
         'content' => [
             [
@@ -65,11 +19,71 @@ test('from HTML', function() {
                     [
                         'type' => 'link',
                         'attrs' => [
-                            'href' => 'https://exmaple.com'
-                        ]
+                            'href' => 'https://example.com/page',
+                        ],
                     ],
                 ],
             ],
         ],
-    ]);
-});
+    ];
+
+    public function test_json_to_html(): void
+    {
+        $result = PostContentService::getHtml(self::DEFAULT_DOC, BlogFactory::one());
+        $this->assertSame(
+            "<a href=\"https://example.com/page\" target=\"_blank\" rel=\"noopener noreferrer\">Example Text</a>",
+            $result
+        );
+    }
+
+    public function test_internal_link(): void
+    {
+        $blog = BlogFactory::one();
+        $blog->update([
+            'hosting_at' => 'self',
+            'hosting_url' => 'https://example.com',
+        ]);
+
+        $result = PostContentService::getHtml(self::DEFAULT_DOC, $blog);
+        $this->assertSame(
+            "<a href=\"https://example.com/page\" rel=\"noopener noreferrer\">Example Text</a>",
+            $result
+        );
+    }
+
+    public function test_nofollow_meta(): void
+    {
+        $blog = BlogFactory::one();
+        $blog->setMeta('seo_external_links_follow', 'nofollow');
+        $result = PostContentService::getHtml(self::DEFAULT_DOC, $blog);
+        $this->assertSame(
+            "<a href=\"https://example.com/page\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">Example Text</a>",
+            $result
+        );
+    }
+
+    public function test_from_html(): void
+    {
+        $html = '<a href="https://exmaple.com">Example Text</a>';
+        $result = PostContentService::getDocumentFromHtml($html, BlogFactory::one(), false);
+
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Example Text',
+                    'marks' => [
+                        [
+                            'type' => 'link',
+                            'attrs' => [
+                                'href' => 'https://exmaple.com'
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ], $result->toArray());
+    }
+
+}

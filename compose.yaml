@@ -37,7 +37,7 @@ services:
       target: backend-dev
     volumes:
       - ./backend:/app/backend
-      - ../internal:/app/backend/vendor/hyvor/internal
+      # - ../internal:/app/backend/vendor/hyvor/internal
     env_file:
       - .env
     labels:
