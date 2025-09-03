@@ -40,6 +40,7 @@ class TypepadEntry
     {
         foreach ($multilineSections as $section) {
             $firstLine = strtok($section, "\n");
+            if ($firstLine === false) continue;
             $key = rtrim($firstLine, ":");
             $nextLines = substr($section, strlen($firstLine) + 1);
             $this->values[$key][] = trim($nextLines);
