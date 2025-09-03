@@ -3,10 +3,11 @@
 namespace App\Console\Commands\Import;
 
 use App\Domains\App\JobMessageLog;
-use App\Domains\Import\HyvorBlogs\HyvorBlogsParser;
 use App\Domains\Import\Importer\Importer;
 use App\Domains\Import\Importer\ParserException;
-use App\Domains\Import\WordPress\WordPressParser;
+use App\Domains\Import\Parser\HyvorBlogsParser;
+use App\Domains\Import\Parser\Typepad\TypepadParser;
+use App\Domains\Import\Parser\WordPressParser;
 use App\Models\Blog;
 use Illuminate\Console\Command;
 
@@ -24,6 +25,8 @@ class ImportCommand extends Command
 
     public function handle(): void
     {
+        ini_set('memory_limit', '2048M');
+
         $from = $this->option('from');
         $test = $this->option('test');
 
@@ -47,6 +50,7 @@ class ImportCommand extends Command
         $parserClass = match ($from) {
             'wordpress' => WordPressParser::class,
             'hb' => HyvorBlogsParser::class,
+            'typepad' => TypepadParser::class,
             default => throw new \Exception('Invalid import source')
         };
 
@@ -80,7 +84,7 @@ class ImportCommand extends Command
             return;
         }
 
-        $importer = new Importer($blog, $parser, false);
+        $importer = new Importer($blog, $parser, true);
         $importer->import();
     }
 

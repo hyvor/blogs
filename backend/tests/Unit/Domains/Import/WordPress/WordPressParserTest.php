@@ -3,7 +3,7 @@
 namespace Tests\Unit\Domains\Import\WordPress;
 
 use App\Domains\App\JobMessageLog;
-use App\Domains\Import\WordPress\WordPressParser;
+use App\Domains\Import\Parser\WordPressParser;
 use App\Domains\Post\Content\Nodes\Audio\Audio;
 use App\Domains\Post\Content\Nodes\Embed\Embed;
 use App\Domains\Post\Content\Nodes\Image\Image;
