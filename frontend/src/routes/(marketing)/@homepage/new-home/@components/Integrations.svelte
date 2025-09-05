@@ -1,12 +1,9 @@
 <script lang="ts">
-    import Browser from "./Browser.svelte";
-    import seoImg from './img/SEO.png';
-    import seoFull from './img/seo-full.png';
-    import IconBullseye from '@hyvor/icons/IconBullseye';
-    import IconLink from '@hyvor/icons/IconLink';
-    import IconClipBoard from '@hyvor/icons/IconClipboard';
-    import IconTags from '@hyvor/icons/IconTags';
-    import Review from "./@components/Review.svelte";
+    import Browser from "../Browser.svelte";
+    import seoImg from '../img/SEO.png';
+    import seoFull from '../img/seo-full.png';
+    import Review from "./Review.svelte";
+
 
 
     interface Props {
@@ -20,68 +17,40 @@
 <div class="above-fold" id="seo-section">
 
     <div class="left">
-
-        <h1>
-            Outperform your Competitors
-<!--            with Built-in SEO-->
-        </h1>
-
-        <h2>Spend your time creating content while your competitors are stuck with plugins.</h2>
-
-        <div class="bento-grid">
-            <div class="int">
-               <IconBullseye class="int-icon" size="30px" />
-                <div class="seo-feature-name">SEO Analyzer</div>
-            </div>
-
-            <div class="int">
-               <IconLink class="int-icon" size="30px" />
-                <div class="seo-feature-name">Post Link Analyzer</div>
-            </div>
-
-            <div class="int">
-               <IconClipBoard class="int-icon" size="30px" />
-                <div class="seo-feature-name">Full Blog Link Analyzer</div>
-            </div>
-
-            <div class="int">
-               <IconTags class="int-icon" size="30px" />
-                <div class="seo-feature-name">Meta tags</div>
-            </div>
-
-            <div class="int">
-               <IconBullseye class="int-icon" size="30px" />
-                <div class="seo-feature-name">Robots.txt</div>
-            </div>
-        </div>
-
-
-        <div class="testmonial">
-            <Review
-                userName="Michael B."
-                title="Boosted My Blog's Traffic!"
-                country="USA"
-                date="2024-06-15"
-                review="The built-in SEO tools are fantastic! My blog's traffic has significantly increased since I started using them. Highly recommend!"
-                stars={5}
-                verified={true}
-                />
-        </div>
-
-
-    </div>
-
-    <div class="right">
         <div class="main-browser">
             <Browser image={seoFull} />
         </div>
 
         <div class="another-browser">
-             <Browser image={seoImg} />
+            <Browser image={seoImg} />
         </div>
     </div>
 
+    <div class="right">
+
+        <h1>
+            Integrate with Your Favorite Tools
+        </h1>
+
+        <h2>
+            Add custom codes to your site to connect with analytics, marketing, and other third-party tools.
+        </h2>
+
+        <div class="testmonial">
+            <Review
+                userName="Alice Johnson"
+                title="Game Changer for My Blog!"
+                country="Canada"
+                date="2024-05-10"
+                review="The ability to add custom codes has transformed how I manage my blog. Integrating analytics and marketing tools is now seamless!"
+                stars={5}
+                verified={true}
+            />
+        </div>
+    </div>
 </div>
+
+
 
 
 <style lang="scss">
@@ -94,39 +63,20 @@
         display: flex;
         padding-top: 75px;
         padding-right: 50px;
-        padding-left: 55px;
-        padding-bottom: 75px;
-        margin-bottom: 50px;
+        padding-left: 75px;
+        //padding-bottom: 75px;
+        //background-color: #3c3030;
+
 
         .left {
             flex: 1;
-        }
-
-        .left h1 {
-            font-size: 60px !important;
-            margin: 0;
-        }
-
-        .left .sassy {
-            margin-top: 20px;
-            font-size: 40px !important;
-            color: var(--grey-dark);
-            font-weight: 500;
-            text-align: end;
-        }
-
-        .right {
-            flex: 1;
-            padding-left: 25px;
+            padding-right: 25px;
             position: relative;
-
-
-
 
             .main-browser {
                 width: 150%; /* did this to make it extend over the screen edge */
                 max-width: none; /* did this to remove max-width thing */
-                margin-left: 0;
+                margin-left: -50%; /* This makes it extend over the left edge */
                 //background-color: #191e19;
                 padding-top: 70px;
                 padding-bottom: 70px;
@@ -141,17 +91,46 @@
                 position: absolute;
                 width: 400px;
                 bottom: 30px;
-                right: 0;
+                left: 0;
                 border-radius: 20px;
                 box-shadow: var(--box-shadow);
             }
+        }
+
+        .right {
+            flex: 1;
+            margin-left: 35px;
+        }
+
+        .right h1 {
+            font-size: 60px !important;
+            margin: 0;
+        }
+
+        .right .sassy {
+            margin-top: 20px;
+            font-size: 40px !important;
+            color: var(--grey-dark);
+            font-weight: 500;
+            text-align: end;
+        }
+
+        .right .multi-lang-img {
+            display: flex;
+            //    align to the right of the screen
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .right .steps {
+            background-color: #3c3030;
         }
 
         //
         @keyframes heroEnter {
             0% {
                 //transform: translateX(30px) translateY(0) translateZ(20px);
-                transform: translateX(300PX) translateY(0) translateZ(20px);
+                transform: translateX(-300PX) translateY(0) translateZ(20px);
 
 
             }
@@ -165,7 +144,7 @@
 
         @keyframes heroEnterDelayed {
             0% {
-                transform: translateX(200px) translateY(30px) translateZ(10px);
+                transform: translateX(-200px) translateY(30px) translateZ(10px);
                 //transform: translateX(0) translateY(30px) translateZ(10px);
                 opacity: 0.1;
 
@@ -196,49 +175,37 @@
             //    differed the appearance and float animation a bit using different timings
         }
 
-        .bento-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px 40px;
-            margin-top: 40px;
-        }
 
         .int {
             display: flex;
             align-items: center;
             gap: 15px;
-            //font-size: 25px;
-            font-size: 20px;
+            font-size: 35px;
             margin-bottom: 10px;
-            color: var(--gray-dark);
-        }
-
-        .seo-feature-name{
-            color:  var(--gray-dark);
-        }
-
-        .int span {
-            opacity: 0.2;
+            span {
+                opacity: 0.2;
+            }
         }
 
         .int-icon {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
         }
 
         h1 {
             margin: 0;
             font-size:40px;
+            text-align: end;
         }
 
         h2 {
             font-weight: normal;
-            //font-size: 25px;
             font-size: 20px;
             color: var(--grey-dark);
             margin: 0;
             padding-top: 20px;
+            text-align: end;
         }
 
         .buttons {
@@ -260,8 +227,8 @@
 
     .testmonial {
         display: flex;
-        justify-content: flex-start;
-        margin-top: 25px;
+        justify-content: flex-end;
+        margin-top: 20px;
     }
 
     @media (max-width: 992px) {
@@ -270,7 +237,7 @@
             text-align: center;
             padding-left: 20px;
             padding-right: 20px;
-            .right {
+            .left {
                 display: none;
             }
             .buttons {
@@ -296,10 +263,4 @@
             width: 500px;
         }
     }
-
-
-    //    media queries for 768px, 1024px, 1440px, 2560px
-
-
-
 </style>

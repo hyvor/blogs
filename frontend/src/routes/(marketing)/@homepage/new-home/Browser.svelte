@@ -1,6 +1,8 @@
 <script lang="ts">
+
 interface Props {
     image: string | null;
+    link?:   string;
 }
 
 let { image = null }: Props = $props();

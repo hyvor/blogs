@@ -1,15 +1,15 @@
 <script>
 	import CustomThemes from './@homepage/CustomThemes/CustomThemes.svelte';
-	import Reviews from './@components/Reviews.svelte';
 	import AboveFold from './@homepage/AboveFold.svelte';
-	import Hosting from './@homepage/Hosting/Hosting.svelte';
-	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
 	import FullTrialSignup from './@components/FullTrialSignup.svelte';
-	import AllFeatures from './@homepage/AllFeatures/AllFeatures.svelte';
 	import HomepageCustomers from './@homepage/Customers/HomepageCustomers.svelte';
     import NoPlugins from "./@homepage/new-home/NoPlugins.svelte";
     import SEO from "./@homepage/new-home/SEO.svelte";
     import MultiLingual from "./@homepage/new-home/MultiLingual.svelte";
+    import Hosting from "./@homepage/new-home/@components/Hosting.svelte";
+    import Integrations from "./@homepage/new-home/@components/Integrations.svelte";
+    import CustomersAndReview from "./@homepage/new-home/@components/CustomersAndReview.svelte";
+    import HostAnywhere from "./@homepage/new-home/@components/HostAnywhere.svelte";
 </script>
 
 <svelte:head>
@@ -25,16 +25,15 @@
 
 
 <NoPlugins />
-<!--<Reviews />-->
-<!--<CustomThemes />-->
 <SEO />
 <MultiLingual />
-<!--<Hosting />-->
-
-<!--<MultiLanguage />-->
-<!--<AllFeatures />-->
-<!--<HomepageCustomers />-->
-<!--<FullTrialSignup />-->
+<Hosting />
+<CustomThemes />
+<Integrations />
+<CustomersAndReview />
+<HomepageCustomers />
+<FullTrialSignup />
+<HostAnywhere />
 
 
 

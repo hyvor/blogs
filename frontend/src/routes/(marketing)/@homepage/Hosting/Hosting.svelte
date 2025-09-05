@@ -2,13 +2,13 @@
 	import { Tag } from '@hyvor/design/components';
 	import FeatureSectionTitle from '../FeatureSectionTitle.svelte';
 
-	import logoCfWorkers from './cf-workers.svg';
-	import logoLaravel from './laravel.svg';
-	import logoNext from './next.svg';
-	import logoDocker from './docker.svg';
-	import logoSymfony from './symfony.svg';
-	import Type from './Type.svelte';
-	import iconHosting from './host-anywhere.svg';
+	import logoCfWorkers from '../new-home/img/cf-workers.svg';
+	import logoLaravel from '../new-home/img/laravel.svg';
+	import logoNext from '../new-home/img/next.svg';
+	import logoDocker from '../new-home/img/docker.svg';
+	import logoSymfony from '../new-home/img/symfony.svg';
+	import Type from '../new-home/@components/Type.svelte';
+	import iconHosting from '../new-home/img/host-anywhere.svg';
 </script>
 
 <FeatureSectionTitle

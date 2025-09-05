@@ -3,7 +3,7 @@
 	import IconCheck from '@hyvor/icons/IconCheck';
 import IconLock from '@hyvor/icons/IconLock';
 
-	import CheckFeatures from "../../@components/CheckFeatures.svelte";
+	import CheckFeatures from "../../../@components/CheckFeatures.svelte";
 
     interface Props {
         name: string;

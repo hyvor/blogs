@@ -49,4 +49,9 @@
 	.nav-item-wrap.has-parent {
 		padding-left: 15px;
 	}
+
+    .docs-wrap :global(.docs) {
+        width: auto !important;
+        margin: auto 55px;
+    }
 </style>

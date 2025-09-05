@@ -41,7 +41,8 @@
 		font-size: 60px;
 		font-weight: 600;
 		opacity: 0.25;
-		color: var(--blue-dark);
+		//color: var(--blue-dark);
+        color: var(--accent-light);
 	}
 	.top {
 		display: flex;
@@ -49,8 +50,9 @@
 		gap: 15px;
 	}
 	.icon {
-		color: var(--blue-dark);
+		//color: var(--blue-dark);
 		position: relative;
+        color: var(--accent-light);
 	}
 	.top-line {
 		height: 2px;

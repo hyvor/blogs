@@ -10,7 +10,7 @@
 	import PlanSwitcher from './PlanSwitcher.svelte';
 	import Faq from './Faq.svelte';
 	import IconBrush from '@hyvor/icons/IconBrush';
-	import IconCreditCard from '@hyvor/icons/IconCreditCard';
+	// import IconCreditCard from '@hyvor/icons/IconCreditCard';
 	import IconHourglass from '@hyvor/icons/IconHourglass';
 	import IconPercent from '@hyvor/icons/IconPercent';
 	import IconCCircle from '@hyvor/icons/IconCCircle';
@@ -215,6 +215,7 @@
 <style lang="scss">
 	.plans {
 		display: flex;
+        font-size: 18px;
 	}
 	.plans-left {
 		flex: 1;

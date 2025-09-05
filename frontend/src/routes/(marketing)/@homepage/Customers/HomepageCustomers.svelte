@@ -2,6 +2,7 @@
 	import { Button } from "@hyvor/design/components";
 import CustomerList from "../../customers/CustomerList.svelte";
 import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
+    import Review from "../new-home/@components/Review.svelte";
 </script>
 
 <FeatureSectionTitle
@@ -13,6 +14,29 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
     <CustomerList max={6} />
 </div>
 
+<div class="reviews">
+<!--    <Review-->
+<!--        userName="Alice Johnson"-->
+<!--        title="Game Changer for My Blog!"-->
+<!--        country="Canada"-->
+<!--        date="2024-05-10"-->
+<!--        review="The ability to add custom codes has transformed how I manage my blog. Integrating analytics and marketing tools is now seamless!"-->
+<!--        stars={5}-->
+<!--        verified={true}-->
+<!--        />-->
+
+<!--    <Review-->
+<!--        userName="Michael Smith"-->
+<!--        title="Perfect for My Business Blog"-->
+<!--        country="USA"-->
+<!--        date="2024-04-22"-->
+<!--        review="Hyvor Blogs offers the perfect balance of customization and ease of use. The custom code feature allowed me to integrate essential marketing tools effortlessly."-->
+<!--        stars={4}-->
+<!--        verified={true}-->
+<!--        />-->
+
+</div>
+
 <div class="action">
     <Button as="a" href="/customers" color="gray">
         View more customer blogs &rarr;
@@ -21,7 +45,8 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
 
 <style>
     .wrap {
-        margin: 60px auto;
+        margin: 60px 55px;
+        width: auto;
     }
 
     .action {

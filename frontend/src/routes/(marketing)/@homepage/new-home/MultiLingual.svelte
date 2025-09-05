@@ -3,6 +3,7 @@
     import seoImg from './img/SEO.png';
     import seoFull from './img/seo-full.png';
     import multiLanguage from "../MultiLanguage/multi-language.svg";
+    import MultiLanguage from "../MultiLanguage/MultiLanguage.svelte";
 
 
     interface Props {
@@ -28,16 +29,20 @@
     <div class="right">
 
         <h1>
-            Outperform your Competitors
-            <!--            with Built-in SEO-->
+           Multi-Language Support Built-In
         </h1>
 
         <h2>
-            Spend your time creating content while your competitors are stuck with plugins.  </h2>
-        <img src={multiLanguage} alt="Multi Language" width="200px"  />
-
+         Reach a global audience with ease. Posts, author names, tags, metadata, ...everything is easily translatable. RTL support too!.
+          </h2>
+       <div class="multi-lang-img">
+           <img src={multiLanguage} alt="Multi Language" width="350px"  />
+       </div>
     </div>
+</div>
 
+<div class="steps">
+    <MultiLanguage />
 </div>
 
 
@@ -52,7 +57,9 @@
         padding-top: 75px;
         padding-right: 50px;
         padding-left: 75px;
-        padding-bottom: 75px;
+        //padding-bottom: 75px;
+        background-color: #3c3030;
+        color: var(--text-white);
 
         .left {
             flex: 1;
@@ -85,6 +92,7 @@
 
         .right {
             flex: 1;
+            margin-left: 35px;
         }
 
         .right h1 {
@@ -98,6 +106,17 @@
             color: var(--grey-dark);
             font-weight: 500;
             text-align: end;
+        }
+
+        .right .multi-lang-img {
+           display: flex;
+        //    align to the right of the screen
+              justify-content: center;
+              margin-top: 20px;
+        }
+
+        .right .steps {
+            background-color: #3c3030;
         }
 
         //
@@ -170,14 +189,16 @@
         h1 {
             margin: 0;
             font-size:40px;
+            text-align: end;
         }
 
         h2 {
             font-weight: normal;
-            font-size: 25px;
+            font-size: 20px;
             color: var(--grey-dark);
             margin: 0;
             padding-top: 20px;
+            text-align: end;
         }
 
         .buttons {

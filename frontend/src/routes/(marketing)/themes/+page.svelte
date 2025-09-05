@@ -18,7 +18,7 @@ import ThemesPreview from "../@components/ThemesPreview.svelte";
 <style lang="scss">
     .wrap {
         height: calc(100vh - var(--header-height));
-        padding: 15px;
+        padding: 15px 55px;
     }
 
     // .theme-service {

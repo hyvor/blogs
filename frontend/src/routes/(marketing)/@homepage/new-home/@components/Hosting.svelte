@@ -1,12 +1,15 @@
+
 <script lang="ts">
-    import Browser from "./Browser.svelte";
-    import seoImg from './img/SEO.png';
-    import seoFull from './img/seo-full.png';
-    import IconBullseye from '@hyvor/icons/IconBullseye';
-    import IconLink from '@hyvor/icons/IconLink';
-    import IconClipBoard from '@hyvor/icons/IconClipboard';
-    import IconTags from '@hyvor/icons/IconTags';
-    import Review from "./@components/Review.svelte";
+    import Browser from "../Browser.svelte";
+    import seoImg from '../img/SEO.png';
+    import seoFull from '../img/seo-full.png'
+    import logoCfWorkers from "../img/cf-workers.svg";
+    import logoDocker from "../img/docker.svg";
+    import logoNext from "../img/next.svg";
+    import logoLaravel from "../img/laravel.svg";
+    import logoSymfony from "../img/symfony.svg";
+    import {Tag} from "@hyvor/design/components";
+    import Type from "./Type.svelte";
 
 
     interface Props {
@@ -22,50 +25,87 @@
     <div class="left">
 
         <h1>
-            Outperform your Competitors
-<!--            with Built-in SEO-->
+            Host Anywhere
         </h1>
 
-        <h2>Spend your time creating content while your competitors are stuck with plugins.</h2>
+        <h2>
+            Subdomain, custom domain, sub-directory... anywhere!
 
-        <div class="bento-grid">
-            <div class="int">
-               <IconBullseye class="int-icon" size="30px" />
-                <div class="seo-feature-name">SEO Analyzer</div>
-            </div>
+        </h2>
 
-            <div class="int">
-               <IconLink class="int-icon" size="30px" />
-                <div class="seo-feature-name">Post Link Analyzer</div>
-            </div>
+        <div class="types hds-container">
+            <Type
+                name="Default Subdomain"
+                domain="subdomain.hyvorblogs.io"
+                features={[
+			'Best option to <strong>get started</strong>',
+			'Available for all blogs by default'
+		]}
+            />
 
-            <div class="int">
-               <IconClipBoard class="int-icon" size="30px" />
-                <div class="seo-feature-name">Full Blog Link Analyzer</div>
-            </div>
+            <Type
+                name="Custom Domain"
+                domain="blog.example.com"
+                features={[
+			'Best option for a <strong>professional blog</strong>',
+			'<a href="https://blogs.hyvor.com/docs/custom-domain" target="_blank">Easy to setup</a> by changing DNS records.',
+			'Root (<b>example.com</b>) or subdomain (<strong>blog.example.com</strong>)',
+			'Free SSL certificate'
+		]}
+            />
 
-            <div class="int">
-               <IconTags class="int-icon" size="30px" />
-                <div class="seo-feature-name">Meta tags</div>
-            </div>
+            <Type
+                name="Sub-directory"
+                domain="example.com/blog"
+                features={[
+			'Best option for <strong>SEO</strong>',
+			'Serve your blog from your web app',
+			'Reverse proxy support'
+		]}
+            >
+                <div
+                    style="
+                margin-top:15px;
+                border-top:1px solid var(--accent-light);
+                margin-left:-25px;
+                margin-right:-25px;
+            "
+                ></div>
 
-            <div class="int">
-               <IconBullseye class="int-icon" size="30px" />
-                <div class="seo-feature-name">Robots.txt</div>
-            </div>
-        </div>
+                <div class="sub-dir-note">
+                    Use one of the following methods to host your blog in a sub-directory:
+                </div>
 
+                <div class="methods">
+                    <a href="https://hyvor.com/blog/cloudflare-workers-blog" target="_blank">
+                        <img src={logoCfWorkers} alt="Cloudflare Workers Logo" />
+                        <span>
+					Cloudflare <br /> Workers <br />
+					<Tag color="blue" size="small">No-code</Tag>
+				</span>
+                    </a>
 
-        <div class="testmonial">
-            <Review
-                userName="Michael B."
-                title="Boosted My Blog's Traffic!"
-                country="USA"
-                date="2024-06-15"
-                review="The built-in SEO tools are fantastic! My blog's traffic has significantly increased since I started using them. Highly recommend!"
-                stars={5}
-                verified={true}
-                />
+                    <a href="https://hyvor.com/blog/docker-subdirectory-blog" target="_blank">
+                        <img src={logoDocker} alt="Docker Logo" />
+                        <span> Docker </span>
+                    </a>
+
+                    <a href="https://hyvor.com/blog/nextjs-blog" target="_blank">
+                        <img src={logoNext} alt="Next.js Logo" />
+                        <span> Next.js </span>
+                    </a>
+
+                    <a href="https://hyvor.com/blog/laravel-blog" target="_blank">
+                        <img src={logoLaravel} alt="Laravel Logo" />
+                        <span> Laravel </span>
+                    </a>
+
+                    <a href="https://hyvor.com/blog/symfony-blog" target="_blank">
+                        <img src={logoSymfony} alt="Symfony Logo" />
+                        <span> Symfony </span>
+                    </a>
+                </div>
+            </Type>
         </div>
 
 
@@ -77,7 +117,7 @@
         </div>
 
         <div class="another-browser">
-             <Browser image={seoImg} />
+            <Browser image={seoImg} />
         </div>
     </div>
 
@@ -96,7 +136,6 @@
         padding-right: 50px;
         padding-left: 55px;
         padding-bottom: 75px;
-        margin-bottom: 50px;
 
         .left {
             flex: 1;
@@ -104,7 +143,7 @@
 
         .left h1 {
             font-size: 60px !important;
-            margin: 0;
+            margin: 0 !important;
         }
 
         .left .sassy {
@@ -145,6 +184,44 @@
                 border-radius: 20px;
                 box-shadow: var(--box-shadow);
             }
+        }
+
+        .types {
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+            width: 700px;
+            max-width: 100%;
+            margin: auto;
+            margin-top: 40px;
+            padding: 0 !important;
+        }
+        .methods {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 15px;
+            a {
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            img {
+                width: 30px;
+                height: 30px;
+                margin-bottom: 10px;
+            }
+            span {
+                text-align: center;
+                font-size: 14px;
+            }
+        }
+        .sub-dir-note {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            color: var(--text-light);
+            font-size: 14px;
         }
 
         //
@@ -261,7 +338,7 @@
     .testmonial {
         display: flex;
         justify-content: flex-start;
-        margin-top: 25px;
+        margin-top: 20px;
     }
 
     @media (max-width: 992px) {
@@ -296,10 +373,4 @@
             width: 500px;
         }
     }
-
-
-    //    media queries for 768px, 1024px, 1440px, 2560px
-
-
-
 </style>

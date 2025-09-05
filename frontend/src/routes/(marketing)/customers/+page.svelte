@@ -26,8 +26,9 @@
 <style>
     .wrap {
         padding: 60px 0;
-        width: 1200px;
+        /*width: 1200px;*/
         max-width: 100%;
-        margin: auto;
+        /*margin: auto;*/
+        margin: auto 55px;
     }
 </style>

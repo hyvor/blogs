@@ -148,7 +148,7 @@
     .section-content {
         display: flex;
         gap: 50px;
-        padding: 0 75px;
+        padding: 0 55px;
         margin-bottom: 100px;
     }
 

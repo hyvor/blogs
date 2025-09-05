@@ -199,7 +199,8 @@
 <style lang="scss">
 	.wrap {
 		width: 100%;
-		padding: 0 20px;
+		//padding: 0 20px;
+        padding: 0;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-start;

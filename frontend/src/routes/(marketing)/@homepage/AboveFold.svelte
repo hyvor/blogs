@@ -44,27 +44,27 @@
 
         {/if}
 
-        <div class="checks">
-            <div class="check">
-                <IconCheckCircleFill />
-                Multilingual
-            </div>
+<!--        <div class="checks">-->
+<!--            <div class="check">-->
+<!--                <IconCheckCircleFill />-->
+<!--                Multilingual-->
+<!--            </div>-->
 
-            <div class="check">
-                <IconCheckCircleFill />
-                In-built SEO
-            </div>
+<!--            <div class="check">-->
+<!--                <IconCheckCircleFill />-->
+<!--                In-built SEO-->
+<!--            </div>-->
 
-            <div class="check">
-                <IconCheckCircleFill />
-                Customizable themes
-            </div>
+<!--            <div class="check">-->
+<!--                <IconCheckCircleFill />-->
+<!--                Customizable themes-->
+<!--            </div>-->
 
-            <div class="check">
-                <IconCheckCircleFill />
-                Custom domain & subdirectory hosting
-            </div>
-        </div>
+<!--            <div class="check">-->
+<!--                <IconCheckCircleFill />-->
+<!--                Custom domain & subdirectory hosting-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="buttons">
 
@@ -122,7 +122,7 @@
         display: flex;
         padding-top: 75px;
         padding-right: 50px;
-        padding-left: 75px;
+        padding-left: 55px;
         padding-bottom: 75px;
         margin-bottom: 70px;
 
@@ -136,10 +136,12 @@
             position: relative;
 
             .main-browser {
-                width: 150%; /* did this to make it extend over the screen edge */
-                max-width: none; /* did this to remove max-width thing */
+                //width: 150%; /* did this to make it extend over the screen edge */
+                //max-width: none; /* did this to remove max-width thing */
                 margin-left: 0;
 
+                width: clamp(100%, 150%, 900px); // Intentional overflow effect
+                margin-left: 0;
 
                 animation: heroEnter 1s ease-out, subtleFloat 8s ease-in-out infinite 2s;
             }
@@ -216,7 +218,7 @@
         }
 
         h1 {
-            margin: 0;
+            margin: 0 !important;
             font-size:60px;
             line-height: 1.1;
         }
@@ -282,5 +284,13 @@
             width: 500px;
         }
     }
+
+//    media queries for 768px, 1024px, 1440px, 2560px set a max width
+  @media (min-width: 1440px) {
+        .above-fold {
+            max-width: 1700px;
+            margin: auto;
+        }
+  }
 
 </style>

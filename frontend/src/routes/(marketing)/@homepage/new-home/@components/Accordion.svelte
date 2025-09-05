@@ -14,7 +14,7 @@
         width?: string;
     }
 
-    let { title, content, isOpen = false, onToggle, id, icon, children, link, width }: Props = $props();
+    let { title, content, isOpen = false, onToggle, id, icon, link }: Props = $props();
     const Icon = icon;
 
     function handleClick() {
@@ -25,7 +25,7 @@
 </script>
 
 <div class="accordion-item">
-    <button class="accordion-header" class:open={isOpen} on:click={handleClick}>
+    <button class="accordion-header" class:open={isOpen} onclick={handleClick}>
         {#if icon}
 			<span class="icon">
 				<Icon size={20} />

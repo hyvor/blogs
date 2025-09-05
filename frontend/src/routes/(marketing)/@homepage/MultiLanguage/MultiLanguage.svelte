@@ -11,11 +11,11 @@ import IconTranslate from '@hyvor/icons/IconTranslate';
     import icon from './multi-language.svg';
 </script>
 
-<FeatureSectionTitle 
-    title="Multi-language"
-    subtitle="Posts, author names, tags, metadata, ...everything is easily translatable. RTL support too!"
-    icon={icon}
-/>
+<!--<FeatureSectionTitle -->
+<!--    title="Multi-language"-->
+<!--    subtitle="Posts, author names, tags, metadata, ...everything is easily translatable. RTL support too!"-->
+<!--    icon={icon}-->
+<!--/>-->
 
 
 <div class="wrap">
@@ -46,9 +46,11 @@ import IconTranslate from '@hyvor/icons/IconTranslate';
 <style>
 
     .wrap {
-        margin: 60px 0;
+        margin: 0 0 60px 0;
         padding: 60px 20px;
-        background-color: var(--blue-light);
+        /*background-color: var(--blue-light);*/
+        background-color: #3c3030;
+        color: white;
     }
 
     .inner {
