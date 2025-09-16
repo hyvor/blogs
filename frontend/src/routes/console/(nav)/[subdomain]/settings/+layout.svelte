@@ -219,6 +219,7 @@ import IconTag from '@hyvor/icons/IconTag';
 <style>
     .settings {
         display: flex;
+        height: 100%;
     }
     .nav {
         width: 315px;

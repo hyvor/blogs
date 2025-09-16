@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FormControl, Modal, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
+	import { FormControl, Modal, SplitControl, Switch, TextInput, Validation, toast } from "@hyvor/design/components";
 	import type { Route } from "../../../../lib/types";
 	import { createRoute, updateRoute } from "./routeActions";
 	import { createEventDispatcher } from "svelte";
@@ -16,6 +16,7 @@
     let template = $state(route?.template || '');
     let postsFilter = $state(route?.posts_filter || '');
     let contentType = $state(route?.content_type || '');
+    let postsFilterEnabled = $state(route?.posts_filter !== null);
 
     let nameError : null | string = $state(null);
     let matchError : null | string = $state(null);
@@ -63,7 +64,7 @@
             name,
             match,
             template,
-            posts_filter: postsFilter,
+            posts_filter: postsFilterEnabled ? postsFilter : null,
             content_type: contentType,
         })
             .then(res => {
@@ -90,7 +91,7 @@
             name,
             match,
             template,
-            posts_filter: postsFilter,
+            posts_filter: postsFilterEnabled ? postsFilter : null,
             content_type: contentType,
         })
             .then(res => {
@@ -189,12 +190,18 @@
         caption="A FilterQ expression to filter posts for the _posts array."
     >
         <FormControl>
-            <TextInput 
-                block
-                placeholder="tag.slug=new"
-                bind:value={postsFilter}
-                state={postsFilterError ? "error" : undefined}
+            <Switch 
+                bind:checked={postsFilterEnabled}
+                label="Enable posts filter"
             />
+            {#if postsFilterEnabled}
+                <TextInput 
+                    block
+                    placeholder="tag.slug=new (leave empty to show all posts)"
+                    bind:value={postsFilter}
+                    state={postsFilterError ? "error" : undefined}
+                />
+            {/if}
             {#if postsFilterError}
                 <Validation state="error">{postsFilterError}</Validation>
             {/if}

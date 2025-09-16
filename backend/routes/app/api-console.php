@@ -223,8 +223,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             // route
             Route::get('/routes', [ConsoleRouteController::class, 'get']);
             Route::post('/route', [ConsoleRouteController::class, 'create']);
-            Route::patch('/route/{id}', [ConsoleRouteController::class, 'update']);
             Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
+            Route::patch('/route/{id}', [ConsoleRouteController::class, 'update'])
+                ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
 
             // theme
             Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
