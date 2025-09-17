@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
-use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Data\Enums\WebhookEventEnum;
 

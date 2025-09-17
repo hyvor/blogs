@@ -109,15 +109,14 @@ class WebhookDeliveryService
         int $limit = 50,
         int $offset = 0
     ): Collection {
-        $webhooksIds = $blog->webhooks()->pluck('id')->toArray();
-
-        $query = WebhookDelivery::whereIn('webhook_id', $webhooksIds);
-        
+        $query = WebhookDelivery::join('webhooks', 'webhook_deliveries.webhook_id', '=', 'webhooks.id')
+            ->where('webhooks.blog_id', $blog->id)
+            ->select('webhook_deliveries.*');
         if ($webhookId !== null) {
-            $query->where('webhook_id', $webhookId);
+            $query->where('webhook_deliveries.webhook_id', $webhookId);
         }
         
-        return $query->orderBy('id', 'desc')
+        return $query->orderBy('webhook_deliveries.id', 'desc')
             ->limit($limit)
             ->offset($offset)
             ->get();
