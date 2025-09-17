@@ -19,7 +19,6 @@
 	let isCreating = $state(false);
 	let activeTab = $state<'configure' | 'deliveries'>('configure');
 	
-	// Filter state
 	let selectedWebhookId = $state<number | null>(null);
 	let showWebhookFilter = $state(false);
 
