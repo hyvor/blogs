@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { IconMessage, Table, TableRow, TableCell, Tag } from '@hyvor/design/components';
+	import { IconMessage, Table, TableRow, TableCell, Tag, LoadButton } from '@hyvor/design/components';
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
 
 	interface Props {
 		deliveries: WebhookDelivery[];
+		hasMore?: boolean;
+		isLoadingMore?: boolean;
 	}
 
-	let { deliveries }: Props = $props();
+	let { deliveries, hasMore = false, isLoadingMore = false }: Props = $props();
 
 	function getStatusColor(status: string) {
 		switch (status) {
@@ -57,6 +59,13 @@
 			</TableRow>
 		{/each}
 	</Table>
+	
+	<LoadButton
+		text="Load more"
+		show={hasMore}
+		loading={isLoadingMore}
+		on:click
+	/>
 {/if}
 
 <style>

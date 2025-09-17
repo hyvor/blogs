@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, IconMessage, Loader, Table, TableRow, toast, TabNav, TabNavItem, Dropdown, ActionList, ActionListItem} from '@hyvor/design/components';
+	import { Button, IconMessage, Loader, Table, TableRow, toast, TabNav, TabNavItem, Dropdown, ActionList, ActionListItem, LoadButton} from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
@@ -21,6 +21,10 @@
 	
 	let selectedWebhookId = $state<number | null>(null);
 	let showWebhookFilter = $state(false);
+	
+	let isLoadingMoreDeliveries = $state(false);
+	let hasMoreDeliveries = $state(false);
+	const deliveriesLimit = 50;
 
 	$effect(() => {
 		if (activeTab === 'deliveries') {
@@ -60,17 +64,28 @@
 			});
 	}
 
-	function loadDeliveries() {
-		isDeliveriesLoading = true;
-		getWebhookDeliveries(selectedWebhookId || undefined)
+	function loadDeliveries(more = false) {
+		more ? (isLoadingMoreDeliveries = true) : (isDeliveriesLoading = true);
+		if (!more) deliveries = [];
+
+		const offset = more ? deliveries.length : 0;
+
+		getWebhookDeliveries(selectedWebhookId || undefined, deliveriesLimit, offset)
 			.then((response) => {
-				deliveries = response;
+				const newDeliveries = response;
+				deliveries = more ? [...deliveries, ...newDeliveries] : newDeliveries;
+				hasMoreDeliveries = newDeliveries.length === deliveriesLimit;
 			})
 			.catch((error) => {
-				toast.error('Failed to load webhook deliveries');
+				if (more) {
+					toast.error('Failed to load more deliveries');
+				} else {
+					toast.error('Failed to load webhook deliveries');
+				}
 			})
 			.finally(() => {
 				isDeliveriesLoading = false;
+				isLoadingMoreDeliveries = false;
 			});
 	}
 
@@ -96,6 +111,8 @@
 	function handleWebhookFilterSelect(webhookId: number | null) {
 		selectedWebhookId = webhookId;
 		showWebhookFilter = false;
+		// Reset pagination when filter changes
+		hasMoreDeliveries = false;
 	}
 
 	function getSelectedWebhookUrl(): string {
@@ -126,7 +143,7 @@
 		<div class="filter-section">
 			<Dropdown bind:show={showWebhookFilter} width={300}>
 				{#snippet trigger()}
-					<Button slot="trigger" color="input">
+					<Button color="input">
 						{truncateUrl(getSelectedWebhookUrl())}
 						{#snippet end()}
 							<IconCaretDown />
@@ -134,7 +151,7 @@
 					</Button>
 				{/snippet}
 				{#snippet content()}
-					<ActionList slot="content" selection="single">
+					<ActionList selection="single">
 						<ActionListItem 
 							selected={selectedWebhookId === null} 
 							on:select={() => handleWebhookFilterSelect(null)}
@@ -167,7 +184,12 @@
 		{#if isDeliveriesLoading}
 			<Loader full />
 		{:else}
-			<WebhookDeliveryList {deliveries} />
+			<WebhookDeliveryList 
+				{deliveries} 
+				hasMore={hasMoreDeliveries}
+				isLoadingMore={isLoadingMoreDeliveries}
+				on:click={() => loadDeliveries(true)}
+			/>
 		{/if}
 	{/if}
 </div>
