@@ -52,8 +52,8 @@ it('returns font css', function () {
         return true;
     });
 
-    expect(Cache::has('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap'))->toBeTrue();
-    $cachedValue = Cache::get('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap');
+    expect(Cache::has("bunny-fonts-$blog->id-https://fonts.bunny.net/css?family=mulish:400&display=swap"))->toBeTrue();
+    $cachedValue = Cache::get("bunny-fonts-$blog->id-https://fonts.bunny.net/css?family=mulish:400&display=swap");
     expect($cachedValue)->toBe($replaced);
 });
 
@@ -71,5 +71,5 @@ it('on fail', function () {
     expect($responseObject->status)->toBe(500);
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
 
-    expect(Cache::has('bunny-fonts-https://fonts.bunny.net/css?family=mulish:400&display=swap'))->toBeFalse();
+    expect(Cache::has("bunny-fonts-$blog->id-https://fonts.bunny.net/css?family=mulish:400&display=swap"))->toBeFalse();
 });
