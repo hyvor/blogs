@@ -13,10 +13,10 @@ class BunnyService
     /**
      * @throws UnableToFetchBunnyException
      */
-    public static function getCss(string $blogUrl, string $fontFamily): string
+    public static function getCss(int $blogId, string $blogUrl, string $fontFamily): string
     {
         $url = "https://fonts.bunny.net/css?family=$fontFamily&display=swap";
-        $cacheKey = 'bunny-fonts-' . $url;
+        $cacheKey = "bunny-fonts-$blogId-$url";
 
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);

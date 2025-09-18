@@ -22,7 +22,7 @@ class FontsCssProcessor extends RouteProcessorAbstract
         $family = $matchedRoute->param('family');
 
         try {
-            $css = BunnyService::getCss($blogUrl, (string)$family);
+            $css = BunnyService::getCss($pathMatcher->blog->id, $blogUrl, (string)$family);
 
             $this->setResponseObject(
                 DeliveryAPIResponseObject::forFile(
