@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use App\Data\Enums\WebhookEventEnum;
-use Database\Factories\WebhookFactory;
+use Database\Factories\WebhookDeliveryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class WebhookDelivery extends Model
 {
     /**
-     * @use HasFactory<WebhookFactory>
+     * @use HasFactory<WebhookDeliveryFactory>
      */
     use HasFactory;
 
