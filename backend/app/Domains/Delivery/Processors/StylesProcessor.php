@@ -102,7 +102,7 @@ class StylesProcessor extends RouteProcessorAbstract
         }
 
         try {
-            $bunnyCss = BunnyService::getCss($blog->url(), $themeFonts);
+            $bunnyCss = BunnyService::getCss($blog->id, $blog->url(), $themeFonts);
         } catch (UnableToFetchBunnyException) {
             return $css;
         }
