@@ -5,7 +5,7 @@
 		icon: Component;
 		title: string;
 		description: string;
-		color: 'green' | 'blue' | 'orange' | 'red';
+		color: 'green' | 'blue' | 'orange' | 'red' | 'accent';
 	}
 
 	let { icon, title, description, color }: Props = $props();
@@ -23,8 +23,12 @@
 
 <style>
 	.feature {
-		width: calc(33.33% - 15px);
+		/*width: calc(33.33% - 15px);*/
 	}
+
+    .icon.accent {
+        color: var(--accent);
+    }
 
 	.icon.green {
 		color: var(--green);
@@ -43,11 +47,13 @@
 		font-weight: 600;
 		font-size: 20px;
 		margin-top: 10px;
+        text-align: start;
 	}
 
 	.description {
 		font-size: 16px;
 		margin-top: 10px;
+        text-align: start;
 	}
 
 	@media (max-width: 992px) {

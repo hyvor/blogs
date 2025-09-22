@@ -1,19 +1,14 @@
 <script>
 	import { Button, Link, Loader } from '@hyvor/design/components';
 	import ThemesPreview from '../../@components/ThemesPreview.svelte';
-	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-	import FeatureSectionTitle from '../FeatureSectionTitle.svelte';
-	import logo from './custom-themes.svg';
+	// import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	// import FeatureSectionTitle from '../FeatureSectionTitle.svelte';
+	// import logo from './custom-themes.svg';
 
 	let isLoading = $state(true);
 </script>
 
-<!--<FeatureSectionTitle-->
-<!--	title="Custom Themes"-->
-<!--	subtitle="Match your blog to your brand with custom themes. Choose from a variety of themes or create your own."-->
-<!--	h2Style="margin-top: 50px; text-align: left;"-->
-<!--	icon={logo}-->
-<!--/>-->
+
 <div class="wrapper">
     <div class="title">
         <h1>
@@ -35,16 +30,16 @@
         <Button as="a" href="/themes">Go to themes page &rarr;</Button>
     </div>
 
-    <div class="dev">
-        Are you familiar with HTML and CSS? Have a web developer in your team? You can create your own
-        theme from scratch!
-        <Link href="https://blogs.hyvor.com/docs/themes-overview" target="_blank">
-            Theme Development Docs
-            {#snippet end()}
-                <IconBoxArrowUpRight size={12} />
-            {/snippet}
-        </Link>
-    </div>
+<!--    <div class="dev">-->
+<!--        Are you familiar with HTML and CSS? Have a web developer in your team? You can create your own-->
+<!--        theme from scratch!-->
+<!--        <Link href="https://blogs.hyvor.com/docs/themes-overview" target="_blank">-->
+<!--            Theme Development Docs-->
+<!--            {#snippet end()}-->
+<!--                <IconBoxArrowUpRight size={12} />-->
+<!--            {/snippet}-->
+<!--        </Link>-->
+<!--    </div>-->
 </div>
 
 <style>

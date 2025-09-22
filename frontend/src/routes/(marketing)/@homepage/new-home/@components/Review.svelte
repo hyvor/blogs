@@ -1,13 +1,4 @@
 <script lang="ts">
-    // export let userName = "John Doe";
-    // export let country = "United States";
-    // export let date = "2024-01-15";
-    // export let review = "Excellent service! The product exceeded my expectations and the customer support was outstanding. Highly recommend to anyone looking for quality and reliability.";
-    // export let stars = 5;
-    // export let likes = 12;
-    // export let verified = true;
-    // export let userAvatar = null
-
     import IconCheck from "@hyvor/icons/IconCheck";
     import type { Snippet, Component } from "svelte";
     import IconStarFill from "@hyvor/icons/IconStarFill";
@@ -82,7 +73,7 @@
 
     <div class="star-rating">
         {#each getStarRating(stars) as filled}
-            <IconStarFill class="star {filled ? 'filled' : ''}" size={18} color="#00b67a" />
+            <IconStarFill class="star {filled ? 'filled' : ''}" size={18} color="var(--accent)" />
         {/each}
         <span class="rating-text">({stars}/5)</span>
     </div>
@@ -121,7 +112,7 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: #00b67a;
+        background: var(--accent);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -162,7 +153,7 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #00b67a;
+        color: var(--accent);
         font-weight: 500;
     }
 
@@ -176,14 +167,6 @@
         align-items: center;
         gap: 2px;
         margin-bottom: 16px;
-    }
-
-    .star {
-        color: #ddd;
-    }
-
-    .star.filled {
-        color: #00b67a;
     }
 
     .rating-text {
@@ -222,5 +205,10 @@
         .user-info {
             width: 100%;
         }
+
+        /*.review-date {*/
+        /*    align-self: flex-end;*/
+        /*}*/
+
     }
 </style>

@@ -6,10 +6,10 @@
     import NoPlugins from "./@homepage/new-home/NoPlugins.svelte";
     import SEO from "./@homepage/new-home/SEO.svelte";
     import MultiLingual from "./@homepage/new-home/MultiLingual.svelte";
-    import Hosting from "./@homepage/new-home/@components/Hosting.svelte";
     import Integrations from "./@homepage/new-home/@components/Integrations.svelte";
     import CustomersAndReview from "./@homepage/new-home/@components/CustomersAndReview.svelte";
     import HostAnywhere from "./@homepage/new-home/@components/HostAnywhere.svelte";
+    import DeveloperFriendly from "./@homepage/new-home/@components/DeveloperFriendly.svelte";
 </script>
 
 <svelte:head>
@@ -19,21 +19,21 @@
 </svelte:head>
 
 <AboveFold
-	title="All-in-one Blogging Platform"
-	subtitle="For Content Marketing Teams and Businesses"
+	subtitle="For Creators and Content Marketing Teams"
 />
 
 
 <NoPlugins />
 <SEO />
 <MultiLingual />
-<Hosting />
+<HostAnywhere />
 <CustomThemes />
 <Integrations />
+<DeveloperFriendly />
 <CustomersAndReview />
 <HomepageCustomers />
 <FullTrialSignup />
-<HostAnywhere />
+
 
 
 

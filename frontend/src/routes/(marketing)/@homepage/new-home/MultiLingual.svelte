@@ -1,7 +1,7 @@
 <script lang="ts">
     import Browser from "./Browser.svelte";
-    import seoImg from './img/SEO.png';
-    import seoFull from './img/seo-full.png';
+    import arabic from './img/arabic.png';
+    import french from './img/french.png';
     import multiLanguage from "../MultiLanguage/multi-language.svg";
     import MultiLanguage from "../MultiLanguage/MultiLanguage.svelte";
 
@@ -18,11 +18,11 @@
 
     <div class="left">
         <div class="main-browser">
-            <Browser image={seoFull} />
+            <Browser image={arabic} link="pensee.com/ar" />
         </div>
 
         <div class="another-browser">
-            <Browser image={seoImg} />
+            <Browser image={french} link="pensee.com/fr" />
         </div>
     </div>
 
@@ -75,14 +75,14 @@
                 padding-bottom: 70px;
                 padding-left: 70px;
                 border-radius: 20px;
-                filter: blur(1px);
+                //filter: blur(1px);
                 opacity: 0.9;
 
             }
 
             .another-browser {
                 position: absolute;
-                width: 400px;
+                width: 600px;
                 bottom: 30px;
                 left: 0;
                 border-radius: 20px;
@@ -100,13 +100,13 @@
             margin: 0;
         }
 
-        .right .sassy {
-            margin-top: 20px;
-            font-size: 40px !important;
-            color: var(--grey-dark);
-            font-weight: 500;
-            text-align: end;
-        }
+        //.right .sassy {
+        //    margin-top: 20px;
+        //    font-size: 40px !important;
+        //    color: var(--grey-dark);
+        //    font-weight: 500;
+        //    text-align: end;
+        //}
 
         .right .multi-lang-img {
            display: flex;
@@ -115,9 +115,9 @@
               margin-top: 20px;
         }
 
-        .right .steps {
-            background-color: #3c3030;
-        }
+        //.right .steps {
+        //    background-color: #3c3030;
+        //}
 
         //
         @keyframes heroEnter {
@@ -130,8 +130,8 @@
             100% {
                 //transform: translateX(0) translateY(0) translateZ(0);
                 transform: translateX(0) translateY(0) translateZ(0);
-                opacity: 1;
-                filter: blur(0);
+                //opacity: 1;
+                //filter: blur(0);
             }
         }
 
@@ -139,7 +139,7 @@
             0% {
                 transform: translateX(-200px) translateY(30px) translateZ(10px);
                 //transform: translateX(0) translateY(30px) translateZ(10px);
-                opacity: 0.1;
+                //opacity: 0.1;
 
             }
             100% {
@@ -169,22 +169,22 @@
         }
 
 
-        .int {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 35px;
-            margin-bottom: 10px;
-            span {
-                opacity: 0.2;
-            }
-        }
-
-        .int-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
+        //.int {
+        //    display: flex;
+        //    align-items: center;
+        //    gap: 15px;
+        //    font-size: 35px;
+        //    margin-bottom: 10px;
+        //    span {
+        //        opacity: 0.2;
+        //    }
+        //}
+        //
+        //.int-icon {
+        //    width: 50px;
+        //    height: 50px;
+        //    border-radius: 50%;
+        //}
 
         h1 {
             margin: 0;
@@ -200,22 +200,6 @@
             padding-top: 20px;
             text-align: end;
         }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-    }
-
-    .trial-checks {
-        margin-top:25px;
-        margin-left:5px;
-    }
-
-    .hurry {
-        margin-top: 30px;
-        width: 400px;
     }
 
     @media (max-width: 992px) {
@@ -224,30 +208,30 @@
             text-align: center;
             padding-left: 20px;
             padding-right: 20px;
-            .left {
-                display: none;
-            }
-            .buttons {
-                justify-content: center;
-            }
+        }
+        .left {
+            display: none;
         }
 
-        .int {
+        .right {
+            margin-left: 0 !important;
+            margin-top: 30px;
+        }
+
+        .right h1 {
+            font-size: 28px !important;
+            line-height: 1.2;
+        }
+
+        .right h2 {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .multi-lang-img {
             justify-content: center;
         }
 
-        .trial-checks {
-            margin-left: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .hurry {
-            display: flex;
-            justify-content:  center;
-            margin-left: 0;
-            max-width: 100%;
-            width: 500px;
-        }
     }
+
 </style>

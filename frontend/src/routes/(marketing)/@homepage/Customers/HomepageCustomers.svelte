@@ -5,45 +5,51 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
     import Review from "../new-home/@components/Review.svelte";
 </script>
 
-<FeatureSectionTitle
-    title="Loved by Many & Highly Customizable!"
-    subtitle="Hyvor Blogs is used by hundreds of bloggers around the world. Here are some of their blogs."
-/>
 
-<div class="wrap hds-container">
-    <CustomerList max={6} />
-</div>
+<div class="customers-section">
+    <div class="title">
+        <h1>
+            Loved by Many & Highly Customizable!
+        </h1>
+        <h2>
+            Hyvor Blogs is used by hundreds of bloggers around the world. Here are some of their blogs.
+        </h2>
+    </div>
 
-<div class="reviews">
-<!--    <Review-->
-<!--        userName="Alice Johnson"-->
-<!--        title="Game Changer for My Blog!"-->
-<!--        country="Canada"-->
-<!--        date="2024-05-10"-->
-<!--        review="The ability to add custom codes has transformed how I manage my blog. Integrating analytics and marketing tools is now seamless!"-->
-<!--        stars={5}-->
-<!--        verified={true}-->
-<!--        />-->
+    <div class="wrap hds-container">
+        <CustomerList max={6} />
+    </div>
 
-<!--    <Review-->
-<!--        userName="Michael Smith"-->
-<!--        title="Perfect for My Business Blog"-->
-<!--        country="USA"-->
-<!--        date="2024-04-22"-->
-<!--        review="Hyvor Blogs offers the perfect balance of customization and ease of use. The custom code feature allowed me to integrate essential marketing tools effortlessly."-->
-<!--        stars={4}-->
-<!--        verified={true}-->
-<!--        />-->
-
-</div>
-
-<div class="action">
-    <Button as="a" href="/customers" color="gray">
-        View more customer blogs &rarr;
-    </Button>
+    <div class="action">
+        <Button as="a" href="/customers" color="gray" size="large">
+            View more customer blogs &rarr;
+        </Button>
+    </div>
 </div>
 
 <style>
+    .customers-section{
+        padding-top: 100px;
+    }
+
+    .title {
+        text-align: start;
+        margin-bottom: 40px;
+        padding-right: 50px;
+        padding-left: 75px;
+    }
+
+    .title h1 {
+        font-size: 60px !important;
+        margin: 0 !important;
+    }
+
+    .title h2 {
+        font-size: 20px !important;
+        padding-top: 20px;
+        margin: 0 !important;
+        font-weight: normal;
+    }
     .wrap {
         margin: 60px 55px;
         width: auto;
@@ -54,4 +60,36 @@ import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
         margin-bottom: 80px;
         text-align: center;
     }
+
+    @media (max-width: 768px) {
+        .customers-section {
+            padding-top: 60px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .title h1 {
+            font-size: 28px !important;
+            line-height: 1.3;
+        }
+
+        .title h2 {
+            font-size: 16px !important;
+            line-height: 1.4;
+        }
+
+        .wrap {
+            margin: 30px 15px;
+        }
+
+        .action {
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+    }
+
 </style>

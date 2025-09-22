@@ -1,8 +1,5 @@
 
 <script lang="ts">
-    import Browser from "../Browser.svelte";
-    import seoImg from '../img/SEO.png';
-    import seoFull from '../img/seo-full.png'
     import logoCfWorkers from "../img/cf-workers.svg";
     import logoDocker from "../img/docker.svg";
     import logoNext from "../img/next.svg";
@@ -10,17 +7,9 @@
     import logoSymfony from "../img/symfony.svg";
     import {Tag} from "@hyvor/design/components";
     import Type from "./Type.svelte";
-
-
-    interface Props {
-        title: string;
-        subtitle: string;
-    }
-
-    let { title, subtitle = undefined }: Props = $props();
 </script>
 
-<div class="above-fold" id="seo-section">
+<div class="above-fold">
 
     <div class="title">
 
@@ -30,11 +19,7 @@
 
         <h2>
             Subdomain, custom domain, sub-directory... anywhere!
-
         </h2>
-
-
-
     </div>
 
     <div class="hosting">
@@ -66,7 +51,7 @@
                     <span class="yellow"></span>
                     <span class="green"></span>
                 </div>
-                <div class="address-bar">subdomain.hyvorblogs.io</div>
+                <div class="address-bar">blog.example.com</div>
             </div>
             <div class="browser-content">
                 <Type
@@ -89,7 +74,7 @@
                     <span class="yellow"></span>
                     <span class="green"></span>
                 </div>
-                <div class="address-bar">subdomain.hyvorblogs.io</div>
+                <div class="address-bar">example.com/blog</div>
             </div>
             <div class="browser-content">
                 <Type
@@ -158,7 +143,8 @@
 
 <style>
     .above-fold {
-        padding-top: 75px;
+        margin-top: 60px;
+        /*padding-top: 75px;*/
         padding-right: 50px;
         padding-left: 55px;
         padding-bottom: 75px;
@@ -175,8 +161,13 @@
 
     .title h2 {
         font-size: 20px !important;
-        margin: 0 !important;
+
         font-weight: normal;
+    }
+
+    .hosting {
+        display: flex;
+        gap: 20px;
     }
 
     .browser-window {
@@ -195,6 +186,9 @@
         border-bottom: 1px solid #ddd;
     }
 
+    .browser-window :global(.hds-box){
+        box-shadow: none;
+    }
     .buttons {
         display: flex;
         gap: 6px;
@@ -263,5 +257,25 @@
         color: var(--text-light);
         font-size: 14px;
     }
+
+    @media (max-width: 992px) {
+        .above-fold {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .hosting {
+            flex-direction: column;
+            align-items: center;
+        }
+        .browser-window {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .browser-content {
+            width: 100%;
+        }
+    }
+
 
 </style>

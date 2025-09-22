@@ -74,7 +74,7 @@
 </script>
 
 <div class="wrap">
-    <h3>Loved by 100+ bloggers & businesses</h3>
+    <h1>Loved by 100+ bloggers & businesses</h1>
 
     <div class="customer-logos">
         {#each customers as customer}
@@ -82,8 +82,8 @@
                 <img
                     src={customer.logo}
                     alt={customer.name}
-                    width={customer.width || 140}
-                    height={customer.height || 30}
+                    width={customer.width || 170}
+                    height={customer.height || 60}
                 />
             </a>
         {/each}
@@ -122,38 +122,61 @@
     </div>
 
     {#if button}
-        <div class="view-on-g2">
-            <Button
-                as="a"
-                color="gray"
-                variant="fill"
-                href="https://www.g2.com/products/hyvor-blogs/reviews"
-                target="_blank"
-            >
-                View reviews on G2
-                {#snippet end()}
-                    <IconBoxArrowUpRight size={12} />
-                {/snippet}
-            </Button>
+        <div class="button-collection">
+            <div class="view-on-g2">
+                <Button
+                    as="a"
+                    size="large"
+                    color="gray"
+                    variant="fill"
+                    href="https://www.g2.com/products/hyvor-blogs/reviews"
+                    target="_blank"
+                >
+                    View reviews on G2
+                    {#snippet end()}
+                        <IconBoxArrowUpRight size={12} />
+                    {/snippet}
+                </Button>
+            </div>
+
+            <div class ="view-on-g2">
+                <Button
+                    as="a"
+                    size="large"
+                    color="gray"
+                    variant="fill"
+                    href="https://www.trustpilot.com/review/hyvor.com"
+                    target="_blank"
+                >
+                    View reviews on Trustpilot
+                    {#snippet end()}
+                        <IconBoxArrowUpRight size={12} />
+                    {/snippet}
+                </Button>
+            </div>
         </div>
     {/if}
 </div>
 
 <style lang="scss">
     .wrap {
-        padding: 60px 15px;
+        padding-right: 75px;
+        padding-left: 50px;
+        padding-top:  75px;
     }
-    h3 {
-        text-align: center;
-        font-size: 26px;
+    h1 {
+        text-align: end;
+        font-size: 60px !important;
+        margin: 0 !important;
     }
     .customer-logos {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px 0;
+        padding: 70px 0;
         flex-wrap: wrap;
         gap: 30px;
+        filter: grayscale(100%);
     }
 
     .reviews {
@@ -169,14 +192,57 @@
         text-align: center;
     }
 
-    @media (max-width: 992px) {
+    .button-collection {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 50px;
+    }
+
+    @media (max-width: 768px) {
+        .wrap {
+            padding: 40px 20px;
+        }
+
+
+        h1 {
+            text-align: center;
+            font-size: 28px !important;
+            line-height: 1.2;
+        }
+
+        .customer-logos {
+            gap: 20px;
+            padding: 40px 0;
+
+            a img {
+                max-width: 120px;
+                height: auto;
+            }
+        }
+
         .reviews {
             flex-direction: column;
+            gap: 20px;
             padding: 0;
-            .review {
+            margin: auto;
+        }
+
+        .button-collection {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+            margin-top: 30px;
+
+            .view-on-g2 {
                 width: 100%;
-                padding: 15px;
+
+                button, a {
+                    width: 100%;
+                    justify-content: center;
+                }
             }
         }
     }
+
 </style>

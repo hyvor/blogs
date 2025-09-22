@@ -68,7 +68,12 @@
 <style lang="scss">
 	.hurry {
 		padding: 25px 30px;
-        width: 400px;
+        color: var(--text);
+        width: 500px;
+        box-shadow: none;
+        border: 1px solid var(--accent-light);
+        background-color: transparent;
+
 
 		.title {
 			font-weight: 600;

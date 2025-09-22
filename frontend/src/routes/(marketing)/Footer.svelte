@@ -72,9 +72,16 @@
 		.row {
 			flex-direction: column;
 			gap: 35px;
+            text-align: center;
 		}
 		.row:not(.first) {
 			margin-top: 35px;
+            text-align: center;
 		}
+
+       :global(.link-list){
+            margin: auto;
+       }
 	}
+
 </style>

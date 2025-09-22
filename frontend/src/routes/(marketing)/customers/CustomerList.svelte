@@ -213,6 +213,7 @@
 		padding: 25px;
 		border-radius: 20px;
 		transition: 0.1s;
+
 		&:hover {
 			transform: translateY(-10px);
 		}
@@ -250,4 +251,27 @@
 			width: 100%;
 		}
 	}
+
+//    media queries
+    @media (max-width: 768px) {
+        .wrap {
+            gap: 12px;
+            padding: 0 10px;
+        }
+
+        .customer {
+            padding: 15px;
+            border-radius: 15px;
+
+            img {
+                border-radius: 15px;
+            }
+
+            .name {
+                font-size: 16px;
+            }
+        }
+
+
+    }
 </style>

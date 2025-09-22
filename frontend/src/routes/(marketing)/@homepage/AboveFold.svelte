@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { Button } from '@hyvor/design/components';
+	import { Button, Divider } from '@hyvor/design/components';
 	import Hurry from "./Hurry.svelte";
     import hbIcon from '$lib/img/logo-social.png';
     import Browser from "./new-home/Browser.svelte";
     import  TestSS from './new-home/img/test-ss.png';
-    import BlogPage from './new-home/img/blog-page.png';
-    import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
-
+    import MistLight from './new-home/img/mist-light.png';
 
     interface Props {
         title: string;
@@ -44,28 +42,6 @@
 
         {/if}
 
-<!--        <div class="checks">-->
-<!--            <div class="check">-->
-<!--                <IconCheckCircleFill />-->
-<!--                Multilingual-->
-<!--            </div>-->
-
-<!--            <div class="check">-->
-<!--                <IconCheckCircleFill />-->
-<!--                In-built SEO-->
-<!--            </div>-->
-
-<!--            <div class="check">-->
-<!--                <IconCheckCircleFill />-->
-<!--                Customizable themes-->
-<!--            </div>-->
-
-<!--            <div class="check">-->
-<!--                <IconCheckCircleFill />-->
-<!--                Custom domain & subdirectory hosting-->
-<!--            </div>-->
-<!--        </div>-->
-
         <div class="buttons">
 
             <Button as="a" href="/console?signup" size="large">
@@ -86,10 +62,10 @@
 
     <div class="right">
           <div class="main-browser">
-              <Browser image={TestSS} />
+              <Browser image={TestSS} link="blogs.hyvor.com/console" />
           </div>
           <div class="another-browser">
-              <Browser image={BlogPage} />
+              <Browser image={MistLight} link="pensee.com" />
           </div>
     </div>
 
@@ -99,22 +75,6 @@
 <style lang="scss">
     :global(body) {
         overflow-x: hidden;
-    }
-
-    .checks {
-        margin-top: 30px;
-    }
-
-    .check {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 6px;
-        font-size: 18px;
-    }
-
-    .check :global(svg) {
-        color: var(--accent);
     }
 
     .above-fold {
@@ -229,10 +189,11 @@
 
         h2 {
             font-weight: normal;
-            font-size: 25px;
+            font-size: 28px;
             color: var(--grey-dark);
             margin: 0;
-            padding-top: 20px;
+            padding-top: 30px;
+        //    40
         }
 
         .buttons {
@@ -240,57 +201,250 @@
             gap: 10px;
             margin-top: 30px;
         }
-    }
 
-    .trial-checks {
-        margin-top:25px;
-        margin-left:5px;
+
     }
 
     .hurry {
         margin-top: 50px;
         width: 400px;
     }
+//    @media (max-width: 992px) {
+//        .above-fold {
+//            flex-direction: column;
+//            text-align: center;
+//            padding-left: 20px;
+//            padding-right: 20px;
+//            .right {
+//                display: none;
+//            }
+//            .buttons {
+//                justify-content: center;
+//            }
+//        }
+//
+//        .int {
+//            justify-content: center;
+//        }
+//
+//        .hurry {
+//            display: flex;
+//            justify-content:  center;
+//            margin-left: 0;
+//            max-width: 100%;
+//            width: 500px;
+//        }
+//    }
+//
+////    media queries for 768px, 1024px, 1440px, 2560px set a max width
+//  @media (min-width: 1440px) {
+//        .above-fold {
+//            max-width: 1700px;
+//            margin: auto;
+//        }
+//
+//    .hurry {
+//            width: 500px;
+//        }
+//  }
+    /* Tablet styles */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .above-fold {
+            padding-left: 30px;
+            padding-right: 30px;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            margin-bottom: 50px;
 
-    @media (max-width: 992px) {
+            h1 {
+                font-size: 52px;
+            }
+
+            h1 .all-in-one {
+                font-size: 38px;
+            }
+
+            h2 {
+                font-size: 24px;
+                padding-top: 25px;
+            }
+
+            .right {
+                display: none;
+                //padding-left: 15px;
+                //
+                //.main-browser {
+                //    width: clamp(100%, 130%, 800px);
+                //}
+                //
+                //.another-browser {
+                //    top: 240px;
+                //    right: 120px;
+                //    width: 85%;
+                //}
+            }
+        }
+
+        .hurry {
+            width: 350px;
+        }
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
         .above-fold {
             flex-direction: column;
             text-align: center;
             padding-left: 20px;
             padding-right: 20px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            margin-bottom: 40px;
+
+            .left {
+                margin-bottom: 30px;
+            }
+
             .right {
+                //display: block;
+                //padding-left: 0;
+                //position: relative;
+                //
+                //.main-browser {
+                //    width: 100%;
+                //    max-width: 100%;
+                //    margin-left: 0;
+                //    animation: mobileHeroEnter 0.8s ease-out;
+                //}
+                //
+                //.another-browser {
+                //    display: none; // Hide secondary browser on mobile for cleaner look
+                //}
                 display: none;
             }
+
+            .int {
+                justify-content: center;
+                font-size: 28px;
+                gap: 12px;
+                margin-bottom: 15px;
+
+                .int-icon {
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+
+            h1 {
+                font-size: 42px;
+                margin-bottom: 0 !important;
+            }
+
+            h1 .all-in-one {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 20px;
+                padding-top: 20px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
             .buttons {
                 justify-content: center;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 25px;
+                align-items: center;
             }
-        }
 
-        .int {
-            justify-content: center;
-        }
-
-        .trial-checks {
-            margin-left: 0;
-            display: flex;
-            justify-content: center;
+            // Make buttons full width on mobile
+            .buttons :global(.button) {
+                width: 100%;
+                max-width: 280px;
+            }
         }
 
         .hurry {
             display: flex;
-            justify-content:  center;
+            justify-content: center;
             margin-left: 0;
+            margin-top: 35px;
             max-width: 100%;
-            width: 500px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        @keyframes mobileHeroEnter {
+            0% {
+                transform: translateY(20px);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     }
 
-//    media queries for 768px, 1024px, 1440px, 2560px set a max width
-  @media (min-width: 1440px) {
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .above-fold {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 30px;
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h1 .all-in-one {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 18px;
+                padding-top: 15px;
+            }
+
+            .int {
+                font-size: 24px;
+                gap: 10px;
+
+                .int-icon {
+                    width: 35px;
+                    height: 35px;
+                }
+            }
+
+            .buttons {
+                margin-top: 20px;
+                gap: 10px;
+            }
+
+            .buttons :global(.button) {
+                max-width: 250px;
+                font-size: 16px;
+            }
+        }
+
+        .hurry {
+            margin-top: 25px;
+            padding: 0 5px;
+        }
+    }
+
+    /* Large screens - keep your existing max-width constraint */
+    @media (min-width: 1440px) {
         .above-fold {
             max-width: 1700px;
             margin: auto;
         }
-  }
+
+        .hurry {
+            width: 500px;
+        }
+    }
 
 </style>

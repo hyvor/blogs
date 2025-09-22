@@ -1,9 +1,6 @@
 <script lang="ts">
     import FeatureSectionTitle from "../@homepage/FeatureSectionTitle.svelte";
-    import {Box} from "@hyvor/design/components";
     import {categories} from "./integrations";
-
-    // console.log(categories)
 
 </script>
 <svelte:head>

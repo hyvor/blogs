@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Button } from "@hyvor/design/components";
 	import TrialChecks from "./TrialChecks.svelte";
+    import Browser from "../@homepage/new-home/Browser.svelte";
+    import image from '../@homepage/new-home/img/image.png';
 
     interface Props {
         title?: string;
@@ -35,7 +37,6 @@
         </div>
 
     </div>
-
 </div>
 
 <style>
@@ -54,17 +55,19 @@
 
     h3 {
         text-align: center;
-        font-size: 25px;
+        font-size: 30px;
         font-weight: 600;
     }
 
     .button-wrap {
         padding: 20px;
         text-align: center;
+        font-size: 20px;
     }
 
     .trial-checks {
         margin-top:15px;
+        font-size: 20px;
     }
 
 </style>

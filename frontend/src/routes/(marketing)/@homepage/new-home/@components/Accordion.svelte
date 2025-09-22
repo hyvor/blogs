@@ -51,10 +51,10 @@
 
 <style>
     .accordion-item {
-        border: 1px solid #e5e7eb;
+        /*border: 1px solid #e5e7eb;*/
         border-radius: 20px;
         overflow: hidden;
-        background: white;
+        background: var(--accent-light-mid);
     }
 
     .accordion-header {
@@ -66,17 +66,15 @@
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
-        transition: background-color 0.2s ease;
         font-size: 16px;
     }
 
     .accordion-header:hover {
-        background-color: #f9fafb;
+        background-color: var(--accent-light-mid);
     }
 
     .accordion-header.open {
-        background-color: #f3f4f6;
-        border-bottom: 1px solid #e5e7eb;
+        background-color: var(--accent-light);
     }
 
     .title {
@@ -104,7 +102,7 @@
         color: #4b5563;
         line-height: 1.6;
         border-top: 1px solid #f3f4f6;
-        background-color: #fafafa;
+        background-color: var(--accent-light-mid);
     }
 
     .icon {

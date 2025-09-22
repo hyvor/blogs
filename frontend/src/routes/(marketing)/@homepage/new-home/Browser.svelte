@@ -5,7 +5,7 @@ interface Props {
     link?:   string;
 }
 
-let { image = null }: Props = $props();
+let { image = null, link }: Props = $props();
 </script>
 
     <div class="browser-window">
@@ -15,7 +15,7 @@ let { image = null }: Props = $props();
                 <span class="yellow"></span>
                 <span class="green"></span>
             </div>
-            <div class="address-bar">blogs.hyvor.com</div>
+            <div class="address-bar">{link}</div>
         </div>
         <div class="browser-content">
             <img src={image} alt="Hyvor Blogs Screenshot">

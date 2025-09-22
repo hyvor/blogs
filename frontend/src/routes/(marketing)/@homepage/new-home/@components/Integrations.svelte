@@ -1,266 +1,334 @@
 <script lang="ts">
-    import Browser from "../Browser.svelte";
-    import seoImg from '../img/SEO.png';
-    import seoFull from '../img/seo-full.png';
-    import Review from "./Review.svelte";
+    import {integrations} from "../../../integrations/integrations";
+    import { Button, Tag } from '@hyvor/design/components';
 
+    //to find free integrations
+    const hyvorTalk = integrations.find(integration => integration.slug === 'hyvor-talk-comments');
+    const hyvorPost = integrations.find(integration => integration.slug === 'hyvor-post');
 
-
-    interface Props {
-        title: string;
-        subtitle: string;
-    }
-
-    let { title, subtitle = undefined }: Props = $props();
 </script>
 
 <div class="above-fold" id="seo-section">
-
-    <div class="left">
-        <div class="main-browser">
-            <Browser image={seoFull} />
-        </div>
-
-        <div class="another-browser">
-            <Browser image={seoImg} />
-        </div>
-    </div>
-
-    <div class="right">
-
+    <div class="title">
         <h1>
             Integrate with Your Favorite Tools
         </h1>
-
         <h2>
             Add custom codes to your site to connect with analytics, marketing, and other third-party tools.
         </h2>
+    </div>
 
-        <div class="testmonial">
-            <Review
-                userName="Alice Johnson"
-                title="Game Changer for My Blog!"
-                country="Canada"
-                date="2024-05-10"
-                review="The ability to add custom codes has transformed how I manage my blog. Integrating analytics and marketing tools is now seamless!"
-                stars={5}
-                verified={true}
-            />
+
+</div>
+<div class="view-more">
+    <div class="free" style="display: flex; gap: 20px;">
+
+        <div class="free">
+            <div class="hyvor-card">
+                <div class="hyvor-talk-section">
+                    <img src={hyvorTalk.icon} alt="Hyvor Talk" class="integration-icon" width="70px">
+                    <div class="name-wrapper">
+                        <div class="name" style="font-size: 24px">{hyvorTalk.name}</div>
+<!--                        <div class="subname">{hyvorTalk.subname}</div>-->
+                        <p style="font-size: 20px">Add a commenting space to your blog</p>
+                    </div>
+                </div>
+                <div class="diagonal-divider"></div>
+                <div class="hyvor-post-section">
+                    <div class="subname"><Tag size="small" color="blue">{hyvorPost.subname}</Tag></div>
+                    <img src={hyvorPost.icon} alt="Hyvor Post" class="integration-icon" width="70px">
+                    <div class="name-wrapper">
+                        <div class="name" style="font-size: 24px">{hyvorPost.name}</div>
+<!--                        <Tag size="small" color="blue">{hyvorPost.subname}</Tag>-->
+                        <p style="font-size: 20px">Boost your content marketing with Hyvor Post</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="integration-container">
+    <div class="scrolling-wrapper">
+        <div class="scrolling-content">
+            {#each integrations as integration}
+                <div class="integration-item">
+                    <div
+                        class="overlay"
+                        style:background-color={integration.color}
+                    ></div>
+                    <img
+                        src="{integration.icon}"
+                        alt="{integration.name}"
+                        class="integration-icon"
+                    >
+                    <div class="name-wrapper">
+                        <div class="name">{integration.name}</div>
+                        {#if integration.subname}
+                            <div class="subname">{integration.subname}</div>
+                        {/if}
+                    </div>
+                </div>
+            {/each}
+            <!-- Duplicate the integrations for seamless loop -->
+            {#each integrations as integration}
+                <div class="integration-item">
+                    <div
+                        class="overlay"
+                        style:background-color={integration.color}
+                    ></div>
+                    <img
+                        src="{integration.icon}"
+                        alt="{integration.name}"
+                        class="integration-icon"
+                    >
+                    <div class="name-wrapper">
+                        <div class="name">{integration.name}</div>
+                        {#if integration.subname}
+                            <div class="subname">{integration.subname}</div>
+                        {/if}
+                    </div>
+                </div>
+            {/each}
         </div>
     </div>
 </div>
 
-
-
-
 <style lang="scss">
+    .free {
+        display: flex;
+        justify-content: center;
+
+
+        .hyvor-card {
+            width: 97vw;
+            height: 300px; // Increased from 200px
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+
+            .hyvor-talk-section,
+            .hyvor-post-section {
+                min-height: 300px; // Increased from 200px
+                position: relative;
+                width: calc(50% - 30px);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+
+                .integration-icon {
+                    max-width: 40px;
+                    max-height: 40px;
+                    margin-bottom: 10px;
+                }
+
+                .name-wrapper {
+                    text-align: center;
+
+                    .name {
+                        font-size: 18px;
+                        font-weight: bold;
+                        margin: 0 0 5px 0;
+                        color: #333;
+                    }
+                }
+            }
+
+            .hyvor-talk-section {
+                float: left;
+                background: #fff2e6;
+
+                &:after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 100%;
+                    width: 0;
+                    height: 0;
+                    border-top: 300px solid  #fff2e6;
+                    border-right: 50px solid transparent;
+                }
+            }
+
+            .hyvor-post-section {
+                float: right;
+                background: #e8f4fd;
+
+                &:before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 100%;
+                    width: 0;
+                    height: 0;
+                    border-bottom: 300px solid #e8f4fd;
+                    border-left: 50px solid transparent;
+                }
+            }
+        }
+    }
+
+    .free .subname {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+    }
+
+    .free img {
+        max-width: 70px !important;
+        max-height:  70px !important;
+    }
+
+    .view-more {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 50px;
+
+    }
+
     :global(body) {
         overflow-x: hidden;
     }
 
     .above-fold {
-
         display: flex;
         padding-top: 75px;
+        flex-direction: column;
+    }
+
+    .title {
+        text-align: end;
+        //margin-bottom: 40px;
         padding-right: 50px;
         padding-left: 75px;
-        //padding-bottom: 75px;
-        //background-color: #3c3030;
-
-
-        .left {
-            flex: 1;
-            padding-right: 25px;
-            position: relative;
-
-            .main-browser {
-                width: 150%; /* did this to make it extend over the screen edge */
-                max-width: none; /* did this to remove max-width thing */
-                margin-left: -50%; /* This makes it extend over the left edge */
-                //background-color: #191e19;
-                padding-top: 70px;
-                padding-bottom: 70px;
-                padding-left: 70px;
-                border-radius: 20px;
-                filter: blur(1px);
-                opacity: 0.9;
-
-            }
-
-            .another-browser {
-                position: absolute;
-                width: 400px;
-                bottom: 30px;
-                left: 0;
-                border-radius: 20px;
-                box-shadow: var(--box-shadow);
-            }
-        }
-
-        .right {
-            flex: 1;
-            margin-left: 35px;
-        }
-
-        .right h1 {
-            font-size: 60px !important;
-            margin: 0;
-        }
-
-        .right .sassy {
-            margin-top: 20px;
-            font-size: 40px !important;
-            color: var(--grey-dark);
-            font-weight: 500;
-            text-align: end;
-        }
-
-        .right .multi-lang-img {
-            display: flex;
-            //    align to the right of the screen
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .right .steps {
-            background-color: #3c3030;
-        }
-
-        //
-        @keyframes heroEnter {
-            0% {
-                //transform: translateX(30px) translateY(0) translateZ(20px);
-                transform: translateX(-300PX) translateY(0) translateZ(20px);
-
-
-            }
-            100% {
-                //transform: translateX(0) translateY(0) translateZ(0);
-                transform: translateX(0) translateY(0) translateZ(0);
-                opacity: 1;
-                filter: blur(0);
-            }
-        }
-
-        @keyframes heroEnterDelayed {
-            0% {
-                transform: translateX(-200px) translateY(30px) translateZ(10px);
-                //transform: translateX(0) translateY(30px) translateZ(10px);
-                opacity: 0.1;
-
-            }
-            100% {
-                //transform: translateX(0) translateY(0) translateZ(0);
-                opacity: 1;
-                transform: translateX(0) translateY(0) translateZ(0);
-                //filter: blur(0);
-            }
-        }
-
-        @keyframes subtleFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .main-browser {
-            animation: heroEnter 1s ease-out, subtleFloat 8s ease-in-out infinite 2s;
-        }
-
-        .another-browser {
-            animation: heroEnterDelayed 3s ease-out, subtleFloat 6s ease-in-out infinite 3s reverse;
-            //    differed the appearance and float animation a bit using different timings
-        }
-
-
-        .int {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 35px;
-            margin-bottom: 10px;
-            span {
-                opacity: 0.2;
-            }
-        }
-
-        .int-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-
-        h1 {
-            margin: 0;
-            font-size:40px;
-            text-align: end;
-        }
-
-        h2 {
-            font-weight: normal;
-            font-size: 20px;
-            color: var(--grey-dark);
-            margin: 0;
-            padding-top: 20px;
-            text-align: end;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
     }
 
-    .trial-checks {
-        margin-top:25px;
-        margin-left:5px;
+    .title h1 {
+        font-size: 60px !important;
+        margin: 0 !important;
     }
 
-    .hurry {
-        margin-top: 30px;
-        width: 400px;
+    .title h2 {
+        font-size: 20px !important;
+        //margin: 0 !important;
+        font-weight: normal;
     }
 
-    .testmonial {
+    .integration-container {
+        overflow: hidden;
+        margin-bottom: 20px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .scrolling-wrapper {
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .scrolling-content {
         display: flex;
-        justify-content: flex-end;
-        margin-top: 20px;
+        animation: scroll 30s linear infinite;
+        gap: 20px;
+        width: max-content;
+        padding: 20px 0;
     }
 
-    @media (max-width: 992px) {
-        .above-fold {
-            flex-direction: column;
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .integration-item {
+        flex: 0 0 auto;
+        width: 200px;
+        padding: 20px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s transform;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+
+        &:hover {
+            transform: translateY(-5px);
+            animation-play-state: paused;
+        }
+
+        .integration-icon {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .name-wrapper {
+            z-index: 1;
+        }
+
+        .name {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .subname {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.3;
+            border-radius: 15px;
+        }
+    }
+
+    /* Pause animation on hover */
+    .scrolling-wrapper:hover .scrolling-content {
+        animation-play-state: paused;
+    }
+
+
+    /* media queries */
+    @media (max-width: 768px) {
+        .title {
             text-align: center;
-            padding-left: 20px;
             padding-right: 20px;
-            .left {
-                display: none;
-            }
-            .buttons {
-                justify-content: center;
-            }
+            padding-left: 20px;
         }
 
-        .int {
-            justify-content: center;
+        .title h1 {
+            font-size: 40px !important;
         }
 
-        .trial-checks {
-            margin-left: 0;
-            display: flex;
-            justify-content: center;
+        .integration-item {
+            min-width: 160px;
         }
 
-        .hurry {
-            display: flex;
-            justify-content:  center;
-            margin-left: 0;
-            max-width: 100%;
-            width: 500px;
+        .scrolling-content {
+            animation-duration: 25s;
         }
     }
 </style>

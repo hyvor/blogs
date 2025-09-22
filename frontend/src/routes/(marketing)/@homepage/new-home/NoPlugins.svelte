@@ -15,8 +15,6 @@
 
     import Accordion from "./@components/Accordion.svelte";
 
-    let selectedFeature = $state("SEO");
-
     const Features = [
         {
             id: "SEO",
@@ -65,22 +63,20 @@
         }
     ];
 
-    let openItemId = $state<string | null>(null);
+    let openItemId = $state("SEO");
+    let selectedFeature = $state("SEO");
 
     function handleToggle(id: string) {
-        // If the clicked item is already open, close it. Otherwise, open it.
-        openItemId = openItemId === id ? null : id;
-
-        // Update the selected feature when an accordion is opened
         if (openItemId === id) {
-            selectedFeature = id;
+            // Do nothing – keep it open
+            return;
         }
-        // keeping the last selected feature when closing:
-        // If needed image to disappear when accordion close
-        else {
-            selectedFeature = "";
-        }
+
+        // Open the new one
+        openItemId = id;
+        selectedFeature = id;
     }
+
 </script>
 
 <div class="all-in-one">
@@ -93,6 +89,18 @@
                 All essential blogging features built-in.
                 Imagine WordPress and its most used plugins bundled into one, without the maintenance.
             </h3>
+
+            <!-- Mobile image display - shown between title and accordions on mobile -->
+            <div class="mobile-image">
+                {#if Features.find(f => f.id === selectedFeature)?.image}
+                    <Browser image={Features.find(f => f.id === selectedFeature)?.image} />
+                {:else}
+                    <div class="no-image-placeholder">
+                        <span>Preview not available</span>
+                    </div>
+                {/if}
+            </div>
+
             {#each Features as feature (feature.name)}
                 <div class="item">
                     <Accordion
@@ -114,8 +122,8 @@
                 {#if Features.find(f => f.id === selectedFeature)?.image}
                     <Browser image={Features.find(f => f.id === selectedFeature)?.image} />
                 {:else}
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 50px; font-size: 1.2rem;">
-                        Image not available
+                    <div class="no-image-placeholder">
+                        <span>Image not available</span>
                     </div>
                 {/if}
             </div>
@@ -128,6 +136,7 @@
         margin: 0;
         padding: 60px 0;
         background-color: #483332;
+        overflow-x: hidden;
     }
 
     .title {
@@ -142,7 +151,7 @@
         width: 700px;
         margin-bottom: 45px;
         font-size: 20px;
-        color: var(--gray-light);
+        color: white;
     }
 
     .section-content {
@@ -160,40 +169,168 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
+        z-index: 2;
     }
 
     .right {
+        justify-content: center;
         position: relative;
-
     }
 
     .img {
-        /*width: 150%;*/
-        /*max-width: none;*/
+        transform: translateX(-400px); /* Start position */
+        width: calc(100vw - 60%); /* Extend to viewport width minus left offset */
+        max-width: none;
         margin-left: 0;
-        padding-top: 70px;
-        padding-bottom: 70px;
+        padding-top: 100px;
         padding-left: 70px;
         border-radius: 20px;
+        z-index: 0;
+        position: absolute;
     }
 
-    .right .img :global(.browser-content){
-        /*height: calc(100vh - 300px) !important;*/
+    .img:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #483332;
+        opacity: 0.6;
     }
 
-    @media (max-width: 992px) {
+    /* Hide mobile image on desktop */
+    .mobile-image {
+        display: none;
+    }
+
+    .no-image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        padding: 50px;
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.6);
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Tablet styles */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .section-content {
+            padding: 0 30px;
+            gap: 30px;
+        }
+
+        .title {
+            font-size: 2.2rem;
+        }
+
+        h3 {
+            width: 100%;
+            font-size: 18px;
+            margin-bottom: 35px;
+        }
+
+        .img {
+            transform: translateX(-300px);
+            width: calc(100vw - 65%);
+            padding-left: 50px;
+            padding-top: 80px;
+        }
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+        .all-in-one {
+            padding: 40px 0;
+        }
+
         .section-content {
             flex-direction: column;
             padding: 0 20px;
+            gap: 0;
+            margin-bottom: 60px;
         }
+
         .title {
+            font-size: 2rem;
             text-align: center;
-            padding-left: 0;
-            margin: 30px;
+            margin-bottom: 12px;
         }
+
+        h3 {
+            width: 100%;
+            font-size: 18px;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .left {
+            gap: 12px;
+        }
+
+        /* Show mobile image */
+        .mobile-image {
+            display: block;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .mobile-image .no-image-placeholder {
+            height: 200px;
+            font-size: 1rem;
+            margin: 0 10px;
+        }
+
+        /* Hide desktop right section on mobile */
         .right {
-            order: -1;
-            margin-bottom: 30px;
+            display: none;
+        }
+
+        /* Ensure mobile browser component is responsive */
+        .mobile-image :global(.browser-content) {
+            max-width: 100%;
+        }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .all-in-one {
+            padding: 30px 0;
+        }
+
+        .section-content {
+            padding: 0 15px;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .mobile-image {
+            margin-bottom: 20px;
+        }
+
+        .mobile-image .no-image-placeholder {
+            height: 150px;
+            font-size: 0.9rem;
+            margin: 0 5px;
+        }
+
+        .left {
+            gap: 10px;
         }
     }
 </style>

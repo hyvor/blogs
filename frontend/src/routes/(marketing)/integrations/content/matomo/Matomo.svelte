@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { Callout, CodeBlock } from '@hyvor/design/components';
-    import { Docs, DocsImage } from '@hyvor/design/marketing';
+    import { Callout } from '@hyvor/design/components';
+    import { DocsImage } from '@hyvor/design/marketing';
     import createAccountImage from './create-account.png';
     import copyCodeImage from './copy-code.png';
     import pasteCodeImage from './paste-code.png';

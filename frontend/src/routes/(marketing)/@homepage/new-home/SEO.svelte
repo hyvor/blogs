@@ -6,6 +6,8 @@
     import IconLink from '@hyvor/icons/IconLink';
     import IconClipBoard from '@hyvor/icons/IconClipboard';
     import IconTags from '@hyvor/icons/IconTags';
+    import IconFiletypeTxt from '@hyvor/icons/IconFiletypeTxt';
+    import IconFileEarmarkText from "@hyvor/icons/IconFileEarmarkText";
     import Review from "./@components/Review.svelte";
 
 
@@ -26,7 +28,7 @@
 <!--            with Built-in SEO-->
         </h1>
 
-        <h2>Spend your time creating content while your competitors are stuck with plugins.</h2>
+        <h2>We hande the SEO and speed. You don't need to worry about anything.</h2>
 
         <div class="bento-grid">
             <div class="int">
@@ -45,12 +47,17 @@
             </div>
 
             <div class="int">
+                <IconFileEarmarkText class="int-icon" size="30px" />
+                <div class="seo-feature-name">llms.txt</div>
+            </div>
+
+            <div class="int">
                <IconTags class="int-icon" size="30px" />
                 <div class="seo-feature-name">Meta tags</div>
             </div>
 
             <div class="int">
-               <IconBullseye class="int-icon" size="30px" />
+               <IconFiletypeTxt class="int-icon" size="30px" />
                 <div class="seo-feature-name">Robots.txt</div>
             </div>
         </div>
@@ -73,11 +80,11 @@
 
     <div class="right">
         <div class="main-browser">
-            <Browser image={seoFull} />
+            <Browser image={seoFull} link="blogs.hyvor.com/console" />
         </div>
 
         <div class="another-browser">
-             <Browser image={seoImg} />
+             <Browser image={seoImg} link="blogs.hyvor.com/console" />
         </div>
     </div>
 
@@ -107,44 +114,33 @@
             margin: 0;
         }
 
-        .left .sassy {
-            margin-top: 20px;
-            font-size: 40px !important;
-            color: var(--grey-dark);
-            font-weight: 500;
-            text-align: end;
-        }
-
         .right {
             flex: 1;
             padding-left: 25px;
             position: relative;
+        }
 
+        .right .main-browser {
+            width: 150%; /* did this to make it extend over the screen edge */
+            max-width: none; /* did this to remove max-width thing */
+            margin-left: 0;
+            //background-color: #191e19;
+            padding-top: 70px;
+            padding-bottom: 70px;
+            padding-left: 70px;
+            border-radius: 20px;
+            filter: blur(1px);
+            opacity: 0.9;
 
+        }
 
-
-            .main-browser {
-                width: 150%; /* did this to make it extend over the screen edge */
-                max-width: none; /* did this to remove max-width thing */
-                margin-left: 0;
-                //background-color: #191e19;
-                padding-top: 70px;
-                padding-bottom: 70px;
-                padding-left: 70px;
-                border-radius: 20px;
-                filter: blur(1px);
-                opacity: 0.9;
-
-            }
-
-            .another-browser {
-                position: absolute;
-                width: 400px;
-                bottom: 30px;
-                right: 0;
-                border-radius: 20px;
-                box-shadow: var(--box-shadow);
-            }
+        .right .another-browser {
+            position: absolute;
+            width: 400px;
+            bottom: 30px;
+            right: 0;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
         }
 
         //
@@ -217,16 +213,6 @@
             color:  var(--gray-dark);
         }
 
-        .int span {
-            opacity: 0.2;
-        }
-
-        .int-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
         h1 {
             margin: 0;
             font-size:40px;
@@ -240,22 +226,6 @@
             margin: 0;
             padding-top: 20px;
         }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-    }
-
-    .trial-checks {
-        margin-top:25px;
-        margin-left:5px;
-    }
-
-    .hurry {
-        margin-top: 30px;
-        width: 400px;
     }
 
     .testmonial {
@@ -264,42 +234,47 @@
         margin-top: 25px;
     }
 
+    .testmonial :global(.review-card){
+        width: auto;
+    }
+
     @media (max-width: 992px) {
         .above-fold {
             flex-direction: column;
             text-align: center;
             padding-left: 20px;
             padding-right: 20px;
-            .right {
-                display: none;
-            }
-            .buttons {
-                justify-content: center;
-            }
+        }
+
+        .right {
+            display: none;
         }
 
         .int {
             justify-content: center;
         }
 
-        .trial-checks {
-            margin-left: 0;
-            display: flex;
+        .bento-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            margin-top: 30px;
+            justify-items: center;
+        }
+
+        .left h1 {
+            font-size: 28px !important;
+            line-height: 1.2;
+        }
+
+        .left h2 {
+            font-size: 18px !important;
+            line-height: 1.4;
+        }
+
+        .testmonial {
             justify-content: center;
         }
 
-        .hurry {
-            display: flex;
-            justify-content:  center;
-            margin-left: 0;
-            max-width: 100%;
-            width: 500px;
-        }
+
     }
-
-
-    //    media queries for 768px, 1024px, 1440px, 2560px
-
-
-
 </style>

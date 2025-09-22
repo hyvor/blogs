@@ -27,6 +27,7 @@ import formsiteIcon from './icons/formsite.png';
 import paperformIcon from './icons/paperform.png';
 import zohoFormsIcon from './icons/zoho-forms.png';
 import googleAdsenseIcon from './icons/google-adsense.svg';
+import hyvorPostIcon from './icons/hyvor-post.png';
 import ezoicImg from './icons/ezoic.png';
 
 import type { Component } from 'svelte';
@@ -40,6 +41,7 @@ import Ezoic from './content/ezoic/Ezoic.svelte';
 import GoogleAdsense from './content/google-adsense/GoogleAdsense.svelte';
 import GoogleForms from './content/google-forms/GoogleForms.svelte';
 import Memberstack from './content/memberstack/Memberstack.svelte';
+import HyvorPost from './content/hyvor-post/HyvorPost.svelte';
 
 type CategoryName = 'analytics' | 'comments' | 'newsletters' | 'ads' | 'memberships' | 'forms';
 
@@ -233,6 +235,18 @@ export const integrations: Integration[] = [
 		category: 'newsletters',
 		color: '#fae2c4',
 		component: Mailchimp
+	},
+
+	{
+		slug: 'hyvor-post',
+		name: 'Hyvor Post',
+		icon: hyvorPostIcon,
+		title: 'Add Hyvor Post to your blog',
+		description: 'Coming Soon',
+		category: 'newsletters',
+		subname: 'Coming Soon',
+		color: '#96cfd3',
+		component: HyvorPost
 	},
 
 	//emailoctopus
