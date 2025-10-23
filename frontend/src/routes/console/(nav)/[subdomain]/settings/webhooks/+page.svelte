@@ -18,6 +18,7 @@
 	let isDeliveriesLoading = $state(true);
 	let isCreating = $state(false);
 	let activeTab = $state<'configure' | 'deliveries'>('configure');
+	let webhooksLoaded = $state(false);
 	
 	let selectedWebhookId = $state<number | null>(null);
 	let showWebhookFilter = $state(false);
@@ -26,23 +27,24 @@
 	let hasMoreDeliveries = $state(false);
 	const deliveriesLimit = 50;
 
+	let previousSelectedWebhookId = $state<number | null | undefined>(undefined);
+	
 	$effect(() => {
 		if (activeTab === 'deliveries') {
 			// Load webhooks first if not already loaded, then load deliveries
-			if (webhooks.length === 0 && !isLoading) {
+			if (!webhooksLoaded && !isLoading) {
 				loadWebhooks().then(() => {
 					loadDeliveries();
+					previousSelectedWebhookId = selectedWebhookId;
 				});
-			} else {
-				loadDeliveries();
+			} else if (webhooksLoaded) {
+				// Only load deliveries if this is the first time switching to deliveries tab
+				// or if the webhook filter has actually changed
+				if (previousSelectedWebhookId === undefined || previousSelectedWebhookId !== selectedWebhookId) {
+					loadDeliveries();
+					previousSelectedWebhookId = selectedWebhookId;
+				}
 			}
-		}
-	});
-
-	// Reload deliveries when webhook filter changes
-	$effect(() => {
-		if (activeTab === 'deliveries' && selectedWebhookId !== undefined) {
-			loadDeliveries();
 		}
 	});
 
@@ -55,6 +57,7 @@
 		return getWebhooks()
 			.then((webhookList) => {
 				webhooks = webhookList;
+				webhooksLoaded = true;
 			})
 			.catch((error) => {
 				toast.error('Failed to load webhooks: ' + error.message);
@@ -65,6 +68,12 @@
 	}
 
 	function loadDeliveries(more = false) {
+		if (webhooks.length === 0)
+		{
+			isDeliveriesLoading = false;
+			isLoadingMoreDeliveries = false;
+			return;
+		}
 		more ? (isLoadingMoreDeliveries = true) : (isDeliveriesLoading = true);
 		if (!more) deliveries = [];
 
@@ -95,14 +104,14 @@
 	}
 
 	function handleCreate(e: CustomEvent<Webhook>) {
-		webhooks = [e.detail, ...webhooks];
+		webhooks = [e, ...webhooks];
 		isCreating = false;
 	}
 
 	function handleUpdate(e: CustomEvent<Webhook>) {
 		webhooks = webhooks.map((webhook) => {
-			if (webhook.id === e.detail.id) {
-				return e.detail;
+			if (webhook.id === e.id) {
+				return e;
 			}
 			return webhook;
 		});
@@ -178,7 +187,13 @@
 		{#if isLoading}
 			<Loader full />
 		{:else}
-			<WebhookList {webhooks} {isLoading} on:delete={(e) => handleDelete(e.detail)} on:update={handleUpdate} />
+			<WebhookList 
+				{webhooks} 
+				{isLoading} 
+				onDelete={(e) => handleDelete(e)} 
+				onUpdate={(e) => handleUpdate(e)} 
+				selectedWebhookId={selectedWebhookId}
+			/>
 		{/if}
 	{:else if activeTab === 'deliveries'}
 		{#if isDeliveriesLoading}
@@ -195,7 +210,7 @@
 </div>
 
 {#if isCreating}
-	<CreateWebhookModal bind:show={isCreating} on:create={handleCreate} />
+	<CreateWebhookModal bind:show={isCreating} onCreate={handleCreate} />
 {/if}
 
 <style>

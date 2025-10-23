@@ -31,7 +31,7 @@
 </script>
 
 {#if deliveries.length === 0}
-	<IconMessage empty size="large" message="No webhook deliveries found" />
+	<IconMessage empty message="No webhook deliveries found" />
 {:else}
 	<Table columns="2fr 1fr 1fr 1fr" hover>
 		<TableRow head>
@@ -67,6 +67,3 @@
 		on:click
 	/>
 {/if}
-
-<style>
-</style>

@@ -2,23 +2,16 @@
 	import { IconMessage, Table, TableRow } from '@hyvor/design/components';
 	import type { Webhook } from '../../../../lib/types';
 	import WebhookRow from './WebhookRow.svelte';
-	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
 		webhooks: Webhook[];
 		isLoading: boolean;
+		onDelete: (id: number) => void;
+		onUpdate: (webhook: Webhook) => void;
 	}
 
-	let { webhooks, isLoading }: Props = $props();
-	const dispatch = createEventDispatcher();
+	let { webhooks, isLoading, onDelete, onUpdate }: Props = $props();
 
-	function handleDelete(id: number) {
-		dispatch('delete', id);
-	}
-
-	function handleUpdate(e: CustomEvent<Webhook>) {
-		dispatch('update', e.detail);
-	}
 </script>
 
 {#if webhooks.length === 0}
@@ -33,7 +26,11 @@
 		</TableRow>
 
 		{#each webhooks as webhook (webhook.id)}
-			<WebhookRow {webhook} on:delete={() => handleDelete(webhook.id)} on:update={handleUpdate} />
+			<WebhookRow 
+				{webhook} 
+				onDelete={onDelete} 
+				onUpdate={onUpdate} 
+			/>
 		{/each}
 	</Table>
 {/if}

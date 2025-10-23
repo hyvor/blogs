@@ -10,16 +10,16 @@ import IconTrash from '@hyvor/icons/IconTrash';
     
     interface Props {
         webhook: Webhook;
+        onDelete: (id: number) => void;
+        onUpdate: (webhook: Webhook) => void;
     }
 
-    let { webhook }: Props = $props();
+    let { webhook, onDelete, onUpdate }: Props = $props();
 
     function handleCopy() {
         navigator.clipboard.writeText(webhook.secret);
         toast.success("Copied");
     }
-
-    const dispatch = createEventDispatcher();
 
     let isUpdating = $state(false);
 
@@ -41,7 +41,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
                     toast.error(err.message, { id: toastId });
                 });
 
-            dispatch("delete");
+            onDelete(webhook.id);
         }
     }
 
@@ -81,7 +81,7 @@ import IconTrash from '@hyvor/icons/IconTrash';
     <CreateUpdateWebhookModal
         {webhook}
         bind:show={isUpdating}
-        on:update
+        onUpdate={onUpdate}
     />
 {/if}
 
