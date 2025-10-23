@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\User;
 
@@ -77,8 +78,9 @@ class UserObject
 
         /** @var UserVariantObject[] $variants */
         $variants = $user->variants
-            ->map(fn ($variant) => new UserVariantObject($variant, $user, $blog))
+            ->map(fn($variant) => new UserVariantObject($variant, $user, $blog))
             ->sortBy('language_id')
+            ->values()
             ->toArray();
 
         $this->variants = $variants;
@@ -86,20 +88,18 @@ class UserObject
 
     private function getUserEmail(User $user): ?string
     {
-
         if ($user->status === UserStatusEnum::INVITED) {
-
             // mask the email
             $email = $user->email;
 
-            if (!$email)
+            if (!$email) {
                 return null;
+            }
 
             $emailParts = explode('@', $email);
             $emailParts[0] = substr($emailParts[0], 0, 3) . '***';
             $emailParts[1] = substr($emailParts[1], 0, 3) . '***';
             return implode('@', $emailParts);
-
         } else {
             return $user->email;
         }
