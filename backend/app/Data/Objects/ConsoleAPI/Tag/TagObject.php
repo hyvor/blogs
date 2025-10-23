@@ -36,7 +36,7 @@ class TagObject
         $this->created_at = $tag->created_at->getTimestamp();
         $this->updated_at = $tag->updated_at->getTimestamp();
         $this->is_private = $tag->is_private;
-        
+
         $this->slug = $tag->slug;
         $this->posts_count = $tag->posts_count;
         $this->code_head = $tag->code_head;
@@ -44,10 +44,11 @@ class TagObject
 
         /** @var TagVariantObject[] $variants */
         $variants = $tag->variants
-            ->map(fn ($variant) => new TagVariantObject($variant, $tag, $blog))
+            ->map(fn($variant) => new TagVariantObject($variant, $tag, $blog))
             ->sortBy('language_id')
+            ->values()
             ->toArray();
 
-         $this->variants = $variants;
+        $this->variants = $variants;
     }
 }
