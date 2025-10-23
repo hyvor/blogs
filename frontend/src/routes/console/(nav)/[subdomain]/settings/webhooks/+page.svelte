@@ -14,7 +14,7 @@
 	let webhooks: Webhook[] = $state([]);
 	let deliveries: WebhookDelivery[] = $state([]);
 
-	let isLoading = $state(true);
+	let isWebhooksLoading = $state(true);
 	let isDeliveriesLoading = $state(true);
 	let isCreating = $state(false);
 	let activeTab = $state<'configure' | 'deliveries'>('configure');
@@ -32,7 +32,7 @@
 	$effect(() => {
 		if (activeTab === 'deliveries') {
 			// Load webhooks first if not already loaded, then load deliveries
-			if (!webhooksLoaded && !isLoading) {
+			if (!webhooksLoaded && !isWebhooksLoading) {
 				loadWebhooks().then(() => {
 					loadDeliveries();
 					previousSelectedWebhookId = selectedWebhookId;
@@ -53,7 +53,7 @@
 	});
 
 	function loadWebhooks() {
-		isLoading = true;
+		isWebhooksLoading = true;
 		return getWebhooks()
 			.then((webhookList) => {
 				webhooks = webhookList;
@@ -63,7 +63,7 @@
 				toast.error('Failed to load webhooks: ' + error.message);
 			})
 			.finally(() => {
-				isLoading = false;
+				isWebhooksLoading = false;
 			});
 	}
 
@@ -184,12 +184,12 @@
 
 <div class="content">
 	{#if activeTab === 'configure'}
-		{#if isLoading}
+		{#if isWebhooksLoading}
 			<Loader full />
 		{:else}
 			<WebhookList 
 				{webhooks} 
-				{isLoading} 
+				{isWebhooksLoading} 
 				onDelete={(e) => handleDelete(e)} 
 				onUpdate={(e) => handleUpdate(e)} 
 				selectedWebhookId={selectedWebhookId}

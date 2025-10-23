@@ -67,33 +67,6 @@ class ConsoleWebhookController extends Controller
         return response()->json();
     }
 
-    public function getWebhookDeliveries(Webhook $webhook, Request $request) : JsonResponse
-    {
-        $request->validate([
-            'limit' => 'integer|max:100',
-            'offset' => 'integer',
-        ]);
-
-        $limit = $request->integer('limit', 50);
-        $offset = $request->integer('offset', 0);
-
-        $data = WebhookDeliveryService::getAllWebhookDeliveries(
-            $webhook->blog,
-            $webhook->id,
-            $limit,
-            $offset
-        );
-
-        $deliveries = $data->collection->map(function ($delivery) {
-            return new WebhookDeliveryObject($delivery);
-        });
-
-        return response()->json([
-            'data' => $deliveries,
-            'total' => $data->total,
-        ]);
-    }
-
     public function getAllWebhookDeliveries(Blog $blog, Request $request) : JsonResponse
     {
         $requestData = $request->validate([
