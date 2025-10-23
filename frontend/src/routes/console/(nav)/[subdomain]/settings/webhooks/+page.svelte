@@ -103,12 +103,12 @@
 		webhooks = webhooks.filter((webhook) => webhook.id !== id);
 	}
 
-	function handleCreate(e: CustomEvent<Webhook>) {
+	function handleCreate(e: Webhook) {
 		webhooks = [e, ...webhooks];
 		isCreating = false;
 	}
 
-	function handleUpdate(e: CustomEvent<Webhook>) {
+	function handleUpdate(e: Webhook) {
 		webhooks = webhooks.map((webhook) => {
 			if (webhook.id === e.id) {
 				return e;

@@ -23,7 +23,7 @@
 		onUpdate?: (webhook: Webhook) => void;
 	}
 
-	let { show = $bindable(), webhook = undefined, onCreate, onUpdate }: ProProps = $props();
+	let { show = $bindable(), webhook = undefined, onCreate, onUpdate }: Props = $props();
 
 	let url = $state(webhook?.url || '');
 	let urlError: null | string = $state(null);

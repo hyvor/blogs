@@ -5,12 +5,12 @@
 
 	interface Props {
 		webhooks: Webhook[];
-		isLoading: boolean;
+		isWebhooksLoading: boolean;
 		onDelete: (id: number) => void;
 		onUpdate: (webhook: Webhook) => void;
 	}
 
-	let { webhooks, isLoading, onDelete, onUpdate }: Props = $props();
+	let { webhooks, isWebhooksLoading, onDelete, onUpdate }: Props = $props();
 
 </script>
 
