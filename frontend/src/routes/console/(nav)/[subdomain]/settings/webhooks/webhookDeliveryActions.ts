@@ -1,11 +1,6 @@
 import consoleApi from '../../../../lib/consoleApi';
 import type { WebhookDelivery } from '../../../../lib/types';
 
-export interface WebhookDeliveryResponse {
-	data: WebhookDelivery[];
-	total: number;
-}
-
 export function getWebhookDeliveries(
 	webhookId?: number,
 	limit: number = 50,
