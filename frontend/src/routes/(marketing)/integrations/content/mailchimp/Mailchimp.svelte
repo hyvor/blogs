@@ -13,7 +13,7 @@
 	<Callout type="info">
 		<p><b>Requirements</b>:</p>
 		<ul>
-			<li>a <a href="https://hyvor.com/login">Mailchimp account</a></li>
+			<li>a Mailchimp account</li>
 			<li>a form created using Mailchimp</li>
 			<li>a blog on <a href="/console">Hyvor Blogs</a></li>
 		</ul>

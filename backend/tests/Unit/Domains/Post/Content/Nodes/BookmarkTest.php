@@ -5,7 +5,9 @@ namespace Tests\Unit\PostContent\Nodes;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Theme\ThemeFilesRepository;
-use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 beforeEach(function () {
     $this->url = 'https://example.com';
@@ -15,17 +17,16 @@ beforeEach(function () {
     $this->icon_url = '/icon.ico';
     $this->site = 'Youtube';
 
-    Http::fake([
-        'https://hyvor.cluster/api/internal/unfold/unfold*' => Http::response([
-            'lastUrl' => $this->url,
-            'url' => $this->url,
-            'title' => $this->title,
-            'description' => $this->description,
-            'thumbnailUrl' => $this->thumbnail_url,
-            'iconUrl' => $this->icon_url,
-            'siteName' => $this->site,
-        ])
-    ]);
+    $mockHttpClient = new MockHttpClient(new JsonMockResponse([
+        'lastUrl' => $this->url,
+        'url' => $this->url,
+        'title' => $this->title,
+        'description' => $this->description,
+        'thumbnailUrl' => $this->thumbnail_url,
+        'iconUrl' => $this->icon_url,
+        'siteName' => $this->site,
+    ]));
+    $this->app->bind(HttpClientInterface::class, fn() => $mockHttpClient);
 
     // add URL data first
 //    UrlData::create([

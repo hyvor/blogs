@@ -34,11 +34,10 @@ it('clears cache when creating a media', function () {
 
     $this->mock(
         CacheService::class,
-        fn (MockInterface $mock) =>
-        $mock
+        fn(MockInterface $mock) => $mock
             ->shouldReceive('clearSingleCache')
             ->once()
-            ->with('/media/'.$media->name)
+            ->with('/media/' . $media->name)
     )->makePartial();
 
     $event = new MediaCreatedEvent($media);
@@ -51,11 +50,10 @@ it('clears cache when deleting media', function () {
 
     $this->mock(
         CacheService::class,
-        fn (MockInterface $mock) =>
-    $mock
-        ->shouldReceive('clearSingleCache')
-        ->once()
-        ->with('/media/'.$media->name)
+        fn(MockInterface $mock) => $mock
+            ->shouldReceive('clearSingleCache')
+            ->once()
+            ->with('/media/' . $media->name)
     )->makePartial();
 
     $event = new MediaDeletedEvent($media);
@@ -66,8 +64,7 @@ it('clears cache when deleting media', function () {
 it('clears cache when asset updates', function () {
     $this->mock(
         CacheService::class,
-        fn (MockInterface $mock) =>
-        $mock
+        fn(MockInterface $mock) => $mock
             ->shouldReceive('clearSingleCache')
             ->once()
             ->with('/assets/script.js')
@@ -81,16 +78,25 @@ it('clears cache when asset updates', function () {
 it('clears cache when styles updates', function () {
     $this->mock(
         CacheService::class,
-        fn (MockInterface $mock) =>
-    $mock
-        ->shouldReceive('clearSingleCache')
-        ->once()
-        ->with('/styles.css')
+        function (MockInterface $mock) {
+            $mock
+                ->shouldReceive('clearSingleCache')
+                ->once()
+                ->with('/styles.css');
+
+            $mock
+                ->shouldReceive('clearTemplateCache')
+                ->once();
+        }
     )->makePartial();
 
-    $event = new StylesEditedEvent(blog());
+    $blog = blog();
+    $event = new StylesEditedEvent($blog);
+
     $listener = new ClearCacheSubscriber();
     $listener->onStylesEdit($event);
+
+    expect($blog->getMeta('cache_version_styles'))->toBe(2);
 });
 
 it('clears cache on redirect change', function () {
@@ -98,11 +104,10 @@ it('clears cache on redirect change', function () {
 
     $this->mock(
         CacheService::class,
-        fn (MockInterface $mock) =>
-            $mock
-                ->shouldReceive('clearSingleCache')
-                ->once()
-                ->with('/from')
+        fn(MockInterface $mock) => $mock
+            ->shouldReceive('clearSingleCache')
+            ->once()
+            ->with('/from')
     )->makePartial();
 
     $event = new RedirectChangedEvent($redirect);

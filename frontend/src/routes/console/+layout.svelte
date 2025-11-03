@@ -91,7 +91,6 @@
 				instance={getConfig().hyvor.instance}
 				product="blogs"
 				config={{
-					twitter: 'https://twitter.com/HyvorBlogs',
 					g2: 'https://www.g2.com/products/hyvor-blogs/reviews',
 					chat: false
 				}}

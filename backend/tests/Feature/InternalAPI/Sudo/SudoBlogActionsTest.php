@@ -21,7 +21,6 @@ class SudoBlogActionsTest extends DatabaseTestCase
         $blog = Blog::factory()->create();
 
         $this->internalApi(
-            'POST',
             '/core/sudo/blogs/' . $blog->id,
             [
                 'action' => 'block',
@@ -39,7 +38,6 @@ class SudoBlogActionsTest extends DatabaseTestCase
         $blog = Blog::factory()->create(['is_blocked' => true]);
 
         $this->internalApi(
-            'POST',
             '/core/sudo/blogs/' . $blog->id,
             [
                 'action' => 'unblock',

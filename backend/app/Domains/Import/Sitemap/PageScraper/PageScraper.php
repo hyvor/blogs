@@ -2,6 +2,7 @@
 
 namespace App\Domains\Import\Sitemap\PageScraper;
 
+use App\Domains\App\HttpBot;
 use App\Domains\Import\Sitemap\PageScraper\Enums\PageScrapeErrorEnum;
 use App\Domains\Import\Sitemap\PageScraper\Enums\SelectTypeEnum;
 use App\Domains\Import\Sitemap\PageScraper\Exceptions\PageScrapperException;
@@ -40,7 +41,9 @@ class PageScraper
     public function scrape() : void
     {
 
-        $response = Http::get($this->url);
+        $response = Http::withHeaders([
+            'User-Agent' => HttpBot::USER_AGENT,
+        ])->get($this->url);
 
         if (!$response->ok()) {
             $this->setError(PageScrapeErrorEnum::CANNOT_FETCH);
@@ -86,8 +89,10 @@ class PageScraper
 
     private function tryParsingDate(?string $date) : ?Carbon
     {
-        if (!$date)
+        if (!$date) {
             return null;
+        }
+
         try {
             return Carbon::parse($date);
         } catch (InvalidFormatException) {
@@ -153,6 +158,12 @@ class PageScraper
             $slug = trim($slug, '/');
         }
 
+        if (str_contains($slug, '/')) {
+            // get the last part only
+            $parts = explode('/', $slug);
+            $slug = end($parts);
+        }
+
         $this->slug = $slug;
     }
 
@@ -179,9 +190,10 @@ class PageScraper
 
         $filtered = $crawler->filter($this->options->contentSelector);
 
-        $content = $filtered->count() > 0 ?
-            $filtered->first()->html() :
-            null;
+        $content = '';
+        $filtered->each(function (Crawler $node) use (&$content) {
+            $content .= $node->html();
+        });
 
         if (!$content || trim($content) === "") {
             throw new PageScrapperException(PageScrapeErrorEnum::CANNOT_GET_CONTENT);

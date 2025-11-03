@@ -3,7 +3,10 @@
 namespace Tests\Feature\DeliveryApi;
 
 use App\Models\Redirect;
-use App\Models\Subscription;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 it('works with subdomain', function () {
     $blog = blog();
@@ -75,16 +78,29 @@ it('redirects to homepage correctly', function () {
         ->assertRedirect("https://hyvorblogs.com");
 });
 
-it('shows error when trial has ended', function () {
-    $blog = blog(['trial_ends_at' => now()->subDay()]);
-    $this->get("http://$blog->subdomain.hyvorblogs.io/any")
-        ->assertSee('trial has ended')
-        ->assertSee('/console/' . $blog->subdomain . '/billing');
-})->skip('Currently the trial is not checked, so skipped');
+it('redirects on no license', function () {
+    $time = now();
+    $this->travelTo($time);
+    $blog = blog();
+    BillingFake::enable(license: null);
 
-it('does now show an error when trial is ended but there is a subscription', function () {
+    $this->get("http://$blog->subdomain.hyvorblogs.io/any")
+        ->assertRedirect('https://blogs.hyvor.com')
+        ->assertHeader('X-Blog-Subdomain', $blog->subdomain)
+        ->assertHeader('X-Redirect-Reason', 'No license')
+        ->assertHeader('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store, private');
+
+    $value = DB::table('cache')->where('key', "laravel_cachehas-license:$blog->hyvor_user_id")->first();
+
+    expect(unserialize($value->value))->toBeFalse();
+    expect($value->expiration)->toBe($time->addSeconds(30)->getTimestamp());
+});
+
+it('caches for 48 hours when there is a license', function () {
+    $time = now();
+    $this->travelTo($time);
+
     $blog = blogWithAccessLanguageAndRoutes(['trial_ends_at' => now()->subDay()]);
-    Subscription::factory()->create(['blog_id' => $blog]);
 
     $content = '<body>Testing</body>';
     addThemeTemplateFile($blog, $content);
@@ -92,10 +108,43 @@ it('does now show an error when trial is ended but there is a subscription', fun
     $this->get("http://$blog->subdomain.hyvorblogs.io")
         ->assertOk()
         ->assertSee($content, false);
+
+    $value = DB::table('cache')->where('key', "laravel_cachehas-license:$blog->hyvor_user_id")->first();
+
+    expect(unserialize($value->value))->toBeTrue();
+    expect($value->expiration)->toBe($time->addHours(48)->getTimestamp());
 });
 
 it('does not show trial error for non-default blogs', function () {
-    $blog = blog(['trial_ends_at' => now()->subDay(), 'type' => 'dev']);
+    $blog = blog(['type' => 'dev']);
+    BillingFake::enable(license: null);
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")
         ->assertDontSee('trial has ended');
+});
+
+it('does not fail on internal api call fail', function () {
+    $blog = blogWithAccessLanguageAndRoutes();
+    $content = '<body>Testing</body>';
+    addThemeTemplateFile($blog, $content);
+    BillingFake::enable(fn() => throw new InternalApiCallFailedException('test'));
+
+    $this->get("http://$blog->subdomain.hyvorblogs.io")
+        ->assertOk()
+        ->assertSee($content, false);
+});
+
+it('gets has license from cache', function () {
+    $blog = blogWithAccessLanguageAndRoutes(['hyvor_user_id' => 1]);
+    Cache::put('has-license:1', true, 60);
+
+    $content = '<body>Testing</body>';
+    addThemeTemplateFile($blog, $content);
+    BillingFake::enable(fn() => throw new InternalApiCallFailedException('test'));
+
+
+    BillingFake::enable(fn() => throw new \Exception());
+
+    $this->get("http://$blog->subdomain.hyvorblogs.io")
+        ->assertOk()
+        ->assertSee($content, false);
 });

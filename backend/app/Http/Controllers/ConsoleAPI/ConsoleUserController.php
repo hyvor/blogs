@@ -15,8 +15,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
-use Hyvor\Internal\Auth\Auth;
-use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -56,7 +55,7 @@ class ConsoleUserController extends Controller
         Request $request,
         Blog $blog,
         UsageService $usageService,
-        Auth $auth,
+        AuthInterface $auth,
     ): JsonResponse {
         $request->validate([
             'username_or_email' => 'required|string',

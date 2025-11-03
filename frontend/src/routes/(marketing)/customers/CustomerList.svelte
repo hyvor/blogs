@@ -111,14 +111,6 @@
 			color: '#ffece4'
 		},
 		{
-			name: 'Deflekt',
-			type: 'business',
-			image: 'deflekt_ik0u1p.webp',
-			url: 'deflekt.ai/blog',
-			country: '🇳🇱',
-			color: '#f2ebff'
-		},
-		{
 			name: 'David Hooper',
 			type: 'personal',
 			image: 'davidhooper_zb90qt.webp',
@@ -148,20 +140,6 @@
 			image: 'enthu.webp',
 			url: 'enthu.com/blog',
 			country: '🇮🇳'
-		},
-		{
-			name: 'Tiger22',
-			type: 'business',
-			image: 'tiger22.webp',
-			url: 'tiger22.com',
-			color: '#f7e3e7'
-		},
-		{
-			name: 'Wireframe',
-			type: 'personal',
-			image: 'wireframe.webp',
-			url: 'wireframe.blog',
-			color: '#f4e8f9'
 		}
 	];
 
@@ -198,6 +176,8 @@
 			<img
 				src="https://res.cloudinary.com/dqabfne6s/image/upload/c_scale,w_800/v1687716078/blogs.hyvor.com/customer-screenshots/{customer.image}"
 				alt={customer.url}
+				loading="lazy"
+				style="aspect-ratio: 16 / 9"
 			/>
 
 			<div class="data">

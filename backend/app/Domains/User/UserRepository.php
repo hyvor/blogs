@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\User;
 
@@ -24,8 +26,7 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\FilterQ;
-use Hyvor\Internal\Auth\Auth;
-use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
@@ -34,9 +35,9 @@ class UserRepository
 
 
     /**
-     * @param  Blog  $blog
-     * @param  int  $limit
-     * @param  int  $offset
+     * @param Blog $blog
+     * @param int $limit
+     * @param int $offset
      * @return Collection<int, User>
      */
     public static function getUsers(Blog $blog, int $limit, int $offset = 0)
@@ -60,9 +61,9 @@ class UserRepository
     /**
      * Search users by their primary language name
      *
-     * @param  Blog  $blog
-     * @param  string  $search
-     * @param  int  $limit
+     * @param Blog $blog
+     * @param string $search
+     * @param int $limit
      * @return Collection<int, User>
      */
     public static function searchUsers(Blog $blog, string $search, int $limit)
@@ -74,8 +75,8 @@ class UserRepository
 
         return User::join(
             'user_variants',
-            fn ($join) => $join->on('user_variants.user_id', '=', 'users.id')
-                    ->where('user_variants.language_id', '=', $primaryLanguage->id)
+            fn($join) => $join->on('user_variants.user_id', '=', 'users.id')
+                ->where('user_variants.language_id', '=', $primaryLanguage->id)
         )
             ->where('users.blog_id', $blog->id)
             ->where('user_variants.name', 'LIKE', $search)
@@ -143,11 +144,10 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
-
-        $auth = app(Auth::class);
+        $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($hyvorUserId);
 
-        if (! $hyvorUser) {
+        if (!$hyvorUser) {
             throw new Exception('User not found');
         }
 
@@ -233,9 +233,8 @@ class UserRepository
 
     public static function deleteUser(User $user): void
     {
-
         // variants
-        $user->variants->map(fn ($variant) => self::deleteUserVariant($variant));
+        $user->variants->map(fn($variant) => self::deleteUserVariant($variant));
 
         // post-authors
         PostTagAuthorRepository::deletePostAuthorsByUser($user);
@@ -331,13 +330,13 @@ class UserRepository
             ->first();
     }
 
-    public static function getOwnerEmailAddress(Blog $blog) : ?string
+    public static function getOwnerEmailAddress(Blog $blog): ?string
     {
         if (!$blog->hyvor_user_id) {
             return null;
         }
 
-        $auth = app(Auth::class);
+        $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($blog->hyvor_user_id);
 
         if (!$hyvorUser) {
@@ -349,7 +348,7 @@ class UserRepository
 
     public static function sendInviteEmail(User $user): void
     {
-        $auth = app(Auth::class);
+        $auth = app(AuthInterface::class);
         if (!$user->hyvor_user_id) {
             return;
         }
@@ -368,7 +367,7 @@ class UserRepository
     }
 
 
-    public static function isBlocked(int $hyvorUserId) : bool
+    public static function isBlocked(int $hyvorUserId): bool
     {
         return BlockedUser::where('hyvor_user_id', $hyvorUserId)
             ->exists();

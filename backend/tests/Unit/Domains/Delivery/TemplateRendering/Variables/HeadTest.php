@@ -8,7 +8,6 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('sets _head in index', function () {
-
     $blog = blogWithLanguageAndRoutes();
     $variant = $blog->variants[0];
     $variantName = htmlspecialchars($variant->name);
@@ -40,7 +39,7 @@ it('sets _head in index', function () {
 
     expect($content)->toContain('<meta name="generator" content="Hyvor Blogs" />');
     // styles.css
-    expect($content)->toContain("<link rel=\"stylesheet\" href=\"$blogUrl/styles.css\" />");
+    expect($content)->toContain("<link rel=\"stylesheet\" href=\"$blogUrl/styles.css?v=1\" />");
     // code_head
     expect($content)->toContain($codeHeadRendered);
     // title
@@ -141,7 +140,7 @@ it('adds nofollow', function () {
     expect($content)->toContain('<meta name="robots" content="noindex">');
 });
 
-it('adds favicon', function() {
+it('adds favicon', function () {
     $blog = blogWithLanguageAndRoutes();
     $url = 'https://exmaple.com/icon.png';
     $blog->setMeta('icon_url', $url);
@@ -163,8 +162,7 @@ it('adds favicon', function() {
     expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
 });
 
-it('adds favicon from logo when icon is not set', function() {
-
+it('adds favicon from logo when icon is not set', function () {
     $blog = blogWithLanguageAndRoutes();
     $url = 'https://exmaple.com/logo.png';
     $blog->setMeta('logo_url', $url);
@@ -184,11 +182,11 @@ it('adds favicon from logo when icon is not set', function() {
     $content = $responseObject->content;
 
     expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
-
 });
 
-it('adds fonts', function() {
-
+/*
+ * font CSS embedded in styles.css now
+ * it('adds fonts', function () {
     $blog = blogWithLanguageAndRoutes();
 
     $content = '{{ _head | template }}';
@@ -212,12 +210,12 @@ it('adds fonts', function() {
 
     $content = $responseObject->content;
 
-    expect($content)->toContain("<link rel=\"stylesheet\" href=\"https://{$blog->subdomain}.hyvorblogs.io/fonts/css/mulish:400\" />");
+    expect($content)->toContain(
+        "<link rel=\"stylesheet\" href=\"https://{$blog->subdomain}.hyvorblogs.io/fonts/css/mulish:400\" />"
+    );
+});*/
 
-});
-
-it('adds tag code', function() {
-
+it('adds tag code', function () {
     $blog = blogWithLanguageAndRoutes();
 
     $post = addPublishedPost($blog);
@@ -244,11 +242,9 @@ it('adds tag code', function() {
 
     expect($content)->toContain('This is tag code head for ' . $post->variants[0]->slug);
     expect($content)->not->toContain('Not tag');
-
 });
 
-it('does not add tag code to other pages', function() {
-
+it('does not add tag code to other pages', function () {
     $blog = blogWithLanguageAndRoutes();
 
     $post = addPublishedPost($blog);
@@ -271,5 +267,4 @@ it('does not add tag code to other pages', function() {
     $content = $responseObject->content;
 
     expect($content)->not->toContain('This is tag code head for');
-
 });

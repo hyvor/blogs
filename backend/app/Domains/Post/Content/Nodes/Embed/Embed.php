@@ -51,7 +51,7 @@ class Embed extends NodeType
                  * So, we don't have to worry about the applciation making a HTTP call
                  * It is a simple database call
                  */
-                $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
+                $urlData = app(UrlDataRepository::class)->fetch($url, UrlDataFetchTypeEnum::EMBED);
                 $embedContent = $urlData['embed'];
             }
 

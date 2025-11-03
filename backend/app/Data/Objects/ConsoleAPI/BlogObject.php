@@ -157,6 +157,9 @@ class BlogObject
 
         $this->variants = $blog->variants->map(function ($variant) {
             return new BlogVariantObject($variant);
-        })->sortBy('language_id')->toArray();
+        })
+            ->sortBy('language_id')
+            ->values()
+            ->toArray();
     }
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\Redirect;
 
@@ -35,7 +36,6 @@ class RedirectRepository
         string $to,
         RedirectTypeEnum $type
     ): Redirect {
-
         $redirect = $blog->redirects()->create([
             'dynamic' => $dynamic,
             'path' => $path,
@@ -50,7 +50,7 @@ class RedirectRepository
     /**
      * @param array{path?: string, to?: string, type?: RedirectTypeEnum} $updates
      */
-    public static function updateRedirect(Redirect $redirect, array $updates) : Redirect
+    public static function updateRedirect(Redirect $redirect, array $updates): Redirect
     {
         $redirect->update($updates);
         RedirectChangedEvent::dispatch($redirect);
@@ -64,29 +64,26 @@ class RedirectRepository
     }
 
     /**
-    * @return array{
-    *   to: string,
-    *   type: RedirectTypeEnum
-    * } | null
-    */
+     * @return array{
+     *   to: string,
+     *   type: RedirectTypeEnum
+     * } | null
+     */
     public static function findRedirectForPath(Blog $blog, string $path): array|null
     {
         // first check for dynamic redirects
         $dynamicRedirects = $blog->redirects()
-                                ->where('dynamic', true)
-                                ->get();
+            ->where('dynamic', true)
+            ->get();
 
         // iterates through all dynamic redirects for the blog
         foreach ($dynamicRedirects as $dynamicRedirect) {
-
             $dynamicPath = $dynamicRedirect->path;
             $to = $dynamicRedirect->to;
 
             try {
-
                 // checks if path matches the regex pattern of the dynamic path
                 if (preg_match(self::getRegex($dynamicPath), $path)) {
-
                     // generates dynamic to path using the regex pattern
                     $dynamicTo = preg_replace(self::getRegex($dynamicPath), $to, $path);
 
@@ -95,23 +92,27 @@ class RedirectRepository
                             'to' => $dynamicTo,
                             'type' => $dynamicRedirect->type,
                         ];
-                    }                        
+                    }
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 throw new SafetyException('Dynamic link parsing failed');
             }
         }
-        
+
         // if no dynamic redirect is found, check for static redirects
-        $staticRedirect = $blog->redirects()
-                                ->where('path', $path)
-                                ->first();
+        $staticRedirect = self::getRedirectByPath($blog, $path);
 
         return $staticRedirect ? [
             'to' => $staticRedirect->to,
             'type' => $staticRedirect->type,
         ] : null;
+    }
+
+    public static function getRedirectByPath(Blog $blog, string $path): Redirect|null
+    {
+        return $blog->redirects()
+            ->where('path', $path)
+            ->first();
     }
 
     public static function hasRedirectForPath(Blog $blog, string $path): bool
@@ -128,8 +129,9 @@ class RedirectRepository
 
     public static function validateRegex(string $regex): bool
     {
-        if (@preg_match(self::getRegex($regex), '') === false)
+        if (@preg_match(self::getRegex($regex), '') === false) {
             return false;
+        }
         return true;
     }
 

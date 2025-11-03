@@ -4,6 +4,7 @@ namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Http\Middleware\HandleCors;
+use Hyvor\Internal\Metric\MetricMiddleware;
 
 class Kernel extends HttpKernel
 {
@@ -14,8 +15,9 @@ class Kernel extends HttpKernel
         HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\TrimStrings::class,
+        MetricMiddleware::class,
     ];
 
 

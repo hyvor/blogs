@@ -19,7 +19,7 @@ services:
           action: rebuild
     labels:
       traefik.enable: true
-      traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.dev`)
+      traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)
       traefik.http.routers.hyvor-blogs-frontend.entrypoints: https
       traefik.http.routers.hyvor-blogs-frontend.tls: true
       traefik.http.routers.hyvor-blogs-frontend.middlewares: vite-retry@file
@@ -36,30 +36,32 @@ services:
       context: .
       target: backend-dev
     volumes:
-      - type: bind
-        source: ./backend
-        target: /app/backend
+      - ./backend:/app/backend
+      # - ../internal:/app/backend/vendor/hyvor/internal
     env_file:
       - .env
     labels:
       traefik.enable: true
       # backend
-      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.dev`) && PathPrefix(`/api`)
+      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.localhost`) && PathPrefix(`/api`)
       traefik.http.routers.hyvor-blogs-backend.entrypoints: https
       traefik.http.routers.hyvor-blogs-backend.tls: true
       traefik.http.routers.hyvor-blogs-backend.service: hyvor-blogs-backend
+
       # subdirectory hosting
       traefik.http.routers.hyvor-blogs-subdir.rule: HostRegexp(`^.+\.hyvorblogs\.localhost$`)
-
       traefik.http.routers.hyvor-blogs-subdir.entrypoints: http
       traefik.http.routers.hyvor-blogs-subdir.service: hyvor-blogs-backend
-      # service
+
+      # services
       traefik.http.services.hyvor-blogs-backend.loadbalancer.server.port: 80
     networks:
       hyvor-network:
         aliases:
-          - blogs.hyvor.dev
+          - blogs.hyvor.localhost
     profiles: [ dev ]
+    healthcheck:
+      disable: true
 
 networks:
   hyvor-network:

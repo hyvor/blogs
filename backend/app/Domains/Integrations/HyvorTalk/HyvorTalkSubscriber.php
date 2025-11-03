@@ -9,6 +9,10 @@ use Illuminate\Events\Dispatcher;
 class HyvorTalkSubscriber
 {
 
+    public function __construct(
+        private readonly HyvorTalkService $hyvorTalkService
+    ) {}
+
     public function subscribe(Dispatcher $events) : void
     {
         $events->listen(BlogUrlChangedEvent::class, [static::class, 'onBlogUrlUpdate']);
@@ -18,7 +22,7 @@ class HyvorTalkSubscriber
     public function onBlogUrlUpdate(BlogUrlChangedEvent $event) : void
     {
 
-        $hyvorTalkIntegration = HyvorTalkService::getHyvorTalkWebsite($event->blog);
+        $hyvorTalkIntegration = $this->hyvorTalkService->getHyvorTalkWebsite($event->blog);
 
         if (!$hyvorTalkIntegration)
             return;
@@ -36,17 +40,17 @@ class HyvorTalkSubscriber
             $domains[] = $subdomain;
         }
 
-        HyvorTalkService::updateDomains($hyvorTalkIntegration, $domains);
+        $this->hyvorTalkService->updateDomains($hyvorTalkIntegration, $domains);
     }
 
     public function onGatedContentChange(GatedContentChangedEvent $event) : void
     {
-        $hyvorTalkWebsite = HyvorTalkService::getHyvorTalkWebsite($event->blog);
+        $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($event->blog);
 
         if (!$hyvorTalkWebsite)
             return;
 
-        $website = HyvorTalkService::callConsoleApi(
+        $website = $this->hyvorTalkService->callConsoleApi(
             $hyvorTalkWebsite,
             'GET',
             '/website'
@@ -55,7 +59,7 @@ class HyvorTalkSubscriber
         // if encryption key is not created, create one
         if (!$website['encryption_key']) {
 
-            $website = HyvorTalkService::callConsoleApi(
+            $website = $this->hyvorTalkService->callConsoleApi(
                 $hyvorTalkWebsite,
                 'PATCH',
                 '/website',
