@@ -2,6 +2,8 @@
 
 namespace App\Domains\Integrations\S3;
 
+use App\Models\Blog;
+use App\Models\S3Storage;
 use Aws\S3\S3Client;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -83,43 +85,42 @@ class S3StorageService
             $errors['read'] = $genericError;
         }
 
-        // VISIBILITY
-        try {
-            $fs->setVisibility($filename, Visibility::PUBLIC);
-            $visibility = true;
-        } catch (UnableToSetVisibility $exception) {
-            $errors['visibility'] = $exception->getMessage();
-        } catch (FilesystemException $exception) {
-            $errors['visibility'] = $genericError;
-        }
+        // // VISIBILITY
+        // try {
+        //     $fs->setVisibility($filename, Visibility::PUBLIC);
+        //     $visibility = true;
+        // } catch (UnableToSetVisibility $exception) {
+        //     $errors['visibility'] = $exception->getMessage();
+        // } catch (FilesystemException $exception) {
+        //     $errors['visibility'] = $genericError;
+        // }
 
-        // PUBLIC ACCESS
-        $publicAccessErrorPrefix = '';
-        try {
-            $publicUrl = $fs->publicUrl($filename);
-            $publicAccessErrorPrefix = "[$publicUrl] ";
-            $response = Http::get($publicUrl);
+        // // PUBLIC ACCESS
+        // $publicAccessErrorPrefix = '';
+        // try {
+        //     $publicUrl = $fs->publicUrl($filename);
+        //     $publicAccessErrorPrefix = "[$publicUrl] ";
+        //     $response = Http::get($publicUrl);
 
-            if (!$response->ok()) {
-                $errors['public_access'] = $publicAccessErrorPrefix . 'Invalid status code: ' . $response->status();
-            }
+        //     if (!$response->ok()) {
+        //         $errors['public_access'] = $publicAccessErrorPrefix . 'Invalid status code: ' . $response->status();
+        //     }
 
-            if ($response->body() !== $content) {
-                $errors['public_access'] = $publicAccessErrorPrefix . 'Content mismatch';
-            }
+        //     if ($response->body() !== $content) {
+        //         $errors['public_access'] = $publicAccessErrorPrefix . 'Content mismatch';
+        //     }
 
-            $publicAccess = true;
-        } catch (ConnectionException $e) {
-            $errors['access'] = $publicAccessErrorPrefix . 'Connection error';
-        } catch (\Exception $exception) {
-            $errors['access'] = $publicAccessErrorPrefix . $genericError;
-        }
+        //     $publicAccess = true;
+        // } catch (ConnectionException $e) {
+        //     $errors['access'] = $publicAccessErrorPrefix . 'Connection error';
+        // } catch (\Exception $exception) {
+        //     $errors['access'] = $publicAccessErrorPrefix . $genericError;
+        // }
 
         // DELETE
         try {
             $fs->delete($filename);
-            //$delete = true;
-            $errors['delete'] = "Something went wrong";
+            $delete = true;
         } catch (UnableToDeleteFile $exception) {
             $errors['delete'] = $exception->getMessage();
         } catch (FilesystemException $exception) {
@@ -129,11 +130,39 @@ class S3StorageService
         return [
             'write' => $write,
             'read' => $read,
-            'visibility' => $visibility,
-            'public_access' => $publicAccess,
+            //'visibility' => $visibility,
+            //'public_access' => $publicAccess,
             'delete' => $delete,
             'errors' => $errors,
         ];
+    }
+
+    public static function createS3Storage(Blog $blog, S3ConnectionDto $dto): S3Storage
+    {
+        return S3Storage::create([
+            'blog_id' => $blog->id,
+            'endpoint_url' => $dto->endpointUrl,
+            'bucket_name' => $dto->bucketName,
+            'access_key' => $dto->accessKey,
+            'secret_key_encrypted' => encrypt($dto->secretKey),
+            'region' => $dto->region,
+            'path_style_access' => $dto->pathStyleAccess,
+            'cdn_url' => $dto->cdnUrl,
+        ]);
+    }
+
+    public static function updateS3Storage(S3Storage $s3Storage, S3ConnectionDto $dto): S3Storage
+    {
+        $s3Storage->endpoint_url = $dto->endpointUrl;
+        $s3Storage->bucket_name = $dto->bucketName;
+        $s3Storage->access_key = $dto->accessKey;
+        $s3Storage->secret_key_encrypted = encrypt($dto->secretKey);
+        $s3Storage->region = $dto->region;
+        $s3Storage->path_style_access = $dto->pathStyleAccess;
+        $s3Storage->cdn_url = $dto->cdnUrl;
+        $s3Storage->save();
+
+        return $s3Storage;
     }
 
 }

@@ -30,6 +30,8 @@ class CreateMediaTable extends Migration
             $table->string('extension')->nullable()->index(); // file extension
 
             $table->unique(['blog_id', 'name']);
+
+            $table->enum('hosted_at', ['platform', 'custom_s3'])->default('platform');
         });
     }
 

@@ -5,14 +5,14 @@
 	let { results }: { results: VerifyResults } = $props();
 
 	const pass = $derived(
-		results.write && results.read && results.visibility && results.public_access && results.delete
+		results.write && results.read && results.delete
 	);
 </script>
 
 <div>
 	{@render row('Write', 'Creating and writing to a file', results.write, results.errors.write)}
 	{@render row('Read', 'Reading from a file', results.read, results.errors.read)}
-	{@render row(
+	<!-- {@render row(
 		'Visibility',
 		'Changing file visibility to public',
 		results.visibility,
@@ -23,7 +23,7 @@
 		'Accessing file with public URL',
 		results.public_access,
 		results.errors.public_access
-	)}
+	)} -->
 	{@render row('Delete', 'Deleting a file', results.delete, results.errors.delete)}
 </div>
 

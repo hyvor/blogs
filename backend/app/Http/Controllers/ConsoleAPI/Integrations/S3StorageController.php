@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\ConsoleAPI\Integrations;
 
+use App\Data\Objects\ConsoleAPI\S3StorageObject;
 use App\Domains\Integrations\S3\S3ConnectionDto;
 use App\Domains\Integrations\S3\S3StorageService;
+use App\Models\Blog;
+use App\Models\S3Storage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class S3StorageController
 {
 
-    public function set(Request $request, S3StorageService $s3StorageService): JsonResponse
+    public function set(Request $request, Blog $blog, S3StorageService $s3StorageService): JsonResponse
     {
         $data = $request->validate([
             'endpoint_url' => 'required|string',
@@ -18,7 +21,6 @@ class S3StorageController
             'access_key' => 'required|string',
             'secret_key' => 'required|string',
             'region' => 'nullable|string',
-            'path_prefix' => 'nullable|string',
             'path_style_access' => 'required|boolean',
             'cdn_url' => 'nullable|string',
             'test' => 'boolean',
@@ -32,7 +34,6 @@ class S3StorageController
             accessKey: $data['access_key'],
             secretKey: $data['secret_key'],
             region: $data['region'],
-            pathPrefix: $data['path_prefix'],
             pathStyleAccess: $data['path_style_access'],
             cdnUrl: $data['cdn_url'],
         );
@@ -43,7 +44,15 @@ class S3StorageController
             return response()->json($s3StorageService->test($filesystem));
         }
 
-        return response()->json();
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+
+        if ($customS3)
+            $s3Storage = S3StorageService::updateS3Storage($customS3, $conn);
+        else
+            $s3Storage = S3StorageService::createS3Storage($blog, $conn);
+
+        return response()->json(new S3StorageObject($s3Storage));
     }
 
 }

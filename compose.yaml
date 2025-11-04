@@ -5,18 +5,14 @@ services:
     build:
       context: .
       target: frontend-dev
-    develop:
-      watch:
-        - path: frontend/src
-          action: sync
-          target: /app/frontend/src
-        - path: frontend/static
-          action: sync
-          target: /app/frontend/static
-        - path: frontend/package.json
-          action: rebuild
-        - path: frontend/package-lock.json
-          action: rebuild
+    volumes:
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/static:/app/frontend/static
+      - ./frontend/vite.config.ts:/app/frontend/vite.config.ts
+      - ./frontend/package.json:/app/frontend/package.json
+      - ./frontend/package-lock.json:/app/frontend/package-lock.json
+      - ./frontend/tsconfig.json:/app/frontend/tsconfig.json
+      - ./frontend/svelte.config.js:/app/frontend/svelte.config.js
     labels:
       traefik.enable: true
       traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)

@@ -20,10 +20,11 @@ return new class extends Migration {
             $table->text('endpoint_url');
             $table->text('bucket_name');
             $table->text('access_key');
-            $table->text('secret_key');
+            $table->text('secret_key_encrypted');
             $table->text('region')->nullable();
             $table->boolean('path_style_access')->default(false);
             $table->text('cdn_url')->nullable();
+            $table->enum('transfer_state', ['pending', 'success', 'failed'])->default('pending');
         });
     }
 

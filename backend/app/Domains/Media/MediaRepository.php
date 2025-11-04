@@ -2,6 +2,8 @@
 
 namespace App\Domains\Media;
 
+use App\Domains\Integrations\S3\S3ConnectionDto;
+use App\Domains\Integrations\S3\S3StorageService;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
@@ -10,6 +12,7 @@ use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
+use App\Models\S3Storage;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use League\Flysystem\FilesystemException;
 
 /**
  *  Terms
@@ -95,17 +99,38 @@ class MediaRepository
         $fileName = self::getUniqueFilename($blog->id, $fileName);
 
         try {
+            $s3connection = S3ConnectionDto::fromDefaultStorage();
 
-            $path = Storage::putFileAs(
-                self::getPathPrefix($blog->id),
-                $file,
-                $fileName
-            );
+            $customS3 = S3Storage::where('blog_id', $blog->id)
+                ->first();
 
-            if (!$path) {
-                throw new UploadException('Error while uploading from storage');
+            if ($customS3) {
+                // Upload to custom S3
+                $s3connection = S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                );
             }
 
+            $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+            
+            $stream = fopen($file->getPathname(), 'r');
+            try {
+                $filesystem->writeStream(
+                    self::getPath($blog->id, $fileName),
+                    $stream
+                );
+            } finally {
+                if (is_resource($stream)) {
+                    fclose($stream);
+                }
+            }
+            
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             throw new UploadException("Error while uploading: $errorMessage");
@@ -118,6 +143,7 @@ class MediaRepository
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),
             'extension' => $file->extension(),
+            'hosted_at' => $customS3 ? 'custom_s3' : 'platform',
         ]);
 
         MediaCreatedEvent::dispatch($media);
@@ -272,5 +298,16 @@ class MediaRepository
         }
 
         return $fileName;
+    }
+
+    public static function transferMediaToUserStorage(Blog $blog): void
+    {
+        $medias = Media
+            ::where('blog_id', $blog->id)
+            ->where('hosted_at', 'platform')
+            ->get();
+        foreach ($medias as $media) {
+            self::upload($blog, $media);
+        }
     }
 }

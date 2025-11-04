@@ -10,6 +10,7 @@
 	} from '@hyvor/design/components';
 	import { updateS3Integration, type VerifyResults } from './mediaActions';
 	import S3Results from './S3Results.svelte';
+	import { on } from 'svelte/events';
 
 	let endpointUrl = $state('https://s3.eu-west-3.amazonaws.com');
 	let bucketName = $state('hbstoragetestings');
@@ -27,12 +28,10 @@
 		verifyResults &&
 			verifyResults.write &&
 			verifyResults.read &&
-			verifyResults.visibility &&
-			verifyResults.public_access &&
 			verifyResults.delete
 	);
 
-	function save() {
+	function save(test: boolean = true) {
 		isVerifying = true;
 		verifyResults = null;
 
@@ -45,7 +44,7 @@
 			pathPrefix,
 			pathStyleAccess,
 			customCdnUrl,
-			true
+			test
 		)
 			.then((results) => {
 				verifyResults = results;
@@ -94,7 +93,7 @@
 				<TextInput block bind:value={customCdnUrl} />
 			</SplitControl>
 
-			<Button on:click={save}>Save</Button>
+			<Button on:click={() => save()}>Save</Button>
 		{/snippet}
 	</SplitControl>
 </div>
@@ -102,6 +101,9 @@
 <Modal
 	bind:show={isVerifying}
 	title="Connect S3 Storage"
+	on:confirm={() => {
+		save(false);
+	}}
 	footer={{
 		confirm:
 			verifyResults === null
