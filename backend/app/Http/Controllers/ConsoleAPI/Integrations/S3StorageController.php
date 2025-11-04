@@ -12,6 +12,17 @@ use Illuminate\Http\Request;
 
 class S3StorageController
 {
+    public function get(Blog $blog): JsonResponse
+    {
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+
+        if (! $customS3) {
+            return response()->json(null);
+        }
+
+        return response()->json(new S3StorageObject($customS3));
+    }
 
     public function set(Request $request, Blog $blog, S3StorageService $s3StorageService): JsonResponse
     {
@@ -53,6 +64,20 @@ class S3StorageController
             $s3Storage = S3StorageService::createS3Storage($blog, $conn);
 
         return response()->json(new S3StorageObject($s3Storage));
+    }
+
+    public function delete(Blog $blog): JsonResponse
+    {
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+
+        if (! $customS3) {
+            return response()->json(null);
+        }
+
+        S3StorageService::deleteS3Storage($customS3);
+
+        return response()->json(null);
     }
 
 }

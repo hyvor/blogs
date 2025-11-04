@@ -15,6 +15,23 @@ export interface VerifyResults {
     };
 }
 
+export interface S3Storage {
+    endpoint_url: string;
+    bucket_name: string;
+    access_key: string;
+    secret_key: string;
+    region: string | null;
+    path_prefix: string | null;
+    path_style_access: boolean;
+    cdn_url: string | null;
+}
+
+export function getS3Storage() {
+    return consoleApi.get<S3Storage | null>({
+        endpoint: '/integrations/s3',
+    })
+}
+
 export function updateS3Integration(
     endpointUrl: string,
     bucketName: string,
@@ -26,7 +43,6 @@ export function updateS3Integration(
     customCdnUrl: string,
     test: boolean = false,
 ) {
-    console.log('test', test);
     return consoleApi.post<VerifyResults>({
         endpoint: '/integrations/s3',
         data: {

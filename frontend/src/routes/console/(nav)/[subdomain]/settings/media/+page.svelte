@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		Button,
+		Callout,
 		Loader,
 		Modal,
 		SplitControl,
@@ -8,21 +9,22 @@
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
-	import { updateS3Integration, type VerifyResults } from './mediaActions';
+	import { getS3Storage, updateS3Integration, type VerifyResults } from './mediaActions';
 	import S3Results from './S3Results.svelte';
-	import { on } from 'svelte/events';
+	import { onMount } from 'svelte';
 
-	let endpointUrl = $state('https://s3.eu-west-3.amazonaws.com');
-	let bucketName = $state('hbstoragetestings');
-	let accessKey = $state('AKIAW3MEBKLXRELX6LVN');
-	let secretKey = $state('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');
-	let region = $state('eu-west-3');
+	let endpointUrl = $state('');
+	let bucketName = $state('');
+	let accessKey = $state('');
+	let secretKey = $state('');
+	let region = $state('');
 	let pathPrefix = $state('');
 	let pathStyleAccess = $state(false);
 	let customCdnUrl = $state('');
 
 	let isVerifying = $state(false);
 	let verifyResults = $state(null as VerifyResults | null);
+	let hasS3Storage = $state(false);
 
 	const pass = $derived(
 		verifyResults &&
@@ -30,6 +32,28 @@
 			verifyResults.read &&
 			verifyResults.delete
 	);
+
+	function loadS3Storage() {
+		getS3Storage()
+			.then((data) => {
+				if (data && data.endpoint_url) {
+					hasS3Storage = true;
+					endpointUrl = data.endpoint_url;
+					bucketName = data.bucket_name;
+					accessKey = data.access_key;
+					secretKey = data.secret_key;
+					region = data.region || '';
+					pathPrefix = data.path_prefix || '';
+					pathStyleAccess = data.path_style_access;
+					customCdnUrl = data.cdn_url || '';
+				} else {
+					hasS3Storage = false;
+				}
+			})
+			.catch((e) => {
+				toast.error(e.message);
+			});
+	}
 
 	function save(test: boolean = true) {
 		isVerifying = true;
@@ -48,6 +72,11 @@
 		)
 			.then((results) => {
 				verifyResults = results;
+				if (!test) {
+					hasS3Storage = true;
+					isVerifying = false;
+					toast.success('S3 storage connected successfully');
+				}
 			})
 			.catch((e) => {
 				toast.error(e.message);
@@ -57,9 +86,19 @@
 				// isVerifying = false;
 			});
 	}
+
+	onMount(() => {
+		loadS3Storage();
+	});
 </script>
 
 <div>
+	{#if !hasS3Storage}
+		<Callout type="info">
+			Your media is currently hosted by Hyvor Blogs. You can set up your own S3-compatible storage.
+		</Callout>
+	{/if}
+	
 	<SplitControl
 		label="S3 Storage"
 		caption="Use your own S3-compatible storage to save media files."
