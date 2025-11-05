@@ -331,7 +331,6 @@ class MediaRepository
     {
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
-
         if (!$customS3) {
             throw new UploadException('No custom s3');
         }
@@ -395,14 +394,16 @@ class MediaRepository
                 $media->save();
             }
 
-            if ($fromPlatformToCustom)
+            if ($fromPlatformToCustom) {
                 $customS3->transfer_state = S3TransferStateEnum::SUCCESS;
+                $customS3->save();
+            }
             else {
                 $customS3->reverse_transfer_state = S3TransferStateEnum::SUCCESS;
-                S3StorageService::deleteS3Storage($customS3);
+                $customS3->save();
+                $customS3->delete();
             }
 
-            $customS3->save();
         } catch (\Exception $e) {
             if ($fromPlatformToCustom)
                 $customS3->transfer_state = S3TransferStateEnum::FAILED;

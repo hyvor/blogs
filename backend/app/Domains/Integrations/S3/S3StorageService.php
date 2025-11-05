@@ -167,10 +167,9 @@ class S3StorageService
         return $s3Storage;
     }
 
-    public static function deleteS3Storage(S3Storage $s3Storage): S3Storage
+    public static function deleteS3Storage(S3Storage $s3Storage): void
     {
         $s3Storage->delete();
-        return $s3Storage;
     }
 
 }
