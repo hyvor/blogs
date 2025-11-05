@@ -273,6 +273,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
                 Route::get('/s3', [S3StorageController::class, 'get']);
                 Route::post('/s3', [S3StorageController::class, 'set']);
+                Route::delete('/s3', [S3StorageController::class, 'delete']);
 
                 Route::get('/hyvor-talk/membership-plans', [IntegrationHyvorTalkController::class, 'getMembershipPlans']
                 );

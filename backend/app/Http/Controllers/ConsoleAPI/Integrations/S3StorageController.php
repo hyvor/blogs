@@ -73,7 +73,6 @@ class S3StorageController
 
     public function delete(Blog $blog): JsonResponse
     {
-        TransferMediaToStorageJob::dispatch($blog, false);
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
 
@@ -81,7 +80,7 @@ class S3StorageController
             return response()->json(null);
         }
 
-        S3StorageService::deleteS3Storage($customS3);
+        TransferMediaToStorageJob::dispatch($blog->id, false);
 
         return response()->json(null);
     }

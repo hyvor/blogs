@@ -9,7 +9,7 @@
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
-	import { getS3Storage, updateS3Integration, type VerifyResults } from './mediaActions';
+	import { getS3Storage, updateS3Integration, deleteS3Storage, type VerifyResults } from './mediaActions';
 	import S3Results from './S3Results.svelte';
 	import { onMount } from 'svelte';
 
@@ -25,6 +25,7 @@
 	let isVerifying = $state(false);
 	let verifyResults = $state(null as VerifyResults | null);
 	let hasS3Storage = $state(false);
+	let isDisconnecting = $state(false);
 
 	const pass = $derived(
 		verifyResults &&
@@ -87,6 +88,30 @@
 			});
 	}
 
+	function disconnectS3() {
+		isDisconnecting = true;
+		deleteS3Storage()
+			.then(() => {
+				hasS3Storage = false;
+				toast.success('S3 storage disconnected. Media files are being transferred back to Hyvor Blogs.');
+				// Clear form fields
+				endpointUrl = '';
+				bucketName = '';
+				accessKey = '';
+				secretKey = '';
+				region = '';
+				pathPrefix = '';
+				pathStyleAccess = false;
+				customCdnUrl = '';
+			})
+			.catch((e) => {
+				toast.error(e.message);
+			})
+			.finally(() => {
+				isDisconnecting = false;
+			});
+	}
+
 	onMount(() => {
 		loadS3Storage();
 	});
@@ -96,6 +121,10 @@
 	{#if !hasS3Storage}
 		<Callout type="info">
 			Your media is currently hosted by Hyvor Blogs. You can set up your own S3-compatible storage.
+		</Callout>
+	{:else}
+		<Callout type="success">
+			Your media is currently stored in your custom S3 storage.
 		</Callout>
 	{/if}
 	
@@ -132,7 +161,19 @@
 				<TextInput block bind:value={customCdnUrl} />
 			</SplitControl>
 
-			<Button on:click={() => save()}>Save</Button>
+			<div class="button-group">
+				<Button on:click={() => save()}>Save</Button>
+				{#if hasS3Storage}
+					<Button 
+						color="red" 
+						variant="outline" 
+						on:click={disconnectS3}
+						disabled={isDisconnecting}
+					>
+						{isDisconnecting ? 'Disconnecting...' : 'Disconnect & Use Platform Storage'}
+					</Button>
+				{/if}
+			</div>
 		{/snippet}
 	</SplitControl>
 </div>
@@ -165,5 +206,11 @@
 <style>
 	div {
 		padding: 30px;
+	}
+
+	.button-group {
+		display: flex;
+		gap: 10px;
+		padding: 0;
 	}
 </style>

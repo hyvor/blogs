@@ -58,3 +58,9 @@ export function updateS3Integration(
         }
     })
 }
+
+export function deleteS3Storage() {
+    return consoleApi.delete<null>({
+        endpoint: '/integrations/s3',
+    })
+}

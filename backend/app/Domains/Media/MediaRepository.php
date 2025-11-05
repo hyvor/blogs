@@ -61,6 +61,9 @@ class MediaRepository
         array|null $extensions = null,
         string|null $search = null,
     ): Collection {
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+
         return Media::where('blog_id', $blog->id)
             ->when($extensions, function ($query) use ($extensions) {
                 $query->whereIn('extension', $extensions);
@@ -71,6 +74,7 @@ class MediaRepository
                         ->orWhere('original_name', 'LIKE', "%$search%");
                 });
             })
+            ->where('hosted_at', $customS3 ? 'custom_s3' : 'platform')
             ->limit($limit)
             ->offset($offset)
             ->orderBy('id', 'DESC')
@@ -372,8 +376,11 @@ class MediaRepository
 
             if ($fromPlatformToCustom)
                 $customS3->transfer_state = S3TransferStateEnum::SUCCESS;
-            else
+            else {
                 $customS3->reverse_transfer_state = S3TransferStateEnum::SUCCESS;
+                S3StorageService::deleteS3Storage($customS3);
+            }
+
             $customS3->save();
         } catch (\Exception $e) {
             if ($fromPlatformToCustom)
