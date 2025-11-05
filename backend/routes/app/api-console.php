@@ -155,16 +155,16 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/tags/search', [ConsoleTagController::class, 'search']);
 
         Route::middleware('role:owner|admin|editor|writer')->group(function () {
-
-            // tags
             Route::post('/tag', [ConsoleTagController::class, 'create']);
+        });
+
+        Route::middleware('role:owner|admin|editor')->group(function () {
             Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
             Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
             Route::get('/tag/{id}/slug-available', [ConsoleTagController::class, 'checkSlugAvailability']);
             Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
             Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
             Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
-
         });
 
         /**
