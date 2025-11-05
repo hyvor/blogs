@@ -145,6 +145,7 @@ class S3StorageService
             'bucket_name' => $dto->bucketName,
             'access_key' => $dto->accessKey,
             'secret_key_encrypted' => encrypt($dto->secretKey),
+            'path_prefix' => $dto->pathPrefix,
             'region' => $dto->region,
             'path_style_access' => $dto->pathStyleAccess,
             'cdn_url' => $dto->cdnUrl,
@@ -157,6 +158,7 @@ class S3StorageService
         $s3Storage->bucket_name = $dto->bucketName;
         $s3Storage->access_key = $dto->accessKey;
         $s3Storage->secret_key_encrypted = encrypt($dto->secretKey);
+        $s3Storage->path_prefix = $dto->pathPrefix;
         $s3Storage->region = $dto->region;
         $s3Storage->path_style_access = $dto->pathStyleAccess;
         $s3Storage->cdn_url = $dto->cdnUrl;

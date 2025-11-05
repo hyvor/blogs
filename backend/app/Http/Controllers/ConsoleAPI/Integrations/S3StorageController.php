@@ -26,12 +26,14 @@ class S3StorageController
 
     public function set(Request $request, Blog $blog, S3StorageService $s3StorageService): JsonResponse
     {
+        // TODO: handle upload back to platform storage before changing settings
         $data = $request->validate([
             'endpoint_url' => 'required|string',
             'bucket_name' => 'required|string',
             'access_key' => 'required|string',
             'secret_key' => 'required|string',
             'region' => 'nullable|string',
+            'path_prefix' => 'nullable|string',
             'path_style_access' => 'required|boolean',
             'cdn_url' => 'nullable|string',
             'test' => 'boolean',
@@ -44,6 +46,7 @@ class S3StorageController
             bucketName: $data['bucket_name'],
             accessKey: $data['access_key'],
             secretKey: $data['secret_key'],
+            pathPrefix: $data['path_prefix'],
             region: $data['region'],
             pathStyleAccess: $data['path_style_access'],
             cdnUrl: $data['cdn_url'],
@@ -68,6 +71,7 @@ class S3StorageController
 
     public function delete(Blog $blog): JsonResponse
     {
+        // TODO: handle upload back to platform storage before deleting
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
 

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Media;
 
+use App\Data\Enums\S3TransferStateEnum;
 use App\Domains\Integrations\S3\S3ConnectionDto;
 use App\Domains\Integrations\S3\S3StorageService;
 use App\Domains\Media\Events\MediaCreatedEvent;
@@ -111,6 +112,7 @@ class MediaRepository
                     $customS3->bucket_name,
                     $customS3->access_key,
                     decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
                     $customS3->cdn_url
@@ -300,14 +302,33 @@ class MediaRepository
         return $fileName;
     }
 
-    public static function transferMediaToUserStorage(Blog $blog): void
+    public static function transferMediaToStorage(Blog $blog): void
     {
-        $medias = Media
-            ::where('blog_id', $blog->id)
-            ->where('hosted_at', 'platform')
-            ->get();
-        foreach ($medias as $media) {
-            self::upload($blog, $media);
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+        if ($customS3) {
+            $customS3->transfer_state = S3TransferStateEnum::PENDING;
+            $customS3->save();
+        }
+
+        try {
+            $medias = Media
+                ::where('blog_id', $blog->id)
+                ->where('hosted_at', $customS3 ? 'platform' : 'custom_s3')
+                ->get();
+            foreach ($medias as $media) {
+                self::upload($blog, $media);
+            }
+
+            if ($customS3) {
+                $customS3->transfer_state = S3TransferStateEnum::SUCCESS;
+                $customS3->save();
+            }
+        } catch (\Exception $e) {
+            if ($customS3) {
+                $customS3->transfer_state = S3TransferStateEnum::FAILED;
+                $customS3->save();
+            }
         }
     }
 }
