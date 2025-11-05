@@ -302,33 +302,85 @@ class MediaRepository
         return $fileName;
     }
 
-    public static function transferMediaToStorage(Blog $blog): void
+    public static function transferMediaToStorage(Blog $blog, bool $fromPlatformToCustom): void
     {
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
-        if ($customS3) {
-            $customS3->transfer_state = S3TransferStateEnum::PENDING;
-            $customS3->save();
-        }
 
+        if (!$customS3) {
+            throw new UploadException('No custom s3');
+        }
+        if ($fromPlatformToCustom)
+            $customS3->transfer_state = S3TransferStateEnum::PENDING;
+        else
+            $customS3->reverse_transfer_state = S3TransferStateEnum::PENDING;
+
+        $customS3->save();
         try {
+            // Setup source and destination connections
+            $sourceConnection = $fromPlatformToCustom 
+                ? S3ConnectionDto::fromDefaultStorage()
+                : S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                );
+            
+            $destConnection = $fromPlatformToCustom
+                ? S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                )
+                : S3ConnectionDto::fromDefaultStorage();
+            
+            $s3Service = new S3StorageService();
+            $sourceFs = $s3Service->getFilesystem($sourceConnection);
+            $destFs = $s3Service->getFilesystem($destConnection);
+            
             $medias = Media
                 ::where('blog_id', $blog->id)
-                ->where('hosted_at', $customS3 ? 'platform' : 'custom_s3')
+                ->where('hosted_at', $fromPlatformToCustom ? 'platform' : 'custom_s3')
                 ->get();
+                
             foreach ($medias as $media) {
-                self::upload($blog, $media);
+                $path = self::getPath($media->blog_id, $media->name);
+
+                $stream = $sourceFs->readStream($path);
+                try {
+                    $destFs->writeStream($path, $stream);
+                } finally {
+                    if (is_resource($stream)) {
+                        fclose($stream);
+                    }
+                }
+                
+                // Update the media record
+                $media->hosted_at = $fromPlatformToCustom ? 'custom_s3' : 'platform';
+                $media->save();
             }
 
-            if ($customS3) {
+            if ($fromPlatformToCustom)
                 $customS3->transfer_state = S3TransferStateEnum::SUCCESS;
-                $customS3->save();
-            }
+            else
+                $customS3->reverse_transfer_state = S3TransferStateEnum::SUCCESS;
+            $customS3->save();
         } catch (\Exception $e) {
-            if ($customS3) {
+            if ($fromPlatformToCustom)
                 $customS3->transfer_state = S3TransferStateEnum::FAILED;
-                $customS3->save();
-            }
+            else
+                $customS3->reverse_transfer_state = S3TransferStateEnum::FAILED;
+            $customS3->save();
         }
     }
 }

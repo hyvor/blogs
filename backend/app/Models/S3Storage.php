@@ -11,5 +11,6 @@ class S3Storage extends Model
     protected $casts = [
         'secret_key_encrypted' => 'encrypted',
         'transfer_state' => S3TransferStateEnum::class,
+        'reverse_transfer_state' => S3TransferStateEnum::class,
     ];
 }

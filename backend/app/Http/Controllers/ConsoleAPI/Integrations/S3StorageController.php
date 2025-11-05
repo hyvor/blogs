@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI\Integrations;
 use App\Data\Objects\ConsoleAPI\S3StorageObject;
 use App\Domains\Integrations\S3\S3ConnectionDto;
 use App\Domains\Integrations\S3\S3StorageService;
+use App\Domains\Media\Jobs\TransferMediaToStorageJob;
 use App\Models\Blog;
 use App\Models\S3Storage;
 use Illuminate\Http\JsonResponse;
@@ -26,7 +27,6 @@ class S3StorageController
 
     public function set(Request $request, Blog $blog, S3StorageService $s3StorageService): JsonResponse
     {
-        // TODO: handle upload back to platform storage before changing settings
         $data = $request->validate([
             'endpoint_url' => 'required|string',
             'bucket_name' => 'required|string',
@@ -66,12 +66,14 @@ class S3StorageController
         else
             $s3Storage = S3StorageService::createS3Storage($blog, $conn);
 
+        TransferMediaToStorageJob::dispatch($blog->id, true);
+
         return response()->json(new S3StorageObject($s3Storage));
     }
 
     public function delete(Blog $blog): JsonResponse
     {
-        // TODO: handle upload back to platform storage before deleting
+        TransferMediaToStorageJob::dispatch($blog, false);
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
 
