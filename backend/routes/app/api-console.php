@@ -154,7 +154,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/tags', [ConsoleTagController::class, 'get']);
         Route::get('/tags/search', [ConsoleTagController::class, 'search']);
 
-        Route::middleware('role:owner|admin|editor')->group(function () {
+        Route::middleware('role:owner|admin|editor|writer')->group(function () {
 
             // tags
             Route::post('/tag', [ConsoleTagController::class, 'create']);
