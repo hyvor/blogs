@@ -2,6 +2,7 @@
 
 namespace App\Domains\Media;
 
+use App\Data\Enums\MediaHostedAtEnum;
 use App\Data\Enums\S3TransferStateEnum;
 use App\Domains\Integrations\S3\S3ConnectionDto;
 use App\Domains\Integrations\S3\S3StorageService;
@@ -196,13 +197,14 @@ class MediaRepository
     public static function getContents(Media $media): ?string
     {
         $name = $media->name;
+
         if (!$name)
             return null;
 
         try {
             $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
-            
-            $s3connection = $customS3 && $media->hosted_at === 'custom_s3'
+
+            $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                 ? S3ConnectionDto::fromCustomStorage(
                     $customS3->endpoint_url,
                     $customS3->bucket_name,
@@ -214,11 +216,11 @@ class MediaRepository
                     $customS3->cdn_url
                 )
                 : S3ConnectionDto::fromDefaultStorage();
-
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
             
             return $filesystem->read(self::getPath($media->blog_id, $name));
         } catch (\Exception $e) {
+
             return null;
         }
     }
