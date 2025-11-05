@@ -25,7 +25,7 @@ class S3StorageController
         return response()->json(new S3StorageObject($customS3));
     }
 
-    public function set(Request $request, Blog $blog, S3StorageService $s3StorageService): JsonResponse
+    public function set(Request $request, Blog $blog): JsonResponse
     {
         $data = $request->validate([
             'endpoint_url' => 'required|string',
@@ -36,10 +36,44 @@ class S3StorageController
             'path_prefix' => 'nullable|string',
             'path_style_access' => 'required|boolean',
             'cdn_url' => 'nullable|string',
-            'test' => 'boolean',
         ]);
 
-        $test = boolval($data['test']);
+        $conn = new S3ConnectionDto(
+            endpointUrl: $data['endpoint_url'],
+            bucketName: $data['bucket_name'],
+            accessKey: $data['access_key'],
+            secretKey: $data['secret_key'],
+            pathPrefix: $data['path_prefix'],
+            region: $data['region'],
+            pathStyleAccess: $data['path_style_access'],
+            cdnUrl: $data['cdn_url'],
+        );
+
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
+
+        if ($customS3)
+            $s3Storage = S3StorageService::updateS3Storage($customS3, $conn);
+        else
+            $s3Storage = S3StorageService::createS3Storage($blog, $conn);
+
+        TransferMediaToStorageJob::dispatch($blog->id, true);
+
+        return response()->json(new S3StorageObject($s3Storage));
+    }
+    
+    public function testConnection(Request $request, S3StorageService $s3StorageService): JsonResponse
+    {
+        $data = $request->validate([
+            'endpoint_url' => 'required|string',
+            'bucket_name' => 'required|string',
+            'access_key' => 'required|string',
+            'secret_key' => 'required|string',
+            'region' => 'nullable|string',
+            'path_prefix' => 'nullable|string',
+            'path_style_access' => 'required|boolean',
+            'cdn_url' => 'nullable|string',
+        ]);
 
         $conn = new S3ConnectionDto(
             endpointUrl: $data['endpoint_url'],
@@ -54,21 +88,7 @@ class S3StorageController
 
         $filesystem = $s3StorageService->getFilesystem($conn);
 
-        if ($test) {
-            return response()->json($s3StorageService->test($filesystem));
-        }
-
-        $customS3 = S3Storage::where('blog_id', $blog->id)
-            ->first();
-
-        if ($customS3)
-            $s3Storage = S3StorageService::updateS3Storage($customS3, $conn);
-        else
-            $s3Storage = S3StorageService::createS3Storage($blog, $conn);
-
-        TransferMediaToStorageJob::dispatch($blog->id, true);
-
-        return response()->json(new S3StorageObject($s3Storage));
+        return response()->json($s3StorageService->test($filesystem));
     }
 
     public function delete(Blog $blog): JsonResponse

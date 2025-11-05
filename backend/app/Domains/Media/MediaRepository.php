@@ -199,7 +199,28 @@ class MediaRepository
         if (!$name)
             return null;
 
-        return Storage::get(self::getPath($media->blog_id, $name));
+        try {
+            $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+            
+            $s3connection = $customS3 && $media->hosted_at === 'custom_s3'
+                ? S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                )
+                : S3ConnectionDto::fromDefaultStorage();
+
+            $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+            
+            return $filesystem->read(self::getPath($media->blog_id, $name));
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public static function delete(Media $media): void

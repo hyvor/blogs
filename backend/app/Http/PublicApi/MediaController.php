@@ -17,6 +17,7 @@ class MediaController
     {
         /** @var string $path */
         $path = $request->route('path');
+
         $missing = response(null, 404);
 
         if (!$path) {

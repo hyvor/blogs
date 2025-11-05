@@ -32,6 +32,32 @@ export function getS3Storage() {
     })
 }
 
+
+export function testS3Connection(
+    endpointUrl: string,
+    bucketName: string,
+    accessKey: string,
+    secretKey: string,
+    region: string,
+    pathPrefix: string,
+    pathStyleAccess: boolean,
+    customCdnUrl: string,
+) {
+    return consoleApi.post<VerifyResults>({
+        endpoint: '/integrations/s3/test-connection',
+        data: {
+            endpoint_url: endpointUrl,
+            bucket_name: bucketName,
+            access_key: accessKey,
+            secret_key: secretKey,
+            region: region,
+            path_prefix: pathPrefix,
+            path_style_access: pathStyleAccess,
+            cdn_url: customCdnUrl,
+        }
+    })
+}
+
 export function updateS3Integration(
     endpointUrl: string,
     bucketName: string,
@@ -41,9 +67,8 @@ export function updateS3Integration(
     pathPrefix: string,
     pathStyleAccess: boolean,
     customCdnUrl: string,
-    test: boolean = false,
 ) {
-    return consoleApi.post<VerifyResults>({
+    return consoleApi.post<S3Storage>({
         endpoint: '/integrations/s3',
         data: {
             endpoint_url: endpointUrl,
@@ -54,7 +79,6 @@ export function updateS3Integration(
             path_prefix: pathPrefix,
             path_style_access: pathStyleAccess,
             cdn_url: customCdnUrl,
-            test
         }
     })
 }

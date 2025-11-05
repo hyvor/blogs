@@ -272,6 +272,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                 );
 
                 Route::get('/s3', [S3StorageController::class, 'get']);
+                Route::post('/s3/test-connection', [S3StorageController::class, 'testConnection']);
                 Route::post('/s3', [S3StorageController::class, 'set']);
                 Route::delete('/s3', [S3StorageController::class, 'delete']);
 

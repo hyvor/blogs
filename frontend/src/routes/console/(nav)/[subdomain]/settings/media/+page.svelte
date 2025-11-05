@@ -9,7 +9,7 @@
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
-	import { getS3Storage, updateS3Integration, deleteS3Storage, type VerifyResults } from './mediaActions';
+	import { getS3Storage, testS3Connection, updateS3Integration, deleteS3Storage, type VerifyResults } from './mediaActions';
 	import S3Results from './S3Results.svelte';
 	import { onMount } from 'svelte';
 
@@ -23,6 +23,7 @@
 	let customCdnUrl = $state('');
 
 	let isVerifying = $state(false);
+	let isSaving = $state(false);
 	let verifyResults = $state(null as VerifyResults | null);
 	let hasS3Storage = $state(false);
 	let isDisconnecting = $state(false);
@@ -56,9 +57,31 @@
 			});
 	}
 
-	function save(test: boolean = true) {
+	function testConnection() {
 		isVerifying = true;
 		verifyResults = null;
+			
+		testS3Connection(
+			endpointUrl,
+			bucketName,
+			accessKey,
+			secretKey,
+			region,
+			pathPrefix,
+			pathStyleAccess,
+			customCdnUrl
+		)
+			.then((results) => {
+				verifyResults = results;
+			})
+			.catch((e) => {
+				toast.error(e.message);
+				isVerifying = false;
+			});
+	}
+
+	function connect() {
+		isSaving = true;
 
 		updateS3Integration(
 			endpointUrl,
@@ -68,23 +91,17 @@
 			region,
 			pathPrefix,
 			pathStyleAccess,
-			customCdnUrl,
-			test
+			customCdnUrl
 		)
-			.then((results) => {
-				verifyResults = results;
-				if (!test) {
-					hasS3Storage = true;
-					isVerifying = false;
-					toast.success('S3 storage connected successfully');
-				}
+			.then(() => {
+				hasS3Storage = true;
+				isVerifying = false;
+				isSaving = false;
+				toast.success('S3 storage connected successfully');
 			})
 			.catch((e) => {
 				toast.error(e.message);
-				isVerifying = false;
-			})
-			.finally(() => {
-				// isVerifying = false;
+				isSaving = false;
 			});
 	}
 
@@ -162,7 +179,7 @@
 			</SplitControl>
 
 			<div class="button-group">
-				<Button on:click={() => save()}>Save</Button>
+				<Button on:click={testConnection}>Test & Connect</Button>
 				{#if hasS3Storage}
 					<Button 
 						color="red" 
@@ -181,17 +198,15 @@
 <Modal
 	bind:show={isVerifying}
 	title="Connect S3 Storage"
-	on:confirm={() => {
-		save(false);
-	}}
+	on:confirm={connect}
 	footer={{
 		confirm:
 			verifyResults === null
 				? false
 				: {
-						text: 'Connect',
+						text: isSaving ? 'Connecting...' : 'Connect',
 						props: {
-							disabled: pass === false
+							disabled: pass === false || isSaving
 						}
 					}
 	}}
