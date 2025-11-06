@@ -221,6 +221,7 @@
 <style>
 	div {
 		padding: 30px;
+		overflow: auto;
 	}
 
 	.button-group {

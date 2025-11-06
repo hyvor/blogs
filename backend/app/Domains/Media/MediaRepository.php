@@ -343,7 +343,6 @@ class MediaRepository
 
         $customS3->save();
         try {
-            // Setup source and destination connections
             $sourceConnection = $fromPlatformToCustom 
                 ? S3ConnectionDto::fromDefaultStorage()
                 : S3ConnectionDto::fromCustomStorage(
@@ -356,7 +355,6 @@ class MediaRepository
                     $customS3->path_style_access,
                     $customS3->cdn_url
                 );
-            
             $destConnection = $fromPlatformToCustom
                 ? S3ConnectionDto::fromCustomStorage(
                     $customS3->endpoint_url,
@@ -390,8 +388,7 @@ class MediaRepository
                         fclose($stream);
                     }
                 }
-                
-                // Update the media record
+
                 $media->hosted_at = $fromPlatformToCustom ? 'custom_s3' : 'platform';
                 $media->save();
             }
