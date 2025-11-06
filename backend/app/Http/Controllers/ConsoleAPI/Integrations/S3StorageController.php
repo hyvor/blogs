@@ -18,7 +18,7 @@ class S3StorageController
         $customS3 = S3Storage::where('blog_id', $blog->id)
             ->first();
 
-        if (! $customS3) {
+        if (!$customS3) {
             return response()->json(null);
         }
 

@@ -15,6 +15,7 @@ class S3StorageObject
     public string $secret_key;
 
     public ?string $region;
+    public ?string $path_prefix;
 
     public bool $path_style_access;
 
@@ -26,6 +27,7 @@ class S3StorageObject
         $this->access_key = $s3Storage->access_key;
         $this->secret_key = decrypt($s3Storage->secret_key_encrypted);
         $this->region = $s3Storage->region;
+        $this->path_prefix = $s3Storage->path_prefix;
         $this->path_style_access = $s3Storage->path_style_access;
         $this->cdn_url = $s3Storage->cdn_url;
     }
