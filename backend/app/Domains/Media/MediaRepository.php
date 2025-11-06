@@ -267,13 +267,6 @@ class MediaRepository
         return self::getPathPrefix($blogId) . '/' . $filName;
     }
 
-    private static function getFileNameFromPath(string $path): string
-    {
-        $split = explode('/', $path);
-
-        return $split[count($split) - 1];
-    }
-
     /**
      * @param string $path
      * @param Blog $blog
@@ -467,7 +460,7 @@ class MediaRepository
                     }
                 }
 
-                $media->hosted_at = $fromPlatformToCustom ? 'custom_s3' : 'platform';
+                $media->hosted_at = $fromPlatformToCustom ? MediaHostedAtEnum::CUSTOM_S3 : MediaHostedAtEnum::PLATFORM;
                 $media->save();
             }
 
