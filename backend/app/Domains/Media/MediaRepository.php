@@ -10,21 +10,17 @@ use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Route\PermalinkRepository;
-use App\Domains\Billing\LicenseService;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
 use App\Models\S3Storage;
-use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use League\Flysystem\FilesystemException;
 
 /**
  *  Terms
@@ -233,7 +229,27 @@ class MediaRepository
         $path = self::getPath($media->blog_id, $media->name);
 
         if ($path) {
-            Storage::delete($path);
+            try {
+                $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+
+                $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
+                    ? S3ConnectionDto::fromCustomStorage(
+                        $customS3->endpoint_url,
+                        $customS3->bucket_name,
+                        $customS3->access_key,
+                        decrypt($customS3->secret_key_encrypted),
+                        $customS3->path_prefix,
+                        $customS3->region,
+                        $customS3->path_style_access,
+                        $customS3->cdn_url
+                    )
+                    : S3ConnectionDto::fromDefaultStorage();
+                
+                $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+                $filesystem->delete($path);
+            } catch (\Exception $e) {
+                // TODO: Handle deletion errors
+            }
         }
 
         $media->delete();
@@ -269,10 +285,38 @@ class MediaRepository
     public function createMediaFor(string $path, Blog $blog, string $file, ?int $postId, int $size)
     {
         $extension = File::extension($path);
-        $name = self::getPathPrefix($blog->id) . '/' . Str::random() . ($extension ? ".$extension" : '');
-        Storage::put($name, $file);
+        $fileName = Str::random() . ($extension ? ".$extension" : '');
+        $fileName = self::getUniqueFilename($blog->id, $fileName);
 
-        $fileName = self::getFileNameFromPath($name);
+        try {
+            $s3connection = S3ConnectionDto::fromDefaultStorage();
+
+            $customS3 = S3Storage::where('blog_id', $blog->id)
+                ->first();
+
+            if ($customS3) {
+                $s3connection = S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                );
+            }
+
+            $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+            $filesystem->write(
+                self::getPath($blog->id, $fileName),
+                $file
+            );
+            
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            throw new UploadException("Error while uploading: $errorMessage");
+        }
 
         $media = Media::create([
             'blog_id' => $blog->id,
@@ -280,7 +324,8 @@ class MediaRepository
             'name' => $fileName,
             'size' => $size,
             'original_name' => $fileName,
-            'extension' => $extension
+            'extension' => $extension,
+            'hosted_at' => $customS3 ? 'custom_s3' : 'platform',
         ]);
 
         MediaCreatedEvent::dispatch($media);
@@ -305,7 +350,23 @@ class MediaRepository
 
             $newLink = PermalinkRepository::getMediaPermalink($media, $blog);
 
-            Storage::move($oldPath, $newPath);
+            $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+
+            $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
+                ? S3ConnectionDto::fromCustomStorage(
+                    $customS3->endpoint_url,
+                    $customS3->bucket_name,
+                    $customS3->access_key,
+                    decrypt($customS3->secret_key_encrypted),
+                    $customS3->path_prefix,
+                    $customS3->region,
+                    $customS3->path_style_access,
+                    $customS3->cdn_url
+                )
+                : S3ConnectionDto::fromDefaultStorage();
+            
+            $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+            $filesystem->move($oldPath, $newPath);
 
             UpdateMediaUrlsInPostsJob::dispatch($blog, $oldLink, $newLink);
         });
@@ -320,8 +381,25 @@ class MediaRepository
         $start = pathinfo($name, PATHINFO_FILENAME);
         $ext = pathinfo($name, PATHINFO_EXTENSION);
 
+        $customS3 = S3Storage::where('blog_id', $blogId)->first();
+
+        $s3connection = $customS3
+            ? S3ConnectionDto::fromCustomStorage(
+                $customS3->endpoint_url,
+                $customS3->bucket_name,
+                $customS3->access_key,
+                decrypt($customS3->secret_key_encrypted),
+                $customS3->path_prefix,
+                $customS3->region,
+                $customS3->path_style_access,
+                $customS3->cdn_url
+            )
+            : S3ConnectionDto::fromDefaultStorage();
+        
+        $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+
         $i = 1;
-        while (Storage::exists(self::getPath($blogId, $fileName))) {
+        while ($filesystem->fileExists(self::getPath($blogId, $fileName))) {
             $fileName = $start . '-' . $i . '.' . $ext;
             $i++;
         }

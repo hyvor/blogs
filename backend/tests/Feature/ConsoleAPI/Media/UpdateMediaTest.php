@@ -3,25 +3,53 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Blog\Jobs\UpdateMediaUrlsInPostsJob;
+use App\Domains\Integrations\S3\S3ConnectionDto;
+use App\Domains\Integrations\S3\S3StorageService;
+use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Filesystem;
+
+beforeEach(function () {
+    $this->blog = blogWithAccess();
+    
+    $s3Service = new S3StorageService();
+    $this->filesystem = $s3Service->getFilesystem(S3ConnectionDto::fromDefaultStorage());
+    $this->prefix = 'blog/' . $this->blog->id . '/';
+    
+    // Clean up any existing files from previous test runs
+    $filesToClean = ['test.png', 'new-name.png', 'new-name-1.png'];
+    foreach ($filesToClean as $file) {
+        try {
+            $this->filesystem->delete($this->prefix . $file);
+        } catch (\Exception $e) {
+        }
+    }
+});
+
+afterEach(function () {
+    // Clean up after test
+    $filesToClean = ['test.png', 'new-name.png', 'new-name-1.png'];
+    foreach ($filesToClean as $file) {
+        try {
+            $this->filesystem->delete($this->prefix . $file);
+        } catch (\Exception $e) {
+        }
+    }
+});
 
 it('updates name and moves file',function() {
 
     Queue::fake();
-
-    $blog = blogWithAccess();
-
-    Storage::fake();
-    Storage::put('blog/' . $blog->id . '/test.png', 'content');
+    
+    $this->filesystem->write($this->prefix . 'test.png', 'content');
 
     $media = Media::factory()->create([
-        'blog_id' => $blog->id,
+        'blog_id' => $this->blog->id,
         'name' => 'test.png',
     ]);
 
-    consoleApi($blog, 'PATCH', '/media/' . $media->id, [
+    consoleApi($this->blog, 'PATCH', '/media/' . $media->id, [
         'name' => 'new-name.png'
     ])
         ->assertOk()
@@ -29,8 +57,8 @@ it('updates name and moves file',function() {
 
     expect($media->refresh()->name)->toBe('new-name.png');
 
-    Storage::assertMissing('blog/' . $blog->id . '/test.png');
-    Storage::assertExists('blog/' . $blog->id . '/new-name.png');
+    expect($this->filesystem->fileExists($this->prefix . 'test.png'))->toBeFalse();
+    expect($this->filesystem->fileExists($this->prefix . 'new-name.png'))->toBeTrue();
 
     Queue::assertPushed(UpdateMediaUrlsInPostsJob::class, function (UpdateMediaUrlsInPostsJob $job) {
         expect($job->oldUrl)->toEndWith('/media/test.png');
@@ -43,18 +71,15 @@ it('updates name and moves file',function() {
 it('updates to kebab case', function() {
 
     Queue::fake();
-
-    $blog = blogWithAccess();
-
-    Storage::fake();
-    Storage::put('blog/' . $blog->id . '/test.png', 'content');
+    
+    $this->filesystem->write($this->prefix . 'test.png', 'content');
 
     $media = Media::factory()->create([
-        'blog_id' => $blog->id,
+        'blog_id' => $this->blog->id,
         'name' => 'test.png',
     ]);
 
-    consoleApi($blog, 'PATCH', '/media/' . $media->id, [
+    consoleApi($this->blog, 'PATCH', '/media/' . $media->id, [
         'name' => 'New Name.png'
     ])
         ->assertOk()
@@ -62,8 +87,8 @@ it('updates to kebab case', function() {
 
     expect($media->refresh()->name)->toBe('new-name.png');
 
-    Storage::assertMissing('blog/' . $blog->id . '/test.png');
-    Storage::assertExists('blog/' . $blog->id . '/new-name.png');
+    expect($this->filesystem->fileExists($this->prefix . 'test.png'))->toBeFalse();
+    expect($this->filesystem->fileExists($this->prefix . 'new-name.png'))->toBeTrue();
 
     Queue::assertPushed(UpdateMediaUrlsInPostsJob::class, function (UpdateMediaUrlsInPostsJob $job) {
         expect($job->oldUrl)->toEndWith('/media/test.png');
@@ -75,18 +100,15 @@ it('updates to kebab case', function() {
 
 it('handles duplicates', function() {
 
-    $blog = blogWithAccess();
-
-    Storage::fake();
-    Storage::put('blog/' . $blog->id . '/test.png', 'content');
-    Storage::put('blog/' . $blog->id . '/new-name.png', 'content');
+    $this->filesystem->write($this->prefix . 'test.png', 'content');
+    $this->filesystem->write($this->prefix . 'new-name.png', 'content');
 
     $media = Media::factory()->create([
-        'blog_id' => $blog->id,
+        'blog_id' => $this->blog->id,
         'name' => 'test.png',
     ]);
 
-    consoleApi($blog, 'PATCH', '/media/' . $media->id, [
+    consoleApi($this->blog, 'PATCH', '/media/' . $media->id, [
         'name' => 'new-name.png'
     ])
         ->assertOk()
@@ -94,8 +116,8 @@ it('handles duplicates', function() {
 
     expect($media->refresh()->name)->toBe('new-name-1.png');
 
-    Storage::assertMissing('blog/' . $blog->id . '/test.png');
-    Storage::assertExists('blog/' . $blog->id . '/new-name.png');
-    Storage::assertExists('blog/' . $blog->id . '/new-name-1.png');
+    expect($this->filesystem->fileExists($this->prefix . 'test.png'))->toBeFalse();
+    expect($this->filesystem->fileExists($this->prefix . 'new-name.png'))->toBeTrue();
+    expect($this->filesystem->fileExists($this->prefix . 'new-name-1.png'))->toBeTrue();
 
 });

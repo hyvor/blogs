@@ -31,7 +31,8 @@ class CreateS3StorageTest extends DatabaseTestCase
             ]
         );
 
-        $s3Storage = S3Storage::findOrFail($blog->id);
+        $s3Storage = S3Storage::where('blog_id', $blog->id)
+            ->first();
         $this->assertEquals('https://s3.example.com', $s3Storage->endpoint_url);
         $this->assertEquals('my-bucket', $s3Storage->bucket_name);
         $this->assertEquals('ACCESSKEY', $s3Storage->access_key);

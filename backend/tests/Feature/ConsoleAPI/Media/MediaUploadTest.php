@@ -3,16 +3,45 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Media\Events\MediaCreatedEvent;
+use App\Domains\Integrations\S3\S3ConnectionDto;
+use App\Domains\Integrations\S3\S3StorageService;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
+use League\Flysystem\Filesystem;
+
+beforeEach(function () {
+    $this->blog = blogWithAccess();
+    
+    $s3Service = new S3StorageService();
+    $this->filesystem = $s3Service->getFilesystem(S3ConnectionDto::fromDefaultStorage());
+    $this->prefix = 'blog/' . $this->blog->id . '/';
+    
+    // Clean up any existing files from previous test runs
+    $filesToClean = ['test.png', 'new-name.png', 'new-name-1.png'];
+    foreach ($filesToClean as $file) {
+        try {
+            $this->filesystem->delete($this->prefix . $file);
+        } catch (\Exception $e) {
+        }
+    }
+});
+
+afterEach(function () {
+    // Clean up after test
+    $filesToClean = ['test.png', 'new-name.png', 'new-name-1.png'];
+    foreach ($filesToClean as $file) {
+        try {
+            $this->filesystem->delete($this->prefix . $file);
+        } catch (\Exception $e) {
+        }
+    }
+});
 
 it('uploads', function () {
     Event::fake();
-    Storage::fake();
 
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
@@ -31,13 +60,13 @@ it('uploads', function () {
         );
 
     Event::assertDispatched(MediaCreatedEvent::class);
-    Storage::has('blog/' . $blog->id . '/image.png');
+    expect($this->filesystem->fileExists('blog/' . $blog->id . '/image.png'))->toBeTrue();
 });
 
 it('uploads with duplicate name', function () {
-    Storage::fake();
     $blog = blogWithAccess();
-    Storage::put('blog/' . $blog->id . '/image.png', 'content');
+    $prefix = 'blog/' . $blog->id . '/';
+    $this->filesystem->write($prefix . 'image.png', 'content');
 
     $file = UploadedFile::fake()->image('image.png')->size(100);
     BillingFake::enable(license: new BlogsLicense(storage: 1000));
@@ -50,11 +79,10 @@ it('uploads with duplicate name', function () {
         ->json();
 
     expect($media['name'])->toBe('image-1.png');
-    Storage::assertExists('blog/' . $blog->id . '/image.png');
+    expect($this->filesystem->fileExists($prefix . 'image.png'))->toBeTrue();
 });
 
 it('converts to kebab case', function () {
-    Storage::fake();
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
     BillingFake::enable(license: new BlogsLicense(storage: 1000));
@@ -70,10 +98,9 @@ it('converts to kebab case', function () {
 });
 
 it('uploads with post ID', function () {
-    Storage::fake();
     $blog = blogWithAccess();
     BillingFake::enable(license: new BlogsLicense(storage: 1000));
-    consoleApi($blog, 'POST', '/media', [
+    $response = consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),
         'post_id' => 2
     ])
@@ -82,7 +109,6 @@ it('uploads with post ID', function () {
 });
 
 it('limits file size', function () {
-    Storage::fake();
     $file = UploadedFile::fake()->image('image.png')->size(config('limits.max_media_upload_size_kb') + 1);
 
     $blog = blogWithAccess();
