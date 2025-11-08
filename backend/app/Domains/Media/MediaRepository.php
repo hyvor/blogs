@@ -145,7 +145,7 @@ class MediaRepository
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),
             'extension' => $file->extension(),
-            'hosted_at' => $customS3 ? 'custom_s3' : 'platform',
+            'hosted_at' => $customS3 ? MediaHostedAtEnum::CUSTOM_S3 : MediaHostedAtEnum::PLATFORM,
         ]);
 
         MediaCreatedEvent::dispatch($media);

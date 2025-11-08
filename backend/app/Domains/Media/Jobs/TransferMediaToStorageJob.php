@@ -16,6 +16,7 @@ class TransferMediaToStorageJob implements ShouldQueue
 
     public function __construct(
         public int $blog_id,
+        // True if transferring from platform storage to custom storage, false for the reverse
         public bool $fromPlatformToCustom
     )
     {
