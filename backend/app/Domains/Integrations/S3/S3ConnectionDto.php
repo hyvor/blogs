@@ -2,6 +2,8 @@
 
 namespace App\Domains\Integrations\S3;
 
+use App\Models\S3Storage;
+
 class S3ConnectionDto
 {
 
@@ -29,24 +31,16 @@ class S3ConnectionDto
         );
     }
 
-    public static function fromCustomStorage(
-        string $endpointUrl,
-        string $bucketName,
-        string $accessKey,
-        string $secretKey,
-        ?string $pathPrefix,
-        ?string $region,
-        bool $pathStyleAccess,
-    ): S3ConnectionDto
+    public static function fromCustomStorage(S3Storage $s3Storage): S3ConnectionDto
     {
         return new S3ConnectionDto(
-            endpointUrl: $endpointUrl,
-            bucketName: $bucketName,
-            accessKey: $accessKey,
-            secretKey: $secretKey,
-            pathPrefix: $pathPrefix,
-            region: $region,
-            pathStyleAccess: $pathStyleAccess,
+            endpointUrl: $s3Storage->endpoint_url,
+            bucketName: $s3Storage->bucket_name,
+            accessKey: $s3Storage->access_key,
+            secretKey: $s3Storage->getDecryptedSecretKey(),
+            pathPrefix: $s3Storage->path_prefix,
+            region: $s3Storage->region,
+            pathStyleAccess: $s3Storage->path_style_access,
         );
     }
 }

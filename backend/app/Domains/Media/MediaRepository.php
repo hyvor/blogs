@@ -106,18 +106,8 @@ class MediaRepository
             $customS3 = S3Storage::where('blog_id', $blog->id)
                 ->first();
 
-            if ($customS3) {
-                // Upload to custom S3
-                $s3connection = S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                );
-            }
+            if ($customS3)
+                $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
 
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
             
@@ -200,15 +190,7 @@ class MediaRepository
             $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
-                ? S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                )
+                ? S3ConnectionDto::fromCustomStorage($customS3)
                 : S3ConnectionDto::fromDefaultStorage();
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
             
@@ -231,17 +213,8 @@ class MediaRepository
                 $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
 
                 $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
-                    ? S3ConnectionDto::fromCustomStorage(
-                        $customS3->endpoint_url,
-                        $customS3->bucket_name,
-                        $customS3->access_key,
-                        $customS3->secret_key_encrypted,
-                        $customS3->path_prefix,
-                        $customS3->region,
-                        $customS3->path_style_access,
-                    )
+                    ? S3ConnectionDto::fromCustomStorage($customS3)
                     : S3ConnectionDto::fromDefaultStorage();
-                
                 $filesystem = (new S3StorageService())->getFilesystem($s3connection);
                 $filesystem->delete($path);
             } catch (\Exception $e) {
@@ -284,17 +257,8 @@ class MediaRepository
             $customS3 = S3Storage::where('blog_id', $blog->id)
                 ->first();
 
-            if ($customS3) {
-                $s3connection = S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                );
-            }
+            if ($customS3)
+                $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
 
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
             $filesystem->write(
@@ -342,15 +306,7 @@ class MediaRepository
             $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
-                ? S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                )
+                ? S3ConnectionDto::fromCustomStorage($customS3)
                 : S3ConnectionDto::fromDefaultStorage();
             
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
@@ -372,15 +328,7 @@ class MediaRepository
         $customS3 = S3Storage::where('blog_id', $blogId)->first();
 
         $s3connection = $customS3
-            ? S3ConnectionDto::fromCustomStorage(
-                $customS3->endpoint_url,
-                $customS3->bucket_name,
-                $customS3->access_key,
-                $customS3->secret_key_encrypted,
-                $customS3->path_prefix,
-                $customS3->region,
-                $customS3->path_style_access,
-            )
+            ? S3ConnectionDto::fromCustomStorage($customS3)
             : S3ConnectionDto::fromDefaultStorage();
         
         $filesystem = (new S3StorageService())->getFilesystem($s3connection);
@@ -411,24 +359,9 @@ class MediaRepository
             $sourceConnection = $fromPlatformToCustom 
                 ? S3ConnectionDto::fromDefaultStorage()
                 : S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                );
+                    $customS3);
             $destConnection = $fromPlatformToCustom
-                ? S3ConnectionDto::fromCustomStorage(
-                    $customS3->endpoint_url,
-                    $customS3->bucket_name,
-                    $customS3->access_key,
-                    $customS3->secret_key_encrypted,
-                    $customS3->path_prefix,
-                    $customS3->region,
-                    $customS3->path_style_access,
-                )
+                ? S3ConnectionDto::fromCustomStorage($customS3)
                 : S3ConnectionDto::fromDefaultStorage();
             
             $s3Service = new S3StorageService();
