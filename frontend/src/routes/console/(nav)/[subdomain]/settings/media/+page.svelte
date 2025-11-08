@@ -20,7 +20,6 @@
 	let region = $state('');
 	let pathPrefix = $state('');
 	let pathStyleAccess = $state(false);
-	let customCdnUrl = $state('');
 
 	let isVerifying = $state(false);
 	let isSaving = $state(false);
@@ -47,7 +46,6 @@
 					region = data.region || '';
 					pathPrefix = data.path_prefix || '';
 					pathStyleAccess = data.path_style_access;
-					customCdnUrl = data.cdn_url || '';
 				} else {
 					hasS3Storage = false;
 				}
@@ -69,7 +67,6 @@
 			region,
 			pathPrefix,
 			pathStyleAccess,
-			customCdnUrl
 		)
 			.then((results) => {
 				verifyResults = results;
@@ -90,8 +87,7 @@
 			secretKey,
 			region,
 			pathPrefix,
-			pathStyleAccess,
-			customCdnUrl
+			pathStyleAccess
 		)
 			.then(() => {
 				hasS3Storage = true;
@@ -119,7 +115,6 @@
 				region = '';
 				pathPrefix = '';
 				pathStyleAccess = false;
-				customCdnUrl = '';
 			})
 			.catch((e) => {
 				toast.error(e.message);
@@ -171,13 +166,6 @@
 			<SplitControl label="Path-style Access">
 				<Switch bind:checked={pathStyleAccess} />
 			</SplitControl>
-			<SplitControl
-				label="Custom CDN URL (optional)"
-				caption="Set this if you have a custom CDN URL for your S3 bucket."
-			>
-				<TextInput block bind:value={customCdnUrl} />
-			</SplitControl>
-
 			<div class="button-group">
 				<Button on:click={testConnection}>Test & Connect</Button>
 				{#if hasS3Storage}

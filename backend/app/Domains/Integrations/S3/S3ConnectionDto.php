@@ -13,7 +13,6 @@ class S3ConnectionDto
         public ?string $pathPrefix,
         public ?string $region,
         public bool $pathStyleAccess,
-        public ?string $cdnUrl,
     ) {
     }
 
@@ -27,7 +26,6 @@ class S3ConnectionDto
             pathPrefix: null,
             region: config('filesystems.disks.s3.region'),
             pathStyleAccess: config('filesystems.disks.s3.use_path_style_endpoint', false),
-            cdnUrl: null,
         );
     }
 
@@ -39,7 +37,6 @@ class S3ConnectionDto
         ?string $pathPrefix,
         ?string $region,
         bool $pathStyleAccess,
-        ?string $cdnUrl,
     ): S3ConnectionDto
     {
         return new S3ConnectionDto(
@@ -50,7 +47,6 @@ class S3ConnectionDto
             pathPrefix: $pathPrefix,
             region: $region,
             pathStyleAccess: $pathStyleAccess,
-            cdnUrl: $cdnUrl,
         );
     }
 }

@@ -23,7 +23,6 @@ export interface S3Storage {
     region: string | null;
     path_prefix: string | null;
     path_style_access: boolean;
-    cdn_url: string | null;
 }
 
 export function getS3Storage() {
@@ -41,7 +40,6 @@ export function testS3Connection(
     region: string,
     pathPrefix: string,
     pathStyleAccess: boolean,
-    customCdnUrl: string,
 ) {
     return consoleApi.post<VerifyResults>({
         endpoint: '/integrations/s3/test-connection',
@@ -53,7 +51,6 @@ export function testS3Connection(
             region: region,
             path_prefix: pathPrefix,
             path_style_access: pathStyleAccess,
-            cdn_url: customCdnUrl,
         }
     })
 }
@@ -66,7 +63,6 @@ export function updateS3Integration(
     region: string,
     pathPrefix: string,
     pathStyleAccess: boolean,
-    customCdnUrl: string,
 ) {
     return consoleApi.post<S3Storage>({
         endpoint: '/integrations/s3',
@@ -78,7 +74,6 @@ export function updateS3Integration(
             region: region,
             path_prefix: pathPrefix,
             path_style_access: pathStyleAccess,
-            cdn_url: customCdnUrl,
         }
     })
 }

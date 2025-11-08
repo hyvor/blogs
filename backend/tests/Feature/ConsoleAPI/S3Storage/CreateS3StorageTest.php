@@ -27,7 +27,6 @@ class CreateS3StorageTest extends DatabaseTestCase
                 'region' => 'us-east-1',
                 'path_prefix' => 'media',
                 'path_style_access' => true,
-                'cdn_url' => 'https://cdn.example.com',
             ]
         );
 
@@ -40,7 +39,6 @@ class CreateS3StorageTest extends DatabaseTestCase
         $this->assertEquals('us-east-1', $s3Storage->region);
         $this->assertEquals('media', $s3Storage->path_prefix);
         $this->assertTrue($s3Storage->path_style_access);
-        $this->assertEquals('https://cdn.example.com', $s3Storage->cdn_url);
 
         Queue::assertPushed(TransferMediaToStorageJob::class, function (TransferMediaToStorageJob $job) use ($blog) {
             return $job->blog_id === $blog->id && $job->fromPlatformToCustom === true;

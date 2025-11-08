@@ -23,7 +23,6 @@ class S3StorageFactory extends Factory
             'region' => $this->faker->randomElement(['us-east-1', 'us-west-2', 'eu-west-1', 'ap-southeast-1']),
             'path_prefix' => $this->faker->optional()->slug(),
             'path_style_access' => $this->faker->boolean(),
-            'cdn_url' => $this->faker->optional()->url(),
             'transfer_state' => S3TransferStateEnum::PENDING,
             'reverse_transfer_state' => S3TransferStateEnum::PENDING,
         ];

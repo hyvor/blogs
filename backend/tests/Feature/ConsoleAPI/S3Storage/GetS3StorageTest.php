@@ -34,7 +34,6 @@ class GetS3StorageTest extends DatabaseTestCase
             'region' => 'us-east-1',
             'path_prefix' => 'media',
             'path_style_access' => true,
-            'cdn_url' => 'https://cdn.example.com',
         ]);
 
         $response = $this->consoleApi(
@@ -52,7 +51,6 @@ class GetS3StorageTest extends DatabaseTestCase
             'region' => 'us-east-1',
             'path_prefix' => 'media',
             'path_style_access' => true,
-            'cdn_url' => 'https://cdn.example.com',
         ]);
     }
 }

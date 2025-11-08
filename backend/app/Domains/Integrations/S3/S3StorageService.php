@@ -148,7 +148,6 @@ class S3StorageService
             'path_prefix' => $dto->pathPrefix,
             'region' => $dto->region,
             'path_style_access' => $dto->pathStyleAccess,
-            'cdn_url' => $dto->cdnUrl,
         ]);
     }
 
@@ -161,7 +160,7 @@ class S3StorageService
         $s3Storage->path_prefix = $dto->pathPrefix;
         $s3Storage->region = $dto->region;
         $s3Storage->path_style_access = $dto->pathStyleAccess;
-        $s3Storage->cdn_url = $dto->cdnUrl;
+
         $s3Storage->save();
 
         return $s3Storage;

@@ -24,7 +24,6 @@ return new class extends Migration {
             $table->text('region')->nullable();
             $table->text('path_prefix')->nullable();
             $table->boolean('path_style_access')->default(false);
-            $table->text('cdn_url')->nullable();
             $table->enum('transfer_state', ['pending', 'success', 'failed'])->default('pending');
             $table->enum('reverse_transfer_state', ['pending', 'success', 'failed'])->default('pending');
         });

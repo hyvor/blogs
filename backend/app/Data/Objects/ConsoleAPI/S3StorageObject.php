@@ -19,7 +19,6 @@ class S3StorageObject
 
     public bool $path_style_access;
 
-    public ?string $cdn_url;
 
     public function __construct(S3Storage $s3Storage) {
         $this->endpoint_url = $s3Storage->endpoint_url;
@@ -29,6 +28,5 @@ class S3StorageObject
         $this->region = $s3Storage->region;
         $this->path_prefix = $s3Storage->path_prefix;
         $this->path_style_access = $s3Storage->path_style_access;
-        $this->cdn_url = $s3Storage->cdn_url;
     }
 }

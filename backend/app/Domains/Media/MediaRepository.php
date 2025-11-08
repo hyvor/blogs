@@ -116,7 +116,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 );
             }
 
@@ -209,7 +208,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 )
                 : S3ConnectionDto::fromDefaultStorage();
             $filesystem = (new S3StorageService())->getFilesystem($s3connection);
@@ -241,7 +239,6 @@ class MediaRepository
                         $customS3->path_prefix,
                         $customS3->region,
                         $customS3->path_style_access,
-                        $customS3->cdn_url
                     )
                     : S3ConnectionDto::fromDefaultStorage();
                 
@@ -296,7 +293,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 );
             }
 
@@ -354,7 +350,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 )
                 : S3ConnectionDto::fromDefaultStorage();
             
@@ -385,7 +380,6 @@ class MediaRepository
                 $customS3->path_prefix,
                 $customS3->region,
                 $customS3->path_style_access,
-                $customS3->cdn_url
             )
             : S3ConnectionDto::fromDefaultStorage();
         
@@ -424,7 +418,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 );
             $destConnection = $fromPlatformToCustom
                 ? S3ConnectionDto::fromCustomStorage(
@@ -435,7 +428,6 @@ class MediaRepository
                     $customS3->path_prefix,
                     $customS3->region,
                     $customS3->path_style_access,
-                    $customS3->cdn_url
                 )
                 : S3ConnectionDto::fromDefaultStorage();
             

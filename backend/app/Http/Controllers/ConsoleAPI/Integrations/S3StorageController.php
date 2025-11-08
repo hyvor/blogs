@@ -35,7 +35,6 @@ class S3StorageController
             'region' => 'nullable|string',
             'path_prefix' => 'nullable|string',
             'path_style_access' => 'required|boolean',
-            'cdn_url' => 'nullable|string',
         ]);
 
         $conn = new S3ConnectionDto(
@@ -45,8 +44,7 @@ class S3StorageController
             secretKey: $data['secret_key'],
             pathPrefix: $data['path_prefix'],
             region: $data['region'],
-            pathStyleAccess: $data['path_style_access'],
-            cdnUrl: $data['cdn_url'],
+            pathStyleAccess: $data['path_style_access']
         );
 
         $customS3 = S3Storage::where('blog_id', $blog->id)
@@ -72,7 +70,6 @@ class S3StorageController
             'region' => 'nullable|string',
             'path_prefix' => 'nullable|string',
             'path_style_access' => 'required|boolean',
-            'cdn_url' => 'nullable|string',
         ]);
 
         $conn = new S3ConnectionDto(
@@ -83,7 +80,6 @@ class S3StorageController
             pathPrefix: $data['path_prefix'],
             region: $data['region'],
             pathStyleAccess: $data['path_style_access'],
-            cdnUrl: $data['cdn_url'],
         );
 
         $filesystem = $s3StorageService->getFilesystem($conn);
