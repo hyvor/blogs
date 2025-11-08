@@ -35,7 +35,7 @@ class CreateS3StorageTest extends DatabaseTestCase
         $this->assertEquals('https://s3.example.com', $s3Storage->endpoint_url);
         $this->assertEquals('my-bucket', $s3Storage->bucket_name);
         $this->assertEquals('ACCESSKEY', $s3Storage->access_key);
-        $this->assertEquals('SECRETKEY', decrypt($s3Storage->secret_key_encrypted));
+        $this->assertEquals('SECRETKEY', $s3Storage->secret_key_encrypted);
         $this->assertEquals('us-east-1', $s3Storage->region);
         $this->assertEquals('media', $s3Storage->path_prefix);
         $this->assertTrue($s3Storage->path_style_access);
