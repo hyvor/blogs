@@ -30,7 +30,7 @@ class GetS3StorageTest extends DatabaseTestCase
             'endpoint_url' => 'https://s3.example.com',
             'bucket_name' => 'my-bucket',
             'access_key' => 'ACCESSKEY',
-            'secret_key_encrypted' => encrypt('SECRETKEY'),
+            'secret_key_encrypted' => 'SECRETKEY',
             'region' => 'us-east-1',
             'path_prefix' => 'media',
             'path_style_access' => true,

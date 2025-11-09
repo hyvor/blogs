@@ -60,8 +60,7 @@ class MediaRepository
         array|null $extensions = null,
         string|null $search = null,
     ): Collection {
-        $customS3 = S3Storage::where('blog_id', $blog->id)
-            ->first();
+        $customS3 = S3Storage::fromBlogId($blog->id);
 
         return Media::where('blog_id', $blog->id)
             ->when($extensions, function ($query) use ($extensions) {
@@ -108,8 +107,7 @@ class MediaRepository
 
         $s3connection = S3ConnectionDto::fromDefaultStorage();
 
-        $customS3 = S3Storage::where('blog_id', $blog->id)
-            ->first();
+        $customS3 = S3Storage::fromBlogId(blog->id);
 
         if ($customS3)
             $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
@@ -195,7 +193,7 @@ class MediaRepository
             return null;
 
         try {
-            $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+            $customS3 = S3Storage::fromBlogId($media->blog->id);
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                 ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -218,7 +216,7 @@ class MediaRepository
 
         if ($path) {
             try {
-                $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+                $customS3 = S3Storage::fromBlogId($media->blog->id);
 
                 $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                     ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -262,8 +260,7 @@ class MediaRepository
         try {
             $s3connection = S3ConnectionDto::fromDefaultStorage();
 
-            $customS3 = S3Storage::where('blog_id', $blog->id)
-                ->first();
+            $customS3 = S3Storage::fromBlogId($blog->id);
 
             if ($customS3)
                 $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
@@ -311,7 +308,7 @@ class MediaRepository
 
             $newLink = PermalinkRepository::getMediaPermalink($media, $blog);
 
-            $customS3 = S3Storage::where('blog_id', $media->blog_id)->first();
+            $customS3 = S3Storage::fromBlogId($media->blog->id);
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                 ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -333,7 +330,7 @@ class MediaRepository
         $start = pathinfo($name, PATHINFO_FILENAME);
         $ext = pathinfo($name, PATHINFO_EXTENSION);
 
-        $customS3 = S3Storage::where('blog_id', $blogId)->first();
+        $customS3 = S3Storage::fromBlogId($blogId);
 
         $s3connection = $customS3
             ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -352,8 +349,8 @@ class MediaRepository
 
     public static function transferMediaToStorage(Blog $blog, bool $fromPlatformToCustom): void
     {
-        $customS3 = S3Storage::where('blog_id', $blog->id)
-            ->first();
+        $customS3 = S3Storage::fromBlogId($blog->id);
+
         if (!$customS3) {
             throw new UploadException('No custom s3');
         }
