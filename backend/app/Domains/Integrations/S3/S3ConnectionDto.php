@@ -37,7 +37,7 @@ class S3ConnectionDto
             endpointUrl: $s3Storage->endpoint_url,
             bucketName: $s3Storage->bucket_name,
             accessKey: $s3Storage->access_key,
-            secretKey: $s3Storage->getDecryptedSecretKey(),
+            secretKey: $s3Storage->secret_key_encrypted,
             pathPrefix: $s3Storage->path_prefix,
             region: $s3Storage->region,
             pathStyleAccess: $s3Storage->path_style_access,

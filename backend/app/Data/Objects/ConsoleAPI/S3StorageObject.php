@@ -24,7 +24,7 @@ class S3StorageObject
         $this->endpoint_url = $s3Storage->endpoint_url;
         $this->bucket_name = $s3Storage->bucket_name;
         $this->access_key = $s3Storage->access_key;
-        $this->secret_key = decrypt($s3Storage->secret_key_encrypted);
+        $this->secret_key = $s3Storage->secret_key_encrypted;
         $this->region = $s3Storage->region;
         $this->path_prefix = $s3Storage->path_prefix;
         $this->path_style_access = $s3Storage->path_style_access;

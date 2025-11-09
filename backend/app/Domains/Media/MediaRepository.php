@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
 
 /**
  *  Terms
@@ -90,6 +92,10 @@ class MediaRepository
             ->first();
     }
 
+    /**
+     * @throws FilesystemException
+     * @throws UploadException
+     */
     public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null, ?string $fileName = null): Media
     {
         if ($fileName === null) {
@@ -100,33 +106,35 @@ class MediaRepository
 
         $fileName = self::getUniqueFilename($blog->id, $fileName);
 
-        try {
-            $s3connection = S3ConnectionDto::fromDefaultStorage();
+        $s3connection = S3ConnectionDto::fromDefaultStorage();
 
-            $customS3 = S3Storage::where('blog_id', $blog->id)
-                ->first();
+        $customS3 = S3Storage::where('blog_id', $blog->id)
+            ->first();
 
-            if ($customS3)
-                $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
+        if ($customS3)
+            $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
 
-            $filesystem = (new S3StorageService())->getFilesystem($s3connection);
-            
-            $stream = fopen($file->getPathname(), 'r');
-            try {
-                $filesystem->writeStream(
-                    self::getPath($blog->id, $fileName),
-                    $stream
-                );
-            } finally {
-                if (is_resource($stream)) {
-                    fclose($stream);
-                }
-            }
-            
-        } catch (\Exception $e) {
-            $errorMessage = $e->getMessage();
-            throw new UploadException("Error while uploading: $errorMessage");
+        $filesystem = (new S3StorageService())->getFilesystem($s3connection);
+
+        $stream = fopen($file->getPathname(), 'r');
+        if ($stream === false) {
+            throw new UploadException('Could not open file stream for upload');
         }
+        try {
+            $filesystem->writeStream(
+                self::getPath($blog->id, $fileName),
+                $stream
+            );
+        }
+        catch (UnableToWriteFile $e) {
+            throw new UploadException('Could not write file to storage: ' . $e->getMessage());
+        }
+        finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
 
         $media = Media::create([
             'blog_id' => $blog->id,
@@ -358,8 +366,7 @@ class MediaRepository
         try {
             $sourceConnection = $fromPlatformToCustom 
                 ? S3ConnectionDto::fromDefaultStorage()
-                : S3ConnectionDto::fromCustomStorage(
-                    $customS3);
+                : S3ConnectionDto::fromCustomStorage($customS3);
             $destConnection = $fromPlatformToCustom
                 ? S3ConnectionDto::fromCustomStorage($customS3)
                 : S3ConnectionDto::fromDefaultStorage();
@@ -370,7 +377,7 @@ class MediaRepository
             
             $medias = Media
                 ::where('blog_id', $blog->id)
-                ->where('hosted_at', $fromPlatformToCustom ? 'platform' : 'custom_s3')
+                ->where('hosted_at', $fromPlatformToCustom ? MediaHostedAtEnum::PLATFORM : MediaHostedAtEnum::CUSTOM_S3)
                 ->get();
                 
             foreach ($medias as $media) {
