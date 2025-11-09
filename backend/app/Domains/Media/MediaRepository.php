@@ -271,7 +271,7 @@ class MediaRepository
                 $file
             );
             
-        } catch (\Exception $e) {
+        } catch (FilesystemException $e) {
             $errorMessage = $e->getMessage();
             throw new UploadException("Error while uploading: $errorMessage");
         }

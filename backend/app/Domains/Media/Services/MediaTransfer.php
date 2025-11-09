@@ -11,6 +11,7 @@ use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Models\S3Storage;
+use League\Flysystem\FilesystemException;
 
 class MediaTransfer
 {
@@ -74,7 +75,7 @@ class MediaTransfer
                 $customS3->delete();
             }
 
-        } catch (\Exception $e) {
+        } catch (FilesystemException $e) {
             if ($fromPlatformToCustom)
                 $customS3->transfer_state = S3TransferStateEnum::FAILED;
             else
