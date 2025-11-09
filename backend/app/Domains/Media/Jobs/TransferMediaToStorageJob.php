@@ -3,6 +3,7 @@
 namespace App\Domains\Media\Jobs;
 
 use App\Domains\Media\MediaRepository;
+use App\Domains\Media\Services\MediaTransfer;
 use App\Models\Blog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -25,7 +26,7 @@ class TransferMediaToStorageJob implements ShouldQueue
     public function handle(): void
     {
         $blog = Blog::findOrFail($this->blog_id);
-        MediaRepository::transferMediaToStorage($blog, $this->fromPlatformToCustom);
+        MediaTransfer::transferMediaToStorage($blog, $this->fromPlatformToCustom);
     }
 }
 
