@@ -107,7 +107,7 @@ class MediaRepository
 
         $s3connection = S3ConnectionDto::fromDefaultStorage();
 
-        $customS3 = S3Storage::fromBlogId(blog->id);
+        $customS3 = S3Storage::fromBlogId($blog->id);
 
         if ($customS3)
             $s3connection = S3ConnectionDto::fromCustomStorage($customS3);
