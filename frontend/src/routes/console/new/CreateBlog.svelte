@@ -17,6 +17,7 @@
 
 	import { addToBlogList, blogListStore } from '../lib/stores';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
+	import OrgSelector from './OrgSelector.svelte';
 
 	interface Props {
 		dev?: boolean;
@@ -166,6 +167,10 @@
 						</div>
 					</Callout>
 				{/if}
+
+				<SplitControl label="Organization" caption="This organization will own the blog">
+					<OrgSelector />
+				</SplitControl>
 
 				<SplitControl label="Name" caption="A name for your blog">
 					<FormControl>

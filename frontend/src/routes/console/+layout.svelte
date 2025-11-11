@@ -24,7 +24,9 @@
 
 	let isLoading = $state(true);
 
-	onMount(() => {
+	function startConsole() {
+		isLoading = true;
+
 		const isTemp = $page.url.searchParams.has('temp');
 		isTempStore.set(isTemp);
 
@@ -66,7 +68,9 @@
 					toast.error(err.message);
 				}
 			});
-	});
+	}
+
+	onMount(startConsole);
 </script>
 
 <svelte:head>
@@ -93,6 +97,9 @@
 				config={{
 					g2: 'https://www.g2.com/products/hyvor-blogs/reviews',
 					chat: false
+				}}
+				onOrganizationSwitch={(org) => {
+					startConsole();
 				}}
 			/>
 		{/if}
