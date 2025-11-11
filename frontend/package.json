@@ -40,7 +40,7 @@
 	"type": "module",
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.2",
-		"@hyvor/design": "^1.1.13",
+		"@hyvor/design": "^1.1.24-beta.1",
 		"@hyvor/icons": "^1.0.0",
 		"@sentry/sveltekit": "^8.33.1",
 		"@types/react-dom": "^18.2.18",
