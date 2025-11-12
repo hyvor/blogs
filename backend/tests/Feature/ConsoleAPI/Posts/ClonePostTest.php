@@ -6,6 +6,8 @@ use App\Models\Post;
 use Database\Factories\BlogFactory;
 use Database\Factories\PostFactory;
 use Database\Factories\PostVariantFactory;
+use Database\Factories\TagFactory;
+use Database\Factories\UserFactory;
 use Tests\Case\DatabaseTestCase;
 
 class ClonePostTest extends DatabaseTestCase
@@ -31,6 +33,21 @@ class ClonePostTest extends DatabaseTestCase
             'link_analysis' => ['links' => ['https://example.com']],
         ]);
         $originalVariant = $originalPost->variants->first();
+
+        // Create tags and authors
+        $tag1 = TagFactory::oneFor($blog, [], ['name' => 'Tag 1']);
+        $tag2 = TagFactory::oneFor($blog, [], ['name' => 'Tag 2']);
+        $author1 = UserFactory::oneFor($blog, [], ['name' => 'Author 1']);
+        $author2 = UserFactory::oneFor($blog, [], ['name' => 'Author 2']);
+
+        // Attach tags and authors to the original post
+        TagFactory::postTag($originalPost, $tag1);
+        TagFactory::postTag($originalPost, $tag2);
+        UserFactory::postAuthor($originalPost, $author1);
+        UserFactory::postAuthor($originalPost, $author2);
+
+        // Reload the post to get the relationships
+        $originalPost->refresh();
 
         $response = $this->consoleApi($blog, 'POST', 'post/' . $originalPost->id .  '/clone');
 
@@ -70,5 +87,15 @@ class ClonePostTest extends DatabaseTestCase
 
         $this->assertEquals('draft', $clonedVariant->status->value);
         $this->assertNull($clonedVariant->slug);
+
+        $this->assertCount(2, $clonedPost->tags);
+        $clonedTagIds = $clonedPost->tags->pluck('id')->sort()->values()->toArray();
+        $originalTagIds = $originalPost->tags->pluck('id')->sort()->values()->toArray();
+        $this->assertEquals($originalTagIds, $clonedTagIds);
+
+        $this->assertCount(2, $clonedPost->authors);
+        $clonedAuthorIds = $clonedPost->authors->pluck('id')->sort()->values()->toArray();
+        $originalAuthorIds = $originalPost->authors->pluck('id')->sort()->values()->toArray();
+        $this->assertEquals($originalAuthorIds, $clonedAuthorIds);
     }
 }
