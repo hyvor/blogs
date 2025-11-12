@@ -83,7 +83,7 @@
 			updateWebhook(webhook.id, updates)
 				.then((res) => {
 					toast.success('Webhook updated successfully');
-					onUpdate(res);
+					onUpdate?.(res);
 					show = false;
 				})
 				.catch((err) => {
@@ -98,7 +98,7 @@
 			createWebhook(url, events)
 				.then((res) => {
 					toast.success('Webhook created successfully');
-					onCreate(res);
+					onCreate?.(res);
 					show = false;
 				})
 				.catch((err) => {

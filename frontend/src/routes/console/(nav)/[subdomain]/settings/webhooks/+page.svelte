@@ -192,7 +192,6 @@
 				{isWebhooksLoading} 
 				onDelete={(e) => handleDelete(e)} 
 				onUpdate={(e) => handleUpdate(e)} 
-				selectedWebhookId={selectedWebhookId}
 			/>
 		{/if}
 	{:else if activeTab === 'deliveries'}

@@ -23,7 +23,9 @@ class WebhookDeliveryObject
     public function __construct(WebhookDelivery $delivery)
     {
         $this->id = $delivery->id;
-        $this->created_at = $delivery->created_at->getTimestamp();
+        /** @var \Carbon\Carbon $carbon */
+        $carbon = $delivery->created_at;
+        $this->created_at = $carbon->getTimestamp();
         $this->url = $delivery->url;
         $this->event = $delivery->event;
         $this->status = $delivery->status;
