@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\ConsoleApi\Controllers;
 
@@ -25,8 +27,7 @@ class ConsoleController
 
     public function init(AccessAuthUser $user): JsonResponse
     {
-
-        $blogs = UserBlogRepository::getBlogsOfUser($user->id)
+        $blogs = UserBlogRepository::getBlogsOfUser($user)
             ->mapInto(BlogListObject::class);
 
         return response()->json([
@@ -35,12 +36,10 @@ class ConsoleController
             'is_blocked' => UserRepository::isBlocked($user->id),
             'config' => $this->config()
         ]);
-
     }
 
     public function initTemp(Request $request): JsonResponse
     {
-
         $tempSubdomain = $request->input('temp_subdomain');
 
         $blog = BlogListObject::fromTempBlog(
@@ -61,7 +60,6 @@ class ConsoleController
             'is_blocked' => false,
             'config' => $this->config()
         ]);
-
     }
 
     public function getConfig(): JsonResponse
@@ -70,7 +68,7 @@ class ConsoleController
     }
 
     /**
-     * @return string[] 
+     * @return string[]
      */
     private function config(): array
     {
@@ -91,8 +89,8 @@ class ConsoleController
 
             'services' => [
                 'paddle' => [
-                    'sandbox' => (bool) config('services.paddle.sandbox'),
-                    'vendor_id' => (int) config('services.paddle.vendor_id'),
+                    'sandbox' => (bool)config('services.paddle.sandbox'),
+                    'vendor_id' => (int)config('services.paddle.vendor_id'),
                 ]
             ]
         ];
@@ -105,9 +103,7 @@ class ConsoleController
         StorageUsage $storageUsage,
         AutoTranslateCharsUsage $autoTranslateCharsUsage,
         AiTokensUsage $aiTokensUsage
-    ): JsonResponse
-    {
-
+    ): JsonResponse {
         $license = $billing->license($user->id, null);
 
         return response()->json([
@@ -123,7 +119,6 @@ class ConsoleController
      */
     private function usageOf(UsageAbstract $usage, ?License $license, int $userId): array
     {
-
         $used = $usage->usageOfUser($userId);
         $limit = $license ? $license->{$usage->getKey()} : 0;
 
@@ -131,7 +126,6 @@ class ConsoleController
             'used' => $used,
             'limit' => $limit,
         ];
-
     }
 
     public function changeBlogSort(Request $request, AccessAuthUser $user): JsonResponse
