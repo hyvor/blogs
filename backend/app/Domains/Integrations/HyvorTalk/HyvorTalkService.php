@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\Integrations\HyvorTalk;
 
@@ -11,7 +12,9 @@ use Hyvor\Internal\InternalApi\InternalApi;
 
 class HyvorTalkService
 {
-    public function __construct(private readonly InternalApi $internalApi) {}
+    public function __construct(private readonly InternalApi $internalApi)
+    {
+    }
 
     /**
      * @param 'create-website'|'set-domains'|'console-api' $endpoint
@@ -37,6 +40,7 @@ class HyvorTalkService
     {
         $domain = PermalinkRepository::getBlogDomain($blog);
 
+        // TODO: org
         $data = $this->callApi("create-website", [
             "name" => $blog->subdomain,
             "domain" => $domain,

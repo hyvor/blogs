@@ -43,6 +43,7 @@ class ConsoleUserBlogController extends Controller
 
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
+            $hyvorUser->getCurrentOrganization()->id,
             $name,
             $subdomain,
             $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT,

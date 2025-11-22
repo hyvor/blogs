@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\Theme;
 
@@ -25,18 +26,19 @@ class ThemeRepository
      */
     public static function getAllThemesWithLatestVersions(): Collection
     {
-
-        $themes = Theme::selectRaw('
+        $themes = Theme::selectRaw(
+            '
             (
                 SELECT id 
                 FROM theme_versions 
                 WHERE theme_id = themes.id 
                 ORDER BY id DESC 
                 LIMIT 1
-            ) as latest_version_id, themes.*')
+            ) as latest_version_id, themes.*'
+        )
             ->get();
 
-        $versionIds = $themes->map(fn ($theme) => $theme->latest_version_id); // @phpstan-ignore-line
+        $versionIds = $themes->map(fn($theme) => $theme->latest_version_id); // @phpstan-ignore-line
 
         $versions = ThemeVersion::whereIn('id', $versionIds)->get();
 
@@ -77,9 +79,9 @@ class ThemeRepository
         Theme $theme,
         string $version,
         string $zip,
-    ) : void
-    {
+    ): void {
         $previewBlog = app(BlogService::class)->createBlog(
+            null,
             null,
             $theme->name,
             self::generateThemePreviewSubdomain($theme->name, $version),
@@ -95,7 +97,7 @@ class ThemeRepository
         ThemeFilesRepository::copyThemeToBlog($previewBlog, $theme->name);
     }
 
-    private static function generateThemePreviewSubdomain(string $name, string $version) : string
+    private static function generateThemePreviewSubdomain(string $name, string $version): string
     {
         $version = str_replace('.', '-', $version);
         $random = Str::random(12);

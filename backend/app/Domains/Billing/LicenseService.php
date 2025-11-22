@@ -16,9 +16,9 @@ class LicenseService
      */
     public static function getLicense(Blog $blog): ?BlogsLicense
     {
-        $userId = $blog->hyvor_user_id;
+        $organizationId = $blog->organization_id;
 
-        if (!$userId) {
+        if (!$organizationId) {
             // this is a temp or a dev blog
             return new BlogsLicense();
         }
@@ -26,14 +26,14 @@ class LicenseService
         $billing = app(Billing::class);
 
         /** @var ?BlogsLicense $license */
-        $license = $billing->license($userId, $blog->id);
+        $license = $billing->license($organizationId, $blog->id);
 
         return $license;
     }
 
-    private static function getHasLicenseCacheKey(int $userId): string
+    private static function getHasLicenseCacheKey(int $organizationId): string
     {
-        return "has-license:$userId";
+        return "has-license:$organizationId";
     }
 
     /**
@@ -47,13 +47,13 @@ class LicenseService
      */
     public static function hasLicenseCached(Blog $blog): bool
     {
-        $userId = $blog->hyvor_user_id;
+        $organizationId = $blog->organization_id;
 
-        if (!$userId) {
+        if (!$organizationId) {
             return false;
         }
 
-        $key = self::getHasLicenseCacheKey($userId);
+        $key = self::getHasLicenseCacheKey($organizationId);
 
         $value = Cache::get($key);
 

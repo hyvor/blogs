@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -16,27 +18,25 @@ class UserFiller implements FillerInterface
     {
     }
 
-    public function fill() : void
+    public function fill(): void
     {
-
         if ($this->blog->type === BlogTypeEnum::TEMP) {
-
             UserRepository::createGuestUser(
                 $this->blog,
                 'Temporary User',
                 UserRoleEnum::OWNER,
                 pictureUrl: RandomImageUrlGenerator::getUserImageUrl()
             );
-
-        } else if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
-
-            // add the OWNER
-            UserRepository::createUserFromHyvorUser(
-                $this->blog,
-                intval($this->blog->hyvor_user_id),
-                UserRoleEnum::OWNER,
-                UserStatusEnum::ACTIVE
-            );
+        } else {
+            if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
+                // add the OWNER
+                UserRepository::createUserFromHyvorUser(
+                    $this->blog,
+                    intval($this->blog->created_by_user_id),
+                    UserRoleEnum::OWNER,
+                    UserStatusEnum::ACTIVE
+                );
+            }
         }
 
         if (
