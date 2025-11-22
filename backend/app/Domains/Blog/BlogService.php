@@ -59,14 +59,16 @@ class BlogService
 
     public function createBlog(
         ?int $userId,
+        ?int $organizationId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         ?string $ip = null
     ): Blog {
-        return DB::transaction(function () use ($userId, $name, $subdomain, $type, $ip) {
+        return DB::transaction(function () use ($userId, $organizationId, $name, $subdomain, $type, $ip) {
             $blog = Blog::create([
-                'hyvor_user_id' => $userId,
+                'created_by_user_id' => $userId,
+                'organization_id' => $organizationId,
                 'ip' => $ip,
                 'subdomain' => $subdomain,
                 'type' => $type,
@@ -74,8 +76,8 @@ class BlogService
             ]);
             $blog->refresh(); // fetch default columns
 
-            if ($userId) {
-                $this->resource->register($userId, $blog->id);
+            if ($organizationId) {
+                $this->resource->register($organizationId, $blog->id);
             }
 
             (new LanguageFiller($blog))->fill();

@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-
 /**
  * @property int $id
  * @property Carbon $created_at
@@ -25,7 +24,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $ip
  * @property bool $is_blocked
  * @property ?Carbon $blocked_at
- * @property ?int $hyvor_user_id
+ * @property false $hyvor_user_id DO NOT USE. DEPRECATED FIELD.
+ * @property ?int $created_by_user_id
  * @property ?int $theme_version_id
  * @property string $subdomain
  * @property BlogTypeEnum $type
@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property ?string $hosting_url
  * @property bool $hosting_redirect_subdomain
  * @property mixed $counts
+ * @property int $organization_id
  */
 class Blog extends Model
 {

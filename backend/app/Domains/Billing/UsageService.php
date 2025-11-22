@@ -17,25 +17,25 @@ class UsageService
         private StorageUsage $storageUsage,
         private AutoTranslateCharsUsage $autoTranslateCharsUsage,
         private AiTokensUsage $aiTokensUsage
-    )
-    {
+    ) {
     }
 
-    public function usersLimitReached(Blog $blog) : bool
+    public function usersLimitReached(Blog $blog): bool
     {
         return $this->reached($blog, $this->usersUsage);
     }
 
-    public function storageLimitReached(Blog $blog) : bool
+    public function storageLimitReached(Blog $blog): bool
     {
         return $this->reached($blog, $this->storageUsage);
     }
 
-    public function autoTranslationCharsLimitReached(Blog $blog) : bool
+    public function autoTranslationCharsLimitReached(Blog $blog): bool
     {
         return $this->reached($blog, $this->autoTranslateCharsUsage);
     }
-    public function aiTokensLimitReached(Blog $blog) : bool
+
+    public function aiTokensLimitReached(Blog $blog): bool
     {
         return $this->reached($blog, $this->aiTokensUsage);
     }
@@ -48,12 +48,12 @@ class UsageService
             return true;
         }
 
-        if ($blog->hyvor_user_id === null) {
+        if ($blog->organization_id === null) {
             // this should be a temp, dev, or preview blog
             return false;
         }
 
-        return $usage->hasReached($license, $blog->hyvor_user_id, $blog->id);
+        return $usage->hasReached($license, $blog->organization_id, $blog->id);
     }
 
 
