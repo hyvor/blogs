@@ -155,7 +155,7 @@ class PostsController extends Controller
             language: $language,
         );
 
-        $posts = $searchData->map(function ($post) use ($blog, $language) {
+        $posts = $searchData->collection->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
 
@@ -163,7 +163,7 @@ class PostsController extends Controller
 
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $searchData->count()),
+            'pagination' => new PaginationObject($limit, $page, $searchData->total),
         ]);
     }
 }

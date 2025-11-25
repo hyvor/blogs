@@ -51,7 +51,7 @@ class PostRepository
     }
 
     /**
-     * @return Collection<int, Post>
+     * @return CollectionWithTotal<Post>
      */
     public function getPosts(
         Blog $blog,
@@ -64,10 +64,10 @@ class PostRepository
         int $limit = 10,
         int $offset = 0,
         ?Language $language = null,
-    ): Collection {
+    ): CollectionWithTotal {
         $language ??= LanguageRepository::getPrimaryLanguage($blog);
 
-        return Post::where('posts.blog_id', $blog->id)
+        $base = Post::where('posts.blog_id', $blog->id)
             ->join('post_variants', function ($join) use ($language) {
                 $join->on('post_variants.post_id', '=', 'posts.id');
                 $join->where('post_variants.language_id', '=', $language->id);
@@ -118,11 +118,17 @@ class PostRepository
                         ->orderBy('posts.published_at', 'desc')
                         ->orderBy('posts.created_at', 'desc');
                 }
-            )
-            ->select('posts.*') // to prevent selecting post_variants data
-            ->limit($limit)
-            ->offset($offset)
-            ->get();
+            );
+
+        $total = $base->count();
+
+        /** @var \Illuminate\Support\Collection<int, Post> $posts */
+        $posts = $base->select('posts.*') // to prevent selecting post_variants data
+                    ->limit($limit)
+                    ->offset($offset)
+                    ->get();
+
+        return new CollectionWithTotal($posts, $total);
     }
 
     /**
