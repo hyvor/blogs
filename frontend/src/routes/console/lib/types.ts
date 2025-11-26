@@ -337,6 +337,17 @@ export interface Webhook {
 	secret: string;
 }
 
+export type WebhookDeliveryStatus = 'pending' | 'success' | 'failed';
+
+export interface WebhookDelivery {
+	id: number;
+	url: string;
+	event: string;
+	status: WebhookDeliveryStatus;
+	data: Record<string, any>;
+	created_at: number;
+}
+
 export type ApiKeyType = 'console' | 'delivery';
 
 // === THEME

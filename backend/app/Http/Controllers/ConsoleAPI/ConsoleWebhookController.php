@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\WebhookObject;
+use App\Data\Objects\ConsoleAPI\WebhookDeliveryObject;
 use App\Domains\Webhook\WebhookService;
+use App\Domains\Webhook\WebhookDeliveryService;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -65,12 +67,28 @@ class ConsoleWebhookController extends Controller
         return response()->json();
     }
 
-    public function getWebhookDeliveries(Webhook $webhook, Request $request) : void
+    public function getAllWebhookDeliveries(Blog $blog, Request $request) : JsonResponse
     {
-        $request->validate([
-            'page' => 'integer'
+        $requestData = $request->validate([
+            'webhook_id' => 'integer|nullable',
+            'limit' => 'integer|max:100',
+            'offset' => 'integer',
         ]);
 
-        $page = $request->input('page', 1);
+        $limit = $request->integer('limit', 50);
+        $offset = $request->integer('offset', 0);
+
+        $data = WebhookDeliveryService::getAllWebhookDeliveries(
+            $blog,
+            $requestData['webhook_id'] ?? null,
+            $limit,
+            $offset
+        );
+
+        $deliveries = $data->map(function ($delivery) {
+            return new WebhookDeliveryObject($delivery);
+        });
+
+        return response()->json($deliveries);
     }
 }

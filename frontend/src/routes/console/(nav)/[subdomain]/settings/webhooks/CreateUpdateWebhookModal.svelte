@@ -12,7 +12,6 @@
 		Validation,
 		toast
 	} from '@hyvor/design/components';
-	import { createEventDispatcher } from 'svelte';
 	import { createWebhook, updateWebhook } from './webhookActions';
 	import { type Webhook, WebhookEventType } from '../../../../lib/types';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
@@ -20,9 +19,11 @@
 	interface Props {
 		show: boolean;
 		webhook?: undefined | Webhook;
+		onCreate?: (webhook: Webhook) => void;
+		onUpdate?: (webhook: Webhook) => void;
 	}
 
-	let { show = $bindable(), webhook = undefined }: Props = $props();
+	let { show = $bindable(), webhook = undefined, onCreate, onUpdate }: Props = $props();
 
 	let url = $state(webhook?.url || '');
 	let urlError: null | string = $state(null);
@@ -33,8 +34,6 @@
 	let isButtonDisabled = $derived(webhook
 		? url === webhook.url && JSON.stringify(events) === JSON.stringify(webhook.events)
 		: url.trim().length === 0);
-
-	const dispatch = createEventDispatcher();
 
 	function handleChangeEvent(name: WebhookEventType, e: any) {
 		if (e.target.checked && !events.includes(name)) {
@@ -84,7 +83,7 @@
 			updateWebhook(webhook.id, updates)
 				.then((res) => {
 					toast.success('Webhook updated successfully');
-					dispatch('update', res);
+					onUpdate?.(res);
 					show = false;
 				})
 				.catch((err) => {
@@ -99,7 +98,7 @@
 			createWebhook(url, events)
 				.then((res) => {
 					toast.success('Webhook created successfully');
-					dispatch('create', res);
+					onCreate?.(res);
 					show = false;
 				})
 				.catch((err) => {
