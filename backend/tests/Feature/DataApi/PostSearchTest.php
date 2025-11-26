@@ -155,4 +155,39 @@ class PostSearchTest extends DatabaseTestCase
         $this->dataApi($blog, '/posts/search')->assertUnprocessable();
     }
 
+    public function testReturnsCorrectTotal(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes();
+
+        $inContent = PostFactory::oneFor($blog, [], [
+            'content_text' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inTitle = PostFactory::oneFor($blog, [], [
+            'title' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inDescription = PostFactory::oneFor($blog, [], [
+            'description' => 'hyvor is good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $inSlug = PostFactory::oneFor($blog, [], [
+            'slug' => 'hyvor-is-good',
+            'status' => 'published',
+            'ts_language' => 'english'
+        ]);
+
+        $this->dataApi($blog, '/posts/search', [
+            'search' => 'hyvor is good',
+            'limit' => 3,
+        ])
+            ->assertOk()
+            ->assertJsonPath('pagination.total', 4);
+    }
 }
