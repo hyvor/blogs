@@ -14,7 +14,7 @@
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+    import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
@@ -204,8 +204,11 @@ import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 			<SplitControl label="Custom Domain" caption="Your custom domain name">
 				<FormControl>
 					<TextInput
-						bind:value={$blogStore.hosting_domain}
-						on:input={(e) => handleBlogValueChangeEvent(e, 'hosting_domain')}
+						value={$blogStore.hosting_domain}
+						on:input={(e) => {
+							e.target.value = e.target.value.trim();
+							handleBlogValueChangeEvent(e, 'hosting_domain');
+						}}
 						block
 						placeholder="blog.example.com"
 						state={hostingUrlError ? 'error' : undefined}
