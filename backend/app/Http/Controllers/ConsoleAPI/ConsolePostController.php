@@ -76,7 +76,7 @@ class ConsolePostController extends Controller
             $limit,
             $offset,
             $language
-        )->map(function ($post) use ($blog) {
+        )->collection->map(function ($post) use ($blog) {
             return new PostObject($post, $blog);
         });
 
