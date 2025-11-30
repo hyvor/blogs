@@ -20,7 +20,7 @@
 	});
 </script>
 
-<Header {logo} subName="Blogs" darkToggle={false}>
+<Header product="blogs" subName="Blogs" darkToggle={false}>
 	{#snippet center()}
 		<div class="center">
 			<Button
