@@ -6,6 +6,7 @@ use App\Domains\App\JobMessageLog;
 use App\Domains\Import\Importer\Importer;
 use App\Domains\Import\Importer\ParserException;
 use App\Domains\Import\Parser\HyvorBlogsParser;
+use App\Domains\Import\Parser\MediumParser;
 use App\Domains\Import\Parser\Typepad\TypepadParser;
 use App\Domains\Import\Parser\WordPressParser;
 use App\Models\Blog;
@@ -51,6 +52,7 @@ class ImportCommand extends Command
             'wordpress' => WordPressParser::class,
             'hb' => HyvorBlogsParser::class,
             'typepad' => TypepadParser::class,
+            'medium' => MediumParser::class,
             default => throw new \Exception('Invalid import source')
         };
 
