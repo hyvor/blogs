@@ -2,6 +2,8 @@ parameters:
     level: 8
     paths:
         - app
+    scanDirectories:
+        - tests/Helpers
     excludePaths:
         - app/Stale
 

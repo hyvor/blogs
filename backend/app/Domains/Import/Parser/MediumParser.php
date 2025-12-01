@@ -24,7 +24,7 @@ class MediumParser extends MediaAwareParserAbstract
 
     public function __construct(
         private Blog $blog,
-        private string $path,
+        string $path,
         private JobMessageLog $log,
     ) {
         $this->postsPath = $path . '/posts';
@@ -97,8 +97,9 @@ class MediumParser extends MediaAwareParserAbstract
         }
 
         $slugWithHash = basename($path);
-        $rawSlug = preg_replace('/-[a-f0-9]+$/', '', $slugWithHash);
-        $slug = Str::slug($rawSlug);
+        /** @var string|null $rawSlug */
+        $rawSlug = preg_replace('/-[a-zA-Z0-9]+$/', '', $slugWithHash);
+        $slug = Str::slug($rawSlug ?? '');
 
         if (in_array($slug, $this->parsedPostSlugs)) {
             $this->duplicateCount++;
@@ -121,24 +122,29 @@ class MediumParser extends MediaAwareParserAbstract
             $featuredImageUrl = $featuredImageNode->attr('src');
             
             $node = $featuredImageNode->getNode(0);
-            $parentNode = $node->parentNode;
-            if ($parentNode) {
-                $parentNode->removeChild($node);
-                
-                while ($parentNode instanceof \DOMElement && !trim($parentNode->textContent) && $parentNode->getElementsByTagName('*')->length === 0) {
-                    $grandParent = $parentNode->parentNode;
-                    if ($grandParent) {
-                        $grandParent->removeChild($parentNode);
-                        $parentNode = $grandParent;
-                    } else {
-                        break;
+            if ($node) {
+                $parentNode = $node->parentNode;
+                if ($parentNode) {
+                    $parentNode->removeChild($node);
+                    
+                    while ($parentNode instanceof \DOMElement && !trim($parentNode->textContent) && $parentNode->getElementsByTagName('*')->length === 0) {
+                        $grandParent = $parentNode->parentNode;
+                        if ($grandParent) {
+                            $grandParent->removeChild($parentNode);
+                            $parentNode = $grandParent;
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
         }
 
         $contentNode->filter('h1')->each(function (Crawler $node) {
-            $node->getNode(0)->parentNode->removeChild($node->getNode(0));
+            $domNode = $node->getNode(0);
+            if ($domNode && $domNode->parentNode) {
+                $domNode->parentNode->removeChild($domNode);
+            }
         });
 
         $rawContent = $contentNode->html();
