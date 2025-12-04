@@ -5,10 +5,10 @@
 	import type { AuthUser, BlogList } from './lib/types';
 	import { authUserStore, blogListStore } from './lib/stores';
 	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
-	import { page } from '$app/stores';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -28,7 +28,7 @@
 	function startConsole() {
 		isLoading = true;
 
-		const isTemp = $page.url.searchParams.has('temp');
+		const isTemp = page.url.searchParams.has('temp');
 		isTempStore.set(isTemp);
 
 		const tempSubdomain = initTempSubdomain();
@@ -62,7 +62,7 @@
 			})
 			.catch((err) => {
 				if (err.code === 401) {
-					const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
+					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
 					location.href =
 						`/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
 				} else {
@@ -100,7 +100,9 @@
 					chat: false
 				}}
 				onOrganizationSwitch={(org) => {
-					goto('/console');
+					if (page.url.pathname !== '/console/new') {
+						goto('/console');
+					}
 					startConsole();
 				}}
 			/>

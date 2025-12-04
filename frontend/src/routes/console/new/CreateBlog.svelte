@@ -10,14 +10,16 @@
 		TextInput,
 		Validation,
 		toast,
-		hyvorBar
+		hyvorBar,
+		OrganizationButton,
+		IconButton
 	} from '@hyvor/design/components';
 	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import { addToBlogList, blogListStore } from '../lib/stores';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
-	import OrgSelector from './OrgSelector.svelte';
+	import IconX from '@hyvor/icons/IconX';
 
 	interface Props {
 		dev?: boolean;
@@ -138,12 +140,14 @@
 <div class="wrap">
 	<div class="inner hds-box">
 		<div class="back">
-			<Button variant="outline" size="small" on:click={handleBack} disabled={isCreating}>
-				{#snippet start()}
-					<IconCaretLeft size={14} />
-				{/snippet}
-				Back
-			</Button>
+			<IconButton
+				variant="invisible"
+				color="input"
+				on:click={handleBack}
+				disabled={isCreating}
+			>
+				<IconX size={22} />
+			</IconButton>
 		</div>
 
 		{#if isCreating}
@@ -168,8 +172,8 @@
 					</Callout>
 				{/if}
 
-				<SplitControl label="Organization" caption="This organization will own the blog">
-					<OrgSelector />
+				<SplitControl label="Organization" caption="The organization this blog belongs to">
+					<OrganizationButton />
 				</SplitControl>
 
 				<SplitControl label="Name" caption="A name for your blog">
@@ -242,9 +246,9 @@
 <style>
 	.back {
 		position: absolute;
-		bottom: 100%;
-		left: 0;
-		padding: 15px 0;
+		top: 0;
+		right: 0;
+		padding: 30px;
 	}
 	.wrap {
 		display: flex;
@@ -261,7 +265,7 @@
 		text-align: center;
 	}
 	.inner {
-		width: 550px;
+		width: 750px;
 		max-width: 100%;
 		position: relative;
 	}
