@@ -17,9 +17,14 @@ class UserBlogRepository
      */
     public static function getBlogsOfUser(AuthUser $user): Collection
     {
+        $org = $user->current_organization;
+        if (!$org) {
+            return collect();
+        }
+
         return User::where('users.hyvor_user_id', $user->id)
             ->join('blogs', 'blogs.id', '=', 'users.blog_id')
-            ->where('blogs.organization_id', $user->getCurrentOrganization()->id)
+            ->where('blogs.organization_id', $org->id)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('users.id', 'ASC')
