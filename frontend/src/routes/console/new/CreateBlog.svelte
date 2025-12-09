@@ -14,6 +14,7 @@
 		OrganizationButton,
 		IconButton
 	} from '@hyvor/design/components';
+	import { ResourceCreator } from '@hyvor/design/cloud';
 	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
@@ -137,7 +138,9 @@
 	}
 </script>
 
-<div class="wrap">
+<ResourceCreator>HI</ResourceCreator>
+
+<!-- <div class="wrap">
 	<div class="inner hds-box">
 		<div class="back">
 			<IconButton
@@ -241,7 +244,7 @@
 			</div>
 		{/if}
 	</div>
-</div>
+</div> -->
 
 <style>
 	.back {

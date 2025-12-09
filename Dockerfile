@@ -24,7 +24,6 @@ COPY frontend/static /app/frontend/static
 FROM frontend-base AS frontend-dev
 EXPOSE 36201
 RUN npm install
-RUN if [ -d "src/design" ]; then cd src/design && npm link && cd ../.. && npm link @hyvor/design; fi
 CMD npm run dev
 
 ###################################################

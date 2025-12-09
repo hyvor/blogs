@@ -1,17 +1,34 @@
-import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
+import type { PluginOption } from 'vite';
 import { defineConfig } from 'vitest/config';
 
+function watchHds(): PluginOption {
+	return {
+		name: 'watch-hds',
+		config() {
+			return {
+				server: {
+					watch: {
+						ignored: [
+							(path) => {
+								return (
+									path.includes('node_modules') && !path.includes('@hyvor/design')
+								);
+							}
+						]
+					}
+				},
+				optimizeDeps: {
+					exclude: ['@hyvor/design']
+				}
+			};
+		}
+	};
+}
+
 export default defineConfig({
-	plugins: [
-		sentrySvelteKit({
-			sourceMapsUploadOptions: {
-				org: 'hyvor',
-				project: 'hyvor-blogs-frontend'
-			}
-		}),
-		sveltekit()
-	],
+	plugins: [sveltekit(), watchHds()],
+
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		environment: 'happy-dom'

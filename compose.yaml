@@ -5,8 +5,17 @@ services:
       context: .
       target: frontend-dev
     volumes:
-      - ./frontend:/app/frontend
-      - ../design:/app/frontend/node_modules/@hyvor/design:ro
+      - ./frontend/src:/app/frontend/src
+      - ./frontend/static:/app/frontend/static
+      - ./frontend/vite.config.ts:/app/frontend/vite.config.ts
+      - ./frontend/package.json:/app/frontend/package.json
+      - ./frontend/package-lock.json:/app/frontend/package-lock.json
+      - ./frontend/tsconfig.json:/app/frontend/tsconfig.json
+      - ./frontend/svelte.config.js:/app/frontend/svelte.config.js
+
+      # for local design system testing
+      - ../design/dist:/app/frontend/node_modules/@hyvor/design/dist:ro
+      - ../design/package.json:/app/frontend/node_modules/@hyvor/design/package.json:ro
     labels:
       traefik.enable: true
       traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)
