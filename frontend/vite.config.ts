@@ -1,33 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import type { PluginOption } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-function watchHds(): PluginOption {
-	return {
-		name: 'watch-hds',
-		config() {
-			return {
-				server: {
-					watch: {
-						ignored: [
-							(path) => {
-								return (
-									path.includes('node_modules') && !path.includes('@hyvor/design')
-								);
-							}
-						]
-					}
-				},
-				optimizeDeps: {
-					exclude: ['@hyvor/design']
-				}
-			};
-		}
-	};
-}
-
 export default defineConfig({
-	plugins: [sveltekit(), watchHds()],
+	plugins: [sveltekit()],
 
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
@@ -41,6 +16,7 @@ export default defineConfig({
 			strict: false
 		}
 	},
+
 	envDir: '../',
 
 	define: {
