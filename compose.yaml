@@ -1,18 +1,12 @@
 services:
-
   hyvor-blogs-frontend:
     container_name: hyvor-blogs-frontend
     build:
       context: .
       target: frontend-dev
     volumes:
-      - ./frontend/src:/app/frontend/src
-      - ./frontend/static:/app/frontend/static
-      - ./frontend/vite.config.ts:/app/frontend/vite.config.ts
-      - ./frontend/package.json:/app/frontend/package.json
-      - ./frontend/package-lock.json:/app/frontend/package-lock.json
-      - ./frontend/tsconfig.json:/app/frontend/tsconfig.json
-      - ./frontend/svelte.config.js:/app/frontend/svelte.config.js
+      - ./frontend:/app/frontend
+      - ../design:/app/frontend/node_modules/@hyvor/design:ro
     labels:
       traefik.enable: true
       traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)
@@ -24,7 +18,7 @@ services:
     networks:
       - hyvor-network
 
-    profiles: [ dev ]
+    profiles: [dev]
 
   hyvor-blogs-backend:
     container_name: hyvor-blogs-backend
@@ -55,7 +49,7 @@ services:
       hyvor-network:
         aliases:
           - blogs.hyvor.localhost
-    profiles: [ dev ]
+    profiles: [dev]
     healthcheck:
       disable: true
 
