@@ -1,14 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Special;
 
 use App\Domains\Blog\BlogService;
+use App\Exceptions\TrustedException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CaddyController
 {
-    public function checkDomain(Request $request) : Response
+    public function checkDomain(Request $request): Response
     {
         $request->validate([
             'domain' => 'required|string',
@@ -18,7 +20,7 @@ class CaddyController
         $blog = BlogService::getBlogByCustomDomain($domain);
 
         if (!$blog) {
-            abort(500);
+            throw new TrustedException("Bad domain");
         }
 
         return response('OK');
