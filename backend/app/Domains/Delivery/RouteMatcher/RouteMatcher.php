@@ -41,9 +41,8 @@ class RouteMatcher
         string $match,
         array $defaults = [],
         array $requirements = [],
-        ModelsRoute $routeModel = null
-    ) : void
-    {
+        ?ModelsRoute $routeModel = null
+    ): void {
         $route = new Route($match, $defaults, $requirements);
         $this->collection->add($routeName, $route);
 
