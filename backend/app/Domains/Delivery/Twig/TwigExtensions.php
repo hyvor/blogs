@@ -47,7 +47,11 @@ class TwigExtensions extends AbstractExtension
             new TwigFilter('asset_url', [$this, 'assetUrlFilter'], ['needs_context' => true]),
             new TwigFilter('asset', [$this, 'assetFilter'], ['needs_context' => true, 'is_safe' => ['html']]),
             new TwigFilter('lang', [$this, 'langFilter'], ['needs_context' => true, 'is_variadic' => true]),
-            new TwigFilter('lang_by_number', [$this, 'langByNumberFilter'], ['needs_context' => true, 'is_variadic' => true]),
+            new TwigFilter(
+                'lang_by_number',
+                [$this, 'langByNumberFilter'],
+                ['needs_context' => true, 'is_variadic' => true]
+            ),
             new TwigFilter('template', [$this, 'templateFilter'], [
                 'needs_environment' => true,
                 'needs_context' => true,
@@ -84,9 +88,8 @@ class TwigExtensions extends AbstractExtension
     /**
      * @param array<mixed> $context
      */
-    public function assetUrlFilter(array $context, string $assetName) : string
+    public function assetUrlFilter(array $context, string $assetName): string
     {
-
         /**
          * Here, we cannot use PermalinkRepository
          * because it requires Blog $blog, which has a wrong base URL
@@ -100,7 +103,7 @@ class TwigExtensions extends AbstractExtension
     /**
      * @param string[] $context
      */
-    public function assetFilter(array $context, string $assetName) : string
+    public function assetFilter(array $context, string $assetName): string
     {
         $blog = $this->getBlogFromContext($context);
         $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
@@ -112,12 +115,12 @@ class TwigExtensions extends AbstractExtension
      * @param mixed[] $context
      * @param string[] $args
      */
-    public function langFilter(array $context, string $key, array $args = []) : ?string
+    public function langFilter(array $context, string $key, array $args = []): ?string
     {
         $blog = $this->getBlogFromContext($context);
         $currentLanguage = LanguageRepository::getLanguageByCode($blog, $context['_lang']['code']);
 
-        if (! isset($this->twigLanguageHandler) && $currentLanguage) {
+        if (!isset($this->twigLanguageHandler) && $currentLanguage) {
             $this->twigLanguageHandler = new TwigLanguage($blog, $currentLanguage);
         }
 
@@ -128,13 +131,13 @@ class TwigExtensions extends AbstractExtension
      * @param mixed[] $context
      * @param string[] $args
      */
-    public function langByNumberFilter(array $context, string $value, array $args = []) : ?string
+    public function langByNumberFilter(array $context, string $value, array $args = []): ?string
     {
         $zero = $args['zero'] ?? null;
         $one = $args['one'] ?? null;
         $multi = $args['multi'] ?? null;
 
-        $value = (int) $value;
+        $value = (int)$value;
 
         $key = $multi;
         if ($value === 0) {
@@ -143,13 +146,13 @@ class TwigExtensions extends AbstractExtension
             $key = $one;
         }
 
-        return $this->langFilter($context, (string) $key, [(string) $value]);
+        return $this->langFilter($context, (string)$key, [(string)$value]);
     }
 
     /**
      * @param mixed[] $context
      */
-    public function templateFilter(Environment $env, array $context, string $string) : string
+    public function templateFilter(Environment $env, array $context, string $string): string
     {
         $template = $env->createTemplate($string);
         $html = $template->render($context);
@@ -160,7 +163,7 @@ class TwigExtensions extends AbstractExtension
     /**
      * @param mixed[] $context
      */
-    public function paginationPageUrlFilter(array $context, ?int $pageNumber) : string
+    public function paginationPageUrlFilter(array $context, ?int $pageNumber): string
     {
         $pageNumber ??= 1;
 
@@ -169,7 +172,7 @@ class TwigExtensions extends AbstractExtension
 
         $url = rtrim($url, '/');
         if ($pageNumber > 1) {
-            $url .= '/page/'.$pageNumber;
+            $url .= '/page/' . $pageNumber;
         }
 
         return $url;
@@ -231,13 +234,13 @@ class TwigExtensions extends AbstractExtension
      * @param string[] $context
      * @param string[] $params
      */
-    public function dataFunction(array $context, array $params = []) : mixed
+    public function dataFunction(array $context, array $params = []): mixed
     {
         $blog = $this->getBlogFromContext($context);
 
         $endpoint = $params['endpoint'] ?? null;
 
-        if (! $endpoint) {
+        if (!$endpoint) {
             throw new Error('endpoint is required for the data() function');
         }
 
@@ -247,15 +250,14 @@ class TwigExtensions extends AbstractExtension
             $response = app(DataAPICaller::class)->callApi($blog->subdomain, $endpoint, $params);
         } catch (TrustedException $e) {
             // throw twig error
-            throw new Error("Error when calling the Data API  /$endpoint endpoint: ".$e->getMessage());
+            throw new Error("Error when calling the Data API  /$endpoint endpoint: " . $e->getMessage());
         }
 
         return $response;
     }
 
-    public function iconFunction(string $library, ?string $iconName, int $width = null, int $height = null): string
+    public function iconFunction(string $library, ?string $iconName, ?int $width = null, ?int $height = null): string
     {
-
         if (!$iconName) {
             throw new Error('Icon name is required for the icon() function');
         }
@@ -331,7 +333,10 @@ class TwigExtensions extends AbstractExtension
             $schema['image'] = [$context['_meta']['featured_image']];
         }
 
-        return '<script type="application/ld+json">' . "\n" . json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n" . '</script>';
+        return '<script type="application/ld+json">' . "\n" . json_encode(
+                $schema,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+            ) . "\n" . '</script>';
     }
 
     /**
@@ -339,7 +344,7 @@ class TwigExtensions extends AbstractExtension
      */
     private function getBlogFromContext($context): Blog
     {
-        if (! isset($this->blog)) {
+        if (!isset($this->blog)) {
             $subdomain = $context['_blog']['subdomain'];
             $blog = BlogService::getBlogBySubdomain($subdomain);
             if (!$blog) {
