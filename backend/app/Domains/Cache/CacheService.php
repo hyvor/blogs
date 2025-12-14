@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\Cache;
 
@@ -21,9 +22,8 @@ class CacheService
     private Blog $blog;
 
     public function __construct(
-        Blog $blog = null
-    )
-    {
+        ?Blog $blog = null
+    ) {
         if ($blog) {
             $this->blog = $blog;
         }
@@ -44,7 +44,7 @@ class CacheService
         return "blog_cache_{$this->blog->id}_$path";
     }
 
-    public function clearTemplateCache() : void
+    public function clearTemplateCache(): void
     {
         $key = $this->getKey(self::LAST_TEMPLATE_CACHE_CLEARED_AT);
         Cache::put($key, now()->timestamp);
@@ -55,14 +55,14 @@ class CacheService
     /**
      * @param string[] $paths
      */
-    public function clearPathsCache(array $paths) : void
+    public function clearPathsCache(array $paths): void
     {
         foreach ($paths as $path) {
             $this->clearSingleCache($path);
         }
     }
 
-    public function clearSingleCache(string $path) : void
+    public function clearSingleCache(string $path): void
     {
         $key = $this->getKey($path);
         Cache::forget($key);
@@ -70,7 +70,7 @@ class CacheService
         CacheClearSingleEvent::dispatch($this->blog, $path);
     }
 
-    public function clearAllCache() : void
+    public function clearAllCache(): void
     {
         $key = $this->getKey(self::LAST_ALL_CACHE_CLEARED_AT);
         Cache::put($key, now()->timestamp);
@@ -78,7 +78,7 @@ class CacheService
         CacheClearAllEvent::dispatch($this->blog);
     }
 
-    public function set(string $path, DeliveryAPIResponseObject $responseObject) : void
+    public function set(string $path, DeliveryAPIResponseObject $responseObject): void
     {
         $key = $this->getKey($path);
         Cache::put($key, serialize($responseObject));
