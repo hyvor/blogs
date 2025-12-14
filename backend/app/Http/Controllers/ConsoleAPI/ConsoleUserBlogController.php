@@ -41,9 +41,15 @@ class ConsoleUserBlogController extends Controller
 //            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
 //        }
 
+        $org = $hyvorUser->current_organization;
+
+        if ($org === null) {
+            throw new TrustedException('No current organization found');
+        }
+
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
-            $hyvorUser->getCurrentOrganization()->id,
+            $org->id,
             $name,
             $subdomain,
             $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT,

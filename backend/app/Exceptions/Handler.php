@@ -7,6 +7,7 @@ use Hyvor\Internal\Http\Exceptions\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -43,7 +44,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if (!config('app.debug')) { // not in debug mode
+        if (
+            !config('app.debug') ||
+            $exception instanceof HttpException ||
+            $exception instanceof ValidationException ||
+            $exception instanceof FilterQException ||
+            $exception instanceof TrustedException ||
+            $exception instanceof HttpExceptionInterface
+        ) { // not in debug mode
             if ($request->getHost() === config('blogs.domain_app')) {
                 // app domain
 
