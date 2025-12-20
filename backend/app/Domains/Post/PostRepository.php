@@ -260,7 +260,7 @@ class PostRepository
 
     /**
      * @param array{
-     *     published_at?: DateTimeInterface,
+     *     published_at?: DateTimeInterface|null,
      *     featured_image_url?: ?string,
      *     is_page?: bool,
      *     is_featured?: bool,
@@ -348,7 +348,9 @@ class PostRepository
             'ts_language' => $fts->findClosestRegconfigByLanguageCode($language->code),
         ]);
 
+
         PostVariantCreatedEvent::dispatch($variant);
+
 
         /** @var PostVariant $variant */
         $variant = PostVariant::find($variant->id);
@@ -512,5 +514,56 @@ class PostRepository
         $variant->content_html = $html;
         $variant->content_text = $text;
         $variant->save();
+    }
+
+    public static function clonePost(Post $post): Post
+    {
+        $blog = $post->blog;
+        if (!$blog) {
+            throw new \RuntimeException('Cannot clone post without a blog.');
+        }
+        $clone = self::createPost($blog, [
+            'published_at' => null,
+            'is_page' => $post->is_page,
+            'is_featured' => false,
+            'featured_image_url' => $post->featured_image_url,
+            'canonical_url' => $post->canonical_url,
+            'code_head' => $post->code_head,
+            'code_foot' => $post->code_foot,
+        ]);
+
+        foreach ($post->variants as $index => $variant) {
+            if ($variant->language != LanguageRepository::getPrimaryLanguage($blog)) {
+                $cloneVariant = self::createPostVariant($clone, $variant->language);
+            }
+            else {
+                $cloneVariant = $clone->variants[0]; // Default variant already created
+            }
+            if (!$cloneVariant) {
+                continue;
+            }
+            $cloneVariant = self::updatePostVariant($cloneVariant, [
+                'slug' => null,
+                'status' => PostStatusEnum::DRAFT,
+                'content' => $variant->content,
+                'content_unsaved' => $variant->content_unsaved,
+                'title' => $variant->title,
+                'description' => $variant->description,
+                'seo_primary_keyword' => $variant->seo_primary_keyword,
+                'seo_secondary_keywords' => $variant->seo_secondary_keywords ?? [],
+                'link_analysis' => $variant->link_analysis ?? [],
+            ], false);
+            self::updateVariantHtml($cloneVariant);
+        }
+
+        foreach ($post->authors as $author) {
+            $clone->authors()->attach($author->id);
+        }
+
+        foreach ($post->tags as $tag) {
+            $clone->tags()->attach($tag->id);
+        }
+
+        return $clone;
     }
 }

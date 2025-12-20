@@ -424,4 +424,11 @@ class ConsolePostController extends Controller
             'available' => $available
         ]);
     }
+
+    public function clonePost(Blog $blog, Post $post): JsonResponse
+    {
+        $clonedPost = PostRepository::clonePost($post);
+
+        return response()->json(new PostObject($clonedPost, $blog));
+    }
 }
