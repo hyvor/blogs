@@ -29,6 +29,9 @@ class MediaTransfer
             $customS3->reverse_transfer_state = S3TransferStateEnum::PENDING;
 
         $customS3->save();
+
+        $stateProperty = $fromPlatformToCustom ? 'transfer_state' : 'reverse_transfer_state';
+
         try {
             $sourceConnection = $fromPlatformToCustom
                 ? S3ConnectionDto::fromDefaultStorage()
@@ -75,11 +78,8 @@ class MediaTransfer
                 $customS3->delete();
             }
 
-        } catch (FilesystemException $e) {
-            if ($fromPlatformToCustom)
-                $customS3->transfer_state = S3TransferStateEnum::FAILED;
-            else
-                $customS3->reverse_transfer_state = S3TransferStateEnum::FAILED;
+        } catch (FilesystemException) {
+            $customS3->{$stateProperty} = S3TransferStateEnum::FAILED;
             $customS3->save();
         }
     }

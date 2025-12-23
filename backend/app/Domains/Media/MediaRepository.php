@@ -193,7 +193,7 @@ class MediaRepository
             return null;
 
         try {
-            $customS3 = S3Storage::fromBlogId($media->blog->id);
+            $customS3 = S3Storage::fromBlogId($media->blog_id);
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                 ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -216,7 +216,7 @@ class MediaRepository
 
         if ($path) {
             try {
-                $customS3 = S3Storage::fromBlogId($media->blog->id);
+                $customS3 = S3Storage::fromBlogId($media->blog_id);
 
                 $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                     ? S3ConnectionDto::fromCustomStorage($customS3)
@@ -308,7 +308,7 @@ class MediaRepository
 
             $newLink = PermalinkRepository::getMediaPermalink($media, $blog);
 
-            $customS3 = S3Storage::fromBlogId($media->blog->id);
+            $customS3 = S3Storage::fromBlogId($media->blog_id);
 
             $s3connection = $customS3 && $media->hosted_at === MediaHostedAtEnum::CUSTOM_S3
                 ? S3ConnectionDto::fromCustomStorage($customS3)
