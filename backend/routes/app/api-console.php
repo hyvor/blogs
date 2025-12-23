@@ -156,12 +156,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/tags', [ConsoleTagController::class, 'get']);
         Route::get('/tags/search', [ConsoleTagController::class, 'search']);
 
-<<<<<<< HEAD
         Route::middleware('role:owner|admin|editor|writer')->group(function () {
-=======
-        Route::middleware('role:owner|admin|editor')->group(function () {
-            // tags
->>>>>>> 397957f6 (S3 wip)
             Route::post('/tag', [ConsoleTagController::class, 'create']);
         });
 
@@ -172,7 +167,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
             Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
             Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
-
         });
 
         /**
@@ -280,24 +274,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                     '/hyvor-talk/gated-content-rule/{id}',
                     [IntegrationHyvorTalkController::class, 'deleteGatedContentRule']
                 );
-<<<<<<< HEAD
-=======
-
-                Route::get('/s3', [S3StorageController::class, 'get']);
-                Route::post('/s3', [S3StorageController::class, 'set']);
->>>>>>> afd5652e (S3 wip)
 
                 Route::get('/s3', [S3StorageController::class, 'get']);
                 Route::post('/s3', [S3StorageController::class, 'set']);
 
-<<<<<<< HEAD
-                Route::get('/s3', [S3StorageController::class, 'get']);
-                Route::post('/s3/test-connection', [S3StorageController::class, 'testConnection']);
-                Route::post('/s3', [S3StorageController::class, 'set']);
-                Route::delete('/s3', [S3StorageController::class, 'delete']);
-
-=======
->>>>>>> f4fe4b1c (wip)
                 Route::get('/hyvor-talk/membership-plans', [IntegrationHyvorTalkController::class, 'getMembershipPlans']
                 );
             });
