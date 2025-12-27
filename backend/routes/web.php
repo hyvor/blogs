@@ -20,4 +20,9 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'internal/api-internal.php';
 });
 
+// local routes
+Route::domain('localhost')->group(function () {
+    include 'app/special.php';
+});
+
 include 'app/api-delivery.php';

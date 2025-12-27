@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Special;
@@ -20,7 +21,7 @@ class CaddyController
         $blog = BlogService::getBlogByCustomDomain($domain);
 
         if (!$blog) {
-            throw new TrustedException("Bad domain");
+            return response('Bad domain', 400);
         }
 
         return response('OK');
