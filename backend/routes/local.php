@@ -5,8 +5,18 @@ use App\Domains\Post\Content\PostContentService;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use App\Models\User;
+use Hyvor\Internal\Component\Component;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/api/comms', function () {
+    $commsService = app(Hyvor\Internal\Bundle\Comms\CommsService::class);
+
+    $event = new Hyvor\Internal\Bundle\Comms\Event\OrgMigration\InitOrg(1);
+    $response = $commsService->send($event, Component::CORE);
+
+    dd($response);
+});
 
 Route::get('callout', function () {
     $json = PostContentService::getJsonFromHtml(
