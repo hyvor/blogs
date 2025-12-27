@@ -4,7 +4,7 @@
 
 {
 	frankenphp {
-		worker "/app/backend/public/frankenphp-worker.php" {$WORKERS}
+		worker "/app/backend/public/frankenphp-worker.php" {$CADDY_SERVER_WORKER_COUNT}
 	}
 
 	on_demand_tls {
