@@ -14,7 +14,7 @@ Route::domain(config('blogs.domain_app'))
     ->get('/api/delivery/v0/{subdomain}', [DeliveryAPIController::class, 'handle']);
 
 // subdomain
-Route::domain('{subdomain}.'.config('blogs.delivery_domain'))
+Route::domain('{subdomain}.' . config('blogs.delivery_domain'))
     ->middleware([
         SubdomainMiddleware::class,
         RedirectIfNotOnSubdomainMiddleware::class,
@@ -25,9 +25,10 @@ Route::domain('{subdomain}.'.config('blogs.delivery_domain'))
 Route::middleware(CustomDomainMiddleware::class)
     ->domain('{domain}')
     ->get('{any}', [DomainDeliveryController::class, 'handle'])
-    ->where('domain',
+    ->where(
+        'domain',
         '^(?!' .
-        str_replace('.', '\.', strval(config('blogs.domain_app'))) .
-        ').*$'
+            str_replace('.', '\.', strval(config('blogs.domain_app'))) .
+            ').*$'
     )
     ->where('any', '.*');
