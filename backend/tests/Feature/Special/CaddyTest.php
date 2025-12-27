@@ -5,7 +5,7 @@ namespace Tests\Feature\Special;
 use App\Models\Blog;
 
 it('returns 500 when the custom domain does not exist', function () {
-    $this->get('/api/special/caddy/allowed-domain?domain=hyvor.com')->assertStatus(422);
+    $this->get('/api/special/caddy/allowed-domain?domain=hyvor.com')->assertStatus(400);
 });
 
 it('returns 200 when the custom is there', function () {
