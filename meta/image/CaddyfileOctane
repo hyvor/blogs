@@ -12,7 +12,8 @@
     }
 
     log {
-        level ERROR
+        output stderr
+        level {$LOG_LEVEL}
     }
 
     metrics
