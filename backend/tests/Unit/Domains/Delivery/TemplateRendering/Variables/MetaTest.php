@@ -29,7 +29,7 @@ it('sets _meta on index', function () {
 
 it('no errors on _meta for custom routes', function () {
 
-    $content = '_meta goes here:{% if _meta %}<title>{{ _meta.title }}</title>{% endif %}';
+    $content = '_meta goes here:{% if _meta is defined %}_meta was defined{% endif %}';
     $blog = blogWithLanguageAndRoutes();
     $variants = $blog->variants;
 
