@@ -5,7 +5,7 @@
     <meta name="robots" content="noindex">
 {% endif %}
 
-{% if _meta %}
+{% if _meta is defined %}
 
     <title>{{ _meta.title }}</title>
     <meta name="description" content="{{ _meta.description }}" />
