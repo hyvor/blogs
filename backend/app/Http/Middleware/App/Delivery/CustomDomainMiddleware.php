@@ -13,12 +13,6 @@ class CustomDomainMiddleware
     public function handle(Request $request, Closure $next) : mixed
     {
         $host = $request->getHost();
-
-        Log::info("Info from CustomDomainMiddleware", [
-            "host" => $host,
-            "url" => $request->getBaseUrl()
-        ]);
-
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (!$blog) {
