@@ -279,7 +279,7 @@ class TwigExtensions extends AbstractExtension
      */
     public function isCurrentUrlFunction(array $context, string $url): bool
     {
-        $currentUrl = $context['_meta']['url'];
+        $currentUrl = $context['_meta']['url'] ?? '';
         $blogBaseUrl = $context['_blog']['base_url'];
 
         $currentPath = substr($currentUrl, strlen($blogBaseUrl));
@@ -316,6 +316,10 @@ class TwigExtensions extends AbstractExtension
      */
     public function richSchema(array $context): string
     {
+        if (!isset($context['_meta'])) {
+            return '';
+        }
+
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'BlogPosting',
