@@ -167,7 +167,7 @@ class TwigExtensions extends AbstractExtension
     {
         $pageNumber ??= 1;
 
-        $url = $context['_meta']['url'];
+        $url = $context['_meta']['url'] ?? '';
         $url = preg_replace('/\/page\/\d+$/', '', $url);
 
         $url = rtrim($url, '/');
