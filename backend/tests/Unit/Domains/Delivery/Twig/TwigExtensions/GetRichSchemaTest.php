@@ -59,3 +59,13 @@ it('gets rich schema', function () {
 </script>'
     );
 });
+
+// This was added to prevent template rendering issues for custom
+// routes that does not have _meta defined
+it('does not get rich schema when _meta is undefined', function () {
+    testTwigRendering(
+        "{{ rich_schema() }}",
+        [],
+        ''
+    );
+});
