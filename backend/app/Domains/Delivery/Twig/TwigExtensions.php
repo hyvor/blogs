@@ -131,11 +131,15 @@ class TwigExtensions extends AbstractExtension
      * @param mixed[] $context
      * @param string[] $args
      */
-    public function langByNumberFilter(array $context, string $value, array $args = []): ?string
+    public function langByNumberFilter(array $context, ?string $value, array $args = []): ?string
     {
         $zero = $args['zero'] ?? null;
         $one = $args['one'] ?? null;
         $multi = $args['multi'] ?? null;
+
+        if ($value === null) {
+            return null;
+        }
 
         $value = (int)$value;
 
@@ -167,7 +171,7 @@ class TwigExtensions extends AbstractExtension
     {
         $pageNumber ??= 1;
 
-        $url = $context['_meta']['url'];
+        $url = $context['_meta']['url'] ?? '';
         $url = preg_replace('/\/page\/\d+$/', '', $url);
 
         $url = rtrim($url, '/');
