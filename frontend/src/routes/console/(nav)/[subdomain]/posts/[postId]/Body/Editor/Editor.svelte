@@ -6,6 +6,7 @@
 	import PublishedOverlay from "./PublishedOverlay.svelte";
 	import type { PostVariant } from "../../../../../../lib/types";
 	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
+    import { Editor } from '@hyvor/richtext';
 
     let uniqueKey = $derived(`${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
@@ -36,6 +37,7 @@
         handleEditorEventHandlers(e.detail.name, e.detail.event);
     }
 
+
 </script>
 
 <div class="editor hds-box">
@@ -43,11 +45,47 @@
 
     {#key uniqueKey}
         <div class="wrap">
-            <Prosemirror 
-                value={$postCurrentContentStore} 
-                on:change={handleChange}
-                on:view={handleView}
-                on:event={handleEvent}
+            <Editor 
+                value={$postCurrentContentStore}
+                onValueChange={handleChange}
+                onDOMEvent={handleEvent}
+                config={{
+                    colorButtonBackground: '#5A8387',
+                    colorButtonText: '#ffffff',
+    
+                    codeBlockEnabled: true,
+                    codeBlockConfig: {
+                        language: false,
+                        fileName: false,
+                        annotations: false,
+                        annotationsUrl: null
+                    },
+    
+                    customHtmlEnabled: true,
+                    buttonEnabled: true,
+    
+                    // to be added later
+                    tableEnabled: true,
+                    bookmarkEnabled: true,
+    
+                    imageEnabled: true,
+    
+                    // does not make sense for emails (or email clients do not support)
+                    tocEnabled: true,
+                    audioEnabled: true,
+                    embedEnabled: true,
+    
+                    fileMaxSizeInMB: 10,
+                    fileUploader: async (file, name, type) => {
+                        if (type !== 'image') {
+                            return null;
+                        }
+                        const media = await uploadImage(file, 'issue_images');
+                        return {
+                            url: media.url
+                        };
+                    }
+                }}
             />
             <PublishedOverlay />
         </div>
