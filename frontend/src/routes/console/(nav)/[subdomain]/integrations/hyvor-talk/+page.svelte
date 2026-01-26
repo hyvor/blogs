@@ -73,7 +73,7 @@
 				href="https://talk.hyvor.com"
 				target="_blank"
 				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to the Growth plan or higher to use this integration. This
+			> on your blog for FREE. Upgrade to any plan to use this integration. This
 			integration is not available in the trial period.
 		</div>
 	{/snippet}
@@ -98,8 +98,7 @@
 				<div class="connection-status">
 					This blog is connected to website ID <strong
 						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
-					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments, newsletters, and
-					memberships.
+					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
 				</div>
 
 				<Button
