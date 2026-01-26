@@ -251,8 +251,8 @@ export const nodes = {
     } as NodeSpec,
 
     toc: {
-        attrs: { 
-            levels: {default: [1,2,3,4,5,6]} 
+        attrs: {
+            levels: {default: [1,2,3,4,5,6]}
         },
         group: "block",
         inline: false,
@@ -260,6 +260,27 @@ export const nodes = {
         selectable: false,
         atom: true,
     },
+
+    button: {
+        attrs: {
+            href: {default: null},
+        },
+        content: "inline*",
+        group: "block",
+        draggable: false,
+        selectable: false,
+        parseDOM: [{
+            tag: 'div.button-wrap a[href]',
+            getAttrs(dom: HTMLElement) {
+                return {
+                    href: dom.getAttribute('href'),
+                };
+            }
+        }],
+        toDOM(node: Node) {
+            return ['div', {class: 'button-wrap'}, ['a', {href: node.attrs.href, class: 'button', target: '_blank'}, 0]];
+        }
+    } as NodeSpec,
 
      ...tableNodes({
         tableGroup: "block",

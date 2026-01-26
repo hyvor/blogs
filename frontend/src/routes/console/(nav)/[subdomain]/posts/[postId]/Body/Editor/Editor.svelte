@@ -1,11 +1,9 @@
 <script lang="ts">
-	import type { EditorView } from "prosemirror-view";
 	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postLanguageStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import EditorTop from "./EditorTop/EditorTop.svelte";
-    import Prosemirror from "./Prosemirror.svelte";
 	import PublishedOverlay from "./PublishedOverlay.svelte";
 	import type { PostVariant } from "../../../../../../lib/types";
-	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
+	import { handleEditorEventHandlers } from "./editorEvents";
     import { Editor } from '@hyvor/richtext';
     import { uploadMedia } from "../../../../tools/media/mediaActions";
 
@@ -15,12 +13,12 @@
         `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
         `-version-${$postEditingStatusStore.editorVersion}`);
 
-    function handleChange(e: CustomEvent<string>) {
-
+    function handleChange(value: string) {
+        const parsed = JSON.parse(value);
         const key = $postEditingStatusStore.isEditingPublished ? 'content_unsaved' : 'content';
 
         const updates = {
-            [key]: e.detail
+            [key]: value
         } as Partial<PostVariant>;
        
         /* if (key === 'content_unsaved') {
@@ -34,10 +32,15 @@
         updatePostEditingStatusValue('editorView', e.detail);
     }
 
-    function handleEvent(e: CustomEvent<ProsemirrorEventDispatchType>) {
-        handleEditorEventHandlers(e.detail.name, e.detail.event);
+    function handleEvent(name: keyof HTMLElementEventMap, event: Event) {
+        handleEditorEventHandlers(name, event);
     }
 
+    interface EditorView {
+		focus(): void;
+	}
+
+	let editorView: EditorView & any = $state({} as any);
 
 </script>
 
@@ -47,9 +50,10 @@
     {#key uniqueKey}
         <div class="wrap">
             <Editor
+                bind:editorView
                 value={$postCurrentContentStore}
-                onValueChange={handleChange}
-                onDOMEvent={handleEvent}
+                onvaluechange={handleChange}
+                ondomevent={handleEvent}
                 config={{
                     colorButtonBackground: '#5A8387',
                     colorButtonText: '#ffffff',
