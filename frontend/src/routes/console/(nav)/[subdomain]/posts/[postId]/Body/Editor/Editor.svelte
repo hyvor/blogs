@@ -7,6 +7,7 @@
 	import type { PostVariant } from "../../../../../../lib/types";
 	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
     import { Editor } from '@hyvor/richtext';
+    import { uploadMedia } from "../../../../tools/media/mediaActions";
 
     let uniqueKey = $derived(`${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
@@ -45,7 +46,7 @@
 
     {#key uniqueKey}
         <div class="wrap">
-            <Editor 
+            <Editor
                 value={$postCurrentContentStore}
                 onValueChange={handleChange}
                 onDOMEvent={handleEvent}
@@ -64,13 +65,11 @@
                     customHtmlEnabled: true,
                     buttonEnabled: true,
     
-                    // to be added later
                     tableEnabled: true,
                     bookmarkEnabled: true,
     
                     imageEnabled: true,
     
-                    // does not make sense for emails (or email clients do not support)
                     tocEnabled: true,
                     audioEnabled: true,
                     embedEnabled: true,
@@ -80,7 +79,7 @@
                         if (type !== 'image') {
                             return null;
                         }
-                        const media = await uploadImage(file, 'issue_images');
+                        const media = await uploadMedia(file, name);
                         return {
                             url: media.url
                         };
