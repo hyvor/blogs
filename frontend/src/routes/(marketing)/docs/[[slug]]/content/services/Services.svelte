@@ -27,8 +27,7 @@
 		<p>
 			<a href="https://talk.hyvor.com">Hyvor Talk</a> is our own commenting platform. Hyvor Blogs
 			integrates with Hyvor Talk directly to allow comments on your blog. You can use Hyvor Talk for
-			<b>FREE</b>
-			starting from <a href="/pricing">Growth Plan</a>.
+			<b>FREE</b> on <a href ="/pricing">all plans</a>.
 		</p>
 
 		<!--  <Callout type="info">

@@ -205,8 +205,7 @@
 	</Faq>
 
 	<Faq q="How to add a commenting system?" icon={IconChat}>
-		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free on Growth and higher
-		plans. You can also embed other commenting systems easily.
+		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free for all plans. You can also embed other commenting systems easily.
 	</Faq>
 </div>
 
