@@ -4,6 +4,7 @@ namespace App\Domains\User;
 
 use App\Models\User;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthUserOrganization;
 use Illuminate\Support\Collection;
 
 /**
@@ -15,16 +16,15 @@ class UserBlogRepository
     /**
      * @return Collection<int, User>
      */
-    public static function getBlogsOfUser(AuthUser $user): Collection
+    public static function getBlogsOfUser(AuthUser $user, ?AuthUserOrganization $organization): Collection
     {
-        $org = $user->current_organization;
-        if (!$org) {
+        if (!$organization) {
             return collect();
         }
 
         return User::where('users.hyvor_user_id', $user->id)
             ->join('blogs', 'blogs.id', '=', 'users.blog_id')
-            ->where('blogs.organization_id', $org->id)
+            ->where('blogs.organization_id', $organization->id)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('users.id', 'ASC')

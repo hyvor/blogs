@@ -33,16 +33,12 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
-use App\Models\Subscription;
-use Hyvor\Internal\Resource\Resource;
 use Illuminate\Support\Facades\DB;
 
 class BlogService
 {
 
-    public function __construct(
-        private Resource $resource
-    ) {
+    public function __construct() {
     }
 
     public static function isSubdomainReserved(string $subdomain): bool
@@ -58,8 +54,8 @@ class BlogService
     }
 
     public function createBlog(
-        ?int $userId,
-        ?int $organizationId,
+        int $userId,
+        int $organizationId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,

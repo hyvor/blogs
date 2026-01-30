@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Http\ConsoleApi\Controllers\ConsoleController;
+use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
@@ -29,7 +30,6 @@ use App\Http\Middleware\App\ConsoleApi\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
-use Hyvor\Internal\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/api/console/v0')
@@ -47,7 +47,7 @@ Route::prefix('/api/console/v0')
  */
 Route::prefix('/api/console/v0')
     ->middleware([
-        AuthMiddleware::class,
+        ConsoleApiAuthMiddleware::class,
         CorsOnLocalhost::class
     ])
     ->group(function () {
