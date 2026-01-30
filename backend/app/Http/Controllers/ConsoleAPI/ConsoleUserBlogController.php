@@ -6,18 +6,26 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
+use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\Controllers\Controller;
 use App\Rules\Subdomain;
-use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ConsoleUserBlogController extends Controller
 {
-    public function createBlog(Request $request, AccessAuthUser $hyvorUser): JsonResponse
+
+    public function __construct(
+        private ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
+    ) {}
+
+    public function createBlog(Request $request): JsonResponse
     {
+        $user = $this->consoleApiAuthMiddleware->getUser($request);
+        $organization = $this->consoleApiAuthMiddleware->getOrganization($request);
+
         $request->validate([
             'name' => 'required|string',
             'subdomain' => ['required_unless:is_dev,true', new Subdomain(checkUnique: true)],
@@ -41,15 +49,13 @@ class ConsoleUserBlogController extends Controller
 //            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
 //        }
 
-        $org = $hyvorUser->current_organization;
-
-        if ($org === null) {
+        if ($organization === null) {
             throw new TrustedException('No current organization found');
         }
 
         $blog = app(BlogService::class)->createBlog(
-            $hyvorUser->id,
-            $org->id,
+            $user->id,
+            $organization->id,
             $name,
             $subdomain,
             $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT,

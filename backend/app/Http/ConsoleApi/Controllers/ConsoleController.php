@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\ConsoleApi\Controllers;
 
-use App\Domains\Billing\LicenseService;
 use App\Domains\Billing\Usage\AiTokensUsage;
 use App\Domains\Billing\Usage\AutoTranslateCharsUsage;
 use App\Domains\Billing\Usage\StorageUsage;
@@ -12,12 +11,12 @@ use App\Domains\Billing\Usage\UsersUsage;
 use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
+use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Billing\Usage\UsageAbstract;
-use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,13 +24,20 @@ use Illuminate\Http\Request;
 class ConsoleController
 {
 
-    public function init(AccessAuthUser $user): JsonResponse
+    public function init(
+        ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
+        Request $request
+    ): JsonResponse
     {
-        $blogs = UserBlogRepository::getBlogsOfUser($user)
+        $user = $consoleApiAuthMiddleware->getUser($request);
+        $organization = $consoleApiAuthMiddleware->getOrganization($request);
+
+        $blogs = UserBlogRepository::getBlogsOfUser($user, $organization)
             ->mapInto(BlogListObject::class);
 
         return response()->json([
             'user' => new AuthUserObject($user),
+            'organization' => $organization,
             'blogs' => $blogs,
             'is_blocked' => UserRepository::isBlocked($user->id),
             'config' => $this->config()
@@ -97,13 +103,17 @@ class ConsoleController
     }
 
     public function getUsage(
-        AccessAuthUser $user,
+        ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
+        Request $request,
         Billing $billing,
         UsersUsage $usersUsage,
         StorageUsage $storageUsage,
         AutoTranslateCharsUsage $autoTranslateCharsUsage,
         AiTokensUsage $aiTokensUsage
     ): JsonResponse {
+
+        $user = $consoleApiAuthMiddleware->getUser($request);
+
         $license = $billing->license($user->id, null);
 
         return response()->json([
@@ -128,8 +138,10 @@ class ConsoleController
         ];
     }
 
-    public function changeBlogSort(Request $request, AccessAuthUser $user): JsonResponse
+    public function changeBlogSort(Request $request, ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,): JsonResponse
     {
+        $user = $consoleApiAuthMiddleware->getUser($request);
+
         $request->validate([
             'blog_ids' => 'required|array',
             'blog_ids.*' => 'integer',

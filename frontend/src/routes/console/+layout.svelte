@@ -4,11 +4,13 @@
 	import consoleApi from './lib/consoleApi';
 	import type { AuthUser, BlogList } from './lib/types';
 	import { authUserStore, blogListStore } from './lib/stores';
-	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
+	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { CloudContext, type CloudContextOrganization, HyvorBar } from '@hyvor/design/cloud';
+	import { get } from 'svelte/store';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -18,12 +20,15 @@
 
 	interface InitResponse {
 		user: AuthUser;
+		organization: CloudContextOrganization;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
 	}
 
 	let isLoading = $state(true);
+
+	let organization = $state(null as null | CloudContextOrganization);
 
 	function startConsole() {
 		isLoading = true;
@@ -46,6 +51,7 @@
 
 				authUserStore.set(res.user);
 				blogListStore.set(res.blogs);
+				organization = res.organization;
 
 				if (res.blogs[0]?.type === 'temp') {
 					const subdomain = res.blogs[0].subdomain;
@@ -91,24 +97,34 @@
 			</Loader>
 		</div>
 	{:else}
-		{#if !$isTempStore}
-			<HyvorBar
-				instance={getConfig().hyvor.instance}
-				product="blogs"
-				config={{
-					g2: 'https://www.g2.com/products/hyvor-blogs/reviews',
-					chat: false
-				}}
-				onOrganizationSwitch={(org) => {
-					if (page.url.pathname !== '/console/new') {
-						goto('/console');
-					}
-					startConsole();
-				}}
-			/>
-		{/if}
+		<CloudContext
+			context={{
+				component: 'blogs',
+				deployment: 'cloud',
+				instance: getConfig().hyvor.instance,
+				user: get(authUserStore),
+				organization,
+				callbacks: {
+					onOrganizationSwitch: (switcher) => {
+						isLoading = true;
 
-		{@render children?.()}
+						switcher
+							.then((org) => {
+								startConsole();
+							})
+							.catch(() => {
+								isLoading = false;
+							});
+					}
+				}
+			}}
+		>
+			{#if !$isTempStore}
+				<HyvorBar />
+			{/if}
+
+			{@render children?.()}
+		</CloudContext>
 	{/if}
 </main>
 

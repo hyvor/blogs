@@ -4,7 +4,6 @@ namespace App\Domains\Sudo;
 
 
 use App\Models\Blog;
-use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Illuminate\Support\Facades\DB;
 
 class SudoAnalyticsService
