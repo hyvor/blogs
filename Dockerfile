@@ -58,6 +58,9 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 COPY backend/package.json backend/package-lock.json /app/backend/
 RUN npm install
 
+# supervisor
+RUN apt update && apt install -y supervisor
+
 
 ###################################################
 FROM backend-base AS backend-dev
@@ -68,15 +71,19 @@ COPY backend/composer.json backend/composer.lock /app/backend/
 RUN composer install --no-interaction \
     && touch ../.env # needed in CI
 
+COPY symfony/composer.json symfony/composer.lock /app/symfony/
+RUN cd /app/symfony && composer install --no-interaction
+
 # set up code and install composer packages
 COPY backend /app/backend/
+COPY symfony /app/symfony/
 COPY meta/dev/php.dev.ini /usr/local/etc/php/conf.d/app.ini
-
-# use local internal library
-RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
+COPY meta/dev/supervisord.dev.conf /etc/supervisor/conf.d/supervisord.conf
+COPY meta/dev/Caddyfile.dev /etc/caddy/Caddyfile
+COPY meta/dev/run.dev /app/run
 
 EXPOSE 80
-CMD php artisan octane:frankenphp --workers=1 --max-requests=1 --host=0.0.0.0 --port=80
+CMD ["/app/run"]
 
 ###################################################
 FROM backend-base AS final
