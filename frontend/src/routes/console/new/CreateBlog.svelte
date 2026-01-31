@@ -118,17 +118,15 @@
 			return false;
 		}
 
-		return true;
-	}
-
-	function handleFinish() {
-		toast.success('Blog created successfully');
 		goto('/console/' + res.subdomain);
+
+		return true;
 	}
 </script>
 
 <ResourceCreator
 	title="Start a blog"
+	resourceTitle="Blog"
 	cta="Create Blog"
 	onback={handleBack}
 	oncreate={handleCreate}

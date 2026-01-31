@@ -37,7 +37,7 @@ class ConsoleBlogController extends Controller
     public function getBlogData(Blog $blog, BillingInterface $billing)
     {
         $license = $blog->organization_id ?
-            $billing->license($blog->organization_id, $blog->id) :
+            $billing->license($blog->organization_id) :
             null;
 
         return response()->json([
