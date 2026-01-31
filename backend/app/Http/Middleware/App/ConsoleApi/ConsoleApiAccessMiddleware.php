@@ -56,12 +56,13 @@ class ConsoleApiAccessMiddleware
                     new ConsoleApiAccessingUser($owner)
                 );
             } else {
-                $hyvorUser = $this->auth->me($request);
+                $me = $this->auth->me($request);
 
-                if (!$hyvorUser) {
+                if (!$me) {
                     throw new TrustedException('You are not logged in');
                 }
 
+                $hyvorUser = $me->getUser();
                 $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
 
                 if (!$user) {
