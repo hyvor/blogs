@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'themes')]
+class Theme
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,24 +19,18 @@ class PostAuthor
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $post_id;
+    #[ORM\Column(length: 255, unique: true)]
+    private string $name;
 
-    #[ORM\Column]
-    private int $user_id;
+    #[ORM\Column(length: 255)]
+    private string $type;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    #[ORM\Column(options: ['default' => 0])]
+    private int $blogs_count = 0;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -63,36 +55,36 @@ class PostAuthor
         return $this;
     }
 
-    public function getPostId(): int
+    public function getName(): string
     {
-        return $this->post_id;
+        return $this->name;
     }
 
-    public function setPostId(int $post_id): static
+    public function setName(string $name): static
     {
-        $this->post_id = $post_id;
+        $this->name = $name;
         return $this;
     }
 
-    public function getUserId(): int
+    public function getType(): string
     {
-        return $this->user_id;
+        return $this->type;
     }
 
-    public function setUserId(int $user_id): static
+    public function setType(string $type): static
     {
-        $this->user_id = $user_id;
+        $this->type = $type;
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getBlogsCount(): int
     {
-        return $this->user;
+        return $this->blogs_count;
     }
 
-    public function setUser(?User $user): static
+    public function setBlogsCount(int $blogs_count): static
     {
-        $this->user = $user;
+        $this->blogs_count = $blogs_count;
         return $this;
     }
 }

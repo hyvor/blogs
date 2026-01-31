@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'webhooks')]
+class Webhook
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,23 +20,20 @@ class PostAuthor
     private ?\DateTimeImmutable $updated_at = null;
 
     #[ORM\Column]
-    private int $post_id;
+    private int $blog_id;
 
-    #[ORM\Column]
-    private int $user_id;
+    #[ORM\Column(length: 255)]
+    private string $url;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    #[ORM\Column(type: 'json')]
+    private array $events;
+
+    #[ORM\Column(length: 32)]
+    private string $secret;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -63,36 +58,47 @@ class PostAuthor
         return $this;
     }
 
-    public function getPostId(): int
+    public function getBlogId(): int
     {
-        return $this->post_id;
+        return $this->blog_id;
     }
 
-    public function setPostId(int $post_id): static
+    public function setBlogId(int $blog_id): static
     {
-        $this->post_id = $post_id;
+        $this->blog_id = $blog_id;
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUrl(): string
     {
-        return $this->user_id;
+        return $this->url;
     }
 
-    public function setUserId(int $user_id): static
+    public function setUrl(string $url): static
     {
-        $this->user_id = $user_id;
+        $this->url = $url;
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getEvents(): array
     {
-        return $this->user;
+        return $this->events;
     }
 
-    public function setUser(?User $user): static
+    public function setEvents(array $events): static
     {
-        $this->user = $user;
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getSecret(): string
+    {
+        return $this->secret;
+    }
+
+    public function setSecret(string $secret): static
+    {
+        $this->secret = $secret;
         return $this;
     }
 }
