@@ -6,7 +6,6 @@ use App\Models\Blog;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
-use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Illuminate\Support\Facades\Cache;
 
 class LicenseService
