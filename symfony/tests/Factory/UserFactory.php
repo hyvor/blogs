@@ -36,7 +36,7 @@ final class UserFactory extends PersistentObjectFactory
         return [
             'blog_id' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),
-            'role' => self::faker()->text(255),
+            'role' => ,
             'slug' => self::faker()->text(255),
             'sort' => self::faker()->randomNumber(),
             'status' => self::faker()->text(255),

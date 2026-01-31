@@ -34,43 +34,43 @@ class User
     #[ORM\Column(nullable: true)]
     private ?int $hyvor_user_id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column()]
     private string $role;
 
-    #[ORM\Column(length: 255, options: ['default' => 'invited'])]
+    #[ORM\Column(options: ['default' => 'invited'])]
     private string $status = 'invited';
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column()]
     private string $slug;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $website_url = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $picture_url = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_facebook = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_twitter = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_linkedin = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_youtube = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_tiktok = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_instagram = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column()]
     private ?string $social_github = null;
 
     #[ORM\Column(options: ['default' => 0])]
