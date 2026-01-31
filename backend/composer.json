@@ -54,10 +54,10 @@
         "unsplash/unsplash": "^3.2"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^8.1",
-        "larastan/larastan": "^3.0",
         "pestphp/pest": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpstan/phpstan": "^2.0",
