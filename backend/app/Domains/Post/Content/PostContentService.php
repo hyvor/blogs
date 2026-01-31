@@ -46,7 +46,7 @@ class PostContentService
     /**
      * @param array<mixed>|string $json
      */
-    public static function getHtml(array|string $json, Blog $blog, PostContentOptions $options = null) : string
+    public static function getHtml(array|string $json, Blog $blog, ?PostContentOptions $options = null) : string
     {
         return Document::fromJson(self::getSchema($blog, $options), $json)->toHtml();
     }
@@ -83,7 +83,7 @@ class PostContentService
         return Document::fromJson(self::getSchema($blog), $json);
     }
 
-    private static function getSchema(Blog $blog, PostContentOptions $options = null) : Schema
+    private static function getSchema(Blog $blog, ?PostContentOptions $options = null) : Schema
     {
 
         $options ??= new PostContentOptions;

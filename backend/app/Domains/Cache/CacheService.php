@@ -21,7 +21,7 @@ class CacheService
     private Blog $blog;
 
     public function __construct(
-        Blog $blog = null
+        ?Blog $blog = null
     )
     {
         if ($blog) {

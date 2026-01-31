@@ -154,7 +154,7 @@ class ThemeFilesRepository
         return $importer->success();
     }
 
-    public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null) : void
+    public static function copyThemeToBlog(Blog $blog, string $themeName, ?string $version = null) : void
     {
         $theme = ThemeRepository::getThemeByName($themeName);
 

@@ -12,7 +12,7 @@ use function now;
 
 class PostPreviewSecretEncryptor
 {
-    public static function getPreviewSecret(Post $post, DateTimeInterface $time = null) : string
+    public static function getPreviewSecret(Post $post, ?DateTimeInterface $time = null) : string
     {
         $timestamp = ($time ?? now())->getTimestamp();
         return encrypt("$post->id.$timestamp");

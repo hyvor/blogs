@@ -38,7 +38,7 @@ class WebhookService
     /**
      * @param string[] $events
      */
-    public static function updateWebhook(Webhook $webhook, string $url = null, array $events = null): Webhook
+    public static function updateWebhook(Webhook $webhook, ?string $url = null, ?array $events = null): Webhook
     {
         if ($url) {
             $webhook->url = $url;

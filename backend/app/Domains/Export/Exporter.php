@@ -18,7 +18,7 @@ class Exporter
     public function __construct(
         Blog $blog,
         ExportFormatEnum $format,
-        Export $export = null
+        ?Export $export = null
     )
     {
 

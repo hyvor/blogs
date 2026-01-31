@@ -253,7 +253,7 @@ class TwigExtensions extends AbstractExtension
         return $response;
     }
 
-    public function iconFunction(string $library, ?string $iconName, int $width = null, int $height = null): string
+    public function iconFunction(string $library, ?string $iconName, ?int $width = null, ?int $height = null): string
     {
 
         if (!$iconName) {

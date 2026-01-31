@@ -41,7 +41,7 @@ class RouteMatcher
         string $match,
         array $defaults = [],
         array $requirements = [],
-        ModelsRoute $routeModel = null
+        ?ModelsRoute $routeModel = null
     ) : void
     {
         $route = new Route($match, $defaults, $requirements);
