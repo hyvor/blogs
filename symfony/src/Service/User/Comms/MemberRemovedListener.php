@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Service\User\Comms;
+
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
