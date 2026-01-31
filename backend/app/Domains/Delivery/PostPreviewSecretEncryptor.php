@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery;
 
@@ -14,7 +12,7 @@ use function now;
 
 class PostPreviewSecretEncryptor
 {
-    public static function getPreviewSecret(Post $post, ?DateTimeInterface $time = null): string
+    public static function getPreviewSecret(Post $post, ?DateTimeInterface $time = null) : string
     {
         $timestamp = ($time ?? now())->getTimestamp();
         return encrypt("$post->id.$timestamp");
@@ -33,7 +31,7 @@ class PostPreviewSecretEncryptor
         $id = $split[0] ?? null;
         $timestamp = $split[1] ?? null;
 
-        if (!$id || !$timestamp) {
+        if (! $id || ! $timestamp) {
             return null;
         }
 
@@ -42,6 +40,6 @@ class PostPreviewSecretEncryptor
             return null;
         }
 
-        return (int)$id;
+        return (int) $id;
     }
 }

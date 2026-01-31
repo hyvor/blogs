@@ -20,13 +20,13 @@ class LicenseService
 
         if (!$organizationId) {
             // this is a temp or a dev blog
-            return new BlogsLicense();
+            return BlogsLicense::trial();
         }
 
         $billing = app(Billing::class);
 
         /** @var ?BlogsLicense $license */
-        $license = $billing->license($organizationId, $blog->id);
+        $license = $billing->license($organizationId);
 
         return $license;
     }

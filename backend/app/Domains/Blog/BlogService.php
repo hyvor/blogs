@@ -261,8 +261,8 @@ class BlogService
 
             $blog->delete();
 
-
-            $this->resource->delete($blog->id);
+            // todo: send notification to core somehow to remove component_organizations
+            // $this->resource->delete($blog->id);
 
             BlogDeletedEvent::dispatch($blog);
         });
