@@ -5,6 +5,7 @@ namespace App\Domains\Billing;
 use App\Models\Blog;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Illuminate\Support\Facades\Cache;
 
@@ -12,7 +13,7 @@ class LicenseService
 {
 
     /**
-     * @throws InternalApiCallFailedException
+     * @throws CommsApiFailedException
      */
     public static function getLicense(Blog $blog): ?BlogsLicense
     {
@@ -24,16 +25,15 @@ class LicenseService
         }
 
         $billing = app(Billing::class);
+        $resolvedLicense = $billing->license($organizationId);
 
-        /** @var ?BlogsLicense $license */
-        $license = $billing->license($organizationId);
-
-        return $license;
+        /** @var ?BlogsLicense */
+        return $resolvedLicense->license;
     }
 
     private static function getHasLicenseCacheKey(int $organizationId): string
     {
-        return "has-license:$organizationId";
+        return "has-license-org:$organizationId";
     }
 
     /**
@@ -70,7 +70,7 @@ class LicenseService
             Cache::put($key, $hasLicense, $cachePeriodSeconds);
 
             return $hasLicense;
-        } catch (InternalApiCallFailedException $e) {
+        } catch (CommsApiFailedException $e) {
             return true;
         }
     }
