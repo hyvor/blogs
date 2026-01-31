@@ -7,10 +7,10 @@
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { CloudContext, type CloudContextOrganization, HyvorBar } from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -30,7 +30,7 @@
 
 	let organization = $state(null as null | CloudContextOrganization);
 
-	function startConsole() {
+	function startConsole(switchingOrg = false) {
 		isLoading = true;
 
 		const isTemp = page.url.searchParams.has('temp');
@@ -62,6 +62,10 @@
 						});
 						window.dispatchEvent(event);
 					}
+				}
+
+				if (switchingOrg && !page.url.pathname.startsWith('/console/new')) {
+					goto('/console');
 				}
 
 				isLoading = false;
@@ -110,7 +114,7 @@
 
 						switcher
 							.then((org) => {
-								startConsole();
+								startConsole(true);
 							})
 							.catch(() => {
 								isLoading = false;
