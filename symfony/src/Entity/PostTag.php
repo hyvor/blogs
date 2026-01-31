@@ -23,8 +23,16 @@ class PostTag
     #[ORM\Column]
     private int $post_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    private Post $post;
+
     #[ORM\Column]
     private int $tag_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'tag_id', referencedColumnName: 'id')]
+    private Tag $tag;
 
     public function getId(): int
     {
@@ -64,6 +72,17 @@ class PostTag
         return $this;
     }
 
+    public function getPost(): Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(Post $post): static
+    {
+        $this->post = $post;
+        return $this;
+    }
+
     public function getTagId(): int
     {
         return $this->tag_id;
@@ -72,6 +91,17 @@ class PostTag
     public function setTagId(int $tag_id): static
     {
         $this->tag_id = $tag_id;
+        return $this;
+    }
+
+    public function getTag(): Tag
+    {
+        return $this->tag;
+    }
+
+    public function setTag(Tag $tag): static
+    {
+        $this->tag = $tag;
         return $this;
     }
 }

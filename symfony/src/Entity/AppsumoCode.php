@@ -25,6 +25,10 @@ class AppsumoCode
     #[ORM\Column(nullable: true)]
     private ?int $blog_id = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private ?Blog $blog = null;
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $redeemed_at = null;
 
@@ -74,6 +78,17 @@ class AppsumoCode
     public function setBlogId(?int $blog_id): static
     {
         $this->blog_id = $blog_id;
+        return $this;
+    }
+
+    public function getBlog(): ?Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(?Blog $blog): static
+    {
+        $this->blog = $blog;
         return $this;
     }
 

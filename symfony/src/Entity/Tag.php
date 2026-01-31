@@ -23,6 +23,10 @@ class Tag
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column(length: 255)]
     private string $slug;
 
@@ -73,6 +77,17 @@ class Tag
     public function setBlogId(int $blog_id): static
     {
         $this->blog_id = $blog_id;
+        return $this;
+    }
+
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
         return $this;
     }
 

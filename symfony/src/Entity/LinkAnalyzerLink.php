@@ -27,8 +27,16 @@ class LinkAnalyzerLink
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column]
     private int $post_variant_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_variant_id', referencedColumnName: 'id')]
+    private PostVariant $post_variant;
 
     #[ORM\Column(length: 255)]
     private string $url;
@@ -100,6 +108,17 @@ class LinkAnalyzerLink
         return $this;
     }
 
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
+        return $this;
+    }
+
     public function getPostVariantId(): int
     {
         return $this->post_variant_id;
@@ -108,6 +127,17 @@ class LinkAnalyzerLink
     public function setPostVariantId(int $post_variant_id): static
     {
         $this->post_variant_id = $post_variant_id;
+        return $this;
+    }
+
+    public function getPostVariant(): PostVariant
+    {
+        return $this->post_variant;
+    }
+
+    public function setPostVariant(PostVariant $post_variant): static
+    {
+        $this->post_variant = $post_variant;
         return $this;
     }
 

@@ -24,6 +24,10 @@ class PostAuthor
     #[ORM\Column]
     private int $post_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    private Post $post;
+
     #[ORM\Column]
     private int $user_id;
 
@@ -71,6 +75,17 @@ class PostAuthor
     public function setPostId(int $post_id): static
     {
         $this->post_id = $post_id;
+        return $this;
+    }
+
+    public function getPost(): Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(Post $post): static
+    {
+        $this->post = $post;
         return $this;
     }
 
