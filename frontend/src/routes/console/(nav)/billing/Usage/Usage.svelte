@@ -13,7 +13,7 @@
 				usage = data;
 			})
 			.catch((error) => {
-				toast.error(error);
+				toast.error(error.message);
 			})
 			.finally(() => {
 				loading = false;
@@ -24,10 +24,10 @@
 {#if loading}
 	<Loader padding={100} block />
 {:else}
-	<!-- <div class="usage">
+	<div class="usage">
 		<UsageBar name="Users" data={usage.users} />
 		<UsageBar name="Media Storage" data={usage.storage} bytes={true} />
 		<UsageBar name="Auto-Translate Characters (this month)" data={usage.auto_translate_chars} />
 		<UsageBar name="GPT Tokens (this month)" data={usage.ai_tokens} />
-	</div> -->
+	</div>
 {/if}

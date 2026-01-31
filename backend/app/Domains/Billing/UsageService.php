@@ -7,40 +7,92 @@ use App\Domains\Billing\Usage\AutoTranslateCharsUsage;
 use App\Domains\Billing\Usage\StorageUsage;
 use App\Domains\Billing\Usage\UsersUsage;
 use App\Models\Blog;
-use Hyvor\Internal\Billing\Usage\UsageAbstract;
+use Illuminate\Database\Connection;
 
 class UsageService
 {
 
     public function __construct(
-        private UsersUsage $usersUsage,
-        private StorageUsage $storageUsage,
-        private AutoTranslateCharsUsage $autoTranslateCharsUsage,
-        private AiTokensUsage $aiTokensUsage
+        private Connection $db
     ) {
+    }
+
+    public function getUsersUsage(int $organizationId): int
+    {
+        $result = $this->db->selectOne(<<<SQL
+            SELECT SUM(
+                COALESCE((counts->>'users')::INT, 0)
+            ) AS count
+            FROM blogs
+            WHERE organization_id = ? 
+        SQL, [$organizationId]);
+
+        return $result->count ?? 0;
+    }
+
+    public function getStorageUsageBytes(int $organizationId): int
+    {
+        $result = $this->db->selectOne(<<<SQL
+            SELECT SUM(
+                COALESCE((counts->>'media')::INT, 0)
+            ) AS count
+            FROM blogs
+            WHERE organization_id = ?
+        SQL, [$organizationId]);
+
+        return $result->count ?? 0;
+    }
+
+    public function getAutoTranslateCharsUsageThisMonth(int $organizationId): int
+    {
+        $result = $this->db->selectOne(<<<SQL
+            SELECT SUM(chars) AS count
+            FROM auto_translations
+            INNER JOIN blogs ON auto_translations.blog_id = blogs.id
+            WHERE blogs.organization_id = ?
+            AND auto_translations.created_at >= ?
+        SQL, [$organizationId, now()->startOfMonth()]);
+
+        return $result->count ?? 0;
+    }
+
+    public function getAiTokensUsage(int $organizationId): int
+    {
+        $result = $this->db->selectOne(<<<SQL
+            SELECT SUM(tokens_total) AS count
+            FROM gpt_prompts
+            INNER JOIN blogs ON gpt_prompts.blog_id = blogs.id
+            WHERE blogs.organization_id = ?
+            AND gpt_prompts.created_at >= ?
+        SQL, [$organizationId, now()->startOfMonth()]);
+
+        return $result->count ?? 0;
     }
 
     public function usersLimitReached(Blog $blog): bool
     {
-        return $this->reached($blog, $this->usersUsage);
+        return $this->reached($blog, 'users', [$this, 'getUsersUsage']);
     }
 
     public function storageLimitReached(Blog $blog): bool
     {
-        return $this->reached($blog, $this->storageUsage);
+        return $this->reached($blog, 'storage', [$this, 'getStorageUsageBytes']);
     }
 
     public function autoTranslationCharsLimitReached(Blog $blog): bool
     {
-        return $this->reached($blog, $this->autoTranslateCharsUsage);
+        return $this->reached($blog, 'autoTranslationsChars', [$this, 'getAutoTranslateCharsUsageThisMonth']);
     }
 
     public function aiTokensLimitReached(Blog $blog): bool
     {
-        return $this->reached($blog, $this->aiTokensUsage);
+        return $this->reached($blog, 'aiTokens', [$this, 'getAiTokensUsage']);
     }
 
-    private function reached(Blog $blog, UsageAbstract $usage): bool
+    /**
+     * @param array{0: self, 1: string} $usageFunc
+     */
+    private function reached(Blog $blog, string $licenseKey, array $usageFunc): bool
     {
         $license = LicenseService::getLicense($blog);
 
@@ -53,7 +105,12 @@ class UsageService
             return false;
         }
 
-        return $usage->hasReached($license, $blog->organization_id, $blog->id);
+        $limit = $license->$licenseKey ?? 0;
+
+        assert(is_callable($usageFunc));
+        $usage = $usageFunc();
+
+        return $usage >= $limit;
     }
 
 
