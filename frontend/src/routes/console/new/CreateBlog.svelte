@@ -115,6 +115,7 @@
 			addToBlogList(res);
 		} catch (e: any) {
 			toast.error(e.message);
+			return false;
 		}
 
 		return true;
@@ -131,11 +132,7 @@
 	cta="Create Blog"
 	onback={handleBack}
 	oncreate={handleCreate}
-	onfinish={handleFinish}
-	steps={['Creating your blog', 'Copying the theme', 'Configuring settings']}
-	ctaProps={{
-		disabled: name.trim() === '' || subdomain.trim() === ''
-	}}
+	ctaDisabled={name.trim() === '' || subdomain.trim() === ''}
 >
 	{#if dev}
 		<Callout type="warning" style="margin-bottom:20px;">
