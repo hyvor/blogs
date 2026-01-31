@@ -34,7 +34,7 @@ class UserVariant
     private ?string $location = null;
 
     #[ORM\ManyToOne(inversedBy: 'variants')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
 
     public function getId(): int
