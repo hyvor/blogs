@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'auto_translations')]
+class AutoTranslation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,23 +20,20 @@ class PostAuthor
     private ?\DateTimeImmutable $updated_at = null;
 
     #[ORM\Column]
-    private int $post_id;
+    private int $blog_id;
+
+    #[ORM\Column(length: 10)]
+    private string $source_lang;
+
+    #[ORM\Column(length: 10)]
+    private string $target_lang;
 
     #[ORM\Column]
-    private int $user_id;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    private int $chars;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -63,36 +58,47 @@ class PostAuthor
         return $this;
     }
 
-    public function getPostId(): int
+    public function getBlogId(): int
     {
-        return $this->post_id;
+        return $this->blog_id;
     }
 
-    public function setPostId(int $post_id): static
+    public function setBlogId(int $blog_id): static
     {
-        $this->post_id = $post_id;
+        $this->blog_id = $blog_id;
         return $this;
     }
 
-    public function getUserId(): int
+    public function getSourceLang(): string
     {
-        return $this->user_id;
+        return $this->source_lang;
     }
 
-    public function setUserId(int $user_id): static
+    public function setSourceLang(string $source_lang): static
     {
-        $this->user_id = $user_id;
+        $this->source_lang = $source_lang;
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getTargetLang(): string
     {
-        return $this->user;
+        return $this->target_lang;
     }
 
-    public function setUser(?User $user): static
+    public function setTargetLang(string $target_lang): static
     {
-        $this->user = $user;
+        $this->target_lang = $target_lang;
+        return $this;
+    }
+
+    public function getChars(): int
+    {
+        return $this->chars;
+    }
+
+    public function setChars(int $chars): static
+    {
+        $this->chars = $chars;
         return $this;
     }
 }

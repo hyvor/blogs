@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'post_tag')]
+#[ORM\UniqueConstraint(columns: ['post_id', 'tag_id'])]
+class PostTag
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,20 +24,11 @@ class PostAuthor
     private int $post_id;
 
     #[ORM\Column]
-    private int $user_id;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    private int $tag_id;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -74,25 +64,14 @@ class PostAuthor
         return $this;
     }
 
-    public function getUserId(): int
+    public function getTagId(): int
     {
-        return $this->user_id;
+        return $this->tag_id;
     }
 
-    public function setUserId(int $user_id): static
+    public function setTagId(int $tag_id): static
     {
-        $this->user_id = $user_id;
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+        $this->tag_id = $tag_id;
         return $this;
     }
 }

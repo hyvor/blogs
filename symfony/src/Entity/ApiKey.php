@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'api_keys')]
+class ApiKey
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,23 +20,20 @@ class PostAuthor
     private ?\DateTimeImmutable $updated_at = null;
 
     #[ORM\Column]
-    private int $post_id;
+    private int $blog_id;
 
-    #[ORM\Column]
-    private int $user_id;
+    #[ORM\Column(length: 255)]
+    private string $name;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    #[ORM\Column(length: 255)]
+    private string $type;
+
+    #[ORM\Column(length: 32)]
+    private string $api_key;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -63,36 +58,47 @@ class PostAuthor
         return $this;
     }
 
-    public function getPostId(): int
+    public function getBlogId(): int
     {
-        return $this->post_id;
+        return $this->blog_id;
     }
 
-    public function setPostId(int $post_id): static
+    public function setBlogId(int $blog_id): static
     {
-        $this->post_id = $post_id;
+        $this->blog_id = $blog_id;
         return $this;
     }
 
-    public function getUserId(): int
+    public function getName(): string
     {
-        return $this->user_id;
+        return $this->name;
     }
 
-    public function setUserId(int $user_id): static
+    public function setName(string $name): static
     {
-        $this->user_id = $user_id;
+        $this->name = $name;
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getType(): string
     {
-        return $this->user;
+        return $this->type;
     }
 
-    public function setUser(?User $user): static
+    public function setType(string $type): static
     {
-        $this->user = $user;
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getApiKey(): string
+    {
+        return $this->api_key;
+    }
+
+    public function setApiKey(string $api_key): static
+    {
+        $this->api_key = $api_key;
         return $this;
     }
 }

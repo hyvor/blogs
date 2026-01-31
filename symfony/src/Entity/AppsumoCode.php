@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PostAuthorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostAuthorRepository::class)]
-#[ORM\Table(name: 'post_author')]
-#[ORM\UniqueConstraint(columns: ['post_id', 'user_id'])]
-class PostAuthor
+#[ORM\Entity]
+#[ORM\Table(name: 'appsumo_codes')]
+class AppsumoCode
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,24 +19,18 @@ class PostAuthor
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $post_id;
+    #[ORM\Column(length: 255, unique: true)]
+    private string $code;
 
-    #[ORM\Column]
-    private int $user_id;
+    #[ORM\Column(nullable: true)]
+    private ?int $blog_id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', insertable: false, updatable: false)]
-    private ?User $user = null;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $redeemed_at = null;
 
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -63,36 +55,36 @@ class PostAuthor
         return $this;
     }
 
-    public function getPostId(): int
+    public function getCode(): string
     {
-        return $this->post_id;
+        return $this->code;
     }
 
-    public function setPostId(int $post_id): static
+    public function setCode(string $code): static
     {
-        $this->post_id = $post_id;
+        $this->code = $code;
         return $this;
     }
 
-    public function getUserId(): int
+    public function getBlogId(): ?int
     {
-        return $this->user_id;
+        return $this->blog_id;
     }
 
-    public function setUserId(int $user_id): static
+    public function setBlogId(?int $blog_id): static
     {
-        $this->user_id = $user_id;
+        $this->blog_id = $blog_id;
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getRedeemedAt(): ?\DateTimeImmutable
     {
-        return $this->user;
+        return $this->redeemed_at;
     }
 
-    public function setUser(?User $user): static
+    public function setRedeemedAt(?\DateTimeImmutable $redeemed_at): static
     {
-        $this->user = $user;
+        $this->redeemed_at = $redeemed_at;
         return $this;
     }
 }
