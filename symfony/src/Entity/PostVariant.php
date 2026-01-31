@@ -25,8 +25,16 @@ class PostVariant
     #[ORM\Column]
     private int $post_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    private Post $post;
+
     #[ORM\Column]
     private int $language_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
+    private Language $language;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;
@@ -105,6 +113,17 @@ class PostVariant
         return $this;
     }
 
+    public function getPost(): Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(Post $post): static
+    {
+        $this->post = $post;
+        return $this;
+    }
+
     public function getLanguageId(): int
     {
         return $this->language_id;
@@ -113,6 +132,17 @@ class PostVariant
     public function setLanguageId(int $language_id): static
     {
         $this->language_id = $language_id;
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): static
+    {
+        $this->language = $language;
         return $this;
     }
 

@@ -23,8 +23,16 @@ class Language
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column(nullable: true)]
     private ?int $fallback_language_id = null;
+
+    #[ORM\ManyToOne(targetEntity: Language::class)]
+    #[ORM\JoinColumn(name: 'fallback_language_id', referencedColumnName: 'id')]
+    private ?Language $fallback_language = null;
 
     #[ORM\Column(length: 12)]
     private string $code;
@@ -76,6 +84,17 @@ class Language
         return $this;
     }
 
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
+        return $this;
+    }
+
     public function getFallbackLanguageId(): ?int
     {
         return $this->fallback_language_id;
@@ -84,6 +103,17 @@ class Language
     public function setFallbackLanguageId(?int $fallback_language_id): static
     {
         $this->fallback_language_id = $fallback_language_id;
+        return $this;
+    }
+
+    public function getFallbackLanguage(): ?Language
+    {
+        return $this->fallback_language;
+    }
+
+    public function setFallbackLanguage(?Language $fallback_language): static
+    {
+        $this->fallback_language = $fallback_language;
         return $this;
     }
 

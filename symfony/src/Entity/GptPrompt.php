@@ -25,8 +25,16 @@ class GptPrompt
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column(nullable: true)]
     private ?int $post_id = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    private ?Post $post = null;
 
     #[ORM\Column(length: 1000)]
     private string $prompt;
@@ -95,6 +103,17 @@ class GptPrompt
         return $this;
     }
 
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
+        return $this;
+    }
+
     public function getPostId(): ?int
     {
         return $this->post_id;
@@ -103,6 +122,17 @@ class GptPrompt
     public function setPostId(?int $post_id): static
     {
         $this->post_id = $post_id;
+        return $this;
+    }
+
+    public function getPost(): ?Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(?Post $post): static
+    {
+        $this->post = $post;
         return $this;
     }
 

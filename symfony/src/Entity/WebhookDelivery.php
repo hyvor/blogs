@@ -22,6 +22,10 @@ class WebhookDelivery
     #[ORM\Column]
     private int $webhook_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'webhook_id', referencedColumnName: 'id')]
+    private Webhook $webhook;
+
     #[ORM\Column(length: 255)]
     private string $status;
 
@@ -75,6 +79,17 @@ class WebhookDelivery
     public function setWebhookId(int $webhook_id): static
     {
         $this->webhook_id = $webhook_id;
+        return $this;
+    }
+
+    public function getWebhook(): Webhook
+    {
+        return $this->webhook;
+    }
+
+    public function setWebhook(Webhook $webhook): static
+    {
+        $this->webhook = $webhook;
         return $this;
     }
 

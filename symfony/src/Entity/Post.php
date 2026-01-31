@@ -25,6 +25,10 @@ class Post
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column(options: ['default' => false])]
     private bool $is_page = false;
 
@@ -89,6 +93,17 @@ class Post
     public function setBlogId(int $blog_id): static
     {
         $this->blog_id = $blog_id;
+        return $this;
+    }
+
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
         return $this;
     }
 

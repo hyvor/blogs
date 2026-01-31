@@ -22,6 +22,10 @@ class PostVariantHistory
     #[ORM\Column]
     private int $post_variant_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_variant_id', referencedColumnName: 'id')]
+    private PostVariant $post_variant;
+
     #[ORM\Column(type: 'text')]
     private string $content;
 
@@ -60,6 +64,17 @@ class PostVariantHistory
     public function setPostVariantId(int $post_variant_id): static
     {
         $this->post_variant_id = $post_variant_id;
+        return $this;
+    }
+
+    public function getPostVariant(): PostVariant
+    {
+        return $this->post_variant;
+    }
+
+    public function setPostVariant(PostVariant $post_variant): static
+    {
+        $this->post_variant = $post_variant;
         return $this;
     }
 

@@ -23,6 +23,10 @@ class ThemeVersion
     #[ORM\Column]
     private int $theme_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'theme_id', referencedColumnName: 'id')]
+    private Theme $theme;
+
     #[ORM\Column(length: 255)]
     private string $version;
 
@@ -67,6 +71,17 @@ class ThemeVersion
     public function setThemeId(int $theme_id): static
     {
         $this->theme_id = $theme_id;
+        return $this;
+    }
+
+    public function getTheme(): Theme
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(Theme $theme): static
+    {
+        $this->theme = $theme;
         return $this;
     }
 

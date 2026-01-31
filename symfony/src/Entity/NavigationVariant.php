@@ -23,8 +23,16 @@ class NavigationVariant
     #[ORM\Column]
     private int $navigation_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'navigation_id', referencedColumnName: 'id')]
+    private Navigation $navigation;
+
     #[ORM\Column]
     private int $language_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
+    private Language $language;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
@@ -67,6 +75,17 @@ class NavigationVariant
         return $this;
     }
 
+    public function getNavigation(): Navigation
+    {
+        return $this->navigation;
+    }
+
+    public function setNavigation(Navigation $navigation): static
+    {
+        $this->navigation = $navigation;
+        return $this;
+    }
+
     public function getLanguageId(): int
     {
         return $this->language_id;
@@ -75,6 +94,17 @@ class NavigationVariant
     public function setLanguageId(int $language_id): static
     {
         $this->language_id = $language_id;
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): static
+    {
+        $this->language = $language;
         return $this;
     }
 

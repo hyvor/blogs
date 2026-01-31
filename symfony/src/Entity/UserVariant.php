@@ -24,6 +24,10 @@ class UserVariant
     #[ORM\Column]
     private int $language_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
+    private Language $language;
+
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $name = null;
 
@@ -77,6 +81,17 @@ class UserVariant
     public function setLanguageId(int $language_id): static
     {
         $this->language_id = $language_id;
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): static
+    {
+        $this->language = $language;
         return $this;
     }
 

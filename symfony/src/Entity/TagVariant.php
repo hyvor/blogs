@@ -23,8 +23,16 @@ class TagVariant
     #[ORM\Column]
     private int $tag_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'tag_id', referencedColumnName: 'id')]
+    private Tag $tag;
+
     #[ORM\Column]
     private int $language_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
+    private Language $language;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
@@ -70,6 +78,17 @@ class TagVariant
         return $this;
     }
 
+    public function getTag(): Tag
+    {
+        return $this->tag;
+    }
+
+    public function setTag(Tag $tag): static
+    {
+        $this->tag = $tag;
+        return $this;
+    }
+
     public function getLanguageId(): int
     {
         return $this->language_id;
@@ -78,6 +97,17 @@ class TagVariant
     public function setLanguageId(int $language_id): static
     {
         $this->language_id = $language_id;
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): static
+    {
+        $this->language = $language;
         return $this;
     }
 

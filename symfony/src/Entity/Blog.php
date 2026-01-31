@@ -37,6 +37,10 @@ class Blog
     #[ORM\Column(nullable: true)]
     private ?int $theme_version_id = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'theme_version_id', referencedColumnName: 'id')]
+    private ?ThemeVersion $theme_version = null;
+
     #[ORM\Column(length: 255, unique: true)]
     private string $subdomain;
 
@@ -154,6 +158,17 @@ class Blog
     public function setThemeVersionId(?int $theme_version_id): static
     {
         $this->theme_version_id = $theme_version_id;
+        return $this;
+    }
+
+    public function getThemeVersion(): ?ThemeVersion
+    {
+        return $this->theme_version;
+    }
+
+    public function setThemeVersion(?ThemeVersion $theme_version): static
+    {
+        $this->theme_version = $theme_version;
         return $this;
     }
 

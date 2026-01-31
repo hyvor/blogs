@@ -17,8 +17,16 @@ class BlogVariant
     #[ORM\Column]
     private int $blog_id;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
+    private Blog $blog;
+
     #[ORM\Column]
     private int $language_id;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
+    private Language $language;
 
     #[ORM\Column(length: 160, nullable: true)]
     private ?string $name = null;
@@ -42,6 +50,17 @@ class BlogVariant
         return $this;
     }
 
+    public function getBlog(): Blog
+    {
+        return $this->blog;
+    }
+
+    public function setBlog(Blog $blog): static
+    {
+        $this->blog = $blog;
+        return $this;
+    }
+
     public function getLanguageId(): int
     {
         return $this->language_id;
@@ -50,6 +69,17 @@ class BlogVariant
     public function setLanguageId(int $language_id): static
     {
         $this->language_id = $language_id;
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): static
+    {
+        $this->language = $language;
         return $this;
     }
 
