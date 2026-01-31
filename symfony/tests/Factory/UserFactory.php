@@ -15,9 +15,7 @@ final class UserFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -36,10 +34,10 @@ final class UserFactory extends PersistentObjectFactory
         return [
             'blog_id' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),
-            'role' => ,
+            'role' => 'admin',
             'slug' => self::faker()->text(255),
             'sort' => self::faker()->randomNumber(),
-            'status' => self::faker()->text(255),
+            'status' => 'active',
         ];
     }
 
@@ -49,8 +47,7 @@ final class UserFactory extends PersistentObjectFactory
     #[\Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(User $user): void {})
-        ;
+        return $this// ->afterInstantiate(function(User $user): void {})
+            ;
     }
 }

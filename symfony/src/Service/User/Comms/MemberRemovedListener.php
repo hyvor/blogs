@@ -21,7 +21,7 @@ class MemberRemovedListener
         $users = $this->em
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            ->join('user.blog', 'b')
+            ->join('u.blog', 'b')
             ->andWhere('b.organization_id = :orgId')
             ->andWhere('u.id = :userId')
             ->setParameter('orgId', $event->getOrganizationId())
@@ -29,7 +29,9 @@ class MemberRemovedListener
             ->getQuery()
             ->getResult();
 
-        dd($users);
+        foreach ($users as $user) {
+            //
+        }
     }
 
 }
