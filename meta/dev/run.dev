@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# install dependencies
+cd /app/backend && compose install
+cd /app/symfony && composer install
+
+# Run supervisor
+/usr/bin/supervisord
