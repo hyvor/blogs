@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\ConsoleApi\Controllers;
 
-use App\Domains\Billing\Usage\AiTokensUsage;
-use App\Domains\Billing\Usage\AutoTranslateCharsUsage;
-use App\Domains\Billing\Usage\StorageUsage;
-use App\Domains\Billing\Usage\UsersUsage;
+use App\Domains\Billing\UsageService;
 use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
@@ -15,11 +12,13 @@ use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
 use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\Billing\Usage\UsageAbstract;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ConsoleController
 {
@@ -106,34 +105,38 @@ class ConsoleController
         ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
         Request $request,
         Billing $billing,
-        UsersUsage $usersUsage,
-        StorageUsage $storageUsage,
-        AutoTranslateCharsUsage $autoTranslateCharsUsage,
-        AiTokensUsage $aiTokensUsage
+        UsageService $usageService,
     ): JsonResponse {
 
-        $user = $consoleApiAuthMiddleware->getUser($request);
+        $organization = $consoleApiAuthMiddleware->getOrganization($request);
 
-        $license = $billing->license($user->id, null);
+        if (!$organization) {
+            throw new BadRequestHttpException('no organization found');
+        }
+
+        try {
+            $license = $billing->license($organization->id);
+        } catch (CommsApiFailedException) {
+            throw new UnprocessableEntityHttpException('unable to fetch the license. please try again later');
+        }
 
         return response()->json([
-            'users' => $this->usageOf($usersUsage, $license, $user->id),
-            'storage' => $this->usageOf($storageUsage, $license, $user->id),
-            'auto_translate_chars' => $this->usageOf($autoTranslateCharsUsage, $license, $user->id),
-            'ai_tokens' => $this->usageOf($aiTokensUsage, $license, $user->id),
+            'users' => $this->usageOf($license, 'users', $usageService->getUsersUsage($organization->id)),
+            'storage' => $this->usageOf($license, 'storage', $usageService->getStorageUsageBytes($organization->id)),
+            'auto_translate_chars' => $this->usageOf($license, 'autoTranslationsChars', $usageService->getAutoTranslateCharsUsageThisMonth($organization->id)),
+            'ai_tokens' => $this->usageOf($license, 'aiTokens', $usageService->getAiTokensUsage($organization->id)),
         ]);
     }
 
     /**
      * @return array{used: int, limit: int}
      */
-    private function usageOf(UsageAbstract $usage, ?License $license, int $userId): array
+    private function usageOf(ResolvedLicense $license, string $licenseKey, int $currentUsage): array
     {
-        $used = $usage->usageOfUser($userId);
-        $limit = $license ? $license->{$usage->getKey()} : 0;
+        $limit = $license->license->{$licenseKey} ?? 0;
 
         return [
-            'used' => $used,
+            'used' => $currentUsage,
             'limit' => $limit,
         ];
     }

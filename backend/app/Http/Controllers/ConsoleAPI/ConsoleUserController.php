@@ -70,7 +70,7 @@ class ConsoleUserController extends Controller
         $role = UserRoleEnum::from($request->input('role'));
 
         if (str_contains($usernameOrEmail, '@')) {
-            $hyvorUser = $auth->fromEmail($usernameOrEmail);
+            $hyvorUser = $auth->fromEmail($usernameOrEmail)[0] ?? null;
         } else {
             $hyvorUser = $auth->fromUsername($usernameOrEmail);
         }

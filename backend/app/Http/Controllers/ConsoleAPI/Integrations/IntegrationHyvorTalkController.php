@@ -60,9 +60,8 @@ class IntegrationHyvorTalkController
             throw new TrustedException('Hyvor Talk integration already exists');
         }
 
-        // TODO: Org
-        if (!$blog->hyvor_user_id) {
-            throw new TrustedException('Hyvor Talk integration requires Hyvor Talk user ID');
+        if (!$blog->organization_id) {
+            throw new TrustedException('Hyvor Talk integration requires an organization');
         }
 
         $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite($blog);
