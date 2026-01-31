@@ -75,8 +75,10 @@ class UserRepository
 
         return User::join(
             'user_variants',
-            fn($join) => $join->on('user_variants.user_id', '=', 'users.id')
-                ->where('user_variants.language_id', '=', $primaryLanguage->id)
+            fn($join)
+                => $join
+                ->on('user_variants.user_id', '=', 'users.id')
+                ->where('user_variants.language_id', '=', $primaryLanguage->id),
         )
             ->where('users.blog_id', $blog->id)
             ->where('user_variants.name', 'LIKE', $search)
@@ -98,23 +100,28 @@ class UserRepository
             ['users.posts_count', 'DESC'],
         ],
     ): CollectionWithTotal {
-        $builder = (new FilterQ)->expression($filter)
+        $builder = (new FilterQ)
+            ->expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
-                $keys->add('id')
+                $keys
+                    ->add('id')
                     ->column('users.id')
                     ->valueType('int');
 
-                $keys->add('slug')
+                $keys
+                    ->add('slug')
                     ->column('users.slug')
                     ->valueType('string|int')
                     ->operators('=,!=');
 
-                $keys->add('posts_count')
+                $keys
+                    ->add('posts_count')
                     ->column('users.posts_count')
                     ->valueType('int');
 
-                $keys->add('created_at')
+                $keys
+                    ->add('created_at')
                     ->column('users.created_at')
                     ->valueType('date');
             })
@@ -178,7 +185,7 @@ class UserRepository
             $language,
             name: $hyvorUser->name,
             location: $hyvorUser->location,
-            bio: $hyvorUser->bio
+            bio: $hyvorUser->bio,
         );
 
         $user = $user->refresh();
