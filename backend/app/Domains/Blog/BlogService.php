@@ -33,12 +33,18 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
+use Hyvor\Internal\Component\Component;
 use Illuminate\Support\Facades\DB;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 
 class BlogService
 {
 
-    public function __construct() {
+    public function __construct(
+        private CommsInterface $comms,
+    )
+    {
     }
 
     public static function isSubdomainReserved(string $subdomain): bool
@@ -54,8 +60,8 @@ class BlogService
     }
 
     public function createBlog(
-        int $userId,
-        int $organizationId,
+        ?int $userId,
+        ?int $organizationId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
@@ -73,7 +79,10 @@ class BlogService
             $blog->refresh(); // fetch default columns
 
             if ($organizationId) {
-                $this->resource->register($organizationId, $blog->id);
+                $this->comms->send(new ResourceCreated(
+                    Component::BLOGS,
+                    $organizationId
+                ));
             }
 
             (new LanguageFiller($blog))->fill();

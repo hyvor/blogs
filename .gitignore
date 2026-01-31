@@ -1,7 +1,7 @@
 .idea
 .vscode
 !.vscode/settings.json
-.env
+backend/.env
 .DS_Store
 testing/*
 data.ms/
