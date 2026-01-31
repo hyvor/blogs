@@ -2,9 +2,4 @@
 
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 
-class MemberRemovedListenerTest extends KernelTestCase
-{
-
-    //
-
-}
+class MemberRemovedListenerTest extends KernelTestCase {}
