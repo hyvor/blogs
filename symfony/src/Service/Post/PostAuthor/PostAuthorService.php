@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Service\Post\PostAuthor;
+
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
