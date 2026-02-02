@@ -19,3 +19,6 @@ Copy `.env.dev` to `.env`, run `cp .env.dev .env`. Update the `.env` file with t
 From hyvor/dev directory, run `./run blogs` to start Hyvor Blogs at `https://blogs.hyvor.localhost`.
 #### Step 3: Run database migrations
 Connect to the hyvor-blogs-backend container and run `php artisan refresh:dev`.
+The first time you run this command, it will take a while to download the themes from GitHub.
+
+That's it! You can now access the Hyvor Blogs at `https://blogs.hyvor.localhost`.
