@@ -3,12 +3,14 @@
 namespace App\Service\User;
 
 use App\Entity\User;
+use App\Service\Post\PostAuthor\PostAuthorService;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserService
 {
 
     public function __construct(
-        private \Doctrine\ORM\EntityManagerInterface $em,
+        private EntityManagerInterface $em,
         private PostAuthorService $postAuthorService,
     ) {}
 

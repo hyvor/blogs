@@ -149,7 +149,6 @@ class UserRepository
         Blog $blog,
         int $hyvorUserId,
         UserRoleEnum $role,
-        UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
         $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($hyvorUserId);
@@ -170,7 +169,7 @@ class UserRepository
         $user = User::create([
             'blog_id' => $blog->id,
             'role' => $role,
-            'status' => $status,
+            'status' => UserStatusEnum::ACTIVE,
             'slug' => UniqueBlogItemSlugGenerator::forHyvorUser($blog, $hyvorUser),
             'hyvor_user_id' => $hyvorUser->id,
             'email' => $hyvorUser->email,
@@ -352,26 +351,6 @@ class UserRepository
         }
 
         return $hyvorUser->email;
-    }
-
-    public static function sendInviteEmail(User $user): void
-    {
-        $auth = app(AuthInterface::class);
-        if (!$user->hyvor_user_id) {
-            return;
-        }
-        $hyvorUser = $auth->fromId($user->hyvor_user_id);
-        if (!$hyvorUser) {
-            return;
-        }
-
-        Mail::to($hyvorUser->email)->send(new InviteUserMail($user, $hyvorUser));
-    }
-
-    public static function activateUser(User $user): void
-    {
-        $user->status = UserStatusEnum::ACTIVE;
-        $user->save();
     }
 
 

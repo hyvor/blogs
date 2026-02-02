@@ -13,58 +13,69 @@ class UsageService
 {
 
     public function __construct(
-        private Connection $db
-    ) {
-    }
+        private Connection $db,
+    ) {}
 
     public function getUsersUsage(int $organizationId): int
     {
-        $result = $this->db->selectOne(<<<SQL
-            SELECT SUM(
-                COALESCE((counts->>'users')::INT, 0)
-            ) AS count
-            FROM blogs
-            WHERE organization_id = ? 
-        SQL, [$organizationId]);
+        $result = $this->db->selectOne(
+            <<<SQL
+                SELECT SUM(
+                    COALESCE((counts->>'users')::INT, 0)
+                ) AS count
+                FROM blogs
+                WHERE organization_id = ? 
+                SQL,
+            [$organizationId],
+        );
 
         return $result->count ?? 0;
     }
 
     public function getStorageUsageBytes(int $organizationId): int
     {
-        $result = $this->db->selectOne(<<<SQL
-            SELECT SUM(
-                COALESCE((counts->>'media')::INT, 0)
-            ) AS count
-            FROM blogs
-            WHERE organization_id = ?
-        SQL, [$organizationId]);
+        $result = $this->db->selectOne(
+            <<<SQL
+                SELECT SUM(
+                    COALESCE((counts->>'media')::INT, 0)
+                ) AS count
+                FROM blogs
+                WHERE organization_id = ?
+                SQL,
+            [$organizationId],
+        );
 
         return $result->count ?? 0;
     }
 
     public function getAutoTranslateCharsUsageThisMonth(int $organizationId): int
     {
-        $result = $this->db->selectOne(<<<SQL
-            SELECT SUM(chars) AS count
-            FROM auto_translations
-            INNER JOIN blogs ON auto_translations.blog_id = blogs.id
-            WHERE blogs.organization_id = ?
-            AND auto_translations.created_at >= ?
-        SQL, [$organizationId, now()->startOfMonth()]);
+        $result = $this->db->selectOne(
+            <<<SQL
+                SELECT SUM(chars) AS count
+                FROM auto_translations
+                INNER JOIN blogs ON auto_translations.blog_id = blogs.id
+                WHERE blogs.organization_id = ?
+                AND auto_translations.created_at >= ?
+                SQL,
+            [$organizationId, now()->startOfMonth()],
+        );
 
         return $result->count ?? 0;
     }
 
     public function getAiTokensUsage(int $organizationId): int
     {
-        $result = $this->db->selectOne(<<<SQL
-            SELECT SUM(tokens_total) AS count
-            FROM gpt_prompts
-            INNER JOIN blogs ON gpt_prompts.blog_id = blogs.id
-            WHERE blogs.organization_id = ?
-            AND gpt_prompts.created_at >= ?
-        SQL, [$organizationId, now()->startOfMonth()]);
+        $result = $this->db->selectOne(
+            <<<SQL
+                SELECT SUM(tokens_total) AS count
+                FROM gpt_prompts
+                INNER JOIN blogs ON gpt_prompts.blog_id = blogs.id
+                WHERE blogs.organization_id = ?
+                AND gpt_prompts.created_at >= ?
+                SQL,
+            [$organizationId, now()->startOfMonth()],
+        );
 
         return $result->count ?? 0;
     }
@@ -108,7 +119,7 @@ class UsageService
         $limit = $license->$licenseKey ?? 0;
 
         assert(is_callable($usageFunc));
-        $usage = $usageFunc();
+        $usage = $usageFunc($blog->organization_id);
 
         return $usage >= $limit;
     }

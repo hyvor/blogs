@@ -3,6 +3,7 @@
 namespace App\Service\User\Comms;
 
 use App\Entity\User;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Hyvor\Internal\Bundle\Comms\Event\FromCore\Member\MemberRemoved;
@@ -13,6 +14,7 @@ class MemberRemovedListener
 
     public function __construct(
         private EntityManagerInterface $em,
+        private UserService $userService,
     ) {}
 
     public function __invoke(MemberRemoved $event): void
@@ -30,7 +32,7 @@ class MemberRemovedListener
             ->getResult();
 
         foreach ($users as $user) {
-            //
+            $this->userService->deleteUser($user);
         }
     }
 

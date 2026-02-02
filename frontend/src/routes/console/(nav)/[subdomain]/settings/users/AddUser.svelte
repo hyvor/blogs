@@ -14,6 +14,7 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { createGuestUser, createHyvorUser } from './userActions';
 	import { createEventDispatcher } from 'svelte';
+	import { OrganizationMemberSearch } from '@hyvor/design/cloud';
 
 	interface Props {
 		show: boolean;
@@ -23,11 +24,8 @@
 
 	let type: 'hyvor' | 'guest' = $state('hyvor');
 
-	let hyvorUsernameOrEmail: string = $state('');
-	let hyvorUsernameOrEmailError: null | string = $state(null);
-	let hyvorUsernameOrEmailEl: HTMLInputElement | undefined = $state();
-
 	let role: UserRole = $state('admin');
+	let hyvorUserId: number | undefined = $state(undefined);
 
 	let guestName = $state('');
 	let guestNameError: null | string = $state(null);
@@ -42,24 +40,20 @@
 	}
 
 	function addHyvor() {
-		hyvorUsernameOrEmailError = null;
-
-		if (hyvorUsernameOrEmail.trim() === '') {
-			hyvorUsernameOrEmailError = 'Username or email is required';
-			hyvorUsernameOrEmailEl?.focus();
+		if (!hyvorUserId) {
 			return;
 		}
 
 		isLoading = true;
 
-		createHyvorUser(hyvorUsernameOrEmail, role)
+		createHyvorUser(hyvorUserId, role)
 			.then((res) => {
 				dispatch('add', res);
 				show = false;
-				toast.success('User invited successfully');
+				toast.success('User added successfully');
 			})
 			.catch((e) => {
-				toast.error(e.message || 'Failed to invite user');
+				toast.error(e.message || 'Failed to add user');
 			})
 			.finally(() => {
 				isLoading = false;
@@ -97,11 +91,15 @@
 	title="Add User"
 	footer={{
 		confirm: {
-			text: type === 'hyvor' ? 'Invite User' : 'Add User'
+			text: 'Add User',
+			props: {
+				disabled: type === 'hyvor' && hyvorUserId === undefined
+			}
 		}
 	}}
 	loading={isLoading}
 	on:confirm={handleAdd}
+	closeOnOutsideClick={false}
 >
 	<SplitControl label="User Type" caption="Guest users cannot access the console">
 		<InputGroup>
@@ -111,24 +109,8 @@
 	</SplitControl>
 
 	{#if type === 'hyvor'}
-		<SplitControl label="Username or Email" caption="The username or email of the HYVOR user">
-			<FormControl>
-				<TextInput
-					bind:value={hyvorUsernameOrEmail}
-					state={hyvorUsernameOrEmailError ? 'error' : undefined}
-					bind:input={hyvorUsernameOrEmailEl}
-				/>
-				{#if hyvorUsernameOrEmailError}
-					<Validation state="error">
-						{hyvorUsernameOrEmailError}
-					</Validation>
-				{/if}
-				<div class="signup-note">
-					Ask the user to <Link href="https://hyvor.com/signup" target="_blank"
-						>signup for HYVOR</Link
-					> if they haven't already.
-				</div>
-			</FormControl>
+		<SplitControl label="User">
+			<OrganizationMemberSearch bind:selectedUserId={hyvorUserId} />
 		</SplitControl>
 		<SplitControl label="Role" caption="The role of the user">
 			<div class="roles">

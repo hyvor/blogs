@@ -38,7 +38,7 @@ class ConsoleApiAccessMiddleware
 
             app()->instance(
                 ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser($owner)
+                new ConsoleApiAccessingUser($owner),
             );
         } else {
             if ($apiKey) {
@@ -53,7 +53,7 @@ class ConsoleApiAccessMiddleware
 
                 app()->instance(
                     ConsoleApiAccessingUser::class,
-                    new ConsoleApiAccessingUser($owner)
+                    new ConsoleApiAccessingUser($owner),
                 );
             } else {
                 $me = $this->auth->me($request);
@@ -68,13 +68,20 @@ class ConsoleApiAccessMiddleware
                 if (!$user) {
                     throw new TrustedException(
                         'You do not have access to this blog',
-                        TrustedException::ERROR_UNAUTHORIZED
+                        TrustedException::ERROR_UNAUTHORIZED,
+                    );
+                }
+
+                if ($this->blog->organization_id !== $me->getOrganization()?->id) {
+                    throw new TrustedException(
+                        'You do not have access to this blog (organization mismatch)',
+                        TrustedException::ERROR_UNAUTHORIZED,
                     );
                 }
 
                 app()->instance(
                     ConsoleApiAccessingUser::class,
-                    new ConsoleApiAccessingUser($user)
+                    new ConsoleApiAccessingUser($user),
                 );
             }
         }

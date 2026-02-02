@@ -23,7 +23,7 @@ Route::get('callout', function () {
         '
         <aside data-emoji="💡" style="background-color: #ffd969" data-fg="#000">The only real valuable thing is intuition.</aside>
     ',
-        Blog::find(1)
+        Blog::find(1),
     );
 
     dd($json);
@@ -35,7 +35,7 @@ Route::get('code', function () {
         language: 'plain',
         themeName: 'nord',
         lineNumbers: true,
-        annotations: ''
+        annotations: '',
     );
 
     dd($languages);
@@ -52,14 +52,9 @@ Route::get('embed', function () {
     $html = '<div id="hyvor-blogs-embed-wrap"></div>';
     $js = view('embed.embed-js', [
         'domain' => 'http://blogs.hyvor.test:8080',
-        'subdomain' => 'test'
+        'subdomain' => 'test',
     ]);
     return $html . '<script>' . $js . '</script>';
-});
-
-Route::get('user-email', function () {
-    $user = User::whereNotNull('hyvor_user_id')->first();
-    UserRepository::sendInviteEmail($user);
 });
 
 Route::get('broken', function () {
