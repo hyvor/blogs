@@ -23,11 +23,10 @@ class MemberRemovedListener
         $users = $this->em
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            ->join('u.blog', 'b')
-            ->andWhere('b.organization_id = :orgId')
-            ->andWhere('u.id = :userId')
+            ->join('u.blog', 'b', 'WITH', 'b.organization_id = :orgId')
+            ->andWhere('u.hyvor_user_id = :hyvorUserId')
             ->setParameter('orgId', $event->getOrganizationId())
-            ->setParameter('userId', $event->getUserId())
+            ->setParameter('hyvorUserId', $event->getUserId())
             ->getQuery()
             ->getResult();
 

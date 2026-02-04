@@ -16,25 +16,28 @@ class MemberRemovedListenerTest extends KernelTestCase
 
     public function test_deletes_user_and_variants(): void
     {
-        $blog = BlogFactory::createOne([
-            'organization_id' => 45,
-        ]);
+        $hyvorUserId = 100;
 
-        $user = UserFactory::createOne([
-            'blog' => $blog,
-        ]);
+        $blog = BlogFactory::createOne(['organization_id' => 45]);
+        $user = UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => $hyvorUserId]);
         $userId = $user->getId();
+        $userOtherHyvorUserId = UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => 101]);
+
+        $blogOtherOrg = BlogFactory::createOne(['organization_id' => 46]);
+        $userOtherOrg = UserFactory::createOne(['blog' => $blogOtherOrg, 'hyvor_user_id' => $hyvorUserId]);
 
         $event = new MemberRemoved(
             organizationId: 45,
-            userId: $user->getId(),
+            userId: $hyvorUserId,
         );
 
         $this->getEd()->dispatch($event);
 
-        $this->assertNull(
-            $this->getEm()->getRepository(User::class)->find($userId),
-        );
+        $userRepo = $this->getEm()->getRepository(User::class);
+
+        $this->assertNull($userRepo->find($userId));
+        $this->assertNotNull($userRepo->find($userOtherHyvorUserId->getId()));
+        $this->assertNotNull($userRepo->find($userOtherOrg->getId()));
     }
 
 }
