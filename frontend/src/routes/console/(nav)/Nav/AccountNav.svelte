@@ -1,13 +1,17 @@
 <script>
 	import { NavLink } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import IconCurrencyEuro from '@hyvor/icons/IconCurrencyEuro';
-	import { onMount } from 'svelte';
+	import { canAccessBilling } from '../../lib/orgPermission.ts';
 </script>
 
 <div class="wrap">
-	<NavLink href={consoleUrl('/billing')} active={$page.url.pathname === `/console/billing`}>
+	<NavLink
+			href={consoleUrl('/billing')}
+			active={page.url.pathname === `/console/billing`}
+			disabled={!canAccessBilling()}
+	>
 		{#snippet start()}
 			<IconCurrencyEuro />
 		{/snippet}

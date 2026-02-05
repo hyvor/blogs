@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { AuthUser, BlogList } from './lib/types';
-	import { authUserStore, blogListStore } from './lib/stores';
+	import {authOrganizationStore, authUserStore, blogListStore} from './lib/stores';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
@@ -28,8 +28,6 @@
 
 	let isLoading = $state(true);
 
-	let organization = $state(null as null | CloudContextOrganization);
-
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
 
@@ -50,8 +48,8 @@
 				setConfig(res.config);
 
 				authUserStore.set(res.user);
+				authOrganizationStore.set(res.organization);
 				blogListStore.set(res.blogs);
-				organization = res.organization;
 
 				if (res.blogs[0]?.type === 'temp') {
 					const subdomain = res.blogs[0].subdomain;
@@ -107,13 +105,13 @@
 				deployment: 'cloud',
 				instance: getConfig().hyvor.instance,
 				user: get(authUserStore),
-				organization,
+				organization: get(authOrganizationStore),
 				callbacks: {
 					onOrganizationSwitch: (switcher) => {
 						isLoading = true;
 
 						switcher
-							.then((org) => {
+							.then(() => {
 								startConsole(true);
 							})
 							.catch(() => {

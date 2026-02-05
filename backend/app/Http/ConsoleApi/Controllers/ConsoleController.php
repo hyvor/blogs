@@ -11,7 +11,7 @@ use App\Domains\User\UserRepository;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
-use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\SyntaxHighlighter\Highlighter;
@@ -104,7 +104,7 @@ class ConsoleController
     public function getUsage(
         ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
         Request $request,
-        Billing $billing,
+        BillingInterface $billing,
         UsageService $usageService,
     ): JsonResponse {
 
