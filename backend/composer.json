@@ -24,7 +24,7 @@
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/internal": "4.0.2-beta.2",
+        "hyvor/internal": "4.0.2",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",

@@ -21,6 +21,12 @@ const config = {
 			handleHttpError: 'ignore',
 			entries: ['*', ...Object.keys(APP_REDIRECTS)]
 		}
+	},
+
+	compilerOptions: {
+		experimental: {
+			async: true
+		}
 	}
 };
 

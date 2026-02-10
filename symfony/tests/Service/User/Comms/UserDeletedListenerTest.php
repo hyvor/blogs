@@ -5,7 +5,6 @@ namespace App\Tests\Service\User\Comms;
 use App\Entity\User;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\UserFactory;
-use Hyvor\Internal\Bundle\Comms\Event\FromCore\Member\MemberRemoved;
 use Hyvor\Internal\Bundle\Comms\Event\FromCore\User\UserDeleted;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -34,8 +35,8 @@ class User
     #[ORM\Column(nullable: true)]
     private ?int $hyvor_user_id = null;
 
-    #[ORM\Column()]
-    private string $role;
+    #[ORM\Column(enumType: UserRole::class)]
+    private UserRole $role;
 
     #[ORM\Column(options: ['default' => 'invited'])]
     private string $status = 'invited';
@@ -155,12 +156,12 @@ class User
         return $this;
     }
 
-    public function getRole(): string
+    public function getRole(): UserRole
     {
         return $this->role;
     }
 
-    public function setRole(string $role): static
+    public function setRole(UserRole $role): static
     {
         $this->role = $role;
         return $this;

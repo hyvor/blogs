@@ -1,6 +1,6 @@
 <?php
 
-namespace Service\User\Comms;
+namespace App\Service\User\Comms;
 
 use App\Entity\User;
 use App\Service\User\UserService;
