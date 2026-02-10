@@ -36,8 +36,5 @@
     <include>
       <directory suffix=".php">./app</directory>
     </include>
-    <exclude>
-      <directory suffix=".php">./app/Stale</directory>
-    </exclude>
   </source>
 </phpunit>
