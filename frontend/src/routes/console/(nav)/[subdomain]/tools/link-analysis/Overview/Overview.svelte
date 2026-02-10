@@ -41,8 +41,8 @@
 			<div class="stats-title">Stats</div>
 
 			<div class="stats-note">
-				Stats are based on the currently analyzed posts. Some posts may not be analyzed until a
-				full-blog analysis is done.
+				Stats are based on the currently analyzed posts. Some posts may not be analyzed
+				until a full-blog analysis is done.
 			</div>
 		</div>
 
@@ -67,13 +67,17 @@
 				<div class="stats-title">Analyses</div>
 
 				<div class="stats-note">
-					A full-blog analysis is done every 2 weeks automatically (only published posts are
-					analyzed). You can also start one manually.
+					A full-blog analysis is done every 2 weeks automatically (only published posts
+					are analyzed). You can also start one manually.
 				</div>
 			</div>
 
 			<div class="stats-top-right">
-				<Button size="small" on:click={handleStartNewAnalysis} disabled={isStartingNewAnalysis}>
+				<Button
+					size="small"
+					on:click={handleStartNewAnalysis}
+					disabled={isStartingNewAnalysis}
+				>
 					Start New Analysis
 				</Button>
 			</div>

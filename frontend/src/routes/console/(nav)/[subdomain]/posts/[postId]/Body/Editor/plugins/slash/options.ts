@@ -181,7 +181,7 @@ function selectImage() {
 						])
 					);
 				},
-				onclose: () => {	
+				onclose: () => {
 					destroy();
 					resolve(null);
 				}
@@ -299,7 +299,6 @@ function createBookmark(url: string = '') {
 			unmount(creator);
 			div.remove();
 		}
-
 	});
 }
 

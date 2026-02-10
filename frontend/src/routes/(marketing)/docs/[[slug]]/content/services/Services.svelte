@@ -21,13 +21,15 @@
 {#if active === 'comments'}
 	<div>
 		<p>
-			Adding a commenting system to your blog means your readers have a way to share their opinions
-			and participate in conversations in the blog. It can increase the authority of your blog.
+			Adding a commenting system to your blog means your readers have a way to share their
+			opinions and participate in conversations in the blog. It can increase the authority of
+			your blog.
 		</p>
 		<p>
-			<a href="https://talk.hyvor.com">Hyvor Talk</a> is our own commenting platform. Hyvor Blogs
-			integrates with Hyvor Talk directly to allow comments on your blog. You can use Hyvor Talk for
-			<b>FREE</b> on <a href ="/pricing">all plans</a>.
+			<a href="https://talk.hyvor.com">Hyvor Talk</a> is our own commenting platform. Hyvor
+			Blogs integrates with Hyvor Talk directly to allow comments on your blog. You can use
+			Hyvor Talk for
+			<b>FREE</b> on <a href="/pricing">all plans</a>.
 		</p>
 
 		<!--  <Callout type="info">
@@ -42,9 +44,9 @@
 
 		<h2>Adding Comments</h2>
 		<p>
-			To add comments to your blog, you need to add the code given by the commenting system in the
-			"Comments Embed Code" field. This will add the comments to the bottom of each post. You can
-			find the code in the commenting system's dashboard.
+			To add comments to your blog, you need to add the code given by the commenting system in
+			the "Comments Embed Code" field. This will add the comments to the bottom of each post.
+			You can find the code in the commenting system's dashboard.
 		</p>
 		<p>Here are some popular commenting systems:</p>
 		<ul>
@@ -65,18 +67,21 @@
 			<li>First, signup for a <a href="/docs/newsletter#services">newsletter service</a>.</li>
 			<li>Copy the given HTML code.</li>
 			<li>
-				Paste it in <b>Console → Settings → Comments & Newsletter → Newsletter Signup Form Code</b>.
+				Paste it in <b
+					>Console → Settings → Comments & Newsletter → Newsletter Signup Form Code</b
+				>.
 			</li>
 		</ul>
 
 		<h2>Positioning</h2>
 		<p>
-			All Hyvor Blogs <a href="/themes">themes</a> are designed to have a place for the newsletter
-			signup form. If you want to change this position, you will need to
-			<a href="/docs/theme#editing">edit your theme</a>, and change the position of the newsletter
-			<a href="/docs/themes-templates#placeholders">placeholder</a>. In your template files, find
-			and cut this code <code>{`{{ _newsletter | template }}`}</code>, and paste it in the place you
-			need the signup form to be.
+			All Hyvor Blogs <a href="/themes">themes</a> are designed to have a place for the
+			newsletter signup form. If you want to change this position, you will need to
+			<a href="/docs/theme#editing">edit your theme</a>, and change the position of the
+			newsletter
+			<a href="/docs/themes-templates#placeholders">placeholder</a>. In your template files,
+			find and cut this code <code>{`{{ _newsletter | template }}`}</code>, and paste it in
+			the place you need the signup form to be.
 		</p>
 
 		<h2>Newsletter Services</h2>
@@ -88,7 +93,9 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a></div>
+				<div>
+					<a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-convertkit" target="_blank"
 						>{#snippet end()}
@@ -99,7 +106,9 @@
 			</TableRow>
 			<TableRow>
 				<div>
-					<a href="https://mailchimp.com/en-gb/" rel="nofollow" target="_blank">MailChimp</a>
+					<a href="https://mailchimp.com/en-gb/" rel="nofollow" target="_blank"
+						>MailChimp</a
+					>
 				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/how-to-add-mailchimp" target="_blank"
@@ -111,7 +120,9 @@
 			</TableRow>
 			<TableRow>
 				<div>
-					<a href="https://emailoctopus.com/" rel="nofollow" target="_blank">EmailOctopus</a>
+					<a href="https://emailoctopus.com/" rel="nofollow" target="_blank"
+						>EmailOctopus</a
+					>
 				</div>
 				<!-- <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
 			</TableRow>
@@ -122,7 +133,9 @@
 			>
 			<TableRow
 				><div>
-					<a href="https://www.mailerlite.com/" rel="nofollow" target="_blank">MailerLite</a>
+					<a href="https://www.mailerlite.com/" rel="nofollow" target="_blank"
+						>MailerLite</a
+					>
 				</div></TableRow
 			>
 		</Table>
@@ -160,7 +173,9 @@
 					>
 				</div>
 				<div>
-					<Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog" target="_blank"
+					<Link
+						href="https://hyvor.com/blog/add-google-analytics-to-your-blog"
+						target="_blank"
 						>{#snippet end()}
 							<IconBoxArrowUpRight />
 						{/snippet}View</Link
@@ -178,16 +193,22 @@
 				<div><a href="https://matomo.org/" rel="nofollow" target="_blank">Matomo</a></div>
 			</TableRow>
 			<TableRow>
-				<div><a href="https://usefathom.com/" rel="nofollow" target="_blank">Fathom</a></div>
+				<div>
+					<a href="https://usefathom.com/" rel="nofollow" target="_blank">Fathom</a>
+				</div>
 			</TableRow>
 			<TableRow
 				><div>
-					<a href="https://plausible.io/" rel="nofollow" target="_blank">Plausible Analytics</a>
+					<a href="https://plausible.io/" rel="nofollow" target="_blank"
+						>Plausible Analytics</a
+					>
 				</div></TableRow
 			>
 			<TableRow
 				><div>
-					<a href="https://simpleanalytics.io/" rel="nofollow" target="_blank">Simple Analytics</a>
+					<a href="https://simpleanalytics.io/" rel="nofollow" target="_blank"
+						>Simple Analytics</a
+					>
 				</div></TableRow
 			>
 			<TableRow
@@ -198,24 +219,25 @@
 		</Table>
 
 		<p>
-			We are not affiliated with any of these services. There are plenty of other analytics tools
-			not mentioned here.
+			We are not affiliated with any of these services. There are plenty of other analytics
+			tools not mentioned here.
 		</p>
 
 		<h2>Privacy</h2>
 		<p>
 			Some of those platforms track <b>users</b> while others only track <b>visits</b>. Before
 			tracking users, you will need the user's consent (Using a <b>cookie banner</b>). Please
-			consult the documentations of each service to learn more about how they handle personal data.
+			consult the documentations of each service to learn more about how they handle personal
+			data.
 		</p>
 	</div>
 {:else if active === 'memberships'}
 	<div>
 		<p>
-			Adding memberships (login, signup, subscriptions, etc.) is an easy way to allow your readers
-			to log in to your blog, as well as for you to provide gated content and earn a subscription
-			revenue. Because these feature are dynamic, Hyvor Blogs does not and will not support
-			memberships natively, as we thrive to make your blog static.
+			Adding memberships (login, signup, subscriptions, etc.) is an easy way to allow your
+			readers to log in to your blog, as well as for you to provide gated content and earn a
+			subscription revenue. Because these feature are dynamic, Hyvor Blogs does not and will
+			not support memberships natively, as we thrive to make your blog static.
 		</p>
 
 		<h2>Membership Platforms</h2>
@@ -227,7 +249,10 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a></div>
+				<div>
+					<a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a
+					>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-memberstack" target="_blank"
 						>{#snippet end()}
@@ -239,7 +264,9 @@
 
 			<TableRow>
 				<div>
-					<a href="https://www.memberspace.com/" rel="nofollow" target="_blank">Memberspace</a>
+					<a href="https://www.memberspace.com/" rel="nofollow" target="_blank"
+						>Memberspace</a
+					>
 				</div>
 				<!-- <div><Link href="https://hyvor.com/blog/add-memberspace"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
 			</TableRow>
@@ -247,8 +274,8 @@
 
 		<Callout type="info"
 			><p>
-				Note that integrating these platforms, in most cases, requires you to write Javascript code.
-				If you just want to connect with your users, embedding a <a
+				Note that integrating these platforms, in most cases, requires you to write
+				Javascript code. If you just want to connect with your users, embedding a <a
 					href="https://blogs.hyvor.com/docs/newsletter">newsletter</a
 				> signup form would be a better and easy option.
 			</p></Callout
@@ -257,15 +284,15 @@
 {:else}
 	<div>
 		<p>
-			You may want to collect data from your visitors. Embedding a forms service is the easier way
-			to do that.
+			You may want to collect data from your visitors. Embedding a forms service is the easier
+			way to do that.
 		</p>
 
 		<h2>How to Embed Forms</h2>
 		<ul>
 			<li>
-				First, signup for a <a href="/docs/forms#forms">forms services</a>. They allow you to create
-				custom forms as you like
+				First, signup for a <a href="/docs/forms#forms">forms services</a>. They allow you
+				to create custom forms as you like
 			</li>
 			<li>Then, add the form embed code to your blog:</li>
 			<ul>
@@ -292,7 +319,9 @@
 
 			<TableRow>
 				<div>
-					<a href="https://www.google.com/forms" rel="nofollow" target="_blank">Google Forms</a>
+					<a href="https://www.google.com/forms" rel="nofollow" target="_blank"
+						>Google Forms</a
+					>
 				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-google-forms" target="_blank"
@@ -305,7 +334,9 @@
 
 			<TableRow>
 				<div>
-					<a href="https://forms.office.com/" rel="nofollow" target="_blank">Microsoft Forms</a>
+					<a href="https://forms.office.com/" rel="nofollow" target="_blank"
+						>Microsoft Forms</a
+					>
 				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"
@@ -317,7 +348,9 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a></div>
+				<div>
+					<a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"
 						>{#snippet end()}
@@ -339,27 +372,35 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://www.jotform.com/" rel="nofollow" target="_blank">JotForm</a></div>
-			</TableRow>
-
-			<TableRow>
-				<div><a href="https://www.formsite.com/" rel="nofollow" target="_blank">Formsite</a></div>
-			</TableRow>
-
-			<TableRow>
-				<div><a href="https://paperform.co/" rel="nofollow" target="_blank">Paperform</a></div>
+				<div>
+					<a href="https://www.jotform.com/" rel="nofollow" target="_blank">JotForm</a>
+				</div>
 			</TableRow>
 
 			<TableRow>
 				<div>
-					<a href="https://www.zoho.com/forms/" rel="nofollow" target="_blank">Zoho Forms</a>
+					<a href="https://www.formsite.com/" rel="nofollow" target="_blank">Formsite</a>
+				</div>
+			</TableRow>
+
+			<TableRow>
+				<div>
+					<a href="https://paperform.co/" rel="nofollow" target="_blank">Paperform</a>
+				</div>
+			</TableRow>
+
+			<TableRow>
+				<div>
+					<a href="https://www.zoho.com/forms/" rel="nofollow" target="_blank"
+						>Zoho Forms</a
+					>
 				</div>
 			</TableRow>
 		</Table>
 
 		<p>
-			We are not affiliated with any of these services. There are plenty of other forms services not
-			mentioned here.
+			We are not affiliated with any of these services. There are plenty of other forms
+			services not mentioned here.
 		</p>
 	</div>
 {/if}

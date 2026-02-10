@@ -80,10 +80,10 @@
 					<TagName {tag} small />
 				</TagComponent>
 				{#snippet end()}
-												<Text light  small>
+					<Text light small>
 						{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
 					</Text>
-											{/snippet}
+				{/snippet}
 			</ActionListItem>
 		{/each}
 	{/if}

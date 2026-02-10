@@ -22,8 +22,8 @@
 		<a href="#dynamic">Dynamic Redirects</a>.
 	</li>
 	<li>
-		<strong>From</strong> - The path you want to redirect from. For example, <code>/path</code>. For
-		dynamic redirects, you can use regular expressions.
+		<strong>From</strong> - The path you want to redirect from. For example, <code>/path</code>.
+		For dynamic redirects, you can use regular expressions.
 	</li>
 	<li>
 		<strong>To</strong> - Where to redirect the visitor. It can be a path within your blog or an external
@@ -42,9 +42,9 @@
 <h2 id="dynamic">Dynamic Redirects</h2>
 
 <p>
-	With dynamic redirects, you can match a path dynamically using a pattern. This is useful when you
-	want to redirect multiple paths that follow a pattern to a single destination. For example, you
-	can redirect all requests starting with <code>/author/</code> to an external site.
+	With dynamic redirects, you can match a path dynamically using a pattern. This is useful when
+	you want to redirect multiple paths that follow a pattern to a single destination. For example,
+	you can redirect all requests starting with <code>/author/</code> to an external site.
 </p>
 
 <Callout type="info">
@@ -66,8 +66,8 @@
 		Set <strong>From</strong> to a regular expression you want to match (we support PCRE2 syntax).
 	</li>
 	<li>
-		Set <strong>To</strong> to the URL you want to redirect to. You can use captured groups here,
-		like <code>$1</code>.
+		Set <strong>To</strong> to the URL you want to redirect to. You can use captured groups
+		here, like <code>$1</code>.
 	</li>
 	<li>
 		Choose the <strong>Type</strong> of redirect and click <strong>Add</strong>.

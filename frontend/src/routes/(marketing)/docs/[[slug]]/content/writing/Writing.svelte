@@ -150,9 +150,9 @@
 
 <h5>Adding & Removing Links</h5>
 <p>
-	Adding links is similar to adding <a href="/docs/writing#inline-styles">inline styles</a>. Select
-	the text you want to link and then click the Link icon. Next, paste the URL in the input and hit
-	Enter.
+	Adding links is similar to adding <a href="/docs/writing#inline-styles">inline styles</a>.
+	Select the text you want to link and then click the Link icon. Next, paste the URL in the input
+	and hit Enter.
 </p>
 <DocsImage src={linkAddGIF} alt="Adding Links" />
 
@@ -230,15 +230,14 @@
 
 <h3 id="/docs/writing#blocks">Blocks</h3>
 <p>
-	The term "blocks" is used to refer to block-like elements you can add to posts, such as paragraphs
-	and blockquotes. Paragraphs are the basic blocks. You can create a paragraph by pressing <code
-		>Enter</code
-	> anywhere inside the editor.
+	The term "blocks" is used to refer to block-like elements you can add to posts, such as
+	paragraphs and blockquotes. Paragraphs are the basic blocks. You can create a paragraph by
+	pressing <code>Enter</code> anywhere inside the editor.
 </p>
 
 <p>
-	To add other blocks, use the slash command: type slash (<code>/</code>) in a new line to open the
-	blocks list. Use the mouse or up/down arrows to navigate through the list.
+	To add other blocks, use the slash command: type slash (<code>/</code>) in a new line to open
+	the blocks list. Use the mouse or up/down arrows to navigate through the list.
 </p>
 
 <DocsImage src={blocksImgs} alt="Blocks" width={400} />
@@ -328,7 +327,8 @@
 <h4 id="quote">Quote</h4>
 <p>
 	Quote block is usually used to quote something, while it is also generally used make text stand
-	out. You can create a Quote block via the <a href="/docs/writing#slash-command">slash command</a>
+	out. You can create a Quote block via the <a href="/docs/writing#slash-command">slash command</a
+	>
 	or by entering <code>{`> + space`}</code> in a new line (Markdown syntax).
 </p>
 <DocsImage src={qutoeGIF} alt="Quote" width={400} />
@@ -338,8 +338,8 @@
 
 <h4 id="callout">Callout</h4>
 <p>
-	Callout block is used to write text that stands out from other content in the post. You can set an
-	emoji and background/font colors for each callout block.
+	Callout block is used to write text that stands out from other content in the post. You can set
+	an emoji and background/font colors for each callout block.
 </p>
 <DocsImage src={calloutGIF} alt="Quote" width={400} />
 
@@ -361,8 +361,8 @@
 
 <h5 id="excalidraw">Excalidraw</h5>
 <p>
-	Excalidraw is a tool to create diagrams and drawings. You can add Excalidraw drawings/editings in
-	your posts.
+	Excalidraw is a tool to create diagrams and drawings. You can add Excalidraw drawings/editings
+	in your posts.
 </p>
 <DocsImage src={excalidrawGIF} alt="Excalidraw" />
 
@@ -384,8 +384,8 @@
 	<p>
 		Image uploaded from device or a URL are automatically added to your <a href="/docs/media"
 			>media</a
-		> ensuring their availability without depending on an external service. However, images added via
-		Unsplash are hosted at unsplash.com and not uploaded to blog media.
+		> ensuring their availability without depending on an external service. However, images added
+		via Unsplash are hosted at unsplash.com and not uploaded to blog media.
 	</p>
 </Callout>
 
@@ -399,11 +399,11 @@
 <h4 id="embed">Embed</h4>
 <p>
 	Hyvor Blogs supports embedding content from Youtube, Twitter, Instagram, Facebook, and other
-	platforms. <a href="https://unfold.hyvor.com/" target="_blank">Hyvor Unfold</a> is used under the
-	hood to support various platforms. You can add an embed using the
+	platforms. <a href="https://unfold.hyvor.com/" target="_blank">Hyvor Unfold</a> is used under
+	the hood to support various platforms. You can add an embed using the
 	<a href="/docs/writing#slash-command">slash command</a>
-	(<code>/</code> <b>in a new line → Embed</b>). Then, paste the URL you would like to embed in the
-	input box.
+	(<code>/</code> <b>in a new line → Embed</b>). Then, paste the URL you would like to embed in
+	the input box.
 </p>
 <DocsImage src={embedGIF} alt="Embed" />
 
@@ -414,15 +414,15 @@
 <h4 id="link-bookmark">Link Bookmark</h4>
 <p>
 	You can use Link Bookmark block to add a rich link previews to your posts. To insert a link
-	bookmark, type <code>/</code> <b>in a new line → Link Bookmark</b>. Then, paste the URL you would
-	like to embed in the input box and press Enter. Hyvor Blogs will generate a rich preview of the
-	link using OG tags and other metadata.
+	bookmark, type <code>/</code> <b>in a new line → Link Bookmark</b>. Then, paste the URL you
+	would like to embed in the input box and press Enter. Hyvor Blogs will generate a rich preview
+	of the link using OG tags and other metadata.
 </p>
 <DocsImage src={linkBookmarkGIF} alt="Link Bookmark" />
 <Callout type="info">
 	<p>
-		The URL you enter should be publicly accessible to generate a preview. For example, you cannot
-		generate link bookmarks for private social media posts.
+		The URL you enter should be publicly accessible to generate a preview. For example, you
+		cannot generate link bookmarks for private social media posts.
 	</p>
 </Callout>
 
@@ -462,19 +462,19 @@
 		you can set a custom publish time for a post.
 	</li>
 	<li>
-		<b>Authors</b> - You can add <a href="/docs/users">users</a> in your blog as authors of a post.
-		By default, the post creator is added as an author of a post. Users with
-		<a href="/docs/users#roles">editor-level permissions</a> can add or remove authors of a post. One
-		post can have multiple authors.
+		<b>Authors</b> - You can add <a href="/docs/users">users</a> in your blog as authors of a
+		post. By default, the post creator is added as an author of a post. Users with
+		<a href="/docs/users#roles">editor-level permissions</a> can add or remove authors of a post.
+		One post can have multiple authors.
 	</li>
 	<li><b>Tags</b> - You can assign one or more <a href="/docs/tags">tags</a> to a post.</li>
 	<li>
-		<b>Description</b> - A short description of the post. This will be used as the meta description of
-		the post for search engines and social media.
+		<b>Description</b> - A short description of the post. This will be used as the meta description
+		of the post for search engines and social media.
 	</li>
 	<li>
-		<b>Featured Image</b> - The featured image of the post. This will be used as the meta image of the
-		post for search engines and social media.
+		<b>Featured Image</b> - The featured image of the post. This will be used as the meta image of
+		the post for search engines and social media.
 	</li>
 </ul>
 
@@ -483,8 +483,8 @@
 <DocsImage src={postMetaDataAdvancedImg} alt="Post Metadata Advanced" width={400} />
 <ul>
 	<li>
-		<b>Canonical URL</b> - If you have published the same post on a different location, you can add the
-		canonical URL of the post here.
+		<b>Canonical URL</b> - If you have published the same post on a different location, you can add
+		the canonical URL of the post here.
 	</li>
 	<li>
 		<b>Code Head</b> - Custom code to add right before the <code>{`</head>`}</code> tag of the post.
@@ -496,8 +496,8 @@
 
 <Callout type="info">
 	<p>
-		See <a href="/docs/custom-code">custom code</a> documentation for more information on different ways
-		of adding custom code to your blog.
+		See <a href="/docs/custom-code">custom code</a> documentation for more information on different
+		ways of adding custom code to your blog.
 	</p>
 </Callout>
 
@@ -505,8 +505,8 @@
 <p>A post can have one of the following statuses:</p>
 <ul>
 	<li>
-		<b>Draft</b> - Not visible to the public. Only <a href="/docs/users">users</a> of your blog can see
-		the post in the Console.
+		<b>Draft</b> - Not visible to the public. Only <a href="/docs/users">users</a> of your blog can
+		see the post in the Console.
 	</li>
 	<li>
 		<b>Scheduled</b> - Not visible to the public. It will be published automatically at the specified
@@ -517,24 +517,24 @@
 
 <h3 id="publishing">Publishing</h3>
 <p>
-	Once you have finished writing your post, you can publish it. Once published, the post will appear
-	publicly on your blog.
+	Once you have finished writing your post, you can publish it. Once published, the post will
+	appear publicly on your blog.
 </p>
 <p><b>Post → Publish</b></p>
 <DocsImage src={publishingGIF} alt="Publishing" />
 
 <h3 id="scheduling">Scheduling</h3>
 <p>
-	You can also schedule the post at a specific date and time. Hyvor Blogs will automatically publish
-	your post at the specified time.
+	You can also schedule the post at a specific date and time. Hyvor Blogs will automatically
+	publish your post at the specified time.
 </p>
 <p><b>Post → Publish → Publish Later → Schedule</b></p>
 <DocsImage src={publishScheduleGIF} alt="Scheduling" />
 
 <h3 id="unpublishing">Unpublishing</h3>
 <p>
-	You can unpublish a published post. The post's status will be change to Draft. Therefore, it will
-	no longer appear on the blog. You can re-publish it later.
+	You can unpublish a published post. The post's status will be change to Draft. Therefore, it
+	will no longer appear on the blog. You can re-publish it later.
 </p>
 <p><b>Post → Unpublish</b></p>
 <DocsImage src={unpublishGIF} alt="Unpublishing" />
@@ -550,10 +550,10 @@
 <h2 id="other-guides">Other Guides</h2>
 <h3 id="auto-saving">Auto-saving & Post History</h3>
 <p>
-	If you are editing a draft, Hyvor Blogs will automatically save your post every 15 seconds if any
-	post data (content or metadata) has been edited. You can also manually save your post by pressing <b
-		>Ctrl + S</b
-	>. Check the bottom right corner of the editor to see the status of the auto-saving.
+	If you are editing a draft, Hyvor Blogs will automatically save your post every 15 seconds if
+	any post data (content or metadata) has been edited. You can also manually save your post by
+	pressing <b>Ctrl + S</b>. Check the bottom right corner of the editor to see the status of the
+	auto-saving.
 </p>
 <DocsImage src={savingGIF} alt="Auto-saving" />
 <p>
@@ -592,16 +592,16 @@
 
 <h3 id="multi-language">Multi-language posts</h3>
 <p>
-	If you have set up multiple languages for your blog, you will see the language codes at the top of
-	the post editor. Click on a language code to switch to that language variant of the post. Each
-	variant should be published separately. See our <a href="/docs/languages">languages</a> guide, which
-	explains everything you need to know about publishing multi-language posts.
+	If you have set up multiple languages for your blog, you will see the language codes at the top
+	of the post editor. Click on a language code to switch to that language variant of the post.
+	Each variant should be published separately. See our <a href="/docs/languages">languages</a> guide,
+	which explains everything you need to know about publishing multi-language posts.
 </p>
 
 <h2 id="seo-analysis">SEO Analysis</h2>
 <p>
-	The SEO analysis tool in the post editor will give you suggestions to improve your post's SEO. It
-	works based on pre-defined rules, inspired by the <a
+	The SEO analysis tool in the post editor will give you suggestions to improve your post's SEO.
+	It works based on pre-defined rules, inspired by the <a
 		href="https://rankmath.com/kb/score-100-in-tests"
 		rel="nofollow">Rank Math</a
 	> WordPress plugin.
@@ -612,16 +612,16 @@
 
 	<p>
 		SEO analysis is <b>merely a suggestion</b>. Getting a higher score alone will not make your
-		posts rank high. There are also other factors that affect your SEO, such as backlinks, domain
-		authority, etc. However, these suggestions will help you better optimize your content for search
-		engines.
+		posts rank high. There are also other factors that affect your SEO, such as backlinks,
+		domain authority, etc. However, these suggestions will help you better optimize your content
+		for search engines.
 	</p>
 </Callout>
 
 <p>
 	To start analyzing your post, add a primary keyword for your post. You can also add secondary
-	keywords. Hyvor Blogs will then analyze your post content and metadata and give you suggestions in
-	real-time to improve SEO for your post.
+	keywords. Hyvor Blogs will then analyze your post content and metadata and give you suggestions
+	in real-time to improve SEO for your post.
 </p>
 <p>These are the tests that Hyvor Blogs will run on your post:</p>
 <ul>
@@ -638,8 +638,8 @@
 	<p>
 		If the primary keyword is <code>blogging platforms</code>, we check for
 		<code>blogging-platforms</code>
-		in the slug. It is recommended to set a <b>short slug with hyphens</b>. In this case, the score
-		will be:
+		in the slug. It is recommended to set a <b>short slug with hyphens</b>. In this case, the
+		score will be:
 	</p>
 	<ul>
 		<li>100% if the slug matches exactly <code>blogging-platforms</code></li>
@@ -648,8 +648,8 @@
 
 	<li><b>Primary keyword in the beginning of the content</b></li>
 	<p>
-		If your content is longer than 300 words, the primary keyword should be in the first 10% of the
-		content. If it is shorter than 300 words, it should be somewhere in the content.
+		If your content is longer than 300 words, the primary keyword should be in the first 10% of
+		the content. If it is shorter than 300 words, it should be somewhere in the content.
 	</p>
 
 	<li><b>Content length</b></li>
@@ -686,8 +686,8 @@
 
 	<li><b>Internal links</b></li>
 	<p>
-		At least one internal link should be present in the post. Links to any subdomain of your main
-		domain will be considered as internal links. See <a href="/docs/writing#link-types"
+		At least one internal link should be present in the post. Links to any subdomain of your
+		main domain will be considered as internal links. See <a href="/docs/writing#link-types"
 			>link types</a
 		>
 		for more information. <code>internal-blog</code>, <code>internal-domain</code>, and
@@ -709,8 +709,8 @@
 <h2 id="link-analysis">Link Analysis</h2>
 <p>
 	The link analysis tool in the post editor analyzes the status of the links in your post as you
-	write. It will show you a warning if there are any broken, risky, or redirect links in your post.
-	It also shows you the <a href="/docs/writing#link-types">type of each link</a>.
+	write. It will show you a warning if there are any broken, risky, or redirect links in your
+	post. It also shows you the <a href="/docs/writing#link-types">type of each link</a>.
 </p>
 <DocsImage src={linkAnalysisImg} alt="Link Analysis" width={400} />
 <h3 id="link-types">Link Types</h3>
@@ -792,7 +792,7 @@
 </ul>
 
 <p>
-	You can use the default prompts in most cases. However, you can also customize the prompts to get
-	better results.
+	You can use the default prompts in most cases. However, you can also customize the prompts to
+	get better results.
 </p>
 <DocsImage src={AIGIF} alt="GPT Writing" />

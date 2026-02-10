@@ -19,17 +19,18 @@
 <h2 id="tag-index">Tag index page</h2>
 
 <p>
-	Each tag creates an index page (<code>/tag/{'{slug}'}</code>), which lists the posts of that tag.
-	This makes easy for users to browse posts of a specific tag. You can change the base URL of tag
-	index pages (<code>/tag/</code>) by <a href="/docs/routes#customizing-other">editing routes</a>.
+	Each tag creates an index page (<code>/tag/{'{slug}'}</code>), which lists the posts of that
+	tag. This makes easy for users to browse posts of a specific tag. You can change the base URL of
+	tag index pages (<code>/tag/</code>) by
+	<a href="/docs/routes#customizing-other">editing routes</a>.
 </p>
 
 <h2 id="assign">Assigning a tag to a post</h2>
 
 <p>
-	You can assign a tag to a post in the post editor. In post settings, click the + icon next to the
-	tags field to assign a tag. Then, type the name of the tag you want to assign. If the tag exists,
-	it will be assigned to the post. If not, you can create a new tag.
+	You can assign a tag to a post in the post editor. In post settings, click the + icon next to
+	the tags field to assign a tag. Then, type the name of the tag you want to assign. If the tag
+	exists, it will be assigned to the post. If not, you can create a new tag.
 </p>
 
 <DocsImage src={tagAssign} alt="Assign a tag to a post" width={400} />
@@ -91,8 +92,8 @@
 		<strong>Name</strong>: The name of the tag. This is what users see.
 	</li>
 	<li>
-		<strong>Description</strong>: A short description of the tag. This may be shown on the tag index
-		page.
+		<strong>Description</strong>: A short description of the tag. This may be shown on the tag
+		index page.
 	</li>
 	<li>
 		<strong>Slug</strong>: The slug of the tag index page.

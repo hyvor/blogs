@@ -41,7 +41,8 @@
 		if (
 			await confirm({
 				title: 'Delete Media',
-				content: 'Are you sure you want to delete this media file? This action cannot be undone!',
+				content:
+					'Are you sure you want to delete this media file? This action cannot be undone!',
 				confirmText: 'Yes, Delete',
 				danger: true
 			})

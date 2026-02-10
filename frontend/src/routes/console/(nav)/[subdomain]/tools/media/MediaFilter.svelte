@@ -103,7 +103,10 @@
 		{#snippet content()}
 			<ActionList selection="single">
 				{#each fileTypes as f (f.value)}
-					<ActionListItem on:select={() => selectFileType(f.value)} selected={type === f.value}>
+					<ActionListItem
+						on:select={() => selectFileType(f.value)}
+						selected={type === f.value}
+					>
 						{f.name}
 
 						{#snippet end()}

@@ -1,5 +1,5 @@
 <script>
-	import CreateBlog from "../CreateBlog.svelte";
-
+	import CreateBlog from '../CreateBlog.svelte';
 </script>
+
 <CreateBlog dev />

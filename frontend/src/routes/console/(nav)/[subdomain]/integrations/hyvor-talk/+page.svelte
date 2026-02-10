@@ -73,8 +73,8 @@
 				href="https://talk.hyvor.com"
 				target="_blank"
 				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to any plan to use this integration. This
-			integration is not available in the trial period.
+			> on your blog for FREE. Upgrade to any plan to use this integration. This integration is
+			not available in the trial period.
 		</div>
 	{/snippet}
 
@@ -97,13 +97,13 @@
 			{#if data.connected}
 				<div class="connection-status">
 					This blog is connected to website ID <strong
-						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
+						>{(data as HyvorTalkIntegrationData).data.website_id}</strong
 					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
 				</div>
 
 				<Button
 					as="a"
-					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData<true>).data.website_id}/comments`}
+					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData).data.website_id}/comments`}
 					target="_blank"
 					size="small"
 					style="margin-right:6px;"
@@ -129,13 +129,13 @@
 					{#snippet nested()}
 						<div>
 							<Comments
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
 							/>
 							<Newsletter
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
 							/>
 							<Memberships
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
 							/>
 						</div>
 					{/snippet}

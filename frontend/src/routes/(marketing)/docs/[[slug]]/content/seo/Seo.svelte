@@ -18,8 +18,8 @@
 <h2 id="meta">Meta Tags</h2>
 
 <p>
-	Hyvor Blogs automatically meta tags to your blog. They help search engines to understand your blog
-	better and social media sites to display your blog better.
+	Hyvor Blogs automatically meta tags to your blog. They help search engines to understand your
+	blog better and social media sites to display your blog better.
 </p>
 
 <h3 id="basic">Basic Meta Tags</h3>
@@ -165,7 +165,8 @@
 		<code>User-agent: *</code> - allows all crawlers to access your blog.
 	</li>
 	<li>
-		<code>Sitemap: {`{{ _blog.base_url }}`}/sitemap.xml</code> - tells crawlers where to find the sitemap.
+		<code>Sitemap: {`{{ _blog.base_url }}`}/sitemap.xml</code> - tells crawlers where to find the
+		sitemap.
 	</li>
 	<li>
 		<code>Disallow: /p/</code> - prevents crawlers from accessing /p/ routes (post preview pages).
@@ -173,8 +174,8 @@
 </ul>
 
 <p>
-	You can update your robots.txt file in <strong>Settings &rarr; SEO &rarr; Robots.txt</strong>. You
-	can also use <a href="/docs/themes-templates#variables">theme variables</a> there (ex:
+	You can update your robots.txt file in <strong>Settings &rarr; SEO &rarr; Robots.txt</strong>.
+	You can also use <a href="/docs/themes-templates#variables">theme variables</a> there (ex:
 	<code>{`{{ _blog.base_url }}`}</code> in the default robots.txt file).
 </p>
 
@@ -186,8 +187,8 @@
 		target="_blank"
 		rel="nofollow">sitemap index</a
 	>
-	at <code>/sitemap.xml</code> of your blog. You may submit this URL to search engines to help them discover
-	your blog faster.
+	at <code>/sitemap.xml</code> of your blog. You may submit this URL to search engines to help them
+	discover your blog faster.
 </p>
 
 <p>Sitemap index format:</p>
@@ -210,8 +211,8 @@
 		<code>sitemap-pages.xml</code> - contains links to the pages and homepage.
 	</li>
 	<li>
-		<code>sitemap-posts-[index].xml</code> - contains links to posts. Each file can have up to 2500
-		URLs. First page has the oldest URLs. Within the file, we also auto generate
+		<code>sitemap-posts-[index].xml</code> - contains links to posts. Each file can have up to
+		2500 URLs. First page has the oldest URLs. Within the file, we also auto generate
 		<ul>
 			<li>
 				<code>{`<image:image>`}</code> to link to images in the post (only directly uploaded images)
@@ -276,7 +277,8 @@
 <h3 id="posts-of-tag">3. Posts of a tag</h3>
 
 <p>
-	Sometimes you may want to prevent indexing posts that has a specific tag (ex: <code>no-index</code
+	Sometimes you may want to prevent indexing posts that has a specific tag (ex: <code
+		>no-index</code
 	>). In such cases, you can add the above meta tag to the
 	<a href="/docs/custom-code#tag">tag's custom code</a>.
 </p>

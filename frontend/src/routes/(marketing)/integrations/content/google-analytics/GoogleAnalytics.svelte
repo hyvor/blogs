@@ -17,7 +17,8 @@
 		<p><b>Requirements: </b></p>
 		<ul>
 			<li>
-				a <a href="https://myaccount.google.com">Google account</a> to use the Google Analytics tools.
+				a <a href="https://myaccount.google.com">Google account</a> to use the Google Analytics
+				tools.
 			</li>
 			<li>a blog on <a href="/console">Hyvor Blogs</a></li>
 		</ul>
@@ -26,14 +27,15 @@
 	<h2 id="google-analytics-account-creation">Step 1 - Google Analytics account setup</h2>
 
 	<p>
-		If you already have a Google Analytics account, skip to <a href="#create-data-stream">Step 2</a
+		If you already have a Google Analytics account, skip to <a href="#create-data-stream"
+			>Step 2</a
 		>.
 	</p>
 
 	<ol>
 		<li>
-			Sign in to your Google account and go to <a href="https://analytics.google.com/analytics"
-				>Google Analytics</a
+			Sign in to your Google account and go to <a
+				href="https://analytics.google.com/analytics">Google Analytics</a
 			>. Then click <b>Start Measuring</b>.
 		</li>
 		<DocsImage src={gaStartImg} alt="Google Analytics start measuring" />
@@ -42,13 +44,14 @@
 		<DocsImage src={createAccImg} alt="Create account" />
 
 		<li>
-			Select or unselect the data-sharing parameters according to your needs. Then click "<b>Next</b
+			Select or unselect the data-sharing parameters according to your needs. Then click "<b
+				>Next</b
 			>".
 		</li>
 
 		<li>
-			Choose a name for your Google Analytics property. Since a property represents a business's web
-			and/or app data you can use the name of your blog.
+			Choose a name for your Google Analytics property. Since a property represents a
+			business's web and/or app data you can use the name of your blog.
 		</li>
 		<li>Select the time zone and the currency of your country. Click <b>Next</b>.</li>
 		<DocsImage src={createPropertyImg} alt="Create property" />
@@ -61,8 +64,8 @@
 		<li>
 			Choose the business objectives that you want to achieve with your blog. Then click <b
 				>Create</b
-			>. After that you will see Google Analytics Terms of Service Agreement, make sure to accept
-			that.
+			>. After that you will see Google Analytics Terms of Service Agreement, make sure to
+			accept that.
 		</li>
 		<DocsImage src={businessObjImg} alt="Business objectives" />
 	</ol>
@@ -78,8 +81,8 @@
 			Enter the URL of your website, and use your blog URL (ex:<code
 				>myawesomeblog.hyvorblogs.io</code
 			>
-			or <code>myawesomeblog.com</code>), and the name for the stream, and use the name of your blog
-			(My Awesome Blog).
+			or <code>myawesomeblog.com</code>), and the name for the stream, and use the name of
+			your blog (My Awesome Blog).
 		</li>
 		<li>Click <b>Create stream</b>.</li>
 		<DocsImage src={dataStreamImg} alt="Data stream" />

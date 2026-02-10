@@ -1,6 +1,6 @@
 <script>
-import { Button } from "@hyvor/design/components";
-import ThemesPreview from "../@components/ThemesPreview.svelte";
+	import { Button } from '@hyvor/design/components';
+	import ThemesPreview from '../@components/ThemesPreview.svelte';
 </script>
 
 <!-- <div class="hds-container theme-service">
@@ -11,27 +11,26 @@ import ThemesPreview from "../@components/ThemesPreview.svelte";
 </div> -->
 
 <div class="wrap">
-    <ThemesPreview />
+	<ThemesPreview />
 </div>
 
-
 <style lang="scss">
-    .wrap {
-        height: calc(100vh - var(--header-height));
-        padding: 15px;
-    }
+	.wrap {
+		height: calc(100vh - var(--header-height));
+		padding: 15px;
+	}
 
-    // .theme-service {
-    //     margin-top: 50px;
-    //     text-align: center;
+	// .theme-service {
+	//     margin-top: 50px;
+	//     text-align: center;
 
-    //     p {
-    //         font-size: 20px;
-    //         margin-bottom: 20px;
-    //     }
+	//     p {
+	//         font-size: 20px;
+	//         margin-bottom: 20px;
+	//     }
 
-    //     button {
-    //         margin-top: 20px;
-    //     }
-    // }
+	//     button {
+	//         margin-top: 20px;
+	//     }
+	// }
 </style>

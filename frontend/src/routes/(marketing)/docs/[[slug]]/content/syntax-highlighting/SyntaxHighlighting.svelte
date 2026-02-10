@@ -2,8 +2,7 @@
 	import { Button, Loader, Table, TableRow } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-import IconCaretRight from '@hyvor/icons/IconCaretRight';
-
+	import IconCaretRight from '@hyvor/icons/IconCaretRight';
 
 	interface DataType {
 		languageTags: string;
@@ -74,14 +73,12 @@ import IconCaretRight from '@hyvor/icons/IconCaretRight';
 			<Button size="small" on:click={() => (showPreview = !showPreview)}>
 				Show theme previews
 				{#snippet end()}
-							
-						{#if showPreview}
-							<IconCaretDown size={12} />
-						{:else}
-							<IconCaretRight size={12} />
-						{/if}
-					
-							{/snippet}
+					{#if showPreview}
+						<IconCaretDown size={12} />
+					{:else}
+						<IconCaretRight size={12} />
+					{/if}
+				{/snippet}
 			</Button>
 		</p>
 
@@ -174,12 +171,12 @@ import IconCaretRight from '@hyvor/icons/IconCaretRight';
 	<li>
 		Under the hood, Hyvor Blogs use <a href="https://github.com/shikijs/shiki" rel="nofollow"
 			>Shiki</a
-		> for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If you
-		want to add any, contact us.
+		> for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If
+		you want to add any, contact us.
 	</li>
 	<li>
-		Colors for syntax comes from our side, but styles like padding, margins, space between lines,
-		and font sizes comes from the <a href="/docs/theme">theme</a> of your blog.
+		Colors for syntax comes from our side, but styles like padding, margins, space between
+		lines, and font sizes comes from the <a href="/docs/theme">theme</a> of your blog.
 	</li>
 </ul>
 

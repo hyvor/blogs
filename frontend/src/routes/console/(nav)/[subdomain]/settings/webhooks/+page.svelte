@@ -1,5 +1,18 @@
 <script lang="ts">
-	import { Button, IconMessage, Loader, Table, TableRow, toast, TabNav, TabNavItem, Dropdown, ActionList, ActionListItem, LoadButton} from '@hyvor/design/components';
+	import {
+		Button,
+		IconMessage,
+		Loader,
+		Table,
+		TableRow,
+		toast,
+		TabNav,
+		TabNavItem,
+		Dropdown,
+		ActionList,
+		ActionListItem,
+		LoadButton
+	} from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
@@ -19,16 +32,16 @@
 	let isCreating = $state(false);
 	let activeTab = $state<'configure' | 'deliveries'>('configure');
 	let webhooksLoaded = $state(false);
-	
+
 	let selectedWebhookId = $state<number | null>(null);
 	let showWebhookFilter = $state(false);
-	
+
 	let isLoadingMoreDeliveries = $state(false);
 	let hasMoreDeliveries = $state(false);
 	const deliveriesLimit = 50;
 
 	let previousSelectedWebhookId = $state<number | null | undefined>(undefined);
-	
+
 	$effect(() => {
 		if (activeTab === 'deliveries') {
 			// Load webhooks first if not already loaded, then load deliveries
@@ -40,7 +53,10 @@
 			} else if (webhooksLoaded) {
 				// Only load deliveries if this is the first time switching to deliveries tab
 				// or if the webhook filter has actually changed
-				if (previousSelectedWebhookId === undefined || previousSelectedWebhookId !== selectedWebhookId) {
+				if (
+					previousSelectedWebhookId === undefined ||
+					previousSelectedWebhookId !== selectedWebhookId
+				) {
 					loadDeliveries();
 					previousSelectedWebhookId = selectedWebhookId;
 				}
@@ -68,8 +84,7 @@
 	}
 
 	function loadDeliveries(more = false) {
-		if (webhooks.length === 0)
-		{
+		if (webhooks.length === 0) {
 			isDeliveriesLoading = false;
 			isLoadingMoreDeliveries = false;
 			return;
@@ -98,7 +113,6 @@
 			});
 	}
 
-
 	function handleDelete(id: number) {
 		webhooks = webhooks.filter((webhook) => webhook.id !== id);
 	}
@@ -126,7 +140,7 @@
 
 	function getSelectedWebhookUrl(): string {
 		if (!selectedWebhookId) return 'All Webhooks';
-		const webhook = webhooks.find(w => w.id === selectedWebhookId);
+		const webhook = webhooks.find((w) => w.id === selectedWebhookId);
 		return webhook ? webhook.url : 'Unknown Webhook';
 	}
 
@@ -161,15 +175,15 @@
 				{/snippet}
 				{#snippet content()}
 					<ActionList selection="single">
-						<ActionListItem 
-							selected={selectedWebhookId === null} 
+						<ActionListItem
+							selected={selectedWebhookId === null}
 							on:select={() => handleWebhookFilterSelect(null)}
 						>
 							All Webhooks
 						</ActionListItem>
 						{#each webhooks as webhook (webhook.id)}
-							<ActionListItem 
-								selected={selectedWebhookId === webhook.id} 
+							<ActionListItem
+								selected={selectedWebhookId === webhook.id}
 								on:select={() => handleWebhookFilterSelect(webhook.id)}
 							>
 								{webhook.url}
@@ -187,19 +201,19 @@
 		{#if isWebhooksLoading}
 			<Loader full />
 		{:else}
-			<WebhookList 
-				{webhooks} 
-				{isWebhooksLoading} 
-				onDelete={(e) => handleDelete(e)} 
-				onUpdate={(e) => handleUpdate(e)} 
+			<WebhookList
+				{webhooks}
+				{isWebhooksLoading}
+				onDelete={(e) => handleDelete(e)}
+				onUpdate={(e) => handleUpdate(e)}
 			/>
 		{/if}
 	{:else if activeTab === 'deliveries'}
 		{#if isDeliveriesLoading}
 			<Loader full />
 		{:else}
-			<WebhookDeliveryList 
-				{deliveries} 
+			<WebhookDeliveryList
+				{deliveries}
 				hasMore={hasMoreDeliveries}
 				isLoadingMore={isLoadingMoreDeliveries}
 				on:click={() => loadDeliveries(true)}

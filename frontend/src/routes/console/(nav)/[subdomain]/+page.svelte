@@ -1,107 +1,106 @@
 <script lang="ts">
-    import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-import IconLaptop from '@hyvor/icons/IconLaptop';
-import IconTablet from '@hyvor/icons/IconTablet';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import IconLaptop from '@hyvor/icons/IconLaptop';
+	import IconTablet from '@hyvor/icons/IconTablet';
 
-	import { blogStore } from "../../lib/stores/blogStore";
-	import { IconButton, Link, Loader } from "@hyvor/design/components";
+	import { blogStore } from '../../lib/stores/blogStore';
+	import { IconButton, Link, Loader } from '@hyvor/design/components';
 
-    let type : 'laptop' | 'tablet' = $state('laptop');
-    let isLoading = $state(true);
+	let type: 'laptop' | 'tablet' = $state('laptop');
+	let isLoading = $state(true);
 </script>
 
 <div class="preview">
+	<div class="navi">
+		<div class="left">
+			<Link href={$blogStore.url} target="_blank" underline={false} color="text">
+				{$blogStore.url.replace(/https?:\/\//, '')}
+				{#snippet end()}
+					<IconBoxArrowUpRight size={14} />
+				{/snippet}
+			</Link>
+		</div>
+		<div class="right">
+			<IconButton
+				on:click={() => (type = 'laptop')}
+				variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
+			>
 
-    <div class="navi">
-        <div class="left">
-            <Link href={$blogStore.url} target="_blank" underline={false} color="text">
-                {$blogStore.url.replace(/https?:\/\//, '')} {#snippet end()}
-                                <IconBoxArrowUpRight  size={14} />
-                            {/snippet}
-            </Link>
-        </div>
-        <div class="right">
-            <IconButton
-                on:click={() => type = 'laptop'}
-                variant={type == 'laptop' ? "fill" : "invisible"}
-            ><IconLaptop /></IconButton>
+			<IconButton
+				on:click={() => (type = 'tablet')}
+				variant={type == 'tablet' ? 'fill' : 'invisible'}><IconTablet /></IconButton
+			>
+		</div>
+	</div>
 
-            <IconButton 
-                on:click={() => type = 'tablet'}
-                variant={type == 'tablet' ? "fill" : "invisible"}
-            ><IconTablet /></IconButton>
-        </div>
-    </div>
-
-    <div 
-        class="iframe"
-        style="padding: {type === 'laptop' ? 0 : 15}px"
-    >
-        {#if isLoading}
-            <Loader />
-        {/if}
-        <iframe
-            id="preview-iframe"
-            src={$blogStore.url}
-            style:width={type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360) + "px"}
-            style:height={type === 'laptop' ? "100%" : 740 + "px"}
-            style:display={isLoading ? "none" : "block"}
-            onload={() => isLoading = false}
-            title="Preview"
-></iframe>
-    </div>
-
+	<div class="iframe" style="padding: {type === 'laptop' ? 0 : 15}px">
+		{#if isLoading}
+			<Loader />
+		{/if}
+		<iframe
+			id="preview-iframe"
+			src={$blogStore.url}
+			style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
+			style:height={type === 'laptop' ? '100%' : 740 + 'px'}
+			style:display={isLoading ? 'none' : 'block'}
+			onload={() => (isLoading = false)}
+			title="Preview"
+		></iframe>
+	</div>
 </div>
 
-
 <style>
-    .preview {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        border-radius: var(--box-radius);
-        background: var(--box-background);
-        box-shadow: var(--box-shadow);
-    }
+	.preview {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--box-radius);
+		background: var(--box-background);
+		box-shadow: var(--box-shadow);
+	}
 
-    .navi {
-        padding: 15px 20px;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid var(--border);
-    }
-    .left {    
-        flex: 1;
-        font-size: 14px;
-        font-weight: 600;
-    }
+	.navi {
+		padding: 15px 20px;
+		font-size: 16px;
+		display: flex;
+		align-items: center;
+		border-bottom: 1px solid var(--border);
+	}
+	.left {
+		flex: 1;
+		font-size: 14px;
+		font-weight: 600;
+	}
 
-    .iframe {
-        flex: 1;
-        display:flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        position:relative;
-    }
+	.iframe {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		position: relative;
+	}
 
-    iframe {
-        max-width: 100%;
-        max-height: 100%;
-        border: none;
-        animation: preview-iframe .5s;
-    }
-    @keyframes preview-iframe {
-        0% {opacity: 0;}
-        100% {opacity: 1;}
-    }
+	iframe {
+		max-width: 100%;
+		max-height: 100%;
+		border: none;
+		animation: preview-iframe 0.5s;
+	}
+	@keyframes preview-iframe {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 
-    @media screen and (max-width: 1200px) {
-        .iframe, iframe {
-            min-height: 600px;
-        }
-    }
-
+	@media screen and (max-width: 1200px) {
+		.iframe,
+		iframe {
+			min-height: 600px;
+		}
+	}
 </style>

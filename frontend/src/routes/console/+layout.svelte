@@ -3,14 +3,13 @@
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { AuthUser, BlogList } from './lib/types';
-	import {authOrganizationStore, authUserStore, blogListStore} from './lib/stores';
+	import { authOrganizationStore, authUserStore, blogListStore } from './lib/stores';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
 	import { CloudContext, type CloudContextOrganization, HyvorBar } from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
-	import { goto } from '$app/navigation';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -63,7 +62,7 @@
 				}
 
 				if (switchingOrg && !page.url.pathname.startsWith('/console/new')) {
-					goto('/console');
+					location.href = '/console';
 				}
 
 				isLoading = false;

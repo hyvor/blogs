@@ -3,45 +3,42 @@ import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { history } from 'prosemirror-history';
 import inputRulesPlugin from './plugin-inputrules';
-import keymapPlugins from "./plugin-keymap";
+import keymapPlugins from './plugin-keymap';
 import codemark from 'prosemirror-codemark';
-import pasteImagesPlugin from "./plugin-paste-images";
+import pasteImagesPlugin from './plugin-paste-images';
 import { columnResizing, tableEditing } from 'prosemirror-tables';
-import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip.svelte";
-import schema from "../../../../../../../lib/prosemirror/schema";
-import wordCountPlugin from "./plugin-wordcount";
-import slashPlugin from "./slash/plugin-slash.svelte";
-import slashTipPlugin from "./slash/plugin-slash-tip";
-import tableMenuPlugin from "./table/plugin-table-menu.svelte";
+import marksTooltipPlugin from './marks-tooltip/plugin-marks-tooltip.svelte';
+import schema from '../../../../../../../lib/prosemirror/schema';
+import wordCountPlugin from './plugin-wordcount';
+import slashPlugin from './slash/plugin-slash.svelte';
+import slashTipPlugin from './slash/plugin-slash-tip';
+import tableMenuPlugin from './table/plugin-table-menu.svelte';
 
 export function getPlugins() {
+	return [
+		inputRulesPlugin(),
+		...keymapPlugins(),
 
-    return [
-        inputRulesPlugin(),
-        ...keymapPlugins(),
+		placeholderPlugin('Start writing...'),
+		marksTooltipPlugin(),
+		wordCountPlugin(),
 
-        placeholderPlugin('Start writing...'),
-        marksTooltipPlugin(),
-        wordCountPlugin(),
-        
-        slashPlugin(),
-        slashTipPlugin(),
+		slashPlugin(),
+		slashTipPlugin(),
 
-        // from defaults
-        dropCursor(),
-        gapCursor(),
+		// from defaults
+		dropCursor(),
+		gapCursor(),
 
-        history(),
+		history(),
 
-        pasteImagesPlugin(),
+		pasteImagesPlugin(),
 
-        // https://github.com/curvenote/prosemirror-codemark
-        ...codemark({ markType: schema.marks.code }),
+		// https://github.com/curvenote/prosemirror-codemark
+		...codemark({ markType: schema.marks.code }),
 
-
-        columnResizing({ cellMinWidth: 20 }),
-        tableEditing(),
-        tableMenuPlugin(),
-    ]
-
+		columnResizing({ cellMinWidth: 20 }),
+		tableEditing(),
+		tableMenuPlugin()
+	];
 }

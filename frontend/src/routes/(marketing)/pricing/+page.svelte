@@ -110,7 +110,11 @@
 			name: 'Hyvor Talk',
 			under: 'Commenting Platform',
 			description: 'Add Hyvor Talk commenting system for FREE',
-			values: ['25k credits/month (Premium)', '100k credits/month (Premium)', '250k credits/month (Business)']
+			values: [
+				'25k credits/month (Premium)',
+				'100k credits/month (Premium)',
+				'250k credits/month (Business)'
+			]
 		}
 		// {
 		// 	name: 'Hyvor Post',
@@ -170,8 +174,8 @@
 <div class="faqs hds-container">
 	<Faq q="How does the free trial work?" icon={IconHourglass}>
 		Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card
-		required. All features are available during the trial (except Hyvor Talk integration). After
-		the trial, you can upgrade to a paid plan to continue using Hyvor Blogs.
+		required. All features are available during the trial (except Hyvor Talk integration). After the
+		trial, you can upgrade to a paid plan to continue using Hyvor Blogs.
 	</Faq>
 
 	<Faq q="Do I have to pay for themes?" icon={IconBrush}>
@@ -205,7 +209,8 @@
 	</Faq>
 
 	<Faq q="How to add a commenting system?" icon={IconChat}>
-		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free for all plans. You can also embed other commenting systems easily.
+		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free for all plans. You
+		can also embed other commenting systems easily.
 	</Faq>
 </div>
 

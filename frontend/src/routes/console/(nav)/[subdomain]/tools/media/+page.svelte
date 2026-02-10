@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MediaLibrary from "./MediaLibrary.svelte";
+	import MediaLibrary from './MediaLibrary.svelte';
 </script>
 
 <div class="media hds-box">
@@ -9,6 +9,6 @@
 <style>
 	.media {
 		flex: 1;
-        padding: 25px;
+		padding: 25px;
 	}
 </style>

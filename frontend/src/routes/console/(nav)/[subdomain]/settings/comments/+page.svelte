@@ -11,7 +11,7 @@
 <div class="settings">
 	<SplitControl label="Comments Embed Code">
 		{#snippet caption()}
-				<div >
+			<div>
 				Paste the embed code from your commenting system here. You can use Twig <Link
 					href="/docs/themes-templates#variables"
 					style="display:inline"
@@ -21,7 +21,7 @@
 					style="display:inline">Integrations &rarr; Hyvor Talk</Link
 				>.
 			</div>
-			{/snippet}
+		{/snippet}
 
 		<CodemirrorEditor
 			value={$blogStore.comments_code || ''}
@@ -39,9 +39,9 @@
 
 	<SplitControl label="Newsletter Signup Form Code">
 		{#snippet caption()}
-				<div >
-				Paste the embed code provided by a email newsletter service here (for the sign up form). You
-				can use Twig <Link
+			<div>
+				Paste the embed code provided by a email newsletter service here (for the sign up
+				form). You can use Twig <Link
 					style="display:inline;"
 					href="/docs/themes-templates#variables"
 					target="_blank">route variables</Link
@@ -50,7 +50,7 @@
 					style="display:inline">Integrations &rarr; Hyvor Talk</Link
 				>.
 			</div>
-			{/snippet}
+		{/snippet}
 
 		<CodemirrorEditor
 			value={$blogStore.newsletter_code || ''}
@@ -61,8 +61,8 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific place,
-				you may also edit your theme files.
+				Your theme will decide where to show this form. If you want to show it in a specific
+				place, you may also edit your theme files.
 			</Text>
 		</div>
 	</SplitControl>

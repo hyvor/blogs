@@ -1,107 +1,64 @@
 <script lang="ts">
-	import { Button, ButtonGroup, InputGroup, Modal, Radio, SplitControl, TextInput, toast } from "@hyvor/design/components";
-	import { createApiKey } from "./apiKeysActions";
-	import { createEventDispatcher } from "svelte";
-    
-    interface Props {
-        show: boolean;
-    }
+	import {
+		Button,
+		ButtonGroup,
+		InputGroup,
+		Modal,
+		Radio,
+		SplitControl,
+		TextInput,
+		toast
+	} from '@hyvor/design/components';
+	import { createApiKey } from './apiKeysActions';
+	import { createEventDispatcher } from 'svelte';
 
-    let { show = $bindable() }: Props = $props();
+	interface Props {
+		show: boolean;
+	}
 
-    let api: 'console' | 'delivery' = $state('console');
-    let name = $state('');
+	let { show = $bindable() }: Props = $props();
 
-    let isButtonDisabled = $derived(name.trim().length === 0);
+	let api: 'console' | 'delivery' = $state('console');
+	let name = $state('');
 
-    const dispatch = createEventDispatcher();
+	let isButtonDisabled = $derived(name.trim().length === 0);
 
-    function handleClick() {
+	const dispatch = createEventDispatcher();
 
-        show = false;
+	function handleClick() {
+		show = false;
 
-        const toastId = toast.loading('Creating API Key...');
+		const toastId = toast.loading('Creating API Key...');
 
-        createApiKey(name, api)
-            .then(res => {
-                toast.success('API Key created successfully', {id: toastId});
-                dispatch('create', res);
-            })
-            .catch(err => {
-                toast.error(err.message, {id: toastId});
-            });
-
-    }
-
+		createApiKey(name, api)
+			.then((res) => {
+				toast.success('API Key created successfully', { id: toastId });
+				dispatch('create', res);
+			})
+			.catch((err) => {
+				toast.error(err.message, { id: toastId });
+			});
+	}
 </script>
 
+<Modal title="Create API Key" bind:show>
+	<SplitControl label="API">
+		<InputGroup>
+			<Radio value="console" bind:group={api}>Console API</Radio>
 
-<Modal
-    title="Create API Key"
-    bind:show
->
+			<Radio value="delivery" bind:group={api}>Delivery API</Radio>
+		</InputGroup>
+	</SplitControl>
 
-    <SplitControl 
-        label="API"
-    >
+	<SplitControl label="Name" caption="Just for your reference">
+		<TextInput bind:value={name} block placeholder="My API Key" autofocus maxlength="50" />
+	</SplitControl>
 
-        <InputGroup>
-            
-            <Radio 
-                value="console"
-                bind:group={api}
-            >
-                Console API
-            </Radio>
+	{#snippet footer()}
+		<ButtonGroup>
+			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-            <Radio 
-                value="delivery"
-                bind:group={api}
-            >
-                Delivery API
-            </Radio>
-            
-        </InputGroup>
-
-    </SplitControl>
-
-    <SplitControl
-        label="Name"
-        caption="Just for your reference"
-    >
-
-        <TextInput 
-            bind:value={name}
-            block
-            placeholder="My API Key"
-            autofocus
-            maxlength="50"
-        />
-
-    </SplitControl>
-
-    {#snippet footer()}
-    
-
-            <ButtonGroup>
-
-                <Button
-                    variant="invisible"
-                    on:click={() => show = false}
-                >
-                    Cancel
-                </Button>
-
-                <Button
-                    on:click={handleClick}
-                    disabled={isButtonDisabled}
-                >
-                    Create
-                </Button>
-
-            </ButtonGroup>
-
-        
-    {/snippet}
-
+			<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
+		</ButtonGroup>
+	{/snippet}
 </Modal>

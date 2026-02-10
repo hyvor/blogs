@@ -41,7 +41,9 @@
 	<DocsImage src={codeSnippetImg} alt="Paste code" />
 	<ol>
 		<li>Copy the code snippet given.</li>
-		<li>Go to <b>Settings &rarr; Custome Code &rarr; Head Code</b> in your blog's dashboard.</li>
+		<li>
+			Go to <b>Settings &rarr; Custome Code &rarr; Head Code</b> in your blog's dashboard.
+		</li>
 		<DocsImage src={pasteCodeImg} alt="Paste code" />
 		<li>On the AdSense page, check “<b>I've placed the code</b>” and click <b>Verify</b>.</li>
 		<li>Click on <b>Request Review</b>.</li>
@@ -52,8 +54,8 @@
 		<li>Copy the code snippet given.</li>
 		<DocsImage src={adsTxtImg} alt="Ads.txt" />
 		<li>
-			Go to <b>Themes &rarr; Templates &rarr; + New</b> on your blog's dashboard and create a file
-			named <code>route-ads.txt.twig</code>.
+			Go to <b>Themes &rarr; Templates &rarr; + New</b> on your blog's dashboard and create a
+			file named <code>route-ads.txt.twig</code>.
 		</li>
 		<li>Paste the code snippet in that twig file and click <b>Save</b>.</li>
 		<Callout type="info">

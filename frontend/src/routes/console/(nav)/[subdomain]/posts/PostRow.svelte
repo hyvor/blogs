@@ -2,7 +2,17 @@
 	import dayjs from 'dayjs';
 	import type { Post, PostVariant } from '../../../lib/types';
 	import { getLanguageById } from '../../../lib/actions/languageActions';
-	import { Avatar, Link, Tag, Dropdown, ActionList, ActionListItem, IconButton, toast, Button } from '@hyvor/design/components';
+	import {
+		Avatar,
+		Link,
+		Tag,
+		Dropdown,
+		ActionList,
+		ActionListItem,
+		IconButton,
+		toast,
+		Button
+	} from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
@@ -35,14 +45,14 @@
 	function handleClone(e: Event) {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		if (isCloning) return;
-		
+
 		showDropdown = false;
 		isCloning = true;
-		
+
 		const toastId = toast.loading('Cloning post...');
-		
+
 		clonePost(post.id)
 			.then((clonedPost) => {
 				toast.success('Post cloned successfully', { id: toastId });
@@ -139,27 +149,27 @@
 	</div>
 
 	<div class="post-actions-wrap">
-		<div on:click={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+		<div
+			on:click={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
+		>
 			<Dropdown bind:show={showDropdown} align="end" width={150}>
-			{#snippet trigger()}
-				<IconButton 
-					size="small" 
-					color="input" 
-					variant="invisible"
-					disabled={isCloning}
-				>
-					<IconThreeDotsVertical size={16} />
-				</IconButton>
-			{/snippet}
+				{#snippet trigger()}
+					<IconButton size="small" color="input" variant="invisible" disabled={isCloning}>
+						<IconThreeDotsVertical size={16} />
+					</IconButton>
+				{/snippet}
 
-			{#snippet content()}
-				<ActionList>
-					<ActionListItem on:click={handleClone} disabled={isCloning}>
-						Clone post
-					</ActionListItem>
-				</ActionList>
-			{/snippet}
-		</Dropdown>
+				{#snippet content()}
+					<ActionList>
+						<ActionListItem on:click={handleClone} disabled={isCloning}>
+							Clone post
+						</ActionListItem>
+					</ActionList>
+				{/snippet}
+			</Dropdown>
 		</div>
 	</div>
 </a>

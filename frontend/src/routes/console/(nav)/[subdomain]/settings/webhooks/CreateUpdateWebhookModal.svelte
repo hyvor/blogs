@@ -31,9 +31,11 @@
 	let events: WebhookEventType[] = $state(webhook?.events || []);
 	let eventsError: null | string = $state(null);
 
-	let isButtonDisabled = $derived(webhook
-		? url === webhook.url && JSON.stringify(events) === JSON.stringify(webhook.events)
-		: url.trim().length === 0);
+	let isButtonDisabled = $derived(
+		webhook
+			? url === webhook.url && JSON.stringify(events) === JSON.stringify(webhook.events)
+			: url.trim().length === 0
+	);
 
 	function handleChangeEvent(name: WebhookEventType, e: any) {
 		if (e.target.checked && !events.includes(name)) {

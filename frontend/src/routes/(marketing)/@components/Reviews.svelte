@@ -65,14 +65,12 @@
 		{
 			name: 'Lionel S.',
 			role: 'Blogger',
-			review:
-				'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
+			review: 'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
 		},
 		{
 			name: 'Manoj P.',
 			role: 'Senior Application Engineer',
-			review:
-				' The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
+			review: ' The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
 		}
 	];
 </script>

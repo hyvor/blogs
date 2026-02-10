@@ -133,7 +133,12 @@
 		</Tooltip>
 
 		<Tooltip text="Recheck">
-			<IconButton size={22} color="input" on:click={handleReload} disabled={!isHttp || isReloading}>
+			<IconButton
+				size={22}
+				color="input"
+				on:click={handleReload}
+				disabled={!isHttp || isReloading}
+			>
 				<IconArrowClockwise size={12} />
 			</IconButton>
 		</Tooltip>

@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { IconMessage, Table, TableRow, TableCell, Tag, LoadButton } from '@hyvor/design/components';
+	import {
+		IconMessage,
+		Table,
+		TableRow,
+		TableCell,
+		Tag,
+		LoadButton
+	} from '@hyvor/design/components';
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
 
@@ -59,11 +66,6 @@
 			</TableRow>
 		{/each}
 	</Table>
-	
-	<LoadButton
-		text="Load more"
-		show={hasMore}
-		loading={isLoadingMore}
-		on:click
-	/>
+
+	<LoadButton text="Load more" show={hasMore} loading={isLoadingMore} on:click />
 {/if}

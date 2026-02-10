@@ -154,7 +154,10 @@
 		<div><code>languages.changed</code></div>
 		<div><a href="/docs/languages">Blog languages</a> changed</div>
 		<div>
-			<code>{'{ languages: '}<a href="/docs/api-console#language-object">Language</a>{'[] }'}</code>
+			<code
+				>{'{ languages: '}<a href="/docs/api-console#language-object">Language</a
+				>{'[] }'}</code
+			>
 		</div>
 	</TableRow>
 
@@ -209,8 +212,8 @@
 <h2 id="security">Security</h2>
 
 <p>
-	In the console, you can find a key for each Webhook you create. This key is sent in each response.
-	You can use it to verify the webhook using a simple string comparison.
+	In the console, you can find a key for each Webhook you create. This key is sent in each
+	response. You can use it to verify the webhook using a simple string comparison.
 </p>
 
 <CodeBlock

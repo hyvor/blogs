@@ -9,6 +9,7 @@
 	import { page } from '$app/state';
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
 	import { isTempStore } from '../../lib/temp';
+	import { blogListStore } from '../../lib/stores';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -16,9 +17,15 @@
 	let { children }: Props = $props();
 
 	let isLoading = $state(true);
+	let subdomain = $derived(String(page.params.subdomain));
 
 	onMount(() => {
-		const subdomain = page.params.subdomain;
+		const userBlogs = $blogListStore.find((b) => b.subdomain === subdomain);
+
+		if (!userBlogs) {
+			location.href = '/console';
+			return;
+		}
 
 		loadBlog(subdomain!)
 			.then(() => {

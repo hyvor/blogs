@@ -1,5 +1,10 @@
 import consoleApi from '../../lib/consoleApi';
-import { blogCountsStore, blogOriginalStore, blogStore, licenseStore } from '../../lib/stores/blogStore';
+import {
+	blogCountsStore,
+	blogOriginalStore,
+	blogStore,
+	licenseStore
+} from '../../lib/stores/blogStore';
 import { languagesStore } from '../../lib/stores/languagesStore';
 import { usersStore } from '../../lib/stores/usersStore';
 import type { Blog, BlogCounts, Language, License, User } from '../../lib/types';
@@ -11,7 +16,7 @@ interface BlogResponse {
 	languages: Language[];
 	users: User[];
 	counts: BlogCounts;
-	license: License | null
+	license: License | null;
 }
 
 // to prevent multiple requests for the same subdomain
@@ -48,8 +53,8 @@ export function loadBlog(subdomain: string) {
 						autoTranslationsChars: 500,
 						talkCredits: 0,
 						postEmails: 0,
-						analyses: true,
-					})
+						analyses: true
+					});
 				}
 
 				resolve(res);

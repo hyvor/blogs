@@ -5,7 +5,7 @@
 	import type { SelectedFile } from '../image-uploader';
 	import { Button, Loader, Switch, toast, TextInput, Validation } from '@hyvor/design/components';
 	import IconCheckAll from '@hyvor/icons/IconCheckAll';
-import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
+	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 
 	import byteFormatter from '../../../helper/byte-formatter';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -20,9 +20,11 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 
 	const fileUrl = file.url instanceof Blob ? URL.createObjectURL(file.url) : file.url;
 	let imageSize = $state(file.url instanceof File ? file.url.size : null);
-	let imageName = $state(toKebabCase(
-		file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null
-	));
+	let imageName = $state(
+		toKebabCase(
+			file.url instanceof File ? file.url.name : file.media ? file.media.original_name : null
+		)
+	);
 	let nameError = $state('');
 
 	let imgEl: HTMLImageElement | undefined = $state();
@@ -199,14 +201,12 @@ import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 			<Button on:click={handleUpload}>
 				{shouldUpload ? 'Upload' : 'Select'}
 				{#snippet end()}
-							
-						{#if shouldUpload}
-							<IconCloudUpload />
-						{:else}
-							<IconCheckAll />
-						{/if}
-					
-							{/snippet}
+					{#if shouldUpload}
+						<IconCloudUpload />
+					{:else}
+						<IconCheckAll />
+					{/if}
+				{/snippet}
 			</Button>
 		</div>
 	{/if}

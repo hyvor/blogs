@@ -93,7 +93,10 @@
 		<span>
 			<LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
 
-			<UnsavedTag show={$postVariantStore.slug !== $postOriginalVariantStore.slug} {loaderState} />
+			<UnsavedTag
+				show={$postVariantStore.slug !== $postOriginalVariantStore.slug}
+				{loaderState}
+			/>
 		</span>
 	{/snippet}
 

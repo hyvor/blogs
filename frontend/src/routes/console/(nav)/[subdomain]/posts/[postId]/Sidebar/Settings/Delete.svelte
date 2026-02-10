@@ -20,8 +20,9 @@
 				content:
 					($postLanguageStore.is_primary
 						? 'Are you sure you want to delete this post?'
-						: 'Are you sure you want to delete the ' + $postLanguageStore.name + ' variant?') +
-					' This action is IRREVERSIBLE.',
+						: 'Are you sure you want to delete the ' +
+							$postLanguageStore.name +
+							' variant?') + ' This action is IRREVERSIBLE.',
 				confirmText: 'Yes, Delete',
 				danger: true
 			})
@@ -32,9 +33,12 @@
 
 			func()
 				.then(() => {
-					toast.success('Deleted' + ($postLanguageStore.is_primary ? ' post' : ' variant'), {
-						id: toastId
-					});
+					toast.success(
+						'Deleted' + ($postLanguageStore.is_primary ? ' post' : ' variant'),
+						{
+							id: toastId
+						}
+					);
 
 					if ($postLanguageStore.is_primary) {
 						goto(consoleUrlWithBlog($postStore.is_page ? '/pages' : '/posts'));

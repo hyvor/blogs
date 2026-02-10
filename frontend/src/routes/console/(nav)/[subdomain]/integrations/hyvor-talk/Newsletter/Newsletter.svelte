@@ -11,11 +11,12 @@
 
 	let { websiteId }: Props = $props();
 
-	let code =
-		$derived(`<` +
-		`script async src="https://talk.hyvor.com/embed/newsletter.js" type="module"><` +
-		`/script>
-<hyvor-talk-newsletter website-id="${websiteId}"></hyvor-talk-newsletter>`);
+	let code = $derived(
+		`<` +
+			`script async src="https://talk.hyvor.com/embed/newsletter.js" type="module"><` +
+			`/script>
+<hyvor-talk-newsletter website-id="${websiteId}"></hyvor-talk-newsletter>`
+	);
 
 	let adding = $state(false);
 
@@ -26,7 +27,7 @@
 
 <SplitControl column>
 	{#snippet label()}
-		<Label >
+		<Label>
 			Newsletter <ConfiguredTag
 				configured={$blogStore.newsletter_code?.includes('<hyvor-talk-newsletter') || false}
 			/>

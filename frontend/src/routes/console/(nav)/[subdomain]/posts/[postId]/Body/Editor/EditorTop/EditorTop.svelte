@@ -1,79 +1,76 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 	import SaveStatus from './SaveStatus.svelte';
-	import PublishedEditingStatus from "./PublishedEditingStore/PublishedEditingStatus.svelte";
-	import AutoTranslate from "./AutoTranslate/AutoTranslate.svelte";
+	import PublishedEditingStatus from './PublishedEditingStore/PublishedEditingStatus.svelte';
+	import AutoTranslate from './AutoTranslate/AutoTranslate.svelte';
 
-    let el: HTMLDivElement | undefined = $state();
-    let parent: HTMLDivElement;
+	let el: HTMLDivElement | undefined = $state();
+	let parent: HTMLDivElement;
 
-    function positionEl() {
-        if (!el || !parent) return;
+	function positionEl() {
+		if (!el || !parent) return;
 
-        const { top, left, right } = parent.getBoundingClientRect();
+		const { top, left, right } = parent.getBoundingClientRect();
 
-        if (top <= 0) {
-            el.classList.add('fixed');
-            el.style.left = left + 'px';
-            el.style.right = window.innerWidth - right + 'px';
-            // keep a 15px margin from the top
-            //el.style.top = Math.min(20, -top) + 'px';
-        } else {
-            el.classList.remove('fixed');
-        }
-    }
+		if (top <= 0) {
+			el.classList.add('fixed');
+			el.style.left = left + 'px';
+			el.style.right = window.innerWidth - right + 'px';
+			// keep a 15px margin from the top
+			//el.style.top = Math.min(20, -top) + 'px';
+		} else {
+			el.classList.remove('fixed');
+		}
+	}
 
-    onMount(() => {
-        parent = el?.parentElement as HTMLDivElement;
-        positionEl();
-    });
+	onMount(() => {
+		parent = el?.parentElement as HTMLDivElement;
+		positionEl();
+	});
 </script>
 
 <svelte:window onscrollcapture={positionEl} />
 
-<div 
-    class="editor-top"
-    bind:this={el}
->
+<div class="editor-top" bind:this={el}>
+	<div class="left">
+		<SaveStatus />
+		<PublishedEditingStatus />
+	</div>
 
-    <div class="left">
-        <SaveStatus />
-        <PublishedEditingStatus />
-    </div>
-
-    <div class="right">
-        <AutoTranslate />
-        <!-- see plugin-wordocount.ts -->
-        <span id="pm-word-count"></span>
-    </div>
-
+	<div class="right">
+		<AutoTranslate />
+		<!-- see plugin-wordocount.ts -->
+		<span id="pm-word-count"></span>
+	</div>
 </div>
 
 <style>
-    .editor-top {
-        padding: 15px 25px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        transition: .3s border-radius, .3s box-shadow;
-    }
-    .editor-top:global(.fixed) {
-        position: fixed;
-        z-index: 10;
-        top: var(--top-offset, 0);
-        background-color: var(--box-background);
-        box-shadow: var(--box-shadow);
-        border-radius: var(--box-radius);
-        border-bottom: none;
-    }
-    .left {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    #pm-word-count {
-        font-size: 12px;
-        color: var(--text-light);
-        font-weight: 600;
-    }
+	.editor-top {
+		padding: 15px 25px;
+		border-bottom: 1px solid var(--border);
+		display: flex;
+		transition:
+			0.3s border-radius,
+			0.3s box-shadow;
+	}
+	.editor-top:global(.fixed) {
+		position: fixed;
+		z-index: 10;
+		top: var(--top-offset, 0);
+		background-color: var(--box-background);
+		box-shadow: var(--box-shadow);
+		border-radius: var(--box-radius);
+		border-bottom: none;
+	}
+	.left {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+	#pm-word-count {
+		font-size: 12px;
+		color: var(--text-light);
+		font-weight: 600;
+	}
 </style>

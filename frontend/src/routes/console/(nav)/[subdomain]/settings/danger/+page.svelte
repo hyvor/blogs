@@ -22,7 +22,9 @@
 	<SplitControl label="Delete Blog">
 		{#snippet caption()}
 			<div class="caption">
-				Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
+				Completely delete the blog and all its data. This action is <strong
+					>irreversible</strong
+				>.
 			</div>
 		{/snippet}
 
@@ -47,7 +49,7 @@
 	.danger {
 		padding: 20px 30px;
 	}
-	.caption{
+	.caption {
 		color: var(--text-light);
 		font-size: 14px;
 	}

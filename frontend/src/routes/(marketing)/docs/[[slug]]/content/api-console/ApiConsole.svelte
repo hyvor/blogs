@@ -28,8 +28,8 @@
 	</ul>
 
 	<li>
-		Similarly to our <a href="/docs/api-data">Data API</a>, the Console API always return an object
-		or an array of objects, in JSON format
+		Similarly to our <a href="/docs/api-data">Data API</a>, the Console API always return an
+		object or an array of objects, in JSON format
 	</li>
 	<li>
 		Request params can be set as JSON (recommended) or as usual request params (in query or HTTP
@@ -54,9 +54,9 @@
 
 <p>
 	The Console API has many endpoints and is categorized by what "resource" you want to access or
-	manage. Most categories have CRUD operations but some may have more endpoints for specific tasks.
-	These objects are defined within the Category. Also, note that Console API objects are different
-	from <a href="/docs/api-data">Data API</a> objects.
+	manage. Most categories have CRUD operations but some may have more endpoints for specific
+	tasks. These objects are defined within the Category. Also, note that Console API objects are
+	different from <a href="/docs/api-data">Data API</a> objects.
 </p>
 <p>Jump to each category:</p>
 
@@ -195,7 +195,8 @@ type Response = Post[]
 
 <h4 id="create-post">Create a post/page</h4>
 <p>
-	Create an empty draft post. A post variant will be created from the primary language of the blog.
+	Create an empty draft post. A post variant will be created from the primary language of the
+	blog.
 </p>
 <p><code>POST /post</code></p>
 

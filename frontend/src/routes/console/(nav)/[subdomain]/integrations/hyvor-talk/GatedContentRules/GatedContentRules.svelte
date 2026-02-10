@@ -44,7 +44,7 @@
 
 <SplitControl column>
 	{#snippet label()}
-		<Label >
+		<Label>
 			Gated Content Rules <Button
 				size="small"
 				on:click={() => (creating = true)}

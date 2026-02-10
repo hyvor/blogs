@@ -14,7 +14,7 @@
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-    import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
@@ -122,17 +122,19 @@
 
 	function handleError(message: string, code: number) {
 		if (message === 'domain_taken') {
-			hostingUrlError = 'This domain is already taken by another blog. Contact support if needed.';
+			hostingUrlError =
+				'This domain is already taken by another blog. Contact support if needed.';
 		} else {
 			toast.error(message);
 		}
 	}
 
-	let hasUrlChanged =
-		$derived($blogStore.subdomain !== subdomain ||
-		$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
-		$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
-		$blogOriginalStore.hosting_url !== $blogStore.hosting_url);
+	let hasUrlChanged = $derived(
+		$blogStore.subdomain !== subdomain ||
+			$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
+			$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
+			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
+	);
 </script>
 
 <DisabledOnTemp>
@@ -170,10 +172,18 @@
 
 		<SplitControl label="Hosted at" caption="Where do you like to host your blog?">
 			<InputGroup>
-				<Radio value="subdomain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
+				<Radio
+					value="subdomain"
+					group={$blogStore.hosting_at}
+					on:change={handleHostedAtChange}
+				>
 					Subdomain (hyvorblogs.io)
 				</Radio>
-				<Radio value="domain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
+				<Radio
+					value="domain"
+					group={$blogStore.hosting_at}
+					on:change={handleHostedAtChange}
+				>
 					Custom Domain - &nbsp;<Link
 						href="/docs/custom-domain"
 						target="_blank"
@@ -181,8 +191,8 @@
 					>
 						Docs
 						{#snippet end()}
-												<IconBoxArrowUpRight  size={10} />
-											{/snippet}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
 					</Link>
 				</Radio>
 				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
@@ -193,8 +203,8 @@
 					>
 						Docs
 						{#snippet end()}
-												<IconBoxArrowUpRight  size={10} />
-											{/snippet}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
 					</Link>
 				</Radio>
 			</InputGroup>
@@ -221,7 +231,10 @@
 		{/if}
 
 		{#if $blogStore.hosting_at === 'self'}
-			<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
+			<SplitControl
+				label="Self-hosting URL"
+				caption="Where your blog is hosted (absolute URL)"
+			>
 				<FormControl>
 					<TextInput
 						bind:value={$blogStore.hosting_url}
@@ -253,21 +266,22 @@
 		{#if hasUrlChanged}
 			<Callout type="warning" style="margin-top: 20px;">
 				{#snippet icon()}
-								<IconExclamationCircle  size={18} />
-							{/snippet}
+					<IconExclamationCircle size={18} />
+				{/snippet}
 				{#snippet title()}
-								<div >URL Change</div>
-							{/snippet}
+					<div>URL Change</div>
+				{/snippet}
 				You are about to change the URL of your blog!
 				<ul>
 					<li>
-						Previously shared links may break. However, when changing from hyvorblogs.io subdomain
-						to a custom domain or self-hosting, we'll redirect users to the new URL.
+						Previously shared links may break. However, when changing from hyvorblogs.io
+						subdomain to a custom domain or self-hosting, we'll redirect users to the
+						new URL.
 					</li>
 					<li>This may impact the SEO of your blog.</li>
 					<li>
-						We'll update the media links in your post content and blog settings. This may take some
-						time.
+						We'll update the media links in your post content and blog settings. This
+						may take some time.
 					</li>
 				</ul>
 			</Callout>

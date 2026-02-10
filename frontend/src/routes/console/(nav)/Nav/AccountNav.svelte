@@ -8,9 +8,9 @@
 
 <div class="wrap">
 	<NavLink
-			href={consoleUrl('/billing')}
-			active={page.url.pathname === `/console/billing`}
-			disabled={!canAccessBilling()}
+		href={consoleUrl('/billing')}
+		active={page.url.pathname === `/console/billing`}
+		disabled={!canAccessBilling()}
 	>
 		{#snippet start()}
 			<IconCurrencyEuro />

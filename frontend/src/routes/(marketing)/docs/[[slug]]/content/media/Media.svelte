@@ -6,8 +6,8 @@
 <h1>Media</h1>
 
 <p>
-	"Media" refers to the files you upload in your blog. It can be images, videos, audio, or any other
-	file. Visit <strong>Tools &rarr; Media Library</strong> to manage your blog media.
+	"Media" refers to the files you upload in your blog. It can be images, videos, audio, or any
+	other file. Visit <strong>Tools &rarr; Media Library</strong> to manage your blog media.
 </p>
 
 <h2 id="images">Images</h2>
@@ -59,8 +59,10 @@
 <h3 id="responsive-images">Responsive Images</h3>
 
 <p>
-	Hyvor Blogs handles responsive images for you. Here's how it works. Images (PNG, JPEG, WebP only)
-	uploaded to the media library can be automatically resized by appending <code>{`/{width}w`}</code>
+	Hyvor Blogs handles responsive images for you. Here's how it works. Images (PNG, JPEG, WebP
+	only) uploaded to the media library can be automatically resized by appending <code
+		>{`/{width}w`}</code
+	>
 	to the URL.
 </p>
 
@@ -81,8 +83,8 @@
 		href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images"
 		target="_blank"
 		rel="nofollow">srcset</a
-	> (supported by all modern browsers) to make images in your posts responsive. These are the sizes we
-	use:
+	> (supported by all modern browsers) to make images in your posts responsive. These are the sizes
+	we use:
 </p>
 
 <ul>

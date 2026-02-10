@@ -11,12 +11,15 @@
 </script>
 
 <svelte:head>
-    <title>Hyvor Blogs - All-in-one Blogging Platform</title>
-    <meta name="description" content="Hyvor Blogs is a powerful blogging platform that allows you to create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains with SSL, and many more features included!">
-	<link rel="canonical" href="https://blogs.hyvor.com">
+	<title>Hyvor Blogs - All-in-one Blogging Platform</title>
+	<meta
+		name="description"
+		content="Hyvor Blogs is a powerful blogging platform that allows you to create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains with SSL, and many more features included!"
+	/>
+	<link rel="canonical" href="https://blogs.hyvor.com" />
 </svelte:head>
 
-<AboveFold 
+<AboveFold
 	title="All-in-one Blogging Platform"
 	subtitle="Hyvor Blogs is a platform to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff."
 />

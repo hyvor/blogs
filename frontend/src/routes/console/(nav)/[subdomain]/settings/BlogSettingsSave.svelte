@@ -5,7 +5,6 @@
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
 	import { beforeNavigate } from '$app/navigation';
 
-
 	interface Props {
 		keys?: (keyof Blog)[];
 		variantKeys?: (keyof BlogVariant)[];
@@ -25,7 +24,6 @@
 	}: Props = $props();
 
 	let loadingState: 'none' | 'loading' | 'success' | 'error' = $state('none');
-
 
 	beforeNavigate((navigation) => {
 		if (should) {
@@ -135,7 +133,9 @@
 	</span>
 
 	<ButtonGroup>
-		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}>Discard</Button>
+		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}
+			>Discard</Button
+		>
 
 		<Button disabled={!should} on:click={handleSave}>Save</Button>
 	</ButtonGroup>

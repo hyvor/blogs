@@ -125,7 +125,12 @@
 			</div>
 		{/if}
 
-		<LoadButton text="Load More" show={hasMore} loading={isLoadingMore} on:click={handleLoadMore} />
+		<LoadButton
+			text="Load More"
+			show={hasMore}
+			loading={isLoadingMore}
+			on:click={handleLoadMore}
+		/>
 	</div>
 </div>
 

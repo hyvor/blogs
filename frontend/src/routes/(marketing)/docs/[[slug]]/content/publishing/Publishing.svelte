@@ -21,8 +21,8 @@
 </p>
 <Callout type="info">
 	<p>
-		All themes in our themes list are free. If you wish to create a paid theme, you have to sell it
-		outside our platform, and users can upload the ZIP from the Console to install it.
+		All themes in our themes list are free. If you wish to create a paid theme, you have to sell
+		it outside our platform, and users can upload the ZIP from the Console to install it.
 	</p>
 </Callout>
 
@@ -58,8 +58,8 @@
 	<div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
 
 	<div class="checklist-main-text">
-		Blog search must be implemented at least with post searching. Optionally, you can add search for
-		tags and authors.
+		Blog search must be implemented at least with post searching. Optionally, you can add search
+		for tags and authors.
 	</div>
 </div>
 
@@ -73,7 +73,8 @@
 </div>
 
 <div class="checklist-main">
-	<Checkbox>All <a href="/docs/themes-templates#placeholders">placeholders</a> are added</Checkbox>
+	<Checkbox>All <a href="/docs/themes-templates#placeholders">placeholders</a> are added</Checkbox
+	>
 </div>
 <div class="child-checkbox">
 	<InputGroup>
@@ -122,8 +123,8 @@
 
 <div class="checklist-main">
 	<Checkbox
-		>Configurations are added for colors, fonts, etc. See <a href="/docs/themes-publishing#config"
-			>Config</a
+		>Configurations are added for colors, fonts, etc. See <a
+			href="/docs/themes-publishing#config">Config</a
 		> section.</Checkbox
 	>
 </div>
@@ -165,8 +166,8 @@
 <div class="checklist-main" id="mult-line">
 	<div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
 	<div class="checklist-main-text">
-		Should support the blog's social media links (shows an icon or link to the social media profile
-		if the link is available)
+		Should support the blog's social media links (shows an icon or link to the social media
+		profile if the link is available)
 	</div>
 </div>
 <div class="child-checkbox">
@@ -237,8 +238,8 @@ settings:
 
 <h2 id="rtl">RTL Support</h2>
 <p>
-	All published themes should support RTL (right-to-left) languages. Follow these tips to make sure
-	your theme supports RTL.
+	All published themes should support RTL (right-to-left) languages. Follow these tips to make
+	sure your theme supports RTL.
 </p>
 
 <ul>
@@ -295,9 +296,9 @@ settings:
 <h2 id="content-styles">Content Styles</h2>
 
 <p>
-	All published themes should nicely style all the blocks in the "Content Style Guide" post in your
-	DEV blog. In addition to styling them, follow these guidelines to avoid common but subtle UX
-	issues.
+	All published themes should nicely style all the blocks in the "Content Style Guide" post in
+	your DEV blog. In addition to styling them, follow these guidelines to avoid common but subtle
+	UX issues.
 </p>
 
 <h3 id="heading-anchors">1. Heading Anchors</h3>
@@ -391,8 +392,8 @@ pre {
 
 <ul>
 	<li>
-		<code>.table-container</code> should have <code>overflow-x: auto</code> to make sure the table is
-		scrollable on mobile devices
+		<code>.table-container</code> should have <code>overflow-x: auto</code> to make sure the table
+		is scrollable on mobile devices
 	</li>
 </ul>
 <CodeBlock
@@ -437,8 +438,8 @@ li {
 <h2 id="changelog">Changelog</h2>
 <p>
 	Add a <code>CHANGELOG.md</code> file to your theme folder and add the changes for each version.
-	See <a href="https://keepachangelog.com/en/1.1.0/" rel="nofollow">keepachangelog.com</a> to learn how
-	to write a changelog.
+	See <a href="https://keepachangelog.com/en/1.1.0/" rel="nofollow">keepachangelog.com</a> to learn
+	how to write a changelog.
 </p>
 
 <p>

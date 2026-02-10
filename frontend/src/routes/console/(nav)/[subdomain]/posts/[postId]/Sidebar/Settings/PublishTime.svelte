@@ -53,7 +53,7 @@
 <OnlyPrimaryVariant>
 	<SplitControl>
 		{#snippet label()}
-				<span >
+			<span>
 				Publish Time
 
 				<UnsavedTag
@@ -61,7 +61,7 @@
 					{loaderState}
 				/>
 			</span>
-			{/snippet}
+		{/snippet}
 
 		{#if $postVariantStore.status !== 'draft' || $postStore.published_at !== null}
 			<TextInput

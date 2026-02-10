@@ -1,4 +1,3 @@
-
 /**
  * position: sticky causes a z-index problem between
  * the left header and the sidebar
@@ -8,5 +7,5 @@
 export let Z_INDEX = 1000;
 
 export function increaseZIndex() {
-    Z_INDEX++;
+	Z_INDEX++;
 }

@@ -20,7 +20,7 @@
 <div class="docs-wrap">
 	<Docs>
 		{#snippet nav()}
-				<Nav >
+			<Nav>
 				{#each categories as category}
 					<NavCategory name={category.name}>
 						{#each category.pages as page}
@@ -33,12 +33,12 @@
 					</NavCategory>
 				{/each}
 			</Nav>
-			{/snippet}
+		{/snippet}
 		{#snippet content()}
-				<Content >
+			<Content>
 				<data.component />
 			</Content>
-			{/snippet}
+		{/snippet}
 	</Docs>
 </div>
 

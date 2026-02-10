@@ -11,7 +11,6 @@
 	}
 
 	let { webhooks, isWebhooksLoading, onDelete, onUpdate }: Props = $props();
-
 </script>
 
 {#if webhooks.length === 0}
@@ -26,11 +25,7 @@
 		</TableRow>
 
 		{#each webhooks as webhook (webhook.id)}
-			<WebhookRow 
-				{webhook} 
-				onDelete={onDelete} 
-				onUpdate={onUpdate} 
-			/>
+			<WebhookRow {webhook} {onDelete} {onUpdate} />
 		{/each}
 	</Table>
 {/if}

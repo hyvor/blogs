@@ -76,7 +76,7 @@
 		currentDragger = null;
 	}
 
-	$: currentDragger, dragDisabled, positionDragNote();
+	$: (currentDragger, dragDisabled, positionDragNote());
 
 	function positionDragNote() {
 		if (!dragNoteEl) return;
