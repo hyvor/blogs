@@ -51,7 +51,7 @@
 	</SplitControl>
 
 	<SplitControl label="Name" caption="Just for your reference">
-		<TextInput bind:value={name} block placeholder="My API Key" autofocus maxlength="50" />
+		<TextInput bind:value={name} block placeholder="My API Key" autofocus maxlength={50} />
 	</SplitControl>
 
 	{#snippet footer()}

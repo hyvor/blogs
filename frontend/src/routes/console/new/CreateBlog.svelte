@@ -153,7 +153,7 @@
 				block
 				bind:value={name}
 				oninput={handleNameInput}
-				maxlength="50"
+				maxlength={50}
 				state={nameError ? 'error' : undefined}
 				autofocus
 			/>
@@ -173,7 +173,7 @@
 					block
 					bind:value={subdomain}
 					oninput={handleSubdomainInput}
-					maxlength="50"
+					maxlength={50}
 					state={subdomainError ? 'error' : subdomainSuccess ? 'success' : undefined}
 				>
 					{#snippet end()}

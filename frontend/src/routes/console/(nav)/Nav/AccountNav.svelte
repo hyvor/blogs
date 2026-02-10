@@ -3,7 +3,7 @@
 	import { consoleUrl } from '../../lib/consoleUrl';
 	import { page } from '$app/state';
 	import IconCurrencyEuro from '@hyvor/icons/IconCurrencyEuro';
-	import { canAccessBilling } from '../../lib/orgPermission.ts';
+	import { canAccessBilling } from '../../lib/orgPermission';
 </script>
 
 <div class="wrap">

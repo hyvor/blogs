@@ -37,7 +37,7 @@
 				data = {
 					connected: true,
 					data: res
-				};
+				} as HyvorTalkIntegrationData;
 				toast.success('Hyvor Talk connected successfully', { id: toastId });
 			})
 			.catch((_) => toast.error('Failed to connect to Hyvor Talk', { id: toastId }));
@@ -97,13 +97,13 @@
 			{#if data.connected}
 				<div class="connection-status">
 					This blog is connected to website ID <strong
-						>{(data as HyvorTalkIntegrationData).data.website_id}</strong
+						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
 					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
 				</div>
 
 				<Button
 					as="a"
-					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData).data.website_id}/comments`}
+					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData<true>).data.website_id}/comments`}
 					target="_blank"
 					size="small"
 					style="margin-right:6px;"
@@ -129,13 +129,13 @@
 					{#snippet nested()}
 						<div>
 							<Comments
-								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
 							/>
 							<Newsletter
-								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
 							/>
 							<Memberships
-								websiteId={(data as HyvorTalkIntegrationData).data.website_id}
+								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
 							/>
 						</div>
 					{/snippet}
