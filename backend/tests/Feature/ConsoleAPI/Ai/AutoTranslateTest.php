@@ -9,6 +9,8 @@ use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Models\AutoTranslation;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Illuminate\Support\Facades\Http;
 use Tests\Helper\Generator\PostContentGenerator;
 
@@ -25,7 +27,9 @@ it('translates', function () {
     ]);
 
     $blog = blogWithAccess();
-    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
+    $license = BlogsLicense::trial();
+    $license->autoTranslationsChars = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -63,7 +67,9 @@ it('translates with code block', function () {
     ]);
 
     $blog = blogWithAccess();
-    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
+    $license = BlogsLicense::trial();
+    $license->autoTranslationsChars = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     $codeBlock = [
         'type' => 'code_block',
@@ -115,7 +121,9 @@ it('translates with code block with HTML', function () {
     ]);
 
     $blog = blogWithAccess();
-    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
+    $license = BlogsLicense::trial();
+    $license->autoTranslationsChars = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     $codeBlock = [
         'type' => 'code_block',
@@ -157,7 +165,9 @@ it('throws API error', function () {
     ]);
 
     $blog = blogWithAccess();
-    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
+    $license = BlogsLicense::trial();
+    $license->autoTranslationsChars = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -172,7 +182,9 @@ it('throws API error', function () {
 it('throws an error when limits reached', function () {
     $blog = blogWithAccess();
 
-    BillingFake::enable(license: new BlogsLicense(autoTranslationsChars: 1000));
+    $license = BlogsLicense::trial();
+    $license->autoTranslationsChars = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     AutoTranslation::create([
         'blog_id' => $blog->id,
