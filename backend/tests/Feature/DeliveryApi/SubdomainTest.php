@@ -115,7 +115,6 @@ it('caches for 48 hours when there is a license', function () {
         ->assertOk()
         ->assertSee($content, false);
 
-    dd(DB::table('cache')->get());
     $value = DB::table('cache')->where('key', "laravel_cachehas-license-org:$blog->organization_id")->first();
 
     expect(unserialize($value->value))->toBeTrue();
