@@ -23,7 +23,7 @@ class CliAPIController
             $path = trim($path, '/');
             $split = explode('/', $path);
 
-            $file = $split[1] ?? $split[0] ?? null;
+            $file = $split[1] ?? $split[0];
             $folder = ThemeFileFolderEnum::tryFrom(isset($split[1]) ? $split[0] : '');
 
             if ($file) {

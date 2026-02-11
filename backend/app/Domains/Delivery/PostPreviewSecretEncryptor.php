@@ -28,7 +28,7 @@ class PostPreviewSecretEncryptor
 
         $split = explode('.', $decrypted);
 
-        $id = $split[0] ?? null;
+        $id = $split[0];
         $timestamp = $split[1] ?? null;
 
         if (! $id || ! $timestamp) {

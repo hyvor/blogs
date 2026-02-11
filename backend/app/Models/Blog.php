@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property ?string $hosting_url
  * @property bool $hosting_redirect_subdomain
  * @property mixed $counts
- * @property int $organization_id
+ * @property ?int $organization_id
  */
 class Blog extends Model
 {

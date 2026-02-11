@@ -30,8 +30,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?int $words
  *
  * @property ?string $seo_primary_keyword
- * @property ?array $seo_secondary_keywords
- * @property ?array $link_analysis
+ * @property ?string[] $seo_secondary_keywords
+ * @property ?array<string, number> $link_analysis
  *
  * @property Language $language
  * @property Post $post

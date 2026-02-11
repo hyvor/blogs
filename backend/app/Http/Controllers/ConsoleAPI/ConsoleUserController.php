@@ -76,10 +76,13 @@ class ConsoleUserController extends Controller
             throw new TrustedException('User is already added to the blog');
         }
 
+        $organizationId = $blog->organization_id;
+        assert($organizationId !== null);
+
         try {
             $verification = $comms->send(
                 new VerifyMember(
-                    $blog->organization_id,
+                    $organizationId,
                     $hyvorUserId,
                 ),
             );

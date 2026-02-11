@@ -205,11 +205,11 @@ class PermalinkRepository
         $path = str_replace('{slug}', $variantSlug, $path);
 
         if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', $variant->post->tags[0]?->slug ?? '', $path);
+            $path = str_replace('{tag}', $variant->post->tags[0]->slug ?? '', $path);
         }
 
         if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', $variant->post->authors[0]?->slug ?? '', $path);
+            $path = str_replace('{author}', $variant->post->authors[0]->slug ?? '', $path);
         }
 
         /**
@@ -265,7 +265,7 @@ class PermalinkRepository
         $path = trim($path, '/');
         $split = explode('/', $path);
 
-        if (!isset($split[0]) || $split[0] !== 'media') {
+        if ($split[0] !== 'media') {
             return null;
         }
 

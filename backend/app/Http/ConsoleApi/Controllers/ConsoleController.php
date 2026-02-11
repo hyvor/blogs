@@ -73,7 +73,7 @@ class ConsoleController
     }
 
     /**
-     * @return string[]
+     * @return array<string, mixed>
      */
     private function config(): array
     {
