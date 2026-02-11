@@ -96,6 +96,7 @@ it('redirects on no license', function () {
         ->assertHeader('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store, private');
 
     $value = DB::table('cache')->where('key', "hyvor_blogs_cachehas-license-org:$blog->organization_id")->first();
+    dump($value);
 
     expect(unserialize($value->value))->toBeFalse();
     expect($value->expiration)->toBe($time->addSeconds(30)->getTimestamp());
@@ -116,6 +117,7 @@ it('caches for 48 hours when there is a license', function () {
         ->assertSee($content, false);
 
     $value = DB::table('cache')->where('key', "hyvor_blogs_cachehas-license-org:$blog->organization_id")->first();
+    dump($value);
 
     expect(unserialize($value->value))->toBeTrue();
     expect($value->expiration)->toBe($time->addHours(48)->getTimestamp());
