@@ -56,7 +56,7 @@ it('shows error when trial has ended', function () {
         ->assertHeader('X-Redirect-Reason', 'No license')
         ->assertHeader('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store, private');
 
-    $value = DB::table('cache')->where('key', "hyvor_blogs_cachehas-license-org:$blog->organization_id")->first();
+    $value = DB::table('cache')->where('key', "laravel_cachehas-license-org:$blog->organization_id")->first();
 
     expect(unserialize($value->value))->toBeFalse();
     expect($value->expiration)->toBe($time->addSeconds(30)->getTimestamp());
