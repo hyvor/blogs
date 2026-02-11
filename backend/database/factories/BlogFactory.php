@@ -53,7 +53,7 @@ class BlogFactory extends Factory
      */
     public static function withAccess($attrs = []): Blog
     {
-        $blog = self::one($attrs + ['hyvor_user_id' => 1]);
+        $blog = self::one($attrs + ['hyvor_user_id' => 1, 'organization_id' => 1]);
 
         User::factory()->create([
             'blog_id' => $blog->id,
