@@ -87,8 +87,6 @@ class OrganizationMigrationCommand extends Command
     private function migrateBlogToOrganization(Blog $blog, int $organizationId): void
     {
         $blog->setOrganizationId($organizationId);
-        $blog->setCreatedByUserId($blog->getHyvorUserId());
-
         $this->em->persist($blog);
         $this->em->flush();
     }
