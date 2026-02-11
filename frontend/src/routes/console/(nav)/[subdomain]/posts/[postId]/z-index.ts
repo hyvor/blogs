@@ -7,5 +7,5 @@
 export let Z_INDEX = 1000;
 
 export function increaseZIndex() {
-	Z_INDEX++;
+  Z_INDEX++;
 }

@@ -1,87 +1,96 @@
-import { get } from 'svelte/store';
+import { get } from "svelte/store";
 import {
-	postOriginalStore,
-	postOriginalVariantStore,
-	postStore,
-	postVariantStore,
-	updatePostEditingStatusValue,
-	updatePostVariantStore
-} from '../../../../postStore';
-import type { Post, PostVariant, Tag, User } from '../../../../../../../lib/types';
-import { hasIdArrayChanged } from '../../Settings/settingsHelpers';
+  postOriginalStore,
+  postOriginalVariantStore,
+  postStore,
+  postVariantStore,
+  updatePostEditingStatusValue,
+  updatePostVariantStore,
+} from "../../../../postStore";
+import type {
+  Post,
+  PostVariant,
+  Tag,
+  User,
+} from "../../../../../../../lib/types";
+import { hasIdArrayChanged } from "../../Settings/settingsHelpers";
 
 export function getPublishedChanges() {
-	// checks the post and the current variant for changes
+  // checks the post and the current variant for changes
 
-	const post = get(postStore);
-	const postOriginal = get(postOriginalStore);
+  const post = get(postStore);
+  const postOriginal = get(postOriginalStore);
 
-	const postVariant = get(postVariantStore);
-	const postVariantOriginal = get(postOriginalVariantStore);
+  const postVariant = get(postVariantStore);
+  const postVariantOriginal = get(postOriginalVariantStore);
 
-	const changes = {
-		post: {} as Partial<Post>,
-		variant: {} as Partial<PostVariant>,
-		tags: undefined as undefined | Tag[],
-		authors: undefined as undefined | User[]
-	};
+  const changes = {
+    post: {} as Partial<Post>,
+    variant: {} as Partial<PostVariant>,
+    tags: undefined as undefined | Tag[],
+    authors: undefined as undefined | User[],
+  };
 
-	const postKeys: (keyof Post)[] = [
-		'published_at',
-		'is_featured',
-		'featured_image_url',
-		'canonical_url',
-		'code_head',
-		'code_foot'
-	];
+  const postKeys: (keyof Post)[] = [
+    "published_at",
+    "is_featured",
+    "featured_image_url",
+    "canonical_url",
+    "code_head",
+    "code_foot",
+  ];
 
-	const postVariantKeys: (keyof PostVariant)[] = ['slug', 'title', 'description'];
+  const postVariantKeys: (keyof PostVariant)[] = [
+    "slug",
+    "title",
+    "description",
+  ];
 
-	postKeys.forEach((key) => {
-		if (post[key] !== postOriginal[key]) {
-			// @ts-ignore
-			changes.post[key] = post[key];
-		}
-	});
+  postKeys.forEach((key) => {
+    if (post[key] !== postOriginal[key]) {
+      // @ts-ignore
+      changes.post[key] = post[key];
+    }
+  });
 
-	postVariantKeys.forEach((key) => {
-		if (postVariant[key] !== postVariantOriginal[key]) {
-			// @ts-ignore
-			changes.variant[key] = postVariant[key];
-		}
-	});
+  postVariantKeys.forEach((key) => {
+    if (postVariant[key] !== postVariantOriginal[key]) {
+      // @ts-ignore
+      changes.variant[key] = postVariant[key];
+    }
+  });
 
-	if (hasIdArrayChanged(post.tags, postOriginal.tags)) {
-		changes.tags = post.tags;
-	}
-	if (hasIdArrayChanged(post.authors, postOriginal.authors)) {
-		changes.authors = post.authors;
-	}
+  if (hasIdArrayChanged(post.tags, postOriginal.tags)) {
+    changes.tags = post.tags;
+  }
+  if (hasIdArrayChanged(post.authors, postOriginal.authors)) {
+    changes.authors = post.authors;
+  }
 
-	if (
-		postVariant.content_unsaved !== null &&
-		postVariant.content_unsaved !== postVariantOriginal.content
-	) {
-		changes.variant.content = postVariant.content_unsaved;
-	}
+  if (
+    postVariant.content_unsaved !== null &&
+    postVariant.content_unsaved !== postVariantOriginal.content
+  ) {
+    changes.variant.content = postVariant.content_unsaved;
+  }
 
-	return changes;
+  return changes;
 }
 
 export function hasPublishedChanges() {
-	const changes = getPublishedChanges();
-	return (
-		Object.keys(changes.post).length > 0 ||
-		Object.keys(changes.variant).length > 0 ||
-		changes.tags !== undefined ||
-		changes.authors !== undefined
-	);
+  const changes = getPublishedChanges();
+  return (
+    Object.keys(changes.post).length > 0 ||
+    Object.keys(changes.variant).length > 0 ||
+    changes.tags !== undefined ||
+    changes.authors !== undefined
+  );
 }
 
 export function finishUpdating() {
-	// no longer editing
-	updatePostEditingStatusValue('isEditingPublished', false);
+  // no longer editing
+  updatePostEditingStatusValue("isEditingPublished", false);
 
-	// clear unsaved content
-	updatePostVariantStore({ content_unsaved: null });
+  // clear unsaved content
+  updatePostVariantStore({ content_unsaved: null });
 }

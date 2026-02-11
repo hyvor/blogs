@@ -1,6 +1,9 @@
-import { writable } from 'svelte/store';
-import type { BlogList } from './types';
-import type { CloudContextUser, CloudContextOrganization } from '@hyvor/design/cloud';
+import { writable } from "svelte/store";
+import type { BlogList } from "./types";
+import type {
+  CloudContextUser,
+  CloudContextOrganization,
+} from "@hyvor/design/cloud";
 
 // Currently logged in user
 export const authUserStore = writable<CloudContextUser>();
@@ -9,5 +12,5 @@ export const authOrganizationStore = writable<CloudContextOrganization>();
 export const blogListStore = writable<BlogList[]>([]);
 
 export function addToBlogList(blog: BlogList) {
-	blogListStore.update((list) => [...list, blog]);
+  blogListStore.update((list) => [...list, blog]);
 }
