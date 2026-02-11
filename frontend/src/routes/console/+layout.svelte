@@ -2,13 +2,13 @@
 	import { initTempSubdomain, setTempSubdomain } from './lib/temp';
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
-	import type { AuthUser, BlogList } from './lib/types';
+	import type { BlogList } from './lib/types';
 	import { authOrganizationStore, authUserStore, blogListStore } from './lib/stores';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
-	import { CloudContext, type CloudContextOrganization, HyvorBar } from '@hyvor/design/cloud';
+	import {CloudContext, type CloudContextOrganization, CloudContextUser, HyvorBar} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
 
 	interface Props {
@@ -18,7 +18,7 @@
 	let { children }: Props = $props();
 
 	interface InitResponse {
-		user: AuthUser;
+		user: CloudContextUser;
 		organization: CloudContextOrganization;
 		blogs: BlogList[];
 		temp_unique_id?: string;
