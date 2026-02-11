@@ -7,8 +7,8 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
-use Database\Factories\BlogFactory;
-use Hyvor\Internal\Resource\ResourceFake;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
+use Hyvor\Internal\Component\Component;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Tests\Case\DatabaseTestCase;
 
@@ -53,8 +53,6 @@ class CreateBlogTest extends DatabaseTestCase
 
     public function testCreatesBlog(): void
     {
-        ResourceFake::enable();
-
         $blogId = $this->consoleUserApi('POST', '/blog', [
             'name' => 'Testing',
             'subdomain' => 'new-blog',
@@ -72,13 +70,17 @@ class CreateBlogTest extends DatabaseTestCase
         $this->assertEquals(BlogTypeEnum::DEFAULT, $blog->type);
         $this->assertEquals(1, BlogVariant::where('blog_id', $blogId)->count());
 
-        ResourceFake::assertRegistered(1, $blogId);
+        $this->getComms()->assertSent(
+            ResourceCreated::class,
+            Component::CORE,
+            eventValidator: function (ResourceCreated $event) use ($blog) {
+                $this->assertSame($blog->organization_id, $event->getOrganizationId());
+            }
+        );
     }
 
     public function testCreatesDevBlog(): void
     {
-        ResourceFake::enable();
-
         $blogId = $this->consoleUserApi('POST', '/blog', [
             'name' => 'Testing',
             'is_dev' => true,
@@ -95,7 +97,13 @@ class CreateBlogTest extends DatabaseTestCase
             $blog->subdomain
         );
 
-        ResourceFake::assertRegistered(1, $blogId);
+        $this->getComms()->assertSent(
+            ResourceCreated::class,
+            Component::CORE,
+            eventValidator: function (ResourceCreated $event) use ($blog) {
+                $this->assertSame($blog->organization_id, $event->getOrganizationId());
+            }
+        );
     }
 
     /*public function testCannotCreateABlogWithAlreadyExistingSubdomain(): void

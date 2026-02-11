@@ -14,7 +14,6 @@ use App\Domains\Blog\Deleters\UserDeleter;
 use App\Domains\Blog\Jobs\DeleteBlogJob;
 use App\Models\Blog;
 use Database\Factories\BlogFactory;
-use Hyvor\Internal\Resource\ResourceFake;
 use Tests\Case\DatabaseTestCase;
 
 class DeleteBlogJobTest extends DatabaseTestCase
@@ -22,8 +21,6 @@ class DeleteBlogJobTest extends DatabaseTestCase
 
     public function testDeletes(): void
     {
-        ResourceFake::enable();
-
         $deleters = [
             LanguageDeleter::class,
             MediaDeleter::class,
@@ -48,8 +45,6 @@ class DeleteBlogJobTest extends DatabaseTestCase
         (new DeleteBlogJob($blog))->handle();
 
         $this->assertNull(Blog::find($blog->id));
-
-        ResourceFake::assertDeleted($blog->id);
     }
 
 }

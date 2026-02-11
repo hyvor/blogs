@@ -61,7 +61,6 @@ class AnalyzeAllLinksJob implements ShouldQueue
 
         $email = UserRepository::getOwnerEmailAddress($this->blog);
         if (!$email) {
-        dd('here', $emailOption);
             return;
         }
 

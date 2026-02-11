@@ -21,6 +21,7 @@ class BlogFactory extends Factory
         return [
             'type' => BlogTypeEnum::DEFAULT,
             'hyvor_user_id' => rand(),
+            'organization_id' => rand(),
             'subdomain' => Str::random(20),
             'trial_ends_at' => Carbon::now()->addDays(7),
             'hosting_at' => 'subdomain',

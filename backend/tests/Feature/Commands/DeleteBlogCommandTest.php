@@ -3,15 +3,12 @@
 namespace Tests\Feature\Commands;
 
 use App\Models\Blog;
-use Hyvor\Internal\Resource\ResourceFake;
 use Tests\Case\DatabaseTestCase;
 
 class DeleteBlogCommandTest extends DatabaseTestCase
 {
     public function testDeleteBlogsByUserId(): void
     {
-        ResourceFake::enable();
-
         $userId = 1;
         $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
@@ -31,8 +28,6 @@ class DeleteBlogCommandTest extends DatabaseTestCase
 
     public function testDeleteABlog(): void
     {
-        ResourceFake::enable();
-
         $userId = 1;
         $blogs = Blog::factory()->count(2)->create(['hyvor_user_id' => $userId]);
         $otherBlogs = Blog::factory()->count(2)->create();
