@@ -11,7 +11,7 @@ on:
 jobs:
 
   frontend-check:
-    name: "Frontend Check"
+    name: "Svelte / TS Check"
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,22 @@ jobs:
 
       - name: Run Svelte Check
         run: docker run frontend-dev npm run check
+
+  prettier:
+    name: "Svelte / Prettier"
+    runs-on: ubuntu-latest
+
+    steps:
+      -   name: Checkout
+          uses: actions/checkout@v3
+
+      -   name: Install Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: "24.9.0"
+
+      -   name: Frontend
+          run: cd frontend && npm ci && npm run lint
 
   laravel-phpstan:
     name: "Laravel / PHPStan"
