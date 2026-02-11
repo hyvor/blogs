@@ -68,11 +68,10 @@ FROM backend-base AS backend-dev
 # pcov for debugging
 RUN install-php-extensions pcov
 COPY backend/composer.json backend/composer.lock /app/backend/
-RUN composer install --no-interaction \
-    && touch ../.env # needed in CI
+RUN cd backend && composer install --no-interaction && touch .env # needed in CI
 
 COPY symfony/composer.json symfony/composer.lock /app/symfony/
-RUN cd /app/symfony && composer install --no-interaction
+RUN cd symfony && composer install --no-interaction
 
 # set up code and install composer packages
 COPY backend /app/backend/

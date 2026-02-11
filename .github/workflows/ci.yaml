@@ -58,35 +58,75 @@ jobs:
             -w /app/symfony \
             backend-dev ./vendor/bin/phpstan analyse --memory-limit=1G --ansi
 
-  php-tests:
-    name: "PHP Tests"
+  laravel-php-tests:
+    name: "Laravel / PHP Tests"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      -   name: Checkout
+          uses: actions/checkout@v3
 
-      - name: Set up services
-        run: |
-          docker network create ci
-          docker compose -f meta/ci/compose.ci.yaml up -d
+      -   name: Set up services
+          run: |
+            docker network create ci
+            docker compose -f meta/ci/compose.ci.yaml up -d
 
-      - name: Build Docker image
-        run: docker build -t backend-dev . --target backend-dev
+      -   name: Build Docker image
+          run: docker build -t backend-dev . --target backend-dev
 
-      - name: Run Tests
-        run: |
-          touch coverage.xml
-          docker run \
-          -e DB_HOST=postgres \
-          --network ci \
-          --mount type=bind,source=$(pwd)/coverage.xml,target=/app/coverage.xml \
-          backend-dev php -d memory_limit=1024M ./vendor/bin/pest --coverage-clover /app/coverage.xml
+      -   name: Run Tests
+          run: |
+            touch coverage.xml
+            docker run \
+            -w /app/symfony \
+            -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
+            --network ci \
+            backend-dev php -d memory_limit=1024M bin/console dev:reset --env=test --no-interaction
+            docker run \
+            -w /app/backend \
+            -e DB_HOST=postgres \
+            --network ci \
+            --mount type=bind,source=$(pwd)/coverage.xml,target=/app/backend/coverage.xml \
+            backend-dev php -d memory_limit=1024M ./vendor/bin/pest --ci --coverage-clover /app/backend/coverage.xml
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
-          slug: hyvor/blogs
-          files: /app/coverage.xml
+      -   name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
+            slug: hyvor/blogs
+            files: /app/backend/coverage.xml
 
+  symfony-php-tests:
+    name: "Symfony / PHP Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      -   name: Checkout
+          uses: actions/checkout@v3
+
+      -   name: Set up services
+          run: |
+            docker network create ci
+            docker compose -f meta/ci/compose.ci.yaml up -d
+
+      -   name: Build Docker image
+          run: docker build -t backend-dev . --target backend-dev
+
+      -   name: Run Tests
+          run: |
+            touch coverage.xml
+            docker run \
+            -w /app/symfony \
+            -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
+            --network ci \
+            --mount type=bind,source=$(pwd)/coverage.xml,target=/app/symfony/coverage.xml \
+            backend-dev sh -c "
+            php -d memory_limit=1024M bin/console doctrine:migrations:migrate --env=test --no-interaction &&
+            php -d memory_limit=1024M ./vendor/bin/phpunit --coverage-clover /app/symfony/coverage.xml"
+
+      -   name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
+            slug: hyvor/core
+            files: /app/symfony/coverage.xml
