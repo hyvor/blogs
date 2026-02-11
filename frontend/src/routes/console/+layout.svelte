@@ -8,7 +8,12 @@
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
-	import {CloudContext, type CloudContextOrganization, CloudContextUser, HyvorBar} from '@hyvor/design/cloud';
+	import {
+		CloudContext,
+		type CloudContextOrganization,
+		CloudContextUser,
+		HyvorBar
+	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
 
 	interface Props {
