@@ -42,7 +42,7 @@ RUN  npm install \
 ###################################################
 FROM frankenphp AS backend-base
 
-WORKDIR /app/backend
+WORKDIR /app
 
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
@@ -56,7 +56,7 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # install npm dependencies (shiki)
 COPY backend/package.json backend/package-lock.json /app/backend/
-RUN npm install
+RUN cd backend && npm install
 
 # supervisor
 RUN apt update && apt install -y supervisor
@@ -93,10 +93,12 @@ RUN apt update && apt install -y supervisor
 
 # copy files
 COPY backend /app/backend
+COPY symfony /app/symfony
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
+RUN cd backend && composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
+RUN cd symfony && composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
 
 # copy configs
 COPY meta/image/CaddyfileOctane /etc/caddy/Caddyfile
