@@ -95,8 +95,8 @@ it('redirects on no license', function () {
         ->assertHeader('X-Redirect-Reason', 'No license')
         ->assertHeader('Cache-Control', 'max-age=0, must-revalidate, no-cache, no-store, private');
 
+    dd(DB::table('cache')->get());
     $value = DB::table('cache')->where('key', "hyvor_blogs_cachehas-license-org:$blog->organization_id")->first();
-    dump($value);
 
     expect(unserialize($value->value))->toBeFalse();
     expect($value->expiration)->toBe($time->addSeconds(30)->getTimestamp());
@@ -116,8 +116,8 @@ it('caches for 48 hours when there is a license', function () {
         ->assertOk()
         ->assertSee($content, false);
 
+    dd(DB::table('cache')->get());
     $value = DB::table('cache')->where('key', "hyvor_blogs_cachehas-license-org:$blog->organization_id")->first();
-    dump($value);
 
     expect(unserialize($value->value))->toBeTrue();
     expect($value->expiration)->toBe($time->addHours(48)->getTimestamp());
