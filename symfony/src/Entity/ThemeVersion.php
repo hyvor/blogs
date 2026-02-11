@@ -114,11 +114,17 @@ class ThemeVersion
         return $this;
     }
 
+    /**
+     * @return resource|null
+     */
     public function getZip()
     {
         return $this->zip;
     }
 
+    /**
+     * @param resource|null $zip
+     */
     public function setZip($zip): static
     {
         $this->zip = $zip;
