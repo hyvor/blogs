@@ -33,9 +33,8 @@ class ThemeVersion
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $preview_subdomain = null;
 
-    /** @var resource|null $zip */
     #[ORM\Column(type: 'blob', nullable: true)]
-    private $zip = null;
+    private ?string $zip = null;
 
     public function getId(): int
     {
@@ -114,18 +113,12 @@ class ThemeVersion
         return $this;
     }
 
-    /**
-     * @return resource|null
-     */
-    public function getZip()
+    public function getZip(): ?string
     {
         return $this->zip;
     }
 
-    /**
-     * @param resource|null $zip
-     */
-    public function setZip($zip): static
+    public function setZip(?string $zip): static
     {
         $this->zip = $zip;
         return $this;

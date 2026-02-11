@@ -33,9 +33,8 @@ class ThemeFile
     #[ORM\Column(length: 255)]
     private string $name;
 
-    /** @var resource|null $content */
     #[ORM\Column(type: 'blob', nullable: true)]
-    private $content = null;
+    private ?string $content = null;
 
     public function getId(): int
     {
@@ -114,18 +113,12 @@ class ThemeFile
         return $this;
     }
 
-    /**
-     * @return resource|null
-     */
-    public function getContent()
+    public function getContent(): ?string
     {
         return $this->content;
     }
 
-    /**
-    * @param resource|null $content
-    */
-    public function setContent($content): static
+    public function setContent(?string $content): static
     {
         $this->content = $content;
         return $this;
