@@ -38,6 +38,7 @@ class Subscription
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $ends_at = null;
 
+    /** @var array<string, mixed>|null $meta */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $meta = null;
 
@@ -140,11 +141,17 @@ class Subscription
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getMeta(): ?array
     {
         return $this->meta;
     }
 
+    /**
+     * @param array<string, mixed>|null $meta
+     */
     public function setMeta(?array $meta): static
     {
         $this->meta = $meta;

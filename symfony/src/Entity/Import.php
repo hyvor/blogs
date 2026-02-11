@@ -38,6 +38,7 @@ class Import
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $error = null;
 
+    /** @var array<string, mixed>|null $options */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $options = null;
 
@@ -152,11 +153,17 @@ class Import
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getOptions(): ?array
     {
         return $this->options;
     }
 
+    /**
+     * @param array<string, mixed>|null $options
+     */
     public function setOptions(?array $options): static
     {
         $this->options = $options;

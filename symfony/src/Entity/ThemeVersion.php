@@ -33,6 +33,7 @@ class ThemeVersion
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $preview_subdomain = null;
 
+    /** @var resource|null $zip */
     #[ORM\Column(type: 'blob', nullable: true)]
     private $zip = null;
 

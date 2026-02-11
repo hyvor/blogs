@@ -29,6 +29,7 @@ class Webhook
     #[ORM\Column(length: 255)]
     private string $url;
 
+    /** @var string[] $events */
     #[ORM\Column(type: 'json')]
     private array $events;
 
@@ -101,11 +102,17 @@ class Webhook
         return $this;
     }
 
+    /**
+     * @return string[]
+     */
     public function getEvents(): array
     {
         return $this->events;
     }
 
+    /**
+     * @param string[] $events
+     */
     public function setEvents(array $events): static
     {
         $this->events = $events;

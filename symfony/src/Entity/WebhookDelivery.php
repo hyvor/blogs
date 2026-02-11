@@ -35,6 +35,7 @@ class WebhookDelivery
     #[ORM\Column(length: 255)]
     private string $event;
 
+    /** @var array<string, mixed> $data */
     #[ORM\Column(type: 'json')]
     private array $data;
 
@@ -132,11 +133,15 @@ class WebhookDelivery
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
     }
 
+    /** @param array<string, mixed> $data */
     public function setData(array $data): static
     {
         $this->data = $data;

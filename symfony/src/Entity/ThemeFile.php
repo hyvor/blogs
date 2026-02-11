@@ -33,6 +33,7 @@ class ThemeFile
     #[ORM\Column(length: 255)]
     private string $name;
 
+    /** @var resource|null $content */
     #[ORM\Column(type: 'blob', nullable: true)]
     private $content = null;
 
@@ -113,11 +114,17 @@ class ThemeFile
         return $this;
     }
 
+    /**
+     * @return resource|null
+     */
     public function getContent()
     {
         return $this->content;
     }
 
+    /**
+    * @param resource|null $content
+    */
     public function setContent($content): static
     {
         $this->content = $content;

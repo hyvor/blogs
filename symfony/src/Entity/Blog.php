@@ -62,9 +62,11 @@ class Blog
     #[ORM\Column(nullable: true, options: ['default' => true])]
     private ?bool $hosting_redirect_subdomain = true;
 
+    /** @var array<string, mixed>|null $meta */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $meta = null;
 
+    /** @var array<string, number>|null $counts */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $counts = null;
 
@@ -247,22 +249,34 @@ class Blog
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getMeta(): ?array
     {
         return $this->meta;
     }
 
+    /**
+     * @param array<string, mixed>|null $meta
+     */
     public function setMeta(?array $meta): static
     {
         $this->meta = $meta;
         return $this;
     }
 
+    /**
+     * @return array<string, number>|null
+     */
     public function getCounts(): ?array
     {
         return $this->counts;
     }
 
+    /**
+     * @param array<string, number>|null $counts
+     */
     public function setCounts(?array $counts): static
     {
         $this->counts = $counts;

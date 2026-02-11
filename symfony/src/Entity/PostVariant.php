@@ -66,9 +66,11 @@ class PostVariant
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $seo_primary_keyword = null;
 
+    /** @var string[]|null $seo_secondary_keywords */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $seo_secondary_keywords = null;
 
+    /** @var array<string, number>|null $link_analysis */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $link_analysis = null;
 
@@ -262,22 +264,30 @@ class PostVariant
         return $this;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getSeoSecondaryKeywords(): ?array
     {
         return $this->seo_secondary_keywords;
     }
 
+    /** @param string[]|null $seo_secondary_keywords */
     public function setSeoSecondaryKeywords(?array $seo_secondary_keywords): static
     {
         $this->seo_secondary_keywords = $seo_secondary_keywords;
         return $this;
     }
 
+    /**
+     * @return array<string, number>|null
+     */
     public function getLinkAnalysis(): ?array
     {
         return $this->link_analysis;
     }
 
+    /** @param array<string, number>|null $link_analysis */
     public function setLinkAnalysis(?array $link_analysis): static
     {
         $this->link_analysis = $link_analysis;
