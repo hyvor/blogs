@@ -69,7 +69,7 @@ class BlogService
     ): Blog {
         return DB::transaction(function () use ($userId, $organizationId, $name, $subdomain, $type, $ip) {
             $blog = Blog::create([
-                'created_by_user_id' => $userId,
+                'hyvor_user_id' => $userId,
                 'organization_id' => $organizationId,
                 'ip' => $ip,
                 'subdomain' => $subdomain,

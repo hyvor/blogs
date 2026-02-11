@@ -13,7 +13,6 @@ return new class extends Migration {
     {
         $query = <<<SQL
         ALTER TABLE blogs ADD COLUMN organization_id BIGINT;
-        ALTER TABLE blogs ADD COLUMN created_by_user_id BIGINT;
         SQL;
 
         DB::unprepared($query);

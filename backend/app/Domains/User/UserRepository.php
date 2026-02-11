@@ -338,13 +338,13 @@ class UserRepository
 
     public static function getOwnerEmailAddress(Blog $blog): ?string
     {
-        if (!$blog->created_by_user_id) {
+        if (!$blog->hyvor_user_id) {
             return null;
         }
 
         // TODO: org
         $auth = app(AuthInterface::class);
-        $hyvorUser = $auth->fromId($blog->created_by_user_id);
+        $hyvorUser = $auth->fromId($blog->hyvor_user_id);
 
         if (!$hyvorUser) {
             return null;

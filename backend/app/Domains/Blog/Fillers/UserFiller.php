@@ -30,7 +30,7 @@ class UserFiller implements FillerInterface
                 // add the OWNER
                 UserRepository::createUserFromHyvorUser(
                     $this->blog,
-                    intval($this->blog->created_by_user_id),
+                    intval($this->blog->hyvor_user_id),
                     UserRoleEnum::OWNER,
                 );
             }

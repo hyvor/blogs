@@ -256,7 +256,6 @@ CREATE TABLE public.blogs (
                               meta jsonb,
                               counts jsonb,
                               organization_id bigint,
-                              created_by_user_id bigint
 );
 
 
