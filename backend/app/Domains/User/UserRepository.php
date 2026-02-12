@@ -17,7 +17,6 @@ use App\Domains\User\Events\UserUpdatedEvent;
 use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
-use App\Domains\User\Mail\InviteUserMail;
 use App\Helpers\CollectionWithTotal;
 use App\Models\BlockedUser;
 use App\Models\Blog;
@@ -28,7 +27,6 @@ use Exception;
 use Hyvor\FilterQ\FilterQ;
 use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 
 class UserRepository
 {
@@ -342,7 +340,7 @@ class UserRepository
             return null;
         }
 
-        // TODO: org
+        // TODO: org (https://github.com/hyvor/core/issues/493)
         $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($blog->hyvor_user_id);
 

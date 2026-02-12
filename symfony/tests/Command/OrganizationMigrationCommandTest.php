@@ -14,14 +14,20 @@ use Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration\InitOrg;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration\InitOrgResponse;
 use Hyvor\Internal\Component\Component;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
 #[CoversClass(OrganizationMigrationCommand::class)]
 class OrganizationMigrationCommandTest extends KernelTestCase
 {
+
+    use ClockSensitiveTrait;
+
     public function test_organization_migration(): void
     {
+        $this->mockTime();
+
         $blogs = BlogFactory::createMany(3, [
-            'organization_id' => null
+            'organization_id' => null,
         ]);
 
         $this->getComms()->addResponse(InitOrg::class, function () {
@@ -33,11 +39,11 @@ class OrganizationMigrationCommandTest extends KernelTestCase
             $user = UserFactory::createOne([
                 'blog' => $blog,
                 'hyvor_user_id' => $blog->getHyvorUserId(),
-                'role' => UserRole::OWNER
+                'role' => UserRole::OWNER,
             ]);
             $admin = UserFactory::createOne([
                 'blog' => $blog,
-                'role' => UserRole::ADMIN
+                'role' => UserRole::ADMIN,
             ]);
 
             $userIds = [$user->getHyvorUserId(), $admin->getHyvorUserId()];
@@ -45,7 +51,7 @@ class OrganizationMigrationCommandTest extends KernelTestCase
 
             $shouldReceiveEnsureMembers[] = [
                 'blog' => $blog,
-                'userIds' => $userIds
+                'userIds' => $userIds,
             ];
         }
 
@@ -60,11 +66,12 @@ class OrganizationMigrationCommandTest extends KernelTestCase
         $this->assertCount(3, $sentEvents);
 
         foreach ($shouldReceiveEnsureMembers as $receivable) {
-
-            $event = array_values(array_filter(
-                $sentEvents,
-                fn(array $item) => $item['event']->orgId === $receivable['blog']->getOrganizationId()
-            ))[0];
+            $event = array_values(
+                array_filter(
+                    $sentEvents,
+                    fn(array $item) => $item['event']->orgId === $receivable['blog']->getOrganizationId(),
+                ),
+            )[0];
 
             $this->assertSame($receivable['userIds'], $event['event']->userIds);
         }
@@ -78,8 +85,10 @@ class OrganizationMigrationCommandTest extends KernelTestCase
 
     public function test_does_not_update_migrated_organizations(): void
     {
+        $this->mockTime();
+
         $blogs = BlogFactory::createMany(3, [
-            'organization_id' => null
+            'organization_id' => null,
         ]);
 
         $this->getComms()->addResponse(InitOrg::class, function () {
@@ -90,27 +99,27 @@ class OrganizationMigrationCommandTest extends KernelTestCase
             UserFactory::createOne([
                 'blog' => $blog,
                 'hyvor_user_id' => $blog->getHyvorUserId(),
-                'role' => UserRole::OWNER
+                'role' => UserRole::OWNER,
             ]);
             UserFactory::createOne([
                 'blog' => $blog,
-                'role' => UserRole::ADMIN
+                'role' => UserRole::ADMIN,
             ]);
         }
 
 
         $migratedBlogs = BlogFactory::createMany(2, [
-            'organization_id' => 20001003
+            'organization_id' => 20001003,
         ]);
         foreach ($migratedBlogs as $blog) {
             UserFactory::createOne([
                 'blog' => $blog,
                 'hyvor_user_id' => $blog->getHyvorUserId(),
-                'role' => UserRole::OWNER
+                'role' => UserRole::OWNER,
             ]);
             UserFactory::createOne([
                 'blog' => $blog,
-                'role' => UserRole::ADMIN
+                'role' => UserRole::ADMIN,
             ]);
         }
 

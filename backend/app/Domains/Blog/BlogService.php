@@ -43,9 +43,7 @@ class BlogService
 
     public function __construct(
         private CommsInterface $comms,
-    )
-    {
-    }
+    ) {}
 
     public static function isSubdomainReserved(string $subdomain): bool
     {
@@ -65,7 +63,7 @@ class BlogService
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
-        ?string $ip = null
+        ?string $ip = null,
     ): Blog {
         return DB::transaction(function () use ($userId, $organizationId, $name, $subdomain, $type, $ip) {
             $blog = Blog::create([
@@ -79,17 +77,19 @@ class BlogService
             $blog->refresh(); // fetch default columns
 
             if ($organizationId) {
-                $this->comms->send(new ResourceCreated(
-                    Component::BLOGS,
-                    $organizationId
-                ));
+                $this->comms->send(
+                    new ResourceCreated(
+                        Component::BLOGS,
+                        $organizationId,
+                    ),
+                );
             }
 
             (new LanguageFiller($blog))->fill();
 
             if ($type === BlogTypeEnum::PREVIEW) {
                 $blog->setMeta([
-                    'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
+                    'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl(),
                 ]);
             }
 
@@ -260,9 +260,6 @@ class BlogService
             }
 
             $blog->delete();
-
-            // todo: send notification to core somehow to remove component_organizations
-            // $this->resource->delete($blog->id);
 
             BlogDeletedEvent::dispatch($blog);
         });

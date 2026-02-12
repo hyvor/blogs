@@ -25,15 +25,13 @@ class UserFiller implements FillerInterface
                 UserRoleEnum::OWNER,
                 pictureUrl: RandomImageUrlGenerator::getUserImageUrl(),
             );
-        } else {
-            if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
-                // add the OWNER
-                UserRepository::createUserFromHyvorUser(
-                    $this->blog,
-                    intval($this->blog->hyvor_user_id),
-                    UserRoleEnum::OWNER,
-                );
-            }
+        } elseif ($this->blog->type !== BlogTypeEnum::PREVIEW) {
+            // add the OWNER
+            UserRepository::createUserFromHyvorUser(
+                $this->blog,
+                intval($this->blog->hyvor_user_id),
+                UserRoleEnum::OWNER,
+            );
         }
 
         if (

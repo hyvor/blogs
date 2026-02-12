@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $ip
  * @property bool $is_blocked
  * @property ?Carbon $blocked_at
- * @property int $hyvor_user_id
+ * @property ?int $hyvor_user_id
  * @property ?int $theme_version_id
  * @property string $subdomain
  * @property BlogTypeEnum $type
@@ -78,10 +78,10 @@ class Blog extends Model
         $definer->add('seo_indexing')->default(true);
         $definer->add('seo_robots_txt')->default(
             <<<'TEXT'
-        User-agent: *
-        Sitemap: {{ _blog.base_url }}/sitemap.xml
-        Disallow: /p/
-        TEXT
+                User-agent: *
+                Sitemap: {{ _blog.base_url }}/sitemap.xml
+                Disallow: /p/
+                TEXT,
         );
         $definer->add('seo_external_links_follow')->default('follow');
         $definer->add('seo_rich_schema')->default(true);
