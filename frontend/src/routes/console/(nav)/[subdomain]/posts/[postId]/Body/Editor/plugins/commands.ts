@@ -1,58 +1,48 @@
-import { Node } from "prosemirror-model";
-import { TextSelection, NodeSelection, type Command } from "prosemirror-state";
-import { undoInputRule } from "prosemirror-inputrules";
+import { Node } from 'prosemirror-model';
+import { TextSelection, NodeSelection, type Command } from 'prosemirror-state';
+import { undoInputRule } from 'prosemirror-inputrules';
 import {
-  joinBackward,
-  deleteSelection,
-  selectNodeBackward,
-  joinForward,
-  selectNodeForward,
-  joinUp,
-  joinDown,
-  lift,
-  newlineInCode,
-  exitCode,
-  createParagraphNear,
-  liftEmptyBlock,
-  splitBlock,
-  splitBlockKeepMarks,
-  selectParentNode,
-  selectAll,
-  wrapIn,
-  setBlockType,
-  toggleMark,
-  autoJoin,
-  chainCommands,
-} from "prosemirror-commands";
+	joinBackward,
+	deleteSelection,
+	selectNodeBackward,
+	joinForward,
+	selectNodeForward,
+	joinUp,
+	joinDown,
+	lift,
+	newlineInCode,
+	exitCode,
+	createParagraphNear,
+	liftEmptyBlock,
+	splitBlock,
+	splitBlockKeepMarks,
+	selectParentNode,
+	selectAll,
+	wrapIn,
+	setBlockType,
+	toggleMark,
+	autoJoin,
+	chainCommands
+} from 'prosemirror-commands';
 
 export function clearAndChangeNode(node: Node): Command {
-  return function (state, dispatch) {
-    let { $from, to } = state.selection,
-      pos;
-    let same = $from.sharedDepth(to);
-    pos = $from.before(same);
-    const nodeSel = NodeSelection.create(state.doc, pos);
-    const tr = state.tr.replaceWith(nodeSel.from, nodeSel.to, node);
-    if (dispatch) {
-      dispatch(tr.setSelection(TextSelection.create(tr.doc, nodeSel.from + 1)));
-      return true;
-    }
-    return false;
-  };
+	return function (state, dispatch) {
+		let { $from, to } = state.selection,
+			pos;
+		let same = $from.sharedDepth(to);
+		pos = $from.before(same);
+		const nodeSel = NodeSelection.create(state.doc, pos);
+		const tr = state.tr.replaceWith(nodeSel.from, nodeSel.to, node);
+		if (dispatch) {
+			dispatch(tr.setSelection(TextSelection.create(tr.doc, nodeSel.from + 1)));
+			return true;
+		}
+		return false;
+	};
 }
 
-let backspace = chainCommands(
-  deleteSelection,
-  undoInputRule,
-  joinBackward,
-  selectNodeBackward,
-);
-let del = chainCommands(
-  deleteSelection,
-  undoInputRule,
-  joinForward,
-  selectNodeForward,
-);
+let backspace = chainCommands(deleteSelection, undoInputRule, joinBackward, selectNodeBackward);
+let del = chainCommands(deleteSelection, undoInputRule, joinForward, selectNodeForward);
 
 // :: Object
 // A basic keymap containing bindings not specific to any schema.
@@ -66,19 +56,14 @@ let del = chainCommands(
 // * **Mod-Delete** to `deleteSelection`, `joinForward`, `selectNodeForward`
 // * **Mod-a** to `selectAll`
 export let pcBaseKeymap = {
-  Enter: chainCommands(
-    newlineInCode,
-    createParagraphNear,
-    liftEmptyBlock,
-    splitBlock,
-  ),
-  "Mod-Enter": exitCode,
-  Backspace: backspace,
-  "Mod-Backspace": backspace,
-  "Shift-Backspace": backspace,
-  Delete: del,
-  "Mod-Delete": del,
-  "Mod-a": selectAll,
+	Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock),
+	'Mod-Enter': exitCode,
+	Backspace: backspace,
+	'Mod-Backspace': backspace,
+	'Shift-Backspace': backspace,
+	Delete: del,
+	'Mod-Delete': del,
+	'Mod-a': selectAll
 } as { [key: string]: Command };
 
 // :: Object
@@ -87,24 +72,25 @@ export let pcBaseKeymap = {
 // **Ctrl-Alt-Backspace**, **Alt-Delete**, and **Alt-d** like
 // Ctrl-Delete.
 export let macBaseKeymap = {
-  "Ctrl-h": pcBaseKeymap["Backspace"],
-  "Alt-Backspace": pcBaseKeymap["Mod-Backspace"],
-  "Ctrl-d": pcBaseKeymap["Delete"],
-  "Ctrl-Alt-Backspace": pcBaseKeymap["Mod-Delete"],
-  "Alt-Delete": pcBaseKeymap["Mod-Delete"],
-  "Alt-d": pcBaseKeymap["Mod-Delete"],
+	'Ctrl-h': pcBaseKeymap['Backspace'],
+	'Alt-Backspace': pcBaseKeymap['Mod-Backspace'],
+	'Ctrl-d': pcBaseKeymap['Delete'],
+	'Ctrl-Alt-Backspace': pcBaseKeymap['Mod-Delete'],
+	'Alt-Delete': pcBaseKeymap['Mod-Delete'],
+	'Alt-d': pcBaseKeymap['Mod-Delete']
 } as { [key: string]: Command };
 // @ts-ignore
 for (let key in pcBaseKeymap) macBaseKeymap[key] = pcBaseKeymap[key];
 
 // declare global: os, navigator
 const mac =
-  typeof navigator != "undefined"
-    ? /Mac|iP(hone|[oa]d)/.test(navigator.platform)
-    : // @ts-ignore
-      typeof os != "undefined"
-      ? os.platform() == "darwin"
-      : false;
+	typeof navigator != 'undefined'
+		? /Mac|iP(hone|[oa]d)/.test(navigator.platform)
+		: // @ts-ignore
+			typeof os != 'undefined'
+			? // @ts-ignore
+				os.platform() == 'darwin'
+			: false;
 
 // :: Object
 // Depending on the detected platform, this will hold

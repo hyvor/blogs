@@ -11,7 +11,7 @@
 	import {
 		CloudContext,
 		type CloudContextOrganization,
-		CloudContextUser,
+		type CloudContextUser,
 		HyvorBar
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
@@ -110,6 +110,7 @@
 				instance: getConfig().hyvor.instance,
 				user: get(authUserStore),
 				organization: get(authOrganizationStore),
+                license: null, // TODO!!! add this
 				callbacks: {
 					onOrganizationSwitch: (switcher) => {
 						isLoading = true;
