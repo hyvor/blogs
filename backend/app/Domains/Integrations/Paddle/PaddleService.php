@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Domains\Integrations\Paddle;
 
@@ -20,9 +21,8 @@ class PaddleService
         Blog $blog,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency,
-        ?string $referral
-    ) : string
-    {
+        ?string $referral,
+    ): string {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
@@ -31,7 +31,7 @@ class PaddleService
          */
         $data = PaddleApiCaller::call('/product/generate_pay_link', [
             'product_id' => $planId,
-            'passthrough' => Passthrough::encode($blog, $referral)
+            'passthrough' => Passthrough::encode($blog, $referral),
         ]);
 
         return $data->url;
@@ -40,9 +40,8 @@ class PaddleService
     public function updateSubscription(
         Subscription $subscription,
         SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
-    ) : void 
-    {
+        SubscriptionFrequencyEnum $frequency,
+    ): void {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
@@ -51,11 +50,11 @@ class PaddleService
         PaddleApiCaller::call('/subscription/users/update', [
             'subscription_id' => $subscriptionId,
             'plan_id' => $planId,
-            'bill_immediately' => true
+            'bill_immediately' => true,
         ]);
     }
 
-    public function cancelSubscription(Subscription $subscription) : void
+    public function cancelSubscription(Subscription $subscription): void
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
@@ -67,17 +66,17 @@ class PaddleService
     /**
      * @return Collection<int, mixed>
      */
-    public function getPayments(Subscription $subscription) : Collection
+    public function getPayments(Subscription $subscription): Collection
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$paddleSubscriptionId)
+        if (!$paddleSubscriptionId) {
             return collect();
+        }
 
-        /** @var array<mixed> $data */
-        $data = PaddleApiCaller::call('/subscription/payments', [
+        $data = (array)PaddleApiCaller::call('/subscription/payments', [
             'subscription_id' => $paddleSubscriptionId,
-            'is_paid' => 1
+            'is_paid' => 1,
         ]);
 
         return collect($data);
@@ -86,16 +85,17 @@ class PaddleService
     /**
      * @return Collection<int, mixed>
      */
-    public function getInfo(Subscription $subscription) : Collection
+    public function getInfo(Subscription $subscription): Collection
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$paddleSubscriptionId)
+        if (!$paddleSubscriptionId) {
             return collect();
+        }
 
         /** @var array<mixed> $data */
         $data = PaddleApiCaller::call('/subscription/users', [
-            'subscription_id' => $paddleSubscriptionId
+            'subscription_id' => $paddleSubscriptionId,
         ])->{0};
 
         return collect($data);
@@ -109,13 +109,14 @@ class PaddleService
     {
         $id = $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
 
-        if (!$id)
+        if (!$id) {
             return null;
+        }
 
         return intval($id);
     }
 
-    public static function setPaddleSubscriptionId(Subscription $subscription, int $id) : void
+    public static function setPaddleSubscriptionId(Subscription $subscription, int $id): void
     {
         $subscription->setMeta(self::META_PADDLE_SUBSCRIPTION_ID, $id);
     }
@@ -132,8 +133,9 @@ class PaddleService
             ->where('frequency', $frequency)
             ->first();
 
-        if (!$plan)
+        if (!$plan) {
             throw new SafetyException('Paddle plan not found');
+        }
 
         return $plan;
     }
@@ -142,8 +144,9 @@ class PaddleService
     {
         $plan = self::paddlePlans()->firstWhere('id', $id);
 
-        if (!$plan)
+        if (!$plan) {
             throw new SafetyException('Paddle plan not found');
+        }
 
         return $plan;
     }
