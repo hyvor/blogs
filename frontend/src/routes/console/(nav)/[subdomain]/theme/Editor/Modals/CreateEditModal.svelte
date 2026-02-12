@@ -173,13 +173,7 @@
 
 	<SplitControl label="File Name">
 		<FormControl>
-			<TextInput
-				block
-				autofocus
-				on:input={handleInput}
-				bind:value={fileName}
-				state={inputState}
-			>
+			<TextInput block autofocus on:input={handleInput} bind:value={fileName} state={inputState}>
 				{#snippet end()}
 					<Loader state={loaderState} size="small" duration={10000} />
 				{/snippet}

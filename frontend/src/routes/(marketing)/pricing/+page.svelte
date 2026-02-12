@@ -46,8 +46,7 @@
 		},
 		{
 			name: 'Data Ownership',
-			description:
-				'You own everything you write. Export and move to another platform anytime.',
+			description: 'You own everything you write. Export and move to another platform anytime.',
 			values: [true, true, true, true, true, true]
 		},
 		{
@@ -173,9 +172,9 @@
 
 <div class="faqs hds-container">
 	<Faq q="How does the free trial work?" icon={IconHourglass}>
-		Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card
-		required. All features are available during the trial (except Hyvor Talk integration). After the
-		trial, you can upgrade to a paid plan to continue using Hyvor Blogs.
+		Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card required.
+		All features are available during the trial (except Hyvor Talk integration). After the trial, you
+		can upgrade to a paid plan to continue using Hyvor Blogs.
 	</Faq>
 
 	<Faq q="Do I have to pay for themes?" icon={IconBrush}>
@@ -183,8 +182,8 @@
 			>free and <Link href="https://github.com/hyvor/hyvor-blogs-themes" target="_blank"
 				>open-source</Link
 			></strong
-		>. They can be easily installed on your blog with a few clicks. If you want to build your
-		own theme, you will have to cover the development costs.
+		>. They can be easily installed on your blog with a few clicks. If you want to build your own
+		theme, you will have to cover the development costs.
 	</Faq>
 
 	<Faq q="Do you offer discounts?" icon={IconPercent}>
@@ -204,13 +203,13 @@
 
 	<Faq q="Can I display ads on my blog?" icon={IconBadgeAd}>
 		You decide! You are in control of your blog and the theme. You can add any ad code to your
-		theme. You can easily add Google AdSense or any other ad network to your blog by adding the
-		ad code to your blog/theme.
+		theme. You can easily add Google AdSense or any other ad network to your blog by adding the ad
+		code to your blog/theme.
 	</Faq>
 
 	<Faq q="How to add a commenting system?" icon={IconChat}>
-		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free for all plans. You
-		can also embed other commenting systems easily.
+		<Link href="https://talk.hyvor.com">Hyvor Talk</Link> is available for free for all plans. You can
+		also embed other commenting systems easily.
 	</Faq>
 </div>
 

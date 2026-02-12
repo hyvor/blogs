@@ -89,9 +89,7 @@
 			{:else if user.status === 'invited'}
 				<Tag size="x-small" color="blue">PENDING</Tag>
 				<Tooltip text="Resend invitation email">
-					<Button size="x-small" on:click={handelResend} style="margin-top:8px;">
-						Resend
-					</Button>
+					<Button size="x-small" on:click={handelResend} style="margin-top:8px;">Resend</Button>
 				</Tooltip>
 			{:else if user.status === 'blocked'}
 				<Tag size="x-small" color="red">BLOCKED</Tag>

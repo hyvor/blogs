@@ -24,8 +24,8 @@
 </ul>
 
 <p>
-	It will take a couple of minutes depending on the size of your blog. You can track the progress
-	in the <strong>History</strong> tab.
+	It will take a couple of minutes depending on the size of your blog. You can track the progress in
+	the <strong>History</strong> tab.
 </p>
 
 <DocsImage src={exportGif} alt="Exporting data" />

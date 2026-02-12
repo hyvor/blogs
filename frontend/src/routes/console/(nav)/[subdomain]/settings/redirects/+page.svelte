@@ -104,12 +104,7 @@
 		>
 			{#snippet end()}
 				{#if searchVal.trim() !== ''}
-					<IconButton
-						variant="invisible"
-						color="gray"
-						size={16}
-						on:click={searchActions.onClear}
-					>
+					<IconButton variant="invisible" color="gray" size={16} on:click={searchActions.onClear}>
 						<IconX size={12} />
 					</IconButton>
 				{/if}

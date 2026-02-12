@@ -20,9 +20,9 @@
 <h2 id="primary-language">Primary Language</h2>
 
 <p>
-	<strong>English (en)</strong> is the primary language for newly created blogs. If you are blogging
-	in a different language, it is important to change the language in Language settings to tell users,
-	browsers, and crawlers the language of your blog.
+	<strong>English (en)</strong> is the primary language for newly created blogs. If you are blogging in
+	a different language, it is important to change the language in Language settings to tell users, browsers,
+	and crawlers the language of your blog.
 </p>
 
 <p>Each language in your blog has a code, name, and a direction.</p>
@@ -50,8 +50,8 @@
 		post is translated into Español, 简体中文, and Nederlands".
 	</li>
 	<li>
-		<strong>Direction</strong> - Left-to-right or right-to-left. Setting this to RTL will change the
-		UI according. All official themes are built with RTL support.
+		<strong>Direction</strong> - Left-to-right or right-to-left. Setting this to RTL will change the UI
+		according. All official themes are built with RTL support.
 	</li>
 </ul>
 
@@ -59,15 +59,15 @@
 
 <p>
 	Everything in Hyvor Blogs is designed to support multiple languages. Most of the texts can be
-	translated from the Console UI while some texts (like the texts in the theme) should be
-	translated in YAML files.
+	translated from the Console UI while some texts (like the texts in the theme) should be translated
+	in YAML files.
 </p>
 
 <h3 id="add-language">Step 1: Add a Language</h3>
 
 <p>
-	Go to <strong>Settings &rarr; Languages</strong> and click <strong>Add Language</strong> button to
-	add a new language.
+	Go to <strong>Settings &rarr; Languages</strong> and click <strong>Add Language</strong> button to add
+	a new language.
 </p>
 
 <DocsImage src={addLanguageImg} alt="Add Language" />
@@ -128,8 +128,7 @@
 </Table>
 
 <p>
-	Translatable settings will have a UI like this. First, create a variant, then translate the
-	data.
+	Translatable settings will have a UI like this. First, create a variant, then translate the data.
 </p>
 
 <DocsImage src={translateDataImg} alt="Translate data" />
@@ -150,8 +149,9 @@
 		Copy the contents of the <code>en.yaml</code> file.
 	</li>
 	<li>
-		Create a new file with the language code of the language you want to translate to. For
-		example, <code>fr.yaml</code> for French. Then, paste the copied contents to the new file.
+		Create a new file with the language code of the language you want to translate to. For example, <code
+			>fr.yaml</code
+		> for French. Then, paste the copied contents to the new file.
 	</li>
 	<li>
 		Finally, start translating the texts.
@@ -164,8 +164,9 @@
 				<code>*</code> and <code>{`{key}`}</code> are placeholders. Do not translate them.
 			</li>
 			<li>
-				You may wrap the value in double quotes (") if you want to use special characters
-				like <code>:</code>, <code>*</code>, etc.
+				You may wrap the value in double quotes (") if you want to use special characters like <code
+					>:</code
+				>, <code>*</code>, etc.
 			</li>
 		</ul>
 	</li>
@@ -207,8 +208,8 @@
 </p>
 
 <p>
-	HB adds the lang attribute to the <code>{`<html` + `>`}</code> tag in all pages using the language
-	code you set (this is why using the correct language codes are important).
+	HB adds the lang attribute to the <code>{`<html` + `>`}</code> tag in all pages using the language code
+	you set (this is why using the correct language codes are important).
 </p>
 
 <CodeBlock code={`<` + `html lang="en">`} />

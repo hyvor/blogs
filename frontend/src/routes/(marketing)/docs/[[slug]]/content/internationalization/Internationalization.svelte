@@ -6,8 +6,8 @@
 
 <p>
 	We do not expect you to translate themes to multiple languages, but the theme should be
-	translatable. It means that all strings in the template files <b>should be translatable</b>.
-	This is a requirement if you are planning to
+	translatable. It means that all strings in the template files <b>should be translatable</b>. This
+	is a requirement if you are planning to
 	<a href="https://blogs.hyvor.com/docs/themes-publishing">publish</a> the theme.
 </p>
 
@@ -34,16 +34,16 @@
 />
 
 <p>
-	Here, <code>'welcome'</code> is a key in <code>en.yaml</code>. And, <code>lang</code> is a
-	custom Twig filter defined by HB. HB will display the correct language based on the
+	Here, <code>'welcome'</code> is a key in <code>en.yaml</code>. And, <code>lang</code> is a custom
+	Twig filter defined by HB. HB will display the correct language based on the
 	<a href="/docs/languages">language of the user's blog</a>.
 </p>
 
 <h2 id="lang-folder">Lang folder</h2>
 
 <p>
-	The <code>/lang</code> folder contains <code>.yaml</code> language files. A language file may look
-	like this:
+	The <code>/lang</code> folder contains <code>.yaml</code> language files. A language file may look like
+	this:
 </p>
 <CodeBlock
 	language="yaml"
@@ -57,8 +57,7 @@ welcome: Welcome
 <p>
 	English (<code>en.yaml</code>) is the default language and it is required. You may also define
 	other languages. Language codes should be
-	<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" rel="nofollow"
-		>ISO 639-1 Codes</a
+	<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" rel="nofollow">ISO 639-1 Codes</a
 	>.
 </p>
 <p>Let's see another example:</p>
@@ -101,8 +100,7 @@ byAuthor: "by {authorName}"
 	<ul>
 		<li>example: <code>{`{authorName}`}</code></li>
 		<li>
-			Use if the string has more inputs or if the inputs are data that can be described in
-			name.
+			Use if the string has more inputs or if the inputs are data that can be described in name.
 		</li>
 		<li>You can have multiple named placeholders in the string.</li>
 		<li>
@@ -117,8 +115,8 @@ byAuthor: "by {authorName}"
 <h2 id="lang-by-number">Conditional strings based on a number</h2>
 <p>
 	Sometimes you may want to display a different message when a number is zero, one, or more than
-	one. Instead writing a bunch of if conditions, you may use the <code>lang_by_number</code> custom
-	Twig filter.
+	one. Instead writing a bunch of if conditions, you may use the <code>lang_by_number</code> custom Twig
+	filter.
 </p>
 
 <CodeBlock
@@ -154,10 +152,10 @@ Number of posts:
 	the language or set up multiple languages in a blog.
 </p>
 <p>
-	Let's say that the blogger changes his site's language to French (<code>fr</code>). Then, we
-	check if a <code>fr.yaml</code> is available in the <code>lang</code> folder. If not, we'll just
-	show English strings. However, anyone can easily add a <code>fr.yaml</code> from the Console (even
-	someone without technical knowledge can do that). Keys don't change, only the strings.
+	Let's say that the blogger changes his site's language to French (<code>fr</code>). Then, we check
+	if a <code>fr.yaml</code> is available in the <code>lang</code> folder. If not, we'll just show
+	English strings. However, anyone can easily add a <code>fr.yaml</code> from the Console (even someone
+	without technical knowledge can do that). Keys don't change, only the strings.
 </p>
 
 <p>Here's how an <code>fr</code> version of the above file will look like.</p>
@@ -213,12 +211,12 @@ byAuthor: "par {authorName}"
 		There is no need to have a language switcher in single-language blogs.
 	</li>
 	<li>
-		<code>_lang</code> is the current language. So, <code>{`{{ _lang.code }}`}</code> displays the
-		current language code.
+		<code>_lang</code> is the current language. So, <code>{`{{ _lang.code }}`}</code> displays the current
+		language code.
 	</li>
 	<li>
-		<code>{`{% for lang in _blog.languages %}`}</code> loops through all the languages in the
-		blog and renders an <code>{`<a>`}</code> element for each language inside the dropdown.
+		<code>{`{% for lang in _blog.languages %}`}</code> loops through all the languages in the blog
+		and renders an <code>{`<a>`}</code> element for each language inside the dropdown.
 	</li>
 	<li>
 		The <code>{`language_variant_url`}</code>

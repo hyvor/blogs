@@ -63,10 +63,9 @@
 		<div class="title">SEO Analyzer</div>
 
 		<div class="subtitle">
-			Our in-built SEO analyzer will help you optimize your posts for search engines and
-			prevent you from making common SEO mistakes. You will receive <strong
-				>realtime feedback</strong
-			> as you write your blog post.
+			Our in-built SEO analyzer will help you optimize your posts for search engines and prevent you
+			from making common SEO mistakes. You will receive <strong>realtime feedback</strong> as you write
+			your blog post.
 		</div>
 
 		<div class="hds-box video-wrap">
@@ -81,8 +80,8 @@
 		<div class="title">Post Link Analyzer</div>
 
 		<div class="subtitle">
-			Remember that broken link you added to your blog post? That won't happen again with our
-			link analyzer.
+			Remember that broken link you added to your blog post? That won't happen again with our link
+			analyzer.
 		</div>
 
 		<div class="hds-box video-wrap">
@@ -98,8 +97,8 @@
 	<div class="title">Full-blog Link Analyzer</div>
 
 	<div class="subtitle">
-		What about links that break over time? No worries! We run a full-blog link analysis every
-		two weeks to notify you of any broken or redirect links.
+		What about links that break over time? No worries! We run a full-blog link analysis every two
+		weeks to notify you of any broken or redirect links.
 	</div>
 
 	<div class="img-wrap">

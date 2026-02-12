@@ -6,27 +6,27 @@
 
 <p>
 	The purpose of configurations is to make themes customizable to some extent without having to
-	change the theme code. Configurations may be used to allow the blogger to turn on or off
-	features, change colors and fonts, or even define API keys for external services.
+	change the theme code. Configurations may be used to allow the blogger to turn on or off features,
+	change colors and fonts, or even define API keys for external services.
 </p>
 
 <Callout type="info">
 	<p>
-		If you are developing a theme for yourself or a single client, you <b>may not</b> want to
-		use configurations. However, if you are planning to
+		If you are developing a theme for yourself or a single client, you <b>may not</b> want to use
+		configurations. However, if you are planning to
 		<a href="/docs/themes-publishing">publish</a> your theme, adding configurations is required.
 	</p>
 </Callout>
 
 <p>
-	All configurations are added to <code>config.yaml</code> with their default values. There are two
-	types of configurations.
+	All configurations are added to <code>config.yaml</code> with their default values. There are two types
+	of configurations.
 </p>
 
 <ul>
 	<li>
-		<b>HB-aware configurations</b> - HB is aware of these configurations, and will make decisions
-		based on their values. You too can use their values in templates.
+		<b>HB-aware configurations</b> - HB is aware of these configurations, and will make decisions based
+		on their values. You too can use their values in templates.
 	</li>
 	<li>
 		<b>Theme configurations</b> - HB is unaware of these configurations. You can use them in templates
@@ -117,8 +117,8 @@ image_service:
 <h3 id="config-def">Config Definitions</h3>
 
 <p>
-	<code>config.def.yaml</code> "describes" your <b>theme configurations</b>. This helps the
-	blogger to understand what each configuration does. It also helps to render the
+	<code>config.def.yaml</code> "describes" your <b>theme configurations</b>. This helps the blogger
+	to understand what each configuration does. It also helps to render the
 	<code>config.yaml</code>
 	file in <b>Console → Theme</b> as a UI instead of a file.
 </p>
@@ -165,8 +165,8 @@ image_service:
 <Callout type="info">
 	<p>
 		We use the <code>config.def.yaml</code> file to render the <code>config.yaml</code> file in
-		<code>Console → Theme</code> as a UI instead of a file. Also, adding conditions in the def file
-		(Ex: min, max) makes sure that wrong configurations are not set by the blogger.
+		<code>Console → Theme</code> as a UI instead of a file. Also, adding conditions in the def file (Ex:
+		min, max) makes sure that wrong configurations are not set by the blogger.
 	</p>
 </Callout>
 
@@ -224,8 +224,7 @@ image_service:
 	<TableRow>
 		<div><code>radio</code></div>
 		<div>
-			Select one of several options. See examples <a href="/docs/themes-config#radio">below</a
-			>
+			Select one of several options. See examples <a href="/docs/themes-config#radio">below</a>
 		</div>
 	</TableRow>
 
@@ -238,8 +237,9 @@ image_service:
 <h4 id="radio">Radio Example</h4>
 
 <p>
-	You can set radio options in <code>$options</code>, which is a <code>key: label</code> pair
-	list. <code>key</code> is the actual value that will be saved in the <code>config.yaml</code>
+	You can set radio options in <code>$options</code>, which is a <code>key: label</code> pair list.
+	<code>key</code>
+	is the actual value that will be saved in the <code>config.yaml</code>
 	file. <code>label</code> is what the user will see.
 </p>
 

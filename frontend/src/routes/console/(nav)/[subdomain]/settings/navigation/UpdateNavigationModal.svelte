@@ -38,9 +38,7 @@
 	}
 
 	let hasChanges = $derived(
-		Object.keys(variantChanges).length !== 0 ||
-			url !== navigation.url ||
-			type !== navigation.type
+		Object.keys(variantChanges).length !== 0 || url !== navigation.url || type !== navigation.type
 	);
 
 	const dispatch = createEventDispatcher();
@@ -58,13 +56,7 @@
 		const toastId = toast.loading('Updating navigation');
 		for (const [languageId, changes] of Object.entries(variantChanges)) {
 			try {
-				await updateNavigationVariant(
-					navigation.id,
-					Number(languageId),
-					changes,
-					type,
-					url
-				);
+				await updateNavigationVariant(navigation.id, Number(languageId), changes, type, url);
 			} catch (e) {
 				toast.error('Failed to update navigation variant', { id: toastId });
 				isUpdating = false;

@@ -53,8 +53,8 @@
 	<SplitControl label="Private">
 		{#snippet caption()}
 			<Caption>
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on
-				public pages - only for internal use.
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
+				pages - only for internal use.
 			</Caption>
 		{/snippet}
 		<Switch bind:checked={isPrivate} />

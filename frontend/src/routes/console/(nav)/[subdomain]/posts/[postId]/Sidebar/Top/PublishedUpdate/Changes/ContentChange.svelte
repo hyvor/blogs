@@ -16,9 +16,7 @@
 		getDiffWordsCount(getTextFromContent(contentOld), getTextFromContent(contentNew))
 	);
 
-	let totalWords = $derived(
-		getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code)
-	);
+	let totalWords = $derived(getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code));
 </script>
 
 <span>

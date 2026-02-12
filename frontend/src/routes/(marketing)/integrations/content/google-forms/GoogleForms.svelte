@@ -41,8 +41,8 @@
 	</ol>
 
 	<p>
-		If you want to place the form on one of the main pages of the blog (ex: index page, contact
-		us page, about us page, footer, etc). For demonstration, the form is placed on the footer.
+		If you want to place the form on one of the main pages of the blog (ex: index page, contact us
+		page, about us page, footer, etc). For demonstration, the form is placed on the footer.
 	</p>
 
 	<ol>

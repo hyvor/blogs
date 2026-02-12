@@ -12,13 +12,13 @@
 
 <ul>
 	<li>
-		All your posts have a similar HTML structure, and data can be extracted from the HTML using
-		meta tags and, optionally, CSS selectors.
+		All your posts have a similar HTML structure, and data can be extracted from the HTML using meta
+		tags and, optionally, CSS selectors.
 	</li>
 	<li>
-		Has a sitemap (XML or TXT) with all the URLs of your posts. If you don't have a sitemap, you
-		can easily use an online tool to generate one. Or, if you have a list of URLs in a TXT file,
-		you can use that as well.
+		Has a sitemap (XML or TXT) with all the URLs of your posts. If you don't have a sitemap, you can
+		easily use an online tool to generate one. Or, if you have a list of URLs in a TXT file, you can
+		use that as well.
 	</li>
 </ul>
 
@@ -78,8 +78,8 @@
 <h2 id="css-selectors">CSS Selectors</h2>
 
 <p>
-	Each blog has a different structure. Therefore, we need to know how to extract data from your
-	HTML pages. You can provide CSS selectors for each data type.
+	Each blog has a different structure. Therefore, we need to know how to extract data from your HTML
+	pages. You can provide CSS selectors for each data type.
 </p>
 
 <p>For example, in this blog:</p>
@@ -147,11 +147,11 @@
 <h2 id="import-images">Importing images</h2>
 
 <p>
-	If you are completely migrating to Hyvor Blogs, it is possible that images will no longer will
-	be available in the original server. Therefore, we recommend you to import images to Hyvor
-	Blogs. To do this, make sure to keep the Import Images on. Then, we will import featured images
-	and all images in the post content into your blog <a href="/docs/media">media library</a>. The
-	image should be less than 50MB to be imported.
+	If you are completely migrating to Hyvor Blogs, it is possible that images will no longer will be
+	available in the original server. Therefore, we recommend you to import images to Hyvor Blogs. To
+	do this, make sure to keep the Import Images on. Then, we will import featured images and all
+	images in the post content into your blog <a href="/docs/media">media library</a>. The image
+	should be less than 50MB to be imported.
 </p>
 
 <h2 id="test-import">Test & Import!</h2>

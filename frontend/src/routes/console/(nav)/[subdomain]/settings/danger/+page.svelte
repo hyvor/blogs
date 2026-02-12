@@ -22,9 +22,7 @@
 	<SplitControl label="Delete Blog">
 		{#snippet caption()}
 			<div class="caption">
-				Completely delete the blog and all its data. This action is <strong
-					>irreversible</strong
-				>.
+				Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
 			</div>
 		{/snippet}
 

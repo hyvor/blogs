@@ -48,15 +48,13 @@
 		{
 			name: 'Blog Outline',
 			description: 'Generate an outline for a blog post',
-			prompt: (options) =>
-				addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
+			prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
 		},
 
 		{
 			name: 'Blog Post',
 			description: 'Generate a blog post',
-			prompt: (options) =>
-				addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
+			prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
 		},
 
 		{
@@ -181,11 +179,7 @@
 				{/each}
 
 				{#if pendingPrompt}
-					<PromptResponse
-						prompt={pendingPrompt}
-						response={null}
-						error={pendingPromptError}
-					/>
+					<PromptResponse prompt={pendingPrompt} response={null} error={pendingPromptError} />
 				{/if}
 
 				<div class="reset-button">
@@ -249,8 +243,7 @@
 				</Button>
 			</div>
 			<div class="disclaimer">
-				This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate
-				results.
+				This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate results.
 			</div>
 		</div>
 	{/if}

@@ -32,10 +32,9 @@
 
 		deleteBlogDangerous()
 			.then(() => {
-				toast.success(
-					'Blog deletion is in progress. It will take a few minutes to complete.',
-					{ id: toastId }
-				);
+				toast.success('Blog deletion is in progress. It will take a few minutes to complete.', {
+					id: toastId
+				});
 				setTimeout(() => {
 					window.location.href = '/';
 				}, 3000);

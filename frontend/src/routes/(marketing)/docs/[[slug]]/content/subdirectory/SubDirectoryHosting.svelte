@@ -17,9 +17,9 @@
 <h2 id="docker">1. Docker</h2>
 
 <p>
-	If you are already using Docker within your website, you can use our official Docker image to
-	host your Hyvor Blog in a subdirectory. You can use a reverse proxy like Caddy, Nginx or Traefik
-	to route blog traffic to the Docker container.
+	If you are already using Docker within your website, you can use our official Docker image to host
+	your Hyvor Blog in a subdirectory. You can use a reverse proxy like Caddy, Nginx or Traefik to
+	route blog traffic to the Docker container.
 </p>
 
 <p>
@@ -46,8 +46,8 @@
 		href="https://workers.cloudflare.com/"
 		rel="nofollow"
 		target="_blank">Cloudflare Workers</a
-	> is by far the easiest method to host your blog in a subdirectory. You can set it up in a couple
-	of minutes without writing a single line of code.
+	> is by far the easiest method to host your blog in a subdirectory. You can set it up in a couple of
+	minutes without writing a single line of code.
 </p>
 
 <p>
@@ -69,8 +69,8 @@
 
 <p>
 	If your main website is built with a web framework like NextJS or Laravel, you can use the same
-	framework to host your blog. You can set up your blog to be served directly from the framework
-	and use a cache (filesystem, redis, etc.) to improve performance.
+	framework to host your blog. You can set up your blog to be served directly from the framework and
+	use a cache (filesystem, redis, etc.) to improve performance.
 </p>
 
 <p>We currently have libraries for the following frameworks.</p>

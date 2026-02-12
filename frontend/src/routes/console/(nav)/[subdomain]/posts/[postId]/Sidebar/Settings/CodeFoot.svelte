@@ -41,10 +41,7 @@
 				label="Code Foot"
 				info="Custom code to be added before the </body> tag of the post."
 			/>
-			<UnsavedTag
-				show={$postStore.code_foot !== $postOriginalStore.code_foot}
-				{loaderState}
-			/>
+			<UnsavedTag show={$postStore.code_foot !== $postOriginalStore.code_foot} {loaderState} />
 		</span>
 	{/snippet}
 

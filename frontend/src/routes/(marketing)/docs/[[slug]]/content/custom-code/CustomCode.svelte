@@ -14,8 +14,8 @@
 <h1>Custom Code</h1>
 
 <p>
-	You can add custom code to customize your blog, add styles, or integrate third-party services
-	like analytics.
+	You can add custom code to customize your blog, add styles, or integrate third-party services like
+	analytics.
 </p>
 
 <ul>
@@ -79,9 +79,9 @@
 </p>
 
 <p>
-	For example, posts that have SVG animations will need an additional Javascript library to play
-	SVG animations. You can assign a "svg" tag to those posts and link to the Javascript library in
-	the custom code of that tag.
+	For example, posts that have SVG animations will need an additional Javascript library to play SVG
+	animations. You can assign a "svg" tag to those posts and link to the Javascript library in the
+	custom code of that tag.
 </p>
 
 <DocsImage src={customCodeTag} alt="Custom code in tag settings" />

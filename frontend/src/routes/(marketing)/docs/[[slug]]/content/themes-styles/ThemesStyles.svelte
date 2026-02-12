@@ -6,12 +6,12 @@
 
 <p>This folder contains SCSS files. <code>index.scss is required.</code></p>
 <p>
-	While developing and working with other blogging platforms/CMSs, we understood that customizing
-	a theme becomes really hard when the theme developer puts all CSS in a single file. Therefore,
-	we decided that we want to support "chunk-css" files to make it easy to edit for the blogger.
-	And, we use <a href="https://sass-lang.com/" rel="nofollow">SCSS</a> instead of CSS to make the theme
-	developer's life easier. All CSS is valid SCSS. So, if you haven't use SCSS earlier, just use CSS.
-	SCSS just have some cool features like nesting rules.
+	While developing and working with other blogging platforms/CMSs, we understood that customizing a
+	theme becomes really hard when the theme developer puts all CSS in a single file. Therefore, we
+	decided that we want to support "chunk-css" files to make it easy to edit for the blogger. And, we
+	use <a href="https://sass-lang.com/" rel="nofollow">SCSS</a> instead of CSS to make the theme developer's
+	life easier. All CSS is valid SCSS. So, if you haven't use SCSS earlier, just use CSS. SCSS just have
+	some cool features like nesting rules.
 </p>
 
 <p>
@@ -33,17 +33,17 @@
 />
 
 <p>
-	On our side, we process <code>index.scss</code> file and generate a <code>styles.css</code>,
-	which will be accessible via <ocde>/styles.css</ocde>.
+	On our side, we process <code>index.scss</code> file and generate a <code>styles.css</code>, which
+	will be accessible via <ocde>/styles.css</ocde>.
 	<b>That is the only CSS file of the whole blog!</b>
 </p>
 
 <Callout type="info">
 	<p>
-		We strongly encourage you to write CSS from scratch without using any libraries like
-		Bootstrap. A blog theme is very simple and it is totally possible to manage everything on
-		your own without depending on third-party libraries. If you really want to use a library,
-		add it to assets instead of styles.
+		We strongly encourage you to write CSS from scratch without using any libraries like Bootstrap.
+		A blog theme is very simple and it is totally possible to manage everything on your own without
+		depending on third-party libraries. If you really want to use a library, add it to assets
+		instead of styles.
 	</p>
 </Callout>
 
@@ -61,8 +61,8 @@
 />
 
 <p>
-	Then, you can use the font in your SCSS files. See our <a href="/docs/fonts">fonts</a> page for a
-	in-depth guide.
+	Then, you can use the font in your SCSS files. See our <a href="/docs/fonts">fonts</a> page for a in-depth
+	guide.
 </p>
 
 <h2 id="advanced-nodes">Advanced Nodes</h2>
@@ -230,8 +230,8 @@
 
 <p>
 	It would be troublesome for you to write logic to consider all these options and find out what
-	theme to show to the user. Therefore, we make developing light/dark easy by adding a class name
-	to the <code>{`<html></html>`}</code> element. You can decide colors based on that class. We
+	theme to show to the user. Therefore, we make developing light/dark easy by adding a class name to
+	the <code>{`<html></html>`}</code> element. You can decide colors based on that class. We
 	recommend you to use
 	<a
 		href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties"
@@ -273,8 +273,8 @@
 
 <Callout type="info">
 	<p>
-		Under the hood, determining the color is handled by a small Javascript code injected into
-		the blog in the <code>_head</code>
+		Under the hood, determining the color is handled by a small Javascript code injected into the
+		blog in the <code>_head</code>
 		<a href="/docs/themes-templates#placeholders">placeholder</a>.
 	</p>
 </Callout>
@@ -282,8 +282,8 @@
 <h2 id="mode-toggler">Light/Dark Mode Toggler</h2>
 
 <p>
-	If you support both light and dark themes, you will mostly likely have a button that allows
-	users to toggle between color modes. In most other platforms, you have to write logic to do this
+	If you support both light and dark themes, you will mostly likely have a button that allows users
+	to toggle between color modes. In most other platforms, you have to write logic to do this
 	manually and save preferences in local storage - but not in Hyvor Blogs!
 </p>
 <p>
@@ -381,7 +381,7 @@
 
 <Callout type="info">
 	<p>
-		Please note that these examples are just here to explain you how it works. Feel free to
-		design more creative color mode togglers ;)
+		Please note that these examples are just here to explain you how it works. Feel free to design
+		more creative color mode togglers ;)
 	</p>
 </Callout>

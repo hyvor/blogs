@@ -5,9 +5,9 @@
 <h1>Theme</h1>
 
 <p>
-	Hyvor Blogs comes with a few pre-built themes (see <a href="/themes">Themes</a>). When you
-	create a blog, the default theme, <b>Hello</b>, will be copied to your blog. You can change the
-	theme or edit theme files to customize your blog.
+	Hyvor Blogs comes with a few pre-built themes (see <a href="/themes">Themes</a>). When you create
+	a blog, the default theme, <b>Hello</b>, will be copied to your blog. You can change the theme or
+	edit theme files to customize your blog.
 </p>
 
 <ul>

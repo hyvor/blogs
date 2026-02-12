@@ -45,10 +45,7 @@
 		{/if}
 	</SplitControl>
 
-	<SplitControl
-		label="External links type"
-		caption="Should search engines follow external links?"
-	>
+	<SplitControl label="External links type" caption="Should search engines follow external links?">
 		<FormControl>
 			<Radio
 				value="follow"

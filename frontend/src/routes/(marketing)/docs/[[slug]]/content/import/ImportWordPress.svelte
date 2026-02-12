@@ -14,14 +14,13 @@
 <ul>
 	<li>
 		Export your posts at <strong
-			>WordPress admin &rarr; Tools &rarr; Export &rarr; All Content &rarr; Download Export
-			File</strong
+			>WordPress admin &rarr; Tools &rarr; Export &rarr; All Content &rarr; Download Export File</strong
 		>
 	</li>
 	<li>
 		Download your <code>wp-content/uploads</code> folder from your WordPress site. This folder contains
-		all the images and other media files used in your posts. You may need to use an FTP client or
-		ask your hosting provider to download this folder.
+		all the images and other media files used in your posts. You may need to use an FTP client or ask
+		your hosting provider to download this folder.
 	</li>
 </ul>
 

@@ -1,5 +1,5 @@
-import { writable } from "svelte/store";
-import type { User } from "../types";
+import { writable } from 'svelte/store';
+import type { User } from '../types';
 
 /**
  * Saved "some" users of the blog in this store.

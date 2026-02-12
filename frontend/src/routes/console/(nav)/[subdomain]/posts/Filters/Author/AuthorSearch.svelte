@@ -76,11 +76,7 @@
 				selected={$postListFiltersStore.author?.id === user.id}
 			>
 				{#snippet start()}
-					<Avatar
-						src={user.picture_url}
-						alt={user.variants[0]?.name || 'Unnamed'}
-						size={20}
-					/>
+					<Avatar src={user.picture_url} alt={user.variants[0]?.name || 'Unnamed'} size={20} />
 				{/snippet}
 				<span class="text">
 					{user.variants[0]?.name || 'Unnamed'}

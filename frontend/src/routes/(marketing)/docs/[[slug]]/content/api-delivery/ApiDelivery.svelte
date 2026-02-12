@@ -30,8 +30,8 @@
 		<strong>Settings &rarr; API Keys</strong>.
 	</li>
 	<li>
-		Set <code>path</code> query parameter to the path of the blog you want to get information
-		about. For example, if you want to get information about
+		Set <code>path</code> query parameter to the path of the blog you want to get information about.
+		For example, if you want to get information about
 		<code>https://myblog.com/hello-world</code>, set <code>path</code> to
 		<code>/hello-world/</code>.
 	</li>
@@ -102,9 +102,8 @@
 		<div><code>cache</code></div>
 		<div><code>boolean</code></div>
 		<div>
-			Whether the response object should be cached in proxy/intermediary servers. <code
-				>false</code
-			> for post preview routes.
+			Whether the response object should be cached in proxy/intermediary servers. <code>false</code> for
+			post preview routes.
 		</div>
 	</TableRow>
 	<TableRow>

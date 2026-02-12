@@ -31,8 +31,8 @@
 
 	<h2 id="not-using-cloudflare">1. If you are already using Cloudflare CDN,</h2>
 	<p>
-		This process is called "Automatic Setup". To proceed with it, you should have the "Orange
-		cloud" turned on.
+		This process is called "Automatic Setup". To proceed with it, you should have the "Orange cloud"
+		turned on.
 	</p>
 	<ol>
 		<li>Login to your Cloudflare account</li>
@@ -42,8 +42,8 @@
 		<DocsImage src={webAnalyticsAddSiteImg} alt="Add a site" />
 		<li>
 			Once you click on input space, it will show your domain (in a dropdown) that is already
-			managed by Cloudflare. Click on your blog domain and proceed by clicking <b>Done</b>.
-			This is called <b>Automatic Setup</b>.
+			managed by Cloudflare. Click on your blog domain and proceed by clicking <b>Done</b>. This is
+			called <b>Automatic Setup</b>.
 		</li>
 		<DocsImage src={existingDomainAddImg} alt="Add a site" />
 		<p>
@@ -57,8 +57,7 @@
 	<h2 id="already-use-cloudflare">2. If you do not use Cloudflare CDN,</h2>
 	<h3 id="add-your-blog">2.1. Adding Your Blog to Cloudflare Analytics</h3>
 	<p>
-		After you signed in to your Cloudflare account, you can add your blog to Cloudflare
-		Analytics.
+		After you signed in to your Cloudflare account, you can add your blog to Cloudflare Analytics.
 	</p>
 	<ol>
 		<li>Click <b>Analytics & Logs &rarr; Web Analytics</b>.</li>
@@ -71,8 +70,8 @@
 			<ol>
 				<li>
 					Click the dropdown which says "<b
-						>Click here to use my-awesome-blog.hyvorblogs.io which does not belong to
-						Cloudflare websites</b
+						>Click here to use my-awesome-blog.hyvorblogs.io which does not belong to Cloudflare
+						websites</b
 					>"
 				</li>
 				<li>Click <b>Done</b>.</li>

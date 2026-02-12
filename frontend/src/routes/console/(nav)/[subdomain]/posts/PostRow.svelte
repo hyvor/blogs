@@ -164,9 +164,7 @@
 
 				{#snippet content()}
 					<ActionList>
-						<ActionListItem on:click={handleClone} disabled={isCloning}>
-							Clone post
-						</ActionListItem>
+						<ActionListItem on:click={handleClone} disabled={isCloning}>Clone post</ActionListItem>
 					</ActionList>
 				{/snippet}
 			</Dropdown>

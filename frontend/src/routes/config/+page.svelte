@@ -17,11 +17,7 @@
 		<div class="column-title">config.yaml</div>
 		<div class="column-content">
 			<div class="hds-box">
-				<CodemirrorEditor
-					ext="yaml"
-					bind:value={config}
-					on:change={(e) => (config = e.detail)}
-				/>
+				<CodemirrorEditor ext="yaml" bind:value={config} on:change={(e) => (config = e.detail)} />
 			</div>
 		</div>
 	</div>
@@ -30,11 +26,7 @@
 		<div class="column-title">config.def.yaml</div>
 		<div class="column-content">
 			<div class="hds-box">
-				<CodemirrorEditor
-					value={configDef}
-					ext="yaml"
-					on:change={(e) => (configDef = e.detail)}
-				/>
+				<CodemirrorEditor value={configDef} ext="yaml" on:change={(e) => (configDef = e.detail)} />
 			</div>
 		</div>
 	</div>

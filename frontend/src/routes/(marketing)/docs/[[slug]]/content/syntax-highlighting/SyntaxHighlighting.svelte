@@ -171,12 +171,12 @@
 	<li>
 		Under the hood, Hyvor Blogs use <a href="https://github.com/shikijs/shiki" rel="nofollow"
 			>Shiki</a
-		> for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If
-		you want to add any, contact us.
+		> for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If you
+		want to add any, contact us.
 	</li>
 	<li>
-		Colors for syntax comes from our side, but styles like padding, margins, space between
-		lines, and font sizes comes from the <a href="/docs/theme">theme</a> of your blog.
+		Colors for syntax comes from our side, but styles like padding, margins, space between lines,
+		and font sizes comes from the <a href="/docs/theme">theme</a> of your blog.
 	</li>
 </ul>
 

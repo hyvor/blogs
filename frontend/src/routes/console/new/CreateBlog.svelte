@@ -141,8 +141,9 @@
 				<div>Development Blog</div>
 			{/snippet}
 			<div>
-				You are creating a development blog, which can only be used for theme development.
-				Click <Link href="/console/new">here</Link> to create a production blog.
+				You are creating a development blog, which can only be used for theme development. Click <Link
+					href="/console/new">here</Link
+				> to create a production blog.
 			</div>
 		</Callout>
 	{/if}

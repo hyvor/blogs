@@ -16,10 +16,8 @@
 	</Callout>
 	<h2>Step 1: Create a Matomo Account</h2>
 	<p>
-		Go to <a
-			href="https://matomo.org/start-free-analytics-trial/"
-			rel="noopener"
-			target="_blank">Matomo Analytics</a
+		Go to <a href="https://matomo.org/start-free-analytics-trial/" rel="noopener" target="_blank"
+			>Matomo Analytics</a
 		>' signup page and enter your email and blog's address (URL) to get started.
 	</p>
 	<DocsImage src={createAccountImage} alt="Create Matomo Account" />
@@ -49,8 +47,8 @@
 		<li>Click "Save" to save the changes.</li>
 	</ul>
 	<p>
-		This is will be applied to your entire blog since Matomo needs to track analytics of your
-		entire blog.
+		This is will be applied to your entire blog since Matomo needs to track analytics of your entire
+		blog.
 	</p>
 
 	<p>

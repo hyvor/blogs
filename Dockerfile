@@ -15,6 +15,7 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json \
     frontend/svelte.config.js \
     frontend/vite.config.ts \
+    frontend/.prettier* \
     frontend/tsconfig.json /app/frontend/
 # copy code
 COPY frontend/src /app/frontend/src

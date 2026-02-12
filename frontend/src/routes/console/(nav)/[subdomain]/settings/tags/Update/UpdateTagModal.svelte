@@ -110,8 +110,8 @@
 	<SplitControl label="Private">
 		{#snippet caption()}
 			<Caption>
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on
-				public pages - only for internal use.
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
+				pages - only for internal use.
 			</Caption>
 		{/snippet}
 		<Switch bind:checked={isPrivate} />
@@ -164,8 +164,8 @@
 
 		{#if customCode}
 			<p style="color:var(--text-light);font-size:14px;">
-				Custom code is added to <strong>all posts</strong> that have this tag. It is not added
-				to the tag page.
+				Custom code is added to <strong>all posts</strong> that have this tag. It is not added to the
+				tag page.
 			</p>
 		{/if}
 	</div>

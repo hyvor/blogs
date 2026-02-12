@@ -1,12 +1,5 @@
 <script lang="ts">
-	import {
-		Button,
-		IconButton,
-		TableRow,
-		Tooltip,
-		confirm,
-		toast
-	} from '@hyvor/design/components';
+	import { Button, IconButton, TableRow, Tooltip, confirm, toast } from '@hyvor/design/components';
 	import type { ApiKey } from '../../../../lib/types';
 	import IconArrowCounterclockwise from '@hyvor/icons/IconArrowCounterclockwise';
 	import IconCopy from '@hyvor/icons/IconCopy';
@@ -32,8 +25,7 @@
 		if (
 			await confirm({
 				title: 'Regenerate API Key',
-				content:
-					'Are you sure to regenerate this API Key? This will invalidate the old API Key.',
+				content: 'Are you sure to regenerate this API Key? This will invalidate the old API Key.',
 				confirmText: 'Yes, regenerate',
 				danger: true
 			})

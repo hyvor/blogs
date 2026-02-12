@@ -6,8 +6,7 @@
 <LicenseRequired license="analyses">
 	{#snippet upgradeText()}
 		<div>
-			The SEO analyzer is available on the <b>Growth plan</b> and above. Upgrade now to up your
-			SEO game.
+			The SEO analyzer is available on the <b>Growth plan</b> and above. Upgrade now to up your SEO game.
 		</div>
 	{/snippet}
 

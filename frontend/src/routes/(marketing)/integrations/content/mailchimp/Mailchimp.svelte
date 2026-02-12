@@ -29,9 +29,7 @@
 	<h2>Step 1: Get the Mailchimp Form Code</h2>
 	<ol>
 		<li>
-			Choose the Newsletter Signup Form you created (in the Form Editor) and click <b
-				>Continue</b
-			>.
+			Choose the Newsletter Signup Form you created (in the Form Editor) and click <b>Continue</b>.
 		</li>
 		<li><b>Copy the Code</b> given.</li>
 		<DocsImage src={copyCodeImg} alt="Copy the code" />
@@ -41,9 +39,7 @@
 	<ol>
 		<li>Go to <a href="/console">Hyvor Blogs Console</a>.</li>
 		<li>
-			Then go to, <b
-				>Settings &rarr; Comments & Newsletters &rarr; Newsletter Sign-up Form Code</b
-			>
+			Then go to, <b>Settings &rarr; Comments & Newsletters &rarr; Newsletter Sign-up Form Code</b>
 			and <b>paste</b> the copied code.
 		</li>
 		<li><b>Save.</b></li>
@@ -52,24 +48,23 @@
 
 	<h2>Step 3: Verify</h2>
 	<p>
-		Go to your blog URL and check whether the newsletter sign up form is integrated correctly.
-		It should look like this.
+		Go to your blog URL and check whether the newsletter sign up form is integrated correctly. It
+		should look like this.
 	</p>
 	<DocsImage src={integrationImg} alt="Integrated" />
 
 	<Callout type="danger">
 		<p>
-			<b>Warning</b>: Please note that the location of the form may vary depending on the
-			template employed by your blog. For instance, the form appears on the post pages in the
-			Hello theme. To specify the desired placement for the subscription form, kindly refer to
-			the section below.
+			<b>Warning</b>: Please note that the location of the form may vary depending on the template
+			employed by your blog. For instance, the form appears on the post pages in the Hello theme. To
+			specify the desired placement for the subscription form, kindly refer to the section below.
 		</p>
 	</Callout>
 
 	<h2 id="edit-theme">Note: Editing the blog's theme to add the subscription form</h2>
 	<p>
-		If the signup form location used by your blog's <a href="/docs/themes-templates">template</a
-		> does not fit your need, you can edit the theme to customize the location.
+		If the signup form location used by your blog's <a href="/docs/themes-templates">template</a> does
+		not fit your need, you can edit the theme to customize the location.
 	</p>
 	<ol>
 		<li>Go to the <b>Theme → templates</b> section.</li>
@@ -96,8 +91,8 @@
 		/>
 
 		<p>
-			This way, you can customize where to put the subscription form. Note that you can put it
-			in multiple places.
+			This way, you can customize where to put the subscription form. Note that you can put it in
+			multiple places.
 		</p>
 	</ol>
 </div>

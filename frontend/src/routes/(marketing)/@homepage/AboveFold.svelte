@@ -34,9 +34,7 @@
 		<div class="buttons">
 			<Button as="a" href="/console?signup" size="large">Start your blog</Button>
 
-			<Button as="a" href="/customers" size="large" variant="outline">
-				See customer blogs
-			</Button>
+			<Button as="a" href="/customers" size="large" variant="outline">See customer blogs</Button>
 		</div>
 
 		<div class="trial-checks">

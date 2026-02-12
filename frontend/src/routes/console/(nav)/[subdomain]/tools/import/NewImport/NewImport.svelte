@@ -111,10 +111,7 @@
 				<TextInput block bind:value={descriptionCssSelector} />
 			</SplitControl>
 
-			<SplitControl
-				label="Post Content Exclude"
-				caption="To exclude elements from post content"
-			>
+			<SplitControl label="Post Content Exclude" caption="To exclude elements from post content">
 				<TextInput block bind:value={contentExcludeCssSelector} />
 			</SplitControl>
 
@@ -155,8 +152,7 @@
 
 <div class="footer">
 	<div class="note" style="margin-bottom: 20px;">
-		Please test a few pages before importing the sitemap. If you need help, feel free to contact
-		us.
+		Please test a few pages before importing the sitemap. If you need help, feel free to contact us.
 	</div>
 
 	<Button on:click={handleSitemapImport}>Import Sitemap</Button>

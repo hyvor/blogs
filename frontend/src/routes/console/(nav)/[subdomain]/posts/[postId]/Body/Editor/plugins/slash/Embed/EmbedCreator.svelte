@@ -130,8 +130,8 @@
 
 	{#if embedFailed}
 		<div class="link-alternatives">
-			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL
-			or create a custom HTML block and paste the embed code manually.
+			We couldn't convert this URL to an embed. You can add a link bookmark to preview the URL or
+			create a custom HTML block and paste the embed code manually.
 			<div class="alternatives-button">
 				<Button variant="outline" color="gray" size="small" on:click={handleCreateBookmark}
 					>Create Link Bookmark</Button

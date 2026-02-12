@@ -86,11 +86,7 @@
 					{#each $postStore.authors as author}
 						<Tag size="small" style="padding: 4px 8px" bg="#f1f1f1">
 							{#snippet start()}
-								<Avatar
-									src={author.picture_url}
-									alt={getAuthorName(author)}
-									size={16}
-								/>
+								<Avatar src={author.picture_url} alt={getAuthorName(author)} size={16} />
 							{/snippet}
 							{getAuthorName(author)}
 

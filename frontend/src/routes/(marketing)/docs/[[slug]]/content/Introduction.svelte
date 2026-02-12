@@ -12,9 +12,9 @@
 <h2 id="get-started">How to get started?</h2>
 
 <p>
-	Visit the <a href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to create a new blog.
-	The Console is where you will be managing all of your blogs. You can access the Console using your
-	HYVOR account. Each account can have multiple blogs.
+	Visit the <a href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to create a new blog. The
+	Console is where you will be managing all of your blogs. You can access the Console using your HYVOR
+	account. Each account can have multiple blogs.
 </p>
 
 <h2 id="features">Features</h2>
@@ -26,33 +26,33 @@
 
 <ul>
 	<li>
-		<strong><a href="/docs/writing">Powerful writing tools</a> </strong> - You can write your posts
-		in the built-in rich text editor. Adding images, rich media, and code snippets are easy-peasy.
+		<strong><a href="/docs/writing">Powerful writing tools</a> </strong> - You can write your posts in
+		the built-in rich text editor. Adding images, rich media, and code snippets are easy-peasy.
 	</li>
 	<li>
-		<strong><a href="/docs/languages">Multi-language support</a></strong> - Want to reach a wider
-		audience? Enable multiple languages for your blog and start translating. We support AI translations
-		via DeepL as well.
+		<strong><a href="/docs/languages">Multi-language support</a></strong> - Want to reach a wider audience?
+		Enable multiple languages for your blog and start translating. We support AI translations via DeepL
+		as well.
 	</li>
 	<li>
-		<strong><a href="/docs/theme">Customizable Themes</a></strong> - You can choose a theme from our
-		theme library or create your own theme from scratch.
+		<strong><a href="/docs/theme">Customizable Themes</a></strong> - You can choose a theme from our theme
+		library or create your own theme from scratch.
 	</li>
 	<li>
-		<strong><a href="/docs/users">Invite your team members</a></strong> - Write posts with your team
-		members. Multiple roles are available.
+		<strong><a href="/docs/users">Invite your team members</a></strong> - Write posts with your team members.
+		Multiple roles are available.
 	</li>
 	<li>
-		<strong><a href="/docs/custom-domain">Custom Domain</a></strong> - Host your blog on your own
-		domain like example.com or blog.example.com.
+		<strong><a href="/docs/custom-domain">Custom Domain</a></strong> - Host your blog on your own domain
+		like example.com or blog.example.com.
 	</li>
 	<li>
-		<strong><a href="/docs/subdirectory">Sub-directory Hosting</a></strong> - Host your blog on your
-		a sub-directory like example.com/blog. Multiple integrations are available.
+		<strong><a href="/docs/subdirectory">Sub-directory Hosting</a></strong> - Host your blog on your a
+		sub-directory like example.com/blog. Multiple integrations are available.
 	</li>
 	<li>
-		<strong><a href="/docs/seo">In-built SEO</a></strong> - Hyvor Blogs is built with SEO in mind.
-		Most of the technical SEO stuff is handled by us. You just need to focus on writing.
+		<strong><a href="/docs/seo">In-built SEO</a></strong> - Hyvor Blogs is built with SEO in mind. Most
+		of the technical SEO stuff is handled by us. You just need to focus on writing.
 	</li>
 	<li>
 		<strong><a href="/docs/custom-code">Integrations via Custom Code</a></strong> - Want to add analytics,
@@ -69,9 +69,7 @@
 
 <ul>
 	<li>S3 Storage - Store your images and other media files on S3.</li>
-	<li>
-		Importing from WordPress export files and WordPress compatibility (to move over anytime)
-	</li>
+	<li>Importing from WordPress export files and WordPress compatibility (to move over anytime)</li>
 	<li>On-premise hosting</li>
 </ul>
 

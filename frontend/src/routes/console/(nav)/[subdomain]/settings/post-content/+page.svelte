@@ -60,8 +60,7 @@
 								{#each getConfig().highlight_themes as theme}
 									<ActionListItem
 										on:select={() => handleHighlightThemeSelect(theme)}
-										style="background-color: {($blogStore.syntax_theme ||
-											'nord') === theme
+										style="background-color: {($blogStore.syntax_theme || 'nord') === theme
 											? 'var(--accent-light-mid)'
 											: 'transparent'}"
 									>

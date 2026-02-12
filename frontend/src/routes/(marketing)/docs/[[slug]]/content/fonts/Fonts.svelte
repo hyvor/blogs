@@ -76,8 +76,8 @@
 <DocsImage src={fontsConfig} alt="Config fonts" />
 
 <p>
-	When you add this to the config.yaml, the fonts will be loaded in the <code>{`<head>`}</code> tag
-	of your blog automatically. Then, you can use that font in your blog.
+	When you add this to the config.yaml, the fonts will be loaded in the <code>{`<head>`}</code> tag of
+	your blog automatically. Then, you can use that font in your blog.
 </p>
 
 <Callout type="info">
@@ -114,8 +114,8 @@
 <DocsImage src={fontsUse} alt="Use fonts" />
 
 <p>
-	If your theme does not support font customization, you can use CSS to change the font as
-	explained in the next section.
+	If your theme does not support font customization, you can use CSS to change the font as explained
+	in the next section.
 </p>
 
 <h2 id="custom-fonts">2. Custom Fonts</h2>

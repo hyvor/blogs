@@ -138,10 +138,7 @@
 	{#if changes.variant.slug !== undefined}
 		<SplitControl label="Slug">
 			{#if diff}
-				<Diff
-					strOld={$postOriginalVariantStore.slug || ''}
-					strNew={$postVariantStore.slug || ''}
-				/>
+				<Diff strOld={$postOriginalVariantStore.slug || ''} strNew={$postVariantStore.slug || ''} />
 			{:else}
 				<span>{$postVariantStore.slug}</span>
 			{/if}
@@ -152,9 +149,7 @@
 				{/if}
 				{#if slugGetInvalidCharater(changes.variant.slug || '')}
 					<Validation state="error"
-						>Slug cannot contain {slugGetInvalidCharater(
-							changes.variant.slug || ''
-						)}.</Validation
+						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
 					>
 				{/if}
 			</div>

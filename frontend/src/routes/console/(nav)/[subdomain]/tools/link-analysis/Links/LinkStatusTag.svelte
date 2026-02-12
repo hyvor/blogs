@@ -6,10 +6,7 @@
 	import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
 
 	import { getStatusType } from '../../../../../lib/links/links';
-	import type {
-		LinkAnalysisIgnoreReason,
-		LinkAnalysisStatusType
-	} from '../../../../../lib/types';
+	import type { LinkAnalysisIgnoreReason, LinkAnalysisStatusType } from '../../../../../lib/types';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 
 	interface Props {
@@ -61,8 +58,7 @@
 			if (isAnchor) {
 				tooltip = 'Heading ID not found';
 			} else if (status !== undefined) {
-				tooltip =
-					status === 0 ? 'Broken - Connection issue' : 'Broken - HTTP status ' + status;
+				tooltip = status === 0 ? 'Broken - Connection issue' : 'Broken - HTTP status ' + status;
 			} else {
 				tooltip = 'Link is broken';
 			}
@@ -77,8 +73,7 @@
 		} else if (statusType === 'ignored') {
 			statusDisplay = 'Ignored';
 			tooltip =
-				'Link Ignored' +
-				(ignoreReason ? ' (' + getReadableIgnoreReason(ignoreReason) + ')' : '');
+				'Link Ignored' + (ignoreReason ? ' (' + getReadableIgnoreReason(ignoreReason) + ')' : '');
 			color = 'default';
 		} else if (statusType === 'error') {
 			statusDisplay = 'Error';

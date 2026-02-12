@@ -52,11 +52,11 @@
 		<code>styles.css</code> stylesheet that contains all styles of the blog.
 	</li>
 	<li>
-		<code>{`<script>`}</code>s in <code>{`<head>`}</code> will only run in the first page load, and
-		not when navigating.
+		<code>{`<script>`}</code>s in <code>{`<head>`}</code> will only run in the first page load, and not
+		when navigating.
 	</li>
 	<li>
-		<code>{`<script>`}</code>s in <code>{`<body>`}</code> will load/run on each navigation,
-		unless they have a <b>data-flashload-skip-script</b> attribute.
+		<code>{`<script>`}</code>s in <code>{`<body>`}</code> will load/run on each navigation, unless
+		they have a <b>data-flashload-skip-script</b> attribute.
 	</li>
 </ul>

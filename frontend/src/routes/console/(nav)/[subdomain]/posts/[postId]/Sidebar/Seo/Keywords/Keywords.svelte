@@ -23,9 +23,7 @@
 
 	function addPrimaryKeyword(k: string) {
 		k = k.trim().toLowerCase();
-		if (
-			$postVariantStore.seo_secondary_keywords.find((keyword) => keyword.toLowerCase() === k)
-		) {
+		if ($postVariantStore.seo_secondary_keywords.find((keyword) => keyword.toLowerCase() === k)) {
 			toast.error('Keyword already added');
 			return false;
 		}
@@ -58,9 +56,7 @@
 
 		if (keyword !== null) {
 			updateSecondaryKeywords(
-				$postVariantStore.seo_secondary_keywords.map((k) =>
-					k === keyword ? newKeyword : k
-				)
+				$postVariantStore.seo_secondary_keywords.map((k) => (k === keyword ? newKeyword : k))
 			);
 		} else {
 			updateSecondaryKeywords([...$postVariantStore.seo_secondary_keywords, newKeyword]);
@@ -75,9 +71,7 @@
 	}
 
 	function handleSecondaryRemove(keyword: string) {
-		updateSecondaryKeywords(
-			$postVariantStore.seo_secondary_keywords.filter((k) => k !== keyword)
-		);
+		updateSecondaryKeywords($postVariantStore.seo_secondary_keywords.filter((k) => k !== keyword));
 	}
 </script>
 

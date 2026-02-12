@@ -54,8 +54,8 @@
 		<li>Copy the code snippet given.</li>
 		<DocsImage src={adsTxtImg} alt="Ads.txt" />
 		<li>
-			Go to <b>Themes &rarr; Templates &rarr; + New</b> on your blog's dashboard and create a
-			file named <code>route-ads.txt.twig</code>.
+			Go to <b>Themes &rarr; Templates &rarr; + New</b> on your blog's dashboard and create a file
+			named <code>route-ads.txt.twig</code>.
 		</li>
 		<li>Paste the code snippet in that twig file and click <b>Save</b>.</li>
 		<Callout type="info">

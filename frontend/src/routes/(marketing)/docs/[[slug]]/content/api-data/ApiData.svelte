@@ -22,10 +22,9 @@
 
 <Callout type="info">
 	<p>
-		In addition to calling the Data API via HTTP, it is possible call it within template files
-		using the Twig <a href="/docs/themes-templates#fetch-data">data() function</a>. It is the
-		preferred method if you want data to render some UI (Ex: recent posts section) in your blog,
-		because the
+		In addition to calling the Data API via HTTP, it is possible call it within template files using
+		the Twig <a href="/docs/themes-templates#fetch-data">data() function</a>. It is the preferred
+		method if you want data to render some UI (Ex: recent posts section) in your blog, because the
 		<code>{`data()`}</code> function calls the Data API internally at the time of rendering the template,
 		eliminating the need for additional HTTP requests.
 	</p>
@@ -244,20 +243,20 @@
 <Callout type="info">
 	<p>
 		<b>Note</b>: There is an important distinction between posts (<code>/post</code>,
-		<code>/posts</code>, and <code>/posts/search</code>) and other endpoints when using
-		languages. Let's say you have two languages in your blog: <code>en</code> (primary) and
-		<code>fr</code>. If you call the <code>/posts</code> endpoint with language the language
-		code <code>fr</code>,
-		<b>only the posts that have a</b> <code>fr</code> <b>variant</b> will be returned. However,
-		in other endpoints (authors, tags), all records will be returned regardless of they have a
+		<code>/posts</code>, and <code>/posts/search</code>) and other endpoints when using languages.
+		Let's say you have two languages in your blog: <code>en</code> (primary) and
+		<code>fr</code>. If you call the <code>/posts</code> endpoint with language the language code
+		<code>fr</code>,
+		<b>only the posts that have a</b> <code>fr</code> <b>variant</b> will be returned. However, in
+		other endpoints (authors, tags), all records will be returned regardless of they have a
 		<code>fr</code>
-		variant or not. Missing translations will be filled with primary language strings. The reason
-		is that, when someone visits your blog's <code>/fr</code> index page, we only want to show
-		the posts that are translated into French. We do not want to "fallback" post contents.
-		However, fallbacking author/tags data is fine in most cases. <br />
+		variant or not. Missing translations will be filled with primary language strings. The reason is that,
+		when someone visits your blog's <code>/fr</code> index page, we only want to show the posts that
+		are translated into French. We do not want to "fallback" post contents. However, fallbacking
+		author/tags data is fine in most cases. <br />
 		<Divider />
-		In other words, <code>language</code> in post(s) endpoints works as a filter, while it works as
-		a translator in other endpoints.
+		In other words, <code>language</code> in post(s) endpoints works as a filter, while it works as a
+		translator in other endpoints.
 	</p>
 </Callout>
 
@@ -290,9 +289,8 @@ To get the next 20 results (page 2):
 	>
 </p>
 <p>
-	Our Data API uses <a href="https://github.com/hyvor/laravel-filterq">Laravel FilterQ</a> under the
-	hood, which allows you to write advanced logic like the above example, using comparison and logical
-	operators.
+	Our Data API uses <a href="https://github.com/hyvor/laravel-filterq">Laravel FilterQ</a> under the hood,
+	which allows you to write advanced logic like the above example, using comparison and logical operators.
 </p>
 
 <p>A condition consists of three parts:</p>
@@ -587,8 +585,8 @@ published_at>'-7 days'
 
 <h4 id="sort">5. <code>sort</code> param</h4>
 <p>
-	Here's a list of supported sort values. You can combine multiple as comma-separated-values,
-	which then will be executed in its order, similar to <code>ORDER BY</code> in SQL.
+	Here's a list of supported sort values. You can combine multiple as comma-separated-values, which
+	then will be executed in its order, similar to <code>ORDER BY</code> in SQL.
 </p>
 
 <Table columns="2fr 2fr 2fr" hover>
@@ -669,13 +667,13 @@ published_at>'-7 days'
 
 <h4 id="keys">6. <code>keys</code> param</h4>
 <p>
-	The <code>keys</code> can be used to include or exclude keys from the Objects, similar to
-	GraphQL. All endpoints support the <code>keys</code> param.
+	The <code>keys</code> can be used to include or exclude keys from the Objects, similar to GraphQL.
+	All endpoints support the <code>keys</code> param.
 </p>
 
 <p>
-	If you call the <code>/posts</code> endpoint, with <code>keys=id,content</code>, the post
-	objects will only contain those two keys.
+	If you call the <code>/posts</code> endpoint, with <code>keys=id,content</code>, the post objects
+	will only contain those two keys.
 </p>
 
 <CodeBlock
@@ -691,8 +689,8 @@ published_at>'-7 days'
 <p>
 	Use <code>!</code> at the start to exclude tags. For example,
 	<code>keys=!content,description</code>
-	will exclude <code>content</code> and <code>description</code> from the Post object and all other
-	keys will be included.
+	will exclude <code>content</code> and <code>description</code> from the Post object and all other keys
+	will be included.
 </p>
 
 <p>
@@ -857,8 +855,8 @@ published_at>'-7 days'
 		<div><code>code_head</code></div>
 		<div><code>string</code></div>
 		<div>
-			<a href="/docs/custom-code">Custom code</a> to add before <code>{`</head>`}</code> . An empty
-			string if nothing is set.
+			<a href="/docs/custom-code">Custom code</a> to add before <code>{`</head>`}</code> . An empty string
+			if nothing is set.
 		</div>
 	</TableRow>
 
@@ -866,8 +864,8 @@ published_at>'-7 days'
 		<div><code>code_foot</code></div>
 		<div><code>string</code></div>
 		<div>
-			<a href="/docs/custom-code">Custom code</a> to add before <code>{`</body>`}</code> . An empty
-			string if nothing is set.
+			<a href="/docs/custom-code">Custom code</a> to add before <code>{`</body>`}</code> . An empty string
+			if nothing is set.
 		</div>
 	</TableRow>
 
@@ -887,8 +885,8 @@ published_at>'-7 days'
 		<div><code>tags</code></div>
 		<div><code>array</code></div>
 		<div>
-			An array of public <a href="/docs/api-data#tag-object">Tag objects</a>. The primary tag
-			is the index 0
+			An array of public <a href="/docs/api-data#tag-object">Tag objects</a>. The primary tag is the
+			index 0
 		</div>
 	</TableRow>
 
@@ -905,16 +903,16 @@ published_at>'-7 days'
 		<div><code>authors</code></div>
 		<div><code>array</code></div>
 		<div>
-			An array of <a href="/docs/api-data#author-object">Author objects</a>. The primary
-			author is the index 0
+			An array of <a href="/docs/api-data#author-object">Author objects</a>. The primary author is
+			the index 0
 		</div>
 	</TableRow>
 </Table>
 
 <Callout type="info">
 	<p>
-		In posts, <b>id</b> attribute is globally unique within Hyvor Blogs. The <b>slug</b> attribute
-		is unique within the blog.
+		In posts, <b>id</b> attribute is globally unique within Hyvor Blogs. The <b>slug</b> attribute is
+		unique within the blog.
 	</p>
 </Callout>
 
@@ -1012,8 +1010,7 @@ published_at>'-7 days'
 <h3 id="author-object">Author Object</h3>
 <Callout type="info">
 	<p>
-		Author is a <a href="https://blogs.hyvor.com/docs/users">user</a> who has written at least one
-		post
+		Author is a <a href="https://blogs.hyvor.com/docs/users">user</a> who has written at least one post
 	</p>
 </Callout>
 
@@ -1253,8 +1250,7 @@ published_at>'-7 days'
 		<div><code>code_head</code>, <code>code_foot</code></div>
 		<div><code>string</code></div>
 		<div>
-			Custom HTML code for before <code>{`</head>`}</code>, and <code>{`</body>`}</code> for all
-			pages.
+			Custom HTML code for before <code>{`</head>`}</code>, and <code>{`</body>`}</code> for all pages.
 		</div>
 	</TableRow>
 

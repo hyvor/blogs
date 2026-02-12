@@ -33,8 +33,8 @@
 		<IconLightbulb />
 	{/snippet}
 	Setting up a custom domain will help you to <strong>build your brand</strong> and
-	<strong>prevent locking into our platform</strong> in case you want to move to another platform in
-	the future.
+	<strong>prevent locking into our platform</strong> in case you want to move to another platform in the
+	future.
 </Callout>
 
 <p>
@@ -115,9 +115,9 @@
 	</Table>
 {:else}
 	<p>
-		If you can't use the CNAME method, you can use the <strong>A</strong> record method. This
-		method depends on our infrastructure. If you use this method, you may need to update the IP
-		address in the future if we have a <i>major</i> infrastructure change.
+		If you can't use the CNAME method, you can use the <strong>A</strong> record method. This method
+		depends on our infrastructure. If you use this method, you may need to update the IP address in
+		the future if we have a <i>major</i> infrastructure change.
 	</p>
 
 	<p>
@@ -183,18 +183,18 @@
 <h2 id="troubleshoot">Troubleshooting</h2>
 
 <p>
-	If your blog with custom domain is loading infinitely or returning any other errors codes,
-	please check the following.
+	If your blog with custom domain is loading infinitely or returning any other errors codes, please
+	check the following.
 </p>
 
 <ul>
 	<li>
-		Make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same
-		hostname as your custom domain.
+		Make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same hostname
+		as your custom domain.
 	</li>
 	<li>
-		If you have set up <code>CAA</code> records for your domain, make sure you have allowed
-		ZeroSSL to issue certificates for your domain (see
+		If you have set up <code>CAA</code> records for your domain, make sure you have allowed ZeroSSL
+		to issue certificates for your domain (see
 		<a
 			href="https://help.zerossl.com/hc/en-us/articles/360060119753-Invalid-CAA-Records"
 			target="_blank">this guide</a

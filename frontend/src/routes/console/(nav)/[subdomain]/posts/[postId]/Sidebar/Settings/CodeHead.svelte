@@ -37,14 +37,8 @@
 <SplitControl>
 	{#snippet label()}
 		<span>
-			<LabelWithInfo
-				label="Code Head"
-				info="Custom code to be added to <head> tag of the post."
-			/>
-			<UnsavedTag
-				show={$postStore.code_head !== $postOriginalStore.code_head}
-				{loaderState}
-			/>
+			<LabelWithInfo label="Code Head" info="Custom code to be added to <head> tag of the post." />
+			<UnsavedTag show={$postStore.code_head !== $postOriginalStore.code_head} {loaderState} />
 		</span>
 	{/snippet}
 

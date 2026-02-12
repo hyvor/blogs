@@ -118,10 +118,7 @@
 	<SplitControl label="Dynamic" caption="Match a path dynamically using a pattern.">
 		<div style="display: flex; align-items: center;">
 			<FormControl>
-				<Switch
-					bind:checked={dynamic}
-					disabled={isCreating ? $dynamicRedirectsStore >= 5 : true}
-				/>
+				<Switch bind:checked={dynamic} disabled={isCreating ? $dynamicRedirectsStore >= 5 : true} />
 			</FormControl>
 			<Text small light style="margin-left:15px; margin-bottom: 2%"
 				>{Math.max(5 - $dynamicRedirectsStore, 0)}/5 remaining

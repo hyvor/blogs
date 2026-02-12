@@ -74,11 +74,7 @@
 			</TableRow>
 
 			{#each routes as route (route.id)}
-				<RouteRow
-					{route}
-					on:delete={() => handleDelete(route.id)}
-					on:update={handleUpdate}
-				/>
+				<RouteRow {route} on:delete={() => handleDelete(route.id)} on:update={handleUpdate} />
 			{/each}
 		</Table>
 	{/if}

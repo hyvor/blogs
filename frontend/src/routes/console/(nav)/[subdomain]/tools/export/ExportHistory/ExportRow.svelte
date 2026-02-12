@@ -23,9 +23,7 @@
 	<div><JobStatusTag status={data.status} /></div>
 	<div>
 		{#if data.url}
-			<Link href={data.url} download={fileNameFromUrl(data.url)} target="_blank"
-				>Download</Link
-			>
+			<Link href={data.url} download={fileNameFromUrl(data.url)} target="_blank">Download</Link>
 		{/if}
 	</div>
 </TableRow>

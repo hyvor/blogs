@@ -291,8 +291,8 @@
 <p>
 	Similar to <code>post</code> and <code>page</code>, <code>routes</code>, other default routes (<code
 		>index</code
-	>, <code>tag</code>, <code>author</code>, and <code>search</code>) routes are customizable to
-	some extent. Here are some ideas:
+	>, <code>tag</code>, <code>author</code>, and <code>search</code>) routes are customizable to some
+	extent. Here are some ideas:
 </p>
 <ul>
 	<li><code>{`/author/{slug}`}</code>→<code>{`/creator/{slug}`}</code></li>
@@ -304,8 +304,8 @@
 	<p>
 		Please note that you (or theme developers) can also add custom routes by adding <code
 			>{`route-{route}`}</code
-		>.twig files to template files. See <a href="/docs/themes-templates#custom-routes">here</a> from
-		more details.
+		>.twig files to template files. See <a href="/docs/themes-templates#custom-routes">here</a> from more
+		details.
 	</p>
 </Callout>
 
@@ -323,8 +323,8 @@
 	<p>
 		Please note that you (or theme developers) can also add custom routes by adding <code
 			>{`route-{route}`}</code
-		>.twig files to template files. See <a href="/docs/themes-templates#custom-routes">here</a> from
-		more details.
+		>.twig files to template files. See <a href="/docs/themes-templates#custom-routes">here</a> from more
+		details.
 	</p>
 </Callout>
 
@@ -351,10 +351,10 @@
 
 <h2 id="website">Making a Website</h2>
 <p>
-	We usually call a website "a blog" when it has posts and the home page lists all of them. That
-	is the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to
-	create a general website. For example, you can create a landing page for the homepage, and have
-	your blog in the <code>/blog</code> subdirectory.
+	We usually call a website "a blog" when it has posts and the home page lists all of them. That is
+	the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to create a
+	general website. For example, you can create a landing page for the homepage, and have your blog
+	in the <code>/blog</code> subdirectory.
 </p>
 
 <h2 id="collections">Multiple Post Collections</h2>
@@ -369,9 +369,9 @@
 	<li>
 		We can customize the <code>index</code> (<code>/</code>) route and its template (<code
 			>index.twig</code
-		>) to show an overview of blog posts and podcast episodes. To do this, you will need to
-		update <code>index.twig</code> and use our <a href="/docs/api-data">Data API</a> to fetch posts
-		separately.
+		>) to show an overview of blog posts and podcast episodes. To do this, you will need to update
+		<code>index.twig</code>
+		and use our <a href="/docs/api-data">Data API</a> to fetch posts separately.
 	</li>
 	<li>We add two new routes with a new template:</li>
 	<ul>

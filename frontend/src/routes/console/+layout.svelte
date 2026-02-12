@@ -75,8 +75,7 @@
 			.catch((err) => {
 				if (err.code === 401) {
 					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
-					location.href =
-						`/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+					location.href = `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
 				} else {
 					toast.error(err.message);
 				}
@@ -110,7 +109,7 @@
 				instance: getConfig().hyvor.instance,
 				user: get(authUserStore),
 				organization: get(authOrganizationStore),
-                license: null, // TODO!!! add this
+				license: null, // TODO!!! add this
 				callbacks: {
 					onOrganizationSwitch: (switcher) => {
 						isLoading = true;

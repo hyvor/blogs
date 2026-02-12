@@ -1,12 +1,5 @@
 <script lang="ts">
-	import {
-		Button,
-		IconMessage,
-		Loader,
-		TabNav,
-		TabNavItem,
-		toast
-	} from '@hyvor/design/components';
+	import { Button, IconMessage, Loader, TabNav, TabNavItem, toast } from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { Navigation, NavigationVariant } from '../../../../lib/types';
