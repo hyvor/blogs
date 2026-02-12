@@ -187,7 +187,8 @@ class PermalinkRepository
     ): string {
         $language ??= $variant->language;
 
-        $route = RouteRepository::getRoute($blog, 'post');
+        $routeName = $variant->post->is_page ? 'page' : 'post';
+        $route = RouteRepository::getRoute($blog, $routeName);
         $path = $route ? $route->match : '';
 
         // build regex for matching dates

@@ -31,6 +31,48 @@ class PermalinkTest extends DatabaseTestCase
         $this->assertSame('http://test.userblogs.hyvorstaging.com', PermalinkRepository::getBaseUrl($blog));
     }
 
+    public function testPagePermalinkUsesPageRouteWhenDifferentFromPostRoute(): void
+    {
+        $blog = BlogFactory::withLanguageAndRoutes(
+            ['subdomain' => 'supun'],
+            routes: [
+                [
+                    'name' => 'post',
+                    'match' => '/articles/{slug}',
+                    'template' => 'post',
+                ],
+                [
+                    'name' => 'page',
+                    'match' => '/{slug}',
+                    'template' => 'page,post',
+                ],
+            ]
+        );
+
+        $language = $blog->languages[0];
+        $this->assertNotNull($language);
+
+        $page = PostFactory::oneFor(
+            $blog,
+            attr: [
+                'is_page' => true,
+                'published_at' => '2021-12-31 12:00:00',
+            ],
+            variantAttr: [
+                'slug' => 'about',
+            ]
+        );
+
+        $this->assertSame(
+            'https://supun.hyvorblogs.io/about',
+            PermalinkRepository::getPostPermalink(
+                $page,
+                $blog,
+                $language
+            )
+        );
+    }
+
     // slug
     #[TestWith(['/{slug}', 'https://supun.hyvorblogs.io/about'])]
     // other language
