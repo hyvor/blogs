@@ -187,7 +187,8 @@ class PermalinkRepository
     ): string {
         $language ??= $variant->language;
 
-        $routeName = $variant->post->is_page ? 'page' : 'post';
+        $post = $variant->post;
+        $routeName = $post->is_page ? 'page' : 'post';
         $route = RouteRepository::getRoute($blog, $routeName);
         $path = $route ? $route->match : '';
 
