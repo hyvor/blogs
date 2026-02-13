@@ -95,7 +95,7 @@ jobs:
           -w /app/symfony \
           -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
           --network ci \
-          backend-dev php -d memory_limit=1024M bin/console dev:reset --env=test --no-interaction
+          backend-dev php -d memory_limit=1024M bin/console doctrine:migrations:migrate --env=test --no-interaction
           docker run \
           -w /app/backend \
           -e DB_HOST=postgres \
