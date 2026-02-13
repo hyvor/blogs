@@ -41,6 +41,7 @@
         "openai-php/laravel": "^0.18.0",
         "predis/predis": "^1.1",
         "sentry/sentry-laravel": "^4.9",
+        "spatie/laravel-ignition": "^2.0",
         "symfony/css-selector": "^7.4",
         "symfony/dom-crawler": "^7.4",
         "symfony/http-client": "^7.4",
@@ -63,8 +64,7 @@
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "plannr/laravel-fast-refresh-database": "^1.2.0",
-        "spatie/invade": "^2",
-        "spatie/laravel-ignition": "^2.0"
+        "spatie/invade": "^2"
     },
     "autoload": {
         "psr-4": {
