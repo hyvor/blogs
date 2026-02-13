@@ -254,8 +254,7 @@ CREATE TABLE public.blogs (
                               hosting_url character varying(255),
                               hosting_redirect_subdomain boolean DEFAULT true,
                               meta jsonb,
-                              counts jsonb,
-                              organization_id bigint
+                              counts jsonb
 );
 
 

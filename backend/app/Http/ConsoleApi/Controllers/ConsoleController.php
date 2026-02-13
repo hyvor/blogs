@@ -13,6 +13,7 @@ use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\ConsoleApi\Objects\User\AuthUserObject;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
@@ -25,11 +26,13 @@ class ConsoleController
 
     public function init(
         ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
+        BillingInterface $billing,
         Request $request
     ): JsonResponse
     {
         $user = $consoleApiAuthMiddleware->getUser($request);
         $organization = $consoleApiAuthMiddleware->getOrganization($request);
+        $license = $organization ? $billing->license($organization->id) : new ResolvedLicense(ResolvedLicenseType::NONE);
 
         $blogs = UserBlogRepository::getBlogsOfUser($user, $organization)
             ->mapInto(BlogListObject::class);
@@ -37,6 +40,7 @@ class ConsoleController
         return response()->json([
             'user' => new AuthUserObject($user),
             'organization' => $organization,
+            'resolved_license' => $license,
             'blogs' => $blogs,
             'is_blocked' => UserRepository::isBlocked($user->id),
             'config' => $this->config()

@@ -10,4 +10,5 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Zenstruck\Foundry\ZenstruckFoundryBundle::class => ['dev' => true, 'test' => true],
     Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle::class => ['test' => true],
+    DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => ['test' => true],
 ];

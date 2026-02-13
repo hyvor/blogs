@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { BlogList } from './lib/types';
-	import { authOrganizationStore, authUserStore, blogListStore } from './lib/stores';
+	import {authOrganizationStore, authUserStore, blogListStore, resolvedLicenseStore} from './lib/stores';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
@@ -12,6 +12,7 @@
 		CloudContext,
 		type CloudContextOrganization,
 		type CloudContextUser,
+		type ResolvedLicense,
 		HyvorBar
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
@@ -25,6 +26,7 @@
 	interface InitResponse {
 		user: CloudContextUser;
 		organization: CloudContextOrganization;
+		resolved_license: ResolvedLicense;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
@@ -53,6 +55,7 @@
 
 				authUserStore.set(res.user);
 				authOrganizationStore.set(res.organization);
+				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
 
 				if (res.blogs[0]?.type === 'temp') {
@@ -109,7 +112,7 @@
 				instance: getConfig().hyvor.instance,
 				user: get(authUserStore),
 				organization: get(authOrganizationStore),
-				license: null, // TODO!!! add this
+				license: get(resolvedLicenseStore),
 				callbacks: {
 					onOrganizationSwitch: (switcher) => {
 						isLoading = true;
