@@ -1,56 +1,54 @@
 <script lang="ts">
-	import { Loader, SplitControl, Textarea } from "@hyvor/design/components";
-	import { postOriginalVariantStore, postVariantStore, updatePostVariantStore } from "../../../postStore";
-	import UnsavedTag from "./UnsavedTag.svelte";
-	import { updatePostVariant } from "../../../postActions";
+	import { Loader, SplitControl, Textarea } from '@hyvor/design/components';
+	import {
+		postOriginalVariantStore,
+		postVariantStore,
+		updatePostVariantStore
+	} from '../../../postStore';
+	import UnsavedTag from './UnsavedTag.svelte';
+	import { updatePostVariant } from '../../../postActions';
 
-    function handleInput(e: any) {
-        updatePostVariantStore({description: e.target.value});
-    }
+	function handleInput(e: any) {
+		updatePostVariantStore({ description: e.target.value });
+	}
 
-    let loaderState : 'none' | 'loading' | 'success' | 'error' = $state('none');
+	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
-    function handleBlur(e: any) {
+	function handleBlur(e: any) {
+		const desc = (e.target.value as string).trim();
 
-        const desc = (e.target.value as string).trim();
-        
-        if (desc === $postOriginalVariantStore.description)
-            return;
+		if (desc === $postOriginalVariantStore.description) return;
 
-        if ($postVariantStore.status !== 'published') {
+		if ($postVariantStore.status !== 'published') {
+			loaderState = 'loading';
 
-            loaderState = 'loading';
-
-            updatePostVariant({description: desc})
-                .then(() => {
-                    loaderState = 'success';
-                })
-                .catch(err => {
-                    loaderState = 'error';
-                })
-        }
-
-    }
-
+			updatePostVariant({ description: desc })
+				.then(() => {
+					loaderState = 'success';
+				})
+				.catch((err) => {
+					loaderState = 'error';
+				});
+		}
+	}
 </script>
 
-
 <SplitControl>
-    {#snippet label()}
-        <span >
-            Description
-            <UnsavedTag 
-                show={$postVariantStore.description !== $postOriginalVariantStore.description}
-                loaderState={loaderState}
-            />
-        </span>
-    {/snippet}
-    <Textarea
-        block
-        rows={4}
-        value={$postVariantStore.description || ''}
-        on:input={handleInput}
-        on:blur={handleBlur}
-        maxlength={255}
-    />
+	{#snippet label()}
+		<span>
+			Description
+			<UnsavedTag
+				show={$postVariantStore.description !== $postOriginalVariantStore.description}
+				{loaderState}
+			/>
+		</span>
+	{/snippet}
+	<Textarea
+		block
+		rows={4}
+		value={$postVariantStore.description || ''}
+		on:input={handleInput}
+		on:blur={handleBlur}
+		maxlength={255}
+	/>
 </SplitControl>

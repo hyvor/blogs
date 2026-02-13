@@ -267,7 +267,9 @@
 
 	<ul>
 		<li><a href="https://icons.getbootstrap.com/" rel="nofollow">bootstrap</a></li>
-		<li><a href="https://fontawesome.com/icons" rel="nofollow">fontawesome</a>Free icons only</li>
+		<li>
+			<a href="https://fontawesome.com/icons" rel="nofollow">fontawesome</a>Free icons only
+		</li>
 
 		<ul>
 			<li>append <code>-regular</code> to regular icons (<code>calendar-regular</code>)</li>

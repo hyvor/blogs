@@ -121,9 +121,7 @@
 
 		const extend = markExtend(view.state.selection.$from, link);
 
-		view.dispatch(
-			view.state.tr.removeMark(extend.from, extend.to, view.state.schema.marks.link)
-		);
+		view.dispatch(view.state.tr.removeMark(extend.from, extend.to, view.state.schema.marks.link));
 		view.focus();
 	}
 
@@ -137,12 +135,7 @@
 		<span class="tooltip" bind:this={tooltip}>
 			{#if link}
 				<div class="link-row">
-					<a
-						class="link"
-						target="_blank"
-						rel="noopener noreferrer"
-						href={link.attrs.href}
-					>
+					<a class="link" target="_blank" rel="noopener noreferrer" href={link.attrs.href}>
 						{getTrimmedLink(link.attrs.href)}
 						<IconBoxArrowUpRight size={12} />
 					</a>

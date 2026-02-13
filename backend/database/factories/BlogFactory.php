@@ -21,6 +21,7 @@ class BlogFactory extends Factory
         return [
             'type' => BlogTypeEnum::DEFAULT,
             'hyvor_user_id' => rand(),
+            'organization_id' => rand(),
             'subdomain' => Str::random(20),
             'trial_ends_at' => Carbon::now()->addDays(7),
             'hosting_at' => 'subdomain',
@@ -52,7 +53,7 @@ class BlogFactory extends Factory
      */
     public static function withAccess($attrs = []): Blog
     {
-        $blog = self::one($attrs + ['hyvor_user_id' => 1]);
+        $blog = self::one($attrs + ['hyvor_user_id' => 1, 'organization_id' => 1]);
 
         User::factory()->create([
             'blog_id' => $blog->id,

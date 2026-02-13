@@ -11,7 +11,7 @@ on:
 jobs:
 
   frontend-check:
-    name: "Frontend Check"
+    name: "Svelte / TS Check"
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +24,22 @@ jobs:
       - name: Run Svelte Check
         run: docker run frontend-dev npm run check
 
-  phpstan:
-    name: PHPStan
+  prettier:
+    name: "Svelte / Prettier"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t frontend-ci . --target frontend-dev
+
+      - name: Run prettier
+        run: docker run frontend-ci npm run lint
+
+  laravel-phpstan:
+    name: "Laravel / PHPStan"
     runs-on: ubuntu-latest
 
     steps:
@@ -36,10 +50,30 @@ jobs:
         run: docker build -t backend-dev . --target backend-dev
 
       - name: Run PHPStan
-        run: docker run backend-dev ./vendor/bin/phpstan analyse --memory-limit=1G --ansi
+        run: |
+          docker run \
+          -w /app/backend \
+          backend-dev ./vendor/bin/phpstan analyse --memory-limit=1G --ansi
 
-  php-tests:
-    name: "PHP Tests"
+  symfony-phpstan:
+    name: "Symfony / PHPStan"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t backend-dev . --target backend-dev
+
+      - name: Run PHPStan
+        run: |
+          docker run \
+          -w /app/symfony \
+          backend-dev ./vendor/bin/phpstan analyse --memory-limit=1G --ansi
+
+  laravel-php-tests:
+    name: "Laravel / PHP Tests"
     runs-on: ubuntu-latest
 
     steps:
@@ -58,15 +92,55 @@ jobs:
         run: |
           touch coverage.xml
           docker run \
+          -w /app/symfony \
+          -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
+          --network ci \
+          backend-dev php -d memory_limit=1024M bin/console doctrine:migrations:migrate --env=test --no-interaction
+          docker run \
+          -w /app/backend \
           -e DB_HOST=postgres \
           --network ci \
-          --mount type=bind,source=$(pwd)/coverage.xml,target=/app/coverage.xml \
-          backend-dev php -d memory_limit=1024M ./vendor/bin/pest --coverage-clover /app/coverage.xml
+          --mount type=bind,source=$(pwd)/coverage.xml,target=/app/backend/coverage.xml \
+          backend-dev php -d memory_limit=1024M ./vendor/bin/pest --ci --coverage-clover /app/backend/coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
           slug: hyvor/blogs
-          files: /app/coverage.xml
+          files: /app/backend/coverage.xml
 
+  symfony-php-tests:
+    name: "Symfony / PHP Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up services
+        run: |
+          docker network create ci
+          docker compose -f meta/ci/compose.ci.yaml up -d
+
+      - name: Build Docker image
+        run: docker build -t backend-dev . --target backend-dev
+
+      - name: Run Tests
+        run: |
+          touch coverage.xml
+          docker run \
+          -w /app/symfony \
+          -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
+          --network ci \
+          --mount type=bind,source=$(pwd)/coverage.xml,target=/app/symfony/coverage.xml \
+          backend-dev sh -c "
+          php -d memory_limit=1024M bin/console doctrine:migrations:migrate --env=test --no-interaction &&
+          php -d memory_limit=1024M ./vendor/bin/phpunit --coverage-clover /app/symfony/coverage.xml"
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.HYVOR_ORG_CODECOV_TOKEN }}
+          slug: hyvor/core
+          files: /app/symfony/coverage.xml

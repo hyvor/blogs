@@ -34,8 +34,8 @@ class VariantsHelper
         $variantPrimaryLanguage = $variants->sortBy('id')->first();
 
         return
-            $variantCorrectLanguage?->{$name} ?? // first, the correct one
-            $variantFallbackLanguage?->{$name} ?? // otherwise, the fallback
+            $variantCorrectLanguage->{$name} ?? // first, the correct one
+            $variantFallbackLanguage->{$name} ?? // otherwise, the fallback
             $variantPrimaryLanguage->{$name}; // finally, the primary language.
     }
 

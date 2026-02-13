@@ -34,9 +34,7 @@
 		if (pos === undefined) return;
 
 		view.dispatch(
-			view.state.tr
-				.setMeta('addToHistory', false)
-				.setNodeMarkup(pos, null, { levels: e.detail })
+			view.state.tr.setMeta('addToHistory', false).setNodeMarkup(pos, null, { levels: e.detail })
 		);
 	}
 </script>

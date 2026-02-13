@@ -11,15 +11,16 @@
 
 	let { websiteId }: Props = $props();
 
-	let code =
-		$derived(`<` +
-		`script async src="https://talk.hyvor.com/embed/embed.js" type="module"></` +
-		`script>
+	let code = $derived(
+		`<` +
+			`script async src="https://talk.hyvor.com/embed/embed.js" type="module"></` +
+			`script>
 <hyvor-talk-comments 
     website-id="${websiteId}" 
     page-id="{{ _post.id }}"
     page-url="{{ _post.url }}"
-></hyvor-talk-comments>`);
+></hyvor-talk-comments>`
+	);
 
 	let adding = $state(false);
 
@@ -30,7 +31,7 @@
 
 <SplitControl column>
 	{#snippet label()}
-		<Label >
+		<Label>
 			Comments <ConfiguredTag
 				configured={$blogStore.comments_code?.includes('<hyvor-talk-comments') || false}
 			/>

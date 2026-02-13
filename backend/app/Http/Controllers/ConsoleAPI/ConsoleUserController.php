@@ -16,9 +16,12 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
 
 class ConsoleUserController extends Controller
 {
@@ -55,10 +58,10 @@ class ConsoleUserController extends Controller
         Request $request,
         Blog $blog,
         UsageService $usageService,
-        AuthInterface $auth,
+        CommsInterface $comms,
     ): JsonResponse {
         $request->validate([
-            'username_or_email' => 'required|string',
+            'hyvor_user_id' => 'required|integer',
             'role' => ['required', new Enum(UserRoleEnum::class)],
         ]);
 
@@ -66,30 +69,36 @@ class ConsoleUserController extends Controller
             throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
         }
 
-        $usernameOrEmail = $request->input('username_or_email');
+        $hyvorUserId = $request->input('hyvor_user_id');
         $role = UserRoleEnum::from($request->input('role'));
 
-        if (str_contains($usernameOrEmail, '@')) {
-            $hyvorUser = $auth->fromEmail($usernameOrEmail);
-        } else {
-            $hyvorUser = $auth->fromUsername($usernameOrEmail);
+        if (UserRepository::getUserByBlogIdAndHyvorUserId($blog->id, $hyvorUserId)) {
+            throw new TrustedException('User is already added to the blog');
         }
 
-        if (!$hyvorUser) {
-            throw new TrustedException('Unable to find the user');
+        $organizationId = $blog->organization_id;
+        assert($organizationId !== null);
+
+        try {
+            $verification = $comms->send(
+                new VerifyMember(
+                    $organizationId,
+                    $hyvorUserId,
+                ),
+            );
+        } catch (CommsApiFailedException $e) {
+            throw new TrustedException('Unable to verify the user. Please try again later.');
+        }
+
+        if (!$verification->isMember()) {
+            throw new TrustedException('Unable to find the user in the organization');
         }
 
         if ($role === UserRoleEnum::OWNER) {
             throw new TrustedException('Owners cannot be created. Use ownership transferring');
         }
 
-        if (UserRepository::getUserByBlogIdAndHyvorUserId($blog->id, $hyvorUser->id)) {
-            throw new TrustedException('User already exists');
-        }
-
-        $user = UserRepository::createUserFromHyvorUser($blog, $hyvorUser->id, $role);
-
-        UserRepository::sendInviteEmail($user);
+        $user = UserRepository::createUserFromHyvorUser($blog, $hyvorUserId, $role);
 
         return response()->json(new UserObject($user, $blog));
     }
@@ -249,7 +258,7 @@ class ConsoleUserController extends Controller
         if ($language->is_primary) {
             throw new TrustedException(
                 'Primary language variant cannot be deleted. Delete the user instead',
-                TrustedException::ERROR_UNPROCESSABLE
+                TrustedException::ERROR_UNPROCESSABLE,
             );
         }
 
@@ -260,51 +269,6 @@ class ConsoleUserController extends Controller
         }
 
         UserRepository::deleteUserVariant($variant);
-
-        return response()->json();
-    }
-
-    public static function acceptInvite(Request $request): mixed
-    {
-        $request->validate([
-            'user_id' => 'required|integer',
-            'signature' => 'required|string',
-        ]);
-
-        if (!$request->hasValidSignature(false)) {
-            return response()->view('confirmation', [
-                'type' => 'error',
-                'title' => 'Invalid Link',
-                'description' => 'Unable to accept the invitation. The link may be altered or expired. Please ask the admins of the blog to re-invite.',
-            ], 422);
-        }
-
-        $userId = $request->integer('user_id');
-        $user = UserRepository::getUserById($userId);
-
-        if (!$user) {
-            return response()->view('confirmation', [
-                'type' => 'error',
-                'title' => 'User not found',
-                'description' => 'Unable to accept the invitation. User not found.',
-            ], 422);
-        }
-
-        UserRepository::activateUser($user);
-
-        return view('confirmation', [
-            'title' => 'Invitation Accepted',
-            'description' => 'You have accepted the invitation to join the blog. You can visit the <a class="link" href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to access all your blogs.',
-        ]);
-    }
-
-    public function resendInvite(User $user): JsonResponse
-    {
-        if ($user->status !== UserStatusEnum::INVITED) {
-            throw new TrustedException('User is not invited');
-        }
-
-        UserRepository::sendInviteEmail($user);
 
         return response()->json();
     }

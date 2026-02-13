@@ -62,11 +62,7 @@
 		loading = true;
 
 		if (isUpdate) {
-			updateGatedContentRule(
-				rule!.id,
-				minimumPlan,
-				gateType === 'default' ? null : gateContent
-			)
+			updateGatedContentRule(rule!.id, minimumPlan, gateType === 'default' ? null : gateContent)
 				.then((res) => {
 					show = false;
 					dispatch('update', res);
@@ -155,9 +151,7 @@
 				{#each plans as plan}
 					<Radio bind:group={minimumPlan} value={plan.name} name="minimumPlan">
 						{plan.name}
-						<span class="price"
-							>({prettyCurrency(currency)}{plan.monthly_price}/month)</span
-						>
+						<span class="price">({prettyCurrency(currency)}{plan.monthly_price}/month)</span>
 					</Radio>
 				{/each}
 			</FormControl>

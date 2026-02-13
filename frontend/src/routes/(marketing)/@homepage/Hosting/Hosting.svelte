@@ -21,10 +21,7 @@
 	<Type
 		name="Default Subdomain"
 		domain="subdomain.hyvorblogs.io"
-		features={[
-			'Best option to <strong>get started</strong>',
-			'Available for all blogs by default'
-		]}
+		features={['Best option to <strong>get started</strong>', 'Available for all blogs by default']}
 	/>
 
 	<Type

@@ -33,17 +33,17 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
-use App\Models\Subscription;
-use Hyvor\Internal\Resource\Resource;
+use Hyvor\Internal\Component\Component;
 use Illuminate\Support\Facades\DB;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 
 class BlogService
 {
 
     public function __construct(
-        private Resource $resource
-    ) {
-    }
+        private CommsInterface $comms,
+    ) {}
 
     public static function isSubdomainReserved(string $subdomain): bool
     {
@@ -59,14 +59,16 @@ class BlogService
 
     public function createBlog(
         ?int $userId,
+        ?int $organizationId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
-        ?string $ip = null
+        ?string $ip = null,
     ): Blog {
-        return DB::transaction(function () use ($userId, $name, $subdomain, $type, $ip) {
+        return DB::transaction(function () use ($userId, $organizationId, $name, $subdomain, $type, $ip) {
             $blog = Blog::create([
                 'hyvor_user_id' => $userId,
+                'organization_id' => $organizationId,
                 'ip' => $ip,
                 'subdomain' => $subdomain,
                 'type' => $type,
@@ -74,15 +76,20 @@ class BlogService
             ]);
             $blog->refresh(); // fetch default columns
 
-            if ($userId) {
-                $this->resource->register($userId, $blog->id);
+            if ($organizationId) {
+                $this->comms->send(
+                    new ResourceCreated(
+                        Component::BLOGS,
+                        $organizationId,
+                    ),
+                );
             }
 
             (new LanguageFiller($blog))->fill();
 
             if ($type === BlogTypeEnum::PREVIEW) {
                 $blog->setMeta([
-                    'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
+                    'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl(),
                 ]);
             }
 
@@ -253,9 +260,6 @@ class BlogService
             }
 
             $blog->delete();
-
-
-            $this->resource->delete($blog->id);
 
             BlogDeletedEvent::dispatch($blog);
         });

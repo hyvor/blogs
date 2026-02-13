@@ -63,9 +63,7 @@
 	function handleTranslate() {
 		isTranslating = true;
 
-		const variant = $postStore.variants.find(
-			(v) => v.language_id === sourceVariantLanguage.id
-		)!;
+		const variant = $postStore.variants.find((v) => v.language_id === sourceVariantLanguage.id)!;
 
 		autoTranslate(
 			sourceDeepLLanguage,
@@ -124,8 +122,8 @@
 		{/snippet}
 
 		<div class="note">
-			Automatically translate your posts using DeepL. Make sure to review the translations
-			before publishing.
+			Automatically translate your posts using DeepL. Make sure to review the translations before
+			publishing.
 		</div>
 
 		<SplitControl label="Source Variant" caption="The variant you want to translate from">

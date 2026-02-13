@@ -52,21 +52,19 @@
 
 	<SplitControl label="Private">
 		{#snippet caption()}
-				<Caption >
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
-				- only for internal use.
+			<Caption>
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
+				pages - only for internal use.
 			</Caption>
-			{/snippet}
+		{/snippet}
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
 	{#snippet footer()}
-	
-			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<ButtonGroup>
+			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-				<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
-			</ButtonGroup>
-		
+			<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
+		</ButtonGroup>
 	{/snippet}
 </Modal>

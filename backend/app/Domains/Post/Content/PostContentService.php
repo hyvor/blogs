@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content;
 
@@ -48,7 +46,7 @@ class PostContentService
     /**
      * @param array<mixed>|string $json
      */
-    public static function getHtml(array|string $json, Blog $blog, ?PostContentOptions $options = null): string
+    public static function getHtml(array|string $json, Blog $blog, ?PostContentOptions $options = null) : string
     {
         return Document::fromJson(self::getSchema($blog, $options), $json)->toHtml();
     }
@@ -56,12 +54,12 @@ class PostContentService
     /**
      * @param array<mixed>|string $json
      */
-    public static function getText(array|string $json, Blog $blog): string
+    public static function getText(array|string $json, Blog $blog) : string
     {
         return Document::fromJson(self::getSchema($blog), $json)->toText();
     }
 
-    public static function getJsonFromHtml(string $html, Blog $blog, bool $sanitize = true): string
+    public static function getJsonFromHtml(string $html, Blog $blog, bool $sanitize = true) : string
     {
         return self::getDocumentFromHtml($html, $blog, $sanitize)->toJson();
     }
@@ -70,7 +68,8 @@ class PostContentService
         string $html,
         Blog $blog,
         bool $sanitize = true
-    ): Node {
+    ) : Node
+    {
         $schema = self::getSchema($blog);
         $parser = HtmlParser::fromSchema($schema);
         return $parser->parse($html, sanitize: $sanitize);
@@ -79,13 +78,14 @@ class PostContentService
     /**
      * @param array<mixed>|string $json
      */
-    public static function getDocumentFromJson(array|string $json, Blog $blog): Document
+    public static function getDocumentFromJson(array|string $json, Blog $blog) : Document
     {
         return Document::fromJson(self::getSchema($blog), $json);
     }
 
-    private static function getSchema(Blog $blog, ?PostContentOptions $options = null): Schema
+    private static function getSchema(Blog $blog, ?PostContentOptions $options = null) : Schema
     {
+
         $options ??= new PostContentOptions;
 
         return new Schema(
@@ -126,9 +126,10 @@ class PostContentService
                 new Sup,
             ]
         );
+
     }
 
-    public static function getDefaultBlockTemplate(string $name): string
+    public static function getDefaultBlockTemplate(string $name) : string
     {
         return strval(
             file_get_contents(resource_path("twig/blocks/$name.twig"))

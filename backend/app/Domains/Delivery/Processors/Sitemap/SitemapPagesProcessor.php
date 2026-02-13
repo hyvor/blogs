@@ -60,7 +60,7 @@ class SitemapPagesProcessor extends RouteProcessorAbstract
                     ->where(
                         'post_variants.language_id',
                         '=',
-                        $this->languages->firstWhere('is_primary', true)?->id ?? 0
+                        $this->languages->firstWhere('is_primary', true)->id ?? 0
                     )
         )
             ->where('post_variants.status', 'published')

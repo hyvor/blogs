@@ -14,7 +14,7 @@
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-    import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
@@ -128,11 +128,12 @@
 		}
 	}
 
-	let hasUrlChanged =
-		$derived($blogStore.subdomain !== subdomain ||
-		$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
-		$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
-		$blogOriginalStore.hosting_url !== $blogStore.hosting_url);
+	let hasUrlChanged = $derived(
+		$blogStore.subdomain !== subdomain ||
+			$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
+			$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
+			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
+	);
 </script>
 
 <DisabledOnTemp>
@@ -181,8 +182,8 @@
 					>
 						Docs
 						{#snippet end()}
-												<IconBoxArrowUpRight  size={10} />
-											{/snippet}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
 					</Link>
 				</Radio>
 				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
@@ -193,8 +194,8 @@
 					>
 						Docs
 						{#snippet end()}
-												<IconBoxArrowUpRight  size={10} />
-											{/snippet}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
 					</Link>
 				</Radio>
 			</InputGroup>
@@ -253,11 +254,11 @@
 		{#if hasUrlChanged}
 			<Callout type="warning" style="margin-top: 20px;">
 				{#snippet icon()}
-								<IconExclamationCircle  size={18} />
-							{/snippet}
+					<IconExclamationCircle size={18} />
+				{/snippet}
 				{#snippet title()}
-								<div >URL Change</div>
-							{/snippet}
+					<div>URL Change</div>
+				{/snippet}
 				You are about to change the URL of your blog!
 				<ul>
 					<li>

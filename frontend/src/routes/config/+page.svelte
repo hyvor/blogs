@@ -1,114 +1,92 @@
 <script>
-    import { run } from 'svelte/legacy';
+	import { run } from 'svelte/legacy';
 
-	import ConfigUi from "../console/(nav)/[subdomain]/theme/Editor/ConfigUi/ConfigUi.svelte";
-	import CodemirrorEditor from "../console/lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
+	import ConfigUi from '../console/(nav)/[subdomain]/theme/Editor/ConfigUi/ConfigUi.svelte';
+	import CodemirrorEditor from '../console/lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 
-    let config = $state('name: my-theme');
-    let configDef = $state('');
+	let config = $state('name: my-theme');
+	let configDef = $state('');
 
-    run(() => {
-        console.log(configDef)
-    });
+	run(() => {
+		console.log(configDef);
+	});
 </script>
 
-
 <div class="demo-view">
+	<div class="column">
+		<div class="column-title">config.yaml</div>
+		<div class="column-content">
+			<div class="hds-box">
+				<CodemirrorEditor ext="yaml" bind:value={config} on:change={(e) => (config = e.detail)} />
+			</div>
+		</div>
+	</div>
 
-    <div class="column">
-        <div class="column-title">
-            config.yaml
-        </div>
-        <div class="column-content">
-            <div class="hds-box">
-                <CodemirrorEditor
-                    ext="yaml" 
-                    bind:value={config}
-                    on:change={e => config = e.detail}
-                />
-            </div>
-        </div>
-    </div>
+	<div class="column">
+		<div class="column-title">config.def.yaml</div>
+		<div class="column-content">
+			<div class="hds-box">
+				<CodemirrorEditor value={configDef} ext="yaml" on:change={(e) => (configDef = e.detail)} />
+			</div>
+		</div>
+	</div>
 
-    <div class="column">
-        <div class="column-title">
-            config.def.yaml
-        </div>
-        <div class="column-content">
-            <div class="hds-box">
-                <CodemirrorEditor 
-                    value={configDef}
-                    ext="yaml"
-                    on:change={e => configDef = e.detail}
-                />
-            </div>
-        </div>
-    </div>
-
-    <div class="column">
-        <div class="column-title">
-            User Interface
-        </div>
-        <div class="column-content user-interface-wrap">
-            <div class="hds-box">
-                <ConfigUi
-                    config={config}
-                    configDef={configDef}
-                />
-            </div>
-        </div>
-    </div>
-
+	<div class="column">
+		<div class="column-title">User Interface</div>
+		<div class="column-content user-interface-wrap">
+			<div class="hds-box">
+				<ConfigUi {config} {configDef} />
+			</div>
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
+	.demo-view {
+		display: flex;
+		height: 100vh;
 
-    .demo-view {
-        display: flex;
-        height: 100vh;
+		.column {
+			flex: 2;
+			display: flex;
+			flex-direction: column;
+			margin: 0 10px;
+			flex-shrink: 0;
+			min-width: 0;
+		}
+		.column:nth-child(3) {
+			flex: 3;
+		}
 
-        .column {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            margin: 0 10px;
-            flex-shrink: 0;
-            min-width: 0;
-        }
-        .column:nth-child(3) {
-            flex: 3;
-        }
+		.column-title {
+			font-size: 16px;
+			font-weight: 600;
+			padding: 10px;
+			text-align: center;
+		}
 
-        .column-title {
-            font-size: 16px;
-            font-weight: 600;
-            padding: 10px;
-            text-align: center;
-        }
+		.column-content {
+			flex: 1;
+			overflow: auto;
+		}
 
-        .column-content {
-            flex: 1;
-            overflow: auto;
-        }
+		.hds-box {
+			height: 100%;
+		}
 
-        .hds-box {
-            height: 100%;
-        }
+		.user-interface-wrap {
+			overflow: auto;
+			.hds-box {
+				padding: 30px;
+			}
+		}
 
-        .user-interface-wrap {
-            overflow: auto;
-            .hds-box {
-                padding: 30px;
-            }
-        }
-
-        :global(.CodeMirror) {
-            background-color: transparent!important;
-            min-height: 100%;
-            :global(.CodeMirror-gutters) {
-                background-color: transparent!important;
-            }
-        }
-    }
-
+		:global(.CodeMirror) {
+			background-color: transparent !important;
+			min-height: 100%;
+			:global(.CodeMirror-gutters) {
+				background-color: transparent !important;
+			}
+		}
+	}
 </style>

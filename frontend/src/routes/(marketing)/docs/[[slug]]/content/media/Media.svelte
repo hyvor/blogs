@@ -41,9 +41,9 @@
 <p>
 	<a href="https://en.wikipedia.org/wiki/WebP" rel="nofollow" target="_blank">WebP</a> images are 25-34%
 	smaller than JPEG/PNG images of the same quality. It is recommended nowadays to use WebP in websites
-	whenever possible as all modern browsers support WebP images. You can upload JPEG and PNG as usual
-	in your posts. Hyvor Blogs will automatically convert them to WebP images on the fly. You don't need
-	to do anything.
+	whenever possible as all modern browsers support WebP images. You can upload JPEG and PNG as usual in
+	your posts. Hyvor Blogs will automatically convert them to WebP images on the fly. You don't need to
+	do anything.
 </p>
 
 <Callout type="info">

@@ -278,8 +278,8 @@ type Response = PostVariant
 
 <p>
 	<code>content</code> and <code>content_unsaved</code> should be in ProseMirror JSON format. See
-	<a href="/docs/api-console#get-prosemirror-json">Get ProseMirror JSON endpoint</a> to convert HTML
-	to ProseMirror JSON.
+	<a href="/docs/api-console#get-prosemirror-json">Get ProseMirror JSON endpoint</a> to convert HTML to
+	ProseMirror JSON.
 </p>
 
 <h4 id="delete-post-variant">Delete a post variant</h4>

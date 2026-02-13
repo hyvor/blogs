@@ -47,9 +47,7 @@
 					<Loader size="small" />
 				{:else}
 					<span class="error"
-						>{typeof error === 'string'
-							? error
-							: 'Something went wrong. Please try again.'}</span
+						>{typeof error === 'string' ? error : 'Something went wrong. Please try again.'}</span
 					>
 				{/if}
 			{:else}

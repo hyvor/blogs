@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI\Integrations;
 
@@ -21,9 +22,10 @@ class IntegrationHyvorTalkController
 
     public function __construct(
         private readonly HyvorTalkService $hyvorTalkService
-    ) {}
+    ) {
+    }
 
-    public function getIntegration(Blog $blog) : JsonResponse
+    public function getIntegration(Blog $blog): JsonResponse
     {
         $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($blog);
 
@@ -50,26 +52,24 @@ class IntegrationHyvorTalkController
         return $hyvorTalkWebsite;
     }
 
-    public function createIntegration(Blog $blog) : JsonResponse
+    public function createIntegration(Blog $blog): JsonResponse
     {
-
         $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($blog);
 
         if ($hyvorTalkWebsite) {
             throw new TrustedException('Hyvor Talk integration already exists');
         }
 
-        if (!$blog->hyvor_user_id) {
-            throw new TrustedException('Hyvor Talk integration requires Hyvor Talk user ID');
+        if (!$blog->organization_id) {
+            throw new TrustedException('Hyvor Talk integration requires an organization');
         }
 
         $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite($blog);
 
         return response()->json(new HyvorTalkIntegrationObject($hyvorTalkWebsite));
-
     }
 
-    public function deleteIntegration(Blog $blog) : JsonResponse
+    public function deleteIntegration(Blog $blog): JsonResponse
     {
         $hyvorTalkWebsite = $this->getHyvorTalkWebsite($blog);
 
@@ -78,19 +78,16 @@ class IntegrationHyvorTalkController
         return response()->json();
     }
 
-    public function getGatedContentRules(Blog $blog) : JsonResponse
+    public function getGatedContentRules(Blog $blog): JsonResponse
     {
-
         $rules = HyvorTalkGatedContentService::getGatedContentRules($blog, withTag: true)
             ->map(fn($rule) => new GatedContentRuleObject($rule, $blog));
 
         return response()->json($rules);
-
     }
 
-    public function createGatedContentRule(Blog $blog, Request $request) : JsonResponse
+    public function createGatedContentRule(Blog $blog, Request $request): JsonResponse
     {
-
         $request->validate([
             'tag_id' => 'required|integer',
             'minimum_plan' => 'required|string',
@@ -105,7 +102,7 @@ class IntegrationHyvorTalkController
         }
 
         $tagId = $request->integer('tag_id');
-        $minimumPlan = (string) $request->string('minimum_plan');
+        $minimumPlan = (string)$request->string('minimum_plan');
         /** @var ?string $gate */
         $gate = $request->input('gate');
 
@@ -123,9 +120,8 @@ class IntegrationHyvorTalkController
         return response()->json(new GatedContentRuleObject($rule, $blog));
     }
 
-    public function updateGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog, Request $request) : JsonResponse
+    public function updateGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog, Request $request): JsonResponse
     {
-
         $request->validate([
             'minimum_plan' => 'required|string',
             'gate' => 'string|nullable'
@@ -134,7 +130,7 @@ class IntegrationHyvorTalkController
         $updates = [];
 
         if ($request->has('minimum_plan')) {
-            $updates['minimum_plan'] = (string) $request->string('minimum_plan');
+            $updates['minimum_plan'] = (string)$request->string('minimum_plan');
         }
 
         if ($request->has('gate')) {
@@ -147,15 +143,14 @@ class IntegrationHyvorTalkController
     }
 
 
-    public function deleteGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog) : JsonResponse
+    public function deleteGatedContentRule(HyvorTalkGatedContentRule $rule, Blog $blog): JsonResponse
     {
         HyvorTalkGatedContentService::deleteGatedContentRule($blog, $rule);
         return response()->json();
     }
 
-    public function getMembershipPlans(Blog $blog) : JsonResponse
+    public function getMembershipPlans(Blog $blog): JsonResponse
     {
-
         $htWebsite = $this->getHyvorTalkWebsite($blog);
 
         try {
@@ -172,12 +167,11 @@ class IntegrationHyvorTalkController
 
         return response()->json([
             'currency' => $website['memberships_currency'],
-            'plans' => collect($plans)->map(fn ($plan) => [
+            'plans' => collect($plans)->map(fn($plan) => [
                 'name' => $plan['name'],
                 'monthly_price' => $plan['monthly_price'],
             ])
         ]);
-
     }
 
 }

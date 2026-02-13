@@ -1,44 +1,42 @@
-
 export interface Config {
-    hyvor: {
-        instance: string;
-    }
-    domains: {
-        app: string,
-        delivery: string
-    },
-    limits: {
-        max_upload_size: number,
-        max_theme_zip_size: number,
-        max_asset_file_size: number
-    },
-    highlight_themes: string[],
-    services: {
-        paddle: {
-            sandbox: boolean,
-            vendor_id: number,
-        }
-    }
+	hyvor: {
+		instance: string;
+	};
+	domains: {
+		app: string;
+		delivery: string;
+	};
+	limits: {
+		max_upload_size: number;
+		max_theme_zip_size: number;
+		max_asset_file_size: number;
+	};
+	highlight_themes: string[];
+	services: {
+		paddle: {
+			sandbox: boolean;
+			vendor_id: number;
+		};
+	};
 }
 
 let config = {} as Config;
 
 export function setConfig(c: Config) {
-    config = c;
+	config = c;
 }
 
 export function getConfig() {
-    return config;
+	return config;
 }
 
-
 export async function loadConfig() {
-    if (config.domains) {
-        return;
-    }
+	if (config.domains) {
+		return;
+	}
 
-    const response = await fetch('/api/special/config');
-    const data = await response.json();
+	const response = await fetch('/api/special/config');
+	const data = await response.json();
 
-    setConfig(data);
+	setConfig(data);
 }

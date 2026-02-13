@@ -18,7 +18,7 @@
 
 <p>
 	If you are already using Docker within your website, you can use our official Docker image to host
-	your Hyvor Blog in a subdirectory. You can use a reverse proxy like Caddy, Nginx or Traefik to 
+	your Hyvor Blog in a subdirectory. You can use a reverse proxy like Caddy, Nginx or Traefik to
 	route blog traffic to the Docker container.
 </p>
 

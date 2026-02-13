@@ -47,7 +47,7 @@
 	.danger {
 		padding: 20px 30px;
 	}
-	.caption{
+	.caption {
 		color: var(--text-light);
 		font-size: 14px;
 	}

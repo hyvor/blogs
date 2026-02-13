@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme;
 
@@ -51,7 +50,8 @@ class ThemeFilesRepository
         Blog $blog,
         array $fileNames,
         ?ThemeFileFolderEnum $folder = null
-    ): Collection {
+    ): Collection
+    {
         return $blog->themeFiles()
             ->whereIn('name', $fileNames)
             ->where('folder', $folder?->value)
@@ -71,7 +71,7 @@ class ThemeFilesRepository
     }
 
     /**
-     * @param Blog $blog
+     * @param  Blog  $blog
      * @return Collection<int, ThemeFile>
      */
     public static function getAllFilesOfBlog(Blog $blog): Collection
@@ -101,8 +101,8 @@ class ThemeFilesRepository
     }
 
     /**
-     * @param ThemeFile $file
-     * @param array{name?: string, content?: string} $updates
+     * @param  ThemeFile  $file
+     * @param  array{name?: string, content?: string}  $updates
      * @return ThemeFile
      */
     public static function updateFile(ThemeFile $file, array $updates): ThemeFile
@@ -120,7 +120,7 @@ class ThemeFilesRepository
         return $file;
     }
 
-    private static function fileUpdated(ThemeFile $file): void
+    private static function fileUpdated(ThemeFile $file) : void
     {
         /** @var Blog $blog */
         $blog = $file->blog;
@@ -134,12 +134,12 @@ class ThemeFilesRepository
         };
     }
 
-    public static function deleteFile(ThemeFile $file): void
+    public static function deleteFile(ThemeFile $file) : void
     {
         $file->delete();
     }
 
-    public static function deleteAllFiles(Blog $blog): void
+    public static function deleteAllFiles(Blog $blog) : void
     {
         $blog->themeFiles()->delete();
     }
@@ -154,25 +154,24 @@ class ThemeFilesRepository
         return $importer->success();
     }
 
-    public static function copyThemeToBlog(Blog $blog, string $themeName, ?string $version = null): void
+    public static function copyThemeToBlog(Blog $blog, string $themeName, ?string $version = null) : void
     {
         $theme = ThemeRepository::getThemeByName($themeName);
 
-        if (!$theme) {
+        if (!$theme)
             return;
-        }
 
         $themeVersion = $version === null ?
             ThemeRepository::getThemeLatestVersion($theme) :
             ThemeRepository::getThemeVersion($theme, $version);
 
-        if (!$themeVersion) {
+        if (! $themeVersion) {
             throw new TrustedException('Theme version not found');
         }
 
         $success = self::updateThemeFromZip($blog, $themeVersion->zip);
 
-        if (!$success) {
+        if (! $success) {
             throw new TrustedException('Unable to copy the theme');
         }
 

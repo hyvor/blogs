@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -12,30 +14,23 @@ use Faker\Factory;
 
 class UserFiller implements FillerInterface
 {
-    public function __construct(private Blog $blog)
-    {
-    }
+    public function __construct(private Blog $blog) {}
 
-    public function fill() : void
+    public function fill(): void
     {
-
         if ($this->blog->type === BlogTypeEnum::TEMP) {
-
             UserRepository::createGuestUser(
                 $this->blog,
                 'Temporary User',
                 UserRoleEnum::OWNER,
-                pictureUrl: RandomImageUrlGenerator::getUserImageUrl()
+                pictureUrl: RandomImageUrlGenerator::getUserImageUrl(),
             );
-
-        } else if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
-
+        } elseif ($this->blog->type !== BlogTypeEnum::PREVIEW) {
             // add the OWNER
             UserRepository::createUserFromHyvorUser(
                 $this->blog,
                 intval($this->blog->hyvor_user_id),
                 UserRoleEnum::OWNER,
-                UserStatusEnum::ACTIVE
             );
         }
 
@@ -48,7 +43,7 @@ class UserFiller implements FillerInterface
             foreach (range(1, 5) as $i) {
                 $user = UserRepository::createGuestUser($this->blog, $faker->name());
                 UserRepository::updateUser($user, [
-                    'picture_url' => RandomImageUrlGenerator::getUserImageUrl()
+                    'picture_url' => RandomImageUrlGenerator::getUserImageUrl(),
                 ]);
             }
         }

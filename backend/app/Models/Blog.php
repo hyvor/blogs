@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-
 /**
  * @property int $id
  * @property Carbon $created_at
@@ -34,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property ?string $hosting_url
  * @property bool $hosting_redirect_subdomain
  * @property mixed $counts
+ * @property ?int $organization_id
  */
 class Blog extends Model
 {
@@ -78,10 +78,10 @@ class Blog extends Model
         $definer->add('seo_indexing')->default(true);
         $definer->add('seo_robots_txt')->default(
             <<<'TEXT'
-        User-agent: *
-        Sitemap: {{ _blog.base_url }}/sitemap.xml
-        Disallow: /p/
-        TEXT
+                User-agent: *
+                Sitemap: {{ _blog.base_url }}/sitemap.xml
+                Disallow: /p/
+                TEXT,
         );
         $definer->add('seo_external_links_follow')->default('follow');
         $definer->add('seo_rich_schema')->default(true);

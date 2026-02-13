@@ -36,12 +36,14 @@ class ConsoleBlogController extends Controller
      */
     public function getBlogData(Blog $blog, BillingInterface $billing)
     {
-        $license = $blog->hyvor_user_id ?
-            $billing->license($blog->hyvor_user_id, $blog->id) :
+        $license = $blog->organization_id ?
+            $billing->license($blog->organization_id) :
             null;
 
         return response()->json([
             'blog' => new BlogObject($blog),
+            // TODO: we don't need this. Update frontend to rely on organization license instead,
+            // which is loaded on /init
             'license' => $license,
             'counts' => [
                 'posts' => [
@@ -49,12 +51,12 @@ class ConsoleBlogController extends Controller
                     'draft' => $blog->getCount('posts_draft'),
                     'scheduled' => $blog->getCount('posts_scheduled'),
                     'featured' => $blog->getCount('posts_featured'),
-                ]
+                ],
             ],
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn($tag) => new TagObject($tag, $blog)),
             'languages' => LanguageRepository::getAllLanguages($blog)->map(
-                fn($language) => new LanguageObject($language)
+                fn($language) => new LanguageObject($language),
             ),
         ]);
     }

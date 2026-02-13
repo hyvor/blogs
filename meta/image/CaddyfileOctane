@@ -44,7 +44,22 @@
 
 # main app
 {$DOMAIN_APP}:80, :8989 {
-	handle /api/* {
+    @symfony {
+        path /api/comms/*
+    }
+    handle @symfony {
+        root * /app/symfony/public
+        encode zstd gzip
+        php_server {
+            file_server off
+            try_files index.php
+        }
+    }
+
+    @laravel {
+        path /api/*
+    }
+	handle @laravel {
 		root * /app/backend/public
 		encode zstd gzip
 		php_server {

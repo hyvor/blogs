@@ -9,22 +9,23 @@ use App\Domains\LinkAnalyzer\Check\DispatchAllChecksJob;
 use App\Models\LinkAnalyzerCheck;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Illuminate\Support\Facades\Queue;
 
 it('dispatches all jbos', function () {
     Queue::fake();
 
-    BillingFake::enable(license: function (int $userId) {
-        if ($userId === 2) {
-            return null;
-        }
-        if ($userId === 3) {
-            return new BlogsLicense(analyses: false);
-        }
-        return new BlogsLicense();
-    });
+    $blogLicenseWithoutAnalyse = BlogsLicense::trial();
+    $blogLicenseWithoutAnalyse->analyses = false;
 
-    $blog = blog(['hyvor_user_id' => 1]);
+    BillingFake::enable([
+            1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, BlogsLicense::trial()),
+            2 => new ResolvedLicense(ResolvedLicenseType::NONE),
+            3 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $blogLicenseWithoutAnalyse)
+    ]);
+
+    $blog = blog(['organization_id' => 1]);
 
     $blogWithoutLinkAnalysis = blog();
     $blogWithoutLinkAnalysis->setMeta('link_analysis_enabled', false);
@@ -36,8 +37,8 @@ it('dispatches all jbos', function () {
     ]);
 
     $allBlogs = collect([$blog, $blogWithoutLinkAnalysis, $blogWithRecentCheck]);
-    $blogWithNoLicense = blog(['hyvor_user_id' => 2]);
-    $blogWithNoAnalysesLicense = blog(['hyvor_user_id' => 3]);
+    $blogWithNoLicense = blog(['organization_id' => 2]);
+    $blogWithNoAnalysesLicense = blog(['organization_id' => 3]);
 
     (new DispatchAllChecksJob())->handle();
 

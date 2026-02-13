@@ -5,7 +5,6 @@
 	import EmbedHtmlDisplay from '../../plugins/slash/Embed/EmbedHtmlDisplay.svelte';
 	import BookmarkDisplay from '../../plugins/slash/Bookmark/BookmarkDisplay.svelte';
 
-
 	interface Props {
 		url: string;
 		type?: any;

@@ -14,7 +14,7 @@
 	import type { Tag, TagVariant } from '../../../../../lib/types';
 	import CodemirrorEditor from '../../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import IconCaretDownFill from '@hyvor/icons/IconCaretDownFill';
-import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
+	import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
 
 	import VariantInput from '../../@components/VariantInput/VariantInput.svelte';
 	import { updateTag, updateTagVariant } from '../tagActions';
@@ -50,11 +50,12 @@ import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
 		};
 	}
 
-	let hasChanges =
-		$derived(Object.keys(variantChanges).length !== 0 ||
-		slug !== tag.slug ||
-		codeHead !== (tag.code_head || '') ||
-		codeFoot !== (tag.code_foot || ''));
+	let hasChanges = $derived(
+		Object.keys(variantChanges).length !== 0 ||
+			slug !== tag.slug ||
+			codeHead !== (tag.code_head || '') ||
+			codeFoot !== (tag.code_foot || '')
+	);
 
 	const dispatch = createEventDispatcher();
 
@@ -108,11 +109,11 @@ import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
 <Modal title="Edit tag" bind:show>
 	<SplitControl label="Private">
 		{#snippet caption()}
-				<Caption >
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public pages
-				- only for internal use.
+			<Caption>
+				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
+				pages - only for internal use.
 			</Caption>
-			{/snippet}
+		{/snippet}
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
@@ -151,14 +152,14 @@ import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
 			Custom Code
 
 			{#snippet end()}
-						<span >
+				<span>
 					{#if customCode}
 						<IconCaretDownFill />
 					{:else}
 						<IconCaretRightFill />
 					{/if}
 				</span>
-					{/snippet}
+			{/snippet}
 		</Link>
 
 		{#if customCode}
@@ -192,13 +193,11 @@ import IconCaretRightFill from '@hyvor/icons/IconCaretRightFill';
 	{/if}
 
 	{#snippet footer()}
-	
-			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<ButtonGroup>
+			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-				<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
-			</ButtonGroup>
-		
+			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
+		</ButtonGroup>
 	{/snippet}
 </Modal>
 

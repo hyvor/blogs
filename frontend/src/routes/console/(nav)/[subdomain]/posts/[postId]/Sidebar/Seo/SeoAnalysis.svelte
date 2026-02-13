@@ -1,18 +1,18 @@
 <script lang="ts">
 	import Keywords from './Keywords/Keywords.svelte';
-	import SeoCurve from "./SeoCurve.svelte";
-	import SeoResults from "./SeoResults.svelte";
+	import SeoCurve from './SeoCurve.svelte';
+	import SeoResults from './SeoResults.svelte';
 </script>
 
 <div class="seo-top">
-    <SeoCurve />
-    <Keywords />
+	<SeoCurve />
+	<Keywords />
 </div>
 
 <SeoResults />
 
 <style>
-    .seo-top {
-        display: flex;
-    }
+	.seo-top {
+		display: flex;
+	}
 </style>

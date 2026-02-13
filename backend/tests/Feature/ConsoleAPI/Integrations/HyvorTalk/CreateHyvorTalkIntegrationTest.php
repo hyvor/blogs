@@ -34,6 +34,6 @@ it('creates an integration', function () {
         ->assertJsonPath('website_id', 23);
 
     expect($response->getRequestUrl())->toBe(
-        'https://talk.hyvor.cluster/api/internal/blogs/integration/create-website'
+        'http://talk.hyvor.internal/api/internal/blogs/integration/create-website'
     );
 });

@@ -6,6 +6,8 @@ use App\Models\GptPrompt;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
 
@@ -30,7 +32,9 @@ it('creates a new prompt', function () {
 
     $blog = blogWithAccess();
     $post = addPost($blog);
-    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
+    $license = BlogsLicense::trial();
+    $license->aiTokens = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     $json = consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -59,7 +63,9 @@ it('does not allow creating a prompt for a post of other blog', function () {
     $blog = blogWithAccess();
     $post = addPost(blog());
 
-    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
+    $license = BlogsLicense::trial();
+    $license->aiTokens = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     consoleApi($blog, 'post', '/gpt/prompt', [
         'post_id' => $post->id,
@@ -73,7 +79,9 @@ it('does not allow when limit is exceeded', function () {
     $blog = blogWithAccess();
     $post = addPost($blog);
 
-    BillingFake::enable(license: new BlogsLicense(aiTokens: 1000));
+    $license = BlogsLicense::trial();
+    $license->aiTokens = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     GptPrompt::factory()->create([
         'blog_id' => $blog->id,

@@ -21,7 +21,8 @@
 <p>
 	Each tag creates an index page (<code>/tag/{'{slug}'}</code>), which lists the posts of that tag.
 	This makes easy for users to browse posts of a specific tag. You can change the base URL of tag
-	index pages (<code>/tag/</code>) by <a href="/docs/routes#customizing-other">editing routes</a>.
+	index pages (<code>/tag/</code>) by
+	<a href="/docs/routes#customizing-other">editing routes</a>.
 </p>
 
 <h2 id="assign">Assigning a tag to a post</h2>

@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace App\Http\ConsoleApi\Objects\Blog;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
-use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\User;
@@ -27,7 +27,6 @@ class BlogListObject
 
     public function __construct(User $user)
     {
-
         $blog = $user->blog;
 
         if (!$blog) {
@@ -36,10 +35,9 @@ class BlogListObject
 
         $this->role = $user->role;
         $this->setBlogAttrs($blog);
-
     }
 
-    private function setBlogAttrs(Blog $blog) : void
+    private function setBlogAttrs(Blog $blog): void
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
@@ -53,7 +51,7 @@ class BlogListObject
         $this->users_count = $blog->getCount('users');
     }
 
-    public static function fromTempBlog(Blog $blog) : self
+    public static function fromTempBlog(Blog $blog): self
     {
         $obj = (new ReflectionClass(self::class))
             ->newInstanceWithoutConstructor();

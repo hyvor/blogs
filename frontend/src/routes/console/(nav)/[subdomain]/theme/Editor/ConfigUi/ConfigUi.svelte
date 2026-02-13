@@ -72,12 +72,7 @@
 			return deepmerge(configState, updatingObject);
 		}
 
-		const newConfig = getNewConfig(
-			configYaml,
-			e.detail.parentKeys,
-			e.detail.key,
-			e.detail.value
-		);
+		const newConfig = getNewConfig(configYaml, e.detail.parentKeys, e.detail.key, e.detail.value);
 
 		// configYaml = newConfig;
 		dispatch('change', yaml.dump(newConfig));

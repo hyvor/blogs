@@ -22,7 +22,7 @@ function blog($attrs = []): Blog
  */
 function blogWithAccess($attrs = [])
 {
-    $blog = blog($attrs + ['hyvor_user_id' => 1]);
+    $blog = blog($attrs + ['hyvor_user_id' => 1, 'organization_id' => 1]);
 
     User::factory()->create([
         'blog_id' => $blog->id,

@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Domains\Export;
 
@@ -20,15 +19,19 @@ class Exporter
         Blog $blog,
         ExportFormatEnum $format,
         ?Export $export = null
-    ) {
+    )
+    {
+
         $this->blog = $blog;
         $this->format = $format;
 
         $this->export = $export ?? ExportService::createExport($blog, $format);
+
     }
 
-    public function export(): void
+    public function export() : void
     {
+
         $exporterClass = match ($this->format) {
             ExportFormatEnum::HYVOR_BLOGS => HyvorBlogsExporter::class,
             default => throw new \Exception('Invalid format'),
@@ -56,9 +59,10 @@ class Exporter
             'status' => 'completed',
             'url' => $url,
         ]);
+
     }
 
-    private function fail(string $error): void
+    private function fail(string $error) : void
     {
         $this->export->update([
             'status' => 'failed',

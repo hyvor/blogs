@@ -108,7 +108,7 @@ class TwigExtensions extends AbstractExtension
         $blog = $this->getBlogFromContext($context);
         $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
 
-        return $file?->content ?? '';
+        return $file->content ?? '';
     }
 
     /**

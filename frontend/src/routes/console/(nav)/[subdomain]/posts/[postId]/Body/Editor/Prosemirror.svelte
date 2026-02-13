@@ -50,10 +50,7 @@
 				(obj, e) => {
 					return {
 						...obj,
-						[e]: <T extends keyof DOMEventMap>(
-							view: EditorView,
-							event: DOMEventMap[T]
-						) =>
+						[e]: <T extends keyof DOMEventMap>(view: EditorView, event: DOMEventMap[T]) =>
 							dispatch('event', {
 								view,
 								name: e,

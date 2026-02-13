@@ -12,13 +12,6 @@ export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
 
 export type BlogType = 'default' | 'dev' | 'temp';
 
-export interface AuthUser {
-	id: number;
-	name: string;
-	username: string | null;
-	picture_url: string | null;
-}
-
 export interface BlogList {
 	id: number;
 	role: UserRole;

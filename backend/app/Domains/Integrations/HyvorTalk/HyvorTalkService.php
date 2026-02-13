@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Domains\Integrations\HyvorTalk;
 
@@ -24,7 +26,7 @@ class HyvorTalkService
         return $this->internalApi->call(
             Component::TALK,
             "/blogs/integration/" . $endpoint,
-            $data
+            $data,
         );
     }
 
@@ -37,6 +39,8 @@ class HyvorTalkService
     {
         $domain = PermalinkRepository::getBlogDomain($blog);
 
+        // TODO: org
+        // https://github.com/hyvor/blogs/issues/734
         $data = $this->callApi("create-website", [
             "name" => $blog->subdomain,
             "domain" => $domain,
@@ -59,7 +63,7 @@ class HyvorTalkService
      */
     public function updateDomains(
         HyvorTalkWebsite $website,
-        array $domains
+        array $domains,
     ): void {
         $this->callApi("set-domains", [
             "website_id" => $website->website_id,
@@ -76,7 +80,7 @@ class HyvorTalkService
         HyvorTalkWebsite $website,
         string $method,
         string $endpoint,
-        array $data = []
+        array $data = [],
     ) {
         return $this->callApi("console-api", [
             "website_id" => $website->website_id,

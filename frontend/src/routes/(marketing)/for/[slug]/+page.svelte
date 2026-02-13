@@ -4,10 +4,10 @@
 	import AllFeatures from './../../@homepage/AllFeatures/AllFeatures.svelte';
 	import MultiLanguage from './../../@homepage/MultiLanguage/MultiLanguage.svelte';
 	import CustomThemes from './../../@homepage/CustomThemes/CustomThemes.svelte';
-	import Reviews from "../../@components/Reviews.svelte";
-	import AboveFold from "../../@homepage/AboveFold.svelte";
-    import Hosting from "../../@homepage/Hosting/Hosting.svelte";
-    import Seo from "../../@homepage/Seo/Seo.svelte";
+	import Reviews from '../../@components/Reviews.svelte';
+	import AboveFold from '../../@homepage/AboveFold.svelte';
+	import Hosting from '../../@homepage/Hosting/Hosting.svelte';
+	import Seo from '../../@homepage/Seo/Seo.svelte';
 
 	let { data } = $props();
 </script>
@@ -18,11 +18,7 @@
 	<link rel="canonical" href={`https://hyvor.com/blogs/${data.slug}`} />
 </svelte:head>
 
-<AboveFold
-    integrationIcon={data.icon}
-    title={data.title}
-    subtitle={data.subtitle}
-/>
+<AboveFold integrationIcon={data.icon} title={data.title} subtitle={data.subtitle} />
 <Reviews />
 <CustomThemes />
 <Hosting />

@@ -3,14 +3,15 @@
 namespace Tests\Case;
 
 use App\Models\Blog;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
+use Plannr\Laravel\FastRefreshDatabase\Traits\FastRefreshDatabase;
 
 class DatabaseTestCase extends AppTestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     /**
      * Calls the Console API.
@@ -60,5 +61,11 @@ class DatabaseTestCase extends AppTestCase
         $endpoint = trim($endpoint, '/');
 
         return $this->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
+    }
+
+    protected function refreshTestDatabase()
+    {
+        RefreshDatabaseState::$migrated = true;
+        $this->beginDatabaseTransaction();
     }
 }

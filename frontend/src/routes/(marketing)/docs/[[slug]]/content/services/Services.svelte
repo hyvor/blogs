@@ -27,7 +27,7 @@
 		<p>
 			<a href="https://talk.hyvor.com">Hyvor Talk</a> is our own commenting platform. Hyvor Blogs
 			integrates with Hyvor Talk directly to allow comments on your blog. You can use Hyvor Talk for
-			<b>FREE</b> on <a href ="/pricing">all plans</a>.
+			<b>FREE</b> on <a href="/pricing">all plans</a>.
 		</p>
 
 		<!--  <Callout type="info">
@@ -88,7 +88,9 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a></div>
+				<div>
+					<a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-convertkit" target="_blank"
 						>{#snippet end()}
@@ -178,7 +180,9 @@
 				<div><a href="https://matomo.org/" rel="nofollow" target="_blank">Matomo</a></div>
 			</TableRow>
 			<TableRow>
-				<div><a href="https://usefathom.com/" rel="nofollow" target="_blank">Fathom</a></div>
+				<div>
+					<a href="https://usefathom.com/" rel="nofollow" target="_blank">Fathom</a>
+				</div>
 			</TableRow>
 			<TableRow
 				><div>
@@ -227,7 +231,9 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a></div>
+				<div>
+					<a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-memberstack" target="_blank"
 						>{#snippet end()}
@@ -317,7 +323,9 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a></div>
+				<div>
+					<a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a>
+				</div>
 				<div>
 					<Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"
 						>{#snippet end()}
@@ -339,15 +347,21 @@
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://www.jotform.com/" rel="nofollow" target="_blank">JotForm</a></div>
+				<div>
+					<a href="https://www.jotform.com/" rel="nofollow" target="_blank">JotForm</a>
+				</div>
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://www.formsite.com/" rel="nofollow" target="_blank">Formsite</a></div>
+				<div>
+					<a href="https://www.formsite.com/" rel="nofollow" target="_blank">Formsite</a>
+				</div>
 			</TableRow>
 
 			<TableRow>
-				<div><a href="https://paperform.co/" rel="nofollow" target="_blank">Paperform</a></div>
+				<div>
+					<a href="https://paperform.co/" rel="nofollow" target="_blank">Paperform</a>
+				</div>
 			</TableRow>
 
 			<TableRow>

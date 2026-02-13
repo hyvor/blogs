@@ -1,13 +1,18 @@
-import { derived, writable } from "svelte/store";
-import type { AuthUser, BlogList, Post } from "./types";
+import { writable } from 'svelte/store';
+import type { BlogList } from './types';
+import type {
+	CloudContextUser,
+	CloudContextOrganization,
+	ResolvedLicense
+} from '@hyvor/design/cloud';
 
 // Currently logged in user
-export const authUserStore = writable<AuthUser>();
-
+export const authUserStore = writable<CloudContextUser>();
+export const authOrganizationStore = writable<CloudContextOrganization>();
+export const resolvedLicenseStore = writable<ResolvedLicense>();
 // List of blogs of the current user (all roles)
 export const blogListStore = writable<BlogList[]>([]);
 
-
 export function addToBlogList(blog: BlogList) {
-    blogListStore.update(list => [...list, blog])
+	blogListStore.update((list) => [...list, blog]);
 }
