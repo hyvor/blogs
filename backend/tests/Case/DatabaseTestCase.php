@@ -3,14 +3,14 @@
 namespace Tests\Case;
 
 use App\Models\Blog;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
+use Plannr\Laravel\FastRefreshDatabase\Traits\FastRefreshDatabase;
 
 class DatabaseTestCase extends AppTestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     /**
      * Calls the Console API.

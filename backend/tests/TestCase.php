@@ -3,9 +3,9 @@
 namespace Tests;
 
 use App\Models\Blog;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
+use Plannr\Laravel\FastRefreshDatabase\Traits\FastRefreshDatabase;
 
 /**
  * @deprecated
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\URL;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     /**
      * Indicates whether the default seeder should run before each test.

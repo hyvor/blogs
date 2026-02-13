@@ -11,7 +11,6 @@ use Tests\CreatesApplication;
 
 class AppTestCase extends TestCase
 {
-
     use CreatesApplication;
 
     protected function setUp(): void
