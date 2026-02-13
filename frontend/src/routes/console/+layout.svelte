@@ -3,7 +3,12 @@
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { BlogList } from './lib/types';
-	import {authOrganizationStore, authUserStore, blogListStore, resolvedLicenseStore} from './lib/stores';
+	import {
+		authOrganizationStore,
+		authUserStore,
+		blogListStore,
+		resolvedLicenseStore
+	} from './lib/stores';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
