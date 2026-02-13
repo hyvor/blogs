@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $ip
  * @property bool $is_blocked
  * @property ?Carbon $blocked_at
- * @property int $hyvor_user_id
+ * @property ?int $hyvor_user_id
  * @property ?int $theme_version_id
  * @property string $subdomain
  * @property BlogTypeEnum $type

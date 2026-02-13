@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4e7b48b42d57612586ac63a6eb3692b",
+    "content-hash": "d11014dc3fcc1104a391ec6d3e6f430b",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2457,16 +2457,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.0.2",
+            "version": "4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "d55422a76c1ab363a0c5685c5f79d3a54dea4816"
+                "reference": "60a732982de61eb37afe04ef1163a0d82e6d4af0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/d55422a76c1ab363a0c5685c5f79d3a54dea4816",
-                "reference": "d55422a76c1ab363a0c5685c5f79d3a54dea4816",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/60a732982de61eb37afe04ef1163a0d82e6d4af0",
+                "reference": "60a732982de61eb37afe04ef1163a0d82e6d4af0",
                 "shasum": ""
             },
             "require": {
@@ -2526,9 +2526,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.0.2"
+                "source": "https://github.com/hyvor/internal/tree/4.0.4"
             },
-            "time": "2026-02-06T19:08:21+00:00"
+            "time": "2026-02-13T11:51:53+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
