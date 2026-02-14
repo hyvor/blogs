@@ -1,23 +1,9 @@
 <script lang="ts">
 	import { Header } from '@hyvor/design/marketing';
-	import logo from '$lib/img/logo.png';
-	import { Button, DarkToggle } from '@hyvor/design/components';
+	import { Button } from '@hyvor/design/components';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 
 	let loggedIn = $state(false);
-
-	onMount(() => {
-		fetch('/api/auth/check', {
-			method: 'POST'
-		})
-			.then<{ is_logged_in: boolean }>((res) => res.json())
-			.then((res) => {
-				if (res?.is_logged_in) {
-					loggedIn = true;
-				}
-			});
-	});
 </script>
 
 <Header product="blogs" subName="Blogs" darkToggle={false}>
@@ -59,7 +45,9 @@
 				as="a"
 				size="small"
 				href="/integrations"
-				variant={$page.url.pathname.startsWith('/integrations') ? 'fill-light' : 'invisible'}
+				variant={$page.url.pathname.startsWith('/integrations')
+					? 'fill-light'
+					: 'invisible'}
 			>
 				Integrations
 			</Button>
@@ -68,13 +56,7 @@
 
 	{#snippet end()}
 		<div class="end">
-			{#if loggedIn}
-				<Button as="a" size="small" href="/console">Go to Console &rarr;</Button>
-			{:else}
-				<!-- <DarkToggle /> -->
-				<Button as="a" size="small" href="/console" variant="invisible">Login</Button>
-				<Button as="a" size="small" href="/console?signup">Start a Blog</Button>
-			{/if}
+			<Button as="a" size="small" href="/console">Go to Console &rarr;</Button>
 		</div>
 	{/snippet}
 </Header>
