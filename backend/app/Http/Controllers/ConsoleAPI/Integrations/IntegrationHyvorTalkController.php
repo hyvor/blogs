@@ -64,6 +64,10 @@ class IntegrationHyvorTalkController
             throw new TrustedException('Hyvor Talk integration already exists');
         }
 
+        if ($consoleApiAccessingUser->user->hyvor_user_id === null) {
+            throw new TrustedException('Hyvor Talk integration requires user id to be set');
+        }
+
         $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite(
             $blog,
             $consoleApiAccessingUser->user->hyvor_user_id

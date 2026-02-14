@@ -41,8 +41,8 @@ class HyvorTalkService
         $domain = PermalinkRepository::getBlogDomain($blog);
         $organizationId = $blog->organization_id;
 
-        if (!$memberId || !$organizationId) {
-            throw new TrustedException('Hyvor Talk integration requires organization and user');
+        if (!$organizationId) {
+            throw new TrustedException('Hyvor Talk integration requires organization');
         }
 
         $data = $this->callApi("create-website", [

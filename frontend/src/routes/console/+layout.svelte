@@ -83,9 +83,9 @@
 			.catch((err) => {
 				if (err.code === 401) {
 					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
-                    const url = new URL(err.data[toPage + '_url'], location.origin);
-                    url.searchParams.set('redirect', location.href);
-                    location.href = url.toString();
+					const url = new URL(err.data[toPage + '_url'], location.origin);
+					url.searchParams.set('redirect', location.href);
+					location.href = url.toString();
 				} else {
 					toast.error(err.message);
 				}
