@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Log;
 
 class CustomDomainMiddleware
 {
-    public function handle(Request $request, Closure $next) : mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         $host = $request->getHost();
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (!$blog) {
-            return redirect('https://blogs.hyvor.com');
+            return redirect('https://blogs.hyvor.com', headers: [
+                'X-Custom-Domain-Not-Found' => 1,
+            ]);
         }
 
         app()->instance(Blog::class, $blog);

@@ -2,7 +2,7 @@
 # Alias for deppendencies
 FROM node:22.12.0 AS node
 FROM composer:2.8.4 AS composer
-FROM dunglas/frankenphp:1.10.0-php8.4.15 AS frankenphp
+FROM dunglas/frankenphp:1.11.2-php8.4 AS frankenphp
 
 ###################################################
 ################  FRONTEND STAGES  ################
@@ -101,7 +101,7 @@ RUN cd backend && composer install --no-interaction --no-dev --optimize-autoload
 RUN cd symfony && composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
 
 # copy configs
-COPY meta/image/CaddyfileOctane /etc/caddy/Caddyfile
+COPY meta/image/Caddyfile /etc/caddy/Caddyfile
 COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run
