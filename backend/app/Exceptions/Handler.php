@@ -95,7 +95,9 @@ class Handler extends ExceptionHandler
             } else {
                 // subdomains
                 if ($exception instanceof SubdomainNotFoundException) {
-                    return redirect('https://' . config('blogs.domain_app'));
+                    return redirect('https://' . config('blogs.domain_app'), headers: [
+                        'X-Subdomain-Not-Found' => '1',
+                    ]);
                 }
             }
         }
