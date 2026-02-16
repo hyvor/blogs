@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { IconButton, Loader } from '@hyvor/design/components';
-	import { onMount } from 'svelte';
 	import { scale } from 'svelte/transition';
 	import consoleApi from '../../../../lib/consoleApi';
 	import type { Post } from '../../../../lib/types';
@@ -16,18 +15,24 @@
 	import type { Unsubscriber } from 'svelte/store';
 	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
 
-	const postId = $page.params.postId;
-
 	let isLoading = $state(true);
 
 	let postView: HTMLDivElement | undefined = $state();
+	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
+	let activeRequest: AbortController | null = null;
 
-	onMount(() => {
-		let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
+	$effect(() => {
+		const postId = $page.params.postId;
+		if (!postId) return;
+
+		activeRequest?.abort();
+		activeRequest = new AbortController();
+		isLoading = true;
 
 		consoleApi
 			.get<Post>({
-				endpoint: '/post/' + postId
+				endpoint: '/post/' + postId,
+				signal: activeRequest.signal
 			})
 			.then((res) => {
 				setPostAndPostOriginalStore(res);
@@ -36,13 +41,20 @@
 				}
 				initEditorEventHandlers();
 
+				linkAnalysisLoaderUnsubscriber?.();
 				linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
 
 				isLoading = false;
+			})
+			.catch((error) => {
+				if (error?.name === 'AbortError') return;
+				throw error;
 			});
 
 		return () => {
+			activeRequest?.abort();
 			linkAnalysisLoaderUnsubscriber?.();
+			linkAnalysisLoaderUnsubscriber = null;
 		};
 	});
 

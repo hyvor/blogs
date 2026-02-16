@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Integrations\HyvorTalk;
 
 use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\HyvorTalkWebsite;
 use Hyvor\Internal\Component\Component;
@@ -35,16 +36,20 @@ class HyvorTalkService
         return HyvorTalkWebsite::where("blog_id", $blog->id)->first();
     }
 
-    public function createHyvorTalkWebsite(Blog $blog): HyvorTalkWebsite
+    public function createHyvorTalkWebsite(Blog $blog, int $memberId): HyvorTalkWebsite
     {
         $domain = PermalinkRepository::getBlogDomain($blog);
+        $organizationId = $blog->organization_id;
 
-        // TODO: org
-        // https://github.com/hyvor/blogs/issues/734
+        if (!$organizationId) {
+            throw new TrustedException('Hyvor Talk integration requires organization');
+        }
+
         $data = $this->callApi("create-website", [
             "name" => $blog->subdomain,
             "domain" => $domain,
-            "hyvor_user_id" => $blog->hyvor_user_id,
+            "member_id" => $memberId,
+            "organization_id" => $organizationId,
         ]);
 
         return HyvorTalkWebsite::create([

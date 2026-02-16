@@ -5,6 +5,7 @@ namespace App\Http\ConsoleApi\Middleware;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
+use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -22,7 +23,14 @@ class ConsoleApiAuthMiddleware {
         $me = $this->auth->me($request);
 
         if (!$me) {
-            throw new HttpException(401, 'unauthorized');
+            throw new DataCarryingHttpException(
+                401,
+                [
+                    'login_url' => $this->auth->authUrl('login'),
+                    'signup_url' => $this->auth->authUrl('signup'),
+                ],
+                'Unauthorized'
+            );
         }
 
         $request->attributes->set(self::USER_KEY, $me->getUser());

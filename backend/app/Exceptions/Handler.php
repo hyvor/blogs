@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Hyvor\FilterQ\Exceptions\FilterQException;
+use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
@@ -60,20 +61,25 @@ class Handler extends ExceptionHandler
                     $request->is('integrations/*') ||
                     $request->is('embed/*')
                 ) {
-                    $code = $exception->status ?? $exception->getCode();
+                    $code = $exception instanceof HttpExceptionInterface ?
+                        $exception->getStatusCode() :
+                        ($exception->status ?? $exception->getCode());
 
                     if ($code === 400) {
                         $code = 422;
                     }
 
-                    $httpCode = method_exists($exception, 'getStatusCode') ?
-                        $exception->getStatusCode() :
-                        (in_array($code, [401, 403, 404, 422, 500]) ? $code : 500);
+                    if ($exception instanceof HttpExceptionInterface) {
+                        $httpCode = $code;
+                    } else {
+                        $httpCode = in_array($code, [401, 403, 404, 422, 500]) ? $code : 500;
+                    }
 
                     $error =
                         $exception instanceof TrustedException ||
                         $exception instanceof FilterQException ||
-                        $exception instanceof HttpException
+                        $exception instanceof HttpException ||
+                        $exception instanceof HttpExceptionInterface
                             ?
                             $exception->getMessage() :
                             'Something went wrong on our side.';
@@ -87,9 +93,13 @@ class Handler extends ExceptionHandler
                         $error = $exception->validator->errors()->first();
                     }
 
+                    $data = $exception instanceof DataCarryingHttpException ?
+                        $exception->getData() : null;
+
                     return response()->json([
                         'error' => $error,
                         'code' => $code,
+                        'data' => $data,
                     ], $httpCode);
                 }
             } else {

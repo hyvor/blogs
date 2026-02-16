@@ -9,6 +9,7 @@ use App\Domains\Integrations\HyvorTalk\HyvorTalkGatedContentService;
 use App\Domains\Integrations\HyvorTalk\HyvorTalkService;
 use App\Domains\Tag\TagRepository;
 use App\Exceptions\TrustedException;
+use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
 use App\Models\Blog;
 use App\Models\HyvorTalkGatedContentRule;
 use App\Models\HyvorTalkWebsite;
@@ -52,7 +53,10 @@ class IntegrationHyvorTalkController
         return $hyvorTalkWebsite;
     }
 
-    public function createIntegration(Blog $blog): JsonResponse
+    public function createIntegration(
+        Blog $blog,
+        ConsoleApiAccessingUser $consoleApiAccessingUser
+    ): JsonResponse
     {
         $hyvorTalkWebsite = $this->hyvorTalkService->getHyvorTalkWebsite($blog);
 
@@ -60,11 +64,14 @@ class IntegrationHyvorTalkController
             throw new TrustedException('Hyvor Talk integration already exists');
         }
 
-        if (!$blog->organization_id) {
-            throw new TrustedException('Hyvor Talk integration requires an organization');
+        if ($consoleApiAccessingUser->user->hyvor_user_id === null) {
+            throw new TrustedException('Hyvor Talk integration requires user id to be set');
         }
 
-        $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite($blog);
+        $hyvorTalkWebsite = $this->hyvorTalkService->createHyvorTalkWebsite(
+            $blog,
+            $consoleApiAccessingUser->user->hyvor_user_id
+        );
 
         return response()->json(new HyvorTalkIntegrationObject($hyvorTalkWebsite));
     }
