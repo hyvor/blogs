@@ -61,7 +61,7 @@ class OrganizationMigrationCommand extends Command
                 );
 
                 try {
-                    $this->em->wrapInTransaction(function () use ($blog, $output) {
+                    $this->em->wrapInTransaction(function () use ($blog) {
                         $initOrgEvent = new InitOrg($blog->getHyvorUserId());
                         /** @var InitOrgResponse $initOrgResponse */
                         $initOrgResponse = $this->comms->send($initOrgEvent);
