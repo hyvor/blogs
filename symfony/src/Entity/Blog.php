@@ -32,7 +32,7 @@ class Blog
     private ?\DateTimeImmutable $blocked_at = null;
 
     #[ORM\Column()]
-    private int $hyvor_user_id;
+    private ?int $hyvor_user_id = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $theme_version_id = null;
@@ -139,12 +139,12 @@ class Blog
         return $this;
     }
 
-    public function getHyvorUserId(): int
+    public function getHyvorUserId(): ?int
     {
         return $this->hyvor_user_id;
     }
 
-    public function setHyvorUserId(int $hyvor_user_id): static
+    public function setHyvorUserId(?int $hyvor_user_id): static
     {
         $this->hyvor_user_id = $hyvor_user_id;
         return $this;
