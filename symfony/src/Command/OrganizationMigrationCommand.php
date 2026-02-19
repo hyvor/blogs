@@ -53,6 +53,9 @@ class OrganizationMigrationCommand extends Command
             }
 
             foreach ($blogsWithoutOrg as $blog) {
+
+                assert($blog->getHyvorUserId() !== null);
+
                 $output->writeln(
                     "{$this->clock->now()->format('Y-m-d H:i:s')}: Updating Blog => User ID: {$blog->getHyvorUserId()}",
                 );
