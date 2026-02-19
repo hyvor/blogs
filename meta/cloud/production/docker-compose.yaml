@@ -4,6 +4,7 @@ services:
   hyvor-blogs:
     image: hyvor/blogs:${IMAGE_VERSION:-latest}
     env_file: .env
+    command: sh -c "frankenphp run --config /etc/caddy/Caddyfile"
     labels:
       - "traefik.enable=true"
 
