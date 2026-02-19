@@ -133,4 +133,27 @@ class OrganizationMigrationCommandTest extends KernelTestCase
         ]);
         $this->assertCount(2, $dbBlogs);
     }
+
+    public function test_does_not_update_null_user_ids(): void
+    {
+        $this->mockTime();
+
+        $blogs = BlogFactory::createMany(3, [
+            'organization_id' => null,
+            'hyvor_user_id' => null,
+        ]);
+
+        $command = $this->commandTester('organization:migrate');
+        $exitCode = $command->execute([]);
+        $this->assertSame(0, $exitCode);
+
+        $sentEvents = $this->getComms()->getSentsByEventClass(InitOrg::class);
+        $this->assertCount(0, $sentEvents);
+
+        // Assert nothing is updated
+        $pendingBlogs = $this->getEm()->getRepository(Blog::class)->findBy([
+            'organization_id' => null,
+        ]);
+        $this->assertCount(3, $pendingBlogs);
+    }
 }

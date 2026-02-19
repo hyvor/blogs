@@ -10,7 +10,6 @@ use Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration\EnsureMembers;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration\InitOrg;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration\InitOrgResponse;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
-use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -42,6 +41,7 @@ class OrganizationMigrationCommand extends Command
                 ->getRepository(Blog::class)
                 ->createQueryBuilder('b')
                 ->where('b.organization_id IS NULL')
+                ->andWhere('b.hyvor_user_id IS NOT NULL')
                 ->orderBy('b.id', 'ASC')
                 ->setMaxResults(100)
                 ->getQuery()
@@ -67,7 +67,7 @@ class OrganizationMigrationCommand extends Command
 
                         $this->migrateBlogToOrganization($blog, $createdOrgId);
                         $this->ensureMembersOfOrganization($createdOrgId);
-                    } catch (CommsApiFailedException|\Exception $e) {
+                    } catch (CommsApiFailedException | \Exception $e) {
                         $output->writeln(
                             "<error>Error occurred while migrating to organization. Blog ID: {$blog->getId()} | User ID: {$blog->getHyvorUserId()}</error>",
                         );
