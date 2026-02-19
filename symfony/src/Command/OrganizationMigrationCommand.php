@@ -60,8 +60,8 @@ class OrganizationMigrationCommand extends Command
                     "{$this->clock->now()->format('Y-m-d H:i:s')}: Updating Blog => User ID: {$blog->getHyvorUserId()}",
                 );
 
-                $this->em->wrapInTransaction(function () use ($blog, $output) {
-                    try {
+                try {
+                    $this->em->wrapInTransaction(function () use ($blog) {
                         $initOrgEvent = new InitOrg($blog->getHyvorUserId());
                         /** @var InitOrgResponse $initOrgResponse */
                         $initOrgResponse = $this->comms->send($initOrgEvent);
@@ -70,13 +70,13 @@ class OrganizationMigrationCommand extends Command
 
                         $this->migrateBlogToOrganization($blog, $createdOrgId);
                         $this->ensureMembersOfOrganization($createdOrgId);
-                    } catch (CommsApiFailedException | \Exception $e) {
-                        $output->writeln(
-                            "<error>Error occurred while migrating to organization. Blog ID: {$blog->getId()} | User ID: {$blog->getHyvorUserId()}</error>",
-                        );
-                        $output->writeln("<error>{$e->getMessage()}</error>");
-                    }
-                });
+                    });
+                } catch (CommsApiFailedException | \Exception $e) {
+                    $output->writeln(
+                        "<error>Error occurred while migrating to organization. Blog ID: {$blog->getId()} | User ID: {$blog->getHyvorUserId()}</error>",
+                    );
+                    $output->writeln("<error>{$e->getMessage()}</error>");
+                }
             }
 
             $output->writeln(
