@@ -66,7 +66,7 @@
 {:else}
 	<TempBlogNotice />
 
-	{#if $resolvedLicenseStore.license === null && !forcedShow}
+	{#if $resolvedLicenseStore?.license === null && !forcedShow}
 		<LicenseExpiredNotice />
 	{:else if $blogStore.is_blocked && !forcedShow}
 		<BlogBannedStatus />

@@ -22,10 +22,10 @@
 
 		// not allowed in trial
 		if (excludeTrial) {
-			return resolvedLicense['type'] !== 'trial';
+			return resolvedLicense?.type !== 'trial';
 		}
 
-		const license = resolvedLicense['license'];
+		const license = resolvedLicense?.license;
 		return (
 			license && // sanity
 			licenseProperty && // sanity
