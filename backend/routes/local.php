@@ -68,3 +68,10 @@ Route::get('/api/link-report', function () {
 
     return new \App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail($blog, $analyze);
 });
+
+Route::get('/api/test-mail', function () {
+    Mail::raw('Test email body', function ($msg) {
+        $msg->to('ishini@hyvor.com')->subject('Test Email');
+    });
+    return 'Email sent!';
+});
