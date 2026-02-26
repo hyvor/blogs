@@ -1,26 +1,37 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { licenseStore } from '../../lib/stores/blogStore';
 	import type { License } from '../../lib/types';
 	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
 	import { Button } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
+	import {resolvedLicenseStore} from "../../lib/stores";
 
 	interface Props {
-		license: keyof License;
+		licenseProperty: keyof License;
+		excludeTrial: boolean
 		children: Snippet;
 		upgradeText: Snippet;
 	}
 
-	let { license, children, upgradeText }: Props = $props();
+	let { licenseProperty, excludeTrial = false, children, upgradeText }: Props = $props();
 
-	let hasLicense = $derived(licenseCheck(license));
+	let hasLicense = $derived(licenseCheck(excludeTrial, licenseProperty));
 
-	function licenseCheck(license: keyof License) {
+	function licenseCheck(excludeTrial: boolean, licenseProperty?: keyof License) {
+		const resolvedLicense = $resolvedLicenseStore;
+
+		// not allowed in trial
+		if (excludeTrial) {
+			console.log('excludeTrial');
+			return resolvedLicense['type'] !== 'trial';
+		}
+
+		const license = resolvedLicense['license'];
+		console.log(license);
 		return (
-			$licenseStore && // sanity
-			$licenseStore[license] !== false && // feature not enabled
-			$licenseStore[license] !== 0 // int feature (limit) is zero, so not enabled again
+			license && // sanity
+			license[licenseProperty] !== false && // feature not enabled
+			license[licenseProperty] !== 0 // int feature (limit) is zero, so not enabled again
 		);
 	}
 </script>
