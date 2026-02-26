@@ -66,7 +66,7 @@
 	});
 </script>
 
-<LicenseRequired license="talkCredits">
+<LicenseRequired excludeTrial={true}>
 	{#snippet upgradeText()}
 		<div>
 			This integration allows you to use <a

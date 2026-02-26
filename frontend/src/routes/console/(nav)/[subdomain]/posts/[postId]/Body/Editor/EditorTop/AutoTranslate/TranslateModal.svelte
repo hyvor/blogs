@@ -113,7 +113,7 @@
 	on:confirm={handleTranslate}
 	loading={isTranslating}
 >
-	<LicenseRequired license="autoTranslationsChars">
+	<LicenseRequired licenseProperty="autoTranslationsChars">
 		{#snippet upgradeText()}
 			<div>
 				Auto-translation is available in the Growth and higher plans. Upgrade now to easily

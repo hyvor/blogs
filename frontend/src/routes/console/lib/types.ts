@@ -3,8 +3,6 @@ export interface License {
 	storage: number;
 	aiTokens: number;
 	autoTranslationsChars: number;
-	talkCredits: number;
-	postEmails: number;
 	analyses: boolean;
 }
 
