@@ -15,7 +15,7 @@
 </script>
 
 <div class="link-analysis hds-box">
-	<LicenseRequired license="analyses">
+	<LicenseRequired licenseProperty="analyses">
 		{#snippet upgradeText()}
 			<div>
 				Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze

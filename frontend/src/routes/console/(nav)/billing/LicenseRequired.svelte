@@ -4,32 +4,31 @@
 	import IconArrowUpCircle from '@hyvor/icons/IconArrowUpCircle';
 	import { Button } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
-	import {resolvedLicenseStore} from "../../lib/stores";
+	import { resolvedLicenseStore } from '../../lib/stores';
 
 	interface Props {
-		licenseProperty: keyof License;
-		excludeTrial: boolean
+		licenseProperty?: keyof License;
+		excludeTrial?: boolean;
 		children: Snippet;
 		upgradeText: Snippet;
 	}
 
 	let { licenseProperty, excludeTrial = false, children, upgradeText }: Props = $props();
 
-	let hasLicense = $derived(licenseCheck(excludeTrial, licenseProperty));
+	let hasLicense = $derived(licenseCheck());
 
-	function licenseCheck(excludeTrial: boolean, licenseProperty?: keyof License) {
+	function licenseCheck() {
 		const resolvedLicense = $resolvedLicenseStore;
 
 		// not allowed in trial
 		if (excludeTrial) {
-			console.log('excludeTrial');
 			return resolvedLicense['type'] !== 'trial';
 		}
 
 		const license = resolvedLicense['license'];
-		console.log(license);
 		return (
 			license && // sanity
+			licenseProperty && // sanity
 			license[licenseProperty] !== false && // feature not enabled
 			license[licenseProperty] !== 0 // int feature (limit) is zero, so not enabled again
 		);
