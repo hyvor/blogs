@@ -59,6 +59,10 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 COPY backend/package.json backend/package-lock.json /app/backend/
 RUN cd backend && npm install
 
+# install npm dependencies (shiki) for symfony
+COPY symfony/package.json /app/symfony/
+RUN cd symfony && npm install
+
 # supervisor
 RUN apt update && apt install -y supervisor
 

@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\BlockedUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BlockedUserRepository::class)]
+#[ORM\Entity]
 #[ORM\Table(name: 'blocked_users')]
 class BlockedUser
 {
