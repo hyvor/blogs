@@ -21,7 +21,9 @@ class UserService
      */
     public function getBlogsForUser(int $hyvorUserId, int $organizationId): array
     {
-        return $this->userRepository->createQueryBuilder('u')
+        /** @var User[] */
+        return $this->userRepository
+            ->createQueryBuilder('u')
             ->join('u.blog', 'b')
             ->leftJoin('b.variants', 'bv')
             ->addSelect('b', 'bv')
@@ -35,6 +37,21 @@ class UserService
             ->addOrderBy('u.id', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param int[] $blogIds ordered list of blog IDs to set sort order
+     */
+    public function changeBlogSorts(int $hyvorUserId, array $blogIds): void
+    {
+        $i = 1;
+        foreach ($blogIds as $blogId) {
+            $this->em->getConnection()->executeStatement(
+                'UPDATE users SET sort = ? WHERE blog_id = ? AND hyvor_user_id = ?',
+                [$i, $blogId, $hyvorUserId],
+            );
+            $i++;
+        }
     }
 
     /**

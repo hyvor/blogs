@@ -16,7 +16,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ConsoleController::class)]
 #[UsesClass(UserService::class)]
-class SortBlogsConsoleTest extends ApiTestCase
+class SortBlogsTest extends ApiTestCase
 {
 
     public function test_updates_sort_order_for_user_blogs(): void

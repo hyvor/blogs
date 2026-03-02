@@ -10,3 +10,18 @@
 
 - Keep repositories empty, always use services.
 - Do not DI repositories, instead DI EntityMangerInterface and get the repository.
+
+## Commands
+
+Run commands within the container:
+
+```bash
+# backend tests
+docker compose exec hyvor-blogs-backend php bin/phpunit
+
+# phpstan
+docker compose exec hyvor-blogs-backend php vendor/bin/phpstan --memory-limit=1G
+
+# prettier
+docker compose exec hyvor-blogs-frontend npm run format
+```
