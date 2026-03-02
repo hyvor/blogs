@@ -6,7 +6,8 @@ export function getSubdomainAvailable(subdomain: string) {
 	return consoleApi.get<{ available: boolean }>({
 		endpoint: '/blog/check-subdomain',
 		data: { subdomain },
-		userApi: true
+		userApi: true,
+		v2: true
 	});
 }
 
@@ -18,7 +19,8 @@ export function createBlog(name: string, subdomain: string, isDev = false) {
 			subdomain,
 			is_dev: isDev
 		},
-		userApi: true
+		userApi: true,
+		v2: true
 	});
 }
 
@@ -26,7 +28,8 @@ export function saveSort(ids: number[]) {
 	return consoleApi.patch({
 		endpoint: '/blogs/sort',
 		data: { blog_ids: ids },
-		userApi: true
+		userApi: true,
+		v2: true
 	});
 }
 

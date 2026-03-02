@@ -51,6 +51,7 @@
 			.get<InitResponse>({
 				endpoint: isTemp ? 'init-temp' : 'init',
 				userApi: true,
+				v2: !isTemp,
 				data: {
 					temp_subdomain: isTemp ? tempSubdomain : undefined
 				}

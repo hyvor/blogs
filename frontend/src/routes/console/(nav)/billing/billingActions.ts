@@ -15,6 +15,7 @@ export interface UsageData {
 export function getUsage() {
 	return consoleApi.get<UsageData>({
 		endpoint: '/usage',
-		userApi: true
+		userApi: true,
+		v2: true
 	});
 }
