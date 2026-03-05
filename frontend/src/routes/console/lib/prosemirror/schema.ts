@@ -307,43 +307,49 @@ export const nodes = {
 		}
 	} as NodeSpec,
 
-    toc: {
-        attrs: {
-            levels: {default: [1,2,3,4,5,6]}
-        },
-        group: "block",
-        inline: false,
-        draggable: false,
-        selectable: false,
-        atom: true,
-    },
+	toc: {
+		attrs: {
+			levels: { default: [1, 2, 3, 4, 5, 6] }
+		},
+		group: 'block',
+		inline: false,
+		draggable: false,
+		selectable: false,
+		atom: true
+	},
 
-    button: {
-        attrs: {
-            href: {default: null},
-        },
-        content: "inline*",
-        group: "block",
-        draggable: false,
-        selectable: false,
-        parseDOM: [{
-            tag: 'div.button-wrap a[href]',
-            getAttrs(dom: HTMLElement) {
-                return {
-                    href: dom.getAttribute('href'),
-                };
-            }
-        }],
-        toDOM(node: Node) {
-            return ['div', {class: 'button-wrap'}, ['a', {href: node.attrs.href, class: 'button', target: '_blank'}, 0]];
-        }
-    } as NodeSpec,
+	button: {
+		attrs: {
+			href: { default: null }
+		},
+		content: 'inline*',
+		group: 'block',
+		draggable: false,
+		selectable: false,
+		parseDOM: [
+			{
+				tag: 'div.button-wrap a[href]',
+				getAttrs(dom: HTMLElement) {
+					return {
+						href: dom.getAttribute('href')
+					};
+				}
+			}
+		],
+		toDOM(node: Node) {
+			return [
+				'div',
+				{ class: 'button-wrap' },
+				['a', { href: node.attrs.href, class: 'button', target: '_blank' }, 0]
+			];
+		}
+	} as NodeSpec,
 
-     ...tableNodes({
-        tableGroup: "block",
-        cellContent: "block+",
-        cellAttributes: {}
-    }),
+	...tableNodes({
+		tableGroup: 'block',
+		cellContent: 'block+',
+		cellAttributes: {}
+	}),
 
 	// :: NodeSpec A hard line break, represented in the DOM as `<br>`.
 	hard_break: {
@@ -354,8 +360,8 @@ export const nodes = {
 		toDOM() {
 			return ['br'];
 		}
-	} as NodeSpec,
-}
+	} as NodeSpec
+};
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
 /**
