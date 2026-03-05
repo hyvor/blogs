@@ -41,9 +41,6 @@
         }
     });
 
-	function handleEvent(e: CustomEvent<ProsemirrorEventDispatchType>) {
-		handleEditorEventHandlers(e.detail.name, e.detail.event);
-	}
 </script>
 
 <div class="editor hds-box">

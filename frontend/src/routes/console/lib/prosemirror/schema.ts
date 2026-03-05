@@ -343,8 +343,8 @@ export const nodes = {
         tableGroup: "block",
         cellContent: "block+",
         cellAttributes: {}
-    })
-}
+    }),
+
 	// :: NodeSpec A hard line break, represented in the DOM as `<br>`.
 	hard_break: {
 		inline: true,
@@ -355,24 +355,7 @@ export const nodes = {
 			return ['br'];
 		}
 	} as NodeSpec,
-
-	toc: {
-		attrs: {
-			levels: { default: [1, 2, 3, 4, 5, 6] }
-		},
-		group: 'block',
-		inline: false,
-		draggable: false,
-		selectable: false,
-		atom: true
-	},
-
-	...tableNodes({
-		tableGroup: 'block',
-		cellContent: 'block+',
-		cellAttributes: {}
-	})
-};
+}
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
 /**
