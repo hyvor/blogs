@@ -60,9 +60,9 @@
     
                     codeBlockEnabled: true,
                     codeBlockConfig: {
-                        language: false,
-                        fileName: false,
-                        annotations: false,
+                        language: true,
+                        fileName: true,
+                        annotations: true,
                         annotationsUrl: null
                     },
     
