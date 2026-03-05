@@ -6,10 +6,11 @@
 	import { handleEditorEventHandlers } from "./editorEvents";
     import { Editor } from '@hyvor/richtext';
     import { uploadMedia } from "../../../../tools/media/mediaActions";
+    import type { EditorView } from 'prosemirror-view';
 
     let uniqueKey = $derived(`${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
-        `-key-${$postCurrentContentKey}` + 
+        `-key-${$postCurrentContentKey}` +
         `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
         `-version-${$postEditingStatusStore.editorVersion}`);
 
@@ -20,7 +21,7 @@
         const updates = {
             [key]: value
         } as Partial<PostVariant>;
-       
+
         /* if (key === 'content_unsaved') {
             updates.content = e.detail;
         } */
@@ -28,19 +29,17 @@
         updatePostVariantStore(updates);
     }
 
-    function handleView(e: CustomEvent<EditorView>) {
-        updatePostEditingStatusValue('editorView', e.detail);
-    }
-
     function handleEvent(name: keyof HTMLElementEventMap, event: Event) {
         handleEditorEventHandlers(name, event);
     }
 
-    interface EditorView {
-		focus(): void;
-	}
+	let editorView: EditorView = $state({} as EditorView);
 
-	let editorView: EditorView & any = $state({} as any);
+    $effect(() => {
+        if (editorView && editorView.state) {
+            updatePostEditingStatusValue('editorView', editorView);
+        }
+    });
 
 </script>
 
