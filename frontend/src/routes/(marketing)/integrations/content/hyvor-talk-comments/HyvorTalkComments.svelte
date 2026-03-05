@@ -14,7 +14,7 @@
 				a <a href="https://hyvor.com/login">HYVOR account</a>. This is the same account you used for
 				create a blog at Hyvor Blogs
 			</li>
-			<li>a <a href="/pricing">Growth Plan</a> subscription for Hyvor Blogs</li>
+			<li>a <a href="/pricing">subscription</a> for Hyvor Blogs</li>
 		</ul>
 	</Callout>
 
@@ -29,7 +29,9 @@
 		</p>
 		<ol>
 			<li>Click "<b>Add to "Comments Embed Code"</b>".</li>
-			<li>Copy the code and paste it on "<b>Comments Embed Code</b>", then click <b>Save</b>.</li>
+			<li>
+				Copy the code and paste it on "<b>Comments Embed Code</b>", then click <b>Save</b>.
+			</li>
 		</ol>
 		<DocsImage src={pasteCodeImg} alt="Paste Code" />
 

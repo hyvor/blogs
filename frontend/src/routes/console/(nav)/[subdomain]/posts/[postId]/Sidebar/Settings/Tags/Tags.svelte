@@ -17,7 +17,7 @@
 	import type { Tag as TagType } from '../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
 	import IconPlus from '@hyvor/icons/IconPlus';
-import IconX from '@hyvor/icons/IconX';
+	import IconX from '@hyvor/icons/IconX';
 
 	import TagsSearch from './TagsSearch.svelte';
 	import { hasIdArrayChanged } from '../settingsHelpers';
@@ -64,12 +64,12 @@ import IconX from '@hyvor/icons/IconX';
 <OnlyPrimaryVariant>
 	<SplitControl>
 		{#snippet label()}
-				<span >
+			<span>
 				Tags
 
 				<UnsavedTag show={hasChanged} {loaderState} />
 			</span>
-			{/snippet}
+		{/snippet}
 
 		<div class="tags">
 			<div class="left">
@@ -79,16 +79,15 @@ import IconX from '@hyvor/icons/IconX';
 							<TagName {tag} small />
 
 							{#snippet end()}
-														<IconButton
+								<IconButton
 									color="red"
 									variant="invisible"
 									on:click={() => handleRemoveTag(tag.id)}
 									size={14}
-									
 								>
 									<IconX size={10} />
 								</IconButton>
-													{/snippet}
+							{/snippet}
 						</Tag>
 					{/each}
 				{:else}
@@ -99,14 +98,14 @@ import IconX from '@hyvor/icons/IconX';
 			<div class="right">
 				<Dropdown position="bottom" align="end" width={300} bind:show={dropdownOpen}>
 					{#snippet trigger()}
-										<IconButton color="input" size={22} >
+						<IconButton color="input" size={22}>
 							<IconPlus size={14} />
 						</IconButton>
-									{/snippet}
+					{/snippet}
 
 					{#snippet content()}
-										<TagsSearch  selectedTags={$postStore.tags} on:select={handleAddTag} />
-									{/snippet}
+						<TagsSearch selectedTags={$postStore.tags} on:select={handleAddTag} />
+					{/snippet}
 				</Dropdown>
 			</div>
 		</div>

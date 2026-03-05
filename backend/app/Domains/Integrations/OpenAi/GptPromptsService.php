@@ -26,9 +26,9 @@ class GptPromptsService
             'prompt' => $prompt,
             'gpt_response' => $response->choices[0]->message->content,
             'model_name' => $response->model,
-            'tokens_prompt' => $response->usage->promptTokens,
-            'tokens_response' => $response->usage->completionTokens,
-            'tokens_total' => $response->usage->totalTokens,
+            'tokens_prompt' => $response->usage?->promptTokens,
+            'tokens_response' => $response->usage?->completionTokens,
+            'tokens_total' => $response->usage?->totalTokens,
         ]);
 
         return $gptPromptModel->refresh();

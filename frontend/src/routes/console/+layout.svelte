@@ -2,13 +2,26 @@
 	import { initTempSubdomain, setTempSubdomain } from './lib/temp';
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
-	import type { AuthUser, BlogList } from './lib/types';
-	import { authUserStore, blogListStore } from './lib/stores';
-	import { Loader, toast, HyvorBar } from '@hyvor/design/components';
-	import { page } from '$app/stores';
+	import type { BlogList } from './lib/types';
+	import {
+		authOrganizationStore,
+		authUserStore,
+		blogListStore,
+		resolvedLicenseStore
+	} from './lib/stores';
+	import { Loader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
-	import { loadBlog } from './(nav)/[subdomain]/blogLoader';
+	import { page } from '$app/state';
+	import {
+		CloudContext,
+		type CloudContextOrganization,
+		type CloudContextUser,
+		type ResolvedLicense,
+		HyvorBar
+	} from '@hyvor/design/cloud';
+	import { get } from 'svelte/store';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -16,7 +29,9 @@
 	let { children }: Props = $props();
 
 	interface InitResponse {
-		user: AuthUser;
+		user: CloudContextUser;
+		organization: CloudContextOrganization;
+		resolved_license: ResolvedLicense;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
@@ -24,8 +39,10 @@
 
 	let isLoading = $state(true);
 
-	onMount(() => {
-		const isTemp = $page.url.searchParams.has('temp');
+	function startConsole(switchingOrg = false) {
+		isLoading = true;
+
+		const isTemp = page.url.searchParams.has('temp');
 		isTempStore.set(isTemp);
 
 		const tempSubdomain = initTempSubdomain();
@@ -42,6 +59,8 @@
 				setConfig(res.config);
 
 				authUserStore.set(res.user);
+				authOrganizationStore.set(res.organization);
+				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
 
 				if (res.blogs[0]?.type === 'temp') {
@@ -55,18 +74,25 @@
 					}
 				}
 
+				if (switchingOrg && !page.url.pathname.startsWith('/console/new')) {
+					location.href = '/console';
+				}
+
 				isLoading = false;
 			})
 			.catch((err) => {
 				if (err.code === 401) {
-					const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
-					location.href =
-						`/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
+					const url = new URL(err.data[toPage + '_url'], location.origin);
+					url.searchParams.set('redirect', location.href);
+					location.href = url.toString();
 				} else {
 					toast.error(err.message);
 				}
 			});
-	});
+	}
+
+	onMount(startConsole);
 </script>
 
 <svelte:head>
@@ -86,18 +112,36 @@
 			</Loader>
 		</div>
 	{:else}
-		{#if !$isTempStore}
-			<HyvorBar
-				instance={getConfig().hyvor.instance}
-				product="blogs"
-				config={{
-					g2: 'https://www.g2.com/products/hyvor-blogs/reviews',
-					chat: false
-				}}
-			/>
-		{/if}
+		<CloudContext
+			context={{
+				component: 'blogs',
+				deployment: 'cloud',
+				instance: getConfig().hyvor.instance,
+				user: get(authUserStore),
+				organization: get(authOrganizationStore),
+				license: get(resolvedLicenseStore),
+				callbacks: {
+					onOrganizationSwitch: (switcher) => {
+						isLoading = true;
 
-		{@render children?.()}
+						switcher
+							.then(() => {
+								startConsole(true);
+							})
+							.catch(() => {
+								isLoading = false;
+							});
+					}
+				}
+			}}
+			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
+		>
+			{#if !$isTempStore}
+				<HyvorBar />
+			{/if}
+
+			{@render children?.()}
+		</CloudContext>
 	{/if}
 </main>
 

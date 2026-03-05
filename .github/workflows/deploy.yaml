@@ -15,10 +15,10 @@ jobs:
     strategy:
       matrix:
         server:
-          - name: hyvor-blogs-server-1
-            ip: 188.245.253.182
-          - name: hyvor-blogs-server-2
-            ip: 88.99.224.18
+          - name: hyvor-blogs-server-01
+            ip: 46.224.230.180
+          - name: hyvor-blogs-server-02
+            ip: 91.99.96.237
 
     steps:
       - uses: actions/checkout@v3

@@ -187,7 +187,10 @@ class PermalinkRepository
     ): string {
         $language ??= $variant->language;
 
-        $route = RouteRepository::getRoute($blog, 'post');
+        $post = $variant->post;
+        // @phpstan-ignore booleanAnd.leftAlwaysTrue
+        $routeName = ($post && $post->is_page) ? 'page' : 'post';
+        $route = RouteRepository::getRoute($blog, $routeName);
         $path = $route ? $route->match : '';
 
         // build regex for matching dates
@@ -205,11 +208,11 @@ class PermalinkRepository
         $path = str_replace('{slug}', $variantSlug, $path);
 
         if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', $variant->post->tags[0]?->slug ?? '', $path);
+            $path = str_replace('{tag}', $variant->post->tags[0]->slug ?? '', $path);
         }
 
         if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', $variant->post->authors[0]?->slug ?? '', $path);
+            $path = str_replace('{author}', $variant->post->authors[0]->slug ?? '', $path);
         }
 
         /**
@@ -265,7 +268,7 @@ class PermalinkRepository
         $path = trim($path, '/');
         $split = explode('/', $path);
 
-        if (!isset($split[0]) || $split[0] !== 'media') {
+        if ($split[0] !== 'media') {
             return null;
         }
 

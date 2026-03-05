@@ -112,7 +112,7 @@ class BlogObject
 
         $this->url = $blog->url();
 
-        /** @var mixed $meta */
+        /** @var \stdClass $meta */
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;
@@ -155,9 +155,10 @@ class BlogObject
         $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report) ??
             LinkAnalysisEmailReportEnum::NEVER;
 
-        $this->variants = $blog->variants->map(function ($variant) {
-            return new BlogVariantObject($variant);
-        })
+        $this->variants = $blog->variants
+            ->map(function ($variant) {
+                return new BlogVariantObject($variant);
+            })
             ->sortBy('language_id')
             ->values()
             ->toArray();

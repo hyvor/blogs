@@ -84,7 +84,9 @@
 
 	<h3 id="add-the-code">2.2. Adding the Code to Your Blog</h3>
 	<ol>
-		<li>In your <a href="/console">blog console</a> go to <b>Settings &rarr; Custom code</b>.</li>
+		<li>
+			In your <a href="/console">blog console</a> go to <b>Settings &rarr; Custom code</b>.
+		</li>
 		<li>
 			Paste the code you copied from Cloudflare Analytics into the <b>Footer Code</b> section.
 		</li>

@@ -80,7 +80,7 @@ class BlogObject
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
 
-        /** @var mixed $meta */
+        /** @var \stdClass $meta */
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;
@@ -94,7 +94,7 @@ class BlogObject
             $meta->social_youtube,
             $meta->social_instagram,
             $meta->social_github,
-            $meta->social_tiktok
+            $meta->social_tiktok,
         );
 
         $this->seo_indexing = $meta->seo_indexing;

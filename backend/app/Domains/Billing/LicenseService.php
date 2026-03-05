@@ -5,35 +5,34 @@ namespace App\Domains\Billing;
 use App\Models\Blog;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Illuminate\Support\Facades\Cache;
 
 class LicenseService
 {
 
     /**
-     * @throws InternalApiCallFailedException
+     * @throws CommsApiFailedException
      */
     public static function getLicense(Blog $blog): ?BlogsLicense
     {
-        $userId = $blog->hyvor_user_id;
+        $organizationId = $blog->organization_id;
 
-        if (!$userId) {
+        if (!$organizationId) {
             // this is a temp or a dev blog
-            return new BlogsLicense();
+            return BlogsLicense::trial();
         }
 
         $billing = app(Billing::class);
+        $resolvedLicense = $billing->license($organizationId);
 
-        /** @var ?BlogsLicense $license */
-        $license = $billing->license($userId, $blog->id);
-
-        return $license;
+        /** @var ?BlogsLicense */
+        return $resolvedLicense->license;
     }
 
-    private static function getHasLicenseCacheKey(int $userId): string
+    private static function getHasLicenseCacheKey(int $organizationId): string
     {
-        return "has-license:$userId";
+        return "has-license-org:$organizationId";
     }
 
     /**
@@ -47,13 +46,13 @@ class LicenseService
      */
     public static function hasLicenseCached(Blog $blog): bool
     {
-        $userId = $blog->hyvor_user_id;
+        $organizationId = $blog->organization_id;
 
-        if (!$userId) {
+        if (!$organizationId) {
             return false;
         }
 
-        $key = self::getHasLicenseCacheKey($userId);
+        $key = self::getHasLicenseCacheKey($organizationId);
 
         $value = Cache::get($key);
 
@@ -70,7 +69,7 @@ class LicenseService
             Cache::put($key, $hasLicense, $cachePeriodSeconds);
 
             return $hasLicense;
-        } catch (InternalApiCallFailedException $e) {
+        } catch (CommsApiFailedException $e) {
             return true;
         }
     }

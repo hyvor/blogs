@@ -11,7 +11,6 @@ use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
-use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Http\Request;
 
@@ -39,7 +38,7 @@ class ConsoleApiAccessMiddleware
 
             app()->instance(
                 ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser($owner)
+                new ConsoleApiAccessingUser($owner),
             );
         } else {
             if ($apiKey) {
@@ -54,28 +53,35 @@ class ConsoleApiAccessMiddleware
 
                 app()->instance(
                     ConsoleApiAccessingUser::class,
-                    new ConsoleApiAccessingUser($owner)
+                    new ConsoleApiAccessingUser($owner),
                 );
             } else {
-                $hyvorUser = $this->auth->check(
-                    (string)$request->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME)
-                );
-                if (!$hyvorUser) {
+                $me = $this->auth->me($request);
+
+                if (!$me) {
                     throw new TrustedException('You are not logged in');
                 }
 
+                $hyvorUser = $me->getUser();
                 $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
 
                 if (!$user) {
                     throw new TrustedException(
                         'You do not have access to this blog',
-                        TrustedException::ERROR_UNAUTHORIZED
+                        TrustedException::ERROR_UNAUTHORIZED,
+                    );
+                }
+
+                if ($this->blog->organization_id !== $me->getOrganization()?->id) {
+                    throw new TrustedException(
+                        'You do not have access to this blog (organization mismatch)',
+                        TrustedException::ERROR_UNAUTHORIZED,
                     );
                 }
 
                 app()->instance(
                     ConsoleApiAccessingUser::class,
-                    new ConsoleApiAccessingUser($user)
+                    new ConsoleApiAccessingUser($user),
                 );
             }
         }

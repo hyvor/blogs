@@ -10,7 +10,7 @@ export function getWebhookDeliveries(
 		limit,
 		offset
 	};
-	
+
 	if (webhookId) {
 		data.webhook_id = webhookId;
 	}

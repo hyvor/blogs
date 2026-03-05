@@ -3,7 +3,7 @@
 	import type { Tag } from '../../../../lib/types';
 	import { primaryLanguageStore } from '../../../../lib/stores/languagesStore';
 	import IconPencilFill from '@hyvor/icons/IconPencilFill';
-import IconTrash from '@hyvor/icons/IconTrash';
+	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { deleteTag } from './tagActions';
 	import { createEventDispatcher } from 'svelte';

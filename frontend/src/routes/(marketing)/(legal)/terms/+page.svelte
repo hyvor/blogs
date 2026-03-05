@@ -105,8 +105,8 @@
 			in a misleading or deceptive manner.
 		</li>
 		<li>
-			<strong>Self-Harm</strong><br /> Content that promotes or glorifies suicide, eating disorders,
-			or other forms of self-harm.
+			<strong>Self-Harm</strong><br /> Content that promotes or glorifies suicide, eating disorders, or
+			other forms of self-harm.
 		</li>
 		<li>
 			<strong>Terrorist Content</strong><br />Any content promoting terrorist activities, extremist

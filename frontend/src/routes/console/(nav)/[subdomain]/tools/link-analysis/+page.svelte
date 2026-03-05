@@ -15,11 +15,11 @@
 </script>
 
 <div class="link-analysis hds-box">
-	<LicenseRequired license="analyses">
+	<LicenseRequired licenseProperty="analyses">
 		{#snippet upgradeText()}
 			<div>
-				Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically
-				analyze all links in your blog and receive email reports.
+				Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze
+				all links in your blog and receive email reports.
 			</div>
 		{/snippet}
 

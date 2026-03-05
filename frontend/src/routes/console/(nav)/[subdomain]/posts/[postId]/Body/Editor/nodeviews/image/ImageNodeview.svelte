@@ -185,12 +185,7 @@
 <div class="image-node-wrap">
 	<div class="top">
 		<div class="left">
-			<TextInput
-				size="small"
-				placeholder="Add alt text..."
-				on:input={handleAltInput}
-				value={alt}
-			>
+			<TextInput size="small" placeholder="Add alt text..." on:input={handleAltInput} value={alt}>
 				{#snippet start()}
 					<span>ALT</span>
 				{/snippet}

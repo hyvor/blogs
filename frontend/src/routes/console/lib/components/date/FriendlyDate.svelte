@@ -1,17 +1,15 @@
 <script lang="ts">
-	import dayjs from "dayjs";
+	import dayjs from 'dayjs';
 
-    interface Props {
-        time: number; // Unix timestamp
-    }
+	interface Props {
+		time: number; // Unix timestamp
+	}
 
-    let { time }: Props = $props();
+	let { time }: Props = $props();
 
-    let day = $derived(dayjs.unix(time));
+	let day = $derived(dayjs.unix(time));
 </script>
 
-
-<time 
-    title={day.format("YYYY-MM-DD HH:mm:ss")}
-    datetime={day.format()}
->{day.format('MMM D, YYYY')}</time>
+<time title={day.format('YYYY-MM-DD HH:mm:ss')} datetime={day.format()}
+	>{day.format('MMM D, YYYY')}</time
+>

@@ -16,8 +16,8 @@ class UpdateHtmlCommand extends Command
     public function handle(): void
     {
 
+        /** @var string $subdomain */
         $subdomain = $this->argument('subdomain');
-        assert(is_string($subdomain));
 
         $blog = Blog::where('subdomain', $subdomain)->first();
 

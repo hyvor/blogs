@@ -42,7 +42,8 @@ class RouteMatcher
         array $defaults = [],
         array $requirements = [],
         ?ModelsRoute $routeModel = null
-    ): void {
+    ) : void
+    {
         $route = new Route($match, $defaults, $requirements);
         $this->collection->add($routeName, $route);
 

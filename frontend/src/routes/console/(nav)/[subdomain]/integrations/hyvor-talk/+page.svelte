@@ -37,7 +37,7 @@
 				data = {
 					connected: true,
 					data: res
-				};
+				} as HyvorTalkIntegrationData;
 				toast.success('Hyvor Talk connected successfully', { id: toastId });
 			})
 			.catch((_) => toast.error('Failed to connect to Hyvor Talk', { id: toastId }));
@@ -66,15 +66,15 @@
 	});
 </script>
 
-<LicenseRequired license="talkCredits">
+<LicenseRequired excludeTrial={true}>
 	{#snippet upgradeText()}
 		<div>
 			This integration allows you to use <a
 				href="https://talk.hyvor.com"
 				target="_blank"
 				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to the Growth plan or higher to use this integration. This
-			integration is not available in the trial period.
+			> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
+			in the trial period.
 		</div>
 	{/snippet}
 
@@ -83,12 +83,12 @@
 	{:else if data}
 		<SplitControl label="Introduction">
 			<div>
-				<Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first
-				commenting, newsletter, and memberships platform. You can use it for free on your blog.
+				<Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first commenting,
+				newsletter, and memberships platform. You can use it for free on your blog.
 
 				<p>
-					When you connect Hyvor Talk to your blog, we will automatically create a new
-					website ID in Hyvor Talk for this blog under your account.
+					When you connect Hyvor Talk to your blog, we will automatically create a new website ID in
+					Hyvor Talk for this blog under your account.
 				</p>
 			</div>
 		</SplitControl>
@@ -98,8 +98,7 @@
 				<div class="connection-status">
 					This blog is connected to website ID <strong
 						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
-					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments, newsletters, and
-					memberships.
+					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
 				</div>
 
 				<Button
@@ -116,9 +115,7 @@
 					>Disconnect</Button
 				>
 			{:else}
-				<div class="connection-status">
-					This blog is not connected to a website in Hyvor Talk.
-				</div>
+				<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
 
 				<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
 			{/if}
@@ -129,15 +126,9 @@
 				<SplitControl label="Embed Codes">
 					{#snippet nested()}
 						<div>
-							<Comments
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
-							/>
-							<Newsletter
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
-							/>
-							<Memberships
-								websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id}
-							/>
+							<Comments websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+							<Newsletter websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+							<Memberships websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
 						</div>
 					{/snippet}
 				</SplitControl>
@@ -156,8 +147,7 @@
 				<li>This new website can <b>only</b> be used on this blog.</li>
 				<li>It is free of charge.</li>
 				<li>
-					If you have any other websites on Hyvor Talk, you will need a separate
-					subscription.
+					If you have any other websites on Hyvor Talk, you will need a separate subscription.
 				</li>
 			</ul>
 		</div>
@@ -176,15 +166,13 @@
 		<Callout type="warning">You cannot connect this blog to the same website ID again.</Callout>
 
 		<p>
-			Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your
-			Hyvor Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
+			Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor
+			Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
 		</p>
 
 		{#snippet footer()}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (isDisconnecting = false)}
-					>Cancel</Button
-				>
+				<Button variant="invisible" on:click={() => (isDisconnecting = false)}>Cancel</Button>
 				<Button color="red" on:click={handleDisconnect}>Disconnect</Button>
 			</ButtonGroup>
 		{/snippet}

@@ -17,7 +17,6 @@ use App\Domains\User\Events\UserUpdatedEvent;
 use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
-use App\Domains\User\Mail\InviteUserMail;
 use App\Helpers\CollectionWithTotal;
 use App\Models\BlockedUser;
 use App\Models\Blog;
@@ -28,7 +27,6 @@ use Exception;
 use Hyvor\FilterQ\FilterQ;
 use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 
 class UserRepository
 {
@@ -75,8 +73,10 @@ class UserRepository
 
         return User::join(
             'user_variants',
-            fn($join) => $join->on('user_variants.user_id', '=', 'users.id')
-                ->where('user_variants.language_id', '=', $primaryLanguage->id)
+            fn($join)
+                => $join
+                ->on('user_variants.user_id', '=', 'users.id')
+                ->where('user_variants.language_id', '=', $primaryLanguage->id),
         )
             ->where('users.blog_id', $blog->id)
             ->where('user_variants.name', 'LIKE', $search)
@@ -98,23 +98,28 @@ class UserRepository
             ['users.posts_count', 'DESC'],
         ],
     ): CollectionWithTotal {
-        $builder = (new FilterQ)->expression($filter)
+        $builder = (new FilterQ)
+            ->expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
-                $keys->add('id')
+                $keys
+                    ->add('id')
                     ->column('users.id')
                     ->valueType('int');
 
-                $keys->add('slug')
+                $keys
+                    ->add('slug')
                     ->column('users.slug')
                     ->valueType('string|int')
                     ->operators('=,!=');
 
-                $keys->add('posts_count')
+                $keys
+                    ->add('posts_count')
                     ->column('users.posts_count')
                     ->valueType('int');
 
-                $keys->add('created_at')
+                $keys
+                    ->add('created_at')
                     ->column('users.created_at')
                     ->valueType('date');
             })
@@ -142,7 +147,6 @@ class UserRepository
         Blog $blog,
         int $hyvorUserId,
         UserRoleEnum $role,
-        UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
         $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($hyvorUserId);
@@ -163,7 +167,7 @@ class UserRepository
         $user = User::create([
             'blog_id' => $blog->id,
             'role' => $role,
-            'status' => $status,
+            'status' => UserStatusEnum::ACTIVE,
             'slug' => UniqueBlogItemSlugGenerator::forHyvorUser($blog, $hyvorUser),
             'hyvor_user_id' => $hyvorUser->id,
             'email' => $hyvorUser->email,
@@ -178,7 +182,7 @@ class UserRepository
             $language,
             name: $hyvorUser->name,
             location: $hyvorUser->location,
-            bio: $hyvorUser->bio
+            bio: $hyvorUser->bio,
         );
 
         $user = $user->refresh();
@@ -336,6 +340,7 @@ class UserRepository
             return null;
         }
 
+        // TODO: org (https://github.com/hyvor/core/issues/493)
         $auth = app(AuthInterface::class);
         $hyvorUser = $auth->fromId($blog->hyvor_user_id);
 
@@ -344,26 +349,6 @@ class UserRepository
         }
 
         return $hyvorUser->email;
-    }
-
-    public static function sendInviteEmail(User $user): void
-    {
-        $auth = app(AuthInterface::class);
-        if (!$user->hyvor_user_id) {
-            return;
-        }
-        $hyvorUser = $auth->fromId($user->hyvor_user_id);
-        if (!$hyvorUser) {
-            return;
-        }
-
-        Mail::to($hyvorUser->email)->send(new InviteUserMail($user, $hyvorUser));
-    }
-
-    public static function activateUser(User $user): void
-    {
-        $user->status = UserStatusEnum::ACTIVE;
-        $user->save();
     }
 
 

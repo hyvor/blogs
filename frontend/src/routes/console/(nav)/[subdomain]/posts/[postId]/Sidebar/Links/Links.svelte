@@ -3,11 +3,11 @@
 	import LinkAnalysis from './LinkAnalysis.svelte';
 </script>
 
-<LicenseRequired license="analyses">
+<LicenseRequired licenseProperty="analyses">
 	{#snippet upgradeText()}
 		<div>
-			Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to analyze links
-			in your posts and say goodbye to broken links.
+			Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to analyze links in
+			your posts and say goodbye to broken links.
 		</div>
 	{/snippet}
 

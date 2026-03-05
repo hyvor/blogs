@@ -2,6 +2,7 @@
 
 namespace App\Domains\App\AppContext;
 
+// note: a very bad design
 enum AppContextType : string
 {
 

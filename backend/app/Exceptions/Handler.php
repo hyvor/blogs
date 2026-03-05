@@ -3,10 +3,12 @@
 namespace App\Exceptions;
 
 use Hyvor\FilterQ\Exceptions\FilterQException;
+use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -43,7 +45,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if (!config('app.debug')) { // not in debug mode
+        if (
+            !config('app.debug') ||
+            $exception instanceof HttpException ||
+            $exception instanceof ValidationException ||
+            $exception instanceof FilterQException ||
+            $exception instanceof TrustedException ||
+            $exception instanceof HttpExceptionInterface
+        ) { // not in debug mode
             if ($request->getHost() === config('blogs.domain_app')) {
                 // app domain
 
@@ -52,20 +61,25 @@ class Handler extends ExceptionHandler
                     $request->is('integrations/*') ||
                     $request->is('embed/*')
                 ) {
-                    $code = $exception->status ?? $exception->getCode();
+                    $code = $exception instanceof HttpExceptionInterface ?
+                        $exception->getStatusCode() :
+                        ($exception->status ?? $exception->getCode());
 
                     if ($code === 400) {
                         $code = 422;
                     }
 
-                    $httpCode = method_exists($exception, 'getStatusCode') ?
-                        $exception->getStatusCode() :
-                        (in_array($code, [401, 403, 404, 422, 500]) ? $code : 500);
+                    if ($exception instanceof HttpExceptionInterface) {
+                        $httpCode = $code;
+                    } else {
+                        $httpCode = in_array($code, [401, 403, 404, 422, 500]) ? $code : 500;
+                    }
 
                     $error =
                         $exception instanceof TrustedException ||
                         $exception instanceof FilterQException ||
-                        $exception instanceof HttpException
+                        $exception instanceof HttpException ||
+                        $exception instanceof HttpExceptionInterface
                             ?
                             $exception->getMessage() :
                             'Something went wrong on our side.';
@@ -79,15 +93,21 @@ class Handler extends ExceptionHandler
                         $error = $exception->validator->errors()->first();
                     }
 
+                    $data = $exception instanceof DataCarryingHttpException ?
+                        $exception->getData() : null;
+
                     return response()->json([
                         'error' => $error,
                         'code' => $code,
+                        'data' => $data,
                     ], $httpCode);
                 }
             } else {
                 // subdomains
                 if ($exception instanceof SubdomainNotFoundException) {
-                    return redirect('https://' . config('blogs.domain_app'));
+                    return redirect('https://' . config('blogs.domain_app'), headers: [
+                        'X-Subdomain-Not-Found' => '1',
+                    ]);
                 }
             }
         }

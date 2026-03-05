@@ -41,9 +41,7 @@
 					<a href="https://hyvor.com/blog/wordpress-alternatives" target="_blank"
 						>WordPress Alternatives</a
 					>
-					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank"
-						>Ghost Alternatives</a
-					>
+					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank">Ghost Alternatives</a>
 					<a href="https://hyvor.com/blog/medium-alternatives" target="_blank"
 						>Medium Alternatives</a
 					>

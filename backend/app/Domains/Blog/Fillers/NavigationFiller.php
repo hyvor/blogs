@@ -42,8 +42,8 @@ class NavigationFiller implements FillerInterface
         ) {
 
             // send about and contact to footer
-            $this->navs[0]['type'] = NavigationTypeEnum::FOOTER;
-            $this->navs[1]['type'] = NavigationTypeEnum::FOOTER;
+            $this->navs[0] = array_merge($this->navs[0], ['type' => NavigationTypeEnum::FOOTER]);
+            $this->navs[1] = array_merge($this->navs[1], ['type' => NavigationTypeEnum::FOOTER]);
 
             $this->navs[] = [
                 'type' => NavigationTypeEnum::HEADER,

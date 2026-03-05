@@ -5,6 +5,8 @@ namespace Tests\Feature\ConsoleAPI\Media;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +19,9 @@ it('uploads', function () {
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
 
-    BillingFake::enable(license: new BlogsLicense(storage: 1000));
+    $license = BlogsLicense::trial();
+    $license->storage = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -40,7 +44,9 @@ it('uploads with duplicate name', function () {
     Storage::put('blog/' . $blog->id . '/image.png', 'content');
 
     $file = UploadedFile::fake()->image('image.png')->size(100);
-    BillingFake::enable(license: new BlogsLicense(storage: 1000));
+    $license = BlogsLicense::trial();
+    $license->storage = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     $media = consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -57,7 +63,9 @@ it('converts to kebab case', function () {
     Storage::fake();
     $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
-    BillingFake::enable(license: new BlogsLicense(storage: 1000));
+    $license = BlogsLicense::trial();
+    $license->storage = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     $media = consoleApi($blog, 'POST', '/media', [
         'file' => $file,
@@ -72,7 +80,9 @@ it('converts to kebab case', function () {
 it('uploads with post ID', function () {
     Storage::fake();
     $blog = blogWithAccess();
-    BillingFake::enable(license: new BlogsLicense(storage: 1000));
+    $license = BlogsLicense::trial();
+    $license->storage = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
     consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),
         'post_id' => 2
@@ -96,7 +106,9 @@ it('limits file size', function () {
 it('throws error when media size exceeded', function () {
     $blog = blogWithAccess();
     $blog->setCount('media', 10 ** 9 * 2);
-    BillingFake::enable(license: new BlogsLicense(storage: 1000));
+    $license = BlogsLicense::trial();
+    $license->storage = 1000;
+    BillingFake::enable([$blog->organization_id => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)]);
 
     consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),

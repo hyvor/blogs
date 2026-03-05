@@ -72,10 +72,13 @@
 		<ul>
 			<li><code>index.twig</code>: The form will be displayed on the home page.</li>
 
-			<li><code>_footer.twig</code>: The form will be displayed in the footers of all pages.</li>
+			<li>
+				<code>_footer.twig</code>: The form will be displayed in the footers of all pages.
+			</li>
 		</ul>
 		<li>
-			<b>Copy</b> the following code snippet in your chosen file <code>MAILCHIMP_CODE_SNIPPET</code>
+			<b>Copy</b> the following code snippet in your chosen file
+			<code>MAILCHIMP_CODE_SNIPPET</code>
 			with the code snipped provided by Mailchimp when editing your form.
 		</li>
 		<CodeBlock

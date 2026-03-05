@@ -4,10 +4,11 @@ namespace App\Domains\User;
 
 use App\Models\User;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthUserOrganization;
 use Illuminate\Support\Collection;
 
 /**
- * A combination of User + Blog models
+ * A combination of o + Blog models
  * Usually, these methods are related to the Console
  */
 class UserBlogRepository
@@ -15,12 +16,18 @@ class UserBlogRepository
     /**
      * @return Collection<int, User>
      */
-    public static function getBlogsOfUser(int $userId): Collection
+    public static function getBlogsOfUser(AuthUser $user, ?AuthUserOrganization $organization): Collection
     {
-        return User::where('hyvor_user_id', $userId)
+        if (!$organization) {
+            return collect();
+        }
+
+        return User::where('users.hyvor_user_id', $user->id)
+            ->join('blogs', 'blogs.id', '=', 'users.blog_id')
+            ->where('blogs.organization_id', $organization->id)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('users.id', 'ASC')
             ->with('blog', 'blog.subscriptions')
             ->get();
     }
@@ -29,7 +36,7 @@ class UserBlogRepository
      * To sort the order displayed of blogs displayed in the console
      * $arr = [blogId, blogId] in the correct sort
      *
-     * @param  int[]  $arr
+     * @param int[] $arr
      */
     public static function changeBlogSorts(AuthUser $user, array $arr): void
     {

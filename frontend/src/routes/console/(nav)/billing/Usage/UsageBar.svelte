@@ -12,9 +12,7 @@
 	let { name, data, bytes = false }: Props = $props();
 
 	let width = $state('0%');
-	let percentage = $derived(
-		Math.min(data.limit === 0 ? 100 : (data.used / data.limit) * 100, 100)
-	);
+	let percentage = $derived(Math.min(data.limit === 0 ? 100 : (data.used / data.limit) * 100, 100));
 
 	onMount(() => {
 		setTimeout(() => {
@@ -47,9 +45,7 @@
 		</div>
 		{#if data.limit > 0}
 			<div class="usage-number">
-				<span
-					class="usage-now"
-					style:color={color === 'var(--accent)' ? 'var(--text)' : color}
+				<span class="usage-now" style:color={color === 'var(--accent)' ? 'var(--text)' : color}
 					>{current.toLocaleString()}</span
 				>
 				<span class="usage-full">/ {limit.toLocaleString()}</span>

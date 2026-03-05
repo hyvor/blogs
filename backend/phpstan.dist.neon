@@ -1,0 +1,7 @@
+parameters:
+    level: 8
+    paths:
+        - app
+
+includes:
+    - vendor/larastan/larastan/extension.neon

@@ -44,13 +44,11 @@
 		<p>Please confirm that you want to update it to Hyvor Talk embed code.</p>
 
 		{#snippet footer()}
-			
-				<ButtonGroup>
-					<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
-					<Button on:click={handleUpdate}>Update</Button>
-				</ButtonGroup>
-			
-			{/snippet}
+			<ButtonGroup>
+				<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
+				<Button on:click={handleUpdate}>Update</Button>
+			</ButtonGroup>
+		{/snippet}
 	</Modal>
 {/if}
 

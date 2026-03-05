@@ -11,7 +11,7 @@
   <coverage/>
   <php>
     <server name="HYVOR_INSTANCE" value="https://hyvor.com" />
-    <server name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.cluster" />
+    <server name="HYVOR_PRIVATE_INSTANCE" value="http://hyvor.internal" />
     <server name="APP_ENV" value="testing"/>
     <server name="APP_DEBUG" value="false"/>
     <server name="APP_URL" value="https://blogs.hyvor.com"/>
@@ -36,8 +36,5 @@
     <include>
       <directory suffix=".php">./app</directory>
     </include>
-    <exclude>
-      <directory suffix=".php">./app/Stale</directory>
-    </exclude>
   </source>
 </phpunit>

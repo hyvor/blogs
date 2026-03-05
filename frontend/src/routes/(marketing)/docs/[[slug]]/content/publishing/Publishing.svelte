@@ -15,9 +15,9 @@
 	Are you ready to publish your newly built theme to our <a href="/themes">themes list</a>? To do
 	that, your theme should be developed within a fork of our
 	<a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a>
-	repository. After everything is completed, send us a pull request to the <code>main</code> branch.
-	If merged, your theme will be automatically added to our theme list, and other bloggers can install
-	it easily.
+	repository. After everything is completed, send us a pull request to the <code>main</code> branch. If
+	merged, your theme will be automatically added to our theme list, and other bloggers can install it
+	easily.
 </p>
 <Callout type="info">
 	<p>
@@ -90,8 +90,8 @@
 
 <div class="checklist-main">
 	<Checkbox
-		><code>_comments</code> and <code>_newsletter</code> blocks should not be displayed if the value
-		of each is empty.</Checkbox
+		><code>_comments</code> and <code>_newsletter</code> blocks should not be displayed if the value of
+		each is empty.</Checkbox
 	>
 </div>
 

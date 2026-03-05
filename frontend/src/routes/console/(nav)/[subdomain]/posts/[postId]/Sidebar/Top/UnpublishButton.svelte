@@ -40,8 +40,8 @@
 		bind:show={modalOpen}
 		size="small"
 	>
-		Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this
-		post? It's status will be changed to draft.
+		Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this post?
+		It's status will be changed to draft.
 
 		{#snippet footer()}
 			<div>

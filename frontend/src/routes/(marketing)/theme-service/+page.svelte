@@ -57,8 +57,7 @@
 
 			<div class="switch">
 				<Switch bind:checked={switch2} on:change={updatePrice}
-					>Publish your theme in our theme directory <Caption>30% discount</Caption
-					></Switch
+					>Publish your theme in our theme directory <Caption>30% discount</Caption></Switch
 				>
 			</div>
 		</div>
@@ -82,12 +81,8 @@
 	<div class="or">OR</div>
 
 	<div class="cta">
-		<Button
-			as="a"
-			href="mailto:blogs.support@hyvor.com"
-			variant="outline"
-			size="large"
-			color="gray">Email Us</Button
+		<Button as="a" href="mailto:blogs.support@hyvor.com" variant="outline" size="large" color="gray"
+			>Email Us</Button
 		>
 	</div>
 </div>

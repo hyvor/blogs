@@ -131,12 +131,7 @@
 		/>
 
 		{#if showUpload}
-			<input
-				type="file"
-				bind:this={uploadInput}
-				style="display:none"
-				onchange={handleUpload}
-			/>
+			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
 			<Button on:click={handleClickUpload}>
 				{#snippet start()}
 					<IconCloudUpload />
@@ -164,12 +159,7 @@
 		{/if}
 	</div>
 
-	<LoadButton
-		text="Load More"
-		loading={isLoadingMore}
-		show={hasMore}
-		on:click={() => load(true)}
-	/>
+	<LoadButton text="Load More" loading={isLoadingMore} show={hasMore} on:click={() => load(true)} />
 </div>
 
 <style>

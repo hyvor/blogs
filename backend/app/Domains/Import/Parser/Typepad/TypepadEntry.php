@@ -13,7 +13,7 @@ class TypepadEntry
     public function __construct(string $entryString)
     {
         $subsections = explode("-----\n", $entryString);
-        $metadataSection = $subsections[0] ?? '';
+        $metadataSection = $subsections[0];
         $this->parseMetadata($metadataSection);
 
         $multilineSections = array_slice($subsections, 1);

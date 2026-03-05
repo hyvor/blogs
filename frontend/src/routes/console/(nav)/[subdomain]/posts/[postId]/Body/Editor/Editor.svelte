@@ -26,8 +26,8 @@
             updates.content = e.detail;
         } */
 
-        updatePostVariantStore(updates);
-    }
+		updatePostVariantStore(updates);
+	}
 
     function handleEvent(name: keyof HTMLElementEventMap, event: Event) {
         handleEditorEventHandlers(name, event);
@@ -41,10 +41,13 @@
         }
     });
 
+	function handleEvent(e: CustomEvent<ProsemirrorEventDispatchType>) {
+		handleEditorEventHandlers(e.detail.name, e.detail.event);
+	}
 </script>
 
 <div class="editor hds-box">
-    <EditorTop />
+	<EditorTop />
 
     {#key uniqueKey}
         <div class="wrap">
@@ -95,11 +98,10 @@
 </div>
 
 <style>
-    
-    .editor {
-        position: relative;
-    }
-    .wrap {
-        position: relative;
-    }
+	.editor {
+		position: relative;
+	}
+	.wrap {
+		position: relative;
+	}
 </style>

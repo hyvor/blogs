@@ -50,7 +50,7 @@ it("gets membership plan names", function () {
     // You may need to implement custom logic to verify the requests if needed
 
     expect($plansResponse->getRequestUrl())->toBe(
-        "https://talk.hyvor.cluster/api/internal/blogs/integration/console-api"
+        "http://talk.hyvor.internal/api/internal/blogs/integration/console-api"
     );
 
     $json = json_decode($plansResponse->getRequestOptions()['body'], true);

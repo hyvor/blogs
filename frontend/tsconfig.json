@@ -9,13 +9,14 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"moduleResolution": "bundler",
+		"moduleResolution": "Bundler",
+		"target": "es2022",
 		"noUncheckedIndexedAccess": true
 	},
 	"exclude": [
 		"node_modules/react/**/*",
 		"node_modules/react-dom/**/*",
 		"node_modules/@excalidraw/**/*",
-		"src/design/**/*",
+		"src/design/**/*"
 	]
 }

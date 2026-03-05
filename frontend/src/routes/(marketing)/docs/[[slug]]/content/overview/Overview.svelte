@@ -19,8 +19,8 @@
 <ul>
 	<li><b>Theme Developer</b> - the person who develops a theme (must be you!).</li>
 	<li>
-		<b>Blogger</b> - The person who owns the blog. They can install the theme you create and edit it
-		through the console.
+		<b>Blogger</b> - The person who owns the blog. They can install the theme you create and edit it through
+		the console.
 	</li>
 	<li>
 		<b>Subdomain</b> - Subdomain part of <code>{`{subdomain}`}</code>.hyvorblogs.io which is given
@@ -73,8 +73,9 @@
 <p>
 	<a href="https://github.com/hyvor/flashload">Flashload</a> is added to all blogs by default.
 	Therefore, it is important to keep Flashload in mind while designing themes. Please take a minute
-	and read the <a href="https://github.com/hyvor/flashload#readme">Flashload documentation</a> to get
-	the idea of how it works.
+	and read the
+	<a href="https://github.com/hyvor/flashload#readme">Flashload documentation</a> to get the idea of how
+	it works.
 </p>
 <p>
 	Why Flashload? Browser reloads are slow. They load the same CSS/JS resources multiple times making
@@ -85,9 +86,10 @@
 
 <p>
 	We previously learned that there's only one <code>styles.css</code> for a blog that contains all
-	CSS of the blog. This <code>styles.css</code> should be loaded inside the <code>{`<head>`}</code>
-	of the page. When the user navigates to another page, Flashload sends an AJAX request to that path
-	and pre-fetches the HTML page. Then, it updates <b>only the</b> <code>{`<body>`}</code>
+	CSS of the blog. This <code>styles.css</code> should be loaded inside the
+	<code>{`<head>`}</code>
+	of the page. When the user navigates to another page, Flashload sends an AJAX request to that path and
+	pre-fetches the HTML page. Then, it updates <b>only the</b> <code>{`<body>`}</code>
 	<b>part</b>. (Remember, we already have all CSS loaded in the first request, so we don't want to
 	load it again).
 </p>
@@ -155,8 +157,8 @@
 		for theme development.
 	</li>
 	<li>
-		You will get a subdomain in the <code>dev-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> format. We
-		will need this later.
+		You will get a subdomain in the <code>dev-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> format. We will
+		need this later.
 	</li>
 </ul>
 
@@ -251,8 +253,8 @@
 <Callout type="info">
 	<p>
 		<b>How it works:</b> The <code>hyvor-blogs-cli</code> command runs a process that watches your local
-		file changes and syncs it with our production environment. So, whenever you add, edit, or delete
-		a file within your theme folder, it will be synced with the theme files in your DEV blog.
+		file changes and syncs it with our production environment. So, whenever you add, edit, or delete a
+		file within your theme folder, it will be synced with the theme files in your DEV blog.
 	</p>
 
 	<p>

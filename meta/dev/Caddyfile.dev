@@ -1,0 +1,32 @@
+{
+	frankenphp
+    metrics
+}
+
+:80 {
+
+    @symfony {
+        path /api/comms/*
+    }
+    handle @symfony {
+        root /app/symfony/public
+        php_server {
+            file_server off
+            try_files index.php
+        }
+    }
+
+    # laravel
+    handle {
+        root /app/backend/public
+        php_server {
+            file_server off
+            try_files index.php
+        }
+    }
+
+	log {
+        output file /var/log/caddy.log
+    }
+
+}

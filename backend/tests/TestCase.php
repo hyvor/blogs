@@ -3,9 +3,10 @@
 namespace Tests;
 
 use App\Models\Blog;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
+use Plannr\Laravel\FastRefreshDatabase\Traits\FastRefreshDatabase;
 
 /**
  * @deprecated
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     /**
      * Indicates whether the default seeder should run before each test.
@@ -34,4 +35,9 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to("/api/cli/$subdomain/$endpoint"), $data);
     }
 
+    protected function refreshTestDatabase()
+    {
+        RefreshDatabaseState::$migrated = true;
+        $this->beginDatabaseTransaction();
+    }
 }

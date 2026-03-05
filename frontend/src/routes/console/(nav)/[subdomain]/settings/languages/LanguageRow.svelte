@@ -1,91 +1,88 @@
 <script lang="ts">
-    import IconPencilFill from '@hyvor/icons/IconPencilFill';
-import IconTrash from '@hyvor/icons/IconTrash';
+	import IconPencilFill from '@hyvor/icons/IconPencilFill';
+	import IconTrash from '@hyvor/icons/IconTrash';
 
-    import type { Language } from "../../../../lib/types";
-	import { IconButton, Modal, TableRow, Tag, Tooltip, confirm, toast } from "@hyvor/design/components";
-	import LanguageModal from "./LanguageModal.svelte";
-	import { deleteLanguage } from "./languageActions";
-	import { languageStoreRemove } from "../../../../lib/stores/languagesStore";
-	import DeleteConfirm from "./DeleteConfirm.svelte";
-    
-    interface Props {
-        language: Language;
-    }
+	import type { Language } from '../../../../lib/types';
+	import {
+		IconButton,
+		Modal,
+		TableRow,
+		Tag,
+		Tooltip,
+		confirm,
+		toast
+	} from '@hyvor/design/components';
+	import LanguageModal from './LanguageModal.svelte';
+	import { deleteLanguage } from './languageActions';
+	import { languageStoreRemove } from '../../../../lib/stores/languagesStore';
+	import DeleteConfirm from './DeleteConfirm.svelte';
 
-    let { language }: Props = $props();
+	interface Props {
+		language: Language;
+	}
 
-    let isEditing = $state(false);
+	let { language }: Props = $props();
 
-    async function handleDelete() {
+	let isEditing = $state(false);
 
-        if (await confirm({
-            title: 'Delete language',
-            content: DeleteConfirm,
-            contentProps: {
-                language
-            },
-            confirmText: 'Yes, delete',
-            danger: true,
-        })) {
+	async function handleDelete() {
+		if (
+			await confirm({
+				title: 'Delete language',
+				content: DeleteConfirm,
+				contentProps: {
+					language
+				},
+				confirmText: 'Yes, delete',
+				danger: true
+			})
+		) {
+			const toastId = toast.loading('Deleting language...');
 
-            const toastId = toast.loading('Deleting language...');
-
-            deleteLanguage(language.id)
-                .then(() => {
-                    toast.success('Language deleted.', {id: toastId});
-                    languageStoreRemove(language.id);
-                })
-                .catch(err => {
-                    toast.error(err.message, {id: toastId});
-                });
-
-        }
-
-    }
-
+			deleteLanguage(language.id)
+				.then(() => {
+					toast.success('Language deleted.', { id: toastId });
+					languageStoreRemove(language.id);
+				})
+				.catch((err) => {
+					toast.error(err.message, { id: toastId });
+				});
+		}
+	}
 </script>
 
 <TableRow>
-    <div>
-        {language.name}
-        {#if language.is_primary}
-            <Tag 
-                size="x-small"
-                color="accent"
-            >
-                PRIMARY
-            </Tag>
-        {/if}
-    </div>
-    <div>{language.code}</div>
-    <div>{language.direction.toUpperCase()}</div>
-    <div>
-        <Tooltip text="Edit language">
-            <IconButton 
-                variant="fill-light" 
-                color="gray" 
-                size="small"
-                on:click={() => isEditing = true}
-            >
-                <IconPencilFill size={12} />
-            </IconButton>
-        </Tooltip>
-        <Tooltip text={language.is_primary ? "Cannot delete primary language" : "Delete language"}>  
-            <IconButton 
-                variant="fill-light" 
-                color="red" 
-                size="small"
-                on:click={handleDelete}
-                disabled={language.is_primary}
-            >
-                <IconTrash size={12} />
-            </IconButton>
-        </Tooltip>
-    </div>
+	<div>
+		{language.name}
+		{#if language.is_primary}
+			<Tag size="x-small" color="accent">PRIMARY</Tag>
+		{/if}
+	</div>
+	<div>{language.code}</div>
+	<div>{language.direction.toUpperCase()}</div>
+	<div>
+		<Tooltip text="Edit language">
+			<IconButton
+				variant="fill-light"
+				color="gray"
+				size="small"
+				on:click={() => (isEditing = true)}
+			>
+				<IconPencilFill size={12} />
+			</IconButton>
+		</Tooltip>
+		<Tooltip text={language.is_primary ? 'Cannot delete primary language' : 'Delete language'}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				on:click={handleDelete}
+				disabled={language.is_primary}
+			>
+				<IconTrash size={12} />
+			</IconButton>
+		</Tooltip>
+	</div>
 </TableRow>
 
-<LanguageModal
-    {language}
-    bind:show={isEditing}
-/>
+<LanguageModal {language} bind:show={isEditing} />

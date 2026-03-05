@@ -34,7 +34,6 @@
 
 	let startExt = $derived(getExtension(name));
 
-
 	function getExtension(n: string) {
 		const parts = n.split('.');
 		return (parts[parts.length - 1] || '').trim();

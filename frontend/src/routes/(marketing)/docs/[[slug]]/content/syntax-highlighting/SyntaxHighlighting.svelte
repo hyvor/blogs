@@ -2,8 +2,7 @@
 	import { Button, Loader, Table, TableRow } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-import IconCaretRight from '@hyvor/icons/IconCaretRight';
-
+	import IconCaretRight from '@hyvor/icons/IconCaretRight';
 
 	interface DataType {
 		languageTags: string;
@@ -74,14 +73,12 @@ import IconCaretRight from '@hyvor/icons/IconCaretRight';
 			<Button size="small" on:click={() => (showPreview = !showPreview)}>
 				Show theme previews
 				{#snippet end()}
-							
-						{#if showPreview}
-							<IconCaretDown size={12} />
-						{:else}
-							<IconCaretRight size={12} />
-						{/if}
-					
-							{/snippet}
+					{#if showPreview}
+						<IconCaretDown size={12} />
+					{:else}
+						<IconCaretRight size={12} />
+					{/if}
+				{/snippet}
 			</Button>
 		</p>
 

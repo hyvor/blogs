@@ -2,7 +2,7 @@
 # Alias for deppendencies
 FROM node:22.12.0 AS node
 FROM composer:2.8.4 AS composer
-FROM dunglas/frankenphp:1.10.0-php8.4.15 AS frankenphp
+FROM dunglas/frankenphp:1.11.2-php8.4 AS frankenphp
 
 ###################################################
 ################  FRONTEND STAGES  ################
@@ -15,6 +15,7 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json \
     frontend/svelte.config.js \
     frontend/vite.config.ts \
+    frontend/.prettier* \
     frontend/tsconfig.json /app/frontend/
 # copy code
 COPY frontend/src /app/frontend/src
@@ -24,7 +25,6 @@ COPY frontend/static /app/frontend/static
 FROM frontend-base AS frontend-dev
 EXPOSE 36201
 RUN npm install
-RUN if [ -d "src/design" ]; then cd src/design && npm link && cd ../.. && npm link @hyvor/design; fi
 CMD npm run dev
 
 ###################################################
@@ -43,7 +43,7 @@ RUN  npm install \
 ###################################################
 FROM frankenphp AS backend-base
 
-WORKDIR /app/backend
+WORKDIR /app
 
 # install php and dependencies
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
@@ -57,7 +57,10 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # install npm dependencies (shiki)
 COPY backend/package.json backend/package-lock.json /app/backend/
-RUN npm install
+RUN cd backend && npm install
+
+# supervisor
+RUN apt update && apt install -y supervisor
 
 
 ###################################################
@@ -66,18 +69,21 @@ FROM backend-base AS backend-dev
 # pcov for debugging
 RUN install-php-extensions pcov
 COPY backend/composer.json backend/composer.lock /app/backend/
-RUN composer install --no-interaction \
-    && touch ../.env # needed in CI
+RUN cd backend && composer install --no-interaction && touch .env # needed in CI
+
+COPY symfony/composer.json symfony/composer.lock /app/symfony/
+RUN cd symfony && composer install --no-interaction
 
 # set up code and install composer packages
 COPY backend /app/backend/
+COPY symfony /app/symfony/
 COPY meta/dev/php.dev.ini /usr/local/etc/php/conf.d/app.ini
-
-# use local internal library
-RUN if [ -d "packages/internal" ]; then composer require hyvor/internal:@dev; fi
+COPY meta/dev/supervisord.dev.conf /etc/supervisor/conf.d/supervisord.conf
+COPY meta/dev/Caddyfile.dev /etc/caddy/Caddyfile
+COPY meta/dev/run.dev /app/run
 
 EXPOSE 80
-CMD php artisan octane:frankenphp --workers=1 --max-requests=1 --host=0.0.0.0 --port=80
+CMD ["/app/run"]
 
 ###################################################
 FROM backend-base AS final
@@ -87,13 +93,15 @@ RUN apt update && apt install -y supervisor
 
 # copy files
 COPY backend /app/backend
+COPY symfony /app/symfony
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
+RUN cd backend && composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
+RUN cd symfony && composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
 
 # copy configs
-COPY meta/image/CaddyfileOctane /etc/caddy/Caddyfile
+COPY meta/image/Caddyfile /etc/caddy/Caddyfile
 COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run

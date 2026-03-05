@@ -6,12 +6,7 @@
 		children?: import('svelte').Snippet;
 	}
 
-	let {
-		title = null,
-		style = undefined,
-		padding = 30,
-		children
-	}: Props = $props();
+	let { title = null, style = undefined, padding = 30, children }: Props = $props();
 </script>
 
 <div class="wrap hds-box" {style} style:padding="{padding}px">

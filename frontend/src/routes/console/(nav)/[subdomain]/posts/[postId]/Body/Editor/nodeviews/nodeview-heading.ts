@@ -2,7 +2,6 @@ import type { Node as ProsemirrorNode } from 'prosemirror-model';
 import { EditorView, type NodeView } from 'prosemirror-view';
 
 export default class HeadingNodeView implements NodeView {
-
 	dom: HTMLElement;
 	contentDOM: HTMLElement;
 
@@ -13,14 +12,13 @@ export default class HeadingNodeView implements NodeView {
 	private node: ProsemirrorNode;
 
 	constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
-
 		this.node = node;
 
 		this.dom = document.createElement('div');
 		this.dom.classList.add('heading-wrap');
 
 		const headingDetails = document.createElement('div');
-		headingDetails.classList.add('heading-details');	
+		headingDetails.classList.add('heading-details');
 
 		// Create headingSelectorsWrap before inputWrap
 		const headingSelectorsWrap = document.createElement('div');
@@ -59,64 +57,59 @@ export default class HeadingNodeView implements NodeView {
 		headingDetails.appendChild(headingSelectorsWrap);
 
 		// Create inputWrap for the input field
-		this.inputWrap = document.createElement("div");
-		this.inputWrap.classList.add("input-wrap");
-		this.inputWrap.contentEditable = "false";
+		this.inputWrap = document.createElement('div');
+		this.inputWrap.classList.add('input-wrap');
+		this.inputWrap.contentEditable = 'false';
 		headingDetails.appendChild(this.inputWrap);
 		this.dom.appendChild(headingDetails);
 
 		// Create contentDOM
 		this.contentDOM = document.createElement('h' + this.node.attrs.level);
-		const id = this.node.attrs.id || "";
+		const id = this.node.attrs.id || '';
 		this.contentDOM.id = id;
 		this.dom.appendChild(this.contentDOM);
 
-		
-		const type = document.createElement("span");
-		type.innerHTML = "#";
+		const type = document.createElement('span');
+		type.innerHTML = '#';
 		this.inputWrap.appendChild(type);
 
 		// ID input
-		this.input = document.createElement("input");
+		this.input = document.createElement('input');
 		this.input.value = id;
 
 		this.input.oninput = (e) => {
 			const pos = getPos();
 
-			if (pos === undefined)
-				return;
+			if (pos === undefined) return;
 
 			view.dispatch(
-				view.state.tr.setNodeMarkup(
-					pos,
-					null,
-					{ ...this.node.attrs, id: (e.target as HTMLInputElement).value }
-				)
+				view.state.tr.setNodeMarkup(pos, null, {
+					...this.node.attrs,
+					id: (e.target as HTMLInputElement).value
+				})
 			);
 		};
 
 		this.inputWrap.appendChild(this.input);
-		
 	}
 
-    update(node: ProsemirrorNode) {
-
+	update(node: ProsemirrorNode) {
 		if (node.type.name !== 'heading') {
 			return false;
 		}
 
 		this.node = node;
 
-        if (Number(node.attrs.level) === Number(this.contentDOM.tagName[1])) {
-            // changing ID
-			
-			this.contentDOM.id = node.attrs.id;
-            this.input.value = node.attrs.id;
-            return true;
-        }
+		if (Number(node.attrs.level) === Number(this.contentDOM.tagName[1])) {
+			// changing ID
 
-        return false;
-    }
+			this.contentDOM.id = node.attrs.id;
+			this.input.value = node.attrs.id;
+			return true;
+		}
+
+		return false;
+	}
 
 	stopEvent(e: Event) {
 		return (e.target as Node).isEqualNode(this.input);

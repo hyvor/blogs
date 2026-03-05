@@ -228,8 +228,8 @@
 
 <p>
 	We expect a <strong>200 HTTP Response Code</strong> from your server to mark the webhook as success.
-	If we get any other response code or fail to reach your servers, we will retry to send the webhook
-	for 3 more times after
+	If we get any other response code or fail to reach your servers, we will retry to send the webhook for
+	3 more times after
 </p>
 
 <ul>

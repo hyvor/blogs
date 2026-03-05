@@ -13,7 +13,7 @@
 	import type { Tag as TagType } from '../../../../../../../lib/types';
 	import { createTag, getTags, searchTags } from '../../../../../settings/tags/tagActions';
 	import IconPlus from '@hyvor/icons/IconPlus';
-import IconLock from '@hyvor/icons/IconLock';
+	import IconLock from '@hyvor/icons/IconLock';
 
 	import TagName from '../../../../../settings/tags/TagName.svelte';
 
@@ -108,10 +108,10 @@ import IconLock from '@hyvor/icons/IconLock';
 							<TagName {tag} small />
 						</Tag>
 						{#snippet end()}
-												<Text  small light>
+							<Text small light>
 								{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
 							</Text>
-											{/snippet}
+						{/snippet}
 					</ActionListItem>
 				{/each}
 
@@ -124,8 +124,8 @@ import IconLock from '@hyvor/icons/IconLock';
 							on:click={handleCreateTag}
 						>
 							{#snippet start()}
-														<IconPlus size={15}  />
-													{/snippet}
+								<IconPlus size={15} />
+							{/snippet}
 							Create tag&nbsp;<b>{search}</b>
 							{#if createPrivate}
 								<IconLock size={12} style="margin-left:4px;" />

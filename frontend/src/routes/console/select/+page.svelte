@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
-	import { authUserStore, blogListStore } from '../lib/stores';
+	import { blogListStore } from '../lib/stores';
 	import IconCaretLeft from '@hyvor/icons/IconCaretLeft';
 	import IconCaretRight from '@hyvor/icons/IconCaretRight';
 	import IconGripVertical from '@hyvor/icons/IconGripVertical';
@@ -76,7 +76,7 @@
 		currentDragger = null;
 	}
 
-	$: currentDragger, dragDisabled, positionDragNote();
+	$: (currentDragger, dragDisabled, positionDragNote());
 
 	function positionDragNote() {
 		if (!dragNoteEl) return;

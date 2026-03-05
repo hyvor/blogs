@@ -1,53 +1,43 @@
 <script lang="ts">
-	import { Tag, TextInput } from "@hyvor/design/components";
+	import { Tag, TextInput } from '@hyvor/design/components';
 	import IconCheck from '@hyvor/icons/IconCheck';
-import IconLock from '@hyvor/icons/IconLock';
+	import IconLock from '@hyvor/icons/IconLock';
 
-	import CheckFeatures from "../../@components/CheckFeatures.svelte";
+	import CheckFeatures from '../../@components/CheckFeatures.svelte';
 
-    interface Props {
-        name: string;
-        domain: string;
-        features: string[];
-        children?: import('svelte').Snippet;
-    }
+	interface Props {
+		name: string;
+		domain: string;
+		features: string[];
+		children?: import('svelte').Snippet;
+	}
 
-    let {
-        name,
-        domain,
-        features,
-        children
-    }: Props = $props();
-
+	let { name, domain, features, children }: Props = $props();
 </script>
 
-
 <div class="type hds-box">
-    <div class="top">
-        <span class="name">{name}</span>
-        <Tag color="blue">{domain}</Tag>
-    </div>
+	<div class="top">
+		<span class="name">{name}</span>
+		<Tag color="blue">{domain}</Tag>
+	</div>
 
-    <CheckFeatures {features} />
+	<CheckFeatures {features} />
 
-    {@render children?.()}
-
+	{@render children?.()}
 </div>
 
 <style lang="scss">
+	.type {
+		padding: 20px 25px;
+	}
 
-    .type {
-        padding: 20px 25px;
-    }
-
-    .top {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .name {
-        font-weight: 600;
-        font-size: 18px;
-    }
-
+	.top {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+	.name {
+		font-weight: 600;
+		font-size: 18px;
+	}
 </style>

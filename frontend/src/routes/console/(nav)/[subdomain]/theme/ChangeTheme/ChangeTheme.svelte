@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { Button } from "@hyvor/design/components";
-	import SelectThemeModal from "./SelectThemeModal.svelte";
-    
-    let show = $state(false);
+	import { Button } from '@hyvor/design/components';
+	import SelectThemeModal from './SelectThemeModal.svelte';
+
+	let show = $state(false);
 </script>
 
-<Button 
-    size="small"
-    on:click={() => show = true}
->
-    Change
-</Button>
-
+<Button size="small" on:click={() => (show = true)}>Change</Button>
 
 {#if show}
-    <SelectThemeModal bind:show={show} />
+	<SelectThemeModal bind:show />
 {/if}

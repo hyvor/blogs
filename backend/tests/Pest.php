@@ -5,8 +5,11 @@ use App\Models\Blog;
 use App\Models\User;
 use Faker\Factory;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
@@ -19,8 +22,15 @@ uses()->beforeEach(function () {
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
     // reset userbase
-    AuthFake::enable(['id' => 1]);
-    BillingFake::enable(license: new BlogsLicense());
+    AuthFake::enable(
+        ['id' => 1],
+        new AuthUserOrganization(
+            id: 1,
+            name: 'Fake Organization',
+            role: 'admin'
+        )
+    );
+    BillingFake::enable([1 => new ResolvedLicense(ResolvedLicenseType::TRIAL, BlogsLicense::trial())]);
 
     Cache::flush();
 
