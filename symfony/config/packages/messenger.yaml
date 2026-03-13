@@ -18,3 +18,4 @@ when@test:
             transports:
                 async: "test://"
                 failed: "test://"
+                scheduler_default: "test://"
