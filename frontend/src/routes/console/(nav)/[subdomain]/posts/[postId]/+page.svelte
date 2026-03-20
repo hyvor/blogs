@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { IconButton, Loader } from '@hyvor/design/components';
 	import { scale } from 'svelte/transition';
 	import consoleApi from '../../../../lib/consoleApi';
@@ -31,7 +31,7 @@
 	function getLangIdFromUrl() {
 		if ($languagesStore.length === 0) return null;
 
-		const languageCode = $page.url.searchParams.get('lang')?.trim().toLowerCase();
+		const languageCode = page.url.searchParams.get('lang')?.trim().toLowerCase();
 		if (!languageCode) return null;
 
 		const selectedLanguage = $languagesStore.find(
@@ -45,7 +45,7 @@
 	}
 
 	$effect(() => {
-		const postId = $page.params.postId;
+		const postId = page.params.postId;
 		if (!postId) return;
 
 		activeRequest?.abort();
