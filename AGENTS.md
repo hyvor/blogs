@@ -10,6 +10,7 @@
 
 - Keep repositories empty, always use services.
 - Do not DI repositories, instead DI EntityMangerInterface and get the repository.
+- Prefer ClockAwareTrait and $this->now() instead of new DateTimeImmutable() for better testability.
 
 ## Commands
 

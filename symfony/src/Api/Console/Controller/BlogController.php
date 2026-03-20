@@ -49,7 +49,7 @@ class BlogController
             }
         }
 
-        $blogUser = $this->blogService->createBlog(
+        $owner = $this->blogService->createBlog(
             $user->id,
             $org->id,
             $input->name,
@@ -58,7 +58,9 @@ class BlogController
             $request->getClientIp(),
         );
 
-        return new JsonResponse($this->blogListObjectFactory->create($blogUser), 201);
+        assert($owner !== null);
+
+        return new JsonResponse($this->blogListObjectFactory->create($owner), 201);
     }
 
     #[Route('/blog/check-subdomain', methods: ['GET'])]
