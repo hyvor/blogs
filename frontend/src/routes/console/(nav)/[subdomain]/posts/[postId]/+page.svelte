@@ -28,20 +28,20 @@
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
 	let activeRequest: AbortController | null = null;
 
-	function syncLanguageFromUrl() {
-		if (!$postEditingStatusStore || $languagesStore.length === 0) return;
+	function getLangIdFromUrl() {
+		if ($languagesStore.length === 0) return null;
 
 		const languageCode = $page.url.searchParams.get('lang')?.trim().toLowerCase();
-		if (!languageCode) return;
+		if (!languageCode) return null;
 
 		const selectedLanguage = $languagesStore.find(
 			(language) => language.code.toLowerCase() === languageCode
 		);
-		if (!selectedLanguage) return;
+		if (!selectedLanguage) return null;
 
-		if ($postEditingStatusStore?.languageId === selectedLanguage.id) return;
+        console.log(selectedLanguage);
 
-		updatePostEditingStatusValue('languageId', selectedLanguage.id);
+        return selectedLanguage.id;
 	}
 
 	$effect(() => {
@@ -60,8 +60,7 @@
 			.then((res) => {
 				setPostAndPostOriginalStore(res);
 				if (postView) {
-					initPostEditingState(postView);
-					syncLanguageFromUrl();
+					initPostEditingState(postView, getLangIdFromUrl());
 				}
 				initEditorEventHandlers();
 
@@ -80,10 +79,6 @@
 			linkAnalysisLoaderUnsubscriber?.();
 			linkAnalysisLoaderUnsubscriber = null;
 		};
-	});
-
-	$effect(() => {
-		syncLanguageFromUrl();
 	});
 
 	function getBackUrl() {
