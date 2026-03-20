@@ -4,7 +4,13 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from '../../../../lib/consoleApi';
 	import type { Post } from '../../../../lib/types';
-	import { initPostEditingState, setPostAndPostOriginalStore, postStore } from '../postStore';
+	import {
+		initPostEditingState,
+		postEditingStatusStore,
+		postStore,
+		setPostAndPostOriginalStore,
+		updatePostEditingStatusValue
+	} from '../postStore';
 	import PostBody from './Body/PostBody.svelte';
 	import PostSidebar from './Sidebar/PostSidebar.svelte';
 	import { blogStore } from '../../../../lib/stores/blogStore';
@@ -14,12 +20,29 @@
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import type { Unsubscriber } from 'svelte/store';
 	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
+	import { languagesStore } from '../../../../lib/stores/languagesStore';
 
 	let isLoading = $state(true);
 
 	let postView: HTMLDivElement | undefined = $state();
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
 	let activeRequest: AbortController | null = null;
+
+	function syncLanguageFromUrl() {
+		if (!$postEditingStatusStore || $languagesStore.length === 0) return;
+
+		const languageCode = $page.url.searchParams.get('lang')?.trim().toLowerCase();
+		if (!languageCode) return;
+
+		const selectedLanguage = $languagesStore.find(
+			(language) => language.code.toLowerCase() === languageCode
+		);
+		if (!selectedLanguage) return;
+
+		if ($postEditingStatusStore?.languageId === selectedLanguage.id) return;
+
+		updatePostEditingStatusValue('languageId', selectedLanguage.id);
+	}
 
 	$effect(() => {
 		const postId = $page.params.postId;
@@ -38,6 +61,7 @@
 				setPostAndPostOriginalStore(res);
 				if (postView) {
 					initPostEditingState(postView);
+					syncLanguageFromUrl();
 				}
 				initEditorEventHandlers();
 
@@ -56,6 +80,10 @@
 			linkAnalysisLoaderUnsubscriber?.();
 			linkAnalysisLoaderUnsubscriber = null;
 		};
+	});
+
+	$effect(() => {
+		syncLanguageFromUrl();
 	});
 
 	function getBackUrl() {
