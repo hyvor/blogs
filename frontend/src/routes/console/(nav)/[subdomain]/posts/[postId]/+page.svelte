@@ -4,16 +4,9 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from '../../../../lib/consoleApi';
 	import type { Post } from '../../../../lib/types';
-	import {
-		initPostEditingState,
-		postEditingStatusStore,
-		postStore,
-		setPostAndPostOriginalStore,
-		updatePostEditingStatusValue
-	} from '../postStore';
+	import { initPostEditingState, postStore, setPostAndPostOriginalStore } from '../postStore';
 	import PostBody from './Body/PostBody.svelte';
 	import PostSidebar from './Sidebar/PostSidebar.svelte';
-	import { blogStore } from '../../../../lib/stores/blogStore';
 	import IconCaretLeftFill from '@hyvor/icons/IconCaretLeftFill';
 	import { initEditorEventHandlers } from './Body/Editor/editorEvents';
 	import { isTempStore } from '../../../../lib/temp';
@@ -28,20 +21,17 @@
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
 	let activeRequest: AbortController | null = null;
 
-	function getLangIdFromUrl() {
-		if ($languagesStore.length === 0) return null;
+	function getInitialLanguageId() {
+		const primaryId = $languagesStore.find((language) => language.is_primary)!.id;
 
-		const languageCode = page.url.searchParams.get('lang')?.trim().toLowerCase();
-		if (!languageCode) return null;
-
-		const selectedLanguage = $languagesStore.find(
-			(language) => language.code.toLowerCase() === languageCode
+		const languageCodeFromUrl = page.url.searchParams.get('lang')?.trim().toLowerCase();
+		const languageFromUrl = $languagesStore.find(
+			(l) => l.code.toLowerCase() === languageCodeFromUrl
 		);
-		if (!selectedLanguage) return null;
 
-        console.log(selectedLanguage);
+		if (languageFromUrl) return languageFromUrl.id;
 
-        return selectedLanguage.id;
+		return primaryId;
 	}
 
 	$effect(() => {
@@ -60,7 +50,7 @@
 			.then((res) => {
 				setPostAndPostOriginalStore(res);
 				if (postView) {
-					initPostEditingState(postView, getLangIdFromUrl());
+					initPostEditingState(postView, getInitialLanguageId());
 				}
 				initEditorEventHandlers();
 
