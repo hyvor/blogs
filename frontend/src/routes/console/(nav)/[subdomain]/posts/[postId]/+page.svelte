@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { IconButton, Loader } from '@hyvor/design/components';
 	import { scale } from 'svelte/transition';
 	import consoleApi from '../../../../lib/consoleApi';
 	import type { Post } from '../../../../lib/types';
-	import { initPostEditingState, setPostAndPostOriginalStore, postStore } from '../postStore';
+	import { initPostEditingState, postStore, setPostAndPostOriginalStore } from '../postStore';
 	import PostBody from './Body/PostBody.svelte';
 	import PostSidebar from './Sidebar/PostSidebar.svelte';
-	import { blogStore } from '../../../../lib/stores/blogStore';
 	import IconCaretLeftFill from '@hyvor/icons/IconCaretLeftFill';
 	import { initEditorEventHandlers } from './Body/Editor/editorEvents';
 	import { isTempStore } from '../../../../lib/temp';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import type { Unsubscriber } from 'svelte/store';
 	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
+	import { languagesStore } from '../../../../lib/stores/languagesStore';
 
 	let isLoading = $state(true);
 
@@ -21,8 +21,21 @@
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
 	let activeRequest: AbortController | null = null;
 
+	function getInitialLanguageId() {
+		const primaryId = $languagesStore.find((language) => language.is_primary)!.id;
+
+		const languageCodeFromUrl = page.url.searchParams.get('lang')?.trim().toLowerCase();
+		const languageFromUrl = $languagesStore.find(
+			(l) => l.code.toLowerCase() === languageCodeFromUrl
+		);
+
+		if (languageFromUrl) return languageFromUrl.id;
+
+		return primaryId;
+	}
+
 	$effect(() => {
-		const postId = $page.params.postId;
+		const postId = page.params.postId;
 		if (!postId) return;
 
 		activeRequest?.abort();
@@ -37,7 +50,7 @@
 			.then((res) => {
 				setPostAndPostOriginalStore(res);
 				if (postView) {
-					initPostEditingState(postView);
+					initPostEditingState(postView, getInitialLanguageId());
 				}
 				initEditorEventHandlers();
 

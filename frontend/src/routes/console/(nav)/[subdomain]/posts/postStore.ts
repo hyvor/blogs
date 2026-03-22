@@ -23,9 +23,9 @@ export interface PostEditingStatus {
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
 
-export function initPostEditingState(postView: HTMLDivElement) {
+export function initPostEditingState(postView: HTMLDivElement, langId: number) {
 	postEditingStatusStore.set({
-		languageId: get(languagesStore).find((l) => l.is_primary === true)!.id,
+		languageId: langId,
 		sidebar: 'settings',
 		isEditingPublished: false,
 		editorView: null,

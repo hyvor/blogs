@@ -2,5 +2,7 @@ Getting started (within the Docker container):
 
 ```bash
 cp .env.dev .env
-php artisan refresh:dev
+
+cd /app/symfony && bin/console dev:reset && \
+  cd /app/backend && php artisan db:seed
 ```
