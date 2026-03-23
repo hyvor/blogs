@@ -11,7 +11,7 @@
 		<p><b>Requirements</b>:</p>
 		<ul>
 			<li>
-				a <a href="https://hyvor.com/login">HYVOR account</a>. This is the same account you used for
+				a <a href="https://hyvor.com/login">HYVOR account</a>. This is the same account you used to
 				create a blog at Hyvor Blogs
 			</li>
 			<li>a <a href="/pricing">subscription</a> for Hyvor Blogs</li>
@@ -24,13 +24,13 @@
 		<li>Click on <b>Connect Hyvor Talk</b></li>
 		<DocsImage src={connectHyvorTalkImg} alt="Connect Hyvor Talk" />
 		<p>
-			Then it will generate you a code snippet as shown above. There are two methods you can try to
-			add this code for this integration.
+			Then it will generate a code snippet for you as shown above. There are two methods you can use to
+			complete this integration.
 		</p>
 		<ol>
 			<li>Click "<b>Add to "Comments Embed Code"</b>".</li>
 			<li>
-				Copy the code and paste it on "<b>Comments Embed Code</b>", then click <b>Save</b>.
+				Copy the code and paste it in "<b>Comments Embed Code</b>", then click <b>Save</b>.
 			</li>
 		</ol>
 		<DocsImage src={pasteCodeImg} alt="Paste Code" />
