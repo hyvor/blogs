@@ -7,10 +7,10 @@
 		Button,
 		Dropdown,
 		LoadButton,
+		Loader,
 		Switch,
 		TextInput,
-		toast,
-		Validation
+		toast
 	} from '@hyvor/design/components';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import type { Blog } from '../types';
@@ -30,6 +30,8 @@
 	let sortAsc = $state(false);
 	let sortsDropdownShow = $state(false);
 
+	let loading = $state(false);
+	let loadingMore = $state(false);
 	let hasMore = $state(false);
 
 	// Search
@@ -41,10 +43,15 @@
 	};
 	let searchBy: keyof SearchByType = $state('blog_id');
 	let search = $state('');
-	let searchError = $state('');
 	let byShow = $state(false);
 
 	function load(more = false) {
+		if (more) {
+			loadingMore = true;
+		} else {
+			loading = true;
+		}
+
 		sudoApi
 			.get<Blog[]>({
 				endpoint: '/blogs',
@@ -57,6 +64,8 @@
 			.then((res) => {
 				data = more ? [...data, ...res] : res;
 				hasMore = res.length === LIMIT;
+				loading = false;
+				loadingMore = false;
 			});
 	}
 
@@ -72,11 +81,9 @@
 	}
 
 	function searchAction() {
-		searchError = '';
 		search = search.trim();
 
 		if (search === '') {
-			searchError = 'Search field is required';
 			return;
 		}
 
@@ -102,8 +109,35 @@
 	onMount(load);
 </script>
 
-<div class="wrap">
-	<div class="top">
+<div class="header">
+	<div class="search-section">
+		<TextInput
+			size="small"
+			bind:value={search}
+			placeholder="Search by {SEARCH_BY[searchBy]}..."
+			onkeyup={(e) => e.key === 'Enter' && searchAction()}
+		/>
+		<Dropdown bind:show={byShow}>
+			{#snippet trigger()}
+				<Button size="small" color="input">
+					{SEARCH_BY[searchBy]}
+					{#snippet end()}
+						<IconCaretDown size={12} />
+					{/snippet}
+				</Button>
+			{/snippet}
+			{#snippet content()}
+				<ActionList>
+					<ActionListGroup>
+						{#each Object.entries(SEARCH_BY) as [key, value]}
+							<ActionListItem on:select={() => onByChange(key)}>{value}</ActionListItem>
+						{/each}
+					</ActionListGroup>
+				</ActionList>
+			{/snippet}
+		</Dropdown>
+	</div>
+	<div class="sort-section">
 		<Dropdown bind:show={sortsDropdownShow}>
 			{#snippet trigger()}
 				<Button color="input" size="small">
@@ -123,76 +157,58 @@
 		</Dropdown>
 		<Switch bind:checked={sortAsc} on:change={() => load()}>Ascending</Switch>
 	</div>
+</div>
 
-	<div class="list">
+<div class="wrap">
+	{#if loading}
+		<Loader padding={100} block />
+	{:else}
+		<div class="column-headers">
+			<span>ID</span>
+			<span>Blog</span>
+			<span>Type</span>
+			<span>Hosting URL</span>
+		</div>
 		{#each data as blog}
 			<BlogRow {blog} />
 		{/each}
-
-		<LoadButton text="Load more" loading={false} show={hasMore} on:click={() => load(true)} />
-	</div>
-</div>
-
-<div class="search-bar">
-	<TextInput
-		size="small"
-		bind:value={search}
-		placeholder="Search"
-		state={searchError ? 'error' : undefined}
-		on:keyup={(e) => e.key === 'Enter' && searchAction()}
-	/>
-
-	<Dropdown position="top" align="center" bind:show={byShow}>
-		{#snippet trigger()}
-			<Button size="small" color="input">
-				{SEARCH_BY[searchBy]}
-				{#snippet end()}
-					<IconCaretDown size={12} />
-				{/snippet}
-			</Button>
-		{/snippet}
-
-		{#snippet content()}
-			<ActionList>
-				<ActionListGroup>
-					{#each Object.entries(SEARCH_BY) as [key, value]}
-						<ActionListItem on:select={() => onByChange(key)}>{value}</ActionListItem>
-					{/each}
-				</ActionListGroup>
-			</ActionList>
-		{/snippet}
-	</Dropdown>
-
-	<Button size="small" on:click={searchAction}>Search</Button>
-
-	{#if searchError}
-		<div style="margin-top:10px;">
-			<Validation state="error" style="display:inline-flex">{searchError}</Validation>
-		</div>
+		<LoadButton text="Load more" loading={loadingMore} show={hasMore} on:click={() => load(true)} />
 	{/if}
 </div>
 
 <style>
+	.header {
+		padding: 20px;
+		border-bottom: 1px solid var(--border);
+		display: grid;
+		grid-template-columns: minmax(100px, 400px) 1fr;
+		gap: 20px;
+		align-items: center;
+	}
+	.search-section {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+	.sort-section {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		justify-content: flex-end;
+	}
 	.wrap {
-		padding: 30px;
+		padding: 20px;
 		flex: 1;
 		overflow: auto;
 	}
-	.top {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		margin-bottom: 20px;
-	}
-	.list {
-		padding: 5px 0;
-	}
-	.search-bar {
-		padding: 15px 25px;
-		text-align: center;
-		border-top: 1px solid var(--border);
-	}
-	.search-bar :global(input) {
-		width: 250px;
+	.column-headers {
+		display: grid;
+		padding: 10px 25px;
+		grid-template-columns: 60px 1fr 100px 1fr;
+		font-size: 10px;
+		color: var(--text-light);
+		text-transform: uppercase;
+		position: sticky;
+		top: 0;
 	}
 </style>

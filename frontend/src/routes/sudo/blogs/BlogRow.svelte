@@ -1,13 +1,5 @@
 <script lang="ts">
-	import { Tag, toast } from '@hyvor/design/components';
 	import type { Blog } from '../types';
-
-	function copyId(e: any) {
-		e.preventDefault();
-		e.stopPropagation();
-		navigator.clipboard.writeText(blog.id.toString());
-		toast.success('ID copied to clipboard');
-	}
 
 	interface Props {
 		blog: Blog;
@@ -26,63 +18,60 @@
 	}
 </script>
 
-<a class="blog" href={`/sudo/blogs/${blog.id}`}>
-	<div class="id">
-		<Tag interactive on:click={copyId}>
-			ID: {blog.id}
-		</Tag>
-	</div>
-
-	<div class="blog-name">
-		{blog.variants[0]?.name || 'No name'}
-	</div>
-
-	<div class="blog-name">
-		{blog.variants[0]?.description || 'No description'}
-	</div>
-
+<a class="row" href={`/sudo/blogs/${blog.id}`}>
+	<div class="id">#{blog.id}</div>
 	<div class="blog-info">
-		Type: {blog.type || '-'}
+		<div class="blog-name">
+			{blog.variants[0]?.name || 'No name'}
+		</div>
+		<div class="blog-description">
+			{blog.variants[0]?.description || 'No description'}
+		</div>
+		<div class="blog-subdomain">
+			{blog.subdomain}
+		</div>
 	</div>
-
+	<div class="type">
+		{blog.type || '-'}
+	</div>
 	<div class="hosting">
-		<span>URL</span>
 		{getHostingUrl(blog)}
 	</div>
 </a>
 
 <style>
-	.blog {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 5px 15px;
+	.row {
+		display: grid;
+		padding: 10px 25px;
 		border-radius: 20px;
+		cursor: pointer;
+		grid-template-columns: 60px 1fr 100px 1fr;
+		align-items: start;
 		font-size: 14px;
-		flex: 1;
 	}
-	.blog:hover {
+	.row:hover {
 		background-color: var(--hover);
 	}
 	.id {
-		width: 100px;
-	}
-	.hosting {
-		flex: 1;
-		font-size: 14px;
-	}
-	.hosting span {
-		display: block;
-		font-weight: bold;
-		margin-bottom: 4px;
+		font-size: 12px;
+		color: var(--text-light);
+		font-weight: 600;
+		padding-top: 2px;
 	}
 	.blog-name {
-		width: 200px;
+		font-weight: 600;
+	}
+	.blog-description {
+		color: var(--text-light);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	.blog-info {
-		width: 100px;
+	.blog-subdomain {
+		font-size: 12px;
+		color: var(--text-light);
+	}
+	.hosting {
+		word-break: break-all;
 	}
 </style>
