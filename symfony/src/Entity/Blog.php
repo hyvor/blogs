@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Repository\BlogRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
@@ -15,6 +17,10 @@ class Blog
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
+
+    /** @var Collection<int, BlogVariant> */
+    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
+    private Collection $variants;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $created_at = null;
@@ -292,5 +298,18 @@ class Blog
     {
         $this->organization_id = $organization_id;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, BlogVariant>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
+    }
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
     }
 }
