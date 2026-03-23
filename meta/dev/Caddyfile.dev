@@ -39,6 +39,8 @@
 
         path /api/console/v0/blog/*/webhooks
         path /api/console/v0/blog/*/webhook/*
+        
+        path /.well-known/acme-challenge/*
     }
     handle @symfony {
         root /app/symfony/public

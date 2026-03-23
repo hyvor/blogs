@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\TlsCertificateStatus;
 use App\Entity\TlsCertificate;
+use App\Service\TlsCertificate\Acme\AcmeClient;
 use App\Service\TlsCertificate\Message\GeneratePendingTlsCertificatesMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -18,6 +19,7 @@ class GeneratePendingTlsCertifactesMessageHandler
 
     public function __construct(
         private EntityManagerInterface $em,
+        private AcmeClient $acmeClient,
     )
     {
     }
@@ -66,5 +68,6 @@ class GeneratePendingTlsCertifactesMessageHandler
     private function generateTlsCertificate(TlsCertificate $tlsCertificate): void
     {
         // TODO: implement certificate generation
+        $this->acmeClient->init();
     }
 }
