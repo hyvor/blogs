@@ -13,12 +13,13 @@
 		toast
 	} from '@hyvor/design/components';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-	import type { Blog } from '../types';
+	import type { Blog, Organization } from '../types';
 	import sudoApi from '../lib/sudoApi';
 	import BlogRow from './BlogRow.svelte';
 	import { goto } from '$app/navigation';
 
 	let data: Blog[] = $state([]);
+	let orgsMap: Map<number, Organization> = $state(new Map());
 
 	const SORTS = {
 		id: 'ID'
@@ -53,7 +54,7 @@
 		}
 
 		sudoApi
-			.get<Blog[]>({
+			.get<{ blogs: Blog[]; orgs: Organization[] }>({
 				endpoint: '/blogs',
 				data: {
 					limit: LIMIT,
@@ -62,8 +63,13 @@
 				}
 			})
 			.then((res) => {
-				data = more ? [...data, ...res] : res;
-				hasMore = res.length === LIMIT;
+				data = more ? [...data, ...res.blogs] : res.blogs;
+				const newMap = more ? new Map(orgsMap) : new Map<number, Organization>();
+				for (const org of res.orgs) {
+					newMap.set(org.id, org);
+				}
+				orgsMap = newMap;
+				hasMore = res.blogs.length === LIMIT;
 				loading = false;
 				loadingMore = false;
 			});
@@ -88,18 +94,18 @@
 		}
 
 		sudoApi
-			.get<Blog[]>({
+			.get<{ blogs: Blog[]; orgs: Organization[] }>({
 				endpoint: '/blogs',
 				data: {
 					[searchBy]: search
 				}
 			})
 			.then((res) => {
-				if (res.length === 0) {
+				if (res.blogs.length === 0) {
 					toast.error('Blog not found for ' + SEARCH_BY[searchBy] + ': ' + search);
 					return;
 				}
-				goto(`/sudo/blogs/${res[0].id}`);
+				goto(`/sudo/blogs/${res.blogs[0]!.id}`);
 			})
 			.catch((err) => {
 				toast.error(err.message);
@@ -166,11 +172,12 @@
 		<div class="column-headers">
 			<span>ID</span>
 			<span>Blog</span>
+			<span>Organization</span>
 			<span>Type</span>
 			<span>Hosting URL</span>
 		</div>
 		{#each data as blog}
-			<BlogRow {blog} />
+			<BlogRow {blog} org={blog.organization_id ? orgsMap.get(blog.organization_id) ?? null : null} />
 		{/each}
 		<LoadButton text="Load more" loading={loadingMore} show={hasMore} on:click={() => load(true)} />
 	{/if}
@@ -204,7 +211,7 @@
 	.column-headers {
 		display: grid;
 		padding: 10px 25px;
-		grid-template-columns: 60px 1fr 100px 1fr;
+		grid-template-columns: 60px 1fr 150px 100px 1fr;
 		font-size: 10px;
 		color: var(--text-light);
 		text-transform: uppercase;

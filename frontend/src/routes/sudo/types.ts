@@ -18,6 +18,11 @@ export interface BlogVariant {
 	description: string | null;
 }
 
+export interface Organization {
+	id: number;
+	name: string;
+}
+
 export interface Blog {
 	id: number;
 	created_at: number;

@@ -5,6 +5,7 @@ namespace App\Api\Sudo\Controller;
 use App\Api\Sudo\Input\BlogListInput;
 use App\Api\Sudo\Service\SudoAnalyticsService;
 use App\Entity\Blog;
+use Hyvor\Internal\Auth\AuthInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Api\SudoObject\SudoObjectFactory;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -19,6 +20,7 @@ class BlogController extends AbstractController
         private EntityManagerInterface $entityManager,
         private SudoObjectFactory $sudoObjectFactory,
         private SudoAnalyticsService $analyticsService,
+        private AuthInterface $auth,
     ) {
     }
 
@@ -63,15 +65,28 @@ class BlogController extends AbstractController
 
         $blogs = $qb->getQuery()->getResult();
 
-        return new JsonResponse(
-            array_map(
+        $organizationIds = array_values(array_unique(array_filter(
+            array_map(fn(Blog $blog) => $blog->getOrganizationId(), $blogs),
+        )));
+
+        $orgs = $this->auth->organizations($organizationIds);
+
+        return new JsonResponse([
+            'blogs' => array_map(
                 fn(Blog $blog) => $this->sudoObjectFactory->create(
                     $blog,
                     [Blog::class => ['variants']],
                 ),
                 $blogs,
             ),
-        );
+            'orgs' => array_values(array_map(
+                fn($org) => [
+                    'id' => $org->getId(),
+                    'name' => $org->getName(),
+                ],
+                $orgs,
+            )),
+        ]);
     }
 
     #[Route('/blogs/{id}', methods: 'GET')]

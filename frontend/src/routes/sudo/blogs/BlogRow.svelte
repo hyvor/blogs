@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { Blog } from '../types';
+	import type { Blog, Organization } from '../types';
 
 	interface Props {
 		blog: Blog;
+		org: Organization | null;
 	}
 
-	let { blog }: Props = $props();
+	let { blog, org }: Props = $props();
 
 	function getHostingUrl(blog: Blog): string {
 		if (blog.hosting_at === 'domain' && blog.hosting_domain) {
@@ -31,6 +32,13 @@
 			{blog.subdomain}
 		</div>
 	</div>
+	<div class="org">
+		{#if org}
+			{org.name}
+		{:else}
+			<span class="no-org">-</span>
+		{/if}
+	</div>
 	<div class="type">
 		{blog.type || '-'}
 	</div>
@@ -45,7 +53,7 @@
 		padding: 10px 25px;
 		border-radius: 20px;
 		cursor: pointer;
-		grid-template-columns: 60px 1fr 100px 1fr;
+		grid-template-columns: 60px 1fr 150px 100px 1fr;
 		align-items: start;
 		font-size: 14px;
 	}
@@ -69,6 +77,15 @@
 	}
 	.blog-subdomain {
 		font-size: 12px;
+		color: var(--text-light);
+	}
+	.org {
+		font-size: 13px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.no-org {
 		color: var(--text-light);
 	}
 	.hosting {
