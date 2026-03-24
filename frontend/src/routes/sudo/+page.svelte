@@ -50,7 +50,9 @@
 				class:positive={data.blogs.total_30_days_change >= 0}
 				class:negative={data.blogs.total_30_days_change < 0}
 			>
-				{data.blogs.total_30_days_change >= 0 ? '+' : ''}{data.blogs.total_30_days_change.toLocaleString()}
+				{data.blogs.total_30_days_change >= 0
+					? '+'
+					: ''}{data.blogs.total_30_days_change.toLocaleString()}
 				<span class="change-label">30d</span>
 			</div>
 		</div>

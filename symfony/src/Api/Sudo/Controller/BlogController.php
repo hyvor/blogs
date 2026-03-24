@@ -63,6 +63,7 @@ class BlogController extends AbstractController
             $qb->andWhere('b.hyvor_user_id = :user_id')->setParameter('user_id', $input->user_id);
         }
 
+        /** @var Blog[] $blogs */
         $blogs = $qb->getQuery()->getResult();
 
         $organizationIds = array_values(array_unique(array_filter(

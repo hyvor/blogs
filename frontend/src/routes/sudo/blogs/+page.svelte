@@ -177,7 +177,10 @@
 			<span>Hosting URL</span>
 		</div>
 		{#each data as blog}
-			<BlogRow {blog} org={blog.organization_id ? orgsMap.get(blog.organization_id) ?? null : null} />
+			<BlogRow
+				{blog}
+				org={blog.organization_id ? (orgsMap.get(blog.organization_id) ?? null) : null}
+			/>
 		{/each}
 		<LoadButton text="Load more" loading={loadingMore} show={hasMore} on:click={() => load(true)} />
 	{/if}

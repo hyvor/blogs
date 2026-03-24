@@ -16,28 +16,37 @@ class SudoAnalyticsService
 
     public function getBlogTotal(): int
     {
-        return (int) $this->entityManager->getConnection()
+        /** @var numeric-string|int|false $count */
+        $count = $this->entityManager->getConnection()
             ->executeQuery('SELECT COUNT(*) FROM blogs')
             ->fetchOne();
+
+        return (int) $count;
     }
 
     public function getBlog30DaysChange(): int
     {
         $date = $this->now()->modify('-30 days')->format('Y-m-d H:i:s');
 
-        return (int) $this->entityManager->getConnection()
+        /** @var numeric-string|int|false $count */
+        $count = $this->entityManager->getConnection()
             ->executeQuery(
                 'SELECT COUNT(*) FROM blogs WHERE created_at > :date',
                 ['date' => $date]
             )
             ->fetchOne();
+
+        return (int) $count;
     }
 
     public function getBlogsWithCustomDomains(): int
     {
-        return (int) $this->entityManager->getConnection()
+        /** @var numeric-string|int|false $count */
+        $count = $this->entityManager->getConnection()
             ->executeQuery('SELECT COUNT(*) FROM blogs WHERE hosting_domain IS NOT NULL')
             ->fetchOne();
+
+        return (int) $count;
     }
 
     /**
@@ -56,6 +65,7 @@ class SudoAnalyticsService
 
         $result = [];
         foreach ($rows as $row) {
+            /** @var array{month: string, count: numeric-string|int} $row */
             $result[$row['month']] = (int) $row['count'];
         }
 
