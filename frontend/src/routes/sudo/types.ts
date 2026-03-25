@@ -21,6 +21,10 @@ export interface BlogVariant {
 export interface Organization {
 	id: number;
 	name: string;
+	billing_email: string | null;
+	billing_address: {
+		country: string | null;
+	} | null;
 }
 
 export interface Blog {

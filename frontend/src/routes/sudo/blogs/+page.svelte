@@ -214,7 +214,7 @@
 	.column-headers {
 		display: grid;
 		padding: 10px 25px;
-		grid-template-columns: 60px 1fr 150px 100px 1fr;
+		grid-template-columns: 60px 1fr 200px 100px 1fr;
 		font-size: 10px;
 		color: var(--text-light);
 		text-transform: uppercase;

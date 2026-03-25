@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { Button } from '@hyvor/design/components';
 	import type { Blog, Organization } from '../types';
+	import { flagByCountryCode } from '$lib/helpers/countryCode';
 
 	interface Props {
 		blog: Blog;
@@ -34,7 +36,28 @@
 	</div>
 	<div class="org">
 		{#if org}
-			{org.name}
+			<div class="org-name">
+				{org.name}
+
+				{#if org.billing_address?.country}
+					<span title={org.billing_address?.country}>
+						{flagByCountryCode(org.billing_address?.country)}
+					</span>
+				{/if}
+			</div>
+			<div class="org-email">
+				{org.billing_email}
+			</div>
+			<div class="view-button">
+				<Button
+					as="a"
+					href="/sudo/core/organizations/{org.id}"
+					size="x-small"
+					color="input"
+				>
+					Org &rarr;
+				</Button>
+			</div>
 		{:else}
 			<span class="no-org">-</span>
 		{/if}
@@ -53,7 +76,7 @@
 		padding: 10px 25px;
 		border-radius: 20px;
 		cursor: pointer;
-		grid-template-columns: 60px 1fr 150px 100px 1fr;
+		grid-template-columns: 60px 1fr 200px 100px 1fr;
 		align-items: start;
 		font-size: 14px;
 	}
@@ -81,9 +104,15 @@
 	}
 	.org {
 		font-size: 13px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+	}
+	.org-name {
+		font-weight: 600;
+	}
+	.org-email {
+		font-size: 14px;
+	}
+	.view-button {
+		margin-top: 3px;
 	}
 	.no-org {
 		color: var(--text-light);

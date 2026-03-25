@@ -84,6 +84,8 @@ class BlogController extends AbstractController
                 fn($org) => [
                     'id' => $org->getId(),
                     'name' => $org->getName(),
+                    'billing_email' => $org->getBillingEmail(),
+                    'billing_address' => $org->getBillingAddress(),
                 ],
                 $orgs,
             )),
