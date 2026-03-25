@@ -49,12 +49,7 @@
 				{org.billing_email}
 			</div>
 			<div class="view-button">
-				<Button
-					as="a"
-					href="/sudo/core/organizations/{org.id}"
-					size="x-small"
-					color="input"
-				>
+				<Button as="a" href="/sudo/core/organizations/{org.id}" size="x-small" color="input">
 					Org &rarr;
 				</Button>
 			</div>
