@@ -3,7 +3,9 @@
 namespace App\Service\TlsCertificate\MessageHandler;
 
 use App\Entity\TlsCertificate;
+use App\Service\TlsCertificate\Acme\AcmeException;
 use App\Service\TlsCertificate\Message\RegenerateExpiredTlsCertificatesMessage;
+use App\Service\TlsCertificate\TlsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -15,9 +17,8 @@ class RegenerateExpiredTlsCertificatesMessageHandler
 
     public function __construct(
         private EntityManagerInterface $em,
-    )
-    {
-    }
+        private TlsService $tlsService
+    ) {}
 
     public function __invoke(RegenerateExpiredTlsCertificatesMessage $message): void
     {
@@ -30,12 +31,11 @@ class RegenerateExpiredTlsCertificatesMessageHandler
             ->getResult();
 
         foreach ($expiredCerts as $tlsCertificate) {
-            $this->regenerateTlsCertificate($tlsCertificate);
+            try {
+                $this->tlsService->generateCertificate($tlsCertificate);
+            } catch (AcmeException) {
+                // Log the error and continue with the next certificate
+            }
         }
-    }
-
-    private function regenerateTlsCertificate(TlsCertificate $tlsCertificate): void
-    {
-        // TODO: implement certificate regeneration
     }
 }

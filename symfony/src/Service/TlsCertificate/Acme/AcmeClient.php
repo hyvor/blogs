@@ -5,6 +5,7 @@ namespace App\Service\TlsCertificate\Acme;
 use App\Service\TlsCertificate\Acme\Dto\AccountInternalDto;
 use App\Service\TlsCertificate\Acme\Dto\AuthorizationResponse\AuthorizationResponse;
 use App\Service\TlsCertificate\Acme\Dto\DirectoryDto;
+use App\Service\TlsCertificate\Acme\Dto\FinalCertificate;
 use App\Service\TlsCertificate\Acme\Dto\OrderResponse;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -34,7 +35,6 @@ class AcmeClient implements LoggerAwareInterface
         private CacheInterface $cache,
         private DenormalizerInterface $denormalizer,
         private ClockInterface $clock,
-//        private DnsResolveInterface $dnsResolve,
         #[Autowire('%kernel.environment%')]
         private string $env,
     ) {
@@ -186,6 +186,144 @@ class AcmeClient implements LoggerAwareInterface
     }
 
     /**
+     * @throws AcmeException
+     */
+    public function finalizeOrder(PendingOrder $order, \OpenSSLAsymmetricKey $privateKey): FinalCertificate
+    {
+        $this->verifyHttpChallenge($order);
+
+        $waitSeconds = 10;
+        $this->logger?->info(
+            "HTTP challenge verified, waiting $waitSeconds seconds before notifying ACME server"
+        );
+        $this->clock->sleep($waitSeconds);
+
+        // notify challenge is ready
+        $this->httpRequest($order->challengeUrl);
+        $this->logger?->info('Notified ACME server that challenge is ready, polling for authorization status');
+
+        // poll for authorization status
+        $maxAttempts = 10;
+        $attempt = 0;
+        do {
+            $attempt++;
+            $authorization = $this->httpRequest(
+                $order->authorizationUrl,
+                payload: "",
+                returnType: AuthorizationResponse::class
+            );
+            $this->clock->sleep(2 * $attempt);
+
+            if ($attempt > 1) {
+                $this->logger?->info('Still polling ACME server for authorization status', [
+                    'attempt' => $attempt,
+                    'status' => $authorization->status,
+                ]);
+            }
+        } while ($authorization->status === 'pending' && $attempt < $maxAttempts);
+
+        if ($authorization->status !== 'valid') {
+            throw new AcmeException('Authorization failed, status: ' . $authorization->status); // @codeCoverageIgnore
+        }
+
+        // Finalize order
+        $this->logger?->info('Authorization valid, proceeding to finalize order');
+        $csr = openssl_csr_new(['CN' => $order->domain], $privateKey, ['digest_alg' => 'sha256']);
+        if (!$csr instanceof \OpenSSLCertificateSigningRequest) {
+            throw new AcmeException('Failed to generate CSR: ' . openssl_error_string()); // @codeCoverageIgnore
+        }
+        openssl_csr_export($csr, $csrPem, false);
+        assert(is_string($csrPem));
+        $csrDer = $this->csrPemToDer($csrPem);
+
+        $payload = [
+            'csr' => $this->base64url($csrDer),
+        ];
+        $this->httpRequest($order->finalizeOrderUrl, $payload);
+
+        // At this point, the order is being processed by the ACME server.
+        // Poll the order URL until the certificate is ready to be downloaded.
+        $this->logger?->info('ACME client finalized order. Polling for order status to be "valid"');
+        $attempt = 0;
+        do {
+            $attempt++;
+            $response = $this->httpRequest($order->orderUrl, payload: "", returnType: OrderResponse::class);
+            $this->clock->sleep(2);
+            if ($attempt > 1) {
+                // @codeCoverageIgnoreStart
+                $this->logger?->info('Polling ACME server for order status', [
+                    'attempt' => $attempt,
+                    'status' => $response->status,
+                ]);
+                // @codeCoverageIgnoreEnd
+            }
+        } while (
+            (
+                $response->status === 'processing' ||
+                $response->status === 'pending'
+            ) &&
+            $attempt < $maxAttempts
+        );
+
+        if ($response->status !== 'valid') {
+            throw new AcmeException('Order finalization failed, status: ' . $response->status); // @codeCoverageIgnore
+        }
+
+        if (!$response->certificate) {
+            throw new AcmeException('No certificate URL returned from ACME server'); // @codeCoverageIgnore
+        }
+
+        // Download certificate
+        $this->logger?->info('Order is valid. Downloading certificate from ACME server');
+        $certPem = $this->httpRequest($response->certificate, payload: "", returnRawContent: true);
+
+        $this->logger?->info('Certificate downloaded successfully from ACME server');
+
+        return FinalCertificate::fromPem($certPem);
+    }
+
+    /**
+     * @throws AcmeException
+     */
+    private function verifyHttpChallenge(PendingOrder $order): void
+    {
+        $attempt = 0;
+        $maxAttempts = 3;
+        $sleepSeconds = 5;
+
+        while ($attempt < $maxAttempts) {
+            try {
+                $response = $this->http->request(
+                    'GET',
+                    'https://' . $order->domain . '/.well-known/acme-challenge/' . $order->token,
+                );
+                $resolvedKey = $response->getContent();
+
+                if ($resolvedKey === $order->keyAuthorization) {
+                    $this->logger?->info('HTTP challenge successfull, good to proceed');
+                    return;
+                }
+
+                $this->logger?->info(
+                    "HTTP challenge failed completed, waiting for {$sleepSeconds}s before retrying",
+                    [
+                        'attempt' => "$attempt/$maxAttempts",
+                        'domain' => $order->domain,
+                    ]
+                );
+
+                $attempt++;
+                $this->clock->sleep($sleepSeconds);
+                // @codeCoverageIgnoreStart
+            } catch (ExceptionInterface $e) {
+                throw new AcmeException('Failed to fetch response for HTTP challenge: ' . $e->getMessage());
+            }
+            // @codeCoverageIgnoreEnd
+        }
+        throw new AcmeException('HTTP challenge has failed after maximum attempts'); // @codeCoverageIgnore
+    }
+
+    /**
      * @param class-string<T> $returnType
      * @param array<string, mixed> $payload
      * @param 'POST'|'GET'|'HEAD' $method
@@ -213,6 +351,9 @@ class AcmeClient implements LoggerAwareInterface
             if ($method === 'POST') {
                 $options['json'] = $this->sign($payload, $url);
             }
+
+            $options['verify_peer'] = false;
+            $options['verify_host'] = false;
 
             $response = $this->http->request(
                 $method,
@@ -353,5 +494,14 @@ class AcmeClient implements LoggerAwareInterface
         }
 
         return $nonce;
+    }
+
+    private function csrPemToDer(string $pem): string
+    {
+        $begin = "-----BEGIN CERTIFICATE REQUEST-----";
+        $end = "-----END CERTIFICATE REQUEST-----";
+        $pem = substr($pem, strpos($pem, $begin) + strlen($begin));
+        $pem = substr($pem, 0, (int)strpos($pem, $end));
+        return base64_decode($pem);
     }
 }

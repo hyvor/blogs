@@ -1,6 +1,6 @@
 <?php
 
-namespace Api;
+namespace App\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\BrowserKit\Response;
