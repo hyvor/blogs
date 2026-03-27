@@ -38,11 +38,13 @@ class AcmeClient implements LoggerAwareInterface
         #[Autowire('%kernel.environment%')]
         private string $env,
     ) {
-        if ($this->env === 'prod') {
-            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_PRODUCTION; // @codeCoverageIgnore
-        } else {
-            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_STAGING;
-        }
+        // TODO: Fix before PROD
+//        if ($this->env === 'prod') {
+//            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_PRODUCTION; // @codeCoverageIgnore
+//        } else {
+//            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_STAGING;
+//        }
+        $this->directoryUrl = 'https://hyvor-blogs-pebble:14000/dir';
     }
 
     /**
@@ -352,6 +354,7 @@ class AcmeClient implements LoggerAwareInterface
                 $options['json'] = $this->sign($payload, $url);
             }
 
+            // TODO: REMOVE BEFORE PROD
             $options['verify_peer'] = false;
             $options['verify_host'] = false;
 

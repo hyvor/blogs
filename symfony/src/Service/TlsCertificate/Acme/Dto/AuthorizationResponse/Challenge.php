@@ -9,7 +9,7 @@ readonly class Challenge
          * @var string 'http-01'|'dns-01'|'tls-alpn-01'
          */
         public string $type,
-        public string $token,
+        public ?string $token,
         public string $url,
     ) {}
 }
