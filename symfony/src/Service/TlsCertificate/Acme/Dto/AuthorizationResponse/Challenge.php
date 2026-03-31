@@ -11,5 +11,9 @@ readonly class Challenge
         public string $type,
         public ?string $token,
         public string $url,
+        /**
+         * @var array<string, mixed>
+         */
+        public array $error = [],
     ) {}
 }

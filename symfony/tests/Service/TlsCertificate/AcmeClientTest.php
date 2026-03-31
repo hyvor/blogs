@@ -6,6 +6,7 @@ use App\Service\TlsCertificate\Acme\AcmeClient;
 use App\Service\TlsCertificate\Acme\PendingOrder;
 use App\Tests\Case\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversNamespace;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -135,6 +136,7 @@ class AcmeClientTest extends KernelTestCase
 //        );
 
         $client = $this->getService(AcmeClient::class);
+        $client->setLogger($this->getService(LoggerInterface::class));
         $client->init();
         $pendingOrder = $client->newOrder('custom-domain.localhost');
 //        $pendingOrder = $client->newOrder('myinstance.com');

@@ -176,6 +176,10 @@ class AcmeClient implements LoggerAwareInterface
         );
         $keyAuthorization = $httpChallenge->token . '.' . $thumbprint;
 
+        $this->cache->get('acme_challenge_' . $httpChallenge->token, function () use ($keyAuthorization) {
+            return $keyAuthorization;
+        });
+
         return new PendingOrder(
             domain: $domain,
             token: $httpChallenge->token,
@@ -212,7 +216,7 @@ class AcmeClient implements LoggerAwareInterface
             $authorization = $this->httpRequest(
                 $order->authorizationUrl,
                 payload: "",
-                returnType: AuthorizationResponse::class
+                returnType: AuthorizationResponse::class,
             );
             $this->clock->sleep(2 * $attempt);
 
@@ -225,7 +229,7 @@ class AcmeClient implements LoggerAwareInterface
         } while ($authorization->status === 'pending' && $attempt < $maxAttempts);
 
         if ($authorization->status !== 'valid') {
-            throw new AcmeException('Authorization failed, status: ' . $authorization->status); // @codeCoverageIgnore
+            throw new AcmeException('Authorization failed, status: ' . $authorization->status . ' Error: ' . json_encode($authorization->error)); // @codeCoverageIgnore
         }
 
         // Finalize order
@@ -297,7 +301,7 @@ class AcmeClient implements LoggerAwareInterface
             try {
                 $response = $this->http->request(
                     'GET',
-                    'https://' . $order->domain . '/.well-known/acme-challenge/' . $order->token,
+                    'http://' . $order->domain . '/.well-known/acme-challenge/' . $order->token,
                 );
                 $resolvedKey = $response->getContent();
 

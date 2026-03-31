@@ -73,6 +73,8 @@ services:
     ports:
       - 14000:14000  # ACME port
       - 15000:15000  # Management port
+    volumes:
+      - ./meta/dev/pebble.json:/test/config/pebble-config.json:ro
     labels:
       traefik.enable: true
       traefik.http.routers.hyvor-blogs-pebble.rule: Host(`blogs.pebble.localhost`)
