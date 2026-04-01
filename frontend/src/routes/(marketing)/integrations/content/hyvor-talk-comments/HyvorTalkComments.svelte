@@ -24,8 +24,8 @@
 		<li>Click on <b>Connect Hyvor Talk</b></li>
 		<DocsImage src={connectHyvorTalkImg} alt="Connect Hyvor Talk" />
 		<p>
-			Then it will generate a code snippet for you as shown above. There are two methods you can use to
-			complete this integration.
+			Then it will generate a code snippet for you as shown above. There are two methods you can use
+			to complete this integration.
 		</p>
 		<ol>
 			<li>Click "<b>Add to "Comments Embed Code"</b>".</li>
