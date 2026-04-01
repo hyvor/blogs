@@ -2,6 +2,9 @@ export interface SudoConfig {
 	hyvor: {
 		instance: string;
 	};
+	app: {
+		delivery_url: string;
+	}
 }
 
 export interface SudoStats {
@@ -37,7 +40,6 @@ export interface Blog {
 	hyvor_user_id: number | null;
 	theme_version_id: number | null;
 	subdomain: string;
-	trial_ends_at: number;
 	type: string | null;
 	hosting_at: string;
 	hosting_domain: string | null;

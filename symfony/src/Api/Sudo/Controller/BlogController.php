@@ -5,6 +5,7 @@ namespace App\Api\Sudo\Controller;
 use App\Api\Sudo\Input\BlogListInput;
 use App\Api\Sudo\Service\SudoAnalyticsService;
 use App\Entity\Blog;
+use App\Service\Sudo\SudoPermission;
 use Hyvor\Internal\Auth\AuthInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Api\SudoObject\SudoObjectFactory;
@@ -13,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
+use Hyvor\Internal\Bundle\Api\SudoPermissionRequired;
 
 class BlogController extends AbstractController
 {
@@ -25,6 +27,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('/overview', methods: 'GET')]
+    #[SudoPermissionRequired(SudoPermission::ACCESS_SUDO)]
     public function overview(): JsonResponse
     {
         return new JsonResponse([
@@ -38,11 +41,10 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blogs', methods: 'GET')]
+    #[SudoPermissionRequired(SudoPermission::READ_BLOGS)]
     public function getBlogs(
-        #[MapQueryString] ?BlogListInput $input = null,
+        #[MapQueryString] BlogListInput $input,
     ): JsonResponse {
-        $input ??= new BlogListInput();
-
         $qb = $this->entityManager->getRepository(Blog::class)
             ->createQueryBuilder('b')
             ->leftJoin('b.variants', 'v')
@@ -70,7 +72,7 @@ class BlogController extends AbstractController
             array_map(fn(Blog $blog) => $blog->getOrganizationId(), $blogs),
         )));
 
-        $orgs = $this->auth->organizations($organizationIds);
+        $orgs = $this->auth->organizations($organizationIds, includeBillingInfo: true);
 
         return new JsonResponse([
             'blogs' => array_map(
@@ -93,6 +95,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blogs/{id}', methods: 'GET')]
+    #[SudoPermissionRequired(SudoPermission::READ_BLOGS)]
     public function getBlog(
         #[MapEntity] Blog $blog,
     ): JsonResponse {

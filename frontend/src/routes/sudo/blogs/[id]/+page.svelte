@@ -6,6 +6,7 @@
 	import dayjs from 'dayjs';
 	import type { Blog } from '../../types';
 	import sudoApi from '../../lib/sudoApi';
+	import { getHostingUrl } from '../../lib/blogUrl';
 
 	let blog: Blog | undefined = $state();
 
@@ -34,16 +35,6 @@
 		return dayjs.unix(ts).format('YYYY-MM-DD HH:mm:ss');
 	}
 
-	function getHostingUrl(blog: Blog): string {
-		if (blog.hosting_at === 'domain' && blog.hosting_domain) {
-			return blog.hosting_domain;
-		}
-		if (blog.hosting_at === 'self' && blog.hosting_url) {
-			return blog.hosting_url;
-		}
-		return blog.subdomain + '.blogs.hyvor.com';
-	}
-
 	onMount(loadBlog);
 </script>
 
@@ -59,10 +50,10 @@
 			{blog.subdomain}
 		</SplitControl>
 		<SplitControl label="Name">
-			{blog.variants[0]?.name || 'No name'}
+			{blog.variants[0]?.name || ''}
 		</SplitControl>
 		<SplitControl label="Description">
-			{blog.variants[0]?.description || 'No description'}
+			{blog.variants[0]?.description || ''}
 		</SplitControl>
 		<SplitControl label="Created At">
 			{formatTimestamp(blog.created_at)}
@@ -71,7 +62,10 @@
 			{blog.type || '-'}
 		</SplitControl>
 		<SplitControl label="Hosting">
-			{getHostingUrl(blog)}
+			{@const hostingUrl = getHostingUrl(blog)}
+			<a href={hostingUrl} class="hds-link" target="_blank">
+				{hostingUrl}
+			</a>
 			<span style="color: var(--text-light);margin-left:5px;">
 				({blog.hosting_at})
 			</span>
@@ -81,9 +75,6 @@
 		</SplitControl>
 		<SplitControl label="Organization ID">
 			{blog.organization_id ?? '-'}
-		</SplitControl>
-		<SplitControl label="Trial Ends At">
-			{formatTimestamp(blog.trial_ends_at)}
 		</SplitControl>
 		<SplitControl label="Blocked">
 			{#if blog.is_blocked}

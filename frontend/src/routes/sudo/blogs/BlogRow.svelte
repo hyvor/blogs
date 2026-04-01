@@ -2,6 +2,7 @@
 	import { Button } from '@hyvor/design/components';
 	import type { Blog, Organization } from '../types';
 	import { flagByCountryCode } from '$lib/helpers/countryCode';
+	import { getHostingUrl } from '../lib/blogUrl';
 
 	interface Props {
 		blog: Blog;
@@ -9,16 +10,6 @@
 	}
 
 	let { blog, org }: Props = $props();
-
-	function getHostingUrl(blog: Blog): string {
-		if (blog.hosting_at === 'domain' && blog.hosting_domain) {
-			return blog.hosting_domain;
-		}
-		if (blog.hosting_at === 'self' && blog.hosting_url) {
-			return blog.hosting_url;
-		}
-		return blog.subdomain + '.blogs.hyvor.com';
-	}
 </script>
 
 <a class="row" href={`/sudo/blogs/${blog.id}`}>
@@ -49,7 +40,7 @@
 				{org.billing_email}
 			</div>
 			<div class="view-button">
-				<Button as="a" href="/sudo/core/organizations/{org.id}" size="x-small" color="input">
+				<Button as="a" href="https://hyvor.com/sudo/core/organizations/{org.id}" size="x-small" target="_blank" color="input">
 					Org &rarr;
 				</Button>
 			</div>
@@ -61,7 +52,13 @@
 		{blog.type || '-'}
 	</div>
 	<div class="hosting">
-		{getHostingUrl(blog)}
+		<button class="hds-link" onclick={(e) => {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			window.open(getHostingUrl(blog), '_blank')
+		}}>
+			{getHostingUrl(blog)}
+		</button>
 	</div>
 </a>
 

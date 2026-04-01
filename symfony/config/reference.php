@@ -941,6 +941,10 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         folder?: scalar|Param|null, // Default: "%kernel.project_dir%/../shared/locale"
  *         default?: scalar|Param|null, // Default: "en-US"
  *     },
+ *     sudo?: array{
+ *         permission_enum?: string|Param, // Default: null
+ *         role_enum?: string|Param, // Default: null
+ *     },
  * }
  * @psalm-type MakerConfig = array{
  *     root_namespace?: scalar|Param|null, // Default: "App"

@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-	<title>Sudo · Hyvor Blogs</title>
+	<title>sudo · Hyvor Blogs</title>
 	<meta name="robots" content="nofollow, noindex" />
 </svelte:head>
 
