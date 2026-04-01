@@ -48,6 +48,7 @@
 {$DOMAIN_APP}:80, :8989 {
     @symfony {
         path /api/comms/*
+        path /api/sudo/*
     }
     handle @symfony {
         root * /app/symfony/public
