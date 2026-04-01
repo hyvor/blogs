@@ -160,7 +160,7 @@ export const integrations: Integration[] = [
 		icon: hyvortalkIcon,
 		title: 'Add Hyvor Talk Comments to your blog',
 		description:
-			'Hyvor Talks is a privacy-focused, feature-rich commenting system for websites, offering real-time discussions with spam protection and user-friendly interface. Learn how to integrate Hyvor Talk Comments with your Hyvor Blogs blog.',
+			'Hyvor Talk is a privacy-focused, feature-rich commenting system for websites, offering real-time discussions with spam protection and a user-friendly interface. Learn how to integrate Hyvor Talk Comments with your Hyvor Blogs blog.',
 		category: 'comments',
 		color: '#ffe6a4',
 		component: HyvorTalkComments
