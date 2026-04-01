@@ -40,7 +40,13 @@
 				{org.billing_email}
 			</div>
 			<div class="view-button">
-				<Button as="a" href="https://hyvor.com/sudo/core/organizations/{org.id}" size="x-small" target="_blank" color="input">
+				<Button
+					as="a"
+					href="https://hyvor.com/sudo/core/organizations/{org.id}"
+					size="x-small"
+					target="_blank"
+					color="input"
+				>
 					Org &rarr;
 				</Button>
 			</div>
@@ -52,11 +58,14 @@
 		{blog.type || '-'}
 	</div>
 	<div class="hosting">
-		<button class="hds-link" onclick={(e) => {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			window.open(getHostingUrl(blog), '_blank')
-		}}>
+		<button
+			class="hds-link"
+			onclick={(e) => {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				window.open(getHostingUrl(blog), '_blank');
+			}}
+		>
 			{getHostingUrl(blog)}
 		</button>
 	</div>

@@ -4,7 +4,7 @@ export interface SudoConfig {
 	};
 	app: {
 		delivery_url: string;
-	}
+	};
 }
 
 export interface SudoStats {
