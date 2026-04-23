@@ -105,6 +105,14 @@ export interface BlogCounts {
 	};
 }
 
+export type CustomDomainHostingStatus = 'pending' | 'active' | 'failed';
+export interface CustomDomainHosting {
+	status: CustomDomainHostingStatus;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
+}
+
 // == POST
 export type Post = {
 	id: number;

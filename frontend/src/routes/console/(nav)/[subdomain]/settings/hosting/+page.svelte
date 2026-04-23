@@ -9,23 +9,31 @@
 		Switch,
 		TextInput,
 		Validation,
-		toast
+		toast, Button, TabNav, Table, TableRow, TabNavItem, Tag
 	} from '@hyvor/design/components';
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 
-	import type { Blog } from '../../../../lib/types';
+	import type {Blog, CustomDomainHosting} from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
+	import {getCustomDomainHosting} from "./hostingActions";
+	import IconCopy from "@hyvor/icons/IconCopy";
 
 	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
 
 	let subdomainError: null | string = $state(null);
 	let hostingUrlError: null | string = $state(null);
+
+	let customDomainHosting: null | CustomDomainHosting = $state(null);
+	let dnsMethod: 'cname' | 'a' = $state('cname');
+	const CUSTOM_DOMAIN_IP = '116.202.185.2';
+	const CNAME_DOMAIN = 'hyvorblogs.io';
 
 	function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
 		blogStore.update((b) => {
@@ -134,6 +142,14 @@
 			$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
 			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
 	);
+
+	function getCustomDomainHostingStatus() {
+		customDomainHosting = getCustomDomainHosting();
+	}
+
+	$effect(() => {
+		$blogOriginalStore.hosting_domain && getCustomDomainHostingStatus();
+	})
 </script>
 
 <DisabledOnTemp>
@@ -218,6 +234,115 @@
 						<Validation state="error">{hostingUrlError}</Validation>
 					{/if}
 				</FormControl>
+
+				{#if $blogOriginalStore.hosting_domain && customDomainHosting}
+					<Callout
+							type={customDomainHosting.status === 'active' ? 'success' : 'warning'}
+							style="margin-top: 20px;"
+					>
+						{#if customDomainHosting.status !== 'active'}
+							<p>
+								Your custom domain has not been verified yet. Please update your DNS records as shown
+								below to verify your domain ownership.
+							</p>
+
+							<TabNav bind:active={dnsMethod}>
+								<TabNavItem name="cname">
+									CNAME {#snippet end()}
+									<Tag size="small" color="blue">Preferred</Tag>
+								{/snippet}
+								</TabNavItem>
+								<TabNavItem name="a">A Record</TabNavItem>
+							</TabNav>
+
+							{#if dnsMethod === 'cname'}
+								<Table columns="1fr 2fr">
+									<br />
+									<TableRow head>
+										<div>Field</div>
+										<div>Value</div>
+									</TableRow>
+									<TableRow>
+										<div>Host/Name</div>
+										<div>
+											<div style="margin-bottom:6px;">
+												<code>@</code> for <strong>example.com</strong> or
+											</div>
+											<code>blog</code> for <strong>blog.example.com</strong>
+										</div>
+									</TableRow>
+									<TableRow>
+										<div>Content</div>
+										<div>
+											<code>{CNAME_DOMAIN}</code>
+											<Button
+												size="x-small"
+												on:click={() => {
+													navigator.clipboard.writeText(CNAME_DOMAIN);
+														toast.success('Copied to clipboard');
+													}}
+												style="margin-left:5px;"
+												color="input"
+											>
+												Copy {#snippet end()}
+												<IconCopy size={12} />
+											{/snippet}
+											</Button>
+										</div>
+									</TableRow>
+								</Table>
+							{:else}
+								<Table columns="1fr 2fr">
+									<br />
+									<TableRow head>
+										<div>Field</div>
+										<div>Value</div>
+									</TableRow>
+									<TableRow>
+										<div>Host/Name</div>
+										<div>
+											<div style="margin-bottom:6px;">
+												<code>@</code> for <strong>example.com</strong> or
+											</div>
+											<code>blog</code> for <strong>blog.example.com</strong>
+										</div>
+									</TableRow>
+									<TableRow>
+										<div>IP Address</div>
+										<div>
+											<code>{CUSTOM_DOMAIN_IP}</code>
+											<Button
+												size="x-small"
+												on:click={() => {
+													navigator.clipboard.writeText(CUSTOM_DOMAIN_IP);
+													toast.success('Copied to clipboard');
+												}}
+												style="margin-left:5px;"
+												color="input"
+											>
+												Copy {#snippet end()}
+												<IconCopy size={12} />
+											{/snippet}
+											</Button>
+										</div>
+									</TableRow>
+								</Table>
+							{/if}
+
+							<div style="margin-top: 15px; margin-bottom: 10px;">
+							<Button>
+								Verify Now
+								{#snippet end()}
+									<IconArrowClockwise />
+								{/snippet}
+							</Button>
+							</div>
+
+						{:else}
+							Your custom domain is verified and active. 🎉
+						{/if}
+					</Callout>
+				{/if}
 			</SplitControl>
 		{/if}
 
