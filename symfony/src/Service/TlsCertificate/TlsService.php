@@ -23,7 +23,7 @@ class TlsService
 
     public function getDecryptedPrivateKeyPem(TlsCertificate $cert): string
     {
-        return $this->encryption->decryptString($cert->getPrivateKey());
+        return $this->encryption->decryptString($cert->getPrivateKeyEncrypted());
     }
 
     public function getDecryptedPrivateKey(TlsCertificate $cert): \OpenSSLAsymmetricKey
@@ -48,7 +48,7 @@ class TlsService
         $tlsCertificate->setCreatedAt($this->now());
         $tlsCertificate->setUpdatedAt($this->now());
         $tlsCertificate->setStatus(TlsCertificateStatus::PENDING);
-        $tlsCertificate->setPrivateKey($encryptedPrivateKey);
+        $tlsCertificate->setPrivateKeyEncrypted($encryptedPrivateKey);
 
         $this->em->persist($tlsCertificate);
         $this->em->flush();

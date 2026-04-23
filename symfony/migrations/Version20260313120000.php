@@ -19,13 +19,19 @@ final class Version20260313120000 extends AbstractMigration
     {
         $this->addSql(
             <<<SQL
+                CREATE TYPE tls_certificate_status AS ENUM ('pending', 'active', 'failed');
+            SQL
+        );
+
+        $this->addSql(
+            <<<SQL
             CREATE TABLE tls_certificates (
                 id serial PRIMARY KEY,
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL,
-                status VARCHAR(255) NOT NULL DEFAULT 'pending',
-                private_key TEXT,
+                status tls_certificate_status NOT NULL DEFAULT 'pending',
+                private_key_encrypted TEXT,
                 certificate TEXT,
                 valid_from timestamptz,
                 valid_to timestamptz

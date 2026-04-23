@@ -32,7 +32,7 @@ class TlsCertificate
     private TlsCertificateStatus $status = TlsCertificateStatus::PENDING;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $private_key = null;
+    private ?string $private_key_encrypted = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $certificate = null;
@@ -109,14 +109,14 @@ class TlsCertificate
         return $this;
     }
 
-    public function getPrivateKey(): ?string
+    public function getPrivateKeyEncrypted(): ?string
     {
-        return $this->private_key;
+        return $this->private_key_encrypted;
     }
 
-    public function setPrivateKey(?string $private_key): static
+    public function setPrivateKeyEncrypted(?string $private_key_encrypted): static
     {
-        $this->private_key = $private_key;
+        $this->private_key_encrypted = $private_key_encrypted;
         return $this;
     }
 
