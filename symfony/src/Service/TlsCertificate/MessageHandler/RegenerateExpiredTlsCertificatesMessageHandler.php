@@ -23,10 +23,11 @@ class RegenerateExpiredTlsCertificatesMessageHandler
     public function __invoke(RegenerateExpiredTlsCertificatesMessage $message): void
     {
         // Get TLS certificates where valid_to is in the past
+        /** @var TlsCertificate[] $expiredCerts */
         $expiredCerts = $this->em->getRepository(TlsCertificate::class)
             ->createQueryBuilder('tc')
-            ->where('tc.valid_to < :now')
-            ->setParameter('now', $this->now()->modify('-14 days'))
+            ->where('tc.valid_to < :date')
+            ->setParameter('date', $this->now()->modify('-14 days'))
             ->getQuery()
             ->getResult();
 

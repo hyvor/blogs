@@ -42,7 +42,7 @@ class GeneratePendingTlsCertifactesMessageHandler
                 ->setParameter('blog_id', $message->getBlogId());
         }
 
-        /** @var array<int, Blog|TlsCertificate|null $results */
+        /** @var array<int, Blog|TlsCertificate|null> $results */
         $results = $q->getQuery()->getResult();
 
         $grouped = [];
@@ -56,13 +56,14 @@ class GeneratePendingTlsCertifactesMessageHandler
         }
 
         foreach ($grouped as $row) {
+            $tlsCertificate = $row['tlsCertificate'];
 
-            if ($row['tlsCertificate'] === null) {
-                $this->tlsService->createTlsCertificate($row['blog']);
+            if ($tlsCertificate === null) {
+                $tlsCertificate = $this->tlsService->createTlsCertificate($row['blog']);
             }
 
             try {
-                $this->tlsService->generateCertificate($row['tlsCertificate']);
+                $this->tlsService->generateCertificate($tlsCertificate);
             } catch (AcmeException) {
                 // Log the error and continue with the next certificate
             }

@@ -23,7 +23,12 @@ class TlsService
 
     public function getDecryptedPrivateKeyPem(TlsCertificate $cert): string
     {
-        return $this->encryption->decryptString($cert->getPrivateKeyEncrypted());
+        $privateKeyEncrypted = $cert->getPrivateKeyEncrypted();
+        if ($privateKeyEncrypted === null) {
+            throw new \RuntimeException('No encrypted private key found for TLS certificate'); // @codeCoverageIgnore
+        }
+
+        return $this->encryption->decryptString($privateKeyEncrypted);
     }
 
     public function getDecryptedPrivateKey(TlsCertificate $cert): \OpenSSLAsymmetricKey

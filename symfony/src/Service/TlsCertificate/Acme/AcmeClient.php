@@ -171,6 +171,7 @@ class AcmeClient implements LoggerAwareInterface
 
         $this->logger?->info('Authorization fetched, preparing HTTP-01 challenge response');
         $httpChallenge = $authorization->getFirstHttp01Challenge();
+        assert($httpChallenge->token !== null, 'HTTP-01 challenge must have a token'); // @codeCoverageIgnore
         $thumbprint = $this->base64url(
             hash('sha256', (string)json_encode($this->getJwk()), true)
         );
@@ -229,7 +230,7 @@ class AcmeClient implements LoggerAwareInterface
         } while ($authorization->status === 'pending' && $attempt < $maxAttempts);
 
         if ($authorization->status !== 'valid') {
-            throw new AcmeException('Authorization failed, status: ' . $authorization->status . ' Error: ' . json_encode($authorization->error)); // @codeCoverageIgnore
+            throw new AcmeException('Authorization failed, status: ' . $authorization->status); // @codeCoverageIgnore
         }
 
         // Finalize order

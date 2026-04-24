@@ -26,7 +26,7 @@ class TlsCertificate
 
     #[ORM\OneToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
-    private ?Blog $blog = null;
+    private Blog $blog;
 
     #[ORM\Column(length: 255, enumType: TlsCertificateStatus::class, options: ['default' => 'pending'])]
     private TlsCertificateStatus $status = TlsCertificateStatus::PENDING;
@@ -87,12 +87,12 @@ class TlsCertificate
         return $this;
     }
 
-    public function getBlog(): ?Blog
+    public function getBlog(): Blog
     {
         return $this->blog;
     }
 
-    public function setBlog(?Blog $blog): static
+    public function setBlog(Blog $blog): static
     {
         $this->blog = $blog;
         return $this;
