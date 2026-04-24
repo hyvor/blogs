@@ -409,5 +409,7 @@
 <style>
 	.hosting {
 		padding: 20px 30px;
+		height: 90%;
+		overflow-y: auto;
 	}
 </style>
