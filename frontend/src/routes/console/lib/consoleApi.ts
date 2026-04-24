@@ -17,14 +17,13 @@ interface CallOptions extends ConsoleApiOptions {
 }
 
 function getConsoleApi() {
-
 	async function call<T>({
 		endpoint,
 		userApi = false,
 		method,
 		data = {},
 		subdomain,
-	   	v1 = false,
+		v1 = false,
 		signal
 	}: CallOptions): Promise<T> {
 		const baseUrl = `/api/console/v${v1 ? '1' : '0'}`;

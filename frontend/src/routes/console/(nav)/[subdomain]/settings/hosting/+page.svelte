@@ -9,7 +9,13 @@
 		Switch,
 		TextInput,
 		Validation,
-		toast, Button, TabNav, Table, TableRow, TabNavItem, Tag
+		toast,
+		Button,
+		TabNav,
+		Table,
+		TableRow,
+		TabNavItem,
+		Tag
 	} from '@hyvor/design/components';
 	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
@@ -17,12 +23,12 @@
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 
-	import type {Blog, CustomDomainHosting} from '../../../../lib/types';
+	import type { Blog, CustomDomainHosting } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
-	import {getCustomDomainHosting} from "./hostingActions";
-	import IconCopy from "@hyvor/icons/IconCopy";
+	import { getCustomDomainHosting } from './hostingActions';
+	import IconCopy from '@hyvor/icons/IconCopy';
 
 	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
@@ -149,7 +155,7 @@
 
 	$effect(() => {
 		$blogOriginalStore.hosting_domain && getCustomDomainHostingStatus();
-	})
+	});
 </script>
 
 <DisabledOnTemp>
@@ -237,20 +243,20 @@
 
 				{#if $blogOriginalStore.hosting_domain && customDomainHosting}
 					<Callout
-							type={customDomainHosting.status === 'active' ? 'success' : 'warning'}
-							style="margin-top: 20px;"
+						type={customDomainHosting.status === 'active' ? 'success' : 'warning'}
+						style="margin-top: 20px;"
 					>
 						{#if customDomainHosting.status !== 'active'}
 							<p>
-								Your custom domain has not been verified yet. Please update your DNS records as shown
-								below to verify your domain ownership.
+								Your custom domain has not been verified yet. Please update your DNS records as
+								shown below to verify your domain ownership.
 							</p>
 
 							<TabNav bind:active={dnsMethod}>
 								<TabNavItem name="cname">
 									CNAME {#snippet end()}
-									<Tag size="small" color="blue">Preferred</Tag>
-								{/snippet}
+										<Tag size="small" color="blue">Preferred</Tag>
+									{/snippet}
 								</TabNavItem>
 								<TabNavItem name="a">A Record</TabNavItem>
 							</TabNav>
@@ -279,14 +285,14 @@
 												size="x-small"
 												on:click={() => {
 													navigator.clipboard.writeText(CNAME_DOMAIN);
-														toast.success('Copied to clipboard');
-													}}
+													toast.success('Copied to clipboard');
+												}}
 												style="margin-left:5px;"
 												color="input"
 											>
 												Copy {#snippet end()}
-												<IconCopy size={12} />
-											{/snippet}
+													<IconCopy size={12} />
+												{/snippet}
 											</Button>
 										</div>
 									</TableRow>
@@ -321,8 +327,8 @@
 												color="input"
 											>
 												Copy {#snippet end()}
-												<IconCopy size={12} />
-											{/snippet}
+													<IconCopy size={12} />
+												{/snippet}
 											</Button>
 										</div>
 									</TableRow>
@@ -337,7 +343,6 @@
 									{/snippet}
 								</Button>
 							</div>
-
 						{:else}
 							Your custom domain is verified and active. 🎉
 						{/if}
