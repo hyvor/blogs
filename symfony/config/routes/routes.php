@@ -23,6 +23,11 @@ return static function (RoutingConfigurator $routes): void {
         ->import('../../src/Api/Delivery', 'attribute')
         ->namePrefix('api_delivery_');
 
+    // console API
+    $routes->import('../../src/Api/Console/Controller', 'attribute')
+        ->prefix('/api/console/v1/blog/{subdomain}')
+        ->namePrefix('api_console_');
+
     // internal API routes
     $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');
 

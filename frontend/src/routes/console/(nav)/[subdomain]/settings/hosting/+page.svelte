@@ -143,8 +143,8 @@
 			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
 	);
 
-	function getCustomDomainHostingStatus() {
-		customDomainHosting = getCustomDomainHosting();
+	async function getCustomDomainHostingStatus() {
+		customDomainHosting = await getCustomDomainHosting();
 	}
 
 	$effect(() => {
@@ -330,12 +330,12 @@
 							{/if}
 
 							<div style="margin-top: 15px; margin-bottom: 10px;">
-							<Button>
-								Verify Now
-								{#snippet end()}
-									<IconArrowClockwise />
-								{/snippet}
-							</Button>
+								<Button on:click={getCustomDomainHostingStatus}>
+									Verify Now
+									{#snippet end()}
+										<IconArrowClockwise />
+									{/snippet}
+								</Button>
 							</div>
 
 						{:else}

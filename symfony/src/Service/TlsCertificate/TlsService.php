@@ -44,7 +44,7 @@ class TlsService
         $encryptedPrivateKey = $this->encryption->encryptString($privateKeyPem);
 
         $tlsCertificate = new TlsCertificate();
-        $tlsCertificate->setBlogId($blog->getId());
+        $tlsCertificate->setBlog($blog);
         $tlsCertificate->setCreatedAt($this->now());
         $tlsCertificate->setUpdatedAt($this->now());
         $tlsCertificate->setStatus(TlsCertificateStatus::PENDING);
@@ -54,6 +54,12 @@ class TlsService
         $this->em->flush();
 
         return $tlsCertificate;
+    }
+
+    public function getTlsCertificate(Blog $blog): ?TlsCertificate
+    {
+        return $this->em->getRepository(TlsCertificate::class)
+            ->findOneBy(['blog' => $blog]);
     }
 
     /**
