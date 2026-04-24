@@ -26,7 +26,7 @@ class RegenerateExpiredTlsCertificatesMessageHandler
         $expiredCerts = $this->em->getRepository(TlsCertificate::class)
             ->createQueryBuilder('tc')
             ->where('tc.valid_to < :now')
-            ->setParameter('now', $this->now())
+            ->setParameter('now', $this->now()->modify('-14 days'))
             ->getQuery()
             ->getResult();
 
