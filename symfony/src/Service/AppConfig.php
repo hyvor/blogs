@@ -10,8 +10,10 @@ readonly class AppConfig
     public function __construct(
         #[Autowire('%env(string:DOMAIN_APP)%')]
         private string $domainApp,
-        #[Autowire('%env(string:default::DELIVERY_URL)%')]
-        private string $deliveryUrl,
+        #[Autowire('%env(default::string:DELIVERY_URL)%')]
+        private string $deliveryUrl = '',
+        #[Autowire('%env(default::string:HYVOR_INSTANCE)%')]
+        private string $hyvorInstance = '',
     ) {}
 
     public function getDeliveryUrl(): string
@@ -28,5 +30,10 @@ readonly class AppConfig
     public function getDomainApp(): string
     {
         return $this->domainApp;
+    }
+
+    public function getHyvorInstance(): string
+    {
+        return $this->hyvorInstance;
     }
 }

@@ -44,6 +44,11 @@ final class BlogFactory extends PersistentObjectFactory
         ];
     }
 
+    public function withOrganization(int $organizationId): static
+    {
+        return $this->with(['organization_id' => $organizationId]);
+    }
+
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
      */
