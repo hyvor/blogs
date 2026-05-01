@@ -52,7 +52,7 @@ function getConsoleApi() {
 
 		const headers = {
 			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore),
-			'X-Organization-Id': get(authOrganizationStore)?.id.toString(),
+			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
 		} as Record<string, string>;
 
 		if (!(data instanceof FormData)) {

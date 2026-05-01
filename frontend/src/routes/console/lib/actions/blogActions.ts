@@ -19,7 +19,7 @@ export function createBlog(name: string, subdomain: string, isDev = false) {
 			subdomain,
 			is_dev: isDev
 		},
-		userApi: true,
+		userApi: true
 	});
 }
 
