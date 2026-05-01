@@ -60,8 +60,8 @@ COPY backend/package.json backend/package-lock.json /app/backend/
 RUN cd backend && npm install
 
 # install npm dependencies (shiki) for symfony
-COPY symfony/package.json /app/symfony/
-RUN cd symfony && npm install
+COPY symfony/package-lock.json /app/symfony/
+RUN cd symfony && npm ci
 
 # supervisor
 RUN apt update && apt install -y supervisor

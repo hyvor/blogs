@@ -18,6 +18,7 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -103,6 +104,13 @@ class ConsoleController
                 'limit' => $bl->aiTokens ?? 0,
             ],
         ]);
+    }
+
+    #[Route('/ping', methods: ['GET'])]
+    #[OrganizationLevelEndpoint]
+    public function ping(): JsonResponse
+    {
+        return new JsonResponse();
     }
 
     #[Route('/blogs/sort', methods: ['PATCH'])]

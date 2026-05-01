@@ -1,6 +1,7 @@
 import { get } from 'svelte/store';
 import { blogStore } from './stores/blogStore';
 import { tempSubdomainStore } from './temp';
+import { getCloudContext } from '@hyvor/design/cloud';
 
 export interface ConsoleApiOptions {
 	endpoint: string;
@@ -50,7 +51,7 @@ function getConsoleApi() {
 		}
 
 		const headers = {
-			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore)
+			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore),
 		} as Record<string, string>;
 
 		if (!(data instanceof FormData)) {
