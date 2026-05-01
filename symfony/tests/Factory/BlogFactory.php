@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -16,9 +17,7 @@ final class BlogFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -44,6 +43,24 @@ final class BlogFactory extends PersistentObjectFactory
         ];
     }
 
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $userAttrs
+     * @return array{0: Blog, 1: User}
+     */
+    public static function createOneWithUser(
+        array $blogAttrs = [],
+        array $userAttrs = [],
+    ): array {
+        $blog = self::createOne($blogAttrs);
+
+        $user = UserFactory::createOne(array_merge($userAttrs, [
+            'blog' => $blog,
+        ]));
+
+        return [$blog, $user];
+    }
+
     public function withOrganization(int $organizationId): static
     {
         return $this->with(['organization_id' => $organizationId]);
@@ -55,8 +72,7 @@ final class BlogFactory extends PersistentObjectFactory
     #[\Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(Blog $blog): void {})
-        ;
+        return $this// ->afterInstantiate(function(Blog $blog): void {})
+            ;
     }
 }

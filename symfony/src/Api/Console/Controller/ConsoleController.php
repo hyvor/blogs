@@ -11,6 +11,7 @@ use App\Service\AppConfig;
 use App\Service\CodeHighlight\Highlighter;
 use App\Service\Limit;
 use App\Service\User\UserService;
+use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +24,7 @@ class ConsoleController
         private BlogListObjectFactory $blogListObjectFactory,
         private AppConfig $appConfig,
         private Highlighter $highlighter,
+        private InternalConfig $internalConfig,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
@@ -42,18 +44,18 @@ class ConsoleController
         }
 
         return new JsonResponse([
-            'user'         => new AuthUserObject($user),
+            'user' => new AuthUserObject($user),
             'organization' => $org,
-            'blogs'        => $blogs,
-            'config'       => [
-                'hyvor'   => ['instance' => $this->appConfig->getHyvorInstance()],
+            'blogs' => $blogs,
+            'config' => [
+                'hyvor' => ['instance' => $this->internalConfig->getInstance()],
                 'domains' => [
-                    'app'      => $this->appConfig->getDomainApp(),
+                    'app' => $this->appConfig->getDomainApp(),
                     'delivery' => $this->appConfig->getDeliveryDomain(),
                 ],
-                'limits'  => [
-                    'max_upload_size'     => Limit::MAX_MEDIA_UPLOAD_SIZE,
-                    'max_theme_zip_size'  => Limit::MAX_THEME_ZIP_SIZE,
+                'limits' => [
+                    'max_upload_size' => Limit::MAX_MEDIA_UPLOAD_SIZE,
+                    'max_theme_zip_size' => Limit::MAX_THEME_ZIP_SIZE,
                     'max_asset_file_size' => Limit::MAX_ASSET_FILE_SIZE,
                 ],
                 'highlight_themes' => $this->highlighter->getAllThemes(),

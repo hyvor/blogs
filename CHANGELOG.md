@@ -1,6 +1,8 @@
 ## Unreleased - 2026-02-28
 
--
+- Migrating to Symfony
+    - IMPORTANT: /init no longer check user status, so all invite status users must be removed from blogs
+    -
 
 ## [0.0.50] - 2025-02-14
 

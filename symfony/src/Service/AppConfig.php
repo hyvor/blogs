@@ -12,8 +12,6 @@ readonly class AppConfig
         private string $domainApp,
         #[Autowire('%env(default::string:DELIVERY_URL)%')]
         private string $deliveryUrl = '',
-        #[Autowire('%env(default::string:HYVOR_INSTANCE)%')]
-        private string $hyvorInstance = '',
     ) {}
 
     public function getDeliveryUrl(): string
