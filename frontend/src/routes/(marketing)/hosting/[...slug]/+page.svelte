@@ -45,6 +45,6 @@
 
 <style>
 	.docs-wrap :global(.nav-items a.active) {
-		background-color: var(--accent-lightest) !important;
+		background-color: var(--accent-light-mid) !important;
 	}
 </style>

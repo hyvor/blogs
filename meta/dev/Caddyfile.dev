@@ -9,6 +9,7 @@
         path /api/comms/*
         path /api/sudo/*
         path /api/v2/*
+        path /api/oidc/*
     }
     handle @symfony {
         root /app/symfony/public

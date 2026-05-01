@@ -4,7 +4,6 @@ namespace App\Service\Blog;
 
 use App\Entity\Blog;
 use Doctrine\ORM\EntityManagerInterface;
-use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
 class BlogService
