@@ -19,7 +19,7 @@ class BlogService
         private EntityManagerInterface $em,
     ) {}
 
-    public static function isSubdomainReserved(string $subdomain): bool
+    public function isSubdomainReserved(string $subdomain): bool
     {
         return in_array($subdomain, ['new', 'billing', 'select'], true);
     }

@@ -2,19 +2,13 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\OrganizationLevelEndpoint;
 use App\Api\Console\Authorization\OrganizationOptional;
-use App\Api\Console\Input\Blog\CreateBlogInput;
-use App\Api\Console\Object\BlogListObjectFactory;
-use App\Entity\Enum\BlogType;
 use App\Service\Blog\BlogService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Uuid;
 
 class BlogController
 {
@@ -72,7 +66,7 @@ class BlogController
             throw new UnprocessableEntityHttpException('subdomain is required');
         }
 
-        $available = !BlogService::isSubdomainReserved($subdomain)
+        $available = !$this->blogService->isSubdomainReserved($subdomain)
             && $this->blogService->getBlogBySubdomain($subdomain) === null;
 
         return new JsonResponse(['available' => $available]);

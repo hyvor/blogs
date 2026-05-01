@@ -45,9 +45,9 @@ class ConsoleUserBlogController extends Controller
             throw new TrustedException('Subdomain is reserved');
         }
 
-//        if (!BlogService::canUserCreateBlog($hyvorUser->id)) {
-//            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
-//        }
+        //        if (!BlogService::canUserCreateBlog($hyvorUser->id)) {
+        //            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
+        //        }
 
         if ($organization === null) {
             throw new TrustedException('No current organization found');
@@ -69,32 +69,5 @@ class ConsoleUserBlogController extends Controller
         }
 
         return response()->json(new BlogListObject($user));
-    }
-
-
-    public function checkSubdomain(Request $request): JsonResponse
-    {
-        $request->validate([
-            'subdomain' => 'required|string',
-        ]);
-
-        $subdomain = $request->input('subdomain');
-
-        $available = true;
-        $isReserved = BlogService::isSubdomainReserved($subdomain);
-
-        if ($isReserved) {
-            $available = false;
-        }
-
-        $blog = BlogService::getBlogBySubdomain($subdomain);
-
-        if ($blog) {
-            $available = false;
-        }
-
-        return response()->json([
-            'available' => $available,
-        ]);
     }
 }

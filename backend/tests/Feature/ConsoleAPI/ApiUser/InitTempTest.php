@@ -4,7 +4,7 @@ namespace Tests\Feature\ConsoleAPI\ApiUser;
 
 use App\Models\Blog;
 
-it('it creates a temporary blog', function() {
+it('it creates a temporary blog', function () {
 
     $data = consoleUserApi('GET', '/init-temp')
         ->assertOk()
@@ -25,10 +25,9 @@ it('it creates a temporary blog', function() {
     expect($user['name'])->toBe('Temp User');
     expect($user['username'])->toBeNull();
     expect($user['picture_url'])->toBeNull();
-
 });
 
-it('loads a temporary blog', function() {
+it('loads a temporary blog', function () {
 
     $blog = blog(['type' => 'temp']);
 
@@ -38,10 +37,9 @@ it('loads a temporary blog', function() {
 
     expect($data['blogs'])->toHaveCount(1);
     expect($data['blogs'][0]['subdomain'])->toBe($blog->subdomain);
-
 });
 
-it('does not allow loading other blogs as temporary', function() {
+it('does not allow loading other blogs as temporary', function () {
 
     $blog = blog();
 
@@ -51,5 +49,4 @@ it('does not allow loading other blogs as temporary', function() {
 
     expect($data['blogs'])->toHaveCount(1);
     expect($data['blogs'][0]['subdomain'])->not->toBe($blog->subdomain);
-
 });

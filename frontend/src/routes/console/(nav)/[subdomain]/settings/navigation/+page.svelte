@@ -68,8 +68,16 @@
 			<IconMessage empty message="No items found." />
 		{:else}
 			<TabNav>
-				<TabNavItem name="header" active={activeTab === 'header'} onclick={() => activeTab = 'header'}>Header</TabNavItem>
-				<TabNavItem name="footer" active={activeTab === 'footer'} onclick={() => activeTab = 'footer'}>Footer</TabNavItem>
+				<TabNavItem
+					name="header"
+					active={activeTab === 'header'}
+					onclick={() => (activeTab = 'header')}>Header</TabNavItem
+				>
+				<TabNavItem
+					name="footer"
+					active={activeTab === 'footer'}
+					onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
+				>
 			</TabNav>
 
 			<NavTable

@@ -24,21 +24,21 @@
 		{/snippet}
 
 		<TabNav>
-			<TabNavItem name="overview" active={tab === 'overview'} onclick={() => tab = 'overview'}>
+			<TabNavItem name="overview" active={tab === 'overview'} onclick={() => (tab = 'overview')}>
 				{#snippet start()}
 					<IconCardChecklist />
 				{/snippet}
 				Overview
 			</TabNavItem>
 
-			<TabNavItem name="links" active={tab === 'links'} onclick={() => tab = 'links'}>
+			<TabNavItem name="links" active={tab === 'links'} onclick={() => (tab = 'links')}>
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
 				Links
 			</TabNavItem>
 
-			<TabNavItem name="settings" active={tab === 'settings'} onclick={() => tab = 'settings'}>
+			<TabNavItem name="settings" active={tab === 'settings'} onclick={() => (tab = 'settings')}>
 				{#snippet start()}
 					<IconGear />
 				{/snippet}

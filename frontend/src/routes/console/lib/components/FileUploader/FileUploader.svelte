@@ -60,7 +60,7 @@
 					</Button>
 				{:else if type === 'any'}
 					<TabNav>
-						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => tab = 'upload'}>
+						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => (tab = 'upload')}>
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
@@ -69,13 +69,13 @@
 					</TabNav>
 				{:else}
 					<TabNav>
-						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => tab = 'upload'}>
+						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => (tab = 'upload')}>
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
 							Upload
 						</TabNavItem>
-						<TabNavItem name="media" active={tab === 'media'} onclick={() => tab = 'media'}>
+						<TabNavItem name="media" active={tab === 'media'} onclick={() => (tab = 'media')}>
 							{#snippet start()}
 								<IconCardImage />
 							{/snippet}
@@ -83,7 +83,11 @@
 						</TabNavItem>
 
 						{#if type === 'image'}
-							<TabNavItem name="unsplash" active={tab === 'unsplash'} onclick={() => tab = 'unsplash'}>
+							<TabNavItem
+								name="unsplash"
+								active={tab === 'unsplash'}
+								onclick={() => (tab = 'unsplash')}
+							>
 								{#snippet start()}
 									<svg
 										role="img"
@@ -97,7 +101,11 @@
 								{/snippet}
 								Unsplash
 							</TabNavItem>
-							<TabNavItem name="excalidraw" active={tab === 'excalidraw'} onclick={() => tab = 'excalidraw'}>
+							<TabNavItem
+								name="excalidraw"
+								active={tab === 'excalidraw'}
+								onclick={() => (tab = 'excalidraw')}
+							>
 								{#snippet start()}
 									<ExcalidrawIcon />
 								{/snippet}

@@ -12,9 +12,13 @@
 
 <div class="import hds-box">
 	<TabNav>
-		<TabNavItem name="new" active={tab === 'new'} onclick={() => tab = 'new'}>New Import</TabNavItem>
+		<TabNavItem name="new" active={tab === 'new'} onclick={() => (tab = 'new')}
+			>New Import</TabNavItem
+		>
 
-		<TabNavItem name="history" active={tab === 'history'} onclick={() => tab = 'history'}>History</TabNavItem>
+		<TabNavItem name="history" active={tab === 'history'} onclick={() => (tab = 'history')}
+			>History</TabNavItem
+		>
 	</TabNav>
 
 	<div class="content">

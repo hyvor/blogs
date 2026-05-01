@@ -65,12 +65,14 @@
 <h2 id="dns">Step 2: Update DNS Records</h2>
 
 <TabNav>
-	<TabNavItem name="cname" active={dnsMethod === 'cname'} onclick={() => dnsMethod = 'cname'}>
+	<TabNavItem name="cname" active={dnsMethod === 'cname'} onclick={() => (dnsMethod = 'cname')}>
 		CNAME {#snippet end()}
 			<Tag size="small" color="blue">Preferred</Tag>
 		{/snippet}
 	</TabNavItem>
-	<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => dnsMethod = 'a'}>A Record</TabNavItem>
+	<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
+		>A Record</TabNavItem
+	>
 </TabNav>
 
 {#if dnsMethod === 'cname'}
