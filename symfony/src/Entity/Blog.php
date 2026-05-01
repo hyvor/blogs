@@ -79,6 +79,11 @@ class Blog
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
 
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -306,10 +311,5 @@ class Blog
     public function getVariants(): Collection
     {
         return $this->variants;
-    }
-
-    public function __construct()
-    {
-        $this->variants = new ArrayCollection();
     }
 }

@@ -37,10 +37,20 @@ final class UserFactory extends PersistentObjectFactory
             'hyvor_user_id' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),
             'role' => UserRole::ADMIN,
-            'slug' => self::faker()->text(255),
+            'slug' => self::faker()->slug(),
             'sort' => self::faker()->randomNumber(),
             'status' => 'active',
         ];
+    }
+
+    public function active(): static
+    {
+        return $this->with(['status' => 'active']);
+    }
+
+    public function asOwner(): static
+    {
+        return $this->with(['role' => UserRole::OWNER]);
     }
 
     /**

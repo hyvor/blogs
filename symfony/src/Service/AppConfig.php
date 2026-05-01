@@ -8,11 +8,11 @@ readonly class AppConfig
 {
 
     public function __construct(
-        #[Autowire('%env(string:default::DELIVERY_URL)%')]
-        private string $deliveryUrl,
-    )
-    {
-    }
+        #[Autowire('%env(string:DOMAIN_APP)%')]
+        private string $domainApp,
+        #[Autowire('%env(default::string:DELIVERY_URL)%')]
+        private string $deliveryUrl = '',
+    ) {}
 
     public function getDeliveryUrl(): string
     {
@@ -25,4 +25,8 @@ readonly class AppConfig
         return strval($host);
     }
 
+    public function getDomainApp(): string
+    {
+        return $this->domainApp;
+    }
 }

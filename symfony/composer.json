@@ -13,6 +13,7 @@
         "symfony/flex": "^2.10",
         "symfony/framework-bundle": "8.0.*",
         "symfony/runtime": "8.0.*",
+        "symfony/uid": "8.0.*",
         "symfony/yaml": "8.0.*"
     },
     "config": {

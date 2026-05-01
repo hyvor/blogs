@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use App\Http\ConsoleApi\Controllers\ConsoleController;
@@ -52,11 +53,8 @@ Route::prefix('/api/console/v0')
         CorsOnLocalhost::class,
     ])
     ->group(function () {
-        Route::get('/init', [ConsoleController::class, 'init']);
         Route::get('/usage', [ConsoleController::class, 'getUsage']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
-        Route::patch('/blogs/sort', [ConsoleController::class, 'changeBlogSort']);
-        Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
     });
 
 /**
@@ -273,7 +271,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                     [IntegrationHyvorTalkController::class, 'deleteGatedContentRule'],
                 );
 
-                Route::get('/hyvor-talk/membership-plans', [IntegrationHyvorTalkController::class, 'getMembershipPlans'],
+                Route::get(
+                    '/hyvor-talk/membership-plans',
+                    [IntegrationHyvorTalkController::class, 'getMembershipPlans'],
                 );
             });
 

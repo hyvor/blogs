@@ -11,10 +11,14 @@
 </script>
 
 <div class="import hds-box">
-	<TabNav bind:active={tab}>
-		<TabNavItem name="new">New Import</TabNavItem>
+	<TabNav>
+		<TabNavItem name="new" active={tab === 'new'} onclick={() => (tab = 'new')}
+			>New Import</TabNavItem
+		>
 
-		<TabNavItem name="history">History</TabNavItem>
+		<TabNavItem name="history" active={tab === 'history'} onclick={() => (tab = 'history')}
+			>History</TabNavItem
+		>
 	</TabNav>
 
 	<div class="content">

@@ -59,8 +59,8 @@
 						Back
 					</Button>
 				{:else if type === 'any'}
-					<TabNav bind:active={tab}>
-						<TabNavItem name="upload">
+					<TabNav>
+						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => (tab = 'upload')}>
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
@@ -68,14 +68,14 @@
 						</TabNavItem>
 					</TabNav>
 				{:else}
-					<TabNav bind:active={tab}>
-						<TabNavItem name="upload">
+					<TabNav>
+						<TabNavItem name="upload" active={tab === 'upload'} onclick={() => (tab = 'upload')}>
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
 							Upload
 						</TabNavItem>
-						<TabNavItem name="media">
+						<TabNavItem name="media" active={tab === 'media'} onclick={() => (tab = 'media')}>
 							{#snippet start()}
 								<IconCardImage />
 							{/snippet}
@@ -83,7 +83,11 @@
 						</TabNavItem>
 
 						{#if type === 'image'}
-							<TabNavItem name="unsplash">
+							<TabNavItem
+								name="unsplash"
+								active={tab === 'unsplash'}
+								onclick={() => (tab = 'unsplash')}
+							>
 								{#snippet start()}
 									<svg
 										role="img"
@@ -97,7 +101,11 @@
 								{/snippet}
 								Unsplash
 							</TabNavItem>
-							<TabNavItem name="excalidraw">
+							<TabNavItem
+								name="excalidraw"
+								active={tab === 'excalidraw'}
+								onclick={() => (tab = 'excalidraw')}
+							>
 								{#snippet start()}
 									<ExcalidrawIcon />
 								{/snippet}
