@@ -57,6 +57,7 @@ class ConsoleController
             'organization' => $org,
             'blogs' => $blogs,
             'config' => [
+                'deployment' => $this->internalConfig->getDeployment()->value,
                 'hyvor' => ['instance' => $this->internalConfig->getInstance()],
                 'domains' => [
                     'app' => $this->appConfig->getDomainApp(),

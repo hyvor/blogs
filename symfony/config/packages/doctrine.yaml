@@ -20,6 +20,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            InternalBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/hyvor/internal/bundle/src/Entity'
+                prefix: 'Hyvor\Internal\Bundle\Entity'
+                alias: InternalBundle
         controller_resolver:
             enabled: false
             auto_mapping: false

@@ -1,4 +1,5 @@
 export interface Config {
+	deployment: 'cloud' | 'on-prem';
 	hyvor: {
 		instance: string;
 	};

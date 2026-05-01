@@ -49,6 +49,14 @@
 			>
 				Integrations
 			</Button>
+			<Button
+				as="a"
+				size="small"
+				href="/hosting"
+				variant={$page.url.pathname.startsWith('/hosting') ? 'fill-light' : 'invisible'}
+			>
+				Self-Hosting
+			</Button>
 		</div>
 	{/snippet}
 

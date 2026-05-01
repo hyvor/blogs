@@ -12,6 +12,12 @@ return static function (RoutingConfigurator $routes): void {
     // internal API routes
     $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');
 
+    // OIDC routes (on-prem authentication)
+    $routes->import('@InternalBundle/src/Controller/OidcController.php', 'attribute')
+        ->prefix('/api/oidc')
+        ->namePrefix('api_oidc_')
+        ->host('%env(DOMAIN_APP)%');
+
     // sudo API routes
     $routes->import('../../src/Api/Sudo/Controller', 'attribute')
         ->prefix('/api/sudo')

@@ -116,7 +116,7 @@
 		<CloudContext
 			context={{
 				component: 'blogs',
-				deployment: 'cloud',
+				deployment: getConfig().deployment,
 				instance: getConfig().hyvor.instance,
 				user: get(authUserStore),
 				organization: get(authOrganizationStore),

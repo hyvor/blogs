@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: hyvor-blogs-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?postgres password not set}
+      POSTGRES_DB: hyvor_blogs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hyvor_blogs"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      # Since the app runs in host network mode, we bind Postgres to the host
+      # 127.0.0.1 makes it accessible only locally.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  blogs:
+    image: hyvor/blogs:latest
+    container_name: hyvor-blogs
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    network_mode: "host"
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
