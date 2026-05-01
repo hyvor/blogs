@@ -9,7 +9,8 @@ use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ConsoleApiAuthMiddleware {
+class ConsoleApiAuthMiddleware
+{
 
     private const USER_KEY = 'console_api_user';
     private const ORGANIZATION_KEY = 'console_api_organization';
@@ -18,7 +19,7 @@ class ConsoleApiAuthMiddleware {
         private AuthInterface $auth
     ) {}
 
-    public function handle(Request $request, \Closure $next) : mixed
+    public function handle(Request $request, \Closure $next): mixed
     {
         $me = $this->auth->me($request);
 
@@ -52,5 +53,4 @@ class ConsoleApiAuthMiddleware {
         $organization = $request->attributes->get(self::ORGANIZATION_KEY);
         return $organization;
     }
-
 }

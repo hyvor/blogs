@@ -42,18 +42,12 @@ Route::prefix('/api/console/v0')
         Route::get('/init-temp', [ConsoleController::class, 'initTemp']);
     });
 
-/**
- * This is an internal API for user-level functions
- * This cannot be accessed via API keys
- * Used only in our Console
- */
 Route::prefix('/api/console/v0')
     ->middleware([
         ConsoleApiAuthMiddleware::class,
         CorsOnLocalhost::class,
     ])
     ->group(function () {
-        Route::get('/usage', [ConsoleController::class, 'getUsage']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
     });
 
