@@ -29,9 +29,4 @@ readonly class AppConfig
     {
         return $this->domainApp;
     }
-
-    public function getHyvorInstance(): string
-    {
-        return $this->hyvorInstance;
-    }
 }
