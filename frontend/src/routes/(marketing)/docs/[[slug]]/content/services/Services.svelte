@@ -6,16 +6,16 @@
 
 <h1>Services</h1>
 
-<TabNav bind:active>
-	<TabNavItem name="comments">Comments</TabNavItem>
+<TabNav>
+	<TabNavItem name="comments" active={active === 'comments'} onclick={() => active = 'comments'}>Comments</TabNavItem>
 
-	<TabNavItem name="newsletter">Newsletter</TabNavItem>
+	<TabNavItem name="newsletter" active={active === 'newsletter'} onclick={() => active = 'newsletter'}>Newsletter</TabNavItem>
 
-	<TabNavItem name="analytics">Analytics</TabNavItem>
+	<TabNavItem name="analytics" active={active === 'analytics'} onclick={() => active = 'analytics'}>Analytics</TabNavItem>
 
-	<TabNavItem name="memberships">Memberships</TabNavItem>
+	<TabNavItem name="memberships" active={active === 'memberships'} onclick={() => active = 'memberships'}>Memberships</TabNavItem>
 
-	<TabNavItem name="forms">Forms</TabNavItem>
+	<TabNavItem name="forms" active={active === 'forms'} onclick={() => active = 'forms'}>Forms</TabNavItem>
 </TabNav>
 
 {#if active === 'comments'}

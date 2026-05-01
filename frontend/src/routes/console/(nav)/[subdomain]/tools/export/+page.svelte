@@ -11,9 +11,9 @@
 </script>
 
 <div class="export hds-box">
-	<TabNav bind:active={tab}>
-		<TabNavItem name="new">New Export</TabNavItem>
-		<TabNavItem name="history">History</TabNavItem>
+	<TabNav>
+		<TabNavItem name="new" active={tab === 'new'} onclick={() => tab = 'new'}>New Export</TabNavItem>
+		<TabNavItem name="history" active={tab === 'history'} onclick={() => tab = 'history'}>History</TabNavItem>
 	</TabNav>
 
 	<div class="content">

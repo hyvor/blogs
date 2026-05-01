@@ -33,15 +33,15 @@
 
 	<div class="body hds-box">
 		<div class="nav">
-			<TabNav bind:active={$tab}>
-				<TabNavItem name="settings">
+			<TabNav>
+				<TabNavItem name="settings" active={$tab === 'settings'} onclick={() => $tab = 'settings'}>
 					{#snippet start()}
 						<IconGear />
 					{/snippet}
 					Settings
 				</TabNavItem>
 
-				<TabNavItem name="seo">
+				<TabNavItem name="seo" active={$tab === 'seo'} onclick={() => $tab = 'seo'}>
 					{#snippet start()}
 						<IconSearchHeart />
 					{/snippet}
@@ -51,7 +51,7 @@
 					{/snippet}
 				</TabNavItem>
 
-				<TabNavItem name="links">
+				<TabNavItem name="links" active={$tab === 'links'} onclick={() => $tab = 'links'}>
 					{#snippet start()}
 						<IconLink45deg />
 					{/snippet}
@@ -61,7 +61,7 @@
 					{/snippet}
 				</TabNavItem>
 
-				<TabNavItem name="ai">
+				<TabNavItem name="ai" active={$tab === 'ai'} onclick={() => $tab = 'ai'}>
 					{#snippet start()}
 						<IconMagic />
 					{/snippet}

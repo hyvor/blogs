@@ -23,22 +23,22 @@
 			</div>
 		{/snippet}
 
-		<TabNav bind:active={tab}>
-			<TabNavItem name="overview">
+		<TabNav>
+			<TabNavItem name="overview" active={tab === 'overview'} onclick={() => tab = 'overview'}>
 				{#snippet start()}
 					<IconCardChecklist />
 				{/snippet}
 				Overview
 			</TabNavItem>
 
-			<TabNavItem name="links">
+			<TabNavItem name="links" active={tab === 'links'} onclick={() => tab = 'links'}>
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
 				Links
 			</TabNavItem>
 
-			<TabNavItem name="settings">
+			<TabNavItem name="settings" active={tab === 'settings'} onclick={() => tab = 'settings'}>
 				{#snippet start()}
 					<IconGear />
 				{/snippet}

@@ -45,20 +45,20 @@
 
 <Modal bind:show>
 	{#snippet title()}
-		<TabNav bind:active={activeTab}>
-			<TabNavItem name="paste">
+		<TabNav>
+			<TabNavItem name="paste" active={activeTab === 'paste'} onclick={() => activeTab = 'paste'}>
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
 				Paste Link
 			</TabNavItem>
-			<TabNavItem name="anchors">
+			<TabNavItem name="anchors" active={activeTab === 'anchors'} onclick={() => activeTab = 'anchors'}>
 				{#snippet start()}
 					<IconHash />
 				{/snippet}
 				Anchors
 			</TabNavItem>
-			<TabNavItem name="posts">
+			<TabNavItem name="posts" active={activeTab === 'posts'} onclick={() => activeTab = 'posts'}>
 				{#snippet start()}
 					<IconSearch size={13} />
 				{/snippet}
