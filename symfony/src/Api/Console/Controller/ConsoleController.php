@@ -18,7 +18,6 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -39,11 +38,11 @@ class ConsoleController
     #[Route('/init', methods: ['GET'])]
     #[OrganizationLevelEndpoint]
     #[OrganizationOptional]
-    public function init(Request $request): JsonResponse
+    public function init(): JsonResponse
     {
-        $user = $this->authListener->getUser($request);
-        $org = $this->authListener->hasOrganization($request)
-            ? $this->authListener->getOrganization($request) : null;
+        $user = $this->authListener->getUser();
+        $org = $this->authListener->hasOrganization()
+            ? $this->authListener->getOrganization() : null;
 
         $blogs = [];
         if ($org !== null) {
@@ -74,9 +73,9 @@ class ConsoleController
 
     #[Route('/usage', methods: ['GET'])]
     #[OrganizationLevelEndpoint]
-    public function usage(Request $request): JsonResponse
+    public function usage(): JsonResponse
     {
-        $org = $this->authListener->getOrganization($request);
+        $org = $this->authListener->getOrganization();
 
         try {
             $license = $this->billing->license($org->id);
@@ -106,20 +105,12 @@ class ConsoleController
         ]);
     }
 
-    #[Route('/ping', methods: ['GET'])]
-    #[OrganizationLevelEndpoint]
-    public function ping(): JsonResponse
-    {
-        return new JsonResponse();
-    }
-
     #[Route('/blogs/sort', methods: ['PATCH'])]
     #[OrganizationLevelEndpoint]
     public function sortBlogs(
         #[MapRequestPayload] SortBlogsInput $input,
-        Request $request,
     ): JsonResponse {
-        $user = $this->authListener->getUser($request);
+        $user = $this->authListener->getUser();
         $this->userService->changeBlogSorts($user->id, $input->blog_ids);
 
         return new JsonResponse();

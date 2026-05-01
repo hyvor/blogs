@@ -19,49 +19,47 @@ use Symfony\Component\Uid\Uuid;
 class BlogController
 {
     public function __construct(
-        private ConsoleApiAuthorizationListener $authListener,
         private BlogService $blogService,
-        private BlogListObjectFactory $blogListObjectFactory,
     ) {}
 
-    #[Route('/blog', methods: ['POST'])]
-    #[OrganizationLevelEndpoint]
-    public function create(
-        #[MapRequestPayload] CreateBlogInput $input,
-        Request $request,
-    ): JsonResponse {
-        $user = $this->authListener->getUser();
-        $org = $this->authListener->getOrganization();
+    // #[Route('/blog', methods: ['POST'])]
+    // #[OrganizationLevelEndpoint]
+    // public function create(
+    //     #[MapRequestPayload] CreateBlogInput $input,
+    //     Request $request,
+    // ): JsonResponse {
+    //     $user = $this->authListener->getUser();
+    //     $org = $this->authListener->getOrganization();
 
-        $subdomain = $input->subdomain;
+    //     $subdomain = $input->subdomain;
 
-        if ($input->is_dev) {
-            $subdomain = 'dev-' . Uuid::v4();
-        } else {
-            assert($subdomain !== null);
+    //     if ($input->is_dev) {
+    //         $subdomain = 'dev-' . Uuid::v4();
+    //     } else {
+    //         assert($subdomain !== null);
 
-            if (BlogService::isSubdomainReserved($subdomain)) {
-                throw new UnprocessableEntityHttpException('subdomain is reserved');
-            }
+    //         if (BlogService::isSubdomainReserved($subdomain)) {
+    //             throw new UnprocessableEntityHttpException('subdomain is reserved');
+    //         }
 
-            if ($this->blogService->getBlogBySubdomain($subdomain) !== null) {
-                throw new UnprocessableEntityHttpException('subdomain is already taken');
-            }
-        }
+    //         if ($this->blogService->getBlogBySubdomain($subdomain) !== null) {
+    //             throw new UnprocessableEntityHttpException('subdomain is already taken');
+    //         }
+    //     }
 
-        $owner = $this->blogService->createBlog(
-            $user->id,
-            $org->id,
-            $input->name,
-            $subdomain,
-            $input->is_dev ? BlogType::DEV : BlogType::DEFAULT,
-            $request->getClientIp(),
-        );
+    //     $owner = $this->blogService->createBlog(
+    //         $user->id,
+    //         $org->id,
+    //         $input->name,
+    //         $subdomain,
+    //         $input->is_dev ? BlogType::DEV : BlogType::DEFAULT,
+    //         $request->getClientIp(),
+    //     );
 
-        assert($owner !== null);
+    //     assert($owner !== null);
 
-        return new JsonResponse($this->blogListObjectFactory->create($owner), 201);
-    }
+    //     return new JsonResponse($this->blogListObjectFactory->create($owner), 201);
+    // }
 
     #[Route('/blog/check-subdomain', methods: ['GET'])]
     #[OrganizationLevelEndpoint]

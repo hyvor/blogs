@@ -28,6 +28,10 @@ class BlogListObject
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType()?->value;
         $this->url = $url;
+
+        /**
+         * @var array<string, string|null> $meta
+         */
         $meta = $blog->getMeta() ?? [];
         $this->logo_url = $meta['logo_url'] ?? null;
         $counts = $blog->getCounts() ?? [];
