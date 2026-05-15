@@ -135,6 +135,23 @@ class UserService
     }
 
     /**
+     * Might be able to use getUserByBlogAndAuthUser instead
+     */
+    public function hasAccessToBlog(Blog $blog, int $hyvorUserId): bool
+    {
+        $user = $this->em->getRepository(User::class)->findOneBy([
+            'blog' => $blog,
+            'hyvor_user_id' => $hyvorUserId,
+        ]);
+
+        if (!$user) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Note: this does not emit events like Laravel does, which means
      * counts are not updated and webhooks are not triggered
      */

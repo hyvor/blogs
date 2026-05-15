@@ -52,6 +52,12 @@ function getConsoleApi() {
 			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
 		} as Record<string, string>;
 
+		const currentOrg = get(authOrganizationStore);
+
+		if (currentOrg) {
+			headers['X-Organization-ID'] = String(currentOrg.id);
+		}
+
 		if (!(data instanceof FormData)) {
 			headers['Content-Type'] = 'application/json';
 		}

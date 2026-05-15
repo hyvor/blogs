@@ -2,13 +2,14 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Entity\Blog;
+use Api\Console\Authorization\ConsoleAuthorizationListener;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainSetupStatus;
 use App\Service\CustomDomain\Message\GeneratePendingTlsCertificatesMessage;
 use App\Service\CustomDomain\CustomDomainService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,15 +17,15 @@ use Symfony\Component\Routing\Attribute\Route;
 class CustomDomainController extends AbstractController
 {
     public function __construct(
-        private CustomDomainService $tlsService,
-        private MessageBusInterface $messageBus
-    )
-    {
-    }
+        private ConsoleAuthorizationListener $authorizationListener,
+        private CustomDomainService          $tlsService,
+        private MessageBusInterface          $messageBus
+    ) {}
 
     #[Route('/custom-domain', methods: 'GET')]
-    public function getCustomDomainStatus(Blog $blog): JsonResponse
+    public function getCustomDomainStatus(Request $request): JsonResponse
     {
+        $blog = $this->authorizationListener->getBlog($request);
         $tlsCertificate = $this->tlsService->getTlsCertificate($blog);
 
         if ($blog->getHostingAt() !== BlogHostingAt::DOMAIN) {
