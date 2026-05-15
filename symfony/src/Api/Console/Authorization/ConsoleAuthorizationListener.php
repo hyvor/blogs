@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Console\Authorization;
+namespace App\Api\Console\Authorization;
 
 use App\Entity\Blog;
 use App\Service\Blog\BlogService;

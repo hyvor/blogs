@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use Api\Console\Authorization\ConsoleAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleAuthorizationListener;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainSetupStatus;
 use App\Service\CustomDomain\Message\GeneratePendingTlsCertificatesMessage;
