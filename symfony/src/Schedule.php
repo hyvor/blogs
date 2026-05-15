@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Service\TlsCertificate\Message\GeneratePendingTlsCertificatesMessage;
+use App\Service\CustomDomain\Message\GeneratePendingTlsCertificatesMessage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;

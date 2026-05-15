@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\TlsCertificateStatus;
-use App\Repository\TlsCertificateRepository;
+use App\Entity\Enum\CustomDomainSetupStatus;
+use App\Repository\CustomDomainSetupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TlsCertificateRepository::class)]
-#[ORM\Table(name: 'tls_certificates')]
-class TlsCertificate
+#[ORM\Entity(repositoryClass: CustomDomainSetupRepository::class)]
+#[ORM\Table(name: 'custom_domain_setups')]
+class CustomDomainSetup
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,8 +28,11 @@ class TlsCertificate
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(length: 255, enumType: TlsCertificateStatus::class, options: ['default' => 'pending'])]
-    private TlsCertificateStatus $status = TlsCertificateStatus::PENDING;
+    #[ORM\Column(length: 255, enumType: CustomDomainSetupStatus::class, options: ['default' => 'pending'])]
+    private CustomDomainSetupStatus $status = CustomDomainSetupStatus::PENDING;
+
+    #[ORM\Column]
+    private string $domain;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $private_key_encrypted = null;
@@ -98,14 +101,25 @@ class TlsCertificate
         return $this;
     }
 
-    public function getStatus(): TlsCertificateStatus
+    public function getStatus(): CustomDomainSetupStatus
     {
         return $this->status;
     }
 
-    public function setStatus(TlsCertificateStatus $status): static
+    public function setStatus(CustomDomainSetupStatus $status): static
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(string $domain): static
+    {
+        $this->domain = $domain;
         return $this;
     }
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Service\TlsCertificate\MessageHandler;
+namespace App\Service\CustomDomain\MessageHandler;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
-use App\Entity\Enum\TlsCertificateStatus;
-use App\Entity\TlsCertificate;
-use App\Service\TlsCertificate\Acme\AcmeException;
-use App\Service\TlsCertificate\Message\GeneratePendingTlsCertificatesMessage;
-use App\Service\TlsCertificate\TlsService;
+use App\Entity\Enum\CustomDomainSetupStatus;
+use App\Entity\CustomDomainSetup;
+use App\Service\CustomDomain\Acme\AcmeException;
+use App\Service\CustomDomain\Message\GeneratePendingTlsCertificatesMessage;
+use App\Service\CustomDomain\CustomDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -17,7 +17,7 @@ class GeneratePendingTlsCertifactesMessageHandler
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private TlsService $tlsService,
+        private CustomDomainService    $tlsService,
     ) {}
 
     public function __invoke(GeneratePendingTlsCertificatesMessage $message): void
@@ -27,7 +27,7 @@ class GeneratePendingTlsCertifactesMessageHandler
             ->select('b', 'tc')
             ->from(Blog::class, 'b')
             ->leftJoin(
-                TlsCertificate::class,
+                CustomDomainSetup::class,
                 'tc',
                 'WITH',
                 'tc.blog = b'
@@ -35,14 +35,14 @@ class GeneratePendingTlsCertifactesMessageHandler
             ->where('b.hosting_at = :hosting_at')
             ->andWhere('tc.id IS NULL OR tc.status = :pending_status')
             ->setParameter('hosting_at', BlogHostingAt::DOMAIN)
-            ->setParameter('pending_status', TlsCertificateStatus::PENDING);
+            ->setParameter('pending_status', CustomDomainSetupStatus::PENDING);
 
         if ($message->getBlogId() !== null) {
             $q->andWhere('b.id = :blog_id')
                 ->setParameter('blog_id', $message->getBlogId());
         }
 
-        /** @var array<int, Blog|TlsCertificate|null> $results */
+        /** @var array<int, Blog|CustomDomainSetup|null> $results */
         $results = $q->getQuery()->getResult();
 
         $grouped = [];
@@ -50,7 +50,7 @@ class GeneratePendingTlsCertifactesMessageHandler
             if ($item instanceof Blog) {
                 $grouped[$item->getId()]['blog'] = $item;
                 $grouped[$item->getId()]['tlsCertificate'] = null;
-            } elseif ($item instanceof TlsCertificate) {
+            } elseif ($item instanceof CustomDomainSetup) {
                 $grouped[$item->getBlogId()]['tlsCertificate'] = $item;
             }
         }

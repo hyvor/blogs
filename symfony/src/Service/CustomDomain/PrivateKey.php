@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\TlsCertificate;
+namespace App\Service\CustomDomain;
 
 class PrivateKey
 {

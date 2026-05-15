@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Service\TlsCertificate;
+namespace App\Tests\Service\CustomDomain;
 
-use App\Service\TlsCertificate\Acme\AcmeClient;
-use App\Service\TlsCertificate\Acme\PendingOrder;
+use App\Service\CustomDomain\Acme\AcmeClient;
+use App\Service\CustomDomain\Acme\PendingOrder;
 use App\Tests\Case\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversNamespace;
 use Psr\Log\LoggerInterface;

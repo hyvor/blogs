@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme\Dto\AuthorizationResponse;
+namespace App\Service\CustomDomain\Acme\Dto\AuthorizationResponse;
 
-use App\Service\TlsCertificate\Acme\AcmeException;
+use App\Service\CustomDomain\Acme\AcmeException;
 
 class AuthorizationResponse
 {

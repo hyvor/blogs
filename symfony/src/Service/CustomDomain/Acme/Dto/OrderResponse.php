@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme\Dto;
+namespace App\Service\CustomDomain\Acme\Dto;
 
-use App\Service\TlsCertificate\Acme\AcmeException;
+use App\Service\CustomDomain\Acme\AcmeException;
 
 readonly class OrderResponse
 {

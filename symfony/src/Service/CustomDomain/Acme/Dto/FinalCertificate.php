@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme\Dto;
+namespace App\Service\CustomDomain\Acme\Dto;
 
 class FinalCertificate
 {

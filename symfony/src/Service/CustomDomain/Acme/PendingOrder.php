@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme;
+namespace App\Service\CustomDomain\Acme;
 
 class PendingOrder
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Service\TlsCertificate;
+namespace App\Service\CustomDomain;
 
 use App\Entity\Blog;
-use App\Entity\Enum\TlsCertificateStatus;
-use App\Entity\TlsCertificate;
-use App\Service\TlsCertificate\Acme\AcmeClient;
-use App\Service\TlsCertificate\Acme\AcmeException;
+use App\Entity\Enum\CustomDomainSetupStatus;
+use App\Entity\CustomDomainSetup;
+use App\Service\CustomDomain\Acme\AcmeClient;
+use App\Service\CustomDomain\Acme\AcmeException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Symfony\Component\Clock\ClockAwareTrait;
 
-class TlsService
+class CustomDomainService
 {
     use ClockAwareTrait;
 
@@ -21,7 +21,7 @@ class TlsService
         private Encryption $encryption,
     ) {}
 
-    public function getDecryptedPrivateKeyPem(TlsCertificate $cert): string
+    public function getDecryptedPrivateKeyPem(CustomDomainSetup $cert): string
     {
         $privateKeyEncrypted = $cert->getPrivateKeyEncrypted();
         if ($privateKeyEncrypted === null) {
@@ -31,7 +31,7 @@ class TlsService
         return $this->encryption->decryptString($privateKeyEncrypted);
     }
 
-    public function getDecryptedPrivateKey(TlsCertificate $cert): \OpenSSLAsymmetricKey
+    public function getDecryptedPrivateKey(CustomDomainSetup $cert): \OpenSSLAsymmetricKey
     {
         $privateKeyPem = $this->getDecryptedPrivateKeyPem($cert);
 
@@ -43,16 +43,16 @@ class TlsService
         return $privateKey;
     }
 
-    public function createTlsCertificate(Blog $blog): TlsCertificate
+    public function createTlsCertificate(Blog $blog): CustomDomainSetup
     {
         $privateKeyPem = PrivateKey::generatePrivateKeyPem();
         $encryptedPrivateKey = $this->encryption->encryptString($privateKeyPem);
 
-        $tlsCertificate = new TlsCertificate();
+        $tlsCertificate = new CustomDomainSetup();
         $tlsCertificate->setBlog($blog);
         $tlsCertificate->setCreatedAt($this->now());
         $tlsCertificate->setUpdatedAt($this->now());
-        $tlsCertificate->setStatus(TlsCertificateStatus::PENDING);
+        $tlsCertificate->setStatus(CustomDomainSetupStatus::PENDING);
         $tlsCertificate->setPrivateKeyEncrypted($encryptedPrivateKey);
 
         $this->em->persist($tlsCertificate);
@@ -61,16 +61,16 @@ class TlsService
         return $tlsCertificate;
     }
 
-    public function getTlsCertificate(Blog $blog): ?TlsCertificate
+    public function getTlsCertificate(Blog $blog): ?CustomDomainSetup
     {
-        return $this->em->getRepository(TlsCertificate::class)
+        return $this->em->getRepository(CustomDomainSetup::class)
             ->findOneBy(['blog' => $blog]);
     }
 
     /**
      * @throws AcmeException
      */
-    public function generateCertificate(TlsCertificate $tlsCertificate): void
+    public function generateCertificate(CustomDomainSetup $tlsCertificate): void
     {
         $domain = $tlsCertificate->getBlog()->getHostingDomain();
         assert($domain !== null);
@@ -90,13 +90,13 @@ class TlsService
     }
 
     public function activateCertificate(
-        TlsCertificate $tlsCertificate,
-        string $certPem,
+        CustomDomainSetup  $tlsCertificate,
+        string             $certPem,
         \DateTimeImmutable $validFrom,
         \DateTimeImmutable $validTo
     ): void
     {
-        $tlsCertificate->setStatus(TlsCertificateStatus::ACTIVE);
+        $tlsCertificate->setStatus(CustomDomainSetupStatus::ACTIVE);
         $tlsCertificate->setCertificate($certPem);
         $tlsCertificate->setValidFrom($validFrom);
         $tlsCertificate->setValidTo($validTo);

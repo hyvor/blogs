@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\TlsCertificate;
+use App\Entity\CustomDomainSetup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TlsCertificate>
+ * @extends ServiceEntityRepository<CustomDomainSetup>
  */
-class TlsCertificateRepository extends ServiceEntityRepository
+class CustomDomainSetupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TlsCertificate::class);
+        parent::__construct($registry, CustomDomainSetup::class);
     }
 
     //    /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme\Dto\AuthorizationResponse;
+namespace App\Service\CustomDomain\Acme\Dto\AuthorizationResponse;
 
 readonly class Challenge
 {

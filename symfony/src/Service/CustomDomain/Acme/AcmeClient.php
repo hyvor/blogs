@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\TlsCertificate\Acme;
+namespace App\Service\CustomDomain\Acme;
 
-use App\Service\TlsCertificate\Acme\Dto\AccountInternalDto;
-use App\Service\TlsCertificate\Acme\Dto\AuthorizationResponse\AuthorizationResponse;
-use App\Service\TlsCertificate\Acme\Dto\DirectoryDto;
-use App\Service\TlsCertificate\Acme\Dto\FinalCertificate;
-use App\Service\TlsCertificate\Acme\Dto\OrderResponse;
+use App\Service\CustomDomain\Acme\Dto\AccountInternalDto;
+use App\Service\CustomDomain\Acme\Dto\AuthorizationResponse\AuthorizationResponse;
+use App\Service\CustomDomain\Acme\Dto\DirectoryDto;
+use App\Service\CustomDomain\Acme\Dto\FinalCertificate;
+use App\Service\CustomDomain\Acme\Dto\OrderResponse;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Clock\ClockInterface;
