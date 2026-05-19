@@ -13,6 +13,9 @@
 
         # need to update this as routes are migrated to Symfony
         # also update image Caddyfile
+        path /api/console/v0/init
+        path /api/console/v0/usage
+        path /api/console/v0/blogs/sort
         path /api/console/v0/blog/*/api-key*
         path /api/console/v0/blog/*/language*
         path /api/console/v0/blog/*/navigation*

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Console\Controller;
+namespace App\Api\Console\ControllerOrg;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\OrganizationLevelEndpoint;

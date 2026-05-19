@@ -5,6 +5,10 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 return static function (RoutingConfigurator $routes): void {
     // console API
     $routes
+        ->import('../../src/Api/Console/ControllerOrg', 'attribute')
+        ->prefix('/api/console/v0')
+        ->namePrefix('api_console_');
+    $routes
         ->import('../../src/Api/Console/Controller', 'attribute')
         ->prefix('/api/console/v0/blog/{subdomain}')
         ->namePrefix('api_console_');
