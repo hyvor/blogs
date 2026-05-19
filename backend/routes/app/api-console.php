@@ -235,8 +235,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/data/imports', [ConsoleImportController::class, 'getImports']);
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
-
-            Route::get('/build', []);
         });
 
         /**

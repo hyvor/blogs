@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -34,6 +36,15 @@ class Navigation
 
     #[ORM\Column(options: ['default' => 0])]
     private int $sort = 0;
+
+    /** @var Collection<int, NavigationVariant> */
+    #[ORM\OneToMany(targetEntity: NavigationVariant::class, mappedBy: 'navigation')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -121,5 +132,13 @@ class Navigation
     {
         $this->sort = $sort;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, NavigationVariant>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
     }
 }

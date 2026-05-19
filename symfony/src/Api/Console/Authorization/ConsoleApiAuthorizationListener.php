@@ -7,7 +7,6 @@ use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

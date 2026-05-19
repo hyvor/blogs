@@ -1,0 +1,121 @@
+<?php
+
+namespace App\Api\Console\Controller;
+
+use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Input\Blog\Redirect\CreateRedirectInput;
+use App\Api\Console\Input\Blog\Redirect\GetRedirectsInput;
+use App\Api\Console\Input\Blog\Redirect\UpdateRedirectInput;
+use App\Service\Limit;
+use App\Service\Redirect\RedirectService;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Routing\Attribute\Route;
+
+class RedirectController
+{
+    public function __construct(
+        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private RedirectService $redirectService,
+    ) {}
+
+    private function formatRedirect(mixed $r): array
+    {
+        return [
+            'id' => $r->getId(),
+            'created_at' => $r->getCreatedAt()->getTimestamp(),
+            'dynamic' => $r->isDynamic(),
+            'path' => $r->getPath(),
+            'to' => $r->getTo(),
+            'type' => $r->getType(),
+        ];
+    }
+
+    #[Route('/redirects', methods: ['GET'])]
+    public function getRedirects(
+        #[MapQueryString] GetRedirectsInput $input = new GetRedirectsInput(),
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+        $redirects = $this->redirectService->getRedirects(
+            $blog,
+            $input->search ?? '',
+            $input->limit,
+            $input->offset,
+        );
+
+        return new JsonResponse(array_map([$this, 'formatRedirect'], $redirects));
+    }
+
+    #[Route('/redirects', methods: ['POST'])]
+    public function createRedirect(
+        #[MapRequestPayload] CreateRedirectInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        if ($this->redirectService->getRedirectsCount($blog) >= Limit::MAX_REDIRECTS_PER_BLOG) {
+            throw new UnprocessableEntityHttpException(
+                'You have reached the maximum number of redirects (' . Limit::MAX_REDIRECTS_PER_BLOG . ')'
+            );
+        }
+
+        if ($input->dynamic) {
+            if (!$this->redirectService->validateRegex($input->path)) {
+                throw new UnprocessableEntityHttpException('Invalid regex pattern for dynamic redirect');
+            }
+            if ($this->redirectService->getDynamicRedirectCount($blog) >= 5) {
+                throw new UnprocessableEntityHttpException('You have reached the maximum number of dynamic redirects (5)');
+            }
+        } else {
+            if ($this->redirectService->hasRedirectForPath($blog, $input->path)) {
+                throw new UnprocessableEntityHttpException('A redirect for this path already exists');
+            }
+        }
+
+        $redirect = $this->redirectService->createRedirect(
+            $blog,
+            $input->dynamic,
+            $input->path,
+            $input->to,
+            $input->type,
+        );
+
+        return new JsonResponse($this->formatRedirect($redirect), 201);
+    }
+
+    #[Route('/redirects/{id}', methods: ['PUT'])]
+    public function updateRedirect(
+        int $id,
+        #[MapRequestPayload] UpdateRedirectInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+        $redirect = $this->redirectService->getRedirectByIdAndBlog($id, $blog);
+
+        if ($input->path !== null && $input->path !== $redirect->getPath()) {
+            if ($redirect->isDynamic()) {
+                if (!$this->redirectService->validateRegex($input->path)) {
+                    throw new UnprocessableEntityHttpException('Invalid regex pattern for dynamic redirect');
+                }
+            } else {
+                if ($this->redirectService->hasRedirectForPath($blog, $input->path)) {
+                    throw new UnprocessableEntityHttpException('A redirect for this path already exists');
+                }
+            }
+        }
+
+        $redirect = $this->redirectService->updateRedirect($redirect, $input->path, $input->to, $input->type);
+
+        return new JsonResponse($this->formatRedirect($redirect));
+    }
+
+    #[Route('/redirects/{id}', methods: ['DELETE'])]
+    public function deleteRedirect(int $id): JsonResponse
+    {
+        $blog = $this->blogAuthListener->getBlog();
+        $redirect = $this->redirectService->getRedirectByIdAndBlog($id, $blog);
+        $this->redirectService->deleteRedirect($redirect);
+
+        return new JsonResponse();
+    }
+}
