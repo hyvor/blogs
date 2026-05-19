@@ -6,7 +6,7 @@ return static function (RoutingConfigurator $routes): void {
     // console API
     $routes
         ->import('../../src/Api/Console/Controller', 'attribute')
-        ->prefix('/api/v2/console')
+        ->prefix('/api/console/v0/blog/{subdomain}')
         ->namePrefix('api_console_');
 
     // internal API routes
