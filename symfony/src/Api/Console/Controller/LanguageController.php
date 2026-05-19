@@ -5,6 +5,7 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Language\CreateLanguageInput;
 use App\Api\Console\Input\Blog\Language\UpdateLanguageInput;
+use App\Api\Console\Object\LanguageObject;
 use App\Service\Language\LanguageService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -19,24 +20,13 @@ class LanguageController
         private LanguageService $languageService,
     ) {}
 
-    private function formatLanguage(mixed $lang): array
-    {
-        return [
-            'id' => $lang->getId(),
-            'code' => $lang->getCode(),
-            'name' => $lang->getName(),
-            'is_primary' => $lang->isPrimary(),
-            'direction' => $lang->getDirection(),
-        ];
-    }
-
     #[Route('/languages', methods: ['GET'])]
     public function getLanguages(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $languages = $this->languageService->getAllLanguages($blog);
 
-        return new JsonResponse(array_map([$this, 'formatLanguage'], $languages));
+        return new JsonResponse(array_map(fn($lang) => new LanguageObject($lang), $languages));
     }
 
     #[Route('/language', methods: ['POST'])]
@@ -51,7 +41,7 @@ class LanguageController
 
         $language = $this->languageService->createLanguage($blog, $input->code, $input->name, $input->direction);
 
-        return new JsonResponse($this->formatLanguage($language), 201);
+        return new JsonResponse(new LanguageObject($language), 201);
     }
 
     #[Route('/language/{id}', methods: ['PATCH'])]
@@ -72,7 +62,7 @@ class LanguageController
 
         $language = $this->languageService->updateLanguage($language, $input->code, $input->name, $input->direction);
 
-        return new JsonResponse($this->formatLanguage($language));
+        return new JsonResponse(new LanguageObject($language));
     }
 
     #[Route('/language/{id}', methods: ['DELETE'])]

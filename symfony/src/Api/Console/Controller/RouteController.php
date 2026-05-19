@@ -5,6 +5,7 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Route\CreateRouteInput;
 use App\Api\Console\Input\Blog\Route\UpdateRouteInput;
+use App\Api\Console\Object\RouteObject;
 use App\Service\Limit;
 use App\Service\Route\RouteService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,26 +20,13 @@ class RouteController
         private RouteService $routeService,
     ) {}
 
-    private function formatRoute(mixed $r): array
-    {
-        return [
-            'id' => $r->getId(),
-            'name' => $r->getName(),
-            'match' => $r->getMatch(),
-            'template' => $r->getTemplate(),
-            'posts_filter' => $r->getPostsFilter(),
-            'content_type' => $r->getContentType(),
-            'is_enabled' => $r->isEnabled(),
-        ];
-    }
-
     #[Route('/routes', methods: ['GET'])]
     public function getRoutes(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $routes = $this->routeService->getRoutes($blog);
 
-        return new JsonResponse(array_map([$this, 'formatRoute'], $routes));
+        return new JsonResponse(array_map(fn($r) => new RouteObject($r), $routes));
     }
 
     #[Route('/route', methods: ['POST'])]
@@ -62,7 +50,7 @@ class RouteController
             $input->content_type,
         );
 
-        return new JsonResponse($this->formatRoute($route), 201);
+        return new JsonResponse(new RouteObject($route), 201);
     }
 
     #[Route('/route/{id}', methods: ['PATCH'])]
@@ -81,7 +69,7 @@ class RouteController
             $input->content_type,
         );
 
-        return new JsonResponse($this->formatRoute($route));
+        return new JsonResponse(new RouteObject($route));
     }
 
     #[Route('/route/{id}', methods: ['DELETE'])]

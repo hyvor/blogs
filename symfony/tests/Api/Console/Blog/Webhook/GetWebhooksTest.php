@@ -33,6 +33,7 @@ class GetWebhooksTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertIsArray($json);
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('https://example.com/hook', $json[0]['url']);
         $this->assertSame(['post.created'], $json[0]['events']);
         $this->assertArrayHasKey('secret', $json[0]);

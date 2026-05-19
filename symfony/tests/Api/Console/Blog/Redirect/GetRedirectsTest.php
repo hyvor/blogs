@@ -34,6 +34,7 @@ class GetRedirectsTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertIsArray($json);
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('/old-page', $json[0]['path']);
         $this->assertSame('https://example.com/new-page', $json[0]['to']);
         $this->assertSame('permanent', $json[0]['type']);

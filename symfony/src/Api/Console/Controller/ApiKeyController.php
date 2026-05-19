@@ -4,6 +4,7 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
 use App\Api\Console\Input\Blog\ApiKey\CreateApiKeyInput;
+use App\Api\Console\Object\ApiKeyObject;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Limit;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,12 +25,7 @@ class ApiKeyController
         $blog = $this->blogAuthListener->getBlog();
         $apiKeys = $this->apiKeyService->getApiKeys($blog);
 
-        return new JsonResponse(array_map(fn($k) => [
-            'id' => $k->getId(),
-            'name' => $k->getName(),
-            'type' => $k->getType(),
-            'api_key' => $k->getApiKey(),
-        ], $apiKeys));
+        return new JsonResponse(array_map(fn($k) => new ApiKeyObject($k), $apiKeys));
     }
 
     #[Route('/api-key', methods: ['POST'])]
@@ -46,12 +42,7 @@ class ApiKeyController
 
         $apiKey = $this->apiKeyService->createApiKey($blog, $input->name, $input->type);
 
-        return new JsonResponse([
-            'id' => $apiKey->getId(),
-            'name' => $apiKey->getName(),
-            'type' => $apiKey->getType(),
-            'api_key' => $apiKey->getApiKey(),
-        ], 201);
+        return new JsonResponse(new ApiKeyObject($apiKey), 201);
     }
 
     #[Route('/api-key/{id}', methods: ['PATCH'])]
@@ -61,12 +52,7 @@ class ApiKeyController
         $apiKey = $this->apiKeyService->getApiKeyByIdAndBlog($id, $blog);
         $apiKey = $this->apiKeyService->regenerateApiKey($apiKey);
 
-        return new JsonResponse([
-            'id' => $apiKey->getId(),
-            'name' => $apiKey->getName(),
-            'type' => $apiKey->getType(),
-            'api_key' => $apiKey->getApiKey(),
-        ]);
+        return new JsonResponse(new ApiKeyObject($apiKey));
     }
 
     #[Route('/api-key/{id}', methods: ['DELETE'])]

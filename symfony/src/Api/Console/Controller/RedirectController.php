@@ -6,6 +6,7 @@ use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Redirect\CreateRedirectInput;
 use App\Api\Console\Input\Blog\Redirect\GetRedirectsInput;
 use App\Api\Console\Input\Blog\Redirect\UpdateRedirectInput;
+use App\Api\Console\Object\RedirectObject;
 use App\Service\Limit;
 use App\Service\Redirect\RedirectService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,18 +22,6 @@ class RedirectController
         private RedirectService $redirectService,
     ) {}
 
-    private function formatRedirect(mixed $r): array
-    {
-        return [
-            'id' => $r->getId(),
-            'created_at' => $r->getCreatedAt()->getTimestamp(),
-            'dynamic' => $r->isDynamic(),
-            'path' => $r->getPath(),
-            'to' => $r->getTo(),
-            'type' => $r->getType(),
-        ];
-    }
-
     #[Route('/redirects', methods: ['GET'])]
     public function getRedirects(
         #[MapQueryString] GetRedirectsInput $input = new GetRedirectsInput(),
@@ -45,7 +34,7 @@ class RedirectController
             $input->offset,
         );
 
-        return new JsonResponse(array_map([$this, 'formatRedirect'], $redirects));
+        return new JsonResponse(array_map(fn($r) => new RedirectObject($r), $redirects));
     }
 
     #[Route('/redirect', methods: ['POST'])]
@@ -81,7 +70,7 @@ class RedirectController
             $input->type,
         );
 
-        return new JsonResponse($this->formatRedirect($redirect), 201);
+        return new JsonResponse(new RedirectObject($redirect), 201);
     }
 
     #[Route('/redirect/{id}', methods: ['PUT'])]
@@ -106,7 +95,7 @@ class RedirectController
 
         $redirect = $this->redirectService->updateRedirect($redirect, $input->path, $input->to, $input->type);
 
-        return new JsonResponse($this->formatRedirect($redirect));
+        return new JsonResponse(new RedirectObject($redirect));
     }
 
     #[Route('/redirect/{id}', methods: ['DELETE'])]

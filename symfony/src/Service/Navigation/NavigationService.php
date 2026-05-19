@@ -28,7 +28,9 @@ class NavigationService
             ->setParameter('blogId', $blog->getId())
             ->orderBy('n.sort', 'ASC');
 
-        return $qb->getQuery()->getResult();
+        /** @var Navigation[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     public function getNavigationCount(Blog $blog, string $type): int

@@ -38,6 +38,7 @@ class GetWebhookDeliveriesTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertIsArray($json);
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('post.created', $json[0]['event']);
         $this->assertSame('success', $json[0]['status']);
     }

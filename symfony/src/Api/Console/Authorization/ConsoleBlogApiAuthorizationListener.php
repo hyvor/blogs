@@ -39,7 +39,7 @@ class ConsoleBlogApiAuthorizationListener
 
         $request = $event->getRequest();
         $subdomain = $request->attributes->get('subdomain');
-        if (!$subdomain) {
+        if (!is_string($subdomain) || $subdomain === '') {
             throw new NotFoundHttpException('Blog not found');
         }
 

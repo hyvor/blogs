@@ -36,7 +36,9 @@ class CreateNavigationTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame('/header.json', $json['url']);
         $this->assertSame('header', $json['type']);
+        $this->assertIsArray($json['variants']);
         $this->assertCount(1, $json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame('Header Nav', $json['variants'][0]['name']);
     }
 }

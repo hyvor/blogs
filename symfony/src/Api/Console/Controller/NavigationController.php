@@ -8,6 +8,8 @@ use App\Api\Console\Input\Blog\Navigation\CreateNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\SortNavigationsInput;
 use App\Api\Console\Input\Blog\Navigation\UpdateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\UpdateNavigationVariantInput;
+use App\Api\Console\Object\NavigationObject;
+use App\Api\Console\Object\NavigationVariantObject;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
 use App\Service\Navigation\NavigationService;
@@ -26,33 +28,13 @@ class NavigationController
         private LanguageService $languageService,
     ) {}
 
-    private function formatNavigation(mixed $nav): array
-    {
-        $variants = array_values(array_map(fn($v) => [
-            'navigation_id' => $v->getNavigationId(),
-            'language_id' => $v->getLanguageId(),
-            'name' => $v->getName(),
-        ], $nav->getVariants()->toArray()));
-
-        usort($variants, fn($a, $b) => $a['language_id'] <=> $b['language_id']);
-
-        return [
-            'id' => $nav->getId(),
-            'created_at' => $nav->getCreatedAt()->getTimestamp(),
-            'url' => $nav->getUrl(),
-            'type' => $nav->getType(),
-            'sort' => $nav->getSort(),
-            'variants' => $variants,
-        ];
-    }
-
     #[Route('/navigations', methods: ['GET'])]
     public function getNavigations(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $navigations = $this->navigationService->getNavigations($blog);
 
-        return new JsonResponse(array_map([$this, 'formatNavigation'], $navigations));
+        return new JsonResponse(array_map(fn($nav) => new NavigationObject($nav), $navigations));
     }
 
     #[Route('/navigations/sort', methods: ['PATCH'])]
@@ -88,7 +70,7 @@ class NavigationController
 
         $navigation = $this->navigationService->getNavigationByIdAndBlog($navigation->getId(), $blog);
 
-        return new JsonResponse($this->formatNavigation($navigation), 201);
+        return new JsonResponse(new NavigationObject($navigation), 201);
     }
 
     #[Route('/navigation/{id}', methods: ['PATCH'])]
@@ -100,7 +82,7 @@ class NavigationController
         $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
         $navigation = $this->navigationService->updateNavigation($navigation, $input->url, $input->type);
 
-        return new JsonResponse($this->formatNavigation($navigation));
+        return new JsonResponse(new NavigationObject($navigation));
     }
 
     #[Route('/navigation/{id}', methods: ['DELETE'])]
@@ -128,11 +110,7 @@ class NavigationController
 
         $variant = $this->navigationService->createNavigationVariant($navigation, $language, $input->name);
 
-        return new JsonResponse([
-            'navigation_id' => $variant->getNavigationId(),
-            'language_id' => $variant->getLanguageId(),
-            'name' => $variant->getName(),
-        ], 201);
+        return new JsonResponse(new NavigationVariantObject($variant), 201);
     }
 
     #[Route('/navigation/{id}/variant', methods: ['PATCH'])]
@@ -155,11 +133,7 @@ class NavigationController
 
         $variant = $this->navigationService->updateNavigationVariant($variant, $input->name);
 
-        return new JsonResponse([
-            'navigation_id' => $variant->getNavigationId(),
-            'language_id' => $variant->getLanguageId(),
-            'name' => $variant->getName(),
-        ]);
+        return new JsonResponse(new NavigationVariantObject($variant));
     }
 
     #[Route('/navigation/{id}/variant', methods: ['DELETE'])]

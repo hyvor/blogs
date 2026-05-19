@@ -97,6 +97,8 @@ class WebhookService
                ->setParameter('webhookId', $webhookId);
         }
 
-        return $qb->getQuery()->getResult();
+        /** @var WebhookDelivery[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

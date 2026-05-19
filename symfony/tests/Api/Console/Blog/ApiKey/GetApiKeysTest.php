@@ -33,6 +33,7 @@ class GetApiKeysTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertIsArray($json);
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('My Key', $json[0]['name']);
         $this->assertSame('delivery', $json[0]['type']);
     }

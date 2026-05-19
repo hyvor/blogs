@@ -44,7 +44,9 @@ class LanguageService
             ->orderBy('l.is_primary', 'DESC')
             ->addOrderBy('l.id', 'ASC');
 
-        return $qb->getQuery()->getResult();
+        /** @var Language[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     public function getLanguageByCode(Blog $blog, string $code): ?Language

@@ -6,6 +6,8 @@ use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Webhook\CreateWebhookInput;
 use App\Api\Console\Input\Blog\Webhook\GetWebhookDeliveriesInput;
 use App\Api\Console\Input\Blog\Webhook\UpdateWebhookInput;
+use App\Api\Console\Object\WebhookDeliveryObject;
+use App\Api\Console\Object\WebhookObject;
 use App\Service\Limit;
 use App\Service\Webhook\WebhookService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,12 +29,7 @@ class WebhookController
         $blog = $this->blogAuthListener->getBlog();
         $webhooks = $this->webhookService->getWebhooks($blog);
 
-        return new JsonResponse(array_map(fn($w) => [
-            'id' => $w->getId(),
-            'url' => $w->getUrl(),
-            'events' => $w->getEvents(),
-            'secret' => $w->getSecret(),
-        ], $webhooks));
+        return new JsonResponse(array_map(fn($w) => new WebhookObject($w), $webhooks));
     }
 
     #[Route('/webhook', methods: ['POST'])]
@@ -49,12 +46,7 @@ class WebhookController
 
         $webhook = $this->webhookService->createWebhook($blog, $input->url, $input->events);
 
-        return new JsonResponse([
-            'id' => $webhook->getId(),
-            'url' => $webhook->getUrl(),
-            'events' => $webhook->getEvents(),
-            'secret' => $webhook->getSecret(),
-        ], 201);
+        return new JsonResponse(new WebhookObject($webhook), 201);
     }
 
     #[Route('/webhook/{id}', methods: ['PATCH'])]
@@ -66,12 +58,7 @@ class WebhookController
         $webhook = $this->webhookService->getWebhookByIdAndBlog($id, $blog);
         $webhook = $this->webhookService->updateWebhook($webhook, $input->url, $input->events);
 
-        return new JsonResponse([
-            'id' => $webhook->getId(),
-            'url' => $webhook->getUrl(),
-            'events' => $webhook->getEvents(),
-            'secret' => $webhook->getSecret(),
-        ]);
+        return new JsonResponse(new WebhookObject($webhook));
     }
 
     #[Route('/webhook/{id}', methods: ['DELETE'])]
@@ -96,13 +83,6 @@ class WebhookController
             $input->offset,
         );
 
-        return new JsonResponse(array_map(fn($d) => [
-            'id' => $d->getId(),
-            'url' => $d->getUrl(),
-            'event' => $d->getEvent(),
-            'status' => $d->getStatus(),
-            'response' => $d->getResponse(),
-            'created_at' => $d->getCreatedAt()?->getTimestamp(),
-        ], $deliveries));
+        return new JsonResponse(array_map(fn($d) => new WebhookDeliveryObject($d), $deliveries));
     }
 }

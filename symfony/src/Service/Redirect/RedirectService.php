@@ -34,7 +34,9 @@ class RedirectService
                ->setParameter('search', '%' . $search . '%');
         }
 
-        return $qb->getQuery()->getResult();
+        /** @var Redirect[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     public function getRedirectsCount(Blog $blog): int
