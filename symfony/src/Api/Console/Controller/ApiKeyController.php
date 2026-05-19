@@ -32,7 +32,7 @@ class ApiKeyController
         ], $apiKeys));
     }
 
-    #[Route('/api-keys', methods: ['POST'])]
+    #[Route('/api-key', methods: ['POST'])]
     public function createApiKey(
         #[MapRequestPayload] CreateApiKeyInput $input,
     ): JsonResponse {
@@ -54,7 +54,7 @@ class ApiKeyController
         ], 201);
     }
 
-    #[Route('/api-keys/{id}', methods: ['PATCH'])]
+    #[Route('/api-key/{id}', methods: ['PATCH'])]
     public function regenerateApiKey(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -69,7 +69,7 @@ class ApiKeyController
         ]);
     }
 
-    #[Route('/api-keys/{id}', methods: ['DELETE'])]
+    #[Route('/api-key/{id}', methods: ['DELETE'])]
     public function deleteApiKey(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

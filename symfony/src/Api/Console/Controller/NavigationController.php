@@ -65,7 +65,7 @@ class NavigationController
         return new JsonResponse();
     }
 
-    #[Route('/navigations', methods: ['POST'])]
+    #[Route('/navigation', methods: ['POST'])]
     public function createNavigation(
         #[MapRequestPayload] CreateNavigationInput $input,
     ): JsonResponse {
@@ -91,7 +91,7 @@ class NavigationController
         return new JsonResponse($this->formatNavigation($navigation), 201);
     }
 
-    #[Route('/navigations/{id}', methods: ['PATCH'])]
+    #[Route('/navigation/{id}', methods: ['PATCH'])]
     public function updateNavigation(
         int $id,
         #[MapRequestPayload] UpdateNavigationInput $input,
@@ -103,7 +103,7 @@ class NavigationController
         return new JsonResponse($this->formatNavigation($navigation));
     }
 
-    #[Route('/navigations/{id}', methods: ['DELETE'])]
+    #[Route('/navigation/{id}', methods: ['DELETE'])]
     public function deleteNavigation(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -113,7 +113,7 @@ class NavigationController
         return new JsonResponse();
     }
 
-    #[Route('/navigations/{id}/variants', methods: ['POST'])]
+    #[Route('/navigation/{id}/variant', methods: ['POST'])]
     public function createVariant(
         int $id,
         #[MapRequestPayload] CreateNavigationVariantInput $input,
@@ -135,7 +135,7 @@ class NavigationController
         ], 201);
     }
 
-    #[Route('/navigations/{id}/variants', methods: ['PATCH'])]
+    #[Route('/navigation/{id}/variant', methods: ['PATCH'])]
     public function updateVariant(
         int $id,
         #[MapRequestPayload] UpdateNavigationVariantInput $input,
@@ -162,7 +162,7 @@ class NavigationController
         ]);
     }
 
-    #[Route('/navigations/{id}/variants', methods: ['DELETE'])]
+    #[Route('/navigation/{id}/variant', methods: ['DELETE'])]
     public function deleteVariant(int $id, Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

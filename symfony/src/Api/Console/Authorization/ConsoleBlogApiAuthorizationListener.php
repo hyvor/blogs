@@ -29,7 +29,7 @@ class ConsoleBlogApiAuthorizationListener
     public function __invoke(ControllerEvent $event): void
     {
         // @codeCoverageIgnoreStart
-        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/v2/console')) {
+        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/console/v0/blog/')) {
             return;
         }
         if (!$event->isMainRequest()) {
@@ -37,15 +37,10 @@ class ConsoleBlogApiAuthorizationListener
         }
         // @codeCoverageIgnoreEnd
 
-        // org-level endpoints are handled by ConsoleApiAuthorizationListener
-        if (count($event->getAttributes(OrganizationLevelEndpoint::class)) > 0) {
-            return;
-        }
-
         $request = $event->getRequest();
-        $subdomain = $request->headers->get('X-Blog-Subdomain');
+        $subdomain = $request->attributes->get('subdomain');
         if (!$subdomain) {
-            throw new NotFoundHttpException('X-Blog-Subdomain header is required');
+            throw new NotFoundHttpException('Blog not found');
         }
 
         $blog = $this->blogService->getBlogBySubdomain($subdomain);

@@ -23,10 +23,9 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     ): Response {
         AuthFake::enableForSymfony($this->getContainer(), $user);
         $endpoint = ltrim($endpoint, '/');
-        $server['HTTP_X_BLOG_SUBDOMAIN'] = $subdomain;
         $this->client->request(
             $method,
-            '/api/v2/console/' . $endpoint,
+            '/api/console/v0/blog/' . $subdomain . '/' . $endpoint,
             server: array_merge(['CONTENT_TYPE' => 'application/json'], $server),
             content: (string)json_encode($data),
         );

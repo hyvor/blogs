@@ -41,7 +41,7 @@ class RouteController
         return new JsonResponse(array_map([$this, 'formatRoute'], $routes));
     }
 
-    #[Route('/routes', methods: ['POST'])]
+    #[Route('/route', methods: ['POST'])]
     public function createRoute(
         #[MapRequestPayload] CreateRouteInput $input,
     ): JsonResponse {
@@ -65,7 +65,7 @@ class RouteController
         return new JsonResponse($this->formatRoute($route), 201);
     }
 
-    #[Route('/routes/{id}', methods: ['PATCH'])]
+    #[Route('/route/{id}', methods: ['PATCH'])]
     public function updateRoute(
         int $id,
         #[MapRequestPayload] UpdateRouteInput $input,
@@ -84,7 +84,7 @@ class RouteController
         return new JsonResponse($this->formatRoute($route));
     }
 
-    #[Route('/routes/{id}', methods: ['DELETE'])]
+    #[Route('/route/{id}', methods: ['DELETE'])]
     public function deleteRoute(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

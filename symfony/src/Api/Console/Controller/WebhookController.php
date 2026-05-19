@@ -35,7 +35,7 @@ class WebhookController
         ], $webhooks));
     }
 
-    #[Route('/webhooks', methods: ['POST'])]
+    #[Route('/webhook', methods: ['POST'])]
     public function createWebhook(
         #[MapRequestPayload] CreateWebhookInput $input,
     ): JsonResponse {
@@ -57,7 +57,7 @@ class WebhookController
         ], 201);
     }
 
-    #[Route('/webhooks/{id}', methods: ['PATCH'])]
+    #[Route('/webhook/{id}', methods: ['PATCH'])]
     public function updateWebhook(
         int $id,
         #[MapRequestPayload] UpdateWebhookInput $input,
@@ -74,7 +74,7 @@ class WebhookController
         ]);
     }
 
-    #[Route('/webhooks/{id}', methods: ['DELETE'])]
+    #[Route('/webhook/{id}', methods: ['DELETE'])]
     public function deleteWebhook(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

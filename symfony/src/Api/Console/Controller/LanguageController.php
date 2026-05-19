@@ -39,7 +39,7 @@ class LanguageController
         return new JsonResponse(array_map([$this, 'formatLanguage'], $languages));
     }
 
-    #[Route('/languages', methods: ['POST'])]
+    #[Route('/language', methods: ['POST'])]
     public function createLanguage(
         #[MapRequestPayload] CreateLanguageInput $input,
     ): JsonResponse {
@@ -54,7 +54,7 @@ class LanguageController
         return new JsonResponse($this->formatLanguage($language), 201);
     }
 
-    #[Route('/languages/{id}', methods: ['PATCH'])]
+    #[Route('/language/{id}', methods: ['PATCH'])]
     public function updateLanguage(
         int $id,
         #[MapRequestPayload] UpdateLanguageInput $input,
@@ -75,7 +75,7 @@ class LanguageController
         return new JsonResponse($this->formatLanguage($language));
     }
 
-    #[Route('/languages/{id}', methods: ['DELETE'])]
+    #[Route('/language/{id}', methods: ['DELETE'])]
     public function deleteLanguage(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

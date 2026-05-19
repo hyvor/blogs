@@ -48,7 +48,7 @@ class RedirectController
         return new JsonResponse(array_map([$this, 'formatRedirect'], $redirects));
     }
 
-    #[Route('/redirects', methods: ['POST'])]
+    #[Route('/redirect', methods: ['POST'])]
     public function createRedirect(
         #[MapRequestPayload] CreateRedirectInput $input,
     ): JsonResponse {
@@ -84,7 +84,7 @@ class RedirectController
         return new JsonResponse($this->formatRedirect($redirect), 201);
     }
 
-    #[Route('/redirects/{id}', methods: ['PUT'])]
+    #[Route('/redirect/{id}', methods: ['PUT'])]
     public function updateRedirect(
         int $id,
         #[MapRequestPayload] UpdateRedirectInput $input,
@@ -109,7 +109,7 @@ class RedirectController
         return new JsonResponse($this->formatRedirect($redirect));
     }
 
-    #[Route('/redirects/{id}', methods: ['DELETE'])]
+    #[Route('/redirect/{id}', methods: ['DELETE'])]
     public function deleteRedirect(int $id): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
