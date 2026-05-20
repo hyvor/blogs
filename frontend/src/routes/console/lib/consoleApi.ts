@@ -1,11 +1,13 @@
 import { get } from 'svelte/store';
 import { blogStore } from './stores/blogStore';
 import { tempSubdomainStore } from './temp';
+import { authOrganizationStore } from './stores';
 
 export interface ConsoleApiOptions {
 	endpoint: string;
 	data?: Record<string, any> | FormData;
 	userApi?: boolean;
+	v2?: boolean;
 	subdomain?: string;
 	signal?: AbortSignal;
 }
@@ -16,10 +18,12 @@ interface CallOptions extends ConsoleApiOptions {
 
 function getConsoleApi() {
 	const baseUrl = '/api/console/v0';
+	const baseUrlV2 = '/api/v2/console';
 
 	async function call<T>({
 		endpoint,
 		userApi = false,
+		v2 = false,
 		method,
 		data = {},
 		subdomain,
@@ -27,11 +31,10 @@ function getConsoleApi() {
 	}: CallOptions): Promise<T> {
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
-		// const projectId = get(currentProjectIdStore);
-		// let url = baseUrl + (projectApi ? "/project/" + projectId : "") + endpoint;
-
 		let url;
-		if (userApi) {
+		if (v2) {
+			url = baseUrlV2 + endpoint;
+		} else if (userApi) {
 			url = baseUrl + endpoint;
 		} else {
 			const blogSubdomain = subdomain || get(blogStore).subdomain;
@@ -48,7 +51,8 @@ function getConsoleApi() {
 		}
 
 		const headers = {
-			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore)
+			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore),
+			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
 		} as Record<string, string>;
 
 		if (!(data instanceof FormData)) {

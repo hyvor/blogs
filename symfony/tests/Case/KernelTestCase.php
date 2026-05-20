@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @deprecated use internal case directly
+ */
 class KernelTestCase extends \Hyvor\Internal\Bundle\Testing\KernelTestCase
 {
     protected ContainerInterface $container;

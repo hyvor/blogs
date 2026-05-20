@@ -67,9 +67,17 @@
 		{:else if items.length === 0}
 			<IconMessage empty message="No items found." />
 		{:else}
-			<TabNav bind:active={activeTab}>
-				<TabNavItem name="header">Header</TabNavItem>
-				<TabNavItem name="footer">Footer</TabNavItem>
+			<TabNav>
+				<TabNavItem
+					name="header"
+					active={activeTab === 'header'}
+					onclick={() => (activeTab = 'header')}>Header</TabNavItem
+				>
+				<TabNavItem
+					name="footer"
+					active={activeTab === 'footer'}
+					onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
+				>
 			</TabNav>
 
 			<NavTable

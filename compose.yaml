@@ -1,5 +1,5 @@
 services:
-  hyvor-blogs-frontend:
+  frontend:
     container_name: hyvor-blogs-frontend
     build:
       context: .
@@ -23,9 +23,9 @@ services:
     networks:
       - hyvor-network
 
-    profiles: [ dev ]
+    profiles: [dev]
 
-  hyvor-blogs-backend:
+  backend:
     container_name: hyvor-blogs-backend
     build:
       context: .
@@ -54,7 +54,7 @@ services:
       hyvor-network:
         aliases:
           - blogs.hyvor.internal
-    profiles: [ dev ]
+    profiles: [dev]
     healthcheck:
       disable: true
       test: ls

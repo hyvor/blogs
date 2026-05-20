@@ -7,13 +7,10 @@ namespace App\Http\ConsoleApi\Controllers;
 use App\Domains\Billing\UsageService;
 use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
-use App\Domains\User\UserRepository;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
-use App\Http\ConsoleApi\Objects\User\AuthUserObject;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
-use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
@@ -23,29 +20,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ConsoleController
 {
-
-    public function init(
-        ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,
-        BillingInterface $billing,
-        Request $request
-    ): JsonResponse
-    {
-        $user = $consoleApiAuthMiddleware->getUser($request);
-        $organization = $consoleApiAuthMiddleware->getOrganization($request);
-        $license = $organization ? $billing->license($organization->id) : new ResolvedLicense(ResolvedLicenseType::NONE);
-
-        $blogs = UserBlogRepository::getBlogsOfUser($user, $organization)
-            ->mapInto(BlogListObject::class);
-
-        return response()->json([
-            'user' => new AuthUserObject($user),
-            'organization' => $organization,
-            'resolved_license' => $license,
-            'blogs' => $blogs,
-            'is_blocked' => UserRepository::isBlocked($user->id),
-            'config' => $this->config()
-        ]);
-    }
 
     public function initTemp(Request $request): JsonResponse
     {
@@ -144,21 +118,4 @@ class ConsoleController
             'limit' => $limit,
         ];
     }
-
-    public function changeBlogSort(Request $request, ConsoleApiAuthMiddleware $consoleApiAuthMiddleware,): JsonResponse
-    {
-        $user = $consoleApiAuthMiddleware->getUser($request);
-
-        $request->validate([
-            'blog_ids' => 'required|array',
-            'blog_ids.*' => 'integer',
-        ]);
-
-        $blogIds = $request->input('blog_ids');
-
-        UserBlogRepository::changeBlogSorts($user, $blogIds);
-
-        return response()->json();
-    }
-
 }

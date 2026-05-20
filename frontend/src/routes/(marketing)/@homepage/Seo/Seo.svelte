@@ -11,7 +11,7 @@
 
 <FeatureSectionTitle
 	title="SEO & Speed"
-	subtitle="All blogs are <b>automagically</b> optimized for SEO and speed. You don't need to worry about anything."
+	subtitle="All blogs are <b>automatically</b> optimized for SEO and speed. You don't need to worry about anything."
 	icon={iconSeo}
 />
 
@@ -64,7 +64,7 @@
 
 		<div class="subtitle">
 			Our in-built SEO analyzer will help you optimize your posts for search engines and prevent you
-			from making common SEO mistakes. You will receive <strong>realtime feedback</strong> as you write
+			from making common SEO mistakes. You will receive <strong>real-time feedback</strong> as you write
 			your blog post.
 		</div>
 

@@ -22,7 +22,7 @@
 <h2 id="twig">Twig</h2>
 <p>
 	We use <a href="https://twig.symfony.com/doc/3.x/" rel="nofollow">Twig 3.0</a> for templating. It
-	is a powerful language with a plenty of in-built tags, filters, and functions. Twig also has nice,
+	is a powerful language with plenty of in-built tags, filters, and functions. Twig also has nice,
 	easy-to-follow documentation, which was one reason we chose Twig over other template languages. If
 	you haven't used it ever, go through the
 	<a href="https://twig.symfony.com/doc/3.x/templates.html" rel="nofollow"
