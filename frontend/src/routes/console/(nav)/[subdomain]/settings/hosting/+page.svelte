@@ -1,69 +1,47 @@
 <script lang="ts">
 	import {
+		Button,
 		Callout,
+		confirm,
 		FormControl,
-		InputGroup,
-		Link,
-		Radio,
+		Loader,
 		SplitControl,
 		Switch,
+		Tag,
 		TextInput,
-		Validation,
 		toast,
-		Button,
-		TabNav,
-		Table,
-		TableRow,
-		TabNavItem,
-		Tag
+		Validation
 	} from '@hyvor/design/components';
-	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
+	import {
+		blogOriginalStore,
+		blogStore,
+		hostingInfoStore,
+		updateHostingInfoStore
+	} from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
-	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
-	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
-
-	import type { Blog, CustomDomainHosting } from '../../../../lib/types';
-	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
-	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
+	import type {Blog} from '../../../../lib/types';
+	import {isSubdomainValid} from '../../../../lib/helper/isSubdomainValid';
 	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
-	import { getCustomDomainHosting } from './hostingActions';
-	import IconCopy from '@hyvor/icons/IconCopy';
+	import {getHostingInfo, updateHostedAt} from './hostingActions';
+	import SetupCustomDomainModal from './SetupCustomDomainModal.svelte';
+	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle'
+	import {onMount} from "svelte";
 
 	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
 
 	let subdomainError: null | string = $state(null);
-	let hostingUrlError: null | string = $state(null);
+	let showCustomDomainModal = $state(false);
+	let showSelfHostingModal = $state(false);
 
-	let customDomainHosting: null | CustomDomainHosting = $state(null);
-	let dnsMethod: 'cname' | 'a' = $state('cname');
-	const CUSTOM_DOMAIN_IP = '116.202.185.2';
-	const CNAME_DOMAIN = 'hyvorblogs.io';
-
-	function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
-		blogStore.update((b) => {
-			return {
-				...b,
-				[key]: e.target.value
-			};
-		});
-	}
+	let isLoading = $state(true);
 
 	function handleRedirectSubdomainChange() {
 		blogStore.update((b) => {
 			return {
 				...b,
 				hosting_redirect_subdomain: !b.hosting_redirect_subdomain
-			};
-		});
-	}
-
-	function handleHostedAtChange(e: any) {
-		blogStore.update((b) => {
-			return {
-				...b,
-				hosting_at: e.target.value
 			};
 		});
 	}
@@ -75,41 +53,6 @@
 		}
 
 		subdomainError = null;
-		hostingUrlError = null;
-
-		if ($blogStore.hosting_at === 'self') {
-			const hostingUrl = ($blogStore.hosting_url || '').trim();
-			if (hostingUrl === '') {
-				hostingUrlError = 'Self-Hosting URL is required';
-				return false;
-			}
-			if (!isValidUrl(hostingUrl)) {
-				hostingUrlError = 'Invalid URL. Make sure to include the protocol (https://)';
-				return false;
-			}
-		}
-
-		if ($blogStore.hosting_at === 'domain') {
-			const hostingDomain = ($blogStore.hosting_domain || '').trim();
-			if (hostingDomain === '') {
-				hostingUrlError = 'Custom Domain is required';
-				return false;
-			}
-			if (hostingDomain.match(' ')) {
-				hostingUrlError = 'Custom Domain cannot contain spaces';
-				return false;
-			}
-			if (hostingDomain.match(/^https?:\/\//)) {
-				hostingUrlError = 'Add the domain without the protocol (https://)';
-				return false;
-			}
-			if (hostingDomain.match('/')) {
-				hostingUrlError =
-					'Custom Domain cannot contain /. Use self-hosting for to host your blog in a subdirectory';
-				return false;
-			}
-		}
-
 		return true;
 	}
 
@@ -130,16 +73,11 @@
 			return;
 		}
 
-		const error = isSubdomainValid(val);
-		subdomainError = error;
+		subdomainError = isSubdomainValid(val);
 	}
 
-	function handleError(message: string, code: number) {
-		if (message === 'domain_taken') {
-			hostingUrlError = 'This domain is already taken by another blog. Contact support if needed.';
-		} else {
-			toast.error(message);
-		}
+	function handleError(message: string) {
+		toast.error(message);
 	}
 
 	let hasUrlChanged = $derived(
@@ -149,261 +87,149 @@
 			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
 	);
 
-	async function getCustomDomainHostingStatus() {
-		customDomainHosting = await getCustomDomainHosting();
+	async function handleRevertToSubdomain() {
+		const confirmed = await confirm({
+			title: 'Revert to Subdomain Hosting',
+			content: 'Are you sure you want to revert to subdomain hosting? This will change the URL of your blog back to your hyvorblogs.io subdomain.',
+			confirmText: 'Revert',
+			cancelText: 'Cancel',
+			danger: true
+		});
+
+		if (!confirmed) {
+			return;
+		}
+
+		const toastId = toast.loading('Reverting to subdomain hosting...');
+		try {
+			const updates = await updateHostedAt('subdomain');
+			updateHostingInfoStore(updates);
+			toast.success('Successfully reverted to subdomain hosting.', { id: toastId });
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to revert to subdomain', { id: toastId });
+		}
 	}
 
-	$effect(() => {
-		$blogOriginalStore.hosting_domain && getCustomDomainHostingStatus();
-	});
+	let activeHostingLabel = $derived(
+		$blogStore.hosting_at === 'domain'
+			? 'Custom Domain'
+			: $blogStore.hosting_at === 'self'
+				? 'Self-hosting'
+				: 'Subdomain'
+	);
+	let activeHostingColor = $derived(
+		$blogStore.hosting_at === 'domain'
+			? 'blue'
+			: $blogStore.hosting_at === 'self'
+				? 'blue'
+				: 'green'
+	);
+
+	onMount(() => {
+		getHostingInfo()
+			.then(res => {
+				hostingInfoStore.set(res);
+				isLoading = false;
+			})
+			.catch (err => {
+				toast.error(err.message || 'Failed to load hosting information');
+		});
+	})
 </script>
 
 <DisabledOnTemp>
-	<BlogSettingsSave
-		keys={[
-			'subdomain',
-			'hosting_at',
-			'hosting_domain',
-			'hosting_url',
-			'hosting_redirect_subdomain'
-		]}
-		outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
-		beforeSave={handleBeforeSave}
-		afterSave={handleAfterSave}
-		onError={handleError}
-	/>
+	{#if isLoading}
+		<Loader block />
+	{:else}
+		<BlogSettingsSave
+			keys={[
+				'subdomain',
+				'hosting_redirect_subdomain'
+			]}
+			outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
+			beforeSave={handleBeforeSave}
+			afterSave={handleAfterSave}
+			onError={handleError}
+		/>
 
-	<div class="hosting">
-		<SplitControl
-			label="Subdomain"
-			caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
-		>
-			<FormControl>
-				<TextInput
-					bind:value={subdomain}
-					block
-					state={subdomainError ? 'error' : undefined}
-					on:input={handleSubdomainInput}
-				/>
-				{#if subdomainError}
-					<Validation state="error">{subdomainError}</Validation>
-				{/if}
-			</FormControl>
-		</SplitControl>
-
-		<SplitControl label="Hosted at" caption="Where do you like to host your blog?">
-			<InputGroup>
-				<Radio value="subdomain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Subdomain (hyvorblogs.io)
-				</Radio>
-				<Radio value="domain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Custom Domain - &nbsp;<Link
-						href="/docs/custom-domain"
-						target="_blank"
-						style="font-size:14px;"
-					>
-						Docs
-						{#snippet end()}
-							<IconBoxArrowUpRight size={10} />
-						{/snippet}
-					</Link>
-				</Radio>
-				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Self-hosting - &nbsp;<Link
-						href="/docs/self-hosting"
-						target="_blank"
-						style="font-size:14px;"
-					>
-						Docs
-						{#snippet end()}
-							<IconBoxArrowUpRight size={10} />
-						{/snippet}
-					</Link>
-				</Radio>
-			</InputGroup>
-		</SplitControl>
-
-		{#if $blogStore.hosting_at === 'domain'}
-			<SplitControl label="Custom Domain" caption="Your custom domain name">
-				<FormControl>
-					<TextInput
-						value={$blogStore.hosting_domain}
-						on:input={(e) => {
-							e.target.value = e.target.value.trim();
-							handleBlogValueChangeEvent(e, 'hosting_domain');
-						}}
-						block
-						placeholder="blog.example.com"
-						state={hostingUrlError ? 'error' : undefined}
-					/>
-					{#if hostingUrlError}
-						<Validation state="error">{hostingUrlError}</Validation>
-					{/if}
-				</FormControl>
-
-				{#if $blogOriginalStore.hosting_domain && customDomainHosting}
-					<Callout
-						type={customDomainHosting.status === 'active' ? 'success' : 'warning'}
-						style="margin-top: 20px;"
-					>
-						{#if customDomainHosting.status !== 'active'}
-							<p>
-								Your custom domain has not been verified yet. Please update your DNS records as
-								shown below to verify your domain ownership.
-							</p>
-
-							<TabNav bind:active={dnsMethod}>
-								<TabNavItem name="cname">
-									CNAME {#snippet end()}
-										<Tag size="small" color="blue">Preferred</Tag>
-									{/snippet}
-								</TabNavItem>
-								<TabNavItem name="a">A Record</TabNavItem>
-							</TabNav>
-
-							{#if dnsMethod === 'cname'}
-								<Table columns="1fr 2fr">
-									<br />
-									<TableRow head>
-										<div>Field</div>
-										<div>Value</div>
-									</TableRow>
-									<TableRow>
-										<div>Host/Name</div>
-										<div>
-											<div style="margin-bottom:6px;">
-												<code>@</code> for <strong>example.com</strong> or
-											</div>
-											<code>blog</code> for <strong>blog.example.com</strong>
-										</div>
-									</TableRow>
-									<TableRow>
-										<div>Content</div>
-										<div>
-											<code>{CNAME_DOMAIN}</code>
-											<Button
-												size="x-small"
-												on:click={() => {
-													navigator.clipboard.writeText(CNAME_DOMAIN);
-													toast.success('Copied to clipboard');
-												}}
-												style="margin-left:5px;"
-												color="input"
-											>
-												Copy {#snippet end()}
-													<IconCopy size={12} />
-												{/snippet}
-											</Button>
-										</div>
-									</TableRow>
-								</Table>
-							{:else}
-								<Table columns="1fr 2fr">
-									<br />
-									<TableRow head>
-										<div>Field</div>
-										<div>Value</div>
-									</TableRow>
-									<TableRow>
-										<div>Host/Name</div>
-										<div>
-											<div style="margin-bottom:6px;">
-												<code>@</code> for <strong>example.com</strong> or
-											</div>
-											<code>blog</code> for <strong>blog.example.com</strong>
-										</div>
-									</TableRow>
-									<TableRow>
-										<div>IP Address</div>
-										<div>
-											<code>{CUSTOM_DOMAIN_IP}</code>
-											<Button
-												size="x-small"
-												on:click={() => {
-													navigator.clipboard.writeText(CUSTOM_DOMAIN_IP);
-													toast.success('Copied to clipboard');
-												}}
-												style="margin-left:5px;"
-												color="input"
-											>
-												Copy {#snippet end()}
-													<IconCopy size={12} />
-												{/snippet}
-											</Button>
-										</div>
-									</TableRow>
-								</Table>
-							{/if}
-
-							<div style="margin-top: 15px; margin-bottom: 10px;">
-								<Button on:click={getCustomDomainHostingStatus}>
-									Verify Now
-									{#snippet end()}
-										<IconArrowClockwise />
-									{/snippet}
-								</Button>
-							</div>
-						{:else}
-							Your custom domain is verified and active. 🎉
-						{/if}
-					</Callout>
-				{/if}
-			</SplitControl>
-		{/if}
-
-		{#if $blogStore.hosting_at === 'self'}
-			<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
-				<FormControl>
-					<TextInput
-						bind:value={$blogStore.hosting_url}
-						on:input={(e) => handleBlogValueChangeEvent(e, 'hosting_url')}
-						block
-						placeholder="https://example.com/blog"
-						state={hostingUrlError ? 'error' : undefined}
-					/>
-					{#if hostingUrlError}
-						<Validation state="error">{hostingUrlError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-		{/if}
-
-		{#if $blogStore.hosting_at !== 'subdomain'}
+		<div class="hosting">
 			<SplitControl
-				label="Redirect Subdomain"
-				caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
-					($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+				label="Subdomain"
+				caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
 			>
-				<Switch
-					checked={$blogStore.hosting_redirect_subdomain}
-					on:change={handleRedirectSubdomainChange}
-				/>
+				<FormControl>
+					<TextInput
+						bind:value={subdomain}
+						block
+						state={subdomainError ? 'error' : undefined}
+						on:input={handleSubdomainInput}
+					/>
+					{#if subdomainError}
+						<Validation state="error">{subdomainError}</Validation>
+					{/if}
+				</FormControl>
 			</SplitControl>
-		{/if}
 
-		{#if hasUrlChanged}
-			<Callout type="warning" style="margin-top: 20px;">
-				{#snippet icon()}
-					<IconExclamationCircle size={18} />
-				{/snippet}
-				{#snippet title()}
-					<div>URL Change</div>
-				{/snippet}
-				You are about to change the URL of your blog!
-				<ul>
-					<li>
-						Previously shared links may break. However, when changing from hyvorblogs.io subdomain
-						to a custom domain or self-hosting, we'll redirect users to the new URL.
-					</li>
-					<li>This may impact the SEO of your blog.</li>
-					<li>
-						We'll update the media links in your post content and blog settings. This may take some
-						time.
-					</li>
-				</ul>
-			</Callout>
-		{/if}
-	</div>
+			<SplitControl label="Hosting configuration" caption="Where do you like to host your blog?">
+				{#if $hostingInfoStore.hosting_at === 'subdomain'}
+					{$blogStore.subdomain}.hyvorblogs.io
+				{:else if $hostingInfoStore.hosting_at === 'domain'}
+					{$blogStore.hosting_domain}
+				{:else if $hostingInfoStore.hosting_at === 'self'}
+					{$blogStore.hosting_url}
+				{/if}
+				&nbsp;
+				<Tag color={activeHostingColor}>{activeHostingLabel}</Tag>
+
+				<div class="hosting-config-wrap">
+					<Button size="small" disabled={$hostingInfoStore.hosting_at === 'subdomain'} on:click={handleRevertToSubdomain}>Revert to Subdomain</Button>
+					<Button size="small" disabled={$hostingInfoStore.hosting_at === 'domain'} on:click={() => showCustomDomainModal = true}>Set-up Custom Domain</Button>
+					<Button size="small" disabled={$hostingInfoStore.hosting_at === 'self'} on:click={() => showSelfHostingModal = true}>Set-up Self-hosting</Button>
+				</div>
+			</SplitControl>
+
+			{#if $blogStore.hosting_at !== 'subdomain'}
+				<SplitControl
+					label="Redirect Subdomain"
+					caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
+						($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+				>
+					<Switch
+						checked={$blogStore.hosting_redirect_subdomain}
+						on:change={handleRedirectSubdomainChange}
+					/>
+				</SplitControl>
+			{/if}
+
+			<!-- TODO: Need to put this somewhere else (if needed) -->
+			{#if hasUrlChanged}
+				<Callout type="warning" style="margin-top: 20px;">
+					{#snippet icon()}
+						<IconExclamationCircle size={18} />
+					{/snippet}
+					{#snippet title()}
+						<div>URL Change</div>
+					{/snippet}
+					You are about to change the URL of your blog!
+					<ul>
+						<li>
+							Previously shared links may break. However, when changing from hyvorblogs.io subdomain
+							to a custom domain or self-hosting, we'll redirect users to the new URL.
+						</li>
+						<li>This may impact the SEO of your blog.</li>
+						<li>
+							We'll update the media links in your post content and blog settings. This may take some
+							time.
+						</li>
+					</ul>
+				</Callout>
+			{/if}
+		</div>
+
+		<SetupCustomDomainModal bind:show={showCustomDomainModal} />
+		<SetupSelfHostingModal bind:show={showSelfHostingModal} />
+
+	{/if}
 </DisabledOnTemp>
 
 <style>
@@ -411,5 +237,8 @@
 		padding: 20px 30px;
 		height: 90%;
 		overflow-y: auto;
+	}
+	.hosting-config-wrap {
+		margin-top: 10px;
 	}
 </style>

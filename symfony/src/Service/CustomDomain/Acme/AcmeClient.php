@@ -197,13 +197,7 @@ class AcmeClient implements LoggerAwareInterface
      */
     public function finalizeOrder(PendingOrder $order, \OpenSSLAsymmetricKey $privateKey): FinalCertificate
     {
-        $this->verifyHttpChallenge($order);
-
-        $waitSeconds = 10;
-        $this->logger?->info(
-            "HTTP challenge verified, waiting $waitSeconds seconds before notifying ACME server"
-        );
-        $this->clock->sleep($waitSeconds);
+        $this->verifyHttpChallenge($order->domain, $order->token, $order->keyAuthorization);
 
         // notify challenge is ready
         $this->httpRequest($order->challengeUrl);
@@ -290,9 +284,25 @@ class AcmeClient implements LoggerAwareInterface
     }
 
     /**
+     * Verifies domain ownership directly without ACME order.
      * @throws AcmeException
      */
-    private function verifyHttpChallenge(PendingOrder $order): void
+    public function preVerifyDomain(string $domain): void
+    {
+        $token = bin2hex(random_bytes(16));
+        $keyAuthorization = $token . '.pre-check';
+
+        $this->cache->get('acme_challenge_' . $token, function () use ($keyAuthorization) {
+            return $keyAuthorization;
+        });
+
+        $this->verifyHttpChallenge($domain, $token, $keyAuthorization);
+    }
+
+    /**
+     * @throws AcmeException
+     */
+    public function verifyHttpChallenge(string $domain, string $token, string $keyAuthorization): void
     {
         $attempt = 0;
         $maxAttempts = 3;
@@ -302,11 +312,11 @@ class AcmeClient implements LoggerAwareInterface
             try {
                 $response = $this->http->request(
                     'GET',
-                    'http://' . $order->domain . '/.well-known/acme-challenge/' . $order->token,
+                    'http://' . $domain . '/.well-known/acme-challenge/' . $token,
                 );
                 $resolvedKey = $response->getContent();
 
-                if ($resolvedKey === $order->keyAuthorization) {
+                if ($resolvedKey === $keyAuthorization) {
                     $this->logger?->info('HTTP challenge successfull, good to proceed');
                     return;
                 }
@@ -315,7 +325,7 @@ class AcmeClient implements LoggerAwareInterface
                     "HTTP challenge failed completed, waiting for {$sleepSeconds}s before retrying",
                     [
                         'attempt' => "$attempt/$maxAttempts",
-                        'domain' => $order->domain,
+                        'domain' => $domain,
                     ]
                 );
 

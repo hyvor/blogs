@@ -43,53 +43,93 @@ class CustomDomainService
         return $privateKey;
     }
 
-    public function createTlsCertificate(Blog $blog): CustomDomainSetup
+    public function createCustomDomainSetup(Blog $blog, string $domain): CustomDomainSetup
     {
         $privateKeyPem = PrivateKey::generatePrivateKeyPem();
         $encryptedPrivateKey = $this->encryption->encryptString($privateKeyPem);
 
-        $tlsCertificate = new CustomDomainSetup();
-        $tlsCertificate->setBlog($blog);
-        $tlsCertificate->setCreatedAt($this->now());
-        $tlsCertificate->setUpdatedAt($this->now());
-        $tlsCertificate->setStatus(CustomDomainSetupStatus::PENDING);
-        $tlsCertificate->setPrivateKeyEncrypted($encryptedPrivateKey);
+        $customDomainSetup = new CustomDomainSetup();
+        $customDomainSetup->setBlog($blog);
+        $customDomainSetup->setDomain($domain);
+        $customDomainSetup->setCreatedAt($this->now());
+        $customDomainSetup->setUpdatedAt($this->now());
+        $customDomainSetup->setStatus(CustomDomainSetupStatus::PENDING);
+        $customDomainSetup->setPrivateKeyEncrypted($encryptedPrivateKey);
 
-        $this->em->persist($tlsCertificate);
+        $this->em->persist($customDomainSetup);
         $this->em->flush();
 
-        return $tlsCertificate;
+        return $customDomainSetup;
     }
 
-    public function getTlsCertificate(Blog $blog): ?CustomDomainSetup
+    public function updateCustomDomainSetup(
+        CustomDomainSetup $customDomainSetup,
+        string $domain
+    ): CustomDomainSetup
     {
+        if ($customDomainSetup->getStatus() !== CustomDomainSetupStatus::PENDING) {
+            throw new \RuntimeException('Only pending custom domain setup can be updated');
+        }
+
+        $customDomainSetup->setDomain($domain);
+        $customDomainSetup->setUpdatedAt($this->now());
+
+        $this->em->persist($customDomainSetup);
+        $this->em->flush();
+
+        return $customDomainSetup;
+    }
+
+    public function deleteCustomDomainSetup(CustomDomainSetup $customDomainSetup): void
+    {
+        $this->em->remove($customDomainSetup);
+        $this->em->flush();
+    }
+
+    public function getCustomDomainSetup(Blog $blog, ?string $domain = null): ?CustomDomainSetup
+    {
+        $criteria = ['blog' => $blog];
+
+        if ($domain) {
+            $criteria['domain'] = $domain;
+        }
+
+        // TODO: what if there multiple records?
         return $this->em->getRepository(CustomDomainSetup::class)
-            ->findOneBy(['blog' => $blog]);
+            ->findOneBy($criteria);
     }
 
     /**
      * @throws AcmeException
      */
-    public function generateCertificate(CustomDomainSetup $tlsCertificate): void
+    public function verifyCustomDomainSetup(CustomDomainSetup $customDomainSetup): CustomDomainSetup
     {
-        $domain = $tlsCertificate->getBlog()->getHostingDomain();
-        assert($domain !== null);
+        $this->generateCertificate($customDomainSetup);
+        return $customDomainSetup;
+    }
 
-        $privateKey = $this->getDecryptedPrivateKey($tlsCertificate);
+    /**
+     * @throws AcmeException
+     */
+    public function generateCertificate(CustomDomainSetup $customDomainSetup): void
+    {
+        $domain = $customDomainSetup->getDomain();
+        $privateKey = $this->getDecryptedPrivateKey($customDomainSetup);
 
+        $this->acmeClient->preVerifyDomain($domain);
         $this->acmeClient->init();
         $order = $this->acmeClient->newOrder($domain);
         $finalCert = $this->acmeClient->finalizeOrder($order, $privateKey);
 
-        $this->activateCertificate(
-            $tlsCertificate,
+        $this->activateTlsCertificate(
+            $customDomainSetup,
             $finalCert->certificatePem,
             $finalCert->validFrom,
             $finalCert->validTo
         );
     }
 
-    public function activateCertificate(
+    public function activateTlsCertificate(
         CustomDomainSetup  $tlsCertificate,
         string             $certPem,
         \DateTimeImmutable $validFrom,

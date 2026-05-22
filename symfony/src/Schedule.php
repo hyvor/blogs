@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Service\CustomDomain\Message\GeneratePendingTlsCertificatesMessage;
+use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -22,7 +22,7 @@ class Schedule implements ScheduleProviderInterface
     public function getSchedule(): SymfonySchedule
     {
         return new SymfonySchedule()
-            ->add(RecurringMessage::every('5 minutes', new GeneratePendingTlsCertificatesMessage()))
+            ->add(RecurringMessage::every('1 day', new RegenerateExpiredTlsCertificatesMessage()))
 
             ->lock($this->lockFactory->createLock('schedule'))
             ->stateful($this->cache) // ensure missed tasks are executed
