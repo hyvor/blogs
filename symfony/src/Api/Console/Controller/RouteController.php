@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Route\CreateRouteInput;
 use App\Api\Console\Input\Blog\Route\UpdateRouteInput;
 use App\Api\Console\Object\RouteObject;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RouteController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private RouteService $routeService,
     ) {}
 

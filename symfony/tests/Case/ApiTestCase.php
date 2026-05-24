@@ -59,7 +59,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
 
         $this->client->request(
             $method,
-            '/api/v2/console/' . $endpoint,
+            '/api/console/v0/' . $endpoint,
             server: array_merge(['CONTENT_TYPE' => 'application/json'], $server),
             content: (string)json_encode($data),
         );

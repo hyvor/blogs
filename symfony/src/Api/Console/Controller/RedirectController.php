@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Redirect\CreateRedirectInput;
 use App\Api\Console\Input\Blog\Redirect\GetRedirectsInput;
 use App\Api\Console\Input\Blog\Redirect\UpdateRedirectInput;
@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RedirectController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private RedirectService $redirectService,
     ) {}
 

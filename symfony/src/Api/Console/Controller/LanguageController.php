@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Language\CreateLanguageInput;
 use App\Api\Console\Input\Blog\Language\UpdateLanguageInput;
 use App\Api\Console\Object\LanguageObject;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class LanguageController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private LanguageService $languageService,
     ) {}
 

@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\ApiKey\CreateApiKeyInput;
 use App\Api\Console\Object\ApiKeyObject;
 use App\Service\ApiKey\ApiKeyService;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ApiKeyController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private ApiKeyService $apiKeyService,
     ) {}
 

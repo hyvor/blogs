@@ -68,4 +68,13 @@ class ApiKeyService
         }
         return $apiKey;
     }
+
+    public function getByRawKey(Blog $blog, string $rawKey): ?ApiKey
+    {
+        return $this->em->getRepository(ApiKey::class)->findOneBy([
+            'blog_id' => $blog->getId(),
+            'api_key' => $rawKey,
+            'type' => 'console',
+        ]);
+    }
 }

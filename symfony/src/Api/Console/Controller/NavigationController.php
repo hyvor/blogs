@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\SortNavigationsInput;
@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class NavigationController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private NavigationService $navigationService,
         private LanguageService $languageService,
     ) {}

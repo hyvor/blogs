@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Authorization\ConsoleBlogApiAuthorizationListener;
+use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Input\Blog\Webhook\CreateWebhookInput;
 use App\Api\Console\Input\Blog\Webhook\GetWebhookDeliveriesInput;
 use App\Api\Console\Input\Blog\Webhook\UpdateWebhookInput;
@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class WebhookController
 {
     public function __construct(
-        private ConsoleBlogApiAuthorizationListener $blogAuthListener,
+        private ConsoleApiAuthorizationListener $blogAuthListener,
         private WebhookService $webhookService,
     ) {}
 
