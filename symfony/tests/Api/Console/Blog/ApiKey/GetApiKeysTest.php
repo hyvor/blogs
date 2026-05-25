@@ -18,9 +18,9 @@ class GetApiKeysTest extends ApiTestCase
             ['subdomain' => 'ak-list'],
             ['hyvor_user_id' => 200, 'status' => 'active'],
         );
+
         ApiKeyFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'My Key',
             'type' => 'delivery',
             'api_key' => 'abc123',

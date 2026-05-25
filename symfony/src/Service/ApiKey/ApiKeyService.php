@@ -18,7 +18,7 @@ class ApiKeyService
     public function getApiKeys(Blog $blog): array
     {
         return $this->em->getRepository(ApiKey::class)->findBy(
-            ['blog_id' => $blog->getId()],
+            ['blog' => $blog],
         );
     }
 
