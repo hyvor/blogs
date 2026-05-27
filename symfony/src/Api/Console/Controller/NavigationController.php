@@ -3,6 +3,7 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\SortNavigationsInput;
@@ -10,6 +11,7 @@ use App\Api\Console\Input\Blog\Navigation\UpdateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\UpdateNavigationVariantInput;
 use App\Api\Console\Object\NavigationObject;
 use App\Api\Console\Object\NavigationVariantObject;
+use App\Entity\Navigation;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
 use App\Service\Navigation\NavigationService;
@@ -68,28 +70,22 @@ class NavigationController
             $input->name,
         );
 
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($navigation->getId(), $blog);
-
         return new JsonResponse(new NavigationObject($navigation), 201);
     }
 
     #[Route('/navigation/{id}', methods: ['PATCH'])]
     public function updateNavigation(
-        int $id,
+        #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationInput $input,
     ): JsonResponse {
-        $blog = $this->blogAuthListener->getBlog();
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
         $navigation = $this->navigationService->updateNavigation($navigation, $input->url, $input->type);
 
         return new JsonResponse(new NavigationObject($navigation));
     }
 
     #[Route('/navigation/{id}', methods: ['DELETE'])]
-    public function deleteNavigation(int $id): JsonResponse
+    public function deleteNavigation(#[MapBlogEntity] Navigation $navigation): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
         $this->navigationService->deleteNavigation($navigation);
 
         return new JsonResponse();
@@ -97,11 +93,10 @@ class NavigationController
 
     #[Route('/navigation/{id}/variant', methods: ['POST'])]
     public function createVariant(
-        int $id,
+        #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] CreateNavigationVariantInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
 
         $language = $this->languageService->getLanguageById($blog, $input->language_id);
         if ($language === null) {
@@ -115,11 +110,10 @@ class NavigationController
 
     #[Route('/navigation/{id}/variant', methods: ['PATCH'])]
     public function updateVariant(
-        int $id,
+        #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationVariantInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
 
         $language = $this->languageService->getLanguageById($blog, $input->language_id);
         if ($language === null) {
@@ -137,10 +131,9 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}/variant', methods: ['DELETE'])]
-    public function deleteVariant(int $id, Request $request): JsonResponse
+    public function deleteVariant(#[MapBlogEntity] Navigation $navigation, Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
-        $navigation = $this->navigationService->getNavigationByIdAndBlog($id, $blog);
 
         $body = json_decode((string)$request->getContent(), true);
         $languageId = is_array($body) ? ($body['language_id'] ?? null) : null;

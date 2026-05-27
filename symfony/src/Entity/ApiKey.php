@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ApiKeyType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -29,8 +30,8 @@ class ApiKey
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: ApiKeyType::class)]
+    private ApiKeyType $type;
 
     #[ORM\Column(length: 32)]
     private string $api_key;
@@ -101,12 +102,12 @@ class ApiKey
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ApiKeyType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ApiKeyType $type): static
     {
         $this->type = $type;
         return $this;

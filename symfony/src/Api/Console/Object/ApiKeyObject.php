@@ -15,7 +15,7 @@ class ApiKeyObject
     {
         $this->id = $apiKey->getId();
         $this->name = $apiKey->getName();
-        $this->type = $apiKey->getType();
+        $this->type = $apiKey->getType()->value;
         $this->api_key = $apiKey->getApiKey();
     }
 }

@@ -16,7 +16,7 @@ class GetWebhooksTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-test'],
-            ['hyvor_user_id' => 100, 'status' => 'active'],
+            ['status' => 'active'],
         );
         WebhookFactory::createOne([
             'blog' => $blog,
@@ -26,8 +26,7 @@ class GetWebhooksTest extends ApiTestCase
             'secret' => 'mysecret1234567890123456789012',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 100]);
-        $this->consoleBlogApi('GET', 'wh-test', '/webhooks', user: $authUser);
+        $this->consoleBlogApi('GET', 'wh-test', '/webhooks', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -41,9 +40,9 @@ class GetWebhooksTest extends ApiTestCase
 
     public function test_access_denied_when_user_not_in_blog(): void
     {
-        [$blog, $user] = BlogFactory::createOneWithUser(
+        BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-denied'],
-            ['hyvor_user_id' => 110, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

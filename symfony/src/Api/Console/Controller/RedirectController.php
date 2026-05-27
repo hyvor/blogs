@@ -3,10 +3,12 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Redirect\CreateRedirectInput;
 use App\Api\Console\Input\Blog\Redirect\GetRedirectsInput;
 use App\Api\Console\Input\Blog\Redirect\UpdateRedirectInput;
 use App\Api\Console\Object\RedirectObject;
+use App\Entity\Redirect;
 use App\Service\Limit;
 use App\Service\Redirect\RedirectService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -75,11 +77,10 @@ class RedirectController
 
     #[Route('/redirect/{id}', methods: ['PUT'])]
     public function updateRedirect(
-        int $id,
+        #[MapBlogEntity] Redirect $redirect,
         #[MapRequestPayload] UpdateRedirectInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $redirect = $this->redirectService->getRedirectByIdAndBlog($id, $blog);
 
         if ($input->path !== null && $input->path !== $redirect->getPath()) {
             if ($redirect->isDynamic()) {
@@ -99,10 +100,8 @@ class RedirectController
     }
 
     #[Route('/redirect/{id}', methods: ['DELETE'])]
-    public function deleteRedirect(int $id): JsonResponse
+    public function deleteRedirect(#[MapBlogEntity] Redirect $redirect): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $redirect = $this->redirectService->getRedirectByIdAndBlog($id, $blog);
         $this->redirectService->deleteRedirect($redirect);
 
         return new JsonResponse();

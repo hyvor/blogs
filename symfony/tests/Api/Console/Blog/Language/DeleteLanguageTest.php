@@ -6,7 +6,6 @@ use App\Api\Console\Controller\LanguageController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
@@ -16,7 +15,7 @@ class DeleteLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-delete'],
-            ['hyvor_user_id' => 406, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
@@ -25,8 +24,7 @@ class DeleteLanguageTest extends ApiTestCase
             'is_primary' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 406]);
-        $this->consoleBlogApi('DELETE', 'lang-delete', '/language/' . $lang->getId(), user: $authUser);
+        $this->consoleBlogApi('DELETE', 'lang-delete', '/language/' . $lang->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
     }
@@ -35,7 +33,7 @@ class DeleteLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-del-primary'],
-            ['hyvor_user_id' => 407, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
@@ -44,8 +42,7 @@ class DeleteLanguageTest extends ApiTestCase
             'is_primary' => true,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 407]);
-        $this->consoleBlogApi('DELETE', 'lang-del-primary', '/language/' . $lang->getId(), user: $authUser);
+        $this->consoleBlogApi('DELETE', 'lang-del-primary', '/language/' . $lang->getId(), user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }

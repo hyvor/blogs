@@ -6,7 +6,6 @@ use App\Api\Console\Controller\RedirectController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RedirectFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
@@ -16,7 +15,7 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-update'],
-            ['hyvor_user_id' => 503, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
@@ -27,11 +26,10 @@ class UpdateRedirectTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 503]);
         $this->consoleBlogApi('PUT', 'redir-update', '/redirect/' . $redirect->getId(), [
             'to' => 'https://example.com/updated',
             'type' => 'temporary',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -43,11 +41,11 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-upd-b1'],
-            ['hyvor_user_id' => 504, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-upd-b2'],
-            ['hyvor_user_id' => 505, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog2,
@@ -55,10 +53,9 @@ class UpdateRedirectTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 504]);
         $this->consoleBlogApi('PUT', 'redir-upd-b1', '/redirect/' . $redirect->getId(), [
             'to' => 'https://hack.com',
-        ], user: $authUser);
+        ], user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

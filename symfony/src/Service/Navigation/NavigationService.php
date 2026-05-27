@@ -8,7 +8,6 @@ use App\Entity\Navigation;
 use App\Entity\NavigationVariant;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NavigationService
 {
@@ -69,6 +68,7 @@ class NavigationService
         $variant->setCreatedAt($now);
         $variant->setUpdatedAt($now);
         $this->em->persist($variant);
+        $navigation->getVariants()->add($variant);
         $this->em->flush();
 
         return $navigation;
@@ -107,18 +107,6 @@ class NavigationService
             }
         }
         $this->em->flush();
-    }
-
-    public function getNavigationByIdAndBlog(int $id, Blog $blog): Navigation
-    {
-        $navigation = $this->em->getRepository(Navigation::class)->findOneBy([
-            'id' => $id,
-            'blog_id' => $blog->getId(),
-        ]);
-        if ($navigation === null) {
-            throw new NotFoundHttpException('Navigation not found');
-        }
-        return $navigation;
     }
 
     public function createNavigationVariant(

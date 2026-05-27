@@ -6,7 +6,6 @@ use App\Api\Console\Controller\RouteController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
@@ -16,7 +15,7 @@ class UpdateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-update'],
-            ['hyvor_user_id' => 603, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
@@ -26,12 +25,11 @@ class UpdateRouteTest extends ApiTestCase
             'template' => 'old-template',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 603]);
         $this->consoleBlogApi('PATCH', 'route-update', '/route/' . $route->getId(), [
             'name' => 'New Name',
             'match' => '/new',
             'template' => 'new-template',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -44,21 +42,20 @@ class UpdateRouteTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-upd-b1'],
-            ['hyvor_user_id' => 604, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-upd-b2'],
-            ['hyvor_user_id' => 605, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog2,
             'blog_id' => $blog2->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 604]);
         $this->consoleBlogApi('PATCH', 'route-upd-b1', '/route/' . $route->getId(), [
             'name' => 'Hacked',
-        ], user: $authUser);
+        ], user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

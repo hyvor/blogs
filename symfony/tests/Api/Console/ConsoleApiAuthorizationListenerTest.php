@@ -5,8 +5,9 @@ namespace Api\Console;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Controller\ApiKeyController;
 use App\Api\Console\ControllerOrg\ConsoleController;
-use App\Tests\Case\ApiTestCase;
+use App\Entity\Enum\ApiKeyType;
 use App\Entity\Enum\UserRole;
+use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Auth\AuthFake;
@@ -164,7 +165,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'api_key' => 'validrawkey123456789012345678901',
-            'type' => 'console',
+            'type' => ApiKeyType::CONSOLE,
             'name' => 'Test Key',
         ]);
 
@@ -223,7 +224,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'api_key' => 'deliverykey123456789012345678901',
-            'type' => 'delivery',
+            'type' => ApiKeyType::DELIVERY,
             'name' => 'Delivery Key',
         ]);
 

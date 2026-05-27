@@ -6,7 +6,6 @@ use App\Api\Console\Controller\NavigationController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\NavigationFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
@@ -16,7 +15,7 @@ class UpdateNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-update'],
-            ['hyvor_user_id' => 303, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
@@ -25,11 +24,10 @@ class UpdateNavigationTest extends ApiTestCase
             'type' => 'header',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 303]);
         $this->consoleBlogApi('PATCH', 'nav-update', '/navigation/' . $nav->getId(), [
             'url' => '/new.json',
             'type' => 'footer',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -41,22 +39,21 @@ class UpdateNavigationTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-upd-b1'],
-            ['hyvor_user_id' => 304, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-upd-b2'],
-            ['hyvor_user_id' => 305, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog2,
             'blog_id' => $blog2->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 304]);
         $this->consoleBlogApi('PATCH', 'nav-upd-b1', '/navigation/' . $nav->getId(), [
             'url' => '/hack.json',
             'type' => 'header',
-        ], user: $authUser);
+        ], user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

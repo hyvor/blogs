@@ -3,13 +3,14 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Language\CreateLanguageInput;
 use App\Api\Console\Input\Blog\Language\UpdateLanguageInput;
 use App\Api\Console\Object\LanguageObject;
+use App\Entity\Language;
 use App\Service\Language\LanguageService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -46,14 +47,10 @@ class LanguageController
 
     #[Route('/language/{id}', methods: ['PATCH'])]
     public function updateLanguage(
-        int $id,
+        #[MapBlogEntity] Language $language,
         #[MapRequestPayload] UpdateLanguageInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $language = $this->languageService->getLanguageById($blog, $id);
-        if ($language === null) {
-            throw new NotFoundHttpException('Language not found');
-        }
 
         $existing = $this->languageService->getLanguageByCode($blog, $input->code);
         if ($existing !== null && $existing->getId() !== $language->getId()) {
@@ -66,14 +63,8 @@ class LanguageController
     }
 
     #[Route('/language/{id}', methods: ['DELETE'])]
-    public function deleteLanguage(int $id): JsonResponse
+    public function deleteLanguage(#[MapBlogEntity] Language $language): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $language = $this->languageService->getLanguageById($blog, $id);
-        if ($language === null) {
-            throw new NotFoundHttpException('Language not found');
-        }
-
         if ($language->isPrimary()) {
             throw new UnprocessableEntityHttpException('Cannot delete the primary language');
         }

@@ -16,7 +16,7 @@ class GetRedirectsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-list'],
-            ['hyvor_user_id' => 500, 'status' => 'active'],
+            ['status' => 'active'],
         );
         RedirectFactory::createOne([
             'blog' => $blog,
@@ -27,8 +27,7 @@ class GetRedirectsTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 500]);
-        $this->consoleBlogApi('GET', 'redir-list', '/redirects', user: $authUser);
+        $this->consoleBlogApi('GET', 'redir-list', '/redirects', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -42,9 +41,9 @@ class GetRedirectsTest extends ApiTestCase
 
     public function test_access_denied_when_user_not_in_blog(): void
     {
-        [$blog, $user] = BlogFactory::createOneWithUser(
+        BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-denied'],
-            ['hyvor_user_id' => 507, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

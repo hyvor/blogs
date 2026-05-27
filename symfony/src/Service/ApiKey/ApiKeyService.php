@@ -4,9 +4,9 @@ namespace App\Service\ApiKey;
 
 use App\Entity\ApiKey;
 use App\Entity\Blog;
+use App\Entity\Enum\ApiKeyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiKeyService
 {
@@ -27,7 +27,7 @@ class ApiKeyService
         return $this->em->getRepository(ApiKey::class)->count(['blog_id' => $blog->getId()]);
     }
 
-    public function createApiKey(Blog $blog, string $name, string $type): ApiKey
+    public function createApiKey(Blog $blog, string $name, ApiKeyType $type): ApiKey
     {
         $apiKey = new ApiKey();
         $apiKey->setBlog($blog);
@@ -57,24 +57,12 @@ class ApiKeyService
         $this->em->flush();
     }
 
-    public function getApiKeyByIdAndBlog(int $id, Blog $blog): ApiKey
-    {
-        $apiKey = $this->em->getRepository(ApiKey::class)->findOneBy([
-            'id' => $id,
-            'blog_id' => $blog->getId(),
-        ]);
-        if ($apiKey === null) {
-            throw new NotFoundHttpException('API key not found');
-        }
-        return $apiKey;
-    }
-
     public function getByRawKey(Blog $blog, string $rawKey): ?ApiKey
     {
         return $this->em->getRepository(ApiKey::class)->findOneBy([
             'blog_id' => $blog->getId(),
             'api_key' => $rawKey,
-            'type' => 'console',
+            'type' => ApiKeyType::CONSOLE,
         ]);
     }
 }

@@ -6,7 +6,6 @@ use App\Entity\Blog;
 use App\Entity\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RouteService
 {
@@ -87,15 +86,4 @@ class RouteService
         $this->em->flush();
     }
 
-    public function getRouteByIdAndBlog(int $id, Blog $blog): Route
-    {
-        $route = $this->em->getRepository(Route::class)->findOneBy([
-            'id' => $id,
-            'blog_id' => $blog->getId(),
-        ]);
-        if ($route === null) {
-            throw new NotFoundHttpException('Route not found');
-        }
-        return $route;
-    }
 }

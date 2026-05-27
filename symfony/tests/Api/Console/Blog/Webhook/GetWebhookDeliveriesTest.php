@@ -7,7 +7,6 @@ use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookDeliveryFactory;
 use App\Tests\Factory\WebhookFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
@@ -17,7 +16,7 @@ class GetWebhookDeliveriesTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-deliveries'],
-            ['hyvor_user_id' => 109, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
@@ -31,8 +30,7 @@ class GetWebhookDeliveriesTest extends ApiTestCase
             'url' => 'https://example.com/hook',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 109]);
-        $this->consoleBlogApi('GET', 'wh-deliveries', '/webhook-deliveries', user: $authUser);
+        $this->consoleBlogApi('GET', 'wh-deliveries', '/webhook-deliveries', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();

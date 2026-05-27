@@ -6,7 +6,6 @@ use App\Api\Console\Controller\WebhookController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
@@ -16,14 +15,13 @@ class CreateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-create'],
-            ['hyvor_user_id' => 101, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
-        $authUser = AuthFake::generateUser(['id' => 101]);
         $this->consoleBlogApi('POST', 'wh-create', '/webhook', [
             'url' => 'https://example.com/hook',
             'events' => ['post.created', 'post.updated'],
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
@@ -36,7 +34,7 @@ class CreateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-limit'],
-            ['hyvor_user_id' => 102, 'status' => 'active'],
+            ['status' => 'active'],
         );
         for ($i = 0; $i < 5; $i++) {
             WebhookFactory::createOne([
@@ -45,11 +43,10 @@ class CreateWebhookTest extends ApiTestCase
             ]);
         }
 
-        $authUser = AuthFake::generateUser(['id' => 102]);
         $this->consoleBlogApi('POST', 'wh-limit', '/webhook', [
             'url' => 'https://example.com/hook',
             'events' => ['post.created'],
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }

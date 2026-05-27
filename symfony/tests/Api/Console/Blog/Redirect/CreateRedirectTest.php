@@ -6,7 +6,6 @@ use App\Api\Console\Controller\RedirectController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RedirectFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
@@ -16,16 +15,15 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-create'],
-            ['hyvor_user_id' => 501, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
-        $authUser = AuthFake::generateUser(['id' => 501]);
         $this->consoleBlogApi('POST', 'redir-create', '/redirect', [
             'dynamic' => false,
             'path' => '/old',
             'to' => 'https://example.com/new',
             'type' => 'permanent',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
@@ -38,7 +36,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-dup'],
-            ['hyvor_user_id' => 502, 'status' => 'active'],
+            ['status' => 'active'],
         );
         RedirectFactory::createOne([
             'blog' => $blog,
@@ -47,13 +45,12 @@ class CreateRedirectTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 502]);
         $this->consoleBlogApi('POST', 'redir-dup', '/redirect', [
             'dynamic' => false,
             'path' => '/existing',
             'to' => 'https://example.com/new',
             'type' => 'permanent',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }

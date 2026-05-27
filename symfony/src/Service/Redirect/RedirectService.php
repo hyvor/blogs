@@ -6,7 +6,6 @@ use App\Entity\Blog;
 use App\Entity\Redirect;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RedirectService
 {
@@ -109,15 +108,4 @@ class RedirectService
         $this->em->flush();
     }
 
-    public function getRedirectByIdAndBlog(int $id, Blog $blog): Redirect
-    {
-        $redirect = $this->em->getRepository(Redirect::class)->findOneBy([
-            'id' => $id,
-            'blog_id' => $blog->getId(),
-        ]);
-        if ($redirect === null) {
-            throw new NotFoundHttpException('Redirect not found');
-        }
-        return $redirect;
-    }
 }

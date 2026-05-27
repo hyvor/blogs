@@ -6,7 +6,6 @@ use App\Api\Console\Controller\WebhookController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
@@ -16,7 +15,7 @@ class UpdateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-update'],
-            ['hyvor_user_id' => 103, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
@@ -25,10 +24,9 @@ class UpdateWebhookTest extends ApiTestCase
             'events' => ['post.created'],
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 103]);
         $this->consoleBlogApi('PATCH', 'wh-update', '/webhook/' . $webhook->getId(), [
             'url' => 'https://new.com/hook',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -39,21 +37,20 @@ class UpdateWebhookTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-upd-b1'],
-            ['hyvor_user_id' => 104, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-upd-b2'],
-            ['hyvor_user_id' => 105, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog2,
             'blog_id' => $blog2->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 104]);
         $this->consoleBlogApi('PATCH', 'wh-upd-b1', '/webhook/' . $webhook->getId(), [
             'url' => 'https://hack.com/hook',
-        ], user: $authUser);
+        ], user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

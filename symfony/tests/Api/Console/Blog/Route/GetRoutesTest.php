@@ -16,7 +16,7 @@ class GetRoutesTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-list'],
-            ['hyvor_user_id' => 600, 'status' => 'active'],
+            ['status' => 'active'],
         );
         RouteFactory::createOne([
             'blog' => $blog,
@@ -27,8 +27,7 @@ class GetRoutesTest extends ApiTestCase
             'is_enabled' => true,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 600]);
-        $this->consoleBlogApi('GET', 'route-list', '/routes', user: $authUser);
+        $this->consoleBlogApi('GET', 'route-list', '/routes', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -43,9 +42,9 @@ class GetRoutesTest extends ApiTestCase
 
     public function test_access_denied_when_user_not_in_blog(): void
     {
-        [$blog, $user] = BlogFactory::createOneWithUser(
+        BlogFactory::createOneWithUser(
             ['subdomain' => 'route-denied'],
-            ['hyvor_user_id' => 609, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

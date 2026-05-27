@@ -6,7 +6,6 @@ use App\Api\Console\Controller\LanguageController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
@@ -16,7 +15,7 @@ class UpdateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-update'],
-            ['hyvor_user_id' => 403, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
@@ -27,12 +26,11 @@ class UpdateLanguageTest extends ApiTestCase
             'is_primary' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 403]);
         $this->consoleBlogApi('PATCH', 'lang-update', '/language/' . $lang->getId(), [
             'code' => 'en-US',
             'name' => 'English (US)',
             'direction' => 'ltr',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -44,11 +42,11 @@ class UpdateLanguageTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-upd-b1'],
-            ['hyvor_user_id' => 404, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-upd-b2'],
-            ['hyvor_user_id' => 405, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog2,
@@ -56,12 +54,11 @@ class UpdateLanguageTest extends ApiTestCase
             'code' => 'fr',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 404]);
         $this->consoleBlogApi('PATCH', 'lang-upd-b1', '/language/' . $lang->getId(), [
             'code' => 'fr',
             'name' => 'French',
             'direction' => 'ltr',
-        ], user: $authUser);
+        ], user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

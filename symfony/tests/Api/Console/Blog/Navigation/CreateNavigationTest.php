@@ -6,7 +6,6 @@ use App\Api\Console\Controller\NavigationController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
@@ -16,7 +15,7 @@ class CreateNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-create'],
-            ['hyvor_user_id' => 301, 'status' => 'active'],
+            ['status' => 'active'],
         );
         LanguageFactory::createOne([
             'blog' => $blog,
@@ -25,12 +24,11 @@ class CreateNavigationTest extends ApiTestCase
             'is_primary' => true,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 301]);
         $this->consoleBlogApi('POST', 'nav-create', '/navigation', [
             'url' => '/header.json',
             'name' => 'Header Nav',
             'type' => 'header',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();

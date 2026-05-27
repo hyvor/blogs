@@ -6,7 +6,6 @@ use App\Api\Console\Controller\WebhookController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
@@ -16,15 +15,14 @@ class DeleteWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-delete'],
-            ['hyvor_user_id' => 106, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 106]);
-        $this->consoleBlogApi('DELETE', 'wh-delete', '/webhook/' . $webhook->getId(), user: $authUser);
+        $this->consoleBlogApi('DELETE', 'wh-delete', '/webhook/' . $webhook->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
     }
@@ -33,19 +31,18 @@ class DeleteWebhookTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-del-b1'],
-            ['hyvor_user_id' => 107, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-del-b2'],
-            ['hyvor_user_id' => 108, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog2,
             'blog_id' => $blog2->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 107]);
-        $this->consoleBlogApi('DELETE', 'wh-del-b1', '/webhook/' . $webhook->getId(), user: $authUser);
+        $this->consoleBlogApi('DELETE', 'wh-del-b1', '/webhook/' . $webhook->getId(), user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

@@ -7,7 +7,6 @@ use App\Entity\Webhook;
 use App\Entity\WebhookDelivery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebhookService
 {
@@ -63,18 +62,6 @@ class WebhookService
     {
         $this->em->remove($webhook);
         $this->em->flush();
-    }
-
-    public function getWebhookByIdAndBlog(int $id, Blog $blog): Webhook
-    {
-        $webhook = $this->em->getRepository(Webhook::class)->findOneBy([
-            'id' => $id,
-            'blog_id' => $blog->getId(),
-        ]);
-        if ($webhook === null) {
-            throw new NotFoundHttpException('Webhook not found');
-        }
-        return $webhook;
     }
 
     /**

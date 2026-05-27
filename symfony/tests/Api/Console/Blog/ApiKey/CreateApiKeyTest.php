@@ -6,7 +6,6 @@ use App\Api\Console\Controller\ApiKeyController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
@@ -16,14 +15,13 @@ class CreateApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-create'],
-            ['hyvor_user_id' => 201, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
-        $authUser = AuthFake::generateUser(['id' => 201]);
         $this->consoleBlogApi('POST', 'ak-create', '/api-key', [
             'name' => 'Test Key',
             'type' => 'console',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
@@ -36,7 +34,7 @@ class CreateApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-limit'],
-            ['hyvor_user_id' => 202, 'status' => 'active'],
+            ['status' => 'active'],
         );
         for ($i = 0; $i < 50; $i++) {
             ApiKeyFactory::createOne([
@@ -46,11 +44,10 @@ class CreateApiKeyTest extends ApiTestCase
             ]);
         }
 
-        $authUser = AuthFake::generateUser(['id' => 202]);
         $this->consoleBlogApi('POST', 'ak-limit', '/api-key', [
             'name' => 'Over Limit',
             'type' => 'console',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }

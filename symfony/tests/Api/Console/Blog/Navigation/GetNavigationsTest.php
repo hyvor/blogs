@@ -18,7 +18,7 @@ class GetNavigationsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-list'],
-            ['hyvor_user_id' => 300, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
@@ -41,8 +41,7 @@ class GetNavigationsTest extends ApiTestCase
             'name' => 'Main Nav',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 300]);
-        $this->consoleBlogApi('GET', 'nav-list', '/navigations', user: $authUser);
+        $this->consoleBlogApi('GET', 'nav-list', '/navigations', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -59,9 +58,9 @@ class GetNavigationsTest extends ApiTestCase
 
     public function test_access_denied_when_user_not_in_blog(): void
     {
-        [$blog, $user] = BlogFactory::createOneWithUser(
+        BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-denied'],
-            ['hyvor_user_id' => 308, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

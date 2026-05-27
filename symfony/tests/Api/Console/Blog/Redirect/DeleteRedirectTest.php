@@ -6,7 +6,6 @@ use App\Api\Console\Controller\RedirectController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RedirectFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
@@ -16,7 +15,7 @@ class DeleteRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-delete'],
-            ['hyvor_user_id' => 506, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
@@ -24,8 +23,7 @@ class DeleteRedirectTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 506]);
-        $this->consoleBlogApi('DELETE', 'redir-delete', '/redirect/' . $redirect->getId(), user: $authUser);
+        $this->consoleBlogApi('DELETE', 'redir-delete', '/redirect/' . $redirect->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
     }

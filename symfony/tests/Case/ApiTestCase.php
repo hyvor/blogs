@@ -2,6 +2,7 @@
 
 namespace App\Tests\Case;
 
+use App\Entity\User as BlogUser;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -19,9 +20,17 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         string $endpoint,
         array $data = [],
         array $server = [],
-        ?AuthUser $user = null,
+        BlogUser|AuthUser|int|null $user = null,
     ): Response {
-        AuthFake::enableForSymfony($this->getContainer(), $user);
+        $authUser = null;
+        if ($user instanceof BlogUser) {
+            $authUser = AuthFake::generateUser(['id' => $user->getHyvorUserId()]);
+        } elseif ($user instanceof AuthUser) {
+            $authUser = $user;
+        } elseif (is_int($user)) {
+            $authUser = AuthFake::generateUser(['id' => $user]);
+        }
+        AuthFake::enableForSymfony($this->getContainer(), $authUser);
         $endpoint = ltrim($endpoint, '/');
         $this->client->request(
             $method,

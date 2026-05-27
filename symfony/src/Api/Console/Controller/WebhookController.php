@@ -3,11 +3,13 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Webhook\CreateWebhookInput;
 use App\Api\Console\Input\Blog\Webhook\GetWebhookDeliveriesInput;
 use App\Api\Console\Input\Blog\Webhook\UpdateWebhookInput;
 use App\Api\Console\Object\WebhookDeliveryObject;
 use App\Api\Console\Object\WebhookObject;
+use App\Entity\Webhook;
 use App\Service\Limit;
 use App\Service\Webhook\WebhookService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,21 +53,17 @@ class WebhookController
 
     #[Route('/webhook/{id}', methods: ['PATCH'])]
     public function updateWebhook(
-        int $id,
+        #[MapBlogEntity] Webhook $webhook,
         #[MapRequestPayload] UpdateWebhookInput $input,
     ): JsonResponse {
-        $blog = $this->blogAuthListener->getBlog();
-        $webhook = $this->webhookService->getWebhookByIdAndBlog($id, $blog);
         $webhook = $this->webhookService->updateWebhook($webhook, $input->url, $input->events);
 
         return new JsonResponse(new WebhookObject($webhook));
     }
 
     #[Route('/webhook/{id}', methods: ['DELETE'])]
-    public function deleteWebhook(int $id): JsonResponse
+    public function deleteWebhook(#[MapBlogEntity] Webhook $webhook): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $webhook = $this->webhookService->getWebhookByIdAndBlog($id, $blog);
         $this->webhookService->deleteWebhook($webhook);
 
         return new JsonResponse();

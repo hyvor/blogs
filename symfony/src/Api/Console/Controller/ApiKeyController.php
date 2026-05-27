@@ -3,8 +3,10 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\ApiKey\CreateApiKeyInput;
 use App\Api\Console\Object\ApiKeyObject;
+use App\Entity\ApiKey;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Limit;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,20 +48,16 @@ class ApiKeyController
     }
 
     #[Route('/api-key/{id}', methods: ['PATCH'])]
-    public function regenerateApiKey(int $id): JsonResponse
+    public function regenerateApiKey(#[MapBlogEntity] ApiKey $apiKey): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $apiKey = $this->apiKeyService->getApiKeyByIdAndBlog($id, $blog);
         $apiKey = $this->apiKeyService->regenerateApiKey($apiKey);
 
         return new JsonResponse(new ApiKeyObject($apiKey));
     }
 
     #[Route('/api-key/{id}', methods: ['DELETE'])]
-    public function deleteApiKey(int $id): JsonResponse
+    public function deleteApiKey(#[MapBlogEntity] ApiKey $apiKey): JsonResponse
     {
-        $blog = $this->blogAuthListener->getBlog();
-        $apiKey = $this->apiKeyService->getApiKeyByIdAndBlog($id, $blog);
         $this->apiKeyService->deleteApiKey($apiKey);
 
         return new JsonResponse();

@@ -6,7 +6,6 @@ use App\Api\Console\Controller\LanguageController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
@@ -16,15 +15,14 @@ class CreateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-create'],
-            ['hyvor_user_id' => 401, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
-        $authUser = AuthFake::generateUser(['id' => 401]);
         $this->consoleBlogApi('POST', 'lang-create', '/language', [
             'code' => 'fr',
             'name' => 'French',
             'direction' => 'ltr',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
@@ -36,7 +34,7 @@ class CreateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-dup'],
-            ['hyvor_user_id' => 402, 'status' => 'active'],
+            ['status' => 'active'],
         );
         LanguageFactory::createOne([
             'blog' => $blog,
@@ -44,12 +42,11 @@ class CreateLanguageTest extends ApiTestCase
             'code' => 'en',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 402]);
         $this->consoleBlogApi('POST', 'lang-dup', '/language', [
             'code' => 'en',
             'name' => 'English Again',
             'direction' => 'ltr',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\ApiKey;
 
+use App\Entity\Enum\ApiKeyType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateApiKeyInput
@@ -9,7 +10,5 @@ class CreateApiKeyInput
     #[Assert\NotBlank]
     public string $name;
 
-    #[Assert\NotBlank]
-    #[Assert\Choice(['console', 'delivery'])]
-    public string $type;
+    public ApiKeyType $type;
 }

@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
+use App\Entity\Enum\ApiKeyType;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -16,18 +17,17 @@ class GetApiKeysTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-list'],
-            ['hyvor_user_id' => 200, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         ApiKeyFactory::createOne([
             'blog' => $blog,
             'name' => 'My Key',
-            'type' => 'delivery',
+            'type' => ApiKeyType::DELIVERY,
             'api_key' => 'abc123',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 200]);
-        $this->consoleBlogApi('GET', 'ak-list', '/api-keys', user: $authUser);
+        $this->consoleBlogApi('GET', 'ak-list', '/api-keys', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -40,9 +40,9 @@ class GetApiKeysTest extends ApiTestCase
 
     public function test_access_denied_when_user_not_in_blog(): void
     {
-        [$blog, $user] = BlogFactory::createOneWithUser(
+        BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-denied'],
-            ['hyvor_user_id' => 207, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

@@ -6,7 +6,6 @@ use App\Api\Console\Controller\ApiKeyController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
@@ -16,7 +15,7 @@ class RegenerateApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-regen'],
-            ['hyvor_user_id' => 203, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog,
@@ -24,8 +23,7 @@ class RegenerateApiKeyTest extends ApiTestCase
             'api_key' => 'oldkey12345678901234567890abcd',
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 203]);
-        $this->consoleBlogApi('PATCH', 'ak-regen', '/api-key/' . $apiKey->getId(), user: $authUser);
+        $this->consoleBlogApi('PATCH', 'ak-regen', '/api-key/' . $apiKey->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -37,19 +35,18 @@ class RegenerateApiKeyTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-rg-b1'],
-            ['hyvor_user_id' => 204, 'status' => 'active'],
+            ['status' => 'active'],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-rg-b2'],
-            ['hyvor_user_id' => 205, 'status' => 'active'],
+            ['status' => 'active'],
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog2,
             'blog_id' => $blog2->getId(),
         ]);
 
-        $authUser = AuthFake::generateUser(['id' => 204]);
-        $this->consoleBlogApi('PATCH', 'ak-rg-b1', '/api-key/' . $apiKey->getId(), user: $authUser);
+        $this->consoleBlogApi('PATCH', 'ak-rg-b1', '/api-key/' . $apiKey->getId(), user: $user1);
 
         $this->assertResponseStatusCodeSame(404);
     }

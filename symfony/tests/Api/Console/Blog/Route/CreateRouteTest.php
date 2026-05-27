@@ -6,7 +6,6 @@ use App\Api\Console\Controller\RouteController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
-use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
@@ -16,17 +15,16 @@ class CreateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-create'],
-            ['hyvor_user_id' => 601, 'status' => 'active'],
+            ['status' => 'active'],
         );
 
-        $authUser = AuthFake::generateUser(['id' => 601]);
         $this->consoleBlogApi('POST', 'route-create', '/route', [
             'name' => 'Tag Index',
             'match' => '/tag/{slug}',
             'template' => 'tag',
             'posts_filter' => 'tags:{{slug}}',
             'content_type' => null,
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
@@ -41,7 +39,7 @@ class CreateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-limit'],
-            ['hyvor_user_id' => 602, 'status' => 'active'],
+            ['status' => 'active'],
         );
         for ($i = 0; $i < 50; $i++) {
             RouteFactory::createOne([
@@ -51,12 +49,11 @@ class CreateRouteTest extends ApiTestCase
             ]);
         }
 
-        $authUser = AuthFake::generateUser(['id' => 602]);
         $this->consoleBlogApi('POST', 'route-limit', '/route', [
             'name' => 'Over Limit Route',
             'match' => '/over-limit',
             'template' => 'page',
-        ], user: $authUser);
+        ], user: $user);
 
         $this->assertResponseStatusCodeSame(422);
     }
