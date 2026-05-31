@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Event;
+namespace App\Service\Language\Event;
 
 use App\Entity\Language;
 

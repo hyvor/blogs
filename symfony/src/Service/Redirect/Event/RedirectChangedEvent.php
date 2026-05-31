@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Event;
+namespace App\Service\Redirect\Event;
 
 use App\Entity\Redirect;
 

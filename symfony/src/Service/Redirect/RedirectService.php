@@ -5,7 +5,7 @@ namespace App\Service\Redirect;
 use App\Entity\Blog;
 use App\Entity\Enum\RedirectType;
 use App\Entity\Redirect;
-use App\Event\RedirectChangedEvent;
+use App\Service\Redirect\Event\RedirectChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

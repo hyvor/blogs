@@ -3,7 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
-use App\Event\LanguageChangedEvent;
+use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;

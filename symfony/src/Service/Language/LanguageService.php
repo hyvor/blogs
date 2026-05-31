@@ -5,7 +5,7 @@ namespace App\Service\Language;
 use App\Entity\Blog;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
-use App\Event\LanguageChangedEvent;
+use App\Service\Language\Event\LanguageChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

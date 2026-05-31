@@ -4,7 +4,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
 use App\Entity\Enum\RedirectType;
-use App\Event\RedirectChangedEvent;
+use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
