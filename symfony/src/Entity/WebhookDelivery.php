@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\WebhookDeliveryStatus;
+use App\Entity\Enum\WebhookEvent;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -26,14 +28,14 @@ class WebhookDelivery
     #[ORM\JoinColumn(name: 'webhook_id', referencedColumnName: 'id')]
     private Webhook $webhook;
 
-    #[ORM\Column(length: 255)]
-    private string $status;
+    #[ORM\Column(length: 255, enumType: WebhookDeliveryStatus::class)]
+    private WebhookDeliveryStatus $status;
 
     #[ORM\Column(length: 255)]
     private string $url;
 
-    #[ORM\Column(length: 255)]
-    private string $event;
+    #[ORM\Column(length: 255, enumType: WebhookEvent::class)]
+    private WebhookEvent $event;
 
     /** @var array<string, mixed> $data */
     #[ORM\Column(type: 'json')]
@@ -100,12 +102,12 @@ class WebhookDelivery
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): WebhookDeliveryStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(WebhookDeliveryStatus $status): static
     {
         $this->status = $status;
         return $this;
@@ -122,12 +124,12 @@ class WebhookDelivery
         return $this;
     }
 
-    public function getEvent(): string
+    public function getEvent(): WebhookEvent
     {
         return $this->event;
     }
 
-    public function setEvent(string $event): static
+    public function setEvent(WebhookEvent $event): static
     {
         $this->event = $event;
         return $this;

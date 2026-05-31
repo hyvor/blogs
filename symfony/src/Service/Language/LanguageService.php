@@ -5,15 +5,20 @@ namespace App\Service\Language;
 use App\Entity\Blog;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
+use App\Event\LanguageChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class LanguageService
 {
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private EventDispatcherInterface $ed,
+    ) {}
 
     public function createLanguage(
         Blog $blog,
@@ -31,6 +36,7 @@ class LanguageService
         $language->setIsPrimary($isPrimary);
         $this->em->persist($language);
         $this->em->flush();
+        $this->ed->dispatch(new LanguageChangedEvent($language));
         return $language;
     }
 
@@ -91,6 +97,7 @@ class LanguageService
         }
         $language->setUpdatedAt($this->now());
         $this->em->flush();
+        $this->ed->dispatch(new LanguageChangedEvent($language));
         return $language;
     }
 
@@ -98,5 +105,6 @@ class LanguageService
     {
         $this->em->remove($language);
         $this->em->flush();
+        $this->ed->dispatch(new LanguageChangedEvent($language));
     }
 }

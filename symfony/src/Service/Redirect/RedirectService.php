@@ -5,14 +5,19 @@ namespace App\Service\Redirect;
 use App\Entity\Blog;
 use App\Entity\Enum\RedirectType;
 use App\Entity\Redirect;
+use App\Event\RedirectChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RedirectService
 {
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private EventDispatcherInterface $ed,
+    ) {}
 
     /**
      * @return Redirect[]
@@ -92,6 +97,7 @@ class RedirectService
         $redirect->setUpdatedAt($now);
         $this->em->persist($redirect);
         $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect));
         return $redirect;
     }
 
@@ -108,6 +114,7 @@ class RedirectService
         }
         $redirect->setUpdatedAt($this->now());
         $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect));
         return $redirect;
     }
 
@@ -115,5 +122,6 @@ class RedirectService
     {
         $this->em->remove($redirect);
         $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect));
     }
 }

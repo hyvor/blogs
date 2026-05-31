@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -32,6 +33,7 @@ class CreateRedirectTest extends ApiTestCase
         $this->assertSame('/old', $json['path']);
         $this->assertSame('https://example.com/new', $json['to']);
         $this->assertFalse($json['dynamic']);
+        $this->getEd()->assertDispatched(RedirectChangedEvent::class);
     }
 
     public function test_creates_dynamic_redirect(): void

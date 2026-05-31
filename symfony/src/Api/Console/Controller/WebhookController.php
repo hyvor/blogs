@@ -11,6 +11,7 @@ use App\Api\Console\Object\WebhookDeliveryObject;
 use App\Api\Console\Object\WebhookObject;
 use App\Entity\Webhook;
 use App\Service\Limit;
+use App\Service\Webhook\WebhookDeliveryService;
 use App\Service\Webhook\WebhookService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -23,6 +24,7 @@ class WebhookController
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private WebhookService $webhookService,
+        private WebhookDeliveryService $webhookDeliveryService,
     ) {}
 
     #[Route('/webhooks', methods: ['GET'])]
@@ -74,7 +76,7 @@ class WebhookController
         #[MapQueryString] GetWebhookDeliveriesInput $input = new GetWebhookDeliveriesInput(),
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $deliveries = $this->webhookService->getWebhookDeliveries(
+        $deliveries = $this->webhookDeliveryService->getWebhookDeliveries(
             $blog,
             $input->webhook_id,
             $input->limit,

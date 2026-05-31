@@ -3,12 +3,15 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Event\LanguageChangedEvent;
+use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
+#[CoversClass(LanguageService::class)]
 class DeleteLanguageTest extends ApiTestCase
 {
     public function test_delete_language(): void
@@ -27,6 +30,7 @@ class DeleteLanguageTest extends ApiTestCase
         $this->consoleBlogApi('DELETE', 'lang-delete', '/language/' . $lang->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
+        $this->getEd()->assertDispatched(LanguageChangedEvent::class);
     }
 
     public function test_delete_primary_language_fails(): void

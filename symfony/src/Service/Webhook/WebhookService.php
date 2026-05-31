@@ -5,7 +5,6 @@ namespace App\Service\Webhook;
 use App\Entity\Blog;
 use App\Entity\Enum\WebhookEvent;
 use App\Entity\Webhook;
-use App\Entity\WebhookDelivery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
@@ -64,30 +63,5 @@ class WebhookService
     {
         $this->em->remove($webhook);
         $this->em->flush();
-    }
-
-    /**
-     * @return WebhookDelivery[]
-     */
-    public function getWebhookDeliveries(Blog $blog, ?int $webhookId, int $limit, int $offset): array
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('d')
-            ->from(WebhookDelivery::class, 'd')
-            ->join('d.webhook', 'w')
-            ->where('w.blog_id = :blogId')
-            ->setParameter('blogId', $blog->getId())
-            ->orderBy('d.id', 'DESC')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset);
-
-        if ($webhookId !== null) {
-            $qb->andWhere('d.webhook_id = :webhookId')
-                ->setParameter('webhookId', $webhookId);
-        }
-
-        /** @var WebhookDelivery[] $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
     }
 }

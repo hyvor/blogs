@@ -2,6 +2,8 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\WebhookDeliveryStatus;
+use App\Entity\Enum\WebhookEvent;
 use App\Entity\WebhookDelivery;
 
 class WebhookDeliveryObject
@@ -9,8 +11,8 @@ class WebhookDeliveryObject
     public int $id;
     public int $created_at;
     public string $url;
-    public string $event;
-    public string $status;
+    public WebhookEvent $event;
+    public WebhookDeliveryStatus $status;
     public ?string $response;
 
     public function __construct(WebhookDelivery $delivery)

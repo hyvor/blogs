@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
 use App\Entity\Enum\RedirectType;
+use App\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -40,6 +41,7 @@ class UpdateRedirectTest extends ApiTestCase
         $this->assertSame('https://example.com/updated', $json['to']);
         $this->assertSame('/new-path', $json['path']);
         $this->assertSame('temporary', $json['type']);
+        $this->getEd()->assertDispatched(RedirectChangedEvent::class);
     }
 
     public function test_dynamic_invalid_regex(): void

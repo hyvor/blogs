@@ -3,6 +3,9 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Entity\Enum\WebhookDeliveryStatus;
+use App\Entity\Enum\WebhookEvent;
+use App\Service\Webhook\WebhookDeliveryService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookDeliveryFactory;
@@ -10,6 +13,7 @@ use App\Tests\Factory\WebhookFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
+#[CoversClass(WebhookDeliveryService::class)]
 class GetWebhookDeliveriesTest extends ApiTestCase
 {
     public function test_get_webhook_deliveries(): void
@@ -25,8 +29,8 @@ class GetWebhookDeliveriesTest extends ApiTestCase
         WebhookDeliveryFactory::createOne([
             'webhook' => $webhook,
             'webhook_id' => $webhook->getId(),
-            'event' => 'post.created',
-            'status' => 'success',
+            'event' => WebhookEvent::POST_CREATED,
+            'status' => WebhookDeliveryStatus::SUCCESS,
             'url' => 'https://example.com/hook',
         ]);
 

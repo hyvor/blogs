@@ -4,12 +4,15 @@ namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
 use App\Entity\Enum\LanguageDirection;
+use App\Event\LanguageChangedEvent;
+use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
+#[CoversClass(LanguageService::class)]
 class UpdateLanguageTest extends ApiTestCase
 {
     public function test_update_language(): void
@@ -37,6 +40,7 @@ class UpdateLanguageTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame('en-US', $json['code']);
         $this->assertSame('English (US)', $json['name']);
+        $this->getEd()->assertDispatched(LanguageChangedEvent::class);
     }
 
     public function test_update_language_wrong_blog(): void

@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
 use App\Entity\Redirect;
+use App\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -30,9 +31,9 @@ class DeleteRedirectTest extends ApiTestCase
         $this->consoleBlogApi('DELETE', 'redir-delete', '/redirect/' . $redirect->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
-
         $this->assertNull(
             $this->getEm()->getRepository(Redirect::class)->find($id)
         );
+        $this->getEd()->assertDispatched(RedirectChangedEvent::class);
     }
 }

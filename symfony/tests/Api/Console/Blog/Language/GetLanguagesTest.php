@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
 use App\Entity\Enum\LanguageDirection;
+use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -11,6 +12,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
+#[CoversClass(LanguageService::class)]
 class GetLanguagesTest extends ApiTestCase
 {
     public function test_get_languages(): void

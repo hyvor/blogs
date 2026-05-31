@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Entity\Enum\WebhookEvent;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -22,7 +23,7 @@ class GetWebhooksTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'url' => 'https://example.com/hook',
-            'events' => ['post.created'],
+            'events' => [WebhookEvent::POST_CREATED],
             'secret' => 'mysecret1234567890123456789012',
         ]);
 

@@ -3,12 +3,15 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Event\LanguageChangedEvent;
+use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
+#[CoversClass(LanguageService::class)]
 class CreateLanguageTest extends ApiTestCase
 {
     public function test_create_language(): void
@@ -29,6 +32,7 @@ class CreateLanguageTest extends ApiTestCase
         $this->assertSame('fr', $json['code']);
         $this->assertSame('French', $json['name']);
         $this->assertSame('ltr', $json['direction']);
+        $this->getEd()->assertDispatched(LanguageChangedEvent::class);
     }
 
     public function test_create_language_duplicate_code(): void
