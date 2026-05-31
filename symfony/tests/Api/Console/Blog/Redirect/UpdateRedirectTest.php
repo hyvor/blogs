@@ -3,12 +3,15 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Entity\Enum\RedirectType;
+use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RedirectFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
+#[CoversClass(RedirectService::class)]
 class UpdateRedirectTest extends ApiTestCase
 {
     public function test_update_redirect(): void
@@ -22,19 +25,86 @@ class UpdateRedirectTest extends ApiTestCase
             'blog_id' => $blog->getId(),
             'path' => '/old-path',
             'to' => 'https://example.com/old',
-            'type' => 'permanent',
+            'type' => RedirectType::PERMANENT,
             'dynamic' => false,
         ]);
 
-        $this->consoleBlogApi('PUT', 'redir-update', '/redirect/' . $redirect->getId(), [
+        $this->consoleBlogApi('PATCH', 'redir-update', '/redirect/' . $redirect->getId(), [
             'to' => 'https://example.com/updated',
+            'path' => '/new-path',
             'type' => 'temporary',
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('https://example.com/updated', $json['to']);
+        $this->assertSame('/new-path', $json['path']);
         $this->assertSame('temporary', $json['type']);
+    }
+
+    public function test_dynamic_invalid_regex(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'redir-update-regex'],
+            ['status' => 'active'],
+        );
+        $redirect = RedirectFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'path' => '/old-path',
+            'to' => 'https://example.com/old',
+            'type' => RedirectType::PERMANENT,
+            'dynamic' => true,
+        ]);
+
+        $this->consoleBlogApi('PATCH', 'redir-update-regex', '/redirect/' . $redirect->getId(), [
+            'path' => '[invalid-regex',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Invalid regex pattern for dynamic redirect');
+    }
+
+    public function test_fails_when_path_already_exists(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'redir-update-path'],
+            ['status' => 'active'],
+        );
+        RedirectFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'path' => '/existing-path',
+        ]);
+        $redirect = RedirectFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'path' => '/old-path',
+        ]);
+
+        $this->consoleBlogApi('PATCH', 'redir-update-path', '/redirect/' . $redirect->getId(), [
+            'path' => '/existing-path',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'A redirect for this path already exists');
+    }
+
+    public function test_ok_when_path_already_exists_but_is_same_redirect(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'redir-update-same-path'],
+            ['status' => 'active'],
+        );
+        $redirect = RedirectFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'path' => '/same-path',
+        ]);
+
+        $this->consoleBlogApi('PATCH', 'redir-update-same-path', '/redirect/' . $redirect->getId(), [
+            'path' => '/same-path',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
     }
 
     public function test_update_redirect_wrong_blog(): void
@@ -53,7 +123,7 @@ class UpdateRedirectTest extends ApiTestCase
             'dynamic' => false,
         ]);
 
-        $this->consoleBlogApi('PUT', 'redir-upd-b1', '/redirect/' . $redirect->getId(), [
+        $this->consoleBlogApi('PATCH', 'redir-upd-b1', '/redirect/' . $redirect->getId(), [
             'to' => 'https://hack.com',
         ], user: $user1);
 

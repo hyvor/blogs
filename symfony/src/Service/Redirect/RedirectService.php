@@ -3,6 +3,7 @@
 namespace App\Service\Redirect;
 
 use App\Entity\Blog;
+use App\Entity\Enum\RedirectType;
 use App\Entity\Redirect;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -30,7 +31,7 @@ class RedirectService
 
         if ($search !== '') {
             $qb->andWhere('r.path LIKE :search OR r.to LIKE :search')
-               ->setParameter('search', '%' . $search . '%');
+                ->setParameter('search', '%' . $search . '%');
         }
 
         /** @var Redirect[] $result */
@@ -59,9 +60,17 @@ class RedirectService
         ]) !== null;
     }
 
+    /**
+     * gets the regex pattern from user's "path" input.
+     */
+    private function getRegex(string $userRegex): string
+    {
+        return ('~' . $userRegex . '~');
+    }
+
     public function validateRegex(string $regex): bool
     {
-        return @preg_match('/' . $regex . '/', '') !== false;
+        return @preg_match($this->getRegex($regex), '') !== false;
     }
 
     public function createRedirect(
@@ -69,7 +78,7 @@ class RedirectService
         bool $dynamic,
         string $path,
         string $to,
-        string $type,
+        RedirectType $type,
     ): Redirect {
         $now = $this->now();
         $redirect = new Redirect();
@@ -86,7 +95,7 @@ class RedirectService
         return $redirect;
     }
 
-    public function updateRedirect(Redirect $redirect, ?string $path, ?string $to, ?string $type): Redirect
+    public function updateRedirect(Redirect $redirect, ?string $path, ?string $to, ?RedirectType $type): Redirect
     {
         if ($path !== null) {
             $redirect->setPath($path);
@@ -107,5 +116,4 @@ class RedirectService
         $this->em->remove($redirect);
         $this->em->flush();
     }
-
 }

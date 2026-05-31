@@ -1,5 +1,4 @@
 .idea
-.vscode
 !.vscode/settings.json
 backend/.env
 .DS_Store

@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Entity\Enum\RedirectType;
+use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RedirectFactory;
@@ -10,6 +12,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
+#[CoversClass(RedirectService::class)]
 class GetRedirectsTest extends ApiTestCase
 {
     public function test_get_redirects(): void
@@ -23,7 +26,7 @@ class GetRedirectsTest extends ApiTestCase
             'blog_id' => $blog->getId(),
             'path' => '/old-page',
             'to' => 'https://example.com/new-page',
-            'type' => 'permanent',
+            'type' => RedirectType::PERMANENT,
             'dynamic' => false,
         ]);
 

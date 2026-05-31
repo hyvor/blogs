@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\RedirectType;
 use App\Entity\Redirect;
 
 class RedirectObject
@@ -11,7 +12,7 @@ class RedirectObject
     public bool $dynamic;
     public string $path;
     public string $to;
-    public string $type;
+    public RedirectType $type;
 
     public function __construct(Redirect $redirect)
     {

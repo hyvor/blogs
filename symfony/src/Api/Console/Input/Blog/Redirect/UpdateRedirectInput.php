@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\Redirect;
 
+use App\Entity\Enum\RedirectType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateRedirectInput
@@ -11,6 +12,5 @@ class UpdateRedirectInput
     #[Assert\Url]
     public ?string $to = null;
 
-    #[Assert\Choice(['permanent', 'temporary'])]
-    public ?string $type = null;
+    public ?RedirectType $type = null;
 }

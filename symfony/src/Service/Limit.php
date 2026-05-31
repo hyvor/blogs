@@ -11,6 +11,5 @@ class Limit
     const int MAX_WEBHOOKS_PER_BLOG = 5;
     const int MAX_API_KEYS_PER_BLOG = 50;
     const int MAX_NAVIGATIONS_PER_TYPE = 10;
-    const int MAX_REDIRECTS_PER_BLOG = 1000;
     const int MAX_ROUTES_PER_BLOG = 50;
 }
