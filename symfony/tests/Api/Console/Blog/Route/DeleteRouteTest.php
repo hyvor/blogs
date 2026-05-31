@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Entity\Route;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
@@ -25,6 +26,9 @@ class DeleteRouteTest extends ApiTestCase
         $this->consoleBlogApi('DELETE', 'route-delete', '/route/' . $route->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
+
+        $routes = $this->getEm()->getRepository(Route::class)->findAll();
+        $this->assertCount(0, $routes);
     }
 
     public function test_delete_route_wrong_blog(): void

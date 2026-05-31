@@ -38,6 +38,30 @@ class UpdateRouteTest extends ApiTestCase
         $this->assertSame('new-template', $json['template']);
     }
 
+    public function test_update_to_null(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'route-update-null'],
+            ['status' => 'active'],
+        );
+        $route = RouteFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'posts_filter' => 'some-filter',
+            'content_type' => 'some-type',
+        ]);
+
+        $this->consoleBlogApi('PATCH', 'route-update-null', '/route/' . $route->getId(), [
+            'posts_filter' => null,
+            'content_type' => null,
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertNull($json['posts_filter']);
+        $this->assertNull($json['content_type']);
+    }
+
     public function test_update_route_wrong_blog(): void
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(

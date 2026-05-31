@@ -52,29 +52,28 @@ class RouteService
         return $route;
     }
 
-    public function updateRoute(
-        Route $route,
-        ?string $name,
-        ?string $match,
-        ?string $template,
-        ?string $postsFilter,
-        ?string $contentType,
-    ): Route {
-        if ($name !== null) {
-            $route->setName($name);
+    /**
+     * @param array{name?: string, match?: string, template?: string, posts_filter?: string|null, content_type?: string|null} $updates
+     */
+    public function updateRoute(Route $route, array $updates): Route
+    {
+
+        if (array_key_exists('name', $updates)) {
+            $route->setName($updates['name']);
         }
-        if ($match !== null) {
-            $route->setMatch($match);
+        if (array_key_exists('match', $updates)) {
+            $route->setMatch($updates['match']);
         }
-        if ($template !== null) {
-            $route->setTemplate($template);
+        if (array_key_exists('template', $updates)) {
+            $route->setTemplate($updates['template']);
         }
-        if ($postsFilter !== null) {
-            $route->setPostsFilter($postsFilter);
+        if (array_key_exists('posts_filter', $updates)) {
+            $route->setPostsFilter($updates['posts_filter']);
         }
-        if ($contentType !== null) {
-            $route->setContentType($contentType);
+        if (array_key_exists('content_type', $updates)) {
+            $route->setContentType($updates['content_type']);
         }
+
         $route->setUpdatedAt($this->now());
         $this->em->flush();
         return $route;
@@ -85,5 +84,4 @@ class RouteService
         $this->em->remove($route);
         $this->em->flush();
     }
-
 }

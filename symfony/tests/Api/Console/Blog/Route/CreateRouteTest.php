@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Entity\Route;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
@@ -33,6 +34,16 @@ class CreateRouteTest extends ApiTestCase
         $this->assertSame('tag', $json['template']);
         $this->assertSame('tags:{{slug}}', $json['posts_filter']);
         $this->assertTrue($json['is_enabled']);
+
+        $route = $this->getEm()->getRepository(Route::class)->findAll();
+        $this->assertCount(1, $route);
+        $route = $route[0];
+        $this->assertSame($blog->getId(), $route->getBlogId());
+        $this->assertSame('Tag Index', $route->getName());
+        $this->assertSame('/tag/{slug}', $route->getMatch());
+        $this->assertSame('tag', $route->getTemplate());
+        $this->assertSame('tags:{{slug}}', $route->getPostsFilter());
+        $this->assertNull($route->getContentType());
     }
 
     public function test_create_route_limit(): void
@@ -55,6 +66,6 @@ class CreateRouteTest extends ApiTestCase
             'template' => 'page',
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'You have reached the maximum number of routes (50)');
     }
 }

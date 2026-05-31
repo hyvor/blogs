@@ -4,13 +4,13 @@ namespace App\Api\Console\Input\Blog\Route;
 
 class UpdateRouteInput
 {
-    public ?string $name = null;
+    public string $name;
 
-    public ?string $match = null;
+    public string $match;
 
-    public ?string $template = null;
+    public string $template;
 
-    public ?string $posts_filter = null;
+    public ?string $posts_filter;
 
-    public ?string $content_type = null;
+    public ?string $content_type;
 }

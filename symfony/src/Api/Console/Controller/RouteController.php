@@ -7,7 +7,7 @@ use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Route\CreateRouteInput;
 use App\Api\Console\Input\Blog\Route\UpdateRouteInput;
 use App\Api\Console\Object\RouteObject;
-use App\Entity\Route as BlogRoute;
+use App\Entity\Route as RouteEntity;
 use App\Service\Limit;
 use App\Service\Route\RouteService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,23 +57,16 @@ class RouteController
 
     #[Route('/route/{id}', methods: ['PATCH'])]
     public function updateRoute(
-        #[MapBlogEntity] BlogRoute $route,
+        #[MapBlogEntity] RouteEntity $route,
         #[MapRequestPayload] UpdateRouteInput $input,
     ): JsonResponse {
-        $route = $this->routeService->updateRoute(
-            $route,
-            $input->name,
-            $input->match,
-            $input->template,
-            $input->posts_filter,
-            $input->content_type,
-        );
+        $route = $this->routeService->updateRoute($route, (array) $input);
 
         return new JsonResponse(new RouteObject($route));
     }
 
     #[Route('/route/{id}', methods: ['DELETE'])]
-    public function deleteRoute(#[MapBlogEntity] BlogRoute $route): JsonResponse
+    public function deleteRoute(#[MapBlogEntity] RouteEntity $route): JsonResponse
     {
         $this->routeService->deleteRoute($route);
 
