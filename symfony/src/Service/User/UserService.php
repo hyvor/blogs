@@ -2,10 +2,12 @@
 
 namespace App\Service\User;
 
+use App\Entity\Blog;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Post\PostAuthor\PostAuthorService;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\AuthUser;
 
 class UserService
 {
@@ -15,6 +17,18 @@ class UserService
         private PostAuthorService $postAuthorService,
         private UserRepository $userRepository,
     ) {}
+
+    public function getUserByBlogAndAuthUser(Blog $blog, AuthUser|int $authUserOrId): ?User
+    {
+        $authUserId = $authUserOrId instanceof AuthUser ? $authUserOrId->id : $authUserOrId;
+
+        /** @var User|null */
+        return $this->userRepository->findOneBy([
+            'blog' => $blog,
+            'hyvor_user_id' => $authUserId,
+            'status' => 'active',
+        ]);
+    }
 
     /**
      * @return User[]
@@ -70,5 +84,4 @@ class UserService
             $this->em->remove($user);
         });
     }
-
 }

@@ -56,7 +56,6 @@ class BlogController
     // }
 
     #[Route('/blog/check-subdomain', methods: ['GET'])]
-    #[OrganizationLevelEndpoint]
     #[OrganizationOptional]
     public function checkSubdomain(Request $request): JsonResponse
     {

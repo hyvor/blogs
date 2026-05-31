@@ -55,11 +55,17 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         string $endpoint,
         array $data = [],
         array $server = [],
-        ?AuthUser $user = null,
+        AuthUser|int|null $user = null,
         ?AuthUserOrganization $organization = null,
         bool $setOrgHeader = true,
     ): Response {
-        AuthFake::enableForSymfony($this->getContainer(), $user, $organization);
+        $authUser = null;
+        if ($user instanceof AuthUser) {
+            $authUser = $user;
+        } elseif (is_int($user)) {
+            $authUser = AuthFake::generateUser(['id' => $user]);
+        }
+        AuthFake::enableForSymfony($this->getContainer(), $authUser, $organization);
 
         $endpoint = ltrim($endpoint, '/');
 

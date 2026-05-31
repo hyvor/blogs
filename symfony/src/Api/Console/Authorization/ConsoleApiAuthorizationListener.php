@@ -7,6 +7,7 @@ use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Blog\BlogService;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
@@ -34,6 +35,7 @@ class ConsoleApiAuthorizationListener
         private ApiKeyService $apiKeyService,
         private EntityManagerInterface $em,
         private RequestStack $requestStack,
+        private UserService $userService,
     ) {}
 
     public function __invoke(ControllerEvent $event): void
@@ -121,14 +123,10 @@ class ConsoleApiAuthorizationListener
         $request->attributes->set(self::RESOLVED_USER_KEY, $authUser);
         $request->attributes->set(self::RESOLVED_ORGANIZATION_KEY, $me->getOrganization());
 
-        $blogUser = $this->em->getRepository(User::class)->findOneBy([
-            'blog_id' => $blog->getId(),
-            'hyvor_user_id' => $authUser->id,
-            'status' => 'active',
-        ]);
+        $blogUser = $this->userService->getUserByBlogAndAuthUser($blog, $authUser);
 
         if ($blogUser === null) {
-            throw new AccessDeniedHttpException('Access denied');
+            throw new AccessDeniedHttpException('You do not have access to this blog');
         }
 
         $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
@@ -137,7 +135,6 @@ class ConsoleApiAuthorizationListener
     private function handleOrgLevel(ControllerEvent $event): void
     {
         $request = $event->getRequest();
-        $isOrgLevel = count($event->getAttributes(OrganizationLevelEndpoint::class)) > 0;
         $orgOptional = count($event->getAttributes(OrganizationOptional::class)) > 0;
 
         $me = $this->auth->me($request);
@@ -152,7 +149,6 @@ class ConsoleApiAuthorizationListener
         $request->attributes->set(self::RESOLVED_ORGANIZATION_KEY, $me->getOrganization());
 
         if ($orgOptional) {
-            assert($isOrgLevel === true);
             return;
         }
 
@@ -165,6 +161,8 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('org_mismatch');
         }
     }
+
+    // helpers
 
     public function getUser(): AuthUser
     {
@@ -198,14 +196,5 @@ class ConsoleApiAuthorizationListener
         $blog = $request->attributes->get(self::RESOLVED_BLOG_KEY);
         assert($blog instanceof Blog);
         return $blog;
-    }
-
-    public function getBlogUser(): User
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        assert($request !== null);
-        $user = $request->attributes->get(self::RESOLVED_BLOG_USER_KEY);
-        assert($user instanceof User);
-        return $user;
     }
 }

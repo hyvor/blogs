@@ -37,7 +37,6 @@ class ConsoleController
     ) {}
 
     #[Route('/init', methods: ['GET'])]
-    #[OrganizationLevelEndpoint]
     #[OrganizationOptional]
     public function init(): JsonResponse
     {
@@ -74,7 +73,6 @@ class ConsoleController
     }
 
     #[Route('/usage', methods: ['GET'])]
-    #[OrganizationLevelEndpoint]
     public function usage(): JsonResponse
     {
         $org = $this->authListener->getOrganization();
@@ -108,14 +106,12 @@ class ConsoleController
     }
 
     #[Route('/ping', methods: ['GET'])]
-    #[OrganizationLevelEndpoint]
     public function ping(): JsonResponse
     {
         return new JsonResponse();
     }
 
     #[Route('/blogs/sort', methods: ['PATCH'])]
-    #[OrganizationLevelEndpoint]
     public function sortBlogs(
         #[MapRequestPayload] SortBlogsInput $input,
     ): JsonResponse {

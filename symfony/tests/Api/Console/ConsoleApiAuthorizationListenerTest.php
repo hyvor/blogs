@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ConsoleApiAuthorizationListener::class)]
 #[UsesClass(ConsoleController::class)]
-#[UsesClass(ApiKeyController::class)]
 class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 {
 
@@ -42,8 +41,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
     public function test_org_optional_passes_without_org(): void
     {
-        $user = AuthFake::generateUser();
-        $this->consoleOrgApi('GET', '/init', user: $user);
+        $this->consoleOrgApi('GET', '/init', user: 1, organization: null);
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($this->getJson()['organization']);
@@ -88,7 +86,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         $user = AuthFake::generateUser();
         $this->consoleOrgApi('GET', '/ping', user: $user);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseFailed(403, 'Organization is required');
     }
 
     public function test_org_required_returns_403_on_header_mismatch(): void
@@ -104,7 +102,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             setOrgHeader: false,
         );
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseFailed(403, 'org_mismatch');
     }
 
     public function test_org_required_passes_with_correct_header(): void
@@ -125,7 +123,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         $user = AuthFake::generateUser(['id' => 300]);
         $this->consoleBlogApi('GET', 'nonexistent-blog', '/api-keys', user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Blog not found');
     }
 
     public function test_blog_level_returns_401_when_not_authenticated(): void
@@ -134,7 +132,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
         $this->consoleBlogApi('GET', 'auth-test-blog', '/api-keys');
 
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseFailed(401, 'Unauthorized');
     }
 
     public function test_blog_level_returns_403_when_user_not_in_blog(): void
@@ -147,7 +145,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         $otherUser = AuthFake::generateUser(['id' => 999]);
         $this->consoleBlogApi('GET', 'auth-test-other', '/api-keys', user: $otherUser);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseFailed(403, 'You do not have access to this blog');
     }
 
     // -----------------------------------------------------------------------
@@ -237,5 +235,4 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(403);
     }
-
 }
