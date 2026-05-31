@@ -31,12 +31,24 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         } elseif (is_int($user)) {
             $authUser = AuthFake::generateUser(['id' => $user]);
         }
-        AuthFake::enableForSymfony($this->getContainer(), $authUser);
+
+        $blog = $subdomain instanceof Blog ? $subdomain : $this->getEm()->getRepository(Blog::class)->findOneBy(['subdomain' => $subdomain]);
+        $orgId = $blog?->getOrganizationId() ?? 0;
+
+        AuthFake::enableForSymfony(
+            $this->getContainer(),
+            $authUser,
+            new AuthUserOrganization($orgId, '', 'admin')
+        );
+
         $endpoint = ltrim($endpoint, '/');
         $this->client->request(
             $method,
             '/api/console/v0/blog/' . ($subdomain instanceof Blog ? $subdomain->getSubdomain() : $subdomain) . '/' . $endpoint,
-            server: array_merge(['CONTENT_TYPE' => 'application/json'], $server),
+            server: array_merge([
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_ORGANIZATION_ID' => $orgId,
+            ], $server),
             content: (string)json_encode($data),
         );
         $response = $this->client->getResponse();

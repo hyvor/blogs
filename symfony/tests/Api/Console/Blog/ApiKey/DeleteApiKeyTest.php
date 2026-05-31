@@ -20,7 +20,6 @@ class DeleteApiKeyTest extends ApiTestCase
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $id = $apiKey->getId();

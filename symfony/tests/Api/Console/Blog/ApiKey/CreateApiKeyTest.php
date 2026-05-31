@@ -39,7 +39,6 @@ class CreateApiKeyTest extends ApiTestCase
         for ($i = 0; $i < 50; $i++) {
             ApiKeyFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'api_key' => bin2hex(random_bytes(16)),
             ]);
         }

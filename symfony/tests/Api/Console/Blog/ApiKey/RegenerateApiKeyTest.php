@@ -19,7 +19,6 @@ class RegenerateApiKeyTest extends ApiTestCase
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'api_key' => 'oldkey12345678901234567890abcd',
         ]);
 
@@ -43,7 +42,6 @@ class RegenerateApiKeyTest extends ApiTestCase
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
         ]);
 
         $this->consoleBlogApi('PATCH', 'ak-rg-b1', '/api-key/' . $apiKey->getId(), user: $user1);
