@@ -13,7 +13,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogEntityValueResolver implements ValueResolverInterface
 {
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ConsoleApiAuthorizationListener $authorizationListener,
+    ) {}
 
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
@@ -27,18 +30,16 @@ class BlogEntityValueResolver implements ValueResolverInterface
         }
 
         $id = $request->attributes->get('id');
-        $blog = $request->attributes->get(ConsoleApiAuthorizationListener::RESOLVED_BLOG_KEY);
-
-        assert($blog instanceof Blog);
+        $blog = $this->authorizationListener->getBlog();
 
         $entity = $this->em->find($class, $id);
 
         if ($entity === null) {
-            throw new NotFoundHttpException('Resource not found');
+            throw new NotFoundHttpException('Entity not found');
         }
 
-        if ($entity->getBlogId() !== $blog->getId()) {
-            throw new NotFoundHttpException('Resource not found');
+        if ($entity->getBlog()->getId() !== $blog->getId()) {
+            throw new NotFoundHttpException('Entity does not belong to blog');
         }
 
         yield $entity;

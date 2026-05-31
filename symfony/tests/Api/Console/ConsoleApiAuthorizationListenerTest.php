@@ -6,7 +6,6 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Controller\ApiKeyController;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
-use App\Entity\Enum\UserRole;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -135,28 +134,83 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         $this->assertResponseFailed(401, 'Unauthorized');
     }
 
+    public function test_blog_level_returns_403_when_no_org(): void
+    {
+        BlogFactory::createOneWithUser(['subdomain' => 'auth-no-org'], ['status' => 'active']);
+
+        // consoleBlogApi with a user but no org → AuthFake sets user with null org
+        $user = AuthFake::generateUser();
+        $this->consoleBlogApi('GET', 'auth-no-org', '/api-keys', user: $user);
+
+        $this->assertResponseFailed(403, 'Organization is required');
+    }
+
+    public function test_blog_level_returns_403_when_org_does_not_match_blog(): void
+    {
+        BlogFactory::createOneWithUser(
+            ['subdomain' => 'auth-org-mismatch', 'organization_id' => 100],
+            ['status' => 'active'],
+        );
+
+        $user = AuthFake::generateUser();
+        $org = new AuthUserOrganization(999, 'Other Org', 'admin');
+        AuthFake::enableForSymfony($this->getContainer(), $user, $org);
+        $this->client->request(
+            'GET',
+            '/api/console/v0/blog/auth-org-mismatch/api-keys',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_X_ORGANIZATION_ID' => '999'],
+        );
+
+        $this->assertResponseFailed(403, 'This project does not belong to your current organization.');
+    }
+
+    public function test_blog_level_returns_403_on_org_header_mismatch(): void
+    {
+        BlogFactory::createOneWithUser(
+            ['subdomain' => 'auth-hdr-mismatch', 'organization_id' => 200],
+            ['status' => 'active'],
+        );
+
+        $user = AuthFake::generateUser();
+        $org = new AuthUserOrganization(200, 'Org', 'admin');
+        AuthFake::enableForSymfony($this->getContainer(), $user, $org);
+        $this->client->request(
+            'GET',
+            '/api/console/v0/blog/auth-hdr-mismatch/api-keys',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_X_ORGANIZATION_ID' => '999'],
+        );
+
+        $this->assertResponseFailed(403, 'org_mismatch');
+    }
+
     public function test_blog_level_returns_403_when_user_not_in_blog(): void
     {
         BlogFactory::createOneWithUser(
-            ['subdomain' => 'auth-test-other'],
+            ['subdomain' => 'auth-test-other', 'organization_id' => 300],
             ['hyvor_user_id' => 301, 'status' => 'active'],
         );
 
         $otherUser = AuthFake::generateUser(['id' => 999]);
-        $this->consoleBlogApi('GET', 'auth-test-other', '/api-keys', user: $otherUser);
+        $org = new AuthUserOrganization(300, 'Org', 'admin');
+        AuthFake::enableForSymfony($this->getContainer(), $otherUser, $org);
+        $this->client->request(
+            'GET',
+            '/api/console/v0/blog/auth-test-other/api-keys',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_X_ORGANIZATION_ID' => '300'],
+        );
 
         $this->assertResponseFailed(403, 'You do not have access to this blog');
     }
 
     // -----------------------------------------------------------------------
-    // Blog-level: API key auth
+    // Blog-level: API key auth (X-API-Key header)
     // -----------------------------------------------------------------------
 
     public function test_api_key_auth_succeeds(): void
     {
         [$blog] = BlogFactory::createOneWithUser(
             ['subdomain' => 'apikey-auth-blog'],
-            ['hyvor_user_id' => 400, 'status' => 'active', 'role' => UserRole::OWNER],
+            ['hyvor_user_id' => 400, 'status' => 'active'],
         );
 
         ApiKeyFactory::createOne([
@@ -171,7 +225,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'GET',
             'apikey-auth-blog',
             '/api-keys',
-            server: ['HTTP_AUTHORIZATION' => 'Bearer validrawkey123456789012345678901'],
+            server: ['HTTP_X_API_KEY' => 'validrawkey123456789012345678901'],
         );
 
         $this->assertResponseIsSuccessful();
@@ -188,24 +242,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'GET',
             'apikey-invalid-blog',
             '/api-keys',
-            server: ['HTTP_AUTHORIZATION' => 'Bearer wrongkey'],
-        );
-
-        $this->assertResponseStatusCodeSame(403);
-    }
-
-    public function test_api_key_auth_returns_403_for_wrong_bearer_format(): void
-    {
-        BlogFactory::createOneWithUser(
-            ['subdomain' => 'apikey-format-blog'],
-            ['hyvor_user_id' => 402, 'status' => 'active'],
-        );
-
-        $this->consoleBlogApi(
-            'GET',
-            'apikey-format-blog',
-            '/api-keys',
-            server: ['HTTP_AUTHORIZATION' => 'Basic somekey'],
+            server: ['HTTP_X_API_KEY' => 'wrongkey'],
         );
 
         $this->assertResponseStatusCodeSame(403);
@@ -215,7 +252,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         [$blog] = BlogFactory::createOneWithUser(
             ['subdomain' => 'apikey-delivery-blog'],
-            ['hyvor_user_id' => 403, 'status' => 'active'],
+            ['hyvor_user_id' => 402, 'status' => 'active'],
         );
 
         ApiKeyFactory::createOne([
@@ -230,7 +267,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'GET',
             'apikey-delivery-blog',
             '/api-keys',
-            server: ['HTTP_AUTHORIZATION' => 'Bearer deliverykey123456789012345678901'],
+            server: ['HTTP_X_API_KEY' => 'deliverykey123456789012345678901'],
         );
 
         $this->assertResponseStatusCodeSame(403);

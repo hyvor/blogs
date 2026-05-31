@@ -34,7 +34,7 @@ final class ApiKeyFactory extends PersistentObjectFactory
     {
         return [
             'api_key' => self::faker()->text(32),
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'name' => self::faker()->text(255),
             'type' => self::faker()->randomElement([ApiKeyType::CONSOLE, ApiKeyType::DELIVERY]),
         ];

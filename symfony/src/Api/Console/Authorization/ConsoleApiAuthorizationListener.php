@@ -3,12 +3,9 @@
 namespace App\Api\Console\Authorization;
 
 use App\Entity\Blog;
-use App\Entity\Enum\UserRole;
-use App\Entity\User;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Blog\BlogService;
 use App\Service\User\UserService;
-use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -24,16 +21,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 #[AsEventListener(event: KernelEvents::CONTROLLER, priority: 200)]
 class ConsoleApiAuthorizationListener
 {
-    const string RESOLVED_USER_KEY = 'console_api_resolved_user';
-    const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
-    const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
-    const string RESOLVED_BLOG_USER_KEY = 'console_api_resolved_blog_user';
+    private const string RESOLVED_USER_KEY = 'console_api_resolved_user';
+    private const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
+    private const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
 
     public function __construct(
         private AuthInterface $auth,
         private BlogService $blogService,
         private ApiKeyService $apiKeyService,
-        private EntityManagerInterface $em,
         private RequestStack $requestStack,
         private UserService $userService,
     ) {}
@@ -68,9 +63,7 @@ class ConsoleApiAuthorizationListener
             throw new NotFoundHttpException('Blog not found');
         }
 
-        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
-
-        if ($request->headers->has('authorization')) {
+        if ($request->headers->has('x-api-key')) {
             $this->handleApiKeyAuth($request, $blog);
         } else {
             $this->handleBlogSessionAuth($request, $blog);
@@ -79,34 +72,17 @@ class ConsoleApiAuthorizationListener
 
     private function handleApiKeyAuth(Request $request, Blog $blog): void
     {
-        $authorizationHeader = $request->headers->get('authorization');
-        assert(is_string($authorizationHeader));
+        $apiKeyHeader = $request->headers->get('x-api-key');
+        assert(is_string($apiKeyHeader));
 
-        if (!str_starts_with($authorizationHeader, 'Bearer ')) {
-            throw new AccessDeniedHttpException('Authorization header must start with "Bearer ".');
-        }
-
-        $rawKey = trim(substr($authorizationHeader, 7));
-        if ($rawKey === '') {
-            throw new AccessDeniedHttpException('API key is missing or empty.');
-        }
-
-        $apiKey = $this->apiKeyService->getByRawKey($blog, $rawKey);
+        $apiKey = $this->apiKeyService->getByRawKey($blog, $apiKeyHeader);
         if ($apiKey === null) {
             throw new AccessDeniedHttpException('Invalid API key.');
         }
 
-        $owner = $this->em->getRepository(User::class)->findOneBy([
-            'blog_id' => $blog->getId(),
-            'role' => UserRole::OWNER,
-            'status' => 'active',
-        ]);
+        // TODO: verify scopes
 
-        if ($owner === null) {
-            throw new AccessDeniedHttpException('Blog owner not found.');
-        }
-
-        $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $owner);
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
     }
 
     private function handleBlogSessionAuth(Request $request, Blog $blog): void
@@ -120,8 +96,19 @@ class ConsoleApiAuthorizationListener
         }
 
         $authUser = $me->getUser();
-        $request->attributes->set(self::RESOLVED_USER_KEY, $authUser);
-        $request->attributes->set(self::RESOLVED_ORGANIZATION_KEY, $me->getOrganization());
+        $authOrganization = $me->getOrganization();
+
+        if ($authOrganization === null) {
+            throw new AccessDeniedHttpException('Organization is required');
+        }
+
+        if ($blog->getOrganizationId() !== $authOrganization->id) {
+            throw new AccessDeniedHttpException('This project does not belong to your current organization.');
+        }
+
+        if ((int)$request->headers->get('X-Organization-Id') !== $authOrganization->id) {
+            throw new AccessDeniedHttpException('org_mismatch');
+        }
 
         $blogUser = $this->userService->getUserByBlogAndAuthUser($blog, $authUser);
 
@@ -129,7 +116,9 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('You do not have access to this blog');
         }
 
-        $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
+        // TODO: verify scopes
+
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
     }
 
     private function handleOrgLevel(ControllerEvent $event): void
@@ -164,6 +153,9 @@ class ConsoleApiAuthorizationListener
 
     // helpers
 
+    /**
+     * only use in org-level endpoints
+     */
     public function getUser(): AuthUser
     {
         $request = $this->requestStack->getCurrentRequest();
