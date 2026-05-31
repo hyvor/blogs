@@ -56,9 +56,9 @@ class CreateNavigationVariantTest extends ApiTestCase
 
         $this->consoleBlogApi('POST', 'nav-var-no-lang', '/navigation/' . $nav->getId() . '/variant', [
             'language_id' => 99999,
-            'name' => 'Ghost',
+            'name' => 'HB',
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Language not found');
     }
 }

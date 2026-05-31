@@ -70,7 +70,7 @@ class DeleteNavigationVariantTest extends ApiTestCase
             'language_id' => $lang->getId(),
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Navigation variant not found');
     }
 
     public function test_language_not_found(): void
@@ -88,6 +88,6 @@ class DeleteNavigationVariantTest extends ApiTestCase
             'language_id' => 99999,
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Language not found');
     }
 }

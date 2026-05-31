@@ -71,7 +71,7 @@ class UpdateNavigationVariantTest extends ApiTestCase
             'name' => 'Nonexistent',
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Navigation variant not found');
     }
 
     public function test_language_not_found(): void
@@ -90,6 +90,6 @@ class UpdateNavigationVariantTest extends ApiTestCase
             'name' => 'Ghost',
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Language not found');
     }
 }

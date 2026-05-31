@@ -8,6 +8,7 @@ use App\Api\Console\Input\Blog\Navigation\CreateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\SortNavigationsInput;
 use App\Api\Console\Input\Blog\Navigation\UpdateNavigationInput;
+use App\Api\Console\Input\Blog\Navigation\DeleteNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\UpdateNavigationVariantInput;
 use App\Api\Console\Object\NavigationObject;
 use App\Api\Console\Object\NavigationVariantObject;
@@ -16,7 +17,6 @@ use App\Service\Language\LanguageService;
 use App\Service\Limit;
 use App\Service\Navigation\NavigationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -129,18 +129,13 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}/variant', methods: ['DELETE'])]
-    public function deleteVariant(#[MapBlogEntity] Navigation $navigation, Request $request): JsonResponse
-    {
+    public function deleteVariant(
+        #[MapBlogEntity] Navigation $navigation,
+        #[MapRequestPayload] DeleteNavigationVariantInput $input,
+    ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        $body = json_decode((string)$request->getContent(), true);
-        $languageId = is_array($body) ? ($body['language_id'] ?? null) : null;
-
-        if (!is_int($languageId) || $languageId <= 0) {
-            throw new UnprocessableEntityHttpException('language_id is required');
-        }
-
-        $language = $this->languageService->getLanguageById($blog, $languageId);
+        $language = $this->languageService->getLanguageById($blog, $input->language_id);
         if ($language === null) {
             throw new NotFoundHttpException('Language not found');
         }
