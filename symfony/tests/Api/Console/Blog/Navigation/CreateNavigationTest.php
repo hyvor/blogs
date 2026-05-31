@@ -3,7 +3,10 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Enum\NavigationType;
 use App\Entity\Navigation;
+use App\Service\Navigation\Event\NavigationChangedEvent;
+use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -11,6 +14,7 @@ use App\Tests\Factory\NavigationFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationService::class)]
 class CreateNavigationTest extends ApiTestCase
 {
     public function test_create_navigation(): void
@@ -45,10 +49,11 @@ class CreateNavigationTest extends ApiTestCase
         $this->assertCount(1, $navigations);
         $nav = $navigations[0];
         $this->assertSame('/header.json', $nav->getUrl());
-        $this->assertSame('header', $nav->getType());
+        $this->assertSame(NavigationType::HEADER, $nav->getType());
         $this->assertCount(1, $nav->getVariants());
         $variant = $nav->getVariants()->first();
         $this->assertSame('Header Nav', $variant->getName());
+        $this->getEd()->assertDispatched(NavigationChangedEvent::class);
     }
 
     public function test_fails_when_limit_exceeded(): void
@@ -68,11 +73,10 @@ class CreateNavigationTest extends ApiTestCase
             NavigationFactory::createOne([
                 'blog' => $blog,
                 'blog_id' => $blog->getId(),
-                'type' => 'header',
+                'type' => NavigationType::HEADER,
             ]);
         }
 
-        // 11th navigation should fail
         $this->consoleBlogApi('POST', 'nav-create-lim', '/navigation', [
             'url' => "/nav11.json",
             'name' => "Nav 11",

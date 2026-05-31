@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Service\Navigation\Event\NavigationVariantChangedEvent;
+use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -10,6 +12,7 @@ use App\Tests\Factory\NavigationFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationService::class)]
 class CreateNavigationVariantTest extends ApiTestCase
 {
     public function test_create_navigation_variant(): void
@@ -37,5 +40,25 @@ class CreateNavigationVariantTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame('French Nav', $json['name']);
         $this->assertSame($lang->getId(), $json['language_id']);
+        $this->getEd()->assertDispatched(NavigationVariantChangedEvent::class);
+    }
+
+    public function test_language_not_found(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'nav-var-no-lang'],
+            ['status' => 'active'],
+        );
+        $nav = NavigationFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+        ]);
+
+        $this->consoleBlogApi('POST', 'nav-var-no-lang', '/navigation/' . $nav->getId() . '/variant', [
+            'language_id' => 99999,
+            'name' => 'Ghost',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(404);
     }
 }

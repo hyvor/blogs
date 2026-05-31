@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Enum\NavigationType;
+use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -12,6 +14,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationService::class)]
 class GetNavigationsTest extends ApiTestCase
 {
     public function test_get_navigations(): void
@@ -24,7 +27,7 @@ class GetNavigationsTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'url' => '/nav-list.json',
-            'type' => 'header',
+            'type' => NavigationType::HEADER,
             'sort' => 0,
         ]);
         $lang = LanguageFactory::createOne([

@@ -35,7 +35,6 @@ final class NavigationVariantFactory extends PersistentObjectFactory
     {
         return [
             'language_id' => self::faker()->randomNumber(),
-            'navigation_id' => self::faker()->randomNumber(),
         ];
     }
 

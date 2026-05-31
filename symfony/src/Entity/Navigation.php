@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\NavigationType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,8 +32,8 @@ class Navigation
     #[ORM\Column(length: 255)]
     private string $url;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: NavigationType::class)]
+    private NavigationType $type;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $sort = 0;
@@ -112,12 +113,12 @@ class Navigation
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): NavigationType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(NavigationType $type): static
     {
         $this->type = $type;
         return $this;

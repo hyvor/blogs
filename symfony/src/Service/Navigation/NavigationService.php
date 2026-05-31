@@ -3,18 +3,26 @@
 namespace App\Service\Navigation;
 
 use App\Entity\Blog;
+use App\Entity\Enum\NavigationType;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\NavigationVariant;
 use App\Service\Language\LanguageService;
+use App\Service\Navigation\Event\NavigationChangedEvent;
+use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class NavigationService
 {
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em, private LanguageService $languageService,) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private LanguageService $languageService,
+        private EventDispatcherInterface $ed,
+    ) {}
 
     /** @return Navigation[] */
     public function getNavigations(Blog $blog): array
@@ -33,7 +41,7 @@ class NavigationService
         return $result;
     }
 
-    public function getNavigationCount(Blog $blog, string $type): int
+    public function getNavigationCount(Blog $blog, NavigationType $type): int
     {
         return $this->em->getRepository(Navigation::class)->count([
             'blog_id' => $blog->getId(),
@@ -44,10 +52,9 @@ class NavigationService
     public function createNavigation(
         Blog $blog,
         string $url,
-        string $type,
+        NavigationType $type,
         string $name,
     ): Navigation {
-
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
         $now = $this->now();
@@ -64,28 +71,30 @@ class NavigationService
         $this->createNavigationVariant($navigation, $primaryLanguage, $name, flush: false);
 
         $this->em->flush();
+        $this->ed->dispatch(new NavigationChangedEvent($navigation));
 
         return $navigation;
     }
 
-    public function updateNavigation(Navigation $navigation, string $url, string $type): Navigation
+    public function updateNavigation(Navigation $navigation, string $url, NavigationType $type): Navigation
     {
         $navigation->setUrl($url);
         $navigation->setType($type);
         $navigation->setUpdatedAt($this->now());
         $this->em->flush();
+        $this->ed->dispatch(new NavigationChangedEvent($navigation));
         return $navigation;
     }
 
     public function deleteNavigation(Navigation $navigation): void
     {
-        // delete variants first
         foreach ($navigation->getVariants() as $variant) {
             $this->em->remove($variant);
         }
         $this->em->flush();
         $this->em->remove($navigation);
         $this->em->flush();
+        $this->ed->dispatch(new NavigationChangedEvent($navigation));
     }
 
     /** @param int[] $ids */
@@ -123,6 +132,7 @@ class NavigationService
         $this->em->persist($variant);
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new NavigationVariantChangedEvent($variant));
         }
 
         return $variant;
@@ -131,7 +141,7 @@ class NavigationService
     public function getNavigationVariant(Navigation $navigation, Language $language): ?NavigationVariant
     {
         return $this->em->getRepository(NavigationVariant::class)->findOneBy([
-            'navigation_id' => $navigation->getId(),
+            'navigation' => $navigation,
             'language_id' => $language->getId(),
         ]);
     }
@@ -141,6 +151,7 @@ class NavigationService
         $variant->setName($name);
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
+        $this->ed->dispatch(new NavigationVariantChangedEvent($variant));
         return $variant;
     }
 
@@ -148,5 +159,6 @@ class NavigationService
     {
         $this->em->remove($variant);
         $this->em->flush();
+        $this->ed->dispatch(new NavigationVariantChangedEvent($variant));
     }
 }

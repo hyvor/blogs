@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\Navigation;
 
+use App\Entity\Enum\NavigationType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateNavigationInput
@@ -9,7 +10,6 @@ class UpdateNavigationInput
     #[Assert\NotBlank]
     public string $url;
 
-    #[Assert\NotBlank]
-    #[Assert\Choice(['header', 'footer'])]
-    public string $type;
+    #[Assert\NotNull]
+    public NavigationType $type;
 }

@@ -3,12 +3,16 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Enum\NavigationType;
+use App\Service\Navigation\Event\NavigationChangedEvent;
+use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\NavigationFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationService::class)]
 class UpdateNavigationTest extends ApiTestCase
 {
     public function test_update_navigation(): void
@@ -21,7 +25,7 @@ class UpdateNavigationTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'url' => '/old.json',
-            'type' => 'header',
+            'type' => NavigationType::HEADER,
         ]);
 
         $this->consoleBlogApi('PATCH', 'nav-update', '/navigation/' . $nav->getId(), [
@@ -33,6 +37,7 @@ class UpdateNavigationTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame('/new.json', $json['url']);
         $this->assertSame('footer', $json['type']);
+        $this->getEd()->assertDispatched(NavigationChangedEvent::class);
     }
 
     public function test_update_navigation_wrong_blog(): void

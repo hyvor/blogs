@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\NavigationType;
 use App\Entity\Navigation;
 use App\Entity\NavigationVariant;
 
@@ -10,7 +11,7 @@ class NavigationObject
     public int $id;
     public int $created_at;
     public string $url;
-    public string $type;
+    public NavigationType $type;
     public int $sort;
     /** @var NavigationVariantObject[] */
     public array $variants;
