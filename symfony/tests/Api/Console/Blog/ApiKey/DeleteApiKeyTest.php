@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
+use App\Entity\ApiKey;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -22,8 +23,13 @@ class DeleteApiKeyTest extends ApiTestCase
             'blog_id' => $blog->getId(),
         ]);
 
+        $id = $apiKey->getId();
         $this->consoleBlogApi('DELETE', 'ak-delete', '/api-key/' . $apiKey->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
+
+        $this->assertNull(
+            $this->getEm()->getRepository(ApiKey::class)->find($id)
+        );
     }
 }

@@ -31,7 +31,6 @@ class ApiKeyService
     {
         $apiKey = new ApiKey();
         $apiKey->setBlog($blog);
-        $apiKey->setBlogId($blog->getId());
         $apiKey->setName($name);
         $apiKey->setType($type);
         $apiKey->setApiKey(bin2hex(random_bytes(16)));
