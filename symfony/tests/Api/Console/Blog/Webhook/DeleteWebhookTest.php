@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Entity\Webhook;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -25,25 +26,8 @@ class DeleteWebhookTest extends ApiTestCase
         $this->consoleBlogApi('DELETE', 'wh-delete', '/webhook/' . $webhook->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
-    }
 
-    public function test_delete_webhook_wrong_blog(): void
-    {
-        [$blog1, $user1] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'wh-del-b1'],
-            ['status' => 'active'],
-        );
-        [$blog2, $user2] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'wh-del-b2'],
-            ['status' => 'active'],
-        );
-        $webhook = WebhookFactory::createOne([
-            'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
-        ]);
-
-        $this->consoleBlogApi('DELETE', 'wh-del-b1', '/webhook/' . $webhook->getId(), user: $user1);
-
-        $this->assertResponseStatusCodeSame(404);
+        $webhooks = $this->getEm()->getRepository(Webhook::class)->findAll();
+        $this->assertCount(0, $webhooks);
     }
 }

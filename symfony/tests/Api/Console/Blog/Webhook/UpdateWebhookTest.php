@@ -3,10 +3,13 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Entity\Enum\WebhookEvent;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+
+use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(WebhookController::class)]
 class UpdateWebhookTest extends ApiTestCase
@@ -21,7 +24,7 @@ class UpdateWebhookTest extends ApiTestCase
             'blog' => $blog,
             'blog_id' => $blog->getId(),
             'url' => 'https://old.com/hook',
-            'events' => ['post.created'],
+            'events' => [WebhookEvent::POST_CREATED],
         ]);
 
         $this->consoleBlogApi('PATCH', 'wh-update', '/webhook/' . $webhook->getId(), [
@@ -31,6 +34,30 @@ class UpdateWebhookTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('https://new.com/hook', $json['url']);
+
+        refresh($webhook);
+        $this->assertSame('https://new.com/hook', $webhook->getUrl());
+        $this->assertSame([WebhookEvent::POST_CREATED], $webhook->getEvents());
+    }
+
+    public function test_fails_on_invalid_event(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'wh-update-2'],
+            ['status' => 'active'],
+        );
+        $webhook = WebhookFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'url' => 'https://old.com/hook',
+            'events' => [WebhookEvent::POST_CREATED],
+        ]);
+
+        $this->consoleBlogApi('PATCH', 'wh-update-2', '/webhook/' . $webhook->getId(), [
+            'events' => ['invalid.event'],
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(422);
     }
 
     public function test_update_webhook_wrong_blog(): void

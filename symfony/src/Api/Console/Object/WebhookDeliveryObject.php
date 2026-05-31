@@ -7,11 +7,11 @@ use App\Entity\WebhookDelivery;
 class WebhookDeliveryObject
 {
     public int $id;
+    public int $created_at;
     public string $url;
     public string $event;
     public string $status;
     public ?string $response;
-    public ?int $created_at;
 
     public function __construct(WebhookDelivery $delivery)
     {
@@ -20,6 +20,6 @@ class WebhookDeliveryObject
         $this->event = $delivery->getEvent();
         $this->status = $delivery->getStatus();
         $this->response = $delivery->getResponse();
-        $this->created_at = $delivery->getCreatedAt()?->getTimestamp();
+        $this->created_at = $delivery->getCreatedAt()->getTimestamp() ?? 0;
     }
 }

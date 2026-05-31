@@ -3,6 +3,7 @@
 namespace App\Service\Webhook;
 
 use App\Entity\Blog;
+use App\Entity\Enum\WebhookEvent;
 use App\Entity\Webhook;
 use App\Entity\WebhookDelivery;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +28,7 @@ class WebhookService
         return $this->em->getRepository(Webhook::class)->count(['blog_id' => $blog->getId()]);
     }
 
-    /** @param string[] $events */
+    /** @param WebhookEvent[] $events */
     public function createWebhook(Blog $blog, string $url, array $events): Webhook
     {
         $webhook = new Webhook();
@@ -39,12 +40,13 @@ class WebhookService
         $now = $this->now();
         $webhook->setCreatedAt($now);
         $webhook->setUpdatedAt($now);
+
         $this->em->persist($webhook);
         $this->em->flush();
         return $webhook;
     }
 
-    /** @param string[]|null $events */
+    /** @param WebhookEvent[]|null $events */
     public function updateWebhook(Webhook $webhook, ?string $url, ?array $events): Webhook
     {
         if ($url !== null) {
@@ -81,7 +83,7 @@ class WebhookService
 
         if ($webhookId !== null) {
             $qb->andWhere('d.webhook_id = :webhookId')
-               ->setParameter('webhookId', $webhookId);
+                ->setParameter('webhookId', $webhookId);
         }
 
         /** @var WebhookDelivery[] $result */
