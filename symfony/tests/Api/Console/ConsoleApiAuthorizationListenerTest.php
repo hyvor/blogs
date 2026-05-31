@@ -3,7 +3,6 @@
 namespace Api\Console;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
-use App\Api\Console\Controller\ApiKeyController;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
 use App\Tests\Case\ApiTestCase;
@@ -215,7 +214,6 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
         ApiKeyFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'api_key' => 'validrawkey123456789012345678901',
             'type' => ApiKeyType::CONSOLE,
             'name' => 'Test Key',
@@ -245,7 +243,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             server: ['HTTP_X_API_KEY' => 'wrongkey'],
         );
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseFailed(403, 'Invalid API key');
     }
 
     public function test_delivery_type_key_cannot_be_used_for_api_key_auth(): void
@@ -257,7 +255,6 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
         ApiKeyFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'api_key' => 'deliverykey123456789012345678901',
             'type' => ApiKeyType::DELIVERY,
             'name' => 'Delivery Key',
@@ -270,6 +267,6 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             server: ['HTTP_X_API_KEY' => 'deliverykey123456789012345678901'],
         );
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseFailed(403, 'Invalid API key');
     }
 }

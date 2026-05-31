@@ -24,7 +24,7 @@ class ApiKeyService
 
     public function getApiKeysCount(Blog $blog): int
     {
-        return $this->em->getRepository(ApiKey::class)->count(['blog_id' => $blog->getId()]);
+        return $this->em->getRepository(ApiKey::class)->count(['blog' => $blog]);
     }
 
     public function createApiKey(Blog $blog, string $name, ApiKeyType $type): ApiKey
@@ -59,7 +59,7 @@ class ApiKeyService
     public function getByRawKey(Blog $blog, string $rawKey): ?ApiKey
     {
         return $this->em->getRepository(ApiKey::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'api_key' => $rawKey,
             'type' => ApiKeyType::CONSOLE,
         ]);
