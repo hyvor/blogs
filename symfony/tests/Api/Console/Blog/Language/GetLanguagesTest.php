@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Entity\Enum\LanguageDirection;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -20,11 +21,10 @@ class GetLanguagesTest extends ApiTestCase
         );
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'name' => 'English',
             'is_primary' => true,
-            'direction' => 'ltr',
+            'direction' => LanguageDirection::LTR,
         ]);
 
         $this->consoleBlogApi('GET', 'lang-list', '/languages', user: $user);

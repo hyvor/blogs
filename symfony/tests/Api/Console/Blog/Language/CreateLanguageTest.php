@@ -28,6 +28,7 @@ class CreateLanguageTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame('fr', $json['code']);
         $this->assertSame('French', $json['name']);
+        $this->assertSame('ltr', $json['direction']);
     }
 
     public function test_create_language_duplicate_code(): void
@@ -48,6 +49,6 @@ class CreateLanguageTest extends ApiTestCase
             'direction' => 'ltr',
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'A language with this code already exists');
     }
 }

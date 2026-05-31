@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Entity\Enum\LanguageDirection;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -22,7 +23,7 @@ class UpdateLanguageTest extends ApiTestCase
             'blog_id' => $blog->getId(),
             'code' => 'en',
             'name' => 'English',
-            'direction' => 'ltr',
+            'direction' => LanguageDirection::LTR,
             'is_primary' => false,
         ]);
 

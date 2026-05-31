@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
 
 class LanguageObject
@@ -10,7 +11,7 @@ class LanguageObject
     public string $code;
     public string $name;
     public bool $is_primary;
-    public string $direction;
+    public LanguageDirection $direction;
 
     public function __construct(Language $language)
     {

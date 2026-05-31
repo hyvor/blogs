@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\Language;
 
+use App\Entity\Enum\LanguageDirection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateLanguageInput
@@ -14,6 +15,5 @@ class CreateLanguageInput
     #[Assert\Length(max: 255)]
     public string $name;
 
-    #[Assert\Choice(['ltr', 'rtl'])]
-    public string $direction = 'ltr';
+    public LanguageDirection $direction = LanguageDirection::LTR;
 }

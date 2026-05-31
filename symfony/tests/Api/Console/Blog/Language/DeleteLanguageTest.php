@@ -44,6 +44,6 @@ class DeleteLanguageTest extends ApiTestCase
 
         $this->consoleBlogApi('DELETE', 'lang-del-primary', '/language/' . $lang->getId(), user: $user);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Cannot delete the primary language');
     }
 }

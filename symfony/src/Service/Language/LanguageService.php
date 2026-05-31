@@ -3,6 +3,7 @@
 namespace App\Service\Language;
 
 use App\Entity\Blog;
+use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -18,7 +19,7 @@ class LanguageService
         Blog $blog,
         string $code,
         string $name,
-        string $direction = 'ltr',
+        LanguageDirection $direction = LanguageDirection::LTR,
         bool $isPrimary = false,
     ): Language {
         $language = new Language();
@@ -77,11 +78,17 @@ class LanguageService
         return $language;
     }
 
-    public function updateLanguage(Language $language, string $code, string $name, string $direction): Language
+    public function updateLanguage(Language $language, ?string $code, ?string $name, ?LanguageDirection $direction): Language
     {
-        $language->setCode($code);
-        $language->setName($name);
-        $language->setDirection($direction);
+        if ($code !== null) {
+            $language->setCode($code);
+        }
+        if ($name !== null) {
+            $language->setName($name);
+        }
+        if ($direction !== null) {
+            $language->setDirection($direction);
+        }
         $language->setUpdatedAt($this->now());
         $this->em->flush();
         return $language;

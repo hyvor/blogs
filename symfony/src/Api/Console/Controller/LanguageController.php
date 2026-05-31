@@ -52,9 +52,11 @@ class LanguageController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        $existing = $this->languageService->getLanguageByCode($blog, $input->code);
-        if ($existing !== null && $existing->getId() !== $language->getId()) {
-            throw new UnprocessableEntityHttpException('A language with this code already exists');
+        if ($input->code !== null) {
+            $existing = $this->languageService->getLanguageByCode($blog, $input->code);
+            if ($existing !== null && $existing->getId() !== $language->getId()) {
+                throw new UnprocessableEntityHttpException('A language with this code already exists');
+            }
         }
 
         $language = $this->languageService->updateLanguage($language, $input->code, $input->name, $input->direction);
