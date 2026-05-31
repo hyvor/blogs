@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Navigation;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\NavigationFactory;
@@ -25,5 +26,8 @@ class DeleteNavigationTest extends ApiTestCase
         $this->consoleBlogApi('DELETE', 'nav-delete', '/navigation/' . $nav->getId(), user: $user);
 
         $this->assertResponseIsSuccessful();
+
+        $navs = $this->getEm()->getRepository(Navigation::class)->findAll();
+        $this->assertCount(0, $navs);
     }
 }

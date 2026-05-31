@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Navigation;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\NavigationFactory;
@@ -33,5 +34,10 @@ class SortNavigationsTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
+
+        $navs = $this->getEm()->getRepository(Navigation::class)->findBy([], ['sort' => 'ASC']);
+        $this->assertCount(2, $navs);
+        $this->assertSame($nav2->getId(), $navs[0]->getId());
+        $this->assertSame($nav1->getId(), $navs[1]->getId());
     }
 }

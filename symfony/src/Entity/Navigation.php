@@ -141,4 +141,13 @@ class Navigation
     {
         return $this->variants;
     }
+
+    public function addVariant(NavigationVariant $variant): static
+    {
+        if (! $this->variants->contains($variant)) {
+            $this->variants->add($variant);
+            $variant->setNavigation($this);
+        }
+        return $this;
+    }
 }

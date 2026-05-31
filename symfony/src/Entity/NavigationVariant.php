@@ -20,9 +20,6 @@ class NavigationVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $navigation_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'navigation_id', referencedColumnName: 'id')]
     private Navigation $navigation;
@@ -67,17 +64,6 @@ class NavigationVariant
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getNavigationId(): int
-    {
-        return $this->navigation_id;
-    }
-
-    public function setNavigationId(int $navigation_id): static
-    {
-        $this->navigation_id = $navigation_id;
         return $this;
     }
 

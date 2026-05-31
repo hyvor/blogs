@@ -35,7 +35,6 @@ class GetNavigationsTest extends ApiTestCase
         ]);
         NavigationVariantFactory::createOne([
             'navigation' => $nav,
-            'navigation_id' => $nav->getId(),
             'language' => $lang,
             'language_id' => $lang->getId(),
             'name' => 'Main Nav',

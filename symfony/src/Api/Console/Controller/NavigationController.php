@@ -61,12 +61,10 @@ class NavigationController
             );
         }
 
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
         $navigation = $this->navigationService->createNavigation(
             $blog,
             $input->url,
             $input->type,
-            $primaryLanguage,
             $input->name,
         );
 

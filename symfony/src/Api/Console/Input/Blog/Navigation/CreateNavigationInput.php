@@ -13,6 +13,6 @@ class CreateNavigationInput
     public string $name;
 
     #[Assert\NotBlank]
-    #[Assert\Choice(['header', 'footer'])]
+    #[Assert\Choice(choices: ['header', 'footer'])]
     public string $type;
 }

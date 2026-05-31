@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\NavigationVariant;
+use App\Service\Language\LanguageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
@@ -13,7 +14,7 @@ class NavigationService
 {
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(private EntityManagerInterface $em, private LanguageService $languageService,) {}
 
     /** @return Navigation[] */
     public function getNavigations(Blog $blog): array
@@ -44,9 +45,11 @@ class NavigationService
         Blog $blog,
         string $url,
         string $type,
-        Language $primaryLanguage,
         string $name,
     ): Navigation {
+
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+
         $now = $this->now();
         $navigation = new Navigation();
         $navigation->setBlog($blog);
@@ -57,18 +60,9 @@ class NavigationService
         $navigation->setCreatedAt($now);
         $navigation->setUpdatedAt($now);
         $this->em->persist($navigation);
-        $this->em->flush(); // flush first to get ID
 
-        $variant = new NavigationVariant();
-        $variant->setNavigation($navigation);
-        $variant->setNavigationId($navigation->getId());
-        $variant->setLanguage($primaryLanguage);
-        $variant->setLanguageId($primaryLanguage->getId());
-        $variant->setName($name);
-        $variant->setCreatedAt($now);
-        $variant->setUpdatedAt($now);
-        $this->em->persist($variant);
-        $navigation->getVariants()->add($variant);
+        $this->createNavigationVariant($navigation, $primaryLanguage, $name, flush: false);
+
         $this->em->flush();
 
         return $navigation;
@@ -113,18 +107,24 @@ class NavigationService
         Navigation $navigation,
         Language $language,
         ?string $name,
+        bool $flush = true,
     ): NavigationVariant {
         $now = $this->now();
         $variant = new NavigationVariant();
         $variant->setNavigation($navigation);
-        $variant->setNavigationId($navigation->getId());
         $variant->setLanguage($language);
         $variant->setLanguageId($language->getId());
         $variant->setName($name);
         $variant->setCreatedAt($now);
         $variant->setUpdatedAt($now);
+
+        $navigation->addVariant($variant);
+
         $this->em->persist($variant);
-        $this->em->flush();
+        if ($flush) {
+            $this->em->flush();
+        }
+
         return $variant;
     }
 

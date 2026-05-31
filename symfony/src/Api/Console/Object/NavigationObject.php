@@ -23,7 +23,6 @@ class NavigationObject
         $this->type = $navigation->getType();
         $this->sort = $navigation->getSort();
 
-        /** @var NavigationVariant[] $variantEntities */
         $variantEntities = $navigation->getVariants()->toArray();
         $this->variants = array_values(array_map(
             fn(NavigationVariant $v) => new NavigationVariantObject($v),
