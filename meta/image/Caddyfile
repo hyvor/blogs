@@ -51,6 +51,16 @@
         path /api/sudo/*
         path /api/v2/*
         path /api/oidc/*
+
+        path /api/console/v0/init
+        path /api/console/v0/usage
+        path /api/console/v0/blogs/sort
+        path /api/console/v0/blog/*/api-key*
+        path /api/console/v0/blog/*/language*
+        path /api/console/v0/blog/*/navigation*
+        path /api/console/v0/blog/*/redirect*
+        path /api/console/v0/blog/*/route*
+        path /api/console/v0/blog/*/webhook*
     }
     handle @symfony {
         root * /app/symfony/public

@@ -163,40 +163,40 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Settings, users, and theme
          */
         Route::middleware('role:owner|admin')->group(function () {
-            // webhooks
-            Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
-            Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
-            Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
-            Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
-            Route::get('/webhook-deliveries', [ConsoleWebhookController::class, 'getAllWebhookDeliveries']);
+            // webhooks - migrated to Symfony
+            // Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
+            // Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
+            // Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
+            // Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
+            // Route::get('/webhook-deliveries', [ConsoleWebhookController::class, 'getAllWebhookDeliveries']);
 
-            // api-keys
-            Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
-            Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
-            Route::patch('/api-key/{id}', [ConsoleApiKeysController::class, 'updateApiKey']);
-            Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
+            // api-keys - migrated to Symfony
+            // Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
+            // Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
+            // Route::patch('/api-key/{id}', [ConsoleApiKeysController::class, 'updateApiKey']);
+            // Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
 
-            // navigation
-            Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
-            Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
-            Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
-            Route::patch('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
-            Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
-            Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
-            Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
-            Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
+            // navigation - migrated to Symfony
+            // Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
+            // Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
+            // Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
+            // Route::patch('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
+            // Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
+            // Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
+            // Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
+            // Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
 
-            // languages
-            Route::get('/languages', [ConsoleLanguageController::class, 'get']);
-            Route::post('/language', [ConsoleLanguageController::class, 'create']);
-            Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
-            Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
+            // languages - migrated to Symfony
+            // Route::get('/languages', [ConsoleLanguageController::class, 'get']);
+            // Route::post('/language', [ConsoleLanguageController::class, 'create']);
+            // Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
+            // Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
 
-            // redirects
-            Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
-            Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
-            Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
-            Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
+            // redirects - migrated to Symfony
+            // Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
+            // Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
+            // Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
+            // Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
 
             // users
             Route::get('/users', [ConsoleUserController::class, 'get']);
@@ -211,12 +211,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
             Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
 
-            // route
-            Route::get('/routes', [ConsoleRouteController::class, 'get']);
-            Route::post('/route', [ConsoleRouteController::class, 'create']);
-            Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
-            Route::patch('/route/{id}', [ConsoleRouteController::class, 'update'])
-                ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
+            // route - migrated to Symfony
+            // Route::get('/routes', [ConsoleRouteController::class, 'get']);
+            // Route::post('/route', [ConsoleRouteController::class, 'create']);
+            // Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
+            // Route::patch('/route/{id}', [ConsoleRouteController::class, 'update'])
+            //     ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
 
             // theme
             Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
@@ -235,8 +235,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/data/imports', [ConsoleImportController::class, 'getImports']);
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
-
-            Route::get('/build', []);
         });
 
         /**

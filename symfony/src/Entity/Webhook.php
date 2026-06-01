@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Enum\WebhookEvent;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'webhooks')]
@@ -29,8 +30,8 @@ class Webhook
     #[ORM\Column(length: 255)]
     private string $url;
 
-    /** @var string[] $events */
-    #[ORM\Column(type: 'json')]
+    /** @var WebhookEvent[] $events */
+    #[ORM\Column(type: 'webhook_event_json')]
     private array $events;
 
     #[ORM\Column(length: 32)]
@@ -103,7 +104,7 @@ class Webhook
     }
 
     /**
-     * @return string[]
+     * @return WebhookEvent[]
      */
     public function getEvents(): array
     {
@@ -111,7 +112,7 @@ class Webhook
     }
 
     /**
-     * @param string[] $events
+     * @param WebhookEvent[] $events
      */
     public function setEvents(array $events): static
     {

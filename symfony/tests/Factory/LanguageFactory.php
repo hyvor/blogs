@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -15,9 +16,7 @@ final class LanguageFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -36,7 +35,7 @@ final class LanguageFactory extends PersistentObjectFactory
         return [
             'blog_id' => self::faker()->randomNumber(),
             'code' => self::faker()->text(12),
-            'direction' => self::faker()->text(255),
+            'direction' => self::faker()->randomElement(LanguageDirection::cases()),
             'is_primary' => self::faker()->boolean(),
             'name' => self::faker()->text(255),
         ];

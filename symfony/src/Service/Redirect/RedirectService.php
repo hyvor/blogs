@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Service\Redirect;
+
+use App\Entity\Blog;
+use App\Entity\Enum\RedirectType;
+use App\Entity\Redirect;
+use App\Service\Redirect\Event\RedirectChangedEvent;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+class RedirectService
+{
+    use ClockAwareTrait;
+
+    public function __construct(
+        private EntityManagerInterface $em,
+        private EventDispatcherInterface $ed,
+    ) {}
+
+    /**
+     * @return Redirect[]
+     */
+    public function getRedirects(Blog $blog, string $search, int $limit, int $offset): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('r')
+            ->from(Redirect::class, 'r')
+            ->where('r.blog_id = :blogId')
+            ->setParameter('blogId', $blog->getId())
+            ->orderBy('r.dynamic', 'DESC')
+            ->addOrderBy('r.created_at', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        if ($search !== '') {
+            $qb->andWhere('r.path LIKE :search OR r.to LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        /** @var Redirect[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    public function getRedirectsCount(Blog $blog): int
+    {
+        return $this->em->getRepository(Redirect::class)->count(['blog_id' => $blog->getId()]);
+    }
+
+    public function getDynamicRedirectCount(Blog $blog): int
+    {
+        return $this->em->getRepository(Redirect::class)->count([
+            'blog_id' => $blog->getId(),
+            'dynamic' => true,
+        ]);
+    }
+
+    public function hasRedirectForPath(Blog $blog, string $path): bool
+    {
+        return $this->em->getRepository(Redirect::class)->findOneBy([
+            'blog_id' => $blog->getId(),
+            'path' => $path,
+        ]) !== null;
+    }
+
+    /**
+     * gets the regex pattern from user's "path" input.
+     */
+    private function getRegex(string $userRegex): string
+    {
+        return ('~' . $userRegex . '~');
+    }
+
+    public function validateRegex(string $regex): bool
+    {
+        return @preg_match($this->getRegex($regex), '') !== false;
+    }
+
+    public function createRedirect(
+        Blog $blog,
+        bool $dynamic,
+        string $path,
+        string $to,
+        RedirectType $type,
+    ): Redirect {
+        $now = $this->now();
+        $redirect = new Redirect();
+        $redirect->setBlog($blog);
+        $redirect->setBlogId($blog->getId());
+        $redirect->setDynamic($dynamic);
+        $redirect->setPath($path);
+        $redirect->setTo($to);
+        $redirect->setType($type);
+        $redirect->setCreatedAt($now);
+        $redirect->setUpdatedAt($now);
+        $this->em->persist($redirect);
+        $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect));
+        return $redirect;
+    }
+
+    public function updateRedirect(Redirect $redirect, ?string $path, ?string $to, ?RedirectType $type): Redirect
+    {
+        $oldRedirect = clone $redirect;
+
+        if ($path !== null) {
+            $redirect->setPath($path);
+        }
+        if ($to !== null) {
+            $redirect->setTo($to);
+        }
+        if ($type !== null) {
+            $redirect->setType($type);
+        }
+        $redirect->setUpdatedAt($this->now());
+        $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect, $oldRedirect));
+        return $redirect;
+    }
+
+    public function deleteRedirect(Redirect $redirect): void
+    {
+        $this->em->remove($redirect);
+        $this->em->flush();
+        $this->ed->dispatch(new RedirectChangedEvent($redirect));
+    }
+}

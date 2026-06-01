@@ -2,17 +2,16 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\BlogController;
+use App\Api\Console\ControllerOrg\BlogController;
 use App\Service\Blog\BlogService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(BlogController::class)]
-#[UsesClass(BlogService::class)]
+#[CoversClass(BlogService::class)]
 class CheckSubdomainTest extends ApiTestCase
 {
 
@@ -57,5 +56,4 @@ class CheckSubdomainTest extends ApiTestCase
         $this->consoleOrgApi('GET', '/blog/check-subdomain', user: $user);
         $this->assertResponseStatusCodeSame(422);
     }
-
 }

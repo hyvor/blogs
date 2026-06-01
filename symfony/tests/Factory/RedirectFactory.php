@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\RedirectType;
 use App\Entity\Redirect;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -39,7 +40,7 @@ final class RedirectFactory extends PersistentObjectFactory
             'dynamic' => self::faker()->boolean(),
             'path' => self::faker()->text(255),
             'to' => self::faker()->text(255),
-            'type' => self::faker()->text(255),
+            'type' => self::faker()->randomElement(RedirectType::cases()),
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }

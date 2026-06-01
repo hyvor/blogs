@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\LanguageDirection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -43,8 +44,8 @@ class Language
     #[ORM\Column(options: ['default' => false])]
     private bool $is_primary = false;
 
-    #[ORM\Column(length: 255, options: ['default' => 'ltr'])]
-    private string $direction = 'ltr';
+    #[ORM\Column(length: 255, enumType: LanguageDirection::class, options: ['default' => 'ltr'])]
+    private LanguageDirection $direction = LanguageDirection::LTR;
 
     public function getId(): int
     {
@@ -156,12 +157,12 @@ class Language
         return $this;
     }
 
-    public function getDirection(): string
+    public function getDirection(): LanguageDirection
     {
         return $this->direction;
     }
 
-    public function setDirection(string $direction): static
+    public function setDirection(LanguageDirection $direction): static
     {
         $this->direction = $direction;
         return $this;

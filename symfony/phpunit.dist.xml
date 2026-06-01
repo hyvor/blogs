@@ -33,6 +33,11 @@
             <directory>src</directory>
         </include>
 
+         <exclude>
+            <directory>src/Entity</directory>
+            <directory>src/Repository</directory>
+        </exclude>
+
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
@@ -43,4 +48,11 @@
     <extensions>
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
     </extensions>
+
+    <coverage>
+        <report>
+            <clover outputFile="coverage/clover.xml"/>
+            <html outputDirectory="coverage/html"/>
+        </report>
+    </coverage>
 </phpunit>

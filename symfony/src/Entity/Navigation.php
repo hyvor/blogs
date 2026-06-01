@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\NavigationType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -29,11 +32,20 @@ class Navigation
     #[ORM\Column(length: 255)]
     private string $url;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: NavigationType::class)]
+    private NavigationType $type;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $sort = 0;
+
+    /** @var Collection<int, NavigationVariant> */
+    #[ORM\OneToMany(targetEntity: NavigationVariant::class, mappedBy: 'navigation')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -101,12 +113,12 @@ class Navigation
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): NavigationType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(NavigationType $type): static
     {
         $this->type = $type;
         return $this;
@@ -120,6 +132,23 @@ class Navigation
     public function setSort(int $sort): static
     {
         $this->sort = $sort;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NavigationVariant>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
+    }
+
+    public function addVariant(NavigationVariant $variant): static
+    {
+        if (! $this->variants->contains($variant)) {
+            $this->variants->add($variant);
+            $variant->setNavigation($this);
+        }
         return $this;
     }
 }

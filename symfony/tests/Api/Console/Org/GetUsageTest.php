@@ -2,7 +2,7 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\ConsoleController;
+use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Service\Billing\UsageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\AutoTranslationFactory;
@@ -146,5 +146,4 @@ class GetUsageTest extends ApiTestCase
         $this->assertSame(0, $json['ai_tokens']['used']);
         $this->assertSame(0, $json['auto_translate_chars']['used']);
     }
-
 }

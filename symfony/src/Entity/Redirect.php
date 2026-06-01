@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\RedirectType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -36,8 +37,8 @@ class Redirect
     #[ORM\Column(name: '`to`', length: 255)]
     private string $to;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: RedirectType::class)]
+    private RedirectType $type;
 
     public function getId(): int
     {
@@ -127,12 +128,12 @@ class Redirect
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): RedirectType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(RedirectType $type): static
     {
         $this->type = $type;
         return $this;

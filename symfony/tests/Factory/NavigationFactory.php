@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\NavigationType;
 use App\Entity\Navigation;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -15,9 +16,7 @@ final class NavigationFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -37,7 +36,7 @@ final class NavigationFactory extends PersistentObjectFactory
             'blog_id' => self::faker()->randomNumber(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'sort' => self::faker()->randomNumber(),
-            'type' => self::faker()->text(255),
+            'type' => self::faker()->randomElement(NavigationType::cases()),
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'url' => self::faker()->text(255),
         ];

@@ -209,20 +209,27 @@
 <h2 id="security">Security</h2>
 
 <p>
-	In the console, you can find a key for each Webhook you create. This key is sent in each response.
-	You can use it to verify the webhook using a simple string comparison.
+	Each webhook request includes an <code>X-Signature</code> header containing an HMAC-SHA256 signature
+	of the request body, signed with your webhook's secret key. You can find the secret in the Console
+	under your webhook settings.
 </p>
+
+<p>To verify the signature:</p>
 
 <CodeBlock
 	code={`
-    if (request.post.key !== env.HB_WEBHOOK_KEY) {
+    const signature = request.headers['x-signature'];
+    const expected = crypto
+        .createHmac('sha256', env.HB_WEBHOOK_SECRET)
+        .update(JSON.stringify(request.body))
+        .digest('hex');
+
+    if (signature !== expected) {
         return "Unauthorized";
     }
 `}
 	language="js"
 />
-
-<p>Soon we will be moving to a signature-based method for verification.</p>
 
 <h2 id="response">Response & Retries</h2>
 

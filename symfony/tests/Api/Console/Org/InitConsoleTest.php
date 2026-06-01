@@ -2,15 +2,23 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\ConsoleController;
+use App\Api\Console\ControllerOrg\ConsoleController;
+use App\Api\Console\Object\AuthUserObject;
+use App\Api\Console\Object\BlogListObject;
+use App\Api\Console\Object\BlogListObjectFactory;
 use App\Entity\Enum\UserRole;
+use App\Service\CodeHighlight\Highlighter;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(AuthUserObject::class)]
+#[CoversClass(BlogListObject::class)]
+#[CoversClass(BlogListObjectFactory::class)]
 #[CoversClass(ConsoleController::class)]
+#[CoversClass(Highlighter::class)]
 class InitConsoleTest extends ApiTestCase
 {
 
@@ -67,5 +75,4 @@ class InitConsoleTest extends ApiTestCase
         $this->assertSame([], $json['blogs']);
         $this->assertNull($json['organization']);
     }
-
 }

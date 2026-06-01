@@ -42,3 +42,8 @@ docker compose exec backend bash -c "cd /app/symfony && php vendor/bin/phpstan -
 # prettier
 docker compose exec frontend npm run format
 ```
+
+### Supported VSCode Extensions
+
+- Prettier (Svelte and TS files)
+- Coverage Gutters (Symfony code coverage)

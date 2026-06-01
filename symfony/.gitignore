@@ -8,6 +8,7 @@
 /var/
 /vendor/
 /node_modules
+/coverage
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
