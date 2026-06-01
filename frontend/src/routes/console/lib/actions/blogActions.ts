@@ -7,7 +7,6 @@ export function getSubdomainAvailable(subdomain: string) {
 		endpoint: '/blog/check-subdomain',
 		data: { subdomain },
 		userApi: true,
-		v2: true
 	});
 }
 
@@ -28,7 +27,6 @@ export function saveSort(ids: number[]) {
 		endpoint: '/blogs/sort',
 		data: { blog_ids: ids },
 		userApi: true,
-		v2: true
 	});
 }
 

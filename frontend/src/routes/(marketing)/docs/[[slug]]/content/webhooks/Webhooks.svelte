@@ -210,8 +210,8 @@
 
 <p>
 	Each webhook request includes an <code>X-Signature</code> header containing an HMAC-SHA256 signature
-	of the request body, signed with your webhook's secret key. You can find the secret in the Console
-	under your webhook settings.
+	of the request body, signed with your webhook's secret key. You can find the secret in the Console under
+	your webhook settings.
 </p>
 
 <p>To verify the signature:</p>

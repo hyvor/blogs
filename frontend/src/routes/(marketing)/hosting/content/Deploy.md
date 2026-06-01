@@ -99,11 +99,11 @@ docker compose logs -f
 
 The container listens on **port 80** and routes requests based on the incoming domain:
 
-| Domain | Served content |
-|---|---|
-| `DOMAIN_APP` | Console, API, and marketing pages |
+| Domain                      | Served content                                           |
+| --------------------------- | -------------------------------------------------------- |
+| `DOMAIN_APP`                | Console, API, and marketing pages                        |
 | Subdomain of `DELIVERY_URL` | Blog at that subdomain (e.g. `myblog.blogs.example.com`) |
-| Any other domain | Custom domain blog |
+| Any other domain            | Custom domain blog                                       |
 
 ## Upgrading
 

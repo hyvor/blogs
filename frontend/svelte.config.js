@@ -8,10 +8,10 @@ const config = {
 	extensions: ['.svelte', '.md'],
 
 	preprocess: [
-		vitePreprocess(),
 		mdsvex({
 			extensions: ['.md']
-		})
+		}),
+		vitePreprocess(),
 	],
 
 	kit: {
