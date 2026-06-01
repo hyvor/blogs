@@ -20,7 +20,7 @@
     <server name="DELIVERY_URL" value="https://hyvorblogs.io"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="database"/>
-    <server name="DATABASE_URL" value="postgresql://postgres:postgres@hyvor-service-pgsql:5432/hyvor_blogs_testing"/>
+    <server name="DATABASE_URL" value="postgresql://postgres:postgres@hyvor-service-pgsql:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8"/>
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>

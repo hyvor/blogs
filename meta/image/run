@@ -3,6 +3,11 @@
 # Laravel optimization
 php /app/backend/artisan optimize
 
+# Run migrations if enabled
+if [ "${RUN_MIGRATIONS_ON_STARTUP:-true}" = "true" ]; then
+    php /app/symfony/bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+fi
+
 # Extract delivery domain from DELIVERY_URL
 DELIVERY_DOMAIN=$(echo "$DELIVERY_URL" | sed -E 's#https?://##' | sed 's#/##g')
 export DELIVERY_DOMAIN
