@@ -57,11 +57,11 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # install npm dependencies (shiki)
 COPY backend/package.json backend/package-lock.json /app/backend/
-RUN cd backend && npm ci
+RUN cd /app/backend && npm ci
 
 # install npm dependencies (shiki) for symfony
 COPY symfony/package-lock.json symfony/package.json /app/symfony/
-RUN cd symfony && npm ci
+RUN cd /app/symfony && npm ci
 
 # supervisor
 RUN apt update && apt install -y supervisor
@@ -73,10 +73,10 @@ FROM backend-base AS backend-dev
 # pcov for debugging
 RUN install-php-extensions pcov
 COPY backend/composer.json backend/composer.lock /app/backend/
-RUN cd backend && composer install --no-interaction && touch .env # needed in CI
+RUN cd /app/backend && composer install --no-interaction && touch .env # needed in CI
 
 COPY symfony/composer.json symfony/composer.lock /app/symfony/
-RUN cd symfony && composer install --no-interaction
+RUN cd /app/symfony && composer install --no-interaction
 
 # set up code and install composer packages
 COPY backend /app/backend/

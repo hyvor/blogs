@@ -1,9 +1,13 @@
 # backend/vendor
+
 frontend/node_modules
 frontend/.svelte-kit
-frontend/vite.config.ts.timestamp-*
+frontend/vite.config.ts.timestamp-\*
 backend/node_modules
 backend/vendor
+symfony/node_modules
+symfony/vendor
+symfony/var
 github
 .idea
 .vscode

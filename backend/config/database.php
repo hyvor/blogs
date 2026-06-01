@@ -3,15 +3,15 @@
 use Illuminate\Support\Str;
 
 $databaseUrl = env('DATABASE_URL');
-$databaseUrlParsed = parse_url($databaseUrl);
+$databaseUrlParsed = parse_url($databaseUrl ?? '');
 
 $pgsql = [
     'driver' => 'pgsql',
-    'host' => $databaseUrlParsed['host'],
-    'port' => $databaseUrlParsed['port'],
+    'host' => $databaseUrlParsed['host'] ?? '',
+    'port' => isset($databaseUrlParsed['port']) ? (int) $databaseUrlParsed['port'] : null,
     'database' => $databaseUrlParsed['path'] ? ltrim($databaseUrlParsed['path'], '/') : 'hyvor_blogs',
-    'username' => $databaseUrlParsed['user'],
-    'password' => $databaseUrlParsed['pass'],
+    'username' => $databaseUrlParsed['user'] ?? '',
+    'password' => $databaseUrlParsed['pass'] ?? '',
     'charset' => 'utf8',
     'prefix' => '',
     'prefix_indexes' => true,
