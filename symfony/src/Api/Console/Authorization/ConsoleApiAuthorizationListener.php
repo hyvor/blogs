@@ -14,11 +14,12 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-#[AsEventListener(event: KernelEvents::CONTROLLER, priority: 200)]
+
 class ConsoleApiAuthorizationListener
 {
     private const string RESOLVED_USER_KEY = 'console_api_resolved_user';
@@ -33,7 +34,8 @@ class ConsoleApiAuthorizationListener
         private UserService $userService,
     ) {}
 
-    public function __invoke(ControllerEvent $event): void
+    #[AsEventListener(event: KernelEvents::CONTROLLER, priority: 200)]
+    public function onController(ControllerEvent $event): void
     {
         // @codeCoverageIgnoreStart
         if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/console/v0')) {
@@ -52,6 +54,13 @@ class ConsoleApiAuthorizationListener
         } else {
             $this->handleOrgLevel($event);
         }
+    }
+
+    #[AsEventListener(event: KernelEvents::RESPONSE, priority: 200)]
+    public function onResponse(ResponseEvent $event): void
+    {
+        $response = $event->getResponse();
+        $response->headers->set('Symfony', 'Performing');
     }
 
     private function handleBlogLevel(ControllerEvent $event, string $subdomain): void
