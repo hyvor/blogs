@@ -5,6 +5,8 @@
 {
 	frankenphp
 
+	http_port 8080
+
 	on_demand_tls {
         ask http://localhost:8989/api/special/caddy/allowed-domain
     }
@@ -33,7 +35,7 @@
 
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
-*.{$DELIVERY_DOMAIN}:80 {
+*.{$DELIVERY_DOMAIN}:8080 {
 	root * /app/backend/public
 	encode zstd gzip
 	php_server {
@@ -46,7 +48,7 @@
 }
 
 # main app
-{$DOMAIN_APP}:80, :8989 {
+{$DOMAIN_APP}:8080, :8989 {
     @symfony {
         path /api/comms/*
         path /api/sudo/*
@@ -114,7 +116,7 @@
 }
 
 # custom domain
-http://, https:// {
+:8080 {
 	tls {
 		on_demand
 	}

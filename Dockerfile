@@ -92,8 +92,10 @@ CMD ["/app/run"]
 ###################################################
 FROM backend-base AS final
 
-# supervisor
-RUN apt update && apt install -y supervisor
+# install supervisor
+# create chef user
+RUN apt update && apt install -y supervisor \
+    && useradd --system --home-dir /var/www --create-home --shell /usr/sbin/nologin chef
 
 # copy files
 COPY backend /app/backend
@@ -110,10 +112,13 @@ COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run
 
-# laravel directories
+# set ownership for all runtime-writable directories
 RUN touch /app/backend/storage/logs/laravel.log \
-    && chown -R www-data:www-data /app/backend/storage /app/backend/bootstrap/cache /var/www \
+    && mkdir -p /app/symfony/var \
+    && chown -R chef:chef /app/backend/storage /app/backend/bootstrap/cache /var/www /app/symfony/var \
     && chmod -R 775 /app/backend/storage /app/backend/bootstrap/cache
 
-EXPOSE 80
+USER chef
+
+EXPOSE 8080
 CMD ["/app/run"]
