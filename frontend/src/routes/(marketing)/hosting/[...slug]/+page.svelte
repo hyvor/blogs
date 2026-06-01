@@ -12,8 +12,11 @@
 </script>
 
 <svelte:head>
-	<title>{data.name} | Hyvor Blogs Hosting</title>
-	<link rel="canonical" href="https://blogs.hyvor.com/hosting{data.slug ? '/' + data.slug : ''}" />
+	<title>{data.name} | Hosting | Hyvor Blogs</title>
+	<link
+		rel="canonical"
+		href="https://blogs.hyvor.com/hosting{data.slug ? '/' + data.slug : ''}"
+	/>
 </svelte:head>
 
 <div class="docs-wrap">

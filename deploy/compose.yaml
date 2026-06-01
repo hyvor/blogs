@@ -1,3 +1,4 @@
+# TODO: change network_mode
 services:
   postgres:
     image: postgres:16
