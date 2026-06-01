@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Entity\Enum\WebhookEvent;
+use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -11,6 +12,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
+#[CoversClass(WebhookService::class)]
 class GetWebhooksTest extends ApiTestCase
 {
     public function test_get_webhooks(): void

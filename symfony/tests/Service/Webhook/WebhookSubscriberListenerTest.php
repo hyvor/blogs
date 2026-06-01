@@ -12,6 +12,7 @@ use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Webhook\WebhookDeliveryService;
 use App\Service\Webhook\WebhookSubscriberListener;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -23,6 +24,7 @@ use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookSubscriberListener::class)]
+#[CoversClass(WebhookDeliveryService::class)]
 class WebhookSubscriberListenerTest extends KernelTestCase
 {
     private function dispatch(object $event): void

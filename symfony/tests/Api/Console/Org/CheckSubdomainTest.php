@@ -9,10 +9,9 @@ use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(BlogController::class)]
-#[UsesClass(BlogService::class)]
+#[CoversClass(BlogService::class)]
 class CheckSubdomainTest extends ApiTestCase
 {
 

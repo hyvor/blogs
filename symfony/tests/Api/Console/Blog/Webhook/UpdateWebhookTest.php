@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Entity\Enum\WebhookEvent;
+use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -12,6 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(WebhookController::class)]
+#[CoversClass(WebhookService::class)]
 class UpdateWebhookTest extends ApiTestCase
 {
     public function test_update_webhook(): void

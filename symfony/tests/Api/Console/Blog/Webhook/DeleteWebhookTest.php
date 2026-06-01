@@ -4,12 +4,14 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Entity\Webhook;
+use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
+#[CoversClass(WebhookService::class)]
 class DeleteWebhookTest extends ApiTestCase
 {
     public function test_delete_webhook(): void
