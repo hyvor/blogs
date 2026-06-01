@@ -74,7 +74,6 @@ OIDC_CLIENT_ID=
 OIDC_CLIENT_SECRET=
 
 # S3-compatible storage
-FILESYSTEM_DRIVER=s3
 S3_ACCESS_KEY_ID=
 S3_SECRET_ACCESS_KEY=
 S3_ENDPOINT=          # e.g. https://s3.amazonaws.com
