@@ -4,14 +4,19 @@ namespace App\Service\Route;
 
 use App\Entity\Blog;
 use App\Entity\Route;
+use App\Service\Route\Event\RouteChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RouteService
 {
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+        private EventDispatcherInterface $dispatcher,
+    ) {}
 
     /** @return Route[] */
     public function getRoutes(Blog $blog): array
@@ -49,6 +54,7 @@ class RouteService
         $route->setUpdatedAt($now);
         $this->em->persist($route);
         $this->em->flush();
+        $this->dispatcher->dispatch(new RouteChangedEvent($route));
         return $route;
     }
 
@@ -57,7 +63,6 @@ class RouteService
      */
     public function updateRoute(Route $route, array $updates): Route
     {
-
         if (array_key_exists('name', $updates)) {
             $route->setName($updates['name']);
         }
@@ -76,6 +81,7 @@ class RouteService
 
         $route->setUpdatedAt($this->now());
         $this->em->flush();
+        $this->dispatcher->dispatch(new RouteChangedEvent($route));
         return $route;
     }
 
@@ -83,5 +89,6 @@ class RouteService
     {
         $this->em->remove($route);
         $this->em->flush();
+        $this->dispatcher->dispatch(new RouteChangedEvent($route));
     }
 }

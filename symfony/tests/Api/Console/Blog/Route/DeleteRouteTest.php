@@ -4,12 +4,15 @@ namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
 use App\Entity\Route;
+use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Route\RouteService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
+#[CoversClass(RouteService::class)]
 class DeleteRouteTest extends ApiTestCase
 {
     public function test_delete_route(): void
@@ -29,6 +32,7 @@ class DeleteRouteTest extends ApiTestCase
 
         $routes = $this->getEm()->getRepository(Route::class)->findAll();
         $this->assertCount(0, $routes);
+        $this->getEd()->assertDispatched(RouteChangedEvent::class);
     }
 
     public function test_delete_route_wrong_blog(): void

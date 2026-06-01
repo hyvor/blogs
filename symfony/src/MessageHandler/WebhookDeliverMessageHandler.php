@@ -43,11 +43,11 @@ class WebhookDeliverMessageHandler
             // failed after all retries, do not retry again
             throw new UnrecoverableMessageHandlingException("WebhookDelivery {$message->deliveryId} failed after retries");
         } elseif ($delivery->getStatus() === WebhookDeliveryStatus::RETRYING) {
-            // will be retried
+            // try_count is 1-indexed here (already incremented by deliver()); use try_count-1 as RETRIES index
+            $retryIndex = min($delivery->getTryCount() - 1, count(self::RETRIES) - 1);
             throw new RecoverableMessageHandlingException(
                 "WebhookDelivery {$message->deliveryId} will be retried",
-                // TODO: this must be based on try_count and RETRIES
-                retryDelay: 60 * 1000,
+                retryDelay: self::RETRIES[$retryIndex] * 1000,
             );
         }
     }

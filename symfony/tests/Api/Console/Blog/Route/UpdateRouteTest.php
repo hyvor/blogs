@@ -3,12 +3,15 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Route\RouteService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
+#[CoversClass(RouteService::class)]
 class UpdateRouteTest extends ApiTestCase
 {
     public function test_update_route(): void
@@ -36,6 +39,7 @@ class UpdateRouteTest extends ApiTestCase
         $this->assertSame('New Name', $json['name']);
         $this->assertSame('/new', $json['match']);
         $this->assertSame('new-template', $json['template']);
+        $this->getEd()->assertDispatched(RouteChangedEvent::class);
     }
 
     public function test_update_to_null(): void

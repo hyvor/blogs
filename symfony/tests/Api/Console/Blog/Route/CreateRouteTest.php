@@ -4,12 +4,15 @@ namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
 use App\Entity\Route;
+use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Route\RouteService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
+#[CoversClass(RouteService::class)]
 class CreateRouteTest extends ApiTestCase
 {
     public function test_create_route(): void
@@ -44,6 +47,7 @@ class CreateRouteTest extends ApiTestCase
         $this->assertSame('tag', $route->getTemplate());
         $this->assertSame('tags:{{slug}}', $route->getPostsFilter());
         $this->assertNull($route->getContentType());
+        $this->getEd()->assertDispatched(RouteChangedEvent::class);
     }
 
     public function test_create_route_limit(): void

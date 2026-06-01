@@ -113,7 +113,14 @@ class WebhookDeliveryService
 
     private function handleDeliveryFailure(WebhookDelivery $delivery): void
     {
-        // TODO: if try count < max retries, set status to RETRYING and schedule retry, else set to FAILED
+        $delivery->setTryCount($delivery->getTryCount() + 1);
+        $delivery->setLastTryAt($this->now());
         $delivery->setUpdatedAt($this->now());
+
+        if ($delivery->getTryCount() < self::MAX_RETRIES) {
+            $delivery->setStatus(WebhookDeliveryStatus::RETRYING);
+        } else {
+            $delivery->setStatus(WebhookDeliveryStatus::FAILED);
+        }
     }
 }

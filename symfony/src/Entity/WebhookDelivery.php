@@ -47,6 +47,12 @@ class WebhookDelivery
     #[ORM\Column(nullable: true)]
     private ?int $http_status = null;
 
+    #[ORM\Column]
+    private int $try_count = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $last_try_at = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -169,6 +175,28 @@ class WebhookDelivery
     public function setHttpStatus(?int $http_status): static
     {
         $this->http_status = $http_status;
+        return $this;
+    }
+
+    public function getTryCount(): int
+    {
+        return $this->try_count;
+    }
+
+    public function setTryCount(int $try_count): static
+    {
+        $this->try_count = $try_count;
+        return $this;
+    }
+
+    public function getLastTryAt(): ?\DateTimeImmutable
+    {
+        return $this->last_try_at;
+    }
+
+    public function setLastTryAt(?\DateTimeImmutable $last_try_at): static
+    {
+        $this->last_try_at = $last_try_at;
         return $this;
     }
 }

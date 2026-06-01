@@ -1,7 +1,7 @@
 framework:
     messenger:
+        failure_transport: failed
         transports:
-            failure_transport: failed
             async:
                 dsn: "doctrine://default"
                 retry_strategy:
@@ -17,3 +17,4 @@ when@test:
         messenger:
             transports:
                 async: "test://"
+                failed: "test://"

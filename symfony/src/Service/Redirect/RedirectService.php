@@ -103,6 +103,8 @@ class RedirectService
 
     public function updateRedirect(Redirect $redirect, ?string $path, ?string $to, ?RedirectType $type): Redirect
     {
+        $oldRedirect = clone $redirect;
+
         if ($path !== null) {
             $redirect->setPath($path);
         }
@@ -114,7 +116,7 @@ class RedirectService
         }
         $redirect->setUpdatedAt($this->now());
         $this->em->flush();
-        $this->ed->dispatch(new RedirectChangedEvent($redirect));
+        $this->ed->dispatch(new RedirectChangedEvent($redirect, $oldRedirect));
         return $redirect;
     }
 

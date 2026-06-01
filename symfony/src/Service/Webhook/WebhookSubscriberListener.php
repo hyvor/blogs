@@ -4,6 +4,7 @@ namespace App\Service\Webhook;
 
 use App\Api\Console\Object\LanguageObject;
 use App\Api\Console\Object\NavigationObject;
+use App\Api\Console\Object\RouteObject;
 use App\Entity\Blog;
 use App\Entity\Enum\WebhookEvent;
 use App\Message\WebhookDeliverMessage;
@@ -15,6 +16,8 @@ use App\Service\Language\LanguageService;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Navigation\NavigationService;
+use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Route\RouteService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -31,7 +34,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 // TODO: UserDeletedEvent, UserVariantDeletedEvent → USER_DELETED / USER_UPDATED
 // TODO: MediaCreatedEvent → MEDIA_CREATED
 // TODO: MediaDeletedEvent → MEDIA_DELETED
-// TODO: RouteChangedEvent → ROUTES_CHANGED
 
 class WebhookSubscriberListener
 {
@@ -41,6 +43,7 @@ class WebhookSubscriberListener
         private MessageBusInterface $bus,
         private NavigationService $navigationService,
         private LanguageService $languageService,
+        private RouteService $routeService,
     ) {}
 
     /**
@@ -61,24 +64,48 @@ class WebhookSubscriberListener
     public function onNavigationChanged(NavigationChangedEvent $event): void
     {
         $blog = $event->navigation->getBlog();
-        $navigations = array_map(fn($nav) => (array)(new NavigationObject($nav)), $this->navigationService->getNavigations($blog));
-        $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, fn() => ['navigations' => $navigations]);
+        $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, function () use ($blog) {
+            return ['navigations' => array_map(
+                fn($nav) => (array)(new NavigationObject($nav)),
+                $this->navigationService->getNavigations($blog),
+            )];
+        });
     }
 
     #[AsEventListener]
     public function onNavigationVariantChanged(NavigationVariantChangedEvent $event): void
     {
         $blog = $event->variant->getNavigation()->getBlog();
-        $navigations = array_map(fn($nav) => (array)(new NavigationObject($nav)), $this->navigationService->getNavigations($blog));
-        $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, fn() => ['navigations' => $navigations]);
+        $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, function () use ($blog) {
+            return ['navigations' => array_map(
+                fn($nav) => (array)(new NavigationObject($nav)),
+                $this->navigationService->getNavigations($blog),
+            )];
+        });
     }
 
     #[AsEventListener]
     public function onLanguageChanged(LanguageChangedEvent $event): void
     {
         $blog = $event->language->getBlog();
-        $languages = array_map(fn($lang) => (array)(new LanguageObject($lang)), $this->languageService->getAllLanguages($blog));
-        $this->call($blog, WebhookEvent::LANGUAGES_CHANGED, fn() => ['languages' => $languages]);
+        $this->call($blog, WebhookEvent::LANGUAGES_CHANGED, function () use ($blog) {
+            return ['languages' => array_map(
+                fn($lang) => (array)(new LanguageObject($lang)),
+                $this->languageService->getAllLanguages($blog),
+            )];
+        });
+    }
+
+    #[AsEventListener]
+    public function onRouteChanged(RouteChangedEvent $event): void
+    {
+        $blog = $event->route->getBlog();
+        $this->call($blog, WebhookEvent::ROUTES_CHANGED, function () use ($blog) {
+            return ['routes' => array_map(
+                fn($route) => (array)(new RouteObject($route)),
+                $this->routeService->getRoutes($blog),
+            )];
+        });
     }
 
     #[AsEventListener]
