@@ -1,6 +1,6 @@
 import type { Component } from 'svelte';
 import Introduction from './content/Introduction.md';
-import Deploy from './content/Deploy.md';
+import Deploy from './content/Deploy.svelte';
 
 export const categories: Category[] = [
 	{
