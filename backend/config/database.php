@@ -2,9 +2,16 @@
 
 use Illuminate\Support\Str;
 
+$databaseUrl = env('DATABASE_URL');
+$databaseUrlParsed = parse_url($databaseUrl);
+
 $pgsql = [
     'driver' => 'pgsql',
-    'url' => env('DATABASE_URL'),
+    'host' => $databaseUrlParsed['host'],
+    'port' => $databaseUrlParsed['port'],
+    'database' => $databaseUrlParsed['path'] ? ltrim($databaseUrlParsed['path'], '/') : 'hyvor_blogs',
+    'username' => $databaseUrlParsed['user'],
+    'password' => $databaseUrlParsed['pass'],
     'charset' => 'utf8',
     'prefix' => '',
     'prefix_indexes' => true,
