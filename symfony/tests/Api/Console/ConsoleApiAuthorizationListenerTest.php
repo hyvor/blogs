@@ -137,9 +137,13 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(['subdomain' => 'auth-no-org'], ['status' => 'active']);
 
-        // consoleBlogApi with a user but no org → AuthFake sets user with null org
+        // Use the client directly — consoleBlogApi auto-wires org from the blog,
+        // but this test needs the user to have NO org to trigger the 403.
         $user = AuthFake::generateUser();
-        $this->consoleBlogApi('GET', 'auth-no-org', '/api-keys', user: $user);
+        AuthFake::enableForSymfony($this->getContainer(), $user, null);
+        $this->client->request('GET', '/api/console/v0/blog/auth-no-org/api-keys',
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
 
         $this->assertResponseFailed(403, 'Organization is required');
     }
