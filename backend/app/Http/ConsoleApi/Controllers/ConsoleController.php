@@ -53,7 +53,7 @@ class ConsoleController
             ],
             'domains' => [
                 'app' => config('blogs.domain_app'),
-                'delivery' => config('blogs.delivery_domain'),
+                'delivery' => preg_replace('/https?:\/\//', '', config('blogs.delivery_url')),
             ],
             'limits' => [
                 'max_upload_size' => config('limits.max_media_upload_size_kb') * 1000,
@@ -64,8 +64,8 @@ class ConsoleController
 
             'services' => [
                 'paddle' => [
-                    'sandbox' => (bool)config('services.paddle.sandbox'),
-                    'vendor_id' => (int)config('services.paddle.vendor_id'),
+                    'sandbox' => (bool) config('services.paddle.sandbox'),
+                    'vendor_id' => (int) config('services.paddle.vendor_id'),
                 ]
             ]
         ];

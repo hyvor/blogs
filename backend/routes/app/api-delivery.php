@@ -13,8 +13,10 @@ Route::domain(config('blogs.domain_app'))
     ->middleware([SubdomainMiddleware::class, DeliveryApiKeyMiddleware::class])
     ->get('/api/delivery/v0/{subdomain}', [DeliveryAPIController::class, 'handle']);
 
+$deliveryDomain = preg_replace('/https?:\/\//', '', config('blogs.delivery_url'));
+
 // subdomain
-Route::domain('{subdomain}.' . config('blogs.delivery_domain'))
+Route::domain('{subdomain}.' . $deliveryDomain)
     ->middleware([
         SubdomainMiddleware::class,
         RedirectIfNotOnSubdomainMiddleware::class,
@@ -28,7 +30,7 @@ Route::middleware(CustomDomainMiddleware::class)
     ->where(
         'domain',
         '^(?!' .
-            str_replace('.', '\.', strval(config('blogs.domain_app'))) .
-            ').*$'
+        str_replace('.', '\.', strval(config('blogs.domain_app'))) .
+        ').*$'
     )
     ->where('any', '.*');

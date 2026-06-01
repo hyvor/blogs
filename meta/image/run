@@ -3,5 +3,9 @@
 # Laravel optimization
 php /app/backend/artisan optimize
 
+# Extract delivery domain from DELIVERY_URL
+DELIVERY_DOMAIN=$(echo "$DELIVERY_URL" | sed -E 's#https?://##' | sed 's#/##g')
+export DELIVERY_DOMAIN
+
 # Run supervisor
 /usr/bin/supervisord

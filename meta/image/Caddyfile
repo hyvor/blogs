@@ -32,6 +32,7 @@
 }
 
 # hyvorblogs.io subdomain
+# see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
 	root * /app/backend/public
 	encode zstd gzip

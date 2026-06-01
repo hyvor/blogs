@@ -17,7 +17,6 @@
     <server name="APP_URL" value="https://blogs.hyvor.com"/>
     <server name="APP_KEY" value="base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="/>
     <server name="DOMAIN_APP" value="blogs.hyvor.com"/>
-    <server name="DELIVERY_DOMAIN" value="hyvorblogs.io"/>
     <server name="DELIVERY_URL" value="https://hyvorblogs.io"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="database"/>
