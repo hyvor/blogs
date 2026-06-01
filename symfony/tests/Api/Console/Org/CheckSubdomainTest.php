@@ -2,7 +2,7 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\BlogController;
+use App\Api\Console\ControllerOrg\BlogController;
 use App\Service\Blog\BlogService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -57,5 +57,4 @@ class CheckSubdomainTest extends ApiTestCase
         $this->consoleOrgApi('GET', '/blog/check-subdomain', user: $user);
         $this->assertResponseStatusCodeSame(422);
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\ConsoleController;
+use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\UserRole;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -67,5 +67,4 @@ class InitConsoleTest extends ApiTestCase
         $this->assertSame([], $json['blogs']);
         $this->assertNull($json['organization']);
     }
-
 }
