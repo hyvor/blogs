@@ -22,8 +22,7 @@
 	<ul>
 		<li><code>GET</code> - to get data, usually an array of resources</li>
 		<li><code>POST</code> - to create a resource</li>
-		<li><code>PATCH</code> - to partially update a resource</li>
-		<li><code>PUT</code> - to completely update an resource</li>
+		<li><code>PATCH</code> - to partially or completely update a resource</li>
 		<li><code>DELETE</code> - to delete a resource</li>
 	</ul>
 
@@ -670,10 +669,10 @@ type Response = Media
 	<li><code>GET /navigations</code> - Get navigations</li>
 	<li><code>PATCH /navigations/sort</code> - Update sort navigations</li>
 	<li><code>POST /navigation</code> - Create a navigation</li>
-	<li><code>PUT /user/{`{id}`}</code> - Update a navigation</li>
+	<li><code>PATCH /navigation/{`{id}`}</code> - Update a navigation</li>
 	<li><code>DELETE /navigation/{`{id}`}</code> - Delete a navigation</li>
 	<li><code>POST /navigation/{`{id}`}/variant</code> - Create a navigation variant</li>
-	<li><code>PUT /navigation/{`{id}`}/variant</code> - Update a navigation variant</li>
+	<li><code>PATCH /navigation/{`{id}`}/variant</code> - Update a navigation variant</li>
 	<li><code>DELETE /navigation/{`{id}`}/variant</code> - Delete a navigation variant</li>
 </ul>
 
@@ -720,13 +719,12 @@ type Response = Navigation
 />
 
 <h4 id="update-navigation">Update a navigation</h4>
-<p><code>PUT /navigation/{`{id}`}</code></p>
+<p><code>PATCH /navigation/{`{id}`}</code></p>
 <CodeBlock
 	language="ts"
 	code={`
 type Request = {
     url: string,
-    name: string,
     type: 'header' | 'footer',
 }
 type Response = Navigation
@@ -757,11 +755,12 @@ type Response = NavigationVariant
 />
 
 <h4 id="update-navigation-variant">Update a navigation variant</h4>
-<p><code>PUT /navigation/{`{id}`}/variant</code></p>
+<p><code>PATCH /navigation/{`{id}`}/variant</code></p>
 <CodeBlock
 	language="ts"
 	code={`
 type Request = {
+    language_id: number,
     name: string,
 }
 type Response = NavigationVariant
@@ -773,7 +772,9 @@ type Response = NavigationVariant
 <CodeBlock
 	language="ts"
 	code={`
-type Request = {}
+type Request = {
+    language_id: number,
+}
 type Response = {}
 `}
 />
@@ -846,7 +847,7 @@ type Response = {}
 <ul>
 	<li><code>GET /redirects</code> - Get redirects</li>
 	<li><code>POST /redirect</code> - Create a redirect</li>
-	<li><code>PUT /redirect/{`{id}`}</code> - Update a redirect</li>
+	<li><code>PATCH /redirect/{`{id}`}</code> - Update a redirect</li>
 	<li><code>DELETE /redirect/{`{id}`}</code> - Delete a redirect</li>
 </ul>
 
@@ -861,6 +862,7 @@ type Response = {}
 	language="ts"
 	code={`
 type Request = {
+    search?: string,
     limit?: number,
     offset?: number,
 }
@@ -874,6 +876,7 @@ type Response = Redirect[]
 	language="ts"
 	code={`
 type Request = {
+    dynamic: boolean,
     path: string,
     to: string,
     type: 'temporary' | 'permanent'
@@ -882,8 +885,8 @@ type Response = Redirect
 `}
 />
 
-<h4 id="updata-redirect">Update a redirect</h4>
-<p><code>PUT /redirect/{`{id}`}</code></p>
+<h4 id="update-redirect">Update a redirect</h4>
+<p><code>PATCH /redirect/{`{id}`}</code></p>
 <CodeBlock
 	language="ts"
 	code={`
