@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Api\Console\Object\RedirectObject;
 use App\Entity\Enum\RedirectType;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
@@ -12,6 +13,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
+#[CoversClass(RedirectObject::class)]
 #[CoversClass(RedirectService::class)]
 class GetRedirectsTest extends ApiTestCase
 {

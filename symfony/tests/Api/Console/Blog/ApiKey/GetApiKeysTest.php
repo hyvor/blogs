@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
+use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\Enum\ApiKeyType;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
@@ -12,6 +13,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
+#[CoversClass(ApiKeyObject::class)]
 #[CoversClass(ApiKeyService::class)]
 class GetApiKeysTest extends ApiTestCase
 {

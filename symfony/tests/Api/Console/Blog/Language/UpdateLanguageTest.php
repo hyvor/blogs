@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Api\Console\Object\LanguageObject;
 use App\Entity\Enum\LanguageDirection;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
@@ -12,6 +13,7 @@ use App\Tests\Factory\LanguageFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
+#[CoversClass(LanguageObject::class)]
 #[CoversClass(LanguageService::class)]
 class UpdateLanguageTest extends ApiTestCase
 {

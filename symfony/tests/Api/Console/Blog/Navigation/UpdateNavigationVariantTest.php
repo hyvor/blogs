@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Api\Console\Object\NavigationVariantObject;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
@@ -14,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
 #[CoversClass(NavigationService::class)]
+#[CoversClass(NavigationVariantObject::class)]
 class UpdateNavigationVariantTest extends ApiTestCase
 {
     public function test_update_navigation_variant(): void

@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Api\Console\Object\NavigationObject;
+use App\Api\Console\Object\NavigationVariantObject;
 use App\Entity\Enum\NavigationType;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
@@ -14,7 +16,9 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationObject::class)]
 #[CoversClass(NavigationService::class)]
+#[CoversClass(NavigationVariantObject::class)]
 class GetNavigationsTest extends ApiTestCase
 {
     public function test_get_navigations(): void

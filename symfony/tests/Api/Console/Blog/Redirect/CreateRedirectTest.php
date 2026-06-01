@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Api\Console\Object\RedirectObject;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
@@ -11,6 +12,7 @@ use App\Tests\Factory\RedirectFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
+#[CoversClass(RedirectObject::class)]
 #[CoversClass(RedirectService::class)]
 class CreateRedirectTest extends ApiTestCase
 {

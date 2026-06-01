@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Api\Console\Object\NavigationObject;
 use App\Entity\Navigation;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
@@ -11,6 +12,7 @@ use App\Tests\Factory\NavigationFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
+#[CoversClass(NavigationObject::class)]
 #[CoversClass(NavigationService::class)]
 class SortNavigationsTest extends ApiTestCase
 {

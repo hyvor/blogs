@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
+use App\Api\Console\Object\ApiKeyObject;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
@@ -10,6 +11,7 @@ use App\Tests\Factory\BlogFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
+#[CoversClass(ApiKeyObject::class)]
 #[CoversClass(ApiKeyService::class)]
 class CreateApiKeyTest extends ApiTestCase
 {

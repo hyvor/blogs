@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Api\Console\Object\RouteObject;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
@@ -10,6 +11,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
+#[CoversClass(RouteObject::class)]
 class GetRoutesTest extends ApiTestCase
 {
     public function test_get_routes(): void

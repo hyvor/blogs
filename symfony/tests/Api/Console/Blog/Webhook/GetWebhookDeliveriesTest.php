@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Api\Console\Object\WebhookDeliveryObject;
 use App\Entity\Enum\WebhookDeliveryStatus;
 use App\Entity\Enum\WebhookEvent;
 use App\Service\Webhook\WebhookDeliveryService;
@@ -13,6 +14,7 @@ use App\Tests\Factory\WebhookFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(WebhookController::class)]
+#[CoversClass(WebhookDeliveryObject::class)]
 #[CoversClass(WebhookDeliveryService::class)]
 class GetWebhookDeliveriesTest extends ApiTestCase
 {

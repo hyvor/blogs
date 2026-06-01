@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Api\Console\Object\RouteObject;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
 use App\Tests\Case\ApiTestCase;
@@ -11,6 +12,7 @@ use App\Tests\Factory\RouteFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
+#[CoversClass(RouteObject::class)]
 #[CoversClass(RouteService::class)]
 class UpdateRouteTest extends ApiTestCase
 {
