@@ -13,4 +13,4 @@ DELIVERY_DOMAIN=$(echo "$DELIVERY_URL" | sed -E 's#https?://##' | sed 's#/##g')
 export DELIVERY_DOMAIN
 
 # Run supervisor
-/usr/bin/supervisord
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

@@ -10,6 +10,7 @@
         "hyvor/internal": "^4.0.10",
         "sentry/sentry-symfony": "^5.10",
         "symfony/console": "8.0.*",
+        "symfony/doctrine-messenger": "8.0.*",
         "symfony/dotenv": "8.0.*",
         "symfony/flex": "^2.10",
         "symfony/framework-bundle": "8.0.*",
