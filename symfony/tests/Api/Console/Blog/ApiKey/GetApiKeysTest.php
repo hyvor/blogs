@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
 use App\Entity\Enum\ApiKeyType;
+use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -11,6 +12,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
+#[CoversClass(ApiKeyService::class)]
 class GetApiKeysTest extends ApiTestCase
 {
     public function test_get_api_keys(): void
@@ -31,7 +33,6 @@ class GetApiKeysTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json);
         $this->assertCount(1, $json);
         $this->assertIsArray($json[0]);
         $this->assertSame('My Key', $json[0]['name']);

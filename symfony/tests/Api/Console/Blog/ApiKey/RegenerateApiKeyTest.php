@@ -3,12 +3,14 @@
 namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
+use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ApiKeyController::class)]
+#[CoversClass(ApiKeyService::class)]
 class RegenerateApiKeyTest extends ApiTestCase
 {
     public function test_regenerate_api_key(): void

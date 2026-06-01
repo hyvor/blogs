@@ -16,8 +16,10 @@ class BlogEntityValueResolver implements ValueResolverInterface
     public function __construct(
         private EntityManagerInterface $em,
         private ConsoleApiAuthorizationListener $authorizationListener,
-    ) {}
+    ) {
+    }
 
+    /** @return iterable<mixed> */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         if (count($argument->getAttributes(MapBlogEntity::class)) === 0) {
@@ -32,13 +34,19 @@ class BlogEntityValueResolver implements ValueResolverInterface
         $id = $request->attributes->get('id');
         $blog = $this->authorizationListener->getBlog();
 
+        /** @var class-string $class */
         $entity = $this->em->find($class, $id);
 
         if ($entity === null) {
             throw new NotFoundHttpException('Entity not found');
         }
 
-        if ($entity->getBlog()->getId() !== $blog->getId()) {
+        assert(method_exists($entity, 'getBlog'));
+
+        $entityBlog = $entity->getBlog();
+        assert($entityBlog instanceof Blog);
+
+        if ($entityBlog->getId() !== $blog->getId()) {
             throw new NotFoundHttpException('Entity does not belong to blog');
         }
 

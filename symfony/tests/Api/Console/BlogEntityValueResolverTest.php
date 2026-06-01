@@ -19,9 +19,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class BlogEntityValueResolverTest extends KernelTestCase
 {
 
+    /** @return array<mixed> */
     private function resolve(Request $request, ArgumentMetadata $argument): array
     {
         $resolver = self::getContainer()->get(BlogEntityValueResolver::class);
+        assert($resolver instanceof BlogEntityValueResolver);
         return iterator_to_array($resolver->resolve($request, $argument));
     }
 
@@ -98,6 +100,8 @@ class BlogEntityValueResolverTest extends KernelTestCase
 
         $result = $this->resolve($request, $argument);
         $this->assertCount(1, $result);
-        $this->assertSame($apiKey->getId(), $result[0]->getId());
+        $resolved = $result[0];
+        assert($resolved instanceof ApiKey);
+        $this->assertSame($apiKey->getId(), $resolved->getId());
     }
 }

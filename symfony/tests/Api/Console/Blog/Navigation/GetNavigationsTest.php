@@ -47,7 +47,6 @@ class GetNavigationsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json);
         $this->assertCount(1, $json);
         $this->assertIsArray($json[0]);
         $this->assertSame('/nav-list.json', $json[0]['url']);

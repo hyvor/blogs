@@ -47,7 +47,7 @@ class WebhookSubscriberListener
     ) {}
 
     /**
-     * @param array<string, mixed> $data
+     * @param callable(): array<string, mixed> $dataFunc
      */
     private function call(Blog $blog, WebhookEvent $event, callable $dataFunc): void
     {

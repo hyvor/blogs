@@ -31,7 +31,6 @@ class GetWebhooksTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json);
         $this->assertCount(1, $json);
         $this->assertIsArray($json[0]);
         $this->assertSame('https://example.com/hook', $json[0]['url']);

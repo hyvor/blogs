@@ -12,7 +12,6 @@ use App\Tests\Factory\WebhookDeliveryFactory;
 use App\Tests\Factory\WebhookFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Component\Messenger\Exception\RecoverableMessageHandlingException;
@@ -20,8 +19,8 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(WebhookDeliverMessageHandler::class)]
-#[UsesClass(WebhookDeliveryService::class)]
-#[UsesClass(WebhookDeliverMessage::class)]
+#[CoversClass(WebhookDeliveryService::class)]
+#[CoversClass(WebhookDeliverMessage::class)]
 class WebhookDeliverMessageHandlerTest extends KernelTestCase
 {
     private function handler(HttpClientInterface $httpClient): WebhookDeliverMessageHandler
@@ -82,6 +81,7 @@ class WebhookDeliverMessageHandlerTest extends KernelTestCase
         $body = $options['body'];
         $this->assertIsString($body);
 
+        /** @var array<string, array<int, string>> $headers */
         $headers = $options['normalized_headers'];
         $this->assertArrayHasKey('x-signature', $headers);
         $signature = $headers['x-signature'][0];

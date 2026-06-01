@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\WebhookEvent;
 use App\Entity\Webhook;
 
 class WebhookObject
@@ -16,7 +17,7 @@ class WebhookObject
     {
         $this->id = $webhook->getId();
         $this->url = $webhook->getUrl();
-        $this->events = $webhook->getEvents();
+        $this->events = array_map(fn(WebhookEvent $e) => $e->value, $webhook->getEvents());
         $this->secret = $webhook->getSecret();
     }
 }

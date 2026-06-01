@@ -22,6 +22,6 @@ class WebhookDeliveryObject
         $this->event = $delivery->getEvent();
         $this->status = $delivery->getStatus();
         $this->response = $delivery->getResponse();
-        $this->created_at = $delivery->getCreatedAt()->getTimestamp() ?? 0;
+        $this->created_at = $delivery->getCreatedAt()?->getTimestamp() ?? 0;
     }
 }

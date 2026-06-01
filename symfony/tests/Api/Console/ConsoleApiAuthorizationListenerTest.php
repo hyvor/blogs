@@ -5,6 +5,7 @@ namespace Api\Console;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
+use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ConsoleApiAuthorizationListener::class)]
 #[UsesClass(ConsoleController::class)]
+#[CoversClass(ApiKeyService::class)]
 class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 {
 
@@ -141,7 +143,9 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         // but this test needs the user to have NO org to trigger the 403.
         $user = AuthFake::generateUser();
         AuthFake::enableForSymfony($this->getContainer(), $user, null);
-        $this->client->request('GET', '/api/console/v0/blog/auth-no-org/api-keys',
+        $this->client->request(
+            'GET',
+            '/api/console/v0/blog/auth-no-org/api-keys',
             server: ['CONTENT_TYPE' => 'application/json'],
         );
 

@@ -15,6 +15,7 @@ class WebhookEventJsonType extends Type
         return 'JSON';
     }
 
+    /** @return list<WebhookEvent> */
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): array
     {
         if ($value === null) {
@@ -23,10 +24,14 @@ class WebhookEventJsonType extends Type
 
         $decoded = is_string($value) ? json_decode($value, true) : $value;
 
-        return array_map(
-            fn(string $v) => WebhookEvent::from($v),
-            $decoded ?? []
-        );
+        if (!is_array($decoded)) {
+            return [];
+        }
+
+        return array_values(array_map(
+            fn(mixed $v) => WebhookEvent::from(is_string($v) ? $v : ''),
+            $decoded,
+        ));
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string
@@ -35,9 +40,10 @@ class WebhookEventJsonType extends Type
             return '[]';
         }
 
-        return json_encode(
-            array_map(fn(WebhookEvent $e) => $e->value, $value)
-        );
+        return (string)json_encode(array_map(
+            fn(mixed $e) => $e instanceof WebhookEvent ? $e->value : '',
+            $value,
+        ));
     }
 
     public function getName(): string

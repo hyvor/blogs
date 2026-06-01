@@ -98,8 +98,9 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $this->dispatch(new NavigationChangedEvent($nav));
 
         $delivery = $this->assertDelivery(WebhookEvent::NAVIGATION_CHANGED);
-        $this->assertArrayHasKey('navigations', $delivery->getData());
-        $this->assertSame($nav->getId(), $delivery->getData()['navigations'][0]['id']);
+        /** @var array<int, array{id: int}> $navigations */
+        $navigations = $delivery->getData()['navigations'];
+        $this->assertSame($nav->getId(), $navigations[0]['id']);
     }
 
     // -----------------------------------------------------------------------
@@ -125,8 +126,9 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $this->dispatch(new NavigationVariantChangedEvent($variant));
 
         $delivery = $this->assertDelivery(WebhookEvent::NAVIGATION_CHANGED);
-        $this->assertArrayHasKey('navigations', $delivery->getData());
-        $this->assertSame($nav->getId(), $delivery->getData()['navigations'][0]['id']);
+        /** @var array<int, array{id: int}> $navigations */
+        $navigations = $delivery->getData()['navigations'];
+        $this->assertSame($nav->getId(), $navigations[0]['id']);
     }
 
     // -----------------------------------------------------------------------
@@ -146,8 +148,9 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $this->dispatch(new LanguageChangedEvent($lang));
 
         $delivery = $this->assertDelivery(WebhookEvent::LANGUAGES_CHANGED);
-        $this->assertArrayHasKey('languages', $delivery->getData());
-        $this->assertSame($lang->getId(), $delivery->getData()['languages'][0]['id']);
+        /** @var array<int, array{id: int}> $languages */
+        $languages = $delivery->getData()['languages'];
+        $this->assertSame($lang->getId(), $languages[0]['id']);
     }
 
     // -----------------------------------------------------------------------
@@ -167,8 +170,9 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $this->dispatch(new RouteChangedEvent($route));
 
         $delivery = $this->assertDelivery(WebhookEvent::ROUTES_CHANGED);
-        $this->assertArrayHasKey('routes', $delivery->getData());
-        $this->assertSame($route->getId(), $delivery->getData()['routes'][0]['id']);
+        /** @var array<int, array{id: int}> $routes */
+        $routes = $delivery->getData()['routes'];
+        $this->assertSame($route->getId(), $routes[0]['id']);
     }
 
     // -----------------------------------------------------------------------

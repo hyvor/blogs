@@ -25,7 +25,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     ): Response {
         $authUser = null;
         if ($user instanceof BlogUser) {
-            $authUser = AuthFake::generateUser(['id' => $user->getHyvorUserId()]);
+            $authUser = AuthFake::generateUser(['id' => (int)$user->getHyvorUserId()]);
         } elseif ($user instanceof AuthUser) {
             $authUser = $user;
         } elseif (is_int($user)) {

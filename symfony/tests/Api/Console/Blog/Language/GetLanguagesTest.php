@@ -33,7 +33,6 @@ class GetLanguagesTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json);
         $this->assertCount(1, $json);
         $this->assertIsArray($json[0]);
         $this->assertSame('en', $json[0]['code']);

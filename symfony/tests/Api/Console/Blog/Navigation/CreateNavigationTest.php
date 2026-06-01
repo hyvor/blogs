@@ -52,6 +52,7 @@ class CreateNavigationTest extends ApiTestCase
         $this->assertSame(NavigationType::HEADER, $nav->getType());
         $this->assertCount(1, $nav->getVariants());
         $variant = $nav->getVariants()->first();
+        $this->assertNotFalse($variant);
         $this->assertSame('Header Nav', $variant->getName());
         $this->getEd()->assertDispatched(NavigationChangedEvent::class);
     }
