@@ -6,6 +6,8 @@
 :80 {
 
     @symfony {
+        path /blog/*
+
         path /api/comms/*
         path /api/sudo/*
         path /api/v2/*
