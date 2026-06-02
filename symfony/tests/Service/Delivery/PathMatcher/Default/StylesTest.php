@@ -4,6 +4,7 @@ namespace App\Tests\Service\Delivery\PathMatcher\Default;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Service\Delivery\CacheControl;
+use App\Service\Delivery\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\StylesProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -49,6 +50,7 @@ class StylesTest extends KernelTestCase
 
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
         $this->assertSame('text/css', $response->mimeType);
         $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
@@ -85,7 +87,7 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(500, $response->status);
-        $this->assertStringContainsString('SCSS Error', (string)$response->content);
+        $this->assertStringContainsString('SCSS Error', (string) $response->content);
     }
 
     public function test_no_cache_for_dev(): void
@@ -117,7 +119,8 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
-        $this->assertStringContainsString('body{font-family:Roboto}', (string)$response->content);
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame('body{color:red}body{font-family:Roboto}', (string) $response->content);
     }
 
     public function test_continues_without_bunny_when_fetch_fails(): void
@@ -140,6 +143,6 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
-        $this->assertStringNotContainsString('font-family', (string)$response->content);
+        $this->assertSame("body{color:red}", (string) $response->content);
     }
 }
