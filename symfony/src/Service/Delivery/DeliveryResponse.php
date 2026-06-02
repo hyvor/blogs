@@ -12,6 +12,7 @@ class DeliveryResponse
         public readonly ?string $to = null,
         public readonly ?string $content = null,
         public readonly string $mimeType = 'text/html',
+        public readonly CacheControl $cacheControl = CacheControl::NO_CACHE,
     ) {}
 
     public static function forRedirect(string $to, RedirectType $type): self
@@ -25,11 +26,32 @@ class DeliveryResponse
 
     public static function forNotFound(string $content = '404'): self
     {
-        return new self(DeliveryResponseType::NOT_FOUND, 404, content: $content);
+        return new self(DeliveryResponseType::FILE, 404, content: $content);
     }
 
-    public static function forFile(string $content, string $mimeType = 'text/html', int $status = 200): self
+    public static function forFile(
+        string $content,
+        string $mimeType = 'text/html',
+        int $status = 200,
+        CacheControl $cacheControl = CacheControl::NO_CACHE,
+    ): self {
+        return new self(
+            DeliveryResponseType::FILE,
+            $status,
+            content: $content,
+            mimeType: $mimeType,
+            cacheControl: $cacheControl,
+        );
+    }
+
+    public static function forError(string $content, int $status = 500): self
     {
-        return new self(DeliveryResponseType::FILE, $status, content: $content, mimeType: $mimeType);
+        return new self(
+            DeliveryResponseType::FILE,
+            $status,
+            content: $content,
+            mimeType: 'text/plain',
+            cacheControl: CacheControl::NO_CACHE,
+        );
     }
 }

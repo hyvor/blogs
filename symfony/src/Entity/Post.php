@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -12,6 +14,21 @@ class Post
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
+
+    /** @var Collection<int, PostVariant> */
+    #[ORM\OneToMany(targetEntity: PostVariant::class, mappedBy: 'post')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
+
+    /** @return Collection<int, PostVariant> */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
+    }
 
     #[ORM\Column]
     private \DateTimeImmutable $created_at;

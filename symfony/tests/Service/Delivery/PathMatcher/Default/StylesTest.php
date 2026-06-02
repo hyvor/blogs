@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Tests\Service\Delivery\PathMatcher\Default;
+
+use App\Entity\Enum\BlogHostingAt;
+use App\Service\Delivery\CacheControl;
+use App\Service\Delivery\PathMatcher;
+use App\Service\Delivery\Processor\StylesProcessor;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\ThemeFileFactory;
+use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+#[CoversClass(PathMatcher::class)]
+#[CoversClass(StylesProcessor::class)]
+class StylesTest extends KernelTestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->getService(CacheInterface::class)->clear();
+    }
+
+    private function pathMatcher(): PathMatcher
+    {
+        return $this->getService(PathMatcher::class);
+    }
+
+    private function createBlogWithScss(array $blogAttrs = [], string $scss = 'body {color: red;}'): \App\Entity\Blog
+    {
+        $blog = BlogFactory::createOne($blogAttrs);
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'folder' => 'styles',
+            'name' => 'index.scss',
+            'content' => $scss,
+        ]);
+        return $blog;
+    }
+
+    public function test_compiles_scss(): void
+    {
+        $blog = $this->createBlogWithScss();
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(200, $response->status);
+        $this->assertSame('text/css', $response->mimeType);
+        $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
+    }
+
+    public function test_works_with_imports(): void
+    {
+        $blog = BlogFactory::createOne();
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'folder' => 'styles',
+            'name' => 'index.scss',
+            'content' => '@import "imported.scss";',
+        ]);
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'folder' => 'styles',
+            'name' => 'imported.scss',
+            'content' => 'body {color: red;}',
+        ]);
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(200, $response->status);
+        $this->assertSame('body{color:red}', $response->content);
+    }
+
+    public function test_shows_error_on_invalid_scss(): void
+    {
+        $blog = $this->createBlogWithScss(scss: '{');
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(500, $response->status);
+        $this->assertStringContainsString('SCSS Error', (string)$response->content);
+    }
+
+    public function test_no_cache_for_dev(): void
+    {
+        $blog = $this->createBlogWithScss(['type' => \App\Entity\Enum\BlogType::DEV]);
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(CacheControl::NO_CACHE, $response->cacheControl);
+    }
+
+    public function test_adds_bunny_font_css(): void
+    {
+        $mockClient = new MockHttpClient([
+            new MockResponse('body{font-family:Roboto}'),
+        ]);
+        static::getContainer()->set(HttpClientInterface::class, $mockClient);
+        $this->getService(CacheInterface::class)->clear();
+
+        $blog = $this->createBlogWithScss();
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'folder' => null,
+            'name' => 'config.yaml',
+            'content' => "THEME_FONTS: roboto:400,600",
+        ]);
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(200, $response->status);
+        $this->assertStringContainsString('body{font-family:Roboto}', (string)$response->content);
+    }
+
+    public function test_continues_without_bunny_when_fetch_fails(): void
+    {
+        $mockClient = new MockHttpClient([
+            new MockResponse('', ['http_code' => 500]),
+        ]);
+        static::getContainer()->set(HttpClientInterface::class, $mockClient);
+        $this->getService(CacheInterface::class)->clear();
+
+        $blog = $this->createBlogWithScss();
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'folder' => null,
+            'name' => 'config.yaml',
+            'content' => "THEME_FONTS: roboto:400,600",
+        ]);
+
+        $response = $this->pathMatcher()->match($blog, '/styles.css');
+
+        $this->assertSame(200, $response->status);
+        $this->assertStringNotContainsString('font-family', (string)$response->content);
+    }
+}

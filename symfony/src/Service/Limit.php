@@ -18,4 +18,6 @@ class Limit
      * Users will rarely need 50 routes. If someone creates custom pages, a little more will be needed
      */
     const int MAX_ROUTES_PER_BLOG = 50;
+
+    const int MAX_ENTRIES_PER_SITEMAP = 2500;
 }
