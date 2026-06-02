@@ -35,7 +35,7 @@ final class RedirectFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'dynamic' => self::faker()->boolean(),
             'path' => self::faker()->text(255),

@@ -21,9 +21,6 @@ class Redirect
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
