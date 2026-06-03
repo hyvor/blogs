@@ -23,7 +23,6 @@ class DeleteRouteTest extends ApiTestCase
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('DELETE', 'route-delete', '/route/' . $route->getId(), user: $user);

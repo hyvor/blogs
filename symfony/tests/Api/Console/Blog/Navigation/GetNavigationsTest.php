@@ -29,14 +29,12 @@ class GetNavigationsTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => '/nav-list.json',
             'type' => NavigationType::HEADER,
             'sort' => 0,
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);

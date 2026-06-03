@@ -22,7 +22,6 @@ class DeleteLanguageTest extends ApiTestCase
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
             'is_primary' => false,
         ]);
@@ -41,7 +40,6 @@ class DeleteLanguageTest extends ApiTestCase
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);

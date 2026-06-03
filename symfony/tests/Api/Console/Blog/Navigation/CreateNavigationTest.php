@@ -27,7 +27,6 @@ class CreateNavigationTest extends ApiTestCase
         );
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
@@ -67,7 +66,6 @@ class CreateNavigationTest extends ApiTestCase
         );
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
@@ -75,7 +73,6 @@ class CreateNavigationTest extends ApiTestCase
         for ($i = 0; $i < 10; $i++) {
             NavigationFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'type' => NavigationType::HEADER,
             ]);
         }

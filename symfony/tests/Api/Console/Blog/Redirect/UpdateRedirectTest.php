@@ -25,7 +25,6 @@ class UpdateRedirectTest extends ApiTestCase
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/old-path',
             'to' => 'https://example.com/old',
             'type' => RedirectType::PERMANENT,
@@ -54,7 +53,6 @@ class UpdateRedirectTest extends ApiTestCase
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/old-path',
             'to' => 'https://example.com/old',
             'type' => RedirectType::PERMANENT,
@@ -76,12 +74,10 @@ class UpdateRedirectTest extends ApiTestCase
         );
         RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/existing-path',
         ]);
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/old-path',
         ]);
 
@@ -100,7 +96,6 @@ class UpdateRedirectTest extends ApiTestCase
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/same-path',
         ]);
 

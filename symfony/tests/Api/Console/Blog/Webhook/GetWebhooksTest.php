@@ -25,7 +25,6 @@ class GetWebhooksTest extends ApiTestCase
         );
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => 'https://example.com/hook',
             'events' => [WebhookEvent::POST_CREATED],
             'secret' => 'mysecret1234567890123456789012',

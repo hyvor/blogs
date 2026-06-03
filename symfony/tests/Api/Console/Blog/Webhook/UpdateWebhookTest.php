@@ -26,7 +26,6 @@ class UpdateWebhookTest extends ApiTestCase
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => 'https://old.com/hook',
             'events' => [WebhookEvent::POST_CREATED],
         ]);
@@ -52,7 +51,6 @@ class UpdateWebhookTest extends ApiTestCase
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => 'https://old.com/hook',
             'events' => [WebhookEvent::POST_CREATED],
         ]);

@@ -23,7 +23,6 @@ class DeleteNavigationTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('DELETE', 'nav-delete', '/navigation/' . $nav->getId(), user: $user);

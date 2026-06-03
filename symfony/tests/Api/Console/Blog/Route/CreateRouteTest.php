@@ -61,7 +61,6 @@ class CreateRouteTest extends ApiTestCase
         for ($i = 0; $i < 50; $i++) {
             RouteFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'name' => 'Route ' . $i,
             ]);
         }

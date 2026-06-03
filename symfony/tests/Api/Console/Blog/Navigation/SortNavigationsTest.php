@@ -24,12 +24,10 @@ class SortNavigationsTest extends ApiTestCase
         );
         $nav1 = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'sort' => 0,
         ]);
         $nav2 = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'sort' => 1,
         ]);
 

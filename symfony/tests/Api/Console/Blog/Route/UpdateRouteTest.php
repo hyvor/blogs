@@ -24,7 +24,6 @@ class UpdateRouteTest extends ApiTestCase
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'Old Name',
             'match' => '/old',
             'template' => 'old-template',
@@ -52,7 +51,6 @@ class UpdateRouteTest extends ApiTestCase
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'posts_filter' => 'some-filter',
             'content_type' => 'some-type',
         ]);

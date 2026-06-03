@@ -26,7 +26,6 @@ class GetWebhookDeliveriesTest extends ApiTestCase
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         WebhookDeliveryFactory::createOne([
             'webhook' => $webhook,

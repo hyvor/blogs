@@ -73,7 +73,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::CACHE_ALL],
         ]);
         $lang = LanguageFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
@@ -92,7 +91,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::NAVIGATION_CHANGED],
         ]);
         $nav = NavigationFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
@@ -114,7 +112,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::NAVIGATION_CHANGED],
         ]);
         $nav = NavigationFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
@@ -142,7 +139,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::LANGUAGES_CHANGED],
         ]);
         $lang = LanguageFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
@@ -164,7 +160,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::ROUTES_CHANGED],
         ]);
         $route = RouteFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
@@ -186,7 +181,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::CACHE_ALL],
         ]);
 
@@ -200,7 +194,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::CACHE_SINGLE],
         ]);
 
@@ -214,7 +207,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::CACHE_TEMPLATES],
         ]);
 
@@ -233,7 +225,6 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         // webhook subscribes to CACHE_ALL, not CACHE_SINGLE
         WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'events' => [WebhookEvent::CACHE_ALL],
         ]);
 

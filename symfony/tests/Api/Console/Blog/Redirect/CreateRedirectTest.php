@@ -67,7 +67,6 @@ class CreateRedirectTest extends ApiTestCase
         );
         RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/existing',
             'dynamic' => false,
         ]);
@@ -108,7 +107,6 @@ class CreateRedirectTest extends ApiTestCase
         for ($i = 0; $i < 5; $i++) {
             RedirectFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'path' => '/dynamic' . $i,
                 'dynamic' => true,
             ]);

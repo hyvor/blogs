@@ -22,7 +22,6 @@ class GetRoutesTest extends ApiTestCase
         );
         RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'Blog Index',
             'match' => '/',
             'template' => 'index',

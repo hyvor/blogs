@@ -26,11 +26,9 @@ class UpdateNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
         ]);
         NavigationVariantFactory::createOne([
@@ -60,11 +58,9 @@ class UpdateNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
         ]);
 
@@ -84,7 +80,6 @@ class UpdateNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('PATCH', 'nav-var-upd-nl', '/navigation/' . $nav->getId() . '/variant', [
