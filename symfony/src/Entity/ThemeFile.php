@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ThemeFileFolder;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -28,7 +29,7 @@ class ThemeFile
     private Blog $blog;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $folder = null;
+    private ?ThemeFileFolder $folder = null;
 
     #[ORM\Column(length: 255)]
     private string $name;
@@ -91,12 +92,12 @@ class ThemeFile
         return $this;
     }
 
-    public function getFolder(): ?string
+    public function getFolder(): ?ThemeFileFolder
     {
         return $this->folder;
     }
 
-    public function setFolder(?string $folder): static
+    public function setFolder(?ThemeFileFolder $folder): static
     {
         $this->folder = $folder;
         return $this;

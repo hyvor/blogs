@@ -20,9 +20,6 @@ class Media
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;

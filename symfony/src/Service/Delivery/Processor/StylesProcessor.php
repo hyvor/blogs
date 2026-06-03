@@ -24,7 +24,8 @@ class StylesProcessor
         private ThemeFilesService $themeFilesService,
         private BunnyService $bunnyService,
         private PermalinkService $permalinkService,
-    ) {}
+    ) {
+    }
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
@@ -32,7 +33,7 @@ class StylesProcessor
 
         $filesArray = [];
         foreach ($files as $file) {
-            $filesArray[$file->getName()] = (string)$file->getContent();
+            $filesArray[$file->getName()] = (string) $file->getContent();
         }
 
         $compiler = new Compiler();
@@ -44,7 +45,7 @@ class StylesProcessor
                 throw new \RuntimeException('SCSS compilation failed');
             }
             $css = $result->getCss();
-        } catch (SassException|\RuntimeException $e) {
+        } catch (SassException | \RuntimeException $e) {
             return DeliveryResponse::forError(DeliveryFileType::ASSET, 'SCSS Error: ' . $e->getMessage(), 500);
         }
 
@@ -66,6 +67,9 @@ class StylesProcessor
     private function minify(string $css): string
     {
         $minifier = new Minify\CSS();
+        /**
+         * the comment at the start is a fix for a security issue that allows reading any file
+         */
         $minifier->add('/**/' . $css);
         return $minifier->minify();
     }
@@ -78,7 +82,7 @@ class StylesProcessor
         }
 
         try {
-            $config = Yaml::parse((string)$configFile->getContent());
+            $config = Yaml::parse((string) $configFile->getContent());
         } catch (\Exception) {
             return $css;
         }

@@ -16,7 +16,9 @@ final class LanguageFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     #[\Override]
     public static function class(): string
@@ -33,7 +35,7 @@ final class LanguageFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'code' => self::faker()->text(12),
             'direction' => self::faker()->randomElement(LanguageDirection::cases()),
             'is_primary' => self::faker()->boolean(),

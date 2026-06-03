@@ -25,7 +25,6 @@ class RobotsTxtTest extends KernelTestCase
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);

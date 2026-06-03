@@ -13,7 +13,9 @@ use Intervention\Image\ImageManager;
 
 class MediaProcessor
 {
-    public function __construct(private MediaService $mediaService) {}
+    public function __construct(private MediaService $mediaService)
+    {
+    }
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
@@ -24,7 +26,7 @@ class MediaProcessor
 
         $additional = $matchedRoute->param('additional');
 
-        $media = $this->mediaService->getByBlogAndName($blog->getId(), $fileName);
+        $media = $this->mediaService->getByBlogAndName($blog, $fileName);
         if ($media === null) {
             return null;
         }
@@ -35,8 +37,10 @@ class MediaProcessor
         }
 
         $mimeType = $media->getExtension()
-            ? (MimeTypes::getMimeFromExtension($media->getExtension()) ?? 'application/octet-stream')
-            : (MimeTypes::getMimeFromFileName($media->getName()) ?? 'application/octet-stream');
+            ? MimeTypes::getMimeFromExtension($media->getExtension())
+            : MimeTypes::getMimeFromFileName($media->getName());
+
+        $mimeType ??= 'application/octet-stream';
 
         ['content' => $content, 'mimeType' => $mimeType] = $this->convertImage($content, $mimeType);
 
@@ -61,12 +65,12 @@ class MediaProcessor
     private function addAdditional(string $content, string $mimeType, string $additional): ?array
     {
         if ($mimeType === 'image/webp' && preg_match('/^(\d+)w$/', $additional, $matches)) {
-            $width = (int)$matches[1];
+            $width = (int) $matches[1];
             $manager = new ImageManager(['driver' => 'gd']);
             $image = $manager->make($content)->widen($width, function (\Intervention\Image\Constraint $constraint) {
                 $constraint->upsize();
             })->encode('webp', 100);
-            return ['content' => (string)$image, 'mimeType' => $mimeType];
+            return ['content' => (string) $image, 'mimeType' => $mimeType];
         }
         return null;
     }
@@ -77,7 +81,7 @@ class MediaProcessor
         if ($mimeType === 'image/png' || $mimeType === 'image/jpeg') {
             try {
                 $manager = new ImageManager(['driver' => 'gd']);
-                $content = (string)$manager->make($content)->encode('webp', 100);
+                $content = (string) $manager->make($content)->encode('webp', 100);
                 $mimeType = 'image/webp';
             } catch (\Exception) {
                 // ignore
