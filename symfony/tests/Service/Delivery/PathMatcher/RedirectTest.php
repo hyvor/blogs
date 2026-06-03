@@ -3,7 +3,7 @@
 namespace App\Tests\Service\Delivery\PathMatcher;
 
 use App\Entity\Enum\RedirectType;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Factory\BlogFactory;

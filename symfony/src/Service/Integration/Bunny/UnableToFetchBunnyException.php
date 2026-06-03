@@ -1,5 +1,5 @@
 <?php
 
-namespace App\Service\Delivery;
+namespace App\Service\Integration\Bunny;
 
 class UnableToFetchBunnyException extends \RuntimeException {}

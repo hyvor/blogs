@@ -4,13 +4,15 @@ namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogType;
-use App\Service\Delivery\BunnyService;
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponse;
+use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
-use App\Service\Delivery\ThemeFilesService;
-use App\Service\Delivery\UnableToFetchBunnyException;
+use App\Service\Integration\Bunny\BunnyService;
+use App\Service\Integration\Bunny\UnableToFetchBunnyException;
 use App\Service\Route\PermalinkService;
+use App\Service\Theme\ThemeFilesService;
 use MatthiasMullie\Minify;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\SassException;
@@ -26,7 +28,7 @@ class StylesProcessor
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
-        $files = $this->themeFilesService->getFilesInFolder($blog, 'styles');
+        $files = $this->themeFilesService->getFilesInFolder($blog, ThemeFileFolder::STYLES);
 
         $filesArray = [];
         foreach ($files as $file) {
@@ -43,7 +45,7 @@ class StylesProcessor
             }
             $css = $result->getCss();
         } catch (SassException|\RuntimeException $e) {
-            return DeliveryResponse::forError('SCSS Error: ' . $e->getMessage(), 500);
+            return DeliveryResponse::forError(DeliveryFileType::ASSET, 'SCSS Error: ' . $e->getMessage(), 500);
         }
 
         $css = $this->addFontCss($blog, $css);
@@ -53,7 +55,12 @@ class StylesProcessor
             ? CacheControl::NO_CACHE
             : CacheControl::ONE_YEAR;
 
-        return DeliveryResponse::forFile($css, 'text/css', cacheControl: $cacheControl);
+        return DeliveryResponse::forFile(
+            DeliveryFileType::ASSET,
+            $css,
+            'text/css',
+            cacheControl: $cacheControl,
+        );
     }
 
     private function minify(string $css): string
@@ -76,7 +83,7 @@ class StylesProcessor
             return $css;
         }
 
-        $themeFonts = $config['THEME_FONTS'] ?? null;
+        $themeFonts = is_array($config) ? ($config['THEME_FONTS'] ?? null) : null;
         if (!is_string($themeFonts)) {
             return $css;
         }

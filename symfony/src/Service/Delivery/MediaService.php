@@ -2,9 +2,9 @@
 
 namespace App\Service\Delivery;
 
-use App\Entity\Blog;
 use App\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class MediaService
 {

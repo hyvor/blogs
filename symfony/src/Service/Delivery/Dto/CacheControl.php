@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Delivery;
+namespace App\Service\Delivery\Dto;
 
 enum CacheControl
 {

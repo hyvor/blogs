@@ -2,8 +2,9 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Fonts;
 
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\Fonts\FontsCssProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -31,23 +32,44 @@ class FontCssTest extends KernelTestCase
 
     public function test_returns_font_css(): void
     {
-        $fontCssResponse = "@font-face { font-family: 'Mulish'; src: url(https://fonts.bunny.net/mulish/files/mulish-latin-400-normal.woff2); }";
+        $cssResponse = "@font-face {
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(https://fonts.bunny.net/mulish/files/mulish-latin-400-normal.woff2) format('woff2'), url(https://fonts.bunny.net/mulish/files/mulish-latin-400-normal.woff) format('woff'); 
+  unicode-range: U+0000-00FF;
+}";
 
         $mockClient = new MockHttpClient([
-            new MockResponse($fontCssResponse),
+            new MockResponse($cssResponse),
         ]);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
+        $blogUrl = $this->getService(\App\Service\Route\PermalinkService::class)->getBlogUrl($blog);
+
+        $replaced = "@font-face {
+  font-family: 'Mulish';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url($blogUrl/fonts/file/mulish/files/mulish-latin-400-normal.woff2) format('woff2'), url($blogUrl/fonts/file/mulish/files/mulish-latin-400-normal.woff) format('woff'); 
+  unicode-range: U+0000-00FF;
+}";
+
         $response = $this->pathMatcher()->match($blog, '/fonts/css/mulish:400');
 
-        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame($replaced, $response->content);
         $this->assertSame(200, $response->status);
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
         $this->assertSame('text/css', $response->mimeType);
         $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
-        // font URLs are rewritten to local paths
-        $this->assertStringNotContainsString('fonts.bunny.net/mulish', (string)$response->content);
-        $this->assertStringContainsString('/fonts/file/mulish', (string)$response->content);
+
+        // Verify correct URL was requested
+        $requests = $mockClient->getRequestsCount();
+        $this->assertSame(1, $requests);
     }
 
     public function test_on_fail(): void
@@ -60,8 +82,9 @@ class FontCssTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $response = $this->pathMatcher()->match($blog, '/fonts/css/mulish:400');
 
+        $this->assertSame('Failed to fetch font css: Request failed', $response->content);
         $this->assertSame(500, $response->status);
-        $this->assertStringContainsString('Failed to fetch font css', (string)$response->content);
-        $this->assertSame(CacheControl::NO_CACHE, $response->cacheControl);
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
     }
 }

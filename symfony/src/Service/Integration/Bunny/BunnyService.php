@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Delivery;
+namespace App\Service\Integration\Bunny;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

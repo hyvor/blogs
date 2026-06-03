@@ -6,7 +6,8 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\PostVariant;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
@@ -47,7 +48,7 @@ class SitemapIndexProcessor
         </sitemapindex>
         XML;
 
-        return DeliveryResponse::forFile($content, 'text/xml');
+        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $content, 'text/xml');
     }
 
     /** @return IndexEntry[] */

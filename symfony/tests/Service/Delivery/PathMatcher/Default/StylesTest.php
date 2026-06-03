@@ -2,9 +2,11 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default;
 
-use App\Entity\Enum\BlogHostingAt;
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Entity\Enum\BlogType;
+use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\StylesProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -37,21 +39,21 @@ class StylesTest extends KernelTestCase
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
-            'folder' => 'styles',
+            'folder' => ThemeFileFolder::STYLES->value,
             'name' => 'index.scss',
             'content' => $scss,
         ]);
         return $blog;
     }
 
-    public function test_compiles_scss(): void
+    public function test_matches_styles_css(): void
     {
         $blog = $this->createBlogWithScss();
 
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame(200, $response->status);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
         $this->assertSame('text/css', $response->mimeType);
         $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
     }
@@ -62,14 +64,14 @@ class StylesTest extends KernelTestCase
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
-            'folder' => 'styles',
+            'folder' => ThemeFileFolder::STYLES->value,
             'name' => 'index.scss',
             'content' => '@import "imported.scss";',
         ]);
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
-            'folder' => 'styles',
+            'folder' => ThemeFileFolder::STYLES->value,
             'name' => 'imported.scss',
             'content' => 'body {color: red;}',
         ]);
@@ -87,12 +89,12 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(500, $response->status);
-        $this->assertStringContainsString('SCSS Error', (string) $response->content);
+        $this->assertStringContainsString('SCSS Error', (string)$response->content);
     }
 
     public function test_no_cache_for_dev(): void
     {
-        $blog = $this->createBlogWithScss(['type' => \App\Entity\Enum\BlogType::DEV]);
+        $blog = $this->createBlogWithScss(['type' => BlogType::DEV]);
 
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
@@ -119,11 +121,10 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
-        $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame('body{color:red}body{font-family:Roboto}', (string) $response->content);
+        $this->assertSame("body{color:red}body{font-family:Roboto}", $response->content);
     }
 
-    public function test_continues_without_bunny_when_fetch_fails(): void
+    public function test_adds_comment_when_bunny_fails(): void
     {
         $mockClient = new MockHttpClient([
             new MockResponse('', ['http_code' => 500]),
@@ -143,6 +144,6 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
-        $this->assertSame("body{color:red}", (string) $response->content);
+        $this->assertSame("body{color:red}", $response->content);
     }
 }

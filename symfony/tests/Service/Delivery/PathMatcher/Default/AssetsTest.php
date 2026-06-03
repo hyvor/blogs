@@ -2,8 +2,10 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default;
 
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\AssetsProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -22,20 +24,23 @@ class AssetsTest extends KernelTestCase
 
     public function test_matches_assets(): void
     {
+        $file = 'script.js';
+        $content = 'var x = null';
+
         $blog = BlogFactory::createOne();
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
-            'folder' => 'assets',
-            'name' => 'script.js',
-            'content' => 'var x = null',
+            'folder' => ThemeFileFolder::ASSETS->value,
+            'name' => $file,
+            'content' => $content,
         ]);
 
-        $response = $this->pathMatcher()->match($blog, '/assets/script.js');
+        $response = $this->pathMatcher()->match($blog, "/assets/$file");
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame('var x = null', $response->content);
-        $this->assertSame('text/javascript', $response->mimeType);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
+        $this->assertSame($content, $response->content);
         $this->assertSame(CacheControl::ONE_WEEK, $response->cacheControl);
     }
 
@@ -46,6 +51,7 @@ class AssetsTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/assets/flashload.js');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
         $this->assertIsString($response->content);
         $this->assertNotEmpty($response->content);
     }

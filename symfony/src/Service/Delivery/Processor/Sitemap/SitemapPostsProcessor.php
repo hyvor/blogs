@@ -5,7 +5,8 @@ namespace App\Service\Delivery\Processor\Sitemap;
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
@@ -50,7 +51,7 @@ class SitemapPostsProcessor
         </urlset>
         XML;
 
-        return DeliveryResponse::forFile($xml, 'text/xml');
+        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $xml, 'text/xml');
     }
 
     /** @return Post[] */

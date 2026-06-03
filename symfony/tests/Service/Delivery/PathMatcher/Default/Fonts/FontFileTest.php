@@ -2,8 +2,9 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Fonts;
 
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\Fonts\FontsFileProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -35,9 +36,10 @@ class FontFileTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $response = $this->pathMatcher()->match($blog, '/fonts/file/mulish/files/mulish-latin-400-normal.woff2');
 
-        $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame(200, $response->status);
         $this->assertSame('empty response', $response->content);
+        $this->assertSame(200, $response->status);
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
         $this->assertSame('application/font-woff2', $response->mimeType);
         $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
     }
@@ -52,9 +54,10 @@ class FontFileTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $response = $this->pathMatcher()->match($blog, '/fonts/file/mulish/files/mulish-latin-400-normal.woff2');
 
-        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame('Failed to fetch font file: Request failed', $response->content);
         $this->assertSame(500, $response->status);
-        $this->assertStringContainsString('Failed to fetch font file', (string)$response->content);
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
         $this->assertSame('text/plain', $response->mimeType);
         $this->assertSame(CacheControl::NO_CACHE, $response->cacheControl);
     }

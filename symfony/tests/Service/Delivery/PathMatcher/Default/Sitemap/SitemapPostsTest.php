@@ -2,6 +2,8 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Sitemap;
 
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\Sitemap\SitemapPostsProcessor;
 use App\Service\Limit;
@@ -74,6 +76,8 @@ class SitemapPostsTest extends KernelTestCase
 
         $response = $this->pathMatcher()->match($blog, '/sitemap-posts-1.xml');
 
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
         $this->assertSame(200, $response->status);
         $this->assertSame('text/xml', $response->mimeType);
 

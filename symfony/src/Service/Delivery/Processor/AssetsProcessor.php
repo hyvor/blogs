@@ -3,11 +3,13 @@
 namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponse;
+use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\MimeTypes;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
-use App\Service\Delivery\ThemeFilesService;
+use App\Service\Theme\ThemeFilesService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class AssetsProcessor
@@ -27,7 +29,7 @@ class AssetsProcessor
             return null;
         }
 
-        $file = $this->themeFilesService->getFile($blog, $fileName, 'assets');
+        $file = $this->themeFilesService->getFile($blog, $fileName, ThemeFileFolder::ASSETS);
 
         if ($file !== null) {
             $content = $file->getContent();
@@ -45,6 +47,11 @@ class AssetsProcessor
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension) ?? 'application/octet-stream';
 
-        return DeliveryResponse::forFile($content, $mimeType, cacheControl: CacheControl::ONE_WEEK);
+        return DeliveryResponse::forFile(
+            DeliveryFileType::ASSET,
+            $content,
+            $mimeType,
+            cacheControl: CacheControl::ONE_WEEK,
+        );
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Service\Delivery;
 
 use App\Entity\Blog;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\Processor\AssetsProcessor;
 use App\Service\Delivery\Processor\Fonts\FontsCssProcessor;
 use App\Service\Delivery\Processor\Fonts\FontsFileProcessor;

@@ -2,6 +2,8 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default;
 
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\RobotsTxtProcessor;
 use App\Tests\Factory\BlogFactory;
@@ -32,6 +34,8 @@ class RobotsTxtTest extends KernelTestCase
 
         $blogUrl = $this->getService(\App\Service\Route\PermalinkService::class)->getBlogUrl($blog);
 
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
         $this->assertSame('text/plain', $response->mimeType);
         $this->assertSame(200, $response->status);
         $this->assertSame(

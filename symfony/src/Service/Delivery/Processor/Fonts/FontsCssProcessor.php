@@ -3,11 +3,12 @@
 namespace App\Service\Delivery\Processor\Fonts;
 
 use App\Entity\Blog;
-use App\Service\Delivery\BunnyService;
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
-use App\Service\Delivery\UnableToFetchBunnyException;
+use App\Service\Integration\Bunny\BunnyService;
+use App\Service\Integration\Bunny\UnableToFetchBunnyException;
 use App\Service\Route\PermalinkService;
 
 class FontsCssProcessor
@@ -28,9 +29,17 @@ class FontsCssProcessor
 
         try {
             $css = $this->bunnyService->getCss($blog->getId(), $blogUrl, $family);
-            return DeliveryResponse::forFile($css, 'text/css', cacheControl: CacheControl::ONE_YEAR);
+            return DeliveryResponse::forFile(
+                DeliveryFileType::ASSET,
+                $css,
+                'text/css',
+                cacheControl: CacheControl::ONE_YEAR,
+            );
         } catch (UnableToFetchBunnyException $e) {
-            return DeliveryResponse::forError('Failed to fetch font css: ' . $e->getMessage());
+            return DeliveryResponse::forError(
+                DeliveryFileType::ASSET,
+                'Failed to fetch font css: ' . $e->getMessage(),
+            );
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 
 class PreviewProcessor

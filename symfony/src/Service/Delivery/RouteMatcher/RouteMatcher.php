@@ -34,7 +34,9 @@ class RouteMatcher
     {
         $matcher = new UrlMatcher($this->collection, new RequestContext());
         try {
-            return new MatchedRoute($matcher->match($this->path));
+            /** @var array<string, mixed> $params */
+            $params = $matcher->match($this->path);
+            return new MatchedRoute($params);
         } catch (ResourceNotFoundException) {
             return null;
         }

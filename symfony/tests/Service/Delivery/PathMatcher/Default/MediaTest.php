@@ -2,8 +2,9 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default;
 
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponseType;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\MediaService;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\MediaProcessor;
@@ -30,11 +31,6 @@ class MediaTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
-    private function mediaService(): MediaService
-    {
-        return $this->getService(MediaService::class);
-    }
-
     private function storeFile(int $blogId, string $name, string $content): void
     {
         $dir = $this->storageDir . '/blog/' . $blogId;
@@ -46,49 +42,50 @@ class MediaTest extends KernelTestCase
 
     private function configureStoragePath(): void
     {
-        // Override the storage path to use our temp dir
         $service = new MediaService($this->getEm(), $this->storageDir);
         static::getContainer()->set(MediaService::class, $service);
     }
 
-    public function test_matches_svg_media(): void
+    public function test_matches_media(): void
     {
         $this->configureStoragePath();
+        $fileName = 'test.svg';
+        $content = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
+
         $blog = BlogFactory::createOne();
-        $media = MediaFactory::createOne([
-            'blog' => $blog,
-            'blog_id' => $blog->getId(),
-            'name' => 'test.svg',
-            'original_name' => 'test.svg',
-            'extension' => 'svg',
-        ]);
-        $svgContent = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
-        $this->storeFile($blog->getId(), 'test.svg', $svgContent);
-
-        $response = $this->pathMatcher()->match($blog, '/media/test.svg');
-
-        $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame(200, $response->status);
-        $this->assertSame($svgContent, $response->content);
-        $this->assertSame('image/svg+xml', $response->mimeType);
-        $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
-    }
-
-    public function test_gets_mime_type_from_file_name(): void
-    {
-        $this->configureStoragePath();
-        $blog = BlogFactory::createOne();
-        $svgContent = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
         MediaFactory::createOne([
             'blog' => $blog,
             'blog_id' => $blog->getId(),
-            'name' => 'test-no-ext.svg',
-            'original_name' => 'test.svg',
+            'name' => $fileName,
+            'original_name' => $fileName,
+            'extension' => 'svg',
+        ]);
+        $this->storeFile($blog->getId(), $fileName, $content);
+
+        $response = $this->pathMatcher()->match($blog, "/media/$fileName");
+
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(200, $response->status);
+        $this->assertSame($content, $response->content);
+        $this->assertSame('image/svg+xml', $response->mimeType);
+        $this->assertSame(DeliveryFileType::MEDIA, $response->fileType);
+        $this->assertSame(CacheControl::ONE_YEAR, $response->cacheControl);
+    }
+
+    public function test_gets_mime_type_from_the_file_name(): void
+    {
+        $this->configureStoragePath();
+        $blog = BlogFactory::createOne();
+        MediaFactory::createOne([
+            'blog' => $blog,
+            'blog_id' => $blog->getId(),
+            'name' => 'image-without-ext.svg',
+            'original_name' => 'image.svg',
             'extension' => null,
         ]);
-        $this->storeFile($blog->getId(), 'test-no-ext.svg', $svgContent);
+        $this->storeFile($blog->getId(), 'image-without-ext.svg', '<svg/>');
 
-        $response = $this->pathMatcher()->match($blog, '/media/test-no-ext.svg');
+        $response = $this->pathMatcher()->match($blog, '/media/image-without-ext.svg');
 
         $this->assertSame('image/svg+xml', $response->mimeType);
     }
@@ -111,9 +108,11 @@ class MediaTest extends KernelTestCase
 
         $response = $this->pathMatcher()->match($blog, '/media/photo.jpg');
 
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
         $this->assertSame($webpContent, $response->content);
         $this->assertSame('image/webp', $response->mimeType);
+        $this->assertSame(DeliveryFileType::MEDIA, $response->fileType);
     }
 
     public function test_converts_png_to_webp(): void
@@ -134,8 +133,10 @@ class MediaTest extends KernelTestCase
 
         $response = $this->pathMatcher()->match($blog, '/media/photo.png');
 
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
         $this->assertSame($webpContent, $response->content);
         $this->assertSame('image/webp', $response->mimeType);
+        $this->assertSame(DeliveryFileType::MEDIA, $response->fileType);
     }
 }

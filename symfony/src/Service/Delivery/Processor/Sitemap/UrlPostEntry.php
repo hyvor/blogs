@@ -65,13 +65,15 @@ class UrlPostEntry
         $srcs = [];
 
         if (($node['type'] ?? null) === 'image') {
-            $src = $node['attrs']['src'] ?? null;
+            $attrs = $node['attrs'] ?? [];
+            $src = is_array($attrs) ? ($attrs['src'] ?? null) : null;
             if (is_string($src)) {
                 $srcs[] = $src;
             }
         }
 
-        foreach ($node['content'] ?? [] as $child) {
+        $content = $node['content'] ?? [];
+        foreach (is_array($content) ? $content : [] as $child) {
             if (is_array($child)) {
                 $srcs = array_merge($srcs, $this->extractImageSrcs($child));
             }

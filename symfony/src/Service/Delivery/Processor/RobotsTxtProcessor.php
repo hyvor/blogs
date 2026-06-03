@@ -3,7 +3,8 @@
 namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Language\LanguageService;
 use App\Service\Route\PermalinkService;
@@ -26,7 +27,8 @@ TEXT;
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
         $meta = $blog->getMeta() ?? [];
-        $robots = $meta['seo_robots_txt'] ?? self::DEFAULT_ROBOTS_TXT;
+        $metaRobots = $meta['seo_robots_txt'] ?? null;
+        $robots = is_string($metaRobots) ? $metaRobots : self::DEFAULT_ROBOTS_TXT;
 
         try {
             $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
@@ -37,14 +39,12 @@ TEXT;
         $blogUrl = $this->permalinkService->getBlogPermalink($blog, $primaryLanguage);
 
         try {
-            $template = $this->twig->createTemplate((string)$robots);
-            $rendered = $template->render([
-                '_blog' => ['base_url' => $blogUrl],
-            ]);
+            $template = $this->twig->createTemplate($robots);
+            $rendered = $template->render(['_blog' => ['base_url' => $blogUrl]]);
         } catch (\Exception) {
-            $rendered = (string)$robots;
+            $rendered = $robots;
         }
 
-        return DeliveryResponse::forFile($rendered, 'text/plain');
+        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $rendered, 'text/plain');
     }
 }

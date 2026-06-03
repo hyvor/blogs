@@ -3,8 +3,9 @@
 namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
-use App\Service\Delivery\CacheControl;
-use App\Service\Delivery\DeliveryResponse;
+use App\Service\Delivery\Dto\CacheControl;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\MediaService;
 use App\Service\Delivery\MimeTypes;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
@@ -48,7 +49,12 @@ class MediaProcessor
             $mimeType = $result['mimeType'];
         }
 
-        return DeliveryResponse::forFile($content, $mimeType, cacheControl: CacheControl::ONE_YEAR);
+        return DeliveryResponse::forFile(
+            DeliveryFileType::MEDIA,
+            $content,
+            $mimeType,
+            cacheControl: CacheControl::ONE_YEAR,
+        );
     }
 
     /** @return array{content: string, mimeType: string}|null */
@@ -57,7 +63,7 @@ class MediaProcessor
         if ($mimeType === 'image/webp' && preg_match('/^(\d+)w$/', $additional, $matches)) {
             $width = (int)$matches[1];
             $manager = new ImageManager(['driver' => 'gd']);
-            $image = $manager->make($content)->widen($width, function ($constraint) {
+            $image = $manager->make($content)->widen($width, function (\Intervention\Image\Constraint $constraint) {
                 $constraint->upsize();
             })->encode('webp', 100);
             return ['content' => (string)$image, 'mimeType' => $mimeType];
@@ -74,7 +80,7 @@ class MediaProcessor
                 $content = (string)$manager->make($content)->encode('webp', 100);
                 $mimeType = 'image/webp';
             } catch (\Exception) {
-                // ignore conversion failure
+                // ignore
             }
         }
         return ['content' => $content, 'mimeType' => $mimeType];

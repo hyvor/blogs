@@ -16,7 +16,7 @@ class MatchedRoute
         $name = '';
         foreach ($props as $key => $value) {
             if ($key === '_route') {
-                $name = $value;
+                $name = is_string($value) ? $value : '';
             } else {
                 $params[$key] = $value;
             }
