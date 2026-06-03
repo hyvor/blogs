@@ -14,9 +14,6 @@ class BlogVariant
     #[ORM\Column]
     private int $id;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -42,17 +39,6 @@ class BlogVariant
     public function setId(int $id): static
     {
         $this->id = $id;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
