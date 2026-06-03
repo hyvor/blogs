@@ -22,14 +22,14 @@ class RouteService
     public function getRoutes(Blog $blog): array
     {
         return $this->em->getRepository(Route::class)->findBy(
-            ['blog_id' => $blog->getId()],
+            ['blog' => $blog],
             ['created_at' => 'ASC'],
         );
     }
 
     public function getRoutesCount(Blog $blog): int
     {
-        return $this->em->getRepository(Route::class)->count(['blog_id' => $blog->getId()]);
+        return $this->em->getRepository(Route::class)->count(['blog' => $blog]);
     }
 
     public function createRoute(
@@ -43,7 +43,6 @@ class RouteService
         $now = $this->now();
         $route = new Route();
         $route->setBlog($blog);
-        $route->setBlogId($blog->getId());
         $route->setName($name);
         $route->setMatch($match);
         $route->setTemplate($template);

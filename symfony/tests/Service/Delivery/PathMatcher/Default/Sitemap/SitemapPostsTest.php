@@ -29,13 +29,11 @@ class SitemapPostsTest extends KernelTestCase
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
         RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'post',
             'match' => '/{slug}',
             'template' => 'post.twig',
@@ -45,7 +43,6 @@ class SitemapPostsTest extends KernelTestCase
         for ($i = 0; $i < $count; $i++) {
             $post = PostFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'is_page' => false,
             ]);
             PostVariantFactory::createOne([

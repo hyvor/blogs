@@ -26,19 +26,16 @@ class SitemapPagesTest extends KernelTestCase
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
         $primaryLang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
             'is_primary' => false,
         ]);
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'de',
             'is_primary' => false,
         ]);
@@ -60,13 +57,11 @@ class SitemapPagesTest extends KernelTestCase
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
         RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'page',
             'match' => '/{slug}',
             'template' => 'page.twig',
@@ -77,7 +72,6 @@ class SitemapPagesTest extends KernelTestCase
         for ($i = 0; $i < 2; $i++) {
             $post = PostFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'is_page' => true,
             ]);
             PostVariantFactory::createOne([
@@ -92,7 +86,6 @@ class SitemapPagesTest extends KernelTestCase
         // 1 published post (should NOT appear)
         $post = PostFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'is_page' => false,
         ]);
         PostVariantFactory::createOne([

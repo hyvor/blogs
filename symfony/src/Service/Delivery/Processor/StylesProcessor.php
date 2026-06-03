@@ -12,16 +12,17 @@ use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Integration\Bunny\BunnyService;
 use App\Service\Integration\Bunny\UnableToFetchBunnyException;
 use App\Service\Route\PermalinkService;
+use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use MatthiasMullie\Minify;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Exception\SassException;
-use Symfony\Component\Yaml\Yaml;
 
 class StylesProcessor
 {
     public function __construct(
         private ThemeFilesService $themeFilesService,
+        private ThemeConfigService $themeConfigService,
         private BunnyService $bunnyService,
         private PermalinkService $permalinkService,
     ) {
@@ -76,18 +77,8 @@ class StylesProcessor
 
     private function addFontCss(Blog $blog, string $css): string
     {
-        $configFile = $this->themeFilesService->getFile($blog, 'config.yaml', null);
-        if ($configFile === null) {
-            return $css;
-        }
-
-        try {
-            $config = Yaml::parse((string) $configFile->getContent());
-        } catch (\Exception) {
-            return $css;
-        }
-
-        $themeFonts = is_array($config) ? ($config['THEME_FONTS'] ?? null) : null;
+        $config = $this->themeConfigService->getConfig($blog);
+        $themeFonts = $config['THEME_FONTS'] ?? null;
         if (!is_string($themeFonts)) {
             return $css;
         }

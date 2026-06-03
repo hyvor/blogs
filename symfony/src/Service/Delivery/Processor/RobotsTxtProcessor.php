@@ -6,9 +6,9 @@ use App\Entity\Blog;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
+use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Language\LanguageService;
 use App\Service\Route\PermalinkService;
-use Twig\Environment;
 
 class RobotsTxtProcessor
 {
@@ -21,7 +21,7 @@ TEXT;
     public function __construct(
         private LanguageService $languageService,
         private PermalinkService $permalinkService,
-        private Environment $twig,
+        private TwigRendererService $twigRenderer,
     ) {}
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
@@ -39,8 +39,9 @@ TEXT;
         $blogUrl = $this->permalinkService->getBlogPermalink($blog, $primaryLanguage);
 
         try {
-            $template = $this->twig->createTemplate($robots);
-            $rendered = $template->render(['_blog' => ['base_url' => $blogUrl]]);
+            $rendered = $this->twigRenderer->renderString($robots, [
+                '_blog' => ['base_url' => $blogUrl],
+            ]);
         } catch (\Exception) {
             $rendered = $robots;
         }

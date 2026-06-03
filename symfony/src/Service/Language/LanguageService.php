@@ -29,7 +29,6 @@ class LanguageService
     ): Language {
         $language = new Language();
         $language->setBlog($blog);
-        $language->setBlogId($blog->getId());
         $language->setCode($code);
         $language->setName($name);
         $language->setDirection($direction);
@@ -46,8 +45,8 @@ class LanguageService
         $qb = $this->em->createQueryBuilder();
         $qb->select('l')
             ->from(Language::class, 'l')
-            ->where('l.blog_id = :blogId')
-            ->setParameter('blogId', $blog->getId())
+            ->where('l.blog = :blog')
+            ->setParameter('blog', $blog)
             ->orderBy('l.is_primary', 'DESC')
             ->addOrderBy('l.id', 'ASC');
 
@@ -59,7 +58,7 @@ class LanguageService
     public function getLanguageByCode(Blog $blog, string $code): ?Language
     {
         return $this->em->getRepository(Language::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'code' => $code,
         ]);
     }
@@ -67,7 +66,7 @@ class LanguageService
     public function getLanguageById(Blog $blog, int $id): ?Language
     {
         return $this->em->getRepository(Language::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'id' => $id,
         ]);
     }
@@ -75,7 +74,7 @@ class LanguageService
     public function getPrimaryLanguage(Blog $blog): Language
     {
         $language = $this->em->getRepository(Language::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'is_primary' => true,
         ]);
         if ($language === null) {

@@ -9,6 +9,7 @@ class DeliveryResponse
     private function __construct(
         public readonly DeliveryResponseType $type,
         public readonly int $status,
+        public readonly bool $cache = true,
         public readonly ?string $to = null,
         public readonly ?string $content = null,
         public readonly string $mimeType = 'text/html',
@@ -40,11 +41,13 @@ class DeliveryResponse
         string $content,
         string $mimeType = 'text/html',
         int $status = 200,
+        bool $cache = true,
         CacheControl $cacheControl = CacheControl::NO_CACHE,
     ): self {
         return new self(
             DeliveryResponseType::FILE,
             $status,
+            cache: $cache,
             content: $content,
             mimeType: $mimeType,
             cacheControl: $cacheControl,
@@ -60,6 +63,7 @@ class DeliveryResponse
         return new self(
             DeliveryResponseType::FILE,
             $status,
+            cache: false,
             content: $content,
             mimeType: 'text/plain',
             cacheControl: CacheControl::NO_CACHE,

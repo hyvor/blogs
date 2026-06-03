@@ -9,6 +9,7 @@
 parameters:
     app.storage_path_default: ''
     app.storage_path: '%env(default:app.storage_path_default:STORAGE_PATH)%'
+    app.filesystem_default: 'memory'
 
 services:
     # default configuration for services in *this* file
@@ -28,3 +29,22 @@ services:
         arguments:
             - '%env(DATABASE_URL)%'
             - { db_table: 'oidc_sessions' }
+
+    Aws\S3\S3Client:
+        lazy: true
+        arguments:
+            $args:
+                version: 'latest'
+                region: '%env(default::string:S3_REGION)%'
+                endpoint: '%env(default::string:S3_ENDPOINT)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(default::string:S3_ACCESS_KEY_ID)%'
+                    secret: '%env(default::string:S3_SECRET_ACCESS_KEY)%'
+
+    League\Flysystem\Filesystem:
+        factory: ['App\Service\App\Storage\FilesystemFactory', 'create']
+        arguments:
+            - '%env(default:app.filesystem_default:string:FILESYSTEM)%'
+            - '@Aws\S3\S3Client'
+            - '%env(default::string:S3_BUCKET)%'

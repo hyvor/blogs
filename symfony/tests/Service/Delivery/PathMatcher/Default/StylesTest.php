@@ -38,8 +38,7 @@ class StylesTest extends KernelTestCase
         $blog = BlogFactory::createOne($blogAttrs);
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
-            'folder' => ThemeFileFolder::STYLES->value,
+            'folder' => \App\Entity\Enum\ThemeFileFolder::STYLES,
             'name' => 'index.scss',
             'content' => $scss,
         ]);
@@ -63,15 +62,13 @@ class StylesTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
-            'folder' => ThemeFileFolder::STYLES->value,
+            'folder' => \App\Entity\Enum\ThemeFileFolder::STYLES,
             'name' => 'index.scss',
             'content' => '@import "imported.scss";',
         ]);
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
-            'folder' => ThemeFileFolder::STYLES->value,
+            'folder' => \App\Entity\Enum\ThemeFileFolder::STYLES,
             'name' => 'imported.scss',
             'content' => 'body {color: red;}',
         ]);
@@ -112,7 +109,6 @@ class StylesTest extends KernelTestCase
         $blog = $this->createBlogWithScss();
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'folder' => null,
             'name' => 'config.yaml',
             'content' => "THEME_FONTS: roboto:400,600",
@@ -135,7 +131,6 @@ class StylesTest extends KernelTestCase
         $blog = $this->createBlogWithScss();
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'folder' => null,
             'name' => 'config.yaml',
             'content' => "THEME_FONTS: roboto:400,600",

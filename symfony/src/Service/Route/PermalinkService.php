@@ -36,7 +36,7 @@ class PermalinkService
     {
         $routeName = $post->isPage() ? 'page' : 'post';
         $route = $this->em->getRepository(Route::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'name' => $routeName,
         ]);
 

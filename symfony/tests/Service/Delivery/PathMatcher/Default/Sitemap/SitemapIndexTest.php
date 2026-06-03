@@ -27,7 +27,6 @@ class SitemapIndexTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
@@ -51,7 +50,6 @@ class SitemapIndexTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
@@ -60,7 +58,6 @@ class SitemapIndexTest extends KernelTestCase
         for ($i = 0; $i < 5; $i++) {
             $post = PostFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
                 'is_page' => false,
             ]);
             PostVariantFactory::createOne([

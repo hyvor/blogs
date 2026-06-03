@@ -18,13 +18,13 @@ class WebhookService
     public function getWebhooks(Blog $blog): array
     {
         return $this->em->getRepository(Webhook::class)->findBy(
-            ['blog_id' => $blog->getId()],
+            ['blog' => $blog],
         );
     }
 
     public function getWebhooksCount(Blog $blog): int
     {
-        return $this->em->getRepository(Webhook::class)->count(['blog_id' => $blog->getId()]);
+        return $this->em->getRepository(Webhook::class)->count(['blog' => $blog]);
     }
 
     /** @param WebhookEvent[] $events */
@@ -32,7 +32,6 @@ class WebhookService
     {
         $webhook = new Webhook();
         $webhook->setBlog($blog);
-        $webhook->setBlogId($blog->getId());
         $webhook->setUrl($url);
         $webhook->setEvents($events);
         $webhook->setSecret(bin2hex(random_bytes(16)));

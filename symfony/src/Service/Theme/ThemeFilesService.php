@@ -16,7 +16,7 @@ class ThemeFilesService
     public function getFile(Blog $blog, string $name, ?ThemeFileFolder $folder): ?ThemeFile
     {
         return $this->em->getRepository(ThemeFile::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'folder' => $folder,
             'name' => $name,
         ]);
@@ -26,7 +26,7 @@ class ThemeFilesService
     public function getFilesInFolder(Blog $blog, ThemeFileFolder $folder): array
     {
         return $this->em->getRepository(ThemeFile::class)->findBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'folder' => $folder,
         ]);
     }

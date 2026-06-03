@@ -32,8 +32,8 @@ class NavigationService
             ->addSelect('v')
             ->from(Navigation::class, 'n')
             ->leftJoin('n.variants', 'v')
-            ->where('n.blog_id = :blogId')
-            ->setParameter('blogId', $blog->getId())
+            ->where('n.blog = :blog')
+            ->setParameter('blog', $blog)
             ->orderBy('n.sort', 'ASC');
 
         /** @var Navigation[] $result */
@@ -44,7 +44,7 @@ class NavigationService
     public function getNavigationCount(Blog $blog, NavigationType $type): int
     {
         return $this->em->getRepository(Navigation::class)->count([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'type' => $type,
         ]);
     }
@@ -60,7 +60,6 @@ class NavigationService
         $now = $this->now();
         $navigation = new Navigation();
         $navigation->setBlog($blog);
-        $navigation->setBlogId($blog->getId());
         $navigation->setUrl($url);
         $navigation->setType($type);
         $navigation->setSort(0);
@@ -103,7 +102,7 @@ class NavigationService
         foreach ($ids as $sort => $id) {
             $navigation = $this->em->getRepository(Navigation::class)->findOneBy([
                 'id' => $id,
-                'blog_id' => $blog->getId(),
+                'blog' => $blog,
             ]);
             if ($navigation !== null) {
                 $navigation->setSort($sort);

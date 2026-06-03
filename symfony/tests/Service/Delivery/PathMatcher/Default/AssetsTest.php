@@ -30,8 +30,7 @@ class AssetsTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         ThemeFileFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
-            'folder' => ThemeFileFolder::ASSETS->value,
+            'folder' => \App\Entity\Enum\ThemeFileFolder::ASSETS,
             'name' => $file,
             'content' => $content,
         ]);

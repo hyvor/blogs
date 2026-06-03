@@ -25,19 +25,16 @@ class UrlPostEntryTest extends KernelTestCase
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
         $lang1 = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
             'is_primary' => true,
         ]);
         $lang2 = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
             'is_primary' => false,
         ]);
         RouteFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'name' => 'post',
             'match' => '/{slug}',
             'template' => 'post.twig',
@@ -46,7 +43,6 @@ class UrlPostEntryTest extends KernelTestCase
 
         $post = PostFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'is_page' => false,
         ]);
         $baseUrl = $this->permalinkService()->getBlogUrl($blog);
