@@ -2,17 +2,21 @@
 	interface Props {
 		name: string;
 		price: number;
+		annualOnly?: boolean;
 	}
 
-	let { name, price }: Props = $props();
+	let { name, price, annualOnly = false }: Props = $props();
 </script>
 
 <div class="plan hds-box">
 	<div class="inner">
 		<div class="name">{name}</div>
 		<div class="price-wrap">
-			<span class="price">€{price}</span><span class="freq">/month</span>
+			<span class="price">€{price}</span><span class="freq">/{annualOnly ? 'year' : 'month'}</span>
 		</div>
+		{#if annualOnly}
+			<div class="annual-note">billed annually</div>
+		{/if}
 	</div>
 </div>
 
@@ -42,6 +46,12 @@
 
 	.freq {
 		color: var(--text-light);
+	}
+
+	.annual-note {
+		font-size: 0.8rem;
+		color: var(--text-light);
+		margin-top: 2px;
 	}
 
 	@media (max-width: 1000px) {

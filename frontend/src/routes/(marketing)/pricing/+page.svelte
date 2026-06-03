@@ -20,49 +20,54 @@
 
 	const basicFeatures: Feature[] = [
 		{
+			name: 'Blogs',
+			description: 'Total number of blogs you can create',
+			values: [1, 'Unlimited', 'Unlimited', 'Unlimited']
+		},
+		{
 			name: 'Users',
 			description: 'Total number of users who writes for your blog (your team members)',
-			values: [5, 15, 50]
+			values: [1, 5, 15, 50]
 		},
 		{
 			name: 'Storage',
 			description: 'Total storage used for blog media (mostly uploaded images)',
-			values: ['5GB', '150GB', '500GB']
+			values: ['1GB', '5GB', '150GB', '500GB']
 		},
 		{
 			name: 'Custom Themes',
 			description: 'Use default themes for free or build your own custom theme',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Custom Domain',
 			description: 'Host your blog on your own domain',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Multi-language support',
 			description: 'Add multiple languages to your blog and translate your posts',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Data Ownership',
 			description: 'You own everything you write. Export and move to another platform anytime.',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'No Branding',
 			description: 'Remove Hyvor Blogs branding from your blog',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'SEO Analysis',
 			description: 'In-post SEO analysis (check keywords, content, etc.)',
-			values: [false, true, true, true, true, true]
+			values: [false, true, true, true]
 		},
 		{
 			name: 'Link Analysis',
 			description: 'Post link analysis, bi-weekly full-blog link analysis, and email reports',
-			values: [false, true, true, true, true, true]
+			values: [false, false, true, true]
 		}
 	];
 
@@ -71,13 +76,13 @@
 			name: 'GPT Writing',
 			description:
 				'Use OpenAI GPT 3.5 for content writing, keyword generation, and more. Usually, 1000 tokens is about 750 words.',
-			values: [false, '100k tokens/m', '1m tokens/m']
+			values: [false, false, '100k tokens/m', '1m tokens/m']
 		},
 		{
 			name: 'Auto-Translations',
 			description:
 				'Automatically translate your posts into multiple languages using DeepL. Monthly characters limit on each plan.',
-			values: [false, '100k chars/m', '500k chars/m']
+			values: [false, false, '100k chars/m', '500k chars/m']
 		}
 	];
 
@@ -85,22 +90,22 @@
 		{
 			name: 'Data API',
 			description: 'Access public data of your blog via API',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Console API',
 			description: 'The same API we use in our Console',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Delivery API',
 			description: 'For self-serving a blog within Web Frameworks.',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		},
 		{
 			name: 'Webhooks',
 			description: 'Receive an HTTP request on events in your blog',
-			values: [true, true, true, true, true, true]
+			values: [true, true, true, true]
 		}
 	];
 
@@ -110,6 +115,7 @@
 			under: 'Commenting Platform',
 			description: 'Add Hyvor Talk commenting system for FREE',
 			values: [
+				'10k credits/month (Premium)',
 				'25k credits/month (Premium)',
 				'100k credits/month (Premium)',
 				'250k credits/month (Business)'
@@ -154,7 +160,7 @@
 			<div class="plans-left"></div>
 			{#each PLANS as plan, i}
 				{#if i >= $plansStart && i < $plansMax + $plansStart}
-					<Plan name={plan.name} price={plan.price} />
+					<Plan name={plan.name} price={plan.price} annualOnly={plan.annualOnly} />
 				{/if}
 			{/each}
 		</div>
