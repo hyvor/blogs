@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Enum\LinkAnalyzerCheckType;
 use App\Entity\LinkAnalyzerLink;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -35,7 +36,7 @@ final class LinkAnalyzerLinkFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'check_type' => self::faker()->randomElement(LinkAnalyzerCheckType::cases()),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'full_url' => self::faker()->text(255),

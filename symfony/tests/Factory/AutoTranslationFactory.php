@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\AutoTranslation;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class AutoTranslationFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'chars' => self::faker()->randomNumber(),
             'source_lang' => self::faker()->text(10),
             'target_lang' => self::faker()->text(10),

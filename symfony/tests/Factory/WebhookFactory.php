@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Webhook;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class WebhookFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'events' => [],
             'secret' => self::faker()->text(32),
             'url' => self::faker()->text(255),

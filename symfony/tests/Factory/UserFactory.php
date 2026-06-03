@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -33,7 +34,7 @@ final class UserFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'hyvor_user_id' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),
             'role' => UserRole::ADMIN,

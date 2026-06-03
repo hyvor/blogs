@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Route;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class RouteFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'is_enabled' => self::faker()->boolean(),
             'match' => self::faker()->text(255),
             'name' => self::faker()->text(255),
