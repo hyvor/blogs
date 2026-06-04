@@ -4,8 +4,8 @@ namespace App\Service\Delivery\Twig;
 
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Blog\BlogService;
 use App\Service\Theme\ThemeFilesService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class TwigLanguage
@@ -18,13 +18,13 @@ class TwigLanguage
 
     public function __construct(
         private ThemeFilesService $themeFilesService,
-        private EntityManagerInterface $em,
+        private BlogService $blogService,
     ) {}
 
     public function getBlogBySubdomain(string $subdomain): ?Blog
     {
         if (!isset($this->blogCache[$subdomain])) {
-            $blog = $this->em->getRepository(Blog::class)->findOneBy(['subdomain' => $subdomain]);
+            $blog = $this->blogService->getBlogBySubdomain($subdomain);
             if ($blog === null) {
                 return null;
             }

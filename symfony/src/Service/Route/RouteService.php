@@ -18,6 +18,11 @@ class RouteService
         private EventDispatcherInterface $dispatcher,
     ) {}
 
+    public function getRouteByName(Blog $blog, string $name): ?Route
+    {
+        return $this->em->getRepository(Route::class)->findOneBy(['blog' => $blog, 'name' => $name]);
+    }
+
     /** @return Route[] */
     public function getRoutes(Blog $blog): array
     {
