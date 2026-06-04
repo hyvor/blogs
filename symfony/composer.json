@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "aws/aws-sdk-php": "^3.384",
+        "hyvor/doctrine-filterq": "@dev",
         "hyvor/internal": "^4.0.10",
         "hyvor/scssphp": "^2.0",
         "intervention/image": "^2.7",

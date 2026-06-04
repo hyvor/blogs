@@ -98,4 +98,23 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         }
         return $response;
     }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function dataApi(string|Blog $blog, string $endpoint, array $params = []): Response
+    {
+        $subdomain = $blog instanceof Blog ? $blog->getSubdomain() : $blog;
+        $endpoint = ltrim($endpoint, '/');
+        $url = '/api/data/v1/' . $subdomain . '/' . $endpoint;
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
+        }
+        $this->client->request('GET', $url);
+        $response = $this->client->getResponse();
+        if ($response->getStatusCode() === 500) {
+            throw new \Exception('API 500: ' . $response->getContent());
+        }
+        return $response;
+    }
 }

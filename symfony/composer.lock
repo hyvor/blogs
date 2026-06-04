@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc6ec6cad206e3d75dd2e5736670edde",
+    "content-hash": "89ee111877ba1e64ad3526f663cd9fd8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1790,6 +1790,54 @@
                 }
             ],
             "time": "2026-03-10T16:41:02+00:00"
+        },
+        {
+            "name": "hyvor/doctrine-filterq",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/doctrine-filterq.git",
+                "reference": "00324d004532445e38f08eb2de154da1d5fb2820"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/doctrine-filterq/zipball/00324d004532445e38f08eb2de154da1d5fb2820",
+                "reference": "00324d004532445e38f08eb2de154da1d5fb2820",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.17|^3.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^3.0|^4.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.5",
+                "symfony/cache": "^8.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\FilterQ\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SupunKavinda",
+                    "email": "supun@hyvor.com"
+                }
+            ],
+            "description": "Advanced filtering for Doctrine ORM APIs",
+            "support": {
+                "issues": "https://github.com/hyvor/doctrine-filterq/issues",
+                "source": "https://github.com/hyvor/doctrine-filterq/tree/main"
+            },
+            "time": "2026-06-04T21:55:43+00:00"
         },
         {
             "name": "hyvor/internal",
@@ -11675,7 +11723,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "hyvor/doctrine-filterq": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
