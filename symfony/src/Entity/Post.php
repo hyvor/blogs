@@ -15,21 +15,6 @@ class Post
     #[ORM\Column]
     private int $id;
 
-    /** @var Collection<int, PostVariant> */
-    #[ORM\OneToMany(targetEntity: PostVariant::class, mappedBy: 'post')]
-    private Collection $variants;
-
-    public function __construct()
-    {
-        $this->variants = new ArrayCollection();
-    }
-
-    /** @return Collection<int, PostVariant> */
-    public function getVariants(): Collection
-    {
-        return $this->variants;
-    }
-
     #[ORM\Column]
     private \DateTimeImmutable $created_at;
 
@@ -60,6 +45,16 @@ class Post
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $code_foot = null;
+
+
+    /** @var Collection<int, PostVariant> */
+    #[ORM\OneToMany(targetEntity: PostVariant::class, mappedBy: 'post')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -180,5 +175,11 @@ class Post
     {
         $this->code_foot = $code_foot;
         return $this;
+    }
+
+    /** @return Collection<int, PostVariant> */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
     }
 }

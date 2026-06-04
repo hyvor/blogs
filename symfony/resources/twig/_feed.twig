@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed
+    xmlns="http://www.w3.org/2005/Atom"
+    xmlns:media="http://search.yahoo.com/mrss/"
+>
+
+    <id>{{ _blog.url }}/</id>
+    <title>{{ _blog.name }}</title>
+    <updated>{{ _posts[0].updated_at | date('c') }}</updated>
+    <link rel="self" href="{{ _blog.url }}/feed"/>
+    <link href="{{ _blog.url }}"/>
+
+    {% if _blog.icon_url %}
+    <icon>{{ _blog.icon_url }}</icon>
+    {% endif %}
+
+    {% if _blog.logo_url %}
+    <logo>{{ _blog.logo_url }}</logo>
+    {% endif %}
+
+    <generator uri="https://blogs.hyvor.com">Hyvor Blogs</generator>
+
+    {% for post in _posts %}
+        <entry>
+            <id>{{ post.url }}</id>
+            <title>{{ post.title }}</title>
+            <link rel="alternate" href="{{ post.url }}"/>
+            <updated>{{ post.updated_at | date('c') }}</updated>
+            <summary>{{ post.description }}</summary>
+
+            <content type="html">{{ post.content }}</content>
+
+            {% for author in post.authors %}
+                <author>
+                    <name>{{ author.name }}</name>
+                    <uri>{{ author.url }}</uri>
+                </author>
+            {% endfor %}
+
+            {% for tag in post.tags %}
+                <category term="{{ tag.slug }}" label="{{ tag.name }}"></category>
+            {% endfor %}
+
+            {% if post.canonical_url %}
+                <source>
+                <id>{{ post.canonical_url }}</id>
+                </source>
+            {% endif %}
+
+            {% if post.featured_image_url %}
+                <media:thumbnail url="{{ post.featured_image_url }}"/>
+            {% endif %}
+
+        </entry>
+    {% endfor %}
+
+</feed>
