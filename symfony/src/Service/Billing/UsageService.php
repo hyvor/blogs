@@ -73,4 +73,15 @@ class UsageService
         return (int)$result;
     }
 
+    public function getBlogsUsage(int $organizationId): int
+    {
+        /** @var ?int $result */
+        $result = $this->connection->fetchOne(
+            "SELECT COUNT(*) FROM blogs WHERE organization_id = ? AND type = 'default'",
+            [$organizationId],
+        );
+
+        return (int)$result;
+    }
+
 }

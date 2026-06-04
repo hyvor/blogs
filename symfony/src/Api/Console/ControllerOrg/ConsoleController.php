@@ -102,6 +102,10 @@ class ConsoleController
                 'used' => $this->usageService->getAiTokensUsage($org->id),
                 'limit' => $bl->aiTokens ?? 0,
             ],
+            'blogs' => [
+                'used' => $this->usageService->getBlogsUsage($org->id),
+                'limit' => $bl->blogs ?? 0,
+            ],
         ]);
     }
 

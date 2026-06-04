@@ -25,6 +25,7 @@
 	<Loader padding={100} block />
 {:else}
 	<div class="usage">
+		<UsageBar name="Blogs" data={usage.blogs} unlimitedOnZero={true} />
 		<UsageBar name="Users" data={usage.users} />
 		<UsageBar name="Media Storage" data={usage.storage} bytes={true} />
 		<UsageBar name="Auto-Translate Characters (this month)" data={usage.auto_translate_chars} />
