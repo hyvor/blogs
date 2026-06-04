@@ -28,6 +28,7 @@ class BlogObject
     public string $color_mode_default;
     public int $cache_version_styles;
     public int $posts_count;
+    public SocialMediaObject $social;
     /** @var NavObject[] */
     public array $nav_header = [];
     /** @var NavObject[] */
@@ -82,6 +83,17 @@ class BlogObject
         $this->color_modes = is_string($meta['color_modes'] ?? null) ? $meta['color_modes'] : 'light';
         $this->color_mode_default = is_string($meta['color_mode_default'] ?? null) ? $meta['color_mode_default'] : 'light';
         $this->cache_version_styles = is_numeric($meta['cache_version_styles'] ?? null) ? (int)$meta['cache_version_styles'] : 1;
+
+        $this->social = new SocialMediaObject(
+            is_string($meta['social_facebook'] ?? null) ? $meta['social_facebook'] : null,
+            is_string($meta['social_twitter'] ?? null) ? $meta['social_twitter'] : null,
+            is_string($meta['social_linkedin'] ?? null) ? $meta['social_linkedin'] : null,
+            is_string($meta['social_youtube'] ?? null) ? $meta['social_youtube'] : null,
+            is_string($meta['social_instagram'] ?? null) ? $meta['social_instagram'] : null,
+            is_string($meta['social_github'] ?? null) ? $meta['social_github'] : null,
+            is_string($meta['social_tiktok'] ?? null) ? $meta['social_tiktok'] : null,
+        );
+
         $counts = $blog->getCounts() ?? [];
         $this->posts_count = is_numeric($counts['posts'] ?? null) ? (int)$counts['posts'] : 0;
 

@@ -336,7 +336,7 @@ class TemplateRendererService
         foreach ($variants as $v) {
             $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
             if ($vLang) {
-                $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'bio' => $v->getBio()];
+                $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'bio' => $v->getBio(), 'location' => $v->getLocation()];
             }
         }
         return $this->authorObjectFactory->create($user, $blog, $language, $variantData);

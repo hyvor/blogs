@@ -10,11 +10,14 @@ use App\Service\Route\PermalinkService;
 class TagObject
 {
     public int $id;
+    public int $created_at;
+    public bool $is_private;
     public string $slug;
-    public ?bool $is_private;
-    public ?string $name;
-    public ?string $description;
     public string $url;
+    public string $name;
+    public string $description;
+    public ?string $code_head;
+    public ?string $code_foot;
     public int $posts_count;
     public LanguageObject $language;
     /** @var VariantObject[] */
@@ -26,22 +29,28 @@ class TagObject
     public function __construct(Tag $tag, Blog $blog, Language $language, PermalinkService $permalinkService, array $variantData = [])
     {
         $this->id = $tag->getId();
+        $this->created_at = $tag->getCreatedAt()?->getTimestamp() ?? 0;
+        $this->is_private = (bool)$tag->isPrivate();
         $this->slug = $tag->getSlug();
-        $this->is_private = $tag->isPrivate();
-        $this->posts_count = $tag->getPostsCount() ?? 0;
         $this->url = $permalinkService->getTagPermalink($tag, $blog, $language);
+        $this->posts_count = $tag->getPostsCount() ?? 0;
+        $this->code_head = $tag->getCodeHead();
+        $this->code_foot = $tag->getCodeFoot();
         $this->language = new LanguageObject($language);
 
-        $this->name = null;
-        $this->description = null;
+        $matched = null;
+        $fallback = $variantData[0] ?? null;
         foreach ($variantData as $vd) {
             if ($vd['language']->getId() === $language->getId()) {
-                $this->name = $vd['name'];
-                $this->description = $vd['description'];
+                $matched = $vd;
             } else {
                 $url = $permalinkService->getTagPermalink($tag, $blog, $vd['language']);
                 $this->variants[] = new VariantObject(new LanguageObject($vd['language']), $url);
             }
         }
+
+        $resolved = $matched ?? $fallback;
+        $this->name = $resolved['name'] ?? '';
+        $this->description = $resolved['description'] ?? '';
     }
 }

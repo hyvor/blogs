@@ -7,14 +7,12 @@ use App\Entity\Navigation;
 
 class NavObject
 {
+    public string $name;
     public string $url;
-    public ?string $name;
-    public bool $open_in_new_tab;
 
     public function __construct(Navigation $nav, Language $language)
     {
         $this->url = $nav->getUrl();
-        $this->open_in_new_tab = false;
         $name = null;
         foreach ($nav->getVariants() as $variant) {
             if ($variant->getLanguageId() === $language->getId()) {
@@ -26,6 +24,6 @@ class NavObject
             $first = $nav->getVariants()->first();
             $name = $first ? $first->getName() : null;
         }
-        $this->name = $name;
+        $this->name = $name ?? '';
     }
 }

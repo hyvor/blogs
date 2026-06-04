@@ -13,7 +13,7 @@ class AuthorObjectFactory
     public function __construct(private PermalinkService $permalinkService) {}
 
     /**
-     * @param array<array{language: Language, name: ?string, bio: ?string}> $variantData
+     * @param array<array{language: Language, name: ?string, bio: ?string, location: ?string}> $variantData
      */
     public function create(User $user, Blog $blog, Language $language, array $variantData = []): AuthorObject
     {
