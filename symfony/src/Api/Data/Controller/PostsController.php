@@ -4,6 +4,9 @@ namespace App\Api\Data\Controller;
 
 use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\PostObjectFactory;
+use App\Api\Data\Input\GetPostInput;
+use App\Api\Data\Input\GetPostsInput;
+use App\Api\Data\Input\SearchPostsInput;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
@@ -13,7 +16,7 @@ use App\Entity\PostVariant;
 use App\Service\Delivery\PostQueryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,31 +41,22 @@ class PostsController
     ) {}
 
     #[Route('/post', name: 'post', methods: ['GET'])]
-    public function post(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function post(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetPostInput $input): JsonResponse
     {
-        $id = $request->query->get('id');
-        $slug = $request->query->get('slug');
-        $languageCode = $request->query->get('language');
-        $keys = $request->query->get('keys');
-
-        if ($id === null && $slug === null) {
+        if ($input->id === null && $input->slug === null) {
             throw new UnprocessableEntityHttpException('Either id or slug is required');
         }
 
-        if ($id !== null && !ctype_digit((string)$id)) {
-            throw new UnprocessableEntityHttpException('id must be an integer');
-        }
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
 
         $post = null;
-        if ($id !== null) {
-            $found = $this->postQueryService->getPostById((int)$id);
+        if ($input->id !== null) {
+            $found = $this->postQueryService->getPostById($input->id);
             if ($found !== null && $found->getBlog()->getId() === $blog->getId()) {
                 $post = $found;
             }
-        } elseif (is_string($slug)) {
-            $post = $this->postQueryService->getPostBySlugAndLanguage($language, $slug);
+        } elseif ($input->slug !== null) {
+            $post = $this->postQueryService->getPostBySlugAndLanguage($language, $input->slug);
         }
 
         if ($post === null) {
@@ -88,36 +82,28 @@ class PostsController
             throw new NotFoundHttpException('Post not found');
         }
 
-        $filtered = KeysFilter::filter($postObject, is_string($keys) ? $keys : null);
+        $filtered = KeysFilter::filter($postObject, $input->keys);
 
         return new JsonResponse($filtered);
     }
 
     #[Route('/posts', name: 'posts', methods: ['GET'])]
-    public function posts(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function posts(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetPostsInput $input): JsonResponse
     {
-        $languageCode = $request->query->get('language');
-        $limitParam = $request->query->get('limit');
-        $pageParam = $request->query->get('page');
-        $filter = $request->query->get('filter');
-        $sort = $request->query->get('sort');
-        $keys = $request->query->get('keys');
-        $pages = filter_var($request->query->get('pages', 'false'), FILTER_VALIDATE_BOOLEAN);
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
-        $limit = $this->dataApiHelper->getLimit($limitParam !== null ? (int)$limitParam : null);
-        $page = $this->dataApiHelper->getPage($pageParam !== null ? (int)$pageParam : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
+        $limit = $this->dataApiHelper->getLimit($input->limit);
+        $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
-        $orderBys = $this->dataApiHelper->getSort(is_string($sort) ? $sort : null, self::ALLOWED_SORTS);
+        $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
         $result = $this->postQueryService->getPostsForDataApi(
             $blog,
             $language,
-            is_string($filter) ? $filter : null,
+            $input->filter,
             $limit,
             $offset,
             $orderBys,
-            (bool)$pages,
+            $input->pages ?? false,
         );
 
         $postObjects = array_map(
@@ -126,7 +112,7 @@ class PostsController
         );
         $postObjects = array_values(array_filter($postObjects));
 
-        $filteredPosts = KeysFilter::filter($postObjects, is_string($keys) ? $keys : null);
+        $filteredPosts = KeysFilter::filter($postObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredPosts,
@@ -135,24 +121,14 @@ class PostsController
     }
 
     #[Route('/posts/search', name: 'posts_search', methods: ['GET'])]
-    public function search(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function search(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] SearchPostsInput $input): JsonResponse
     {
-        $search = $request->query->get('search');
-        if (!is_string($search) || $search === '') {
-            throw new UnprocessableEntityHttpException('search parameter is required');
-        }
-
-        $languageCode = $request->query->get('language');
-        $limitParam = $request->query->get('limit');
-        $pageParam = $request->query->get('page');
-        $keys = $request->query->get('keys');
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
-        $limit = $this->dataApiHelper->getLimit($limitParam !== null ? (int)$limitParam : null);
-        $page = $this->dataApiHelper->getPage($pageParam !== null ? (int)$pageParam : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
+        $limit = $this->dataApiHelper->getLimit($input->limit);
+        $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
 
-        $result = $this->postQueryService->searchPosts($blog, $language, $search, $limit, $offset);
+        $result = $this->postQueryService->searchPosts($blog, $language, $input->search, $limit, $offset);
 
         $postObjects = array_map(
             fn($post) => $this->postObjectFactory->createFromEntity($post, $blog, $language),
@@ -160,7 +136,7 @@ class PostsController
         );
         $postObjects = array_values(array_filter($postObjects));
 
-        $filteredPosts = KeysFilter::filter($postObjects, is_string($keys) ? $keys : null);
+        $filteredPosts = KeysFilter::filter($postObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredPosts,

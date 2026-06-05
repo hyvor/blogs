@@ -1,0 +1,3 @@
+dunglas_doctrine_json_odm:
+    type_map:
+        blogs_meta: App\Entity\Meta\BlogMeta

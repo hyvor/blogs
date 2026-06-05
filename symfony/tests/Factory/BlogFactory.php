@@ -17,7 +17,9 @@ final class BlogFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     #[\Override]
     public static function class(): string
@@ -71,12 +73,7 @@ final class BlogFactory extends PersistentObjectFactory
     ): Blog {
         $blog = self::createOne($blogAttrs);
 
-        LanguageFactory::createOne(array_merge([
-            'blog' => $blog,
-            'code' => 'en',
-            'name' => 'English',
-            'is_primary' => true,
-        ], $languageAttrs));
+        LanguageFactory::createOnePrimaryFor($blog, $languageAttrs);
 
         return $blog;
     }
@@ -93,6 +90,6 @@ final class BlogFactory extends PersistentObjectFactory
     protected function initialize(): static
     {
         return $this// ->afterInstantiate(function(Blog $blog): void {})
-            ;
+        ;
     }
 }

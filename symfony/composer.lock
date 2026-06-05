@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89ee111877ba1e64ad3526f663cd9fd8",
+    "content-hash": "974bbb212b4cb3a61d0fee2ea4c79b43",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1340,6 +1340,90 @@
             "time": "2026-02-08T16:21:46+00:00"
         },
         {
+            "name": "dunglas/doctrine-json-odm",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dunglas/doctrine-json-odm.git",
+                "reference": "d5162f5f3fb2568bd96b0966148ec21688ab4632"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dunglas/doctrine-json-odm/zipball/d5162f5f3fb2568bd96b0966148ec21688ab4632",
+                "reference": "d5162f5f3fb2568bd96b0966148ec21688ab4632",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.6.3 || ^3.0",
+                "php": ">=8.1",
+                "symfony/property-access": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/property-info": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/serializer": "^5.4 || ^6.4 || ^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.0 || ^2.0",
+                "doctrine/dbal": "^2.7 || ^3.3 || ^4.0.0",
+                "doctrine/doctrine-bundle": "^1.12.13 || ^2.2 || ^3.0",
+                "symfony/finder": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/framework-bundle": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/phpunit-bridge": "^8.0",
+                "symfony/uid": "^5.4 || ^6.4 || ^7.4 || ^8.0",
+                "symfony/validator": "^5.4 || ^6.4 || ^7.4 || ^8.0"
+            },
+            "suggest": {
+                "scienta/doctrine-json-functions": "To add support for JSON functions in DQL.",
+                "symfony/framework-bundle": "To use the provided bundle."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dunglas\\DoctrineJsonOdm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kévin Dunglas",
+                    "email": "kevin@dunglas.dev",
+                    "homepage": "https://dunglas.dev"
+                }
+            ],
+            "description": "An object document mapper for Doctrine ORM using JSON types of modern RDBMS.",
+            "homepage": "https://dunglas.dev",
+            "keywords": [
+                "database",
+                "json",
+                "mysql",
+                "odm",
+                "orm",
+                "postgresql",
+                "rdbms"
+            ],
+            "support": {
+                "issues": "https://github.com/dunglas/doctrine-json-odm/issues",
+                "source": "https://github.com/dunglas/doctrine-json-odm/tree/v1.5.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dunglas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/dunglas/doctrine-json-odm",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-01-06T22:15:42+00:00"
+        },
+        {
             "name": "fakerphp/faker",
             "version": "v1.24.1",
             "source": {
@@ -1793,7 +1877,7 @@
         },
         {
             "name": "hyvor/doctrine-filterq",
-            "version": "dev-main",
+            "version": "0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/doctrine-filterq.git",
@@ -1815,7 +1899,6 @@
                 "phpunit/phpunit": "^10.5",
                 "symfony/cache": "^8.1"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1835,7 +1918,7 @@
             "description": "Advanced filtering for Doctrine ORM APIs",
             "support": {
                 "issues": "https://github.com/hyvor/doctrine-filterq/issues",
-                "source": "https://github.com/hyvor/doctrine-filterq/tree/main"
+                "source": "https://github.com/hyvor/doctrine-filterq/tree/0.0.1"
             },
             "time": "2026-06-04T21:55:43+00:00"
         },
@@ -11723,9 +11806,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "hyvor/doctrine-filterq": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

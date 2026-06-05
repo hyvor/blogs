@@ -4,6 +4,8 @@ namespace App\Api\Data\Controller;
 
 use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\TagObjectFactory;
+use App\Api\Data\Input\GetTagInput;
+use App\Api\Data\Input\GetTagsInput;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
@@ -13,7 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,28 +34,19 @@ class TagsController
     ) {}
 
     #[Route('/tag', name: 'tag', methods: ['GET'])]
-    public function tag(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function tag(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetTagInput $input): JsonResponse
     {
-        $id = $request->query->get('id');
-        $slug = $request->query->get('slug');
-        $languageCode = $request->query->get('language');
-        $keys = $request->query->get('keys');
-
-        if ($id === null && $slug === null) {
+        if ($input->id === null && $input->slug === null) {
             throw new UnprocessableEntityHttpException('Either id or slug is required');
         }
 
-        if ($id !== null && !ctype_digit((string)$id)) {
-            throw new UnprocessableEntityHttpException('id must be an integer');
-        }
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
 
         $tag = null;
-        if ($id !== null) {
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['id' => (int)$id, 'blog' => $blog]);
-        } elseif (is_string($slug)) {
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['slug' => $slug, 'blog' => $blog]);
+        if ($input->id !== null) {
+            $tag = $this->em->getRepository(Tag::class)->findOneBy(['id' => $input->id, 'blog' => $blog]);
+        } elseif ($input->slug !== null) {
+            $tag = $this->em->getRepository(Tag::class)->findOneBy(['slug' => $input->slug, 'blog' => $blog]);
         }
 
         if ($tag === null) {
@@ -62,40 +55,28 @@ class TagsController
 
         $tagObject = $this->tagObjectFactory->createFromEntity($tag, $blog, $language);
 
-        $filtered = KeysFilter::filter($tagObject, is_string($keys) ? $keys : null);
+        $filtered = KeysFilter::filter($tagObject, $input->keys);
 
         return new JsonResponse($filtered);
     }
 
     #[Route('/tags', name: 'tags', methods: ['GET'])]
-    public function tags(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function tags(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetTagsInput $input): JsonResponse
     {
-        $languageCode = $request->query->get('language');
-        $limitParam = $request->query->get('limit');
-        $pageParam = $request->query->get('page');
-        $filter = $request->query->get('filter');
-        $sort = $request->query->get('sort');
-        $keys = $request->query->get('keys');
-        $visibility = $request->query->get('visibility', 'public');
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
-        $limit = $this->dataApiHelper->getLimit($limitParam !== null ? (int)$limitParam : null);
-        $page = $this->dataApiHelper->getPage($pageParam !== null ? (int)$pageParam : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
+        $limit = $this->dataApiHelper->getLimit($input->limit);
+        $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
-        $orderBys = $this->dataApiHelper->getSort(is_string($sort) ? $sort : null, self::ALLOWED_SORTS);
+        $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        if (!in_array($visibility, ['public', 'private', 'any'], true)) {
-            throw new UnprocessableEntityHttpException('visibility must be public, private, or any');
-        }
-
-        [$tags, $total] = $this->queryTags($blog, is_string($filter) ? $filter : null, $limit, $offset, $orderBys, $visibility);
+        [$tags, $total] = $this->queryTags($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
 
         $tagObjects = array_map(
             fn(Tag $tag) => $this->tagObjectFactory->createFromEntity($tag, $blog, $language),
             $tags
         );
 
-        $filteredTags = KeysFilter::filter($tagObjects, is_string($keys) ? $keys : null);
+        $filteredTags = KeysFilter::filter($tagObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredTags,

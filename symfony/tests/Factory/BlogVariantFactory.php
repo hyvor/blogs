@@ -55,8 +55,25 @@ final class BlogVariantFactory extends PersistentObjectFactory
         return self::createOne([
             'blog' => $blog,
             'language' => $primaryLanguage,
-            'language_id' => $primaryLanguage->getId(),
         ]);
+    }
+
+    /**
+     * If languages is not set, blog's languages will be used
+     */
+    public static function createManyForBlogWithAllLanguages(Blog $blog, ?array $languages = null): array
+    {
+        $languages = $languages ?? $blog->getLanguages();
+
+        $variants = [];
+        foreach ($languages as $language) {
+            $variants[] = self::createOne([
+                'blog' => $blog,
+                'language' => $language,
+            ]);
+        }
+
+        return $variants;
     }
 
     /**

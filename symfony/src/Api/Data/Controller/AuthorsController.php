@@ -4,6 +4,8 @@ namespace App\Api\Data\Controller;
 
 use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\AuthorObjectFactory;
+use App\Api\Data\Input\GetAuthorInput;
+use App\Api\Data\Input\GetAuthorsInput;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
@@ -13,7 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,28 +34,19 @@ class AuthorsController
     ) {}
 
     #[Route('/author', name: 'author', methods: ['GET'])]
-    public function author(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function author(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetAuthorInput $input): JsonResponse
     {
-        $id = $request->query->get('id');
-        $slug = $request->query->get('slug');
-        $languageCode = $request->query->get('language');
-        $keys = $request->query->get('keys');
-
-        if ($id === null && $slug === null) {
+        if ($input->id === null && $input->slug === null) {
             throw new UnprocessableEntityHttpException('Either id or slug is required');
         }
 
-        if ($id !== null && !ctype_digit((string)$id)) {
-            throw new UnprocessableEntityHttpException('id must be an integer');
-        }
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
 
         $user = null;
-        if ($id !== null) {
-            $user = $this->em->getRepository(User::class)->findOneBy(['id' => (int)$id, 'blog' => $blog]);
-        } elseif (is_string($slug)) {
-            $user = $this->em->getRepository(User::class)->findOneBy(['slug' => $slug, 'blog' => $blog]);
+        if ($input->id !== null) {
+            $user = $this->em->getRepository(User::class)->findOneBy(['id' => $input->id, 'blog' => $blog]);
+        } elseif ($input->slug !== null) {
+            $user = $this->em->getRepository(User::class)->findOneBy(['slug' => $input->slug, 'blog' => $blog]);
         }
 
         if ($user === null) {
@@ -66,35 +59,28 @@ class AuthorsController
 
         $authorObject = $this->authorObjectFactory->createFromEntity($user, $blog, $language);
 
-        $filtered = KeysFilter::filter($authorObject, is_string($keys) ? $keys : null);
+        $filtered = KeysFilter::filter($authorObject, $input->keys);
 
         return new JsonResponse($filtered);
     }
 
     #[Route('/authors', name: 'authors', methods: ['GET'])]
-    public function authors(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
+    public function authors(#[MapBlogFromSubdomain] Blog $blog, #[MapQueryString] GetAuthorsInput $input): JsonResponse
     {
-        $languageCode = $request->query->get('language');
-        $limitParam = $request->query->get('limit');
-        $pageParam = $request->query->get('page');
-        $filter = $request->query->get('filter');
-        $sort = $request->query->get('sort');
-        $keys = $request->query->get('keys');
-
-        $language = $this->dataApiHelper->getLanguage($blog, is_string($languageCode) ? $languageCode : null);
-        $limit = $this->dataApiHelper->getLimit($limitParam !== null ? (int)$limitParam : null);
-        $page = $this->dataApiHelper->getPage($pageParam !== null ? (int)$pageParam : null);
+        $language = $this->dataApiHelper->getLanguage($blog, $input->language);
+        $limit = $this->dataApiHelper->getLimit($input->limit);
+        $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
-        $orderBys = $this->dataApiHelper->getSort(is_string($sort) ? $sort : null, self::ALLOWED_SORTS);
+        $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        [$authors, $total] = $this->queryAuthors($blog, is_string($filter) ? $filter : null, $limit, $offset, $orderBys);
+        [$authors, $total] = $this->queryAuthors($blog, $input->filter, $limit, $offset, $orderBys);
 
         $authorObjects = array_map(
             fn(User $user) => $this->authorObjectFactory->createFromEntity($user, $blog, $language),
             $authors
         );
 
-        $filteredAuthors = KeysFilter::filter($authorObjects, is_string($keys) ? $keys : null);
+        $filteredAuthors = KeysFilter::filter($authorObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredAuthors,

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
 use App\Entity\Language;
 use App\Entity\Navigation;
@@ -65,8 +66,8 @@ class Blog
     #[ORM\Column]
     private \DateTimeImmutable $trial_ends_at;
 
-    #[ORM\Column(length: 255, nullable: true, enumType: BlogType::class, options: ['default' => 'default'])]
-    private ?BlogType $type = BlogType::DEFAULT;
+    #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
+    private BlogType $type = BlogType::DEFAULT;
 
     #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
@@ -80,9 +81,8 @@ class Blog
     #[ORM\Column(nullable: true, options: ['default' => true])]
     private ?bool $hosting_redirect_subdomain = true;
 
-    /** @var array<string, mixed>|null $meta */
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $meta = null;
+    #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
+    private BlogMeta $meta;
 
     /** @var array<string, number>|null $counts */
     #[ORM\Column(type: 'json', nullable: true)]
@@ -96,6 +96,7 @@ class Blog
         $this->variants = new ArrayCollection();
         $this->languages = new ArrayCollection();
         $this->navigations = new ArrayCollection();
+        $this->meta = new BlogMeta();
     }
 
     public function getId(): int
@@ -219,12 +220,12 @@ class Blog
         return $this;
     }
 
-    public function getType(): ?BlogType
+    public function getType(): BlogType
     {
         return $this->type;
     }
 
-    public function setType(?BlogType $type): static
+    public function setType(BlogType $type): static
     {
         $this->type = $type;
         return $this;
@@ -274,18 +275,12 @@ class Blog
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getMeta(): ?array
+    public function getMeta(): BlogMeta
     {
         return $this->meta;
     }
 
-    /**
-     * @param array<string, mixed>|null $meta
-     */
-    public function setMeta(?array $meta): static
+    public function setMeta(BlogMeta $meta): static
     {
         $this->meta = $meta;
         return $this;
