@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Repository\BlogRepository;
+use App\Entity\Language;
+use App\Entity\Navigation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +23,16 @@ class Blog
     /** @var Collection<int, BlogVariant> */
     #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
     private Collection $variants;
+
+    /** @var Collection<int, Language> */
+    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['is_primary' => 'DESC', 'id' => 'ASC'])]
+    private Collection $languages;
+
+    /** @var Collection<int, Navigation> */
+    #[ORM\OneToMany(targetEntity: Navigation::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['sort' => 'ASC'])]
+    private Collection $navigations;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $created_at = null;
@@ -82,6 +94,8 @@ class Blog
     public function __construct()
     {
         $this->variants = new ArrayCollection();
+        $this->languages = new ArrayCollection();
+        $this->navigations = new ArrayCollection();
     }
 
     public function getId(): int
@@ -311,5 +325,21 @@ class Blog
     public function getVariants(): Collection
     {
         return $this->variants;
+    }
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @return Collection<int, Navigation>
+     */
+    public function getNavigations(): Collection
+    {
+        return $this->navigations;
     }
 }

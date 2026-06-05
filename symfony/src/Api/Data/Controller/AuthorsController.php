@@ -6,9 +6,9 @@ use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
+use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\User;
-use App\Service\Blog\BlogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
@@ -26,17 +26,14 @@ class AuthorsController
     ];
 
     public function __construct(
-        private BlogService $blogService,
         private DataApiHelper $dataApiHelper,
         private AuthorObjectFactory $authorObjectFactory,
         private EntityManagerInterface $em,
     ) {}
 
     #[Route('/author', name: 'author', methods: ['GET'])]
-    public function author(string $subdomain, Request $request): JsonResponse
+    public function author(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $id = $request->query->get('id');
         $slug = $request->query->get('slug');
         $languageCode = $request->query->get('language');
@@ -63,7 +60,6 @@ class AuthorsController
             throw new NotFoundHttpException('Author not found');
         }
 
-        // Must have posts_count > 0 to be considered an author
         if ($user->getPostsCount() === 0) {
             throw new UnprocessableEntityHttpException('User is not an author');
         }
@@ -76,10 +72,8 @@ class AuthorsController
     }
 
     #[Route('/authors', name: 'authors', methods: ['GET'])]
-    public function authors(string $subdomain, Request $request): JsonResponse
+    public function authors(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $languageCode = $request->query->get('language');
         $limitParam = $request->query->get('limit');
         $pageParam = $request->query->get('page');
@@ -121,7 +115,6 @@ class AuthorsController
             ->andWhere('u.posts_count > 0')
             ->setParameter('blog', $blog);
 
-        // Apply filterq
         if ($filter !== null && $filter !== '') {
             try {
                 FilterQ::expression($filter)
@@ -138,7 +131,6 @@ class AuthorsController
             }
         }
 
-        // Count
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT u.id)');
         $totalFetch = $countQb->getQuery()->getSingleScalarResult();
@@ -148,7 +140,6 @@ class AuthorsController
             return [[], 0];
         }
 
-        // Apply ordering
         foreach ($orderBys as [$column, $direction]) {
             $qb->addOrderBy($column, $direction);
         }
@@ -159,14 +150,5 @@ class AuthorsController
         $users = $qb->getQuery()->getResult();
 
         return [$users, $total];
-    }
-
-    private function getBlog(string $subdomain): Blog
-    {
-        $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        if ($blog === null) {
-            throw new NotFoundHttpException('Blog not found');
-        }
-        return $blog;
     }
 }

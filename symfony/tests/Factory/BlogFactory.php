@@ -61,6 +61,26 @@ final class BlogFactory extends PersistentObjectFactory
         return [$blog, $user];
     }
 
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $languageAttrs
+     */
+    public static function createOneWithPrimaryLanguage(
+        array $blogAttrs = [],
+        array $languageAttrs = [],
+    ): Blog {
+        $blog = self::createOne($blogAttrs);
+
+        LanguageFactory::createOne(array_merge([
+            'blog' => $blog,
+            'code' => 'en',
+            'name' => 'English',
+            'is_primary' => true,
+        ], $languageAttrs));
+
+        return $blog;
+    }
+
     public function withOrganization(int $organizationId): static
     {
         return $this->with(['organization_id' => $organizationId]);

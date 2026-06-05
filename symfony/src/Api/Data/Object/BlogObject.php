@@ -5,7 +5,6 @@ namespace App\Api\Data\Object;
 use App\Entity\Blog;
 use App\Entity\Enum\NavigationType;
 use App\Entity\Language;
-use App\Entity\Navigation;
 use App\Service\Route\PermalinkService;
 
 class BlogObject
@@ -36,16 +35,10 @@ class BlogObject
     /** @var LanguageObject[] */
     public array $languages = [];
 
-    /**
-     * @param Navigation[] $navigations
-     * @param Language[] $allLanguages
-     */
     public function __construct(
         Blog $blog,
         Language $language,
         PermalinkService $permalinkService,
-        array $navigations = [],
-        array $allLanguages = [],
     ) {
         $type = $blog->getType();
         $this->type = $type !== null ? $type->value : 'default';
@@ -97,7 +90,7 @@ class BlogObject
         $counts = $blog->getCounts() ?? [];
         $this->posts_count = is_numeric($counts['posts'] ?? null) ? (int)$counts['posts'] : 0;
 
-        foreach ($navigations as $nav) {
+        foreach ($blog->getNavigations() as $nav) {
             $navObj = new NavObject($nav, $language);
             if ($nav->getType() === NavigationType::HEADER) {
                 $this->nav_header[] = $navObj;
@@ -106,7 +99,7 @@ class BlogObject
             }
         }
 
-        foreach ($allLanguages as $lang) {
+        foreach ($blog->getLanguages() as $lang) {
             $this->languages[] = new LanguageObject($lang);
         }
     }

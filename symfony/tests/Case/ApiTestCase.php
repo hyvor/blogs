@@ -25,7 +25,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     ): Response {
         $authUser = null;
         if ($user instanceof BlogUser) {
-            $authUser = AuthFake::generateUser(['id' => (int)$user->getHyvorUserId()]);
+            $authUser = AuthFake::generateUser(['id' => (int) $user->getHyvorUserId()]);
         } elseif ($user instanceof AuthUser) {
             $authUser = $user;
         } elseif (is_int($user)) {
@@ -49,7 +49,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
                 'CONTENT_TYPE' => 'application/json',
                 'HTTP_X_ORGANIZATION_ID' => $orgId,
             ], $server),
-            content: (string)json_encode($data),
+            content: (string) json_encode($data),
         );
         $response = $this->client->getResponse();
         if ($response->getStatusCode() === 500) {
@@ -89,7 +89,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
             $method,
             '/api/console/v0/' . $endpoint,
             server: array_merge(['CONTENT_TYPE' => 'application/json'], $server),
-            content: (string)json_encode($data),
+            content: (string) json_encode($data),
         );
 
         $response = $this->client->getResponse();
@@ -106,7 +106,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     {
         $subdomain = $blog instanceof Blog ? $blog->getSubdomain() : $blog;
         $endpoint = ltrim($endpoint, '/');
-        $url = '/api/data/v1/' . $subdomain . '/' . $endpoint;
+        $url = '/api/data/v0/' . $subdomain . '/' . $endpoint;
         if (!empty($params)) {
             $url .= '?' . http_build_query($params);
         }

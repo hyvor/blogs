@@ -6,8 +6,6 @@ use App\Api\Data\Controller\BlogController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
-use App\Tests\Factory\LanguageFactory;
-use App\Entity\Enum\BlogHostingAt;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(BlogController::class)]
@@ -15,11 +13,10 @@ class BlogTest extends ApiTestCase
 {
     public function test_fetches_blog(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
-        BlogVariantFactory::createOne(['blog' => $blog, 'language' => $lang, 'language_id' => $lang->getId(), 'name' => 'My Blog']);
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        BlogVariantFactory::createOneForBlog($blog);
 
-        $response = $this->dataApi($blog, '/blog');
+        $this->dataApi($blog, '/blog');
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -34,11 +31,10 @@ class BlogTest extends ApiTestCase
 
     public function test_fetches_blog_with_correct_language(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
-        BlogVariantFactory::createOne(['blog' => $blog, 'language' => $lang, 'language_id' => $lang->getId(), 'name' => 'English Blog']);
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        BlogVariantFactory::createOneForBlog($blog);
 
-        $response = $this->dataApi($blog, '/blog', ['language' => 'en']);
+        $this->dataApi($blog, '/blog', ['language' => 'en']);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -47,8 +43,7 @@ class BlogTest extends ApiTestCase
 
     public function test_filters_key(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
 
         $this->dataApi($blog, '/blog', ['keys' => 'subdomain']);
 

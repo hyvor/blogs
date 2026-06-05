@@ -14,7 +14,6 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\Language;
-use App\Entity\Navigation;
 use App\Entity\Post;
 use App\Entity\PostAuthor;
 use App\Entity\PostTag;
@@ -166,10 +165,7 @@ class TemplateRendererService
     ): array {
         $config = $this->themeConfigService->getConfig($blog);
 
-        $allLanguages = $this->em->getRepository(Language::class)->findBy(['blog' => $blog]);
-        $navigations = $this->em->getRepository(Navigation::class)->findBy(['blog' => $blog]);
-
-        $blogObject = $this->blogObjectFactory->create($blog, $language, $navigations, $allLanguages);
+        $blogObject = $this->blogObjectFactory->create($blog, $language);
 
         $vars = [
             '_blog' => $blogObject,

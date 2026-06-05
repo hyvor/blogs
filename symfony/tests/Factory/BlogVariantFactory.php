@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
 use App\Entity\BlogVariant;
 use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -38,6 +39,24 @@ final class BlogVariantFactory extends PersistentObjectFactory
             'blog' => BlogFactory::new(),
             'language_id' => self::faker()->randomNumber(),
         ];
+    }
+
+    public static function createOneForBlog(Blog $blog): BlogVariant
+    {
+        $primaryLanguage = null;
+        foreach ($blog->getLanguages() as $lang) {
+            if ($lang->isPrimary()) {
+                $primaryLanguage = $lang;
+                break;
+            }
+        }
+        assert($primaryLanguage !== null, 'Blog must have a primary language');
+
+        return self::createOne([
+            'blog' => $blog,
+            'language' => $primaryLanguage,
+            'language_id' => $primaryLanguage->getId(),
+        ]);
     }
 
     /**

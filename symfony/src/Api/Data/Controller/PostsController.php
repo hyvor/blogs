@@ -6,10 +6,10 @@ use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
+use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
-use App\Service\Blog\BlogService;
 use App\Service\Delivery\PostQueryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,6 @@ class PostsController
     ];
 
     public function __construct(
-        private BlogService $blogService,
         private DataApiHelper $dataApiHelper,
         private PostQueryService $postQueryService,
         private PostObjectFactory $postObjectFactory,
@@ -39,10 +38,8 @@ class PostsController
     ) {}
 
     #[Route('/post', name: 'post', methods: ['GET'])]
-    public function post(string $subdomain, Request $request): JsonResponse
+    public function post(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $id = $request->query->get('id');
         $slug = $request->query->get('slug');
         $languageCode = $request->query->get('language');
@@ -52,7 +49,6 @@ class PostsController
             throw new UnprocessableEntityHttpException('Either id or slug is required');
         }
 
-        // Validate id is an integer if provided
         if ($id !== null && !ctype_digit((string)$id)) {
             throw new UnprocessableEntityHttpException('id must be an integer');
         }
@@ -62,7 +58,6 @@ class PostsController
         $post = null;
         if ($id !== null) {
             $found = $this->postQueryService->getPostById((int)$id);
-            // Make sure the post belongs to this blog
             if ($found !== null && $found->getBlog()->getId() === $blog->getId()) {
                 $post = $found;
             }
@@ -74,7 +69,6 @@ class PostsController
             throw new NotFoundHttpException('Post not found');
         }
 
-        // Check if variant exists for the language at all
         $anyVariant = $this->em->getRepository(PostVariant::class)->findOneBy([
             'post' => $post,
             'language' => $language,
@@ -84,7 +78,6 @@ class PostsController
             throw new NotFoundHttpException('Post variant not found');
         }
 
-        // Variant exists but not published
         if ($anyVariant->getStatus() !== PostVariantStatus::PUBLISHED) {
             throw new UnprocessableEntityHttpException('This post is not published');
         }
@@ -101,10 +94,8 @@ class PostsController
     }
 
     #[Route('/posts', name: 'posts', methods: ['GET'])]
-    public function posts(string $subdomain, Request $request): JsonResponse
+    public function posts(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $languageCode = $request->query->get('language');
         $limitParam = $request->query->get('limit');
         $pageParam = $request->query->get('page');
@@ -133,7 +124,6 @@ class PostsController
             fn($post) => $this->postObjectFactory->createFromEntity($post, $blog, $language),
             $result['posts']
         );
-        // Filter nulls (shouldn't happen but guard anyway)
         $postObjects = array_values(array_filter($postObjects));
 
         $filteredPosts = KeysFilter::filter($postObjects, is_string($keys) ? $keys : null);
@@ -145,10 +135,8 @@ class PostsController
     }
 
     #[Route('/posts/search', name: 'posts_search', methods: ['GET'])]
-    public function search(string $subdomain, Request $request): JsonResponse
+    public function search(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $search = $request->query->get('search');
         if (!is_string($search) || $search === '') {
             throw new UnprocessableEntityHttpException('search parameter is required');
@@ -178,14 +166,5 @@ class PostsController
             'data' => $filteredPosts,
             'pagination' => new PaginationObject($limit, $page, $result['total']),
         ]);
-    }
-
-    private function getBlog(string $subdomain): Blog
-    {
-        $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        if ($blog === null) {
-            throw new NotFoundHttpException('Blog not found');
-        }
-        return $blog;
     }
 }

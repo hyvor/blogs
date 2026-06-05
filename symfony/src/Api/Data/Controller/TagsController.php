@@ -6,9 +6,9 @@ use App\Api\Data\DataApiHelper;
 use App\Api\Data\Factory\TagObjectFactory;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
+use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\Tag;
-use App\Service\Blog\BlogService;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
@@ -26,17 +26,14 @@ class TagsController
     ];
 
     public function __construct(
-        private BlogService $blogService,
         private DataApiHelper $dataApiHelper,
         private TagObjectFactory $tagObjectFactory,
         private EntityManagerInterface $em,
     ) {}
 
     #[Route('/tag', name: 'tag', methods: ['GET'])]
-    public function tag(string $subdomain, Request $request): JsonResponse
+    public function tag(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $id = $request->query->get('id');
         $slug = $request->query->get('slug');
         $languageCode = $request->query->get('language');
@@ -71,10 +68,8 @@ class TagsController
     }
 
     #[Route('/tags', name: 'tags', methods: ['GET'])]
-    public function tags(string $subdomain, Request $request): JsonResponse
+    public function tags(#[MapBlogFromSubdomain] Blog $blog, Request $request): JsonResponse
     {
-        $blog = $this->getBlog($subdomain);
-
         $languageCode = $request->query->get('language');
         $limitParam = $request->query->get('limit');
         $pageParam = $request->query->get('page');
@@ -120,15 +115,12 @@ class TagsController
             ->where('t.blog = :blog')
             ->setParameter('blog', $blog);
 
-        // Apply visibility filter
         if ($visibility === 'public') {
             $qb->andWhere('t.is_private = false OR t.is_private IS NULL');
         } elseif ($visibility === 'private') {
             $qb->andWhere('t.is_private = true');
         }
-        // 'any' = no filter
 
-        // Apply filterq
         if ($filter !== null && $filter !== '') {
             try {
                 FilterQ::expression($filter)
@@ -145,7 +137,6 @@ class TagsController
             }
         }
 
-        // Count
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT t.id)');
         $totalFetch = $countQb->getQuery()->getSingleScalarResult();
@@ -155,7 +146,6 @@ class TagsController
             return [[], 0];
         }
 
-        // Apply ordering
         foreach ($orderBys as [$column, $direction]) {
             $qb->addOrderBy($column, $direction);
         }
@@ -166,14 +156,5 @@ class TagsController
         $tags = $qb->getQuery()->getResult();
 
         return [$tags, $total];
-    }
-
-    private function getBlog(string $subdomain): Blog
-    {
-        $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        if ($blog === null) {
-            throw new NotFoundHttpException('Blog not found');
-        }
-        return $blog;
     }
 }
