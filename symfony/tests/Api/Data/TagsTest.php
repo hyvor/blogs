@@ -10,6 +10,7 @@ use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(TagsController::class)]
@@ -39,18 +40,17 @@ class TagsTest extends ApiTestCase
             ]);
             TagVariantFactory::createOne([
                 'tag' => $tag,
-                'tag_id' => $tag->getId(),
-                'language_id' => $this->lang1->getId(),
                 'language' => $this->lang1,
             ]);
             TagVariantFactory::createOne([
                 'tag' => $tag,
-                'tag_id' => $tag->getId(),
-                'language_id' => $this->lang2->getId(),
                 'language' => $this->lang2,
             ]);
             $this->tags[] = $tag;
         }
+
+        // other blog
+        TagFactory::createOne();
     }
 
     public function test_fetches_tags_without_params(): void
@@ -77,7 +77,7 @@ class TagsTest extends ApiTestCase
     public function test_does_not_work_with_wrong_language(): void
     {
         $this->dataApi($this->blog, '/tags', ['language' => 'jp']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Language not found');
     }
 
     public function test_gives_correct_limit(): void
@@ -91,6 +91,7 @@ class TagsTest extends ApiTestCase
 
     public function test_gives_correct_page_for_pagination(): void
     {
+        // default order is posts_count DESC
         // Update posts_count to control sort order
         $em = $this->getEm();
         $tag0 = $em->find(\App\Entity\Tag::class, $this->tags[0]->getId());
@@ -110,25 +111,25 @@ class TagsTest extends ApiTestCase
     public function test_does_not_work_for_invalid_limit(): void
     {
         $this->dataApi($this->blog, '/tags', ['limit' => 0]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'limit: This value should be greater than or equal to 1');
     }
 
     public function test_does_not_work_for_invalid_page(): void
     {
         $this->dataApi($this->blog, '/tags', ['page' => -1]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'page: This value should be greater than or equal to 1');
     }
 
     public function test_does_not_work_for_invalid_sort(): void
     {
         $this->dataApi($this->blog, '/tags', ['sort' => 'something_invalid']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Sort by something_invalid not supported');
     }
 
     public function test_does_not_work_for_invalid_sort_method(): void
     {
-        $this->dataApi($this->blog, '/tags', ['sort' => 'published_at SOME']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->dataApi($this->blog, '/tags', ['sort' => 'posts_count SOME']);
+        $this->assertResponseFailed(422, 'Sort method SOME not supported');
     }
 
     public function test_sorts_by_posts_count_desc(): void
@@ -190,7 +191,7 @@ class TagsTest extends ApiTestCase
 
     public function test_filters_by_slug(): void
     {
-        $tag = $this->tags[0];
+        $tag = $this->tags[1];
 
         $this->dataApi($this->blog, '/tags', ['filter' => "slug='{$tag->getSlug()}'"]);
 
@@ -200,9 +201,50 @@ class TagsTest extends ApiTestCase
         $this->assertSame($tag->getSlug(), $json['data'][0]['slug']);
     }
 
+    public function test_filters_by_posts_count(): void
+    {
+        $em = $this->getEm();
+        foreach ($this->tags as $i => $t) {
+            $tag = $em->find(\App\Entity\Tag::class, $t->getId());
+            $tag->setPostsCount(($i + 1) * 10);
+        }
+        $em->flush();
+
+        $this->dataApi($this->blog, '/tags', ['filter' => 'posts_count>=30']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(2, $json['data']);
+        foreach ($json['data'] as $item) {
+            $this->assertGreaterThanOrEqual(30, $item['posts_count']);
+        }
+    }
+
+    public function test_filters_by_created_at(): void
+    {
+        $em = $this->getEm();
+        foreach ($this->tags as $i => $tag) {
+            $createdAt = new \DateTimeImmutable();
+            $createdAt = $createdAt->modify("-{$i} days");
+            $tag->setCreatedAt($createdAt);
+        }
+        $em->flush();
+
+        $date = (new \DateTimeImmutable())->modify('-2 days')->format('Y-m-d');
+        $this->dataApi($this->blog, '/tags', ['filter' => "created_at>='{$date}'"]);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(3, $json['data']);
+        foreach ($json['data'] as $item) {
+            $itemCreatedAt = new DateTimeImmutable('@' . $item['created_at'])->format('Y-m-d');
+            $this->assertGreaterThanOrEqual($date, $itemCreatedAt);
+        }
+    }
+
     public function test_sends_total_correctly(): void
     {
-        $this->dataApi($this->blog, '/tags');
+        $this->dataApi($this->blog, '/tags', ['limit' => 2]);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -235,8 +277,6 @@ class TagsTest extends ApiTestCase
         ]);
         TagVariantFactory::createOne([
             'tag' => $privateTag,
-            'tag_id' => $privateTag->getId(),
-            'language_id' => $this->lang1->getId(),
             'language' => $this->lang1,
         ]);
 

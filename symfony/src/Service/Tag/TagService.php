@@ -47,7 +47,7 @@ class TagService
             ->setParameter('blog', $blog);
 
         if ($visibility === 'public') {
-            $qb->andWhere('t.is_private = false OR t.is_private IS NULL');
+            $qb->andWhere('t.is_private = false');
         } elseif ($visibility === 'private') {
             $qb->andWhere('t.is_private = true');
         }
@@ -70,8 +70,7 @@ class TagService
 
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT t.id)');
-        $totalFetch = $countQb->getQuery()->getSingleScalarResult();
-        $total = is_numeric($totalFetch) ? (int) $totalFetch : 0;
+        $total = (int ) $countQb->getQuery()->getSingleScalarResult();
 
         if ($total === 0) {
             return ['tags' => [], 'total' => 0];
