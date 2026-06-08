@@ -34,8 +34,8 @@ final class TagVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
-            'tag_id' => self::faker()->randomNumber(),
+            'language' => LanguageFactory::new(),
+            'tag' => TagFactory::new(),
         ];
     }
 

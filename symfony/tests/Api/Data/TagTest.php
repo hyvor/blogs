@@ -39,16 +39,12 @@ class TagTest extends ApiTestCase
 
         TagVariantFactory::createOne([
             'tag' => $this->tag,
-            'tag_id' => $this->tag->getId(),
-            'language_id' => $this->lang1->getId(),
             'language' => $this->lang1,
             'name' => 'My Tag',
         ]);
 
         TagVariantFactory::createOne([
             'tag' => $this->tag,
-            'tag_id' => $this->tag->getId(),
-            'language_id' => $this->lang2->getId(),
             'language' => $this->lang2,
             'name' => 'Mon Tag',
         ]);

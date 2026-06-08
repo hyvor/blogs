@@ -51,7 +51,7 @@ class TagsController
             throw new NotFoundHttpException('Tag not found');
         }
 
-        $tagObject = $this->tagObjectFactory->createFromEntity($tag, $blog, $language);
+        $tagObject = $this->tagObjectFactory->create($tag, $blog, $language);
 
         $filtered = KeysFilter::filter($tagObject, $input->keys);
 
@@ -70,7 +70,7 @@ class TagsController
         $result = $this->tagService->getTagsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
 
         $tagObjects = array_map(
-            fn(Tag $tag) => $this->tagObjectFactory->createFromEntity($tag, $blog, $language),
+            fn(Tag $tag) => $this->tagObjectFactory->create($tag, $blog, $language),
             $result['tags']
         );
 

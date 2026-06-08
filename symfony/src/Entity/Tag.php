@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -38,6 +40,15 @@ class Tag
 
     #[ORM\Column(nullable: true, options: ['default' => false])]
     private bool $is_private = false;
+
+    /** @var Collection<int, TagVariant> */
+    #[ORM\OneToMany(targetEntity: TagVariant::class, mappedBy: 'tag')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -136,5 +147,13 @@ class Tag
     {
         $this->is_private = $is_private;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, TagVariant>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
     }
 }

@@ -20,15 +20,9 @@ class TagVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $tag_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     private Tag $tag;
-
-    #[ORM\Column]
-    private int $language_id;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
@@ -73,17 +67,6 @@ class TagVariant
         return $this;
     }
 
-    public function getTagId(): int
-    {
-        return $this->tag_id;
-    }
-
-    public function setTagId(int $tag_id): static
-    {
-        $this->tag_id = $tag_id;
-        return $this;
-    }
-
     public function getTag(): Tag
     {
         return $this->tag;
@@ -92,17 +75,6 @@ class TagVariant
     public function setTag(Tag $tag): static
     {
         $this->tag = $tag;
-        return $this;
-    }
-
-    public function getLanguageId(): int
-    {
-        return $this->language_id;
-    }
-
-    public function setLanguageId(int $language_id): static
-    {
-        $this->language_id = $language_id;
         return $this;
     }
 
