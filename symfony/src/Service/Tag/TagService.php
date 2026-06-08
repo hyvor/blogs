@@ -7,7 +7,6 @@ use App\Entity\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class TagService
 {
@@ -31,6 +30,7 @@ class TagService
      * @param array<array{0: string, 1: string}> $orderBys
      * @param 'public'|'private'|'any' $visibility
      * @return array{tags: Tag[], total: int}
+     * @throws FilterQException
      */
     public function getTagsWithFilterQ(
         Blog $blog,
@@ -53,19 +53,15 @@ class TagService
         }
 
         if ($filter !== null && $filter !== '') {
-            try {
-                FilterQ::expression($filter)
-                    ->queryBuilder($qb)
-                    ->keys(function ($keys) {
-                        $keys->add('id', 't.id')->valueType('int');
-                        $keys->add('slug', 't.slug')->valueType('string');
-                        $keys->add('posts_count', 't.posts_count')->valueType('int');
-                        $keys->add('created_at', 't.created_at')->valueType('date');
-                    })
-                    ->addWhere();
-            } catch (FilterQException $e) {
-                throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-            }
+            FilterQ::expression($filter)
+                ->queryBuilder($qb)
+                ->keys(function ($keys) {
+                    $keys->add('id', 't.id')->valueType('int');
+                    $keys->add('slug', 't.slug')->valueType('string');
+                    $keys->add('posts_count', 't.posts_count')->valueType('int');
+                    $keys->add('created_at', 't.created_at')->valueType('date');
+                })
+                ->addWhere();
         }
 
         $countQb = clone $qb;

@@ -12,6 +12,7 @@ use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\User;
 use App\Service\User\UserService;
+use Hyvor\FilterQ\Exceptions\FilterQException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -73,7 +74,11 @@ class AuthorsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        $result = $this->userService->getAuthorsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys);
+        try {
+            $result = $this->userService->getAuthorsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys);
+        } catch (FilterQException $e) {
+            throw new UnprocessableEntityHttpException("Filter error: " . $e->getMessage(), $e);
+        }
 
         $authorObjects = array_map(
             fn(User $user) => $this->authorObjectFactory->create($user, $blog, $language),

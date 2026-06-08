@@ -4,8 +4,9 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
-use App\Data\Objects\DataAPI\AuthorObject;
+use App\Api\Data\Object\AuthorObject;
 use App\Entity\Enum\BlogHostingAt;
+use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -32,6 +33,9 @@ class AuthorsTest extends ApiTestCase
         $this->lang1 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'en', 'is_primary' => true]);
         $this->lang2 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author', 'is_enabled' => true]);
+
+        // other blog
+        UserFactory::createOne();
     }
 
     private function createAuthors(int $count, array $attrs = []): array
@@ -290,5 +294,11 @@ class AuthorsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame(3, $json['pagination']['total']);
+    }
+
+    public function test_filter_error(): void
+    {
+        $this->dataApi($this->blog, '/authors', ['filter' => 'posts_count=test']);
+        $this->assertResponseFailed(422, 'Filter error: Value for posts_count should be one of: int');
     }
 }

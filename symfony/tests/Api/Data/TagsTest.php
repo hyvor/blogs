@@ -303,4 +303,10 @@ class TagsTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertCount(5, $json['data']); // 4 public + 1 private
     }
+
+    public function test_filter_error(): void
+    {
+        $this->dataApi($this->blog, '/tags', ['filter' => 'posts_count=test']);
+        $this->assertResponseFailed(422, 'Filter error: Value for posts_count should be one of: int');
+    }
 }

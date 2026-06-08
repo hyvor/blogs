@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Hyvor\Internal\Auth\AuthUser;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class UserService
 {
@@ -48,6 +47,7 @@ class UserService
     /**
      * @param array<array{0: string, 1: string}> $orderBys
      * @return array{users: User[], total: int}
+     * @throws FilterQException
      */
     public function getAuthorsWithFilterQ(
         Blog $blog,
@@ -64,19 +64,15 @@ class UserService
             ->setParameter('blog', $blog);
 
         if ($filter !== null && $filter !== '') {
-            try {
-                FilterQ::expression($filter)
-                    ->queryBuilder($qb)
-                    ->keys(function ($keys) {
-                        $keys->add('id', 'u.id')->valueType('int');
-                        $keys->add('slug', 'u.slug')->valueType('string');
-                        $keys->add('posts_count', 'u.posts_count')->valueType('int');
-                        $keys->add('created_at', 'u.created_at')->valueType('date');
-                    })
-                    ->addWhere();
-            } catch (FilterQException $e) {
-                throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-            }
+            FilterQ::expression($filter)
+                ->queryBuilder($qb)
+                ->keys(function ($keys) {
+                    $keys->add('id', 'u.id')->valueType('int');
+                    $keys->add('slug', 'u.slug')->valueType('string');
+                    $keys->add('posts_count', 'u.posts_count')->valueType('int');
+                    $keys->add('created_at', 'u.created_at')->valueType('date');
+                })
+                ->addWhere();
         }
 
         $countQb = clone $qb;

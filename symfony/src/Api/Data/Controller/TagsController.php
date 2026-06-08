@@ -12,6 +12,7 @@ use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\Tag;
 use App\Service\Tag\TagService;
+use Hyvor\FilterQ\Exceptions\FilterQException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -67,7 +68,11 @@ class TagsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        $result = $this->tagService->getTagsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
+        try {
+            $result = $this->tagService->getTagsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
+        } catch (FilterQException $e) {
+            throw new UnprocessableEntityHttpException('Filter error: ' . $e->getMessage(), $e);
+        }
 
         $tagObjects = array_map(
             fn(Tag $tag) => $this->tagObjectFactory->create($tag, $blog, $language),
