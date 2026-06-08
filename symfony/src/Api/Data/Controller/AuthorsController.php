@@ -76,7 +76,7 @@ class AuthorsController
         $result = $this->userService->getAuthorsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys);
 
         $authorObjects = array_map(
-            fn(User $user) => $this->authorObjectFactory->createFromEntity($user, $blog, $language),
+            fn(User $user) => $this->authorObjectFactory->create($user, $blog, $language),
             $result['users']
         );
 

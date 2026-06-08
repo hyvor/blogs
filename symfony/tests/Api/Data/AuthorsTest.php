@@ -3,6 +3,8 @@
 namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\AuthorsController;
+use App\Api\Data\Factory\AuthorObjectFactory;
+use App\Data\Objects\DataAPI\AuthorObject;
 use App\Entity\Enum\BlogHostingAt;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -13,6 +15,9 @@ use App\Tests\Factory\UserVariantFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AuthorsController::class)]
+#[CoversClass(UserService::class)]
+#[CoversClass(AuthorObjectFactory::class)]
+#[CoversClass(AuthorObject::class)]
 class AuthorsTest extends ApiTestCase
 {
     private $blog;
@@ -40,8 +45,6 @@ class AuthorsTest extends ApiTestCase
             ], $attrs));
             UserVariantFactory::createOne([
                 'user' => $author,
-                'user_id' => $author->getId(),
-                'language_id' => $this->lang1->getId(),
                 'language' => $this->lang1,
             ]);
             $authors[] = $author;
@@ -68,8 +71,6 @@ class AuthorsTest extends ApiTestCase
         foreach ($authors as $author) {
             UserVariantFactory::createOne([
                 'user' => $author,
-                'user_id' => $author->getId(),
-                'language_id' => $this->lang2->getId(),
                 'language' => $this->lang2,
             ]);
         }
@@ -85,7 +86,7 @@ class AuthorsTest extends ApiTestCase
     public function test_does_not_work_with_wrong_language(): void
     {
         $this->dataApi($this->blog, '/authors', ['language' => 'jp']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Language not found');
     }
 
     public function test_gives_correct_limit(): void
@@ -101,12 +102,10 @@ class AuthorsTest extends ApiTestCase
 
     public function test_gives_correct_page_for_pagination(): void
     {
-        $em = $this->getEm();
-
         $author1 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 101, 'status' => 'active']);
         $author2 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 100, 'status' => 'active']);
-        UserVariantFactory::createOne(['user' => $author1, 'user_id' => $author1->getId(), 'language_id' => $this->lang1->getId(), 'language' => $this->lang1]);
-        UserVariantFactory::createOne(['user' => $author2, 'user_id' => $author2->getId(), 'language_id' => $this->lang1->getId(), 'language' => $this->lang1]);
+        UserVariantFactory::createOne(['user' => $author1, 'language' => $this->lang1]);
+        UserVariantFactory::createOne(['user' => $author2, 'language' => $this->lang1]);
 
         $this->dataApi($this->blog, '/authors', ['limit' => 1, 'page' => 2]);
 
@@ -119,25 +118,25 @@ class AuthorsTest extends ApiTestCase
     public function test_does_not_work_for_invalid_limit(): void
     {
         $this->dataApi($this->blog, '/authors', ['limit' => 0]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'limit: This value should be greater than or equal to 1');
     }
 
     public function test_does_not_work_for_invalid_page(): void
     {
         $this->dataApi($this->blog, '/authors', ['page' => -1]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'page: This value should be greater than or equal to 1');
     }
 
     public function test_does_not_work_for_invalid_sort(): void
     {
         $this->dataApi($this->blog, '/authors', ['sort' => 'something_invalid']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Sort by something_invalid not supported');
     }
 
     public function test_does_not_work_for_invalid_sort_method(): void
     {
-        $this->dataApi($this->blog, '/authors', ['sort' => 'published_at SOME']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->dataApi($this->blog, '/authors', ['sort' => 'posts_count SOME']);
+        $this->assertResponseFailed(422, 'Sort method SOME not supported');
     }
 
     public function test_sorts_by_posts_count_desc(): void
@@ -146,7 +145,7 @@ class AuthorsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($authors as $i => $a) {
             $u = $em->find(\App\Entity\User::class, $a->getId());
-            $u->setPostsCount(($i + 1) * 10);
+            $u->setPostsCount(rand(1, 100));
         }
         $em->flush();
 
@@ -164,7 +163,7 @@ class AuthorsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($authors as $i => $a) {
             $u = $em->find(\App\Entity\User::class, $a->getId());
-            $u->setPostsCount(($i + 1) * 10);
+            $u->setPostsCount(rand(1, 100));
         }
         $em->flush();
 
@@ -174,6 +173,40 @@ class AuthorsTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertLessThanOrEqual($json['data'][1]['posts_count'], $json['data'][0]['posts_count']);
         $this->assertLessThanOrEqual($json['data'][2]['posts_count'], $json['data'][1]['posts_count']);
+    }
+
+    public function test_sorts_by_created_at_desc(): void
+    {
+        $authors = $this->createAuthors(3);
+        $em = $this->getEm();
+        foreach ($authors as $i => $a) {
+            $a->setCreatedAt(new \DateTimeImmutable('-' . rand(1, 100) . ' days'));
+        }
+        $em->flush();
+
+        $this->dataApi($this->blog, '/authors', ['sort' => 'created_at', 'limit' => 3]);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertGreaterThanOrEqual($json['data'][1]['created_at'], $json['data'][0]['created_at']);
+        $this->assertGreaterThanOrEqual($json['data'][2]['created_at'], $json['data'][1]['created_at']);
+    }
+
+    public function test_sorts_by_created_at_asc(): void
+    {
+        $authors = $this->createAuthors(3);
+        $em = $this->getEm();
+        foreach ($authors as $i => $a) {
+            $a->setCreatedAt(new \DateTimeImmutable('-' . rand(1, 100) . ' days'));
+        }
+        $em->flush();
+
+        $this->dataApi($this->blog, '/authors', ['sort' => 'created_at ASC', 'limit' => 3]);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertLessThanOrEqual($json['data'][1]['created_at'], $json['data'][0]['created_at']);
+        $this->assertLessThanOrEqual($json['data'][2]['created_at'], $json['data'][1]['created_at']);
     }
 
     public function test_filters_keys(): void
@@ -204,7 +237,7 @@ class AuthorsTest extends ApiTestCase
     public function test_filters_by_slug(): void
     {
         $author = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 5, 'slug' => 'filter-by-slug-test', 'status' => 'active']);
-        UserVariantFactory::createOne(['user' => $author, 'user_id' => $author->getId(), 'language_id' => $this->lang1->getId(), 'language' => $this->lang1]);
+        UserVariantFactory::createOne(['user' => $author, 'language' => $this->lang1]);
 
         $this->dataApi($this->blog, '/authors', ['filter' => "slug='filter-by-slug-test'"]);
 
@@ -214,11 +247,45 @@ class AuthorsTest extends ApiTestCase
         $this->assertSame('filter-by-slug-test', $json['data'][0]['slug']);
     }
 
+    public function test_filters_by_posts_count(): void
+    {
+        $authors = $this->createAuthors(4);
+
+        foreach ($authors as $i => $a) {
+            $a->setPostsCount(($i + 1) * 5);
+        }
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/authors', ['filter' => 'posts_count>=10', 'sort' => 'posts_count ASC']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(3, $json['data']);
+        $this->assertSame(10, $json['data'][0]['posts_count']);
+    }
+
+    public function test_filters_by_created_at(): void
+    {
+        $authors = $this->createAuthors(4);
+
+        foreach ($authors as $i => $a) {
+            $a->setCreatedAt(new \DateTimeImmutable('-' . ($i + 1) * 5 . ' days'));
+        }
+        $this->getEm()->flush();
+
+        $date = (new \DateTimeImmutable('-15 days'))->format('Y-m-d');
+        $this->dataApi($this->blog, '/authors', ['filter' => "created_at>='{$date}'", 'sort' => 'created_at ASC']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(3, $json['data']);
+    }
+
     public function test_sends_total_correctly(): void
     {
         $this->createAuthors(3);
 
-        $this->dataApi($this->blog, '/authors');
+        $this->dataApi($this->blog, '/authors', ['limit' => 2]);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
