@@ -29,7 +29,7 @@ class TagObject
     public function __construct(Tag $tag, Blog $blog, Language $language, PermalinkService $permalinkService, array $variantData = [])
     {
         $this->id = $tag->getId();
-        $this->created_at = $tag->getCreatedAt()?->getTimestamp() ?? 0;
+        $this->created_at = $tag->getCreatedAt()->getTimestamp();
         $this->is_private = (bool)$tag->isPrivate();
         $this->slug = $tag->getSlug();
         $this->url = $permalinkService->getTagPermalink($tag, $blog, $language);

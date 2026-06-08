@@ -37,6 +37,8 @@ final class TagFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'slug' => self::faker()->text(255),
+            'created_at' => self::faker()->dateTime(),
+            'updated_at' => self::faker()->dateTime(),
         ];
     }
 

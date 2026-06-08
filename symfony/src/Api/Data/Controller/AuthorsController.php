@@ -11,9 +11,7 @@ use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Hyvor\FilterQ\Exceptions\FilterQException;
-use Hyvor\FilterQ\FilterQ;
+use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,7 +28,7 @@ class AuthorsController
     public function __construct(
         private DataApiHelper $dataApiHelper,
         private AuthorObjectFactory $authorObjectFactory,
-        private EntityManagerInterface $em,
+        private UserService $userService,
     ) {}
 
     #[Route('/author', name: 'author', methods: ['GET'])]
@@ -44,9 +42,9 @@ class AuthorsController
 
         $user = null;
         if ($input->id !== null) {
-            $user = $this->em->getRepository(User::class)->findOneBy(['id' => $input->id, 'blog' => $blog]);
+            $user = $this->userService->getUserById($blog, $input->id);
         } elseif ($input->slug !== null) {
-            $user = $this->em->getRepository(User::class)->findOneBy(['slug' => $input->slug, 'blog' => $blog]);
+            $user = $this->userService->getUserBySlug($blog, $input->slug);
         }
 
         if ($user === null) {
@@ -73,68 +71,18 @@ class AuthorsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        [$authors, $total] = $this->queryAuthors($blog, $input->filter, $limit, $offset, $orderBys);
+        $result = $this->userService->getAuthorsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys);
 
         $authorObjects = array_map(
             fn(User $user) => $this->authorObjectFactory->createFromEntity($user, $blog, $language),
-            $authors
+            $result['users']
         );
 
         $filteredAuthors = KeysFilter::filter($authorObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredAuthors,
-            'pagination' => new PaginationObject($limit, $page, $total),
+            'pagination' => new PaginationObject($limit, $page, $result['total']),
         ]);
-    }
-
-    /**
-     * @param array<array{0: string, 1: string}> $orderBys
-     * @return array{0: User[], 1: int}
-     */
-    private function queryAuthors(Blog $blog, ?string $filter, int $limit, int $offset, array $orderBys): array
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('u')
-            ->from(User::class, 'u')
-            ->where('u.blog = :blog')
-            ->andWhere('u.posts_count > 0')
-            ->setParameter('blog', $blog);
-
-        if ($filter !== null && $filter !== '') {
-            try {
-                FilterQ::expression($filter)
-                    ->queryBuilder($qb)
-                    ->keys(function ($keys) {
-                        $keys->add('id', 'u.id')->valueType('int');
-                        $keys->add('slug', 'u.slug')->valueType('string');
-                        $keys->add('posts_count', 'u.posts_count')->valueType('int');
-                        $keys->add('created_at', 'u.created_at')->valueType('date');
-                    })
-                    ->addWhere();
-            } catch (FilterQException $e) {
-                throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-            }
-        }
-
-        $countQb = clone $qb;
-        $countQb->select('COUNT(DISTINCT u.id)');
-        $totalFetch = $countQb->getQuery()->getSingleScalarResult();
-        $total = is_numeric($totalFetch) ? (int)$totalFetch : 0;
-
-        if ($total === 0) {
-            return [[], 0];
-        }
-
-        foreach ($orderBys as [$column, $direction]) {
-            $qb->addOrderBy($column, $direction);
-        }
-
-        $qb->setMaxResults($limit)->setFirstResult($offset);
-
-        /** @var User[] $users */
-        $users = $qb->getQuery()->getResult();
-
-        return [$users, $total];
     }
 }

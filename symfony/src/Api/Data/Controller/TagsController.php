@@ -11,9 +11,7 @@ use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Entity\Tag;
-use Doctrine\ORM\EntityManagerInterface;
-use Hyvor\FilterQ\Exceptions\FilterQException;
-use Hyvor\FilterQ\FilterQ;
+use App\Service\Tag\TagService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,7 +28,7 @@ class TagsController
     public function __construct(
         private DataApiHelper $dataApiHelper,
         private TagObjectFactory $tagObjectFactory,
-        private EntityManagerInterface $em,
+        private TagService $tagService,
     ) {}
 
     #[Route('/tag', name: 'tag', methods: ['GET'])]
@@ -44,9 +42,9 @@ class TagsController
 
         $tag = null;
         if ($input->id !== null) {
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['id' => $input->id, 'blog' => $blog]);
+            $tag = $this->tagService->getTagById($blog, $input->id);
         } elseif ($input->slug !== null) {
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['slug' => $input->slug, 'blog' => $blog]);
+            $tag = $this->tagService->getTagBySlug($blog, $input->slug);
         }
 
         if ($tag === null) {
@@ -69,73 +67,18 @@ class TagsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        [$tags, $total] = $this->queryTags($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
+        $result = $this->tagService->getTagsWithFilterQ($blog, $input->filter, $limit, $offset, $orderBys, $input->visibility);
 
         $tagObjects = array_map(
             fn(Tag $tag) => $this->tagObjectFactory->createFromEntity($tag, $blog, $language),
-            $tags
+            $result['tags']
         );
 
         $filteredTags = KeysFilter::filter($tagObjects, $input->keys);
 
         return new JsonResponse([
             'data' => $filteredTags,
-            'pagination' => new PaginationObject($limit, $page, $total),
+            'pagination' => new PaginationObject($limit, $page, $result['total']),
         ]);
-    }
-
-    /**
-     * @param array<array{0: string, 1: string}> $orderBys
-     * @return array{0: Tag[], 1: int}
-     */
-    private function queryTags(Blog $blog, ?string $filter, int $limit, int $offset, array $orderBys, string $visibility): array
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('t')
-            ->from(Tag::class, 't')
-            ->where('t.blog = :blog')
-            ->setParameter('blog', $blog);
-
-        if ($visibility === 'public') {
-            $qb->andWhere('t.is_private = false OR t.is_private IS NULL');
-        } elseif ($visibility === 'private') {
-            $qb->andWhere('t.is_private = true');
-        }
-
-        if ($filter !== null && $filter !== '') {
-            try {
-                FilterQ::expression($filter)
-                    ->queryBuilder($qb)
-                    ->keys(function ($keys) {
-                        $keys->add('id', 't.id')->valueType('int');
-                        $keys->add('slug', 't.slug')->valueType('string');
-                        $keys->add('posts_count', 't.posts_count')->valueType('int');
-                        $keys->add('created_at', 't.created_at')->valueType('date');
-                    })
-                    ->addWhere();
-            } catch (FilterQException $e) {
-                throw new UnprocessableEntityHttpException($e->getMessage(), $e);
-            }
-        }
-
-        $countQb = clone $qb;
-        $countQb->select('COUNT(DISTINCT t.id)');
-        $totalFetch = $countQb->getQuery()->getSingleScalarResult();
-        $total = is_numeric($totalFetch) ? (int)$totalFetch : 0;
-
-        if ($total === 0) {
-            return [[], 0];
-        }
-
-        foreach ($orderBys as [$column, $direction]) {
-            $qb->addOrderBy($column, $direction);
-        }
-
-        $qb->setMaxResults($limit)->setFirstResult($offset);
-
-        /** @var Tag[] $tags */
-        $tags = $qb->getQuery()->getResult();
-
-        return [$tags, $total];
     }
 }

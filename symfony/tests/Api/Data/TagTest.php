@@ -86,11 +86,18 @@ class TagTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('fr', $json['language']['code']);
+        $this->assertSame('Mon Tag', $json['name']);
     }
 
     public function test_returns_404_if_tag_not_found(): void
     {
         $this->dataApi($this->blog, '/tag', ['id' => 999999]);
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function test_returns_404_if_tag_not_found_by_slug(): void
+    {
+        $this->dataApi($this->blog, '/tag', ['slug' => 'non-existent-slug']);
         $this->assertResponseStatusCodeSame(404);
     }
 
