@@ -21,20 +21,6 @@ class Blog
     #[ORM\Column]
     private int $id;
 
-    /** @var Collection<int, BlogVariant> */
-    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
-    private Collection $variants;
-
-    /** @var Collection<int, Language> */
-    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'blog')]
-    #[ORM\OrderBy(['is_primary' => 'DESC', 'id' => 'ASC'])]
-    private Collection $languages;
-
-    /** @var Collection<int, Navigation> */
-    #[ORM\OneToMany(targetEntity: Navigation::class, mappedBy: 'blog')]
-    #[ORM\OrderBy(['sort' => 'ASC'])]
-    private Collection $navigations;
-
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $created_at = null;
 
@@ -90,6 +76,20 @@ class Blog
 
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
+
+    /** @var Collection<int, BlogVariant> */
+    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
+    private Collection $variants;
+
+    /** @var Collection<int, Language> */
+    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['is_primary' => 'DESC', 'id' => 'ASC'])]
+    private Collection $languages;
+
+    /** @var Collection<int, Navigation> */
+    #[ORM\OneToMany(targetEntity: Navigation::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['sort' => 'ASC'])]
+    private Collection $navigations;
 
     public function __construct()
     {

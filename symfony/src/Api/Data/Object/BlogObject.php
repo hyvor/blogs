@@ -3,13 +3,16 @@
 namespace App\Api\Data\Object;
 
 use App\Entity\Blog;
+use App\Entity\Enum\Blog\ColorMode;
+use App\Entity\Enum\Blog\ColorModeDefault;
+use App\Entity\Enum\BlogType;
 use App\Entity\Enum\NavigationType;
 use App\Entity\Language;
 use App\Service\Route\PermalinkService;
 
 class BlogObject
 {
-    public string $type;
+    public BlogType $type;
     public string $subdomain;
     public ?string $name;
     public ?string $description;
@@ -23,8 +26,8 @@ class BlogObject
     public bool $seo_indexing;
     public bool $seo_rich_schema;
     public bool $flashload;
-    public string $color_modes;
-    public string $color_mode_default;
+    public ColorMode $color_modes;
+    public ColorModeDefault $color_mode_default;
     public int $cache_version_styles;
     public int $posts_count;
     public SocialMediaObject $social;
@@ -40,7 +43,7 @@ class BlogObject
         Language $language,
         PermalinkService $permalinkService,
     ) {
-        $this->type = $blog->getType()->value;
+        $this->type = $blog->getType();
         $this->subdomain = $blog->getSubdomain();
 
         $chosenVariant = array_find($blog->getVariants()->toArray(), fn($variant) => $variant->getLanguageId() === $language->getId()) ??

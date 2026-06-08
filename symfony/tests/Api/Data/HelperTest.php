@@ -48,7 +48,7 @@ class HelperTest extends ApiTestCase
     {
         $orderBys = $this->helper->getSort('published_at', PostsController::ALLOWED_SORTS);
 
-        $this->assertEquals(
+        $this->assertSame(
             [[PostsController::ALLOWED_SORTS['published_at'], 'DESC']],
             $orderBys
         );
@@ -58,7 +58,7 @@ class HelperTest extends ApiTestCase
     {
         $orderBys = $this->helper->getSort(null, PostsController::ALLOWED_SORTS);
 
-        $this->assertEquals(
+        $this->assertSame(
             [[PostsController::ALLOWED_SORTS['published_at'], 'DESC']],
             $orderBys
         );
@@ -68,7 +68,7 @@ class HelperTest extends ApiTestCase
     {
         $orderBys = $this->helper->getSort('published_at DESC,id ASC', PostsController::ALLOWED_SORTS);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
                 [PostsController::ALLOWED_SORTS['id'], 'ASC'],
@@ -81,7 +81,7 @@ class HelperTest extends ApiTestCase
     {
         $orderBys = $this->helper->getSort('published_at DESC, id ASC', PostsController::ALLOWED_SORTS);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
                 [PostsController::ALLOWED_SORTS['id'], 'ASC'],
@@ -94,7 +94,7 @@ class HelperTest extends ApiTestCase
     {
         $orderBys = $this->helper->getSort('published_at  DESC, id  ASC ', PostsController::ALLOWED_SORTS);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
                 [PostsController::ALLOWED_SORTS['id'], 'ASC'],
@@ -105,18 +105,18 @@ class HelperTest extends ApiTestCase
 
     public function test_limit(): void
     {
-        $this->assertEquals(20, $this->helper->getLimit(20));
-        $this->assertEquals(DataApiHelper::DEFAULT_LIMIT, $this->helper->getLimit(null));
-        $this->assertEquals(DataApiHelper::MAX_LIMIT, $this->helper->getLimit(DataApiHelper::MAX_LIMIT + 100));
+        $this->assertSame(20, $this->helper->getLimit(20));
+        $this->assertSame(DataApiHelper::DEFAULT_LIMIT, $this->helper->getLimit(null));
+        $this->assertSame(DataApiHelper::MAX_LIMIT, $this->helper->getLimit(DataApiHelper::MAX_LIMIT + 100));
     }
 
     public function test_page(): void
     {
-        $this->assertEquals(DataApiHelper::DEFAULT_PAGE, $this->helper->getPage(null));
+        $this->assertSame(DataApiHelper::DEFAULT_PAGE, $this->helper->getPage(null));
     }
 
     public function test_offset(): void
     {
-        $this->assertEquals(20, $this->helper->getOffset(2, 20));
+        $this->assertSame(20, $this->helper->getOffset(2, 20));
     }
 }

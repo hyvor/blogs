@@ -3,6 +3,9 @@
 namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\BlogController;
+use App\Entity\Enum\Blog\ColorMode;
+use App\Entity\Enum\Blog\ColorModeDefault;
+use App\Entity\Meta\BlogMeta;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
@@ -67,5 +70,24 @@ class BlogTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertArrayHasKey('subdomain', $json);
         $this->assertArrayNotHasKey('name', $json);
+    }
+
+    public function test_blog_meta(): void
+    {
+
+        $meta = new BlogMeta();
+        $meta->color_modes = ColorMode::LIGHT;
+        $meta->color_mode_default = ColorModeDefault::DARK;
+
+        $blog = BlogFactory::createOneWithPrimaryLanguage([
+            'meta' => $meta,
+        ]);
+
+        $this->dataApi($blog, '/blog');
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('light', $json['color_modes']);
+        $this->assertSame('dark', $json['color_mode_default']);
     }
 }

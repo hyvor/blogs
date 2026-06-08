@@ -2,6 +2,9 @@
 
 namespace App\Entity\Meta;
 
+use App\Entity\Enum\Blog\ColorMode;
+use App\Entity\Enum\Blog\ColorModeDefault;
+
 class BlogMeta
 {
     public bool $embeddable = false;
@@ -30,8 +33,8 @@ class BlogMeta
     public ?string $comments_code = null;
     public ?string $newsletter_code = null;
 
-    public string $color_modes = 'both';
-    public string $color_mode_default = 'os';
+    public ColorMode $color_modes = ColorMode::BOTH;
+    public ColorModeDefault $color_mode_default = ColorModeDefault::OS;
 
     public bool $syntax_on = true;
     public bool $syntax_line_numbers = true;

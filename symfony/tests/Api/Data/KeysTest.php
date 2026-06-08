@@ -5,6 +5,7 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\KeysFilter;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -130,5 +131,16 @@ class KeysTest extends ApiTestCase
 
         $this->assertArrayNotHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);
+    }
+
+    #bug
+    public function test_works_with_enum(): void
+    {
+        $arr = $this->j(KeysFilter::filter(new class {
+            public LanguageDirection $dir = LanguageDirection::LTR;
+        }, ''));
+        
+        $this->assertArrayHasKey('dir', $arr);
+        $this->assertEquals('ltr', $arr['dir']);
     }
 }
