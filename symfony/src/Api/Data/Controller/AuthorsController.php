@@ -51,11 +51,13 @@ class AuthorsController
             throw new NotFoundHttpException('Author not found');
         }
 
+        // must have written one post to be an author
+        // otherwise, it can be a user like finance
         if ($user->getPostsCount() === 0) {
             throw new UnprocessableEntityHttpException('User is not an author');
         }
 
-        $authorObject = $this->authorObjectFactory->createFromEntity($user, $blog, $language);
+        $authorObject = $this->authorObjectFactory->create($user, $blog, $language);
 
         $filtered = KeysFilter::filter($authorObject, $input->keys);
 

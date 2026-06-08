@@ -4,7 +4,8 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
-use App\Entity\Enum\BlogHostingAt;
+use App\Api\Data\Object\AuthorObject;
+use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -15,6 +16,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AuthorsController::class)]
 #[CoversClass(AuthorObjectFactory::class)]
+#[CoversClass(AuthorObject::class)]
+#[CoversClass(UserService::class)]
 class AuthorTest extends ApiTestCase
 {
     private $blog;
@@ -26,7 +29,7 @@ class AuthorTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $this->blog = BlogFactory::createOne();
         $this->lang1 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'en', 'is_primary' => true]);
         $this->lang2 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author', 'is_enabled' => true]);
@@ -40,19 +43,18 @@ class AuthorTest extends ApiTestCase
 
         UserVariantFactory::createOne([
             'user' => $this->author,
-            'user_id' => $this->author->getId(),
-            'language_id' => $this->lang1->getId(),
             'language' => $this->lang1,
             'name' => 'John Doe',
         ]);
 
         UserVariantFactory::createOne([
             'user' => $this->author,
-            'user_id' => $this->author->getId(),
-            'language_id' => $this->lang2->getId(),
             'language' => $this->lang2,
             'name' => 'Jean Dupont',
         ]);
+
+        // other blog user
+        UserFactory::createOne();
     }
 
     public function test_fetches_author_by_id(): void
@@ -74,16 +76,21 @@ class AuthorTest extends ApiTestCase
         $this->assertSame($this->author->getId(), $json['id']);
     }
 
+    public function test_requires_id_or_slug(): void
+    {
+        $this->dataApi($this->blog, '/author', []);
+        $this->assertResponseFailed(422, 'Either id or slug is required');
+    }
+
     public function test_does_not_fetch_user_when_posts_count_is_zero(): void
     {
         $em = $this->getEm();
-        $user = $em->find(\App\Entity\User::class, $this->author->getId());
-        $user->setPostsCount(0);
+        $this->author->setPostsCount(0);
         $em->flush();
 
         $this->dataApi($this->blog, '/author', ['id' => $this->author->getId()]);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'User is not an author');
     }
 
     public function test_validates_id(): void
@@ -99,18 +106,24 @@ class AuthorTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('fr', $json['language']['code']);
+        $this->assertSame('Jean Dupont', $json['name']);
+
+        $variants = $json['variants'];
+        $this->assertIsArray($variants);
+        $this->assertCount(1, $variants);
+        $this->assertSame('en', $variants[0]['language']['code']);
     }
 
     public function test_requires_valid_language(): void
     {
         $this->dataApi($this->blog, '/author', ['id' => $this->author->getId(), 'language' => 'jp']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Language not found');
     }
 
     public function test_returns_404_if_author_not_found(): void
     {
         $this->dataApi($this->blog, '/author', ['id' => 999999]);
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Author not found');
     }
 
     public function test_filters_keys(): void
