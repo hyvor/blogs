@@ -7,6 +7,7 @@ use App\Api\Data\KeysFilter;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
+use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -36,11 +37,9 @@ class KeysTest extends ApiTestCase
             'published_at' => new \DateTimeImmutable(),
         ]);
 
-        PostVariantFactory::createOne([
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang,
-            'language_id' => $lang->getId(),
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'keys-test-' . $post->getId(),
         ]);
@@ -50,7 +49,7 @@ class KeysTest extends ApiTestCase
 
         /** @var PostObjectFactory $factory */
         $factory = $this->getContainer()->get(PostObjectFactory::class);
-        $this->postObject = $factory->createFromEntity($post, $blog, $lang);
+        $this->postObject = $factory->create($post, $variant, $blog, $lang);
     }
 
     private function j(mixed $obj): array

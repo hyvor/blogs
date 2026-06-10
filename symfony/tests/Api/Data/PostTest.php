@@ -9,15 +9,9 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use App\Tests\Factory\PostAuthorFactory;
 use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\PostTagFactory;
 use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
-use App\Tests\Factory\TagFactory;
-use App\Tests\Factory\TagVariantFactory;
-use App\Tests\Factory\UserFactory;
-use App\Tests\Factory\UserVariantFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostsController::class)]
@@ -40,22 +34,26 @@ class PostTest extends ApiTestCase
 
         $variant1 = PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang1,
-            'language_id' => $lang1->getId(),
             'status' => PostVariantStatus::PUBLISHED,
-            'slug' => 'test-post-' . $post->getId(),
+            'slug' => 'test-post-en',
             'title' => 'Test Post',
         ]);
 
         $variant2 = PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang2,
-            'language_id' => $lang2->getId(),
             'status' => PostVariantStatus::PUBLISHED,
-            'slug' => 'test-post-fr-' . $post->getId(),
+            'slug' => 'test-post-fr',
             'title' => 'Test Post FR',
+        ]);
+
+        // other blog post
+        $otherBlogPost = PostFactory::createOne();
+        PostVariantFactory::createOne([
+            'post' => $otherBlogPost,
+            'language' => $lang1,
+            'status' => PostVariantStatus::PUBLISHED,
         ]);
 
         return [$blog, $lang1, $lang2, $post, $variant1, $variant2];
@@ -64,10 +62,6 @@ class PostTest extends ApiTestCase
     public function test_works_with_post_id(): void
     {
         [$blog, $lang1, $lang2, $post] = $this->createBlogWithPost();
-
-        /** @var PostObjectFactory $factory */
-        $factory = $this->getContainer()->get(PostObjectFactory::class);
-        $postObject = json_decode((string)json_encode($factory->createFromEntity($post, $blog, $lang1)), true);
 
         $this->dataApi($blog, '/post', ['id' => $post->getId()]);
 
@@ -108,6 +102,7 @@ class PostTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame($post->getId(), $json['id']);
         $this->assertSame('fr', $json['language']['code']);
+        $this->assertSame('test-post-fr', $json['slug']);
     }
 
     public function test_does_not_work_with_invalid_language(): void
@@ -125,7 +120,7 @@ class PostTest extends ApiTestCase
 
         $this->dataApi($blog, '/post', ['id' => 999999]);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Post not found');
     }
 
     public function test_returns_404_for_missing_variant(): void
@@ -139,16 +134,14 @@ class PostTest extends ApiTestCase
         // Only create EN variant, no FR
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang1,
-            'language_id' => $lang1->getId(),
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'only-en-' . $post->getId(),
         ]);
 
         $this->dataApi($blog, '/post', ['id' => $post->getId(), 'language' => 'fr']);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Post not found: variant for language not found');
     }
 
     public function test_does_not_return_unpublished_posts(): void
@@ -159,16 +152,14 @@ class PostTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable()]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang,
-            'language_id' => $lang->getId(),
             'status' => PostVariantStatus::DRAFT,
             'slug' => 'draft-post-' . $post->getId(),
         ]);
 
         $this->dataApi($blog, '/post', ['id' => $post->getId()]);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(404, 'Post not found: not published');
     }
 
     public function test_does_not_return_posts_when_blog_is_wrong(): void

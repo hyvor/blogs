@@ -11,15 +11,13 @@ use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
-use App\Entity\Enum\PostVariantStatus;
-use App\Entity\PostVariant;
-use App\Service\Delivery\PostQueryService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Post\PostService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Enum\PostVariantStatus;
 
 class PostsController
 {
@@ -35,9 +33,8 @@ class PostsController
 
     public function __construct(
         private DataApiHelper $dataApiHelper,
-        private PostQueryService $postQueryService,
+        private PostService $postService,
         private PostObjectFactory $postObjectFactory,
-        private EntityManagerInterface $em,
     ) {}
 
     #[Route('/post', name: 'post', methods: ['GET'])]
@@ -51,36 +48,26 @@ class PostsController
 
         $post = null;
         if ($input->id !== null) {
-            $found = $this->postQueryService->getPostById($input->id);
-            if ($found !== null && $found->getBlog()->getId() === $blog->getId()) {
-                $post = $found;
-            }
+            $post = $this->postService->getPostByBlogAndId($blog, $input->id);
         } elseif ($input->slug !== null) {
-            $post = $this->postQueryService->getPostBySlugAndLanguage($language, $input->slug);
+            $post = $this->postService->getPostBySlugAndLanguage($language, $input->slug);
         }
 
         if ($post === null) {
             throw new NotFoundHttpException('Post not found');
         }
 
-        $anyVariant = $this->em->getRepository(PostVariant::class)->findOneBy([
-            'post' => $post,
-            'language' => $language,
-        ]);
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
 
-        if ($anyVariant === null) {
-            throw new NotFoundHttpException('Post variant not found');
+        if ($variant === null) {
+            throw new NotFoundHttpException('Post not found: variant for language not found');
         }
 
-        if ($anyVariant->getStatus() !== PostVariantStatus::PUBLISHED) {
-            throw new UnprocessableEntityHttpException('This post is not published');
+        if ($variant->getStatus() !== PostVariantStatus::PUBLISHED) {
+            throw new NotFoundHttpException('Post not found: not published');
         }
 
-        $postObject = $this->postObjectFactory->createFromEntity($post, $blog, $language);
-
-        if ($postObject === null) {
-            throw new NotFoundHttpException('Post not found');
-        }
+        $postObject = $this->postObjectFactory->create($post, $variant, $blog, $language);
 
         $filtered = KeysFilter::filter($postObject, $input->keys);
 
@@ -96,7 +83,7 @@ class PostsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        $result = $this->postQueryService->getPostsForDataApi(
+        $result = $this->postService->getPostsForDataApi(
             $blog,
             $language,
             $input->filter,
@@ -107,7 +94,13 @@ class PostsController
         );
 
         $postObjects = array_map(
-            fn($post) => $this->postObjectFactory->createFromEntity($post, $blog, $language),
+            function ($post) use ($blog, $language) {
+                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+                if ($variant === null) {
+                    return null;
+                }
+                return $this->postObjectFactory->create($post, $variant, $blog, $language);
+            },
             $result['posts']
         );
         $postObjects = array_values(array_filter($postObjects));
@@ -128,10 +121,16 @@ class PostsController
         $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
 
-        $result = $this->postQueryService->searchPosts($blog, $language, $input->search, $limit, $offset);
+        $result = $this->postService->searchPosts($blog, $language, $input->search, $limit, $offset);
 
         $postObjects = array_map(
-            fn($post) => $this->postObjectFactory->createFromEntity($post, $blog, $language),
+            function ($post) use ($blog, $language) {
+                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+                if ($variant === null) {
+                    return null;
+                }
+                return $this->postObjectFactory->create($post, $variant, $blog, $language);
+            },
             $result['posts']
         );
         $postObjects = array_values(array_filter($postObjects));

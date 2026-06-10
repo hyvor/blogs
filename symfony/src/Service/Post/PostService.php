@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Delivery;
+namespace App\Service\Post;
 
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
@@ -18,12 +18,49 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
-class PostQueryService
+class PostService
 {
     public function __construct(
         private Connection $connection,
         private EntityManagerInterface $em,
     ) {}
+
+    public function getPostById(int $id): ?Post
+    {
+        return $this->em->getRepository(Post::class)->find($id);
+    }
+
+    public function getPostByBlogAndId(Blog $blog, int $id): ?Post
+    {
+        return $this->em->getRepository(Post::class)->findOneBy([
+            'id' => $id,
+            'blog' => $blog,
+        ]);
+    }
+
+    public function getPostBySlugAndLanguage(Language $language, string $slug): ?Post
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('p')
+            ->from(Post::class, 'p')
+            ->join(PostVariant::class, 'pv', 'WITH', 'pv.post = p AND pv.language = :language AND pv.status = :status AND pv.slug = :slug')
+            ->setParameter('language', $language)
+            ->setParameter('status', PostVariantStatus::PUBLISHED)
+            ->setParameter('slug', $slug)
+            ->setMaxResults(1);
+
+        /** @var Post|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+        return $result;
+    }
+
+    public function getPostVariantByPostAndLanguage(Post $post, Language $language): ?PostVariant
+    {
+        return $this->em->getRepository(PostVariant::class)->findOneBy([
+            'post' => $post,
+            'language' => $language,
+        ]);
+    }
 
     /**
      * @return array{posts: Post[], total: int}
@@ -36,7 +73,6 @@ class PostQueryService
         int $offset = 0,
         bool $featuredFirst = true,
     ): array {
-        // Backward-compatible: null filter returns empty (old behavior)
         if ($filter === null) {
             return ['posts' => [], 'total' => 0];
         }
@@ -66,39 +102,6 @@ class PostQueryService
         return $this->executePostQuery($qb, $orderBys, $limit, $offset);
     }
 
-    public function getPostById(int $id): ?Post
-    {
-        return $this->em->getRepository(Post::class)->find($id);
-    }
-
-    public function getPostVariantByPostAndLanguage(Post $post, Language $language): ?PostVariant
-    {
-        return $this->em->getRepository(PostVariant::class)->findOneBy([
-            'post' => $post,
-            'language' => $language,
-            'status' => PostVariantStatus::PUBLISHED,
-        ]);
-    }
-
-    /**
-     * Finds a post by variant slug and language (published only).
-     */
-    public function getPostBySlugAndLanguage(Language $language, string $slug): ?Post
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('p')
-            ->from(Post::class, 'p')
-            ->join(PostVariant::class, 'pv', 'WITH', 'pv.post = p AND pv.language = :language AND pv.status = :status AND pv.slug = :slug')
-            ->setParameter('language', $language)
-            ->setParameter('status', PostVariantStatus::PUBLISHED)
-            ->setParameter('slug', $slug)
-            ->setMaxResults(1);
-
-        /** @var Post|null $result */
-        $result = $qb->getQuery()->getOneOrNullResult();
-        return $result;
-    }
-
     /**
      * @return array{posts: Post[], total: int}
      */
@@ -114,7 +117,6 @@ class PostQueryService
             return ['posts' => [], 'total' => 0];
         }
 
-        // Build prefix search query: word1:* & word2:*
         $queryTerms = implode(' & ', array_map(fn(string $w) => $w . ':*', array_filter($words)));
 
         $sql = <<<SQL
@@ -131,7 +133,6 @@ AND to_tsvector(COALESCE(pv.ts_language,'simple'), COALESCE(pv.title,'') || ' ' 
 ORDER BY rank DESC
 SQL;
 
-        // Count total
         $countSql = <<<SQL
 SELECT COUNT(*) FROM posts p
 JOIN post_variants pv ON pv.post_id = p.id AND pv.language_id = :lang
@@ -163,7 +164,6 @@ SQL;
 
         $posts = $this->em->getRepository(Post::class)->findBy(['id' => $ids]);
 
-        // Re-sort to match rank order from query
         /** @var array<int|string, int> $idOrder */
         $idOrder = array_flip($ids);
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
@@ -207,7 +207,7 @@ SQL;
                     $keys->add('words', 'pv.words')->valueType('int');
                     $keys->add('featured_image_url', 'p.featured_image_url')->valueType(['string', 'null']);
                     $keys->add('canonical_url', 'p.canonical_url')->valueType(['string', 'null']);
-                    // Tag join - shared state to avoid duplicate alias if both tag.id and tag.slug used
+
                     $tagJoined = false;
                     $tagJoinFn = function (OrmQB $qb) use (&$tagJoined) {
                         if (!$tagJoined) {
@@ -219,7 +219,6 @@ SQL;
                     $keys->add('tag.id', 'tag_filter.id')->valueType('int')->join($tagJoinFn);
                     $keys->add('tag.slug', 'tag_filter.slug')->valueType('string')->join($tagJoinFn);
 
-                    // Author join - shared state
                     $authorJoined = false;
                     $authorJoinFn = function (OrmQB $qb) use (&$authorJoined) {
                         if (!$authorJoined) {
@@ -243,7 +242,6 @@ SQL;
      */
     private function executePostQuery(OrmQB $qb, array $orderBys, int $limit, int $offset): array
     {
-        // 1. Count total using COUNT(DISTINCT p.id)
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT p.id)');
         $totalFetch = $countQb->getQuery()->getSingleScalarResult();
@@ -253,8 +251,6 @@ SQL;
             return ['posts' => [], 'total' => 0];
         }
 
-        // 2. Select IDs with ordering - need to include ORDER BY columns in SELECT for GROUP BY
-        // Select p.id, pv.title, pv.words, pv.updated_at for GROUP BY + ORDER BY
         $idQb = clone $qb;
         $idQb->select('p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at')
              ->groupBy('p.id, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at');
@@ -274,10 +270,8 @@ SQL;
             return ['posts' => [], 'total' => $total];
         }
 
-        // 3. Fetch Post entities by IDs
         $posts = $this->em->getRepository(Post::class)->findBy(['id' => $ids]);
 
-        // Re-sort to match order from query
         /** @var array<int|string, int> $idOrder */
         $idOrder = array_flip($ids);
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));

@@ -8,13 +8,14 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Service\Delivery\Twig\TwigRendererService;
+use App\Service\Post\PostService;
 use App\Service\Theme\ThemeConfigService;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FeedService
 {
     public function __construct(
-        private PostQueryService $postQueryService,
+        private PostService $postService,
         private TwigRendererService $twigRendererService,
         private BlogObjectFactory $blogObjectFactory,
         private PostObjectFactory $postObjectFactory,
@@ -27,7 +28,7 @@ class FeedService
 
     public function generateFeed(Blog $blog, Language $language, string $filter): string
     {
-        $result = $this->postQueryService->getPostsWithFilter($blog, $language, $filter, 25);
+        $result = $this->postService->getPostsWithFilter($blog, $language, $filter, 25);
         $posts = $result['posts'];
 
         $blogObject = $this->blogObjectFactory->create($blog, $language);

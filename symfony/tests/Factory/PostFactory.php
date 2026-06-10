@@ -37,8 +37,8 @@ final class PostFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'is_featured' => self::faker()->boolean(),
-            'is_page' => self::faker()->boolean(),
+            'is_featured' => false,
+            'is_page' => false,
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }

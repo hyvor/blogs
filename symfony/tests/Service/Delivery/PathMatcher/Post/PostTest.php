@@ -45,9 +45,7 @@ class PostTest extends KernelTestCase
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $language,
-            'language_id' => $language->getId(),
             'slug' => 'my-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
         ]);
@@ -75,9 +73,7 @@ class PostTest extends KernelTestCase
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => true]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $language,
-            'language_id' => $language->getId(),
             'slug' => 'my-page-slug',
             'status' => PostVariantStatus::PUBLISHED,
         ]);
@@ -109,17 +105,13 @@ class PostTest extends KernelTestCase
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $primaryLang,
-            'language_id' => $primaryLang->getId(),
             'slug' => 'en-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
         ]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $secondaryLang,
-            'language_id' => $secondaryLang->getId(),
             'slug' => 'fr-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
         ]);
@@ -148,9 +140,7 @@ class PostTest extends KernelTestCase
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $language,
-            'language_id' => $language->getId(),
             'slug' => 'draft-post',
             'status' => PostVariantStatus::DRAFT,
         ]);
