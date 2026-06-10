@@ -201,15 +201,7 @@ class TemplateRendererService
 
             $postObjects = [];
             foreach ($posts as $post) {
-                $pv = null;
-                foreach ($post->getVariants() as $v) {
-                    if ($v->getLanguage()->getId() === $language->getId()) {
-                        $pv = $v;
-                        break;
-                    }
-                }
-                if ($pv === null || $pv->getStatus() !== PostVariantStatus::PUBLISHED) continue;
-                $postObjects[] = $this->buildPostObject($post, $pv, $blog, $language);
+                $postObjects[] = $this->buildPostObject($post, $blog, $language);
             }
 
             $vars['_posts'] = $postObjects;
@@ -241,16 +233,7 @@ class TemplateRendererService
         }
 
         if (($routeName === 'post' || $routeName === 'page') && $model instanceof Post) {
-            $variant = null;
-            foreach ($model->getVariants() as $v) {
-                if ($v->getLanguage()->getId() === $language->getId()) {
-                    $variant = $v;
-                    break;
-                }
-            }
-            if ($variant === null) return [];
-
-            $postObj = $this->buildPostObject($model, $variant, $blog, $language);
+            $postObj = $this->buildPostObject($model, $blog, $language);
             $url = $this->permalinkService->getPostPermalink($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($postObj->title, $postObj->description, $postObj->featured_image_url, $url, $model->getCanonicalUrl() ?? $url),
@@ -289,9 +272,9 @@ class TemplateRendererService
         return 1;
     }
 
-    private function buildPostObject(Post $post, PostVariant $variant, Blog $blog, Language $language): \App\Api\Data\Object\PostObject
+    private function buildPostObject(Post $post, Blog $blog, Language $language): \App\Api\Data\Object\PostObject
     {
-        return $this->postObjectFactory->create($post, $variant, $blog, $language);
+        return $this->postObjectFactory->create($blog, $post, $language);
     }
 
     private function buildTagObject(Tag $tag, Blog $blog, Language $language): \App\Api\Data\Object\TagObject

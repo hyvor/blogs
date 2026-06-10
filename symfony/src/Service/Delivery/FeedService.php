@@ -5,7 +5,6 @@ namespace App\Service\Delivery;
 use App\Api\Data\Factory\BlogObjectFactory;
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Entity\Blog;
-use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Post\PostService;
@@ -35,15 +34,7 @@ class FeedService
 
         $postObjects = [];
         foreach ($posts as $post) {
-            $variant = null;
-            foreach ($post->getVariants() as $v) {
-                if ($v->getLanguage()->getId() === $language->getId()) {
-                    $variant = $v;
-                    break;
-                }
-            }
-            if ($variant === null || $variant->getStatus() !== PostVariantStatus::PUBLISHED) continue;
-            $postObjects[] = $this->postObjectFactory->create($post, $variant, $blog, $language);
+            $postObjects[] = $this->postObjectFactory->create($blog, $post, $language);
         }
 
         $vars = [

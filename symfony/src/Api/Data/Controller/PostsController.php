@@ -96,16 +96,9 @@ class PostsController
         );
 
         $postObjects = array_map(
-            function ($post) use ($blog, $language) {
-                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
-                if ($variant === null) {
-                    return null;
-                }
-                return $this->postObjectFactory->create($post, $variant, $blog, $language);
-            },
+            fn ($post) => $this->postObjectFactory->create($blog, $post, $language),
             $result['posts']
         );
-        $postObjects = array_values(array_filter($postObjects));
 
         $filteredPosts = KeysFilter::filter($postObjects, $input->keys);
 
@@ -123,7 +116,7 @@ class PostsController
         $page = $this->dataApiHelper->getPage($input->page);
         $offset = $this->dataApiHelper->getOffset($page, $limit);
 
-        $result = $this->postService->searchPosts($blog, $language, $input->search, $limit, $offset);
+        $result = $this->postSearchService->search($blog, $language, $input->search, $limit, $offset, false, true);
 
         $postObjects = array_map(
             fn ($post) => $this->postObjectFactory->create($blog, $post, $language),

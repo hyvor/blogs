@@ -7,7 +7,6 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder as OrmQB;
 use Hyvor\FilterQ\Exceptions\FilterQException;
@@ -17,7 +16,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 class PostService
 {
     public function __construct(
-        private Connection $connection,
         private EntityManagerInterface $em,
     ) {}
 
@@ -96,75 +94,6 @@ class PostService
         $qb = $this->buildPostQueryBase($blog, $language, $isPages);
         $this->applyFilter($qb, $filter);
         return $this->executePostQuery($qb, $orderBys, $limit, $offset);
-    }
-
-    /**
-     * @return array{posts: Post[], total: int}
-     */
-    public function searchPosts(
-        Blog $blog,
-        Language $language,
-        string $search,
-        int $limit,
-        int $offset,
-    ): array {
-        $words = preg_split('/\s+/', trim($search));
-        if (empty($words) || $words === [false]) {
-            return ['posts' => [], 'total' => 0];
-        }
-
-        $queryTerms = implode(' & ', array_map(fn(string $w) => $w . ':*', array_filter($words)));
-
-        $sql = <<<SQL
-SELECT p.id,
-  ts_rank(
-    to_tsvector(COALESCE(pv.ts_language,'simple'), COALESCE(pv.title,'') || ' ' || COALESCE(pv.slug,'') || ' ' || COALESCE(pv.description,'') || ' ' || COALESCE(pv.content_text,'')),
-    to_tsquery(COALESCE(pv.ts_language,'simple'), :query)
-  ) as rank
-FROM posts p
-JOIN post_variants pv ON pv.post_id = p.id AND pv.language_id = :lang
-WHERE p.blog_id = :blog AND pv.status = 'published' AND p.is_page = false
-AND to_tsvector(COALESCE(pv.ts_language,'simple'), COALESCE(pv.title,'') || ' ' || COALESCE(pv.slug,'') || ' ' || COALESCE(pv.description,'') || ' ' || COALESCE(pv.content_text,''))
-    @@ to_tsquery(COALESCE(pv.ts_language,'simple'), :query)
-ORDER BY rank DESC
-SQL;
-
-        $countSql = <<<SQL
-SELECT COUNT(*) FROM posts p
-JOIN post_variants pv ON pv.post_id = p.id AND pv.language_id = :lang
-WHERE p.blog_id = :blog AND pv.status = 'published' AND p.is_page = false
-AND to_tsvector(COALESCE(pv.ts_language,'simple'), COALESCE(pv.title,'') || ' ' || COALESCE(pv.slug,'') || ' ' || COALESCE(pv.description,'') || ' ' || COALESCE(pv.content_text,''))
-    @@ to_tsquery(COALESCE(pv.ts_language,'simple'), :query)
-SQL;
-
-        $params = [
-            'blog' => $blog->getId(),
-            'lang' => $language->getId(),
-            'query' => $queryTerms,
-        ];
-
-        $totalFetch = $this->connection->fetchOne($countSql, $params);
-        $total = is_numeric($totalFetch) ? (int)$totalFetch : 0;
-
-        $rows = $this->connection->fetchAllAssociative($sql . ' LIMIT :limit OFFSET :offset', array_merge($params, [
-            'limit' => $limit,
-            'offset' => $offset,
-        ]));
-
-        /** @var array<int|string> $ids */
-        $ids = array_column($rows, 'id');
-
-        if (empty($ids)) {
-            return ['posts' => [], 'total' => $total];
-        }
-
-        $posts = $this->em->getRepository(Post::class)->findBy(['id' => $ids]);
-
-        /** @var array<int|string, int> $idOrder */
-        $idOrder = array_flip($ids);
-        usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
-
-        return ['posts' => $posts, 'total' => $total];
     }
 
     private function buildPostQueryBase(Blog $blog, Language $language, bool $isPage): OrmQB

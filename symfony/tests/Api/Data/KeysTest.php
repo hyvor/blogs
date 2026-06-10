@@ -38,7 +38,7 @@ class KeysTest extends ApiTestCase
             'published_at' => new \DateTimeImmutable(),
         ]);
 
-        $variant = PostVariantFactory::createOne([
+        PostVariantFactory::createOne([
             'post' => $post,
             'language' => $lang,
             'status' => PostVariantStatus::PUBLISHED,
@@ -52,7 +52,7 @@ class KeysTest extends ApiTestCase
 
         /** @var PostObjectFactory $factory */
         $factory = $this->getContainer()->get(PostObjectFactory::class);
-        $this->postObject = $factory->create($post, $variant, $blog, $lang);
+        $this->postObject = $factory->create($blog, $post, $lang);
     }
 
     private function j(mixed $obj): array
