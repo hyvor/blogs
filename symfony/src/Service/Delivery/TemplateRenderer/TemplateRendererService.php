@@ -203,7 +203,7 @@ class TemplateRendererService
             foreach ($posts as $post) {
                 $pv = null;
                 foreach ($post->getVariants() as $v) {
-                    if ($v->getLanguageId() === $language->getId()) {
+                    if ($v->getLanguage()->getId() === $language->getId()) {
                         $pv = $v;
                         break;
                     }
@@ -243,7 +243,7 @@ class TemplateRendererService
         if (($routeName === 'post' || $routeName === 'page') && $model instanceof Post) {
             $variant = null;
             foreach ($model->getVariants() as $v) {
-                if ($v->getLanguageId() === $language->getId()) {
+                if ($v->getLanguage()->getId() === $language->getId()) {
                     $variant = $v;
                     break;
                 }
@@ -299,7 +299,7 @@ class TemplateRendererService
         $variants = $this->em->getRepository(TagVariant::class)->findBy(['tag' => $tag]);
         $variantData = [];
         foreach ($variants as $v) {
-            $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
+            $vLang = $v->getLanguage();
             if ($vLang) {
                 $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'description' => $v->getDescription()];
             }
@@ -312,7 +312,7 @@ class TemplateRendererService
         $variants = $this->em->getRepository(UserVariant::class)->findBy(['user' => $user]);
         $variantData = [];
         foreach ($variants as $v) {
-            $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
+            $vLang = $v->getLanguage();
             if ($vLang) {
                 $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'bio' => $v->getBio(), 'location' => $v->getLocation()];
             }

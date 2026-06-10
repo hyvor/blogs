@@ -34,9 +34,7 @@ class PostSearchTest extends ApiTestCase
 
         PostVariantFactory::createOne(array_merge([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang,
-            'language_id' => $lang->getId(),
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'search-' . $post->getId(),
         ], $variantAttrs));

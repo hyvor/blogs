@@ -46,7 +46,7 @@ class BlogObject
         $this->type = $blog->getType();
         $this->subdomain = $blog->getSubdomain();
 
-        $chosenVariant = array_find($blog->getVariants()->toArray(), fn($variant) => $variant->getLanguageId() === $language->getId()) ??
+        $chosenVariant = array_find($blog->getVariants()->toArray(), fn($variant) => $variant->getLanguage()->getId() === $language->getId()) ??
             ($blog->getVariants()->first() ?: null);
 
         $this->name = $chosenVariant?->getName() ?? null;

@@ -6,11 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\Post;
-use App\Entity\PostAuthor;
-use App\Entity\PostTag;
 use App\Entity\PostVariant;
-use App\Entity\Tag;
-use App\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder as OrmQB;
@@ -211,8 +207,7 @@ SQL;
                     $tagJoined = false;
                     $tagJoinFn = function (OrmQB $qb) use (&$tagJoined) {
                         if (!$tagJoined) {
-                            $qb->join(PostTag::class, 'post_tag_filter', 'WITH', 'post_tag_filter.post = p')
-                               ->join(Tag::class, 'tag_filter', 'WITH', 'tag_filter = post_tag_filter.tag');
+                            $qb->join('p.tags', 'tag_filter');
                             $tagJoined = true;
                         }
                     };
@@ -222,8 +217,7 @@ SQL;
                     $authorJoined = false;
                     $authorJoinFn = function (OrmQB $qb) use (&$authorJoined) {
                         if (!$authorJoined) {
-                            $qb->join(PostAuthor::class, 'post_author_filter', 'WITH', 'post_author_filter.post = p')
-                               ->join(User::class, 'author_filter', 'WITH', 'author_filter = post_author_filter.user');
+                            $qb->join('p.authors', 'author_filter');
                             $authorJoined = true;
                         }
                     };

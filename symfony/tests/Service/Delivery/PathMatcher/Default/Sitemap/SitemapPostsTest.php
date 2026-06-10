@@ -47,9 +47,7 @@ class SitemapPostsTest extends KernelTestCase
             ]);
             PostVariantFactory::createOne([
                 'post' => $post,
-                'post_id' => $post->getId(),
                 'language' => $lang,
-                'language_id' => $lang->getId(),
                 'status' => \App\Entity\Enum\PostVariantStatus::PUBLISHED,
                 'slug' => 'post-' . $i,
             ]);

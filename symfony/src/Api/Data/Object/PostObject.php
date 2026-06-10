@@ -3,11 +3,10 @@
 namespace App\Api\Data\Object;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use App\Entity\Tag;
-use App\Entity\User;
 use App\Service\Route\PermalinkService;
 
 class PostObject
@@ -38,20 +37,12 @@ class PostObject
     /** @var AuthorObject[] */
     public array $authors = [];
 
-    /**
-     * @param Tag[] $tags
-     * @param User[] $authors
-     * @param array<array{variant: PostVariant, language: Language}> $otherVariants
-     */
     public function __construct(
         Post $post,
         PostVariant $variant,
         Blog $blog,
         Language $language,
         PermalinkService $permalinkService,
-        array $tags = [],
-        array $authors = [],
-        array $otherVariants = [],
     ) {
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
@@ -72,7 +63,7 @@ class PostObject
         $this->code_foot = $post->getCodeFoot() ?? '';
         $this->language = new LanguageObject($language);
 
-        foreach ($tags as $tag) {
+        foreach ($post->getTags() as $tag) {
             $tagObj = new TagObject($tag, $blog, $language, $permalinkService);
             if ($tag->isPrivate()) {
                 $this->tags_private[] = $tagObj;
@@ -81,14 +72,20 @@ class PostObject
             }
         }
 
-        foreach ($authors as $user) {
+        foreach ($post->getAuthors() as $user) {
             $this->authors[] = new AuthorObject($user, $blog, $language, $permalinkService);
         }
 
-        foreach ($otherVariants as $ov) {
-            $otherVariantLang = $ov['language'];
-            $url = $permalinkService->getPostPermalink($post, $blog, $otherVariantLang);
-            $this->variants[] = new VariantObject(new LanguageObject($otherVariantLang), $url);
+        foreach ($post->getVariants() as $pv) {
+            if ($pv->getLanguage()->getId() === $language->getId()) {
+                continue;
+            }
+            if ($pv->getStatus() !== PostVariantStatus::PUBLISHED) {
+                continue;
+            }
+            $variantLang = $pv->getLanguage();
+            $url = $permalinkService->getPostPermalink($post, $blog, $variantLang);
+            $this->variants[] = new VariantObject(new LanguageObject($variantLang), $url);
         }
     }
 }

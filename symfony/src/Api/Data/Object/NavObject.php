@@ -15,7 +15,7 @@ class NavObject
         $this->url = $nav->getUrl();
         $name = null;
         foreach ($nav->getVariants() as $variant) {
-            if ($variant->getLanguageId() === $language->getId()) {
+            if ($variant->getLanguage()->getId() === $language->getId()) {
                 $name = $variant->getName();
                 break;
             }

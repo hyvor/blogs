@@ -7,12 +7,13 @@ use App\Api\Data\KeysFilter;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Post;
+use App\Entity\Tag;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\PostTagFactory;
 use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
@@ -45,7 +46,9 @@ class KeysTest extends ApiTestCase
         ]);
 
         $tag = TagFactory::createOne(['blog' => $blog, 'slug' => 'keys-tag', 'is_private' => false]);
-        PostTagFactory::createOne(['post' => $post, 'post_id' => $post->getId(), 'tag' => $tag, 'tag_id' => $tag->getId()]);
+
+        $post->getTags()->add($tag);
+        $this->getEm()->flush();
 
         /** @var PostObjectFactory $factory */
         $factory = $this->getContainer()->get(PostObjectFactory::class);

@@ -34,7 +34,6 @@ class UpdateNavigationVariantTest extends ApiTestCase
         NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
-            'language_id' => $lang->getId(),
             'name' => 'Old Name',
         ]);
 

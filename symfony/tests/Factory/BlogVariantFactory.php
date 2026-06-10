@@ -5,6 +5,7 @@ namespace App\Tests\Factory;
 use App\Entity\Blog;
 use App\Entity\BlogVariant;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -37,7 +38,7 @@ final class BlogVariantFactory extends PersistentObjectFactory
     {
         return [
             'blog' => BlogFactory::new(),
-            'language_id' => self::faker()->randomNumber(),
+            'language' => LanguageFactory::new(),
         ];
     }
 

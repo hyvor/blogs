@@ -33,7 +33,6 @@ class DeleteNavigationVariantTest extends ApiTestCase
         $variant = NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
-            'language_id' => $lang->getId(),
         ]);
         $variantId = $variant->getId();
 

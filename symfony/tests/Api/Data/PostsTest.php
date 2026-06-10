@@ -5,12 +5,13 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\PostsController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Post;
+use App\Entity\Tag;
+use App\Entity\User;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
-use App\Tests\Factory\PostAuthorFactory;
 use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\PostTagFactory;
 use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
@@ -50,9 +51,7 @@ class PostsTest extends ApiTestCase
             ]);
             PostVariantFactory::createOne([
                 'post' => $post,
-                'post_id' => $post->getId(),
                 'language' => $this->primaryLanguage,
-                'language_id' => $this->primaryLanguage->getId(),
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'post-' . $i . '-' . $post->getId(),
                 'title' => 'Post ' . $i,
@@ -60,9 +59,7 @@ class PostsTest extends ApiTestCase
             ]);
             PostVariantFactory::createOne([
                 'post' => $post,
-                'post_id' => $post->getId(),
                 'language' => $this->secondaryLanguage,
-                'language_id' => $this->secondaryLanguage->getId(),
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'post-fr-' . $i . '-' . $post->getId(),
                 'title' => 'Post FR ' . $i,
@@ -80,9 +77,7 @@ class PostsTest extends ApiTestCase
             ]);
             PostVariantFactory::createOne([
                 'post' => $page,
-                'post_id' => $page->getId(),
                 'language' => $this->primaryLanguage,
-                'language_id' => $this->primaryLanguage->getId(),
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'page-' . $i . '-' . $page->getId(),
                 'title' => 'Page ' . $i,
@@ -278,7 +273,8 @@ class PostsTest extends ApiTestCase
         $tag = TagFactory::createOne(['blog' => $this->blog, 'slug' => 'filter-tag', 'is_private' => false]);
         TagFactory::createOne(['blog' => $this->blog, 'slug' => 'filter-tag-v', 'is_private' => false]);
         $post = $this->posts[0];
-        PostTagFactory::createOne(['post' => $post, 'post_id' => $post->getId(), 'tag' => $tag, 'tag_id' => $tag->getId()]);
+        $post->getTags()->add($tag);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'tag.id=' . $tag->getId()]);
 
@@ -291,7 +287,8 @@ class PostsTest extends ApiTestCase
     {
         $tag = TagFactory::createOne(['blog' => $this->blog, 'slug' => 'my-filter-tag-slug', 'is_private' => false]);
         $post = $this->posts[0];
-        PostTagFactory::createOne(['post' => $post, 'post_id' => $post->getId(), 'tag' => $tag, 'tag_id' => $tag->getId()]);
+        $post->getTags()->add($tag);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => "tag.slug='my-filter-tag-slug'"]);
 
@@ -304,7 +301,8 @@ class PostsTest extends ApiTestCase
     {
         $user = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 5]);
         $post = $this->posts[0];
-        PostAuthorFactory::createOne(['post' => $post, 'post_id' => $post->getId(), 'user' => $user, 'user_id' => $user->getId()]);
+        $post->getAuthors()->add($user);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'author.id=' . $user->getId()]);
 
@@ -317,7 +315,8 @@ class PostsTest extends ApiTestCase
     {
         $user = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 5, 'slug' => 'my-author-slug-test']);
         $post = $this->posts[0];
-        PostAuthorFactory::createOne(['post' => $post, 'post_id' => $post->getId(), 'user' => $user, 'user_id' => $user->getId()]);
+        $post->getAuthors()->add($user);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => "author.slug='my-author-slug-test'"]);
 
