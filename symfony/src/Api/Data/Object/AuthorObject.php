@@ -27,7 +27,7 @@ class AuthorObject
     public function __construct(User $user, Blog $blog, Language $language, PermalinkService $permalinkService)
     {
         $this->id = $user->getId();
-        $this->created_at = $user->getCreatedAt()?->getTimestamp() ?? 0;
+        $this->created_at = $user->getCreatedAt()->getTimestamp();
         $this->slug = $user->getSlug();
         $this->url = $permalinkService->getAuthorPermalink($user, $blog, $language);
         $this->picture_url = $user->getPictureUrl();

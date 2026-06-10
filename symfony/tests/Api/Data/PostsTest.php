@@ -5,9 +5,6 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\PostsController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
-use App\Entity\Post;
-use App\Entity\Tag;
-use App\Entity\User;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -46,7 +43,6 @@ class PostsTest extends ApiTestCase
             $post = PostFactory::createOne([
                 'blog' => $this->blog,
                 'is_page' => false,
-                'is_featured' => false,
                 'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
             ]);
             PostVariantFactory::createOne([
@@ -72,7 +68,6 @@ class PostsTest extends ApiTestCase
             $page = PostFactory::createOne([
                 'blog' => $this->blog,
                 'is_page' => true,
-                'is_featured' => false,
                 'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
             ]);
             PostVariantFactory::createOne([
@@ -95,6 +90,7 @@ class PostsTest extends ApiTestCase
         $this->assertCount(4, $json['data']);
         $this->assertArrayHasKey('pagination', $json);
         $this->assertSame('en', $json['data'][0]['language']['code']);
+        $this->assertFalse($json['data'][0]['is_page']);
     }
 
     public function test_fetches_pages(): void
@@ -115,6 +111,7 @@ class PostsTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertArrayHasKey('data', $json);
         $this->assertSame('fr', $json['data'][0]['language']['code']);
+        $this->assertSame('Post FR 0', $json['data'][0]['title']);
     }
 
     public function test_does_not_work_with_wrong_language(): void
@@ -144,25 +141,25 @@ class PostsTest extends ApiTestCase
     public function test_does_not_work_for_invalid_limit(): void
     {
         $this->dataApi($this->blog, '/posts', ['limit' => 0]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'limit: This value should be greater than or equal to 1.');
     }
 
     public function test_does_not_work_for_invalid_page(): void
     {
         $this->dataApi($this->blog, '/posts', ['page' => -1]);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'page: This value should be greater than or equal to 1.');
     }
 
     public function test_does_not_work_for_invalid_sort(): void
     {
         $this->dataApi($this->blog, '/posts', ['sort' => 'something_invalid']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Sort by something_invalid not supported');
     }
 
     public function test_does_not_work_for_invalid_sort_method(): void
     {
         $this->dataApi($this->blog, '/posts', ['sort' => 'published_at SOME']);
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Sort method SOME not supported');
     }
 
     public function test_sorts_by_published_at_desc(): void
@@ -198,10 +195,8 @@ class PostsTest extends ApiTestCase
     public function test_sorts_by_is_featured_desc(): void
     {
         $featuredPost = $this->posts[0];
-        $em = $this->getEm();
-        $post = $em->find(\App\Entity\Post::class, $featuredPost->getId());
-        $post->setIsFeatured(true);
-        $em->flush();
+        $featuredPost->setIsFeatured(true);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['sort' => 'is_featured DESC', 'limit' => 3]);
 
@@ -234,14 +229,72 @@ class PostsTest extends ApiTestCase
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 
+    public function test_filters_by_published_at(): void
+    {
+        $post = $this->posts[0];
+        $post->setPublishedAt(new \DateTimeImmutable('yesterday'));
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/posts', ['filter' => 'published_at=yesterday']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
+        $this->assertSame($post->getId(), $json['data'][0]['id']);
+        $this->assertSame($post->getPublishedAt()->getTimestamp(), $json['data'][0]['published_at']);
+    }
+
+    public function test_filters_by_created_at(): void
+    {
+        $post = $this->posts[0];
+        $post->setCreatedAt(new \DateTimeImmutable('yesterday'));
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/posts', ['filter' => 'created_at=yesterday']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
+        $this->assertSame($post->getId(), $json['data'][0]['id']);
+        $this->assertSame($post->getCreatedAt()->getTimestamp(), $json['data'][0]['created_at']);
+    }
+
+    public function test_filters_by_updated_at(): void
+    {
+        $post = $this->posts[0];
+        $post->getVariants()[0]->setUpdatedAt(new \DateTimeImmutable('yesterday'));
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/posts', ['filter' => 'updated_at=yesterday']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
+        $this->assertSame($post->getId(), $json['data'][0]['id']);
+        $this->assertSame($post->getVariants()[0]->getUpdatedAt()->getTimestamp(), $json['data'][0]['updated_at']);
+    }
+
     public function test_filters_by_is_featured(): void
     {
-        $em = $this->getEm();
-        $post = $em->find(\App\Entity\Post::class, $this->posts[1]->getId());
-        $post->setIsFeatured(true);
-        $em->flush();
+        $this->posts[1]->setIsFeatured(true);
+        $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'is_featured=true']);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
+        $this->assertSame($this->posts[1]->getId(), $json['data'][0]['id']);
+    }
+
+    public function test_filters_by_slug(): void
+    {
+        $post = $this->posts[0];
+        $variant = $post->getVariants()[0];
+        $variant->setSlug('my-unique-slug-test');
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/posts', ['filter' => "slug=my-unique-slug-test"]);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -249,18 +302,13 @@ class PostsTest extends ApiTestCase
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 
-    public function test_filters_by_slug(): void
+    public function test_filters_by_featured_image_not_null(): void
     {
         $post = $this->posts[0];
-        $em = $this->getEm();
-        $variant = $em->getRepository(\App\Entity\PostVariant::class)->findOneBy([
-            'post' => $post,
-            'language' => $this->primaryLanguage,
-        ]);
-        $variant->setSlug('my-unique-slug-test');
-        $em->flush();
+        $post->setFeaturedImageUrl('https://example.com/image.jpg');
+        $this->getEm()->flush();
 
-        $this->dataApi($this->blog, '/posts', ['filter' => "slug=my-unique-slug-test"]);
+        $this->dataApi($this->blog, '/posts', ['filter' => 'featured_image_url!=null']);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
@@ -271,7 +319,6 @@ class PostsTest extends ApiTestCase
     public function test_filters_by_tag_id(): void
     {
         $tag = TagFactory::createOne(['blog' => $this->blog, 'slug' => 'filter-tag', 'is_private' => false]);
-        TagFactory::createOne(['blog' => $this->blog, 'slug' => 'filter-tag-v', 'is_private' => false]);
         $post = $this->posts[0];
         $post->getTags()->add($tag);
         $this->getEm()->flush();
@@ -280,6 +327,7 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 
@@ -294,6 +342,7 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 
@@ -308,6 +357,7 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 
@@ -322,6 +372,7 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
 }

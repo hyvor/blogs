@@ -90,7 +90,7 @@ class PostsController
             $limit,
             $offset,
             $orderBys,
-            $input->pages ?? false,
+            $input->pages,
         );
 
         $postObjects = array_map(

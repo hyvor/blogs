@@ -17,5 +17,5 @@ class GetPostsInput
     public ?string $filter = null;
     public ?string $sort = null;
     public ?string $keys = null;
-    public ?bool $pages = null;
+    public bool $pages = false;
 }
