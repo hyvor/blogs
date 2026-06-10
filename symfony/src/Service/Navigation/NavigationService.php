@@ -121,7 +121,6 @@ class NavigationService
         $variant = new NavigationVariant();
         $variant->setNavigation($navigation);
         $variant->setLanguage($language);
-        $variant->setLanguageId($language->getId());
         $variant->setName($name);
         $variant->setCreatedAt($now);
         $variant->setUpdatedAt($now);
@@ -141,7 +140,7 @@ class NavigationService
     {
         return $this->em->getRepository(NavigationVariant::class)->findOneBy([
             'navigation' => $navigation,
-            'language_id' => $language->getId(),
+            'language' => $language,
         ]);
     }
 

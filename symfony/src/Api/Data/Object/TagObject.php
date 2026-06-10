@@ -20,16 +20,14 @@ class TagObject
     public ?string $code_foot;
     public int $posts_count;
     public LanguageObject $language;
+
     /** @var VariantObject[] */
     public array $variants = [];
 
-    /**
-     * @param array<array{language: Language, name: ?string, description: ?string}> $variantData
-     */
-    public function __construct(Tag $tag, Blog $blog, Language $language, PermalinkService $permalinkService, array $variantData = [])
+    public function __construct(Tag $tag, Blog $blog, Language $language, PermalinkService $permalinkService)
     {
         $this->id = $tag->getId();
-        $this->created_at = $tag->getCreatedAt()?->getTimestamp() ?? 0;
+        $this->created_at = $tag->getCreatedAt()->getTimestamp();
         $this->is_private = (bool)$tag->isPrivate();
         $this->slug = $tag->getSlug();
         $this->url = $permalinkService->getTagPermalink($tag, $blog, $language);
@@ -38,19 +36,18 @@ class TagObject
         $this->code_foot = $tag->getCodeFoot();
         $this->language = new LanguageObject($language);
 
-        $matched = null;
-        $fallback = $variantData[0] ?? null;
-        foreach ($variantData as $vd) {
-            if ($vd['language']->getId() === $language->getId()) {
-                $matched = $vd;
+        $variants = $tag->getVariants();
+        $selectedVariant = $variants[0] ?? null;
+        foreach ($variants as $variant) {
+            if ($variant->getLanguage()->getId() === $language->getId()) {
+                $selectedVariant = $variant;
             } else {
-                $url = $permalinkService->getTagPermalink($tag, $blog, $vd['language']);
-                $this->variants[] = new VariantObject(new LanguageObject($vd['language']), $url);
+                $url = $permalinkService->getTagPermalink($tag, $blog, $variant->getLanguage());
+                $this->variants[] = new VariantObject(new LanguageObject($variant->getLanguage()), $url);
             }
         }
 
-        $resolved = $matched ?? $fallback;
-        $this->name = $resolved['name'] ?? '';
-        $this->description = $resolved['description'] ?? '';
+        $this->name = $selectedVariant?->getName() ?? '';
+        $this->description = $selectedVariant?->getDescription() ?? '';
     }
 }

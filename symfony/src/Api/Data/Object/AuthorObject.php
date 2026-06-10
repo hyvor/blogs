@@ -24,13 +24,10 @@ class AuthorObject
     /** @var VariantObject[] */
     public array $variants = [];
 
-    /**
-     * @param array<array{language: Language, name: ?string, bio: ?string, location: ?string}> $variantData
-     */
-    public function __construct(User $user, Blog $blog, Language $language, PermalinkService $permalinkService, array $variantData = [])
+    public function __construct(User $user, Blog $blog, Language $language, PermalinkService $permalinkService)
     {
         $this->id = $user->getId();
-        $this->created_at = $user->getCreatedAt()?->getTimestamp() ?? 0;
+        $this->created_at = $user->getCreatedAt()->getTimestamp();
         $this->slug = $user->getSlug();
         $this->url = $permalinkService->getAuthorPermalink($user, $blog, $language);
         $this->picture_url = $user->getPictureUrl();
@@ -48,20 +45,19 @@ class AuthorObject
             $user->getSocialTiktok(),
         );
 
-        $matched = null;
-        $fallback = $variantData[0] ?? null;
-        foreach ($variantData as $vd) {
-            if ($vd['language']->getId() === $language->getId()) {
-                $matched = $vd;
+        $variants = $user->getVariants();
+        $selectedVariant = $variants[0] ?? null;
+        foreach ($variants as $variant) {
+            if ($variant->getLanguage()->getId() === $language->getId()) {
+                $selectedVariant = $variant;
             } else {
-                $url = $permalinkService->getAuthorPermalink($user, $blog, $vd['language']);
-                $this->variants[] = new VariantObject(new LanguageObject($vd['language']), $url);
+                $url = $permalinkService->getAuthorPermalink($user, $blog, $variant->getLanguage());
+                $this->variants[] = new VariantObject(new LanguageObject($variant->getLanguage()), $url);
             }
         }
 
-        $resolved = $matched ?? $fallback;
-        $this->name = $resolved['name'] ?? '';
-        $this->bio = $resolved['bio'] ?? null;
-        $this->location = $resolved['location'] ?? null;
+        $this->name = $selectedVariant?->getName() ?? '';
+        $this->bio = $selectedVariant?->getBio();
+        $this->location = $selectedVariant?->getLocation();
     }
 }

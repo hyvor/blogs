@@ -12,12 +12,6 @@ use App\Service\Route\PermalinkService;
 
 class RobotsTxtProcessor
 {
-    private const DEFAULT_ROBOTS_TXT = <<<'TEXT'
-User-agent: *
-Sitemap: {{ _blog.base_url }}/sitemap.xml
-Disallow: /p/
-TEXT;
-
     public function __construct(
         private LanguageService $languageService,
         private PermalinkService $permalinkService,
@@ -26,9 +20,7 @@ TEXT;
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
-        $meta = $blog->getMeta() ?? [];
-        $metaRobots = $meta['seo_robots_txt'] ?? null;
-        $robots = is_string($metaRobots) ? $metaRobots : self::DEFAULT_ROBOTS_TXT;
+        $robots = $blog->getMeta()->seo_robots_txt;
 
         try {
             $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);

@@ -278,8 +278,6 @@ export interface Navigation {
 export type NavigationType = 'header' | 'footer';
 
 export interface NavigationVariant {
-	navigation_id: number;
-	language_id: number;
 	name: string;
 }
 

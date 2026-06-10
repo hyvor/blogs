@@ -49,9 +49,7 @@ class UrlPostEntryTest extends KernelTestCase
 
         $variant1 = PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang1,
-            'language_id' => $lang1->getId(),
             'status' => \App\Entity\Enum\PostVariantStatus::PUBLISHED,
             'slug' => 'my-post',
             'content' => json_encode([
@@ -68,9 +66,7 @@ class UrlPostEntryTest extends KernelTestCase
         ]);
         $variant2 = PostVariantFactory::createOne([
             'post' => $post,
-            'post_id' => $post->getId(),
             'language' => $lang2,
-            'language_id' => $lang2->getId(),
             'status' => \App\Entity\Enum\PostVariantStatus::PUBLISHED,
             'slug' => 'mon-article',
         ]);

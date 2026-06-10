@@ -41,7 +41,7 @@ class PermalinkService
 
         $variant = null;
         foreach ($post->getVariants() as $v) {
-            if ($v->getLanguageId() === $language->getId()) {
+            if ($v->getLanguage()->getId() === $language->getId()) {
                 $variant = $v;
                 break;
             }

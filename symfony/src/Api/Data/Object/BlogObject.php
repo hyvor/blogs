@@ -3,14 +3,16 @@
 namespace App\Api\Data\Object;
 
 use App\Entity\Blog;
+use App\Entity\Enum\Blog\ColorMode;
+use App\Entity\Enum\Blog\ColorModeDefault;
+use App\Entity\Enum\BlogType;
 use App\Entity\Enum\NavigationType;
 use App\Entity\Language;
-use App\Entity\Navigation;
 use App\Service\Route\PermalinkService;
 
 class BlogObject
 {
-    public string $type;
+    public BlogType $type;
     public string $subdomain;
     public ?string $name;
     public ?string $description;
@@ -24,8 +26,8 @@ class BlogObject
     public bool $seo_indexing;
     public bool $seo_rich_schema;
     public bool $flashload;
-    public string $color_modes;
-    public string $color_mode_default;
+    public ColorMode $color_modes;
+    public ColorModeDefault $color_mode_default;
     public int $cache_version_styles;
     public int $posts_count;
     public SocialMediaObject $social;
@@ -36,68 +38,50 @@ class BlogObject
     /** @var LanguageObject[] */
     public array $languages = [];
 
-    /**
-     * @param Navigation[] $navigations
-     * @param Language[] $allLanguages
-     */
     public function __construct(
         Blog $blog,
         Language $language,
         PermalinkService $permalinkService,
-        array $navigations = [],
-        array $allLanguages = [],
     ) {
-        $type = $blog->getType();
-        $this->type = $type !== null ? $type->value : 'default';
+        $this->type = $blog->getType();
         $this->subdomain = $blog->getSubdomain();
 
-        $this->name = null;
-        $this->description = null;
-        foreach ($blog->getVariants() as $variant) {
-            if ($variant->getLanguageId() === $language->getId()) {
-                $this->name = $variant->getName();
-                $this->description = $variant->getDescription();
-                break;
-            }
-        }
-        if ($this->name === null) {
-            $first = $blog->getVariants()->first();
-            if ($first) {
-                $this->name = $first->getName();
-                $this->description = $first->getDescription();
-            }
-        }
+        $chosenVariant = array_find($blog->getVariants()->toArray(), fn($variant) => $variant->getLanguage()->getId() === $language->getId()) ??
+            ($blog->getVariants()->first() ?: null);
+
+        $this->name = $chosenVariant?->getName() ?? null;
+        $this->description = $chosenVariant?->getDescription() ?? null;
 
         $this->url = $permalinkService->getBlogPermalink($blog, $language);
         $this->base_url = $permalinkService->getBlogUrl($blog);
 
-        $meta = $blog->getMeta() ?? [];
-        $this->logo_url = is_string($meta['logo_url'] ?? null) ? $meta['logo_url'] : null;
-        $this->icon_url = is_string($meta['icon_url'] ?? null) ? $meta['icon_url'] : null;
-        $this->cover_url = is_string($meta['cover_url'] ?? null) ? $meta['cover_url'] : null;
-        $this->code_head = is_string($meta['code_head'] ?? null) ? $meta['code_head'] : null;
-        $this->code_foot = is_string($meta['code_foot'] ?? null) ? $meta['code_foot'] : null;
-        $this->seo_indexing = (bool)($meta['seo_indexing'] ?? true);
-        $this->seo_rich_schema = (bool)($meta['seo_rich_schema'] ?? false);
-        $this->flashload = (bool)($meta['flashload'] ?? false);
-        $this->color_modes = is_string($meta['color_modes'] ?? null) ? $meta['color_modes'] : 'light';
-        $this->color_mode_default = is_string($meta['color_mode_default'] ?? null) ? $meta['color_mode_default'] : 'light';
-        $this->cache_version_styles = is_numeric($meta['cache_version_styles'] ?? null) ? (int)$meta['cache_version_styles'] : 1;
+        $meta = $blog->getMeta();
+        $this->logo_url = $meta->logo_url;
+        $this->icon_url = $meta->icon_url;
+        $this->cover_url = $meta->cover_url;
+        $this->code_head = $meta->code_head;
+        $this->code_foot = $meta->code_foot;
+        $this->seo_indexing = $meta->seo_indexing;
+        $this->seo_rich_schema = $meta->seo_rich_schema;
+        $this->flashload = $meta->flashload;
+        $this->color_modes = $meta->color_modes;
+        $this->color_mode_default = $meta->color_mode_default;
+        $this->cache_version_styles = $meta->cache_version_styles;
 
         $this->social = new SocialMediaObject(
-            is_string($meta['social_facebook'] ?? null) ? $meta['social_facebook'] : null,
-            is_string($meta['social_twitter'] ?? null) ? $meta['social_twitter'] : null,
-            is_string($meta['social_linkedin'] ?? null) ? $meta['social_linkedin'] : null,
-            is_string($meta['social_youtube'] ?? null) ? $meta['social_youtube'] : null,
-            is_string($meta['social_instagram'] ?? null) ? $meta['social_instagram'] : null,
-            is_string($meta['social_github'] ?? null) ? $meta['social_github'] : null,
-            is_string($meta['social_tiktok'] ?? null) ? $meta['social_tiktok'] : null,
+            $meta->social_facebook,
+            $meta->social_twitter,
+            $meta->social_linkedin,
+            $meta->social_youtube,
+            $meta->social_instagram,
+            $meta->social_github,
+            $meta->social_tiktok,
         );
 
         $counts = $blog->getCounts() ?? [];
-        $this->posts_count = is_numeric($counts['posts'] ?? null) ? (int)$counts['posts'] : 0;
+        $this->posts_count = is_numeric($counts['posts'] ?? null) ? (int) $counts['posts'] : 0;
 
-        foreach ($navigations as $nav) {
+        foreach ($blog->getNavigations() as $nav) {
             $navObj = new NavObject($nav, $language);
             if ($nav->getType() === NavigationType::HEADER) {
                 $this->nav_header[] = $navObj;
@@ -106,7 +90,7 @@ class BlogObject
             }
         }
 
-        foreach ($allLanguages as $lang) {
+        foreach ($blog->getLanguages() as $lang) {
             $this->languages[] = new LanguageObject($lang);
         }
     }

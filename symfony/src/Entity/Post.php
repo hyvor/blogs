@@ -51,9 +51,27 @@ class Post
     #[ORM\OneToMany(targetEntity: PostVariant::class, mappedBy: 'post')]
     private Collection $variants;
 
+    /** @var Collection<int, Tag> */
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    #[ORM\JoinTable(name: 'post_tag')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $tags;
+
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'post_author')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $authors;
+
     public function __construct()
     {
         $this->variants = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     public function getId(): int
@@ -181,5 +199,17 @@ class Post
     public function getVariants(): Collection
     {
         return $this->variants;
+    }
+
+    /** @return Collection<int, Tag> */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /** @return Collection<int, User> */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
     }
 }

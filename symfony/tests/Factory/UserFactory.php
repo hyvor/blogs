@@ -34,6 +34,8 @@ final class UserFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
+            'created_at' => self::faker()->dateTime(),
+            'updated_at' => self::faker()->dateTime(),
             'blog' => BlogFactory::new(),
             'hyvor_user_id' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),

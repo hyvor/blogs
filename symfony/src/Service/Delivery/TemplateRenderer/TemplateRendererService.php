@@ -14,10 +14,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\Language;
-use App\Entity\Navigation;
 use App\Entity\Post;
-use App\Entity\PostAuthor;
-use App\Entity\PostTag;
 use App\Entity\PostVariant;
 use App\Entity\Route;
 use App\Entity\Tag;
@@ -26,7 +23,7 @@ use App\Entity\User;
 use App\Entity\UserVariant;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
-use App\Service\Delivery\PostQueryService;
+use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
@@ -42,7 +39,7 @@ class TemplateRendererService
         private ThemeFilesService $themeFilesService,
         private ThemeConfigService $themeConfigService,
         private TwigRendererService $twigRendererService,
-        private PostQueryService $postQueryService,
+        private PostService $postService,
         private BlogObjectFactory $blogObjectFactory,
         private PostObjectFactory $postObjectFactory,
         private TagObjectFactory $tagObjectFactory,
@@ -166,10 +163,7 @@ class TemplateRendererService
     ): array {
         $config = $this->themeConfigService->getConfig($blog);
 
-        $allLanguages = $this->em->getRepository(Language::class)->findBy(['blog' => $blog]);
-        $navigations = $this->em->getRepository(Navigation::class)->findBy(['blog' => $blog]);
-
-        $blogObject = $this->blogObjectFactory->create($blog, $language, $navigations, $allLanguages);
+        $blogObject = $this->blogObjectFactory->create($blog, $language);
 
         $vars = [
             '_blog' => $blogObject,
@@ -197,7 +191,7 @@ class TemplateRendererService
             $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
             $offset = ($pageNumber - 1) * $limit;
 
-            $result = $this->postQueryService->getPostsWithFilter($blog, $language, $resolvedFilter, $limit, $offset);
+            $result = $this->postService->getPostsWithFilter($blog, $language, $resolvedFilter, $limit, $offset);
             $posts = $result['posts'];
             $total = $result['total'];
 
@@ -207,15 +201,7 @@ class TemplateRendererService
 
             $postObjects = [];
             foreach ($posts as $post) {
-                $pv = null;
-                foreach ($post->getVariants() as $v) {
-                    if ($v->getLanguageId() === $language->getId()) {
-                        $pv = $v;
-                        break;
-                    }
-                }
-                if ($pv === null || $pv->getStatus() !== PostVariantStatus::PUBLISHED) continue;
-                $postObjects[] = $this->buildPostObject($post, $pv, $blog, $language);
+                $postObjects[] = $this->buildPostObject($post, $blog, $language);
             }
 
             $vars['_posts'] = $postObjects;
@@ -247,16 +233,7 @@ class TemplateRendererService
         }
 
         if (($routeName === 'post' || $routeName === 'page') && $model instanceof Post) {
-            $variant = null;
-            foreach ($model->getVariants() as $v) {
-                if ($v->getLanguageId() === $language->getId()) {
-                    $variant = $v;
-                    break;
-                }
-            }
-            if ($variant === null) return [];
-
-            $postObj = $this->buildPostObject($model, $variant, $blog, $language);
+            $postObj = $this->buildPostObject($model, $blog, $language);
             $url = $this->permalinkService->getPostPermalink($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($postObj->title, $postObj->description, $postObj->featured_image_url, $url, $model->getCanonicalUrl() ?? $url),
@@ -295,25 +272,9 @@ class TemplateRendererService
         return 1;
     }
 
-    private function buildPostObject(Post $post, PostVariant $variant, Blog $blog, Language $language): \App\Api\Data\Object\PostObject
+    private function buildPostObject(Post $post, Blog $blog, Language $language): \App\Api\Data\Object\PostObject
     {
-        $postTags = $this->em->getRepository(PostTag::class)->findBy(['post' => $post]);
-        $tags = array_map(fn($pt) => $pt->getTag(), $postTags);
-
-        $postAuthors = $this->em->getRepository(PostAuthor::class)->findBy(['post' => $post]);
-        $authors = array_filter(array_map(fn($pa) => $pa->getUser(), $postAuthors));
-
-        $otherVariants = [];
-        foreach ($post->getVariants() as $v) {
-            if ($v->getLanguageId() !== $language->getId() && $v->getStatus() === PostVariantStatus::PUBLISHED) {
-                $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
-                if ($vLang) {
-                    $otherVariants[] = ['variant' => $v, 'language' => $vLang];
-                }
-            }
-        }
-
-        return $this->postObjectFactory->create($post, $variant, $blog, $language, $tags, array_values($authors), $otherVariants);
+        return $this->postObjectFactory->create($blog, $post, $language);
     }
 
     private function buildTagObject(Tag $tag, Blog $blog, Language $language): \App\Api\Data\Object\TagObject
@@ -321,7 +282,7 @@ class TemplateRendererService
         $variants = $this->em->getRepository(TagVariant::class)->findBy(['tag' => $tag]);
         $variantData = [];
         foreach ($variants as $v) {
-            $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
+            $vLang = $v->getLanguage();
             if ($vLang) {
                 $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'description' => $v->getDescription()];
             }
@@ -334,7 +295,7 @@ class TemplateRendererService
         $variants = $this->em->getRepository(UserVariant::class)->findBy(['user' => $user]);
         $variantData = [];
         foreach ($variants as $v) {
-            $vLang = $this->em->getRepository(Language::class)->find($v->getLanguageId());
+            $vLang = $v->getLanguage();
             if ($vLang) {
                 $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'bio' => $v->getBio(), 'location' => $v->getLocation()];
             }

@@ -49,7 +49,6 @@ class ClearCacheListenerTest extends KernelTestCase
         $variant = NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
-            'language_id' => $lang->getId(),
         ]);
 
         $this->dispatch(new NavigationVariantChangedEvent($variant));

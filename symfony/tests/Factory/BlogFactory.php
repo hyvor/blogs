@@ -17,7 +17,9 @@ final class BlogFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     #[\Override]
     public static function class(): string
@@ -61,6 +63,42 @@ final class BlogFactory extends PersistentObjectFactory
         return [$blog, $user];
     }
 
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $languageAttrs
+     */
+    public static function createOneWithPrimaryLanguage(
+        array $blogAttrs = [],
+        array $languageAttrs = [],
+        bool $variants = true,
+    ): Blog {
+        $blog = self::createOne($blogAttrs);
+
+        LanguageFactory::createOnePrimaryFor($blog, $languageAttrs);
+
+        if ($variants) {
+            BlogVariantFactory::createManyForBlogWithAllLanguages($blog);
+        }
+
+        return $blog;
+    }
+
+    public static function createOneWithLanguageAndRoutes(
+        array $blogAttrs = [],
+        array $languageAttrs = [],
+        ?array $routes = null
+    ): Blog {
+        $blog = self::createOneWithPrimaryLanguage($blogAttrs, $languageAttrs);
+
+        if ($routes === null) {
+            RouteFactory::createDefaultsFor($blog);
+        } else {
+            RouteFactory::createManyFromArray($blog, $routes);
+        }
+
+        return $blog;
+    }
+
     public function withOrganization(int $organizationId): static
     {
         return $this->with(['organization_id' => $organizationId]);
@@ -73,6 +111,6 @@ final class BlogFactory extends PersistentObjectFactory
     protected function initialize(): static
     {
         return $this// ->afterInstantiate(function(Blog $blog): void {})
-            ;
+        ;
     }
 }

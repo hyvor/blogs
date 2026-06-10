@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Language;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -38,7 +39,7 @@ final class LanguageFactory extends PersistentObjectFactory
             'blog' => BlogFactory::new(),
             'code' => self::faker()->text(12),
             'direction' => self::faker()->randomElement(LanguageDirection::cases()),
-            'is_primary' => self::faker()->boolean(),
+            'is_primary' => false,
             'name' => self::faker()->text(255),
         ];
     }
@@ -52,5 +53,21 @@ final class LanguageFactory extends PersistentObjectFactory
         return $this
             // ->afterInstantiate(function(Language $language): void {})
         ;
+    }
+
+    public static function createOneFor(Blog $blog, array $attributes = []): Language
+    {
+        return self::createOne(array_merge([
+            'blog' => $blog,
+        ], $attributes));
+    }
+
+    public static function createOnePrimaryFor(Blog $blog, array $attributes = []): Language
+    {
+        return self::createOneFor($blog, array_merge([
+            'is_primary' => true,
+            'code' => 'en',
+            'name' => 'English',
+        ], $attributes));
     }
 }

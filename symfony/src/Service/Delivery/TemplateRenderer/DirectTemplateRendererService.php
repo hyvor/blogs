@@ -8,7 +8,6 @@ use App\Api\Data\Object\MetaObject;
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\Language;
-use App\Entity\Navigation;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
 use App\Service\Theme\ThemeConfigService;
@@ -30,10 +29,8 @@ class DirectTemplateRendererService
     public function render(Blog $blog, Language $language, string $templateName, string $path): string
     {
         $config = $this->themeConfigService->getConfig($blog);
-        $allLanguages = $this->em->getRepository(Language::class)->findBy(['blog' => $blog]);
-        $navigations = $this->em->getRepository(Navigation::class)->findBy(['blog' => $blog]);
 
-        $blogObject = $this->blogObjectFactory->create($blog, $language, $navigations, $allLanguages);
+        $blogObject = $this->blogObjectFactory->create($blog, $language);
 
         $url = $this->permalinkService->getFullUrlFromPath($blog, $path);
         $meta = new MetaObject(null, null, null, $url, $url);

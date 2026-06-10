@@ -4,7 +4,10 @@ namespace App\Entity;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
+use App\Entity\Language;
+use App\Entity\Navigation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,10 +20,6 @@ class Blog
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
-
-    /** @var Collection<int, BlogVariant> */
-    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
-    private Collection $variants;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $created_at = null;
@@ -53,8 +52,8 @@ class Blog
     #[ORM\Column]
     private \DateTimeImmutable $trial_ends_at;
 
-    #[ORM\Column(length: 255, nullable: true, enumType: BlogType::class, options: ['default' => 'default'])]
-    private ?BlogType $type = BlogType::DEFAULT;
+    #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
+    private BlogType $type = BlogType::DEFAULT;
 
     #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
@@ -68,9 +67,8 @@ class Blog
     #[ORM\Column(nullable: true, options: ['default' => true])]
     private ?bool $hosting_redirect_subdomain = true;
 
-    /** @var array<string, mixed>|null $meta */
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $meta = null;
+    #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
+    private BlogMeta $meta;
 
     /** @var array<string, number>|null $counts */
     #[ORM\Column(type: 'json', nullable: true)]
@@ -79,9 +77,26 @@ class Blog
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
 
+    /** @var Collection<int, BlogVariant> */
+    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
+    private Collection $variants;
+
+    /** @var Collection<int, Language> */
+    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['is_primary' => 'DESC', 'id' => 'ASC'])]
+    private Collection $languages;
+
+    /** @var Collection<int, Navigation> */
+    #[ORM\OneToMany(targetEntity: Navigation::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['sort' => 'ASC'])]
+    private Collection $navigations;
+
     public function __construct()
     {
         $this->variants = new ArrayCollection();
+        $this->languages = new ArrayCollection();
+        $this->navigations = new ArrayCollection();
+        $this->meta = new BlogMeta();
     }
 
     public function getId(): int
@@ -205,12 +220,12 @@ class Blog
         return $this;
     }
 
-    public function getType(): ?BlogType
+    public function getType(): BlogType
     {
         return $this->type;
     }
 
-    public function setType(?BlogType $type): static
+    public function setType(BlogType $type): static
     {
         $this->type = $type;
         return $this;
@@ -260,18 +275,12 @@ class Blog
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getMeta(): ?array
+    public function getMeta(): BlogMeta
     {
         return $this->meta;
     }
 
-    /**
-     * @param array<string, mixed>|null $meta
-     */
-    public function setMeta(?array $meta): static
+    public function setMeta(BlogMeta $meta): static
     {
         $this->meta = $meta;
         return $this;
@@ -311,5 +320,21 @@ class Blog
     public function getVariants(): Collection
     {
         return $this->variants;
+    }
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @return Collection<int, Navigation>
+     */
+    public function getNavigations(): Collection
+    {
+        return $this->navigations;
     }
 }

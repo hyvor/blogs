@@ -22,15 +22,9 @@ class PostVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $post_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
     private Post $post;
-
-    #[ORM\Column]
-    private int $language_id;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
@@ -110,17 +104,6 @@ class PostVariant
         return $this;
     }
 
-    public function getPostId(): int
-    {
-        return $this->post_id;
-    }
-
-    public function setPostId(int $post_id): static
-    {
-        $this->post_id = $post_id;
-        return $this;
-    }
-
     public function getPost(): Post
     {
         return $this->post;
@@ -132,16 +115,6 @@ class PostVariant
         return $this;
     }
 
-    public function getLanguageId(): int
-    {
-        return $this->language_id;
-    }
-
-    public function setLanguageId(int $language_id): static
-    {
-        $this->language_id = $language_id;
-        return $this;
-    }
 
     public function getLanguage(): Language
     {

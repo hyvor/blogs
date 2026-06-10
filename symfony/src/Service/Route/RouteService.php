@@ -9,9 +9,51 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @phpstan-type RouteDef array{name: string, match: string, template: string, posts_filter?: string}
+ */
 class RouteService
 {
     use ClockAwareTrait;
+
+    /**
+     * @var RouteDef[]
+     */
+    public const ROUTES = [
+        // post
+        [
+            'name' => 'post',
+            'match' => '/{slug}',
+            'template' => 'post',
+        ],
+        // page
+        [
+            'name' => 'page',
+            'match' => '/{slug}',
+            'template' => 'page,post',
+        ],
+        // home page (index)
+        [
+            'name' => 'index',
+            'match' => '/',
+            'template' => 'index',
+            'posts_filter' => '',
+        ],
+        // tag
+        [
+            'name' => 'tag',
+            'match' => '/tag/{slug}',
+            'template' => 'tag,index',
+            'posts_filter' => 'tag.slug={slug}',
+        ],
+        // author
+        [
+            'name' => 'author',
+            'match' => '/author/{slug}',
+            'template' => 'author,index',
+            'posts_filter' => 'author.slug={slug}',
+        ],
+    ];
 
     public function __construct(
         private EntityManagerInterface $em,

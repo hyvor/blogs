@@ -11,7 +11,7 @@ class BlogListObject
     public bool $is_blocked;
     public string $name;
     public string $subdomain;
-    public ?string $type;
+    public string $type;
     public string $url;
     public ?string $logo_url;
     public int $posts_count;
@@ -26,14 +26,11 @@ class BlogListObject
         $variants = $blog->getVariants();
         $this->name = $variants[0]?->getName() ?? 'Unnamed';
         $this->subdomain = $blog->getSubdomain();
-        $this->type = $blog->getType()?->value;
+        $this->type = $blog->getType()->value;
         $this->url = $url;
 
-        /**
-         * @var array<string, string|null> $meta
-         */
-        $meta = $blog->getMeta() ?? [];
-        $this->logo_url = $meta['logo_url'] ?? null;
+        $meta = $blog->getMeta();
+        $this->logo_url = $meta->logo_url;
         $counts = $blog->getCounts() ?? [];
         $this->posts_count = (int)($counts['posts'] ?? 0);
         $this->users_count = (int)($counts['users'] ?? 0);
