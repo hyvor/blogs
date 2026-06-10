@@ -11,6 +11,7 @@ use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PaginationObject;
 use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
+use App\Service\Post\PostSearchService;
 use App\Service\Post\PostService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
@@ -34,6 +35,7 @@ class PostsController
     public function __construct(
         private DataApiHelper $dataApiHelper,
         private PostService $postService,
+        private PostSearchService $postSearchService,
         private PostObjectFactory $postObjectFactory,
     ) {}
 
@@ -67,7 +69,7 @@ class PostsController
             throw new NotFoundHttpException('Post not found: not published');
         }
 
-        $postObject = $this->postObjectFactory->create($post, $variant, $blog, $language);
+        $postObject = $this->postObjectFactory->create($blog, $post, $language);
 
         $filtered = KeysFilter::filter($postObject, $input->keys);
 
@@ -124,16 +126,9 @@ class PostsController
         $result = $this->postService->searchPosts($blog, $language, $input->search, $limit, $offset);
 
         $postObjects = array_map(
-            function ($post) use ($blog, $language) {
-                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
-                if ($variant === null) {
-                    return null;
-                }
-                return $this->postObjectFactory->create($post, $variant, $blog, $language);
-            },
+            fn ($post) => $this->postObjectFactory->create($blog, $post, $language),
             $result['posts']
         );
-        $postObjects = array_values(array_filter($postObjects));
 
         $filteredPosts = KeysFilter::filter($postObjects, $input->keys);
 

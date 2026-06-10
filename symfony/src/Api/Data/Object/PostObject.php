@@ -6,7 +6,6 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\Post;
-use App\Entity\PostVariant;
 use App\Service\Route\PermalinkService;
 
 class PostObject
@@ -38,12 +37,29 @@ class PostObject
     public array $authors = [];
 
     public function __construct(
-        Post $post,
-        PostVariant $variant,
         Blog $blog,
+        Post $post,
         Language $language,
         PermalinkService $permalinkService,
     ) {
+       
+        $variant = null;
+        foreach ($post->getVariants() as $pv) {
+            if ($pv->getLanguage()->getId() === $language->getId()) {
+                $variant = $pv;
+                continue;
+            }
+            if ($pv->getStatus() !== PostVariantStatus::PUBLISHED) {
+                continue;
+            }
+            $variantLang = $pv->getLanguage();
+            $url = $permalinkService->getPostPermalink($post, $blog, $variantLang);
+            $this->variants[] = new VariantObject(new LanguageObject($variantLang), $url);
+        }
+
+        assert($variant !== null, 'Caller should ensure that variant is not null');
+        assert($variant->getStatus() === PostVariantStatus::PUBLISHED, 'Caller should ensure that variant is published');
+
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $variantUpdatedAt = $variant->getUpdatedAt();
@@ -76,16 +92,5 @@ class PostObject
             $this->authors[] = new AuthorObject($user, $blog, $language, $permalinkService);
         }
 
-        foreach ($post->getVariants() as $pv) {
-            if ($pv->getLanguage()->getId() === $language->getId()) {
-                continue;
-            }
-            if ($pv->getStatus() !== PostVariantStatus::PUBLISHED) {
-                continue;
-            }
-            $variantLang = $pv->getLanguage();
-            $url = $permalinkService->getPostPermalink($post, $blog, $variantLang);
-            $this->variants[] = new VariantObject(new LanguageObject($variantLang), $url);
-        }
     }
 }
