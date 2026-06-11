@@ -32,7 +32,10 @@ class ThemeFile
     private string $name;
 
     /**
-     * @var resource|null
+     * Doctrine hydrates this as a resource when read fresh from the database,
+     * but it is set as a hex-encoded string by setContent().
+     *
+     * @var resource|string|null
      */
     #[ORM\Column(type: 'blob', nullable: true)]
     private $content = null;
@@ -105,22 +108,29 @@ class ThemeFile
 
     public function getContent(): ?string
     {
-        if ($this->content === null) {
+        $content = $this->content;
+
+        if ($content === null) {
             return null;
         }
 
-        $content = stream_get_contents($this->content);
+        if (is_resource($content)) {
+            $content = stream_get_contents($content);
+        }
 
         if ($content === false) {
             return null;
         }
 
-        return hex2bin($content);
+        /** @phpstan-ignore argument.type (PHPStan cannot narrow `resource` out of the union via is_resource()) */
+        $decoded = hex2bin($content);
+
+        return $decoded === false ? null : $decoded;
     }
 
     public function setContent(?string $content): static
     {
-        $this->content = $content;
+        $this->content = $content === null ? null : bin2hex($content);
         return $this;
     }
 }

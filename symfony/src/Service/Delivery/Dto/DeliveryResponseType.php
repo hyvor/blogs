@@ -2,8 +2,8 @@
 
 namespace App\Service\Delivery\Dto;
 
-enum DeliveryResponseType
+enum DeliveryResponseType: string
 {
-    case REDIRECT;
-    case FILE;
+    case REDIRECT = 'redirect';
+    case FILE = 'file';
 }
