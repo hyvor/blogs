@@ -14,7 +14,6 @@ class DeliveryService
 {
     public function __construct(
         private PathMatcher $pathMatcher,
-        /** @phpstan-ignore property.onlyWritten */
         private BlogCacheService $blogCacheService,
         private bool $debug = false,
     ) {}
@@ -60,12 +59,7 @@ class DeliveryService
             $deliveryResponse->status,
         );
         $response->headers->set('Content-Type', $deliveryResponse->mimeType);
-        $cacheControlHeader = match ($deliveryResponse->cacheControl) {
-            \App\Service\Delivery\Dto\CacheControl::NO_CACHE => 'no-cache, no-store, must-revalidate',
-            \App\Service\Delivery\Dto\CacheControl::ONE_WEEK => 'public, max-age=604800',
-            \App\Service\Delivery\Dto\CacheControl::ONE_YEAR => 'public, max-age=31536000',
-        };
-        $response->headers->set('Cache-Control', $cacheControlHeader);
+        $response->headers->set('Cache-Control', $deliveryResponse->cacheControl->toHeaderValue());
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;

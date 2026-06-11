@@ -31,8 +31,11 @@ class ThemeFile
     #[ORM\Column(length: 255)]
     private string $name;
 
+    /**
+     * @var resource|null
+     */
     #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $content = null;
+    private $content = null;
 
     public function getId(): int
     {
@@ -102,7 +105,17 @@ class ThemeFile
 
     public function getContent(): ?string
     {
-        return $this->content;
+        if ($this->content === null) {
+            return null;
+        }
+
+        $content = stream_get_contents($this->content);
+
+        if ($content === false) {
+            return null;
+        }
+
+        return hex2bin($content);
     }
 
     public function setContent(?string $content): static
