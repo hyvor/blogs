@@ -55,6 +55,7 @@
         path /api/v2/*
         path /api/oidc/*
         path /api/data/*
+        path /api/delivery/*
 
         path /api/console/v0/init
         path /api/console/v0/usage

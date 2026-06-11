@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\BlogType;
 use App\Entity\User;
 
 class BlogListObject
@@ -11,7 +12,7 @@ class BlogListObject
     public bool $is_blocked;
     public string $name;
     public string $subdomain;
-    public string $type;
+    public BlogType $type;
     public string $url;
     public ?string $logo_url;
     public int $posts_count;
@@ -26,7 +27,7 @@ class BlogListObject
         $variants = $blog->getVariants();
         $this->name = $variants[0]?->getName() ?? 'Unnamed';
         $this->subdomain = $blog->getSubdomain();
-        $this->type = $blog->getType()->value;
+        $this->type = $blog->getType();
         $this->url = $url;
 
         $meta = $blog->getMeta();

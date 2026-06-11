@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "974bbb212b4cb3a61d0fee2ea4c79b43",
+    "content-hash": "624d618ce8588a6be4c1a5031c089d35",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1996,6 +1996,52 @@
                 "source": "https://github.com/hyvor/internal/tree/4.0.10"
             },
             "time": "2026-03-31T21:58:01+00:00"
+        },
+        {
+            "name": "hyvor/php-svg-icons",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/php-svg-icons.git",
+                "reference": "9944d1e35e8f3d23972862178a9506f690ef251d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/php-svg-icons/zipball/9944d1e35e8f3d23972862178a9506f690ef251d",
+                "reference": "9944d1e35e8f3d23972862178a9506f690ef251d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.21",
+                "phpstan/phpstan": "^1.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\SvgIcons\\": "src",
+                    "Hyvor\\SvgIcons\\Tests\\": "tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Supun",
+                    "email": "supun@hyvor.com"
+                }
+            ],
+            "description": "PHP SVG Icons Library",
+            "support": {
+                "issues": "https://github.com/hyvor/php-svg-icons/issues",
+                "source": "https://github.com/hyvor/php-svg-icons/tree/1.1.0"
+            },
+            "time": "2024-10-09T09:31:00+00:00"
         },
         {
             "name": "hyvor/scssphp",

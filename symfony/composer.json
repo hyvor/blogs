@@ -11,6 +11,7 @@
         "dunglas/doctrine-json-odm": "^1.5",
         "hyvor/doctrine-filterq": "^0.0.1",
         "hyvor/internal": "^4.0.10",
+        "hyvor/php-svg-icons": "^1.1",
         "hyvor/scssphp": "^2.0",
         "intervention/image": "^2.7",
         "league/flysystem": "^3.34",
