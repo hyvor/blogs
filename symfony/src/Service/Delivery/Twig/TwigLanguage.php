@@ -6,14 +6,16 @@ use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Blog\BlogService;
 use App\Service\Theme\ThemeFilesService;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Error\Error;
 
 class TwigLanguage
 {
-    /** @var array<string, Blog> */
-    private array $blogCache = [];
 
-    /** @var array<string, array<string, string>> */
+    /**
+     * @var array<string, array<string, string>> 
+     */
     private array $stringsCache = [];
 
     public function __construct(
@@ -21,24 +23,16 @@ class TwigLanguage
         private BlogService $blogService,
     ) {}
 
-    public function getBlogBySubdomain(string $subdomain): ?Blog
-    {
-        if (!isset($this->blogCache[$subdomain])) {
-            $blog = $this->blogService->getBlogBySubdomain($subdomain);
-            if ($blog === null) {
-                return null;
-            }
-            $this->blogCache[$subdomain] = $blog;
-        }
-        return $this->blogCache[$subdomain];
-    }
-
     /**
      * @param string[] $args
      */
     public function get(Blog $blog, string $langCode, string $key, array $args = []): ?string
     {
-        $strings = $this->loadStrings($blog, $langCode);
+        try {
+            $strings = $this->loadStrings($blog, $langCode);
+        } catch (ParseException $e) {
+            throw new Error('Error parsing language file: ' . $e->getMessage());
+        }
         $val = $strings[$key] ?? '';
 
         if (isset($args[0])) {
@@ -53,7 +47,10 @@ class TwigLanguage
         return $val;
     }
 
-    /** @return array<string, string> */
+    /** 
+     * @return array<string, string> 
+     * @throws ParseException
+     */
     private function loadStrings(Blog $blog, string $langCode): array
     {
         $cacheKey = $blog->getId() . '_' . $langCode;
@@ -63,27 +60,24 @@ class TwigLanguage
 
         $defaultFileName = 'en.yaml';
         $langFileName = $langCode . '.yaml';
+        $fileNames = $langCode === 'en' ? [$defaultFileName] : [$defaultFileName, $langFileName];
+        
+        $files = $this->themeFilesService->getFilesByNames($blog, $fileNames, ThemeFileFolder::LANG);
+        $enFileContent = array_find($files, fn($f) => $f->getName() === $defaultFileName)?->getContent();
 
         $strings = [];
 
-        $enFile = $this->themeFilesService->getFile($blog, $defaultFileName, ThemeFileFolder::LANG);
-        if ($enFile?->getContent()) {
-            $parsed = Yaml::parse((string)$enFile->getContent());
-            if (is_array($parsed)) {
-                $strings = $parsed;
-            }
+        if ($enFileContent) {
+            $strings = $this->parseYaml($enFileContent);
         }
 
         if ($langFileName !== $defaultFileName) {
-            $langFile = $this->themeFilesService->getFile($blog, $langFileName, ThemeFileFolder::LANG);
-            if ($langFile?->getContent()) {
-                $parsed = Yaml::parse((string)$langFile->getContent());
-                if (is_array($parsed)) {
-                    foreach ($strings as $k => &$v) {
-                        if (isset($parsed[$k])) {
-                            $v = $parsed[$k];
-                        }
-                    }
+            $langFile = array_find($files, fn($f) => $f->getName() === $langFileName);
+
+            if ($langFile && $langFile->getContent()) {
+                $newStrings = $this->parseYaml($langFile->getContent());
+                foreach ($newStrings as $key => $value) {
+                    $strings[$key] = $value;
                 }
             }
         }
@@ -91,5 +85,19 @@ class TwigLanguage
         /** @var array<string, string> $strings */
         $this->stringsCache[$cacheKey] = $strings;
         return $strings;
+    }
+
+    /**
+     * @throws ParseException
+     */
+    private function parseYaml(string $content) : array
+    {
+        $parsed = Yaml::parse($content);
+
+        if (is_array($parsed)) {
+            return $parsed;
+        }
+
+        return [];
     }
 }

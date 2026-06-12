@@ -22,6 +22,18 @@ class ThemeFilesService
         ]);
     }
 
+    /**
+     * @param string[] $names
+     */
+    public function getFilesByNames(Blog $blog, array $names, ?ThemeFileFolder $folder): array
+    {
+        return $this->em->getRepository(ThemeFile::class)->findBy([
+            'blog' => $blog,
+            'folder' => $folder,
+            'name' => $names,
+        ]);
+    }
+
     /** @return ThemeFile[] */
     public function getFilesInFolder(Blog $blog, ThemeFileFolder $folder): array
     {
