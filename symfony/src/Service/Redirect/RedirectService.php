@@ -17,7 +17,8 @@ class RedirectService
     public function __construct(
         private EntityManagerInterface $em,
         private EventDispatcherInterface $ed,
-    ) {}
+    ) {
+    }
 
     /**
      * @return Redirect[]
@@ -27,8 +28,8 @@ class RedirectService
         $qb = $this->em->createQueryBuilder();
         $qb->select('r')
             ->from(Redirect::class, 'r')
-            ->where('r.blog_id = :blogId')
-            ->setParameter('blogId', $blog->getId())
+            ->where('r.blog = :blog')
+            ->setParameter('blog', $blog)
             ->orderBy('r.dynamic', 'DESC')
             ->addOrderBy('r.created_at', 'DESC')
             ->setMaxResults($limit)
@@ -46,13 +47,13 @@ class RedirectService
 
     public function getRedirectsCount(Blog $blog): int
     {
-        return $this->em->getRepository(Redirect::class)->count(['blog_id' => $blog->getId()]);
+        return $this->em->getRepository(Redirect::class)->count(['blog' => $blog]);
     }
 
     public function getDynamicRedirectCount(Blog $blog): int
     {
         return $this->em->getRepository(Redirect::class)->count([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'dynamic' => true,
         ]);
     }
@@ -60,7 +61,7 @@ class RedirectService
     public function hasRedirectForPath(Blog $blog, string $path): bool
     {
         return $this->em->getRepository(Redirect::class)->findOneBy([
-            'blog_id' => $blog->getId(),
+            'blog' => $blog,
             'path' => $path,
         ]) !== null;
     }
@@ -88,7 +89,6 @@ class RedirectService
         $now = $this->now();
         $redirect = new Redirect();
         $redirect->setBlog($blog);
-        $redirect->setBlogId($blog->getId());
         $redirect->setDynamic($dynamic);
         $redirect->setPath($path);
         $redirect->setTo($to);
@@ -125,5 +125,37 @@ class RedirectService
         $this->em->remove($redirect);
         $this->em->flush();
         $this->ed->dispatch(new RedirectChangedEvent($redirect));
+    }
+
+    /**
+     * @return array{to: string, type: RedirectType}|null
+     */
+    public function findRedirectForPath(Blog $blog, string $path): ?array
+    {
+        $dynamicRedirects = $this->em->getRepository(Redirect::class)->findBy([
+            'blog' => $blog,
+            'dynamic' => true,
+        ]);
+
+        foreach ($dynamicRedirects as $redirect) {
+            $regex = $this->getRegex($redirect->getPath());
+            if (@preg_match($regex, $path)) {
+                $dynamicTo = preg_replace($regex, $redirect->getTo(), $path);
+                if ($dynamicTo !== null) {
+                    return ['to' => $dynamicTo, 'type' => $redirect->getType()];
+                }
+            }
+        }
+
+        $staticRedirect = $this->em->getRepository(Redirect::class)->findOneBy([
+            'blog' => $blog,
+            'path' => $path,
+        ]);
+
+        if ($staticRedirect) {
+            return ['to' => $staticRedirect->getTo(), 'type' => $staticRedirect->getType()];
+        }
+
+        return null;
     }
 }

@@ -6,10 +6,14 @@
 :80 {
 
     @symfony {
+        path /blog/*
+
         path /api/comms/*
         path /api/sudo/*
         path /api/v2/*
         path /api/oidc/*
+        path /api/data/*
+        path /api/delivery/*
 
         # need to update this as routes are migrated to Symfony
         # also update image Caddyfile

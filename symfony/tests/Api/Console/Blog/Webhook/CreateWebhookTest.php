@@ -52,7 +52,6 @@ class CreateWebhookTest extends ApiTestCase
         for ($i = 0; $i < 5; $i++) {
             WebhookFactory::createOne([
                 'blog' => $blog,
-                'blog_id' => $blog->getId(),
             ]);
         }
 

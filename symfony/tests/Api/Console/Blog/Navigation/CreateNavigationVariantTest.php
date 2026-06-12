@@ -25,11 +25,9 @@ class CreateNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
         ]);
 
@@ -53,7 +51,6 @@ class CreateNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('POST', 'nav-var-no-lang', '/navigation/' . $nav->getId() . '/variant', [

@@ -35,9 +35,10 @@ final class PostVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
-            'post_id' => self::faker()->randomNumber(),
+            'post' => PostFactory::new(),
+            'language' => LanguageFactory::new(),
             'status' => self::faker()->randomElement(PostVariantStatus::cases()),
+            'slug' => self::faker()->slug(),
         ];
     }
 

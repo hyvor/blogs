@@ -34,7 +34,6 @@ class WebhookDeliverMessageHandlerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => $url,
             'events' => [WebhookEvent::CACHE_ALL],
             'secret' => 'test-secret',

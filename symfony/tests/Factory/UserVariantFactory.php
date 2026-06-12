@@ -34,9 +34,10 @@ final class UserVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
+            'user' => UserFactory::new(),
+            'language' => LanguageFactory::new(),
+            'name' => self::faker()->name(),
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'user_id' => self::faker()->randomNumber(),
         ];
     }
 

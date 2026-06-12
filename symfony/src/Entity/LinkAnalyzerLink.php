@@ -24,9 +24,6 @@ class LinkAnalyzerLink
     #[ORM\Column]
     private \DateTimeImmutable $last_checked_at;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -100,17 +97,6 @@ class LinkAnalyzerLink
     public function setLastCheckedAt(\DateTimeImmutable $last_checked_at): static
     {
         $this->last_checked_at = $last_checked_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 

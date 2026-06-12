@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Subscription;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class SubscriptionFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'frequency' => self::faker()->text(255),
             'plan' => self::faker()->text(255),

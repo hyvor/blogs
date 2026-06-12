@@ -22,9 +22,6 @@ class GptPrompt
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deleted_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -95,17 +92,6 @@ class GptPrompt
     public function setDeletedAt(?\DateTimeImmutable $deleted_at): static
     {
         $this->deleted_at = $deleted_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 

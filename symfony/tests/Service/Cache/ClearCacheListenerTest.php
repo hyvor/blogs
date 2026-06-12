@@ -49,7 +49,6 @@ class ClearCacheListenerTest extends KernelTestCase
         $variant = NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
-            'language_id' => $lang->getId(),
         ]);
 
         $this->dispatch(new NavigationVariantChangedEvent($variant));
@@ -72,7 +71,6 @@ class ClearCacheListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/old-path',
             'dynamic' => false,
         ]);
@@ -88,7 +86,6 @@ class ClearCacheListenerTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/wildcard',
             'dynamic' => true,
         ]);

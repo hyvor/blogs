@@ -3,6 +3,11 @@
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function (RoutingConfigurator $routes): void {
+    // data API
+    $routes->import('../../src/Api/Data/Controller', 'attribute')
+        ->prefix('/api/data/v0/{subdomain}')
+        ->namePrefix('api_data_');
+
     // console API
     $routes
         ->import('../../src/Api/Console/ControllerOrg', 'attribute')
@@ -12,6 +17,11 @@ return static function (RoutingConfigurator $routes): void {
         ->import('../../src/Api/Console/Controller', 'attribute')
         ->prefix('/api/console/v0/blog/{subdomain}')
         ->namePrefix('api_console_');
+
+    // delivery API
+    $routes
+        ->import('../../src/Api/Delivery', 'attribute')
+        ->namePrefix('api_delivery_');
 
     // internal API routes
     $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');

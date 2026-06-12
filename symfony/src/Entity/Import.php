@@ -19,9 +19,6 @@ class Import
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -84,17 +81,6 @@ class Import
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 

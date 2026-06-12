@@ -25,7 +25,6 @@ class GetRedirectsTest extends ApiTestCase
         );
         RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'path' => '/old-page',
             'to' => 'https://example.com/new-page',
             'type' => RedirectType::PERMANENT,

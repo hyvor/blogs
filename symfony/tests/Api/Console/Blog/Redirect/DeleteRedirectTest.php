@@ -23,7 +23,6 @@ class DeleteRedirectTest extends ApiTestCase
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'dynamic' => false,
         ]);
 

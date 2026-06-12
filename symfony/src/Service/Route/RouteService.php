@@ -9,27 +9,74 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @phpstan-type RouteDef array{name: string, match: string, template: string, posts_filter?: string}
+ */
 class RouteService
 {
     use ClockAwareTrait;
+
+    /**
+     * @var RouteDef[]
+     */
+    public const ROUTES = [
+        // post
+        [
+            'name' => 'post',
+            'match' => '/{slug}',
+            'template' => 'post',
+        ],
+        // page
+        [
+            'name' => 'page',
+            'match' => '/{slug}',
+            'template' => 'page,post',
+        ],
+        // home page (index)
+        [
+            'name' => 'index',
+            'match' => '/',
+            'template' => 'index',
+            'posts_filter' => '',
+        ],
+        // tag
+        [
+            'name' => 'tag',
+            'match' => '/tag/{slug}',
+            'template' => 'tag,index',
+            'posts_filter' => 'tag.slug={slug}',
+        ],
+        // author
+        [
+            'name' => 'author',
+            'match' => '/author/{slug}',
+            'template' => 'author,index',
+            'posts_filter' => 'author.slug={slug}',
+        ],
+    ];
 
     public function __construct(
         private EntityManagerInterface $em,
         private EventDispatcherInterface $dispatcher,
     ) {}
 
+    public function getRouteByName(Blog $blog, string $name): ?Route
+    {
+        return $this->em->getRepository(Route::class)->findOneBy(['blog' => $blog, 'name' => $name]);
+    }
+
     /** @return Route[] */
     public function getRoutes(Blog $blog): array
     {
         return $this->em->getRepository(Route::class)->findBy(
-            ['blog_id' => $blog->getId()],
+            ['blog' => $blog],
             ['created_at' => 'ASC'],
         );
     }
 
     public function getRoutesCount(Blog $blog): int
     {
-        return $this->em->getRepository(Route::class)->count(['blog_id' => $blog->getId()]);
+        return $this->em->getRepository(Route::class)->count(['blog' => $blog]);
     }
 
     public function createRoute(
@@ -43,7 +90,6 @@ class RouteService
         $now = $this->now();
         $route = new Route();
         $route->setBlog($blog);
-        $route->setBlogId($blog->getId());
         $route->setName($name);
         $route->setMatch($match);
         $route->setTemplate($template);

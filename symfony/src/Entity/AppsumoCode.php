@@ -22,9 +22,6 @@ class AppsumoCode
     #[ORM\Column(length: 255, unique: true)]
     private string $code;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $blog_id = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private ?Blog $blog = null;
@@ -73,17 +70,6 @@ class AppsumoCode
     public function setCode(string $code): static
     {
         $this->code = $code;
-        return $this;
-    }
-
-    public function getBlogId(): ?int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(?int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 

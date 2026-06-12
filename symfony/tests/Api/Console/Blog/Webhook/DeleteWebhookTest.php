@@ -22,7 +22,6 @@ class DeleteWebhookTest extends ApiTestCase
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('DELETE', 'wh-delete', '/webhook/' . $webhook->getId(), user: $user);

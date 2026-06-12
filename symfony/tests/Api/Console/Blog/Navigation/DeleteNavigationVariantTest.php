@@ -25,17 +25,14 @@ class DeleteNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
         ]);
         $variant = NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
-            'language_id' => $lang->getId(),
         ]);
         $variantId = $variant->getId();
 
@@ -58,11 +55,9 @@ class DeleteNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'fr',
         ]);
 
@@ -81,7 +76,6 @@ class DeleteNavigationVariantTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
         ]);
 
         $this->consoleBlogApi('DELETE', 'nav-var-del-nl', '/navigation/' . $nav->getId() . '/variant', [

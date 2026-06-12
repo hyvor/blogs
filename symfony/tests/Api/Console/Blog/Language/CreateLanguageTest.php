@@ -45,7 +45,6 @@ class CreateLanguageTest extends ApiTestCase
         );
         LanguageFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'code' => 'en',
         ]);
 

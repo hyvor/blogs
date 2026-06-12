@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Media;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class MediaFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'name' => self::faker()->text(255),
             'original_name' => self::faker()->text(255),

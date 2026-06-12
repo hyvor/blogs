@@ -25,7 +25,6 @@ class UpdateNavigationTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
-            'blog_id' => $blog->getId(),
             'url' => '/old.json',
             'type' => NavigationType::HEADER,
         ]);

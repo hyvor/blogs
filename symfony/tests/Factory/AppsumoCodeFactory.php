@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\AppsumoCode;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,6 +35,7 @@ final class AppsumoCodeFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
+            'blog' => BlogFactory::new(),
             'code' => self::faker()->text(255),
         ];
     }

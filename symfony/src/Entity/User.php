@@ -20,13 +20,10 @@ class User
     private int $id;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updated_at = null;
-
-    #[ORM\Column]
-    private int $blog_id;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
@@ -102,12 +99,12 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
         return $this;
@@ -121,17 +118,6 @@ class User
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
