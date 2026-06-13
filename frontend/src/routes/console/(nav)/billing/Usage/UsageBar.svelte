@@ -7,10 +7,12 @@
 		name: string;
 		data: Usage;
 		bytes?: boolean;
+		unlimitedOnZero?: boolean;
 	}
 
-	let { name, data, bytes = false }: Props = $props();
+	let { name, data, bytes = false, unlimitedOnZero = false }: Props = $props();
 
+	let isUnlimited = $derived(unlimitedOnZero && data.limit === 0);
 	let width = $state('0%');
 	let percentage = $derived(Math.min(data.limit === 0 ? 100 : (data.used / data.limit) * 100, 100));
 
@@ -43,7 +45,12 @@
 		<div class="usage-name">
 			{name}
 		</div>
-		{#if data.limit > 0}
+		{#if isUnlimited}
+			<div class="usage-number">
+				<span class="usage-now">{current.toLocaleString()}</span>
+				<span class="usage-full">/ Unlimited</span>
+			</div>
+		{:else if data.limit > 0}
 			<div class="usage-number">
 				<span class="usage-now" style:color={color === 'var(--accent)' ? 'var(--text)' : color}
 					>{current.toLocaleString()}</span
@@ -53,7 +60,11 @@
 		{/if}
 	</div>
 
-	{#if data.limit === 0}
+	{#if isUnlimited}
+		<div class="usage-bar-bar">
+			<div class="usage-bar-fill" style:width="100%" style:background="var(--accent)" style:opacity="0.3"></div>
+		</div>
+	{:else if data.limit === 0}
 		<div class="feature-not-included">Your license does not include this feature.</div>
 	{:else}
 		<div class="usage-bar-bar">

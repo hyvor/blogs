@@ -9,7 +9,10 @@ use App\Exceptions\TrustedException;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Rules\Subdomain;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\License\BlogsLicense;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -51,6 +54,19 @@ class ConsoleUserBlogController extends Controller
 
         if ($organization === null) {
             throw new TrustedException('No current organization found');
+        }
+
+        if (!$isDev) {
+            /** @var ?BlogsLicense $license */
+            $license = app(Billing::class)->license($organization->id)->license;
+            if ($license && $license->blogs !== 0) {
+                $count = Blog::where('organization_id', $organization->id)
+                    ->where('type', BlogTypeEnum::DEFAULT->value)
+                    ->count();
+                if ($count >= $license->blogs) {
+                    throw new TrustedException('You have reached the maximum number of blogs allowed in your plan. Please upgrade your plan to create more blogs.');
+                }
+            }
         }
 
         $blog = app(BlogService::class)->createBlog(
