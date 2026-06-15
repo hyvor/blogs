@@ -13,6 +13,7 @@ use App\Service\Route\PermalinkService;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DirectTemplateRendererService
 {
@@ -23,6 +24,7 @@ class DirectTemplateRendererService
         private ThemeConfigService $themeConfigService,
         private TwigRendererService $twigRendererService,
         private BlogObjectFactory $blogObjectFactory,
+        #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
 
