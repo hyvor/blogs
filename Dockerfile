@@ -120,5 +120,7 @@ RUN touch /app/backend/storage/logs/laravel.log \
 
 USER chef
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD curl -f http://localhost:8080/health || exit 1
+
 EXPOSE 8080
 CMD ["/app/run"]
