@@ -16,8 +16,6 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/api-cli.php';
     include 'app/api-public.php';
     include 'app/special.php';
-    include 'blog.php';
-    include 'internal/api-internal.php';
 });
 
 // local routes
