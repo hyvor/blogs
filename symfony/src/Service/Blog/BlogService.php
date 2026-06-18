@@ -7,8 +7,11 @@ use App\Entity\Blog;
 use App\Entity\BlogVariant;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
+use App\Service\Blog\Event\BlogUpdatedEvent;
+use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class BlogService
 {
@@ -20,6 +23,7 @@ class BlogService
 
     public function __construct(
         private EntityManagerInterface $em,
+        private EventDispatcherInterface $ed,
     ) {}
 
     public function isSubdomainReserved(string $subdomain): bool
@@ -39,6 +43,8 @@ class BlogService
 
     public function updateBlog(Blog $blog, UpdateBlogInput $input): Blog
     {
+        $blogOld = clone $blog;
+
         if ($input->subdomain !== null) {
             $blog->setSubdomain($input->subdomain);
         }
@@ -154,6 +160,8 @@ class BlogService
 
         $this->em->flush();
 
+        $this->ed->dispatch(new BlogUpdatedEvent($blog, $blogOld));
+
         return $blog;
     }
 
@@ -181,6 +189,8 @@ class BlogService
 
     public function updateBlogVariant(BlogVariant $variant, ?string $name, ?string $description): BlogVariant
     {
+        $variantOld = clone $variant;
+
         if ($name !== null) {
             $variant->setName($name);
         }
@@ -189,6 +199,8 @@ class BlogService
         }
 
         $this->em->flush();
+
+        $this->ed->dispatch(new BlogVariantUpdatedEvent($variant, $variantOld));
 
         return $variant;
     }

@@ -7,10 +7,17 @@ use App\Entity\Language;
 use App\Entity\Tag;
 use App\Entity\TagVariant;
 use App\Service\Language\LanguageService;
+use App\Service\Tag\Event\TagCreatedEvent;
+use App\Service\Tag\Event\TagDeletedEvent;
+use App\Service\Tag\Event\TagUpdatedEvent;
+use App\Service\Tag\Event\TagVariantCreatedEvent;
+use App\Service\Tag\Event\TagVariantDeletedEvent;
+use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class TagService
@@ -20,6 +27,7 @@ class TagService
     public function __construct(
         private EntityManagerInterface $em,
         private LanguageService $languageService,
+        private EventDispatcherInterface $ed,
     ) {}
 
     public function getTagById(Blog $blog, int $id): ?Tag
@@ -162,6 +170,8 @@ class TagService
 
         $tag->getVariants()->add($variant);
 
+        $this->ed->dispatch(new TagCreatedEvent($tag));
+
         return $tag;
     }
 
@@ -170,6 +180,8 @@ class TagService
      */
     public function updateTag(Tag $tag, array $updates): Tag
     {
+        $tagOld = clone $tag;
+
         if (isset($updates['is_private'])) {
             $tag->setIsPrivate($updates['is_private']);
         }
@@ -186,6 +198,8 @@ class TagService
         $tag->setUpdatedAt($this->now());
 
         $this->em->flush();
+
+        $this->ed->dispatch(new TagUpdatedEvent($tag, $tagOld));
 
         return $tag;
     }
@@ -204,6 +218,8 @@ class TagService
 
         $this->em->remove($tag);
         $this->em->flush();
+
+        $this->ed->dispatch(new TagDeletedEvent($tag));
     }
 
     public function getTagVariant(Tag $tag, Language $language): ?TagVariant
@@ -230,11 +246,15 @@ class TagService
 
         $tag->getVariants()->add($variant);
 
+        $this->ed->dispatch(new TagVariantCreatedEvent($variant));
+
         return $variant;
     }
 
     public function updateTagVariant(TagVariant $variant, ?string $name, ?string $description): TagVariant
     {
+        $variantOld = clone $variant;
+
         if ($name !== null) {
             $variant->setName($name);
         }
@@ -246,6 +266,8 @@ class TagService
 
         $this->em->flush();
 
+        $this->ed->dispatch(new TagVariantUpdatedEvent($variant, $variantOld));
+
         return $variant;
     }
 
@@ -253,6 +275,8 @@ class TagService
     {
         $this->em->remove($variant);
         $this->em->flush();
+
+        $this->ed->dispatch(new TagVariantDeletedEvent($variant));
     }
 
     private function generateUniqueSlug(Blog $blog, string $name): string
