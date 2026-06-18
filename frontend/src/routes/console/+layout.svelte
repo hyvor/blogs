@@ -7,6 +7,7 @@
 		authOrganizationStore,
 		authUserStore,
 		blogListStore,
+		blogSelectorOpenStore,
 		resolvedLicenseStore
 	} from './lib/stores';
 	import { ConsoleLoader, toast } from '@hyvor/design/components';
@@ -22,6 +23,7 @@
 		HyvorBar
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
+	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -37,8 +39,8 @@
 		temp_unique_id?: string;
 		config: Config;
 		preloaded: {
-			blog: BlogResponse
-		}
+			blog: BlogResponse;
+		};
 	}
 
 	let isLoading = $state(true);
@@ -101,12 +103,24 @@
 	}
 
 	onMount(startConsole);
+
+	function handleGlobalKeydown(e: KeyboardEvent) {
+		const isMac = navigator.platform.toUpperCase().includes('MAC');
+		const modifierPressed = isMac ? e.metaKey : e.ctrlKey;
+
+		if (modifierPressed && e.key.toLowerCase() === 'b') {
+			e.preventDefault();
+			$blogSelectorOpenStore = true;
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Console | Hyvor Blogs</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
+
+<svelte:window onkeydown={!isLoading && !$isTempStore ? handleGlobalKeydown : undefined} />
 
 <main>
 	{#if isLoading}
@@ -137,10 +151,14 @@
 			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
 		>
 			{#if !$isTempStore}
-				<HyvorBar />
+				<HyvorBar logo="/logo.svg" />
 			{/if}
 
 			{@render children?.()}
+
+			{#if !$isTempStore}
+				<BlogSelectorModal />
+			{/if}
 		</CloudContext>
 	{/if}
 </main>
@@ -151,13 +169,6 @@
 		flex-direction: column;
 		width: 100%;
 		height: 100vh;
-	}
-	.full-loader {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 
 	@media (max-width: 992px) {
