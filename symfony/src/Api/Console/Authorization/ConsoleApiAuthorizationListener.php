@@ -198,4 +198,12 @@ class ConsoleApiAuthorizationListener
         assert($blog instanceof Blog);
         return $blog;
     }
+
+    /**
+     * ConsoleSubrequest sets this to run without authorization
+     */
+    public function setBlogToRequest(Request $request, Blog $blog): void
+    {
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+    }
 }

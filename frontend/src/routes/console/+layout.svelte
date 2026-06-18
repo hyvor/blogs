@@ -13,6 +13,7 @@
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
+	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
 	import {
 		CloudContext,
 		type CloudContextOrganization,
@@ -35,6 +36,9 @@
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
+		preloaded: {
+			blog: BlogResponse
+		}
 	}
 
 	let isLoading = $state(true);
@@ -62,6 +66,10 @@
 				authOrganizationStore.set(res.organization);
 				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
+
+				if (res.preloaded.blog) {
+					setPreloadedBlog(res.preloaded.blog);
+				}
 
 				if (res.blogs[0]?.type === 'temp') {
 					const subdomain = res.blogs[0].subdomain;

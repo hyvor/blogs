@@ -3,8 +3,8 @@
 namespace App\Api\Console\ControllerOrg;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
-use App\Api\Console\Authorization\OrganizationLevelEndpoint;
 use App\Api\Console\Authorization\OrganizationOptional;
+use App\Api\Console\ConsoleSubrequest;
 use App\Api\Console\Input\Blog\SortBlogsInput;
 use App\Api\Console\Object\AuthUserObject;
 use App\Api\Console\Object\BlogListObjectFactory;
@@ -18,7 +18,6 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,6 +33,7 @@ class ConsoleController
         private InternalConfig $internalConfig,
         private BillingInterface $billing,
         private UsageService $usageService,
+        private ConsoleSubrequest $consoleSubrequest,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
@@ -44,17 +44,24 @@ class ConsoleController
         $org = $this->authListener->hasOrganization()
             ? $this->authListener->getOrganization() : null;
 
-        $blogs = [];
+        $userBlogs = [];
+        $blogListObjects = [];
         if ($org !== null) {
-            foreach ($this->userService->getBlogsForUser($user->id, $org->id) as $entry) {
-                $blogs[] = $this->blogListObjectFactory->create($entry);
+            $userBlogs = $this->userService->getBlogsForUser($user->id, $org->id);
+            foreach ($userBlogs as $entry) {
+                $blogListObjects[] = $this->blogListObjectFactory->create($entry);
             }
+        }
+
+        $preloadedBlog = null;
+        if (count($userBlogs) > 0) {
+            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($userBlogs[0]->getBlog(), 'GET', '/blog');
         }
 
         return new JsonResponse([
             'user' => new AuthUserObject($user),
             'organization' => $org,
-            'blogs' => $blogs,
+            'blogs' => $blogListObjects,
             'config' => [
                 'deployment' => $this->internalConfig->getDeployment()->value,
                 'hyvor' => ['instance' => $this->internalConfig->getInstance()],
@@ -69,6 +76,9 @@ class ConsoleController
                 ],
                 'highlight_themes' => $this->highlighter->getAllThemes(),
             ],
+            'preloaded' => [
+                'blog' => json_decode($preloadedBlog->getContent(), true),
+            ]
         ]);
     }
 

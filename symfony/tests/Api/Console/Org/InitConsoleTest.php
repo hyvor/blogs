@@ -10,6 +10,7 @@ use App\Entity\Enum\UserRole;
 use App\Service\CodeHighlight\Highlighter;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -74,5 +75,31 @@ class InitConsoleTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame([], $json['blogs']);
         $this->assertNull($json['organization']);
+    }
+
+    public function test_preloads_first_blog(): void
+    {
+
+        $orgId = 100;
+        $hyvorUserId = 200;
+
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            [
+                'organization_id' => $orgId,
+                'subdomain' => 'myblog',
+            ],
+            [
+                'hyvor_user_id' => $hyvorUserId,
+                'role' => UserRole::OWNER,
+            ],
+        );
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $authUser = AuthFake::generateUser(['id' => $hyvorUserId]);
+        $authOrg = new AuthUserOrganization($orgId, 'My Org', 'admin');
+
+        $this->consoleOrgApi('GET', '/init', user: $authUser, organization: $authOrg);
+
+        dd($this->getJson());
     }
 }
