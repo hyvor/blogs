@@ -21,7 +21,7 @@
         path /api/console/v0/usage
         path /api/console/v0/blogs/sort
         path /api/console/v0/blog/check-subdomain
-        
+
         path /api/console/v0/blog/*/api-keys
         path /api/console/v0/blog/*/api-key/*
 
@@ -39,6 +39,14 @@
 
         path /api/console/v0/blog/*/webhooks
         path /api/console/v0/blog/*/webhook/*
+
+        path /api/console/v0/blog/*/blog
+        path /api/console/v0/blog/*/blog/*
+
+        path /api/console/v0/blog/*/tags
+        path /api/console/v0/blog/*/tags/*
+        path /api/console/v0/blog/*/tag
+        path /api/console/v0/blog/*/tag/*
     }
     handle @symfony {
         root /app/symfony/public

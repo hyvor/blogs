@@ -5,14 +5,12 @@ declare(strict_types=1);
 use App\Http\ConsoleApi\Controllers\ConsoleController;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
-use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
@@ -72,11 +70,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Posts and media
          */
         Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
-            // blog
-            Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
-            Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
-            Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
-            Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
 
             /**
              * In post routes, role is checked internally on some actions
@@ -132,25 +125,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/gpt/prompt', [ConsoleGptController::class, 'newPrompt']);
             Route::get('/gpt/post-history', [ConsoleGptController::class, 'getPostChatHistory']);
             Route::delete('/gpt/post-history', [ConsoleGptController::class, 'deletePostChatHistory']);
-        });
-
-        /**
-         * Tags
-         */
-        Route::get('/tags', [ConsoleTagController::class, 'get']);
-        Route::get('/tags/search', [ConsoleTagController::class, 'search']);
-
-        Route::middleware('role:owner|admin|editor|writer')->group(function () {
-            Route::post('/tag', [ConsoleTagController::class, 'create']);
-        });
-
-        Route::middleware('role:owner|admin|editor')->group(function () {
-            Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
-            Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
-            Route::get('/tag/{id}/slug-available', [ConsoleTagController::class, 'checkSlugAvailability']);
-            Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
-            Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
-            Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
         });
 
         /**
