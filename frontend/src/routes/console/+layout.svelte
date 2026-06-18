@@ -9,7 +9,7 @@
 		blogListStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { Loader, toast } from '@hyvor/design/components';
+	import { ConsoleLoader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
@@ -104,21 +104,13 @@
 </script>
 
 <svelte:head>
-	<title>Console · Hyvor Blogs</title>
+	<title>Console | Hyvor Blogs</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <main>
 	{#if isLoading}
-		<div class="full-loader">
-			<Loader size="large">
-				<div>
-					{#if $isTempStore}
-						Creating your temporary blog...
-					{/if}
-				</div>
-			</Loader>
-		</div>
+		<ConsoleLoader logo="/logo.svg" size={80} />
 	{:else}
 		<CloudContext
 			context={{
