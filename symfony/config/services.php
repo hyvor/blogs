@@ -1,10 +1,6 @@
 <?php
 
 use App\Service\App\Storage\FilesystemFactory;
-use App\Service\Delivery\DeliveryService;
-use App\Service\Delivery\FeedService;
-use App\Service\Delivery\TemplateRenderer\DirectTemplateRendererService;
-use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use Aws\S3\S3Client;
 use League\Flysystem\Filesystem;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -13,7 +9,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
 return static function (ContainerConfigurator $container): void {
     $parameters = $container->parameters();
-    $parameters->set('app.filesystem_default', 'memory');
+    $parameters->set('app.filesystem_default', 's3');
 
     $services = $container->services();
     $services->defaults()->autowire()->autoconfigure();
@@ -42,16 +38,4 @@ return static function (ContainerConfigurator $container): void {
             new Reference(S3Client::class),
             '%env(default::string:S3_BUCKET)%',
         ]);
-
-    $services->set(TemplateRendererService::class)
-        ->arg('$projectDir', '%kernel.project_dir%');
-
-    $services->set(DirectTemplateRendererService::class)
-        ->arg('$projectDir', '%kernel.project_dir%');
-
-    $services->set(FeedService::class)
-        ->arg('$projectDir', '%kernel.project_dir%');
-
-    $services->set(DeliveryService::class)
-        ->arg('$debug', '%kernel.debug%');
 };

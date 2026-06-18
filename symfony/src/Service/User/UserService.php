@@ -3,8 +3,10 @@
 namespace App\Service\User;
 
 use App\Entity\Blog;
+use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\Language\LanguageService;
 use App\Service\Post\PostAuthor\PostAuthorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
@@ -18,6 +20,7 @@ class UserService
         private EntityManagerInterface $em,
         private PostAuthorService $postAuthorService,
         private UserRepository $userRepository,
+        private LanguageService $languageService,
     ) {}
 
     public function getUserByBlogAndAuthUser(Blog $blog, AuthUser|int $authUserOrId): ?User
@@ -42,6 +45,31 @@ class UserService
     {
         /** @var User|null */
         return $this->userRepository->findOneBy(['slug' => $slug, 'blog' => $blog]);
+    }
+
+    /**
+     * @return User[]
+     */
+    public function getUsers(Blog $blog, int $limit, int $offset = 0): array
+    {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+
+        /** @var User[] */
+        return $this->em->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->join('u.variants', 'uv')
+            ->where('u.blog = :blog')
+            ->andWhere('uv.language = :language')
+            ->setParameter('blog', $blog)
+            ->setParameter('language', $primaryLanguage)
+            ->orderBy('CASE WHEN u.role = :ownerRole THEN 0 ELSE 1 END', 'ASC')
+            ->addOrderBy('u.posts_count', 'DESC')
+            ->setParameter('ownerRole', UserRole::OWNER)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

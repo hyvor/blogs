@@ -16,8 +16,7 @@ class FilesystemFactory
         ?string $bucket,
     ): Filesystem {
         if ($adapterType === 's3') {
-            assert(is_string($bucket));
-            $adapter = new AwsS3V3Adapter($s3Client, $bucket);
+            $adapter = new AwsS3V3Adapter($s3Client, $bucket ?? '');
         } else {
             $adapter = new InMemoryFilesystemAdapter();
         }

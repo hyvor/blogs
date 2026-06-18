@@ -3,15 +3,31 @@
 namespace App\Service\Tag;
 
 use App\Entity\Blog;
+use App\Entity\Language;
 use App\Entity\Tag;
+use App\Entity\TagVariant;
+use App\Service\Language\LanguageService;
+use App\Service\Tag\Event\TagCreatedEvent;
+use App\Service\Tag\Event\TagDeletedEvent;
+use App\Service\Tag\Event\TagUpdatedEvent;
+use App\Service\Tag\Event\TagVariantCreatedEvent;
+use App\Service\Tag\Event\TagVariantDeletedEvent;
+use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
+use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class TagService
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private EntityManagerInterface $em,
+        private LanguageService $languageService,
+        private EventDispatcherInterface $ed,
     ) {}
 
     public function getTagById(Blog $blog, int $id): ?Tag
@@ -24,6 +40,49 @@ class TagService
     {
         /** @var Tag|null */
         return $this->em->getRepository(Tag::class)->findOneBy(['slug' => $slug, 'blog' => $blog]);
+    }
+
+    /**
+     * @return Tag[]
+     */
+    public function getTags(Blog $blog, int $limit, int $offset = 0): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('t')
+            ->from(Tag::class, 't')
+            ->where('t.blog = :blog')
+            ->setParameter('blog', $blog)
+            ->orderBy('t.created_at', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        /** @var Tag[] */
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Tag[]
+     */
+    public function searchTags(Blog $blog, string $search, int $limit = 10): array
+    {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+
+        $search = str_replace('%', '', $search) . '%';
+
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('t')
+            ->from(Tag::class, 't')
+            ->join('t.variants', 'tv')
+            ->where('t.blog = :blog')
+            ->andWhere('tv.language = :language')
+            ->andWhere('tv.name LIKE :search')
+            ->setParameter('blog', $blog)
+            ->setParameter('language', $primaryLanguage)
+            ->setParameter('search', $search)
+            ->setMaxResults($limit);
+
+        /** @var Tag[] */
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -82,5 +141,159 @@ class TagService
         $tags = $qb->getQuery()->getResult();
 
         return ['tags' => $tags, 'total' => $total];
+    }
+
+    public function createTag(Blog $blog, string $name, bool $isPrivate = false): Tag
+    {
+        $now = $this->now();
+
+        $tag = new Tag();
+        $tag->setBlog($blog);
+        $tag->setSlug($this->generateUniqueSlug($blog, $name));
+        $tag->setIsPrivate($isPrivate);
+        $tag->setCreatedAt($now);
+        $tag->setUpdatedAt($now);
+
+        $this->em->persist($tag);
+
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+
+        $variant = new TagVariant();
+        $variant->setTag($tag);
+        $variant->setLanguage($primaryLanguage);
+        $variant->setName($name);
+        $variant->setCreatedAt($now);
+        $variant->setUpdatedAt($now);
+
+        $this->em->persist($variant);
+        $this->em->flush();
+
+        $tag->getVariants()->add($variant);
+
+        $this->ed->dispatch(new TagCreatedEvent($tag));
+
+        return $tag;
+    }
+
+    /**
+     * @param array{is_private?: bool, slug?: string, code_head?: string, code_foot?: string} $updates
+     */
+    public function updateTag(Tag $tag, array $updates): Tag
+    {
+        $tagOld = clone $tag;
+
+        if (isset($updates['is_private'])) {
+            $tag->setIsPrivate($updates['is_private']);
+        }
+        if (isset($updates['slug'])) {
+            $tag->setSlug($updates['slug']);
+        }
+        if (isset($updates['code_head'])) {
+            $tag->setCodeHead($updates['code_head']);
+        }
+        if (isset($updates['code_foot'])) {
+            $tag->setCodeFoot($updates['code_foot']);
+        }
+
+        $tag->setUpdatedAt($this->now());
+
+        $this->em->flush();
+
+        $this->ed->dispatch(new TagUpdatedEvent($tag, $tagOld));
+
+        return $tag;
+    }
+
+    public function deleteTag(Tag $tag): void
+    {
+        foreach ($tag->getVariants() as $variant) {
+            $this->em->remove($variant);
+        }
+
+        // todo: we should add foreign keys and let the DB handle this
+        $this->em->getConnection()->executeStatement(
+            'DELETE FROM post_tag WHERE tag_id = ?',
+            [$tag->getId()],
+        );
+
+        $this->em->remove($tag);
+        $this->em->flush();
+
+        $this->ed->dispatch(new TagDeletedEvent($tag));
+    }
+
+    public function getTagVariant(Tag $tag, Language $language): ?TagVariant
+    {
+        /** @var TagVariant|null */
+        return $this->em->getRepository(TagVariant::class)->findOneBy([
+            'tag' => $tag,
+            'language' => $language,
+        ]);
+    }
+
+    public function createTagVariant(Tag $tag, Language $language): TagVariant
+    {
+        $now = $this->now();
+
+        $variant = new TagVariant();
+        $variant->setTag($tag);
+        $variant->setLanguage($language);
+        $variant->setCreatedAt($now);
+        $variant->setUpdatedAt($now);
+
+        $this->em->persist($variant);
+        $this->em->flush();
+
+        $tag->getVariants()->add($variant);
+
+        $this->ed->dispatch(new TagVariantCreatedEvent($variant));
+
+        return $variant;
+    }
+
+    public function updateTagVariant(TagVariant $variant, ?string $name, ?string $description): TagVariant
+    {
+        $variantOld = clone $variant;
+
+        if ($name !== null) {
+            $variant->setName($name);
+        }
+        if ($description !== null) {
+            $variant->setDescription($description);
+        }
+
+        $variant->setUpdatedAt($this->now());
+
+        $this->em->flush();
+
+        $this->ed->dispatch(new TagVariantUpdatedEvent($variant, $variantOld));
+
+        return $variant;
+    }
+
+    public function deleteTagVariant(TagVariant $variant): void
+    {
+        $this->em->remove($variant);
+        $this->em->flush();
+
+        $this->ed->dispatch(new TagVariantDeletedEvent($variant));
+    }
+
+    private function generateUniqueSlug(Blog $blog, string $name): string
+    {
+        $slugger = new AsciiSlugger();
+        $checks = [$name];
+        $i = 0;
+
+        while (true) {
+            $check = $checks[$i] ?? bin2hex(random_bytes(8));
+            $slug = (string) $slugger->slug($check)->lower();
+
+            if ($this->getTagBySlug($blog, $slug) === null) {
+                return $slug;
+            }
+
+            $i++;
+        }
     }
 }

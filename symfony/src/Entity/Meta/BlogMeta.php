@@ -4,6 +4,8 @@ namespace App\Entity\Meta;
 
 use App\Entity\Enum\Blog\ColorMode;
 use App\Entity\Enum\Blog\ColorModeDefault;
+use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
+use App\Entity\Enum\Blog\SeoExternalLinksFollow;
 
 class BlogMeta
 {
@@ -27,7 +29,7 @@ class BlogMeta
 
     public bool $seo_indexing = true;
     public string $seo_robots_txt = "User-agent: *\nSitemap: {{ _blog.base_url }}/sitemap.xml\nDisallow: /p/";
-    public string $seo_external_links_follow = 'follow';
+    public SeoExternalLinksFollow $seo_external_links_follow = SeoExternalLinksFollow::FOLLOW;
     public bool $seo_rich_schema = true;
 
     public ?string $comments_code = null;
@@ -44,7 +46,7 @@ class BlogMeta
     public bool $flashload = true;
 
     public bool $link_analysis_enabled = true;
-    public string $link_analysis_email_report = 'broken';
+    public LinkAnalysisEmailReport $link_analysis_email_report = LinkAnalysisEmailReport::BROKEN;
 
     public int $cache_version_styles = 1;
 }

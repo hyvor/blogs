@@ -22,6 +22,9 @@ return static function (RoutingConfigurator $routes): void {
     $routes
         ->import('../../src/Api/Delivery', 'attribute')
         ->namePrefix('api_delivery_');
+        
+    // misc routes
+    $routes->import('../../src/Api/Misc/MiscController.php', 'attribute')->namePrefix('api_misc_');
 
     // internal API routes
     $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');

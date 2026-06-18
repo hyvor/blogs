@@ -5,6 +5,8 @@ namespace App\Tests\Service\Webhook;
 use App\Entity\Enum\WebhookEvent;
 use App\Entity\WebhookDelivery;
 use App\Message\WebhookDeliverMessage;
+use App\Service\Blog\Event\BlogUpdatedEvent;
+use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
@@ -12,13 +14,22 @@ use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Tag\Event\TagCreatedEvent;
+use App\Service\Tag\Event\TagDeletedEvent;
+use App\Service\Tag\Event\TagUpdatedEvent;
+use App\Service\Tag\Event\TagVariantCreatedEvent;
+use App\Service\Tag\Event\TagVariantDeletedEvent;
+use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use App\Service\Webhook\WebhookDeliveryService;
 use App\Service\Webhook\WebhookSubscriberListener;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
 use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\TagFactory;
+use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\WebhookFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -75,7 +86,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::CACHE_ALL],
         ]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
 
         $this->dispatch(new LanguageChangedEvent($lang));
 
@@ -93,7 +104,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::NAVIGATION_CHANGED],
         ]);
-        $nav = NavigationFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
+        $nav = NavigationFactory::createOne(['blog' => $blog]);
 
         $this->dispatch(new NavigationChangedEvent($nav));
 
@@ -114,8 +125,8 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::NAVIGATION_CHANGED],
         ]);
-        $nav = NavigationFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
+        $nav = NavigationFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
         $variant = NavigationVariantFactory::createOne([
             'navigation' => $nav,
             'language' => $lang,
@@ -140,7 +151,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::LANGUAGES_CHANGED],
         ]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
 
         $this->dispatch(new LanguageChangedEvent($lang));
 
@@ -161,7 +172,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::ROUTES_CHANGED],
         ]);
-        $route = RouteFactory::createOne(['blog' => $blog, 'blog_id' => $blog->getId()]);
+        $route = RouteFactory::createOne(['blog' => $blog]);
 
         $this->dispatch(new RouteChangedEvent($route));
 
@@ -169,6 +180,159 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         /** @var array<int, array{id: int}> $routes */
         $routes = $delivery->getData()['routes'];
         $this->assertSame($route->getId(), $routes[0]['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // BlogUpdatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_blog_updated_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::BLOG_UPDATED],
+        ]);
+
+        $this->dispatch(new BlogUpdatedEvent($blog, clone $blog));
+
+        $delivery = $this->assertDelivery(WebhookEvent::BLOG_UPDATED);
+        /** @var array{id: int} $blogData */
+        $blogData = $delivery->getData()['blog'];
+        $this->assertSame($blog->getId(), $blogData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // BlogVariantUpdatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_blog_variant_updated_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::BLOG_UPDATED],
+        ]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = BlogVariantFactory::createOne(['blog' => $blog, 'language' => $lang]);
+
+        $this->dispatch(new BlogVariantUpdatedEvent($variant, clone $variant));
+
+        $delivery = $this->assertDelivery(WebhookEvent::BLOG_UPDATED);
+        /** @var array{id: int} $blogData */
+        $blogData = $delivery->getData()['blog'];
+        $this->assertSame($blog->getId(), $blogData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // TagCreatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_tag_created_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_CREATED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new TagCreatedEvent($tag));
+
+        $delivery = $this->assertDelivery(WebhookEvent::TAG_CREATED);
+        /** @var array{id: int} $tagData */
+        $tagData = $delivery->getData()['tag'];
+        $this->assertSame($tag->getId(), $tagData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // TagUpdatedEvent / TagVariantCreatedEvent / TagVariantUpdatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_tag_updated_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_UPDATED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new TagUpdatedEvent($tag, clone $tag));
+
+        $delivery = $this->assertDelivery(WebhookEvent::TAG_UPDATED);
+        /** @var array{id: int} $tagData */
+        $tagData = $delivery->getData()['tag'];
+        $this->assertSame($tag->getId(), $tagData['id']);
+    }
+
+    public function test_tag_variant_created_dispatches_tag_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_UPDATED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = TagVariantFactory::createOne(['tag' => $tag, 'language' => $lang]);
+
+        $this->dispatch(new TagVariantCreatedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::TAG_UPDATED);
+    }
+
+    public function test_tag_variant_updated_dispatches_tag_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_UPDATED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = TagVariantFactory::createOne(['tag' => $tag, 'language' => $lang]);
+
+        $this->dispatch(new TagVariantUpdatedEvent($variant, clone $variant));
+
+        $this->assertDelivery(WebhookEvent::TAG_UPDATED);
+    }
+
+    // -----------------------------------------------------------------------
+    // TagDeletedEvent / TagVariantDeletedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_tag_deleted_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_DELETED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new TagDeletedEvent($tag));
+
+        $delivery = $this->assertDelivery(WebhookEvent::TAG_DELETED);
+        /** @var array{id: int} $tagData */
+        $tagData = $delivery->getData()['tag'];
+        $this->assertSame($tag->getId(), $tagData['id']);
+    }
+
+    public function test_tag_variant_deleted_dispatches_tag_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::TAG_UPDATED],
+        ]);
+        $tag = TagFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = TagVariantFactory::createOne(['tag' => $tag, 'language' => $lang]);
+
+        $this->dispatch(new TagVariantDeletedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::TAG_UPDATED);
     }
 
     // -----------------------------------------------------------------------

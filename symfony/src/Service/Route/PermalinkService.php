@@ -123,10 +123,15 @@ class PermalinkService
     private function buildSubdomainUrl(Blog $blog): string
     {
         $url = $this->appConfig->getDeliveryUrl();
-        $scheme = parse_url($url, PHP_URL_SCHEME) ?? 'https';
-        $host = parse_url($url, PHP_URL_HOST) ?? '';
-        $port = parse_url($url, PHP_URL_PORT);
-        $portStr = $port ? ":$port" : '';
-        return "$scheme://{$blog->getSubdomain()}.$host$portStr";
+
+        if ($url !== null) {
+            $scheme = parse_url($url, PHP_URL_SCHEME) ?? 'https';
+            $host = parse_url($url, PHP_URL_HOST) ?? '';
+            $port = parse_url($url, PHP_URL_PORT);
+            $portStr = $port ? ":$port" : '';
+            return "$scheme://{$blog->getSubdomain()}.$host$portStr";
+        }
+
+        return 'https://' . $this->appConfig->getDomainApp() . '/blog/' . $blog->getSubdomain();
     }
 }

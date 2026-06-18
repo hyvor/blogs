@@ -10,6 +10,7 @@ use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Post\PostService;
 use App\Service\Theme\ThemeConfigService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class FeedService
 {
@@ -22,6 +23,7 @@ class FeedService
         private ThemeConfigService $themeConfigService,
         /** @phpstan-ignore property.onlyWritten */
         private EntityManagerInterface $em,
+        #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
 

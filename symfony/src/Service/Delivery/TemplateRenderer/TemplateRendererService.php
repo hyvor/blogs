@@ -30,6 +30,7 @@ use App\Service\Route\PermalinkService;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class TemplateRendererService
 {
@@ -44,6 +45,7 @@ class TemplateRendererService
         private PostObjectFactory $postObjectFactory,
         private TagObjectFactory $tagObjectFactory,
         private AuthorObjectFactory $authorObjectFactory,
+        #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
 

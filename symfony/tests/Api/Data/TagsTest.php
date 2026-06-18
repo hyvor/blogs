@@ -114,6 +114,12 @@ class TagsTest extends ApiTestCase
         $this->assertResponseFailed(422, 'limit: This value should be greater than or equal to 1');
     }
 
+    public function test_max_limit_is_250(): void
+    {
+        $this->dataApi($this->blog, '/tags', ['limit' => 251]);
+        $this->assertResponseFailed(422, 'limit: This value should be less than or equal to 250');
+    }
+
     public function test_does_not_work_for_invalid_page(): void
     {
         $this->dataApi($this->blog, '/tags', ['page' => -1]);

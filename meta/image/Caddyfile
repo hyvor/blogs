@@ -7,7 +7,7 @@
 	http_port 80
 
 	on_demand_tls {
-        ask http://localhost:8989/api/special/caddy/allowed-domain
+        ask http://localhost:8080/api/special/caddy/allowed-domain
     }
 
     log {
@@ -47,7 +47,7 @@
 }
 
 # main app
-{$DOMAIN_APP}:80, :8989 {
+{$DOMAIN_APP}:80, :8080 {
     @symfony {
         path /api/comms/*
         path /api/sudo/*
@@ -60,7 +60,7 @@
         path /api/console/v0/usage
         path /api/console/v0/blogs/sort
         path /api/console/v0/blog/check-subdomain
-        
+
         path /api/console/v0/blog/*/api-keys
         path /api/console/v0/blog/*/api-key/*
 
@@ -78,6 +78,14 @@
 
         path /api/console/v0/blog/*/webhooks
         path /api/console/v0/blog/*/webhook/*
+
+        path /api/console/v0/blog/*/blog
+        path /api/console/v0/blog/*/blog/*
+
+        path /api/console/v0/blog/*/tags
+        path /api/console/v0/blog/*/tags/*
+        path /api/console/v0/blog/*/tag
+        path /api/console/v0/blog/*/tag/*
     }
     handle @symfony {
         root * /app/symfony/public

@@ -2,12 +2,16 @@
 
 namespace App\Service\Webhook;
 
+use App\Api\Console\Object\BlogObjectFactory;
 use App\Api\Console\Object\LanguageObject;
 use App\Api\Console\Object\NavigationObject;
 use App\Api\Console\Object\RouteObject;
+use App\Api\Console\Object\TagObjectFactory;
 use App\Entity\Blog;
 use App\Entity\Enum\WebhookEvent;
 use App\Message\WebhookDeliverMessage;
+use App\Service\Blog\Event\BlogUpdatedEvent;
+use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
@@ -18,17 +22,18 @@ use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Navigation\NavigationService;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
+use App\Service\Tag\Event\TagCreatedEvent;
+use App\Service\Tag\Event\TagDeletedEvent;
+use App\Service\Tag\Event\TagUpdatedEvent;
+use App\Service\Tag\Event\TagVariantCreatedEvent;
+use App\Service\Tag\Event\TagVariantDeletedEvent;
+use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-// TODO: BlogUpdatedEvent → BLOG_UPDATED
-// TODO: BlogVariantUpdatedEvent → BLOG_UPDATED
 // TODO: PostCreatedEvent → POST_CREATED
 // TODO: PostUpdatedEvent, PostVariantUpdatedEvent, PostVariantCreatedEvent → POST_UPDATED
 // TODO: PostDeletedEvent, PostVariantDeletedEvent → POST_DELETED / POST_UPDATED
-// TODO: TagCreatedEvent → TAG_CREATED
-// TODO: TagUpdatedEvent, TagVariantUpdatedEvent, TagVariantCreatedEvent → TAG_UPDATED
-// TODO: TagDeletedEvent, TagVariantDeletedEvent → TAG_DELETED / TAG_UPDATED
 // TODO: UserCreatedEvent → USER_CREATED
 // TODO: UserUpdatedEvent, UserVariantUpdatedEvent, UserVariantCreatedEvent → USER_UPDATED
 // TODO: UserDeletedEvent, UserVariantDeletedEvent → USER_DELETED / USER_UPDATED
@@ -44,6 +49,8 @@ class WebhookSubscriberListener
         private NavigationService $navigationService,
         private LanguageService $languageService,
         private RouteService $routeService,
+        private BlogObjectFactory $blogObjectFactory,
+        private TagObjectFactory $tagObjectFactory,
     ) {}
 
     /**
@@ -106,6 +113,84 @@ class WebhookSubscriberListener
                 $this->routeService->getRoutes($blog),
             )];
         });
+    }
+
+    #[AsEventListener]
+    public function onBlogUpdated(BlogUpdatedEvent $event): void
+    {
+        $blog = $event->blog;
+        $this->call($blog, WebhookEvent::BLOG_UPDATED, fn() => [
+            'blog' => (array) $this->blogObjectFactory->create($blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onBlogVariantUpdated(BlogVariantUpdatedEvent $event): void
+    {
+        $blog = $event->variant->getBlog();
+        $this->call($blog, WebhookEvent::BLOG_UPDATED, fn() => [
+            'blog' => (array) $this->blogObjectFactory->create($blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagCreated(TagCreatedEvent $event): void
+    {
+        $tag = $event->tag;
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_CREATED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagUpdated(TagUpdatedEvent $event): void
+    {
+        $tag = $event->tag;
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_UPDATED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagDeleted(TagDeletedEvent $event): void
+    {
+        $tag = $event->tag;
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_DELETED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagVariantCreated(TagVariantCreatedEvent $event): void
+    {
+        $tag = $event->variant->getTag();
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_UPDATED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagVariantUpdated(TagVariantUpdatedEvent $event): void
+    {
+        $tag = $event->variant->getTag();
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_UPDATED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onTagVariantDeleted(TagVariantDeletedEvent $event): void
+    {
+        $tag = $event->variant->getTag();
+        $blog = $tag->getBlog();
+        $this->call($blog, WebhookEvent::TAG_UPDATED, fn() => [
+            'tag' => (array) $this->tagObjectFactory->create($tag, $blog),
+        ]);
     }
 
     #[AsEventListener]

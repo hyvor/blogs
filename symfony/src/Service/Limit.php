@@ -12,6 +12,9 @@ class Limit
     const int MAX_API_KEYS_PER_BLOG = 50;
     const int MAX_NAVIGATIONS_PER_TYPE = 10;
 
+    const int MAX_BLOG_NAME_LENGTH = 160;
+    const int MAX_BLOG_DESCRIPTION_LENGTH = 255;
+
     /**
      * All routes are fetched when rendering content
      * therefore, we have to make sure there are no large number of routes
