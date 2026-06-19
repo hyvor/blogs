@@ -139,12 +139,14 @@
 				<PostRow {post} />
 			{/each}
 
-			<LoadButton
-				text="Load more"
-				show={hasMore}
-				loading={isLoadingMore}
-				on:click={() => loadPosts(true)}
-			/>
+			<div class="load-more-wrap">
+				<LoadButton
+					text="Load more"
+					show={hasMore}
+					loading={isLoadingMore}
+					on:click={() => loadPosts(true)}
+				/>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -165,7 +167,7 @@
 	}
 
 	.middle {
-		padding: 20px 25px;
+		padding: 20px 0;
 		background-color: var(--box-background);
 		border-radius: var(--box-radius);
 		box-shadow: var(--box-shadow);
@@ -185,6 +187,10 @@
 		align-items: center;
 		justify-content: center;
 		height: 100%;
+	}
+
+	.load-more-wrap {
+		padding: 16px 30px;
 	}
 
 	.title {
