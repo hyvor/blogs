@@ -2,8 +2,6 @@
 	import dayjs from 'dayjs';
 	import type { Post } from '../../../lib/types';
 	import {
-		Avatar,
-		Tag,
 		Dropdown,
 		ActionList,
 		ActionListItem,
@@ -17,7 +15,8 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-	import TagName from '../settings/tags/TagName.svelte';
+	import AuthorTag from './AuthorTag.svelte';
+	import TagChip from './TagChip.svelte';
 	import { clonePost } from './postActions';
 	import { goto } from '$app/navigation';
 
@@ -107,29 +106,21 @@
 				<VariantLangTag {variant} size="x-small" />
 			{/each}
 		</div>
-
 	</div>
 
-	<div class="post-authors">
+	<div class="post-authors-tags">
 		{#if !post.is_page}
-			{#each post.authors as author (author.id)}
-				<div class="post-author">
-					<Avatar src={author.picture_url || undefined} size="small" />
-					<span class="post-author-name">
-						{author.variants[0]?.name || 'Unnamed'}
-					</span>
-				</div>
-			{/each}
-		{/if}
-	</div>
+			<div class="post-authors">
+				{#each post.authors as author (author.id)}
+					<AuthorTag user={author} size="x-small" />
+				{/each}
+			</div>
 
-	<div class="post-tags">
-		{#if !post.is_page}
-			{#each post.tags as tag (tag.id)}
-				<Tag size="small">
-					<TagName {tag} small />
-				</Tag>
-			{/each}
+			<div class="post-tags">
+				{#each post.tags as tag (tag.id)}
+					<TagChip {tag} size="x-small" />
+				{/each}
+			</div>
 		{/if}
 	</div>
 
@@ -174,11 +165,7 @@
 <style lang="scss">
 	.post-list-item {
 		display: grid;
-		align-items: center;
-		grid-template-columns: minmax(280px, 1.8fr) minmax(110px, 0.9fr) minmax(
-				110px,
-				1fr
-			) 100px 36px;
+		grid-template-columns: minmax(280px, 1.8fr) minmax(200px, 1.9fr) 100px 36px;
 		gap: 14px;
 		padding: 16px 30px;
 		border-bottom: 1px solid var(--border);
@@ -244,33 +231,19 @@
 		gap: 5px;
 	}
 
-	.post-authors {
+	.post-authors-tags {
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
+		min-width: 0;
 	}
 
-	.post-author {
-		display: flex;
-		align-items: center;
-		gap: 7px;
-	}
-	.post-author :global(img) {
-		flex-shrink: 0;
-	}
-
-	.post-author-name {
-		font-size: 14px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
+	.post-authors,
 	.post-tags {
 		display: flex;
 		flex-wrap: wrap;
-		align-content: center;
 		gap: 5px;
+		min-width: 0;
 	}
 
 	.post-health-wrap {
@@ -301,6 +274,8 @@
 	}
 
 	.post-actions-wrap {
+		display: flex;
+		align-items: center;
 		text-align: right;
 		position: relative;
 		z-index: 1;
