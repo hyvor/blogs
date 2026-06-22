@@ -14,6 +14,7 @@ use App\Domains\Post\Content\Nodes\Audio\Audio;
 use App\Domains\Post\Content\Nodes\Blockquote;
 use App\Domains\Post\Content\Nodes\Bookmark\Bookmark;
 use App\Domains\Post\Content\Nodes\BulletList;
+use App\Domains\Post\Content\Nodes\Button;
 use App\Domains\Post\Content\Nodes\Callout\Callout;
 use App\Domains\Post\Content\Nodes\CodeBlock\CodeBlock;
 use App\Domains\Post\Content\Nodes\CustomHtml;
@@ -114,6 +115,7 @@ class PostContentService
                 new TableCell(),
                 new TableHeader(),
                 new Audio(),
+                new Button(),
             ],
             [
                 new Code,
