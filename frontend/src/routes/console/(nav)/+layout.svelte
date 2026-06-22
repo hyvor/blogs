@@ -1,17 +1,23 @@
 <script lang="ts">
 	import Nav from './Nav/Nav.svelte';
+	import { page } from '$app/state';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
 
 	let { children }: Props = $props();
+
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
 </script>
 
 <main id="blog-main">
-	<div id="nav">
-		<Nav />
-	</div>
-	<div id="content">
+	{#if !isPostPage}
+		<div id="nav">
+			<Nav />
+		</div>
+	{/if}
+	<div id="content" class:post-page={isPostPage}>
 		{@render children?.()}
 	</div>
 </main>
@@ -35,6 +41,10 @@
 		height: 100%;
 		min-width: 0;
 		overflow: auto;
+	}
+
+	#content.post-page {
+		padding: 0;
 	}
 
 	@media (max-width: 992px) {

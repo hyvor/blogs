@@ -45,6 +45,8 @@
 
 	let isLoading = $state(true);
 
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
 
@@ -150,7 +152,7 @@
 			}}
 			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
 		>
-			{#if !$isTempStore}
+			{#if !$isTempStore && !isPostPage}
 				<HyvorBar logo="/logo.svg" />
 			{/if}
 

@@ -7,16 +7,16 @@
 		Text,
 		toast
 	} from '@hyvor/design/components';
-	import { languagesStore } from '../../../../../../lib/stores/languagesStore';
+	import { languagesStore } from '../../../../../lib/stores/languagesStore';
 	import {
 		addPostVariantStore,
 		postLanguageStore,
 		postStore,
 		updatePostEditingStatusValue
-	} from '../../../postStore';
+	} from '../../postStore';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-	import type { Language } from '../../../../../../lib/types';
-	import { createPostVariant } from '../../../postActions';
+	import type { Language } from '../../../../../lib/types';
+	import { createPostVariant } from '../../postActions';
 	import { goto } from '$app/navigation';
 
 	let showDropdown = $state(false);
@@ -99,9 +99,6 @@
 {/if}
 
 <style>
-	.wrap {
-		padding: 10px;
-	}
 	.wrap :global(.dropdown .content-wrap) {
 		z-index: 11 !important;
 	}
