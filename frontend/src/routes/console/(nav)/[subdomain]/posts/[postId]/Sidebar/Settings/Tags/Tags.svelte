@@ -1,13 +1,5 @@
 <script lang="ts">
-	import {
-		Avatar,
-		Dropdown,
-		IconButton,
-		Loader,
-		SplitControl,
-		Tag,
-		Text
-	} from '@hyvor/design/components';
+	import { Dropdown, IconButton, SplitControl, Text } from '@hyvor/design/components';
 	import {
 		postOriginalStore,
 		postStore,
@@ -15,7 +7,6 @@
 		updatePostStore
 	} from '../../../../postStore';
 	import type { Tag as TagType } from '../../../../../../../lib/types';
-	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconX from '@hyvor/icons/IconX';
 
@@ -24,7 +15,7 @@
 	import UnsavedTag from '../UnsavedTag.svelte';
 	import OnlyPrimaryVariant from '../OnlyPrimaryVariant.svelte';
 	import { updatePostTags } from '../../../../postActions';
-	import TagName from '../../../../../settings/tags/TagName.svelte';
+	import TagChip from '../../../../TagChip.svelte';
 
 	let dropdownOpen = $state(false);
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
@@ -75,9 +66,7 @@
 			<div class="left">
 				{#if $postStore.tags.length}
 					{#each $postStore.tags as tag}
-						<Tag size="small" bg="#f1f1f1">
-							<TagName {tag} small />
-
+						<TagChip {tag}>
 							{#snippet end()}
 								<IconButton
 									color="red"
@@ -88,7 +77,7 @@
 									<IconX size={10} />
 								</IconButton>
 							{/snippet}
-						</Tag>
+						</TagChip>
 					{/each}
 				{:else}
 					<Text light small>No tags</Text>

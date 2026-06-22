@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BlogList } from '../lib/types';
+	import type { BlogList } from '../../types';
 
 	interface Props {
 		blog: BlogList; // const name = blog.subscription ? blog.subscription.plan

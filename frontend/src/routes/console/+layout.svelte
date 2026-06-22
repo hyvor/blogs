@@ -7,12 +7,16 @@
 		authOrganizationStore,
 		authUserStore,
 		blogListStore,
+		blogSelectorOpenStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { Loader, toast } from '@hyvor/design/components';
+	import { ConsoleLoader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
+	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
+	import { setPreloadedPost } from './(nav)/[subdomain]/posts/[postId]/postLoader';
+	import type { Post } from './lib/types';
 	import {
 		CloudContext,
 		type CloudContextOrganization,
@@ -21,6 +25,7 @@
 		HyvorBar
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
+	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -35,9 +40,25 @@
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
+		preloaded: {
+			blog: BlogResponse;
+			post: Post | null;
+		};
 	}
 
 	let isLoading = $state(true);
+
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+
+	function getBlogHint() {
+		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
+
+	function getPostHint() {
+		const match = page.url.pathname.match(/^\/console\/[^\/]+\/posts\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
 
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
@@ -52,7 +73,9 @@
 				endpoint: isTemp ? 'init-temp' : 'init',
 				userApi: true,
 				data: {
-					temp_subdomain: isTemp ? tempSubdomain : undefined
+					temp_subdomain: isTemp ? tempSubdomain : undefined,
+					blog_hint: isTemp ? undefined : getBlogHint(),
+					post_hint: isTemp ? undefined : getPostHint()
 				}
 			})
 			.then((res) => {
@@ -62,6 +85,14 @@
 				authOrganizationStore.set(res.organization);
 				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
+
+				if (res.preloaded.blog) {
+					setPreloadedBlog(res.preloaded.blog);
+				}
+
+				if (res.preloaded.post) {
+					setPreloadedPost(res.preloaded.post);
+				}
 
 				if (res.blogs[0]?.type === 'temp') {
 					const subdomain = res.blogs[0].subdomain;
@@ -93,24 +124,28 @@
 	}
 
 	onMount(startConsole);
+
+	function handleGlobalKeydown(e: KeyboardEvent) {
+		const isMac = navigator.platform.toUpperCase().includes('MAC');
+		const modifierPressed = isMac ? e.metaKey : e.ctrlKey;
+
+		if (modifierPressed && e.key.toLowerCase() === 'b') {
+			e.preventDefault();
+			$blogSelectorOpenStore = true;
+		}
+	}
 </script>
 
 <svelte:head>
-	<title>Console · Hyvor Blogs</title>
+	<title>Console | Hyvor Blogs</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
+<svelte:window onkeydown={!isLoading && !$isTempStore ? handleGlobalKeydown : undefined} />
+
 <main>
 	{#if isLoading}
-		<div class="full-loader">
-			<Loader size="large">
-				<div>
-					{#if $isTempStore}
-						Creating your temporary blog...
-					{/if}
-				</div>
-			</Loader>
-		</div>
+		<ConsoleLoader logo="/logo.svg" size={80} />
 	{:else}
 		<CloudContext
 			context={{
@@ -136,11 +171,15 @@
 			}}
 			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
 		>
-			{#if !$isTempStore}
-				<HyvorBar />
+			{#if !$isTempStore && !isPostPage}
+				<HyvorBar logo="/logo.svg" />
 			{/if}
 
 			{@render children?.()}
+
+			{#if !$isTempStore}
+				<BlogSelectorModal />
+			{/if}
 		</CloudContext>
 	{/if}
 </main>
@@ -151,13 +190,6 @@
 		flex-direction: column;
 		width: 100%;
 		height: 100vh;
-	}
-	.full-loader {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 
 	@media (max-width: 992px) {

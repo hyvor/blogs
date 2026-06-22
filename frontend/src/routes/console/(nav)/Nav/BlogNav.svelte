@@ -12,6 +12,7 @@
 	import { page } from '$app/stores';
 	import { NavLink } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
+	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
 	interface Props {
 		listItem: BlogList;
@@ -20,7 +21,7 @@
 	let { listItem }: Props = $props();
 </script>
 
-<a class="current-blog" href={consoleUrl('/select')}>
+<button type="button" class="current-blog" onclick={() => ($blogSelectorOpenStore = true)}>
 	<div class="name-url">
 		<div class="name">
 			{listItem.name || 'Unnamed'}
@@ -33,7 +34,7 @@
 	<div class="current-icon">
 		<IconChevronExpand />
 	</div>
-</a>
+</button>
 
 <div class="nav-items">
 	<NavLink
@@ -122,10 +123,17 @@
 	.current-blog {
 		display: flex;
 		align-items: center;
+		width: calc(100% - 20px);
 		padding: 10px 20px;
 		cursor: pointer;
 		border-radius: var(--box-radius);
 		margin: 10px;
+		font-family: inherit;
+		font-size: inherit;
+		text-align: left;
+		background: none;
+		border: none;
+		color: inherit;
 	}
 
 	.current-blog:hover {

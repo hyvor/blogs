@@ -1,14 +1,5 @@
 <script lang="ts">
-	import {
-		Avatar,
-		Dropdown,
-		IconButton,
-		Loader,
-		SplitControl,
-		Tag,
-		Text,
-		TextInput
-	} from '@hyvor/design/components';
+	import { Dropdown, IconButton, SplitControl, Text } from '@hyvor/design/components';
 	import {
 		postOriginalStore,
 		postStore,
@@ -16,7 +7,6 @@
 		updatePostStore
 	} from '../../../../postStore';
 	import type { User } from '../../../../../../../lib/types';
-	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconX from '@hyvor/icons/IconX';
 
@@ -25,16 +15,11 @@
 	import { updatePost, updatePostAuthors } from '../../../../postActions';
 	import OnlyPrimaryVariant from '../OnlyPrimaryVariant.svelte';
 	import { hasIdArrayChanged } from '../settingsHelpers';
+	import AuthorTag from '../../../../AuthorTag.svelte';
 
 	let dropdownOpen = $state(false);
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
-
-	function getAuthorName(user: User) {
-		const primaryLang = getPrimaryLanguage();
-		const variant = user.variants.find((v) => v.language_id === primaryLang.id);
-		return variant?.name || 'Unknown user';
-	}
 
 	function saveAuthors() {
 		loaderState = 'loading';
@@ -84,12 +69,7 @@
 			<div class="left">
 				{#if $postStore.authors.length}
 					{#each $postStore.authors as author}
-						<Tag size="small" style="padding: 4px 8px" bg="#f1f1f1">
-							{#snippet start()}
-								<Avatar src={author.picture_url} alt={getAuthorName(author)} size={16} />
-							{/snippet}
-							{getAuthorName(author)}
-
+						<AuthorTag user={author}>
 							{#snippet end()}
 								<IconButton
 									color="red"
@@ -100,7 +80,7 @@
 									<IconX size={12} />
 								</IconButton>
 							{/snippet}
-						</Tag>
+						</AuthorTag>
 					{/each}
 				{:else}
 					<Text light small>No authors</Text>

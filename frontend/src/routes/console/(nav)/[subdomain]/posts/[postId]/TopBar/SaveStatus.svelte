@@ -6,12 +6,11 @@
 		postOriginalVariantStore,
 		postVariantStore,
 		updatePostEditingStatusValue
-	} from '../../../../postStore';
-	import { updatePostVariant } from '../../../../postActions';
+	} from '../../postStore';
+	import { updatePostVariant } from '../../postActions';
 	import { Tag, toast } from '@hyvor/design/components';
 	import { beforeNavigate } from '$app/navigation';
-	import UnsavedTag from '../../../Sidebar/Settings/UnsavedTag.svelte';
-	import { addEditorEventListener } from '../editorEvents';
+	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 
 	let key = $derived($postCurrentContentKey as 'content' | 'content_unsaved');
 	let hasChanged = $derived($postVariantStore[key] !== $postOriginalVariantStore[key]);
@@ -42,7 +41,6 @@
 	let autoSaveInterval: ReturnType<typeof setInterval>;
 
 	onMount(() => {
-		// addEditorEventListener('blur', save);
 		autoSaveInterval = setInterval(save, 15000);
 	});
 
