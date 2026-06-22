@@ -6,7 +6,8 @@
 		ActionList,
 		ActionListItem,
 		IconButton,
-		toast
+		toast,
+		confirm
 	} from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
@@ -17,18 +18,20 @@
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import AuthorTag from './AuthorTag.svelte';
 	import TagChip from './TagChip.svelte';
-	import { clonePost } from './postActions';
+	import { clonePost, deletePostById } from './postActions';
 	import { goto } from '$app/navigation';
 
 	interface Props {
 		post: Post;
+		onDelete?: (postId: number) => void;
 	}
 
-	let { post }: Props = $props();
+	let { post, onDelete }: Props = $props();
 
 	let variant = $derived(post.variants[0]!);
 	let showDropdown = $state(false);
 	let isCloning = $state(false);
+	let isDeleting = $state(false);
 
 	const publishedAtDate = dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY');
 	const createdAtDate = dayjs.unix(post.created_at).format('MMM D, YYYY');
@@ -54,6 +57,42 @@
 			})
 			.finally(() => {
 				isCloning = false;
+			});
+	}
+
+	async function handleDelete(e: Event) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (isDeleting) return;
+
+		showDropdown = false;
+
+		const confirmed = await confirm({
+			title: post.is_page ? 'Delete Page' : 'Delete Post',
+			content:
+				`Are you sure you want to delete this ${post.is_page ? 'page' : 'post'}? ` +
+				'This action is IRREVERSIBLE.',
+			confirmText: 'Yes, Delete',
+			danger: true
+		});
+
+		if (!confirmed) return;
+
+		isDeleting = true;
+
+		const toastId = toast.loading('Deleting...');
+
+		deletePostById(post.id)
+			.then(() => {
+				toast.success('Deleted', { id: toastId });
+				onDelete?.(post.id);
+			})
+			.catch((error) => {
+				toast.error(error.message || 'Failed to delete', { id: toastId });
+			})
+			.finally(() => {
+				isDeleting = false;
 			});
 	}
 </script>
@@ -146,15 +185,18 @@
 	>
 		<Dropdown bind:show={showDropdown} align="end" width={150}>
 			{#snippet trigger()}
-				<IconButton size="small" color="input" variant="invisible" disabled={isCloning}>
+				<IconButton size="small" color="input" variant="invisible" disabled={isCloning || isDeleting}>
 					<IconThreeDotsVertical size={16} />
 				</IconButton>
 			{/snippet}
 
 			{#snippet content()}
 				<ActionList>
-					<ActionListItem on:click={handleClone} disabled={isCloning}
+					<ActionListItem on:click={handleClone} disabled={isCloning || isDeleting}
 						>Clone post</ActionListItem
+					>
+					<ActionListItem on:click={handleDelete} disabled={isCloning || isDeleting} type="danger"
+						>Delete post</ActionListItem
 					>
 				</ActionList>
 			{/snippet}

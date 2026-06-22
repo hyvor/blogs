@@ -1,9 +1,10 @@
 <script lang="ts">
 	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
-	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, LoadButton, toast } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { Post } from '../../../lib/types';
 	import PostRow from './PostRow.svelte';
+	import PostRowSkeleton from './PostRowSkeleton.svelte';
 	import StatusFilter from './Filters/StatusFilter.svelte';
 	import TagFilter from './Filters/Tag/TagFilter.svelte';
 	import DateFilter from './Filters/Date/DateFilter.svelte';
@@ -127,16 +128,16 @@
 
 	<div class="middle">
 		{#if isLoading}
-			<div class="loader-wrap">
-				<Loader size="large" block padding={100} />
-			</div>
+			{#each { length: 6 } as _}
+				<PostRowSkeleton />
+			{/each}
 		{:else if error}
 			<IconMessage error message={error} />
 		{:else if posts.length === 0}
 			<IconMessage empty message="No posts found" />
 		{:else}
 			{#each posts as post (post.id)}
-				<PostRow {post} />
+				<PostRow {post} onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))} />
 			{/each}
 
 			<div class="load-more-wrap">
@@ -180,13 +181,6 @@
 		display: flex;
 		align-items: center;
 		flex: 1;
-	}
-
-	.loader-wrap {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
 	}
 
 	.load-more-wrap {
