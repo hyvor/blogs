@@ -18,6 +18,7 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,11 +39,14 @@ class ConsoleController
 
     #[Route('/init', methods: ['GET'])]
     #[OrganizationOptional]
-    public function init(): JsonResponse
+    public function init(Request $request): JsonResponse
     {
         $user = $this->authListener->getUser();
         $org = $this->authListener->hasOrganization()
             ? $this->authListener->getOrganization() : null;
+
+        $blogHint = $request->query->get('blog_hint');
+        // TODO: handle post_hint
 
         $userBlogs = [];
         $blogListObjects = [];
@@ -55,7 +59,17 @@ class ConsoleController
 
         $preloadedBlog = null;
         if (count($userBlogs) > 0) {
-            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($userBlogs[0]->getBlog(), 'GET', '/blog');
+            $blogToPreload = $userBlogs[0]->getBlog();
+            if ($blogHint !== null) {
+                foreach ($userBlogs as $entry) {
+                    if ($entry->getBlog()->getSubdomain() === $blogHint) {
+                        $blogToPreload = $entry->getBlog();
+                        break;
+                    }
+                }
+            }
+
+            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($blogToPreload, 'GET', '/blog');
         }
 
         return new JsonResponse([
@@ -77,7 +91,8 @@ class ConsoleController
                 'highlight_themes' => $this->highlighter->getAllThemes(),
             ],
             'preloaded' => [
-                'blog' => json_decode($preloadedBlog->getContent(), true),
+                'blog' => $preloadedBlog ? json_decode($preloadedBlog->getContent(), true) : null,
+                'post' => null,
             ]
         ]);
     }

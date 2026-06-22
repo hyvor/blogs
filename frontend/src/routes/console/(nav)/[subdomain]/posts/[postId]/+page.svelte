@@ -12,7 +12,7 @@
 	import type { Unsubscriber } from 'svelte/store';
 	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
-	import { fade } from 'svelte/transition';
+	import { getPreloadedPost } from './postLoader';
 
 	let isLoading = $state(true);
 
@@ -38,26 +38,35 @@
 		if (!postId) return;
 
 		activeRequest?.abort();
-		activeRequest = new AbortController();
 		isLoading = true;
+
+		function handlePost(post: Post) {
+			setPostAndPostOriginalStore(post);
+			if (postView) {
+				initPostEditingState(postView, getInitialLanguageId());
+			}
+			initEditorEventHandlers();
+
+			linkAnalysisLoaderUnsubscriber?.();
+			linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
+
+			isLoading = false;
+		}
+
+		const preloadedPost = getPreloadedPost(postId);
+		if (preloadedPost) {
+			handlePost(preloadedPost);
+			return;
+		}
+
+		activeRequest = new AbortController();
 
 		consoleApi
 			.get<Post>({
 				endpoint: '/post/' + postId,
 				signal: activeRequest.signal
 			})
-			.then((res) => {
-				setPostAndPostOriginalStore(res);
-				if (postView) {
-					initPostEditingState(postView, getInitialLanguageId());
-				}
-				initEditorEventHandlers();
-
-				linkAnalysisLoaderUnsubscriber?.();
-				linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
-
-				isLoading = false;
-			})
+			.then(handlePost)
 			.catch((error) => {
 				if (error?.name === 'AbortError') return;
 				throw error;

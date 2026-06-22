@@ -100,6 +100,48 @@ class InitConsoleTest extends ApiTestCase
 
         $this->consoleOrgApi('GET', '/init', user: $authUser, organization: $authOrg);
 
-        dd($this->getJson());
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertIsArray($json['preloaded']['blog']);
+        $this->assertSame('myblog', $json['preloaded']['blog']['blog']['subdomain']);
+    }
+
+    public function test_preloads_blog_matching_blog_hint(): void
+    {
+        $orgId = 100;
+        $hyvorUserId = 200;
+
+        [$blog1, $user] = BlogFactory::createOneWithUser(
+            [
+                'organization_id' => $orgId,
+                'subdomain' => 'blog1',
+            ],
+            [
+                'hyvor_user_id' => $hyvorUserId,
+                'role' => UserRole::OWNER,
+            ],
+        );
+        LanguageFactory::createOnePrimaryFor($blog1);
+
+        [$blog2, ] = BlogFactory::createOneWithUser(
+            [
+                'organization_id' => $orgId,
+                'subdomain' => 'blog2',
+            ],
+            [
+                'hyvor_user_id' => $hyvorUserId,
+                'role' => UserRole::OWNER,
+            ],
+        );
+        LanguageFactory::createOnePrimaryFor($blog2);
+
+        $authUser = AuthFake::generateUser(['id' => $hyvorUserId]);
+        $authOrg = new AuthUserOrganization($orgId, 'My Org', 'admin');
+
+        $this->consoleOrgApi('GET', '/init?blog_hint=blog2', user: $authUser, organization: $authOrg);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('blog2', $json['preloaded']['blog']['blog']['subdomain']);
     }
 }

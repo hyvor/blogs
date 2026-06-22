@@ -15,6 +15,8 @@
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
 	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
+	import { setPreloadedPost } from './(nav)/[subdomain]/posts/[postId]/postLoader';
+	import type { Post } from './lib/types';
 	import {
 		CloudContext,
 		type CloudContextOrganization,
@@ -40,12 +42,23 @@
 		config: Config;
 		preloaded: {
 			blog: BlogResponse;
+			post: Post | null;
 		};
 	}
 
 	let isLoading = $state(true);
 
 	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+
+	function getBlogHint() {
+		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
+
+	function getPostHint() {
+		const match = page.url.pathname.match(/^\/console\/[^\/]+\/posts\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
 
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
@@ -60,7 +73,9 @@
 				endpoint: isTemp ? 'init-temp' : 'init',
 				userApi: true,
 				data: {
-					temp_subdomain: isTemp ? tempSubdomain : undefined
+					temp_subdomain: isTemp ? tempSubdomain : undefined,
+					blog_hint: isTemp ? undefined : getBlogHint(),
+					post_hint: isTemp ? undefined : getPostHint()
 				}
 			})
 			.then((res) => {
@@ -73,6 +88,10 @@
 
 				if (res.preloaded.blog) {
 					setPreloadedBlog(res.preloaded.blog);
+				}
+
+				if (res.preloaded.post) {
+					setPreloadedPost(res.preloaded.post);
 				}
 
 				if (res.blogs[0]?.type === 'temp') {
