@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\RedirectType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -20,9 +21,6 @@ class Redirect
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -36,8 +34,8 @@ class Redirect
     #[ORM\Column(name: '`to`', length: 255)]
     private string $to;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: RedirectType::class)]
+    private RedirectType $type;
 
     public function getId(): int
     {
@@ -69,17 +67,6 @@ class Redirect
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
@@ -127,12 +114,12 @@ class Redirect
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): RedirectType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(RedirectType $type): static
     {
         $this->type = $type;
         return $this;

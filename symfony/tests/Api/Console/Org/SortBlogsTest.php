@@ -2,7 +2,7 @@
 
 namespace Api\Console\Org;
 
-use App\Api\Console\Controller\ConsoleController;
+use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\User;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
@@ -100,5 +100,4 @@ class SortBlogsTest extends ApiTestCase
         $this->consoleOrgApi('PATCH', '/blogs/sort', data: [], user: $user, organization: $org);
         $this->assertResponseStatusCodeSame(422);
     }
-
 }

@@ -37,12 +37,14 @@ use Hyvor\Internal\Component\Component;
 use Illuminate\Support\Facades\DB;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
+use Hyvor\Internal\InternalConfig;
 
 class BlogService
 {
 
     public function __construct(
         private CommsInterface $comms,
+        private InternalConfig $internalConfig,
     ) {}
 
     public static function isSubdomainReserved(string $subdomain): bool
@@ -76,7 +78,7 @@ class BlogService
             ]);
             $blog->refresh(); // fetch default columns
 
-            if ($organizationId) {
+            if ($organizationId && $this->internalConfig->getDeployment()->isCloud()) {
                 $this->comms->send(
                     new ResourceCreated(
                         Component::BLOGS,

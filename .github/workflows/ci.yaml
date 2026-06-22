@@ -9,7 +9,6 @@ on:
       - main
 
 jobs:
-
   frontend-check:
     name: "Svelte / TS Check"
     runs-on: ubuntu-latest
@@ -98,7 +97,7 @@ jobs:
           backend-dev php -d memory_limit=1024M bin/console doctrine:migrations:migrate --env=test --no-interaction
           docker run \
           -w /app/backend \
-          -e DB_HOST=postgres \
+          -e DATABASE_URL="postgresql://postgres:postgres@postgres:5432/hyvor_blogs_testing?serverVersion=16&charset=utf8" \
           --network ci \
           --mount type=bind,source=$(pwd)/coverage.xml,target=/app/backend/coverage.xml \
           backend-dev php -d memory_limit=1024M ./vendor/bin/pest --ci --coverage-clover /app/backend/coverage.xml

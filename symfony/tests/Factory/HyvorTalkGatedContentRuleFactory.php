@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\HyvorTalkGatedContentRule;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +35,7 @@ final class HyvorTalkGatedContentRuleFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'minimum_plan' => self::faker()->text(255),
             'tag_id' => self::faker()->randomNumber(),
         ];

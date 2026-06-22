@@ -21,7 +21,8 @@ Run the following to reset the database and seed it with sample data:
 
 ```bash
 # from docker container:
-cd /app/symfony && bin/console dev:reset --seed
+cd /app/symfony && bin/console dev:reset && \
+cd /app/backend && php artisan db:seed && php artisan download:themes
 
 # from host machine:
 docker compose exec -it backend bash -c "cd /app/symfony && bin/console dev:reset --seed"
@@ -42,3 +43,8 @@ docker compose exec backend bash -c "cd /app/symfony && php vendor/bin/phpstan -
 # prettier
 docker compose exec frontend npm run format
 ```
+
+### Supported VSCode Extensions
+
+- Prettier (Svelte and TS files)
+- Coverage Gutters (Symfony code coverage)

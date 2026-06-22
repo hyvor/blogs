@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: hyvor-blogs-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?postgres password not set}
+      POSTGRES_DB: hyvor_blogs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hyvor_blogs"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  blogs:
+    image: hyvor/blogs:latest
+    container_name: hyvor-blogs
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:

@@ -69,6 +69,12 @@ export function deletePost() {
 	});
 }
 
+export function deletePostById(postId: number) {
+	return consoleApi.delete({
+		endpoint: `/post/${postId}`
+	});
+}
+
 export function updatePostAuthors(authors: User[], updateStore = true) {
 	const postId = get(postStore).id;
 

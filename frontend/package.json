@@ -26,6 +26,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.45.1",
 		"happy-dom": "^13.3.8",
+		"mdsvex": "^0.12.7",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.4.1",
 		"svelte": "^5.49.1",
@@ -40,7 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.2",
-		"@hyvor/design": "^2.0.8",
+		"@hyvor/design": "^2.0.11",
 		"@hyvor/icons": "^1.0.0",
 		"@hyvor/richtext": "^0.0.14",
 		"@types/react-dom": "^18.2.18",

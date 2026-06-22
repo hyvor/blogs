@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
+use Hyvor\Internal\InternalConfig;
 
 class ConsoleUserController extends Controller
 {
@@ -59,6 +60,7 @@ class ConsoleUserController extends Controller
         Blog $blog,
         UsageService $usageService,
         CommsInterface $comms,
+        InternalConfig $internalConfig,
     ): JsonResponse {
         $request->validate([
             'hyvor_user_id' => 'required|integer',
@@ -79,19 +81,21 @@ class ConsoleUserController extends Controller
         $organizationId = $blog->organization_id;
         assert($organizationId !== null);
 
-        try {
-            $verification = $comms->send(
-                new VerifyMember(
-                    $organizationId,
-                    $hyvorUserId,
-                ),
-            );
-        } catch (CommsApiFailedException $e) {
-            throw new TrustedException('Unable to verify the user. Please try again later.');
-        }
+        if ($internalConfig->getDeployment()->isCloud()) {
+            try {
+                $verification = $comms->send(
+                    new VerifyMember(
+                        $organizationId,
+                        $hyvorUserId,
+                    ),
+                );
+            } catch (CommsApiFailedException $e) {
+                throw new TrustedException('Unable to verify the user. Please try again later.');
+            }
 
-        if (!$verification->isMember()) {
-            throw new TrustedException('Unable to find the user in the organization');
+            if (!$verification->isMember()) {
+                throw new TrustedException('Unable to find the user in the organization');
+            }
         }
 
         if ($role === UserRoleEnum::OWNER) {

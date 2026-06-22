@@ -7,6 +7,10 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 use Hyvor\Internal\Component\Component;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -18,6 +22,10 @@ class CreateBlogTest extends DatabaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        BillingFake::enable([
+            1 => new ResolvedLicense(ResolvedLicenseType::TRIAL, BlogsLicense::trial()),
+        ]);
 
         // themes are needed to create a blog
         Theme::factory()
@@ -111,6 +119,63 @@ class CreateBlogTest extends DatabaseTestCase
         );
     }
 
+    public function testCannotExceedBlogLimitOnPersonalPlan(): void
+    {
+        $personalLicense = new BlogsLicense(
+            users: 1,
+            storage: 1_000_000_000,
+            aiTokens: 0,
+            autoTranslationsChars: 0,
+            seoAnalysis: false,
+            linkAnalysis: false,
+            blogs: 1,
+        );
+
+        BillingFake::enable([
+            1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $personalLicense),
+        ]);
+
+        Blog::factory()->create([
+            'organization_id' => 1,
+            'type' => BlogTypeEnum::DEFAULT,
+        ]);
+
+        $this->consoleUserApi('POST', '/blog', [
+            'name' => 'Second Blog',
+            'subdomain' => 'second-blog',
+        ])
+            ->assertUnprocessable()
+            ->assertSee('maximum number of blogs');
+    }
+
+    public function testBlogLimitNotAppliedForDevBlogs(): void
+    {
+        $personalLicense = new BlogsLicense(
+            users: 1,
+            storage: 1_000_000_000,
+            aiTokens: 0,
+            autoTranslationsChars: 0,
+            seoAnalysis: false,
+            linkAnalysis: false,
+            blogs: 1,
+        );
+
+        BillingFake::enable([
+            1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $personalLicense),
+        ]);
+
+        Blog::factory()->create([
+            'organization_id' => 1,
+            'type' => BlogTypeEnum::DEFAULT,
+        ]);
+
+        // Dev blogs bypass the limit check
+        $this->consoleUserApi('POST', '/blog', [
+            'name' => 'Dev Blog',
+            'is_dev' => true,
+        ])->assertOk();
+    }
+
     /*public function testCannotCreateABlogWithAlreadyExistingSubdomain(): void
     {
         $blog = BlogFactory::withAccess();
@@ -121,19 +186,6 @@ class CreateBlogTest extends DatabaseTestCase
         ])
             ->assertUnprocessable()
             ->assertSee(['Subdomain', 'taken']);
-    }
-
-    public function testCannotCreateIfTheUserHas2BlogsWithoutSubscription(): void
-    {
-        BlogFactory::withAccess();
-        BlogFactory::withAccess();
-
-        $this->consoleUserApi('POST', '/blog', [
-            'name' => 'Testing',
-            'subdomain' => 'some-subdomain'
-        ])
-            ->assertUnprocessable()
-            ->assertSee('Please upgrade at least one of your blogs to create more');
     }*/
 
 }

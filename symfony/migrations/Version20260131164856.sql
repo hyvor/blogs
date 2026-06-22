@@ -104,39 +104,6 @@ ALTER SEQUENCE public.api_keys_id_seq OWNED BY public.api_keys.id;
 
 
 --
--- Name: appsumo_codes; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.appsumo_codes (
-                                      id bigint NOT NULL,
-                                      created_at timestamp(0) without time zone,
-                                      updated_at timestamp(0) without time zone,
-                                      code character varying(255) NOT NULL,
-                                      blog_id bigint,
-                                      redeemed_at timestamp(0) without time zone
-);
-
-
---
--- Name: appsumo_codes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.appsumo_codes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: appsumo_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.appsumo_codes_id_seq OWNED BY public.appsumo_codes.id;
-
-
---
 -- Name: auto_translations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1065,45 +1032,6 @@ ALTER SEQUENCE public.routes_id_seq OWNED BY public.routes.id;
 
 
 --
--- Name: subscriptions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.subscriptions (
-                                      id bigint NOT NULL,
-                                      created_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                                      updated_at timestamp(0) without time zone,
-                                      blog_id bigint NOT NULL,
-                                      status character varying(255) NOT NULL,
-                                      plan character varying(255) NOT NULL,
-                                      frequency character varying(255) NOT NULL,
-                                      ends_at timestamp(0) without time zone,
-                                      meta json,
-                                      CONSTRAINT subscriptions_frequency_check CHECK (((frequency)::text = ANY ((ARRAY['monthly'::character varying, 'yearly'::character varying])::text[]))),
-    CONSTRAINT subscriptions_plan_check CHECK (((plan)::text = ANY ((ARRAY['starter'::character varying, 'growth'::character varying, 'premium'::character varying, 'team'::character varying, 'business'::character varying, 'enterprise'::character varying])::text[]))),
-    CONSTRAINT subscriptions_status_check CHECK (((status)::text = ANY ((ARRAY['active'::character varying, 'past_due'::character varying, 'deleted'::character varying])::text[])))
-);
-
-
---
--- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.subscriptions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.subscriptions_id_seq OWNED BY public.subscriptions.id;
-
-
---
 -- Name: tag_variants; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1482,13 +1410,6 @@ ALTER TABLE ONLY public.api_keys ALTER COLUMN id SET DEFAULT nextval('public.api
 
 
 --
--- Name: appsumo_codes id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appsumo_codes ALTER COLUMN id SET DEFAULT nextval('public.appsumo_codes_id_seq'::regclass);
-
-
---
 -- Name: auto_translations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1664,13 +1585,6 @@ ALTER TABLE ONLY public.routes ALTER COLUMN id SET DEFAULT nextval('public.route
 
 
 --
--- Name: subscriptions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.subscriptions ALTER COLUMN id SET DEFAULT nextval('public.subscriptions_id_seq'::regclass);
-
-
---
 -- Name: tag_variants id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1746,22 +1660,6 @@ ALTER TABLE ONLY public.webhooks ALTER COLUMN id SET DEFAULT nextval('public.web
 
 ALTER TABLE ONLY public.api_keys
     ADD CONSTRAINT api_keys_pkey PRIMARY KEY (id);
-
-
---
--- Name: appsumo_codes appsumo_codes_code_unique; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appsumo_codes
-    ADD CONSTRAINT appsumo_codes_code_unique UNIQUE (code);
-
-
---
--- Name: appsumo_codes appsumo_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appsumo_codes
-    ADD CONSTRAINT appsumo_codes_pkey PRIMARY KEY (id);
 
 
 --
@@ -2114,14 +2012,6 @@ ALTER TABLE ONLY public.routes
 
 ALTER TABLE ONLY public.routes
     ADD CONSTRAINT routes_pkey PRIMARY KEY (id);
-
-
---
--- Name: subscriptions subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.subscriptions
-    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
 
 
 --

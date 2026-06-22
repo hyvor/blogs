@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\ApiKey;
+use App\Entity\Enum\ApiKeyType;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -15,9 +16,7 @@ final class ApiKeyFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -35,9 +34,9 @@ final class ApiKeyFactory extends PersistentObjectFactory
     {
         return [
             'api_key' => self::faker()->text(32),
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'name' => self::faker()->text(255),
-            'type' => self::faker()->text(255),
+            'type' => self::faker()->randomElement([ApiKeyType::CONSOLE, ApiKeyType::DELIVERY]),
         ];
     }
 

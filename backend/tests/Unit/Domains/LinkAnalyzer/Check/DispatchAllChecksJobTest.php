@@ -17,7 +17,7 @@ it('dispatches all jbos', function () {
     Queue::fake();
 
     $blogLicenseWithoutAnalyse = BlogsLicense::trial();
-    $blogLicenseWithoutAnalyse->analyses = false;
+    $blogLicenseWithoutAnalyse->linkAnalysis = false;
 
     BillingFake::enable([
             1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, BlogsLicense::trial()),

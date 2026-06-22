@@ -3,25 +3,21 @@
 namespace App\Service\Post\PostAuthor;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Connection;
 
 class PostAuthorService
 {
 
     public function __construct(
-        private EntityManagerInterface $em,
+        private Connection $connection,
     ) {}
 
     public function deleteByUser(User $user): void
     {
-        $this->em
-            ->getRepository(\App\Entity\PostAuthor::class)
-            ->createQueryBuilder('pa')
-            ->andWhere('pa.user = :user')
-            ->setParameter('user', $user)
-            ->delete()
-            ->getQuery()
-            ->execute();
+        $this->connection->executeStatement(
+            'DELETE FROM post_author WHERE user_id = ?',
+            [$user->getId()],
+        );
     }
 
 }

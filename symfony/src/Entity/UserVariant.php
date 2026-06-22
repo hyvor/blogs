@@ -18,11 +18,9 @@ class UserVariant
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
 
-    #[ORM\Column]
-    private int $user_id;
-
-    #[ORM\Column]
-    private int $language_id;
+    #[ORM\ManyToOne(inversedBy: 'variants')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private User $user;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
@@ -36,10 +34,6 @@ class UserVariant
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $location = null;
-
-    #[ORM\ManyToOne(inversedBy: 'variants')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user = null;
 
     public function getId(): int
     {
@@ -63,25 +57,14 @@ class UserVariant
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUser(): User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(int $user_id): static
+    public function setUser(User $user): static
     {
-        $this->user_id = $user_id;
-        return $this;
-    }
-
-    public function getLanguageId(): int
-    {
-        return $this->language_id;
-    }
-
-    public function setLanguageId(int $language_id): static
-    {
-        $this->language_id = $language_id;
+        $this->user = $user;
         return $this;
     }
 
@@ -126,17 +109,6 @@ class UserVariant
     public function setLocation(?string $location): static
     {
         $this->location = $location;
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
         return $this;
     }
 }

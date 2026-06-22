@@ -12,6 +12,8 @@ export const authOrganizationStore = writable<CloudContextOrganization>();
 export const resolvedLicenseStore = writable<ResolvedLicense>();
 // List of blogs of the current user (all roles)
 export const blogListStore = writable<BlogList[]>([]);
+// Whether the blog selector modal is open
+export const blogSelectorOpenStore = writable(false);
 
 export function addToBlogList(blog: BlogList) {
 	blogListStore.update((list) => [...list, blog]);

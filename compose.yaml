@@ -33,12 +33,12 @@ services:
     volumes:
       - ./backend:/app/backend
       - ./symfony:/app/symfony
-      # - ../internal:/app/backend/vendor/hyvor/internal:ro
-      # - ../internal:/app/symfony/vendor/hyvor/internal:ro
+      #- ../internal:/app/backend/vendor/hyvor/internal:ro
+      #- ../internal:/app/symfony/vendor/hyvor/internal:ro
     labels:
       traefik.enable: true
       # backend
-      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.localhost`) && PathPrefix(`/api`)
+      traefik.http.routers.hyvor-blogs-backend.rule: Host(`blogs.hyvor.localhost`) && (PathPrefix(`/api`) || PathPrefix(`/blog/`))
       traefik.http.routers.hyvor-blogs-backend.entrypoints: https
       traefik.http.routers.hyvor-blogs-backend.tls: true
       traefik.http.routers.hyvor-blogs-backend.service: hyvor-blogs-backend

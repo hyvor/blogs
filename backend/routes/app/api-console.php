@@ -5,24 +5,16 @@ declare(strict_types=1);
 use App\Http\ConsoleApi\Controllers\ConsoleController;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
-use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
-use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
-use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
-use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
-use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
-use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
-use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
@@ -42,18 +34,12 @@ Route::prefix('/api/console/v0')
         Route::get('/init-temp', [ConsoleController::class, 'initTemp']);
     });
 
-/**
- * This is an internal API for user-level functions
- * This cannot be accessed via API keys
- * Used only in our Console
- */
 Route::prefix('/api/console/v0')
     ->middleware([
         ConsoleApiAuthMiddleware::class,
         CorsOnLocalhost::class,
     ])
     ->group(function () {
-        Route::get('/usage', [ConsoleController::class, 'getUsage']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
     });
 
@@ -67,14 +53,14 @@ Route::prefix('/api/console/v0')
  */
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
-        // converts {subdomain} tp Blog model
+            // converts {subdomain} tp Blog model
         SubdomainMiddleware::class,
 
-        // check if the user or API key has access to the console API
-        // and set App\Models\User app instance
+            // check if the user or API key has access to the console API
+            // and set App\Models\User app instance
         ConsoleApiAccessMiddleware::class,
 
-        // checks relationship to the blog, for resources that have {id} in route
+            // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
 
         CorsOnLocalhost::class,
@@ -84,11 +70,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Posts and media
          */
         Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
-            // blog
-            Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
-            Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
-            Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
-            Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
 
             /**
              * In post routes, role is checked internally on some actions
@@ -147,62 +128,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         });
 
         /**
-         * Tags
-         */
-        Route::get('/tags', [ConsoleTagController::class, 'get']);
-        Route::get('/tags/search', [ConsoleTagController::class, 'search']);
-
-        Route::middleware('role:owner|admin|editor|writer')->group(function () {
-            Route::post('/tag', [ConsoleTagController::class, 'create']);
-        });
-
-        Route::middleware('role:owner|admin|editor')->group(function () {
-            Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
-            Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
-            Route::get('/tag/{id}/slug-available', [ConsoleTagController::class, 'checkSlugAvailability']);
-            Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
-            Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
-            Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
-        });
-
-        /**
          * Settings, users, and theme
          */
         Route::middleware('role:owner|admin')->group(function () {
-            // webhooks
-            Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
-            Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
-            Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
-            Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
-            Route::get('/webhook-deliveries', [ConsoleWebhookController::class, 'getAllWebhookDeliveries']);
-
-            // api-keys
-            Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
-            Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
-            Route::patch('/api-key/{id}', [ConsoleApiKeysController::class, 'updateApiKey']);
-            Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
-
-            // navigation
-            Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
-            Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
-            Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
-            Route::patch('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
-            Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
-            Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
-            Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
-            Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
-
-            // languages
-            Route::get('/languages', [ConsoleLanguageController::class, 'get']);
-            Route::post('/language', [ConsoleLanguageController::class, 'create']);
-            Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
-            Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
-
-            // redirects
-            Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
-            Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
-            Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
-            Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
 
             // users
             Route::get('/users', [ConsoleUserController::class, 'get']);
@@ -216,13 +144,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
             Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
             Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
-
-            // route
-            Route::get('/routes', [ConsoleRouteController::class, 'get']);
-            Route::post('/route', [ConsoleRouteController::class, 'create']);
-            Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
-            Route::patch('/route/{id}', [ConsoleRouteController::class, 'update'])
-                ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
 
             // theme
             Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
@@ -241,8 +162,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/data/imports', [ConsoleImportController::class, 'getImports']);
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
-
-            Route::get('/build', []);
         });
 
         /**

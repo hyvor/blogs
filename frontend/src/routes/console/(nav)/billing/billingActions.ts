@@ -10,12 +10,12 @@ export interface UsageData {
 	storage: Usage;
 	auto_translate_chars: Usage;
 	ai_tokens: Usage;
+	blogs: Usage;
 }
 
 export function getUsage() {
 	return consoleApi.get<UsageData>({
 		endpoint: '/usage',
-		userApi: true,
-		v2: true
+		userApi: true
 	});
 }

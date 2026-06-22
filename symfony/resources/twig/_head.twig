@@ -1,0 +1,173 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% if not _blog.seo_indexing %}
+    <meta name="robots" content="noindex">
+{% endif %}
+
+{% if _meta is defined %}
+
+    <title>{{ _meta.title }}</title>
+    <meta name="description" content="{{ _meta.description }}" />
+    <link rel="canonical" href="{{ _meta.canonical_url }}" />
+
+    {% if (_blog.icon_url) %}
+        <link rel="shortcut icon" href="{{ _blog.icon_url }}" />
+    {% elseif (_blog.logo_url) %}
+        <link rel="shortcut icon" href="{{ _blog.logo_url }}" />
+    {% endif %}
+
+    {# OG Tags ========== #}
+    <meta property="og:site_name" content="{{ _blog.name }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{ _meta.title }}" />
+    <meta property="og:locale" content="{{ _lang.code }}" />
+    <meta property="og:description" content="{{ _meta.description }}" />
+    <meta property="og:url" content="{{ _meta.url }}" />
+    <meta property="og:image" content="{{ _meta.featured_image }}" />
+
+    {% if _route.name == 'post' %}
+        <meta property="article:published_time" content="{{ _post.published_at | date('c') }}" />
+        <meta property="article:modified_time" content="{{ _post.updated_at | date('c') }}" />
+
+        {# Authors #}
+        {% for author in _post.authors %}
+            <meta property="article:author" content="{{ author.name }}" />
+        {% endfor %}
+        
+        {# Tags #}
+        {% for tag in _post.tags %}
+            <meta property="article:section" content="{{ tag.name }}" />
+        {% endfor %}
+
+        {% if _blog.seo_rich_schema %}
+            {{ rich_schema() }}
+        {% endif %}
+    {% endif %}
+
+    {# Twitter Tags ========== #}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ _meta.title }}" />
+    <meta name="twitter:description" content="{{ _meta.description }}" />
+    <meta name="twitter:url" content="{{ _meta.url }}" />
+    <meta name="twitter:image" content="{{ _meta.featured_image }}" />
+
+    {% if _blog.social.twitter %}
+        <meta name="twitter:site" content="@{{ _blog.social.twitter|split('/')|last }}" />
+    {% endif %}
+    {% if _route.name == 'post' and _post.authors[0].social.twitter %}
+        <meta name="twitter:creator" content="@{{ _post.authors[0].social.twitter|split('/')|last }}" />
+    {% endif %}
+
+{% endif %}
+
+
+{# Alternative Languages for posts ========= #}
+{% if _post %}
+    {% for variant in _post.variants %}
+        <link rel="alternate" href="{{ variant.url }}" hreflang="{{ variant.language.code }}" />
+    {% endfor %}
+{% endif %}
+
+{# Custom Code from blog, post, and tags #}
+{% if _blog.code_head %}
+    {{  _blog.code_head | template }}
+{% endif %}
+{% if _post.code_head %}
+    {{ _post.code_head | template }}
+{% endif %}
+{% if _post %}
+    {% for tag in _post.tags %}
+        {% if tag.code_head %}
+            {{ tag.code_head | template }}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
+<meta name="generator" content="Hyvor Blogs" />
+
+<link rel="stylesheet" href="{{ _blog.base_url }}/styles.css?v={{ _blog.cache_version_styles }}" />
+
+<script>
+
+    {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}
+
+    window._hb = {
+        __domain: "{{ __domain }}",
+        subdomain: "{{ _blog.subdomain }}",
+        color_modes: "{{ _blog.color_modes }}",
+        color_mode_default: "{{ _blog.color_mode_default }}",
+        base_url: "{{ _blog.base_url }}"
+    };
+
+    (function() {
+
+        {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
+        var lsKey = 'color-mode-pref';
+
+        window._hb.changeColorMode = function(pref, noSave) {
+            var renderMode = _hb.getColorMode(pref)
+            var a, r; // add, remove classes
+            if (renderMode === 'dark') {
+                a = 'mode-dark';
+                r = 'mode-light';
+            } else {
+                a = 'mode-light';
+                r = 'mode-dark';
+            }
+            {# shadowRoot or <html> #}
+            var html = document.documentElement;
+            html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
+            html.classList.add(a, 'mode-preference-' + pref);
+            if (!noSave) {
+                try {localStorage.setItem(lsKey, pref)} catch (e) {}
+            }
+            window.dispatchEvent(new CustomEvent("hb:colorModeChanged", {
+                detail: {
+                    mode: renderMode
+                }
+            }))
+        }
+        window._hb.getColorModePreference = function() {
+            var ls = null;
+            try {
+                ls = localStorage.getItem(lsKey)
+            } catch (e) {}
+            return ls || _hb.color_mode_default; // os|light|dark
+        }
+        window._hb.getColorMode = function(pref) {
+            var mode = pref || _hb.getColorModePreference();
+            if (mode === 'os') {
+                mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            return mode
+        }
+
+        _hb.changeColorMode(
+            _hb.color_modes !== "both" ? _hb.color_modes : _hb.getColorModePreference(),
+            true
+        )
+
+        {# Data API #}
+        window._hb.dataApi = function(version, endpoint, params, onSuccess, onError) {
+            var url = "//" + _hb.__domain + "/api/data/" + version + "/" + _hb.subdomain + "/" + endpoint
+                + (params ? ("?" + new URLSearchParams(params || {}).toString()) : "");
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                onSuccess(JSON.parse(this.responseText))
+            }
+            xhr.onerror = function() {
+                onError && onError()
+            }
+            xhr.open('GET', url, true)
+            xhr.send();
+
+            return xhr;
+        }
+
+    })()
+
+    console.log("%c Hi 👋 This blog is powered by Hyvor Blogs", "font-size:12px;font-family: monospace;display: inline-block;padding: 8px 19px;border: 1px dashed #896c6b;");
+
+</script>

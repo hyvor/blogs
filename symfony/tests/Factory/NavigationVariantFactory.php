@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\NavigationVariant;
+use App\Tests\Factory\LanguageFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,8 +35,7 @@ final class NavigationVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
-            'navigation_id' => self::faker()->randomNumber(),
+            'language' => LanguageFactory::new(),
         ];
     }
 

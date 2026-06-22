@@ -7,7 +7,6 @@ export interface ConsoleApiOptions {
 	endpoint: string;
 	data?: Record<string, any> | FormData;
 	userApi?: boolean;
-	v2?: boolean;
 	subdomain?: string;
 	signal?: AbortSignal;
 }
@@ -18,12 +17,10 @@ interface CallOptions extends ConsoleApiOptions {
 
 function getConsoleApi() {
 	const baseUrl = '/api/console/v0';
-	const baseUrlV2 = '/api/v2/console';
 
 	async function call<T>({
 		endpoint,
 		userApi = false,
-		v2 = false,
 		method,
 		data = {},
 		subdomain,
@@ -32,9 +29,7 @@ function getConsoleApi() {
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
 		let url;
-		if (v2) {
-			url = baseUrlV2 + endpoint;
-		} else if (userApi) {
+		if (userApi) {
 			url = baseUrl + endpoint;
 		} else {
 			const blogSubdomain = subdomain || get(blogStore).subdomain;
