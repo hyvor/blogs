@@ -78,14 +78,9 @@
 			linkAnalysisLoaderUnsubscriber = null;
 		};
 	});
-
 </script>
 
-<div
-	id="post-view"
-	class:is-temp={$isTempStore}
-	bind:this={postView}
->
+<div id="post-view" class:is-temp={$isTempStore} bind:this={postView}>
 	{#if isLoading}
 		<div class="full-loader">
 			<Loader block size="large" />
@@ -114,7 +109,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		overflow: hidden;
 	}
 
 	.full-loader {
@@ -137,6 +131,7 @@
 		margin: auto;
 		display: flex;
 		align-items: flex-start;
+		min-height: calc(100vh - 76px);
 	}
 
 	.post-left {
