@@ -357,16 +357,23 @@ class PostService
         Blog $blog,
         array $authors = [],
         bool $isPage = false,
+        bool $isFeatured = false,
+        ?string $featuredImageUrl = null,
+        ?string $canonicalUrl = null,
+        ?string $codeHead = null,
+        ?string $codeFoot = null,
     ): Post {
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
-        $post = new Post();
-        $post->setBlog($blog);
-        $post->setIsPage($isPage);
-        $post->setIsFeatured(false);
-        $post->setCreatedAt($this->now());
-        $post->setUpdatedAt($this->now());
-        $this->em->persist($post);
+        $post = $this->instantiatePost(
+            $blog,
+            $isPage,
+            $isFeatured,
+            $featuredImageUrl,
+            $canonicalUrl,
+            $codeHead,
+            $codeFoot,
+        );
 
         $variant = $this->createPostVariant($post, $primaryLanguage, flush: false);
         $post->getVariants()->add($variant);
@@ -374,6 +381,30 @@ class PostService
         $this->setPostAuthors($post, $authors, flush: false);
 
         $this->em->flush();
+
+        return $post;
+    }
+
+    private function instantiatePost(
+        Blog $blog,
+        bool $isPage,
+        bool $isFeatured = false,
+        ?string $featuredImageUrl = null,
+        ?string $canonicalUrl = null,
+        ?string $codeHead = null,
+        ?string $codeFoot = null,
+    ): Post {
+        $post = new Post();
+        $post->setBlog($blog);
+        $post->setIsPage($isPage);
+        $post->setIsFeatured($isFeatured);
+        $post->setFeaturedImageUrl($featuredImageUrl);
+        $post->setCanonicalUrl($canonicalUrl);
+        $post->setCodeHead($codeHead);
+        $post->setCodeFoot($codeFoot);
+        $post->setCreatedAt($this->now());
+        $post->setUpdatedAt($this->now());
+        $this->em->persist($post);
 
         return $post;
     }
@@ -421,12 +452,30 @@ class PostService
         $this->em->flush();
     }
 
-    public function createPostVariant(Post $post, Language $language, bool $flush = true): PostVariant
-    {
+    /**
+     * @param string[] $seoSecondaryKeywords
+     */
+    public function createPostVariant(
+        Post $post,
+        Language $language,
+        bool $flush = true,
+        ?string $content = null,
+        ?string $contentUnsaved = null,
+        ?string $title = null,
+        ?string $description = null,
+        ?string $seoPrimaryKeyword = null,
+        array $seoSecondaryKeywords = [],
+    ): PostVariant {
         $variant = new PostVariant();
         $variant->setPost($post);
         $variant->setLanguage($language);
         $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setContent($content);
+        $variant->setContentUnsaved($contentUnsaved);
+        $variant->setTitle($title);
+        $variant->setDescription($description);
+        $variant->setSeoPrimaryKeyword($seoPrimaryKeyword);
+        $variant->setSeoSecondaryKeywords($seoSecondaryKeywords);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
         $this->em->persist($variant);
@@ -549,7 +598,7 @@ class PostService
     /**
      * @param Tag[] $tags
      */
-    public function setPostTags(Post $post, array $tags): void
+    public function setPostTags(Post $post, array $tags, bool $flush = true): void
     {
         $post->getTags()->clear();
         foreach ($tags as $tag) {
@@ -557,7 +606,10 @@ class PostService
         }
 
         $post->setUpdatedAt($this->now());
-        $this->em->flush();
+
+        if ($flush) {
+            $this->em->flush();
+        }
     }
 
     /**
@@ -579,60 +631,34 @@ class PostService
 
     public function clonePost(Post $post): Post
     {
-        $blog = $post->getBlog();
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-
-        $clone = new Post();
-        $clone->setBlog($blog);
-        $clone->setIsPage($post->isPage());
-        $clone->setIsFeatured(false);
-        $clone->setFeaturedImageUrl($post->getFeaturedImageUrl());
-        $clone->setCanonicalUrl($post->getCanonicalUrl());
-        $clone->setCodeHead($post->getCodeHead());
-        $clone->setCodeFoot($post->getCodeFoot());
-        $clone->setCreatedAt($this->now());
-        $clone->setUpdatedAt($this->now());
-        $this->em->persist($clone);
-        $this->em->flush();
+        $clone = $this->instantiatePost(
+            $post->getBlog(),
+            $post->isPage(),
+            featuredImageUrl: $post->getFeaturedImageUrl(),
+            canonicalUrl: $post->getCanonicalUrl(),
+            codeHead: $post->getCodeHead(),
+            codeFoot: $post->getCodeFoot(),
+        );
 
         foreach ($post->getVariants() as $variant) {
-            $language = $variant->getLanguage();
-            $isClonePrimaryVariant = $language->getId() === $primaryLanguage->getId();
-
-            if ($isClonePrimaryVariant) {
-                $cloneVariant = new PostVariant();
-                $cloneVariant->setPost($clone);
-                $cloneVariant->setLanguage($language);
-                $this->em->persist($cloneVariant);
-            } else {
-                $cloneVariant = new PostVariant();
-                $cloneVariant->setPost($clone);
-                $cloneVariant->setLanguage($language);
-                $this->em->persist($cloneVariant);
-            }
-
-            $cloneVariant->setStatus(PostVariantStatus::DRAFT);
-            $cloneVariant->setSlug(null);
-            $cloneVariant->setContent($variant->getContent());
-            $cloneVariant->setContentUnsaved($variant->getContentUnsaved());
-            $cloneVariant->setTitle($variant->getTitle());
-            $cloneVariant->setDescription($variant->getDescription());
-            $cloneVariant->setSeoPrimaryKeyword($variant->getSeoPrimaryKeyword());
-            $cloneVariant->setSeoSecondaryKeywords($variant->getSeoSecondaryKeywords());
-            $cloneVariant->setCreatedAt($this->now());
-            $cloneVariant->setUpdatedAt($this->now());
+            $cloneVariant = $this->createPostVariant(
+                $clone,
+                $variant->getLanguage(),
+                flush: false,
+                content: $variant->getContent(),
+                contentUnsaved: $variant->getContentUnsaved(),
+                title: $variant->getTitle(),
+                description: $variant->getDescription(),
+                seoPrimaryKeyword: $variant->getSeoPrimaryKeyword(),
+                seoSecondaryKeywords: $variant->getSeoSecondaryKeywords() ?? [],
+            );
+            $clone->getVariants()->add($cloneVariant);
         }
 
-        foreach ($post->getAuthors() as $author) {
-            $clone->getAuthors()->add($author);
-        }
-
-        foreach ($post->getTags() as $tag) {
-            $clone->getTags()->add($tag);
-        }
+        $this->setPostAuthors($clone, array_values($post->getAuthors()->toArray()), flush: false);
+        $this->setPostTags($clone, array_values($post->getTags()->toArray()), flush: false);
 
         $this->em->flush();
-        $this->em->refresh($clone);
 
         return $clone;
     }
