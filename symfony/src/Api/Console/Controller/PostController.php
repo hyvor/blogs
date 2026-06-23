@@ -210,7 +210,7 @@ class PostController
         }
 
         if ($input->status !== null) {
-            $data['status'] = PostVariantStatus::from($input->status);
+            $data['status'] = $input->status;
         }
 
         if ($input->content !== null) {
@@ -229,7 +229,7 @@ class PostController
             $data['description'] = $input->description;
         }
 
-        if ($input->seo_primary_keyword !== null) {
+        if ($input->seo_primary_keyword !== false) {
             $data['seo_primary_keyword'] = $input->seo_primary_keyword;
         }
 

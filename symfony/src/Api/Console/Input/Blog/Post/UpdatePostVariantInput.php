@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\Post;
 
+use App\Entity\Enum\PostVariantStatus;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdatePostVariantInput
@@ -12,8 +13,7 @@ class UpdatePostVariantInput
     #[Assert\Length(max: 255)]
     public ?string $slug = null;
 
-    #[Assert\Choice(choices: ['draft', 'published', 'scheduled'])]
-    public ?string $status = null;
+    public ?PostVariantStatus $status = null;
 
     public ?string $content = null;
 
@@ -26,8 +26,9 @@ class UpdatePostVariantInput
     public ?string $description = null;
 
     #[Assert\Length(max: 255)]
-    public ?string $seo_primary_keyword = null;
+    public null|string|false $seo_primary_keyword = false;
 
+    #[Assert\All([new Assert\Length(max: 255)])]
     /** @var string[]|null */
     public ?array $seo_secondary_keywords = null;
 

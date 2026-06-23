@@ -25,28 +25,6 @@ class PostService
 {
     use ClockAwareTrait;
 
-    private const SLUG_INVALID_CHARACTERS = [
-        ':',
-        '/',
-        '?',
-        '#',
-        '[',
-        ']',
-        '@',
-        '!',
-        '$',
-        '&',
-        "'",
-        '(',
-        ')',
-        '*',
-        '+',
-        ',',
-        ';',
-        '=',
-        '%',
-    ];
-
     public function __construct(
         private EntityManagerInterface $em,
         private Connection $connection,
@@ -680,15 +658,5 @@ class PostService
         /** @var Post|null $result */
         $result = $qb->getQuery()->getOneOrNullResult();
         return $result;
-    }
-
-    public function validateSlug(string $slug): ?string
-    {
-        foreach (self::SLUG_INVALID_CHARACTERS as $char) {
-            if (str_contains($slug, $char)) {
-                return $char;
-            }
-        }
-        return null;
     }
 }

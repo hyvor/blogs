@@ -60,11 +60,13 @@ class UpdatePostVariantTest extends ApiTestCase
             'status' => PostVariantStatus::DRAFT,
             'slug' => null,
             'title' => 'My Post Title',
+            'seo_primary_keyword' => 'my-post-title',
         ]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
             'language_id' => $language->getId(),
             'status' => 'published',
+            'seo_primary_keyword' => null,
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
@@ -72,6 +74,7 @@ class UpdatePostVariantTest extends ApiTestCase
 
         $this->assertSame('published', $json['status']);
         $this->assertNotEmpty($json['slug']);
+        $this->assertNull($json['seo_primary_keyword']);
     }
 
     public function test_fails_if_slug_already_taken(): void
