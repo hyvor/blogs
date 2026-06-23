@@ -23,4 +23,7 @@ class Limit
     const int MAX_ROUTES_PER_BLOG = 50;
 
     const int MAX_ENTRIES_PER_SITEMAP = 2500;
+
+    const int MAX_TAGS_PER_POST = 25;
+    const int MAX_AUTHORS_PER_POST = 25;
 }

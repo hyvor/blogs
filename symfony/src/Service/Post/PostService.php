@@ -19,7 +19,6 @@ use Doctrine\ORM\QueryBuilder as OrmQB;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class PostService
@@ -548,16 +547,10 @@ class PostService
     }
 
     /**
-     * @param int[] $tagIds
+     * @param Tag[] $tags
      */
-    public function updatePostTags(Post $post, Blog $blog, array $tagIds): void
+    public function setPostTags(Post $post, array $tags): void
     {
-        $tags = $this->em->getRepository(Tag::class)->findBy(['id' => $tagIds, 'blog' => $blog]);
-
-        if (count($tags) !== count($tagIds)) {
-            throw new UnprocessableEntityHttpException('Some tag IDs are invalid');
-        }
-
         $post->getTags()->clear();
         foreach ($tags as $tag) {
             $post->getTags()->add($tag);
@@ -565,20 +558,6 @@ class PostService
 
         $post->setUpdatedAt($this->now());
         $this->em->flush();
-    }
-
-    /**
-     * @param int[] $userIds
-     */
-    public function updatePostAuthors(Post $post, Blog $blog, array $userIds): void
-    {
-        $users = $this->em->getRepository(User::class)->findBy(['id' => $userIds, 'blog' => $blog]);
-
-        if (count($users) !== count($userIds)) {
-            throw new UnprocessableEntityHttpException('Some author IDs are invalid');
-        }
-
-        $this->setPostAuthors($post, $users, flush: true);
     }
 
     /**

@@ -18,6 +18,8 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\PostService;
+use App\Service\Tag\TagService;
+use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -33,6 +35,8 @@ class PostController
         private PostService $postService,
         private LanguageService $languageService,
         private PostObjectFactory $postObjectFactory,
+        private TagService $tagService,
+        private UserService $userService,
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -274,7 +278,13 @@ class PostController
         #[MapRequestPayload] UpdatePostTagsInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $this->postService->updatePostTags($post, $blog, $input->ids);
+
+        $tags = $this->tagService->getTagsByIds($blog, $input->ids);
+        if (count($tags) !== count($input->ids)) {
+            throw new UnprocessableEntityHttpException('Some tag IDs are invalid');
+        }
+
+        $this->postService->setPostTags($post, $tags);
         return new JsonResponse();
     }
 
@@ -284,7 +294,13 @@ class PostController
         #[MapRequestPayload] UpdatePostAuthorsInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $this->postService->updatePostAuthors($post, $blog, $input->ids);
+
+        $users = $this->userService->getUsersByIds($blog, $input->ids);
+        if (count($users) !== count($input->ids)) {
+            throw new UnprocessableEntityHttpException('Some author IDs are invalid');
+        }
+
+        $this->postService->setPostAuthors($post, $users);
         return new JsonResponse();
     }
 

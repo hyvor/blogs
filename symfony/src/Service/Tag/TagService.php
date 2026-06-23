@@ -36,6 +36,16 @@ class TagService
         return $this->em->getRepository(Tag::class)->findOneBy(['id' => $id, 'blog' => $blog]);
     }
 
+    /**
+     * @param int[] $ids
+     * @return Tag[]
+     */
+    public function getTagsByIds(Blog $blog, array $ids): array
+    {
+        /** @var Tag[] */
+        return $this->em->getRepository(Tag::class)->findBy(['id' => $ids, 'blog' => $blog]);
+    }
+
     public function getTagBySlug(Blog $blog, string $slug): ?Tag
     {
         /** @var Tag|null */

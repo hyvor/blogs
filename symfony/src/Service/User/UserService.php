@@ -41,6 +41,16 @@ class UserService
         return $this->userRepository->findOneBy(['id' => $id, 'blog' => $blog]);
     }
 
+    /**
+     * @param int[] $ids
+     * @return User[]
+     */
+    public function getUsersByIds(Blog $blog, array $ids): array
+    {
+        /** @var User[] */
+        return $this->userRepository->findBy(['id' => $ids, 'blog' => $blog]);
+    }
+
     public function getUserBySlug(Blog $blog, string $slug): ?User
     {
         /** @var User|null */
