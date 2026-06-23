@@ -3,6 +3,7 @@
 namespace App\Api\Console\Authorization;
 
 use App\Entity\Blog;
+use App\Entity\User;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Blog\BlogService;
 use App\Service\User\UserService;
@@ -25,6 +26,7 @@ class ConsoleApiAuthorizationListener
     private const string RESOLVED_USER_KEY = 'console_api_resolved_user';
     private const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
     private const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
+    private const string RESOLVED_BLOG_USER_KEY = 'console_api_resolved_blog_user';
 
     public function __construct(
         private AuthInterface $auth,
@@ -128,6 +130,7 @@ class ConsoleApiAuthorizationListener
         // TODO: verify scopes
 
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+        $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
     }
 
     private function handleOrgLevel(ControllerEvent $event): void
@@ -197,6 +200,14 @@ class ConsoleApiAuthorizationListener
         $blog = $request->attributes->get(self::RESOLVED_BLOG_KEY);
         assert($blog instanceof Blog);
         return $blog;
+    }
+
+    public function getBlogUser(): ?User
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        assert($request !== null);
+        $user = $request->attributes->get(self::RESOLVED_BLOG_USER_KEY);
+        return $user instanceof User ? $user : null;
     }
 
     /**

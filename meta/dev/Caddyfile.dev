@@ -47,6 +47,10 @@
         path /api/console/v0/blog/*/tags/*
         path /api/console/v0/blog/*/tag
         path /api/console/v0/blog/*/tag/*
+
+        path /api/console/v0/blog/*/posts
+        path /api/console/v0/blog/*/pages
+        path /api/console/v0/blog/*/post/*
     }
     handle @symfony {
         root /app/symfony/public
