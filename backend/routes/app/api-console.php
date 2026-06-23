@@ -10,7 +10,6 @@ use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
-use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
@@ -20,7 +19,6 @@ use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Controllers\ConsoleAPI\Misc\ConsoleMiscProsemirrorController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
-use App\Http\Middleware\App\ConsoleApi\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
@@ -53,14 +51,14 @@ Route::prefix('/api/console/v0')
  */
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
-            // converts {subdomain} tp Blog model
+        // converts {subdomain} tp Blog model
         SubdomainMiddleware::class,
 
-            // check if the user or API key has access to the console API
-            // and set App\Models\User app instance
+        // check if the user or API key has access to the console API
+        // and set App\Models\User app instance
         ConsoleApiAccessMiddleware::class,
 
-            // checks relationship to the blog, for resources that have {id} in route
+        // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
 
         CorsOnLocalhost::class,
@@ -70,35 +68,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Posts and media
          */
         Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
-
-            /**
-             * In post routes, role is checked internally on some actions
-             * such as publishing posts
-             * or editing posts or others
-             */
-            // posts (and pages)
-            Route::get('/posts', [ConsolePostController::class, 'getPosts']);
-            Route::get('/pages', [ConsolePostController::class, 'getPages']);
-            Route::post('/post', [ConsolePostController::class, 'createPost']);
-
-            // check author
-            Route::middleware(PostAuthorshipMiddleware::class)->group(function () {
-                Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
-                Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
-                Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
-
-                Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
-                Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
-                Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
-
-                Route::patch('/post/{id}/tags', [ConsolePostController::class, 'updateTags']);
-                Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
-
-                Route::get('/post/{id}/slug-available', [ConsolePostController::class, 'checkSlugAvailability']);
-
-                Route::post('/post/{id}/clone', [ConsolePostController::class, 'clonePost']);
-            });
-
             // media CRD
             Route::get('/media', [ConsoleMediaController::class, 'getMedia']);
             Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
