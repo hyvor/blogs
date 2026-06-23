@@ -454,6 +454,7 @@ class PostService
 
     /**
      * @param string[] $seoSecondaryKeywords
+     * @param array<string, number>|null $linkAnalysis
      */
     public function createPostVariant(
         Post $post,
@@ -465,6 +466,7 @@ class PostService
         ?string $description = null,
         ?string $seoPrimaryKeyword = null,
         array $seoSecondaryKeywords = [],
+        ?array $linkAnalysis = null,
     ): PostVariant {
         $variant = new PostVariant();
         $variant->setPost($post);
@@ -476,6 +478,7 @@ class PostService
         $variant->setDescription($description);
         $variant->setSeoPrimaryKeyword($seoPrimaryKeyword);
         $variant->setSeoSecondaryKeywords($seoSecondaryKeywords);
+        $variant->setLinkAnalysis($linkAnalysis);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
         $this->em->persist($variant);
@@ -651,6 +654,7 @@ class PostService
                 description: $variant->getDescription(),
                 seoPrimaryKeyword: $variant->getSeoPrimaryKeyword(),
                 seoSecondaryKeywords: $variant->getSeoSecondaryKeywords() ?? [],
+                linkAnalysis: $variant->getLinkAnalysis(),
             );
             $clone->getVariants()->add($cloneVariant);
         }
