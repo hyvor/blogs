@@ -63,6 +63,6 @@ class GetPostTest extends ApiTestCase
 
         $this->consoleBlogApi('GET', $blog1, '/post/' . $post->getId(), user: $user1);
 
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertResponseFailed(404, 'Entity does not belong to blog');
     }
 }

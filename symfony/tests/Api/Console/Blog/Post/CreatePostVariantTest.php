@@ -54,7 +54,7 @@ class CreatePostVariantTest extends ApiTestCase
             'language_id' => $language->getId(),
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Variant already exists');
     }
 
     public function test_fails_if_language_not_found(): void
@@ -69,6 +69,6 @@ class CreatePostVariantTest extends ApiTestCase
             'language_id' => 99999,
         ], user: $user);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'Language not found');
     }
 }
