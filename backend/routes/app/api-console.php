@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Http\ConsoleApi\Controllers\ConsoleController;
 use App\Http\ConsoleApi\Middleware\ConsoleApiAuthMiddleware;
 use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
@@ -12,20 +11,11 @@ use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
-use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
 use Illuminate\Support\Facades\Route;
-
-Route::prefix('/api/console/v0')
-    ->middleware([
-        CorsOnLocalhost::class,
-    ])
-    ->group(function () {
-        Route::get('/init-temp', [ConsoleController::class, 'initTemp']);
-    });
 
 Route::prefix('/api/console/v0')
     ->middleware([
@@ -46,14 +36,14 @@ Route::prefix('/api/console/v0')
  */
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
-        // converts {subdomain} tp Blog model
+            // converts {subdomain} tp Blog model
         SubdomainMiddleware::class,
 
-        // check if the user or API key has access to the console API
-        // and set App\Models\User app instance
+            // check if the user or API key has access to the console API
+            // and set App\Models\User app instance
         ConsoleApiAccessMiddleware::class,
 
-        // checks relationship to the blog, for resources that have {id} in route
+            // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
 
         CorsOnLocalhost::class,
@@ -93,38 +83,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
         });
-
-        /**
-         * Integrations
-         */
-        Route::middleware('role:owner|admin')
-            ->prefix('integrations')
-            ->group(function () {
-                Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
-                Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
-                Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
-                Route::get(
-                    '/hyvor-talk/gated-content-rules',
-                    [IntegrationHyvorTalkController::class, 'getGatedContentRules'],
-                );
-                Route::post(
-                    '/hyvor-talk/gated-content-rule',
-                    [IntegrationHyvorTalkController::class, 'createGatedContentRule'],
-                );
-                Route::patch(
-                    '/hyvor-talk/gated-content-rule/{id}',
-                    [IntegrationHyvorTalkController::class, 'updateGatedContentRule'],
-                );
-                Route::delete(
-                    '/hyvor-talk/gated-content-rule/{id}',
-                    [IntegrationHyvorTalkController::class, 'deleteGatedContentRule'],
-                );
-
-                Route::get(
-                    '/hyvor-talk/membership-plans',
-                    [IntegrationHyvorTalkController::class, 'getMembershipPlans'],
-                );
-            });
 
         /**
          * Danger

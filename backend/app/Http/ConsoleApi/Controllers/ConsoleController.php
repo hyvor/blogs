@@ -4,38 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\ConsoleApi\Controllers;
 
-use App\Domains\Blog\TempBlogService;
-use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ConsoleController
 {
-
-    public function initTemp(Request $request): JsonResponse
-    {
-        $tempSubdomain = $request->input('temp_subdomain');
-
-        $blog = BlogListObject::fromTempBlog(
-            TempBlogService::getTempBlog(
-                $tempSubdomain,
-                $request->ip(),
-            )
-        );
-
-        return response()->json([
-            'user' => [
-                'id' => 0,
-                'name' => 'Temp User',
-                'picture_url' => null,
-                'username' => null,
-            ],
-            'blogs' => [$blog],
-            'is_blocked' => false,
-            'config' => $this->config()
-        ]);
-    }
 
     public function getConfig(): JsonResponse
     {
