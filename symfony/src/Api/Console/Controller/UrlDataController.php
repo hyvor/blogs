@@ -21,11 +21,15 @@ class UrlDataController
         #[MapQueryString] GetUrlDataInput $input,
     ): JsonResponse {
         try {
-            $data = $this->urlDataService->fetch($input->url, $input->type);
+            if ($input->type === 'link') {
+                $data = $this->urlDataService->getLink($input->url);
+            } else {
+                $data = $this->urlDataService->getEmbed($input->url);
+            }
         } catch (UnfoldException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
 
-        return new JsonResponse($data);
+        return new JsonResponse($input->type === 'link' ? $data : ['html' => $data]);
     }
 }

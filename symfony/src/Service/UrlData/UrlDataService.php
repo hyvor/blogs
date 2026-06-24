@@ -6,15 +6,27 @@ use App\Entity\UrlData;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Unfold\Exception\UnfoldException;
 use Hyvor\Unfold\Unfold;
+use Hyvor\Unfold\UnfoldConfig;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Psr\Http\Client\ClientInterface;
 
 class UrlDataService
 {
 
     use ClockAwareTrait;
 
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ClientInterface $httpClient,
+    ) {
+    }
+
+    private function getUnfoldConfig(): UnfoldConfig
     {
+        return new UnfoldConfig(
+            httpClient: $this->httpClient,
+            httpUserAgent: 'Unfold PHP Client (Hyvor Blogs)'
+        );
     }
 
     /**
@@ -32,7 +44,7 @@ class UrlDataService
             return $urlData->getHtml() ?? '';
         }
 
-        $embed = Unfold::embed($url);
+        $embed = Unfold::embed($url, $this->getUnfoldConfig());
 
         $urlData = new UrlData();
         $urlData->setCreatedAt($this->now());
@@ -60,7 +72,7 @@ class UrlDataService
         ]);
 
         if ($urlData === null || $force) {
-            $link = Unfold::link($url);
+            $link = Unfold::link($url, $this->getUnfoldConfig());
 
             $urlData = new UrlData();
             $urlData->setCreatedAt($this->now());
