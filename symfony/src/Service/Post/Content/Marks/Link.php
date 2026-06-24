@@ -66,6 +66,13 @@ class Link extends MarkType
         return $blogDomain === $hrefDomain;
     }
 
+    /**
+     * All links has the noopener and noreferrer privacy options
+     * noopener - https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/noopener
+     * noreferrer - https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/noreferrer
+     *
+     * No follow is added based on blog settings
+     */
     private function getLinkRel(bool $linksFollow): string
     {
         return 'noopener noreferrer' . ($linksFollow ? '' : ' nofollow');
