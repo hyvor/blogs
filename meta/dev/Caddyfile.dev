@@ -6,7 +6,7 @@
 :80 {
 
     handle {
-        root /app/symfony/public
+        root /app/backend/public
         php_server {
             file_server off
             try_files index.php

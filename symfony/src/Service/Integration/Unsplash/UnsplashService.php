@@ -2,6 +2,7 @@
 
 namespace App\Service\Integration\Unsplash;
 
+use App\Service\AppConfig;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -9,8 +10,9 @@ class UnsplashService
 {
     public function __construct(
         private HttpClientInterface $httpClient,
-        private string $accessKey,
-    ) {}
+        private AppConfig $appConfig,
+    ) {
+    }
 
     /**
      * @return list<array<string, mixed>>
@@ -21,7 +23,7 @@ class UnsplashService
         try {
             $response = $this->httpClient->request('GET', 'https://api.unsplash.com/search/photos', [
                 'headers' => [
-                    'Authorization' => 'Client-ID ' . $this->accessKey,
+                    'Authorization' => 'Client-ID ' . $this->appConfig->getUnsplashAccessKey(),
                 ],
                 'query' => [
                     'query' => $search,

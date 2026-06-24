@@ -42,6 +42,7 @@ use App\Service\Post\Content\Nodes\Text;
 use App\Service\Post\Content\Nodes\Toc\Toc;
 use App\Service\Route\PermalinkService;
 use App\Service\Theme\ThemeFilesService;
+use App\Service\UrlData\UrlDataService;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
@@ -60,7 +61,8 @@ class PostContentService
         private UrlDataService $urlDataService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<mixed>|string $json

@@ -40,11 +40,8 @@ class CliControllerTest extends ApiTestCase
     public function test_requires_a_dev_blog(): void
     {
         $blog = BlogFactory::createOne(['type' => BlogType::DEFAULT]);
-
         $response = $this->callCliApi($blog->getSubdomain(), []);
-
-        $this->assertSame(422, $response->getStatusCode());
-        $this->assertStringContainsString('DEV blog', (string) $response->getContent());
+        $this->assertResponseFailed(422, 'Please use a DEV blog');
     }
 
     public function test_creates_files(): void

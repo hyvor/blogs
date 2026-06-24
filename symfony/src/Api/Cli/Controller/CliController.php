@@ -8,6 +8,7 @@ use App\Service\Blog\BlogService;
 use App\Service\Theme\ThemeFilesService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,11 +17,15 @@ class CliController
     public function __construct(
         private BlogService $blogService,
         private ThemeFilesService $themeFilesService,
-    ) {}
+    ) {
+    }
 
     #[Route('/files', methods: ['PATCH'])]
-    public function updateFiles(Request $request, string $subdomain): JsonResponse
-    {
+    public function updateFiles(
+        Request $request,
+        string $subdomain,
+        #[MapRequestPayload] UpdateFilesInput $input,
+    ): JsonResponse {
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
 
         if ($blog === null) {
@@ -31,25 +36,18 @@ class CliController
             throw new UnprocessableEntityHttpException('Please use a DEV blog');
         }
 
-        /** @var array<string, mixed> $body */
-        $body = json_decode($request->getContent(), true) ?? [];
-
-        /** @var array<string, string> $files */
-        $files = is_array($body['files'] ?? null) ? $body['files'] : [];
-        $reset = (bool) ($body['reset'] ?? false);
-
-        if ($reset) {
+        if ($input->reset) {
             $this->themeFilesService->deleteAllFiles($blog);
         }
 
-        foreach ($files as $path => $content) {
+        foreach ($input->files as $path => $content) {
             $path = trim($path, '/');
             $split = explode('/', $path);
 
             $file = $split[1] ?? $split[0];
             $folder = count($split) > 1 ? ThemeFileFolder::tryFrom($split[0]) : null;
 
-            if ($file !== '') {
+            if ($file) {
                 $this->themeFilesService->createOrUpdateFile(
                     $blog,
                     $folder,

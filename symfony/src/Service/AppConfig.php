@@ -12,7 +12,11 @@ readonly class AppConfig
         private string $domainApp,
         #[Autowire('%env(default::DELIVERY_URL)%')]
         private ?string $deliveryUrl = null,
-    ) {}
+
+        #[Autowire('%env(string:default::UNSPLASH_ACCESS_KEY)%')]
+        private ?string $unsplashAccessKey = null,
+    ) {
+    }
 
     public function getDomainApp(): string
     {
@@ -32,4 +36,10 @@ readonly class AppConfig
         $host = parse_url($this->deliveryUrl, PHP_URL_HOST);
         return $host !== false ? strval($host) : null;
     }
+
+    public function getUnsplashAccessKey(): ?string
+    {
+        return $this->unsplashAccessKey;
+    }
+
 }

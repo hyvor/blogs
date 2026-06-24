@@ -1,7 +1,6 @@
 <?php
 
 use App\Service\App\Storage\FilesystemFactory;
-use App\Service\Integration\Unsplash\UnsplashService;
 use Aws\S3\S3Client;
 use League\Flysystem\Filesystem;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -21,16 +20,18 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(S3Client::class)
         ->lazy()
-        ->args(['$args' => [
-            'version' => 'latest',
-            'region' => '%env(default::string:S3_REGION)%',
-            'endpoint' => '%env(default::string:S3_ENDPOINT)%',
-            'use_path_style_endpoint' => true,
-            'credentials' => [
-                'key' => '%env(default::string:S3_ACCESS_KEY_ID)%',
-                'secret' => '%env(default::string:S3_SECRET_ACCESS_KEY)%',
-            ],
-        ]]);
+        ->args([
+            '$args' => [
+                'version' => 'latest',
+                'region' => '%env(default::string:S3_REGION)%',
+                'endpoint' => '%env(default::string:S3_ENDPOINT)%',
+                'use_path_style_endpoint' => true,
+                'credentials' => [
+                    'key' => '%env(default::string:S3_ACCESS_KEY_ID)%',
+                    'secret' => '%env(default::string:S3_SECRET_ACCESS_KEY)%',
+                ],
+            ]
+        ]);
 
     $services->set(Filesystem::class)
         ->factory([FilesystemFactory::class, 'create'])
@@ -39,7 +40,4 @@ return static function (ContainerConfigurator $container): void {
             new Reference(S3Client::class),
             '%env(default::string:S3_BUCKET)%',
         ]);
-
-    $services->set(UnsplashService::class)
-        ->arg('$accessKey', '%env(string:UNSPLASH_ACCESS_KEY)%');
 };
