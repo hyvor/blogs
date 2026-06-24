@@ -5,80 +5,8 @@
 
 :80 {
 
-    @symfony {
-        path /blog/*
-
-        path /api/comms/*
-        path /api/sudo/*
-        path /api/v2/*
-        path /api/oidc/*
-        path /api/data/*
-        path /api/delivery/*
-        path /api/cli/*
-        path /api/media/*
-
-        # need to update this as routes are migrated to Symfony
-        # also update image Caddyfile
-        path /api/console/v0/init
-        path /api/console/v0/usage
-        path /api/console/v0/blogs/sort
-        path /api/console/v0/blog/check-subdomain
-
-        path /api/console/v0/blog/*/api-keys
-        path /api/console/v0/blog/*/api-key/*
-
-        path /api/console/v0/blog/*/languages
-        path /api/console/v0/blog/*/language/*
-
-        path /api/console/v0/blog/*/navigations
-        path /api/console/v0/blog/*/navigation/*
-
-        path /api/console/v0/blog/*/redirects
-        path /api/console/v0/blog/*/redirect/*
-
-        path /api/console/v0/blog/*/routes
-        path /api/console/v0/blog/*/route/*
-
-        path /api/console/v0/blog/*/webhooks
-        path /api/console/v0/blog/*/webhook/*
-
-        path /api/console/v0/blog/*/blog
-        path /api/console/v0/blog/*/blog/*
-
-        path /api/console/v0/blog/*/tags
-        path /api/console/v0/blog/*/tags/*
-        path /api/console/v0/blog/*/tag
-        path /api/console/v0/blog/*/tag/*
-
-        path /api/console/v0/blog/*/posts
-        path /api/console/v0/blog/*/pages
-        path /api/console/v0/blog/*/post/*
-
-        path /api/console/v0/blog/*/misc/*
-
-        path /api/console/v0/blog/*/url-data
-
-        path /api/console/v0/blog/*/theme
-        path /api/console/v0/blog/*/theme/*
-
-        path /api/console/v0/blog/*/media
-        path /api/console/v0/blog/*/media/*
-
-        path /api/console/v0/blog/*/users
-        path /api/console/v0/blog/*/user
-        path /api/console/v0/blog/*/user/*
-    }
-    handle @symfony {
-        root /app/symfony/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
-    }
-
-    # laravel
     handle {
-        root /app/backend/public
+        root /app/symfony/public
         php_server {
             file_server off
             try_files index.php

@@ -18,20 +18,6 @@
     metrics
 }
 
-:9666 {
-    metrics
-}
-
-:9667 {
-    root * /app/backend/public
-    php_server {
-        root /app/backend/public
-        file_server off
-        env HYVOR_METRICS_SERVER 1
-        worker frankenphp-worker.php 1
-    }
-}
-
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
@@ -40,94 +26,19 @@
 	php_server {
         file_server off
         root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
+        try_files index.php
     }
 }
 
 # main app
-{$DOMAIN_APP}:80, :8080 {
-    @symfony {
-        path /api/comms/*
-        path /api/sudo/*
-        path /api/v2/*
-        path /api/oidc/*
-        path /api/data/*
-        path /api/delivery/*
-        path /api/cli/*
-        path /api/media/*
+{$DOMAIN_APP}:80 {
 
-        path /api/console/v0/init
-        path /api/console/v0/usage
-        path /api/console/v0/blogs/sort
-        path /api/console/v0/blog/check-subdomain
-
-        path /api/console/v0/blog/*/api-keys
-        path /api/console/v0/blog/*/api-key/*
-
-        path /api/console/v0/blog/*/languages
-        path /api/console/v0/blog/*/language/*
-
-        path /api/console/v0/blog/*/navigations
-        path /api/console/v0/blog/*/navigation/*
-
-        path /api/console/v0/blog/*/redirects
-        path /api/console/v0/blog/*/redirect/*
-
-        path /api/console/v0/blog/*/routes
-        path /api/console/v0/blog/*/route/*
-
-        path /api/console/v0/blog/*/webhooks
-        path /api/console/v0/blog/*/webhook/*
-
-        path /api/console/v0/blog/*/blog
-        path /api/console/v0/blog/*/blog/*
-
-        path /api/console/v0/blog/*/tags
-        path /api/console/v0/blog/*/tags/*
-        path /api/console/v0/blog/*/tag
-        path /api/console/v0/blog/*/tag/*
-
-        path /api/console/v0/blog/*/posts
-        path /api/console/v0/blog/*/pages
-        path /api/console/v0/blog/*/post/*
-
-        path /api/console/v0/blog/*/misc/*
-
-        path /api/console/v0/blog/*/url-data
-
-        path /api/console/v0/blog/*/theme
-        path /api/console/v0/blog/*/theme/*
-
-        path /api/console/v0/blog/*/media
-        path /api/console/v0/blog/*/media/*
-
-        path /api/console/v0/blog/*/users
-        path /api/console/v0/blog/*/user
-        path /api/console/v0/blog/*/user/*
-    }
-    handle @symfony {
-        root * /app/symfony/public
+	handle /api/* {
+		root * /app/backend/public
         encode zstd gzip
         php_server {
             file_server off
             try_files index.php
-        }
-    }
-
-    @laravel {
-        path /api/*
-    }
-	handle @laravel {
-		root * /app/backend/public
-		encode zstd gzip
-		php_server {
-            file_server off
-            root /app/backend/public/
-            env LARAVEL_OCTANE 1
-            env FRANKENPHP_WORKER 1
-            worker frankenphp-worker.php
         }
 	}
 
