@@ -112,7 +112,7 @@ class CodeBlock extends NodeType
 
                     $text = $node->textContent ?? '';
                     $text = trim($text);
-                    $text = $text ?: ' ';
+                    $text = $text ?: ' '; // prevents codemirror error when empty
 
                     return $document->createTextNode($text);
                 },

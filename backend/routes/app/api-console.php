@@ -17,7 +17,6 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
-use App\Http\Controllers\ConsoleAPI\Misc\ConsoleMiscProsemirrorController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
@@ -164,13 +163,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                     [IntegrationHyvorTalkController::class, 'getMembershipPlans'],
                 );
             });
-
-        /**
-         * Misc
-         */
-        Route::prefix('misc')->group(function () {
-            Route::get('/prosemirror/json', [ConsoleMiscProsemirrorController::class, 'getJson']);
-        });
 
         /**
          * Danger

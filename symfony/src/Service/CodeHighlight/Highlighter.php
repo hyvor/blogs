@@ -42,6 +42,11 @@ class Highlighter
         return $this->callJs(['type' => 'themes']);
     }
 
+    public function getAllLanguages(): mixed
+    {
+        return $this->callJs(['type' => 'languages']);
+    }
+
     /**
      * @param array<int, array<int, stdClass>> $tokens
      * @return array<string, mixed>
@@ -236,6 +241,7 @@ class Highlighter
      */
     private function callJs(array $arguments): mixed
     {
+        // code from https://github.com/spatie/shiki-php/blob/main/src/Shiki.php
         $command = [
             (new ExecutableFinder())->find('node', 'node', [
                 '/usr/local/bin',
