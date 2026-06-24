@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Route;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
@@ -19,7 +20,7 @@ class DeleteRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
@@ -38,11 +39,11 @@ class DeleteRouteTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-del-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-del-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog2,

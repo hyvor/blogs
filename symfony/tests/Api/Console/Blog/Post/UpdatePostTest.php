@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +22,7 @@ class UpdatePostTest extends ApiTestCase
     public function test_updates_post_fields(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog, 'is_featured' => false]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);

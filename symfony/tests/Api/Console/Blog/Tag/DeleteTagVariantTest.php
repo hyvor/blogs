@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Tag;
 
 use App\Api\Console\Controller\TagController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\TagVariant;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class DeleteTagVariantTest extends ApiTestCase
     public function test_deletes_a_tag_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-delete']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLanguage = LanguageFactory::createOnePrimaryFor($blog);
         $secondLanguage = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
 
@@ -40,7 +41,7 @@ class DeleteTagVariantTest extends ApiTestCase
     public function test_does_not_delete_primary_language_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-delete-primary']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLanguage = LanguageFactory::createOnePrimaryFor($blog);
         $tag = TagFactory::createOne(['blog' => $blog]);
         TagVariantFactory::createOne(['tag' => $tag, 'language' => $primaryLanguage]);
@@ -55,7 +56,7 @@ class DeleteTagVariantTest extends ApiTestCase
     public function test_variant_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-delete-nf']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLanguage = LanguageFactory::createOnePrimaryFor($blog);
         $secondLanguage = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
         $tag = TagFactory::createOne(['blog' => $blog]);
@@ -71,7 +72,7 @@ class DeleteTagVariantTest extends ApiTestCase
     public function test_language_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-delete-nolang']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $tag = TagFactory::createOne(['blog' => $blog]);
 
         $this->consoleBlogApi('DELETE', $blog, '/tag/' . $tag->getId() . '/variant', [

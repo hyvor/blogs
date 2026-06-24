@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\PostVariant;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class DeletePostVariantTest extends ApiTestCase
     public function test_deletes_secondary_language_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-delete']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLang = LanguageFactory::createOnePrimaryFor($blog);
         $secondaryLang = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
 
@@ -41,7 +42,7 @@ class DeletePostVariantTest extends ApiTestCase
     public function test_cannot_delete_primary_language_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-delete-primary']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLang = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $primaryLang]);
@@ -56,7 +57,7 @@ class DeletePostVariantTest extends ApiTestCase
     public function test_returns_404_if_variant_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-delete-nf']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLang = LanguageFactory::createOnePrimaryFor($blog);
         $secondaryLang = LanguageFactory::createOneFor($blog, ['code' => 'de']);
         $post = PostFactory::createOne(['blog' => $blog]);

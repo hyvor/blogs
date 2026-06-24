@@ -26,6 +26,7 @@
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
 	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
+	import { onNavigate } from '$app/navigation';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -134,6 +135,17 @@
 			$blogSelectorOpenStore = true;
 		}
 	}
+
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <svelte:head>

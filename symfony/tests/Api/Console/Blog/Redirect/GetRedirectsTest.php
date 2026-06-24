@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 use App\Api\Console\Controller\RedirectController;
 use App\Api\Console\Object\RedirectObject;
 use App\Entity\Enum\RedirectType;
+use App\Entity\Enum\UserStatus;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +22,7 @@ class GetRedirectsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-list'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         RedirectFactory::createOne([
             'blog' => $blog,
@@ -46,7 +47,7 @@ class GetRedirectsTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

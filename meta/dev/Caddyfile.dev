@@ -14,6 +14,8 @@
         path /api/oidc/*
         path /api/data/*
         path /api/delivery/*
+        path /api/cli/*
+        path /api/media/*
 
         # need to update this as routes are migrated to Symfony
         # also update image Caddyfile
@@ -53,6 +55,18 @@
         path /api/console/v0/blog/*/post/*
 
         path /api/console/v0/blog/*/misc/*
+
+        path /api/console/v0/blog/*/url-data
+
+        path /api/console/v0/blog/*/theme
+        path /api/console/v0/blog/*/theme/*
+
+        path /api/console/v0/blog/*/media
+        path /api/console/v0/blog/*/media/*
+
+        path /api/console/v0/blog/*/users
+        path /api/console/v0/blog/*/user
+        path /api/console/v0/blog/*/user/*
     }
     handle @symfony {
         root /app/symfony/public

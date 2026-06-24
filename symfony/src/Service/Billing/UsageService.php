@@ -2,7 +2,11 @@
 
 namespace App\Service\Billing;
 
+use App\Entity\Blog;
 use Doctrine\DBAL\Connection;
+use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Symfony\Component\Clock\ClockAwareTrait;
 
 class UsageService
@@ -11,7 +15,52 @@ class UsageService
 
     public function __construct(
         private Connection $connection,
+        private BillingInterface $billing,
     ) {}
+
+    public function storageLimitReached(Blog $blog): bool
+    {
+        $organizationId = $blog->getOrganizationId();
+
+        if ($organizationId === null) {
+            // temp, dev, or preview blogs have no organization, and no limits
+            return false;
+        }
+
+        try {
+            $license = $this->billing->license($organizationId);
+        } catch (CommsApiFailedException) {
+            return true;
+        }
+
+        $bl = $license->license instanceof BlogsLicense ? $license->license : null;
+        $limit = $bl->storage ?? 0;
+        $usage = $this->getStorageUsageBytes($organizationId);
+
+        return $usage >= $limit;
+    }
+
+    public function usersLimitReached(Blog $blog): bool
+    {
+        $organizationId = $blog->getOrganizationId();
+
+        if ($organizationId === null) {
+            // temp, dev, or preview blogs have no organization, and no limits
+            return false;
+        }
+
+        try {
+            $license = $this->billing->license($organizationId);
+        } catch (CommsApiFailedException) {
+            return true;
+        }
+
+        $bl = $license->license instanceof BlogsLicense ? $license->license : null;
+        $limit = $bl->users ?? 0;
+        $usage = $this->getUsersUsage($organizationId);
+
+        return $usage >= $limit;
+    }
 
     public function getUsersUsage(int $organizationId): int
     {

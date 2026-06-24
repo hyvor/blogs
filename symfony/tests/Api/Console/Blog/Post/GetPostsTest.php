@@ -6,6 +6,7 @@ use App\Api\Console\Controller\PostController;
 use App\Api\Console\Object\PostObject;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -24,7 +25,7 @@ class GetPostsTest extends ApiTestCase
     public function test_fetches_posts(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'posts-get']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         for ($i = 0; $i < 3; $i++) {
@@ -46,7 +47,7 @@ class GetPostsTest extends ApiTestCase
     public function test_fetches_posts_with_limit_and_offset(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'posts-get-offset']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         for ($i = 0; $i < 5; $i++) {
@@ -64,7 +65,7 @@ class GetPostsTest extends ApiTestCase
     public function test_filters_posts_by_status(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'posts-get-status']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $post1 = PostFactory::createOne(['blog' => $blog]);
@@ -83,7 +84,7 @@ class GetPostsTest extends ApiTestCase
     public function test_does_not_return_pages(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'posts-get-no-pages']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);

@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Language;
 use App\Api\Console\Controller\LanguageController;
 use App\Api\Console\Object\LanguageObject;
 use App\Entity\Enum\LanguageDirection;
+use App\Entity\Enum\UserStatus;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
@@ -21,7 +22,7 @@ class UpdateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-update'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
@@ -48,11 +49,11 @@ class UpdateLanguageTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-upd-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-upd-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog2,

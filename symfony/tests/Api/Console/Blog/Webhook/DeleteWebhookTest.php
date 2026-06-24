@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Webhook;
 use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
@@ -18,7 +19,7 @@ class DeleteWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,

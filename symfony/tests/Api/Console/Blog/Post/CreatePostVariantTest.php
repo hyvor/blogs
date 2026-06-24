@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\PostVariant;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class CreatePostVariantTest extends ApiTestCase
     public function test_creates_variant_for_secondary_language(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-create']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $primaryLang = LanguageFactory::createOnePrimaryFor($blog);
         $secondaryLang = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
 
@@ -45,7 +46,7 @@ class CreatePostVariantTest extends ApiTestCase
     public function test_fails_if_variant_already_exists(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-create-dup']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -60,7 +61,7 @@ class CreatePostVariantTest extends ApiTestCase
     public function test_fails_if_language_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-create-nf']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);

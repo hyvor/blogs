@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Redirect;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
@@ -19,7 +20,7 @@ class DeleteRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,

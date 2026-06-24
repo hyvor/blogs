@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Misc;
 
 use App\Api\Console\Controller\MiscController;
+use App\Entity\Enum\UserStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,7 +15,7 @@ class GetProsemirrorJsonTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'misc-prosemirror'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $html = urlencode('<p>Hello World</p>');

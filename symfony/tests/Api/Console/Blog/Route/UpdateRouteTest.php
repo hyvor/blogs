@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
 use App\Api\Console\Object\RouteObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class UpdateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-update'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
@@ -47,7 +48,7 @@ class UpdateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-update-null'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog,
@@ -70,11 +71,11 @@ class UpdateRouteTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-upd-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-upd-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $route = RouteFactory::createOne([
             'blog' => $blog2,

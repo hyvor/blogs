@@ -447,7 +447,6 @@ type Request = {
 	<li><code>POST /user/{`{id}`}/variant</code> - Create a user variant</li>
 	<li><code>PATCH /user/{`{id}`}/variant</code> - Update a user variant</li>
 	<li><code>DELETE /user/{`{id}`}/variant</code> - Delete a user variant</li>
-	<li><code>POST /user</code> - Resend invitation email</li>
 </ul>
 
 <p>Objects:</p>
@@ -567,16 +566,6 @@ type Response = UserVariant
 
 <h4 id="delete-user-variant">Delete a user variant</h4>
 <p><code>DELETE /user/{`{id}`}/variant</code></p>
-<CodeBlock
-	language="ts"
-	code={`
-type Request = {}
-type Response = {}
-`}
-/>
-
-<h4 id="resend-invite">Resend invitation email</h4>
-<p><code>POST /user/{`{id}`}/resend-invite</code></p>
 <CodeBlock
 	language="ts"
 	code={`

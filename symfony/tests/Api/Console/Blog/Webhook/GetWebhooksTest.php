@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Api\Console\Object\WebhookObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Enum\WebhookEvent;
 use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
@@ -21,7 +22,7 @@ class GetWebhooksTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-test'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         WebhookFactory::createOne([
             'blog' => $blog,
@@ -45,7 +46,7 @@ class GetWebhooksTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

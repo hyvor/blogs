@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
 use App\Api\Console\Object\NavigationObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Navigation;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class SortNavigationsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-sort'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $nav1 = NavigationFactory::createOne([
             'blog' => $blog,

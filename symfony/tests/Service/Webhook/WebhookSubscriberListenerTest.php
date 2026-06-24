@@ -11,6 +11,8 @@ use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
+use App\Service\Media\Event\MediaCreatedEvent;
+use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
@@ -20,16 +22,25 @@ use App\Service\Tag\Event\TagUpdatedEvent;
 use App\Service\Tag\Event\TagVariantCreatedEvent;
 use App\Service\Tag\Event\TagVariantDeletedEvent;
 use App\Service\Tag\Event\TagVariantUpdatedEvent;
+use App\Service\User\Event\UserCreatedEvent;
+use App\Service\User\Event\UserDeletedEvent;
+use App\Service\User\Event\UserUpdatedEvent;
+use App\Service\User\Event\UserVariantCreatedEvent;
+use App\Service\User\Event\UserVariantDeletedEvent;
+use App\Service\User\Event\UserVariantUpdatedEvent;
 use App\Service\Webhook\WebhookDeliveryService;
 use App\Service\Webhook\WebhookSubscriberListener;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
+use App\Tests\Factory\UserFactory;
+use App\Tests\Factory\UserVariantFactory;
 use App\Tests\Factory\WebhookFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -336,6 +347,121 @@ class WebhookSubscriberListenerTest extends KernelTestCase
     }
 
     // -----------------------------------------------------------------------
+    // User events
+    // -----------------------------------------------------------------------
+
+    public function test_user_created_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_CREATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new UserCreatedEvent($user));
+
+        $delivery = $this->assertDelivery(WebhookEvent::USER_CREATED);
+        /** @var array{id: int} $userData */
+        $userData = $delivery->getData()['user'];
+        $this->assertSame($user->getId(), $userData['id']);
+    }
+
+    public function test_user_updated_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_UPDATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $userOld = clone $user;
+
+        $this->dispatch(new UserUpdatedEvent($user, $userOld));
+
+        $this->assertDelivery(WebhookEvent::USER_UPDATED);
+    }
+
+    public function test_user_deleted_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_DELETED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new UserDeletedEvent($user));
+
+        $this->assertDelivery(WebhookEvent::USER_DELETED);
+    }
+
+    public function test_user_variant_created_dispatches_message_when_not_primary_language(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_UPDATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog, ['is_primary' => false]);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+
+        $this->dispatch(new UserVariantCreatedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::USER_UPDATED);
+    }
+
+    public function test_user_variant_created_skips_message_when_primary_language(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_UPDATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOnePrimaryFor($blog);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+
+        $this->dispatch(new UserVariantCreatedEvent($variant));
+
+        $this->transport('async')->dispatched()->assertCount(0);
+    }
+
+    public function test_user_variant_updated_dispatches_user_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_UPDATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+        $variantOld = clone $variant;
+
+        $this->dispatch(new UserVariantUpdatedEvent($variant, $variantOld));
+
+        $this->assertDelivery(WebhookEvent::USER_UPDATED);
+    }
+
+    public function test_user_variant_deleted_dispatches_user_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::USER_UPDATED],
+        ]);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+
+        $this->dispatch(new UserVariantDeletedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::USER_UPDATED);
+    }
+
+    // -----------------------------------------------------------------------
     // Cache events
     // -----------------------------------------------------------------------
 
@@ -376,6 +502,44 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         $this->dispatch(new CacheClearTemplatesEvent($blog));
 
         $this->assertDelivery(WebhookEvent::CACHE_TEMPLATES, []);
+    }
+
+    // -----------------------------------------------------------------------
+    // MediaCreatedEvent / MediaDeletedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_media_created_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::MEDIA_CREATED],
+        ]);
+        $media = MediaFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new MediaCreatedEvent($media));
+
+        $delivery = $this->assertDelivery(WebhookEvent::MEDIA_CREATED);
+        /** @var array{id: int} $mediaData */
+        $mediaData = $delivery->getData()['media'];
+        $this->assertSame($media->getId(), $mediaData['id']);
+    }
+
+    public function test_media_deleted_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::MEDIA_DELETED],
+        ]);
+        $media = MediaFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new MediaDeletedEvent($media));
+
+        $delivery = $this->assertDelivery(WebhookEvent::MEDIA_DELETED);
+        /** @var array{id: int} $mediaData */
+        $mediaData = $delivery->getData()['media'];
+        $this->assertSame($media->getId(), $mediaData['id']);
     }
 
     // -----------------------------------------------------------------------

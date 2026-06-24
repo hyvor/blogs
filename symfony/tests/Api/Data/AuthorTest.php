@@ -5,6 +5,7 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Object\AuthorObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -38,7 +39,7 @@ class AuthorTest extends ApiTestCase
             'blog' => $this->blog,
             'slug' => 'john-doe',
             'posts_count' => 2,
-            'status' => 'active',
+            'status' => UserStatus::ACTIVE,
         ]);
 
         UserVariantFactory::createOne([

@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Service\Limit;
 use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
@@ -23,7 +24,7 @@ class UpdatePostTagsTest extends ApiTestCase
     public function test_updates_post_tags(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-tags-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -44,7 +45,7 @@ class UpdatePostTagsTest extends ApiTestCase
     public function test_clears_tags_when_empty_ids(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-tags-clear']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -67,7 +68,7 @@ class UpdatePostTagsTest extends ApiTestCase
     {
         $blog1 = BlogFactory::createOne(['subdomain' => 'post-tags-blog1']);
         $blog2 = BlogFactory::createOne(['subdomain' => 'post-tags-blog2']);
-        $user = UserFactory::createOne(['blog' => $blog1, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog1, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog1);
         $post = PostFactory::createOne(['blog' => $blog1]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -84,7 +85,7 @@ class UpdatePostTagsTest extends ApiTestCase
     public function test_fails_if_more_than_max_tags(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-tags-limit']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $post = PostFactory::createOne(['blog' => $blog]);
 
         $tagIds = array_fill(0, Limit::MAX_TAGS_PER_POST + 1, 1);

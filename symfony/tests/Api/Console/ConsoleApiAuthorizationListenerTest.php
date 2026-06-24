@@ -5,6 +5,7 @@ namespace Api\Console;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
+use App\Entity\Enum\UserStatus;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
@@ -137,7 +138,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
 
     public function test_blog_level_returns_403_when_no_org(): void
     {
-        BlogFactory::createOneWithUser(['subdomain' => 'auth-no-org'], ['status' => 'active']);
+        BlogFactory::createOneWithUser(['subdomain' => 'auth-no-org'], ['status' => UserStatus::ACTIVE]);
 
         // Use the client directly — consoleBlogApi auto-wires org from the blog,
         // but this test needs the user to have NO org to trigger the 403.
@@ -156,7 +157,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'auth-org-mismatch', 'organization_id' => 100],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $user = AuthFake::generateUser();
@@ -175,7 +176,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'auth-hdr-mismatch', 'organization_id' => 200],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $user = AuthFake::generateUser();
@@ -194,7 +195,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'auth-test-other', 'organization_id' => 300],
-            ['hyvor_user_id' => 301, 'status' => 'active'],
+            ['hyvor_user_id' => 301, 'status' => UserStatus::ACTIVE],
         );
 
         $otherUser = AuthFake::generateUser(['id' => 999]);
@@ -217,7 +218,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         [$blog] = BlogFactory::createOneWithUser(
             ['subdomain' => 'apikey-auth-blog'],
-            ['hyvor_user_id' => 400, 'status' => 'active'],
+            ['hyvor_user_id' => 400, 'status' => UserStatus::ACTIVE],
         );
 
         ApiKeyFactory::createOne([
@@ -241,7 +242,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'apikey-invalid-blog'],
-            ['hyvor_user_id' => 401, 'status' => 'active'],
+            ['hyvor_user_id' => 401, 'status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi(
@@ -258,7 +259,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
     {
         [$blog] = BlogFactory::createOneWithUser(
             ['subdomain' => 'apikey-delivery-blog'],
-            ['hyvor_user_id' => 402, 'status' => 'active'],
+            ['hyvor_user_id' => 402, 'status' => UserStatus::ACTIVE],
         );
 
         ApiKeyFactory::createOne([

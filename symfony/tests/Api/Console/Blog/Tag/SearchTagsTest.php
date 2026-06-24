@@ -7,6 +7,7 @@ use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\TagVariantObject;
 use App\Api\Console\Object\TagVariantObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -27,7 +28,7 @@ class SearchTagsTest extends ApiTestCase
     public function test_searches_tags(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tags-search']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $name = 'Thisisname';

@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Tag;
 use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Tag;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
@@ -22,7 +23,7 @@ class CreateTagTest extends ApiTestCase
     public function test_creates_a_tag_with_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-create']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         LanguageFactory::createOnePrimaryFor($blog);
 
         $name = 'Blogging';
@@ -46,7 +47,7 @@ class CreateTagTest extends ApiTestCase
     public function test_creates_a_private_tag(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-create-private']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         LanguageFactory::createOnePrimaryFor($blog);
 
         $this->consoleBlogApi('POST', $blog, '/tag', [

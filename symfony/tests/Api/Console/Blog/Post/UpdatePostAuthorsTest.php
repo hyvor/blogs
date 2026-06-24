@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Service\Limit;
 use App\Service\Post\PostService;
 use App\Service\User\UserService;
@@ -22,8 +23,8 @@ class UpdatePostAuthorsTest extends ApiTestCase
     public function test_updates_post_authors(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-authors-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
-        $author2 = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $author2 = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -42,8 +43,8 @@ class UpdatePostAuthorsTest extends ApiTestCase
     {
         $blog1 = BlogFactory::createOne(['subdomain' => 'post-authors-blog1']);
         $blog2 = BlogFactory::createOne(['subdomain' => 'post-authors-blog2']);
-        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => 'active']);
-        $userFromBlog2 = UserFactory::createOne(['blog' => $blog2, 'status' => 'active']);
+        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => UserStatus::ACTIVE]);
+        $userFromBlog2 = UserFactory::createOne(['blog' => $blog2, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog1);
         $post = PostFactory::createOne(['blog' => $blog1]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -58,7 +59,7 @@ class UpdatePostAuthorsTest extends ApiTestCase
     public function test_fails_if_more_than_max_authors(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-authors-limit']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $post = PostFactory::createOne(['blog' => $blog]);
 
         $authorIds = array_fill(0, Limit::MAX_AUTHORS_PER_POST + 1, 1);

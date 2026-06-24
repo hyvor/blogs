@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Tag;
 use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagVariantObject;
 use App\Api\Console\Object\TagVariantObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Entity\TagVariant;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
@@ -24,7 +25,7 @@ class CreateTagVariantTest extends ApiTestCase
     public function test_creates_a_tag_variant_for_primary_language(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-create-1']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $tag = TagFactory::createOne(['blog' => $blog]);
 
@@ -44,7 +45,7 @@ class CreateTagVariantTest extends ApiTestCase
     public function test_creates_a_tag_variant_for_second_language(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-create-2']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         LanguageFactory::createOnePrimaryFor($blog);
         $language = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
         $tag = TagFactory::createOne(['blog' => $blog]);
@@ -65,7 +66,7 @@ class CreateTagVariantTest extends ApiTestCase
     public function test_language_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-var-create-nolang']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $tag = TagFactory::createOne(['blog' => $blog]);
 
         $this->consoleBlogApi('POST', $blog, '/tag/' . $tag->getId() . '/variant', [

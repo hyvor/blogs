@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Api\Console\Object\WebhookObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Enum\WebhookEvent;
 use App\Service\Webhook\WebhookService;
 use App\Tests\Case\ApiTestCase;
@@ -22,7 +23,7 @@ class UpdateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-update'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
@@ -47,7 +48,7 @@ class UpdateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-update-2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,
@@ -66,11 +67,11 @@ class UpdateWebhookTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-upd-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-upd-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog2,

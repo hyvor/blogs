@@ -6,6 +6,7 @@ use App\Api\Console\Controller\PostController;
 use App\Api\Console\Object\PostObject;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -26,7 +27,7 @@ class GetPostTest extends ApiTestCase
     public function test_returns_post_with_variants_tags_and_authors(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-get']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_featured' => true]);
@@ -55,7 +56,7 @@ class GetPostTest extends ApiTestCase
     {
         $blog1 = BlogFactory::createOne(['subdomain' => 'post-get-blog1']);
         $blog2 = BlogFactory::createOne(['subdomain' => 'post-get-blog2']);
-        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => 'active']);
+        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog2);
 
         $post = PostFactory::createOne(['blog' => $blog2]);

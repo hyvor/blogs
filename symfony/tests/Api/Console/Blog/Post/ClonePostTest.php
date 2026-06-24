@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
@@ -50,8 +51,8 @@ class ClonePostTest extends ApiTestCase
 
         $tag1 = TagFactory::createOne(['blog' => $blog]);
         $tag2 = TagFactory::createOne(['blog' => $blog]);
-        $author1 = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
-        $author2 = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $author1 = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $author2 = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $originalPost->getTags()->add($tag1);
         $originalPost->getTags()->add($tag2);

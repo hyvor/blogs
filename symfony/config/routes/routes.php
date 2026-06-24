@@ -18,6 +18,12 @@ return static function (RoutingConfigurator $routes): void {
         ->prefix('/api/console/v0/blog/{subdomain}')
         ->namePrefix('api_console_');
 
+    // CLI API
+    $routes
+        ->import('../../src/Api/Cli/Controller', 'attribute')
+        ->prefix('/api/cli/{subdomain}')
+        ->namePrefix('api_cli_');
+
     // delivery API
     $routes
         ->import('../../src/Api/Delivery', 'attribute')

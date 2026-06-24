@@ -9,11 +9,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
-use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
-use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
-use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
-use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
@@ -67,17 +63,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Posts and media
          */
         Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
-            // media CRD
-            Route::get('/media', [ConsoleMediaController::class, 'getMedia']);
-            Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
-            Route::post('/media/from-url', [ConsoleMediaController::class, 'uploadFileFromUrl']);
-            Route::patch('/media/{id}', [ConsoleMediaController::class, 'updateMedia']);
-            Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
-            Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
-
-            // url data
-            Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
-
             Route::post('/ai/translate', [ConsoleAiController::class, 'translate']);
 
             // link analysis
@@ -99,29 +84,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          * Settings, users, and theme
          */
         Route::middleware('role:owner|admin')->group(function () {
-
-            // users
-            Route::get('/users', [ConsoleUserController::class, 'get']);
-            Route::get('/users/search', [ConsoleUserController::class, 'search']);
-            Route::post('/user', [ConsoleUserController::class, 'create']);
-            Route::post('/user/guest', [ConsoleUserController::class, 'createGuest']);
-            Route::patch('/user/{id}', [ConsoleUserController::class, 'update']);
-            Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
-            Route::get('/user/{id}/slug-available', [ConsoleUserController::class, 'checkSlugAvailability']);
-            Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
-            Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
-            Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
-            Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
-
-            // theme
-            Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
-            Route::patch('/theme', [ConsoleThemeController::class, 'changeTheme']);
-            Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
-            Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
-            Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
-            Route::patch('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
-            Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
-            Route::get('/theme/file/name-available', [ConsoleThemeController::class, 'isFileNameAvailable']);
 
             // import and export
             Route::get('/data/exports', [ConsoleExportController::class, 'getExports']);

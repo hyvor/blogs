@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -22,7 +23,7 @@ class UpdatePostVariantTest extends ApiTestCase
     public function test_updates_variant_fields(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT, 'slug' => null]);
@@ -51,7 +52,7 @@ class UpdatePostVariantTest extends ApiTestCase
     public function test_auto_generates_slug_when_publishing_without_slug(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-pub']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne([
@@ -80,7 +81,7 @@ class UpdatePostVariantTest extends ApiTestCase
     public function test_fails_if_slug_already_taken(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-slug-taken']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $post1 = PostFactory::createOne(['blog' => $blog]);
@@ -100,7 +101,7 @@ class UpdatePostVariantTest extends ApiTestCase
     public function test_fails_if_slug_has_invalid_characters(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-slug-invalid']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -116,7 +117,7 @@ class UpdatePostVariantTest extends ApiTestCase
     public function test_creates_redirect_on_slug_change(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-redirect', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         RouteFactory::createDefaultsFor($blog);
 

@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
 use App\Api\Console\Object\RouteObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Route;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
@@ -21,7 +22,7 @@ class CreateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'route-create', '/route', [
@@ -56,7 +57,7 @@ class CreateRouteTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-limit'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         for ($i = 0; $i < 50; $i++) {
             RouteFactory::createOne([

@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
 use App\Entity\ApiKey;
+use App\Entity\Enum\UserStatus;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
@@ -18,7 +19,7 @@ class DeleteApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $apiKey = ApiKeyFactory::createOne([
             'blog' => $blog,

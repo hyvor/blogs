@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Route;
 
 use App\Api\Console\Controller\RouteController;
 use App\Api\Console\Object\RouteObject;
+use App\Entity\Enum\UserStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
@@ -18,7 +19,7 @@ class GetRoutesTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'route-list'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         RouteFactory::createOne([
             'blog' => $blog,
@@ -44,7 +45,7 @@ class GetRoutesTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'route-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

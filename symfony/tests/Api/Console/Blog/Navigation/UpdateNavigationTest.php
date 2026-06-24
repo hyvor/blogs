@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Navigation;
 use App\Api\Console\Controller\NavigationController;
 use App\Api\Console\Object\NavigationObject;
 use App\Entity\Enum\NavigationType;
+use App\Entity\Enum\UserStatus;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
@@ -21,7 +22,7 @@ class UpdateNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-update'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
@@ -45,11 +46,11 @@ class UpdateNavigationTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-upd-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-upd-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog2,

@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Tag;
 
 use App\Api\Console\Controller\TagController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Tag;
 use App\Entity\TagVariant;
 use App\Service\Tag\TagService;
@@ -22,7 +23,7 @@ class DeleteTagTest extends ApiTestCase
     public function test_deletes_the_tag_its_variants_and_post_tags(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-delete']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language1 = LanguageFactory::createOnePrimaryFor($blog);
         $language2 = LanguageFactory::createOneFor($blog, ['code' => 'fr']);
         $language3 = LanguageFactory::createOneFor($blog, ['code' => 'es']);
@@ -55,7 +56,7 @@ class DeleteTagTest extends ApiTestCase
     public function test_entity_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-delete-nf']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('DELETE', $blog, '/tag/99999', user: $user);
 

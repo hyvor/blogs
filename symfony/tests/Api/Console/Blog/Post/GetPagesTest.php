@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,7 +20,7 @@ class GetPagesTest extends ApiTestCase
     public function test_fetches_pages_only(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'pages-get']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $page = PostFactory::createOne(['blog' => $blog, 'is_page' => true]);

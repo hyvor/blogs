@@ -14,7 +14,8 @@
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import { getPreloadedPost } from './postLoader';
 
-	let isLoading = $state(true);
+	let isLoading = $state(false);
+	let storesSet = $state(false);
 
 	let postView: HTMLDivElement | undefined = $state();
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
@@ -33,31 +34,33 @@
 		return primaryId;
 	}
 
-	$effect(() => {
+	function handlePost(post: Post) {
+		setPostAndPostOriginalStore(post);
+		if (postView) {
+			initPostEditingState(postView, getInitialLanguageId());
+		}
+		initEditorEventHandlers();
+
+		linkAnalysisLoaderUnsubscriber?.();
+		linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
+
+		isLoading = false;
+		storesSet = true;
+	}
+
+	$effect.pre(() => {
 		const postId = page.params.postId;
 		if (!postId) return;
 
 		activeRequest?.abort();
-		isLoading = true;
-
-		function handlePost(post: Post) {
-			setPostAndPostOriginalStore(post);
-			if (postView) {
-				initPostEditingState(postView, getInitialLanguageId());
-			}
-			initEditorEventHandlers();
-
-			linkAnalysisLoaderUnsubscriber?.();
-			linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
-
-			isLoading = false;
-		}
 
 		const preloadedPost = getPreloadedPost(postId);
 		if (preloadedPost) {
 			handlePost(preloadedPost);
 			return;
 		}
+
+		isLoading = true;
 
 		activeRequest = new AbortController();
 
@@ -80,23 +83,30 @@
 	});
 </script>
 
-<div id="post-view" class:is-temp={$isTempStore} bind:this={postView}>
+<div 
+	id="post-view" 
+	class:is-temp={$isTempStore} 
+	bind:this={postView}
+	 style:view-transition-name={`post-${page.params.postId}`}
+>
 	{#if isLoading}
 		<div class="full-loader">
 			<Loader block size="large" />
 		</div>
 	{:else}
-		<div class="top-bar-wrap">
-			<TopBar />
-		</div>
-
-		<div class="post-inner">
-			<div class="post-left">
-				<PostBody />
+		<div class="container">
+			<div class="top-bar-wrap">
+				<TopBar />
 			</div>
 
-			<div class="post-right">
-				<PostSidebar />
+			<div class="post-inner">
+				<div class="post-left">
+					<PostBody />
+				</div>
+
+				<div class="post-right">
+					<PostSidebar />
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -106,9 +116,15 @@
 	#post-view {
 		background-color: var(--background);
 		padding: 10px 0;
+		height: 100vh;
+	}
+
+	.container {
+		height: 100vh;
+		width: 1200px;
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
+		margin: 0 auto;
 	}
 
 	.full-loader {
@@ -121,12 +137,10 @@
 	}
 
 	.top-bar-wrap {
-		width: 1200px;
-		margin: 0 auto 15px;
+		margin-bottom: 15px;
 	}
 
 	.post-inner {
-		width: 1200px;
 		flex: 1;
 		margin: auto;
 		display: flex;

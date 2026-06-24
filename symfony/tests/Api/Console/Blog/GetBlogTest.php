@@ -11,6 +11,7 @@ use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObject;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Entity\Enum\UserRole;
+use App\Entity\Enum\UserStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
@@ -40,7 +41,7 @@ class GetBlogTest extends ApiTestCase
         $user = UserFactory::createOne([
             'blog' => $blog,
             'role' => UserRole::OWNER,
-            'status' => 'active',
+            'status' => UserStatus::ACTIVE,
         ]);
         UserVariantFactory::createOne(['user' => $user, 'language' => $language]);
 

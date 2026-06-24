@@ -1,6 +1,7 @@
 <?php
 
 use App\Service\App\Storage\FilesystemFactory;
+use App\Service\Integration\Unsplash\UnsplashService;
 use Aws\S3\S3Client;
 use League\Flysystem\Filesystem;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -38,4 +39,7 @@ return static function (ContainerConfigurator $container): void {
             new Reference(S3Client::class),
             '%env(default::string:S3_BUCKET)%',
         ]);
+
+    $services->set(UnsplashService::class)
+        ->arg('$accessKey', '%env(string:UNSPLASH_ACCESS_KEY)%');
 };

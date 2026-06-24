@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class DeletePostTest extends ApiTestCase
     public function test_deletes_post(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-delete']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
@@ -37,7 +38,7 @@ class DeletePostTest extends ApiTestCase
     {
         $blog1 = BlogFactory::createOne(['subdomain' => 'post-delete-b1']);
         $blog2 = BlogFactory::createOne(['subdomain' => 'post-delete-b2']);
-        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => 'active']);
+        $user1 = UserFactory::createOne(['blog' => $blog1, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog2);
         $post = PostFactory::createOne(['blog' => $blog2]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language]);

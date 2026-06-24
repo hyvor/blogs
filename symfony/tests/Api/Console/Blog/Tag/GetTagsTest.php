@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Tag;
 use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +22,7 @@ class GetTagsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'tags-get'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         for ($i = 0; $i < 4; $i++) {
@@ -43,7 +44,7 @@ class GetTagsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'tags-get-offset'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         for ($i = 0; $i < 2; $i++) {

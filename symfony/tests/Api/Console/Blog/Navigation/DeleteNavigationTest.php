@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Navigation;
 
 use App\Api\Console\Controller\NavigationController;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Navigation;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\NavigationService;
@@ -19,7 +20,7 @@ class DeleteNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,

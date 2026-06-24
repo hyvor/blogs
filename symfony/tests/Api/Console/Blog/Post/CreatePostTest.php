@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Api\Console\Object\PostObject;
 use App\Api\Console\Object\PostObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Post\PostService;
@@ -23,7 +24,7 @@ class CreatePostTest extends ApiTestCase
     public function test_creates_a_post_with_primary_language_variant(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-create']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         LanguageFactory::createOnePrimaryFor($blog);
 
         $this->consoleBlogApi('POST', $blog, '/post', [], user: $user);
@@ -46,7 +47,7 @@ class CreatePostTest extends ApiTestCase
     public function test_creates_a_page(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-create-page']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         LanguageFactory::createOnePrimaryFor($blog);
 
         $this->consoleBlogApi('POST', $blog, '/post', ['is_page' => true], user: $user);
@@ -63,7 +64,7 @@ class CreatePostTest extends ApiTestCase
     public function test_adds_creator_as_author(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-create-author']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active', 'hyvor_user_id' => 42]);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE, 'hyvor_user_id' => 42]);
         LanguageFactory::createOnePrimaryFor($blog);
 
         $this->consoleBlogApi('POST', $blog, '/post', [], user: $user);

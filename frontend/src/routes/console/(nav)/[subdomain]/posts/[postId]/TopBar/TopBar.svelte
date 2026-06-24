@@ -9,18 +9,23 @@
 	import PostLanguage from './PostLanguage.svelte';
 	import SaveStatus from './SaveStatus.svelte';
 	import CaretLeft from './CaretLeft.svelte';
+	import { goto } from '$app/navigation';
 
 	function getBackUrl() {
 		const postData = $postStore;
 		return consoleUrlWithBlog(postData && postData.is_page ? '/pages' : '/posts');
 	}
+
+	function handleBack() {
+		goto(getBackUrl())
+	}
 </script>
 
 <div class="post-top-bar hds-box">
-	<a class="back-button" href={getBackUrl()}>
+	<button class="back-button" onclick={handleBack}>
 		<CaretLeft />
 		Back
-	</a>
+	</button>
 
 	<div class="left">
 		<PostStatusTag status={$postVariantStore.status} />

@@ -6,7 +6,7 @@ for multi-blog, multi-author publishing workflows.
 
 <p align="center">
   <a href="https://blogs.hyvor.com">
-    <img src="https://hyvor.com/img/logo.png" alt="Hyvor Blogs Logo" width="130"/>
+    <img src="https://hyvor.com/api/public/logo/blogs.png" alt="Hyvor Blogs Logo" width="130"/>
   </a>
 </p>
 
