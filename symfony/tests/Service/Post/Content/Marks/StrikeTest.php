@@ -38,11 +38,57 @@ class StrikeTest extends KernelTestCase
         $this->assertSame('<s>strikethrough</s>', $html);
     }
 
-    public function test_html_to_json(): void
+    public function test_s_tag_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><s>strikethrough</s></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<s>strikethrough</s>', $this->blog(), false);
 
-        $this->assertSame('strike', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'strikethrough',
+                    'marks' => [
+                        ['type' => 'strike'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
+    }
+
+    public function test_strike_tag_to_json(): void
+    {
+        $document = $this->service()->getDocumentFromHtml('<strike>strikethrough</strike>', $this->blog(), false);
+
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'strikethrough',
+                    'marks' => [
+                        ['type' => 'strike'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
+    }
+
+    public function test_del_tag_to_json(): void
+    {
+        $document = $this->service()->getDocumentFromHtml('<del>strikethrough</del>', $this->blog(), false);
+
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'strikethrough',
+                    'marks' => [
+                        ['type' => 'strike'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

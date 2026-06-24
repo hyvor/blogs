@@ -19,7 +19,7 @@ use App\Service\Post\Content\Nodes\Audio\Audio;
 use App\Service\Post\Content\Nodes\Blockquote;
 use App\Service\Post\Content\Nodes\Bookmark\Bookmark;
 use App\Service\Post\Content\Nodes\BulletList;
-use App\Service\Post\Content\Nodes\Button;
+use App\Service\Post\Content\Nodes\Button\Button;
 use App\Service\Post\Content\Nodes\Callout\Callout;
 use App\Service\Post\Content\Nodes\CodeBlock\CodeBlock;
 use App\Service\Post\Content\Nodes\CustomHtml;

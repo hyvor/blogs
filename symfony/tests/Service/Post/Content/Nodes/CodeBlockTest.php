@@ -72,9 +72,22 @@ class CodeBlockTest extends KernelTestCase
     {
         $html = "<pre>\n<code>matchLabels:\n    app: nginx\n</code>\n</pre>";
         $json = $this->service()->getJsonFromHtml($html, $this->blog());
-        $decoded = json_decode($json, true);
 
-        $this->assertSame('code_block', $decoded['content'][0]['type']);
-        $this->assertSame("matchLabels:\n    app: nginx", $decoded['content'][0]['content'][0]['text']);
+        $this->assertSame(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'code_block',
+                    'attrs' => [
+                        'language' => '',
+                        'name' => '',
+                        'annotations' => '',
+                    ],
+                    'content' => [
+                        ['type' => 'text', 'text' => "matchLabels:\n    app: nginx"],
+                    ],
+                ],
+            ],
+        ]), $json);
     }
 }

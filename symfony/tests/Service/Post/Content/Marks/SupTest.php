@@ -40,9 +40,19 @@ class SupTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><sup>superscript</sup></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<sup>superscript</sup>', $this->blog(), false);
 
-        $this->assertSame('sup', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'superscript',
+                    'marks' => [
+                        ['type' => 'sup'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

@@ -40,17 +40,47 @@ class EmTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><em>italic</em></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<em>italic</em>', $this->blog());
 
-        $this->assertSame('em', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'italic',
+                            'marks' => [
+                                ['type' => 'em'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 
     public function test_i_tag_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><i>italic</i></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<i>italic</i>', $this->blog());
 
-        $this->assertSame('em', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'italic',
+                            'marks' => [
+                                ['type' => 'em'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

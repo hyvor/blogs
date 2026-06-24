@@ -40,9 +40,24 @@ class HighlightTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><mark>highlighted</mark></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<mark>highlighted</mark>', $this->blog());
 
-        $this->assertSame('highlight', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'highlighted',
+                            'marks' => [
+                                ['type' => 'highlight'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

@@ -40,9 +40,24 @@ class CodeTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><code>var x</code></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<code>var x</code>', $this->blog());
 
-        $this->assertSame('code', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'var x',
+                            'marks' => [
+                                ['type' => 'code'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

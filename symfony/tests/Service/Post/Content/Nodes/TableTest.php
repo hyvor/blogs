@@ -56,10 +56,30 @@ class TableTest extends KernelTestCase
     {
         $html = '<table><tr><td>Cell 1</td></tr></table>';
         $json = $this->service()->getJsonFromHtml($html, $this->blog());
-        $decoded = json_decode($json, true);
 
-        $this->assertSame('table', $decoded['content'][0]['type']);
-        $this->assertSame('table_row', $decoded['content'][0]['content'][0]['type']);
-        $this->assertSame('table_cell', $decoded['content'][0]['content'][0]['content'][0]['type']);
+        $this->assertSame(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'table',
+                    'content' => [
+                        [
+                            'type' => 'table_row',
+                            'content' => [
+                                [
+                                    'type' => 'table_cell',
+                                    'content' => [
+                                        [
+                                            'type' => 'paragraph',
+                                            'content' => [['type' => 'text', 'text' => 'Cell 1']],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]), $json);
     }
 }

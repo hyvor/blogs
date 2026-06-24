@@ -38,11 +38,39 @@ class StrongTest extends KernelTestCase
         $this->assertSame('<strong>bold</strong>', $html);
     }
 
-    public function test_html_to_json(): void
+    public function test_b_tag_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><strong>bold</strong></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<b>bold</b>', $this->blog(), false);
 
-        $this->assertSame('strong', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'bold',
+                    'marks' => [
+                        ['type' => 'strong'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
+    }
+
+    public function test_strong_tag_to_json(): void
+    {
+        $document = $this->service()->getDocumentFromHtml('<strong>bold</strong>', $this->blog(), false);
+
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'bold',
+                    'marks' => [
+                        ['type' => 'strong'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

@@ -47,13 +47,51 @@ class CalloutTest extends KernelTestCase
         $html = '<aside style="background-color:#fff0f0;color:#000000"><span>💡</span><div>Note</div></aside>';
         $json = $this->service()->getJsonFromHtml($html, $this->blog());
 
-        $decoded = json_decode($json, true);
-        $callout = $decoded['content'][0];
+        $this->assertSame(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'callout',
+                    'attrs' => [
+                        'emoji' => '💡',
+                        'bg' => '#fff0f0',
+                        'fg' => '#000000',
+                    ],
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Note'],
+                    ],
+                ],
+            ],
+        ]), $json);
+    }
 
-        $this->assertSame('callout', $callout['type']);
-        $this->assertSame('💡', $callout['attrs']['emoji']);
-        $this->assertSame('#fff0f0', $callout['attrs']['bg']);
-        $this->assertSame('#000000', $callout['attrs']['fg']);
-        $this->assertSame('Note', $callout['content'][0]['text']);
+    public function test_html_to_json_without_div(): void
+    {
+        $html = '<aside>Some <b>content</b></aside>';
+        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+
+        $this->assertSame(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'callout',
+                    'attrs' => [
+                        'emoji' => Callout::DEFAULT_EMOJI,
+                        'bg' => Callout::DEFAULT_BG,
+                        'fg' => Callout::DEFAULT_FG,
+                    ],
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Some '],
+                        [
+                            'type' => 'text',
+                            'text' => 'content',
+                            'marks' => [
+                                ['type' => 'strong'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]), $json);
     }
 }

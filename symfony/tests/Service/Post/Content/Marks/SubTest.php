@@ -40,9 +40,19 @@ class SubTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p><sub>subscript</sub></p>', $this->blog());
-        $decoded = json_decode($json, true);
+        $document = $this->service()->getDocumentFromHtml('<sub>subscript</sub>', $this->blog(), false);
 
-        $this->assertSame('sub', $decoded['content'][0]['content'][0]['marks'][0]['type']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'subscript',
+                    'marks' => [
+                        ['type' => 'sub'],
+                    ],
+                ],
+            ],
+        ], $document->toArray());
     }
 }

@@ -50,9 +50,31 @@ class FigcaptionTest extends KernelTestCase
     {
         $html = '<figure><img src="https://example.com/img.jpg"><figcaption>A caption</figcaption></figure>';
         $json = $this->service()->getJsonFromHtml($html, $this->blog());
-        $decoded = json_decode($json, true);
 
-        $this->assertSame('figcaption', $decoded['content'][0]['content'][1]['type']);
-        $this->assertSame('A caption', $decoded['content'][0]['content'][1]['content'][0]['text']);
+        $this->assertSame(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'figure',
+                    'content' => [
+                        [
+                            'type' => 'image',
+                            'attrs' => [
+                                'src' => 'https://example.com/img.jpg',
+                                'alt' => null,
+                                'width' => null,
+                                'height' => null,
+                            ],
+                        ],
+                        [
+                            'type' => 'figcaption',
+                            'content' => [
+                                ['type' => 'text', 'text' => 'A caption'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]), $json);
     }
 }

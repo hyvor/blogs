@@ -54,9 +54,35 @@ class UrlUpdaterTest extends KernelTestCase
         $updater = new UrlUpdater($doc);
         $updated = $updater->updateFromOldToNew($oldUrl, $newUrl);
 
-        $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://new.com/media/audio.mp3', $decoded['content'][1]['attrs']['src']);
-        $this->assertSame('https://new.com/page', $decoded['content'][2]['marks'][0]['attrs']['href']);
+        $this->assertSame([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'image',
+                    'attrs' => [
+                        'src' => 'https://new.com/media/image.jpg',
+                        'alt' => null,
+                        'width' => null,
+                        'height' => null,
+                    ],
+                ],
+                [
+                    'type' => 'audio',
+                    'attrs' => [
+                        'src' => 'https://new.com/media/audio.mp3',
+                    ],
+                ],
+                [
+                    'type' => 'text',
+                    'text' => 'test',
+                    'marks' => [
+                        [
+                            'type' => 'link',
+                            'attrs' => ['href' => 'https://new.com/page'],
+                        ],
+                    ],
+                ],
+            ],
+        ], json_decode($updated->toJson(), true));
     }
 }
