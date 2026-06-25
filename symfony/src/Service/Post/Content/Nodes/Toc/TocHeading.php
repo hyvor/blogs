@@ -10,7 +10,8 @@ class TocHeading
         public string $title,
         public ?string $id,
         public int $level,
-    ) {}
+    ) {
+    }
 
     /**
      * @param int[] $levels
@@ -26,9 +27,12 @@ class TocHeading
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
 
-        if (!$dom->loadHTML(
-            '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $html
-        )) {
+        if (
+            !$dom->loadHTML(
+                // https://stackoverflow.com/a/8218649/9059939
+                '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $html
+            )
+        ) {
             return [];
         }
 

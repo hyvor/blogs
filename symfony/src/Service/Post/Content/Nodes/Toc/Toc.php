@@ -23,7 +23,8 @@ class Toc extends NodeType
         private Blog $blog,
         private ThemeFilesService $themeFilesService,
         private TwigRendererService $twigRendererService,
-    ) {}
+    ) {
+    }
 
     public function toHtmlFromContext(Context $context): string
     {
