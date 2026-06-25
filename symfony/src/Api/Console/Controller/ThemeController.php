@@ -15,7 +15,6 @@ use App\Service\Limit;
 use App\Service\Theme\Exception\ThemeImportException;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeService;
-use App\Service\Theme\ThemeZipService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,7 +32,6 @@ class ThemeController
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private ThemeFilesService $themeFilesService,
         private ThemeService $themeService,
-        private ThemeZipService $themeZipService,
         private LoggerInterface $logger,
     ) {
     }
@@ -104,7 +102,7 @@ class ThemeController
         $blog = $this->blogAuthListener->getBlog();
 
         try {
-            $zipContent = $this->themeZipService->exportZip($blog);
+            $zipContent = $this->themeFilesService->exportFilesToZip($blog);
         } catch (\RuntimeException $e) {
             $this->logger->error('Failed to export theme zip', ['exception' => $e]);
             throw new UnprocessableEntityHttpException('Unable to export the theme as a zip file. Please try again later.');
