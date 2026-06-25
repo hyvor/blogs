@@ -4,20 +4,20 @@ namespace App\Service\Theme;
 
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Theme\Exception\ThemeImportException;
 
 /**
  * Imports a theme zip into a blog's theme files.
  */
 class ThemeImporter
 {
-    private bool $success = true;
 
     /**
      * Notes on skipped entries, for debugging.
      *
      * @var string[]
      */
-    private array $traces = [];
+    private array $logs = [];
 
     public function __construct(
         private Blog $blog,
@@ -26,6 +26,9 @@ class ThemeImporter
     ) {
     }
 
+    /**
+     * @throws ThemeImportException
+     */
     public function import(): void
     {
         $tmpPath = tempnam(sys_get_temp_dir(), 'theme-import-');
@@ -33,27 +36,23 @@ class ThemeImporter
             throw new ThemeImportException('Unable to create a temporary file for the theme import');
         }
 
-        try {
-            file_put_contents($tmpPath, $this->zipContent);
-
-            $zip = new \ZipArchive();
-            $opened = $zip->open($tmpPath);
-
-            if ($opened !== true) {
-                $this->success = false;
-                return;
-            }
-
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $this->importEntry($zip, $i);
-            }
-
-            $zip->close();
-        } catch (\Exception) {
-            $this->success = false;
-        } finally {
-            unlink($tmpPath);
+        if (file_put_contents($tmpPath, $this->zipContent) === false) {
+            throw new ThemeImportException('Unable to write the theme zip content to the temporary file');
         }
+
+        $zip = new \ZipArchive();
+        $opened = $zip->open($tmpPath);
+
+        if ($opened !== true) {
+            throw new ThemeImportException('Unable to open the zip file for the theme import');
+        }
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $this->importEntry($zip, $i);
+        }
+
+        $zip->close();
+        unlink($tmpPath);
     }
 
     private function importEntry(\ZipArchive $zip, int $index): void
@@ -78,7 +77,8 @@ class ThemeImporter
         }
 
         if (!$this->themeFilesService->isFileAllowedInFolder($folder, $fileName)) {
-            $this->addTrace("$entry skipped because it is not allowed");
+            $folderName = $folder?->value ?? 'root';
+            $this->addTrace("$entry skipped because it is not allowed in the $folderName folder");
             return;
         }
 
@@ -93,19 +93,14 @@ class ThemeImporter
 
     private function addTrace(string $trace): void
     {
-        $this->traces[] = $trace;
+        $this->logs[] = $trace;
     }
 
     /**
      * @return string[]
      */
-    public function traces(): array
+    public function getLogs(): array
     {
-        return $this->traces;
-    }
-
-    public function success(): bool
-    {
-        return $this->success;
+        return $this->logs;
     }
 }

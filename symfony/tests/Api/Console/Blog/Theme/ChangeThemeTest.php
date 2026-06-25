@@ -68,9 +68,20 @@ class ChangeThemeTest extends ApiTestCase
         );
 
         $this->consoleBlogApi('PATCH', $blog, '/theme', ['name' => 'does-not-exist'], user: $user);
+        $this->assertResponseFailed(422, "Theme 'does-not-exist' not found");
+    }
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSame([], $this->getJson());
+    public function test_theme_version_not_found(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'theme-change-version-404'],
+            [],
+        );
+
+        $theme = ThemeFactory::createOne(['name' => 'sample', 'type' => 'original']);
+
+        $this->consoleBlogApi('PATCH', $blog, '/theme', ['name' => 'sample', 'version' => '2.0.0'], user: $user);
+        $this->assertResponseFailed(400, "Theme version not found");
     }
 
     /**

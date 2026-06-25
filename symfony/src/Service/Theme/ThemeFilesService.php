@@ -11,6 +11,7 @@ use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
 use App\Service\Theme\Event\StylesEditedEvent;
 use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Theme\Exception\ThemeImportException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -138,6 +139,9 @@ class ThemeFilesService
         ]);
     }
 
+    /**
+     * @throws ThemeImportException
+     */
     public function updateFilesFromZip(Blog $blog, string $zipContent): ThemeImporter
     {
         return $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
@@ -150,17 +154,20 @@ class ThemeFilesService
         });
     }
 
-    public function updateFilesFromTheme(Blog $blog, ThemeVersion $version): void
+    /**
+     * @throws ThemeImportException
+     */
+    public function updateFilesFromThemeVersion(Blog $blog, ThemeVersion $version): ThemeImporter
     {
-        $importer = $this->updateFilesFromZip($blog, $version->getZip() ?? '');
+        return $this->em->wrapInTransaction(function () use ($blog, $version) {
+            $importer = $this->updateFilesFromZip($blog, $version->getZip() ?? '');
 
-        if (!$importer->success()) {
-            throw new \RuntimeException('Unable to copy the theme');
-        }
+            $blog->setThemeVersion($version);
+            $blog->setUpdatedAt($this->now());
+            $this->em->flush();
 
-        $blog->setThemeVersionId($version->getId());
-        $blog->setThemeVersion($version);
-        $this->em->flush();
+            return $importer;
+        });
     }
 
     public function isFileAllowedInFolder(?ThemeFileFolder $folder, string $fileName): bool

@@ -12,6 +12,7 @@ use App\Api\Console\Object\ThemeFileObject;
 use App\Entity\Blog;
 use App\Entity\ThemeFile;
 use App\Service\Limit;
+use App\Service\Theme\Exception\ThemeImportException;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeService;
 use App\Service\Theme\ThemeZipService;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ThemeController
@@ -42,6 +44,7 @@ class ThemeController
         $blog = $this->blogAuthListener->getBlog();
 
         $zip = $request->files->get('zip');
+
         if (!$zip instanceof UploadedFile) {
             throw new UnprocessableEntityHttpException('The zip field is required');
         }
@@ -50,13 +53,21 @@ class ThemeController
         }
 
         $content = file_get_contents($zip->getPathname());
-        $importer = $content !== false ? $this->themeFilesService->updateFilesFromZip($blog, $content) : null;
 
-        if ($importer === null || !$importer->success()) {
-            throw new UnprocessableEntityHttpException('Unable to import the theme');
+        if ($content === false) {
+            throw new UnprocessableEntityHttpException('Unable to read the zip file content');
         }
 
-        return new JsonResponse($this->fileObjects($blog));
+        try {
+            $importer = $this->themeFilesService->updateFilesFromZip($blog, $content);
+        } catch (ThemeImportException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+
+        return new JsonResponse([
+            'files' => $this->fileObjects($blog),
+            'logs' => $importer->getLogs(),
+        ]);
     }
 
     #[Route('/theme', methods: ['PATCH'])]
@@ -75,12 +86,12 @@ class ThemeController
             : $this->themeService->getThemeLatestVersion($theme);
 
         if ($version === null) {
-            throw new UnprocessableEntityHttpException('Theme version not found');
+            throw new BadRequestHttpException('Theme version not found');
         }
 
         try {
-            $this->themeFilesService->updateFilesFromTheme($blog, $version);
-        } catch (\RuntimeException $e) {
+            $this->themeFilesService->updateFilesFromThemeVersion($blog, $version);
+        } catch (ThemeImportException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
 
