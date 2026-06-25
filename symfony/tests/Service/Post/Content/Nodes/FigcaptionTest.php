@@ -21,6 +21,19 @@ class FigcaptionTest extends KernelTestCase
         return (new Blog())->setSubdomain('test');
     }
 
+    public function test_json_to_html_standalone(): void
+    {
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'figcaption'],
+            ],
+        ]);
+
+        $html = $this->service()->getHtml($json, $this->blog());
+        $this->assertSame('<figcaption></figcaption>', $html);
+    }
+
     public function test_json_to_html(): void
     {
         $json = json_encode([

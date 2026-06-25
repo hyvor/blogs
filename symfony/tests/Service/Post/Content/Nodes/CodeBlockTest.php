@@ -22,6 +22,42 @@ class CodeBlockTest extends KernelTestCase
         return (new Blog())->setSubdomain('test');
     }
 
+    public function test_json_to_html(): void
+    {
+        $code = '$x = null';
+
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'code_block',
+                    'attrs' => [
+                        'language' => 'php',
+                        'annotations' => 'h=1',
+                        'name' => 'file.js',
+                    ],
+                    'content' => [['type' => 'text', 'text' => $code]],
+                ],
+            ],
+        ]);
+
+        $html = $this->service()->getHtml($json, $this->blog());
+
+        $dom = new \DOMDocument();
+        $dom->loadXML($html);
+
+        /** @var \DOMElement $pre */
+        $pre = $dom->firstChild;
+
+        $this->assertSame('language-php has-highlight has-line-numbers', $pre->attributes->getNamedItem('class')->value);
+        $this->assertSame('h=1', $pre->attributes->getNamedItem('data-annotations')->value);
+        $this->assertSame('file.js', $pre->attributes->getNamedItem('data-name')->value);
+        $this->assertSame('php', $pre->attributes->getNamedItem('data-language')->value);
+
+        $code = $pre->firstChild;
+        $this->assertSame('code', $code->nodeName);
+    }
+
     public function test_json_to_html_plain(): void
     {
         $code = '$x = null';
