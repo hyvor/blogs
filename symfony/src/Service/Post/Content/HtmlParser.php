@@ -66,6 +66,9 @@ class HtmlParser
         $this->html = $html === false ? $this->html : $html;
     }
 
+    /**
+     * Converts elements inside <pre><code> into a single text element
+     */
     private function fixCodeBlocks(): void
     {
         $doc = $this->getDomDocument();
@@ -114,6 +117,7 @@ class HtmlParser
         $this->html = $html === false ? $this->html : $html;
     }
 
+    // <a><img></a> || <p><img></p> => <img>
     private function convertAOrPImgToImg(): void
     {
         $replacer = function (Crawler $crawler, DOMDocument $doc) {
@@ -152,7 +156,13 @@ class HtmlParser
             }
         };
 
+        // it is very likely that images are nested p > a > img
+        // hence the a > img to img conversion first
+
+        // first a > img to img
         $this->html = $this->filterAndRun($this->html, 'a > img', $replacer);
+
+        // then p > img to img
         $this->html = $this->filterAndRun($this->html, 'p > img', $replacer);
     }
 
@@ -167,7 +177,7 @@ class HtmlParser
 
         $crawler
             ->filter($filter)
-            ->each(fn (Crawler $crawler) => $callback($crawler, $doc));
+            ->each(fn(Crawler $crawler) => $callback($crawler, $doc));
 
         $html = $doc->saveHTML();
 
