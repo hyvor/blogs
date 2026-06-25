@@ -28,7 +28,8 @@ class ThemeController
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private ThemeFilesService $themeFilesService,
         private ThemeZipService $themeZipService,
-    ) {}
+    ) {
+    }
 
     #[Route('/theme', methods: ['POST'])]
     public function uploadTheme(Request $request): JsonResponse
@@ -44,9 +45,9 @@ class ThemeController
         }
 
         $content = file_get_contents($zip->getPathname());
-        $success = $content !== false && $this->themeZipService->importZip($blog, $content);
+        $importer = $content !== false ? $this->themeFilesService->updateFilesFromZip($blog, $content) : null;
 
-        if (!$success) {
+        if ($importer === null || !$importer->success()) {
             throw new UnprocessableEntityHttpException('Unable to import the theme');
         }
 
@@ -161,9 +162,7 @@ class ThemeController
         #[MapQueryString] CheckThemeFileNameAvailableInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $folder = $input->folder !== null ? ThemeFileFolder::tryFrom($input->folder) : null;
-
-        $file = $this->themeFilesService->getFile($blog, $input->name, $folder);
+        $file = $this->themeFilesService->getFile($blog, $input->name, $input->folder);
 
         return new JsonResponse([
             'available' => $file === null,

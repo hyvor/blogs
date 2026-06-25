@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Input\Blog\Theme;
 
+use App\Entity\Enum\ThemeFileFolder;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckThemeFileNameAvailableInput
@@ -9,6 +10,5 @@ class CheckThemeFileNameAvailableInput
     #[Assert\NotBlank]
     public string $name;
 
-    #[Assert\Choice(choices: ['templates', 'assets', 'styles', 'lang'])]
-    public ?string $folder = null;
+    public ?ThemeFileFolder $folder = null;
 }

@@ -135,4 +135,16 @@ class ThemeFilesService
             'folder' => $folder,
         ]);
     }
+
+    public function updateFilesFromZip(Blog $blog, string $zipContent): ThemeImporter
+    {
+        return $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
+            $this->deleteAllFiles($blog);
+
+            $importer = new ThemeImporter($blog, $zipContent, $this);
+            $importer->import();
+
+            return $importer;
+        });
+    }
 }

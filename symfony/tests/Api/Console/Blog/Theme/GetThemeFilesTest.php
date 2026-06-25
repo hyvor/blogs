@@ -28,6 +28,9 @@ class GetThemeFilesTest extends ApiTestCase
             'content' => 'none',
         ]);
 
+        // another blog
+        ThemeFileFactory::createOne();
+
         $this->consoleBlogApi('GET', $blog, '/theme/files', user: $user);
 
         $this->assertResponseIsSuccessful();
