@@ -13,6 +13,7 @@ use App\Entity\Blog;
 use App\Entity\ThemeFile;
 use App\Service\Limit;
 use App\Service\Theme\ThemeFilesService;
+use App\Service\Theme\ThemeService;
 use App\Service\Theme\ThemeZipService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -29,6 +30,7 @@ class ThemeController
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private ThemeFilesService $themeFilesService,
+        private ThemeService $themeService,
         private ThemeZipService $themeZipService,
         private LoggerInterface $logger,
     ) {
@@ -63,8 +65,21 @@ class ThemeController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
+        $theme = $this->themeService->getThemeByName($input->name);
+        if ($theme === null) {
+            throw new UnprocessableEntityHttpException("Theme '$input->name' not found");
+        }
+
+        $version = $input->version !== null
+            ? $this->themeService->getThemeVersion($theme, $input->version)
+            : $this->themeService->getThemeLatestVersion($theme);
+
+        if ($version === null) {
+            throw new UnprocessableEntityHttpException('Theme version not found');
+        }
+
         try {
-            $this->themeZipService->copyThemeToBlog($blog, $input->name);
+            $this->themeFilesService->updateFilesFromTheme($blog, $version);
         } catch (\RuntimeException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
@@ -81,7 +96,7 @@ class ThemeController
             $zipContent = $this->themeZipService->exportZip($blog);
         } catch (\RuntimeException $e) {
             $this->logger->error('Failed to export theme zip', ['exception' => $e]);
-            throw new UnprocessableEntityHttpException($e->getMessage());
+            throw new UnprocessableEntityHttpException('Unable to export the theme as a zip file. Please try again later.');
         }
 
         $filename = 'hb-theme-of-' . $blog->getSubdomain() . '-' . date('Y-m-d') . '.zip';

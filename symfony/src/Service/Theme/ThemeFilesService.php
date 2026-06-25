@@ -5,6 +5,7 @@ namespace App\Service\Theme;
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\ThemeFile;
+use App\Entity\ThemeVersion;
 use App\Service\Theme\Event\AssetEditedEvent;
 use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
@@ -117,6 +118,7 @@ class ThemeFilesService
 
     /**
      * @param string[] $names
+     * @return ThemeFile[]
      */
     public function getFilesByNames(Blog $blog, array $names, ?ThemeFileFolder $folder): array
     {
@@ -146,6 +148,19 @@ class ThemeFilesService
 
             return $importer;
         });
+    }
+
+    public function updateFilesFromTheme(Blog $blog, ThemeVersion $version): void
+    {
+        $importer = $this->updateFilesFromZip($blog, $version->getZip() ?? '');
+
+        if (!$importer->success()) {
+            throw new \RuntimeException('Unable to copy the theme');
+        }
+
+        $blog->setThemeVersionId($version->getId());
+        $blog->setThemeVersion($version);
+        $this->em->flush();
     }
 
     public function isFileAllowedInFolder(?ThemeFileFolder $folder, string $fileName): bool

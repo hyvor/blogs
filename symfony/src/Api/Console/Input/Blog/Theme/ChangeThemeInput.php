@@ -8,4 +8,6 @@ class ChangeThemeInput
 {
     #[Assert\NotBlank]
     public string $name;
+
+    public ?string $version = null;
 }

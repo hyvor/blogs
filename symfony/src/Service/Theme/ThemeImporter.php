@@ -30,7 +30,7 @@ class ThemeImporter
     {
         $tmpPath = tempnam(sys_get_temp_dir(), 'theme-import-');
         if ($tmpPath === false) {
-            throw new \RuntimeException('Unable to create a temporary file for the theme import');
+            throw new ThemeImportException('Unable to create a temporary file for the theme import');
         }
 
         try {
