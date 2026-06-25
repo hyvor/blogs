@@ -12,6 +12,7 @@ use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(ThemeController::class)]
 #[CoversClass(ThemeFilesService::class)]
@@ -37,6 +38,9 @@ class UpdateThemeFileTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSame('new.twig', $this->getJson()['name']);
+
+        refresh($file);
+        $this->assertSame('new.twig', $file->getName());
     }
 
     public function test_updates_content(): void
@@ -60,6 +64,9 @@ class UpdateThemeFileTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSame('new', $this->getJson()['content']);
         $this->getEd()->assertDispatched(TemplateEditedEvent::class);
+
+        refresh($file);
+        $this->assertSame('new', $file->getContent());
     }
 
     public function test_updates_a_style_file(): void
@@ -83,6 +90,9 @@ class UpdateThemeFileTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSame('new', $this->getJson()['content']);
         $this->getEd()->assertDispatched(StylesEditedEvent::class);
+
+        refresh($file);
+        $this->assertSame('new', $file->getContent());
     }
 
     public function test_updates_content_to_empty(): void

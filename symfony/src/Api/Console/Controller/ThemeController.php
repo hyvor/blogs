@@ -6,9 +6,10 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Input\Blog\Theme\ChangeThemeInput;
 use App\Api\Console\Input\Blog\Theme\CheckThemeFileNameAvailableInput;
+use App\Api\Console\Input\Blog\Theme\CreateThemeFileInput;
+use App\Api\Console\Input\Blog\Theme\UpdateThemeFileInput;
 use App\Api\Console\Object\ThemeFileObject;
 use App\Entity\Blog;
-use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\ThemeFile;
 use App\Service\Limit;
 use App\Service\Theme\ThemeFilesService;
@@ -93,23 +94,13 @@ class ThemeController
     }
 
     #[Route('/theme/file', methods: ['POST'])]
-    public function createFile(Request $request): JsonResponse
-    {
+    public function createFile(
+        #[MapRequestPayload] CreateThemeFileInput $input,
+        Request $request,
+    ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $body = $this->bodyParams($request);
 
-        $folderValue = $body['folder'] ?? null;
-        $folder = is_string($folderValue) ? ThemeFileFolder::tryFrom($folderValue) : null;
-
-        $nameValue = $body['name'] ?? null;
-        $name = is_string($nameValue) ? $nameValue : '';
-        if ($name === '') {
-            throw new UnprocessableEntityHttpException('The name field is required');
-        }
-
-        $contentValue = $body['content'] ?? null;
-        $content = is_string($contentValue) ? $contentValue : '';
-
+        $content = $input->content;
         $uploadedFile = $request->files->get('file');
         if ($uploadedFile instanceof UploadedFile) {
             if ($uploadedFile->getSize() !== false && $uploadedFile->getSize() > Limit::MAX_ASSET_FILE_SIZE) {
@@ -119,11 +110,15 @@ class ThemeController
             $content = $fileContent === false ? '' : $fileContent;
         }
 
-        if ($this->themeFilesService->getFile($blog, $name, $folder) !== null) {
-            throw new UnprocessableEntityHttpException('File already exists');
+        if ($this->themeFilesService->isFileAllowedInFolder($input->folder, $input->name) === false) {
+            throw new UnprocessableEntityHttpException("The file '$input->name' is not allowed in the specified folder");
         }
 
-        $file = $this->themeFilesService->createOrUpdateFile($blog, $folder, $name, $content);
+        if ($this->themeFilesService->getFile($blog, $input->name, $input->folder) !== null) {
+            throw new UnprocessableEntityHttpException("File with name '$input->name' already exists in the specified folder");
+        }
+
+        $file = $this->themeFilesService->createOrUpdateFile($blog, $input->folder, $input->name, $content);
 
         return new JsonResponse(new ThemeFileObject($file));
     }
@@ -131,17 +126,16 @@ class ThemeController
     #[Route('/theme/file/{id}', methods: ['PATCH'])]
     public function updateFile(
         #[MapBlogEntity] ThemeFile $file,
-        Request $request,
+        #[MapRequestPayload] UpdateThemeFileInput $input,
     ): JsonResponse {
-        $body = $this->bodyParams($request);
 
         /** @var array{name?: ?string, content?: ?string} $updates */
         $updates = [];
-        if (array_key_exists('name', $body) && (is_string($body['name']) || $body['name'] === null)) {
-            $updates['name'] = $body['name'];
+        if ($input->name !== null) {
+            $updates['name'] = $input->name;
         }
-        if (array_key_exists('content', $body) && (is_string($body['content']) || $body['content'] === null)) {
-            $updates['content'] = $body['content'];
+        if ($input->content !== null) {
+            $updates['content'] = $input->content;
         }
 
         $file = $this->themeFilesService->updateFile($file, $updates);
@@ -178,21 +172,4 @@ class ThemeController
         );
     }
 
-    /**
-     * Reads request params from either a JSON body or a multipart/form-data body.
-     *
-     * @return array<string, mixed>
-     */
-    private function bodyParams(Request $request): array
-    {
-        $contentType = $request->headers->get('Content-Type') ?? '';
-        if (str_contains($contentType, 'multipart/form-data') || str_contains($contentType, 'application/x-www-form-urlencoded')) {
-            /** @var array<string, mixed> */
-            return $request->request->all();
-        }
-
-        $decoded = json_decode($request->getContent(), true);
-        /** @var array<string, mixed> */
-        return is_array($decoded) ? $decoded : [];
-    }
 }

@@ -102,6 +102,22 @@ class CreateThemeFileTest extends ApiTestCase
             'content' => 'test',
         ], user: $user);
 
-        $this->assertResponseFailed(422, 'File already exists');
+        $this->assertResponseFailed(422, 'File with name \'index.twig\' already exists in the specified folder');
+    }
+
+    public function test_does_not_create_a_file_if_it_is_not_allowed_in_the_folder(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'theme-file-not-allowed'],
+            [],
+        );
+
+        $this->consoleBlogApi('POST', $blog, '/theme/file', [
+            'folder' => 'templates',
+            'name' => 'index.css',
+            'content' => 'test',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, "The file 'index.css' is not allowed in the specified folder");
     }
 }

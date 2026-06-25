@@ -77,7 +77,7 @@ class ThemeImporter
             }
         }
 
-        if (!$this->fileAllowed($folder, $fileName)) {
+        if (!$this->themeFilesService->isFileAllowedInFolder($folder, $fileName)) {
             $this->addTrace("$entry skipped because it is not allowed");
             return;
         }
@@ -89,17 +89,6 @@ class ThemeImporter
         }
 
         $this->themeFilesService->createOrUpdateFile($this->blog, $folder, $fileName, $content);
-    }
-
-    private function fileAllowed(?ThemeFileFolder $folder, string $fileName): bool
-    {
-        return match ($folder) {
-            null => in_array($fileName, ['config.yaml', 'config.def.yaml'], true),
-            ThemeFileFolder::TEMPLATES => str_ends_with($fileName, '.twig'),
-            ThemeFileFolder::LANG => str_ends_with($fileName, '.yaml'),
-            ThemeFileFolder::STYLES => str_ends_with($fileName, '.scss'),
-            ThemeFileFolder::ASSETS => true,
-        };
     }
 
     private function addTrace(string $trace): void

@@ -147,4 +147,15 @@ class ThemeFilesService
             return $importer;
         });
     }
+
+    public function isFileAllowedInFolder(?ThemeFileFolder $folder, string $fileName): bool
+    {
+        return match ($folder) {
+            null => in_array($fileName, ['config.yaml', 'config.def.yaml'], true),
+            ThemeFileFolder::TEMPLATES => str_ends_with($fileName, '.twig'),
+            ThemeFileFolder::LANG => str_ends_with($fileName, '.yaml'),
+            ThemeFileFolder::STYLES => str_ends_with($fileName, '.scss'),
+            ThemeFileFolder::ASSETS => true,
+        };
+    }
 }
