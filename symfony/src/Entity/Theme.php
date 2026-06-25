@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ThemeCreationType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -22,8 +23,8 @@ class Theme
     #[ORM\Column(length: 255, unique: true)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: ThemeCreationType::class)]
+    private ThemeCreationType $type;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $blogs_count = 0;
@@ -72,12 +73,12 @@ class Theme
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ThemeCreationType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ThemeCreationType $type): static
     {
         $this->type = $type;
         return $this;

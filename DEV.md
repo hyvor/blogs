@@ -21,13 +21,12 @@ Run the following to reset the database and seed it with sample data:
 
 ```bash
 # from docker container:
-bin/console dev:reset --seed --themes
+bin/console dev:reset --seed && bin/console themes:sync
 
 # from host machine:
-docker compose exec -it backend bash -c "bin/console dev:reset --seed --themes"
+docker compose exec -it backend bash -c "bin/console dev:reset --seed && bin/console themes:sync"
 
-# --seed: seeds with sample data (blogs, users, etc.)
-# --themes: downloads the themes from hyvor/hyvor-blogs-themes Github repository
+# note: themes:sync downloads the themes from hyvor/hyvor-blogs-themes Github repository
 ```
 
 ### Checks

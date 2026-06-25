@@ -8,6 +8,7 @@ use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeZipService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
+use App\Entity\Enum\ThemeCreationType;
 use App\Tests\Factory\ThemeFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use App\Tests\Factory\ThemeVersionFactory;
@@ -25,7 +26,7 @@ class ChangeThemeTest extends ApiTestCase
             [],
         );
 
-        $theme = ThemeFactory::createOne(['name' => 'sample', 'type' => 'original']);
+        $theme = ThemeFactory::createOne(['name' => 'sample', 'type' => ThemeCreationType::ORIGINAL]);
         ThemeVersionFactory::createOne([
             'theme' => $theme,
             'version' => '1.0.0',
@@ -78,7 +79,7 @@ class ChangeThemeTest extends ApiTestCase
             [],
         );
 
-        $theme = ThemeFactory::createOne(['name' => 'sample', 'type' => 'original']);
+        $theme = ThemeFactory::createOne(['name' => 'sample', 'type' => ThemeCreationType::ORIGINAL]);
 
         $this->consoleBlogApi('PATCH', $blog, '/theme', ['name' => 'sample', 'version' => '2.0.0'], user: $user);
         $this->assertResponseFailed(400, "Theme version not found");

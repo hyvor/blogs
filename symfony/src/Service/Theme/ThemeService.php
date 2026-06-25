@@ -2,6 +2,7 @@
 
 namespace App\Service\Theme;
 
+use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Theme;
 use App\Entity\ThemeVersion;
 use Doctrine\ORM\EntityManagerInterface;
@@ -81,5 +82,50 @@ class ThemeService
             'theme' => $theme,
             'version' => $version,
         ]);
+    }
+
+    public function createTheme(string $name, ThemeCreationType $type): Theme
+    {
+        $theme = new Theme();
+        $theme->setName($name);
+        $theme->setType($type);
+        $this->em->persist($theme);
+        $this->em->flush();
+        return $theme;
+    }
+
+    public function createThemeVersion(Theme $theme, string $version, string $zip): ThemeVersion
+    {
+        $themeVersion = new ThemeVersion();
+        $themeVersion->setTheme($theme);
+        $themeVersion->setThemeId($theme->getId());
+        $themeVersion->setVersion($version);
+        $themeVersion->setZip($zip);
+        $this->em->persist($themeVersion);
+        $this->em->flush();
+        return $themeVersion;
+    }
+
+    /**
+     * Returns name => latest version string for all themes that have at least one version.
+     *
+     * @return array<string, string>
+     */
+    public function getLatestVersionsOfAllThemes(): array
+    {
+        /** @var ThemeVersion[] $versions */
+        $versions = $this->em->createQuery(
+            'SELECT tv FROM App\Entity\ThemeVersion tv
+             WHERE tv.id IN (
+                 SELECT MAX(tv2.id) FROM App\Entity\ThemeVersion tv2
+                 GROUP BY tv2.theme
+             )'
+        )->getResult();
+
+        $result = [];
+        foreach ($versions as $version) {
+            $result[$version->getTheme()->getName()] = $version->getVersion();
+        }
+        return $result;
     }
 }
