@@ -2,7 +2,7 @@
 
 namespace App\Service\Post\Content\Nodes\Embed;
 
-use App\Service\Post\Content\UrlDataService;
+use App\Service\UrlData\UrlDataService;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Types\NodeType;

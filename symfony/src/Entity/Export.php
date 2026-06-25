@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ExportFormat;
+use App\Entity\Enum\JobStatus;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -23,11 +25,11 @@ class Export
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(length: 255, options: ['default' => 'hyvor_blogs'])]
-    private string $format = 'hyvor_blogs';
+    #[ORM\Column(length: 255, enumType: ExportFormat::class, options: ['default' => 'hyvor_blogs'])]
+    private ExportFormat $format = ExportFormat::HYVOR_BLOGS;
 
-    #[ORM\Column(length: 255, options: ['default' => 'pending'])]
-    private string $status = 'pending';
+    #[ORM\Column(length: 255, enumType: JobStatus::class, options: ['default' => 'pending'])]
+    private JobStatus $status = JobStatus::PENDING;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
@@ -79,23 +81,23 @@ class Export
         return $this;
     }
 
-    public function getFormat(): string
+    public function getFormat(): ExportFormat
     {
         return $this->format;
     }
 
-    public function setFormat(string $format): static
+    public function setFormat(ExportFormat $format): static
     {
         $this->format = $format;
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): JobStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(JobStatus $status): static
     {
         $this->status = $status;
         return $this;

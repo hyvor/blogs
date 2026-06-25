@@ -5,6 +5,7 @@ namespace App\Api\Console\Object;
 use App\Entity\Blog;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
 class PostVariantObject
@@ -24,9 +25,15 @@ class PostVariantObject
     public array $seo_secondary_keywords;
     /** @var array<string, mixed> */
     public array $link_analysis;
+    public ?string $content_html = null;
 
-    public function __construct(PostVariant $variant, Post $post, Blog $blog, PermalinkService $permalinkService)
-    {
+    public function __construct(
+        PostVariant $variant,
+        Post $post,
+        Blog $blog,
+        PermalinkService $permalinkService,
+        ?PostContentService $postContentService = null,
+    ) {
         $this->id = $variant->getId();
         $this->language_id = $variant->getLanguage()->getId();
         $this->post_id = $post->getId();
@@ -40,5 +47,9 @@ class PostVariantObject
         $this->seo_primary_keyword = $variant->getSeoPrimaryKeyword();
         $this->seo_secondary_keywords = $variant->getSeoSecondaryKeywords() ?? [];
         $this->link_analysis = $variant->getLinkAnalysis() ?? [];
+
+        if ($postContentService !== null && $this->content !== null) {
+            $this->content_html = $postContentService->getHtml($this->content, $blog);
+        }
     }
 }

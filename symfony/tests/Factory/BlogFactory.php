@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -58,6 +59,7 @@ final class BlogFactory extends PersistentObjectFactory
 
         $user = UserFactory::createOne(array_merge($userAttrs, [
             'blog' => $blog,
+            'role' => UserRole::OWNER
         ]));
 
         return [$blog, $user];

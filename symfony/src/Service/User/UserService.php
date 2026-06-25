@@ -68,6 +68,12 @@ class UserService
         return $this->userRepository->findOneBy(['blog' => $blog, 'hyvor_user_id' => $hyvorUserId]);
     }
 
+    public function getOwner(Blog $blog): ?User
+    {
+        /** @var User|null */
+        return $this->userRepository->findOneBy(['blog' => $blog, 'role' => UserRole::OWNER]);
+    }
+
     /**
      * @return User[]
      */

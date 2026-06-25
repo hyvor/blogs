@@ -4,6 +4,7 @@ namespace App\Api\Console\Object;
 
 use App\Entity\Blog;
 use App\Entity\Post;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
 class PostObject
@@ -25,8 +26,14 @@ class PostObject
     /** @var UserObject[] */
     public array $authors;
 
-    public function __construct(Post $post, Blog $blog, PermalinkService $permalinkService, TagObjectFactory $tagObjectFactory, UserObjectFactory $userObjectFactory)
-    {
+    public function __construct(
+        Post $post,
+        Blog $blog,
+        PermalinkService $permalinkService,
+        TagObjectFactory $tagObjectFactory,
+        UserObjectFactory $userObjectFactory,
+        ?PostContentService $postContentService = null,
+    ) {
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $this->updated_at = $post->getUpdatedAt()->getTimestamp();
@@ -41,7 +48,7 @@ class PostObject
         $variants = $post->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
         $this->variants = array_map(
-            fn($v) => new PostVariantObject($v, $post, $blog, $permalinkService),
+            fn($v) => new PostVariantObject($v, $post, $blog, $permalinkService, $postContentService),
             $variants,
         );
 

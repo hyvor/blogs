@@ -4,13 +4,14 @@ namespace App\Service\Post\Content\Nodes\Bookmark;
 
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
-use App\Service\Post\Content\UrlDataService;
+use App\Service\UrlData\UrlDataService;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\Delivery\Twig\TwigRendererService;
 use DOMElement;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Unfold\Exception\UnfoldException;
 
 class Bookmark extends NodeType
 {
@@ -24,7 +25,8 @@ class Bookmark extends NodeType
         private ThemeFilesService $themeFilesService,
         private TwigRendererService $twigRendererService,
         private string $projectDir,
-    ) {}
+    ) {
+    }
 
     public function toHtml(Node $node, string $children): string
     {
@@ -35,9 +37,9 @@ class Bookmark extends NodeType
             return '';
         }
 
-        $data = $this->urlDataService->getLink((string) $url);
-
-        if ($data === null) {
+        try {
+            $data = $this->urlDataService->getLink((string) $url);
+        } catch (UnfoldException) {
             return '';
         }
 
@@ -52,7 +54,16 @@ class Bookmark extends NodeType
         }
 
         return $this->twigRendererService->renderString($template, [
-            'data' => $data,
+            // this object is a little different to support the historical bookmark template
+            'data' => [
+                'url' => $data['final_url'],
+                'original_url' => $data['original_url'],
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'thumbnail_url' => $data['thumbnail_url'],
+                'icon_url' => $data['icon_url'],
+                'site' => $data['site_url'],
+            ],
         ]);
     }
 
