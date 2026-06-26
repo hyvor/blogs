@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Message\RepoSyncMessage;
+use App\Service\Theme\RepoSync\RepoSyncMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

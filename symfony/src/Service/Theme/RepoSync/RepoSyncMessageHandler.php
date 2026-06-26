@@ -1,9 +1,7 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Service\Theme\RepoSync;
 
-use App\Message\RepoSyncMessage;
-use App\Service\Theme\RepoSync\RepoSyncService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

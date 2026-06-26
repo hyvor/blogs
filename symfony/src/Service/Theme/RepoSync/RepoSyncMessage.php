@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Message;
+namespace App\Service\Theme\RepoSync;
 
 use App\Service\App\Messenger\MessageTransport;
 use Symfony\Component\Messenger\Attribute\AsMessage;
