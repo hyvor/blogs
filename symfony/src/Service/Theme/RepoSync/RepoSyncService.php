@@ -26,6 +26,9 @@ class RepoSyncService
     ) {
     }
 
+    /**
+     * @throws RepoSyncException
+     */
     public function downloadAndSync(): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'themes_zip_');

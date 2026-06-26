@@ -16,7 +16,7 @@ class RepoSyncTest extends KernelTestCase
 {
     private function zipPath(): string
     {
-        return __DIR__ . '/../../../__DATA__/Themes/github-themes.zip';
+        return __DIR__ . '/github-themes.zip';
     }
 
     private function service(): RepoSyncService

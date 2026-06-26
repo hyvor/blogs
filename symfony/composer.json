@@ -26,6 +26,7 @@
         "symfony/dotenv": "8.0.*",
         "symfony/flex": "^2.11",
         "symfony/framework-bundle": "8.0.*",
+        "symfony/lock": "8.0.*",
         "symfony/mime": "8.0.*",
         "symfony/monolog-bundle": "^4.0.2",
         "symfony/process": "8.0.*",
