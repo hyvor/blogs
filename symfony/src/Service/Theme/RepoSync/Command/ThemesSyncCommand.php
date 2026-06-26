@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Command;
+namespace App\Service\Theme\RepoSync\Command;
 
-use App\Service\Theme\RepoSync\RepoSyncMessage;
+use App\Service\App\Messenger\MessageTransport;
+use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'themes:sync',
-    description: 'Download and sync themes from the GitHub repository',
+    description: 'Download and sync themes from the hyvor/hyvor-blogs-themes GitHub repository',
 )]
 class ThemesSyncCommand extends Command
 {
@@ -22,12 +23,12 @@ class ThemesSyncCommand extends Command
         parent::__construct();
     }
 
-    /** @throws \Symfony\Component\Messenger\Exception\ExceptionInterface */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->bus->dispatch(new RepoSyncMessage());
-        $io->success('Theme sync job dispatched.');
+        $io->note('Syncing themes...');
+        $this->bus->dispatch(new RepoSyncMessage(), [MessageTransport::syncStamp()]);
+        $io->success('Theme synced successfully.');
         return Command::SUCCESS;
     }
 }

@@ -4,7 +4,9 @@ namespace App\Service\Theme\RepoSync;
 
 use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Service\Theme\RepoSync\Exception\RepoSyncException;
 use App\Service\Theme\ThemeService;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
 
@@ -13,7 +15,7 @@ use ZipArchive;
  */
 class RepoSyncService
 {
-    private const REPO_ZIP_URL = 'https://github.com/hyvor/hyvor-blogs-themes/zipball/main';
+    private const string REPO_ZIP_URL = 'https://github.com/hyvor/hyvor-blogs-themes/zipball/main';
 
     /** @var array<string, ThemeData> */
     public array $themes = [];
@@ -24,13 +26,6 @@ class RepoSyncService
     ) {
     }
 
-    /**
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     * @throws \RuntimeException
-     * @throws \TypeError
-     * @throws \ValueError
-     * @throws \Exception
-     */
     public function downloadAndSync(): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'themes_zip_');
@@ -46,32 +41,32 @@ class RepoSyncService
     }
 
     /**
-     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
-     * @throws \RuntimeException
+     * @throws RepoSyncException
      */
     private function downloadToFile(string $url, string $destination): void
     {
-        $response = $this->httpClient->request('GET', $url);
-        $fileHandle = fopen($destination, 'w');
-
-        if ($fileHandle === false) {
-            throw new \RuntimeException('Could not open temp file for writing');
-        }
-
         try {
+            $response = $this->httpClient->request('GET', $url);
+            $fileHandle = fopen($destination, 'w');
+
+            if ($fileHandle === false) {
+                throw new RepoSyncException('Could not open temp file for writing');
+            }
+
             foreach ($this->httpClient->stream($response) as $chunk) {
                 fwrite($fileHandle, $chunk->getContent());
             }
+        } catch (TransportExceptionInterface $e) {
+            throw new RepoSyncException('Error downloading zip file: ' . $e->getMessage(), 0, $e);
         } finally {
-            fclose($fileHandle);
+            if (isset($fileHandle) && is_resource($fileHandle)) {
+                fclose($fileHandle);
+            }
         }
     }
 
     /**
-     * @throws \RuntimeException
-     * @throws \TypeError
-     * @throws \ValueError
-     * @throws \Exception
+     * @throws RepoSyncException
      */
     public function syncFromFile(string $zipFilePath): void
     {
@@ -80,24 +75,25 @@ class RepoSyncService
     }
 
     /**
-     * @throws \RuntimeException
-     * @throws \TypeError
-     * @throws \ValueError
+     * @throws RepoSyncException
      */
     public function breakIntoThemes(string $zipFilePath): void
     {
         $zip = new ZipArchive();
 
         if ($zip->open($zipFilePath) !== true) {
-            throw new \RuntimeException('Could not open zip file: ' . $zipFilePath);
+            throw new RepoSyncException('Could not open zip file: ' . $zipFilePath);
         }
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $entry = $zip->getNameIndex($i);
 
+            // not interested in directories
             if ($entry === false || str_ends_with($entry, '/')) {
                 continue;
             }
+
+            // entry = hyvor-hyvor-blogs-themes-7357d59/original/default/config.def.yaml
 
             // Strip leading prefix: hyvor-hyvor-blogs-themes-abc123/...
             $entry = (string) preg_replace('/^[^\/]+\//', '', $entry);
@@ -119,10 +115,12 @@ class RepoSyncService
                 $folder = null;
             }
 
+            // skip unnecessary folders in the repo
             if ($type !== 'original' && $type !== 'ported') {
                 continue;
             }
 
+            // only interested in theme files
             if (!$themeName || !$fileName) {
                 continue;
             }
@@ -131,6 +129,7 @@ class RepoSyncService
             $typeEnum = ThemeCreationType::from($type);
             $content = (string) $zip->getFromIndex($i);
 
+            // make sure the theme is created
             if (!array_key_exists($themeName, $this->themes)) {
                 $this->themes[$themeName] = new ThemeData($themeName, $typeEnum);
             }
@@ -142,8 +141,7 @@ class RepoSyncService
     }
 
     /**
-     * @throws \RuntimeException
-     * @throws \Exception
+     * @throws RepoSyncException
      */
     private function saveThemes(): void
     {
@@ -161,7 +159,7 @@ class RepoSyncService
                 $themeModel = $this->themeService->getThemeByName($theme->name);
 
                 if ($themeModel === null) {
-                    throw new \RuntimeException('Theme not found after creation: ' . $theme->name);
+                    throw new RepoSyncException('Theme not found after creation: ' . $theme->name);
                 }
 
                 $zip = $this->generateZip($theme);
@@ -170,7 +168,7 @@ class RepoSyncService
         }
     }
 
-    /** @throws \RuntimeException */
+    /** @throws RepoSyncException */
     private function generateZip(ThemeData $theme): string
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'theme_out_');
@@ -191,7 +189,7 @@ class RepoSyncService
             $content = file_get_contents($tmpFile);
 
             if ($content === false) {
-                throw new \RuntimeException('Could not read generated zip file');
+                throw new RepoSyncException('Could not read generated zip file');
             }
 
             return $content;

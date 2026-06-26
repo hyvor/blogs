@@ -10,6 +10,7 @@ framework:
                     delay: 60000
                     multiplier: 5
                     max_delay: 1800000
+            sync: "sync://"
             failed: "doctrine://default?queue_name=failed"
 
 when@test:
@@ -17,4 +18,5 @@ when@test:
         messenger:
             transports:
                 async: "test://"
+                sync: "test://"
                 failed: "test://"

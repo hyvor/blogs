@@ -6,9 +6,13 @@ use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Theme;
 use App\Entity\ThemeVersion;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 
 class ThemeService
 {
+
+    use ClockAwareTrait;
+
     public function __construct(
         private EntityManagerInterface $em,
     ) {
@@ -87,6 +91,8 @@ class ThemeService
     public function createTheme(string $name, ThemeCreationType $type): Theme
     {
         $theme = new Theme();
+        $theme->setCreatedAt($this->clock->now());
+        $theme->setUpdatedAt($this->clock->now());
         $theme->setName($name);
         $theme->setType($type);
         $this->em->persist($theme);
@@ -97,8 +103,9 @@ class ThemeService
     public function createThemeVersion(Theme $theme, string $version, string $zip): ThemeVersion
     {
         $themeVersion = new ThemeVersion();
+        $themeVersion->setCreatedAt($this->clock->now());
+        $themeVersion->setUpdatedAt($this->clock->now());
         $themeVersion->setTheme($theme);
-        $themeVersion->setThemeId($theme->getId());
         $themeVersion->setVersion($version);
         $themeVersion->setZip($zip);
         $this->em->persist($themeVersion);
