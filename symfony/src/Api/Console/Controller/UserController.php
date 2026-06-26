@@ -46,7 +46,7 @@ class UserController
 
     #[Route('/users', methods: ['GET'])]
     public function getUsers(
-        #[MapQueryString] GetUsersInput $input = new GetUsersInput(),
+        #[MapQueryString] GetUsersInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
         $users = $this->userService->getUsers($blog, $input->limit, $input->offset);

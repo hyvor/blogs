@@ -39,7 +39,7 @@ final class BlogFactory extends PersistentObjectFactory
         return [
             'hosting_at' => self::faker()->randomElement(BlogHostingAt::cases()),
             'hyvor_user_id' => self::faker()->randomNumber(),
-            'is_blocked' => self::faker()->boolean(),
+            'is_blocked' => false,
             'organization_id' => self::faker()->randomNumber(),
             'subdomain' => bin2hex(random_bytes(20)),
             'trial_ends_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
