@@ -4,22 +4,12 @@ import type { User, UserRole, UserVariant } from '../../../../lib/types';
 interface GetUsersData {
 	limit?: number;
 	offset?: number;
+	search?: string | null;
 }
 
 export function getUsers(data: GetUsersData = {}) {
 	return consoleApi.get<User[]>({
 		endpoint: '/users',
-		data
-	});
-}
-
-interface SearchUsersData {
-	search: string;
-}
-
-export function searchUsers(data: SearchUsersData) {
-	return consoleApi.get<User[]>({
-		endpoint: '/users/search',
 		data
 	});
 }

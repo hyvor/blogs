@@ -75,30 +75,6 @@ class UserService
     }
 
     /**
-     * @return User[]
-     */
-    public function searchUsers(Blog $blog, string $search, int $limit = 10): array
-    {
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-        $search = str_replace('%', '', $search);
-
-        /** @var User[] */
-        return $this->em->createQueryBuilder()
-            ->select('u')
-            ->from(User::class, 'u')
-            ->join('u.variants', 'uv')
-            ->where('u.blog = :blog')
-            ->andWhere('uv.language = :language')
-            ->andWhere('uv.name LIKE :search')
-            ->setParameter('blog', $blog)
-            ->setParameter('language', $primaryLanguage)
-            ->setParameter('search', $search . '%')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @param int[] $ids
      * @return User[]
      */
@@ -117,12 +93,16 @@ class UserService
     /**
      * @return User[]
      */
-    public function getUsers(Blog $blog, int $limit, int $offset = 0): array
+    public function getUsers(
+        Blog $blog,
+        int $limit,
+        int $offset = 0,
+        ?string $search = null,
+    ): array
     {
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
-        /** @var User[] */
-        return $this->em->createQueryBuilder()
+        $qb = $this->em->createQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
             ->join('u.variants', 'uv')
@@ -134,8 +114,15 @@ class UserService
             ->addOrderBy('u.posts_count', 'DESC')
             ->setParameter('ownerRole', UserRole::OWNER)
             ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getQuery()
+            ->setFirstResult($offset);
+
+        if ($search) {
+            $qb->andWhere('uv.name LIKE :search')
+                ->setParameter('search', str_replace('%', '', $search) . '%');
+        }
+
+        /** @var User[] */
+        return $qb->getQuery()
             ->getResult();
     }
 

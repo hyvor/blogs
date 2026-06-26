@@ -49,20 +49,7 @@ class UserController
         #[MapQueryString] GetUsersInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $users = $this->userService->getUsers($blog, $input->limit, $input->offset);
-
-        return new JsonResponse(array_map(
-            fn($user) => $this->userObjectFactory->create($user, $blog),
-            $users,
-        ));
-    }
-
-    #[Route('/users/search', methods: ['GET'])]
-    public function searchUsers(
-        #[MapQueryString] SearchUsersInput $input,
-    ): JsonResponse {
-        $blog = $this->blogAuthListener->getBlog();
-        $users = $this->userService->searchUsers($blog, $input->search, limit: 10);
+        $users = $this->userService->getUsers($blog, $input->limit, $input->offset, search: $input->search);
 
         return new JsonResponse(array_map(
             fn($user) => $this->userObjectFactory->create($user, $blog),

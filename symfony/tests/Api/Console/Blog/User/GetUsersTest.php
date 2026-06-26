@@ -40,4 +40,26 @@ class GetUsersTest extends ApiTestCase
         $this->assertArrayHasKey('status', $json[0]);
         $this->assertArrayHasKey('variants', $json[0]);
     }
+
+    public function test_searches_users(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'search-users']);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        UserVariantFactory::createOne(['user' => $owner, 'language' => $language]);
+
+        $name = 'Thisisname';
+        $user = UserFactory::createOne(['blog' => $blog]);
+        UserVariantFactory::createOne(['user' => $user, 'language' => $language, 'name' => $name]);
+
+        $user2 = UserFactory::createOne(['blog' => $blog]);
+        UserVariantFactory::createOne(['user' => $user2, 'language' => $language, 'name' => 'Another name']);
+
+        $this->consoleBlogApi('GET', $blog, '/users?search=Thisis', user: $owner);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json);
+        $this->assertSame($name, $json[0]['variants'][0]['name']);
+    }
 }
