@@ -5,3 +5,8 @@ parameters:
         - config/
         - src/
         - tests/
+    exceptions:
+        uncheckedExceptionClasses:
+            - PHPUnit\Framework\Exception
+        check:
+            missingCheckedExceptionInThrows: true

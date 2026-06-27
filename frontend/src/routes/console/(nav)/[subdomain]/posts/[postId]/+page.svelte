@@ -1,21 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { IconButton, Loader } from '@hyvor/design/components';
-	import { scale } from 'svelte/transition';
+	import { Loader } from '@hyvor/design/components';
 	import consoleApi from '../../../../lib/consoleApi';
 	import type { Post } from '../../../../lib/types';
-	import { initPostEditingState, postStore, setPostAndPostOriginalStore } from '../postStore';
+	import { initPostEditingState, setPostAndPostOriginalStore } from '../postStore';
 	import PostBody from './Body/PostBody.svelte';
 	import PostSidebar from './Sidebar/PostSidebar.svelte';
-	import IconCaretLeftFill from '@hyvor/icons/IconCaretLeftFill';
+	import TopBar from './TopBar/TopBar.svelte';
 	import { initEditorEventHandlers } from './Body/Editor/editorEvents';
 	import { isTempStore } from '../../../../lib/temp';
-	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 	import type { Unsubscriber } from 'svelte/store';
 	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
+	import { getPreloadedPost } from './postLoader';
 
-	let isLoading = $state(true);
+	let isLoading = $state(false);
+	let storesSet = $state(false);
 
 	let postView: HTMLDivElement | undefined = $state();
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
@@ -34,31 +34,42 @@
 		return primaryId;
 	}
 
-	$effect(() => {
+	function handlePost(post: Post) {
+		setPostAndPostOriginalStore(post);
+		if (postView) {
+			initPostEditingState(postView, getInitialLanguageId());
+		}
+		initEditorEventHandlers();
+
+		linkAnalysisLoaderUnsubscriber?.();
+		linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
+
+		isLoading = false;
+		storesSet = true;
+	}
+
+	$effect.pre(() => {
 		const postId = page.params.postId;
 		if (!postId) return;
 
 		activeRequest?.abort();
-		activeRequest = new AbortController();
+
+		const preloadedPost = getPreloadedPost(postId);
+		if (preloadedPost) {
+			handlePost(preloadedPost);
+			return;
+		}
+
 		isLoading = true;
+
+		activeRequest = new AbortController();
 
 		consoleApi
 			.get<Post>({
 				endpoint: '/post/' + postId,
 				signal: activeRequest.signal
 			})
-			.then((res) => {
-				setPostAndPostOriginalStore(res);
-				if (postView) {
-					initPostEditingState(postView, getInitialLanguageId());
-				}
-				initEditorEventHandlers();
-
-				linkAnalysisLoaderUnsubscriber?.();
-				linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
-
-				isLoading = false;
-			})
+			.then(handlePost)
 			.catch((error) => {
 				if (error?.name === 'AbortError') return;
 				throw error;
@@ -70,40 +81,32 @@
 			linkAnalysisLoaderUnsubscriber = null;
 		};
 	});
-
-	function getBackUrl() {
-		const postData = $postStore;
-		return consoleUrlWithBlog(postData && postData.is_page ? '/pages' : '/posts');
-	}
 </script>
 
-<div
-	id="post-view"
-	class:is-temp={$isTempStore}
-	in:scale={{ duration: 300, opacity: 0, start: 0.8 }}
+<div 
+	id="post-view" 
+	class:is-temp={$isTempStore} 
 	bind:this={postView}
+	 style:view-transition-name={`post-${page.params.postId}`}
 >
-	<div class="back">
-		<a href={getBackUrl()}>
-			<IconButton variant="invisible" color="gray">
-				<IconCaretLeftFill />
-			</IconButton>
-		</a>
-	</div>
-
 	{#if isLoading}
 		<div class="full-loader">
 			<Loader block size="large" />
 		</div>
 	{:else}
-		<div class="post-inner">
-			<div class="post-left">
-				<!-- <PostHeader /> -->
-				<PostBody />
+		<div class="container">
+			<div class="top-bar-wrap">
+				<TopBar />
 			</div>
 
-			<div class="post-right">
-				<PostSidebar />
+			<div class="post-inner">
+				<div class="post-left">
+					<PostBody />
+				</div>
+
+				<div class="post-right">
+					<PostSidebar />
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -111,15 +114,17 @@
 
 <style lang="scss">
 	#post-view {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: var(--accent-lightest);
-		overflow: auto;
-		padding: 20px 0;
-		z-index: 101;
+		background-color: var(--background);
+		padding: 10px 0;
+		height: 100vh;
+	}
+
+	.container {
+		height: 100vh;
+		width: 1200px;
+		display: flex;
+		flex-direction: column;
+		margin: 0 auto;
 	}
 
 	.full-loader {
@@ -128,63 +133,51 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex: 1;
+	}
+
+	.top-bar-wrap {
+		margin-bottom: 15px;
 	}
 
 	.post-inner {
-		width: 1200px;
+		flex: 1;
 		margin: auto;
 		display: flex;
 		align-items: flex-start;
+		min-height: calc(100vh - 76px);
 	}
 
 	.post-left {
 		width: 700px;
-		min-height: calc(100vh - 40px);
 		position: relative;
+		height: 100%;
 	}
 
 	.post-right {
 		flex: 1;
 		margin-left: 15px;
-		height: calc(100vh - 40px);
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		position: sticky;
-		top: 0px;
-		z-index: 10;
 		min-width: 0;
-	}
-
-	.back {
-		margin-left: 15px;
-		margin-top: 15px;
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 100;
-		font-weight: 600;
-		width: 35px;
-		height: 35px;
 	}
 
 	#post-view.is-temp {
 		height: calc(100% - var(--top-offset));
 		top: var(--top-offset);
-		.back {
-			top: var(--top-offset);
-		}
 	}
 
 	@media (max-width: 992px) {
+		.top-bar-wrap {
+			width: 100%;
+			padding: 0 15px;
+		}
 		.post-inner {
 			width: 100%;
 			padding: 0 15px;
 			flex-direction: column;
 			margin-top: 15px;
-		}
-		.back {
-			position: relative;
-			margin-top: 0;
 		}
 		.post-right {
 			margin-left: 0;

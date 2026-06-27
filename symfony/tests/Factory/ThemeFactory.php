@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Theme;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -35,8 +36,8 @@ final class ThemeFactory extends PersistentObjectFactory
     {
         return [
             'blogs_count' => self::faker()->randomNumber(),
-            'name' => self::faker()->text(255),
-            'type' => self::faker()->text(255),
+            'name' => self::faker()->unique()->word(),
+            'type' => self::faker()->randomElement(ThemeCreationType::cases()),
         ];
     }
 

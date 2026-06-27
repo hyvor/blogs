@@ -2,6 +2,8 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\ExportFormat;
+use App\Entity\Enum\JobStatus;
 use App\Entity\Export;
 use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -37,8 +39,8 @@ final class ExportFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'format' => self::faker()->text(255),
-            'status' => self::faker()->text(255),
+            'format' => ExportFormat::HYVOR_BLOGS,
+            'status' => JobStatus::PENDING,
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }

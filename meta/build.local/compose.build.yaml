@@ -15,9 +15,9 @@ services:
       traefik.http.routers.hyvor-blogs-subdir.rule: HostRegexp(`^.+\.b\.build\.hyvor\.localhost$`)
       traefik.http.routers.hyvor-blogs-subdir.entrypoints: http
 
-      traefik.http.services.hyvor-blogs-build.loadbalancer.server.port: 8080
+      traefik.http.services.hyvor-blogs-build.loadbalancer.server.port: 80
     command: >
-      sh -c "/app/symfony/bin/console doctrine:migrations:migrate --no-interaction && /app/run"
+      sh -c "/app/backend/bin/console doctrine:migrations:migrate --no-interaction && /app/run"
     networks:
       hyvor-network:
         aliases:
@@ -25,6 +25,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    #user: root # give permissions temorarily for installing stuff
 
   postgres:
     container_name: hyvor-blogs-build-postgres

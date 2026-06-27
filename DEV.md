@@ -21,11 +21,12 @@ Run the following to reset the database and seed it with sample data:
 
 ```bash
 # from docker container:
-cd /app/symfony && bin/console dev:reset && \
-cd /app/backend && php artisan db:seed && php artisan download:themes
+bin/console dev:reset --seed && bin/console themes:sync
 
 # from host machine:
-docker compose exec -it backend bash -c "cd /app/symfony && bin/console dev:reset --seed"
+docker compose exec -it backend bash -c "bin/console dev:reset --seed && bin/console themes:sync"
+
+# note: themes:sync downloads the themes from hyvor/hyvor-blogs-themes Github repository
 ```
 
 ### Checks
@@ -34,11 +35,8 @@ docker compose exec -it backend bash -c "cd /app/symfony && bin/console dev:rese
 # backend tests
 docker compose exec backend bash -c "cd /app/backend && php bin/phpunit"
 
-# symfony tests
-docker compose exec backend bash -c "cd /app/symfony && php bin/phpunit"
-
 # phpstan
-docker compose exec backend bash -c "cd /app/symfony && php vendor/bin/phpstan --memory-limit=1G"
+docker compose exec backend bash -c "cd /app/backend && php vendor/bin/phpstan --memory-limit=1G"
 
 # prettier
 docker compose exec frontend npm run format

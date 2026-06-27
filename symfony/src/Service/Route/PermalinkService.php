@@ -5,6 +5,7 @@ namespace App\Service\Route;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
+use App\Entity\Media;
 use App\Entity\Post;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -83,6 +84,20 @@ class PermalinkService
         return $this->getBlogUrl($blog) . $path;
     }
 
+    public function getAssetPermalink(string $assetName, Blog $blog, bool $onlyPath = false): string
+    {
+        $path = 'assets/' . $assetName;
+
+        return $onlyPath ? '/' . ltrim($path, '/') : $this->getFullUrlFromPath($blog, $path);
+    }
+
+    public function getMediaPermalink(Media $media, Blog $blog, bool $onlyPath = false): string
+    {
+        $path = 'media/' . $media->getName();
+
+        return $onlyPath ? '/' . ltrim($path, '/') : $this->getFullUrlFromPath($blog, $path);
+    }
+
     public function getAuthorPermalink(User $user, Blog $blog, Language $language): string
     {
         $route = $this->routeService->getRouteByName($blog, 'author');
@@ -123,10 +138,15 @@ class PermalinkService
     private function buildSubdomainUrl(Blog $blog): string
     {
         $url = $this->appConfig->getDeliveryUrl();
-        $scheme = parse_url($url, PHP_URL_SCHEME) ?? 'https';
-        $host = parse_url($url, PHP_URL_HOST) ?? '';
-        $port = parse_url($url, PHP_URL_PORT);
-        $portStr = $port ? ":$port" : '';
-        return "$scheme://{$blog->getSubdomain()}.$host$portStr";
+
+        if ($url !== null) {
+            $scheme = parse_url($url, PHP_URL_SCHEME) ?? 'https';
+            $host = parse_url($url, PHP_URL_HOST) ?? '';
+            $port = parse_url($url, PHP_URL_PORT);
+            $portStr = $port ? ":$port" : '';
+            return "$scheme://{$blog->getSubdomain()}.$host$portStr";
+        }
+
+        return 'https://' . $this->appConfig->getDomainApp() . '/blog/' . $blog->getSubdomain();
     }
 }

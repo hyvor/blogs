@@ -3,8 +3,8 @@
 namespace App\Api\Console\ControllerOrg;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
-use App\Api\Console\Authorization\OrganizationLevelEndpoint;
 use App\Api\Console\Authorization\OrganizationOptional;
+use App\Api\Console\ConsoleSubrequest;
 use App\Api\Console\Input\Blog\SortBlogsInput;
 use App\Api\Console\Object\AuthUserObject;
 use App\Api\Console\Object\BlogListObjectFactory;
@@ -34,27 +34,48 @@ class ConsoleController
         private InternalConfig $internalConfig,
         private BillingInterface $billing,
         private UsageService $usageService,
+        private ConsoleSubrequest $consoleSubrequest,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
     #[OrganizationOptional]
-    public function init(): JsonResponse
+    public function init(Request $request): JsonResponse
     {
         $user = $this->authListener->getUser();
         $org = $this->authListener->hasOrganization()
             ? $this->authListener->getOrganization() : null;
 
-        $blogs = [];
+        $blogHint = $request->query->get('blog_hint');
+        // TODO: handle post_hint
+
+        $userBlogs = [];
+        $blogListObjects = [];
         if ($org !== null) {
-            foreach ($this->userService->getBlogsForUser($user->id, $org->id) as $entry) {
-                $blogs[] = $this->blogListObjectFactory->create($entry);
+            $userBlogs = $this->userService->getBlogsForUser($user->id, $org->id);
+            foreach ($userBlogs as $entry) {
+                $blogListObjects[] = $this->blogListObjectFactory->create($entry);
             }
+        }
+
+        $preloadedBlog = null;
+        if (count($userBlogs) > 0) {
+            $blogToPreload = $userBlogs[0]->getBlog();
+            if ($blogHint !== null) {
+                foreach ($userBlogs as $entry) {
+                    if ($entry->getBlog()->getSubdomain() === $blogHint) {
+                        $blogToPreload = $entry->getBlog();
+                        break;
+                    }
+                }
+            }
+
+            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($blogToPreload, 'GET', '/blog');
         }
 
         return new JsonResponse([
             'user' => new AuthUserObject($user),
             'organization' => $org,
-            'blogs' => $blogs,
+            'blogs' => $blogListObjects,
             'config' => [
                 'deployment' => $this->internalConfig->getDeployment()->value,
                 'hyvor' => ['instance' => $this->internalConfig->getInstance()],
@@ -69,6 +90,10 @@ class ConsoleController
                 ],
                 'highlight_themes' => $this->highlighter->getAllThemes(),
             ],
+            'preloaded' => [
+                'blog' => $preloadedBlog ? json_decode($preloadedBlog->getContent(), true) : null,
+                'post' => null,
+            ]
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
+use App\Entity\Enum\UserStatus;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
@@ -18,7 +19,7 @@ class DeleteLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-delete'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,
@@ -36,7 +37,7 @@ class DeleteLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-del-primary'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $lang = LanguageFactory::createOne([
             'blog' => $blog,

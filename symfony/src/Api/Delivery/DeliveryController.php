@@ -3,15 +3,18 @@
 namespace App\Api\Delivery;
 
 use App\Entity\Enum\ApiKeyType;
+use App\Entity\Enum\BlogHostingAt;
 use App\Service\ApiKey\ApiKeyService;
+use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
 use App\Service\Delivery\DeliveryService;
+use App\Service\Route\PermalinkService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class DeliveryController extends AbstractController
@@ -21,6 +24,8 @@ class DeliveryController extends AbstractController
         private BlogService $blogService,
         private ApiKeyService $apiKeyService,
         private DeliveryService $deliveryService,
+        private AppConfig $appConfig,
+        private PermalinkService $permalinkService
     )
     {
     }
@@ -54,17 +59,23 @@ class DeliveryController extends AbstractController
         return new JsonResponse($response);
     }
 
-
-    #[Route('/blog/{subdomain}/{path}', defaults: ['path' => null], requirements: ['path' => '.*'], methods: ['GET'])]
+    #[Route('/blog/{subdomain}/{path}', requirements: ['path' => '.*'], defaults: ['path' => null], methods: ['GET'])]
     public function blogOnSubdirectory(string $subdomain, ?string $path): Response
     {
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        
+
         if ($blog === null) {
-            throw new NotFoundHttpException('Blog not found');
+            return new Response('Blog not found', 404);
         }
 
         $path = '/' . ltrim($path ?? '', '/');
+
+        if (
+            $this->appConfig->getDeliveryUrl() !== null ||
+            $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN
+        ) {
+            return new RedirectResponse($this->permalinkService->getFullUrlFromPath($blog, $path), 302);
+        }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);
     }

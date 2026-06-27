@@ -6,6 +6,7 @@ use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Object\AuthorObject;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\UserStatus;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -45,7 +46,7 @@ class AuthorsTest extends ApiTestCase
             $author = UserFactory::createOne(array_merge([
                 'blog' => $this->blog,
                 'posts_count' => rand(1, 100),
-                'status' => 'active',
+                'status' => UserStatus::ACTIVE,
             ], $attrs));
             UserVariantFactory::createOne([
                 'user' => $author,
@@ -106,8 +107,8 @@ class AuthorsTest extends ApiTestCase
 
     public function test_gives_correct_page_for_pagination(): void
     {
-        $author1 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 101, 'status' => 'active']);
-        $author2 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 100, 'status' => 'active']);
+        $author1 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 101, 'status' => UserStatus::ACTIVE]);
+        $author2 = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 100, 'status' => UserStatus::ACTIVE]);
         UserVariantFactory::createOne(['user' => $author1, 'language' => $this->lang1]);
         UserVariantFactory::createOne(['user' => $author2, 'language' => $this->lang1]);
 
@@ -123,6 +124,12 @@ class AuthorsTest extends ApiTestCase
     {
         $this->dataApi($this->blog, '/authors', ['limit' => 0]);
         $this->assertResponseFailed(422, 'limit: This value should be greater than or equal to 1');
+    }
+
+    public function test_max_limit_is_250(): void
+    {
+        $this->dataApi($this->blog, '/authors', ['limit' => 251]);
+        $this->assertResponseFailed(422, 'limit: This value should be less than or equal to 250');
     }
 
     public function test_does_not_work_for_invalid_page(): void
@@ -240,7 +247,7 @@ class AuthorsTest extends ApiTestCase
 
     public function test_filters_by_slug(): void
     {
-        $author = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 5, 'slug' => 'filter-by-slug-test', 'status' => 'active']);
+        $author = UserFactory::createOne(['blog' => $this->blog, 'posts_count' => 5, 'slug' => 'filter-by-slug-test', 'status' => UserStatus::ACTIVE]);
         UserVariantFactory::createOne(['user' => $author, 'language' => $this->lang1]);
 
         $this->dataApi($this->blog, '/authors', ['filter' => "slug='filter-by-slug-test'"]);

@@ -1,6 +1,6 @@
 when@prod:
     sentry:
-        dsn: "%env(SENTRY_DSN)%"
+        dsn: "%env(string:default::SENTRY_DSN)%"
         options:
             # Add request headers, cookies, IP address and the authenticated user
             # see https://docs.sentry.io/platforms/php/data-management/data-collected/ for more info

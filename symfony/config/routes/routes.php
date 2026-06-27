@@ -18,15 +18,25 @@ return static function (RoutingConfigurator $routes): void {
         ->prefix('/api/console/v0/blog/{subdomain}')
         ->namePrefix('api_console_');
 
+    // CLI API
+    $routes
+        ->import('../../src/Api/Cli/Controller', 'attribute')
+        ->prefix('/api/cli/{subdomain}')
+        ->namePrefix('api_cli_');
+
     // delivery API
     $routes
         ->import('../../src/Api/Delivery', 'attribute')
         ->namePrefix('api_delivery_');
 
-    // console API
-    $routes->import('../../src/Api/Console/Controller', 'attribute')
-        ->prefix('/api/console/v1/blog/{subdomain}')
-        ->namePrefix('api_console_');
+    // public API
+    $routes
+        ->import('../../src/Api/Public', 'attribute')
+        ->prefix('/api/public')
+        ->namePrefix('api_public_');
+
+    // misc routes
+    $routes->import('../../src/Api/Misc/MiscController.php', 'attribute')->namePrefix('api_misc_');
 
     // internal API routes
     $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');

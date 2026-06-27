@@ -2,31 +2,30 @@
 
 namespace App;
 
-use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use Symfony\Component\Lock\LockFactory;
+use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
+use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Component\Lock\LockFactory;
 
 #[AsSchedule]
 class Schedule implements ScheduleProviderInterface
 {
     public function __construct(
         private LockFactory $lockFactory,
-        private CacheInterface $cache,
     ) {
     }
 
     public function getSchedule(): SymfonySchedule
     {
         return new SymfonySchedule()
-            ->add(RecurringMessage::every('1 day', new RegenerateExpiredTlsCertificatesMessage()))
+            ->lock($this->lockFactory->createLock('default-schedule')) // only run on one server
 
-            ->lock($this->lockFactory->createLock('schedule'))
-            ->stateful($this->cache) // ensure missed tasks are executed
-            ->processOnlyLastMissedRun(true) // ensure only last missed task is run
+            ->add(RecurringMessage::cron('0 0 * * *', new RepoSyncMessage()))
+            ->add(RecurringMessage::every('1 day', new RegenerateExpiredTlsCertificatesMessage()))
 
             // add your own tasks here
             // see https://symfony.com/doc/current/scheduler.html#attaching-recurring-messages-to-a-schedule

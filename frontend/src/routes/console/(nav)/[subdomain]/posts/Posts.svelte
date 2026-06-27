@@ -1,9 +1,10 @@
 <script lang="ts">
 	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
-	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, LoadButton, toast } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { Post } from '../../../lib/types';
 	import PostRow from './PostRow.svelte';
+	import PostRowSkeleton from './PostRowSkeleton.svelte';
 	import StatusFilter from './Filters/StatusFilter.svelte';
 	import TagFilter from './Filters/Tag/TagFilter.svelte';
 	import DateFilter from './Filters/Date/DateFilter.svelte';
@@ -12,6 +13,7 @@
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { setPreloadedPosts } from './[postId]/postLoader';
 
 	interface Props {
 		pages?: boolean;
@@ -43,6 +45,7 @@
 			getPages()
 				.then((res) => {
 					posts = res;
+					setPreloadedPosts(res);
 				})
 				.catch(() => {
 					error = 'Failed to load pages';
@@ -63,6 +66,7 @@
 			})
 				.then((res) => {
 					posts = more ? [...posts, ...res] : res;
+					setPreloadedPosts(res);
 					hasMore = res.length === limit;
 				})
 				.catch(() => {
@@ -127,24 +131,26 @@
 
 	<div class="middle">
 		{#if isLoading}
-			<div class="loader-wrap">
-				<Loader size="large" block padding={100} />
-			</div>
+			{#each { length: 6 } as _}
+				<PostRowSkeleton />
+			{/each}
 		{:else if error}
 			<IconMessage error message={error} />
 		{:else if posts.length === 0}
 			<IconMessage empty message="No posts found" />
 		{:else}
 			{#each posts as post (post.id)}
-				<PostRow {post} />
+				<PostRow {post} onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))} />
 			{/each}
 
-			<LoadButton
-				text="Load more"
-				show={hasMore}
-				loading={isLoadingMore}
-				on:click={() => loadPosts(true)}
-			/>
+			<div class="load-more-wrap">
+				<LoadButton
+					text="Load more"
+					show={hasMore}
+					loading={isLoadingMore}
+					on:click={() => loadPosts(true)}
+				/>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -165,7 +171,7 @@
 	}
 
 	.middle {
-		padding: 20px 25px;
+		padding: 20px 0;
 		background-color: var(--box-background);
 		border-radius: var(--box-radius);
 		box-shadow: var(--box-shadow);
@@ -180,11 +186,8 @@
 		flex: 1;
 	}
 
-	.loader-wrap {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
+	.load-more-wrap {
+		padding: 16px 30px;
 	}
 
 	.title {

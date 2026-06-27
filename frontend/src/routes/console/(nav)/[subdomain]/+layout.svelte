@@ -10,6 +10,7 @@
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
 	import { isTempStore } from '../../lib/temp';
 	import { blogListStore, resolvedLicenseStore } from '../../lib/stores';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -19,13 +20,21 @@
 	let isLoading = $state(true);
 	let subdomain = $derived(String(page.params.subdomain));
 
-	onMount(() => {
+	$effect(() => {
+		if (subdomain) {
+			handleBlogChange();
+		}
+	});
+
+	function handleBlogChange() {
 		const userBlogs = $blogListStore.find((b) => b.subdomain === subdomain);
 
 		if (!userBlogs) {
 			location.href = '/console';
 			return;
 		}
+
+		isLoading = true;
 
 		loadBlog(subdomain!)
 			.then(() => {
@@ -34,7 +43,7 @@
 			.catch(() => {
 				toast.error('Unable to load blog');
 			});
-	});
+	}
 
 	let forcedShow = $derived.by(() => {
 		if ($isTempStore) {

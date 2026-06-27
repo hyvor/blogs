@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\ApiKey;
 
 use App\Api\Console\Controller\ApiKeyController;
 use App\Api\Console\Object\ApiKeyObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
@@ -19,7 +20,7 @@ class CreateApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'ak-create', '/api-key', [
@@ -38,7 +39,7 @@ class CreateApiKeyTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-limit'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         for ($i = 0; $i < 50; $i++) {
             ApiKeyFactory::createOne([

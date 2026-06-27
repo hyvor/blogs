@@ -39,9 +39,6 @@ class Blog
     #[ORM\Column()]
     private ?int $hyvor_user_id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $theme_version_id = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'theme_version_id', referencedColumnName: 'id')]
     private ?ThemeVersion $theme_version = null;
@@ -173,17 +170,6 @@ class Blog
     public function setHyvorUserId(?int $hyvor_user_id): static
     {
         $this->hyvor_user_id = $hyvor_user_id;
-        return $this;
-    }
-
-    public function getThemeVersionId(): ?int
-    {
-        return $this->theme_version_id;
-    }
-
-    public function setThemeVersionId(?int $theme_version_id): static
-    {
-        $this->theme_version_id = $theme_version_id;
         return $this;
     }
 

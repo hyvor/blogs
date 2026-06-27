@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Navigation;
 use App\Api\Console\Controller\NavigationController;
 use App\Api\Console\Object\NavigationObject;
 use App\Entity\Enum\NavigationType;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Navigation;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\NavigationService;
@@ -23,7 +24,7 @@ class CreateNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         LanguageFactory::createOne([
             'blog' => $blog,
@@ -62,7 +63,7 @@ class CreateNavigationTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-create-lim'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         LanguageFactory::createOne([
             'blog' => $blog,

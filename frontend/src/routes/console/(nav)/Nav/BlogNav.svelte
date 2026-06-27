@@ -10,8 +10,9 @@
 	import IconTools from '@hyvor/icons/IconTools';
 
 	import { page } from '$app/stores';
-	import { NavLink } from '@hyvor/design/components';
+	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
+	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
 	interface Props {
 		listItem: BlogList;
@@ -20,7 +21,7 @@
 	let { listItem }: Props = $props();
 </script>
 
-<a class="current-blog" href={consoleUrl('/select')}>
+<button type="button" class="current-blog" onclick={() => ($blogSelectorOpenStore = true)}>
 	<div class="name-url">
 		<div class="name">
 			{listItem.name || 'Unnamed'}
@@ -33,9 +34,10 @@
 	<div class="current-icon">
 		<IconChevronExpand />
 	</div>
-</a>
+</button>
 
 <div class="nav-items">
+	<NavLinkGroup activeBackground="var(--accent-light-mid)">
 	<NavLink
 		href={consoleUrl(listItem.subdomain)}
 		active={$page.url.pathname === `/console/${listItem.subdomain}`}
@@ -116,16 +118,24 @@
 		{/snippet}
 		Settings
 	</NavLink>
+	</NavLinkGroup>
 </div>
 
 <style lang="scss">
 	.current-blog {
 		display: flex;
 		align-items: center;
+		width: calc(100% - 20px);
 		padding: 10px 20px;
 		cursor: pointer;
 		border-radius: var(--box-radius);
 		margin: 10px;
+		font-family: inherit;
+		font-size: inherit;
+		text-align: left;
+		background: none;
+		border: none;
+		color: inherit;
 	}
 
 	.current-blog:hover {
@@ -153,10 +163,6 @@
 	.nav-items {
 		padding-bottom: 20px;
 		padding-top: 10px;
-	}
-
-	.nav-items :global(a.active) {
-		background-color: var(--accent-light-mid);
 	}
 
 	.home-link {

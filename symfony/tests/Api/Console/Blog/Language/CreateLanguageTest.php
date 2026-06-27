@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Language;
 
 use App\Api\Console\Controller\LanguageController;
 use App\Api\Console\Object\LanguageObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class CreateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'lang-create', '/language', [
@@ -41,7 +42,7 @@ class CreateLanguageTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-dup'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         LanguageFactory::createOne([
             'blog' => $blog,

@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Redirect\CreateRedirectInput;
 use App\Api\Console\Input\Blog\Redirect\GetRedirectsInput;
 use App\Api\Console\Input\Blog\Redirect\UpdateRedirectInput;
@@ -24,6 +26,7 @@ class RedirectController
     ) {}
 
     #[Route('/redirects', methods: ['GET'])]
+    #[ScopeRequired(Scope::REDIRECTS_READ)]
     public function getRedirects(
         #[MapQueryString] GetRedirectsInput $input = new GetRedirectsInput(),
     ): JsonResponse {
@@ -39,6 +42,7 @@ class RedirectController
     }
 
     #[Route('/redirect', methods: ['POST'])]
+    #[ScopeRequired(Scope::REDIRECTS_WRITE)]
     public function createRedirect(
         #[MapRequestPayload] CreateRedirectInput $input,
     ): JsonResponse {
@@ -69,6 +73,7 @@ class RedirectController
     }
 
     #[Route('/redirect/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::REDIRECTS_WRITE)]
     public function updateRedirect(
         #[MapBlogEntity] Redirect $redirect,
         #[MapRequestPayload] UpdateRedirectInput $input,
@@ -93,6 +98,7 @@ class RedirectController
     }
 
     #[Route('/redirect/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::REDIRECTS_WRITE)]
     public function deleteRedirect(#[MapBlogEntity] Redirect $redirect): JsonResponse
     {
         $this->redirectService->deleteRedirect($redirect);

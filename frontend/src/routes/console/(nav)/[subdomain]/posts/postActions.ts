@@ -69,6 +69,12 @@ export function deletePost() {
 	});
 }
 
+export function deletePostById(postId: number) {
+	return consoleApi.delete({
+		endpoint: `/post/${postId}`
+	});
+}
+
 export function updatePostAuthors(authors: User[], updateStore = true) {
 	const postId = get(postStore).id;
 
@@ -131,6 +137,42 @@ export function updatePostVariant(
 				(update as any)[key] = (res as any)[key];
 			});
 			updatePostVariantStore(update, true);
+		}
+	});
+
+	return promise;
+}
+
+export function publishPostVariant(updateStore = true) {
+	const postId = get(postStore).id;
+	const languageId = get(postLanguageStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/publish`,
+		data: { language_id: languageId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
+export function unpublishPostVariant(updateStore = true) {
+	const postId = get(postStore).id;
+	const languageId = get(postLanguageStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/unpublish`,
+		data: { language_id: languageId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
 		}
 	});
 

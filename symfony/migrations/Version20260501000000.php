@@ -11,11 +11,13 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create OIDC tables for on-prem authentication';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, and API keys scopes';
     }
 
     public function up(Schema $schema): void
     {
+
+        // OIDC
         $this->addSql(<<<SQL
             CREATE TABLE oidc_users
             (
@@ -32,9 +34,7 @@ final class Version20260501000000 extends AbstractMigration
             )
         SQL
         );
-
         $this->addSql('CREATE INDEX idx_oidc_users_email ON oidc_users (email)');
-
         $this->addSql(<<<SQL
             CREATE TABLE oidc_sessions
             (
@@ -45,13 +45,20 @@ final class Version20260501000000 extends AbstractMigration
             )
         SQL
         );
-
         $this->addSql('CREATE INDEX idx_oidc_sessions_sess_lifetime ON oidc_sessions (sess_lifetime)');
+
+        // Webhooks
+        $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN try_count INTEGER NOT NULL DEFAULT 0');
+        $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN last_try_at TIMESTAMPTZ');
+
+        // API keys scopes
+        $this->addSql("ALTER TABLE api_keys ADD scopes JSON NOT NULL DEFAULT '[]'");
+
+        // User role
+        // change 'owner' to 'admin'
+        $this->addSql("UPDATE users SET role = 'admin' WHERE role = 'owner'");
     }
 
     public function down(Schema $schema): void
-    {
-        $this->addSql('DROP TABLE oidc_users');
-        $this->addSql('DROP TABLE oidc_sessions');
-    }
+    {}
 }

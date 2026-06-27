@@ -4,7 +4,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\ExportFormatEnum;
 use App\Data\Objects\ConsoleAPI\ExportObject;
-use App\Domains\Blog\BlogService;
 use App\Domains\Export\ExportJob;
 use App\Domains\Export\ExportService;
 use App\Exceptions\TrustedException;
@@ -15,13 +14,13 @@ use Illuminate\Http\JsonResponse;
 class ConsoleExportController extends Controller
 {
 
-    public function getExports(Blog $blog) : JsonResponse
+    public function getExports(Blog $blog): JsonResponse
     {
         $exports = ExportService::getExports($blog)->mapInto(ExportObject::class);
         return response()->json($exports);
     }
 
-    public function export(Blog $blog) : JsonResponse
+    public function export(Blog $blog): JsonResponse
     {
 
         if (ExportService::hasPendingExports($blog)) {

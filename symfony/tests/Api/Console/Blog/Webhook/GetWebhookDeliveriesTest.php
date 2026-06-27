@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Api\Console\Object\WebhookDeliveryObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Enum\WebhookDeliveryStatus;
 use App\Entity\Enum\WebhookEvent;
 use App\Service\Webhook\WebhookDeliveryService;
@@ -22,7 +23,7 @@ class GetWebhookDeliveriesTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-deliveries'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog,

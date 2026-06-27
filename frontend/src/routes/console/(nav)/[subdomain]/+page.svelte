@@ -4,7 +4,7 @@
 	import IconTablet from '@hyvor/icons/IconTablet';
 
 	import { blogStore } from '../../lib/stores/blogStore';
-	import { IconButton, Link, Loader } from '@hyvor/design/components';
+	import { IconButton, Link } from '@hyvor/design/components';
 
 	let type: 'laptop' | 'tablet' = $state('laptop');
 	let isLoading = $state(true);
@@ -35,7 +35,7 @@
 
 	<div class="iframe" style="padding: {type === 'laptop' ? 0 : 15}px">
 		{#if isLoading}
-			<Loader />
+			<div class="iframe-loader"></div>
 		{/if}
 		<iframe
 			id="preview-iframe"
@@ -80,6 +80,23 @@
 		justify-content: center;
 		overflow: hidden;
 		position: relative;
+	}
+
+	.iframe-loader {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+		background-size: 400% 100%;
+		animation: shimmer 1.8s ease-in-out infinite;
+	}
+
+	@keyframes shimmer {
+		0% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0 50%;
+		}
 	}
 
 	iframe {

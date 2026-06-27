@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Language\CreateLanguageInput;
 use App\Api\Console\Input\Blog\Language\UpdateLanguageInput;
 use App\Api\Console\Object\LanguageObject;
@@ -22,6 +24,7 @@ class LanguageController
     ) {}
 
     #[Route('/languages', methods: ['GET'])]
+    #[ScopeRequired(Scope::LANGUAGES_READ)]
     public function getLanguages(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -31,6 +34,7 @@ class LanguageController
     }
 
     #[Route('/language', methods: ['POST'])]
+    #[ScopeRequired(Scope::LANGUAGES_WRITE)]
     public function createLanguage(
         #[MapRequestPayload] CreateLanguageInput $input,
     ): JsonResponse {
@@ -46,6 +50,7 @@ class LanguageController
     }
 
     #[Route('/language/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::LANGUAGES_WRITE)]
     public function updateLanguage(
         #[MapBlogEntity] Language $language,
         #[MapRequestPayload] UpdateLanguageInput $input,
@@ -65,6 +70,7 @@ class LanguageController
     }
 
     #[Route('/language/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::LANGUAGES_WRITE)]
     public function deleteLanguage(#[MapBlogEntity] Language $language): JsonResponse
     {
         if ($language->isPrimary()) {

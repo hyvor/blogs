@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\ApiKey\CreateApiKeyInput;
 use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\ApiKey;
@@ -22,6 +24,7 @@ class ApiKeyController
     ) {}
 
     #[Route('/api-keys', methods: ['GET'])]
+    #[ScopeRequired(Scope::API_KEYS_READ)]
     public function getApiKeys(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -31,6 +34,7 @@ class ApiKeyController
     }
 
     #[Route('/api-key', methods: ['POST'])]
+    #[ScopeRequired(Scope::API_KEYS_WRITE)]
     public function createApiKey(
         #[MapRequestPayload] CreateApiKeyInput $input,
     ): JsonResponse {
@@ -48,6 +52,7 @@ class ApiKeyController
     }
 
     #[Route('/api-key/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::API_KEYS_WRITE)]
     public function regenerateApiKey(#[MapBlogEntity] ApiKey $apiKey): JsonResponse
     {
         $apiKey = $this->apiKeyService->regenerateApiKey($apiKey);
@@ -56,6 +61,7 @@ class ApiKeyController
     }
 
     #[Route('/api-key/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::API_KEYS_WRITE)]
     public function deleteApiKey(#[MapBlogEntity] ApiKey $apiKey): JsonResponse
     {
         $this->apiKeyService->deleteApiKey($apiKey);

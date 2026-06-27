@@ -31,10 +31,8 @@ services:
       context: .
       target: backend-dev
     volumes:
-      - ./backend:/app/backend
-      - ./symfony:/app/symfony
-      - ../internal:/app/backend/vendor/hyvor/internal:ro
-      - ../internal:/app/symfony/vendor/hyvor/internal:ro
+      - ./symfony:/app/backend
+      #- ../internal:/app/backend/vendor/hyvor/internal:ro
     labels:
       traefik.enable: true
       # backend
