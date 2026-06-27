@@ -1,10 +1,5 @@
-# Taken from here:
-# https://github.com/laravel/octane/blob/2.x/src/Commands/stubs/Caddyfile
-# ENV variables are coming from here: https://github.com/laravel/octane/blob/2.x/src/Commands/StartFrankenPhpCommand.php#L92
-
 {
 	frankenphp
-	http_port 80
 
 	on_demand_tls {
         ask http://localhost:8080/api/special/caddy/allowed-domain
@@ -25,8 +20,9 @@
 	encode zstd gzip
 	php_server {
         file_server off
-        root /app/backend/public/
-        try_files index.php
+        worker {
+			file /app/backend/public/index.php
+		}
     }
 }
 
@@ -38,7 +34,9 @@
         encode zstd gzip
         php_server {
             file_server off
-            try_files index.php
+            worker {
+				file /app/backend/public/index.php
+			}
         }
 	}
 
@@ -73,14 +71,12 @@
 	tls {
 		on_demand
 	}
-
 	root * /app/backend/public
 	encode zstd gzip
 	php_server {
         file_server off
-        root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
+        worker {
+			file /app/backend/public/index.php
+		}
     }
 }
