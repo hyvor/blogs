@@ -8,6 +8,7 @@ export interface ConsoleApiOptions {
 	data?: Record<string, any> | FormData;
 	userApi?: boolean;
 	subdomain?: string;
+	v1?: boolean;
 	signal?: AbortSignal;
 }
 
@@ -16,16 +17,17 @@ interface CallOptions extends ConsoleApiOptions {
 }
 
 function getConsoleApi() {
-	const baseUrl = '/api/console/v0';
-
 	async function call<T>({
 		endpoint,
 		userApi = false,
 		method,
 		data = {},
 		subdomain,
+		v1 = false,
 		signal
 	}: CallOptions): Promise<T> {
+		const baseUrl = `/api/console/v${v1 ? '1' : '0'}`;
+
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
 		let url;
@@ -50,6 +52,12 @@ function getConsoleApi() {
 			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
 		} as Record<string, string>;
 
+		const currentOrg = get(authOrganizationStore);
+
+		if (currentOrg) {
+			headers['X-Organization-ID'] = String(currentOrg.id);
+		}
+
 		if (!(data instanceof FormData)) {
 			headers['Content-Type'] = 'application/json';
 		}
@@ -70,7 +78,7 @@ function getConsoleApi() {
 
 		if (!response.ok) {
 			const e = await response.json();
-			const error = e && e.error ? e.error : 'Something went wrong';
+			const error = e && e.message ? e.message : 'Something went wrong';
 			/* toast({type: 'error', message: error});
             throw error; */
 

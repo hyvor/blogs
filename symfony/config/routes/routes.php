@@ -50,4 +50,7 @@ return static function (RoutingConfigurator $routes): void {
     $routes->import('../../src/Api/Sudo/Controller', 'attribute')
         ->prefix('/api/sudo')
         ->namePrefix('api_sudo_');
+
+    // let's encrypt endpoint
+    $routes->import('../../src/Api/LetsEncryptController.php', 'attribute');
 };

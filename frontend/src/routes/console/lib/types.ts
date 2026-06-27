@@ -105,6 +105,22 @@ export interface BlogCounts {
 	};
 }
 
+export interface HostingInfo {
+	hosting_at: 'subdomain' | 'domain' | 'self';
+	custom_domain_setup?: CustomDomainSetup | null;
+	hosting_url?: string;
+}
+
+export type CustomDomainSetupStatus = 'pending' | 'active' | 'failed';
+export interface CustomDomainSetup {
+	created_at: number;
+	domain: string;
+	status: CustomDomainSetupStatus;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
+}
+
 // == POST
 export type Post = {
 	id: number;

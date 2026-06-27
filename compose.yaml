@@ -46,16 +46,45 @@ services:
       traefik.http.routers.hyvor-blogs-subdir.entrypoints: http
       traefik.http.routers.hyvor-blogs-subdir.service: hyvor-blogs-backend
 
+      # let's encrypt
+      traefik.http.routers.lets-encrypt.rule: Host(`custom-domain.localhost`) && PathPrefix(`/.well-known/acme-challenge`)
+      traefik.http.routers.lets-encrypt.entrypoints: https
+      traefik.http.routers.lets-encrypt.tls: true
+      traefik.http.routers.lets-encrypt.service: hyvor-blogs-backend
+
       # services
       traefik.http.services.hyvor-blogs-backend.loadbalancer.server.port: 80
     networks:
       hyvor-network:
         aliases:
           - blogs.hyvor.internal
-    profiles: [dev]
+          - custom-domain.localhost
+    profiles: [ dev ]
     healthcheck:
       disable: true
       test: ls
+
+  hyvor-blogs-pebble:
+    container_name: hyvor-blogs-pebble
+    image: ghcr.io/letsencrypt/pebble:latest
+    command: -config /test/config/pebble-config.json
+    ports:
+      - 14000:14000  # ACME port
+      - 15000:15000  # Management port
+    volumes:
+      - ./meta/dev/pebble.json:/test/config/pebble-config.json:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.hyvor-blogs-pebble.rule: Host(`blogs.pebble.localhost`)
+      traefik.http.routers.hyvor-blogs-pebble.entrypoints: https
+      traefik.http.services.hyvor-blogs-pebble.loadbalancer.server.port: 80
+    environment:
+      - PEBBLE_VA_NOSLEEP=1
+    networks:
+      hyvor-network:
+        aliases:
+          - blogs.pebble.localhost
+    profiles: [ external ]
 
 networks:
   hyvor-network:
