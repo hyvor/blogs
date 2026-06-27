@@ -2,13 +2,21 @@
 
 namespace App\Service\CodeHighlight;
 
-use stdClass;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ExecutableFinder;
-use Symfony\Component\Process\Process;
+use Phiki\Grammar\Grammar;
+use Phiki\Phiki;
+use Phiki\Theme\ParsedTheme;
+use Phiki\Theme\Theme;
+use Phiki\Token\HighlightedToken;
 
 class Highlighter
 {
+    private Phiki $phiki;
+
+    public function __construct()
+    {
+        $this->phiki = new Phiki();
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -19,61 +27,65 @@ class Highlighter
         bool $lineNumbers,
         string $annotations
     ): array {
-        $data = $this->callJs([
-            'type' => 'tokens',
-            'theme' => $themeName,
-            'code' => $code,
-            'language' => $language,
-        ]);
+        try {
+            $theme = Theme::tryFrom($themeName) ?? Theme::GithubDark;
+            $grammar = Grammar::tryFrom($language) ?? Grammar::Html;
 
-        if (!$data instanceof stdClass) {
+            /** @var array<int, array<int, HighlightedToken>> $lines */
+            $lines = $this->phiki->codeToHighlightedTokens($code, $grammar, $theme);
+            $parsedTheme = $this->phiki->environment->themes->resolve($theme);
+        } catch (\Throwable) {
             return ['pre' => ['style' => '', 'class' => '', 'onmouseenter' => '', 'onmouseleave' => ''], 'code' => htmlspecialchars($code)];
         }
 
-        /** @var array<int, array<int, stdClass>> $tokens */
-        $tokens = is_array($data->tokens) ? $data->tokens : [];
-        $theme = $data->theme instanceof stdClass ? $data->theme : new stdClass();
-
-        return $this->buildHtml($language, $lineNumbers, $tokens, $theme, new Annotations($annotations));
-    }
-
-    public function getAllThemes(): mixed
-    {
-        return $this->callJs(['type' => 'themes']);
-    }
-
-    public function getAllLanguages(): mixed
-    {
-        return $this->callJs(['type' => 'languages']);
+        return $this->buildHtml($language, $lineNumbers, $lines, $parsedTheme, new Annotations($annotations));
     }
 
     /**
-     * @param array<int, array<int, stdClass>> $tokens
+     * @return string[]
+     */
+    public function getAllThemes(): array
+    {
+        return array_map(fn(Theme $t) => $t->value, Theme::cases());
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAllLanguages(): array
+    {
+        return array_map(fn(Grammar $g) => $g->value, Grammar::cases());
+    }
+
+    /**
+     * @param array<int, array<int, HighlightedToken>> $lines
      * @return array<string, mixed>
      */
     private function buildHtml(
         string $language,
         bool $lineNumbers,
-        array $tokens,
-        stdClass $theme,
+        array $lines,
+        ParsedTheme $parsedTheme,
         Annotations $annotations
     ): array {
-        $fg = isset($theme->fg) && is_string($theme->fg) ? $theme->fg : '#000000';
-        $bg = isset($theme->bg) && is_string($theme->bg) ? $theme->bg : '#ffffff';
-        $colors = isset($theme->colors) && $theme->colors instanceof stdClass ? $theme->colors : new stdClass();
+        $base = $parsedTheme->base();
+        $fg = $base->foreground ?? '#000000';
+        $bg = $base->background ?? '#ffffff';
+        /** @var array<string, string> $colors */
+        $colors = $parsedTheme->colors;
 
         $html = '';
         $lineNumber = 1;
 
         $hasLineNumbers = $lineNumbers && $annotations->hasLineNumbers();
-        $maxLineNumber = max($annotations->getMaxLineNumber(), count($tokens));
+        $maxLineNumber = max($annotations->getMaxLineNumber(), count($lines));
 
         $hasDiff = $annotations->hasDiffAdd() || $annotations->hasDiffRemove();
         $hasFocus = $annotations->hasFocus();
 
         $blur = 'blur(2px)';
 
-        foreach ($tokens as $index => $line) {
+        foreach ($lines as $index => $line) {
             $lineBackground = null;
             $lineFilter = null;
             $lineTransition = null;
@@ -88,19 +100,16 @@ class Highlighter
             if ($shouldFocus) {
                 $lineClass[] = 'focus';
             } elseif ($shouldDiffAdd) {
-                $v = $colors->{'diffEditor.insertedTextBackground'} ?? '#00ff0022';
-                $lineBackground = is_string($v) ? $v : '#00ff0022';
+                $lineBackground = $colors['diffEditor.insertedTextBackground'] ?? '#00ff0022';
                 $lineClass[] = 'diff-add';
             } elseif ($shouldDiffRemove) {
-                $v = $colors->{'diffEditor.removedTextBackground'} ?? '#ff000022';
-                $lineBackground = is_string($v) ? $v : '#ff000022';
+                $lineBackground = $colors['diffEditor.removedTextBackground'] ?? '#ff000022';
                 $lineClass[] = 'diff-remove';
             } elseif ($annotations->shouldHighlight($realLineNumber)) {
-                $v = $colors->{'editor.lineHighlightBackground'}
-                    ?? $colors->{'editor.selectionHighlightBackground'}
-                    ?? $colors->{'editor.selectionBackground'}
+                $lineBackground = $colors['editor.lineHighlightBackground']
+                    ?? $colors['editor.selectionHighlightBackground']
+                    ?? $colors['editor.selectionBackground']
                     ?? $bg;
-                $lineBackground = is_string($v) ? $v : $bg;
                 $lineClass[] = 'highlight';
             }
 
@@ -135,8 +144,8 @@ class Highlighter
                 $html .= '<wbr />';
             }
             foreach ($line as $token) {
-                $tokenColor = isset($token->color) && is_string($token->color) ? $token->color : $fg;
-                $tokenContent = isset($token->content) && is_string($token->content) ? $token->content : '';
+                $tokenColor = $token->settings['default']->foreground ?? $fg;
+                $tokenContent = $token->token->text;
                 $html .= '<span style="color:' . $tokenColor . '">' . htmlspecialchars($tokenContent) . '</span>';
             }
             $html .= '</span></div>';
@@ -181,14 +190,16 @@ class Highlighter
         ];
     }
 
-    private function lineNumberSpan(int|false $number, int $max, stdClass $colors, string $defaultFg): string
+    /**
+     * @param array<string, string> $colors
+     */
+    private function lineNumberSpan(int|false $number, int $max, array $colors, string $defaultFg): string
     {
         $numLength = $number === false ? 0 : strlen((string) $number);
         $maxLength = strlen((string) $max);
         $diffLength = $maxLength - $numLength;
 
-        $v = $colors->{'editorLineNumber.foreground'} ?? $defaultFg;
-        $color = is_string($v) ? $v : $defaultFg;
+        $color = $colors['editorLineNumber.foreground'] ?? $defaultFg;
 
         $styles = $this->toStyleString([
             '-webkit-user-select' => 'none',
@@ -202,16 +213,18 @@ class Highlighter
         return "<span class=\"line-number\" style=\"$styles\" aria-hidden=\"true\">$numberDisplay</span>";
     }
 
-    private function diffMarkSpan(bool $shouldDiffAdd, bool $shouldDiffRemove, stdClass $colors): string
+    /**
+     * @param array<string, string> $colors
+     */
+    private function diffMarkSpan(bool $shouldDiffAdd, bool $shouldDiffRemove, array $colors): string
     {
         $content = $shouldDiffAdd ? '+' : ($shouldDiffRemove ? '-' : ' ');
 
         if ($shouldDiffRemove) {
-            $v = $colors->{'terminal.ansiRed'} ?? $colors->{'terminal.ansiBrightRed'} ?? '#f07178';
+            $color = $colors['terminal.ansiRed'] ?? $colors['terminal.ansiBrightRed'] ?? '#f07178';
         } else {
-            $v = $colors->{'terminal.ansiGreen'} ?? $colors->{'terminal.ansiBrightGreen'} ?? '#cceccd';
+            $color = $colors['terminal.ansiGreen'] ?? $colors['terminal.ansiBrightGreen'] ?? '#cceccd';
         }
-        $color = is_string($v) ? $v : '#888888';
 
         $style = $this->toStyleString([
             '-webkit-user-select' => 'none',
@@ -234,35 +247,5 @@ class Highlighter
             }
         }
         return implode(';', $parts);
-    }
-
-    /**
-     * @param array<string, mixed> $arguments
-     */
-    private function callJs(array $arguments): mixed
-    {
-        // code from https://github.com/spatie/shiki-php/blob/main/src/Shiki.php
-        $command = [
-            (new ExecutableFinder())->find('node', 'node', [
-                '/usr/local/bin',
-                '/opt/homebrew/bin',
-            ]),
-            'index.js',
-            json_encode($arguments),
-        ];
-
-        $process = new Process(
-            command: $command,
-            cwd: (string) realpath(dirname(__DIR__, 3) . '/js'),
-            timeout: null,
-        );
-
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        return json_decode($process->getOutput());
     }
 }
