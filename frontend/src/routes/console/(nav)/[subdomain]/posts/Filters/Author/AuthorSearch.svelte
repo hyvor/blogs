@@ -9,7 +9,7 @@
 	} from '@hyvor/design/components';
 	import type { User } from '../../../../../lib/types';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { getUsers, searchUsers } from '../../../settings/users/userActions';
+	import { getUsers } from '../../../settings/users/userActions';
 	import { postListFiltersStore } from '../../postListStore';
 
 	let isLoading = $state(true);
@@ -22,9 +22,7 @@
 		isLoading = true;
 		users = [];
 
-		const promise = search.trim() ? searchUsers({ search }) : getUsers();
-
-		promise
+		getUsers({ search: search.trim() ? search.trim() : undefined })
 			.then((res) => {
 				users = res;
 				isLoading = false;
@@ -76,7 +74,11 @@
 				selected={$postListFiltersStore.author?.id === user.id}
 			>
 				{#snippet start()}
-					<Avatar src={user.picture_url} alt={user.variants[0]?.name || 'Unnamed'} size={20} />
+					<Avatar
+						src={user.picture_url}
+						alt={user.variants[0]?.name || 'Unnamed'}
+						size={20}
+					/>
 				{/snippet}
 				<span class="text">
 					{user.variants[0]?.name || 'Unnamed'}
