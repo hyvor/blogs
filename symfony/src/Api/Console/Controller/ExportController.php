@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Object\ExportObject;
 use App\Entity\Enum\ExportFormat;
 use App\Service\Export\ExportService;
@@ -19,6 +21,7 @@ class ExportController
     }
 
     #[Route('/data/exports', methods: ['GET'])]
+    #[ScopeRequired(Scope::DATA_READ)]
     public function getExports(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -32,6 +35,7 @@ class ExportController
     }
 
     #[Route('/data/export', methods: ['POST'])]
+    #[ScopeRequired(Scope::DATA_WRITE)]
     public function export(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

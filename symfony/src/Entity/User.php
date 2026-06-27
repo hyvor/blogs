@@ -30,6 +30,10 @@ class User
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
+    /**
+     * This is HYVOR user ID in cloud
+     * and OIDC user ID in self-hosted
+     */
     #[ORM\Column(nullable: true)]
     private ?int $hyvor_user_id = null;
 

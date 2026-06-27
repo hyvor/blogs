@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\CreateBlogVariantInput;
 use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Api\Console\Input\Blog\UpdateBlogVariantInput;
@@ -35,6 +37,7 @@ class BlogController
     ) {}
 
     #[Route('/blog', methods: ['GET'])]
+    #[ScopeRequired(Scope::BLOG_READ)]
     public function getBlog(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -62,6 +65,7 @@ class BlogController
     }
 
     #[Route('/blog', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::BLOG_WRITE)]
     public function updateBlog(
         #[MapRequestPayload] UpdateBlogInput $input,
     ): JsonResponse {
@@ -81,6 +85,7 @@ class BlogController
     }
 
     #[Route('/blog/variant', methods: ['POST'])]
+    #[ScopeRequired(Scope::BLOG_WRITE)]
     public function createBlogVariant(
         #[MapRequestPayload] CreateBlogVariantInput $input,
     ): JsonResponse {
@@ -102,6 +107,7 @@ class BlogController
     }
 
     #[Route('/blog/variant', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::BLOG_WRITE)]
     public function updateBlogVariant(
         #[MapRequestPayload] UpdateBlogVariantInput $input,
     ): JsonResponse {

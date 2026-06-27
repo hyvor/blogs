@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Post\CheckPostSlugAvailableInput;
 use App\Api\Console\Input\Blog\Post\CreatePostInput;
 use App\Api\Console\Input\Blog\Post\CreatePostVariantInput;
@@ -40,6 +42,7 @@ class PostController
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
     public function getPosts(
         #[MapQueryString] GetPostsInput $input = new GetPostsInput(),
     ): JsonResponse {
@@ -74,6 +77,7 @@ class PostController
     }
 
     #[Route('/pages', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
     public function getPages(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -86,6 +90,7 @@ class PostController
     }
 
     #[Route('/post', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function createPost(
         #[MapRequestPayload] CreatePostInput $input,
     ): JsonResponse {
@@ -107,6 +112,7 @@ class PostController
     }
 
     #[Route('/post/{id}', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[ScopeRequired(Scope::POSTS_READ)]
     public function getPost(#[MapBlogEntity] Post $post): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -114,6 +120,7 @@ class PostController
     }
 
     #[Route('/post/{id}', methods: ['PATCH'], requirements: ['id' => Requirement::DIGITS])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function updatePost(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostInput $input,
@@ -148,6 +155,7 @@ class PostController
     }
 
     #[Route('/post/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function deletePost(#[MapBlogEntity] Post $post): JsonResponse
     {
         $this->postService->deletePost($post);
@@ -155,6 +163,7 @@ class PostController
     }
 
     #[Route('/post/{id}/variant', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function createPostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] CreatePostVariantInput $input,
@@ -177,6 +186,7 @@ class PostController
     }
 
     #[Route('/post/{id}/variant', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function updatePostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostVariantInput $input,
@@ -245,6 +255,7 @@ class PostController
     }
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function deletePostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] DeletePostVariantInput $input,
@@ -273,6 +284,7 @@ class PostController
     }
 
     #[Route('/post/{id}/tags', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function updateTags(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostTagsInput $input,
@@ -289,6 +301,7 @@ class PostController
     }
 
     #[Route('/post/{id}/authors', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function updateAuthors(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostAuthorsInput $input,
@@ -305,6 +318,7 @@ class PostController
     }
 
     #[Route('/post/{id}/slug-available', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
     public function checkSlugAvailability(
         #[MapBlogEntity] Post $post,
         #[MapQueryString] CheckPostSlugAvailableInput $input,
@@ -323,6 +337,7 @@ class PostController
     }
 
     #[Route('/post/{id}/clone', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function clonePost(#[MapBlogEntity] Post $post): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

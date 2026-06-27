@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Service\Post\Content\PostContentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -16,6 +18,7 @@ class MiscController
     ) {}
 
     #[Route('/misc/prosemirror/json', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function getProsemirrorJson(
         #[MapQueryParameter] string $html,
     ): JsonResponse {

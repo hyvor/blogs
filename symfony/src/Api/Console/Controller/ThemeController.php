@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Theme\ChangeThemeInput;
 use App\Api\Console\Input\Blog\Theme\CheckThemeFileNameAvailableInput;
 use App\Api\Console\Input\Blog\Theme\CreateThemeFileInput;
@@ -37,6 +39,7 @@ class ThemeController
     }
 
     #[Route('/theme', methods: ['POST'])]
+    #[ScopeRequired(Scope::THEMES_WRITE)]
     public function uploadTheme(Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -69,6 +72,7 @@ class ThemeController
     }
 
     #[Route('/theme', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::THEMES_WRITE)]
     public function changeTheme(
         #[MapRequestPayload] ChangeThemeInput $input,
     ): JsonResponse {
@@ -97,6 +101,7 @@ class ThemeController
     }
 
     #[Route('/theme/download', methods: ['GET'])]
+    #[ScopeRequired(Scope::THEMES_READ)]
     public function downloadTheme(): Response
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -118,6 +123,7 @@ class ThemeController
     }
 
     #[Route('/theme/files', methods: ['GET'])]
+    #[ScopeRequired(Scope::THEMES_READ)]
     public function getAllFiles(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -126,6 +132,7 @@ class ThemeController
     }
 
     #[Route('/theme/file', methods: ['POST'])]
+    #[ScopeRequired(Scope::THEMES_WRITE)]
     public function createFile(
         #[MapRequestPayload] CreateThemeFileInput $input,
         Request $request,
@@ -156,6 +163,7 @@ class ThemeController
     }
 
     #[Route('/theme/file/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::THEMES_WRITE)]
     public function updateFile(
         #[MapBlogEntity] ThemeFile $file,
         #[MapRequestPayload] UpdateThemeFileInput $input,
@@ -176,6 +184,7 @@ class ThemeController
     }
 
     #[Route('/theme/file/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::THEMES_WRITE)]
     public function deleteFile(#[MapBlogEntity] ThemeFile $file): JsonResponse
     {
         $this->themeFilesService->deleteFile($file);
@@ -184,6 +193,7 @@ class ThemeController
     }
 
     #[Route('/theme/file/name-available', methods: ['GET'])]
+    #[ScopeRequired(Scope::THEMES_READ)]
     public function isFileNameAvailable(
         #[MapQueryString] CheckThemeFileNameAvailableInput $input,
     ): JsonResponse {

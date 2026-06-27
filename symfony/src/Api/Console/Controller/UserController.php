@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\User\CheckUserSlugAvailableInput;
 use App\Api\Console\Input\Blog\User\CreateGuestUserInput;
 use App\Api\Console\Input\Blog\User\CreateUserInput;
@@ -45,6 +47,7 @@ class UserController
     ) {}
 
     #[Route('/users', methods: ['GET'])]
+    #[ScopeRequired(Scope::USERS_READ)]
     public function getUsers(
         #[MapQueryString] GetUsersInput $input,
     ): JsonResponse {
@@ -58,14 +61,11 @@ class UserController
     }
 
     #[Route('/user', methods: ['POST'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function createUser(
         #[MapRequestPayload] CreateUserInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-
-        if ($this->usageService->usersLimitReached($blog)) {
-            throw new UnprocessableEntityHttpException('Max users limit exceeded. Please upgrade your plan');
-        }
 
         if ($this->userService->getUserByHyvorUserId($blog, $input->hyvor_user_id) !== null) {
             throw new UnprocessableEntityHttpException('User is already added to the blog');
@@ -79,6 +79,9 @@ class UserController
         assert($organizationId !== null);
 
         if ($this->internalConfig->getDeployment()->isCloud()) {
+            if ($this->usageService->usersLimitReached($blog)) {
+                throw new UnprocessableEntityHttpException('Max users limit exceeded. Please upgrade your organization\'s Hyvor Blogs plan');
+            }
             try {
                 $verification = $this->comms->send(
                     new VerifyMember($organizationId, $input->hyvor_user_id),
@@ -98,6 +101,7 @@ class UserController
     }
 
     #[Route('/user/guest', methods: ['POST'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function createGuestUser(
         #[MapRequestPayload] CreateGuestUserInput $input,
     ): JsonResponse {
@@ -113,6 +117,7 @@ class UserController
     }
 
     #[Route('/user/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function updateUser(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] UpdateUserInput $input,
@@ -150,6 +155,7 @@ class UserController
     }
 
     #[Route('/user/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function deleteUser(#[MapBlogEntity] User $user): JsonResponse
     {
         if ($user->getRole() === UserRole::OWNER) {
@@ -162,6 +168,7 @@ class UserController
     }
 
     #[Route('/user/{id}/slug-available', methods: ['GET'])]
+    #[ScopeRequired(Scope::USERS_READ)]
     public function checkSlugAvailability(
         #[MapBlogEntity] User $user,
         #[MapQueryString] CheckUserSlugAvailableInput $input,
@@ -175,6 +182,7 @@ class UserController
     }
 
     #[Route('/user/{id}/variant', methods: ['POST'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function createVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] CreateUserVariantInput $input,
@@ -192,6 +200,7 @@ class UserController
     }
 
     #[Route('/user/{id}/variant', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function updateVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] UpdateUserVariantInput $input,
@@ -214,6 +223,7 @@ class UserController
     }
 
     #[Route('/user/{id}/variant', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::USERS_WRITE)]
     public function deleteVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] DeleteUserVariantInput $input,

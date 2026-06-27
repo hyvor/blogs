@@ -27,6 +27,7 @@ class ConsoleApiAuthorizationListener
     private const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
     private const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
     private const string RESOLVED_BLOG_USER_KEY = 'console_api_resolved_blog_user';
+    private const string RESOLVED_API_KEY_SCOPES_KEY = 'console_api_resolved_api_key_scopes';
 
     public function __construct(
         private AuthInterface $auth,
@@ -79,6 +80,8 @@ class ConsoleApiAuthorizationListener
         } else {
             $this->handleBlogSessionAuth($request, $blog);
         }
+
+        $this->verifyScope($event);
     }
 
     private function handleApiKeyAuth(Request $request, Blog $blog): void
@@ -91,8 +94,7 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('Invalid API key.');
         }
 
-        // TODO: verify scopes
-
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $apiKey->getScopes());
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
     }
 
@@ -127,8 +129,8 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('You do not have access to this blog');
         }
 
-        // TODO: verify scopes
-
+        // session-based blog users get all scopes; role-based access control is separate
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, null);
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
         $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
     }
@@ -160,6 +162,31 @@ class ConsoleApiAuthorizationListener
         $orgFromReq = (int)$request->headers->get('X-Organization-ID');
         if ($orgFromReq !== $me->getOrganization()->id) {
             throw new AccessDeniedHttpException('org_mismatch');
+        }
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    private function verifyScope(ControllerEvent $event): void
+    {
+        $attributes = $event->getAttributes(ScopeRequired::class);
+        $scopeRequiredAttribute = $attributes[0] ?? null;
+
+        assert(
+            $scopeRequiredAttribute instanceof ScopeRequired,
+            'ScopeRequired attribute must be set on all blog-level controller methods'
+        );
+
+        // null scopes = session auth, all scopes granted
+        $scopes = $event->getRequest()->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
+        assert(is_array($scopes));
+
+        $requiredScope = $scopeRequiredAttribute->scope->value;
+        if (!in_array($requiredScope, $scopes, true)) {
+            throw new AccessDeniedHttpException(
+                "API key is missing the required scope '$requiredScope'."
+            );
         }
     }
 

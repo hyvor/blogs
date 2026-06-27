@@ -33,6 +33,12 @@ class ApiKey
     #[ORM\Column(length: 32)]
     private string $api_key;
 
+    /**
+     * @var string[]
+     */
+    #[ORM\Column(type: 'json')]
+    private array $scopes = [];
+
     public function getId(): int
     {
         return $this->id;
@@ -107,6 +113,23 @@ class ApiKey
     public function setApiKey(string $api_key): static
     {
         $this->api_key = $api_key;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param string[] $scopes
+     */
+    public function setScopes(array $scopes): static
+    {
+        $this->scopes = $scopes;
         return $this;
     }
 }

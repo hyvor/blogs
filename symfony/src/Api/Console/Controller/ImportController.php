@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Object\Import\ImportObject;
 use App\Service\Import\ImportService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +19,7 @@ class ImportController
     }
 
     #[Route('/data/imports', methods: ['GET'])]
+    #[ScopeRequired(Scope::DATA_READ)]
     public function getImports(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

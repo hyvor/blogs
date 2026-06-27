@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Route\CreateRouteInput;
 use App\Api\Console\Input\Blog\Route\UpdateRouteInput;
 use App\Api\Console\Object\RouteObject;
@@ -23,6 +25,7 @@ class RouteController
     ) {}
 
     #[Route('/routes', methods: ['GET'])]
+    #[ScopeRequired(Scope::ROUTES_READ)]
     public function getRoutes(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -32,6 +35,7 @@ class RouteController
     }
 
     #[Route('/route', methods: ['POST'])]
+    #[ScopeRequired(Scope::ROUTES_WRITE)]
     public function createRoute(
         #[MapRequestPayload] CreateRouteInput $input,
     ): JsonResponse {
@@ -56,6 +60,7 @@ class RouteController
     }
 
     #[Route('/route/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::ROUTES_WRITE)]
     public function updateRoute(
         #[MapBlogEntity] RouteEntity $route,
         #[MapRequestPayload] UpdateRouteInput $input,
@@ -66,6 +71,7 @@ class RouteController
     }
 
     #[Route('/route/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::ROUTES_WRITE)]
     public function deleteRoute(#[MapBlogEntity] RouteEntity $route): JsonResponse
     {
         $this->routeService->deleteRoute($route);

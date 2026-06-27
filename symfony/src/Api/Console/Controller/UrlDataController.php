@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Input\Blog\UrlData\GetUrlDataInput;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -17,6 +19,7 @@ class UrlDataController
     }
 
     #[Route('/url-data', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
     public function getData(
         #[MapQueryString] GetUrlDataInput $input,
     ): JsonResponse {

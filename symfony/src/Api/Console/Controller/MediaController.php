@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Media\GetMediaInput;
 use App\Api\Console\Input\Blog\Media\SearchUnsplashInput;
 use App\Api\Console\Input\Blog\Media\UpdateMediaInput;
@@ -36,6 +38,7 @@ class MediaController
     ) {}
 
     #[Route('/media', methods: ['GET'])]
+    #[ScopeRequired(Scope::MEDIA_READ)]
     public function getMedia(
         #[MapQueryString] GetMediaInput $input = new GetMediaInput(),
     ): JsonResponse {
@@ -61,6 +64,7 @@ class MediaController
     }
 
     #[Route('/media', methods: ['POST'])]
+    #[ScopeRequired(Scope::MEDIA_WRITE)]
     public function uploadFile(Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -93,6 +97,7 @@ class MediaController
     }
 
     #[Route('/media/from-url', methods: ['POST'])]
+    #[ScopeRequired(Scope::MEDIA_WRITE)]
     public function uploadFileFromUrl(
         #[MapRequestPayload] UploadMediaFromUrlInput $input,
     ): JsonResponse {
@@ -112,6 +117,7 @@ class MediaController
     }
 
     #[Route('/media/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::MEDIA_WRITE)]
     public function updateMedia(
         #[MapBlogEntity] Media $media,
         #[MapRequestPayload] UpdateMediaInput $input,
@@ -126,6 +132,7 @@ class MediaController
     }
 
     #[Route('/media/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::MEDIA_WRITE)]
     public function deleteFile(#[MapBlogEntity] Media $media): JsonResponse
     {
         $this->mediaService->deleteMedia($media);
@@ -134,6 +141,7 @@ class MediaController
     }
 
     #[Route('/media/unsplash/search', methods: ['GET'])]
+    #[ScopeRequired(Scope::MEDIA_READ)]
     public function searchUnsplash(
         #[MapQueryString] SearchUnsplashInput $input,
     ): JsonResponse {

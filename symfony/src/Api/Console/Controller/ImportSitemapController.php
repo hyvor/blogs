@@ -3,6 +3,8 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Import\SitemapImportInput;
 use App\Api\Console\Input\Import\SitemapTestInput;
 use App\Api\Console\Object\Import\ImportObject;
@@ -52,6 +54,7 @@ class ImportSitemapController
     }
 
     #[Route('/data/import/sitemap/test', methods: ['POST'])]
+    #[ScopeRequired(Scope::DATA_WRITE)]
     public function test(#[MapRequestPayload] SitemapTestInput $input): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -86,6 +89,7 @@ class ImportSitemapController
     }
 
     #[Route('/data/import/sitemap/import', methods: ['POST'])]
+    #[ScopeRequired(Scope::DATA_WRITE)]
     public function import(#[MapRequestPayload] SitemapImportInput $input): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
