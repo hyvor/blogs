@@ -1,18 +1,13 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type {CustomDomainSetup, HostingInfo} from '../../../../lib/types';
-
+import type { CustomDomainSetup, HostingInfo } from '../../../../lib/types';
 
 export function getHostingInfo() {
 	return consoleApi.get<HostingInfo>({
-		endpoint: '/hosting',
-		v1: true
+		endpoint: '/hosting'
 	});
 }
 
-export function updateHostedAt(
-	hostingAt: 'subdomain' | 'self',
-	hostingUrl?: string
-	) {
+export function updateHostedAt(hostingAt: 'subdomain' | 'self', hostingUrl?: string) {
 	const data: Record<string, string> = {
 		hosting_at: hostingAt
 	};
@@ -26,8 +21,7 @@ export function updateHostedAt(
 
 	return consoleApi.post<HostingInfo>({
 		endpoint: '/hosting',
-		data: data,
-		v1: true,
+		data: data
 	});
 }
 
@@ -36,8 +30,7 @@ export function createCustomDomainSetup(domain: string) {
 		endpoint: '/hosting/custom-domain',
 		data: {
 			domain: domain
-		},
-		v1: true,
+		}
 	});
 }
 
@@ -47,22 +40,19 @@ export function updateCustomDomainSetup(oldDomain: string, newDomain: string) {
 		data: {
 			old_domain: oldDomain,
 			new_domain: newDomain
-		},
-		v1: true,
+		}
 	});
 }
 
 export function deleteCustomDomainSetup() {
 	return consoleApi.delete<void>({
-		endpoint: '/hosting/custom-domain',
-		v1: true,
+		endpoint: '/hosting/custom-domain'
 	});
 }
 
 export function verifyCustomDomainSetup() {
 	return consoleApi.post<CustomDomainSetup>({
-		endpoint: '/hosting/custom-domain/verify',
-		v1: true,
+		endpoint: '/hosting/custom-domain/verify'
 	});
 }
 

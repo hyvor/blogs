@@ -11,14 +11,15 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, and API keys scopes';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domain_setups, and API keys scopes';
     }
 
     public function up(Schema $schema): void
     {
 
-        // OIDC
-        $this->addSql(<<<SQL
+        // OIDC ====
+        $this->addSql(
+            <<<SQL
             CREATE TABLE oidc_users
             (
               id          SERIAL PRIMARY KEY,
@@ -35,7 +36,8 @@ final class Version20260501000000 extends AbstractMigration
         SQL
         );
         $this->addSql('CREATE INDEX idx_oidc_users_email ON oidc_users (email)');
-        $this->addSql(<<<SQL
+        $this->addSql(
+            <<<SQL
             CREATE TABLE oidc_sessions
             (
                 sess_id       VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -47,18 +49,48 @@ final class Version20260501000000 extends AbstractMigration
         );
         $this->addSql('CREATE INDEX idx_oidc_sessions_sess_lifetime ON oidc_sessions (sess_lifetime)');
 
-        // Webhooks
+        // Webhooks ====
         $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN try_count INTEGER NOT NULL DEFAULT 0');
         $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN last_try_at TIMESTAMPTZ');
 
-        // API keys scopes
+        // API keys scopes ====
         $this->addSql("ALTER TABLE api_keys ADD scopes JSON NOT NULL DEFAULT '[]'");
 
-        // User role
+        // User role ====
         // change 'owner' to 'admin'
         $this->addSql("UPDATE users SET role = 'admin' WHERE role = 'owner'");
+
+
+        // Custom Domain ====
+        $this->addSql(
+            <<<SQL
+                CREATE TYPE custom_domain_setup_status AS ENUM ('pending', 'active', 'failed');
+            SQL
+        );
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE custom_domain_setups (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+                status custom_domain_setup_status NOT NULL DEFAULT 'pending',
+                domain TEXT NOT NULL,
+                private_key_encrypted TEXT,
+                certificate TEXT,
+                valid_from timestamptz,
+                valid_to timestamptz
+            );
+            SQL
+        );
+
+        // 1 active and 1 pending setup per blog
+        $this->addSql("CREATE UNIQUE INDEX unique_active_custom_domain_setups ON custom_domain_setups(blog_id, domain) WHERE status = 'active'");
+        $this->addSql("CREATE UNIQUE INDEX unique_pending_custom_domain_setups ON custom_domain_setups(blog_id, domain) WHERE status = 'pending'");
+        $this->addSql("CREATE INDEX idx_custom_domain_setups_blog_id ON custom_domain_setups(blog_id)");
+        $this->addSql("CREATE INDEX idx_custom_domain_setups_domain ON custom_domain_setups(domain)");
     }
 
-    public function down(Schema $schema): void
-    {}
+    public function down(Schema $schema): void {}
 }

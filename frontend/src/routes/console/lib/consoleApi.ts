@@ -8,7 +8,6 @@ export interface ConsoleApiOptions {
 	data?: Record<string, any> | FormData;
 	userApi?: boolean;
 	subdomain?: string;
-	v1?: boolean;
 	signal?: AbortSignal;
 }
 
@@ -23,10 +22,9 @@ function getConsoleApi() {
 		method,
 		data = {},
 		subdomain,
-		v1 = false,
 		signal
 	}: CallOptions): Promise<T> {
-		const baseUrl = `/api/console/v${v1 ? '1' : '0'}`;
+		const baseUrl = `/api/console/v0`;
 
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
