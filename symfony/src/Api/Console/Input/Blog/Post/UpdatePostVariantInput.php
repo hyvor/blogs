@@ -3,6 +3,7 @@
 namespace App\Api\Console\Input\Blog\Post;
 
 use App\Entity\Enum\PostVariantStatus;
+use App\Service\Post\Content\Validation\ProsemirrorJson;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdatePostVariantInput
@@ -15,8 +16,10 @@ class UpdatePostVariantInput
 
     public ?PostVariantStatus $status = null;
 
+    #[ProsemirrorJson]
     public ?string $content = null;
 
+    #[ProsemirrorJson]
     public ?string $content_unsaved = null;
 
     #[Assert\Length(max: 255)]

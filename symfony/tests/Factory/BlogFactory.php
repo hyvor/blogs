@@ -59,7 +59,7 @@ final class BlogFactory extends PersistentObjectFactory
 
         $user = UserFactory::createOne(array_merge($userAttrs, [
             'blog' => $blog,
-            'role' => UserRole::OWNER
+            'role' => UserRole::ADMIN
         ]));
 
         return [$blog, $user];

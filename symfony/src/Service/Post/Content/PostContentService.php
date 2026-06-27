@@ -46,6 +46,7 @@ use App\Service\UrlData\UrlDataService;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 use Hyvor\Phrosemirror\Types\Schema;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -94,10 +95,11 @@ class PostContentService
 
     /**
      * @param array<mixed>|string $json
+     * @throws PhrosemirrorException
      */
-    public function getDocumentFromJson(array|string $json, Blog $blog): Document
+    public function getDocumentFromJson(array|string $json): Document
     {
-        return Document::fromJson($this->getSchema($blog), $json);
+        return Document::fromJson($this->getSchema(new Blog()), $json);
     }
 
     private function getSchema(Blog $blog, ?PostContentOptions $options = null): Schema

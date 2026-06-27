@@ -129,8 +129,7 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('You do not have access to this blog');
         }
 
-        // session-based blog users get all scopes; role-based access control is separate
-        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, null);
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
         $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
     }

@@ -6,6 +6,8 @@ use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserStatus;
+use App\Service\Post\Content\Validation\ProsemirrorJson;
+use App\Service\Post\Content\Validation\ProsemirrorJsonValidator;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -15,15 +17,36 @@ use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(ProsemirrorJson::class)]
+#[CoversClass(ProsemirrorJsonValidator::class)]
 class UpdatePostVariantTest extends ApiTestCase
 {
+
+    #[TestWith(['{"invalid_json": true,}', 'Unable to decode JSON'])]
+    #[TestWith(['{"type": "notdoc"}', 'The top node must be a doc node'])]
+    public function test_fails_when_json_invalid(string|int $content, string $error): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $blog->getLanguages()->first()]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $blog->getLanguages()->first()->getId(),
+            'content' => $content, // Invalid JSON
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'The value must be a valid Prosemirror JSON. Error: ' . $error);
+    }
+
     public function test_updates_variant_fields(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $user = UserFactory::createOne(['blog' => $blog]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT, 'slug' => null]);
