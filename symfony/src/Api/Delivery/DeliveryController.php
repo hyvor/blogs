@@ -54,12 +54,11 @@ class DeliveryController extends AbstractController
         return new JsonResponse($response);
     }
 
-
-    #[Route('/blog/{subdomain}/{path}', defaults: ['path' => null], requirements: ['path' => '.*'], methods: ['GET'])]
+    #[Route('/blog/{subdomain}/{path}', requirements: ['path' => '.*'], defaults: ['path' => null], methods: ['GET'])]
     public function blogOnSubdirectory(string $subdomain, ?string $path): Response
     {
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        
+
         if ($blog === null) {
             throw new NotFoundHttpException('Blog not found');
         }

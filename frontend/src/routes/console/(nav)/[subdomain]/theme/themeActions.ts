@@ -8,7 +8,7 @@ export function loadThemeFiles() {
 }
 
 export async function loadThemes() {
-	const response = await fetch('/api/special/themes');
+	const response = await fetch('/api/public/themes');
 
 	if (!response.ok) {
 		throw new Error('Failed to load themes');
