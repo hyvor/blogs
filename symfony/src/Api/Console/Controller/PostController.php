@@ -20,6 +20,7 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\PostService;
+use App\Service\Post\PostSlugService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +36,7 @@ class PostController
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private PostService $postService,
+        private PostSlugService $postSlugService,
         private LanguageService $languageService,
         private PostObjectFactory $postObjectFactory,
         private TagService $tagService,
@@ -206,21 +208,17 @@ class PostController
         $data = [];
 
         if ($input->slug !== null) {
-            $invalidChar = $this->postService->validateSlug($input->slug);
+            $invalidChar = $this->postSlugService->validateSlug($input->slug);
             if ($invalidChar !== null) {
                 throw new UnprocessableEntityHttpException("Slug cannot contain $invalidChar");
             }
 
-            $slugPost = $this->postService->getPostByVariantLanguageAndSlug($language, $input->slug);
-            if ($slugPost !== null && $slugPost->getId() !== $post->getId()) {
-                throw new UnprocessableEntityHttpException('Slug has already been taken');
+            $slugVariant = $this->postService->getPostVariantByLanguageAndSlug($language, $input->slug);
+            if ($slugVariant !== null && $slugVariant->getId() !== $variant->getId()) {
+                throw new UnprocessableEntityHttpException('Slug has already been taken by another post');
             }
 
             $data['slug'] = $input->slug;
-        }
-
-        if ($input->status !== null) {
-            $data['status'] = $input->status;
         }
 
         if ($input->content !== null) {
@@ -249,9 +247,23 @@ class PostController
 
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;
 
-        $variant = $this->postService->updatePostVariant($variant, $blog, $data, $redirectOnSlugChange);
+        $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
 
         return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+    }
+
+    #[Route('/post/{id}/variant/publish', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
+    public function publishPostVariant()
+    {
+        //
+    }
+
+    #[Route('/post/{id}/variant/publish', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
+    public function unpublishPostVariant()
+    {
+        //
     }
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]
@@ -330,8 +342,10 @@ class PostController
             throw new NotFoundHttpException('Language not found');
         }
 
-        $slugPost = $this->postService->getPostByVariantLanguageAndSlug($language, $input->slug);
-        $available = $slugPost === null || $slugPost->getId() === $post->getId();
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+
+        $slugVariant = $this->postService->getPostVariantByLanguageAndSlug($language, $input->slug);
+        $available = $slugVariant === null || ($variant !== null && $slugVariant->getId() === $variant->getId());
 
         return new JsonResponse(['available' => $available]);
     }

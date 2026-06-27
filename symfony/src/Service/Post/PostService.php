@@ -661,18 +661,11 @@ class PostService
         return $clone;
     }
 
-    public function getPostByVariantLanguageAndSlug(Language $language, string $slug): ?Post
+    public function getPostVariantByLanguageAndSlug(Language $language, string $slug): ?PostVariant
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('p')
-            ->from(Post::class, 'p')
-            ->join(PostVariant::class, 'pv', 'WITH', 'pv.post = p AND pv.language = :language AND pv.slug = :slug')
-            ->setParameter('language', $language)
-            ->setParameter('slug', $slug)
-            ->setMaxResults(1);
-
-        /** @var Post|null $result */
-        $result = $qb->getQuery()->getOneOrNullResult();
-        return $result;
+        return $this->em->getRepository(PostVariant::class)->findOneBy([
+            'language' => $language,
+            'slug' => $slug,
+        ]);
     }
 }

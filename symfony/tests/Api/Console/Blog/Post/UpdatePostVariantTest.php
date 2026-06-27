@@ -43,6 +43,34 @@ class UpdatePostVariantTest extends ApiTestCase
         $this->assertResponseFailed(422, 'The value must be a valid Prosemirror JSON. Error: ' . $error);
     }
 
+    public function test_when_language_not_found(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $blog->getLanguages()->first()]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => 9999, // Non-existent language ID
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Language not found');
+    }
+
+    public function test_when_variant_not_found(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        // No variant created for this post
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $blog->getLanguages()->first()->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(404, 'Post variant not found');
+    }
+
     public function test_updates_variant_fields(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-update']);
