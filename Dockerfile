@@ -60,7 +60,7 @@ COPY symfony/package-lock.json symfony/package.json ./
 RUN npm ci
 
 # supervisor
-RUN apt update && apt install -y supervisor
+RUN apt update && apt install -y supervisor && rm -rf /var/lib/apt/lists/*
 
 
 ###################################################
@@ -84,26 +84,25 @@ CMD ["/app/run"]
 ###################################################
 FROM backend-base AS final
 
-# install supervisor
-# create chef user
-RUN apt update && apt install -y supervisor \
-    && useradd --system --home-dir /var/www --create-home --shell /usr/sbin/nologin chef
-
 # copy files
 COPY symfony ./
 COPY --from=frontend-prod /app/frontend/build /app/static
 
 # install composer
-RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative
+# create chef user
+# set ownership for all runtime-writable directories
+RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative && \
+    composer clear-cache && \
+    rm /usr/local/bin/composer && \
+    useradd --system --home-dir /var/www --create-home --shell /usr/sbin/nologin chef && \
+    mkdir -p /app/backend/var && \
+    chown -R chef:chef /app/backend/var
 
 # copy configs
 COPY meta/image/Caddyfile /etc/caddy/Caddyfile
 COPY meta/image/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY meta/image/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY meta/image/run /app/run
-
-# set ownership for all runtime-writable directories
-RUN mkdir -p /app/backend/var && chown -R chef:chef /app/backend/var
 
 USER chef
 
