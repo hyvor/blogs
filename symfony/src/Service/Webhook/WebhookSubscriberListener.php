@@ -6,6 +6,7 @@ use App\Api\Console\Object\BlogObjectFactory;
 use App\Api\Console\Object\LanguageObject;
 use App\Api\Console\Object\MediaObjectFactory;
 use App\Api\Console\Object\NavigationObject;
+use App\Api\Console\Object\PostObjectFactory;
 use App\Api\Console\Object\RouteObject;
 use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObjectFactory;
@@ -24,6 +25,9 @@ use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Navigation\NavigationService;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Route\RouteService;
 use App\Service\Tag\Event\TagCreatedEvent;
@@ -41,10 +45,6 @@ use App\Service\User\Event\UserVariantUpdatedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-// TODO: PostCreatedEvent → POST_CREATED
-// TODO: PostUpdatedEvent, PostVariantUpdatedEvent, PostVariantCreatedEvent → POST_UPDATED
-// TODO: PostDeletedEvent, PostVariantDeletedEvent → POST_DELETED / POST_UPDATED
-
 class WebhookSubscriberListener
 {
     public function __construct(
@@ -58,6 +58,7 @@ class WebhookSubscriberListener
         private TagObjectFactory $tagObjectFactory,
         private MediaObjectFactory $mediaObjectFactory,
         private UserObjectFactory $userObjectFactory,
+        private PostObjectFactory $postObjectFactory,
     ) {}
 
     /**
@@ -283,6 +284,36 @@ class WebhookSubscriberListener
         $blog = $user->getBlog();
         $this->call($blog, WebhookEvent::USER_UPDATED, fn() => [
             'user' => (array) $this->userObjectFactory->create($user, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostVariantUpdated(PostVariantUpdatedEvent $event): void
+    {
+        $post = $event->variant->getPost();
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_UPDATED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostVariantPublished(PostVariantPublishedEvent $event): void
+    {
+        $post = $event->variant->getPost();
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_VARIANT_PUBLISHED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostVariantUnpublished(PostVariantUnpublishedEvent $event): void
+    {
+        $post = $event->variant->getPost();
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_VARIANT_UNPUBLISHED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
         ]);
     }
 

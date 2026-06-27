@@ -10,6 +10,9 @@ use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
@@ -39,6 +42,8 @@ use App\Tests\Factory\NavigationVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -540,6 +545,75 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         /** @var array{id: int} $mediaData */
         $mediaData = $delivery->getData()['media'];
         $this->assertSame($media->getId(), $mediaData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // PostVariantUpdatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_variant_updated_dispatches_post_updated(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_UPDATED],
+        ]);
+        $language = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+
+        $this->dispatch(new PostVariantUpdatedEvent($variant));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_UPDATED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // PostVariantPublishedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_variant_published_dispatches_post_variant_published(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_VARIANT_PUBLISHED],
+        ]);
+        $language = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+
+        $this->dispatch(new PostVariantPublishedEvent($variant));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_VARIANT_PUBLISHED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // PostVariantUnpublishedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_variant_unpublished_dispatches_post_variant_unpublished(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_VARIANT_UNPUBLISHED],
+        ]);
+        $language = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+
+        $this->dispatch(new PostVariantUnpublishedEvent($variant));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_VARIANT_UNPUBLISHED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
     }
 
     // -----------------------------------------------------------------------

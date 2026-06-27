@@ -15,6 +15,9 @@ use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Tag\Event\TagCreatedEvent;
@@ -35,6 +38,8 @@ use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
 use App\Tests\Factory\RedirectFactory;
 use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
@@ -293,6 +298,42 @@ class ClearCacheListenerTest extends KernelTestCase
         $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
 
         $this->dispatch(new UserVariantDeletedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_updated_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantUpdatedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_published_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantPublishedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_unpublished_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantUnpublishedEvent($variant));
 
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }

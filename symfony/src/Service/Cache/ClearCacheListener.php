@@ -21,6 +21,9 @@ use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
 use App\Service\Theme\Event\StylesEditedEvent;
 use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Route\PermalinkService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
@@ -29,9 +32,6 @@ use App\Service\User\Event\UserVariantDeletedEvent;
 use App\Service\User\Event\UserVariantUpdatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-
-// TODO: PostUpdatedEvent, PostDeletedEvent, PostVariantUpdatedEvent, PostVariantDeletedEvent → clearTemplateCache
-// TODO: GatedContentChangedEvent → clearTemplateCache
 
 
 class ClearCacheListener
@@ -114,6 +114,24 @@ class ClearCacheListener
     public function onTagVariantDeleted(TagVariantDeletedEvent $event): void
     {
         $this->cacheService->clearTemplateCache($event->variant->getTag()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantUpdated(PostVariantUpdatedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantPublished(PostVariantPublishedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantUnpublished(PostVariantUnpublishedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
     }
 
     #[AsEventListener]

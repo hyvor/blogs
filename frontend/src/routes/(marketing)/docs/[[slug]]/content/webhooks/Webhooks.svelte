@@ -51,6 +51,20 @@
 			<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
 		</div>
 	</TableRow>
+	<TableRow>
+		<div><code>post.variant.published</code></div>
+		<div>A post variant is published</div>
+		<div>
+			<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+		</div>
+	</TableRow>
+	<TableRow>
+		<div><code>post.variant.unpublished</code></div>
+		<div>A post variant is unpublished</div>
+		<div>
+			<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+		</div>
+	</TableRow>
 
 	<div class="separator"></div>
 

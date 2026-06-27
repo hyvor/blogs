@@ -11,6 +11,7 @@ use App\Api\Console\Input\Blog\Post\CreatePostInput;
 use App\Api\Console\Input\Blog\Post\CreatePostVariantInput;
 use App\Api\Console\Input\Blog\Post\DeletePostVariantInput;
 use App\Api\Console\Input\Blog\Post\GetPostsInput;
+use App\Api\Console\Input\Blog\Post\PublishPostVariantInput;
 use App\Api\Console\Input\Blog\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Blog\Post\UpdatePostInput;
 use App\Api\Console\Input\Blog\Post\UpdatePostTagsInput;
@@ -254,16 +255,48 @@ class PostController
 
     #[Route('/post/{id}/variant/publish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
-    public function publishPostVariant()
-    {
-        //
+    public function publishPostVariant(
+        #[MapBlogEntity] Post $post,
+        #[MapRequestPayload] PublishPostVariantInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $language = $this->languageService->getLanguageById($blog, $input->language_id);
+        if ($language === null) {
+            throw new UnprocessableEntityHttpException('Language not found');
+        }
+
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Variant not found');
+        }
+
+        $variant = $this->postService->publishPostVariant($variant, $blog);
+
+        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
     }
 
-    #[Route('/post/{id}/variant/publish', methods: ['POST'])]
+    #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
-    public function unpublishPostVariant()
-    {
-        //
+    public function unpublishPostVariant(
+        #[MapBlogEntity] Post $post,
+        #[MapRequestPayload] PublishPostVariantInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $language = $this->languageService->getLanguageById($blog, $input->language_id);
+        if ($language === null) {
+            throw new UnprocessableEntityHttpException('Language not found');
+        }
+
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Variant not found');
+        }
+
+        $variant = $this->postService->unpublishPostVariant($variant);
+
+        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
     }
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]

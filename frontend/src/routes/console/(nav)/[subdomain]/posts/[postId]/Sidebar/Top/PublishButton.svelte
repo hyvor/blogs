@@ -12,7 +12,7 @@
 	import IconSendFill from '@hyvor/icons/IconSendFill';
 	import { postVariantStore } from '../../../postStore';
 	import dayjs from 'dayjs';
-	import { updatePost, updatePostVariant } from '../../../postActions';
+	import { updatePost, publishPostVariant } from '../../../postActions';
 	import PublishedToast from './Toast/PublishedToast.svelte';
 
 	let modalOpen = $state(false);
@@ -34,15 +34,8 @@
 			return;
 		}
 
-		updatePostVariant(
-			{
-				status: type
-			},
-			true,
-			['url']
-		)
-			.then((res) => {
-				console.log(res);
+		publishPostVariant()
+			.then(() => {
 				toast.success(PublishedToast, { id: toastId, duration: 5000 });
 			})
 			.catch(() => {

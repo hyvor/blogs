@@ -68,7 +68,7 @@ class UpdatePostVariantTest extends ApiTestCase
             'language_id' => $blog->getLanguages()->first()->getId(),
         ], user: $user);
 
-        $this->assertResponseFailed(404, 'Post variant not found');
+        $this->assertResponseFailed(404, 'Variant not found');
     }
 
     public function test_updates_variant_fields(): void
@@ -100,9 +100,9 @@ class UpdatePostVariantTest extends ApiTestCase
         $this->assertSame(['world', 'test'], $json['seo_secondary_keywords']);
     }
 
-    public function test_auto_generates_slug_when_publishing_without_slug(): void
+    public function test_clears_seo_primary_keyword(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-pub']);
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-seo']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
@@ -110,22 +110,17 @@ class UpdatePostVariantTest extends ApiTestCase
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
-            'slug' => null,
-            'title' => 'My Post Title',
             'seo_primary_keyword' => 'my-post-title',
         ]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
             'language_id' => $language->getId(),
-            'status' => 'published',
             'seo_primary_keyword' => null,
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
-        $this->assertSame('published', $json['status']);
-        $this->assertNotEmpty($json['slug']);
         $this->assertNull($json['seo_primary_keyword']);
     }
 

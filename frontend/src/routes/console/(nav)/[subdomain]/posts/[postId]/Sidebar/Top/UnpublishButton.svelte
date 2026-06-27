@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Modal, toast } from '@hyvor/design/components';
 	import { postVariantStore } from '../../../postStore';
-	import { updatePostVariant } from '../../../postActions';
+	import { unpublishPostVariant } from '../../../postActions';
 	import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
 
 	let modalOpen = $state(false);
@@ -11,9 +11,7 @@
 
 		const toastId = toast.loading('Unpublishing...');
 
-		updatePostVariant({
-			status: 'draft'
-		})
+		unpublishPostVariant()
 			.then(() => {
 				toast.success('Post unpublished', { id: toastId });
 			})

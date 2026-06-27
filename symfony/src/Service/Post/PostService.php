@@ -11,6 +11,9 @@ use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Connection;
@@ -19,7 +22,7 @@ use Doctrine\ORM\QueryBuilder as OrmQB;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PostService
 {
@@ -31,6 +34,8 @@ class PostService
         private LanguageService $languageService,
         private PermalinkService $permalinkService,
         private RedirectService $redirectService,
+        private EventDispatcherInterface $ed,
+        private PostSlugService $postSlugService,
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -487,7 +492,6 @@ class PostService
     /**
      * @param array{
      *     slug?: string|null,
-     *     status?: PostVariantStatus,
      *     content?: string|null,
      *     content_unsaved?: string|null,
      *     title?: string|null,
@@ -506,30 +510,6 @@ class PostService
 
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
-        }
-
-        if (array_key_exists('status', $data)) {
-            $status = $data['status'];
-            $variant->setStatus($status);
-
-            if ($status === PostVariantStatus::PUBLISHED) {
-                $post = $variant->getPost();
-                if ($post->getPublishedAt() === null) {
-                    $post->setPublishedAt($this->now());
-                }
-
-                if ($variant->getSlug() === null) {
-                    $title = $variant->getTitle() ?? ($data['title'] ?? null);
-                    $slugger = new AsciiSlugger();
-                    $slug = $title ? strtolower((string)$slugger->slug($title)) : bin2hex(random_bytes(8));
-
-                    if ($this->getPostByVariantLanguageAndSlug($variant->getLanguage(), $slug) !== null) {
-                        $slug = bin2hex(random_bytes(8));
-                    }
-
-                    $variant->setSlug($slug);
-                }
-            }
         }
 
         if (array_key_exists('content', $data)) {
@@ -579,6 +559,42 @@ class PostService
                 }
             }
         }
+
+        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+
+        return $variant;
+    }
+
+    public function publishPostVariant(PostVariant $variant, Blog $blog): PostVariant
+    {
+        if ($variant->getSlug() === null) {
+            $slug = $this->postSlugService->generateUniqueSlug($variant->getLanguage(), $variant->getTitle());
+            $variant->setSlug($slug);
+        }
+
+        $post = $variant->getPost();
+        if ($post->getPublishedAt() === null) {
+            $post->setPublishedAt($this->now());
+        }
+
+        $variant->setStatus(PostVariantStatus::PUBLISHED);
+        $variant->setUpdatedAt($this->now());
+        $this->em->flush();
+
+        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+        $this->ed->dispatch(new PostVariantPublishedEvent($variant));
+
+        return $variant;
+    }
+
+    public function unpublishPostVariant(PostVariant $variant): PostVariant
+    {
+        $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setUpdatedAt($this->now());
+        $this->em->flush();
+
+        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+        $this->ed->dispatch(new PostVariantUnpublishedEvent($variant));
 
         return $variant;
     }

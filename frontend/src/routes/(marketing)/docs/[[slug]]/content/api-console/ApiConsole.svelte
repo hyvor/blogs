@@ -151,6 +151,8 @@ type Response = BlogVariant
 	<li><code>DELETE /post/{`{id}`}</code> - Delete a post/page</li>
 	<li><code>POST /post/{`{id}`}/variant</code> - Create a post variant</li>
 	<li><code>PATCH /post/{`{id}`}/variant</code> - Update a post variant</li>
+	<li><code>POST /post/{`{id}`}/variant/publish</code> - Publish a post variant</li>
+	<li><code>POST /post/{`{id}`}/variant/unpublish</code> - Unpublish a post variant</li>
 	<li><code>DELETE /post/{`{id}`}/variant</code> - Delete a post variant</li>
 	<li><code>PATCH /post/{`{id}`}/tags</code> - Update post tags</li>
 	<li><code>PATCH /post/{`{id}`}/authors</code> - Update post authors</li>
@@ -265,7 +267,6 @@ type Response = PostVariant
 type Request = {
     language_id: number,
     slug?: string, // max 255 chars
-    status?: 'draft' | 'published' | 'scheduled',
     content?: string | null,
     content_unsaved?: string | null,
     title?: string | null, // max 255 chars
@@ -279,6 +280,41 @@ type Response = PostVariant
 	<code>content</code> and <code>content_unsaved</code> should be in ProseMirror JSON format. See
 	<a href="/docs/api-console#get-prosemirror-json">Get ProseMirror JSON endpoint</a> to convert HTML to
 	ProseMirror JSON.
+</p>
+
+<h4 id="publish-post-variant">Publish a post variant</h4>
+<p><code>POST /post/{`{id}`}/variant/publish</code></p>
+<CodeBlock
+	language="ts"
+	code={`
+type Request = {
+    language_id: number
+}
+type Response = PostVariant
+`}
+/>
+
+<p>
+	Publishes a post variant. If the variant does not have a slug, one is automatically generated
+	from the title. If the post does not have a <code>published_at</code> time, it is set to now.
+	Requires <code>posts.publish.own</code> scope.
+</p>
+
+<h4 id="unpublish-post-variant">Unpublish a post variant</h4>
+<p><code>POST /post/{`{id}`}/variant/unpublish</code></p>
+<CodeBlock
+	language="ts"
+	code={`
+type Request = {
+    language_id: number
+}
+type Response = PostVariant
+`}
+/>
+
+<p>
+	Sets the variant status back to <code>draft</code>. Works on both published and scheduled
+	variants. Requires <code>posts.publish.own</code> scope.
 </p>
 
 <h4 id="delete-post-variant">Delete a post variant</h4>
