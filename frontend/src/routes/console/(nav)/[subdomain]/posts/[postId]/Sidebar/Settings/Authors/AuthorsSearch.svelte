@@ -3,7 +3,7 @@
 	import { Loader, Text, TextInput } from '@hyvor/design/components';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { User } from '../../../../../../../lib/types';
-	import { getUsers, searchUsers } from '../../../../../settings/users/userActions';
+	import { getUsers } from '../../../../../settings/users/userActions';
 
 	let isLoading = $state(true);
 	let users: User[] = $state([]);
@@ -29,7 +29,7 @@
 		}
 
 		setTimeout(() => {
-			searchUsers({ search }).then((res) => {
+			getUsers({ search }).then((res) => {
 				isLoading = false;
 				searchedUsers = res;
 			});

@@ -68,8 +68,8 @@ class DevSeedCommand extends Command
 
             $users = [];
             $userConfigs = [
-                ['role' => UserRole::OWNER, 'hyvor_user_id' => 1, 'status' => UserStatus::ACTIVE],
-                ['role' => UserRole::ADMIN, 'hyvor_user_id' => 2, 'status' => UserStatus::ACTIVE],
+                // ['role' => UserRole::OWNER, 'hyvor_user_id' => 1, 'status' => UserStatus::ACTIVE],
+                ['role' => UserRole::ADMIN, 'hyvor_user_id' => 1, 'status' => UserStatus::ACTIVE],
             ];
             foreach ($userConfigs as $userConfig) {
                 $user = UserFactory::createOne(array_merge(['blog' => $blog], $userConfig));

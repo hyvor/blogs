@@ -98,8 +98,7 @@ class UserService
         int $limit,
         int $offset = 0,
         ?string $search = null,
-    ): array
-    {
+    ): array {
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
         $qb = $this->em->createQueryBuilder()
@@ -110,9 +109,9 @@ class UserService
             ->andWhere('uv.language = :language')
             ->setParameter('blog', $blog)
             ->setParameter('language', $primaryLanguage)
-            ->orderBy('CASE WHEN u.role = :ownerRole THEN 0 ELSE 1 END', 'ASC')
+            ->orderBy('CASE WHEN u.role = :adminRole THEN 0 ELSE 1 END', 'ASC')
             ->addOrderBy('u.posts_count', 'DESC')
-            ->setParameter('ownerRole', UserRole::OWNER)
+            ->setParameter('adminRole', UserRole::ADMIN)
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
