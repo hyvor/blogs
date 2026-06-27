@@ -8,16 +8,8 @@ use App\Http\Controllers\Special\SyntaxController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/api/special')->group(function () {
-
-    Route::get('caddy/allowed-domain', [CaddyController::class, 'checkDomain']);
-    Route::post('themes/publish', [GithubThemeController::class, 'publish']);
-
-    Route::get('/health', fn() => 'ok');
-
     Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
     Route::get('/config', [ConsoleController::class, 'getConfig']);
-
-    Route::get('/syntax', [SyntaxController::class, 'getData']);
 });
 
 // TODO: Migrate these to public API

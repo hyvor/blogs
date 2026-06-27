@@ -83,15 +83,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": {
-        "local": {
-            "type": "path",
-            "url": "./packages/*",
-            "options": {
-                "symlink": true
-            }
-        }
-    },
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
