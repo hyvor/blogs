@@ -2,7 +2,7 @@
 
 namespace App\Entity\Enum;
 
-enum CustomDomainSetupStatus: string
+enum CustomDomainStatus: string
 {
     case PENDING = 'pending';
     case ACTIVE = 'active';

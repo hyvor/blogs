@@ -3,8 +3,8 @@
 namespace App\Service\CustomDomain;
 
 use App\Entity\Blog;
-use App\Entity\Enum\CustomDomainSetupStatus;
-use App\Entity\CustomDomainSetup;
+use App\Entity\Enum\CustomDomainStatus;
+use App\Entity\CustomDomain;
 use App\Service\CustomDomain\Acme\AcmeClient;
 use App\Service\CustomDomain\Acme\AcmeException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +21,7 @@ class CustomDomainService
         private Encryption $encryption,
     ) {}
 
-    public function getDecryptedPrivateKeyPem(CustomDomainSetup $cert): string
+    public function getDecryptedPrivateKeyPem(CustomDomain $cert): string
     {
         $privateKeyEncrypted = $cert->getPrivateKeyEncrypted();
         if ($privateKeyEncrypted === null) {
@@ -31,7 +31,7 @@ class CustomDomainService
         return $this->encryption->decryptString($privateKeyEncrypted);
     }
 
-    public function getDecryptedPrivateKey(CustomDomainSetup $cert): \OpenSSLAsymmetricKey
+    public function getDecryptedPrivateKey(CustomDomain $cert): \OpenSSLAsymmetricKey
     {
         $privateKeyPem = $this->getDecryptedPrivateKeyPem($cert);
 
@@ -43,50 +43,47 @@ class CustomDomainService
         return $privateKey;
     }
 
-    public function createCustomDomainSetup(Blog $blog, string $domain): CustomDomainSetup
+    public function createCustomDomain(Blog $blog, string $domain): CustomDomain
     {
         $privateKeyPem = PrivateKey::generatePrivateKeyPem();
         $encryptedPrivateKey = $this->encryption->encryptString($privateKeyPem);
 
-        $customDomainSetup = new CustomDomainSetup();
-        $customDomainSetup->setBlog($blog);
-        $customDomainSetup->setDomain($domain);
-        $customDomainSetup->setCreatedAt($this->now());
-        $customDomainSetup->setUpdatedAt($this->now());
-        $customDomainSetup->setStatus(CustomDomainSetupStatus::PENDING);
-        $customDomainSetup->setPrivateKeyEncrypted($encryptedPrivateKey);
+        $customDomain = new CustomDomain();
+        $customDomain->setBlog($blog);
+        $customDomain->setDomain($domain);
+        $customDomain->setCreatedAt($this->now());
+        $customDomain->setUpdatedAt($this->now());
+        $customDomain->setStatus(CustomDomainStatus::PENDING);
+        $customDomain->setPrivateKeyEncrypted($encryptedPrivateKey);
 
-        $this->em->persist($customDomainSetup);
+        $this->em->persist($customDomain);
         $this->em->flush();
 
-        return $customDomainSetup;
+        return $customDomain;
     }
 
-    public function updateCustomDomainSetup(
-        CustomDomainSetup $customDomainSetup,
-        string $domain
-    ): CustomDomainSetup
+    public function updateCustomDomain(CustomDomain $customDomain, string $domain): CustomDomain
     {
-        if ($customDomainSetup->getStatus() !== CustomDomainSetupStatus::PENDING) {
-            throw new \RuntimeException('Only pending custom domain setup can be updated');
+        if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
+            throw new \RuntimeException('Only pending custom domain can be updated');
         }
 
-        $customDomainSetup->setDomain($domain);
-        $customDomainSetup->setUpdatedAt($this->now());
+        $customDomain->setDomain($domain);
+        $customDomain->setUpdatedAt($this->now());
 
-        $this->em->persist($customDomainSetup);
+        $this->em->persist($customDomain);
         $this->em->flush();
 
-        return $customDomainSetup;
+        return $customDomain;
     }
 
-    public function deleteCustomDomainSetup(CustomDomainSetup $customDomainSetup): void
+    public function deleteCustomDomain(CustomDomain $customDomain): void
     {
-        $this->em->remove($customDomainSetup);
+        $this->em->remove($customDomain);
         $this->em->flush();
     }
 
-    public function getCustomDomainSetup(Blog $blog, ?string $domain = null): ?CustomDomainSetup
+    public function getCustomDomain(Blog $blog, ?string $domain = null): ?CustomDomain
     {
         $criteria = ['blog' => $blog];
 
@@ -95,26 +92,26 @@ class CustomDomainService
         }
 
         // TODO: what if there multiple records?
-        return $this->em->getRepository(CustomDomainSetup::class)
+        return $this->em->getRepository(CustomDomain::class)
             ->findOneBy($criteria);
     }
 
     /**
      * @throws AcmeException
      */
-    public function verifyCustomDomainSetup(CustomDomainSetup $customDomainSetup): CustomDomainSetup
+    public function verifyCustomDomain(CustomDomain $customDomain): CustomDomain
     {
-        $this->generateCertificate($customDomainSetup);
-        return $customDomainSetup;
+        $this->generateCertificate($customDomain);
+        return $customDomain;
     }
 
     /**
      * @throws AcmeException
      */
-    public function generateCertificate(CustomDomainSetup $customDomainSetup): void
+    public function generateCertificate(CustomDomain $customDomain): void
     {
-        $domain = $customDomainSetup->getDomain();
-        $privateKey = $this->getDecryptedPrivateKey($customDomainSetup);
+        $domain = $customDomain->getDomain();
+        $privateKey = $this->getDecryptedPrivateKey($customDomain);
 
         $this->acmeClient->preVerifyDomain($domain);
         $this->acmeClient->init();
@@ -122,7 +119,7 @@ class CustomDomainService
         $finalCert = $this->acmeClient->finalizeOrder($order, $privateKey);
 
         $this->activateTlsCertificate(
-            $customDomainSetup,
+            $customDomain,
             $finalCert->certificatePem,
             $finalCert->validFrom,
             $finalCert->validTo
@@ -130,13 +127,13 @@ class CustomDomainService
     }
 
     public function activateTlsCertificate(
-        CustomDomainSetup  $tlsCertificate,
+        CustomDomain       $tlsCertificate,
         string             $certPem,
         \DateTimeImmutable $validFrom,
         \DateTimeImmutable $validTo
     ): void
     {
-        $tlsCertificate->setStatus(CustomDomainSetupStatus::ACTIVE);
+        $tlsCertificate->setStatus(CustomDomainStatus::ACTIVE);
         $tlsCertificate->setCertificate($certPem);
         $tlsCertificate->setValidFrom($validFrom);
         $tlsCertificate->setValidTo($validTo);

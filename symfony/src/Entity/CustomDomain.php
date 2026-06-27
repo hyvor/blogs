@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\CustomDomainSetupStatus;
-use App\Repository\CustomDomainSetupRepository;
+use App\Entity\Enum\CustomDomainStatus;
+use App\Repository\CustomDomainRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CustomDomainSetupRepository::class)]
-#[ORM\Table(name: 'custom_domain_setups')]
-class CustomDomainSetup
+#[ORM\Entity(repositoryClass: CustomDomainRepository::class)]
+#[ORM\Table(name: 'custom_domains')]
+class CustomDomain
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,8 +28,8 @@ class CustomDomainSetup
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(length: 255, enumType: CustomDomainSetupStatus::class, options: ['default' => 'pending'])]
-    private CustomDomainSetupStatus $status = CustomDomainSetupStatus::PENDING;
+    #[ORM\Column(length: 255, enumType: CustomDomainStatus::class, options: ['default' => 'pending'])]
+    private CustomDomainStatus $status = CustomDomainStatus::PENDING;
 
     #[ORM\Column]
     private string $domain;
@@ -101,12 +101,12 @@ class CustomDomainSetup
         return $this;
     }
 
-    public function getStatus(): CustomDomainSetupStatus
+    public function getStatus(): CustomDomainStatus
     {
         return $this->status;
     }
 
-    public function setStatus(CustomDomainSetupStatus $status): static
+    public function setStatus(CustomDomainStatus $status): static
     {
         $this->status = $status;
         return $this;

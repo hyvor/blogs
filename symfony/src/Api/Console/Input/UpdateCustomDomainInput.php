@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Input;
 
-class UpdateCustomDomainSetupInput
+class UpdateCustomDomainInput
 {
     public string $old_domain;
     public string $new_domain;

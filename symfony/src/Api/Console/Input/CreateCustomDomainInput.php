@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Input;
 
-class CreateCustomDomainSetupInput
+class CreateCustomDomainInput
 {
     public string $domain;
 }

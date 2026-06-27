@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Entity\CustomDomain;
 use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
 use App\Entity\Language;
@@ -63,6 +64,10 @@ class Blog
 
     #[ORM\Column(nullable: true, options: ['default' => true])]
     private ?bool $hosting_redirect_subdomain = true;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
+    private ?CustomDomain $custom_domain = null;
 
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
     private BlogMeta $meta;
@@ -258,6 +263,17 @@ class Blog
     public function setHostingRedirectSubdomain(?bool $hosting_redirect_subdomain): static
     {
         $this->hosting_redirect_subdomain = $hosting_redirect_subdomain;
+        return $this;
+    }
+
+    public function getCustomDomain(): ?CustomDomain
+    {
+        return $this->custom_domain;
+    }
+
+    public function setCustomDomain(?CustomDomain $custom_domain): static
+    {
+        $this->custom_domain = $custom_domain;
         return $this;
     }
 

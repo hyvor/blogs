@@ -2,7 +2,7 @@
 
 namespace App\Service\CustomDomain\MessageHandler;
 
-use App\Entity\CustomDomainSetup;
+use App\Entity\CustomDomain;
 use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use App\Service\CustomDomain\CustomDomainService;
@@ -23,8 +23,8 @@ class RegenerateExpiredTlsCertificatesMessageHandler
     public function __invoke(RegenerateExpiredTlsCertificatesMessage $message): void
     {
         // Get TLS certificates where valid_to is in the past
-        /** @var CustomDomainSetup[] $expiredCerts */
-        $expiredCerts = $this->em->getRepository(CustomDomainSetup::class)
+        /** @var CustomDomain[] $expiredCerts */
+        $expiredCerts = $this->em->getRepository(CustomDomain::class)
             ->createQueryBuilder('tc')
             ->where('tc.valid_to < :date')
             ->setParameter('date', $this->now()->modify('-14 days'))
