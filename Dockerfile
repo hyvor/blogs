@@ -46,22 +46,11 @@ FROM frankenphp AS backend-base
 WORKDIR /app/backend
 
 # install php and dependencies
+# install supervisor
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache apcu
-
-# install npm and dependencies
-COPY --from=node /usr/local/include/node /usr/local/include/node
-COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=node /usr/local/bin/node /usr/local/bin/node
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
-
-# install npm dependencies (shiki) for symfony
-COPY symfony/package-lock.json symfony/package.json ./
-RUN npm ci
-
-# supervisor
-RUN apt update && apt install -y supervisor && rm -rf /var/lib/apt/lists/*
-
+RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache apcu && \
+    apt update && apt install -y supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
 ###################################################
 FROM backend-base AS backend-dev
