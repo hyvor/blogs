@@ -2,52 +2,19 @@
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
+/**
+ * X-Router = delivery is set by Caddyfile for non-app routes (blog delivery)
+ */
 return static function (RoutingConfigurator $routes): void {
-    // data API
-    $routes->import('../../src/Api/Data/Controller', 'attribute')
-        ->prefix('/api/data/v0/{subdomain}')
-        ->namePrefix('api_data_');
-
-    // console API
+    // app routes
+    // (ex: blogs.hyvor.com)
     $routes
-        ->import('../../src/Api/Console/ControllerOrg', 'attribute')
-        ->prefix('/api/console/v0')
-        ->namePrefix('api_console_');
+        ->import('./app.php')
+        ->condition('request.headers.get("X-Router") === null');
+
+    // delivery routes
+    // (ex: subdomain.hyvorblogs.io and custom domains)
     $routes
-        ->import('../../src/Api/Console/Controller', 'attribute')
-        ->prefix('/api/console/v0/blog/{subdomain}')
-        ->namePrefix('api_console_');
-
-    // CLI API
-    $routes
-        ->import('../../src/Api/Cli/Controller', 'attribute')
-        ->prefix('/api/cli/{subdomain}')
-        ->namePrefix('api_cli_');
-
-    // delivery API
-    $routes
-        ->import('../../src/Api/Delivery', 'attribute')
-        ->namePrefix('api_delivery_');
-
-    // public API
-    $routes
-        ->import('../../src/Api/Public', 'attribute')
-        ->prefix('/api/public')
-        ->namePrefix('api_public_');
-
-    // misc routes
-    $routes->import('../../src/Api/Misc', 'attribute')->namePrefix('api_misc_');
-
-    // internal API routes
-    $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');
-
-    // OIDC routes
-    $routes->import('@InternalBundle/src/Controller/OidcController.php', 'attribute')
-        ->prefix('/api/oidc')
-        ->namePrefix('api_oidc_');
-
-    // sudo API routes
-    $routes->import('../../src/Api/Sudo/Controller', 'attribute')
-        ->prefix('/api/sudo')
-        ->namePrefix('api_sudo_');
+        ->import('./delivery.php')
+        ->condition('request.headers.get("X-Router") === "delivery"');
 };

@@ -5,6 +5,20 @@
 
 :80 {
 
+    @delivery {
+        host *.hyvorblogs.localhost
+        host custom-domain.localhost
+    }
+
+    handle @delivery {
+        request_header X-Router delivery
+        root /app/backend/public
+        php_server {
+            file_server off
+            try_files index.php
+        }
+    }
+
     handle {
         root /app/backend/public
         php_server {

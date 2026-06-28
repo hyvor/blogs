@@ -2,7 +2,7 @@
 
 namespace App\Tests\Api\Delivery;
 
-use App\Api\Delivery\DeliveryController;
+use App\Api\Delivery\AppDeliveryController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Tests\Case\ApiTestCase;
@@ -10,7 +10,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(DeliveryController::class)]
+#[CoversClass(AppDeliveryController::class)]
 class BlogOnSubdirectoryTest extends ApiTestCase
 {
     public function test_blog_on_subdirectory(): void
