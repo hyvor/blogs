@@ -38,7 +38,7 @@ class MediaController
     ) {}
 
     #[Route('/media', methods: ['GET'])]
-    #[ScopeRequired(Scope::MEDIA_READ)]
+    #[ScopeRequired(Scope::MEDIA_MANAGE)]
     public function getMedia(
         #[MapQueryString] GetMediaInput $input = new GetMediaInput(),
     ): JsonResponse {
@@ -64,7 +64,7 @@ class MediaController
     }
 
     #[Route('/media', methods: ['POST'])]
-    #[ScopeRequired(Scope::MEDIA_WRITE)]
+    #[ScopeRequired(Scope::MEDIA_UPLOAD)]
     public function uploadFile(Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -97,7 +97,7 @@ class MediaController
     }
 
     #[Route('/media/from-url', methods: ['POST'])]
-    #[ScopeRequired(Scope::MEDIA_WRITE)]
+    #[ScopeRequired(Scope::MEDIA_UPLOAD)]
     public function uploadFileFromUrl(
         #[MapRequestPayload] UploadMediaFromUrlInput $input,
     ): JsonResponse {
@@ -117,7 +117,7 @@ class MediaController
     }
 
     #[Route('/media/{id}', methods: ['PATCH'])]
-    #[ScopeRequired(Scope::MEDIA_WRITE)]
+    #[ScopeRequired(Scope::MEDIA_MANAGE)]
     public function updateMedia(
         #[MapBlogEntity] Media $media,
         #[MapRequestPayload] UpdateMediaInput $input,
@@ -132,7 +132,7 @@ class MediaController
     }
 
     #[Route('/media/{id}', methods: ['DELETE'])]
-    #[ScopeRequired(Scope::MEDIA_WRITE)]
+    #[ScopeRequired(Scope::MEDIA_MANAGE)]
     public function deleteFile(#[MapBlogEntity] Media $media): JsonResponse
     {
         $this->mediaService->deleteMedia($media);
@@ -141,7 +141,7 @@ class MediaController
     }
 
     #[Route('/media/unsplash/search', methods: ['GET'])]
-    #[ScopeRequired(Scope::MEDIA_READ)]
+    #[ScopeRequired(Scope::MEDIA_MANAGE)]
     public function searchUnsplash(
         #[MapQueryString] SearchUnsplashInput $input,
     ): JsonResponse {
