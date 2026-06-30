@@ -6,6 +6,8 @@ use App\Entity\Blog;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
 use App\Service\Media\MediaUploadException;
+use App\Service\Post\Content\Nodes\Audio\Audio;
+use App\Service\Post\Content\Nodes\Image\Image;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
@@ -94,8 +96,8 @@ class Importer
 
         $document->traverse(function (Node $node) {
             if (
-                $node->isOfType(\App\Service\Post\Content\Nodes\Image\Image::class) ||
-                $node->isOfType(\App\Service\Post\Content\Nodes\Audio\Audio::class)
+                $node->isOfType(Image::class) ||
+                $node->isOfType(Audio::class)
             ) {
                 $src = $node->attr('src');
                 $src = is_string($src) ? $src : '';
