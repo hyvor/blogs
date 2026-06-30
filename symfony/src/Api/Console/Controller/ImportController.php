@@ -19,7 +19,7 @@ class ImportController
     }
 
     #[Route('/data/imports', methods: ['GET'])]
-    #[ScopeRequired(Scope::DATA_READ)]
+    #[ScopeRequired(Scope::IMPORT_MANAGE)]
     public function getImports(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
