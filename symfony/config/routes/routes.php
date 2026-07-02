@@ -21,6 +21,6 @@ return static function (RoutingConfigurator $routes): void {
 
     // custom domain delivery
     $routes
-        ->import('../../src/Api/Delivery/SubdomainController.php', 'attribute')
-        ->condition('request.headers.get("X-Router") === "subdomain"');
+        ->import('../../src/Api/Delivery/CustomDomainController.php', 'attribute')
+        ->condition('request.headers.get("X-Router") === "customdomain"');
 };

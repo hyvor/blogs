@@ -95,6 +95,15 @@ class CustomDomainService
         return $this->em->getRepository(CustomDomain::class)->findOneBy(['blog' => $blog]);
     }
 
+    public function getBlogByCustomDomain(string $domain): ?Blog
+    {
+        $customDomain = $this->getCustomDomain($domain);
+        if ($customDomain === null) {
+            return null;
+        }
+        return $customDomain->getBlog();
+    }
+
     /**
      * @throws AcmeException
      */
