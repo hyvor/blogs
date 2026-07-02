@@ -2,9 +2,12 @@
 
 namespace App\Api\Delivery;
 
+use App\Entity\Enum\BlogHostingAt;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
 use App\Service\Delivery\DeliveryService;
+use App\Service\Route\PermalinkService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -15,7 +18,8 @@ class SubdomainController
     public function __construct(
         private DeliveryService $deliveryService,
         private AppConfig $appConfig,
-        private BlogService $blogService
+        private BlogService $blogService,
+        private PermalinkService $permalinkService
     ) {}
 
     #[Route(
@@ -41,6 +45,17 @@ class SubdomainController
         }
 
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
+
+        if ($blog === null) {
+            throw new HttpException(404, 'Blog not found for subdomain: ' . $subdomain);
+        }
+
+        if (
+            $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN &&
+            $blog->getHostingRedirectSubdomain()
+        ) {
+            return new RedirectResponse($this->permalinkService->getFullUrlFromPath($blog, $path), 302);
+        }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);
     }

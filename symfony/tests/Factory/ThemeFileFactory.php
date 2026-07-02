@@ -2,6 +2,8 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
+use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\ThemeFile;
 use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -49,5 +51,15 @@ final class ThemeFileFactory extends PersistentObjectFactory
         return $this
             // ->afterInstantiate(function(ThemeFile $themeFile): void {})
         ;
+    }
+
+    public static function createIndexTwig(Blog $blog, string $content): ThemeFile
+    {
+        return self::createOne([
+            'blog' => $blog,
+            'name' => 'index.twig',
+            'folder' => ThemeFileFolder::TEMPLATES,
+            'content' => $content,
+        ]);
     }
 }

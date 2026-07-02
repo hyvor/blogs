@@ -62,8 +62,8 @@ class Blog
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
 
-    #[ORM\Column(nullable: true, options: ['default' => true])]
-    private ?bool $hosting_redirect_subdomain = true;
+    #[ORM\Column()]
+    private bool $hosting_redirect_subdomain = true;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
@@ -255,12 +255,12 @@ class Blog
         return $this;
     }
 
-    public function getHostingRedirectSubdomain(): ?bool
+    public function getHostingRedirectSubdomain(): bool
     {
         return $this->hosting_redirect_subdomain;
     }
 
-    public function setHostingRedirectSubdomain(?bool $hosting_redirect_subdomain): static
+    public function setHostingRedirectSubdomain(bool $hosting_redirect_subdomain): static
     {
         $this->hosting_redirect_subdomain = $hosting_redirect_subdomain;
         return $this;
