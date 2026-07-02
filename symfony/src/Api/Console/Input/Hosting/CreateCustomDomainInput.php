@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Console\Input;
+namespace App\Api\Console\Input\Hosting;
 
 class CreateCustomDomainInput
 {

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { Button, Tag } from '@hyvor/design/components';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		title: string;
-		subtitle: string;
+		subtitle: string | Snippet;
 		active: boolean;
 		buttonLabel: string;
 		onclick: () => void;
@@ -25,7 +26,13 @@
 			<Tag color={tag.color} size="small">{tag.label}</Tag>
 		{/if}
 	</div>
-	<p class="hosting-option-subtitle">{subtitle}</p>
+	<p class="hosting-option-subtitle">
+		{#if typeof subtitle === 'string'}
+			{subtitle}
+		{:else}
+			{@render subtitle()}
+		{/if}
+	</p>
 
 	<div class="button-wrap">
 		<Button size="small" variant="outline" disabled={active} {onclick}>{buttonLabel}</Button>

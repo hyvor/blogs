@@ -5,12 +5,13 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\UpdateHostingAtInput;
-use App\Api\Console\Input\CreateCustomDomainInput;
-use App\Api\Console\Input\UpdateCustomDomainInput;
+use App\Api\Console\Input\Hosting\CreateCustomDomainInput;
+use App\Api\Console\Input\Hosting\UpdateCustomDomainInput;
+use App\Api\Console\Input\Hosting\UpdateHostingInput;
 use App\Api\Console\Object\CustomDomainObject;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
+use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
 use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\CustomDomainService;
@@ -26,6 +27,7 @@ class HostingController extends AbstractController
         private CustomDomainService          $customDomainService,
         private BlogService                  $blogService,
         private ConsoleApiAuthorizationListener $authorizationListener,
+        private AppConfig $appConfig
     ) {}
 
     #[Route('/hosting', methods: 'GET')]
@@ -36,6 +38,7 @@ class HostingController extends AbstractController
         $customDomain = $this->customDomainService->getCustomDomain($blog);
 
         return new JsonResponse([
+            'delivery_url' => $this->appConfig->getDeliveryUrl(),
             'hosting_at' => $blog->getHostingAt(),
             'custom_domain' => $customDomain
                 ? new CustomDomainObject($customDomain)
@@ -46,14 +49,22 @@ class HostingController extends AbstractController
     #[Route('/hosting', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
     public function updateHostingAt(
-        #[MapRequestPayload] UpdateHostingAtInput $input
+        #[MapRequestPayload] UpdateHostingInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
         $hostingAt = $input->hosting_at;
-        $hostingUrl = isset($input->hosting_url) ? $input->hosting_url : null;
+        $hostingUrl = $input->hosting_url;
+
+        if ($hostingAt === BlogHostingAt::DOMAIN) {
+            throw new BadRequestHttpException('Use custom domain endpoints to set hosting at domain');
+        }
 
         if ($hostingAt === BlogHostingAt::SELF && $hostingUrl === null) {
             throw new BadRequestHttpException('Hosting URL is required when self-hosting');
+        }
+
+        if ($blog->getHostingAt() === $hostingAt) {
+            throw new BadRequestHttpException('Hosting at is already set to the requested value: ' . $hostingAt->value);
         }
 
         $blog = $this->blogService->updateHostingAt(
@@ -74,10 +85,10 @@ class HostingController extends AbstractController
         #[MapRequestPayload] CreateCustomDomainInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($blog, $input->domain);
+        $customDomain = $this->customDomainService->getCustomDomain($input->domain);
 
         if ($customDomain !== null) {
-            throw new BadRequestHttpException('Custom domain already exists for this domain');
+            throw new BadRequestHttpException('This custom domain is already in use by another blog');
         }
 
         $customDomain = $this->customDomainService->createCustomDomain($blog, $input->domain);
@@ -91,17 +102,21 @@ class HostingController extends AbstractController
         #[MapRequestPayload] UpdateCustomDomainInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($blog, $input->old_domain);
 
+        if ($this->customDomainService->getCustomDomain($input->domain) !== null) {
+            throw new BadRequestHttpException('This custom domain is already in use by another blog');
+        }
+
+        $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
         if ($customDomain === null) {
-            throw new BadRequestHttpException('Custom domain does not exist for this domain');
+            throw new BadRequestHttpException('Please create a custom domain first before updating it');
         }
 
         if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
             throw new BadRequestHttpException('Only custom domains with PENDING status can be updated');
         }
 
-        $customDomain = $this->customDomainService->updateCustomDomain($customDomain, $input->new_domain);
+        $customDomain = $this->customDomainService->updateCustomDomain($customDomain, $input->domain);
 
         return new JsonResponse(new CustomDomainObject($customDomain));
     }
@@ -111,13 +126,14 @@ class HostingController extends AbstractController
     public function deleteCustomDomain(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($blog);
+        $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
 
         if ($customDomain === null) {
             throw new BadRequestHttpException('Custom domain does not exist');
         }
 
         if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
+            // active domains will simply use switch to subdomain instead
             throw new BadRequestHttpException('Only custom domains with PENDING status can be deleted');
         }
 
@@ -131,7 +147,7 @@ class HostingController extends AbstractController
     public function verifyCustomDomain(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($blog);
+        $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
 
         if ($customDomain === null) {
             throw new BadRequestHttpException('Custom domain does not exist');

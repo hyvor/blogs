@@ -9,6 +9,7 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\CustomDomain\CustomDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,6 +25,7 @@ class BlogService
     public function __construct(
         private EntityManagerInterface $em,
         private EventDispatcherInterface $ed,
+        private CustomDomainService $customDomainService,
     ) {}
 
     public function isSubdomainReserved(string $subdomain): bool
@@ -42,15 +44,15 @@ class BlogService
         ?string $host = null
     ): Blog
     {
+        if ($blog->getHostingAt() === BlogHostingAt::DOMAIN && $blog->getCustomDomain()) {
+            $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);
+            $blog->setCustomDomain(null); // we don't really have to do this with the foreign key
+        }
+
         switch ($hostingAt) {
             case BlogHostingAt::SUBDOMAIN:
                 $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
                 $blog->setHostingDomain(null);
-                $blog->setHostingUrl(null);
-                break;
-            case BlogHostingAt::DOMAIN:
-                $blog->setHostingAt(BlogHostingAt::DOMAIN);
-                $blog->setHostingDomain($host);
                 $blog->setHostingUrl(null);
                 break;
             case BlogHostingAt::SELF:
@@ -58,6 +60,8 @@ class BlogService
                 $blog->setHostingDomain(null);
                 $blog->setHostingUrl($host);
                 break;
+            default:
+                throw new \InvalidArgumentException('Invalid hosting at value');
         }
 
         $this->em->persist($blog);
@@ -65,6 +69,7 @@ class BlogService
 
         return $blog;
     }
+
     public function getBlogByCustomDomain(string $customDomain): ?Blog
     {
         return $this->em->getRepository(Blog::class)->findOneBy(['hosting_domain' => $customDomain]);

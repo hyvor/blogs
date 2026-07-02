@@ -6,5 +6,4 @@ enum CustomDomainStatus: string
 {
     case PENDING = 'pending';
     case ACTIVE = 'active';
-    case FAILED = 'failed';
 }

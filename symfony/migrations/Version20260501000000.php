@@ -64,19 +64,18 @@ final class Version20260501000000 extends AbstractMigration
         // Custom Domain ====
         $this->addSql(
             <<<SQL
-                CREATE TYPE custom_domain_status AS ENUM ('pending', 'active', 'failed');
+                CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');
             SQL
         );
-
         $this->addSql(
             <<<SQL
             CREATE TABLE custom_domains (
                 id serial PRIMARY KEY,
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
-                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
                 status custom_domain_status NOT NULL DEFAULT 'pending',
-                domain TEXT NOT NULL,
+                domain TEXT NOT NULL UNIQUE,
                 private_key_encrypted TEXT,
                 certificate TEXT,
                 valid_from timestamptz,
@@ -84,12 +83,7 @@ final class Version20260501000000 extends AbstractMigration
             );
             SQL
         );
-
-        // 1 active and 1 pending setup per blog
-        $this->addSql("CREATE UNIQUE INDEX unique_active_custom_domains ON custom_domains(blog_id, domain) WHERE status = 'active'");
-        $this->addSql("CREATE UNIQUE INDEX unique_pending_custom_domains ON custom_domains(blog_id, domain) WHERE status = 'pending'");
         $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
-        $this->addSql("CREATE INDEX idx_custom_domains_domain ON custom_domains(domain)");
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');

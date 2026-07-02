@@ -77,23 +77,22 @@ class CustomDomainService
         return $customDomain;
     }
 
-    public function deleteCustomDomain(CustomDomain $customDomain): void
+    public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void
     {
         $this->em->remove($customDomain);
-        $this->em->flush();
+        if ($flush) {
+            $this->em->flush();
+        }
     }
 
-    public function getCustomDomain(Blog $blog, ?string $domain = null): ?CustomDomain
+    public function getCustomDomain(string $domain): ?CustomDomain
     {
-        $criteria = ['blog' => $blog];
+        return $this->em->getRepository(CustomDomain::class)->findOneBy(['domain' => $domain]);
+    }
 
-        if ($domain) {
-            $criteria['domain'] = $domain;
-        }
-
-        // TODO: what if there multiple records?
-        return $this->em->getRepository(CustomDomain::class)
-            ->findOneBy($criteria);
+    public function getBlogCustomDomain(Blog $blog): ?CustomDomain
+    {
+        return $this->em->getRepository(CustomDomain::class)->findOneBy(['blog' => $blog]);
     }
 
     /**

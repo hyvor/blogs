@@ -160,14 +160,14 @@
 				<div class="hosting-options">
 					<HostingOption
 						title="Subdomain"
-						subtitle="Your blog will be hosted at {$blogStore.subdomain}.hyvorblogs.io"
+						subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
 						active={$hostingInfoStore.hosting_at === 'subdomain'}
 						buttonLabel="Use Subdomain"
 						onclick={handleRevertToSubdomain}
 					/>
 					<HostingOption
 						title="Custom Domain"
-						subtitle="Your blog will be hosted at your custom domain (e.g., blog.example.com)"
+						subtitle="Your blog will be hosted at your own custom domain (e.g., blog.example.com)"
 						active={$hostingInfoStore.hosting_at === 'domain'}
 						buttonLabel="Setup Custom Domain"
 						onclick={() => (showCustomDomainModal = true)}
@@ -177,11 +177,22 @@
 					/>
 					<HostingOption
 						title="Self-Hosted"
-						subtitle="You will serve your blog from your own server (headless or via Delivery API)"
 						active={$hostingInfoStore.hosting_at === 'self'}
 						buttonLabel="Setup Self-Hosting"
 						onclick={() => (showSelfHostingModal = true)}
-					/>
+					>
+						{#snippet subtitle()}
+							You will serve your blog from your own server for <a
+								class="hds-link"
+								target="_blank"
+								href="/docs/subdirectory">subdirectory hosting</a
+							>
+							or for
+							<a class="hds-link" target="_blank" href="/docs/headless"
+								>headless usage</a
+							>.
+						{/snippet}
+					</HostingOption>
 				</div>
 			</SplitControl>
 

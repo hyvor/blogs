@@ -21,14 +21,11 @@ class CustomDomain
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\OneToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(length: 255, enumType: CustomDomainStatus::class, options: ['default' => 'pending'])]
+    #[ORM\Column(enumType: CustomDomainStatus::class)]
     private CustomDomainStatus $status = CustomDomainStatus::PENDING;
 
     #[ORM\Column]
@@ -76,17 +73,6 @@ class CustomDomain
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 

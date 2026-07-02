@@ -41,7 +41,7 @@ class DeleteCustomDomainTest extends ApiTestCase
 
         $this->consoleBlogApi('DELETE', $blog, '/hosting/custom-domain', user: $user);
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseFailed(400, 'Custom domain does not exist');
     }
 
     public function test_fails_when_status_is_not_pending(): void
@@ -55,6 +55,6 @@ class DeleteCustomDomainTest extends ApiTestCase
 
         $this->consoleBlogApi('DELETE', $blog, '/hosting/custom-domain', user: $user);
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseFailed(400, 'Only custom domains with PENDING status can be deleted');
     }
 }

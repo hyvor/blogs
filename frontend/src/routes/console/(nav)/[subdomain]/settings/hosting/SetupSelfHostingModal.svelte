@@ -10,8 +10,8 @@
 		toast
 	} from '@hyvor/design/components';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
-	import {blogStore, updateHostingInfoStore} from '../../../../lib/stores/blogStore';
-	import {updateHostedAt} from "./hostingActions";
+	import { blogStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
+	import { updateHostedAt } from './hostingActions';
 
 	interface Props {
 		show: boolean;
@@ -59,7 +59,7 @@
 	}
 </script>
 
-<Modal title="Set-up Self-hosting" {loading} bind:show>
+<Modal title="Setup Self-hosting" {loading} bind:show>
 	<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
 		<FormControl>
 			<TextInput
@@ -77,7 +77,9 @@
 
 	{#snippet footer()}
 		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)} disabled={loading}>Cancel</Button>
+			<Button variant="invisible" on:click={() => (show = false)} disabled={loading}
+				>Cancel</Button
+			>
 			<Button on:click={handleConfirm} disabled={loading}>Confirm</Button>
 		</ButtonGroup>
 	{/snippet}
