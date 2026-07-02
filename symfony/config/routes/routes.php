@@ -3,7 +3,9 @@
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 /**
- * X-Router = delivery is set by Caddyfile for non-app routes (blog delivery)
+ * Caddyfile sets X-Router header:
+ * - subdomain: for subdomain delivery (ex: subdomain.hyvorblogs.io)
+ * - customdomain: for custom domain delivery
  */
 return static function (RoutingConfigurator $routes): void {
     // app routes
@@ -12,9 +14,13 @@ return static function (RoutingConfigurator $routes): void {
         ->import('./app.php')
         ->condition('request.headers.get("X-Router") === null');
 
-    // delivery routes
-    // (ex: subdomain.hyvorblogs.io and custom domains)
+    // subdomain delivery (ex: subdomain.hyvorblogs.io)
     $routes
-        ->import('./delivery.php')
-        ->condition('request.headers.get("X-Router") === "delivery"');
+        ->import('../../src/Api/Delivery/SubdomainController.php', 'attribute')
+        ->condition('request.headers.get("X-Router") === "subdomain"');
+
+    // custom domain delivery
+    $routes
+        ->import('../../src/Api/Delivery/SubdomainController.php', 'attribute')
+        ->condition('request.headers.get("X-Router") === "subdomain"');
 };

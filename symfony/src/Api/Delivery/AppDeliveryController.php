@@ -26,9 +26,7 @@ class AppDeliveryController extends AbstractController
         private DeliveryService $deliveryService,
         private AppConfig $appConfig,
         private PermalinkService $permalinkService
-    )
-    {
-    }
+    ) {}
 
     #[Route('/api/delivery/v0/{subdomain}', methods: ['GET'])]
     public function api(string $subdomain, Request $request): JsonResponse
@@ -79,5 +77,4 @@ class AppDeliveryController extends AbstractController
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);
     }
-
 }

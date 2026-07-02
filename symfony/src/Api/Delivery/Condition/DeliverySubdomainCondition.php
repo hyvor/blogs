@@ -16,8 +16,10 @@ class DeliverySubdomainCondition
 
     public function check(Request $request): bool
     {
+        dd($request->getHost());
         $host = strtolower(trim($request->getHost()));
         $deliveryDomain = $this->appConfig->getDeliveryDomain();
-
+        throw new \RuntimeException('Condition was checked!');
+        return false;
     }
 }
