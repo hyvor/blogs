@@ -49,7 +49,9 @@
 
 	let isLoading = $state(true);
 
-	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+	const isPostPage = $derived(
+		page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null
+	);
 
 	function getBlogHint() {
 		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);
@@ -135,17 +137,6 @@
 			$blogSelectorOpenStore = true;
 		}
 	}
-
-	onNavigate((navigation) => {
-		if (!document.startViewTransition) return;
-
-		return new Promise((resolve) => {
-			document.startViewTransition(async () => {
-				resolve();
-				await navigation.complete;
-			});
-		});
-	});
 </script>
 
 <svelte:head>
