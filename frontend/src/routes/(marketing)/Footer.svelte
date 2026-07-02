@@ -11,7 +11,7 @@
 					<a href="/themes">Themes</a>
 					<a href="/pricing">Pricing</a>
 					<a href="/docs">Docs</a>
-					<a href="/customers">Customers</a>
+
 				</FooterLinkList>
 
 				<FooterLinkList title="Legal">
