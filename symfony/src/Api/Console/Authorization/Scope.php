@@ -47,6 +47,8 @@ enum Scope: string
     case IMPORT_MANAGE = 'import.manage';
     case EXPORT_MANAGE = 'export.manage';
 
+    case LINK_ANALYSIS_MANAGE = 'link_analysis.manage';
+
     /**
      * @return string[]
      */

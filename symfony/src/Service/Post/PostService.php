@@ -67,6 +67,22 @@ class PostService
         return $result;
     }
 
+    public function getPostVariantByBlogAndId(Blog $blog, int $id): ?PostVariant
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('pv')
+            ->from(PostVariant::class, 'pv')
+            ->join(Post::class, 'p', 'WITH', 'pv.post = p AND p.blog = :blog')
+            ->where('pv.id = :id')
+            ->setParameter('blog', $blog)
+            ->setParameter('id', $id)
+            ->setMaxResults(1);
+
+        /** @var PostVariant|null $result */
+        $result = $qb->getQuery()->getOneOrNullResult();
+        return $result;
+    }
+
     public function getPostVariantByPostAndLanguage(Post $post, Language $language): ?PostVariant
     {
         return $this->em->getRepository(PostVariant::class)->findOneBy([
