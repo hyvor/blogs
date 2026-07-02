@@ -1,33 +1,26 @@
 <script>
-	import CustomThemes from './@homepage/CustomThemes/CustomThemes.svelte';
-	import Reviews from './@components/Reviews.svelte';
-	import AboveFold from './@homepage/AboveFold.svelte';
-	import Hosting from './@homepage/Hosting/Hosting.svelte';
-	import Seo from './@homepage/Seo/Seo.svelte';
-	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
-	import FullTrialSignup from './@components/FullTrialSignup.svelte';
+	import Hero from './@homepage/Hero.svelte';
+	import LogoStrip from './@homepage/LogoStrip.svelte';
+	import StatsRow from './@homepage/StatsRow.svelte';
+	import Features from './@homepage/Features.svelte';
+	import Testimonials from './@homepage/Testimonials.svelte';
 	import AllFeatures from './@homepage/AllFeatures/AllFeatures.svelte';
-	import HomepageCustomers from './@homepage/Customers/HomepageCustomers.svelte';
+	import FullTrialSignup from './@components/FullTrialSignup.svelte';
 </script>
 
 <svelte:head>
-	<title>Hyvor Blogs - All-in-one Blogging Platform</title>
+	<title>Hyvor Blogs - Open-source Blogging Platform</title>
 	<meta
 		name="description"
-		content="Hyvor Blogs is a powerful blogging platform that allows you to create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains with SSL, and many more features included!"
+		content="Hyvor Blogs is an open-source blogging platform that's fast and simple. Create a blog, manage it, and grow it without managing servers or databases. Self-host or let us handle it."
 	/>
 	<link rel="canonical" href="https://blogs.hyvor.com" />
 </svelte:head>
 
-<AboveFold
-	title="All-in-one Blogging Platform"
-	subtitle="Hyvor Blogs is a platform to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff."
-/>
-<Reviews />
-<CustomThemes />
-<Hosting />
-<Seo />
-<MultiLanguage />
+<Hero />
+<LogoStrip />
+<StatsRow />
+<Features />
+<Testimonials />
 <AllFeatures />
-<HomepageCustomers />
 <FullTrialSignup />

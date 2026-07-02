@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
-	import TrialChecks from './TrialChecks.svelte';
+	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 
 	interface Props {
 		title?: string;
@@ -8,52 +8,100 @@
 	}
 
 	let {
-		title = 'Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?',
+		title = 'Start your blog today',
 		...rest
 	}: Props = $props();
+
+	const checks = [
+		'14-day free trial',
+		'No credit card required',
+		'Cancel anytime',
+	];
 </script>
 
-<div class="wrap" {...rest}>
+<section class="cta-section" {...rest}>
 	<div class="hds-container inner">
-		<h3>
-			{title}
-		</h3>
+		<div class="badge">Open-source &amp; free to try</div>
+		<h2>{title}</h2>
+		<p>Join hundreds of bloggers and businesses building with Hyvor Blogs.</p>
 
-		<div class="button-wrap">
-			<Button as="a" size="large" href="/console?signup">Start your blog</Button>
+		<div class="cta-actions">
+			<Button as="a" size="large" href="/console?signup">Start your blog &rarr;</Button>
 		</div>
 
-		<div class="trial-checks">
-			<TrialChecks style="display:flex;justify-content:space-around" />
+		<div class="checks">
+			{#each checks as check}
+				<div class="check">
+					<IconCheckCircleFill size={15} />
+					{check}
+				</div>
+			{/each}
 		</div>
 	</div>
-</div>
+</section>
 
-<style>
-	.wrap {
-		background-color: var(--accent-light-mid);
-		padding: 80px 15px;
-		margin: 30px 0;
+<style lang="scss">
+	.cta-section {
+		padding: 96px 0;
+		background: linear-gradient(
+			to bottom,
+			var(--background),
+			color-mix(in srgb, var(--accent) 6%, var(--background))
+		);
+		border-top: 1px solid var(--border);
+		text-align: center;
 	}
 
 	.inner {
-		width: 700px;
-		max-width: 100%;
-		margin: auto;
+		max-width: 600px;
 	}
 
-	h3 {
-		text-align: center;
-		font-size: 25px;
+	.badge {
+		display: inline-flex;
+		padding: 4px 14px;
+		border-radius: 100px;
+		font-size: 13px;
 		font-weight: 600;
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		color: var(--accent);
+		border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+		margin-bottom: 24px;
 	}
 
-	.button-wrap {
-		padding: 20px;
-		text-align: center;
+	h2 {
+		font-size: clamp(28px, 4vw, 40px);
+		font-weight: 800;
+		margin: 0 0 12px;
+		letter-spacing: -0.02em;
 	}
 
-	.trial-checks {
-		margin-top: 15px;
+	p {
+		font-size: 1rem;
+		color: var(--text-light);
+		margin: 0 0 32px;
+	}
+
+	.cta-actions {
+		margin-bottom: 24px;
+	}
+
+	.checks {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+		flex-wrap: wrap;
+	}
+
+	.check {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 14px;
+		color: var(--text-light);
+
+		:global(svg) {
+			color: var(--accent);
+		}
 	}
 </style>
