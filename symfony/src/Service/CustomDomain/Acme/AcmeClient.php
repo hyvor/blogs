@@ -21,11 +21,9 @@ class AcmeClient implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    public const string DIRECTORY_URL_LETSENCRYPT_PRODUCTION = 'https://acme-v02.api.letsencrypt.org/directory';
-    public const string DIRECTORY_URL_LETSENCRYPT_STAGING = 'https://acme-staging-v02.api.letsencrypt.org/directory';
-
+    private const string DIRECTORY_URL_PRODUCTION = 'https://acme-v02.api.letsencrypt.org/directory';
+    private const string DIRECTORY_URL_DEV = 'https://hyvor-blogs-pebble:14000/dir';
     private const string CACHE_ACCOUNT_KEY = 'acme_account';
-
     private string $directoryUrl;
     private DirectoryDto $directory;
     private AccountInternalDto $account;
@@ -36,15 +34,11 @@ class AcmeClient implements LoggerAwareInterface
         private DenormalizerInterface $denormalizer,
         private ClockInterface $clock,
         #[Autowire('%kernel.environment%')]
-        private string $env,
+        private readonly string $env,
     ) {
-        // TODO: Fix before PROD
-//        if ($this->env === 'prod') {
-//            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_PRODUCTION; // @codeCoverageIgnore
-//        } else {
-//            $this->directoryUrl = self::DIRECTORY_URL_LETSENCRYPT_STAGING;
-//        }
-        $this->directoryUrl = 'https://hyvor-blogs-pebble:14000/dir';
+        $this->directoryUrl = $this->env === 'dev' ?
+            self::DIRECTORY_URL_DEV :
+            self::DIRECTORY_URL_PRODUCTION;
     }
 
     /**
