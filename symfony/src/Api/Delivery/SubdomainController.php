@@ -24,7 +24,7 @@ class SubdomainController
 
     #[Route(
         '/{path}',
-        name: 'blog_delivery',
+        name: 'subdomain_delivery',
         requirements: ['path' => '.*'],
     )]
     public function handle(string $path, Request $request): Response
