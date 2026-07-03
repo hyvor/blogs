@@ -184,40 +184,6 @@ class LinkAnalysisService
         $this->em->flush();
     }
 
-    public function completeCheck(LinkAnalyzerCheck $check, AnalysisResult $result): void
-    {
-        $check->setStatus(JobStatus::COMPLETED);
-        $check->setUpdatedAt($this->now());
-        $check->setPostsCount($result->postsCount);
-        $check->setLinksTotalCount($result->linksCount);
-        $check->setLinksOkCount($result->linksOkCount);
-        $check->setLinksBrokenCount($result->linksBrokenCount);
-        $check->setLinksRiskyCount($result->linksRiskyCount);
-        $check->setLinksRedirectCount($result->linksRedirectCount);
-        $check->setLinksIgnoredCount($result->linksIgnoredCount);
-        $this->em->flush();
-    }
-
-    public function failCheck(LinkAnalyzerCheck $check, string $error): void
-    {
-        $check->setStatus(JobStatus::FAILED);
-        $check->setUpdatedAt($this->now());
-        $check->setError($error);
-        $this->em->flush();
-    }
-
-    public function updatePostVariantLinkAnalysisCache(
-        PostVariant $postVariant,
-        string $url,
-        int $statusCode
-    ): void
-    {
-        $cache = $postVariant->getLinkAnalysis() ?? [];
-        $cache[$url] = $statusCode;
-        $postVariant->setLinkAnalysis($cache);
-        $this->em->flush();
-    }
-
     /**
      * @param LinkAnalyzerLink[] $links
      * @return array<string, int>
