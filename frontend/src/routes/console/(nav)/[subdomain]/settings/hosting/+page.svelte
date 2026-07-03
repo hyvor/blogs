@@ -77,13 +77,6 @@
 		toast.error(message);
 	}
 
-	let hasUrlChanged = $derived(
-		$blogStore.subdomain !== subdomain ||
-			$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
-			$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
-			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
-	);
-
 	async function handleRevertToSubdomain() {
 		const confirmed = await confirm({
 			title: 'Revert to Subdomain Hosting',
@@ -123,26 +116,14 @@
 {#if isLoading}
 	<Loader block />
 {:else}
-	<BlogSettingsSave
-		keys={['subdomain', 'hosting_redirect_subdomain']}
-		outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
-		beforeSave={handleBeforeSave}
-		afterSave={handleAfterSave}
-		onError={handleError}
-	/>
-
 	<div class="hosting">
-		<SplitControl
-			label="Hosting configuration"
-			caption="Where do you like to host your blog?"
-			column
-		>
+		<SplitControl label="Hosting Configuration" column>
 			<div class="hosting-options">
 				<HostingOption
 					title="Subdomain"
 					subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
 					active={$hostingInfoStore.hosting_at === 'subdomain'}
-					buttonLabel="Use Subdomain"
+					buttonLabel="Revert to Subdomain"
 					onclick={handleRevertToSubdomain}
 				/>
 				<HostingOption
@@ -167,7 +148,7 @@
 							target="_blank"
 							href="/docs/subdirectory">subdirectory hosting</a
 						>
-						or for
+						or
 						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a
 						>.
 					{/snippet}

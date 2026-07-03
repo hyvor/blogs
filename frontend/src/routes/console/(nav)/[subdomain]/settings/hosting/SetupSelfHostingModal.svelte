@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		Button,
 		ButtonGroup,
@@ -23,10 +24,13 @@
 	let error: string | null = $state(null);
 	let loading = $state(false);
 
+	let urlInput: HTMLInputElement;
+
 	$effect(() => {
 		if (show) {
 			url = $blogStore.hosting_url || '';
 			error = null;
+			urlInput?.focus();
 		}
 	});
 
@@ -39,7 +43,7 @@
 			return;
 		}
 		if (!isValidUrl(urlTrimmed)) {
-			error = 'Invalid URL. Make sure to include the protocol (https://)';
+			error = 'Invalid URL. Make sure to include the protocol (https:// or http://)';
 			return;
 		}
 
@@ -67,7 +71,7 @@
 				placeholder="https://example.com/blog"
 				block
 				state={error ? 'error' : undefined}
-				autofocus
+				bind:input={urlInput}
 			/>
 			{#if error}
 				<Validation state="error">{error}</Validation>

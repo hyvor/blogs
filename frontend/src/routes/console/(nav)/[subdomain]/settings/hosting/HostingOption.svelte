@@ -20,11 +20,14 @@
 <div class="hosting-option" class:active>
 	<div class="hosting-option-header">
 		<span class="hosting-option-title">{title}</span>
-		{#if active}
-			<Tag color="green" size="small">Active</Tag>
-		{:else if tag}
-			<Tag color={tag.color} size="small">{tag.label}</Tag>
-		{/if}
+
+		<span>
+			{#if active}
+				<Tag color="green" size="small">Active</Tag>
+			{:else if tag}
+				<Tag color={tag.color} size="small">{tag.label}</Tag>
+			{/if}
+		</span>
 	</div>
 	<p class="hosting-option-subtitle">
 		{#if typeof subtitle === 'string'}
@@ -54,10 +57,11 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		margin-bottom: 6px;
 	}
 	.hosting-option-title {
 		font-weight: 600;
-		margin-bottom: 6px;
+		line-height: 1;
 	}
 	.hosting-option-subtitle {
 		font-size: 14px;
