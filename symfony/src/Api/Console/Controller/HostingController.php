@@ -13,7 +13,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
 use App\Service\AppConfig;
-use App\Service\Blog\BlogService;
+use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\CustomDomainService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +26,7 @@ class HostingController extends AbstractController
 {
     public function __construct(
         private CustomDomainService          $customDomainService,
-        private BlogService                  $blogService,
+        private HostingChangeService         $hostingChangeService,
         private ConsoleApiAuthorizationListener $authorizationListener,
         private AppConfig $appConfig
     ) {}
@@ -74,11 +74,7 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('Hosting at is already set to the requested value: ' . $hostingAt->value);
         }
 
-        $blog = $this->blogService->updateHostingAt(
-            $blog,
-            $hostingAt,
-            $hostingUrl
-        );
+        $this->hostingChangeService->requestHostingChange($blog, $hostingAt, $hostingUrl);
 
         return $this->getHostingInfoResponse($blog);
     }

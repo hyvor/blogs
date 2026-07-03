@@ -87,6 +87,34 @@ final class Version20260501000000 extends AbstractMigration
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');
+
+        // Hosting changes ====
+        $this->addSql(
+            <<<SQL
+                CREATE TYPE hosting_change_status AS ENUM ('changing', 'success', 'failed');
+            SQL
+        );
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE hosting_changes (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+                from_at blog_hosting_at NOT NULL,
+                from_subdomain TEXT,
+                from_domain TEXT,
+                from_url TEXT,
+                to_at blog_hosting_at NOT NULL,
+                to_subdomain TEXT,
+                to_domain TEXT,
+                to_url TEXT,
+                status hosting_change_status NOT NULL DEFAULT 'changing',
+                error_message TEXT
+            );
+            SQL
+        );
+        $this->addSql("CREATE INDEX idx_hosting_changes_blog_id ON hosting_changes(blog_id)");
     }
 
     public function down(Schema $schema): void {}

@@ -6,7 +6,6 @@ use App\Entity\Enum\Blog\ColorMode;
 use App\Entity\Enum\Blog\ColorModeDefault;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Blog\BlogService;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,13 +13,6 @@ class UpdateBlogInput
 {
     #[Assert\Regex(BlogService::SUBDOMAIN_REGEX)]
     public ?string $subdomain = null;
-
-    public ?BlogHostingAt $hosting_at = null;
-
-    public ?string $hosting_domain = null;
-
-    #[Assert\Url]
-    public ?string $hosting_url = null;
 
     public ?bool $hosting_redirect_subdomain = null;
 

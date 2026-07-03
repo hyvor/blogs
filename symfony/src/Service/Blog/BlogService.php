@@ -5,7 +5,6 @@ namespace App\Service\Blog;
 use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Entity\Blog;
 use App\Entity\BlogVariant;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
@@ -38,38 +37,9 @@ class BlogService
         return $this->em->getRepository(Blog::class)->findOneBy(['subdomain' => $subdomain]);
     }
 
-    public function updateHostingAt(
-        Blog $blog,
-        BlogHostingAt $hostingAt,
-        ?string $hostingUrl = null
-    ): Blog
-    {
-        // does not support domain here
-        assert($hostingAt !== BlogHostingAt::DOMAIN);
-
-        if ($blog->getHostingAt() === BlogHostingAt::DOMAIN && $blog->getCustomDomain()) {
-            $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);
-            $blog->setCustomDomain(null); // we don't really have to do this with the foreign key
-        }
-
-        if ($blog->getHostingAt() === BlogHostingAt::SELF) {
-            $blog->setHostingUrl(null);
-        }
-
-        $blog->setHostingAt($hostingAt);
-        if ($hostingAt === BlogHostingAt::SELF) {
-            $blog->setHostingUrl($hostingUrl);
-        }
-
-        $this->em->persist($blog);
-        $this->em->flush();
-
-        return $blog;
-    }
-
     public function getBlogByCustomDomain(string $customDomain): ?Blog
     {
-        return $this->em->getRepository(Blog::class)->findOneBy(['hosting_domain' => $customDomain]);
+        return $this->customDomainService->getBlogByCustomDomain($customDomain);
     }
 
     public function updateBlog(Blog $blog, UpdateBlogInput $input): Blog
@@ -78,22 +48,6 @@ class BlogService
 
         if ($input->subdomain !== null) {
             $blog->setSubdomain($input->subdomain);
-        }
-
-        if ($input->hosting_at !== null) {
-            $blog->setHostingAt($input->hosting_at);
-
-            if ($input->hosting_at !== BlogHostingAt::DOMAIN) {
-                $blog->setHostingDomain(null);
-            } elseif ($input->hosting_domain !== null) {
-                $blog->setHostingDomain($input->hosting_domain);
-            }
-        } elseif ($input->hosting_domain !== null) {
-            $blog->setHostingDomain($input->hosting_domain);
-        }
-
-        if ($input->hosting_url !== null) {
-            $blog->setHostingUrl($input->hosting_url);
         }
 
         if ($input->hosting_redirect_subdomain !== null) {

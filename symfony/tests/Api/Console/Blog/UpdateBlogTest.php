@@ -25,37 +25,11 @@ class UpdateBlogTest extends ApiTestCase
 
         $this->consoleBlogApi('PATCH', $blog, '/blog', [
             'subdomain' => 'blog-update-new',
-            'hosting_at' => 'domain',
-            'hosting_domain' => 'example.com',
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('blog-update-new', $json['subdomain']);
-        $this->assertSame('domain', $json['hosting_at']);
-        $this->assertSame('example.com', $json['hosting_domain']);
-    }
-
-    public function test_updates_self_url_and_clears_custom_domain(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-self']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $blog->setHostingDomain('hyvor.com');
-        $this->getEm()->flush();
-
-        $url = 'https://hyvor.com/blog';
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'hosting_at' => 'self',
-            'hosting_url' => $url,
-        ], user: $user);
-
-        $this->assertResponseIsSuccessful();
-        $json = $this->getJson();
-        $this->assertSame('self', $json['hosting_at']);
-        $this->assertSame($url, $json['hosting_url']);
-        $this->assertNull($json['hosting_domain']);
     }
 
     public function test_update_metadata(): void
@@ -87,20 +61,5 @@ class UpdateBlogTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseFailed(422, 'valid URL');
-    }
-
-    public function test_returns_error_when_custom_domain_is_taken(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-domain-taken']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $blog->setHostingDomain('hyvor.com');
-        $this->getEm()->flush();
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'hosting_domain' => 'hyvor.com',
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'domain_taken');
     }
 }
