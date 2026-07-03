@@ -19,12 +19,10 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
-	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
 	import SetupCustomDomainModal from './SetupCustomDomainModal.svelte';
 	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
 	import HostingOption from './HostingOption.svelte';
-	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	import { onMount } from 'svelte';
 
 	const originalSubdomain = $blogStore.subdomain;
@@ -122,123 +120,95 @@
 	});
 </script>
 
-<DisabledOnTemp>
-	{#if isLoading}
-		<Loader block />
-	{:else}
-		<BlogSettingsSave
-			keys={['subdomain', 'hosting_redirect_subdomain']}
-			outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
-			beforeSave={handleBeforeSave}
-			afterSave={handleAfterSave}
-			onError={handleError}
-		/>
+{#if isLoading}
+	<Loader block />
+{:else}
+	<BlogSettingsSave
+		keys={['subdomain', 'hosting_redirect_subdomain']}
+		outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
+		beforeSave={handleBeforeSave}
+		afterSave={handleAfterSave}
+		onError={handleError}
+	/>
 
-		<div class="hosting">
-			<SplitControl
-				label="Subdomain"
-				caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
-			>
-				<FormControl>
-					<TextInput
-						bind:value={subdomain}
-						block
-						state={subdomainError ? 'error' : undefined}
-						on:input={handleSubdomainInput}
-					/>
-					{#if subdomainError}
-						<Validation state="error">{subdomainError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-
-			<SplitControl
-				label="Hosting configuration"
-				caption="Where do you like to host your blog?"
-				column
-			>
-				<div class="hosting-options">
-					<HostingOption
-						title="Subdomain"
-						subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
-						active={$hostingInfoStore.hosting_at === 'subdomain'}
-						buttonLabel="Use Subdomain"
-						onclick={handleRevertToSubdomain}
-					/>
-					<HostingOption
-						title="Custom Domain"
-						subtitle="Your blog will be hosted at your own custom domain (e.g., blog.example.com)"
-						active={$hostingInfoStore.hosting_at === 'domain'}
-						buttonLabel="Setup Custom Domain"
-						onclick={() => (showCustomDomainModal = true)}
-						tag={$hostingInfoStore.custom_domain_setup?.status === 'pending'
-							? { color: 'orange', label: 'Pending Verification' }
-							: null}
-					/>
-					<HostingOption
-						title="Self-Hosted"
-						active={$hostingInfoStore.hosting_at === 'self'}
-						buttonLabel="Setup Self-Hosting"
-						onclick={() => (showSelfHostingModal = true)}
-					>
-						{#snippet subtitle()}
-							You will serve your blog from your own server for <a
-								class="hds-link"
-								target="_blank"
-								href="/docs/subdirectory">subdirectory hosting</a
-							>
-							or for
-							<a class="hds-link" target="_blank" href="/docs/headless"
-								>headless usage</a
-							>.
-						{/snippet}
-					</HostingOption>
-				</div>
-			</SplitControl>
-
-			{#if $blogStore.hosting_at !== 'subdomain'}
-				<SplitControl
-					label="Redirect Subdomain"
-					caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
-						($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+	<div class="hosting">
+		<SplitControl
+			label="Hosting configuration"
+			caption="Where do you like to host your blog?"
+			column
+		>
+			<div class="hosting-options">
+				<HostingOption
+					title="Subdomain"
+					subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
+					active={$hostingInfoStore.hosting_at === 'subdomain'}
+					buttonLabel="Use Subdomain"
+					onclick={handleRevertToSubdomain}
+				/>
+				<HostingOption
+					title="Custom Domain"
+					subtitle="Your blog will be hosted at your own custom domain (e.g., blog.example.com)"
+					active={$hostingInfoStore.hosting_at === 'domain'}
+					buttonLabel="Setup Custom Domain"
+					onclick={() => (showCustomDomainModal = true)}
+					tag={$hostingInfoStore.custom_domain_setup?.status === 'pending'
+						? { color: 'orange', label: 'Pending Verification' }
+						: null}
+				/>
+				<HostingOption
+					title="Self-Hosted"
+					active={$hostingInfoStore.hosting_at === 'self'}
+					buttonLabel="Setup Self-Hosting"
+					onclick={() => (showSelfHostingModal = true)}
 				>
-					<Switch
-						checked={$blogStore.hosting_redirect_subdomain}
-						on:change={handleRedirectSubdomainChange}
-					/>
-				</SplitControl>
-			{/if}
-
-			<!-- TODO: Need to put this somewhere else (if needed) -->
-			{#if hasUrlChanged}
-				<Callout type="warning" style="margin-top: 20px;">
-					{#snippet icon()}
-						<IconExclamationCircle size={18} />
+					{#snippet subtitle()}
+						You will serve your blog from your own server for <a
+							class="hds-link"
+							target="_blank"
+							href="/docs/subdirectory">subdirectory hosting</a
+						>
+						or for
+						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a
+						>.
 					{/snippet}
-					{#snippet title()}
-						<div>URL Change</div>
-					{/snippet}
-					You are about to change the URL of your blog!
-					<ul>
-						<li>
-							Previously shared links may break. However, when changing from
-							hyvorblogs.io subdomain to a custom domain or self-hosting, we'll
-							redirect users to the new URL.
-						</li>
-						<li>This may impact the SEO of your blog.</li>
-						<li>
-							We'll update the media links in your post content and blog settings.
-							This may take some time.
-						</li>
-					</ul>
-				</Callout>
-			{/if}
-		</div>
+				</HostingOption>
+			</div>
+		</SplitControl>
 
-		<SetupCustomDomainModal bind:show={showCustomDomainModal} />
-		<SetupSelfHostingModal bind:show={showSelfHostingModal} />
-	{/if}
-</DisabledOnTemp>
+		<SplitControl
+			label="Subdomain"
+			caption="Unique subdomain for your blog. This will be used for subdomain hosting as well as in APIs to identify your blog."
+		>
+			<FormControl>
+				<TextInput
+					bind:value={subdomain}
+					block
+					state={subdomainError ? 'error' : undefined}
+					on:input={handleSubdomainInput}
+				/>
+				{#if subdomainError}
+					<Validation state="error">{subdomainError}</Validation>
+				{/if}
+			</FormControl>
+		</SplitControl>
+
+		{#if $blogStore.hosting_at !== 'subdomain'}
+			<SplitControl
+				label="Redirect Subdomain"
+				caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
+					($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+			>
+				<Switch
+					checked={$blogStore.hosting_redirect_subdomain}
+					on:change={handleRedirectSubdomainChange}
+				/>
+			</SplitControl>
+		{/if}
+	</div>
+
+	<SetupCustomDomainModal bind:show={showCustomDomainModal} />
+	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
+{/if}
 
 <style>
 	.hosting {

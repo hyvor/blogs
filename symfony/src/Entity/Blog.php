@@ -4,11 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
-use App\Entity\CustomDomain;
 use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
-use App\Entity\Language;
-use App\Entity\Navigation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -53,11 +50,8 @@ class Blog
     #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
     private BlogType $type = BlogType::DEFAULT;
 
-    #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
+    #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
-
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
-    private ?string $hosting_domain = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
@@ -230,17 +224,6 @@ class Blog
     public function setHostingAt(BlogHostingAt $hosting_at): static
     {
         $this->hosting_at = $hosting_at;
-        return $this;
-    }
-
-    public function getHostingDomain(): ?string
-    {
-        return $this->hosting_domain;
-    }
-
-    public function setHostingDomain(?string $hosting_domain): static
-    {
-        $this->hosting_domain = $hosting_domain;
         return $this;
     }
 

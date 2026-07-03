@@ -9,6 +9,7 @@ use App\Api\Console\Input\Hosting\CreateCustomDomainInput;
 use App\Api\Console\Input\Hosting\UpdateCustomDomainInput;
 use App\Api\Console\Input\Hosting\UpdateHostingInput;
 use App\Api\Console\Object\CustomDomainObject;
+use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
 use App\Service\AppConfig;
@@ -35,11 +36,17 @@ class HostingController extends AbstractController
     public function getHostingInfo(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($blog);
+        return $this->getHostingInfoResponse($blog);
+    }
+
+    private function getHostingInfoResponse(Blog $blog): JsonResponse
+    {
+        $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
 
         return new JsonResponse([
             'delivery_url' => $this->appConfig->getDeliveryUrl(),
             'hosting_at' => $blog->getHostingAt(),
+            'hosting_url' => $blog->getHostingUrl(),
             'custom_domain' => $customDomain
                 ? new CustomDomainObject($customDomain)
                 : null,
@@ -73,10 +80,7 @@ class HostingController extends AbstractController
             $hostingUrl
         );
 
-        return new JsonResponse([
-            'hosting_at' => $blog->getHostingAt(),
-            'hosting_url' => $blog->getHostingUrl(),
-        ]);
+        return $this->getHostingInfoResponse($blog);
     }
 
     #[Route('/hosting/custom-domain', methods: 'POST')]

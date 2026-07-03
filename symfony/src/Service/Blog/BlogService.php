@@ -41,27 +41,24 @@ class BlogService
     public function updateHostingAt(
         Blog $blog,
         BlogHostingAt $hostingAt,
-        ?string $host = null
+        ?string $hostingUrl = null
     ): Blog
     {
+        // does not support domain here
+        assert($hostingAt !== BlogHostingAt::DOMAIN);
+
         if ($blog->getHostingAt() === BlogHostingAt::DOMAIN && $blog->getCustomDomain()) {
             $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);
             $blog->setCustomDomain(null); // we don't really have to do this with the foreign key
         }
 
-        switch ($hostingAt) {
-            case BlogHostingAt::SUBDOMAIN:
-                $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
-                $blog->setHostingDomain(null);
-                $blog->setHostingUrl(null);
-                break;
-            case BlogHostingAt::SELF:
-                $blog->setHostingAt(BlogHostingAt::SELF);
-                $blog->setHostingDomain(null);
-                $blog->setHostingUrl($host);
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid hosting at value');
+        if ($blog->getHostingAt() === BlogHostingAt::SELF) {
+            $blog->setHostingUrl(null);
+        }
+
+        $blog->setHostingAt($hostingAt);
+        if ($hostingAt === BlogHostingAt::SELF) {
+            $blog->setHostingUrl($hostingUrl);
         }
 
         $this->em->persist($blog);
