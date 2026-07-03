@@ -5,7 +5,7 @@ namespace App\Tests\MessageHandler;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 use App\Message\HostingChangeMessage;
 use App\MessageHandler\HostingChangeMessageHandler;
 use App\Service\Blog\Hosting\HostingChangeService;
@@ -42,7 +42,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $handler = $this->getService(HostingChangeMessageHandler::class);
         $handler(new HostingChangeMessage($hostingChange->getId()));
 
-        $hostingChange = $this->getEm()->find(HostingChanges::class, $hostingChange->getId());
+        $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChange->getId());
         $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
@@ -65,7 +65,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
             {
             }
 
-            public function process(HostingChanges $hostingChange): void
+            public function process(HostingChange $hostingChange): void
             {
                 throw new \RuntimeException('boom');
             }
@@ -80,7 +80,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         // attempt 1: fails, retry_count = 1, redispatched with a delay
         $handler(new HostingChangeMessage($hostingChangeId));
 
-        $hostingChange = $this->getEm()->find(HostingChanges::class, $hostingChangeId);
+        $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
         $this->assertSame(1, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
@@ -93,7 +93,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         // attempt 2: fails, retry_count = 2, redispatched with a bigger delay
         $handler(new HostingChangeMessage($hostingChangeId));
 
-        $hostingChange = $this->getEm()->find(HostingChanges::class, $hostingChangeId);
+        $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
         $this->assertSame(2, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
@@ -110,7 +110,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         // attempt 3: fails, exhausted -> marked as failed, no further redispatch
         $handler(new HostingChangeMessage($hostingChangeId));
 
-        $hostingChange = $this->getEm()->find(HostingChanges::class, $hostingChangeId);
+        $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
         $this->assertSame(3, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::FAILED, $hostingChange->getStatus());
         $this->assertSame('boom', $hostingChange->getErrorMessage());

@@ -4,7 +4,7 @@ namespace App\Api\Console\Object;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 
 class HostingChangeObject
 {
@@ -22,7 +22,7 @@ class HostingChangeObject
     public HostingChangeStatus $status;
     public ?string $error_message;
 
-    public function __construct(HostingChanges $hostingChange)
+    public function __construct(HostingChange $hostingChange)
     {
         $this->id = $hostingChange->getId();
         $this->created_at = $hostingChange->getCreatedAt()->getTimestamp();

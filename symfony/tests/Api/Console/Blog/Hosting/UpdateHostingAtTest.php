@@ -8,7 +8,7 @@ use App\Entity\CustomDomain;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\Enum\UserStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 use App\Message\HostingChangeMessage;
 use App\MessageHandler\HostingChangeMessageHandler;
 use App\Service\Blog\Hosting\HostingChangeService;
@@ -30,7 +30,7 @@ class UpdateHostingAtTest extends ApiTestCase
      * Simulates the worker: asserts the async job was dispatched, then runs it
      * synchronously via its handler, as this codebase's tests do for other jobs.
      */
-    private function processHostingChange(): HostingChanges
+    private function processHostingChange(): HostingChange
     {
         $dispatched = $this->transport('async')->dispatched();
         $dispatched->assertContains(HostingChangeMessage::class, 1);
@@ -40,7 +40,7 @@ class UpdateHostingAtTest extends ApiTestCase
 
         $this->getService(HostingChangeMessageHandler::class)($message);
 
-        $hostingChange = $this->getEm()->find(HostingChanges::class, $message->hostingChangeId);
+        $hostingChange = $this->getEm()->find(HostingChange::class, $message->hostingChangeId);
         $this->assertNotNull($hostingChange);
 
         return $hostingChange;

@@ -2,11 +2,11 @@
 
 namespace App\Service\Blog\Event;
 
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 
 readonly class BlogHostingChangedEvent
 {
     public function __construct(
-        public HostingChanges $hostingChange,
+        public HostingChange $hostingChange,
     ) {}
 }

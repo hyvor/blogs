@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HostingChangesRepository::class)]
 #[ORM\Table(name: 'hosting_changes')]
-class HostingChanges
+class HostingChange
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

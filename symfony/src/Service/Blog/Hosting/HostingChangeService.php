@@ -5,7 +5,7 @@ namespace App\Service\Blog\Hosting;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 use App\Message\HostingChangeMessage;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
@@ -38,7 +38,7 @@ class HostingChangeService
     /**
      * @throws PendingHostingChangeException if the blog already has a change in progress
      */
-    public function requestHostingChange(Blog $blog, BlogHostingAt $toAt, ?string $toHostingUrl = null): HostingChanges
+    public function requestHostingChange(Blog $blog, BlogHostingAt $toAt, ?string $toHostingUrl = null): HostingChange
     {
         if ($this->hasPendingChange($blog)) {
             throw new PendingHostingChangeException($blog);
@@ -47,7 +47,7 @@ class HostingChangeService
         $fromDomain = $blog->getCustomDomain()?->getDomain();
         $toDomain = $toAt === BlogHostingAt::DOMAIN ? $fromDomain : null;
 
-        $hostingChange = new HostingChanges();
+        $hostingChange = new HostingChange();
         $hostingChange->setBlog($blog);
         $hostingChange->setFromAt($blog->getHostingAt());
         $hostingChange->setFromDomain($fromDomain);
@@ -79,12 +79,12 @@ class HostingChangeService
         return $latest !== null && $latest->getStatus() === HostingChangeStatus::CHANGING;
     }
 
-    public function getLatestChange(Blog $blog): ?HostingChanges
+    public function getLatestChange(Blog $blog): ?HostingChange
     {
-        /** @var HostingChanges|null */
+        /** @var HostingChange|null */
         return $this->em->createQueryBuilder()
             ->select('hc')
-            ->from(HostingChanges::class, 'hc')
+            ->from(HostingChange::class, 'hc')
             ->where('hc.blog = :blog')
             ->setParameter('blog', $blog)
             ->orderBy('hc.id', 'DESC')
@@ -100,7 +100,7 @@ class HostingChangeService
      * NOTE: Doctrine closes the EntityManager on any exception raised inside
      * wrapInTransaction() — the caller must obtain a fresh one before using it again.
      */
-    public function process(HostingChanges $hostingChange): void
+    public function process(HostingChange $hostingChange): void
     {
         $this->em->wrapInTransaction(function () use ($hostingChange) {
             $this->applyChange($hostingChange);
@@ -113,7 +113,7 @@ class HostingChangeService
         $this->eventDispatcher->dispatch(new BlogHostingChangedEvent($hostingChange));
     }
 
-    private function applyChange(HostingChanges $hostingChange): void
+    private function applyChange(HostingChange $hostingChange): void
     {
         $blog = $hostingChange->getBlog();
         $toAt = $hostingChange->getToAt();

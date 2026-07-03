@@ -4,11 +4,11 @@ namespace App\Tests\Factory;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<HostingChanges>
+ * @extends PersistentObjectFactory<HostingChange>
  */
 final class HostingChangeFactory extends PersistentObjectFactory
 {
@@ -19,7 +19,7 @@ final class HostingChangeFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return HostingChanges::class;
+        return HostingChange::class;
     }
 
     #[\Override]

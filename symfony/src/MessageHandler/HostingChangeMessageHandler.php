@@ -3,7 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChanges;
+use App\Entity\HostingChange;
 use App\Message\HostingChangeMessage;
 use App\Service\Blog\Hosting\HostingChangeService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,7 +33,7 @@ class HostingChangeMessageHandler
     public function __invoke(HostingChangeMessage $message): void
     {
         $em = $this->entityManager();
-        $hostingChange = $em->find(HostingChanges::class, $message->hostingChangeId);
+        $hostingChange = $em->find(HostingChange::class, $message->hostingChangeId);
 
         if ($hostingChange === null) {
             throw new UnrecoverableMessageHandlingException("HostingChanges {$message->hostingChangeId} not found");
@@ -51,7 +51,7 @@ class HostingChangeMessageHandler
         // process() may have closed the EntityManager (Doctrine closes it on any exception
         // raised inside wrapInTransaction), so fetch a fresh one to record the failure
         $em = $this->entityManager();
-        $hostingChange = $em->find(HostingChanges::class, $message->hostingChangeId);
+        $hostingChange = $em->find(HostingChange::class, $message->hostingChangeId);
 
         if ($hostingChange === null) {
             return;
