@@ -72,16 +72,12 @@
 	<div class="full-loader">
 		<Loader size="large" />
 	</div>
+{:else if $resolvedLicenseStore?.license === null && !forcedShow}
+	<LicenseExpiredNotice />
+{:else if $blogStore.is_blocked && !forcedShow}
+	<BlogBannedStatus />
 {:else}
-	<TempBlogNotice />
-
-	{#if $resolvedLicenseStore?.license === null && !forcedShow}
-		<LicenseExpiredNotice />
-	{:else if $blogStore.is_blocked && !forcedShow}
-		<BlogBannedStatus />
-	{:else}
-		{@render children?.()}
-	{/if}
+	{@render children?.()}
 {/if}
 
 <style>

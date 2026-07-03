@@ -24,6 +24,7 @@ import Configuration from './content/configuration/Configuration.svelte';
 import Publishing from './content/publishing/Publishing.svelte';
 import ApiConsole from './content/api-console/ApiConsole.svelte';
 import ApiData from './content/api-data/ApiData.svelte';
+import Headless from './content/headless/Headless.svelte';
 import Users from './content/users/Users.svelte';
 import SyntaxHighlighting from './content/syntax-highlighting/SyntaxHighlighting.svelte';
 import Tags from './content/tags/Tags.svelte';
@@ -68,6 +69,11 @@ export const categories: Category[] = [
 				slug: 'subdirectory',
 				name: 'Subdirectory',
 				component: SubDirectoryHosting
+			},
+			{
+				slug: 'headless',
+				name: 'Headless',
+				component: Headless
 			}
 		]
 	},

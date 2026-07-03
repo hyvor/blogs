@@ -3,8 +3,10 @@
 namespace App\Tests\Service\Cache;
 
 use App\Entity\Enum\BlogHostingAt;
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Cache\BlogCacheService;
 use App\Service\Cache\ClearCacheListener;
 use App\Service\Cache\Event\CacheClearAllEvent;
@@ -50,6 +52,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ClearCacheListener::class)]
 #[UsesClass(BlogCacheService::class)]
+#[UsesClass(HostingChangeService::class)]
 class ClearCacheListenerTest extends KernelTestCase
 {
     private function dispatch(object $event): void
@@ -132,7 +135,7 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }
 
-    public function test_blog_updated_clears_template_cache_when_hosting_unchanged(): void
+    public function test_blog_updated_clears_template_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $blogOld = clone $blog;
@@ -143,14 +146,13 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearAllEvent::class);
     }
 
-    public function test_blog_updated_clears_all_cache_when_hosting_changed(): void
+    public function test_blog_hosting_changed_clears_all_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $blogOld = clone $blog;
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
-        $blog->setHostingDomain('example.com');
+        $hostingChangeService = $this->getService(HostingChangeService::class);
+        $hostingChange = $hostingChangeService->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
 
-        $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
+        $this->dispatch(new BlogHostingChangedEvent($hostingChange));
 
         $this->getEd()->assertDispatched(CacheClearAllEvent::class);
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);

@@ -71,14 +71,6 @@ class BlogController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        // TODO: to be removed with new TLS
-        if (
-            $input->hosting_domain !== null &&
-            $this->blogService->getBlogByCustomDomain($input->hosting_domain) !== null
-        ) {
-            throw new UnprocessableEntityHttpException('domain_taken');
-        }
-
         $blog = $this->blogService->updateBlog($blog, $input);
 
         return new JsonResponse($this->blogObjectFactory->create($blog));

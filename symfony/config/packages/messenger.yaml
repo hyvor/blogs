@@ -20,3 +20,4 @@ when@test:
                 async: "test://"
                 sync: "test://"
                 failed: "test://"
+                scheduler_default: "test://"

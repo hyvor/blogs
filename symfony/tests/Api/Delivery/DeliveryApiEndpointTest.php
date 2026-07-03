@@ -2,7 +2,7 @@
 
 namespace App\Tests\Api\Delivery;
 
-use App\Api\Delivery\DeliveryController;
+use App\Api\Delivery\AppDeliveryController;
 use App\Entity\Blog;
 use App\Entity\Enum\ApiKeyType;
 use App\Tests\Case\ApiTestCase;
@@ -13,7 +13,7 @@ use App\Entity\Enum\ThemeFileFolder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
-#[CoversClass(DeliveryController::class)]
+#[CoversClass(AppDeliveryController::class)]
 class DeliveryApiEndpointTest extends ApiTestCase
 {
 

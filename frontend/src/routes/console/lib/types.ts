@@ -105,6 +105,42 @@ export interface BlogCounts {
 	};
 }
 
+export interface HostingInfo {
+	hosting_at: 'subdomain' | 'domain' | 'self';
+	custom_domain_setup?: CustomDomainSetup | null;
+	hosting_url?: string;
+	change?: HostingChange | null;
+}
+
+export type HostingChangeAt = 'subdomain' | 'domain' | 'self';
+export type HostingChangeStatus = 'changing' | 'success' | 'failed';
+
+export interface HostingChange {
+	id: number;
+	created_at: number;
+	updated_at: number;
+	from_at: HostingChangeAt;
+	from_subdomain: string | null;
+	from_domain: string | null;
+	from_url: string | null;
+	to_at: HostingChangeAt;
+	to_subdomain: string | null;
+	to_domain: string | null;
+	to_url: string | null;
+	status: HostingChangeStatus;
+	error_message: string | null;
+}
+
+export type CustomDomainSetupStatus = 'pending' | 'active' | 'failed';
+export interface CustomDomainSetup {
+	created_at: number;
+	domain: string;
+	status: CustomDomainSetupStatus;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
+}
+
 // == POST
 export type Post = {
 	id: number;

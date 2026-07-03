@@ -4,11 +4,13 @@ namespace App\Command\Dev;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Entity\Enum\CustomDomainStatus;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
 use App\Entity\Enum\UserStatus;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
+use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
@@ -18,8 +20,10 @@ use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -28,21 +32,23 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'dev:seed',
     description: 'Seed the database for development',
 )]
-class DevSeedCommand extends Command
+class DevSeedCommand
 {
     public function __construct(
         private Connection $connection,
-    ) {
-        parent::__construct();
-    }
+    ) {}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        Application $application
+    ): int
     {
         $io = new SymfonyStyle($input, $output);
 
         $blogConfigs = [
             ['subdomain' => 'test', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
-            ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::SELF, 'hosting_domain' => 'hyvorblogscustom.test'],
+            ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::DOMAIN, 'custom_domain' => CustomDomainFactory::createOne(['status' => CustomDomainStatus::ACTIVE])],
             ['subdomain' => 'self', 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://blogs.hyvor.test/blog'],
             ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'http://127.0.0.1:8885'],
         ];
@@ -103,6 +109,9 @@ class DevSeedCommand extends Command
         }
 
         $io->success('Database seeded successfully.');
+
+        // sync themes
+        $application->doRun(new ArrayInput(['command' => 'themes:sync']), $output);
 
         return Command::SUCCESS;
     }
