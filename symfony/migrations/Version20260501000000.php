@@ -110,11 +110,16 @@ final class Version20260501000000 extends AbstractMigration
                 to_domain TEXT,
                 to_url TEXT,
                 status hosting_change_status NOT NULL DEFAULT 'changing',
-                error_message TEXT
+                error_message TEXT,
+                retry_count INTEGER NOT NULL DEFAULT 0
             );
             SQL
         );
         $this->addSql("CREATE INDEX idx_hosting_changes_blog_id ON hosting_changes(blog_id)");
+        // only one change can be in progress for a blog at a time
+        $this->addSql(
+            "CREATE UNIQUE INDEX idx_hosting_changes_blog_pending ON hosting_changes(blog_id) WHERE status = 'changing'"
+        );
     }
 
     public function down(Schema $schema): void {}

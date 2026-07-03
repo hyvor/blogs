@@ -2,6 +2,7 @@
 
 namespace App\Service\Cache;
 
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
@@ -69,15 +70,14 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogUpdated(BlogUpdatedEvent $event): void
     {
-        $hostingChanged = $event->blogOld->getHostingAt() !== $event->blog->getHostingAt() ||
-            $event->blogOld->getHostingDomain() !== $event->blog->getHostingDomain() ||
-            $event->blogOld->getHostingUrl() !== $event->blog->getHostingUrl();
+        // hosting fields are no longer changed through this event; see onBlogHostingChanged
+        $this->cacheService->clearTemplateCache($event->blog);
+    }
 
-        if ($hostingChanged) {
-            $this->cacheService->clearAllCache($event->blog);
-        } else {
-            $this->cacheService->clearTemplateCache($event->blog);
-        }
+    #[AsEventListener]
+    public function onBlogHostingChanged(BlogHostingChangedEvent $event): void
+    {
+        $this->cacheService->clearAllCache($event->hostingChange->getBlog());
     }
 
     #[AsEventListener]

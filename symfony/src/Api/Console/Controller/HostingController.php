@@ -9,6 +9,7 @@ use App\Api\Console\Input\Hosting\CreateCustomDomainInput;
 use App\Api\Console\Input\Hosting\UpdateCustomDomainInput;
 use App\Api\Console\Input\Hosting\UpdateHostingInput;
 use App\Api\Console\Object\CustomDomainObject;
+use App\Api\Console\Object\HostingChangeObject;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
@@ -16,6 +17,9 @@ use App\Service\AppConfig;
 use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
+use App\Service\CustomDomain\Exception\InternalCustomDomainVerificationException;
+use App\Service\CustomDomain\InternalCustomDomainVerificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -28,7 +32,8 @@ class HostingController extends AbstractController
         private CustomDomainService          $customDomainService,
         private HostingChangeService         $hostingChangeService,
         private ConsoleApiAuthorizationListener $authorizationListener,
-        private AppConfig $appConfig
+        private AppConfig $appConfig,
+        private InternalCustomDomainVerificationService $internalCustomDomainVerificationService,
     ) {}
 
     #[Route('/hosting', methods: 'GET')]
@@ -42,6 +47,7 @@ class HostingController extends AbstractController
     private function getHostingInfoResponse(Blog $blog): JsonResponse
     {
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
+        $hostingChange = $this->hostingChangeService->getLatestChange($blog);
 
         return new JsonResponse([
             'delivery_url' => $this->appConfig->getDeliveryUrl(),
@@ -49,6 +55,9 @@ class HostingController extends AbstractController
             'hosting_url' => $blog->getHostingUrl(),
             'custom_domain' => $customDomain
                 ? new CustomDomainObject($customDomain)
+                : null,
+            'change' => $hostingChange
+                ? new HostingChangeObject($hostingChange)
                 : null,
         ]);
     }
@@ -74,7 +83,15 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('Hosting at is already set to the requested value: ' . $hostingAt->value);
         }
 
-        $this->hostingChangeService->requestHostingChange($blog, $hostingAt, $hostingUrl);
+        if ($this->hostingChangeService->hasPendingChange($blog)) {
+            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+        }
+
+        try {
+            $this->hostingChangeService->requestHostingChange($blog, $hostingAt, $hostingUrl);
+        } catch (PendingHostingChangeException) {
+            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+        }
 
         return $this->getHostingInfoResponse($blog);
     }
@@ -157,11 +174,26 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('Only custom domains with PENDING status can be verified');
         }
 
+        if ($this->hostingChangeService->hasPendingChange($blog)) {
+            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+        }
+
+        $domain = $customDomain->getDomain();
+
+        // first verify internally before attempting ACME
         try {
-            $customDomain = $this->customDomainService->verifyCustomDomain($customDomain);
+            $this->internalCustomDomainVerificationService->verify($domain);
+        } catch (InternalCustomDomainVerificationException) {
+            throw new BadRequestHttpException(
+                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
+            );
+        }
+
+        // then attempt ACME generation
+        try {
+            $customDomain = $this->customDomainService->generateCertificate($customDomain);
         } catch (AcmeException $e) {
-            // TODO: this is not ideal. it could expose internal data as well.
-            throw new BadRequestHttpException($e->getMessage());
+            throw new BadRequestHttpException('Unable to generate certificate via ACME protocol: ' . $e->getMessage());
         }
 
         return new JsonResponse(new CustomDomainObject($customDomain));

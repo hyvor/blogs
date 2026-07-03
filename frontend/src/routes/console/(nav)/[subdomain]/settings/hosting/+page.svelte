@@ -11,18 +11,17 @@
 		Validation
 	} from '@hyvor/design/components';
 	import {
-		blogOriginalStore,
 		blogStore,
 		hostingInfoStore,
 		updateHostingInfoStore
 	} from '../../../../lib/stores/blogStore';
-	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
 	import SetupCustomDomainModal from './SetupCustomDomainModal.svelte';
 	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
 	import HostingOption from './HostingOption.svelte';
+	import HostingChangeStatus from './HostingChangeStatus.svelte';
 	import { onMount } from 'svelte';
 
 	const originalSubdomain = $blogStore.subdomain;
@@ -155,6 +154,10 @@
 				</HostingOption>
 			</div>
 		</SplitControl>
+
+		{#if $hostingInfoStore.change}
+			<HostingChangeStatus change={$hostingInfoStore.change} />
+		{/if}
 
 		<SplitControl
 			label="Subdomain"

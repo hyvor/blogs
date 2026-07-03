@@ -107,21 +107,11 @@ class CustomDomainService
     /**
      * @throws AcmeException
      */
-    public function verifyCustomDomain(CustomDomain $customDomain): CustomDomain
-    {
-        $this->generateCertificate($customDomain);
-        return $customDomain;
-    }
-
-    /**
-     * @throws AcmeException
-     */
-    public function generateCertificate(CustomDomain $customDomain): void
+    public function generateCertificate(CustomDomain $customDomain): CustomDomain
     {
         $domain = $customDomain->getDomain();
         $privateKey = $this->getDecryptedPrivateKey($customDomain);
 
-        $this->acmeClient->preVerifyDomain($domain);
         $this->acmeClient->init();
         $order = $this->acmeClient->newOrder($domain);
         $finalCert = $this->acmeClient->finalizeOrder($order, $privateKey);
@@ -132,6 +122,8 @@ class CustomDomainService
             $finalCert->validFrom,
             $finalCert->validTo
         );
+
+        return $customDomain;
     }
 
     public function activateTlsCertificate(

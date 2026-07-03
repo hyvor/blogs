@@ -28,6 +28,8 @@ class AcmeClient implements LoggerAwareInterface
     private DirectoryDto $directory;
     private AccountInternalDto $account;
 
+    public const string ACME_CHALLENGE_CACHE_PREFIX = 'acme_challenge_';
+
     public function __construct(
         private HttpClientInterface $http,
         private CacheInterface $cache,
@@ -171,7 +173,7 @@ class AcmeClient implements LoggerAwareInterface
         );
         $keyAuthorization = $httpChallenge->token . '.' . $thumbprint;
 
-        $this->cache->get('acme_challenge_' . $httpChallenge->token, function () use ($keyAuthorization) {
+        $this->cache->get(self::ACME_CHALLENGE_CACHE_PREFIX . $httpChallenge->token, function () use ($keyAuthorization) {
             return $keyAuthorization;
         });
 
@@ -191,8 +193,6 @@ class AcmeClient implements LoggerAwareInterface
      */
     public function finalizeOrder(PendingOrder $order, \OpenSSLAsymmetricKey $privateKey): FinalCertificate
     {
-        $this->verifyHttpChallenge($order->domain, $order->token, $order->keyAuthorization);
-
         // notify challenge is ready
         $this->httpRequest($order->challengeUrl);
         $this->logger?->info('Notified ACME server that challenge is ready, polling for authorization status');
@@ -275,63 +275,6 @@ class AcmeClient implements LoggerAwareInterface
         $this->logger?->info('Certificate downloaded successfully from ACME server');
 
         return FinalCertificate::fromPem($certPem);
-    }
-
-    /**
-     * Verifies domain ownership directly without ACME order.
-     * @throws AcmeException
-     */
-    public function preVerifyDomain(string $domain): void
-    {
-        $token = bin2hex(random_bytes(16));
-        $keyAuthorization = $token . '.pre-check';
-
-        $this->cache->get('acme_challenge_' . $token, function () use ($keyAuthorization) {
-            return $keyAuthorization;
-        });
-
-        $this->verifyHttpChallenge($domain, $token, $keyAuthorization);
-    }
-
-    /**
-     * @throws AcmeException
-     */
-    public function verifyHttpChallenge(string $domain, string $token, string $keyAuthorization): void
-    {
-        $attempt = 0;
-        $maxAttempts = 3;
-        $sleepSeconds = 5;
-
-        while ($attempt < $maxAttempts) {
-            try {
-                $response = $this->http->request(
-                    'GET',
-                    'http://' . $domain . '/.well-known/acme-challenge/' . $token,
-                );
-                $resolvedKey = $response->getContent();
-
-                if ($resolvedKey === $keyAuthorization) {
-                    $this->logger?->info('HTTP challenge successfull, good to proceed');
-                    return;
-                }
-
-                $this->logger?->info(
-                    "HTTP challenge failed completed, waiting for {$sleepSeconds}s before retrying",
-                    [
-                        'attempt' => "$attempt/$maxAttempts",
-                        'domain' => $domain,
-                    ]
-                );
-
-                $attempt++;
-                $this->clock->sleep($sleepSeconds);
-                // @codeCoverageIgnoreStart
-            } catch (ExceptionInterface $e) {
-                throw new AcmeException('Failed to fetch response for HTTP challenge: ' . $e->getMessage());
-            }
-            // @codeCoverageIgnoreEnd
-        }
-        throw new AcmeException('HTTP challenge has failed after maximum attempts'); // @codeCoverageIgnore
     }
 
     /**

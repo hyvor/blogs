@@ -56,6 +56,9 @@ class HostingChanges
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $error_message = null;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private int $retry_count = 0;
+
     public function getId(): int
     {
         return $this->id;
@@ -207,6 +210,17 @@ class HostingChanges
     public function setErrorMessage(?string $error_message): static
     {
         $this->error_message = $error_message;
+        return $this;
+    }
+
+    public function getRetryCount(): int
+    {
+        return $this->retry_count;
+    }
+
+    public function setRetryCount(int $retry_count): static
+    {
+        $this->retry_count = $retry_count;
         return $this;
     }
 }
