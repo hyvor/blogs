@@ -2,7 +2,7 @@
 
 namespace App\Api\Public;
 
-use App\Api\Misc\ThemeObject;
+use App\Api\Public\Object\ThemeObject;
 use App\Service\Theme\ThemeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

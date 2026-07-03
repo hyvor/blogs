@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Api\Misc;
+namespace App\Api\Public\Object;
 
 use App\Entity\Theme;
 use App\Entity\ThemeVersion;

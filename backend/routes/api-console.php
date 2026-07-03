@@ -26,27 +26,11 @@ Route::prefix('/api/console/v0')
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
     });
 
-/**
- * Console API
- * ======================
- *
- * this is the Console API
- * can be used by both us and others
- * Important! see BlogAccessMiddleware to see how to write these routes securely
- */
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
-            // converts {subdomain} tp Blog model
         SubdomainMiddleware::class,
-
-            // check if the user or API key has access to the console API
-            // and set App\Models\User app instance
         ConsoleApiAccessMiddleware::class,
-
-            // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
-
-        CorsOnLocalhost::class,
     ])
     ->group(function () {
         /**
