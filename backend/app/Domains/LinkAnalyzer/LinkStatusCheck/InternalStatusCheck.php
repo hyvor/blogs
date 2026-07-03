@@ -40,5 +40,4 @@ class InternalStatusCheck implements LinkStatusCheckInterface
 
         return $statuses;
     }
-
 }

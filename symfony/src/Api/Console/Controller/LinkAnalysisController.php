@@ -14,7 +14,10 @@ use App\Api\Console\Object\LinkAnalysis\LinkObjectFactory;
 use App\Entity\Enum\JobStatus;
 use App\Entity\PostVariant;
 use App\Service\LinkAnalysis\LinkAnalysisService;
+use App\Service\LinkAnalysis\PostVariantAnalyzerFactory;
+use App\Service\LinkAnalysis\PostVariantLinkService;
 use App\Service\Post\PostService;
+use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -24,11 +27,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class LinkAnalysisController
 {
+    use ClockAwareTrait;
+
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private LinkAnalysisService $linkAnalysisService,
         private LinkObjectFactory $linkObjectFactory,
         private PostService $postService,
+        private PostVariantAnalyzerFactory $postVariantAnalyzerFactory,
+        private PostVariantLinkService $postVariantLinkService
     ) {}
 
     #[Route('/link-analysis/check-urls', methods: ['POST'])]
@@ -40,7 +47,8 @@ class LinkAnalysisController
         $postVariant = $this->findPostVariant($input->post_variant_id);
 
         $urls = array_slice($input->urls, 0, 100);
-        $links = $this->linkAnalysisService->checkPostVariantLinks($blog, $postVariant, $urls);
+        $analyzer = $this->postVariantAnalyzerFactory->create($blog);
+        $links = $analyzer->analyzeVariant($postVariant, $urls);
 
         return new JsonResponse(array_map(
             fn($link) => $this->linkObjectFactory->create($blog, $link),
@@ -64,8 +72,9 @@ class LinkAnalysisController
         $this->linkAnalysisService->ignoreLink($link, $input->status);
 
         $newCode = $input->status ? LinkAnalysisService::IGNORE_CODE : $link->getStatusCode();
-        // TODO: review and update
-        $this->linkAnalysisService->updatePostVariantLinkAnalysisCache($postVariant, $input->url, $newCode);
+        $this->postVariantLinkService->updatePostVariantCache($postVariant, [
+            $input->url => $newCode
+        ], true);
 
         return new JsonResponse($this->linkObjectFactory->create($blog, $link));
     }
@@ -87,7 +96,6 @@ class LinkAnalysisController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        // TODO: Fix query
         $links = $this->linkAnalysisService->getLinks(
             $blog,
             $input->type,
@@ -129,7 +137,7 @@ class LinkAnalysisController
                 throw new UnprocessableEntityHttpException('A check is already running');
             }
 
-            $secondsSinceLastCheck = (new \DateTimeImmutable())->getTimestamp() - $lastCheck->getCreatedAt()->getTimestamp();
+            $secondsSinceLastCheck = $this->now()->getTimestamp() - $lastCheck->getCreatedAt()->getTimestamp();
             if ($lastCheck->getStatus() === JobStatus::COMPLETED && $secondsSinceLastCheck < 24 * 3600) {
                 throw new UnprocessableEntityHttpException('A check was already run in the last 24 hours');
             }

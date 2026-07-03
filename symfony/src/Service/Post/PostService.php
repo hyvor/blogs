@@ -514,6 +514,7 @@ class PostService
      *     description?: string|null,
      *     seo_primary_keyword?: string|null,
      *     seo_secondary_keywords?: string[],
+     *     link_analysis?: array<string, number>
      * } $data
      */
     public function updatePostVariant(
@@ -554,6 +555,10 @@ class PostService
 
         if (array_key_exists('seo_secondary_keywords', $data)) {
             $variant->setSeoSecondaryKeywords(array_slice($data['seo_secondary_keywords'], 0, 10));
+        }
+
+        if (array_key_exists('link_analysis', $data)) {
+            $variant->setLinkAnalysis($data['link_analysis']);
         }
 
         $variant->setUpdatedAt($this->now());
