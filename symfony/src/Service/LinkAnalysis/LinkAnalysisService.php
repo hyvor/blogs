@@ -69,47 +69,47 @@ class LinkAnalysisService
                 'l',
                 'pv',
                 'lang',
-                'CASE WHEN l.ignore = false AND l.statusCode >= 200 AND l.statusCode < 300 THEN 1 ELSE 0 END AS HIDDEN ok',
-                'CASE WHEN l.ignore = false AND l.statusCode >= 300 AND l.statusCode < 400 THEN 1 ELSE 0 END AS HIDDEN redirect',
-                'CASE WHEN l.ignore = false AND (l.statusCode = 404 OR l.statusCode = 0) THEN 1 ELSE 0 END AS HIDDEN broken',
-                'CASE WHEN l.ignore = false AND l.statusCode != 404 AND l.statusCode != 0 AND (l.statusCode < 200 OR l.statusCode >= 400) THEN 1 ELSE 0 END AS HIDDEN risky',
+                'CASE WHEN l.ignore = false AND l.status_code >= 200 AND l.status_code < 300 THEN 1 ELSE 0 END AS HIDDEN ok',
+                'CASE WHEN l.ignore = false AND l.status_code >= 300 AND l.status_code < 400 THEN 1 ELSE 0 END AS HIDDEN redirect',
+                'CASE WHEN l.ignore = false AND (l.status_code = 404 OR l.status_code = 0) THEN 1 ELSE 0 END AS HIDDEN broken',
+                'CASE WHEN l.ignore = false AND l.status_code != 404 AND l.status_code != 0 AND (l.status_code < 200 OR l.status_code >= 400) THEN 1 ELSE 0 END AS HIDDEN risky',
                 'CASE WHEN l.ignore = true THEN 1 ELSE 0 END AS HIDDEN ignored'
             )
             ->from(LinkAnalyzerLink::class, 'l')
-            ->leftJoin('l.postVariant', 'pv')
+            ->leftJoin('l.post_variant', 'pv')
             ->leftJoin('pv.language', 'lang')
             ->where('l.blog = :blog')
             ->setParameter('blog', $blog)
             ->orderBy('broken', 'DESC')
             ->addOrderBy('risky', 'DESC')
             ->addOrderBy('redirect', 'DESC')
-            ->addOrderBy('l.lastCheckedAt', 'DESC')
+            ->addOrderBy('l.last_checked_at', 'DESC')
             ->addOrderBy('l.id', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
         if ($postVariantId !== null) {
-            $qb->andWhere('l.postVariant = :postVariantId')
+            $qb->andWhere('l.post_variant = :postVariantId')
                 ->setParameter('postVariantId', $postVariantId);
         }
 
         match ($status) {
             LinkAnalyzerLinkStatus::OK => $qb
                 ->andWhere('l.ignore = false')
-                ->andWhere('l.statusCode >= 200')
-                ->andWhere('l.statusCode < 300'),
+                ->andWhere('l.status_code >= 200')
+                ->andWhere('l.status_code < 300'),
             LinkAnalyzerLinkStatus::REDIRECT => $qb
                 ->andWhere('l.ignore = false')
-                ->andWhere('l.statusCode >= 300')
-                ->andWhere('l.statusCode < 400'),
+                ->andWhere('l.status_code >= 300')
+                ->andWhere('l.status_code < 400'),
             LinkAnalyzerLinkStatus::BROKEN => $qb
                 ->andWhere('l.ignore = false')
-                ->andWhere('l.statusCode = 404 OR l.statusCode = 0'),
+                ->andWhere('l.status_code = 404 OR l.status_code = 0'),
             LinkAnalyzerLinkStatus::RISKY => $qb
                 ->andWhere('l.ignore = false')
-                ->andWhere('l.statusCode != 404')
-                ->andWhere('l.statusCode != 0')
-                ->andWhere('l.statusCode < 200 OR l.statusCode >= 400'),
+                ->andWhere('l.status_code != 404')
+                ->andWhere('l.status_code != 0')
+                ->andWhere('l.status_code < 200 OR l.status_code >= 400'),
             LinkAnalyzerLinkStatus::IGNORED => $qb
                 ->andWhere('l.ignore = true'),
             default => null,
