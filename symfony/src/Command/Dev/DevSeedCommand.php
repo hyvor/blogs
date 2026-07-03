@@ -20,8 +20,10 @@ use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -30,15 +32,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'dev:seed',
     description: 'Seed the database for development',
 )]
-class DevSeedCommand extends Command
+class DevSeedCommand
 {
     public function __construct(
         private Connection $connection,
-    ) {
-        parent::__construct();
-    }
+    ) {}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        Application $application
+    ): int
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -105,6 +109,9 @@ class DevSeedCommand extends Command
         }
 
         $io->success('Database seeded successfully.');
+
+        // sync themes
+        $application->doRun(new ArrayInput(['command' => 'themes:sync']), $output);
 
         return Command::SUCCESS;
     }
