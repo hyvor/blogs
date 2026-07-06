@@ -17,15 +17,6 @@ use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/api/console/v0')
-    ->middleware([
-        ConsoleApiAuthMiddleware::class,
-        CorsOnLocalhost::class,
-    ])
-    ->group(function () {
-        Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
-    });
-
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
         SubdomainMiddleware::class,
