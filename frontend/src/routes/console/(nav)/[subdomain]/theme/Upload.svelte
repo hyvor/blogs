@@ -27,7 +27,7 @@
 		const toastId = toast.loading('Uploading theme...');
 
 		uploadTheme(file)
-			.then((files) => {
+			.then(({ files }) => {
 				toast.success('Theme uploading completed', { id: toastId });
 				setThemeFiles(files);
 			})

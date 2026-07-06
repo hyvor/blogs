@@ -316,7 +316,8 @@ export interface Navigation {
 export type NavigationType = 'header' | 'footer';
 
 export interface NavigationVariant {
-	name: string;
+	language_id: number;
+	name: string | null;
 }
 
 // API
@@ -467,4 +468,13 @@ export interface GptPrompt {
 
 	prompt: string;
 	gpt_response: string;
+}
+
+// === Hyvor Talk
+
+export interface HyvorTalkGatedContentRule {
+	id: number;
+	tag: Tag;
+	minimum_plan: string | null;
+	gate: string | null;
 }

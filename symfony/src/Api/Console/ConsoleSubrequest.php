@@ -17,6 +17,9 @@ class ConsoleSubrequest
         private ConsoleApiAuthorizationListener $consoleApiAuthorizationListener,
     ) {}
 
+    /**
+     * @throws HttpException
+     */
     public function callBlogEndpoint(
         Blog $blog,
         string $method,
@@ -27,7 +30,11 @@ class ConsoleSubrequest
         $request = Request::create($path, $method);
         $this->consoleApiAuthorizationListener->setBlogToRequest($request, $blog);
 
-        $response = $this->kernel->handle($request, HttpKernelInterface::SUB_REQUEST);
+        try {
+            $response = $this->kernel->handle($request, HttpKernelInterface::SUB_REQUEST);
+        } catch (\Throwable $e) {
+            throw new HttpException(500, 'Subrequest to ' . $path . ' failed', $e);
+        }
 
         if ($response->getStatusCode() !== 200) {
             throw new HttpException($response->getStatusCode(), 'Subrequest to ' . $path . ' failed with status code ' . $response->getStatusCode());
