@@ -32,7 +32,7 @@
 <Tag {color} {size}>
 	{#snippet start()}
 		{@const SvelteComponent = icon}
-		<SvelteComponent size={status === "scheduled" ? 10  : 12} />
+		<SvelteComponent size={status === 'scheduled' ? 10 : 12} />
 	{/snippet}
 
 	{status.toUpperCase()}

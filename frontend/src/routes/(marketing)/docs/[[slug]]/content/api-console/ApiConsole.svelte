@@ -295,9 +295,9 @@ type Response = PostVariant
 />
 
 <p>
-	Publishes a post variant. If the variant does not have a slug, one is automatically generated
-	from the title. If the post does not have a <code>published_at</code> time, it is set to now.
-	Requires <code>posts.publish.own</code> scope.
+	Publishes a post variant. If the variant does not have a slug, one is automatically generated from
+	the title. If the post does not have a <code>published_at</code> time, it is set to now. Requires
+	<code>posts.publish.own</code> scope.
 </p>
 
 <h4 id="unpublish-post-variant">Unpublish a post variant</h4>
@@ -1296,8 +1296,9 @@ type Response = {}
 
 <h4 id="delete-blog">Delete the blog</h4>
 <p>
-	Soft-deletes the blog. The blog and its data are permanently deleted 30 days
-	later. Requires the <code>blog.delete</code> scope.
+	Soft-deletes the blog. The blog and its data are permanently deleted 30 days later. Requires the <code
+		>blog.delete</code
+	> scope.
 </p>
 <p><code>DELETE /blog</code></p>
 <CodeBlock

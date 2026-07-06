@@ -62,7 +62,12 @@
 
 	{#if isUnlimited}
 		<div class="usage-bar-bar">
-			<div class="usage-bar-fill" style:width="100%" style:background="var(--accent)" style:opacity="0.3"></div>
+			<div
+				class="usage-bar-fill"
+				style:width="100%"
+				style:background="var(--accent)"
+				style:opacity="0.3"
+			></div>
 		</div>
 	{:else if data.limit === 0}
 		<div class="feature-not-included">Your license does not include this feature.</div>

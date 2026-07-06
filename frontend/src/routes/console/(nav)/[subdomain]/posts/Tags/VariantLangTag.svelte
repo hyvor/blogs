@@ -15,7 +15,7 @@
 		[key: string]: any;
 	}
 
-	let { variant, size = "small", ...rest }: Props = $props();
+	let { variant, size = 'small', ...rest }: Props = $props();
 
 	let language = $derived($languagesStore.find((v) => v.id === variant.language_id));
 
@@ -43,7 +43,7 @@
 
 {#if language}
 	<Tooltip text={tooltip} position="bottom">
-		<Tag size={size} interactive color="default" outline {...rest}>
+		<Tag {size} interactive color="default" outline {...rest}>
 			{language.code}
 			{#snippet end()}
 				{@const SvelteComponent = icon}

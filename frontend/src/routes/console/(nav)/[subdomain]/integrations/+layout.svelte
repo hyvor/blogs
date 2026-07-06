@@ -16,8 +16,7 @@
 	<div class="nav hds-box">
 		<NavLink
 			href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-			active={$page.url.pathname ===
-				`/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
+			active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
 		>
 			{#snippet start()}
 				<img src={hyvorTalkLogo} alt="Hyvor Talk" />

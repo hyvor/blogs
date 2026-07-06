@@ -29,13 +29,7 @@
 			];
 		}
 		if (plan === 'starter') {
-			return [
-				'All Personal features',
-				'3 blogs',
-				'5 users',
-				'5GB media storage',
-				'SEO Analysis'
-			];
+			return ['All Personal features', '3 blogs', '5 users', '5GB media storage', 'SEO Analysis'];
 		}
 		if (plan === 'growth') {
 			return [
@@ -60,15 +54,19 @@
 
 	const features = getFeatures();
 
-	let price = $derived((() => {
-		if (plan === 'personal') return yearly ? prices.personal : Math.round(prices.personal / 10);
-		return prices[plan as keyof typeof prices] * (yearly ? 10 : 1);
-	})());
+	let price = $derived(
+		(() => {
+			if (plan === 'personal') return yearly ? prices.personal : Math.round(prices.personal / 10);
+			return prices[plan as keyof typeof prices] * (yearly ? 10 : 1);
+		})()
+	);
 
-	let period = $derived((() => {
-		if (plan === 'personal') return yearly ? 'year' : 'month';
-		return yearly ? 'year' : 'month';
-	})());
+	let period = $derived(
+		(() => {
+			if (plan === 'personal') return yearly ? 'year' : 'month';
+			return yearly ? 'year' : 'month';
+		})()
+	);
 
 	let personalMonthlyNote = $derived(plan === 'personal' && !yearly);
 </script>
@@ -88,11 +86,15 @@
 	<div class="price">
 		{#if plan === 'personal'}
 			<div class="annual-only">
-				{personalMonthlyNote ? `* Annual billing only (€${prices.personal}/year)` : 'Annual billing only'}
+				{personalMonthlyNote
+					? `* Annual billing only (€${prices.personal}/year)`
+					: 'Annual billing only'}
 			</div>
 		{/if}
 		<div class="price-display">
-			<span class="price-amount">{currency}{price}</span><span class="price-period">/{period}{personalMonthlyNote ? '*' : ''}</span>
+			<span class="price-amount">{currency}{price}</span><span class="price-period"
+				>/{period}{personalMonthlyNote ? '*' : ''}</span
+			>
 		</div>
 	</div>
 

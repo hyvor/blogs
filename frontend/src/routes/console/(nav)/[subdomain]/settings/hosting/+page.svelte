@@ -148,8 +148,7 @@
 							href="/docs/subdirectory">subdirectory hosting</a
 						>
 						or
-						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a
-						>.
+						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a>.
 					{/snippet}
 				</HostingOption>
 			</div>

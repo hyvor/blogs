@@ -49,9 +49,7 @@
 
 	let isLoading = $state(true);
 
-	const isPostPage = $derived(
-		page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null
-	);
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
 
 	function getBlogHint() {
 		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);

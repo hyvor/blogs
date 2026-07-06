@@ -8,9 +8,7 @@
 	</div>
 </div>
 
-
 <style>
-
 	.self-host {
 		margin-top: 40px;
 	}

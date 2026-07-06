@@ -20,11 +20,7 @@
 
 <Tag {size} style="padding: 4px 8px" bg="#f1f1f1" {end}>
 	{#snippet start()}
-		<Avatar
-			src={user.picture_url || undefined}
-			alt={name}
-			size={size === 'x-small' ? 14 : 16}
-		/>
+		<Avatar src={user.picture_url || undefined} alt={name} size={size === 'x-small' ? 14 : 16} />
 	{/snippet}
 	{name}
 </Tag>

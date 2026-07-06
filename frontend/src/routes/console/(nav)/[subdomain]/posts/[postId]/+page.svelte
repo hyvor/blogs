@@ -83,11 +83,11 @@
 	});
 </script>
 
-<div 
-	id="post-view" 
-	class:is-temp={$isTempStore} 
+<div
+	id="post-view"
+	class:is-temp={$isTempStore}
 	bind:this={postView}
-	 style:view-transition-name={`post-${page.params.postId}`}
+	style:view-transition-name={`post-${page.params.postId}`}
 >
 	{#if isLoading}
 		<div class="full-loader">
