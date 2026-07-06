@@ -41,6 +41,24 @@ class CustomDomainTest extends ApiTestCase
         );
     }
 
+    public function test_redirects_when_blog_deleted(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage([
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'deleted_at' => new \DateTimeImmutable(),
+        ]);
+        $customDomain = CustomDomainFactory::createActiveFor($blog, 'deleted.customdomain.com');
+        $blog->setCustomDomain($customDomain);
+        $this->getEm()->flush();
+
+        $response = $this->call('deleted.customdomain.com', '/some/path');
+
+        $this->assertResponseRedirects(
+            'https://blogs.hyvor.com/?via=custom_domain&host=deleted.customdomain.com',
+            302
+        );
+    }
+
     public function test_returns_response_when_blog_found(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage([

@@ -50,6 +50,10 @@ class SubdomainController
             throw new HttpException(404, 'Blog not found for subdomain: ' . $subdomain);
         }
 
+        if ($blog->getDeletedAt()) {
+            throw new HttpException(404, 'Blog is deleted.');
+        }
+
         if (
             $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN &&
             $blog->getHostingRedirectSubdomain()

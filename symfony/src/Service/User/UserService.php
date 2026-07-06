@@ -192,6 +192,7 @@ class UserService
             ->where('u.hyvor_user_id = :userId')
             ->andWhere('b.organization_id = :orgId')
             ->andWhere('u.status = :status')
+            ->andWhere('b.deleted_at IS NULL')
             ->setParameter('userId', $hyvorUserId)
             ->setParameter('orgId', $organizationId)
             ->setParameter('status', UserStatus::ACTIVE)
@@ -232,12 +233,16 @@ class UserService
     }
 
     /** @throws \Exception if the Hyvor user is not found */
-    public function createUserFromHyvorUser(Blog $blog, int $hyvorUserId, UserRole $role): User
+    public function createUserFromAuthUser(Blog $blog, int|AuthUser $hyvorUserId, UserRole $role): User
     {
-        $hyvorUser = $this->auth->fromId($hyvorUserId);
+        if (is_int($hyvorUserId)) {
+            $hyvorUser = $this->auth->fromId($hyvorUserId);
 
-        if ($hyvorUser === null) {
-            throw new \Exception('User not found');
+            if ($hyvorUser === null) {
+                throw new \Exception('User not found');
+            }
+        } else {
+            $hyvorUser = $hyvorUserId;
         }
 
         $now = $this->now();
@@ -281,7 +286,12 @@ class UserService
         return $user;
     }
 
-    public function createGuestUser(Blog $blog, string $name, UserRole $role = UserRole::CONTRIBUTOR): User
+    public function createGuestUser(
+        Blog $blog,
+        string $name,
+        UserRole $role = UserRole::CONTRIBUTOR,
+        ?string $pictureUrl = null
+    ): User
     {
         $now = $this->now();
 
@@ -292,13 +302,14 @@ class UserService
         $user->setSlug($this->generateUniqueSlug($blog, [$name]));
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
+        $user->setPictureUrl($pictureUrl);
 
         $this->em->persist($user);
-        $this->em->flush();
 
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-        $this->createUserVariant($user, $primaryLanguage, name: $name);
+        $this->createUserVariant($user, $primaryLanguage, name: $name, flush: false);
 
+        $this->em->flush();
         $this->ed->dispatch(new UserCreatedEvent($user));
 
         return $user;
@@ -393,6 +404,7 @@ class UserService
         ?string $name = null,
         ?string $location = null,
         ?string $bio = null,
+        bool $flush = true
     ): UserVariant {
         $variant = new UserVariant();
         $variant->setUser($user);
@@ -401,13 +413,14 @@ class UserService
         $variant->setLocation($location);
         $variant->setBio($bio);
         $variant->setUpdatedAt($this->now());
-
-        $this->em->persist($variant);
-        $this->em->flush();
-
         $user->getVariants()->add($variant);
 
-        $this->ed->dispatch(new UserVariantCreatedEvent($variant));
+        $this->em->persist($variant);
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new UserVariantCreatedEvent($variant));
+        }
 
         return $variant;
     }

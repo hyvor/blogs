@@ -6,6 +6,7 @@ use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Entity\Blog;
 use App\Entity\BlogVariant;
 use App\Entity\Language;
+use App\Service\Blog\Event\BlogDeletedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\CustomDomain\CustomDomainService;
@@ -158,14 +159,22 @@ class BlogService
         ]);
     }
 
-    public function createBlogVariant(Blog $blog, Language $language): BlogVariant
+    public function createBlogVariant(
+        Blog $blog,
+        Language $language,
+        ?string $name = null,
+        bool $flush = true
+    ): BlogVariant
     {
         $variant = new BlogVariant();
         $variant->setBlog($blog);
         $variant->setLanguage($language);
+        $variant->setName($name);
 
         $this->em->persist($variant);
-        $this->em->flush();
+        if ($flush) {
+            $this->em->flush();
+        }
 
         $blog->getVariants()->add($variant);
 
@@ -189,4 +198,23 @@ class BlogService
 
         return $variant;
     }
+
+    /**
+     * Soft-deletes the blog. The blog and its data are hard-deleted 30 days later
+     * by BlogHardDeleteMessageHandler. See https://github.com/hyvor/core/issues/561
+     */
+    public function softDeleteBlog(Blog $blog): void
+    {
+        $blog->setDeletedAt($this->now());
+        $this->em->flush();
+
+        $this->ed->dispatch(new BlogDeletedEvent($blog));
+    }
+
+    public function hardDeleteBlog(Blog $blog): void
+    {
+        $this->em->remove($blog);
+        $this->em->flush();
+    }
+
 }

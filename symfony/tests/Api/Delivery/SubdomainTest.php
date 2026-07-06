@@ -55,6 +55,19 @@ class SubdomainTest extends ApiTestCase
         $this->assertStringContainsString('Blog not found for subdomain: nonexistent', $response->getContent());
     }
 
+    public function test_when_blog_deleted(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
+
+        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'deleted_at' => new \DateTimeImmutable()]);
+        RouteFactory::createDefaultsFor($blog);
+        ThemeFileFactory::createIndexTwig($blog, '<h1>Hello World</h1>');
+
+        $response = $this->call('testblog.hyvorblogs.io', '/');
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertStringContainsString('Blog is deleted.', $response->getContent());
+    }
+
     public function test_successful_request(): void
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
