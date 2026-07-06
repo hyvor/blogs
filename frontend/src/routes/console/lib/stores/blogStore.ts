@@ -1,9 +1,10 @@
 import { writable } from 'svelte/store';
-import type { Blog, BlogCounts, BlogVariant } from '../types';
+import type { Blog, BlogCounts, BlogVariant, HostingInfo } from '../types';
 
 export const blogStore = writable<Blog>();
 export const blogOriginalStore = writable<Blog>();
 export const blogCountsStore = writable<BlogCounts>();
+export const hostingInfoStore = writable<HostingInfo>();
 
 export function updateBlogStore(
 	blog: Partial<Blog> | ((currentBlog: Blog) => Partial<Blog>),
@@ -65,4 +66,14 @@ export function updateBlogStoreVariant(
 			};
 		});
 	});
+}
+
+export function updateHostingInfoStore(updates: HostingInfo) {
+	blogStore.update((blog) => ({
+		...blog,
+		hosting_at: updates.hosting_at,
+		hosting_domain: updates.custom_domain_setup?.domain ?? null,
+		hosting_url: updates.hosting_url ?? null
+	}));
+	hostingInfoStore.set(updates);
 }

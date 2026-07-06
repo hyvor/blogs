@@ -43,7 +43,7 @@ class SudoAnalyticsService
     {
         /** @var numeric-string|int|false $count */
         $count = $this->entityManager->getConnection()
-            ->executeQuery('SELECT COUNT(*) FROM blogs WHERE hosting_domain IS NOT NULL')
+            ->executeQuery('SELECT COUNT(*) FROM blogs WHERE custom_domain_id IS NOT NULL')
             ->fetchOne();
 
         return (int) $count;

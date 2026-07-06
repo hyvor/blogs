@@ -53,7 +53,7 @@ class ThemeService
 
         $versionsByThemeId = [];
         foreach ($versions as $version) {
-            $versionsByThemeId[$version->getThemeId()] = $version;
+            $versionsByThemeId[$version->getTheme()->getId()] = $version;
         }
 
         $result = [];

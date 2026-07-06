@@ -6,7 +6,7 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Blog\ApiKey\CreateApiKeyInput;
+use App\Api\Console\Input\ApiKey\CreateApiKeyInput;
 use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\ApiKey;
 use App\Service\ApiKey\ApiKeyService;

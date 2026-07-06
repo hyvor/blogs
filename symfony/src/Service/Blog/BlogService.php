@@ -5,10 +5,11 @@ namespace App\Service\Blog;
 use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Entity\Blog;
 use App\Entity\BlogVariant;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
+use App\Service\Blog\Event\BlogDeletedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\CustomDomain\CustomDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,6 +25,7 @@ class BlogService
     public function __construct(
         private EntityManagerInterface $em,
         private EventDispatcherInterface $ed,
+        private CustomDomainService $customDomainService,
     ) {}
 
     public function isSubdomainReserved(string $subdomain): bool
@@ -38,7 +40,7 @@ class BlogService
 
     public function getBlogByCustomDomain(string $customDomain): ?Blog
     {
-        return $this->em->getRepository(Blog::class)->findOneBy(['hosting_domain' => $customDomain]);
+        return $this->customDomainService->getBlogByCustomDomain($customDomain);
     }
 
     public function updateBlog(Blog $blog, UpdateBlogInput $input): Blog
@@ -47,22 +49,6 @@ class BlogService
 
         if ($input->subdomain !== null) {
             $blog->setSubdomain($input->subdomain);
-        }
-
-        if ($input->hosting_at !== null) {
-            $blog->setHostingAt($input->hosting_at);
-
-            if ($input->hosting_at !== BlogHostingAt::DOMAIN) {
-                $blog->setHostingDomain(null);
-            } elseif ($input->hosting_domain !== null) {
-                $blog->setHostingDomain($input->hosting_domain);
-            }
-        } elseif ($input->hosting_domain !== null) {
-            $blog->setHostingDomain($input->hosting_domain);
-        }
-
-        if ($input->hosting_url !== null) {
-            $blog->setHostingUrl($input->hosting_url);
         }
 
         if ($input->hosting_redirect_subdomain !== null) {
@@ -173,14 +159,22 @@ class BlogService
         ]);
     }
 
-    public function createBlogVariant(Blog $blog, Language $language): BlogVariant
+    public function createBlogVariant(
+        Blog $blog,
+        Language $language,
+        ?string $name = null,
+        bool $flush = true
+    ): BlogVariant
     {
         $variant = new BlogVariant();
         $variant->setBlog($blog);
         $variant->setLanguage($language);
+        $variant->setName($name);
 
         $this->em->persist($variant);
-        $this->em->flush();
+        if ($flush) {
+            $this->em->flush();
+        }
 
         $blog->getVariants()->add($variant);
 
@@ -204,4 +198,23 @@ class BlogService
 
         return $variant;
     }
+
+    /**
+     * Soft-deletes the blog. The blog and its data are hard-deleted 30 days later
+     * by BlogHardDeleteMessageHandler. See https://github.com/hyvor/core/issues/561
+     */
+    public function softDeleteBlog(Blog $blog): void
+    {
+        $blog->setDeletedAt($this->now());
+        $this->em->flush();
+
+        $this->ed->dispatch(new BlogDeletedEvent($blog));
+    }
+
+    public function hardDeleteBlog(Blog $blog): void
+    {
+        $this->em->remove($blog);
+        $this->em->flush();
+    }
+
 }

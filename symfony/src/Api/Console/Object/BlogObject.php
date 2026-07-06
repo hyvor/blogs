@@ -89,9 +89,9 @@ class BlogObject
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType();
         $this->hosting_at = $blog->getHostingAt();
-        $this->hosting_domain = $blog->getHostingDomain();
+        $this->hosting_domain = $blog->getCustomDomain()?->getDomain();
         $this->hosting_url = $blog->getHostingUrl();
-        $this->hosting_redirect_subdomain = (bool) $blog->getHostingRedirectSubdomain();
+        $this->hosting_redirect_subdomain = $blog->getHostingRedirectSubdomain();
 
         $this->url = $url;
 

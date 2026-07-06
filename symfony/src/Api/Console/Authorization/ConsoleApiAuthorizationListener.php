@@ -71,7 +71,7 @@ class ConsoleApiAuthorizationListener
         $request = $event->getRequest();
 
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
-        if ($blog === null) {
+        if ($blog === null || $blog->getDeletedAt()) {
             throw new NotFoundHttpException('Blog not found');
         }
 

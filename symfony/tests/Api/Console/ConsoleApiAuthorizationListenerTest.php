@@ -127,6 +127,19 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         $this->assertResponseFailed(404, 'Blog not found');
     }
 
+    public function test_blog_level_returns_404_when_blog_is_deleted(): void
+    {
+        BlogFactory::createOneWithUser([
+            'subdomain' => 'deleted-blog',
+            'deleted_at' => new \DateTimeImmutable('-1 day'),
+        ], ['status' => UserStatus::ACTIVE]);
+
+        $user = AuthFake::generateUser(['id' => 301]);
+        $this->consoleBlogApi('GET', 'deleted-blog', '/api-keys', user: $user);
+
+        $this->assertResponseFailed(404, 'Blog not found');
+    }
+
     public function test_blog_level_returns_401_when_not_authenticated(): void
     {
         BlogFactory::createOne(['subdomain' => 'auth-test-blog']);

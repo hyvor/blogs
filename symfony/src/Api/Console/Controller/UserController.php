@@ -6,15 +6,15 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Blog\User\CheckUserSlugAvailableInput;
-use App\Api\Console\Input\Blog\User\CreateGuestUserInput;
-use App\Api\Console\Input\Blog\User\CreateUserInput;
-use App\Api\Console\Input\Blog\User\CreateUserVariantInput;
-use App\Api\Console\Input\Blog\User\DeleteUserVariantInput;
-use App\Api\Console\Input\Blog\User\GetUsersInput;
 use App\Api\Console\Input\Blog\User\SearchUsersInput;
-use App\Api\Console\Input\Blog\User\UpdateUserInput;
-use App\Api\Console\Input\Blog\User\UpdateUserVariantInput;
+use App\Api\Console\Input\User\CheckUserSlugAvailableInput;
+use App\Api\Console\Input\User\CreateGuestUserInput;
+use App\Api\Console\Input\User\CreateUserInput;
+use App\Api\Console\Input\User\CreateUserVariantInput;
+use App\Api\Console\Input\User\DeleteUserVariantInput;
+use App\Api\Console\Input\User\GetUsersInput;
+use App\Api\Console\Input\User\UpdateUserInput;
+use App\Api\Console\Input\User\UpdateUserVariantInput;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Api\Console\Object\UserVariantObjectFactory;
 use App\Entity\Enum\UserRole;
@@ -71,8 +71,8 @@ class UserController
             throw new UnprocessableEntityHttpException('User is already added to the blog');
         }
 
-        if ($input->role === UserRole::OWNER) {
-            throw new UnprocessableEntityHttpException('Owners cannot be created. Use ownership transferring');
+        if ($input->role === UserRole::ADMIN) {
+            throw new UnprocessableEntityHttpException('Admins cannot be created. Use ownership transferring');
         }
 
         $organizationId = $blog->getOrganizationId();
@@ -95,7 +95,7 @@ class UserController
             }
         }
 
-        $user = $this->userService->createUserFromHyvorUser($blog, $input->hyvor_user_id, $input->role);
+        $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
 
         return new JsonResponse($this->userObjectFactory->create($user, $blog));
     }
@@ -125,20 +125,20 @@ class UserController
         $blog = $this->blogAuthListener->getBlog();
 
         if ($input->role !== null) {
-            if ($input->role === UserRole::OWNER) {
+            if ($input->role === UserRole::ADMIN) {
                 throw new UnprocessableEntityHttpException(
-                    'You cannot update the role to owner. Use transferring instead',
+                    'You cannot update the role to admin. Use transferring instead',
                 );
             }
-            if ($user->getRole() === UserRole::OWNER) {
+            if ($user->getRole() === UserRole::ADMIN) {
                 throw new UnprocessableEntityHttpException(
-                    'You cannot update the role of the owner. Use transferring instead',
+                    'You cannot update the role of the admin. Use transferring instead',
                 );
             }
         }
 
-        if ($input->status !== null && $user->getRole() === UserRole::OWNER) {
-            throw new UnprocessableEntityHttpException('You cannot update the status of the owner');
+        if ($input->status !== null && $user->getRole() === UserRole::ADMIN) {
+            throw new UnprocessableEntityHttpException('You cannot update the status of the admin');
         }
 
         if (
@@ -158,8 +158,8 @@ class UserController
     #[ScopeRequired(Scope::USERS_WRITE)]
     public function deleteUser(#[MapBlogEntity] User $user): JsonResponse
     {
-        if ($user->getRole() === UserRole::OWNER) {
-            throw new UnprocessableEntityHttpException('Cannot delete the owner');
+        if ($user->getRole() === UserRole::ADMIN) {
+            throw new UnprocessableEntityHttpException('Cannot delete the admin');
         }
 
         $this->userService->deleteUser($user);

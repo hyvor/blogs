@@ -6,8 +6,6 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
-use App\Entity\Language;
-use App\Entity\Navigation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -46,23 +44,21 @@ class Blog
     #[ORM\Column(length: 255, unique: true)]
     private string $subdomain;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $trial_ends_at;
-
     #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
     private BlogType $type = BlogType::DEFAULT;
 
-    #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
+    #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
-
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
-    private ?string $hosting_domain = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
 
-    #[ORM\Column(nullable: true, options: ['default' => true])]
-    private ?bool $hosting_redirect_subdomain = true;
+    #[ORM\Column()]
+    private bool $hosting_redirect_subdomain = true;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
+    private ?CustomDomain $custom_domain = null;
 
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
     private BlogMeta $meta;
@@ -73,6 +69,9 @@ class Blog
 
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deleted_at = null;
 
     /** @var Collection<int, BlogVariant> */
     #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
@@ -195,17 +194,6 @@ class Blog
         return $this;
     }
 
-    public function getTrialEndsAt(): \DateTimeImmutable
-    {
-        return $this->trial_ends_at;
-    }
-
-    public function setTrialEndsAt(\DateTimeImmutable $trial_ends_at): static
-    {
-        $this->trial_ends_at = $trial_ends_at;
-        return $this;
-    }
-
     public function getType(): BlogType
     {
         return $this->type;
@@ -228,17 +216,6 @@ class Blog
         return $this;
     }
 
-    public function getHostingDomain(): ?string
-    {
-        return $this->hosting_domain;
-    }
-
-    public function setHostingDomain(?string $hosting_domain): static
-    {
-        $this->hosting_domain = $hosting_domain;
-        return $this;
-    }
-
     public function getHostingUrl(): ?string
     {
         return $this->hosting_url;
@@ -250,14 +227,25 @@ class Blog
         return $this;
     }
 
-    public function getHostingRedirectSubdomain(): ?bool
+    public function getHostingRedirectSubdomain(): bool
     {
         return $this->hosting_redirect_subdomain;
     }
 
-    public function setHostingRedirectSubdomain(?bool $hosting_redirect_subdomain): static
+    public function setHostingRedirectSubdomain(bool $hosting_redirect_subdomain): static
     {
         $this->hosting_redirect_subdomain = $hosting_redirect_subdomain;
+        return $this;
+    }
+
+    public function getCustomDomain(): ?CustomDomain
+    {
+        return $this->custom_domain;
+    }
+
+    public function setCustomDomain(?CustomDomain $custom_domain): static
+    {
+        $this->custom_domain = $custom_domain;
         return $this;
     }
 
@@ -298,6 +286,22 @@ class Blog
     {
         $this->organization_id = $organization_id;
         return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deleted_at): static
+    {
+        $this->deleted_at = $deleted_at;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted_at !== null;
     }
 
     /**

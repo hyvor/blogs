@@ -42,7 +42,6 @@ final class BlogFactory extends PersistentObjectFactory
             'is_blocked' => false,
             'organization_id' => self::faker()->randomNumber(),
             'subdomain' => bin2hex(random_bytes(20)),
-            'trial_ends_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
 

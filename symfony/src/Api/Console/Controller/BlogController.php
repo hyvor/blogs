@@ -5,7 +5,9 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
+use App\Api\Console\Input\Blog\CacheClearType;
 use App\Api\Console\Input\Blog\CreateBlogVariantInput;
+use App\Api\Console\Input\Blog\DeleteBlogCacheInput;
 use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Api\Console\Input\Blog\UpdateBlogVariantInput;
 use App\Api\Console\Object\BlogObjectFactory;
@@ -14,6 +16,7 @@ use App\Api\Console\Object\LanguageObject;
 use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Service\Blog\BlogService;
+use App\Service\Cache\BlogCacheService;
 use App\Service\Language\LanguageService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
@@ -34,6 +37,7 @@ class BlogController
         private BlogObjectFactory $blogObjectFactory,
         private TagObjectFactory $tagObjectFactory,
         private UserObjectFactory $userObjectFactory,
+        private BlogCacheService $blogCacheService,
     ) {}
 
     #[Route('/blog', methods: ['GET'])]
@@ -71,14 +75,6 @@ class BlogController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        // TODO: to be removed with new TLS
-        if (
-            $input->hosting_domain !== null &&
-            $this->blogService->getBlogByCustomDomain($input->hosting_domain) !== null
-        ) {
-            throw new UnprocessableEntityHttpException('domain_taken');
-        }
-
         $blog = $this->blogService->updateBlog($blog, $input);
 
         return new JsonResponse($this->blogObjectFactory->create($blog));
@@ -92,7 +88,7 @@ class BlogController
         $blog = $this->blogAuthListener->getBlog();
 
         $language = $this->languageService->getLanguageById($blog, $input->language_id);
-        
+
         if ($language === null) {
             throw new UnprocessableEntityHttpException('Language not found');
         }
@@ -126,5 +122,32 @@ class BlogController
         $variant = $this->blogService->updateBlogVariant($variant, $input->name, $input->description);
 
         return new JsonResponse(new BlogVariantObject($variant));
+    }
+
+    #[Route('/blog', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::BLOG_DELETE)]
+    public function delete(): JsonResponse
+    {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $this->blogService->softDeleteBlog($blog);
+
+        return new JsonResponse();
+    }
+
+    #[Route('/blog/cache', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::BLOG_DELETE)]
+    public function deleteCache(
+        #[MapRequestPayload] DeleteBlogCacheInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        match ($input->type) {
+            CacheClearType::ALL => $this->blogCacheService->clearAllCache($blog),
+            CacheClearType::TEMPLATE => $this->blogCacheService->clearTemplateCache($blog),
+            CacheClearType::PATHS => $this->blogCacheService->clearPathsCache($blog, $input->paths),
+        };
+
+        return new JsonResponse();
     }
 }

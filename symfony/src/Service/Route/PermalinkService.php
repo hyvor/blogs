@@ -41,10 +41,24 @@ class PermalinkService
 
     public function getBlogUrl(Blog $blog): string
     {
-        return match ($blog->getHostingAt()) {
+        return $this->buildUrlForHosting(
+            $blog,
+            $blog->getHostingAt(),
+            $blog->getHostingUrl(),
+            $blog->getCustomDomain()?->getDomain()
+        );
+    }
+
+    /**
+     * Computes the URL a blog would have under a given (possibly not-yet-applied)
+     * hosting configuration, without mutating the blog.
+     */
+    public function buildUrlForHosting(Blog $blog, BlogHostingAt $hostingAt, ?string $hostingUrl, ?string $domain): string
+    {
+        return match ($hostingAt) {
             BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($blog),
-            BlogHostingAt::DOMAIN => 'https://' . $blog->getHostingDomain(),
-            BlogHostingAt::SELF => $blog->getHostingUrl() ?? '',
+            BlogHostingAt::DOMAIN => 'https://' . $domain,
+            BlogHostingAt::SELF => $hostingUrl ?? '',
         };
     }
 

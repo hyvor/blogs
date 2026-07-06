@@ -17,19 +17,7 @@ class MiscController extends AbstractController
 
     public function __construct(
         private Filesystem $filesystem,
-        private ThemeService $themeService,
     ) {}
-
-    #[Route('/api/misc/themes', methods: ['GET'])]
-    public function getAllThemes(): JsonResponse
-    {
-        $themes = $this->themeService->getAllThemesWithLatestVersions();
-
-        return new JsonResponse(array_map(
-            fn($row) => new ThemeObject($row['theme'], $row['latest_version']),
-            $themes,
-        ));
-    }
 
     #[Route('/api/health', methods: ['GET'])]
     public function healthCheck(): Response

@@ -3,18 +3,41 @@
     metrics
 }
 
+(handle_php) {
+    root /app/backend/public
+    php_server {
+        file_server off
+        try_files index.php
+    }
+}
+
 :80 {
 
+    @subdomain {
+        host *.hyvorblogs.localhost
+    }
+
+    handle @subdomain {
+        request_header X-Router subdomain
+        import handle_php
+    }
+
+    @customdomain {
+        host custom-domain.localhost
+    }
+
+    handle @customdomain {
+        request_header X-Router customdomain
+        import handle_php
+    }
+
     handle {
-        root /app/backend/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
+        import handle_php
     }
 
 	log {
-        output file /var/log/caddy.log
+        output stderr
+        level DEBUG
     }
 
 }

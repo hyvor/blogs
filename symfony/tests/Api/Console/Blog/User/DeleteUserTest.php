@@ -23,7 +23,7 @@ class DeleteUserTest extends ApiTestCase
     {
         $blog = BlogFactory::createOne(['subdomain' => 'delete-user']);
         $owner = UserFactory::createOne(['blog' => $blog]);
-        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
+        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::EDITOR]);
 
         for ($i = 0; $i < 3; $i++) {
             UserVariantFactory::createOne(['user' => $user, 'language' => LanguageFactory::createOneFor($blog)]);
@@ -42,16 +42,16 @@ class DeleteUserTest extends ApiTestCase
         $this->getEd()->assertDispatchedCount(UserVariantDeletedEvent::class, 3);
     }
 
-    public function test_cannot_delete_owner(): void
+    public function test_cannot_delete_admin(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'delete-user-owner']);
-        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::OWNER]);
+        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
 
         $this->consoleBlogApi('DELETE', $blog, '/user/' . $owner->getId(), user: $owner);
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString(
-            'Cannot delete the owner',
+            'Cannot delete the admin',
             (string)$this->client->getResponse()->getContent(),
         );
 

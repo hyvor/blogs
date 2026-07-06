@@ -5,7 +5,7 @@ namespace App\Api\Console\Authorization;
 enum Scope: string
 {
     case BLOG_READ = 'blog.read';
-    case BLOG_WRITE = 'blog.write'; // change blog settings
+    case BLOG_WRITE = 'blog.write'; // change blog settings, hosting, etc
     case BLOG_DELETE = 'blog.delete';
 
     case POSTS_READ = 'posts.read';
