@@ -95,7 +95,7 @@ class UserController
             }
         }
 
-        $user = $this->userService->createUserFromHyvorUser($blog, $input->hyvor_user_id, $input->role);
+        $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
 
         return new JsonResponse($this->userObjectFactory->create($user, $blog));
     }

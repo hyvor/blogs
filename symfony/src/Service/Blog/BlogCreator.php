@@ -3,11 +3,11 @@
 namespace App\Service\Blog;
 
 use App\Entity\Blog;
-use App\Entity\BlogVariant;
 use App\Entity\Enum\BlogType;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\NavigationType;
 use App\Entity\Enum\UserRole;
+use App\Entity\Language;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
@@ -20,7 +20,7 @@ use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeService;
 use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Faker\Factory;
+use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 use Hyvor\Internal\Component\Component;
@@ -34,6 +34,12 @@ class BlogCreator
     use ClockAwareTrait;
 
     private const int RANDOM_POSTS_COUNT = 30;
+
+    /**
+     * TODO: self-hosted deployments should not depend on Cloudinary
+     *       With the media domain update, change this so that filler images are served from it
+     *       We can fetch those images from cloudinary in themes:sync
+     */
     private const string IMAGE_URL_BASE = 'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images';
 
     /**
@@ -90,40 +96,36 @@ class BlogCreator
         private ThemeFilesService $themeFilesService,
         private PostService $postService,
         private PostContentService $postContentService,
+        private BlogService $blogService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
 
     public function create(
-        ?int $hyvorUserId,
+        ?AuthUser $authUser,
         ?int $organizationId,
         string $name,
         string $subdomain,
         BlogType $type = BlogType::DEFAULT,
         ?string $ip = null,
     ): Blog {
-        /** @var Blog */
-        return $this->em->wrapInTransaction(function () use ($hyvorUserId, $organizationId, $name, $subdomain, $type, $ip) {
+        /** @var Blog $blog */
+        $blog =  $this->em->wrapInTransaction(function () use ($authUser, $organizationId, $name, $subdomain, $type, $ip) {
             $now = $this->now();
 
             $blog = new Blog();
-            $blog->setHyvorUserId($hyvorUserId);
+            $blog->setCreatedAt($now);
+            $blog->setUpdatedAt($now);
+            $blog->setHyvorUserId($authUser->id);
             $blog->setOrganizationId($organizationId);
             $blog->setIp($ip);
             $blog->setSubdomain($subdomain);
             $blog->setType($type);
-            $blog->setTrialEndsAt($now); // TODO:
-            $blog->setCreatedAt($now);
-            $blog->setUpdatedAt($now);
 
             $this->em->persist($blog);
-            $this->em->flush();
 
-            if ($organizationId !== null && $this->internalConfig->getDeployment()->isCloud()) {
-                $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
-            }
-
-            $this->fillLanguages($blog);
+            $primaryLanguage = $this->fillLanguages($blog);
+            $this->blogService->createBlogVariant($blog, $primaryLanguage, name: $name, flush: false);
 
             if ($type === BlogType::PREVIEW) {
                 $meta = $blog->getMeta();
@@ -131,73 +133,85 @@ class BlogCreator
                 $blog->setMeta($meta);
             }
 
-            /**
-             * Creating the variant is important because all functions are designed assuming
-             * the primary variant exists. Other fillers can be risky (theme copying, for example),
-             * so we create the languages and the variant first, then run the other fillers.
-             */
-            $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-            $variant = new BlogVariant();
-            $variant->setBlog($blog);
-            $variant->setLanguage($primaryLanguage);
-            $variant->setName($name);
-            $this->em->persist($variant);
-            $this->em->flush();
-            $blog->getVariants()->add($variant);
-
-            $this->fillUsers($blog);
-            $this->fillTags($blog);
-            $this->fillPosts($blog);
+            $primaryUser = $this->fillPrimaryUser($blog, $authUser);
+            $this->fillAdditionalUsers($blog);
+            $welcomeTag = $this->fillTags($blog);
+            $this->fillPosts($blog, $primaryUser, $welcomeTag);
             $this->fillRoutes($blog);
-            $this->fillNavigations($blog);
+            $this->fillNavigations($blog, $primaryUser);
             $this->fillTheme($blog);
+
+            if ($organizationId !== null && $this->internalConfig->getDeployment()->isCloud()) {
+                $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
+            }
 
             return $blog;
         });
+
+        return $blog;
     }
 
-    private function fillLanguages(Blog $blog): void
+    /**
+     * Fills primary language (and other languages for DEV/PREVIEW blogs) for the given blog.
+     * @return Language The primary language of the blog.
+     */
+    private function fillLanguages(Blog $blog): Language
     {
-        $this->languageService->createLanguage($blog, 'en', 'English', isPrimary: true);
+        $primaryLanguage = $this->languageService->createLanguage($blog, 'en', 'English', isPrimary: true);
 
-        if ($blog->getType() === BlogType::DEV || $blog->getType() === BlogType::PREVIEW) {
+        if ($blog->getType()->isNonDefault()) {
             $this->languageService->createLanguage($blog, 'fr', 'French');
             $this->languageService->createLanguage($blog, 'ar', 'Arabic', LanguageDirection::RTL);
         }
+
+        return $primaryLanguage;
     }
 
-    private function fillUsers(Blog $blog): void
+    private function fillPrimaryUser(Blog $blog, AuthUser $authUser): User
     {
-        if ($blog->getType() === BlogType::TEMP) {
-            $user = $this->userService->createGuestUser($blog, 'Temporary User', UserRole::ADMIN);
-            $this->userService->updateUser($user, ['picture_url' => $this->getUserImageUrl()]);
-        } elseif ($blog->getType() !== BlogType::PREVIEW) {
-            $hyvorUserId = $blog->getHyvorUserId();
-            assert($hyvorUserId !== null);
-            $this->userService->createUserFromHyvorUser($blog, $hyvorUserId, UserRole::ADMIN);
+        if ($blog->getType() === BlogType::PREVIEW) {
+            return $this->createRandomGuestUser($blog);
         }
 
-        if ($blog->getType() === BlogType::DEV || $blog->getType() === BlogType::PREVIEW) {
-            $faker = Factory::create();
+        try {
+            return $this->userService->createUserFromAuthUser($blog, $authUser, UserRole::ADMIN);
+        } catch (\Exception) {
+            // this should not happen
+        }
+    }
 
+    private function fillAdditionalUsers(Blog $blog): void
+    {
+        if ($blog->getType()->isNonDefault()) {
             for ($i = 0; $i < 5; $i++) {
-                $user = $this->userService->createGuestUser($blog, $faker->name());
-                $this->userService->updateUser($user, ['picture_url' => $this->getUserImageUrl()]);
+                $this->createRandomGuestUser($blog);
             }
         }
     }
 
-    private function fillTags(Blog $blog): void
+    private function createRandomGuestUser(Blog $blog): User
     {
-        $this->tagService->createTag($blog, 'Welcome');
+        return $this->userService->createGuestUser(
+            $blog,
+            $this->getRandomUserName(),
+            pictureUrl: $this->getUserImageUrl()
+        );
+    }
 
-        if ($blog->getType() === BlogType::DEV || $blog->getType() === BlogType::PREVIEW) {
-            $faker = Factory::create();
+    /**
+     * @return Tag welcome tag
+     */
+    private function fillTags(Blog $blog): Tag
+    {
+        $tag = $this->tagService->createTag($blog, 'Welcome');
 
+        if ($blog->getType()->isNonDefault()) {
             for ($i = 0; $i < 5; $i++) {
-                $this->tagService->createTag($blog, $faker->word());
+                $this->tagService->createTag($blog, $this->getRandomTagName());
             }
         }
+
+        return $tag;
     }
 
     private function fillRoutes(Blog $blog): void
@@ -214,9 +228,9 @@ class BlogCreator
         }
     }
 
-    private function fillNavigations(Blog $blog): void
+    private function fillNavigations(Blog $blog, User $primaryUser): void
     {
-        $isExtended = $blog->getType() === BlogType::DEV || $blog->getType() === BlogType::PREVIEW;
+        $isExtended = $blog->getType()->isNonDefault();
 
         // for DEV/PREVIEW blogs, "About" and "Contact" go to the footer instead of the header
         $aboutContactType = $isExtended ? NavigationType::FOOTER : NavigationType::HEADER;
@@ -231,10 +245,11 @@ class BlogCreator
         if ($isExtended) {
             $navs[] = ['type' => NavigationType::HEADER, 'name' => 'Content Style', 'url' => '/content-style'];
 
-            $owner = $this->userService->getOwner($blog);
-            if ($owner !== null) {
-                $navs[] = ['type' => NavigationType::HEADER, 'name' => 'Author', 'url' => '/author/' . $owner->getSlug()];
-            }
+            $navs[] = [
+                'type' => NavigationType::HEADER,
+                'name' => 'Author',
+                'url' => '/author/' . $primaryUser->getSlug()
+            ];
 
             $tags = $this->tagService->getTags($blog, 1);
             if ($tags !== []) {
@@ -268,24 +283,13 @@ class BlogCreator
         $this->themeFilesService->updateFilesFromThemeVersion($blog, $version);
     }
 
-    /**
-     * Known issue: PostContentService::getJsonFromHtml() below sanitizes by default, and
-     * hyvor/phrosemirror's Sanitizer currently throws
-     * `DeepCopy\Exception\CloneException: The class "ReflectionClass" is not cloneable`
-     * when given a real, Doctrine-managed Blog (its proxies/relations carry ReflectionClass
-     * state that myclabs/deep-copy can't clone). This is a pre-existing bug in that vendor
-     * package, unrelated to blog creation itself — it needs an upstream fix.
-     */
-    private function fillPosts(Blog $blog): void
+    private function fillPosts(Blog $blog, User $primaryUser, Tag $welcomeTag): void
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
-        $owner = $this->userService->getOwner($blog);
-        $tags = $this->tagService->getTags($blog, 1);
-        $tag = $tags[0] ?? null;
 
         foreach (self::POST_DATA as $row) {
             $isPage = $row['type'] === 'page';
-            $authors = !$isPage && $owner !== null ? [$owner] : [];
+            $authors = !$isPage ? [$primaryUser] : [];
 
             $post = $this->postService->createPost(
                 $blog,
@@ -309,20 +313,18 @@ class BlogCreator
 
             $this->postService->publishPostVariant($variant, $blog);
 
-            if (!$isPage && $tag instanceof Tag) {
-                $this->postService->setPostTags($post, [$tag], flush: true);
+            if (!$isPage) {
+                $this->postService->setPostTags($post, [$welcomeTag], flush: true);
             }
         }
 
-        if ($blog->getType() === BlogType::DEV || $blog->getType() === BlogType::PREVIEW) {
+        if ($blog->getType()->isNonDefault()) {
             $this->fillRandomPosts($blog);
         }
     }
 
     private function fillRandomPosts(Blog $blog): void
     {
-        $faker = Factory::create();
-
         $languages = $this->languageService->getAllLanguages($blog);
         $tags = $this->tagService->getTags($blog, 100);
         $users = $this->userService->getUsers($blog, 100);
@@ -337,12 +339,11 @@ class BlogCreator
                 $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language)
                     ?? $this->postService->createPostVariant($post, $language, flush: false);
 
-                /** @var string[] $paragraphs */
-                $paragraphs = $faker->paragraphs(5, false);
+                $paragraphs = $this->getFakeParagraphs();
                 $html = '<p>' . implode('</p><p>', $paragraphs) . '</p>';
 
                 $variant = $this->postService->updatePostVariant($variant, $blog, [
-                    'title' => $faker->sentence(),
+                    'title' => $this->getRandomTitle(),
                     'content' => $this->postContentService->getJsonFromHtml($html, $blog),
                 ]);
 
@@ -369,6 +370,75 @@ class BlogCreator
         $shuffled = $items;
         shuffle($shuffled);
         return array_slice($shuffled, 0, $count);
+    }
+
+    private function getRandomUserName(): string
+    {
+        $names = [
+            'Alex Johnson',
+            'Emily Smith',
+            'Michael Brown',
+            'Sophia Davis',
+            'Daniel Wilson',
+            'Olivia Martinez',
+            'James Anderson',
+            'Ava Taylor',
+            'William Thomas',
+            'Isabella Moore',
+            'Benjamin Jackson',
+        ];
+
+        return $names[random_int(0, count($names) - 1)];
+    }
+
+    private function getRandomTagName(): string
+    {
+        $tags = [
+            'Technology',
+            'Lifestyle',
+            'Travel',
+            'Food',
+            'Health',
+            'Fashion',
+            'Education',
+            'Entertainment',
+            'Sports',
+            'Business',
+        ];
+
+        return $tags[random_int(0, count($tags) - 1)];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getFakeParagraphs(): array
+    {
+        return [
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.',
+            'Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.',
+            'Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.',
+        ];
+    }
+
+    private function getRandomTitle(): string
+    {
+        $titles = [
+            'The Future of Technology: Trends to Watch',
+            '10 Tips for a Healthier Lifestyle',
+            'Exploring the World: Top Travel Destinations',
+            'Delicious Recipes for Every Occasion',
+            'The Importance of Mental Health Awareness',
+            'Fashion Forward: Latest Trends and Styles',
+            'Education in the Digital Age: Challenges and Opportunities',
+            'Entertainment Industry Insights: Behind the Scenes',
+            'Sports Highlights: Memorable Moments and Achievements',
+            'Business Strategies for Success in a Competitive Market',
+        ];
+
+        return $titles[random_int(0, count($titles) - 1)];
     }
 
     private function getFeaturedImageUrl(): string
