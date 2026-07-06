@@ -43,6 +43,14 @@ class BlogCacheService
         $this->dispatcher->dispatch(new CacheClearSingleEvent($blog, $path));
     }
 
+    /** @param string[] $paths */
+    public function clearPathsCache(Blog $blog, array $paths): void
+    {
+        foreach ($paths as $path) {
+            $this->clearSingleCache($blog, $path);
+        }
+    }
+
     private function put(string $key, mixed $value): void
     {
         // Matches Laravel database cache driver format: base64_encode(serialize($value))

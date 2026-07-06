@@ -54,7 +54,7 @@ final class UserFactory extends PersistentObjectFactory
 
     public function asOwner(): static
     {
-        return $this->with(['role' => UserRole::OWNER]);
+        return $this->with(['role' => UserRole::ADMIN]);
     }
 
     /**

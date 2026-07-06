@@ -35,9 +35,10 @@ class InitConsoleTest extends ApiTestCase
             ],
             [
                 'hyvor_user_id' => $hyvorUserId,
-                'role' => UserRole::OWNER,
+                'role' => UserRole::ADMIN,
             ],
         );
+        LanguageFactory::createOnePrimaryFor($blog);
 
         // other user blog
         $blog2 = BlogFactory::createOneWithUser(['organization_id' => $orgId]);
@@ -58,7 +59,7 @@ class InitConsoleTest extends ApiTestCase
         $this->assertIsArray($json['blogs']);
         $this->assertCount(1, $json['blogs']);
         $this->assertIsArray($json['blogs'][0]);
-        $this->assertSame('owner', $json['blogs'][0]['role']);
+        $this->assertSame('admin', $json['blogs'][0]['role']);
         $this->assertSame('myblog', $json['blogs'][0]['subdomain']);
 
         $this->assertIsArray($json['config']);
@@ -90,7 +91,7 @@ class InitConsoleTest extends ApiTestCase
             ],
             [
                 'hyvor_user_id' => $hyvorUserId,
-                'role' => UserRole::OWNER,
+                'role' => UserRole::ADMIN,
             ],
         );
         LanguageFactory::createOnePrimaryFor($blog);
@@ -118,7 +119,7 @@ class InitConsoleTest extends ApiTestCase
             ],
             [
                 'hyvor_user_id' => $hyvorUserId,
-                'role' => UserRole::OWNER,
+                'role' => UserRole::ADMIN,
             ],
         );
         LanguageFactory::createOnePrimaryFor($blog1);
@@ -130,7 +131,7 @@ class InitConsoleTest extends ApiTestCase
             ],
             [
                 'hyvor_user_id' => $hyvorUserId,
-                'role' => UserRole::OWNER,
+                'role' => UserRole::ADMIN,
             ],
         );
         LanguageFactory::createOnePrimaryFor($blog2);

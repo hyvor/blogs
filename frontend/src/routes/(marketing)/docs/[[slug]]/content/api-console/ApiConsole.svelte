@@ -1254,6 +1254,7 @@ type Response = {}
 	<li><code>GET /misc/themes</code> - Get all themes</li>
 	<li><code>GET /misc/prosemirror/json</code> - Get prosemirror json</li>
 	<li><code>DELETE /blog/cache</code> - Delete blog cache</li>
+	<li><code>DELETE /blog</code> - Delete the blog</li>
 </ul>
 
 <h4 id="get-all-themes">Get all themes</h4>
@@ -1289,6 +1290,20 @@ type Request = {
     type: 'all' | 'template' | 'paths',
     paths?: string[],
 }
+type Response = {}
+`}
+/>
+
+<h4 id="delete-blog">Delete the blog</h4>
+<p>
+	Soft-deletes the blog. The blog and its data are permanently deleted 30 days
+	later. Requires the <code>blog.delete</code> scope.
+</p>
+<p><code>DELETE /blog</code></p>
+<CodeBlock
+	language="ts"
+	code={`
+type Request = {}
 type Response = {}
 `}
 />

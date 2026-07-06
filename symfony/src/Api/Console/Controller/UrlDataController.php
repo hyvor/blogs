@@ -2,15 +2,15 @@
 
 namespace App\Api\Console\Controller;
 
-use App\Api\Console\Input\Blog\UrlData\GetUrlDataInput;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
+use App\Api\Console\Input\UrlData\GetUrlDataInput;
+use App\Service\UrlData\UrlDataService;
+use Hyvor\Unfold\Exception\UnfoldException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\UrlData\UrlDataService;
-use Hyvor\Unfold\Exception\UnfoldException;
 
 class UrlDataController
 {

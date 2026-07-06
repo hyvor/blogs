@@ -38,7 +38,7 @@ class CustomDomainController
         $host = $request->getHost();
         $blog = $this->customDomainService->getBlogByCustomDomain($host);
 
-        if ($blog === null) {
+        if ($blog === null || $blog->getDeletedAt()) {
             return new RedirectResponse(
                 'https://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
                 302

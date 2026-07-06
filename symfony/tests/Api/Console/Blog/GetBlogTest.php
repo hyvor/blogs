@@ -40,7 +40,7 @@ class GetBlogTest extends ApiTestCase
 
         $user = UserFactory::createOne([
             'blog' => $blog,
-            'role' => UserRole::OWNER,
+            'role' => UserRole::ADMIN,
             'status' => UserStatus::ACTIVE,
         ]);
         UserVariantFactory::createOne(['user' => $user, 'language' => $language]);
@@ -63,7 +63,7 @@ class GetBlogTest extends ApiTestCase
 
         $this->assertIsArray($json['users']);
         $this->assertCount(1, $json['users']);
-        $this->assertSame('owner', $json['users'][0]['role']);
+        $this->assertSame('admin', $json['users'][0]['role']);
 
         $this->assertIsArray($json['tags']);
         $this->assertCount(1, $json['tags']);

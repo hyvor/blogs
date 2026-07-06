@@ -44,9 +44,6 @@ class Blog
     #[ORM\Column(length: 255, unique: true)]
     private string $subdomain;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $trial_ends_at;
-
     #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
     private BlogType $type = BlogType::DEFAULT;
 
@@ -72,6 +69,9 @@ class Blog
 
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deleted_at = null;
 
     /** @var Collection<int, BlogVariant> */
     #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
@@ -194,17 +194,6 @@ class Blog
         return $this;
     }
 
-    public function getTrialEndsAt(): \DateTimeImmutable
-    {
-        return $this->trial_ends_at;
-    }
-
-    public function setTrialEndsAt(\DateTimeImmutable $trial_ends_at): static
-    {
-        $this->trial_ends_at = $trial_ends_at;
-        return $this;
-    }
-
     public function getType(): BlogType
     {
         return $this->type;
@@ -297,6 +286,22 @@ class Blog
     {
         $this->organization_id = $organization_id;
         return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deleted_at): static
+    {
+        $this->deleted_at = $deleted_at;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted_at !== null;
     }
 
     /**

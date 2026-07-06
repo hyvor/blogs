@@ -6,10 +6,10 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Blog\Theme\ChangeThemeInput;
-use App\Api\Console\Input\Blog\Theme\CheckThemeFileNameAvailableInput;
-use App\Api\Console\Input\Blog\Theme\CreateThemeFileInput;
-use App\Api\Console\Input\Blog\Theme\UpdateThemeFileInput;
+use App\Api\Console\Input\Theme\ChangeThemeInput;
+use App\Api\Console\Input\Theme\CheckThemeFileNameAvailableInput;
+use App\Api\Console\Input\Theme\CreateThemeFileInput;
+use App\Api\Console\Input\Theme\UpdateThemeFileInput;
 use App\Api\Console\Object\ThemeFileObject;
 use App\Entity\Blog;
 use App\Entity\ThemeFile;
@@ -24,8 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ThemeController

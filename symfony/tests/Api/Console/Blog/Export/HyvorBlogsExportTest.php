@@ -40,7 +40,7 @@ class HyvorBlogsExportTest extends ApiTestCase
     {
         $blog = BlogFactory::createOne(['subdomain' => 'hyvor-blogs-export']);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::OWNER]);
+        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
         UserVariantFactory::createOne(['user' => $owner, 'language' => $language]);
 
         $posts = [];

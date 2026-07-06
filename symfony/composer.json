@@ -12,7 +12,7 @@
         "hyvor/doctrine-filterq": "^0.0.1",
         "hyvor/internal": "^4.0.14",
         "hyvor/php-svg-icons": "^1.1",
-        "hyvor/phrosemirror": "^1.0.5",
+        "hyvor/phrosemirror": "^1.0.6",
         "hyvor/scssphp": "^2.0.4",
         "hyvor/unfold": "^0.0.6",
         "intervention/image": "^2.7.2",
