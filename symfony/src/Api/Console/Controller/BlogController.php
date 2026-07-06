@@ -124,6 +124,17 @@ class BlogController
         return new JsonResponse(new BlogVariantObject($variant));
     }
 
+    #[Route('/blog', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::BLOG_DELETE)]
+    public function delete(): JsonResponse
+    {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $this->blogService->softDeleteBlog($blog);
+
+        return new JsonResponse();
+    }
+
     #[Route('/blog/cache', methods: ['DELETE'])]
     #[ScopeRequired(Scope::BLOG_DELETE)]
     public function deleteCache(

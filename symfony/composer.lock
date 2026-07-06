@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9dafdb66962b12358291c045c02eec17",
+    "content-hash": "406afc8296f6ac7c124b495006aec206",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2104,16 +2104,16 @@
         },
         {
             "name": "hyvor/phrosemirror",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/phrosemirror.git",
-                "reference": "b01c0d3474a0f00fec702129eab784882e7b38d5"
+                "reference": "e8439f9b4bce9d89ad6220a055454e4c13627024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/b01c0d3474a0f00fec702129eab784882e7b38d5",
-                "reference": "b01c0d3474a0f00fec702129eab784882e7b38d5",
+                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/e8439f9b4bce9d89ad6220a055454e4c13627024",
+                "reference": "e8439f9b4bce9d89ad6220a055454e4c13627024",
                 "shasum": ""
             },
             "require": {
@@ -2145,9 +2145,9 @@
             "description": "Prosemirror in PHP",
             "support": {
                 "issues": "https://github.com/hyvor/phrosemirror/issues",
-                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.5"
+                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.6"
             },
-            "time": "2025-04-18T09:20:31+00:00"
+            "time": "2026-07-06T13:03:10+00:00"
         },
         {
             "name": "hyvor/scssphp",
