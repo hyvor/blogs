@@ -57,12 +57,4 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
         });
-
-        /**
-         * Danger
-         */
-        Route::middleware('role:owner')->group(function () {
-            Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
-            Route::delete('/blog/cache', [ConsoleDangerController::class, 'deleteCache']);
-        });
     });
