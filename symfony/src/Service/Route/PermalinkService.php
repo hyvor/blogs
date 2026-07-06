@@ -7,12 +7,33 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Entity\Media;
 use App\Entity\Post;
+use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\AppConfig;
 
 class PermalinkService
 {
+    // https://www.php.net/manual/en/datetime.format.php
+    private const DATE_FORMATTERS = [
+        'year' => 'Y',
+        'year_short' => 'y',
+        'month' => 'm',
+        'month_number' => 'n',
+        'month_short' => 'M',
+        'month_long' => 'F',
+        'day' => 'd',
+        'day_number' => 'j',
+        'day_year' => 'z',
+        'day_week' => 'D',
+        'day_week_long' => 'l',
+        'day_week_number' => 'N',
+        'hour' => 'H',
+        'minute' => 'i',
+        'second' => 's',
+        'unix' => 'u',
+    ];
+
     public function __construct(
         private AppConfig $appConfig,
         private RouteService $routeService,
@@ -71,6 +92,51 @@ class PermalinkService
         }
 
         return $this->getBlogUrl($blog) . $path;
+    }
+
+    public function getPostVariantPermalink(
+        Blog $blog,
+        PostVariant $variant,
+        ?Language $language = null,
+        bool $onlyPath = false,
+        ?string $customVariantSlug = null
+    ): string
+    {
+        $language ??= $variant->getLanguage();
+
+        $post = $variant->getPost();
+        $routeName = $post->isPage() ? 'page' : 'post';
+        $route = $this->routeService->getRouteByName($blog, $routeName);
+        $path = $route ? $route->getMatch() : '';
+
+        // build regex for matching dates
+        $keys = array_keys(self::DATE_FORMATTERS);
+        $regex = '/\{(' . implode('|', $keys) . ')}/';
+
+        $path = preg_replace_callback($regex, function ($matches) use ($post) {
+            if ($post->getPublishedAt()) {
+                return $post->getPublishedAt()->format(self::DATE_FORMATTERS[$matches[1]]);
+            }
+            return '';
+        }, $path);
+
+        $path = $path ?? '';
+        $variantSlug = $customVariantSlug ?? $variant->getSlug() ?? '';
+        $path = str_replace('{slug}', $variantSlug, $path);
+
+        if (str_contains($path, '{tag}')) {
+            $path = str_replace('{tag}', $post->getTags()->first()?->getSlug() ?? '', $path);
+        }
+
+        if (str_contains($path, '{author}')) {
+            $path = str_replace('{author}', $post->getAuthors()->first()?->getSlug() ?? '', $path);
+        }
+
+        if (!$language->isPrimary()) {
+            $path = '/' . $language->getCode() . $path;
+        }
+
+        return $onlyPath ? '/' . ltrim($path, '/') : $this->getFullUrlFromPath($blog, $path);
     }
 
     public function isLinkInBlog(string $link, Blog $blog): bool

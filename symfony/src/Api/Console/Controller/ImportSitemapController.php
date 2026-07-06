@@ -54,7 +54,7 @@ class ImportSitemapController
     }
 
     #[Route('/data/import/sitemap/test', methods: ['POST'])]
-    #[ScopeRequired(Scope::DATA_WRITE)]
+    #[ScopeRequired(Scope::IMPORT_MANAGE)]
     public function test(#[MapRequestPayload] SitemapTestInput $input): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -89,7 +89,7 @@ class ImportSitemapController
     }
 
     #[Route('/data/import/sitemap/import', methods: ['POST'])]
-    #[ScopeRequired(Scope::DATA_WRITE)]
+    #[ScopeRequired(Scope::IMPORT_MANAGE)]
     public function import(#[MapRequestPayload] SitemapImportInput $input): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

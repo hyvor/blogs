@@ -21,7 +21,7 @@ class ExportController
     }
 
     #[Route('/data/exports', methods: ['GET'])]
-    #[ScopeRequired(Scope::DATA_READ)]
+    #[ScopeRequired(Scope::EXPORT_MANAGE)]
     public function getExports(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -35,7 +35,7 @@ class ExportController
     }
 
     #[Route('/data/export', methods: ['POST'])]
-    #[ScopeRequired(Scope::DATA_WRITE)]
+    #[ScopeRequired(Scope::EXPORT_MANAGE)]
     public function export(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

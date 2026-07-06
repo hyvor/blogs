@@ -4,7 +4,6 @@ namespace App\Tests\Factory;
 
 use App\Entity\Enum\LinkAnalyzerCheckType;
 use App\Entity\LinkAnalyzerLink;
-use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -12,11 +11,6 @@ use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
  */
 final class LinkAnalyzerLinkFactory extends PersistentObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
     }
@@ -27,36 +21,28 @@ final class LinkAnalyzerLinkFactory extends PersistentObjectFactory
         return LinkAnalyzerLink::class;
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     #[\Override]
     protected function defaults(): array|callable
     {
         return [
             'blog' => BlogFactory::new(),
+            'post_variant' => PostVariantFactory::new(),
             'check_type' => self::faker()->randomElement(LinkAnalyzerCheckType::cases()),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'full_url' => self::faker()->text(255),
-            'ignore' => self::faker()->boolean(),
+            'full_url' => self::faker()->url(),
+            'ignore' => false,
             'last_checked_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'post_variant_id' => self::faker()->randomNumber(),
-            'status_code' => self::faker()->numberBetween(1, 32767),
+            'status_code' => 200,
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'url' => self::faker()->text(255),
+            'url' => self::faker()->url(),
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
     #[\Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(LinkAnalyzerLink $linkAnalyzerLink): void {})
-        ;
+        return $this->afterPersist(function (LinkAnalyzerLink $link): void {
+            $link->setPostVariantId($link->getPostVariant()->getId());
+        });
     }
 }
