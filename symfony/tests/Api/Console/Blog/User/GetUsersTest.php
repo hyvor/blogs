@@ -22,7 +22,7 @@ class GetUsersTest extends ApiTestCase
     {
         $blog = BlogFactory::createOne(['subdomain' => 'get-users']);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::OWNER]);
+        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
 
         for ($i = 0; $i < 3; $i++) {
             $user = UserFactory::createOne(['blog' => $blog]);
