@@ -3,16 +3,23 @@
 namespace App\Tests\Service\Cache;
 
 use App\Entity\Enum\BlogHostingAt;
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Cache\BlogCacheService;
 use App\Service\Cache\ClearCacheListener;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
+use App\Service\Media\Event\MediaCreatedEvent;
+use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Tag\Event\TagCreatedEvent;
@@ -20,21 +27,32 @@ use App\Service\Tag\Event\TagDeletedEvent;
 use App\Service\Tag\Event\TagUpdatedEvent;
 use App\Service\Tag\Event\TagVariantDeletedEvent;
 use App\Service\Tag\Event\TagVariantUpdatedEvent;
+use App\Service\User\Event\UserCreatedEvent;
+use App\Service\User\Event\UserDeletedEvent;
+use App\Service\User\Event\UserUpdatedEvent;
+use App\Service\User\Event\UserVariantDeletedEvent;
+use App\Service\User\Event\UserVariantUpdatedEvent;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
 use App\Tests\Factory\RedirectFactory;
 use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
+use App\Tests\Factory\UserFactory;
+use App\Tests\Factory\UserVariantFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ClearCacheListener::class)]
 #[UsesClass(BlogCacheService::class)]
+#[UsesClass(HostingChangeService::class)]
 class ClearCacheListenerTest extends KernelTestCase
 {
     private function dispatch(object $event): void
@@ -117,7 +135,7 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }
 
-    public function test_blog_updated_clears_template_cache_when_hosting_unchanged(): void
+    public function test_blog_updated_clears_template_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $blogOld = clone $blog;
@@ -128,14 +146,13 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearAllEvent::class);
     }
 
-    public function test_blog_updated_clears_all_cache_when_hosting_changed(): void
+    public function test_blog_hosting_changed_clears_all_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $blogOld = clone $blog;
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
-        $blog->setHostingDomain('example.com');
+        $hostingChangeService = $this->getService(HostingChangeService::class);
+        $hostingChange = $hostingChangeService->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
 
-        $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
+        $this->dispatch(new BlogHostingChangedEvent($hostingChange));
 
         $this->getEd()->assertDispatched(CacheClearAllEvent::class);
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
@@ -205,6 +222,120 @@ class ClearCacheListenerTest extends KernelTestCase
         $variant = TagVariantFactory::createOne(['tag' => $tag, 'language' => $lang]);
 
         $this->dispatch(new TagVariantDeletedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_media_created_clears_single_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'photo.png']);
+
+        $this->dispatch(new MediaCreatedEvent($media));
+
+        $this->getEd()->assertDispatched(CacheClearSingleEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_media_deleted_clears_single_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'photo.png']);
+
+        $this->dispatch(new MediaDeletedEvent($media));
+
+        $this->getEd()->assertDispatched(CacheClearSingleEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_user_created_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $user = UserFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new UserCreatedEvent($user));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_user_updated_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $userOld = clone $user;
+
+        $this->dispatch(new UserUpdatedEvent($user, $userOld));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_user_deleted_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $user = UserFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new UserDeletedEvent($user));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_user_variant_updated_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+        $variantOld = clone $variant;
+
+        $this->dispatch(new UserVariantUpdatedEvent($variant, $variantOld));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_user_variant_deleted_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $variant = UserVariantFactory::createOne(['user' => $user, 'language' => $lang]);
+
+        $this->dispatch(new UserVariantDeletedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_updated_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantUpdatedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_published_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantPublishedEvent($variant));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_post_variant_unpublished_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantUnpublishedEvent($variant));
 
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }

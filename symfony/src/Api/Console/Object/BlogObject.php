@@ -84,14 +84,14 @@ class BlogObject
         $this->id = $blog->getId();
         $this->created_at = $blog->getCreatedAt()?->getTimestamp() ?? 0;
         $this->is_blocked = $blog->isBlocked();
-        $this->theme_version_id = $blog->getThemeVersionId();
+        $this->theme_version_id = $blog->getThemeVersion()?->getId();
 
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType();
         $this->hosting_at = $blog->getHostingAt();
-        $this->hosting_domain = $blog->getHostingDomain();
+        $this->hosting_domain = $blog->getCustomDomain()?->getDomain();
         $this->hosting_url = $blog->getHostingUrl();
-        $this->hosting_redirect_subdomain = (bool) $blog->getHostingRedirectSubdomain();
+        $this->hosting_redirect_subdomain = $blog->getHostingRedirectSubdomain();
 
         $this->url = $url;
 

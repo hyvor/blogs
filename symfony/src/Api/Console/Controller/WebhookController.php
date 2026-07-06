@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Webhook\CreateWebhookInput;
 use App\Api\Console\Input\Blog\Webhook\GetWebhookDeliveriesInput;
 use App\Api\Console\Input\Blog\Webhook\UpdateWebhookInput;
@@ -28,6 +30,7 @@ class WebhookController
     ) {}
 
     #[Route('/webhooks', methods: ['GET'])]
+    #[ScopeRequired(Scope::WEBHOOKS_READ)]
     public function getWebhooks(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -37,6 +40,7 @@ class WebhookController
     }
 
     #[Route('/webhook', methods: ['POST'])]
+    #[ScopeRequired(Scope::WEBHOOKS_WRITE)]
     public function createWebhook(
         #[MapRequestPayload] CreateWebhookInput $input,
     ): JsonResponse {
@@ -54,6 +58,7 @@ class WebhookController
     }
 
     #[Route('/webhook/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::WEBHOOKS_WRITE)]
     public function updateWebhook(
         #[MapBlogEntity] Webhook $webhook,
         #[MapRequestPayload] UpdateWebhookInput $input,
@@ -64,6 +69,7 @@ class WebhookController
     }
 
     #[Route('/webhook/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::WEBHOOKS_WRITE)]
     public function deleteWebhook(#[MapBlogEntity] Webhook $webhook): JsonResponse
     {
         $this->webhookService->deleteWebhook($webhook);
@@ -72,6 +78,7 @@ class WebhookController
     }
 
     #[Route('/webhook-deliveries', methods: ['GET'])]
+    #[ScopeRequired(Scope::WEBHOOKS_READ)]
     public function getDeliveries(
         #[MapQueryString] GetWebhookDeliveriesInput $input = new GetWebhookDeliveriesInput(),
     ): JsonResponse {

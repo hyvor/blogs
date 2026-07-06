@@ -105,6 +105,42 @@ export interface BlogCounts {
 	};
 }
 
+export interface HostingInfo {
+	hosting_at: 'subdomain' | 'domain' | 'self';
+	custom_domain_setup?: CustomDomainSetup | null;
+	hosting_url?: string;
+	change?: HostingChange | null;
+}
+
+export type HostingChangeAt = 'subdomain' | 'domain' | 'self';
+export type HostingChangeStatus = 'changing' | 'success' | 'failed';
+
+export interface HostingChange {
+	id: number;
+	created_at: number;
+	updated_at: number;
+	from_at: HostingChangeAt;
+	from_subdomain: string | null;
+	from_domain: string | null;
+	from_url: string | null;
+	to_at: HostingChangeAt;
+	to_subdomain: string | null;
+	to_domain: string | null;
+	to_url: string | null;
+	status: HostingChangeStatus;
+	error_message: string | null;
+}
+
+export type CustomDomainSetupStatus = 'pending' | 'active' | 'failed';
+export interface CustomDomainSetup {
+	created_at: number;
+	domain: string;
+	status: CustomDomainSetupStatus;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
+}
+
 // == POST
 export type Post = {
 	id: number;
@@ -431,50 +467,4 @@ export interface GptPrompt {
 
 	prompt: string;
 	gpt_response: string;
-}
-
-/**
- * @deprecated
- */
-export interface UrlData {
-	url: string;
-	original_url: string;
-	domain: string;
-	html: string | null; // for embeds
-	title: string;
-	description: string;
-	thumbnail_url: string | null;
-	icon_url: string | null;
-	site: string | null;
-}
-
-export interface UnfoldedLink {
-	url: string;
-	lastUrl: string;
-	title: string | null;
-	description: string | null;
-	authors: unknown[];
-	tags: unknown[];
-	siteName: string | null;
-	siteUrl: string | null;
-	canonicalUrl: string | null;
-	publishedTime: number | null;
-	modifiedTime: number | null;
-	thumbnailUrl: string | null;
-	iconUrl: string | null;
-	locale: string | null;
-}
-
-export interface UnfoldedEmbed {
-	url: string;
-	embed: string;
-}
-
-// === Hyvor Talk
-
-export interface HyvorTalkGatedContentRule {
-	id: number;
-	tag: Tag;
-	minimum_plan: string | null;
-	gate: string | null;
 }

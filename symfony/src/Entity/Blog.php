@@ -6,8 +6,6 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
-use App\Entity\Language;
-use App\Entity\Navigation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -39,9 +37,6 @@ class Blog
     #[ORM\Column()]
     private ?int $hyvor_user_id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $theme_version_id = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'theme_version_id', referencedColumnName: 'id')]
     private ?ThemeVersion $theme_version = null;
@@ -55,17 +50,18 @@ class Blog
     #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
     private BlogType $type = BlogType::DEFAULT;
 
-    #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
+    #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
-
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
-    private ?string $hosting_domain = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
 
-    #[ORM\Column(nullable: true, options: ['default' => true])]
-    private ?bool $hosting_redirect_subdomain = true;
+    #[ORM\Column()]
+    private bool $hosting_redirect_subdomain = true;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
+    private ?CustomDomain $custom_domain = null;
 
     #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
     private BlogMeta $meta;
@@ -176,17 +172,6 @@ class Blog
         return $this;
     }
 
-    public function getThemeVersionId(): ?int
-    {
-        return $this->theme_version_id;
-    }
-
-    public function setThemeVersionId(?int $theme_version_id): static
-    {
-        $this->theme_version_id = $theme_version_id;
-        return $this;
-    }
-
     public function getThemeVersion(): ?ThemeVersion
     {
         return $this->theme_version;
@@ -242,17 +227,6 @@ class Blog
         return $this;
     }
 
-    public function getHostingDomain(): ?string
-    {
-        return $this->hosting_domain;
-    }
-
-    public function setHostingDomain(?string $hosting_domain): static
-    {
-        $this->hosting_domain = $hosting_domain;
-        return $this;
-    }
-
     public function getHostingUrl(): ?string
     {
         return $this->hosting_url;
@@ -264,14 +238,25 @@ class Blog
         return $this;
     }
 
-    public function getHostingRedirectSubdomain(): ?bool
+    public function getHostingRedirectSubdomain(): bool
     {
         return $this->hosting_redirect_subdomain;
     }
 
-    public function setHostingRedirectSubdomain(?bool $hosting_redirect_subdomain): static
+    public function setHostingRedirectSubdomain(bool $hosting_redirect_subdomain): static
     {
         $this->hosting_redirect_subdomain = $hosting_redirect_subdomain;
+        return $this;
+    }
+
+    public function getCustomDomain(): ?CustomDomain
+    {
+        return $this->custom_domain;
+    }
+
+    public function setCustomDomain(?CustomDomain $custom_domain): static
+    {
+        $this->custom_domain = $custom_domain;
         return $this;
     }
 

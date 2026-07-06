@@ -15,6 +15,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     /**
      * @param array<string, mixed> $data
      * @param array<string, string> $server
+     * @param array<string, mixed> $files
      */
     public function consoleBlogApi(
         string $method,
@@ -23,6 +24,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         array $data = [],
         array $server = [],
         BlogUser|AuthUser|int|null $user = null,
+        array $files = [],
     ): Response {
         $authUser = null;
         if ($user instanceof BlogUser) {
@@ -43,15 +45,26 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         );
 
         $endpoint = ltrim($endpoint, '/');
-        $this->client->request(
-            $method,
-            '/api/console/v0/blog/' . ($subdomain instanceof Blog ? $subdomain->getSubdomain() : $subdomain) . '/' . $endpoint,
-            server: array_merge([
-                'CONTENT_TYPE' => 'application/json',
-                'HTTP_X_ORGANIZATION_ID' => $orgId,
-            ], $server),
-            content: (string) json_encode($data),
-        );
+
+        if (!empty($files)) {
+            $this->client->request(
+                $method,
+                '/api/console/v0/blog/' . ($subdomain instanceof Blog ? $subdomain->getSubdomain() : $subdomain) . '/' . $endpoint,
+                parameters: $data,
+                files: $files,
+                server: array_merge(['HTTP_X_ORGANIZATION_ID' => $orgId], $server),
+            );
+        } else {
+            $this->client->request(
+                $method,
+                '/api/console/v0/blog/' . ($subdomain instanceof Blog ? $subdomain->getSubdomain() : $subdomain) . '/' . $endpoint,
+                server: array_merge([
+                    'CONTENT_TYPE' => 'application/json',
+                    'HTTP_X_ORGANIZATION_ID' => $orgId,
+                ], $server),
+                content: (string) json_encode($data),
+            );
+        }
         $response = $this->client->getResponse();
         if ($response->getStatusCode() === 500) {
             throw new \Exception('API 500: ' . $response->getContent());

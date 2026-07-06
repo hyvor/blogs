@@ -1,10 +1,5 @@
-# Taken from here:
-# https://github.com/laravel/octane/blob/2.x/src/Commands/stubs/Caddyfile
-# ENV variables are coming from here: https://github.com/laravel/octane/blob/2.x/src/Commands/StartFrankenPhpCommand.php#L92
-
 {
 	frankenphp
-	http_port 80
 
 	on_demand_tls {
         ask http://localhost:8080/api/special/caddy/allowed-domain
@@ -18,20 +13,6 @@
     metrics
 }
 
-:9666 {
-    metrics
-}
-
-:9667 {
-    root * /app/backend/public
-    php_server {
-        root /app/backend/public
-        file_server off
-        env HYVOR_METRICS_SERVER 1
-        worker frankenphp-worker.php 1
-    }
-}
-
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
@@ -39,75 +20,23 @@
 	encode zstd gzip
 	php_server {
         file_server off
-        root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
+        worker {
+			file /app/backend/public/index.php
+		}
     }
 }
 
 # main app
-{$DOMAIN_APP}:80, :8080 {
-    @symfony {
-        path /api/comms/*
-        path /api/sudo/*
-        path /api/v2/*
-        path /api/oidc/*
-        path /api/data/*
-        path /api/delivery/*
+{$DOMAIN_APP}:80 {
 
-        path /api/console/v0/init
-        path /api/console/v0/usage
-        path /api/console/v0/blogs/sort
-        path /api/console/v0/blog/check-subdomain
-
-        path /api/console/v0/blog/*/api-keys
-        path /api/console/v0/blog/*/api-key/*
-
-        path /api/console/v0/blog/*/languages
-        path /api/console/v0/blog/*/language/*
-
-        path /api/console/v0/blog/*/navigations
-        path /api/console/v0/blog/*/navigation/*
-
-        path /api/console/v0/blog/*/redirects
-        path /api/console/v0/blog/*/redirect/*
-
-        path /api/console/v0/blog/*/routes
-        path /api/console/v0/blog/*/route/*
-
-        path /api/console/v0/blog/*/webhooks
-        path /api/console/v0/blog/*/webhook/*
-
-        path /api/console/v0/blog/*/blog
-        path /api/console/v0/blog/*/blog/*
-
-        path /api/console/v0/blog/*/tags
-        path /api/console/v0/blog/*/tags/*
-        path /api/console/v0/blog/*/tag
-        path /api/console/v0/blog/*/tag/*
-    }
-    handle @symfony {
-        root * /app/symfony/public
+	handle /api/* {
+		root * /app/backend/public
         encode zstd gzip
         php_server {
             file_server off
-            try_files index.php
-        }
-    }
-
-    @laravel {
-        path /api/*
-    }
-	handle @laravel {
-		root * /app/backend/public
-		encode zstd gzip
-		php_server {
-            file_server off
-            root /app/backend/public/
-            env LARAVEL_OCTANE 1
-            env FRANKENPHP_WORKER 1
-            worker frankenphp-worker.php
+            worker {
+				file /app/backend/public/index.php
+			}
         }
 	}
 
@@ -133,7 +62,7 @@
 		encode zstd gzip
 		file_server
 		header Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-		rewrite * /200.html
+		rewrite * /fallback.html
 	}
 }
 
@@ -142,14 +71,12 @@
 	tls {
 		on_demand
 	}
-
 	root * /app/backend/public
 	encode zstd gzip
 	php_server {
         file_server off
-        root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
+        worker {
+			file /app/backend/public/index.php
+		}
     }
 }

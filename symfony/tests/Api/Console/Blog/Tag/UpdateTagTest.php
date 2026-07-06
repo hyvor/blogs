@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Tag;
 use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
+use App\Entity\Enum\UserStatus;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +22,7 @@ class UpdateTagTest extends ApiTestCase
     public function test_updates_a_tag(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-update']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $tag = TagFactory::createOne(['blog' => $blog]);
 
         $slug = 'hello-world';
@@ -46,7 +47,7 @@ class UpdateTagTest extends ApiTestCase
     public function test_entity_not_found(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-update-nf']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('PATCH', $blog, '/tag/99999', [
             'slug' => 'hello-world',

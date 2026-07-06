@@ -34,7 +34,7 @@ final class ThemeVersionFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'theme_id' => self::faker()->randomNumber(),
+            'theme' => ThemeFactory::new(),
             'version' => self::faker()->text(255),
         ];
     }

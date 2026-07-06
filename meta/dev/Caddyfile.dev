@@ -3,70 +3,41 @@
     metrics
 }
 
+(handle_php) {
+    root /app/backend/public
+    php_server {
+        file_server off
+        try_files index.php
+    }
+}
+
 :80 {
 
-    @symfony {
-        path /blog/*
-
-        path /api/comms/*
-        path /api/sudo/*
-        path /api/v2/*
-        path /api/oidc/*
-        path /api/data/*
-        path /api/delivery/*
-
-        # need to update this as routes are migrated to Symfony
-        # also update image Caddyfile
-        path /api/console/v0/init
-        path /api/console/v0/usage
-        path /api/console/v0/blogs/sort
-        path /api/console/v0/blog/check-subdomain
-
-        path /api/console/v0/blog/*/api-keys
-        path /api/console/v0/blog/*/api-key/*
-
-        path /api/console/v0/blog/*/languages
-        path /api/console/v0/blog/*/language/*
-
-        path /api/console/v0/blog/*/navigations
-        path /api/console/v0/blog/*/navigation/*
-
-        path /api/console/v0/blog/*/redirects
-        path /api/console/v0/blog/*/redirect/*
-
-        path /api/console/v0/blog/*/routes
-        path /api/console/v0/blog/*/route/*
-
-        path /api/console/v0/blog/*/webhooks
-        path /api/console/v0/blog/*/webhook/*
-
-        path /api/console/v0/blog/*/blog
-        path /api/console/v0/blog/*/blog/*
-
-        path /api/console/v0/blog/*/tags
-        path /api/console/v0/blog/*/tags/*
-        path /api/console/v0/blog/*/tag
-        path /api/console/v0/blog/*/tag/*
-    }
-    handle @symfony {
-        root /app/symfony/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
+    @subdomain {
+        host *.hyvorblogs.localhost
     }
 
-    # laravel
+    handle @subdomain {
+        request_header X-Router subdomain
+        import handle_php
+    }
+
+    @customdomain {
+        host custom-domain.localhost
+    }
+
+    handle @customdomain {
+        request_header X-Router customdomain
+        import handle_php
+    }
+
     handle {
-        root /app/backend/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
+        import handle_php
     }
 
 	log {
-        output file /var/log/caddy.log
+        output stderr
+        level DEBUG
     }
 
 }

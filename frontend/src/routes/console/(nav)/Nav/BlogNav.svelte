@@ -10,7 +10,7 @@
 	import IconTools from '@hyvor/icons/IconTools';
 
 	import { page } from '$app/stores';
-	import { NavLink } from '@hyvor/design/components';
+	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
 	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
@@ -37,6 +37,7 @@
 </button>
 
 <div class="nav-items">
+	<NavLinkGroup activeBackground="var(--accent-light-mid)">
 	<NavLink
 		href={consoleUrl(listItem.subdomain)}
 		active={$page.url.pathname === `/console/${listItem.subdomain}`}
@@ -117,6 +118,7 @@
 		{/snippet}
 		Settings
 	</NavLink>
+	</NavLinkGroup>
 </div>
 
 <style lang="scss">
@@ -161,10 +163,6 @@
 	.nav-items {
 		padding-bottom: 20px;
 		padding-top: 10px;
-	}
-
-	.nav-items :global(a.active) {
-		background-color: var(--accent-light-mid);
 	}
 
 	.home-link {

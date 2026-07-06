@@ -97,7 +97,11 @@
 	}
 </script>
 
-<a class="post-list-item" href={consoleUrlWithBlog(`/posts/${post.id}`)}>
+<a 
+	class="post-list-item" 
+	href={consoleUrlWithBlog(`/posts/${post.id}`)} 
+	style:view-transition-name={`post-${post.id}`}
+>
 	<div class="post-main">
 		<div class="post-title-row">
 			<div class="post-title">{variant?.title || '(Untitled)'}</div>

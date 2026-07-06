@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ThemeCreationType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -14,16 +15,16 @@ class Theme
     private int $id;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updated_at = null;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\Column(length: 255, unique: true)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: ThemeCreationType::class)]
+    private ThemeCreationType $type;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $blogs_count = 0;
@@ -39,23 +40,23 @@ class Theme
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
         return $this;
@@ -72,12 +73,12 @@ class Theme
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ThemeCreationType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ThemeCreationType $type): static
     {
         $this->type = $type;
         return $this;

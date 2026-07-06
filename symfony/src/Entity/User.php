@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
+use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,14 +30,18 @@ class User
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
+    /**
+     * This is HYVOR user ID in cloud
+     * and OIDC user ID in self-hosted
+     */
     #[ORM\Column(nullable: true)]
     private ?int $hyvor_user_id = null;
 
     #[ORM\Column(enumType: UserRole::class)]
     private UserRole $role;
 
-    #[ORM\Column(options: ['default' => 'invited'])]
-    private string $status = 'invited';
+    #[ORM\Column(enumType: UserStatus::class, options: ['default' => 'invited'])]
+    private UserStatus $status = UserStatus::INVITED;
 
     #[ORM\Column()]
     private string $slug;
@@ -154,12 +159,12 @@ class User
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): UserStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(UserStatus $status): static
     {
         $this->status = $status;
         return $this;

@@ -16,7 +16,7 @@
 	let showPreview = $state(false);
 
 	onMount(() => {
-		fetch('/api/special/syntax')
+		fetch('/api/public/highlighting-docs')
 			.then((res) => res.json())
 			.then((res) => {
 				data = res;

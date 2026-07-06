@@ -1,0 +1,126 @@
+<?php
+
+namespace App\Tests\Api\Console\Blog\Post;
+
+use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\PostVariantStatus;
+use App\Service\Post\PostService;
+use App\Service\Post\PostSlugService;
+use App\Tests\Case\ApiTestCase;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\UserFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(PostController::class)]
+#[CoversClass(PostService::class)]
+#[CoversClass(PostSlugService::class)]
+class PublishPostVariantTest extends ApiTestCase
+{
+    public function test_language_not_found(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => 9999,
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Language not found');
+    }
+
+    public function test_variant_not_found(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => $blog->getLanguages()->first()->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(404, 'Variant not found');
+    }
+
+    public function test_publishes_draft_variant(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'title' => 'My Post',
+        ]);
+
+        $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => $language->getId(),
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode((string)$response->getContent(), true);
+        $this->assertSame('published', $data['status']);
+        $this->assertSame('my-post', $data['slug']);
+
+        $this->getEm()->refresh($post);
+        $this->assertNotNull($post->getPublishedAt());
+    }
+
+    public function test_generates_slug_if_missing(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => null,
+            'title' => 'My Post Title',
+        ]);
+
+        $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => $language->getId(),
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode((string)$response->getContent(), true);
+        $this->assertSame('published', $data['status']);
+        $this->assertNotNull($data['slug']);
+        $this->assertNotEmpty($data['slug']);
+    }
+
+    public function test_does_not_overwrite_existing_published_at(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $existingDate = new \DateTimeImmutable('2020-01-01');
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $existingDate]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'some-slug',
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => $language->getId(),
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->getEm()->refresh($post);
+        $this->assertSame($existingDate->getTimestamp(), $post->getPublishedAt()->getTimestamp());
+    }
+}

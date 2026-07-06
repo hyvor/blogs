@@ -1,7 +1,7 @@
 <?php
 
 use App\Service\App\Storage\FilesystemFactory;
-use Aws\S3\S3Client;
+use AsyncAws\S3\S3Client;
 use League\Flysystem\Filesystem;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Reference;
@@ -20,16 +20,15 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(S3Client::class)
         ->lazy()
-        ->args(['$args' => [
-            'version' => 'latest',
-            'region' => '%env(default::string:S3_REGION)%',
-            'endpoint' => '%env(default::string:S3_ENDPOINT)%',
-            'use_path_style_endpoint' => true,
-            'credentials' => [
-                'key' => '%env(default::string:S3_ACCESS_KEY_ID)%',
-                'secret' => '%env(default::string:S3_SECRET_ACCESS_KEY)%',
-            ],
-        ]]);
+        ->args([
+            '$configuration' => [
+                'endpoint' => '%env(default::string:S3_ENDPOINT)%',
+                'accessKeyId' => '%env(default::string:S3_ACCESS_KEY_ID)%',
+                'accessKeySecret' => '%env(default::string:S3_SECRET_ACCESS_KEY)%',
+                'region' => '%env(default::string:S3_REGION)%', 
+                'pathStyleEndpoint' => true,
+            ]
+        ]);
 
     $services->set(Filesystem::class)
         ->factory([FilesystemFactory::class, 'create'])

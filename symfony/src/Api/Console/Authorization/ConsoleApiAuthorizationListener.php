@@ -3,6 +3,7 @@
 namespace App\Api\Console\Authorization;
 
 use App\Entity\Blog;
+use App\Entity\User;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Blog\BlogService;
 use App\Service\User\UserService;
@@ -25,6 +26,8 @@ class ConsoleApiAuthorizationListener
     private const string RESOLVED_USER_KEY = 'console_api_resolved_user';
     private const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
     private const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
+    private const string RESOLVED_BLOG_USER_KEY = 'console_api_resolved_blog_user';
+    private const string RESOLVED_API_KEY_SCOPES_KEY = 'console_api_resolved_api_key_scopes';
 
     public function __construct(
         private AuthInterface $auth,
@@ -77,6 +80,8 @@ class ConsoleApiAuthorizationListener
         } else {
             $this->handleBlogSessionAuth($request, $blog);
         }
+
+        $this->verifyScope($event);
     }
 
     private function handleApiKeyAuth(Request $request, Blog $blog): void
@@ -89,8 +94,7 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('Invalid API key.');
         }
 
-        // TODO: verify scopes
-
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $apiKey->getScopes());
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
     }
 
@@ -125,9 +129,9 @@ class ConsoleApiAuthorizationListener
             throw new AccessDeniedHttpException('You do not have access to this blog');
         }
 
-        // TODO: verify scopes
-
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+        $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
     }
 
     private function handleOrgLevel(ControllerEvent $event): void
@@ -157,6 +161,31 @@ class ConsoleApiAuthorizationListener
         $orgFromReq = (int)$request->headers->get('X-Organization-ID');
         if ($orgFromReq !== $me->getOrganization()->id) {
             throw new AccessDeniedHttpException('org_mismatch');
+        }
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    private function verifyScope(ControllerEvent $event): void
+    {
+        $attributes = $event->getAttributes(ScopeRequired::class);
+        $scopeRequiredAttribute = $attributes[0] ?? null;
+
+        assert(
+            $scopeRequiredAttribute instanceof ScopeRequired,
+            'ScopeRequired attribute must be set on all blog-level controller methods'
+        );
+
+        // null scopes = session auth, all scopes granted
+        $scopes = $event->getRequest()->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
+        assert(is_array($scopes));
+
+        $requiredScope = $scopeRequiredAttribute->scope->value;
+        if (!in_array($requiredScope, $scopes, true)) {
+            throw new AccessDeniedHttpException(
+                "API key is missing the required scope '$requiredScope'."
+            );
         }
     }
 
@@ -197,6 +226,14 @@ class ConsoleApiAuthorizationListener
         $blog = $request->attributes->get(self::RESOLVED_BLOG_KEY);
         assert($blog instanceof Blog);
         return $blog;
+    }
+
+    public function getBlogUser(): ?User
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        assert($request !== null);
+        $user = $request->attributes->get(self::RESOLVED_BLOG_USER_KEY);
+        return $user instanceof User ? $user : null;
     }
 
     /**

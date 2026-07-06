@@ -2,9 +2,12 @@
 
 namespace App\Service\Cache;
 
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
+use App\Service\Media\Event\MediaCreatedEvent;
+use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Redirect\Event\RedirectChangedEvent;
@@ -14,20 +17,31 @@ use App\Service\Tag\Event\TagDeletedEvent;
 use App\Service\Tag\Event\TagUpdatedEvent;
 use App\Service\Tag\Event\TagVariantDeletedEvent;
 use App\Service\Tag\Event\TagVariantUpdatedEvent;
+use App\Service\Theme\Event\AssetEditedEvent;
+use App\Service\Theme\Event\ConfigEditedEvent;
+use App\Service\Theme\Event\LangEditedEvent;
+use App\Service\Theme\Event\StylesEditedEvent;
+use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
+use App\Service\Route\PermalinkService;
+use App\Service\User\Event\UserCreatedEvent;
+use App\Service\User\Event\UserDeletedEvent;
+use App\Service\User\Event\UserUpdatedEvent;
+use App\Service\User\Event\UserVariantDeletedEvent;
+use App\Service\User\Event\UserVariantUpdatedEvent;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
-
-// TODO: PostUpdatedEvent, PostDeletedEvent, PostVariantUpdatedEvent, PostVariantDeletedEvent → clearTemplateCache
-// TODO: UserCreatedEvent, UserUpdatedEvent, UserDeletedEvent, UserVariantUpdatedEvent, UserVariantDeletedEvent → clearTemplateCache
-// TODO: TemplateEditedEvent, ConfigEditedEvent, LangEditedEvent → clearTemplateCache
-// TODO: MediaCreatedEvent, MediaDeletedEvent → clearSingleCache (with media permalink)
-// TODO: AssetEditedEvent → clearSingleCache (with asset permalink)
-// TODO: StylesEditedEvent → clearSingleCache('/styles.css') + clearTemplateCache
-// TODO: GatedContentChangedEvent → clearTemplateCache
 
 
 class ClearCacheListener
 {
-    public function __construct(private BlogCacheService $cacheService) {}
+    public function __construct(
+        private BlogCacheService $cacheService,
+        private PermalinkService $permalinkService,
+        private EntityManagerInterface $em,
+    ) {}
 
     #[AsEventListener]
     public function onNavigationChanged(NavigationChangedEvent $event): void
@@ -56,15 +70,14 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogUpdated(BlogUpdatedEvent $event): void
     {
-        $hostingChanged = $event->blogOld->getHostingAt() !== $event->blog->getHostingAt() ||
-            $event->blogOld->getHostingDomain() !== $event->blog->getHostingDomain() ||
-            $event->blogOld->getHostingUrl() !== $event->blog->getHostingUrl();
+        // hosting fields are no longer changed through this event; see onBlogHostingChanged
+        $this->cacheService->clearTemplateCache($event->blog);
+    }
 
-        if ($hostingChanged) {
-            $this->cacheService->clearAllCache($event->blog);
-        } else {
-            $this->cacheService->clearTemplateCache($event->blog);
-        }
+    #[AsEventListener]
+    public function onBlogHostingChanged(BlogHostingChangedEvent $event): void
+    {
+        $this->cacheService->clearAllCache($event->hostingChange->getBlog());
     }
 
     #[AsEventListener]
@@ -104,6 +117,24 @@ class ClearCacheListener
     }
 
     #[AsEventListener]
+    public function onPostVariantUpdated(PostVariantUpdatedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantPublished(PostVariantPublishedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantUnpublished(PostVariantUnpublishedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
     public function onRedirectChanged(RedirectChangedEvent $event): void
     {
         $redirect = $event->redirect;
@@ -118,5 +149,93 @@ class ClearCacheListener
                 $this->cacheService->clearSingleCache($blog, $event->oldRedirect->getPath());
             }
         }
+    }
+
+    #[AsEventListener]
+    public function onTemplateEdited(TemplateEditedEvent $event): void
+    {
+        $blog = $event->file->getBlog();
+        $this->cacheService->clearTemplateCache($blog);
+    }
+
+    #[AsEventListener]
+    public function onConfigEdited(ConfigEditedEvent $event): void
+    {
+        $blog = $event->file->getBlog();
+        $this->cacheService->clearTemplateCache($blog);
+    }
+
+    #[AsEventListener]
+    public function onLangEdited(LangEditedEvent $event): void
+    {
+        $blog = $event->file->getBlog();
+        $this->cacheService->clearTemplateCache($blog);
+    }
+
+    #[AsEventListener]
+    public function onAssetEdited(AssetEditedEvent $event): void
+    {
+        $path = $this->permalinkService->getAssetPermalink($event->name, $event->blog, true);
+        $this->cacheService->clearSingleCache($event->blog, $path);
+    }
+
+    #[AsEventListener]
+    public function onStylesEdited(StylesEditedEvent $event): void
+    {
+        $this->cacheService->clearSingleCache($event->blog, '/styles.css');
+        $this->cacheService->clearTemplateCache($event->blog);
+
+        $meta = clone $event->blog->getMeta();
+        $meta->cache_version_styles++;
+        $event->blog->setMeta($meta);
+        $this->em->flush();
+    }
+
+    #[AsEventListener]
+    public function onUserCreated(UserCreatedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->user->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onUserUpdated(UserUpdatedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->user->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onUserDeleted(UserDeletedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->user->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onUserVariantUpdated(UserVariantUpdatedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getUser()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onUserVariantDeleted(UserVariantDeletedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getUser()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onMediaCreated(MediaCreatedEvent $event): void
+    {
+        $media = $event->media;
+        $blog = $media->getBlog();
+        $path = $this->permalinkService->getMediaPermalink($media, $blog, true);
+        $this->cacheService->clearSingleCache($blog, $path);
+    }
+
+    #[AsEventListener]
+    public function onMediaDeleted(MediaDeletedEvent $event): void
+    {
+        $media = $event->media;
+        $blog = $media->getBlog();
+        $path = $this->permalinkService->getMediaPermalink($media, $blog, true);
+        $this->cacheService->clearSingleCache($blog, $path);
     }
 }

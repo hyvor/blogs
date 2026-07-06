@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationInput;
 use App\Api\Console\Input\Blog\Navigation\CreateNavigationVariantInput;
 use App\Api\Console\Input\Blog\Navigation\SortNavigationsInput;
@@ -31,6 +33,7 @@ class NavigationController
     ) {}
 
     #[Route('/navigations', methods: ['GET'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_READ)]
     public function getNavigations(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -40,6 +43,7 @@ class NavigationController
     }
 
     #[Route('/navigations/sort', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function sort(
         #[MapRequestPayload] SortNavigationsInput $input,
     ): JsonResponse {
@@ -50,6 +54,7 @@ class NavigationController
     }
 
     #[Route('/navigation', methods: ['POST'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function createNavigation(
         #[MapRequestPayload] CreateNavigationInput $input,
     ): JsonResponse {
@@ -72,6 +77,7 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function updateNavigation(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationInput $input,
@@ -82,6 +88,7 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function deleteNavigation(#[MapBlogEntity] Navigation $navigation): JsonResponse
     {
         $this->navigationService->deleteNavigation($navigation);
@@ -90,6 +97,7 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}/variant', methods: ['POST'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function createVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] CreateNavigationVariantInput $input,
@@ -107,6 +115,7 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}/variant', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function updateVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationVariantInput $input,
@@ -129,6 +138,7 @@ class NavigationController
     }
 
     #[Route('/navigation/{id}/variant', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
     public function deleteVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] DeleteNavigationVariantInput $input,

@@ -79,6 +79,15 @@ class RedirectService
         return @preg_match($this->getRegex($regex), '') !== false;
     }
 
+    public function getRedirectByPath(Blog $blog, string $path): ?Redirect
+    {
+        return $this->em->getRepository(Redirect::class)->findOneBy([
+            'blog' => $blog,
+            'path' => $path,
+            'dynamic' => false,
+        ]);
+    }
+
     public function createRedirect(
         Blog $blog,
         bool $dynamic,

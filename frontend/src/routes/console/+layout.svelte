@@ -26,6 +26,7 @@
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
 	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
+	import { onNavigate } from '$app/navigation';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -48,7 +49,9 @@
 
 	let isLoading = $state(true);
 
-	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+	const isPostPage = $derived(
+		page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null
+	);
 
 	function getBlogHint() {
 		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);

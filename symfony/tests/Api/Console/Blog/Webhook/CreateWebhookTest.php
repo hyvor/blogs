@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Webhook;
 
 use App\Api\Console\Controller\WebhookController;
 use App\Api\Console\Object\WebhookObject;
+use App\Entity\Enum\UserStatus;
 use App\Entity\Enum\WebhookEvent;
 use App\Entity\Webhook;
 use App\Service\Webhook\WebhookService;
@@ -21,7 +22,7 @@ class CreateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'wh-create', '/webhook', [
@@ -47,7 +48,7 @@ class CreateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-limit'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         for ($i = 0; $i < 5; $i++) {
             WebhookFactory::createOne([
@@ -67,7 +68,7 @@ class CreateWebhookTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'wh-wrong-event'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'wh-wrong-event', '/webhook', [

@@ -11,12 +11,15 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create OIDC tables for on-prem authentication';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, blogs.custom_domain_id, and API keys scopes';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql(<<<SQL
+
+        // OIDC ====
+        $this->addSql(
+            <<<SQL
             CREATE TABLE oidc_users
             (
               id          SERIAL PRIMARY KEY,
@@ -32,10 +35,9 @@ final class Version20260501000000 extends AbstractMigration
             )
         SQL
         );
-
         $this->addSql('CREATE INDEX idx_oidc_users_email ON oidc_users (email)');
-
-        $this->addSql(<<<SQL
+        $this->addSql(
+            <<<SQL
             CREATE TABLE oidc_sessions
             (
                 sess_id       VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -45,13 +47,80 @@ final class Version20260501000000 extends AbstractMigration
             )
         SQL
         );
-
         $this->addSql('CREATE INDEX idx_oidc_sessions_sess_lifetime ON oidc_sessions (sess_lifetime)');
+
+        // Webhooks ====
+        $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN try_count INTEGER NOT NULL DEFAULT 0');
+        $this->addSql('ALTER TABLE webhook_deliveries ADD COLUMN last_try_at TIMESTAMPTZ');
+
+        // API keys scopes ====
+        $this->addSql("ALTER TABLE api_keys ADD scopes JSON NOT NULL DEFAULT '[]'");
+
+        // User role ====
+        // change 'owner' to 'admin'
+        $this->addSql("UPDATE users SET role = 'admin' WHERE role = 'owner'");
+
+
+        // Custom Domain ====
+        $this->addSql(
+            <<<SQL
+                CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');
+            SQL
+        );
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE custom_domains (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
+                status custom_domain_status NOT NULL DEFAULT 'pending',
+                domain TEXT NOT NULL UNIQUE,
+                private_key_encrypted TEXT,
+                certificate TEXT,
+                valid_from timestamptz,
+                valid_to timestamptz
+            );
+            SQL
+        );
+        $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
+
+        // Blogs: custom_domain_id ====
+        $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');
+
+        // Hosting changes ====
+        $this->addSql(
+            <<<SQL
+                CREATE TYPE hosting_change_status AS ENUM ('changing', 'success', 'failed');
+            SQL
+        );
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE hosting_changes (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+                from_at blog_hosting_at NOT NULL,
+                from_subdomain TEXT,
+                from_domain TEXT,
+                from_url TEXT,
+                to_at blog_hosting_at NOT NULL,
+                to_subdomain TEXT,
+                to_domain TEXT,
+                to_url TEXT,
+                status hosting_change_status NOT NULL DEFAULT 'changing',
+                error_message TEXT,
+                retry_count INTEGER NOT NULL DEFAULT 0
+            );
+            SQL
+        );
+        $this->addSql("CREATE INDEX idx_hosting_changes_blog_id ON hosting_changes(blog_id)");
+        // only one change can be in progress for a blog at a time
+        $this->addSql(
+            "CREATE UNIQUE INDEX idx_hosting_changes_blog_pending ON hosting_changes(blog_id) WHERE status = 'changing'"
+        );
     }
 
-    public function down(Schema $schema): void
-    {
-        $this->addSql('DROP TABLE oidc_users');
-        $this->addSql('DROP TABLE oidc_sessions');
-    }
+    public function down(Schema $schema): void {}
 }

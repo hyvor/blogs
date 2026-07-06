@@ -10,6 +10,9 @@ enum WebhookEvent: string
     case POST_UPDATED = 'post.updated';
     case POST_DELETED = 'post.deleted';
 
+    case POST_VARIANT_PUBLISHED = 'post.variant.published';
+    case POST_VARIANT_UNPUBLISHED = 'post.variant.unpublished';
+
     case TAG_CREATED = 'tag.created';
     case TAG_UPDATED = 'tag.updated';
     case TAG_DELETED = 'tag.deleted';

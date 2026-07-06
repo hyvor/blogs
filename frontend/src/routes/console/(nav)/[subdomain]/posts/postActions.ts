@@ -143,6 +143,42 @@ export function updatePostVariant(
 	return promise;
 }
 
+export function publishPostVariant(updateStore = true) {
+	const postId = get(postStore).id;
+	const languageId = get(postLanguageStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/publish`,
+		data: { language_id: languageId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
+export function unpublishPostVariant(updateStore = true) {
+	const postId = get(postStore).id;
+	const languageId = get(postLanguageStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/unpublish`,
+		data: { language_id: languageId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
 export function createPostVariant(postId: number, languageId: number) {
 	return consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant`,

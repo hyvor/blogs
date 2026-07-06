@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NavLink } from '@hyvor/design/components';
+	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { page } from '$app/stores';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import IconChatText from '@hyvor/icons/IconChatText';
@@ -16,10 +16,8 @@
 	import IconPeople from '@hyvor/icons/IconPeople';
 	import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
 	import IconSend from '@hyvor/icons/IconSend';
-	import IconSignTurnRight from '@hyvor/icons/IconSignTurnRight';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import IconSignpost2 from '@hyvor/icons/IconSignpost2';
-	import IconSlash from '@hyvor/icons/IconSlash';
 	import IconTag from '@hyvor/icons/IconTag';
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
@@ -34,6 +32,7 @@
 
 <div class="settings">
 	<div class="nav hds-box">
+		<NavLinkGroup activeBackground="var(--accent-light-mid)">
 		<NavLink href={consoleUrlWithBlog('/settings')} active={$page.url.pathname === `${prefix}`}>
 			{#snippet start()}
 				<IconList />
@@ -203,6 +202,7 @@
 			{/snippet}
 			Danger Zone
 		</NavLink>
+		</NavLinkGroup>
 	</div>
 
 	<div class="content hds-box">
@@ -224,9 +224,6 @@
 		height: 100%;
 		padding: 25px 0;
 		overflow: auto;
-	}
-	.nav :global(a.active) {
-		background-color: var(--accent-light-mid);
 	}
 	.content {
 		flex: 1;

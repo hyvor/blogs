@@ -15,8 +15,6 @@
 	import UserRow from './UserRow.svelte';
 	import { getUsers } from './userActions';
 	import { onMount } from 'svelte';
-	import Slug from '../../posts/[postId]/Sidebar/Settings/Slug.svelte';
-	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
 	import AddUser from './AddUser.svelte';
 
 	let isLoading = $state(true);
@@ -72,49 +70,47 @@
 	onMount(loadUsers);
 </script>
 
-<DisabledOnTemp>
-	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
-			Add User {#snippet end()}
-				<IconPlus />
-			{/snippet}
-		</Button>
-	</SettingsTop>
+<SettingsTop>
+	<Button on:click={() => (isCreating = true)}>
+		Add User {#snippet end()}
+			<IconPlus />
+		{/snippet}
+	</Button>
+</SettingsTop>
 
-	<div class="table">
-		{#if isLoading}
-			<Loader full />
-		{:else if users.length === 0}
-			<IconMessage empty message="No users found" />
-		{:else}
-			<Table columns="2fr 1fr 1fr 1fr 70px">
-				<TableRow head>
-					<div>Slug</div>
-					<div>Status</div>
-					<div>Role</div>
-					<div>Posts</div>
-					<div></div>
-				</TableRow>
+<div class="table">
+	{#if isLoading}
+		<Loader full />
+	{:else if users.length === 0}
+		<IconMessage empty message="No users found" />
+	{:else}
+		<Table columns="2fr 1fr 1fr 1fr 70px">
+			<TableRow head>
+				<div>Slug</div>
+				<div>Status</div>
+				<div>Role</div>
+				<div>Posts</div>
+				<div></div>
+			</TableRow>
 
-				{#each users as user}
-					<UserRow
-						{user}
-						on:delete={handleDelete}
-						on:update={handleUpdate}
-						on:variantCreate={handleCreateVariant}
-					/>
-				{/each}
-
-				<LoadButton
-					text="Load More"
-					show={hasMore}
-					on:click={() => loadUsers(true)}
-					loading={isLoadingMore}
+			{#each users as user}
+				<UserRow
+					{user}
+					on:delete={handleDelete}
+					on:update={handleUpdate}
+					on:variantCreate={handleCreateVariant}
 				/>
-			</Table>
-		{/if}
-	</div>
-</DisabledOnTemp>
+			{/each}
+
+			<LoadButton
+				text="Load More"
+				show={hasMore}
+				on:click={() => loadUsers(true)}
+				loading={isLoadingMore}
+			/>
+		</Table>
+	{/if}
+</div>
 
 {#if isCreating}
 	<AddUser bind:show={isCreating} on:add={handleAdd} />

@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\ApiKey;
 use App\Api\Console\Controller\ApiKeyController;
 use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\Enum\ApiKeyType;
+use App\Entity\Enum\UserStatus;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
@@ -21,7 +22,7 @@ class GetApiKeysTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-list'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         ApiKeyFactory::createOne([
@@ -45,7 +46,7 @@ class GetApiKeysTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'ak-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

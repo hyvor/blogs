@@ -3,6 +3,7 @@
 namespace App\Api\Console\Object;
 
 use App\Entity\Enum\UserRole;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 
 class UserObject
@@ -15,7 +16,7 @@ class UserObject
 
     public ?int $hyvor_user_id;
 
-    public string $status;
+    public UserStatus $status;
 
     public UserRole $role;
 
@@ -57,7 +58,7 @@ class UserObject
         $this->slug = $user->getSlug();
         $this->posts_count = $user->getPostsCount();
 
-        $this->email = $user->getEmail();
+        $this->email = $this->getMaskedEmail($user);
 
         $this->picture_url = $user->getPictureUrl();
         $this->website_url = $user->getWebsiteUrl();
@@ -71,5 +72,24 @@ class UserObject
         $this->social_github = $user->getSocialGithub();
 
         $this->variants = $variants;
+    }
+
+    private function getMaskedEmail(User $user): ?string
+    {
+        $email = $user->getEmail();
+
+        if ($user->getStatus() !== UserStatus::INVITED || $email === null) {
+            return $email;
+        }
+
+        $emailParts = explode('@', $email);
+        if (count($emailParts) !== 2) {
+            return $email;
+        }
+
+        $emailParts[0] = substr($emailParts[0], 0, 3) . '***';
+        $emailParts[1] = substr($emailParts[1], 0, 3) . '***';
+
+        return implode('@', $emailParts);
     }
 }

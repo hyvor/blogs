@@ -39,6 +39,8 @@ final class BlogVariantFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'language' => LanguageFactory::new(),
+            'name' => self::faker()->name(),
+            'description' => self::faker()->sentence(),
         ];
     }
 

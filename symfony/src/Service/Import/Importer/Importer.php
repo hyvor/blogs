@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Service\Import\Importer;
+
+use App\Entity\Blog;
+use App\Service\Language\LanguageService;
+use App\Service\Media\MediaService;
+use App\Service\Media\MediaUploadException;
+use App\Service\Post\Content\PostContentService;
+use App\Service\Post\PostService;
+use App\Service\Route\PermalinkService;
+use App\Service\User\UserService;
+use Doctrine\DBAL\Connection;
+use Hyvor\Phrosemirror\Document\Node;
+
+class Importer
+{
+    public int $postsCount = 0;
+
+    public function __construct(
+        private readonly Blog $blog,
+        private readonly ParserAbstract $parser,
+        private readonly bool $importImages,
+        private readonly Connection $connection,
+        private readonly LanguageService $languageService,
+        private readonly UserService $userService,
+        private readonly PostService $postService,
+        private readonly MediaService $mediaService,
+        private readonly PermalinkService $permalinkService,
+        private readonly PostContentService $postContentService,
+    ) {
+    }
+
+    public function import(): void
+    {
+        $this->parser->parse();
+
+        $this->connection->transactional(function () {
+            $this->importPosts();
+        });
+    }
+
+    private function importPosts(): void
+    {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($this->blog);
+        $owner = $this->userService->getOwner($this->blog);
+
+        foreach ($this->parser->posts as $importingPost) {
+            $featuredImageUrl = $importingPost->featuredImageUrl
+                ? $this->tryToUploadImage($importingPost->featuredImageUrl)
+                : null;
+
+            $post = $this->postService->createPost(
+                $this->blog,
+                isPage: $importingPost->isPage,
+                isFeatured: $importingPost->isFeatured,
+                featuredImageUrl: $featuredImageUrl,
+            );
+            $this->postService->updatePost($post, ['published_at' => $importingPost->publishedAt]);
+
+            foreach ($importingPost->variants as $importingVariant) {
+                $content = $this->importMediaOfContent($importingVariant->content);
+
+                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $primaryLanguage);
+
+                if (!$variant) {
+                    continue;
+                }
+
+                $this->postService->updatePostVariant($variant, $this->blog, [
+                    'slug' => $importingVariant->slug,
+                    'title' => $importingVariant->title,
+                    'description' => $importingVariant->description,
+                    'content' => $content,
+                    'status' => $importingVariant->status,
+                ]);
+            }
+
+            if ($owner) {
+                $this->postService->setPostAuthors($post, [$owner], flush: true);
+            }
+
+            $this->postsCount++;
+        }
+    }
+
+    private function importMediaOfContent(string $content): string
+    {
+        if (!$this->importImages) {
+            return $content;
+        }
+
+        $document = $this->postContentService->getDocumentFromJson($content, $this->blog);
+
+        $document->traverse(function (Node $node) {
+            if (
+                $node->isOfType(\App\Service\Post\Content\Nodes\Image\Image::class) ||
+                $node->isOfType(\App\Service\Post\Content\Nodes\Audio\Audio::class)
+            ) {
+                $src = $node->attr('src');
+                $src = is_string($src) ? $src : '';
+
+                if ($src && str_starts_with($src, 'http')) {
+                    $node->attrs->set('src', $this->tryToUploadImage($src));
+                }
+            }
+        });
+
+        return $document->toJson();
+    }
+
+    private function tryToUploadImage(string $url): string
+    {
+        if (!$this->importImages) {
+            return $url;
+        }
+
+        try {
+            $media = $this->mediaService->uploadFromUrl($this->blog, $url);
+        } catch (MediaUploadException) {
+            $media = null;
+        }
+
+        if ($media) {
+            return $this->permalinkService->getMediaPermalink($media, $this->blog);
+        }
+
+        return $url;
+    }
+}

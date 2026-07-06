@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog;
 
 use App\Api\Console\Controller\BlogController;
 use App\Api\Console\Object\BlogVariantObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\Blog\BlogService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -20,7 +21,7 @@ class UpdateBlogVariantTest extends ApiTestCase
     public function test_validates(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-var-update-validate']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('PATCH', $blog, '/blog/variant', [
             'language_id' => 2,
@@ -33,7 +34,7 @@ class UpdateBlogVariantTest extends ApiTestCase
     public function test_updates_name(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-var-update-name']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createOne(['blog' => $blog, 'language' => $language]);
 
@@ -52,7 +53,7 @@ class UpdateBlogVariantTest extends ApiTestCase
     public function test_updates_description(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-var-update-desc']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => 'active']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createOne(['blog' => $blog, 'language' => $language]);
 

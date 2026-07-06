@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 
 use App\Api\Console\Controller\RedirectController;
 use App\Api\Console\Object\RedirectObject;
+use App\Entity\Enum\UserStatus;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
@@ -20,7 +21,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-create'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'redir-create', '/redirect', [
@@ -42,7 +43,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-create-dyn'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'redir-create-dyn', '/redirect', [
@@ -63,7 +64,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-dup'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         RedirectFactory::createOne([
             'blog' => $blog,
@@ -85,7 +86,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-dyn-regex'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $this->consoleBlogApi('POST', 'redir-dyn-regex', '/redirect', [
@@ -102,7 +103,7 @@ class CreateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-dyn-limit'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         for ($i = 0; $i < 5; $i++) {
             RedirectFactory::createOne([

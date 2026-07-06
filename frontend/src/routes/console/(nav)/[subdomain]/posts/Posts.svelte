@@ -13,6 +13,7 @@
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { setPreloadedPosts } from './[postId]/postLoader';
 
 	interface Props {
 		pages?: boolean;
@@ -44,6 +45,7 @@
 			getPages()
 				.then((res) => {
 					posts = res;
+					setPreloadedPosts(res);
 				})
 				.catch(() => {
 					error = 'Failed to load pages';
@@ -64,6 +66,7 @@
 			})
 				.then((res) => {
 					posts = more ? [...posts, ...res] : res;
+					setPreloadedPosts(res);
 					hasMore = res.length === limit;
 				})
 				.catch(() => {

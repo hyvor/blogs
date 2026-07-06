@@ -4,6 +4,8 @@ namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Blog\Tag\CheckTagSlugAvailableInput;
 use App\Api\Console\Input\Blog\Tag\CreateTagInput;
 use App\Api\Console\Input\Blog\Tag\CreateTagVariantInput;
@@ -35,6 +37,7 @@ class TagController
     ) {}
 
     #[Route('/tags', methods: ['GET'])]
+    #[ScopeRequired(Scope::TAGS_READ)]
     public function getTags(
         #[MapQueryString] GetTagsInput $input = new GetTagsInput(),
     ): JsonResponse {
@@ -48,6 +51,7 @@ class TagController
     }
 
     #[Route('/tags/search', methods: ['GET'])]
+    #[ScopeRequired(Scope::TAGS_READ)]
     public function searchTags(
         #[MapQueryString] SearchTagsInput $input,
     ): JsonResponse {
@@ -61,6 +65,7 @@ class TagController
     }
 
     #[Route('/tag', methods: ['POST'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function createTag(
         #[MapRequestPayload] CreateTagInput $input,
     ): JsonResponse {
@@ -71,6 +76,7 @@ class TagController
     }
 
     #[Route('/tag/{id}', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function updateTag(
         #[MapBlogEntity] Tag $tag,
         #[MapRequestPayload] UpdateTagInput $input,
@@ -82,6 +88,7 @@ class TagController
     }
 
     #[Route('/tag/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function deleteTag(#[MapBlogEntity] Tag $tag): JsonResponse
     {
         $this->tagService->deleteTag($tag);
@@ -90,6 +97,7 @@ class TagController
     }
 
     #[Route('/tag/{id}/slug-available', methods: ['GET'])]
+    #[ScopeRequired(Scope::TAGS_READ)]
     public function checkSlugAvailability(
         #[MapBlogEntity] Tag $tag,
         #[MapQueryString] CheckTagSlugAvailableInput $input,
@@ -103,6 +111,7 @@ class TagController
     }
 
     #[Route('/tag/{id}/variant', methods: ['POST'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function createVariant(
         #[MapBlogEntity] Tag $tag,
         #[MapRequestPayload] CreateTagVariantInput $input,
@@ -120,6 +129,7 @@ class TagController
     }
 
     #[Route('/tag/{id}/variant', methods: ['PATCH'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function updateVariant(
         #[MapBlogEntity] Tag $tag,
         #[MapRequestPayload] UpdateTagVariantInput $input,
@@ -142,6 +152,7 @@ class TagController
     }
 
     #[Route('/tag/{id}/variant', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::TAGS_WRITE)]
     public function deleteVariant(
         #[MapBlogEntity] Tag $tag,
         #[MapRequestPayload] DeleteTagVariantInput $input,

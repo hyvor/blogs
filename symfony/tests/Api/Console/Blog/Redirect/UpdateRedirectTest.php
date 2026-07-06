@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Redirect;
 use App\Api\Console\Controller\RedirectController;
 use App\Api\Console\Object\RedirectObject;
 use App\Entity\Enum\RedirectType;
+use App\Entity\Enum\UserStatus;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Redirect\RedirectService;
 use App\Tests\Case\ApiTestCase;
@@ -21,7 +22,7 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-update'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
@@ -49,7 +50,7 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-update-regex'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
@@ -70,7 +71,7 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-update-path'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         RedirectFactory::createOne([
             'blog' => $blog,
@@ -92,7 +93,7 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-update-same-path'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog,
@@ -110,11 +111,11 @@ class UpdateRedirectTest extends ApiTestCase
     {
         [$blog1, $user1] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-upd-b1'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         [$blog2, $user2] = BlogFactory::createOneWithUser(
             ['subdomain' => 'redir-upd-b2'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog2,

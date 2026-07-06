@@ -6,6 +6,7 @@ use App\Api\Console\Controller\NavigationController;
 use App\Api\Console\Object\NavigationObject;
 use App\Api\Console\Object\NavigationVariantObject;
 use App\Entity\Enum\NavigationType;
+use App\Entity\Enum\UserStatus;
 use App\Service\Navigation\NavigationService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -25,7 +26,7 @@ class GetNavigationsTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-list'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog,
@@ -62,7 +63,7 @@ class GetNavigationsTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'nav-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

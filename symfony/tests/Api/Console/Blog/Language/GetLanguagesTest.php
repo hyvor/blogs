@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Language;
 use App\Api\Console\Controller\LanguageController;
 use App\Api\Console\Object\LanguageObject;
 use App\Entity\Enum\LanguageDirection;
+use App\Entity\Enum\UserStatus;
 use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +22,7 @@ class GetLanguagesTest extends ApiTestCase
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-list'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
         LanguageFactory::createOne([
             'blog' => $blog,
@@ -46,7 +47,7 @@ class GetLanguagesTest extends ApiTestCase
     {
         BlogFactory::createOneWithUser(
             ['subdomain' => 'lang-denied'],
-            ['status' => 'active'],
+            ['status' => UserStatus::ACTIVE],
         );
 
         $otherAuthUser = AuthFake::generateUser(['id' => 999]);

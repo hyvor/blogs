@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		Button,
 		IconButton,
 		Link,
 		TableRow,
@@ -14,7 +13,7 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { createEventDispatcher } from 'svelte';
-	import { deleteUser, resendInvitation } from './userActions';
+	import { deleteUser } from './userActions';
 	import UpdateUser from './Update/UpdateUser.svelte';
 
 	interface Props {
@@ -52,25 +51,6 @@
 		}
 	}
 
-	async function handelResend() {
-		if (
-			await confirm({
-				title: 'Resend Invitation',
-				content: 'Please confirm to re-send an invitation to this user.',
-				confirmText: 'Yes, resend'
-			})
-		) {
-			const toastId = toast.loading('Resending invitation...');
-
-			resendInvitation(user.id)
-				.then(() => {
-					toast.success('Invitation sent.', { id: toastId });
-				})
-				.catch((e) => {
-					toast.error(e.message, { id: toastId });
-				});
-		}
-	}
 </script>
 
 <TableRow>
@@ -88,9 +68,6 @@
 				<Tag size="x-small" color="green">ACTIVE</Tag>
 			{:else if user.status === 'invited'}
 				<Tag size="x-small" color="blue">PENDING</Tag>
-				<Tooltip text="Resend invitation email">
-					<Button size="x-small" on:click={handelResend} style="margin-top:8px;">Resend</Button>
-				</Tooltip>
 			{:else if user.status === 'blocked'}
 				<Tag size="x-small" color="red">BLOCKED</Tag>
 			{/if}
@@ -119,21 +96,6 @@
 			</Tooltip>
 		{/if}
 	</div>
-
-	<!-- {
-        isResendingEmail && <PopupConfirm
-            title="Resend Invitation"
-            text="Please confirm to re-send an invitation to this user."
-            name="Resend"
-            onClick={handleResend}
-            onCancel={() => setIsResendingEmail(false)}
-        />
-    }
-
-    {
-        isUpdating && <UpdateUserPopup user={user} onClose={() => setIsUpdating(false)} />
-    }
- -->
 </TableRow>
 
 {#if isEditing}
