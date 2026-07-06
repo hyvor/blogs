@@ -192,7 +192,9 @@
 					<Tag size="small" color="blue">Preferred</Tag>
 				{/snippet}
 			</TabNavItem>
-			<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}>A Record</TabNavItem>
+			<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
+				>A Record</TabNavItem
+			>
 		</TabNav>
 
 		{#if dnsMethod === 'cname'}
