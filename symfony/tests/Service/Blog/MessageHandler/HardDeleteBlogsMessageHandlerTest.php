@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\MessageHandler;
+namespace App\Tests\Service\Blog\MessageHandler;
 
 use App\Entity\Blog;
 use App\Entity\Post;
