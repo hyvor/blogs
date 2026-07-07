@@ -32,6 +32,7 @@ class KeysFilter
 
         if (is_iterable($object)) {
             foreach ($object as $i => $element) {
+                /** @var int|string $i */
                 $ret[$i] = $this->filterObject($element, $start);
             }
         } else {

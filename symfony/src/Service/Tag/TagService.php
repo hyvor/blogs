@@ -124,7 +124,7 @@ class TagService
         if ($filter !== null && $filter !== '') {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function ($keys) {
+                ->keys(function (\Hyvor\FilterQ\Keys $keys) {
                     $keys->add('id', 't.id')->valueType('int');
                     $keys->add('slug', 't.slug')->valueType('string');
                     $keys->add('posts_count', 't.posts_count')->valueType('int');

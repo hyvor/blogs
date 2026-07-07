@@ -91,7 +91,11 @@ class MediaController
             $this->validateFilename($fileName);
         }
 
-        $media = $this->mediaService->uploadFile($blog, $file, $postId, $fileName);
+        try {
+            $media = $this->mediaService->uploadFile($blog, $file, $postId, $fileName);
+        } catch (MediaUploadException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
 
         return new JsonResponse($this->mediaObjectFactory->create($media, $blog));
     }
@@ -126,7 +130,11 @@ class MediaController
 
         $this->validateFilename($input->name);
 
-        $media = $this->mediaService->updateName($media, $input->name);
+        try {
+            $media = $this->mediaService->updateName($media, $input->name);
+        } catch (MediaUploadException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
 
         return new JsonResponse($this->mediaObjectFactory->create($media, $blog));
     }

@@ -91,7 +91,7 @@ class ConsoleController
                 'highlight_themes' => $this->highlighter->getAllThemes(),
             ],
             'preloaded' => [
-                'blog' => $preloadedBlog ? json_decode($preloadedBlog->getContent(), true) : null,
+                'blog' => $preloadedBlog ? json_decode((string) $preloadedBlog->getContent(), true) : null,
                 'post' => null,
             ]
         ]);

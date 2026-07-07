@@ -97,9 +97,9 @@ class PostContentService
      * @param array<mixed>|string $json
      * @throws PhrosemirrorException
      */
-    public function getDocumentFromJson(array|string $json): Document
+    public function getDocumentFromJson(array|string $json, ?Blog $blog = null): Document
     {
-        return Document::fromJson($this->getSchema(new Blog()), $json);
+        return Document::fromJson($this->getSchema($blog ?? new Blog()), $json);
     }
 
     private function getSchema(Blog $blog, ?PostContentOptions $options = null): Schema

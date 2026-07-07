@@ -57,7 +57,7 @@ class Bookmark extends NodeType
             // this object is a little different to support the historical bookmark template
             'data' => [
                 'url' => $data['final_url'],
-                'original_url' => $data['original_url'],
+                'original_url' => $data['url'],
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'thumbnail_url' => $data['thumbnail_url'],

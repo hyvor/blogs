@@ -36,6 +36,7 @@ class ThemeVersion
      * @var resource|string|null
      */
     #[ORM\Column(type: 'blob', nullable: true)]
+    /** @phpstan-ignore property.unusedType (Doctrine hydrates this as a resource; PHPStan only sees the string writes here) */
     private $zip = null;
 
     public function getId(): int

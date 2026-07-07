@@ -47,6 +47,7 @@ class TocHtml
             $ul .= '<li>';
             $ul .= '<a href="#' . ($entry['id'] ?? '') . '">' . $entry['title'] . '</a>';
             if (!empty($entry['children'])) {
+                /** @phpstan-ignore argument.type (TocEntry is self-referential; PHPStan doesn't support recursive type aliases here) */
                 $ul .= $this->childrenToHtml($entry['children']);
             }
             $ul .= '</li>';

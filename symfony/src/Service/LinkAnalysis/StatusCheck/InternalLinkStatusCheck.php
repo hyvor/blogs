@@ -35,7 +35,8 @@ class InternalLinkStatusCheck implements LinkStatusCheckInterface
             assert(str_starts_with($url, $baseUrl));
 
             $path = substr($url, strlen($baseUrl));
-            $path = parse_url($path, PHP_URL_PATH) ?? '/'; // remove query and fragment
+            $parsedPath = parse_url($path, PHP_URL_PATH); // remove query and fragment
+            $path = is_string($parsedPath) ? $parsedPath : '/';
 
             $response = $this->deliveryService->getResponse($this->blog, $path);
             $statuses[$url] = new StatusResult(

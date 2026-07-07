@@ -168,6 +168,7 @@ class MediaService
         return $media;
     }
 
+    /** @throws MediaUploadException */
     public function updateName(Media $media, string $name): Media
     {
         $blogId = $media->getBlog()->getId();

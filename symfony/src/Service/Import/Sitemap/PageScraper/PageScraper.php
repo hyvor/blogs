@@ -143,6 +143,7 @@ class PageScraper
         $this->featuredImageUrl = $this->getAttributeOfSelector($body, 'meta[property="og:image"]', 'content');
     }
 
+    /** @throws PageScraperException */
     private function setSlug(): void
     {
         $slug = parse_url($this->url, PHP_URL_PATH);
@@ -183,6 +184,7 @@ class PageScraper
         return $text === '' ? null : $text;
     }
 
+    /** @throws PageScraperException */
     private function setContent(string $body): void
     {
         $crawler = new Crawler($body);

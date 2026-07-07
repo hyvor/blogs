@@ -11,6 +11,7 @@ use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
@@ -23,6 +24,7 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -36,6 +38,7 @@ class PostService
         private RedirectService $redirectService,
         private EventDispatcherInterface $ed,
         private PostSlugService $postSlugService,
+        private PostContentService $postContentService
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -156,7 +159,7 @@ class PostService
         try {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function ($keys) {
+                ->keys(function (\Hyvor\FilterQ\Keys $keys) {
                     $keys->add('id', 'p.id')->valueType('int');
                     $keys->add('published_at', 'p.published_at')->valueType('date');
                     $keys->add('created_at', 'p.created_at')->valueType('date');
@@ -571,7 +574,7 @@ class PostService
             $oldPath = substr($oldUrl, strlen($blogUrl)) ?: '/';
             $newPath = substr($newUrl, strlen($blogUrl)) ?: '/';
 
-            if ($oldPath !== $newPath && $oldPath !== '') {
+            if ($oldPath !== $newPath) {
                 $existingRedirect = $this->redirectService->getRedirectByPath($blog, $oldPath);
                 if ($existingRedirect !== null) {
                     $this->redirectService->updateRedirect($existingRedirect, null, $newPath, null);
@@ -704,5 +707,20 @@ class PostService
             'language' => $language,
             'slug' => $slug,
         ]);
+    }
+
+    public function renderPostVariantHtml(PostVariant $variant): void
+    {
+        if (!$variant->getContent()) {
+            return;
+        }
+
+        $blog = $variant->getPost()->getBlog();
+
+        $html = $this->postContentService->getHtml($variant->getContent(), $blog);
+        $text = $this->postContentService->getText($variant->getContent(), $blog);
+
+        $variant->setContentHtml($html);
+        $variant->setContentText($text);
     }
 }

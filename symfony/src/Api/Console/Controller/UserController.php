@@ -149,7 +149,51 @@ class UserController
             throw new UnprocessableEntityHttpException('Slug already taken');
         }
 
-        $user = $this->userService->updateUser($user, (array) $input);
+        $updates = [];
+        if ($input->hyvor_user_id !== null) {
+            $updates['hyvor_user_id'] = $input->hyvor_user_id;
+        }
+        if ($input->role !== null) {
+            $updates['role'] = $input->role;
+        }
+        if ($input->status !== null) {
+            $updates['status'] = $input->status;
+        }
+        if ($input->slug !== null) {
+            $updates['slug'] = $input->slug;
+        }
+        if ($input->email !== null) {
+            $updates['email'] = $input->email;
+        }
+        if ($input->website_url !== null) {
+            $updates['website_url'] = $input->website_url;
+        }
+        if ($input->picture_url !== null) {
+            $updates['picture_url'] = $input->picture_url;
+        }
+        if ($input->social_facebook !== null) {
+            $updates['social_facebook'] = $input->social_facebook;
+        }
+        if ($input->social_twitter !== null) {
+            $updates['social_twitter'] = $input->social_twitter;
+        }
+        if ($input->social_linkedin !== null) {
+            $updates['social_linkedin'] = $input->social_linkedin;
+        }
+        if ($input->social_youtube !== null) {
+            $updates['social_youtube'] = $input->social_youtube;
+        }
+        if ($input->social_tiktok !== null) {
+            $updates['social_tiktok'] = $input->social_tiktok;
+        }
+        if ($input->social_instagram !== null) {
+            $updates['social_instagram'] = $input->social_instagram;
+        }
+        if ($input->social_github !== null) {
+            $updates['social_github'] = $input->social_github;
+        }
+
+        $user = $this->userService->updateUser($user, $updates);
 
         return new JsonResponse($this->userObjectFactory->create($user, $blog));
     }

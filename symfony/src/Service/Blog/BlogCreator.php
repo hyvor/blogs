@@ -116,7 +116,7 @@ class BlogCreator
             $blog = new Blog();
             $blog->setCreatedAt($now);
             $blog->setUpdatedAt($now);
-            $blog->setHyvorUserId($authUser->id);
+            $blog->setHyvorUserId($authUser?->id);
             $blog->setOrganizationId($organizationId);
             $blog->setIp($ip);
             $blog->setSubdomain($subdomain);
@@ -167,17 +167,13 @@ class BlogCreator
         return $primaryLanguage;
     }
 
-    private function fillPrimaryUser(Blog $blog, AuthUser $authUser): User
+    private function fillPrimaryUser(Blog $blog, ?AuthUser $authUser): User
     {
-        if ($blog->getType() === BlogType::PREVIEW) {
+        if ($blog->getType() === BlogType::PREVIEW || $authUser === null) {
             return $this->createRandomGuestUser($blog);
         }
 
-        try {
-            return $this->userService->createUserFromAuthUser($blog, $authUser, UserRole::ADMIN);
-        } catch (\Exception) {
-            // this should not happen
-        }
+        return $this->userService->createUserFromAuthUser($blog, $authUser, UserRole::ADMIN);
     }
 
     private function fillAdditionalUsers(Blog $blog): void
@@ -262,6 +258,7 @@ class BlogCreator
         }
     }
 
+    /** @throws \App\Service\Theme\Exception\ThemeImportException */
     private function fillTheme(Blog $blog): void
     {
         if ($blog->getType() === BlogType::PREVIEW) {

@@ -4,6 +4,7 @@ namespace App\Service\CustomDomain;
 
 use App\Service\CustomDomain\Exception\InternalCustomDomainVerificationException;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -23,6 +24,7 @@ class InternalCustomDomainVerificationService
     public function __construct(
         private CacheInterface $cache,
         private HttpClientInterface $http,
+        private ClockInterface $clock
     ) {}
 
     /**

@@ -38,6 +38,7 @@ class ThemeFile
      * @var resource|string|null
      */
     #[ORM\Column(type: 'blob', nullable: true)]
+    /** @phpstan-ignore property.unusedType (Doctrine hydrates this as a resource; PHPStan only sees the string writes here) */
     private $content = null;
 
     public function getId(): int

@@ -68,13 +68,6 @@ class UserService
         return $this->userRepository->findOneBy(['blog' => $blog, 'hyvor_user_id' => $hyvorUserId]);
     }
 
-    // we no longer have a concept of 'owner', change implementations
-//    public function getOwner(Blog $blog): ?User
-//    {
-//        /** @var User|null */
-//        return $this->userRepository->findOneBy(['blog' => $blog, 'role' => UserRole::ADMIN]);
-//    }
-
     /**
      * @param int[] $ids
      * @return User[]
@@ -148,7 +141,7 @@ class UserService
         if ($filter !== null && $filter !== '') {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function ($keys) {
+                ->keys(function (\Hyvor\FilterQ\Keys $keys) {
                     $keys->add('id', 'u.id')->valueType('int');
                     $keys->add('slug', 'u.slug')->valueType('string');
                     $keys->add('posts_count', 'u.posts_count')->valueType('int');

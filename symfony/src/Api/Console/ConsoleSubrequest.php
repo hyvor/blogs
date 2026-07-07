@@ -4,8 +4,8 @@ namespace App\Api\Console;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Entity\Blog;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -24,7 +24,7 @@ class ConsoleSubrequest
         Blog $blog,
         string $method,
         string $endpoint, // e.g. /blog
-    ): JsonResponse
+    ): Response
     {
         $path = '/api/console/v0/blog/' . $blog->getSubdomain() . $endpoint;
         $request = Request::create($path, $method);

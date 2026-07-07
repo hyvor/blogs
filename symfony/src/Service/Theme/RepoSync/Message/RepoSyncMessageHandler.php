@@ -2,6 +2,7 @@
 
 namespace App\Service\Theme\RepoSync\Message;
 
+use App\Service\Theme\RepoSync\Exception\RepoSyncException;
 use App\Service\Theme\RepoSync\RepoSyncService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -13,6 +14,7 @@ class RepoSyncMessageHandler
     ) {
     }
 
+    /** @throws RepoSyncException */
     public function __invoke(RepoSyncMessage $message): void
     {
         $this->repoSyncService->downloadAndSync();

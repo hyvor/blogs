@@ -177,11 +177,11 @@ class ConsoleApiAuthorizationListener
             'ScopeRequired attribute must be set on all blog-level controller methods'
         );
 
-        // null scopes = session auth, all scopes granted
+        /** @var array<Scope>|null $scopes */
         $scopes = $event->getRequest()->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
         assert(is_array($scopes));
 
-        $requiredScope = $scopeRequiredAttribute->scope->value;
+        $requiredScope = $scopeRequiredAttribute->scope;
         if (!in_array($requiredScope, $scopes, true)) {
             throw new AccessDeniedHttpException(
                 "API key is missing the required scope '$requiredScope'."

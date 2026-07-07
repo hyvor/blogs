@@ -78,7 +78,7 @@ class TocHeading
             $levels = array_map('trim', $levels);
         }
 
-        $levels = array_map('intval', $levels);
+        $levels = array_map(fn($level) => is_numeric($level) ? (int) $level : 0, $levels);
 
         return array_values(
             array_filter($levels, fn($level) => $level >= 1 && $level <= 6)

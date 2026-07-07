@@ -4,7 +4,6 @@ namespace App\Service\Delivery;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogType;
-use App\Service\Cache\BlogCacheService;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -15,7 +14,6 @@ class DeliveryService
 {
     public function __construct(
         private PathMatcher $pathMatcher,
-        private BlogCacheService $blogCacheService,
         #[Autowire('%kernel.debug%')]
         private bool $debug = false,
     ) {}

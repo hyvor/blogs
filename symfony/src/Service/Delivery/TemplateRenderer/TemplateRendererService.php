@@ -18,9 +18,7 @@ use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Entity\Route;
 use App\Entity\Tag;
-use App\Entity\TagVariant;
 use App\Entity\User;
-use App\Entity\UserVariant;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Post\PostService;
@@ -154,6 +152,7 @@ class TemplateRendererService
 
     /**
      * @return array<string, mixed>
+     * @throws TemplatePageNotFoundException
      */
     private function getVariables(
         Blog $blog,
@@ -281,28 +280,12 @@ class TemplateRendererService
 
     private function buildTagObject(Tag $tag, Blog $blog, Language $language): \App\Api\Data\Object\TagObject
     {
-        $variants = $this->em->getRepository(TagVariant::class)->findBy(['tag' => $tag]);
-        $variantData = [];
-        foreach ($variants as $v) {
-            $vLang = $v->getLanguage();
-            if ($vLang) {
-                $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'description' => $v->getDescription()];
-            }
-        }
-        return $this->tagObjectFactory->create($tag, $blog, $language, $variantData);
+        return $this->tagObjectFactory->create($tag, $blog, $language);
     }
 
     private function buildAuthorObject(User $user, Blog $blog, Language $language): \App\Api\Data\Object\AuthorObject
     {
-        $variants = $this->em->getRepository(UserVariant::class)->findBy(['user' => $user]);
-        $variantData = [];
-        foreach ($variants as $v) {
-            $vLang = $v->getLanguage();
-            if ($vLang) {
-                $variantData[] = ['language' => $vLang, 'name' => $v->getName(), 'bio' => $v->getBio(), 'location' => $v->getLocation()];
-            }
-        }
-        return $this->authorObjectFactory->create($user, $blog, $language, $variantData);
+        return $this->authorObjectFactory->create($user, $blog, $language);
     }
 
     private function getHeadCode(): string
