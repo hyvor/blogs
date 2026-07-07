@@ -11,6 +11,7 @@ use App\Service\Integration\Bunny\BunnyService;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -24,7 +25,7 @@ class FontCssTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getService(CacheInterface::class)->clear();
+        $this->getService(CacheItemPoolInterface::class)->clear();
     }
 
     private function pathMatcher(): PathMatcher

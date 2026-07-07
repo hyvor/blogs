@@ -84,6 +84,11 @@ final class BlogFactory extends PersistentObjectFactory
         return $blog;
     }
 
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $languageAttrs
+     * @param array<array<string, mixed>>|null $routes
+     */
     public static function createOneWithLanguageAndRoutes(
         array $blogAttrs = [],
         array $languageAttrs = [],

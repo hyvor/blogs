@@ -50,7 +50,7 @@ class UserObject
     {
         $this->id = $user->getId();
         $this->created_at = $user->getCreatedAt()->getTimestamp();
-        $this->updated_at = $user->getUpdatedAt()?->getTimestamp() ?? 0;
+        $this->updated_at = $user->getUpdatedAt()->getTimestamp();
         $this->hyvor_user_id = $user->getHyvorUserId();
 
         $this->status = $user->getStatus();

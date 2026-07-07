@@ -58,7 +58,7 @@ class PostVariantAnalyzer
                 continue;
             }
 
-            $urls = $variantIndexedUrls[$variant->getId()] ?? [];
+            $urls = $variantIndexedUrls[$variant->getId()];
 
             // combine the results with the urls
             $results = array_map(
@@ -185,6 +185,9 @@ class PostVariantAnalyzer
         return $variantIndexedUrls;
     }
 
+    /**
+     * @param AnalyzedLink[] $results
+     */
     private function finalizeVariant(PostVariant $variant, array $results): void
     {
         $ignoredLinksUrls = $this->postVariantLinkService->getIgnoredLinks($variant);

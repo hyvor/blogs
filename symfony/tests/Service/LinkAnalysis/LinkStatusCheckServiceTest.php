@@ -17,12 +17,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[CoversClass(LinkStatusCheckService::class)]
 class LinkStatusCheckServiceTest extends KernelTestCase
 {
-    /** @return array{0: string[], 1: string[]} */
+    /**
+     * @param string[] $urls
+     * @return array{0: string[], 1: string[]}
+     */
     private function callSeparateUrls(array $urls, ?Blog $blog): array
     {
         $service = $this->getService(LinkStatusCheckService::class);
         $method = new ReflectionMethod(LinkStatusCheckService::class, 'separateUrls');
-        return $method->invoke($service, $urls, $blog);
+        /** @var array{0: string[], 1: string[]} $result */
+        $result = $method->invoke($service, $urls, $blog);
+        return $result;
     }
 
     public function test_separates_internal_and_external_urls(): void

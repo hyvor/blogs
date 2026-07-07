@@ -13,9 +13,9 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(PathMatcher::class)]
@@ -25,7 +25,7 @@ class StylesTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->getService(CacheInterface::class)->clear();
+        $this->getService(CacheItemPoolInterface::class)->clear();
     }
 
     private function pathMatcher(): PathMatcher
@@ -33,6 +33,9 @@ class StylesTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
+    /**
+     * @param array<string, mixed> $blogAttrs
+     */
     private function createBlogWithScss(array $blogAttrs = [], string $scss = 'body {color: red;}'): \App\Entity\Blog
     {
         $blog = BlogFactory::createOne($blogAttrs);
@@ -104,7 +107,7 @@ class StylesTest extends KernelTestCase
             new MockResponse('body{font-family:Roboto}'),
         ]);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
-        $this->getService(CacheInterface::class)->clear();
+        $this->getService(CacheItemPoolInterface::class)->clear();
 
         $blog = $this->createBlogWithScss();
         ThemeFileFactory::createOne([
@@ -126,7 +129,7 @@ class StylesTest extends KernelTestCase
             new MockResponse('', ['http_code' => 500]),
         ]);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
-        $this->getService(CacheInterface::class)->clear();
+        $this->getService(CacheItemPoolInterface::class)->clear();
 
         $blog = $this->createBlogWithScss();
         ThemeFileFactory::createOne([

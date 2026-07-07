@@ -3,7 +3,9 @@
 namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\TagsController;
+use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Language;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -16,9 +18,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagsController::class)]
 class TagsTest extends ApiTestCase
 {
-    private $blog;
-    private $lang1;
-    private $lang2;
+    private Blog $blog;
+    private Language $lang1;
+    private Language $lang2;
     /** @var \App\Entity\Tag[] */
     private array $tags = [];
 

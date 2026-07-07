@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Blog;
 use App\Entity\BlogVariant;
+use App\Entity\Language;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -63,8 +64,11 @@ final class BlogVariantFactory extends PersistentObjectFactory
 
     /**
      * If languages is not set, blog's languages will be used
+     *
+     * @param iterable<Language>|null $languages
+     * @return BlogVariant[]
      */
-    public static function createManyForBlogWithAllLanguages(Blog $blog, ?array $languages = null): array
+    public static function createManyForBlogWithAllLanguages(Blog $blog, ?iterable $languages = null): array
     {
         $languages = $languages ?? $blog->getLanguages();
 

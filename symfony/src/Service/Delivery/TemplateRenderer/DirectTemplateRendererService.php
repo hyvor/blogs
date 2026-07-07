@@ -12,13 +12,11 @@ use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DirectTemplateRendererService
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private PermalinkService $permalinkService,
         private ThemeFilesService $themeFilesService,
         private ThemeConfigService $themeConfigService,

@@ -69,6 +69,7 @@ class TwigExtensions extends AbstractExtension
         ];
     }
 
+    /** @param array<mixed> $context */
     private function getBlogFromContext(array $context): Blog
     {
         $subdomain = $context['_blog']['subdomain'] ?? '';

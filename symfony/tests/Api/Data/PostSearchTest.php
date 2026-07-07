@@ -16,6 +16,17 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class PostSearchTest extends ApiTestCase
 {
 
+    private function primaryLanguage(Blog $blog): Language
+    {
+        $language = $blog->getLanguages()[0];
+        assert($language instanceof Language);
+        return $language;
+    }
+
+    /**
+     * @param array<string, mixed> $variantAttrs
+     * @param array<string, mixed> $postAttrs
+     */
     private function createPost(Blog $blog, Language $lang, array $variantAttrs, array $postAttrs = []): mixed
     {
         $post = PostFactory::createOne(array_merge([
@@ -37,7 +48,7 @@ class PostSearchTest extends ApiTestCase
     public function test_searches_posts_in_english(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $cake = $this->createPost($blog, $lang, [
             'title' => 'How to make a cake',
@@ -67,7 +78,7 @@ class PostSearchTest extends ApiTestCase
     public function test_stemming(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $cake = $this->createPost($blog, $lang, [
             'title' => 'How to make a cake',
@@ -98,7 +109,7 @@ class PostSearchTest extends ApiTestCase
     public function test_searches_in_french_also_searches_description_and_content(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $gateau = $this->createPost($blog, $lang, [
             'description' => 'Comment faire un gâteau',
@@ -121,7 +132,7 @@ class PostSearchTest extends ApiTestCase
     public function test_searches_with_partial_words(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $this->createPost($blog, $lang, [
             'title' => 'Wordpress Alternatives',
@@ -144,7 +155,7 @@ class PostSearchTest extends ApiTestCase
     public function test_does_not_work_without_search_query(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $this->dataApi($blog, '/posts/search');
 
@@ -154,7 +165,7 @@ class PostSearchTest extends ApiTestCase
     public function test_priority_title_slug_description_content(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $inContent = $this->createPost($blog, $lang, [
             'content_text' => 'hyvor is good',
@@ -194,7 +205,7 @@ class PostSearchTest extends ApiTestCase
     public function test_returns_correct_total(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         $this->createPost($blog, $lang, ['title' => 'hyvor is good', 'ts_language' => 'english']);
         $this->createPost($blog, $lang, ['title' => 'hyvor blog', 'ts_language' => 'english']);
@@ -210,7 +221,7 @@ class PostSearchTest extends ApiTestCase
     public function test_returns_paginated_results(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        $lang = $blog->getLanguages()[0];
+        $lang = $this->primaryLanguage($blog);
 
         for ($i = 0; $i < 3; $i++) {
             $this->createPost($blog, $lang, [

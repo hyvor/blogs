@@ -44,6 +44,9 @@ class LinkAnalysisService
             ['blogId' => $blog->getId()],
         )->fetchAssociative();
 
+        /** @var array<string, string|int|null> $result */
+        $result = $result === false ? [] : $result;
+
         return [
             'ok' => (int)($result['ok'] ?? 0),
             'redirect' => (int)($result['redirect'] ?? 0),
@@ -115,7 +118,9 @@ class LinkAnalysisService
             default => null,
         };
 
-        return $qb->getQuery()->getResult();
+        /** @var LinkAnalyzerLink[] $result */
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     /**
@@ -123,7 +128,8 @@ class LinkAnalysisService
      */
     public function getChecks(Blog $blog, int $limit, int $offset): array
     {
-        return $this->em->createQueryBuilder()
+        /** @var LinkAnalyzerCheck[] $result */
+        $result = $this->em->createQueryBuilder()
             ->select('c')
             ->from(LinkAnalyzerCheck::class, 'c')
             ->where('c.blog = :blog')
@@ -133,11 +139,13 @@ class LinkAnalysisService
             ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
+        return $result;
     }
 
     public function getLastCheck(Blog $blog): ?LinkAnalyzerCheck
     {
-        return $this->em->createQueryBuilder()
+        /** @var LinkAnalyzerCheck|null $result */
+        $result = $this->em->createQueryBuilder()
             ->select('c')
             ->from(LinkAnalyzerCheck::class, 'c')
             ->where('c.blog = :blog')
@@ -146,6 +154,7 @@ class LinkAnalysisService
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+        return $result;
     }
 
     public function createCheck(Blog $blog): LinkAnalyzerCheck

@@ -24,6 +24,9 @@ class SitemapPostsTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
+    /**
+     * @return array{0: \App\Entity\Blog, 1: \App\Entity\Language}
+     */
     private function createBlogWithPosts(int $count): array
     {
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);

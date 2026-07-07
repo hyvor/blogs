@@ -26,8 +26,6 @@ class PostsTest extends ApiTestCase
     private $secondaryLanguage;
     /** @var \App\Entity\Post[] */
     private array $posts = [];
-    /** @var \App\Entity\Post[] */
-    private array $pages = [];
 
     protected function setUp(): void
     {
@@ -77,7 +75,6 @@ class PostsTest extends ApiTestCase
                 'slug' => 'page-' . $i . '-' . $page->getId(),
                 'title' => 'Page ' . $i,
             ]);
-            $this->pages[] = $page;
         }
     }
 

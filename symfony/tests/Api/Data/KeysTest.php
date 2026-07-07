@@ -4,6 +4,7 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\KeysFilter;
+use App\Api\Data\Object\PostObject;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
@@ -22,7 +23,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(KeysFilter::class)]
 class KeysTest extends ApiTestCase
 {
-    private $postObject;
+    private PostObject $postObject;
 
     protected function setUp(): void
     {
@@ -55,9 +56,14 @@ class KeysTest extends ApiTestCase
         $this->postObject = $factory->create($blog, $post, $lang);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function j(mixed $obj): array
     {
-        return json_decode((string)json_encode($obj), true);
+        /** @var array<string, mixed> $decoded */
+        $decoded = json_decode((string) json_encode($obj), true);
+        return $decoded;
     }
 
     public function test_does_not_filter_keys_when_null(): void

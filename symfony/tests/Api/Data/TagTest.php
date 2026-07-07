@@ -4,7 +4,10 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\TagsController;
 use App\Api\Data\Factory\TagObjectFactory;
+use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Language;
+use App\Entity\Tag;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -17,10 +20,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagObjectFactory::class)]
 class TagTest extends ApiTestCase
 {
-    private $blog;
-    private $lang1;
-    private $lang2;
-    private $tag;
+    private Blog $blog;
+    private Language $lang1;
+    private Language $lang2;
+    private Tag $tag;
 
     protected function setUp(): void
     {

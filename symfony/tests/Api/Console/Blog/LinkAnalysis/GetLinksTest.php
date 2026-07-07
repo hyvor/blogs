@@ -17,6 +17,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(LinkAnalysisController::class)]
 class GetLinksTest extends ApiTestCase
 {
+    /**
+     * @return array{0: \App\Entity\Blog, 1: \App\Entity\User, 2: \App\Entity\PostVariant}
+     */
     private function setupBlog(string $subdomain): array
     {
         $blog = BlogFactory::createOne(['subdomain' => $subdomain, 'hosting_at' => BlogHostingAt::SUBDOMAIN]);

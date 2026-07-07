@@ -178,6 +178,7 @@ class UpdatePostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
 
+        /** @var string|int $redirect */
         $redirect = $this->getEm()->getConnection()->fetchOne(
             "SELECT COUNT(*) FROM redirects WHERE blog_id = ? AND path = '/old-slug'",
             [$blog->getId()],

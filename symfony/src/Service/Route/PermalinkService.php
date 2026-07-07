@@ -125,11 +125,13 @@ class PermalinkService
         $path = str_replace('{slug}', $variantSlug, $path);
 
         if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', $post->getTags()->first()?->getSlug() ?? '', $path);
+            $firstTag = $post->getTags()->first();
+            $path = str_replace('{tag}', $firstTag !== false ? ($firstTag->getSlug() ?? '') : '', $path);
         }
 
         if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', $post->getAuthors()->first()?->getSlug() ?? '', $path);
+            $firstAuthor = $post->getAuthors()->first();
+            $path = str_replace('{author}', $firstAuthor !== false ? ($firstAuthor->getSlug() ?? '') : '', $path);
         }
 
         if (!$language->isPrimary()) {

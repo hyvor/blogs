@@ -46,6 +46,7 @@ class DeleteTagTest extends ApiTestCase
         $this->assertNull($this->getEm()->getRepository(Tag::class)->find($tagId));
         $this->assertCount(0, $this->getEm()->getRepository(TagVariant::class)->findBy(['tag' => $tagId]));
 
+        /** @var string|int $postTagCount */
         $postTagCount = $this->getEm()->getConnection()->fetchOne(
             'SELECT COUNT(*) FROM post_tag WHERE tag_id = ?',
             [$tagId],

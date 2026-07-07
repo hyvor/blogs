@@ -5,7 +5,10 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Object\AuthorObject;
+use App\Entity\Blog;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Language;
+use App\Entity\User;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -21,10 +24,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(UserService::class)]
 class AuthorTest extends ApiTestCase
 {
-    private $blog;
-    private $lang1;
-    private $lang2;
-    private $author;
+    private Blog $blog;
+    private Language $lang1;
+    private Language $lang2;
+    private User $author;
 
     protected function setUp(): void
     {
