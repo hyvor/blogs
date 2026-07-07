@@ -3,7 +3,6 @@
 namespace App\Service\CustomDomain;
 
 use App\Service\CustomDomain\Exception\InternalCustomDomainVerificationException;
-use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
@@ -16,8 +15,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class InternalCustomDomainVerificationService
 {
-
-    use ClockAwareTrait;
 
     public const string CACHE_KEY_PREFIX = 'internal-dns-verification-';
 

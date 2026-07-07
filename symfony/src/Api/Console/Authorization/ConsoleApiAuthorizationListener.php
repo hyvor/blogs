@@ -184,7 +184,7 @@ class ConsoleApiAuthorizationListener
         $requiredScope = $scopeRequiredAttribute->scope;
         if (!in_array($requiredScope, $scopes, true)) {
             throw new AccessDeniedHttpException(
-                "API key is missing the required scope '$requiredScope'."
+                "API key is missing the required scope '{$requiredScope->value}'."
             );
         }
     }

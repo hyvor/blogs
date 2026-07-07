@@ -50,24 +50,19 @@ enum Scope: string
     case LINK_ANALYSIS_MANAGE = 'link_analysis.manage';
 
     /**
-     * @return string[]
+     * @return self[]
      */
     public static function all(): array
     {
-        return array_map(fn($scope) => $scope->value, Scope::cases());
+        return Scope::cases();
     }
 
     /**
      * @param Scope[] $except
-     * @return string[]
+     * @return Scope[]
      */
     public static function allExcept(array $except): array
     {
-        return array_values(
-            array_diff(
-                self::all(),
-                array_map(fn($scope) => $scope->value, $except)
-            )
-        );
+        return array_filter(Scope::cases(), fn(Scope $scope) => !in_array($scope, $except, true));
     }
 }
