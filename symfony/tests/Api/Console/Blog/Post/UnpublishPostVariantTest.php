@@ -36,9 +36,11 @@ class UnpublishPostVariantTest extends ApiTestCase
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/unpublish', [
-            'language_id' => $blog->getLanguages()->first()->getId(),
+            'language_id' => $language->getId(),
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');
@@ -50,6 +52,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne([
             'post' => $post,
@@ -64,6 +67,7 @@ class UnpublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertSame('draft', $data['status']);
     }
 
@@ -73,6 +77,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne([
             'post' => $post,
@@ -87,6 +92,7 @@ class UnpublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertSame('draft', $data['status']);
     }
 }

@@ -71,6 +71,7 @@ class PostTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame($post->getId(), $json['id']);
+        $this->assertIsArray($json['language']);
         $this->assertSame('en', $json['language']['code']);
     }
 
@@ -104,6 +105,7 @@ class PostTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame($post->getId(), $json['id']);
+        $this->assertIsArray($json['language']);
         $this->assertSame('fr', $json['language']['code']);
         $this->assertSame('test-post-fr', $json['slug']);
     }

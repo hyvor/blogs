@@ -73,7 +73,9 @@ class CustomDomainTest extends ApiTestCase
         $response = $this->call('ishini.io', '/');
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('<h1>Hello World</h1>', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $content);
     }
 
 }

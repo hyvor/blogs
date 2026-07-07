@@ -39,7 +39,7 @@ class CreateWebhookTest extends ApiTestCase
         $webhooks = $this->getEm()->getRepository(Webhook::class)->findAll();
         $this->assertCount(1, $webhooks);
         $webhook = $webhooks[0];
-        $this->assertSame($blog->getId(), $webhook->getBlogId());
+        $this->assertSame($blog->getId(), $webhook->getBlog()->getId());
         $this->assertSame('https://example.com/hook', $webhook->getUrl());
         $this->assertSame([WebhookEvent::POST_CREATED, WebhookEvent::POST_UPDATED], $webhook->getEvents());
     }

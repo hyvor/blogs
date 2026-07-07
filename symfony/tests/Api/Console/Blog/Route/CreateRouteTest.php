@@ -44,7 +44,7 @@ class CreateRouteTest extends ApiTestCase
         $route = $this->getEm()->getRepository(Route::class)->findAll();
         $this->assertCount(1, $route);
         $route = $route[0];
-        $this->assertSame($blog->getId(), $route->getBlogId());
+        $this->assertSame($blog->getId(), $route->getBlog()->getId());
         $this->assertSame('Tag Index', $route->getName());
         $this->assertSame('/tag/{slug}', $route->getMatch());
         $this->assertSame('tag', $route->getTemplate());

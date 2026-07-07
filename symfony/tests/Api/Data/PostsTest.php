@@ -5,6 +5,7 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\PostsController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\PostVariant;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -84,8 +85,11 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(4, $json['data']);
         $this->assertArrayHasKey('pagination', $json);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('en', $json['data'][0]['language']['code']);
         $this->assertFalse($json['data'][0]['is_page']);
     }
@@ -96,6 +100,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(2, $json['data']);
         $this->assertTrue($json['data'][0]['is_page']);
     }
@@ -106,7 +112,10 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertArrayHasKey('data', $json);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('fr', $json['data'][0]['language']['code']);
         $this->assertSame('Post FR 0', $json['data'][0]['title']);
     }
@@ -123,6 +132,7 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
     }
 
@@ -132,6 +142,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame($this->posts[2]->getId(), $json['data'][0]['id']);
     }
 
@@ -171,6 +183,10 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertGreaterThanOrEqual($json['data'][1]['published_at'], $json['data'][0]['published_at']);
         $this->assertGreaterThanOrEqual($json['data'][2]['published_at'], $json['data'][1]['published_at']);
     }
@@ -181,6 +197,10 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertLessThanOrEqual($json['data'][1]['published_at'], $json['data'][0]['published_at']);
         $this->assertLessThanOrEqual($json['data'][2]['published_at'], $json['data'][1]['published_at']);
     }
@@ -191,6 +211,10 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertGreaterThanOrEqual($json['data'][1]['id'], $json['data'][0]['id']);
         $this->assertGreaterThanOrEqual($json['data'][2]['id'], $json['data'][1]['id']);
     }
@@ -205,6 +229,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertTrue($json['data'][0]['is_featured']);
         $this->assertSame($featuredPost->getId(), $json['data'][0]['id']);
     }
@@ -215,6 +241,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(3, $json['data']);
         $this->assertArrayHasKey('id', $json['data'][0]);
         $this->assertArrayNotHasKey('slug', $json['data'][0]);
@@ -228,6 +256,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -242,9 +272,13 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
-        $this->assertSame($post->getPublishedAt()->getTimestamp(), $json['data'][0]['published_at']);
+        $publishedAt = $post->getPublishedAt();
+        $this->assertNotNull($publishedAt);
+        $this->assertSame($publishedAt->getTimestamp(), $json['data'][0]['published_at']);
     }
 
     public function test_filters_by_created_at(): void
@@ -257,6 +291,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
         $this->assertSame($post->getCreatedAt()->getTimestamp(), $json['data'][0]['created_at']);
@@ -265,16 +301,22 @@ class PostsTest extends ApiTestCase
     public function test_filters_by_updated_at(): void
     {
         $post = $this->posts[0];
-        $post->getVariants()[0]->setUpdatedAt(new \DateTimeImmutable('yesterday'));
+        $variant = $post->getVariants()[0];
+        $this->assertInstanceOf(PostVariant::class, $variant);
+        $variant->setUpdatedAt(new \DateTimeImmutable('yesterday'));
         $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'updated_at=yesterday']);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
-        $this->assertSame($post->getVariants()[0]->getUpdatedAt()->getTimestamp(), $json['data'][0]['updated_at']);
+        $updatedAt = $variant->getUpdatedAt();
+        $this->assertNotNull($updatedAt);
+        $this->assertSame($updatedAt->getTimestamp(), $json['data'][0]['updated_at']);
     }
 
     public function test_filters_by_is_featured(): void
@@ -286,6 +328,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($this->posts[1]->getId(), $json['data'][0]['id']);
     }
@@ -294,6 +338,7 @@ class PostsTest extends ApiTestCase
     {
         $post = $this->posts[0];
         $variant = $post->getVariants()[0];
+        $this->assertInstanceOf(PostVariant::class, $variant);
         $variant->setSlug('my-unique-slug-test');
         $this->getEm()->flush();
 
@@ -301,6 +346,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -315,6 +362,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -330,6 +379,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -345,6 +396,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -360,6 +413,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }
@@ -375,6 +430,8 @@ class PostsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
     }

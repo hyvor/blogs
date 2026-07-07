@@ -84,6 +84,7 @@ class TagTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['language']);
         $this->assertSame('fr', $json['language']['code']);
         $this->assertSame('Mon Tag', $json['name']);
     }

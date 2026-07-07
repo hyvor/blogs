@@ -58,7 +58,7 @@ class SubdomainController
             $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN &&
             $blog->getHostingRedirectSubdomain()
         ) {
-            return new RedirectResponse($this->permalinkService->getFullUrlFromPath($blog, $path), 302);
+            return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);

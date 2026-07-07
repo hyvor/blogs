@@ -93,7 +93,9 @@ class KeysTest extends ApiTestCase
     {
         $arr = $this->j(KeysFilter::filter($this->postObject, 'tags.id'));
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayNotHasKey('slug', $tag);
@@ -103,7 +105,9 @@ class KeysTest extends ApiTestCase
     {
         $arr = $this->j(KeysFilter::filter($this->postObject, 'tags.id, tags.slug'));
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);
@@ -116,7 +120,9 @@ class KeysTest extends ApiTestCase
 
         $this->assertArrayHasKey('tags', $arr);
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);
@@ -135,7 +141,9 @@ class KeysTest extends ApiTestCase
         $arr = $this->j(KeysFilter::filter($this->postObject, '!tags.id'));
 
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayNotHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);

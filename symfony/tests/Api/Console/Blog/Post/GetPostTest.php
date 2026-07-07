@@ -46,9 +46,13 @@ class GetPostTest extends ApiTestCase
 
         $this->assertSame($post->getId(), $json['id']);
         $this->assertTrue($json['is_featured']);
+        $this->assertIsArray($json['variants']);
         $this->assertCount(1, $json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame('Hello World', $json['variants'][0]['title']);
+        $this->assertIsArray($json['tags']);
         $this->assertCount(1, $json['tags']);
+        $this->assertIsArray($json['authors']);
         $this->assertCount(1, $json['authors']);
     }
 

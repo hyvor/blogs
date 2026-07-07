@@ -103,7 +103,9 @@ class InitConsoleTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['preloaded']);
         $this->assertIsArray($json['preloaded']['blog']);
+        $this->assertIsArray($json['preloaded']['blog']['blog']);
         $this->assertSame('myblog', $json['preloaded']['blog']['blog']['subdomain']);
     }
 
@@ -143,6 +145,9 @@ class InitConsoleTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['preloaded']);
+        $this->assertIsArray($json['preloaded']['blog']);
+        $this->assertIsArray($json['preloaded']['blog']['blog']);
         $this->assertSame('blog2', $json['preloaded']['blog']['blog']['subdomain']);
     }
 }

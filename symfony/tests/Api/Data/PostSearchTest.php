@@ -6,6 +6,7 @@ use App\Api\Data\Controller\PostsController;
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
+use App\Entity\Post;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\PostFactory;
@@ -27,7 +28,7 @@ class PostSearchTest extends ApiTestCase
      * @param array<string, mixed> $variantAttrs
      * @param array<string, mixed> $postAttrs
      */
-    private function createPost(Blog $blog, Language $lang, array $variantAttrs, array $postAttrs = []): mixed
+    private function createPost(Blog $blog, Language $lang, array $variantAttrs, array $postAttrs = []): Post
     {
         $post = PostFactory::createOne(array_merge([
             'blog' => $blog,
@@ -71,7 +72,9 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame('How to make a cake', $json['data'][0]['title']);
     }
 
@@ -101,7 +104,10 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(2, $json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
         $this->assertSame('How to make a cake', $json['data'][0]['title']);
         $this->assertSame('How to make a pie', $json['data'][1]['title']);
     }
@@ -125,7 +131,9 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame($etape->getId(), $json['data'][0]['id']);
     }
 
@@ -148,7 +156,9 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame('Wordpress Alternatives', $json['data'][0]['title']);
     }
 
@@ -191,7 +201,12 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(4, $json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
+        $this->assertIsArray($json['data'][3]);
         // Title should come first
         $this->assertSame($inTitle->getId(), $json['data'][0]['id']);
         // Then slug
@@ -215,6 +230,7 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['pagination']);
         $this->assertSame(2, $json['pagination']['total']);
     }
 
@@ -234,7 +250,9 @@ class PostSearchTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(2, $json['data']);
+        $this->assertIsArray($json['pagination']);
         $this->assertSame(3, $json['pagination']['total']);
     }
 }

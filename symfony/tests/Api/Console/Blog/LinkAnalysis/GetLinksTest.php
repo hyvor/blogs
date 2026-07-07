@@ -55,6 +55,7 @@ class GetLinksTest extends ApiTestCase
         $json = $this->getJson();
 
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('https://example.com', $json[0]['url']);
         $this->assertSame(200, $json[0]['status_code']);
         $this->assertSame('ok', $json[0]['status_type']);
@@ -91,6 +92,7 @@ class GetLinksTest extends ApiTestCase
         $json = $this->getJson();
 
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('https://broken.example.com', $json[0]['url']);
         $this->assertSame('broken', $json[0]['status_type']);
     }

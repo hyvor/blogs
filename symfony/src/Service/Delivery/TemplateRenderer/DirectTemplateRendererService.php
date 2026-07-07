@@ -32,7 +32,7 @@ class DirectTemplateRendererService
 
         $blogObject = $this->blogObjectFactory->create($blog, $language);
 
-        $url = $this->permalinkService->getFullUrlFromPath($blog, $path);
+        $url = $this->permalinkService->getBlogUrlWithPath($blog, $path);
         $meta = new MetaObject(null, null, null, $url, $url);
 
         $vars = [

@@ -33,10 +33,12 @@ class UpdatePostVariantTest extends ApiTestCase
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
-        PostVariantFactory::createOne(['post' => $post, 'language' => $blog->getLanguages()->first()]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
-            'language_id' => $blog->getLanguages()->first()->getId(),
+            'language_id' => $language->getId(),
             'content' => $content, // Invalid JSON
         ], user: $user);
 
@@ -63,9 +65,11 @@ class UpdatePostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
         // No variant created for this post
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
-            'language_id' => $blog->getLanguages()->first()->getId(),
+            'language_id' => $language->getId(),
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');

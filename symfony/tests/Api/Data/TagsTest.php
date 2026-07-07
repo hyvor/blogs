@@ -61,8 +61,11 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(4, $json['data']);
         $this->assertArrayHasKey('pagination', $json);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('en', $json['data'][0]['language']['code']);
     }
 
@@ -72,7 +75,10 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(4, $json['data']);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('fr', $json['data'][0]['language']['code']);
     }
 
@@ -88,6 +94,7 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
     }
 
@@ -98,6 +105,8 @@ class TagsTest extends ApiTestCase
         $em = $this->getEm();
         $tag0 = $em->find(\App\Entity\Tag::class, $this->tags[0]->getId());
         $tag1 = $em->find(\App\Entity\Tag::class, $this->tags[1]->getId());
+        $this->assertNotNull($tag0);
+        $this->assertNotNull($tag1);
         $tag0->setPostsCount(101);
         $tag1->setPostsCount(100);
         $em->flush();
@@ -106,6 +115,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($this->tags[1]->getId(), $json['data'][0]['id']);
     }
@@ -145,6 +156,7 @@ class TagsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($this->tags as $i => $t) {
             $tag = $em->find(\App\Entity\Tag::class, $t->getId());
+            $this->assertNotNull($tag);
             $tag->setPostsCount(($i + 1) * 10);
         }
         $em->flush();
@@ -153,6 +165,10 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertGreaterThanOrEqual($json['data'][1]['posts_count'], $json['data'][0]['posts_count']);
         $this->assertGreaterThanOrEqual($json['data'][2]['posts_count'], $json['data'][1]['posts_count']);
     }
@@ -162,6 +178,7 @@ class TagsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($this->tags as $i => $t) {
             $tag = $em->find(\App\Entity\Tag::class, $t->getId());
+            $this->assertNotNull($tag);
             $tag->setPostsCount(($i + 1) * 10);
         }
         $em->flush();
@@ -170,6 +187,10 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertLessThanOrEqual($json['data'][1]['posts_count'], $json['data'][0]['posts_count']);
         $this->assertLessThanOrEqual($json['data'][2]['posts_count'], $json['data'][1]['posts_count']);
     }
@@ -180,6 +201,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(3, $json['data']);
         $this->assertArrayHasKey('id', $json['data'][0]);
         $this->assertArrayNotHasKey('slug', $json['data'][0]);
@@ -193,6 +216,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($tag->getId(), $json['data'][0]['id']);
     }
@@ -205,6 +230,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($tag->getSlug(), $json['data'][0]['slug']);
     }
@@ -214,6 +241,7 @@ class TagsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($this->tags as $i => $t) {
             $tag = $em->find(\App\Entity\Tag::class, $t->getId());
+            $this->assertNotNull($tag);
             $tag->setPostsCount(($i + 1) * 10);
         }
         $em->flush();
@@ -222,8 +250,10 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(2, $json['data']);
         foreach ($json['data'] as $item) {
+            $this->assertIsArray($item);
             $this->assertGreaterThanOrEqual(30, $item['posts_count']);
         }
     }
@@ -243,8 +273,11 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
         foreach ($json['data'] as $item) {
+            $this->assertIsArray($item);
+            $this->assertIsInt($item['created_at']);
             $itemCreatedAt = new DateTimeImmutable('@' . $item['created_at'])->format('Y-m-d');
             $this->assertGreaterThanOrEqual($date, $itemCreatedAt);
         }
@@ -256,6 +289,7 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['pagination']);
         $this->assertSame(4, $json['pagination']['total']);
     }
 
@@ -272,6 +306,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(4, $json['data']); // only public tags
         $this->assertFalse($json['data'][0]['is_private']);
     }
@@ -292,6 +328,8 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertTrue($json['data'][0]['is_private']);
         $this->assertSame($privateTag->getId(), $json['data'][0]['id']);
@@ -309,6 +347,7 @@ class TagsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(5, $json['data']); // 4 public + 1 private
     }
 

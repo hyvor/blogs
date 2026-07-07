@@ -4,14 +4,14 @@ namespace App\Tests\Api\Console\Blog\Theme;
 
 use App\Api\Console\Controller\ThemeController;
 use App\Entity\Enum\ThemeFileFolder;
-use App\Service\Theme\ThemeZipService;
+use App\Service\Theme\ThemeFilesService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ThemeController::class)]
-#[CoversClass(ThemeZipService::class)]
+#[CoversClass(ThemeFilesService::class)]
 class DownloadThemeTest extends ApiTestCase
 {
     public function test_downloads_the_theme_as_a_zip(): void

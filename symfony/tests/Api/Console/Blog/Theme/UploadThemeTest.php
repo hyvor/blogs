@@ -89,7 +89,12 @@ class UploadThemeTest extends ApiTestCase
         $this->assertArrayHasKey('logs', $response);
 
         $files = $response['files'];
-        $names = array_map(fn($f) => $f['name'], $files);
+        $this->assertIsArray($files);
+        $names = [];
+        foreach ($files as $f) {
+            $this->assertIsArray($f);
+            $names[] = $f['name'];
+        }
 
         $this->assertContains('@base.twig', $names);
         $this->assertContains('index.twig', $names);
@@ -99,6 +104,7 @@ class UploadThemeTest extends ApiTestCase
 
         $configFile = null;
         foreach ($files as $f) {
+            $this->assertIsArray($f);
             if ($f['name'] === 'config.yaml') {
                 $configFile = $f;
             }
@@ -131,9 +137,15 @@ class UploadThemeTest extends ApiTestCase
         $response = $this->getJson();
 
         $logs = $response['logs'];
+        $this->assertIsArray($logs);
         $this->assertNotEmpty($logs);
 
-        $logsStr = implode(' ', $logs);
+        $logStrings = [];
+        foreach ($logs as $log) {
+            $this->assertIsString($log);
+            $logStrings[] = $log;
+        }
+        $logsStr = implode(' ', $logStrings);
         $this->assertStringContainsString('bad.php', $logsStr);
         $this->assertStringContainsString('skipped', $logsStr);
 
@@ -156,7 +168,12 @@ class UploadThemeTest extends ApiTestCase
         unlink($tmp);
 
         $files = $this->getJson()['files'];
-        $names = array_map(fn($f) => $f['name'], $files);
+        $this->assertIsArray($files);
+        $names = [];
+        foreach ($files as $f) {
+            $this->assertIsArray($f);
+            $names[] = $f['name'];
+        }
 
         $this->assertContains('other.twig', $names);
         $this->assertNotContains('index.twig', $names);

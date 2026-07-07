@@ -40,6 +40,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(3, $json);
+        $this->assertIsArray($json[0]);
         $this->assertArrayHasKey('id', $json[0]);
         $this->assertArrayHasKey('variants', $json[0]);
     }
@@ -98,6 +99,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertFalse($json[0]['is_page']);
     }
 }

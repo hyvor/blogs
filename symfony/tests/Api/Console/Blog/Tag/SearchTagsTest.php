@@ -44,6 +44,9 @@ class SearchTagsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
+        $this->assertIsArray($json[0]['variants']);
+        $this->assertIsArray($json[0]['variants'][0]);
         $this->assertSame($name, $json[0]['variants'][0]['name']);
     }
 }

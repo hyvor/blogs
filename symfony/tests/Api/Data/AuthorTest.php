@@ -109,12 +109,15 @@ class AuthorTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['language']);
         $this->assertSame('fr', $json['language']['code']);
         $this->assertSame('Jean Dupont', $json['name']);
 
         $variants = $json['variants'];
         $this->assertIsArray($variants);
         $this->assertCount(1, $variants);
+        $this->assertIsArray($variants[0]);
+        $this->assertIsArray($variants[0]['language']);
         $this->assertSame('en', $variants[0]['language']['code']);
     }
 

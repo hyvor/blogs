@@ -34,6 +34,8 @@ class CreateTagTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
+        $this->assertIsArray($json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame($name, $json['variants'][0]['name']);
         $this->assertFalse($json['is_private']);
         $this->assertCount(1, $json['variants']);
