@@ -87,11 +87,17 @@ class Blog
     #[ORM\OrderBy(['sort' => 'ASC'])]
     private Collection $navigations;
 
+    /** @var Collection<int, Route> */
+    #[ORM\OneToMany(targetEntity: Route::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $routes;
+
     public function __construct()
     {
         $this->variants = new ArrayCollection();
         $this->languages = new ArrayCollection();
         $this->navigations = new ArrayCollection();
+        $this->routes = new ArrayCollection();
         $this->meta = new BlogMeta();
     }
 
@@ -326,5 +332,13 @@ class Blog
     public function getNavigations(): Collection
     {
         return $this->navigations;
+    }
+
+    /**
+     * @return Collection<int, Route>
+     */
+    public function getRoutes(): Collection
+    {
+        return $this->routes;
     }
 }
