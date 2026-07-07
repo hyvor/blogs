@@ -32,7 +32,7 @@ class CodeTest extends KernelTestCase
                     'marks' => [['type' => 'code']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<code>var x</code>', $html);

@@ -36,7 +36,7 @@ class CalloutTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => 'Note']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<aside style="background-color:#fff0f0;color:#000000"><span>💡</span><div>Note</div></aside>', $html);
@@ -62,7 +62,7 @@ class CalloutTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 
     public function test_html_to_json_without_div(): void
@@ -92,6 +92,6 @@ class CalloutTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

@@ -40,7 +40,7 @@ class FigureTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<figure><img src="https://example.com/img.jpg" loading="lazy"><figcaption>Caption</figcaption></figure>', $html);
@@ -73,6 +73,6 @@ class FigureTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

@@ -37,7 +37,7 @@ class HeadingTest extends KernelTestCase
                         'content' => [['type' => 'text', 'text' => $content]],
                     ],
                 ],
-            ]);
+            ], JSON_THROW_ON_ERROR);
 
             $html = $this->service()->getHtml($json, $this->blog());
             $this->assertSame("<h$i id=\"$id\"><a href=\"#$id\">$content</a></h$i>", $html);
@@ -58,7 +58,7 @@ class HeadingTest extends KernelTestCase
                         'content' => [['type' => 'text', 'text' => $content]],
                     ],
                 ],
-            ]);
+            ], JSON_THROW_ON_ERROR);
 
             $html = $this->service()->getHtml($json, $this->blog());
             $this->assertSame("<h$i>$content</h$i>", $html);
@@ -76,7 +76,7 @@ class HeadingTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => '']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<h2></h2>', $html);
@@ -102,7 +102,7 @@ class HeadingTest extends KernelTestCase
                         'content' => [['type' => 'text', 'text' => $content]],
                     ],
                 ],
-            ]);
+            ], JSON_THROW_ON_ERROR);
 
             $html = $this->service()->getHtml($json, $blog);
             $this->assertSame("<h$i id=\"$id\">$content</h$i>", $html);
@@ -133,7 +133,7 @@ class HeadingTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame(
@@ -158,6 +158,6 @@ class HeadingTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => $content]],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

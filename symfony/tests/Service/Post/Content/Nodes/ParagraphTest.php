@@ -33,7 +33,7 @@ class ParagraphTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<p>Hello World</p>', $html);
@@ -53,6 +53,6 @@ class ParagraphTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

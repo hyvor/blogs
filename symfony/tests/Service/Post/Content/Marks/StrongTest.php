@@ -32,7 +32,7 @@ class StrongTest extends KernelTestCase
                     'marks' => [['type' => 'strong']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<strong>bold</strong>', $html);

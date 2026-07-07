@@ -39,7 +39,7 @@ class CodeBlockTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => $code]],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
 
@@ -71,7 +71,7 @@ class CodeBlockTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => $code]],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog(), new PostContentOptions(isCodeBlockPlain: true));
         $this->assertStringContainsString('<code>$x = null</code>', $html);
@@ -101,7 +101,7 @@ class CodeBlockTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 
     public function test_removes_code_wrapper_from_pre(): void
@@ -124,6 +124,6 @@ class CodeBlockTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

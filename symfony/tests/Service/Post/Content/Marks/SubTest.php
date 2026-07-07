@@ -32,7 +32,7 @@ class SubTest extends KernelTestCase
                     'marks' => [['type' => 'sub']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<sub>subscript</sub>', $html);

@@ -35,7 +35,7 @@ class HardBreakTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<p>Before<br>After</p>', $html);
@@ -57,6 +57,6 @@ class HardBreakTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

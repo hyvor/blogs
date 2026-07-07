@@ -32,7 +32,7 @@ class EmTest extends KernelTestCase
                     'marks' => [['type' => 'em']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<em>italic</em>', $html);

@@ -28,7 +28,7 @@ class FigcaptionTest extends KernelTestCase
             'content' => [
                 ['type' => 'figcaption'],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<figcaption></figcaption>', $html);
@@ -53,7 +53,7 @@ class FigcaptionTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertStringContainsString('<figcaption>A caption</figcaption>', $html);
@@ -88,6 +88,6 @@ class FigcaptionTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }
