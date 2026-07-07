@@ -42,6 +42,10 @@ class ImageTest extends KernelTestCase
         $this->filesystem->write('blog/' . $blogId . '/' . $name, $content);
     }
 
+    /**
+     * @param positive-int $width
+     * @param positive-int $height
+     */
     private function pngContent(int $width, int $height = 100): string
     {
         $image = imagecreatetruecolor($width, $height);

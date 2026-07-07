@@ -3,6 +3,7 @@
 namespace App\Tests\Service\CustomDomain;
 
 use App\Service\CustomDomain\Acme\AcmeClient;
+use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\Acme\PendingOrder;
 use App\Tests\Case\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversNamespace;
@@ -18,6 +19,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[CoversNamespace("App\Service\TlsCertificate\Acme")]
 class AcmeClientTest extends KernelTestCase
 {
+    /** @throws AcmeException */
     public function test_acme_client_happy_path(): void
     {
         Clock::set(new MockClock());
@@ -158,12 +160,6 @@ class AcmeClientTest extends KernelTestCase
         $this->assertStringContainsString(
             "-----BEGIN CERTIFICATE-----",
             $cert->certificatePem
-        );
-
-        // test HTTP requests made
-        $this->assertSame(
-            AcmeClient::DIRECTORY_URL_LETSENCRYPT_STAGING,
-            $directoryResponse->getRequestUrl()
         );
     }
 

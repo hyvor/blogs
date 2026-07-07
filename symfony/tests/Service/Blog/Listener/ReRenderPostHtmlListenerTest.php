@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ReRenderPostHtmlListenerTest extends KernelTestCase
 {
 
-    public function test_does_not_dispatch_message_if_meta_not_changed()
+    public function test_does_not_dispatch_message_if_meta_not_changed(): void
     {
         $blog = new Blog()->setId(1);
         $oldBlog = new Blog()->setId(1);

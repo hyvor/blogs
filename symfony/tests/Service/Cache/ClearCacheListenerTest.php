@@ -6,6 +6,7 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Cache\BlogCacheService;
 use App\Service\Cache\ClearCacheListener;
@@ -146,6 +147,7 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearAllEvent::class);
     }
 
+    /** @throws PendingHostingChangeException */
     public function test_blog_hosting_changed_clears_all_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);

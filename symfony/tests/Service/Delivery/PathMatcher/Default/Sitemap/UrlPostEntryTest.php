@@ -74,6 +74,7 @@ class UrlPostEntryTest extends KernelTestCase
         // Reload post with variants
         $this->getEm()->clear();
         $post = $this->getEm()->find(\App\Entity\Post::class, $post->getId());
+        $this->assertNotNull($post);
 
         $entry = new UrlPostEntry($post, $this->permalinkService());
         $xml = $entry->toXML();

@@ -49,12 +49,24 @@ class CodeBlockTest extends KernelTestCase
         /** @var \DOMElement $pre */
         $pre = $dom->firstChild;
 
-        $this->assertSame('language-php has-highlight has-line-numbers', $pre->attributes->getNamedItem('class')->value);
-        $this->assertSame('h=1', $pre->attributes->getNamedItem('data-annotations')->value);
-        $this->assertSame('file.js', $pre->attributes->getNamedItem('data-name')->value);
-        $this->assertSame('php', $pre->attributes->getNamedItem('data-language')->value);
+        $classAttr = $pre->attributes->getNamedItem('class');
+        $this->assertNotNull($classAttr);
+        $this->assertSame('language-php has-highlight has-line-numbers', $classAttr->value);
+
+        $annotationsAttr = $pre->attributes->getNamedItem('data-annotations');
+        $this->assertNotNull($annotationsAttr);
+        $this->assertSame('h=1', $annotationsAttr->value);
+
+        $nameAttr = $pre->attributes->getNamedItem('data-name');
+        $this->assertNotNull($nameAttr);
+        $this->assertSame('file.js', $nameAttr->value);
+
+        $languageAttr = $pre->attributes->getNamedItem('data-language');
+        $this->assertNotNull($languageAttr);
+        $this->assertSame('php', $languageAttr->value);
 
         $code = $pre->firstChild;
+        $this->assertNotNull($code);
         $this->assertSame('code', $code->nodeName);
     }
 

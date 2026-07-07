@@ -23,6 +23,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[CoversClass(HostingChangeService::class)]
 class HostingChangeServiceTest extends KernelTestCase
 {
+    /** @throws PendingHostingChangeException */
     public function test_succeeds_updates_blog_and_dispatches_event(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
@@ -37,6 +38,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
         $this->assertSame('https://example.com', $blog->getHostingUrl());
 
@@ -45,6 +47,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $this->getEd()->assertDispatched(CacheClearAllEvent::class);
     }
 
+    /** @throws PendingHostingChangeException */
     public function test_failure_rolls_back_and_propagates_the_exception_leaving_change_as_changing(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
@@ -84,6 +87,7 @@ class HostingChangeServiceTest extends KernelTestCase
         }
     }
 
+    /** @throws PendingHostingChangeException */
     public function test_request_hosting_change_rejects_when_a_change_is_already_pending(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
@@ -97,6 +101,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
     }
 
+    /** @throws PendingHostingChangeException */
     public function test_request_hosting_change_allowed_when_previous_change_resolved(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);

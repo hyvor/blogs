@@ -15,7 +15,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TocHtml::class)]
 class TocFilterTest extends KernelTestCase
 {
-    private function render(string $template, mixed $context): string
+    /**
+     * @param array<string, mixed> $context
+     */
+    private function render(string $template, array $context): string
     {
         return $this->getService(TwigRendererService::class)->renderString($template, $context);
     }

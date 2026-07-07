@@ -85,6 +85,7 @@ class SitemapPostsTest extends KernelTestCase
         $namespaces = $xml->getNamespaces(true);
         $xml->registerXPathNamespace('default', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $urls = $xml->xpath('default:url');
+        $this->assertIsArray($urls);
         $this->assertCount(5, $urls);
     }
 
