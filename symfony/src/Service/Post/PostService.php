@@ -12,6 +12,11 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Event\PostCreatedEvent;
+use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostUpdatedEvent;
+use App\Service\Post\Event\PostVariantCreatedEvent;
+use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
@@ -406,6 +411,7 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostCreatedEvent($post));
         }
 
         return $post;
@@ -469,6 +475,8 @@ class PostService
         $post->setUpdatedAt($this->now());
         $this->em->flush();
 
+        $this->ed->dispatch(new PostUpdatedEvent($post));
+
         return $post;
     }
 
@@ -476,6 +484,8 @@ class PostService
     {
         $this->em->remove($post);
         $this->em->flush();
+
+        $this->ed->dispatch(new PostDeletedEvent($post));
     }
 
     /**
@@ -522,6 +532,7 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostVariantCreatedEvent($variant));
         }
 
         return $variant;
@@ -587,7 +598,7 @@ class PostService
         $this->em->flush();
 
         if ($redirectOnSlugChange) {
-            $newUrl = $this->permalinkService->getPostPermalink($variant->getPost(), $blog, $variant->getLanguage());
+            $newUrl = $this->permalinkService->getPostVariantPermalink($variant);
             $blogUrl = $this->permalinkService->getBlogUrl($blog);
 
             $oldPath = substr($oldUrl, strlen($blogUrl)) ?: '/';
@@ -648,6 +659,8 @@ class PostService
         if ($variant !== null) {
             $this->em->remove($variant);
             $this->em->flush();
+
+            $this->ed->dispatch(new PostVariantDeletedEvent($variant));
         }
     }
 
