@@ -1,9 +1,8 @@
 <script lang="ts">
 	const stats = [
-		{ value: '100+', label: 'Blogs & businesses', sub: 'and growing' },
-		{ value: '100', label: 'Lighthouse score', sub: 'performance, SEO, a11y' },
-		{ value: '3', label: 'Hosting options', sub: 'subdomain, domain, sub-dir' },
-		{ value: '14', label: 'Day free trial', sub: 'no credit card required' },
+		{ value: '10,000+', label: 'Blogs & businesses', sub: 'and growing' },
+		{ value: '99.9%', label: 'Uptime', sub: 'rock-solid reliability' },
+		{ value: '2020', label: 'Founded', sub: 'independent & growing' }
 	];
 </script>
 
