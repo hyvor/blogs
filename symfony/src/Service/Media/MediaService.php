@@ -13,6 +13,7 @@ use League\Flysystem\FilesystemException;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\UnicodeString;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -78,8 +79,26 @@ class MediaService
         return $qb->getQuery()->getResult();
     }
 
+    public function getMediaById(int $id): ?Media
+    {
+        return $this->em->getRepository(Media::class)->find($id);
+    }
+
+    public function getMediaByBlogAndName(Blog $blog, string $name): ?Media
+    {
+        return $this->em->getRepository(Media::class)->findOneBy([
+            'blog' => $blog,
+            'name' => $name,
+        ]);
+    }
+
     /** @throws MediaUploadException */
-    public function uploadFile(Blog $blog, UploadedFile $file, ?int $postId = null, ?string $fileName = null): Media
+    public function uploadFile(
+        Blog $blog,
+        UploadedFile $file,
+        ?int $postId = null,
+        ?string $fileName = null
+    ): Media
     {
         $extension = $file->getClientOriginalExtension();
 
@@ -111,9 +130,10 @@ class MediaService
         $media->setPostId($postId);
         $media->setName($fileName);
         $media->setSize((int)$file->getSize());
-        $media->setOriginalName((string)$file->getClientOriginalName());
+        $media->setOriginalName($file->getClientOriginalName());
         $media->setExtension($this->extensionFromName($fileName));
         $media->setCreatedAt($this->now());
+        $media->setUpdatedAt($this->now());
 
         $this->em->persist($media);
         $this->em->flush();
@@ -128,6 +148,7 @@ class MediaService
     {
         try {
             $response = $this->httpClient->request('GET', $url, ['timeout' => 10]);
+            $stream = $this->httpClient->stream($response);
             $content = $response->getContent();
         } catch (HttpClientExceptionInterface) {
             throw new MediaUploadException('Error while fetching image file');
@@ -228,7 +249,7 @@ class MediaService
 
     private function toKebabCase(string $name): string
     {
-        return preg_replace('/\s+/u', '-', trim(mb_strtolower($name))) ?? $name;
+        return new UnicodeString($name)->kebab();
     }
 
     private function extensionFromName(string $name): ?string
