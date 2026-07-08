@@ -20,6 +20,7 @@ use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use Doctrine\DBAL\Connection;
+use Hyvor\Internal\Sudo\SudoUserService;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -36,6 +37,7 @@ class DevSeedCommand
 {
     public function __construct(
         private Connection $connection,
+        private SudoUserService $sudoUserService
     ) {}
 
     public function __invoke(
@@ -45,6 +47,8 @@ class DevSeedCommand
     ): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        $this->sudoUserService->create(1, 'sudo');
 
         $blogConfigs = [
             ['subdomain' => 'test', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
@@ -111,7 +115,10 @@ class DevSeedCommand
         $io->success('Database seeded successfully.');
 
         // sync themes
-        $application->doRun(new ArrayInput(['command' => 'themes:sync']), $output);
+        $application->doRun(new ArrayInput([
+            'command' => 'themes:sync',
+            '--no-preview-blogs' => true,
+        ]), $output);
 
         return Command::SUCCESS;
     }

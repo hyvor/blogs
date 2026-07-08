@@ -380,8 +380,11 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
+        // disable creating the variant, only makes sense in BlogCreator
+        // be careful when set to false, if the variant is not set manually, it could cause data inconsistency
+        bool $createVariant = true,
+        bool $flush = true,
     ): Post {
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
         $post = $this->instantiatePost(
             $blog,
@@ -393,12 +396,17 @@ class PostService
             $codeFoot,
         );
 
-        $variant = $this->createPostVariant($post, $primaryLanguage, flush: false);
-        $post->getVariants()->add($variant);
+        if ($createVariant) {
+            $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+            $variant = $this->createPostVariant($post, $primaryLanguage, flush: false);
+            $post->getVariants()->add($variant);
+        }
 
         $this->setPostAuthors($post, $authors, flush: false);
 
-        $this->em->flush();
+        if ($flush) {
+            $this->em->flush();
+        }
 
         return $post;
     }
@@ -478,8 +486,10 @@ class PostService
         Post $post,
         Language $language,
         bool $flush = true,
+        PostVariantStatus $status = PostVariantStatus::DRAFT,
         ?string $content = null,
         ?string $contentUnsaved = null,
+        ?string $slug = null,
         ?string $title = null,
         ?string $description = null,
         ?string $seoPrimaryKeyword = null,
@@ -489,9 +499,10 @@ class PostService
         $variant = new PostVariant();
         $variant->setPost($post);
         $variant->setLanguage($language);
-        $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setStatus($status);
         $variant->setContent($content);
         $variant->setContentUnsaved($contentUnsaved);
+        $variant->setSlug($slug);
         $variant->setTitle($title);
         $variant->setDescription($description);
         $variant->setSeoPrimaryKeyword($seoPrimaryKeyword);
@@ -499,6 +510,14 @@ class PostService
         $variant->setLinkAnalysis($linkAnalysis);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
+
+        if ($status === PostVariantStatus::PUBLISHED) {
+            if ($post->getPublishedAt() === null) {
+                $post->setPublishedAt($this->now());
+            }
+            assert($variant->getSlug() !== null, 'Slug must be set for published post variant');
+        }
+
         $this->em->persist($variant);
 
         if ($flush) {
@@ -526,7 +545,7 @@ class PostService
         array $data,
         bool $redirectOnSlugChange = false,
     ): PostVariant {
-        $oldUrl = $this->permalinkService->getPostPermalink($variant->getPost(), $blog, $variant->getLanguage());
+        $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
@@ -652,7 +671,7 @@ class PostService
     /**
      * @param User[] $users
      */
-    public function setPostAuthors(Post $post, array $users, bool $flush = false): void
+    public function setPostAuthors(Post $post, array $users, bool $flush = true): void
     {
         $post->getAuthors()->clear();
         foreach ($users as $user) {

@@ -54,8 +54,10 @@ class NavigationService
         string $url,
         NavigationType $type,
         string $name,
+        bool $flush = true,
+        ?Language $primaryLanguage = null,
     ): Navigation {
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $primaryLanguage ??= $this->languageService->getPrimaryLanguage($blog);
 
         $now = $this->now();
         $navigation = new Navigation();
@@ -69,8 +71,10 @@ class NavigationService
 
         $this->createNavigationVariant($navigation, $primaryLanguage, $name, flush: false);
 
-        $this->em->flush();
-        $this->ed->dispatch(new NavigationChangedEvent($navigation));
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new NavigationChangedEvent($navigation));
+        }
 
         return $navigation;
     }

@@ -17,6 +17,6 @@ class RepoSyncMessageHandler
     /** @throws RepoSyncException */
     public function __invoke(RepoSyncMessage $message): void
     {
-        $this->repoSyncService->downloadAndSync();
+        $this->repoSyncService->downloadAndSync($message->createPreviewBlogs);
     }
 }

@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogType;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\NavigationType;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
 use App\Entity\Language;
 use App\Entity\Tag;
@@ -16,8 +17,10 @@ use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\RouteService;
 use App\Service\Tag\TagService;
+use App\Service\Theme\Exception\ThemeImportException;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeService;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthUser;
@@ -33,7 +36,7 @@ class BlogCreator
 {
     use ClockAwareTrait;
 
-    private const int RANDOM_POSTS_COUNT = 30;
+    private const int RANDOM_POSTS_COUNT = 15;
 
     /**
      * TODO: self-hosted deployments should not depend on Cloudinary
@@ -122,23 +125,23 @@ class BlogCreator
             $blog->setSubdomain($subdomain);
             $blog->setType($type);
 
+            if ($type === BlogType::PREVIEW) {
+                $meta = $blog->getMeta();
+                $meta->cover_url = $this->getRandomFeaturedImageUrl();
+                $blog->setMeta($meta);
+            }
+
             $this->em->persist($blog);
 
             $primaryLanguage = $this->fillLanguages($blog);
             $this->blogService->createBlogVariant($blog, $primaryLanguage, name: $name, flush: false);
 
-            if ($type === BlogType::PREVIEW) {
-                $meta = $blog->getMeta();
-                $meta->cover_url = $this->getFeaturedImageUrl();
-                $blog->setMeta($meta);
-            }
-
-            $primaryUser = $this->fillPrimaryUser($blog, $authUser);
-            $this->fillAdditionalUsers($blog);
-            $welcomeTag = $this->fillTags($blog);
-            $this->fillPosts($blog, $primaryUser, $welcomeTag);
+            $primaryUser = $this->fillPrimaryUser($blog, $authUser, $primaryLanguage);
+            $this->fillAdditionalUsers($blog, $primaryLanguage);
+            $welcomeTag = $this->fillTags($blog, $primaryLanguage);
+            $this->fillPosts($blog, $primaryUser, $welcomeTag, $primaryLanguage);
             $this->fillRoutes($blog);
-            $this->fillNavigations($blog, $primaryUser);
+            $this->fillNavigations($blog, $primaryUser, $primaryLanguage);
             $this->fillTheme($blog);
 
             if ($organizationId !== null && $this->internalConfig->getDeployment()->isCloud()) {
@@ -157,53 +160,88 @@ class BlogCreator
      */
     private function fillLanguages(Blog $blog): Language
     {
-        $primaryLanguage = $this->languageService->createLanguage($blog, 'en', 'English', isPrimary: true);
+        $primaryLanguage = $this->languageService->createLanguage(
+            $blog,
+            'en',
+            'English',
+            isPrimary: true,
+            flush: false
+        );
 
         if ($blog->getType()->isNonDefault()) {
-            $this->languageService->createLanguage($blog, 'fr', 'French');
-            $this->languageService->createLanguage($blog, 'ar', 'Arabic', LanguageDirection::RTL);
+            $this->languageService->createLanguage($blog, 'fr', 'French', flush: false);
+            $this->languageService->createLanguage($blog, 'ar', 'Arabic', LanguageDirection::RTL, flush: false);
         }
 
         return $primaryLanguage;
     }
 
-    private function fillPrimaryUser(Blog $blog, ?AuthUser $authUser): User
+    /**
+     * @throws HyvorUserNotFoundException
+     */
+    private function fillPrimaryUser(Blog $blog, ?AuthUser $authUser, Language $primaryLanguage): User
     {
         if ($blog->getType() === BlogType::PREVIEW || $authUser === null) {
-            return $this->createRandomGuestUser($blog);
+            return $this->userService->createGuestUser(
+                $blog,
+                'John Doe',
+                pictureUrl: $this->getRandomUserImageUrl(),
+                flush: false,
+                primaryLanguage: $primaryLanguage
+            );
         }
 
-        return $this->userService->createUserFromAuthUser($blog, $authUser, UserRole::ADMIN);
+        return $this->userService->createUserFromAuthUser(
+            $blog,
+            $authUser,
+            UserRole::ADMIN,
+            flush: false,
+            primaryLanguage: $primaryLanguage,
+        );
     }
 
-    private function fillAdditionalUsers(Blog $blog): void
+    private function fillAdditionalUsers(Blog $blog, Language $primaryLanguage): void
     {
         if ($blog->getType()->isNonDefault()) {
-            for ($i = 0; $i < 5; $i++) {
-                $this->createRandomGuestUser($blog);
+            $names = [
+                'Alex Johnson',
+                'Emily Smith',
+                'Michael Brown',
+                'Sophia Davis',
+                'Daniel Wilson',
+            ];
+
+            foreach ($names as $name) {
+                $this->userService->createGuestUser(
+                    $blog,
+                    $name,
+                    pictureUrl: $this->getRandomUserImageUrl(),
+                    flush: false,
+                    primaryLanguage: $primaryLanguage
+                );
             }
         }
-    }
-
-    private function createRandomGuestUser(Blog $blog): User
-    {
-        return $this->userService->createGuestUser(
-            $blog,
-            $this->getRandomUserName(),
-            pictureUrl: $this->getUserImageUrl()
-        );
     }
 
     /**
      * @return Tag welcome tag
      */
-    private function fillTags(Blog $blog): Tag
+    private function fillTags(Blog $blog, Language $primaryLanguage): Tag
     {
-        $tag = $this->tagService->createTag($blog, 'Welcome');
+        $tag = $this->tagService->createTag($blog, 'Welcome', flush: false, primaryLanguage: $primaryLanguage);
 
         if ($blog->getType()->isNonDefault()) {
-            for ($i = 0; $i < 5; $i++) {
-                $this->tagService->createTag($blog, $this->getRandomTagName());
+
+            $tagNames = [
+                'Technology',
+                'Lifestyle',
+                'Travel',
+                'Food',
+                'Health',
+            ];
+
+            foreach ($tagNames as $tagName) {
+                $this->tagService->createTag($blog, $tagName, flush: false, primaryLanguage: $primaryLanguage);
             }
         }
 
@@ -220,11 +258,12 @@ class BlogCreator
                 $route['template'],
                 $route['posts_filter'] ?? null,
                 null,
+                flush: false
             );
         }
     }
 
-    private function fillNavigations(Blog $blog, User $primaryUser): void
+    private function fillNavigations(Blog $blog, User $primaryUser, Language $primaryLanguage): void
     {
         $isExtended = $blog->getType()->isNonDefault();
 
@@ -247,18 +286,18 @@ class BlogCreator
                 'url' => '/author/' . $primaryUser->getSlug()
             ];
 
-            $tags = $this->tagService->getTags($blog, 1);
+            $tags = $blog->getTags()->toArray();
             if ($tags !== []) {
                 $navs[] = ['type' => NavigationType::HEADER, 'name' => 'Tag', 'url' => '/tag/' . $tags[0]->getSlug()];
             }
         }
 
         foreach ($navs as $nav) {
-            $this->navigationService->createNavigation($blog, $nav['url'], $nav['type'], $nav['name']);
+            $this->navigationService->createNavigation($blog, $nav['url'], $nav['type'], $nav['name'], flush: false, primaryLanguage: $primaryLanguage);
         }
     }
 
-    /** @throws \App\Service\Theme\Exception\ThemeImportException */
+    /** @throws ThemeImportException */
     private function fillTheme(Blog $blog): void
     {
         if ($blog->getType() === BlogType::PREVIEW) {
@@ -280,10 +319,8 @@ class BlogCreator
         $this->themeFilesService->updateFilesFromThemeVersion($blog, $version);
     }
 
-    private function fillPosts(Blog $blog, User $primaryUser, Tag $welcomeTag): void
+    private function fillPosts(Blog $blog, User $primaryUser, Tag $welcomeTag, Language $primaryLanguage): void
     {
-        $language = $this->languageService->getPrimaryLanguage($blog);
-
         foreach (self::POST_DATA as $row) {
             $isPage = $row['type'] === 'page';
             $authors = !$isPage ? [$primaryUser] : [];
@@ -292,26 +329,27 @@ class BlogCreator
                 $blog,
                 authors: $authors,
                 isPage: $isPage,
-                featuredImageUrl: $this->getFeaturedImageUrl(),
+                featuredImageUrl: $this->getRandomFeaturedImageUrl(),
+                createVariant: false,
+                flush: false,
             );
 
             $content = (string) file_get_contents($this->projectDir . '/resources/posts/' . $row['file']);
             $json = $this->postContentService->getJsonFromHtml($content, $blog);
 
-            $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
-            assert($variant !== null);
-
-            $variant = $this->postService->updatePostVariant($variant, $blog, [
-                'slug' => $row['slug'],
-                'content' => $json,
-                'title' => $row['title'],
-                'description' => $row['description'] ?? '',
-            ]);
-
-            $this->postService->publishPostVariant($variant, $blog);
+            $this->postService->createPostVariant(
+                $post,
+                $primaryLanguage,
+                flush: false,
+                status: PostVariantStatus::PUBLISHED,
+                content: $json,
+                slug: $row['slug'],
+                title: $row['title'],
+                description: $row['description'] ?? ''
+            );
 
             if (!$isPage) {
-                $this->postService->setPostTags($post, [$welcomeTag], flush: true);
+                $this->postService->setPostTags($post, [$welcomeTag], flush: false);
             }
         }
 
@@ -322,37 +360,39 @@ class BlogCreator
 
     private function fillRandomPosts(Blog $blog): void
     {
-        $languages = $this->languageService->getAllLanguages($blog);
-        $tags = $this->tagService->getTags($blog, 100);
-        $users = $this->userService->getUsers($blog, 100);
+        $languages = $blog->getLanguages();
+        $tags = $blog->getTags();
+        $users = $blog->getUsers();
 
         for ($i = 0; $i < self::RANDOM_POSTS_COUNT; $i++) {
             $post = $this->postService->createPost(
                 $blog,
-                featuredImageUrl: $this->getFeaturedImageUrl(),
+                featuredImageUrl: $this->getRandomFeaturedImageUrl(),
+                createVariant: false,
+                flush: false
             );
 
             foreach ($languages as $language) {
-                $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language)
-                    ?? $this->postService->createPostVariant($post, $language, flush: false);
-
                 $paragraphs = $this->getFakeParagraphs();
                 $html = '<p>' . implode('</p><p>', $paragraphs) . '</p>';
 
-                $variant = $this->postService->updatePostVariant($variant, $blog, [
-                    'title' => $this->getRandomTitle(),
-                    'content' => $this->postContentService->getJsonFromHtml($html, $blog),
-                ]);
-
-                $this->postService->publishPostVariant($variant, $blog);
+                $this->postService->createPostVariant(
+                    $post,
+                    $language,
+                    flush: false,
+                    status: PostVariantStatus::PUBLISHED,
+                    content: $this->postContentService->getJsonFromHtml($html, $blog),
+                    slug: 'post-' . bin2hex(random_bytes(4)) . '-' . $i,
+                    title: $this->getRandomTitle(),
+                );
             }
 
-            if ($tags !== []) {
-                $this->postService->setPostTags($post, $this->pickRandom($tags, 1, 3), flush: true);
+            if ($tags->count() > 0) {
+                $this->postService->setPostTags($post, $this->pickRandom($tags->toArray(), 1, 3), flush: false);
             }
 
-            if ($users !== []) {
-                $this->postService->setPostAuthors($post, $this->pickRandom($users, 1, 3), flush: true);
+            if ($users->count() > 0) {
+                $this->postService->setPostAuthors($post, $this->pickRandom($users->toArray(), 1, 3), flush: false);
             }
         }
     }
@@ -367,43 +407,6 @@ class BlogCreator
         $shuffled = $items;
         shuffle($shuffled);
         return array_slice($shuffled, 0, $count);
-    }
-
-    private function getRandomUserName(): string
-    {
-        $names = [
-            'Alex Johnson',
-            'Emily Smith',
-            'Michael Brown',
-            'Sophia Davis',
-            'Daniel Wilson',
-            'Olivia Martinez',
-            'James Anderson',
-            'Ava Taylor',
-            'William Thomas',
-            'Isabella Moore',
-            'Benjamin Jackson',
-        ];
-
-        return $names[random_int(0, count($names) - 1)];
-    }
-
-    private function getRandomTagName(): string
-    {
-        $tags = [
-            'Technology',
-            'Lifestyle',
-            'Travel',
-            'Food',
-            'Health',
-            'Fashion',
-            'Education',
-            'Entertainment',
-            'Sports',
-            'Business',
-        ];
-
-        return $tags[random_int(0, count($tags) - 1)];
     }
 
     /**
@@ -438,12 +441,12 @@ class BlogCreator
         return $titles[random_int(0, count($titles) - 1)];
     }
 
-    private function getFeaturedImageUrl(): string
+    private function getRandomFeaturedImageUrl(): string
     {
         return self::IMAGE_URL_BASE . '/post-featured-images/' . random_int(1, 20) . '.webp';
     }
 
-    private function getUserImageUrl(): string
+    private function getRandomUserImageUrl(): string
     {
         return self::IMAGE_URL_BASE . '/author-images/' . random_int(1, 5) . '.webp';
     }

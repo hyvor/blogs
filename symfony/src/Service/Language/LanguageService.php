@@ -26,6 +26,7 @@ class LanguageService
         string $name,
         LanguageDirection $direction = LanguageDirection::LTR,
         bool $isPrimary = false,
+        bool $flush = true,
     ): Language {
         $language = new Language();
         $language->setBlog($blog);
@@ -34,8 +35,14 @@ class LanguageService
         $language->setDirection($direction);
         $language->setIsPrimary($isPrimary);
         $this->em->persist($language);
-        $this->em->flush();
-        $this->ed->dispatch(new LanguageChangedEvent($language));
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new LanguageChangedEvent($language));
+        }
+
+        $blog->getLanguages()->add($language);
+
         return $language;
     }
 

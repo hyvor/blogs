@@ -2,17 +2,21 @@
 
 namespace App\Tests\Service\Theme\RepoSync;
 
+use App\Entity\Blog;
+use App\Entity\Enum\BlogType;
 use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Theme;
 use App\Entity\ThemeVersion;
 use App\Service\Theme\RepoSync\Exception\RepoSyncException;
 use App\Service\Theme\RepoSync\RepoSyncService;
+use App\Service\Theme\ThemeVersionCreator;
 use App\Tests\Factory\ThemeFactory;
 use App\Tests\Factory\ThemeVersionFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RepoSyncService::class)]
+#[CoversClass(ThemeVersionCreator::class)]
 class RepoSyncTest extends KernelTestCase
 {
     private function zipPath(): string
@@ -28,7 +32,7 @@ class RepoSyncTest extends KernelTestCase
     /** @throws RepoSyncException */
     public function test_adds_new_themes_and_versions(): void
     {
-        $this->service()->syncFromFile($this->zipPath());
+        $this->service()->syncFromFile($this->zipPath(), true);
 
         $em = $this->getEm();
         $themes = $em->getRepository(Theme::class)->findAll();
@@ -39,6 +43,10 @@ class RepoSyncTest extends KernelTestCase
             $version = $em->getRepository(ThemeVersion::class)->findOneBy(['theme' => $theme]);
             $this->assertNotNull($version);
         }
+
+        // preview blogs
+        $blogs = $this->getEm()->getRepository(Blog::class)->findBy(['type' => BlogType::PREVIEW]);
+        $this->assertGreaterThan(0, count($blogs));
     }
 
     /** @throws RepoSyncException */
@@ -48,13 +56,17 @@ class RepoSyncTest extends KernelTestCase
         $theme = $this->getEm()->getRepository(Theme::class)->findOneBy(['name' => 'hello']);
         ThemeVersionFactory::createOne(['theme' => $theme, 'version' => '0.0.1']);
 
-        $this->service()->syncFromFile($this->zipPath());
+        $this->service()->syncFromFile($this->zipPath(), false);
 
         $count = $this->getEm()
             ->getRepository(ThemeVersion::class)
             ->count(['theme' => $theme]);
 
         $this->assertSame(2, $count);
+
+        // preview blogs
+        $blogs = $this->getEm()->getRepository(Blog::class)->findBy(['type' => BlogType::PREVIEW]);
+        $this->assertSame(0, count($blogs));
     }
 
     /** @throws RepoSyncException */
@@ -64,7 +76,7 @@ class RepoSyncTest extends KernelTestCase
         $theme = $this->getEm()->getRepository(Theme::class)->findOneBy(['name' => 'hello']);
         ThemeVersionFactory::createOne(['theme' => $theme, 'version' => '1.0.0']);
 
-        $this->service()->syncFromFile($this->zipPath());
+        $this->service()->syncFromFile($this->zipPath(), false);
 
         $count = $this->getEm()
             ->getRepository(ThemeVersion::class)

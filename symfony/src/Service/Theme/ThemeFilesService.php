@@ -46,6 +46,7 @@ class ThemeFilesService
         ?ThemeFileFolder $folder,
         string $name,
         ?string $content,
+        bool $event = true,
     ): ThemeFile {
         $file = $this->getFile($blog, $name, $folder);
         $now = $this->now();
@@ -64,7 +65,9 @@ class ThemeFilesService
         $this->em->persist($file);
         $this->em->flush();
 
-        $this->fileUpdated($file);
+        if ($event) {
+            $this->dispatchFileUpdatedEvent($file);
+        }
 
         return $file;
     }
@@ -85,7 +88,7 @@ class ThemeFilesService
 
         $this->em->flush();
 
-        $this->fileUpdated($file);
+        $this->dispatchFileUpdatedEvent($file);
 
         return $file;
     }
@@ -104,7 +107,7 @@ class ThemeFilesService
         $this->em->flush();
     }
 
-    private function fileUpdated(ThemeFile $file): void
+    private function dispatchFileUpdatedEvent(ThemeFile $file): void
     {
         $blog = $file->getBlog();
 

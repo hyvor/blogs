@@ -21,6 +21,7 @@ use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Service\Billing\UsageService;
 use App\Service\Language\LanguageService;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 use App\Service\User\UserService;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
@@ -95,7 +96,11 @@ class UserController
             }
         }
 
-        $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
+        try {
+            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
+        } catch (HyvorUserNotFoundException) {
+            throw new UnprocessableEntityHttpException('Unable to find the user');
+        }
 
         return new JsonResponse($this->userObjectFactory->create($user, $blog));
     }

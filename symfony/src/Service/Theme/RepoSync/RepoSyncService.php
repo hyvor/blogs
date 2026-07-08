@@ -6,6 +6,7 @@ use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Theme\RepoSync\Exception\RepoSyncException;
 use App\Service\Theme\ThemeService;
+use App\Service\Theme\ThemeVersionCreator;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
@@ -23,19 +24,20 @@ class RepoSyncService
     public function __construct(
         private ThemeService $themeService,
         private HttpClientInterface $httpClient,
+        private ThemeVersionCreator $themeVersionCreator
     ) {
     }
 
     /**
      * @throws RepoSyncException
      */
-    public function downloadAndSync(): void
+    public function downloadAndSync(bool $createPreviewBlogs = true): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), 'themes_zip_');
 
         try {
             $this->downloadToFile(self::REPO_ZIP_URL, $tmpFile);
-            $this->syncFromFile($tmpFile);
+            $this->syncFromFile($tmpFile, $createPreviewBlogs);
         } finally {
             if (file_exists($tmpFile)) {
                 unlink($tmpFile);
@@ -71,10 +73,10 @@ class RepoSyncService
     /**
      * @throws RepoSyncException
      */
-    public function syncFromFile(string $zipFilePath): void
+    public function syncFromFile(string $zipFilePath, bool $createPreviewBlogs): void
     {
         $this->breakIntoThemes($zipFilePath);
-        $this->saveThemes();
+        $this->saveThemes($createPreviewBlogs);
     }
 
     /**
@@ -146,7 +148,7 @@ class RepoSyncService
     /**
      * @throws RepoSyncException
      */
-    private function saveThemes(): void
+    private function saveThemes(bool $createPreviewBlogs): void
     {
         $latestVersions = $this->themeService->getLatestVersionsOfAllThemes();
 
@@ -166,7 +168,7 @@ class RepoSyncService
                 }
 
                 $zip = $this->generateZip($theme);
-                $this->themeService->createThemeVersion($themeModel, $version, $zip);
+                $this->themeVersionCreator->create($themeModel, $version, $zip, $createPreviewBlogs);
             }
         }
     }

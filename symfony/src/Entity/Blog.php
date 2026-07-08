@@ -92,12 +92,22 @@ class Blog
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $routes;
 
+    /** @var Collection<int, Tag> */
+    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'blog')]
+    private Collection $tags;
+
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'blogs')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->variants = new ArrayCollection();
         $this->languages = new ArrayCollection();
         $this->navigations = new ArrayCollection();
         $this->routes = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->users = new ArrayCollection();
         $this->meta = new BlogMeta();
     }
 
@@ -340,5 +350,21 @@ class Blog
     public function getRoutes(): Collection
     {
         return $this->routes;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
     }
 }

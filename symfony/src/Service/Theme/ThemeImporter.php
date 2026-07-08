@@ -88,7 +88,7 @@ class ThemeImporter
             return;
         }
 
-        $this->themeFilesService->createOrUpdateFile($this->blog, $folder, $fileName, $content);
+        $this->themeFilesService->createOrUpdateFile($this->blog, $folder, $fileName, $content, event: false);
     }
 
     private function addTrace(string $trace): void

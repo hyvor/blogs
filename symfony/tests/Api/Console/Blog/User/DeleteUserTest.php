@@ -11,9 +11,12 @@ use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+
+use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
@@ -29,6 +32,10 @@ class DeleteUserTest extends ApiTestCase
             UserVariantFactory::createOne(['user' => $user, 'language' => LanguageFactory::createOneFor($blog)]);
         }
 
+        $post = PostFactory::createOne();
+        $post->getAuthors()->add($user);
+        $this->getEm()->flush();
+
         $userId = $user->getId();
         $this->assertCount(3, $this->getEm()->getRepository(UserVariant::class)->findBy(['user' => $userId]));
 
@@ -40,6 +47,9 @@ class DeleteUserTest extends ApiTestCase
 
         $this->getEd()->assertDispatched(UserDeletedEvent::class);
         $this->getEd()->assertDispatchedCount(UserVariantDeletedEvent::class, 3);
+
+        refresh($post);
+        $this->assertCount(0, $post->getAuthors());
     }
 
     public function test_cannot_delete_admin(): void

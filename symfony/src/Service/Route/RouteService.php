@@ -92,6 +92,7 @@ class RouteService
         string $template,
         ?string $postsFilter,
         ?string $contentType,
+        bool $flush = true
     ): Route {
         $now = $this->now();
 
@@ -107,9 +108,11 @@ class RouteService
         $route->setUpdatedAt($now);
 
         $this->em->persist($route);
-        $this->em->flush();
-
-        $this->dispatcher->dispatch(new RouteChangedEvent($route));
+        
+        if ($flush) {
+            $this->em->flush();
+            $this->dispatcher->dispatch(new RouteChangedEvent($route));
+        }
 
         return $route;
     }

@@ -5,6 +5,7 @@ namespace App\Service\Theme\RepoSync\Command;
 use App\Service\App\Messenger\MessageTransport;
 use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,19 +16,21 @@ use Symfony\Component\Messenger\MessageBusInterface;
     name: 'themes:sync',
     description: 'Download and sync themes from the hyvor/hyvor-blogs-themes GitHub repository',
 )]
-class ThemesSyncCommand extends Command
+class ThemesSyncCommand
 {
     public function __construct(
         private MessageBusInterface $bus,
-    ) {
-        parent::__construct();
-    }
+    ) {}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        #[Option('disable seeding preview blogs')] bool $noPreviewBlogs = false,
+    ): int
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Syncing themes...');
-        $this->bus->dispatch(new RepoSyncMessage(), [MessageTransport::syncStamp()]);
+        $this->bus->dispatch(new RepoSyncMessage(!$noPreviewBlogs), [MessageTransport::syncStamp()]);
         $io->success('Theme synced successfully.');
         return Command::SUCCESS;
     }

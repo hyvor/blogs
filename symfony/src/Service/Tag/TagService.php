@@ -156,7 +156,7 @@ class TagService
         return ['tags' => $tags, 'total' => $total];
     }
 
-    public function createTag(Blog $blog, string $name, bool $isPrivate = false): Tag
+    public function createTag(Blog $blog, string $name, bool $isPrivate = false, bool $flush = true, ?Language $primaryLanguage = null): Tag
     {
         $now = $this->now();
 
@@ -169,7 +169,7 @@ class TagService
 
         $this->em->persist($tag);
 
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $primaryLanguage ??= $this->languageService->getPrimaryLanguage($blog);
 
         $variant = new TagVariant();
         $variant->setTag($tag);
@@ -179,11 +179,14 @@ class TagService
         $variant->setUpdatedAt($now);
 
         $this->em->persist($variant);
-        $this->em->flush();
-
         $tag->getVariants()->add($variant);
 
-        $this->ed->dispatch(new TagCreatedEvent($tag));
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new TagCreatedEvent($tag));
+        }
+
+        $blog->getTags()->add($tag);
 
         return $tag;
     }
