@@ -54,7 +54,6 @@ class WebhookDeliveryService
         $now = $this->now();
         $delivery = new WebhookDelivery();
         $delivery->setWebhook($webhook);
-        $delivery->setWebhookId($webhook->getId());
         $delivery->setUrl($webhook->getUrl());
         $delivery->setEvent($event);
         $delivery->setData($data);

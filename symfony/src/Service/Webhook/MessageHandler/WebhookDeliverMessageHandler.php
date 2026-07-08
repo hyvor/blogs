@@ -1,10 +1,10 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Service\Webhook\MessageHandler;
 
 use App\Entity\Enum\WebhookDeliveryStatus;
 use App\Entity\WebhookDelivery;
-use App\Message\WebhookDeliverMessage;
+use App\Service\Webhook\Message\WebhookDeliverMessage;
 use App\Service\Webhook\WebhookDeliveryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

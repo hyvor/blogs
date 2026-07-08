@@ -31,7 +31,7 @@ final class WebhookDeliveryFactory extends PersistentObjectFactory
             'event' => self::faker()->randomElement(WebhookEvent::cases()),
             'status' => self::faker()->randomElement(WebhookDeliveryStatus::cases()),
             'url' => self::faker()->url(),
-            'webhook_id' => self::faker()->randomNumber(),
+            'webhook' => WebhookFactory::new(),
         ];
     }
 

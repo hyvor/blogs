@@ -12,7 +12,6 @@ use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Entity\Blog;
 use App\Entity\Enum\WebhookEvent;
-use App\Message\WebhookDeliverMessage;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
@@ -42,6 +41,7 @@ use App\Service\User\Event\UserUpdatedEvent;
 use App\Service\User\Event\UserVariantCreatedEvent;
 use App\Service\User\Event\UserVariantDeletedEvent;
 use App\Service\User\Event\UserVariantUpdatedEvent;
+use App\Service\Webhook\Message\WebhookDeliverMessage;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
