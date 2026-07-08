@@ -11,6 +11,7 @@ use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -34,6 +35,7 @@ class CreateTagTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
+        $this->assertSame('blogging', $json['slug']);
         $this->assertIsArray($json['variants']);
         $this->assertIsArray($json['variants'][0]);
         $this->assertSame($name, $json['variants'][0]['name']);
@@ -44,6 +46,26 @@ class CreateTagTest extends ApiTestCase
         $this->assertCount(1, $tags);
         $this->assertFalse($tags[0]->isPrivate());
         $this->assertCount(1, $tags[0]->getVariants());
+    }
+
+    public function test_generates_unique_slug(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'tag-create-unique-slug']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $name = 'Blogging';
+        $slug = 'blogging';
+
+        TagFactory::createOne(['blog' => $blog, 'slug' => $slug]);
+
+        $this->consoleBlogApi('POST', $blog, '/tag', [
+            'name' => $name,
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(201);
+        $json = $this->getJson();
+        $this->assertSame('blogging-1', $json['slug']);
     }
 
     public function test_creates_a_private_tag(): void
@@ -63,4 +85,5 @@ class CreateTagTest extends ApiTestCase
         $this->assertCount(1, $tags);
         $this->assertTrue($tags[0]->isPrivate());
     }
+
 }

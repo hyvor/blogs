@@ -16,6 +16,7 @@ use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
+use Hyvor\FilterQ\Keys;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -60,6 +61,8 @@ class TagService
         $qb = $this->em->createQueryBuilder();
         $qb->select('t')
             ->from(Tag::class, 't')
+            ->leftJoin('t.variants', 'tv')
+            ->addSelect('tv')
             ->where('t.blog = :blog')
             ->setParameter('blog', $blog)
             ->orderBy('t.created_at', 'DESC')
@@ -124,9 +127,9 @@ class TagService
         if ($filter !== null && $filter !== '') {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function (\Hyvor\FilterQ\Keys $keys) {
+                ->keys(function (Keys $keys) {
                     $keys->add('id', 't.id')->valueType('int');
-                    $keys->add('slug', 't.slug')->valueType('string');
+                    $keys->add('slug', 't.slug')->valueType('string')->operators('=,!=');
                     $keys->add('posts_count', 't.posts_count')->valueType('int');
                     $keys->add('created_at', 't.created_at')->valueType('date');
                 })
@@ -220,12 +223,6 @@ class TagService
             $this->em->remove($variant);
         }
 
-        // todo: we should add foreign keys and let the DB handle this
-        $this->em->getConnection()->executeStatement(
-            'DELETE FROM post_tag WHERE tag_id = ?',
-            [$tag->getId()],
-        );
-
         $this->em->remove($tag);
         $this->em->flush();
 
@@ -292,18 +289,20 @@ class TagService
     private function generateUniqueSlug(Blog $blog, string $name): string
     {
         $slugger = new AsciiSlugger();
-        $checks = [$name];
-        $i = 0;
+        $checks = [
+            $name,
+            $name . '-1',
+            $name . '-' . bin2hex(random_bytes(6))
+        ];
 
-        while (true) {
-            $check = $checks[$i] ?? bin2hex(random_bytes(8));
+        foreach ($checks as $check) {
             $slug = (string) $slugger->slug($check)->lower();
 
             if ($this->getTagBySlug($blog, $slug) === null) {
                 return $slug;
             }
-
-            $i++;
         }
+
+        throw new \RuntimeException('Unable to generate unique slug for tag.');
     }
 }

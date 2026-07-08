@@ -39,6 +39,7 @@ class ReRenderPostHtmlMessageHandler {
         while (true) {
             $qb = $this->em->createQueryBuilder();
 
+            /** @var PostVariant[] $variants */
             $variants = $qb->select('pv')
                 ->from(PostVariant::class, 'pv')
                 ->join('pv.post', 'p')
