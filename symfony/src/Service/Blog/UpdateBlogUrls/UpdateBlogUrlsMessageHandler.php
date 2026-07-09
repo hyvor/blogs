@@ -15,6 +15,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+/**
+ * TODO: tests
+ */
 #[AsMessageHandler]
 class UpdateBlogUrlsMessageHandler
 {
@@ -62,6 +65,10 @@ class UpdateBlogUrlsMessageHandler
         $changed = false;
 
         foreach (['logo_url', 'cover_url', 'icon_url'] as $field) {
+            if ($meta->$field === null) {
+                continue;
+            }
+
             $replaced = $updater->update($meta->$field);
             if ($replaced !== false) {
                 $meta->$field = $replaced;
@@ -114,12 +121,15 @@ class UpdateBlogUrlsMessageHandler
                 ->getResult();
 
             foreach ($posts as $post) {
-                $featuredImageUrl = $updater->update($post->getFeaturedImageUrl());
-                if ($featuredImageUrl !== false) {
-                    $post->setFeaturedImageUrl($featuredImageUrl);
+                if ($post->getFeaturedImageUrl()) {
+                    $featuredImageUrl = $updater->update($post->getFeaturedImageUrl());
+                    if ($featuredImageUrl !== false) {
+                        $post->setFeaturedImageUrl($featuredImageUrl);
+                    }
                 }
 
                 foreach ($post->getVariants() as $variant) {
+                    // TODO: use lock for updating variants
                     try {
                         $content = $variant->getContent();
                         if ($content !== null) {
@@ -178,6 +188,10 @@ class UpdateBlogUrlsMessageHandler
             }
 
             foreach ($users as $user) {
+                if ($user->getPictureUrl() === null) {
+                    continue;
+                }
+
                 $pictureUrl = $updater->update($user->getPictureUrl());
                 if ($pictureUrl !== false) {
                     $user->setPictureUrl($pictureUrl);

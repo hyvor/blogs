@@ -3,7 +3,12 @@
 namespace App\Tests\Api\Console\Blog\Media;
 
 use App\Api\Console\Controller\MediaController;
+use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
+use App\Service\App\MessageTransport;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Media\MediaService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,6 +24,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(MediaController::class)]
 #[CoversClass(MediaService::class)]
+#[CoversClass(UpdateBlogUrlLock::class)]
 class UpdateMediaTest extends ApiTestCase
 {
     private Filesystem $filesystem;
@@ -32,7 +38,7 @@ class UpdateMediaTest extends ApiTestCase
 
     public function test_updates_name_and_moves_file(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'update-media']);
+        $blog = BlogFactory::createOne(['subdomain' => 'update-media', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $this->filesystem->write('blog/' . $blog->getId() . '/test.png', 'content');
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
@@ -71,6 +77,18 @@ class UpdateMediaTest extends ApiTestCase
 
         $this->assertFalse($this->filesystem->fileExists('blog/' . $blog->getId() . '/test.png'));
         $this->assertTrue($this->filesystem->fileExists('blog/' . $blog->getId() . '/new-name.png'));
+
+        $transport = $this->transport(MessageTransport::ASYNC)->throwExceptions();
+        $transport->queue()->assertContains(UpdateBlogUrlsMessage::class);
+        $message = $transport->queue()->messages(UpdateBlogUrlsMessage::class)[0];
+
+        $this->assertSame(UpdateBlogUrlEvent::MEDIA_URL_CHANGED, $message->event);
+        $this->assertSame($blog->getId(), $message->blogId);
+        $this->assertSame('https://update-media.hyvorblogs.io/media/test.png', $message->mediaOldUrl);
+        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $message->mediaNewUrl);
+        $this->assertCount(2, $message->lockKeys);
+
+        $transport->processOrFail();
 
         refresh($variant);
         $contentJson = json_decode($variant->getContent(), true, 512, JSON_THROW_ON_ERROR);
