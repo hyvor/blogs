@@ -4,9 +4,9 @@ namespace App\Service\Post\Content;
 
 use App\Entity\Blog;
 use App\Service\CodeHighlight\Highlighter;
-use App\Service\Delivery\MediaService;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Media\ImageResizeService;
+use App\Service\Media\MediaService;
 use App\Service\Post\Content\Marks\Code;
 use App\Service\Post\Content\Marks\Em;
 use App\Service\Post\Content\Marks\Highlight;

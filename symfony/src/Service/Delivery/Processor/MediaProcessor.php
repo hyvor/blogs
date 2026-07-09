@@ -6,9 +6,9 @@ use App\Entity\Blog;
 use App\Service\Delivery\Dto\CacheControl;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
-use App\Service\Delivery\MediaService;
 use App\Service\Delivery\MimeTypes;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
+use App\Service\Media\MediaService;
 use Intervention\Image\ImageManager;
 
 class MediaProcessor
@@ -26,7 +26,7 @@ class MediaProcessor
 
         $additional = $matchedRoute->param('additional');
 
-        $media = $this->mediaService->getByBlogAndName($blog, $fileName);
+        $media = $this->mediaService->getMediaByBlogAndName($blog, $fileName);
         if ($media === null) {
             return null;
         }

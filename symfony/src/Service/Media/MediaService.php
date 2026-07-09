@@ -4,15 +4,21 @@ namespace App\Service\Media;
 
 use App\Entity\Blog;
 use App\Entity\Media;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Limit;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
+use App\Service\Media\Event\MediaNameUpdatedEvent;
+use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\UnicodeString;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -40,6 +46,9 @@ class MediaService
         private Filesystem $filesystem,
         private EventDispatcherInterface $ed,
         private HttpClientInterface $httpClient,
+        private PermalinkService $permalinkService,
+        private UpdateBlogUrlLock $updateBlogUrlLock,
+        private MessageBusInterface $bus
     ) {}
 
     /**
@@ -92,7 +101,16 @@ class MediaService
         ]);
     }
 
-    /** @throws MediaUploadException */
+    public function getContents(Media $media): ?string
+    {
+        try {
+            return $this->filesystem->read($this->getPath($media->getBlog()->getId(), $media->getName()));
+        } catch (FilesystemException) {
+            return null;
+        }
+    }
+
+    /** @throws MediaException */
     public function uploadFile(
         Blog $blog,
         UploadedFile $file,
@@ -112,26 +130,83 @@ class MediaService
 
         $stream = fopen($file->getPathname(), 'r');
         if ($stream === false) {
-            throw new MediaUploadException('Error while uploading from storage');
+            throw new MediaException('Error while uploading from storage');
         }
 
         try {
             $this->filesystem->writeStream($this->getPath($blog->getId(), $fileName), $stream);
         } catch (FilesystemException $e) {
-            throw new MediaUploadException('Error while uploading: ' . $e->getMessage());
+            throw new MediaException('Error while uploading: ' . $e->getMessage());
         } finally {
             if (is_resource($stream)) {
                 fclose($stream);
             }
         }
 
+        return $this->createMedia(
+            $blog,
+            $postId,
+            $fileName,
+            (int)$file->getSize(),
+            $file->getClientOriginalName(),
+            $this->extensionFromName($fileName)
+        );
+    }
+
+    /** @throws MediaException */
+    public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
+    {
+        try {
+            $response = $this->httpClient->request('GET', $url, ['timeout' => 10]);
+            $content = $response->getContent();
+        } catch (HttpClientExceptionInterface) {
+            throw new MediaException('Error while fetching image file');
+        }
+
+        if ($content === '') {
+            throw new MediaException('Error while fetching image file');
+        }
+
+        if (strlen($content) > Limit::MAX_MEDIA_UPLOAD_SIZE) {
+            throw new MediaException('File size is too large');
+        }
+
+        $extension = $this->extensionFromName((string)parse_url($url, PHP_URL_PATH));
+        $fileName = bin2hex(random_bytes(16)) . ($extension !== null ? '.' . $extension : '');
+        $fileName = $this->getUniqueFilename($blog->getId(), $fileName);
+
+        try {
+            $this->filesystem->write($this->getPath($blog->getId(), $fileName), $content);
+        } catch (FilesystemException $e) {
+            throw new MediaException('Error while uploading: ' . $e->getMessage());
+        }
+
+        return $this->createMedia(
+            $blog,
+            $postId,
+            $fileName,
+            strlen($content),
+            $fileName,
+            $extension
+        );
+    }
+
+    private function createMedia(
+        Blog $blog,
+        ?int $postId,
+        string $fileName,
+        int $size,
+        string $originalName,
+        ?string $extension
+    ): Media
+    {
         $media = new Media();
         $media->setBlog($blog);
         $media->setPostId($postId);
         $media->setName($fileName);
-        $media->setSize((int)$file->getSize());
-        $media->setOriginalName($file->getClientOriginalName());
-        $media->setExtension($this->extensionFromName($fileName));
+        $media->setSize($size);
+        $media->setOriginalName($originalName);
+        $media->setExtension($extension);
         $media->setCreatedAt($this->now());
         $media->setUpdatedAt($this->now());
 
@@ -143,71 +218,60 @@ class MediaService
         return $media;
     }
 
-    /** @throws MediaUploadException */
-    public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
-    {
-        try {
-            $response = $this->httpClient->request('GET', $url, ['timeout' => 10]);
-            $stream = $this->httpClient->stream($response);
-            $content = $response->getContent();
-        } catch (HttpClientExceptionInterface) {
-            throw new MediaUploadException('Error while fetching image file');
-        }
 
-        if ($content === '') {
-            throw new MediaUploadException('Error while fetching image file');
-        }
-
-        if (strlen($content) > Limit::MAX_MEDIA_UPLOAD_SIZE) {
-            throw new MediaUploadException('File size is too large');
-        }
-
-        $extension = $this->extensionFromName((string)parse_url($url, PHP_URL_PATH));
-        $fileName = bin2hex(random_bytes(16)) . ($extension !== null ? '.' . $extension : '');
-        $fileName = $this->getUniqueFilename($blog->getId(), $fileName);
-
-        try {
-            $this->filesystem->write($this->getPath($blog->getId(), $fileName), $content);
-        } catch (FilesystemException $e) {
-            throw new MediaUploadException('Error while uploading: ' . $e->getMessage());
-        }
-
-        $media = new Media();
-        $media->setBlog($blog);
-        $media->setPostId($postId);
-        $media->setName($fileName);
-        $media->setSize(strlen($content));
-        $media->setOriginalName($fileName);
-        $media->setExtension($extension);
-        $media->setCreatedAt($this->now());
-
-        $this->em->persist($media);
-        $this->em->flush();
-
-        $this->ed->dispatch(new MediaCreatedEvent($media));
-
-        return $media;
-    }
-
-    /** @throws MediaUploadException */
+    /** @throws MediaException */
     public function updateName(Media $media, string $name): Media
     {
-        $blogId = $media->getBlog()->getId();
+        $blog = $media->getBlog();
+        $blogId = $blog->getId();
         $fileName = $this->toKebabCase($name);
         $fileName = $this->getUniqueFilename($blogId, $fileName);
 
         $oldPath = $this->getPath($blogId, $media->getName());
         $newPath = $this->getPath($blogId, $fileName);
 
+        $oldUrl = $this->permalinkService->getMediaPermalink($media, $blog);
+
         $media->setName($fileName);
         $media->setExtension($this->extensionFromName($fileName));
-        $this->em->flush();
+
+        $newUrl = $this->permalinkService->getMediaPermalink($media, $blog);
+
+        $canUpdateBlogUrls = $this->updateBlogUrlLock->canUpdate(UpdateBlogUrlEvent::MEDIA_URL_CHANGED, $media->getId());
+        if ($canUpdateBlogUrls !== true) {
+            throw new MediaException($canUpdateBlogUrls->getMessage());
+        }
+
+        $globalLock = $this->updateBlogUrlLock->mediaUrlGlobalLock();
+        $mediaLock = $this->updateBlogUrlLock->mediaUrlLock($media->getId());
+
+        $globalLock[0]->acquire(); // doesn't matter if we can't acquire, we just want to block HOSTING_CHANGED from running while we update the media URL
+        if (!$mediaLock[0]->acquire()) {
+            $globalLock[0]->release();
+            throw new MediaException('Cannot update media URL because another process is already updating the media URL. Please try again later.');
+        }
+
+        $updateBlogUrlsMessage = new UpdateBlogUrlsMessage(
+            blogId: $blogId,
+            event: UpdateBlogUrlEvent::MEDIA_URL_CHANGED,
+            lockKeys: [
+                $globalLock[1],
+                $mediaLock[1]
+            ],
+            mediaId: $media->getId(),
+            mediaOldUrl: $oldUrl,
+            mediaNewUrl: $newUrl
+        );
 
         try {
             $this->filesystem->move($oldPath, $newPath);
         } catch (FilesystemException $e) {
-            throw new MediaUploadException('Error while renaming: ' . $e->getMessage());
+            throw new MediaException('Error while renaming: ' . $e->getMessage());
         }
+
+        $this->em->flush();
+        $this->bus->dispatch($updateBlogUrlsMessage);
+        $this->ed->dispatch(new MediaNameUpdatedEvent($media, $oldUrl, $newUrl));
 
         return $media;
     }
@@ -249,7 +313,9 @@ class MediaService
 
     private function toKebabCase(string $name): string
     {
-        return new UnicodeString($name)->kebab();
+        $extension = $this->extensionFromName($name);
+        $nameWithoutExtension = $extension !== null ? substr($name, 0, -strlen($extension) - 1) : $name;
+        return new UnicodeString($nameWithoutExtension)->kebab() . ($extension !== null ? '.' . $extension : '');
     }
 
     private function extensionFromName(string $name): ?string

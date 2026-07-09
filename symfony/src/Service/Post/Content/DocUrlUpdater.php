@@ -2,30 +2,30 @@
 
 namespace App\Service\Post\Content;
 
+use App\Service\Blog\UpdateBlogUrls\Updater\UpdaterInterface;
 use App\Service\Post\Content\Marks\Link;
 use App\Service\Post\Content\Nodes\Audio\Audio;
 use App\Service\Post\Content\Nodes\Image\Image;
 use App\Service\Post\Content\Nodes\Text;
 use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
-class UrlUpdater
+#[Exclude]
+class DocUrlUpdater
 {
     public function __construct(private Node $document) {}
 
-    public function updateFromOldToNew(
-        string $oldUrl,
-        string $newUrl,
+    public function updateFromUpdater(
+        UpdaterInterface $updater,
         bool $updateMedia = true,
         bool $updateLinks = true
     ): Node {
         return $this->update(
-            function (Node $media) use ($oldUrl, $newUrl, $updateMedia) {
+            function (Node $media) use ($updater, $updateMedia) {
                 if (!$updateMedia) {
                     return false;
                 }
-
-                $oldMediaPrefix = $oldUrl . '/media/';
 
                 /** @var string $src */
                 $src = $media->attrs->get('src', false);
@@ -33,13 +33,10 @@ class UrlUpdater
                 if (!$src) {
                     return false;
                 }
-                if (!str_starts_with($src, $oldMediaPrefix)) {
-                    return false;
-                }
 
-                return $newUrl . '/media/' . substr($src, strlen($oldMediaPrefix));
+                return $updater->update($src);
             },
-            function (Mark $link) use ($oldUrl, $newUrl, $updateLinks) {
+            function (Mark $link) use ($updater, $updateLinks) {
                 if (!$updateLinks) {
                     return false;
                 }
@@ -50,11 +47,8 @@ class UrlUpdater
                 if (!$href) {
                     return false;
                 }
-                if (!str_starts_with($href, $oldUrl)) {
-                    return false;
-                }
 
-                return $newUrl . substr($href, strlen($oldUrl));
+                return $updater->update($href);
             }
         );
     }

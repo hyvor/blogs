@@ -5,7 +5,7 @@ namespace App\Service\Import\Importer;
 use App\Entity\Blog;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
-use App\Service\Media\MediaUploadException;
+use App\Service\Media\MediaException;
 use App\Service\Post\Content\Nodes\Audio\Audio;
 use App\Service\Post\Content\Nodes\Image\Image;
 use App\Service\Post\Content\PostContentService;
@@ -119,7 +119,7 @@ class Importer
 
         try {
             $media = $this->mediaService->uploadFromUrl($this->blog, $url);
-        } catch (MediaUploadException) {
+        } catch (MediaException) {
             $media = null;
         }
 

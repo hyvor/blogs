@@ -4,11 +4,11 @@ namespace App\Tests\Service\Post\Content;
 
 use App\Entity\Blog;
 use App\Service\Post\Content\PostContentService;
-use App\Service\Post\Content\UrlUpdater;
+use App\Service\Post\Content\DocUrlUpdater;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(UrlUpdater::class)]
+#[CoversClass(DocUrlUpdater::class)]
 class UrlUpdaterTest extends KernelTestCase
 {
     private function service(): PostContentService
@@ -51,7 +51,7 @@ class UrlUpdaterTest extends KernelTestCase
             ],
         ], $blog);
 
-        $updater = new UrlUpdater($doc);
+        $updater = new DocUrlUpdater($doc);
         $updated = $updater->updateFromOldToNew($oldUrl, $newUrl);
 
         $this->assertSame([

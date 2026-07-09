@@ -78,7 +78,6 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogUpdated(BlogUpdatedEvent $event): void
     {
-        // hosting fields are no longer changed through this event; see onBlogHostingChanged
         $this->cacheService->clearTemplateCache($event->blog);
     }
 

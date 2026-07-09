@@ -11,7 +11,7 @@ use App\Entity\UserVariant;
 use App\Repository\UserRepository;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
-use App\Service\Media\MediaUploadException;
+use App\Service\Media\MediaException;
 use App\Service\Route\PermalinkService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
@@ -247,7 +247,7 @@ class UserService
             try {
                 $media = $this->mediaService->uploadFromUrl($blog, $hyvorUser->picture_url);
                 $pictureUrl = $this->permalinkService->getMediaPermalink($media, $blog);
-            } catch (MediaUploadException) {
+            } catch (MediaException) {
                 // ignore: picture upload is best-effort
             }
         }

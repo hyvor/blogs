@@ -8,10 +8,14 @@ use App\Service\Media\MediaService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\UserFactory;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\Attributes\CoversClass;
+
+use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(MediaController::class)]
 #[CoversClass(MediaService::class)]
@@ -33,6 +37,28 @@ class UpdateMediaTest extends ApiTestCase
         $this->filesystem->write('blog/' . $blog->getId() . '/test.png', 'content');
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
 
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'content' => json_encode([
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'image',
+                                'attrs' => [
+                                    'src' => 'https://update-media.hyvorblogs.io/media/' . $media->getName(),
+                                    'alt' => '',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ], JSON_THROW_ON_ERROR),
+        ]);
+
         $this->consoleBlogApi('PATCH', $blog, '/media/' . $media->getId(), [
             'name' => 'new-name.png',
         ], user: $user);
@@ -45,6 +71,10 @@ class UpdateMediaTest extends ApiTestCase
 
         $this->assertFalse($this->filesystem->fileExists('blog/' . $blog->getId() . '/test.png'));
         $this->assertTrue($this->filesystem->fileExists('blog/' . $blog->getId() . '/new-name.png'));
+
+        refresh($variant);
+        $contentJson = json_decode($variant->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $contentJson['content'][0]['content'][0]['attrs']['src']);
     }
 
     public function test_updates_to_kebab_case(): void
