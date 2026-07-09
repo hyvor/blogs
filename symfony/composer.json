@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-zip": "*",
+        "ext-dom": "*",
         "dunglas/doctrine-json-odm": "^1.5",
         "hyvor/doctrine-filterq": "^0.0.1",
         "hyvor/internal": "^4.0.14",
