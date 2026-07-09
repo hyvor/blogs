@@ -12,11 +12,8 @@
 		button?: { href: string; label: string } | null;
 		flip?: boolean;
 		altBg?: boolean;
-		/** Right column. Put any markup/CSS/JS you need here. */
 		visual: Snippet;
-		/** Optional full-width content rendered below the split, inside the same section. */
 		after?: Snippet;
-		/** Optional override for the entire left column, instead of the props above. */
 		left?: Snippet;
 	}
 
@@ -73,7 +70,7 @@
 	{/if}
 </section>
 
-<style lang="scss">
+<style>
 	.feature-section {
 		padding: 100px 0;
 		border-bottom: 1px solid var(--border);
@@ -87,10 +84,10 @@
 		display: flex;
 		align-items: center;
 		gap: 72px;
+	}
 
-		&.flip {
-			flex-direction: row-reverse;
-		}
+	.split.flip {
+		flex-direction: row-reverse;
 	}
 
 	.text-col,
@@ -132,29 +129,43 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+	}
 
-		li {
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			font-size: 1rem;
+	.bullets li {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 1rem;
+	}
 
-			:global(svg) {
-				color: var(--accent);
-				flex-shrink: 0;
-			}
-		}
+	.bullets li :global(svg) {
+		color: var(--accent);
+		flex-shrink: 0;
 	}
 
 	@media (max-width: 900px) {
 		.split,
 		.split.flip {
 			flex-direction: column;
+			align-items: stretch;
 			gap: 48px;
+		}
+
+		.text-col {
+			width: 100%;
+			text-align: center;
+		}
+
+		.visual-col {
+			width: 100%;
 		}
 
 		p {
 			max-width: 100%;
+		}
+
+		.bullets {
+			align-items: center;
 		}
 	}
 </style>

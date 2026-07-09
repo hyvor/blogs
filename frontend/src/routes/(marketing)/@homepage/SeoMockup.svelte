@@ -143,7 +143,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.seo-mockup {
 		display: flex;
 		flex-direction: column;
@@ -199,10 +199,10 @@
 		stroke-dashoffset: 326.73;
 		transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1);
 		transition-delay: var(--delay, 0ms);
+	}
 
-		&.animate {
-			stroke-dashoffset: 0;
-		}
+	.gauge-fill.animate {
+		stroke-dashoffset: 0;
 	}
 
 	.gauge-center {
@@ -342,16 +342,16 @@
 		font-weight: 700;
 		background: color-mix(in srgb, var(--text) 8%, transparent);
 		color: var(--text-light);
+	}
 
-		&.ac-pill-pass {
-			background: color-mix(in srgb, #22c55e 15%, transparent);
-			color: #16a34a;
-		}
+	.ac-pill.ac-pill-pass {
+		background: color-mix(in srgb, #22c55e 15%, transparent);
+		color: #16a34a;
+	}
 
-		&.ac-pill-info {
-			background: color-mix(in srgb, #3b82f6 15%, transparent);
-			color: #3b82f6;
-		}
+	.ac-pill.ac-pill-info {
+		background: color-mix(in srgb, #3b82f6 15%, transparent);
+		color: #3b82f6;
 	}
 
 	@media (max-width: 900px) {

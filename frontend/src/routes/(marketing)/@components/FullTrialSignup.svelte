@@ -46,7 +46,8 @@
 	}
 
 	.inner {
-		max-width: 600px;
+		width: 600px;
+		max-width: 100%;
 	}
 
 	.badge {

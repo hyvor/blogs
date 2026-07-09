@@ -236,7 +236,7 @@
 	</div>
 </section>
 
-<style lang="scss">
+<style>
 	.all-features {
 		padding: 80px 0;
 	}
@@ -244,17 +244,18 @@
 	.section-header {
 		text-align: center;
 		margin-bottom: 48px;
+	}
 
-		h2 {
-			font-size: 32px;
-			font-weight: 700;
-			margin: 0 0 12px;
-		}
-		p {
-			font-size: 1rem;
-			color: var(--text-light);
-			margin: 0;
-		}
+	.section-header h2 {
+		font-size: 32px;
+		font-weight: 700;
+		margin: 0 0 12px;
+	}
+
+	.section-header p {
+		font-size: 1rem;
+		color: var(--text-light);
+		margin: 0;
 	}
 
 	.accordion {
@@ -265,9 +266,10 @@
 
 	.accordion-item {
 		border-bottom: 1px solid var(--border);
-		&:last-child {
-			border-bottom: none;
-		}
+	}
+
+	.accordion-item:last-child {
+		border-bottom: none;
 	}
 
 	.accordion-trigger {
@@ -282,10 +284,10 @@
 		text-align: left;
 		transition: background 0.15s;
 		color: var(--text);
+	}
 
-		&:hover {
-			background: var(--hover);
-		}
+	.accordion-trigger:hover {
+		background: var(--hover);
 	}
 
 	.open .accordion-trigger {
@@ -316,9 +318,10 @@
 		align-items: center;
 		color: var(--text-light);
 		transition: transform 0.2s;
-		&.rotated {
-			transform: rotate(180deg);
-		}
+	}
+
+	.chevron.rotated {
+		transform: rotate(180deg);
 	}
 
 	/* CSS grid row trick: content stays in DOM for SEO, height animates via grid */
@@ -326,10 +329,10 @@
 		display: grid;
 		grid-template-rows: 0fr;
 		transition: grid-template-rows 0.22s ease;
+	}
 
-		&.open {
-			grid-template-rows: 1fr;
-		}
+	.accordion-body.open {
+		grid-template-rows: 1fr;
 	}
 
 	.accordion-body-inner {

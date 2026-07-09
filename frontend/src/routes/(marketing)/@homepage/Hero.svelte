@@ -58,7 +58,7 @@
 	</div>
 </section>
 
-<style lang="scss">
+<style>
 	.hero {
 		display: flex;
 		align-items: center;
@@ -154,15 +154,15 @@
 		width: 12px;
 		height: 12px;
 		border-radius: 50%;
-		&.red {
-			background: #ff5f57;
-		}
-		&.yellow {
-			background: #febc2e;
-		}
-		&.green {
-			background: #28c840;
-		}
+	}
+	.dot.red {
+		background: #ff5f57;
+	}
+	.dot.yellow {
+		background: #febc2e;
+	}
+	.dot.green {
+		background: #28c840;
 	}
 
 	.url-bar {
@@ -202,13 +202,13 @@
 	.mock-nav {
 		display: flex;
 		gap: 10px;
-		span {
-			display: block;
-			width: 40px;
-			height: 10px;
-			border-radius: 4px;
-			background: color-mix(in srgb, var(--text) 10%, transparent);
-		}
+	}
+	.mock-nav span {
+		display: block;
+		width: 40px;
+		height: 10px;
+		border-radius: 4px;
+		background: color-mix(in srgb, var(--text) 10%, transparent);
 	}
 
 	.mock-post {
@@ -228,12 +228,12 @@
 		border-radius: 4px;
 		background: color-mix(in srgb, var(--text) 18%, transparent);
 		margin-bottom: 10px;
-		&.wide {
-			width: 90%;
-		}
-		&.narrow {
-			width: 65%;
-		}
+	}
+	.mock-title.wide {
+		width: 90%;
+	}
+	.mock-title.narrow {
+		width: 65%;
 	}
 
 	.mock-meta {
@@ -263,9 +263,9 @@
 		background: color-mix(in srgb, var(--text) 10%, transparent);
 		margin-bottom: 10px;
 		width: 100%;
-		&.short {
-			width: 70%;
-		}
+	}
+	.mock-text.short {
+		width: 70%;
 	}
 
 	/* Responsive */

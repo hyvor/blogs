@@ -77,7 +77,7 @@
 	{/each}
 </div>
 
-<style lang="scss">
+<style>
 	.hosting-mockup {
 		display: flex;
 		flex-direction: column;
@@ -93,13 +93,13 @@
 			box-shadow 0.2s,
 			border-color 0.2s;
 		box-shadow: 0 2px 8px color-mix(in srgb, var(--text) 4%, transparent);
+	}
 
-		&.active {
-			border-color: var(--accent);
-			box-shadow:
-				0 0 0 1px var(--accent),
-				0 8px 24px color-mix(in srgb, var(--accent) 15%, transparent);
-		}
+	.hosting-card.active {
+		border-color: var(--accent);
+		box-shadow:
+			0 0 0 1px var(--accent),
+			0 8px 24px color-mix(in srgb, var(--accent) 15%, transparent);
 	}
 
 	.hc-top {
@@ -152,12 +152,12 @@
 		border: 1px solid var(--border);
 		color: var(--text-light);
 		background: color-mix(in srgb, var(--text) 3%, var(--background));
+	}
 
-		&.hc-tag-accent {
-			color: var(--accent);
-			border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-			background: color-mix(in srgb, var(--accent) 10%, transparent);
-		}
+	.hc-tag.hc-tag-accent {
+		color: var(--accent);
+		border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
 	}
 
 	.hc-methods {
@@ -180,14 +180,14 @@
 		transition:
 			border-color 0.15s,
 			transform 0.15s;
+	}
 
-		&:hover {
-			border-color: var(--accent);
-			transform: translateY(-1px);
-		}
+	.hc-method:hover {
+		border-color: var(--accent);
+		transform: translateY(-1px);
+	}
 
-		img {
-			display: block;
-		}
+	.hc-method img {
+		display: block;
 	}
 </style>

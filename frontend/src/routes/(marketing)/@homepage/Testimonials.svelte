@@ -99,7 +99,7 @@
 	</div>
 </section>
 
-<style lang="scss">
+<style>
 	.testimonials {
 		background: #0f0f11;
 		padding: 96px 0;
@@ -166,11 +166,11 @@
 		transition:
 			background 0.2s,
 			transform 0.2s;
+	}
 
-		&.active {
-			background: #fff;
-			transform: scale(1.3);
-		}
+	.dot.active {
+		background: #fff;
+		transform: scale(1.3);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -196,29 +196,27 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-
-		strong {
-			font-size: 14px;
-			font-weight: 600;
-			color: #fff;
-		}
-
-		span {
-			font-size: 13px;
-			color: rgba(255, 255, 255, 0.4);
-		}
 	}
 
-	.g2-link {
-		:global(.button) {
-			border-color: rgba(255, 255, 255, 0.15) !important;
-			color: rgba(255, 255, 255, 0.6) !important;
-			background: transparent !important;
+	figcaption strong {
+		font-size: 14px;
+		font-weight: 600;
+		color: #fff;
+	}
 
-			&:hover {
-				border-color: rgba(255, 255, 255, 0.35) !important;
-				color: rgba(255, 255, 255, 0.9) !important;
-			}
-		}
+	figcaption span {
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	.g2-link :global(.button) {
+		border-color: rgba(255, 255, 255, 0.15) !important;
+		color: rgba(255, 255, 255, 0.6) !important;
+		background: transparent !important;
+	}
+
+	.g2-link :global(.button):hover {
+		border-color: rgba(255, 255, 255, 0.35) !important;
+		color: rgba(255, 255, 255, 0.9) !important;
 	}
 </style>

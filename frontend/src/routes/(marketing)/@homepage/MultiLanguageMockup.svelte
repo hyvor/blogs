@@ -38,7 +38,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.ml-mockup {
 		border-radius: 20px;
 		border: 1px solid var(--border);
@@ -77,12 +77,12 @@
 		border: 1px solid var(--border);
 		color: var(--text-light);
 		background: var(--background);
+	}
 
-		&.active {
-			background: var(--accent);
-			color: #fff;
-			border-color: var(--accent);
-		}
+	.lang-chip.active {
+		background: var(--accent);
+		color: #fff;
+		border-color: var(--accent);
 	}
 
 	.ml-body {
@@ -98,10 +98,10 @@
 		gap: 12px;
 		padding: 8px 0;
 		border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+	}
 
-		&.rtl .lang-lines {
-			direction: rtl;
-		}
+	.lang-row.rtl .lang-lines {
+		direction: rtl;
 	}
 
 	.lang-flag-code {
@@ -123,12 +123,14 @@
 		height: 8px;
 		border-radius: 4px;
 		background: color-mix(in srgb, var(--text) 10%, transparent);
-		&.long {
-			width: 90%;
-		}
-		&.med {
-			width: 65%;
-		}
+	}
+
+	.lang-line.long {
+		width: 90%;
+	}
+
+	.lang-line.med {
+		width: 65%;
 	}
 
 	.lang-status {
@@ -137,9 +139,10 @@
 		width: 20px;
 		text-align: center;
 		color: var(--text-light);
-		&.done {
-			color: #22c55e;
-		}
+	}
+
+	.lang-status.done {
+		color: #22c55e;
 	}
 
 	.ml-footer {
