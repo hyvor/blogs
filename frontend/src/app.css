@@ -8,15 +8,14 @@
 	--background: #fcfcfc;
 }
 
-
 ::view-transition-group(*) {
-  animation-duration: 200ms;
+	animation-duration: 200ms;
 }
 
 ::view-transition-old(*) {
-  animation-timing-function: ease-out;
+	animation-timing-function: ease-out;
 }
 
 ::view-transition-new(*) {
-  animation-timing-function: ease-out;
+	animation-timing-function: ease-out;
 }

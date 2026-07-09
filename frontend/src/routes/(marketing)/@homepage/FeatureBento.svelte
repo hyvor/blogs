@@ -12,13 +12,17 @@
 		{ primary: '#10b981', surface: '#d1fae5' },
 		{ primary: '#f59e0b', surface: '#fef3c7' },
 		{ primary: '#ec4899', surface: '#fce7f3' },
-		{ primary: '#8b5cf6', surface: '#ede9fe' },
+		{ primary: '#8b5cf6', surface: '#ede9fe' }
 	];
 
 	const hostingTypes = [
-		{ domain: 'yourblog.hyvorblogs.io', label: 'Default subdomain', note: 'Zero setup, ready instantly' },
+		{
+			domain: 'yourblog.hyvorblogs.io',
+			label: 'Default subdomain',
+			note: 'Zero setup, ready instantly'
+		},
 		{ domain: 'blog.yoursite.com', label: 'Custom domain', note: 'Free SSL, easy DNS setup' },
-		{ domain: 'yoursite.com/blog', label: 'Sub-directory', note: 'Best for SEO, reverse proxy' },
+		{ domain: 'yoursite.com/blog', label: 'Sub-directory', note: 'Best for SEO, reverse proxy' }
 	];
 
 	const seoFeatures = [
@@ -26,25 +30,39 @@
 		'Auto-generated sitemaps & robots.txt',
 		'In-built SEO & link analyzers',
 		'Static HTML, no JS bloat',
-		'Automatic WebP conversion',
+		'Automatic WebP conversion'
 	];
 
 	const mlSteps = [
-		{ icon: IconPlusCircle, title: 'Add a language', desc: 'Name, code,done. Everything is ready for translation.' },
-		{ icon: IconTranslate, title: 'Translate content', desc: 'Posts, tags, author names,manually or with AI.' },
-		{ icon: IconGlobe, title: 'Reach global audiences', desc: 'Hyvor Blogs handles routing, hreflang, and RTL automatically.' },
+		{
+			icon: IconPlusCircle,
+			title: 'Add a language',
+			desc: 'Name, code,done. Everything is ready for translation.'
+		},
+		{
+			icon: IconTranslate,
+			title: 'Translate content',
+			desc: 'Posts, tags, author names,manually or with AI.'
+		},
+		{
+			icon: IconGlobe,
+			title: 'Reach global audiences',
+			desc: 'Hyvor Blogs handles routing, hreflang, and RTL automatically.'
+		}
 	];
 </script>
 
 <section class="bento hds-container">
 	<div class="grid">
-
 		<!-- Custom Themes (large) -->
 		<div class="card card-themes">
 			<div class="card-body">
 				<span class="badge" style="--badge-color: #6366f1">Themes</span>
 				<h3>Match your brand, perfectly</h3>
-				<p>Choose from a library of beautiful themes or build your own with HTML and CSS. Every detail is customizable.</p>
+				<p>
+					Choose from a library of beautiful themes or build your own with HTML and CSS. Every
+					detail is customizable.
+				</p>
 				<Button as="a" href="/themes" size="small" variant="outline">
 					Browse themes
 					{#snippet end()}
@@ -88,7 +106,9 @@
 		<div class="card card-ml">
 			<span class="badge" style="--badge-color: #10b981">Multi-language</span>
 			<h3>Go global in minutes</h3>
-			<p>Everything is translatable,posts, tags, authors. RTL languages supported out of the box.</p>
+			<p>
+				Everything is translatable,posts, tags, authors. RTL languages supported out of the box.
+			</p>
 			<div class="ml-steps">
 				{#each mlSteps as step, i}
 					<div class="ml-step">
@@ -107,7 +127,10 @@
 			<div class="card-body">
 				<span class="badge" style="--badge-color: #f59e0b">SEO &amp; Speed</span>
 				<h3>Perfect scores. Zero configuration.</h3>
-				<p>All blogs are automatically optimized. Static HTML, instant CDN delivery, and built-in SEO tools.</p>
+				<p>
+					All blogs are automatically optimized. Static HTML, instant CDN delivery, and built-in SEO
+					tools.
+				</p>
 				<ul class="seo-features">
 					{#each seoFeatures as feat}
 						<li>
@@ -129,7 +152,6 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 </section>
 
@@ -206,7 +228,7 @@
 		border-radius: 8px;
 		overflow: hidden;
 		border: 1px solid var(--border);
-		box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 	}
 
 	.swatch-header {
@@ -223,9 +245,15 @@
 	.swatch-line {
 		height: 5px;
 		border-radius: 3px;
-		&.long { width: 100%; }
-		&.med { width: 80%; }
-		&.short { width: 60%; }
+		&.long {
+			width: 100%;
+		}
+		&.med {
+			width: 80%;
+		}
+		&.short {
+			width: 60%;
+		}
 	}
 
 	/* Hosting card */
@@ -413,7 +441,10 @@
 		.grid {
 			grid-template-columns: 1fr;
 		}
-		.card-themes, .card-hosting, .card-ml, .card-seo {
+		.card-themes,
+		.card-hosting,
+		.card-ml,
+		.card-seo {
 			grid-column: 1;
 			grid-row: auto;
 		}

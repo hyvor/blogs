@@ -41,53 +41,140 @@
 			label: 'Post Editor',
 			color: 'green',
 			features: [
-				{ icon: IconPencil, title: 'All the basics', description: 'Bold, italic, headings, lists, quotes, links, and more.' },
-				{ icon: IconImage, title: 'Images', description: 'Upload, paste, drag and drop, Unsplash, Excalidraw, and more ways to add images.' },
-				{ icon: IconCode, title: 'Embeds', description: 'Easily embed from Youtube, X, Facebook, Instagram, and 1000+ other platforms.' },
-				{ icon: IconRegex, title: 'Syntax Highlighting', description: 'Add code blocks with syntax highlighting for 100+ languages.' },
-				{ icon: IconMarkdown, title: 'Markdown-friendly', description: 'Markdown shortcuts for all the formatting you need.' },
-				{ icon: IconHourglass, title: 'Drafts & Scheduling', description: 'Save drafts and schedule posts to be published in the future.' },
+				{
+					icon: IconPencil,
+					title: 'All the basics',
+					description: 'Bold, italic, headings, lists, quotes, links, and more.'
+				},
+				{
+					icon: IconImage,
+					title: 'Images',
+					description:
+						'Upload, paste, drag and drop, Unsplash, Excalidraw, and more ways to add images.'
+				},
+				{
+					icon: IconCode,
+					title: 'Embeds',
+					description:
+						'Easily embed from Youtube, X, Facebook, Instagram, and 1000+ other platforms.'
+				},
+				{
+					icon: IconRegex,
+					title: 'Syntax Highlighting',
+					description: 'Add code blocks with syntax highlighting for 100+ languages.'
+				},
+				{
+					icon: IconMarkdown,
+					title: 'Markdown-friendly',
+					description: 'Markdown shortcuts for all the formatting you need.'
+				},
+				{
+					icon: IconHourglass,
+					title: 'Drafts & Scheduling',
+					description: 'Save drafts and schedule posts to be published in the future.'
+				}
 			]
 		},
 		{
 			label: 'Your Blog',
 			color: 'blue',
 			features: [
-				{ icon: IconTag, title: 'Tags', description: 'Organize your posts with tags. Tag index pages are generated automatically.' },
-				{ icon: IconPeople, title: 'Authors', description: 'Add one or more authors to your blog posts. Author index pages are generated automatically.' },
-				{ icon: IconSignpost2, title: 'Navigation', description: 'Add navigation links to your blog header and footer without writing any code.' },
-				{ icon: IconSignTurnSlightRight, title: 'Redirects', description: 'Set up redirects for your old blog posts to keep your SEO juice.' },
-				{ icon: IconRss, title: 'Atom (RSS) Feed', description: 'Atom feeds are generated automatically. No extra work needed.' },
-				{ icon: IconDiagram3, title: 'Sitemap', description: 'Same for the sitemap! It\'s generated automatically.' },
-				{ icon: IconBraces, title: 'Custom Code', description: 'Add custom code to the whole blog or a specific page to integrate with third-party services.' },
+				{
+					icon: IconTag,
+					title: 'Tags',
+					description: 'Organize your posts with tags. Tag index pages are generated automatically.'
+				},
+				{
+					icon: IconPeople,
+					title: 'Authors',
+					description:
+						'Add one or more authors to your blog posts. Author index pages are generated automatically.'
+				},
+				{
+					icon: IconSignpost2,
+					title: 'Navigation',
+					description:
+						'Add navigation links to your blog header and footer without writing any code.'
+				},
+				{
+					icon: IconSignTurnSlightRight,
+					title: 'Redirects',
+					description: 'Set up redirects for your old blog posts to keep your SEO juice.'
+				},
+				{
+					icon: IconRss,
+					title: 'Atom (RSS) Feed',
+					description: 'Atom feeds are generated automatically. No extra work needed.'
+				},
+				{
+					icon: IconDiagram3,
+					title: 'Sitemap',
+					description: "Same for the sitemap! It's generated automatically."
+				},
+				{
+					icon: IconBraces,
+					title: 'Custom Code',
+					description:
+						'Add custom code to the whole blog or a specific page to integrate with third-party services.'
+				}
 			]
 		},
 		{
 			label: 'Optimizations',
 			color: 'orange',
 			features: [
-				{ icon: IconSearchHeart, title: 'SEO', description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.' },
-				{ icon: IconLightning, title: 'Speed', description: 'All official themes are optimized for speed. We use caching extensively to make your blog blazing fast.' },
-				{ icon: IconArrowsAngleContract, title: 'Image Optimization', description: 'Automatic webp conversion and responsive images for all your images.' },
+				{
+					icon: IconSearchHeart,
+					title: 'SEO',
+					description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
+				},
+				{
+					icon: IconLightning,
+					title: 'Speed',
+					description:
+						'All official themes are optimized for speed. We use caching extensively to make your blog blazing fast.'
+				},
+				{
+					icon: IconArrowsAngleContract,
+					title: 'Image Optimization',
+					description: 'Automatic webp conversion and responsive images for all your images.'
+				}
 			]
 		},
 		{
 			label: 'Developers',
 			color: 'red',
 			features: [
-				{ icon: IconDatabase, title: 'Data API', description: 'A REST API to access your blog data, allowing you to use Hyvor Blogs as a headless CMS.' },
-				{ icon: IconController, title: 'Console API', description: 'Everything you can do from the Console, you can do with the Console API.' },
-				{ icon: IconSend, title: 'Delivery API', description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.' },
-				{ icon: IconSend, title: 'Webhooks', description: 'Get notified when an event happens in your blog.' },
+				{
+					icon: IconDatabase,
+					title: 'Data API',
+					description:
+						'A REST API to access your blog data, allowing you to use Hyvor Blogs as a headless CMS.'
+				},
+				{
+					icon: IconController,
+					title: 'Console API',
+					description: 'Everything you can do from the Console, you can do with the Console API.'
+				},
+				{
+					icon: IconSend,
+					title: 'Delivery API',
+					description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
+				},
+				{
+					icon: IconSend,
+					title: 'Webhooks',
+					description: 'Get notified when an event happens in your blog.'
+				}
 			]
-		},
+		}
 	];
 
 	const colorMap: Record<FeatureColor, string> = {
 		green: 'var(--green)',
 		blue: 'var(--blue)',
 		orange: 'var(--orange)',
-		red: 'var(--red)',
+		red: 'var(--red)'
 	};
 
 	let openIndex = $state(0);
@@ -133,7 +220,12 @@
 						<div class="accordion-content">
 							<div class="features-grid">
 								{#each cat.features as feat}
-									<Feature icon={feat.icon} title={feat.title} description={feat.description} color={cat.color} />
+									<Feature
+										icon={feat.icon}
+										title={feat.title}
+										description={feat.description}
+										color={cat.color}
+									/>
 								{/each}
 							</div>
 						</div>

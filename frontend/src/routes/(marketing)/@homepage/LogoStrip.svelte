@@ -12,7 +12,7 @@
 		{ name: 'Subdivisions', logo: logoSubdivisions },
 		{ name: 'Job Posts', logo: logoJobPosts, width: 100, height: 26 },
 		{ name: 'Yoga Kiddy', logo: yogakiddy, width: 36, height: 36 },
-		{ name: 'Univerbal', logo: logoUniverbal, width: 110, height: 42 },
+		{ name: 'Univerbal', logo: logoUniverbal, width: 110, height: 42 }
 	];
 </script>
 
@@ -21,7 +21,13 @@
 		<p class="label">Trusted by 100+ bloggers &amp; businesses</p>
 		<div class="logos">
 			{#each customers as c}
-				<img src={c.logo} alt={c.name} width={c.width ?? 120} height={c.height ?? 28} class="logo" />
+				<img
+					src={c.logo}
+					alt={c.name}
+					width={c.width ?? 120}
+					height={c.height ?? 28}
+					class="logo"
+				/>
 			{/each}
 		</div>
 	</div>
@@ -38,7 +44,7 @@
 	}
 
 	.label {
-		font-size: 13px;
+		font-size: 16px;
 		font-weight: 600;
 		letter-spacing: 0.07em;
 		text-transform: uppercase;

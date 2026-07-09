@@ -97,9 +97,9 @@
 	}
 </script>
 
-<a 
-	class="post-list-item" 
-	href={consoleUrlWithBlog(`/posts/${post.id}`)} 
+<a
+	class="post-list-item"
+	href={consoleUrlWithBlog(`/posts/${post.id}`)}
 	style:view-transition-name={`post-${post.id}`}
 >
 	<div class="post-main">
@@ -189,7 +189,12 @@
 	>
 		<Dropdown bind:show={showDropdown} align="end" width={150}>
 			{#snippet trigger()}
-				<IconButton size="small" color="input" variant="invisible" disabled={isCloning || isDeleting}>
+				<IconButton
+					size="small"
+					color="input"
+					variant="invisible"
+					disabled={isCloning || isDeleting}
+				>
 					<IconThreeDotsVertical size={16} />
 				</IconButton>
 			{/snippet}

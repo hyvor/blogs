@@ -17,9 +17,7 @@
 
 			<div class="buttons">
 				<Button as="a" href="/console?signup" size="large">Start your blog</Button>
-				<Button as="a" href="/customers" size="large" variant="outline"
-					>See customer blogs</Button
-				>
+				<Button as="a" href="/customers" size="large" variant="outline">See customer blogs</Button>
 			</div>
 
 			<div class="trial-checks">
@@ -72,6 +70,8 @@
 		display: flex;
 		align-items: center;
 		gap: 100px;
+		width: 1120px;
+		max-width: 100%;
 	}
 
 	.left {
@@ -228,8 +228,12 @@
 		border-radius: 4px;
 		background: color-mix(in srgb, var(--text) 18%, transparent);
 		margin-bottom: 10px;
-		&.wide   { width: 90%; }
-		&.narrow { width: 65%; }
+		&.wide {
+			width: 90%;
+		}
+		&.narrow {
+			width: 65%;
+		}
 	}
 
 	.mock-meta {
@@ -259,7 +263,9 @@
 		background: color-mix(in srgb, var(--text) 10%, transparent);
 		margin-bottom: 10px;
 		width: 100%;
-		&.short { width: 70%; }
+		&.short {
+			width: 70%;
+		}
 	}
 
 	/* Responsive */

@@ -17,7 +17,7 @@
 	}
 
 	function handleBack() {
-		goto(getBackUrl())
+		goto(getBackUrl());
 	}
 </script>
 

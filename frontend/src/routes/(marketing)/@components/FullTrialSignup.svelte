@@ -7,16 +7,9 @@
 		[key: string]: any;
 	}
 
-	let {
-		title = 'Start your blog today',
-		...rest
-	}: Props = $props();
+	let { title = 'Start your blog today', ...rest }: Props = $props();
 
-	const checks = [
-		'14-day free trial',
-		'No credit card required',
-		'Cancel anytime',
-	];
+	const checks = ['14-day free trial', 'No credit card required', 'Cancel anytime'];
 </script>
 
 <section class="cta-section" {...rest}>

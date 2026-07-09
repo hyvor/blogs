@@ -9,23 +9,42 @@
 
 	const customers = [
 		{ name: 'Aqeez', logo: logoAqeez, url: 'https://blog.aqeez.com' },
-		{ name: 'Times of Madeira', logo: logoTimesOfMadeira, url: 'https://timesofmadeira.com', height: 65 },
+		{
+			name: 'Times of Madeira',
+			logo: logoTimesOfMadeira,
+			url: 'https://timesofmadeira.com',
+			height: 65
+		},
 		{ name: 'Subdivisions', logo: logoSubdivisions, url: 'https://blog.subdivisions.com' },
-		{ name: 'Job Posts', logo: logoJobPosts, url: 'https://jobposts.ai/blog', width: 120, height: 30 },
+		{
+			name: 'Job Posts',
+			logo: logoJobPosts,
+			url: 'https://jobposts.ai/blog',
+			width: 120,
+			height: 30
+		},
 		{ name: 'Yoga Kiddy', logo: yogakiddy, url: 'https://fr.yogakiddy.com', width: 40, height: 40 },
-		{ name: 'Univerbal', logo: logoUniverbal, url: 'https://blog.univerbal.app', width: 130, height: 50 }
+		{
+			name: 'Univerbal',
+			logo: logoUniverbal,
+			url: 'https://blog.univerbal.app',
+			width: 130,
+			height: 50
+		}
 	];
 
 	const reviews = [
 		{
 			name: 'Lionel S.',
 			role: 'Blogger',
-			review: 'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
+			review:
+				'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
 		},
 		{
 			name: 'Manoj P.',
 			role: 'Senior Application Engineer',
-			review: 'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
+			review:
+				'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
 		}
 	];
 </script>
@@ -52,9 +71,12 @@
 		{#each reviews as review}
 			<div class="review">
 				<div class="stars" aria-label="5 stars">
-					{#each [1,2,3,4,5] as _}
+					{#each [1, 2, 3, 4, 5] as _}
 						<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-							<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" fill="currentColor"/>
+							<path
+								d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
+								fill="currentColor"
+							/>
 						</svg>
 					{/each}
 				</div>
