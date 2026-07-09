@@ -1,10 +1,10 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Service\Export\MessageHandler;
 
 use App\Entity\Export;
-use App\Message\ExportMessage;
 use App\Service\Export\ExportService;
+use App\Service\Export\Message\ExportMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
