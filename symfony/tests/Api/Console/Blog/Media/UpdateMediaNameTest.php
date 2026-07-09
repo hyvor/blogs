@@ -25,7 +25,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 #[CoversClass(MediaController::class)]
 #[CoversClass(MediaService::class)]
 #[CoversClass(UpdateBlogUrlLock::class)]
-class UpdateMediaTest extends ApiTestCase
+class UpdateMediaNameTest extends ApiTestCase
 {
     private Filesystem $filesystem;
 
@@ -142,4 +142,48 @@ class UpdateMediaTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(422);
     }
+
+    public function test_cannot_update_if_another_process_is_updating_urls(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'update-media-lock']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
+
+        // Simulate another process holding the lock
+        $lock = $this->getService(UpdateBlogUrlLock::class)->mediaUrlLock($media->getId())[0];
+        $lock->acquire();
+
+        $this->consoleBlogApi('PATCH', $blog, '/media/' . $media->getId(), [
+            'name' => 'new-name.png',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Cannot update media URL because another process is already updating the media URL.');
+
+        $this->getEm()->clear();
+        refresh($media);
+        $this->assertSame('test.png', $media->getName());
+    }
+
+    public function test_cannot_update_if_hosting_update_is_in_progress(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'update-media-hosting-lock']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
+
+        // Simulate another process holding the hosting lock
+        $lock = $this->getService(UpdateBlogUrlLock::class)->hostingChangedLock()[0];
+        $lock->acquire();
+
+        $this->consoleBlogApi('PATCH', $blog, '/media/' . $media->getId(), [
+            'name' => 'new-name.png',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Cannot update media URL because a hosting URL update is in progress.');
+
+        $this->getEm()->clear();
+        refresh($media);
+        $this->assertSame('test.png', $media->getName());
+    }
+
+
 }
