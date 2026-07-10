@@ -6,3 +6,15 @@
 	/* extra */
 	--accent-light-mid: #f7f2f0;
 }
+
+::view-transition-group(*) {
+	animation-duration: 200ms;
+}
+
+::view-transition-old(*) {
+	animation-timing-function: ease-out;
+}
+
+::view-transition-new(*) {
+	animation-timing-function: ease-out;
+}
