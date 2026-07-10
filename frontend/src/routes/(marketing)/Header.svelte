@@ -70,7 +70,9 @@
 							as="a"
 							size="small"
 							href="/customers"
-							variant={$page.url.pathname === '/customers' ? 'fill-light' : 'invisible'}
+							variant={$page.url.pathname === '/customers'
+								? 'fill-light'
+								: 'invisible'}
 							block
 						>
 							Customers
@@ -79,7 +81,9 @@
 							as="a"
 							size="small"
 							href="/integrations"
-							variant={$page.url.pathname.startsWith('/integrations') ? 'fill-light' : 'invisible'}
+							variant={$page.url.pathname.startsWith('/integrations')
+								? 'fill-light'
+								: 'invisible'}
 							block
 						>
 							Integrations
