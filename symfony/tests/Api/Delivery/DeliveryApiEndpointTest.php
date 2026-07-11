@@ -5,17 +5,36 @@ namespace App\Tests\Api\Delivery;
 use App\Api\Delivery\AppDeliveryController;
 use App\Entity\Blog;
 use App\Entity\Enum\ApiKeyType;
+use App\Entity\Enum\RedirectType;
+use App\Service\Cache\BlogCacheService;
+use App\Service\Delivery\DeliveryService;
+use App\Service\Delivery\Dto\DeliveryResponse;
+use App\Service\Delivery\PathMatcher;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use App\Entity\Enum\ThemeFileFolder;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(AppDeliveryController::class)]
 class DeliveryApiEndpointTest extends ApiTestCase
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // we want debug false forced to ensure caching is tested
+        $this->getContainer()->set(DeliveryService::class, new DeliveryService(
+            $this->getService(PathMatcher::class),
+            $this->getService(BlogCacheService::class),
+            debug: false, // force
+        ));
+    }
+
 
     /**
      * @param array<string, mixed> $params
@@ -84,6 +103,42 @@ class DeliveryApiEndpointTest extends ApiTestCase
         $this->assertTrue($json['cache']);
         $this->assertSame('no-cache, private', $json['cache_control']);
         $this->assertArrayHasKey('at', $json);
+
+        // cache set
+        $cache = $this->getService(CacheItemPoolInterface::class);
+        $item = $cache->getItem(hash('xxh3', 'blog_cache_' . $blog->getId() . '_/'));
+        $this->assertTrue($item->isHit());
+        $cached = unserialize($item->get());
+        $this->assertInstanceOf(DeliveryResponse::class, $cached);
+        $this->assertSame(200, $cached->status);
+        $this->assertSame('just testing', $cached->content);
+    }
+
+    public function test_returns_from_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+
+        $cache = $this->getService(CacheItemPoolInterface::class);
+        $item = $cache->getItem(hash('xxh3', 'blog_cache_' . $blog->getId() . '_/'));
+        $item->set(serialize(DeliveryResponse::forRedirect('https://example.com', RedirectType::TEMPORARY)));
+        $cache->save($item);
+
+        $apiKey = ApiKeyFactory::createOne([
+            'blog' => $blog,
+            'type' => ApiKeyType::DELIVERY,
+        ]);
+
+        $this->deliveryApi($blog, [
+            'api_key' => $apiKey->getApiKey(),
+            'path' => '',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+
+        $this->assertSame(302, $json['status']);
+        $this->assertSame('redirect', $json['type']);
+        $this->assertSame('https://example.com', $json['to']);
     }
 
     public function test_does_not_cache_preview(): void

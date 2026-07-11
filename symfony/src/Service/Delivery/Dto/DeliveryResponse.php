@@ -4,8 +4,11 @@ namespace App\Service\Delivery\Dto;
 
 use App\Entity\Enum\RedirectType;
 
-class DeliveryResponse
+class DeliveryResponse implements \JsonSerializable
 {
+
+    public int $at;
+
     private function __construct(
         public readonly DeliveryResponseType $type,
         public readonly int $status,
@@ -15,7 +18,9 @@ class DeliveryResponse
         public readonly string $mimeType = 'text/html',
         public readonly CacheControl $cacheControl = CacheControl::NO_CACHE,
         public readonly ?DeliveryFileType $fileType = null,
-    ) {}
+    ) {
+        $this->at = time();
+    }
 
     public static function forRedirect(string $to, RedirectType $type): self
     {
@@ -69,5 +74,26 @@ class DeliveryResponse
             cacheControl: CacheControl::NO_CACHE,
             fileType: $fileType,
         );
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $response = [
+            'type' => $this->type->value,
+            'status' => $this->status,
+            'cache' => $this->cache,
+            'cache_control' => $this->cacheControl->toHeaderValue(),
+            'at' => $this->at,
+        ];
+
+        if ($this->type === DeliveryResponseType::REDIRECT) {
+            $response['to'] = $this->to;
+        } elseif ($this->type === DeliveryResponseType::FILE) {
+            $response['content'] = base64_encode($this->content ?? '');
+            $response['file_type'] = $this->fileType?->value;
+            $response['mime_type'] = $this->mimeType;
+        }
+
+        return $response;
     }
 }
