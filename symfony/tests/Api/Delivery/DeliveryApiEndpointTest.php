@@ -20,6 +20,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(AppDeliveryController::class)]
+#[CoversClass(DeliveryService::class)]
 class DeliveryApiEndpointTest extends ApiTestCase
 {
 

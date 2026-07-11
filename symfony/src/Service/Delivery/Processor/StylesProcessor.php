@@ -50,12 +50,18 @@ class StylesProcessor
             return DeliveryResponse::forError(DeliveryFileType::ASSET, 'SCSS Error: ' . $e->getMessage(), 500);
         }
 
-        $css = $this->addFontCss($blog, $css);
+        [$css, $shortCache, $comment] = $this->addFontCss($blog, $css);
         $css = $this->minify($css);
 
-        $cacheControl = $blog->getType() === BlogType::DEV
-            ? CacheControl::NO_CACHE
-            : CacheControl::ONE_YEAR;
+        if ($comment !== null) {
+            $css .= "\n/* $comment */";
+        }
+
+        $cacheControl = match (true) {
+            $blog->getType() === BlogType::DEV => CacheControl::NO_CACHE,
+            $shortCache => CacheControl::ONE_HOUR,
+            default => CacheControl::ONE_YEAR,
+        };
 
         return DeliveryResponse::forFile(
             DeliveryFileType::ASSET,
@@ -75,21 +81,30 @@ class StylesProcessor
         return $minifier->minify();
     }
 
-    private function addFontCss(Blog $blog, string $css): string
+    /**
+     * @return array{0: string, 1: bool, 2: string|null} returns an array with the modified CSS,
+     *                                                   a boolean indicating if caching should be short (due to fetching fonts error),
+     *                                                   and an optional comment to append to the CSS after minifying
+     */
+    private function addFontCss(Blog $blog, string $css): array
     {
         $config = $this->themeConfigService->getConfig($blog);
         $themeFonts = $config['THEME_FONTS'] ?? null;
         if (!is_string($themeFonts)) {
-            return $css;
+            return [$css, false, null];
         }
 
         try {
             $blogUrl = $this->permalinkService->getBlogUrl($blog);
             $bunnyCss = $this->bunnyService->getCss($blog->getId(), $blogUrl, $themeFonts);
-        } catch (UnableToFetchBunnyException) {
-            return $css;
+        } catch (UnableToFetchBunnyException $e) {
+            return [
+                $css,
+                true,
+                'Unable to fetch fonts from Bunny: ' . $e->getMessage()
+            ];
         }
 
-        return $css . "\n" . $bunnyCss;
+        return [$css . "\n" . $bunnyCss, false, null];
     }
 }

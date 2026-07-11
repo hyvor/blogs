@@ -41,15 +41,15 @@ class PathMatcher
 
     public function __construct(Blog $blog, string $path)
     {
-        if ($path[0] !== '/') {
-            throw new Exception('Path should start with /');
-        }
-
-        $this->blog = $blog;
-        $this->path = $path;
+//        if ($path[0] !== '/') {
+//            throw new Exception('Path should start with /');
+//        }
+//
+//        $this->blog = $blog;
+//        $this->path = $path;
 
         $this->callFuncs([
-            'matchRedirect',
+          //  'matchRedirect',
             'matchDefaultRoutes',
 
             'setLanguage',
@@ -63,32 +63,32 @@ class PathMatcher
      * calls functions with match check after each
      * @param string[] $funcs
      */
-    private function callFuncs(array $funcs) : void
-    {
-        foreach ($funcs as $func) {
-            $this->{$func}();
-            if ($this->matched()) {
-                return;
-            }
-        }
-    }
+//    private function callFuncs(array $funcs) : void
+//    {
+//        foreach ($funcs as $func) {
+//            $this->{$func}();
+//            if ($this->matched()) {
+//                return;
+//            }
+//        }
+//    }
 
     /**
      * Matches for redirects
      */
-    private function matchRedirect() : void
-    {
-        $redirect = RedirectRepository::findRedirectForPath($this->blog, $this->path);
-
-        if ($redirect) {
-            $this->setMatched(
-                DeliveryAPIResponseObject::forRedirect(
-                    $redirect['to'],
-                    $redirect['type']
-                )
-            );
-        }
-    }
+//    private function matchRedirect() : void
+//    {
+//        $redirect = RedirectRepository::findRedirectForPath($this->blog, $this->path);
+//
+//        if ($redirect) {
+//            $this->setMatched(
+//                DeliveryAPIResponseObject::forRedirect(
+//                    $redirect['to'],
+//                    $redirect['type']
+//                )
+//            );
+//        }
+//    }
 
     /**
      * Unlike posts/pages, these routes do not conflict
@@ -96,58 +96,58 @@ class PathMatcher
      * If there's no match, nothing happens
      * The PathMatcher moves to the next step
      */
-    private function matchDefaultRoutes() : void
-    {
-        $routeMatcher = new RouteMatcher($this->path);
-
-        $routeMatcher->add('assets', '/assets/{file_name}');
-        $routeMatcher->add('preview', '/p/{id}/{lang}');
-        $routeMatcher->add('styles', '/styles.css');
-        $routeMatcher->add('media', '/media/{file_name}/{additional}', [
-            'additional' => null
-        ]);
-
-        $routeMatcher->add('fonts-css', '/fonts/css/{family}');
-        $routeMatcher->add('fonts-file', '/fonts/file/{path}', [], [
-            'path' => '.*'
-        ]);
-
-        $routeMatcher->add('sitemap-index', '/sitemap.xml');
-        $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
-        $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml', [], [
-            'number' => '\d+',
-        ]);
-
-        $routeMatcher->add('robots.txt', '/robots.txt');
-
-        $matchedRoute = $routeMatcher->match();
-
-        if ($matchedRoute) {
-            $processor = match ($matchedRoute->name) {
-                'assets' => AssetsProcessor::class,
-                'preview' => PreviewProcessor::class,
-                'styles' => StylesProcessor::class,
-                'media' => MediaProcessor::class,
-
-                'fonts-css' => FontsCssProcessor::class,
-                'fonts-file' => FontsFileProcessor::class,
-
-                'sitemap-index' => SitemapIndexProcessor::class,
-                'sitemap-pages' => SitemapPagesProcessor::class,
-                'sitemap-posts' => SitemapPostsProcessor::class,
-
-                'robots.txt' => RobotsTxtProcessor::class,
-
-                default => throw new SafetyException('Route name not found'),
-            };
-
-            $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();
-
-            if ($responseObject) {
-                $this->setMatched($responseObject);
-            }
-        }
-    }
+//    private function matchDefaultRoutes() : void
+//    {
+//        $routeMatcher = new RouteMatcher($this->path);
+//
+//        $routeMatcher->add('assets', '/assets/{file_name}');
+//        $routeMatcher->add('preview', '/p/{id}/{lang}');
+//        $routeMatcher->add('styles', '/styles.css');
+//        $routeMatcher->add('media', '/media/{file_name}/{additional}', [
+//            'additional' => null
+//        ]);
+//
+//        $routeMatcher->add('fonts-css', '/fonts/css/{family}');
+//        $routeMatcher->add('fonts-file', '/fonts/file/{path}', [], [
+//            'path' => '.*'
+//        ]);
+//
+//        $routeMatcher->add('sitemap-index', '/sitemap.xml');
+//        $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
+//        $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml', [], [
+//            'number' => '\d+',
+//        ]);
+//
+//        $routeMatcher->add('robots.txt', '/robots.txt');
+//
+//        $matchedRoute = $routeMatcher->match();
+//
+//        if ($matchedRoute) {
+//            $processor = match ($matchedRoute->name) {
+//                'assets' => AssetsProcessor::class,
+//                'preview' => PreviewProcessor::class,
+//                'styles' => StylesProcessor::class,
+//                'media' => MediaProcessor::class,
+//
+//                'fonts-css' => FontsCssProcessor::class,
+//                'fonts-file' => FontsFileProcessor::class,
+//
+//                'sitemap-index' => SitemapIndexProcessor::class,
+//                'sitemap-pages' => SitemapPagesProcessor::class,
+//                'sitemap-posts' => SitemapPostsProcessor::class,
+//
+//                'robots.txt' => RobotsTxtProcessor::class,
+//
+//                default => throw new SafetyException('Route name not found'),
+//            };
+//
+//            $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();
+//
+//            if ($responseObject) {
+//                $this->setMatched($responseObject);
+//            }
+//        }
+//    }
 
     /**
      * Set the language based on the path prefix
