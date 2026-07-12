@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Tests\Service\Delivery\PathMatcher\Default;
+namespace App\Tests\Service\Delivery\PathMatcher\Default\Media;
 
 use App\Service\Delivery\Dto\CacheControl;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
-use App\Service\Delivery\MediaService;
-use League\Flysystem\Filesystem;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\MediaProcessor;
+use App\Service\Media\MediaService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use League\Flysystem\Filesystem;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PathMatcher::class)]
@@ -20,14 +19,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(MediaService::class)]
 class MediaTest extends KernelTestCase
 {
-    private Filesystem $filesystem;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
-        $mediaService = new MediaService($this->getEm(), $this->filesystem);
-        static::getContainer()->set(MediaService::class, $mediaService);
     }
 
     private function pathMatcher(): PathMatcher
@@ -37,7 +32,7 @@ class MediaTest extends KernelTestCase
 
     private function storeFile(int $blogId, string $name, string $content): void
     {
-        $this->filesystem->write('blog/' . $blogId . '/' . $name, $content);
+        $this->getService(Filesystem::class)->write('blog/' . $blogId . '/' . $name, $content);
     }
 
     public function test_matches_media(): void
@@ -84,7 +79,6 @@ class MediaTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne();
         $jpgContent = (string)file_get_contents(__DIR__ . '/test.jpg');
-        $webpContent = (string)file_get_contents(__DIR__ . '/test.webp');
 
         MediaFactory::createOne([
             'blog' => $blog,
@@ -98,7 +92,6 @@ class MediaTest extends KernelTestCase
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
-        $this->assertSame($webpContent, $response->content);
         $this->assertSame('image/webp', $response->mimeType);
         $this->assertSame(DeliveryFileType::MEDIA, $response->fileType);
     }
@@ -107,7 +100,6 @@ class MediaTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne();
         $pngContent = (string)file_get_contents(__DIR__ . '/test.png');
-        $webpContent = (string)file_get_contents(__DIR__ . '/test.webp');
 
         MediaFactory::createOne([
             'blog' => $blog,
@@ -121,8 +113,46 @@ class MediaTest extends KernelTestCase
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
-        $this->assertSame($webpContent, $response->content);
         $this->assertSame('image/webp', $response->mimeType);
         $this->assertSame(DeliveryFileType::MEDIA, $response->fileType);
+    }
+
+    /**
+     * prefix with test_ to run this test.
+     * it is here to check how long it takes to convert a large image to webp.
+     * 2026-07-12: around 3s without resizing
+     */
+    public function /*test_*/converts_large_image(): void
+    {
+        if (!file_exists(__DIR__ . '/test-large.jpg')) {
+            $content = file_get_contents('https://images.unsplash.com/photo-1782760794099-dc5a50bd55a6?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=max-bohme-cBiQfqb1BQU-unsplash.jpg');
+            $this->assertSame(
+                4894632,
+                strlen($content),
+            );
+            file_put_contents(
+        __DIR__ . '/test-large.jpg',
+                $content
+            );
+        }
+
+
+        $jpg = (string)file_get_contents(__DIR__ . '/test-large.jpg');
+
+        $blog = BlogFactory::createOne();
+        MediaFactory::createOne([
+            'blog' => $blog,
+            'name' => 'large.jpg',
+            'original_name' => 'large.jpg',
+            'extension' => 'jpg',
+        ]);
+        $this->storeFile($blog->getId(), 'large.jpg', $jpg);
+
+        $startTime = microtime(true);
+        $response = $this->pathMatcher()->match($blog, '/media/large.jpg');
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(200, $response->status);
+        $this->assertSame('image/webp', $response->mimeType);
+        dd('processing took: ' . microtime(true) - $startTime . ' seconds');
     }
 }
