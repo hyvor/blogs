@@ -101,6 +101,47 @@ class PreviewTest extends KernelTestCase
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
     }
 
+    public function test_shows_unsaved_content_if_it_exists(): void
+    {
+        [$blog, $language] = $this->createBlogWithLanguagesAndRoutes();
+
+        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'slug' => 'my-post-slug',
+            'status' => PostVariantStatus::PUBLISHED,
+            'content_unsaved' => json_encode([
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Unsaved content',
+                            ],
+                        ],
+                    ],
+                ],
+            ]),
+        ]);
+
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'folder' => ThemeFileFolder::TEMPLATES,
+            'name' => 'post.twig',
+            'content' => '{{ _post.content | raw }}',
+        ]);
+
+        $id = $this->postService()->getPreviewId($post);
+        $response = $this->pathMatcher()->match($blog, "/p/$id/{$language->getCode()}");
+
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertStringContainsString('Unsaved content', (string)$response->content);
+        $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
+    }
+
     public function test_language_works(): void
     {
         [$blog, , $secondary] = $this->createBlogWithLanguagesAndRoutes();

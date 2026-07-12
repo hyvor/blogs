@@ -21,6 +21,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\Twig\TwigRendererService;
@@ -43,6 +44,7 @@ class TemplateRendererService
         private PostObjectFactory $postObjectFactory,
         private TagObjectFactory $tagObjectFactory,
         private AuthorObjectFactory $authorObjectFactory,
+        private PostContentService $postContentService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
@@ -233,7 +235,7 @@ class TemplateRendererService
         Post|Tag|User|null $model,
         ?string $resolvedFilter,
     ): array {
-        $routeName = $route->getName();
+        $routeName = $matchedRoute->name;
 
         if ($routeName === 'index') {
             $blogObj = $this->blogObjectFactory->create($blog, $language);
@@ -243,18 +245,43 @@ class TemplateRendererService
             ];
         }
 
-        if (($routeName === 'post' || $routeName === 'page') && $model instanceof Post) {
+        if (
+            (
+                $routeName === 'post' ||
+                $routeName === 'page' ||
+                $routeName === 'preview'
+            )
+        ) {
+            assert($model instanceof Post);
+
             $postObj = $this->buildPostObject($model, $blog, $language);
             $url = $postObj->url;
+
+            if ($routeName === 'preview') {
+                $variant = $model->getVariants()->filter(fn($v) => $v->getLanguage()->getId() === $language->getId())->first();
+
+                if ($variant && $variant->getContentUnsaved()) {
+                    $postObj->content = $this->postContentService->getHtml($variant->getContentUnsaved(), $blog);
+                }
+            }
+
             return [
-                '_meta' => new MetaObject($postObj->title, $postObj->description, $postObj->featured_image_url, $url, $model->getCanonicalUrl() ?? $url),
+                '_meta' => new MetaObject(
+                    $postObj->title,
+                    $postObj->description,
+                    $postObj->featured_image_url,
+                    $url,
+                        $model->getCanonicalUrl() ?? $url
+                ),
                 '_post' => $postObj,
                 '_comments' => '',
                 '_newsletter' => '',
             ];
         }
 
-        if ($routeName === 'tag' && $model instanceof Tag) {
+        if ($routeName === 'tag') {
+            assert($model instanceof Tag);
+
             $tagObj = $this->buildTagObject($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($tagObj->name, $tagObj->name, null, $tagObj->url, $tagObj->url),
@@ -262,7 +289,9 @@ class TemplateRendererService
             ];
         }
 
-        if ($routeName === 'author' && $model instanceof User) {
+        if ($routeName === 'author') {
+            assert($model instanceof User);
+
             $authorObj = $this->buildAuthorObject($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($authorObj->name, $authorObj->bio, $authorObj->picture_url, $authorObj->url, $authorObj->url),
