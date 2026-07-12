@@ -33,11 +33,7 @@ class LinkObjectFactory
             post_variant_id: $postVariant->getId(),
             post_variant_language_id: $postVariant->getLanguage()->getId(),
             post_variant_title: $postVariant->getTitle(),
-            post_variant_url: $this->permalinkService->getPostPermalink(
-                $postVariant->getPost(),
-                $blog,
-                $postVariant->getLanguage(),
-            ),
+            post_variant_url: $this->permalinkService->getPostVariantPermalink($postVariant),
         );
     }
 }

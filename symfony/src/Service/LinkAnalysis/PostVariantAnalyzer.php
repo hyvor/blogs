@@ -95,11 +95,7 @@ class PostVariantAnalyzer
         PostVariant $variant,
         ?array $urls = null,
     ): array {
-        $variantUrl = $this->permalinkService->getPostPermalink(
-            $variant->getPost(),
-            $variant->getPost()->getBlog(),
-            $variant->getLanguage()
-        );
+        $variantUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
         // TODO: update links on LinkUpdateEvent
 
@@ -156,11 +152,9 @@ class PostVariantAnalyzer
                 continue;
             }
 
-            $language = $variant->getLanguage();
-
             $doc = $this->postContentService->getDocumentFromJson($content);
             $linkMarks = $doc->getMarks(Link::class);
-            $variantUrl = $this->permalinkService->getPostVariantPermalink($this->blog, $variant, $language);
+            $variantUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
             foreach ($linkMarks as $linkMark) {
                 $originalUrl = $this->getHrefFromLinkMark($linkMark);

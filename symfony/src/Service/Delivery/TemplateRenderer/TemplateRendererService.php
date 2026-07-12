@@ -47,13 +47,19 @@ class TemplateRendererService
         private string $projectDir,
     ) {}
 
+    /**
+     * $presetModel skips slug-based lookup in getModel() — used by PreviewProcessor,
+     * whose MatchedRoute carries a preview id/lang, not a slug.
+     */
     public function render(
         Blog $blog,
         Language $language,
         Route $route,
         MatchedRoute $matchedRoute,
+        bool $cache = true,
+        Post|Tag|User|null $presetModel = null,
     ): ?DeliveryResponse {
-        $model = $this->getModel($blog, $language, $route, $matchedRoute);
+        $model = $presetModel ?? $this->getModel($blog, $language, $route, $matchedRoute);
         if ($model === false) {
             return null;
         }
@@ -81,7 +87,11 @@ class TemplateRendererService
             return null;
         }
 
-        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $content);
+        return DeliveryResponse::forFile(
+            DeliveryFileType::TEMPLATE,
+            $content,
+            cache: $cache
+        );
     }
 
     /** @param string[] $availableFiles */
@@ -235,7 +245,7 @@ class TemplateRendererService
 
         if (($routeName === 'post' || $routeName === 'page') && $model instanceof Post) {
             $postObj = $this->buildPostObject($model, $blog, $language);
-            $url = $this->permalinkService->getPostPermalink($model, $blog, $language);
+            $url = $postObj->url;
             return [
                 '_meta' => new MetaObject($postObj->title, $postObj->description, $postObj->featured_image_url, $url, $model->getCanonicalUrl() ?? $url),
                 '_post' => $postObj,

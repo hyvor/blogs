@@ -20,7 +20,7 @@ class UrlPostEntry
 
         foreach ($this->post->getVariants() as $variant) {
             $language = $variant->getLanguage();
-            $url = $this->permalinkService->getPostPermalink($this->post, $blog, $language);
+            $url = $this->permalinkService->getPostVariantPermalink($variant);
 
             if ($language->isPrimary()) {
                 $entry->loc($url);

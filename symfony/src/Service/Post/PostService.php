@@ -755,4 +755,33 @@ class PostService
         $variant->setContentHtml($html);
         $variant->setContentText($text);
     }
+
+    private const string PREVIEW_ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz123456789';
+
+    public function getPreviewId(int|Post $idOrPost): string
+    {
+        $id = $idOrPost instanceof Post ? $idOrPost->getId() : $idOrPost;
+        $length = strlen(self::PREVIEW_ID_LETTERS);
+        $s = '';
+        while ($id > 0) {
+            $s = self::PREVIEW_ID_LETTERS[$id % $length] . $s;
+            $id = intdiv($id, $length);
+        }
+        return $s;
+    }
+
+    public function parsePreviewId(string $previewId): ?int
+    {
+        $length = strlen(self::PREVIEW_ID_LETTERS);
+        $id = 0;
+        for ($i = 0; $i < strlen($previewId); $i++) {
+            $char = $previewId[$i];
+            $pos = strpos(self::PREVIEW_ID_LETTERS, $char);
+            if ($pos === false) {
+                return null;
+            }
+            $id = $id * $length + $pos;
+        }
+        return $id;
+    }
 }
