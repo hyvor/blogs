@@ -66,7 +66,7 @@
 		currentTheme = originalThemes[0];
 	});
 	let currentThemeUrl = $derived(
-		`//${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`
+		`http://${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`
 	);
 </script>
 
