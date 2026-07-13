@@ -5,7 +5,7 @@ namespace App\Tests\Api\Console\Blog\Media;
 use App\Api\Console\Controller\MediaController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
-use App\Service\App\MessageTransport;
+use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;

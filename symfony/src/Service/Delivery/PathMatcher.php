@@ -20,8 +20,8 @@ use App\Service\Delivery\Processor\Sitemap\SitemapPostsProcessor;
 use App\Service\Delivery\Processor\StylesProcessor;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\RouteMatcher\RouteMatcher;
-use App\Service\Delivery\TemplateRenderer\DirectTemplateRendererService;
-use App\Service\Delivery\TemplateRenderer\TemplatePageNotFoundException;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingException;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingPageNotFoundException;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Service\Redirect\RedirectService;
 use App\Service\Theme\ThemeFilesService;
@@ -41,7 +41,6 @@ class PathMatcher
         private SitemapPostsProcessor $sitemapPostsProcessor,
         private RobotsTxtProcessor $robotsTxtProcessor,
         private TemplateRendererService $templateRendererService,
-        private DirectTemplateRendererService $directTemplateRendererService,
         private FeedService $feedService,
         private ThemeFilesService $themeFilesService,
     ) {
@@ -215,14 +214,14 @@ class PathMatcher
         if ($file === null) return null;
 
         try {
-            $html = $this->directTemplateRendererService->render($blog, $language, $templateName, $path);
-        } catch (\Twig\Error\Error $e) {
-            return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $e->getMessage(), 'text/html', 500, false);
+            $html = $this->templateRendererService->renderWithoutRoute($blog, $language, $templateName, $path);
+            $mimeType = MimeTypes::getMimeFromFileName($trimmedPath) ?? 'text/html';
+            return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, $mimeType);
+        } catch (TemplateRenderingException $e) {
+            return DeliveryResponse::forError($e->getMessage());
+        } catch (TemplateRenderingPageNotFoundException) {
+            return null;
         }
-
-        $mimeType = MimeTypes::getMimeFromFileName($trimmedPath) ?? 'text/html';
-
-        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, $mimeType);
     }
 
     private function renderRoute(
@@ -252,8 +251,15 @@ class PathMatcher
         }
 
         try {
-            return $this->templateRendererService->render($blog, $language, $route, $matchedRoute);
-        } catch (TemplatePageNotFoundException) {
+            $rendered = $this->templateRendererService->renderForRoute($blog, $language, $route, $matchedRoute);
+
+            return DeliveryResponse::forFile(
+                DeliveryFileType::TEMPLATE,
+                $rendered
+            );
+        } catch (TemplateRenderingException $e) {
+            return DeliveryResponse::forError($e->getMessage());
+        } catch (TemplateRenderingPageNotFoundException) {
             return null;
         }
     }
@@ -264,13 +270,14 @@ class PathMatcher
 
         if ($file !== null) {
             try {
-                $html = $this->directTemplateRendererService->render($blog, $language, '404.twig', $path);
+                $html = $this->templateRendererService->renderWithoutRoute($blog, $language, '404.twig', $path);
                 return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, 'text/html', 404);
-            } catch (\Twig\Error\Error) {
+            } catch (TemplateRenderingException|TemplateRenderingPageNotFoundException) {
                 // fall through to default
             }
         }
 
         return DeliveryResponse::forNotFound();
     }
+
 }

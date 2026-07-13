@@ -3,9 +3,12 @@
 namespace App\Service\Delivery\Processor;
 
 use App\Entity\Blog;
+use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingException;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingPageNotFoundException;
 use App\Service\Language\LanguageService;
 use App\Service\Post\PostService;
 use App\Service\Route\RouteService;
@@ -54,13 +57,24 @@ class PreviewProcessor
         $route = $this->routeService->getRouteByName($blog, $post->isPage() ? 'page' : 'post');
         assert($route !== null);
 
-        return $this->templateRendererService->render(
-            $blog,
-            $language,
-            $route,
-            $matchedRoute,
-            cache: false,
-            presetModel: $post
-        );
+        try {
+            $rendered = $this->templateRendererService->renderForRoute(
+                $blog,
+                $language,
+                $route,
+                $matchedRoute,
+                presetModel: $post
+            );
+
+            return DeliveryResponse::forFile(
+                DeliveryFileType::TEMPLATE,
+                $rendered,
+                cache: false
+            );
+        } catch (TemplateRenderingException $e) {
+            DeliveryResponse::forError($e->getMessage());
+        } catch (TemplateRenderingPageNotFoundException) {
+            return null;
+        }
     }
 }

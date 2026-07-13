@@ -18,6 +18,7 @@ use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Entity\Route;
 use App\Entity\Tag;
+use App\Entity\ThemeFile;
 use App\Entity\User;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
@@ -30,6 +31,7 @@ use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Twig\Error\Error;
 
 class TemplateRendererService
 {
@@ -50,52 +52,77 @@ class TemplateRendererService
     ) {}
 
     /**
-     * @throws TemplatePageNotFoundException
+     * @throws TemplateRenderingPageNotFoundException when the route / model is not found (404)
+     * @throws TemplateRenderingException when the template rendering fails (500)
      */
-    public function render(
+    public function renderForRoute(
         Blog $blog,
         Language $language,
         Route $route,
         MatchedRoute $matchedRoute,
-        bool $cache = true,
         // used by PreviewProcessor to skip slug-based lookup
         Post|null $presetModel = null,
-    ): ?DeliveryResponse {
+    ): string {
         $model = $presetModel ?? $this->getModel($blog, $language, $route, $matchedRoute);
         if ($model === false) {
-            return null;
+            throw new TemplateRenderingPageNotFoundException();
         }
 
         $templateFiles = $this->themeFilesService->getFilesInFolder($blog, ThemeFileFolder::TEMPLATES);
+        $templateName = $this->getTemplateNameFromRoute($route, array_map(fn($f) => $f->getName(), $templateFiles));
+        $vars = $this->getVariables($blog, $language, $route, $matchedRoute, $model, $templateName);
+
+        return $this->renderBlogTemplate($blog, $templateName, $vars);
+    }
+
+    /**
+     * @throws TemplateRenderingException
+     */
+    public function renderWithoutRoute(Blog $blog, Language $language, string $templateName, string $path): string
+    {
+        $vars = $this->getDefaultVariables($blog, $language);
+
+        $url = $this->permalinkService->getBlogUrlWithPath($blog, $path);
+        $meta = new MetaObject(null, null, null, $url, $url);
+        $vars['_meta'] = $meta;
+
+        return $this->renderBlogTemplate($blog, $templateName, $vars);
+    }
+
+    /**
+     * @param ThemeFile[] $templateFiles
+     * @throws TemplateRenderingException
+     */
+    private function renderBlogTemplate(
+        Blog $blog,
+        string $template,
+        array $vars,
+
+        // send if previously loaded
+        ?array $templateFiles = null
+    ): string
+    {
+        $templateFiles ??= $this->themeFilesService->getFilesInFolder($blog, ThemeFileFolder::TEMPLATES);
         $loaderArray = [];
+
         foreach ($templateFiles as $file) {
             $loaderArray[$file->getName()] = $file->getContent() ?? '';
         }
 
-        $templateName = $this->getTemplateName($route, array_keys($loaderArray));
-
-        if (!array_key_exists($templateName, $loaderArray)) {
-            return null;
+        if (!array_key_exists($template, $loaderArray)) {
+            throw new TemplateRenderingException("Template file '$template' not found in blog templates.");
         }
 
         try {
-            $vars = $this->getVariables($blog, $language, $route, $matchedRoute, $model, $templateName);
-            $content = $this->twigRendererService->renderFromFiles($loaderArray, $vars, $templateName);
-        } catch (\Twig\Error\Error $e) {
-            $msg = $e->getMessage();
-            $html = "<div style=\"font-family:monospace;\">Twig Template Error:<br><br><div style=\"font-size:18px\">$msg</div></div>";
-            return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, 'text/html', 500, false);
+            return $this->twigRendererService->renderFromFiles($loaderArray, $vars, $template);
+        } catch (Error $e) {
+            throw new TemplateRenderingException("Unable to render template '$template'. Twig error: " . $e->getMessage());
         }
-
-        return DeliveryResponse::forFile(
-            DeliveryFileType::TEMPLATE,
-            $content,
-            cache: $cache
-        );
     }
 
+
     /** @param string[] $availableFiles */
-    private function getTemplateName(Route $route, array $availableFiles): string
+    private function getTemplateNameFromRoute(Route $route, array $availableFiles): string
     {
         $checkFiles = explode(',', $route->getTemplate());
         foreach ($checkFiles as $file) {
@@ -162,7 +189,7 @@ class TemplateRendererService
 
     /**
      * @return array<string, mixed>
-     * @throws TemplatePageNotFoundException
+     * @throws TemplateRenderingPageNotFoundException
      */
     private function getVariables(
         Blog $blog,
@@ -172,18 +199,8 @@ class TemplateRendererService
         Post|Tag|User|null $model,
         string $templateName,
     ): array {
-        $config = $this->themeConfigService->getConfig($blog);
-
-        $blogObject = $this->blogObjectFactory->create($blog, $language);
-
-        $vars = [
-            '_blog' => $blogObject,
-            '_config' => $config,
-            '_lang' => new LanguageObject($language),
-            '_head' => $this->getHeadCode(),
-            '_foot' => $this->getFootCode(),
-            '_route' => new RouteObject($route, $matchedRoute, $templateName),
-        ];
+        $vars  = $this->getDefaultVariables($blog, $language);
+        $vars['_route'] = new RouteObject($route, $matchedRoute, $templateName);
 
         $filter = $route->getPostsFilter();
         $resolvedFilter = null;
@@ -199,6 +216,7 @@ class TemplateRendererService
 
         if ($resolvedFilter !== null) {
             $pageNumber = $this->getPageNumber($matchedRoute);
+            $config = $this->themeConfigService->getConfig($blog);
             $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
             $offset = ($pageNumber - 1) * $limit;
 
@@ -207,7 +225,7 @@ class TemplateRendererService
             $total = $result['total'];
 
             if (empty($posts) && $pageNumber > 1) {
-                throw new TemplatePageNotFoundException();
+                throw new TemplateRenderingPageNotFoundException();
             }
 
             $postObjects = [];
@@ -222,6 +240,20 @@ class TemplateRendererService
         /** @var array<string, mixed> $serialized */
         $serialized = json_decode((string)json_encode($vars), true);
         return $serialized;
+    }
+
+    private function getDefaultVariables(Blog $blog, Language $language): array
+    {
+        $config = $this->themeConfigService->getConfig($blog);
+        $blogObject = $this->blogObjectFactory->create($blog, $language);
+
+        return [
+            '_blog' => $blogObject,
+            '_config' => $config,
+            '_lang' => new LanguageObject($language),
+            '_head' => $this->getHeadCode(),
+            '_foot' => $this->getFootCode(),
+        ];
     }
 
     /** @return array<string, mixed> */

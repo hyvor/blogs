@@ -31,6 +31,7 @@ class TwigRendererService
     /**
      * @param array<string, string> $files
      * @param array<string, mixed> $vars
+     * @throws \Twig\Error\Error
      */
     public function renderFromFiles(array $files, array $vars, string $fileName): string
     {
@@ -45,7 +46,7 @@ class TwigRendererService
 
         // hb-defined filters and functions
         $twig->addExtension($this->twigExtensions);
-        
+
         // for template_from_string
         $twig->addExtension(new StringLoaderExtension());
 
@@ -58,7 +59,7 @@ class TwigRendererService
         if ($this->env === 'dev') {
             $twig->addExtension(new DebugExtension());
         }
-            
+
         return $twig;
     }
 }

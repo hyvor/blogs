@@ -33,8 +33,8 @@ class FontsFileProcessor
 
         } catch (ExceptionInterface $e) {
             return DeliveryResponse::forError(
-                DeliveryFileType::ASSET,
                 'Failed to fetch font file: ' . ($e instanceof TransportExceptionInterface ? 'Connection failed' : 'Request failed'),
+                DeliveryFileType::ASSET,
             );
         }
 

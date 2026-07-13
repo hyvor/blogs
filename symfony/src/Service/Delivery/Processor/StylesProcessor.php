@@ -47,7 +47,10 @@ class StylesProcessor
             }
             $css = $result->getCss();
         } catch (SassException | \RuntimeException $e) {
-            return DeliveryResponse::forError(DeliveryFileType::ASSET, 'SCSS Error: ' . $e->getMessage(), 500);
+            return DeliveryResponse::forError(
+                'SCSS Error: ' . $e->getMessage(),
+                DeliveryFileType::ASSET,
+            );
         }
 
         [$css, $shortCache, $comment] = $this->addFontCss($blog, $css);

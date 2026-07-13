@@ -37,8 +37,8 @@ class FontsCssProcessor
             );
         } catch (UnableToFetchBunnyException $e) {
             return DeliveryResponse::forError(
-                DeliveryFileType::ASSET,
                 'Failed to fetch font css: ' . $e->getMessage(),
+                DeliveryFileType::ASSET,
             );
         }
     }

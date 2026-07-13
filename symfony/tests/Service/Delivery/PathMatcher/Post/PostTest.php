@@ -29,12 +29,8 @@ class PostTest extends KernelTestCase
     /** @return array{\App\Entity\Blog, \App\Entity\Language} */
     private function createBlogWithLanguageAndRoutes(): array
     {
-        $blog = BlogFactory::createOne();
-        $language = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
-        return [$blog, $language];
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        return [$blog, $blog->getLanguages()[0]];
     }
 
     public function test_matches_a_post(): void

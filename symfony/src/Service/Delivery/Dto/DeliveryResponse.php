@@ -61,16 +61,22 @@ class DeliveryResponse implements \JsonSerializable
     }
 
     public static function forError(
-        DeliveryFileType $fileType,
-        string $content = '',
+        string $error,
+        DeliveryFileType $fileType = DeliveryFileType::TEMPLATE,
         int $status = 500,
     ): self {
+        $html = <<<HTML
+        <div style=\"font-family:monospace;font-size:18px;\">
+            {$error}
+        </div>
+        HTML;
+
         return new self(
             DeliveryResponseType::FILE,
             $status,
             cache: false,
-            content: $content,
-            mimeType: 'text/plain',
+            content: $html,
+            mimeType: 'text/html',
             cacheControl: CacheControl::NO_CACHE,
             fileType: $fileType,
         );
