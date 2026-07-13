@@ -4,27 +4,8 @@ namespace App\Domains\Delivery;
 
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\Delivery\Processors\AssetsProcessor;
-use App\Domains\Delivery\Processors\Fonts\FontsCssProcessor;
-use App\Domains\Delivery\Processors\Fonts\FontsFileProcessor;
-use App\Domains\Delivery\Processors\MediaProcessor;
-use App\Domains\Delivery\Processors\PreviewProcessor;
-use App\Domains\Delivery\Processors\RobotsTxtProcessor;
-use App\Domains\Delivery\Processors\Sitemap\SitemapIndexProcessor;
-use App\Domains\Delivery\Processors\Sitemap\SitemapPagesProcessor;
-use App\Domains\Delivery\Processors\Sitemap\SitemapPostsProcessor;
-use App\Domains\Delivery\Processors\StylesProcessor;
-use App\Domains\Delivery\RouteMatcher\RouteMatcher;
 use App\Domains\Delivery\TemplateRenderer\DirectTemplateRenderer;
 use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
-use App\Domains\Language\LanguageRepository;
-use App\Domains\Redirect\RedirectRepository;
-use App\Domains\Theme\ThemeFilesRepository;
-use App\Exceptions\SafetyException;
-use App\Helpers\MimeTypes;
-use App\Models\Blog;
-use App\Models\Language;
 use Exception;
 
 class PathMatcher
@@ -50,9 +31,9 @@ class PathMatcher
 
         $this->callFuncs([
           //  'matchRedirect',
-            'matchDefaultRoutes',
+            //  'matchDefaultRoutes',
 
-            'setLanguage',
+          //  'setLanguage',
             'matchNonPostRoutes',
             'matchPostRoutes',
             'matchTemplateRoutes'
@@ -152,41 +133,41 @@ class PathMatcher
     /**
      * Set the language based on the path prefix
      */
-    private function setLanguage() : void
-    {
-
-        // Get fr from /fr/hello-world
-        $pathExploded = explode('/', $this->path);
-        $possibleLanguageCode = $pathExploded[1] ?? null;
-
-        if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
-            // fetch all languages and find out the correct one
-            $langs = $this->blog->languages;
-
-            // messing with the collection
-            $defaultLang = $langs->where('is_primary', true)->first();
-            $nonDefaultLangs = $langs->where('is_primary', false);
-
-            $lang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
-
-            if ($lang) {
-                /**
-                 * Set new path to match, removing the language part
-                 */
-                $this->path = '/'.implode('/', array_slice($pathExploded, 2));
-            } else {
-                $lang = $defaultLang;
-            }
-        } else {
-            // fetch only the default one
-            $lang = LanguageRepository::getPrimaryLanguage($this->blog);
-        }
-
-        if (!$lang)
-            throw new SafetyException('Language not found');
-
-        $this->language = $lang;
-    }
+//    private function setLanguage() : void
+//    {
+//
+//        // Get fr from /fr/hello-world
+//        $pathExploded = explode('/', $this->path);
+//        $possibleLanguageCode = $pathExploded[1] ?? null;
+//
+//        if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
+//            // fetch all languages and find out the correct one
+//            $langs = $this->blog->languages;
+//
+//            // messing with the collection
+//            $defaultLang = $langs->where('is_primary', true)->first();
+//            $nonDefaultLangs = $langs->where('is_primary', false);
+//
+//            $lang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
+//
+//            if ($lang) {
+//                /**
+//                 * Set new path to match, removing the language part
+//                 */
+//                $this->path = '/'.implode('/', array_slice($pathExploded, 2));
+//            } else {
+//                $lang = $defaultLang;
+//            }
+//        } else {
+//            // fetch only the default one
+//            $lang = LanguageRepository::getPrimaryLanguage($this->blog);
+//        }
+//
+//        if (!$lang)
+//            throw new SafetyException('Language not found');
+//
+//        $this->language = $lang;
+//    }
 
     /**
      * Match non-post/page routes

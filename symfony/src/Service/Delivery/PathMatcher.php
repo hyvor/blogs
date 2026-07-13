@@ -30,22 +30,22 @@ use Doctrine\ORM\EntityManagerInterface;
 class PathMatcher
 {
     public function __construct(
-        private readonly RedirectService $redirectService,
-        private readonly AssetsProcessor $assetsProcessor,
-        private readonly PreviewProcessor $previewProcessor,
-        private readonly StylesProcessor $stylesProcessor,
-        private readonly MediaProcessor $mediaProcessor,
-        private readonly FontsCssProcessor $fontsCssProcessor,
-        private readonly FontsFileProcessor $fontsFileProcessor,
-        private readonly SitemapIndexProcessor $sitemapIndexProcessor,
-        private readonly SitemapPagesProcessor $sitemapPagesProcessor,
-        private readonly SitemapPostsProcessor $sitemapPostsProcessor,
-        private readonly RobotsTxtProcessor $robotsTxtProcessor,
-        private readonly TemplateRendererService $templateRendererService,
-        private readonly DirectTemplateRendererService $directTemplateRendererService,
-        private readonly FeedService $feedService,
-        private readonly ThemeFilesService $themeFilesService,
-        private readonly EntityManagerInterface $em,
+        private RedirectService $redirectService,
+        private AssetsProcessor $assetsProcessor,
+        private PreviewProcessor $previewProcessor,
+        private StylesProcessor $stylesProcessor,
+        private MediaProcessor $mediaProcessor,
+        private FontsCssProcessor $fontsCssProcessor,
+        private FontsFileProcessor $fontsFileProcessor,
+        private SitemapIndexProcessor $sitemapIndexProcessor,
+        private SitemapPagesProcessor $sitemapPagesProcessor,
+        private SitemapPostsProcessor $sitemapPostsProcessor,
+        private RobotsTxtProcessor $robotsTxtProcessor,
+        private TemplateRendererService $templateRendererService,
+        private DirectTemplateRendererService $directTemplateRendererService,
+        private FeedService $feedService,
+        private ThemeFilesService $themeFilesService,
+        private EntityManagerInterface $em,
     ) {
     }
 
@@ -118,13 +118,15 @@ class PathMatcher
             $this->notFound($blog, $resolvedPath, $language);
     }
 
-    /** @return array{Language, string}|null */
+    /**
+     * @return array{Language, string}|null
+     */
     private function resolveLanguage(Blog $blog, string $path): ?array
     {
         $pathExploded = explode('/', $path);
         $possibleCode = $pathExploded[1] ?? null;
 
-        $langs = $this->em->getRepository(Language::class)->findBy(['blog' => $blog]);
+        $langs = $blog->getLanguages();
 
         $primary = null;
         $secondary = [];
@@ -146,7 +148,7 @@ class PathMatcher
         }
 
         if ($primary === null) {
-            // No primary language configured — return null to produce a 404
+            // should not happen, but just in case
             return null;
         }
 
