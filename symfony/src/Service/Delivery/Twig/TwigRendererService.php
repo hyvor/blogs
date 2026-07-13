@@ -42,7 +42,8 @@ class TwigRendererService
 
     private function buildEnvironment(ArrayLoader $loader): Environment
     {
-        $twig = new Environment($loader, ['cache' => false]);
+        $isDev = $this->env === 'dev';
+        $twig = new Environment($loader, ['cache' => false, 'debug' => $isDev]);
 
         // hb-defined filters and functions
         $twig->addExtension($this->twigExtensions);
@@ -56,7 +57,7 @@ class TwigRendererService
         // format_datetime https://twig.symfony.com/doc/3.x/filters/format_datetime.html
         $twig->addExtension(new IntlExtension());
 
-        if ($this->env === 'dev') {
+        if ($isDev) {
             $twig->addExtension(new DebugExtension());
         }
 
