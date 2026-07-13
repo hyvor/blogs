@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
+use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
@@ -24,34 +25,25 @@ class AuthorTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
-    private function createBlogWithLanguageAndRoutes(): \App\Entity\Blog
+    private function createBlogWithLanguageAndRoutes(): Blog
     {
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'tag', 'match' => '/tag/{slug}', 'template' => 'tag,index', 'posts_filter' => 'tag.slug={slug}', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author,index', 'posts_filter' => 'author.slug={slug}', 'is_enabled' => true]);
+        RouteFactory::createDefaultsFor($blog);
         return $blog;
     }
 
     public function test_matches_author_page(): void
     {
-        $content = 'I am an author';
+        $content = 'I am an author: {{ _author.slug }}';
         $blog = $this->createBlogWithLanguageAndRoutes();
-        ThemeFileFactory::createOne([
-            'blog' => $blog,
-            'folder' => ThemeFileFolder::TEMPLATES,
-            'name' => 'author.twig',
-            'content' => $content,
-        ]);
+        ThemeFileFactory::createTemplateTwig($blog, 'author.twig', $content);
         UserFactory::createOne(['blog' => $blog, 'slug' => 'my-author']);
 
         $response = $this->pathMatcher()->match($blog, '/author/my-author');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame($content, $response->content);
+        $this->assertSame('I am an author: my-author', $response->content);
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
     }
 }

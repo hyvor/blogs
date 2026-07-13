@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
+use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
@@ -24,21 +25,17 @@ class TagTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
-    private function createBlogWithLanguageAndRoutes(): \App\Entity\Blog
+    private function createBlogWithLanguageAndRoutes(): Blog
     {
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'tag', 'match' => '/tag/{slug}', 'template' => 'tag,index', 'posts_filter' => 'tag.slug={slug}', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author,index', 'posts_filter' => 'author.slug={slug}', 'is_enabled' => true]);
+        RouteFactory::createDefaultsFor($blog);
         return $blog;
     }
 
     public function test_matches_tag_page(): void
     {
-        $content = 'I am a tag';
+        $content = 'I am a tag: {{ _tag.slug }}';
         $blog = $this->createBlogWithLanguageAndRoutes();
         ThemeFileFactory::createOne([
             'blog' => $blog,
@@ -51,7 +48,7 @@ class TagTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/tag/my-tag');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame($content, $response->content);
+        $this->assertSame('I am a tag: my-tag', $response->content);
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
     }
 

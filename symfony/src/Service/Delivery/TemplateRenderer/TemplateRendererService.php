@@ -50,8 +50,7 @@ class TemplateRendererService
     ) {}
 
     /**
-     * $presetModel skips slug-based lookup in getModel() — used by PreviewProcessor,
-     * whose MatchedRoute carries a preview id/lang, not a slug.
+     * @throws TemplatePageNotFoundException
      */
     public function render(
         Blog $blog,
@@ -59,7 +58,8 @@ class TemplateRendererService
         Route $route,
         MatchedRoute $matchedRoute,
         bool $cache = true,
-        Post|Tag|User|null $presetModel = null,
+        // used by PreviewProcessor to skip slug-based lookup
+        Post|null $presetModel = null,
     ): ?DeliveryResponse {
         $model = $presetModel ?? $this->getModel($blog, $language, $route, $matchedRoute);
         if ($model === false) {
@@ -85,8 +85,6 @@ class TemplateRendererService
             $msg = $e->getMessage();
             $html = "<div style=\"font-family:monospace;\">Twig Template Error:<br><br><div style=\"font-size:18px\">$msg</div></div>";
             return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, 'text/html', 500, false);
-        } catch (TemplatePageNotFoundException) {
-            return null;
         }
 
         return DeliveryResponse::forFile(
@@ -214,7 +212,7 @@ class TemplateRendererService
 
             $postObjects = [];
             foreach ($posts as $post) {
-                $postObjects[] = $this->buildPostObject($post, $blog, $language);
+                $postObjects[] = $this->postObjectFactory->create($blog, $post, $language);
             }
 
             $vars['_posts'] = $postObjects;
@@ -254,7 +252,7 @@ class TemplateRendererService
         ) {
             assert($model instanceof Post);
 
-            $postObj = $this->buildPostObject($model, $blog, $language);
+            $postObj = $this->postObjectFactory->create($blog, $model, $language);
             $url = $postObj->url;
 
             if ($routeName === 'preview') {
@@ -282,7 +280,7 @@ class TemplateRendererService
         if ($routeName === 'tag') {
             assert($model instanceof Tag);
 
-            $tagObj = $this->buildTagObject($model, $blog, $language);
+            $tagObj = $this->tagObjectFactory->create($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($tagObj->name, $tagObj->name, null, $tagObj->url, $tagObj->url),
                 '_tag' => $tagObj,
@@ -292,7 +290,7 @@ class TemplateRendererService
         if ($routeName === 'author') {
             assert($model instanceof User);
 
-            $authorObj = $this->buildAuthorObject($model, $blog, $language);
+            $authorObj = $this->authorObjectFactory->create($model, $blog, $language);
             return [
                 '_meta' => new MetaObject($authorObj->name, $authorObj->bio, $authorObj->picture_url, $authorObj->url, $authorObj->url),
                 '_author' => $authorObj,
@@ -304,7 +302,7 @@ class TemplateRendererService
 
     private function getPageNumber(MatchedRoute $matchedRoute): int
     {
-        $suffix = (string)($matchedRoute->param('suffix') ?? '');
+        $suffix = $matchedRoute->param('suffix') ?? '';
         if (preg_match('/^page\/(\d+)$/', $suffix, $m)) {
             $n = (int)$m[1];
             return $n > 0 ? $n : 1;
@@ -312,30 +310,13 @@ class TemplateRendererService
         return 1;
     }
 
-    private function buildPostObject(Post $post, Blog $blog, Language $language): \App\Api\Data\Object\PostObject
-    {
-        return $this->postObjectFactory->create($blog, $post, $language);
-    }
-
-    private function buildTagObject(Tag $tag, Blog $blog, Language $language): \App\Api\Data\Object\TagObject
-    {
-        return $this->tagObjectFactory->create($tag, $blog, $language);
-    }
-
-    private function buildAuthorObject(User $user, Blog $blog, Language $language): \App\Api\Data\Object\AuthorObject
-    {
-        return $this->authorObjectFactory->create($user, $blog, $language);
-    }
-
     private function getHeadCode(): string
     {
-        $path = $this->projectDir . '/resources/twig/_head.twig';
-        return file_exists($path) ? (string)file_get_contents($path) : '';
+        return (string)file_get_contents($this->projectDir . '/resources/twig/_head.twig');
     }
 
     private function getFootCode(): string
     {
-        $path = $this->projectDir . '/resources/twig/_foot.twig';
-        return file_exists($path) ? (string)file_get_contents($path) : '';
+        return (string)file_get_contents($this->projectDir . '/resources/twig/_foot.twig');
     }
 }

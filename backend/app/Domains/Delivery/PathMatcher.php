@@ -29,15 +29,15 @@ class PathMatcher
 //        $this->blog = $blog;
 //        $this->path = $path;
 
-        $this->callFuncs([
-          //  'matchRedirect',
-            //  'matchDefaultRoutes',
-
-          //  'setLanguage',
-            'matchNonPostRoutes',
-            'matchPostRoutes',
-            'matchTemplateRoutes'
-        ]);
+//        $this->callFuncs([
+//          //  'matchRedirect',
+//            //  'matchDefaultRoutes',
+//
+//          //  'setLanguage',
+////            'matchNonPostRoutes',
+////            'matchPostRoutes',
+//            'matchTemplateRoutes'
+//        ]);
     }
 
     /**
@@ -172,63 +172,63 @@ class PathMatcher
     /**
      * Match non-post/page routes
      */
-    private function matchNonPostRoutes() : void
-    {
-        $nonPostRoutes = $this->blog->routes->filter(function ($route) {
-            return $route->name !== 'post' && $route->name !== 'page';
-        });
-
-        $routeMatcher = new RouteMatcher($this->path);
-
-        foreach ($nonPostRoutes as $route) {
-            $match = $route->match;
-            $defaults = [];
-            $requirements = [];
-
-            /**
-             * Add suffix
-             * Which can be "page/x" for pagination
-             * or /feed
-             */
-            if ($route->posts_filter !== null) {
-                $match .= '/{suffix}';
-                $defaults = [
-                    'suffix' => null,
-                ];
-                // feed or page number
-                $requirements = [
-                    'suffix' => '(feed|(page\/\d+))',
-                ];
-            }
-
-            $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);
-        }
-
-        $this->matchAndSetResponseObject($routeMatcher);
-    }
+//    private function matchNonPostRoutes() : void
+//    {
+//        $nonPostRoutes = $this->blog->routes->filter(function ($route) {
+//            return $route->name !== 'post' && $route->name !== 'page';
+//        });
+//
+//        $routeMatcher = new RouteMatcher($this->path);
+//
+//        foreach ($nonPostRoutes as $route) {
+//            $match = $route->match;
+//            $defaults = [];
+//            $requirements = [];
+//
+//            /**
+//             * Add suffix
+//             * Which can be "page/x" for pagination
+//             * or /feed
+//             */
+//            if ($route->posts_filter !== null) {
+//                $match .= '/{suffix}';
+//                $defaults = [
+//                    'suffix' => null,
+//                ];
+//                // feed or page number
+//                $requirements = [
+//                    'suffix' => '(feed|(page\/\d+))',
+//                ];
+//            }
+//
+//            $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);
+//        }
+//
+//        $this->matchAndSetResponseObject($routeMatcher);
+//    }
 
     /**
      * Post and page routes can conflict
      * Therefore match both explicitly
      */
-    private function matchPostRoutes() : void
-    {
-        $postRoutes = $this->blog->routes->filter(function ($route) {
-            return $route->name === 'post' || $route->name === 'page';
-        });
-
-        foreach ($postRoutes as $route) {
-            $routeMatcher = new RouteMatcher($this->path);
-
-            $routeMatcher->add($route->name, $route->match, [], [], $route);
-
-            $matched = $this->matchAndSetResponseObject($routeMatcher);
-
-            if ($matched) {
-                return; // do not process other route
-            }
-        }
-    }
+//    private function matchPostRoutes() : void
+//    {
+//        $postRoutes = $this->blog->routes->filter(function ($route) {
+//            return $route->name === 'post' || $route->name === 'page';
+//        });
+//
+//        foreach ($postRoutes as $route) {
+//            $routeMatcher = new RouteMatcher($this->path);
+//
+//            $routeMatcher->add($route->name, $route->match, [], [], $route);
+//
+//            $matched = $this->matchAndSetResponseObject($routeMatcher);
+//
+//            if ($matched) {
+//                return; // do not process other route
+//            }
+//        }
+//    }
 
     private function matchTemplateRoutes() : void
     {
@@ -255,54 +255,54 @@ class PathMatcher
 
     }
 
-    private function matchAndSetResponseObject(RouteMatcher $routeMatcher): bool
-    {
-        $matchedRoute = $routeMatcher->match();
-
-        if (! $matchedRoute) {
-            return false;
-        }
-
-        if (!$matchedRoute->route)
-            return false;
-
-        $filter = $matchedRoute->route->posts_filter === null ?
-            null :
-            // Replace {slug} in posts_filter with the matched route params
-            preg_replace_callback('/\{(.+)\}/', function ($matches) use ($matchedRoute) {
-                $var = $matches[1];
-                $param = $matchedRoute->param($var) ?? '';
-
-                return "'$param'";
-            }, $matchedRoute->route->posts_filter);
-
-        // feed
-        if (
-            $filter !== null &&
-            $matchedRoute->param('suffix') === 'feed'
-        ) {
-            $feed = Feed::generateFeed($this->blog, $this->language, $filter);
-            $responseObject = DeliveryAPIResponseObject::forFile(
-                DeliveryAPIFileTypeEnum::TEMPLATE,
-                $feed,
-                'application/atom+xml'
-            );
-            $this->setMatched($responseObject);
-
-            return true;
-        }
-
-        // template
-        $templateRenderer = new TemplateRenderer($this, $matchedRoute, $filter);
-        $responseObject = $templateRenderer->getResponseObject();
-        if ($responseObject) {
-            $this->setMatched($responseObject);
-
-            return true;
-        }
-
-        return false;
-    }
+//    private function matchAndSetResponseObject(RouteMatcher $routeMatcher): bool
+//    {
+//        $matchedRoute = $routeMatcher->match();
+//
+//        if (! $matchedRoute) {
+//            return false;
+//        }
+//
+//        if (!$matchedRoute->route)
+//            return false;
+//
+//        $filter = $matchedRoute->route->posts_filter === null ?
+//            null :
+//            // Replace {slug} in posts_filter with the matched route params
+//            preg_replace_callback('/\{(.+)\}/', function ($matches) use ($matchedRoute) {
+//                $var = $matches[1];
+//                $param = $matchedRoute->param($var) ?? '';
+//
+//                return "'$param'";
+//            }, $matchedRoute->route->posts_filter);
+//
+//        // feed
+//        if (
+//            $filter !== null &&
+//            $matchedRoute->param('suffix') === 'feed'
+//        ) {
+//            $feed = Feed::generateFeed($this->blog, $this->language, $filter);
+//            $responseObject = DeliveryAPIResponseObject::forFile(
+//                DeliveryAPIFileTypeEnum::TEMPLATE,
+//                $feed,
+//                'application/atom+xml'
+//            );
+//            $this->setMatched($responseObject);
+//
+//            return true;
+//        }
+//
+//        // template
+//        $templateRenderer = new TemplateRenderer($this, $matchedRoute, $filter);
+//        $responseObject = $templateRenderer->getResponseObject();
+//        if ($responseObject) {
+//            $this->setMatched($responseObject);
+//
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     private function setMatched(DeliveryAPIResponseObject $responseObject) : void
     {

@@ -25,7 +25,6 @@ use App\Service\Delivery\TemplateRenderer\TemplatePageNotFoundException;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Service\Redirect\RedirectService;
 use App\Service\Theme\ThemeFilesService;
-use Doctrine\ORM\EntityManagerInterface;
 
 class PathMatcher
 {
@@ -45,7 +44,6 @@ class PathMatcher
         private DirectTemplateRendererService $directTemplateRendererService,
         private FeedService $feedService,
         private ThemeFilesService $themeFilesService,
-        private EntityManagerInterface $em,
     ) {
     }
 
@@ -157,8 +155,8 @@ class PathMatcher
 
     private function matchNonPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
     {
-        $allRoutes = $this->em->getRepository(Route::class)->findBy(['blog' => $blog]);
-        $nonPostRoutes = array_filter($allRoutes, fn(Route $r) => $r->getName() !== 'post' && $r->getName() !== 'page' && $r->isEnabled());
+        $allRoutes = $blog->getRoutes();
+        $nonPostRoutes = $allRoutes->filter(fn(Route $r) => $r->getName() !== 'post' && $r->getName() !== 'page' && $r->isEnabled());
 
         $routeMatcher = new RouteMatcher($path);
         $routeMap = [];
@@ -184,13 +182,13 @@ class PathMatcher
         $route = $routeMap[$matchedRoute->name] ?? null;
         if ($route === null) return null;
 
-        return $this->renderRoute($blog, $path, $language, $route, $matchedRoute);
+        return $this->renderRoute($blog, $language, $route, $matchedRoute);
     }
 
     private function matchPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
     {
-        $allRoutes = $this->em->getRepository(Route::class)->findBy(['blog' => $blog]);
-        $postRoutes = array_filter($allRoutes, fn(Route $r) => ($r->getName() === 'post' || $r->getName() === 'page') && $r->isEnabled());
+        $allRoutes = $blog->getRoutes();
+        $postRoutes = $allRoutes->filter(fn(Route $r) => $r->getName() === 'post' || $r->getName() === 'page');
 
         foreach ($postRoutes as $route) {
             $routeMatcher = new RouteMatcher($path);
@@ -199,7 +197,7 @@ class PathMatcher
 
             if ($matchedRoute === null) continue;
 
-            $response = $this->renderRoute($blog, $path, $language, $route, $matchedRoute);
+            $response = $this->renderRoute($blog, $language, $route, $matchedRoute);
             if ($response !== null) {
                 return $response;
             }
@@ -227,13 +225,22 @@ class PathMatcher
         return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, $mimeType);
     }
 
-    private function renderRoute(Blog $blog, string $path, Language $language, Route $route, MatchedRoute $matchedRoute): ?DeliveryResponse
+    private function renderRoute(
+        Blog $blog,
+        Language $language,
+        Route $route,
+        MatchedRoute $matchedRoute
+    ): ?DeliveryResponse
     {
         $filter = $route->getPostsFilter();
-        $resolvedFilter = null;
 
         if ($filter !== null) {
-            $resolvedFilter = (string)preg_replace_callback('/\{(.+)\}/', function ($m) use ($matchedRoute) {
+            /**
+             * posts_filter can have placeholders like {tag}.
+             * here we are replacing them with the matched route parameters,
+             * and wrapping them with single quotes to make them work with FilterQ
+             */
+            $resolvedFilter = (string)preg_replace_callback('/\{(.+)}/', function ($m) use ($matchedRoute) {
                 return "'" . ($matchedRoute->param($m[1]) ?? '') . "'";
             }, $filter);
 
@@ -247,7 +254,7 @@ class PathMatcher
         try {
             return $this->templateRendererService->render($blog, $language, $route, $matchedRoute);
         } catch (TemplatePageNotFoundException) {
-            return DeliveryResponse::forNotFound();
+            return null;
         }
     }
 

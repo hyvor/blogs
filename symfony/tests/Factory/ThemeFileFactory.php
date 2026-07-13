@@ -60,10 +60,15 @@ final class ThemeFileFactory extends PersistentObjectFactory
 
     public static function createTemplateTwig(Blog $blog, string $name, string $content): ThemeFile
     {
+        return self::createOneFor($blog, $name, $content, ThemeFileFolder::TEMPLATES);
+    }
+
+    public static function createOneFor(Blog $blog, string $name, string $content, ?ThemeFileFolder $folder = ThemeFileFolder::TEMPLATES): ThemeFile
+    {
         return self::createOne([
             'blog' => $blog,
             'name' => $name,
-            'folder' => ThemeFileFolder::TEMPLATES,
+            'folder' => $folder,
             'content' => $content,
         ]);
     }
