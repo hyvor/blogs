@@ -5,6 +5,7 @@
 
 	/* extra */
 	--accent-light-mid: #f7f2f0;
+	--background: #fcfcfc;
 }
 
 ::view-transition-group(*) {

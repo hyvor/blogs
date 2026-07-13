@@ -11,13 +11,15 @@
 			<h1>Blogging&nbsp;Platform.<br />Fast &amp; Simple.</h1>
 
 			<p class="subtitle">
-				Create, manage, and grow your blog without worrying about servers, databases, or
-				infrastructure. Self-host or let us handle it.
+				Create a blog, manage it, and grow it without managing servers or databases.
+				Self-host or let us handle it.
 			</p>
 
 			<div class="buttons">
 				<Button as="a" href="/console?signup" size="large">Start your blog</Button>
-				<Button as="a" href="/customers" size="large" variant="outline">See customer blogs</Button>
+				<Button as="a" href="/customers" size="large" variant="outline"
+					>See customer blogs</Button
+				>
 			</div>
 
 			<div class="trial-checks">
