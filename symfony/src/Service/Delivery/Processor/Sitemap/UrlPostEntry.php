@@ -2,32 +2,39 @@
 
 namespace App\Service\Delivery\Processor\Sitemap;
 
+use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
+use App\Service\Post\Content\Nodes\Image\Image;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 
 class UrlPostEntry
 {
     public function __construct(
         private Post $post,
-        private PermalinkService $permalinkService,
     ) {}
 
-    public function toXML(): string
+    public function toXML(
+        PermalinkService $permalinkService,
+        PostContentService $postContentService
+    ): string
     {
         $entry = new UrlEntry();
         $blog = $this->post->getBlog();
 
         foreach ($this->post->getVariants() as $variant) {
             $language = $variant->getLanguage();
-            $url = $this->permalinkService->getPostVariantPermalink($variant);
+            $url = $permalinkService->getPostVariantPermalink($variant);
 
             if ($language->isPrimary()) {
                 $entry->loc($url);
 
-                $images = $this->findImages($variant->getContent());
+                $images = $this->findImageSrcs($variant->getContent(), $postContentService, $blog);
                 foreach ($images as $src) {
-                    if ($this->permalinkService->isLinkInBlog($src, $blog)) {
+                    if ($permalinkService->isLinkInBlog($src, $blog)) {
                         $entry->image($src);
                     }
                 }
@@ -41,44 +48,32 @@ class UrlPostEntry
         return $entry->toXML();
     }
 
-    /** @return string[] */
-    private function findImages(?string $json): array
+    private function findImageSrcs(
+        ?string $json,
+        PostContentService $postContentService,
+        Blog $blog,
+    ): array
     {
-        if ($json === null || $json === '') {
+        if (!$json) {
             return [];
         }
 
-        $data = json_decode($json, true);
-        if (!is_array($data)) {
+        try {
+            $doc = $postContentService->getDocumentFromJson($json, $blog);
+
+            $srcs = [];
+            $doc->traverse(function (Node $node) use (&$srcs) {
+                if ($node->isOfType(Image::class)) {
+                    $src = $node->attrs->get('src');
+                    if (is_string($src)) {
+                        $srcs[] = $src;
+                    }
+                }
+            });
+
+            return $srcs;
+        } catch (PhrosemirrorException) {
             return [];
         }
-
-        return $this->extractImageSrcs($data);
-    }
-
-    /**
-     * @param array<mixed> $node
-     * @return string[]
-     */
-    private function extractImageSrcs(array $node): array
-    {
-        $srcs = [];
-
-        if (($node['type'] ?? null) === 'image') {
-            $attrs = $node['attrs'] ?? [];
-            $src = is_array($attrs) ? ($attrs['src'] ?? null) : null;
-            if (is_string($src)) {
-                $srcs[] = $src;
-            }
-        }
-
-        $content = $node['content'] ?? [];
-        foreach (is_array($content) ? $content : [] as $child) {
-            if (is_array($child)) {
-                $srcs = array_merge($srcs, $this->extractImageSrcs($child));
-            }
-        }
-
-        return $srcs;
     }
 }

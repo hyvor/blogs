@@ -21,7 +21,7 @@ class SitemapPagesProcessor
         private EntityManagerInterface $em,
     ) {}
 
-    public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
+    public function process(Blog $blog): ?DeliveryResponse
     {
         $languages = $this->languageService->getAllLanguages($blog);
         $primaryLanguage = null;
@@ -33,7 +33,7 @@ class SitemapPagesProcessor
         }
 
         $indexXML = $this->indexXML($blog, $languages);
-        $pagesXML = $primaryLanguage ? $this->pagesXML($blog, $primaryLanguage) : '';
+        $pagesXML = $this->pagesXML($blog, $primaryLanguage);
 
         $xml = <<<XML
         <?xml version="1.0" encoding="UTF-8"?>
@@ -73,12 +73,12 @@ class SitemapPagesProcessor
             ->from(Post::class, 'p')
             ->join('p.variants', 'pv')
             ->where('p.blog = :blog')
-            ->andWhere('pv.language_id = :langId')
+            ->andWhere('pv.language = :lang')
             ->andWhere('pv.status = :status')
             ->andWhere('p.is_page = true')
             ->setParameter('blog', $blog)
-            ->setParameter('langId', $primaryLanguage->getId())
-            ->setParameter('status', PostVariantStatus::PUBLISHED->value)
+            ->setParameter('lang', $primaryLanguage)
+            ->setParameter('status', PostVariantStatus::PUBLISHED)
             ->orderBy('p.id', 'ASC')
             ->getQuery()
             ->getResult();

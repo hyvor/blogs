@@ -96,7 +96,7 @@ class PathMatcher
             'fonts-css' => $this->fontsCssProcessor->process($blog, $matchedRoute),
             'fonts-file' => $this->fontsFileProcessor->process($blog, $matchedRoute),
             'sitemap-index' => $this->sitemapIndexProcessor->process($blog),
-            'sitemap-pages' => $this->sitemapPagesProcessor->process($blog, $matchedRoute),
+            'sitemap-pages' => $this->sitemapPagesProcessor->process($blog),
             'sitemap-posts' => $this->sitemapPostsProcessor->process($blog, $matchedRoute),
             'robots.txt' => $this->robotsTxtProcessor->process($blog, $matchedRoute),
             default => DeliveryResponse::forNotFound(),

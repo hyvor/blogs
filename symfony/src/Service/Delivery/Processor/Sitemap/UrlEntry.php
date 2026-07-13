@@ -32,13 +32,15 @@ class UrlEntry
         $langAltsXML = '';
         foreach ($this->langAlts as $langAlt) {
             $url = htmlspecialchars($langAlt->url);
-            $langAltsXML .= "            <xhtml:link rel=\"alternate\" hreflang=\"$langAlt->code\" href=\"$url\" />\n";
+            $langAltsXML .= <<<XML
+            <xhtml:link rel="alternate" hreflang="$langAlt->code" href="$url" />\n
+            XML;
         }
 
         $imagesXML = '';
         foreach ($this->images as $image) {
             $image = htmlspecialchars($image);
-            $imagesXML .= "            <image:image><image:loc>$image</image:loc></image:image>\n";
+            $imagesXML .= "<image:image><image:loc>$image</image:loc></image:image>\n";
         }
 
         $loc = htmlspecialchars($this->loc);
