@@ -38,12 +38,8 @@ class FeedService
             '_posts' => $postObjects,
         ];
 
-        /** @var array<string, mixed> $serialized */
-        $serialized = json_decode((string)json_encode($vars), true);
+        $templateContent = (string)file_get_contents($this->projectDir . '/resources/twig/_feed.twig');
 
-        $feedTemplate = $this->projectDir . '/resources/twig/_feed.twig';
-        $templateContent = file_exists($feedTemplate) ? (string)file_get_contents($feedTemplate) : '';
-
-        return $this->twigRendererService->renderString($templateContent, $serialized);
+        return $this->twigRendererService->renderString($templateContent, $vars);
     }
 }
