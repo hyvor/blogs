@@ -163,7 +163,9 @@
 					<iframe
 						src={currentThemeUrl}
 						title={currentTheme.name}
-						style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
+						style:width={type === 'laptop'
+							? '100%'
+							: (type === 'tablet' ? 540 : 360) + 'px'}
 						style:height={type === 'laptop' ? '100%' : 740 + 'px'}
 						onload={() => (isLoading = false)}
 						style:display={isLoading ? 'none' : 'block'}
@@ -172,7 +174,11 @@
 					{#if lockScroll}
 						<button class="lock-scroll" onclick={() => (lockScroll = false)}>
 							<div class="overlay"></div>
-							<IconMessage icon={IconLock} iconSize={50} message="Click to unlock scroll" />
+							<IconMessage
+								icon={IconLock}
+								iconSize={50}
+								message="Click to unlock scroll"
+							/>
 						</button>
 					{/if}
 				</div>
