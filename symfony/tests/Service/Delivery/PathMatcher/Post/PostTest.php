@@ -2,8 +2,10 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Post;
 
+use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Entity\Meta\BlogMeta;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
@@ -35,29 +37,58 @@ class PostTest extends KernelTestCase
 
     public function test_matches_a_post(): void
     {
-        $twig = '{{ _post.id }}';
-        [$blog, $language] = $this->createBlogWithLanguageAndRoutes();
+        $content = <<<TXT
+        Meta Title: {{ _meta.title }}
+        Meta Description: {{ _meta.description }}
+        Meta Featured Image: {{ _meta.featured_image }}
+        Meta URL: {{ _meta.url }}
+        Post Slug: {{ _post.slug }}
+        Comments: {{ _comments }}
+        Newsletters: {{ _newsletter }}
+        TXT;
 
-        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
+        $expected = <<<TXT
+        Meta Title: My Post Title
+        Meta Description: My Post Description
+        Meta Featured Image: https://example.com/image.jpg
+        Meta URL: https://example.hyvorblogs.io/my-post-slug
+        Post Slug: my-post-slug
+        Comments: ht
+        Newsletters: hp
+        TXT;
+
+        $blogMeta = new BlogMeta();
+        $blogMeta->comments_code = 'ht';
+        $blogMeta->newsletter_code = 'hp';
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'meta' => $blogMeta,
+            'subdomain' => 'example',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+        ]);
+
+        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false,
+            'featured_image_url' => 'https://example.com/image.jpg',]);
         PostVariantFactory::createOne([
             'post' => $post,
-            'language' => $language,
+            'language' => $blog->getLanguages()[0],
             'slug' => 'my-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
+            'title' => 'My Post Title',
+            'description' => 'My Post Description',
         ]);
 
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,
             'name' => 'post.twig',
-            'content' => $twig,
+            'content' => $content,
         ]);
 
         $response = $this->pathMatcher()->match($blog, '/my-post-slug');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(200, $response->status);
-        $this->assertSame((string)$post->getId(), $response->content);
+        $this->assertSame($expected, $response->content);
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
     }
 

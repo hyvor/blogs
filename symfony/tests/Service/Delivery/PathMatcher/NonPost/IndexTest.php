@@ -3,8 +3,10 @@
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
 use App\Entity\Blog;
+use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Entity\Meta\BlogMeta;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
@@ -39,8 +41,48 @@ class IndexTest extends KernelTestCase
 
     public function test_matches_index_page(): void
     {
-        $content = 'Hello World: {{ _blog.name }}';
-        $blog = $this->createBlogWithLanguageAndRoutes();
+        $content = <<<HTML
+        Title: {{ _meta.title }}
+        Description: {{ _meta.description }}
+        Featured Image: {{ _meta.featured_image }}
+        URL: {{ _meta.url }}
+        Canonical URL: {{ _meta.canonical_url }}
+        Featured Posts Count:: {{ _featured_posts|length }}
+        Featured Post Title: {{ _featured_posts[0].title }}
+        Featured Post Slug: {{ _featured_posts[0].slug }}
+        HTML;
+
+        $expected = <<<HTML
+        Title: My Blog
+        Description: My Blog Description
+        Featured Image: https://example.com/cover.jpg
+        URL: https://myblog.hyvorblogs.io
+        Canonical URL: https://myblog.hyvorblogs.io
+        Featured Posts Count:: 1
+        Featured Post Title: Featured Post
+        Featured Post Slug: featured-post
+        HTML;
+
+
+        $meta = new BlogMeta();
+        $meta->cover_url = 'https://example.com/cover.jpg';
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'subdomain' => 'myblog',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'meta' => $meta,
+        ], variants: false);
+        BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: [
+            'name' => 'My Blog',
+            'description' => 'My Blog Description',
+        ]);
+
+        $featuredPost = PostFactory::createPublishedOneForWithVariants($blog, [
+            'is_featured' => true,
+        ], [
+            'title' => 'Featured Post',
+            'slug' => 'featured-post',
+        ]);
+
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,
@@ -51,7 +93,7 @@ class IndexTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame('Hello World: My Blog', $response->content);
+        $this->assertSame($expected, $response->content);
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
     }
 

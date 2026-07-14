@@ -138,99 +138,99 @@ class TemplateRenderer
     /**
      * @return array<string, mixed>
      */
-    private function getRouteVariables(): array
-    {
-        $routeName = $this->matchedRoute->name;
+//    private function getRouteVariables(): array
+//    {
+//        $routeName = $this->matchedRoute->name;
+//
+//        if ($routeName === 'index') {
+//            $blogObject = new BlogObject($this->pathMatcher->blog, $this->pathMatcher->language);
+//
+//            return [
+//                '_meta' => new MetaObject(
+//                    $blogObject->name,
+//                    $blogObject->description,
+//                    $blogObject->cover_url,
+//                    $blogObject->url,
+//                    $blogObject->url
+//                ),
+//                '_featured_posts' => PostRepository::getPostsWithFilterQ(
+//                    blog: $this->pathMatcher->blog,
+//                    language: $this->pathMatcher->language,
+//                    filter: 'is_featured=true',
+//                    limit: 30 // hard limit - who has 30 featured posts?
+//                )
+//                    ->collection
+//                    ->map(
+//                        fn ($post) => new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language)
+//                    )
+//            ];
+//        } elseif (
+//            (
+//                $routeName === 'post' ||
+//                $routeName === 'page' ||
+//                $routeName === 'preview'
+//            ) &&
+//            $this->model instanceof Post
+//        ) {
+//            if ($routeName === 'preview') {
+//
+//                // set content_html to content_unsaved if it is set
+//
+//                $variant = $this->model->variants
+//                    ->firstWhere('language_id', $this->pathMatcher->language->id);
+//
+//                if ($variant && $variant->content_unsaved) {
+//                    $variant->content_html = PostContentService::getHtml(
+//                        $variant->content_unsaved,
+//                        $this->pathMatcher->blog
+//                    );
+//                }
+//            }
+//
+//            $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
+//
+//            return [
+//                '_meta' => new MetaObject(
+//                    $postObject->title,
+//                    $postObject->description,
+//                    $postObject->featured_image_url,
+//                    $postObject->url,
+//                    $postObject->canonical_url ?? $postObject->url
+//                ),
+//                '_post' => $postObject,
+//                '_comments' => $this->pathMatcher->blog->getMeta('comments_code') ?? '',
+//                '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code') ?? '',
+//            ];
+//        } elseif ($routeName === 'tag' && $this->model instanceof Tag) {
+//            $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
+//
+//            return [
+//                '_meta' => new MetaObject(
+//                    $tagObject->name,
+//                    $tagObject->name,
+//                    null,
+//                    $tagObject->url,
+//                    $tagObject->url
+//                ),
+//                '_tag' => $tagObject,
+//            ];
+//        } elseif ($routeName === 'author' && $this->model instanceof User) {
+////            $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
+////
+////            return [
+////                '_meta' => new MetaObject(
+////                    $authorObject->name,
+////                    $authorObject->bio,
+////                    $authorObject->picture_url,
+////                    $authorObject->url,
+////                    $authorObject->url
+////                ),
+////                '_author' => $authorObject,
+////            ];
+//        }
 
-        if ($routeName === 'index') {
-            $blogObject = new BlogObject($this->pathMatcher->blog, $this->pathMatcher->language);
-
-            return [
-                '_meta' => new MetaObject(
-                    $blogObject->name,
-                    $blogObject->description,
-                    $blogObject->cover_url,
-                    $blogObject->url,
-                    $blogObject->url
-                ),
-                '_featured_posts' => PostRepository::getPostsWithFilterQ(
-                    blog: $this->pathMatcher->blog,
-                    language: $this->pathMatcher->language,
-                    filter: 'is_featured=true',
-                    limit: 30 // hard limit - who has 30 featured posts?
-                )
-                    ->collection
-                    ->map(
-                        fn ($post) => new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language)
-                    )
-            ];
-        } elseif (
-            (
-                $routeName === 'post' ||
-                $routeName === 'page' ||
-                $routeName === 'preview'
-            ) &&
-            $this->model instanceof Post
-        ) {
-            if ($routeName === 'preview') {
-
-                // set content_html to content_unsaved if it is set
-
-                $variant = $this->model->variants
-                    ->firstWhere('language_id', $this->pathMatcher->language->id);
-
-                if ($variant && $variant->content_unsaved) {
-                    $variant->content_html = PostContentService::getHtml(
-                        $variant->content_unsaved,
-                        $this->pathMatcher->blog
-                    );
-                }
-            }
-
-            $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
-
-            return [
-                '_meta' => new MetaObject(
-                    $postObject->title,
-                    $postObject->description,
-                    $postObject->featured_image_url,
-                    $postObject->url,
-                    $postObject->canonical_url ?? $postObject->url
-                ),
-                '_post' => $postObject,
-                '_comments' => $this->pathMatcher->blog->getMeta('comments_code') ?? '',
-                '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code') ?? '',
-            ];
-        } elseif ($routeName === 'tag' && $this->model instanceof Tag) {
-            $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
-
-            return [
-                '_meta' => new MetaObject(
-                    $tagObject->name,
-                    $tagObject->name,
-                    null,
-                    $tagObject->url,
-                    $tagObject->url
-                ),
-                '_tag' => $tagObject,
-            ];
-        } elseif ($routeName === 'author' && $this->model instanceof User) {
-            $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
-
-            return [
-                '_meta' => new MetaObject(
-                    $authorObject->name,
-                    $authorObject->bio,
-                    $authorObject->picture_url,
-                    $authorObject->url,
-                    $authorObject->url
-                ),
-                '_author' => $authorObject,
-            ];
-        }
-
-        return [];
-    }
+//        return [];
+//    }
 
     /**
      * @throws TemplatePageNotFoundException

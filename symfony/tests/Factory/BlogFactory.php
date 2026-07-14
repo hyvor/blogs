@@ -92,9 +92,10 @@ final class BlogFactory extends PersistentObjectFactory
     public static function createOneWithLanguageAndRoutes(
         array $blogAttrs = [],
         array $languageAttrs = [],
-        ?array $routes = null
+        ?array $routes = null,
+        bool $variants = true,
     ): Blog {
-        $blog = self::createOneWithPrimaryLanguage($blogAttrs, $languageAttrs);
+        $blog = self::createOneWithPrimaryLanguage($blogAttrs, $languageAttrs, variants: $variants);
 
         if ($routes === null) {
             RouteFactory::createDefaultsFor($blog);

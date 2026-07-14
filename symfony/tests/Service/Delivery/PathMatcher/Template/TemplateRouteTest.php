@@ -6,7 +6,7 @@ use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
-use App\Service\Delivery\TemplateRenderer\DirectTemplateRendererService;
+use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\ThemeFileFactory;
@@ -14,7 +14,7 @@ use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PathMatcher::class)]
-#[CoversClass(DirectTemplateRendererService::class)]
+#[CoversClass(TemplateRendererService::class)]
 class TemplateRouteTest extends KernelTestCase
 {
     private function pathMatcher(): PathMatcher

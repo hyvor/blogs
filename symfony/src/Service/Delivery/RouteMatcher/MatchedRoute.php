@@ -9,6 +9,12 @@ class MatchedRoute
     /** @var array<string, mixed> */
     public readonly array $params;
 
+    /**
+     * filter, generally params resolved
+     * @var string|null
+     */
+    private ?string $posts_filter = null;
+
     /** @param array<string, mixed> $props */
     public function __construct(array $props)
     {
@@ -29,5 +35,15 @@ class MatchedRoute
     {
         $value = $this->params[$key] ?? null;
         return is_string($value) ? $value : null;
+    }
+
+    public function setPostsFilter(?string $posts_filter): void
+    {
+        $this->posts_filter = $posts_filter;
+    }
+
+    public function getPostsFilter(): ?string
+    {
+        return $this->posts_filter;
     }
 }

@@ -243,6 +243,8 @@ class PathMatcher
                 return "'" . ($matchedRoute->param($m[1]) ?? '') . "'";
             }, $filter);
 
+            $matchedRoute->setPostsFilter($resolvedFilter);
+
             // Feed request
             if ($matchedRoute->param('suffix') === 'feed') {
                 $feed = $this->feedService->generateFeed($blog, $language, $resolvedFilter);

@@ -20,8 +20,7 @@ use App\Entity\Route;
 use App\Entity\Tag;
 use App\Entity\ThemeFile;
 use App\Entity\User;
-use App\Service\Delivery\Dto\DeliveryFileType;
-use App\Service\Delivery\Dto\DeliveryResponse;
+use App\Service\AppConfig;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
@@ -47,6 +46,7 @@ class TemplateRendererService
         private TagObjectFactory $tagObjectFactory,
         private AuthorObjectFactory $authorObjectFactory,
         private PostContentService $postContentService,
+        private AppConfig $appConfig,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
@@ -70,7 +70,7 @@ class TemplateRendererService
 
         $templateFiles = $this->themeFilesService->getFilesInFolder($blog, ThemeFileFolder::TEMPLATES);
         $templateName = $this->getTemplateNameFromRoute($route, array_map(fn($f) => $f->getName(), $templateFiles));
-        $vars = $this->getVariables($blog, $language, $route, $matchedRoute, $model, $templateName);
+        $vars = $this->getVariablesForRoute($blog, $language, $route, $matchedRoute, $model, $templateName);
 
         return $this->renderBlogTemplate($blog, $templateName, $vars);
     }
@@ -191,7 +191,7 @@ class TemplateRendererService
      * @return array<string, mixed>
      * @throws TemplateRenderingPageNotFoundException
      */
-    private function getVariables(
+    private function getVariablesForRoute(
         Blog $blog,
         Language $language,
         Route $route,
@@ -202,25 +202,17 @@ class TemplateRendererService
         $vars  = $this->getDefaultVariables($blog, $language);
         $vars['_route'] = new RouteObject($route, $matchedRoute, $templateName);
 
-        $filter = $route->getPostsFilter();
-        $resolvedFilter = null;
+        $vars += $this->getRouteVariables($blog, $language, $matchedRoute, $model);
+
+        // _posts and _pagination is set if the route has a posts filter
+        $filter = $matchedRoute->getPostsFilter();
         if ($filter !== null) {
-            $resolvedFilter = preg_replace_callback('/\{(.+)\}/', function ($matches) use ($matchedRoute) {
-                $var = $matches[1];
-                $param = $matchedRoute->param($var) ?? '';
-                return "'$param'";
-            }, $filter);
-        }
-
-        $vars += $this->getRouteVariables($blog, $language, $route, $matchedRoute, $model, $resolvedFilter);
-
-        if ($resolvedFilter !== null) {
             $pageNumber = $this->getPageNumber($matchedRoute);
             $config = $this->themeConfigService->getConfig($blog);
             $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
             $offset = ($pageNumber - 1) * $limit;
 
-            $result = $this->postService->getPostsWithFilter($blog, $language, $resolvedFilter, $limit, $offset);
+            $result = $this->postService->getPostsWithFilter($blog, $language, $filter, $limit, $offset);
             $posts = $result['posts'];
             $total = $result['total'];
 
@@ -237,9 +229,7 @@ class TemplateRendererService
             $vars['_pagination'] = new PaginationObject($limit, $pageNumber, $total);
         }
 
-        /** @var array<string, mixed> $serialized */
-        $serialized = json_decode((string)json_encode($vars), true);
-        return $serialized;
+        return $vars;
     }
 
     private function getDefaultVariables(Blog $blog, Language $language): array
@@ -248,9 +238,15 @@ class TemplateRendererService
         $blogObject = $this->blogObjectFactory->create($blog, $language);
 
         return [
+            // internal
+            '__domain' => $this->appConfig->getDomainApp(),
+
+            // vars for all routes
             '_blog' => $blogObject,
             '_config' => $config,
             '_lang' => new LanguageObject($language),
+
+            // placeholders
             '_head' => $this->getHeadCode(),
             '_foot' => $this->getFootCode(),
         ];
@@ -260,27 +256,31 @@ class TemplateRendererService
     private function getRouteVariables(
         Blog $blog,
         Language $language,
-        Route $route,
         MatchedRoute $matchedRoute,
         Post|Tag|User|null $model,
-        ?string $resolvedFilter,
     ): array {
         $routeName = $matchedRoute->name;
 
         if ($routeName === 'index') {
             $blogObj = $this->blogObjectFactory->create($blog, $language);
-            $url = $this->permalinkService->getBlogPermalink($blog, $language);
+
+            $featuredPosts = $this->postService->getPostsWithFilter(
+                blog: $blog,
+                language: $language,
+                filter: 'is_featured=true',
+                limit: 30 // hard limit - who has 30 featured posts?
+            );
+
             return [
-                '_meta' => new MetaObject($blogObj->name, $blogObj->description, $blogObj->cover_url, $url, $url),
+                '_meta' => new MetaObject($blogObj->name, $blogObj->description, $blogObj->cover_url, $blogObj->url, $blogObj->url),
+                '_featured_posts' => array_map(fn($post) => $this->postObjectFactory->create($blog, $post, $language), $featuredPosts['posts'])
             ];
         }
 
         if (
-            (
-                $routeName === 'post' ||
-                $routeName === 'page' ||
-                $routeName === 'preview'
-            )
+            $routeName === 'post' ||
+            $routeName === 'page' ||
+            $routeName === 'preview'
         ) {
             assert($model instanceof Post);
 
@@ -295,17 +295,19 @@ class TemplateRendererService
                 }
             }
 
+            $blogMeta = $blog->getMeta();
+
             return [
                 '_meta' => new MetaObject(
                     $postObj->title,
                     $postObj->description,
                     $postObj->featured_image_url,
                     $url,
-                        $model->getCanonicalUrl() ?? $url
+                    $model->getCanonicalUrl() ?? $url
                 ),
                 '_post' => $postObj,
-                '_comments' => '',
-                '_newsletter' => '',
+                '_comments' => $blogMeta->comments_code ?? '',
+                '_newsletter' => $blogMeta->newsletter_code ?? '',
             ];
         }
 
@@ -314,7 +316,7 @@ class TemplateRendererService
 
             $tagObj = $this->tagObjectFactory->create($model, $blog, $language);
             return [
-                '_meta' => new MetaObject($tagObj->name, $tagObj->name, null, $tagObj->url, $tagObj->url),
+                '_meta' => new MetaObject($tagObj->name, $tagObj->description, null, $tagObj->url, $tagObj->url),
                 '_tag' => $tagObj,
             ];
         }
