@@ -59,7 +59,7 @@ class PostController
             $language = $this->languageService->getPrimaryLanguage($blog);
         }
 
-        $result = $this->postService->getConsolePosts(
+        $result = $this->postService->getPosts(
             $blog,
             $language,
             $input->status,

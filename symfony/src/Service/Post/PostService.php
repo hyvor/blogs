@@ -29,7 +29,6 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -59,7 +58,16 @@ class PostService
         ]);
     }
 
-    public function getPostBySlugAndLanguage(Language $language, string $slug): ?Post
+    /**
+     * @param int[] $ids
+     * @return Post[]
+     */
+    public function getPostsByIds(array $ids): array
+    {
+        return $this->em->getRepository(Post::class)->findBy(['id' => $ids]);
+    }
+
+    public function getPublishedPostBySlugAndLanguage(Language $language, string $slug): ?Post
     {
         $qb = $this->em->createQueryBuilder();
         $qb->select('p')
@@ -101,49 +109,25 @@ class PostService
 
     /**
      * @return array{posts: Post[], total: int}
+     * @throws FilterQException
      */
-    public function getPostsWithFilter(
+    public function getPostsWithFilterQ(
         Blog $blog,
         Language $language,
         ?string $filter,
         int $limit = 10,
         int $offset = 0,
         bool $featuredFirst = true,
+        bool $isPage = false,
+        ?array $orderBys = null
     ): array {
-        if ($filter === null) {
-            return ['posts' => [], 'total' => 0];
-        }
 
-        $orderBys = $featuredFirst
+        $orderBys ??= $featuredFirst
             ? [['p.is_featured', 'DESC'], ['p.published_at', 'DESC']]
             : [['p.published_at', 'DESC']];
 
-        return $this->getPostsForDataApi($blog, $language, $filter, $limit, $offset, $orderBys, false);
-    }
-
-    /**
-     * @param array<array{0: string, 1: string}> $orderBys
-     * @return array{posts: Post[], total: int}
-     */
-    public function getPostsForDataApi(
-        Blog $blog,
-        Language $language,
-        ?string $filter,
-        int $limit,
-        int $offset,
-        array $orderBys,
-        bool $isPages,
-    ): array {
-        $qb = $this->buildPostQueryBase($blog, $language, $isPages);
-        $this->applyFilter($qb, $filter);
-        return $this->executePostQuery($qb, $orderBys, $limit, $offset);
-    }
-
-    private function buildPostQueryBase(Blog $blog, Language $language, bool $isPage): OrmQB
-    {
         $qb = $this->em->createQueryBuilder();
-        $qb->select('p')
-            ->from(Post::class, 'p')
+        $qb->from(Post::class, 'p')
             ->join(PostVariant::class, 'pv', 'WITH', 'pv.post = p AND pv.language = :language AND pv.status = :status')
             ->where('p.blog = :blog')
             ->andWhere('p.is_page = :isPage')
@@ -152,16 +136,7 @@ class PostService
             ->setParameter('status', PostVariantStatus::PUBLISHED)
             ->setParameter('isPage', $isPage);
 
-        return $qb;
-    }
-
-    private function applyFilter(OrmQB $qb, ?string $filter): void
-    {
-        if ($filter === null || $filter === '') {
-            return;
-        }
-
-        try {
+        if ($filter) {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
                 ->keys(function (\Hyvor\FilterQ\Keys $keys) {
@@ -169,12 +144,11 @@ class PostService
                     $keys->add('published_at', 'p.published_at')->valueType('date');
                     $keys->add('created_at', 'p.created_at')->valueType('date');
                     $keys->add('updated_at', 'pv.updated_at')->valueType('date');
-                    $keys->add('is_featured', 'p.is_featured')->valueType('bool');
-                    $keys->add('slug', 'pv.slug')->valueType('string');
-                    $keys->add('title', 'pv.title')->valueType('string');
+                    $keys->add('is_featured', 'p.is_featured')->valueType('bool')->operators('=,!=');
+                    $keys->add('slug', 'pv.slug')->valueType('string')->operators('=,!=');
                     $keys->add('words', 'pv.words')->valueType('int');
-                    $keys->add('featured_image_url', 'p.featured_image_url')->valueType(['string', 'null']);
-                    $keys->add('canonical_url', 'p.canonical_url')->valueType(['string', 'null']);
+                    $keys->add('featured_image_url', 'p.featured_image_url')->valueType(['string', 'null'])->operators('=,!=');
+                    $keys->add('canonical_url', 'p.canonical_url')->valueType(['string', 'null'])->operators('=,!=');
 
                     $tagJoined = false;
                     $tagJoinFn = function (OrmQB $qb) use (&$tagJoined) {
@@ -197,60 +171,48 @@ class PostService
                     $keys->add('author.slug', 'author_filter.slug')->valueType('string')->join($authorJoinFn);
                 })
                 ->addWhere();
-        } catch (FilterQException $e) {
-            throw new UnprocessableEntityHttpException($e->getMessage(), $e);
         }
-    }
 
-    /**
-     * @param array<array{0: string, 1: string}> $orderBys
-     * @return array{posts: Post[], total: int}
-     */
-    private function executePostQuery(OrmQB $qb, array $orderBys, int $limit, int $offset): array
-    {
         $countQb = clone $qb;
         $countQb->select('COUNT(DISTINCT p.id)');
         $totalFetch = $countQb->getQuery()->getSingleScalarResult();
         $total = is_numeric($totalFetch) ? (int)$totalFetch : 0;
 
+
         if ($total === 0) {
             return ['posts' => [], 'total' => 0];
         }
 
-        $idQb = clone $qb;
-        $idQb->select('p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at')
-            ->groupBy('p.id, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at');
-
         foreach ($orderBys as [$column, $direction]) {
-            $idQb->addOrderBy($column, $direction);
+            $qb->addOrderBy($column, $direction);
         }
 
-        $idQb->setMaxResults($limit)
-            ->setFirstResult($offset);
+        $postIdRows = $qb->setMaxResults($limit)
+            // need to select the columns in the WHERE clause
+            ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at')
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getArrayResult();
 
-        /** @var array<array{pid: int}> $rows */
-        $rows = $idQb->getQuery()->getArrayResult();
-        $ids = array_column($rows, 'pid');
+        $postIds = array_column($postIdRows, 'pid');
 
-        if (empty($ids)) {
+        if (empty($postIds)) {
             return ['posts' => [], 'total' => $total];
         }
 
-        $posts = $this->em->getRepository(Post::class)->findBy(['id' => $ids]);
+        $posts = $this->getPostsByIds($postIds);
 
         /** @var array<int|string, int> $idOrder */
-        $idOrder = array_flip($ids);
+        $idOrder = array_flip($postIds);
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
 
         return ['posts' => $posts, 'total' => $total];
     }
 
-    // Console API methods
-
     /**
      * @return array{posts: Post[], total: int}
      */
-    public function getConsolePosts(
+    public function getPosts(
         Blog $blog,
         Language $language,
         ?string $status = null,
@@ -338,22 +300,6 @@ class PostService
         $replaced = (string)preg_replace('/[*:|&!()]/', '', $search);
         $replaced = (string)preg_replace('/\s+/', ':* | ', $replaced);
         return $replaced . ':*';
-    }
-
-    /**
-     * @return Post[]
-     */
-    public function getPostsForExport(Blog $blog): array
-    {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('p')
-            ->from(Post::class, 'p')
-            ->where('p.blog = :blog')
-            ->setParameter('blog', $blog)
-            ->orderBy('p.id', 'ASC');
-
-        /** @var Post[] */
-        return $qb->getQuery()->getResult();
     }
 
     /**
