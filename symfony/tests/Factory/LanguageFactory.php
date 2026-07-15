@@ -38,7 +38,7 @@ final class LanguageFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'code' => self::faker()->text(12),
-            'direction' => self::faker()->randomElement(LanguageDirection::cases()),
+            'direction' => LanguageDirection::LTR,
             'is_primary' => false,
             'name' => self::faker()->text(255),
         ];

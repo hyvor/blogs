@@ -39,6 +39,7 @@ final class PostVariantFactory extends PersistentObjectFactory
             'language' => LanguageFactory::new(),
             'status' => self::faker()->randomElement(PostVariantStatus::cases()),
             'slug' => self::faker()->slug(),
+            'title' => self::faker()->sentence(),
         ];
     }
 
