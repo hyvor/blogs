@@ -26,6 +26,7 @@ use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
+use App\Service\Theme\Exception\ThemeConfigParsingException;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -113,6 +114,13 @@ class TemplateRendererService
             throw new TemplateRenderingException("Template file '$template' not found in blog templates.");
         }
 
+        /**
+         * JSON encoding + decoding is to make sure only data from objects are sent
+         * and the developer does not have access to any mistakenly added PHP methods
+         * @var array<string, mixed> $vars
+         */
+        $vars = json_decode((string)json_encode($vars), true);
+
         try {
             return $this->twigRendererService->renderFromFiles($loaderArray, $vars, $template);
         } catch (Error $e) {
@@ -190,6 +198,7 @@ class TemplateRendererService
     /**
      * @return array<string, mixed>
      * @throws TemplateRenderingPageNotFoundException
+     * @throws TemplateRenderingException
      */
     private function getVariablesForRoute(
         Blog $blog,
@@ -208,7 +217,13 @@ class TemplateRendererService
         $filter = $matchedRoute->getPostsFilter();
         if ($filter !== null) {
             $pageNumber = $this->getPageNumber($matchedRoute);
-            $config = $this->themeConfigService->getConfig($blog);
+
+            try {
+                $config = $this->themeConfigService->getConfig($blog);
+            } catch (ThemeConfigParsingException $e) {
+                throw new TemplateRenderingException($e->getMessage(), previous: $e);
+            }
+
             $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
             $offset = ($pageNumber - 1) * $limit;
 
@@ -232,9 +247,16 @@ class TemplateRendererService
         return $vars;
     }
 
+    /**
+     * @throws TemplateRenderingException
+     */
     private function getDefaultVariables(Blog $blog, Language $language): array
     {
-        $config = $this->themeConfigService->getConfig($blog);
+        try {
+            $config = $this->themeConfigService->getConfig($blog);
+        } catch (ThemeConfigParsingException $e) {
+            throw new TemplateRenderingException($e->getMessage(), previous: $e);
+        }
         $blogObject = $this->blogObjectFactory->create($blog, $language);
 
         return [

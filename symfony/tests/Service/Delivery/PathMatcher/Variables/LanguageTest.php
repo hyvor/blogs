@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\Delivery\PathMatcher;
+namespace App\Tests\Service\Delivery\PathMatcher\Variables;
 
 use App\Service\Delivery\PathMatcher;
 use App\Tests\Factory\BlogFactory;
