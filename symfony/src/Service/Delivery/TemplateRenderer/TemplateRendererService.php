@@ -212,37 +212,7 @@ class TemplateRendererService
         $vars['_route'] = new RouteObject($route, $matchedRoute, $templateName);
 
         $vars += $this->getRouteVariables($blog, $language, $matchedRoute, $model);
-
-        // _posts and _pagination is set if the route has a posts filter
-        $filter = $matchedRoute->getPostsFilter();
-        if ($filter !== null) {
-            $pageNumber = $this->getPageNumber($matchedRoute);
-
-            try {
-                $config = $this->themeConfigService->getConfig($blog);
-            } catch (ThemeConfigParsingException $e) {
-                throw new TemplateRenderingException($e->getMessage(), previous: $e);
-            }
-
-            $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
-            $offset = ($pageNumber - 1) * $limit;
-
-            $result = $this->postService->getPostsWithFilter($blog, $language, $filter, $limit, $offset);
-            $posts = $result['posts'];
-            $total = $result['total'];
-
-            if (empty($posts) && $pageNumber > 1) {
-                throw new TemplateRenderingPageNotFoundException();
-            }
-
-            $postObjects = [];
-            foreach ($posts as $post) {
-                $postObjects[] = $this->postObjectFactory->create($blog, $post, $language);
-            }
-
-            $vars['_posts'] = $postObjects;
-            $vars['_pagination'] = new PaginationObject($limit, $pageNumber, $total);
-        }
+        $vars += $this->getPostFilterVariables($blog, $language, $matchedRoute);
 
         return $vars;
     }
@@ -354,6 +324,48 @@ class TemplateRendererService
         }
 
         return [];
+    }
+
+    private function getPostFilterVariables(
+        Blog $blog,
+        Language $language,
+        MatchedRoute $matchedRoute,
+    ): array
+    {
+        $filter = $matchedRoute->getPostsFilter();
+
+        if ($filter === null) {
+            return [];
+        }
+
+        $pageNumber = $this->getPageNumber($matchedRoute);
+
+        try {
+            $config = $this->themeConfigService->getConfig($blog);
+        } catch (ThemeConfigParsingException $e) {
+            throw new TemplateRenderingException($e->getMessage(), previous: $e);
+        }
+
+        $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
+        $offset = ($pageNumber - 1) * $limit;
+
+        $result = $this->postService->getPostsWithFilter($blog, $language, $filter, $limit, $offset);
+        $posts = $result['posts'];
+        $total = $result['total'];
+
+        if (empty($posts) && $pageNumber > 1) {
+            throw new TemplateRenderingPageNotFoundException();
+        }
+
+        $postObjects = [];
+        foreach ($posts as $post) {
+            $postObjects[] = $this->postObjectFactory->create($blog, $post, $language);
+        }
+
+        return [
+            '_posts' => $postObjects,
+            '_pagination' => new PaginationObject($limit, $pageNumber, $total)
+        ];
     }
 
     private function getPageNumber(MatchedRoute $matchedRoute): int
