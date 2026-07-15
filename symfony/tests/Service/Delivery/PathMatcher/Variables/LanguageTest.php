@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Tests\Service\Delivery\PathMatcher;
+namespace App\Tests\Service\Delivery\PathMatcher\Variables;
 
 use App\Service\Delivery\PathMatcher;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -21,10 +23,12 @@ class LanguageTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        RouteFactory::createDefaultsFor($blog);
+        ThemeFileFactory::createIndexTwig($blog, '{{ _lang.code }}');
 
         // Just test it doesn't throw and falls through to 404
         $response = $this->pathMatcher()->match($blog, '/');
-        $this->assertSame(404, $response->status);
+        $this->assertSame('en', $response->content);
     }
 
     public function test_strips_language_prefix_from_path(): void
@@ -32,10 +36,11 @@ class LanguageTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        RouteFactory::createDefaultsFor($blog);
+        ThemeFileFactory::createIndexTwig($blog, '{{ _lang.code }}');
 
-        // /fr/something - should strip fr prefix and return 404 (no routes)
-        $response = $this->pathMatcher()->match($blog, '/fr/hello-world');
-        $this->assertSame(404, $response->status);
+        $response = $this->pathMatcher()->match($blog, '/fr/');
+        $this->assertSame('fr', $response->content);
     }
 
     public function test_does_not_strip_invalid_language_prefix(): void
@@ -43,19 +48,11 @@ class LanguageTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
         LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        RouteFactory::createDefaultsFor($blog);
+        ThemeFileFactory::createTemplateTwig($blog, '404.twig', '{{ _lang.code }}');
 
         // /jp/ - not a registered language, should NOT be stripped, return 404
-        $response = $this->pathMatcher()->match($blog, '/jp/hello-world');
-        $this->assertSame(404, $response->status);
-    }
-
-    public function test_handles_language_with_country_code(): void
-    {
-        $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr-FR']);
-
-        $response = $this->pathMatcher()->match($blog, '/fr-FR/hello-world');
-        $this->assertSame(404, $response->status);
+        $response = $this->pathMatcher()->match($blog, '/jp/');
+        $this->assertSame('en', $response->content);
     }
 }

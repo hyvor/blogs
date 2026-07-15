@@ -16,7 +16,7 @@
         "hyvor/phrosemirror": "^1.0.6",
         "hyvor/scssphp": "^2.0.4",
         "hyvor/unfold": "^0.0.6",
-        "intervention/image": "^2.7.2",
+        "intervention/image": "^4.2.0",
         "league/flysystem": "^3.35.1",
         "league/flysystem-async-aws-s3": "^3.31",
         "league/flysystem-memory": "^3.31",

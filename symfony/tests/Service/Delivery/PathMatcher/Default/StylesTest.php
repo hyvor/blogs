@@ -123,7 +123,7 @@ class StylesTest extends KernelTestCase
         $this->assertSame("body{color:red}body{font-family:Roboto}", $response->content);
     }
 
-    public function test_adds_comment_when_bunny_fails(): void
+    public function test_adds_comment_when_bunny_fails_and_sets_small_cache(): void
     {
         $mockClient = new MockHttpClient([
             new MockResponse('', ['http_code' => 500]),
@@ -142,6 +142,7 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
-        $this->assertSame("body{color:red}", $response->content);
+        $this->assertStringContainsString("/* Unable to fetch fonts from Bunny: Request failed */", $response->content);
+        $this->assertSame(CacheControl::ONE_HOUR, $response->cacheControl);
     }
 }

@@ -110,6 +110,18 @@ class MediaService
         }
     }
 
+    /**
+     * @return resource|null
+     */
+    public function getContentsStream(Media $media)
+    {
+        try {
+            return $this->filesystem->readStream($this->getPath($media->getBlog()->getId(), $media->getName()));
+        } catch (FilesystemException) {
+            return null;
+        }
+    }
+
     /** @throws MediaException */
     public function uploadFile(
         Blog $blog,

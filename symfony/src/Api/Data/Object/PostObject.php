@@ -53,7 +53,7 @@ class PostObject
                 continue;
             }
             $variantLang = $pv->getLanguage();
-            $url = $permalinkService->getPostPermalink($post, $blog, $variantLang);
+            $url = $permalinkService->getPostVariantPermalink($pv);
             $this->variants[] = new VariantObject(new LanguageObject($variantLang), $url);
         }
 
@@ -68,7 +68,7 @@ class PostObject
         $this->is_featured = $post->isFeatured();
         $this->is_page = $post->isPage();
         $this->slug = $variant->getSlug() ?? '';
-        $this->url = $permalinkService->getPostPermalink($post, $blog, $language);
+        $this->url = $permalinkService->getPostVariantPermalink($variant);
         $this->content = $variant->getContentHtml() ?? '';
         $this->words = $variant->getWords() ?? 0;
         $this->title = $variant->getTitle();

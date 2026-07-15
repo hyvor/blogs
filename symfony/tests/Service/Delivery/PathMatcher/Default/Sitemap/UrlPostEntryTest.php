@@ -2,7 +2,11 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Sitemap;
 
+use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Post;
 use App\Service\Delivery\Processor\Sitemap\UrlPostEntry;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -22,7 +26,7 @@ class UrlPostEntryTest extends KernelTestCase
 
     public function test_generates_url_entry_with_language_variants_and_images(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $lang1 = LanguageFactory::createOne([
             'blog' => $blog,
             'code' => 'en',
@@ -50,7 +54,7 @@ class UrlPostEntryTest extends KernelTestCase
         $variant1 = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $lang1,
-            'status' => \App\Entity\Enum\PostVariantStatus::PUBLISHED,
+            'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'my-post',
             'content' => json_encode([
                 'type' => 'doc',
@@ -67,17 +71,17 @@ class UrlPostEntryTest extends KernelTestCase
         $variant2 = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $lang2,
-            'status' => \App\Entity\Enum\PostVariantStatus::PUBLISHED,
+            'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'mon-article',
         ]);
 
         // Reload post with variants
         $this->getEm()->clear();
-        $post = $this->getEm()->find(\App\Entity\Post::class, $post->getId());
+        $post = $this->getEm()->find(Post::class, $post->getId());
         $this->assertNotNull($post);
 
-        $entry = new UrlPostEntry($post, $this->permalinkService());
-        $xml = $entry->toXML();
+        $entry = new UrlPostEntry($post);
+        $xml = $entry->toXML($this->permalinkService(), $this->getService(PostContentService::class));
 
         $this->assertStringContainsString("<loc>$baseUrl/my-post</loc>", $xml);
         $this->assertStringContainsString('hreflang="en"', $xml);

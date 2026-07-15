@@ -3,6 +3,7 @@
 namespace App\Service\Theme;
 
 use App\Entity\Blog;
+use App\Service\Theme\Exception\ThemeConfigParsingException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -12,6 +13,7 @@ class ThemeConfigService
 
     /**
      * @return array<string, mixed>
+     * @throws ThemeConfigParsingException
      */
     public function getConfig(Blog $blog): array
     {
@@ -22,8 +24,8 @@ class ThemeConfigService
 
         try {
             $config = Yaml::parse((string)$configFile->getContent()) ?? [];
-        } catch (ParseException) {
-            return [];
+        } catch (ParseException $e) {
+            throw new ThemeConfigParsingException('config.yaml could not be parsed: ' . $e->getMessage(), 0, $e);
         }
 
         /** @var array<string, mixed> $result */

@@ -48,11 +48,7 @@ class AppDeliveryController extends AbstractController
         }
 
         $path = strval($request->query->get('path', ''));
-        $response = (array) $this->deliveryService->getResponse($blog, $path);
-
-        if (isset($response['content'])) {
-            $response['content'] = base64_encode($response['content']);
-        }
+        $response = $this->deliveryService->getResponse($blog, $path);
 
         return new JsonResponse($response);
     }

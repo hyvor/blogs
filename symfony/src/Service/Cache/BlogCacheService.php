@@ -6,7 +6,10 @@ use App\Entity\Blog;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
-use Doctrine\DBAL\Connection;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponse;
+use App\Service\Delivery\Dto\DeliveryResponseType;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class BlogCacheService
@@ -15,31 +18,34 @@ class BlogCacheService
     public const LAST_ALL_CACHE_CLEARED_AT = 'LAST_ALL_CACHE_CLEARED_AT';
 
     public function __construct(
-        private Connection $connection,
         private EventDispatcherInterface $dispatcher,
-        private string $cachePrefix = '',
+        private CacheItemPoolInterface $cache,
     ) {}
 
+    /**
+     * key is hashed via xxh3 since path may contain special characters not allowed in cache keys
+     * xxH3 is fast and has a low collision rate than md5 https://php.watch/versions/8.1/xxHash
+     */
     private function getKey(Blog $blog, string $path): string
     {
-        return $this->cachePrefix . "blog_cache_{$blog->getId()}_$path";
+        return hash('xxh3', "blog_cache_{$blog->getId()}_$path");
     }
 
     public function clearTemplateCache(Blog $blog): void
     {
-        $this->put($this->getKey($blog, self::LAST_TEMPLATE_CACHE_CLEARED_AT), time());
+        $this->saveCacheItem($this->getKey($blog, self::LAST_TEMPLATE_CACHE_CLEARED_AT), time());
         $this->dispatcher->dispatch(new CacheClearTemplatesEvent($blog));
     }
 
     public function clearAllCache(Blog $blog): void
     {
-        $this->put($this->getKey($blog, self::LAST_ALL_CACHE_CLEARED_AT), time());
+        $this->saveCacheItem($this->getKey($blog, self::LAST_ALL_CACHE_CLEARED_AT), time());
         $this->dispatcher->dispatch(new CacheClearAllEvent($blog));
     }
 
     public function clearSingleCache(Blog $blog, string $path): void
     {
-        $this->forget($this->getKey($blog, $path));
+        $this->deleteCacheItem($this->getKey($blog, $path));
         $this->dispatcher->dispatch(new CacheClearSingleEvent($blog, $path));
     }
 
@@ -51,23 +57,79 @@ class BlogCacheService
         }
     }
 
-    private function put(string $key, mixed $value): void
+    private function saveCacheItem(
+        string $key,
+        int|DeliveryResponse $value,
+        ?int $ttl = 30 * 24 * 60 * 60 // null means no expiration, default is 30 days
+    ): void
     {
-        // Matches Laravel database cache driver format: base64_encode(serialize($value))
-        $serialized = base64_encode(serialize($value));
-
-        // Max 32-bit signed int — far-future "forever" matching the cache table integer column
-        $forever = 2147483647;
-
-        $this->connection->executeStatement(
-            'INSERT INTO cache (key, value, expiration) VALUES (:key, :value, :expiration)
-             ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, expiration = EXCLUDED.expiration',
-            ['key' => $key, 'value' => $serialized, 'expiration' => $forever],
-        );
+        $item = $this->cache->getItem($key);
+        if ($ttl !== null) {
+            $item->expiresAfter($ttl);
+        }
+        $item->set(is_int($value) ? $value : serialize($value));
+        $this->cache->save($item);
     }
 
-    private function forget(string $key): void
+    private function deleteCacheItem(string $key): void
     {
-        $this->connection->executeStatement('DELETE FROM cache WHERE key = :key', ['key' => $key]);
+        $this->cache->deleteItem($key);
+    }
+
+    private function getIntItem(string $key): int
+    {
+        $item = $this->cache->getItem($key);
+        $value = $item->get();
+        if (!is_int($value)) {
+            return 0;
+        }
+        return $value;
+    }
+
+    public function setResponse(Blog $blog, string $path, DeliveryResponse $responseObject) : void
+    {
+        $key = $this->getKey($blog, $path);
+        $this->saveCacheItem($key, $responseObject);
+    }
+
+    public function getResponse(Blog $blog, string $path): ?DeliveryResponse
+    {
+        $key = $this->getKey($blog, $path);
+        $cache = $this->cache->getItem($key)->get();
+
+        if (!$cache) {
+            return null;
+        }
+
+        if (!is_string($cache)) {
+            return null;
+        }
+
+        $object = unserialize($cache);
+
+        if (!($object instanceof DeliveryResponse)) {
+            return null;
+        }
+
+        $objectCreatedAt = $object->at;
+
+        // when the whole blog cache is cleared
+        $lastCacheAllCleared = $this->getIntItem($this->getKey($blog, self::LAST_ALL_CACHE_CLEARED_AT));
+        if (is_int($lastCacheAllCleared) && $objectCreatedAt < $lastCacheAllCleared) {
+            return null;
+        }
+
+        if (
+            $object->type === DeliveryResponseType::FILE &&
+            $object->fileType === DeliveryFileType::TEMPLATE
+        ) {
+            // if template cache is cleared
+            $templateCacheClearedAt = $this->getIntItem($this->getKey($blog, self::LAST_TEMPLATE_CACHE_CLEARED_AT));
+            if ($objectCreatedAt < $templateCacheClearedAt) {
+                return null;
+            }
+        }
+
+        return $object;
     }
 }

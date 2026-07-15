@@ -68,16 +68,16 @@ final class BlogVariantFactory extends PersistentObjectFactory
      * @param iterable<Language>|null $languages
      * @return BlogVariant[]
      */
-    public static function createManyForBlogWithAllLanguages(Blog $blog, ?iterable $languages = null): array
+    public static function createManyForBlogWithAllLanguages(Blog $blog, ?iterable $languages = null, array $attributes = []): array
     {
         $languages = $languages ?? $blog->getLanguages();
 
         $variants = [];
         foreach ($languages as $language) {
-            $variants[] = self::createOne([
+            $variants[] = self::createOne(array_merge([
                 'blog' => $blog,
                 'language' => $language,
-            ]);
+            ], $attributes));
         }
 
         return $variants;

@@ -4,7 +4,7 @@ namespace App\Tests\Service\Blog\Listener;
 
 use App\Entity\Blog;
 use App\Entity\Meta\BlogMeta;
-use App\Service\App\MessageTransport;
+use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Listener\ReRenderPostHtmlListener;
 use App\Service\Blog\Message\ReRenderPostHtmlMessage;

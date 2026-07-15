@@ -20,32 +20,29 @@ use App\Service\Delivery\Processor\Sitemap\SitemapPostsProcessor;
 use App\Service\Delivery\Processor\StylesProcessor;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\RouteMatcher\RouteMatcher;
-use App\Service\Delivery\TemplateRenderer\DirectTemplateRendererService;
-use App\Service\Delivery\TemplateRenderer\TemplatePageNotFoundException;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingException;
+use App\Service\Delivery\TemplateRenderer\TemplateRenderingPageNotFoundException;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Service\Redirect\RedirectService;
 use App\Service\Theme\ThemeFilesService;
-use Doctrine\ORM\EntityManagerInterface;
 
 class PathMatcher
 {
     public function __construct(
-        private readonly RedirectService $redirectService,
-        private readonly AssetsProcessor $assetsProcessor,
-        private readonly PreviewProcessor $previewProcessor,
-        private readonly StylesProcessor $stylesProcessor,
-        private readonly MediaProcessor $mediaProcessor,
-        private readonly FontsCssProcessor $fontsCssProcessor,
-        private readonly FontsFileProcessor $fontsFileProcessor,
-        private readonly SitemapIndexProcessor $sitemapIndexProcessor,
-        private readonly SitemapPagesProcessor $sitemapPagesProcessor,
-        private readonly SitemapPostsProcessor $sitemapPostsProcessor,
-        private readonly RobotsTxtProcessor $robotsTxtProcessor,
-        private readonly TemplateRendererService $templateRendererService,
-        private readonly DirectTemplateRendererService $directTemplateRendererService,
-        private readonly FeedService $feedService,
-        private readonly ThemeFilesService $themeFilesService,
-        private readonly EntityManagerInterface $em,
+        private RedirectService $redirectService,
+        private AssetsProcessor $assetsProcessor,
+        private PreviewProcessor $previewProcessor,
+        private StylesProcessor $stylesProcessor,
+        private MediaProcessor $mediaProcessor,
+        private FontsCssProcessor $fontsCssProcessor,
+        private FontsFileProcessor $fontsFileProcessor,
+        private SitemapIndexProcessor $sitemapIndexProcessor,
+        private SitemapPagesProcessor $sitemapPagesProcessor,
+        private SitemapPostsProcessor $sitemapPostsProcessor,
+        private RobotsTxtProcessor $robotsTxtProcessor,
+        private TemplateRendererService $templateRendererService,
+        private FeedService $feedService,
+        private ThemeFilesService $themeFilesService,
     ) {
     }
 
@@ -59,168 +56,6 @@ class PathMatcher
             $this->matchRedirect($blog, $path) ??
             $this->matchDefaultRoutes($blog, $path) ??
             $this->matchWithLanguage($blog, $path);
-    }
-
-    private function matchWithLanguage(Blog $blog, string $path): DeliveryResponse
-    {
-        $resolved = $this->resolveLanguage($blog, $path);
-        if ($resolved === null) {
-            return DeliveryResponse::forNotFound();
-        }
-        [$language, $resolvedPath] = $resolved;
-
-        return
-            $this->matchNonPostRoutes($blog, $resolvedPath, $language) ??
-            $this->matchPostRoutes($blog, $resolvedPath, $language) ??
-            $this->matchTemplateRoutes($blog, $resolvedPath, $language) ??
-            $this->notFound($blog, $resolvedPath, $language);
-    }
-
-    /** @return array{Language, string}|null */
-    private function resolveLanguage(Blog $blog, string $path): ?array
-    {
-        $pathExploded = explode('/', $path);
-        $possibleCode = $pathExploded[1] ?? null;
-
-        $langs = $this->em->getRepository(Language::class)->findBy(['blog' => $blog]);
-
-        $primary = null;
-        $secondary = [];
-        foreach ($langs as $lang) {
-            if ($lang->isPrimary()) {
-                $primary = $lang;
-            } else {
-                $secondary[] = $lang;
-            }
-        }
-
-        if ($possibleCode && strlen($possibleCode) <= 12) {
-            foreach ($secondary as $lang) {
-                if ($lang->getCode() === $possibleCode) {
-                    $remainingPath = '/' . implode('/', array_slice($pathExploded, 2));
-                    return [$lang, $remainingPath];
-                }
-            }
-        }
-
-        if ($primary === null) {
-            // No primary language configured — return null to produce a 404
-            return null;
-        }
-
-        return [$primary, $path];
-    }
-
-    private function matchNonPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
-    {
-        $allRoutes = $this->em->getRepository(Route::class)->findBy(['blog' => $blog]);
-        $nonPostRoutes = array_filter($allRoutes, fn(Route $r) => $r->getName() !== 'post' && $r->getName() !== 'page' && $r->isEnabled());
-
-        $routeMatcher = new RouteMatcher($path);
-        $routeMap = [];
-
-        foreach ($nonPostRoutes as $route) {
-            $match = $route->getMatch();
-            $defaults = [];
-            $requirements = [];
-
-            if ($route->getPostsFilter() !== null) {
-                $match .= '/{suffix}';
-                $defaults = ['suffix' => null];
-                $requirements = ['suffix' => '(feed|(page\/\d+))'];
-            }
-
-            $routeMatcher->add($route->getName(), $match, $defaults, $requirements);
-            $routeMap[$route->getName()] = $route;
-        }
-
-        $matchedRoute = $routeMatcher->match();
-        if ($matchedRoute === null) return null;
-
-        $route = $routeMap[$matchedRoute->name] ?? null;
-        if ($route === null) return null;
-
-        return $this->renderRoute($blog, $path, $language, $route, $matchedRoute);
-    }
-
-    private function matchPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
-    {
-        $allRoutes = $this->em->getRepository(Route::class)->findBy(['blog' => $blog]);
-        $postRoutes = array_filter($allRoutes, fn(Route $r) => ($r->getName() === 'post' || $r->getName() === 'page') && $r->isEnabled());
-
-        foreach ($postRoutes as $route) {
-            $routeMatcher = new RouteMatcher($path);
-            $routeMatcher->add($route->getName(), $route->getMatch());
-            $matchedRoute = $routeMatcher->match();
-
-            if ($matchedRoute === null) continue;
-
-            $response = $this->renderRoute($blog, $path, $language, $route, $matchedRoute);
-            if ($response !== null) {
-                return $response;
-            }
-        }
-
-        return null;
-    }
-
-    private function matchTemplateRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
-    {
-        $trimmedPath = trim($path, '/');
-        $templateName = 'route-' . $trimmedPath . '.twig';
-        $file = $this->themeFilesService->getFile($blog, $templateName, ThemeFileFolder::TEMPLATES);
-
-        if ($file === null) return null;
-
-        try {
-            $html = $this->directTemplateRendererService->render($blog, $language, $templateName, $path);
-        } catch (\Twig\Error\Error $e) {
-            return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $e->getMessage(), 'text/html', 500, false);
-        }
-
-        $mimeType = MimeTypes::getMimeFromFileName($trimmedPath) ?? 'text/html';
-
-        return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, $mimeType);
-    }
-
-    private function renderRoute(Blog $blog, string $path, Language $language, Route $route, MatchedRoute $matchedRoute): ?DeliveryResponse
-    {
-        $filter = $route->getPostsFilter();
-        $resolvedFilter = null;
-
-        if ($filter !== null) {
-            $resolvedFilter = (string)preg_replace_callback('/\{(.+)\}/', function ($m) use ($matchedRoute) {
-                return "'" . ($matchedRoute->param($m[1]) ?? '') . "'";
-            }, $filter);
-
-            // Feed request
-            if ($matchedRoute->param('suffix') === 'feed') {
-                $feed = $this->feedService->generateFeed($blog, $language, $resolvedFilter);
-                return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $feed, 'application/atom+xml');
-            }
-        }
-
-        try {
-            return $this->templateRendererService->render($blog, $language, $route, $matchedRoute);
-        } catch (TemplatePageNotFoundException) {
-            return DeliveryResponse::forNotFound();
-        }
-    }
-
-    private function notFound(Blog $blog, string $path, Language $language): DeliveryResponse
-    {
-        $file = $this->themeFilesService->getFile($blog, '404.twig', ThemeFileFolder::TEMPLATES);
-
-        if ($file !== null) {
-            try {
-                $html = $this->directTemplateRendererService->render($blog, $language, '404.twig', $path);
-                return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, 'text/html', 404);
-            } catch (\Twig\Error\Error) {
-                // fall through to default
-            }
-        }
-
-        return DeliveryResponse::forNotFound();
     }
 
     private function matchRedirect(Blog $blog, string $path): ?DeliveryResponse
@@ -250,11 +85,6 @@ class PathMatcher
             return null;
         }
 
-        return $this->runDefaultProcessor($blog, $matchedRoute) ?? DeliveryResponse::forNotFound();
-    }
-
-    private function runDefaultProcessor(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
-    {
         return match ($matchedRoute->name) {
             'assets' => $this->assetsProcessor->process($blog, $matchedRoute),
             'preview' => $this->previewProcessor->process($blog, $matchedRoute),
@@ -262,11 +92,194 @@ class PathMatcher
             'media' => $this->mediaProcessor->process($blog, $matchedRoute),
             'fonts-css' => $this->fontsCssProcessor->process($blog, $matchedRoute),
             'fonts-file' => $this->fontsFileProcessor->process($blog, $matchedRoute),
-            'sitemap-index' => $this->sitemapIndexProcessor->process($blog, $matchedRoute),
-            'sitemap-pages' => $this->sitemapPagesProcessor->process($blog, $matchedRoute),
+            'sitemap-index' => $this->sitemapIndexProcessor->process($blog),
+            'sitemap-pages' => $this->sitemapPagesProcessor->process($blog),
             'sitemap-posts' => $this->sitemapPostsProcessor->process($blog, $matchedRoute),
             'robots.txt' => $this->robotsTxtProcessor->process($blog, $matchedRoute),
-            default => null,
+            default => DeliveryResponse::forNotFound(),
         };
     }
+
+    private function matchWithLanguage(Blog $blog, string $path): DeliveryResponse
+    {
+        $resolved = $this->resolveLanguage($blog, $path);
+        if ($resolved === null) {
+            return DeliveryResponse::forNotFound();
+        }
+        [$language, $resolvedPath] = $resolved;
+
+        return
+            $this->matchNonPostRoutes($blog, $resolvedPath, $language) ??
+            $this->matchPostRoutes($blog, $resolvedPath, $language) ??
+            $this->matchTemplateRoutes($blog, $resolvedPath, $language) ??
+            $this->notFound($blog, $resolvedPath, $language);
+    }
+
+    /**
+     * @return array{Language, string}|null
+     */
+    private function resolveLanguage(Blog $blog, string $path): ?array
+    {
+        $pathExploded = explode('/', $path);
+        $possibleCode = $pathExploded[1] ?? null;
+
+        $langs = $blog->getLanguages();
+
+        $primary = null;
+        $secondary = [];
+        foreach ($langs as $lang) {
+            if ($lang->isPrimary()) {
+                $primary = $lang;
+            } else {
+                $secondary[] = $lang;
+            }
+        }
+
+        if ($possibleCode && strlen($possibleCode) <= 12) {
+            foreach ($secondary as $lang) {
+                if ($lang->getCode() === $possibleCode) {
+                    $remainingPath = '/' . implode('/', array_slice($pathExploded, 2));
+                    return [$lang, $remainingPath];
+                }
+            }
+        }
+
+        if ($primary === null) {
+            // should not happen, but just in case
+            return null;
+        }
+
+        return [$primary, $path];
+    }
+
+    private function matchNonPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
+    {
+        $allRoutes = $blog->getRoutes();
+        $nonPostRoutes = $allRoutes->filter(fn(Route $r) => $r->getName() !== 'post' && $r->getName() !== 'page' && $r->isEnabled());
+
+        $routeMatcher = new RouteMatcher($path);
+        $routeMap = [];
+
+        foreach ($nonPostRoutes as $route) {
+            $match = $route->getMatch();
+            $defaults = [];
+            $requirements = [];
+
+            if ($route->getPostsFilter() !== null) {
+                $match .= '/{suffix}';
+                $defaults = ['suffix' => null];
+                $requirements = ['suffix' => '(feed|(page\/\d+))'];
+            }
+
+            $routeMatcher->add($route->getName(), $match, $defaults, $requirements);
+            $routeMap[$route->getName()] = $route;
+        }
+
+        $matchedRoute = $routeMatcher->match();
+        if ($matchedRoute === null) return null;
+
+        $route = $routeMap[$matchedRoute->name] ?? null;
+        if ($route === null) return null;
+
+        return $this->renderRoute($blog, $language, $route, $matchedRoute);
+    }
+
+    private function matchPostRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
+    {
+        $allRoutes = $blog->getRoutes();
+        $postRoutes = $allRoutes->filter(fn(Route $r) => $r->getName() === 'post' || $r->getName() === 'page');
+
+        foreach ($postRoutes as $route) {
+            $routeMatcher = new RouteMatcher($path);
+            $routeMatcher->add($route->getName(), $route->getMatch());
+            $matchedRoute = $routeMatcher->match();
+
+            if ($matchedRoute === null) continue;
+
+            $response = $this->renderRoute($blog, $language, $route, $matchedRoute);
+            if ($response !== null) {
+                return $response;
+            }
+        }
+
+        return null;
+    }
+
+    private function matchTemplateRoutes(Blog $blog, string $path, Language $language): ?DeliveryResponse
+    {
+        $trimmedPath = trim($path, '/');
+        $templateName = 'route-' . $trimmedPath . '.twig';
+        $file = $this->themeFilesService->getFile($blog, $templateName, ThemeFileFolder::TEMPLATES);
+
+        if ($file === null) return null;
+
+        try {
+            $html = $this->templateRendererService->renderWithoutRoute($blog, $language, $templateName, $path);
+            $mimeType = MimeTypes::getMimeFromFileName($trimmedPath) ?? 'text/html';
+            return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, $mimeType);
+        } catch (TemplateRenderingException $e) {
+            return DeliveryResponse::forError($e->getMessage());
+        } catch (TemplateRenderingPageNotFoundException) {
+            return null;
+        }
+    }
+
+    private function renderRoute(
+        Blog $blog,
+        Language $language,
+        Route $route,
+        MatchedRoute $matchedRoute
+    ): ?DeliveryResponse
+    {
+        $filter = $route->getPostsFilter();
+
+        if ($filter !== null) {
+            /**
+             * posts_filter can have placeholders like {tag}.
+             * here we are replacing them with the matched route parameters,
+             * and wrapping them with single quotes to make them work with FilterQ
+             */
+            $resolvedFilter = (string)preg_replace_callback('/\{(.+)}/', function ($m) use ($matchedRoute) {
+                return "'" . ($matchedRoute->param($m[1]) ?? '') . "'";
+            }, $filter);
+
+            $matchedRoute->setPostsFilter($resolvedFilter);
+
+            // Feed request
+            if ($matchedRoute->param('suffix') === 'feed') {
+                $feed = $this->feedService->generateFeed($blog, $language, $resolvedFilter);
+                return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $feed, 'application/atom+xml');
+            }
+        }
+
+        try {
+            $rendered = $this->templateRendererService->renderForRoute($blog, $language, $route, $matchedRoute);
+
+            return DeliveryResponse::forFile(
+                DeliveryFileType::TEMPLATE,
+                $rendered
+            );
+        } catch (TemplateRenderingException $e) {
+            return DeliveryResponse::forError($e->getMessage());
+        } catch (TemplateRenderingPageNotFoundException) {
+            return null;
+        }
+    }
+
+    private function notFound(Blog $blog, string $path, Language $language): DeliveryResponse
+    {
+        $file = $this->themeFilesService->getFile($blog, '404.twig', ThemeFileFolder::TEMPLATES);
+
+        if ($file !== null) {
+            try {
+                $html = $this->templateRendererService->renderWithoutRoute($blog, $language, '404.twig', $path);
+                return DeliveryResponse::forFile(DeliveryFileType::TEMPLATE, $html, 'text/html', 404);
+            } catch (TemplateRenderingException|TemplateRenderingPageNotFoundException) {
+                // fall through to default
+            }
+        }
+
+        return DeliveryResponse::forNotFound();
+    }
+
 }

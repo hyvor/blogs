@@ -2,13 +2,20 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
+use App\Entity\Blog;
+use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
+use App\Entity\Meta\BlogMeta;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -23,22 +30,59 @@ class IndexTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
-    private function createBlogWithLanguageAndRoutes(): \App\Entity\Blog
+    private function createBlogWithLanguageAndRoutes(): Blog
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'tag', 'match' => '/tag/{slug}', 'template' => 'tag,index', 'posts_filter' => 'tag.slug={slug}', 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author,index', 'posts_filter' => 'author.slug={slug}', 'is_enabled' => true]);
+        $lang = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
+        BlogVariantFactory::createOne(['language' => $lang, 'blog' => $blog, 'name' => 'My Blog']);
+        RouteFactory::createDefaultsFor($blog);
         return $blog;
     }
 
     public function test_matches_index_page(): void
     {
-        $content = 'Hello World';
-        $blog = $this->createBlogWithLanguageAndRoutes();
+        $content = <<<HTML
+        Title: {{ _meta.title }}
+        Description: {{ _meta.description }}
+        Featured Image: {{ _meta.featured_image }}
+        URL: {{ _meta.url }}
+        Canonical URL: {{ _meta.canonical_url }}
+        Featured Posts Count:: {{ _featured_posts|length }}
+        Featured Post Title: {{ _featured_posts[0].title }}
+        Featured Post Slug: {{ _featured_posts[0].slug }}
+        HTML;
+
+        $expected = <<<HTML
+        Title: My Blog
+        Description: My Blog Description
+        Featured Image: https://example.com/cover.jpg
+        URL: https://myblog.hyvorblogs.io
+        Canonical URL: https://myblog.hyvorblogs.io
+        Featured Posts Count:: 1
+        Featured Post Title: Featured Post
+        Featured Post Slug: featured-post
+        HTML;
+
+
+        $meta = new BlogMeta();
+        $meta->cover_url = 'https://example.com/cover.jpg';
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'subdomain' => 'myblog',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'meta' => $meta,
+        ], variants: false);
+        BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: [
+            'name' => 'My Blog',
+            'description' => 'My Blog Description',
+        ]);
+
+        $featuredPost = PostFactory::createPublishedOneForWithVariants($blog, [
+            'is_featured' => true,
+        ], [
+            'title' => 'Featured Post',
+            'slug' => 'featured-post',
+        ]);
+
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,
@@ -49,7 +93,29 @@ class IndexTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/');
 
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
-        $this->assertSame($content, $response->content);
+        $this->assertSame($expected, $response->content);
         $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
+    }
+
+    public function test_matches_index_page_with_number(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _pagination.page }}|{{ _posts[0].slug }}');
+        ThemeFileFactory::createOneFor($blog, 'config.yaml', 'POSTS_PER_PAGINATION: 1', null);
+
+        $post1 = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable('-1 day')]);
+        $post2 = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable('-2 days')]);
+        foreach ([$post1, $post2] as $post) {
+            PostVariantFactory::createOne([
+                'post' => $post,
+                'language' => $blog->getLanguages()[0],
+                'status' => PostVariantStatus::PUBLISHED,
+                'slug' => 'post-' . $post->getId(),
+            ]);
+        }
+
+        $response = $this->pathMatcher()->match($blog, '/page/2');
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame('2|post-' . $post2->getId(), $response->content);
     }
 }

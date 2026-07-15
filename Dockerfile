@@ -48,7 +48,7 @@ WORKDIR /app/backend
 # install php and dependencies
 # install supervisor
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql gd opcache apcu && \
+RUN install-php-extensions bcmath intl pcntl zip pdo_pgsql imagick opcache apcu && \
     apt update && apt install -y supervisor && \
     rm -rf /var/lib/apt/lists/*
 

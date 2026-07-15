@@ -12,6 +12,7 @@ class DataApiCaller
 
     /**
      * @param array<string, mixed> $query
+     * @throws Error
      */
     public function callApi(string $subdomain, string $endpoint, array $query = []): mixed
     {
