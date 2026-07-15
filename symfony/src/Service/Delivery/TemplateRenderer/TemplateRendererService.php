@@ -26,9 +26,11 @@ use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
+use App\Service\Tag\TagService;
 use App\Service\Theme\Exception\ThemeConfigParsingException;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Error\Error;
@@ -36,7 +38,6 @@ use Twig\Error\Error;
 class TemplateRendererService
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private PermalinkService $permalinkService,
         private ThemeFilesService $themeFilesService,
         private ThemeConfigService $themeConfigService,
@@ -48,6 +49,8 @@ class TemplateRendererService
         private AuthorObjectFactory $authorObjectFactory,
         private PostContentService $postContentService,
         private AppConfig $appConfig,
+        private TagService $tagService,
+        private UserService $userService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
@@ -153,33 +156,30 @@ class TemplateRendererService
 
         if ($routeName === 'tag') {
             if ($slug === null) return false;
-            $tag = $this->em->getRepository(Tag::class)->findOneBy(['blog' => $blog, 'slug' => $slug]);
+            $tag = $this->tagService->getTagBySlug($blog, $slug);
             if ($tag === null) return false;
-            if ($tag->isPrivate() === true) return false;
+            if ($tag->isPrivate()) return false; // private pages do not have public pages
             return $tag;
         }
 
         if ($routeName === 'author') {
             if ($slug === null) return false;
-            $user = $this->em->getRepository(User::class)->findOneBy(['blog' => $blog, 'slug' => $slug]);
-            return $user ?? false;
+            $user = $this->userService->getUserBySlug($blog, $slug);
+            if ($user === null) return false;
+            return $user;
         }
 
         if ($routeName === 'post' || $routeName === 'page') {
             if ($slug === null) return false;
 
-            $variant = $this->em->getRepository(PostVariant::class)->findOneBy([
-                'language' => $language,
-                'slug' => $slug,
-            ]);
-
+            $variant = $this->postService->getPostVariantByLanguageAndSlug($language, $slug);
             if ($variant === null) return false;
 
             $post = $variant->getPost();
 
             if ($routeName === 'page' && !$post->isPage()) return false;
             if ($routeName === 'post' && $post->isPage()) return false;
-            if ($post->getBlog()->getId() !== $blog->getId()) return false;
+            if ($post->getBlog()->getId() !== $blog->getId()) return false; // just in case
 
             if (!$this->permalinkService->validatePostPermalinkParams($post, $matchedRoute->params)) {
                 return false;
