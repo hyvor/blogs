@@ -12,7 +12,6 @@
 		Button,
 		Dropdown,
 		IconButton,
-		IconMessage,
 		Link,
 		Loader,
 		Text
@@ -20,7 +19,6 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import IconLaptop from '@hyvor/icons/IconLaptop';
-	import IconLock from '@hyvor/icons/IconLock';
 	import IconTablet from '@hyvor/icons/IconTablet';
 	import IconGithub from '@hyvor/icons/IconGithub';
 
@@ -56,6 +54,21 @@
 		isLoading = true;
 		currentTheme = theme;
 		dropdownOpen = false;
+	}
+
+	// hovering for >1s unlocks it and leaving re-locks it immediately.
+	let hoverTimeout: ReturnType<typeof setTimeout> | undefined;
+
+	function handleIframeMouseEnter() {
+		if (!lockScroll) return;
+		hoverTimeout = setTimeout(() => {
+			lockScroll = false;
+		}, 1000);
+	}
+
+	function handleIframeMouseLeave() {
+		clearTimeout(hoverTimeout);
+		lockScroll = true;
 	}
 
 	let originalThemes = $derived(
@@ -95,7 +108,10 @@
 				{#snippet content()}
 					<ActionList>
 						{#each [originalThemes, portedThemes] as group, i}
-							<ActionListGroup title={i === 0 ? 'Original' : 'Ported'} divider={i > 0}>
+							<ActionListGroup
+								title={i === 0 ? 'Original' : 'Ported'}
+								divider={i > 0}
+							>
 								{#each group as theme (theme.name)}
 									{#if theme.name !== 'blank'}
 										<ActionListItem
@@ -152,7 +168,13 @@
 		</div>
 
 		{#if currentTheme}
-			<div class="iframe" style="padding: {type === 'laptop' ? 0 : 15}px">
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				class="iframe"
+				style="padding: {type === 'laptop' ? 0 : 15}px"
+				onmouseenter={handleIframeMouseEnter}
+				onmouseleave={handleIframeMouseLeave}
+			>
 				{#if isLoading}
 					<Loader full />
 				{/if}
@@ -160,18 +182,14 @@
 				<iframe
 					src={currentThemeUrl}
 					title={currentTheme.name}
-					style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
+					style:width={type === 'laptop'
+						? '100%'
+						: (type === 'tablet' ? 540 : 360) + 'px'}
 					style:height={type === 'laptop' ? '100%' : 740 + 'px'}
+					style:pointer-events={lockScroll ? 'none' : 'auto'}
 					onload={() => (isLoading = false)}
 					style:display={isLoading ? 'none' : 'block'}
 				></iframe>
-
-				{#if lockScroll}
-					<button class="lock-scroll" onclick={() => (lockScroll = false)}>
-						<div class="overlay"></div>
-						<IconMessage icon={IconLock} iconSize={50} message="Click to unlock scroll" />
-					</button>
-				{/if}
 			</div>
 		{/if}
 	</div>
@@ -197,6 +215,8 @@
 	}
 
 	.theme-name {
+		font-weight: normal;
+		color: var(--text-light);
 		text-transform: capitalize;
 	}
 
@@ -239,26 +259,6 @@
 		justify-content: center;
 		overflow: hidden;
 		position: relative;
-	}
-
-	.lock-scroll {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 1;
-		cursor: pointer;
-		.overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: #fafafa;
-			opacity: 0.7;
-			z-index: -1;
-		}
 	}
 
 	iframe {

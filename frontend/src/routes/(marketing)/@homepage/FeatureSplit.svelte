@@ -64,7 +64,7 @@
 	</div>
 
 	{#if after}
-		<div class="hds-container">
+		<div class="hds-container-max">
 			{@render after()}
 		</div>
 	{/if}
