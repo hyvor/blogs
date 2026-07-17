@@ -6,11 +6,11 @@
 	import IconHourglass from '@hyvor/icons/IconHourglass';
 	import IconDot from '@hyvor/icons/IconDot';
 
-	import type { PostVariant } from '../../../../lib/types';
+	import type { PostVariantStatusItem } from '../../../../lib/types';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 
 	interface Props {
-		variant: PostVariant;
+		variant: PostVariantStatusItem;
 		size?: 'x-small' | 'small' | 'medium' | 'large';
 		[key: string]: any;
 	}

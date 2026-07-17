@@ -3,8 +3,9 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
-use App\Api\Console\Object\PostObject;
-use App\Api\Console\Object\PostObjectFactory;
+use App\Api\Console\Object\PostListObject;
+use App\Api\Console\Object\PostListObjectFactory;
+use App\Api\Console\Object\PostVariantStatusObject;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserStatus;
 use App\Service\Post\PostService;
@@ -18,8 +19,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
-#[CoversClass(PostObject::class)]
-#[CoversClass(PostObjectFactory::class)]
+#[CoversClass(PostListObject::class)]
+#[CoversClass(PostListObjectFactory::class)]
+#[CoversClass(PostVariantStatusObject::class)]
 class GetPostsTest extends ApiTestCase
 {
     public function test_fetches_posts(): void
@@ -42,7 +44,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertCount(3, $json);
         $this->assertIsArray($json[0]);
         $this->assertArrayHasKey('id', $json[0]);
-        $this->assertArrayHasKey('variants', $json[0]);
+        $this->assertArrayHasKey('variant_statuses', $json[0]);
     }
 
     public function test_fetches_posts_with_limit_and_offset(): void

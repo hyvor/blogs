@@ -110,7 +110,6 @@
 <style lang="scss">
 	#post-view {
 		background-color: var(--background);
-		padding: 10px 0;
 		height: 100vh;
 	}
 
@@ -141,6 +140,7 @@
 		display: flex;
 		align-items: flex-start;
 		min-height: calc(100vh - 76px);
+    	width: 100%;
 	}
 
 	.post-left {

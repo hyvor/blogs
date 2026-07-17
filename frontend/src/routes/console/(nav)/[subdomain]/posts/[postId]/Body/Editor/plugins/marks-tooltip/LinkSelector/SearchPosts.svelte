@@ -15,7 +15,7 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { createEventDispatcher, tick } from 'svelte';
 	import { getPosts } from '../../../../../../postActions';
-	import type { Language, Post } from '../../../../../../../../../lib/types';
+	import type { Language, PostListItem } from '../../../../../../../../../lib/types';
 	import {
 		languagesStore,
 		primaryLanguageStore
@@ -26,7 +26,7 @@
 	let languageDropdownShow = $state(false);
 
 	let isLoading = $state(false);
-	let posts: Post[] = $state([]);
+	let posts: PostListItem[] = $state([]);
 
 	const dispatch = createEventDispatcher();
 
@@ -67,15 +67,6 @@
 			});
 	}
 
-	function getCurrentVariant(post: Post) {
-		return (
-			post.variants.find((v) => v.language_id === currentLanguage.id) || {
-				title: '(No title)',
-				url: '(No url)'
-			}
-		);
-	}
-
 	async function handleDropdownSelect(language: Language) {
 		currentLanguage = language;
 		await tick();
@@ -84,9 +75,8 @@
 		if (input.trim().length) loadPosts();
 	}
 
-	function handleClick(post: Post) {
-		const cur = getCurrentVariant(post);
-		dispatch('add', cur.url);
+	function handleClick(post: PostListItem) {
+		dispatch('add', post.url || '');
 	}
 </script>
 
@@ -145,11 +135,11 @@
 					onkeyup={bubble('keyup')}
 				>
 					<div class="title">
-						{getCurrentVariant(post).title}
+						{post.title || '(No title)'}
 					</div>
 
 					<div class="url">
-						{getCurrentVariant(post).url}
+						{post.url || '(No url)'}
 					</div>
 				</div>
 			{/each}

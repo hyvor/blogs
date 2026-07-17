@@ -2,7 +2,7 @@
 	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
 	import { Button, IconMessage, LoadButton, toast } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
-	import type { Post } from '../../../lib/types';
+	import type { PostListItem } from '../../../lib/types';
 	import PostRow from './PostRow.svelte';
 	import PostRowSkeleton from './PostRowSkeleton.svelte';
 	import StatusFilter from './Filters/StatusFilter.svelte';
@@ -13,7 +13,6 @@
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-	import { setPreloadedPosts } from './[postId]/postLoader';
 
 	interface Props {
 		pages?: boolean;
@@ -24,7 +23,7 @@
 	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
 	let hasMore = $state(false);
-	let posts: Post[] = $state([]);
+	let posts: PostListItem[] = $state([]);
 	let error: null | string = $state(null);
 
 	function getTime(date: Date | null) {
@@ -45,7 +44,6 @@
 			getPages()
 				.then((res) => {
 					posts = res;
-					setPreloadedPosts(res);
 				})
 				.catch(() => {
 					error = 'Failed to load pages';
@@ -66,7 +64,6 @@
 			})
 				.then((res) => {
 					posts = more ? [...posts, ...res] : res;
-					setPreloadedPosts(res);
 					hasMore = res.length === limit;
 				})
 				.catch(() => {
