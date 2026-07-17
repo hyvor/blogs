@@ -14,8 +14,7 @@
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import { getPreloadedPost } from './postLoader';
 
-	let isLoading = $state(false);
-	let storesSet = $state(false);
+	let isLoading = $state(true);
 
 	let postView: HTMLDivElement | undefined = $state();
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
@@ -45,7 +44,6 @@
 		linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
 
 		isLoading = false;
-		storesSet = true;
 	}
 
 	$effect.pre(() => {
