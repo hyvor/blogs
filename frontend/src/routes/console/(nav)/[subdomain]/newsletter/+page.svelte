@@ -1,0 +1,1 @@
+<iframe src="https://post.hyvor.localhost/console/test/issues?embedded=true" width="100%" height="100%" style="border:none;" title="Hyvor Post Newsletter"></iframe>

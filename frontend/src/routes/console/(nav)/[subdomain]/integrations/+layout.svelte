@@ -75,7 +75,6 @@
 		flex: 1;
 		min-width: 0;
 		height: 100%;
-		padding: 25px 45px;
 		overflow: auto;
 	}
 

@@ -3,7 +3,6 @@
 		Button,
 		ButtonGroup,
 		Callout,
-		Link,
 		Loader,
 		Modal,
 		SplitControl,
@@ -16,11 +15,12 @@
 		deleteHyvorTalkIntegration
 	} from './hyvorTalkActions';
 	import { onMount } from 'svelte';
-	import Newsletter from './Newsletter/Newsletter.svelte';
 	import Comments from './Comments/Comments.svelte';
-	import Memberships from './Memberships/Memberships.svelte';
-	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
 	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
+	import IntergrationTopNotice from '../components/IntergrationTopNotice.svelte';
+	import { getConfig } from '../../../../lib/config';
+	import IntegrationNotAvailable from '../components/IntegrationNotAvailable.svelte';
+	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
 
 	let isLoading = $state(true);
 	let data: HyvorTalkIntegrationData | undefined = $state();
@@ -66,77 +66,82 @@
 	});
 </script>
 
-<LicenseRequired excludeTrial={true}>
-	{#snippet upgradeText()}
-		<div>
-			This integration allows you to use <a
-				href="https://talk.hyvor.com"
-				target="_blank"
-				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
-			in the trial period.
-		</div>
-	{/snippet}
+{#if getConfig().deployment === 'on-prem'}
 
-	{#if isLoading}
-		<Loader full />
-	{:else if data}
-		<SplitControl label="Introduction">
+	<IntegrationNotAvailable>
+		Hyvor Talk integration is not available in self-hosted deployments. However, you can easily embed Hyvor Talk or another commenting system by adding the embed code directly in <a href={consoleUrlWithBlog('/settings/comments')} class="hds-link">Settings &rarr; Comments & Newsletters</a>.
+	</IntegrationNotAvailable>
+
+{:else}
+
+	<IntergrationTopNotice>
+		<a href="https://talk.hyvor.com" target="_blank" class="hds-link">
+			Hyvor Talk
+		</a> is a privacy-first commenting platform. All Hyvor Blogs plans include a free complimentary license for Hyvor Talk.
+	</IntergrationTopNotice>
+
+	<LicenseRequired excludeTrial={true}>
+		{#snippet upgradeText()}
 			<div>
-				<Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first commenting,
-				newsletter, and memberships platform. You can use it for free on your blog.
-
-				<p>
-					When you connect Hyvor Talk to your blog, we will automatically create a new website ID in
-					Hyvor Talk for this blog under your account.
-				</p>
-			</div>
-		</SplitControl>
-
-		<SplitControl label="Connect Hyvor Talk">
-			{#if data.connected}
-				<div class="connection-status">
-					This blog is connected to website ID <strong
-						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
-					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
-				</div>
-
-				<Button
-					as="a"
-					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData<true>).data.website_id}/comments`}
+				This integration allows you to use <a
+					href="https://talk.hyvor.com"
 					target="_blank"
-					size="small"
-					style="margin-right:6px;"
-				>
-					Go to Hyvor Talk Console
-				</Button>
-
-				<Button color="red" size="small" on:click={() => (isDisconnecting = true)}
-					>Disconnect</Button
-				>
-			{:else}
-				<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
-
-				<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
-			{/if}
-		</SplitControl>
-
-		{#if data.connected}
-			<div class="embed-code">
-				<SplitControl label="Embed Codes">
-					{#snippet nested()}
-						<div>
-							<Comments websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
-							<Newsletter websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
-							<Memberships websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
-						</div>
-					{/snippet}
-				</SplitControl>
+					style="text-decoration:underline">Hyvor Talk</a
+				> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
+				in the trial period.
 			</div>
-			<GatedContentRules />
+		{/snippet}
+
+		{#if isLoading}
+			<Loader full />
+		{:else if data}
+
+			<SplitControl label="Connect Hyvor Talk">
+				{#if data.connected}
+					<div class="connection-status">
+						This blog is connected to website ID <strong
+							>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
+						> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
+					</div>
+
+					<Button
+						as="a"
+						href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData<true>).data.website_id}/comments`}
+						target="_blank"
+						size="small"
+						style="margin-right:6px;"
+					>
+						Go to Hyvor Talk Console
+					</Button>
+
+					<Button color="red" size="small" on:click={() => (isDisconnecting = true)}
+						>Disconnect</Button
+					>
+				{:else}
+					<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
+
+					<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
+				{/if}
+			</SplitControl>
+
+			{#if data.connected}
+				<div class="embed-code">
+					<SplitControl label="Embed Codes">
+						{#snippet nested()}
+							<div>
+								<Comments websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+								<Newsletter websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+								<Memberships websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+							</div>
+						{/snippet}
+					</SplitControl>
+				</div>
+				<GatedContentRules />
+			{/if}
 		{/if}
-	{/if}
-</LicenseRequired>
+	</LicenseRequired>
+
+{/if}
 
 {#if isConnecting}
 	<Modal title="Connect Hyvor Talk" bind:show={isConnecting}>

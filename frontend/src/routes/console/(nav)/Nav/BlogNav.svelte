@@ -14,6 +14,13 @@
 	import { consoleUrl } from '../../lib/consoleUrl';
 	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
+
+	import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
+	import hyvorPostLogo from '$lib/img/services/hyvor-post.svg';
+	import IconEnvelope from '@hyvor/icons/IconEnvelope';
+
+	import IconChat from '@hyvor/icons/IconChat';
+
 	interface Props {
 		listItem: BlogList;
 	}
@@ -77,6 +84,32 @@
 			Pages
 		</NavLink>
 
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/comments`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/comments`)}
+		>
+			{#snippet start()}
+				<IconChat />
+			{/snippet}
+			Comments
+			{#snippet end()}
+				<img alt="Hyvor Talk" class="integration-icon" src={hyvorTalkLogo} />
+			{/snippet}
+		</NavLink>
+
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/newsletter`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/newsletter`)}
+		>
+			{#snippet start()}
+				<IconEnvelope />
+			{/snippet}
+			Newsletter
+			{#snippet end()}
+				<img alt="Hyvor Post" class="integration-icon" src={hyvorPostLogo} />
+			{/snippet}
+		</NavLink>
+
 		<div class="section-div"></div>
 
 		<NavLink
@@ -118,6 +151,7 @@
 			{/snippet}
 			Settings
 		</NavLink>
+
 	</NavLinkGroup>
 </div>
 
@@ -182,6 +216,11 @@
 
 	.section-div {
 		height: 25px;
+	}
+	
+	.integration-icon {
+		width: 16px;
+		height: 16px;
 	}
 
 	@media (max-width: 992px) {
