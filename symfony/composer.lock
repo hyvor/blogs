@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52fd400b59eabd99e8e48243684b4574",
+    "content-hash": "4fb5fb30af1467229737077dbeda9f39",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2227,16 +2227,16 @@
         },
         {
             "name": "hyvor/sdk",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php.git",
-                "reference": "0b0af363f3cf4faf2d6e86d0cd59bff240fdec5c"
+                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/0b0af363f3cf4faf2d6e86d0cd59bff240fdec5c",
-                "reference": "0b0af363f3cf4faf2d6e86d0cd59bff240fdec5c",
+                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/800c8671cbf175681618f44e3e5b291b720eb1a9",
+                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9",
                 "shasum": ""
             },
             "require": {
@@ -2253,8 +2253,10 @@
                 "symfony/serializer": "^8.1"
             },
             "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.95",
                 "guzzlehttp/guzzle": "^7.15",
                 "nyholm/psr7": "^1.8",
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
@@ -2269,9 +2271,9 @@
             ],
             "description": "Official PHP SDK for HYVOR products",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php/tree/0.0.3"
+                "source": "https://github.com/hyvor/sdk-php/tree/0.0.4"
             },
-            "time": "2026-07-19T16:51:31+00:00"
+            "time": "2026-07-20T14:31:14+00:00"
         },
         {
             "name": "hyvor/unfold",

@@ -94,6 +94,9 @@ export interface Blog {
 
 	link_analysis_enabled: boolean;
 	link_analysis_email_report: 'always' | 'broken' | 'never';
+
+	hyvor_talk_enabled: boolean;
+	hyvor_post_enabled: boolean;
 }
 
 export interface BlogCounts {

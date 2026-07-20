@@ -15,5 +15,6 @@
 <style>
 	div {
 		padding: 20px 35px;
+		height: 100%;
 	}
 </style>
