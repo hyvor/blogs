@@ -5,6 +5,7 @@
 	import SeoMockup from './SeoMockup.svelte';
 	import HostingMockup from './HostingMockup.svelte';
 	import MultiLanguageMockup from './MultiLanguageMockup.svelte';
+	import SuiteMockup from './SuiteMockup.svelte';
 </script>
 
 <FeatureSplit
@@ -74,5 +75,21 @@
 >
 	{#snippet visual()}
 		<MultiLanguageMockup />
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
+	eyebrow="Content & Community"
+	title="Blogging, comments, and newsletters — all in one place"
+	description="Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected."
+	bullets={[
+		'Hyvor Talk comments, free on every plan',
+		'Hyvor Post newsletters, free on every plan',
+		'One account and dashboard for all three'
+	]}
+	button={{ href: '/pricing', label: "See what's included" }}
+>
+	{#snippet visual()}
+		<SuiteMockup />
 	{/snippet}
 </FeatureSplit>
