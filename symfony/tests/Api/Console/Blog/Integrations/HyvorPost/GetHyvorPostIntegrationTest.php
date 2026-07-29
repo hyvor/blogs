@@ -23,7 +23,6 @@ class GetHyvorPostIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
-        $this->assertFalse($data['enabled']);
         $this->assertNull($data['data']);
     }
 
@@ -33,7 +32,6 @@ class GetHyvorPostIntegrationTest extends ApiTestCase
         $hyvorPost = HyvorPostFactory::createOne([
             'blog' => $blog,
             'newsletter_id' => 555,
-            'subdomain' => 'hp-get-enabled-newsletter',
             'embed_code' => null,
         ]);
 
@@ -41,9 +39,7 @@ class GetHyvorPostIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
-        $this->assertTrue($data['enabled']);
         $this->assertSame(555, $data['data']['newsletter_id']);
-        $this->assertSame('hp-get-enabled-newsletter', $data['data']['subdomain']);
         $this->assertStringContainsString('hyvor-post-form', $data['data']['embed_code']);
     }
 
