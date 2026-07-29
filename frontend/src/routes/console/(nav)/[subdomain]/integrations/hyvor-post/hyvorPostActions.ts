@@ -4,13 +4,10 @@ export interface HyvorPostIntegration {
 	id: number;
 	created_at: number;
 	newsletter_id: number;
-	subdomain: string;
 	embed_code: string;
 }
 
-export type HyvorPostIntegrationData =
-	| { enabled: true; data: HyvorPostIntegration }
-	| { enabled: false; data: undefined };
+export type HyvorPostIntegrationData = { data: HyvorPostIntegration | null };
 
 export function loadHyvorPost() {
 	return consoleApi.get<HyvorPostIntegrationData>({

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { blogStore } from '../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';

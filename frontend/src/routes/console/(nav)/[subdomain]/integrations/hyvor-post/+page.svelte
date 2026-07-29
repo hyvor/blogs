@@ -13,17 +13,22 @@
 		connectHyvorPost,
 		disconnectHyvorPost,
 		updateHyvorPostEmbedCode,
-		type HyvorPostIntegrationData
+		type HyvorPostIntegration
 	} from './hyvorPostActions';
 	import { onMount } from 'svelte';
 	import IntergrationTopNotice from '../components/IntergrationTopNotice.svelte';
 	import IntegrationConfigContent from '../components/IntegrationConfigContent.svelte';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
+	import { getConfig } from '../../../../lib/config';
+	import IntegrationNotAvailable from '../components/IntegrationNotAvailable.svelte';
+	import { setHyvorPostIntegrationState } from '../../../../lib/stores/blogStore';
 
 	const DEFAULT_EMBED_CODE = `<script src="https://post.hyvor.com/form/form.js" type="module" async><\/script>
 <hyvor-post-form newsletter-id="{newsletter-id}"></hyvor-post-form>`;
 
 	let isLoading = $state(true);
-	let data: HyvorPostIntegrationData | undefined = $state();
+	let data: HyvorPostIntegration | null = $state(null);
 	let embedCode = $state('');
 
 	async function handleConnect() {
@@ -41,8 +46,8 @@
 
 		connectHyvorPost()
 			.then((res) => {
-				data = { enabled: true, data: res } as HyvorPostIntegrationData;
-				embedCode = res.embed_code;
+				setFromIntegration(res);
+				setHyvorPostIntegrationState(res.newsletter_id);
 				toast.success('Hyvor Post connected successfully');
 			})
 			.catch((err) => toast.error(err.message || 'Failed to connect to Hyvor Post'))
@@ -64,7 +69,8 @@
 
 		disconnectHyvorPost()
 			.then(() => {
-				data = { enabled: false, data: undefined };
+				setFromIntegration(null);
+				setHyvorPostIntegrationState(null);
 				toast.success('Hyvor Post disconnected successfully', { id: toastId });
 			})
 			.catch((err) =>
@@ -77,10 +83,7 @@
 
 		updateHyvorPostEmbedCode(embedCode)
 			.then((res) => {
-				if (data?.enabled) {
-					data = { enabled: true, data: res } as HyvorPostIntegrationData;
-				}
-				embedCode = res.embed_code;
+				setFromIntegration(res);
 				toast.success('Embed code saved', { id: toastId });
 			})
 			.catch((err) =>
@@ -92,90 +95,126 @@
 		embedCode = DEFAULT_EMBED_CODE;
 	}
 
-	let isEmbedCodeDirty = $derived(data?.enabled === true && embedCode !== data.data.embed_code);
+	let isEmbedCodeDirty = $derived.by(() => data && embedCode !== data.embed_code);
 	let isEmbedCodeDefault = $derived(embedCode === DEFAULT_EMBED_CODE);
 
 	onMount(() => {
 		loadHyvorPost()
 			.then((res) => {
-				data = res;
-				if (res.enabled) {
-					embedCode = res.data.embed_code;
-				}
+				setFromIntegration(res.data);
 			})
 			.catch(() => toast.error('Failed to load Hyvor Post integration data'))
 			.finally(() => (isLoading = false));
 	});
+
+	function setFromIntegration(int: HyvorPostIntegration | null) {
+		data = int;
+		if (int) {
+			embedCode = int.embed_code;
+		}
+	}
 </script>
 
-<IntergrationTopNotice>
-	<a href="https://post.hyvor.com" target="_blank" class="hds-link"> Hyvor Post </a> is a privacy-first
-	email newsletter platform. Connecting it here creates a dedicated newsletter for this blog.
-</IntergrationTopNotice>
+{#if getConfig().deployment === 'on-prem'}
+	<IntegrationNotAvailable>
+		Hyvor Post integration is not available in self-hosted deployments. However, you can easily
+		embed Hyvor Post or another newsletter signup form by adding the embed code directly in <a
+			href={consoleUrlWithBlog('/settings/comments')}
+			class="hds-link">Settings &rarr; Comments & Newsletters</a
+		>.
+	</IntegrationNotAvailable>
+{:else}
+	<IntergrationTopNotice>
+		<a href="https://post.hyvor.com" target="_blank" class="hds-link"> Hyvor Post </a> is a privacy-first
+		email newsletter platform. All Hyvor Blogs plans include a free complimentary license for Hyvor
+		Post.
+	</IntergrationTopNotice>
 
-<IntegrationConfigContent>
-	{#if isLoading}
-		<Loader full />
-	{:else if data}
-		<SplitControl label="Hyvor Post Connection">
-			{#if data.enabled}
-				<div class="connection-status">
-					This blog is connected to newsletter <strong>{data.data.subdomain}</strong> in Hyvor
-					Post.
-				</div>
+	<IntegrationConfigContent>
+		{#if isLoading}
+			<Loader full />
+		{:else}
+			<SplitControl label="Hyvor Post Connection">
+				{#if data}
+					<div class="connection-status">
+						This blog is connected to a newsletter (ID: <strong
+							>{data.newsletter_id}</strong
+						>) in Hyvor Post.
+					</div>
 
-				<Button
-					as="a"
-					href={`https://post.hyvor.com/console/${data.data.newsletter_id}`}
-					target="_blank"
-					size="small"
-					style="margin-right:6px;"
-				>
-					Go to Hyvor Post Console
-				</Button>
+					<Button
+						as="a"
+						href={consoleUrlWithBlog('/newsletter')}
+						size="small"
+						style="margin-right:6px;"
+					>
+						Manage Newsletter
+						{#snippet end()}
+							&rarr;
+						{/snippet}
+					</Button>
 
-				<Button color="red" size="small" on:click={handleDisconnect}>Disconnect</Button>
-			{:else}
-				<div class="connection-status">
-					<Tag>Not Connected</Tag>
-				</div>
+					<Button
+						as="a"
+						href={`https://post.hyvor.com/console?newsletter_id=${data.newsletter_id}`}
+						target="_blank"
+						size="small"
+						style="margin-right:6px;"
+						variant="outline"
+					>
+						Hyvor Post Console
+						{#snippet end()}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
+					</Button>
 
-				<Button onclick={handleConnect}>Connect Now</Button>
-			{/if}
-		</SplitControl>
+					<Button color="red" size="small" on:click={handleDisconnect}>Disconnect</Button>
+				{:else}
+					<div class="connection-status">
+						<Tag>Not Connected</Tag>
+					</div>
 
-		{#if data.enabled}
-			<div class="embed-code">
-				<SplitControl label="Embed Code">
-					{#snippet caption()}
-						<div>Paste this code in your theme to show the newsletter signup form.</div>
-					{/snippet}
+					<Button onclick={handleConnect}>Connect Now</Button>
+				{/if}
+			</SplitControl>
 
-					<Textarea bind:value={embedCode} rows={4} block />
+			{#if data}
+				<div class="embed-code">
+					<SplitControl label="Embed Code">
+						{#snippet caption()}
+							<div>
+								Paste this code in your theme to show the newsletter signup form.
+							</div>
+						{/snippet}
 
-					{#if isEmbedCodeDirty}
-						<div class="embed-code-actions">
-							<Button size="small" on:click={handleSaveEmbedCode}>Save</Button>
-							{#if !isEmbedCodeDefault}
+						<Textarea bind:value={embedCode} rows={4} block />
+
+						{#if isEmbedCodeDirty}
+							<div class="embed-code-actions">
+								<Button size="small" on:click={handleSaveEmbedCode}>Save</Button>
+								{#if !isEmbedCodeDefault}
+									<Button
+										size="small"
+										variant="invisible"
+										on:click={handleResetEmbedCode}>Reset to default</Button
+									>
+								{/if}
+							</div>
+						{:else if !isEmbedCodeDefault}
+							<div class="embed-code-actions">
 								<Button
 									size="small"
 									variant="invisible"
 									on:click={handleResetEmbedCode}>Reset to default</Button
 								>
-							{/if}
-						</div>
-					{:else if !isEmbedCodeDefault}
-						<div class="embed-code-actions">
-							<Button size="small" variant="invisible" on:click={handleResetEmbedCode}
-								>Reset to default</Button
-							>
-						</div>
-					{/if}
-				</SplitControl>
-			</div>
+							</div>
+						{/if}
+					</SplitControl>
+				</div>
+			{/if}
 		{/if}
-	{/if}
-</IntegrationConfigContent>
+	</IntegrationConfigContent>
+{/if}
 
 <style>
 	.connection-status {

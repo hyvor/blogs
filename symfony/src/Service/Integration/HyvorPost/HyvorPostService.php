@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
 use Hyvor\Internal\Component\Component;
+use Hyvor\Sdk\Exceptions\NotFoundException;
 use Hyvor\Sdk\Post\PostClient;
 use Symfony\Component\Clock\ClockAwareTrait;
 
@@ -70,7 +71,8 @@ class HyvorPostService
 
         $hyvorPost = new HyvorPost();
         $hyvorPost->setBlog($blog);
-        $hyvorPost->setNewsletterId((int) $newsletter->id);
+        $hyvorPost->setNewsletterId($newsletter->id);
+        // for now, we always create the newsletter. Later we might have a way to connect an existing newsletter
         $hyvorPost->setCreatedByBlogs(true);
         $hyvorPost->setCreatedAt($this->now());
         $hyvorPost->setUpdatedAt($this->now());
@@ -101,5 +103,42 @@ class HyvorPostService
         $this->em->flush();
 
         return $hyvorPost;
+    }
+
+    /**
+     * Adds a Hyvor user as a Hyvor Post newsletter user. Ignores the call if the
+     * user is already added.
+     */
+    public function addUser(HyvorPost $hyvorPost, int $hyvorUserId): void
+    {
+        $orgId = $hyvorPost->getBlog()->getOrganizationId();
+        assert($orgId !== null);
+
+        $this->getClient($orgId)
+            ->newsletter($hyvorPost->getNewsletterId())
+            ->users
+            ->create([
+                'user_id' => $hyvorUserId,
+                'on_duplicate' => 'ignore',
+            ]);
+    }
+
+    /**
+     * Removes a Hyvor user from a Hyvor Post newsletter. Ignores the call if the
+     * user is not found in Hyvor Post.
+     */
+    public function removeUser(HyvorPost $hyvorPost, int $hyvorUserId): void
+    {
+        $orgId = $hyvorPost->getBlog()->getOrganizationId();
+        assert($orgId !== null);
+
+        try {
+            $this->getClient($orgId)
+                ->newsletter($hyvorPost->getNewsletterId())
+                ->users
+                ->delete(['user_id' => $hyvorUserId]);
+        } catch (NotFoundException) {
+            // user not found in Hyvor Post; nothing to do
+        }
     }
 }

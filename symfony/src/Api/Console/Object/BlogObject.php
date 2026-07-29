@@ -74,15 +74,12 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReport $link_analysis_email_report;
 
-    public bool $hyvor_talk_enabled;
-    public bool $hyvor_post_enabled;
-
     /**
      * @var BlogVariantObject[]
      */
     public array $variants;
 
-    public function __construct(Blog $blog, string $url, bool $hyvorTalkEnabled, bool $hyvorPostEnabled)
+    public function __construct(Blog $blog, string $url)
     {
         $this->id = $blog->getId();
         $this->created_at = $blog->getCreatedAt()?->getTimestamp() ?? 0;
@@ -139,9 +136,6 @@ class BlogObject
 
         $this->link_analysis_enabled = $meta->link_analysis_enabled;
         $this->link_analysis_email_report = $meta->link_analysis_email_report;
-
-        $this->hyvor_talk_enabled = $hyvorTalkEnabled;
-        $this->hyvor_post_enabled = $hyvorPostEnabled;
 
         $variants = $blog->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());

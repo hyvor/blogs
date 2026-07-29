@@ -17,6 +17,8 @@ use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Service\Blog\BlogService;
 use App\Service\Cache\BlogCacheService;
+use App\Service\Integration\HyvorPost\HyvorPostService;
+use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Language\LanguageService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
@@ -38,6 +40,8 @@ class BlogController
         private TagObjectFactory $tagObjectFactory,
         private UserObjectFactory $userObjectFactory,
         private BlogCacheService $blogCacheService,
+        private HyvorTalkService $hyvorTalkService,
+        private HyvorPostService $hyvorPostService,
     ) {}
 
     #[Route('/blog', methods: ['GET'])]
@@ -52,6 +56,9 @@ class BlogController
         $tags = $this->tagService->getTags($blog, 15);
         $languages = $this->languageService->getAllLanguages($blog);
 
+        $hyvorTalk = $this->hyvorTalkService->getHyvorTalkWebsiteOfBlog($blog);
+        $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($blog);
+
         return new JsonResponse([
             'blog' => $this->blogObjectFactory->create($blog),
             'counts' => [
@@ -65,6 +72,14 @@ class BlogController
             'users' => array_map(fn($user) => $this->userObjectFactory->create($user, $blog), $users),
             'tags' => array_map(fn($tag) => $this->tagObjectFactory->create($tag, $blog), $tags),
             'languages' => array_map(fn($language) => new LanguageObject($language), $languages),
+            'integrations' => [
+                'hyvor_talk' => $hyvorTalk ? [
+                    'website_id' => $hyvorTalk->getWebsiteId(),
+                ] : null,
+                'hyvor_post' => $hyvorPost ? [
+                    'newsletter_id' => $hyvorPost->getNewsletterId(),
+                ] : null,
+            ],
         ]);
     }
 

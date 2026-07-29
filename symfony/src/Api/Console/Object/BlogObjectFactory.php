@@ -11,8 +11,6 @@ class BlogObjectFactory
 {
     public function __construct(
         private PermalinkService $permalink,
-        private HyvorTalkService $hyvorTalkService,
-        private HyvorPostService $hyvorPostService,
     ) {}
 
     public function create(Blog $blog): BlogObject
@@ -20,8 +18,6 @@ class BlogObjectFactory
         return new BlogObject(
             $blog,
             $this->permalink->getBlogUrl($blog),
-            $this->hyvorTalkService->getHyvorTalkWebsiteOfBlog($blog) !== null,
-            $this->hyvorPostService->getHyvorPostOfBlog($blog) !== null,
         );
     }
 }

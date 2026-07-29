@@ -144,6 +144,15 @@ export interface CustomDomainSetup {
 	valid_to: number | null;
 }
 
+export interface BlogIntegrations {
+	hyvor_talk: null | {
+		website_id: number;
+	},
+	hyvor_post: null | {
+		newsletter_id: number;
+	}
+}
+
 // == POST
 export type Post = {
 	id: number;

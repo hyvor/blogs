@@ -3,13 +3,17 @@
 namespace App\Tests\Api\Console\Blog\User;
 
 use App\Api\Console\Controller\UserController;
+use App\Entity\Blog;
 use App\Entity\User as BlogUser;
+use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\HyvorPostFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\Fake\HyvorPostServiceFake;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -19,6 +23,7 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMemberResponse;
+use Hyvor\Internal\Deployment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -79,6 +84,16 @@ class CreateUserTest extends ApiTestCase
             $this->getContainer(),
             [$organizationId => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
         );
+    }
+
+    private function connectHyvorPost(Blog $blog): HyvorPostServiceFake
+    {
+        $fake = new HyvorPostServiceFake($this->getEm());
+        $this->getContainer()->set(HyvorPostService::class, $fake);
+
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4242]);
+
+        return $fake;
     }
 
     public function test_creates_a_user(): void
@@ -163,6 +178,128 @@ class CreateUserTest extends ApiTestCase
         $this->assertStringContainsString(
             'Max users limit exceeded. Please upgrade your plan',
             (string)$this->client->getResponse()->getContent(),
+        );
+    }
+
+    public function test_creates_hyvor_post_user_for_admin_role(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-admin', 'organization_id' => 3010]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1250, username: 'hpuser1250', name: 'HP User', email: 'hpuser1250@example.com');
+        $this->setUpComms();
+        $this->enableBilling(3010);
+        $fake = $this->connectHyvorPost($blog);
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'admin',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $fake->addedUsers);
+        $this->assertSame(1250, $fake->addedUsers[0]['hyvorUserId']);
+        $this->assertSame(4242, $fake->addedUsers[0]['newsletterId']);
+    }
+
+    public function test_creates_hyvor_post_user_for_editor_role(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-editor', 'organization_id' => 3011]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1251, username: 'hpuser1251', name: 'HP User', email: 'hpuser1251@example.com');
+        $this->setUpComms();
+        $this->enableBilling(3011);
+        $fake = $this->connectHyvorPost($blog);
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'editor',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $fake->addedUsers);
+    }
+
+    public function test_does_not_create_hyvor_post_user_for_writer_role(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-writer', 'organization_id' => 3012]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1252, username: 'hpuser1252', name: 'HP User', email: 'hpuser1252@example.com');
+        $this->setUpComms();
+        $this->enableBilling(3012);
+        $fake = $this->connectHyvorPost($blog);
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'writer',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $fake->addedUsers);
+    }
+
+    public function test_does_not_create_hyvor_post_user_when_not_connected(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-unconnected', 'organization_id' => 3013]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1253, username: 'hpuser1253', name: 'HP User', email: 'hpuser1253@example.com');
+        $this->setUpComms();
+        $this->enableBilling(3013);
+
+        $fake = new HyvorPostServiceFake($this->getEm());
+        $this->getContainer()->set(HyvorPostService::class, $fake);
+        // note: no HyvorPostFactory row created, so the blog is not connected
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'admin',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $fake->addedUsers);
+    }
+
+    public function test_does_not_create_hyvor_post_user_on_prem(): void
+    {
+        $this->setEnvVar('DEPLOYMENT', Deployment::ON_PREM->value);
+
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-onprem', 'organization_id' => 3014]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1254, username: 'hpuser1254', name: 'HP User', email: 'hpuser1254@example.com');
+        $fake = $this->connectHyvorPost($blog);
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'admin',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $fake->addedUsers);
+    }
+
+    public function test_rolls_back_user_creation_when_hyvor_post_call_fails(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'create-user-hp-rollback', 'organization_id' => 3015]);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog]);
+        $hyvorUser = new AuthUser(id: 1255, username: 'hpuser1255', name: 'HP User', email: 'hpuser1255@example.com');
+        $this->setUpComms();
+        $this->enableBilling(3015);
+        $fake = $this->connectHyvorPost($blog);
+        $fake->throwOnAddUser = new \RuntimeException('hyvor post is down');
+
+        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
+            'hyvor_user_id' => $hyvorUser->id,
+            'role' => 'admin',
+        ]);
+
+        $this->assertSame(500, $this->client->getResponse()->getStatusCode());
+        $this->assertNull(
+            $this->getEm()->getRepository(BlogUser::class)->findOneBy(['blog' => $blog, 'hyvor_user_id' => 1255]),
         );
     }
 }

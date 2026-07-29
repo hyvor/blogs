@@ -35,14 +35,14 @@ class HyvorPostController extends AbstractController
         $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($blog);
 
         return new JsonResponse([
-            'enabled' => $hyvorPost !== null,
             'data' => $hyvorPost !== null ? new HyvorPostObject($hyvorPost) : null,
         ]);
     }
 
     #[Route('/integrations/hyvor-post/connect', methods: 'POST')]
     #[ScopeRequired(Scope::INTEGRATIONS_MANAGE)]
-    public function connect(): JsonResponse {
+    public function connect(): JsonResponse
+    {
         $blog = $this->consoleApiAuthorizationListener->getBlog();
 
         if ($this->hyvorPostService->getHyvorPostOfBlog($blog) !== null) {

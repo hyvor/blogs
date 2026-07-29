@@ -19,6 +19,7 @@ use App\Api\Console\Object\UserVariantObjectFactory;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Service\Billing\UsageService;
+use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Language\LanguageService;
 use App\Service\User\Exception\HyvorUserNotFoundException;
 use App\Service\User\UserService;
@@ -44,6 +45,7 @@ class UserController
         private UsageService $usageService,
         private CommsInterface $comms,
         private InternalConfig $internalConfig,
+        private HyvorPostService $hyvorPostService,
     ) {}
 
     #[Route('/users', methods: ['GET'])]
@@ -91,8 +93,10 @@ class UserController
             }
         }
 
+        $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($blog);
+
         try {
-            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
+            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role, hyvorPost: $hyvorPost);
         } catch (HyvorUserNotFoundException) {
             throw new UnprocessableEntityHttpException('Unable to find the user');
         }
