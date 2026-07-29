@@ -1,9 +1,23 @@
 <script>
+	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { integrationsStore } from '../../../lib/stores/blogStore';
+	import { goto } from '$app/navigation';
 	import EmbeddedConsole from '../@components/EmbeddedConsole/EmbeddedConsole.svelte';
+	import { onMount } from 'svelte';
+	import { getConfig } from '../../../lib/config';
+
+	onMount(() => {
+		if (!$integrationsStore.hyvor_post) {
+			goto(consoleUrlWithBlog('/'));
+		}
+	});
 </script>
 
-<EmbeddedConsole
-	url="https://post.hyvor.localhost/console/test/issues?embedded=true"
-	title="Hyvor Post Newsletter Console"
-	loadingMessage="Loading Hyvor Post Console..."
-/>
+{#if $integrationsStore.hyvor_post}
+	<EmbeddedConsole
+		url="{getConfig().hyvor
+			.hyvor_post_url}/console?embedded=true&newsletter_id={$integrationsStore.hyvor_post
+			.newsletter_id}"
+		title="Hyvor Post Newsletter Console"
+	/>
+{/if}
