@@ -82,7 +82,22 @@ class TagController
         #[MapRequestPayload] UpdateTagInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $tag = $this->tagService->updateTag($tag, (array) $input);
+
+        $updates = [];
+        if ($input->is_private !== null) {
+            $updates['is_private'] = $input->is_private;
+        }
+        if ($input->slug !== null) {
+            $updates['slug'] = $input->slug;
+        }
+        if ($input->code_head !== null) {
+            $updates['code_head'] = $input->code_head;
+        }
+        if ($input->code_foot !== null) {
+            $updates['code_foot'] = $input->code_foot;
+        }
+
+        $tag = $this->tagService->updateTag($tag, $updates);
 
         return new JsonResponse($this->tagObjectFactory->create($tag, $blog));
     }

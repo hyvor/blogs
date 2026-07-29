@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { Loader, toast } from '@hyvor/design/components';
 	import { blogStore } from '../../lib/stores/blogStore';
-	import TempBlogNotice from './Temp/TempBlogNotice.svelte';
 	import { consoleUrlWithBlog } from '../../lib/consoleUrl';
 	import BlogBannedStatus from './@components/BlogStatus/BlogBannedStatus.svelte';
 	import { loadBlog } from './blogLoader';

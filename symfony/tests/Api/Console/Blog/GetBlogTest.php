@@ -53,6 +53,7 @@ class GetBlogTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
+        $this->assertIsArray($json['blog']);
         $this->assertSame($blog->getSubdomain(), $json['blog']['subdomain']);
         $this->assertIsArray($json['blog']['variants']);
         $this->assertCount(1, $json['blog']['variants']);
@@ -63,6 +64,7 @@ class GetBlogTest extends ApiTestCase
 
         $this->assertIsArray($json['users']);
         $this->assertCount(1, $json['users']);
+        $this->assertIsArray($json['users'][0]);
         $this->assertSame('admin', $json['users'][0]['role']);
 
         $this->assertIsArray($json['tags']);
@@ -70,6 +72,7 @@ class GetBlogTest extends ApiTestCase
 
         $this->assertIsArray($json['languages']);
         $this->assertCount(1, $json['languages']);
+        $this->assertIsArray($json['languages'][0]);
         $this->assertTrue($json['languages'][0]['is_primary']);
     }
 }

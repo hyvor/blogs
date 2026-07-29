@@ -45,8 +45,7 @@ class Embed extends NodeType
 
         if ($url) {
             try {
-                $data = $this->urlDataService->getEmbed($url);
-                $embedContent = is_string($data['embed'] ?? null) ? $data['embed'] : null;
+                $embedContent = $this->urlDataService->getEmbed($url) ?: null;
             } catch (\Exception $e) {
                 $errorMessage = $e instanceof UnfoldException ? $e->getMessage() : 'unknown error';
                 $embedContent = '<!-- Unable to fetch embed for URL: ' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '. Error: ' . htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') . ' -->';

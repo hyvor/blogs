@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ThemeSyncCommandTest extends KernelTestCase
 {
 
-    public function test_execute()
+    public function test_execute(): void
     {
         $commandTester = $this->getCommandTester('themes:sync');
         $commandTester->execute([]);
@@ -23,7 +23,7 @@ class ThemeSyncCommandTest extends KernelTestCase
         $transport = $this->transport('sync');
         $this->assertSame(1, $transport->getMessageCount());
 
-        $message = $transport->all()[0]->getMessage();
+        $message = $transport->dispatched()->first()->getMessage();
         $this->assertInstanceOf(RepoSyncMessage::class, $message);
     }
 

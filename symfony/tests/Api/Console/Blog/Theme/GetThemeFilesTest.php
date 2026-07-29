@@ -36,6 +36,7 @@ class GetThemeFilesTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('index.twig', $json[0]['name']);
     }
 }

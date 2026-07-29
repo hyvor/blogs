@@ -52,7 +52,7 @@ class PostsController
         if ($input->id !== null) {
             $post = $this->postService->getPostByBlogAndId($blog, $input->id);
         } elseif ($input->slug !== null) {
-            $post = $this->postService->getPostBySlugAndLanguage($language, $input->slug);
+            $post = $this->postService->getPublishedPostBySlugAndLanguage($language, $input->slug);
         }
 
         if ($post === null) {
@@ -85,14 +85,14 @@ class PostsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        $result = $this->postService->getPostsForDataApi(
+        $result = $this->postService->getPostsWithFilterQ(
             $blog,
             $language,
             $input->filter,
             $limit,
             $offset,
-            $orderBys,
-            $input->pages,
+            isPage: $input->pages,
+            orderBys: $orderBys,
         );
 
         $postObjects = array_map(

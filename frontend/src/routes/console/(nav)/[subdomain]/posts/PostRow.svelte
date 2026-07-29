@@ -1,34 +1,37 @@
 <script lang="ts">
 	import dayjs from 'dayjs';
-	import type { Post } from '../../../lib/types';
+	import type { PostListItem } from '../../../lib/types';
 	import {
 		Dropdown,
 		ActionList,
 		ActionListItem,
 		IconButton,
+		Tag,
 		toast,
 		confirm
 	} from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
-	import SeoAnalysisTag from './Tags/SeoAnalysisTag.svelte';
 	import VariantLangTag from './Tags/VariantLangTag.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-	import AuthorTag from './AuthorTag.svelte';
-	import TagChip from './TagChip.svelte';
 	import { clonePost, deletePostById } from './postActions';
 	import { goto } from '$app/navigation';
+	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
+	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
 
 	interface Props {
-		post: Post;
+		post: PostListItem;
 		onDelete?: (postId: number) => void;
 	}
 
 	let { post, onDelete }: Props = $props();
 
-	let variant = $derived(post.variants[0]!);
+	const primaryLanguage = getPrimaryLanguage();
+	let status = $derived(
+		post.variant_statuses.find((v) => v.language_id === primaryLanguage.id)?.status || 'draft'
+	);
 	let showDropdown = $state(false);
 	let isCloning = $state(false);
 	let isDeleting = $state(false);
@@ -97,18 +100,18 @@
 	}
 </script>
 
-<a 
-	class="post-list-item" 
-	href={consoleUrlWithBlog(`/posts/${post.id}`)} 
+<a
+	class="post-list-item"
+	href={consoleUrlWithBlog(`/posts/${post.id}`)}
 	style:view-transition-name={`post-${post.id}`}
 >
 	<div class="post-main">
 		<div class="post-title-row">
-			<div class="post-title">{variant?.title || '(Untitled)'}</div>
-			<PostStatusTag status={variant?.status || 'draft'} size="x-small" />
+			<div class="post-title">{post.title || '(Untitled)'}</div>
+			<PostStatusTag {status} size="x-small" />
 		</div>
 
-		{#if variant?.slug && variant.status === 'published'}
+		{#if post.slug && status === 'published'}
 			<span
 				class="post-slug"
 				role="link"
@@ -116,37 +119,37 @@
 				onclick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
-					window.open(post.variants[0]?.url || '', '_blank');
+					window.open(post.url || '', '_blank');
 				}}
 				onkeydown={(e) => {
 					if (e.key === 'Enter') {
 						e.preventDefault();
 						e.stopPropagation();
-						window.open(post.variants[0]?.url || '', '_blank');
+						window.open(post.url || '', '_blank');
 					}
 				}}
 			>
-				{post.variants[0]?.slug || ''}
+				{post.slug || ''}
 				<IconBoxArrowUpRight size={10} />
 			</span>
 		{/if}
 
 		<div class="post-date">
-			{#if variant?.status === 'published'}
+			{#if status === 'published'}
 				Published {publishedAtDate}
-			{:else if variant?.status === 'scheduled'}
+			{:else if status === 'scheduled'}
 				Scheduled {publishedAtDate}
 			{:else}
 				Created {createdAtDate}
 			{/if}
-			{#if variant?.status === 'published' && post.updated_at !== post.published_at}
+			{#if status === 'published' && post.updated_at !== post.published_at}
 				· Updated {dayjs.unix(post.updated_at).format('MMM D, YYYY')}
 			{/if}
 		</div>
 
 		<div class="post-languages">
-			{#each post.variants as variant (variant.id)}
-				<VariantLangTag {variant} size="x-small" />
+			{#each post.variant_statuses as variantStatus (variantStatus.language_id)}
+				<VariantLangTag variant={variantStatus} size="x-small" />
 			{/each}
 		</div>
 	</div>
@@ -154,14 +157,14 @@
 	<div class="post-authors-tags">
 		{#if !post.is_page}
 			<div class="post-authors">
-				{#each post.authors as author (author.id)}
-					<AuthorTag user={author} size="x-small" />
+				{#each post.authors as author (author)}
+					<Tag size="x-small" style="padding: 4px 8px" bg="#f1f1f1">{author}</Tag>
 				{/each}
 			</div>
 
 			<div class="post-tags">
-				{#each post.tags as tag (tag.id)}
-					<TagChip {tag} size="x-small" />
+				{#each post.tags as tag (tag)}
+					<Tag size="x-small" bg="#f1f1f1">{tag}</Tag>
 				{/each}
 			</div>
 		{/if}
@@ -170,12 +173,12 @@
 	<div class="post-health-wrap">
 		<div class="health-item">
 			<span class="health-label">SEO</span>
-			<SeoAnalysisTag postVariant={variant} />
+			<SeoScoreTag score={post.seo_score} percentage />
 		</div>
 		<div class="health-divider"></div>
 		<div class="health-item">
 			<span class="health-label">Links</span>
-			<LinkAnalysisTag postVariant={variant} />
+			<LinkAnalysisTag linkAnalysis={post.link_analysis} />
 		</div>
 	</div>
 
@@ -189,7 +192,12 @@
 	>
 		<Dropdown bind:show={showDropdown} align="end" width={150}>
 			{#snippet trigger()}
-				<IconButton size="small" color="input" variant="invisible" disabled={isCloning || isDeleting}>
+				<IconButton
+					size="small"
+					color="input"
+					variant="invisible"
+					disabled={isCloning || isDeleting}
+				>
 					<IconThreeDotsVertical size={16} />
 				</IconButton>
 			{/snippet}

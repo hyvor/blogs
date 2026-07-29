@@ -134,6 +134,6 @@ class HtmlParserTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $doc);
+        ], JSON_THROW_ON_ERROR), $doc);
     }
 }

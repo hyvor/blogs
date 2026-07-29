@@ -26,6 +26,7 @@ class PostVariantLinkService
      */
     public function getIgnoredLinks(PostVariant $variant): array
     {
+        /** @var LinkAnalyzerLink[] $links */
         $links = $this->em->createQueryBuilder()
             ->select('l')
             ->from(LinkAnalyzerLink::class, 'l')
@@ -63,6 +64,7 @@ class PostVariantLinkService
         $links = [];
 
         foreach ($results as $result) {
+            /** @var LinkAnalyzerLink|null $link */
             $link = $this->em->createQueryBuilder()
                 ->select('l')
                 ->from(LinkAnalyzerLink::class, 'l')
@@ -90,7 +92,7 @@ class PostVariantLinkService
             $link->setIgnore($shouldIgnore);
 
             $link->setCheckType($result->status->type);
-            $link->setIgnoreReason($shouldIgnore ? ($result->status->ignoreReason?->value ?? null) : null);
+            $link->setIgnoreReason($shouldIgnore ? $result->status->ignoreReason?->value : null);
             $link->setComment($result->status->comment);
 
             $link->setUpdatedAt($now);

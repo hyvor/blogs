@@ -2,12 +2,12 @@
 
 namespace App\Tests\Api\Misc;
 
-use App\Api\Misc\LetsEncryptController;
+use App\Api\Delivery\CustomDomainController;
 use App\Tests\Case\ApiTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Contracts\Cache\CacheInterface;
 
-#[CoversClass(LetsEncryptController::class)]
+#[CoversClass(CustomDomainController::class)]
 class LetsEncryptTest extends ApiTestCase
 {
     public function test_returns_404_for_unknown_token(): void
@@ -19,6 +19,7 @@ class LetsEncryptTest extends ApiTestCase
     public function test_returns_key_auth_for_known_token(): void
     {
         $cache = $this->getContainer()->get(CacheInterface::class);
+        $this->assertInstanceOf(CacheInterface::class, $cache);
         $cache->get('acme_challenge_test-token-123', fn() => 'test-key-auth-value');
 
         $this->client->request('GET', '/.well-known/acme-challenge/test-token-123');

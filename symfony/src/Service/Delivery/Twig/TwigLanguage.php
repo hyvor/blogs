@@ -4,7 +4,6 @@ namespace App\Service\Delivery\Twig;
 
 use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
-use App\Service\Blog\BlogService;
 use App\Service\Theme\ThemeFilesService;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -20,7 +19,6 @@ class TwigLanguage
 
     public function __construct(
         private ThemeFilesService $themeFilesService,
-        private BlogService $blogService,
     ) {}
 
     /**
@@ -88,6 +86,7 @@ class TwigLanguage
     }
 
     /**
+     * @return array<string, string>
      * @throws ParseException
      */
     private function parseYaml(string $content) : array
@@ -95,6 +94,7 @@ class TwigLanguage
         $parsed = Yaml::parse($content);
 
         if (is_array($parsed)) {
+            /** @var array<string, string> $parsed */
             return $parsed;
         }
 

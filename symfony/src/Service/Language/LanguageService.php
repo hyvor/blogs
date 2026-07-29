@@ -9,7 +9,6 @@ use App\Service\Language\Event\LanguageChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class LanguageService
 {
@@ -26,6 +25,7 @@ class LanguageService
         string $name,
         LanguageDirection $direction = LanguageDirection::LTR,
         bool $isPrimary = false,
+        bool $flush = true,
     ): Language {
         $language = new Language();
         $language->setBlog($blog);
@@ -34,8 +34,14 @@ class LanguageService
         $language->setDirection($direction);
         $language->setIsPrimary($isPrimary);
         $this->em->persist($language);
-        $this->em->flush();
-        $this->ed->dispatch(new LanguageChangedEvent($language));
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new LanguageChangedEvent($language));
+        }
+
+        $blog->getLanguages()->add($language);
+
         return $language;
     }
 
@@ -78,7 +84,7 @@ class LanguageService
             'is_primary' => true,
         ]);
         if ($language === null) {
-            throw new UnprocessableEntityHttpException('No primary language found');
+            throw new \RuntimeException('No primary language found');
         }
         return $language;
     }

@@ -59,12 +59,15 @@ class ImportSitemapTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
+        $this->assertIsArray($json['data']);
         $this->assertSame('Post Title', $json['data']['title']);
         $this->assertSame('My description', $json['data']['description']);
         $this->assertSame('<p>This is a test post</p>', $json['data']['content_html']);
         $this->assertSame((new \DateTimeImmutable('2023-04-05'))->getTimestamp(), $json['data']['published_at']);
         $this->assertSame('https://example.com/image.png', $json['data']['featured_image_url']);
         $this->assertSame('post', $json['data']['slug']);
+        $this->assertIsArray($json['meta']);
+        $this->assertIsArray($json['meta']['select_type']);
         $this->assertSame('css_selector', $json['meta']['select_type']['title']);
         $this->assertSame('css_selector', $json['meta']['select_type']['description']);
         $this->assertSame('css_selector', $json['meta']['select_type']['published_at']);

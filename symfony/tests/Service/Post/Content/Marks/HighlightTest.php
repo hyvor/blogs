@@ -32,7 +32,7 @@ class HighlightTest extends KernelTestCase
                     'marks' => [['type' => 'highlight']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<mark>highlighted</mark>', $html);

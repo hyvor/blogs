@@ -37,6 +37,8 @@ when@test:
         dbal:
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: ""
+            logging: false
+            profiling: false
 
 when@prod:
     doctrine:

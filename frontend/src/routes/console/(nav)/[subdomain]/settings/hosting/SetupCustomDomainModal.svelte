@@ -12,7 +12,8 @@
 		TabNavItem,
 		Table,
 		TableRow,
-		Tag, confirm
+		Tag,
+		confirm
 	} from '@hyvor/design/components';
 	import IconCopy from '@hyvor/icons/IconCopy';
 	import {
@@ -21,7 +22,7 @@
 		updateCustomDomainSetup,
 		verifyCustomDomainSetup
 	} from './hostingActions';
-	import {hostingInfoStore} from '../../../../lib/stores/blogStore';
+	import { hostingInfoStore } from '../../../../lib/stores/blogStore';
 
 	interface Props {
 		show: boolean;
@@ -69,7 +70,8 @@
 			return;
 		}
 		if (domainTrimmed.match('/')) {
-			error = 'Custom Domain cannot contain /. Use self-hosting to host your blog in a subdirectory';
+			error =
+				'Custom Domain cannot contain /. Use self-hosting to host your blog in a subdirectory';
 			return;
 		}
 
@@ -98,7 +100,7 @@
 			// 	error = 'This domain is already taken by another blog. Contact support if needed.';
 			// 	toast.error('Failed to save domain: domain taken', { id: saveToastId });
 			// } else {
-				toast.error(err.message || 'Failed to save domain', { id: saveToastId });
+			toast.error(err.message || 'Failed to save domain', { id: saveToastId });
 			// }
 			// return false;
 		}
@@ -115,7 +117,9 @@
 				toast.success('Custom domain is verified and active!', { id: verifyToastId });
 				show = false;
 			} else {
-				toast.warning('DNS verification is pending. Please configure your DNS settings.', { id: verifyToastId });
+				toast.warning('DNS verification is pending. Please configure your DNS settings.', {
+					id: verifyToastId
+				});
 			}
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to verify DNS records', { id: verifyToastId });
@@ -130,7 +134,8 @@
 	async function handleAbort() {
 		const confirmAbort = await confirm({
 			title: 'Abort Custom Domain Setup',
-			content: 'Are you sure you want to abort the custom domain setup? This will revert back to default subdomain setup (hyvorblogs.io) and you will have to start from scratch if you want to set it up again.',
+			content:
+				'Are you sure you want to abort the custom domain setup? This will revert back to default subdomain setup (hyvorblogs.io) and you will have to start from scratch if you want to set it up again.',
 			confirmText: 'Yes, Abort',
 			cancelText: 'No, Keep It',
 			danger: true
@@ -144,18 +149,18 @@
 		const abortToastId = toast.loading('Aborting custom domain setup...');
 
 		await deleteCustomDomainSetup()
-				.then(() => {
-					hostingInfoStore.update((info) => ({ ...info, custom_domain_setup: null }));
-					toast.success('Custom domain setup aborted', { id: abortToastId });
-					isEditing = true;
-					show = false;
-				})
-				.catch(err => {
-					toast.error(err.message || 'Failed to abort custom domain setup', { id: abortToastId });
-				})
-				.finally(() => {
-					loading = false;
-				});
+			.then(() => {
+				hostingInfoStore.update((info) => ({ ...info, custom_domain_setup: null }));
+				toast.success('Custom domain setup aborted', { id: abortToastId });
+				isEditing = true;
+				show = false;
+			})
+			.catch((err) => {
+				toast.error(err.message || 'Failed to abort custom domain setup', { id: abortToastId });
+			})
+			.finally(() => {
+				loading = false;
+			});
 	}
 </script>
 
@@ -177,17 +182,19 @@
 	</SplitControl>
 	{#if !isEditing}
 		<p>
-			Your custom domain needs to be verified. Please update your DNS records as
-			shown below to verify your domain ownership.
+			Your custom domain needs to be verified. Please update your DNS records as shown below to
+			verify your domain ownership.
 		</p>
 
-		<TabNav bind:active={dnsMethod}>
-			<TabNavItem name="cname">
+		<TabNav>
+			<TabNavItem name="cname" active={dnsMethod === 'cname'} onclick={() => (dnsMethod = 'cname')}>
 				CNAME {#snippet end()}
 					<Tag size="small" color="blue">Preferred</Tag>
 				{/snippet}
 			</TabNavItem>
-			<TabNavItem name="a">A Record</TabNavItem>
+			<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
+				>A Record</TabNavItem
+			>
 		</TabNav>
 
 		{#if dnsMethod === 'cname'}
@@ -268,16 +275,21 @@
 	{#snippet footer()}
 		{#if !isEditing}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={handleEditDomain} disabled={loading}>Edit Domain</Button>
-				<Button variant="fill-light" color="red" on:click={handleAbort} disabled={loading}>Abort</Button>
+				<Button variant="invisible" on:click={handleEditDomain} disabled={loading}
+					>Edit Domain</Button
+				>
+				<Button variant="fill-light" color="red" on:click={handleAbort} disabled={loading}
+					>Abort</Button
+				>
 				<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
 			</ButtonGroup>
 		{:else}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (show = false)} disabled={loading}>Cancel</Button>
+				<Button variant="invisible" on:click={() => (show = false)} disabled={loading}
+					>Cancel</Button
+				>
 				<Button on:click={handleNext} disabled={loading}>Next</Button>
 			</ButtonGroup>
 		{/if}
-
 	{/snippet}
 </Modal>

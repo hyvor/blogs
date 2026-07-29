@@ -39,6 +39,7 @@ class GetPagesTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertTrue($json[0]['is_page']);
     }
 }

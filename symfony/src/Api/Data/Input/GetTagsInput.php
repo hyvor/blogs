@@ -19,6 +19,7 @@ class GetTagsInput
     public ?string $sort = null;
     public ?string $keys = null;
 
+    /** @var 'public'|'private'|'any' */
     #[Assert\Choice(choices: ['public', 'private', 'any'])]
     public string $visibility = 'public';
 }

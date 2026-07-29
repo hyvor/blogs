@@ -12,7 +12,10 @@ use Twig\Error\Error;
 #[CoversClass(TwigRendererService::class)]
 class IconFunctionTest extends KernelTestCase
 {
-    private function render(string $template, mixed $context = []): string
+    /**
+     * @param array<string, mixed> $context
+     */
+    private function render(string $template, array $context = []): string
     {
         return trim($this->getService(TwigRendererService::class)->renderString($template, $context));
     }

@@ -41,7 +41,7 @@ class BulletListTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<ul><li><p>Item 1</p></li></ul>', $html);
@@ -69,6 +69,6 @@ class BulletListTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

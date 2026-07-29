@@ -22,7 +22,7 @@ class SitemapIndexProcessor
         private EntityManagerInterface $em,
     ) {}
 
-    public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
+    public function process(Blog $blog): ?DeliveryResponse
     {
         $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
         $postSitemaps = $this->getPostSitemaps($blog, $primaryLanguage);
@@ -33,10 +33,11 @@ class SitemapIndexProcessor
         $baseUrl = $this->permalinkService->getBlogUrl($blog);
         $sitemapsXml = '';
 
+        $sitemapsLength = count($sitemaps);
         foreach ($sitemaps as $i => $sitemap) {
             $url = "$baseUrl/$sitemap->name";
             $sitemapsXml .= "<sitemap><loc>$url</loc></sitemap>";
-            if ($i !== count($sitemaps) - 1) {
+            if ($i !== $sitemapsLength - 1) {
                 $sitemapsXml .= "\n\t";
             }
         }
@@ -59,12 +60,12 @@ class SitemapIndexProcessor
             ->from(PostVariant::class, 'pv')
             ->join('pv.post', 'p')
             ->where('p.blog = :blog')
-            ->andWhere('pv.language_id = :langId')
+            ->andWhere('pv.language = :lang')
             ->andWhere('pv.status = :status')
             ->andWhere('p.is_page = false')
             ->setParameter('blog', $blog)
-            ->setParameter('langId', $primaryLanguage->getId())
-            ->setParameter('status', PostVariantStatus::PUBLISHED->value)
+            ->setParameter('lang', $primaryLanguage)
+            ->setParameter('status', PostVariantStatus::PUBLISHED)
             ->getQuery()
             ->getSingleScalarResult();
 

@@ -33,6 +33,11 @@ class BlogService
         return in_array($subdomain, ['new', 'billing', 'select'], true);
     }
 
+    public function getBlogById(int $id): ?Blog
+    {
+        return $this->em->getRepository(Blog::class)->find($id);
+    }
+
     public function getBlogBySubdomain(string $subdomain): ?Blog
     {
         return $this->em->getRepository(Blog::class)->findOneBy(['subdomain' => $subdomain]);

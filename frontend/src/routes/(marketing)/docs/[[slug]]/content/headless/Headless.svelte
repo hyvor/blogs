@@ -20,8 +20,8 @@
 
 <ul>
 	<li>
-		You already have a frontend (marketing site, app, docs site) and want blog posts to live
-		inside it, on the same domain and design system.
+		You already have a frontend (marketing site, app, docs site) and want blog posts to live inside
+		it, on the same domain and design system.
 	</li>
 	<li>
 		You want full control over routing, layout, and rendering - beyond what <a
@@ -50,8 +50,7 @@
 		<a href="/docs/api-data">Data API</a>, a public, read-only JSON API.
 	</li>
 	<li>
-		Your application renders that data into pages using your own components, routing, and
-		styling.
+		Your application renders that data into pages using your own components, routing, and styling.
 	</li>
 </ol>
 
@@ -93,8 +92,7 @@ const { data: posts, pagination } = await res.json();
 />
 
 <p>
-	Pagination, filtering, and sorting all work the same way as everywhere else in the Data API -
-	see
+	Pagination, filtering, and sorting all work the same way as everywhere else in the Data API - see
 	<a href="/docs/api-data#page">page</a>, <a href="/docs/api-data#filter">filter</a>, and
 	<a href="/docs/api-data#sort">sort</a>.
 </p>
@@ -116,10 +114,9 @@ const post = await res.json();
 />
 
 <p>
-	The <code>content</code> field is HTML output by the Hyvor Blogs editor. Render it directly
-	(e.g.
-	<code>{`{@html post.content}`}</code> in Svelte, or <code>dangerouslySetInnerHTML</code> in React)
-	- it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs,
+	The <code>content</code> field is HTML output by the Hyvor Blogs editor. Render it directly (e.g.
+	<code>{`{@html post.content}`}</code> in Svelte, or <code>dangerouslySetInnerHTML</code> in React) -
+	it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs,
 	so they render correctly regardless of where you host your frontend.
 </p>
 
@@ -130,32 +127,31 @@ const post = await res.json();
 	is a dynamic route like <code>/blog/[slug]</code> in your app that calls
 	<code>/post?slug=...</code>
 	to render the page, and a listing route like <code>/blog</code> that calls
-	<code>/posts</code> to build an index. Since Hyvor Blogs isn't serving these pages, features
-	that depend on Hyvor Blogs generating pages for you - like automatic
-	<a href="/docs/redirects">redirects</a>, <a href="/docs/routes">custom routes</a>, or
-	theme-level <a href="/docs/seo">SEO</a> - don't apply; you're responsible for SEO tags, sitemaps,
-	and redirects yourself in your own app.
+	<code>/posts</code> to build an index. Since Hyvor Blogs isn't serving these pages, features that
+	depend on Hyvor Blogs generating pages for you - like automatic
+	<a href="/docs/redirects">redirects</a>, <a href="/docs/routes">custom routes</a>, or theme-level
+	<a href="/docs/seo">SEO</a> - don't apply; you're responsible for SEO tags, sitemaps, and redirects
+	yourself in your own app.
 </p>
 
 <h2 id="build-vs-request-time">4. Build-time vs. request-time fetching</h2>
 
 <ul>
 	<li>
-		<b>Static site generators</b> (Astro, Next.js static export, SvelteKit prerendering) can
-		fetch all posts at build time via <code>/posts</code>, generate a static page per post, and
-		rebuild when content changes (e.g. via a <a href="/docs/webhooks">webhook</a> that triggers a
-		redeploy).
+		<b>Static site generators</b> (Astro, Next.js static export, SvelteKit prerendering) can fetch
+		all posts at build time via <code>/posts</code>, generate a static page per post, and rebuild
+		when content changes (e.g. via a <a href="/docs/webhooks">webhook</a> that triggers a redeploy).
 	</li>
 	<li>
-		<b>Server-rendered or client-rendered apps</b> can call the Data API directly on each request,
-		since it requires no authentication and responses are cheap, cacheable JSON.
+		<b>Server-rendered or client-rendered apps</b> can call the Data API directly on each request, since
+		it requires no authentication and responses are cheap, cacheable JSON.
 	</li>
 </ul>
 
 <Callout type="info">
 	<p>
-		Use <a href="/docs/webhooks">webhooks</a> to get notified when posts are published or updated,
-		so you can invalidate a cache or trigger a rebuild instead of polling the API.
+		Use <a href="/docs/webhooks">webhooks</a> to get notified when posts are published or updated, so
+		you can invalidate a cache or trigger a rebuild instead of polling the API.
 	</p>
 </Callout>
 
@@ -163,8 +159,8 @@ const post = await res.json();
 
 <p>
 	If your blog uses <a href="/docs/languages">multiple languages</a>, pass the
-	<code>language</code> param on both the listing and single-post requests to get the right
-	variant, and use the <code>variants</code> array on each object to build language switcher links.
+	<code>language</code> param on both the listing and single-post requests to get the right variant,
+	and use the <code>variants</code> array on each object to build language switcher links.
 </p>
 
 <h2 id="example-stack">Example stack</h2>
@@ -182,6 +178,6 @@ const post = await res.json();
 
 <p>
 	From here, the <a href="/docs/api-data">Data API reference</a> has the full list of endpoints, objects,
-	and parameters (filtering, sorting, pagination, field selection) you'll need to build out listing
-	pages, tag/author pages, and search.
+	and parameters (filtering, sorting, pagination, field selection) you'll need to build out listing pages,
+	tag/author pages, and search.
 </p>

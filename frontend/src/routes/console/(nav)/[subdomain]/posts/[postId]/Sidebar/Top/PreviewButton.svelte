@@ -30,7 +30,7 @@
 		<Button size="small" color="input" on:click={handleClick}>
 			{$postVariantStore.status === 'published' ? 'View' : 'Preview'}
 			{#snippet end()}
-				<IconBoxArrowUpRight size={14} />
+				<IconBoxArrowUpRight size={12} />
 			{/snippet}
 		</Button>
 	{/snippet}
@@ -40,14 +40,14 @@
 			<Button block color="input" on:click={() => handleOpenNewTab(previewUrl)}>
 				Preview
 				{#snippet end()}
-					<IconBoxArrowUpRight size={14} />
+					<IconBoxArrowUpRight size={12} />
 				{/snippet}
 			</Button>
 
 			<Button block on:click={() => handleOpenNewTab($postVariantStore.url)}>
 				Published Post
 				{#snippet end()}
-					<IconBoxArrowUpRight size={14} />
+					<IconBoxArrowUpRight size={12} />
 				{/snippet}
 			</Button>
 		</div>

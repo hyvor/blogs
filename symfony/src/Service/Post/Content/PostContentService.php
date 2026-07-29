@@ -4,9 +4,9 @@ namespace App\Service\Post\Content;
 
 use App\Entity\Blog;
 use App\Service\CodeHighlight\Highlighter;
-use App\Service\Delivery\MediaService;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Media\ImageResizeService;
+use App\Service\Media\MediaService;
 use App\Service\Post\Content\Marks\Code;
 use App\Service\Post\Content\Marks\Em;
 use App\Service\Post\Content\Marks\Highlight;
@@ -97,9 +97,9 @@ class PostContentService
      * @param array<mixed>|string $json
      * @throws PhrosemirrorException
      */
-    public function getDocumentFromJson(array|string $json): Document
+    public function getDocumentFromJson(array|string $json, ?Blog $blog = null): Document
     {
-        return Document::fromJson($this->getSchema(new Blog()), $json);
+        return Document::fromJson($this->getSchema($blog ?? new Blog()), $json);
     }
 
     private function getSchema(Blog $blog, ?PostContentOptions $options = null): Schema

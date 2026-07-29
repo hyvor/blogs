@@ -43,6 +43,8 @@ class BlogTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['languages']);
+        $this->assertIsArray($json['languages'][0]);
         $this->assertSame('es', $json['languages'][0]['code']);
         $this->assertSame($variant->getName(), $json['name']);
     }

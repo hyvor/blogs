@@ -43,9 +43,11 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $handler(new HostingChangeMessage($hostingChange->getId()));
 
         $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChange->getId());
+        $this->assertNotNull($hostingChange);
         $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
     }
 
@@ -81,6 +83,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $handler(new HostingChangeMessage($hostingChangeId));
 
         $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
+        $this->assertNotNull($hostingChange);
         $this->assertSame(1, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
@@ -94,6 +97,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $handler(new HostingChangeMessage($hostingChangeId));
 
         $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
+        $this->assertNotNull($hostingChange);
         $this->assertSame(2, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
@@ -111,6 +115,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $handler(new HostingChangeMessage($hostingChangeId));
 
         $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChangeId);
+        $this->assertNotNull($hostingChange);
         $this->assertSame(3, $hostingChange->getRetryCount());
         $this->assertSame(HostingChangeStatus::FAILED, $hostingChange->getStatus());
         $this->assertSame('boom', $hostingChange->getErrorMessage());

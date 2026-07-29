@@ -32,7 +32,7 @@ class StrikeTest extends KernelTestCase
                     'marks' => [['type' => 'strike']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<s>strikethrough</s>', $html);

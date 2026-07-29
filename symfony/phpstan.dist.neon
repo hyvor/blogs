@@ -6,7 +6,8 @@ parameters:
         - src/
         - tests/
     exceptions:
-        uncheckedExceptionClasses:
-            - PHPUnit\Framework\Exception
+        # make sure that all App\ exceptions are checked exceptions
         check:
             missingCheckedExceptionInThrows: true
+        checkedExceptionRegexes:
+            - '#^App\\#'

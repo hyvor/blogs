@@ -41,18 +41,32 @@ class GetBlogsTest extends ApiTestCase
         $this->assertIsArray($json['blogs']);
         $this->assertCount(2, $json['blogs']);
 
-        $ids = array_map(fn(array $blog) => $blog['id'], $json['blogs']);
+        $ids = [];
+        foreach ($json['blogs'] as $blog) {
+            $this->assertIsArray($blog);
+            $ids[] = $blog['id'];
+        }
         $this->assertContains($blog1->getId(), $ids);
         $this->assertContains($blog2->getId(), $ids);
-        $this->assertArrayHasKey('variants', $json['blogs'][0]);
+
+        $firstBlog = $json['blogs'][0];
+        $this->assertIsArray($firstBlog);
+        $this->assertArrayHasKey('variants', $firstBlog);
 
         $this->assertIsArray($json['orgs']);
-        $orgIds = array_map(fn(array $org) => $org['id'], $json['orgs']);
+        $orgIds = [];
+        foreach ($json['orgs'] as $org) {
+            $this->assertIsArray($org);
+            $orgIds[] = $org['id'];
+        }
         $this->assertContains(1001, $orgIds);
         $this->assertContains(1002, $orgIds);
-        $this->assertArrayHasKey('name', $json['orgs'][0]);
-        $this->assertArrayHasKey('billing_email', $json['orgs'][0]);
-        $this->assertArrayHasKey('billing_address', $json['orgs'][0]);
+
+        $firstOrg = $json['orgs'][0];
+        $this->assertIsArray($firstOrg);
+        $this->assertArrayHasKey('name', $firstOrg);
+        $this->assertArrayHasKey('billing_email', $firstOrg);
+        $this->assertArrayHasKey('billing_address', $firstOrg);
     }
 
     public function test_filters_blogs_by_blog_id(): void
@@ -72,8 +86,11 @@ class GetBlogsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['blogs']);
         $this->assertCount(1, $json['blogs']);
-        $this->assertSame($blog1->getId(), $json['blogs'][0]['id']);
+        $firstBlog = $json['blogs'][0];
+        $this->assertIsArray($firstBlog);
+        $this->assertSame($blog1->getId(), $firstBlog['id']);
     }
 
     public function test_filters_blogs_by_subdomain(): void
@@ -93,8 +110,11 @@ class GetBlogsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['blogs']);
         $this->assertCount(1, $json['blogs']);
-        $this->assertSame('sudo-filter-two', $json['blogs'][0]['subdomain']);
+        $firstBlog = $json['blogs'][0];
+        $this->assertIsArray($firstBlog);
+        $this->assertSame('sudo-filter-two', $firstBlog['subdomain']);
     }
 
     public function test_filters_blogs_by_user_id(): void
@@ -114,8 +134,11 @@ class GetBlogsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['blogs']);
         $this->assertCount(1, $json['blogs']);
-        $this->assertSame($blog1->getId(), $json['blogs'][0]['id']);
+        $firstBlog = $json['blogs'][0];
+        $this->assertIsArray($firstBlog);
+        $this->assertSame($blog1->getId(), $firstBlog['id']);
     }
 
     public function test_get_blog_by_id(): void

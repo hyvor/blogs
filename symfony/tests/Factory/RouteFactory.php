@@ -65,6 +65,7 @@ final class RouteFactory extends PersistentObjectFactory
     }
 
     /**
+     * @param array<array<string, mixed>> $routes
      * @return Route[]
      */
     public static function createManyFromArray(Blog $blog, array $routes): array

@@ -11,12 +11,13 @@ use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\ApiKey;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Limit;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ApiKeyController
+class ApiKeyController extends AbstractController
 {
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,

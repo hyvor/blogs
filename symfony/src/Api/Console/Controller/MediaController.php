@@ -18,7 +18,7 @@ use App\Service\Integration\Unsplash\UnsplashSearchException;
 use App\Service\Integration\Unsplash\UnsplashService;
 use App\Service\Limit;
 use App\Service\Media\MediaService;
-use App\Service\Media\MediaUploadException;
+use App\Service\Media\MediaException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -91,7 +91,11 @@ class MediaController
             $this->validateFilename($fileName);
         }
 
-        $media = $this->mediaService->uploadFile($blog, $file, $postId, $fileName);
+        try {
+            $media = $this->mediaService->uploadFile($blog, $file, $postId, $fileName);
+        } catch (MediaException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
 
         return new JsonResponse($this->mediaObjectFactory->create($media, $blog));
     }
@@ -109,7 +113,7 @@ class MediaController
 
         try {
             $media = $this->mediaService->uploadFromUrl($blog, $input->url, $input->post_id);
-        } catch (MediaUploadException $e) {
+        } catch (MediaException $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
 
@@ -126,7 +130,11 @@ class MediaController
 
         $this->validateFilename($input->name);
 
-        $media = $this->mediaService->updateName($media, $input->name);
+        try {
+            $media = $this->mediaService->updateName($media, $input->name);
+        } catch (MediaException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
 
         return new JsonResponse($this->mediaObjectFactory->create($media, $blog));
     }

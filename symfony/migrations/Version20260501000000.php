@@ -168,6 +168,17 @@ final class Version20260501000000 extends AbstractMigration
 
         // cleanup =============
         $this->addSql('ALTER TABLE blogs DROP COLUMN trial_ends_at');
+
+        // cache ==============
+        // https://supun.io/symfony-database-cache
+        $this->addSql(<<<SQL
+        CREATE TABLE cache_items (
+            item_id varchar(255) NOT NULL PRIMARY KEY,
+            item_data bytea NOT NULL,
+            item_lifetime int4,
+            item_time int4 NOT NULL
+        );
+        SQL);
     }
 
     public function down(Schema $schema): void {}

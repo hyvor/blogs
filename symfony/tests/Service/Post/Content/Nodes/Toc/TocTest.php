@@ -39,7 +39,7 @@ class TocTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => 'My big heading']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
 
@@ -89,7 +89,7 @@ class TocTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => 'My way smaller heading']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
 
@@ -112,7 +112,7 @@ class TocTest extends KernelTestCase
                     'attrs' => ['levels' => [1, 2, 3, 4]],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 
     public function test_disregards_ul_li_inside_toc(): void
@@ -145,7 +145,7 @@ class TocTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 
     public function test_with_custom_twig(): void
@@ -163,7 +163,7 @@ class TocTest extends KernelTestCase
                     'content' => [['type' => 'text', 'text' => 'My big heading']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $blog = BlogFactory::createOne();
         ThemeFileFactory::createOne([

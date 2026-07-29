@@ -7,6 +7,7 @@ class UpdateFilesInput
 
     public bool $reset = false;
 
+    /** @var array<string, string> */
     public array $files = [];
 
 }

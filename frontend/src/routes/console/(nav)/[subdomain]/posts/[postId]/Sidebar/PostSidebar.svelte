@@ -11,23 +11,11 @@
 	import Seo from './Seo/Seo.svelte';
 	import { variantSeoStore } from '../../seoStore';
 	import Ai from './Ai/Ai.svelte';
-	import { Z_INDEX, increaseZIndex } from '../z-index';
 	import { tab } from './sidebar';
 	import LinksSidebarTag from './Links/LinksSidebarTag.svelte';
-
-	let div: HTMLDivElement | undefined = $state();
-
-	function handleClick() {
-		if (!div) return;
-
-		div.style.zIndex = Z_INDEX + 1 + '';
-		increaseZIndex();
-	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="post-sidebar" onclick={handleClick} bind:this={div}>
+<div class="post-sidebar">
 	<div class="body hds-box">
 		<div class="nav">
 			<TabNav>

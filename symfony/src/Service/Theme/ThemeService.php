@@ -15,6 +15,7 @@ class ThemeService
 
     public function __construct(
         private EntityManagerInterface $em,
+        private ThemeFilesService $themeFilesService,
     ) {
     }
 
@@ -98,19 +99,6 @@ class ThemeService
         $this->em->persist($theme);
         $this->em->flush();
         return $theme;
-    }
-
-    public function createThemeVersion(Theme $theme, string $version, string $zip): ThemeVersion
-    {
-        $themeVersion = new ThemeVersion();
-        $themeVersion->setCreatedAt($this->clock->now());
-        $themeVersion->setUpdatedAt($this->clock->now());
-        $themeVersion->setTheme($theme);
-        $themeVersion->setVersion($version);
-        $themeVersion->setZip($zip);
-        $this->em->persist($themeVersion);
-        $this->em->flush();
-        return $themeVersion;
     }
 
     /**

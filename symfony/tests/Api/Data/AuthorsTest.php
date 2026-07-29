@@ -5,8 +5,11 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Object\AuthorObject;
+use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Language;
+use App\Entity\User;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -22,9 +25,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(AuthorObject::class)]
 class AuthorsTest extends ApiTestCase
 {
-    private $blog;
-    private $lang1;
-    private $lang2;
+    private Blog $blog;
+    private Language $lang1;
+    private Language $lang2;
 
     protected function setUp(): void
     {
@@ -39,6 +42,10 @@ class AuthorsTest extends ApiTestCase
         UserFactory::createOne();
     }
 
+    /**
+     * @param array<string, mixed> $attrs
+     * @return array<int, User>
+     */
     private function createAuthors(int $count, array $attrs = []): array
     {
         $authors = [];
@@ -65,8 +72,11 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(4, $json['data']);
         $this->assertArrayHasKey('pagination', $json);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('en', $json['data'][0]['language']['code']);
     }
 
@@ -84,7 +94,10 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(2, $json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][0]['language']);
         $this->assertSame('fr', $json['data'][0]['language']['code']);
     }
 
@@ -102,6 +115,7 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
     }
 
@@ -116,7 +130,9 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame($author2->getId(), $json['data'][0]['id']);
     }
 
@@ -156,6 +172,7 @@ class AuthorsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($authors as $i => $a) {
             $u = $em->find(\App\Entity\User::class, $a->getId());
+            $this->assertInstanceOf(User::class, $u);
             $u->setPostsCount(rand(1, 100));
         }
         $em->flush();
@@ -164,6 +181,10 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertGreaterThanOrEqual($json['data'][1]['posts_count'], $json['data'][0]['posts_count']);
         $this->assertGreaterThanOrEqual($json['data'][2]['posts_count'], $json['data'][1]['posts_count']);
     }
@@ -174,6 +195,7 @@ class AuthorsTest extends ApiTestCase
         $em = $this->getEm();
         foreach ($authors as $i => $a) {
             $u = $em->find(\App\Entity\User::class, $a->getId());
+            $this->assertInstanceOf(User::class, $u);
             $u->setPostsCount(rand(1, 100));
         }
         $em->flush();
@@ -182,6 +204,10 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertLessThanOrEqual($json['data'][1]['posts_count'], $json['data'][0]['posts_count']);
         $this->assertLessThanOrEqual($json['data'][2]['posts_count'], $json['data'][1]['posts_count']);
     }
@@ -199,6 +225,10 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertGreaterThanOrEqual($json['data'][1]['created_at'], $json['data'][0]['created_at']);
         $this->assertGreaterThanOrEqual($json['data'][2]['created_at'], $json['data'][1]['created_at']);
     }
@@ -216,6 +246,10 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertIsArray($json['data'][0]);
+        $this->assertIsArray($json['data'][1]);
+        $this->assertIsArray($json['data'][2]);
         $this->assertLessThanOrEqual($json['data'][1]['created_at'], $json['data'][0]['created_at']);
         $this->assertLessThanOrEqual($json['data'][2]['created_at'], $json['data'][1]['created_at']);
     }
@@ -228,7 +262,9 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertArrayHasKey('id', $json['data'][0]);
         $this->assertArrayNotHasKey('slug', $json['data'][0]);
     }
@@ -241,7 +277,9 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame($authors[0]->getId(), $json['data'][0]['id']);
     }
 
@@ -254,7 +292,9 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(1, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame('filter-by-slug-test', $json['data'][0]['slug']);
     }
 
@@ -271,7 +311,9 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
+        $this->assertIsArray($json['data'][0]);
         $this->assertSame(10, $json['data'][0]['posts_count']);
     }
 
@@ -289,6 +331,7 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['data']);
         $this->assertCount(3, $json['data']);
     }
 
@@ -300,6 +343,7 @@ class AuthorsTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['pagination']);
         $this->assertSame(3, $json['pagination']['total']);
     }
 

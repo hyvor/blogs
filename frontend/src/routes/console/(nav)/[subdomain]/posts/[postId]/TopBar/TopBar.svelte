@@ -17,7 +17,7 @@
 	}
 
 	function handleBack() {
-		goto(getBackUrl())
+		goto(getBackUrl());
 	}
 </script>
 
@@ -45,7 +45,9 @@
 	.post-top-bar {
 		display: flex;
 		align-items: center;
-		height: 46px;
+		height: 42px;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
 	}
 
 	.back-button {
@@ -74,5 +76,9 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+
+	.right {
+		padding-right: 25px;
 	}
 </style>

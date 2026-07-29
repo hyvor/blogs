@@ -65,7 +65,7 @@ class UpdateHostingAtTest extends ApiTestCase
         // the change is applied asynchronously, so the response still reflects the old state
         $json = $this->getJson();
         $this->assertSame('self', $json['hosting_at']);
-        $this->assertNotNull($json['change']);
+        $this->assertIsArray($json['change']);
         $this->assertSame('changing', $json['change']['status']);
         $this->assertSame('self', $json['change']['from_at']);
         $this->assertSame('subdomain', $json['change']['to_at']);
@@ -76,6 +76,7 @@ class UpdateHostingAtTest extends ApiTestCase
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
     }
 
@@ -100,6 +101,7 @@ class UpdateHostingAtTest extends ApiTestCase
         $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
         $this->assertNull($blog->getHostingUrl());
     }
@@ -136,6 +138,7 @@ class UpdateHostingAtTest extends ApiTestCase
         $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
         $this->assertSame('https://myblog.com', $blog->getHostingUrl());
     }
@@ -207,6 +210,7 @@ class UpdateHostingAtTest extends ApiTestCase
         $this->assertSame('active.com', $hostingChange->getFromDomain());
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
 
         $this->assertNull(

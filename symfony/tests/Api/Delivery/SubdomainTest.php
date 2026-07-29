@@ -34,7 +34,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('test.example.com', '/');
         $this->assertResponseStatusCodeSame(500);
-        $this->assertStringContainsString('Delivery domain is not configured.', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('Delivery domain is not configured.', $content);
     }
 
     public function test_fails_when_subdomain_cannot_be_determined(): void
@@ -43,7 +45,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('example.com', '/');
         $this->assertResponseStatusCodeSame(500);
-        $this->assertStringContainsString('Unable to determine subdomain from host: example.com and delivery domain: example.com', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('Unable to determine subdomain from host: example.com and delivery domain: example.com', $content);
     }
 
     public function test_when_blog_not_found(): void
@@ -52,7 +56,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('nonexistent.hyvorblogs.io', '/');
         $this->assertResponseStatusCodeSame(404);
-        $this->assertStringContainsString('Blog not found for subdomain: nonexistent', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('Blog not found for subdomain: nonexistent', $content);
     }
 
     public function test_when_blog_deleted(): void
@@ -65,7 +71,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('testblog.hyvorblogs.io', '/');
         $this->assertResponseStatusCodeSame(404);
-        $this->assertStringContainsString('Blog is deleted.', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('Blog is deleted.', $content);
     }
 
     public function test_successful_request(): void
@@ -78,7 +86,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('testblog.hyvorblogs.io', '/');
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('<h1>Hello World</h1>', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $content);
     }
 
     public function test_redirects_if_not_hosted_at_subdomain(): void
@@ -89,7 +99,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('testblog.hyvorblogs.io', '/test');
         $this->assertResponseStatusCodeSame(302);
-        $this->assertStringContainsString('https://customdomain.com/test', $response->headers->get('Location'));
+        $location = $response->headers->get('Location');
+        $this->assertNotNull($location);
+        $this->assertStringContainsString('https://customdomain.com/test', $location);
     }
 
     public function test_does_not_redirect_if_its_disabled(): void
@@ -107,7 +119,9 @@ class SubdomainTest extends ApiTestCase
 
         $response = $this->call('testblog.hyvorblogs.io', '/');
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('<h1>Hello World</h1>', $response->getContent());
+        $content = $response->getContent();
+        $this->assertNotFalse($content);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $content);
     }
 
 }

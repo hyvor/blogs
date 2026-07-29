@@ -37,12 +37,14 @@ class PostVariantAnalyzer
      *
      * @param PostVariant[] $variants
      * @param array<int, ResolvedUrl[]>|null $urls // indexed by variant ID
+     * @return array<int, LinkAnalyzerLink[]> Links indexed by variant ID
      */
     public function analyzeVariants(
         array $variants,
         ?array $urls = null
-    ): void
+    ): array
     {
+        $resultsByVariant = [];
         // [variantId => [ResolvedUrl, ResolvedUrl, ...]]
         $variantIndexedUrls = $urls ?? $this->getUrlsFromVariants($variants);
         $allFinalUrls = array_map(
@@ -51,14 +53,17 @@ class PostVariantAnalyzer
         );
 
         // check HTTP statuses
-        $statuses = $this->linkStatusCheckService->check($allFinalUrls, $this->blog);
+        $statuses = $this->linkStatusCheckService->check(
+            array_values(array_unique(array_merge(...$allFinalUrls))),
+            $this->blog,
+        );
 
         foreach ($variants as $variant) {
             if (array_key_exists($variant->getId(), $variantIndexedUrls) === false) {
                 continue;
             }
 
-            $urls = $variantIndexedUrls[$variant->getId()] ?? [];
+            $urls = $variantIndexedUrls[$variant->getId()];
 
             // combine the results with the urls
             $results = array_map(
@@ -76,26 +81,21 @@ class PostVariantAnalyzer
                 $urls
             );
 
-            $this->finalizeVariant($variant, $results);
+            $resultsByVariant[$variant->getId()] = $this->finalizeVariant($variant, $results);
         }
 
+        return $resultsByVariant;
     }
 
     /**
      * @param array<string>|null $urls
-     * @return array<int, LinkAnalyzerLink>
+     * @return LinkAnalyzerLink[]
      */
     public function analyzeVariant(
         PostVariant $variant,
         ?array $urls = null,
     ): array {
-        $variantUrl = $this->permalinkService->getPostPermalink(
-            $variant->getPost(),
-            $variant->getPost()->getBlog(),
-            $variant->getLanguage()
-        );
-
-        $links = null;
+        $variantUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
         // TODO: update links on LinkUpdateEvent
 
@@ -107,10 +107,9 @@ class PostVariantAnalyzer
             $resolvedUrls = [$variant->getId() => $resolvedUrls];
         }
 
-        $this->analyzeVariants([$variant], $resolvedUrls);
+        $resultsByVariant = $this->analyzeVariants([$variant], $resolvedUrls);
 
-        assert($links !== null);
-        return $links;
+        return $resultsByVariant[$variant->getId()] ?? [];
     }
 
     private function resolveUrl(string $originalUrl, string $variantUrl): ?ResolvedUrl
@@ -153,11 +152,9 @@ class PostVariantAnalyzer
                 continue;
             }
 
-            $language = $variant->getLanguage();
-
             $doc = $this->postContentService->getDocumentFromJson($content);
             $linkMarks = $doc->getMarks(Link::class);
-            $variantUrl = $this->permalinkService->getPostVariantPermalink($this->blog, $variant, $language);
+            $variantUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
             foreach ($linkMarks as $linkMark) {
                 $originalUrl = $this->getHrefFromLinkMark($linkMark);
@@ -185,7 +182,11 @@ class PostVariantAnalyzer
         return $variantIndexedUrls;
     }
 
-    private function finalizeVariant(PostVariant $variant, array $results): void
+    /**
+     * @param AnalyzedLink[] $results
+     * @return LinkAnalyzerLink[]
+     */
+    private function finalizeVariant(PostVariant $variant, array $results): array
     {
         $ignoredLinksUrls = $this->postVariantLinkService->getIgnoredLinks($variant);
 
@@ -203,6 +204,8 @@ class PostVariantAnalyzer
             $variant,
             $this->linkAnalyzeService->getIgnoreAwareStatusFromLinks($links)
         );
+
+        return $links;
     }
 
     private function getHrefFromLinkMark(Mark $linkMark): ?string

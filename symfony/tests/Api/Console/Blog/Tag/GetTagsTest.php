@@ -36,6 +36,7 @@ class GetTagsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(2, $json);
+        $this->assertIsArray($json[0]);
         $this->assertArrayHasKey('id', $json[0]);
         $this->assertArrayHasKey('slug', $json[0]);
     }

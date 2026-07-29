@@ -38,7 +38,7 @@ final class LanguageFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'code' => self::faker()->text(12),
-            'direction' => self::faker()->randomElement(LanguageDirection::cases()),
+            'direction' => LanguageDirection::LTR,
             'is_primary' => false,
             'name' => self::faker()->text(255),
         ];
@@ -55,6 +55,9 @@ final class LanguageFactory extends PersistentObjectFactory
         ;
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createOneFor(Blog $blog, array $attributes = []): Language
     {
         return self::createOne(array_merge([
@@ -62,6 +65,9 @@ final class LanguageFactory extends PersistentObjectFactory
         ], $attributes));
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createOnePrimaryFor(Blog $blog, array $attributes = []): Language
     {
         return self::createOneFor($blog, array_merge([

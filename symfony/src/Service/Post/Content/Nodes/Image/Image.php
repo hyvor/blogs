@@ -3,9 +3,9 @@
 namespace App\Service\Post\Content\Nodes\Image;
 
 use App\Entity\Blog;
-use App\Service\Delivery\MediaService;
 use App\Service\Delivery\MimeTypes;
 use App\Service\Media\ImageResizeService;
+use App\Service\Media\MediaService;
 use App\Service\Route\PermalinkService;
 use DOMElement;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
@@ -40,11 +40,12 @@ class Image extends NodeType
 
         if (
             $mediaName &&
-            ($media = $this->mediaService->getByBlogAndName($this->blog, $mediaName)) &&
+            ($media = $this->mediaService->getMediaByBlogAndName($this->blog, $mediaName)) &&
             $media->getExtension()
         ) {
             $mimeType = MimeTypes::getMimeFromExtension($media->getExtension());
 
+            // TODO: image width should be pre-stored
             if ($this->imageResizeService->isMimeTypeSupported($mimeType)) {
                 $contents = $this->mediaService->getContents($media);
                 if ($contents !== null) {

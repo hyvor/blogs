@@ -4,6 +4,7 @@ namespace App\Service\Integration\Bunny;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BunnyService
@@ -25,7 +26,7 @@ class BunnyService
             try {
                 $response = $this->httpClient->request('GET', $url);
                 $statusCode = $response->getStatusCode();
-            } catch (\Exception $e) {
+            } catch (ExceptionInterface $e) {
                 throw new UnableToFetchBunnyException('Connection failed');
             }
 

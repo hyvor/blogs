@@ -30,7 +30,6 @@ class UrlDataService
     }
 
     /**
-     * @return array<string, mixed>|null
      * @throws UnfoldException
      */
     public function getEmbed(string $url, bool $force = false): string
@@ -93,12 +92,12 @@ class UrlDataService
 
         return [
             'url' => $urlData->getUrl(),
-            'final_url' => $urlData->getFinalUrl(),
-            'title' => $urlData->getTitle(),
-            'description' => $urlData->getDescription(),
-            'thumbnail_url' => $urlData->getThumbnailUrl(),
-            'icon_url' => $urlData->getIconUrl(),
-            'site_url' => $urlData->getSite(),
+            'final_url' => $urlData->getFinalUrl() ?? '',
+            'title' => $urlData->getTitle() ?? '',
+            'description' => $urlData->getDescription() ?? '',
+            'thumbnail_url' => $urlData->getThumbnailUrl() ?? '',
+            'icon_url' => $urlData->getIconUrl() ?? '',
+            'site_url' => $urlData->getSite() ?? '',
         ];
     }
 }

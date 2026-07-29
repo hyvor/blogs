@@ -45,7 +45,7 @@ class DataApiHelper
         if (!$sort) {
             // Default: first allowed key DESC
             $firstColumn = reset($allowed);
-            return [[$firstColumn, 'DESC']];
+            return [[$firstColumn !== false ? $firstColumn : '', 'DESC']];
         }
 
         $result = [];

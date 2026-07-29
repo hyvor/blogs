@@ -8,5 +8,5 @@ use Symfony\Component\Messenger\Attribute\AsMessage;
 #[AsMessage(MessageTransport::ASYNC)]
 readonly class RepoSyncMessage
 {
-    public function __construct() {}
+    public function __construct(public bool $createPreviewBlogs = true) {}
 }

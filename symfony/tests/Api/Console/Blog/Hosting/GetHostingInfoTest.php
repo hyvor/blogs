@@ -54,7 +54,7 @@ class GetHostingInfoTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertNotNull($json['change']);
+        $this->assertIsArray($json['change']);
         $this->assertSame('changing', $json['change']['status']);
         $this->assertSame('subdomain', $json['change']['from_at']);
         $this->assertSame('self', $json['change']['to_at']);
@@ -74,7 +74,7 @@ class GetHostingInfoTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertNotNull($json['custom_domain']);
+        $this->assertIsArray($json['custom_domain']);
         $this->assertSame('mysite.com', $json['custom_domain']['domain']);
         $this->assertSame('pending', $json['custom_domain']['status']);
     }

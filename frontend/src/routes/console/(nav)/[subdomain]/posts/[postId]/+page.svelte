@@ -14,8 +14,7 @@
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import { getPreloadedPost } from './postLoader';
 
-	let isLoading = $state(false);
-	let storesSet = $state(false);
+	let isLoading = $state(true);
 
 	let postView: HTMLDivElement | undefined = $state();
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
@@ -45,7 +44,6 @@
 		linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
 
 		isLoading = false;
-		storesSet = true;
 	}
 
 	$effect.pre(() => {
@@ -83,12 +81,7 @@
 	});
 </script>
 
-<div 
-	id="post-view" 
-	class:is-temp={$isTempStore} 
-	bind:this={postView}
-	 style:view-transition-name={`post-${page.params.postId}`}
->
+<div id="post-view" class:is-temp={$isTempStore} bind:this={postView}>
 	{#if isLoading}
 		<div class="full-loader">
 			<Loader block size="large" />
@@ -115,7 +108,6 @@
 <style lang="scss">
 	#post-view {
 		background-color: var(--background);
-		padding: 10px 0;
 		height: 100vh;
 	}
 
@@ -146,6 +138,7 @@
 		display: flex;
 		align-items: flex-start;
 		min-height: calc(100vh - 76px);
+    	width: 100%;
 	}
 
 	.post-left {

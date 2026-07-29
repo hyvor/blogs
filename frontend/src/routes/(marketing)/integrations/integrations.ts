@@ -27,7 +27,7 @@ import formsiteIcon from './icons/formsite.png';
 import paperformIcon from './icons/paperform.png';
 import zohoFormsIcon from './icons/zoho-forms.png';
 import googleAdsenseIcon from './icons/google-adsense.svg';
-import ezoicImg from './icons/ezoic.png';
+// import ezoicImg from './icons/ezoic.png';
 
 import type { Component } from 'svelte';
 
@@ -36,7 +36,7 @@ import CloudflareAnalytics from './content/cloudflare-anaytics/CloudflareAnalyti
 import Matomo from './content/matomo/Matomo.svelte';
 import HyvorTalkComments from './content/hyvor-talk-comments/HyvorTalkComments.svelte';
 import Mailchimp from './content/mailchimp/Mailchimp.svelte';
-import Ezoic from './content/ezoic/Ezoic.svelte';
+// import Ezoic from './content/ezoic/Ezoic.svelte';
 import GoogleAdsense from './content/google-adsense/GoogleAdsense.svelte';
 import GoogleForms from './content/google-forms/GoogleForms.svelte';
 import Memberstack from './content/memberstack/Memberstack.svelte';

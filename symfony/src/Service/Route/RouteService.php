@@ -62,7 +62,13 @@ class RouteService
 
     public function getRouteByName(Blog $blog, string $name): ?Route
     {
-        return $this->em->getRepository(Route::class)->findOneBy(['blog' => $blog, 'name' => $name]);
+        $routes = $blog->getRoutes();
+        foreach ($routes as $route) {
+            if ($route->getName() === $name) {
+                return $route;
+            }
+        }
+        return null;
     }
 
     /** @return Route[] */
@@ -86,8 +92,10 @@ class RouteService
         string $template,
         ?string $postsFilter,
         ?string $contentType,
+        bool $flush = true
     ): Route {
         $now = $this->now();
+
         $route = new Route();
         $route->setBlog($blog);
         $route->setName($name);
@@ -98,9 +106,14 @@ class RouteService
         $route->setIsEnabled(true);
         $route->setCreatedAt($now);
         $route->setUpdatedAt($now);
+
         $this->em->persist($route);
-        $this->em->flush();
-        $this->dispatcher->dispatch(new RouteChangedEvent($route));
+        
+        if ($flush) {
+            $this->em->flush();
+            $this->dispatcher->dispatch(new RouteChangedEvent($route));
+        }
+
         return $route;
     }
 
@@ -126,8 +139,11 @@ class RouteService
         }
 
         $route->setUpdatedAt($this->now());
+
         $this->em->flush();
+
         $this->dispatcher->dispatch(new RouteChangedEvent($route));
+
         return $route;
     }
 
@@ -135,6 +151,7 @@ class RouteService
     {
         $this->em->remove($route);
         $this->em->flush();
+
         $this->dispatcher->dispatch(new RouteChangedEvent($route));
     }
 }

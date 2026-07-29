@@ -31,7 +31,7 @@ class AudioTest extends KernelTestCase
                     'attrs' => ['src' => 'https://example.com/audio.mp3'],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<audio controls src="https://example.com/audio.mp3"></audio>', $html);
@@ -50,6 +50,6 @@ class AudioTest extends KernelTestCase
                     'attrs' => ['src' => 'https://example.com/audio.mp3'],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

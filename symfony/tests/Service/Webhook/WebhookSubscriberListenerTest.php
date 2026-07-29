@@ -4,20 +4,24 @@ namespace App\Tests\Service\Webhook;
 
 use App\Entity\Enum\WebhookEvent;
 use App\Entity\WebhookDelivery;
-use App\Message\WebhookDeliverMessage;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
-use App\Service\Post\Event\PostVariantPublishedEvent;
-use App\Service\Post\Event\PostVariantUnpublishedEvent;
-use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
+use App\Service\Post\Event\PostCreatedEvent;
+use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostUpdatedEvent;
+use App\Service\Post\Event\PostVariantCreatedEvent;
+use App\Service\Post\Event\PostVariantDeletedEvent;
+use App\Service\Post\Event\PostVariantPublishedEvent;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
+use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
 use App\Service\Tag\Event\TagCreatedEvent;
 use App\Service\Tag\Event\TagDeletedEvent;
@@ -31,6 +35,7 @@ use App\Service\User\Event\UserUpdatedEvent;
 use App\Service\User\Event\UserVariantCreatedEvent;
 use App\Service\User\Event\UserVariantDeletedEvent;
 use App\Service\User\Event\UserVariantUpdatedEvent;
+use App\Service\Webhook\Message\WebhookDeliverMessage;
 use App\Service\Webhook\WebhookDeliveryService;
 use App\Service\Webhook\WebhookSubscriberListener;
 use App\Tests\Factory\BlogFactory;
@@ -39,11 +44,11 @@ use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
-use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use App\Tests\Factory\WebhookFactory;
@@ -548,6 +553,80 @@ class WebhookSubscriberListenerTest extends KernelTestCase
     }
 
     // -----------------------------------------------------------------------
+    // PostCreatedEvent / PostVariantCreatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_created_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_CREATED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new PostCreatedEvent($post));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_CREATED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    public function test_post_variant_created_dispatches_message_when_not_primary_language(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_UPDATED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog, ['is_primary' => false]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantCreatedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::POST_UPDATED);
+    }
+
+    public function test_post_variant_created_skips_message_when_primary_language(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_UPDATED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOnePrimaryFor($blog);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantCreatedEvent($variant));
+
+        $this->transport('async')->dispatched()->assertCount(0);
+    }
+
+    // -----------------------------------------------------------------------
+    // PostUpdatedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_updated_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_UPDATED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new PostUpdatedEvent($post));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_UPDATED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    // -----------------------------------------------------------------------
     // PostVariantUpdatedEvent
     // -----------------------------------------------------------------------
 
@@ -614,6 +693,43 @@ class WebhookSubscriberListenerTest extends KernelTestCase
         /** @var array{id: int} $postData */
         $postData = $delivery->getData()['post'];
         $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    // -----------------------------------------------------------------------
+    // PostDeletedEvent / PostVariantDeletedEvent
+    // -----------------------------------------------------------------------
+
+    public function test_post_deleted_dispatches_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_DELETED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->dispatch(new PostDeletedEvent($post));
+
+        $delivery = $this->assertDelivery(WebhookEvent::POST_DELETED);
+        /** @var array{id: int} $postData */
+        $postData = $delivery->getData()['post'];
+        $this->assertSame($post->getId(), $postData['id']);
+    }
+
+    public function test_post_variant_deleted_dispatches_post_updated_message(): void
+    {
+        $blog = BlogFactory::createOne();
+        WebhookFactory::createOne([
+            'blog' => $blog,
+            'events' => [WebhookEvent::POST_UPDATED],
+        ]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $lang]);
+
+        $this->dispatch(new PostVariantDeletedEvent($variant));
+
+        $this->assertDelivery(WebhookEvent::POST_UPDATED);
     }
 
     // -----------------------------------------------------------------------

@@ -42,6 +42,10 @@ class ImageTest extends KernelTestCase
         $this->filesystem->write('blog/' . $blogId . '/' . $name, $content);
     }
 
+    /**
+     * @param positive-int $width
+     * @param positive-int $height
+     */
     private function pngContent(int $width, int $height = 100): string
     {
         $image = imagecreatetruecolor($width, $height);
@@ -67,7 +71,7 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<img src="https://example.com/img.jpg" loading="lazy" alt="An image" width="800" height="600">', $html);
@@ -83,7 +87,7 @@ class ImageTest extends KernelTestCase
                     'attrs' => ['src' => 'https://example.com/img.jpg'],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<img src="https://example.com/img.jpg" loading="lazy">', $html);
@@ -108,7 +112,7 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
 
@@ -150,7 +154,7 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $blog);
 
@@ -192,7 +196,7 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $blog);
 
@@ -225,7 +229,7 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 
     public function test_html_to_json_without_optional_attributes(): void
@@ -253,6 +257,6 @@ class ImageTest extends KernelTestCase
                     ],
                 ],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

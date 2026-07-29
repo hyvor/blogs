@@ -31,7 +31,7 @@ class TagObject
         $this->is_private = (bool)$tag->isPrivate();
         $this->slug = $tag->getSlug();
         $this->url = $permalinkService->getTagPermalink($tag, $blog, $language);
-        $this->posts_count = $tag->getPostsCount() ?? 0;
+        $this->posts_count = $tag->getPostsCount();
         $this->code_head = $tag->getCodeHead();
         $this->code_foot = $tag->getCodeFoot();
         $this->language = new LanguageObject($language);

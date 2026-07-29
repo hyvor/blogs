@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
-	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
+	import {
+		getUnfold,
+		type UnfoldedLink
+	} from '../../../../../../../../../lib/actions/urlDataActions';
 	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import BookmarkDisplay from './BookmarkDisplay.svelte';

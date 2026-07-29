@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Api\Console\Authorization\Scope;
 use App\Entity\Enum\ApiKeyType;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -117,11 +118,15 @@ class ApiKey
     }
 
     /**
-     * @return string[]
+     * @return Scope[]
      */
     public function getScopes(): array
     {
-        return $this->scopes;
+        return array_values(
+            array_filter(
+                array_map(fn(string $scope) => Scope::tryFrom($scope), $this->scopes)
+            )
+        );
     }
 
     /**

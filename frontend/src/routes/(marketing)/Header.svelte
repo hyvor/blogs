@@ -69,17 +69,6 @@
 						<Button
 							as="a"
 							size="small"
-							href="/customers"
-							variant={$page.url.pathname === '/customers'
-								? 'fill-light'
-								: 'invisible'}
-							block
-						>
-							Customers
-						</Button>
-						<Button
-							as="a"
-							size="small"
 							href="/integrations"
 							variant={$page.url.pathname.startsWith('/integrations')
 								? 'fill-light'

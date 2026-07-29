@@ -34,7 +34,9 @@ class CreatePostTest extends ApiTestCase
 
         $this->assertFalse($json['is_page']);
         $this->assertFalse($json['is_featured']);
+        $this->assertIsArray($json['variants']);
         $this->assertCount(1, $json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame('draft', $json['variants'][0]['status']);
 
         $posts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
@@ -71,12 +73,15 @@ class CreatePostTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(201);
         $json = $this->getJson();
+        $this->assertIsArray($json['authors']);
         $this->assertCount(1, $json['authors']);
 
         $post = $this->getEm()->getRepository(Post::class)->findOneBy(['blog' => $blog]);
+        $this->assertNotNull($post);
         $this->assertCount(1, $post->getAuthors());
 
         $author = $post->getAuthors()->first();
+        $this->assertNotFalse($author);
         $this->assertSame(42, $author->getHyvorUserId());
     }
 }

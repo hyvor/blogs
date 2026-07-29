@@ -38,9 +38,11 @@ class PublishPostVariantTest extends ApiTestCase
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $blog->getLanguages()->first()->getId(),
+            'language_id' => $language->getId(),
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');
@@ -52,6 +54,7 @@ class PublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
         PostVariantFactory::createOne([
             'post' => $post,
@@ -67,6 +70,7 @@ class PublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertSame('published', $data['status']);
         $this->assertSame('my-post', $data['slug']);
 
@@ -80,6 +84,7 @@ class PublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
         PostVariantFactory::createOne([
             'post' => $post,
@@ -95,6 +100,7 @@ class PublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertSame('published', $data['status']);
         $this->assertNotNull($data['slug']);
         $this->assertNotEmpty($data['slug']);
@@ -106,6 +112,7 @@ class PublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
         $existingDate = new \DateTimeImmutable('2020-01-01');
         $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $existingDate]);
         PostVariantFactory::createOne([
@@ -121,6 +128,8 @@ class PublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->getEm()->refresh($post);
-        $this->assertSame($existingDate->getTimestamp(), $post->getPublishedAt()->getTimestamp());
+        $publishedAt = $post->getPublishedAt();
+        $this->assertNotNull($publishedAt);
+        $this->assertSame($existingDate->getTimestamp(), $publishedAt->getTimestamp());
     }
 }

@@ -11,8 +11,7 @@ use App\Entity\UserVariant;
 use App\Repository\UserRepository;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
-use App\Service\Media\MediaUploadException;
-use App\Service\Post\PostAuthor\PostAuthorService;
+use App\Service\Media\MediaException;
 use App\Service\Route\PermalinkService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
@@ -20,9 +19,11 @@ use App\Service\User\Event\UserUpdatedEvent;
 use App\Service\User\Event\UserVariantCreatedEvent;
 use App\Service\User\Event\UserVariantDeletedEvent;
 use App\Service\User\Event\UserVariantUpdatedEvent;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
+use Hyvor\FilterQ\Keys;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -35,7 +36,6 @@ class UserService
 
     public function __construct(
         private EntityManagerInterface $em,
-        private PostAuthorService $postAuthorService,
         private UserRepository $userRepository,
         private LanguageService $languageService,
         private EventDispatcherInterface $ed,
@@ -68,13 +68,6 @@ class UserService
         return $this->userRepository->findOneBy(['blog' => $blog, 'hyvor_user_id' => $hyvorUserId]);
     }
 
-    // we no longer have a concept of 'owner', change implementations
-//    public function getOwner(Blog $blog): ?User
-//    {
-//        /** @var User|null */
-//        return $this->userRepository->findOneBy(['blog' => $blog, 'role' => UserRole::ADMIN]);
-//    }
-
     /**
      * @param int[] $ids
      * @return User[]
@@ -100,16 +93,14 @@ class UserService
         int $offset = 0,
         ?string $search = null,
     ): array {
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
         $qb = $this->em->createQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
-            ->join('u.variants', 'uv')
+            ->leftJoin('u.variants', 'uv')
+            ->addSelect('uv')
             ->where('u.blog = :blog')
-            ->andWhere('uv.language = :language')
             ->setParameter('blog', $blog)
-            ->setParameter('language', $primaryLanguage)
             ->orderBy('CASE WHEN u.role = :adminRole THEN 0 ELSE 1 END', 'ASC')
             ->addOrderBy('u.posts_count', 'DESC')
             ->setParameter('adminRole', UserRole::ADMIN)
@@ -148,9 +139,9 @@ class UserService
         if ($filter !== null && $filter !== '') {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function ($keys) {
+                ->keys(function (Keys $keys) {
                     $keys->add('id', 'u.id')->valueType('int');
-                    $keys->add('slug', 'u.slug')->valueType('string');
+                    $keys->add('slug', 'u.slug')->valueType('string')->operators('=,!=');
                     $keys->add('posts_count', 'u.posts_count')->valueType('int');
                     $keys->add('created_at', 'u.created_at')->valueType('date');
                 })
@@ -224,22 +215,26 @@ class UserService
                 $this->deleteUserVariant($variant);
             }
 
-            $this->postAuthorService->deleteByUser($user);
-
             $this->em->remove($user);
         });
 
         $this->ed->dispatch(new UserDeletedEvent($user));
     }
 
-    /** @throws \Exception if the Hyvor user is not found */
-    public function createUserFromAuthUser(Blog $blog, int|AuthUser $hyvorUserId, UserRole $role): User
+    /** @throws HyvorUserNotFoundException */
+    public function createUserFromAuthUser(
+        Blog $blog,
+        int|AuthUser $hyvorUserId,
+        UserRole $role,
+        bool $flush = true,
+        ?Language $primaryLanguage = null // to provide from outside
+    ): User
     {
         if (is_int($hyvorUserId)) {
             $hyvorUser = $this->auth->fromId($hyvorUserId);
 
             if ($hyvorUser === null) {
-                throw new \Exception('User not found');
+                throw new HyvorUserNotFoundException();
             }
         } else {
             $hyvorUser = $hyvorUserId;
@@ -252,7 +247,7 @@ class UserService
             try {
                 $media = $this->mediaService->uploadFromUrl($blog, $hyvorUser->picture_url);
                 $pictureUrl = $this->permalinkService->getMediaPermalink($media, $blog);
-            } catch (MediaUploadException) {
+            } catch (MediaException) {
                 // ignore: picture upload is best-effort
             }
         }
@@ -269,19 +264,24 @@ class UserService
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
 
-        $this->em->persist($user);
-        $this->em->flush();
-
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $primaryLanguage ??= $this->languageService->getPrimaryLanguage($blog);
         $this->createUserVariant(
             $user,
             $primaryLanguage,
             name: $hyvorUser->name,
             location: $hyvorUser->location,
             bio: $hyvorUser->bio,
+            flush: false
         );
 
-        $this->ed->dispatch(new UserCreatedEvent($user));
+        $this->em->persist($user);
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new UserCreatedEvent($user));
+        }
+
+        $blog->getUsers()->add($user);
 
         return $user;
     }
@@ -290,7 +290,9 @@ class UserService
         Blog $blog,
         string $name,
         UserRole $role = UserRole::CONTRIBUTOR,
-        ?string $pictureUrl = null
+        ?string $pictureUrl = null,
+        bool $flush = true,
+        ?Language $primaryLanguage = null // to provide from outside
     ): User
     {
         $now = $this->now();
@@ -306,11 +308,15 @@ class UserService
 
         $this->em->persist($user);
 
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $primaryLanguage = $primaryLanguage ?? $this->languageService->getPrimaryLanguage($blog);
         $this->createUserVariant($user, $primaryLanguage, name: $name, flush: false);
 
-        $this->em->flush();
-        $this->ed->dispatch(new UserCreatedEvent($user));
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch(new UserCreatedEvent($user));
+        }
+
+        $blog->getUsers()->add($user);
 
         return $user;
     }
@@ -469,7 +475,7 @@ class UserService
 
         while (true) {
             $check = $checks[$i] ?? bin2hex(random_bytes(8));
-            $slug = (string) $slugger->slug((string) $check)->lower();
+            $slug = (string) $slugger->slug($check)->lower();
 
             if ($slug !== '' && $this->getUserBySlug($blog, $slug) === null) {
                 return $slug;

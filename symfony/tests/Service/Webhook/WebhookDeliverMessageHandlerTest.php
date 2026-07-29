@@ -4,8 +4,8 @@ namespace App\Tests\Service\Webhook;
 
 use App\Entity\Enum\WebhookDeliveryStatus;
 use App\Entity\Enum\WebhookEvent;
-use App\Message\WebhookDeliverMessage;
-use App\MessageHandler\WebhookDeliverMessageHandler;
+use App\Service\Webhook\Message\WebhookDeliverMessage;
+use App\Service\Webhook\MessageHandler\WebhookDeliverMessageHandler;
 use App\Service\Webhook\WebhookDeliveryService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\WebhookDeliveryFactory;

@@ -4,6 +4,7 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\KeysFilter;
+use App\Api\Data\Object\PostObject;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
@@ -22,7 +23,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(KeysFilter::class)]
 class KeysTest extends ApiTestCase
 {
-    private $postObject;
+    private PostObject $postObject;
 
     protected function setUp(): void
     {
@@ -55,9 +56,14 @@ class KeysTest extends ApiTestCase
         $this->postObject = $factory->create($blog, $post, $lang);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function j(mixed $obj): array
     {
-        return json_decode((string)json_encode($obj), true);
+        /** @var array<string, mixed> $decoded */
+        $decoded = json_decode((string) json_encode($obj), true);
+        return $decoded;
     }
 
     public function test_does_not_filter_keys_when_null(): void
@@ -87,7 +93,9 @@ class KeysTest extends ApiTestCase
     {
         $arr = $this->j(KeysFilter::filter($this->postObject, 'tags.id'));
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayNotHasKey('slug', $tag);
@@ -97,7 +105,9 @@ class KeysTest extends ApiTestCase
     {
         $arr = $this->j(KeysFilter::filter($this->postObject, 'tags.id, tags.slug'));
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);
@@ -110,7 +120,9 @@ class KeysTest extends ApiTestCase
 
         $this->assertArrayHasKey('tags', $arr);
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);
@@ -129,7 +141,9 @@ class KeysTest extends ApiTestCase
         $arr = $this->j(KeysFilter::filter($this->postObject, '!tags.id'));
 
         $this->assertNotEmpty($arr['tags']);
+        $this->assertIsArray($arr['tags']);
         $tag = $arr['tags'][0];
+        $this->assertIsArray($tag);
 
         $this->assertArrayNotHasKey('id', $tag);
         $this->assertArrayHasKey('slug', $tag);

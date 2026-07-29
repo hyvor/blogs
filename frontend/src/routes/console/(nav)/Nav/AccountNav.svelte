@@ -24,6 +24,6 @@
 		padding: 15px 0;
 	}
 	.wrap :global(a.active) {
-		background-color: var(--accent-light-mid)!important;
+		background-color: var(--accent-light-mid) !important;
 	}
 </style>

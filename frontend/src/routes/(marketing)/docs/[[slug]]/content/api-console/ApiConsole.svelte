@@ -162,10 +162,17 @@ type Response = BlogVariant
 <ul>
 	<li><a href="/docs/api-console#post-object">Post</a></li>
 	<li><a href="/docs/api-console#post-variant-object">PostVariant</a></li>
+	<li><a href="/docs/api-console#post-list-item-object">PostListItem</a></li>
 </ul>
 
 <h4 id="get-posts">Get posts</h4>
-<p>Get posts with filtering. The filter parameters are similar to the ones in the Console.</p>
+<p>
+	Get posts with filtering. The filter parameters are similar to the ones in the Console. Returns a
+	lightweight <a href="/docs/api-console#post-list-item-object">PostListItem</a> per post, rather than
+	the full <a href="/docs/api-console#post-object">Post</a> object - fetch <code
+		>GET /post/{`{id}`}</code
+	> for the full post.
+</p>
 <p><code>GET /posts</code></p>
 <CodeBlock
 	language="ts"
@@ -177,20 +184,25 @@ type Request = {
     start_timestamp?: number, // unix timestamp
     end_timestamp?: number, // unix timestamp
     search?: string,
+    language_id?: number, // defaults to the blog's primary language
     limit?: number, // default 50, max 100
     offset?: number,
 }
-type Response = Post[]
+type Response = PostListItem[]
 `}
 />
 
 <h4 id="get-pages">Get pages</h4>
+<p>
+	Same lightweight <a href="/docs/api-console#post-list-item-object">PostListItem</a> shape as
+	<code>GET /posts</code>.
+</p>
 <p><code>GET /pages</code></p>
 <CodeBlock
 	language="ts"
 	code={`
 type Request = {}
-type Response = Post[]
+type Response = PostListItem[]
 `}
 />
 
@@ -295,9 +307,9 @@ type Response = PostVariant
 />
 
 <p>
-	Publishes a post variant. If the variant does not have a slug, one is automatically generated
-	from the title. If the post does not have a <code>published_at</code> time, it is set to now.
-	Requires <code>posts.publish.own</code> scope.
+	Publishes a post variant. If the variant does not have a slug, one is automatically generated from
+	the title. If the post does not have a <code>published_at</code> time, it is set to now. Requires
+	<code>posts.publish.own</code> scope.
 </p>
 
 <h4 id="unpublish-post-variant">Unpublish a post variant</h4>
@@ -1296,8 +1308,9 @@ type Response = {}
 
 <h4 id="delete-blog">Delete the blog</h4>
 <p>
-	Soft-deletes the blog. The blog and its data are permanently deleted 30 days
-	later. Requires the <code>blog.delete</code> scope.
+	Soft-deletes the blog. The blog and its data are permanently deleted 30 days later. Requires the <code
+		>blog.delete</code
+	> scope.
 </p>
 <p><code>DELETE /blog</code></p>
 <CodeBlock
@@ -1413,6 +1426,44 @@ interface PostVariant {
     content_unsaved: string | null,
     title: string | null,
     description: string | null,
+}
+`}
+/>
+
+<h3 id="post-list-item-object">PostListItem Object</h3>
+<p>
+	Returned by <code>GET /posts</code> and <code>GET /pages</code>. A lightweight per-post summary:
+	<code>slug</code>, <code>url</code>, <code>title</code>, and <code>link_analysis</code> reflect the
+	variant of the requested (or blog's primary) language, and <code>tags</code>/<code>authors</code>
+	are just their primary-language names. <code>seo_score</code> is currently a placeholder and not
+	yet meaningful. Fetch <code>GET /post/{`{id}`}</code> for the full
+	<a href="/docs/api-console#post-object">Post</a> object, including all variants, tags, and authors.
+</p>
+<CodeBlock
+	language="ts"
+	code={`
+interface PostListItem {
+    id: number,
+    created_at: number,
+    updated_at: number,
+    published_at: number | null,
+
+    is_featured: boolean,
+    is_page: boolean,
+
+    slug: string | null,
+    url: string | null,
+    title: string | null,
+    link_analysis: Record<string, number>,
+    seo_score: number, // placeholder, not yet implemented
+
+    variant_statuses: {
+        language_id: number,
+        status: 'draft' | 'published' | 'scheduled'
+    }[],
+
+    tags: string[], // tag names, primary language
+    authors: string[] // author names, primary language
 }
 `}
 />

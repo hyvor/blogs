@@ -4,20 +4,21 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Theme } from '../../console/lib/types';
 	import { loadThemes } from '../../console/(nav)/[subdomain]/theme/themeActions';
-	import { getConfig, loadConfig } from '../../console/lib/config';
+	import { loadConfig } from '../../console/lib/config';
 	import {
+		ActionList,
+		ActionListGroup,
+		ActionListItem,
+		Button,
+		Dropdown,
 		IconButton,
-		IconMessage,
 		Link,
 		Loader,
-		NavLink,
-		Text,
-		Button
+		Text
 	} from '@hyvor/design/components';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import IconLaptop from '@hyvor/icons/IconLaptop';
-	import IconLock from '@hyvor/icons/IconLock';
 	import IconTablet from '@hyvor/icons/IconTablet';
 	import IconGithub from '@hyvor/icons/IconGithub';
 
@@ -34,6 +35,7 @@
 	let type: 'laptop' | 'tablet' = $state('laptop');
 
 	let isLoading = $state(true);
+	let dropdownOpen = $state(false);
 
 	const dispatch = createEventDispatcher();
 
@@ -48,13 +50,25 @@
 		port = window.location.port ? `:${Number(window.location.port) + 1}` : '';
 	});
 
-	let navEl: HTMLDivElement | undefined = $state();
+	function selectTheme(theme: Theme) {
+		isLoading = true;
+		currentTheme = theme;
+		dropdownOpen = false;
+	}
 
-	function handleMobileNavClick() {
-		if (!navEl) return;
-		if (window.innerWidth > 992) return;
+	// hovering for >1s unlocks it and leaving re-locks it immediately.
+	let hoverTimeout: ReturnType<typeof setTimeout> | undefined;
 
-		navEl.style.display = navEl.style.display !== 'block' ? 'block' : 'none';
+	function handleIframeMouseEnter() {
+		if (!lockScroll) return;
+		hoverTimeout = setTimeout(() => {
+			lockScroll = false;
+		}, 1000);
+	}
+
+	function handleIframeMouseLeave() {
+		clearTimeout(hoverTimeout);
+		lockScroll = true;
 	}
 
 	let originalThemes = $derived(
@@ -65,83 +79,81 @@
 	run(() => {
 		currentTheme = originalThemes[0];
 	});
+	// TODO: revert to getConfig().domains?.delivery once /api/special/config exists in the Symfony backend
+	const deliveryDomain = 'hyvorblogs.localhost';
+
 	let currentThemeUrl = $derived(
-		`//${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`
+		`http://${currentTheme?.preview_subdomain}.${deliveryDomain}${port}`
 	);
 </script>
 
 {#if isLoaded}
-	<div class="wrap">
-		<!-- svelte-ignore a11y_missing_attribute -->
-		<a
-			class="mobile-nav"
-			onclick={handleMobileNavClick}
-			onkeyup={(e) => e.key === 'Enter' && handleMobileNavClick()}
-			role="button"
-			tabindex="0"
-		>
-			<div class="mobile-nav-left">Choose theme</div>
-			<span class="theme-name">{currentTheme?.name}</span>
-			<IconCaretDown size={14} />
-		</a>
-
-		<div class="nav hds-box" bind:this={navEl}>
-			<div>
-				{#each [originalThemes, portedThemes] as group, i}
-					<div class="section">
-						{#if i === 0}
-							Original
-						{:else}
-							Ported
-						{/if}
-					</div>
-					{#each group as theme (theme.name)}
-						{#if theme.name !== 'blank'}
-							<NavLink
-								href="javaScript:void(0)"
-								on:click={() => {
-									isLoading = true;
-									currentTheme = theme;
-									handleMobileNavClick();
-								}}
-								active={currentTheme?.name === theme.name}
-							>
-								{theme.name}
-							</NavLink>
-						{/if}
-					{/each}
-				{/each}
-			</div>
-
-			<div class="open-source">
-				<div class="text">
-					<Text small>Themes are open-source</Text>
-				</div>
-				<Button
-					size="small"
-					as="a"
-					href="https://github.com/hyvor/hyvor-blogs-themes"
-					target="_blank"
-				>
-					View Source
-					{#snippet end()}
-						<IconGithub size={14} />
-					{/snippet}
-				</Button>
-			</div>
-		</div>
-
-		<div class="preview hds-box">
-			<div class="navi">
-				<div class="left">
-					<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
-						Open in new tab
-						{#snippet end()}
-							<IconBoxArrowUpRight size={14} />
+	<div class="preview hds-box">
+		<div class="navi">
+			<Dropdown bind:show={dropdownOpen} width={220}>
+				{#snippet trigger()}
+					<Button color="input">
+						{#snippet start()}
+							<Text bold>Theme</Text>
 						{/snippet}
-					</Link>
-				</div>
-				<div class="right">
+
+						<span class="theme-name">{currentTheme?.name}</span>
+
+						{#snippet end()}
+							<IconCaretDown size={14} />
+						{/snippet}
+					</Button>
+				{/snippet}
+
+				{#snippet content()}
+					<ActionList>
+						{#each [originalThemes, portedThemes] as group, i}
+							<ActionListGroup
+								title={i === 0 ? 'Original' : 'Ported'}
+								divider={i > 0}
+							>
+								{#each group as theme (theme.name)}
+									{#if theme.name !== 'blank'}
+										<ActionListItem
+											on:select={() => selectTheme(theme)}
+											style={currentTheme?.name === theme.name
+												? 'background-color: var(--accent-light-mid)'
+												: ''}
+										>
+											<span class="theme-item-name">{theme.name}</span>
+										</ActionListItem>
+									{/if}
+								{/each}
+							</ActionListGroup>
+						{/each}
+					</ActionList>
+
+					<div class="open-source">
+						<Text small>Themes are open-source</Text>
+						<Button
+							size="small"
+							as="a"
+							href="https://github.com/hyvor/hyvor-blogs-themes"
+							target="_blank"
+						>
+							View Source
+							{#snippet end()}
+								<IconGithub size={14} />
+							{/snippet}
+						</Button>
+					</div>
+				{/snippet}
+			</Dropdown>
+
+			<div class="right">
+				<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
+					Open in new tab
+					{#snippet end()}
+						<IconBoxArrowUpRight size={14} />
+					{/snippet}
+				</Link>
+
+				<div class="device-toggle">
 					<IconButton
 						on:click={() => (type = 'laptop')}
 						variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
@@ -153,99 +165,38 @@
 					>
 				</div>
 			</div>
-
-			{#if currentTheme}
-				<div class="iframe" style="padding: {type === 'laptop' ? 0 : 15}px">
-					{#if isLoading}
-						<Loader full />
-					{/if}
-
-					<iframe
-						src={currentThemeUrl}
-						title={currentTheme.name}
-						style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
-						style:height={type === 'laptop' ? '100%' : 740 + 'px'}
-						onload={() => (isLoading = false)}
-						style:display={isLoading ? 'none' : 'block'}
-					></iframe>
-
-					{#if lockScroll}
-						<button class="lock-scroll" onclick={() => (lockScroll = false)}>
-							<div class="overlay"></div>
-							<IconMessage icon={IconLock} iconSize={50} message="Click to unlock scroll" />
-						</button>
-					{/if}
-				</div>
-			{/if}
 		</div>
+
+		{#if currentTheme}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				class="iframe"
+				style="padding: {type === 'laptop' ? 0 : 15}px"
+				onmouseenter={handleIframeMouseEnter}
+				onmouseleave={handleIframeMouseLeave}
+			>
+				{#if isLoading}
+					<Loader full />
+				{/if}
+
+				<iframe
+					src={currentThemeUrl}
+					title={currentTheme.name}
+					style:width={type === 'laptop'
+						? '100%'
+						: (type === 'tablet' ? 540 : 360) + 'px'}
+					style:height={type === 'laptop' ? '100%' : 740 + 'px'}
+					style:pointer-events={lockScroll ? 'none' : 'auto'}
+					onload={() => (isLoading = false)}
+					style:display={isLoading ? 'none' : 'block'}
+				></iframe>
+			</div>
+		{/if}
 	</div>
 {/if}
 
 <style lang="scss">
-	.mobile-nav {
-		padding: 10px 20px;
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		background-color: var(--box-background);
-		border-radius: var(--box-radius);
-		box-shadow: var(--box-shadow);
-		cursor: pointer;
-		display: none;
-		.mobile-nav-left {
-			flex: 1;
-			color: var(--text-light);
-			font-size: 14px;
-		}
-		.theme-name {
-			font-weight: 600;
-		}
-		&:hover {
-			background-color: var(--hover);
-		}
-	}
-
-	.wrap {
-		display: flex;
-		height: 100%;
-		gap: 15px;
-	}
-
-	.section {
-		font-weight: 600;
-		padding: 10px 20px;
-		margin-top: 20px;
-		font-size: 14px;
-	}
-
-	.nav {
-		padding-bottom: 15px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.open-source {
-		margin-top: auto;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		.text {
-			color: var(--text-light);
-			margin-bottom: 5px;
-		}
-	}
-
-	.nav :global(a) {
-		padding: 4px 18px !important;
-		font-size: 14px;
-	}
-
-	.nav :global(a.active) {
-		background-color: var(--accent-light-mid);
-	}
-
 	.preview {
-		flex: 1;
 		width: 100%;
 		height: 100%;
 		display: flex;
@@ -255,13 +206,48 @@
 	}
 
 	.navi {
-		padding: 15px 20px;
+		padding: 12px 20px;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
 		border-bottom: 1px solid var(--border);
 	}
-	.left {
-		flex: 1;
+
+	.theme-name {
+		font-weight: normal;
+		color: var(--text-light);
+		text-transform: capitalize;
+	}
+
+	.theme-item-name {
+		text-transform: capitalize;
+	}
+
+	/* the group's own margin-top plus the divider's margin-bottom stack up
+	   into a double-gap around a single line; tighten so it reads as one */
+	:global(.action-list-group.has-divider) {
+		margin-top: 4px !important;
+	}
+	:global(.action-list-group .divider) {
+		margin-bottom: 10px;
+	}
+
+	.open-source {
+		margin-top: 10px;
+		padding: 10px 4px 0;
+		border-top: 1px solid var(--border);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 8px;
+	}
+
+	.right {
+		display: flex;
+		align-items: center;
+		gap: 20px;
 		font-size: 14px;
 		font-weight: 600;
 	}
@@ -273,26 +259,6 @@
 		justify-content: center;
 		overflow: hidden;
 		position: relative;
-	}
-
-	.lock-scroll {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 1;
-		cursor: pointer;
-		.overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: #fafafa;
-			opacity: 0.7;
-			z-index: -1;
-		}
 	}
 
 	iframe {
@@ -314,30 +280,13 @@
 	}
 
 	@media screen and (max-width: 992px) {
-		.wrap {
-			flex-direction: column;
-		}
-		.nav {
-			width: 100%;
-			margin-bottom: 15px;
-			display: none;
-		}
-
-		.open-source {
-			border-top: 1px solid var(--border);
-			flex-direction: row;
-			justify-content: space-around;
-			margin-top: 5%;
-			padding-top: 15px;
-		}
-
 		.preview {
 			height: 600px;
 		}
-		.mobile-nav {
-			display: flex;
+		.right :global(a) {
+			display: none;
 		}
-		.navi .right {
+		.device-toggle {
 			display: none;
 		}
 	}

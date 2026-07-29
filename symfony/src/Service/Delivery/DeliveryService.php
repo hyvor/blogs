@@ -28,18 +28,17 @@ class DeliveryService
 
         $useCache = $blog->getType() === BlogType::DEFAULT && !$this->debug;
 
-        // TODO: use cache when getCached is implemented
-        // if ($useCache) {
-        //     $cached = $this->getCached($blog, $path);
-        //     if ($cached !== null) {
-        //         return $cached;
-        //     }
-        // }
+         if ($useCache) {
+             $cached = $this->blogCacheService->getResponse($blog, $path);
+             if ($cached !== null) {
+                 return $cached;
+             }
+         }
 
         $response = $this->pathMatcher->match($blog, $path);
 
         if ($useCache && $response->cache) {
-            $this->setCached($blog, $path, $response);
+            $this->blogCacheService->setResponse($blog, $path, $response);
         }
 
         return $response;
@@ -65,18 +64,5 @@ class DeliveryService
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
-    }
-
-    /** @phpstan-ignore method.unused */
-    private function getCached(Blog $blog, string $path): null
-    {
-        // BlogCacheService stores timestamps, not responses.
-        // TODO: implement response caching
-        return null;
-    }
-
-    private function setCached(Blog $blog, string $path, DeliveryResponse $response): void
-    {
-        // TODO: implement response caching
     }
 }

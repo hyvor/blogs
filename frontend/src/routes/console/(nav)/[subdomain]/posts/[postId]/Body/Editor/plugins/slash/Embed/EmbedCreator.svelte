@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Loader, Modal, TextInput, Button, Validation } from '@hyvor/design/components';
-	import { getUnfold } from '../../../../../../../../../lib/actions/urlDataActions';
-	import type { UnfoldedEmbed } from '../../../../../../../../../lib/types';
+	import {
+		getUnfold,
+		type UnfoldedEmbed
+	} from '../../../../../../../../../lib/actions/urlDataActions';
 	import IconArrowReturnLeft from '@hyvor/icons/IconArrowReturnLeft';
 	import { isValidUrl } from '../../../../../../../../../lib/helper/is-valid-url';
 	import EmbedHtmlDisplay from './EmbedHtmlDisplay.svelte';
@@ -149,7 +151,7 @@
 
 	{#if urlData}
 		<div class="display">
-			<EmbedHtmlDisplay url={urlData.url} />
+			<EmbedHtmlDisplay {url} />
 		</div>
 	{/if}
 </Modal>

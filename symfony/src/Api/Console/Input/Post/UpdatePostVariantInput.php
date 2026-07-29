@@ -28,8 +28,8 @@ class UpdatePostVariantInput
     #[Assert\Length(max: 255)]
     public null|string|false $seo_primary_keyword = false;
 
-    #[Assert\All([new Assert\Length(max: 255)])]
     /** @var string[]|null */
+    #[Assert\All([new Assert\Length(max: 255)])]
     public ?array $seo_secondary_keywords = null;
 
     public bool $redirect_on_slug_change = false;

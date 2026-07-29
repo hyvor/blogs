@@ -77,7 +77,7 @@ class ThemeImporter
         }
 
         if (!$this->themeFilesService->isFileAllowedInFolder($folder, $fileName)) {
-            $folderName = $folder?->value ?? 'root';
+            $folderName = $folder === null ? 'root' : $folder->value;
             $this->addTrace("$entry skipped because it is not allowed in the $folderName folder");
             return;
         }
@@ -88,7 +88,7 @@ class ThemeImporter
             return;
         }
 
-        $this->themeFilesService->createOrUpdateFile($this->blog, $folder, $fileName, $content);
+        $this->themeFilesService->createOrUpdateFile($this->blog, $folder, $fileName, $content, event: false);
     }
 
     private function addTrace(string $trace): void

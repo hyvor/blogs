@@ -27,7 +27,6 @@ class HostingChangeService
         private PermalinkService $permalinkService,
         private CustomDomainService $customDomainService,
         private EventDispatcherInterface $eventDispatcher,
-        private UpdateBlogUrlsService $updateBlogUrlsService,
     ) {
     }
 

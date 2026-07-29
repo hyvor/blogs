@@ -10,6 +10,7 @@ use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -19,6 +20,7 @@ class SitemapPostsProcessor
         private LanguageService $languageService,
         private PermalinkService $permalinkService,
         private EntityManagerInterface $em,
+        private PostContentService $postContentService
     ) {}
 
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
@@ -35,8 +37,8 @@ class SitemapPostsProcessor
 
         $parts = [];
         foreach ($posts as $post) {
-            $entry = new UrlPostEntry($post, $this->permalinkService);
-            $parts[] = $entry->toXML();
+            $entry = new UrlPostEntry($post);
+            $parts[] = $entry->toXML($this->permalinkService, $this->postContentService);
         }
         $postsXML = implode("\n", $parts);
 
@@ -66,13 +68,14 @@ class SitemapPostsProcessor
         $posts = $qb->select('p')
             ->from(Post::class, 'p')
             ->join('p.variants', 'pv')
+            ->addSelect('pv')
             ->where('p.blog = :blog')
-            ->andWhere('pv.language_id = :langId')
+            ->andWhere('pv.language = :lang')
             ->andWhere('pv.status = :status')
             ->andWhere('p.is_page = false')
             ->setParameter('blog', $blog)
-            ->setParameter('langId', $primaryLanguage->getId())
-            ->setParameter('status', PostVariantStatus::PUBLISHED->value)
+            ->setParameter('lang', $primaryLanguage)
+            ->setParameter('status', PostVariantStatus::PUBLISHED)
             ->orderBy('p.id', 'ASC')
             ->setMaxResults($limit)
             ->setFirstResult(($number - 1) * $limit)

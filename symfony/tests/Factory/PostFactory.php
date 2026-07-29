@@ -2,8 +2,9 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
-use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -53,4 +54,40 @@ final class PostFactory extends PersistentObjectFactory
             // ->afterInstantiate(function(Post $post): void {})
         ;
     }
+
+    public static function createOneFor(Blog $blog, array $attributes = []): Post
+    {
+        return self::new(array_merge(['blog' => $blog], $attributes))->create();
+    }
+
+    public static function createOneForWithVariants(Blog $blog, array $postAttributes = [], array $variantAttributes = []): Post
+    {
+        $post = self::createOneFor($blog, $postAttributes);
+        foreach ($blog->getLanguages() as $language) {
+            PostVariantFactory::createOne(array_merge([
+                'post' => $post,
+                'language' => $language,
+            ], $variantAttributes));
+        }
+        return $post;
+    }
+
+    public static function createPublishedOneForWithVariants(
+        Blog $blog,
+        array $postAttributes = [],
+        array $variantAttributes = [],
+        \DateTimeImmutable $publishedAt = new \DateTimeImmutable()
+    ): Post
+    {
+        return self::createOneForWithVariants(
+            $blog,
+            array_merge($postAttributes, [
+                'published_at' => $publishedAt,
+            ]),
+            array_merge($variantAttributes, [
+                'status' => PostVariantStatus::PUBLISHED,
+            ])
+        );
+    }
+
 }

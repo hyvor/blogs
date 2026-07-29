@@ -42,6 +42,8 @@ class CreateGuestUserTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        $this->assertIsArray($json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame('Hyvor', $json['variants'][0]['name']);
 
         $this->getEd()->assertDispatched(UserCreatedEvent::class);

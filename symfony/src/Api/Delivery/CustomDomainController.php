@@ -67,8 +67,8 @@ class CustomDomainController
     )]
     public function serveAcmeVerification(string $token): Response
     {
-        $keyAuth = $this->cache->get(AcmeClient::ACME_CHALLENGE_CACHE_PREFIX . $token, fn() => null);
-        return new Response($keyAuth ?? '', 200, ['Content-Type' => 'text/plain']);
+        $keyAuth = $this->cache->get(AcmeClient::ACME_CHALLENGE_CACHE_PREFIX . $token, fn(): string => '');
+        return new Response($keyAuth, 200, ['Content-Type' => 'text/plain']);
     }
 
 

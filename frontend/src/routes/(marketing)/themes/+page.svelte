@@ -10,14 +10,14 @@
     </Button>
 </div> -->
 
-<div class="wrap">
+<div class="wrap hds-container-max">
 	<ThemesPreview />
 </div>
 
 <style lang="scss">
 	.wrap {
 		height: calc(100vh - var(--header-height));
-		padding: 15px;
+		padding: 15px 0;
 	}
 
 	// .theme-service {

@@ -109,6 +109,8 @@ class CreateUserTest extends ApiTestCase
         $this->assertSame('hyvor@hyvor.com', $json['email']);
         $this->assertSame('admin', $json['role']);
         $this->assertSame('https://hyvor.com', $json['website_url']);
+        $this->assertIsArray($json['variants']);
+        $this->assertIsArray($json['variants'][0]);
         $this->assertSame('HYVOR Company', $json['variants'][0]['name']);
         $this->assertSame('Building SaaS products', $json['variants'][0]['bio']);
         $this->assertSame('France', $json['variants'][0]['location']);

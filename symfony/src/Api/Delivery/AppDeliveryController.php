@@ -48,11 +48,7 @@ class AppDeliveryController extends AbstractController
         }
 
         $path = strval($request->query->get('path', ''));
-        $response = (array) $this->deliveryService->getResponse($blog, $path);
-
-        if (isset($response['content'])) {
-            $response['content'] = base64_encode($response['content']);
-        }
+        $response = $this->deliveryService->getResponse($blog, $path);
 
         return new JsonResponse($response);
     }
@@ -72,7 +68,7 @@ class AppDeliveryController extends AbstractController
             $this->appConfig->getDeliveryUrl() !== null ||
             $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN
         ) {
-            return new RedirectResponse($this->permalinkService->getFullUrlFromPath($blog, $path), 302);
+            return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);

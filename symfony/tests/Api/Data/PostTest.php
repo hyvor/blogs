@@ -18,6 +18,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostObjectFactory::class)]
 class PostTest extends ApiTestCase
 {
+    /**
+     * @return array{0: \App\Entity\Blog, 1: \App\Entity\Language, 2: \App\Entity\Language, 3: \App\Entity\Post, 4: \App\Entity\PostVariant, 5: \App\Entity\PostVariant}
+     */
     private function createBlogWithPost(): array
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
@@ -68,6 +71,7 @@ class PostTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame($post->getId(), $json['id']);
+        $this->assertIsArray($json['language']);
         $this->assertSame('en', $json['language']['code']);
     }
 
@@ -101,6 +105,7 @@ class PostTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame($post->getId(), $json['id']);
+        $this->assertIsArray($json['language']);
         $this->assertSame('fr', $json['language']['code']);
         $this->assertSame('test-post-fr', $json['slug']);
     }

@@ -55,10 +55,3 @@ export function verifyCustomDomainSetup() {
 		endpoint: '/hosting/custom-domain/verify'
 	});
 }
-
-export function getCustomDomainHosting() {
-	return consoleApi.get<CustomDomainSetup>({
-		endpoint: '/custom-domain',
-		v1: true
-	});
-}

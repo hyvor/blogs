@@ -28,7 +28,7 @@ class HorizontalRuleTest extends KernelTestCase
             'content' => [
                 ['type' => 'horizontal_rule'],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<hr>', $html);
@@ -43,6 +43,6 @@ class HorizontalRuleTest extends KernelTestCase
             'content' => [
                 ['type' => 'horizontal_rule'],
             ],
-        ]), $json);
+        ], JSON_THROW_ON_ERROR), $json);
     }
 }

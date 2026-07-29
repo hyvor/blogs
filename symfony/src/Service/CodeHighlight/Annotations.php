@@ -6,7 +6,7 @@ class Annotations
 {
     private bool|null $numbers = null;
 
-    /** @var array<string, int|false> */
+    /** @var array<int, int|false> */
     private array $renumbers = [];
 
     /** @var int[] */
@@ -63,7 +63,7 @@ class Annotations
         } elseif ($key === 'renumber') {
             foreach (explode(',', $value) as $renumber) {
                 $parts = explode(':', $renumber);
-                $from = $parts[0];
+                $from = (int) $parts[0];
                 $to = ($parts[1] ?? '') === 'null' ? false : (int) ($parts[1] ?? 0);
                 $this->renumbers[$from] = $to;
             }
@@ -110,8 +110,7 @@ class Annotations
     }
     public function getRenumberedLineNumber(int $realLineNumber, int $orElse): int|false
     {
-        $key = (string) $realLineNumber;
-        return $this->renumbers[$key] ?? $orElse;
+        return $this->renumbers[$realLineNumber] ?? $orElse;
     }
     public function hasError(): bool { return $this->hasError; }
 }

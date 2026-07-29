@@ -26,6 +26,7 @@ class SitemapParser extends ParserAbstract
     ) {
     }
 
+    /** @throws ParserException */
     public function parse(): void
     {
         $sitemap = null;

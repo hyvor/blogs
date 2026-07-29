@@ -6,7 +6,6 @@ use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\Sitemap\SitemapPostsProcessor;
-use App\Service\Limit;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
@@ -14,6 +13,7 @@ use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\DomCrawler\Crawler;
 
 #[CoversClass(PathMatcher::class)]
 #[CoversClass(SitemapPostsProcessor::class)]
@@ -24,6 +24,9 @@ class SitemapPostsTest extends KernelTestCase
         return $this->getService(PathMatcher::class);
     }
 
+    /**
+     * @return array{0: \App\Entity\Blog, 1: \App\Entity\Language}
+     */
     private function createBlogWithPosts(int $count): array
     {
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
@@ -76,13 +79,9 @@ class SitemapPostsTest extends KernelTestCase
         $this->assertSame(200, $response->status);
         $this->assertSame('text/xml', $response->mimeType);
 
-        $xml = simplexml_load_string((string)$response->content);
-        $this->assertNotFalse($xml);
-
-        $namespaces = $xml->getNamespaces(true);
-        $xml->registerXPathNamespace('default', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        $urls = $xml->xpath('default:url');
-        $this->assertCount(5, $urls);
+        $crawler = new Crawler((string)$response->content);
+        $this->assertCount(5, $crawler->filter('default|url'));
+        $this->assertCount(5, $crawler->filter('default|loc'));
     }
 
     public function test_paginates(): void

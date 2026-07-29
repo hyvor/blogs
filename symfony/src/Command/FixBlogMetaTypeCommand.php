@@ -38,7 +38,11 @@ class FixBlogMetaTypeCommand extends Command
 
         $updated = 0;
         foreach ($rows as $row) {
-            $meta = $row['meta'] !== null ? json_decode((string)$row['meta'], true) : null;
+            /** @var int $blogId */
+            $blogId = $row['id'];
+            /** @var string|null $rawMeta */
+            $rawMeta = $row['meta'];
+            $meta = $rawMeta !== null ? json_decode($rawMeta, true) : null;
 
             if (!is_array($meta)) {
                 $meta = [];
@@ -52,7 +56,7 @@ class FixBlogMetaTypeCommand extends Command
             $updated++;
 
             if ($dryRun) {
-                $io->writeln(sprintf('Blog #%d: %s', $row['id'], json_encode($meta)));
+                $io->writeln(sprintf('Blog #%d: %s', $blogId, json_encode($meta) ?: ''));
                 continue;
             }
 
@@ -60,7 +64,7 @@ class FixBlogMetaTypeCommand extends Command
                 'UPDATE blogs SET meta = :meta::jsonb WHERE id = :id',
                 [
                     'meta' => json_encode($meta),
-                    'id' => $row['id'],
+                    'id' => $blogId,
                 ]
             );
         }

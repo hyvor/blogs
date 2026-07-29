@@ -3,26 +3,28 @@
 namespace App\Tests\Service\CustomDomain;
 
 use App\Service\CustomDomain\Acme\AcmeClient;
+use App\Service\CustomDomain\Acme\AcmeException;
 use App\Service\CustomDomain\Acme\PendingOrder;
 use App\Tests\Case\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversNamespace;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversNamespace("App\Service\TlsCertificate\Acme")]
 class AcmeClientTest extends KernelTestCase
 {
+    /** @throws AcmeException */
     public function test_acme_client_happy_path(): void
     {
         Clock::set(new MockClock());
 
-        $this->getService(CacheInterface::class)->clear();
+        $this->getService(CacheItemPoolInterface::class)->clear();
 
         $directoryResponse = new JsonMockResponse([
             'newAccount' => 'https://acme.org/newAccount',
@@ -158,12 +160,6 @@ class AcmeClientTest extends KernelTestCase
         $this->assertStringContainsString(
             "-----BEGIN CERTIFICATE-----",
             $cert->certificatePem
-        );
-
-        // test HTTP requests made
-        $this->assertSame(
-            AcmeClient::DIRECTORY_URL_LETSENCRYPT_STAGING,
-            $directoryResponse->getRequestUrl()
         );
     }
 

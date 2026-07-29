@@ -5,7 +5,6 @@ namespace App\Tests\Api\Console\Blog\Theme;
 use App\Api\Console\Controller\ThemeController;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Theme\ThemeFilesService;
-use App\Service\Theme\ThemeZipService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Entity\Enum\ThemeCreationType;
@@ -16,7 +15,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ThemeController::class)]
 #[CoversClass(ThemeFilesService::class)]
-#[CoversClass(ThemeZipService::class)]
 class ChangeThemeTest extends ApiTestCase
 {
     public function test_changes_the_theme_of_a_blog_with_the_latest_version(): void
@@ -48,6 +46,7 @@ class ChangeThemeTest extends ApiTestCase
         $configFile = null;
         $helloFile = null;
         foreach ($json as $file) {
+            $this->assertIsArray($file);
             if ($file['name'] === 'config.yaml') {
                 $configFile = $file;
             }
@@ -57,7 +56,8 @@ class ChangeThemeTest extends ApiTestCase
         }
 
         $this->assertNotNull($configFile);
-        $this->assertStringContainsString('2.0.0', (string) $configFile['content']);
+        $this->assertIsString($configFile['content']);
+        $this->assertStringContainsString('2.0.0', $configFile['content']);
         $this->assertNull($helloFile);
     }
 

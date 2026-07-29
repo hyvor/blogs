@@ -96,17 +96,21 @@ class RedirectService
         RedirectType $type,
     ): Redirect {
         $now = $this->now();
+
         $redirect = new Redirect();
+        $redirect->setCreatedAt($now);
+        $redirect->setUpdatedAt($now);
         $redirect->setBlog($blog);
         $redirect->setDynamic($dynamic);
         $redirect->setPath($path);
         $redirect->setTo($to);
         $redirect->setType($type);
-        $redirect->setCreatedAt($now);
-        $redirect->setUpdatedAt($now);
+
         $this->em->persist($redirect);
         $this->em->flush();
+
         $this->ed->dispatch(new RedirectChangedEvent($redirect));
+
         return $redirect;
     }
 
@@ -124,8 +128,10 @@ class RedirectService
             $redirect->setType($type);
         }
         $redirect->setUpdatedAt($this->now());
+
         $this->em->flush();
         $this->ed->dispatch(new RedirectChangedEvent($redirect, $oldRedirect));
+
         return $redirect;
     }
 
@@ -156,10 +162,7 @@ class RedirectService
             }
         }
 
-        $staticRedirect = $this->em->getRepository(Redirect::class)->findOneBy([
-            'blog' => $blog,
-            'path' => $path,
-        ]);
+        $staticRedirect = $this->getRedirectByPath($blog, $path);
 
         if ($staticRedirect) {
             return ['to' => $staticRedirect->getTo(), 'type' => $staticRedirect->getType()];

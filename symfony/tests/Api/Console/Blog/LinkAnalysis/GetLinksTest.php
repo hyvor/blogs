@@ -17,6 +17,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(LinkAnalysisController::class)]
 class GetLinksTest extends ApiTestCase
 {
+    /**
+     * @return array{0: \App\Entity\Blog, 1: \App\Entity\User, 2: \App\Entity\PostVariant}
+     */
     private function setupBlog(string $subdomain): array
     {
         $blog = BlogFactory::createOne(['subdomain' => $subdomain, 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
@@ -52,6 +55,7 @@ class GetLinksTest extends ApiTestCase
         $json = $this->getJson();
 
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('https://example.com', $json[0]['url']);
         $this->assertSame(200, $json[0]['status_code']);
         $this->assertSame('ok', $json[0]['status_type']);
@@ -88,6 +92,7 @@ class GetLinksTest extends ApiTestCase
         $json = $this->getJson();
 
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('https://broken.example.com', $json[0]['url']);
         $this->assertSame('broken', $json[0]['status_type']);
     }

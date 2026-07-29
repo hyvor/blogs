@@ -12,7 +12,6 @@ use App\Api\Console\Object\TagObjectFactory;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Entity\Blog;
 use App\Entity\Enum\WebhookEvent;
-use App\Message\WebhookDeliverMessage;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Cache\Event\CacheClearAllEvent;
@@ -25,6 +24,11 @@ use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
 use App\Service\Navigation\Event\NavigationVariantChangedEvent;
 use App\Service\Navigation\NavigationService;
+use App\Service\Post\Event\PostCreatedEvent;
+use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostUpdatedEvent;
+use App\Service\Post\Event\PostVariantCreatedEvent;
+use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
@@ -42,6 +46,7 @@ use App\Service\User\Event\UserUpdatedEvent;
 use App\Service\User\Event\UserVariantCreatedEvent;
 use App\Service\User\Event\UserVariantDeletedEvent;
 use App\Service\User\Event\UserVariantUpdatedEvent;
+use App\Service\Webhook\Message\WebhookDeliverMessage;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -81,7 +86,7 @@ class WebhookSubscriberListener
         $blog = $event->navigation->getBlog();
         $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, function () use ($blog) {
             return ['navigations' => array_map(
-                fn($nav) => (array)(new NavigationObject($nav)),
+                fn($nav) => (array) new NavigationObject($nav),
                 $this->navigationService->getNavigations($blog),
             )];
         });
@@ -93,7 +98,7 @@ class WebhookSubscriberListener
         $blog = $event->variant->getNavigation()->getBlog();
         $this->call($blog, WebhookEvent::NAVIGATION_CHANGED, function () use ($blog) {
             return ['navigations' => array_map(
-                fn($nav) => (array)(new NavigationObject($nav)),
+                fn($nav) => (array) new NavigationObject($nav),
                 $this->navigationService->getNavigations($blog),
             )];
         });
@@ -105,7 +110,7 @@ class WebhookSubscriberListener
         $blog = $event->language->getBlog();
         $this->call($blog, WebhookEvent::LANGUAGES_CHANGED, function () use ($blog) {
             return ['languages' => array_map(
-                fn($lang) => (array)(new LanguageObject($lang)),
+                fn($lang) => (array) new LanguageObject($lang),
                 $this->languageService->getAllLanguages($blog),
             )];
         });
@@ -288,6 +293,42 @@ class WebhookSubscriberListener
     }
 
     #[AsEventListener]
+    public function onPostCreated(PostCreatedEvent $event): void
+    {
+        $post = $event->post;
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_CREATED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostVariantCreated(PostVariantCreatedEvent $event): void
+    {
+        $post = $event->variant->getPost();
+        $blog = $post->getBlog();
+
+        // skip if this is the primary-language variant created as part of post creation
+        if ($event->variant->getLanguage()->isPrimary()) {
+            return;
+        }
+
+        $this->call($blog, WebhookEvent::POST_UPDATED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostUpdated(PostUpdatedEvent $event): void
+    {
+        $post = $event->post;
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_UPDATED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
     public function onPostVariantUpdated(PostVariantUpdatedEvent $event): void
     {
         $post = $event->variant->getPost();
@@ -313,6 +354,26 @@ class WebhookSubscriberListener
         $post = $event->variant->getPost();
         $blog = $post->getBlog();
         $this->call($blog, WebhookEvent::POST_VARIANT_UNPUBLISHED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostDeleted(PostDeletedEvent $event): void
+    {
+        $post = $event->post;
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_DELETED, fn() => [
+            'post' => (array) $this->postObjectFactory->create($post, $blog),
+        ]);
+    }
+
+    #[AsEventListener]
+    public function onPostVariantDeleted(PostVariantDeletedEvent $event): void
+    {
+        $post = $event->variant->getPost();
+        $blog = $post->getBlog();
+        $this->call($blog, WebhookEvent::POST_UPDATED, fn() => [
             'post' => (array) $this->postObjectFactory->create($post, $blog),
         ]);
     }

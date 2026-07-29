@@ -6,9 +6,11 @@ use App\Entity\Blog;
 use App\Service\Delivery\Dto\CacheControl;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
-use App\Service\Delivery\MediaService;
 use App\Service\Delivery\MimeTypes;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
+use App\Service\Media\MediaService;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\Format;
 use Intervention\Image\ImageManager;
 
 class MediaProcessor
@@ -24,14 +26,12 @@ class MediaProcessor
             return null;
         }
 
-        $additional = $matchedRoute->param('additional');
-
-        $media = $this->mediaService->getByBlogAndName($blog, $fileName);
+        $media = $this->mediaService->getMediaByBlogAndName($blog, $fileName);
         if ($media === null) {
             return null;
         }
 
-        $content = $this->mediaService->getContents($media);
+        $content = $this->mediaService->getContentsStream($media);
         if ($content === null) {
             return null;
         }
@@ -40,18 +40,14 @@ class MediaProcessor
             ? MimeTypes::getMimeFromExtension($media->getExtension())
             : MimeTypes::getMimeFromFileName($media->getName());
 
+        // https://stackoverflow.com/questions/1176022/unknown-file-type-mime
         $mimeType ??= 'application/octet-stream';
 
-        ['content' => $content, 'mimeType' => $mimeType] = $this->convertImage($content, $mimeType);
-
-        if ($additional !== null) {
-            $result = $this->addAdditional($content, $mimeType, $additional);
-            if ($result === null) {
-                return null;
-            }
-            $content = $result['content'];
-            $mimeType = $result['mimeType'];
-        }
+        ['content' => $content, 'mimeType' => $mimeType] = $this->convertImage(
+            $content,
+            $mimeType,
+            $this->getWidth($matchedRoute)
+        );
 
         return DeliveryResponse::forFile(
             DeliveryFileType::MEDIA,
@@ -61,32 +57,65 @@ class MediaProcessor
         );
     }
 
-    /** @return array{content: string, mimeType: string}|null */
-    private function addAdditional(string $content, string $mimeType, string $additional): ?array
+    private function getWidth(MatchedRoute $matchedRoute): ?int
     {
-        if ($mimeType === 'image/webp' && preg_match('/^(\d+)w$/', $additional, $matches)) {
-            $width = (int) $matches[1];
-            $manager = new ImageManager(['driver' => 'gd']);
-            $image = $manager->make($content)->widen($width, function (\Intervention\Image\Constraint $constraint) {
-                $constraint->upsize();
-            })->encode('webp', 100);
-            return ['content' => (string) $image, 'mimeType' => $mimeType];
+        $additional = $matchedRoute->param('additional');
+        if ($additional === null) {
+            return null;
         }
+
+        if (preg_match('/^(\d+)w$/', $additional, $matches)) {
+            return (int) $matches[1];
+        }
+
         return null;
     }
 
-    /** @return array{content: string, mimeType: string} */
-    private function convertImage(string $content, string $mimeType): array
+    /**
+     * @param resource $contentStream
+     * @return array{content: string, mimeType: string}
+     */
+    private function convertImage(
+        $contentStream,
+        string $mimeType,
+        ?int $width
+    ): array
     {
-        if ($mimeType === 'image/png' || $mimeType === 'image/jpeg') {
+        if (
+            $mimeType === 'image/png' ||
+            $mimeType === 'image/jpeg' ||
+            $mimeType === 'image/jpg' ||
+            $mimeType === 'image/webp'
+        ) {
             try {
-                $manager = new ImageManager(['driver' => 'gd']);
-                $content = (string) $manager->make($content)->encode('webp', 100);
+                $manager = new ImageManager(
+                    Driver::class,
+                    autoOrientation: false,
+                );
+
+                /**
+                 * choosen quality:
+                 * it was 100 previously. It took 500MB of memory and 10 seconds to convert a 6MB webp image.
+                 * 2026-07-11: changed to 82
+                 * also, changing to imagick reduced processing time from 10s to 4s
+                 */
+                $image = $manager->decodeStream($contentStream);
+
+                if ($width !== null) {
+                    $image->scale(width: $width);
+                }
+
+                $contentStream = $image->encodeUsingFormat(Format::WEBP, quality: 82)->toStream();
                 $mimeType = 'image/webp';
+
             } catch (\Exception) {
                 // ignore
             }
         }
-        return ['content' => $content, 'mimeType' => $mimeType];
+
+        return [
+            'content' => stream_get_contents($contentStream),
+            'mimeType' => $mimeType
+        ];
     }
 }

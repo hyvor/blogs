@@ -14,7 +14,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TwigExtensions::class)]
 class LanguageVariantUrlFilterTest extends KernelTestCase
 {
-    private function render(string $template, mixed $context): string
+    /**
+     * @param array<string, mixed> $context
+     */
+    private function render(string $template, array $context): string
     {
         return $this->getService(TwigRendererService::class)->renderString($template, $context);
     }

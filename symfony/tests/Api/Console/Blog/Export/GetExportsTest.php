@@ -31,10 +31,13 @@ class GetExportsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(3, $json);
+        $this->assertIsArray($json[0]);
         $this->assertSame('failed', $json[0]['status']);
         $this->assertSame('Something went wrong.', $json[0]['error']);
+        $this->assertIsArray($json[1]);
         $this->assertSame('completed', $json[1]['status']);
         $this->assertSame('https://example.com', $json[1]['url']);
+        $this->assertIsArray($json[2]);
         $this->assertSame('pending', $json[2]['status']);
     }
 }

@@ -52,9 +52,11 @@ class GetChecksTest extends ApiTestCase
         $this->assertCount(2, $json);
 
         // newest first (ordered by id DESC)
+        $this->assertIsArray($json[0]);
         $this->assertSame($check2->getId(), $json[0]['id']);
         $this->assertSame(JobStatus::PENDING->value, $json[0]['status']);
 
+        $this->assertIsArray($json[1]);
         $this->assertSame($check1->getId(), $json[1]['id']);
         $this->assertSame(JobStatus::COMPLETED->value, $json[1]['status']);
         $this->assertSame(10, $json[1]['links_total_count']);

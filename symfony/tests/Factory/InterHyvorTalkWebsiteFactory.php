@@ -2,12 +2,12 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\InterHyvorTalkWebsite;
+use App\Entity\HyvorTalkWebsite;
 use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<InterHyvorTalkWebsite>
+ * @extends PersistentObjectFactory<HyvorTalkWebsite>
  */
 final class InterHyvorTalkWebsiteFactory extends PersistentObjectFactory
 {
@@ -23,7 +23,7 @@ final class InterHyvorTalkWebsiteFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return InterHyvorTalkWebsite::class;
+        return HyvorTalkWebsite::class;
     }
 
     /**

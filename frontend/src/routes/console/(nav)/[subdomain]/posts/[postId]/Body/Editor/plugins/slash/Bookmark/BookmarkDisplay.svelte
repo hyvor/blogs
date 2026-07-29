@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getHostname } from 'tldts';
-	import type { UnfoldedLink } from '../../../../../../../../../lib/types';
+	import type { UnfoldedLink } from '../../../../../../../../../lib/actions/urlDataActions';
 
 	interface Props {
 		link: UnfoldedLink;
@@ -13,13 +13,13 @@
 	<div class="link-details">
 		<div class="link-title">{link.title || '(No Title)'}</div>
 		<div class="link-description">{link.description || ''}</div>
-		{#if link.siteUrl}
-			<div class="link-domain">{getHostname(link.siteUrl)}</div>
+		{#if link.site_url}
+			<div class="link-domain">{getHostname(link.site_url)}</div>
 		{/if}
 	</div>
-	{#if link.thumbnailUrl}
+	{#if link.thumbnail_url}
 		<div class="link-thumbnail">
-			<img alt="Thumbnail" src={link.thumbnailUrl} />
+			<img alt="Thumbnail" src={link.thumbnail_url} />
 		</div>
 	{/if}
 </div>

@@ -4,6 +4,7 @@ namespace App\Tests\Service\LinkAnalysis;
 
 use App\Service\LinkAnalysis\StatusCheck\ExternalLinkStatusCheck;
 use App\Service\LinkAnalysis\StatusCheck\IgnoreReason;
+use App\Service\LinkAnalysis\StatusCheck\StatusResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -13,6 +14,10 @@ use Symfony\Component\HttpClient\Response\MockResponse;
 #[CoversClass(ExternalLinkStatusCheck::class)]
 class ExternalStatusCheckTest extends TestCase
 {
+    /**
+     * @param array<string, MockResponse> $mockResponses
+     * @return array<string, StatusResult>
+     */
     private function check(array $mockResponses): array
     {
         $client = new MockHttpClient($mockResponses);

@@ -32,7 +32,7 @@ class SupTest extends KernelTestCase
                     'marks' => [['type' => 'sup']],
                 ],
             ],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         $html = $this->service()->getHtml($json, $this->blog());
         $this->assertSame('<sup>superscript</sup>', $html);

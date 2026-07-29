@@ -2,10 +2,12 @@
 
 namespace App\Service\Cache;
 
+use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
 use App\Service\Language\Event\LanguageChangedEvent;
+use App\Service\Language\LanguageService;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Navigation\Event\NavigationChangedEvent;
@@ -22,9 +24,13 @@ use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
 use App\Service\Theme\Event\StylesEditedEvent;
 use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostUpdatedEvent;
+use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
+use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
@@ -41,6 +47,8 @@ class ClearCacheListener
         private BlogCacheService $cacheService,
         private PermalinkService $permalinkService,
         private EntityManagerInterface $em,
+        private LanguageService $languageService,
+        private PostService $postService,
     ) {}
 
     #[AsEventListener]
@@ -70,7 +78,6 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogUpdated(BlogUpdatedEvent $event): void
     {
-        // hosting fields are no longer changed through this event; see onBlogHostingChanged
         $this->cacheService->clearTemplateCache($event->blog);
     }
 
@@ -117,9 +124,35 @@ class ClearCacheListener
     }
 
     #[AsEventListener]
+    public function onPostUpdated(PostUpdatedEvent $event): void
+    {
+        $post = $event->post;
+        $blog = $post->getBlog();
+
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $primaryVariant = $this->postService->getPostVariantByPostAndLanguage($post, $primaryLanguage);
+
+        if ($primaryVariant === null || $primaryVariant->getStatus() !== PostVariantStatus::PUBLISHED) {
+            return;
+        }
+
+        $this->cacheService->clearTemplateCache($blog);
+    }
+
+    #[AsEventListener]
+    public function onPostDeleted(PostDeletedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->post->getBlog());
+    }
+
+    #[AsEventListener]
     public function onPostVariantUpdated(PostVariantUpdatedEvent $event): void
     {
-        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+        // status transitions clear the cache via onPostVariantPublished/onPostVariantUnpublished;
+        // here we only need to catch content edits to an already-published variant
+        if ($event->variant->getStatus() === PostVariantStatus::PUBLISHED) {
+            $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+        }
     }
 
     #[AsEventListener]
@@ -130,6 +163,12 @@ class ClearCacheListener
 
     #[AsEventListener]
     public function onPostVariantUnpublished(PostVariantUnpublishedEvent $event): void
+    {
+        $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
+    }
+
+    #[AsEventListener]
+    public function onPostVariantDeleted(PostVariantDeletedEvent $event): void
     {
         $this->cacheService->clearTemplateCache($event->variant->getPost()->getBlog());
     }
@@ -185,6 +224,7 @@ class ClearCacheListener
         $this->cacheService->clearSingleCache($event->blog, '/styles.css');
         $this->cacheService->clearTemplateCache($event->blog);
 
+        // update style version to force cache busting for styles.css
         $meta = clone $event->blog->getMeta();
         $meta->cache_version_styles++;
         $event->blog->setMeta($meta);

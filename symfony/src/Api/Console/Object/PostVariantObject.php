@@ -39,7 +39,7 @@ class PostVariantObject
         $this->post_id = $post->getId();
         $this->slug = $variant->getSlug();
         $this->status = $variant->getStatus()->value;
-        $this->url = $permalinkService->getPostPermalink($post, $blog, $variant->getLanguage());
+        $this->url = $permalinkService->getPostVariantPermalink($variant);
         $this->content = $variant->getContent();
         $this->content_unsaved = $variant->getContentUnsaved();
         $this->title = $variant->getTitle();
