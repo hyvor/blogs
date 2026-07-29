@@ -5,12 +5,14 @@ namespace App\Service\Integration\HyvorPost;
 use App\Entity\Blog;
 use App\Entity\HyvorPost;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Sdk\Exceptions\NotFoundException;
 use Hyvor\Sdk\Post\PostClient;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class HyvorPostService
 {
@@ -36,6 +38,7 @@ class HyvorPostService
     public function __construct(
         private EntityManagerInterface $em,
         private CloudApiService $cloudApiService,
+        private MessageBusInterface $bus
     ) {}
 
     private function getClient(int $orgId): PostClient
@@ -54,7 +57,7 @@ class HyvorPostService
         return $this->em->getRepository(HyvorPost::class)->findOneBy(['blog' => $blog]);
     }
 
-    public function connect(Blog $blog, string $name, string $subdomain): HyvorPost
+    public function connect(Blog $blog, string $name, string $subdomain, AuthUser $user): HyvorPost
     {
         $orgId = $blog->getOrganizationId();
         assert($orgId !== null);
@@ -69,6 +72,10 @@ class HyvorPostService
             ],
         ]);
 
+        // we add the current user to the newsletter so he has access to it immediately
+        // then, later, we will sync users in a job to give other users of the blog access to the newsletter as well
+        $this->addUser($orgId, $newsletter->id, $user->id);
+
         $hyvorPost = new HyvorPost();
         $hyvorPost->setBlog($blog);
         $hyvorPost->setNewsletterId($newsletter->id);
@@ -79,6 +86,8 @@ class HyvorPostService
 
         $this->em->persist($hyvorPost);
         $this->em->flush();
+
+        $this->bus->dispatch(new SyncBlogUsersToNewsletterMessage($blog->getId()));
 
         return $hyvorPost;
     }
@@ -109,13 +118,10 @@ class HyvorPostService
      * Adds a Hyvor user as a Hyvor Post newsletter user. Ignores the call if the
      * user is already added.
      */
-    public function addUser(HyvorPost $hyvorPost, int $hyvorUserId): void
+    public function addUser(int $organizationId, int $newsletterId, int $hyvorUserId): void
     {
-        $orgId = $hyvorPost->getBlog()->getOrganizationId();
-        assert($orgId !== null);
-
-        $this->getClient($orgId)
-            ->newsletter($hyvorPost->getNewsletterId())
+        $this->getClient($organizationId)
+            ->newsletter($newsletterId)
             ->users
             ->create([
                 'user_id' => $hyvorUserId,

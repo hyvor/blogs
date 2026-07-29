@@ -73,7 +73,7 @@ class Fixtures
             'string' => '',
             'bool' => false,
             'array' => [],
-            default => null,
+            default => class_exists($name) ? self::make($name) : null,
         };
     }
 }

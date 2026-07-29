@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Integrations\HyvorPost;
 use App\Api\Console\Controller\HyvorPostController;
 use App\Entity\HyvorPost;
 use App\Service\Integration\HyvorPost\HyvorPostService;
+use App\Service\Integration\HyvorPost\SyncBlogUsersToNewsletterMessage;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
@@ -15,6 +16,7 @@ use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
 use Hyvor\Sdk\HyvorClient;
 use Hyvor\Sdk\Post\Dto\Newsletter\Newsletter;
+use Hyvor\Sdk\Post\Dto\User\User;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -27,12 +29,13 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
 {
     public function test_connects_and_persists_the_integration(): void
     {
-        [$blog, $owner] = BlogFactory::createOneWithUser(['subdomain' => 'hp-connect']);
+        [$blog, $owner] = BlogFactory::createOneWithUser(['subdomain' => 'hp-connect'], ['hyvor_user_id' => 543]);
         LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: ['name' => 'My Blog']);
 
-        $hpResponse = new JsonMockResponse(Fixtures::make(Newsletter::class, ['id' => 123]));
-        $mockClient = new MockHttpClient($hpResponse);
+        $hpNewsletterResponse = new JsonMockResponse(Fixtures::make(Newsletter::class, ['id' => 123]));
+        $hpUserResponse = new JsonMockResponse(Fixtures::make(User::class));
+        $mockClient = new MockHttpClient([$hpNewsletterResponse, $hpUserResponse]);
         $this->getContainer()->set(HttpClientInterface::class, $mockClient);
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
@@ -47,12 +50,22 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
         $this->assertTrue($hyvorPost->isCreatedByBlogs());
         $this->assertSame(123, $hyvorPost->getNewsletterId());
 
-        $requestBody = json_decode($hpResponse->getRequestOptions()['body'], true);
+        $requestBody = json_decode($hpNewsletterResponse->getRequestOptions()['body'], true);
         $this->assertSame('My Blog', $requestBody['name']);
         $this->assertSame('hp-connect', $requestBody['subdomain']);
         $this->assertTrue($requestBody['autogenerate_subdomain_on_duplicate']);
         $this->assertSame('true', $requestBody['metadata']['hyvor_blogs_integration']);
         $this->assertSame((string) $blog->getId(), $requestBody['metadata']['hyvor_blogs_blog_id']);
+
+        $userRequestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $this->assertSame(543, $userRequestBody['user_id']);
+        $this->assertSame('ignore', $userRequestBody['on_duplicate']);
+
+        $transport = $this->transport('async')->throwExceptions();
+        $messages = $transport->queue()->messages(SyncBlogUsersToNewsletterMessage::class);
+        $this->assertCount(1, $messages);
+        $message = $messages[0];
+        $this->assertSame($blog->getId(), $message->blogId);
     }
 
     public function test_conflicts_when_already_connected(): void

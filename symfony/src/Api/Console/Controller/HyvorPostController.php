@@ -44,13 +44,14 @@ class HyvorPostController extends AbstractController
     public function connect(): JsonResponse
     {
         $blog = $this->consoleApiAuthorizationListener->getBlog();
+        $user = $this->consoleApiAuthorizationListener->getUser();
 
         if ($this->hyvorPostService->getHyvorPostOfBlog($blog) !== null) {
             throw new UnprocessableEntityHttpException('This blog is already connected to Hyvor Post');
         }
 
         $blogName = $this->blogService->getBlogVariant($blog, $this->languageService->getPrimaryLanguage($blog))->getName();
-        $hyvorPost = $this->hyvorPostService->connect($blog, $blogName, $blog->getSubdomain());
+        $hyvorPost = $this->hyvorPostService->connect($blog, $blogName, $blog->getSubdomain(), $user);
 
         return new JsonResponse(new HyvorPostObject($hyvorPost), 201);
     }
