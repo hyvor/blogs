@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'inter_hyvor_talk_websites')]
-class InterHyvorTalkWebsite
+class HyvorTalkWebsite
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

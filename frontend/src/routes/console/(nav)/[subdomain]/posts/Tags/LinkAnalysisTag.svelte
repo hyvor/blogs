@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Tooltip } from '@hyvor/design/components';
-	import { calculateLinkAnalysis, getCountsByStatus } from '../../../../lib/links/links';
-	import type { PostVariant } from '../../../../lib/types';
+	import { getCountsByStatus } from '../../../../lib/links/links';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import IconExclamationCircleFill from '@hyvor/icons/IconExclamationCircleFill';
 	import IconQuestionCircle from '@hyvor/icons/IconQuestionCircle';
@@ -9,11 +8,10 @@
 	import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
 
 	interface Props {
-		postVariant: PostVariant;
+		linkAnalysis: Record<string, number>;
 	}
 
-	let { postVariant }: Props = $props();
-	const linkAnalysis = calculateLinkAnalysis(postVariant);
+	let { linkAnalysis }: Props = $props();
 	const counts = getCountsByStatus(linkAnalysis);
 </script>
 

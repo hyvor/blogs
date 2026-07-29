@@ -185,6 +185,33 @@ export type PostVariant = {
 	link_analysis: Record<string, number>;
 };
 
+export type PostVariantStatusItem = {
+	language_id: number;
+	status: PostStatus;
+};
+
+// minimal shape used for listing posts/pages (GET /posts, GET /pages)
+export type PostListItem = {
+	id: number;
+	created_at: number;
+	updated_at: number;
+	published_at: number | null;
+
+	is_featured: boolean;
+	is_page: boolean;
+
+	slug: string | null;
+	url: string | null;
+	title: string | null;
+	link_analysis: Record<string, number>;
+	seo_score: number;
+
+	variant_statuses: PostVariantStatusItem[];
+
+	tags: string[];
+	authors: string[];
+};
+
 export type UserStatus = 'invited' | 'active' | 'blocked';
 
 // == USER

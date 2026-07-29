@@ -23,7 +23,7 @@ class FeedService
 
     public function generateFeed(Blog $blog, Language $language, string $filter): string
     {
-        $result = $this->postService->getPostsWithFilter($blog, $language, $filter, 25);
+        $result = $this->postService->getPostsWithFilterQ($blog, $language, $filter, 25);
         $posts = $result['posts'];
 
         $blogObject = $this->blogObjectFactory->create($blog, $language);

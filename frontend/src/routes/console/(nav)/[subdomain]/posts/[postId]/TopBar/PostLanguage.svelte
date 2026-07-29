@@ -62,7 +62,7 @@
 	<div class="wrap">
 		<Dropdown bind:show={showDropdown} align="end" width={250}>
 			{#snippet trigger()}
-				<Button color="input" disabled={isCreatingVariant}>
+				<Button color="input" disabled={isCreatingVariant} size="small">
 					{$postLanguageStore.name}
 					{#snippet end()}
 						<IconCaretDown size={12} />
@@ -99,6 +99,9 @@
 {/if}
 
 <style>
+	.wrap {
+		margin-right: 10px;
+	}
 	.wrap :global(.dropdown .content-wrap) {
 		z-index: 11 !important;
 	}

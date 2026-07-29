@@ -36,6 +36,7 @@ final class TagVariantFactory extends PersistentObjectFactory
         return [
             'language' => LanguageFactory::new(),
             'tag' => TagFactory::new(),
+            'name' => self::faker()->word(),
         ];
     }
 

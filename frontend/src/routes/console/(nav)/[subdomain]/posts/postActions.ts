@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import type { Post, PostVariant, User, Tag } from '../../../lib/types';
+import type { Post, PostVariant, PostListItem, User, Tag } from '../../../lib/types';
 import consoleApi from '../../../lib/consoleApi';
 import {
 	postLanguageStore,
@@ -24,14 +24,14 @@ interface GetPostsData {
 }
 
 export function getPosts(data: GetPostsData) {
-	return consoleApi.get<Post[]>({
+	return consoleApi.get<PostListItem[]>({
 		endpoint: '/posts',
 		data
 	});
 }
 
 export function getPages() {
-	return consoleApi.get<Post[]>({
+	return consoleApi.get<PostListItem[]>({
 		endpoint: '/pages'
 	});
 }

@@ -256,7 +256,7 @@ class TemplateRendererService
         if ($routeName === 'index') {
             $blogObj = $this->blogObjectFactory->create($blog, $language);
 
-            $featuredPosts = $this->postService->getPostsWithFilter(
+            $featuredPosts = $this->postService->getPostsWithFilterQ(
                 blog: $blog,
                 language: $language,
                 filter: 'is_featured=true',
@@ -349,7 +349,7 @@ class TemplateRendererService
         $limit = is_numeric($config['POSTS_PER_PAGINATION'] ?? null) ? (int)$config['POSTS_PER_PAGINATION'] : 10;
         $offset = ($pageNumber - 1) * $limit;
 
-        $result = $this->postService->getPostsWithFilter($blog, $language, $filter, $limit, $offset);
+        $result = $this->postService->getPostsWithFilterQ($blog, $language, $filter, $limit, $offset);
         $posts = $result['posts'];
         $total = $result['total'];
 

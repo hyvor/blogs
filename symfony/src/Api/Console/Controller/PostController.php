@@ -16,6 +16,7 @@ use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Post\UpdatePostInput;
 use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
+use App\Api\Console\Object\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
@@ -39,6 +40,7 @@ class PostController
         private PostSlugService $postSlugService,
         private LanguageService $languageService,
         private PostObjectFactory $postObjectFactory,
+        private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
     ) {}
@@ -59,7 +61,7 @@ class PostController
             $language = $this->languageService->getPrimaryLanguage($blog);
         }
 
-        $result = $this->postService->getConsolePosts(
+        $result = $this->postService->getPosts(
             $blog,
             $language,
             $input->status,
@@ -73,7 +75,7 @@ class PostController
         );
 
         return new JsonResponse(array_map(
-            fn($post) => $this->postObjectFactory->create($post, $blog),
+            fn($post) => $this->postListObjectFactory->create($post, $language),
             $result['posts'],
         ));
     }
@@ -83,10 +85,11 @@ class PostController
     public function getPages(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
+        $language = $this->languageService->getPrimaryLanguage($blog);
         $pages = $this->postService->getPages($blog);
 
         return new JsonResponse(array_map(
-            fn($post) => $this->postObjectFactory->create($post, $blog),
+            fn($post) => $this->postListObjectFactory->create($post, $language),
             $pages,
         ));
     }
