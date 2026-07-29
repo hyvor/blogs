@@ -16,6 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   blogs:
+    # note: latest is replaced with the actual version tag in zip.sh when building the image
     image: hyvor/blogs:latest
     container_name: hyvor-blogs
     restart: unless-stopped
@@ -24,6 +25,9 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    volumes:
+      - blog_media:/app/media
 
 volumes:
   postgres_data:
+  blog_media:
