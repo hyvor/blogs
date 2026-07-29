@@ -10,9 +10,11 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\HyvorPostFactory;
 use App\Tests\Factory\LanguageFactory;
+use App\Tests\Helper\Fixtures;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
 use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\Post\Dto\Newsletter\Newsletter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -25,15 +27,15 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
 {
     public function test_connects_and_persists_the_integration(): void
     {
-        [$blog, $owner] = BlogFactory::createOneWithUser();
+        [$blog, $owner] = BlogFactory::createOneWithUser(['subdomain' => 'hp-connect']);
         LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: ['name' => 'My Blog']);
 
-        $hpResponse = new JsonMockResponse(['id' => 123]);
+        $hpResponse = new JsonMockResponse(Fixtures::make(Newsletter::class, ['id' => 123]));
         $mockClient = new MockHttpClient($hpResponse);
         $this->getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        $cloudApiServiceMock = $this->createMock(CloudApiService::class);
+        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
             ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
@@ -44,6 +46,13 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
         $this->assertNotNull($hyvorPost);
         $this->assertTrue($hyvorPost->isCreatedByBlogs());
         $this->assertSame(123, $hyvorPost->getNewsletterId());
+
+        $requestBody = json_decode($hpResponse->getRequestOptions()['body'], true);
+        $this->assertSame('My Blog', $requestBody['name']);
+        $this->assertSame('hp-connect', $requestBody['subdomain']);
+        $this->assertTrue($requestBody['autogenerate_subdomain_on_duplicate']);
+        $this->assertSame('true', $requestBody['metadata']['hyvor_blogs_integration']);
+        $this->assertSame((string) $blog->getId(), $requestBody['metadata']['hyvor_blogs_blog_id']);
     }
 
     public function test_conflicts_when_already_connected(): void
@@ -51,14 +60,11 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
         [$blog, $owner] = BlogFactory::createOneWithUser(['subdomain' => 'hp-connect-conflict']);
         HyvorPostFactory::createOne(['blog' => $blog]);
 
-        $fake = new HyvorPostServiceFake($this->getEm());
-        $this->getContainer()->set(HyvorPostService::class, $fake);
-
         $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-post/connect', [
             'name' => 'My Newsletter',
             'subdomain' => 'my-newsletter',
         ], user: $owner);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFailed(422, 'This blog is already connected to Hyvor Post');
     }
 }
