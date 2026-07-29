@@ -39,13 +39,18 @@ class ThemeVersionCreator {
             $this->em->flush();
 
             if ($createPreviewBlog) {
+                $previewSubdomain = $this->generateThemePreviewSubdomain($theme->getName(), $version);
+
                 $blog = $this->blogCreator->create(
                     null,
                     null,
                     $theme->getName(),
-                    $this->generateThemePreviewSubdomain($theme->getName(), $version),
+                    $previewSubdomain,
                     BlogType::PREVIEW
                 );
+
+                $themeVersion->setPreviewSubdomain($previewSubdomain);
+                $this->em->flush();
 
                 $this->themeFilesService->updateFilesFromThemeVersion($blog, $themeVersion);
             }
