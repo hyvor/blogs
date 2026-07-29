@@ -118,27 +118,6 @@ class CreateUserTest extends ApiTestCase
         $this->getEd()->assertDispatched(UserCreatedEvent::class);
     }
 
-    public function test_does_not_create_owners(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'create-user-owner', 'organization_id' => 3002]);
-        LanguageFactory::createOnePrimaryFor($blog);
-        $owner = UserFactory::createOne(['blog' => $blog]);
-        $hyvorUser = new AuthUser(id: 1240, username: 'user1240', name: 'User', email: 'user1240@example.com');
-        $this->setUpComms();
-        $this->enableBilling(3002);
-
-        $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
-            'hyvor_user_id' => $hyvorUser->id,
-            'role' => 'owner',
-        ]);
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString(
-            'Owners cannot be created',
-            (string)$this->client->getResponse()->getContent(),
-        );
-    }
-
     public function test_does_not_create_if_user_exists(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'create-user-exists', 'organization_id' => 3003]);

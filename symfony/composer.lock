@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fb5fb30af1467229737077dbeda9f39",
+    "content-hash": "68afb813574fdd4d2eb3f351040a20e1",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2227,16 +2227,16 @@
         },
         {
             "name": "hyvor/sdk",
-            "version": "0.0.4",
+            "version": "0.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php.git",
-                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9"
+                "reference": "cd268c4ff6614b346e6d785ae3a0b7076f147b04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/800c8671cbf175681618f44e3e5b291b720eb1a9",
-                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9",
+                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/cd268c4ff6614b346e6d785ae3a0b7076f147b04",
+                "reference": "cd268c4ff6614b346e6d785ae3a0b7076f147b04",
                 "shasum": ""
             },
             "require": {
@@ -2271,9 +2271,9 @@
             ],
             "description": "Official PHP SDK for HYVOR products",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php/tree/0.0.4"
+                "source": "https://github.com/hyvor/sdk-php/tree/0.0.5"
             },
-            "time": "2026-07-20T14:31:14+00:00"
+            "time": "2026-07-29T10:52:22+00:00"
         },
         {
             "name": "hyvor/unfold",
@@ -12965,5 +12965,5 @@
         "ext-zip": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

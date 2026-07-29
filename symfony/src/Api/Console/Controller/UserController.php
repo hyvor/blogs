@@ -6,7 +6,6 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Blog\User\SearchUsersInput;
 use App\Api\Console\Input\User\CheckUserSlugAvailableInput;
 use App\Api\Console\Input\User\CreateGuestUserInput;
 use App\Api\Console\Input\User\CreateUserInput;
@@ -72,10 +71,6 @@ class UserController
             throw new UnprocessableEntityHttpException('User is already added to the blog');
         }
 
-        if ($input->role === UserRole::ADMIN) {
-            throw new UnprocessableEntityHttpException('Admins cannot be created. Use ownership transferring');
-        }
-
         $organizationId = $blog->getOrganizationId();
         assert($organizationId !== null);
 
@@ -128,19 +123,6 @@ class UserController
         #[MapRequestPayload] UpdateUserInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-
-        if ($input->role !== null) {
-            if ($input->role === UserRole::ADMIN) {
-                throw new UnprocessableEntityHttpException(
-                    'You cannot update the role to admin. Use transferring instead',
-                );
-            }
-            if ($user->getRole() === UserRole::ADMIN) {
-                throw new UnprocessableEntityHttpException(
-                    'You cannot update the role of the admin. Use transferring instead',
-                );
-            }
-        }
 
         if ($input->status !== null && $user->getRole() === UserRole::ADMIN) {
             throw new UnprocessableEntityHttpException('You cannot update the status of the admin');

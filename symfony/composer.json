@@ -15,7 +15,7 @@
         "hyvor/php-svg-icons": "^1.1",
         "hyvor/phrosemirror": "^1.0.6",
         "hyvor/scssphp": "^2.0.4",
-        "hyvor/sdk": "^0.0.4",
+        "hyvor/sdk": "^0.0.5",
         "hyvor/unfold": "^0.0.6",
         "intervention/image": "^4.2.0",
         "league/flysystem": "^3.35.2",

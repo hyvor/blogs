@@ -63,8 +63,8 @@ class HyvorPostService
             'subdomain' => $subdomain,
             'autogenerate_subdomain_on_duplicate' => true,
             'metadata' => [
-                // TODO: add blog id or subdomain
                 'hyvor_blogs_integration' => 'true',
+                'hyvor_blogs_blog_id' => (string) $blog->getId(),
             ],
         ]);
 
