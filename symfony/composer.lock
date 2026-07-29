@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d90fa66d4b551055a397bf4434d20f94",
+    "content-hash": "9f63d25129aad627fbb7916dcf9bd766",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1776,16 +1776,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.0-beta.3",
+            "version": "4.1.0-beta.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "05ee9c9e62106566eb2cd55b44e853a85b915b92"
+                "reference": "8f146aa18b821529629509fed90444804b3ebc64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/05ee9c9e62106566eb2cd55b44e853a85b915b92",
-                "reference": "05ee9c9e62106566eb2cd55b44e853a85b915b92",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/8f146aa18b821529629509fed90444804b3ebc64",
+                "reference": "8f146aa18b821529629509fed90444804b3ebc64",
                 "shasum": ""
             },
             "require": {
@@ -1846,9 +1846,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.0-beta.3"
+                "source": "https://github.com/hyvor/internal/tree/4.1.0-beta.4"
             },
-            "time": "2026-07-29T08:20:41+00:00"
+            "time": "2026-07-29T18:27:31+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",
@@ -2021,16 +2021,16 @@
         },
         {
             "name": "hyvor/sdk",
-            "version": "0.0.5",
+            "version": "0.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php.git",
-                "reference": "cd268c4ff6614b346e6d785ae3a0b7076f147b04"
+                "reference": "32f685c7fc277fffa242151e2441c348af22d74d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/cd268c4ff6614b346e6d785ae3a0b7076f147b04",
-                "reference": "cd268c4ff6614b346e6d785ae3a0b7076f147b04",
+                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/32f685c7fc277fffa242151e2441c348af22d74d",
+                "reference": "32f685c7fc277fffa242151e2441c348af22d74d",
                 "shasum": ""
             },
             "require": {
@@ -2065,9 +2065,9 @@
             ],
             "description": "Official PHP SDK for HYVOR products",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php/tree/0.0.5"
+                "source": "https://github.com/hyvor/sdk-php/tree/0.0.6"
             },
-            "time": "2026-07-29T10:52:22+00:00"
+            "time": "2026-07-29T18:17:28+00:00"
         },
         {
             "name": "hyvor/unfold",

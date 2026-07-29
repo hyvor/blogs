@@ -30,6 +30,9 @@ class HyvorPostService
         // to list the newsletter to choose from when connecting (currently not used)
         PostScope::ORG_NEWSLETTERS_READ,
 
+        // delete the newsletter when disconnecting
+        PostScope::NEWSLETTER_DELETE,
+
         // add, remove users automatically as they are added/removed in the blog
         PostScope::USERS_READ,
         PostScope::USERS_WRITE,
@@ -94,15 +97,25 @@ class HyvorPostService
 
     /**
      * Disconnects a blog from Hyvor Post.
-     *
-     * Note: this only removes the local integration row. It does not delete the
-     * newsletter on Hyvor Post itself (even if it was created_by_blogs), since the
-     * SDK does not yet support deleting a newsletter.
+     * Deletes the newsletter if it was created by Hyvor Blogs.
      */
     public function disconnect(HyvorPost $hyvorPost): void
     {
         $this->em->remove($hyvorPost);
         $this->em->flush();
+
+        if ($hyvorPost->isCreatedByBlogs()) {
+            $orgId = $hyvorPost->getBlog()->getOrganizationId();
+            assert($orgId !== null);
+
+            try {
+                $this->getClient($orgId)
+                    ->newsletter($hyvorPost->getNewsletterId())
+                    ->delete();
+            } catch (NotFoundException) {
+                // newsletter not found in Hyvor Post; nothing to do
+            }
+        }
     }
 
     public function updateEmbedCode(HyvorPost $hyvorPost, ?string $embedCode): HyvorPost
