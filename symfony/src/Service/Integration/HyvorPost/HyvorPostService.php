@@ -10,6 +10,7 @@ use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
 use Hyvor\Internal\Component\Component;
+use Hyvor\Sdk\Exceptions\HyvorApiException;
 use Hyvor\Sdk\Exceptions\NotFoundException;
 use Hyvor\Sdk\Post\PostClient;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -66,6 +67,9 @@ class HyvorPostService
         return $this->em->getRepository(HyvorPost::class)->findOneBy(['blog' => $blog]);
     }
 
+    /**
+     * @throws HyvorApiException
+     */
     public function connect(Blog $blog, string $name, string $subdomain, AuthUser $user): HyvorPost
     {
         $orgId = $blog->getOrganizationId();

@@ -11,6 +11,7 @@ use App\Api\Console\Object\HyvorPost\HyvorPostObject;
 use App\Service\Blog\BlogService;
 use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Language\LanguageService;
+use Hyvor\Sdk\Exceptions\HyvorApiException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -51,7 +52,12 @@ class HyvorPostController extends AbstractController
         }
 
         $blogName = $this->blogService->getBlogVariant($blog, $this->languageService->getPrimaryLanguage($blog))->getName();
-        $hyvorPost = $this->hyvorPostService->connect($blog, $blogName, $blog->getSubdomain(), $user);
+
+        try {
+            $hyvorPost = $this->hyvorPostService->connect($blog, $blogName, $blog->getSubdomain(), $user);
+        } catch (HyvorApiException) {
+            throw new UnprocessableEntityHttpException('Failed to connect to Hyvor Post. Please try again later.');
+        }
 
         return new JsonResponse(new HyvorPostObject($hyvorPost), 201);
     }

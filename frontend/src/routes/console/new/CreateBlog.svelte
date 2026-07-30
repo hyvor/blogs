@@ -98,8 +98,6 @@
 		subdomainEdited = true;
 	}
 
-	let res: BlogList;
-
 	async function handleCreate() {
 		let valid = true;
 
@@ -117,15 +115,21 @@
 			return false;
 		}
 
+        let blog: BlogList;
 		try {
-			res = await createBlog(name, subdomain, dev);
-			addToBlogList(res);
+			const res = await createBlog(name, subdomain, dev, hyvorTalk, hyvorPost);
+			addToBlogList(res.blog);
+            blog = res.blog;
+
+            res.warnings.forEach((warning) => {
+                toast.warning(warning);
+            });
 		} catch (e: any) {
 			toast.error(e.message);
 			return false;
 		}
 
-		goto('/console/' + res.subdomain);
+		goto('/console/' + blog.subdomain);
 
 		return true;
 	}
