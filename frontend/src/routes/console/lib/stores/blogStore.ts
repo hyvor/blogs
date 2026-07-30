@@ -1,10 +1,11 @@
 import { writable } from 'svelte/store';
-import type { Blog, BlogCounts, BlogVariant, HostingInfo } from '../types';
+import type { Blog, BlogCounts, BlogVariant, HostingInfo, BlogIntegrations } from '../types';
 
 export const blogStore = writable<Blog>();
 export const blogOriginalStore = writable<Blog>();
 export const blogCountsStore = writable<BlogCounts>();
 export const hostingInfoStore = writable<HostingInfo>();
+export const integrationsStore = writable<BlogIntegrations>({ hyvor_talk: null, hyvor_post: null });
 
 export function updateBlogStore(
 	blog: Partial<Blog> | ((currentBlog: Blog) => Partial<Blog>),
@@ -76,4 +77,13 @@ export function updateHostingInfoStore(updates: HostingInfo) {
 		hosting_url: updates.hosting_url ?? null
 	}));
 	hostingInfoStore.set(updates);
+}
+
+
+// integrations
+export function setHyvorPostIntegrationState(newsletterId: number | null) {
+	integrationsStore.update((integrations) => ({
+		...integrations,
+		hyvor_post: newsletterId ? { newsletter_id: newsletterId } : null
+	}));
 }

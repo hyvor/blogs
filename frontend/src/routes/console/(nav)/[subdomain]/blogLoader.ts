@@ -1,8 +1,8 @@
 import consoleApi from '../../lib/consoleApi';
-import { blogCountsStore, blogOriginalStore, blogStore } from '../../lib/stores/blogStore';
+import { blogCountsStore, blogOriginalStore, blogStore, integrationsStore } from '../../lib/stores/blogStore';
 import { languagesStore } from '../../lib/stores/languagesStore';
 import { usersStore } from '../../lib/stores/usersStore';
-import type { Blog, BlogCounts, Language, User } from '../../lib/types';
+import type { Blog, BlogCounts, Language, User, BlogIntegrations } from '../../lib/types';
 import { isTempStore } from '../../lib/temp';
 import { get } from 'svelte/store';
 
@@ -11,6 +11,7 @@ export interface BlogResponse {
 	languages: Language[];
 	users: User[];
 	counts: BlogCounts;
+	integrations: BlogIntegrations;
 }
 
 // to prevent multiple requests for the same subdomain
@@ -23,9 +24,10 @@ export function loadBlog(subdomain: string) {
 	}
 
 	if (PRELOADED_BLOGS[subdomain]) {
-		handleResponse(PRELOADED_BLOGS[subdomain]);
+		const res = PRELOADED_BLOGS[subdomain];
+		handleResponse(res);
 		delete PRELOADED_BLOGS[subdomain];
-		return Promise.resolve(PRELOADED_BLOGS[subdomain]);
+		return Promise.resolve(res);
 	}
 
 	const promise = new Promise<BlogResponse>((resolve, reject) => {
@@ -61,6 +63,7 @@ function handleResponse(res: BlogResponse) {
 	blogCountsStore.set(res.counts);
 	languagesStore.set(res.languages);
 	usersStore.set(res.users);
+	integrationsStore.set(res.integrations);
 }
 
 export function setPreloadedBlog(blogResponse: BlogResponse) {

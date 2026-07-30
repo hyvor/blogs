@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\User;
 use App\Api\Console\Controller\UserController;
 use App\Entity\Enum\UserRole;
 use App\Entity\Enum\UserStatus;
+use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\User\Event\UserUpdatedEvent;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;

@@ -6,7 +6,6 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Blog\User\SearchUsersInput;
 use App\Api\Console\Input\User\CheckUserSlugAvailableInput;
 use App\Api\Console\Input\User\CreateGuestUserInput;
 use App\Api\Console\Input\User\CreateUserInput;
@@ -20,8 +19,10 @@ use App\Api\Console\Object\UserVariantObjectFactory;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use App\Service\Billing\UsageService;
+use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Language\LanguageService;
 use App\Service\User\Exception\HyvorUserNotFoundException;
+use App\Service\User\Exception\UnableToCreateUserException;
 use App\Service\User\UserService;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
@@ -45,6 +46,7 @@ class UserController
         private UsageService $usageService,
         private CommsInterface $comms,
         private InternalConfig $internalConfig,
+        private HyvorPostService $hyvorPostService,
     ) {}
 
     #[Route('/users', methods: ['GET'])]
@@ -72,10 +74,6 @@ class UserController
             throw new UnprocessableEntityHttpException('User is already added to the blog');
         }
 
-        if ($input->role === UserRole::ADMIN) {
-            throw new UnprocessableEntityHttpException('Admins cannot be created. Use ownership transferring');
-        }
-
         $organizationId = $blog->getOrganizationId();
         assert($organizationId !== null);
 
@@ -96,8 +94,10 @@ class UserController
             }
         }
 
+        $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($blog);
+
         try {
-            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
+            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role, hyvorPost: $hyvorPost);
         } catch (HyvorUserNotFoundException) {
             throw new UnprocessableEntityHttpException('Unable to find the user');
         }
@@ -128,19 +128,6 @@ class UserController
         #[MapRequestPayload] UpdateUserInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-
-        if ($input->role !== null) {
-            if ($input->role === UserRole::ADMIN) {
-                throw new UnprocessableEntityHttpException(
-                    'You cannot update the role to admin. Use transferring instead',
-                );
-            }
-            if ($user->getRole() === UserRole::ADMIN) {
-                throw new UnprocessableEntityHttpException(
-                    'You cannot update the role of the admin. Use transferring instead',
-                );
-            }
-        }
 
         if ($input->status !== null && $user->getRole() === UserRole::ADMIN) {
             throw new UnprocessableEntityHttpException('You cannot update the status of the admin');

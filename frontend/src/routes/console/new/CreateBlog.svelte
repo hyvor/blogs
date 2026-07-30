@@ -5,7 +5,9 @@
 		FormControl,
 		Link,
 		SplitControl,
+		Switch,
 		TextInput,
+		Tooltip,
 		Validation,
 		toast
 	} from '@hyvor/design/components';
@@ -15,6 +17,8 @@
 	import { addToBlogList, blogListStore } from '../lib/stores';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
+	import { getConfig } from '../lib/config';
+	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 
 	interface Props {
 		dev?: boolean;
@@ -33,6 +37,9 @@
 
 	let subdomainCheckTimeout: null | ReturnType<typeof setTimeout> = null;
 	let subdomainCheckAbortController: AbortController | null = null;
+
+	let hyvorTalk = $state(true);
+	let hyvorPost = $state(true);
 
 	function checkSubdomain() {
 		if (subdomainCheckTimeout) {
@@ -91,8 +98,6 @@
 		subdomainEdited = true;
 	}
 
-	let res: BlogList;
-
 	async function handleCreate() {
 		let valid = true;
 
@@ -110,15 +115,21 @@
 			return false;
 		}
 
+        let blog: BlogList;
 		try {
-			res = await createBlog(name, subdomain, dev);
-			addToBlogList(res);
+			const res = await createBlog(name, subdomain, dev, hyvorTalk, hyvorPost);
+			addToBlogList(res.blog);
+            blog = res.blog;
+
+            res.warnings.forEach((warning) => {
+                toast.warning(warning);
+            });
 		} catch (e: any) {
 			toast.error(e.message);
 			return false;
 		}
 
-		goto('/console/' + res.subdomain);
+		goto('/console/' + blog.subdomain);
 
 		return true;
 	}
@@ -141,9 +152,8 @@
 				<div>Development Blog</div>
 			{/snippet}
 			<div>
-				You are creating a development blog, which can only be used for theme development. Click <Link
-					href="/console/new">here</Link
-				> to create a production blog.
+				You are creating a development blog, which can only be used for theme development.
+				Click <Link href="/console/new">here</Link> to create a production blog.
 			</div>
 		</Callout>
 	{/if}
@@ -195,5 +205,48 @@
 				{/if}
 			</FormControl>
 		</SplitControl>
+
+		{#if getConfig().deployment === 'cloud'}
+			<SplitControl noHorizonalPadding caption="Comments Integration">
+				{#snippet label()}
+					<span class="product-brand">
+						<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk" width="18" />
+						Hyvor Talk
+						<Tooltip
+							text="All Hyvor Blogs plans include a free complimentary license to Hyvor Talk. Disable this if you want to use a different commenting system."
+						>
+							<IconInfoCircle size={14} />
+						</Tooltip>
+					</span>
+				{/snippet}
+
+				<Switch bind:checked={hyvorTalk} />
+			</SplitControl>
+			<SplitControl noHorizonalPadding caption="Newsletter Integration">
+				{#snippet label()}
+					<span class="product-brand">
+						<img src="/img/services/hyvor-post.svg" alt="Hyvor Post" width="18" />
+						Hyvor Post
+
+						<Tooltip
+							text="All Hyvor Blogs plans include a free complimentary license to Hyvor Post. Disable this if you want to use a different newsletter platform."
+						>
+							<IconInfoCircle size={14} />
+						</Tooltip>
+					</span>
+				{/snippet}
+
+				<Switch bind:checked={hyvorPost} />
+			</SplitControl>
+		{/if}
 	{/if}
 </ResourceCreator>
+
+<style>
+	.product-brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-weight: 600;
+	}
+</style>

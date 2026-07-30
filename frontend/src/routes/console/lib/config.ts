@@ -2,6 +2,8 @@ export interface Config {
 	deployment: 'cloud' | 'on-prem';
 	hyvor: {
 		instance: string;
+		hyvor_post_url: string;
+		hyvor_talk_url: string;
 	};
 	domains: {
 		app: string;

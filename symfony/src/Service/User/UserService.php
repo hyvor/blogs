@@ -26,6 +26,7 @@ use Hyvor\FilterQ\FilterQ;
 use Hyvor\FilterQ\Keys;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\InternalConfig;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -42,6 +43,7 @@ class UserService
         private AuthInterface $auth,
         private MediaService $mediaService,
         private PermalinkService $permalinkService,
+        private InternalConfig $internalConfig,
     ) {}
 
     public function getUserByBlogAndAuthUser(Blog $blog, AuthUser|int $authUserOrId): ?User
@@ -214,20 +216,21 @@ class UserService
             foreach ($user->getVariants()->toArray() as $variant) {
                 $this->deleteUserVariant($variant);
             }
-
             $this->em->remove($user);
         });
 
         $this->ed->dispatch(new UserDeletedEvent($user));
     }
 
-    /** @throws HyvorUserNotFoundException */
+    /**
+     * @throws HyvorUserNotFoundException
+     */
     public function createUserFromAuthUser(
         Blog $blog,
         int|AuthUser $hyvorUserId,
         UserRole $role,
         bool $flush = true,
-        ?Language $primaryLanguage = null // to provide from outside
+        ?Language $primaryLanguage = null, // to provide from outside
     ): User
     {
         if (is_int($hyvorUserId)) {
@@ -264,10 +267,10 @@ class UserService
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
 
-        $primaryLanguage ??= $this->languageService->getPrimaryLanguage($blog);
+        $language = $primaryLanguage ?? $this->languageService->getPrimaryLanguage($blog);
         $this->createUserVariant(
             $user,
-            $primaryLanguage,
+            $language,
             name: $hyvorUser->name,
             location: $hyvorUser->location,
             bio: $hyvorUser->bio,
@@ -387,7 +390,6 @@ class UserService
         }
 
         $user->setUpdatedAt($this->now());
-
         $this->em->flush();
 
         $this->ed->dispatch(new UserUpdatedEvent($user, $userOld));

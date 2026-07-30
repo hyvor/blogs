@@ -94,6 +94,9 @@ export interface Blog {
 
 	link_analysis_enabled: boolean;
 	link_analysis_email_report: 'always' | 'broken' | 'never';
+
+	hyvor_talk_enabled: boolean;
+	hyvor_post_enabled: boolean;
 }
 
 export interface BlogCounts {
@@ -139,6 +142,15 @@ export interface CustomDomainSetup {
 	certificate: string | null;
 	valid_from: number | null;
 	valid_to: number | null;
+}
+
+export interface BlogIntegrations {
+	hyvor_talk: null | {
+		website_id: number;
+	},
+	hyvor_post: null | {
+		newsletter_id: number;
+	}
 }
 
 // == POST

@@ -15,11 +15,10 @@
 	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
 
-	import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
-	import hyvorPostLogo from '$lib/img/services/hyvor-post.svg';
 	import IconEnvelope from '@hyvor/icons/IconEnvelope';
 
 	import IconChat from '@hyvor/icons/IconChat';
+	import { integrationsStore } from '../../lib/stores/blogStore';
 
 	interface Props {
 		listItem: BlogList;
@@ -84,31 +83,43 @@
 			Pages
 		</NavLink>
 
-		<NavLink
-			href={consoleUrl(`${listItem.subdomain}/comments`)}
-			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/comments`)}
-		>
-			{#snippet start()}
-				<IconChat />
-			{/snippet}
-			Comments
-			{#snippet end()}
-				<img alt="Hyvor Talk" class="integration-icon" src={hyvorTalkLogo} />
-			{/snippet}
-		</NavLink>
+		{#if $integrationsStore.hyvor_talk}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/comments`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/comments`)}
+			>
+				{#snippet start()}
+					<IconChat />
+				{/snippet}
+				Comments
+				{#snippet end()}
+					<img
+						alt="Hyvor Talk"
+						class="integration-icon"
+						src="/img/services/hyvor-talk.svg"
+					/>
+				{/snippet}
+			</NavLink>
+		{/if}
 
-		<NavLink
-			href={consoleUrl(`${listItem.subdomain}/newsletter`)}
-			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/newsletter`)}
-		>
-			{#snippet start()}
-				<IconEnvelope />
-			{/snippet}
-			Newsletter
-			{#snippet end()}
-				<img alt="Hyvor Post" class="integration-icon" src={hyvorPostLogo} />
-			{/snippet}
-		</NavLink>
+		{#if $integrationsStore.hyvor_post}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/newsletter`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/newsletter`)}
+			>
+				{#snippet start()}
+					<IconEnvelope />
+				{/snippet}
+				Newsletter
+				{#snippet end()}
+					<img
+						alt="Hyvor Post"
+						class="integration-icon"
+						src="/img/services/hyvor-post.svg"
+					/>
+				{/snippet}
+			</NavLink>
+		{/if}
 
 		<div class="section-div"></div>
 
@@ -151,7 +162,6 @@
 			{/snippet}
 			Settings
 		</NavLink>
-
 	</NavLinkGroup>
 </div>
 
@@ -217,7 +227,7 @@
 	.section-div {
 		height: 25px;
 	}
-	
+
 	.integration-icon {
 		width: 16px;
 		height: 16px;

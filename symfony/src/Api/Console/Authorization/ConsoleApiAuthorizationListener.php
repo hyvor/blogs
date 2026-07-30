@@ -132,6 +132,7 @@ class ConsoleApiAuthorizationListener
         $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
         $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
+        $request->attributes->set(self::RESOLVED_USER_KEY, $authUser);
     }
 
     private function handleOrgLevel(ControllerEvent $event): void

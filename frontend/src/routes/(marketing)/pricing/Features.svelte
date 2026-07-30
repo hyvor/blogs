@@ -91,7 +91,8 @@
 					starter: false,
 					growth: true,
 					premium: true,
-					tooltip: 'Post link analysis, bi-weekly full-blog link analysis, and email reports.'
+					tooltip:
+						'Post link analysis, bi-weekly full-blog link analysis, and email reports.'
 				}
 			]
 		},
@@ -113,7 +114,8 @@
 					starter: false,
 					growth: '100k chars/m',
 					premium: '500k chars/m',
-					tooltip: 'Automatically translate your posts into multiple languages using DeepL.'
+					tooltip:
+						'Automatically translate your posts into multiple languages using DeepL.'
 				}
 			]
 		},
@@ -158,12 +160,22 @@
 			category: 'Integrations',
 			features: [
 				{
-					name: 'Hyvor Talk (Commenting)',
+					name: 'Hyvor Talk (Comments)',
 					personal: '10k credits/m',
 					starter: '25k credits/m',
 					growth: '100k credits/m',
 					premium: '250k credits/m',
-					tooltip: 'Add Hyvor Talk commenting system for free. Credits are used per comment load.'
+					tooltip:
+						'Add Hyvor Talk commenting system for free. Credits are used per comment load.'
+				},
+				{
+					name: 'Hyvor Post (Newsletter)',
+					personal: '5k emails/m',
+					starter: '15k emails/m',
+					growth: '50k emails/m',
+					premium: '150k emails/m',
+					tooltip:
+						'Add Hyvor Post newsletter system for free. Includes a complimentary license for Hyvor Post.'
 				}
 			]
 		}

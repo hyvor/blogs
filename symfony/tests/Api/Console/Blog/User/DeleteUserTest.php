@@ -22,6 +22,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 #[CoversClass(UserService::class)]
 class DeleteUserTest extends ApiTestCase
 {
+
     public function test_deletes_the_user_and_its_variants(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'delete-user']);

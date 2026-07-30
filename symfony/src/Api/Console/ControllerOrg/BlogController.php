@@ -10,10 +10,12 @@ use App\Entity\Enum\BlogType;
 use App\Service\Billing\UsageService;
 use App\Service\Blog\BlogCreator;
 use App\Service\Blog\BlogService;
+use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\InternalConfig;
+use Hyvor\Sdk\Exceptions\HyvorApiException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -32,6 +34,7 @@ class BlogController
         private BillingInterface $billing,
         private UsageService $usageService,
         private InternalConfig $internalConfig,
+        private HyvorPostService $hyvorPostService,
     ) {}
 
     #[Route('/blog', methods: ['POST'])]
@@ -79,10 +82,24 @@ class BlogController
             $request->getClientIp(),
         );
 
+        $isCloud = $this->internalConfig->getDeployment()->isCloud();
+        $warnings = [];
+
+        if ($isCloud && $input->hyvor_post) {
+            try {
+                $this->hyvorPostService->connect($blog, $input->name, $blog->getSubdomain(), $user);
+            } catch (HyvorApiException) {
+                $warnings[] = 'Failed to connect to Hyvor Post. You can try again later from the integrations page.';
+            }
+        }
+
         $owner = $this->userService->getUserByHyvorUserId($blog, $user->id);
         assert($owner !== null); // this cannot happen for non-preview blogs
 
-        return new JsonResponse($this->blogListObjectFactory->create($owner), 201);
+        return new JsonResponse([
+            'blog' => $this->blogListObjectFactory->create($owner),
+            'warnings' => $warnings,
+        ], 201);
     }
 
     #[Route('/blog/check-subdomain', methods: ['GET'])]

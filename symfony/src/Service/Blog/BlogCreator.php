@@ -132,6 +132,7 @@ class BlogCreator
             }
 
             $this->em->persist($blog);
+            $this->em->flush();
 
             $primaryLanguage = $this->fillLanguages($blog);
             $this->blogService->createBlogVariant($blog, $primaryLanguage, name: $name, flush: false);

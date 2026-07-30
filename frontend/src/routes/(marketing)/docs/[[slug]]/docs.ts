@@ -31,6 +31,8 @@ import Tags from './content/tags/Tags.svelte';
 import NavigationLinks from './content/navigation/NavigationLinks.svelte';
 import Import from './content/import/Import.svelte';
 import ImportWordPress from './content/import/ImportWordPress.svelte';
+import HyvorTalkDoc from './content/hyvor-talk/HyvorTalkDoc.svelte';
+import HyvorPostDoc from './content/hyvor-post/HyvorPostDoc.svelte';
 import type { Component } from 'svelte';
 
 export const categories: Category[] = [
@@ -140,6 +142,22 @@ export const categories: Category[] = [
 				slug: 'syntax-highlighting',
 				name: 'Syntax Highlighting',
 				component: SyntaxHighlighting
+			}
+		]
+	},
+
+	{
+		name: 'Integrations',
+		pages: [
+			{
+				slug: 'hyvor-talk',
+				name: 'Hyvor Talk',
+				component: HyvorTalkDoc
+			},
+			{
+				slug: 'hyvor-post',
+				name: 'Hyvor Post',
+				component: HyvorPostDoc
 			}
 		]
 	},

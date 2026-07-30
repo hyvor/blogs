@@ -16,6 +16,8 @@ use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
+use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +37,7 @@ class ConsoleController
         private BillingInterface $billing,
         private UsageService $usageService,
         private ConsoleSubrequest $consoleSubrequest,
+        private InstanceUrlResolver $instanceUrlResolver,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
@@ -78,7 +81,11 @@ class ConsoleController
             'blogs' => $blogListObjects,
             'config' => [
                 'deployment' => $this->internalConfig->getDeployment()->value,
-                'hyvor' => ['instance' => $this->internalConfig->getInstance()],
+                'hyvor' => [
+                    'instance' => $this->internalConfig->getInstance(),
+                    'hyvor_post_url' => $this->instanceUrlResolver->publicUrlOf(Component::POST),
+                    'hyvor_talk_url' => $this->instanceUrlResolver->publicUrlOf(Component::TALK),
+                ],
                 'domains' => [
                     'app' => $this->appConfig->getDomainApp(),
                     'delivery' => $this->appConfig->getDeliveryDomain(),

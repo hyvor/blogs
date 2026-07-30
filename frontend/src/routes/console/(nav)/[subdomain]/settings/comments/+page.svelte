@@ -1,6 +1,10 @@
 <script lang="ts">
-	import { Link, SplitControl, Text } from '@hyvor/design/components';
-	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
+	import { Callout, Link, SplitControl, Text } from '@hyvor/design/components';
+	import {
+		blogStore,
+		integrationsStore,
+		updateBlogStore
+	} from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
@@ -40,17 +44,36 @@
 	<SplitControl label="Newsletter Signup Form Code">
 		{#snippet caption()}
 			<div>
-				Paste the embed code provided by a email newsletter service here (for the sign up form). You
-				can use Twig <Link
+				Paste the embed code provided by a email newsletter service here (for the sign up
+				form). You can use Twig <Link
 					style="display:inline;"
 					href="/docs/themes-templates#variables"
 					target="_blank">route variables</Link
-				> if needed. To connect Hyvor Talk, go to <Link
-					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-					style="display:inline">Integrations &rarr; Hyvor Talk</Link
-				>.
+				> if needed.
+
+				{#if !$integrationsStore.hyvor_post}
+					To connect Hyvor Post, go to <Link
+						href={consoleUrlWithBlog('/integrations/hyvor-post')}
+						style="display:inline">Integrations &rarr; Hyvor Post</Link
+					>.
+				{/if}
 			</div>
 		{/snippet}
+
+		{#if $integrationsStore.hyvor_post}
+			<Callout type="info">
+				{#snippet icon()}
+					<img src="/img/services/hyvor-post.svg" alt="Hyvor Post Logo" width="18" />
+				{/snippet}
+				{#snippet title()}
+					Hyvor Post Integration Enabled
+				{/snippet}
+				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically
+				append the Hyvor Post signup form code, and
+				<strong>you don't generally need to add anything here</strong>.
+			</Callout>
+			<br />
+		{/if}
 
 		<CodemirrorEditor
 			value={$blogStore.newsletter_code || ''}
@@ -61,8 +84,8 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific place,
-				you may also edit your theme files.
+				Your theme will decide where to show this form. If you want to show it in a specific
+				place, you may also edit your theme files.
 			</Text>
 		</div>
 	</SplitControl>
