@@ -33,6 +33,7 @@ use App\Service\Theme\ThemeFilesService;
 use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Error\Error;
 
 class TemplateRendererService
@@ -53,6 +54,7 @@ class TemplateRendererService
         private UserService $userService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
+        private EventDispatcherInterface $ed,
     ) {}
 
     /**
@@ -124,8 +126,16 @@ class TemplateRendererService
          */
         $vars = json_decode((string)json_encode($vars), true);
 
+        // allow services to modify the variables before rendering
+        $event = new TemplateRenderingEvent($blog, $vars);
+        $this->ed->dispatch($event);
+
         try {
-            return $this->twigRendererService->renderFromFiles($loaderArray, $vars, $template);
+            return $this->twigRendererService->renderFromFiles(
+                $loaderArray,
+                $event->getVariables(),
+                $template
+            );
         } catch (Error $e) {
             throw new TemplateRenderingException("Unable to render template '$template'. Twig error: " . $e->getMessage());
         }
@@ -241,6 +251,10 @@ class TemplateRendererService
             // placeholders
             '_head' => $this->getHeadCode(),
             '_foot' => $this->getFootCode(),
+
+            // comments & newsletter
+            '_comments' => $blogMeta->comments_code ?? '',
+            '_newsletter' => $blogMeta->newsletter_code ?? '',
         ];
     }
 
@@ -287,8 +301,6 @@ class TemplateRendererService
                 }
             }
 
-            $blogMeta = $blog->getMeta();
-
             return [
                 '_meta' => new MetaObject(
                     $postObj->title,
@@ -298,8 +310,6 @@ class TemplateRendererService
                     $model->getCanonicalUrl() ?? $url
                 ),
                 '_post' => $postObj,
-                '_comments' => $blogMeta->comments_code ?? '',
-                '_newsletter' => $blogMeta->newsletter_code ?? '',
             ];
         }
 

@@ -12,13 +12,15 @@ class HyvorPostObject
     public int $newsletter_id;
     public string $embed_code;
     public bool $created_by_hyvor_blogs;
+    public string $embed_default_code;
 
     public function __construct(HyvorPost $hyvorPost)
     {
         $this->id = $hyvorPost->getId();
         $this->created_at = $hyvorPost->getCreatedAt()->getTimestamp();
         $this->newsletter_id = $hyvorPost->getNewsletterId();
-        $this->embed_code = $hyvorPost->getEmbedCode() ?? HyvorPostService::DEFAULT_EMBED_CODE;
+        $this->embed_code = HyvorPostService::getEmbedCode($hyvorPost);
         $this->created_by_hyvor_blogs = $hyvorPost->isCreatedByBlogs();
+        $this->embed_default_code = HyvorPostService::getDefaultEmbedCode($hyvorPost->getNewsletterId());
     }
 }

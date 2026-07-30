@@ -24,9 +24,6 @@
 	import IntegrationNotAvailable from '../components/IntegrationNotAvailable.svelte';
 	import { setHyvorPostIntegrationState } from '../../../../lib/stores/blogStore';
 
-	const DEFAULT_EMBED_CODE = `<script src="https://post.hyvor.com/form/form.js" type="module" async><\/script>
-<hyvor-post-form newsletter-id="{newsletter-id}"></hyvor-post-form>`;
-
 	let isLoading = $state(true);
 	let data: HyvorPostIntegration | null = $state(null);
 	let embedCode = $state('');
@@ -92,11 +89,11 @@
 	}
 
 	function handleResetEmbedCode() {
-		embedCode = DEFAULT_EMBED_CODE;
+		embedCode = data!.embed_default_code;
 	}
 
 	let isEmbedCodeDirty = $derived.by(() => data && embedCode !== data.embed_code);
-	let isEmbedCodeDefault = $derived(embedCode === DEFAULT_EMBED_CODE);
+	let isEmbedCodeDefault = $derived.by(() => embedCode === data?.embed_default_code);
 
 	onMount(() => {
 		loadHyvorPost()
@@ -112,6 +109,12 @@
 		if (int) {
 			embedCode = int.embed_code;
 		}
+	}
+
+	function handleCopy() {
+		navigator.clipboard.writeText(embedCode).then(() => {
+			toast.success('Embed code copied to clipboard');
+		});
 	}
 </script>
 
@@ -183,15 +186,25 @@
 					<SplitControl label="Embed Code">
 						{#snippet caption()}
 							<div>
-								Paste this code in your theme to show the newsletter signup form.
+								This code is automatically added to your blog's <a
+									href="/docs/themes-templates#placeholders"
+									class="hds-link"
+									target="_blank"
+									><code>_newsletter</code>
+									variable</a
+								>, which is usually placed below the post content (depending on the
+								theme).
 							</div>
 						{/snippet}
 
 						<Textarea bind:value={embedCode} rows={4} block />
 
-						{#if isEmbedCodeDirty}
-							<div class="embed-code-actions">
-								<Button size="small" on:click={handleSaveEmbedCode}>Save</Button>
+						<div class="embed-code-actions">
+							<div class="actions-left">
+								{#if isEmbedCodeDirty}
+									<Button size="small" on:click={handleSaveEmbedCode}>Save</Button
+									>
+								{/if}
 								{#if !isEmbedCodeDefault}
 									<Button
 										size="small"
@@ -200,15 +213,8 @@
 									>
 								{/if}
 							</div>
-						{:else if !isEmbedCodeDefault}
-							<div class="embed-code-actions">
-								<Button
-									size="small"
-									variant="invisible"
-									on:click={handleResetEmbedCode}>Reset to default</Button
-								>
-							</div>
-						{/if}
+							<Button size="small" color="input" onclick={handleCopy}>Copy</Button>
+						</div>
 					</SplitControl>
 				</div>
 			{/if}
@@ -231,7 +237,17 @@
 
 	.embed-code-actions {
 		display: flex;
-		gap: 6px;
 		margin-top: 10px;
+	}
+
+	.actions-left {
+		flex: 1;
+		display: flex;
+		gap: 6px;
+	}
+
+	code {
+		font-family: monospace;
+		font-size: 0.9em;
 	}
 </style>

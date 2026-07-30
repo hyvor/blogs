@@ -18,9 +18,9 @@ class HyvorPostService
 {
     use ClockAwareTrait;
 
-    public const string DEFAULT_EMBED_CODE = <<<HTML
+    private const string DEFAULT_EMBED_CODE = <<<HTML
         <script src="https://post.hyvor.com/form/form.js" type="module" async></script>
-        <hyvor-post-form newsletter-id="{newsletter-id}"></hyvor-post-form>
+        <hyvor-post-form newsletter-id="{newsletter_id}"></hyvor-post-form>
         HTML;
 
     private const array REQUIRED_SCOPES = [
@@ -159,5 +159,15 @@ class HyvorPostService
         } catch (NotFoundException) {
             // user not found in Hyvor Post; nothing to do
         }
+    }
+
+    public static function getDefaultEmbedCode(int $newsletterId): string
+    {
+        return str_replace('{newsletter_id}', (string) $newsletterId, self::DEFAULT_EMBED_CODE);
+    }
+
+    public static function getEmbedCode(HyvorPost $hyvorPost): string
+    {
+        return $hyvorPost->getEmbedCode() ?? self::getDefaultEmbedCode($hyvorPost->getNewsletterId());
     }
 }

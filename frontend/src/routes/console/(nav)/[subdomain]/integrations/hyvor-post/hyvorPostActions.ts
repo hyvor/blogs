@@ -5,6 +5,7 @@ export interface HyvorPostIntegration {
 	created_at: number;
 	newsletter_id: number;
 	embed_code: string;
+	embed_default_code: string;
 }
 
 export type HyvorPostIntegrationData = { data: HyvorPostIntegration | null };
