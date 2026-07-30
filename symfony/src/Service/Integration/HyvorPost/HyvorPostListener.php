@@ -79,6 +79,11 @@ class HyvorPostListener
             return;
         }
 
+        // guest users
+        if ($user->getHyvorUserId() === null) {
+            return;
+        }
+
         $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($user->getBlog());
 
         if (!$hyvorPost) {

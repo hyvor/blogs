@@ -23,6 +23,18 @@ class HyvorPostService
     private const string DEFAULT_EMBED_CODE = <<<HTML
         <script src="https://post.hyvor.com/form/form.js" type="module" async></script>
         <hyvor-post-form newsletter-id="{newsletter_id}"></hyvor-post-form>
+
+        <script type="module">
+            // sync color mode with hyvor post form
+            window.addEventListener('hb:colorModeChanged', setHpFormColors);
+            function setHpFormColors() {
+                const colorMode = window._hb.getColorMode();
+                for (const frm of document.querySelectorAll('hyvor-post-form')) {
+                    frm.setAttribute('colors', colorMode);
+                }
+            }
+            setHpFormColors();
+        </script>
         HTML;
 
     private const array REQUIRED_SCOPES = [
