@@ -45,7 +45,6 @@ class SyncBlogUsersToNewsletterMessageHandler
 
         $page = 1;
         $pageSize = 25;
-        $roles = [UserRole::ADMIN, UserRole::EDITOR];
 
         do {
             $users = $this->em->getRepository(User::class)
@@ -53,7 +52,7 @@ class SyncBlogUsersToNewsletterMessageHandler
                 ->where('u.blog = :blog')
                 ->andWhere('u.role IN (:roles)')
                 ->setParameter('blog', $blog)
-                ->setParameter('roles', $roles)
+                ->setParameter('roles', HyvorPostService::SYNCED_ROLES)
                 ->setFirstResult(($page - 1) * $pageSize)
                 ->setMaxResults($pageSize)
                 ->orderBy('u.id', 'ASC')

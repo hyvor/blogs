@@ -5,12 +5,10 @@ namespace App\Service\User;
 use App\Entity\Blog;
 use App\Entity\Enum\UserRole;
 use App\Entity\Enum\UserStatus;
-use App\Entity\HyvorPost;
 use App\Entity\Language;
 use App\Entity\User;
 use App\Entity\UserVariant;
 use App\Repository\UserRepository;
-use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
 use App\Service\Media\MediaException;
@@ -37,9 +35,6 @@ class UserService
 {
     use ClockAwareTrait;
 
-    /** Roles that get synced to Hyvor Post as newsletter users. */
-    private const array HYVOR_POST_ROLES = [UserRole::ADMIN, UserRole::EDITOR];
-
     public function __construct(
         private EntityManagerInterface $em,
         private UserRepository $userRepository,
@@ -48,7 +43,6 @@ class UserService
         private AuthInterface $auth,
         private MediaService $mediaService,
         private PermalinkService $permalinkService,
-        private HyvorPostService $hyvorPostService,
         private InternalConfig $internalConfig,
     ) {}
 
@@ -222,41 +216,21 @@ class UserService
             foreach ($user->getVariants()->toArray() as $variant) {
                 $this->deleteUserVariant($variant);
             }
-
-            $this->syncHyvorPostOnDelete($user);
-
             $this->em->remove($user);
         });
 
         $this->ed->dispatch(new UserDeletedEvent($user));
     }
 
-    private function syncHyvorPostOnDelete(User $user): void
-    {
-        $hyvorUserId = $user->getHyvorUserId();
-
-        if (
-            $hyvorUserId === null ||
-            !$this->internalConfig->getDeployment()->isCloud() ||
-            !in_array($user->getRole(), self::HYVOR_POST_ROLES, true)
-        ) {
-            return;
-        }
-
-        $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($user->getBlog());
-        if ($hyvorPost !== null) {
-            $this->hyvorPostService->removeUser($hyvorPost, $hyvorUserId);
-        }
-    }
-
-    /** @throws HyvorUserNotFoundException */
+    /**
+     * @throws HyvorUserNotFoundException
+     */
     public function createUserFromAuthUser(
         Blog $blog,
         int|AuthUser $hyvorUserId,
         UserRole $role,
         bool $flush = true,
         ?Language $primaryLanguage = null, // to provide from outside
-        ?HyvorPost $hyvorPost = null,
     ): User
     {
         if (is_int($hyvorUserId)) {
@@ -281,50 +255,32 @@ class UserService
             }
         }
 
-        /** @var User $user */
-        $user = $this->em->wrapInTransaction(
-            function () use ($blog, $hyvorUser, $role, $now, $pictureUrl, $flush, $primaryLanguage, $hyvorPost) {
-                $user = new User();
-                $user->setBlog($blog);
-                $user->setRole($role);
-                $user->setStatus(UserStatus::ACTIVE);
-                $user->setSlug($this->generateUniqueSlug($blog, [$hyvorUser->name, $hyvorUser->username, $hyvorUser->email]));
-                $user->setHyvorUserId($hyvorUser->id);
-                $user->setEmail($hyvorUser->email);
-                $user->setWebsiteUrl($hyvorUser->website_url);
-                $user->setPictureUrl($pictureUrl);
-                $user->setCreatedAt($now);
-                $user->setUpdatedAt($now);
+        $user = new User();
+        $user->setBlog($blog);
+        $user->setRole($role);
+        $user->setStatus(UserStatus::ACTIVE);
+        $user->setSlug($this->generateUniqueSlug($blog, [$hyvorUser->name, $hyvorUser->username, $hyvorUser->email]));
+        $user->setHyvorUserId($hyvorUser->id);
+        $user->setEmail($hyvorUser->email);
+        $user->setWebsiteUrl($hyvorUser->website_url);
+        $user->setPictureUrl($pictureUrl);
+        $user->setCreatedAt($now);
+        $user->setUpdatedAt($now);
 
-                $language = $primaryLanguage ?? $this->languageService->getPrimaryLanguage($blog);
-                $this->createUserVariant(
-                    $user,
-                    $language,
-                    name: $hyvorUser->name,
-                    location: $hyvorUser->location,
-                    bio: $hyvorUser->bio,
-                    flush: false
-                );
-
-                $this->em->persist($user);
-
-                if ($flush) {
-                    $this->em->flush();
-
-                    if (
-                        $hyvorPost !== null &&
-                        $this->internalConfig->getDeployment()->isCloud() &&
-                        in_array($role, self::HYVOR_POST_ROLES, true)
-                    ) {
-                        $this->hyvorPostService->addUser($hyvorPost, $hyvorUser->id);
-                    }
-                }
-
-                return $user;
-            }
+        $language = $primaryLanguage ?? $this->languageService->getPrimaryLanguage($blog);
+        $this->createUserVariant(
+            $user,
+            $language,
+            name: $hyvorUser->name,
+            location: $hyvorUser->location,
+            bio: $hyvorUser->bio,
+            flush: false
         );
 
+        $this->em->persist($user);
+
         if ($flush) {
+            $this->em->flush();
             $this->ed->dispatch(new UserCreatedEvent($user));
         }
 
@@ -389,7 +345,6 @@ class UserService
     public function updateUser(User $user, array $updates): User
     {
         $userOld = clone $user;
-        $oldRole = $user->getRole();
 
         if (isset($updates['hyvor_user_id'])) {
             $user->setHyvorUserId($updates['hyvor_user_id']);
@@ -435,47 +390,11 @@ class UserService
         }
 
         $user->setUpdatedAt($this->now());
-
-        $this->em->wrapInTransaction(function () use ($user, $oldRole) {
-            $this->em->flush();
-            $this->syncHyvorPostOnRoleChange($user, $oldRole);
-        });
+        $this->em->flush();
 
         $this->ed->dispatch(new UserUpdatedEvent($user, $userOld));
 
         return $user;
-    }
-
-    private function syncHyvorPostOnRoleChange(User $user, UserRole $oldRole): void
-    {
-        $newRole = $user->getRole();
-        $hyvorUserId = $user->getHyvorUserId();
-
-        if (
-            $oldRole === $newRole ||
-            $hyvorUserId === null ||
-            !$this->internalConfig->getDeployment()->isCloud()
-        ) {
-            return;
-        }
-
-        $wasSynced = in_array($oldRole, self::HYVOR_POST_ROLES, true);
-        $isSynced = in_array($newRole, self::HYVOR_POST_ROLES, true);
-
-        if ($wasSynced === $isSynced) {
-            return;
-        }
-
-        $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($user->getBlog());
-        if ($hyvorPost === null) {
-            return;
-        }
-
-        if ($isSynced) {
-            $this->hyvorPostService->addUser($hyvorPost, $hyvorUserId);
-        } else {
-            $this->hyvorPostService->removeUser($hyvorPost, $hyvorUserId);
-        }
     }
 
     public function getUserVariant(User $user, Language $language): ?UserVariant

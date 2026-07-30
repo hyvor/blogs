@@ -22,6 +22,7 @@ use App\Service\Billing\UsageService;
 use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Language\LanguageService;
 use App\Service\User\Exception\HyvorUserNotFoundException;
+use App\Service\User\Exception\UnableToCreateUserException;
 use App\Service\User\UserService;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;

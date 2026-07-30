@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
-	import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
-	import hyvorPostLogo from '$lib/img/services/hyvor-post.svg';
 	import { page } from '$app/stores';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
@@ -16,16 +14,15 @@
 <div class="integrations">
 	<div class="nav hds-box">
 		<NavLinkGroup activeBackground="var(--accent-light-mid)">
-			<div class="nav-title">
-				First-party
-			</div>
+			<div class="nav-title">First-party</div>
 
 			<NavLink
 				href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-				active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
+				active={$page.url.pathname ===
+					`/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
 			>
 				{#snippet start()}
-					<img src={hyvorTalkLogo} alt="Hyvor Talk" />
+					<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk" />
 				{/snippet}
 				Hyvor Talk
 				{#snippet end()}
@@ -34,10 +31,11 @@
 			</NavLink>
 			<NavLink
 				href={consoleUrlWithBlog('/integrations/hyvor-post')}
-				active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-post`}
+				active={$page.url.pathname ===
+					`/console/${$blogStore.subdomain}/integrations/hyvor-post`}
 			>
 				{#snippet start()}
-					<img src={hyvorPostLogo} alt="Hyvor Post" />
+					<img src="/img/services/hyvor-post.svg" alt="Hyvor Post" />
 				{/snippet}
 				Hyvor Post
 				{#snippet end()}

@@ -23,6 +23,7 @@
 	import { getConfig } from '../../../../lib/config';
 	import IntegrationNotAvailable from '../components/IntegrationNotAvailable.svelte';
 	import { setHyvorPostIntegrationState } from '../../../../lib/stores/blogStore';
+	import DisconnectConfirm from './DisconnectConfirm.svelte';
 
 	let isLoading = $state(true);
 	let data: HyvorPostIntegration | null = $state(null);
@@ -53,10 +54,9 @@
 
 	async function handleDisconnect() {
 		const confirmed = await confirm({
-			title: 'Disconnect Hyvor Post',
-			content:
-				'Are you sure you want to disconnect this blog from Hyvor Post? This will not delete your newsletter on Hyvor Post. You will have to delete it manually from the Hyvor Post Console.',
-			confirmText: 'Yes, Disconnect',
+			title: 'Disconnect Hyvor Post & Delete Newsletter',
+			content: DisconnectConfirm,
+			confirmText: 'Yes, Disconnect & Delete Newsletter',
 			danger: true
 		});
 

@@ -15,8 +15,6 @@
 	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
 
-	import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
-	import hyvorPostLogo from '$lib/img/services/hyvor-post.svg';
 	import IconEnvelope from '@hyvor/icons/IconEnvelope';
 
 	import IconChat from '@hyvor/icons/IconChat';
@@ -95,7 +93,11 @@
 				{/snippet}
 				Comments
 				{#snippet end()}
-					<img alt="Hyvor Talk" class="integration-icon" src={hyvorTalkLogo} />
+					<img
+						alt="Hyvor Talk"
+						class="integration-icon"
+						src="/img/services/hyvor-talk.svg"
+					/>
 				{/snippet}
 			</NavLink>
 		{/if}
@@ -110,7 +112,11 @@
 				{/snippet}
 				Newsletter
 				{#snippet end()}
-					<img alt="Hyvor Post" class="integration-icon" src={hyvorPostLogo} />
+					<img
+						alt="Hyvor Post"
+						class="integration-icon"
+						src="/img/services/hyvor-post.svg"
+					/>
 				{/snippet}
 			</NavLink>
 		{/if}

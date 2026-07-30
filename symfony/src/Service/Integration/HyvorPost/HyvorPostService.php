@@ -3,6 +3,7 @@
 namespace App\Service\Integration\HyvorPost;
 
 use App\Entity\Blog;
+use App\Entity\Enum\UserRole;
 use App\Entity\HyvorPost;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthUser;
@@ -36,6 +37,11 @@ class HyvorPostService
         // add, remove users automatically as they are added/removed in the blog
         PostScope::USERS_READ,
         PostScope::USERS_WRITE,
+    ];
+
+    public const array SYNCED_ROLES = [
+        UserRole::ADMIN,
+        UserRole::EDITOR,
     ];
 
     public function __construct(

@@ -8,7 +8,6 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
-	import hyvorPostLogo from '$lib/img/services/hyvor-post.svg';
 </script>
 
 <BlogSettingsSave keys={['comments_code', 'newsletter_code']} />
@@ -64,7 +63,7 @@
 		{#if $integrationsStore.hyvor_post}
 			<Callout type="info">
 				{#snippet icon()}
-					<img src={hyvorPostLogo} alt="Hyvor Post Logo" width="18" />
+					<img src="/img/services/hyvor-post.svg" alt="Hyvor Post Logo" width="18" />
 				{/snippet}
 				{#snippet title()}
 					Hyvor Post Integration Enabled

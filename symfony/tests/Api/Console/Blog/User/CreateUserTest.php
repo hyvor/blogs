@@ -5,7 +5,6 @@ namespace App\Tests\Api\Console\Blog\User;
 use App\Api\Console\Controller\UserController;
 use App\Entity\Blog;
 use App\Entity\User as BlogUser;
-use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\UserService;
 use App\Tests\Case\ApiTestCase;
@@ -13,7 +12,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\HyvorPostFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\UserFactory;
-use App\Tests\Fake\HyvorPostServiceFake;
+use App\Tests\Helper\Fixtures;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -23,8 +22,16 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMemberResponse;
+use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\Deployment;
+use Hyvor\Sdk\Auth\StaticTokenProvider;
+use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\Post\Dto\User\User;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Sentry\HttpClient\HttpClientInterface;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Psr18Client;
+use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(UserController::class)]
@@ -67,9 +74,8 @@ class CreateUserTest extends ApiTestCase
     }
 
     /**
-     * Deployment in the test env defaults to on-prem (see symfony/.env), so the
-     * cloud-only VerifyMember comms check does not run here. The MockComms
-     * response is set up regardless, for completeness.
+     * Deployment in the test env defaults to cloud (see symfony/.env.test), so
+     * the cloud-only VerifyMember comms check runs on every request here.
      */
     private function setUpComms(): void
     {
@@ -86,14 +92,24 @@ class CreateUserTest extends ApiTestCase
         );
     }
 
-    private function connectHyvorPost(Blog $blog): HyvorPostServiceFake
+    /**
+     * Replaces the Hyvor Post SDK's HTTP transport with a MockHttpClient so
+     * HyvorPostService::addUser() runs for real against queued responses,
+     * instead of swapping out HyvorPostService itself.
+     *
+     * @param JsonMockResponse[] $responses
+     */
+    private function mockHyvorPostHttpClient(array $responses): MockHttpClient
     {
-        $fake = new HyvorPostServiceFake($this->getEm());
-        $this->getContainer()->set(HyvorPostService::class, $fake);
+        $mockClient = new MockHttpClient($responses);
+        $this->getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4242]);
+        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
+        $cloudApiServiceMock->method('getHyvorClientForOrganization')
+            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+        $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
-        return $fake;
+        return $mockClient;
     }
 
     public function test_creates_a_user(): void
@@ -189,7 +205,10 @@ class CreateUserTest extends ApiTestCase
         $hyvorUser = new AuthUser(id: 1250, username: 'hpuser1250', name: 'HP User', email: 'hpuser1250@example.com');
         $this->setUpComms();
         $this->enableBilling(3010);
-        $fake = $this->connectHyvorPost($blog);
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4242]);
+
+        $hpUserResponse = new JsonMockResponse(Fixtures::make(User::class));
+        $mockClient = $this->mockHyvorPostHttpClient([$hpUserResponse]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
@@ -197,9 +216,14 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(1, $fake->addedUsers);
-        $this->assertSame(1250, $fake->addedUsers[0]['hyvorUserId']);
-        $this->assertSame(4242, $fake->addedUsers[0]['newsletterId']);
+        $this->assertSame(1, $mockClient->getRequestsCount());
+
+        $requestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $this->assertSame(1250, $requestBody['user_id']);
+        $this->assertSame('ignore', $requestBody['on_duplicate']);
+
+        $newsletterIdHeader = $hpUserResponse->getRequestOptions()['normalized_headers']['x-newsletter-id'][0] ?? null;
+        $this->assertSame('X-Newsletter-Id: 4242', $newsletterIdHeader);
     }
 
     public function test_creates_hyvor_post_user_for_editor_role(): void
@@ -210,7 +234,10 @@ class CreateUserTest extends ApiTestCase
         $hyvorUser = new AuthUser(id: 1251, username: 'hpuser1251', name: 'HP User', email: 'hpuser1251@example.com');
         $this->setUpComms();
         $this->enableBilling(3011);
-        $fake = $this->connectHyvorPost($blog);
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4243]);
+
+        $hpUserResponse = new JsonMockResponse(Fixtures::make(User::class));
+        $mockClient = $this->mockHyvorPostHttpClient([$hpUserResponse]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
@@ -218,7 +245,10 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(1, $fake->addedUsers);
+        $this->assertSame(1, $mockClient->getRequestsCount());
+
+        $requestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $this->assertSame(1251, $requestBody['user_id']);
     }
 
     public function test_does_not_create_hyvor_post_user_for_writer_role(): void
@@ -229,7 +259,9 @@ class CreateUserTest extends ApiTestCase
         $hyvorUser = new AuthUser(id: 1252, username: 'hpuser1252', name: 'HP User', email: 'hpuser1252@example.com');
         $this->setUpComms();
         $this->enableBilling(3012);
-        $fake = $this->connectHyvorPost($blog);
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4244]);
+
+        $mockClient = $this->mockHyvorPostHttpClient([]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
@@ -237,7 +269,7 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(0, $fake->addedUsers);
+        $this->assertSame(0, $mockClient->getRequestsCount());
     }
 
     public function test_does_not_create_hyvor_post_user_when_not_connected(): void
@@ -248,10 +280,9 @@ class CreateUserTest extends ApiTestCase
         $hyvorUser = new AuthUser(id: 1253, username: 'hpuser1253', name: 'HP User', email: 'hpuser1253@example.com');
         $this->setUpComms();
         $this->enableBilling(3013);
-
-        $fake = new HyvorPostServiceFake($this->getEm());
-        $this->getContainer()->set(HyvorPostService::class, $fake);
         // note: no HyvorPostFactory row created, so the blog is not connected
+
+        $mockClient = $this->mockHyvorPostHttpClient([]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
@@ -259,7 +290,7 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(0, $fake->addedUsers);
+        $this->assertSame(0, $mockClient->getRequestsCount());
     }
 
     public function test_does_not_create_hyvor_post_user_on_prem(): void
@@ -270,7 +301,9 @@ class CreateUserTest extends ApiTestCase
         LanguageFactory::createOnePrimaryFor($blog);
         $owner = UserFactory::createOne(['blog' => $blog]);
         $hyvorUser = new AuthUser(id: 1254, username: 'hpuser1254', name: 'HP User', email: 'hpuser1254@example.com');
-        $fake = $this->connectHyvorPost($blog);
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4245]);
+
+        $mockClient = $this->mockHyvorPostHttpClient([]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
@@ -278,7 +311,7 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertCount(0, $fake->addedUsers);
+        $this->assertSame(0, $mockClient->getRequestsCount());
     }
 
     public function test_rolls_back_user_creation_when_hyvor_post_call_fails(): void
@@ -289,8 +322,10 @@ class CreateUserTest extends ApiTestCase
         $hyvorUser = new AuthUser(id: 1255, username: 'hpuser1255', name: 'HP User', email: 'hpuser1255@example.com');
         $this->setUpComms();
         $this->enableBilling(3015);
-        $fake = $this->connectHyvorPost($blog);
-        $fake->throwOnAddUser = new \RuntimeException('hyvor post is down');
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 4246]);
+
+        $hpUserResponse = new JsonMockResponse(['message' => 'hyvor post is down'], ['http_code' => 400]);
+        $this->mockHyvorPostHttpClient([$hpUserResponse]);
 
         $this->requestAsBlogUser($owner, $hyvorUser, 'POST', '/user', [
             'hyvor_user_id' => $hyvorUser->id,
