@@ -26,6 +26,9 @@ use Symfony\Component\HttpClient\Response\JsonMockResponse;
 #[CoversClass(HyvorPostService::class)]
 class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 {
+
+    // 1. Sync all
+
     public function test_syncs_only_admin_and_editor_users_with_correct_request(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => 555]);
@@ -96,4 +99,93 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $this->addToAssertionCount(1);
     }
+
+    // 2. Sync single user
+
+    public function test_syncs_single_user_with_correct_request(): void
+    {
+        $blog = BlogFactory::createOne(['organization_id' => 555]);
+        $hyvorPost = HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 777]);
+        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN, 'hyvor_user_id' => 1001]);
+        $otherUser = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::EDITOR, 'hyvor_user_id' => 1002]);
+
+        $requests = [];
+
+        $mockClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $requests[] = [
+                    'method' => $method,
+                    'url' => $url,
+                    'body' => json_decode($options['body'], true),
+                    'headers' => $options['normalized_headers'],
+                ];
+
+                return new JsonMockResponse(Fixtures::make(User::class, [
+                    'id' => 1,
+                    'role' => 'admin',
+                    'user' => Fixtures::make(UserMini::class, ['name' => 'Test', 'email' => 'test@example.com']),
+                ]));
+            }
+        );
+
+        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
+        $cloudApiServiceMock->method('getHyvorClientForOrganization')
+            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+        $this->container->set(CloudApiService::class, $cloudApiServiceMock);
+
+        $transport = $this->transport('async')->throwExceptions();
+        $transport->send(new SyncBlogUsersToNewsletterMessage($blog->getId(), $user->getHyvorUserId()));
+        $transport->processOrFail(1);
+
+        $this->assertCount(1, $requests);
+
+        $request = $requests[0];
+        $this->assertSame('POST', $request['method']);
+        $this->assertStringContainsString('/api/console/users', $request['url']);
+        $this->assertSame('ignore', $request['body']['on_duplicate']);
+        $this->assertSame($user->getHyvorUserId(), $request['body']['user_id']);
+        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $request['headers']['x-newsletter-id'][0]);
+    }
+
+    // 3. Delete single user
+
+    public function test_deletes_single_user_with_correct_request(): void
+    {
+        $blog = BlogFactory::createOne(['organization_id' => 555]);
+        $hyvorPost = HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 777]);
+        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN, 'hyvor_user_id' => 1001]);
+
+        $requests = [];
+
+        $mockClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $requests[] = [
+                    'method' => $method,
+                    'url' => $url,
+                    'body' => json_decode($options['body'], true),
+                    'headers' => $options['normalized_headers'],
+                ];
+
+                return new JsonMockResponse([]);
+            }
+        );
+
+        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
+        $cloudApiServiceMock->method('getHyvorClientForOrganization')
+            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+        $this->container->set(CloudApiService::class, $cloudApiServiceMock);
+
+        $transport = $this->transport('async')->throwExceptions();
+        $transport->send(new SyncBlogUsersToNewsletterMessage($blog->getId(), $user->getHyvorUserId(), delete: true));
+        $transport->processOrFail(1);
+
+        $this->assertCount(1, $requests);
+
+        $request = $requests[0];
+        $this->assertSame('DELETE', $request['method']);
+        $this->assertStringContainsString('/api/console/users', $request['url']);
+        $this->assertSame($user->getHyvorUserId(), $request['body']['user_id']);
+        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $request['headers']['x-newsletter-id'][0]);
+    }
+
 }

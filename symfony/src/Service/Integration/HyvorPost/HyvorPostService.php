@@ -152,14 +152,11 @@ class HyvorPostService
      * Removes a Hyvor user from a Hyvor Post newsletter. Ignores the call if the
      * user is not found in Hyvor Post.
      */
-    public function removeUser(HyvorPost $hyvorPost, int $hyvorUserId): void
+    public function removeUser(int $organizationId, int $newsletterId, int $hyvorUserId): void
     {
-        $orgId = $hyvorPost->getBlog()->getOrganizationId();
-        assert($orgId !== null);
-
         try {
-            $this->getClient($orgId)
-                ->newsletter($hyvorPost->getNewsletterId())
+            $this->getClient($organizationId)
+                ->newsletter($newsletterId)
                 ->users
                 ->delete(['user_id' => $hyvorUserId]);
         } catch (NotFoundException) {
