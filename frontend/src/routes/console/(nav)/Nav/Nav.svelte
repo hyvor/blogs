@@ -3,14 +3,14 @@
 	import AccountNav from './AccountNav.svelte';
 	import { blogStore } from '../../lib/stores/blogStore';
 	import { blogListStore } from '../../lib/stores';
-	import { isTempStore } from '../../lib/temp';
+	import { getConfig } from '../../lib/config';
 
 	let blogListItemId = $derived($blogStore ? $blogStore.id : $blogListStore[0]?.id);
 	let blogListItem = $derived($blogListStore.find((blog) => blog.id === blogListItemId));
 </script>
 
 <div id="nav-wrap">
-	{#if !$isTempStore}
+	{#if getConfig().deployment === 'cloud'}
 		<div class="nav account">
 			<AccountNav />
 		</div>
