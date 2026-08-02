@@ -26,6 +26,7 @@
 		}
 
 		const license = resolvedLicense?.license;
+		console.log($resolvedLicenseStore);
 		return (
 			license && // sanity
 			licenseProperty && // sanity
