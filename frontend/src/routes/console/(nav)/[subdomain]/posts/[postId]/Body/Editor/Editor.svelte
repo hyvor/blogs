@@ -16,6 +16,7 @@
 	import { Editor } from '@hyvor/richtext';
 	import { uploadMedia } from '../../../../tools/media/mediaActions';
 	import type { EditorView } from 'prosemirror-view';
+	import AutoTranslate from './EditorTop/AutoTranslate/AutoTranslate.svelte';
 
 	let uniqueKey = $derived(
 		`${$postVariantStore.id}` +
@@ -106,6 +107,8 @@
 	<div class="editor-footer">
 		<!-- see plugin-wordcount.ts -->
 		<span id="pm-word-count"></span>
+
+		<AutoTranslate />
 	</div>
 </div>
 

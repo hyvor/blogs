@@ -63,7 +63,9 @@
 	function handleTranslate() {
 		isTranslating = true;
 
-		const variant = $postStore.variants.find((v) => v.language_id === sourceVariantLanguage.id)!;
+		const variant = $postStore.variants.find(
+			(v) => v.language_id === sourceVariantLanguage.id
+		)!;
 
 		autoTranslate(
 			sourceDeepLLanguage,
@@ -113,7 +115,7 @@
 	on:confirm={handleTranslate}
 	loading={isTranslating}
 >
-	<LicenseRequired licenseProperty="autoTranslationsChars">
+	<LicenseRequired licenseProperty="aiTokens">
 		{#snippet upgradeText()}
 			<div>
 				Auto-translation is available in the Growth and higher plans. Upgrade now to easily
@@ -122,8 +124,8 @@
 		{/snippet}
 
 		<div class="note">
-			Automatically translate your posts using DeepL. Make sure to review the translations before
-			publishing.
+			Automatically translate your posts using DeepL. Make sure to review the translations
+			before publishing.
 		</div>
 
 		<SplitControl label="Source Variant" caption="The variant you want to translate from">
