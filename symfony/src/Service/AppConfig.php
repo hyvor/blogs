@@ -14,7 +14,21 @@ readonly class AppConfig
         private ?string $deliveryUrl = null,
 
         #[Autowire('%env(string:default::UNSPLASH_ACCESS_KEY)%')]
+        #[\SensitiveParameter]
         private ?string $unsplashAccessKey = null,
+
+        // AI keys
+        #[Autowire('%env(string:default::OPENAI_API_KEY)%')]
+        #[\SensitiveParameter]
+        private string $openAiApiKey,
+
+        #[Autowire('%env(string:default::ANTHROPIC_API_KEY)%')]
+        #[\SensitiveParameter]
+        private string $anthropicApiKey,
+
+        #[Autowire('%env(string:default::MISTRAL_API_KEY)%')]
+        #[\SensitiveParameter]
+        private string $mistralApiKey,
     ) {
     }
 
@@ -40,6 +54,21 @@ readonly class AppConfig
     public function getUnsplashAccessKey(): ?string
     {
         return $this->unsplashAccessKey;
+    }
+
+    public function getOpenAiApiKey(): string
+    {
+        return $this->openAiApiKey;
+    }
+
+    public function getAnthropicApiKey(): string
+    {
+        return $this->anthropicApiKey;
+    }
+
+    public function getMistralApiKey(): string
+    {
+        return $this->mistralApiKey;
     }
 
 }
