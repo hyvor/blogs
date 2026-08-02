@@ -60,7 +60,7 @@ class Blog
     #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
     private ?CustomDomain $custom_domain = null;
 
-    #[ORM\Column(type: 'json_document', options: ['jsonb' => true, 'default' => '{"#type":"blogs_meta"}'])]
+    #[ORM\Column(type: 'blog_meta', options: ['jsonb' => true, 'default' => '{}'])]
     private BlogMeta $meta;
 
     /** @var array<string, number>|null $counts */

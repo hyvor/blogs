@@ -8,6 +8,7 @@ doctrine:
 
         profiling_collect_backtrace: "%kernel.debug%"
         types:
+            blog_meta: App\Entity\Meta\BlogMetaDoctrineType
             webhook_event_json: App\Service\Webhook\Doctrine\WebhookEventJsonType
     orm:
         validate_xml_mapping: true

@@ -9,7 +9,6 @@
         "ext-dom": "*",
         "ext-iconv": "*",
         "ext-zip": "*",
-        "dunglas/doctrine-json-odm": "^1.5",
         "hyvor/doctrine-filterq": "^0.0.1",
         "hyvor/internal": "4.1.0-beta.4",
         "hyvor/php-svg-icons": "^1.1",
