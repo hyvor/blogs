@@ -43,14 +43,11 @@
 		</InputGroup>
 	</SplitControl>
 
-	<SplitControl
-		label="AI Translation"
-		caption="Allow using AI to translate posts into other languages."
-	>
+	<SplitControl label="AI Translation" caption="Enable AI-powered translation features.">
 		<Switch checked={$blogStore.ai_translation_enabled} on:change={handleAiTranslationChange} />
 	</SplitControl>
 
-	<SplitControl label="AI Generation" caption="Allow using AI to generate post content.">
+	<SplitControl label="AI Generation" caption="Enable AI-powered content generation features.">
 		<Switch checked={$blogStore.ai_generation_enabled} on:change={handleAiGenerationChange} />
 	</SplitControl>
 </div>

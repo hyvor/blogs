@@ -1245,9 +1245,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     }>,
  * }
- * @psalm-type DunglasDoctrineJsonOdmConfig = array{
- *     type_map?: array<string, scalar|Param|null>,
- * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1259,7 +1256,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     internal?: InternalConfig,
  *     monolog?: MonologConfig,
- *     dunglas_doctrine_json_odm?: DunglasDoctrineJsonOdmConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1273,7 +1269,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         maker?: MakerConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         monolog?: MonologConfig,
- *         dunglas_doctrine_json_odm?: DunglasDoctrineJsonOdmConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1287,7 +1282,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         internal?: InternalConfig,
  *         sentry?: SentryConfig,
  *         monolog?: MonologConfig,
- *         dunglas_doctrine_json_odm?: DunglasDoctrineJsonOdmConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1302,7 +1296,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         dama_doctrine_test?: DamaDoctrineTestConfig,
  *         monolog?: MonologConfig,
- *         dunglas_doctrine_json_odm?: DunglasDoctrineJsonOdmConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,
