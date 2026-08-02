@@ -51,6 +51,25 @@ class UpdateBlogTest extends ApiTestCase
         $this->assertSame($cover, $json['cover_url']);
     }
 
+    public function test_updates_ai_settings(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-ai']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'ai_provider' => 'anthropic',
+            'ai_translation_enabled' => true,
+            'ai_generation_enabled' => true,
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('anthropic', $json['ai_provider']);
+        $this->assertSame('claude-sonnet-5', $json['ai_provider_model']);
+        $this->assertTrue($json['ai_translation_enabled']);
+        $this->assertTrue($json['ai_generation_enabled']);
+    }
+
     public function test_validates_urls(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-update-validate']);

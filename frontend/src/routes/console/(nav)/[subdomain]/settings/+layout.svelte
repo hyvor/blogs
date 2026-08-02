@@ -14,6 +14,7 @@
 	import IconLink45deg from '@hyvor/icons/IconLink45deg';
 	import IconList from '@hyvor/icons/IconList';
 	import IconPeople from '@hyvor/icons/IconPeople';
+	import IconRobot from '@hyvor/icons/IconRobot';
 	import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
 	import IconSend from '@hyvor/icons/IconSend';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
@@ -33,7 +34,10 @@
 <div class="settings">
 	<div class="nav hds-box">
 		<NavLinkGroup activeBackground="var(--accent-light-mid)">
-			<NavLink href={consoleUrlWithBlog('/settings')} active={$page.url.pathname === `${prefix}`}>
+			<NavLink
+				href={consoleUrlWithBlog('/settings')}
+				active={$page.url.pathname === `${prefix}`}
+			>
 				{#snippet start()}
 					<IconList />
 				{/snippet}
@@ -90,6 +94,16 @@
 					<IconSearchHeart />
 				{/snippet}
 				SEO
+			</NavLink>
+
+			<NavLink
+				href={consoleUrlWithBlog('/settings/ai')}
+				active={$page.url.pathname === `${prefix}/ai`}
+			>
+				{#snippet start()}
+					<IconRobot />
+				{/snippet}
+				AI
 			</NavLink>
 
 			<NavLink

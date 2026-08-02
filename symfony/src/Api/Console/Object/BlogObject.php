@@ -9,6 +9,7 @@ use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Service\Ai\AiProvider;
 
 class BlogObject
 {
@@ -74,6 +75,10 @@ class BlogObject
     public bool $link_analysis_enabled;
     public LinkAnalysisEmailReport $link_analysis_email_report;
 
+    public AiProvider $ai_provider;
+    public bool $ai_translation_enabled;
+    public bool $ai_generation_enabled;
+
     /**
      * @var BlogVariantObject[]
      */
@@ -136,6 +141,10 @@ class BlogObject
 
         $this->link_analysis_enabled = $meta->link_analysis_enabled;
         $this->link_analysis_email_report = $meta->link_analysis_email_report;
+
+        $this->ai_provider = $meta->ai_provider;
+        $this->ai_translation_enabled = $meta->ai_translation_enabled;
+        $this->ai_generation_enabled = $meta->ai_generation_enabled;
 
         $variants = $blog->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
