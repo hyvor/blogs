@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import { languagesStore } from '../../../lib/stores/languagesStore';
 import type { Post, PostVariant } from '../../../lib/types';
-import type { DOMEventMap, EditorView } from 'prosemirror-view';
+import type { EditorView } from 'prosemirror-view';
 
 // originally loaded post
 export const postOriginalStore = writable<Post>();

@@ -103,13 +103,6 @@
 			<PublishedOverlay />
 		</div>
 	{/key}
-
-	<div class="editor-footer">
-		<!-- see plugin-wordcount.ts -->
-		<span id="pm-word-count"></span>
-
-		<AutoTranslate />
-	</div>
 </div>
 
 <style>
@@ -122,14 +115,5 @@
 	.wrap {
 		position: relative;
 		flex: 1;
-	}
-	.editor-footer {
-		padding: 10px 25px;
-		border-top: 1px solid var(--border);
-	}
-	.editor-footer :global(#pm-word-count) {
-		font-size: 12px;
-		color: var(--text-light);
-		font-weight: 600;
 	}
 </style>

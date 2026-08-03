@@ -97,7 +97,7 @@ class AiPostTranslatorTest extends KernelTestCase
         $this->getContainer()->set(HttpClientInterface::class, $httpClient);
 
         $translator = $this->getTranslator();
-        $translator->translateContent($variant, 'fr');
+        $translator->translatePostVariant($variant, 'fr');
     }
 
     public function test_translates_post_variant_complex_paragraphs(): void
@@ -161,7 +161,7 @@ class AiPostTranslatorTest extends KernelTestCase
         ];
 
         $translator = $this->getTranslator();
-        $translator->translateContent($this->getPostVariant($content), 'fr');
+        $translator->translatePostVariant($this->getPostVariant($content), 'fr');
 
     }
 

@@ -67,7 +67,7 @@ PROMPT;
      * @throws TranslateException
      * @return array{title: ?string, slug: ?string, description: ?string, content: string}
      */
-    public function translateContent(PostVariant $variant, string $targetLanguageCode): array
+    public function translatePostVariant(PostVariant $variant, string $targetLanguageCode): array
     {
         $content = $variant->getContent();
         $blog = $variant->getPost()->getBlog();

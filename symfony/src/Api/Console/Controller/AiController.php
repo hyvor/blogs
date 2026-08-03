@@ -39,14 +39,12 @@ class AiController extends AbstractController
         }
 
         try {
-            $translatedContent = $this->aiPostTranslator->translateContent($variant, $input->target_language_code);
+            $translatedData = $this->aiPostTranslator->translatePostVariant($variant, $input->target_language_code);
         } catch (TranslateException $e) {
             throw new BadRequestHttpException('Translation failed: ' . $e->getMessage());
         }
 
-        return new JsonResponse([
-            'content' => $translatedContent
-        ]);
+        return new JsonResponse($translatedData);
     }
 
 }

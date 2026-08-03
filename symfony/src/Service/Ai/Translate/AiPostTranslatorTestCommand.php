@@ -120,7 +120,7 @@ class AiPostTranslatorTestCommand
         $postVariant->setDescription('This is a test post for translation.');
         $postVariant->setSlug('hello-world');
 
-        $translatedData = $this->aiPostTranslator->translateContent($postVariant, 'fr');
+        $translatedData = $this->aiPostTranslator->translatePostVariant($postVariant, 'fr');
         dd($translatedData);
     }
 
