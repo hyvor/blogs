@@ -109,10 +109,11 @@
 	#post-view {
 		background-color: var(--background);
 		height: 100vh;
+		overflow: auto;
 	}
 
 	.container {
-		height: 100vh;
+		min-height: 100vh;
 		width: 1200px;
 		display: flex;
 		flex-direction: column;
@@ -130,6 +131,10 @@
 
 	.top-bar-wrap {
 		margin-bottom: 15px;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		height: 40px;
 	}
 
 	.post-inner {
@@ -137,8 +142,8 @@
 		margin: auto;
 		display: flex;
 		align-items: flex-start;
-		min-height: calc(100vh - 76px);
-    	width: 100%;
+		min-height: calc(100vh - 70px);
+		width: 100%;
 	}
 
 	.post-left {
@@ -150,15 +155,12 @@
 	.post-right {
 		flex: 1;
 		margin-left: 15px;
-		height: 100%;
+		height: calc(100vh - 70px);
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
-	}
-
-	#post-view.is-temp {
-		height: calc(100% - var(--top-offset));
-		top: var(--top-offset);
+		position: sticky;
+		top: 55px;
 	}
 
 	@media (max-width: 992px) {

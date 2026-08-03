@@ -18,7 +18,7 @@ class Image extends NodeType
     public string $attrs = ImageAttrs::class;
 
     public function __construct(
-        private Blog $blog,
+        private ?Blog $blog,
         private PermalinkService $permalinkService,
         private MediaService $mediaService,
         private ImageResizeService $imageResizeService,
@@ -39,6 +39,7 @@ class Image extends NodeType
         $mediaName = $this->getMediaNameFromPermalink($src);
 
         if (
+            $this->blog &&
             $mediaName &&
             ($media = $this->mediaService->getMediaByBlogAndName($this->blog, $mediaName)) &&
             $media->getExtension()

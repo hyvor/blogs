@@ -49,6 +49,7 @@ enum Scope: string
 
     case LINK_ANALYSIS_MANAGE = 'link_analysis.manage';
     case INTEGRATIONS_MANAGE = 'integrations.manage';
+    case AI_MANAGE = 'ai.use';
 
     /**
      * @return self[]

@@ -20,7 +20,7 @@ class Toc extends NodeType
     public string $attrs = TocAttrs::class;
 
     public function __construct(
-        private Blog $blog,
+        private ?Blog $blog,
         private ThemeFilesService $themeFilesService,
         private TwigRendererService $twigRendererService,
     ) {
@@ -28,6 +28,10 @@ class Toc extends NodeType
 
     public function toHtmlFromContext(Context $context): string
     {
+        if (!$this->blog) {
+            return '';
+        }
+
         $template = $this->themeFilesService->getFile(
             $this->blog,
             'node-toc.twig',

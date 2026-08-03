@@ -3,8 +3,11 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
+use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Service\Ai\Translate\AiPostTranslator;
+use App\Service\Ai\Translate\TranslateException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +25,7 @@ class AiController extends AbstractController
     ) {}
 
     #[Route('/ai/translate/post', methods: ['POST'])]
+    #[ScopeRequired(Scope::AI_MANAGE)]
     public function translate(
         #[MapRequestPayload] TranslatePostInput $input
     ): JsonResponse
@@ -34,9 +38,15 @@ class AiController extends AbstractController
             throw new BadRequestHttpException('Post variant not found');
         }
 
-        $translatedData = $this->aiPostTranslator->translate($variant, $input->target_language_code);
+        try {
+            $translatedContent = $this->aiPostTranslator->translateContent($variant, $input->target_language_code);
+        } catch (TranslateException $e) {
+            throw new BadRequestHttpException('Translation failed: ' . $e->getMessage());
+        }
 
-        return new JsonResponse($translatedData);
+        return new JsonResponse([
+            'content' => $translatedContent
+        ]);
     }
 
 }

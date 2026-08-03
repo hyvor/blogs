@@ -157,13 +157,13 @@
 	<div class="post-authors-tags">
 		{#if !post.is_page}
 			<div class="post-authors">
-				{#each post.authors as author (author)}
+				{#each post.authors as author}
 					<Tag size="x-small" style="padding: 4px 8px" bg="#f1f1f1">{author}</Tag>
 				{/each}
 			</div>
 
 			<div class="post-tags">
-				{#each post.tags as tag (tag)}
+				{#each post.tags as tag}
 					<Tag size="x-small" bg="#f1f1f1">{tag}</Tag>
 				{/each}
 			</div>
@@ -207,8 +207,10 @@
 					<ActionListItem on:click={handleClone} disabled={isCloning || isDeleting}
 						>Clone post</ActionListItem
 					>
-					<ActionListItem on:click={handleDelete} disabled={isCloning || isDeleting} type="danger"
-						>Delete post</ActionListItem
+					<ActionListItem
+						on:click={handleDelete}
+						disabled={isCloning || isDeleting}
+						type="danger">Delete post</ActionListItem
 					>
 				</ActionList>
 			{/snippet}

@@ -88,9 +88,13 @@ class PostContentService
 
     public function getDocumentFromHtml(string $html, Blog $blog, bool $sanitize = true): Node
     {
+        return $this->getHtmlParser($blog)->parse($html, sanitize: $sanitize);
+    }
+
+    public function getHtmlParser(?Blog $blog = null): HtmlParser
+    {
         $schema = $this->getSchema($blog);
-        $parser = HtmlParser::fromSchema($schema);
-        return $parser->parse($html, sanitize: $sanitize);
+        return HtmlParser::fromSchema($schema);
     }
 
     /**
@@ -99,10 +103,10 @@ class PostContentService
      */
     public function getDocumentFromJson(array|string $json, ?Blog $blog = null): Document
     {
-        return Document::fromJson($this->getSchema($blog ?? new Blog()), $json);
+        return Document::fromJson($this->getSchema($blog), $json);
     }
 
-    private function getSchema(Blog $blog, ?PostContentOptions $options = null): Schema
+    private function getSchema(?Blog $blog = null, ?PostContentOptions $options = null): Schema
     {
         $options ??= new PostContentOptions();
 

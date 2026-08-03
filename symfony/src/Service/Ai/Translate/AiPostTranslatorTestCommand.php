@@ -7,6 +7,7 @@ use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Ai\AiProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand('app:ai-post-translator-test', description: 'Test command for AiPostTranslator')]
@@ -14,7 +15,8 @@ class AiPostTranslatorTestCommand
 {
 
     public function __construct(
-        private AiPostTranslator $aiPostTranslator
+        private AiPostTranslator $aiPostTranslator,
+        private EntityManagerInterface $em,
     ) {}
 
     public function __invoke()
@@ -106,7 +108,9 @@ class AiPostTranslatorTestCommand
         $postVariant->setLanguage($language);
         $postVariant->setContent(json_encode($content, JSON_THROW_ON_ERROR));
 
-        $translatedData = $this->aiPostTranslator->translate($postVariant, 'fr');
+        $postVariant = $this->em->getRepository(PostVariant::class)->find(81);
+
+        $translatedData = $this->aiPostTranslator->translateContent($postVariant, 'fr');
     }
 
 }

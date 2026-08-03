@@ -20,7 +20,7 @@ class Bookmark extends NodeType
     public string $group = 'block';
 
     public function __construct(
-        private Blog $blog,
+        private ?Blog $blog,
         private UrlDataService $urlDataService,
         private ThemeFilesService $themeFilesService,
         private TwigRendererService $twigRendererService,
@@ -30,6 +30,10 @@ class Bookmark extends NodeType
 
     public function toHtml(Node $node, string $children): string
     {
+        if (!$this->blog) {
+            return '';
+        }
+
         /** @var string $url */
         $url = $node->attr('url');
 

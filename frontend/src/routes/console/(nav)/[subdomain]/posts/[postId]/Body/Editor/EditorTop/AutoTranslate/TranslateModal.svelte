@@ -67,14 +67,7 @@
 			(v) => v.language_id === sourceVariantLanguage.id
 		)!;
 
-		autoTranslate(
-			sourceDeepLLanguage,
-			targetDeepLLanguage,
-			variant.content,
-			variant.title,
-			variant.description,
-			variant.slug
-		)
+		autoTranslate(variant.id, targetDeepLLanguage)
 			.then((res) => {
 				const updates = {
 					title: res.title,

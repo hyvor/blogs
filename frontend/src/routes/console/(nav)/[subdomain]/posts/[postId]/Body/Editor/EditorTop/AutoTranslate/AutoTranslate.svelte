@@ -1,14 +1,47 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import {
+		increaseEditorVersion,
+		postCurrentContentKey,
 		postEditingStatusStore,
 		postLanguageStore,
-		postVariantStore
+		postStore,
+		postVariantStore,
+		updatePostVariantStore
 	} from '../../../../../postStore';
 	import IconMagic from '@hyvor/icons/IconMagic';
-	import TranslateModal from './TranslateModal.svelte';
+	import { languagesStore } from '../../../../../../../../lib/stores/languagesStore';
+	import { autoTranslate } from './autoTranslateActions';
+	import type { PostVariant } from '../../../../../../../../lib/types';
 
-	let show = $state(false);
+	function handleTranslate() {
+		const variant = $postStore.variants.find(
+			(v) => v.language_id === $languagesStore.find((l) => l.is_primary === true)!.id
+		)!;
+
+		autoTranslate(variant.id, $postLanguageStore.code)
+			.then((res) => {
+				const updates = {
+					//title: res.title,
+					// description: res.description,
+					[$postCurrentContentKey]: res.content
+				} as Partial<PostVariant>;
+
+				// if ($postVariantStore.slug === null) {
+				// 	updates.slug = res.slug;
+				// }
+
+				updatePostVariantStore(updates);
+				increaseEditorVersion();
+
+				// toast.success('Successfully translated');
+
+				// show = false;
+			})
+			.finally(() => {
+				//
+			});
+	}
 </script>
 
 {#if !$postLanguageStore.is_primary}
@@ -16,7 +49,7 @@
 		size="small"
 		style="margin-inline-end:8px"
 		color="input"
-		on:click={() => (show = true)}
+		on:click={handleTranslate}
 		disabled={$postVariantStore.status === 'published' &&
 			!$postEditingStatusStore.isEditingPublished}
 	>
@@ -26,6 +59,6 @@
 	</Button>
 {/if}
 
-{#if show}
+<!-- {#if show}
 	<TranslateModal bind:show />
-{/if}
+{/if} -->
