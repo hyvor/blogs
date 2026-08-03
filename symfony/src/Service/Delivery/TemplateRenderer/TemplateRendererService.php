@@ -21,6 +21,8 @@ use App\Entity\Tag;
 use App\Entity\ThemeFile;
 use App\Entity\User;
 use App\Service\AppConfig;
+use App\Service\Billing\FailedToGetLicenseException;
+use App\Service\Billing\LicenseService;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
@@ -32,6 +34,9 @@ use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Deployment;
+use Hyvor\Internal\InternalConfig;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Error\Error;
@@ -55,6 +60,8 @@ class TemplateRendererService
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
         private EventDispatcherInterface $ed,
+        private InternalConfig $internalConfig,
+        private LicenseService $licenseService
     ) {}
 
     /**
@@ -255,6 +262,8 @@ class TemplateRendererService
             // comments & newsletter
             '_comments' => $blogMeta->comments_code ?? '',
             '_newsletter' => $blogMeta->newsletter_code ?? '',
+
+            '_branding' => $this->shouldShowBranding($blog),
         ];
     }
 
@@ -396,5 +405,26 @@ class TemplateRendererService
     private function getFootCode(): string
     {
         return (string)file_get_contents($this->projectDir . '/resources/twig/_foot.twig');
+    }
+
+    private function shouldShowBranding(Blog $blog): bool
+    {
+        // always shown on on-prem deployments
+        if ($this->internalConfig->getDeployment() === Deployment::ON_PREM) {
+            return true;
+        }
+
+        try {
+            $license = $this->licenseService->getCachedLicenseForBlog($blog);
+
+            if ($license->license instanceof BlogsLicense) {
+                return !$license->license->noBranding;
+            }
+        } catch (FailedToGetLicenseException) {
+            // if we cannot get the license, don't show branding
+        }
+
+        // safety fallback: if we cannot get the license, don't show branding
+        return false;
     }
 }
