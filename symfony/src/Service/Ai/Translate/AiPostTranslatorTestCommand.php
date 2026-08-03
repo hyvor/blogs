@@ -4,13 +4,19 @@ namespace App\Service\Ai\Translate;
 
 use App\Entity\Blog;
 use App\Entity\Language;
+use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Ai\AiProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-#[AsCommand('app:ai-post-translator-test', description: 'Test command for AiPostTranslator')]
+/**
+ * @codeCoverageIgnore
+ */
+#[AsCommand('app:ai:translate', description: 'Test command for AiPostTranslator')]
+#[When(env: 'dev')]
 class AiPostTranslatorTestCommand
 {
 
@@ -94,23 +100,28 @@ class AiPostTranslatorTestCommand
             ]
         ];
 
+        $meta = new BlogMeta();
+        $meta->ai_provider = AiProvider::ANTHROPIC;
         $blog = new Blog();
-        $blog->getMeta()->ai_provider = AiProvider::OPENAI;
+        $blog->setMeta($meta);
 
         $post = new Post();
         $post->setBlog($blog);
 
         $language = new Language();
         $language->setCode('en');
+        $language->setBlog($blog);
 
         $postVariant = new PostVariant();
         $postVariant->setPost($post);
         $postVariant->setLanguage($language);
         $postVariant->setContent(json_encode($content, JSON_THROW_ON_ERROR));
-
-        $postVariant = $this->em->getRepository(PostVariant::class)->find(81);
+        $postVariant->setTitle('Hello, world!');
+        $postVariant->setDescription('This is a test post for translation.');
+        $postVariant->setSlug('hello-world');
 
         $translatedData = $this->aiPostTranslator->translateContent($postVariant, 'fr');
+        dd($translatedData);
     }
 
 }
