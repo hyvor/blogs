@@ -71,5 +71,10 @@ class LicenseService
         return 'license_' . $organizationId;
     }
 
+    public function clearLicenseCache(int $organizationId): void
+    {
+        $this->cache->deleteItem($this->getLicenseCacheKey($organizationId));
+    }
+
 
 }

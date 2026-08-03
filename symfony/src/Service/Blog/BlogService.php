@@ -33,6 +33,11 @@ class BlogService
         return in_array($subdomain, ['new', 'billing', 'select'], true);
     }
 
+    public function getBlogsByOrganizationId(int $organizationId): array
+    {
+        return $this->em->getRepository(Blog::class)->findBy(['organization_id' => $organizationId]);
+    }
+
     public function getBlogById(int $id): ?Blog
     {
         return $this->em->getRepository(Blog::class)->find($id);
