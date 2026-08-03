@@ -21,10 +21,10 @@
 
 <h2 id="twig">Twig</h2>
 <p>
-	We use <a href="https://twig.symfony.com/doc/3.x/" rel="nofollow">Twig 3.0</a> for templating. It
-	is a powerful language with plenty of in-built tags, filters, and functions. Twig also has nice,
-	easy-to-follow documentation, which was one reason we chose Twig over other template languages. If
-	you haven't used it ever, go through the
+	We use <a href="https://twig.symfony.com/doc/3.x/" rel="nofollow">Twig 3.0</a> for templating.
+	It is a powerful language with plenty of in-built tags, filters, and functions. Twig also has
+	nice, easy-to-follow documentation, which was one reason we chose Twig over other template
+	languages. If you haven't used it ever, go through the
 	<a href="https://twig.symfony.com/doc/3.x/templates.html" rel="nofollow"
 		>Twig for Template Designers</a
 	> page, and you will get an idea of how it works. Basically, it's HTML with superpowers.
@@ -49,8 +49,8 @@
 	<TableRow>
 		<div>Partial</div>
 		<div>
-			These templates are not rendered directly but included in main template files. They start with
-			an underscore (<code>_</code>)
+			These templates are not rendered directly but included in main template files. They
+			start with an underscore (<code>_</code>)
 		</div>
 		<div><code>_footer.twig</code></div>
 	</TableRow>
@@ -129,7 +129,8 @@
 		<div><code>_posts</code></div>
 		<div>(all)</div>
 		<div>
-			An array of Post objects, filtered by the <a href="/docs/routes">route</a>'s filter value
+			An array of Post objects, filtered by the <a href="/docs/routes">route</a>'s filter
+			value
 		</div>
 	</TableRow>
 
@@ -156,11 +157,18 @@
 		<div>author</div>
 		<div>An Author object (the current author)</div>
 	</TableRow>
+
+	<TableRow>
+		<div><code>_branding</code></div>
+		<div>all</div>
+		<div>Boolean, whether to show Hyvor Blogs branding.</div>
+	</TableRow>
 </Table>
 
 <p>
-	Each Route gets different variables. We prefix each variable with <code>_</code> so that it won't
-	conflict with the variables you define inside the theme files (Obviously, you shouldn't prefix
+	Each Route gets different variables. We prefix each variable with <code>_</code> so that it
+	won't conflict with the variables you define inside the theme files (Obviously, you shouldn't
+	prefix
 	<code>_</code> your variables inside the Twig template)
 </p>
 
@@ -179,8 +187,8 @@
 		<div><code>_head</code></div>
 		<div>(all)</div>
 		<div>
-			place before <code>{`</head>`}</code>. We automatically add SEO tags, styles.css link, and
-			code_head set by the blogger
+			place before <code>{`</head>`}</code>. We automatically add SEO tags, styles.css link,
+			and code_head set by the blogger
 		</div>
 	</TableRow>
 
@@ -200,9 +208,9 @@
 		<div><code>_comment_count</code> (optional)</div>
 		<div>post and page</div>
 		<div>
-			to render the comment count of that page. For example, some themes have comment count at the
-			top with a link to the comments section to encourage more comments. Only works when Hyvor Talk
-			is connected
+			to render the comment count of that page. For example, some themes have comment count at
+			the top with a link to the comments section to encourage more comments. Only works when
+			Hyvor Talk is connected
 		</div>
 	</TableRow>
 
@@ -214,8 +222,8 @@
 </Table>
 
 <p>
-	Sending all placeholders (except <code> _lang</code>) through the <code>template</code> filter is absolutely
-	required to make them render as templates.
+	Sending all placeholders (except <code> _lang</code>) through the <code>template</code> filter is
+	absolutely required to make them render as templates.
 </p>
 
 <CodeBlock
@@ -228,8 +236,8 @@
 	<p>
 		<code>{`{{ _head | template }}`}</code> is equal to
 		<code>{`{{ include(template_from_string(_head)) }}`}</code>
-		in Twig. We defined the custom <code>template</code> filter to make it easier for you to write it,
-		as it is used frequently in HB templates.
+		in Twig. We defined the custom <code>template</code> filter to make it easier for you to write
+		it, as it is used frequently in HB templates.
 	</p>
 </Callout>
 
@@ -260,7 +268,8 @@
 <p>Function definition: <code>icon(iconLibrary, iconName, width, height)</code></p>
 <ul>
 	<li>
-		All icon names are lowercase, and words are separated by <code>-</code> (<code>arrow-down</code
+		All icon names are lowercase, and words are separated by <code>-</code> (<code
+			>arrow-down</code
 		>).
 	</li>
 	<li>These icon libraries are supported</li>
@@ -289,7 +298,8 @@
 
 		<Callout type="info">
 			<p>
-				Under the hood, we use the <a href="https://github.com/hyvor/php-svg-icons">php-svg-icons</a
+				Under the hood, we use the <a href="https://github.com/hyvor/php-svg-icons"
+					>php-svg-icons</a
 				> open-source library. If you need to add more icon libraries, please send a PR there.
 			</p>
 		</Callout>
@@ -361,8 +371,8 @@
                         `}
 		/>
 		<p>
-			By default, all headings are included in the table of contents. You can set which levels to
-			include as follows:
+			By default, all headings are included in the table of contents. You can set which levels
+			to include as follows:
 		</p>
 		<CodeBlock
 			code={`
@@ -374,9 +384,9 @@
 
 <Callout type="info">
 	<p>
-		The difference between functions and filters can be quite confusing in Twig. Our general rule is
-		to use functions to compute things (<code>data</code> and <code>icon</code>) and use filters
-		when apply a transformation (<code>asset_url</code>, <code>asset</code>, etc.).
+		The difference between functions and filters can be quite confusing in Twig. Our general
+		rule is to use functions to compute things (<code>data</code> and <code>icon</code>) and use
+		filters when apply a transformation (<code>asset_url</code>, <code>asset</code>, etc.).
 	</p>
 </Callout>
 
@@ -408,7 +418,9 @@
 <p>There are two ways to add custom routes:</p>
 <ul>
 	<li>
-		The blogger can add custom routes from the console (<a href="/docs/routes#custom">See docs</a>).
+		The blogger can add custom routes from the console (<a href="/docs/routes#custom"
+			>See docs</a
+		>).
 	</li>
 	<li>
 		Theme developers can define custom routes by adding files named <code
@@ -419,14 +431,13 @@
 </ul>
 
 <p>
-	The first option is more robust, and it providers easier way to automatically set input variables <coe
-		>_posts</coe
-	>
+	The first option is more robust, and it providers easier way to automatically set input
+	variables <coe>_posts</coe>
 	(by filtering), <code>_tag</code>, <code>_author</code>, etc so you can access them without
 	calling the Data API. But, as a theme developer, you will need to use the second option.
 </p>
 <p>
-	For example, let's say you decide that your theme want a page to list all authors of the blog. You
-	can add a <code>{`route-authors.twig`}</code> to the <code>templates</code> folder. If the blog
-	gets a request to <coe>/authors</coe>, this template will be rendered automatically.
+	For example, let's say you decide that your theme want a page to list all authors of the blog.
+	You can add a <code>{`route-authors.twig`}</code> to the <code>templates</code> folder. If the
+	blog gets a request to <coe>/authors</coe>, this template will be rendered automatically.
 </p>
