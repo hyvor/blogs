@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, SplitControl, confirm, toast } from '@hyvor/design/components';
 	import {
-		postLanguageStore,
+		postVariantLanguageStore,
 		postStore,
 		removePostVariantStore,
 		updatePostEditingStatusValue
@@ -16,30 +16,34 @@
 	async function handleClick() {
 		if (
 			await confirm({
-				title: $postLanguageStore.is_primary ? 'Delete Post' : 'Delete Variant',
+				title: $postVariantLanguageStore.is_primary ? 'Delete Post' : 'Delete Variant',
 				content:
-					($postLanguageStore.is_primary
+					($postVariantLanguageStore.is_primary
 						? 'Are you sure you want to delete this post?'
-						: 'Are you sure you want to delete the ' + $postLanguageStore.name + ' variant?') +
-					' This action is IRREVERSIBLE.',
+						: 'Are you sure you want to delete the ' +
+							$postVariantLanguageStore.name +
+							' variant?') + ' This action is IRREVERSIBLE.',
 				confirmText: 'Yes, Delete',
 				danger: true
 			})
 		) {
 			const toastId = toast.loading('Deleting...');
 
-			const func = $postLanguageStore.is_primary ? deletePost : deletePostVariant;
+			const func = $postVariantLanguageStore.is_primary ? deletePost : deletePostVariant;
 
 			func()
 				.then(() => {
-					toast.success('Deleted' + ($postLanguageStore.is_primary ? ' post' : ' variant'), {
-						id: toastId
-					});
+					toast.success(
+						'Deleted' + ($postVariantLanguageStore.is_primary ? ' post' : ' variant'),
+						{
+							id: toastId
+						}
+					);
 
-					if ($postLanguageStore.is_primary) {
+					if ($postVariantLanguageStore.is_primary) {
 						goto(consoleUrlWithBlog($postStore.is_page ? '/pages' : '/posts'));
 					} else {
-						const languageId = $postLanguageStore.id;
+						const languageId = $postVariantLanguageStore.id;
 						updatePostEditingStatusValue('languageId', getPrimaryLanguage().id);
 						removePostVariantStore(languageId);
 					}
@@ -56,10 +60,10 @@
 		<span> Delete </span>
 	{/snippet}
 	<Button color="red" size="small" on:click={handleClick}>
-		{#if $postLanguageStore.is_primary}
+		{#if $postVariantLanguageStore.is_primary}
 			Delete Post
 		{:else}
-			Delete {$postLanguageStore.name} Variant
+			Delete {$postVariantLanguageStore.name} Variant
 		{/if}
 		{#snippet start()}
 			<IconTrash />

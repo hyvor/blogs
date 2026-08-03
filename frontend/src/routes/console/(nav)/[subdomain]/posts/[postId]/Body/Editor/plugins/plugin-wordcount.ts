@@ -3,7 +3,7 @@ import { EditorView } from 'prosemirror-view';
 import { getTextFromDoc } from '../../../../../../../lib/prosemirror/helpers';
 import { getWordsCount } from '../../../../../../../lib/seo/words';
 import { get } from 'svelte/store';
-import { postLanguageStore } from '../../../../postStore';
+import { postVariantLanguageStore } from '../../../../postStore';
 
 export default function wordCountPlugin() {
 	return new Plugin({
@@ -28,7 +28,7 @@ class WordCountPlugin {
 		if (!wordCount) return;
 
 		setTimeout(() => {
-			const languageCode = get(postLanguageStore).code;
+			const languageCode = get(postVariantLanguageStore).code;
 			const text = getTextFromDoc(view.state.doc);
 			wordCount.innerHTML = getWordsCount(text, languageCode) + ' Words';
 		}, 0); // to prevent blocking the UI

@@ -4,7 +4,7 @@
 	import FeaturedChange from './Changes/FeaturedChange.svelte';
 	import {
 		postEditingStatusStore,
-		postLanguageStore,
+		postVariantLanguageStore,
 		updatePostEditingStatusValue
 	} from '../../../../postStore';
 	import {
@@ -21,7 +21,7 @@
 	import {
 		postOriginalStore,
 		postStore,
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postVariantStore
 	} from '../../../../postStore';
 	import Diff from '$lib/components/Diff/Diff.svelte';
@@ -69,7 +69,7 @@
 		if (Object.keys(changes.variant).length) {
 			try {
 				await updatePostVariant({
-					language_id: $postLanguageStore.id,
+					language_id: $postVariantLanguageStore.id,
 					...changes.variant,
 					redirect_on_slug_change: redirectOnSlugChange
 				});
@@ -128,7 +128,7 @@
 	{#if changes.variant.content}
 		<SplitControl label="Content">
 			<ContentChange
-				contentOld={$postOriginalVariantStore.content}
+				contentOld={$postVariantOriginalStore.content}
 				contentNew={$postVariantStore.content_unsaved}
 				{diff}
 			/>
@@ -138,7 +138,10 @@
 	{#if changes.variant.slug !== undefined}
 		<SplitControl label="Slug">
 			{#if diff}
-				<Diff strOld={$postOriginalVariantStore.slug || ''} strNew={$postVariantStore.slug || ''} />
+				<Diff
+					strOld={$postVariantOriginalStore.slug || ''}
+					strNew={$postVariantStore.slug || ''}
+				/>
 			{:else}
 				<span>{$postVariantStore.slug}</span>
 			{/if}
@@ -149,7 +152,9 @@
 				{/if}
 				{#if slugGetInvalidCharater(changes.variant.slug || '')}
 					<Validation state="error"
-						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
+						>Slug cannot contain {slugGetInvalidCharater(
+							changes.variant.slug || ''
+						)}.</Validation
 					>
 				{/if}
 			</div>
@@ -171,7 +176,7 @@
 		<SplitControl label="Description">
 			{#if diff}
 				<Diff
-					strOld={$postOriginalVariantStore.description || ''}
+					strOld={$postVariantOriginalStore.description || ''}
 					strNew={$postVariantStore.description || ''}
 				/>
 			{:else}

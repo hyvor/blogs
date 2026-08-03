@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Loader, SplitControl, Textarea } from '@hyvor/design/components';
 	import {
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
@@ -17,7 +17,7 @@
 	function handleBlur(e: any) {
 		const desc = (e.target.value as string).trim();
 
-		if (desc === $postOriginalVariantStore.description) return;
+		if (desc === $postVariantOriginalStore.description) return;
 
 		if ($postVariantStore.status !== 'published') {
 			loaderState = 'loading';
@@ -38,7 +38,7 @@
 		<span>
 			Description
 			<UnsavedTag
-				show={$postVariantStore.description !== $postOriginalVariantStore.description}
+				show={$postVariantStore.description !== $postVariantOriginalStore.description}
 				{loaderState}
 			/>
 		</span>

@@ -2,10 +2,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import {
 		postCurrentContentKey,
-		postEditingStatusStore,
-		postOriginalVariantStore,
-		postVariantStore,
-		updatePostEditingStatusValue
+		postVariantOriginalStore,
+		postVariantStore
 	} from '../../postStore';
 	import { updatePostVariant } from '../../postActions';
 	import { Tag, toast } from '@hyvor/design/components';
@@ -13,18 +11,20 @@
 	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 
 	let key = $derived($postCurrentContentKey as 'content' | 'content_unsaved');
-	let hasChanged = $derived($postVariantStore[key] !== $postOriginalVariantStore[key]);
+	let hasChanged = $derived($postVariantStore[key] !== $postVariantOriginalStore[key]);
+
+	let isSaving = $state(false);
 
 	function save() {
 		if (!hasChanged) return;
 
-		updatePostEditingStatusValue('isSaving', true);
+		isSaving = true;
 
 		updatePostVariant({
 			[key]: $postVariantStore[key]
 		})
 			.then(() => {
-				updatePostEditingStatusValue('isSaving', false);
+				isSaving = false;
 			})
 			.catch((e) => {
 				toast.error(`Failed to save post content: ${e.message}`);
@@ -62,7 +62,7 @@
 <span class="save-text">
 	<UnsavedTag
 		show={hasChanged}
-		loaderState={$postEditingStatusStore.isSaving ? 'loading' : 'none'}
+		loaderState={isSaving ? 'loading' : 'none'}
 		size="small"
 		addMarginTop={false}
 	/>

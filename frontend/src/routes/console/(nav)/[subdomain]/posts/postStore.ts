@@ -3,13 +3,48 @@ import { languagesStore } from '../../../lib/stores/languagesStore';
 import type { Post, PostVariant } from '../../../lib/types';
 import type { EditorView } from 'prosemirror-view';
 
-// originally loaded post
-export const postOriginalStore = writable<Post>();
-
-// current post data
-export const postStore = writable<Post>();
+// types
 
 export type PostSidebar = 'settings' | 'seo' | 'links' | 'ai';
+
+// stores
+
+export const postOriginalStore = writable<Post>();
+export const postStore = writable<Post>();
+export const postSidebarStore = writable<PostSidebar>('settings');
+export const postVariantOriginalStore = writable<PostVariant | null>(null);
+export const postVariantStore = writable<PostVariant | null>(null);
+
+// derived
+
+export const postVariantLanguageStore = derived(
+	[postVariantStore, languagesStore],
+	([postVariant, languages]) => {
+		if (!postVariant) return null;
+		return languages.find((l) => l.id === postVariant.language_id) || null;
+	}
+);
+
+export const postCurrentContentKey = derived(
+	[postVariantStore],
+	([postVariant]) => {
+		if (!postVariant) return 'content';
+		if (postVariant.status === 'draft') return 'content';
+
+		// editing published (TODO)
+		if (false && postEditingStatus.isEditingPublished) {
+			// content_unsaved is set (editing started)
+			if (postVariant.content_unsaved) {
+				return 'content_unsaved';
+			} else {
+				// otherwise start from content
+				return 'content';
+			}
+		}
+
+		return 'content';
+	}
+);
 
 export interface PostEditingStatus {
 	languageId: number;
@@ -23,17 +58,17 @@ export interface PostEditingStatus {
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
 
-export function initPostEditingState(postView: HTMLDivElement, langId: number) {
-	postEditingStatusStore.set({
-		languageId: langId,
-		sidebar: 'settings',
-		isEditingPublished: false,
-		editorView: null,
-		postView,
-		isSaving: false,
-		editorVersion: 0
-	});
-}
+// export function initPostEditingState(postView: HTMLDivElement, langId: number) {
+// 	postEditingStatusStore.set({
+// 		languageId: langId,
+// 		sidebar: 'settings',
+// 		isEditingPublished: false,
+// 		editorView: null,
+// 		postView,
+// 		isSaving: false,
+// 		editorVersion: 0
+// 	});
+// }
 
 export function updatePostEditingStatusValue<T extends keyof PostEditingStatus>(
 	key: T,
@@ -56,53 +91,53 @@ export function increaseEditorVersion() {
 	});
 }
 
-export const postOriginalVariantStore = derived(
-	[postOriginalStore, postEditingStatusStore],
-	([post, postEditingStatus]) => {
-		return post.variants.find((v) => v.language_id === postEditingStatus.languageId)!;
-	}
-);
+// export const postVariantOriginalStore = derived(
+// 	[postOriginalStore, postEditingStatusStore],
+// 	([post, postEditingStatus]) => {
+// 		return post.variants.find((v) => v.language_id === postEditingStatus.languageId)!;
+// 	}
+// );
 
-export const postVariantStore = derived(
-	[postStore, postEditingStatusStore],
-	([post, postEditingStatus]) => {
-		return post.variants.find((v) => v.language_id === postEditingStatus.languageId)!;
-	}
-);
+// export const postVariantStore = derived(
+// 	[postStore, postEditingStatusStore],
+// 	([post, postEditingStatus]) => {
+// 		return post.variants.find((v) => v.language_id === postEditingStatus.languageId)!;
+// 	}
+// );
 
-export const postLanguageStore = derived(
-	[languagesStore, postEditingStatusStore],
-	([languages, postEditingStatus]) => {
-		return languages.find((l) => l.id === postEditingStatus.languageId)!;
-	}
-);
+// export const postVariantLanguageStore = derived(
+// 	[languagesStore, postEditingStatusStore],
+// 	([languages, postEditingStatus]) => {
+// 		return languages.find((l) => l.id === postEditingStatus.languageId)!;
+// 	}
+// );
 
-export const postCurrentContentKey = derived(
-	[postVariantStore, postEditingStatusStore],
-	([postVariant, postEditingStatus]) => {
-		if (postVariant.status === 'draft') return 'content';
+// export const postCurrentContentKey = derived(
+// 	[postVariantStore, postEditingStatusStore],
+// 	([postVariant, postEditingStatus]) => {
+// 		if (postVariant.status === 'draft') return 'content';
 
-		// editing published
-		if (postEditingStatus.isEditingPublished) {
-			// content_unsaved is set (editing started)
-			if (postVariant.content_unsaved) {
-				return 'content_unsaved';
-			} else {
-				// otherwise start from content
-				return 'content';
-			}
-		}
+// 		// editing published
+// 		if (postEditingStatus.isEditingPublished) {
+// 			// content_unsaved is set (editing started)
+// 			if (postVariant.content_unsaved) {
+// 				return 'content_unsaved';
+// 			} else {
+// 				// otherwise start from content
+// 				return 'content';
+// 			}
+// 		}
 
-		return 'content';
-	}
-);
+// 		return 'content';
+// 	}
+// );
 
-export const postCurrentContentStore = derived(
-	[postVariantStore, postCurrentContentKey],
-	([postVariant, key]) => {
-		return postVariant[key];
-	}
-);
+// export const postCurrentContentStore = derived(
+// 	[postVariantStore, postCurrentContentKey],
+// 	([postVariant, key]) => {
+// 		return postVariant[key];
+// 	}
+// );
 
 export function updatePostStore(values: Partial<Post>, original = false) {
 	const stores = [postStore];
@@ -128,7 +163,7 @@ export function updatePostVariantStore(values: Partial<PostVariant>, original = 
 
 	stores.forEach((store) => {
 		store.update((post) => {
-			const languageId = get(postLanguageStore).id;
+			const languageId = get(postVariantLanguageStore).id;
 			post.variants = post.variants.map((v) => {
 				if (v.language_id === languageId) {
 					return {
@@ -171,7 +206,7 @@ export function removePostVariantStore(languageId: number, original = true) {
 	});
 }
 
-export function setPostAndPostOriginalStore(post: Post) {
-	postStore.set({ ...post });
-	postOriginalStore.set({ ...post });
-}
+// export function setPostAndPostOriginalStore(post: Post) {
+// 	postStore.set({ ...post });
+// 	postOriginalStore.set({ ...post });
+// }

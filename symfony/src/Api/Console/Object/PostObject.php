@@ -4,8 +4,6 @@ namespace App\Api\Console\Object;
 
 use App\Entity\Blog;
 use App\Entity\Post;
-use App\Service\Post\Content\PostContentService;
-use App\Service\Route\PermalinkService;
 
 class PostObject
 {
@@ -19,8 +17,7 @@ class PostObject
     public ?string $canonical_url;
     public ?string $code_head;
     public ?string $code_foot;
-    /** @var PostVariantObject[] */
-    public array $variants;
+
     /** @var TagObject[] */
     public array $tags;
     /** @var UserObject[] */
@@ -29,10 +26,8 @@ class PostObject
     public function __construct(
         Post $post,
         Blog $blog,
-        PermalinkService $permalinkService,
         TagObjectFactory $tagObjectFactory,
         UserObjectFactory $userObjectFactory,
-        ?PostContentService $postContentService = null,
     ) {
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
@@ -44,13 +39,6 @@ class PostObject
         $this->canonical_url = $post->getCanonicalUrl();
         $this->code_head = $post->getCodeHead();
         $this->code_foot = $post->getCodeFoot();
-
-        $variants = $post->getVariants()->toArray();
-        usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
-        $this->variants = array_map(
-            fn($v) => new PostVariantObject($v, $post, $blog, $permalinkService, $postContentService),
-            $variants,
-        );
 
         $this->tags = array_map(fn($tag) => $tagObjectFactory->create($tag, $blog), $post->getTags()->toArray());
         $this->authors = array_map(fn($user) => $userObjectFactory->create($user, $blog), $post->getAuthors()->toArray());

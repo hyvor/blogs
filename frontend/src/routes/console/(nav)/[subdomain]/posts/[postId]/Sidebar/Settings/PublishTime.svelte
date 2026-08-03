@@ -2,7 +2,7 @@
 	import { SplitControl, Text, TextInput } from '@hyvor/design/components';
 	import {
 		postOriginalStore,
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postStore,
 		postVariantStore,
 		updatePostStore

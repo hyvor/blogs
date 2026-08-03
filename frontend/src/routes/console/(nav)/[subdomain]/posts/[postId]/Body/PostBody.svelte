@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { postLanguageStore } from '../../postStore';
+	import { postVariantLanguageStore } from '../../postStore';
 	import Editor from './Editor/Editor.svelte';
 	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
 	import Title from './Top/Title.svelte';
@@ -9,18 +9,18 @@
 	id="post-body"
 	class="hds-box"
 	spellcheck={false}
-	dir={$postLanguageStore.direction}
+	dir={$postVariantLanguageStore!.direction}
 	style="
-        dir: {$postLanguageStore.direction};
-        text-align: {$postLanguageStore.direction === 'rtl' ? 'right' : 'left'};
-        font-family: {$postLanguageStore.direction === 'rtl' ? 'sans-serif' : 'inherit'};
+        dir: {$postVariantLanguageStore!.direction};
+        text-align: {$postVariantLanguageStore!.direction === 'rtl' ? 'right' : 'left'};
+        font-family: {$postVariantLanguageStore!.direction === 'rtl' ? 'sans-serif' : 'inherit'};
     "
 >
 	<div class="top">
 		<Title />
 	</div>
 
-	<Editor />
+	<!-- <Editor /> -->
 
 	<div class="editor-footer">
 		<!-- see plugin-wordcount.ts -->

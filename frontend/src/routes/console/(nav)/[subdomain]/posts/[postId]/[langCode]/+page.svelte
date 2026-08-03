@@ -1,24 +1,28 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { Loader } from '@hyvor/design/components';
-	import consoleApi from '../../../../lib/consoleApi';
-	import type { Post } from '../../../../lib/types';
-	import { initPostEditingState, setPostAndPostOriginalStore } from '../postStore';
-	import PostBody from './Body/PostBody.svelte';
-	import PostSidebar from './Sidebar/PostSidebar.svelte';
-	import TopBar from './TopBar/TopBar.svelte';
-	import { initEditorEventHandlers } from './Body/Editor/editorEvents';
-	import { isTempStore } from '../../../../lib/temp';
+	import type { Post, PostVariant } from '../../../../../lib/types';
+	import {
+		postOriginalStore,
+		postStore,
+		postVariantOriginalStore,
+		postVariantStore
+	} from '../../postStore';
+	import PostBody from '../Body/PostBody.svelte';
+	import PostSidebar from '../Sidebar/PostSidebar.svelte';
+	import TopBar from '../TopBar/TopBar.svelte';
+	import { isTempStore } from '../../../../../lib/temp';
 	import type { Unsubscriber } from 'svelte/store';
-	import { initLinkAnalysisLoader } from './Sidebar/Links/linkLoader';
-	import { languagesStore } from '../../../../lib/stores/languagesStore';
-	import { getPreloadedPost } from './postLoader';
+	import { initLinkAnalysisLoader } from '../Sidebar/Links/linkLoader';
+	import { languagesStore } from '../../../../../lib/stores/languagesStore';
+	import { getPreloadedPost } from '../postLoader';
+	import { onMount } from 'svelte';
+	import { getPost } from '../../postActions';
 
 	let isLoading = $state(true);
 
-	let postView: HTMLDivElement | undefined = $state();
+	let postView: HTMLDivElement;
 	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
-	let activeRequest: AbortController | null = null;
 
 	function getInitialLanguageId() {
 		const primaryId = $languagesStore.find((language) => language.is_primary)!.id;
@@ -33,48 +37,38 @@
 		return primaryId;
 	}
 
-	function handlePost(post: Post) {
-		setPostAndPostOriginalStore(post);
-		if (postView) {
-			initPostEditingState(postView, getInitialLanguageId());
-		}
-		initEditorEventHandlers();
+	function completePostLoading(post: Post, variant: PostVariant | null) {
+		postOriginalStore.set({ ...post });
+		postStore.set({ ...post });
 
-		linkAnalysisLoaderUnsubscriber?.();
-		linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
+		postVariantOriginalStore.set(variant ? { ...variant } : null);
+		postVariantStore.set(variant ? { ...variant } : null);
 
 		isLoading = false;
 	}
 
-	$effect.pre(() => {
+	onMount(() => {
 		const postId = page.params.postId;
 		if (!postId) return;
 
-		activeRequest?.abort();
-
-		const preloadedPost = getPreloadedPost(postId);
-		if (preloadedPost) {
-			handlePost(preloadedPost);
-			return;
-		}
+		// const preloadedPost = getPreloadedPost(postId);
+		// if (preloadedPost) {
+		// 	handlePost(preloadedPost, null);
+		// 	return;
+		// }
 
 		isLoading = true;
 
-		activeRequest = new AbortController();
-
-		consoleApi
-			.get<Post>({
-				endpoint: '/post/' + postId,
-				signal: activeRequest.signal
+		getPost(Number(postId), page.params.langCode)
+			.then(({ post, variant }) => {
+				completePostLoading(post, variant);
 			})
-			.then(handlePost)
 			.catch((error) => {
 				if (error?.name === 'AbortError') return;
 				throw error;
 			});
 
 		return () => {
-			activeRequest?.abort();
 			linkAnalysisLoaderUnsubscriber?.();
 			linkAnalysisLoaderUnsubscriber = null;
 		};

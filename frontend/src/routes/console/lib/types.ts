@@ -175,7 +175,7 @@ export type Post = {
 	code_head: string | null;
 	code_foot: string | null;
 
-	variants: PostVariant[];
+	// variants: PostVariant[];
 
 	tags: Tag[];
 	authors: User[];

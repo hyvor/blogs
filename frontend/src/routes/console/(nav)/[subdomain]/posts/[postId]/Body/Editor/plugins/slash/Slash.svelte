@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { EditorView } from 'prosemirror-view';
 	import type { SlashOption } from './options';
-	import { postLanguageStore } from '../../../../../postStore';
+	import { postVariantLanguageStore } from '../../../../../postStore';
 	import { onMount, tick } from 'svelte';
 	import { Node } from 'prosemirror-model';
 	import schema from '../../../../../../../../lib/prosemirror/schema';
@@ -47,7 +47,7 @@
 			slashEl.classList.remove('top');
 		}
 
-		const isRtl = $postLanguageStore.direction === 'rtl';
+		const isRtl = $postVariantLanguageStore.direction === 'rtl';
 
 		if (isRtl) {
 			slashEl.style.left = 'auto';

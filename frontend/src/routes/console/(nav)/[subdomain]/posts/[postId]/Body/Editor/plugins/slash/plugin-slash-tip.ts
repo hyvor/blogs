@@ -1,7 +1,7 @@
 import { EditorState, Plugin, type PluginView } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { get } from 'svelte/store';
-import { postLanguageStore } from '../../../../../postStore';
+import { postVariantLanguageStore } from '../../../../../postStore';
 
 export default function slashTipPlugin() {
 	return new Plugin({
@@ -59,7 +59,7 @@ class SlashTipPlugin implements PluginView {
 
 		this.element.style.top = posTop - wrapPos.top + 'px';
 
-		const isRtl = get(postLanguageStore).direction === 'rtl';
+		const isRtl = get(postVariantLanguageStore).direction === 'rtl';
 
 		if (isRtl) {
 			this.element.style.left = 25 + 'px';

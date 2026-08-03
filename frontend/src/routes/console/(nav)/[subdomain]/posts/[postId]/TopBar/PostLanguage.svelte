@@ -10,7 +10,7 @@
 	import { languagesStore } from '../../../../../lib/stores/languagesStore';
 	import {
 		addPostVariantStore,
-		postLanguageStore,
+		postVariantLanguageStore,
 		postStore,
 		updatePostEditingStatusValue
 	} from '../../postStore';
@@ -23,7 +23,7 @@
 	let isCreatingVariant = $state(false);
 
 	function handleSelect(lang: Language) {
-		if (lang.id === $postLanguageStore.id) return;
+		if (lang.id === $postVariantLanguageStore.id) return;
 		showDropdown = false;
 
 		// this triggers navigation
@@ -63,7 +63,7 @@
 		<Dropdown bind:show={showDropdown} align="end" width={250}>
 			{#snippet trigger()}
 				<Button color="input" disabled={isCreatingVariant} size="small">
-					{$postLanguageStore.name}
+					{$postVariantLanguageStore.name}
 					{#snippet end()}
 						<IconCaretDown size={12} />
 					{/snippet}
@@ -75,9 +75,9 @@
 					{#each $languagesStore as language}
 						<ActionListItem
 							on:select={() => handleSelect(language)}
-							disabled={language.id === $postLanguageStore.id}
+							disabled={language.id === $postVariantLanguageStore.id}
 							style="
-                                {language.id === $postLanguageStore.id &&
+                                {language.id === $postVariantLanguageStore.id &&
 								'background-color:var(--accent-light-mid)'}
                             "
 						>
