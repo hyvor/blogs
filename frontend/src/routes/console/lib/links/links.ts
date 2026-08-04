@@ -119,6 +119,7 @@ export function getFullUrl(href: string, baseUrl: string): URL | null {
 }
 
 export function calculateLinkAnalysis(variant: PostVariant): Record<string, number> {
+	return {}; // TODO:
 	const content = variant.content_unsaved || variant.content;
 	const links = getLinksFromContent(content, variant.url);
 

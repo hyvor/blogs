@@ -10,6 +10,7 @@ let seoTimeout: null | ReturnType<typeof setTimeout> = null;
 export const variantSeoStore = derived(
 	[postVariantStore, blogStore, postVariantLanguageStore],
 	([variant, blog, language], set) => {
+		return; // TODO:
 		if (seoTimeout) {
 			clearTimeout(seoTimeout);
 		}

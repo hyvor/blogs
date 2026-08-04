@@ -9,7 +9,6 @@
 	import type { PostVariant } from '../../../../../../lib/types';
 	import { Editor } from '@hyvor/richtext';
 	import { uploadMedia } from '../../../../tools/media/mediaActions';
-	import type { EditorView } from 'prosemirror-view';
 	import wordCountPlugin from './plugins/plugin-wordcount';
 
 	let uniqueKey = $derived(`version-1`);
@@ -33,17 +32,10 @@
 		// handleEditorEventHandlers(name, event);
 	}
 
-	let editorView: EditorView = $state({} as EditorView);
 	let value = $derived(
 		$postVariantStore![$postCurrentContentKey] ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
-
-	$effect(() => {
-		if (editorView && editorView.state) {
-			// updatePostEditingStatusValue('editorView', editorView);
-		}
-	});
 </script>
 
 <div class="editor">
