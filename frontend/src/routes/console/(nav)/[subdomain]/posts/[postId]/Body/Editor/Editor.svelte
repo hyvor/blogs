@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		postCurrentContentKey,
+		postEditor,
 		postVariantStore,
 		updatePostEditingStatusValue,
 		updatePostVariantStore
@@ -49,7 +50,7 @@
 	{#key uniqueKey}
 		<div class="wrap">
 			<Editor
-				bind:editorView
+				bind:this={$postEditor}
 				{value}
 				onvaluechange={handleChange}
 				ondomevent={handleEvent}

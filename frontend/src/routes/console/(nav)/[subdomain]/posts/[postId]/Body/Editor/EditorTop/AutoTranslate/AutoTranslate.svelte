@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Button, Loader, toast } from '@hyvor/design/components';
 	import {
-		increaseEditorVersion,
+		postCurrentContentKey,
+		postEditor,
 		postStore,
 		postVariantLanguageStore,
 		postVariantStore,
@@ -32,7 +33,7 @@
 				const updates = {
 					title: res.title,
 					description: res.description,
-					content: res.content // TODO: handle content_unsaved
+					[$postCurrentContentKey]: res.content
 				} as Partial<PostVariant>;
 
 				if ($postVariantStore?.slug === null) {
@@ -40,7 +41,7 @@
 				}
 
 				updatePostVariantStore(updates);
-				increaseEditorVersion();
+				$postEditor.setContent(res.content);
 			})
 			.catch((err) => {
 				toast.error('Auto-translation failed. Please try again later: ' + err.message);

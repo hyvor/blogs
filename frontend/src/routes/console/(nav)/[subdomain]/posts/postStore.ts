@@ -1,7 +1,7 @@
 import { derived, writable } from 'svelte/store';
 import { languagesStore } from '../../../lib/stores/languagesStore';
 import type { Post, PostVariant } from '../../../lib/types';
-import type { EditorView } from 'prosemirror-view';
+import type { Editor } from '@hyvor/richtext';
 
 // types
 
@@ -15,6 +15,7 @@ export const postSidebarStore = writable<PostSidebar>('settings');
 export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
 export const postEditingPublished = writable<boolean>(false); // whether currently editing a published post
+export const postEditor = writable<Editor>();
 
 // derived
 
@@ -71,15 +72,6 @@ export const postEditingStatusStore = writable<PostEditingStatus>();
 
 export function updatePostEditingStatusValue() {
 	throw new Error('Function not implemented.');
-}
-
-export function increaseEditorVersion() {
-	postEditingStatusStore.update((status) => {
-		return {
-			...status,
-			editorVersion: status.editorVersion + 1
-		};
-	});
 }
 
 export function updatePostStore(values: Partial<Post>, original = false) {
