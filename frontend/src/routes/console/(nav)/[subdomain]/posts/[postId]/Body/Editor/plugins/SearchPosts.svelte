@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createBubbler, stopPropagation } from 'svelte/legacy';
 
+	// TODO: this needs to be implemented in the new editor somehow
+
 	const bubble = createBubbler();
 	import {
 		ActionList,

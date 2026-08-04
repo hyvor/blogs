@@ -3,7 +3,6 @@
 		postCurrentContentKey,
 		postEditor,
 		postVariantStore,
-		updatePostEditingStatusValue,
 		updatePostVariantStore
 	} from '../../../postStore';
 	import PublishedOverlay from './PublishedOverlay.svelte';
@@ -11,6 +10,7 @@
 	import { Editor } from '@hyvor/richtext';
 	import { uploadMedia } from '../../../../tools/media/mediaActions';
 	import type { EditorView } from 'prosemirror-view';
+	import wordCountPlugin from './plugins/plugin-wordcount';
 
 	let uniqueKey = $derived(`version-1`);
 
@@ -89,6 +89,7 @@
 						};
 					}
 				}}
+				plugins={[wordCountPlugin()]}
 			/>
 			<PublishedOverlay />
 		</div>
