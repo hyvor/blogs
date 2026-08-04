@@ -1,4 +1,4 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import { languagesStore } from '../../../lib/stores/languagesStore';
 import type { Post, PostVariant } from '../../../lib/types';
 import type { EditorView } from 'prosemirror-view';
@@ -12,8 +12,8 @@ export type PostSidebar = 'settings' | 'seo' | 'links' | 'ai';
 export const postOriginalStore = writable<Post>();
 export const postStore = writable<Post>();
 export const postSidebarStore = writable<PostSidebar>('settings');
-export const postVariantOriginalStore = writable<PostVariant | null>(null);
-export const postVariantStore = writable<PostVariant | null>(null);
+export const postVariantOriginalStore = writable<PostVariant>();
+export const postVariantStore = writable<PostVariant>();
 export const postEditingPublished = writable<boolean>(false); // whether currently editing a published post
 
 // derived
@@ -21,8 +21,7 @@ export const postEditingPublished = writable<boolean>(false); // whether current
 export const postVariantLanguageStore = derived(
 	[postVariantStore, languagesStore],
 	([postVariant, languages]) => {
-		if (!postVariant) return null;
-		return languages.find((l) => l.id === postVariant.language_id) || null;
+		return languages.find((l) => l.id === postVariant.language_id)!;
 	}
 );
 
@@ -70,16 +69,8 @@ export const postEditingStatusStore = writable<PostEditingStatus>();
 // 	});
 // }
 
-export function updatePostEditingStatusValue<T extends keyof PostEditingStatus>(
-	key: T,
-	value: PostEditingStatus[T]
-) {
-	postEditingStatusStore.update((status) => {
-		return {
-			...status,
-			[key]: value
-		};
-	});
+export function updatePostEditingStatusValue() {
+	throw new Error('Function not implemented.');
 }
 
 export function increaseEditorVersion() {
@@ -123,35 +114,3 @@ export function updatePostVariantStore(values: Partial<PostVariant>, original = 
 		});
 	});
 }
-
-export function addPostVariantStore(variant: PostVariant, original = true) {
-	const stores = [postStore];
-	if (original) {
-		stores.push(postOriginalStore);
-	}
-	stores.forEach((store) => {
-		store.update((post) => {
-			post.variants.push(variant);
-			return post;
-		});
-	});
-}
-
-export function removePostVariantStore(languageId: number, original = true) {
-	const stores = [postStore];
-	if (original) {
-		stores.push(postOriginalStore);
-	}
-
-	stores.forEach((store) => {
-		store.update((post) => {
-			post.variants = post.variants.filter((v) => v.language_id !== languageId);
-			return post;
-		});
-	});
-}
-
-// export function setPostAndPostOriginalStore(post: Post) {
-// 	postStore.set({ ...post });
-// 	postOriginalStore.set({ ...post });
-// }

@@ -33,11 +33,14 @@
 	}
 
 	let editorView: EditorView = $state({} as EditorView);
-	let value = $derived($postVariantStore![$postCurrentContentKey] || '{}');
+	let value = $derived(
+		$postVariantStore![$postCurrentContentKey] ||
+			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
+	);
 
 	$effect(() => {
 		if (editorView && editorView.state) {
-			updatePostEditingStatusValue('editorView', editorView);
+			// updatePostEditingStatusValue('editorView', editorView);
 		}
 	});
 </script>

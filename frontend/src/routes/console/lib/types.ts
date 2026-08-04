@@ -175,7 +175,7 @@ export type Post = {
 	code_head: string | null;
 	code_foot: string | null;
 
-	// variants: PostVariant[];
+	variant_statuses: PostVariantStatusItem[];
 
 	tags: Tag[];
 	authors: User[];
@@ -202,6 +202,7 @@ export type PostVariant = {
 };
 
 export type PostVariantStatusItem = {
+	id: number;
 	language_id: number;
 	status: PostStatus;
 };

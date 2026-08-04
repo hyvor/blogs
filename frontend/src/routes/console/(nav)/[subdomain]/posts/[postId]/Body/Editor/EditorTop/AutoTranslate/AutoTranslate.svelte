@@ -2,27 +2,32 @@
 	import { Button, Loader, toast } from '@hyvor/design/components';
 	import {
 		increaseEditorVersion,
-		postEditingStatusStore,
 		postStore,
 		postVariantLanguageStore,
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../../../postStore';
 	import IconMagic from '@hyvor/icons/IconMagic';
-	import {
-		getLanguageByCode,
-		languagesStore
-	} from '../../../../../../../../lib/stores/languagesStore';
 	import { autoTranslate } from './autoTranslateActions';
 	import type { PostVariant } from '../../../../../../../../lib/types';
+	import { getPrimaryLanguage } from '../../../../../../../../lib/stores/languagesStore';
 
 	let loading = $state(false);
 
 	function handleTranslate() {
+		const primaryLanguageId = getPrimaryLanguage().id;
+		const variantId = $postStore.variant_statuses.find(
+			(v) => v.language_id === primaryLanguageId
+		)?.id;
+
+		if (!variantId) {
+			toast.error('Primary language variant not found');
+			return;
+		}
+
 		loading = true;
 
-		// TODO: handle postID vs postVariantID
-		autoTranslate($postStore.id, $postVariantLanguageStore!.code)
+		autoTranslate(variantId, $postVariantLanguageStore!.code)
 			.then((res) => {
 				const updates = {
 					title: res.title,

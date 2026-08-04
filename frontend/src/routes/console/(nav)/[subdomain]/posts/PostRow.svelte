@@ -102,7 +102,7 @@
 
 <a
 	class="post-list-item"
-	href={consoleUrlWithBlog(`/posts/${post.id}`)}
+	href={consoleUrlWithBlog(`/posts/${post.id}/${primaryLanguage.code}`)}
 	style:view-transition-name={`post-${post.id}`}
 >
 	<div class="post-main">
@@ -112,25 +112,26 @@
 		</div>
 
 		{#if post.slug && status === 'published'}
-			<span
-				class="post-slug"
-				role="link"
-				tabindex={0}
-				onclick={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					window.open(post.url || '', '_blank');
-				}}
-				onkeydown={(e) => {
-					if (e.key === 'Enter') {
+			<span class="post-slug">
+				<span
+					role="link"
+					tabindex={0}
+					onclick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
 						window.open(post.url || '', '_blank');
-					}
-				}}
-			>
-				{post.slug || ''}
-				<IconBoxArrowUpRight size={10} />
+					}}
+					onkeydown={(e) => {
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							e.stopPropagation();
+							window.open(post.url || '', '_blank');
+						}
+					}}
+				>
+					{post.slug || ''}
+					<IconBoxArrowUpRight size={10} />
+				</span>
 			</span>
 		{/if}
 
@@ -269,7 +270,7 @@
 		font-size: 12px;
 		color: var(--link);
 	}
-	.post-slug:hover {
+	.post-slug span:hover {
 		text-decoration: underline;
 	}
 

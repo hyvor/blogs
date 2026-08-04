@@ -4,11 +4,10 @@
 		postCurrentContentKey,
 		postVariantOriginalStore,
 		postVariantStore
-	} from '../../postStore';
-	import { updatePostVariant } from '../../postActions';
-	import { Tag, toast } from '@hyvor/design/components';
+	} from '../../../postStore';
+	import { updatePostVariant } from '../../../postActions';
+	import { toast } from '@hyvor/design/components';
 	import { beforeNavigate } from '$app/navigation';
-	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 
 	let key = $derived($postCurrentContentKey as 'content' | 'content_unsaved');
 	let hasChanged = $derived($postVariantStore[key] !== $postVariantOriginalStore[key]);
@@ -60,15 +59,12 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <span class="save-text">
-	<UnsavedTag
-		show={hasChanged}
-		loaderState={isSaving ? 'loading' : 'none'}
-		size="small"
-		addMarginTop={false}
-	/>
-
-	{#if !hasChanged}
-		<Tag size="small" color="green">Saved</Tag>
+	{#if isSaving}
+		Saving...
+	{:else if hasChanged}
+		Unsaved changes
+	{:else}
+		Saved
 	{/if}
 </span>
 

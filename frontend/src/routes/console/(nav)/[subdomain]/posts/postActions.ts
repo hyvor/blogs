@@ -3,6 +3,7 @@ import type { Post, PostVariant, PostListItem, User, Tag } from '../../../lib/ty
 import consoleApi from '../../../lib/consoleApi';
 import {
 	postStore,
+	postVariantLanguageStore,
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
