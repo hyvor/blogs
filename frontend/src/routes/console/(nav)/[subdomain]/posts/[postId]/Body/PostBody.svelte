@@ -20,7 +20,7 @@
 		<Title />
 	</div>
 
-	<!-- <Editor /> -->
+	<Editor />
 
 	<div class="editor-footer">
 		<!-- see plugin-wordcount.ts -->

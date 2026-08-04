@@ -1,26 +1,21 @@
 <script lang="ts">
 	import {
-		postEditingStatusStore,
+		postCurrentContentKey,
 		postVariantStore,
 		updatePostEditingStatusValue,
 		updatePostVariantStore
 	} from '../../../postStore';
-	import EditorTop from './EditorTop/EditorTop.svelte';
 	import PublishedOverlay from './PublishedOverlay.svelte';
 	import type { PostVariant } from '../../../../../../lib/types';
 	import { Editor } from '@hyvor/richtext';
 	import { uploadMedia } from '../../../../tools/media/mediaActions';
 	import type { EditorView } from 'prosemirror-view';
-	import AutoTranslate from './EditorTop/AutoTranslate/AutoTranslate.svelte';
 
-	let uniqueKey = $derived(
-		`-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
-			`-version-${$postEditingStatusStore.editorVersion}`
-	);
+	let uniqueKey = $derived(`version-1`);
 
 	function handleChange(value: string) {
 		const parsed = JSON.parse(value);
-		const key = $postEditingStatusStore.isEditingPublished ? 'content_unsaved' : 'content';
+		const key = $postCurrentContentKey;
 
 		const updates = {
 			[key]: value
@@ -38,6 +33,7 @@
 	}
 
 	let editorView: EditorView = $state({} as EditorView);
+	let value = $derived($postVariantStore![$postCurrentContentKey] || '{}');
 
 	$effect(() => {
 		if (editorView && editorView.state) {
@@ -47,13 +43,11 @@
 </script>
 
 <div class="editor">
-	<!-- <EditorTop /> -->
-
 	{#key uniqueKey}
 		<div class="wrap">
 			<Editor
 				bind:editorView
-				value={null}
+				{value}
 				onvaluechange={handleChange}
 				ondomevent={handleEvent}
 				config={{

@@ -4,6 +4,7 @@
 	const bubble = createBubbler();
 	import { onMount, tick } from 'svelte';
 	import {
+		postEditingPublished,
 		postEditingStatusStore,
 		postVariantStore,
 		updatePostEditingStatusValue,
@@ -12,7 +13,7 @@
 	import IconLock from '@hyvor/icons/IconLock';
 
 	let show = $derived(
-		$postVariantStore.status === 'published' && !$postEditingStatusStore.isEditingPublished
+		$postVariantStore.status === 'published' // && !$postEditingStatusStore.isEditingPublished
 	);
 
 	let messageEl: HTMLDivElement | undefined = $state();
@@ -35,7 +36,8 @@
 	});
 
 	async function handleClick() {
-		updatePostEditingStatusValue('isEditingPublished', true);
+		postEditingPublished.set(true);
+
 		if ($postVariantStore.content_unsaved === null)
 			updatePostVariantStore({ content_unsaved: $postVariantStore.content });
 		await tick();
@@ -45,7 +47,7 @@
 
 <svelte:window onscrollcapture={positionMessage} />
 
-{#if show}
+{#if show && false}
 	<div
 		class="overlay"
 		bind:this={overlayEl}
