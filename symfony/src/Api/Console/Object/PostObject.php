@@ -8,6 +8,7 @@ use App\Entity\Post;
 class PostObject
 {
     public int $id;
+    public string $preview_id;
     public int $created_at;
     public int $updated_at;
     public ?int $published_at;
@@ -31,8 +32,10 @@ class PostObject
         Blog $blog,
         TagObjectFactory $tagObjectFactory,
         UserObjectFactory $userObjectFactory,
+        string $previewId
     ) {
         $this->id = $post->getId();
+        $this->preview_id = $previewId;
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $this->updated_at = $post->getUpdatedAt()->getTimestamp();
         $this->published_at = $post->getPublishedAt()?->getTimestamp();

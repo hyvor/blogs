@@ -295,9 +295,9 @@ class TemplateRendererService
 
             if ($routeName === 'preview') {
                 $variant = $model->getVariants()->filter(fn($v) => $v->getLanguage()->getId() === $language->getId())->first();
-
-                if ($variant && $variant->getContentUnsaved()) {
-                    $postObj->content = $this->postContentService->getHtml($variant->getContentUnsaved(), $blog);
+                $previewContent = $variant ? $variant->getContentUnsaved() ?? $variant->getContent() : null;
+                if ($previewContent) {
+                    $postObj->content = $this->postContentService->getHtml($previewContent, $blog);
                 }
             }
 

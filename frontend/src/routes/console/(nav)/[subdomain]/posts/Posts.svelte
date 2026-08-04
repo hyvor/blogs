@@ -13,6 +13,7 @@
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
 
 	interface Props {
 		pages?: boolean;
@@ -86,7 +87,7 @@
 		createPost(pages)
 			.then((res) => {
 				toast.success(`${pages ? 'Page' : 'Post'} created`, { id: toastId });
-				goto(consoleUrlWithBlog(`/posts/${res.id}`));
+				goto(consoleUrlWithBlog(`/posts/${res.id}/${getPrimaryLanguage().code}`));
 			})
 			.catch((e) => {
 				toast.error(e.message, { id: toastId });
@@ -137,7 +138,10 @@
 			<IconMessage empty message="No posts found" />
 		{:else}
 			{#each posts as post (post.id)}
-				<PostRow {post} onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))} />
+				<PostRow
+					{post}
+					onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))}
+				/>
 			{/each}
 
 			<div class="load-more-wrap">
