@@ -1,12 +1,21 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { postEditingPublished, postEditor, postVariantStore } from '../../../postStore';
+	import {
+		postCurrentContentKey,
+		postEditingPublished,
+		postEditor,
+		postVariantStore
+	} from '../../../postStore';
+	import Compare from '../Compare/Compare.svelte';
 
 	async function handleEditing() {
 		postEditingPublished.update((v) => !v);
 		await tick();
+		$postEditor.setContent($postVariantStore[$postCurrentContentKey]!);
 		$postEditor.focus();
 	}
+
+	let compare = $state(false);
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
@@ -25,7 +34,15 @@
 				Switch to editing mode
 			{/if}
 		</button>
+		{#if $postEditingPublished}
+			&nbsp;&nbsp;&middot;&nbsp;
+			<button onclick={() => (compare = true)}> Compare</button>
+		{/if}
 	</div>
+{/if}
+
+{#if compare}
+	<Compare />
 {/if}
 
 <style>

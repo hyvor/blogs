@@ -6,25 +6,22 @@
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
-	import PublishedOverlay from './PublishedOverlay.svelte';
 	import type { PostVariant } from '../../../../../../lib/types';
 	import { Editor } from '@hyvor/richtext';
-	import { uploadMedia } from '../../../../tools/media/mediaActions';
 	import wordCountPlugin from './plugins/plugin-wordcount';
+	import { editorConfig, schema } from './editor';
 
 	let uniqueKey = $derived(`version-1`);
 
 	function handleChange(value: string) {
-		const parsed = JSON.parse(value);
-		const key = $postCurrentContentKey;
+		let key: 'content' | 'content_unsaved' = 'content';
+		if ($postEditingPublished) {
+			key = 'content_unsaved';
+		}
 
 		const updates = {
 			[key]: value
 		} as Partial<PostVariant>;
-
-		/* if (key === 'content_unsaved') {
-            updates.content = e.detail;
-        } */
 
 		updatePostVariantStore(updates);
 	}
@@ -54,41 +51,8 @@
 				onvaluechange={handleChange}
 				ondomevent={handleEvent}
 				editable={isEditable}
-				config={{
-					colorButtonBackground: '#5A8387',
-					colorButtonText: '#ffffff',
-
-					codeBlockEnabled: true,
-					codeBlockConfig: {
-						language: true,
-						fileName: true,
-						annotations: true,
-						annotationsUrl: null
-					},
-
-					customHtmlEnabled: true,
-					buttonEnabled: true,
-
-					tableEnabled: true,
-					bookmarkEnabled: true,
-
-					imageEnabled: true,
-
-					tocEnabled: true,
-					audioEnabled: true,
-					embedEnabled: true,
-
-					fileMaxSizeInMB: 10,
-					fileUploader: async (file, name, type) => {
-						if (type !== 'image') {
-							return null;
-						}
-						const media = await uploadMedia(file, name);
-						return {
-							url: media.url
-						};
-					}
-				}}
+				{schema}
+				{editorConfig}
 				plugins={[wordCountPlugin()]}
 			/>
 		</div>
