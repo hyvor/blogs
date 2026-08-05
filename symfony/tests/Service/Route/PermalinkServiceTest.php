@@ -64,6 +64,36 @@ class PermalinkServiceTest extends KernelTestCase {
         );
     }
 
+    // custom domain TLS is handled separately (on-demand) and is not affected by TLS_MODE
+    public function test_blog_url_custom_domain_ignores_tls_mode(): void
+    {
+        $this->setEnvVar('TLS_MODE', 'disabled');
+
+        $blog = new Blog();
+        $blog->setHostingAt(BlogHostingAt::DOMAIN);
+        $blog->setCustomDomain(new CustomDomain()->setDomain('supun.io'));
+
+        $this->assertSame(
+            'https://supun.io',
+            $this->getPermalinkService()->getBlogUrl($blog)
+        );
+    }
+
+    public function test_blog_url_subdomain_no_delivery_url_tls_mode_disabled(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', '');
+        $this->setEnvVar('TLS_MODE', 'disabled');
+
+        $blog = new Blog();
+        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
+        $blog->setSubdomain('supun');
+
+        $this->assertSame(
+            'http://blogs.hyvor.com/blog/supun',
+            $this->getPermalinkService()->getBlogUrl($blog)
+        );
+    }
+
     public function test_blog_url_self_hosting(): void
     {
         $blog = new Blog();

@@ -113,6 +113,53 @@ S3_USE_PATH_STYLE_ENDPOINT=false</code
 	using <code>POSTGRES_PASSWORD</code>, so you do not need to change it.
 </p>
 
+<h3 id="tls">TLS Configuration</h3>
+
+<p>
+	<code>TLS_MODE</code> controls how HTTPS is handled for the app domain (<code>DOMAIN_APP</code>).
+	It does not affect custom domains attached to individual blogs, which always get TLS
+	certificates automatically. Set it to one of the following:
+</p>
+
+<Table columns="120px 1fr" style="bordered">
+	<TableRow head>
+		<div>Mode</div>
+		<div>Behavior</div>
+	</TableRow>
+	<TableRow>
+		<div><code>auto</code></div>
+		<div>
+			Default. Caddy automatically obtains and renews a certificate from Let's Encrypt. Requires
+			<code>DOMAIN_APP</code> to be publicly resolvable, with ports 80 and 443 reachable from the internet.
+		</div>
+	</TableRow>
+	<TableRow>
+		<div><code>external</code></div>
+		<div>
+			Use this if you run a reverse proxy (Nginx, Traefik, a load balancer, etc.) in front of Hyvor
+			Blogs that terminates TLS. The container is reached over HTTP only; only port 80 needs to be
+			published. The container does not redirect HTTP to HTTPS itself in this mode &mdash; handle
+			that in your reverse proxy if needed. Make sure your proxy forwards the
+			<code>X-Forwarded-Proto: https</code> and <code>X-Forwarded-For</code> headers, and that its IP
+			is included in <code>TRUSTED_PROXIES</code>.
+		</div>
+	</TableRow>
+	<TableRow>
+		<div><code>manual</code></div>
+		<div>
+			Provide your own certificate and key by mounting them into the container at
+			<code>/certs/cert.pem</code> and <code>/certs/key.pem</code>.
+		</div>
+	</TableRow>
+	<TableRow>
+		<div><code>disabled</code></div>
+		<div>
+			TLS is fully disabled and no HTTPS redirect happens. All links are generated as
+			<code>http://</code>. Only use this on a trusted internal network.
+		</div>
+	</TableRow>
+</Table>
+
 <h2>Start</h2>
 
 <pre><code>docker compose up -d</code></pre>

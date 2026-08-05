@@ -27,7 +27,10 @@
 }
 
 # main app
-{$DOMAIN_APP}:80 {
+# see run script for APP_ADDRESS / APP_TLS_DIRECTIVE (from TLS_MODE)
+{$APP_ADDRESS} {
+
+	{$APP_TLS_DIRECTIVE}
 
 	handle /api/* {
 		root * /app/backend/public

@@ -102,7 +102,7 @@ class ExportService
             return;
         }
 
-        $url = 'https://' . $this->appConfig->getDomainApp() . '/api/media/' . $path;
+        $url = $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/api/media/' . $path;
 
         $export->setStatus(JobStatus::COMPLETED);
         $export->setUrl($url);
