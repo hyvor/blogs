@@ -33,247 +33,272 @@ import Import from './content/import/Import.svelte';
 import ImportWordPress from './content/import/ImportWordPress.svelte';
 import HyvorTalkDoc from './content/hyvor-talk/HyvorTalkDoc.svelte';
 import HyvorPostDoc from './content/hyvor-post/HyvorPostDoc.svelte';
-import type { Component } from 'svelte';
+import type { NavSectionConfig } from '@hyvor/design/marketing';
 
-export const categories: Category[] = [
+export const sections: NavSectionConfig[] = [
 	{
-		name: 'Intro',
-		pages: [
+		name: '',
+		navs: [
 			{
+				type: 'page',
 				slug: '',
 				name: 'Introduction',
-				component: Introduction
+				content: Introduction
 			},
 
 			{
+				type: 'page',
 				slug: 'writing',
 				name: 'Writing',
-				component: Writing
+				content: Writing
 			},
 
 			{
+				type: 'page',
 				slug: 'theme',
 				name: 'Theme',
-				component: Theme
+				content: Theme
 			}
 		]
 	},
 
 	{
 		name: 'Hosting',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'custom-domain',
 				name: 'Custom  Domain',
-				component: CustomDomain
+				content: CustomDomain
 			},
 			{
+				type: 'page',
 				slug: 'subdirectory',
 				name: 'Subdirectory',
-				component: SubDirectoryHosting
+				content: SubDirectoryHosting
 			},
 			{
+				type: 'page',
 				slug: 'headless',
 				name: 'Headless',
-				component: Headless
+				content: Headless
 			}
 		]
 	},
 
 	{
 		name: 'Features',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'languages',
 				name: 'Languages',
-				component: Languages
+				content: Languages
 			},
 			{
+				type: 'page',
 				slug: 'users',
 				name: 'Users',
-				component: Users
+				content: Users
 			},
 			{
+				type: 'page',
 				slug: 'tags',
 				name: 'Tags',
-				component: Tags
+				content: Tags
 			},
 			{
+				type: 'page',
 				slug: 'media',
 				name: 'Media',
-				component: Media
+				content: Media
 			},
 			{
+				type: 'page',
 				slug: 'fonts',
 				name: 'Fonts',
-				component: Fonts
+				content: Fonts
 			},
 			{
+				type: 'page',
 				slug: 'seo',
 				name: 'SEO',
-				component: Seo
+				content: Seo
 			},
 			{
+				type: 'page',
 				slug: 'navigation-links',
 				name: 'Navigation Links',
-				component: NavigationLinks
+				content: NavigationLinks
 			},
 			{
+				type: 'page',
 				slug: 'redirects',
 				name: 'Redirects',
-				component: Redirect
+				content: Redirect
 			},
 			{
+				type: 'page',
 				slug: 'custom-code',
 				name: 'Custom Code',
-				component: CustomCode
+				content: CustomCode
 			},
 			{
+				type: 'page',
 				slug: 'services',
 				name: 'Services',
-				component: Services
+				content: Services
 			},
 			{
+				type: 'page',
 				slug: 'routes',
 				name: 'Routes',
-				component: Routes
+				content: Routes
 			},
 			{
+				type: 'page',
 				slug: 'syntax-highlighting',
 				name: 'Syntax Highlighting',
-				component: SyntaxHighlighting
+				content: SyntaxHighlighting
 			}
 		]
 	},
 
 	{
 		name: 'Integrations',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'hyvor-talk',
 				name: 'Hyvor Talk',
-				component: HyvorTalkDoc
+				content: HyvorTalkDoc
 			},
 			{
+				type: 'page',
 				slug: 'hyvor-post',
 				name: 'Hyvor Post',
-				component: HyvorPostDoc
+				content: HyvorPostDoc
 			}
 		]
 	},
 
 	{
 		name: 'Developer',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'webhooks',
 				name: 'Webhooks',
-				component: Webhooks
+				content: Webhooks
 			},
 			{
+				type: 'page',
 				slug: 'api-console',
 				name: 'Console API',
-				component: ApiConsole
+				content: ApiConsole
 			},
 			{
+				type: 'page',
 				slug: 'api-delivery',
 				name: 'Delivery API',
-				component: ApiDelivery
+				content: ApiDelivery
 			},
 			{
+				type: 'page',
 				slug: 'api-data',
 				name: 'Data API',
-				component: ApiData
+				content: ApiData
 			}
 		]
 	},
 
 	{
 		name: 'Data',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'export',
 				name: 'Export Data',
-				component: Export
+				content: Export
 			},
 			{
-				slug: 'import',
+				type: 'folding-section',
 				name: 'Import Data',
-				component: Import
-			},
-			{
-				slug: 'import-sitemap',
-				name: 'Sitemap',
-				component: ImportSitemap,
-				parent: 'import'
-			},
-			{
-				slug: 'import-wordpress',
-				name: 'WordPress',
-				component: ImportWordPress,
-				parent: 'import'
+				navs: [
+					{
+						type: 'page',
+						slug: 'import',
+						name: 'Overview',
+						content: Import
+					},
+					{
+						type: 'page',
+						slug: 'import-sitemap',
+						name: 'Sitemap',
+						content: ImportSitemap
+					},
+					{
+						type: 'page',
+						slug: 'import-wordpress',
+						name: 'WordPress',
+						content: ImportWordPress
+					}
+				]
 			}
 		]
 	},
 
 	{
 		name: 'Theme Development',
-		pages: [
+		navs: [
 			{
+				type: 'page',
 				slug: 'themes-overview',
 				name: 'Overview',
-				component: Overview
+				content: Overview
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-templates',
 				name: 'Templates',
-				component: ThemeTemplates
+				content: ThemeTemplates
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-styles',
 				name: 'Styling',
-				component: ThemesStyles
+				content: ThemesStyles
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-scripts',
 				name: 'Scripts',
-				component: Scripts
+				content: Scripts
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-internationalization',
 				name: 'Internationalization',
-				component: Internationalization
+				content: Internationalization
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-config',
 				name: 'Configuration',
-				component: Configuration
+				content: Configuration
 			},
 
 			{
+				type: 'page',
 				slug: 'themes-publishing',
 				name: 'Publishing',
-				component: Publishing
+				content: Publishing
 			}
 		]
 	}
 ];
-
-export const pages = categories.reduce((acc, category) => acc.concat(category.pages), [] as Page[]);
-
-interface Category {
-	name: string;
-	pages: Page[];
-}
-
-interface Page {
-	slug: string;
-	name: string;
-	component: Component;
-	parent?: string;
-}
