@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		postCurrentContentKey,
+		postEditingPublished,
 		postEditor,
 		postVariantStore,
 		updatePostVariantStore
@@ -36,6 +37,12 @@
 		$postVariantStore![$postCurrentContentKey] ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
+
+	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
+
+	$effect(() => {
+		$postEditor.setEditable(isEditable);
+	});
 </script>
 
 <div class="editor">
@@ -46,6 +53,7 @@
 				{value}
 				onvaluechange={handleChange}
 				ondomevent={handleEvent}
+				editable={isEditable}
 				config={{
 					colorButtonBackground: '#5A8387',
 					colorButtonText: '#ffffff',
@@ -83,7 +91,6 @@
 				}}
 				plugins={[wordCountPlugin()]}
 			/>
-			<PublishedOverlay />
 		</div>
 	{/key}
 </div>

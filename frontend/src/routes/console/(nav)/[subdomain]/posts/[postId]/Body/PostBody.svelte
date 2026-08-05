@@ -4,6 +4,7 @@
 	import Editor from './Editor/Editor.svelte';
 	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
 	import Title from './Top/Title.svelte';
+	import PublishedNotice from './Footer/PublishedNotice.svelte';
 </script>
 
 <div
@@ -24,14 +25,17 @@
 	<Editor />
 
 	<div class="editor-footer">
-		<div class="footer-left">
-			<!-- see plugin-wordcount.ts -->
-			<span id="pm-word-count"></span>
-			<AutoTranslate />
-		</div>
+		<PublishedNotice />
+		<div class="footer-bottom">
+			<div class="footer-left">
+				<!-- see plugin-wordcount.ts -->
+				<span id="pm-word-count"></span>
+				<AutoTranslate />
+			</div>
 
-		<div class="footer-right">
-			<SaveStatus />
+			<div class="footer-right">
+				<SaveStatus />
+			</div>
 		</div>
 	</div>
 </div>
@@ -49,15 +53,18 @@
 		border-radius: 20px 20px 0 0;
 	}
 	.editor-footer {
-		padding: 10px 30px;
 		border-top: 1px solid var(--border);
 		position: sticky;
 		bottom: 0;
 		background: var(--box-background);
 		border-radius: 0 0 20px 20px;
+	}
+	.footer-bottom {
 		display: flex;
+		padding: 10px 30px;
 		justify-content: space-between;
 		align-items: center;
+		width: 100%;
 	}
 	.editor-footer #pm-word-count {
 		font-size: 12px;

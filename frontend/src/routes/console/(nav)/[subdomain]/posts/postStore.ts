@@ -46,15 +46,7 @@ export const postCurrentContentKey = derived(
 	}
 );
 
-export interface PostEditingStatus {
-	languageId: number;
-	sidebar: PostSidebar;
-	isEditingPublished: boolean;
-	editorView: EditorView | null;
-	postView: HTMLDivElement;
-	isSaving: boolean;
-	editorVersion: number; // to force re-rendering of editor
-}
+export interface PostEditingStatus {}
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
 
