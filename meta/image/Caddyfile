@@ -13,6 +13,20 @@
     metrics
 }
 
+# snippets for the app domain block below, chosen by the run script based on TLS_MODE
+(noop) {
+}
+
+# TLS_MODE=external: the container is only ever reached over HTTP (a reverse proxy in
+# front terminates TLS). If a request arrives without a trusted X-Forwarded-Proto: https
+# header, it didn't come through that proxy, so send it to the public https:// URL instead.
+(external_redirect) {
+	@needs_redirect {
+		not header X-Forwarded-Proto https
+	}
+	redir @needs_redirect https://{host}{uri} permanent
+}
+
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
@@ -27,7 +41,11 @@
 }
 
 # main app
-{$DOMAIN_APP}:80 {
+# see run script for APP_ADDRESS / APP_TLS_DIRECTIVE / APP_REDIRECT_SNIPPET (from TLS_MODE)
+{$APP_ADDRESS} {
+
+	import {$APP_REDIRECT_SNIPPET}
+	{$APP_TLS_DIRECTIVE}
 
 	handle /api/* {
 		root * /app/backend/public

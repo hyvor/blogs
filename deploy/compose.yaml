@@ -25,8 +25,13 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - blog_media:/app/media
+      # Uncomment if TLS_MODE=manual, and point TLS_CERT_FILE/TLS_KEY_FILE in .env to paths under /certs
+      # - /path/to/your/certs:/certs:ro
 
 volumes:
   postgres_data:

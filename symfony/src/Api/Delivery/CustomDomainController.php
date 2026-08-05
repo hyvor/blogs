@@ -40,7 +40,7 @@ class CustomDomainController
 
         if ($blog === null || $blog->getDeletedAt()) {
             return new RedirectResponse(
-                'https://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
+                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
                 302
             );
         }
