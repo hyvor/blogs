@@ -16,10 +16,6 @@ readonly class AppConfig
 
         #[Autowire('%env(string:TLS_MODE)%')]
         private string $tlsMode = 'auto',
-        #[Autowire('%env(default::TLS_CERT_FILE)%')]
-        private ?string $tlsCertFile = null,
-        #[Autowire('%env(default::TLS_KEY_FILE)%')]
-        private ?string $tlsKeyFile = null,
 
         #[Autowire('%env(string:default::UNSPLASH_ACCESS_KEY)%')]
         #[\SensitiveParameter]
@@ -62,16 +58,6 @@ readonly class AppConfig
     public function getTlsMode(): TlsMode
     {
         return TlsMode::from($this->tlsMode);
-    }
-
-    public function getTlsCertFile(): ?string
-    {
-        return $this->tlsCertFile;
-    }
-
-    public function getTlsKeyFile(): ?string
-    {
-        return $this->tlsKeyFile;
     }
 
     public function getUnsplashAccessKey(): ?string

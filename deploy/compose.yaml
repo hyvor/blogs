@@ -30,8 +30,9 @@ services:
       - "443:443"
     volumes:
       - blog_media:/app/media
-      # Uncomment if TLS_MODE=manual, and point TLS_CERT_FILE/TLS_KEY_FILE in .env to paths under /certs
-      # - /path/to/your/certs:/certs:ro
+      # Uncomment if TLS_MODE=manual.
+      # - /path/to/your/certs/cert.pem:/certs/cert.pem:ro
+      # - /path/to/your/certs/key.pem:/certs/key.pem:ro
 
 volumes:
   postgres_data:
