@@ -1,34 +1,24 @@
 import type { Component } from 'svelte';
+import type { NavSectionConfig } from '@hyvor/design/marketing';
 import Introduction from './content/Introduction.md';
 import Deploy from './content/Deploy.svelte';
 
-export const categories: Category[] = [
+export const sections: NavSectionConfig[] = [
 	{
-		name: 'Hosting',
-		pages: [
+		name: '',
+		navs: [
 			{
+				type: 'page',
 				slug: '',
 				name: 'Introduction',
-				component: Introduction as unknown as Component
+				content: Introduction as unknown as Component
 			},
 			{
+				type: 'page',
 				slug: 'deploy',
 				name: 'Deploy',
-				component: Deploy as unknown as Component
+				content: Deploy
 			}
 		]
 	}
 ];
-
-export const pages = categories.reduce((acc, category) => acc.concat(category.pages), [] as Page[]);
-
-interface Category {
-	name: string;
-	pages: Page[];
-}
-
-interface Page {
-	slug: string;
-	name: string;
-	component: Component;
-}
