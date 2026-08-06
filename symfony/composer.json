@@ -24,6 +24,7 @@
         "matthiasmullie/minify": "^1.3.75",
         "phiki/phiki": "^2.2.1",
         "sentry/sentry-symfony": "^5.11",
+        "symfony/ai-agent": "^0.12.0",
         "symfony/ai-anthropic-platform": "^0.12.0",
         "symfony/ai-mistral-platform": "^0.12.0",
         "symfony/ai-open-ai-platform": "^0.12.0",
