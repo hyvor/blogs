@@ -16,6 +16,52 @@ class DocUrlUpdater
 {
     public function __construct(private Node $document) {}
 
+    public function updateFromOldToNew(
+        string $oldUrl,
+        string $newUrl,
+        bool $updateMedia = true,
+        bool $updateLinks = true
+    ): Node {
+        return $this->update(
+            function (Node $media) use ($oldUrl, $newUrl, $updateMedia) {
+                if (!$updateMedia) {
+                    return false;
+                }
+
+                $oldMediaPrefix = $oldUrl . '/media/';
+
+                /** @var string $src */
+                $src = $media->attrs->get('src', false);
+
+                if (!$src) {
+                    return false;
+                }
+                if (!str_starts_with($src, $oldMediaPrefix)) {
+                    return false;
+                }
+
+                return $newUrl . '/media/' . substr($src, strlen($oldMediaPrefix));
+            },
+            function (Mark $link) use ($oldUrl, $newUrl, $updateLinks) {
+                if (!$updateLinks) {
+                    return false;
+                }
+
+                /** @var string $href */
+                $href = $link->attrs->get('href', false);
+
+                if (!$href) {
+                    return false;
+                }
+                if (!str_starts_with($href, $oldUrl)) {
+                    return false;
+                }
+
+                return $newUrl . substr($href, strlen($oldUrl));
+            }
+        );
+    }
+
     public function updateFromUpdater(
         UpdaterInterface $updater,
         bool $updateMedia = true,

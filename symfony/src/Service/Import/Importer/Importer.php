@@ -102,7 +102,10 @@ class Importer
                 $src = $node->attr('src');
                 $src = is_string($src) ? $src : '';
 
-                if ($src && str_starts_with($src, 'http')) {
+                if (
+                    $src &&
+                    (str_starts_with($src, 'http') || str_starts_with($src, 'file://'))
+                ) {
                     $node->attrs->set('src', $this->tryToUploadImage($src));
                 }
             }
@@ -111,8 +114,12 @@ class Importer
         return $document->toJson();
     }
 
-    private function tryToUploadImage(string $url): string
+    private function tryToUploadImage(string $url): ?string
     {
+        if (str_starts_with($url, 'file://')) {
+            return $this->uploadLocalImage($url);
+        }
+
         if (!$this->importImages) {
             return $url;
         }
@@ -128,5 +135,25 @@ class Importer
         }
 
         return $url;
+    }
+
+    private function uploadLocalImage(string $localUrl): ?string
+    {
+        $path = substr($localUrl, strlen('file://'));
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        try {
+            $media = $this->mediaService->uploadFromLocalPath($this->blog, $path);
+        } catch (MediaException) {
+            $media = null;
+        }
+
+        if ($media) {
+            return $this->permalinkService->getMediaPermalink($media, $this->blog);
+        }
+
+        return null;
     }
 }

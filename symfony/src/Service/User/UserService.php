@@ -86,6 +86,15 @@ class UserService
         return $this->userRepository->findOneBy(['slug' => $slug, 'blog' => $blog]);
     }
 
+    public function getOwner(Blog $blog): ?User
+    {
+        /** @var User|null */
+        return $this->userRepository->findOneBy(
+            ['blog' => $blog, 'role' => UserRole::ADMIN],
+            ['id' => 'ASC'],
+        );
+    }
+
     /**
      * @return User[]
      */

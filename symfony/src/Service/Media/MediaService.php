@@ -166,6 +166,44 @@ class MediaService
     }
 
     /** @throws MediaException */
+    public function uploadFromLocalPath(Blog $blog, string $localPath, ?int $postId = null): Media
+    {
+        if (!is_file($localPath)) {
+            throw new MediaException("Local file not found: {$localPath}");
+        }
+
+        $stream = fopen($localPath, 'r');
+        if ($stream === false) {
+            throw new MediaException("Error while reading local file: {$localPath}");
+        }
+
+        $extension = $this->extensionFromName($localPath);
+        $fileName = bin2hex(random_bytes(16)) . ($extension !== null ? '.' . $extension : '');
+        $fileName = $this->getUniqueFilename($blog->getId(), $fileName);
+
+        try {
+            $this->filesystem->writeStream($this->getPath($blog->getId(), $fileName), $stream);
+        } catch (FilesystemException $e) {
+            throw new MediaException('Error while uploading: ' . $e->getMessage());
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
+
+        $size = filesize($localPath);
+
+        return $this->createMedia(
+            $blog,
+            $postId,
+            $fileName,
+            $size !== false ? $size : 0,
+            basename($localPath),
+            $extension
+        );
+    }
+
+    /** @throws MediaException */
     public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
         try {
