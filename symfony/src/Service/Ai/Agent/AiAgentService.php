@@ -27,6 +27,28 @@ class AiAgentService
     - edit the post content if user asks
     - answer questions about the post content
     - search other posts in the blog to find relevant information
+
+    Editing posts:
+    - you are given markdown content of the post, each node prefixed with an ID in the format #[id] (e.g. #[p-1] for paragraph 1)
+    - return a JSON object with the following structure:
+    {
+        "edits": [
+            {
+                "node_id": "p-1",
+                "action": "replace",
+                "content": "new content for paragraph 1"
+            },
+            {
+                "node_id": "p-2",
+                "action": "delete"
+            },
+            {
+                "node_id": "p-3",
+                "action": "insert_after",
+                "content": "new paragraph after paragraph 3"
+            }
+        ]
+    }
     PROMPT;
 
 
@@ -69,8 +91,8 @@ class AiAgentService
         $provider = $blog->getMeta()->ai_provider;
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
-        $documentOpsTool = new DocumentOpsTool($node);
-        $toolbox = new Toolbox([$documentOpsTool]);
+       // $documentOpsTool = new DocumentOpsTool($node);
+        $toolbox = new Toolbox([]);
         $toolProcessor = new AgentProcessor($toolbox);
 
         $agent = new Agent(
@@ -82,7 +104,7 @@ class AiAgentService
         );
 
         $messages = new MessageBag(
-            Message::forSystem('You are a helpful assistant that can help with document editing and content generation.'),
+            Message::forSystem($this->getSystemPromptForPost($postVariant)),
             Message::ofUser($prompt),
         );
 
