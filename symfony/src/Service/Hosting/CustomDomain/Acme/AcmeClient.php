@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme;
+namespace App\Service\Hosting\CustomDomain\Acme;
 
-use App\Service\CustomDomain\Acme\Dto\AccountInternalDto;
-use App\Service\CustomDomain\Acme\Dto\AuthorizationResponse\AuthorizationResponse;
-use App\Service\CustomDomain\Acme\Dto\DirectoryDto;
-use App\Service\CustomDomain\Acme\Dto\FinalCertificate;
-use App\Service\CustomDomain\Acme\Dto\OrderResponse;
+use App\Service\Hosting\CustomDomain\Acme\Dto\AccountInternalDto;
+use App\Service\Hosting\CustomDomain\Acme\Dto\AuthorizationResponse\AuthorizationResponse;
+use App\Service\Hosting\CustomDomain\Acme\Dto\DirectoryDto;
+use App\Service\Hosting\CustomDomain\Acme\Dto\FinalCertificate;
+use App\Service\Hosting\CustomDomain\Acme\Dto\OrderResponse;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Clock\ClockInterface;

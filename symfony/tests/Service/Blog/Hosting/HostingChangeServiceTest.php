@@ -10,7 +10,7 @@ use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Blog\Hosting\UpdateBlogUrlsService;
 use App\Service\Cache\Event\CacheClearAllEvent;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\HostingChangeFactory;

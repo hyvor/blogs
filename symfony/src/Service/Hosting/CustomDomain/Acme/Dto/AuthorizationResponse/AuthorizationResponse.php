@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme\Dto\AuthorizationResponse;
+namespace App\Service\Hosting\CustomDomain\Acme\Dto\AuthorizationResponse;
 
-use App\Service\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 
 class AuthorizationResponse
 {

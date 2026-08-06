@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme;
+namespace App\Service\Hosting\CustomDomain\Acme;
 
 class PendingOrder
 {

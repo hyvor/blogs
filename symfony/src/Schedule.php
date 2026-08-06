@@ -2,10 +2,10 @@
 
 namespace App;
 
-use Symfony\Component\Lock\LockFactory;
-use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
-use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use App\Service\Blog\Message\HardDeleteBlogsMessage;
+use App\Service\Hosting\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
+use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;

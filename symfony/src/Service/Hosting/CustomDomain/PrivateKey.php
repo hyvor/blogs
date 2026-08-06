@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\CustomDomain;
+namespace App\Service\Hosting\CustomDomain;
 
 class PrivateKey
 {

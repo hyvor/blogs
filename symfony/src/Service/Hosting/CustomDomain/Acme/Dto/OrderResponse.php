@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme\Dto;
+namespace App\Service\Hosting\CustomDomain\Acme\Dto;
 
-use App\Service\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 
 readonly class OrderResponse
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\CustomDomain;
+namespace App\Service\Hosting\CustomDomain;
 
-use App\Service\CustomDomain\Exception\InternalCustomDomainVerificationException;
+use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;

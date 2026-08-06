@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\CustomDomain;
+namespace App\Service\Hosting\CustomDomain;
 
 use App\Entity\Blog;
-use App\Entity\Enum\CustomDomainStatus;
 use App\Entity\CustomDomain;
-use App\Service\CustomDomain\Acme\AcmeClient;
-use App\Service\CustomDomain\Acme\AcmeException;
+use App\Entity\Enum\CustomDomainStatus;
+use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Symfony\Component\Clock\ClockAwareTrait;

@@ -6,10 +6,13 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
-use App\Message\HostingChangeMessage;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +30,7 @@ class HostingChangeService
         private PermalinkService $permalinkService,
         private CustomDomainService $customDomainService,
         private EventDispatcherInterface $eventDispatcher,
+        private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler
     ) {
     }
 
@@ -117,11 +121,15 @@ class HostingChangeService
         $blog = $hostingChange->getBlog();
         $toAt = $hostingChange->getToAt();
 
-        $this->updateBlogUrlsService->updateUrls(
-            $blog,
-            $hostingChange->getFromUrl() ?? '',
-            $hostingChange->getToUrl() ?? ''
+        $message = new UpdateBlogUrlsMessage(
+            $blog->getId(),
+            UpdateBlogUrlEvent::HOSTING_CHANGED,
+            lockKeys: [],
+            blogOldUrl: $hostingChange->getFromUrl(),
+            blogNewUrl: $hostingChange->getToUrl()
         );
+
+        ($this->updateBlogUrlsMessageHandler)($message);
 
         if ($blog->getHostingAt() === BlogHostingAt::DOMAIN && $toAt !== BlogHostingAt::DOMAIN && $blog->getCustomDomain()) {
             $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Message;
+namespace App\Service\Hosting\CustomDomain\Message;
 
 use App\Service\App\Messenger\MessageTransport;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage(MessageTransport::ASYNC)]
-readonly class HostingChangeMessage
+readonly class RegenerateExpiredTlsCertificatesMessage
 {
-    public function __construct(public int $hostingChangeId) {}
+
 }

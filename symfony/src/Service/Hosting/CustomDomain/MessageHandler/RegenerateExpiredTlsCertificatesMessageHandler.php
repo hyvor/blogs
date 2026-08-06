@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\CustomDomain\MessageHandler;
+namespace App\Service\Hosting\CustomDomain\MessageHandler;
 
 use App\Entity\CustomDomain;
-use App\Service\CustomDomain\Acme\AcmeException;
-use App\Service\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

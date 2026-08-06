@@ -5,7 +5,7 @@ namespace App\Tests\Api\Console\Blog\Hosting;
 use App\Api\Console\Controller\HostingController;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\Enum\UserStatus;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;

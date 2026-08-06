@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme\Dto;
+namespace App\Service\Hosting\CustomDomain\Acme\Dto;
 
 class FinalCertificate
 {

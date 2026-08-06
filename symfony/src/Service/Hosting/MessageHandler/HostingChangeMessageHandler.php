@@ -1,11 +1,11 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Service\Hosting\MessageHandler;
 
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
-use App\Message\HostingChangeMessage;
 use App\Service\Blog\Hosting\HostingChangeService;
+use App\Service\Hosting\Message\HostingChangeMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Clock\ClockAwareTrait;

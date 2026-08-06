@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\CustomDomain\Acme\Dto\AuthorizationResponse;
+namespace App\Service\Hosting\CustomDomain\Acme\Dto\AuthorizationResponse;
 
 readonly class Challenge
 {

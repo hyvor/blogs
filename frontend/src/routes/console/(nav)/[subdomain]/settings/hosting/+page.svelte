@@ -139,6 +139,7 @@
 					title="Self-Hosted"
 					active={$hostingInfoStore.hosting_at === 'self'}
 					buttonLabel="Setup Self-Hosting"
+					buttonDisabled={!!$hostingInfoStore.change}
 					onclick={() => (showSelfHostingModal = true)}
 				>
 					{#snippet subtitle()}
