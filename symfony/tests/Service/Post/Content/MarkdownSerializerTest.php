@@ -343,6 +343,145 @@ class MarkdownSerializerTest extends KernelTestCase
         $this->assertSame($expected, $mardown);
     }
 
+    public function test_nested_lists(): void
+    {
 
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'bullet_list',
+                    'content' => [
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
+                                [
+                                    'type' => 'ordered_list',
+                                    'content' => [
+                                        [
+                                            'type' => 'list_item',
+                                            'content' => [
+                                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 1']]]
+                                            ]
+                                        ],
+                                        [
+                                            'type' => 'list_item',
+                                            'content' => [
+                                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 2']]]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $expected = <<<MD
+        - Item 1
+          1. Subitem 1
+          2. Subitem 2
+        - Item 2
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+    public function test_hard_break(): void
+    {
+
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type'    => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Line 1'],
+                        ['type' => 'hard_break'],
+                        ['type' => 'text', 'text' => 'Line 2']
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $expected = <<<MD
+        Line 1
+        Line 2
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+    public function test_table(): void
+    {
+
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'table',
+                    'content' => [
+                        [
+                            'type' => 'table_row',
+                            'content' => [
+                                [
+                                    'type'    => 'table_header',
+                                    'content' => [
+                                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 1']]]
+                                    ]
+                                ],
+                                [
+                                    'type'    => 'table_header',
+                                    'content' => [
+                                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 2']]]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'table_row',
+                            'content' => [
+                                [
+                                    'type'    => 'table_cell',
+                                    'content' => [
+                                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 1']]]
+                                    ]
+                                ],
+                                [
+                                    'type'    => 'table_cell',
+                                    'content' => [
+                                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 2']]]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $expected = <<<MD
+        | Header 1 | Header 2 |
+        | --- | --- |
+        | Cell 1 | Cell 2 |
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
 
 }

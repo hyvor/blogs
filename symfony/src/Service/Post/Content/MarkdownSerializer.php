@@ -24,13 +24,17 @@ class MarkdownSerializer
             return $text;
         }
 
-        $childrenMarkdown = '';
+        $getChildrenMarkdown = function() use ($node) {
+            $childrenMarkdown = '';
 
-        foreach ($node->content as $childNode) {
-            $childrenMarkdown .= $this->serialize($childNode);
-        }
+            foreach ($node->content as $childNode) {
+                $childrenMarkdown .= $this->serialize($childNode);
+            }
 
-        return $this->nodeToMarkdown($node, $childrenMarkdown);
+            return $childrenMarkdown;
+        };
+
+        return $this->nodeToMarkdown($node, $getChildrenMarkdown);
 
     }
 
@@ -51,7 +55,10 @@ class MarkdownSerializer
         };
     }
 
-    private function nodeToMarkdown(Node $node, string $children): string
+    /**
+     * @param callable(): string $children
+     */
+    private function nodeToMarkdown(Node $node, callable $children): string
     {
         return match (true) {
             // media
@@ -65,26 +72,34 @@ class MarkdownSerializer
 
             // text
             $node->type instanceof Nodes\Paragraph,
-            $node->type instanceof Nodes\CustomHtml => "$children\n\n",
-            $node->type instanceof Nodes\Heading\Heading => str_repeat('#', $node->attrs->level) . " $children\n\n",
-            $node->type instanceof Nodes\CodeBlock\CodeBlock => $this->codeBlockToMarkdown($node, $children),
+            $node->type instanceof Nodes\CustomHtml => "{$children()}\n\n",
+            $node->type instanceof Nodes\Heading\Heading => str_repeat('#', $node->attrs->level) . " {$children()}\n\n",
+            $node->type instanceof Nodes\CodeBlock\CodeBlock => $this->codeBlockToMarkdown($node, $children()),
 
             // blockquote
-            $node->type instanceof Nodes\Blockquote => $this->blockquoteToMarkdown($children),
-            $node->type instanceof Nodes\Callout\Callout => $this->calloutToMarkdown($node, $children),
+            $node->type instanceof Nodes\Blockquote => $this->blockquoteToMarkdown($children()),
+            $node->type instanceof Nodes\Callout\Callout => $this->calloutToMarkdown($node, $children()),
 
             // lists
             $node->type instanceof Nodes\BulletList => $this->listToMarkdown($node, ordered: false),
             $node->type instanceof Nodes\OrderedList => $this->listToMarkdown($node, ordered: true),
+
+            // table
+            $node->type instanceof Nodes\Table\Table => $this->tableToMarkdown($node),
+            $node->type instanceof Nodes\Table\TableRow,
+            $node->type instanceof Nodes\Table\TableCell\TableCell,
+            $node->type instanceof Nodes\Table\TableCell\TableHeader
+            => $children(),
 
             // wrappers
             $node->type instanceof Nodes\Doc,
             $node->type instanceof Nodes\Figure,
             $node->type instanceof Nodes\Figcaption,
             $node->type instanceof Nodes\ListItem
-            => $children,
+            => $children(),
 
             $node->type instanceof Nodes\HorizontalRule => "---\n\n",
+            $node->type instanceof Nodes\HardBreak => "\n",
 
             // special
             $node->type instanceof Nodes\Toc\Toc => "[#toc]\n\n",
@@ -111,8 +126,48 @@ class MarkdownSerializer
 
             $itemLines = explode("\n", trim($this->serialize($item)));
             foreach ($itemLines as $lineIndex => $line) {
-                $lines[] = $lineIndex === 0 ? "$marker $line" : ($line === '' ? '' : "$indent$line");
+                if ($lineIndex === 0) {
+                    $lines[] = "$marker $line";
+                } elseif ($line !== '') {
+                    // blank lines between blocks (e.g. after a paragraph) are dropped
+                    // so a tight list item doesn't get split apart by them
+                    $lines[] = "$indent$line";
+                }
             }
+        }
+
+        return implode("\n", $lines) . "\n\n";
+    }
+
+    /**
+     * The first row is assumed to be the header row (it's made up of
+     * table_header cells), as is the case for every table this schema
+     * can produce.
+     */
+    private function tableToMarkdown(Node $node): string
+    {
+        $rows = [];
+
+        foreach ($node->content as $row) {
+            $cells = [];
+
+            foreach ($row->content as $cell) {
+                $cellMarkdown = trim($this->serialize($cell));
+                $cells[] = str_replace(["\r\n", "\n"], ' ', $cellMarkdown);
+            }
+
+            $rows[] = $cells;
+        }
+
+        if (!$rows) {
+            return '';
+        }
+
+        $lines = ['| ' . implode(' | ', $rows[0]) . ' |'];
+        $lines[] = '| ' . implode(' | ', array_fill(0, count($rows[0]), '---')) . ' |';
+
+        foreach (array_slice($rows, 1) as $row) {
+            $lines[] = '| ' . implode(' | ', $row) . ' |';
         }
 
         return implode("\n", $lines) . "\n\n";
