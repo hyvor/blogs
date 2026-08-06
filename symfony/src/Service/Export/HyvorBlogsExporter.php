@@ -28,10 +28,6 @@ class HyvorBlogsExporter implements ExporterInterface
 {
     private const int BATCH_SIZE = 1000;
 
-    // routes, redirects and navigation items are not paginated, since they are
-    // always bounded to a small number per blog
-    private const int UNPAGINATED_LIMIT = 100_000;
-
     public function __construct(
         private BlogObjectFactory $blogObjectFactory,
         private LanguageService $languageService,
@@ -54,11 +50,30 @@ class HyvorBlogsExporter implements ExporterInterface
 
         $writer->value('blog', $this->blogObjectFactory->create($blog));
 
+        $this->exportLanguages($blog, $writer);
+        $this->exportPosts($blog, $writer);
+        $this->exportUsers($blog, $writer);
+        $this->exportTags($blog, $writer);
+        $this->exportMedia($blog, $writer);
+        $this->exportNavigation($blog, $writer);
+        $this->exportRoutes($blog, $writer);
+        $this->exportRedirects($blog, $writer);
+
+        $writer->end();
+
+        return $path;
+    }
+
+    private function exportLanguages(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->value('languages', array_map(
             fn($language) => new LanguageObject($language),
             $this->languageService->getAllLanguages($blog),
         ));
+    }
 
+    private function exportPosts(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->collection('posts', []);
         $offset = 0;
         while (true) {
@@ -78,7 +93,24 @@ class HyvorBlogsExporter implements ExporterInterface
             }
             $offset += self::BATCH_SIZE;
         }
+    }
 
+    /**
+     * @return PostVariantObject[]
+     */
+    private function exportPostVariants(Post $post, Blog $blog): array
+    {
+        $variants = $post->getVariants()->toArray();
+        usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
+
+        return array_map(
+            fn($variant) => $this->postObjectFactory->createVariant($variant, $post, $blog, setHtml: true),
+            $variants,
+        );
+    }
+
+    private function exportUsers(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->collection('users', []);
         $offset = 0;
         while (true) {
@@ -95,7 +127,10 @@ class HyvorBlogsExporter implements ExporterInterface
             }
             $offset += self::BATCH_SIZE;
         }
+    }
 
+    private function exportTags(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->collection('tags', []);
         $offset = 0;
         while (true) {
@@ -112,7 +147,10 @@ class HyvorBlogsExporter implements ExporterInterface
             }
             $offset += self::BATCH_SIZE;
         }
+    }
 
+    private function exportMedia(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->collection('media', []);
         $offset = 0;
         while (true) {
@@ -129,38 +167,41 @@ class HyvorBlogsExporter implements ExporterInterface
             }
             $offset += self::BATCH_SIZE;
         }
+    }
 
+    private function exportNavigation(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->value('navigation', array_map(
             fn($navigation) => new NavigationObject($navigation),
             $blog->getNavigations()->toArray(),
         ));
+    }
 
+    private function exportRoutes(Blog $blog, JsonFileWriter $writer): void
+    {
         $writer->value('routes', array_map(
             fn($route) => new RouteObject($route),
             $this->routeService->getRoutes($blog),
         ));
-
-        $writer->value('redirects', array_map(
-            fn($redirect) => new RedirectObject($redirect),
-            $this->redirectService->getRedirects($blog, '', self::UNPAGINATED_LIMIT, 0),
-        ));
-
-        $writer->end();
-
-        return $path;
     }
 
-    /**
-     * @return PostVariantObject[]
-     */
-    private function exportPostVariants(Post $post, Blog $blog): array
+    private function exportRedirects(Blog $blog, JsonFileWriter $writer): void
     {
-        $variants = $post->getVariants()->toArray();
-        usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
-
-        return array_map(
-            fn($variant) => $this->postObjectFactory->createVariant($variant, $post, $blog, setHtml: true),
-            $variants,
-        );
+        $writer->collection('redirects', []);
+        $offset = 0;
+        while (true) {
+            $redirects = $this->redirectService->getRedirects($blog, '', self::BATCH_SIZE, $offset);
+            if (count($redirects) === 0) {
+                break;
+            }
+            $writer->collection('redirects', array_map(
+                fn($redirect) => new RedirectObject($redirect),
+                $redirects,
+            ));
+            if (count($redirects) < self::BATCH_SIZE) {
+                break;
+            }
+            $offset += self::BATCH_SIZE;
+        }
     }
 }
