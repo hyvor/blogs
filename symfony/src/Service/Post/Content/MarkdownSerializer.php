@@ -2,9 +2,9 @@
 
 namespace App\Service\Post\Content;
 
+use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
-use Hyvor\Phrosemirror\Types\MarkType;
 
 class MarkdownSerializer
 {
@@ -18,8 +18,7 @@ class MarkdownSerializer
             $text = $node->text;
 
             foreach (array_reverse($node->marks) as $mark) {
-                $markType = $mark->type;
-                $text = $this->markToMarkdown($markType, $text);
+                $text = $this->markToMarkdown($mark, $text);
             }
 
             return $text;
@@ -35,13 +34,15 @@ class MarkdownSerializer
 
     }
 
-    private function markToMarkdown(MarkType $markType, string $text): string
+    private function markToMarkdown(Mark $mark, string $text): string
     {
+        $markType = $mark->type;
+
         return match (true) {
             $markType instanceof Marks\Strong => "**$text**",
             $markType instanceof Marks\Em => "_{$text}_",
             $markType instanceof Marks\Code => "`$text`",
-            $markType instanceof Marks\Link => "[{$text}]({$markType->attrs->href})",
+            $markType instanceof Marks\Link => "[{$text}]({$mark->attrs->href})",
             $markType instanceof Marks\Strike => "~~{$text}~~",
             $markType instanceof Marks\Sub => "~{$text}~",
             $markType instanceof Marks\Sup => "^{$text}^",
@@ -58,7 +59,7 @@ class MarkdownSerializer
             $node->type instanceof Nodes\Image\Image => $this->imageToMarkdown($node),
 
             // rich
-            $node->type instanceof Nodes\Bookmark\Bookmark => "[#bookmark]({$node->attrs->href})\n\n",
+            $node->type instanceof Nodes\Bookmark\Bookmark => "[#bookmark]({$node->attrs->url})\n\n",
             $node->type instanceof Nodes\Button\Button => "[#button]({$node->attrs->href})\n\n",
             $node->type instanceof Nodes\Embed\Embed => "[#embed]({$node->attrs->url})\n\n",
 
@@ -73,8 +74,8 @@ class MarkdownSerializer
             $node->type instanceof Nodes\Callout\Callout => $this->calloutToMarkdown($node, $children),
 
             // lists
-            $node->type instanceof Nodes\BulletList => "- $children\n\n",
-            $node->type instanceof Nodes\OrderedList => "1. $children\n\n",
+            $node->type instanceof Nodes\BulletList => $this->listToMarkdown($node, ordered: false),
+            $node->type instanceof Nodes\OrderedList => $this->listToMarkdown($node, ordered: true),
 
             // wrappers
             $node->type instanceof Nodes\Doc,
@@ -92,12 +93,29 @@ class MarkdownSerializer
 
     private function calloutToMarkdown(Node $node, string $children): string
     {
-        $icon = $node->attrs->icon ?? '';
+        $icon = $node->attrs->emoji ?? '';
         $fg = $node->attrs->fg ?? '';
         $bg = $node->attrs->bg ?? '';
 
         $topLine = "[$icon, fg=$fg, bg=$bg]";
         return $this->blockquoteToMarkdown("$topLine\n$children");
+    }
+
+    private function listToMarkdown(Node $node, bool $ordered): string
+    {
+        $lines = [];
+
+        foreach ($node->content as $index => $item) {
+            $marker = $ordered ? ($index + 1) . '.' : '-';
+            $indent = str_repeat(' ', mb_strlen($marker) + 1);
+
+            $itemLines = explode("\n", trim($this->serialize($item)));
+            foreach ($itemLines as $lineIndex => $line) {
+                $lines[] = $lineIndex === 0 ? "$marker $line" : ($line === '' ? '' : "$indent$line");
+            }
+        }
+
+        return implode("\n", $lines) . "\n\n";
     }
 
     private function imageToMarkdown(Node $node): string
@@ -113,7 +131,7 @@ class MarkdownSerializer
     private function blockquoteToMarkdown(string $children): string
     {
         $lines = explode("\n", trim($children));
-        $quotedLines = array_map(fn($line) => "> $line", $lines);
+        $quotedLines = array_map(fn($line) => $line === '' ? '>' : "> $line", $lines);
         return implode("\n", $quotedLines) . "\n\n";
     }
 

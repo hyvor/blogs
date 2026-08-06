@@ -76,9 +76,20 @@ class MarkdownSerializerTest extends KernelTestCase
     }
 
     #[TestWith(['strong', '**test**'])]
-    // TODO: add all others
-    public function test_marks(string $markType, string $expected): void
+    #[TestWith(['em', '_test_'])]
+    #[TestWith(['code', '`test`'])]
+    #[TestWith(['strike', '~~test~~'])]
+    #[TestWith(['sub', '~test~'])]
+    #[TestWith(['sup', '^test^'])]
+    #[TestWith(['highlight', '==test=='])]
+    #[TestWith(['link', '[test](https://example.com)', ['href' => 'https://example.com']])]
+    public function test_marks(string $markType, string $expected, array $markAttrs = []): void
     {
+        $mark = ['type' => $markType];
+        if ($markAttrs) {
+            $mark['attrs'] = $markAttrs;
+        }
+
         $doc = [
             'type' => 'doc',
             'content' => [
@@ -89,9 +100,7 @@ class MarkdownSerializerTest extends KernelTestCase
                             'type' => 'text',
                             'text' => 'test',
                             'marks' => [
-                                [
-                                    'type' => $markType
-                                ]
+                                $mark
                             ]
                         ]
                     ]
@@ -142,9 +151,130 @@ class MarkdownSerializerTest extends KernelTestCase
                 'text' => 'Hello, world!'
             ]
         ],
-        'expected' => "Hello, world!\n\n"
+        'expected' => 'Hello, world!'
     ])]
-    // TODO: add all others
+    #[TestWith([
+        'type' => 'heading',
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => 'Heading text'
+            ]
+        ],
+        'expected' => '## Heading text',
+        'attrs' => ['level' => 2]
+    ])]
+    #[TestWith([
+        'type' => 'code_block',
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => 'echo 1;'
+            ]
+        ],
+        'expected' => "```php\necho 1;\n```",
+        'attrs' => ['language' => 'php']
+    ])]
+    #[TestWith([
+        'type' => 'callout',
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => 'Note text'
+            ]
+        ],
+        'expected' => "> [💡, fg=#000000, bg=#f1f1ef]\n> Note text",
+        'attrs' => ['emoji' => '💡', 'fg' => '#000000', 'bg' => '#f1f1ef']
+    ])]
+    #[TestWith([
+        'type' => 'bullet_list',
+        'content' => [
+            [
+                'type' => 'list_item',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]]
+                ]
+            ],
+            [
+                'type' => 'list_item',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]
+                ]
+            ]
+        ],
+        'expected' => "- Item 1\n- Item 2"
+    ])]
+    #[TestWith([
+        'type' => 'ordered_list',
+        'content' => [
+            [
+                'type' => 'list_item',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]]
+                ]
+            ],
+            [
+                'type' => 'list_item',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]
+                ]
+            ]
+        ],
+        'expected' => "1. Item 1\n2. Item 2"
+    ])]
+    #[TestWith([
+        'type' => 'figure',
+        'content' => [
+            [
+                'type' => 'image',
+                'attrs' => ['src' => 'https://example.com/image.png', 'alt' => 'An image', 'width' => 100, 'height' => 200]
+            ]
+        ],
+        'expected' => '![An image](https://example.com/image.png =100x200)'
+    ])]
+    #[TestWith([
+        'type' => 'figure',
+        'content' => [
+            [
+                'type' => 'embed',
+                'attrs' => ['url' => 'https://example.com/embed']
+            ]
+        ],
+        'expected' => '[#embed](https://example.com/embed)'
+    ])]
+    #[TestWith([
+        'type' => 'audio',
+        'expected' => '[#audio](https://example.com/audio.mp3)',
+        'attrs' => ['src' => 'https://example.com/audio.mp3']
+    ])]
+    #[TestWith([
+        'type' => 'bookmark',
+        'expected' => '[#bookmark](https://example.com)',
+        'attrs' => ['url' => 'https://example.com']
+    ])]
+    #[TestWith([
+        'type' => 'button',
+        'content' => [
+            ['type' => 'text', 'text' => 'Click me']
+        ],
+        'expected' => '[#button](https://example.com)',
+        'attrs' => ['href' => 'https://example.com']
+    ])]
+    #[TestWith([
+        'type' => 'horizontal_rule',
+        'expected' => '---'
+    ])]
+    #[TestWith([
+        'type' => 'toc',
+        'expected' => '[#toc]'
+    ])]
+    #[TestWith([
+        'type' => 'custom_html',
+        'content' => [
+            ['type' => 'text', 'text' => '<div>Custom</div>']
+        ],
+        'expected' => '<div>Custom</div>'
+    ])]
     public function test_nodes(
         string $type,
         string $expected,
@@ -169,5 +299,50 @@ class MarkdownSerializerTest extends KernelTestCase
         $this->assertSame($expected, $mardown);
 
     }
+
+    public function test_paragraphs_within_blockquote(): void
+    {
+
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'blockquote',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => 'This is a blockquote.'
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => 'It has multiple paragraphs.'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $expected = <<<MD
+        > This is a blockquote.
+        >
+        > It has multiple paragraphs.
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+
 
 }
