@@ -42,7 +42,7 @@
 {/if}
 
 {#if compare}
-	<Compare />
+	<Compare onclose={() => (compare = false)} />
 {/if}
 
 <style>

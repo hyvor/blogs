@@ -3,13 +3,34 @@
 	import { postVariantStore } from '../../../postStore';
 	import { editorConfig, schema } from '../Editor/editor';
 	import { Node } from 'prosemirror-model';
+	import { Switch } from '@hyvor/design/components';
+	import { fade } from 'svelte/transition';
+
+	function portal(node: HTMLElement) {
+		document.body.appendChild(node);
+		return {
+			destroy() {
+				node.remove();
+			}
+		};
+	}
+
+	let showDiff = $state(true);
+
+	interface Props {
+		onclose: () => void;
+	}
+	let { onclose } = $props();
 
 	const diffContent = $derived.by(() => {
+		const newContentJson = $postVariantStore.content_unsaved || $postVariantStore.content!;
+
+		if (!showDiff) {
+			return newContentJson;
+		}
+
 		const publishedContent = Node.fromJSON(schema, JSON.parse($postVariantStore.content!));
-		const editingContent = Node.fromJSON(
-			schema,
-			JSON.parse($postVariantStore.content_unsaved || $postVariantStore.content!)
-		);
+		const editingContent = Node.fromJSON(schema, JSON.parse(newContentJson));
 
 		const diff = diffDoc(publishedContent, editingContent);
 
@@ -18,9 +39,33 @@
 	});
 </script>
 
-<div class="wrap">
+<div class="wrap" use:portal transition:fade={{ duration: 150 }}>
+	<div class="overlay" onclick={onclose}></div>
 	<div class="inner hds-box">
-		<Editor value={diffContent} {schema} {editorConfig} />
+		<div class="part left">
+			<div class="header">Published Version</div>
+			<div class="editor">
+				<Editor
+					value={$postVariantStore.content}
+					{schema}
+					{editorConfig}
+					editable={false}
+				/>
+			</div>
+		</div>
+		<div class="part">
+			<div class="header">
+				Editing Version
+				<span class="switch">
+					<Switch bind:checked={showDiff}>Show diff</Switch>
+				</span>
+			</div>
+			<div class="editor">
+				{#key showDiff}
+					<Editor value={diffContent} {schema} {editorConfig} editable={false} />
+				{/key}
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -38,9 +83,55 @@
 		background: rgba(0, 0, 0, 0.1);
 	}
 
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
 	.inner {
-		width: 900px;
-		max-width: 100%;
+		width: 1400px;
+		max-width: calc(100% - 15px);
 		height: calc(100% - 40px);
+		display: flex;
+	}
+
+	.part {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	.part.left {
+		border-right: 1px solid var(--border);
+	}
+
+	.header {
+		padding: 15px 30px;
+		font-weight: bold;
+		font-size: 14px;
+		border-bottom: 1px solid var(--border);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 40px;
+	}
+
+	.switch {
+		font-weight: normal;
+	}
+
+	.editor {
+		flex: 1;
+		overflow: auto;
+		padding: 15px 30px;
+	}
+
+	.editor :global(.ProseMirror) {
+		padding: 0 !important;
 	}
 </style>
