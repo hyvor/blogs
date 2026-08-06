@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Blog\Hosting\Exception;
+namespace App\Service\Hosting\Exception;
 
 use App\Entity\Blog;
 

@@ -4,7 +4,7 @@ namespace App\Service\Hosting\MessageHandler;
 
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
-use App\Service\Blog\Hosting\HostingChangeService;
+use App\Service\Hosting\HostingChangeService;
 use App\Service\Hosting\Message\HostingChangeMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

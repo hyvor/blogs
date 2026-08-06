@@ -6,7 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
-use App\Service\Blog\Hosting\HostingChangeService;
+use App\Service\Hosting\HostingChangeService;
 use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Hosting\MessageHandler\HostingChangeMessageHandler;
 use App\Tests\Factory\BlogFactory;

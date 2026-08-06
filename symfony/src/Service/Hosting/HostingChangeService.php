@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Service\Blog\Hosting;
+namespace App\Service\Hosting;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
