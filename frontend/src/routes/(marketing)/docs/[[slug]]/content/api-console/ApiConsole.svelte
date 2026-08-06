@@ -1403,13 +1403,23 @@ interface Post {
     code_head: string | null,
     code_foot: string | null,
 
-    variants: PostVariant[],
+    variant_statuses: {
+        id: number,
+        language_id: number,
+        status: 'draft' | 'published' | 'scheduled'
+    }[],
 
     tags: Tag[],
     authors: User[]
 }
 `}
 />
+<p>
+	<code>variant_statuses</code> only tells you which languages a post has and their status. Fetch
+	<code>GET /post/{`{id}`}?variant_language_code=...</code> to get the full
+	<a href="/docs/api-console#post-variant-object">PostVariant</a> object (content, title, SEO fields, etc.)
+	for a single language.
+</p>
 
 <h3 id="post-variant-object">PostVariant Object</h3>
 <CodeBlock
@@ -1437,7 +1447,7 @@ interface PostVariant {
 	variant of the requested (or blog's primary) language, and <code>tags</code>/<code>authors</code>
 	are just their primary-language names. <code>seo_score</code> is currently a placeholder and not
 	yet meaningful. Fetch <code>GET /post/{`{id}`}</code> for the full
-	<a href="/docs/api-console#post-object">Post</a> object, including all variants, tags, and authors.
+	<a href="/docs/api-console#post-object">Post</a> object, including tags and authors.
 </p>
 <CodeBlock
 	language="ts"

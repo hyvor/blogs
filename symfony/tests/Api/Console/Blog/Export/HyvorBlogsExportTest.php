@@ -113,7 +113,8 @@ class HyvorBlogsExportTest extends ApiTestCase
         $this->assertIsArray($data['posts']);
         $this->assertCount(3, $data['posts']);
         $this->assertIsArray($data['posts'][0]);
-        $this->assertSame($posts[0]->getId(), $data['posts'][0]['id']);
+        $this->assertIsArray($data['posts'][0]['post']);
+        $this->assertSame($posts[0]->getId(), $data['posts'][0]['post']['id']);
 
         $postContentService = $this->getService(PostContentService::class);
         $expectedHtml = $postContentService->getHtml('{"type":"doc","content":[]}', $blog);
