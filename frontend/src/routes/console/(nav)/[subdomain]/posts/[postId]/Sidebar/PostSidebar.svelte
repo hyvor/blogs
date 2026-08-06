@@ -54,7 +54,7 @@
 					{#snippet start()}
 						<IconMagic />
 					{/snippet}
-					AI
+					AI Agent
 				</TabNavItem>
 			</TabNav>
 		</div>

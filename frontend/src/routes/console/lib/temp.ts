@@ -4,7 +4,7 @@ export const LOCAL_STORAGE_KEY = 'console-temp-subdomain';
 
 export const isTempStore = writable(false);
 
-export const tempSubdomainStore = writable<string | null>(null);
+// export const tempSubdomainStore = writable<string | null>(null);
 
 export function initTempSubdomain() {
 	const data = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -37,7 +37,7 @@ export function initTempSubdomain() {
 		return null;
 	}
 
-	tempSubdomainStore.set(subdomain);
+	// tempSubdomainStore.set(subdomain);
 
 	return subdomain;
 }
@@ -50,5 +50,5 @@ export function setTempSubdomain(subdomain: string) {
 			timestamp: Date.now()
 		})
 	);
-	tempSubdomainStore.set(subdomain);
+	// tempSubdomainStore.set(subdomain);
 }

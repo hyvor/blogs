@@ -41,7 +41,7 @@
 	"type": "module",
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.2",
-		"@hyvor/design": "^2.1.0",
+		"@hyvor/design": "^2.1.1",
 		"@hyvor/icons": "^1.0.0",
 		"@hyvor/richtext": "^0.0.17-beta.diff.2",
 		"@types/react-dom": "^18.2.18",

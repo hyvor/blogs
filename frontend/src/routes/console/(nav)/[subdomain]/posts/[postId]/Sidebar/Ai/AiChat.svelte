@@ -16,7 +16,7 @@
 	import IconMagic from '@hyvor/icons/IconMagic';
 	import IconRobot from '@hyvor/icons/IconRobot';
 
-	import { getPrompts, resetChat, sendPrompt } from './aiActions';
+	import { callAgent } from './aiActions';
 	import { onMount, tick } from 'svelte';
 	import { tab } from '../sidebar';
 	import PromptResponse from './PromptResponse.svelte';
@@ -48,13 +48,15 @@
 		{
 			name: 'Blog Outline',
 			description: 'Generate an outline for a blog post',
-			prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
+			prompt: (options) =>
+				addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
 		},
 
 		{
 			name: 'Blog Post',
 			description: 'Generate a blog post',
-			prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
+			prompt: (options) =>
+				addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
 		},
 
 		{
@@ -106,6 +108,8 @@
 	let secondaryKeywords = $derived($postVariantStore.seo_secondary_keywords);
 
 	function loadPrompts() {
+		isLoading = false;
+		return;
 		getPrompts($postStore.id)
 			.then((res) => {
 				prompts = res;
@@ -133,16 +137,18 @@
 
 		scrollToBottom();
 
-		sendPrompt(prompt, $postStore.id)
-			.then((res) => {
-				prompts = [...prompts, res];
-				scrollToBottom();
-				prompt = '';
-				pendingPrompt = null;
-			})
-			.catch((err) => {
-				pendingPromptError = err.message;
-			});
+		callAgent();
+
+		// sendPrompt(prompt, $postStore.id)
+		// 	.then((res) => {
+		// 		prompts = [...prompts, res];
+		// 		scrollToBottom();
+		// 		prompt = '';
+		// 		pendingPrompt = null;
+		// 	})
+		// 	.catch((err) => {
+		// 		pendingPromptError = err.message;
+		// 	});
 	}
 
 	function resetPrompts() {
@@ -179,7 +185,11 @@
 				{/each}
 
 				{#if pendingPrompt}
-					<PromptResponse prompt={pendingPrompt} response={null} error={pendingPromptError} />
+					<PromptResponse
+						prompt={pendingPrompt}
+						response={null}
+						error={pendingPromptError}
+					/>
 				{/if}
 
 				<div class="reset-button">
@@ -243,7 +253,8 @@
 				</Button>
 			</div>
 			<div class="disclaimer">
-				This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate results.
+				This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate
+				results.
 			</div>
 		</div>
 	{/if}

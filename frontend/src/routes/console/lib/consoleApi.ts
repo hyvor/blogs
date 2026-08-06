@@ -1,6 +1,5 @@
 import { get } from 'svelte/store';
 import { blogStore } from './stores/blogStore';
-import { tempSubdomainStore } from './temp';
 import { authOrganizationStore } from './stores';
 
 export interface ConsoleApiOptions {
@@ -15,6 +14,13 @@ interface CallOptions extends ConsoleApiOptions {
 	method: 'get' | 'post' | 'patch' | 'delete' | 'put';
 }
 
+export const CONSOLE_API_BASE_URL = '/api/console/v0';
+
+export function getConsoleBlogBaseUrl(subdomain?: string) {
+	const blogSubdomain = subdomain || get(blogStore).subdomain;
+	return CONSOLE_API_BASE_URL + '/blog/' + blogSubdomain;
+}
+
 function getConsoleApi() {
 	async function call<T>({
 		endpoint,
@@ -24,16 +30,13 @@ function getConsoleApi() {
 		subdomain,
 		signal
 	}: CallOptions): Promise<T> {
-		const baseUrl = `/api/console/v0`;
-
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
 		let url;
 		if (userApi) {
-			url = baseUrl + endpoint;
+			url = CONSOLE_API_BASE_URL + endpoint;
 		} else {
-			const blogSubdomain = subdomain || get(blogStore).subdomain;
-			url = baseUrl + '/blog/' + blogSubdomain + endpoint;
+			url = getConsoleBlogBaseUrl(subdomain) + endpoint;
 		}
 
 		if (method === 'get') {
@@ -46,7 +49,6 @@ function getConsoleApi() {
 		}
 
 		const headers = {
-			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore),
 			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
 		} as Record<string, string>;
 

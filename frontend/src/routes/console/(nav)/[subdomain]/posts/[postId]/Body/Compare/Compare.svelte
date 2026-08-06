@@ -3,17 +3,7 @@
 	import { postVariantStore } from '../../../postStore';
 	import { editorConfig, schema } from '../Editor/editor';
 	import { Node } from 'prosemirror-model';
-	import { Switch } from '@hyvor/design/components';
-	import { fade } from 'svelte/transition';
-
-	function portal(node: HTMLElement) {
-		document.body.appendChild(node);
-		return {
-			destroy() {
-				node.remove();
-			}
-		};
-	}
+	import { Modal, Switch } from '@hyvor/design/components';
 
 	let showDiff = $state(true);
 
@@ -39,9 +29,8 @@
 	});
 </script>
 
-<div class="wrap" use:portal transition:fade={{ duration: 150 }}>
-	<div class="overlay" onclick={onclose}></div>
-	<div class="inner hds-box">
+<Modal bare width="1400px" height="calc(100% - 40px)" {onclose} show={true}>
+	<div class="inner">
 		<div class="part left">
 			<div class="header">Published Version</div>
 			<div class="editor">
@@ -67,34 +56,10 @@
 			</div>
 		</div>
 	</div>
-</div>
+</Modal>
 
 <style>
-	.wrap {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 10000;
-		background: rgba(0, 0, 0, 0.1);
-	}
-
-	.overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-
 	.inner {
-		width: 1400px;
-		max-width: calc(100% - 15px);
-		height: calc(100% - 40px);
 		display: flex;
 	}
 
