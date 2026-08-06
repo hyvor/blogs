@@ -43,9 +43,13 @@
             ...
         ],
         "posts": [
-            post object,
-            post object,
-            post object,
+            {
+                "post": post object,
+                "variants": [
+                    post variant object,
+                    ...
+                ]
+            },
             ...
         ],
         "users": [
@@ -85,6 +89,7 @@
 	<li><a href="/docs/api-console#blog-object">Blog Object</a></li>
 	<li><a href="/docs/api-console#language-object">Language Object</a></li>
 	<li><a href="/docs/api-console#post-object">Post Object</a></li>
+	<li><a href="/docs/api-console#post-variant-object">PostVariant Object</a></li>
 	<li><a href="/docs/api-console#user-object">User Object</a></li>
 	<li><a href="/docs/api-console#media-object">Media Object</a></li>
 	<li><a href="/docs/api-console#tag-object">Tag Object</a></li>
@@ -94,6 +99,8 @@
 </ul>
 
 <p>
-	Note: The <code>variants</code> of the <strong>Post Object</strong> will have an additional
-	<code>content_html</code> property with content converted into HTML.
+	Note: Each entry in <code>posts</code> pairs a <strong>Post Object</strong> with a
+	<code>variants</code> array of <strong>PostVariant Objects</strong>, one per language. These
+	variants have an additional <code>content_html</code> property with content converted into HTML,
+	which is not present when fetching variants through the Console API.
 </p>

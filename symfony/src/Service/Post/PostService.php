@@ -305,6 +305,24 @@ class PostService
     /**
      * @return Post[]
      */
+    public function getPostsForExport(Blog $blog, int $limit, int $offset): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('p')
+            ->from(Post::class, 'p')
+            ->where('p.blog = :blog')
+            ->setParameter('blog', $blog)
+            ->orderBy('p.id', 'ASC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        /** @var Post[] */
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Post[]
+     */
     public function getPages(Blog $blog): array
     {
         $qb = $this->em->createQueryBuilder();

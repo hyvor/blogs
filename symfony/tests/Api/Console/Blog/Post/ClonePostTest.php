@@ -66,9 +66,9 @@ class ClonePostTest extends ApiTestCase
         $json = $this->getJson();
 
         $this->assertArrayHasKey('id', $json);
-        $this->assertArrayHasKey('variants', $json);
-        $this->assertIsArray($json['variants']);
-        $this->assertCount(1, $json['variants']);
+        $this->assertArrayHasKey('variant_statuses', $json);
+        $this->assertIsArray($json['variant_statuses']);
+        $this->assertCount(1, $json['variant_statuses']);
 
         $clonedPost = $this->getEm()->getRepository(Post::class)->find($json['id']);
         $this->assertNotNull($clonedPost);
