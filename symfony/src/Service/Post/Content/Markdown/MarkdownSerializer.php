@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Service\Post\Content;
+namespace App\Service\Post\Content\Markdown;
 
+use App\Service\Post\Content\Marks;
+use App\Service\Post\Content\Nodes;
 use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
@@ -9,9 +11,8 @@ use Hyvor\Phrosemirror\Document\TextNode;
 class MarkdownSerializer
 {
 
-    public function serialize(Node $node): string
+    public function serialize(Node $node, MarkdownSerializationOptions $options = new MarkdownSerializationOptions): string
     {
-
         $nodeType = $node->type;
 
         if ($nodeType->isText() && $node instanceof TextNode) {
@@ -24,18 +25,24 @@ class MarkdownSerializer
             return $text;
         }
 
-        $getChildrenMarkdown = function() use ($node) {
+        $getChildrenMarkdown = function() use ($node, $options) {
             $childrenMarkdown = '';
 
             foreach ($node->content as $childNode) {
-                $childrenMarkdown .= $this->serialize($childNode);
+                $childrenMarkdown .= $this->serialize($childNode, $options);
             }
 
             return $childrenMarkdown;
         };
 
-        return $this->nodeToMarkdown($node, $getChildrenMarkdown);
+        $nodeMarkdown = $this->nodeToMarkdown($node, $getChildrenMarkdown, $options);
 
+        $nodeId = $options->getNodeId($node);
+        if ($nodeId !== null) {
+            $nodeMarkdown = "#[$nodeId] $nodeMarkdown";
+        }
+
+        return $nodeMarkdown;
     }
 
     private function markToMarkdown(Mark $mark, string $text): string
@@ -58,7 +65,7 @@ class MarkdownSerializer
     /**
      * @param callable(): string $children
      */
-    private function nodeToMarkdown(Node $node, callable $children): string
+    private function nodeToMarkdown(Node $node, callable $children, MarkdownSerializationOptions $options): string
     {
         return match (true) {
             // media
@@ -81,11 +88,11 @@ class MarkdownSerializer
             $node->type instanceof Nodes\Callout\Callout => $this->calloutToMarkdown($node, $children()),
 
             // lists
-            $node->type instanceof Nodes\BulletList => $this->listToMarkdown($node, ordered: false),
-            $node->type instanceof Nodes\OrderedList => $this->listToMarkdown($node, ordered: true),
+            $node->type instanceof Nodes\BulletList => $this->listToMarkdown($node, ordered: false, options: $options),
+            $node->type instanceof Nodes\OrderedList => $this->listToMarkdown($node, ordered: true, options: $options),
 
             // table
-            $node->type instanceof Nodes\Table\Table => $this->tableToMarkdown($node),
+            $node->type instanceof Nodes\Table\Table => $this->tableToMarkdown($node, $options),
             $node->type instanceof Nodes\Table\TableRow,
             $node->type instanceof Nodes\Table\TableCell\TableCell,
             $node->type instanceof Nodes\Table\TableCell\TableHeader
@@ -116,7 +123,7 @@ class MarkdownSerializer
         return $this->blockquoteToMarkdown("$topLine\n$children");
     }
 
-    private function listToMarkdown(Node $node, bool $ordered): string
+    private function listToMarkdown(Node $node, bool $ordered, MarkdownSerializationOptions $options): string
     {
         $lines = [];
 
@@ -124,7 +131,7 @@ class MarkdownSerializer
             $marker = $ordered ? ($index + 1) . '.' : '-';
             $indent = str_repeat(' ', mb_strlen($marker) + 1);
 
-            $itemLines = explode("\n", trim($this->serialize($item)));
+            $itemLines = explode("\n", trim($this->serialize($item, $options)));
             foreach ($itemLines as $lineIndex => $line) {
                 if ($lineIndex === 0) {
                     $lines[] = "$marker $line";
@@ -144,7 +151,7 @@ class MarkdownSerializer
      * table_header cells), as is the case for every table this schema
      * can produce.
      */
-    private function tableToMarkdown(Node $node): string
+    private function tableToMarkdown(Node $node, MarkdownSerializationOptions $options): string
     {
         $rows = [];
 
@@ -152,7 +159,7 @@ class MarkdownSerializer
             $cells = [];
 
             foreach ($row->content as $cell) {
-                $cellMarkdown = trim($this->serialize($cell));
+                $cellMarkdown = trim($this->serialize($cell, $options));
                 $cells[] = str_replace(["\r\n", "\n"], ' ', $cellMarkdown);
             }
 

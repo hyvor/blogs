@@ -2,7 +2,8 @@
 
 namespace App\Tests\Service\Post\Content;
 
-use App\Service\Post\Content\MarkdownSerializer;
+use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
+use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -479,6 +480,110 @@ class MarkdownSerializerTest extends KernelTestCase
         | Header 1 | Header 2 |
         | --- | --- |
         | Cell 1 | Cell 2 |
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+    public function test_with_nodeid_map(): void
+    {
+
+        $docJson = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type'    => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Hello, world!']
+                    ]
+                ],
+                [
+                    'type'    => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'This is a test.']
+                    ]
+                ]
+            ]
+        ];
+
+        $doc = $this->getService(PostContentService::class)->getDocumentFromJson($docJson);
+
+        $nodeIdMap = [
+            ['node' => $doc->content->first(), 'id' => 'p-1']
+        ];
+
+        $options = new MarkdownSerializationOptions($nodeIdMap);
+
+        $serializer = new MarkdownSerializer();
+        $mardown = trim($serializer->serialize($doc, $options));
+
+        $expected = <<<MD
+        #[p-1] Hello, world!
+
+        This is a test.
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+    public function test_nodeid_map_with_nested_nodes(): void
+    {
+        $docJson = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type'    => 'blockquote',
+                    'content' => [
+                        [
+                            'type'    => 'paragraph',
+                            'content' => [
+                                ['type' => 'text', 'text' => 'This is a blockquote.']
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'type'    => 'ordered_list',
+                    'content' => [
+                        [
+                            'type'    => 'list_item',
+                            'content' => [
+                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]]
+                            ]
+                        ],
+                        [
+                            'type'    => 'list_item',
+                            'content' => [
+                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $doc = $this->getService(PostContentService::class)->getDocumentFromJson($docJson);
+
+        $nodeIdMap = [
+            ['node' => $doc->content->first(), 'id' => 'quote-1'],
+            ['node' => $doc->content->first()->content->first(), 'id' => 'p-1'],
+            ['node' => $doc->content->last(), 'id' => 'list-1'],
+            ['node' => $doc->content->last()->content->first(), 'id' => 'list-item-1'],
+            ['node' => $doc->content->last()->content->last(), 'id' => 'list-item-2'],
+            ['node' => $doc->content->last()->content->first()->content->first(), 'id' => 'p-2'],
+            ['node' => $doc->content->last()->content->last()->content->first(), 'id' => 'p-3'],
+        ];
+
+        $options = new MarkdownSerializationOptions($nodeIdMap);
+
+        $serializer = new MarkdownSerializer();
+        $mardown = trim($serializer->serialize($doc, $options));
+
+        $expected = <<<MD
+        #[quote-1] > #[p-1] This is a blockquote.
+
+        #[list-1] 1. #[list-item-1] #[p-2] Item 1
+        2. #[list-item-2] #[p-3] Item 2
         MD;
 
         $this->assertSame($expected, $mardown);
