@@ -4,22 +4,19 @@
 		Divider,
 		IconMessage,
 		Link,
-		Loader,
 		TextInput,
 		Textarea,
-		Tooltip,
-		toast
+		Tooltip
 	} from '@hyvor/design/components';
-	import type { GptPrompt } from '../../../../../../lib/types';
 	import { postStore, postVariantStore } from '../../../postStore';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import IconMagic from '@hyvor/icons/IconMagic';
 	import IconRobot from '@hyvor/icons/IconRobot';
 
-	import { callAgent } from './aiActions';
-	import { onMount, tick } from 'svelte';
+	import { applyAgentEvent, callAgent, type AgentTurn } from './aiActions';
+	import { tick } from 'svelte';
 	import { tab } from '../sidebar';
-	import PromptResponse from './PromptResponse.svelte';
+	import AgentResponse from './AgentResponse.svelte';
 
 	interface AutomaticPromptOptions {
 		title: string | null;
@@ -95,32 +92,12 @@
 		}
 	];
 
-	let isLoading = $state(true);
-
-	let prompts: GptPrompt[] = $state([]);
+	let turns: AgentTurn[] = $state([]);
 	let prompt = $state('');
-
-	let pendingPrompt: string | null = $state(null);
-	let pendingPromptError: string | null = $state(null);
 
 	let title = $derived($postVariantStore.title);
 	let primaryKeyword = $derived($postVariantStore.seo_primary_keyword);
 	let secondaryKeywords = $derived($postVariantStore.seo_secondary_keywords);
-
-	function loadPrompts() {
-		isLoading = false;
-		return;
-		getPrompts($postStore.id)
-			.then((res) => {
-				prompts = res;
-			})
-			.catch((err) => {
-				toast.error(err.message);
-			})
-			.finally(() => {
-				isLoading = false;
-			});
-	}
 
 	function scrollToBottom() {
 		const chatZone = document.querySelector('.chat-zone');
@@ -130,134 +107,118 @@
 	}
 
 	async function handleGenerate() {
-		pendingPrompt = prompt;
-		pendingPromptError = null;
+		const userPrompt = prompt.trim();
+		if (!userPrompt) return;
+
+		const turn: AgentTurn = {
+			id: Date.now(),
+			prompt: userPrompt,
+			blocks: [],
+			status: 'streaming',
+			error: null
+		};
+
+		turns.push(turn);
+		prompt = '';
 
 		await tick();
-
 		scrollToBottom();
 
-		callAgent();
+		try {
+			await callAgent((event) => {
+				applyAgentEvent(turn.blocks, event);
+				scrollToBottom();
+			});
+			turn.status = 'done';
+		} catch (err) {
+			turn.status = 'error';
+			turn.error = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+		}
 
-		// sendPrompt(prompt, $postStore.id)
-		// 	.then((res) => {
-		// 		prompts = [...prompts, res];
-		// 		scrollToBottom();
-		// 		prompt = '';
-		// 		pendingPrompt = null;
-		// 	})
-		// 	.catch((err) => {
-		// 		pendingPromptError = err.message;
-		// 	});
+		scrollToBottom();
 	}
 
 	function resetPrompts() {
-		isLoading = true;
-		resetChat($postStore.id)
-			.then((res) => {
-				prompts = [];
-			})
-			.catch((err) => {
-				toast.error(err.message);
-			})
-			.finally(() => {
-				isLoading = false;
-			});
-		pendingPrompt = '';
+		turns = [];
 	}
-
-	onMount(loadPrompts);
 </script>
 
 <div class="ai-chat">
-	{#if isLoading}
-		<Loader full />
-	{:else}
-		<div class="chat-zone">
-			{#if prompts.length == 0}
-				<IconMessage
-					icon={IconRobot}
-					message="Start a conversation with the AI to generate content."
-				/>
-			{:else}
-				{#each prompts as prompt, i}
-					<PromptResponse prompt={prompt.prompt} response={prompt.gpt_response} />
-				{/each}
+	<div class="chat-zone">
+		{#if turns.length == 0}
+			<IconMessage
+				icon={IconRobot}
+				message="Start a conversation with the AI to generate content."
+			/>
+		{:else}
+			{#each turns as turn (turn.id)}
+				<AgentResponse {turn} />
+			{/each}
 
-				{#if pendingPrompt}
-					<PromptResponse
-						prompt={pendingPrompt}
-						response={null}
-						error={pendingPromptError}
-					/>
-				{/if}
-
-				<div class="reset-button">
-					<Button size="small" color="input" on:click={() => resetPrompts()}>
-						{#snippet start()}
-							<IconArrowClockwise />
-						{/snippet}
-						Reset chat
-					</Button>
-				</div>
-			{/if}
-		</div>
-
-		<Divider color="var(--border)" />
-
-		<div class="input-zone">
-			<div class="automatic-prompts-buttons">
-				{#each automaticPrompts as p}
-					<div class="automatic-prompt-button">
-						<Tooltip text={p.description}>
-							<Button
-								color="input"
-								on:click={() =>
-									(prompt = p.prompt({
-										title,
-										primaryKeyword,
-										secondaryKeywords
-									}))}
-								outline
-								size="small"
-							>
-								<div class="prompt-button-title">{p.name}</div>
-							</Button>
-						</Tooltip>
-					</div>
-				{/each}
-			</div>
-
-			{#if !primaryKeyword}
-				<div class="keyword-tip">
-					💡 Tip: <Link href="javascript:void(0)" on:click={() => tab.set('seo')}
-						>Add SEO keywords</Link
-					> for better prompts.
-				</div>
-			{/if}
-
-			<div class="input-row">
-				<div class="prompt-input">
-					<TextInput
-						block={true}
-						placeholder="Type your prompt here..."
-						rows={1}
-						bind:value={prompt}
-					/>
-				</div>
-				<Button disabled={prompt.trim() === ''} on:click={handleGenerate}>
-					<div class="generate-button-content">
-						Generate
-						<div class="generate-icon"><IconMagic /></div>
-					</div>
+			<div class="reset-button">
+				<Button size="small" color="input" on:click={() => resetPrompts()}>
+					{#snippet start()}
+						<IconArrowClockwise />
+					{/snippet}
+					Reset chat
 				</Button>
 			</div>
-			<div class="disclaimer">
-				This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate
-				results.
-			</div>
+		{/if}
+	</div>
+
+	<Divider color="var(--border)" />
+
+	<div class="input-zone">
+		<div class="automatic-prompts-buttons">
+			{#each automaticPrompts as p}
+				<div class="automatic-prompt-button">
+					<Tooltip text={p.description}>
+						<Button
+							color="input"
+							on:click={() =>
+								(prompt = p.prompt({
+									title,
+									primaryKeyword,
+									secondaryKeywords
+								}))}
+							outline
+							size="small"
+						>
+							<div class="prompt-button-title">{p.name}</div>
+						</Button>
+					</Tooltip>
+				</div>
+			{/each}
 		</div>
-	{/if}
+
+		{#if !primaryKeyword}
+			<div class="keyword-tip">
+				💡 Tip: <Link href="javascript:void(0)" on:click={() => tab.set('seo')}
+					>Add SEO keywords</Link
+				> for better prompts.
+			</div>
+		{/if}
+
+		<div class="input-row">
+			<div class="prompt-input">
+				<TextInput
+					block={true}
+					placeholder="Type your prompt here..."
+					rows={1}
+					bind:value={prompt}
+				/>
+			</div>
+			<Button disabled={prompt.trim() === ''} on:click={handleGenerate}>
+				<div class="generate-button-content">
+					Generate
+					<div class="generate-icon"><IconMagic /></div>
+				</div>
+			</Button>
+		</div>
+		<div class="disclaimer">
+			This chat is powered by OpenAI's GPT-4o-mini model. It may produce inaccurate results.
+		</div>
+	</div>
 </div>
 
 <style>
