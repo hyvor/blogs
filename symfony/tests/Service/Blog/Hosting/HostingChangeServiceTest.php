@@ -30,7 +30,7 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $service = $this->getService(HostingChangeService::class);
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
         $service->process($hostingChange);
@@ -72,7 +72,7 @@ class HostingChangeServiceTest extends KernelTestCase
             $failingUrlsService,
         );
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('boom');
@@ -98,7 +98,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $this->assertTrue($service->hasPendingChange($blog));
 
         $this->expectException(PendingHostingChangeException::class);
-        $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
     }
 
     /** @throws PendingHostingChangeException */
@@ -111,7 +111,7 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $this->assertFalse($service->hasPendingChange($blog));
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
     }
 }

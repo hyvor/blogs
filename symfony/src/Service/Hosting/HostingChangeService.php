@@ -35,13 +35,10 @@ class HostingChangeService
     }
 
     /**
-     * Creates a HostingChanges record capturing the requested transition, and dispatches
-     * the async job that will actually apply it.
-     */
-    /**
+     * Creates the HostingChange record and dispatches the job to handle it asynchronously.
      * @throws PendingHostingChangeException if the blog already has a change in progress
      */
-    public function requestHostingChange(Blog $blog, BlogHostingAt $toAt, ?string $toHostingUrl = null): HostingChange
+    public function startHostingChange(Blog $blog, BlogHostingAt $toAt, ?string $toHostingUrl = null): HostingChange
     {
         if ($this->hasPendingChange($blog)) {
             throw new PendingHostingChangeException($blog);

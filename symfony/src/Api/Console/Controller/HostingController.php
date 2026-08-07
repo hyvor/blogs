@@ -64,7 +64,7 @@ class HostingController extends AbstractController
 
     #[Route('/hosting', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function updateHostingAt(
+    public function changeHostingAt(
         #[MapRequestPayload] UpdateHostingInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
@@ -88,7 +88,7 @@ class HostingController extends AbstractController
         }
 
         try {
-            $this->hostingChangeService->requestHostingChange($blog, $hostingAt, $hostingUrl);
+            $this->hostingChangeService->startHostingChange($blog, $hostingAt, $hostingUrl);
         } catch (PendingHostingChangeException) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
