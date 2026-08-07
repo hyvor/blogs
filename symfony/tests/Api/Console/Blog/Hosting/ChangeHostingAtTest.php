@@ -3,13 +3,10 @@
 namespace App\Tests\Api\Console\Blog\Hosting;
 
 use App\Api\Console\Controller\HostingController;
-use App\Entity\Blog;
-use App\Entity\CustomDomain;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\HostingChange;
-use App\Service\Blog\Hosting\UpdateBlogUrlsService;
 use App\Service\Hosting\HostingChangeService;
 use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Hosting\MessageHandler\HostingChangeMessageHandler;
@@ -21,29 +18,48 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(HostingController::class)]
 #[CoversClass(HostingChangeService::class)]
-#[CoversClass(UpdateBlogUrlsService::class)]
 #[CoversClass(HostingChangeMessageHandler::class)]
 #[CoversClass(HostingChangeMessage::class)]
-class UpdateHostingAtTest extends ApiTestCase
+class ChangeHostingAtTest extends ApiTestCase
 {
-    /**
-     * Simulates the worker: asserts the async job was dispatched, then runs it
-     * synchronously via its handler, as this codebase's tests do for other jobs.
-     */
-    private function processHostingChange(): HostingChange
+
+    public function test_update_from_subdomain_to_self(): void
     {
-        $dispatched = $this->transport('async')->dispatched();
-        $dispatched->assertContains(HostingChangeMessage::class, 1);
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            [
+                'subdomain' => 'hosting-update-self',
+                'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            ],
+        );
 
-        /** @var HostingChangeMessage $message */
-        $message = $dispatched->first(HostingChangeMessage::class)->getMessage();
+        $this->consoleBlogApi('POST', $blog, '/hosting', [
+            'hosting_at' => 'self',
+            'hosting_url' => 'https://myblog.com',
+        ], user: $user);
 
-        $this->getService(HostingChangeMessageHandler::class)($message);
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('subdomain', $json['hosting_at']);
+        $this->assertIsArray($json['change']);
+        $this->assertSame('changing', $json['change']['status']);
+        $this->assertSame('subdomain', $json['change']['from_at']);
+        $this->assertSame('self', $json['change']['to_at']);
 
-        $hostingChange = $this->getEm()->find(HostingChange::class, $message->hostingChangeId);
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
+
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+
         $this->assertNotNull($hostingChange);
-
-        return $hostingChange;
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getFromAt());
+        $this->assertSame('https://hosting-update-self.hyvorblogs.io', $hostingChange->getFromUrl());
+        $this->assertSame(BlogHostingAt::SELF, $hostingChange->getToAt());
+        $this->assertSame('https://myblog.com', $hostingChange->getToUrl());
+        $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
+        $this->assertNull($hostingChange->getFromDomain());
+        $this->assertNull($hostingChange->getToDomain());
     }
 
     public function test_update_to_subdomain_from_self(): void
@@ -70,14 +86,16 @@ class UpdateHostingAtTest extends ApiTestCase
         $this->assertSame('self', $json['change']['from_at']);
         $this->assertSame('subdomain', $json['change']['to_at']);
 
-        $hostingChange = $this->processHostingChange();
-        $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
+
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertNotNull($hostingChange);
+        $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
         $this->assertSame(BlogHostingAt::SELF, $hostingChange->getFromAt());
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());
-
-        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
-        $this->assertNotNull($blog);
-        $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
     }
 
     public function test_update_to_subdomain_clears_hosting_url(): void
@@ -97,13 +115,15 @@ class UpdateHostingAtTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $hostingChange = $this->processHostingChange();
-        $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
 
-        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
-        $this->assertNotNull($blog);
-        $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
-        $this->assertNull($blog->getHostingUrl());
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertNotNull($hostingChange);
+        $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());
     }
 
     public function test_update_to_self_requires_url(): void
@@ -134,13 +154,16 @@ class UpdateHostingAtTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $hostingChange = $this->processHostingChange();
-        $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
 
-        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
-        $this->assertNotNull($blog);
-        $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
-        $this->assertSame('https://myblog.com', $blog->getHostingUrl());
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertNotNull($hostingChange);
+        $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
+        $this->assertSame(BlogHostingAt::SELF, $hostingChange->getToAt());
+        $this->assertSame('https://myblog.com', $hostingChange->getToUrl());
     }
 
     public function test_update_to_domain_is_rejected(): void
@@ -205,16 +228,15 @@ class UpdateHostingAtTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $hostingChange = $this->processHostingChange();
-        $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
+
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertNotNull($hostingChange);
+        $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
         $this->assertSame('active.com', $hostingChange->getFromDomain());
-
-        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
-        $this->assertNotNull($blog);
-        $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
-
-        $this->assertNull(
-            $this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'active.com'])
-        );
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());
     }
 }
