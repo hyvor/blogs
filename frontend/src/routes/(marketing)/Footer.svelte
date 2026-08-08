@@ -10,6 +10,28 @@
 	const year = new Date().getFullYear();
 	const BRAND_COLOR = '#896c6b';
 
+	let mascotInView = $state(false);
+
+	function onView(node: HTMLElement, callback: () => void) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0]?.isIntersecting) {
+					setTimeout(() => {
+						callback();
+					}, 400);
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.3 }
+		);
+		observer.observe(node);
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
+
 	const socials = [
 		{ icon: IconTwitterX, href: 'https://x.com/HyvorHQ', label: 'X (Twitter)' },
 		{ icon: IconGithub, href: 'https://github.com/hyvor', label: 'GitHub' },
@@ -79,8 +101,14 @@
 </script>
 
 <div class="footer-outer">
-	<div class="mascot-wrap">
-		<img src="/logo.svg" alt="Hyvor Blogs" width="100" height="100" />
+	<div class="mascot-wrap" use:onView={() => (mascotInView = true)}>
+		<img
+			src="/logo.svg"
+			alt="Hyvor Blogs"
+			width="100"
+			height="100"
+			class:in-view={mascotInView}
+		/>
 	</div>
 
 	<footer class="site-footer">
@@ -141,6 +169,39 @@
 		left: 0;
 		bottom: 100%;
 		transform: translate(-35%, 60%) rotate(20deg);
+	}
+
+	.mascot-wrap img {
+		opacity: 0;
+	}
+
+	.mascot-wrap img.in-view {
+		animation: mascot-tilt-in 0.8s ease forwards;
+	}
+
+	@keyframes mascot-tilt-in {
+		0% {
+			opacity: 0;
+			transform: rotate(-14deg) scale(0.9) translateY(16px);
+		}
+		55% {
+			opacity: 1;
+			transform: rotate(10deg) scale(1.06) translateY(-4px);
+		}
+		100% {
+			opacity: 1;
+			transform: rotate(0deg) scale(1) translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mascot-wrap img {
+			opacity: 1;
+		}
+
+		.mascot-wrap img.in-view {
+			animation: none;
+		}
 	}
 
 	.site-footer {
