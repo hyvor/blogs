@@ -4,14 +4,12 @@
 
 	const testimonials = [
 		{
-			quote:
-				'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.',
+			quote: 'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.',
 			name: 'Lionel S.',
 			role: 'Blogger'
 		},
 		{
-			quote:
-				'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customisation options are extensive, allowing us to create a unique and visually appealing blog.',
+			quote: 'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customisation options are extensive, allowing us to create a unique and visually appealing blog.',
 			name: 'Manoj P.',
 			role: 'Senior Application Engineer'
 		}
@@ -53,7 +51,13 @@
 						<figure class="card">
 							<div class="stars" aria-label="5 out of 5 stars">
 								{#each [1, 2, 3, 4, 5] as _}
-									<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="#f59e0b">
+									<svg
+										width="16"
+										height="16"
+										viewBox="0 0 16 16"
+										aria-hidden="true"
+										fill="#f59e0b"
+									>
 										<path
 											d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
 										/>
@@ -101,7 +105,8 @@
 
 <style>
 	.testimonials {
-		background: #0f0f11;
+		/* background: var(--accent); */
+		background: #574443;
 		padding: 96px 0;
 	}
 
@@ -114,7 +119,7 @@
 		font-weight: 600;
 		letter-spacing: 0.07em;
 		text-transform: uppercase;
-		color: rgba(255, 255, 255, 0.35);
+		color: rgba(255, 255, 255, 1);
 		margin: 0 0 48px;
 	}
 
@@ -138,8 +143,8 @@
 		width: 100%;
 		box-sizing: border-box;
 		border-radius: 20px;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.1);
 		padding: 32px;
 		margin: 0;
 		display: flex;
@@ -161,7 +166,7 @@
 		padding: 0;
 		border: none;
 		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.2);
+		background: rgba(255, 255, 255, 0.35);
 		cursor: pointer;
 		transition:
 			background 0.2s,
@@ -187,7 +192,7 @@
 	blockquote {
 		font-size: 16px;
 		line-height: 1.7;
-		color: rgba(255, 255, 255, 0.8);
+		color: rgba(255, 255, 255, 0.92);
 		margin: 0;
 		flex: 1;
 	}
@@ -206,17 +211,17 @@
 
 	figcaption span {
 		font-size: 13px;
-		color: rgba(255, 255, 255, 0.4);
+		color: rgba(255, 255, 255, 0.65);
 	}
 
 	.g2-link :global(.button) {
-		border-color: rgba(255, 255, 255, 0.15) !important;
-		color: rgba(255, 255, 255, 0.6) !important;
+		border-color: rgba(255, 255, 255, 0.3) !important;
+		color: rgba(255, 255, 255, 0.75) !important;
 		background: transparent !important;
 	}
 
 	.g2-link :global(.button):hover {
-		border-color: rgba(255, 255, 255, 0.35) !important;
-		color: rgba(255, 255, 255, 0.9) !important;
+		border-color: rgba(255, 255, 255, 0.55) !important;
+		color: rgba(255, 255, 255, 1) !important;
 	}
 </style>

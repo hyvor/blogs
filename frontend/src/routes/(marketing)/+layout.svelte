@@ -14,13 +14,5 @@
 {@render children?.()}
 
 {#if $page.url.pathname !== '/themes'}
-	<div class="footer-wrap">
-		<Footer />
-	</div>
+	<Footer />
 {/if}
-
-<style>
-	.footer-wrap {
-		margin-top: 100px;
-	}
-</style>

@@ -1,77 +1,286 @@
 <script lang="ts">
-	import { FooterLinkList, Footer } from '@hyvor/design/marketing';
+	import IconEnvelope from '@hyvor/icons/IconEnvelope';
+	import IconGithub from '@hyvor/icons/IconGithub';
+	import IconTwitterX from '@hyvor/icons/IconTwitterX';
+	import IconLinkedin from '@hyvor/icons/IconLinkedin';
+	import IconYoutube from '@hyvor/icons/IconYoutube';
+	import IconBluesky from '@hyvor/icons/IconBluesky';
+	import IconDiscord from '@hyvor/icons/IconDiscord';
+
+	const year = new Date().getFullYear();
+	const BRAND_COLOR = '#896c6b';
+
+	const socials = [
+		{ icon: IconTwitterX, href: 'https://x.com/HyvorHQ', label: 'X (Twitter)' },
+		{ icon: IconGithub, href: 'https://github.com/hyvor', label: 'GitHub' },
+		{ icon: IconDiscord, href: 'https://discord.com/invite/2WRJxQB', label: 'Discord' },
+		{
+			icon: IconLinkedin,
+			href: 'https://www.linkedin.com/company/30240435',
+			label: 'LinkedIn'
+		},
+		{ icon: IconYoutube, href: 'https://www.youtube.com/@HYVOR', label: 'YouTube' },
+		{ icon: IconBluesky, href: 'https://bsky.app/profile/hyvor.com', label: 'Bluesky' }
+	];
+
+	const columns = [
+		{
+			title: 'Product',
+			links: [
+				{ href: '/console', label: 'Console' },
+				{ href: '/themes', label: 'Themes' },
+				{ href: '/pricing', label: 'Pricing' },
+				{ href: '/docs', label: 'Docs' }
+			]
+		},
+		{
+			title: 'Legal',
+			links: [
+				{ href: '/terms', label: 'Terms of Service' },
+				{ href: '/privacy', label: 'Privacy Policy' },
+				{ href: 'https://hyvor.com/compliance', label: 'Compliance', external: true }
+			]
+		},
+		{
+			title: 'HYVOR',
+			links: [
+				{ href: 'https://hyvor.com', label: 'hyvor.com', external: true },
+				{ href: 'https://hyvor.com/#letter', label: 'About', external: true },
+				{ href: 'https://hyvor.com/security', label: 'Security', external: true },
+				{ href: 'https://status.hyvor.com', label: 'System Status', external: true }
+			]
+		},
+		{
+			title: 'Alternatives',
+			links: [
+				{
+					href: 'https://hyvor.com/compare/blogs/wordpress',
+					label: 'WordPress Alternative',
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/ghost',
+					label: 'Ghost Alternative',
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/medium',
+					label: 'Medium Alternative',
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/blogger',
+					label: 'Blogger Alternative',
+					external: true
+				}
+			]
+		}
+	];
 </script>
 
-<Footer email="blogs.support@hyvor.com">
-	{#snippet center()}
-		<div>
-			<div class="row first">
-				<FooterLinkList title="Product">
-					<a href="/console">Console</a>
-					<a href="/themes">Themes</a>
-					<a href="/pricing">Pricing</a>
-					<a href="/docs">Docs</a>
-				</FooterLinkList>
+<div class="footer-outer">
+	<div class="mascot-wrap">
+		<img src="/logo.svg" alt="Hyvor Blogs" width="100" height="100" />
+	</div>
 
-				<FooterLinkList title="Legal">
-					<a href="/terms">Terms of Service</a>
-					<a href="/privacy">Privacy Policy</a>
-					<a href="https://hyvor.com/compliance" target="_blank">Compliance</a>
-				</FooterLinkList>
+	<footer class="site-footer">
+		<div class="hds-container-max footer-inner">
+			<div class="top-row">
+				<div class="brand">
+					<span>Hyvor Blogs</span>
+				</div>
 
-				<FooterLinkList title="HYVOR">
-					<a href="https://hyvor.com" target="_blank">hyvor.com</a>
-					<a href="https://hyvor.com/#letter" target="_blank">About</a>
-					<a href="https://hyvor.com/security" target="_blank">Security</a>
-					<a href="https://status.hyvor.com" target="_blank">System Status</a>
-				</FooterLinkList>
+				<div class="top-row-right">
+					<a class="email" href="mailto:blogs.support@hyvor.com">
+						<IconEnvelope size={14} />
+						blogs.support@hyvor.com
+					</a>
+
+					<div class="socials">
+						{#each socials as s}
+							<a href={s.href} target="_blank" rel="nofollow" aria-label={s.label}>
+								<s.icon size={16} />
+							</a>
+						{/each}
+					</div>
+				</div>
 			</div>
 
-			<div class="row">
-				<FooterLinkList title="Platforms">
-					<a href="/for/squarespace">Blog for Squarespace</a>
-					<a href="/for/wix">Blog for Wix</a>
-					<a href="/for/shopify">Blog for Shopify</a>
-					<a href="/for/wordpress">Blog for WordPress</a>
-					<a href="/for/webflow">Blog for Webflow</a>
-					<a href="/for/bubble">Blog for Bubble</a>
-				</FooterLinkList>
-				<FooterLinkList title="Alternatives">
-					<a href="https://hyvor.com/blog/wordpress-alternatives" target="_blank"
-						>WordPress Alternatives</a
-					>
-					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank">Ghost Alternatives</a>
-					<a href="https://hyvor.com/blog/medium-alternatives" target="_blank"
-						>Medium Alternatives</a
-					>
-					<a href="https://hyvor.com/blog/blogger-alternatives" target="_blank"
-						>Blogger Alternatives</a
-					>
-				</FooterLinkList>
-				<FooterLinkList title="Use Cases">
-					<a href="/for/saas">For SaaS</a>
-					<a href="/for/ecommerce">For E-commerce</a>
-				</FooterLinkList>
+			<div class="columns">
+				{#each columns as col}
+					<div class="col">
+						<div class="col-title">{col.title}</div>
+						{#each col.links as link}
+							<a href={link.href} target={link.external ? '_blank' : undefined}
+								>{link.label}</a
+							>
+						{/each}
+					</div>
+				{/each}
+			</div>
+
+			<div class="bottom-bar">
+				<div>HYVOR &copy; {year}</div>
+				<div>From France &#127467;&#127479;</div>
 			</div>
 		</div>
-	{/snippet}
-</Footer>
+	</footer>
+</div>
 
 <style>
-	.row {
-		display: flex;
-	}
-	.row:not(.first) {
-		margin-top: 60px;
+	.footer-outer {
+		position: relative;
 	}
 
-	@media (max-width: 992px) {
-		.row {
-			flex-direction: column;
-			gap: 35px;
+	.mascot-wrap {
+		position: absolute;
+		z-index: 10;
+		display: flex;
+		justify-content: center;
+		pointer-events: none;
+		left: 0;
+		bottom: 100%;
+		transform: translate(-35%, 60%) rotate(20deg);
+	}
+
+	.site-footer {
+		position: relative;
+		z-index: 1;
+		background: #574443;
+		padding-top: 50px;
+		color: rgba(255, 255, 255, 0.75);
+	}
+
+	.top-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 20px;
+		padding-bottom: 40px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 16px;
+		font-weight: 700;
+		color: #fff;
+	}
+
+	.top-row-right {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		flex-wrap: wrap;
+	}
+
+	.email {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.75);
+	}
+
+	.email:hover {
+		color: #fff;
+	}
+
+	.socials {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.socials a {
+		color: rgba(255, 255, 255, 0.65);
+		display: flex;
+	}
+
+	.socials a:hover {
+		color: #fff;
+	}
+
+	.columns {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px;
+		padding: 48px 0;
+	}
+
+	.col {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		min-width: 150px;
+		flex: 1;
+	}
+
+	.col-title {
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: rgba(255, 255, 255, 0.45);
+		margin-bottom: 14px;
+	}
+
+	.col a {
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.75);
+		margin-top: 10px;
+	}
+
+	.col a:first-of-type {
+		margin-top: 0;
+	}
+
+	.col a:hover {
+		color: #fff;
+		text-decoration: underline;
+	}
+
+	.bottom-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
+		padding: 24px 0 32px;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	@media (max-width: 900px) {
+		.columns {
+			gap: 32px;
 		}
-		.row:not(.first) {
-			margin-top: 35px;
+
+		.col {
+			min-width: 45%;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.mascot-wrap {
+			margin-bottom: -70px;
+		}
+
+		.site-footer {
+			padding-top: 110px;
+		}
+
+		.top-row {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.col {
+			min-width: 100%;
 		}
 	}
 </style>

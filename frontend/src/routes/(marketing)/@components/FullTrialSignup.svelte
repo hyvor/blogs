@@ -35,7 +35,7 @@
 
 <style lang="scss">
 	.cta-section {
-		padding: 96px 0;
+		padding: 96px 0 138px;
 		background: linear-gradient(
 			to bottom,
 			var(--background),
