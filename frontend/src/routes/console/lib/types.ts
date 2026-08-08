@@ -129,11 +129,11 @@ export interface HostingChange {
 	from_at: HostingChangeAt;
 	from_subdomain: string | null;
 	from_domain: string | null;
-	from_url: string | null;
+	from_url: string;
 	to_at: HostingChangeAt;
 	to_subdomain: string | null;
 	to_domain: string | null;
-	to_url: string | null;
+	to_url: string;
 	status: HostingChangeStatus;
 	error_message: string | null;
 }
