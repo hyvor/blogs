@@ -13,10 +13,12 @@ use App\Api\Console\Object\HostingChangeObject;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
+use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Service\AppConfig;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
+use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Hosting\HostingChangeService;
@@ -46,10 +48,18 @@ class HostingController extends AbstractController
 
     private function getHostingInfoResponse(Blog $blog): JsonResponse
     {
+        return new JsonResponse($this->getHostingInfoData($blog));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getHostingInfoData(Blog $blog): array
+    {
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
         $hostingChange = $this->hostingChangeService->getLatestChange($blog);
 
-        return new JsonResponse([
+        return [
             'delivery_url' => $this->appConfig->getDeliveryUrl(),
             'hosting_at' => $blog->getHostingAt(),
             'hosting_url' => $blog->getHostingUrl(),
@@ -59,7 +69,7 @@ class HostingController extends AbstractController
             'change' => $hostingChange
                 ? new HostingChangeObject($hostingChange)
                 : null,
-        ]);
+        ];
     }
 
     #[Route('/hosting', methods: 'POST')]
@@ -102,15 +112,56 @@ class HostingController extends AbstractController
         #[MapRequestPayload] CreateCustomDomainInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
-        $customDomain = $this->customDomainService->getCustomDomain($input->domain);
 
-        if ($customDomain !== null) {
+        if ($this->customDomainService->getCustomDomain($input->domain) !== null) {
             throw new BadRequestHttpException('This custom domain is already in use by another blog');
         }
 
-        $customDomain = $this->customDomainService->createCustomDomain($blog, $input->domain);
+        if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
+            if ($input->tls_private_key === null || $input->tls_certificate === null) {
+                throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
+            }
 
-        return new JsonResponse(new CustomDomainObject($customDomain));
+            if ($this->hostingChangeService->hasPendingChange($blog)) {
+                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+            }
+
+            try {
+                $customDomain = $this->customDomainService->createCustomDomain(
+                    $blog,
+                    $input->domain,
+                    CustomDomainTlsProvider::CUSTOM,
+                    $input->tls_private_key,
+                    $input->tls_certificate
+                );
+            } catch (InvalidTlsCertificateException $e) {
+                throw new BadRequestHttpException($e->getMessage());
+            }
+
+            $blog->setCustomDomain($customDomain);
+
+            try {
+                $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN);
+            } catch (PendingHostingChangeException) {
+                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+            }
+
+            return new JsonResponse([
+                'custom_domain' => new CustomDomainObject($customDomain),
+                'hosting_info' => $this->getHostingInfoData($blog),
+            ]);
+        }
+
+        try {
+            $customDomain = $this->customDomainService->createCustomDomain($blog, $input->domain);
+        } catch (InvalidTlsCertificateException $e) {
+            throw new BadRequestHttpException($e->getMessage()); // @codeCoverageIgnore
+        }
+
+        return new JsonResponse([
+            'custom_domain' => new CustomDomainObject($customDomain),
+            'hosting_info' => null,
+        ]);
     }
 
     #[Route('/hosting/custom-domain', methods: 'PATCH')]
@@ -120,20 +171,46 @@ class HostingController extends AbstractController
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
 
-        if ($this->customDomainService->getCustomDomain($input->domain) !== null) {
-            throw new BadRequestHttpException('This custom domain is already in use by another blog');
-        }
-
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
         if ($customDomain === null) {
             throw new BadRequestHttpException('Please create a custom domain first before updating it');
         }
 
-        if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
-            throw new BadRequestHttpException('Only custom domains with PENDING status can be updated');
+        if ($input->new_domain === null && $input->tls_private_key === null && $input->tls_certificate === null) {
+            throw new BadRequestHttpException('Nothing to update');
         }
 
-        $customDomain = $this->customDomainService->updateCustomDomain($customDomain, $input->domain);
+        if ($input->new_domain !== null) {
+            if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
+                throw new BadRequestHttpException('Only custom domains with PENDING status can be updated');
+            }
+
+            if ($this->customDomainService->getCustomDomain($input->new_domain) !== null) {
+                throw new BadRequestHttpException('This custom domain is already in use by another blog');
+            }
+
+            $customDomain = $this->customDomainService->updateCustomDomain($customDomain, $input->new_domain);
+        }
+
+        if ($input->tls_private_key !== null || $input->tls_certificate !== null) {
+            if ($customDomain->getTlsProvider() !== CustomDomainTlsProvider::CUSTOM) {
+                throw new BadRequestHttpException('Only custom TLS provider domains can have their certificates updated');
+            }
+
+            if ($input->tls_private_key === null || $input->tls_certificate === null) {
+                throw new BadRequestHttpException('Both private key and certificate are required to update the TLS certificate');
+            }
+
+            try {
+                $customDomain = $this->customDomainService->updateCustomDomainCerts(
+                    $customDomain,
+                    $input->tls_private_key,
+                    $input->tls_certificate
+                );
+            } catch (InvalidTlsCertificateException $e) {
+                throw new BadRequestHttpException($e->getMessage());
+            }
+        }
 
         return new JsonResponse(new CustomDomainObject($customDomain));
     }

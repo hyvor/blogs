@@ -1,5 +1,10 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type { CustomDomainSetup, HostingInfo } from '../../../../lib/types';
+import type {
+	CustomDomainCreateResult,
+	CustomDomainSetup,
+	CustomDomainTlsProvider,
+	HostingInfo
+} from '../../../../lib/types';
 
 export function getHostingInfo() {
 	return consoleApi.get<HostingInfo>({
@@ -25,21 +30,38 @@ export function updateHostedAt(hostingAt: 'subdomain' | 'self', hostingUrl?: str
 	});
 }
 
-export function createCustomDomainSetup(domain: string) {
-	return consoleApi.post<CustomDomainSetup>({
+export function createCustomDomainSetup(
+	domain: string,
+	tlsProvider: CustomDomainTlsProvider = 'auto',
+	tlsPrivateKey?: string,
+	tlsCertificate?: string
+) {
+	return consoleApi.post<CustomDomainCreateResult>({
 		endpoint: '/hosting/custom-domain',
 		data: {
-			domain: domain
+			domain: domain,
+			tls_provider: tlsProvider,
+			tls_private_key: tlsPrivateKey,
+			tls_certificate: tlsCertificate
 		}
 	});
 }
 
-export function updateCustomDomainSetup(oldDomain: string, newDomain: string) {
+export function updateCustomDomainSetup(newDomain: string) {
 	return consoleApi.patch<CustomDomainSetup>({
 		endpoint: '/hosting/custom-domain',
 		data: {
-			old_domain: oldDomain,
 			new_domain: newDomain
+		}
+	});
+}
+
+export function updateCustomDomainCerts(tlsPrivateKey: string, tlsCertificate: string) {
+	return consoleApi.patch<CustomDomainSetup>({
+		endpoint: '/hosting/custom-domain',
+		data: {
+			tls_private_key: tlsPrivateKey,
+			tls_certificate: tlsCertificate
 		}
 	});
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\CustomDomainStatus;
+use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Repository\CustomDomainRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -27,6 +28,9 @@ class CustomDomain
 
     #[ORM\Column(enumType: CustomDomainStatus::class)]
     private CustomDomainStatus $status = CustomDomainStatus::PENDING;
+
+    #[ORM\Column(enumType: CustomDomainTlsProvider::class)]
+    private CustomDomainTlsProvider $tls_provider = CustomDomainTlsProvider::AUTO;
 
     #[ORM\Column]
     private string $domain;
@@ -95,6 +99,17 @@ class CustomDomain
     public function setStatus(CustomDomainStatus $status): static
     {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getTlsProvider(): CustomDomainTlsProvider
+    {
+        return $this->tls_provider;
+    }
+
+    public function setTlsProvider(CustomDomainTlsProvider $tls_provider): static
+    {
+        $this->tls_provider = $tls_provider;
         return $this;
     }
 

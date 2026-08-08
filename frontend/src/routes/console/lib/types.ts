@@ -139,13 +139,20 @@ export interface HostingChange {
 }
 
 export type CustomDomainSetupStatus = 'pending' | 'active' | 'failed';
+export type CustomDomainTlsProvider = 'auto' | 'custom';
 export interface CustomDomainSetup {
 	created_at: number;
 	domain: string;
 	status: CustomDomainSetupStatus;
+	tls_provider: CustomDomainTlsProvider;
 	certificate: string | null;
 	valid_from: number | null;
 	valid_to: number | null;
+}
+
+export interface CustomDomainCreateResult {
+	custom_domain: CustomDomainSetup;
+	hosting_info: HostingInfo | null;
 }
 
 export interface BlogIntegrations {

@@ -43,6 +43,12 @@
 
 }
 
+# local endpoints
+localhost:8080 {
+    request_header X-Router local
+    import handle_php
+}
+
 # custom domain testing
 :443 {
     tls {

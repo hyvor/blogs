@@ -23,4 +23,9 @@ return static function (RoutingConfigurator $routes): void {
     $routes
         ->import('../../src/Api/Delivery/CustomDomainController.php', 'attribute')
         ->condition('request.headers.get("X-Router") === "customdomain"');
+
+    // local endpoints
+    $routes
+        ->import('../../src/Api/Local/LocalController.php', 'attribute')
+        ->condition('request.headers.get("X-Router") === "local"');
 };

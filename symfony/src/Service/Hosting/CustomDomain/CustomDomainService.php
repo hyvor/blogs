@@ -5,8 +5,10 @@ namespace App\Service\Hosting\CustomDomain;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
 use App\Entity\Enum\CustomDomainStatus;
+use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -43,18 +45,31 @@ class CustomDomainService
         return $privateKey;
     }
 
-    public function createCustomDomain(Blog $blog, string $domain): CustomDomain
-    {
-        $privateKeyPem = PrivateKey::generatePrivateKeyPem();
-        $encryptedPrivateKey = $this->encryption->encryptString($privateKeyPem);
-
+    /**
+     * @throws InvalidTlsCertificateException if the TLS provider is CUSTOM and the private key/certificate are invalid
+     */
+    public function createCustomDomain(
+        Blog $blog,
+        string $domain,
+        CustomDomainTlsProvider $tlsProvider = CustomDomainTlsProvider::AUTO,
+        ?string $privateKeyPem = null,
+        ?string $certificatePem = null
+    ): CustomDomain {
         $customDomain = new CustomDomain();
         $customDomain->setBlog($blog);
         $customDomain->setDomain($domain);
         $customDomain->setCreatedAt($this->now());
         $customDomain->setUpdatedAt($this->now());
-        $customDomain->setStatus(CustomDomainStatus::PENDING);
-        $customDomain->setPrivateKeyEncrypted($encryptedPrivateKey);
+        $customDomain->setTlsProvider($tlsProvider);
+
+        if ($tlsProvider === CustomDomainTlsProvider::CUSTOM) {
+            \assert($privateKeyPem !== null && $certificatePem !== null);
+            $this->setCustomTls($customDomain, $privateKeyPem, $certificatePem);
+        } else {
+            $generatedPrivateKeyPem = PrivateKey::generatePrivateKeyPem();
+            $customDomain->setPrivateKeyEncrypted($this->encryption->encryptString($generatedPrivateKeyPem));
+            $customDomain->setStatus(CustomDomainStatus::PENDING);
+        }
 
         $this->em->persist($customDomain);
         $this->em->flush();
@@ -75,6 +90,67 @@ class CustomDomainService
         $this->em->flush();
 
         return $customDomain;
+    }
+
+    /**
+     * @throws InvalidTlsCertificateException if the private key/certificate are invalid
+     */
+    public function updateCustomDomainCerts(
+        CustomDomain $customDomain,
+        string $privateKeyPem,
+        string $certificatePem
+    ): CustomDomain {
+        if ($customDomain->getTlsProvider() !== CustomDomainTlsProvider::CUSTOM) {
+            throw new \RuntimeException('Only custom TLS provider domains can have their certificates updated');
+        }
+
+        $this->setCustomTls($customDomain, $privateKeyPem, $certificatePem);
+        $customDomain->setUpdatedAt($this->now());
+
+        $this->em->persist($customDomain);
+        $this->em->flush();
+
+        return $customDomain;
+    }
+
+    /**
+     * Validates that the given private key and certificate are valid PEM data and that they
+     * match each other, then activates the custom domain with them.
+     *
+     * @throws InvalidTlsCertificateException
+     */
+    private function setCustomTls(CustomDomain $customDomain, string $privateKeyPem, string $certificatePem): void
+    {
+        $privateKey = openssl_pkey_get_private($privateKeyPem);
+        if ($privateKey === false) {
+            throw new InvalidTlsCertificateException('The provided private key is not a valid PEM private key.');
+        }
+
+        $cert = openssl_x509_read($certificatePem);
+        if ($cert === false) {
+            throw new InvalidTlsCertificateException('The provided certificate is not a valid PEM certificate.');
+        }
+
+        if (!openssl_x509_check_private_key($cert, $privateKey)) {
+            throw new InvalidTlsCertificateException('The provided private key does not match the certificate.');
+        }
+
+        $parsed = openssl_x509_parse($cert);
+        if ($parsed === false) {
+            throw new InvalidTlsCertificateException('Unable to parse the provided certificate.'); // @codeCoverageIgnore
+        }
+
+        $validFrom = $parsed['validFrom_time_t'] ?? null;
+        $validTo = $parsed['validTo_time_t'] ?? null;
+        if (!is_int($validFrom) || !is_int($validTo)) {
+            throw new InvalidTlsCertificateException('Unable to determine the validity period of the provided certificate.'); // @codeCoverageIgnore
+        }
+
+        $customDomain->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
+        $customDomain->setCertificate($certificatePem);
+        $customDomain->setValidFrom((new \DateTimeImmutable())->setTimestamp($validFrom));
+        $customDomain->setValidTo((new \DateTimeImmutable())->setTimestamp($validTo));
+        $customDomain->setStatus(CustomDomainStatus::ACTIVE);
     }
 
     public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void

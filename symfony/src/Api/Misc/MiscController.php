@@ -2,13 +2,11 @@
 
 namespace App\Api\Misc;
 
-use App\Service\Theme\ThemeService;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckExistence;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -40,7 +38,7 @@ class MiscController extends AbstractController
             $mimeType = $this->filesystem->mimeType($path);
             $lastModified = $this->filesystem->lastModified($path);
             $content = $this->filesystem->read($path);
-        } catch (UnableToRetrieveMetadata|UnableToReadFile) {
+        } catch (UnableToRetrieveMetadata | UnableToReadFile) {
             return new Response(null, 404);
         }
 
@@ -52,15 +50,4 @@ class MiscController extends AbstractController
 
         return $response;
     }
-
-    /**
-     * This provides Caddy with the certificate for the given custom domain.
-     * https://caddyserver.com/docs/caddyfile/directives/tls#http-1
-     */
-    #[Route('/api/local/caddy-certificate', methods: ['GET'])]
-    public function getCaddyCertificate(): Response
-    {
-        //
-    }
-
 }
