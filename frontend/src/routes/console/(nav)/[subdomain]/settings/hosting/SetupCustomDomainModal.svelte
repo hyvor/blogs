@@ -32,7 +32,7 @@
 
 	let oldDomain = $state('');
 	let domain = $state('');
-	let isEditing = $state(!$hostingInfoStore.custom_domain_setup);
+	let isEditing = $state(!$hostingInfoStore.custom_domain);
 	let error: string | null = $state(null);
 	let loading = $state(false);
 
@@ -40,10 +40,13 @@
 	const CUSTOM_DOMAIN_IP = '116.202.185.2';
 	const CNAME_DOMAIN = 'hyvorblogs.io';
 
+	let domainInput: HTMLInputElement;
+
 	$effect(() => {
 		if (show) {
-			domain = $hostingInfoStore.custom_domain_setup?.domain || '';
+			domain = $hostingInfoStore.custom_domain?.domain || '';
 			error = null;
+			domainInput?.focus();
 		}
 	});
 
@@ -51,7 +54,7 @@
 		error = null;
 		const domainTrimmed = domain.trim();
 
-		if ($hostingInfoStore.custom_domain_setup?.domain === domainTrimmed) {
+		if ($hostingInfoStore.custom_domain?.domain === domainTrimmed) {
 			// No changes, proceed to verification
 			isEditing = false;
 			return;
@@ -81,7 +84,7 @@
 		try {
 			let customDomainSetup;
 
-			if ($hostingInfoStore.custom_domain_setup) {
+			if ($hostingInfoStore.custom_domain) {
 				// Custom domain setup exists
 				customDomainSetup = await updateCustomDomainSetup(oldDomain, domainTrimmed);
 				toast.success('Custom domain updated!', { id: saveToastId });
@@ -91,7 +94,7 @@
 				toast.success('Custom domain saved!', { id: saveToastId });
 			}
 
-			hostingInfoStore.update((info) => ({ ...info, custom_domain_setup: customDomainSetup }));
+			hostingInfoStore.update((info) => ({ ...info, custom_domain: customDomainSetup }));
 			oldDomain = domainTrimmed;
 			isEditing = false;
 		} catch (err: any) {
@@ -150,7 +153,7 @@
 
 		await deleteCustomDomainSetup()
 			.then(() => {
-				hostingInfoStore.update((info) => ({ ...info, custom_domain_setup: null }));
+				hostingInfoStore.update((info) => ({ ...info, custom_domain: null }));
 				toast.success('Custom domain setup aborted', { id: abortToastId });
 				isEditing = true;
 				show = false;
@@ -169,6 +172,7 @@
 		<FormControl>
 			<TextInput
 				bind:value={domain}
+				bind:input={domainInput}
 				placeholder="blog.example.com"
 				block
 				state={error ? 'error' : undefined}

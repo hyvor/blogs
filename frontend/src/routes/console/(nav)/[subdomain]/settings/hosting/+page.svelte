@@ -115,7 +115,7 @@
 					buttonLabel="Setup Custom Domain"
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={() => (showCustomDomainModal = true)}
-					tag={$hostingInfoStore.custom_domain_setup?.status === 'pending'
+					tag={$hostingInfoStore.custom_domain?.status === 'pending'
 						? { color: 'orange', label: 'Pending Verification' }
 						: null}
 				/>

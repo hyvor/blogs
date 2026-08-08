@@ -114,7 +114,7 @@ export interface BlogCounts {
 
 export interface HostingInfo {
 	hosting_at: 'subdomain' | 'domain' | 'self';
-	custom_domain_setup?: CustomDomainSetup | null;
+	custom_domain?: CustomDomainSetup | null;
 	hosting_url?: string;
 	change?: HostingChange | null;
 }

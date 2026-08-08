@@ -53,4 +53,14 @@ class MiscController extends AbstractController
         return $response;
     }
 
+    /**
+     * This provides Caddy with the certificate for the given custom domain.
+     * https://caddyserver.com/docs/caddyfile/directives/tls#http-1
+     */
+    #[Route('/api/local/caddy-certificate', methods: ['GET'])]
+    public function getCaddyCertificate(): Response
+    {
+        //
+    }
+
 }

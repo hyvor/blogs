@@ -11,6 +11,7 @@
     }
 }
 
+# the main app
 :80 {
 
     @subdomain {
@@ -40,4 +41,11 @@
         level DEBUG
     }
 
+}
+
+# custom domain testing
+:443 {
+    tls {
+        get_certificate http http://localhost/api/local/caddy-certificate
+    }
 }
