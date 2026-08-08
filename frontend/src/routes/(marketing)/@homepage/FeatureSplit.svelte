@@ -73,7 +73,6 @@
 <style>
 	.feature-section {
 		padding: 100px 0;
-		border-bottom: 1px solid var(--border);
 	}
 
 	.alt-bg {

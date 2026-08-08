@@ -23,7 +23,7 @@
 					style:background={`color-mix(in srgb, ${p.color} 20%, transparent)`}
 				>
 					<img
-						src="https://hyvor.com/api/public/logo/${p.component}"
+						src="https://hyvor.com/api/public/logo/{p.component}.svg"
 						alt={p.name}
 						width="48"
 						height="48"

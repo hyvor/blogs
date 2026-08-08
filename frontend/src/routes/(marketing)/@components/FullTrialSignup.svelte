@@ -39,9 +39,8 @@
 		background: linear-gradient(
 			to bottom,
 			var(--background),
-			color-mix(in srgb, var(--accent) 6%, var(--background))
+			color-mix(in srgb, var(--accent) 40%, var(--background))
 		);
-		border-top: 1px solid var(--border);
 		text-align: center;
 	}
 
