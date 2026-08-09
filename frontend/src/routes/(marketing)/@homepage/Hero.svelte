@@ -18,12 +18,13 @@
 			<!-- <div class="badge">Open-source</div> -->
 
 			<h1 class="anim anim-1">
-				Just Blogging.<br /><span class="heading-small">(We'll handle the rest)</span>
+				You Publish.<br /><span class="heading-small">(We'll handle the rest)</span>
 			</h1>
 
 			<h2 class="subtitle anim anim-2">
-				Hyvor Blogs is our blogging platform. It's <span class="hl">fast</span>,
-				<span class="hl">simple</span>, and <span class="hl">open-source</span>!
+				Hyvor Blogs is our <span class="marker">blogging platform</span>. It's
+				<span class="hl">fast</span>, <span class="hl">simple</span>, and
+				<span class="hl">open-source</span>!
 			</h2>
 
 			<div class="buttons anim anim-3">
@@ -76,7 +77,7 @@
 		min-width: 0;
 		text-align: center;
 	}
-
+	/* 
 	.badge {
 		display: inline-flex;
 		align-items: center;
@@ -89,7 +90,7 @@
 		color: var(--accent);
 		margin-bottom: 24px;
 		border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-	}
+	} */
 
 	h1 {
 		margin: 0;
@@ -97,6 +98,7 @@
 		line-height: 1.1;
 		letter-spacing: -0.02em;
 		font-weight: 800;
+		font-family: var(--font-serif);
 	}
 
 	/* smaller fontsize */
@@ -111,6 +113,7 @@
 		letter-spacing: -0.02em;
 		line-height: 1.15;
 		margin: 0 0 16px;
+		font-family: var(--font-serif);
 	}
 
 	.subtitle {
@@ -126,6 +129,21 @@
 	.hl {
 		color: var(--accent);
 		font-weight: 700;
+	}
+
+	.marker {
+		position: relative;
+		font-weight: 700;
+		background-image: linear-gradient(
+			100deg,
+			color-mix(in srgb, var(--accent) 35%, transparent) 0%,
+			color-mix(in srgb, var(--accent) 45%, transparent) 100%
+		);
+		background-repeat: no-repeat;
+		background-size: 100% 0.5em;
+		background-position: 0 88%;
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
 	}
 
 	.buttons {

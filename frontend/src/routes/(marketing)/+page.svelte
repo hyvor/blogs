@@ -18,8 +18,8 @@
 </svelte:head>
 
 <Hero />
-<LogoStrip />
-<StatsRow />
+<!-- <StatsRow /> -->
+<!-- <LogoStrip /> -->
 <Features />
 <Testimonials />
 <AllFeatures />

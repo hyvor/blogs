@@ -76,7 +76,7 @@
 	}
 
 	.alt-bg {
-		background: color-mix(in srgb, var(--accent) 3%, var(--background));
+		background: color-mix(in srgb, var(--accent) 10%, var(--background));
 	}
 
 	.split {

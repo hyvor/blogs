@@ -16,3 +16,12 @@
 {#if $page.url.pathname !== '/themes'}
 	<Footer />
 {/if}
+
+<style>
+	/* TODO: remove after adding to design */
+	@import url(https://fonts.bunny.net/css?family=source-serif-4:400,600);
+
+	:global(:root) {
+		--font-serif: 'Source Serif 4', serif;
+	}
+</style>

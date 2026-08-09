@@ -18,6 +18,7 @@
 		'Theme development docs & API'
 	]}
 	button={{ href: '/themes', label: 'Browse themes' }}
+	altBg
 >
 	{#snippet visual()}
 		<ThemesMockup />
@@ -29,7 +30,7 @@
 
 <FeatureSplit
 	eyebrow="SEO & Speed"
-	title="Perfect scores, zero configuration"
+	title="Zero-config SEO"
 	description="Every blog is automatically optimised for search engines and page speed. You write; we handle the technical SEO so your content ranks."
 	bullets={[
 		'Meta tags, Open Graph, Twitter Cards',
@@ -39,7 +40,6 @@
 		'Automatic WebP image conversion'
 	]}
 	flip
-	altBg
 >
 	{#snippet visual()}
 		<SeoMockup />
@@ -48,13 +48,14 @@
 
 <FeatureSplit
 	eyebrow="Flexible Hosting"
-	title="Host it anywhere you like"
+	title="Custom domain or sub-directory"
 	description="Start on a subdomain in seconds, move to a custom domain, or serve your blog from inside your existing site with a sub-directory. Your call."
 	bullets={[
-		'Free SSL on all custom domains',
+		'Free TLS certificates on all custom domains',
 		'Cloudflare Workers, Docker, Next.js, Laravel…',
 		'Reverse proxy support for sub-directory'
 	]}
+	altBg
 >
 	{#snippet visual()}
 		<HostingMockup />
@@ -71,7 +72,6 @@
 		'Automatic hreflang & i18n routing'
 	]}
 	flip
-	altBg
 >
 	{#snippet visual()}
 		<MultiLanguageMockup />
@@ -80,7 +80,7 @@
 
 <FeatureSplit
 	eyebrow="Content & Community"
-	title="Blogging, comments, and newsletters — all in one place"
+	title="Talk & Post included"
 	description="Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected."
 	bullets={[
 		'Hyvor Talk comments, free on every plan',
@@ -88,6 +88,7 @@
 		'One account and dashboard for all three'
 	]}
 	button={{ href: '/pricing', label: "See what's included" }}
+	altBg
 >
 	{#snippet visual()}
 		<SuiteMockup />

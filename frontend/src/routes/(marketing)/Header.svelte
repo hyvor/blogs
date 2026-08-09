@@ -168,7 +168,6 @@
 	.header-inner {
 		display: flex;
 		align-items: center;
-		width: 100%;
 		gap: 16px;
 	}
 
@@ -192,14 +191,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 4px;
+		gap: 2px;
 	}
 
 	.nav-link {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		padding: 6px 14px;
+		padding: 6px 16px;
 		border-radius: 20px;
 		font-size: 13px;
 		font-weight: 500;
