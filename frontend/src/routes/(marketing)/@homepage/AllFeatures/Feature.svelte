@@ -13,17 +13,18 @@
 	const SvelteComponent = $derived(icon);
 </script>
 
-<div class="feature">
-	<div class="icon {color}">
+<li class="feature">
+	<div class="icon {color}" aria-hidden="true">
 		<SvelteComponent size={40} />
 	</div>
-	<div class="title">{title}</div>
-	<div class="description">{description}</div>
-</div>
+	<h4 class="title">{title}</h4>
+	<p class="description">{description}</p>
+</li>
 
 <style>
 	.feature {
 		width: calc(33.33% - 15px);
+		list-style: none;
 	}
 
 	.icon.green {
@@ -42,12 +43,12 @@
 	.title {
 		font-weight: 600;
 		font-size: 20px;
-		margin-top: 10px;
+		margin: 10px 0 0;
 	}
 
 	.description {
 		font-size: 16px;
-		margin-top: 10px;
+		margin: 10px 0 0;
 	}
 
 	@media (max-width: 992px) {

@@ -32,6 +32,7 @@
 
 	interface Category {
 		label: string;
+		icon: any;
 		color: FeatureColor;
 		features: FeatureItem[];
 	}
@@ -39,6 +40,7 @@
 	const categories: Category[] = [
 		{
 			label: 'Post Editor',
+			icon: IconPencil,
 			color: 'green',
 			features: [
 				{
@@ -77,6 +79,7 @@
 		},
 		{
 			label: 'Your Blog',
+			icon: IconSignpost2,
 			color: 'blue',
 			features: [
 				{
@@ -121,6 +124,7 @@
 		},
 		{
 			label: 'Optimizations',
+			icon: IconLightning,
 			color: 'orange',
 			features: [
 				{
@@ -143,6 +147,7 @@
 		},
 		{
 			label: 'Developers',
+			icon: IconDatabase,
 			color: 'red',
 			features: [
 				{
@@ -192,22 +197,27 @@
 
 	<div class="accordion">
 		{#each categories as cat, i}
+			{@const CatIcon = cat.icon}
 			<div class="accordion-item" class:open={openIndex === i}>
-				<button
-					class="accordion-trigger"
-					id="accordion-trigger-{i}"
-					onclick={() => toggle(i)}
-					aria-expanded={openIndex === i}
-					aria-controls="accordion-panel-{i}"
-					style="--cat-color: {colorMap[cat.color]}"
-				>
-					<span class="cat-dot" style="background: {colorMap[cat.color]}"></span>
-					<span class="cat-label">{cat.label}</span>
-					<span class="cat-count">{cat.features.length} features</span>
-					<span class="chevron" class:rotated={openIndex === i}>
-						<IconCaretDown size={16} />
-					</span>
-				</button>
+				<h3 class="accordion-heading">
+					<button
+						class="accordion-trigger"
+						id="accordion-trigger-{i}"
+						onclick={() => toggle(i)}
+						aria-expanded={openIndex === i}
+						aria-controls="accordion-panel-{i}"
+						style="--cat-color: {colorMap[cat.color]}"
+					>
+						<span class="cat-icon" aria-hidden="true">
+							<CatIcon size={18} />
+						</span>
+						<span class="cat-label">{cat.label}</span>
+						<span class="cat-count">{cat.features.length} features</span>
+						<span class="chevron" class:rotated={openIndex === i} aria-hidden="true">
+							<IconCaretDown size={16} />
+						</span>
+					</button>
+				</h3>
 
 				<div
 					class="accordion-body"
@@ -218,7 +228,7 @@
 				>
 					<div class="accordion-body-inner">
 						<div class="accordion-content">
-							<div class="features-grid">
+							<ul class="features-grid">
 								{#each cat.features as feat}
 									<Feature
 										icon={feat.icon}
@@ -227,7 +237,7 @@
 										color={cat.color}
 									/>
 								{/each}
-							</div>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -259,46 +269,54 @@
 	}
 
 	.accordion {
-		border: 1px solid var(--border);
-		border-radius: 20px;
-		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.accordion-item {
-		border-bottom: 1px solid var(--border);
+		border-radius: 16px;
+		transition: background 0.2s ease;
 	}
 
-	.accordion-item:last-child {
-		border-bottom: none;
+	.accordion-item.open {
+		background: var(--accent-light-mid);
+	}
+
+	.accordion-heading {
+		margin: 0;
+		font-size: inherit;
+		font-weight: inherit;
 	}
 
 	.accordion-trigger {
 		width: 100%;
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		padding: 20px 24px;
+		gap: 14px;
+		padding: 18px 20px;
 		background: none;
 		border: none;
+		border-radius: inherit;
 		cursor: pointer;
 		text-align: left;
 		transition: background 0.15s;
 		color: var(--text);
 	}
 
-	.accordion-trigger:hover {
+	.accordion-item:not(.open) .accordion-trigger:hover {
 		background: var(--hover);
 	}
 
-	.open .accordion-trigger {
-		background: var(--background-2, var(--box-background));
-	}
-
-	.cat-dot {
-		display: block;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
+	.cat-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 10px;
+		color: var(--cat-color);
+		background: color-mix(in srgb, var(--cat-color) 16%, transparent);
 		flex-shrink: 0;
 	}
 
@@ -340,15 +358,15 @@
 	}
 
 	.accordion-content {
-		padding: 24px;
-		border-top: 1px solid var(--border);
-		background: var(--background);
+		padding: 8px 20px 28px;
 	}
 
 	.features-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 28px 20px;
+		margin: 0;
+		padding: 0;
 	}
 
 	/* Override Feature.svelte width since we're using grid now */

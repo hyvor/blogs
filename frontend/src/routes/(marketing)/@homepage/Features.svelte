@@ -9,17 +9,52 @@
 </script>
 
 <FeatureSplit
-	eyebrow="Custom Themes"
-	title="Your blog, your brand"
-	description="Choose from a library of beautiful themes or build your own with plain HTML and CSS. Every colour, font, and layout detail is yours to control."
+	eyebrow="Own Your Content"
+	title="Your content. Your rules."
+	description="Hyvor Blogs is open-source and built so you're never locked in. Export everything whenever you want, or self-host on your own infrastructure for full control and privacy."
 	bullets={[
-		'Original & ported themes included',
-		'Open-source, fork and customise freely',
-		'Theme development docs & API'
+		'One-click data export in JSON',
+		'AGPL-3.0 licensed - switch to self-hosting anytime',
+		'No ads, no third-party trackers on your blog'
+	]}
+	altBg
+>
+	<!-- TODO: add an ownership/privacy mockup -->
+	{#snippet visual()}
+		TODO
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
+	eyebrow="All-in-one"
+	title="No plugins.<br/>No maintenance.<br/> No nonsense."
+	description="Everything you need to run a blog is already built in. No plugins to hunt down, no upgrades to babysit, no surprise charges from third-party add-ons - just one platform that works."
+	bullets={[
+		'Every feature included, no plugins required',
+		'We handle upgrades, security patches, etc. for you',
+		'No extra charges or third-party add-on costs'
+	]}
+	flip
+>
+	<!-- TODO: add an all-in-one/no-hassle mockup -->
+	{#snippet visual()}
+		TODO
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
+	eyebrow="Custom Themes"
+	title="Your Style, Your Way"
+	description="Choose from a library of beautiful themes or build your own with plain HTML and CSS. Every color, font, and layout detail is yours to control."
+	bullets={[
+		'Fully open-source themes, free to use and modify',
+		'Theme development docs & API',
+		'or, set up headless mode with your own frontend'
 	]}
 	button={{ href: '/themes', label: 'Browse themes' }}
 	altBg
 >
+	<!-- TODO: add button for headless docs -->
 	{#snippet visual()}
 		<ThemesMockup />
 	{/snippet}
@@ -30,7 +65,7 @@
 
 <FeatureSplit
 	eyebrow="SEO & Speed"
-	title="Zero-config SEO"
+	title="Zero-config SEO.<br/>Lightning-fast pages."
 	description="Every blog is automatically optimised for search engines and page speed. You write; we handle the technical SEO so your content ranks."
 	bullets={[
 		'Meta tags, Open Graph, Twitter Cards',
@@ -48,7 +83,7 @@
 
 <FeatureSplit
 	eyebrow="Flexible Hosting"
-	title="Custom domain or sub-directory"
+	title="Custom domain, Sub-directory, Headless"
 	description="Start on a subdomain in seconds, move to a custom domain, or serve your blog from inside your existing site with a sub-directory. Your call."
 	bullets={[
 		'Free TLS certificates on all custom domains',
@@ -59,6 +94,39 @@
 >
 	{#snippet visual()}
 		<HostingMockup />
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
+	eyebrow="Comments & Newsletters"
+	title="Talk & Post included"
+	description="Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected."
+	bullets={[
+		'Hyvor Talk comments, free on every plan',
+		'Hyvor Post newsletters, free on every plan',
+		'One account and dashboard for all three'
+	]}
+	button={{ href: '/pricing', label: "See what's included" }}
+	flip
+>
+	{#snippet visual()}
+		<SuiteMockup />
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
+	eyebrow="AI Features"
+	title="AI when you need it"
+	description="Save time and effort with AI-powered features. Generate content, translate posts, and ask for suggestions - all without leaving your blog dashboard."
+	bullets={[
+		'AI content generation',
+		'Improvement suggestions',
+		'Bulk post editing (e.g. add internal links)'
+	]}
+	altBg
+>
+	{#snippet visual()}
+		TODO
 	{/snippet}
 </FeatureSplit>
 
@@ -79,18 +147,17 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Content & Community"
-	title="Talk & Post included"
-	description="Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected."
+	eyebrow="Link Analyzer"
+	title="No broken links"
+	description="Hyvor Blogs automatically fetches and checks every link in your posts on a recurring schedule, flagging broken links and redirects before your readers ever hit them."
 	bullets={[
-		'Hyvor Talk comments, free on every plan',
-		'Hyvor Post newsletters, free on every plan',
-		'One account and dashboard for all three'
+		'Automatic, periodic checks for every link',
+		'Per-post and full-blog link reports',
+		'Instant flags for broken links, redirects & status codes'
 	]}
-	button={{ href: '/pricing', label: "See what's included" }}
-	altBg
+	flip
 >
 	{#snippet visual()}
-		<SuiteMockup />
+		TODO
 	{/snippet}
 </FeatureSplit>

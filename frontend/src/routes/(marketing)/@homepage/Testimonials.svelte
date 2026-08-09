@@ -105,8 +105,7 @@
 
 <style>
 	.testimonials {
-		background: var(--accent-light);
-		/* background: #574443; */
+		background: #574443;
 		padding: 96px 0;
 	}
 
@@ -119,7 +118,7 @@
 		font-weight: 600;
 		letter-spacing: 0.07em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--accent-light-mid);
 		margin: 0 0 48px;
 	}
 
@@ -194,6 +193,7 @@
 		line-height: 1.7;
 		margin: 0;
 		flex: 1;
+		color: #fff;
 	}
 
 	figcaption {
@@ -205,6 +205,7 @@
 	figcaption strong {
 		font-size: 14px;
 		font-weight: 600;
+		color: #fff;
 	}
 
 	figcaption span {

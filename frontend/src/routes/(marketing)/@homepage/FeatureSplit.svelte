@@ -6,7 +6,7 @@
 
 	interface Props {
 		eyebrow: string;
-		title: string;
+		title: string | Snippet;
 		description: string;
 		bullets?: string[];
 		button?: { href: string; label: string } | null;
@@ -38,7 +38,13 @@
 				{@render left()}
 			{:else}
 				<span class="eyebrow">{eyebrow}</span>
-				<h2>{title}</h2>
+				<h2>
+					{#if typeof title === 'string'}
+						{@html title}
+					{:else}
+						{@render title()}
+					{/if}
+				</h2>
 				<p>{description}</p>
 
 				{#if bullets.length}
@@ -116,7 +122,7 @@
 	p {
 		font-size: 16px;
 		line-height: 1.7;
-		color: var(--text-light);
+		color: #414141;
 		margin: 0 0 28px;
 		max-width: 440px;
 	}

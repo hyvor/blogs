@@ -219,7 +219,7 @@
 		flex-wrap: wrap;
 		gap: 20px;
 		padding-bottom: 40px;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 	}
 
 	.brand {
@@ -311,7 +311,7 @@
 		flex-wrap: wrap;
 		gap: 10px;
 		padding: 24px 0 32px;
-		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
 		font-size: 13px;
 		color: rgba(255, 255, 255, 0.5);
 	}
