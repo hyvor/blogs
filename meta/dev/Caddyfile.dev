@@ -9,6 +9,7 @@
     php_server {
         file_server off
         try_files index.php
+        env CADDY_ROUTER {args[0]}
     }
 }
 
@@ -20,12 +21,11 @@
     }
 
     handle @subdomain {
-        request_header X-Router subdomain
-        import handle_php
+        import handle_php subdomain
     }
 
     handle {
-        import handle_php
+        import handle_php app
     }
 
 	log {
@@ -37,8 +37,7 @@
 
 # local endpoints
 http://localhost:8080 {
-    request_header X-Router local
-    import handle_php
+    import handle_php local
 }
 
 # custom domain testing
@@ -47,6 +46,5 @@ http://localhost:8080 {
         get_certificate http http://localhost:8080/api/local/caddy-certificate
     }
 
-    request_header X-Router customdomain
-    import handle_php
+    import handle_php customdomain
 }
