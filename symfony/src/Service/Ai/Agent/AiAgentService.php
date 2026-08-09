@@ -2,11 +2,10 @@
 
 namespace App\Service\Ai\Agent;
 
-use App\Entity\Blog;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\DocumentOpsTool;
 use App\Service\Ai\AiPlatformService;
-use Hyvor\Phrosemirror\Document\Node;
+use App\Service\Post\Content\PostContentService;
 use Symfony\AI\Agent\Agent;
 use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
@@ -30,30 +29,13 @@ class AiAgentService
 
     Editing posts:
     - you are given markdown content of the post, each node prefixed with an ID in the format #[id] (e.g. #[p-1] for paragraph 1)
-    - return a JSON object with the following structure:
-    {
-        "edits": [
-            {
-                "node_id": "p-1",
-                "action": "replace",
-                "content": "new content for paragraph 1"
-            },
-            {
-                "node_id": "p-2",
-                "action": "delete"
-            },
-            {
-                "node_id": "p-3",
-                "action": "insert_after",
-                "content": "new paragraph after paragraph 3"
-            }
-        ]
-    }
+    - call tools with the node ID: e.g., document_replace('p-1', 'new *content*');
     PROMPT;
 
 
     public function __construct(
-        private AiPlatformService $aiPlatformService
+        private AiPlatformService $aiPlatformService,
+        private PostContentService $postContentService,
     ) {}
 
     private function getSystemPromptForPost(PostVariant $postVariant): string
@@ -91,8 +73,10 @@ class AiAgentService
         $provider = $blog->getMeta()->ai_provider;
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
-       // $documentOpsTool = new DocumentOpsTool($node);
-        $toolbox = new Toolbox([]);
+        // $node = $this->postContentService->getDocumentFromJson($postVariant->getContent());
+
+        $documentOpsTool = new DocumentOpsTool();
+        $toolbox = new Toolbox([$documentOpsTool]);
         $toolProcessor = new AgentProcessor($toolbox);
 
         $agent = new Agent(
