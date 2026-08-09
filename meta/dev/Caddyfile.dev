@@ -1,6 +1,7 @@
 {
 	frankenphp
     metrics
+    auto_https disable_redirects
 }
 
 (handle_php) {
@@ -23,15 +24,6 @@
         import handle_php
     }
 
-    @customdomain {
-        host custom-domain.localhost
-    }
-
-    handle @customdomain {
-        request_header X-Router customdomain
-        import handle_php
-    }
-
     handle {
         import handle_php
     }
@@ -44,7 +36,7 @@
 }
 
 # local endpoints
-localhost:8080 {
+http://localhost:8080 {
     request_header X-Router local
     import handle_php
 }
@@ -52,6 +44,9 @@ localhost:8080 {
 # custom domain testing
 :443 {
     tls {
-        get_certificate http http://localhost/api/local/caddy-certificate
+        get_certificate http http://localhost:8080/api/local/caddy-certificate
     }
+
+    request_header X-Router customdomain
+    import handle_php
 }

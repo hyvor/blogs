@@ -43,11 +43,6 @@ class HostingController extends AbstractController
     public function getHostingInfo(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        return $this->getHostingInfoResponse($blog);
-    }
-
-    private function getHostingInfoResponse(Blog $blog): JsonResponse
-    {
         return new JsonResponse($this->getHostingInfoData($blog));
     }
 
@@ -103,7 +98,7 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
 
-        return $this->getHostingInfoResponse($blog);
+        return new JsonResponse($this->getHostingInfoData($blog));
     }
 
     #[Route('/hosting/custom-domain', methods: 'POST')]
@@ -117,13 +112,13 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('This custom domain is already in use by another blog');
         }
 
+        if ($this->hostingChangeService->hasPendingChange($blog)) {
+            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
+        }
+
         if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
             if ($input->tls_private_key === null || $input->tls_certificate === null) {
                 throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
-            }
-
-            if ($this->hostingChangeService->hasPendingChange($blog)) {
-                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
             }
 
             try {
