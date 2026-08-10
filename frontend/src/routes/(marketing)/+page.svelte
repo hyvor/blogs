@@ -1,4 +1,5 @@
 <script>
+	import { MARKETING_PAGE_META } from './marketing';
 	import Hero from './@homepage/Hero.svelte';
 	import LogoStrip from './@homepage/LogoStrip.svelte';
 	import StatsRow from './@homepage/StatsRow.svelte';
@@ -10,12 +11,8 @@
 </script>
 
 <svelte:head>
-	<title>Hyvor Blogs - Open-source Blogging Platform</title>
-	<meta
-		name="description"
-		content="Hyvor Blogs is an open-source blogging platform that's fast and simple. Create a blog, manage it, and grow it without managing servers or databases. Self-host or let us handle it."
-	/>
-	<link rel="canonical" href="https://blogs.hyvor.com" />
+	<title>{MARKETING_PAGE_META.title}</title>
+	<meta name="description" content={MARKETING_PAGE_META.description} />
 </svelte:head>
 
 <Hero />
