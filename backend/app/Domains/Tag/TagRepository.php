@@ -116,7 +116,7 @@ class TagRepository
                 ->where('tag_variants.language_id', '=', $primaryLanguage->id)
         )
             ->where('tags.blog_id', $blog->id)
-            ->where('tag_variants.name', 'LIKE', $search)
+            ->where('tag_variants.name', 'ILIKE', $search)
             ->limit($limit)
             ->select('tags.*')
             ->get();
