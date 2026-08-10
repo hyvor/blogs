@@ -5,9 +5,49 @@
 	import CcpaSeal from './Seals/CcpaSeal.svelte';
 	import SsoSeal from './Seals/SsoSeal.svelte';
 	import IsoSeal from './Seals/IsoSeal.svelte';
+
+	let mouseX = $state(0);
+	let mouseY = $state(0);
+	let hovering = $state(false);
+
+	function handlePointerMove(event: PointerEvent) {
+		const bounds = (event.currentTarget as HTMLElement).getBoundingClientRect();
+		mouseX = event.clientX - bounds.left;
+		mouseY = event.clientY - bounds.top;
+	}
 </script>
 
-<section class="enterprise">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<section
+	class="enterprise"
+	onpointermove={handlePointerMove}
+	onpointerenter={() => (hovering = true)}
+	onpointerleave={() => (hovering = false)}
+	style="--mx: {mouseX}px; --my: {mouseY}px;"
+>
+	<svg class="bg-pattern" width="100%" height="100%" aria-hidden="true">
+		<defs>
+			<pattern id="enterprise-grid" width="56" height="56" patternUnits="userSpaceOnUse">
+				<path d="M 56 0 L 0 0 0 56" fill="none" stroke="white" stroke-width="1" />
+			</pattern>
+			<radialGradient id="enterprise-fade" cx="50%" cy="40%" r="75%">
+				<stop offset="0%" stop-color="white" stop-opacity="1" />
+				<stop offset="100%" stop-color="white" stop-opacity="0" />
+			</radialGradient>
+			<mask id="enterprise-mask">
+				<rect width="100%" height="100%" fill="url(#enterprise-fade)" />
+			</mask>
+		</defs>
+		<rect
+			width="100%"
+			height="100%"
+			fill="url(#enterprise-grid)"
+			mask="url(#enterprise-mask)"
+		/>
+	</svg>
+
+	<div class="grid-highlight" class:visible={hovering} aria-hidden="true"></div>
+
 	<div class="hds-container inner">
 		<div class="text-side">
 			<h2>Enterprise-ready.</h2>
@@ -46,11 +86,49 @@
 
 <style>
 	.enterprise {
+		position: relative;
 		background: #574443;
 		padding: 96px 0;
+		overflow: hidden;
+	}
+
+	.bg-pattern {
+		position: absolute;
+		inset: 0;
+		opacity: 0.08;
+		pointer-events: none;
+	}
+
+	.grid-highlight {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image:
+			linear-gradient(to right, rgba(255, 238, 217, 0.9) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(255, 238, 217, 0.9) 1px, transparent 1px);
+		background-size: 56px 56px;
+		-webkit-mask-image: radial-gradient(
+			180px circle at var(--mx, 50%) var(--my, 50%),
+			black 0%,
+			black 35%,
+			transparent 75%
+		);
+		mask-image: radial-gradient(
+			180px circle at var(--mx, 50%) var(--my, 50%),
+			black 0%,
+			black 35%,
+			transparent 75%
+		);
+		opacity: 0;
+		transition: opacity 0.35s ease;
+	}
+
+	.grid-highlight.visible {
+		opacity: 0.2;
 	}
 
 	.inner {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
