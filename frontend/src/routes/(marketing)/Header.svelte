@@ -257,7 +257,7 @@
 
 	.dropdown-link {
 		padding: 8px 10px;
-		border-radius: 8px;
+		border-radius: 20px;
 		font-size: 13px;
 		font-weight: 500;
 		color: var(--text-light);

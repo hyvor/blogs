@@ -4,14 +4,19 @@
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import type { Snippet } from 'svelte';
 
+	type ButtonConfig = { href: string; label: string; external?: boolean };
+
 	interface Props {
 		eyebrow: string;
 		title: string | Snippet;
 		description: string;
 		bullets?: string[];
-		button?: { href: string; label: string } | null;
+		button?: ButtonConfig | ButtonConfig[] | null;
 		flip?: boolean;
 		altBg?: boolean;
+		// lets the visual bleed under the text column (e.g. negative margin on the visual)
+		// while keeping the text readable on top of it
+		overlap?: boolean;
 		visual: Snippet;
 		after?: Snippet;
 		left?: Snippet;
@@ -25,15 +30,36 @@
 		button = null,
 		flip = false,
 		altBg = false,
+		overlap = false,
 		visual,
 		after,
 		left
 	}: Props = $props();
+
+	let inView = $state(false);
+
+	function onView(node: HTMLElement, callback: () => void) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0]?.isIntersecting) {
+					callback();
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.25 }
+		);
+		observer.observe(node);
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <section class="feature-section" class:alt-bg={altBg}>
-	<div class="hds-container split" class:flip>
-		<div class="text-col">
+	<div class="hds-container split" class:flip class:overlap>
+		<div class="text-col" class:in-view={inView} use:onView={() => (inView = true)}>
 			{#if left}
 				{@render left()}
 			{:else}
@@ -56,10 +82,22 @@
 				{/if}
 
 				{#if button}
-					<Button as="a" href={button.href} variant="outline" size="small">
-						{button.label}
-						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
-					</Button>
+					{@const buttons = Array.isArray(button) ? button : [button]}
+					<div class="buttons">
+						{#each buttons as b}
+							<Button
+								as="a"
+								href={b.href}
+								target={b.external ? '_blank' : undefined}
+								rel={b.external ? 'noopener' : undefined}
+								variant="outline"
+								size="small"
+							>
+								{b.label}
+								{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
+							</Button>
+						{/each}
+					</div>
 				{/if}
 			{/if}
 		</div>
@@ -79,6 +117,7 @@
 <style>
 	.feature-section {
 		padding: 100px 0;
+		overflow-x: hidden;
 	}
 
 	.alt-bg {
@@ -99,6 +138,26 @@
 	.visual-col {
 		flex: 1;
 		min-width: 0;
+	}
+
+	.text-col {
+		opacity: 0;
+		transform: translateY(18px);
+		transition:
+			opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.text-col.in-view {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* flex items honor z-index for paint order without needing `position` —
+	   important here, since giving .visual-col its own stacking context would
+	   trap the theme dropdown's position:fixed popup beneath the text column */
+	.split.overlap .text-col {
+		z-index: 2;
 	}
 
 	.eyebrow {
@@ -148,6 +207,12 @@
 		flex-shrink: 0;
 	}
 
+	.buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
 	@media (max-width: 900px) {
 		.split,
 		.split.flip {
@@ -171,6 +236,10 @@
 
 		.bullets {
 			align-items: center;
+		}
+
+		.buttons {
+			justify-content: center;
 		}
 	}
 </style>

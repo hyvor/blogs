@@ -1,4 +1,7 @@
 <script lang="ts">
+	import IconLink45deg from '@hyvor/icons/IconLink45deg';
+	import IconSearch from '@hyvor/icons/IconSearch';
+
 	const scoreItems = [
 		{ name: 'Performance', score: 100 },
 		{ name: 'Accessibility', score: 100 },
@@ -6,47 +9,26 @@
 		{ name: 'SEO', score: 100 }
 	];
 
-	const analyzerSummary = [
-		{
-			color: '#22c55e',
-			title: 'SEO Analyzer',
-			note: 'Real-time feedback',
-			variant: 'checklist' as const,
-			checklist: ['Primary keyword in title', 'Meta description set', 'Content length (400+ words)']
-		},
-		{
-			color: '#3b82f6',
-			title: 'Post Link Analyzer',
-			note: 'Per-post analysis',
-			variant: 'stats' as const,
-			stats: [
-				['Internal links', '12'],
-				['Broken links', '0']
-			]
-		},
-		{
-			color: '#f59e0b',
-			title: 'Full-blog Link Analyzer',
-			note: '19 OK · 1 Redirect',
-			variant: 'links' as const,
-			links: [
-				{ name: 'Hyvor Blogs', status: 'ok' },
-				{ name: 'Multi-language', status: 'ok' },
-				{ name: 'best blogging platform', status: 'redirect' }
-			]
-		}
-	];
+	// matches the semi-circle score meter in the real SEO analyzer
+	const seoScore = 88;
+	const seoGaugeLen = 220;
+	const seoGaugeOffset = seoGaugeLen * (1 - seoScore / 100);
 
 	let inView = $state(false);
 	let animatedScores = $state(scoreItems.map(() => 0));
+	let seoScoreAnimated = $state(0);
 
-	function animateScore(index: number, target: number) {
+	function animateValue(target: number, onUpdate: (v: number) => void, delayMs = 0) {
 		const duration = 1100;
-		const start = performance.now();
+		const startAt = performance.now() + delayMs;
 		function step(now: number) {
-			const progress = Math.min((now - start) / duration, 1);
+			if (now < startAt) {
+				requestAnimationFrame(step);
+				return;
+			}
+			const progress = Math.min((now - startAt) / duration, 1);
 			const eased = 1 - Math.pow(1 - progress, 3);
-			animatedScores[index] = Math.round(eased * target);
+			onUpdate(Math.round(eased * target));
 			if (progress < 1) requestAnimationFrame(step);
 		}
 		requestAnimationFrame(step);
@@ -55,7 +37,8 @@
 	function handleInView() {
 		if (inView) return;
 		inView = true;
-		scoreItems.forEach((item, i) => animateScore(i, item.score));
+		scoreItems.forEach((item, i) => animateValue(item.score, (v) => (animatedScores[i] = v), i * 120));
+		animateValue(seoScore, (v) => (seoScoreAnimated = v), 200);
 	}
 
 	function onView(node: HTMLElement, callback: () => void) {
@@ -96,50 +79,39 @@
 	</div>
 
 	<div class="analyzer-col">
-		{#each analyzerSummary as a}
-			<div class="analyzer-card">
-				<div class="ac-head">
-					<span class="ac-dot" style="background:{a.color}"></span>
-					<span class="ac-title">{a.title}</span>
-					<span class="ac-note">{a.note}</span>
+		<div class="analyzer-card">
+			<div class="seo-gauge">
+				<svg class="seo-gauge-svg" viewBox="0 0 200 130">
+					<defs>
+						<linearGradient id="seoGaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" stop-color="#ef4444" />
+							<stop offset="50%" stop-color="#f59e0b" />
+							<stop offset="100%" stop-color="#22c55e" />
+						</linearGradient>
+					</defs>
+					<path class="seo-gauge-track" d="M30,115 A70,70 0 0,1 170,115" />
+					<path
+						class="seo-gauge-fill"
+						d="M30,115 A70,70 0 0,1 170,115"
+						style="stroke-dashoffset: {inView ? seoGaugeOffset : seoGaugeLen}"
+					/>
+				</svg>
+				<div class="seo-gauge-center">
+					<span class="seo-gauge-value">{seoScoreAnimated}%</span>
 				</div>
-
-				{#if a.variant === 'checklist'}
-					<div class="ac-checklist">
-						{#each a.checklist as label}
-							<div class="ac-check-row">
-								<span class="ac-pill ac-pill-pass">✓</span>
-								<span class="ac-check-label">{label}</span>
-							</div>
-						{/each}
-					</div>
-				{:else if a.variant === 'links'}
-					<div class="ac-links">
-						{#each a.links as l}
-							<div class="ac-link-row">
-								<span class="ac-link-name">{l.name}</span>
-								<span
-									class="ac-pill"
-									class:ac-pill-pass={l.status === 'ok'}
-									class:ac-pill-info={l.status === 'redirect'}
-								>
-									{l.status === 'ok' ? 'OK' : 'Redirect'}
-								</span>
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<div class="ac-stats">
-						{#each a.stats as [label, val]}
-							<div class="ac-stat">
-								<span class="ac-stat-val">{val}</span>
-								<span class="ac-stat-label">{label}</span>
-							</div>
-						{/each}
-					</div>
-				{/if}
 			</div>
-		{/each}
+		</div>
+
+		<div class="analyzer-card">
+			<div class="link-icons">
+				<div class="link-icon-badge link-icon-badge-back">
+					<IconLink45deg size={26} />
+				</div>
+				<div class="link-icon-badge link-icon-badge-front">
+					<IconSearch size={20} />
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -156,7 +128,6 @@
 		gap: 12px;
 		padding: 36px 28px;
 		border-radius: 24px;
-		border: 1px solid var(--border);
 		background: radial-gradient(
 			circle at 50% 0%,
 			color-mix(in srgb, #22c55e 8%, var(--background)),
@@ -230,128 +201,103 @@
 	}
 
 	.analyzer-col {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
 	}
 
 	.analyzer-card {
-		padding: 16px 18px;
+		display: flex;
+		flex-direction: column;
+		padding: 20px 18px;
 		border-radius: 16px;
-		border: 1px solid var(--border);
 		background: var(--background);
 		box-shadow: 0 4px 16px color-mix(in srgb, var(--text) 5%, transparent);
 	}
 
-	.ac-head {
+	/* SEO score meter — just the arc + the number, no labels */
+	.seo-gauge {
+		position: relative;
+		flex: 1;
 		display: flex;
-		align-items: center;
-		gap: 9px;
-		margin-bottom: 14px;
+		align-items: flex-end;
+		justify-content: center;
 	}
 
-	.ac-dot {
-		width: 9px;
-		height: 9px;
-		border-radius: 50%;
-		flex-shrink: 0;
+	.seo-gauge-svg {
+		width: 100%;
+		max-width: 200px;
 	}
 
-	.ac-title {
-		font-size: 14px;
-		font-weight: 600;
-		color: var(--text);
+	.seo-gauge-track {
+		fill: none;
+		stroke: color-mix(in srgb, var(--text) 8%, transparent);
+		stroke-width: 22;
+		stroke-linecap: round;
 	}
 
-	.ac-note {
-		font-size: 12px;
-		color: var(--text-light);
-		margin-left: auto;
+	.seo-gauge-fill {
+		fill: none;
+		stroke: url(#seoGaugeGradient);
+		stroke-width: 22;
+		stroke-linecap: round;
+		stroke-dasharray: 220;
+		stroke-dashoffset: 220;
+		transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 	}
 
-	.ac-stats {
-		display: flex;
-		gap: 28px;
-		padding-top: 14px;
-		border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-	}
-
-	.ac-stat {
+	.seo-gauge-center {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 8px;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 2px;
 	}
 
-	.ac-stat-val {
-		font-size: 20px;
+	.seo-gauge-value {
+		font-size: 26px;
 		font-weight: 800;
 		letter-spacing: -0.02em;
 		color: var(--text);
 	}
 
-	.ac-stat-label {
-		font-size: 11px;
-		color: var(--text-light);
-	}
-
-	.ac-checklist,
-	.ac-links {
+	/* Post Link Analyzer — link + magnifying glass, no text list */
+	.link-icons {
+		flex: 1;
+		position: relative;
 		display: flex;
-		flex-direction: column;
-		gap: 9px;
-		padding-top: 14px;
-		border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-	}
-
-	.ac-check-row {
-		display: flex;
-		align-items: center;
-		gap: 9px;
-	}
-
-	.ac-check-label {
-		font-size: 13px;
-		color: var(--text);
-	}
-
-	.ac-link-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
-	}
-
-	.ac-link-name {
-		font-size: 13px;
-		color: var(--text);
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.ac-pill {
-		flex-shrink: 0;
-		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 20px;
-		height: 20px;
-		padding: 0 8px;
+		min-height: 110px;
+	}
+
+	.link-icon-badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: 100px;
-		font-size: 11px;
-		font-weight: 700;
-		background: color-mix(in srgb, var(--text) 8%, transparent);
-		color: var(--text-light);
-	}
-
-	.ac-pill.ac-pill-pass {
-		background: color-mix(in srgb, #22c55e 15%, transparent);
-		color: #16a34a;
-	}
-
-	.ac-pill.ac-pill-info {
-		background: color-mix(in srgb, #3b82f6 15%, transparent);
+		border: 3px solid var(--background);
 		color: #3b82f6;
+		background: color-mix(in srgb, #3b82f6 14%, var(--background));
+	}
+
+	.link-icon-badge-back {
+		width: 68px;
+		height: 68px;
+		transform: translate(-14px, -6px) rotate(-8deg);
+	}
+
+	.link-icon-badge-front {
+		position: absolute;
+		width: 48px;
+		height: 48px;
+		transform: translate(22px, 20px);
+		color: #16a34a;
+		background: color-mix(in srgb, #22c55e 16%, var(--background));
+		box-shadow: 0 6px 16px color-mix(in srgb, var(--text) 10%, transparent);
 	}
 
 	@media (max-width: 900px) {
@@ -359,6 +305,12 @@
 			flex-wrap: wrap;
 			justify-content: center;
 			row-gap: 24px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.analyzer-col {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

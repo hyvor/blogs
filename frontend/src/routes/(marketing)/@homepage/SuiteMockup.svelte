@@ -1,11 +1,11 @@
 <script lang="ts">
 	const products = [
-		{ name: 'Hyvor Talk', component: 'talk', color: '#ffd969', tag: 'Free', desc: 'Comments' },
+		{ name: 'Hyvor Talk', component: 'talk', color: '#ffd969', tag: 'Complimentary license', desc: 'Comments' },
 		{
 			name: 'Hyvor Post',
 			component: 'post',
 			color: '#5a8387',
-			tag: 'Free',
+			tag: 'Complimentary license',
 			desc: 'Newsletters'
 		}
 	];
@@ -68,7 +68,7 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 10px;
-		width: 140px;
+		width: 170px;
 	}
 
 	.icon-wrap {
@@ -94,7 +94,7 @@
 	}
 
 	.p-tag {
-		font-size: 12px;
+		font-size: 11px;
 		font-weight: 600;
 		padding: 4px 12px;
 		border-radius: 100px;
@@ -115,7 +115,7 @@
 		}
 
 		.product-tile {
-			width: 104px;
+			width: 128px;
 		}
 
 		.icon-wrap {
@@ -125,6 +125,11 @@
 
 		.p-name {
 			font-size: 13px;
+		}
+
+		.p-tag {
+			font-size: 10px;
+			padding: 3px 9px;
 		}
 	}
 </style>

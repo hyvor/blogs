@@ -1,11 +1,14 @@
 <script lang="ts">
 	import FeatureSplit from './FeatureSplit.svelte';
-	import ThemesMockup from './ThemesMockup.svelte';
 	import ThemesLivePreview from './ThemesLivePreview.svelte';
 	import SeoMockup from './SeoMockup.svelte';
 	import HostingMockup from './HostingMockup.svelte';
 	import MultiLanguageMockup from './MultiLanguageMockup.svelte';
 	import SuiteMockup from './SuiteMockup.svelte';
+	import OwnershipMockup from './OwnershipMockup.svelte';
+	import AllInOneMockup from './AllInOneMockup.svelte';
+	import AiMockup from './AiMockup.svelte';
+	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
 </script>
 
 <FeatureSplit
@@ -19,9 +22,8 @@
 	]}
 	altBg
 >
-	<!-- TODO: add an ownership/privacy mockup -->
 	{#snippet visual()}
-		TODO
+		<OwnershipMockup />
 	{/snippet}
 </FeatureSplit>
 
@@ -36,9 +38,8 @@
 	]}
 	flip
 >
-	<!-- TODO: add an all-in-one/no-hassle mockup -->
 	{#snippet visual()}
-		TODO
+		<AllInOneMockup />
 	{/snippet}
 </FeatureSplit>
 
@@ -51,14 +52,14 @@
 		'Theme development docs & API',
 		'or, set up headless mode with your own frontend'
 	]}
-	button={{ href: '/themes', label: 'Browse themes' }}
+	button={[
+		{ href: '/themes', label: 'Browse themes', external: true },
+		{ href: '/docs/headless', label: 'Headless docs' }
+	]}
 	altBg
+	overlap
 >
-	<!-- TODO: add button for headless docs -->
 	{#snippet visual()}
-		<ThemesMockup />
-	{/snippet}
-	{#snippet after()}
 		<ThemesLivePreview />
 	{/snippet}
 </FeatureSplit>
@@ -126,7 +127,7 @@
 	altBg
 >
 	{#snippet visual()}
-		TODO
+		<AiMockup />
 	{/snippet}
 </FeatureSplit>
 
@@ -155,9 +156,8 @@
 		'Per-post and full-blog link reports',
 		'Instant flags for broken links, redirects & status codes'
 	]}
-	flip
 >
 	{#snippet visual()}
-		TODO
+		<LinkAnalyzerMockup />
 	{/snippet}
 </FeatureSplit>

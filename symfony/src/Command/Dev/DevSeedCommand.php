@@ -117,7 +117,7 @@ class DevSeedCommand
         // sync themes
         $application->doRun(new ArrayInput([
             'command' => 'themes:sync',
-            '--no-preview-blogs' => true,
+            // '--no-preview-blogs' => true,
         ]), $output);
 
         return Command::SUCCESS;
