@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ConsoleAPI\Tags;
 
-use App\Models\Route;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -13,7 +12,7 @@ it('searches tags', function() {
     addPrimaryLanguage($blog);
     addDefaultRoutes($blog, 'tag');
 
-    $name = 'Thisisname';
+    $name = 'thisisname';
     $languageId = $blog->languages[0]->id;
 
     Tag::factory()
@@ -33,5 +32,4 @@ it('searches tags', function() {
             fn (AssertableJson $json) => $json->count(1)
                 ->where('0.variants.0.name', $name)
         );
-
 });
