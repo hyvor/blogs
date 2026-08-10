@@ -13,11 +13,10 @@
 <section class="enterprise">
 	<div class="hds-container inner">
 		<div class="text-side">
-			<p class="label">Enterprise</p>
-			<h2>Enterprise-grade everything</h2>
+			<h2>Enterprise-ready.</h2>
 			<p class="description">
-				OIDC SSO with your identity provider, priority support backed by a rock-solid SLA, and
-				privacy compliance built in from day one.
+				Enterprise-grade security and compliance, without adding complexity to your
+				publishing workflow.
 			</p>
 
 			<div class="stat-row">
@@ -33,17 +32,7 @@
 					variant="outline"
 					color="input"
 				>
-					Contact sales
-					{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
-				</Button>
-				<Button
-					as="a"
-					href="https://hyvor.com/enterprise"
-					target="_blank"
-					variant="outline"
-					color="input"
-				>
-					Book a call
+					Contact Sales
 					{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
 				</Button>
 			</div>
