@@ -4,7 +4,7 @@
 
 	import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from '@hyvor/design/marketing';
-	import DnsInstructions from '../../../../../../lib/components/DnsInstructions.svelte';
+	import DnsInstructions from '../../../../../console/(nav)/[subdomain]/settings/hosting/DnsInstructions.svelte';
 </script>
 
 <h1>Custom Domain</h1>
@@ -18,18 +18,24 @@
 	{#snippet icon()}
 		<IconLightbulb />
 	{/snippet}
-	Setting up a custom domain will help you to <strong>build your brand</strong> and
+	Setting up a custom domain will help you to <strong>build your own brand</strong> and
 	<strong>prevent locking into our platform</strong> in case you want to move to another platform in the
 	future.
 </Callout>
 
-<p>
-	Before setting up a custom domain, you need to have a <strong>domain name</strong>. If you don't
-	have one, you can buy one from a domain registrar like
-	<a href="https://www.namecheap.com/" rel="nofollow">Namecheap</a>
-	or
-	<a href="https://www.cloudflare.com/products/registrar" rel="nofollow">Cloudflare Registrar</a>.
-</p>
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+	<li>
+		A <strong>domain name</strong>.
+	</li>
+	<li>
+		Access to your domain's <strong>DNS settings</strong> to create DNS records.
+	</li>
+	<li>
+		<a href="/docs/users#roles">Admin role</a> access to your blog.
+	</li>
+</ul>
 
 <h2 id="blog-setitngs">Step 1: Update Blog Settings</h2>
 

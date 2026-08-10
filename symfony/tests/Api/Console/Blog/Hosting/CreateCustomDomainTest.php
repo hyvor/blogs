@@ -20,7 +20,24 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CustomDomainService::class)]
 class CreateCustomDomainTest extends ApiTestCase
 {
-    public function test_creates_custom_domain(): void
+
+    public function test_fails_when_domain_already_exists(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-cd-create-dup'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        CustomDomainFactory::createPendingFor($blog, 'taken.com');
+
+        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
+            'domain' => 'taken.com',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function test_creates_custom_domain_auto_tls(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'hosting-cd-create'],
@@ -43,22 +60,6 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertNotNull($domain);
         $this->assertSame(CustomDomainStatus::PENDING, $domain->getStatus());
         $this->assertSame(CustomDomainTlsProvider::AUTO, $domain->getTlsProvider());
-    }
-
-    public function test_fails_when_domain_already_exists(): void
-    {
-        [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-cd-create-dup'],
-            ['status' => UserStatus::ACTIVE],
-        );
-
-        CustomDomainFactory::createPendingFor($blog, 'taken.com');
-
-        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
-            'domain' => 'taken.com',
-        ], user: $user);
-
-        $this->assertResponseStatusCodeSame(400);
     }
 
     public function test_creates_custom_domain_with_custom_tls(): void

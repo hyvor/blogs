@@ -145,18 +145,18 @@ class HostingController extends AbstractController
                 'custom_domain' => new CustomDomainObject($customDomain),
                 'hosting_info' => $this->getHostingInfoData($blog),
             ]);
-        }
+        } else {
+            try {
+                $customDomain = $this->customDomainService->createCustomDomain($blog, $input->domain);
+            } catch (InvalidTlsCertificateException $e) {
+                throw new BadRequestHttpException($e->getMessage()); // @codeCoverageIgnore
+            }
 
-        try {
-            $customDomain = $this->customDomainService->createCustomDomain($blog, $input->domain);
-        } catch (InvalidTlsCertificateException $e) {
-            throw new BadRequestHttpException($e->getMessage()); // @codeCoverageIgnore
+            return new JsonResponse([
+                'custom_domain' => new CustomDomainObject($customDomain),
+                'hosting_info' => null,
+            ]);
         }
-
-        return new JsonResponse([
-            'custom_domain' => new CustomDomainObject($customDomain),
-            'hosting_info' => null,
-        ]);
     }
 
     #[Route('/hosting/custom-domain', methods: 'PATCH')]
@@ -223,7 +223,7 @@ class HostingController extends AbstractController
 
         if ($customDomain->getStatus() !== CustomDomainStatus::PENDING) {
             // active domains will simply use switch to subdomain instead
-            throw new BadRequestHttpException('Only custom domains with PENDING status can be deleted');
+            throw new BadRequestHttpException('Only custom domains with PENDING status can be deleted. Switch to subdomain hosting instead to remove an active custom domain.');
         }
 
         $this->customDomainService->deleteCustomDomain($customDomain);

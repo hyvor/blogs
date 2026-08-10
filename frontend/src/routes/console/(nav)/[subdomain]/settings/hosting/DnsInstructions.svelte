@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Button, TabNav, TabNavItem, Table, TableRow, Tag, toast } from '@hyvor/design/components';
-	import IconCopy from '@hyvor/icons/IconCopy';
+	import { TabNav, TabNavItem, Table, TableRow, Tag, toast } from '@hyvor/design/components';
 	import { parse } from 'tldts';
-	import { getConfig, loadConfig } from '../../routes/console/lib/config';
+	import { getConfig, loadConfig } from '../../../../lib/config';
 
 	interface Props {
 		// the full custom domain (e.g. "blog.example.com"). When omitted, generic
@@ -17,6 +16,19 @@
 
 	let dnsMethod: 'cname' | 'a' = $state('cname');
 	let configLoaded = $state(false);
+
+	const records = [
+		{
+			type: 'A',
+			host: '@',
+			content: CLOUD_IP
+		},
+		{
+			type: 'AAAA',
+			host: '5.5.5.5',
+			content: '::'
+		}
+	];
 
 	$effect(() => {
 		loadConfig().then(() => {
@@ -50,10 +62,27 @@
 			<Tag size="small" color="blue">Preferred</Tag>
 		{/snippet}
 	</TabNavItem>
-	<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}>A Record</TabNavItem>
+	<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
+		>A Record</TabNavItem
+	>
 </TabNav>
 
-{#if dnsMethod === 'cname'}
+<Table columns="1fr 1fr 1fr" style="bordered">
+	<TableRow head>
+		<div>Type</div>
+		<div>Host/Name</div>
+		<div>Content</div>
+	</TableRow>
+	{#each records as record}
+		<TableRow>
+			<div>{record.type}</div>
+			<div>{record.host}</div>
+			<div>{record.content}</div>
+		</TableRow>
+	{/each}
+</Table>
+
+<!-- {#if dnsMethod === 'cname'}
 	<Table columns="1fr 2fr">
 		<br />
 		<TableRow head>
@@ -77,7 +106,12 @@
 			<div>Content</div>
 			<div>
 				<code>{cnameTarget}</code>
-				<Button size="x-small" on:click={() => copy(cnameTarget)} style="margin-left:5px;" color="input">
+				<Button
+					size="x-small"
+					on:click={() => copy(cnameTarget)}
+					style="margin-left:5px;"
+					color="input"
+				>
 					Copy {#snippet end()}
 						<IconCopy size={12} />
 					{/snippet}
@@ -112,7 +146,12 @@
 					Contact your server admin for the IP address to use.
 				{:else}
 					<code>{CLOUD_IP}</code>
-					<Button size="x-small" on:click={() => copy(CLOUD_IP)} style="margin-left:5px;" color="input">
+					<Button
+						size="x-small"
+						on:click={() => copy(CLOUD_IP)}
+						style="margin-left:5px;"
+						color="input"
+					>
 						Copy {#snippet end()}
 							<IconCopy size={12} />
 						{/snippet}
@@ -121,4 +160,4 @@
 			</div>
 		</TableRow>
 	</Table>
-{/if}
+{/if} -->

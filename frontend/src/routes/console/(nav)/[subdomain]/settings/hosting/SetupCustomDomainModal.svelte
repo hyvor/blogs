@@ -23,7 +23,7 @@
 	import { hostingInfoStore } from '../../../../lib/stores/blogStore';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { slide } from 'svelte/transition';
-	import DnsInstructions from '../../../../../../lib/components/DnsInstructions.svelte';
+	import DnsInstructions from './DnsInstructions.svelte';
 	import type { CustomDomainTlsProvider } from '../../../../lib/types';
 
 	interface Props {
@@ -316,8 +316,9 @@
 	{#if !isEditing}
 		{#if $hostingInfoStore.custom_domain?.status === 'pending'}
 			<p>
-				Your custom domain needs to be verified. Please update your DNS records as shown below to
-				verify your domain ownership.
+				Please configure your DNS records as shown below. Once done, click "Verify Now". We will
+				check if the DNS records are set correctly and generate the TLS certificate for your custom
+				domain. This may take a few minutes.
 			</p>
 		{:else}
 			<p>
