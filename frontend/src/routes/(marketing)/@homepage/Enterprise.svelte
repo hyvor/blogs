@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-
-	const seals = [
-		{ label: 'GDPR', pending: false },
-		{ label: 'CCPA', pending: false },
-		{ label: 'SSO', pending: false },
-		{ label: 'ISO', pending: true }
-	];
+	import GdprSeal from './Seals/GdprSeal.svelte';
+	import CcpaSeal from './Seals/CcpaSeal.svelte';
+	import SsoSeal from './Seals/SsoSeal.svelte';
+	import IsoSeal from './Seals/IsoSeal.svelte';
 </script>
 
 <section class="enterprise">
@@ -39,12 +36,10 @@
 		</div>
 
 		<div class="seals">
-			{#each seals as s}
-				<div class="seal" class:pending={s.pending}>
-					<span class="seal-label">{s.label}</span>
-					{#if s.pending}<span class="seal-note">Soon</span>{/if}
-				</div>
-			{/each}
+			<GdprSeal />
+			<CcpaSeal />
+			<SsoSeal />
+			<IsoSeal />
 		</div>
 	</div>
 </section>
@@ -130,45 +125,6 @@
 		flex-shrink: 0;
 	}
 
-	.seal {
-		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100px;
-		height: 100px;
-		border-radius: 100px;
-		border: 1.5px solid rgba(255, 255, 255, 0.3);
-	}
-
-	.seal-label {
-		font-size: 13px;
-		font-weight: 700;
-		letter-spacing: 0.03em;
-		color: #fff;
-	}
-
-	.seal.pending {
-		border-style: dashed;
-		border-color: rgba(255, 255, 255, 0.2);
-	}
-
-	.seal.pending .seal-label {
-		color: rgba(255, 255, 255, 0.5);
-	}
-
-	.seal-note {
-		position: absolute;
-		bottom: -10px;
-		font-size: 10px;
-		font-weight: 600;
-		padding: 2px 8px;
-		border-radius: 100px;
-		color: rgba(255, 255, 255, 0.6);
-		background: rgba(255, 255, 255, 0.1);
-		white-space: nowrap;
-	}
-
 	@media (max-width: 768px) {
 		.inner {
 			flex-direction: column;
@@ -187,11 +143,6 @@
 
 		.seals {
 			grid-template-columns: repeat(4, 1fr);
-		}
-
-		.seal {
-			width: 76px;
-			height: 76px;
 		}
 	}
 
