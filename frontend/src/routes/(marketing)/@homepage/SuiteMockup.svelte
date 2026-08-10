@@ -1,135 +1,279 @@
 <script lang="ts">
 	const products = [
-		{ name: 'Hyvor Talk', component: 'talk', color: '#ffd969', tag: 'Complimentary license', desc: 'Comments' },
+		{
+			name: 'Hyvor Talk',
+			component: 'talk',
+			side: 'left',
+			arrowLabel: 'Our commenting platform',
+			tag: 'Complimentary license',
+			color: '#ffd969'
+		},
 		{
 			name: 'Hyvor Post',
 			component: 'post',
-			color: '#5a8387',
+			side: 'right',
+			arrowLabel: 'Our newsletter platform',
 			tag: 'Complimentary license',
-			desc: 'Newsletters'
+			color: '#5a8387'
 		}
 	];
 </script>
 
 <div class="suite-mockup">
-	<div class="equation">
-		{#each products as p, i}
-			{#if i > 0}
-				<span class="plus">+</span>
-			{/if}
-			<div class="product-tile">
-				<div
-					class="icon-wrap"
-					style:background={`color-mix(in srgb, ${p.color} 20%, transparent)`}
-				>
-					<img
-						src="https://hyvor.com/api/public/logo/{p.component}.svg"
-						alt={p.name}
-						width="48"
-						height="48"
-					/>
+	<div class="join-scene">
+		<div class="join-row">
+			{#each products as p}
+				<div class="satellite-col {p.side}">
+					<div
+						class="satellite"
+						style:background={`color-mix(in srgb, ${p.color} 25%, var(--background))`}
+					>
+						<img
+							src="https://hyvor.com/api/public/logo/{p.component}.svg"
+							alt={p.name}
+							width="40"
+							height="40"
+						/>
+					</div>
+					<span class="sat-name">{p.name}</span>
+					<span class="sat-tag">{p.tag}</span>
 				</div>
-				<div class="p-name">{p.name}</div>
-				{#if p.desc}
-					<div class="p-desc">{p.desc}</div>
+				{#if p.side === 'left'}
+					<div class="hub">
+						<img src="/logo.svg" alt="Hyvor Blogs" width="46" height="46" />
+					</div>
 				{/if}
-				<span class="p-tag tag-free">{p.tag}</span>
-			</div>
-		{/each}
+			{/each}
+		</div>
+
+		<!-- these swoop in once the logos have gathered above -->
+		<div class="bottom-arrows-row">
+			{#each products as p}
+				<div class="annotate-col">
+					{#if p.side === 'left'}
+						<svg class="arrow-svg bottom-arrow" viewBox="0 0 60 90">
+							<path class="arrow-path" d="M38,85 C20,65 20,25 28,6 M19,17 L28,6 L37,16" />
+						</svg>
+					{:else}
+						<svg class="arrow-svg bottom-arrow" viewBox="0 0 60 90">
+							<path class="arrow-path" d="M22,85 C40,65 40,25 32,6 M41,17 L32,6 L23,16" />
+						</svg>
+					{/if}
+					<span class="arrow-label">{p.arrowLabel}</span>
+				</div>
+				{#if p.side === 'left'}
+					<div class="hub-spacer"></div>
+				{/if}
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
 	.suite-mockup {
-		border-radius: 20px;
-		/* border: 0.5px solid var(--border); */
-		overflow: hidden;
-		/* background: var(--background); */
-		/* box-shadow: 0 16px 48px color-mix(in srgb, var(--text) 8%, transparent); */
-	}
-
-	.equation {
 		display: flex;
-		align-items: center;
 		justify-content: center;
-		gap: 22px;
-		padding: 56px 32px;
 	}
 
-	.plus {
-		font-size: 30px;
-		font-weight: 300;
-		color: var(--text-light);
-		flex-shrink: 0;
-	}
-
-	.product-tile {
+	.join-scene {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 10px;
-		width: 170px;
+		gap: 4px;
+		padding: 40px 20px;
 	}
 
-	.icon-wrap {
-		width: 88px;
-		height: 88px;
-		border-radius: 100px;
+	.join-row {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		gap: 24px;
 	}
 
-	.p-name {
-		font-size: 16px;
-		font-weight: 700;
+	.annotate-col {
+		width: 90px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+	}
+
+	.arrow-label {
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--text-light);
 		text-align: center;
 		line-height: 1.3;
 	}
 
-	.p-desc {
-		font-size: 13px;
-		color: var(--text-light);
-		margin-top: -6px;
+	.arrow-svg {
+		width: 38px;
+		height: 58px;
+		color: color-mix(in srgb, var(--text) 40%, transparent);
 	}
 
-	.p-tag {
-		font-size: 11px;
+	.arrow-path {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.hub {
+		width: 100px;
+		height: 100px;
+		border-radius: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+		flex-shrink: 0;
+	}
+
+	.satellite-col {
+		width: 90px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
+
+	.satellite {
+		width: 68px;
+		height: 68px;
+		border-radius: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 12px color-mix(in srgb, var(--text) 8%, transparent);
+	}
+
+	/* the logo hops in first, with a bouncy overshoot */
+	.satellite-col.left .satellite {
+		animation: satellite-jump-left 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	.satellite-col.right .satellite {
+		animation: satellite-jump-right 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	@keyframes satellite-jump-left {
+		0%,
+		3% {
+			transform: translateX(-70px) translateY(8px) scale(0.75);
+			opacity: 0;
+		}
+		8% {
+			opacity: 1;
+		}
+		16% {
+			transform: translateX(8px) translateY(-9px) scale(1.07);
+		}
+		22% {
+			transform: translateX(-3px) translateY(2px) scale(0.97);
+		}
+		28%,
+		100% {
+			transform: translateX(0) translateY(0) scale(1);
+			opacity: 1;
+		}
+	}
+
+	@keyframes satellite-jump-right {
+		0%,
+		3% {
+			transform: translateX(70px) translateY(8px) scale(0.75);
+			opacity: 0;
+		}
+		8% {
+			opacity: 1;
+		}
+		16% {
+			transform: translateX(-8px) translateY(-9px) scale(1.07);
+		}
+		22% {
+			transform: translateX(3px) translateY(2px) scale(0.97);
+		}
+		28%,
+		100% {
+			transform: translateX(0) translateY(0) scale(1);
+			opacity: 1;
+		}
+	}
+
+	/* then the name settles in */
+	.sat-name {
+		font-size: 12px;
+		font-weight: 700;
+		color: var(--text);
+		white-space: nowrap;
+		opacity: 0;
+		animation: fade-up-in 3.4s ease-out forwards;
+	}
+
+	/* then the license tag */
+	.sat-tag {
+		font-size: 10px;
 		font-weight: 600;
-		padding: 4px 12px;
+		padding: 3px 9px;
 		border-radius: 100px;
 		color: var(--text-light);
 		background: color-mix(in srgb, var(--text) 6%, transparent);
 		white-space: nowrap;
+		opacity: 0;
+		animation: fade-up-in 3.4s ease-out forwards;
+		animation-delay: 0.3s;
 	}
 
-	.p-tag.tag-free {
-		color: #16a34a;
-		background: color-mix(in srgb, #16a34a 14%, transparent);
+	@keyframes fade-up-in {
+		0%,
+		28% {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		40%,
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
-	@media (max-width: 480px) {
-		.equation {
-			gap: 12px;
-			padding: 36px 16px;
-		}
+	.bottom-arrows-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 24px;
+	}
 
-		.product-tile {
-			width: 128px;
-		}
+	.hub-spacer {
+		width: 100px;
+		flex-shrink: 0;
+	}
 
-		.icon-wrap {
-			width: 68px;
-			height: 68px;
-		}
+	.bottom-arrows-row .annotate-col {
+		opacity: 0;
+		animation: appear-after-join 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
 
-		.p-name {
-			font-size: 13px;
+	@keyframes appear-after-join {
+		0%,
+		54% {
+			opacity: 0;
+			transform: translateY(6px);
 		}
+		68%,
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 
-		.p-tag {
-			font-size: 10px;
-			padding: 3px 9px;
+	@media (max-width: 400px) {
+		.join-scene {
+			transform: scale(0.85);
+			padding: 30px 10px;
 		}
 	}
 </style>

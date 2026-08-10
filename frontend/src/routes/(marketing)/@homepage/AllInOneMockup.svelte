@@ -98,8 +98,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--background);
-		background: color-mix(in srgb, var(--text) 65%, transparent);
+		color: color-mix(in srgb, var(--text) 75%, transparent);
+		background: color-mix(in srgb, var(--text) 10%, var(--background));
 		box-shadow: 0 4px 12px color-mix(in srgb, var(--text) 8%, transparent);
 		transform: translate(var(--x0), var(--y0));
 		animation: settle-in 4.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;

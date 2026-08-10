@@ -17,7 +17,10 @@
 		// lets the visual bleed under the text column (e.g. negative margin on the visual)
 		// while keeping the text readable on top of it
 		overlap?: boolean;
-		visual: Snippet;
+		// when true, bullets become clickable and the active index is passed to `visual`,
+		// so the visual can switch state to match whichever bullet is selected
+		interactiveBullets?: boolean;
+		visual: Snippet<[activeBullet: number]>;
 		after?: Snippet;
 		left?: Snippet;
 	}
@@ -31,12 +34,29 @@
 		flip = false,
 		altBg = false,
 		overlap = false,
+		interactiveBullets = false,
 		visual,
 		after,
 		left
 	}: Props = $props();
 
 	let inView = $state(false);
+	let activeBullet = $state(0);
+
+	// how long the active bullet's progress bar takes to fill before auto-advancing
+	const AUTO_ADVANCE_MS = 5000;
+
+	$effect(() => {
+		if (!interactiveBullets || !inView || bullets.length <= 1) return;
+		// read explicitly so the effect re-runs (and reschedules) every time
+		// activeBullet changes — from this timer firing, or from a manual click
+		activeBullet;
+		const count = bullets.length;
+		const timer = setTimeout(() => {
+			activeBullet = (activeBullet + 1) % count;
+		}, AUTO_ADVANCE_MS);
+		return () => clearTimeout(timer);
+	});
 
 	function onView(node: HTMLElement, callback: () => void) {
 		const observer = new IntersectionObserver(
@@ -74,9 +94,23 @@
 				<p>{description}</p>
 
 				{#if bullets.length}
-					<ul class="bullets">
-						{#each bullets as b}
-							<li><IconCheckCircleFill size={14} />{b}</li>
+					<ul class="bullets" class:interactive={interactiveBullets}>
+						{#each bullets as b, i}
+							<li>
+								{#if interactiveBullets}
+									<button
+										type="button"
+										class="bullet-btn"
+										class:active={activeBullet === i}
+										style="animation-duration: {AUTO_ADVANCE_MS}ms"
+										onclick={() => (activeBullet = i)}
+									>
+										<IconCheckCircleFill size={14} />{b}
+									</button>
+								{:else}
+									<IconCheckCircleFill size={14} />{b}
+								{/if}
+							</li>
 						{/each}
 					</ul>
 				{/if}
@@ -103,7 +137,7 @@
 		</div>
 
 		<div class="visual-col">
-			{@render visual()}
+			{@render visual(activeBullet)}
 		</div>
 	</div>
 
@@ -205,6 +239,62 @@
 	.bullets li :global(svg) {
 		color: var(--accent);
 		flex-shrink: 0;
+	}
+
+	.bullet-btn {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		width: 100%;
+		padding: 8px 10px;
+		border: none;
+		border-radius: 20px;
+		background-color: transparent;
+		background-image: linear-gradient(
+			color-mix(in srgb, var(--accent) 14%, transparent),
+			color-mix(in srgb, var(--accent) 14%, transparent)
+		);
+		background-repeat: no-repeat;
+		background-position: left center;
+		background-size: 0% 100%;
+		color: var(--text-light);
+		font: inherit;
+		font-size: 1rem;
+		text-align: left;
+		cursor: pointer;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
+	}
+
+	.bullet-btn:hover {
+		background-color: color-mix(in srgb, var(--text) 4%, transparent);
+	}
+
+	.bullet-btn.active {
+		color: var(--text);
+		font-weight: 600;
+		animation-name: bullet-fill;
+		animation-timing-function: linear;
+		animation-fill-mode: forwards;
+	}
+
+	@keyframes bullet-fill {
+		from {
+			background-size: 0% 100%;
+		}
+		to {
+			background-size: 100% 100%;
+		}
+	}
+
+	.bullets.interactive li :global(svg) {
+		color: var(--text-light);
+	}
+
+	.bullets.interactive li:has(.bullet-btn.active) :global(svg) {
+		color: var(--accent);
 	}
 
 	.buttons {

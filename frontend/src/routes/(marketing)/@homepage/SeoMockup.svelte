@@ -6,11 +6,12 @@
 		{ name: 'Performance', score: 100 },
 		{ name: 'Accessibility', score: 100 },
 		{ name: 'Best Practices', score: 100 },
-		{ name: 'SEO', score: 100 }
+		{ name: 'SEO', score: 100 },
+		{ name: 'Agentic Browsing', score: 100, fraction: '2/2' }
 	];
 
 	// matches the semi-circle score meter in the real SEO analyzer
-	const seoScore = 88;
+	const seoScore = 95;
 	const seoGaugeLen = 220;
 	const seoGaugeOffset = seoGaugeLen * (1 - seoScore / 100);
 
@@ -37,7 +38,10 @@
 	function handleInView() {
 		if (inView) return;
 		inView = true;
-		scoreItems.forEach((item, i) => animateValue(item.score, (v) => (animatedScores[i] = v), i * 120));
+		scoreItems.forEach((item, i) => {
+			if (item.fraction) return;
+			animateValue(item.score, (v) => (animatedScores[i] = v), i * 120);
+		});
 		animateValue(seoScore, (v) => (seoScoreAnimated = v), 200);
 	}
 
@@ -64,15 +68,23 @@
 	<div class="scores-hero">
 		{#each scoreItems as item, i}
 			<div class="score-gauge" style="--delay: {i * 120}ms">
-				<div class="gauge-ring">
-					<svg class="gauge-svg" viewBox="0 0 120 120">
-						<circle class="gauge-track" cx="60" cy="60" r="52" />
-						<circle class="gauge-fill" class:animate={inView} cx="60" cy="60" r="52" />
-					</svg>
-					<div class="gauge-center">
-						<span class="gauge-value">{animatedScores[i]}</span>
+				{#if item.fraction}
+					<div class="score-badge-wrap">
+						<div class="score-badge">
+							<span class="score-badge-dot"></span>{item.fraction}
+						</div>
 					</div>
-				</div>
+				{:else}
+					<div class="gauge-ring">
+						<svg class="gauge-svg" viewBox="0 0 120 120">
+							<circle class="gauge-track" cx="60" cy="60" r="52" />
+							<circle class="gauge-fill" class:animate={inView} cx="60" cy="60" r="52" />
+						</svg>
+						<div class="gauge-center">
+							<span class="gauge-value">{animatedScores[i]}</span>
+						</div>
+					</div>
+				{/if}
 				<span class="gauge-name">{item.name}</span>
 			</div>
 		{/each}
@@ -84,9 +96,9 @@
 				<svg class="seo-gauge-svg" viewBox="0 0 200 130">
 					<defs>
 						<linearGradient id="seoGaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-							<stop offset="0%" stop-color="#ef4444" />
-							<stop offset="50%" stop-color="#f59e0b" />
-							<stop offset="100%" stop-color="#22c55e" />
+							<stop offset="0%" stop-color="#cb6d6d" />
+							<stop offset="50%" stop-color="#e0b84a" />
+							<stop offset="100%" stop-color="#5f9668" />
 						</linearGradient>
 					</defs>
 					<path class="seo-gauge-track" d="M30,115 A70,70 0 0,1 170,115" />
@@ -125,8 +137,8 @@
 	.scores-hero {
 		display: flex;
 		justify-content: space-between;
-		gap: 12px;
-		padding: 36px 28px;
+		gap: 8px;
+		padding: 32px 20px;
 		border-radius: 24px;
 		background: radial-gradient(
 			circle at 50% 0%,
@@ -140,13 +152,13 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 10px;
+		gap: 8px;
 	}
 
 	.gauge-ring {
 		position: relative;
-		width: 84px;
-		height: 84px;
+		width: 68px;
+		height: 68px;
 	}
 
 	.gauge-svg {
@@ -176,6 +188,33 @@
 		stroke-dashoffset: 0;
 	}
 
+	.score-badge-wrap {
+		height: 68px;
+		display: flex;
+		align-items: center;
+	}
+
+	.score-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 16px;
+		border-radius: 100px;
+		font-size: 15px;
+		font-weight: 700;
+		color: #4a9960;
+		background: color-mix(in srgb, #22c55e 12%, var(--background));
+		white-space: nowrap;
+	}
+
+	.score-badge-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #4ade80;
+		flex-shrink: 0;
+	}
+
 	.gauge-center {
 		position: absolute;
 		inset: 0;
@@ -185,18 +224,18 @@
 	}
 
 	.gauge-value {
-		font-size: 20px;
+		font-size: 17px;
 		font-weight: 800;
 		letter-spacing: -0.02em;
 		color: var(--text);
 	}
 
 	.gauge-name {
-		font-size: 11px;
+		font-size: 10.5px;
 		font-weight: 500;
 		color: var(--text-light);
 		text-align: center;
-		max-width: 74px;
+		max-width: 66px;
 		line-height: 1.3;
 	}
 

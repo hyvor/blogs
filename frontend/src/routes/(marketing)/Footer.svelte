@@ -1,5 +1,6 @@
 <script lang="ts">
 	import IconEnvelope from '@hyvor/icons/IconEnvelope';
+	import IconShieldCheck from '@hyvor/icons/IconShieldCheck';
 	import IconGithub from '@hyvor/icons/IconGithub';
 	import IconTwitterX from '@hyvor/icons/IconTwitterX';
 	import IconLinkedin from '@hyvor/icons/IconLinkedin';
@@ -149,7 +150,11 @@
 
 			<div class="bottom-bar">
 				<div>HYVOR &copy; {year}</div>
-				<div>From France &#127467;&#127479;</div>
+				<div class="france">From France <span class="flag">&#127467;&#127479;</span></div>
+				<a class="gdpr-badge" href="https://hyvor.com/compliance" target="_blank">
+					GDPR compliant
+					<span class="flag">&#127466;&#127482;</span>
+				</a>
 			</div>
 		</div>
 	</footer>
@@ -314,6 +319,31 @@
 		border-top: 1px solid rgba(255, 255, 255, 0.08);
 		font-size: 13px;
 		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.france {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.gdpr-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.gdpr-badge:hover {
+		color: #fff;
+	}
+
+	/* emoji glyphs are pre-colored — never let the surrounding muted text
+	   color/opacity dim or filter them */
+	.flag {
+		color: initial;
+		opacity: 1;
+		filter: none;
 	}
 
 	@media (max-width: 900px) {

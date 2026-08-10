@@ -85,7 +85,7 @@
 <FeatureSplit
 	eyebrow="Flexible Hosting"
 	title="Custom domain, Sub-directory, Headless"
-	description="Start on a subdomain in seconds, move to a custom domain, or serve your blog from inside your existing site with a sub-directory. Your call."
+	description="Move to a custom domain in seconds, serve your blog from inside your existing site with a sub-directory, or go fully headless with your own frontend. Your call."
 	bullets={[
 		'Free TLS certificates on all custom domains',
 		'Cloudflare Workers, Docker, Next.js, Laravel…',
@@ -124,10 +124,11 @@
 		'Improvement suggestions',
 		'Bulk post editing (e.g. add internal links)'
 	]}
+	interactiveBullets
 	altBg
 >
-	{#snippet visual()}
-		<AiMockup />
+	{#snippet visual(active)}
+		<AiMockup {active} />
 	{/snippet}
 </FeatureSplit>
 

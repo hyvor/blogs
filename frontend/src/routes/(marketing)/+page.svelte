@@ -4,6 +4,7 @@
 	import StatsRow from './@homepage/StatsRow.svelte';
 	import Features from './@homepage/Features.svelte';
 	import Testimonials from './@homepage/Testimonials.svelte';
+	import Enterprise from './@homepage/Enterprise.svelte';
 	import AllFeatures from './@homepage/AllFeatures/AllFeatures.svelte';
 	import FullTrialSignup from './@components/FullTrialSignup.svelte';
 </script>
@@ -21,6 +22,7 @@
 <!-- <StatsRow /> -->
 <!-- <LogoStrip /> -->
 <Features />
-<Testimonials />
+<Enterprise />
 <AllFeatures />
+<Testimonials />
 <FullTrialSignup />
