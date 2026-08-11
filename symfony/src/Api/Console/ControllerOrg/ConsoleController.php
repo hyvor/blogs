@@ -75,6 +75,15 @@ class ConsoleController
             $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($blogToPreload, 'GET', '/blog');
         }
 
+        $resolvedLicense = null;
+        if ($this->internalConfig->getDeployment()->isCloud() && $org) {
+            try {
+                $resolvedLicense = $this->billing->license($org->id);
+            } catch (CommsApiFailedException $e) {
+                throw new UnprocessableEntityHttpException('unable to fetch the license. please try again later');
+            }
+        }
+
         return new JsonResponse([
             'user' => new AuthUserObject($user),
             'organization' => $org,
@@ -100,7 +109,8 @@ class ConsoleController
             'preloaded' => [
                 'blog' => $preloadedBlog ? json_decode((string) $preloadedBlog->getContent(), true) : null,
                 'post' => null,
-            ]
+            ],
+            'resolved_license' => $resolvedLicense,
         ]);
     }
 

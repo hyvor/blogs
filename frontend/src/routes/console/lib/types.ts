@@ -95,6 +95,10 @@ export interface Blog {
 	link_analysis_enabled: boolean;
 	link_analysis_email_report: 'always' | 'broken' | 'never';
 
+	ai_provider: 'mistral' | 'openai' | 'anthropic';
+	ai_translation_enabled: boolean;
+	ai_generation_enabled: boolean;
+
 	hyvor_talk_enabled: boolean;
 	hyvor_post_enabled: boolean;
 }
@@ -147,10 +151,10 @@ export interface CustomDomainSetup {
 export interface BlogIntegrations {
 	hyvor_talk: null | {
 		website_id: number;
-	},
+	};
 	hyvor_post: null | {
 		newsletter_id: number;
-	}
+	};
 }
 
 // == POST

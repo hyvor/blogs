@@ -9,5 +9,38 @@ fi
 DELIVERY_DOMAIN=$(echo "$DELIVERY_URL" | sed -E 's#https?://##' | sed 's#/##g')
 export DELIVERY_DOMAIN
 
+# Configure the app domain's Caddy address/TLS directive from TLS_MODE
+# auto:     Caddy manages a Let's Encrypt certificate automatically
+# manual:   the certificate/key mounted at /certs/cert.pem and /certs/key.pem are used to serve TLS
+# external: TLS is terminated by a reverse proxy in front; the container only serves HTTP
+# disabled: no TLS at all, no https redirect
+TLS_MODE="${TLS_MODE:-auto}"
+
+case "$TLS_MODE" in
+    auto)
+        APP_ADDRESS="$DOMAIN_APP"
+        APP_TLS_DIRECTIVE=""
+        ;;
+    manual)
+        APP_ADDRESS="$DOMAIN_APP"
+        APP_TLS_DIRECTIVE="tls /certs/cert.pem /certs/key.pem"
+        ;;
+    external)
+        APP_ADDRESS="$DOMAIN_APP:80"
+        APP_TLS_DIRECTIVE=""
+        ;;
+    disabled)
+        APP_ADDRESS="$DOMAIN_APP:80"
+        APP_TLS_DIRECTIVE=""
+        ;;
+    *)
+        echo "Invalid TLS_MODE: $TLS_MODE. Must be one of: auto, external, manual, disabled." >&2
+        exit 1
+        ;;
+esac
+
+export APP_ADDRESS
+export APP_TLS_DIRECTIVE
+
 # Run supervisor
 /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

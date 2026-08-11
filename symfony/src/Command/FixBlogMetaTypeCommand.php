@@ -31,6 +31,8 @@ class FixBlogMetaTypeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        return 0; // removed json odm dependency. This is no longer needed
+
         $io = new SymfonyStyle($input, $output);
         $dryRun = (bool)$input->getOption('dry-run');
 

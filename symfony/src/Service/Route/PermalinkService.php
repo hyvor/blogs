@@ -89,7 +89,7 @@ class PermalinkService
             return "$scheme://{$blog->getSubdomain()}.$host$portStr";
         }
 
-        return 'https://' . $this->appConfig->getDomainApp() . '/blog/' . $blog->getSubdomain();
+        return $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/blog/' . $blog->getSubdomain();
     }
 
     public function isLinkInBlog(string $link, Blog $blog): bool

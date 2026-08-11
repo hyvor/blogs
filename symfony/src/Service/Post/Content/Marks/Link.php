@@ -16,7 +16,7 @@ class Link extends MarkType
     public string $attrs = LinkAttrs::class;
 
     public function __construct(
-        private Blog $blog,
+        private ?Blog $blog,
         private PermalinkService $permalinkService,
     ) {}
 
@@ -25,7 +25,7 @@ class Link extends MarkType
         /** @var string $href */
         $href = $mark->attr('href');
 
-        $isInternal = $this->isLinkInternal($href);
+        $isInternal = $this->blog && $this->isLinkInternal($href);
         $rel = $this->getLinkRel(
             $isInternal || $this->blog->getMeta()->seo_external_links_follow === SeoExternalLinksFollow::FOLLOW
         );

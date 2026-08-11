@@ -17,7 +17,7 @@ class Heading extends NodeType
     public ?string $content = 'inline*';
     public string $group = 'block';
 
-    public function __construct(private Blog $blog) {}
+    public function __construct(private ?Blog $blog) {}
 
     public function toHtml(Node $node, string $children): string
     {
@@ -32,6 +32,7 @@ class Heading extends NodeType
 
         if (
             $id &&
+            $this->blog &&
             !preg_match('/<a\b[^>]*>.*<\/a>/', $children) &&
             $this->blog->getMeta()->heading_anchors
         ) {

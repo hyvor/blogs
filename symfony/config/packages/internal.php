@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\App;
 
 return App::config([
     'internal' => [
+        'component' => 'blogs',
         'sudo' => [
             'permission_enum' => SudoPermission::class,
             'role_enum' => SudoRole::class,

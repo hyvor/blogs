@@ -21,7 +21,7 @@ class CodeBlock extends NodeType
     public string $group = 'block';
 
     public function __construct(
-        private Blog $blog,
+        private ?Blog $blog,
         private bool $isPlain,
         private ThemeFilesService $themeFilesService,
         private TwigRendererService $twigRendererService,
@@ -31,11 +31,15 @@ class CodeBlock extends NodeType
 
     public function toHtml(Node $node, string $children): string
     {
+        if (!$this->blog) {
+            return '';
+        }
+
         $blog = $this->blog;
         $isPlain = $this->isPlain;
 
-        $syntaxOn = $blog->getMeta()->syntax_on;
-        $lineNumbers = $blog->getMeta()->syntax_line_numbers;
+        $syntaxOn = $blog ? $blog->getMeta()->syntax_on : true;
+        $lineNumbers = $blog ? $blog->getMeta()->syntax_line_numbers : true;
         $themeName = strval($blog->getMeta()->syntax_theme ?? 'nord');
 
         $code = $node->allText();
