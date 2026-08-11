@@ -14,12 +14,11 @@ class MarkdownParserTest extends KernelTestCase
 {
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<string, mixed>>
      */
     private function parse(string $markdown): array
     {
-        $parser = new MarkdownParser($this->getService(PostContentService::class));
-        return $parser->parse($markdown)->toArray();
+        return new MarkdownParser()->parse($markdown);
     }
 
     public function test_basics(): void
@@ -30,27 +29,24 @@ class MarkdownParserTest extends KernelTestCase
         **Bold** and _italic_
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        ['type' => 'text', 'text' => 'Hello, world!'],
-                    ],
-                ],
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        ['type' => 'text', 'text' => 'Bold', 'marks' => [['type' => 'strong']]],
-                        ['type' => 'text', 'text' => ' and '],
-                        ['type' => 'text', 'text' => 'italic', 'marks' => [['type' => 'em']]],
-                    ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Hello, world!'],
                 ],
             ],
-        ], $doc);
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Bold', 'marks' => [['type' => 'strong']]],
+                    ['type' => 'text', 'text' => ' and '],
+                    ['type' => 'text', 'text' => 'italic', 'marks' => [['type' => 'em']]],
+                ],
+            ],
+        ], $nodes);
     }
 
     #[TestWith(['**test**', 'strong', 'test'])]
@@ -62,77 +58,91 @@ class MarkdownParserTest extends KernelTestCase
     #[TestWith(['==test==', 'highlight', 'test'])]
     public function test_marks(string $markdown, string $markType, string $text): void
     {
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        ['type' => 'text', 'text' => $text, 'marks' => [['type' => $markType]]],
-                    ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => $text, 'marks' => [['type' => $markType]]],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_link_mark(): void
     {
-        $doc = $this->parse('[test](https://example.com)');
+        $nodes = $this->parse('[test](https://example.com)');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        [
-                            'type' => 'text',
-                            'text' => 'test',
-                            'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://example.com']]],
-                        ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'test',
+                        'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://example.com']]],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_multiple_marks(): void
     {
-        $doc = $this->parse('**_test_**');
+        $nodes = $this->parse('**_test_**');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        [
-                            'type' => 'text',
-                            'text' => 'test',
-                            'marks' => [['type' => 'strong'], ['type' => 'em']],
-                        ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'test',
+                        'marks' => [['type' => 'strong'], ['type' => 'em']],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_heading(): void
     {
-        $doc = $this->parse('## Heading text');
+        $nodes = $this->parse('## Heading text');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'heading',
-                    'attrs' => ['level' => 2, 'id' => null],
-                    'content' => [['type' => 'text', 'text' => 'Heading text']],
-                ],
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 2],
+                'content' => [['type' => 'text', 'text' => 'Heading text']],
             ],
-        ], $doc);
+        ], $nodes);
+    }
+
+    public function test_heading_with_id(): void
+    {
+        $nodes = $this->parse('## Heading text {#my-id}');
+
+        $this->assertSame([
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 2, 'id' => 'my-id'],
+                'content' => [['type' => 'text', 'text' => 'Heading text']],
+            ],
+        ], $nodes);
+    }
+
+    public function test_heading_that_is_only_an_id(): void
+    {
+        $nodes = $this->parse('## {#my-id}');
+
+        $this->assertSame([
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 2, 'id' => 'my-id'],
+                'content' => [],
+            ],
+        ], $nodes);
     }
 
     public function test_code_block(): void
@@ -143,36 +153,30 @@ class MarkdownParserTest extends KernelTestCase
         ```
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'code_block',
-                    'attrs' => ['language' => 'php', 'name' => null, 'annotations' => null],
-                    'content' => [['type' => 'text', 'text' => 'echo 1;']],
-                ],
+            [
+                'type' => 'code_block',
+                'attrs' => ['language' => 'php'],
+                'content' => [['type' => 'text', 'text' => 'echo 1;']],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_callout(): void
     {
         $markdown = "> [💡, fg=#000000, bg=#f1f1ef]\n> Note text";
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'callout',
-                    'attrs' => ['emoji' => '💡', 'bg' => '#f1f1ef', 'fg' => '#000000'],
-                    'content' => [['type' => 'text', 'text' => 'Note text']],
-                ],
+            [
+                'type' => 'callout',
+                'attrs' => ['emoji' => '💡', 'fg' => '#000000', 'bg' => '#f1f1ef'],
+                'content' => [['type' => 'text', 'text' => 'Note text']],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_bullet_list(): void
@@ -182,30 +186,27 @@ class MarkdownParserTest extends KernelTestCase
         - Item 2
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'bullet_list',
-                    'content' => [
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
-                            ],
+            [
+                'type' => 'bullet_list',
+                'content' => [
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
                         ],
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
-                            ],
+                    ],
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
                         ],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_ordered_list(): void
@@ -215,30 +216,27 @@ class MarkdownParserTest extends KernelTestCase
         2. Item 2
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'ordered_list',
-                    'content' => [
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
-                            ],
+            [
+                'type' => 'ordered_list',
+                'content' => [
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
                         ],
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
-                            ],
+                    ],
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
                         ],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_nested_lists(): void
@@ -250,68 +248,62 @@ class MarkdownParserTest extends KernelTestCase
         - Item 2
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'bullet_list',
-                    'content' => [
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
-                                [
-                                    'type' => 'ordered_list',
-                                    'content' => [
-                                        [
-                                            'type' => 'list_item',
-                                            'content' => [
-                                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 1']]],
-                                            ],
+            [
+                'type' => 'bullet_list',
+                'content' => [
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
+                            [
+                                'type' => 'ordered_list',
+                                'content' => [
+                                    [
+                                        'type' => 'list_item',
+                                        'content' => [
+                                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 1']]],
                                         ],
-                                        [
-                                            'type' => 'list_item',
-                                            'content' => [
-                                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 2']]],
-                                            ],
+                                    ],
+                                    [
+                                        'type' => 'list_item',
+                                        'content' => [
+                                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 2']]],
                                         ],
                                     ],
                                 ],
                             ],
                         ],
-                        [
-                            'type' => 'list_item',
-                            'content' => [
-                                ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
-                            ],
+                    ],
+                    [
+                        'type' => 'list_item',
+                        'content' => [
+                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
                         ],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_hard_break(): void
     {
         $markdown = "Line 1\nLine 2";
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [
-                        ['type' => 'text', 'text' => 'Line 1'],
-                        ['type' => 'hard_break'],
-                        ['type' => 'text', 'text' => 'Line 2'],
-                    ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Line 1'],
+                    ['type' => 'hard_break'],
+                    ['type' => 'text', 'text' => 'Line 2'],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_blockquote_with_multiple_paragraphs(): void
@@ -322,20 +314,17 @@ class MarkdownParserTest extends KernelTestCase
         > It has multiple paragraphs.
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'blockquote',
-                    'content' => [
-                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'This is a blockquote.']]],
-                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'It has multiple paragraphs.']]],
-                    ],
+            [
+                'type' => 'blockquote',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'This is a blockquote.']]],
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'It has multiple paragraphs.']]],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_table(): void
@@ -346,165 +335,171 @@ class MarkdownParserTest extends KernelTestCase
         | Cell 1 | Cell 2 |
         MD;
 
-        $doc = $this->parse($markdown);
+        $nodes = $this->parse($markdown);
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'table',
-                    'content' => [
-                        [
-                            'type' => 'table_row',
-                            'content' => [
-                                [
-                                    'type' => 'table_header',
-                                    'attrs' => ['colspan' => 1, 'rowspan' => 1, 'colwidth' => null],
-                                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 1']]]],
-                                ],
-                                [
-                                    'type' => 'table_header',
-                                    'attrs' => ['colspan' => 1, 'rowspan' => 1, 'colwidth' => null],
-                                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 2']]]],
-                                ],
+            [
+                'type' => 'table',
+                'content' => [
+                    [
+                        'type' => 'table_row',
+                        'content' => [
+                            [
+                                'type' => 'table_header',
+                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 1']]]],
+                            ],
+                            [
+                                'type' => 'table_header',
+                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 2']]]],
                             ],
                         ],
-                        [
-                            'type' => 'table_row',
-                            'content' => [
-                                [
-                                    'type' => 'table_cell',
-                                    'attrs' => ['colspan' => 1, 'rowspan' => 1, 'colwidth' => null],
-                                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 1']]]],
-                                ],
-                                [
-                                    'type' => 'table_cell',
-                                    'attrs' => ['colspan' => 1, 'rowspan' => 1, 'colwidth' => null],
-                                    'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 2']]]],
-                                ],
+                    ],
+                    [
+                        'type' => 'table_row',
+                        'content' => [
+                            [
+                                'type' => 'table_cell',
+                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 1']]]],
+                            ],
+                            [
+                                'type' => 'table_cell',
+                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 2']]]],
                             ],
                         ],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_image_with_size(): void
     {
-        $doc = $this->parse('![An image](https://example.com/image.png =100x200)');
+        $nodes = $this->parse('![An image](https://example.com/image.png "100x200")');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'figure',
-                    'content' => [
-                        [
-                            'type' => 'image',
-                            'attrs' => [
-                                'src' => 'https://example.com/image.png',
-                                'alt' => 'An image',
-                                'width' => 100,
-                                'height' => 200,
-                            ],
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://example.com/image.png',
+                            'alt' => 'An image',
+                            'width' => 100,
+                            'height' => 200,
                         ],
                     ],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
+    }
+
+    public function test_image_with_only_width(): void
+    {
+        $nodes = $this->parse('![An image](https://example.com/image.png "100x")');
+
+        $this->assertSame([
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://example.com/image.png',
+                            'alt' => 'An image',
+                            'width' => 100,
+                        ],
+                    ],
+                ],
+            ],
+        ], $nodes);
+    }
+
+    public function test_image_without_size(): void
+    {
+        $nodes = $this->parse('![An image](https://example.com/image.png)');
+
+        $this->assertSame([
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://example.com/image.png',
+                            'alt' => 'An image',
+                        ],
+                    ],
+                ],
+            ],
+        ], $nodes);
     }
 
     public function test_embed(): void
     {
-        $doc = $this->parse('[#embed](https://example.com/embed)');
+        $nodes = $this->parse('[#embed](https://example.com/embed)');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'figure',
-                    'content' => [
-                        ['type' => 'embed', 'attrs' => ['url' => 'https://example.com/embed']],
-                    ],
+            [
+                'type' => 'figure',
+                'content' => [
+                    ['type' => 'embed', 'attrs' => ['url' => 'https://example.com/embed']],
                 ],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
     public function test_audio(): void
     {
-        $doc = $this->parse('[#audio](https://example.com/audio.mp3)');
+        $nodes = $this->parse('[#audio](https://example.com/audio.mp3)');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'audio', 'attrs' => ['src' => 'https://example.com/audio.mp3']],
-            ],
-        ], $doc);
+            ['type' => 'audio', 'attrs' => ['src' => 'https://example.com/audio.mp3']],
+        ], $nodes);
     }
 
     public function test_bookmark(): void
     {
-        $doc = $this->parse('[#bookmark](https://example.com)');
+        $nodes = $this->parse('[#bookmark](https://example.com)');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'bookmark', 'attrs' => ['url' => 'https://example.com']],
-            ],
-        ], $doc);
+            ['type' => 'bookmark', 'attrs' => ['url' => 'https://example.com']],
+        ], $nodes);
     }
 
     public function test_horizontal_rule(): void
     {
-        $doc = $this->parse('---');
+        $nodes = $this->parse('---');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'horizontal_rule'],
-            ],
-        ], $doc);
+            ['type' => 'horizontal_rule'],
+        ], $nodes);
     }
 
     public function test_toc(): void
     {
-        $doc = $this->parse('[#toc]');
+        $nodes = $this->parse('[#toc]');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'toc', 'attrs' => ['levels' => [1, 2, 3, 4, 5, 6]]],
-            ],
-        ], $doc);
+            ['type' => 'toc'],
+        ], $nodes);
     }
 
     public function test_custom_html(): void
     {
-        $doc = $this->parse('<div>Custom</div>');
+        $nodes = $this->parse('<div>Custom</div>');
 
         $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'custom_html',
-                    'content' => [['type' => 'text', 'text' => '<div>Custom</div>']],
-                ],
+            [
+                'type' => 'custom_html',
+                'content' => [['type' => 'text', 'text' => '<div>Custom</div>']],
             ],
-        ], $doc);
+        ], $nodes);
     }
 
-    public function test_empty_markdown_produces_empty_paragraph(): void
+    public function test_empty_markdown_produces_no_nodes(): void
     {
-        $doc = $this->parse('');
-
-        $this->assertSame([
-            'type' => 'doc',
-            'content' => [
-                ['type' => 'paragraph'],
-            ],
-        ], $doc);
+        $this->assertSame([], $this->parse(''));
     }
 
     public function test_round_trip_via_serializer(): void
@@ -514,7 +509,7 @@ class MarkdownParserTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'heading',
-                    'attrs' => ['level' => 2, 'id' => null],
+                    'attrs' => ['level' => 2, 'id' => 'title'],
                     'content' => [['type' => 'text', 'text' => 'Title']],
                 ],
                 [
@@ -536,7 +531,7 @@ class MarkdownParserTest extends KernelTestCase
 
         $reparsed = $this->parse($markdown);
 
-        $this->assertSame($docJson, $reparsed);
+        $this->assertSame($docJson['content'], $reparsed);
     }
 
 }

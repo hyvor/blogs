@@ -2,11 +2,8 @@
 
 namespace App\Service\Post\Content\Markdown;
 
-use App\Entity\Blog;
 use App\Service\Post\Content\Markdown\CommonMarkExt\Superscript;
 use App\Service\Post\Content\Markdown\CommonMarkExt\SuperscriptDelimiterProcessor;
-use App\Service\Post\Content\PostContentService;
-use Hyvor\Phrosemirror\Document\Node;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote;
@@ -40,14 +37,11 @@ use League\CommonMark\Parser\MarkdownParser as CommonMarkParser;
 class MarkdownParser
 {
 
-    public function __construct(private PostContentService $postContentService)
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function parse(string $markdown): array
     {
-    }
-
-    public function parse(string $markdown, ?Blog $blog = null): Node
-    {
-        $markdown = $this->preprocessImageSizeSyntax($markdown);
-
         $environment = new Environment([
             'html_input' => 'allow',
         ]);
@@ -60,31 +54,7 @@ class MarkdownParser
         $parser = new CommonMarkParser($environment);
         $document = $parser->parse($markdown);
 
-        $content = $this->convertBlocks($document->children());
-
-        if ($content === []) {
-            $content = [['type' => 'paragraph', 'content' => []]];
-        }
-
-        return $this->postContentService->getDocumentFromJson([
-            'type' => 'doc',
-            'content' => $content,
-        ], $blog);
-    }
-
-    /**
-     * Our image-size syntax (`![alt](src =WxH)`) is not valid CommonMark link
-     * destination/title syntax, so it wouldn't be recognized as an image at
-     * all. We rewrite it into a quoted title before parsing, then read it
-     * back out in convertImageParagraph().
-     */
-    private function preprocessImageSizeSyntax(string $markdown): string
-    {
-        return preg_replace(
-            '/(!\[[^\]]*]\()([^\s()]+)\s+=(\d*x\d*)\)/',
-            '$1$2 "size:$3")',
-            $markdown
-        ) ?? $markdown;
+        return $this->convertBlocks($document->children());
     }
 
     /**
@@ -112,11 +82,7 @@ class MarkdownParser
     {
         return match (true) {
             $block instanceof Paragraph => $this->convertParagraph($block),
-            $block instanceof Heading => [
-                'type' => 'heading',
-                'attrs' => ['level' => $block->getLevel()],
-                'content' => $this->convertInlines($block->children()),
-            ],
+            $block instanceof Heading => $this->convertHeading($block),
             $block instanceof BlockQuote => $this->convertBlockquote($block),
             $block instanceof ThematicBreak => ['type' => 'horizontal_rule'],
             $block instanceof ListBlock => [
@@ -168,6 +134,42 @@ class MarkdownParser
     }
 
     /**
+     * MarkdownSerializer appends "{#id}" after a heading's text when it has
+     * an id attr (see MarkdownSerializer::headingToMarkdown()).
+     *
+     * @return array<string, mixed>
+     */
+    private function convertHeading(Heading $heading): array
+    {
+        $content = $this->convertInlines($heading->children());
+        $id = null;
+
+        $lastIndex = count($content) - 1;
+        if ($lastIndex >= 0 && ($content[$lastIndex]['type'] ?? null) === 'text' && !isset($content[$lastIndex]['marks'])) {
+            $text = $content[$lastIndex]['text'];
+            if (is_string($text) && preg_match('/^(.*?)\s*\{#([\w-]+)}$/', $text, $matches)) {
+                $id = $matches[2];
+                if ($matches[1] === '') {
+                    array_pop($content);
+                } else {
+                    $content[$lastIndex]['text'] = $matches[1];
+                }
+            }
+        }
+
+        $attrs = ['level' => $heading->getLevel()];
+        if ($id !== null) {
+            $attrs['id'] = $id;
+        }
+
+        return [
+            'type' => 'heading',
+            'attrs' => $attrs,
+            'content' => $content,
+        ];
+    }
+
+    /**
      * Handles the standalone-link markdown MarkdownSerializer emits for
      * audio/bookmark/embed/button nodes, e.g. "[#audio](https://...)".
      *
@@ -201,7 +203,7 @@ class MarkdownParser
         }
 
         $title = $image->getTitle();
-        if ($title !== null && preg_match('/^size:(\d*)x(\d*)$/', $title, $matches)) {
+        if ($title !== null && preg_match('/^(\d*)x(\d*)$/', $title, $matches) && ($matches[1] !== '' || $matches[2] !== '')) {
             if ($matches[1] !== '') {
                 $attrs['width'] = (int) $matches[1];
             }
