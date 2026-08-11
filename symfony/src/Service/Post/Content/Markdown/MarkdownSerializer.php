@@ -67,6 +67,7 @@ class MarkdownSerializer
      */
     private function nodeToMarkdown(Node $node, callable $children, MarkdownSerializationOptions $options): string
     {
+
         return match (true) {
             // media
             $node->type instanceof Nodes\Audio\Audio => "[#audio]({$node->attrs->src})\n\n",

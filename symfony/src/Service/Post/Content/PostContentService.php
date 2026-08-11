@@ -52,6 +52,19 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class PostContentService
 {
+
+    public const array DEFAULT_CONTENT = [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [],
+            ],
+        ],
+    ];
+
+    public const string DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
+
     public function __construct(
         private PermalinkService $permalinkService,
         private ThemeFilesService $themeFilesService,
