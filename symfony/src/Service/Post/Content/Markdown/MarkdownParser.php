@@ -4,7 +4,11 @@ namespace App\Service\Post\Content\Markdown;
 
 use App\Service\Post\Content\Markdown\CommonMarkExt\Superscript;
 use App\Service\Post\Content\Markdown\CommonMarkExt\SuperscriptDelimiterProcessor;
+use App\Service\Post\Content\PostSchema;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 use League\CommonMark\Environment\Environment;
+use League\CommonMark\Exception\CommonMarkException;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote;
 use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
@@ -38,7 +42,9 @@ class MarkdownParser
 {
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @throws PhrosemirrorException
+     * @throws CommonMarkException
+     * @return Node[]
      */
     public function parse(string $markdown): array
     {
@@ -54,7 +60,14 @@ class MarkdownParser
         $parser = new CommonMarkParser($environment);
         $document = $parser->parse($markdown);
 
-        return $this->convertBlocks($document->children());
+        $blocks = $this->convertBlocks($document->children());
+
+        $schema = new PostSchema();
+        $ret = [];
+        foreach ($blocks as $block) {
+            $ret[] = $schema->nodeFrom($block);
+        }
+        return $ret;
     }
 
     /**

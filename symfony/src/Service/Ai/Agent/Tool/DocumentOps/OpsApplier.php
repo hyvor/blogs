@@ -3,18 +3,10 @@
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Service\Post\Content\Markdown\MarkdownParser;
-use App\Service\Post\Content\PostSchema;
 use Hyvor\Phrosemirror\Document\Node;
 
 class OpsApplier
 {
-
-    private PostSchema $postSchema;
-
-    public function __construct()
-    {
-        $this->postSchema = new PostSchema();
-    }
 
     /**
      * @param Op[] $ops
@@ -88,12 +80,7 @@ class OpsApplier
     private function parseMarkdownToNodes(string $markdown): array
     {
         $markdownParser = new MarkdownParser();
-        $nodesJson = $markdownParser->parse($markdown);
-
-        return array_map(
-            fn(array $json) => $this->postSchema->nodeFrom($json),
-            $nodesJson
-        );
+        return $markdownParser->parse($markdown);
     }
 
 }
