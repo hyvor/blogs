@@ -166,6 +166,17 @@ class MarkdownSerializerTest extends KernelTestCase
         'attrs' => ['level' => 2]
     ])]
     #[TestWith([
+        'type' => 'heading',
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => 'Heading text'
+            ]
+        ],
+        'expected' => '## Heading text {#my-id}',
+        'attrs' => ['level' => 2, 'id' => 'my-id']
+    ])]
+    #[TestWith([
         'type' => 'code_block',
         'content' => [
             [
@@ -231,7 +242,7 @@ class MarkdownSerializerTest extends KernelTestCase
                 'attrs' => ['src' => 'https://example.com/image.png', 'alt' => 'An image', 'width' => 100, 'height' => 200]
             ]
         ],
-        'expected' => '![An image](https://example.com/image.png =100x200)'
+        'expected' => '![An image](https://example.com/image.png "100x200")'
     ])]
     #[TestWith([
         'type' => 'figure',
@@ -483,6 +494,65 @@ class MarkdownSerializerTest extends KernelTestCase
         MD;
 
         $this->assertSame($expected, $mardown);
+    }
+
+    public function test_table_cell_with_pipe_character(): void
+    {
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'table',
+                    'content' => [
+                        [
+                            'type' => 'table_row',
+                            'content' => [
+                                [
+                                    'type'    => 'table_cell',
+                                    'content' => [
+                                        ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'A | B']]]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $expected = <<<MD
+        | A \\| B |
+        | --- |
+        MD;
+
+        $this->assertSame($expected, $mardown);
+    }
+
+    public function test_link_text_with_closing_bracket(): void
+    {
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type'    => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'a [b] c',
+                            'marks' => [
+                                ['type' => 'link', 'attrs' => ['href' => 'https://example.com']]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $this->assertSame('[a \\[b\\] c](https://example.com)', $mardown);
     }
 
     public function test_with_nodeid_map(): void

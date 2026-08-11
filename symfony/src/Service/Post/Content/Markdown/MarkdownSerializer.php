@@ -53,7 +53,7 @@ class MarkdownSerializer
             $markType instanceof Marks\Strong => "**$text**",
             $markType instanceof Marks\Em => "_{$text}_",
             $markType instanceof Marks\Code => "`$text`",
-            $markType instanceof Marks\Link => "[{$text}]({$mark->attrs->href})",
+            $markType instanceof Marks\Link => '[' . $this->escapeBracketText($text) . "]({$mark->attrs->href})",
             $markType instanceof Marks\Strike => "~~{$text}~~",
             $markType instanceof Marks\Sub => "~{$text}~",
             $markType instanceof Marks\Sup => "^{$text}^",
@@ -81,7 +81,7 @@ class MarkdownSerializer
             // text
             $node->type instanceof Nodes\Paragraph,
             $node->type instanceof Nodes\CustomHtml => "{$children()}\n\n",
-            $node->type instanceof Nodes\Heading\Heading => str_repeat('#', $node->attrs->level) . " {$children()}\n\n",
+            $node->type instanceof Nodes\Heading\Heading => $this->headingToMarkdown($node, $children()),
             $node->type instanceof Nodes\CodeBlock\CodeBlock => $this->codeBlockToMarkdown($node, $children()),
 
             // blockquote
@@ -112,6 +112,15 @@ class MarkdownSerializer
             // special
             $node->type instanceof Nodes\Toc\Toc => "[#toc]\n\n",
         };
+    }
+
+    private function headingToMarkdown(Node $node, string $children): string
+    {
+        $level = str_repeat('#', $node->attrs->level);
+        $id = $node->attrs->id ?? null;
+        $idSuffix = $id ? " {#$id}" : '';
+
+        return "$level $children$idSuffix\n\n";
     }
 
     private function calloutToMarkdown(Node $node, string $children): string
@@ -161,7 +170,8 @@ class MarkdownSerializer
 
             foreach ($row->content as $cell) {
                 $cellMarkdown = trim($this->serialize($cell, $options));
-                $cells[] = str_replace(["\r\n", "\n"], ' ', $cellMarkdown);
+                $cellMarkdown = str_replace(["\r\n", "\n"], ' ', $cellMarkdown);
+                $cells[] = str_replace('|', '\\|', $cellMarkdown);
             }
 
             $rows[] = $cells;
@@ -181,14 +191,23 @@ class MarkdownSerializer
         return implode("\n", $lines) . "\n\n";
     }
 
+    /**
+     * The image's width/height are encoded into the markdown title as
+     * "WxH" (e.g. "100x200", "100x", "x200")
+     */
     private function imageToMarkdown(Node $node): string
     {
         $src = $node->attrs->src ?? '';
-        $alt = $node->attrs->alt ?? '';
+        $alt = $this->escapeBracketText($node->attrs->alt ?? '');
         $width = $node->attrs->width ?? '';
         $height = $node->attrs->height ?? '';
-        $sizePart = ($width || $height) ? " ={$width}x{$height}" : '';
+        $sizePart = ($width || $height) ? " \"{$width}x{$height}\"" : '';
         return "![{$alt}]({$src}$sizePart)\n\n";
+    }
+
+    private function escapeBracketText(string $text): string
+    {
+        return str_replace(['[', ']'], ['\\[', '\\]'], $text);
     }
 
     private function blockquoteToMarkdown(string $children): string
