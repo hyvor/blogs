@@ -29,17 +29,12 @@
 	});
 </script>
 
-<Modal bare width="1400px" height="calc(100% - 40px)" {onclose} show={true}>
+<Modal bare width="1400px" height="calc(100% - 40px)" {onclose} show={true} appendToBody>
 	<div class="inner">
 		<div class="part left">
 			<div class="header">Published Version</div>
 			<div class="editor">
-				<Editor
-					value={$postVariantStore.content}
-					{schema}
-					{editorConfig}
-					editable={false}
-				/>
+				<Editor value={$postVariantStore.content} {schema} {editorConfig} editable={false} />
 			</div>
 		</div>
 		<div class="part">

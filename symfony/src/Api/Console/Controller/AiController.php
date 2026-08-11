@@ -62,7 +62,7 @@ class AiController extends AbstractController
 
         $blog = $this->authListener->getBlog();
 
-        $result = $this->aiAgentService->call($blog);
+        $result = $this->aiAgentService->callForPost($blog);
 
         $response = new StreamedResponse(function () use ($result) {
             foreach ($result->getContent() as $delta) {
