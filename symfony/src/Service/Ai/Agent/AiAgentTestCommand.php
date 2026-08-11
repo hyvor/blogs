@@ -135,7 +135,7 @@ class AiAgentTestCommand
         }
 
         dd(
-            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())
+            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
         );
 
         dd(
