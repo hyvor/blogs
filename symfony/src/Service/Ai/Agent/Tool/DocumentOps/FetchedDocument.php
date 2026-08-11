@@ -7,6 +7,9 @@ use Hyvor\Phrosemirror\Document\Node;
 class FetchedDocument
 {
 
+    /**
+     * @var Op[]
+     */
     private array $ops = [];
 
     public function __construct(
@@ -23,6 +26,9 @@ class FetchedDocument
         return $this->document;
     }
 
+    /**
+     * @return array<string, Node>
+     */
     public function getNodeIdMap(): array
     {
         return $this->nodeIdMap;
@@ -33,6 +39,9 @@ class FetchedDocument
         $this->ops[] = $op;
     }
 
+    /**
+     * @return Op[]
+     */
     public function getOps(): array
     {
         return $this->ops;
