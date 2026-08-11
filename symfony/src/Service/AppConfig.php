@@ -9,6 +9,9 @@ readonly class AppConfig
 {
 
     public function __construct(
+        #[Autowire('%env(string:APP_VERSION)%')]
+        private string $version,
+
         #[Autowire('%env(string:DOMAIN_APP)%')]
         private string $domainApp,
         #[Autowire('%env(default::DELIVERY_URL)%')]
@@ -78,6 +81,12 @@ readonly class AppConfig
     public function getMistralApiKey(): string
     {
         return $this->mistralApiKey;
+    }
+
+    public function getHttpBotUserAgent(): string
+    {
+        $url = 'https://' . $this->getDomainApp();
+        return "HyvorBlogsBot/$this->version (+$url)";
     }
 
 }

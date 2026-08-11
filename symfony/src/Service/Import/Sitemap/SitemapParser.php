@@ -4,6 +4,7 @@ namespace App\Service\Import\Sitemap;
 
 use App\Entity\Blog;
 use App\Service\App\HttpBot;
+use App\Service\AppConfig;
 use App\Service\Import\Importer\ImportingPost;
 use App\Service\Import\Importer\ImportingPostVariant;
 use App\Service\Import\Importer\ParserAbstract;
@@ -23,6 +24,7 @@ class SitemapParser extends ParserAbstract
         private readonly PageScraperOptions $pageScraperOptions,
         private readonly HttpClientInterface $httpClient,
         private readonly PostContentService $postContentService,
+        private AppConfig $appConfig
     ) {
     }
 
@@ -33,7 +35,7 @@ class SitemapParser extends ParserAbstract
 
         try {
             $sitemap = $this->httpClient->request('GET', $this->sitemapUrl, [
-                'headers' => ['User-Agent' => HttpBot::USER_AGENT],
+                'headers' => ['User-Agent' => $this->appConfig->getHttpBotUserAgent()],
                 'timeout' => 10,
             ]);
             $ok = $sitemap->getStatusCode() >= 200 && $sitemap->getStatusCode() < 300;
@@ -54,6 +56,7 @@ class SitemapParser extends ParserAbstract
                 $this->pageScraperOptions,
                 $this->httpClient,
                 $this->postContentService,
+                $this->appConfig->getHttpBotUserAgent()
             );
             $scraper->scrape();
 
