@@ -231,8 +231,7 @@ class UserService
         UserRole $role,
         bool $flush = true,
         ?Language $primaryLanguage = null, // to provide from outside
-    ): User
-    {
+    ): User {
         if (is_int($hyvorUserId)) {
             $hyvorUser = $this->auth->fromId($hyvorUserId);
 
@@ -296,8 +295,7 @@ class UserService
         ?string $pictureUrl = null,
         bool $flush = true,
         ?Language $primaryLanguage = null // to provide from outside
-    ): User
-    {
+    ): User {
         $now = $this->now();
 
         $user = new User();
