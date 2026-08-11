@@ -9,6 +9,7 @@ use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
+use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 use Symfony\AI\Agent\Toolbox\Attribute\AsTool;
 
@@ -150,6 +151,22 @@ class DocumentOpsTool
             return $variant->getContentUnsaved() ?? $variant->getContent();
         }
         return $variant->getContent();
+    }
+
+    // methods to call once the agent has finished making changes to the document.
+
+    public function getFinalDocument(int $postVariantId): Node
+    {
+        if (!isset($this->documentCache[$postVariantId])) {
+            // TODO: use custom exception class
+            throw new \RuntimeException("Document for post variant ID $postVariantId not fetched. Please call document_get first.");
+        }
+
+        $fetchedDocument = $this->documentCache[$postVariantId];
+        $ops = $fetchedDocument->getOps();
+
+        $opsApplier = new OpsApplier();
+        return $opsApplier->apply($fetchedDocument, $ops);
     }
 
 }

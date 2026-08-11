@@ -19,20 +19,20 @@ readonly class AppConfig
 
         #[Autowire('%env(string:default::UNSPLASH_ACCESS_KEY)%')]
         #[\SensitiveParameter]
-        private ?string $unsplashAccessKey = null,
+        private string $unsplashAccessKey = '',
 
         // AI keys
         #[Autowire('%env(string:default::OPENAI_API_KEY)%')]
         #[\SensitiveParameter]
-        private string $openAiApiKey,
+        private string $openAiApiKey = '',
 
         #[Autowire('%env(string:default::ANTHROPIC_API_KEY)%')]
         #[\SensitiveParameter]
-        private string $anthropicApiKey,
+        private string $anthropicApiKey = '',
 
         #[Autowire('%env(string:default::MISTRAL_API_KEY)%')]
         #[\SensitiveParameter]
-        private string $mistralApiKey,
+        private string $mistralApiKey = '',
     ) {
     }
 

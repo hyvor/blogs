@@ -106,7 +106,6 @@ class AiAgentTestCommand
             ]
         ];
 
-
         $postVariant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
@@ -114,7 +113,7 @@ class AiAgentTestCommand
             'status' => PostVariantStatus::DRAFT
         ]);
 
-        $prompt = 'Write three paragraphs on the given topic';
+        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
 
         $result = $this->aiAgentService->callForPost($postVariant, $prompt);
 
@@ -122,16 +121,27 @@ class AiAgentTestCommand
         foreach ($result->getResult()->getContent() as $delta) {
             if ($delta instanceof Delta\TextDelta) {
                 $output .= $delta->getText();
+                echo $delta->getText();
             } elseif ($delta instanceof Delta\ThinkingDelta) {
                 $output .= '[Thinking...] ' . $delta->getThinking();
+                echo '[Thinking...] ' . $delta->getThinking();
             } else if ($delta instanceof Delta\ToolCallStart) {
                 $output .= '[Tool call: ' . $delta->getName() . ']';
+                echo '[Tool call: ' . $delta->getName() . ']';
             } else if ($delta instanceof Delta\ToolCallComplete) {
                 $output .= '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
+                echo '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
             }
         }
 
-        dd($output, $result->getDocumentOpsTool()->getCachedDocuments()[$postVariant->getId()]->getOps());
+        dd(
+            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
+        );
+
+        dd(
+            $output,
+            $result->getDocumentOpsTool()->getCachedDocuments()[$postVariant->getId()]->getOps()
+        );
 
         return Command::SUCCESS;
     }

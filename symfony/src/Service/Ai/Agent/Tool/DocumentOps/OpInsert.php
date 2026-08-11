@@ -6,7 +6,7 @@ class OpInsert extends Op
 {
 
     public function __construct(
-        public string $afterNodeId,
+        public string $referenceNodeId,
         public string $contentMarkdown,
         public bool $insertBefore = false
     ) {}
