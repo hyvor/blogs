@@ -35,6 +35,7 @@ class AiAgentService
     - use document_get tool to get markdown content of a post variant
     - each markdown node is prefixed with an ID in the format #[id] (e.g. #[p-1] for paragraph 1)
     - call tools with the node ID: e.g., document_replace(postVariantId, 'p-1', 'new *content*')
+    - when creating a lot of content, generate all and use document_insert(postVariantId, 'p-1' with all the content)
 
     Markdown schema for the post content:
     {markdown_schema}
@@ -112,6 +113,7 @@ class AiAgentService
 
         $callResult = $agent->call($messages, [
             'stream' => true,
+            'max_tokens' => 5000,
             // 'reasoning' => ['summary' => 'auto'],
         ]);
 
