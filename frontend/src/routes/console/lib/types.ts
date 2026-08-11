@@ -150,11 +150,6 @@ export interface CustomDomainSetup {
 	valid_to: number | null;
 }
 
-export interface CustomDomainCreateResult {
-	custom_domain: CustomDomainSetup;
-	hosting_info: HostingInfo | null;
-}
-
 export interface BlogIntegrations {
 	hyvor_talk: null | {
 		website_id: number;

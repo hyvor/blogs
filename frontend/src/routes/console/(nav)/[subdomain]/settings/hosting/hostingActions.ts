@@ -36,7 +36,10 @@ export function createCustomDomainSetup(
 	tlsPrivateKey?: string,
 	tlsCertificate?: string
 ) {
-	return consoleApi.post<CustomDomainCreateResult>({
+	return consoleApi.post<{
+	custom_domain: CustomDomainSetup;
+	hosting_info: HostingInfo | null;
+	}>({
 		endpoint: '/hosting/custom-domain',
 		data: {
 			domain: domain,
