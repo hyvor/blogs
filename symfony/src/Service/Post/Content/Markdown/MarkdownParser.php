@@ -1,27 +1,421 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service\Post\Content\Markdown;
 
+use App\Entity\Blog;
+use App\Service\Post\Content\Markdown\CommonMarkExt\Superscript;
+use App\Service\Post\Content\Markdown\CommonMarkExt\SuperscriptDelimiterProcessor;
+use App\Service\Post\Content\PostContentService;
 use Hyvor\Phrosemirror\Document\Node;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote;
+use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
+use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
+use League\CommonMark\Extension\CommonMark\Node\Block\HtmlBlock;
+use League\CommonMark\Extension\CommonMark\Node\Block\IndentedCode;
+use League\CommonMark\Extension\CommonMark\Node\Block\ListBlock;
+use League\CommonMark\Extension\CommonMark\Node\Block\ListItem;
+use League\CommonMark\Extension\CommonMark\Node\Block\ThematicBreak;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code as CodeInline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Emphasis;
+use League\CommonMark\Extension\CommonMark\Node\Inline\HtmlInline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image as ImageInline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link as LinkInline;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
+use League\CommonMark\Extension\Highlight\HighlightExtension;
+use League\CommonMark\Extension\Highlight\Mark as HighlightInline;
+use League\CommonMark\Extension\Strikethrough\Strikethrough;
+use League\CommonMark\Extension\Strikethrough\StrikethroughExtension;
+use League\CommonMark\Extension\Table\Table as TableBlock;
+use League\CommonMark\Extension\Table\TableCell as TableCellBlock;
+use League\CommonMark\Extension\Table\TableExtension;
+use League\CommonMark\Extension\Table\TableSection;
+use League\CommonMark\Node\Block\Paragraph;
+use League\CommonMark\Node\Inline\Newline;
+use League\CommonMark\Node\Inline\Text as TextInline;
+use League\CommonMark\Node\Node as CommonMarkNode;
 use League\CommonMark\Parser\MarkdownParser as CommonMarkParser;
 
 class MarkdownParser
 {
 
-    public function parse(string $markdown): Node
+    public function __construct(private PostContentService $postContentService)
     {
+    }
+
+    public function parse(string $markdown, ?Blog $blog = null): Node
+    {
+        $markdown = $this->preprocessImageSizeSyntax($markdown);
 
         $environment = new Environment([
-            'html_input' => 'strip',
+            'html_input' => 'allow',
         ]);
         $environment->addExtension(new CommonMarkCoreExtension());
+        $environment->addExtension(new StrikethroughExtension());
+        $environment->addExtension(new HighlightExtension());
+        $environment->addExtension(new TableExtension());
+        $environment->addDelimiterProcessor(new SuperscriptDelimiterProcessor());
 
         $parser = new CommonMarkParser($environment);
         $document = $parser->parse($markdown);
-        dd($document);
 
+        $content = $this->convertBlocks($document->children());
+
+        if ($content === []) {
+            $content = [['type' => 'paragraph', 'content' => []]];
+        }
+
+        return $this->postContentService->getDocumentFromJson([
+            'type' => 'doc',
+            'content' => $content,
+        ], $blog);
+    }
+
+    /**
+     * Our image-size syntax (`![alt](src =WxH)`) is not valid CommonMark link
+     * destination/title syntax, so it wouldn't be recognized as an image at
+     * all. We rewrite it into a quoted title before parsing, then read it
+     * back out in convertImageParagraph().
+     */
+    private function preprocessImageSizeSyntax(string $markdown): string
+    {
+        return preg_replace(
+            '/(!\[[^\]]*]\()([^\s()]+)\s+=(\d*x\d*)\)/',
+            '$1$2 "size:$3")',
+            $markdown
+        ) ?? $markdown;
+    }
+
+    /**
+     * @param iterable<CommonMarkNode> $blocks
+     * @return array<int, array<string, mixed>>
+     */
+    private function convertBlocks(iterable $blocks): array
+    {
+        $nodes = [];
+
+        foreach ($blocks as $block) {
+            $node = $this->convertBlock($block);
+            if ($node !== null) {
+                $nodes[] = $node;
+            }
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function convertBlock(CommonMarkNode $block): ?array
+    {
+        return match (true) {
+            $block instanceof Paragraph => $this->convertParagraph($block),
+            $block instanceof Heading => [
+                'type' => 'heading',
+                'attrs' => ['level' => $block->getLevel()],
+                'content' => $this->convertInlines($block->children()),
+            ],
+            $block instanceof BlockQuote => $this->convertBlockquote($block),
+            $block instanceof ThematicBreak => ['type' => 'horizontal_rule'],
+            $block instanceof ListBlock => [
+                'type' => $block->getListData()->type === ListBlock::TYPE_ORDERED ? 'ordered_list' : 'bullet_list',
+                'content' => $this->convertBlocks($block->children()),
+            ],
+            $block instanceof ListItem => [
+                'type' => 'list_item',
+                'content' => $this->convertBlocks($block->children()),
+            ],
+            $block instanceof FencedCode => $this->convertCodeBlock($block->getInfoWords()[0] ?? null, $block->getLiteral()),
+            $block instanceof IndentedCode => $this->convertCodeBlock(null, $block->getLiteral()),
+            $block instanceof TableBlock => $this->convertTable($block),
+            $block instanceof HtmlBlock => $this->convertHtmlBlock($block),
+            default => null,
+        };
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertParagraph(Paragraph $paragraph): array
+    {
+        $children = $this->toArray($paragraph->children());
+
+        if (count($children) === 1) {
+            $only = $children[0];
+
+            if ($only instanceof TextInline && $only->getLiteral() === '[#toc]') {
+                return ['type' => 'toc'];
+            }
+
+            if ($only instanceof ImageInline) {
+                return $this->convertImageParagraph($only);
+            }
+
+            if ($only instanceof LinkInline) {
+                $special = $this->convertSpecialLinkParagraph($only);
+                if ($special !== null) {
+                    return $special;
+                }
+            }
+        }
+
+        return [
+            'type' => 'paragraph',
+            'content' => $this->convertInlines($children),
+        ];
+    }
+
+    /**
+     * Handles the standalone-link markdown MarkdownSerializer emits for
+     * audio/bookmark/embed/button nodes, e.g. "[#audio](https://...)".
+     *
+     * @return array<string, mixed>|null
+     */
+    private function convertSpecialLinkParagraph(LinkInline $link): ?array
+    {
+        $label = $this->plainText($link->children());
+        $url = $link->getUrl();
+
+        return match ($label) {
+            '#audio' => ['type' => 'audio', 'attrs' => ['src' => $url]],
+            '#bookmark' => ['type' => 'bookmark', 'attrs' => ['url' => $url]],
+            '#embed' => ['type' => 'figure', 'content' => [['type' => 'embed', 'attrs' => ['url' => $url]]]],
+            // the button's text is not part of the markdown MarkdownSerializer emits, so it can't be recovered here
+            '#button' => ['type' => 'button', 'attrs' => ['href' => $url], 'content' => [['type' => 'text', 'text' => 'Button']]],
+            default => null,
+        };
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertImageParagraph(ImageInline $image): array
+    {
+        $attrs = ['src' => $image->getUrl()];
+
+        $alt = $this->plainText($image->children());
+        if ($alt !== '') {
+            $attrs['alt'] = $alt;
+        }
+
+        $title = $image->getTitle();
+        if ($title !== null && preg_match('/^size:(\d*)x(\d*)$/', $title, $matches)) {
+            if ($matches[1] !== '') {
+                $attrs['width'] = (int) $matches[1];
+            }
+            if ($matches[2] !== '') {
+                $attrs['height'] = (int) $matches[2];
+            }
+        }
+
+        return [
+            'type' => 'figure',
+            'content' => [['type' => 'image', 'attrs' => $attrs]],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertBlockquote(BlockQuote $quote): array
+    {
+        $callout = $this->convertCalloutBlockquote($quote);
+        if ($callout !== null) {
+            return $callout;
+        }
+
+        return [
+            'type' => 'blockquote',
+            'content' => $this->convertBlocks($quote->children()),
+        ];
+    }
+
+    /**
+     * A callout is serialized as a blockquote whose first line is
+     * "[emoji, fg=..., bg=...]" (see MarkdownSerializer::calloutToMarkdown).
+     *
+     * @return array<string, mixed>|null
+     */
+    private function convertCalloutBlockquote(BlockQuote $quote): ?array
+    {
+        $children = $this->toArray($quote->children());
+
+        if (count($children) !== 1 || !$children[0] instanceof Paragraph) {
+            return null;
+        }
+
+        $inline = $this->toArray($children[0]->children());
+
+        if (
+            count($inline) === 0
+            || !$inline[0] instanceof TextInline
+            || !preg_match('/^\[(.*), fg=(.*), bg=(.*)]$/', $inline[0]->getLiteral(), $matches)
+        ) {
+            return null;
+        }
+
+        $rest = array_slice($inline, 1);
+        if (isset($rest[0]) && $rest[0] instanceof Newline) {
+            array_shift($rest);
+        }
+
+        return [
+            'type' => 'callout',
+            'attrs' => ['emoji' => $matches[1], 'fg' => $matches[2], 'bg' => $matches[3]],
+            'content' => $this->convertInlines($rest),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertCodeBlock(?string $language, string $literal): array
+    {
+        $text = rtrim($literal, "\n");
+
+        return [
+            'type' => 'code_block',
+            'attrs' => $language ? ['language' => $language] : [],
+            'content' => $text === '' ? [] : [['type' => 'text', 'text' => $text]],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertHtmlBlock(HtmlBlock $block): array
+    {
+        $html = trim($block->getLiteral());
+
+        return [
+            'type' => 'custom_html',
+            'content' => $html === '' ? [] : [['type' => 'text', 'text' => $html]],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function convertTable(TableBlock $table): array
+    {
+        $rows = [];
+
+        foreach ($table->children() as $section) {
+            if (!$section instanceof TableSection) {
+                continue;
+            }
+
+            foreach ($section->children() as $row) {
+                $cells = [];
+
+                foreach ($row->children() as $cell) {
+                    if (!$cell instanceof TableCellBlock) {
+                        continue;
+                    }
+
+                    $cells[] = [
+                        'type' => $cell->getType() === TableCellBlock::TYPE_HEADER ? 'table_header' : 'table_cell',
+                        'content' => [[
+                            'type' => 'paragraph',
+                            'content' => $this->convertInlines($cell->children()),
+                        ]],
+                    ];
+                }
+
+                $rows[] = ['type' => 'table_row', 'content' => $cells];
+            }
+        }
+
+        return ['type' => 'table', 'content' => $rows];
+    }
+
+    /**
+     * @param iterable<CommonMarkNode> $inlines
+     * @param array<int, array<string, mixed>> $marks
+     * @return array<int, array<string, mixed>>
+     */
+    private function convertInlines(iterable $inlines, array $marks = []): array
+    {
+        $nodes = [];
+
+        foreach ($inlines as $inline) {
+            array_push($nodes, ...$this->convertInline($inline, $marks));
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $marks
+     * @return array<int, array<string, mixed>>
+     */
+    private function convertInline(CommonMarkNode $inline, array $marks): array
+    {
+        return match (true) {
+            $inline instanceof TextInline => [$this->textNode($inline->getLiteral(), $marks)],
+            $inline instanceof CodeInline => [$this->textNode($inline->getLiteral(), [...$marks, ['type' => 'code']])],
+            $inline instanceof Strong => $this->convertInlines($inline->children(), [...$marks, ['type' => 'strong']]),
+            $inline instanceof Emphasis => $this->convertInlines($inline->children(), [...$marks, ['type' => 'em']]),
+            $inline instanceof HighlightInline => $this->convertInlines($inline->children(), [...$marks, ['type' => 'highlight']]),
+            $inline instanceof Superscript => $this->convertInlines($inline->children(), [...$marks, ['type' => 'sup']]),
+            $inline instanceof Strikethrough => $this->convertInlines(
+                $inline->children(),
+                [...$marks, ['type' => mb_strlen($inline->getOpeningDelimiter()) >= 2 ? 'strike' : 'sub']]
+            ),
+            $inline instanceof LinkInline => $this->convertInlines(
+                $inline->children(),
+                [...$marks, ['type' => 'link', 'attrs' => ['href' => $inline->getUrl()]]]
+            ),
+            // MarkdownSerializer only ever emits a bare "\n" inside a paragraph for hard_break nodes
+            // (paragraphs are otherwise separated by a blank line), so any newline here means hard_break
+            $inline instanceof Newline => [['type' => 'hard_break']],
+            $inline instanceof HtmlInline => [$this->textNode($inline->getLiteral(), $marks)],
+            default => [],
+        };
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $marks
+     * @return array<string, mixed>
+     */
+    private function textNode(string $text, array $marks): array
+    {
+        $node = ['type' => 'text', 'text' => $text];
+
+        if ($marks !== []) {
+            $node['marks'] = $marks;
+        }
+
+        return $node;
+    }
+
+    /**
+     * @param iterable<CommonMarkNode> $inlines
+     */
+    private function plainText(iterable $inlines): string
+    {
+        $text = '';
+
+        foreach ($inlines as $inline) {
+            if ($inline instanceof TextInline) {
+                $text .= $inline->getLiteral();
+            } else {
+                $text .= $this->plainText($inline->children());
+            }
+        }
+
+        return $text;
+    }
+
+    /**
+     * @param iterable<CommonMarkNode> $nodes
+     * @return CommonMarkNode[]
+     */
+    private function toArray(iterable $nodes): array
+    {
+        return is_array($nodes) ? $nodes : iterator_to_array($nodes);
     }
 
 }
