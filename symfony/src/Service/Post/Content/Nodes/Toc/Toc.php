@@ -2,12 +2,7 @@
 
 namespace App\Service\Post\Content\Nodes\Toc;
 
-use App\Entity\Blog;
-use App\Entity\Enum\ThemeFileFolder;
-use App\Service\Theme\ThemeFilesService;
-use App\Service\Delivery\Twig\TwigRendererService;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
-use Hyvor\Phrosemirror\Converters\HtmlSerializer\Context;
 use Hyvor\Phrosemirror\Types\NodeType;
 
 class Toc extends NodeType
@@ -18,39 +13,6 @@ class Toc extends NodeType
     public ?string $content = null;
     public string $group = 'block';
     public string $attrs = TocAttrs::class;
-
-    public function __construct(
-        private ?Blog $blog,
-        private ThemeFilesService $themeFilesService,
-        private TwigRendererService $twigRendererService,
-    ) {
-    }
-
-    public function toHtmlFromContext(Context $context): string
-    {
-        if (!$this->blog) {
-            return '';
-        }
-
-        $template = $this->themeFilesService->getFile(
-            $this->blog,
-            'node-toc.twig',
-            ThemeFileFolder::TEMPLATES
-        )?->getContent();
-
-        if (!$template) {
-            $template = '{{ toc | raw }}';
-        }
-
-        /** @var int[] $levels */
-        $levels = $context->node->attrs->get('levels') ?: self::DEFAULT_LEVELS;
-        $tocHtml = new TocHtml($levels);
-        $toc = $tocHtml->htmlFromNode($context->topNode);
-
-        return $this->twigRendererService->renderString($template, [
-            'toc' => $toc,
-        ]);
-    }
 
     public function fromHtml(): array
     {

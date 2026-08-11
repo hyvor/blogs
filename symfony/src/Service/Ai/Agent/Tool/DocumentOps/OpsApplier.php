@@ -3,12 +3,18 @@
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Service\Post\Content\Markdown\MarkdownParser;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Phrosemirror\Document\Node;
 
 class OpsApplier
 {
 
-    public function __construct() {}
+    private PostSchema $postSchema;
+
+    public function __construct()
+    {
+        $this->postSchema = new PostSchema();
+    }
 
     /**
      * @param Op[] $ops
@@ -36,8 +42,7 @@ class OpsApplier
         }
 
         $nodeToReplace = $nodeIdMap[$op->nodeId];
-        $markdownParser = new MarkdownParser();
-        $newNodes = $markdownParser->parse($op->newContentMarkdown);
+        $newNodes = $this->parseMarkdownToNodes($op->newContentMarkdown);
 
         $allNodes = $document->content->all();
         foreach ($allNodes as $index => $node) {
@@ -60,8 +65,7 @@ class OpsApplier
         }
 
         $referenceNode = $nodeIdMap[$op->referenceNodeId];
-        $markdownParser = new MarkdownParser();
-        $newNodes = $markdownParser->parse($op->contentMarkdown);
+        $newNodes = $this->parseMarkdownToNodes($op->contentMarkdown);
 
         $allNodes = $document->content->all();
         foreach ($allNodes as $index => $node) {
@@ -76,6 +80,20 @@ class OpsApplier
         }
 
         $document->content->setNodes($allNodes);
+    }
+
+    /**
+     * @return Node[]
+     */
+    private function parseMarkdownToNodes(string $markdown): array
+    {
+        $markdownParser = new MarkdownParser();
+        $nodesJson = $markdownParser->parse($markdown);
+
+        return array_map(
+            fn(array $json) => $this->postSchema->nodeFrom($json),
+            $nodesJson
+        );
     }
 
 }
