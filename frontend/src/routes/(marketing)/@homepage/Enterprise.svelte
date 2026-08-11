@@ -150,12 +150,13 @@
 	}
 
 	h2 {
-		font-size: clamp(30px, 4vw, 44px);
+		font-size: clamp(35px, 4vw, 50px);
 		font-weight: 800;
 		letter-spacing: -0.02em;
 		line-height: 1.1;
 		color: #fff;
 		margin: 0 0 18px;
+		font-family: var(--font-serif);
 	}
 
 	.description {

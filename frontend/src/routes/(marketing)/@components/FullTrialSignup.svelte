@@ -66,6 +66,7 @@
 		font-weight: 800;
 		margin: 0 0 12px;
 		letter-spacing: -0.02em;
+		font-family: var(--font-serif);
 	}
 
 	p {

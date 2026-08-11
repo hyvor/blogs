@@ -100,7 +100,7 @@
 <section class="testimonials">
 	<div class="hds-container head">
 		<p class="label">Testimonials</p>
-		<h2>Don't take our word for it.<br />Hear it from our bloggers.</h2>
+		<h2>Don't take our word for it.<br />Hear it from our customers.</h2>
 	</div>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -212,6 +212,7 @@
 		line-height: 1.15;
 		color: var(--text);
 		margin: 0;
+		font-family: var(--font-serif);
 	}
 
 	.scroll-row {
