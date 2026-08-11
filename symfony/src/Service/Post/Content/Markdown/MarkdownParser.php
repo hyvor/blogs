@@ -108,23 +108,13 @@ class MarkdownParser
     {
         $children = $this->toArray($paragraph->children());
 
-        if (count($children) === 1) {
-            $only = $children[0];
-
-            if ($only instanceof TextInline && $only->getLiteral() === '[#toc]') {
-                return ['type' => 'toc'];
+        if (count($children) === 1 && $children[0] instanceof ImageInline) {
+            $special = $this->convertSpecialImageParagraph($children[0]);
+            if ($special !== null) {
+                return $special;
             }
 
-            if ($only instanceof ImageInline) {
-                return $this->convertImageParagraph($only);
-            }
-
-            if ($only instanceof LinkInline) {
-                $special = $this->convertSpecialLinkParagraph($only);
-                if ($special !== null) {
-                    return $special;
-                }
-            }
+            return $this->convertImageParagraph($children[0]);
         }
 
         return [
@@ -170,24 +160,77 @@ class MarkdownParser
     }
 
     /**
-     * Handles the standalone-link markdown MarkdownSerializer emits for
-     * audio/bookmark/embed/button nodes, e.g. "[#audio](https://...)".
+     * Handles the standalone-image markdown MarkdownSerializer emits for
+     * audio/bookmark/embed/toc/button nodes, e.g. "![#audio](https://...)".
+     * These use image syntax (rather than a plain link) specifically to
+     * avoid CommonMark's shortcut reference-link resolution, which a bare
+     * "[#toc]"-style link is otherwise subject to.
      *
      * @return array<string, mixed>|null
      */
-    private function convertSpecialLinkParagraph(LinkInline $link): ?array
+    private function convertSpecialImageParagraph(ImageInline $image): ?array
     {
-        $label = $this->plainText($link->children());
-        $url = $link->getUrl();
+        $children = $this->toArray($image->children());
+        $label = $this->plainText($children);
+        $url = $image->getUrl();
+
+        // "#button "<label>"" (see MarkdownSerializer::buttonToMarkdown()); the label
+        // can contain marks, so it's extracted from $children, not this flattened $label
+        if (str_starts_with($label, '#button "') && str_ends_with($label, '"') && mb_strlen($label) >= 10) {
+            return $this->convertButtonImage($children, $url);
+        }
 
         return match ($label) {
+            '#toc' => ['type' => 'toc'],
             '#audio' => ['type' => 'audio', 'attrs' => ['src' => $url]],
             '#bookmark' => ['type' => 'bookmark', 'attrs' => ['url' => $url]],
             '#embed' => ['type' => 'figure', 'content' => [['type' => 'embed', 'attrs' => ['url' => $url]]]],
-            // the button's text is not part of the markdown MarkdownSerializer emits, so it can't be recovered here
-            '#button' => ['type' => 'button', 'attrs' => ['href' => $url], 'content' => [['type' => 'text', 'text' => 'Button']]],
             default => null,
         };
+    }
+
+    /**
+     * Strips the "#button "" marker text from the first/last (always
+     * unmarked) text runs, keeping any marks in between intact.
+     *
+     * @param CommonMarkNode[] $children
+     * @return array<string, mixed>
+     */
+    private function convertButtonImage(array $children, string $href): array
+    {
+        $content = $this->convertInlines($children);
+
+        if (($content[0]['type'] ?? null) === 'text' && !isset($content[0]['marks']) && is_string($content[0]['text'])) {
+            $content[0]['text'] = preg_replace('/^#button "/', '', $content[0]['text'], 1);
+        }
+
+        $lastIndex = count($content) - 1;
+        if (
+            ($content[$lastIndex]['type'] ?? null) === 'text'
+            && !isset($content[$lastIndex]['marks'])
+            && is_string($content[$lastIndex]['text'])
+        ) {
+            $content[$lastIndex]['text'] = preg_replace('/"$/', '', $content[$lastIndex]['text'], 1);
+        }
+
+        if (($content[0]['text'] ?? null) === '') {
+            array_shift($content);
+        }
+
+        $lastIndex = count($content) - 1;
+        if ($lastIndex >= 0 && ($content[$lastIndex]['text'] ?? null) === '') {
+            array_pop($content);
+        }
+
+        if ($content === []) {
+            $content = [['type' => 'text', 'text' => '']];
+        }
+
+        return [
+            'type' => 'button',
+            'attrs' => ['href' => $href],
+            'content' => $content,
+        ];
     }
 
     /**

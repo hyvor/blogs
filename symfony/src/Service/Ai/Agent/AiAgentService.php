@@ -6,6 +6,7 @@ use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
 use App\Service\Ai\AiPlatformService;
+use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use Symfony\AI\Agent\Agent;
@@ -34,6 +35,9 @@ class AiAgentService
     - use document_get tool to get markdown content of a post variant
     - each markdown node is prefixed with an ID in the format #[id] (e.g. #[p-1] for paragraph 1)
     - call tools with the node ID: e.g., document_replace(postVariantId, 'p-1', 'new *content*')
+
+    Markdown schema for the post content:
+    {markdown_schema}
     PROMPT;
 
 
@@ -57,14 +61,16 @@ class AiAgentService
                 '{title_prompt}',
                 '{language}',
                 '{language_code}',
-                '{post_variant_id}'
+                '{post_variant_id}',
+                '{markdown_schema}'
             ],
             [
                 $blog->getVariants()->first()->getName(),
                 $titlePrompt,
                 $language->getName(),
                 $language->getCode(),
-                (string)$postVariant->getId()
+                (string)$postVariant->getId(),
+                MarkdownSerializer::SCHEMA_FOR_AI_AGENTS
             ],
             self::SYSTEM_PROMPT_FOR_POST
         );

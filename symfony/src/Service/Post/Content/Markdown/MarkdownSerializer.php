@@ -11,6 +11,46 @@ use Hyvor\Phrosemirror\Document\TextNode;
 class MarkdownSerializer
 {
 
+    public const SCHEMA_FOR_AI_AGENTS = <<<MD
+    Inline styles (can be combined/nested): **bold**, _italic_, `code`, [link text](https://example.com), ~~strikethrough~~, ~subscript~, ^superscript^, ==highlight==
+
+    Paragraphs: plain text, separated from each other by a blank line. A single line break (no blank line) inside a paragraph is a hard line break, not a new paragraph.
+
+    Headings: "#" through "######" for h1-h6. Optionally end with " {#some-id}" to set a custom id, e.g. "## Title {#my-title}".
+
+    Blockquote: prefix every line with "> ".
+
+    Callout (a highlighted blockquote): a blockquote whose first line is "[emoji, fg=#hexcolor, bg=#hexcolor]", e.g.:
+    > [💡, fg=#000000, bg=#f1f1ef]
+    > Note text
+
+    Code block: fenced with an optional language, e.g.:
+    ```php
+    echo 1;
+    ```
+
+    Horizontal rule: "---" alone on its own line.
+
+    Lists: "- item" for a bullet list, "1. item" for an ordered list. Nest a sub-list by indenting it under its parent list item.
+
+    Table (GFM pipe table, first row is always the header row):
+    | Header 1 | Header 2 |
+    | --- | --- |
+    | Cell 1 | Cell 2 |
+
+    Custom HTML: raw HTML as its own standalone block (not mixed with other markdown on the same block).
+
+    Image: "![alt](https://example.com/image.png)". Optionally set a display width/height with a quoted "WxH" title - either side may be blank to only constrain one dimension, e.g. "![alt](https://example.com/image.png "100x200")" or "![alt](https://example.com/image.png "100x")".
+
+    Rich/media blocks - each must be the only thing in its paragraph, using "![#name ...]" image syntax (never a plain link) so it can't be confused with a real link or reference:
+        - Audio: ![#audio](https://example.com/audio.mp3)
+        - Bookmark (link preview card): ![#bookmark](https://example.com)
+        - Embed (e.g. iframe/tweet/video embed): ![#embed](https://example.com/embed)
+        - Table of contents: ![#toc]()
+        - Button (label goes in quotes, and can use inline styles): ![#button "Click **me**"](https://example.com)
+    MD;
+
+
     public function serialize(Node $node, MarkdownSerializationOptions $options = new MarkdownSerializationOptions): string
     {
         $nodeType = $node->type;
@@ -70,13 +110,13 @@ class MarkdownSerializer
 
         return match (true) {
             // media
-            $node->type instanceof Nodes\Audio\Audio => "[#audio]({$node->attrs->src})\n\n",
+            $node->type instanceof Nodes\Audio\Audio => "![#audio]({$node->attrs->src})\n\n",
             $node->type instanceof Nodes\Image\Image => $this->imageToMarkdown($node),
 
             // rich
-            $node->type instanceof Nodes\Bookmark\Bookmark => "[#bookmark]({$node->attrs->url})\n\n",
-            $node->type instanceof Nodes\Button\Button => "[#button]({$node->attrs->href})\n\n",
-            $node->type instanceof Nodes\Embed\Embed => "[#embed]({$node->attrs->url})\n\n",
+            $node->type instanceof Nodes\Bookmark\Bookmark => "![#bookmark]({$node->attrs->url})\n\n",
+            $node->type instanceof Nodes\Button\Button => $this->buttonToMarkdown($node, $children()),
+            $node->type instanceof Nodes\Embed\Embed => "![#embed]({$node->attrs->url})\n\n",
 
             // text
             $node->type instanceof Nodes\Paragraph,
@@ -110,7 +150,11 @@ class MarkdownSerializer
             $node->type instanceof Nodes\HardBreak => "\n",
 
             // special
-            $node->type instanceof Nodes\Toc\Toc => "[#toc]\n\n",
+            // an explicit (empty) destination is required so this parses as a real inline
+            // image rather than a shortcut reference image, which is what "![#toc]" alone
+            // would be - subject to the same global reference-definition ambiguity we're
+            // using image syntax to avoid in the first place
+            $node->type instanceof Nodes\Toc\Toc => "![#toc]()\n\n",
         };
     }
 
@@ -203,6 +247,23 @@ class MarkdownSerializer
         $height = $node->attrs->height ?? '';
         $sizePart = ($width || $height) ? " \"{$width}x{$height}\"" : '';
         return "![{$alt}]({$src}$sizePart)\n\n";
+    }
+
+    /**
+     * The button's label is embedded as a quoted string inside the image
+     * alt text itself, e.g. ![#button "Click **me**"](https://example.com).
+     * Image syntax (rather than a plain link) avoids any ambiguity with
+     * CommonMark's shortcut reference-link resolution. The label supports
+     * inline marks (it's rendered via $children, not plain text) -
+     * MarkdownParser recovers it by stripping the marker text off the
+     * first/last (always unmarked) text runs.
+     */
+    private function buttonToMarkdown(Node $node, string $children): string
+    {
+        $href = $node->attrs->href ?? '';
+        $text = $this->escapeBracketText($children);
+
+        return "![#button \"$text\"]($href)\n\n";
     }
 
     private function escapeBracketText(string $text): string

@@ -437,7 +437,7 @@ class MarkdownParserTest extends KernelTestCase
 
     public function test_embed(): void
     {
-        $nodes = $this->parse('[#embed](https://example.com/embed)');
+        $nodes = $this->parse('![#embed](https://example.com/embed)');
 
         $this->assertSame([
             [
@@ -449,9 +449,79 @@ class MarkdownParserTest extends KernelTestCase
         ], $nodes);
     }
 
+    public function test_button(): void
+    {
+        $nodes = $this->parse('![#button "Click me"](https://example.com)');
+
+        $this->assertSame([
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com'],
+                'content' => [['type' => 'text', 'text' => 'Click me']],
+            ],
+        ], $nodes);
+    }
+
+    public function test_button_with_quotes_and_brackets_in_text(): void
+    {
+        $nodes = $this->parse('![#button "Say "hi" \\[now\\]"](https://example.com)');
+
+        $this->assertSame([
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com'],
+                'content' => [['type' => 'text', 'text' => 'Say "hi" [now]']],
+            ],
+        ], $nodes);
+    }
+
+    public function test_button_with_marks_in_text(): void
+    {
+        $nodes = $this->parse('![#button "Click **me**"](https://example.com)');
+
+        $this->assertSame([
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com'],
+                'content' => [
+                    ['type' => 'text', 'text' => 'Click '],
+                    ['type' => 'text', 'text' => 'me', 'marks' => [['type' => 'strong']]],
+                ],
+            ],
+        ], $nodes);
+    }
+
+    public function test_button_that_is_entirely_marked(): void
+    {
+        $nodes = $this->parse('![#button "**Click me**"](https://example.com)');
+
+        $this->assertSame([
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com'],
+                'content' => [
+                    ['type' => 'text', 'text' => 'Click me', 'marks' => [['type' => 'strong']]],
+                ],
+            ],
+        ], $nodes);
+    }
+
+    public function test_button_with_empty_text(): void
+    {
+        $nodes = $this->parse('![#button ""](https://example.com)');
+
+        $this->assertSame([
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com'],
+                'content' => [['type' => 'text', 'text' => '']],
+            ],
+        ], $nodes);
+    }
+
     public function test_audio(): void
     {
-        $nodes = $this->parse('[#audio](https://example.com/audio.mp3)');
+        $nodes = $this->parse('![#audio](https://example.com/audio.mp3)');
 
         $this->assertSame([
             ['type' => 'audio', 'attrs' => ['src' => 'https://example.com/audio.mp3']],
@@ -460,7 +530,7 @@ class MarkdownParserTest extends KernelTestCase
 
     public function test_bookmark(): void
     {
-        $nodes = $this->parse('[#bookmark](https://example.com)');
+        $nodes = $this->parse('![#bookmark](https://example.com)');
 
         $this->assertSame([
             ['type' => 'bookmark', 'attrs' => ['url' => 'https://example.com']],
@@ -478,7 +548,7 @@ class MarkdownParserTest extends KernelTestCase
 
     public function test_toc(): void
     {
-        $nodes = $this->parse('[#toc]');
+        $nodes = $this->parse('![#toc]()');
 
         $this->assertSame([
             ['type' => 'toc'],
@@ -518,6 +588,14 @@ class MarkdownParserTest extends KernelTestCase
                         ['type' => 'text', 'text' => 'Bold', 'marks' => [['type' => 'strong']]],
                         ['type' => 'text', 'text' => ' and '],
                         ['type' => 'text', 'text' => 'a link', 'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://example.com']]]],
+                    ],
+                ],
+                [
+                    'type' => 'button',
+                    'attrs' => ['href' => 'https://example.com/action'],
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Click '],
+                        ['type' => 'text', 'text' => 'me', 'marks' => [['type' => 'strong']]],
                     ],
                 ],
             ],

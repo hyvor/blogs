@@ -252,16 +252,16 @@ class MarkdownSerializerTest extends KernelTestCase
                 'attrs' => ['url' => 'https://example.com/embed']
             ]
         ],
-        'expected' => '[#embed](https://example.com/embed)'
+        'expected' => '![#embed](https://example.com/embed)'
     ])]
     #[TestWith([
         'type' => 'audio',
-        'expected' => '[#audio](https://example.com/audio.mp3)',
+        'expected' => '![#audio](https://example.com/audio.mp3)',
         'attrs' => ['src' => 'https://example.com/audio.mp3']
     ])]
     #[TestWith([
         'type' => 'bookmark',
-        'expected' => '[#bookmark](https://example.com)',
+        'expected' => '![#bookmark](https://example.com)',
         'attrs' => ['url' => 'https://example.com']
     ])]
     #[TestWith([
@@ -269,7 +269,7 @@ class MarkdownSerializerTest extends KernelTestCase
         'content' => [
             ['type' => 'text', 'text' => 'Click me']
         ],
-        'expected' => '[#button](https://example.com)',
+        'expected' => '![#button "Click me"](https://example.com)',
         'attrs' => ['href' => 'https://example.com']
     ])]
     #[TestWith([
@@ -278,7 +278,7 @@ class MarkdownSerializerTest extends KernelTestCase
     ])]
     #[TestWith([
         'type' => 'toc',
-        'expected' => '[#toc]'
+        'expected' => '![#toc]()'
     ])]
     #[TestWith([
         'type' => 'custom_html',
@@ -553,6 +553,47 @@ class MarkdownSerializerTest extends KernelTestCase
         $mardown = $this->convertToMarkdown($doc);
 
         $this->assertSame('[a \\[b\\] c](https://example.com)', $mardown);
+    }
+
+    public function test_button_text_with_quotes_and_brackets(): void
+    {
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'button',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Say "hi" [now]']
+                    ],
+                    'attrs' => ['href' => 'https://example.com']
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $this->assertSame('![#button "Say "hi" \\[now\\]"](https://example.com)', $mardown);
+    }
+
+    public function test_button_text_with_marks(): void
+    {
+        $doc = [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'button',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Click '],
+                        ['type' => 'text', 'text' => 'me', 'marks' => [['type' => 'strong']]],
+                    ],
+                    'attrs' => ['href' => 'https://example.com']
+                ]
+            ]
+        ];
+
+        $mardown = $this->convertToMarkdown($doc);
+
+        $this->assertSame('![#button "Click **me**"](https://example.com)', $mardown);
     }
 
     public function test_with_nodeid_map(): void
