@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { buildDiffDoc, diffDoc, Editor } from '@hyvor/richtext';
-	import { postVariantStore } from '../../../postStore';
 	import { editorConfig, schema } from '../Editor/editor';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Switch } from '@hyvor/design/components';
@@ -8,19 +7,27 @@
 	let showDiff = $state(true);
 
 	interface Props {
+		leftTitle?: string;
+		rightTitle?: string;
+		leftContent: string;
+		rightContent: string;
 		onclose: () => void;
 	}
-	let { onclose } = $props();
+	let {
+		leftTitle = 'Published Version',
+		rightTitle = 'Editing Version',
+		leftContent,
+		rightContent,
+		onclose
+	}: Props = $props();
 
 	const diffContent = $derived.by(() => {
-		const newContentJson = $postVariantStore.content_unsaved || $postVariantStore.content!;
-
 		if (!showDiff) {
-			return newContentJson;
+			return rightContent;
 		}
 
-		const publishedContent = Node.fromJSON(schema, JSON.parse($postVariantStore.content!));
-		const editingContent = Node.fromJSON(schema, JSON.parse(newContentJson));
+		const publishedContent = Node.fromJSON(schema, JSON.parse(leftContent));
+		const editingContent = Node.fromJSON(schema, JSON.parse(rightContent));
 
 		const diff = diffDoc(publishedContent, editingContent);
 
@@ -32,14 +39,14 @@
 <Modal bare width="1400px" height="calc(100% - 40px)" {onclose} show={true} appendToBody>
 	<div class="inner">
 		<div class="part left">
-			<div class="header">Published Version</div>
+			<div class="header">{leftTitle}</div>
 			<div class="editor">
-				<Editor value={$postVariantStore.content} {schema} {editorConfig} editable={false} />
+				<Editor value={leftContent} {schema} {editorConfig} editable={false} />
 			</div>
 		</div>
 		<div class="part">
 			<div class="header">
-				Editing Version
+				{rightTitle}
 				<span class="switch">
 					<Switch bind:checked={showDiff}>Show diff</Switch>
 				</span>

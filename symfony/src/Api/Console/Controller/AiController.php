@@ -5,11 +5,15 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
+use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
+use App\Api\Console\Object\PostVariantObject;
 use App\Service\Ai\Agent\AiAgentService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
+use App\Service\Route\PermalinkService;
 use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
@@ -28,6 +32,8 @@ class AiController extends AbstractController
     public function __construct(
         private ConsoleApiAuthorizationListener $authListener,
         private PostService $postService,
+        private PostContentService $postContentService,
+        private PermalinkService $permalinkService,
         private AiPostTranslator $aiPostTranslator,
         private AiAgentService $aiAgentService
     ) {}
@@ -57,15 +63,38 @@ class AiController extends AbstractController
 
     #[Route('/ai/agent', methods: ['POST'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function agent(): StreamedResponse
+    public function agent(
+        #[MapRequestPayload] AgentPromptInput $input
+    ): StreamedResponse
     {
 
         $blog = $this->authListener->getBlog();
 
-        $result = $this->aiAgentService->callForPost($blog);
+        $postVariant = $this->postService->getPostVariantByBlogAndId($blog, 117);
 
-        $response = new StreamedResponse(function () use ($result) {
-            foreach ($result->getContent() as $delta) {
+        if (!$postVariant) {
+            throw new BadRequestHttpException('No published post found to run the agent on.');
+        }
+
+        $postVariantObject = new PostVariantObject(
+            $postVariant,
+            $postVariant->getPost(),
+            $blog,
+            $this->permalinkService,
+            $this->postContentService
+        );
+
+        $agentCallResult = $this->aiAgentService->callForPost($postVariant, $input->prompt);
+
+        $response = new StreamedResponse(function () use ($agentCallResult, $postVariantObject, $postVariant) {
+            $send = function (array $event) {
+                echo 'data: '.json_encode($event)."\n\n";
+                flush();
+            };
+
+            $send(['type' => 'post_variant', 'post_variant' => $postVariantObject]);
+
+            foreach ($agentCallResult->getResult()->getContent() as $delta) {
                 $event = match (true) {
                     $delta instanceof ThinkingDelta => ['type' => 'thinking', 'content' => $delta->getThinking()],
                     $delta instanceof ThinkingComplete => ['type' => 'thinking_done'],
@@ -76,14 +105,29 @@ class AiController extends AbstractController
                 };
 
                 if ($event !== null) {
-                    echo 'data: '.json_encode($event)."\n\n";
-                    flush();
+                    $send($event);
                 }
             }
+
+            $documentOpsTool = $agentCallResult->getDocumentOpsTool();
+            $fetchedDocument = $documentOpsTool->getCachedDocuments()[$postVariant->getId()] ?? null;
+
+            if ($fetchedDocument !== null && count($fetchedDocument->getOps()) > 0) {
+                $finalDocument = $documentOpsTool->getFinalDocument($postVariant->getId());
+
+                $send([
+                    'type' => 'document_change',
+                    'post_variant_id' => $postVariant->getId(),
+                    'content' => json_encode($finalDocument->toArray()),
+                ]);
+            }
+
+            $send(['type' => 'done']);
         });
 
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
+        $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
     }

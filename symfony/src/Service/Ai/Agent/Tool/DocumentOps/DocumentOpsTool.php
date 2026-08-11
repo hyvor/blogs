@@ -51,6 +51,9 @@ class DocumentOpsTool
         private PostContentService $postContentService
     ) {}
 
+    /**
+     * @return array<int, FetchedDocument>
+     */
     public function getCachedDocuments(): array
     {
         return $this->documentCache;
