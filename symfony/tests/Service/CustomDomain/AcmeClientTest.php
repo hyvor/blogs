@@ -2,19 +2,17 @@
 
 namespace App\Tests\Service\CustomDomain;
 
-use App\Service\CustomDomain\Acme\AcmeClient;
-use App\Service\CustomDomain\Acme\AcmeException;
-use App\Service\CustomDomain\Acme\PendingOrder;
+use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\Acme\PendingOrder;
 use App\Tests\Case\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversNamespace;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
-use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversNamespace("App\Service\TlsCertificate\Acme")]
 class AcmeClientTest extends KernelTestCase

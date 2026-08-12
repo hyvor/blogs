@@ -361,6 +361,7 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
+        ?\DateTimeImmutable $publishedAt = null,
         // disable creating the variant, only makes sense in BlogCreator
         // be careful when set to false, if the variant is not set manually, it could cause data inconsistency
         bool $createVariant = true,
@@ -375,6 +376,7 @@ class PostService
             $canonicalUrl,
             $codeHead,
             $codeFoot,
+            $publishedAt,
         );
 
         if ($createVariant) {
@@ -401,6 +403,7 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
+        ?\DateTimeImmutable $publishedAt = null,
     ): Post {
         $post = new Post();
         $post->setBlog($blog);
@@ -410,6 +413,7 @@ class PostService
         $post->setCanonicalUrl($canonicalUrl);
         $post->setCodeHead($codeHead);
         $post->setCodeFoot($codeFoot);
+        $post->setPublishedAt($publishedAt);
         $post->setCreatedAt($this->now());
         $post->setUpdatedAt($this->now());
         $this->em->persist($post);

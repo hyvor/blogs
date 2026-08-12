@@ -48,6 +48,5 @@ return static function (RoutingConfigurator $routes): void {
 
     // sudo API routes
     $routes->import('../../src/Api/Sudo/Controller', 'attribute')
-        ->prefix('/api/sudo')
-        ->namePrefix('api_sudo_');
+        ->prefix('/api/sudo');
 };

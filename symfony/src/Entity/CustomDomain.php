@@ -32,10 +32,10 @@ class CustomDomain
     private string $domain;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $private_key_encrypted = null;
+    private ?string $private_key_encrypted = null; # Encrypted PEM
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $certificate = null;
+    private ?string $certificate = null; # PEM
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $valid_from = null;

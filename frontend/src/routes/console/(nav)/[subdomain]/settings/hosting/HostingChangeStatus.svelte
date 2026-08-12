@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Callout, Loader, Tag } from '@hyvor/design/components';
+	import { Callout } from '@hyvor/design/components';
 	import type { HostingChange, HostingChangeAt } from '../../../../lib/types';
 	import { updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import { getHostingInfo } from './hostingActions';
@@ -73,89 +73,73 @@
 
 	onDestroy(clearTimer);
 
-	function loaderState(status: HostingChange['status']) {
-		if (status === 'changing') return 'loading';
-		if (status === 'success') return 'success';
-		return 'error';
-	}
+	let calloutConfig: {
+		type: 'info' | 'success' | 'danger';
+		content: string;
+	} = $derived.by(() => {
+		if (change.status === 'changing') {
+			return {
+				type: 'info',
+				content:
+					'Your hosting change is being applied. This may take a few minutes depending on the number of posts on your blog. You can leave this page and come back later to check the status.'
+			};
+		} else if (change.status === 'success') {
+			return {
+				type: 'success',
+				content: 'Your hosting change has been successfully applied.'
+			};
+		}
+
+		return {
+			type: 'danger',
+			content:
+				change.error_message || 'An unknown error occurred while applying your hosting change.'
+		};
+	});
 </script>
 
-<div class="hosting-change">
-	<div class="hosting-change-header">
-		<Loader size="small" state={loaderState(change.status)} />
-		<span class="hosting-change-title">
-			{#if change.status === 'changing'}
-				Applying hosting change...
-			{:else if change.status === 'success'}
-				Hosting change applied
-			{:else}
-				Hosting change failed
-			{/if}
-		</span>
+<div class="wrap">
+	<div class="transition">
+		<a href={change.from_url} target="_blank">{change.from_url}</a>
+		({hostingAtLabels[change.from_at]}) &rarr;
+		<a href={change.to_url} target="_blank">{change.to_url}</a>
+		({hostingAtLabels[change.to_at]})
 	</div>
-
-	<div class="hosting-change-transition">
-		<div class="hosting-change-box">
-			<Tag size="small" color="default">{hostingAtLabels[change.from_at]}</Tag>
-			{#if change.from_url}
-				<span class="hosting-change-url">{change.from_url}</span>
-			{/if}
-		</div>
-
-		<span class="hosting-change-arrow">→</span>
-
-		<div class="hosting-change-box">
-			<Tag size="small" color="accent">{hostingAtLabels[change.to_at]}</Tag>
-			{#if change.to_url}
-				<span class="hosting-change-url">{change.to_url}</span>
-			{/if}
-		</div>
+	<div class="date">
+		{new Date(change.created_at * 1000).toLocaleString(undefined, {
+			dateStyle: 'medium',
+			timeStyle: 'short'
+		})}
 	</div>
-
-	{#if change.status === 'failed' && change.error_message}
-		<Callout type="danger" title="Error">
-			{change.error_message}
+	<div class="callout">
+		<Callout type={calloutConfig.type}>
+			{calloutConfig.content}
 		</Callout>
-	{/if}
+	</div>
 </div>
 
 <style>
-	.hosting-change {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		border: 2px solid var(--border);
-		border-radius: var(--box-radius, 8px);
+	.wrap {
+		margin-top: 16px;
+		border: 1px solid var(--border);
 		padding: 16px;
+		border-radius: var(--box-radius);
 	}
-	.hosting-change-header {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-	.hosting-change-title {
-		font-weight: 600;
-	}
-	.hosting-change-transition {
-		display: flex;
-		align-items: center;
-		gap: 14px;
-		flex-wrap: wrap;
-	}
-	.hosting-change-box {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		flex: 1;
-		min-width: 180px;
-	}
-	.hosting-change-url {
-		font-size: 13px;
+	.date {
+		font-size: 12px;
 		color: var(--text-light);
-		word-break: break-all;
+		margin-top: 2px;
 	}
-	.hosting-change-arrow {
-		font-size: 20px;
-		color: var(--text-light);
+	.transition {
+		line-height: normal;
+		font-size: 14px;
+	}
+	.callout {
+		font-size: 14px;
+		margin-top: 10px;
+		line-height: 14px;
+	}
+	a {
+		text-decoration: underline;
 	}
 </style>

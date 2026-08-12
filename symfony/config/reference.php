@@ -1245,6 +1245,18 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     }>,
  * }
+ * @psalm-type ZenstruckMessengerMonitorConfig = array{
+ *     storage?: array{
+ *         exclude?: list<scalar|Param|null>,
+ *         orm?: array{
+ *             entity_class?: scalar|Param|null, // Your Doctrine entity class that extends "Zenstruck\Messenger\Monitor\History\Model\ProcessedMessage"
+ *         },
+ *     },
+ *     cache?: array{
+ *         pool?: scalar|Param|null, // Cache pool to use for worker cache. // Default: "cache.app"
+ *         expired_worker_ttl?: int|Param, // How long to keep expired workers in cache (in seconds). // Default: 3600
+ *     },
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1256,6 +1268,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     doctrine_migrations?: DoctrineMigrationsConfig,
  *     internal?: InternalConfig,
  *     monolog?: MonologConfig,
+ *     zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1269,6 +1282,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         maker?: MakerConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         monolog?: MonologConfig,
+ *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1282,6 +1296,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         internal?: InternalConfig,
  *         sentry?: SentryConfig,
  *         monolog?: MonologConfig,
+ *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1296,6 +1311,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *         dama_doctrine_test?: DamaDoctrineTestConfig,
  *         monolog?: MonologConfig,
+ *         zenstruck_messenger_monitor?: ZenstruckMessengerMonitorConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

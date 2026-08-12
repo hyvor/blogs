@@ -33,6 +33,10 @@
 
 	let isLoading = $state(true);
 
+	let isHostingChangeInProgress = $derived(
+		Boolean($hostingInfoStore.change && $hostingInfoStore.change.status === 'changing')
+	);
+
 	function handleRedirectSubdomainChange() {
 		blogStore.update((b) => {
 			return {
@@ -40,24 +44,6 @@
 				hosting_redirect_subdomain: !b.hosting_redirect_subdomain
 			};
 		});
-	}
-
-	function handleBeforeSave() {
-		if (subdomain !== $blogStore.subdomain && subdomainError) {
-			toast.error('Subdomain error: ' + subdomainError);
-			return false;
-		}
-
-		subdomainError = null;
-		return true;
-	}
-
-	function handleAfterSave(newBlog: Blog) {
-		setTimeout(() => {
-			if (newBlog.subdomain !== originalSubdomain) {
-				window.location.href = `/console/${newBlog.subdomain}/settings/hosting`;
-			}
-		}, 0);
 	}
 
 	function handleSubdomainInput(e: any) {
@@ -70,10 +56,6 @@
 		}
 
 		subdomainError = isSubdomainValid(val);
-	}
-
-	function handleError(message: string) {
-		toast.error(message);
 	}
 
 	async function handleRevertToSubdomain() {
@@ -123,6 +105,7 @@
 					subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
 					active={$hostingInfoStore.hosting_at === 'subdomain'}
 					buttonLabel="Revert to Subdomain"
+					buttonDisabled={isHostingChangeInProgress}
 					onclick={handleRevertToSubdomain}
 				/>
 				<HostingOption
@@ -130,8 +113,9 @@
 					subtitle="Your blog will be hosted at your own custom domain (e.g., blog.example.com)"
 					active={$hostingInfoStore.hosting_at === 'domain'}
 					buttonLabel="Setup Custom Domain"
+					buttonDisabled={isHostingChangeInProgress}
 					onclick={() => (showCustomDomainModal = true)}
-					tag={$hostingInfoStore.custom_domain_setup?.status === 'pending'
+					tag={$hostingInfoStore.custom_domain?.status === 'pending'
 						? { color: 'orange', label: 'Pending Verification' }
 						: null}
 				/>
@@ -139,6 +123,7 @@
 					title="Self-Hosted"
 					active={$hostingInfoStore.hosting_at === 'self'}
 					buttonLabel="Setup Self-Hosting"
+					buttonDisabled={isHostingChangeInProgress}
 					onclick={() => (showSelfHostingModal = true)}
 				>
 					{#snippet subtitle()}
@@ -152,11 +137,10 @@
 					{/snippet}
 				</HostingOption>
 			</div>
+			{#if $hostingInfoStore.change}
+				<HostingChangeStatus change={$hostingInfoStore.change} />
+			{/if}
 		</SplitControl>
-
-		{#if $hostingInfoStore.change}
-			<HostingChangeStatus change={$hostingInfoStore.change} />
-		{/if}
 
 		<SplitControl
 			label="Subdomain"
