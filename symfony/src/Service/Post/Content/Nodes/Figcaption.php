@@ -3,18 +3,12 @@
 namespace App\Service\Post\Content\Nodes;
 
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
-use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Types\NodeType;
 
 class Figcaption extends NodeType
 {
     public string $name = 'figcaption';
     public ?string $content = 'inline*';
-
-    public function toHtml(Node $node, string $children): string
-    {
-        return "<figcaption>$children</figcaption>";
-    }
 
     public function fromHtml(): array
     {

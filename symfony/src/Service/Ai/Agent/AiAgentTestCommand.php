@@ -2,15 +2,16 @@
 
 namespace App\Service\Ai\Agent;
 
-use App\Entity\Blog;
-use App\Entity\BlogVariant;
-use App\Entity\Language;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
-use App\Entity\Post;
-use App\Entity\PostVariant;
 use App\Service\Ai\AiProvider;
 use App\Service\Post\Content\PostContentService;
-use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\BlogVariantFactory;
+use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
+use Symfony\AI\Platform\Result\Stream\Delta;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -27,61 +28,120 @@ class AiAgentTestCommand
 
     public function __invoke(): int
     {
-        $blog = new Blog();
         $meta = new BlogMeta();
-        $meta->ai_provider = AiProvider::OPENAI;
-        $blog->setMeta($meta);
-        $blog->getVariants()->add(new BlogVariant()->setName('Supun Blog'));
+        $meta->ai_provider = AiProvider::ANTHROPIC;
+        $blog = BlogFactory::createOne([
+            'meta' => $meta
+        ]);
+        $post = PostFactory::createOneFor($blog);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        BlogVariantFactory::createOneForBlog($blog);
 
-        $doc = $this->postContentService->getDocumentFromJson([
+        $content = [
             'type' => 'doc',
             'content' => [
                 [
-                    'type' => 'paragraph',
+                    'type' => 'heading',
+                    'attrs' => [
+                        'level' => 1
+                    ],
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => 'Hello, world!'
-                        ]
+                            'text' => 'Paris, the world\'s most romantic city'
+                        ],
                     ]
-                ]
+                ],
+//                [
+//                    'type' => 'paragraph',
+//                    'content' => [
+//                        [
+//                            'type' => 'text',
+//                            'text' => 'Hello, world!'
+//                        ],
+//                    ]
+//                ],
+//                [
+//                    'type' => 'paragraph',
+//                    'content' => [
+//                        [
+//                            'type' => 'text',
+//                            'text' => 'Paris is the capital of Germany'
+//                        ],
+//                    ]
+//                ],
+//                [
+//                    'type' => 'bullet_list',
+//                    'content' => [
+//                        [
+//                            'type' => 'list_item',
+//                            'content' => [
+//                                [
+//                                    'type' => 'paragraph',
+//                                    'content' => [
+//                                        [
+//                                            'type' => 'text',
+//                                            'text' => 'Eggs'
+//                                        ],
+//                                    ]
+//                                ]
+//                            ]
+//                        ],
+//                        [
+//                            'type' => 'list_item',
+//                            'content' => [
+//                                [
+//                                    'type' => 'paragraph',
+//                                    'content' => [
+//                                        [
+//                                            'type' => 'text',
+//                                            'text' => 'Milk'
+//                                        ],
+//                                    ]
+//                                ]
+//                            ]
+//                        ]
+//                    ]
+//                ]
             ]
+        ];
+
+        $postVariant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'content' => json_encode($content),
+            'status' => PostVariantStatus::DRAFT
         ]);
 
-        $post = new Post();
-        $post->setBlog($blog);
-
-        $language = new Language();
-        $language->setCode('en');
-        $language->setName('English');
-
-        $postVariant = new PostVariant();
-        $postVariant->setPost($post);
-        $postVariant->setLanguage($language);
-
-        $postContentMarkdown = <<<MD
-        #[p-1] Hello World
-        #[p-2] This is a test post for the AI agent.
-        MD;
-
-        $prompt = <<<PROMPT
-        Post content:
-        $postContentMarkdown
-
-        Remove the "This is a test..." paragraph and add two paragraphs on a random topic.
-        PROMPT;
+        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
 
         $result = $this->aiAgentService->callForPost($postVariant, $prompt);
 
         $output = '';
-        foreach ($result->getContent() as $delta) {
-            if ($delta instanceof TextDelta) {
+        foreach ($result->getResult()->getContent() as $delta) {
+            if ($delta instanceof Delta\TextDelta) {
                 $output .= $delta->getText();
+                echo $delta->getText();
+            } elseif ($delta instanceof Delta\ThinkingDelta) {
+                $output .= '[Thinking...] ' . $delta->getThinking();
+                echo '[Thinking...] ' . $delta->getThinking();
+            } else if ($delta instanceof Delta\ToolCallStart) {
+                $output .= '[Tool call: ' . $delta->getName() . ']';
+                echo '[Tool call: ' . $delta->getName() . ']';
+            } else if ($delta instanceof Delta\ToolCallComplete) {
+                $output .= '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
+                echo '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
             }
         }
-        dd($output);
 
-        dump($doc->toJson());
+        dd(
+            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
+        );
+
+        dd(
+            $output,
+            $result->getDocumentOpsTool()->getCachedDocuments()[$postVariant->getId()]->getOps()
+        );
 
         return Command::SUCCESS;
     }

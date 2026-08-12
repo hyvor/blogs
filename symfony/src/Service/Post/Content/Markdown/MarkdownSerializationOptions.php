@@ -11,20 +11,14 @@ class MarkdownSerializationOptions
         /**
          * an ID to prepend to the node (used for the AI agent)
          * if ID is 'p-1', then the node will have #[p-1] prepended to it
-         * @var array<array{node: Node, id: string}>
+         * @var array<string, Node>
          */
         private array $nodeIdMap = [],
     ) {}
 
     public function getNodeId(Node $node): ?string
     {
-        foreach ($this->nodeIdMap as $map) {
-            if ($map['node'] === $node) {
-                return $map['id'];
-            }
-        }
-
-        return null;
+        return array_find_key($this->nodeIdMap, fn($mappedNode) => $mappedNode === $node);
     }
 
 }
