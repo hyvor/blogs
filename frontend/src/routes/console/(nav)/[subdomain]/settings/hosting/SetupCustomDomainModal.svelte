@@ -8,75 +8,83 @@
 		TextInput,
 		Validation,
 		toast,
-		TabNav,
-		TabNavItem,
-		Table,
-		TableRow,
-		Tag,
 		confirm,
-
 		Radio,
-
 		Tooltip,
-
-		Textarea
-
-
-
+		Textarea,
+		Tag
 	} from '@hyvor/design/components';
-	import IconCopy from '@hyvor/icons/IconCopy';
 	import {
 		createCustomDomainSetup,
-		deleteCustomDomainSetup,
-		updateCustomDomainSetup,
+		updateCustomDomain,
+		deleteCustomDomainIntent,
 		verifyCustomDomainSetup
 	} from './hostingActions';
-	import { hostingInfoStore } from '../../../../lib/stores/blogStore';
+	import { hostingInfoStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { slide } from 'svelte/transition';
+	import DnsInstructions from './DnsInstructions.svelte';
+	import type { CustomDomainIntent, CustomDomainSetup, CustomDomainTlsProvider } from '../../../../lib/types';
 
 	interface Props {
 		show: boolean;
+		// whether the modal should open directly showing the edit form, rather than the
+		// read-only summary of the existing domain/intent (set by the caller before opening)
+		startEditing: boolean;
 	}
 
-	let { show = $bindable() }: Props = $props();
+	let { show = $bindable(), startEditing }: Props = $props();
 
-	let oldDomain = $state('');
-	let domain = $state('');
-	let isEditing = $state(!$hostingInfoStore.custom_domain);
+	let isEditing = $state(false);
 	let error: string | null = $state(null);
 	let loading = $state(false);
 
-	let tlsProvider: 'auto' | 'custom' = $state('auto');
+	let domain = $state('');
+	let tlsProvider: CustomDomainTlsProvider = $state('auto');
 	let tlsPrivateKey: string = $state('');
 	let tlsCertificate: string = $state('');
-
 	let tlsPrivateKeyError = $state('');
 	let tlsCertificateError = $state('');
 
-	let dnsMethod: 'cname' | 'a' = $state('cname');
-	const CUSTOM_DOMAIN_IP = '116.202.185.2';
-	const CNAME_DOMAIN = 'hyvorblogs.io';
-
 	let domainInput: HTMLInputElement;
+
+	let customDomain = $derived($hostingInfoStore.custom_domain);
+	let intent = $derived($hostingInfoStore.custom_domain_intent);
+	let hasExisting = $derived(Boolean(customDomain || intent));
 
 	$effect(() => {
 		if (show) {
-			domain = $hostingInfoStore.custom_domain?.domain || '';
+			domain = customDomain?.domain ?? intent?.domain ?? '';
+			tlsProvider = customDomain?.tls_provider ?? 'auto';
+			tlsPrivateKey = '';
+			tlsCertificate = '';
+			tlsPrivateKeyError = '';
+			tlsCertificateError = '';
 			error = null;
+			isEditing = startEditing || !hasExisting;
 			domainInput?.focus();
 		}
 	});
 
-	async function handleNext() {
+	function applyMutationResult(result: {
+		custom_domain: CustomDomainSetup | null;
+		custom_domain_intent: CustomDomainIntent | null;
+		hosting_info: import('../../../../lib/types').HostingInfo | null;
+	}) {
+		if (result.hosting_info) {
+			updateHostingInfoStore(result.hosting_info);
+		} else {
+			hostingInfoStore.update((info) => ({
+				...info,
+				custom_domain: result.custom_domain,
+				custom_domain_intent: result.custom_domain_intent
+			}));
+		}
+	}
+
+	async function handleSave() {
 		error = null;
 		const domainTrimmed = domain.trim();
-
-		if ($hostingInfoStore.custom_domain?.domain === domainTrimmed) {
-			// No changes, proceed to verification
-			isEditing = false;
-			return;
-		}
 
 		if (domainTrimmed === '') {
 			error = 'Custom Domain is required';
@@ -96,34 +104,50 @@
 			return;
 		}
 
+		if (tlsProvider === 'custom') {
+			tlsPrivateKeyError = '';
+			tlsCertificateError = '';
+			if (tlsPrivateKey.trim() === '') {
+				tlsPrivateKeyError = 'Private key is required';
+			}
+			if (tlsCertificate.trim() === '') {
+				tlsCertificateError = 'Certificate is required';
+			}
+			if (tlsPrivateKeyError || tlsCertificateError) {
+				return;
+			}
+		}
+
 		loading = true;
 		const saveToastId = toast.loading('Saving custom domain...');
 
 		try {
-			let customDomainSetup;
-
-			if ($hostingInfoStore.custom_domain) {
-				// Custom domain setup exists
-				customDomainSetup = await updateCustomDomainSetup(oldDomain, domainTrimmed);
-				toast.success('Custom domain updated!', { id: saveToastId });
+			if (!hasExisting) {
+				const result = await createCustomDomainSetup(
+					domainTrimmed,
+					tlsProvider,
+					tlsProvider === 'custom' ? tlsPrivateKey.trim() : undefined,
+					tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
+				);
+				applyMutationResult(result);
+				toast.success(
+					tlsProvider === 'custom' ? 'Custom domain is now active!' : 'Custom domain saved!',
+					{ id: saveToastId }
+				);
 			} else {
-				// New custom domain setup
-				customDomainSetup = await createCustomDomainSetup(domainTrimmed);
-				toast.success('Custom domain saved!', { id: saveToastId });
+				const result = await updateCustomDomain({
+					newDomain: domainTrimmed,
+					tlsProvider,
+					tlsPrivateKey: tlsProvider === 'custom' ? tlsPrivateKey.trim() : undefined,
+					tlsCertificate: tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
+				});
+				applyMutationResult(result);
+				toast.success('Custom domain updated!', { id: saveToastId });
 			}
 
-			hostingInfoStore.update((info) => ({ ...info, custom_domain: customDomainSetup }));
-			oldDomain = domainTrimmed;
 			isEditing = false;
 		} catch (err: any) {
-			// TODO: handle already taken domains
-			// if (err.message === 'domain_taken') {
-			// 	error = 'This domain is already taken by another blog. Contact support if needed.';
-			// 	toast.error('Failed to save domain: domain taken', { id: saveToastId });
-			// } else {
 			toast.error(err.message || 'Failed to save domain', { id: saveToastId });
-			// }
-			// return false;
 		}
 		loading = false;
 	}
@@ -133,30 +157,26 @@
 		const verifyToastId = toast.loading('Verifying DNS records...');
 
 		try {
-			const customDomainSetup = await verifyCustomDomainSetup();
-			if (customDomainSetup.status === 'active') {
-				toast.success('Custom domain is verified and active!', { id: verifyToastId });
-				show = false;
-			} else {
-				toast.warning('DNS verification is pending. Please configure your DNS settings.', {
-					id: verifyToastId
-				});
-			}
+			const result = await verifyCustomDomainSetup();
+			updateHostingInfoStore(result.hosting_info);
+			toast.success('Custom domain is verified and active!', { id: verifyToastId });
 		} catch (err: any) {
-			toast.error(err.message || 'Failed to verify DNS records', { id: verifyToastId });
+			toast.warning(
+				err.message || 'DNS verification failed. Please check your DNS settings and try again.',
+				{ id: verifyToastId }
+			);
 		}
 		loading = false;
 	}
 
-	function handleEditDomain() {
-		isEditing = true;
-	}
+	async function handleAbortIntent() {
+		const stillHasActiveDomain = Boolean(customDomain);
 
-	async function handleAbort() {
 		const confirmAbort = await confirm({
 			title: 'Abort Custom Domain Setup',
-			content:
-				'Are you sure you want to abort the custom domain setup? This will revert back to default subdomain setup (hyvorblogs.io) and you will have to start from scratch if you want to set it up again.',
+			content: stillHasActiveDomain
+				? `Are you sure you want to abort this setup? Your blog will keep using ${customDomain!.domain} as before.`
+				: 'Are you sure you want to abort the custom domain setup? This will revert back to default subdomain setup (hyvorblogs.io) and you will have to start from scratch if you want to set it up again.',
 			confirmText: 'Yes, Abort',
 			cancelText: 'No, Keep It',
 			danger: true
@@ -169,210 +189,189 @@
 		loading = true;
 		const abortToastId = toast.loading('Aborting custom domain setup...');
 
-		await deleteCustomDomainSetup()
-			.then(() => {
-				hostingInfoStore.update((info) => ({ ...info, custom_domain: null }));
-				toast.success('Custom domain setup aborted', { id: abortToastId });
-				isEditing = true;
+		try {
+			await deleteCustomDomainIntent();
+			hostingInfoStore.update((info) => ({ ...info, custom_domain_intent: null }));
+			toast.success('Custom domain setup aborted', { id: abortToastId });
+			if (!stillHasActiveDomain) {
 				show = false;
-			})
-			.catch((err) => {
-				toast.error(err.message || 'Failed to abort custom domain setup', { id: abortToastId });
-			})
-			.finally(() => {
-				loading = false;
-			});
+			}
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to abort custom domain setup', { id: abortToastId });
+		}
+		loading = false;
+	}
+
+	function handleEdit() {
+		isEditing = true;
+	}
+
+	function handleCancelEdit() {
+		if (hasExisting) {
+			domain = customDomain?.domain ?? intent?.domain ?? '';
+			tlsProvider = customDomain?.tls_provider ?? 'auto';
+			isEditing = false;
+		} else {
+			show = false;
+		}
 	}
 </script>
 
-<Modal title="Set-up Custom Domain" {loading} bind:show>
-	<SplitControl label="Custom Domain" noHorizonalPadding>
-		<FormControl>
-			<TextInput
-				bind:value={domain}
-				bind:input={domainInput}
-				placeholder="blog.example.com"
-				block
-				state={error ? 'error' : undefined}
-				readonly={!isEditing}
-				autofocus
-			/>
-			{#if error}
-				<Validation state="error">{error}</Validation>
-			{/if}
-		</FormControl>
-	</SplitControl>
+<Modal title="Custom Domain" {loading} bind:show>
+	{#if isEditing}
+		<SplitControl label="Custom Domain" noHorizonalPadding>
+			<FormControl>
+				<TextInput
+					bind:value={domain}
+					bind:input={domainInput}
+					placeholder="blog.example.com"
+					block
+					state={error ? 'error' : undefined}
+					autofocus
+				/>
+				{#if error}
+					<Validation state="error">{error}</Validation>
+				{/if}
+			</FormControl>
+		</SplitControl>
 
-	<SplitControl label="TLS Certificate" noHorizonalPadding>
+		<SplitControl label="TLS Certificate" noHorizonalPadding>
+			<FormControl>
+				<Radio name="tls-provider" bind:group={tlsProvider} value="auto">
+					Automatic (Recommended)&nbsp;
+					<Tooltip
+						text="Your TLS certificate will be automatically generated and renewed by Hyvor Blogs using Let's Encrypt."
+					>
+						<IconInfoCircle size={14} />
+					</Tooltip>
+				</Radio>
 
-		<FormControl>
-		<Radio name="tls-provider" bind:group={tlsProvider} value="auto">
-			Automatic (Recommended)&nbsp;
-			<Tooltip text="Your TLS certificate will be automatically generated and renewed by Hyvor Blogs using Let's Encrypt.">
-				<IconInfoCircle size={14} />
-			</Tooltip>
-		</Radio>
+				<Radio name="tls-provider" bind:group={tlsProvider} value="custom">
+					Bring Your Own&nbsp;
+					<Tooltip text="You can bring your own TLS certificate and private key.">
+						<IconInfoCircle size={14} />
+					</Tooltip>
+				</Radio>
+			</FormControl>
+		</SplitControl>
 
-		<Radio name="tls-provider" bind:group={tlsProvider} value="custom">
-			Bring Your Own&nbsp;
-			<Tooltip text="You can bring your own TLS certificate and private key.">
-				<IconInfoCircle size={14} />
-			</Tooltip>
-		</Radio>
-		</FormControl>
+		{#if tlsProvider === 'custom'}
+			<div transition:slide>
+				<SplitControl
+					label="Private Key"
+					caption="In PEM format, including the BEGIN and END lines"
+					noHorizonalPadding
+				>
+					<FormControl>
+						<Textarea
+							bind:value={tlsPrivateKey}
+							placeholder="-----BEGIN PRIVATE KEY-----"
+							block
+							state={tlsPrivateKeyError ? 'error' : undefined}
+						/>
+						{#if tlsPrivateKeyError}
+							<Validation state="error">{tlsPrivateKeyError}</Validation>
+						{/if}
+					</FormControl>
+				</SplitControl>
 
-	</SplitControl>
+				<SplitControl
+					label="Certificate"
+					caption="Full certificate chain in PEM format, including the BEGIN and END lines"
+					noHorizonalPadding
+				>
+					<FormControl>
+						<Textarea
+							bind:value={tlsCertificate}
+							placeholder="-----BEGIN CERTIFICATE-----"
+							block
+							state={tlsCertificateError ? 'error' : undefined}
+						/>
+						{#if tlsCertificateError}
+							<Validation state="error">{tlsCertificateError}</Validation>
+						{/if}
+					</FormControl>
+				</SplitControl>
+			</div>
+		{:else if tlsProvider !== customDomain?.tls_provider}
+			<p class="hint">
+				Switching to automatic TLS requires verifying that this domain's DNS points to Hyvor
+				Blogs before it can go live.
+			</p>
+		{/if}
+	{:else}
+		{#if customDomain}
+			<div class="section">
+				<div class="section-header">
+					<span class="section-domain">{customDomain.domain}</span>
+					<Tag color="green" size="small">Active</Tag>
+					<span class="section-provider"
+						>{customDomain.tls_provider === 'custom' ? 'Bring your own TLS' : 'Automatic TLS'}</span
+					>
+				</div>
+				<DnsInstructions domain={customDomain.domain} />
+			</div>
+		{/if}
 
-	{#if tlsProvider === 'custom'}
-		<div transition:slide>
-			<SplitControl 
-				label="Private Key"
-				caption="In PEM format, including the BEGIN and END lines" 
-				noHorizonalPadding
-			>
-				<FormControl>
-					<Textarea
-						bind:value={tlsPrivateKey}
-						placeholder="-----BEGIN PRIVATE KEY-----"
-						block
-						state={error ? 'error' : undefined}
-						readonly={!isEditing}
-					/>
-					{#if tlsPrivateKeyError}
-						<Validation state="error">{tlsPrivateKeyError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-
-			<SplitControl 
-				label="Certificate" 
-				caption="Full certificate chain in PEM format, including the BEGIN and END lines"
-				noHorizonalPadding
-			>
-				<FormControl>
-					<Textarea
-						bind:value={tlsCertificate}
-						placeholder="-----BEGIN CERTIFICATE-----"
-						block
-						state={error ? 'error' : undefined}
-						readonly={!isEditing}
-					/>
-					{#if tlsCertificateError}
-						<Validation state="error">{tlsCertificateError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-		</div>
-	{/if}
-
-	{#if !isEditing}
-		<p>
-			Your custom domain needs to be verified. Please update your DNS records as shown below to
-			verify your domain ownership.
-		</p>
-
-		<TabNav>
-			<TabNavItem name="cname" active={dnsMethod === 'cname'} onclick={() => (dnsMethod = 'cname')}>
-				CNAME {#snippet end()}
-					<Tag size="small" color="blue">Preferred</Tag>
-				{/snippet}
-			</TabNavItem>
-			<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
-				>A Record</TabNavItem
-			>
-		</TabNav>
-
-		{#if dnsMethod === 'cname'}
-			<Table columns="1fr 2fr">
-				<br />
-				<TableRow head>
-					<div>Field</div>
-					<div>Value</div>
-				</TableRow>
-				<TableRow>
-					<div>Host/Name</div>
-					<div>
-						<!-- TODO: use tldts to show the hostname correctly -->
-						<code>{domain.split('.')[0]}</code> for <strong>{domain}</strong>
-					</div>
-				</TableRow>
-				<TableRow>
-					<div>Content</div>
-					<div>
-						<code>{CNAME_DOMAIN}</code>
-						<Button
-							size="x-small"
-							on:click={() => {
-								navigator.clipboard.writeText(CNAME_DOMAIN);
-								toast.success('Copied to clipboard');
-							}}
-							style="margin-left:5px;"
-							color="input"
-						>
-							Copy {#snippet end()}
-								<IconCopy size={12} />
-							{/snippet}
-						</Button>
-					</div>
-				</TableRow>
-			</Table>
-		{:else}
-			<Table columns="1fr 2fr">
-				<br />
-				<TableRow head>
-					<div>Field</div>
-					<div>Value</div>
-				</TableRow>
-				<TableRow>
-					<div>Host/Name</div>
-					<div>
-						<div style="margin-bottom:6px;">
-							<code>@</code> for <strong>example.com</strong> or
-						</div>
-						<code>blog</code> for <strong>blog.example.com</strong>
-					</div>
-				</TableRow>
-				<TableRow>
-					<div>IP Address</div>
-					<div>
-						<code>{CUSTOM_DOMAIN_IP}</code>
-						<Button
-							size="x-small"
-							on:click={() => {
-								navigator.clipboard.writeText(CUSTOM_DOMAIN_IP);
-								toast.success('Copied to clipboard');
-							}}
-							style="margin-left:5px;"
-							color="input"
-						>
-							Copy {#snippet end()}
-								<IconCopy size={12} />
-							{/snippet}
-						</Button>
-					</div>
-				</TableRow>
-			</Table>
+		{#if intent}
+			<div class="section" transition:slide>
+				<div class="section-header">
+					<span class="section-domain">{intent.domain}</span>
+					<Tag color="orange" size="small">Pending DNS Validation</Tag>
+				</div>
+				<p>
+					Please configure your DNS records as shown below. Once done, click "Verify Now". We
+					will check if the DNS records are set correctly and generate the TLS certificate for
+					your custom domain. This may take a few minutes.
+				</p>
+				<DnsInstructions domain={intent.domain} />
+			</div>
 		{/if}
 	{/if}
 
 	{#snippet footer()}
-		{#if !isEditing}
+		{#if isEditing}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={handleEditDomain} disabled={loading}
-					>Edit Domain</Button
-				>
-				<Button variant="fill-light" color="red" on:click={handleAbort} disabled={loading}
-					>Abort</Button
-				>
-				<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
+				<Button variant="invisible" on:click={handleCancelEdit} disabled={loading}>Cancel</Button>
+				<Button on:click={handleSave} disabled={loading}>Save</Button>
 			</ButtonGroup>
 		{:else}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (show = false)} disabled={loading}
-					>Cancel</Button
-				>
-				<Button on:click={handleNext} disabled={loading}>Next</Button>
+				{#if intent}
+					<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
+						Abort
+					</Button>
+				{/if}
+				<Button variant="invisible" on:click={handleEdit} disabled={loading}>Edit</Button>
+				{#if intent}
+					<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
+				{:else}
+					<Button on:click={() => (show = false)} disabled={loading}>Close</Button>
+				{/if}
 			</ButtonGroup>
 		{/if}
 	{/snippet}
 </Modal>
+
+<style>
+	.section {
+		margin-bottom: 20px;
+	}
+	.section-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+	.section-domain {
+		font-weight: 600;
+	}
+	.section-provider {
+		font-size: 12px;
+		color: var(--text-light);
+	}
+	.hint {
+		font-size: 13px;
+		color: var(--text-light);
+	}
+</style>

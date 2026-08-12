@@ -203,7 +203,7 @@ class ChangeHostingAtTest extends ApiTestCase
         $this->assertResponseFailed(400, 'A hosting change is already in progress for this blog');
     }
 
-    public function test_update_from_domain_to_subdomain_deletes_custom_domain(): void
+    public function test_update_from_domain_to_subdomain(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'hosting-update-from-domain', 'hosting_at' => BlogHostingAt::DOMAIN],

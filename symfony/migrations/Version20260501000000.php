@@ -11,7 +11,7 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, custom_domain_intents, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post';
     }
 
     public function up(Schema $schema): void
@@ -62,7 +62,6 @@ final class Version20260501000000 extends AbstractMigration
 
 
         // Custom Domain ====
-        $this->addSql("CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');");
         $this->addSql("CREATE TYPE custom_domain_tls_provider AS ENUM ('auto', 'custom');");
         $this->addSql(
             <<<SQL
@@ -71,7 +70,6 @@ final class Version20260501000000 extends AbstractMigration
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
-                status custom_domain_status NOT NULL DEFAULT 'pending',
                 tls_provider custom_domain_tls_provider NOT NULL DEFAULT 'auto',
                 domain TEXT NOT NULL UNIQUE,
                 private_key_encrypted TEXT,
@@ -82,6 +80,19 @@ final class Version20260501000000 extends AbstractMigration
             SQL
         );
         $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE custom_domain_intents (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
+                domain TEXT NOT NULL
+            );
+            SQL
+        );
+        $this->addSql("CREATE INDEX idx_custom_domain_intents_blog_id ON custom_domain_intents(blog_id)");
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');

@@ -115,6 +115,7 @@ export interface BlogCounts {
 export interface HostingInfo {
 	hosting_at: 'subdomain' | 'domain' | 'self';
 	custom_domain?: CustomDomainSetup | null;
+	custom_domain_intent?: CustomDomainIntent | null;
 	hosting_url?: string;
 	change?: HostingChange | null;
 }
@@ -138,14 +139,20 @@ export interface HostingChange {
 	error_message: string | null;
 }
 
-export type CustomDomainSetupStatus = 'pending' | 'active' | 'failed';
+export type CustomDomainTlsProvider = 'auto' | 'custom';
 export interface CustomDomainSetup {
 	created_at: number;
 	domain: string;
-	status: CustomDomainSetupStatus;
+	tls_provider: CustomDomainTlsProvider;
 	certificate: string | null;
 	valid_from: number | null;
 	valid_to: number | null;
+}
+
+// a pending, not-yet-DNS-verified auto-TLS custom domain setup
+export interface CustomDomainIntent {
+	created_at: number;
+	domain: string;
 }
 
 export interface BlogIntegrations {

@@ -21,6 +21,7 @@
 	import SetupCustomDomainModal from './SetupCustomDomainModal.svelte';
 	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
 	import HostingOption from './HostingOption.svelte';
+	import CustomDomainOption from './CustomDomainOption.svelte';
 	import HostingChangeStatus from './HostingChangeStatus.svelte';
 	import { onMount } from 'svelte';
 
@@ -29,7 +30,13 @@
 
 	let subdomainError: null | string = $state(null);
 	let showCustomDomainModal = $state(false);
+	let customDomainModalStartEditing = $state(false);
 	let showSelfHostingModal = $state(false);
+
+	function openCustomDomainModal(startEditing: boolean) {
+		customDomainModalStartEditing = startEditing;
+		showCustomDomainModal = true;
+	}
 
 	let isLoading = $state(true);
 
@@ -108,16 +115,11 @@
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={handleRevertToSubdomain}
 				/>
-				<HostingOption
-					title="Custom Domain"
-					subtitle="Your blog will be hosted at your own custom domain (e.g., blog.example.com)"
-					active={$hostingInfoStore.hosting_at === 'domain'}
-					buttonLabel="Setup Custom Domain"
-					buttonDisabled={isHostingChangeInProgress}
-					onclick={() => (showCustomDomainModal = true)}
-					tag={$hostingInfoStore.custom_domain?.status === 'pending'
-						? { color: 'orange', label: 'Pending Verification' }
-						: null}
+				<CustomDomainOption
+					disabled={isHostingChangeInProgress}
+					onSetup={() => openCustomDomainModal(true)}
+					onContinueSetup={() => openCustomDomainModal(false)}
+					onConfigure={() => openCustomDomainModal(true)}
 				/>
 				<HostingOption
 					title="Self-Hosted"
@@ -173,7 +175,7 @@
 		{/if}
 	</div>
 
-	<SetupCustomDomainModal bind:show={showCustomDomainModal} />
+	<SetupCustomDomainModal bind:show={showCustomDomainModal} startEditing={customDomainModalStartEditing} />
 	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
 {/if}
 

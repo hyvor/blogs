@@ -2,15 +2,14 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\Enum\BlogHostingAt;
-use App\Entity\Enum\HostingChangeStatus;
-use App\Entity\HostingChange;
+use App\Entity\Blog;
+use App\Entity\CustomDomainIntent;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<HostingChange>
+ * @extends PersistentObjectFactory<CustomDomainIntent>
  */
-final class HostingChangeFactory extends PersistentObjectFactory
+final class CustomDomainIntentFactory extends PersistentObjectFactory
 {
     public function __construct()
     {
@@ -19,7 +18,7 @@ final class HostingChangeFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return HostingChange::class;
+        return CustomDomainIntent::class;
     }
 
     #[\Override]
@@ -27,14 +26,18 @@ final class HostingChangeFactory extends PersistentObjectFactory
     {
         return [
             'blog' => BlogFactory::new(),
-            'from_at' => BlogHostingAt::SUBDOMAIN,
-            'from_url' => self::faker()->url(),
-            'to_at' => BlogHostingAt::SELF,
-            'to_url' => self::faker()->url(),
-            'status' => HostingChangeStatus::CHANGING,
+            'domain' => self::faker()->domainName(),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),
         ];
+    }
+
+    public static function createFor(Blog $blog, string $domain = 'example.com'): CustomDomainIntent
+    {
+        return self::createOne([
+            'blog' => $blog,
+            'domain' => $domain,
+        ]);
     }
 
     #[\Override]
