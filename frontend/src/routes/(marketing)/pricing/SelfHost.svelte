@@ -2,6 +2,7 @@
 	import { Button } from '@hyvor/design/components';
 	import IconGithub from '@hyvor/icons/IconGithub';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 
 	const bullets = [
 		'Free & open-source — no license fees',
@@ -43,6 +44,7 @@
 					>
 						{#snippet start()}<IconGithub size={14} />{/snippet}
 						View on GitHub
+						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
 					</Button>
 				</span>
 			</div>

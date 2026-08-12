@@ -59,17 +59,10 @@
 	}
 
 	@media (max-width: 900px) {
+		/* the live theme iframe doesn't work well on mobile (too small to be
+		   useful, and the dropdown/device-toggle chrome eats most of the
+		   space) — the "Browse themes" button already covers this case */
 		.themes-live {
-			--left-pull: 0px;
-			--right-bleed: 0px;
-			margin-top: 48px;
-			height: 700px;
-			width: 100%;
-			border-radius: 20px;
-			border-right: 1px solid var(--border);
-		}
-
-		.fade-overlay {
 			display: none;
 		}
 	}

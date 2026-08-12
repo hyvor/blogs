@@ -260,6 +260,14 @@
 		}
 	}
 
+	@media (max-width: 600px) {
+		/* keep in step with the wider .hds-container gutter set globally in
+		   +layout.svelte at this same breakpoint */
+		.plans {
+			padding: 25px 20px;
+		}
+	}
+
 	@media (max-width: 360px) {
 		.toggle-btn {
 			padding: 10px 8px;

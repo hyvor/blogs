@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Button } from '@hyvor/design/components';
-	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import videoReviewPoster from '$lib/img/testimonials/video-review-poster.jpg';
 
 	interface TextReview {
@@ -159,20 +157,6 @@
 			{/if}
 		{/each}
 	</div>
-
-	<div class="hds-container cta">
-		<Button
-			as="a"
-			href="https://www.g2.com/products/hyvor-blogs/reviews"
-			target="_blank"
-			variant="outline"
-			color="input"
-			size="small"
-		>
-			Read more reviews on G2
-			{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
-		</Button>
-	</div>
 </section>
 
 <style>
@@ -212,9 +196,16 @@
 		align-items: stretch;
 		gap: 20px;
 		overflow-x: auto;
+		/* explicit, not left to default — a lone overflow-x: auto silently
+		   forces overflow-y to auto too (per spec, when only one axis is
+		   'visible'), which was clipping each card's box-shadow into a hard
+		   line at the top/bottom of the row instead of letting it fade out */
+		overflow-y: visible;
 		scroll-snap-type: x proximity;
 		cursor: grab;
-		padding: 4px 15px 20px max(15px, calc((100vw - 1000px) / 2));
+		/* top/bottom padding must clear --box-shadow's 30px blur radius, or
+		   the shadow still gets clipped by the row's own padding-box edge */
+		padding: 32px 15px 36px max(15px, calc((100vw - 1000px) / 2));
 		scrollbar-width: none;
 		-webkit-overflow-scrolling: touch;
 		touch-action: pan-y;
@@ -375,9 +366,12 @@
 		color: rgba(255, 255, 255, 0.75);
 	}
 
-	.cta {
-		text-align: center;
-		margin-top: 8px;
+	@media (max-width: 600px) {
+		/* keep in step with the wider .hds-container gutter set globally in
+		   +layout.svelte at this same breakpoint */
+		.scroll-row {
+			padding: 32px 20px 36px max(20px, calc((100vw - 1000px) / 2));
+		}
 	}
 
 	@media (max-width: 768px) {

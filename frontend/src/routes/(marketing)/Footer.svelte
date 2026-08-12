@@ -59,7 +59,7 @@
 
 	const socials = [
 		{ icon: IconTwitterX, href: 'https://x.com/HyvorHQ', label: 'X (Twitter)' },
-		{ icon: IconGithub, href: 'https://github.com/hyvor', label: 'GitHub' },
+		{ icon: IconGithub, href: 'https://github.com/hyvor/blogs', label: 'GitHub' },
 		{ icon: IconDiscord, href: 'https://discord.com/invite/2WRJxQB', label: 'Discord' },
 		{
 			icon: IconLinkedin,
@@ -77,7 +77,8 @@
 				{ href: '/console', label: 'Console' },
 				{ href: '/themes', label: 'Themes' },
 				{ href: '/pricing', label: 'Pricing' },
-				{ href: '/docs', label: 'Docs' }
+				{ href: '/docs', label: 'Docs' },
+				{ href: '/hosting', label: 'Hosting' }
 			]
 		},
 		{
@@ -174,7 +175,7 @@
 
 			<div class="bottom-bar">
 				<div>HYVOR &copy; {year}</div>
-				<div class="bottom-right">
+				<div class="bottom-center">
 					<a class="gdpr-chip" href="https://hyvor.com/compliance" target="_blank">
 						<span class="gdpr-chip-icon">
 							<svg class="ring" viewBox="0 0 32 32" aria-hidden="true">
@@ -190,12 +191,14 @@
 							<span class="lock"><IconLockFill size={10} /></span>
 						</span>
 						<span class="gdpr-chip-text">
-							<span class="l1">GDPR</span>
-							<span class="l2">Compliant</span>
+							<span class="l1">GDPR Compliant</span>
 						</span>
 					</a>
-
-					<div class="france">From France <span class="flag">&#127467;&#127479;</span></div>
+				</div>
+				<div class="bottom-right">
+					<div class="france">
+						From France <span class="flag">🇫🇷</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -380,9 +383,9 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		padding: 3px 10px 3px 3px;
+		padding: 5px 12px 5px 5px;
 		border-radius: 100px;
-		background: #173a8a;
+		background: color-mix(in srgb, #6779a3 20%, transparent 80%);
 		color: #fff;
 		opacity: 0.9;
 		transition: opacity 0.15s ease;

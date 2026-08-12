@@ -48,6 +48,7 @@
 <style lang="scss">
 	.items-wrap {
 		margin-top: 50px;
+		margin-bottom: 80px;
 		display: flex;
 		gap: 10px;
 	}

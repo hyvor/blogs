@@ -15,6 +15,10 @@
 </div>
 
 <style>
+	.docs {
+		margin-bottom: 80px;
+	}
+
 	.docs :global(.nav-item.active) {
 		background-color: var(--accent-light-mid)!important;
 	}

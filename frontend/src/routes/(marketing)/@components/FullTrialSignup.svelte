@@ -92,10 +92,25 @@
 		align-items: center;
 		gap: 6px;
 		font-size: 14px;
-		color: var(--text-light);
+		color: var(--gray-dark);
 
 		:global(svg) {
 			color: var(--accent);
+		}
+	}
+
+	@media (max-width: 600px) {
+		/* same fix as .bullets in FeatureSplit.svelte — center the list as a
+		   single block, sized to its widest row, instead of wrapping into
+		   independently-centered lines (which leaves each row's icon at a
+		   different x position whenever the rows' text lengths differ) */
+		.checks {
+			flex-direction: column;
+			align-items: flex-start;
+			width: fit-content;
+			max-width: 100%;
+			margin: 0 auto;
+			gap: 10px;
 		}
 	}
 </style>

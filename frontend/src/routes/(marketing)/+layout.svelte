@@ -124,4 +124,15 @@
 	:global(:root) {
 		--font-serif: 'Source Serif 4', serif;
 	}
+
+	/* the design system's .hds-container(-max) side padding (15px) reads too
+	   tight on phones — widen it here, once, for every marketing page rather
+	   than patching each section individually */
+	@media (max-width: 600px) {
+		:global(.hds-container),
+		:global(.hds-container-max) {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
 </style>

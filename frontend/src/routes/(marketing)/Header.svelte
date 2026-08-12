@@ -54,7 +54,7 @@
 				Hosting
 			</a>
 
-			<Dropdown bind:show={resourcesDropdown}>
+			<Dropdown bind:show={resourcesDropdown} contentPadding={8}>
 				{#snippet trigger()}
 					<span class="nav-link nav-trigger" class:active={isThemesOrIntegrations}>
 						Resources
@@ -97,7 +97,7 @@
 		</div>
 
 		<span class="mobile-nav-wrap">
-			<Dropdown bind:show={mobileOpen} align="end" width={260}>
+			<Dropdown bind:show={mobileOpen} align="end" width={260} contentPadding={8}>
 				{#snippet trigger()}
 					<span class="icon-btn" aria-label="Menu" role="button" tabindex="0">
 						{#if mobileOpen}
@@ -110,7 +110,7 @@
 				{#snippet content()}
 					<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 					<div
-						class="dropdown-menu mobile-menu"
+						class="dropdown-menu"
 						onclick={(e) => closeOnLinkClick(e, () => (mobileOpen = false))}
 					>
 						<a class="dropdown-link" href="/pricing">Pricing</a>
@@ -252,12 +252,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		padding: 5px;
 	}
 
 	.dropdown-link {
 		padding: 8px 10px;
-		border-radius: 20px;
+		/* the outer box radius is 20px (--box-radius) and its padding is 8px
+		   (Dropdown's contentPadding below) — 20 - 8 = 12 keeps the gap between
+		   the box edge and this pill visually even all the way around,
+		   including through the corners, instead of pinching at the diagonal */
+		border-radius: 12px;
 		font-size: 13px;
 		font-weight: 500;
 		color: var(--text-light);
@@ -275,10 +278,6 @@
 	.dropdown-link.active {
 		background: var(--accent-light);
 		color: var(--text);
-	}
-
-	.mobile-menu {
-		padding: 8px;
 	}
 
 	.mobile-divider {

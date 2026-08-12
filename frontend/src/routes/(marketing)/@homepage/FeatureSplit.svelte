@@ -321,7 +321,7 @@
 
 		.text-col {
 			width: 100%;
-			text-align: center;
+			text-align: left;
 		}
 
 		.visual-col {
@@ -330,14 +330,6 @@
 
 		p {
 			max-width: 100%;
-		}
-
-		.bullets {
-			align-items: center;
-		}
-
-		.buttons {
-			justify-content: center;
 		}
 	}
 </style>
