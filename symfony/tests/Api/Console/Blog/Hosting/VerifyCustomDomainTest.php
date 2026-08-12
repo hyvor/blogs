@@ -9,6 +9,7 @@ use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
+use App\Tests\Factory\CustomDomainIntentFactory;
 use App\Tests\Factory\HostingChangeFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -16,7 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CustomDomainService::class)]
 class VerifyCustomDomainTest extends ApiTestCase
 {
-    public function test_fails_when_no_custom_domain(): void
+    public function test_fails_when_no_intent(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'hosting-cd-verify-nf'],
@@ -28,7 +29,7 @@ class VerifyCustomDomainTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function test_fails_when_status_is_not_pending(): void
+    public function test_fails_when_only_an_active_custom_domain_exists(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
             ['subdomain' => 'hosting-cd-verify-active'],
@@ -49,7 +50,7 @@ class VerifyCustomDomainTest extends ApiTestCase
             ['status' => UserStatus::ACTIVE],
         );
 
-        CustomDomainFactory::createPendingFor($blog, 'pending.com');
+        CustomDomainIntentFactory::createFor($blog, 'pending.com');
         HostingChangeFactory::createOne(['blog' => $blog, 'status' => HostingChangeStatus::CHANGING]);
 
         $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain/verify', user: $user);

@@ -4,7 +4,6 @@ namespace App\Tests\Factory;
 
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
-use App\Entity\Enum\CustomDomainStatus;
 use App\Entity\Enum\CustomDomainTlsProvider;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -29,20 +28,13 @@ final class CustomDomainFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'domain' => self::faker()->domainName(),
-            'status' => CustomDomainStatus::PENDING,
             'tls_provider' => CustomDomainTlsProvider::AUTO,
+            'certificate' => 'cert-pem-data',
+            'valid_from' => new \DateTimeImmutable('-1 day'),
+            'valid_to' => new \DateTimeImmutable('+89 days'),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),
         ];
-    }
-
-    public static function createPendingFor(Blog $blog, string $domain = 'example.com'): CustomDomain
-    {
-        return self::createOne([
-            'blog' => $blog,
-            'domain' => $domain,
-            'status' => CustomDomainStatus::PENDING,
-        ]);
     }
 
     public static function createActiveFor(Blog $blog, string $domain = 'example.com'): CustomDomain
@@ -50,10 +42,6 @@ final class CustomDomainFactory extends PersistentObjectFactory
         return self::createOne([
             'blog' => $blog,
             'domain' => $domain,
-            'status' => CustomDomainStatus::ACTIVE,
-            'certificate' => 'cert-pem-data',
-            'valid_from' => new \DateTimeImmutable('-1 day'),
-            'valid_to' => new \DateTimeImmutable('+89 days'),
         ]);
     }
 
@@ -62,11 +50,7 @@ final class CustomDomainFactory extends PersistentObjectFactory
         return self::createOne([
             'blog' => $blog,
             'domain' => $domain,
-            'status' => CustomDomainStatus::ACTIVE,
             'tls_provider' => CustomDomainTlsProvider::CUSTOM,
-            'certificate' => 'cert-pem-data',
-            'valid_from' => new \DateTimeImmutable('-1 day'),
-            'valid_to' => new \DateTimeImmutable('+89 days'),
         ]);
     }
 
