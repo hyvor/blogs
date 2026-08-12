@@ -53,7 +53,7 @@
 		</div>
 	</div>
 
-	<div class="plans-outer hds-container-max">
+	<div class="plans-outer">
 		<div class="plans-wrap">
 			<div class="plans" bind:this={plansEl}>
 				<div class="plan-slide"><PricingPlan plan="personal" {yearly} {currency} /></div>
@@ -91,6 +91,11 @@
 
 	.plans-outer {
 		position: relative;
+		/* distance from the true viewport edge to where the centered, max-1400px
+		   container's own content starts — keeps the row's padding (and the
+		   arrows) visually aligned with the title above, even though the row
+		   itself runs full-bleed edge to edge */
+		--container-inset: max(15px, calc((100vw - 1400px) / 2 + 15px));
 	}
 
 	.header {
@@ -121,9 +126,19 @@
 		display: flex;
 		align-items: stretch;
 		gap: 20px;
-		padding: 25px 0;
+		/* the row itself runs full viewport width (see .plans-outer, which is no
+		   longer capped to the 1400px container), with padding standing in for
+		   the container's inset — so both edges bleed the same way: a card
+		   cut off on either side reads as "continues off-screen" rather than an
+		   abrupt clip in the middle of the page */
+		padding: 25px var(--container-inset);
 		overflow-x: auto;
 		scroll-snap-type: x proximity;
+		/* without this, the snap engine auto-scrolls past the container's own
+		   left padding on load (treating the border box, not the padding box,
+		   as the snapport) — this keeps the first card's resting position at
+		   scrollLeft 0, fully visible and aligned with the padding */
+		scroll-padding: 0 var(--container-inset);
 		scrollbar-width: none;
 		-ms-overflow-style: none;
 	}
@@ -163,11 +178,11 @@
 	}
 
 	.arrow.left {
-		left: -20px;
+		left: calc(var(--container-inset) - 20px);
 	}
 
 	.arrow.right {
-		right: -20px;
+		right: calc(var(--container-inset) - 20px);
 	}
 
 	.toggle-wrap {
@@ -232,6 +247,7 @@
 		.plans {
 			flex-direction: column;
 			overflow-x: visible;
+			padding: 25px 15px;
 		}
 
 		.plan-slide {

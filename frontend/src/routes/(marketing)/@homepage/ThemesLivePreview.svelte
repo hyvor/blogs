@@ -15,6 +15,7 @@
 		lockScroll={true}
 		hideDeviceToggle={true}
 		hideOpenInNewTab={true}
+		hideOpenSource={true}
 	/>
 
 	<!-- soft scrim so the text overlapping the left edge stays readable -->

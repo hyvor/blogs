@@ -31,18 +31,20 @@
 				<Button as="a" href="/hosting" size="large" variant="fill" color="accent">
 					Learn about self-hosting
 				</Button>
-				<Button
-					as="a"
-					href="https://github.com/hyvor/blogs"
-					target="_blank"
-					rel="noopener"
-					size="large"
-					variant="outline"
-					color="gray"
-				>
-					<IconGithub size={14} />
-					View on GitHub
-				</Button>
+				<span class="github-btn">
+					<Button
+						as="a"
+						href="https://github.com/hyvor/blogs"
+						target="_blank"
+						rel="noopener"
+						size="large"
+						variant="outline"
+						color="gray"
+					>
+						{#snippet start()}<IconGithub size={14} />{/snippet}
+						View on GitHub
+					</Button>
+				</span>
 			</div>
 		</div>
 
@@ -143,6 +145,12 @@
 		flex-wrap: wrap;
 	}
 
+	/* the design system's default icon-text gap (6px) reads too tight next to
+	   the GitHub mark — widen it just for this button */
+	.github-btn :global(.slot.start) {
+		margin-right: 10px;
+	}
+
 	.visual-col {
 		display: flex;
 		justify-content: center;
@@ -188,11 +196,17 @@
 		font-family: var(--font-mono, monospace);
 		font-size: 13px;
 		line-height: 2;
+		/* code stays left-aligned even when the mobile layout around it
+		   center-aligns everything else */
+		text-align: left;
 	}
 
 	.line {
 		color: #d4d4d8;
-		white-space: nowrap;
+		/* no white-space:nowrap — the commands already fit on one line at the
+		   terminal's max-width, so this only kicks in (wraps) when the box is
+		   actually too narrow, with no breakpoint guessing needed */
+		overflow-wrap: break-word;
 	}
 
 	.prompt {
@@ -232,9 +246,4 @@
 		}
 	}
 
-	@media (max-width: 360px) {
-		.line {
-			white-space: normal;
-		}
-	}
 </style>

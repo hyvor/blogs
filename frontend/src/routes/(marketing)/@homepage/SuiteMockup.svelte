@@ -5,16 +5,14 @@
 			component: 'talk',
 			side: 'left',
 			arrowLabel: 'Our commenting platform',
-			tag: 'Complimentary license',
-			color: '#ffd969'
+			tag: 'Complimentary license'
 		},
 		{
 			name: 'Hyvor Post',
 			component: 'post',
 			side: 'right',
 			arrowLabel: 'Our newsletter platform',
-			tag: 'Complimentary license',
-			color: '#5a8387'
+			tag: 'Complimentary license'
 		}
 	];
 </script>
@@ -24,10 +22,7 @@
 		<div class="join-row">
 			{#each products as p}
 				<div class="satellite-col {p.side}">
-					<div
-						class="satellite"
-						style:background={`color-mix(in srgb, ${p.color} 25%, var(--background))`}
-					>
+					<div class="satellite">
 						<img
 							src="https://hyvor.com/api/public/logo/{p.component}.svg"
 							alt={p.name}
@@ -143,11 +138,9 @@
 	.satellite {
 		width: 68px;
 		height: 68px;
-		border-radius: 100px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0 4px 12px color-mix(in srgb, var(--text) 8%, transparent);
 	}
 
 	/* the logo hops in first, with a bouncy overshoot */

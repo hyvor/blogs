@@ -79,7 +79,11 @@
 		padding: 20px;
 		margin-top: 20px;
 		margin-bottom: 40px;
-		max-width: 1100px;
+		/* .hds-container already caps this at 100% of the viewport — cap at
+		   1100px on top of that without clobbering the 100% (a bare
+		   max-width:1100px here would win over hds-container's max-width:100%
+		   by specificity and break shrinking on mobile) */
+		max-width: min(1100px, 100%);
 		margin-left: auto;
 		margin-right: auto;
 	}

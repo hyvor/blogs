@@ -7,9 +7,33 @@
 	import IconYoutube from '@hyvor/icons/IconYoutube';
 	import IconBluesky from '@hyvor/icons/IconBluesky';
 	import IconDiscord from '@hyvor/icons/IconDiscord';
+	import IconLockFill from '@hyvor/icons/IconLockFill';
 
 	const year = new Date().getFullYear();
 	const BRAND_COLOR = '#896c6b';
+
+	// a single 5-pointed star (outer/inner vertices alternating), centered on
+	// its own origin — reused via `transform="translate(...)"` per position
+	// below, rather than a plain dot, for the EU ring on the GDPR badge
+	function starPath(outerR: number, innerR: number) {
+		const points: string[] = [];
+		for (let i = 0; i < 10; i++) {
+			const angle = -Math.PI / 2 + (i * Math.PI) / 5;
+			const r = i % 2 === 0 ? outerR : innerR;
+			points.push(`${(r * Math.cos(angle)).toFixed(2)},${(r * Math.sin(angle)).toFixed(2)}`);
+		}
+		return `M${points.join('L')}Z`;
+	}
+	const gdprStarPath = starPath(1.7, 0.68);
+
+	// positions for the 12-star EU ring on the small GDPR badge (see .gdpr-chip)
+	const gdprStars = Array.from({ length: 12 }, (_, i) => {
+		const angle = (i * 30 * Math.PI) / 180;
+		return {
+			x: 16 + 12 * Math.cos(angle),
+			y: 16 + 12 * Math.sin(angle)
+		};
+	});
 
 	let mascotInView = $state(false);
 
@@ -150,11 +174,29 @@
 
 			<div class="bottom-bar">
 				<div>HYVOR &copy; {year}</div>
-				<div class="france">From France <span class="flag">&#127467;&#127479;</span></div>
-				<a class="gdpr-badge" href="https://hyvor.com/compliance" target="_blank">
-					GDPR compliant
-					<span class="flag">&#127466;&#127482;</span>
-				</a>
+				<div class="bottom-right">
+					<a class="gdpr-chip" href="https://hyvor.com/compliance" target="_blank">
+						<span class="gdpr-chip-icon">
+							<svg class="ring" viewBox="0 0 32 32" aria-hidden="true">
+								<circle cx="16" cy="16" r="16" fill="#173a8a" />
+								{#each gdprStars as s}
+									<path
+										d={gdprStarPath}
+										fill="#ffcd3c"
+										transform="translate({s.x}, {s.y})"
+									/>
+								{/each}
+							</svg>
+							<span class="lock"><IconLockFill size={10} /></span>
+						</span>
+						<span class="gdpr-chip-text">
+							<span class="l1">GDPR</span>
+							<span class="l2">Compliant</span>
+						</span>
+					</a>
+
+					<div class="france">From France <span class="flag">&#127467;&#127479;</span></div>
+				</div>
 			</div>
 		</div>
 	</footer>
@@ -173,7 +215,7 @@
 		pointer-events: none;
 		left: 0;
 		bottom: 100%;
-		transform: translate(-35%, 60%) rotate(20deg);
+		transform: translate(-35%, 45%) rotate(20deg);
 	}
 
 	.mascot-wrap img {
@@ -321,21 +363,78 @@
 		color: rgba(255, 255, 255, 0.5);
 	}
 
+	.bottom-right {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+
 	.france {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
 	}
 
-	.gdpr-badge {
+	.gdpr-chip {
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
-		color: rgba(255, 255, 255, 0.5);
+		gap: 8px;
+		padding: 3px 10px 3px 3px;
+		border-radius: 100px;
+		background: #173a8a;
+		color: #fff;
+		opacity: 0.9;
+		transition: opacity 0.15s ease;
 	}
 
-	.gdpr-badge:hover {
+	.gdpr-chip:hover {
+		opacity: 1;
+	}
+
+	.gdpr-chip-icon {
+		position: relative;
+		width: 22px;
+		height: 22px;
+		flex-shrink: 0;
+	}
+
+	.gdpr-chip-icon .ring {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	.gdpr-chip-icon .lock {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		color: #fff;
+	}
+
+	.gdpr-chip-text {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.2;
+	}
+
+	.gdpr-chip-text .l1 {
+		font-size: 11px;
+		font-weight: 800;
+		letter-spacing: 0.02em;
+		color: #fff;
+	}
+
+	.gdpr-chip-text .l2 {
+		font-size: 8px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.85);
 	}
 
 	/* emoji glyphs are pre-colored — never let the surrounding muted text
@@ -358,11 +457,12 @@
 
 	@media (max-width: 560px) {
 		.mascot-wrap {
-			margin-bottom: -70px;
+			/* keep it clear of the "Hyvor Blogs" wordmark that sits right below it */
+			margin-bottom: -40px;
 		}
 
 		.site-footer {
-			padding-top: 110px;
+			padding-top: 130px;
 		}
 
 		.top-row {

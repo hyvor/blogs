@@ -260,8 +260,8 @@
 			<div class="col">Enterprise</div>
 		</div>
 
-		{#each FEATURES as { category, features }, i}
-			<div class="category-block" class:last={i === FEATURES.length - 1}>
+		{#each FEATURES as { category, features }}
+			<div class="category-block">
 				<div class="category-name">
 					<div class="col-name">{category}</div>
 					<div class="col"></div>
@@ -330,7 +330,6 @@
 		margin: auto;
 		overflow-x: auto;
 		padding: 30px 30px 10px;
-		border: 1px solid var(--border);
 	}
 
 	.col-name {
@@ -351,7 +350,6 @@
 		font-weight: 700;
 		background-color: var(--box-background);
 		padding-bottom: 12px;
-		border-bottom: 1px solid var(--border);
 
 		.col-name {
 			visibility: hidden;
@@ -387,13 +385,6 @@
 		white-space: nowrap;
 	}
 
-	.category-block {
-		border-bottom: 1px solid var(--border);
-		&.last {
-			border-bottom: none;
-		}
-	}
-
 	.category-name {
 		display: flex;
 		align-items: center;
@@ -406,6 +397,13 @@
 			color: var(--text-light);
 			padding-top: 26px;
 			padding-bottom: 8px;
+		}
+
+		/* the empty popular-column cell has no content of its own to size it —
+		   stretch it to the row's full height so the highlight band doesn't
+		   collapse to nothing at each category header */
+		.col.popular {
+			align-self: stretch;
 		}
 	}
 

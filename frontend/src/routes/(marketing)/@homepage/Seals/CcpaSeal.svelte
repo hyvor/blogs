@@ -1,9 +1,15 @@
 <script lang="ts">
 	import SealBase from './SealBase.svelte';
 	import ccpa from './ccpa.svg?url';
+
+	interface Props {
+		size?: number;
+	}
+
+	let { size = 100 }: Props = $props();
 </script>
 
-<SealBase>
+<SealBase {size}>
 	<img src={ccpa} alt="CCPA Seal" class="map" />
 	<span class="label">CCPA</span>
 </SealBase>

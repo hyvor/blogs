@@ -2,10 +2,16 @@
 	import IconStarFill from '@hyvor/icons/IconStarFill';
 	import SealBase from './SealBase.svelte';
 
+	interface Props {
+		size?: number;
+	}
+
+	let { size = 100 }: Props = $props();
+
 	const starAngles = Array.from({ length: 12 }, (_, i) => i * 30);
 </script>
 
-<SealBase>
+<SealBase {size}>
 	<div class="star-ring">
 		{#each starAngles as angle}
 			<span class="star" style="--angle: {angle}deg">

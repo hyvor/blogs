@@ -122,8 +122,11 @@
 		font-size: clamp(22px, 3vw, 26px);
 		line-height: 1.6;
 		color: color-mix(in srgb, var(--text) 70%, var(--text-light));
-		width: 480px;
-		max-width: 100%;
+		/* max-width alone (not width+max-width:100%) — a fixed width here would
+		   inflate the flex column's min-content sizing on mobile (percentages
+		   can't resolve during that pass), pushing the whole hero out wide and
+		   getting clipped by .hero's overflow:hidden */
+		max-width: 480px;
 	}
 
 	.hl {

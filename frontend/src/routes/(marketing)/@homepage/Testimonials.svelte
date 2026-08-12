@@ -72,13 +72,6 @@
 	let dragStartX = 0;
 	let dragStartScroll = 0;
 
-	function onWheel(e: WheelEvent) {
-		if (!scrollEl) return;
-		if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-		e.preventDefault();
-		scrollEl.scrollLeft += e.deltaY;
-	}
-
 	function onPointerDown(e: PointerEvent) {
 		if (!scrollEl) return;
 		dragging = true;
@@ -108,7 +101,6 @@
 		class="scroll-row"
 		class:dragging
 		bind:this={scrollEl}
-		onwheel={onWheel}
 		onpointerdown={onPointerDown}
 		onpointermove={onPointerMove}
 		onpointerup={onPointerUp}

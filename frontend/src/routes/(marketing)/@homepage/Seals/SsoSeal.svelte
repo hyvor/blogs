@@ -1,9 +1,15 @@
 <script lang="ts">
 	import IconShieldLockFill from '@hyvor/icons/IconShieldLockFill';
 	import SealBase from './SealBase.svelte';
+
+	interface Props {
+		size?: number;
+	}
+
+	let { size = 100 }: Props = $props();
 </script>
 
-<SealBase>
+<SealBase {size}>
 	<span class="icon">
 		<IconShieldLockFill size={22} />
 	</span>

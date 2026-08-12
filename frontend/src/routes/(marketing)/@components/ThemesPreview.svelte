@@ -28,12 +28,16 @@
 		hideDeviceToggle?: boolean;
 		// hides the "Open in new tab" link (used in the compact homepage preview)
 		hideOpenInNewTab?: boolean;
+		// hides the "Themes are open-source" / "View Source" footer in the theme
+		// dropdown (used in the compact homepage preview)
+		hideOpenSource?: boolean;
 	}
 
 	let {
 		lockScroll = $bindable(false),
 		hideDeviceToggle = false,
-		hideOpenInNewTab = false
+		hideOpenInNewTab = false,
+		hideOpenSource = false
 	}: Props = $props();
 
 	let isLoaded = $state(false);
@@ -137,20 +141,22 @@
 							{/each}
 						</ActionList>
 
-						<div class="open-source">
-							<Text small>Themes are open-source</Text>
-							<Button
-								size="small"
-								as="a"
-								href="https://github.com/hyvor/hyvor-blogs-themes"
-								target="_blank"
-							>
-								View Source
-								{#snippet end()}
-									<IconGithub size={14} />
-								{/snippet}
-							</Button>
-						</div>
+						{#if !hideOpenSource}
+							<div class="open-source">
+								<Text small>Themes are open-source</Text>
+								<Button
+									size="small"
+									as="a"
+									href="https://github.com/hyvor/hyvor-blogs-themes"
+									target="_blank"
+								>
+									View Source
+									{#snippet end()}
+										<IconGithub size={14} />
+									{/snippet}
+								</Button>
+							</div>
+						{/if}
 					{/snippet}
 				</Dropdown>
 			</div>

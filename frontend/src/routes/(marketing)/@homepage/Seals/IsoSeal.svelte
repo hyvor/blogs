@@ -1,9 +1,15 @@
 <script lang="ts">
 	import IconAwardFill from '@hyvor/icons/IconAwardFill';
 	import SealBase from './SealBase.svelte';
+
+	interface Props {
+		size?: number;
+	}
+
+	let { size = 100 }: Props = $props();
 </script>
 
-<SealBase pending>
+<SealBase {size} pending>
 	<span class="icon">
 		<IconAwardFill size={20} />
 	</span>

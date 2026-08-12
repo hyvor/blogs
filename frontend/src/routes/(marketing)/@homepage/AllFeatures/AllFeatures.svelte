@@ -85,7 +85,8 @@
 				{
 					icon: IconTag,
 					title: 'Tags',
-					description: 'Organize your posts with tags. Tag index pages are generated automatically.'
+					description:
+						'Organize your posts with tags. Tag index pages are generated automatically.'
 				},
 				{
 					icon: IconPeople,
@@ -130,7 +131,8 @@
 				{
 					icon: IconSearchHeart,
 					title: 'SEO',
-					description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
+					description:
+						'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
 				},
 				{
 					icon: IconLightning,
@@ -141,7 +143,8 @@
 				{
 					icon: IconArrowsAngleContract,
 					title: 'Image Optimization',
-					description: 'Automatic webp conversion and responsive images for all your images.'
+					description:
+						'Automatic webp conversion and responsive images for all your images.'
 				}
 			]
 		},
@@ -159,12 +162,14 @@
 				{
 					icon: IconController,
 					title: 'Console API',
-					description: 'Everything you can do from the Console, you can do with the Console API.'
+					description:
+						'Everything you can do from the Console, you can do with the Console API.'
 				},
 				{
 					icon: IconSend,
 					title: 'Delivery API',
-					description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
+					description:
+						'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
 				},
 				{
 					icon: IconSend,
@@ -191,8 +196,8 @@
 
 <section class="all-features hds-container">
 	<div class="section-header">
-		<h2>Everything you need to blog</h2>
-		<p>A complete feature set so you never have to stitch together separate tools.</p>
+		<h2>And There's More...</h2>
+		<p>Everything you need to take your blog from idea to impact.</p>
 	</div>
 
 	<div class="accordion">
@@ -259,7 +264,8 @@
 	.section-header h2 {
 		font-size: 32px;
 		font-weight: 700;
-		margin: 0 0 12px;
+		margin: 0 0 6px;
+		font-family: var(--font-serif);
 	}
 
 	.section-header p {

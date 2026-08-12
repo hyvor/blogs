@@ -231,20 +231,28 @@
 
 	.bullets li {
 		display: flex;
-		align-items: center;
+		/* flex-start, not center — with center, a wrapped second line still
+		   centers independently under the first (inheriting text-align:center
+		   from .text-col on mobile) and the icon centers against the whole
+		   multi-line block instead of sitting with the first line */
+		align-items: flex-start;
 		gap: 10px;
 		font-size: 1rem;
+		text-align: left;
 	}
 
 	.bullets li :global(svg) {
 		color: var(--accent);
 		flex-shrink: 0;
+		/* optically align with the first line's cap-height now that the row
+		   is top- rather than center-aligned */
+		margin-top: 0.3em;
 	}
 
 	.bullet-btn {
 		position: relative;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 10px;
 		width: 100%;
 		padding: 8px 10px;
