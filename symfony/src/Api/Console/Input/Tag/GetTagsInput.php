@@ -11,4 +11,6 @@ class GetTagsInput
 
     #[Assert\PositiveOrZero]
     public int $offset = 0;
+
+    public ?string $search = null;
 }

@@ -11,7 +11,6 @@ use App\Api\Console\Input\Tag\CreateTagInput;
 use App\Api\Console\Input\Tag\CreateTagVariantInput;
 use App\Api\Console\Input\Tag\DeleteTagVariantInput;
 use App\Api\Console\Input\Tag\GetTagsInput;
-use App\Api\Console\Input\Tag\SearchTagsInput;
 use App\Api\Console\Input\Tag\UpdateTagInput;
 use App\Api\Console\Input\Tag\UpdateTagVariantInput;
 use App\Api\Console\Object\TagObjectFactory;
@@ -42,21 +41,7 @@ class TagController
         #[MapQueryString] GetTagsInput $input = new GetTagsInput(),
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-        $tags = $this->tagService->getTags($blog, $input->limit, $input->offset);
-
-        return new JsonResponse(array_map(
-            fn($tag) => $this->tagObjectFactory->create($tag, $blog),
-            $tags,
-        ));
-    }
-
-    #[Route('/tags/search', methods: ['GET'])]
-    #[ScopeRequired(Scope::TAGS_READ)]
-    public function searchTags(
-        #[MapQueryString] SearchTagsInput $input,
-    ): JsonResponse {
-        $blog = $this->blogAuthListener->getBlog();
-        $tags = $this->tagService->searchTags($blog, $input->search, limit: 10);
+        $tags = $this->tagService->getTags($blog, $input->limit, $input->offset, $input->search);
 
         return new JsonResponse(array_map(
             fn($tag) => $this->tagObjectFactory->create($tag, $blog),

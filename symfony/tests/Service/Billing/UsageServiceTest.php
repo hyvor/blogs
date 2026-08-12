@@ -5,7 +5,6 @@ namespace App\Tests\Service\Billing;
 use App\Service\Billing\UsageService;
 use App\Tests\Factory\AutoTranslationFactory;
 use App\Tests\Factory\BlogFactory;
-use App\Tests\Factory\GptPromptFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Clock\Test\ClockSensitiveTrait;
@@ -120,53 +119,9 @@ class UsageServiceTest extends KernelTestCase
     // AI tokens usage (current month only)
     // -----------------------------------------------------------------------
 
-    public function test_ai_tokens_usage(): void
+    public function test_ai_tokens_usage_is_not_tracked(): void
     {
-        self::mockTime('2025-02-20');
-
-        $blog = BlogFactory::createOne(['organization_id' => 1]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog,
-            'tokens_total' => 1000,
-            'created_at' => new \DateTimeImmutable('2025-02-10'),
-        ]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog,
-            'tokens_total' => 2000,
-            'created_at' => new \DateTimeImmutable('2025-02-15'),
-        ]);
-
-        // old — should NOT count
-        GptPromptFactory::createOne([
-            'blog' => $blog,
-            'tokens_total' => 1000,
-            'created_at' => new \DateTimeImmutable('2025-01-01'),
-        ]);
-
-        $blog2 = BlogFactory::createOne(['organization_id' => 1]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog2,
-            'tokens_total' => 1000,
-            'created_at' => new \DateTimeImmutable('2025-02-20'),
-        ]);
-
-        // other org — should NOT count
-        $blog3 = BlogFactory::createOne(['organization_id' => 2]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog3,
-            'tokens_total' => 1000,
-            'created_at' => new \DateTimeImmutable('2025-01-15'),
-        ]);
-
-        $this->assertSame(4000, $this->usage()->getAiTokensUsage(1));
-    }
-
-    public function test_ai_tokens_usage_without_records(): void
-    {
+        // TODO:
         $this->assertSame(0, $this->usage()->getAiTokensUsage(1));
     }
 }

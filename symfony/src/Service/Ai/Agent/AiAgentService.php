@@ -5,10 +5,14 @@ namespace App\Service\Ai\Agent;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
+use App\Service\Ai\Agent\Tool\Query\QueryTool;
 use App\Service\Ai\AiPlatformService;
+use App\Service\Language\LanguageService;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
+use App\Service\Tag\TagService;
+use App\Service\User\UserService;
 use Symfony\AI\Agent\Agent;
 use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
@@ -30,12 +34,14 @@ class AiAgentService
     - edit the post content if user asks
     - answer questions about the post content
     - search other posts in the blog to find relevant information
+    - use get_tags, get_authors and get_post_variants to look up tags, authors and other posts in the blog (e.g. to link to them or tag/attribute this post)
 
     Editing posts:
     - use document_get tool to get markdown content of a post variant
     - each markdown node is prefixed with an ID in the format #[id] (e.g. #[p-1] for paragraph 1)
     - call tools with the node ID: e.g., document_replace(postVariantId, 'p-1', 'new *content*')
     - when creating a lot of content, generate all and use document_insert(postVariantId, 'p-1' with all the content)
+    - use document_delete(postVariantId, 'p-1') to remove a node
 
     Markdown schema for the post content:
     {markdown_schema}
@@ -46,6 +52,9 @@ class AiAgentService
         private AiPlatformService $aiPlatformService,
         private PostContentService $postContentService,
         private PostService $postService,
+        private TagService $tagService,
+        private UserService $userService,
+        private LanguageService $languageService,
     ) {}
 
     private function getSystemPromptForPost(PostVariant $postVariant): string
@@ -93,7 +102,15 @@ class AiAgentService
             $this->postService,
             $this->postContentService
         );
-        $toolbox = new Toolbox([$documentOpsTool]);
+        $queryTool = new QueryTool(
+            $blog,
+
+            $this->tagService,
+            $this->userService,
+            $this->postService,
+            $this->languageService,
+        );
+        $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
         $toolProcessor = new AgentProcessor($toolbox);
 
         $agent = new Agent(

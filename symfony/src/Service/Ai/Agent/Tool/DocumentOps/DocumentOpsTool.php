@@ -33,6 +33,11 @@ use Symfony\AI\Agent\Toolbox\Attribute\AsTool;
     description: 'replace text in a node in the document',
     method: 'replaceText'
 )]
+#[AsTool(
+    name: 'document_delete',
+    description: 'delete a node from the document by node ID',
+    method: 'delete'
+)]
 class DocumentOpsTool
 {
 
@@ -85,8 +90,6 @@ class DocumentOpsTool
         $markdownSerializer = new MarkdownSerializer();
 
         $markdown = $markdownSerializer->serialize($doc, new MarkdownSerializationOptions($nodeIdMap));
-
-        dump($markdown);
 
         return $markdown;
     }
@@ -146,6 +149,23 @@ class DocumentOpsTool
         $fetchedDocument->addOp($op);
 
         return 'Replaced text successfully.';
+    }
+
+    public function delete(
+        int $postVariantId,
+        string $nodeId,
+    ): string
+    {
+        $fetchedDocument = $this->documentCache[$postVariantId] ?? null;
+
+        if (!$fetchedDocument) {
+            return "Document for post variant ID $postVariantId not fetched. Please call document_get first.";
+        }
+
+        $op = new OpDelete($nodeId);
+        $fetchedDocument->addOp($op);
+
+        return 'Deleted node successfully.';
     }
 
     private function getCurrentContentFromVariant(PostVariant $variant): ?string

@@ -84,109 +84,115 @@
 
 <div class="agent-page hds-box">
 	<div class="header">
-		<div class="title">
-			<IconRobot size={18} />
-			<span>AI Agent</span>
-		</div>
-		<div class="subtitle">
-			Ask the agent to answer questions about your blog or edit one of your published posts.
+		<div class="agent-inner">
+			<div class="title">
+				<IconRobot size={18} />
+				<span>AI Agent</span>
+			</div>
+			<div class="subtitle">
+				Ask the agent to answer questions about your blog or edit one of your published posts.
+			</div>
 		</div>
 	</div>
 
 	<div class="body">
-		{#if status === 'idle'}
-			<IconMessage
-				icon={IconRobot}
-				message={`Describe what you'd like the agent to do, e.g. "Fix any typos in the post" or "Add a short FAQ section at the end".`}
-			/>
-		{:else}
-			<div class="turn">
-				<div class="message-wrap user">
-					<div class="avatar user-avatar"><span>You</span></div>
-					<div class="message">{sentPrompt}</div>
-				</div>
+		<div class="agent-inner">
+			{#if status === 'idle'}
+				<IconMessage
+					icon={IconRobot}
+					message={`Describe what you'd like the agent to do, e.g. "Fix any typos in the post" or "Add a short FAQ section at the end".`}
+				/>
+			{:else}
+				<div class="turn">
+					<div class="message-wrap user">
+						<div class="avatar user-avatar"><span>You</span></div>
+						<div class="message">{sentPrompt}</div>
+					</div>
 
-				<div class="message-wrap ai">
-					<div class="avatar ai-avatar"><IconRobot size={16} /></div>
-					<div class="message">
-						{#if postVariant}
-							<a
-								class="post-pill"
-								href={consoleUrlWithBlog(`/posts/${postVariant.post_id}`)}
-								target="_blank"
-							>
-								<IconFileText size={12} />
-								<span>{postVariant.title || 'Untitled post'}</span>
-								<IconBoxArrowUpRight size={11} />
-							</a>
-						{/if}
+					<div class="message-wrap ai">
+						<div class="avatar ai-avatar"><IconRobot size={16} /></div>
+						<div class="message">
+							{#if postVariant}
+								<a
+									class="post-pill"
+									href={consoleUrlWithBlog(`/posts/${postVariant.post_id}`)}
+									target="_blank"
+								>
+									<IconFileText size={12} />
+									<span>{postVariant.title || 'Untitled post'}</span>
+									<IconBoxArrowUpRight size={11} />
+								</a>
+							{/if}
 
-						{#if blocks.length === 0 && !finalText}
-							{#if status === 'error'}
-								<span class="error">{error}</span>
+							{#if blocks.length === 0 && !finalText}
+								{#if status === 'error'}
+									<span class="error">{error}</span>
+								{:else}
+									<Loader size="small" />
+								{/if}
 							{:else}
-								<Loader size="small" />
-							{/if}
-						{:else}
-							<AgentSteps {blocks} />
+								<AgentSteps {blocks} />
 
-							{#if finalText}
-								<div class="message-html">
-									{@html responseHtml}
+								{#if finalText}
+									<div class="message-html">
+										{@html responseHtml}
+									</div>
+								{:else if status === 'streaming'}
+									<Loader size="small" />
+								{/if}
+
+								{#if status === 'error'}
+									<span class="error">{error}</span>
+								{/if}
+							{/if}
+
+							{#if status === 'done' && documentChange}
+								<div class="change-notice">
+									<Button size="small" onclick={() => (showCompare = true)}>
+										Review suggested changes
+									</Button>
 								</div>
-							{:else if status === 'streaming'}
-								<Loader size="small" />
 							{/if}
-
-							{#if status === 'error'}
-								<span class="error">{error}</span>
-							{/if}
-						{/if}
-
-						{#if status === 'done' && documentChange}
-							<div class="change-notice">
-								<Button size="small" onclick={() => (showCompare = true)}>
-									Review suggested changes
-								</Button>
-							</div>
-						{/if}
+						</div>
 					</div>
 				</div>
-			</div>
 
-			{#if status === 'done' || status === 'error'}
-				<div class="reset-button">
-					<Button size="small" color="input" onclick={reset}>
-						{#snippet start()}
-							<IconArrowClockwise />
-						{/snippet}
-						New request
-					</Button>
-				</div>
+				{#if status === 'done' || status === 'error'}
+					<div class="reset-button">
+						<Button size="small" color="input" onclick={reset}>
+							{#snippet start()}
+								<IconArrowClockwise />
+							{/snippet}
+							New request
+						</Button>
+					</div>
+				{/if}
 			{/if}
-		{/if}
+		</div>
 	</div>
 
 	<div class="input-zone">
-		<div class="input-row">
-			<div class="prompt-input">
-				<Textarea
-					block={true}
-					placeholder="Type your prompt here..."
-					rows={1}
-					bind:value={prompt}
-					disabled={status === 'streaming'}
-				/>
-			</div>
-			<Button disabled={prompt.trim() === '' || status === 'streaming'} onclick={handleSubmit}>
-				<div class="generate-button-content">
-					Send
-					<div class="generate-icon"><IconMagic /></div>
+		<div class="agent-inner">
+			<div class="input-row">
+				<div class="prompt-input">
+					<Textarea
+						block={true}
+						placeholder="Type your prompt here..."
+						rows={1}
+						bind:value={prompt}
+						disabled={status === 'streaming'}
+					/>
 				</div>
-			</Button>
-		</div>
-		<div class="disclaimer">
-			The agent picks one published post from your blog and may suggest edits to it.
+				<Button disabled={prompt.trim() === '' || status === 'streaming'} onclick={handleSubmit}>
+					<div class="generate-button-content">
+						Send
+						<div class="generate-icon"><IconMagic /></div>
+					</div>
+				</Button>
+			</div>
+			<div class="disclaimer">
+				The agent picks one published post from your blog and may suggest edits to it.
+			</div>
 		</div>
 	</div>
 </div>
@@ -207,6 +213,12 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+	}
+
+	.agent-inner {
+		width: 800px;
+		max-width: 100%;
+		margin: auto;
 	}
 
 	.header {
@@ -231,6 +243,10 @@
 	.body {
 		flex: 1;
 		overflow: auto;
+	}
+
+	.body .agent-inner {
+		height: 100%;
 	}
 
 	.turn {

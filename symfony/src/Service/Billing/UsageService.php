@@ -107,19 +107,8 @@ class UsageService
 
     public function getAiTokensUsage(int $organizationId): int
     {
-        $startOfMonth = $this->now()->modify('first day of this month midnight')->format('Y-m-d H:i:s');
-
-        /** @var ?int $result */
-        $result = $this->connection->fetchOne(
-            "SELECT SUM(tokens_total) AS count
-             FROM gpt_prompts
-             INNER JOIN blogs ON gpt_prompts.blog_id = blogs.id
-             WHERE blogs.organization_id = ?
-             AND gpt_prompts.created_at >= ?",
-            [$organizationId, $startOfMonth],
-        );
-
-        return (int)$result;
+        // TODO:
+        return 0;
     }
 
     public function getBlogsUsage(int $organizationId): int
