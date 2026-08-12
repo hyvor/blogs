@@ -3,7 +3,6 @@
 namespace App\Service\Import\Sitemap\PageScraper;
 
 use App\Entity\Blog;
-use App\Service\App\HttpBot;
 use App\Service\Import\Sitemap\PageScraper\Enum\PageScrapeError;
 use App\Service\Import\Sitemap\PageScraper\Enum\SelectType;
 use App\Service\Post\Content\HtmlParser;
@@ -34,6 +33,7 @@ class PageScraper
         private readonly PageScraperOptions $options,
         private readonly HttpClientInterface $httpClient,
         private readonly PostContentService $postContentService,
+        private readonly string $httpBotUserAgent,
     ) {
         libxml_use_internal_errors(true);
     }
@@ -42,7 +42,7 @@ class PageScraper
     {
         try {
             $response = $this->httpClient->request('GET', $this->url, [
-                'headers' => ['User-Agent' => HttpBot::USER_AGENT],
+                'headers' => ['User-Agent' => $this->httpBotUserAgent],
                 'timeout' => 10,
             ]);
             $ok = $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;

@@ -5,16 +5,12 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
+use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
-use App\Service\Ai\Agent\AiAgentService;
+use App\Service\Ai\Agent\AiAgentConversationService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
 use App\Service\Post\PostService;
-use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
-use Symfony\AI\Platform\Result\Stream\Delta\ThinkingComplete;
-use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
-use Symfony\AI\Platform\Result\Stream\Delta\ToolCallComplete;
-use Symfony\AI\Platform\Result\Stream\Delta\ToolCallStart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -29,7 +25,7 @@ class AiController extends AbstractController
         private ConsoleApiAuthorizationListener $authListener,
         private PostService $postService,
         private AiPostTranslator $aiPostTranslator,
-        private AiAgentService $aiAgentService
+        private AiAgentConversationService $aiAgentConversationService
     ) {}
 
     #[Route('/ai/translate/post', methods: ['POST'])]
@@ -57,33 +53,23 @@ class AiController extends AbstractController
 
     #[Route('/ai/agent', methods: ['POST'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function agent(): StreamedResponse
+    public function agent(
+        #[MapRequestPayload] AgentPromptInput $input
+    ): StreamedResponse
     {
 
         $blog = $this->authListener->getBlog();
 
-        $result = $this->aiAgentService->call($blog);
-
-        $response = new StreamedResponse(function () use ($result) {
-            foreach ($result->getContent() as $delta) {
-                $event = match (true) {
-                    $delta instanceof ThinkingDelta => ['type' => 'thinking', 'content' => $delta->getThinking()],
-                    $delta instanceof ThinkingComplete => ['type' => 'thinking_done'],
-                    $delta instanceof ToolCallStart => ['type' => 'tool_call', 'tool' => $delta->getName()],
-                    $delta instanceof ToolCallComplete => ['type' => 'tool_result', 'status' => 'done'],
-                    $delta instanceof TextDelta => ['type' => 'text', 'content' => (string) $delta],
-                    default => null,
-                };
-
-                if ($event !== null) {
-                    echo 'data: '.json_encode($event)."\n\n";
-                    flush();
-                }
+        $response = new StreamedResponse(function () use ($blog, $input) {
+            foreach ($this->aiAgentConversationService->streamPrompt($blog, $input->prompt) as $event) {
+                echo 'data: '.json_encode($event)."\n\n";
+                flush();
             }
         });
 
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
+        $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
     }

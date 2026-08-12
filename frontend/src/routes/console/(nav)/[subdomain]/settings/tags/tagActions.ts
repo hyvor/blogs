@@ -22,7 +22,7 @@ interface SearchTagsProps {
 
 export function searchTags(data: SearchTagsProps) {
 	return consoleApi.get<Tag[]>({
-		endpoint: '/tags/search',
+		endpoint: '/tags',
 		data
 	});
 }

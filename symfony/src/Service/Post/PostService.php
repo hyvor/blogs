@@ -223,6 +223,8 @@ class PostService
         ?string $search = null,
         int $limit = 50,
         int $offset = 0,
+        ?int $id = null,
+        ?string $slug = null,
     ): array {
         $where = 'p.blog_id = :blog AND p.is_page = false AND pv.language_id = :language';
         $params = ['blog' => $blog->getId(), 'language' => $language->getId()];
@@ -236,6 +238,16 @@ class PostService
         if ($tagId !== null) {
             $joins .= ' JOIN post_tag pt ON pt.post_id = p.id AND pt.tag_id = :tag_id';
             $params['tag_id'] = $tagId;
+        }
+
+        if ($id !== null) {
+            $where .= ' AND p.id = :id';
+            $params['id'] = $id;
+        }
+
+        if ($slug !== null) {
+            $where .= ' AND pv.slug = :slug';
+            $params['slug'] = $slug;
         }
 
         if ($status !== null) {
@@ -349,6 +361,7 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
+        ?\DateTimeImmutable $publishedAt = null,
         // disable creating the variant, only makes sense in BlogCreator
         // be careful when set to false, if the variant is not set manually, it could cause data inconsistency
         bool $createVariant = true,
@@ -363,6 +376,7 @@ class PostService
             $canonicalUrl,
             $codeHead,
             $codeFoot,
+            $publishedAt,
         );
 
         if ($createVariant) {
@@ -389,6 +403,7 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
+        ?\DateTimeImmutable $publishedAt = null,
     ): Post {
         $post = new Post();
         $post->setBlog($blog);
@@ -398,6 +413,7 @@ class PostService
         $post->setCanonicalUrl($canonicalUrl);
         $post->setCodeHead($codeHead);
         $post->setCodeFoot($codeFoot);
+        $post->setPublishedAt($publishedAt);
         $post->setCreatedAt($this->now());
         $post->setUpdatedAt($this->now());
         $this->em->persist($post);

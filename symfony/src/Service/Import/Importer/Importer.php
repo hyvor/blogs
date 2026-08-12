@@ -30,8 +30,7 @@ class Importer
         private readonly MediaService $mediaService,
         private readonly PermalinkService $permalinkService,
         private readonly PostContentService $postContentService,
-    ) {
-    }
+    ) {}
 
     public function import(): void
     {
@@ -45,7 +44,6 @@ class Importer
     private function importPosts(): void
     {
         $primaryLanguage = $this->languageService->getPrimaryLanguage($this->blog);
-        $owner = $this->userService->getOwner($this->blog);
 
         foreach ($this->parser->posts as $importingPost) {
             $featuredImageUrl = $importingPost->featuredImageUrl
@@ -57,8 +55,8 @@ class Importer
                 isPage: $importingPost->isPage,
                 isFeatured: $importingPost->isFeatured,
                 featuredImageUrl: $featuredImageUrl,
+                publishedAt: $importingPost->publishedAt
             );
-            $this->postService->updatePost($post, ['published_at' => $importingPost->publishedAt]);
 
             foreach ($importingPost->variants as $importingVariant) {
                 $content = $this->importMediaOfContent($importingVariant->content);
@@ -78,9 +76,11 @@ class Importer
                 ]);
             }
 
-            if ($owner) {
-                $this->postService->setPostAuthors($post, [$owner], flush: true);
-            }
+            // imported posts won't have authors
+            // we might want to change this later to import authors as well
+            // if ($owner) {
+            //     $this->postService->setPostAuthors($post, [$owner], flush: true);
+            // }
 
             $this->postsCount++;
         }
@@ -102,7 +102,10 @@ class Importer
                 $src = $node->attr('src');
                 $src = is_string($src) ? $src : '';
 
-                if ($src && str_starts_with($src, 'http')) {
+                if (
+                    $src &&
+                    (str_starts_with($src, 'http') || str_starts_with($src, 'file://'))
+                ) {
                     $node->attrs->set('src', $this->tryToUploadImage($src));
                 }
             }
@@ -111,8 +114,12 @@ class Importer
         return $document->toJson();
     }
 
-    private function tryToUploadImage(string $url): string
+    private function tryToUploadImage(string $url): ?string
     {
+        if (str_starts_with($url, 'file://')) {
+            return $this->uploadLocalImage($url);
+        }
+
         if (!$this->importImages) {
             return $url;
         }
@@ -128,5 +135,25 @@ class Importer
         }
 
         return $url;
+    }
+
+    private function uploadLocalImage(string $localUrl): ?string
+    {
+        $path = substr($localUrl, strlen('file://'));
+        if (!file_exists($path)) {
+            return null;
+        }
+
+        try {
+            $media = $this->mediaService->uploadFromLocalPath($this->blog, $path);
+        } catch (MediaException) {
+            $media = null;
+        }
+
+        if ($media) {
+            return $this->permalinkService->getMediaPermalink($media, $this->blog);
+        }
+
+        return null;
     }
 }

@@ -368,8 +368,7 @@ type Response = {}
 <h3 id="tags">Tags</h3>
 <p>Endpoints:</p>
 <ul>
-	<li><code>GET /tags</code> - Get tags</li>
-	<li><code>GET /tags/search</code> - Search tags</li>
+	<li><code>GET /tags</code> - Get or search tags</li>
 	<li><code>POST /tag</code> - Create a tag</li>
 	<li><code>PATCH /tag/{`{id}`}</code> - Update a tag</li>
 	<li><code>DELETE /tag/{`{id}`}</code> - Delete a tag</li>
@@ -384,7 +383,8 @@ type Response = {}
 	<li><a href="/docs/api-console#tag-variant-object">TagVariant</a></li>
 </ul>
 
-<h4 id="get-tags">Get tags</h4>
+<h4 id="get-tags">Get or search tags</h4>
+<p>Lists tags, optionally searching by name (primary language).</p>
 <p><code>GET /tags</code></p>
 <CodeBlock
 	language="ts"
@@ -392,19 +392,7 @@ type Response = {}
 type Request = {
     limit?: number, // default 50, max 100
     offset?: number,
-}
-type Response = Tag[]
-`}
-/>
-
-<h4 id="search-tags">Search tags</h4>
-<p>Searches for tags by name (primary language).</p>
-<p><code>GET /tags/search</code></p>
-<CodeBlock
-	language="ts"
-	code={`
-type Request = {
-    search: string,
+    search?: string, // filters tags by name (primary language)
 }
 type Response = Tag[]
 `}
