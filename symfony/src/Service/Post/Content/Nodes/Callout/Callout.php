@@ -4,7 +4,6 @@ namespace App\Service\Post\Content\Nodes\Callout;
 
 use DOMElement;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
-use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Types\NodeType;
 use Hyvor\Phrosemirror\Util\InlineStyle;
 use Symfony\Component\DomCrawler\Crawler;
@@ -19,18 +18,6 @@ class Callout extends NodeType
     public const DEFAULT_EMOJI = '💡';
     public const DEFAULT_BG = '#f1f1ef';
     public const DEFAULT_FG = '#000000';
-
-    public function toHtml(Node $node, string $children): string
-    {
-        /** @var string $bg */
-        $bg = $node->attr('bg');
-        /** @var string $fg */
-        $fg = $node->attr('fg');
-        /** @var string $emoji */
-        $emoji = $node->attr('emoji');
-
-        return "<aside style=\"background-color:$bg;color:$fg\"><span>$emoji</span><div>$children</div></aside>";
-    }
 
     public function fromHtml(): array
     {

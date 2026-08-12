@@ -10,6 +10,7 @@ use App\Api\Console\Input\Post\CheckPostSlugAvailableInput;
 use App\Api\Console\Input\Post\CreatePostInput;
 use App\Api\Console\Input\Post\CreatePostVariantInput;
 use App\Api\Console\Input\Post\DeletePostVariantInput;
+use App\Api\Console\Input\Post\GetPostInput;
 use App\Api\Console\Input\Post\GetPostsInput;
 use App\Api\Console\Input\Post\PublishPostVariantInput;
 use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
@@ -27,6 +28,7 @@ use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -116,12 +118,30 @@ class PostController
         return new JsonResponse($this->postObjectFactory->create($post, $blog), 201);
     }
 
-    #[Route('/post/{id}', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[Route('/post/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
-    public function getPost(#[MapBlogEntity] Post $post): JsonResponse
+    public function getPost(
+        #[MapBlogEntity] Post $post,
+        #[MapQueryString] GetPostInput $input,
+    ): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
-        return new JsonResponse($this->postObjectFactory->create($post, $blog));
+
+        $variant = null;
+        if ($input->variant_language_code) {
+            $language = $this->languageService->getLanguageByCode($blog, $input->variant_language_code);
+
+            if ($language === null) {
+                throw new BadRequestHttpException('Invalid variant_language_code, language not found');
+            }
+
+            $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        }
+
+        return new JsonResponse([
+            'post' => $this->postObjectFactory->create($post, $blog),
+            'variant' => $variant ? $this->postObjectFactory->createVariant($variant, $post, $blog) : null,
+        ]);
     }
 
     #[Route('/post/{id}', methods: ['PATCH'], requirements: ['id' => Requirement::DIGITS])]

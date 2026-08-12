@@ -1,24 +1,10 @@
 <script lang="ts">
-	import {
-		Button,
-		Callout,
-		TabNav,
-		TabNavItem,
-		Table,
-		TableRow,
-		Tag,
-		toast
-	} from '@hyvor/design/components';
-	import IconCopy from '@hyvor/icons/IconCopy';
+	import { Callout } from '@hyvor/design/components';
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 
 	import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from '@hyvor/design/marketing';
-
-	const CUSTOM_DOMAIN_IP = '116.202.185.2';
-	const CNAME_DOMAIN = 'hyvorblogs.io';
-
-	let dnsMethod: 'cname' | 'a' = $state('cname');
+	import DnsInstructions from '../../../../../console/(nav)/[subdomain]/settings/hosting/DnsInstructions.svelte';
 </script>
 
 <h1>Custom Domain</h1>
@@ -32,18 +18,24 @@
 	{#snippet icon()}
 		<IconLightbulb />
 	{/snippet}
-	Setting up a custom domain will help you to <strong>build your brand</strong> and
+	Setting up a custom domain will help you to <strong>build your own brand</strong> and
 	<strong>prevent locking into our platform</strong> in case you want to move to another platform in the
 	future.
 </Callout>
 
-<p>
-	Before setting up a custom domain, you need to have a <strong>domain name</strong>. If you don't
-	have one, you can buy one from a domain registrar like
-	<a href="https://www.namecheap.com/" rel="nofollow">Namecheap</a>
-	or
-	<a href="https://www.cloudflare.com/products/registrar" rel="nofollow">Cloudflare Registrar</a>.
-</p>
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+	<li>
+		A <strong>domain name</strong>.
+	</li>
+	<li>
+		Access to your domain's <strong>DNS settings</strong> to create DNS records.
+	</li>
+	<li>
+		<a href="/docs/users#roles">Admin role</a> access to your blog.
+	</li>
+</ul>
 
 <h2 id="blog-setitngs">Step 1: Update Blog Settings</h2>
 
@@ -64,104 +56,12 @@
 
 <h2 id="dns">Step 2: Update DNS Records</h2>
 
-<TabNav>
-	<TabNavItem name="cname" active={dnsMethod === 'cname'} onclick={() => (dnsMethod = 'cname')}>
-		CNAME {#snippet end()}
-			<Tag size="small" color="blue">Preferred</Tag>
-		{/snippet}
-	</TabNavItem>
-	<TabNavItem name="a" active={dnsMethod === 'a'} onclick={() => (dnsMethod = 'a')}
-		>A Record</TabNavItem
-	>
-</TabNav>
+<p>
+	Go to your domain registrar's DNS settings and create either a <strong>CNAME</strong>
+	(recommended - easier and more reliable) or an <strong>A</strong> record with the details below.
+</p>
 
-{#if dnsMethod === 'cname'}
-	<p>
-		<strong>Recommended</strong> method. It's easier and more reliable. Go to your domain
-		registrar's DNS settings and create a <strong>CNAME</strong> record with the following details.
-	</p>
-
-	<Table columns="1fr 2fr">
-		<TableRow head>
-			<div>Field</div>
-			<div>Value</div>
-		</TableRow>
-		<TableRow>
-			<div>Host/Name</div>
-			<div>
-				<div style="margin-bottom:6px;">
-					<code>@</code> for <strong>example.com</strong> or
-				</div>
-				<code>blog</code> for <strong>blog.example.com</strong>
-			</div>
-		</TableRow>
-		<TableRow>
-			<div>Content</div>
-			<div>
-				<code>{CNAME_DOMAIN}</code>
-				<Button
-					size="x-small"
-					on:click={() => {
-						navigator.clipboard.writeText(CNAME_DOMAIN);
-						toast.success('Copied to clipboard');
-					}}
-					style="margin-left:5px;"
-					color="input"
-				>
-					Copy {#snippet end()}
-						<IconCopy size={12} />
-					{/snippet}
-				</Button>
-			</div>
-		</TableRow>
-	</Table>
-{:else}
-	<p>
-		If you can't use the CNAME method, you can use the <strong>A</strong> record method. This method
-		depends on our infrastructure. If you use this method, you may need to update the IP address in
-		the future if we have a <i>major</i> infrastructure change.
-	</p>
-
-	<p>
-		Go to your domain registrar's DNS settings and create an <strong>A</strong> record with the following
-		details.
-	</p>
-
-	<Table columns="1fr 2fr">
-		<TableRow head>
-			<div>Field</div>
-			<div>Value</div>
-		</TableRow>
-		<TableRow>
-			<div>Host/Name</div>
-			<div>
-				<div style="margin-bottom:6px;">
-					<code>@</code> for <strong>example.com</strong> or
-				</div>
-				<code>blog</code> for <strong>blog.example.com</strong>
-			</div>
-		</TableRow>
-		<TableRow>
-			<div>IP Address</div>
-			<div>
-				<code>{CUSTOM_DOMAIN_IP}</code>
-				<Button
-					size="x-small"
-					on:click={() => {
-						navigator.clipboard.writeText(CUSTOM_DOMAIN_IP);
-						toast.success('Copied to clipboard');
-					}}
-					style="margin-left:5px;"
-					color="input"
-				>
-					Copy {#snippet end()}
-						<IconCopy size={12} />
-					{/snippet}
-				</Button>
-			</div>
-		</TableRow>
-	</Table>
-{/if}
+<DnsInstructions />
 
 <p>Voila! Your blog is now available at your custom domain.</p>
 

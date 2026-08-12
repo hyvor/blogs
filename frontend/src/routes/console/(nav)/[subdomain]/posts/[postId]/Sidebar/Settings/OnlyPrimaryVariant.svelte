@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { postLanguageStore } from '../../../postStore';
+	import { postVariantLanguageStore } from '../../../postStore';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -7,7 +8,7 @@
 	let { children }: Props = $props();
 </script>
 
-<div class:disabled={!$postLanguageStore.is_primary}>
+<div class:disabled={!$postVariantLanguageStore.is_primary}>
 	{@render children?.()}
 </div>
 

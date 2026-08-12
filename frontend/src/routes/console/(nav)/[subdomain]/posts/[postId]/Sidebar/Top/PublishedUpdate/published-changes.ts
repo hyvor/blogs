@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import {
 	postOriginalStore,
-	postOriginalVariantStore,
+	postVariantOriginalStore,
 	postStore,
 	postVariantStore,
 	updatePostEditingStatusValue,
@@ -17,7 +17,7 @@ export function getPublishedChanges() {
 	const postOriginal = get(postOriginalStore);
 
 	const postVariant = get(postVariantStore);
-	const postVariantOriginal = get(postOriginalVariantStore);
+	const postVariantOriginal = get(postVariantOriginalStore);
 
 	const changes = {
 		post: {} as Partial<Post>,

@@ -1,5 +1,5 @@
 import { DOMParser, Node } from 'prosemirror-model';
-import schema from './schema';
+// import schema from './schema';
 import { EditorView } from 'prosemirror-view';
 import { TextSelection } from 'prosemirror-state';
 

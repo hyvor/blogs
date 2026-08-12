@@ -1,6 +1,7 @@
 {
 	frankenphp
     metrics
+    auto_https disable_redirects
 }
 
 (handle_php) {
@@ -8,9 +9,11 @@
     php_server {
         file_server off
         try_files index.php
+        env CADDY_ROUTER {args[0]}
     }
 }
 
+# the main app
 :80 {
 
     @subdomain {
@@ -18,21 +21,11 @@
     }
 
     handle @subdomain {
-        request_header X-Router subdomain
-        import handle_php
-    }
-
-    @customdomain {
-        host custom-domain.localhost
-    }
-
-    handle @customdomain {
-        request_header X-Router customdomain
-        import handle_php
+        import handle_php subdomain
     }
 
     handle {
-        import handle_php
+        import handle_php app
     }
 
 	log {
@@ -40,4 +33,18 @@
         level DEBUG
     }
 
+}
+
+# local endpoints
+http://localhost:8080 {
+    import handle_php local
+}
+
+# custom domain testing
+:443 {
+    tls {
+        get_certificate http http://localhost:8080/api/local/caddy-certificate
+    }
+
+    import handle_php customdomain
 }

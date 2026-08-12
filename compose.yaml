@@ -52,6 +52,13 @@ services:
       traefik.http.routers.lets-encrypt.tls: true
       traefik.http.routers.lets-encrypt.service: hyvor-blogs-backend
 
+      # custom domains (sent to container :443 without TLS termination)
+      traefik.tcp.routers.hyvor-blogs-custom-domain.rule: HostSNIRegexp(`^.+\.custom-domain\.localhost$`)
+      traefik.tcp.routers.hyvor-blogs-custom-domain.entrypoints: https
+      traefik.tcp.routers.hyvor-blogs-custom-domain.tls.passthrough: true
+      traefik.tcp.routers.hyvor-blogs-custom-domain.service: hyvor-blogs-backend
+      traefik.tcp.services.hyvor-blogs-backend.loadbalancer.server.port: 443
+
       # services
       traefik.http.services.hyvor-blogs-backend.loadbalancer.server.port: 80
     networks:

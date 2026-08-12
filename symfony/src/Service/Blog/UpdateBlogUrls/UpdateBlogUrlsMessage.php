@@ -3,8 +3,6 @@
 namespace App\Service\Blog\UpdateBlogUrls;
 
 use App\Service\App\Messenger\MessageTransport;
-use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Media\Event\MediaNameUpdatedEvent;
 use Symfony\Component\Lock\Key;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 

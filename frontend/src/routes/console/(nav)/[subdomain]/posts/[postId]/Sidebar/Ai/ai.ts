@@ -2,9 +2,8 @@ import { marked } from 'marked';
 // @ts-ignore
 import DOMPurify from 'dompurify';
 import type { EditorView } from 'prosemirror-view';
-import schema from '../../../../../../lib/prosemirror/schema';
 import { TextSelection } from 'prosemirror-state';
-import { DOMParser, Node } from 'prosemirror-model';
+import { DOMParser } from 'prosemirror-model';
 
 export function getHtmlFromMarkdownResponse(response: string | null) {
 	if (!response) return '';

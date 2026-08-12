@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { Button, SplitControl, TextInput, Textarea } from '@hyvor/design/components';
-	import { postLanguageStore, postStore } from '../../../postStore';
+	import { Button } from '@hyvor/design/components';
+	import { postVariantLanguageStore } from '../../../postStore';
 	import Slug from './Slug.svelte';
 	import Description from './Description.svelte';
 	import Authors from './Authors/Authors.svelte';
 	import Tags from './Tags/Tags.svelte';
 	import PublishTime from './PublishTime.svelte';
-	import Status from './Status/Status.svelte';
 	import CoverImage from './CoverImage.svelte';
 	import Featured from './Featured.svelte';
 	import Delete from './Delete.svelte';
@@ -21,7 +20,6 @@
 </script>
 
 <div class="settings-wrap">
-	<Status />
 	<Slug />
 	<Description />
 	<Authors />
@@ -31,7 +29,7 @@
 	<Featured />
 	<Delete />
 
-	{#if $postLanguageStore.is_primary}
+	{#if $postVariantLanguageStore.is_primary}
 		<div class="advanced-wrap">
 			<Button color="input" size="small" on:click={() => (showAdvanced = !showAdvanced)}>
 				{#snippet end()}

@@ -2,9 +2,8 @@ import { get } from 'svelte/store';
 import type { Post, PostVariant, PostListItem, User, Tag } from '../../../lib/types';
 import consoleApi from '../../../lib/consoleApi';
 import {
-	postLanguageStore,
 	postStore,
-	removePostVariantStore,
+	postVariantLanguageStore,
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
@@ -33,6 +32,16 @@ export function getPosts(data: GetPostsData) {
 export function getPages() {
 	return consoleApi.get<PostListItem[]>({
 		endpoint: '/pages'
+	});
+}
+
+export function getPost(id: number, variantLanguageCode: string | null = null) {
+	return consoleApi.get<{
+		post: Post,
+		variant: PostVariant | null
+	}>({
+		endpoint: `/post/${id}`,
+		data: variantLanguageCode ? { variant_language_code: variantLanguageCode } : undefined
 	});
 }
 
@@ -120,7 +129,7 @@ export function updatePostVariant(
 	additionalKeysToUpdate: (keyof PostVariant)[] = []
 ) {
 	const postId = get(postStore).id;
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 	data.language_id = languageId;
 
 	const promise = consoleApi.patch<PostVariant>({
@@ -145,7 +154,7 @@ export function updatePostVariant(
 
 export function publishPostVariant(updateStore = true) {
 	const postId = get(postStore).id;
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 
 	const promise = consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant/publish`,
@@ -163,7 +172,7 @@ export function publishPostVariant(updateStore = true) {
 
 export function unpublishPostVariant(updateStore = true) {
 	const postId = get(postStore).id;
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 
 	const promise = consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant/unpublish`,
@@ -187,7 +196,7 @@ export function createPostVariant(postId: number, languageId: number) {
 }
 
 export function deletePostVariant() {
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 
 	return consoleApi.delete({
 		endpoint: `/post/${get(postStore).id}/variant`,

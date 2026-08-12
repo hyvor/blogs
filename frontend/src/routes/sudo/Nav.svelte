@@ -1,24 +1,38 @@
 <script lang="ts">
-	import { NavLink } from '@hyvor/design/components';
+	import { Divider, NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import IconBarChart from '@hyvor/icons/IconBarChart';
 	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
 	import { page } from '$app/stores';
+	import IconSend from '@hyvor/icons/IconSend';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 </script>
 
 <div class="nav">
 	<div class="nav-links hds-box">
-		<NavLink href="/sudo" active={$page.url.pathname === '/sudo'}>
-			{#snippet start()}
-				<IconBarChart />
-			{/snippet}
-			Overview
-		</NavLink>
-		<NavLink href="/sudo/blogs" active={$page.url.pathname.startsWith('/sudo/blogs')}>
-			{#snippet start()}
-				<IconCardChecklist />
-			{/snippet}
-			Blogs
-		</NavLink>
+		<NavLinkGroup activeBackground="var(--accent-light-mid)">
+			<NavLink href="/sudo" active={$page.url.pathname === '/sudo'}>
+				{#snippet start()}
+					<IconBarChart />
+				{/snippet}
+				Overview
+			</NavLink>
+			<NavLink href="/sudo/blogs" active={$page.url.pathname.startsWith('/sudo/blogs')}>
+				{#snippet start()}
+					<IconCardChecklist />
+				{/snippet}
+				Blogs
+			</NavLink>
+			<Divider margin={15} />
+			<NavLink href="/api/sudo/messenger" target="_blank">
+				{#snippet start()}
+					<IconSend />
+				{/snippet}
+				Messenger
+				{#snippet end()}
+					<IconBoxArrowUpRight size={14} />
+				{/snippet}
+			</NavLink>
+		</NavLinkGroup>
 	</div>
 </div>
 
@@ -34,9 +48,5 @@
 		height: calc(100vh - 30px);
 		padding: 15px 0;
 		overflow: hidden;
-	}
-
-	.nav-links :global(a.active) {
-		background-color: var(--accent-light-mid);
 	}
 </style>

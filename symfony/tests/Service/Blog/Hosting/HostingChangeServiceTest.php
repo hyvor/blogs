@@ -6,11 +6,11 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
-use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Blog\Hosting\UpdateBlogUrlsService;
 use App\Service\Cache\Event\CacheClearAllEvent;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\Exception\PendingHostingChangeException;
+use App\Service\Hosting\HostingChangeService;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\HostingChangeFactory;
@@ -30,7 +30,7 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $service = $this->getService(HostingChangeService::class);
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
 
         $service->process($hostingChange);
@@ -72,7 +72,7 @@ class HostingChangeServiceTest extends KernelTestCase
             $failingUrlsService,
         );
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('boom');
@@ -98,7 +98,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $this->assertTrue($service->hasPendingChange($blog));
 
         $this->expectException(PendingHostingChangeException::class);
-        $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
     }
 
     /** @throws PendingHostingChangeException */
@@ -111,7 +111,7 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $this->assertFalse($service->hasPendingChange($blog));
 
-        $hostingChange = $service->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
     }
 }

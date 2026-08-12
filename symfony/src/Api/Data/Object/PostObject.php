@@ -42,7 +42,7 @@ class PostObject
         Language $language,
         PermalinkService $permalinkService,
     ) {
-       
+
         $variant = null;
         foreach ($post->getVariants() as $pv) {
             if ($pv->getLanguage()->getId() === $language->getId()) {
@@ -58,7 +58,7 @@ class PostObject
         }
 
         assert($variant !== null, 'Caller should ensure that variant is not null');
-        assert($variant->getStatus() === PostVariantStatus::PUBLISHED, 'Caller should ensure that variant is published');
+        // assert($variant->getStatus() === PostVariantStatus::PUBLISHED, 'Caller should ensure that variant is published');
 
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();

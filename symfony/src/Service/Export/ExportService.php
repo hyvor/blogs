@@ -82,24 +82,30 @@ class ExportService
     {
         $blog = $export->getBlog();
 
-        $data = match ($export->getFormat()) {
-            ExportFormat::HYVOR_BLOGS => $this->hyvorBlogsExporter->export($blog),
+        $exporter = match ($export->getFormat()) {
+            ExportFormat::HYVOR_BLOGS => $this->hyvorBlogsExporter,
             default => null,
         };
 
-        if ($data === null) {
+        if ($exporter === null) {
             $this->fail($export, 'Invalid format');
             return;
         }
 
-        $json = json_encode($data, JSON_THROW_ON_ERROR);
+        $localPath = $exporter->createFile($blog);
         $path = 'exports/' . $blog->getId() . '/' . date('Y-m-d') . '-' . $export->getId() . '.json';
 
         try {
-            $this->filesystem->write($path, $json);
+            $stream = fopen($localPath, 'r');
+            if ($stream === false) {
+                throw new \RuntimeException("Unable to open exported file: {$localPath}");
+            }
+            $this->filesystem->writeStream($path, $stream);
         } catch (FilesystemException $e) {
             $this->fail($export, 'Failed to upload file to storage: ' . $e->getMessage());
             return;
+        } finally {
+            unlink($localPath);
         }
 
         $url = $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/api/media/' . $path;
