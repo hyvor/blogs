@@ -71,12 +71,17 @@ class TagService
 
         if ($search !== null && $search !== '') {
             $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-            $searchLike = str_replace('%', '', $search) . '%';
+            $searchLike = strtolower(str_replace('%', '', $search)) . '%';
 
             // separate join alias from the eager-loading 'tv' join above, so filtering
             // on the primary language variant doesn't drop the other language variants
             // from the hydrated collection
-            $qb->join('t.variants', 'search_tv', 'WITH', 'search_tv.language = :searchLanguage AND search_tv.name LIKE :search')
+            $qb->join(
+                't.variants',
+                'search_tv',
+                'WITH',
+                'search_tv.language = :searchLanguage AND LOWER(search_tv.name) LIKE :search'
+            )
                 ->setParameter('searchLanguage', $primaryLanguage)
                 ->setParameter('search', $searchLike);
         }
