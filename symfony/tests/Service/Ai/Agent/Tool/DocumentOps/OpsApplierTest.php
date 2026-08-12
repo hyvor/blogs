@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Service\Ai\Agent\Tool\DocumentOps\FetchedDocument;
+use App\Service\Ai\Agent\Tool\DocumentOps\OpDelete;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpInsert;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpReplace;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpReplaceText;
@@ -499,6 +500,77 @@ class OpsApplierTest extends KernelTestCase
                                         ]
                                     ]
                                 ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $newDoc->toArray()
+        );
+    }
+
+    public function test_delete(): void
+    {
+        $doc = $this->nestedNode();
+        $ops = [
+            new OpDelete('p-2')
+        ];
+
+        $fetchedDoc = new FetchedDocument(
+            $doc,
+            ['p-2' => $doc->content->nth(1)->content->first()]
+        );
+
+        $opsApplier = new OpsApplier();
+        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+
+        $this->assertSame(
+            [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Hello, world!'
+                            ]
+                        ]
+                    ],
+                    [
+                        'type' => 'blockquote',
+                    ]
+                ]
+            ],
+            $newDoc->toArray()
+        );
+    }
+
+    public function test_delete_unknown_node_id_is_noop(): void
+    {
+        $doc = $this->basicNode();
+        $ops = [
+            new OpDelete('p-99')
+        ];
+
+        $fetchedDoc = new FetchedDocument(
+            $doc,
+            ['p-1' => $doc->content->first()]
+        );
+
+        $opsApplier = new OpsApplier();
+        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+
+        $this->assertSame(
+            [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Hello, world!'
                             ]
                         ]
                     ]

@@ -20,6 +20,7 @@ class OpsApplier
                 $op instanceof OpReplace => $this->applyReplace($fetchedDocument, $op),
                 $op instanceof OpInsert => $this->applyInsert($fetchedDocument, $op),
                 $op instanceof OpReplaceText => $this->applyReplaceText($fetchedDocument, $op),
+                $op instanceof OpDelete => $this->applyDelete($fetchedDocument, $op),
             };
         }
 
@@ -82,6 +83,33 @@ class OpsApplier
                 } else {
                     array_splice($allNodes, $index + 1, 0, $newNodes);
                 }
+                break;
+            }
+        }
+
+        $fragment->setNodes($allNodes);
+    }
+
+    private function applyDelete(FetchedDocument $fetchedDocument, OpDelete $op): void
+    {
+        $nodeIdMap = $fetchedDocument->getNodeIdMap();
+        $document = $fetchedDocument->getDocument();
+
+        if (!isset($nodeIdMap[$op->nodeId])) {
+            return; // Node ID not found, skip this operation
+        }
+
+        $nodeToDelete = $nodeIdMap[$op->nodeId];
+        $fragment = $this->findParentFragment($document, $nodeToDelete);
+
+        if ($fragment === null) {
+            return;
+        }
+
+        $allNodes = $fragment->all();
+        foreach ($allNodes as $index => $node) {
+            if ($node === $nodeToDelete) {
+                array_splice($allNodes, $index, 1);
                 break;
             }
         }

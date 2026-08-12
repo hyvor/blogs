@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Api\Console\Input\Tag;
+namespace App\Api\Console\Input\Ai;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchTagsInput
+class AgentPromptInput
 {
     #[Assert\NotBlank]
-    public string $search;
+    public string $prompt;
 }

@@ -42,7 +42,11 @@
 {/if}
 
 {#if compare}
-	<Compare onclose={() => (compare = false)} />
+	<Compare
+		leftContent={$postVariantStore.content!}
+		rightContent={$postVariantStore.content_unsaved || $postVariantStore.content!}
+		onclose={() => (compare = false)}
+	/>
 {/if}
 
 <style>
