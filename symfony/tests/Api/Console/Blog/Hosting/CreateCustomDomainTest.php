@@ -7,7 +7,7 @@ use App\Api\Console\Object\CustomDomainObject;
 use App\Entity\CustomDomain;
 use App\Entity\Enum\CustomDomainStatus;
 use App\Entity\Enum\UserStatus;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;

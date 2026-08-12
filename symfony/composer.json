@@ -43,7 +43,8 @@
         "symfony/uid": "8.1.*",
         "symfony/yaml": "8.1.*",
         "twig/intl-extra": "^3.26",
-        "twig/string-extra": "^3.24"
+        "twig/string-extra": "^3.24",
+        "zenstruck/messenger-monitor-bundle": "^0.6.0"
     },
     "config": {
         "allow-plugins": {

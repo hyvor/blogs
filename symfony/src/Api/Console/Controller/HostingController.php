@@ -14,12 +14,12 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainStatus;
 use App\Service\AppConfig;
-use App\Service\Blog\Hosting\HostingChangeService;
-use App\Service\CustomDomain\Acme\AcmeException;
-use App\Service\CustomDomain\CustomDomainService;
-use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
-use App\Service\CustomDomain\Exception\InternalCustomDomainVerificationException;
-use App\Service\CustomDomain\InternalCustomDomainVerificationService;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
+use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
+use App\Service\Hosting\Exception\PendingHostingChangeException;
+use App\Service\Hosting\HostingChangeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -64,7 +64,7 @@ class HostingController extends AbstractController
 
     #[Route('/hosting', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function updateHostingAt(
+    public function changeHostingAt(
         #[MapRequestPayload] UpdateHostingInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
@@ -88,7 +88,7 @@ class HostingController extends AbstractController
         }
 
         try {
-            $this->hostingChangeService->requestHostingChange($blog, $hostingAt, $hostingUrl);
+            $this->hostingChangeService->startHostingChange($blog, $hostingAt, $hostingUrl);
         } catch (PendingHostingChangeException) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }

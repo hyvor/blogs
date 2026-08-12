@@ -3,10 +3,10 @@
 namespace App\Api\Delivery;
 
 use App\Service\AppConfig;
-use App\Service\CustomDomain\Acme\AcmeClient;
-use App\Service\CustomDomain\CustomDomainService;
-use App\Service\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Delivery\DeliveryService;
+use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -7,13 +7,13 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
-use App\Service\Blog\Hosting\Exception\PendingHostingChangeException;
-use App\Service\Blog\Hosting\HostingChangeService;
 use App\Service\Cache\BlogCacheService;
 use App\Service\Cache\ClearCacheListener;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
+use App\Service\Hosting\Exception\PendingHostingChangeException;
+use App\Service\Hosting\HostingChangeService;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
@@ -43,10 +43,10 @@ use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\NavigationFactory;
 use App\Tests\Factory\NavigationVariantFactory;
-use App\Tests\Factory\RedirectFactory;
-use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\RedirectFactory;
+use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
@@ -156,7 +156,7 @@ class ClearCacheListenerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $hostingChangeService = $this->getService(HostingChangeService::class);
-        $hostingChange = $hostingChangeService->requestHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
 
         $this->dispatch(new BlogHostingChangedEvent($hostingChange));
 

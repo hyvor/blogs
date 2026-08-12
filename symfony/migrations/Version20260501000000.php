@@ -11,7 +11,7 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs)';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post';
     }
 
     public function up(Schema $schema): void
@@ -62,11 +62,8 @@ final class Version20260501000000 extends AbstractMigration
 
 
         // Custom Domain ====
-        $this->addSql(
-            <<<SQL
-                CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');
-            SQL
-        );
+        $this->addSql("CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');");
+        $this->addSql("CREATE TYPE custom_domain_tls_provider AS ENUM ('auto', 'custom');");
         $this->addSql(
             <<<SQL
             CREATE TABLE custom_domains (
@@ -75,6 +72,7 @@ final class Version20260501000000 extends AbstractMigration
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
                 status custom_domain_status NOT NULL DEFAULT 'pending',
+                tls_provider custom_domain_tls_provider NOT NULL DEFAULT 'auto',
                 domain TEXT NOT NULL UNIQUE,
                 private_key_encrypted TEXT,
                 certificate TEXT,
@@ -104,11 +102,11 @@ final class Version20260501000000 extends AbstractMigration
                 from_at blog_hosting_at NOT NULL,
                 from_subdomain TEXT,
                 from_domain TEXT,
-                from_url TEXT,
+                from_url TEXT NOT NULL,
                 to_at blog_hosting_at NOT NULL,
                 to_subdomain TEXT,
                 to_domain TEXT,
-                to_url TEXT,
+                to_url TEXT NOT NULL,
                 status hosting_change_status NOT NULL DEFAULT 'changing',
                 error_message TEXT,
                 retry_count INTEGER NOT NULL DEFAULT 0
@@ -179,6 +177,45 @@ final class Version20260501000000 extends AbstractMigration
             item_time int4 NOT NULL
         );
         SQL);
+
+        // for zenstruct/messenger-monitor-bundle
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE messenger_processed_messages (
+                id SERIAL PRIMARY KEY,
+                run_id INT NOT NULL,
+                attempt INT NOT NULL DEFAULT 1,
+                message_type VARCHAR(255) NOT NULL,
+                description TEXT,
+                dispatched_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                received_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                finished_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                memory_usage INT NOT NULL,
+                transport VARCHAR(100) NOT NULL,
+                tags TEXT,
+                wait_time INT NOT NULL,
+                handle_time INT NOT NULL,
+                failure_type VARCHAR(255),
+                failure_message TEXT,
+                results JSONB
+            );
+            SQL
+        );
+
+        // hyvor post
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE integrations_hyvor_post (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT NOW(),
+                updated_at timestamptz NOT NULL DEFAULT NOW(),
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
+                newsletter_id BIGINT NOT NULL UNIQUE,
+                embed_code TEXT,
+                created_by_blogs BOOLEAN NOT NULL DEFAULT true
+            );
+            SQL
+        );
     }
 
     public function down(Schema $schema): void {}

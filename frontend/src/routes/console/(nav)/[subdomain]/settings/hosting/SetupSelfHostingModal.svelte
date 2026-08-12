@@ -48,15 +48,16 @@
 		}
 
 		loading = true;
-		const toastId = toast.loading('Saving self-hosting settings...');
 
 		try {
 			const updates = await updateHostedAt('self', urlTrimmed);
 			updateHostingInfoStore(updates);
-			toast.success('Self-hosting configuration saved successfully!', { id: toastId });
+			toast.success(
+				'We are changing your hosting to self-hosting. It may take a few minutes to complete.'
+			);
 			show = false;
 		} catch (err: any) {
-			toast.error(err.message || 'Failed to save hosting URL', { id: toastId });
+			toast.error(err.message || 'Failed to save hosting URL');
 		} finally {
 			loading = false;
 		}

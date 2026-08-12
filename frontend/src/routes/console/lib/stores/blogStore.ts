@@ -73,7 +73,7 @@ export function updateHostingInfoStore(updates: HostingInfo) {
 	blogStore.update((blog) => ({
 		...blog,
 		hosting_at: updates.hosting_at,
-		hosting_domain: updates.custom_domain_setup?.domain ?? null,
+		hosting_domain: updates.custom_domain?.domain ?? null,
 		hosting_url: updates.hosting_url ?? null
 	}));
 	hostingInfoStore.set(updates);
