@@ -1,6 +1,4 @@
 <script lang="ts">
-	import videoReviewPoster from '$lib/img/testimonials/video-review-poster.jpg';
-
 	interface TextReview {
 		type: 'text';
 		name: string;
@@ -30,8 +28,7 @@
 		{
 			type: 'video',
 			name: 'Video testimonial',
-			role: 'Coming soon',
-			posterUrl: videoReviewPoster
+			role: 'Coming soon'
 		},
 		{
 			type: 'text',
