@@ -136,7 +136,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new TextDelta(' world'),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Say hello'));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', 42));
 
         $this->assertSame(
             ['post_variant', 'text', 'text', 'done'],
@@ -147,6 +147,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $conversations = $conversationRepo->findBy(['blog' => $blog]);
         $this->assertCount(1, $conversations);
         $conversation = $conversations[0];
+
+        $this->assertSame(42, $conversation->getCreatedUserId());
+        $this->assertSame('Say hello', $conversation->getTitle());
 
         $messageRepo = $this->getEm()->getRepository(AiMessage::class);
         $messages = $messageRepo->findBy(['conversation' => $conversation], ['id' => 'ASC']);
@@ -165,10 +168,11 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertSame(AiMessageChunkType::TEXT, $userChunks[0]->getType());
         $this->assertSame('Say hello', $userChunks[0]->getContent());
 
+        // consecutive TextDelta chunks are merged into a single row
         $assistantChunks = $chunkRepo->findBy(['message' => $messages[1]], ['id' => 'ASC']);
-        $this->assertCount(2, $assistantChunks);
-        $this->assertSame('Hello', $assistantChunks[0]->getContent());
-        $this->assertSame(' world', $assistantChunks[1]->getContent());
+        $this->assertCount(1, $assistantChunks);
+        $this->assertSame(AiMessageChunkType::TEXT, $assistantChunks[0]->getType());
+        $this->assertSame('Hello world', $assistantChunks[0]->getContent());
     }
 
     public function test_persists_thinking_done_event_but_not_thinking_started(): void
@@ -182,7 +186,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new TextDelta('done'),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Think about it'));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Think about it', 42));
 
         // thinking_started is sent to the frontend, even though it's never persisted
         $this->assertSame(
@@ -199,7 +203,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $this->assertCount(3, $chunks);
 
-        $this->assertSame(AiMessageChunkType::TEXT, $chunks[0]->getType());
+        $this->assertSame(AiMessageChunkType::THINKING, $chunks[0]->getType());
         $this->assertSame('reasoning about it...', $chunks[0]->getContent());
 
         $this->assertSame(AiMessageChunkType::EVENT, $chunks[1]->getType());
@@ -222,12 +226,23 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new ToolCallComplete([new ToolCall('call-1', 'document_replace', $arguments)]),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post'));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', 42));
 
+        // the same typed event that gets persisted is now streamed to the frontend too,
+        // instead of a generic 'tool_result' array
         $this->assertSame(
-            ['post_variant', 'tool_call', 'tool_result', 'done'],
+            ['post_variant', 'tool_call', 'post_variant_edit_suggested', 'done'],
             array_column($events, 'type'),
         );
+
+        $expectedPayload = [
+            'type' => 'post_variant_edit_suggested',
+            'post_variant_id' => $postVariant->getId(),
+            'operation' => 'replace',
+            'arguments' => $arguments,
+        ];
+
+        $this->assertSame($expectedPayload, $events[2]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -239,12 +254,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertCount(1, $chunks);
         $this->assertSame(AiMessageChunkType::EVENT, $chunks[0]->getType());
         $this->assertSame('post_variant_edit_suggested', $chunks[0]->getContent());
-        $this->assertSame([
-            'type' => 'post_variant_edit_suggested',
-            'post_variant_id' => $postVariant->getId(),
-            'operation' => 'replace',
-            'arguments' => $arguments,
-        ], $chunks[0]->getEventPayload());
+        $this->assertSame($expectedPayload, $chunks[0]->getEventPayload());
     }
 
     public function test_ignores_tool_calls_with_no_matching_event(): void
@@ -257,7 +267,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new ToolCallComplete([new ToolCall('call-1', 'some_unmapped_tool', [])]),
         ]);
 
-        iterator_to_array($service->streamPrompt($blog, 'Do something'));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Do something', 42));
+
+        // still notifies the frontend via a generic fallback event, just doesn't persist it
+        $this->assertSame(
+            ['post_variant', 'tool_call', 'tool_result', 'done'],
+            array_column($events, 'type'),
+        );
+        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[2]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -267,6 +284,38 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findBy(['message' => $assistantMessage]);
 
         $this->assertCount(0, $chunks);
+    }
+
+    public function test_starts_a_new_chunk_after_a_break_instead_of_merging(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $arguments = ['postVariantId' => $postVariant->getId()];
+
+        $service = $this->buildService($postVariant, [
+            new TextDelta('Before.'),
+            new ToolCallStart('call-1', 'document_get'),
+            new ToolCallComplete([new ToolCall('call-1', 'document_get', $arguments)]),
+            new TextDelta('After.'),
+        ]);
+
+        iterator_to_array($service->streamPrompt($blog, 'Read then continue', 42));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+
+        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
+            ->findBy(['message' => $assistantMessage], ['id' => 'ASC']);
+
+        $this->assertCount(3, $chunks);
+        $this->assertSame(AiMessageChunkType::TEXT, $chunks[0]->getType());
+        $this->assertSame('Before.', $chunks[0]->getContent());
+        $this->assertSame(AiMessageChunkType::EVENT, $chunks[1]->getType());
+        $this->assertSame('post_variant_read', $chunks[1]->getContent());
+        $this->assertSame(AiMessageChunkType::TEXT, $chunks[2]->getType());
+        $this->assertSame('After.', $chunks[2]->getContent());
     }
 
     public function test_yields_document_change_when_ops_were_made(): void
@@ -284,7 +333,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $service = $this->buildService($postVariant, [new TextDelta('ok')], $documentOpsTool);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Change it'));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Change it', 42));
 
         $this->assertSame(
             ['post_variant', 'text', 'document_change', 'done'],

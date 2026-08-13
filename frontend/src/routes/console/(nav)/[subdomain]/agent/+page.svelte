@@ -131,7 +131,7 @@
 									<Loader size="small" />
 								{/if}
 							{:else}
-								<AgentSteps {blocks} />
+								<AgentSteps {blocks} {postVariant} />
 
 								{#if finalText}
 									<div class="message-html">

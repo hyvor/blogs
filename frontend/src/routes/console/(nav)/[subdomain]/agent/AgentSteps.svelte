@@ -4,13 +4,16 @@
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import IconWrench from '@hyvor/icons/IconWrench';
 	import IconCheck from '@hyvor/icons/IconCheck';
-	import type { AgentBlock } from './agentApi';
+	import IconEye from '@hyvor/icons/IconEye';
+	import IconPencil from '@hyvor/icons/IconPencil';
+	import type { AgentBlock, AgentPostVariant } from './agentApi';
 
 	interface Props {
 		blocks: AgentBlock[];
+		postVariant?: AgentPostVariant | null;
 	}
 
-	let { blocks }: Props = $props();
+	let { blocks, postVariant = null }: Props = $props();
 
 	// tracks user-toggled thinking blocks, keyed by block index
 	let openThinking: Record<number, boolean> = $state({});
@@ -54,6 +57,26 @@
 					<Loader size="small" />
 				{:else}
 					<span class="tool-done"><IconCheck size={13} /></span>
+				{/if}
+			</div>
+		{:else if block.type === 'variant_activity'}
+			<div class="step variant-activity-step">
+				<span class="variant-title"
+					>{postVariant && postVariant.id === block.postVariantId
+						? postVariant.title || 'Untitled post'
+						: 'Post'}</span
+				>
+				{#if block.reads > 0}
+					<span class="variant-activity-icon" title="Read by the agent">
+						<IconEye size={13} />
+						{#if block.reads > 1}<span class="variant-activity-count">{block.reads}</span>{/if}
+					</span>
+				{/if}
+				{#if block.edits > 0}
+					<span class="variant-activity-icon" title="Edits suggested by the agent">
+						<IconPencil size={13} />
+						{#if block.edits > 1}<span class="variant-activity-count">{block.edits}</span>{/if}
+					</span>
 				{/if}
 			</div>
 		{/if}
@@ -118,5 +141,30 @@
 	.tool-step .tool-done {
 		display: inline-flex;
 		color: var(--green);
+	}
+
+	.variant-activity-step {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.variant-title {
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.variant-activity-icon {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+		flex-shrink: 0;
+	}
+
+	.variant-activity-count {
+		font-size: 11px;
+		font-weight: 600;
 	}
 </style>

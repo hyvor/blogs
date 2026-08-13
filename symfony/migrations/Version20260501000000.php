@@ -179,7 +179,7 @@ final class Version20260501000000 extends AbstractMigration
         $this->addSql('DROP TABLE gpt_prompts');
 
         $this->addSql("CREATE TYPE ai_message_role AS ENUM ('user', 'assistant')");
-        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'event')");
+        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'thinking', 'event')");
 
         $this->addSql(
             <<<SQL

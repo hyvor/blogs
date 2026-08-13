@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
-import { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
+import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
 import type { PostVariant } from '../../../lib/types';
 
 export type AgentPostVariant = PostVariant & {
@@ -10,10 +10,21 @@ export type AgentPostVariant = PostVariant & {
 
 export type AgentEvent =
 	| { type: 'post_variant'; post_variant: AgentPostVariant }
+	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }
 	| { type: 'thinking_done' }
 	| { type: 'tool_call'; tool: string }
-	| { type: 'tool_result'; status: string }
+	| { type: 'tool_result'; tool: string }
+	| { type: 'post_variant_read'; post_variant_id: number }
+	| {
+			type: 'post_variant_edit_suggested';
+			post_variant_id: number;
+			operation: string;
+			arguments: Record<string, unknown>;
+	  }
+	| ({ type: 'get_tags' } & Record<string, unknown>)
+	| ({ type: 'get_authors' } & Record<string, unknown>)
+	| ({ type: 'get_post_variants' } & Record<string, unknown>)
 	| { type: 'text'; content: string }
 	| { type: 'document_change'; post_variant_id: number; content: string }
 	| { type: 'done' };
@@ -21,16 +32,84 @@ export type AgentEvent =
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
 	| { type: 'tool'; name: string; status: 'running' | 'done' }
-	| { type: 'text'; content: string };
+	| { type: 'text'; content: string }
+	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
 export interface DocumentChange {
 	postVariantId: number;
 	content: string;
 }
 
+export interface AgentConversationListItem {
+	id: number;
+	created_at: number;
+	title: string | null;
+	user_id: number | null;
+}
+
+export interface AgentConversationUser {
+	id: number;
+	name: string;
+	picture_url: string | null;
+	username: string | null;
+}
+
+export interface AgentConversationsResponse {
+	conversations: AgentConversationListItem[];
+	users: Record<string, AgentConversationUser>;
+}
+
+export function getAgentConversations(limit = 50, offset = 0) {
+	return consoleApi.get<AgentConversationsResponse>({
+		endpoint: '/ai/conversations',
+		data: { limit, offset }
+	});
+}
+
+function markLastRunningToolDone(blocks: AgentBlock[]) {
+	for (let i = blocks.length - 1; i >= 0; i--) {
+		const block = blocks[i];
+		if (block && block.type === 'tool' && block.status === 'running') {
+			block.status = 'done';
+			return;
+		}
+	}
+}
+
+// removes the generic "running tool" step once we know it was a post-variant read/edit,
+// since that activity gets its own grouped block instead
+function removeLastRunningTool(blocks: AgentBlock[]) {
+	for (let i = blocks.length - 1; i >= 0; i--) {
+		const block = blocks[i];
+		if (block && block.type === 'tool' && block.status === 'running') {
+			blocks.splice(i, 1);
+			return;
+		}
+	}
+}
+
+function trackVariantActivity(blocks: AgentBlock[], postVariantId: number, kind: 'read' | 'edit') {
+	let activity = blocks.find(
+		(b): b is Extract<AgentBlock, { type: 'variant_activity' }> =>
+			b.type === 'variant_activity' && b.postVariantId === postVariantId
+	);
+
+	if (!activity) {
+		activity = { type: 'variant_activity', postVariantId, reads: 0, edits: 0 };
+		blocks.push(activity);
+	}
+
+	if (kind === 'read') {
+		activity.reads += 1;
+	} else {
+		activity.edits += 1;
+	}
+}
+
 /**
  * Folds a single SSE event from the agent stream into the turn's block list,
- * merging consecutive deltas of the same kind (thinking/text) into one block.
+ * merging consecutive deltas of the same kind (thinking/text) into one block, and
+ * grouping post-variant read/edit activity by post variant into one block.
  */
 export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 	const last = blocks[blocks.length - 1];
@@ -55,13 +134,23 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 			break;
 
 		case 'tool_result':
-			for (let i = blocks.length - 1; i >= 0; i--) {
-				const block = blocks[i];
-				if (block && block.type === 'tool' && block.status === 'running') {
-					block.status = 'done';
-					break;
-				}
-			}
+			markLastRunningToolDone(blocks);
+			break;
+
+		case 'post_variant_read':
+			removeLastRunningTool(blocks);
+			trackVariantActivity(blocks, event.post_variant_id, 'read');
+			break;
+
+		case 'post_variant_edit_suggested':
+			removeLastRunningTool(blocks);
+			trackVariantActivity(blocks, event.post_variant_id, 'edit');
+			break;
+
+		case 'get_tags':
+		case 'get_authors':
+		case 'get_post_variants':
+			markLastRunningToolDone(blocks);
 			break;
 
 		case 'text':
