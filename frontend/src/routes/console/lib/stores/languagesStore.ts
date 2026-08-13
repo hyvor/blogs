@@ -12,6 +12,10 @@ export function getPrimaryLanguage() {
 	return get(languagesStore).find((l) => l.is_primary)!;
 }
 
+export function getLanguageByCode(code: string) {
+	return get(languagesStore).find((l) => l.code === code) || null;
+}
+
 export function languageStoreAdd(lang: Language) {
 	languagesStore.update((langs) => [...langs, lang]);
 }

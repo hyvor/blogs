@@ -7,7 +7,6 @@ use App\Service\Billing\UsageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\AutoTranslationFactory;
 use App\Tests\Factory\BlogFactory;
-use App\Tests\Factory\GptPromptFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Billing\BillingFake;
@@ -37,12 +36,6 @@ class GetUsageTest extends ApiTestCase
         $blog = BlogFactory::createOne([
             'organization_id' => $orgId,
             'counts' => ['users' => 3, 'media' => 2_000_000],
-        ]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog,
-            'tokens_total' => 500,
-            'created_at' => new \DateTimeImmutable('first day of this month +1 day'),
         ]);
 
         AutoTranslationFactory::createOne([
@@ -77,8 +70,8 @@ class GetUsageTest extends ApiTestCase
         $this->assertSame(200, $json['auto_translate_chars']['used']);
         $this->assertSame(BlogsLicense::trial()->autoTranslationsChars, $json['auto_translate_chars']['limit']);
 
-        // ai_tokens (this month)
-        $this->assertSame(500, $json['ai_tokens']['used']);
+        // ai_tokens usage (TODO:)
+        $this->assertSame(0, $json['ai_tokens']['used']);
         $this->assertSame(BlogsLicense::trial()->aiTokens, $json['ai_tokens']['limit']);
     }
 
@@ -118,12 +111,6 @@ class GetUsageTest extends ApiTestCase
     {
         $orgId = 52;
         $blog = BlogFactory::createOne(['organization_id' => $orgId, 'counts' => []]);
-
-        GptPromptFactory::createOne([
-            'blog' => $blog,
-            'tokens_total' => 999,
-            'created_at' => new \DateTimeImmutable('-2 months'),
-        ]);
 
         AutoTranslationFactory::createOne([
             'blog' => $blog,

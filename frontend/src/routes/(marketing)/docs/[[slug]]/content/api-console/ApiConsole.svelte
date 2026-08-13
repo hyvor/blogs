@@ -368,8 +368,7 @@ type Response = {}
 <h3 id="tags">Tags</h3>
 <p>Endpoints:</p>
 <ul>
-	<li><code>GET /tags</code> - Get tags</li>
-	<li><code>GET /tags/search</code> - Search tags</li>
+	<li><code>GET /tags</code> - Get or search tags</li>
 	<li><code>POST /tag</code> - Create a tag</li>
 	<li><code>PATCH /tag/{`{id}`}</code> - Update a tag</li>
 	<li><code>DELETE /tag/{`{id}`}</code> - Delete a tag</li>
@@ -384,7 +383,8 @@ type Response = {}
 	<li><a href="/docs/api-console#tag-variant-object">TagVariant</a></li>
 </ul>
 
-<h4 id="get-tags">Get tags</h4>
+<h4 id="get-tags">Get or search tags</h4>
+<p>Lists tags, optionally searching by name (primary language).</p>
 <p><code>GET /tags</code></p>
 <CodeBlock
 	language="ts"
@@ -392,19 +392,7 @@ type Response = {}
 type Request = {
     limit?: number, // default 50, max 100
     offset?: number,
-}
-type Response = Tag[]
-`}
-/>
-
-<h4 id="search-tags">Search tags</h4>
-<p>Searches for tags by name (primary language).</p>
-<p><code>GET /tags/search</code></p>
-<CodeBlock
-	language="ts"
-	code={`
-type Request = {
-    search: string,
+    search?: string, // filters tags by name (primary language)
 }
 type Response = Tag[]
 `}
@@ -1403,13 +1391,23 @@ interface Post {
     code_head: string | null,
     code_foot: string | null,
 
-    variants: PostVariant[],
+    variant_statuses: {
+        id: number,
+        language_id: number,
+        status: 'draft' | 'published' | 'scheduled'
+    }[],
 
     tags: Tag[],
     authors: User[]
 }
 `}
 />
+<p>
+	<code>variant_statuses</code> only tells you which languages a post has and their status. Fetch
+	<code>GET /post/{`{id}`}?variant_language_code=...</code> to get the full
+	<a href="/docs/api-console#post-variant-object">PostVariant</a> object (content, title, SEO fields, etc.)
+	for a single language.
+</p>
 
 <h3 id="post-variant-object">PostVariant Object</h3>
 <CodeBlock
@@ -1437,7 +1435,7 @@ interface PostVariant {
 	variant of the requested (or blog's primary) language, and <code>tags</code>/<code>authors</code>
 	are just their primary-language names. <code>seo_score</code> is currently a placeholder and not
 	yet meaningful. Fetch <code>GET /post/{`{id}`}</code> for the full
-	<a href="/docs/api-console#post-object">Post</a> object, including all variants, tags, and authors.
+	<a href="/docs/api-console#post-object">Post</a> object, including tags and authors.
 </p>
 <CodeBlock
 	language="ts"

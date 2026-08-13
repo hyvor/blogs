@@ -9,7 +9,7 @@ use App\Entity\Language;
 use App\Service\Blog\Event\BlogDeletedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,6 +31,11 @@ class BlogService
     public function isSubdomainReserved(string $subdomain): bool
     {
         return in_array($subdomain, ['new', 'billing', 'select'], true);
+    }
+
+    public function getBlogsByOrganizationId(int $organizationId): array
+    {
+        return $this->em->getRepository(Blog::class)->findBy(['organization_id' => $organizationId]);
     }
 
     public function getBlogById(int $id): ?Blog

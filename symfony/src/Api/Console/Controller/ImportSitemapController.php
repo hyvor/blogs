@@ -10,6 +10,7 @@ use App\Api\Console\Input\Import\SitemapTestInput;
 use App\Api\Console\Object\Import\ImportObject;
 use App\Entity\Enum\ImportType;
 use App\Message\ImportMessage;
+use App\Service\AppConfig;
 use App\Service\Import\ImportService;
 use App\Service\Import\Sitemap\PageScraper\PageScraper;
 use App\Service\Import\Sitemap\PageScraper\PageScraperOptions;
@@ -29,6 +30,7 @@ class ImportSitemapController
         private MessageBusInterface $bus,
         private HttpClientInterface $httpClient,
         private PostContentService $postContentService,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -60,7 +62,14 @@ class ImportSitemapController
         $blog = $this->blogAuthListener->getBlog();
         $options = $this->getPageScraperOptions($input->css, $input->slug_exclude);
 
-        $scraper = new PageScraper($blog, $input->url, $options, $this->httpClient, $this->postContentService);
+        $scraper = new PageScraper(
+            $blog,
+            $input->url,
+            $options,
+            $this->httpClient,
+            $this->postContentService,
+            $this->appConfig->getHttpBotUserAgent(),
+        );
         $scraper->scrape();
 
         if ($error = $scraper->getError()) {

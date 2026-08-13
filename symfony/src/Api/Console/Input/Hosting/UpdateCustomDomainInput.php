@@ -2,11 +2,15 @@
 
 namespace App\Api\Console\Input\Hosting;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Enum\CustomDomainTlsProvider;
 
 class UpdateCustomDomainInput
 {
-    #[Assert\NotBlank]
-    #[Assert\Url]
-    public string $domain;
+    public ?string $new_domain = null;
+
+    public ?CustomDomainTlsProvider $tls_provider = null;
+
+    public ?string $tls_private_key = null;
+
+    public ?string $tls_certificate = null;
 }

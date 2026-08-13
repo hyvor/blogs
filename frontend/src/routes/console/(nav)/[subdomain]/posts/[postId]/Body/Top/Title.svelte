@@ -2,7 +2,7 @@
 	import type { FormEventHandler } from 'svelte/elements';
 	import {
 		postEditingStatusStore,
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
@@ -72,7 +72,7 @@
 	});
 
 	let hasChanged = $derived(
-		($postVariantStore.title?.trim() || '') !== ($postOriginalVariantStore.title || '')
+		($postVariantStore.title?.trim() || '') !== ($postVariantOriginalStore.title || '')
 	);
 </script>
 

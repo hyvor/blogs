@@ -28,6 +28,7 @@ final class HostingChangeFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'from_at' => BlogHostingAt::SUBDOMAIN,
+            'from_url' => self::faker()->url(),
             'to_at' => BlogHostingAt::SELF,
             'to_url' => self::faker()->url(),
             'status' => HostingChangeStatus::CHANGING,

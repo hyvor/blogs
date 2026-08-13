@@ -4,7 +4,6 @@ namespace App\Command\Dev;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
-use App\Entity\Enum\CustomDomainStatus;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
 use App\Entity\Enum\UserStatus;
@@ -52,7 +51,7 @@ class DevSeedCommand
 
         $blogConfigs = [
             ['subdomain' => 'test', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
-            ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::DOMAIN, 'custom_domain' => CustomDomainFactory::createOne(['status' => CustomDomainStatus::ACTIVE])],
+            ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::DOMAIN, 'custom_domain' => CustomDomainFactory::createOne()],
             ['subdomain' => 'self', 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://blogs.hyvor.test/blog'],
             ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'http://127.0.0.1:8885'],
         ];

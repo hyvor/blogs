@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\CustomDomainStatus;
+use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Repository\CustomDomainRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,17 +25,17 @@ class CustomDomain
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(enumType: CustomDomainStatus::class)]
-    private CustomDomainStatus $status = CustomDomainStatus::PENDING;
+    #[ORM\Column(enumType: CustomDomainTlsProvider::class)]
+    private CustomDomainTlsProvider $tls_provider = CustomDomainTlsProvider::AUTO;
 
     #[ORM\Column]
     private string $domain;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $private_key_encrypted = null;
+    private ?string $private_key_encrypted = null; # Encrypted PEM
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $certificate = null;
+    private ?string $certificate = null; # PEM
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $valid_from = null;
@@ -87,14 +87,14 @@ class CustomDomain
         return $this;
     }
 
-    public function getStatus(): CustomDomainStatus
+    public function getTlsProvider(): CustomDomainTlsProvider
     {
-        return $this->status;
+        return $this->tls_provider;
     }
 
-    public function setStatus(CustomDomainStatus $status): static
+    public function setTlsProvider(CustomDomainTlsProvider $tls_provider): static
     {
-        $this->status = $status;
+        $this->tls_provider = $tls_provider;
         return $this;
     }
 

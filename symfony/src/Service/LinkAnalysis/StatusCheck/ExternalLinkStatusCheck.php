@@ -3,7 +3,7 @@
 namespace App\Service\LinkAnalysis\StatusCheck;
 
 use App\Entity\Enum\LinkAnalyzerCheckType;
-use App\Service\App\HttpBot;
+use App\Service\AppConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -21,6 +21,7 @@ class ExternalLinkStatusCheck implements LinkStatusCheckInterface
     public function __construct(
         private HttpClientInterface $httpClient,
         private LoggerInterface $logger,
+        private AppConfig $appConfig,
     ) {}
 
     /**
@@ -53,7 +54,7 @@ class ExternalLinkStatusCheck implements LinkStatusCheckInterface
                     'max_redirects' => 0,
                     'timeout' => 5,
                     'max_duration' => 10,
-                    'headers' => ['User-Agent' => HttpBot::USER_AGENT],
+                    'headers' => ['User-Agent' => $this->appConfig->getHttpBotUserAgent()],
                 ]);
             } // @codeCoverageIgnoreStart
             catch (TransportExceptionInterface $e) {

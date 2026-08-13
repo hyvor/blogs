@@ -7,7 +7,6 @@
 	import PublishButton from '../Sidebar/Top/PublishButton.svelte';
 	import UpdateButton from '../Sidebar/Top/PublishedUpdate/UpdateButton.svelte';
 	import PostLanguage from './PostLanguage.svelte';
-	import SaveStatus from './SaveStatus.svelte';
 	import CaretLeft from './CaretLeft.svelte';
 	import { goto } from '$app/navigation';
 
@@ -28,12 +27,10 @@
 	</button>
 
 	<div class="left">
-		<PostStatusTag status={$postVariantStore.status} />
-		<SaveStatus />
+		<PostLanguage />
 	</div>
 
 	<div class="right">
-		<PostLanguage />
 		<PreviewButton />
 		<UnpublishButton />
 		<PublishButton />

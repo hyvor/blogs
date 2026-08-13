@@ -8,62 +8,61 @@
 		toast
 	} from '@hyvor/design/components';
 	import { languagesStore } from '../../../../../lib/stores/languagesStore';
-	import {
-		addPostVariantStore,
-		postLanguageStore,
-		postStore,
-		updatePostEditingStatusValue
-	} from '../../postStore';
+	import { postVariantLanguageStore, postStore, postVariantStore } from '../../postStore';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import type { Language } from '../../../../../lib/types';
 	import { createPostVariant } from '../../postActions';
 	import { goto } from '$app/navigation';
+	import PostStatusTag from '../../PostStatusTag.svelte';
+	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 
 	let showDropdown = $state(false);
-	let isCreatingVariant = $state(false);
+	let creatingLanguageId: number | null = $state(null);
 
-	function handleSelect(lang: Language) {
-		if (lang.id === $postLanguageStore.id) return;
+	async function handleSelect(lang: Language) {
+		if (lang.id === $postVariantLanguageStore.id) return;
 		showDropdown = false;
 
-		// this triggers navigation
-		// which will check for unsaved changes
-		goto('?lang=' + lang.code, { replaceState: true });
+		// create the variant if it doesn't exist
+		if (!getVariantStatus(lang.id)) {
+			creatingLanguageId = lang.id;
 
-		if (getVariantOfLanguage(lang.id)) {
-			// has the variant
-			updatePostEditingStatusValue('languageId', lang.id);
-		} else {
-			// create the variant
-			const toastId = toast.loading(`Creating ${lang.name} variant...`);
-			isCreatingVariant = true;
-
-			createPostVariant($postStore.id, lang.id)
-				.then((res) => {
-					toast.success(`Created ${lang.name} variant`, { id: toastId });
-					addPostVariantStore(res);
-					updatePostEditingStatusValue('languageId', lang.id);
-				})
-				.catch(() => {
-					toast.error(`Failed to create ${lang.name} variant`, { id: toastId });
-				})
-				.finally(() => {
-					isCreatingVariant = false;
-				});
+			try {
+				await createPostVariant($postStore.id, lang.id);
+				creatingLanguageId = null;
+			} catch (error) {
+				toast.error(
+					`Failed to create ${lang.name} variant: ${error instanceof Error ? error.message : String(error)}`
+				);
+				creatingLanguageId = null;
+				return;
+			}
 		}
+
+		// take the user to the variant page
+		goto(consoleUrlWithBlog(`/posts/${$postStore.id}/${lang.code.toLowerCase()}`));
 	}
 
-	function getVariantOfLanguage(languageId: number) {
-		return $postStore.variants.find((variant) => variant.language_id === languageId);
+	function getVariantStatus(languageId: number) {
+		return $postStore.variant_statuses.find((variant) => variant.language_id === languageId)
+			?.status;
 	}
 </script>
 
 {#if $languagesStore.length}
 	<div class="wrap">
-		<Dropdown bind:show={showDropdown} align="end" width={250}>
+		<Dropdown bind:show={showDropdown} align="center" width={250}>
 			{#snippet trigger()}
-				<Button color="input" disabled={isCreatingVariant} size="small">
-					{$postLanguageStore.name}
+				<Button color="input" disabled={creatingLanguageId !== null} size="small">
+					{$postVariantLanguageStore.name}
+
+					&nbsp;
+					<PostStatusTag
+						status={$postVariantStore.status}
+						showIcon={false}
+						size="x-small"
+					/>
+
 					{#snippet end()}
 						<IconCaretDown size={12} />
 					{/snippet}
@@ -75,9 +74,9 @@
 					{#each $languagesStore as language}
 						<ActionListItem
 							on:select={() => handleSelect(language)}
-							disabled={language.id === $postLanguageStore.id}
+							disabled={language.id === $postVariantLanguageStore.id}
 							style="
-                                {language.id === $postLanguageStore.id &&
+                                {language.id === $postVariantLanguageStore.id &&
 								'background-color:var(--accent-light-mid)'}
                             "
 						>
@@ -86,7 +85,9 @@
 							{#snippet end()}
 								<span class="status">
 									<Text small light>
-										{getVariantOfLanguage(language.id)?.status || 'Missing'}
+										{creatingLanguageId === language.id
+											? 'Creating...'
+											: getVariantStatus(language.id) || 'Not created'}
 									</Text>
 								</span>
 							{/snippet}

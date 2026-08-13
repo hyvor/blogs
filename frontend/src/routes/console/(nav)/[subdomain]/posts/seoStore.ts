@@ -1,5 +1,5 @@
 import { derived, get } from 'svelte/store';
-import { postLanguageStore, postVariantStore } from './postStore';
+import { postVariantLanguageStore, postVariantStore } from './postStore';
 import { type Output as SeoOutput, SeoAnalyzer } from '../../../lib/seo/seo-analyzer';
 import type { Blog, Language, PostVariant } from '../../../lib/types';
 import { blogStore } from '../../../lib/stores/blogStore';
@@ -8,8 +8,9 @@ import { getLanguageById } from '../../../lib/actions/languageActions';
 let seoTimeout: null | ReturnType<typeof setTimeout> = null;
 
 export const variantSeoStore = derived(
-	[postVariantStore, blogStore, postLanguageStore],
+	[postVariantStore, blogStore, postVariantLanguageStore],
 	([variant, blog, language], set) => {
+		return; // TODO:
 		if (seoTimeout) {
 			clearTimeout(seoTimeout);
 		}

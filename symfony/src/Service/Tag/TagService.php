@@ -56,7 +56,7 @@ class TagService
     /**
      * @return Tag[]
      */
-    public function getTags(Blog $blog, int $limit, int $offset = 0): array
+    public function getTags(Blog $blog, int $limit, int $offset = 0, ?string $search = null): array
     {
         $qb = $this->em->createQueryBuilder();
         $qb->select('t')
@@ -69,30 +69,17 @@ class TagService
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
-        /** @var Tag[] */
-        return $qb->getQuery()->getResult();
-    }
+        if ($search !== null && $search !== '') {
+            $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+            $searchLike = str_replace('%', '', $search) . '%';
 
-    /**
-     * @return Tag[]
-     */
-    public function searchTags(Blog $blog, string $search, int $limit = 10): array
-    {
-        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-
-        $search = str_replace('%', '', $search) . '%';
-
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('t')
-            ->from(Tag::class, 't')
-            ->join('t.variants', 'tv')
-            ->where('t.blog = :blog')
-            ->andWhere('tv.language = :language')
-            ->andWhere('tv.name LIKE :search')
-            ->setParameter('blog', $blog)
-            ->setParameter('language', $primaryLanguage)
-            ->setParameter('search', $search)
-            ->setMaxResults($limit);
+            // separate join alias from the eager-loading 'tv' join above, so filtering
+            // on the primary language variant doesn't drop the other language variants
+            // from the hydrated collection
+            $qb->join('t.variants', 'search_tv', 'WITH', 'search_tv.language = :searchLanguage AND search_tv.name LIKE :search')
+                ->setParameter('searchLanguage', $primaryLanguage)
+                ->setParameter('search', $searchLike);
+        }
 
         /** @var Tag[] */
         return $qb->getQuery()->getResult();

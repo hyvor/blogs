@@ -2,7 +2,7 @@
 	import UnsavedTag from './UnsavedTag.svelte';
 	import { FormControl, SplitControl, TextInput, Validation } from '@hyvor/design/components';
 	import {
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postStore,
 		postVariantStore,
 		updatePostVariantStore
@@ -47,7 +47,7 @@
 
 		if (!slug) return;
 
-		if (slug === $postOriginalVariantStore.slug) return;
+		if (slug === $postVariantOriginalStore.slug) return;
 
 		loaderState = 'loading';
 
@@ -93,7 +93,10 @@
 		<span>
 			<LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
 
-			<UnsavedTag show={$postVariantStore.slug !== $postOriginalVariantStore.slug} {loaderState} />
+			<UnsavedTag
+				show={$postVariantStore.slug !== $postVariantOriginalStore.slug}
+				{loaderState}
+			/>
 		</span>
 	{/snippet}
 

@@ -7,6 +7,7 @@
 		subtitle: string | Snippet;
 		active: boolean;
 		buttonLabel: string;
+		buttonDisabled?: boolean;
 		onclick: () => void;
 		tag?: {
 			color: 'green' | 'orange' | 'blue' | 'red' | 'default' | 'accent';
@@ -14,7 +15,15 @@
 		} | null;
 	}
 
-	let { title, subtitle, active, buttonLabel, onclick, tag = null }: Props = $props();
+	let {
+		title,
+		subtitle,
+		active,
+		buttonLabel,
+		buttonDisabled = false,
+		onclick,
+		tag = null
+	}: Props = $props();
 </script>
 
 <div class="hosting-option" class:active>
@@ -38,7 +47,9 @@
 	</p>
 
 	<div class="button-wrap">
-		<Button size="small" variant="outline" disabled={active} {onclick}>{buttonLabel}</Button>
+		<Button size="small" variant="outline" disabled={active || buttonDisabled} {onclick}
+			>{buttonLabel}</Button
+		>
 	</div>
 </div>
 

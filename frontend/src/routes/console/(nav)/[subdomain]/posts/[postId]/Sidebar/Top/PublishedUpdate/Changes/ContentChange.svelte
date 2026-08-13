@@ -2,7 +2,7 @@
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
 	import { getWordsCount } from '../../../../../../../../lib/seo/words';
-	import { postLanguageStore } from '../../../../../postStore';
+	import { postVariantLanguageStore } from '../../../../../postStore';
 
 	interface Props {
 		contentOld: string | null;
@@ -16,7 +16,9 @@
 		getDiffWordsCount(getTextFromContent(contentOld), getTextFromContent(contentNew))
 	);
 
-	let totalWords = $derived(getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code));
+	let totalWords = $derived(
+		getWordsCount(getTextFromContent(contentNew), $postVariantLanguageStore.code)
+	);
 </script>
 
 <span>

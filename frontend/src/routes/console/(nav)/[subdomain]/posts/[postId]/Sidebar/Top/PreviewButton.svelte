@@ -2,7 +2,7 @@
 	import { Button, Dropdown } from '@hyvor/design/components';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { blogStore } from '../../../../../../lib/stores/blogStore';
-	import { postLanguageStore, postStore, postVariantStore } from '../../../postStore';
+	import { postVariantLanguageStore, postStore, postVariantStore } from '../../../postStore';
 
 	let showDropdown = $state(false);
 
@@ -11,7 +11,7 @@
 	}
 
 	let previewUrl = $derived(
-		$blogStore.url + '/p/' + $postStore.preview_id + '/' + $postLanguageStore.code
+		$blogStore.url + '/p/' + $postStore.preview_id + '/' + $postVariantLanguageStore.code
 	);
 
 	function handleClick(e: MouseEvent) {

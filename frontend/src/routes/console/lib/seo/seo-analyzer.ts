@@ -1,4 +1,4 @@
-import { Mark, Node } from 'prosemirror-model';
+import { Node } from 'prosemirror-model';
 import { getDocFromContent, getTextFromContent } from '../prosemirror/helpers';
 import { type Link, getLinksFromContent } from '../links/links';
 import { getOccurrencesOfKeywordInContent, getWords, getWordsCount } from './words';

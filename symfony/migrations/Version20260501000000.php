@@ -11,7 +11,7 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs)';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, custom_domain_intents, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post';
     }
 
     public function up(Schema $schema): void
@@ -62,11 +62,7 @@ final class Version20260501000000 extends AbstractMigration
 
 
         // Custom Domain ====
-        $this->addSql(
-            <<<SQL
-                CREATE TYPE custom_domain_status AS ENUM ('pending', 'active');
-            SQL
-        );
+        $this->addSql("CREATE TYPE custom_domain_tls_provider AS ENUM ('auto', 'custom');");
         $this->addSql(
             <<<SQL
             CREATE TABLE custom_domains (
@@ -74,7 +70,7 @@ final class Version20260501000000 extends AbstractMigration
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
-                status custom_domain_status NOT NULL DEFAULT 'pending',
+                tls_provider custom_domain_tls_provider NOT NULL DEFAULT 'auto',
                 domain TEXT NOT NULL UNIQUE,
                 private_key_encrypted TEXT,
                 certificate TEXT,
@@ -84,6 +80,19 @@ final class Version20260501000000 extends AbstractMigration
             SQL
         );
         $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE custom_domain_intents (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL,
+                updated_at timestamptz NOT NULL,
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
+                domain TEXT NOT NULL
+            );
+            SQL
+        );
+        $this->addSql("CREATE INDEX idx_custom_domain_intents_blog_id ON custom_domain_intents(blog_id)");
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');
@@ -104,11 +113,11 @@ final class Version20260501000000 extends AbstractMigration
                 from_at blog_hosting_at NOT NULL,
                 from_subdomain TEXT,
                 from_domain TEXT,
-                from_url TEXT,
+                from_url TEXT NOT NULL,
                 to_at blog_hosting_at NOT NULL,
                 to_subdomain TEXT,
                 to_domain TEXT,
-                to_url TEXT,
+                to_url TEXT NOT NULL,
                 status hosting_change_status NOT NULL DEFAULT 'changing',
                 error_message TEXT,
                 retry_count INTEGER NOT NULL DEFAULT 0
@@ -134,7 +143,6 @@ final class Version20260501000000 extends AbstractMigration
         $this->addSql('ALTER TABLE posts ADD CONSTRAINT posts_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE redirects ADD CONSTRAINT redirects_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE auto_translations ADD CONSTRAINT auto_translations_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE gpt_prompts ADD CONSTRAINT gpt_prompts_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE inter_hyvor_talk_websites ADD CONSTRAINT inter_hyvor_talk_websites_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE link_analyzer_checks ADD CONSTRAINT link_analyzer_checks_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE exports ADD CONSTRAINT exports_blog_id_foreign FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE');
@@ -166,6 +174,55 @@ final class Version20260501000000 extends AbstractMigration
         $this->addSql('ALTER TABLE link_analyzer_links ADD CONSTRAINT link_analyzer_links_post_variant_id_foreign FOREIGN KEY (post_variant_id) REFERENCES post_variants(id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE blog_variants ADD CONSTRAINT blog_variants_language_id_foreign FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE');
 
+        // AI conversations ====
+        // replaces the old gpt_prompts table
+        $this->addSql('DROP TABLE gpt_prompts');
+
+        $this->addSql("CREATE TYPE ai_message_role AS ENUM ('user', 'assistant')");
+        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'thinking', 'event')");
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE ai_conversations (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT NOW(),
+                updated_at timestamptz NOT NULL DEFAULT NOW(),
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
+                title TEXT
+            );
+            SQL
+        );
+        $this->addSql('CREATE INDEX idx_ai_conversations_blog_id ON ai_conversations(blog_id)');
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE ai_messages (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT NOW(),
+                updated_at timestamptz NOT NULL DEFAULT NOW(),
+                conversation_id BIGINT NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
+                role ai_message_role NOT NULL,
+                content TEXT NOT NULL
+            );
+            SQL
+        );
+        $this->addSql('CREATE INDEX idx_ai_messages_conversation_id ON ai_messages(conversation_id)');
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE ai_message_chunks (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT NOW(),
+                updated_at timestamptz NOT NULL DEFAULT NOW(),
+                message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
+                type ai_message_chunk_type NOT NULL,
+                content TEXT NOT NULL,
+                event_payload JSON
+            );
+            SQL
+        );
+        $this->addSql('CREATE INDEX idx_ai_message_chunks_message_id ON ai_message_chunks(message_id)');
+
         // cleanup =============
         $this->addSql('ALTER TABLE blogs DROP COLUMN trial_ends_at');
 
@@ -179,6 +236,45 @@ final class Version20260501000000 extends AbstractMigration
             item_time int4 NOT NULL
         );
         SQL);
+
+        // for zenstruct/messenger-monitor-bundle
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE messenger_processed_messages (
+                id SERIAL PRIMARY KEY,
+                run_id INT NOT NULL,
+                attempt INT NOT NULL DEFAULT 1,
+                message_type VARCHAR(255) NOT NULL,
+                description TEXT,
+                dispatched_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                received_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                finished_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                memory_usage INT NOT NULL,
+                transport VARCHAR(100) NOT NULL,
+                tags TEXT,
+                wait_time INT NOT NULL,
+                handle_time INT NOT NULL,
+                failure_type VARCHAR(255),
+                failure_message TEXT,
+                results JSONB
+            );
+            SQL
+        );
+
+        // hyvor post
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE integrations_hyvor_post (
+                id serial PRIMARY KEY,
+                created_at timestamptz NOT NULL DEFAULT NOW(),
+                updated_at timestamptz NOT NULL DEFAULT NOW(),
+                blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
+                newsletter_id BIGINT NOT NULL UNIQUE,
+                embed_code TEXT,
+                created_by_blogs BOOLEAN NOT NULL DEFAULT true
+            );
+            SQL
+        );
     }
 
     public function down(Schema $schema): void {}

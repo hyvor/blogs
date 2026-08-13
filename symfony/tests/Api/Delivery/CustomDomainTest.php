@@ -4,7 +4,7 @@ namespace App\Tests\Api\Delivery;
 
 use App\Api\Delivery\CustomDomainController;
 use App\Entity\Enum\BlogHostingAt;
-use App\Service\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
