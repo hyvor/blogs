@@ -9,6 +9,7 @@ use App\Entity\LinkAnalyzerCheck;
 use App\Entity\LinkAnalyzerLink;
 use App\Entity\PostVariant;
 use App\Message\LinkAnalysisCheckMessage;
+use App\Service\LinkAnalysis\Exception\LinkAnalysisCheckAlreadyPendingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -157,8 +158,28 @@ class LinkAnalysisService
         return $result;
     }
 
+    /**
+     * @throws LinkAnalysisCheckAlreadyPendingException
+     */
     public function createCheck(Blog $blog): LinkAnalyzerCheck
     {
+        $pending = $this->em->createQueryBuilder()
+            ->select('c')
+            ->from(LinkAnalyzerCheck::class, 'c')
+            ->where('c.blog = :blog')
+            ->andWhere('c.status = :status')
+            ->setParameter('blog', $blog)
+            ->setParameter('status', JobStatus::PENDING)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($pending !== null) {
+            throw new LinkAnalysisCheckAlreadyPendingException(
+                'Link analysis check is already pending for this blog'
+            );
+        }
+
         $check = new LinkAnalyzerCheck();
         $check->setBlog($blog);
         $check->setCreatedAt($this->now());

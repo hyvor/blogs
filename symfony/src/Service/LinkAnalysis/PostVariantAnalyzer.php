@@ -41,7 +41,8 @@ class PostVariantAnalyzer
      */
     public function analyzeVariants(
         array $variants,
-        ?array $urls = null
+        ?array $urls = null,
+        bool $shouldClear = true
     ): array
     {
         $resultsByVariant = [];
@@ -81,7 +82,7 @@ class PostVariantAnalyzer
                 $urls
             );
 
-            $resultsByVariant[$variant->getId()] = $this->finalizeVariant($variant, $results);
+            $resultsByVariant[$variant->getId()] = $this->finalizeVariant($variant, $results, $shouldClear);
         }
 
         return $resultsByVariant;
@@ -94,6 +95,7 @@ class PostVariantAnalyzer
     public function analyzeVariant(
         PostVariant $variant,
         ?array $urls = null,
+        bool $shouldClear = false,
     ): array {
         $variantUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
@@ -107,7 +109,7 @@ class PostVariantAnalyzer
             $resolvedUrls = [$variant->getId() => $resolvedUrls];
         }
 
-        $resultsByVariant = $this->analyzeVariants([$variant], $resolvedUrls);
+        $resultsByVariant = $this->analyzeVariants([$variant], $resolvedUrls, $shouldClear);
 
         return $resultsByVariant[$variant->getId()] ?? [];
     }
@@ -186,7 +188,7 @@ class PostVariantAnalyzer
      * @param AnalyzedLink[] $results
      * @return LinkAnalyzerLink[]
      */
-    private function finalizeVariant(PostVariant $variant, array $results): array
+    private function finalizeVariant(PostVariant $variant, array $results, bool $shouldClear): array
     {
         $ignoredLinksUrls = $this->postVariantLinkService->getIgnoredLinks($variant);
 
@@ -194,7 +196,7 @@ class PostVariantAnalyzer
             $this->blog,
             $variant,
             $results,
-            shouldClear: true,
+            shouldClear: $shouldClear,
             ignoreUrls: $ignoredLinksUrls
         );
 

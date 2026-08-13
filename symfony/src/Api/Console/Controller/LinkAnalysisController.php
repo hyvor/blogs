@@ -13,6 +13,7 @@ use App\Api\Console\Object\LinkAnalysis\CheckObject;
 use App\Api\Console\Object\LinkAnalysis\LinkObjectFactory;
 use App\Entity\Enum\JobStatus;
 use App\Entity\PostVariant;
+use App\Service\LinkAnalysis\Exception\LinkAnalysisCheckAlreadyPendingException;
 use App\Service\LinkAnalysis\LinkAnalysisService;
 use App\Service\LinkAnalysis\PostVariantAnalyzerFactory;
 use App\Service\LinkAnalysis\PostVariantLinkService;
@@ -143,7 +144,11 @@ class LinkAnalysisController
             }
         }
 
-        $check = $this->linkAnalysisService->createCheck($blog);
+        try {
+            $check = $this->linkAnalysisService->createCheck($blog);
+        } catch (LinkAnalysisCheckAlreadyPendingException) {
+            throw new UnprocessableEntityHttpException('A check is already running');
+        }
 
         return new JsonResponse(new CheckObject($check));
     }

@@ -36,6 +36,7 @@
         "symfony/flex": "^2.11",
         "symfony/framework-bundle": "8.1.*",
         "symfony/lock": "8.1.*",
+        "symfony/mailer": "8.1.*",
         "symfony/mime": "8.1.*",
         "symfony/monolog-bundle": "^4.0.2",
         "symfony/process": "8.1.*",
