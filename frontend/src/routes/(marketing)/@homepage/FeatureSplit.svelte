@@ -4,15 +4,23 @@
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import type { Snippet } from 'svelte';
 
+	type ButtonConfig = { href: string; label: string; external?: boolean };
+
 	interface Props {
 		eyebrow: string;
-		title: string;
+		title: string | Snippet;
 		description: string;
 		bullets?: string[];
-		button?: { href: string; label: string } | null;
+		button?: ButtonConfig | ButtonConfig[] | null;
 		flip?: boolean;
 		altBg?: boolean;
-		visual: Snippet;
+		// lets the visual bleed under the text column (e.g. negative margin on the visual)
+		// while keeping the text readable on top of it
+		overlap?: boolean;
+		// when true, bullets become clickable and the active index is passed to `visual`,
+		// so the visual can switch state to match whichever bullet is selected
+		interactiveBullets?: boolean;
+		visual: Snippet<[activeBullet: number]>;
 		after?: Snippet;
 		left?: Snippet;
 	}
@@ -25,41 +33,111 @@
 		button = null,
 		flip = false,
 		altBg = false,
+		overlap = false,
+		interactiveBullets = false,
 		visual,
 		after,
 		left
 	}: Props = $props();
+
+	let inView = $state(false);
+	let activeBullet = $state(0);
+
+	// how long the active bullet's progress bar takes to fill before auto-advancing
+	const AUTO_ADVANCE_MS = 5000;
+
+	$effect(() => {
+		if (!interactiveBullets || !inView || bullets.length <= 1) return;
+		// read explicitly so the effect re-runs (and reschedules) every time
+		// activeBullet changes — from this timer firing, or from a manual click
+		activeBullet;
+		const count = bullets.length;
+		const timer = setTimeout(() => {
+			activeBullet = (activeBullet + 1) % count;
+		}, AUTO_ADVANCE_MS);
+		return () => clearTimeout(timer);
+	});
+
+	function onView(node: HTMLElement, callback: () => void) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0]?.isIntersecting) {
+					callback();
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.25 }
+		);
+		observer.observe(node);
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <section class="feature-section" class:alt-bg={altBg}>
-	<div class="hds-container split" class:flip>
-		<div class="text-col">
+	<div class="hds-container split" class:flip class:overlap>
+		<div class="text-col" class:in-view={inView} use:onView={() => (inView = true)}>
 			{#if left}
 				{@render left()}
 			{:else}
 				<span class="eyebrow">{eyebrow}</span>
-				<h2>{title}</h2>
+				<h2>
+					{#if typeof title === 'string'}
+						{@html title}
+					{:else}
+						{@render title()}
+					{/if}
+				</h2>
 				<p>{description}</p>
 
 				{#if bullets.length}
-					<ul class="bullets">
-						{#each bullets as b}
-							<li><IconCheckCircleFill size={14} />{b}</li>
+					<ul class="bullets" class:interactive={interactiveBullets}>
+						{#each bullets as b, i}
+							<li>
+								{#if interactiveBullets}
+									<button
+										type="button"
+										class="bullet-btn"
+										class:active={activeBullet === i}
+										style="animation-duration: {AUTO_ADVANCE_MS}ms"
+										onclick={() => (activeBullet = i)}
+									>
+										<IconCheckCircleFill size={14} />{b}
+									</button>
+								{:else}
+									<IconCheckCircleFill size={14} />{b}
+								{/if}
+							</li>
 						{/each}
 					</ul>
 				{/if}
 
 				{#if button}
-					<Button as="a" href={button.href} variant="outline" size="small">
-						{button.label}
-						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
-					</Button>
+					{@const buttons = Array.isArray(button) ? button : [button]}
+					<div class="buttons">
+						{#each buttons as b}
+							<Button
+								as="a"
+								href={b.href}
+								target={b.external ? '_blank' : undefined}
+								rel={b.external ? 'noopener' : undefined}
+								variant="outline"
+								size="small"
+							>
+								{b.label}
+								{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
+							</Button>
+						{/each}
+					</div>
 				{/if}
 			{/if}
 		</div>
 
 		<div class="visual-col">
-			{@render visual()}
+			{@render visual(activeBullet)}
 		</div>
 	</div>
 
@@ -73,11 +151,11 @@
 <style>
 	.feature-section {
 		padding: 100px 0;
-		border-bottom: 1px solid var(--border);
+		overflow-x: hidden;
 	}
 
 	.alt-bg {
-		background: color-mix(in srgb, var(--accent) 3%, var(--background));
+		background: color-mix(in srgb, var(--accent) 10%, var(--background));
 	}
 
 	.split {
@@ -94,6 +172,26 @@
 	.visual-col {
 		flex: 1;
 		min-width: 0;
+	}
+
+	.text-col {
+		opacity: 0;
+		transform: translateY(18px);
+		transition:
+			opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.text-col.in-view {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* flex items honor z-index for paint order without needing `position` —
+	   important here, since giving .visual-col its own stacking context would
+	   trap the theme dropdown's position:fixed popup beneath the text column */
+	.split.overlap .text-col {
+		z-index: 2;
 	}
 
 	.eyebrow {
@@ -117,7 +215,7 @@
 	p {
 		font-size: 16px;
 		line-height: 1.7;
-		color: var(--text-light);
+		color: #414141;
 		margin: 0 0 28px;
 		max-width: 440px;
 	}
@@ -133,14 +231,84 @@
 
 	.bullets li {
 		display: flex;
-		align-items: center;
+		/* flex-start, not center — with center, a wrapped second line still
+		   centers independently under the first (inheriting text-align:center
+		   from .text-col on mobile) and the icon centers against the whole
+		   multi-line block instead of sitting with the first line */
+		align-items: flex-start;
 		gap: 10px;
 		font-size: 1rem;
+		text-align: left;
 	}
 
 	.bullets li :global(svg) {
 		color: var(--accent);
 		flex-shrink: 0;
+		/* optically align with the first line's cap-height now that the row
+		   is top- rather than center-aligned */
+		margin-top: 0.3em;
+	}
+
+	.bullet-btn {
+		position: relative;
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		width: 100%;
+		padding: 8px 10px;
+		border: none;
+		border-radius: 20px;
+		background-color: transparent;
+		background-image: linear-gradient(
+			color-mix(in srgb, var(--accent) 14%, transparent),
+			color-mix(in srgb, var(--accent) 14%, transparent)
+		);
+		background-repeat: no-repeat;
+		background-position: left center;
+		background-size: 0% 100%;
+		color: var(--text-light);
+		font: inherit;
+		font-size: 1rem;
+		text-align: left;
+		cursor: pointer;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
+	}
+
+	.bullet-btn:hover {
+		background-color: color-mix(in srgb, var(--text) 4%, transparent);
+	}
+
+	.bullet-btn.active {
+		color: var(--text);
+		font-weight: 600;
+		animation-name: bullet-fill;
+		animation-timing-function: linear;
+		animation-fill-mode: forwards;
+	}
+
+	@keyframes bullet-fill {
+		from {
+			background-size: 0% 100%;
+		}
+		to {
+			background-size: 100% 100%;
+		}
+	}
+
+	.bullets.interactive li :global(svg) {
+		color: var(--text-light);
+	}
+
+	.bullets.interactive li:has(.bullet-btn.active) :global(svg) {
+		color: var(--accent);
+	}
+
+	.buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
 	}
 
 	@media (max-width: 900px) {
@@ -153,7 +321,7 @@
 
 		.text-col {
 			width: 100%;
-			text-align: center;
+			text-align: left;
 		}
 
 		.visual-col {
@@ -162,10 +330,6 @@
 
 		p {
 			max-width: 100%;
-		}
-
-		.bullets {
-			align-items: center;
 		}
 	}
 </style>

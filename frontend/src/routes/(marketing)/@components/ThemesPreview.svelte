@@ -24,9 +24,21 @@
 
 	interface Props {
 		lockScroll?: boolean;
+		// hides the laptop/tablet device switcher (used in the compact homepage preview)
+		hideDeviceToggle?: boolean;
+		// hides the "Open in new tab" link (used in the compact homepage preview)
+		hideOpenInNewTab?: boolean;
+		// hides the "Themes are open-source" / "View Source" footer in the theme
+		// dropdown (used in the compact homepage preview)
+		hideOpenSource?: boolean;
 	}
 
-	let { lockScroll = $bindable(false) }: Props = $props();
+	let {
+		lockScroll = $bindable(false),
+		hideDeviceToggle = false,
+		hideOpenInNewTab = false,
+		hideOpenSource = false
+	}: Props = $props();
 
 	let isLoaded = $state(false);
 	let themes: Theme[] = $state([]);
@@ -40,7 +52,7 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
-		await loadConfig();
+		//await loadConfig();
 		themes = await loadThemes();
 		isLoaded = true;
 
@@ -90,80 +102,90 @@
 {#if isLoaded}
 	<div class="preview hds-box">
 		<div class="navi">
-			<Dropdown bind:show={dropdownOpen} width={220}>
-				{#snippet trigger()}
-					<Button color="input">
-						{#snippet start()}
-							<Text bold>Theme</Text>
-						{/snippet}
+			<div class="left">
+				<Dropdown bind:show={dropdownOpen} width={220}>
+					{#snippet trigger()}
+						<Button color="input">
+							{#snippet start()}
+								<Text bold>Theme</Text>
+							{/snippet}
 
-						<span class="theme-name">{currentTheme?.name}</span>
+							<span class="theme-name">{currentTheme?.name}</span>
 
-						{#snippet end()}
-							<IconCaretDown size={14} />
-						{/snippet}
-					</Button>
-				{/snippet}
-
-				{#snippet content()}
-					<ActionList>
-						{#each [originalThemes, portedThemes] as group, i}
-							<ActionListGroup
-								title={i === 0 ? 'Original' : 'Ported'}
-								divider={i > 0}
-							>
-								{#each group as theme (theme.name)}
-									{#if theme.name !== 'blank'}
-										<ActionListItem
-											on:select={() => selectTheme(theme)}
-											style={currentTheme?.name === theme.name
-												? 'background-color: var(--accent-light-mid)'
-												: ''}
-										>
-											<span class="theme-item-name">{theme.name}</span>
-										</ActionListItem>
-									{/if}
-								{/each}
-							</ActionListGroup>
-						{/each}
-					</ActionList>
-
-					<div class="open-source">
-						<Text small>Themes are open-source</Text>
-						<Button
-							size="small"
-							as="a"
-							href="https://github.com/hyvor/hyvor-blogs-themes"
-							target="_blank"
-						>
-							View Source
 							{#snippet end()}
-								<IconGithub size={14} />
+								<IconCaretDown size={14} />
 							{/snippet}
 						</Button>
-					</div>
-				{/snippet}
-			</Dropdown>
+					{/snippet}
+
+					{#snippet content()}
+						<ActionList>
+							{#each [originalThemes, portedThemes] as group, i}
+								<ActionListGroup
+									title={i === 0 ? 'Original' : 'Ported'}
+									divider={i > 0}
+								>
+									{#each group as theme (theme.name)}
+										{#if theme.name !== 'blank'}
+											<ActionListItem
+												on:select={() => selectTheme(theme)}
+												style={currentTheme?.name === theme.name
+													? 'background-color: var(--accent-light-mid)'
+													: ''}
+											>
+												<span class="theme-item-name">{theme.name}</span>
+											</ActionListItem>
+										{/if}
+									{/each}
+								</ActionListGroup>
+							{/each}
+						</ActionList>
+
+						{#if !hideOpenSource}
+							<div class="open-source">
+								<Text small>Themes are open-source</Text>
+								<Button
+									size="small"
+									as="a"
+									href="https://github.com/hyvor/hyvor-blogs-themes"
+									target="_blank"
+								>
+									View Source
+									{#snippet end()}
+										<IconGithub size={14} />
+									{/snippet}
+								</Button>
+							</div>
+						{/if}
+					{/snippet}
+				</Dropdown>
+			</div>
 
 			<div class="right">
-				<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
-					Open in new tab
-					{#snippet end()}
-						<IconBoxArrowUpRight size={14} />
-					{/snippet}
-				</Link>
+				{#if !hideOpenInNewTab}
+					<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
+						Open in new tab
+						{#snippet end()}
+							<IconBoxArrowUpRight size={14} />
+						{/snippet}
+					</Link>
+				{/if}
 
-				<div class="device-toggle">
-					<IconButton
-						on:click={() => (type = 'laptop')}
-						variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
-					>
+				{#if !hideDeviceToggle}
+					<div class="device-toggle">
+						<IconButton
+							on:click={() => (type = 'laptop')}
+							variant={type == 'laptop' ? 'fill' : 'invisible'}
+							><IconLaptop /></IconButton
+						>
 
-					<IconButton
-						on:click={() => (type = 'tablet')}
-						variant={type == 'tablet' ? 'fill' : 'invisible'}><IconTablet /></IconButton
-					>
-				</div>
+						<IconButton
+							on:click={() => (type = 'tablet')}
+							variant={type == 'tablet' ? 'fill' : 'invisible'}
+							><IconTablet /></IconButton
+						>
+					</div>
+				{/if}
 			</div>
 		</div>
 
@@ -212,6 +234,16 @@
 		justify-content: space-between;
 		gap: 10px;
 		border-bottom: 1px solid var(--border);
+	}
+
+	.left {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		/* keep the theme dropdown (and its popup) above any overlapping page
+		   content — e.g. the fade scrim / text column on the homepage preview */
+		position: relative;
+		z-index: 3;
 	}
 
 	.theme-name {
