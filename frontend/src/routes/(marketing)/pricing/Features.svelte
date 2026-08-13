@@ -122,8 +122,7 @@
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip:
-						'Post link analysis, bi-weekly full-blog link analysis, and email reports.'
+					tooltip: 'Post link analysis, bi-weekly full-blog link analysis, and email reports.'
 				}
 			]
 		},
@@ -147,8 +146,7 @@
 					growth: '100k chars/m',
 					premium: '500k chars/m',
 					enterprise: 'Custom',
-					tooltip:
-						'Automatically translate your posts into multiple languages using DeepL.'
+					tooltip: 'Automatically translate your posts into multiple languages using DeepL.'
 				}
 			]
 		},
@@ -203,8 +201,7 @@
 					growth: '100k credits/m',
 					premium: '250k credits/m',
 					enterprise: 'Custom',
-					tooltip:
-						'Add Hyvor Talk commenting system for free. Credits are used per comment load.'
+					tooltip: 'Add Hyvor Talk commenting system for free. Credits are used per comment load.'
 				},
 				{
 					name: 'Hyvor Post (Newsletter)',

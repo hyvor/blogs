@@ -85,8 +85,7 @@
 				{
 					icon: IconTag,
 					title: 'Tags',
-					description:
-						'Organize your posts with tags. Tag index pages are generated automatically.'
+					description: 'Organize your posts with tags. Tag index pages are generated automatically.'
 				},
 				{
 					icon: IconPeople,
@@ -131,8 +130,7 @@
 				{
 					icon: IconSearchHeart,
 					title: 'SEO',
-					description:
-						'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
+					description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
 				},
 				{
 					icon: IconLightning,
@@ -143,8 +141,7 @@
 				{
 					icon: IconArrowsAngleContract,
 					title: 'Image Optimization',
-					description:
-						'Automatic webp conversion and responsive images for all your images.'
+					description: 'Automatic webp conversion and responsive images for all your images.'
 				}
 			]
 		},
@@ -162,14 +159,12 @@
 				{
 					icon: IconController,
 					title: 'Console API',
-					description:
-						'Everything you can do from the Console, you can do with the Console API.'
+					description: 'Everything you can do from the Console, you can do with the Console API.'
 				},
 				{
 					icon: IconSend,
 					title: 'Delivery API',
-					description:
-						'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
+					description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
 				},
 				{
 					icon: IconSend,

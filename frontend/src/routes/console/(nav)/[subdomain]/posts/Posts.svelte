@@ -138,10 +138,7 @@
 			<IconMessage empty message="No posts found" />
 		{:else}
 			{#each posts as post (post.id)}
-				<PostRow
-					{post}
-					onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))}
-				/>
+				<PostRow {post} onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))} />
 			{/each}
 
 			<div class="load-more-wrap">

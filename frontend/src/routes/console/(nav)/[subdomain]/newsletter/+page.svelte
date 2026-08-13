@@ -15,9 +15,8 @@
 
 {#if $integrationsStore.hyvor_post}
 	<EmbeddedConsole
-		url="{getConfig().hyvor
-			.hyvor_post_url}/console?embedded=true&newsletter_id={$integrationsStore.hyvor_post
-			.newsletter_id}"
+		url="{getConfig().hyvor.hyvor_post_url}/console?embedded=true&newsletter_id={$integrationsStore
+			.hyvor_post.newsletter_id}"
 		title="Hyvor Post Newsletter Console"
 	/>
 {/if}

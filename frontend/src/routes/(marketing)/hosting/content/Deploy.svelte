@@ -117,8 +117,8 @@ S3_USE_PATH_STYLE_ENDPOINT=false</code
 
 <p>
 	<code>TLS_MODE</code> controls how HTTPS is handled for the app domain (<code>DOMAIN_APP</code>).
-	It does not affect custom domains attached to individual blogs, which always get TLS
-	certificates automatically. Set it to one of the following:
+	It does not affect custom domains attached to individual blogs, which always get TLS certificates
+	automatically. Set it to one of the following:
 </p>
 
 <Table columns="120px 1fr" style="bordered">
@@ -140,8 +140,8 @@ S3_USE_PATH_STYLE_ENDPOINT=false</code
 			Blogs that terminates TLS. The container is reached over HTTP only; only port 80 needs to be
 			published. The container does not redirect HTTP to HTTPS itself in this mode &mdash; handle
 			that in your reverse proxy if needed. Make sure your proxy forwards the
-			<code>X-Forwarded-Proto: https</code> and <code>X-Forwarded-For</code> headers, and that its IP
-			is included in <code>TRUSTED_PROXIES</code>.
+			<code>X-Forwarded-Proto: https</code> and <code>X-Forwarded-For</code> headers, and that its
+			IP is included in <code>TRUSTED_PROXIES</code>.
 		</div>
 	</TableRow>
 	<TableRow>

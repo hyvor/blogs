@@ -101,6 +101,6 @@
 <p>
 	Note: Each entry in <code>posts</code> pairs a <strong>Post Object</strong> with a
 	<code>variants</code> array of <strong>PostVariant Objects</strong>, one per language. These
-	variants have an additional <code>content_html</code> property with content converted into HTML,
-	which is not present when fetching variants through the Console API.
+	variants have an additional <code>content_html</code> property with content converted into HTML, which
+	is not present when fetching variants through the Console API.
 </p>

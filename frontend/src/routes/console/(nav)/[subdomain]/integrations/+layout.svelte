@@ -18,8 +18,7 @@
 
 			<NavLink
 				href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-				active={$page.url.pathname ===
-					`/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-talk`}
 			>
 				{#snippet start()}
 					<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk" />
@@ -31,8 +30,7 @@
 			</NavLink>
 			<NavLink
 				href={consoleUrlWithBlog('/integrations/hyvor-post')}
-				active={$page.url.pathname ===
-					`/console/${$blogStore.subdomain}/integrations/hyvor-post`}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations/hyvor-post`}
 			>
 				{#snippet start()}
 					<img src="/img/services/hyvor-post.svg" alt="Hyvor Post" />

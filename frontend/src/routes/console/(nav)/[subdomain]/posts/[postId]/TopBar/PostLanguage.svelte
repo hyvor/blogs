@@ -57,11 +57,7 @@
 					{$postVariantLanguageStore.name}
 
 					&nbsp;
-					<PostStatusTag
-						status={$postVariantStore.status}
-						showIcon={false}
-						size="x-small"
-					/>
+					<PostStatusTag status={$postVariantStore.status} showIcon={false} size="x-small" />
 
 					{#snippet end()}
 						<IconCaretDown size={12} />

@@ -50,6 +50,9 @@
     "hyvor/internal": {
         "version": "4.0.0-beta.12"
     },
+    "nelmio/api-doc-bundle": {
+        "version": "v5.11.1"
+    },
     "php-http/discovery": {
         "version": "1.20",
         "recipe": {

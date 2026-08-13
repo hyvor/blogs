@@ -175,7 +175,10 @@
 		{/if}
 	</div>
 
-	<SetupCustomDomainModal bind:show={showCustomDomainModal} startEditing={customDomainModalStartEditing} />
+	<SetupCustomDomainModal
+		bind:show={showCustomDomainModal}
+		startEditing={customDomainModalStartEditing}
+	/>
 	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
 {/if}
 
