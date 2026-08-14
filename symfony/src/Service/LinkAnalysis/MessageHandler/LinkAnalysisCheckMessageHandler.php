@@ -9,7 +9,7 @@ use App\Entity\LinkAnalyzerCheck;
 use App\Entity\PostVariant;
 use App\Message\LinkAnalysisCheckMessage;
 use App\Service\LinkAnalysis\LinkAnalysisReportMailer;
-use App\Service\LinkAnalysis\PostVariantAnalyzerFactory;
+use App\Service\LinkAnalysis\PostVariantLinkAnalyzerFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -24,7 +24,7 @@ class LinkAnalysisCheckMessageHandler
 
     public function __construct(
         private EntityManagerInterface $em,
-        private PostVariantAnalyzerFactory $postVariantAnalyzerFactory,
+        private PostVariantLinkAnalyzerFactory $postVariantLinkAnalyzerFactory,
         private LinkAnalysisReportMailer $reportMailer,
         private LoggerInterface $logger,
     ) {}
@@ -56,7 +56,7 @@ class LinkAnalysisCheckMessageHandler
     private function runCheck(LinkAnalyzerCheck $check): void
     {
         $blog = $check->getBlog();
-        $analyzer = $this->postVariantAnalyzerFactory->create($blog);
+        $analyzer = $this->postVariantLinkAnalyzerFactory->create($blog);
 
         $postsCount = 0;
         $linksTotalCount = 0;

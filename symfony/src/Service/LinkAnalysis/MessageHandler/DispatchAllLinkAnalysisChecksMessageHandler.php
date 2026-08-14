@@ -3,10 +3,12 @@
 namespace App\Service\LinkAnalysis\MessageHandler;
 
 use App\Entity\Blog;
+use App\Entity\LinkAnalyzerCheck;
 use App\Service\Billing\FailedToGetLicenseException;
 use App\Service\Billing\LicenseService;
 use App\Service\LinkAnalysis\Exception\LinkAnalysisCheckAlreadyPendingException;
 use App\Service\LinkAnalysis\LinkAnalysisService;
+use App\Service\LinkAnalysis\LinkAnalyzerRepository;
 use App\Service\LinkAnalysis\Message\DispatchAllLinkAnalysisChecksMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
@@ -25,14 +27,22 @@ class DispatchAllLinkAnalysisChecksMessageHandler
     public function __construct(
         private EntityManagerInterface $em,
         private LinkAnalysisService $linkAnalysisService,
+        private LinkAnalyzerRepository $linkAnalyzerRepository,
         private LicenseService $licenseService,
         private InternalConfig $internalConfig,
     ) {}
 
     public function __invoke(DispatchAllLinkAnalysisChecksMessage $message): void
     {
-        foreach ($this->getBlogs() as $blog) {
-            if (!$this->isDueForCheck($blog)) {
+        $blogs = $this->getBlogs();
+
+        // one query for the last check of every blog, instead of one query per blog
+        $lastChecksByBlogId = $this->linkAnalyzerRepository->findLastChecksByBlogIds(
+            array_map(fn(Blog $blog) => $blog->getId(), $blogs)
+        );
+
+        foreach ($blogs as $blog) {
+            if (!$this->isDueForCheck($lastChecksByBlogId[$blog->getId()] ?? null)) {
                 continue;
             }
 
@@ -69,10 +79,8 @@ class DispatchAllLinkAnalysisChecksMessageHandler
             ->getResult();
     }
 
-    private function isDueForCheck(Blog $blog): bool
+    private function isDueForCheck(?LinkAnalyzerCheck $lastCheck): bool
     {
-        $lastCheck = $this->linkAnalysisService->getLastCheck($blog);
-
         if ($lastCheck === null) {
             return true;
         }

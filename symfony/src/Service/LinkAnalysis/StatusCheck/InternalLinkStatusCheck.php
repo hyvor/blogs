@@ -5,6 +5,7 @@ namespace App\Service\LinkAnalysis\StatusCheck;
 use App\Entity\Blog;
 use App\Entity\Enum\LinkAnalyzerCheckType;
 use App\Service\Delivery\DeliveryService;
+use App\Service\LinkAnalysis\Dto\StatusResult;
 use App\Service\Route\PermalinkService;
 
 class InternalLinkStatusCheck implements LinkStatusCheckInterface

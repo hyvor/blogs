@@ -2,28 +2,28 @@
 
 namespace App\Service\LinkAnalysis;
 
-
 use App\Entity\Blog;
 use App\Entity\Enum\LinkAnalyzerCheckType;
 use App\Entity\LinkAnalyzerLink;
 use App\Entity\PostVariant;
-use App\Service\LinkAnalysis\StatusCheck\AnalyzedLink;
+use App\Service\LinkAnalysis\Dto\AnalyzedLink;
+use App\Service\LinkAnalysis\Dto\ResolvedUrl;
+use App\Service\LinkAnalysis\Dto\StatusResult;
 use App\Service\LinkAnalysis\StatusCheck\IgnoreReason;
-use App\Service\LinkAnalysis\StatusCheck\StatusResult;
 use App\Service\Post\Content\Marks\Link;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use Hyvor\Phrosemirror\Document\Mark;
 
-class PostVariantAnalyzer
+class PostVariantLinkAnalyzer
 {
     public function __construct(
         private Blog $blog,
         private PermalinkService $permalinkService,
         private RelativeUrlResolver $relativeUrlResolver,
-        private LinkStatusCheckService $linkStatusCheckService,
-        private PostVariantLinkService $postVariantLinkService,
-        private LinkAnalysisService $linkAnalyzeService,
+        private LinkStatusChecker $linkStatusChecker,
+        private LinkAnalyzerRepository $linkAnalyzerRepository,
+        private PostVariantLinkStatusCacheService $postVariantLinkStatusCacheService,
         private PostContentService $postContentService
     )
     {
@@ -54,7 +54,7 @@ class PostVariantAnalyzer
         );
 
         // check HTTP statuses
-        $statuses = $this->linkStatusCheckService->check(
+        $statuses = $this->linkStatusChecker->check(
             array_values(array_unique(array_merge(...$allFinalUrls))),
             $this->blog,
         );
@@ -190,9 +190,9 @@ class PostVariantAnalyzer
      */
     private function finalizeVariant(PostVariant $variant, array $results, bool $shouldClear): array
     {
-        $ignoredLinksUrls = $this->postVariantLinkService->getIgnoredLinks($variant);
+        $ignoredLinksUrls = $this->linkAnalyzerRepository->findIgnoredLinkUrls($variant);
 
-        $links = $this->postVariantLinkService->updateLinksFromResults(
+        $links = $this->linkAnalyzerRepository->syncLinksForVariant(
             $this->blog,
             $variant,
             $results,
@@ -202,9 +202,9 @@ class PostVariantAnalyzer
 
         // TODO: handle OnLinkUpdateEvent
 
-        $this->postVariantLinkService->updatePostVariantCache(
+        $this->postVariantLinkStatusCacheService->update(
             $variant,
-            $this->linkAnalyzeService->getIgnoreAwareStatusFromLinks($links)
+            LinkAnalysisService::getIgnoreAwareStatusFromLinks($links)
         );
 
         return $links;

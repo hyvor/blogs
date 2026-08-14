@@ -4,7 +4,7 @@ namespace App\Tests\Service\LinkAnalysis;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
-use App\Service\LinkAnalysis\LinkStatusCheckService;
+use App\Service\LinkAnalysis\LinkStatusChecker;
 use App\Service\Route\PermalinkService;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -14,8 +14,8 @@ use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[CoversClass(LinkStatusCheckService::class)]
-class LinkStatusCheckServiceTest extends KernelTestCase
+#[CoversClass(LinkStatusChecker::class)]
+class LinkStatusCheckerTest extends KernelTestCase
 {
     /**
      * @param string[] $urls
@@ -23,8 +23,8 @@ class LinkStatusCheckServiceTest extends KernelTestCase
      */
     private function callSeparateUrls(array $urls, ?Blog $blog): array
     {
-        $service = $this->getService(LinkStatusCheckService::class);
-        $method = new ReflectionMethod(LinkStatusCheckService::class, 'separateUrls');
+        $service = $this->getService(LinkStatusChecker::class);
+        $method = new ReflectionMethod(LinkStatusChecker::class, 'separateUrls');
         /** @var array{0: string[], 1: string[]} $result */
         $result = $method->invoke($service, $urls, $blog);
         return $result;
@@ -73,7 +73,7 @@ class LinkStatusCheckServiceTest extends KernelTestCase
         ]);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        $service = $this->getService(LinkStatusCheckService::class);
+        $service = $this->getService(LinkStatusChecker::class);
         $results = $service->check([
             'https://example.com/ok',
             'https://example.com/missing',
@@ -90,7 +90,7 @@ class LinkStatusCheckServiceTest extends KernelTestCase
         ]);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        $service = $this->getService(LinkStatusCheckService::class);
+        $service = $this->getService(LinkStatusChecker::class);
         $results = $service->check([
             'https://example.com/page',
             'https://example.com/page',

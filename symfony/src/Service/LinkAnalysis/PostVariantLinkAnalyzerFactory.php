@@ -6,26 +6,26 @@ use App\Entity\Blog;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
-class PostVariantAnalyzerFactory
+class PostVariantLinkAnalyzerFactory
 {
     public function __construct(
         private PermalinkService $permalinkService,
         private RelativeUrlResolver $relativeUrlResolver,
-        private LinkStatusCheckService $linkStatusCheckService,
-        private PostVariantLinkService $postVariantLinkService,
-        private LinkAnalysisService $linkAnalyzeService,
+        private LinkStatusChecker $linkStatusChecker,
+        private LinkAnalyzerRepository $linkAnalyzerRepository,
+        private PostVariantLinkStatusCacheService $postVariantLinkStatusCacheService,
         private PostContentService $postContentService
     ) {}
 
-    public function create(Blog $blog): PostVariantAnalyzer
+    public function create(Blog $blog): PostVariantLinkAnalyzer
     {
-        return new PostVariantAnalyzer(
+        return new PostVariantLinkAnalyzer(
             $blog,
             $this->permalinkService,
             $this->relativeUrlResolver,
-            $this->linkStatusCheckService,
-            $this->postVariantLinkService,
-            $this->linkAnalyzeService,
+            $this->linkStatusChecker,
+            $this->linkAnalyzerRepository,
+            $this->postVariantLinkStatusCacheService,
             $this->postContentService
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\LinkAnalysis\StatusCheck;
+namespace App\Service\LinkAnalysis\Dto;
 
 class AnalyzedLink
 {

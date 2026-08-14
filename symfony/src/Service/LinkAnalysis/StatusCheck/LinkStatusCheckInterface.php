@@ -2,6 +2,8 @@
 
 namespace App\Service\LinkAnalysis\StatusCheck;
 
+use App\Service\LinkAnalysis\Dto\StatusResult;
+
 interface LinkStatusCheckInterface
 {
     /**

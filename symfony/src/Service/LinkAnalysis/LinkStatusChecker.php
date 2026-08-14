@@ -3,12 +3,12 @@
 namespace App\Service\LinkAnalysis;
 
 use App\Entity\Blog;
+use App\Service\LinkAnalysis\Dto\StatusResult;
 use App\Service\LinkAnalysis\StatusCheck\ExternalLinkStatusCheck;
 use App\Service\LinkAnalysis\StatusCheck\InternalLinkStatusCheck;
-use App\Service\LinkAnalysis\StatusCheck\StatusResult;
 use App\Service\Route\PermalinkService;
 
-class LinkStatusCheckService
+class LinkStatusChecker
 {
     public function __construct(
         private InternalLinkStatusCheck $internalCheck,

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Service\LinkAnalysis\StatusCheck;
+namespace App\Service\LinkAnalysis\Dto;
 
 use App\Entity\Enum\LinkAnalyzerCheckType;
+use App\Service\LinkAnalysis\StatusCheck\IgnoreReason;
 
 class StatusResult
 {

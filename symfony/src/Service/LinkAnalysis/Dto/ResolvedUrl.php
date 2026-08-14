@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\LinkAnalysis;
+namespace App\Service\LinkAnalysis\Dto;
 
 class ResolvedUrl
 {
