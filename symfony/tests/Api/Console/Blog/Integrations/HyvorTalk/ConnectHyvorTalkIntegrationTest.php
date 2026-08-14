@@ -11,7 +11,7 @@ use App\Tests\Factory\HyvorPostFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Helper\Fixtures;
 use Hyvor\Internal\CloudApi\CloudApiService;
-use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\Talk\TalkClient;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Psr18Client;

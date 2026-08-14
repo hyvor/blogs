@@ -15,9 +15,13 @@ use Hyvor\Internal\Component\Component;
 use Hyvor\Sdk\Exceptions\HyvorApiException;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Talk\TalkClient;
+use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class HyvorTalkService
 {
+
+    use ClockAwareTrait;
 
     private const array REQUIRED_SCOPES = [
         TalkScope::ORG_WEBSITES_CREATE,
@@ -31,7 +35,8 @@ class HyvorTalkService
         private CloudApiService $cloudApiService,
         private PermalinkService $permalinkService,
         private BlogService $blogService,
-        private LanguageService $languageService
+        private LanguageService $languageService,
+        private MessageBusInterface $bus,
     ) {}
 
     private function getClient(int $orgId): TalkClient
@@ -65,7 +70,7 @@ class HyvorTalkService
             $this->languageService->getPrimaryLanguage($blog)
         );
 
-        $website = $this->getClient($orgId)->websites->create([
+        $website = $this->getClient($orgId)->org->websites->create([
             'name' => $variant->getName(),
             'domain' => $this->getDomainsOfBlog($blog)[0],
             'metadata' => [
@@ -74,6 +79,25 @@ class HyvorTalkService
             ],
             'start_trial' => false,
         ]);
+
+        // we add the current user to the website in HT so he has access to it immediately
+        // then, later, we will sync users in a job to give other users of the blog access to the website as well
+        $this->addMod($orgId, $website->id, $user->id);
+
+        $hyvorTalk = new HyvorTalkWebsite();
+        $hyvorTalk->setBlog($blog);
+        $hyvorTalk->setWebsiteId($website->id);
+        // for now, we always create the newsletter. Later we might have a way to connect an existing newsletter
+        $hyvorTalk->setCreatedByBlogs(true);
+        $hyvorTalk->setCreatedAt($this->now());
+        $hyvorTalk->setUpdatedAt($this->now());
+
+        $this->em->persist($hyvorTalk);
+        $this->em->flush();
+
+        $this->bus->dispatch(new SyncBlogUsersToNewsletterMessage($blog->getId()));
+
+        return $hyvorTalk;
     }
 
     /**
