@@ -4,36 +4,44 @@ namespace App\Service\Integration\HyvorTalk;
 
 use App\Entity\Blog;
 use App\Entity\HyvorTalkWebsite;
+use App\Entity\User;
+use App\Service\Blog\BlogService;
+use App\Service\Language\LanguageService;
+use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\CloudApi\Scope\TalkScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Sdk\Exceptions\HyvorApiException;
-use Hyvor\Sdk\Talk\Dto\Website\CreateWebsiteRequest;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Talk\TalkClient;
 
 class HyvorTalkService
 {
 
-    private const REQUIRED_SCOPES = [
-
-        //
-
+    private const array REQUIRED_SCOPES = [
+        TalkScope::ORG_WEBSITES_CREATE,
+        TalkScope::WEBSITE_READ,
+        TalkScope::DOMAINS_WRITE,
+        TalkScope::MODS_WRITE,
     ];
 
     public function __construct(
         private EntityManagerInterface $em,
         private CloudApiService $cloudApiService,
+        private PermalinkService $permalinkService,
+        private BlogService $blogService,
+        private LanguageService $languageService
     ) {}
 
     private function getClient(int $orgId): TalkClient
     {
-        $hyvorClient = $this->cloudApiService->getHyvorClientForOrganization(
+        return $this->cloudApiService->getHyvorClientForOrganization(
+            TalkClient::class,
             $orgId,
             Component::TALK,
             self::REQUIRED_SCOPES
         );
-
-        return $hyvorClient->talk;
     }
 
     public function getHyvorTalkWebsiteOfBlog(Blog $blog): ?HyvorTalkWebsite
@@ -41,21 +49,59 @@ class HyvorTalkService
         return $this->em->getRepository(HyvorTalkWebsite::class)->findOneBy(['blog' => $blog]);
     }
 
-    public function createWebsite(Blog $blog): HyvorTalkWebsite
+    /**
+     * @throws HyvorApiException
+     */
+    public function connect(
+        Blog $blog,
+        AuthUser $user,
+    ): HyvorTalkWebsite
     {
         $orgId = $blog->getOrganizationId();
         assert($orgId !== null);
 
-        try {
-            $website = $this->getClient($orgId)->websites->create(
-                new CreateWebsiteRequest(
-                    name: $blog->getName(),
-                    domain: $blog->getDomain()
-                )
-            );
-        } catch (HyvorApiException $e) {
-            //
-        }
+        $variant = $this->blogService->getBlogVariant(
+            $blog,
+            $this->languageService->getPrimaryLanguage($blog)
+        );
+
+        $website = $this->getClient($orgId)->websites->create([
+            'name' => $variant->getName(),
+            'domain' => $this->getDomainsOfBlog($blog)[0],
+            'metadata' => [
+                'hyvor_blogs_integration' => 'true',
+                'hyvor_blogs_blog_id' => (string) $blog->getId(),
+            ],
+            'start_trial' => false,
+        ]);
+    }
+
+    /**
+     * Adds a Hyvor user as a Hyvor Talk website moderator.
+     * Ignores the call if the mod is already there.
+     */
+    public function addMod(int $organizationId, int $websiteId, User $blogUser): void
+    {
+        $this->getClient($organizationId)
+            ->website($websiteId)
+            ->moderators
+            ->create([
+                'user_id' => $blogUser->getHyvorUserId(),
+                'on_duplicate' => 'ignore',
+            ]);
+    }
+
+    /**
+     * @return non-empty-array<string>
+     */
+    private function getDomainsOfBlog(Blog $blog): array
+    {
+        $urls = [
+            $this->permalinkService->getBlogPermalink($blog)
+        ];
+        // add custom domains if any
+
+        return array_map(fn($url) => parse_url($url, PHP_URL_HOST), $urls);
     }
 
 }
