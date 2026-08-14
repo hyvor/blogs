@@ -46,6 +46,12 @@ class HyvorTalkService
 
         // delete the website when disconnecting, add/remove mods as blog users change
         TalkScope::WEBSITE_WRITE,
+
+        // add/remove mods as blog users change
+        TalkScope::MODS_WRITE,
+
+        // add/remove domains
+        TalkScope::DOMAINS_WRITE,
     ];
 
     public const array SYNCED_ROLES = [

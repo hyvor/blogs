@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15d6a21424f86d9dc9ee5461701e6b8b",
+    "content-hash": "5a515fa86aa812a83243ebed48874b46",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2062,16 +2062,16 @@
         },
         {
             "name": "hyvor/sdk-post",
-            "version": "0.1.1",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-post.git",
-                "reference": "7fe8170f90ee65408736f57d04bc9069a85a48fc"
+                "reference": "4d71d9411893df2ae46559fd476795c1b7af8d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/7fe8170f90ee65408736f57d04bc9069a85a48fc",
-                "reference": "7fe8170f90ee65408736f57d04bc9069a85a48fc",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/4d71d9411893df2ae46559fd476795c1b7af8d71",
+                "reference": "4d71d9411893df2ae46559fd476795c1b7af8d71",
                 "shasum": ""
             },
             "require": {
@@ -2095,22 +2095,22 @@
             ],
             "description": "Official PHP SDK for Hyvor Post",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.1"
+                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.3"
             },
-            "time": "2026-08-14T09:41:52+00:00"
+            "time": "2026-08-14T13:32:53+00:00"
         },
         {
             "name": "hyvor/sdk-talk",
-            "version": "0.1.1",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-talk.git",
-                "reference": "78d7bca765792f5d68cf46ce7b7b68537d8687c4"
+                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/78d7bca765792f5d68cf46ce7b7b68537d8687c4",
-                "reference": "78d7bca765792f5d68cf46ce7b7b68537d8687c4",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/ca56488776ff98c1f010b33e8f7c01daf174d18f",
+                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f",
                 "shasum": ""
             },
             "require": {
@@ -2134,9 +2134,9 @@
             ],
             "description": "Official PHP SDK for Hyvor Talk",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.1"
+                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.3"
             },
-            "time": "2026-08-14T09:41:52+00:00"
+            "time": "2026-08-14T13:40:40+00:00"
         },
         {
             "name": "hyvor/unfold",

@@ -83,9 +83,7 @@
 				setFromIntegration(res);
 				toast.success('Embed code saved', { id: toastId });
 			})
-			.catch((err) =>
-				toast.error(err.message || 'Failed to save embed code', { id: toastId })
-			);
+			.catch((err) => toast.error(err.message || 'Failed to save embed code', { id: toastId }));
 	}
 
 	function handleResetEmbedCode() {
@@ -139,17 +137,17 @@
 			<SplitControl label="Hyvor Talk Connection">
 				{#if data}
 					<div class="connection-status">
-						This blog is connected to a website (ID: <strong>{data.website_id}</strong>) in
-						Hyvor Talk.
+						This blog is connected to a website (ID: <strong>{data.website_id}</strong>) in Hyvor
+						Talk.
 					</div>
 
 					<Button
 						as="a"
-						href={consoleUrlWithBlog('/settings/comments')}
+						href={consoleUrlWithBlog('/comments')}
 						size="small"
 						style="margin-right:6px;"
 					>
-						Manage Comments Settings
+						Manage Comments
 						{#snippet end()}
 							&rarr;
 						{/snippet}
@@ -157,7 +155,7 @@
 
 					<Button
 						as="a"
-						href={`https://talk.hyvor.com/console/${data.website_id}`}
+						href={`${getConfig().hyvor.hyvor_talk_url}/console/${data.website_id}`}
 						target="_blank"
 						size="small"
 						style="margin-right:6px;"
@@ -190,8 +188,7 @@
 									target="_blank"
 									><code>_comments</code>
 									variable</a
-								>, which is usually placed below the post content (depending on the
-								theme).
+								>, which is usually placed below the post content (depending on the theme).
 							</div>
 						{/snippet}
 
@@ -200,14 +197,11 @@
 						<div class="embed-code-actions">
 							<div class="actions-left">
 								{#if isEmbedCodeDirty}
-									<Button size="small" on:click={handleSaveEmbedCode}>Save</Button
-									>
+									<Button size="small" on:click={handleSaveEmbedCode}>Save</Button>
 								{/if}
 								{#if !isEmbedCodeDefault}
-									<Button
-										size="small"
-										variant="invisible"
-										on:click={handleResetEmbedCode}>Reset to default</Button
+									<Button size="small" variant="invisible" on:click={handleResetEmbedCode}
+										>Reset to default</Button
 									>
 								{/if}
 							</div>
