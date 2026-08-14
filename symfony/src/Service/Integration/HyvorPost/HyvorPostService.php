@@ -65,13 +65,12 @@ class HyvorPostService
 
     private function getClient(int $orgId): PostClient
     {
-        $hyvorClient = $this->cloudApiService->getHyvorClientForOrganization(
+        return $this->cloudApiService->getHyvorClientForOrganization(
+            PostClient::class,
             $orgId,
             Component::POST,
             self::REQUIRED_SCOPES
         );
-
-        return $hyvorClient->post;
     }
 
     public function getHyvorPostOfBlog(Blog $blog): ?HyvorPost
