@@ -13,9 +13,8 @@
 			content:
 				($postVariantLanguageStore.is_primary
 					? 'Are you sure you want to delete this post?'
-					: 'Are you sure you want to delete the ' +
-						$postVariantLanguageStore.name +
-						' variant?') + ' This action is IRREVERSIBLE.',
+					: 'Are you sure you want to delete the ' + $postVariantLanguageStore.name + ' variant?') +
+				' This action is IRREVERSIBLE.',
 			confirmText: 'Yes, Delete',
 			danger: true,
 			autoClose: false

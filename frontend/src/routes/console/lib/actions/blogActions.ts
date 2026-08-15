@@ -10,10 +10,16 @@ export function getSubdomainAvailable(subdomain: string) {
 	});
 }
 
-export function createBlog(name: string, subdomain: string, isDev = false, hyvorTalk = false, hyvorPost = false) {
+export function createBlog(
+	name: string,
+	subdomain: string,
+	isDev = false,
+	hyvorTalk = false,
+	hyvorPost = false
+) {
 	return consoleApi.post<{
-		blog: BlogList,
-		warnings: string[]
+		blog: BlogList;
+		warnings: string[];
 	}>({
 		endpoint: '/blog',
 		data: {

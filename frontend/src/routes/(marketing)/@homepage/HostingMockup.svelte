@@ -5,12 +5,6 @@
 	import logoLaravel from './Hosting/laravel.svg';
 	import logoSymfony from './Hosting/symfony.svg';
 
-	const hostingOptions = [
-		{ domain: 'yourblog.hyvorblogs.io', label: 'Default subdomain', note: 'Zero setup' },
-		{ domain: 'blog.yoursite.com', label: 'Custom domain', note: 'Free SSL certificate' },
-		{ domain: 'yoursite.com/blog', label: 'Sub-directory', note: 'Best for SEO' }
-	];
-
 	const subDirMethods = [
 		{
 			name: 'Cloudflare Workers',
@@ -27,46 +21,59 @@
 		{ name: 'Symfony', logo: logoSymfony, href: 'https://hyvor.com/blog/symfony-blog' }
 	];
 
-	const subdomainHighlights = ['Live instantly', 'Free forever', 'SSL included'];
-
-	const dnsMethods = [
-		{ name: 'CNAME', recommended: true },
-		{ name: 'A Record', recommended: false }
+	const hostingOptions = [
+		{
+			domain: 'blog.yoursite.com',
+			label: 'Custom domain',
+			note: 'Free SSL certificate',
+			active: true,
+			tags: [
+				{ name: 'CNAME', recommended: true },
+				{ name: 'A Record', recommended: false }
+			]
+		},
+		{
+			domain: 'yoursite.com/blog',
+			label: 'Sub-directory',
+			note: 'Best for SEO',
+			methods: subDirMethods
+		},
+		{
+			domain: 'your-own-frontend.com',
+			label: 'Headless',
+			note: 'Bring your own frontend',
+			tags: [
+				{ name: 'REST API', recommended: true },
+				{ name: 'Any framework', recommended: false }
+			]
+		}
 	];
 </script>
 
 <div class="hosting-mockup">
-	{#each hostingOptions as opt, i}
-		<div class="hosting-card" class:active={i === 1}>
+	{#each hostingOptions as opt}
+		<div class="hosting-card" class:active={opt.active}>
 			<div class="hc-top">
-				{#if i === 1}<span class="hc-badge">Most popular</span>{/if}
+				{#if opt.active}<span class="hc-badge">Most popular</span>{/if}
 			</div>
 			<div class="hc-domain">{opt.domain}</div>
 			<div class="hc-label">{opt.label}</div>
 			<div class="hc-note">{opt.note}</div>
 
-			{#if i === 0}
+			{#if opt.tags}
 				<div class="hc-tags">
-					{#each subdomainHighlights as tag}
-						<span class="hc-tag">{tag}</span>
-					{/each}
-				</div>
-			{/if}
-
-			{#if i === 1}
-				<div class="hc-tags">
-					{#each dnsMethods as m}
-						<span class="hc-tag" class:hc-tag-accent={m.recommended}>
-							{m.name}{#if m.recommended}
+					{#each opt.tags as tag}
+						<span class="hc-tag" class:hc-tag-accent={tag.recommended}>
+							{tag.name}{#if tag.recommended}
 								· Recommended{/if}
 						</span>
 					{/each}
 				</div>
 			{/if}
 
-			{#if i === 2}
+			{#if opt.methods}
 				<div class="hc-methods">
-					{#each subDirMethods as m}
+					{#each opt.methods as m}
 						<a href={m.href} target="_blank" rel="noopener" class="hc-method" title={m.name}>
 							<img src={m.logo} alt={m.name} width="16" height="16" />
 						</a>

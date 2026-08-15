@@ -45,15 +45,13 @@
 		{
 			name: 'Blog Outline',
 			description: 'Generate an outline for a blog post',
-			prompt: (options) =>
-				addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
+			prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
 		},
 
 		{
 			name: 'Blog Post',
 			description: 'Generate a blog post',
-			prompt: (options) =>
-				addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
+			prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
 		},
 
 		{

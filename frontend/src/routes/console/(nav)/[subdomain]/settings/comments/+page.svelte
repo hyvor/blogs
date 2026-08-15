@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { Callout, Link, SplitControl, Text } from '@hyvor/design/components';
-	import {
-		blogStore,
-		integrationsStore,
-		updateBlogStore
-	} from '../../../../lib/stores/blogStore';
+	import { blogStore, integrationsStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
@@ -63,8 +59,8 @@
 	<SplitControl label="Newsletter Signup Form Code">
 		{#snippet caption()}
 			<div>
-				Paste the embed code provided by a email newsletter service here (for the sign up
-				form). You can use Twig <Link
+				Paste the embed code provided by a email newsletter service here (for the sign up form). You
+				can use Twig <Link
 					style="display:inline;"
 					href="/docs/themes-templates#variables"
 					target="_blank">route variables</Link
@@ -87,8 +83,8 @@
 				{#snippet title()}
 					Hyvor Post Integration Enabled
 				{/snippet}
-				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically
-				append the Hyvor Post signup form code, and
+				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically append
+				the Hyvor Post signup form code, and
 				<strong>you don't generally need to add anything here</strong>.
 			</Callout>
 			<br />
@@ -103,8 +99,8 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific
-				place, you may also edit your theme files.
+				Your theme will decide where to show this form. If you want to show it in a specific place,
+				you may also edit your theme files.
 			</Text>
 		</div>
 	</SplitControl>
