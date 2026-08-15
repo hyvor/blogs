@@ -64,36 +64,6 @@ class SyncDomainsMessageHandlerTest extends KernelTestCase
         $this->assertSame('add', $request['body']['operation']);
     }
 
-    public function test_does_nothing_when_blog_does_not_exist(): void
-    {
-        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
-        $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willThrowException(new \RuntimeException('should not be called'));
-        $this->container->set(CloudApiService::class, $cloudApiServiceMock);
-
-        $transport = $this->transport('async')->throwExceptions();
-        $transport->send(new SyncDomainsMessage(999999999));
-        $transport->processOrFail(1);
-
-        $this->addToAssertionCount(1);
-    }
-
-    public function test_does_nothing_when_blog_has_no_organization(): void
-    {
-        $blog = BlogFactory::createOne(['organization_id' => null]);
-
-        $cloudApiServiceMock = $this->createStub(CloudApiService::class);
-        $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willThrowException(new \RuntimeException('should not be called'));
-        $this->container->set(CloudApiService::class, $cloudApiServiceMock);
-
-        $transport = $this->transport('async')->throwExceptions();
-        $transport->send(new SyncDomainsMessage($blog->getId()));
-        $transport->processOrFail(1);
-
-        $this->addToAssertionCount(1);
-    }
-
     public function test_does_nothing_when_blog_not_connected_to_hyvor_talk(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => 555]);

@@ -101,6 +101,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $message = $messages[0];
         $this->assertInstanceOf(SyncBlogUsersToWebsiteMessage::class, $message);
         $this->assertSame('admin', $message->role);
+        $this->assertFalse($message->delete);
     }
 
     // 3. User delete
