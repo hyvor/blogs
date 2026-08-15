@@ -5,9 +5,9 @@ namespace App\Service\LinkAnalysis;
 use App\Entity\Blog;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\LinkAnalyzerCheck;
-use App\Repository\UserRepository;
 use App\Service\AppConfig;
 use App\Service\Route\PermalinkService;
+use App\Service\User\UserService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -22,7 +22,7 @@ class LinkAnalysisReportMailer
         private Environment $twig,
         private AppConfig $appConfig,
         private PermalinkService $permalinkService,
-        private UserRepository $userRepository,
+        private UserService $userService,
         private LoggerInterface $logger,
     ) {}
 
@@ -42,7 +42,7 @@ class LinkAnalysisReportMailer
             return;
         }
 
-        $admins = $this->userRepository->findAdmins($blog);
+        $admins = $this->userService->getAdmins($blog);
         if (count($admins) === 0) {
             return;
         }
