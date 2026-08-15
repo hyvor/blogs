@@ -67,6 +67,7 @@ class SyncBlogUsersToWebsiteMessageHandler
                 ->createQueryBuilder('u')
                 ->where('u.blog = :blog')
                 ->andWhere('u.role IN (:roles)')
+                ->andWhere('u.hyvor_user_id IS NOT NULL')
                 ->setParameter('blog', $hyvorTalk->getBlog())
                 ->setParameter('roles', HyvorTalkService::SYNCED_ROLES)
                 ->setFirstResult(($page - 1) * $pageSize)
