@@ -18,7 +18,7 @@ export function loadHyvorPost() {
 
 export function connectHyvorPost() {
 	return consoleApi.post<HyvorPostIntegration>({
-		endpoint: '/integrations/hyvor-post/connect',
+		endpoint: '/integrations/hyvor-post/connect'
 	});
 }
 

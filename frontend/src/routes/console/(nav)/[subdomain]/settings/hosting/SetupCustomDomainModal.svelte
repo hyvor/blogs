@@ -24,7 +24,11 @@
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { slide } from 'svelte/transition';
 	import DnsInstructions from './DnsInstructions.svelte';
-	import type { CustomDomainIntent, CustomDomainSetup, CustomDomainTlsProvider } from '../../../../lib/types';
+	import type {
+		CustomDomainIntent,
+		CustomDomainSetup,
+		CustomDomainTlsProvider
+	} from '../../../../lib/types';
 
 	interface Props {
 		show: boolean;
@@ -295,8 +299,8 @@
 			</div>
 		{:else if tlsProvider !== customDomain?.tls_provider}
 			<p class="hint">
-				Switching to automatic TLS requires verifying that this domain's DNS points to Hyvor
-				Blogs before it can go live.
+				Switching to automatic TLS requires verifying that this domain's DNS points to Hyvor Blogs
+				before it can go live.
 			</p>
 		{/if}
 	{:else}
@@ -320,9 +324,9 @@
 					<Tag color="orange" size="small">Pending DNS Validation</Tag>
 				</div>
 				<p>
-					Please configure your DNS records as shown below. Once done, click "Verify Now". We
-					will check if the DNS records are set correctly and generate the TLS certificate for
-					your custom domain. This may take a few minutes.
+					Please configure your DNS records as shown below. Once done, click "Verify Now". We will
+					check if the DNS records are set correctly and generate the TLS certificate for your
+					custom domain. This may take a few minutes.
 				</p>
 				<DnsInstructions domain={intent.domain} />
 			</div>

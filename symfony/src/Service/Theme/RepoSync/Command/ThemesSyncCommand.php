@@ -28,6 +28,8 @@ class ThemesSyncCommand
         #[Option('disable seeding preview blogs')] bool $noPreviewBlogs = false,
     ): int
     {
+        ini_set('memory_limit', '512M');
+
         $io = new SymfonyStyle($input, $output);
         $io->note('Syncing themes...');
         $this->bus->dispatch(new RepoSyncMessage(!$noPreviewBlogs), [MessageTransport::syncStamp()]);
