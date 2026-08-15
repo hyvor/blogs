@@ -156,7 +156,7 @@ class HyvorPostService
     {
         $this->getClient($organizationId)
             ->newsletter($newsletterId)
-            ->user
+            ->users
             ->create([
                 'user_id' => $hyvorUserId,
                 'on_duplicate' => 'ignore',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a515fa86aa812a83243ebed48874b46",
+    "content-hash": "c33a728fb7f64e947155280ee225d581",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2062,16 +2062,16 @@
         },
         {
             "name": "hyvor/sdk-post",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-post.git",
-                "reference": "4d71d9411893df2ae46559fd476795c1b7af8d71"
+                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/4d71d9411893df2ae46559fd476795c1b7af8d71",
-                "reference": "4d71d9411893df2ae46559fd476795c1b7af8d71",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/cf4a78436fef1d9716295a549d08e9266a7916c3",
+                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3",
                 "shasum": ""
             },
             "require": {
@@ -2095,13 +2095,13 @@
             ],
             "description": "Official PHP SDK for Hyvor Post",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.3"
+                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.4"
             },
-            "time": "2026-08-14T13:32:53+00:00"
+            "time": "2026-08-15T10:50:43+00:00"
         },
         {
             "name": "hyvor/sdk-talk",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-talk.git",
@@ -2134,7 +2134,7 @@
             ],
             "description": "Official PHP SDK for Hyvor Talk",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.3"
+                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.4"
             },
             "time": "2026-08-14T13:40:40+00:00"
         },

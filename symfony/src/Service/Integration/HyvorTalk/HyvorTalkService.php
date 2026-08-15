@@ -5,7 +5,6 @@ namespace App\Service\Integration\HyvorTalk;
 use App\Entity\Blog;
 use App\Entity\Enum\UserRole;
 use App\Entity\HyvorTalkWebsite;
-use App\Entity\Language;
 use App\Entity\User;
 use App\Service\Blog\BlogService;
 use App\Service\Language\LanguageService;
@@ -32,6 +31,18 @@ class HyvorTalkService
             page-id="{{ _post.id }}"
             page-url="{{ _post.url }}"
         ></hyvor-talk-comments>
+
+        <script type="module">
+            // sync color mode with hyvor talk embed colors
+            window.addEventListener('hb:colorModeChanged', setHtEmbedColors);
+            function setHtEmbedColors() {
+                const colorMode = window._hb.getColorMode();
+                for (const frm of document.querySelectorAll('hyvor-talk-comments')) {
+                    frm.setAttribute('colors', colorMode);
+                }
+            }
+            setHtEmbedColors();
+        </script>
         HTML;
 
     private const array REQUIRED_SCOPES = [
@@ -44,8 +55,8 @@ class HyvorTalkService
         // read the website when disconnecting
         TalkScope::WEBSITE_READ,
 
-        // delete the website when disconnecting, add/remove mods as blog users change
-        TalkScope::WEBSITE_WRITE,
+        // delete the website when disconnecting
+        TalkScope::WEBSITE_DELETE,
 
         // add/remove mods as blog users change
         TalkScope::MODS_WRITE,
@@ -119,7 +130,7 @@ class HyvorTalkService
         try {
             $website = $this->getClient($orgId)->org->websites->create([
                 'name' => $variant->getName(),
-                'domain' => $this->getDomainsOfBlog($blog, $language)[0],
+                'domain' => $this->getDomainsOfBlog($blog)[0],
                 'metadata' => [
                     'hyvor_blogs_integration' => 'true',
                     'hyvor_blogs_blog_id' => (string)$blog->getId(),
@@ -220,6 +231,23 @@ class HyvorTalkService
         }
     }
 
+    public function addDomains(HyvorTalkWebsite $hyvorTalkWebsite): void
+    {
+        $blog = $hyvorTalkWebsite->getBlog();
+        $orgId = $blog->getOrganizationId();
+        assert($orgId !== null);
+
+        $this->getClient($orgId)
+            ->website($hyvorTalkWebsite->getWebsiteId())
+            ->domains
+            ->update([
+                'domains' => $this->getDomainsOfBlog($blog),
+                // we simply add new domains to HT, not caring about deleting old ones
+                // HT ignores duplicates, so this is safe to call multiple times
+                'operation' => 'add',
+            ]);
+    }
+
     public static function getDefaultEmbedCode(int $websiteId): string
     {
         return str_replace('{website_id}', (string) $websiteId, self::DEFAULT_EMBED_CODE);
@@ -233,10 +261,10 @@ class HyvorTalkService
     /**
      * @return non-empty-array<string>
      */
-    private function getDomainsOfBlog(Blog $blog, Language $language): array
+    private function getDomainsOfBlog(Blog $blog): array
     {
         $urls = [
-            $this->permalinkService->getBlogPermalink($blog, $language)
+            $this->permalinkService->getBlogUrl($blog)
         ];
         // add custom domains if any
 
