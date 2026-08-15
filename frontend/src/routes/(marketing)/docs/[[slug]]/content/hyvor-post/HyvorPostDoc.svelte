@@ -22,6 +22,9 @@
 	<li>
 		<a href="#access">Access Mapping</a>
 	</li>
+	<li>
+		<a href="#self-hosted">Self-hosted Deployments</a>
+	</li>
 </ul>
 
 <h2 id="features">Features</h2>
@@ -122,11 +125,15 @@
 		<div>Contributor</div>
 		<div><i>None</i></div>
 	</TableRow>
-	<TableRow>
-		<div>Subscriber</div>
-		<div><i>None</i></div>
-	</TableRow>
 </Table>
+
+<h2 id="self-hosted">Self-hosted Deployments</h2>
+
+<p>
+	The Hyvor Post integration is only available on Hyvor Blogs Cloud. In self-hosted deployments, you
+	can still add newsletters by pasting an embed code (from Hyvor Post or another newsletter system)
+	directly into <strong>Settings &rarr; Comments & Newsletters</strong>.
+</p>
 
 <style>
 	span.info :global(.tooltip-wrap) {

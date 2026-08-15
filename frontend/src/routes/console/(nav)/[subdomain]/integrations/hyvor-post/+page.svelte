@@ -179,7 +179,7 @@
 
 			{#if data}
 				<div class="embed-code">
-					<SplitControl label="Embed Code">
+					<SplitControl label="Embed Code" column>
 						{#snippet caption()}
 							<div>
 								This code is automatically added to your blog's <a
@@ -192,7 +192,7 @@
 							</div>
 						{/snippet}
 
-						<Textarea bind:value={embedCode} rows={4} block />
+						<Textarea bind:value={embedCode} rows={10} block />
 
 						<div class="embed-code-actions">
 							<div class="actions-left">

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc49e9361db8e7c3004b5abe0c210c86",
+    "content-hash": "c33a728fb7f64e947155280ee225d581",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2010,6 +2010,133 @@
                 "source": "https://github.com/hyvor/scssphp/tree/2.0.4"
             },
             "time": "2024-10-29T02:24:39+00:00"
+        },
+        {
+            "name": "hyvor/sdk-core",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/sdk-php-core.git",
+                "reference": "5e39717046628731ab5568668b56ba7b07f970f7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-core/zipball/5e39717046628731ab5568668b56ba7b07f970f7",
+                "reference": "5e39717046628731ab5568668b56ba7b07f970f7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=8.4",
+                "php-http/discovery": "^1.20",
+                "phpdocumentor/reflection-docblock": "^6.0",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.1",
+                "psr/http-message": "^1.1 || ^2.0",
+                "psr/log": "^3.0",
+                "symfony/property-access": "^8.1",
+                "symfony/property-info": "^8.1",
+                "symfony/serializer": "^8.1"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.15",
+                "nyholm/psr7": "^1.8",
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\Sdk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Shared HTTP transport, auth, serialization, and exceptions for HYVOR product SDKs. Not intended to be required directly - installed transitively by hyvor/sdk-* product packages.",
+            "support": {
+                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.1"
+            },
+            "time": "2026-08-14T09:41:51+00:00"
+        },
+        {
+            "name": "hyvor/sdk-post",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/sdk-php-post.git",
+                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/cf4a78436fef1d9716295a549d08e9266a7916c3",
+                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3",
+                "shasum": ""
+            },
+            "require": {
+                "hyvor/sdk-core": "^0.1",
+                "php": ">=8.4"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.8",
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\Sdk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Official PHP SDK for Hyvor Post",
+            "support": {
+                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.4"
+            },
+            "time": "2026-08-15T10:50:43+00:00"
+        },
+        {
+            "name": "hyvor/sdk-talk",
+            "version": "0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/sdk-php-talk.git",
+                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/ca56488776ff98c1f010b33e8f7c01daf174d18f",
+                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f",
+                "shasum": ""
+            },
+            "require": {
+                "hyvor/sdk-core": "^0.1",
+                "php": ">=8.4"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.8",
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\Sdk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Official PHP SDK for Hyvor Talk",
+            "support": {
+                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.4"
+            },
+            "time": "2026-08-14T13:40:40+00:00"
         },
         {
             "name": "hyvor/unfold",
@@ -11933,16 +12060,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.11.4",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "1dcf82bdde0b599acc0b15eed73a600fe8bc8666"
+                "reference": "edc85842118154bf0ae047b223427fef87a7feb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/1dcf82bdde0b599acc0b15eed73a600fe8bc8666",
-                "reference": "1dcf82bdde0b599acc0b15eed73a600fe8bc8666",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/edc85842118154bf0ae047b223427fef87a7feb6",
+                "reference": "edc85842118154bf0ae047b223427fef87a7feb6",
                 "shasum": ""
             },
             "require": {
@@ -12044,7 +12171,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.11.4"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.12.0"
             },
             "funding": [
                 {
@@ -12056,7 +12183,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-13T11:25:05+00:00"
+            "time": "2026-08-14T06:15:04+00:00"
         },
         {
             "name": "zenstruck/messenger-monitor-bundle",

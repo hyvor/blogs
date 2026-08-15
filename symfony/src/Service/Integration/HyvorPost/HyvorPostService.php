@@ -65,13 +65,12 @@ class HyvorPostService
 
     private function getClient(int $orgId): PostClient
     {
-        $hyvorClient = $this->cloudApiService->getHyvorClientForOrganization(
+        return $this->cloudApiService->getHyvorClientForOrganization(
+            PostClient::class,
             $orgId,
             Component::POST,
             self::REQUIRED_SCOPES
         );
-
-        return $hyvorClient->post;
     }
 
     public function getHyvorPostOfBlog(Blog $blog): ?HyvorPost
@@ -87,7 +86,7 @@ class HyvorPostService
         $orgId = $blog->getOrganizationId();
         assert($orgId !== null);
 
-        $newsletter = $this->getClient($orgId)->newsletters->create([
+        $newsletter = $this->getClient($orgId)->org->newsletters->create([
             'name' => $name,
             'subdomain' => $subdomain,
             'autogenerate_subdomain_on_duplicate' => true,

@@ -69,6 +69,7 @@ class SubdomainController
         $host = strtolower(trim($hostHeader));
         $deliveryDomain = strtolower(trim($deliveryDomain));
 
+
         if (str_ends_with($host, '.' . $deliveryDomain)) {
             return substr($host, 0, -strlen('.' . $deliveryDomain));
         }
