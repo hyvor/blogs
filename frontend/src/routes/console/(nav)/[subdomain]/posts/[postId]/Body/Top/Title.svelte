@@ -107,7 +107,7 @@
 	}
 
 	textarea {
-		font-family: inherit;
+		font-family: var(--font-serif);
 		padding-top: 10px;
 		padding-bottom: 10px;
 		font-size: 22px;

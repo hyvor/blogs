@@ -6,6 +6,7 @@ use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
 #[CoversClass(PostSlugService::class)]
+#[CoversClass(PostSuggestionContentChecker::class)]
 class PublishPostVariantTest extends ApiTestCase
 {
     public function test_language_not_found(): void
@@ -131,5 +133,44 @@ class PublishPostVariantTest extends ApiTestCase
         $publishedAt = $post->getPublishedAt();
         $this->assertNotNull($publishedAt);
         $this->assertSame($existingDate->getTimestamp(), $publishedAt->getTimestamp());
+    }
+
+    public function test_blocks_publish_when_content_has_pending_suggestions(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'publish-blocked-suggestions']);
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+
+        $contentWithPendingSuggestion = json_encode([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
+                'content' => [[
+                    'type' => 'text',
+                    'text' => 'hello',
+                    'marks' => [['type' => 'suggestion', 'attrs' => ['type' => 'insert', 'id' => 'sg-1']]],
+                ]],
+            ]],
+        ]);
+
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'content' => $contentWithPendingSuggestion,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'language_id' => $language->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'unresolved suggestions');
+
+        $this->getEm()->refresh($post);
+        $this->assertNull($post->getPublishedAt());
     }
 }

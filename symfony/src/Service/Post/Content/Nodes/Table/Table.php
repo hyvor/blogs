@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Table extends NodeType
 {
     public string $name = 'table';
+    public string $attrs = TableAttrs::class;
     public ?string $content = 'table_row+';
     public string $group = 'block';
 

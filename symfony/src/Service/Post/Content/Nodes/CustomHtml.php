@@ -7,6 +7,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class CustomHtml extends NodeType
 {
     public string $name = 'custom_html';
+    public string $attrs = CustomHtmlAttrs::class;
     public ?string $content = 'text*';
     public string $group = 'block';
 }

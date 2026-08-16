@@ -9,6 +9,7 @@ use App\Entity\Enum\UserStatus;
 use App\Service\Post\Content\Validation\ProsemirrorJson;
 use App\Service\Post\Content\Validation\ProsemirrorJsonValidator;
 use App\Service\Post\PostService;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -23,6 +24,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 #[CoversClass(PostService::class)]
 #[CoversClass(ProsemirrorJson::class)]
 #[CoversClass(ProsemirrorJsonValidator::class)]
+#[CoversClass(PostSuggestionContentChecker::class)]
 class UpdatePostVariantTest extends ApiTestCase
 {
 
@@ -188,5 +190,61 @@ class UpdatePostVariantTest extends ApiTestCase
             [$blog->getId()],
         );
         $this->assertSame(1, (int) $redirect);
+    }
+
+    private function contentWithPendingSuggestion(): string
+    {
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
+                'content' => [[
+                    'type' => 'text',
+                    'text' => 'hello',
+                    'marks' => [['type' => 'suggestion', 'attrs' => ['type' => 'insert', 'id' => 'sg-1']]],
+                ]],
+            ]],
+        ]);
+        $this->assertNotFalse($json);
+        return $json;
+    }
+
+    public function test_allows_saving_a_draft_with_pending_suggestions(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-draft-suggestions']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $language->getId(),
+            'content' => $this->contentWithPendingSuggestion(),
+        ], user: $user);
+
+        // a draft's `content` isn't public yet - autosaving with pending suggestions must not be blocked
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_blocks_updating_a_published_variants_content_with_pending_suggestions(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-published-suggestions']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::PUBLISHED,
+            'slug' => 'already-published',
+        ]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $language->getId(),
+            'content' => $this->contentWithPendingSuggestion(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'unresolved suggestions');
     }
 }

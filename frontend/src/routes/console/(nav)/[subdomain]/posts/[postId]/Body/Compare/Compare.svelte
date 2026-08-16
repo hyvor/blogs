@@ -31,7 +31,7 @@
 
 		const diff = diffDoc(publishedContent, editingContent);
 
-		const doc = buildDiffDoc(diff, schema).toJSON();
+		const doc = buildDiffDoc(diff, schema).doc.toJSON();
 		return JSON.stringify(doc);
 	});
 </script>

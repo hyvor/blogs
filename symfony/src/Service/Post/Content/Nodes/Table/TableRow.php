@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class TableRow extends NodeType
 {
     public string $name = 'table_row';
+    public string $attrs = TableRowAttrs::class;
     public ?string $content = '(table_cell | table_header)*';
 
     public function fromHtml(): array

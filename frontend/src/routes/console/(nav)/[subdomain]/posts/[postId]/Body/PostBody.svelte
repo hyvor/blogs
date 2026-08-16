@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { postEditor, postVariantLanguageStore, postVariantStore } from '../../postStore';
 	import SaveStatus from './Footer/SaveStatus.svelte';
+	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
 	import Editor from './Editor/Editor.svelte';
 	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
 	import Title from './Top/Title.svelte';
@@ -50,12 +51,13 @@
 		<PublishedNotice />
 		<div class="footer-bottom">
 			<div class="footer-left">
-				<!-- see plugin-wordcount.ts -->
-				<span id="pm-word-count"></span>
+				<SuggestionModeToggle />
 				<AutoTranslate />
 			</div>
 
 			<div class="footer-right">
+				<!-- see plugin-wordcount.ts -->
+				<span id="pm-word-count"></span>
 				<SaveStatus />
 			</div>
 		</div>
@@ -87,6 +89,12 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
+	}
+	.footer-left,
+	.footer-right {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 	}
 	.editor-footer #pm-word-count {
 		font-size: 12px;

@@ -3,13 +3,16 @@
 		postCurrentContentKey,
 		postEditingPublished,
 		postEditor,
+		postSuggestionModeStore,
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
 	import type { PostVariant } from '../../../../../../lib/types';
-	import { Editor } from '@hyvor/richtext';
+	import { authUserStore } from '../../../../../../lib/stores';
+	import { Editor, suggestionsPlugin, type Author } from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
 	import { editorConfig, schema } from './editor';
+	import { resolveAuthor, suggestionSource } from './suggestions';
 
 	let uniqueKey = $derived(`version-1`);
 
@@ -40,6 +43,16 @@
 	$effect(() => {
 		$postEditor.setEditable(isEditable);
 	});
+
+	// author is fixed for this editing session (the currently logged-in console user);
+	// the mode changes are handled afterwards via setSuggestionMode() from the footer's
+	// SuggestionModeToggle, not by recreating this plugin - see postSuggestionModeStore
+	const suggestions = suggestionsPlugin({
+		author: `user:${$authUserStore.id}` as Author,
+		mode: $postSuggestionModeStore,
+		resolveAuthor,
+		source: suggestionSource
+	});
 </script>
 
 <div class="editor">
@@ -53,7 +66,7 @@
 				editable={isEditable}
 				{schema}
 				{editorConfig}
-				plugins={[wordCountPlugin()]}
+				plugins={[wordCountPlugin(), suggestions]}
 			/>
 		</div>
 	{/key}

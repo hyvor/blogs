@@ -20,6 +20,7 @@ use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Service\Redirect\RedirectService;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Connection;
@@ -29,6 +30,7 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -42,7 +44,8 @@ class PostService
         private RedirectService $redirectService,
         private EventDispatcherInterface $ed,
         private PostSlugService $postSlugService,
-        private PostContentService $postContentService
+        private PostContentService $postContentService,
+        private PostSuggestionContentChecker $postSuggestionContentChecker,
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -543,6 +546,21 @@ class PostService
     ): PostVariant {
         $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
+        // `content` is only guarded once it's public: a draft's `content` is edited
+        // continuously (autosave), but for a published/scheduled variant, `content` is
+        // only ever set here via the "Update" flow (content_unsaved -> content), i.e.
+        // the moment it actually goes live - see publishPostVariant() for the other
+        // (draft -> published) transition that needs the same guard.
+        if (
+            array_key_exists('content', $data) &&
+            $variant->getStatus() !== PostVariantStatus::DRAFT &&
+            $this->postSuggestionContentChecker->hasPendingSuggestions($data['content'])
+        ) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
         }
@@ -616,6 +634,12 @@ class PostService
 
     public function publishPostVariant(PostVariant $variant, Blog $blog): PostVariant
     {
+        if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContent())) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
         if ($variant->getSlug() === null) {
             $slug = $this->postSlugService->generateUniqueSlug($variant->getLanguage(), $variant->getTitle());
             $variant->setSlug($slug);

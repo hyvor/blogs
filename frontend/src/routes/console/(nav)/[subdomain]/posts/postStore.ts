@@ -16,6 +16,8 @@ export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
 export const postEditingPublished = writable<boolean>(false); // whether currently editing a published post
 export const postEditor = writable<Editor>();
+// 'editing' | 'suggesting' - see @hyvor/richtext's suggestionsPlugin / SuggestionModeToggle.svelte
+export const postSuggestionModeStore = writable<'editing' | 'suggesting'>('editing');
 
 // derived
 

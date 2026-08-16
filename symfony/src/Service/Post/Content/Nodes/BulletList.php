@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class BulletList extends NodeType
 {
     public string $name = 'bullet_list';
+    public string $attrs = BulletListAttrs::class;
     public string $group = 'block';
     public ?string $content = 'list_item*';
 
