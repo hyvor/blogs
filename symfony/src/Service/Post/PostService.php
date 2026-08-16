@@ -29,6 +29,7 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -501,10 +502,14 @@ class PostService
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
 
-        if ($status === PostVariantStatus::PUBLISHED) {
+        if ($status === PostVariantStatus::PUBLISHED || $status === PostVariantStatus::SCHEDULED) {
             if ($post->getPublishedAt() === null) {
                 $post->setPublishedAt($this->now());
             }
+            $variant->setContentUpdatedAt($post->getPublishedAt());
+        }
+
+        if ($status === PostVariantStatus::PUBLISHED) {
             assert($variant->getSlug() !== null, 'Slug must be set for published post variant');
         }
 
@@ -527,7 +532,8 @@ class PostService
      *     description?: string|null,
      *     seo_primary_keyword?: string|null,
      *     seo_secondary_keywords?: string[],
-     *     link_analysis?: array<string, number>
+     *     link_analysis?: array<string, number>,
+     *     content_updated_at?: \DateTimeImmutable|null,
      * } $data
      */
     public function updatePostVariant(
@@ -574,6 +580,16 @@ class PostService
             $variant->setLinkAnalysis($data['link_analysis']);
         }
 
+        $isDraft = $variant->getStatus() === PostVariantStatus::DRAFT;
+
+        if (array_key_exists('content_updated_at', $data)) {
+            $contentUpdatedAt = $data['content_updated_at'];
+            $this->assertContentUpdatedAtValid($variant, $contentUpdatedAt);
+            $variant->setContentUpdatedAt($contentUpdatedAt);
+        } elseif (array_key_exists('content', $data) && !$isDraft) {
+            $variant->setContentUpdatedAt($this->now());
+        }
+
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
@@ -612,6 +628,7 @@ class PostService
         }
 
         $variant->setStatus(PostVariantStatus::PUBLISHED);
+        $variant->setContentUpdatedAt($post->getPublishedAt());
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
@@ -624,6 +641,7 @@ class PostService
     public function unpublishPostVariant(PostVariant $variant): PostVariant
     {
         $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setContentUpdatedAt(null);
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
@@ -631,6 +649,18 @@ class PostService
         $this->ed->dispatch(new PostVariantUnpublishedEvent($variant));
 
         return $variant;
+    }
+
+    private function assertContentUpdatedAtValid(PostVariant $variant, ?\DateTimeImmutable $contentUpdatedAt): void
+    {
+        if ($contentUpdatedAt === null) {
+            return;
+        }
+
+        $publishedAt = $variant->getPost()->getPublishedAt();
+        if ($publishedAt !== null && $contentUpdatedAt < $publishedAt) {
+            throw new UnprocessableEntityHttpException('content_updated_at must be greater than or equal to published_at');
+        }
     }
 
     public function deletePostVariant(Post $post, Language $language): void
