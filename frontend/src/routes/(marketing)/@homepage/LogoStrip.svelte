@@ -11,7 +11,7 @@
 		{ name: 'Times of Madeira', logo: logoTimesOfMadeira, height: 52 },
 		{ name: 'Subdivisions', logo: logoSubdivisions },
 		{ name: 'Job Posts', logo: logoJobPosts, width: 100, height: 26 },
-		{ name: 'Yoga Kiddy', logo: yogakiddy, width: 36, height: 36 },
+		// { name: 'Yoga Kiddy', logo: yogakiddy, width: 36, height: 36 },
 		{ name: 'Univerbal', logo: logoUniverbal, width: 110, height: 42 }
 	];
 </script>
@@ -35,7 +35,8 @@
 
 <style>
 	.logo-strip {
-		background: #0f0f11;
+		/* background: var(--accent); */
+		background: #574443;
 		padding: 52px 0;
 	}
 
@@ -48,7 +49,7 @@
 		font-weight: 600;
 		letter-spacing: 0.07em;
 		text-transform: uppercase;
-		color: rgba(255, 255, 255, 0.35);
+		color: var(--accent-light-mid);
 		margin: 0 0 36px;
 	}
 
@@ -62,7 +63,7 @@
 
 	.logo {
 		filter: brightness(0) invert(1);
-		opacity: 0.45;
+		opacity: 0.8;
 		display: block;
 	}
 </style>

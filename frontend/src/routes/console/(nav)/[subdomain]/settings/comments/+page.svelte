@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { Callout, Link, SplitControl, Text } from '@hyvor/design/components';
-	import {
-		blogStore,
-		integrationsStore,
-		updateBlogStore
-	} from '../../../../lib/stores/blogStore';
+	import { blogStore, integrationsStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
@@ -20,12 +16,31 @@
 					href="/docs/themes-templates#variables"
 					style="display:inline"
 					target="_blank">route variables</Link
-				> if needed. To connect Hyvor Talk, go to <Link
-					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-					style="display:inline">Integrations &rarr; Hyvor Talk</Link
-				>.
+				> if needed.
+
+				{#if !$integrationsStore.hyvor_talk}
+					To connect Hyvor Talk, go to <Link
+						href={consoleUrlWithBlog('/integrations/hyvor-talk')}
+						style="display:inline">Integrations &rarr; Hyvor Talk</Link
+					>.
+				{/if}
 			</div>
 		{/snippet}
+
+		{#if $integrationsStore.hyvor_talk}
+			<Callout type="info">
+				{#snippet icon()}
+					<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk Logo" width="18" />
+				{/snippet}
+				{#snippet title()}
+					Hyvor Talk Integration Enabled
+				{/snippet}
+				Your blog is connected to a website in Hyvor Talk. This integration will automatically
+				append the Hyvor Talk comments embed code, and
+				<strong>you don't generally need to add anything here</strong>.
+			</Callout>
+			<br />
+		{/if}
 
 		<CodemirrorEditor
 			value={$blogStore.comments_code || ''}
@@ -44,8 +59,8 @@
 	<SplitControl label="Newsletter Signup Form Code">
 		{#snippet caption()}
 			<div>
-				Paste the embed code provided by a email newsletter service here (for the sign up
-				form). You can use Twig <Link
+				Paste the embed code provided by a email newsletter service here (for the sign up form). You
+				can use Twig <Link
 					style="display:inline;"
 					href="/docs/themes-templates#variables"
 					target="_blank">route variables</Link
@@ -68,8 +83,8 @@
 				{#snippet title()}
 					Hyvor Post Integration Enabled
 				{/snippet}
-				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically
-				append the Hyvor Post signup form code, and
+				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically append
+				the Hyvor Post signup form code, and
 				<strong>you don't generally need to add anything here</strong>.
 			</Callout>
 			<br />
@@ -84,8 +99,8 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific
-				place, you may also edit your theme files.
+				Your theme will decide where to show this form. If you want to show it in a specific place,
+				you may also edit your theme files.
 			</Text>
 		</div>
 	</SplitControl>

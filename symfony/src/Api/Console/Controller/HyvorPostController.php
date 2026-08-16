@@ -5,7 +5,6 @@ namespace App\Api\Console\Controller;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\HyvorPost\ConnectHyvorPostInput;
 use App\Api\Console\Input\HyvorPost\UpdateHyvorPostInput;
 use App\Api\Console\Object\HyvorPost\HyvorPostObject;
 use App\Service\Blog\BlogService;

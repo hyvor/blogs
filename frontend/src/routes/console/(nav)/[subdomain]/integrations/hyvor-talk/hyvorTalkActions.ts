@@ -4,12 +4,11 @@ export interface HyvorTalkIntegration {
 	id: number;
 	created_at: number;
 	website_id: number;
+	embed_code: string;
+	embed_default_code: string;
 }
 
-export type HyvorTalkIntegrationData<Connected extends boolean = boolean> = {
-	connected: Connected;
-	data: Connected extends true ? HyvorTalkIntegration : undefined;
-};
+export type HyvorTalkIntegrationData = { data: HyvorTalkIntegration | null };
 
 export function loadHyvorTalk() {
 	return consoleApi.get<HyvorTalkIntegrationData>({
@@ -17,14 +16,21 @@ export function loadHyvorTalk() {
 	});
 }
 
-export function createHyvorTalkIntegration() {
+export function connectHyvorTalk() {
 	return consoleApi.post<HyvorTalkIntegration>({
-		endpoint: '/integrations/hyvor-talk'
+		endpoint: '/integrations/hyvor-talk/connect'
 	});
 }
 
-export function deleteHyvorTalkIntegration() {
-	return consoleApi.delete({
-		endpoint: '/integrations/hyvor-talk'
+export function disconnectHyvorTalk() {
+	return consoleApi.post({
+		endpoint: '/integrations/hyvor-talk/disconnect'
+	});
+}
+
+export function updateHyvorTalkEmbedCode(embed_code: string | null) {
+	return consoleApi.patch<HyvorTalkIntegration>({
+		endpoint: '/integrations/hyvor-talk',
+		data: { embed_code }
 	});
 }

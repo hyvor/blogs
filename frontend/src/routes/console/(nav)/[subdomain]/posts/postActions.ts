@@ -37,8 +37,8 @@ export function getPages() {
 
 export function getPost(id: number, variantLanguageCode: string | null = null) {
 	return consoleApi.get<{
-		post: Post,
-		variant: PostVariant | null
+		post: Post;
+		variant: PostVariant | null;
 	}>({
 		endpoint: `/post/${id}`,
 		data: variantLanguageCode ? { variant_language_code: variantLanguageCode } : undefined

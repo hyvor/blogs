@@ -34,10 +34,7 @@
 <div class="settings">
 	<div class="nav hds-box">
 		<NavLinkGroup activeBackground="var(--accent-light-mid)">
-			<NavLink
-				href={consoleUrlWithBlog('/settings')}
-				active={$page.url.pathname === `${prefix}`}
-			>
+			<NavLink href={consoleUrlWithBlog('/settings')} active={$page.url.pathname === `${prefix}`}>
 				{#snippet start()}
 					<IconList />
 				{/snippet}

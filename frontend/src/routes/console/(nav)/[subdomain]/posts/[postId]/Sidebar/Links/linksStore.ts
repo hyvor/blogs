@@ -10,8 +10,9 @@ import {
 } from '../../../../../../lib/links/links';
 import type { LinkAnalysisLink } from '../../../../../../lib/types';
 
-export const variantLinksStore = derived([postVariantStore, blogStore], ([variant, blog]) =>
-	[], // getLinksFromContent(variant?.content || '', blog.url) (TODO:)
+export const variantLinksStore = derived(
+	[postVariantStore, blogStore],
+	([variant, blog]) => [] // getLinksFromContent(variant?.content || '', blog.url) (TODO:)
 );
 
 export const variantLinkAnalysisStore = derived([postVariantStore], ([variant]) =>

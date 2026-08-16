@@ -83,9 +83,7 @@
 				setFromIntegration(res);
 				toast.success('Embed code saved', { id: toastId });
 			})
-			.catch((err) =>
-				toast.error(err.message || 'Failed to save embed code', { id: toastId })
-			);
+			.catch((err) => toast.error(err.message || 'Failed to save embed code', { id: toastId }));
 	}
 
 	function handleResetEmbedCode() {
@@ -129,8 +127,7 @@
 {:else}
 	<IntergrationTopNotice>
 		<a href="https://post.hyvor.com" target="_blank" class="hds-link"> Hyvor Post </a> is a privacy-first
-		email newsletter platform. All Hyvor Blogs plans include a free complimentary license for Hyvor
-		Post.
+		email newsletter platform. All Hyvor Blogs plans include a free complimentary license for Hyvor Post.
 	</IntergrationTopNotice>
 
 	<IntegrationConfigContent>
@@ -140,9 +137,8 @@
 			<SplitControl label="Hyvor Post Connection">
 				{#if data}
 					<div class="connection-status">
-						This blog is connected to a newsletter (ID: <strong
-							>{data.newsletter_id}</strong
-						>) in Hyvor Post.
+						This blog is connected to a newsletter (ID: <strong>{data.newsletter_id}</strong>) in
+						Hyvor Post.
 					</div>
 
 					<Button
@@ -183,7 +179,7 @@
 
 			{#if data}
 				<div class="embed-code">
-					<SplitControl label="Embed Code">
+					<SplitControl label="Embed Code" column>
 						{#snippet caption()}
 							<div>
 								This code is automatically added to your blog's <a
@@ -192,24 +188,20 @@
 									target="_blank"
 									><code>_newsletter</code>
 									variable</a
-								>, which is usually placed below the post content (depending on the
-								theme).
+								>, which is usually placed below the post content (depending on the theme).
 							</div>
 						{/snippet}
 
-						<Textarea bind:value={embedCode} rows={4} block />
+						<Textarea bind:value={embedCode} rows={10} block />
 
 						<div class="embed-code-actions">
 							<div class="actions-left">
 								{#if isEmbedCodeDirty}
-									<Button size="small" on:click={handleSaveEmbedCode}>Save</Button
-									>
+									<Button size="small" on:click={handleSaveEmbedCode}>Save</Button>
 								{/if}
 								{#if !isEmbedCodeDefault}
-									<Button
-										size="small"
-										variant="invisible"
-										on:click={handleResetEmbedCode}>Reset to default</Button
+									<Button size="small" variant="invisible" on:click={handleResetEmbedCode}
+										>Reset to default</Button
 									>
 								{/if}
 							</div>

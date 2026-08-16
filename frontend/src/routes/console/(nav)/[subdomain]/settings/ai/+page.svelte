@@ -3,12 +3,11 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 
-	const providers: { value: 'mistral' | 'openai' | 'anthropic'; label: string; model: string }[] =
-		[
-			{ value: 'mistral', label: 'Mistral', model: 'mistral-medium-3.5' },
-			{ value: 'openai', label: 'OpenAI', model: 'gpt-5.6-terra' },
-			{ value: 'anthropic', label: 'Anthropic', model: 'claude-sonnet-5' }
-		];
+	const providers: { value: 'mistral' | 'openai' | 'anthropic'; label: string; model: string }[] = [
+		{ value: 'mistral', label: 'Mistral', model: 'mistral-medium-3.5' },
+		{ value: 'openai', label: 'OpenAI', model: 'gpt-5.6-terra' },
+		{ value: 'anthropic', label: 'Anthropic', model: 'claude-sonnet-5' }
+	];
 
 	function handleAiProviderChange(value: 'mistral' | 'openai' | 'anthropic') {
 		updateBlogStore({ ai_provider: value });

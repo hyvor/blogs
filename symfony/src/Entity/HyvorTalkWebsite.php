@@ -27,7 +27,13 @@ class HyvorTalkWebsite
     private int $website_id;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $encryption_key = null;
+    private ?string $encryption_key = null; // no longer used
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $embed_code = null;
+
+    #[ORM\Column]
+    private bool $created_by_blogs = true;
 
     public function getId(): int
     {
@@ -93,5 +99,25 @@ class HyvorTalkWebsite
     {
         $this->encryption_key = $encryption_key;
         return $this;
+    }
+
+    public function getEmbedCode(): ?string
+    {
+        return $this->embed_code;
+    }
+
+    public function setEmbedCode(?string $embed_code): void
+    {
+        $this->embed_code = $embed_code;
+    }
+
+    public function isCreatedByBlogs(): bool
+    {
+        return $this->created_by_blogs;
+    }
+
+    public function setCreatedByBlogs(bool $created_by_blogs): void
+    {
+        $this->created_by_blogs = $created_by_blogs;
     }
 }

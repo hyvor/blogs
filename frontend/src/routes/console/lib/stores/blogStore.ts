@@ -79,11 +79,17 @@ export function updateHostingInfoStore(updates: HostingInfo) {
 	hostingInfoStore.set(updates);
 }
 
-
 // integrations
 export function setHyvorPostIntegrationState(newsletterId: number | null) {
 	integrationsStore.update((integrations) => ({
 		...integrations,
 		hyvor_post: newsletterId ? { newsletter_id: newsletterId } : null
+	}));
+}
+
+export function setHyvorTalkIntegrationState(websiteId: number | null) {
+	integrationsStore.update((integrations) => ({
+		...integrations,
+		hyvor_talk: websiteId ? { website_id: websiteId } : null
 	}));
 }

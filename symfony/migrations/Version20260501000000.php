@@ -179,7 +179,7 @@ final class Version20260501000000 extends AbstractMigration
         $this->addSql('DROP TABLE gpt_prompts');
 
         $this->addSql("CREATE TYPE ai_message_role AS ENUM ('user', 'assistant')");
-        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'event')");
+        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'thinking', 'event')");
 
         $this->addSql(
             <<<SQL
@@ -275,6 +275,13 @@ final class Version20260501000000 extends AbstractMigration
             );
             SQL
         );
+
+        // hyvor talk
+        $this->addSql(<<<SQL
+        ALTER TABLE inter_hyvor_talk_websites
+            ADD COLUMN embed_code TEXT,
+            ADD COLUMN created_by_blogs BOOLEAN NOT NULL DEFAULT true;
+        SQL);
     }
 
     public function down(Schema $schema): void {}

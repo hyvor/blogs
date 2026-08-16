@@ -28,13 +28,16 @@ docker compose exec -it backend bash -c "bin/console dev:reset --seed"
 
 ```bash
 # backend tests
-docker compose exec backend bash -c "cd /app/backend && php bin/phpunit"
+docker compose exec backend bash -c "bin/phpunit"
 
 # phpstan
-docker compose exec backend bash -c "cd /app/backend && php vendor/bin/phpstan --memory-limit=1G"
+docker compose exec backend bash -c "vendor/bin/phpstan --memory-limit=1G"
 
-# prettier
+# prettier (format)
 docker compose exec frontend npm run format
+
+# svelte-check
+docker compose exec frontend npm run check
 ```
 
 ### Supported VSCode Extensions

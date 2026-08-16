@@ -24,7 +24,6 @@
 <style>
 	.stats-row {
 		padding: 72px 0;
-		border-bottom: 1px solid var(--border);
 	}
 
 	.inner {

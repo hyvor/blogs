@@ -72,7 +72,6 @@ class HyvorPostListener
         }
     }
 
-    #[AsEventListener]
     private function dispatchSyncUser(User $user, bool $delete = false): void
     {
         if (!$this->internalConfig->getDeployment()->isCloud()) {

@@ -14,20 +14,20 @@ return static function (RoutingConfigurator $routes): void {
     // (ex: blogs.hyvor.com)
     $routes
         ->import('./app.php')
-        ->condition('env("CADDY_ROUTER") === "app"');
+        ->condition('service("app_router").isApp()');
 
     // subdomain delivery (ex: subdomain.hyvorblogs.io)
     $routes
         ->import('../../src/Api/Delivery/SubdomainController.php', 'attribute')
-        ->condition('env("CADDY_ROUTER") === "subdomain"');
+        ->condition('service("app_router").isSubdomain()');
 
     // custom domain delivery
     $routes
         ->import('../../src/Api/Delivery/CustomDomainController.php', 'attribute')
-        ->condition('env("CADDY_ROUTER") === "customdomain"');
+        ->condition('service("app_router").isCustomDomain()');
 
     // local endpoints
     $routes
         ->import('../../src/Api/Local/LocalController.php', 'attribute')
-        ->condition('env("CADDY_ROUTER") === "local"');
+        ->condition('service("app_router").isLocal()');
 };

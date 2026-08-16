@@ -1,417 +1,272 @@
 <script lang="ts">
-	import IconHandThumbsUp from '@hyvor/icons/IconHandThumbsUp';
-	import IconSend from '@hyvor/icons/IconSend';
-	import ProductMascot from './ProductMascot.svelte';
-
-	const TALK_COLOR = '#ffd969';
-	const POST_COLOR = '#5a8387';
-
-	const comments = [
+	const products = [
 		{
-			name: 'Isaac',
-			time: '2d ago',
-			likes: 12,
-			text: 'This is exactly what I needed, thank you!'
+			name: 'Hyvor Talk',
+			component: 'talk',
+			side: 'left',
+			arrowLabel: 'Our commenting platform',
+			tag: 'Complimentary license'
 		},
 		{
-			name: 'Maria',
-			time: '5d ago',
-			likes: 4,
-			text: 'Trying this out on my blog today.'
+			name: 'Hyvor Post',
+			component: 'post',
+			side: 'right',
+			arrowLabel: 'Our newsletter platform',
+			tag: 'Complimentary license'
 		}
 	];
 </script>
 
-<div class="suite-mockup-wrap">
-	<div
-		class="stack-card stack-talk"
-		style:background={`color-mix(in srgb, ${TALK_COLOR} 30%, var(--background))`}
-	>
-		<ProductMascot color={TALK_COLOR} size={22} />
-	</div>
-	<div
-		class="stack-card stack-post"
-		style:background={`color-mix(in srgb, ${POST_COLOR} 30%, var(--background))`}
-	>
-		<ProductMascot color={POST_COLOR} size={22} />
-	</div>
-
-	<div class="free-sticker">
-		<span>3 tools</span>
-		<strong>1 free plan</strong>
-	</div>
-
-	<div class="suite-mockup">
-	<div class="post">
-		<div class="post-image"></div>
-		<h4 class="post-title">Why We Moved to a Headless CMS</h4>
-		<div class="post-meta">By Sarah Chen &middot; Jul 15, 2026 &middot; 4 min read</div>
-		<p class="post-text">
-			We spent the last few months rethinking how content flows through our stack. Here's what
-			changed, and why it made publishing so much faster for our team.
-		</p>
-	</div>
-
-	<div class="newsletter">
-		<div class="mascot-icon" style:background={`color-mix(in srgb, ${POST_COLOR} 20%, transparent)`}>
-			<ProductMascot color={POST_COLOR} size={20} />
-		</div>
-		<div class="newsletter-text">
-			<div class="nl-title">Never miss a post</div>
-			<div class="nl-subtitle">Join 1,204 readers getting new articles by email.</div>
-		</div>
-		<span class="badge">
-			<ProductMascot color={POST_COLOR} size={14} />
-			Hyvor Post
-		</span>
-	</div>
-	<div class="newsletter-form">
-		<div class="email-input">you@email.com</div>
-		<div class="subscribe-btn">Subscribe</div>
-	</div>
-
-	<div class="comments">
-		<div class="comments-head">
-			<span class="ch-title">12 Comments</span>
-			<span class="badge">
-				<ProductMascot color={TALK_COLOR} size={14} />
-				Hyvor Talk
-			</span>
-		</div>
-
-		<div class="write-comment">
-			<div class="avatar you">Y</div>
-			<div class="write-input">Write a comment&hellip;</div>
-			<div class="send-btn"><IconSend size={14} /></div>
-		</div>
-
-		{#each comments as c}
-			<div class="comment-row">
-				<div class="avatar">{c.name[0]}</div>
-				<div class="comment-body">
-					<div class="comment-meta">
-						<span class="c-name">{c.name}</span>
-						<span class="c-time">{c.time}</span>
+<div class="suite-mockup">
+	<div class="join-scene">
+		<div class="join-row">
+			{#each products as p}
+				<div class="satellite-col {p.side}">
+					<div class="satellite">
+						<img
+							src="https://hyvor.com/api/public/logo/{p.component}.svg"
+							alt={p.name}
+							width="40"
+							height="40"
+						/>
 					</div>
-					<p class="c-text">{c.text}</p>
-					<div class="comment-actions">
-						<span class="c-action"><IconHandThumbsUp size={11} />{c.likes}</span>
-						<span class="c-action">Reply</span>
-					</div>
+					<span class="sat-name">{p.name}</span>
+					<span class="sat-tag">{p.tag}</span>
 				</div>
-			</div>
-		{/each}
-	</div>
+				{#if p.side === 'left'}
+					<div class="hub">
+						<img src="/logo.svg" alt="Hyvor Blogs" width="46" height="46" />
+					</div>
+				{/if}
+			{/each}
+		</div>
+
+		<!-- these swoop in once the logos have gathered above -->
+		<div class="bottom-arrows-row">
+			{#each products as p}
+				<div class="annotate-col">
+					{#if p.side === 'left'}
+						<svg class="arrow-svg bottom-arrow" viewBox="0 0 60 90">
+							<path class="arrow-path" d="M38,85 C20,65 20,25 28,6 M19,17 L28,6 L37,16" />
+						</svg>
+					{:else}
+						<svg class="arrow-svg bottom-arrow" viewBox="0 0 60 90">
+							<path class="arrow-path" d="M22,85 C40,65 40,25 32,6 M41,17 L32,6 L23,16" />
+						</svg>
+					{/if}
+					<span class="arrow-label">{p.arrowLabel}</span>
+				</div>
+				{#if p.side === 'left'}
+					<div class="hub-spacer"></div>
+				{/if}
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
-	.suite-mockup-wrap {
-		position: relative;
-		padding: 22px 18px;
-	}
-
-	.stack-card {
-		position: absolute;
-		top: 22px;
-		bottom: 22px;
-		width: 92%;
-		border-radius: 20px;
-		z-index: 0;
-		display: flex;
-		align-items: flex-end;
-		justify-content: flex-end;
-		padding: 18px;
-	}
-
-	.stack-talk {
-		left: 4px;
-		transform: rotate(-5deg);
-	}
-
-	.stack-post {
-		right: 4px;
-		transform: rotate(5deg);
-	}
-
-	.free-sticker {
-		position: absolute;
-		top: 2px;
-		right: 8px;
-		z-index: 2;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		line-height: 1.25;
-		padding: 8px 14px;
-		border-radius: 14px;
-		background: var(--accent);
-		color: #fff;
-		transform: rotate(6deg);
-		box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent);
-	}
-
-	.free-sticker span {
-		font-size: 9px;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		opacity: 0.85;
-	}
-
-	.free-sticker strong {
-		font-size: 14px;
-		white-space: nowrap;
-	}
-
 	.suite-mockup {
-		position: relative;
-		z-index: 1;
-		border-radius: 20px;
-		border: 1px solid var(--border);
-		overflow: hidden;
-		background: var(--background);
-		box-shadow: 0 16px 48px color-mix(in srgb, var(--text) 8%, transparent);
-		font-size: 13px;
-	}
-
-	.post {
-		padding: 20px 20px 16px;
-	}
-
-	.post-image {
-		width: 100%;
-		height: 96px;
-		border-radius: 10px;
-		margin-bottom: 14px;
-		background: linear-gradient(
-			135deg,
-			color-mix(in srgb, var(--accent) 30%, transparent),
-			color-mix(in srgb, var(--accent) 8%, transparent)
-		);
-	}
-
-	.post-title {
-		font-size: 17px;
-		font-weight: 700;
-		line-height: 1.3;
-		margin: 0 0 6px;
-	}
-
-	.post-meta {
-		font-size: 12px;
-		color: var(--text-light);
-		margin-bottom: 12px;
-	}
-
-	.post-text {
-		font-size: 13px;
-		line-height: 1.6;
-		color: var(--text-light);
-		margin: 0;
-	}
-
-	.newsletter {
-		position: relative;
 		display: flex;
-		align-items: flex-start;
-		gap: 12px;
-		padding: 16px 20px 12px;
-		border-top: 1px solid var(--border);
-		background: color-mix(in srgb, var(--accent) 4%, var(--background));
-	}
-
-	.mascot-icon {
-		flex-shrink: 0;
-		width: 36px;
-		height: 36px;
-		display: flex;
-		align-items: center;
 		justify-content: center;
-		border-radius: 10px;
 	}
 
-	.newsletter-text {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.nl-title {
-		font-size: 14px;
-		font-weight: 700;
-		margin-bottom: 3px;
-	}
-
-	.nl-subtitle {
-		font-size: 12px;
-		color: var(--text-light);
-	}
-
-	.newsletter-form {
-		display: flex;
-		gap: 8px;
-		padding: 0 20px 16px;
-		border-bottom: 1px solid var(--border);
-		background: color-mix(in srgb, var(--accent) 4%, var(--background));
-	}
-
-	.email-input {
-		flex: 1;
-		font-size: 12px;
-		color: var(--text-light);
-		padding: 9px 14px;
-		border-radius: 100px;
-		border: 1px solid var(--border);
-		background: var(--background);
-	}
-
-	.subscribe-btn {
-		flex-shrink: 0;
-		font-size: 12px;
-		font-weight: 600;
-		color: #fff;
-		background: var(--accent);
-		padding: 9px 16px;
-		border-radius: 100px;
-		white-space: nowrap;
-	}
-
-	.comments {
-		padding: 16px 20px 20px;
+	.join-scene {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
-	}
-
-	.comments-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.ch-title {
-		font-size: 13px;
-		font-weight: 700;
-	}
-
-	.badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 11px;
-		font-weight: 600;
-		color: var(--text);
-		background: color-mix(in srgb, var(--text) 6%, transparent);
-		padding: 4px 10px 4px 6px;
-		border-radius: 100px;
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	.badge :global(svg) {
-		flex-shrink: 0;
-		border-radius: 50%;
-	}
-
-	.write-comment {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.write-input {
-		flex: 1;
-		font-size: 12px;
-		color: var(--text-light);
-		padding: 9px 14px;
-		border-radius: 100px;
-		border: 1px solid var(--border);
-	}
-
-	.send-btn {
-		flex-shrink: 0;
-		width: 30px;
-		height: 30px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
-		color: var(--accent);
-	}
-
-	.comment-row {
-		display: flex;
-		align-items: flex-start;
-		gap: 10px;
-	}
-
-	.avatar {
-		flex-shrink: 0;
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 12px;
-		font-weight: 700;
-		color: var(--text-light);
-		background: color-mix(in srgb, var(--text) 10%, transparent);
-	}
-
-	.avatar.you {
-		color: var(--accent);
-		background: color-mix(in srgb, var(--accent) 14%, transparent);
-	}
-
-	.comment-body {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
-	.comment-meta {
-		display: flex;
-		align-items: baseline;
-		gap: 8px;
-	}
-
-	.c-name {
-		font-size: 13px;
-		font-weight: 700;
-	}
-
-	.c-time {
-		font-size: 11px;
-		color: var(--text-light);
-	}
-
-	.c-text {
-		font-size: 12.5px;
-		line-height: 1.5;
-		color: var(--text-light);
-		margin: 0;
-	}
-
-	.comment-actions {
-		display: flex;
-		align-items: center;
-		gap: 14px;
-		margin-top: 2px;
-	}
-
-	.c-action {
-		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-		font-size: 11px;
-		color: var(--text-light);
-		font-weight: 600;
+		padding: 40px 20px;
 	}
 
-	.c-action :global(svg) {
-		opacity: 0.7;
+	.join-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 24px;
+	}
+
+	.annotate-col {
+		width: 90px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+	}
+
+	.arrow-label {
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--text-light);
+		text-align: center;
+		line-height: 1.3;
+	}
+
+	.arrow-svg {
+		width: 38px;
+		height: 58px;
+		color: color-mix(in srgb, var(--text) 40%, transparent);
+	}
+
+	.arrow-path {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.hub {
+		width: 100px;
+		height: 100px;
+		border-radius: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+		flex-shrink: 0;
+	}
+
+	.satellite-col {
+		width: 90px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
+
+	.satellite {
+		width: 68px;
+		height: 68px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	/* the logo hops in first, with a bouncy overshoot */
+	.satellite-col.left .satellite {
+		animation: satellite-jump-left 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	.satellite-col.right .satellite {
+		animation: satellite-jump-right 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	@keyframes satellite-jump-left {
+		0%,
+		3% {
+			transform: translateX(-70px) translateY(8px) scale(0.75);
+			opacity: 0;
+		}
+		8% {
+			opacity: 1;
+		}
+		16% {
+			transform: translateX(8px) translateY(-9px) scale(1.07);
+		}
+		22% {
+			transform: translateX(-3px) translateY(2px) scale(0.97);
+		}
+		28%,
+		100% {
+			transform: translateX(0) translateY(0) scale(1);
+			opacity: 1;
+		}
+	}
+
+	@keyframes satellite-jump-right {
+		0%,
+		3% {
+			transform: translateX(70px) translateY(8px) scale(0.75);
+			opacity: 0;
+		}
+		8% {
+			opacity: 1;
+		}
+		16% {
+			transform: translateX(-8px) translateY(-9px) scale(1.07);
+		}
+		22% {
+			transform: translateX(3px) translateY(2px) scale(0.97);
+		}
+		28%,
+		100% {
+			transform: translateX(0) translateY(0) scale(1);
+			opacity: 1;
+		}
+	}
+
+	/* then the name settles in */
+	.sat-name {
+		font-size: 12px;
+		font-weight: 700;
+		color: var(--text);
+		white-space: nowrap;
+		opacity: 0;
+		animation: fade-up-in 3.4s ease-out forwards;
+	}
+
+	/* then the license tag */
+	.sat-tag {
+		font-size: 10px;
+		font-weight: 600;
+		padding: 3px 9px;
+		border-radius: 100px;
+		color: var(--text-light);
+		background: color-mix(in srgb, var(--text) 6%, transparent);
+		white-space: nowrap;
+		opacity: 0;
+		animation: fade-up-in 3.4s ease-out forwards;
+		animation-delay: 0.3s;
+	}
+
+	@keyframes fade-up-in {
+		0%,
+		28% {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		40%,
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.bottom-arrows-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 24px;
+	}
+
+	.hub-spacer {
+		width: 100px;
+		flex-shrink: 0;
+	}
+
+	.bottom-arrows-row .annotate-col {
+		opacity: 0;
+		animation: appear-after-join 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	}
+
+	@keyframes appear-after-join {
+		0%,
+		54% {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		68%,
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 400px) {
+		.join-scene {
+			transform: scale(0.85);
+			padding: 30px 10px;
+		}
 	}
 </style>
