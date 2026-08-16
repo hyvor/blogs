@@ -22,6 +22,9 @@ class PostVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $content_updated_at = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
     private Post $post;
@@ -101,6 +104,17 @@ class PostVariant
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getContentUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->content_updated_at;
+    }
+
+    public function setContentUpdatedAt(?\DateTimeImmutable $content_updated_at): static
+    {
+        $this->content_updated_at = $content_updated_at;
         return $this;
     }
 

@@ -282,6 +282,9 @@ final class Version20260501000000 extends AbstractMigration
             ADD COLUMN embed_code TEXT,
             ADD COLUMN created_by_blogs BOOLEAN NOT NULL DEFAULT true;
         SQL);
+
+        // content_updated_at
+        $this->addSql('ALTER TABLE post_variants ADD COLUMN content_updated_at TIMESTAMPTZ');
     }
 
     public function down(Schema $schema): void {}

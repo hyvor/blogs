@@ -33,4 +33,7 @@ class UpdatePostVariantInput
     public ?array $seo_secondary_keywords = null;
 
     public bool $redirect_on_slug_change = false;
+
+    // false = not provided (leave untouched); null = clear; int = set to this timestamp
+    public null|int|false $content_updated_at = false;
 }

@@ -15,6 +15,7 @@
 	import { goto } from '$app/navigation';
 	import PostStatusTag from '../../PostStatusTag.svelte';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
+	import dayjs from 'dayjs';
 
 	let showDropdown = $state(false);
 	let creatingLanguageId: number | null = $state(null);
@@ -43,15 +44,34 @@
 		goto(consoleUrlWithBlog(`/posts/${$postStore.id}/${lang.code.toLowerCase()}`));
 	}
 
+	function getVariant(languageId: number) {
+		return $postStore.variant_statuses.find((variant) => variant.language_id === languageId);
+	}
+
 	function getVariantStatus(languageId: number) {
-		return $postStore.variant_statuses.find((variant) => variant.language_id === languageId)
-			?.status;
+		return getVariant(languageId)?.status;
+	}
+
+	// content_updated_at reflects when the content itself last changed (null while draft);
+	// fall back to updated_at, which changes on any field update
+	function getVariantLastUpdated(languageId: number) {
+		const variant = getVariant(languageId);
+		if (!variant) return null;
+		return variant.content_updated_at ?? variant.updated_at;
+	}
+
+	function getVariantWords(languageId: number) {
+		return getVariant(languageId)?.words ?? null;
+	}
+
+	function formatWords(words: number) {
+		return `${words.toLocaleString()} word${words === 1 ? '' : 's'}`;
 	}
 </script>
 
 {#if $languagesStore.length}
 	<div class="wrap">
-		<Dropdown bind:show={showDropdown} align="center" width={250}>
+		<Dropdown bind:show={showDropdown} align="center" width={290}>
 			{#snippet trigger()}
 				<Button color="input" disabled={creatingLanguageId !== null} size="small">
 					{$postVariantLanguageStore.name}
@@ -78,14 +98,29 @@
 						>
 							{language.name}
 
-							{#snippet end()}
-								<span class="status">
+							{#snippet description()}
+								{#if creatingLanguageId === language.id}
+									<Text small light>Creating...</Text>
+								{:else if !getVariantStatus(language.id)}
+									<Text small light>Not created</Text>
+								{:else}
+									{@const words = getVariantWords(language.id)}
+									{@const updatedAt = getVariantLastUpdated(language.id)}
 									<Text small light>
-										{creatingLanguageId === language.id
-											? 'Creating...'
-											: getVariantStatus(language.id) || 'Not created'}
+										{#if words}{formatWords(words)}{/if}
+										{#if words && updatedAt}&nbsp;·&nbsp;{/if}
+										{#if updatedAt}{dayjs.unix(updatedAt).fromNow()}{/if}
 									</Text>
-								</span>
+								{/if}
+							{/snippet}
+
+							{#snippet end()}
+								{#if creatingLanguageId !== language.id}
+									{@const status = getVariantStatus(language.id)}
+									{#if status}
+										<PostStatusTag {status} size="x-small" />
+									{/if}
+								{/if}
 							{/snippet}
 						</ActionListItem>
 					{/each}
@@ -101,8 +136,5 @@
 	}
 	.wrap :global(.dropdown .content-wrap) {
 		z-index: 11 !important;
-	}
-	.status {
-		text-transform: capitalize;
 	}
 </style>

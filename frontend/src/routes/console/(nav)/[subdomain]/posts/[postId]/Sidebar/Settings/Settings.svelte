@@ -6,6 +6,7 @@
 	import Authors from './Authors/Authors.svelte';
 	import Tags from './Tags/Tags.svelte';
 	import PublishTime from './PublishTime.svelte';
+	import ContentUpdatedAt from './ContentUpdatedAt.svelte';
 	import CoverImage from './CoverImage.svelte';
 	import Featured from './Featured.svelte';
 	import Delete from './Delete.svelte';
@@ -26,6 +27,7 @@
 	<Tags />
 	<CoverImage />
 	<PublishTime />
+	<ContentUpdatedAt />
 	<Featured />
 	<Delete />
 

@@ -37,6 +37,10 @@
 
 	let textarea: HTMLTextAreaElement | undefined = $state();
 
+	export function focus() {
+		textarea?.focus();
+	}
+
 	function handleResize() {
 		if (!textarea) return;
 		textarea.style.height = '0';
@@ -77,10 +81,8 @@
 </script>
 
 <div class="title-wrap">
-	<!-- svelte-ignore a11y_autofocus -->
 	<textarea
 		placeholder="Title..."
-		autoFocus={($postVariantStore.title || '') === ''}
 		value={$postVariantStore.title}
 		onkeydown={handleKeydown}
 		oninput={handleInput}

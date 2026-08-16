@@ -14,6 +14,7 @@
 		SplitControl,
 		Switch,
 		Tag,
+		TextInput,
 		Tooltip,
 		Validation,
 		toast
@@ -50,6 +51,15 @@
 	let diff = $state(true);
 	let redirectOnSlugChange = $state(true);
 
+	let setCustomContentUpdatedAt = $state(false);
+	let customContentUpdatedAt = $state(dayjs().format('YYYY-MM-DDTHH:mm'));
+
+	let contentUpdatedAtTooEarly = $derived(
+		setCustomContentUpdatedAt &&
+			$postStore.published_at !== null &&
+			dayjs(customContentUpdatedAt).unix() < $postStore.published_at
+	);
+
 	$effect(() => {
 		$postStore;
 		$postOriginalStore;
@@ -58,7 +68,8 @@
 	});
 
 	let disabled = $derived(
-		changes.variant.slug !== undefined && (changes.variant.slug || '').trim() === ''
+		(changes.variant.slug !== undefined && (changes.variant.slug || '').trim() === '') ||
+			contentUpdatedAtTooEarly
 	);
 
 	let isLoading = $state(false);
@@ -71,7 +82,10 @@
 				await updatePostVariant({
 					language_id: $postVariantLanguageStore.id,
 					...changes.variant,
-					redirect_on_slug_change: redirectOnSlugChange
+					redirect_on_slug_change: redirectOnSlugChange,
+					...(setCustomContentUpdatedAt
+						? { content_updated_at: dayjs(customContentUpdatedAt).unix() }
+						: {})
 				});
 			} catch (e: any) {
 				isLoading = false;
@@ -132,6 +146,25 @@
 				contentNew={$postVariantStore.content_unsaved}
 				{diff}
 			/>
+
+			<div class="content-updated-at">
+				<span style="display:inline-flex;align-items:center;gap:5px;">
+					Set a custom updated time
+				</span>
+				<Switch bind:checked={setCustomContentUpdatedAt} />
+			</div>
+
+			{#if setCustomContentUpdatedAt}
+				<div style="margin-top:10px;">
+					<TextInput block type="datetime-local" bind:value={customContentUpdatedAt} />
+
+					{#if contentUpdatedAtTooEarly}
+						<div style="margin-top:5px;">
+							<Validation state="error">Must be on or after the publish time.</Validation>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</SplitControl>
 	{/if}
 
@@ -268,6 +301,13 @@
 		font-size: 14px;
 	}
 	.auto-redirects span {
+		margin-right: 10px;
+	}
+	.content-updated-at {
+		font-size: 14px;
+		margin-top: 10px;
+	}
+	.content-updated-at span {
 		margin-right: 10px;
 	}
 </style>

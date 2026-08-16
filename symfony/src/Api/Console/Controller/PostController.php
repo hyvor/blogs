@@ -268,6 +268,12 @@ class PostController
             $data['seo_secondary_keywords'] = $input->seo_secondary_keywords;
         }
 
+        if ($input->content_updated_at !== false) {
+            $data['content_updated_at'] = $input->content_updated_at !== null
+                ? \DateTimeImmutable::createFromFormat('U', (string)$input->content_updated_at) ?: null
+                : null;
+        }
+
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);

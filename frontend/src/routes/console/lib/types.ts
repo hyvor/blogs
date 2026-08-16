@@ -201,6 +201,7 @@ export type PostVariant = {
 	content_unsaved: string | null;
 	title: string | null;
 	description: string | null;
+	content_updated_at: number | null;
 
 	seo_primary_keyword: string | null;
 	seo_secondary_keywords: string[];
@@ -212,6 +213,9 @@ export type PostVariantStatusItem = {
 	id: number;
 	language_id: number;
 	status: PostStatus;
+	updated_at: number | null;
+	content_updated_at: number | null;
+	words: number | null;
 };
 
 // minimal shape used for listing posts/pages (GET /posts, GET /pages)

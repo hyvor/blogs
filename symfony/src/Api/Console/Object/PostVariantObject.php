@@ -20,6 +20,7 @@ class PostVariantObject
     public ?string $content_unsaved;
     public ?string $title;
     public ?string $description;
+    public ?int $content_updated_at;
     public ?string $seo_primary_keyword;
     /** @var string[] */
     public array $seo_secondary_keywords;
@@ -44,6 +45,7 @@ class PostVariantObject
         $this->content_unsaved = $variant->getContentUnsaved();
         $this->title = $variant->getTitle();
         $this->description = $variant->getDescription();
+        $this->content_updated_at = $variant->getContentUpdatedAt()?->getTimestamp();
         $this->seo_primary_keyword = $variant->getSeoPrimaryKeyword();
         $this->seo_secondary_keywords = $variant->getSeoSecondaryKeywords() ?? [];
         $this->link_analysis = $variant->getLinkAnalysis() ?? [];
