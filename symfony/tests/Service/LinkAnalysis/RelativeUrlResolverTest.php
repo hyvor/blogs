@@ -37,7 +37,7 @@ class RelativeUrlResolverTest extends TestCase
 
     public function test_resolves_anchor_as_fragment(): void
     {
-        // anchors are resolved as fragments — filtering happens in PostVariantAnalyzer
+        // anchors are resolved as fragments — filtering happens in PostVariantLinkAnalyzer
         $result = $this->resolver->resolve('#anchor', 'https://blog.example.com/post');
         $this->assertSame('https://blog.example.com/post#anchor', $result);
     }

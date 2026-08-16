@@ -89,6 +89,24 @@ class UserService
     /**
      * @return User[]
      */
+    public function getAdmins(Blog $blog): array
+    {
+        /** @var User[] */
+        return $this->userRepository->createQueryBuilder('u')
+            ->where('u.blog = :blog')
+            ->andWhere('u.role = :role')
+            ->andWhere('u.status = :status')
+            ->andWhere('u.email IS NOT NULL')
+            ->setParameter('blog', $blog)
+            ->setParameter('role', UserRole::ADMIN)
+            ->setParameter('status', UserStatus::ACTIVE)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return User[]
+     */
     public function getUsers(
         Blog $blog,
         int $limit,

@@ -4,6 +4,7 @@ namespace App\Service\LinkAnalysis\StatusCheck;
 
 use App\Entity\Enum\LinkAnalyzerCheckType;
 use App\Service\AppConfig;
+use App\Service\LinkAnalysis\Dto\StatusResult;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

@@ -80,7 +80,7 @@ class GetTagsTest extends ApiTestCase
         $tag2 = TagFactory::createOne(['blog' => $blog]);
         TagVariantFactory::createOne(['tag' => $tag2, 'language' => $language, 'name' => 'Another name']);
 
-        $this->consoleBlogApi('GET', $blog, '/tags?search=Thisis', user: $user);
+        $this->consoleBlogApi('GET', $blog, '/tags?search=thisis', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();

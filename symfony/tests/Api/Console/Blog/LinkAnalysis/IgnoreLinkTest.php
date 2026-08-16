@@ -68,6 +68,35 @@ class IgnoreLinkTest extends ApiTestCase
         $this->assertSame($ignoreStatus, $link->isIgnore());
     }
 
+    public function test_ignores_internal_link_with_relative_url(): void
+    {
+        [$blog, $user, $postVariant] = $this->setupBlog('link-analysis-ignore-internal');
+
+        $link = LinkAnalyzerLinkFactory::createOne([
+            'blog' => $blog,
+            'post_variant' => $postVariant,
+            'post_variant_id' => $postVariant->getId(),
+            'url' => '/welcome',
+            'full_url' => '/welcome',
+            'status_code' => 200,
+            'ignore' => false,
+        ]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/link-analysis/ignore-link', [
+            'post_variant_id' => $postVariant->getId(),
+            'url' => '/welcome',
+            'status' => true,
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertTrue($json['ignored']);
+        $this->assertSame('/welcome', $json['url']);
+
+        $this->getEm()->refresh($link);
+        $this->assertTrue($link->isIgnore());
+    }
+
     public function test_returns_404_when_link_not_found(): void
     {
         [$blog, $user, $postVariant] = $this->setupBlog('link-analysis-ignore-notfound');
