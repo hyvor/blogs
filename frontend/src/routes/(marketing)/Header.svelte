@@ -7,6 +7,8 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import IconList from '@hyvor/icons/IconList';
 	import IconX from '@hyvor/icons/IconX';
+	import IconPalette from '@hyvor/icons/IconPalette';
+	import IconPuzzle from '@hyvor/icons/IconPuzzle';
 
 	let resourcesDropdown = $state(false);
 	let mobileOpen = $state(false);
@@ -54,7 +56,7 @@
 				Hosting
 			</a>
 
-			<Dropdown bind:show={resourcesDropdown} contentPadding={8}>
+			<Dropdown bind:show={resourcesDropdown} contentPadding={8} width={300}>
 				{#snippet trigger()}
 					<span class="nav-link nav-trigger" class:active={isThemesOrIntegrations}>
 						Resources
@@ -69,17 +71,29 @@
 					>
 						<a
 							href="/themes"
-							class="dropdown-link"
+							class="dropdown-link dropdown-link-rich"
 							class:active={$page.url.pathname === '/themes'}
 						>
-							Themes
+							<span class="dropdown-link-icon">
+								<IconPalette size={15} />
+							</span>
+							<span class="dropdown-link-text">
+								<span class="dropdown-link-title">Themes</span>
+								<span class="dropdown-link-desc">Blog themes to match your brand</span>
+							</span>
 						</a>
 						<a
 							href="/integrations"
-							class="dropdown-link"
+							class="dropdown-link dropdown-link-rich"
 							class:active={$page.url.pathname.startsWith('/integrations')}
 						>
-							Integrations
+							<span class="dropdown-link-icon">
+								<IconPuzzle size={15} />
+							</span>
+							<span class="dropdown-link-text">
+								<span class="dropdown-link-title">Integrations</span>
+								<span class="dropdown-link-desc">Connect with your favorite tools</span>
+							</span>
 						</a>
 					</div>
 				{/snippet}
@@ -278,6 +292,48 @@
 	.dropdown-link.active {
 		background: var(--accent-light);
 		color: var(--text);
+	}
+
+	.dropdown-link-rich {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 8px 10px;
+	}
+
+	.dropdown-link-icon {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		border-radius: 8px;
+		background: var(--accent-light);
+		color: var(--accent);
+	}
+
+	.dropdown-link-rich.active .dropdown-link-icon {
+		background: var(--background);
+	}
+
+	.dropdown-link-text {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		padding-top: 1px;
+	}
+
+	.dropdown-link-title {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--text);
+	}
+
+	.dropdown-link-desc {
+		font-size: 12px;
+		font-weight: 400;
+		color: var(--text-light);
 	}
 
 	.mobile-divider {
