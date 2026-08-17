@@ -6,6 +6,7 @@ use App\Api\Console\Controller\PostSuggestionController;
 use App\Entity\Enum\PostSuggestionStatus;
 use App\Entity\Enum\PostSuggestionType;
 use App\Entity\PostSuggestion;
+use App\Entity\PostSuggestionReply;
 use App\Service\Post\PostService;
 use App\Service\Post\Suggestion\PostSuggestionService;
 use App\Tests\Case\ApiTestCase;
@@ -38,6 +39,18 @@ class PostSuggestionTest extends ApiTestCase
         /** @var PostSuggestionService $service */
         $service = $this->getContainer()->get(PostSuggestionService::class);
         return $service->create($variant, $id, $type, $authorUserId);
+    }
+
+    private function createReplyDirectly(
+        \App\Entity\PostVariant $variant,
+        PostSuggestion $suggestion,
+        string $replyId,
+        int $authorUserId,
+        string $content,
+    ): PostSuggestionReply {
+        /** @var PostSuggestionService $service */
+        $service = $this->getContainer()->get(PostSuggestionService::class);
+        return $service->reply($variant, $suggestion->getId(), null, $replyId, $authorUserId, $content);
     }
 
     public function test_create(): void
@@ -112,6 +125,7 @@ class PostSuggestionTest extends ApiTestCase
         $entry = $result['sg-1'];
         $this->assertIsArray($entry);
         $this->assertSame('user:' . $user->getHyvorUserId(), $entry['author']);
+        $this->assertIsInt($entry['timestamp']);
     }
 
     public function test_get_does_not_return_suggestions_from_another_variant(): void
@@ -183,6 +197,128 @@ class PostSuggestionTest extends ApiTestCase
         $this->assertNotNull($suggestion);
         $this->assertSame('format', $suggestion->getType()->value);
         $this->assertSame((int) $user->getHyvorUserId(), $suggestion->getAuthorUserId());
+    }
+
+    public function test_edit_reply_updates_content(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'suggestion-edit-reply']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $suggestion = $this->createSuggestionDirectly($blog, $variant, 'sg-1', PostSuggestionType::COMMENT, (int) $user->getHyvorUserId());
+        $this->createReplyDirectly($variant, $suggestion, 'reply-1', (int) $user->getHyvorUserId(), 'original');
+
+        $this->consoleBlogApi(
+            'PATCH',
+            $blog,
+            '/post/' . $post->getId() . '/variant/suggestions/sg-1/replies/reply-1',
+            ['language_id' => $language->getId(), 'content' => 'edited'],
+            user: $user,
+        );
+
+        $this->assertResponseIsSuccessful();
+        $reply = $this->getJson();
+        $this->assertSame('edited', $reply['content']);
+
+        /** @var PostSuggestionReply $updated */
+        $updated = $this->getEm()->getRepository(PostSuggestionReply::class)->find('reply-1');
+        $this->assertSame('edited', $updated->getContent());
+    }
+
+    public function test_edit_reply_fails_for_non_owner(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'suggestion-edit-reply-403']);
+        $author = UserFactory::createOne(['blog' => $blog]);
+        $otherUser = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $suggestion = $this->createSuggestionDirectly($blog, $variant, 'sg-1', PostSuggestionType::COMMENT, (int) $author->getHyvorUserId());
+        $this->createReplyDirectly($variant, $suggestion, 'reply-1', (int) $author->getHyvorUserId(), 'original');
+
+        $this->consoleBlogApi(
+            'PATCH',
+            $blog,
+            '/post/' . $post->getId() . '/variant/suggestions/sg-1/replies/reply-1',
+            ['language_id' => $language->getId(), 'content' => 'hijacked'],
+            user: $otherUser,
+        );
+
+        $this->assertResponseFailed(403, 'own replies');
+
+        /** @var PostSuggestionReply $unchanged */
+        $unchanged = $this->getEm()->getRepository(PostSuggestionReply::class)->find('reply-1');
+        $this->assertSame('original', $unchanged->getContent());
+    }
+
+    public function test_edit_reply_not_found(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'suggestion-edit-reply-404']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $this->createSuggestionDirectly($blog, $variant, 'sg-1', PostSuggestionType::COMMENT, (int) $user->getHyvorUserId());
+
+        $this->consoleBlogApi(
+            'PATCH',
+            $blog,
+            '/post/' . $post->getId() . '/variant/suggestions/sg-1/replies/reply-nope',
+            ['language_id' => $language->getId(), 'content' => 'edited'],
+            user: $user,
+        );
+
+        $this->assertResponseFailed(404, 'Reply not found');
+    }
+
+    public function test_delete_reply_removes_it(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'suggestion-delete-reply']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $suggestion = $this->createSuggestionDirectly($blog, $variant, 'sg-1', PostSuggestionType::COMMENT, (int) $user->getHyvorUserId());
+        $this->createReplyDirectly($variant, $suggestion, 'reply-1', (int) $user->getHyvorUserId(), 'bye');
+
+        $this->consoleBlogApi(
+            'DELETE',
+            $blog,
+            '/post/' . $post->getId() . '/variant/suggestions/sg-1/replies/reply-1',
+            ['language_id' => $language->getId()],
+            user: $user,
+        );
+
+        $this->assertResponseIsSuccessful();
+
+        $deleted = $this->getEm()->getRepository(PostSuggestionReply::class)->find('reply-1');
+        $this->assertNull($deleted);
+    }
+
+    public function test_delete_reply_fails_for_non_owner(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'suggestion-delete-reply-403']);
+        $author = UserFactory::createOne(['blog' => $blog]);
+        $otherUser = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $suggestion = $this->createSuggestionDirectly($blog, $variant, 'sg-1', PostSuggestionType::COMMENT, (int) $author->getHyvorUserId());
+        $this->createReplyDirectly($variant, $suggestion, 'reply-1', (int) $author->getHyvorUserId(), 'bye');
+
+        $this->consoleBlogApi(
+            'DELETE',
+            $blog,
+            '/post/' . $post->getId() . '/variant/suggestions/sg-1/replies/reply-1',
+            ['language_id' => $language->getId()],
+            user: $otherUser,
+        );
+
+        $this->assertResponseFailed(403, 'own replies');
+
+        $stillThere = $this->getEm()->getRepository(PostSuggestionReply::class)->find('reply-1');
+        $this->assertNotNull($stillThere);
     }
 
     public function test_resolve_updates_status(): void

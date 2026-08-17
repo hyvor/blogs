@@ -7,9 +7,10 @@ import type {
 } from '../../../lib/types';
 import { postStore, postVariantLanguageStore } from './postStore';
 
-// Syncs @hyvor/richtext's EditorConfig.suggestions `source` (get/create/reply/resolve) and
-// `resolveAuthor` to the backend - see postId/post/[postId]/Body/Editor/suggestions.ts,
-// where these are wired into the editor config.
+// Syncs @hyvor/richtext's EditorConfig.suggestions `source`
+// (get/create/reply/editReply/deleteReply/resolve) and `resolveAuthor` to the backend -
+// see postId/post/[postId]/Body/Editor/suggestions.ts, where these are wired into the
+// editor config.
 
 function postId() {
 	return get(postStore).id;
@@ -42,6 +43,20 @@ export function replyToPostSuggestion(
 	return consoleApi.post<PostSuggestionReply>({
 		endpoint: `/post/${postId()}/variant/suggestions/${suggestionId}/replies`,
 		data: { language_id: languageId(), id: replyId, content, type }
+	});
+}
+
+export function editPostSuggestionReply(suggestionId: string, replyId: string, content: string) {
+	return consoleApi.patch<PostSuggestionReply>({
+		endpoint: `/post/${postId()}/variant/suggestions/${suggestionId}/replies/${replyId}`,
+		data: { language_id: languageId(), content }
+	});
+}
+
+export function deletePostSuggestionReply(suggestionId: string, replyId: string) {
+	return consoleApi.delete<void>({
+		endpoint: `/post/${postId()}/variant/suggestions/${suggestionId}/replies/${replyId}`,
+		data: { language_id: languageId() }
 	});
 }
 

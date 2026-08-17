@@ -129,4 +129,26 @@ class PostSuggestionService
 
         return $suggestion;
     }
+
+    public function findReplyByIdAndSuggestion(PostSuggestion $suggestion, string $replyId): ?PostSuggestionReply
+    {
+        return $this->em->getRepository(PostSuggestionReply::class)->findOneBy([
+            'id' => $replyId,
+            'suggestion' => $suggestion,
+        ]);
+    }
+
+    public function editReply(PostSuggestionReply $reply, string $content): PostSuggestionReply
+    {
+        $reply->setContent($content);
+        $this->em->flush();
+
+        return $reply;
+    }
+
+    public function deleteReply(PostSuggestionReply $reply): void
+    {
+        $this->em->remove($reply);
+        $this->em->flush();
+    }
 }

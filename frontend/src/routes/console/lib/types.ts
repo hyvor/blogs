@@ -280,7 +280,7 @@ export type UserVariant = {
 	location: string | null;
 };
 
-// === POST SUGGESTIONS (track-changes + comments, see @hyvor/richtext's suggestionsPlugin)
+// === POST SUGGESTIONS (track-changes + comments, see @hyvor/richtext's EditorConfig.suggestions)
 
 export type PostSuggestionReply = {
 	id: string;
@@ -292,6 +292,7 @@ export type PostSuggestionReply = {
 export type PostSuggestionSourceEntry = {
 	id: string;
 	author: string; // `user:<hyvor_user_id>`
+	timestamp: number; // ms since epoch
 	comments: PostSuggestionReply[];
 };
 

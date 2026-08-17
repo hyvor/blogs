@@ -7,6 +7,8 @@ import type {
 } from '@hyvor/richtext';
 import {
 	createPostSuggestion,
+	deletePostSuggestionReply,
+	editPostSuggestionReply,
 	getPostSuggestions,
 	replyToPostSuggestion,
 	resolvePostSuggestion,
@@ -30,6 +32,7 @@ export const suggestionSource: SuggestionSource = {
 			entries[id] = entry
 				? {
 						author: entry.author as Author,
+						timestamp: entry.timestamp,
 						comments: entry.comments.map((reply) => ({
 							...reply,
 							author: reply.author as Author
@@ -39,13 +42,23 @@ export const suggestionSource: SuggestionSource = {
 		}
 		return entries;
 	},
-	create(id, type, _author) {
+	create(id, type, _author, _timestamp) {
 		typeCache.set(id, type);
 		createPostSuggestion(id, type).catch((e) => console.error('Failed to sync suggestion', e));
 	},
 	reply(id, reply) {
 		replyToPostSuggestion(id, reply.id, reply.content, typeCache.get(id)).catch((e) =>
 			console.error('Failed to sync suggestion reply', e)
+		);
+	},
+	editReply(id, replyId, content) {
+		editPostSuggestionReply(id, replyId, content).catch((e) =>
+			console.error('Failed to sync suggestion reply edit', e)
+		);
+	},
+	deleteReply(id, replyId) {
+		deletePostSuggestionReply(id, replyId).catch((e) =>
+			console.error('Failed to sync suggestion reply delete', e)
 		);
 	},
 	resolve(id, decision) {

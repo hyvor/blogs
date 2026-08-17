@@ -97,7 +97,7 @@ class UserController
         $hyvorPost = $this->hyvorPostService->getHyvorPostOfBlog($blog);
 
         try {
-            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role, hyvorPost: $hyvorPost);
+            $user = $this->userService->createUserFromAuthUser($blog, $input->hyvor_user_id, $input->role);
         } catch (HyvorUserNotFoundException) {
             throw new UnprocessableEntityHttpException('Unable to find the user');
         }

@@ -7,6 +7,8 @@ use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Post\Suggestion\CreatePostSuggestionInput;
+use App\Api\Console\Input\Post\Suggestion\DeletePostSuggestionReplyInput;
+use App\Api\Console\Input\Post\Suggestion\EditPostSuggestionReplyInput;
 use App\Api\Console\Input\Post\Suggestion\GetPostSuggestionsInput;
 use App\Api\Console\Input\Post\Suggestion\ReplyPostSuggestionInput;
 use App\Api\Console\Input\Post\Suggestion\ResolveAuthorInput;
@@ -15,6 +17,7 @@ use App\Api\Console\Object\PostSuggestionAuthorObject;
 use App\Api\Console\Object\PostSuggestionObject;
 use App\Api\Console\Object\PostSuggestionReplyObject;
 use App\Entity\Post;
+use App\Entity\PostSuggestionReply;
 use App\Entity\PostVariant;
 use App\Service\Language\LanguageService;
 use App\Service\Post\PostService;
@@ -23,17 +26,19 @@ use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 /**
- * Syncs @hyvor/richtext's suggestionsPlugin `source` (get/create/reply/resolve) and
- * `resolveAuthor` to the backend - see App\Service\Post\Suggestion\PostSuggestionService.
- * Every route here is post_variant-scoped: a suggestion id is only ever read/mutated
- * after resolving the variant from {id}+language_id, same as PostController's other
- * variant routes, so one variant's suggestions can't be read/touched through another.
+ * Syncs @hyvor/richtext's EditorConfig.suggestions `source`
+ * (get/create/reply/editReply/deleteReply/resolve) and `resolveAuthor` to the backend -
+ * see App\Service\Post\Suggestion\PostSuggestionService. Every route here is
+ * post_variant-scoped: a suggestion id is only ever read/mutated after resolving the
+ * variant from {id}+language_id, same as PostController's other variant routes, so one
+ * variant's suggestions can't be read/touched through another.
  */
 class PostSuggestionController
 {
@@ -108,6 +113,50 @@ class PostSuggestionController
     }
 
     #[Route(
+        '/post/{id}/variant/suggestions/{suggestionId}/replies/{replyId}',
+        methods: ['PATCH'],
+        requirements: ['id' => Requirement::DIGITS],
+    )]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
+    public function editReply(
+        #[MapBlogEntity] Post $post,
+        string $suggestionId,
+        string $replyId,
+        #[MapRequestPayload] EditPostSuggestionReplyInput $input,
+    ): JsonResponse {
+        $variant = $this->getVariantOrFail($post, $input->language_id);
+        $reply = $this->getReplyOrFail($variant, $suggestionId, $replyId);
+        $this->assertOwnsReply($reply, 'edit');
+
+        $reply = $this->postSuggestionService->editReply($reply, $input->content);
+
+        return new JsonResponse(new PostSuggestionReplyObject($reply));
+    }
+
+    #[Route(
+        '/post/{id}/variant/suggestions/{suggestionId}/replies/{replyId}',
+        methods: ['DELETE'],
+        requirements: ['id' => Requirement::DIGITS],
+    )]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
+    public function deleteReply(
+        #[MapBlogEntity] Post $post,
+        string $suggestionId,
+        string $replyId,
+        // consoleApi's DELETE always sends language_id as a JSON body, like every other
+        // method here, not a query string - see frontend's deletePostSuggestionReply()
+        #[MapRequestPayload] DeletePostSuggestionReplyInput $input,
+    ): JsonResponse {
+        $variant = $this->getVariantOrFail($post, $input->language_id);
+        $reply = $this->getReplyOrFail($variant, $suggestionId, $replyId);
+        $this->assertOwnsReply($reply, 'delete');
+
+        $this->postSuggestionService->deleteReply($reply);
+
+        return new JsonResponse();
+    }
+
+    #[Route(
         '/post/{id}/variant/suggestions/{suggestionId}/resolve',
         methods: ['POST'],
         requirements: ['id' => Requirement::DIGITS],
@@ -145,6 +194,32 @@ class PostSuggestionController
         $variant = $this->userService->getUserVariant($user, $primaryLanguage);
 
         return new JsonResponse(PostSuggestionAuthorObject::fromUser($user, $variant?->getName()));
+    }
+
+    private function getReplyOrFail(PostVariant $variant, string $suggestionId, string $replyId): PostSuggestionReply
+    {
+        $suggestion = $this->postSuggestionService->findByIdAndVariant($variant, $suggestionId);
+        if ($suggestion === null) {
+            throw new NotFoundHttpException('Suggestion not found');
+        }
+
+        $reply = $this->postSuggestionService->findReplyByIdAndSuggestion($suggestion, $replyId);
+        if ($reply === null) {
+            throw new NotFoundHttpException('Reply not found');
+        }
+
+        return $reply;
+    }
+
+    // the richtext panel only ever offers edit/delete for the current user's own replies
+    // (see SuggestionsPanel.svelte's isMine()), but that's client-side UI only - enforce
+    // it here too, since these routes are otherwise reachable by anyone with POSTS_WRITE
+    private function assertOwnsReply(PostSuggestionReply $reply, string $action): void
+    {
+        $authorUserId = $this->blogAuthListener->getUser()->id;
+        if ($reply->getAuthorUserId() !== $authorUserId) {
+            throw new AccessDeniedHttpException("You can only $action your own replies");
+        }
     }
 
     private function getVariantOrFail(Post $post, int $languageId): PostVariant
