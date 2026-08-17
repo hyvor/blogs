@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ConsoleController
@@ -38,6 +39,7 @@ class ConsoleController
         private UsageService $usageService,
         private ConsoleSubrequest $consoleSubrequest,
         private InstanceUrlResolver $instanceUrlResolver,
+        private HubInterface $mercureHub,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
@@ -98,6 +100,9 @@ class ConsoleController
                 'domains' => [
                     'app' => $this->appConfig->getDomainApp(),
                     'delivery' => $this->appConfig->getDeliveryDomain(),
+                ],
+                'mercure' => [
+                    'public_url' => $this->mercureHub->getPublicUrl(),
                 ],
                 'limits' => [
                     'max_upload_size' => Limit::MAX_MEDIA_UPLOAD_SIZE,

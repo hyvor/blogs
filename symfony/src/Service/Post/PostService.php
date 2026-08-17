@@ -3,11 +3,13 @@
 namespace App\Service\Post;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\RedirectType;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Entity\PostVariantStep;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
@@ -568,10 +570,14 @@ class PostService
         if (array_key_exists('content', $data)) {
             $variant->setContent($data['content']);
             $variant->setContentUnsaved(null);
+            $this->resetCollabStream($variant, PostVariantContentType::CONTENT_UNSAVED);
         }
 
         if (array_key_exists('content_unsaved', $data)) {
             $variant->setContentUnsaved($data['content_unsaved']);
+            if ($data['content_unsaved'] === null) {
+                $this->resetCollabStream($variant, PostVariantContentType::CONTENT_UNSAVED);
+            }
         }
 
         if (array_key_exists('title', $data)) {
@@ -672,6 +678,31 @@ class PostService
         $this->ed->dispatch(new PostVariantUnpublishedEvent($variant));
 
         return $variant;
+    }
+
+    /**
+     * Whenever a content type's materialized column is directly overwritten/cleared outside
+     * the collab checkpoint flow (e.g. `content_unsaved` being nulled here when `content` is
+     * set on publish, or the "discard changes" action clearing it explicitly), any in-flight
+     * collab version/steps for that type are now meaningless - reset so the next editing
+     * session for that type starts clean at version 0. See PostVariantCollabService.
+     */
+    private function resetCollabStream(PostVariant $variant, PostVariantContentType $type): void
+    {
+        if ($variant->getVersion($type) === 0) {
+            return;
+        }
+
+        $variant->setVersion($type, 0);
+
+        $this->em->createQueryBuilder()
+            ->delete(PostVariantStep::class, 's')
+            ->where('s.post_variant = :variant')
+            ->andWhere('s.type = :type')
+            ->setParameter('variant', $variant)
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->execute();
     }
 
     private function assertContentUpdatedAtValid(PostVariant $variant, ?\DateTimeImmutable $contentUpdatedAt): void

@@ -3,8 +3,10 @@
 namespace App\Api\Console\Object;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Service\Post\Collab\PostVariantCollabService;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
@@ -28,12 +30,26 @@ class PostVariantObject
     public array $link_analysis;
     public ?string $content_html = null;
 
+    // Collaborative editing state (see PostVariantCollabService) - only populated when
+    // $collabService is passed in (currently only PostController::getPost).
+    public int $content_version = 0;
+    /** @var array<int, array<string, mixed>> */
+    public array $content_steps = [];
+    /** @var string[] */
+    public array $content_client_ids = [];
+    public int $content_unsaved_version = 0;
+    /** @var array<int, array<string, mixed>> */
+    public array $content_unsaved_steps = [];
+    /** @var string[] */
+    public array $content_unsaved_client_ids = [];
+
     public function __construct(
         PostVariant $variant,
         Post $post,
         Blog $blog,
         PermalinkService $permalinkService,
         ?PostContentService $postContentService = null,
+        ?PostVariantCollabService $collabService = null,
     ) {
         $this->id = $variant->getId();
         $this->language_id = $variant->getLanguage()->getId();
@@ -52,6 +68,18 @@ class PostVariantObject
 
         if ($postContentService !== null && $this->content !== null) {
             $this->content_html = $postContentService->getHtml($this->content, $blog);
+        }
+
+        if ($collabService !== null) {
+            $contentState = $collabService->getState($variant, PostVariantContentType::CONTENT);
+            $this->content_version = $contentState['version'];
+            $this->content_steps = $contentState['steps'];
+            $this->content_client_ids = $contentState['client_ids'];
+
+            $unsavedState = $collabService->getState($variant, PostVariantContentType::CONTENT_UNSAVED);
+            $this->content_unsaved_version = $unsavedState['version'];
+            $this->content_unsaved_steps = $unsavedState['steps'];
+            $this->content_unsaved_client_ids = $unsavedState['client_ids'];
         }
     }
 }

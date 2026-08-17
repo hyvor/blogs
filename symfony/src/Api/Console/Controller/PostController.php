@@ -19,18 +19,22 @@ use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
 use App\Api\Console\Object\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
+use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Collab\PostVariantCollabService;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -45,6 +49,8 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
+        private PostVariantCollabService $collabService,
+        private Authorization $mercureAuthorization,
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -123,6 +129,7 @@ class PostController
     public function getPost(
         #[MapBlogEntity] Post $post,
         #[MapQueryString] GetPostInput $input,
+        Request $request,
     ): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -136,6 +143,13 @@ class PostController
             }
 
             $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        }
+
+        if ($variant !== null) {
+            $this->mercureAuthorization->setCookie($request, [
+                $this->collabService->topic($variant, PostVariantContentType::CONTENT),
+                $this->collabService->topic($variant, PostVariantContentType::CONTENT_UNSAVED),
+            ]);
         }
 
         return new JsonResponse([
@@ -244,11 +258,11 @@ class PostController
             $data['slug'] = $input->slug;
         }
 
-        if ($input->content !== null) {
+        if ($input->content !== false) {
             $data['content'] = $input->content;
         }
 
-        if ($input->content_unsaved !== null) {
+        if ($input->content_unsaved !== false) {
             $data['content_unsaved'] = $input->content_unsaved;
         }
 

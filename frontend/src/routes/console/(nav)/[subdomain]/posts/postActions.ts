@@ -209,3 +209,37 @@ export function clonePost(postId: number) {
 		endpoint: `/post/${postId}/clone`
 	});
 }
+
+// Collaborative editing (see PostVariantCollabController on the backend). These intentionally
+// don't call updatePostVariantStore themselves - submitCollabSteps's outcome is confirmed (or
+// not) asynchronously over Mercure, and checkpointPostVariant's caller (SaveStatus.svelte)
+// already knows exactly what it just wrote and updates the store itself.
+
+export function submitCollabSteps(data: {
+	type: 'content' | 'content_unsaved';
+	version: number;
+	steps: unknown[];
+	client_id: string;
+}) {
+	const postId = get(postStore).id;
+	const languageId = get(postVariantLanguageStore).id;
+
+	return consoleApi.post<{ accepted: boolean }>({
+		endpoint: `/post/${postId}/variant/collab`,
+		data: { ...data, language_id: languageId }
+	});
+}
+
+export function checkpointPostVariant(data: {
+	type: 'content' | 'content_unsaved';
+	version: number;
+	content: string;
+}) {
+	const postId = get(postStore).id;
+	const languageId = get(postVariantLanguageStore).id;
+
+	return consoleApi.post<void>({
+		endpoint: `/post/${postId}/variant/collab/checkpoint`,
+		data: { ...data, language_id: languageId }
+	});
+}

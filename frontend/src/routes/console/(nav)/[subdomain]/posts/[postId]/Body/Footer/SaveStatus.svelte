@@ -1,32 +1,47 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import {
+		postContentDirtyStore,
 		postCurrentContentKey,
-		postVariantOriginalStore,
-		postVariantStore
+		postEditor,
+		updatePostVariantStore
 	} from '../../../postStore';
-	import { updatePostVariant } from '../../../postActions';
+	import { checkpointPostVariant } from '../../../postActions';
 	import { toast } from '@hyvor/design/components';
 	import { beforeNavigate } from '$app/navigation';
 
 	let key = $derived($postCurrentContentKey as 'content' | 'content_unsaved');
-	let hasChanged = $derived($postVariantStore[key] !== $postVariantOriginalStore[key]);
+	let hasChanged = $derived($postContentDirtyStore);
 
 	let isSaving = $state(false);
 
 	function save() {
-		if (!hasChanged) return;
+		const editor = $postEditor;
+		if (!hasChanged || !editor) return;
 
 		isSaving = true;
 
-		updatePostVariant({
-			[key]: $postVariantStore[key]
-		})
+		const content = JSON.stringify(editor.getContent());
+		const version = editor.collab.getVersion();
+
+		checkpointPostVariant({ type: key, version, content })
 			.then(() => {
+				updatePostVariantStore(
+					key === 'content'
+						? { content, content_version: version }
+						: { content_unsaved: content, content_unsaved_version: version },
+					true
+				);
+				$postContentDirtyStore = false;
 				isSaving = false;
 			})
 			.catch((e) => {
-				toast.error(`Failed to save post content: ${e.message}`);
+				isSaving = false;
+				// stale version - content_version has moved on since this editor last caught up
+				// via Mercure; harmless, the next interval retries once it has
+				if (e.code !== 409) {
+					toast.error(`Failed to save post content: ${e.message}`);
+				}
 			});
 	}
 

@@ -9,6 +9,9 @@ export interface Config {
 		app: string;
 		delivery: string;
 	};
+	mercure: {
+		public_url: string;
+	};
 	limits: {
 		max_upload_size: number;
 		max_theme_zip_size: number;

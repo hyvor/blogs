@@ -1,0 +1,167 @@
+<?php
+
+namespace App\Service\Post\Collab;
+
+use App\Entity\Blog;
+use App\Entity\Enum\PostVariantContentType;
+use App\Entity\PostVariant;
+use App\Entity\PostVariantStep;
+use App\Service\Post\PostService;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
+
+/**
+ * Real-time collaborative editing for a post variant's content, on top of prosemirror-collab.
+ *
+ * `content_version`/`content_unsaved_version` on PostVariant are the live, monotonically
+ * increasing collab version for each content type. `post_variant_steps` holds exactly the
+ * steps not yet reflected in the `content`/`content_unsaved` column - checkpoint() writes the
+ * full doc into that column and deletes the covered steps in the same transaction, so
+ * "content column + remaining steps == current doc" always holds; getState() relies on this
+ * to let a freshly-loaded client fast-forward via editor.collab.receiveSteps() instead of us
+ * re-implementing prosemirror step application server-side.
+ */
+class PostVariantCollabService
+{
+    use ClockAwareTrait;
+
+    public function __construct(
+        private EntityManagerInterface $em,
+        private HubInterface $hub,
+        private PostService $postService,
+    ) {}
+
+    public function topic(PostVariant $variant, PostVariantContentType $type): string
+    {
+        return sprintf('post_variant_collab:%d:%s', $variant->getId(), $type->value);
+    }
+
+    /**
+     * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
+     */
+    public function getState(PostVariant $variant, PostVariantContentType $type): array
+    {
+        $rows = $this->em->getRepository(PostVariantStep::class)->findBy(
+            ['post_variant' => $variant, 'type' => $type],
+            ['version' => 'ASC'],
+        );
+
+        return [
+            'version' => $variant->getVersion($type),
+            'steps' => array_map(fn(PostVariantStep $s) => $s->getStep(), $rows),
+            'client_ids' => array_map(fn(PostVariantStep $s) => $s->getClientId(), $rows),
+        ];
+    }
+
+    /**
+     * Appends a batch of steps if `$version` still matches the live version, and broadcasts
+     * them to every subscriber (including the submitting client, which relies on this to
+     * confirm its pending steps - see prosemirror-collab). Returns false (a no-op, not an
+     * error) if the client is stale; it will catch up via Mercure and resubmit rebased steps.
+     *
+     * @param array<int, array<string, mixed>> $steps
+     */
+    public function submitSteps(
+        PostVariant $variant,
+        PostVariantContentType $type,
+        int $version,
+        array $steps,
+        string $clientId,
+    ): bool {
+        if ($steps === []) {
+            return true;
+        }
+
+        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $type, $version, $steps, $clientId) {
+            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
+            if ($current === null || $current->getVersion($type) !== $version) {
+                return false;
+            }
+
+            $newVersion = $version;
+            foreach ($steps as $step) {
+                $newVersion++;
+                $row = (new PostVariantStep())
+                    ->setPostVariant($current)
+                    ->setType($type)
+                    ->setVersion($newVersion)
+                    ->setClientId($clientId)
+                    ->setStep($step)
+                    ->setCreatedAt($this->now());
+                $this->em->persist($row);
+            }
+
+            $current->setVersion($type, $newVersion);
+            $this->em->flush();
+
+            return true;
+        });
+
+        if ($accepted) {
+            $this->publish($variant, $type, $version, $steps, $clientId);
+        }
+
+        return $accepted;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $steps
+     */
+    private function publish(
+        PostVariant $variant,
+        PostVariantContentType $type,
+        int $baseVersion,
+        array $steps,
+        string $clientId,
+    ): void {
+        $clientIds = array_fill(0, count($steps), $clientId);
+
+        $this->hub->publish(new Update(
+            $this->topic($variant, $type),
+            json_encode([
+                'type' => 'steps',
+                'version' => $baseVersion + count($steps),
+                'steps' => $steps,
+                'client_ids' => $clientIds,
+            ], JSON_THROW_ON_ERROR),
+        ));
+    }
+
+    /**
+     * Periodic full-document checkpoint (the "update endpoint"): persists `$json` into the
+     * materialized content column, verifying `$version` is exactly the current live version
+     * (not just >=) so a checkpoint never silently drops steps a client hasn't caught up on
+     * yet. On success, prunes the steps it just absorbed.
+     *
+     * @throws ConflictHttpException if `$version` is stale
+     */
+    public function checkpoint(
+        PostVariant $variant,
+        Blog $blog,
+        PostVariantContentType $type,
+        string $json,
+        int $version,
+    ): void {
+        $this->em->wrapInTransaction(function () use ($variant, $blog, $type, $json, $version) {
+            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
+            if ($current === null || $current->getVersion($type) !== $version) {
+                throw new ConflictHttpException('content_version has moved on - catch up via Mercure and retry');
+            }
+
+            $this->postService->updatePostVariant($current, $blog, [$type->value => $json]);
+
+            $this->em->createQueryBuilder()
+                ->delete(PostVariantStep::class, 's')
+                ->where('s.post_variant = :variant')
+                ->andWhere('s.type = :type')
+                ->setParameter('variant', $current)
+                ->setParameter('type', $type)
+                ->getQuery()
+                ->execute();
+        });
+    }
+}
