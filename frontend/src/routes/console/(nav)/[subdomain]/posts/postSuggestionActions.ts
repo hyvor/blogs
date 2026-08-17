@@ -7,9 +7,9 @@ import type {
 } from '../../../lib/types';
 import { postStore, postVariantLanguageStore } from './postStore';
 
-// Syncs @hyvor/richtext's suggestionsPlugin `source` (get/create/reply/resolve) and
+// Syncs @hyvor/richtext's EditorConfig.suggestions `source` (get/create/reply/resolve) and
 // `resolveAuthor` to the backend - see postId/post/[postId]/Body/Editor/suggestions.ts,
-// where these are wired into the plugin's config.
+// where these are wired into the editor config.
 
 function postId() {
 	return get(postStore).id;

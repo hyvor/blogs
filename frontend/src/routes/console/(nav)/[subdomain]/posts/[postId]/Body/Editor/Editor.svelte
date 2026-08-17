@@ -9,7 +9,7 @@
 	} from '../../../postStore';
 	import type { PostVariant } from '../../../../../../lib/types';
 	import { authUserStore } from '../../../../../../lib/stores';
-	import { Editor, suggestionsPlugin, type Author } from '@hyvor/richtext';
+	import { Editor, type Author } from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
@@ -45,14 +45,17 @@
 	});
 
 	// author is fixed for this editing session (the currently logged-in console user);
-	// the mode changes are handled afterwards via setSuggestionMode() from the footer's
-	// SuggestionModeToggle, not by recreating this plugin - see postSuggestionModeStore
-	const suggestions = suggestionsPlugin({
-		author: `user:${$authUserStore.id}` as Author,
-		mode: $postSuggestionModeStore,
-		resolveAuthor,
-		source: suggestionSource
-	});
+	// the mode changes are handled afterwards via postEditor.suggestions.setMode() from
+	// the footer's SuggestionModeToggle, not by recreating this config - see postSuggestionModeStore
+	const fullEditorConfig = {
+		...editorConfig,
+		suggestions: {
+			author: `user:${$authUserStore.id}` as Author,
+			mode: $postSuggestionModeStore,
+			resolveAuthor,
+			source: suggestionSource
+		}
+	};
 </script>
 
 <div class="editor">
@@ -65,8 +68,8 @@
 				ondomevent={handleEvent}
 				editable={isEditable}
 				{schema}
-				{editorConfig}
-				plugins={[wordCountPlugin(), suggestions]}
+				editorConfig={fullEditorConfig}
+				plugins={[wordCountPlugin()]}
 			/>
 		</div>
 	{/key}

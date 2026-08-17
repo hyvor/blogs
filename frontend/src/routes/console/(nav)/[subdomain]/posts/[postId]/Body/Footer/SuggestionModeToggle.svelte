@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { setSuggestionMode } from '@hyvor/richtext';
 	import { postEditor, postSuggestionModeStore } from '../../../postStore';
 
 	function setMode(mode: 'editing' | 'suggesting') {
@@ -7,10 +6,7 @@
 
 		postSuggestionModeStore.set(mode);
 
-		const view = $postEditor?.getView();
-		if (view) {
-			setSuggestionMode(view, mode);
-		}
+		$postEditor?.suggestions.setMode(mode);
 	}
 </script>
 
