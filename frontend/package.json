@@ -43,7 +43,7 @@
 		"@excalidraw/excalidraw": "^0.17.2",
 		"@hyvor/design": "^2.1.5",
 		"@hyvor/icons": "^1.0.0",
-		"@hyvor/richtext": "^0.0.17-beta.collab.1",
+		"@hyvor/richtext": "^0.0.17",
 		"@types/react-dom": "^18.2.18",
 		"chart.js": "^4.5.1",
 		"codemirror": "^5.0.0",

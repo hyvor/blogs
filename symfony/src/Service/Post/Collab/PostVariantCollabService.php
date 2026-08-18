@@ -29,6 +29,10 @@ class PostVariantCollabService
 {
     use ClockAwareTrait;
 
+    // used when a User has no cursor_color yet (e.g. a row created before this column existed) -
+    // see PostVariantCollabController::submitCursor
+    public const string DEFAULT_CURSOR_COLOR = '#333333';
+
     public function __construct(
         private EntityManagerInterface $em,
         private HubInterface $hub,
@@ -128,6 +132,41 @@ class PostVariantCollabService
                 'steps' => $steps,
                 'client_ids' => $clientIds,
             ], JSON_THROW_ON_ERROR),
+        ));
+    }
+
+    /**
+     * Broadcasts the local user's cursor position (or, with `$from`/`$to` null, that they blurred
+     * the editor) to everyone else subscribed to this content type - see @hyvor/richtext's
+     * `editorConfig.cursors`/`editor.cursors.set()`. Unlike submitSteps(), this is fire-and-forget:
+     * no version, no persistence (see PostVariantStep's docblock) - presence is ephemeral, so the
+     * latest cursor position always wins and a late-joining subscriber simply sees nothing until
+     * the other party moves again.
+     *
+     * @param array{name: string, color: string, picture: ?string}|null $user null clears the
+     *     cursor (blur, or no resolvable blog user for the requester)
+     */
+    public function publishCursor(
+        PostVariant $variant,
+        PostVariantContentType $type,
+        string $clientId,
+        ?int $from,
+        ?int $to,
+        ?array $user,
+    ): void {
+        $payload = ['type' => 'cursor', 'client_id' => $clientId];
+
+        if ($from === null || $to === null || $user === null) {
+            $payload['clear'] = true;
+        } else {
+            $payload['from'] = $from;
+            $payload['to'] = $to;
+            $payload['user'] = $user;
+        }
+
+        $this->hub->publish(new Update(
+            $this->topic($variant, $type),
+            json_encode($payload, JSON_THROW_ON_ERROR),
         ));
     }
 

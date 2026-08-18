@@ -230,6 +230,27 @@ export function submitCollabSteps(data: {
 	});
 }
 
+// cursor is null on blur - see @hyvor/richtext's CursorsPluginConfig.onLocalCursorChange
+export function submitCollabCursor(data: {
+	type: 'content' | 'content_unsaved';
+	client_id: string;
+	cursor: { from: number; to: number } | null;
+}) {
+	const postId = get(postStore).id;
+	const languageId = get(postVariantLanguageStore).id;
+
+	return consoleApi.post<void>({
+		endpoint: `/post/${postId}/variant/collab/cursor`,
+		data: {
+			type: data.type,
+			client_id: data.client_id,
+			from: data.cursor?.from ?? null,
+			to: data.cursor?.to ?? null,
+			language_id: languageId
+		}
+	});
+}
+
 export function checkpointPostVariant(data: {
 	type: 'content' | 'content_unsaved';
 	version: number;

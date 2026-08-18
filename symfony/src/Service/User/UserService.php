@@ -263,6 +263,7 @@ class UserService
         $user->setEmail($hyvorUser->email);
         $user->setWebsiteUrl($hyvorUser->website_url);
         $user->setPictureUrl($pictureUrl);
+        $user->setCursorColor($this->generateCursorColor());
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
 
@@ -306,6 +307,7 @@ class UserService
         $user->setCreatedAt($now);
         $user->setUpdatedAt($now);
         $user->setPictureUrl($pictureUrl);
+        $user->setCursorColor($this->generateCursorColor());
 
         $this->em->persist($user);
 
@@ -483,5 +485,17 @@ class UserService
 
             $i++;
         }
+    }
+
+    /**
+     * A random dark HSL color for this user's collab cursor caret/selection - see
+     * User::$cursor_color and PostVariantCollabService::publishCursor(). Fixed, readable
+     * saturation/lightness so any hue stays legible as white-on-color text / a caret on the
+     * editor's light background. Public so App\Command\BackfillCursorColorsCommand can reuse it
+     * for users created before the cursor_color column existed.
+     */
+    public function generateCursorColor(): string
+    {
+        return sprintf('hsl(%d, 70%%, 35%%)', random_int(0, 359));
     }
 }

@@ -7,11 +7,18 @@
 		postSuggestionModeStore,
 		postVariantStore
 	} from '../../../postStore';
-	import { Editor, type Author, type CollabSendable, type CollabStepJSON, type CollabClientID } from '@hyvor/richtext';
+	import {
+		Editor,
+		type Author,
+		type CollabSendable,
+		type CollabStepJSON,
+		type CollabClientID,
+		type RemoteCursor
+	} from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
-	import { submitCollabSteps } from '../../../postActions';
+	import { submitCollabSteps, submitCollabCursor } from '../../../postActions';
 	import { subscribeToCollabTopic, collabTopic } from './collab';
 	import { authUserStore } from '../../../../../../lib/stores';
 
@@ -36,6 +43,14 @@
 			steps: sendable.steps,
 			client_id: String(sendable.clientID)
 		}).catch((e) => console.error('Failed to submit collab steps', e));
+	}
+
+	function handleLocalCursorChange(cursor: { from: number; to: number } | null) {
+		submitCollabCursor({
+			type: $postCurrentContentKey,
+			client_id: clientId,
+			cursor
+		}).catch((e) => console.error('Failed to submit collab cursor', e));
 	}
 
 	let value = $derived(
@@ -78,10 +93,34 @@
 			editor.collab.receiveSteps(backlogSteps, backlogClientIds);
 		}
 
+		// other users' cursors for this topic - keyed by clientId, rebuilt fresh per
+		// subscription since a topic change (variant/content-type switch) makes any prior
+		// roster stale
+		const cursors = new Map<string, RemoteCursor>();
+
 		const topic = collabTopic($postVariantStore.id, $postCurrentContentKey);
-		return subscribeToCollabTopic(topic, (steps, clientIds) => {
-			editor.collab.receiveSteps(steps, clientIds);
-		});
+		return subscribeToCollabTopic(
+			topic,
+			(steps, clientIds) => {
+				editor.collab.receiveSteps(steps, clientIds);
+			},
+			(message) => {
+				if (message.client_id === clientId) return; // ignore our own echo, if any
+
+				if (message.clear || !message.user || message.from === undefined || message.to === undefined) {
+					cursors.delete(message.client_id);
+				} else {
+					cursors.set(message.client_id, {
+						clientId: message.client_id,
+						from: message.from,
+						to: message.to,
+						user: message.user
+					});
+				}
+
+				editor.cursors.set([...cursors.values()]);
+			}
+		);
 	});
 
 	// author is fixed for this editing session (the currently logged-in console user);
@@ -93,6 +132,9 @@
 			version: initialVersion,
 			clientID: clientId,
 			onSendable: handleSendable
+		},
+		cursors: {
+			onLocalCursorChange: handleLocalCursorChange
 		},
 		suggestions: {
 			author: `user:${$authUserStore.id}` as Author,
