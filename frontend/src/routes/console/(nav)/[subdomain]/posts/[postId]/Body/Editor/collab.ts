@@ -33,11 +33,18 @@ type CollabMercureMessage = CollabStepsMercureMessage | CollabCursorMercureMessa
  * which sets the subscription cookie this relies on) and forwards accepted step batches -
  * including this client's own, once confirmed - to `onSteps`, and other clients' cursor
  * moves/clears to `onCursor`. Returns an unsubscribe function.
+ *
+ * `onReconnect` fires when the EventSource reconnects after a drop (not on the initial
+ * connect) - Mercure has no history/replay for a subscriber that was briefly disconnected, so
+ * whatever was published in that gap is simply gone from this transport's point of view. The
+ * caller is expected to treat this as "go fetch what I missed" (see PostVariantCollabController's
+ * `sync` endpoint) rather than trusting steps to keep arriving here uninterrupted.
  */
 export function subscribeToCollabTopic(
 	topic: string,
 	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[]) => void,
-	onCursor: (message: CollabCursorMercureMessage) => void
+	onCursor: (message: CollabCursorMercureMessage) => void,
+	onReconnect: () => void
 ): () => void {
 
 	// TODO: subscribing to a public topic. This should be private
@@ -46,6 +53,8 @@ export function subscribeToCollabTopic(
 	url.searchParams.append('topic', topic);
 
 	const source = new EventSource(url.toString(), { withCredentials: true });
+
+	let droppedConnection = false;
 
 	source.onmessage = (event) => {
 		let message: CollabMercureMessage;
@@ -63,7 +72,16 @@ export function subscribeToCollabTopic(
 	};
 
 	source.onerror = () => {
-		// EventSource retries automatically; nothing to do here besides not crashing the tab
+		// EventSource retries automatically; just remember we dropped so the next successful
+		// open can be told apart from the initial one
+		droppedConnection = true;
+	};
+
+	source.onopen = () => {
+		if (droppedConnection) {
+			droppedConnection = false;
+			onReconnect();
+		}
 	};
 
 	return () => source.close();

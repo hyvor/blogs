@@ -9,12 +9,14 @@ use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Post\CheckpointCollabInput;
 use App\Api\Console\Input\Post\SubmitCollabCursorInput;
 use App\Api\Console\Input\Post\SubmitCollabStepsInput;
+use App\Api\Console\Input\Post\SyncCollabStepsInput;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Collab\PostVariantCollabService;
 use App\Service\Post\PostService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -32,7 +34,9 @@ class PostVariantCollabController
 
     /**
      * Submits a batch of prosemirror-collab steps. Not an error if rejected (stale version) -
-     * the client resolves that by resubmitting once it catches up via Mercure.
+     * the response itself carries the steps the client is missing (see
+     * PostVariantCollabService::submitSteps), so the client catches up and resubmits
+     * immediately instead of waiting on Mercure, which never replays what it missed.
      */
     #[Route('/post/{id}/variant/collab', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -52,7 +56,7 @@ class PostVariantCollabController
             throw new NotFoundHttpException('Variant not found');
         }
 
-        $accepted = $this->collabService->submitSteps(
+        $result = $this->collabService->submitSteps(
             $variant,
             $input->type,
             $input->version,
@@ -60,7 +64,34 @@ class PostVariantCollabController
             $input->client_id,
         );
 
-        return new JsonResponse(['accepted' => $accepted]);
+        return new JsonResponse($result);
+    }
+
+    /**
+     * Standalone catch-up: returns every step after `version`, straight from
+     * `post_variant_steps` rather than Mercure. The frontend calls this whenever it suspects it
+     * missed a broadcast - e.g. its EventSource reconnecting after a drop (Mercure has no replay
+     * for a subscriber that was briefly disconnected) - not just after a rejected submission.
+     */
+    #[Route('/post/{id}/variant/collab/sync', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
+    public function sync(
+        #[MapBlogEntity] Post $post,
+        #[MapQueryString] SyncCollabStepsInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $language = $this->languageService->getLanguageById($blog, $input->language_id);
+        if ($language === null) {
+            throw new UnprocessableEntityHttpException('Language not found');
+        }
+
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Variant not found');
+        }
+
+        return new JsonResponse($this->collabService->getStepsSince($variant, $input->type, $input->version));
     }
 
     /**

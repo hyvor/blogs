@@ -117,6 +117,60 @@ class PostVariantCollabTest extends ApiTestCase
         $hub->assertNotPublished('post_variant_collab:' . $variant->getId() . ':content');
     }
 
+    public function test_stale_submission_returns_the_missing_steps_for_catchup(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'collab-catchup']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
+        // simulates another client's step having already landed while this client was offline
+        $this->seedStep($variant, PostVariantContentType::CONTENT, 'other-client');
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab', [
+            'language_id' => $language->getId(),
+            'type' => 'content',
+            'version' => 0, // stale - live version is 1 (from the seeded step)
+            'steps' => [$this->step('mine')],
+            'client_id' => 'client-1',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertFalse($json['accepted']);
+        $this->assertSame(1, $json['version']);
+        $this->assertSame([$this->step('other-client')], $json['steps']);
+        $this->assertSame(['other-client'], $json['client_ids']);
+
+        // the rejected submission must not have been persisted or broadcast alongside the catch-up
+        /** @var FakeHub $hub */
+        $hub = $this->getContainer()->get(FakeHub::class);
+        $hub->assertNotPublished('post_variant_collab:' . $variant->getId() . ':content');
+    }
+
+    public function test_sync_returns_steps_after_given_version(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'collab-sync']);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
+        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-a');
+        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-b');
+
+        $this->consoleBlogApi('GET', $blog, '/post/' . $post->getId() . '/variant/collab/sync?' . http_build_query([
+            'language_id' => $language->getId(),
+            'type' => 'content',
+            'version' => 1, // already caught up to the first seeded step
+        ]), user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame(2, $json['version']);
+        $this->assertSame([$this->step('client-b')], $json['steps']);
+        $this->assertSame(['client-b'], $json['client_ids']);
+    }
+
     public function test_checkpoint_persists_content_and_prunes_steps(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'collab-checkpoint']);

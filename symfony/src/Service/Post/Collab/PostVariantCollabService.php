@@ -49,25 +49,54 @@ class PostVariantCollabService
      */
     public function getState(PostVariant $variant, PostVariantContentType $type): array
     {
-        $rows = $this->em->getRepository(PostVariantStep::class)->findBy(
-            ['post_variant' => $variant, 'type' => $type],
-            ['version' => 'ASC'],
-        );
+        return $this->getStepsSince($variant, $type, 0);
+    }
+
+    /**
+     * All steps after `$sinceVersion`, in order - i.e. exactly what a client at `$sinceVersion`
+     * is missing. Backs both the stale-submission catch-up below and the standalone `sync`
+     * endpoint (see PostVariantCollabController::sync), which a client calls whenever it
+     * suspects it missed something over Mercure - e.g. on EventSource reconnect, since Mercure
+     * doesn't replay updates published while a subscriber was disconnected. Unlike Mercure, this
+     * always reflects the durable truth in `post_variant_steps`.
+     *
+     * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
+     */
+    public function getStepsSince(PostVariant $variant, PostVariantContentType $type, int $sinceVersion): array
+    {
+        /** @var PostVariantStep[] $rows */
+        $rows = $this->em->createQueryBuilder()
+            ->select('s')
+            ->from(PostVariantStep::class, 's')
+            ->where('s.post_variant = :variant')
+            ->andWhere('s.type = :type')
+            ->andWhere('s.version > :sinceVersion')
+            ->orderBy('s.version', 'ASC')
+            ->setParameter('variant', $variant)
+            ->setParameter('type', $type)
+            ->setParameter('sinceVersion', $sinceVersion)
+            ->getQuery()
+            ->getResult();
 
         return [
             'version' => $variant->getVersion($type),
-            'steps' => array_map(fn(PostVariantStep $s) => $s->getStep(), $rows),
-            'client_ids' => array_map(fn(PostVariantStep $s) => $s->getClientId(), $rows),
+            'steps' => array_values(array_map(fn(PostVariantStep $s) => $s->getStep(), $rows)),
+            'client_ids' => array_values(array_map(fn(PostVariantStep $s) => $s->getClientId(), $rows)),
         ];
     }
 
     /**
      * Appends a batch of steps if `$version` still matches the live version, and broadcasts
      * them to every subscriber (including the submitting client, which relies on this to
-     * confirm its pending steps - see prosemirror-collab). Returns false (a no-op, not an
-     * error) if the client is stale; it will catch up via Mercure and resubmit rebased steps.
+     * confirm its pending steps - see prosemirror-collab). If the client is stale, this is
+     * still not an error - instead of leaving the client to somehow notice and recover via
+     * Mercure (which never replays what it missed), the rejection response carries the steps
+     * the client is missing directly (same shape/source as getStepsSince()/the sync endpoint),
+     * so the frontend can call editor.collab.receiveSteps() immediately and let
+     * prosemirror-collab rebase + automatically resend its still-pending local steps.
      *
      * @param array<int, array<string, mixed>> $steps
+     * @return array{accepted: bool, version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
     public function submitSteps(
         PostVariant $variant,
@@ -75,9 +104,9 @@ class PostVariantCollabService
         int $version,
         array $steps,
         string $clientId,
-    ): bool {
+    ): array {
         if ($steps === []) {
-            return true;
+            return ['accepted' => true, 'version' => $version, 'steps' => [], 'client_ids' => []];
         }
 
         $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $type, $version, $steps, $clientId) {
@@ -107,9 +136,10 @@ class PostVariantCollabService
 
         if ($accepted) {
             $this->publish($variant, $type, $version, $steps, $clientId);
+            return ['accepted' => true, 'version' => $version + count($steps), 'steps' => [], 'client_ids' => []];
         }
 
-        return $accepted;
+        return ['accepted' => false, ...$this->getStepsSince($variant, $type, $version)];
     }
 
     /**

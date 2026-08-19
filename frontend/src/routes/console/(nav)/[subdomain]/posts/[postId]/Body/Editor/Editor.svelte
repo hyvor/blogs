@@ -18,7 +18,7 @@
 	import wordCountPlugin from './plugins/plugin-wordcount';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
-	import { submitCollabSteps, submitCollabCursor } from '../../../postActions';
+	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
 	import { subscribeToCollabTopic, collabTopic } from './collab';
 	import { authUserStore } from '../../../../../../lib/stores';
 
@@ -36,13 +36,29 @@
 		// handleEditorEventHandlers(name, event);
 	}
 
-	function handleSendable(sendable: CollabSendable) {
-		submitCollabSteps({
-			type: $postCurrentContentKey,
-			version: sendable.version,
-			steps: sendable.steps,
-			client_id: String(sendable.clientID)
-		}).catch((e) => console.error('Failed to submit collab steps', e));
+	async function handleSendable(sendable: CollabSendable) {
+		try {
+			const response = await submitCollabSteps({
+				type: $postCurrentContentKey,
+				version: sendable.version,
+				steps: sendable.steps,
+				client_id: String(sendable.clientID)
+			});
+
+			// stale - the response carries exactly the steps we're missing (see
+			// PostVariantCollabService::submitSteps), straight from post_variant_steps rather
+			// than waiting on Mercure to somehow redeliver them. Applying them rebases our
+			// still-pending steps, and prosemirror-collab automatically re-fires onSendable
+			// with the rebased batch - no manual retry needed here.
+			if (!response.accepted) {
+				$postEditor?.collab.receiveSteps(
+					response.steps as CollabStepJSON[],
+					response.client_ids as CollabClientID[]
+				);
+			}
+		} catch (e) {
+			console.error('Failed to submit collab steps', e);
+		}
 	}
 
 	function handleLocalCursorChange(cursor: { from: number; to: number } | null) {
@@ -98,6 +114,26 @@
 		// roster stale
 		const cursors = new Map<string, RemoteCursor>();
 
+		// called when the Mercure EventSource reconnects after a drop - whatever was published
+		// while we were disconnected is gone from that transport's point of view (no replay), so
+		// pull the durable truth directly instead of just hoping nothing was missed
+		async function catchUp() {
+			try {
+				const response = await syncCollabSteps({
+					type: $postCurrentContentKey,
+					version: editor.collab.getVersion()
+				});
+				if (response.steps.length > 0) {
+					editor.collab.receiveSteps(
+						response.steps as CollabStepJSON[],
+						response.client_ids as CollabClientID[]
+					);
+				}
+			} catch (e) {
+				console.error('Failed to sync collab steps', e);
+			}
+		}
+
 		const topic = collabTopic($postVariantStore.id, $postCurrentContentKey);
 		return subscribeToCollabTopic(
 			topic,
@@ -119,7 +155,8 @@
 				}
 
 				editor.cursors.set([...cursors.values()]);
-			}
+			},
+			catchUp
 		);
 	});
 
