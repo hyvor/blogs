@@ -35,6 +35,23 @@
 		// handleEditorEventHandlers(name, event);
 	}
 
+	// Confirmed step batches can arrive redundantly through two independent channels - the
+	// Mercure broadcast (which echoes back to the submitting client too) and a rejected
+	// submitCollabSteps's catch-up payload (same steps, fetched directly instead of waiting on
+	// Mercure) - and fast typing makes overlapping in-flight requests likely, so both channels
+	// can end up delivering the *same* batch. prosemirror-collab's receiveSteps() has no
+	// idempotency of its own: it just bumps its version counter by however many steps it's
+	// given, so applying the same batch twice overshoots the local version past the server's
+	// true version - and once that happens, every future submission looks stale forever with
+	// nothing to catch up on (the server has nothing newer than what it already gave us).
+	// Gating every receiveSteps() call behind "does this batch actually move the version
+	// forward" makes the two channels safely redundant instead of corrupting collab state.
+	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[], resultingVersion: number) {
+		const editor = $postEditor;
+		if (!editor || resultingVersion <= editor.collab.getVersion()) return;
+		editor.collab.receiveSteps(steps, clientIds);
+	}
+
 	async function handleSendable(sendable: CollabSendable) {
 		try {
 			const response = await submitCollabSteps({
@@ -50,9 +67,10 @@
 			// still-pending steps, and prosemirror-collab automatically re-fires onSendable
 			// with the rebased batch - no manual retry needed here.
 			if (!response.accepted) {
-				$postEditor?.collab.receiveSteps(
+				applyConfirmedSteps(
 					response.steps as CollabStepJSON[],
-					response.client_ids as CollabClientID[]
+					response.client_ids as CollabClientID[],
+					response.version
 				);
 			}
 		} catch (e) {
@@ -93,7 +111,7 @@
 		if (!editor) return;
 
 		if (backlogSteps.length > 0) {
-			editor.collab.receiveSteps(backlogSteps, backlogClientIds);
+			applyConfirmedSteps(backlogSteps, backlogClientIds, liveVersion);
 		}
 
 		// other users' cursors for this topic - keyed by clientId, rebuilt fresh per
@@ -111,9 +129,10 @@
 					version: editor.collab.getVersion()
 				});
 				if (response.steps.length > 0) {
-					editor.collab.receiveSteps(
+					applyConfirmedSteps(
 						response.steps as CollabStepJSON[],
-						response.client_ids as CollabClientID[]
+						response.client_ids as CollabClientID[],
+						response.version
 					);
 				}
 			} catch (e) {
@@ -124,8 +143,8 @@
 		const topic = collabTopic($postVariantStore.id);
 		return subscribeToCollabTopic(
 			topic,
-			(steps, clientIds) => {
-				editor.collab.receiveSteps(steps, clientIds);
+			(steps, clientIds, version) => {
+				applyConfirmedSteps(steps, clientIds, version);
 			},
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
