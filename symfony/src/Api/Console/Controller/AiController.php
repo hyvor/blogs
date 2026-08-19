@@ -61,7 +61,7 @@ class AiController extends AbstractController
         $blog = $this->authListener->getBlog();
 
         $response = new StreamedResponse(function () use ($blog, $input) {
-            foreach ($this->aiAgentConversationService->streamPrompt($blog, $input->prompt) as $event) {
+            foreach ($this->aiAgentConversationService->streamPrompt($blog, $input->prompt, $input->post_variant_id) as $event) {
                 echo 'data: '.json_encode($event)."\n\n";
                 flush();
             }

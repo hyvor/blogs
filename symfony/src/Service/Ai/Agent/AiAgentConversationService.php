@@ -50,9 +50,12 @@ class AiAgentConversationService
      * the same typed AgentEvent classes that get persisted, so a conversation reconstructed
      * from the database later can be sent to the frontend in the exact same shape.
      */
-    public function streamPrompt(Blog $blog, string $prompt): iterable
+    public function streamPrompt(Blog $blog, string $prompt, ?int $postVariantId = null): iterable
     {
-        $postVariant = $this->postService->getPostVariantByBlogAndId($blog, 117);
+        // ?? 117 is a temporary fallback for the whole-blog agent page (agent/+page.svelte),
+        // which has no "current post" of its own and doesn't yet have a way for the agent to
+        // pick one on its own. The post-editor sidebar always sends a real post variant ID.
+        $postVariant = $this->postService->getPostVariantByBlogAndId($blog, $postVariantId ?? 117);
 
         if (!$postVariant) {
             throw new BadRequestHttpException('No published post found to run the agent on.');

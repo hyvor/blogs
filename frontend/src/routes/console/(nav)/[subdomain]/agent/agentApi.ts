@@ -3,6 +3,8 @@ import { authOrganizationStore } from '../../../lib/stores';
 import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
 import type { PostVariant } from '../../../lib/types';
 
+export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
+
 export type AgentPostVariant = PostVariant & {
 	post_id: number;
 	content_html: string | null;
@@ -57,6 +59,20 @@ export interface AgentConversationUser {
 export interface AgentConversationsResponse {
 	conversations: AgentConversationListItem[];
 	users: Record<string, AgentConversationUser>;
+}
+
+// Persists a document change directly (no collab session involved) - used by the whole-blog
+// agent page, which never mounts a live post editor for the post it just edited. The sidebar
+// agent instead applies changes through the live editor's collab pipeline (see Editor.svelte's
+// setContent) so the document_version counter stays in sync - this PATCH path would desync it.
+export function saveAgentDocumentChange(postId: number, languageId: number, content: string) {
+	return consoleApi.patch<PostVariant>({
+		endpoint: `/post/${postId}/variant`,
+		data: {
+			language_id: languageId,
+			content_unsaved: content
+		}
+	});
 }
 
 export function getAgentConversations(limit = 50, offset = 0) {
@@ -163,14 +179,18 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 	}
 }
 
-export async function callAgent(prompt: string, onEvent: (event: AgentEvent) => void) {
+export async function callAgent(
+	prompt: string,
+	postVariantId: number | null,
+	onEvent: (event: AgentEvent) => void
+) {
 	const response = await fetch(getConsoleBlogBaseUrl() + '/ai/agent', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'X-Organization-Id': String(get(authOrganizationStore)?.id)
 		},
-		body: JSON.stringify({ prompt }),
+		body: JSON.stringify({ prompt, post_variant_id: postVariantId }),
 		credentials: 'same-origin'
 	});
 
