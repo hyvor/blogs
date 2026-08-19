@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Enum\PostVariantStatus;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -47,10 +46,7 @@ class PostVariant
     private ?string $content_unsaved = null;
 
     #[ORM\Column(options: ['default' => 0])]
-    private int $content_version = 0;
-
-    #[ORM\Column(options: ['default' => 0])]
-    private int $content_unsaved_version = 0;
+    private int $document_version = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_html = null;
@@ -192,51 +188,15 @@ class PostVariant
         return $this;
     }
 
-    public function getContentVersion(): int
+    public function getDocumentVersion(): int
     {
-        return $this->content_version;
+        return $this->document_version;
     }
 
-    public function setContentVersion(int $content_version): static
+    public function setDocumentVersion(int $document_version): static
     {
-        $this->content_version = $content_version;
+        $this->document_version = $document_version;
         return $this;
-    }
-
-    public function getContentUnsavedVersion(): int
-    {
-        return $this->content_unsaved_version;
-    }
-
-    public function setContentUnsavedVersion(int $content_unsaved_version): static
-    {
-        $this->content_unsaved_version = $content_unsaved_version;
-        return $this;
-    }
-
-    public function getVersion(PostVariantContentType $type): int
-    {
-        return match ($type) {
-            PostVariantContentType::CONTENT => $this->content_version,
-            PostVariantContentType::CONTENT_UNSAVED => $this->content_unsaved_version,
-        };
-    }
-
-    public function setVersion(PostVariantContentType $type, int $version): static
-    {
-        match ($type) {
-            PostVariantContentType::CONTENT => $this->content_version = $version,
-            PostVariantContentType::CONTENT_UNSAVED => $this->content_unsaved_version = $version,
-        };
-        return $this;
-    }
-
-    public function getContentForType(PostVariantContentType $type): ?string
-    {
-        return match ($type) {
-            PostVariantContentType::CONTENT => $this->content,
-            PostVariantContentType::CONTENT_UNSAVED => $this->content_unsaved,
-        };
     }
 
     public function getContentHtml(): ?string

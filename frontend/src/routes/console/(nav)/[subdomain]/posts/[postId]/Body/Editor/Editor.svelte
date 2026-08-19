@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		postCurrentContentKey,
 		postEditingPublished,
 		postEditor,
 		postContentDirtyStore,
@@ -26,7 +25,7 @@
 	// see editorConfig.collab and PostVariantCollabController on the backend
 	const clientId = Math.random().toString(36).slice(2);
 
-	let uniqueKey = $derived(`${$postVariantStore.id}-${$postCurrentContentKey}`);
+	let uniqueKey = $derived(String($postVariantStore.id));
 
 	function handleChange() {
 		$postContentDirtyStore = true;
@@ -39,7 +38,7 @@
 	async function handleSendable(sendable: CollabSendable) {
 		try {
 			const response = await submitCollabSteps({
-				type: $postCurrentContentKey,
+				post_variant_id: $postVariantStore.id,
 				version: sendable.version,
 				steps: sendable.steps,
 				client_id: String(sendable.clientID)
@@ -63,36 +62,24 @@
 
 	function handleLocalCursorChange(cursor: { from: number; to: number } | null) {
 		submitCollabCursor({
-			type: $postCurrentContentKey,
+			post_variant_id: $postVariantStore.id,
 			client_id: clientId,
 			cursor
 		}).catch((e) => console.error('Failed to submit collab cursor', e));
 	}
 
 	let value = $derived(
-		$postVariantStore[$postCurrentContentKey] ||
+		$postVariantStore.content_unsaved ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
 
-	// content_version/content_unsaved_version is the live collab version; the steps returned
-	// alongside it are exactly the ones not yet reflected in `value` (see
-	// PostVariantCollabService on the backend) - so the editor must start at the version
-	// *before* those steps, then fast-forward via collab.receiveSteps() once mounted.
-	let backlogSteps = $derived(
-		($postCurrentContentKey === 'content'
-			? $postVariantStore.content_steps
-			: $postVariantStore.content_unsaved_steps) as CollabStepJSON[]
-	);
-	let backlogClientIds = $derived(
-		($postCurrentContentKey === 'content'
-			? $postVariantStore.content_client_ids
-			: $postVariantStore.content_unsaved_client_ids) as CollabClientID[]
-	);
-	let liveVersion = $derived(
-		$postCurrentContentKey === 'content'
-			? $postVariantStore.content_version
-			: $postVariantStore.content_unsaved_version
-	);
+	// document_version is the live collab version; the steps returned alongside it are exactly
+	// the ones not yet reflected in `value` (see PostVariantCollabService on the backend) - so
+	// the editor must start at the version *before* those steps, then fast-forward via
+	// collab.receiveSteps() once mounted.
+	let backlogSteps = $derived($postVariantStore.document_steps as CollabStepJSON[]);
+	let backlogClientIds = $derived($postVariantStore.document_client_ids as CollabClientID[]);
+	let liveVersion = $derived($postVariantStore.document_version);
 	let initialVersion = $derived(liveVersion - backlogSteps.length);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
@@ -120,7 +107,7 @@
 		async function catchUp() {
 			try {
 				const response = await syncCollabSteps({
-					type: $postCurrentContentKey,
+					post_variant_id: $postVariantStore.id,
 					version: editor.collab.getVersion()
 				});
 				if (response.steps.length > 0) {
@@ -134,7 +121,7 @@
 			}
 		}
 
-		const topic = collabTopic($postVariantStore.id, $postCurrentContentKey);
+		const topic = collabTopic($postVariantStore.id);
 		return subscribeToCollabTopic(
 			topic,
 			(steps, clientIds) => {

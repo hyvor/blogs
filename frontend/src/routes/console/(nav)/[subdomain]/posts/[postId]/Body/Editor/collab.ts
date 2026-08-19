@@ -1,11 +1,9 @@
 import type { CollabClientID, CollabStepJSON, RemoteCursorUser } from '@hyvor/richtext';
 import { getConfig } from '../../../../../../lib/config';
 
-export type CollabContentType = 'content' | 'content_unsaved';
-
 // must match PostVariantCollabService::topic() on the backend
-export function collabTopic(variantId: number, type: CollabContentType): string {
-	return `post_variant_collab:${variantId}:${type}`;
+export function collabTopic(variantId: number): string {
+	return `post_variant_collab:${variantId}`;
 }
 
 interface CollabStepsMercureMessage {

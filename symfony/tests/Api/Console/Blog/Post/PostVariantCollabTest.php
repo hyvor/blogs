@@ -4,7 +4,6 @@ namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
 use App\Api\Console\Controller\PostVariantCollabController;
-use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Entity\PostVariantStep;
@@ -36,13 +35,12 @@ class PostVariantCollabTest extends ApiTestCase
      * Seeds a variant as if a step batch had already been accepted, without a second
      * consoleBlogApi() call (only one is allowed per test - see ApiTestCase/AuthFake).
      */
-    private function seedStep(PostVariant $variant, PostVariantContentType $type, string $clientId): void
+    private function seedStep(PostVariant $variant, string $clientId): void
     {
-        $variant->setVersion($type, $variant->getVersion($type) + 1);
+        $variant->setDocumentVersion($variant->getDocumentVersion() + 1);
         $row = (new PostVariantStep())
             ->setPostVariant($variant)
-            ->setType($type)
-            ->setVersion($variant->getVersion($type))
+            ->setVersion($variant->getDocumentVersion())
             ->setClientId($clientId)
             ->setStep($this->step($clientId))
             ->setCreatedAt(new \DateTimeImmutable());
@@ -58,9 +56,8 @@ class PostVariantCollabTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/steps', [
+            'post_variant_id' => $variant->getId(),
             'version' => 0,
             'steps' => [$this->step('a'), $this->step('b')],
             'client_id' => 'client-1',
@@ -73,11 +70,11 @@ class PostVariantCollabTest extends ApiTestCase
         $this->getEm()->clear();
         /** @var PostVariant $refreshed */
         $refreshed = $this->getEm()->getRepository(PostVariant::class)->find($variant->getId());
-        $this->assertSame(2, $refreshed->getContentVersion());
+        $this->assertSame(2, $refreshed->getDocumentVersion());
 
         /** @var FakeHub $hub */
         $hub = $this->getContainer()->get(FakeHub::class);
-        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId() . ':content');
+        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId());
         /** @var array<string, mixed> $payload */
         $payload = json_decode($update->getData(), true);
         /** @var array<int, mixed> $steps */
@@ -95,9 +92,8 @@ class PostVariantCollabTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/steps', [
+            'post_variant_id' => $variant->getId(),
             'version' => 5, // stale - live version is 0
             'steps' => [$this->step('a')],
             'client_id' => 'client-1',
@@ -110,11 +106,11 @@ class PostVariantCollabTest extends ApiTestCase
         $this->getEm()->clear();
         /** @var PostVariant $refreshed */
         $refreshed = $this->getEm()->getRepository(PostVariant::class)->find($variant->getId());
-        $this->assertSame(0, $refreshed->getContentVersion());
+        $this->assertSame(0, $refreshed->getDocumentVersion());
 
         /** @var FakeHub $hub */
         $hub = $this->getContainer()->get(FakeHub::class);
-        $hub->assertNotPublished('post_variant_collab:' . $variant->getId() . ':content');
+        $hub->assertNotPublished('post_variant_collab:' . $variant->getId());
     }
 
     public function test_stale_submission_returns_the_missing_steps_for_catchup(): void
@@ -125,11 +121,10 @@ class PostVariantCollabTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
         // simulates another client's step having already landed while this client was offline
-        $this->seedStep($variant, PostVariantContentType::CONTENT, 'other-client');
+        $this->seedStep($variant, 'other-client');
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/steps', [
+            'post_variant_id' => $variant->getId(),
             'version' => 0, // stale - live version is 1 (from the seeded step)
             'steps' => [$this->step('mine')],
             'client_id' => 'client-1',
@@ -145,7 +140,7 @@ class PostVariantCollabTest extends ApiTestCase
         // the rejected submission must not have been persisted or broadcast alongside the catch-up
         /** @var FakeHub $hub */
         $hub = $this->getContainer()->get(FakeHub::class);
-        $hub->assertNotPublished('post_variant_collab:' . $variant->getId() . ':content');
+        $hub->assertNotPublished('post_variant_collab:' . $variant->getId());
     }
 
     public function test_sync_returns_steps_after_given_version(): void
@@ -155,12 +150,11 @@ class PostVariantCollabTest extends ApiTestCase
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
-        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-a');
-        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-b');
+        $this->seedStep($variant, 'client-a');
+        $this->seedStep($variant, 'client-b');
 
-        $this->consoleBlogApi('GET', $blog, '/post/' . $post->getId() . '/variant/collab/sync?' . http_build_query([
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('GET', $blog, '/documents/sync?' . http_build_query([
+            'post_variant_id' => $variant->getId(),
             'version' => 1, // already caught up to the first seeded step
         ]), user: $user);
 
@@ -171,22 +165,20 @@ class PostVariantCollabTest extends ApiTestCase
         $this->assertSame(['client-b'], $json['client_ids']);
     }
 
-    public function test_checkpoint_persists_content_and_prunes_steps(): void
+    public function test_checkpoint_persists_content_unsaved_and_prunes_steps(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'collab-checkpoint']);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
-        $postId = $post->getId();
-        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT, 'content' => null]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT, 'content_unsaved' => null]);
         $variantId = $variant->getId();
-        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-1');
+        $this->seedStep($variant, 'client-1');
 
         $doc = json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => []]]]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $postId . '/variant/collab/checkpoint', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/checkpoint', [
+            'post_variant_id' => $variantId,
             'version' => 1,
             'content' => $doc,
         ], user: $user);
@@ -195,8 +187,8 @@ class PostVariantCollabTest extends ApiTestCase
         $this->getEm()->clear();
         /** @var PostVariant $refreshed */
         $refreshed = $this->getEm()->getRepository(PostVariant::class)->find($variantId);
-        $this->assertSame($doc, $refreshed->getContent());
-        $this->assertSame(1, $refreshed->getContentVersion());
+        $this->assertSame($doc, $refreshed->getContentUnsaved());
+        $this->assertSame(1, $refreshed->getDocumentVersion());
 
         /** @var string|int $stepCount */
         $stepCount = $this->getEm()->getConnection()->fetchOne(
@@ -220,8 +212,8 @@ class PostVariantCollabTest extends ApiTestCase
             'content_unsaved' => json_encode(['type' => 'doc', 'content' => []]),
         ]);
         $variantId = $variant->getId();
-        $this->seedStep($variant, PostVariantContentType::CONTENT_UNSAVED, 'client-1');
-        $this->assertSame(1, $variant->getContentUnsavedVersion());
+        $this->seedStep($variant, 'client-1');
+        $this->assertSame(1, $variant->getDocumentVersion());
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
             'language_id' => $language->getId(),
@@ -232,7 +224,7 @@ class PostVariantCollabTest extends ApiTestCase
         $this->getEm()->clear();
         /** @var PostVariant $refreshed */
         $refreshed = $this->getEm()->getRepository(PostVariant::class)->find($variantId);
-        $this->assertSame(0, $refreshed->getContentUnsavedVersion());
+        $this->assertSame(0, $refreshed->getDocumentVersion());
 
         /** @var string|int $stepCount */
         $stepCount = $this->getEm()->getConnection()->fetchOne(
@@ -248,13 +240,12 @@ class PostVariantCollabTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
-        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
         $doc = json_encode(['type' => 'doc', 'content' => []]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab/checkpoint', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/checkpoint', [
+            'post_variant_id' => $variant->getId(),
             'version' => 3, // stale - live version is 0
             'content' => $doc,
         ], user: $user);
@@ -271,9 +262,8 @@ class PostVariantCollabTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab/cursor', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/cursor', [
+            'post_variant_id' => $variant->getId(),
             'client_id' => 'client-1',
             'from' => 3,
             'to' => 7,
@@ -283,7 +273,7 @@ class PostVariantCollabTest extends ApiTestCase
 
         /** @var FakeHub $hub */
         $hub = $this->getContainer()->get(FakeHub::class);
-        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId() . ':content');
+        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId());
         /** @var array<string, mixed> $payload */
         $payload = json_decode($update->getData(), true);
 
@@ -306,9 +296,8 @@ class PostVariantCollabTest extends ApiTestCase
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/collab/cursor', [
-            'language_id' => $language->getId(),
-            'type' => 'content',
+        $this->consoleBlogApi('POST', $blog, '/documents/cursor', [
+            'post_variant_id' => $variant->getId(),
             'client_id' => 'client-1',
             'from' => null,
             'to' => null,
@@ -318,7 +307,7 @@ class PostVariantCollabTest extends ApiTestCase
 
         /** @var FakeHub $hub */
         $hub = $this->getContainer()->get(FakeHub::class);
-        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId() . ':content');
+        $update = $hub->assertPublished('post_variant_collab:' . $variant->getId());
         /** @var array<string, mixed> $payload */
         $payload = json_decode($update->getData(), true);
 
@@ -335,20 +324,19 @@ class PostVariantCollabTest extends ApiTestCase
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
-        $this->seedStep($variant, PostVariantContentType::CONTENT, 'client-1');
+        $this->seedStep($variant, 'client-1');
 
         $response = $this->consoleBlogApi('GET', $blog, '/post/' . $post->getId() . '?variant_language_code=' . $language->getCode(), user: $user);
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         /** @var array<string, mixed> $variantJson */
         $variantJson = $json['variant'];
-        /** @var array<int, mixed> $contentSteps */
-        $contentSteps = $variantJson['content_steps'];
+        /** @var array<int, mixed> $documentSteps */
+        $documentSteps = $variantJson['document_steps'];
 
-        $this->assertSame(1, $variantJson['content_version']);
-        $this->assertCount(1, $contentSteps);
-        $this->assertSame(['client-1'], $variantJson['content_client_ids']);
-        $this->assertSame(0, $variantJson['content_unsaved_version']);
+        $this->assertSame(1, $variantJson['document_version']);
+        $this->assertCount(1, $documentSteps);
+        $this->assertSame(['client-1'], $variantJson['document_client_ids']);
 
         $cookies = $response->headers->getCookies();
         $names = array_map(fn($c) => $c->getName(), $cookies);

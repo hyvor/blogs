@@ -11,7 +11,7 @@ final class Version20260817062249 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Collaborative editing: post_variants.content_version / content_unsaved_version, post_variant_steps table';
+        return 'Collaborative editing: post_variants.document_version, post_variant_steps table';
     }
 
     public function up(Schema $schema): void
@@ -21,8 +21,15 @@ final class Version20260817062249 extends AbstractMigration
         $this->addSql(
             <<<SQL
             ALTER TABLE post_variants
-                ADD COLUMN content_version INTEGER NOT NULL DEFAULT 0,
-                ADD COLUMN content_unsaved_version INTEGER NOT NULL DEFAULT 0
+                ADD COLUMN document_version INTEGER NOT NULL DEFAULT 0
+            SQL
+        );
+
+        // content_unsaved is now the sole editable document - backfill it from the published
+        // content for any variant that predates this column (or was never edited since)
+        $this->addSql(
+            <<<SQL
+            UPDATE post_variants SET content_unsaved = content WHERE content_unsaved IS NULL
             SQL
         );
 
@@ -32,16 +39,15 @@ final class Version20260817062249 extends AbstractMigration
             (
                 id              SERIAL PRIMARY KEY,
                 post_variant_id INTEGER NOT NULL REFERENCES post_variants (id) ON DELETE CASCADE,
-                type            VARCHAR(20)  NOT NULL,
                 version         INTEGER      NOT NULL,
                 client_id       VARCHAR(64)  NOT NULL,
                 step            JSONB        NOT NULL,
                 created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-                UNIQUE (post_variant_id, type, version)
+                UNIQUE (post_variant_id, version)
             )
             SQL
         );
-        $this->addSql('CREATE INDEX idx_post_variant_steps_lookup ON post_variant_steps (post_variant_id, type, version)');
+        $this->addSql('CREATE INDEX idx_post_variant_steps_lookup ON post_variant_steps (post_variant_id, version)');
 
         // user color
         $this->addSql('ALTER TABLE users ADD COLUMN cursor_color VARCHAR(30) DEFAULT NULL');

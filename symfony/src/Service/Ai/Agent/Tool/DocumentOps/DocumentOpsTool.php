@@ -3,7 +3,6 @@
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Entity\Blog;
-use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
@@ -170,10 +169,7 @@ class DocumentOpsTool
 
     private function getCurrentContentFromVariant(PostVariant $variant): ?string
     {
-        if ($variant->getStatus() !== PostVariantStatus::DRAFT) {
-            return $variant->getContentUnsaved() ?? $variant->getContent();
-        }
-        return $variant->getContent();
+        return $variant->getContentUnsaved() ?? $variant->getContent();
     }
 
     // methods to call once the agent has finished making changes to the document.

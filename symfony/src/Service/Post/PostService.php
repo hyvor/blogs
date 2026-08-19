@@ -3,7 +3,6 @@
 namespace App\Service\Post;
 
 use App\Entity\Blog;
-use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\RedirectType;
 use App\Entity\Language;
@@ -548,11 +547,9 @@ class PostService
     ): PostVariant {
         $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
-        // `content` is only guarded once it's public: a draft's `content` is edited
-        // continuously (autosave), but for a published/scheduled variant, `content` is
-        // only ever set here via the "Update" flow (content_unsaved -> content), i.e.
-        // the moment it actually goes live - see publishPostVariant() for the other
-        // (draft -> published) transition that needs the same guard.
+        // `content` is the immutable published snapshot - it's never edited directly, only ever
+        // copied from `content_unsaved` here (the "Update" flow, re-publishing a live post) or
+        // in publishPostVariant() (draft -> published). This guard applies once it's public.
         if (
             array_key_exists('content', $data) &&
             $variant->getStatus() !== PostVariantStatus::DRAFT &&
@@ -569,14 +566,12 @@ class PostService
 
         if (array_key_exists('content', $data)) {
             $variant->setContent($data['content']);
-            $variant->setContentUnsaved(null);
-            $this->resetCollabStream($variant, PostVariantContentType::CONTENT_UNSAVED);
         }
 
         if (array_key_exists('content_unsaved', $data)) {
             $variant->setContentUnsaved($data['content_unsaved']);
             if ($data['content_unsaved'] === null) {
-                $this->resetCollabStream($variant, PostVariantContentType::CONTENT_UNSAVED);
+                $this->resetCollabStream($variant);
             }
         }
 
@@ -656,6 +651,7 @@ class PostService
             $post->setPublishedAt($this->now());
         }
 
+        $variant->setContent($variant->getContentUnsaved());
         $variant->setStatus(PostVariantStatus::PUBLISHED);
         $variant->setContentUpdatedAt($post->getPublishedAt());
         $variant->setUpdatedAt($this->now());
@@ -681,26 +677,23 @@ class PostService
     }
 
     /**
-     * Whenever a content type's materialized column is directly overwritten/cleared outside
-     * the collab checkpoint flow (e.g. `content_unsaved` being nulled here when `content` is
-     * set on publish, or the "discard changes" action clearing it explicitly), any in-flight
-     * collab version/steps for that type are now meaningless - reset so the next editing
-     * session for that type starts clean at version 0. See PostVariantCollabService.
+     * Whenever `content_unsaved` is directly overwritten/cleared outside the collab checkpoint
+     * flow (e.g. the "discard changes" action clearing it explicitly), any in-flight collab
+     * version/steps are now meaningless - reset so the next editing session starts clean at
+     * version 0. See PostVariantCollabService.
      */
-    private function resetCollabStream(PostVariant $variant, PostVariantContentType $type): void
+    private function resetCollabStream(PostVariant $variant): void
     {
-        if ($variant->getVersion($type) === 0) {
+        if ($variant->getDocumentVersion() === 0) {
             return;
         }
 
-        $variant->setVersion($type, 0);
+        $variant->setDocumentVersion(0);
 
         $this->em->createQueryBuilder()
             ->delete(PostVariantStep::class, 's')
             ->where('s.post_variant = :variant')
-            ->andWhere('s.type = :type')
             ->setParameter('variant', $variant)
-            ->setParameter('type', $type)
             ->getQuery()
             ->execute();
     }

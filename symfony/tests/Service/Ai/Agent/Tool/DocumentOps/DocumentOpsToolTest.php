@@ -85,11 +85,31 @@ class DocumentOpsToolTest extends KernelTestCase
         $this->assertSame('Post variant with ID 999999 not found.', $result);
     }
 
-    public function test_get_reads_content_unsaved_for_non_draft_variant(): void
+    public function test_get_prefers_content_unsaved_over_content_when_published(): void
     {
         $variant = $this->createVariant(
             paragraphs: ['Saved content.'],
             status: PostVariantStatus::PUBLISHED,
+            contentUnsaved: (string) json_encode([
+                'type' => 'doc',
+                'content' => [
+                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Unsaved content.']]],
+                ],
+            ]),
+        );
+        $tool = $this->createTool($variant->getPost()->getBlog());
+
+        $markdown = $tool->get($variant->getId());
+
+        $this->assertStringContainsString('Unsaved content.', $markdown);
+        $this->assertStringNotContainsString('Saved content.', $markdown);
+    }
+
+    public function test_get_prefers_content_unsaved_over_content_when_draft(): void
+    {
+        $variant = $this->createVariant(
+            paragraphs: ['Saved content.'],
+            status: PostVariantStatus::DRAFT,
             contentUnsaved: (string) json_encode([
                 'type' => 'doc',
                 'content' => [

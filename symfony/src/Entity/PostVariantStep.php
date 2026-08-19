@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\PostVariantContentType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'post_variant_steps')]
-#[ORM\UniqueConstraint(columns: ['post_variant_id', 'type', 'version'])]
-#[ORM\Index(columns: ['post_variant_id', 'type', 'version'], name: 'idx_post_variant_steps_lookup')]
+#[ORM\UniqueConstraint(columns: ['post_variant_id', 'version'])]
+#[ORM\Index(columns: ['post_variant_id', 'version'], name: 'idx_post_variant_steps_lookup')]
 class PostVariantStep
 {
     #[ORM\Id]
@@ -22,9 +21,6 @@ class PostVariantStep
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'post_variant_id', referencedColumnName: 'id', nullable: false)]
     private PostVariant $post_variant;
-
-    #[ORM\Column(length: 20, enumType: PostVariantContentType::class)]
-    private PostVariantContentType $type;
 
     #[ORM\Column]
     private int $version;
@@ -66,17 +62,6 @@ class PostVariantStep
     public function setPostVariant(PostVariant $post_variant): static
     {
         $this->post_variant = $post_variant;
-        return $this;
-    }
-
-    public function getType(): PostVariantContentType
-    {
-        return $this->type;
-    }
-
-    public function setType(PostVariantContentType $type): static
-    {
-        $this->type = $type;
         return $this;
     }
 

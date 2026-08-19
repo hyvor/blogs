@@ -227,64 +227,51 @@ export interface CollabStepsResponse {
 }
 
 export function submitCollabSteps(data: {
-	type: 'content' | 'content_unsaved';
+	post_variant_id: number;
 	version: number;
 	steps: unknown[];
 	client_id: string;
 }) {
-	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
-
 	return consoleApi.post<CollabStepsResponse>({
-		endpoint: `/post/${postId}/variant/collab`,
-		data: { ...data, language_id: languageId }
+		endpoint: `/documents/steps`,
+		data
 	});
 }
 
 // Standalone catch-up (PostVariantCollabController::sync) - call whenever the client suspects
 // it missed a Mercure broadcast (e.g. its EventSource reconnecting after a drop), not only after
 // a rejected submitCollabSteps. Returns the same shape minus `accepted`, since it's not a submission.
-export function syncCollabSteps(data: { type: 'content' | 'content_unsaved'; version: number }) {
-	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
-
+export function syncCollabSteps(data: { post_variant_id: number; version: number }) {
 	return consoleApi.get<Omit<CollabStepsResponse, 'accepted'>>({
-		endpoint: `/post/${postId}/variant/collab/sync`,
-		data: { ...data, language_id: languageId }
+		endpoint: `/documents/sync`,
+		data
 	});
 }
 
 // cursor is null on blur - see @hyvor/richtext's CursorsPluginConfig.onLocalCursorChange
 export function submitCollabCursor(data: {
-	type: 'content' | 'content_unsaved';
+	post_variant_id: number;
 	client_id: string;
 	cursor: { from: number; to: number } | null;
 }) {
-	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
-
 	return consoleApi.post<void>({
-		endpoint: `/post/${postId}/variant/collab/cursor`,
+		endpoint: `/documents/cursor`,
 		data: {
-			type: data.type,
+			post_variant_id: data.post_variant_id,
 			client_id: data.client_id,
 			from: data.cursor?.from ?? null,
-			to: data.cursor?.to ?? null,
-			language_id: languageId
+			to: data.cursor?.to ?? null
 		}
 	});
 }
 
 export function checkpointPostVariant(data: {
-	type: 'content' | 'content_unsaved';
+	post_variant_id: number;
 	version: number;
 	content: string;
 }) {
-	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
-
 	return consoleApi.post<void>({
-		endpoint: `/post/${postId}/variant/collab/checkpoint`,
-		data: { ...data, language_id: languageId }
+		endpoint: `/documents/checkpoint`,
+		data
 	});
 }

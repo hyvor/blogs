@@ -19,7 +19,6 @@ use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
 use App\Api\Console\Object\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
-use App\Entity\Enum\PostVariantContentType;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Collab\PostVariantCollabService;
@@ -147,8 +146,7 @@ class PostController
 
         if ($variant !== null) {
             $this->mercureAuthorization->setCookie($request, [
-                $this->collabService->topic($variant, PostVariantContentType::CONTENT),
-                $this->collabService->topic($variant, PostVariantContentType::CONTENT_UNSAVED),
+                $this->collabService->topic($variant),
             ]);
         }
 

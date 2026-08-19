@@ -3,7 +3,6 @@
 namespace App\Service\Post\Collab;
 
 use App\Entity\Blog;
-use App\Entity\Enum\PostVariantContentType;
 use App\Entity\PostVariant;
 use App\Entity\PostVariantStep;
 use App\Service\Post\PostService;
@@ -15,15 +14,15 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
 /**
- * Real-time collaborative editing for a post variant's content, on top of prosemirror-collab.
+ * Real-time collaborative editing for a post variant's document, on top of prosemirror-collab.
  *
- * `content_version`/`content_unsaved_version` on PostVariant are the live, monotonically
- * increasing collab version for each content type. `post_variant_steps` holds exactly the
- * steps not yet reflected in the `content`/`content_unsaved` column - checkpoint() writes the
- * full doc into that column and deletes the covered steps in the same transaction, so
- * "content column + remaining steps == current doc" always holds; getState() relies on this
- * to let a freshly-loaded client fast-forward via editor.collab.receiveSteps() instead of us
- * re-implementing prosemirror step application server-side.
+ * `document_version` on PostVariant is the live, monotonically increasing collab version.
+ * `post_variant_steps` holds exactly the steps not yet reflected in the `content_unsaved`
+ * column - checkpoint() writes the full doc into that column and deletes the covered steps in
+ * the same transaction, so "content_unsaved column + remaining steps == current doc" always
+ * holds; getState() relies on this to let a freshly-loaded client fast-forward via
+ * editor.collab.receiveSteps() instead of us re-implementing prosemirror step application
+ * server-side.
  */
 class PostVariantCollabService
 {
@@ -39,17 +38,17 @@ class PostVariantCollabService
         private PostService $postService,
     ) {}
 
-    public function topic(PostVariant $variant, PostVariantContentType $type): string
+    public function topic(PostVariant $variant): string
     {
-        return sprintf('post_variant_collab:%d:%s', $variant->getId(), $type->value);
+        return sprintf('post_variant_collab:%d', $variant->getId());
     }
 
     /**
      * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
-    public function getState(PostVariant $variant, PostVariantContentType $type): array
+    public function getState(PostVariant $variant): array
     {
-        return $this->getStepsSince($variant, $type, 0);
+        return $this->getStepsSince($variant, 0);
     }
 
     /**
@@ -62,24 +61,22 @@ class PostVariantCollabService
      *
      * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
-    public function getStepsSince(PostVariant $variant, PostVariantContentType $type, int $sinceVersion): array
+    public function getStepsSince(PostVariant $variant, int $sinceVersion): array
     {
         /** @var PostVariantStep[] $rows */
         $rows = $this->em->createQueryBuilder()
             ->select('s')
             ->from(PostVariantStep::class, 's')
             ->where('s.post_variant = :variant')
-            ->andWhere('s.type = :type')
             ->andWhere('s.version > :sinceVersion')
             ->orderBy('s.version', 'ASC')
             ->setParameter('variant', $variant)
-            ->setParameter('type', $type)
             ->setParameter('sinceVersion', $sinceVersion)
             ->getQuery()
             ->getResult();
 
         return [
-            'version' => $variant->getVersion($type),
+            'version' => $variant->getDocumentVersion(),
             'steps' => array_values(array_map(fn(PostVariantStep $s) => $s->getStep(), $rows)),
             'client_ids' => array_values(array_map(fn(PostVariantStep $s) => $s->getClientId(), $rows)),
         ];
@@ -100,7 +97,6 @@ class PostVariantCollabService
      */
     public function submitSteps(
         PostVariant $variant,
-        PostVariantContentType $type,
         int $version,
         array $steps,
         string $clientId,
@@ -109,9 +105,9 @@ class PostVariantCollabService
             return ['accepted' => true, 'version' => $version, 'steps' => [], 'client_ids' => []];
         }
 
-        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $type, $version, $steps, $clientId) {
+        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $version, $steps, $clientId) {
             $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
-            if ($current === null || $current->getVersion($type) !== $version) {
+            if ($current === null || $current->getDocumentVersion() !== $version) {
                 return false;
             }
 
@@ -120,7 +116,6 @@ class PostVariantCollabService
                 $newVersion++;
                 $row = (new PostVariantStep())
                     ->setPostVariant($current)
-                    ->setType($type)
                     ->setVersion($newVersion)
                     ->setClientId($clientId)
                     ->setStep($step)
@@ -128,18 +123,18 @@ class PostVariantCollabService
                 $this->em->persist($row);
             }
 
-            $current->setVersion($type, $newVersion);
+            $current->setDocumentVersion($newVersion);
             $this->em->flush();
 
             return true;
         });
 
         if ($accepted) {
-            $this->publish($variant, $type, $version, $steps, $clientId);
+            $this->publish($variant, $version, $steps, $clientId);
             return ['accepted' => true, 'version' => $version + count($steps), 'steps' => [], 'client_ids' => []];
         }
 
-        return ['accepted' => false, ...$this->getStepsSince($variant, $type, $version)];
+        return ['accepted' => false, ...$this->getStepsSince($variant, $version)];
     }
 
     /**
@@ -147,7 +142,6 @@ class PostVariantCollabService
      */
     private function publish(
         PostVariant $variant,
-        PostVariantContentType $type,
         int $baseVersion,
         array $steps,
         string $clientId,
@@ -155,7 +149,7 @@ class PostVariantCollabService
         $clientIds = array_fill(0, count($steps), $clientId);
 
         $this->hub->publish(new Update(
-            $this->topic($variant, $type),
+            $this->topic($variant),
             json_encode([
                 'type' => 'steps',
                 'version' => $baseVersion + count($steps),
@@ -167,7 +161,7 @@ class PostVariantCollabService
 
     /**
      * Broadcasts the local user's cursor position (or, with `$from`/`$to` null, that they blurred
-     * the editor) to everyone else subscribed to this content type - see @hyvor/richtext's
+     * the editor) to everyone else subscribed to this variant's document - see @hyvor/richtext's
      * `editorConfig.cursors`/`editor.cursors.set()`. Unlike submitSteps(), this is fire-and-forget:
      * no version, no persistence (see PostVariantStep's docblock) - presence is ephemeral, so the
      * latest cursor position always wins and a late-joining subscriber simply sees nothing until
@@ -178,7 +172,6 @@ class PostVariantCollabService
      */
     public function publishCursor(
         PostVariant $variant,
-        PostVariantContentType $type,
         string $clientId,
         ?int $from,
         ?int $to,
@@ -195,40 +188,37 @@ class PostVariantCollabService
         }
 
         $this->hub->publish(new Update(
-            $this->topic($variant, $type),
+            $this->topic($variant),
             json_encode($payload, JSON_THROW_ON_ERROR),
         ));
     }
 
     /**
-     * Periodic full-document checkpoint (the "update endpoint"): persists `$json` into the
-     * materialized content column, verifying `$version` is exactly the current live version
-     * (not just >=) so a checkpoint never silently drops steps a client hasn't caught up on
-     * yet. On success, prunes the steps it just absorbed.
+     * Periodic full-document checkpoint (the "update endpoint"): persists `$json` into
+     * `content_unsaved`, verifying `$version` is exactly the current live version (not just >=)
+     * so a checkpoint never silently drops steps a client hasn't caught up on yet. On success,
+     * prunes the steps it just absorbed.
      *
      * @throws ConflictHttpException if `$version` is stale
      */
     public function checkpoint(
         PostVariant $variant,
         Blog $blog,
-        PostVariantContentType $type,
         string $json,
         int $version,
     ): void {
-        $this->em->wrapInTransaction(function () use ($variant, $blog, $type, $json, $version) {
+        $this->em->wrapInTransaction(function () use ($variant, $blog, $json, $version) {
             $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
-            if ($current === null || $current->getVersion($type) !== $version) {
-                throw new ConflictHttpException('content_version has moved on - catch up via Mercure and retry');
+            if ($current === null || $current->getDocumentVersion() !== $version) {
+                throw new ConflictHttpException('document_version has moved on - catch up via Mercure and retry');
             }
 
-            $this->postService->updatePostVariant($current, $blog, [$type->value => $json]);
+            $this->postService->updatePostVariant($current, $blog, ['content_unsaved' => $json]);
 
             $this->em->createQueryBuilder()
                 ->delete(PostVariantStep::class, 's')
                 ->where('s.post_variant = :variant')
-                ->andWhere('s.type = :type')
                 ->setParameter('variant', $current)
-                ->setParameter('type', $type)
                 ->getQuery()
                 ->execute();
         });

@@ -2,16 +2,12 @@
 
 namespace App\Api\Console\Input\Post;
 
-use App\Entity\Enum\PostVariantContentType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SubmitCollabCursorInput
 {
     #[Assert\NotNull]
-    public int $language_id;
-
-    #[Assert\NotNull]
-    public PostVariantContentType $type;
+    public int $post_variant_id;
 
     #[Assert\NotBlank]
     #[Assert\Length(max: 64)]

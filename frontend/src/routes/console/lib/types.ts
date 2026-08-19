@@ -209,12 +209,9 @@ export type PostVariant = {
 	link_analysis: Record<string, number>;
 
 	// Collaborative editing state (see PostVariantCollabService) - only populated on GET /post/{id}
-	content_version: number;
-	content_steps: Record<string, unknown>[];
-	content_client_ids: string[];
-	content_unsaved_version: number;
-	content_unsaved_steps: Record<string, unknown>[];
-	content_unsaved_client_ids: string[];
+	document_version: number;
+	document_steps: Record<string, unknown>[];
+	document_client_ids: string[];
 };
 
 export type PostVariantStatusItem = {

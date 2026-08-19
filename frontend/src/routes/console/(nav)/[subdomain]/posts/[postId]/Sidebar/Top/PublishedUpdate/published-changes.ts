@@ -4,8 +4,7 @@ import {
 	postVariantOriginalStore,
 	postStore,
 	postVariantStore,
-	updatePostEditingStatusValue,
-	updatePostVariantStore
+	updatePostEditingStatusValue
 } from '../../../../postStore';
 import type { Post, PostVariant, Tag, User } from '../../../../../../../lib/types';
 import { hasIdArrayChanged } from '../../Settings/settingsHelpers';
@@ -79,9 +78,6 @@ export function hasPublishedChanges() {
 }
 
 export function finishUpdating() {
-	// no longer editing
+	// no longer editing - content_unsaved stays populated, it's the live editable document
 	updatePostEditingStatusValue('isEditingPublished', false);
-
-	// clear unsaved content
-	updatePostVariantStore({ content_unsaved: null });
 }
