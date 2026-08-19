@@ -39,6 +39,9 @@ export function subscribeToCollabTopic(
 	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[]) => void,
 	onCursor: (message: CollabCursorMercureMessage) => void
 ): () => void {
+
+	// TODO: subscribing to a public topic. This should be private
+
 	const url = new URL(getConfig().mercure.public_url);
 	url.searchParams.append('topic', topic);
 

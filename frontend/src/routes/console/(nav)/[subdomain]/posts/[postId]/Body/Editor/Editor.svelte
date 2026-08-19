@@ -163,13 +163,11 @@
 </div>
 
 <style>
-	@import url(https://fonts.bunny.net/css?family=source-serif-4:400,600);
 	.editor {
 		position: relative;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		/* font-family: 'Source Serif 4', sans-serif; */
 	}
 	.wrap {
 		position: relative;

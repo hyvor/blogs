@@ -16,6 +16,8 @@ final class Version20260817062249 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+
+        // post_variant updates
         $this->addSql(
             <<<SQL
             ALTER TABLE post_variants
@@ -40,17 +42,12 @@ final class Version20260817062249 extends AbstractMigration
             SQL
         );
         $this->addSql('CREATE INDEX idx_post_variant_steps_lookup ON post_variant_steps (post_variant_id, type, version)');
+
+        // user color
+        $this->addSql('ALTER TABLE users ADD COLUMN cursor_color VARCHAR(30) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE post_variant_steps');
-        $this->addSql(
-            <<<SQL
-            ALTER TABLE post_variants
-                DROP COLUMN content_version,
-                DROP COLUMN content_unsaved_version
-            SQL
-        );
     }
 }
