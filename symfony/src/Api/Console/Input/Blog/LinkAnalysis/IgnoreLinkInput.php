@@ -8,7 +8,7 @@ class IgnoreLinkInput
 {
     public int $post_variant_id;
 
-    #[Assert\Url]
+    #[Assert\NotBlank]
     public string $url;
 
     public bool $status;

@@ -2,9 +2,9 @@
 
 namespace App\Tests\Service\LinkAnalysis;
 
+use App\Service\LinkAnalysis\Dto\StatusResult;
 use App\Service\LinkAnalysis\StatusCheck\ExternalLinkStatusCheck;
 use App\Service\LinkAnalysis\StatusCheck\IgnoreReason;
-use App\Service\LinkAnalysis\StatusCheck\StatusResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
