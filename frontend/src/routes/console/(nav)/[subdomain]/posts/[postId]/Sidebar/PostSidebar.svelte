@@ -100,8 +100,6 @@
 		overflow: auto;
 	}
 
-	/* the AI agent chat manages its own padding and internal scrolling (message history
-	   scrolls, the prompt input stays pinned at the bottom) - see AgentChat.svelte */
 	.content-flush {
 		padding: 0;
 		overflow: hidden;

@@ -103,13 +103,11 @@ class AiAgentService
 
         $documentOpsTool = new DocumentOpsTool(
             $blog,
-
             $this->postService,
             $this->postContentService
         );
         $queryTool = new QueryTool(
             $blog,
-
             $this->tagService,
             $this->userService,
             $this->postService,

@@ -5,9 +5,6 @@
 	import type { AgentPostVariant, DocumentChange } from '../../../../agent/agentApi';
 
 	function applyDocumentChange(change: DocumentChange, _postVariant: AgentPostVariant) {
-		// goes through the live collab editor rather than a direct save - setContent() dispatches
-		// a normal transaction that the collab plugin turns into OT steps and submits/checkpoints
-		// through the existing pipeline (see Editor.svelte), keeping document_version in sync
 		$postEditor.setContent(change.content);
 	}
 </script>

@@ -3,7 +3,6 @@
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Entity\Blog;
-use App\Entity\PostVariant;
 use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
