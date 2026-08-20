@@ -8,6 +8,7 @@ use App\Entity\Enum\RedirectType;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Entity\PostVariantStep;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
@@ -20,6 +21,7 @@ use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Service\Redirect\RedirectService;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Connection;
@@ -29,6 +31,7 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -42,7 +45,8 @@ class PostService
         private RedirectService $redirectService,
         private EventDispatcherInterface $ed,
         private PostSlugService $postSlugService,
-        private PostContentService $postContentService
+        private PostContentService $postContentService,
+        private PostSuggestionContentChecker $postSuggestionContentChecker,
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -501,10 +505,14 @@ class PostService
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
 
-        if ($status === PostVariantStatus::PUBLISHED) {
+        if ($status === PostVariantStatus::PUBLISHED || $status === PostVariantStatus::SCHEDULED) {
             if ($post->getPublishedAt() === null) {
                 $post->setPublishedAt($this->now());
             }
+            $variant->setContentUpdatedAt($post->getPublishedAt());
+        }
+
+        if ($status === PostVariantStatus::PUBLISHED) {
             assert($variant->getSlug() !== null, 'Slug must be set for published post variant');
         }
 
@@ -527,7 +535,8 @@ class PostService
      *     description?: string|null,
      *     seo_primary_keyword?: string|null,
      *     seo_secondary_keywords?: string[],
-     *     link_analysis?: array<string, number>
+     *     link_analysis?: array<string, number>,
+     *     content_updated_at?: \DateTimeImmutable|null,
      * } $data
      */
     public function updatePostVariant(
@@ -538,17 +547,32 @@ class PostService
     ): PostVariant {
         $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
+        // `content` is the immutable published snapshot - it's never edited directly, only ever
+        // copied from `content_unsaved` here (the "Update" flow, re-publishing a live post) or
+        // in publishPostVariant() (draft -> published). This guard applies once it's public.
+        if (
+            array_key_exists('content', $data) &&
+            $variant->getStatus() !== PostVariantStatus::DRAFT &&
+            $this->postSuggestionContentChecker->hasPendingSuggestions($data['content'])
+        ) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
         }
 
         if (array_key_exists('content', $data)) {
             $variant->setContent($data['content']);
-            $variant->setContentUnsaved(null);
         }
 
         if (array_key_exists('content_unsaved', $data)) {
             $variant->setContentUnsaved($data['content_unsaved']);
+            if ($data['content_unsaved'] === null) {
+                $this->resetCollabStream($variant);
+            }
         }
 
         if (array_key_exists('title', $data)) {
@@ -572,6 +596,16 @@ class PostService
 
         if (array_key_exists('link_analysis', $data)) {
             $variant->setLinkAnalysis($data['link_analysis']);
+        }
+
+        $isDraft = $variant->getStatus() === PostVariantStatus::DRAFT;
+
+        if (array_key_exists('content_updated_at', $data)) {
+            $contentUpdatedAt = $data['content_updated_at'];
+            $this->assertContentUpdatedAtValid($variant, $contentUpdatedAt);
+            $variant->setContentUpdatedAt($contentUpdatedAt);
+        } elseif (array_key_exists('content', $data) && !$isDraft) {
+            $variant->setContentUpdatedAt($this->now());
         }
 
         $variant->setUpdatedAt($this->now());
@@ -601,6 +635,12 @@ class PostService
 
     public function publishPostVariant(PostVariant $variant, Blog $blog): PostVariant
     {
+        if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContent())) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
         if ($variant->getSlug() === null) {
             $slug = $this->postSlugService->generateUniqueSlug($variant->getLanguage(), $variant->getTitle());
             $variant->setSlug($slug);
@@ -611,7 +651,9 @@ class PostService
             $post->setPublishedAt($this->now());
         }
 
+        $variant->setContent($variant->getContentUnsaved());
         $variant->setStatus(PostVariantStatus::PUBLISHED);
+        $variant->setContentUpdatedAt($post->getPublishedAt());
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
@@ -624,6 +666,7 @@ class PostService
     public function unpublishPostVariant(PostVariant $variant): PostVariant
     {
         $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setContentUpdatedAt(null);
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
@@ -631,6 +674,40 @@ class PostService
         $this->ed->dispatch(new PostVariantUnpublishedEvent($variant));
 
         return $variant;
+    }
+
+    /**
+     * Whenever `content_unsaved` is directly overwritten/cleared outside the collab checkpoint
+     * flow (e.g. the "discard changes" action clearing it explicitly), any in-flight collab
+     * version/steps are now meaningless - reset so the next editing session starts clean at
+     * version 0. See PostVariantCollabService.
+     */
+    private function resetCollabStream(PostVariant $variant): void
+    {
+        if ($variant->getDocumentVersion() === 0) {
+            return;
+        }
+
+        $variant->setDocumentVersion(0);
+
+        $this->em->createQueryBuilder()
+            ->delete(PostVariantStep::class, 's')
+            ->where('s.post_variant = :variant')
+            ->setParameter('variant', $variant)
+            ->getQuery()
+            ->execute();
+    }
+
+    private function assertContentUpdatedAtValid(PostVariant $variant, ?\DateTimeImmutable $contentUpdatedAt): void
+    {
+        if ($contentUpdatedAt === null) {
+            return;
+        }
+
+        $publishedAt = $variant->getPost()->getPublishedAt();
+        if ($publishedAt !== null && $contentUpdatedAt < $publishedAt) {
+            throw new UnprocessableEntityHttpException('content_updated_at must be greater than or equal to published_at');
+        }
     }
 
     public function deletePostVariant(Post $post, Language $language): void

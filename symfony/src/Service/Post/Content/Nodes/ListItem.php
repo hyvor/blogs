@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class ListItem extends NodeType
 {
     public string $name = 'list_item';
+    public string $attrs = ListItemAttrs::class;
     public ?string $content = 'block*';
 
     public function fromHtml(): array

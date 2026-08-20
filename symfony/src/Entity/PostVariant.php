@@ -22,6 +22,9 @@ class PostVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $content_updated_at = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
     private Post $post;
@@ -41,6 +44,9 @@ class PostVariant
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_unsaved = null;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $document_version = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_html = null;
@@ -101,6 +107,17 @@ class PostVariant
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getContentUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->content_updated_at;
+    }
+
+    public function setContentUpdatedAt(?\DateTimeImmutable $content_updated_at): static
+    {
+        $this->content_updated_at = $content_updated_at;
         return $this;
     }
 
@@ -168,6 +185,17 @@ class PostVariant
     public function setContentUnsaved(?string $content_unsaved): static
     {
         $this->content_unsaved = $content_unsaved;
+        return $this;
+    }
+
+    public function getDocumentVersion(): int
+    {
+        return $this->document_version;
+    }
+
+    public function setDocumentVersion(int $document_version): static
+    {
+        $this->document_version = $document_version;
         return $this;
     }
 

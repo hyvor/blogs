@@ -59,7 +59,7 @@
 			</TabNav>
 		</div>
 
-		<div class="content">
+		<div class="content" class:content-flush={$tab === 'ai'}>
 			{#if $tab === 'settings'}
 				<Settings />
 			{:else if $tab === 'seo'}
@@ -98,6 +98,13 @@
 		flex: 1;
 		min-height: 0;
 		overflow: auto;
+	}
+
+	.content-flush {
+		padding: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
 	}
 
 	@media (max-width: 992px) {

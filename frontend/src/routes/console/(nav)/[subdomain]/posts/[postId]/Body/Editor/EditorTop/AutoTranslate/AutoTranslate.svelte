@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button, Loader, toast } from '@hyvor/design/components';
 	import {
-		postCurrentContentKey,
 		postEditor,
 		postStore,
 		postVariantLanguageStore,
@@ -33,7 +32,7 @@
 				const updates = {
 					title: res.title,
 					description: res.description,
-					[$postCurrentContentKey]: res.content
+					content_unsaved: res.content
 				} as Partial<PostVariant>;
 
 				if ($postVariantStore?.slug === null) {

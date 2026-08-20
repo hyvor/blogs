@@ -21,16 +21,19 @@ use App\Api\Console\Object\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -45,6 +48,8 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
+        private DocumentService $collabService,
+        private Authorization $mercureAuthorization,
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -123,6 +128,7 @@ class PostController
     public function getPost(
         #[MapBlogEntity] Post $post,
         #[MapQueryString] GetPostInput $input,
+        Request $request,
     ): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -136,6 +142,12 @@ class PostController
             }
 
             $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        }
+
+        if ($variant !== null) {
+            $this->mercureAuthorization->setCookie($request, [
+                $this->collabService->topic($variant),
+            ]);
         }
 
         return new JsonResponse([
@@ -244,11 +256,11 @@ class PostController
             $data['slug'] = $input->slug;
         }
 
-        if ($input->content !== null) {
+        if ($input->content !== false) {
             $data['content'] = $input->content;
         }
 
-        if ($input->content_unsaved !== null) {
+        if ($input->content_unsaved !== false) {
             $data['content_unsaved'] = $input->content_unsaved;
         }
 
@@ -266,6 +278,12 @@ class PostController
 
         if ($input->seo_secondary_keywords !== null) {
             $data['seo_secondary_keywords'] = $input->seo_secondary_keywords;
+        }
+
+        if ($input->content_updated_at !== false) {
+            $data['content_updated_at'] = $input->content_updated_at !== null
+                ? \DateTimeImmutable::createFromFormat('U', (string)$input->content_updated_at) ?: null
+                : null;
         }
 
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;

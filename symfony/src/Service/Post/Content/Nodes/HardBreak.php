@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class HardBreak extends NodeType
 {
     public string $name = 'hard_break';
+    public string $attrs = HardBreakAttrs::class;
     public string $group = 'inline';
     public bool $inline = true;
 

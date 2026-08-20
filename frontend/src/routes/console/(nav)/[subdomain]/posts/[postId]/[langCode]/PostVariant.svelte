@@ -107,10 +107,9 @@
 
 	.container {
 		min-height: 100vh;
-		width: 1200px;
 		display: flex;
 		flex-direction: column;
-		margin: 0 auto;
+		padding: 0 15px;
 	}
 
 	.full-loader {
@@ -140,12 +139,11 @@
 	}
 
 	.post-left {
-		width: 700px;
 		position: relative;
+		flex: 1;
 	}
 
 	.post-right {
-		flex: 1;
 		margin-left: 15px;
 		height: calc(100vh - 70px);
 		display: flex;

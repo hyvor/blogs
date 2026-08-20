@@ -55,6 +55,9 @@ class User
     #[ORM\Column()]
     private ?string $picture_url = null;
 
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $cursor_color = null;
+
     #[ORM\Column()]
     private ?string $social_facebook = null;
 
@@ -211,6 +214,17 @@ class User
     public function setPictureUrl(?string $picture_url): static
     {
         $this->picture_url = $picture_url;
+        return $this;
+    }
+
+    public function getCursorColor(): ?string
+    {
+        return $this->cursor_color;
+    }
+
+    public function setCursorColor(?string $cursor_color): static
+    {
+        $this->cursor_color = $cursor_color;
         return $this;
     }
 

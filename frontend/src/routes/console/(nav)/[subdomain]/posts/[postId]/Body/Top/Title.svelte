@@ -2,6 +2,7 @@
 	import type { FormEventHandler } from 'svelte/elements';
 	import {
 		postEditingStatusStore,
+		postEditor,
 		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
@@ -37,6 +38,10 @@
 
 	let textarea: HTMLTextAreaElement | undefined = $state();
 
+	export function focus() {
+		textarea?.focus();
+	}
+
 	function handleResize() {
 		if (!textarea) return;
 		textarea.style.height = '0';
@@ -47,8 +52,7 @@
 		if (e.key === 'Enter' || e.key === 'ArrowDown') {
 			e.preventDefault();
 			e.stopPropagation();
-
-			$postEditingStatusStore.editorView?.focus();
+			$postEditor.focus();
 		}
 	}
 
@@ -77,15 +81,14 @@
 </script>
 
 <div class="title-wrap">
-	<!-- svelte-ignore a11y_autofocus -->
 	<textarea
 		placeholder="Title..."
-		autoFocus={($postVariantStore.title || '') === ''}
 		value={$postVariantStore.title}
 		onkeydown={handleKeydown}
 		oninput={handleInput}
 		bind:this={textarea}
 		onblur={handleBlur}
+		name="title"
 	></textarea>
 
 	<!-- <div class="loader-wrap">
@@ -99,13 +102,13 @@
 
 <style>
 	.title-wrap {
-		flex: 1;
 		display: flex;
 		align-items: center;
+		position: relative;
 	}
 
 	textarea {
-		font-family: inherit;
+		font-family: var(--font-serif);
 		padding-top: 10px;
 		padding-bottom: 10px;
 		font-size: 22px;
@@ -119,12 +122,16 @@
 		background: none;
 		overflow: hidden;
 		position: relative;
+		padding-block: 15px;
+		/**
+		* reduce width of textarea (700px)
+		*/
+		padding-inline: max(0px, calc(((100% - 700px) / 2) + 30px));
 	}
 
 	.unsaved-tag {
 		position: absolute;
 		bottom: 100%;
-		transform: translateY(50%);
-		left: 25px;
+		left: 30px;
 	}
 </style>

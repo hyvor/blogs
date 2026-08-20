@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Paragraph extends NodeType
 {
     public string $name = 'paragraph';
+    public string $attrs = ParagraphAttrs::class;
     public ?string $content = 'inline*';
     public string $group = 'block';
 

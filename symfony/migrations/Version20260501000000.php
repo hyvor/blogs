@@ -11,7 +11,7 @@ final class Version20260501000000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, custom_domain_intents, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post';
+        return 'Self-hosting changes: OIDC tables, webhook_deliveries, user role changes, custom_domains, custom_domain_intents, blogs.custom_domain_id, API keys scopes, and blog deletion policy (deleted_at + cascading FKs), hyvor_post, post_suggestions';
     }
 
     public function up(Schema $schema): void
@@ -282,6 +282,42 @@ final class Version20260501000000 extends AbstractMigration
             ADD COLUMN embed_code TEXT,
             ADD COLUMN created_by_blogs BOOLEAN NOT NULL DEFAULT true;
         SQL);
+
+        // content_updated_at
+        $this->addSql('ALTER TABLE post_variants ADD COLUMN content_updated_at TIMESTAMPTZ');
+
+        // post suggestions (track-changes + comments) ====
+        // see https://github.com/hyvor/richtext/pull/37
+        $this->addSql("CREATE TYPE post_suggestion_type AS ENUM ('insert', 'delete', 'format', 'comment')");
+        $this->addSql("CREATE TYPE post_suggestion_status AS ENUM ('pending', 'accepted', 'rejected', 'resolved')");
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE post_suggestions (
+                id VARCHAR(64) PRIMARY KEY,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                post_variant_id BIGINT NOT NULL REFERENCES post_variants(id) ON DELETE CASCADE,
+                type post_suggestion_type NOT NULL,
+                status post_suggestion_status NOT NULL DEFAULT 'pending',
+                author_user_id BIGINT NOT NULL
+            );
+            SQL
+        );
+        $this->addSql('CREATE INDEX idx_post_suggestions_post_variant_id ON post_suggestions(post_variant_id)');
+
+        $this->addSql(
+            <<<SQL
+            CREATE TABLE post_suggestion_replies (
+                id VARCHAR(64) PRIMARY KEY,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                suggestion_id VARCHAR(64) NOT NULL REFERENCES post_suggestions(id) ON DELETE CASCADE,
+                author_user_id BIGINT NOT NULL,
+                content TEXT NOT NULL
+            );
+            SQL
+        );
+        $this->addSql('CREATE INDEX idx_post_suggestion_replies_suggestion_id ON post_suggestion_replies(suggestion_id)');
     }
 
     public function down(Schema $schema): void {}
