@@ -88,7 +88,7 @@
 		...editorConfig,
 		suggestions: {
 			author: 'ai' as Author,
-			mode: 'suggesting' as const,
+			mode: 'editing' as const,
 			resolveAuthor,
 			source: createEphemeralSuggestionSource()
 		}
@@ -100,7 +100,7 @@
 	}
 </script>
 
-<Modal bare width="900px" height="calc(100% - 40px)" {onclose} show={true} appendToBody>
+<Modal bare width="900px" height="calc(100% - 40px)" {onclose} show={true} appendToBody id="diff-review-modal">
 	<div class="inner">
 		<div class="header">
 			<span>Review suggested changes</span>
@@ -124,16 +124,21 @@
 		<div class="footer">
 			<Button color="input" onclick={onclose} disabled={applying}>Cancel</Button>
 			<Button disabled={remaining > 0 || applying} onclick={handleFinish}>
-				{applying ? 'Applying…' : 'Finish editing'}
+				{applying ? 'Applying…' : 'Apply changes'}
 			</Button>
 		</div>
 	</div>
 </Modal>
 
 <style>
+
+	:global(#diff-review-modal-desc) {
+		height: 100%;
+	}
+
 	.inner {
 		display: flex;
-		flex-direction: column;
+		flex-direction: column;    
 		height: 100%;
 	}
 

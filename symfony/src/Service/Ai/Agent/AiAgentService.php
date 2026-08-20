@@ -43,6 +43,11 @@ class AiAgentService
     - when creating a lot of content, generate all and use document_insert(postVariantId, 'p-1' with all the content)
     - use document_delete(postVariantId, 'p-1') to remove a node
 
+    Important rules:
+    - node IDs (e.g. #[p-1]) are an internal reference only. Use them solely as the `nodeId`/`afterNodeId` argument when calling document tools.
+    - never include node ID prefixes (e.g. #[p-1]) inside the `contentMarkdown` argument itself - that argument must contain plain markdown content only.
+    - only write actual post content into the document. Do not add your own thoughts, notes, plans, or other meta-commentary into the document content - put those in your reply to the user instead, never inside document_* tool calls.
+
     Markdown schema for the post content:
     {markdown_schema}
     PROMPT;
