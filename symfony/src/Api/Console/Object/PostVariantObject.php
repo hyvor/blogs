@@ -5,6 +5,7 @@ namespace App\Api\Console\Object;
 use App\Entity\Blog;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
@@ -28,12 +29,21 @@ class PostVariantObject
     public array $link_analysis;
     public ?string $content_html = null;
 
+    // Collaborative editing state (see PostVariantCollabService) - only populated when
+    // $collabService is passed in (currently only PostController::getPost).
+    public int $document_version = 0;
+    /** @var array<int, array<string, mixed>> */
+    public array $document_steps = [];
+    /** @var string[] */
+    public array $document_client_ids = [];
+
     public function __construct(
         PostVariant $variant,
         Post $post,
         Blog $blog,
         PermalinkService $permalinkService,
         ?PostContentService $postContentService = null,
+        ?DocumentService $collabService = null,
     ) {
         $this->id = $variant->getId();
         $this->language_id = $variant->getLanguage()->getId();
@@ -52,6 +62,13 @@ class PostVariantObject
 
         if ($postContentService !== null && $this->content !== null) {
             $this->content_html = $postContentService->getHtml($this->content, $blog);
+        }
+
+        if ($collabService !== null) {
+            $state = $collabService->getState($variant);
+            $this->document_version = $state['version'];
+            $this->document_steps = $state['steps'];
+            $this->document_client_ids = $state['client_ids'];
         }
     }
 }

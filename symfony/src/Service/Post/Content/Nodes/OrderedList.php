@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class OrderedList extends NodeType
 {
     public string $name = 'ordered_list';
+    public string $attrs = OrderedListAttrs::class;
     public string $group = 'block';
     public ?string $content = 'list_item*';
 

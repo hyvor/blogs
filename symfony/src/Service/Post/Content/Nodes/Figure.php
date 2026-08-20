@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Figure extends NodeType
 {
     public string $name = 'figure';
+    public string $attrs = FigureAttrs::class;
     public ?string $content = '(image|embed) figcaption?';
     public string $group = 'block';
 

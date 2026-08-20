@@ -22,7 +22,10 @@ class ProsemirrorJsonValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, sprintf('Constraint must be an instance of %s', ProsemirrorJson::class));
         }
 
-        if (null === $value) {
+        // `false` is the "not provided" sentinel used by tri-state (null|string|false)
+        // input properties - e.g. UpdatePostVariantInput's $content/$content_unsaved,
+        // where null means "explicitly clear".
+        if (null === $value || false === $value) {
             return;
         }
 

@@ -209,3 +209,69 @@ export function clonePost(postId: number) {
 		endpoint: `/post/${postId}/clone`
 	});
 }
+
+// Collaborative editing (see PostVariantCollabController on the backend). These intentionally
+// don't call updatePostVariantStore themselves - submitCollabSteps's outcome is confirmed (or
+// not) synchronously in its own response now (see CollabStepsResponse), and checkpointPostVariant's
+// caller (SaveStatus.svelte) already knows exactly what it just wrote and updates the store itself.
+
+// mirrors PostVariantCollabService::submitSteps()'s return shape. When accepted is false,
+// `version`/`steps`/`client_ids` are the steps the caller is missing (not an echo of what it
+// just sent) - feed them straight into editor.collab.receiveSteps() to catch up, instead of
+// waiting on Mercure to (maybe) deliver them - see Editor.svelte's handleSendable.
+export interface CollabStepsResponse {
+	accepted: boolean;
+	version: number;
+	steps: unknown[];
+	client_ids: string[];
+}
+
+export function submitCollabSteps(data: {
+	post_variant_id: number;
+	version: number;
+	steps: unknown[];
+	client_id: string;
+}) {
+	return consoleApi.post<CollabStepsResponse>({
+		endpoint: `/documents/steps`,
+		data
+	});
+}
+
+// Standalone catch-up (PostVariantCollabController::sync) - call whenever the client suspects
+// it missed a Mercure broadcast (e.g. its EventSource reconnecting after a drop), not only after
+// a rejected submitCollabSteps. Returns the same shape minus `accepted`, since it's not a submission.
+export function syncCollabSteps(data: { post_variant_id: number; version: number }) {
+	return consoleApi.get<Omit<CollabStepsResponse, 'accepted'>>({
+		endpoint: `/documents/sync`,
+		data
+	});
+}
+
+// cursor is null on blur - see @hyvor/richtext's CursorsPluginConfig.onLocalCursorChange
+export function submitCollabCursor(data: {
+	post_variant_id: number;
+	client_id: string;
+	cursor: { from: number; to: number } | null;
+}) {
+	return consoleApi.post<void>({
+		endpoint: `/documents/cursor`,
+		data: {
+			post_variant_id: data.post_variant_id,
+			client_id: data.client_id,
+			from: data.cursor?.from ?? null,
+			to: data.cursor?.to ?? null
+		}
+	});
+}
+
+export function checkpointPostVariant(data: {
+	post_variant_id: number;
+	version: number;
+	content: string;
+}) {
+	return consoleApi.post<void>({
+		endpoint: `/documents/checkpoint`,
+		data
+	});
+}

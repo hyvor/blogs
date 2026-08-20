@@ -2,7 +2,9 @@ import { getSchema, type EditorConfig } from '@hyvor/richtext';
 import { uploadMedia } from '../../../../tools/media/mediaActions';
 
 // all nodes enabled
-export const schema = getSchema();
+export const schema = getSchema({
+	suggestions: true,
+});
 
 export const editorConfig: EditorConfig = {
 	colorButtonBackground: '#5A8387',

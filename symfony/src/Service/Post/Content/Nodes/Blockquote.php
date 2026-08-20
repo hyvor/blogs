@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Blockquote extends NodeType
 {
     public string $name = 'blockquote';
+    public string $attrs = BlockquoteAttrs::class;
     public ?string $content = 'block+';
     public string $group = 'block';
 

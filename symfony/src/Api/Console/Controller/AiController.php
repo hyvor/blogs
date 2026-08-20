@@ -57,11 +57,18 @@ class AiController extends AbstractController
         #[MapRequestPayload] AgentPromptInput $input
     ): StreamedResponse
     {
-
         $blog = $this->authListener->getBlog();
+        $prompt = $input->prompt;
+        $postVariant = null;
+        if ($input->post_variant_id) {
+            $postVariant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
+            if ($postVariant === null) {
+                throw new BadRequestHttpException('Post variant not found');
+            }
+        }
 
-        $response = new StreamedResponse(function () use ($blog, $input) {
-            foreach ($this->aiAgentConversationService->streamPrompt($blog, $input->prompt) as $event) {
+        $response = new StreamedResponse(function () use ($blog, $prompt, $postVariant) {
+            foreach ($this->aiAgentConversationService->streamPrompt($blog, $prompt, $postVariant) as $event) {
                 echo 'data: '.json_encode($event)."\n\n";
                 flush();
             }

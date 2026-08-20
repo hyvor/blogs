@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class HorizontalRule extends NodeType
 {
     public string $name = 'horizontal_rule';
+    public string $attrs = HorizontalRuleAttrs::class;
     public string $group = 'block';
 
     public function fromHtml(): array

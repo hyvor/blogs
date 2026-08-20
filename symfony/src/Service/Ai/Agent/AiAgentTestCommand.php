@@ -115,7 +115,7 @@ class AiAgentTestCommand
 
         $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
 
-        $result = $this->aiAgentService->callForPost($postVariant, $prompt);
+        $result = $this->aiAgentService->callAgent($postVariant, $prompt);
 
         $output = '';
         foreach ($result->getResult()->getContent() as $delta) {

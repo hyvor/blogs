@@ -8,6 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Figcaption extends NodeType
 {
     public string $name = 'figcaption';
+    public string $attrs = FigcaptionAttrs::class;
     public ?string $content = 'inline*';
 
     public function fromHtml(): array

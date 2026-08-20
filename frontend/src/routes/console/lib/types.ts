@@ -207,6 +207,11 @@ export type PostVariant = {
 	seo_secondary_keywords: string[];
 
 	link_analysis: Record<string, number>;
+
+	// Collaborative editing state (see PostVariantCollabService) - only populated on GET /post/{id}
+	document_version: number;
+	document_steps: Record<string, unknown>[];
+	document_client_ids: string[];
 };
 
 export type PostVariantStatusItem = {
@@ -278,6 +283,27 @@ export type UserVariant = {
 	name: string | null;
 	bio: string | null;
 	location: string | null;
+};
+
+// === POST SUGGESTIONS (track-changes + comments, see @hyvor/richtext's EditorConfig.suggestions)
+
+export type PostSuggestionReply = {
+	id: string;
+	author: string; // `user:<hyvor_user_id>`
+	content: string;
+	timestamp: number; // ms since epoch
+};
+
+export type PostSuggestionSourceEntry = {
+	id: string;
+	author: string; // `user:<hyvor_user_id>`
+	timestamp: number; // ms since epoch
+	comments: PostSuggestionReply[];
+};
+
+export type PostSuggestionAuthor = {
+	name: string | null;
+	picture_url: string | null;
 };
 
 // === TAG

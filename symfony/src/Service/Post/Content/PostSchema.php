@@ -9,6 +9,7 @@ use App\Service\Post\Content\Marks\Link;
 use App\Service\Post\Content\Marks\Strike;
 use App\Service\Post\Content\Marks\Strong;
 use App\Service\Post\Content\Marks\Sub;
+use App\Service\Post\Content\Marks\Suggestion;
 use App\Service\Post\Content\Marks\Sup;
 use App\Service\Post\Content\Nodes\Audio\Audio;
 use App\Service\Post\Content\Nodes\Blockquote;
@@ -84,6 +85,7 @@ class PostSchema
                 new Strike(),
                 new Strong(),
                 new Sub(),
+                new Suggestion(),
                 new Sup(),
             ]
         );
