@@ -18,22 +18,21 @@
 		callAgent,
 		DEFAULT_CONTENT_JSON,
 		type AgentBlock,
-		type AgentPostVariant,
 		type DocumentChange
 	} from './agentApi';
+	import IdleMessage from './IdleMessage.svelte';
 
 	interface Props {
 		postVariantId: number | null;
 		placeholder?: string;
 		emptyMessage?: string;
 		disclaimer?: string;
-		applyDocumentChange: (change: DocumentChange, postVariant: AgentPostVariant) => Promise<void> | void;
+		applyDocumentChange: (change: DocumentChange) => Promise<void> | void;
 	}
 
 	let {
 		postVariantId,
 		placeholder = 'Type your prompt here...',
-		emptyMessage = `Describe what you'd like the agent to do, e.g. "Fix any typos in the post" or "Add a short FAQ section at the end".`,
 		disclaimer = 'The agent may suggest edits to this post.',
 		applyDocumentChange
 	}: Props = $props();
@@ -42,7 +41,6 @@
 	let status: 'idle' | 'streaming' | 'done' | 'error' = $state('idle');
 	let error: string | null = $state(null);
 	let sentPrompt = $state('');
-	let postVariant: AgentPostVariant | null = $state(null);
 	let blocks: AgentBlock[] = $state([]);
 	let documentChange: DocumentChange | null = $state(null);
 	let showDiffModal = $state(false);
@@ -69,16 +67,13 @@
 		prompt = '';
 		status = 'streaming';
 		error = null;
-		postVariant = null;
 		blocks = [];
 		documentChange = null;
 		applied = false;
 
 		try {
 			await callAgent(userPrompt, postVariantId, (event) => {
-				if (event.type === 'post_variant') {
-					postVariant = event.post_variant;
-				} else if (event.type === 'document_change') {
+				if (event.type === 'document_change') {
 					documentChange = { postVariantId: event.post_variant_id, content: event.content };
 				} else if (event.type !== 'done') {
 					applyAgentEvent(blocks, event);
@@ -95,17 +90,16 @@
 		sentPrompt = '';
 		status = 'idle';
 		error = null;
-		postVariant = null;
 		blocks = [];
 		documentChange = null;
 		applied = false;
 	}
 
 	async function handleFinishReview(finalContent: string) {
-		if (!documentChange || !postVariant) return;
+		if (!documentChange) return;
 		applying = true;
 		try {
-			await applyDocumentChange({ ...documentChange, content: finalContent }, postVariant);
+			await applyDocumentChange({ ...documentChange, content: finalContent });
 			applied = true;
 			showDiffModal = false;
 		} finally {
@@ -118,7 +112,7 @@
 	<div class="body">
 		<div class="agent-inner">
 			{#if status === 'idle'}
-				<IconMessage icon={IconRobot} message={emptyMessage} />
+				<IdleMessage />
 			{:else}
 				<div class="turn">
 					<div class="message-wrap user">
@@ -129,7 +123,7 @@
 					<div class="message-wrap ai">
 						<div class="avatar ai-avatar"><IconRobot size={16} /></div>
 						<div class="message">
-							{#if postVariant}
+							<!-- {#if postVariant}
 								<a
 									class="post-pill"
 									href={consoleUrlWithBlog(`/posts/${postVariant.post_id}`)}
@@ -139,7 +133,7 @@
 									<span>{postVariant.title || 'Untitled post'}</span>
 									<IconBoxArrowUpRight size={11} />
 								</a>
-							{/if}
+							{/if} -->
 
 							{#if blocks.length === 0 && !finalText}
 								{#if status === 'error'}
@@ -148,7 +142,7 @@
 									<Loader size="small" />
 								{/if}
 							{:else}
-								<AgentSteps {blocks} {postVariant} />
+								<AgentSteps {blocks}  />
 
 								{#if finalText}
 									<div class="message-html">
@@ -218,14 +212,14 @@
 	</div>
 </div>
 
-{#if showDiffModal && documentChange && postVariant}
-	<DiffReviewModal
+{#if showDiffModal && documentChange}
+	<!-- <DiffReviewModal
 		leftContent={postVariant.content_unsaved || postVariant.content || DEFAULT_CONTENT_JSON}
 		rightContent={documentChange.content}
 		{applying}
 		onclose={() => (showDiffModal = false)}
 		onfinish={handleFinishReview}
-	/>
+	/> -->
 {/if}
 
 <style lang="scss">

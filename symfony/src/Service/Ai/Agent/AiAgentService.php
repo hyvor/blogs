@@ -2,6 +2,7 @@
 
 namespace App\Service\Ai\Agent;
 
+use App\Entity\Blog;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
@@ -13,6 +14,7 @@ use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
+use Psr\Log\LoggerInterface;
 use Symfony\AI\Agent\Agent;
 use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
@@ -24,11 +26,7 @@ class AiAgentService
 
     private const string SYSTEM_PROMPT_FOR_POST = <<<PROMPT
     You are a helpful writing assistant for the blog '{blog_name}' running on Hyvor Blogs blogging platform.
-
-    {title_prompt}
-    Post is in {language} ({language_code}) language.
-
-    Current post variant ID: {post_variant_id}
+    {current_post_prompt}
 
     You can:
     - edit the post content if user asks
@@ -42,15 +40,21 @@ class AiAgentService
     - call tools with the node ID: e.g., document_replace(postVariantId, 'p-1', 'new *content*')
     - when creating a lot of content, generate all and use document_insert(postVariantId, 'p-1' with all the content)
     - use document_delete(postVariantId, 'p-1') to remove a node
+    - important rules when editing:
+        - node IDs (e.g. #[p-1]) are an internal reference only. Use them solely as the `nodeId`/`afterNodeId` argument when calling document tools.
+        - never include node ID prefixes (e.g. #[p-1]) inside the `contentMarkdown` argument itself - that argument must contain plain markdown content only.
+        - only write actual post content into the document. Do not add your own thoughts, notes, plans, or other meta-commentary into the document content - put those in your reply to the user instead, never inside document_* tool calls.
 
-    Important rules:
-    - node IDs (e.g. #[p-1]) are an internal reference only. Use them solely as the `nodeId`/`afterNodeId` argument when calling document tools.
-    - never include node ID prefixes (e.g. #[p-1]) inside the `contentMarkdown` argument itself - that argument must contain plain markdown content only.
-    - only write actual post content into the document. Do not add your own thoughts, notes, plans, or other meta-commentary into the document content - put those in your reply to the user instead, never inside document_* tool calls.
-
-    Markdown schema for the post content:
+    Markdown schema for post content:
     {markdown_schema}
     PROMPT;
+
+    private const string CURRENT_POST_PROMPT = <<<PROMPT
+    Currently editing post variant ID: {post_variant_id}
+    Post is in {language} ({language_code}) language.
+    Post title: {title_prompt}
+    PROMPT;
+
 
 
     public function __construct(
@@ -60,44 +64,53 @@ class AiAgentService
         private TagService $tagService,
         private UserService $userService,
         private LanguageService $languageService,
+        private LoggerInterface $logger
     ) {}
 
-    private function getSystemPromptForPost(PostVariant $postVariant): string
+    private function getSystemPrompt(Blog $blog, ?PostVariant $postVariant): string
     {
-        $blog = $postVariant->getPost()->getBlog();
-        $title = $postVariant->getTitle();
-        $language = $postVariant->getLanguage();
 
-        $titlePrompt = $title ? "Post title is: '$title'." : "Post has no title.";
+        $currentPostPrompt = '';
+        if ($postVariant) {
+            $title = $postVariant->getTitle();
+            $currentPostPrompt = str_replace(
+                [
+                    '{post_variant_id}',
+                    '{language}',
+                    '{language_code}',
+                    '{title_prompt}'
+                ],
+                [
+                    (string)$postVariant->getId(),
+                    $postVariant->getLanguage()->getName(),
+                    $postVariant->getLanguage()->getCode(),
+                    $title ? "Post title is: '$title'." : "Post has no title."
+                ],
+                self::CURRENT_POST_PROMPT
+            );
+        }
 
         return str_replace(
             [
                 '{blog_name}',
-                '{title_prompt}',
-                '{language}',
-                '{language_code}',
-                '{post_variant_id}',
+                '{current_post_prompt}',
                 '{markdown_schema}'
             ],
             [
                 $blog->getVariants()->first()->getName(),
-                $titlePrompt,
-                $language->getName(),
-                $language->getCode(),
-                (string)$postVariant->getId(),
+                $currentPostPrompt,
                 MarkdownSerializer::SCHEMA_FOR_AI_AGENTS
             ],
             self::SYSTEM_PROMPT_FOR_POST
         );
     }
 
-    public function callForPost(
-        PostVariant $postVariant,
-        string $prompt
+    public function callAgent(
+        Blog $blog,
+        string $prompt,
+        ?PostVariant $postVariant,
     ): AgentCallResult
     {
-        $blog = $postVariant->getPost()->getBlog();
-
         $provider = $blog->getMeta()->ai_provider;
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
@@ -112,6 +125,7 @@ class AiAgentService
             $this->userService,
             $this->postService,
             $this->languageService,
+            $this->logger,
         );
         $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
         $toolProcessor = new AgentProcessor($toolbox);
@@ -124,7 +138,7 @@ class AiAgentService
             name: 'hyvor-blogs-agent'
         );
 
-        $systemPrompt = $this->getSystemPromptForPost($postVariant);
+        $systemPrompt = $this->getSystemPrompt($blog, $postVariant);
 
         $messages = new MessageBag(
             Message::forSystem($systemPrompt),

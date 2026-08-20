@@ -5,13 +5,8 @@ import type { PostVariant } from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
-export type AgentPostVariant = PostVariant & {
-	post_id: number;
-	content_html: string | null;
-};
 
 export type AgentEvent =
-	| { type: 'post_variant'; post_variant: AgentPostVariant }
 	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }
 	| { type: 'thinking_done' }

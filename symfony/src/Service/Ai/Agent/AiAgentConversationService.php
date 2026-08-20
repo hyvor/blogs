@@ -9,6 +9,7 @@ use App\Entity\AiMessageChunk;
 use App\Entity\Blog;
 use App\Entity\Enum\AiMessageChunkType;
 use App\Entity\Enum\AiMessageRole;
+use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Event\AgentEvent;
 use App\Service\Ai\Agent\Event\DocumentChangeEvent;
 use App\Service\Ai\Agent\Event\DoneEvent;
@@ -29,8 +30,8 @@ use Symfony\AI\Platform\Result\Stream\Delta\ThinkingComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
 use Symfony\AI\Platform\Result\Stream\Delta\ToolCallComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ToolCallStart;
+use Symfony\AI\Platform\Result\Stream\Delta\ToolInputDelta;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AiAgentConversationService
 {
@@ -50,24 +51,15 @@ class AiAgentConversationService
      * the same typed AgentEvent classes that get persisted, so a conversation reconstructed
      * from the database later can be sent to the frontend in the exact same shape.
      */
-    public function streamPrompt(Blog $blog, string $prompt, ?int $postVariantId = null): iterable
+    public function streamPrompt(Blog $blog, string $prompt, ?PostVariant $postVariant): iterable
     {
-        // ?? 117 is a temporary fallback for the whole-blog agent page (agent/+page.svelte),
-        // which has no "current post" of its own and doesn't yet have a way for the agent to
-        // pick one on its own. The post-editor sidebar always sends a real post variant ID.
-        $postVariant = $this->postService->getPostVariantByBlogAndId($blog, $postVariantId ?? 117);
-
-        if (!$postVariant) {
-            throw new BadRequestHttpException('No published post found to run the agent on.');
-        }
-
-        $postVariantObject = new PostVariantObject(
-            $postVariant,
-            $postVariant->getPost(),
-            $blog,
-            $this->permalinkService,
-            $this->postContentService
-        );
+//        $postVariantObject = new PostVariantObject(
+//            $postVariant,
+//            $postVariant->getPost(),
+//            $blog,
+//            $this->permalinkService,
+//            $this->postContentService
+//        );
 
         $conversation = new AiConversation();
         $conversation->setBlog($blog);
@@ -78,9 +70,9 @@ class AiAgentConversationService
         $userMessage = $this->createMessage($conversation, AiMessageRole::USER, $prompt);
         $this->createChunk($userMessage, AiMessageChunkType::TEXT, $prompt);
 
-        yield $this->toSseArray(new PostVariantSelectedEvent($postVariantObject));
+        // yield $this->toSseArray(new PostVariantSelectedEvent($postVariantObject));
 
-        $agentCallResult = $this->aiAgentService->callForPost($postVariant, $prompt);
+        $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
         $assistantMessage = $this->createMessage($conversation, AiMessageRole::ASSISTANT, '');
         $assistantText = '';
@@ -155,6 +147,12 @@ class AiAgentConversationService
                         yield $this->toSseArray(new ToolCallCompletedEvent($toolCall->getName()));
                     }
                 }
+            } elseif ($delta instanceof ToolInputDelta) {
+                yield [
+                    'type' => 'tool_input',
+                    'tool_name' => $delta->getName(),
+                    'input' => $delta->getPartialJson(),
+                ];
             }
         }
 
@@ -163,15 +161,20 @@ class AiAgentConversationService
         $this->em->flush();
 
         $documentOpsTool = $agentCallResult->getDocumentOpsTool();
-        $fetchedDocument = $documentOpsTool->getCachedDocuments()[$postVariant->getId()] ?? null;
 
-        if ($fetchedDocument !== null && count($fetchedDocument->getOps()) > 0) {
-            $finalDocument = $documentOpsTool->getFinalDocument($postVariant->getId());
+        if ($postVariant) {
+            $fetchedDocument = $documentOpsTool->getCachedDocuments()[$postVariant->getId()] ?? null;
 
-            yield $this->toSseArray(new DocumentChangeEvent(
-                $postVariant->getId(),
-                (string) json_encode($finalDocument->toArray()),
-            ));
+            if ($fetchedDocument !== null && count($fetchedDocument->getOps()) > 0) {
+                $finalDocument = $documentOpsTool->getFinalDocument($postVariant->getId());
+
+                yield $this->toSseArray(
+                    new DocumentChangeEvent(
+                        $postVariant->getId(),
+                        (string)json_encode($finalDocument->toArray()),
+                    )
+                );
+            }
         }
 
         yield $this->toSseArray(new DoneEvent());

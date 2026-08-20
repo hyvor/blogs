@@ -99,7 +99,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             {
             }
 
-            public function callForPost(PostVariant $postVariant, string $prompt): AgentCallResult
+            public function callAgent(PostVariant $postVariant, string $prompt): AgentCallResult
             {
                 return $this->agentCallResult;
             }

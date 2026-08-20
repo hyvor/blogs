@@ -9,17 +9,6 @@
 </script>
 
 <div class="agent-page hds-box">
-	<div class="header">
-		<div class="agent-inner">
-			<div class="title">
-				<IconRobot size={18} />
-				<span>AI Agent</span>
-			</div>
-			<div class="subtitle">
-				Ask the agent to answer questions about your blog or edit one of your published posts.
-			</div>
-		</div>
-	</div>
 
 	<AgentChat
 		postVariantId={null}
@@ -40,11 +29,6 @@
 		width: 800px;
 		max-width: 100%;
 		margin: auto;
-	}
-
-	.header {
-		padding: 20px 30px;
-		border-bottom: 1px solid var(--border);
 	}
 
 	.title {
