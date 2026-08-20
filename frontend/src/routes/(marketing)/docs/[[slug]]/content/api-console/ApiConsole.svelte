@@ -168,10 +168,9 @@ type Response = BlogVariant
 <h4 id="get-posts">Get posts</h4>
 <p>
 	Get posts with filtering. The filter parameters are similar to the ones in the Console. Returns a
-	lightweight <a href="/docs/api-console#post-list-item-object">PostListItem</a> per post, rather than
-	the full <a href="/docs/api-console#post-object">Post</a> object - fetch <code
-		>GET /post/{`{id}`}</code
-	> for the full post.
+	lightweight <a href="/docs/api-console#post-list-item-object">PostListItem</a> per post, rather
+	than the full <a href="/docs/api-console#post-object">Post</a> object - fetch
+	<code>GET /post/{`{id}`}</code> for the full post.
 </p>
 <p><code>GET /posts</code></p>
 <CodeBlock
@@ -1433,8 +1432,10 @@ interface PostVariant {
 <h3 id="post-list-item-object">PostListItem Object</h3>
 <p>
 	Returned by <code>GET /posts</code> and <code>GET /pages</code>. A lightweight per-post summary:
-	<code>slug</code>, <code>url</code>, <code>title</code>, and <code>link_analysis</code> reflect the
-	variant of the requested (or blog's primary) language, and <code>tags</code>/<code>authors</code>
+	<code>slug</code>, <code>url</code>, <code>title</code>, and <code>link_analysis</code> reflect
+	the variant of the requested (or blog's primary) language, and <code>tags</code>/<code
+		>authors</code
+	>
 	are just their primary-language names. <code>seo_score</code> is currently a placeholder and not
 	yet meaningful. Fetch <code>GET /post/{`{id}`}</code> for the full
 	<a href="/docs/api-console#post-object">Post</a> object, including all variants, tags, and authors.

@@ -207,10 +207,8 @@
 					<ActionListItem on:click={handleClone} disabled={isCloning || isDeleting}
 						>Clone post</ActionListItem
 					>
-					<ActionListItem
-						on:click={handleDelete}
-						disabled={isCloning || isDeleting}
-						type="danger">Delete post</ActionListItem
+					<ActionListItem on:click={handleDelete} disabled={isCloning || isDeleting} type="danger"
+						>Delete post</ActionListItem
 					>
 				</ActionList>
 			{/snippet}

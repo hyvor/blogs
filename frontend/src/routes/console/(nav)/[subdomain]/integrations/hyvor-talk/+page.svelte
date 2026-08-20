@@ -67,17 +67,17 @@
 </script>
 
 {#if getConfig().deployment === 'on-prem'}
-
 	<IntegrationNotAvailable>
-		Hyvor Talk integration is not available in self-hosted deployments. However, you can easily embed Hyvor Talk or another commenting system by adding the embed code directly in <a href={consoleUrlWithBlog('/settings/comments')} class="hds-link">Settings &rarr; Comments & Newsletters</a>.
+		Hyvor Talk integration is not available in self-hosted deployments. However, you can easily
+		embed Hyvor Talk or another commenting system by adding the embed code directly in <a
+			href={consoleUrlWithBlog('/settings/comments')}
+			class="hds-link">Settings &rarr; Comments & Newsletters</a
+		>.
 	</IntegrationNotAvailable>
-
 {:else}
-
 	<IntergrationTopNotice>
-		<a href="https://talk.hyvor.com" target="_blank" class="hds-link">
-			Hyvor Talk
-		</a> is a privacy-first commenting platform. All Hyvor Blogs plans include a free complimentary license for Hyvor Talk.
+		<a href="https://talk.hyvor.com" target="_blank" class="hds-link"> Hyvor Talk </a> is a privacy-first
+		commenting platform. All Hyvor Blogs plans include a free complimentary license for Hyvor Talk.
 	</IntergrationTopNotice>
 
 	<LicenseRequired excludeTrial={true}>
@@ -87,15 +87,14 @@
 					href="https://talk.hyvor.com"
 					target="_blank"
 					style="text-decoration:underline">Hyvor Talk</a
-				> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
-				in the trial period.
+				> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not
+				available in the trial period.
 			</div>
 		{/snippet}
 
 		{#if isLoading}
 			<Loader full />
 		{:else if data}
-
 			<SplitControl label="Connect Hyvor Talk">
 				{#if data.connected}
 					<div class="connection-status">
@@ -118,7 +117,9 @@
 						>Disconnect</Button
 					>
 				{:else}
-					<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
+					<div class="connection-status">
+						This blog is not connected to a website in Hyvor Talk.
+					</div>
 
 					<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
 				{/if}
@@ -140,7 +141,6 @@
 			{/if}
 		{/if}
 	</LicenseRequired>
-
 {/if}
 
 {#if isConnecting}

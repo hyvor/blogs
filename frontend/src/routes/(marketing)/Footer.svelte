@@ -128,13 +128,7 @@
 
 <div class="footer-outer">
 	<div class="mascot-wrap" use:onView={() => (mascotInView = true)}>
-		<img
-			src="/logo.svg"
-			alt="Hyvor Blogs"
-			width="100"
-			height="100"
-			class:in-view={mascotInView}
-		/>
+		<img src="/logo.svg" alt="Hyvor Blogs" width="100" height="100" class:in-view={mascotInView} />
 	</div>
 
 	<footer class="site-footer">
@@ -165,9 +159,7 @@
 					<div class="col">
 						<div class="col-title">{col.title}</div>
 						{#each col.links as link}
-							<a href={link.href} target={link.external ? '_blank' : undefined}
-								>{link.label}</a
-							>
+							<a href={link.href} target={link.external ? '_blank' : undefined}>{link.label}</a>
 						{/each}
 					</div>
 				{/each}
@@ -181,11 +173,7 @@
 							<svg class="ring" viewBox="0 0 32 32" aria-hidden="true">
 								<circle cx="16" cy="16" r="16" fill="#173a8a" />
 								{#each gdprStars as s}
-									<path
-										d={gdprStarPath}
-										fill="#ffcd3c"
-										transform="translate({s.x}, {s.y})"
-									/>
+									<path d={gdprStarPath} fill="#ffcd3c" transform="translate({s.x}, {s.y})" />
 								{/each}
 							</svg>
 							<span class="lock"><IconLockFill size={10} /></span>

@@ -9,6 +9,7 @@
 	import AllInOneMockup from './AllInOneMockup.svelte';
 	import AiMockup from './AiMockup.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
+	import CollaborationMockup from './CollaborationMockup.svelte';
 </script>
 
 <FeatureSplit
@@ -133,6 +134,22 @@
 </FeatureSplit>
 
 <FeatureSplit
+	eyebrow="Real-Time Editor"
+	title="Write together, in real time."
+	description="Invite your whole team into the same post at once and review every edit before it goes live - all inside one editor, just like Google Docs."
+	bullets={[
+		'Live collaboration, just like Google Docs',
+		'Suggestion mode to review edits before publishing'
+	]}
+	interactiveBullets
+	flip
+>
+	{#snippet visual(active)}
+		<CollaborationMockup {active} />
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
 	eyebrow="Multi-language"
 	title="Reach a global audience"
 	description="Translate posts, tags, author names and everything else. Add languages in one click and Hyvor Blogs handles routing, hreflang tags, and RTL layouts automatically."
@@ -141,7 +158,7 @@
 		'Integrated AI translator',
 		'Automatic hreflang & i18n routing'
 	]}
-	flip
+	altBg
 >
 	{#snippet visual()}
 		<MultiLanguageMockup />
@@ -157,6 +174,7 @@
 		'Per-post and full-blog link reports',
 		'Instant flags for broken links, redirects & status codes'
 	]}
+	flip
 >
 	{#snippet visual()}
 		<LinkAnalyzerMockup />

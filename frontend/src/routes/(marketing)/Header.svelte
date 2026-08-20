@@ -48,11 +48,7 @@
 			<a class="nav-link" href="/docs" class:active={$page.url.pathname.startsWith('/docs')}>
 				Docs
 			</a>
-			<a
-				class="nav-link"
-				href="/hosting"
-				class:active={$page.url.pathname.startsWith('/hosting')}
-			>
+			<a class="nav-link" href="/hosting" class:active={$page.url.pathname.startsWith('/hosting')}>
 				Hosting
 			</a>
 
@@ -132,11 +128,7 @@
 						<a class="dropdown-link" href="/hosting">Hosting</a>
 						<a class="dropdown-link" href="/themes">Themes</a>
 						<a class="dropdown-link" href="/integrations">Integrations</a>
-						<a
-							class="dropdown-link"
-							href="https://github.com/hyvor/blogs"
-							target="_blank"
-						>
+						<a class="dropdown-link" href="https://github.com/hyvor/blogs" target="_blank">
 							Github
 						</a>
 						<div class="mobile-divider"></div>

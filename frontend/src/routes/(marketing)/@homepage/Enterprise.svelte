@@ -38,12 +38,7 @@
 				<rect width="100%" height="100%" fill="url(#enterprise-fade)" />
 			</mask>
 		</defs>
-		<rect
-			width="100%"
-			height="100%"
-			fill="url(#enterprise-grid)"
-			mask="url(#enterprise-mask)"
-		/>
+		<rect width="100%" height="100%" fill="url(#enterprise-grid)" mask="url(#enterprise-mask)" />
 	</svg>
 
 	<div class="grid-highlight" class:visible={hovering} aria-hidden="true"></div>
@@ -52,8 +47,8 @@
 		<div class="text-side">
 			<h2>Enterprise-ready.</h2>
 			<p class="description">
-				Enterprise-grade security and compliance, without adding complexity to your
-				publishing workflow.
+				Enterprise-grade security and compliance, without adding complexity to your publishing
+				workflow.
 			</p>
 
 			<div class="stat-row">

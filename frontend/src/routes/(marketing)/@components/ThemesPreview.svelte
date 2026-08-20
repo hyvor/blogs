@@ -121,10 +121,7 @@
 					{#snippet content()}
 						<ActionList>
 							{#each [originalThemes, portedThemes] as group, i}
-								<ActionListGroup
-									title={i === 0 ? 'Original' : 'Ported'}
-									divider={i > 0}
-								>
+								<ActionListGroup title={i === 0 ? 'Original' : 'Ported'} divider={i > 0}>
 									{#each group as theme (theme.name)}
 										{#if theme.name !== 'blank'}
 											<ActionListItem
@@ -175,14 +172,12 @@
 					<div class="device-toggle">
 						<IconButton
 							on:click={() => (type = 'laptop')}
-							variant={type == 'laptop' ? 'fill' : 'invisible'}
-							><IconLaptop /></IconButton
+							variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
 						>
 
 						<IconButton
 							on:click={() => (type = 'tablet')}
-							variant={type == 'tablet' ? 'fill' : 'invisible'}
-							><IconTablet /></IconButton
+							variant={type == 'tablet' ? 'fill' : 'invisible'}><IconTablet /></IconButton
 						>
 					</div>
 				{/if}
@@ -204,9 +199,7 @@
 				<iframe
 					src={currentThemeUrl}
 					title={currentTheme.name}
-					style:width={type === 'laptop'
-						? '100%'
-						: (type === 'tablet' ? 540 : 360) + 'px'}
+					style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
 					style:height={type === 'laptop' ? '100%' : 740 + 'px'}
 					style:pointer-events={lockScroll ? 'none' : 'auto'}
 					onload={() => (isLoading = false)}

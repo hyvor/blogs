@@ -23,7 +23,8 @@
 			type: 'text',
 			name: 'Lionel S.',
 			role: 'Blogger',
-			quote: 'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
+			quote:
+				'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
 		},
 		{
 			type: 'video',
@@ -34,7 +35,8 @@
 			type: 'text',
 			name: 'Manoj P.',
 			role: 'Senior Application Engineer',
-			quote: 'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
+			quote:
+				'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
 		}
 	];
 
@@ -107,12 +109,7 @@
 			{#if review.type === 'text'}
 				{@const av = identicon(review.name)}
 				<figure class="card text-card hds-box">
-					<svg
-						class="avatar"
-						viewBox="0 0 5 5"
-						style="background: {av.bg}"
-						aria-hidden="true"
-					>
+					<svg class="avatar" viewBox="0 0 5 5" style="background: {av.bg}" aria-hidden="true">
 						{#each av.cells as cell}
 							<rect x={cell.x} y={cell.y} width="1" height="1" fill={av.fg} />
 						{/each}
@@ -135,13 +132,7 @@
 					</div>
 
 					<button class="play-btn" aria-label="Play video testimonial" disabled>
-						<svg
-							width="20"
-							height="20"
-							viewBox="0 0 16 16"
-							fill="currentColor"
-							aria-hidden="true"
-						>
+						<svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 							<path d="M5 3.5v9l8-4.5-8-4.5z" />
 						</svg>
 					</button>

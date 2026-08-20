@@ -45,17 +45,15 @@
 		{#each features as f}
 			<div
 				class="orbit-icon"
-				style="--x0:{f.start.x}px; --y0:{f.start.y}px; --x1:{f.end.x}px; --y1:{f.end.y}px; animation-delay:{f.delay}s"
+				style="--x0:{f.start.x}px; --y0:{f.start.y}px; --x1:{f.end.x}px; --y1:{f.end
+					.y}px; animation-delay:{f.delay}s"
 			>
 				<f.icon size={24} />
 			</div>
 		{/each}
 
 		<!-- the plugin doesn't get to stay -->
-		<div
-			class="rejected-plugin"
-			style="--x0:{pluginStart.x}px; --y0:{pluginStart.y}px"
-		>
+		<div class="rejected-plugin" style="--x0:{pluginStart.x}px; --y0:{pluginStart.y}px">
 			<IconPuzzleFill size={22} />
 		</div>
 	</div>
@@ -144,8 +142,7 @@
 			opacity: 1;
 		}
 		30% {
-			transform: translate(calc(var(--x0) * 0.85), calc(var(--y0) * 0.85)) rotate(12deg)
-				scale(0.92);
+			transform: translate(calc(var(--x0) * 0.85), calc(var(--y0) * 0.85)) rotate(12deg) scale(0.92);
 			opacity: 1;
 		}
 		55% {

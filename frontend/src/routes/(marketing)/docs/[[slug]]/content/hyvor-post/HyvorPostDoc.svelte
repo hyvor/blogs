@@ -5,8 +5,8 @@
 <h1>Hyvor Post Integration</h1>
 
 <p>
-	Hyvor Blogs natively integrates with <a href="https://post.hyvor.com">Hyvor Post</a> to provide a
-	newsletter system for your blogs.
+	Hyvor Blogs natively integrates with <a href="https://post.hyvor.com">Hyvor Post</a> to provide a newsletter
+	system for your blogs.
 </p>
 
 <ul>
@@ -29,8 +29,8 @@
 <ul>
 	<li>Easily embed the signup form on your blog.</li>
 	<li>
-		Access all Hyvor Post features directly from the Hyvor Blogs Console: sending issues,
-		managing subscribers, viewing analytics, etc.
+		Access all Hyvor Post features directly from the Hyvor Blogs Console: sending issues, managing
+		subscribers, viewing analytics, etc.
 	</li>
 	<li>Automatic access syncing from Hyvor Blogs to Hyvor Post.</li>
 </ul>
@@ -76,15 +76,15 @@
 <p>
 	If you need to send more emails, you have two options: either upgrade your Hyvor Blogs plan or
 	start a separate Hyvor Post subscription. If you start a separate Hyvor Post subscription, your
-	overall email allowance will be the sum of the complimentary allowance (from Hyvor Blogs) and
-	the subscription allowance (from Hyvor Post subscription).
+	overall email allowance will be the sum of the complimentary allowance (from Hyvor Blogs) and the
+	subscription allowance (from Hyvor Post subscription).
 </p>
 
 <h2 id="connect">Connecting Hyvor Post</h2>
 
 <p>
-	To connect Hyvor Post to your blog, you have two methods: enable the integration when creating
-	the blog or connect later at <strong>Settings &rarr; Integrations &rarr; Hyvor Post</strong>.
+	To connect Hyvor Post to your blog, you have two methods: enable the integration when creating the
+	blog or connect later at <strong>Settings &rarr; Integrations &rarr; Hyvor Post</strong>.
 </p>
 
 <p>
@@ -97,8 +97,8 @@
 <h2 id="access">Access Mapping</h2>
 
 <p>
-	<a href="/docs/users">Users of your blog</a> will have access to Hyvor Post Console based on their
-	role. Hyvor Blogs will automatically sync the access to the connected newsletter.
+	<a href="/docs/users">Users of your blog</a> will have access to Hyvor Post Console based on their role.
+	Hyvor Blogs will automatically sync the access to the connected newsletter.
 </p>
 
 <Table columns="1fr 1fr" style="bordered">
