@@ -1,10 +1,14 @@
 <script lang="ts">
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import AgentChat from './AgentChat.svelte';
-	import { saveAgentDocumentChange, type AgentPostVariant, type DocumentChange } from './agentApi';
+	import type { DocumentChange } from './agentApi';
 
-	async function applyDocumentChange(change: DocumentChange, postVariant: AgentPostVariant) {
-		await saveAgentDocumentChange(postVariant.post_id, postVariant.language_id, change.content);
+	// document_change events only carry a post variant ID + the new content, not the parent
+	// post's ID - so there's no endpoint we can call to persist it from here yet (unlike the
+	// post editor's sidebar, this page never loads the post, so there's no live editor either).
+	// TODO: apply directly once post variant metadata (post_id, language_id) is available here.
+	async function applyDocumentChange(change: DocumentChange) {
+		console.warn('Cannot yet save agent changes from the blog-level agent page', change);
 	}
 </script>
 

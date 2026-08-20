@@ -2,38 +2,28 @@
 	import { marked } from 'marked';
 	// @ts-ignore
 	import DOMPurify from 'dompurify';
-	import { Button, IconMessage, Loader, Textarea } from '@hyvor/design/components';
+	import { Button, Loader, Textarea } from '@hyvor/design/components';
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import IconMagic from '@hyvor/icons/IconMagic';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import IconFileText from '@hyvor/icons/IconFileText';
-	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconCheck from '@hyvor/icons/IconCheck';
 
-	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import DiffReviewModal from './DiffReviewModal.svelte';
 	import AgentSteps from './AgentSteps.svelte';
-	import {
-		applyAgentEvent,
-		callAgent,
-		DEFAULT_CONTENT_JSON,
-		type AgentBlock,
-		type DocumentChange
-	} from './agentApi';
+	import { applyAgentEvent, callAgent, type AgentBlock, type DocumentChange } from './agentApi';
 	import IdleMessage from './IdleMessage.svelte';
 
 	interface Props {
 		postVariantId: number | null;
 		placeholder?: string;
 		emptyMessage?: string;
-		disclaimer?: string;
 		applyDocumentChange: (change: DocumentChange) => Promise<void> | void;
 	}
 
 	let {
 		postVariantId,
 		placeholder = 'Type your prompt here...',
-		disclaimer = 'The agent may suggest edits to this post.',
 		applyDocumentChange
 	}: Props = $props();
 
@@ -42,9 +32,10 @@
 	let error: string | null = $state(null);
 	let sentPrompt = $state('');
 	let blocks: AgentBlock[] = $state([]);
-	let documentChange: DocumentChange | null = $state(null);
+	let documentChanges: DocumentChange[] = $state([]);
+	let appliedIds: Set<number> = $state(new Set());
 	let showDiffModal = $state(false);
-	let applied = $state(false);
+	let reviewPostVariantId: number | null = $state(null);
 	let applying = $state(false);
 
 	let finalText = $derived(
@@ -68,18 +59,32 @@
 		status = 'streaming';
 		error = null;
 		blocks = [];
-		documentChange = null;
-		applied = false;
+		documentChanges = [];
+		appliedIds = new Set();
+		showDiffModal = false;
 
 		try {
 			await callAgent(userPrompt, postVariantId, (event) => {
 				if (event.type === 'document_change') {
-					documentChange = { postVariantId: event.post_variant_id, content: event.content };
+					const existingIndex = documentChanges.findIndex(
+						(c) => c.postVariantId === event.post_variant_id
+					);
+					const change = { postVariantId: event.post_variant_id, content: event.content };
+					if (existingIndex >= 0) {
+						documentChanges[existingIndex] = change;
+					} else {
+						documentChanges.push(change);
+					}
 				} else if (event.type !== 'done') {
 					applyAgentEvent(blocks, event);
 				}
 			});
 			status = 'done';
+
+			const firstChange = documentChanges[0];
+			if (firstChange) {
+				openReview(firstChange.postVariantId);
+			}
 		} catch (err) {
 			status = 'error';
 			error = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
@@ -91,17 +96,22 @@
 		status = 'idle';
 		error = null;
 		blocks = [];
-		documentChange = null;
-		applied = false;
+		documentChanges = [];
+		appliedIds = new Set();
+		showDiffModal = false;
 	}
 
-	async function handleFinishReview(finalContent: string) {
-		if (!documentChange) return;
+	function openReview(postVariantId: number) {
+		reviewPostVariantId = postVariantId;
+		showDiffModal = true;
+	}
+
+	async function handleApplyChange(change: DocumentChange, finalContent: string) {
 		applying = true;
 		try {
-			await applyDocumentChange({ ...documentChange, content: finalContent });
-			applied = true;
-			showDiffModal = false;
+			await applyDocumentChange({ postVariantId: change.postVariantId, content: finalContent });
+			appliedIds.add(change.postVariantId);
+			appliedIds = new Set(appliedIds);
 		} finally {
 			applying = false;
 		}
@@ -123,18 +133,6 @@
 					<div class="message-wrap ai">
 						<div class="avatar ai-avatar"><IconRobot size={16} /></div>
 						<div class="message">
-							<!-- {#if postVariant}
-								<a
-									class="post-pill"
-									href={consoleUrlWithBlog(`/posts/${postVariant.post_id}`)}
-									target="_blank"
-								>
-									<IconFileText size={12} />
-									<span>{postVariant.title || 'Untitled post'}</span>
-									<IconBoxArrowUpRight size={11} />
-								</a>
-							{/if} -->
-
 							{#if blocks.length === 0 && !finalText}
 								{#if status === 'error'}
 									<span class="error">{error}</span>
@@ -157,15 +155,22 @@
 								{/if}
 							{/if}
 
-							{#if status === 'done' && documentChange}
-								<div class="change-notice">
-									{#if applied}
-										<span class="applied-notice"><IconCheck size={13} /> Changes applied</span>
-									{:else}
-										<Button size="small" onclick={() => (showDiffModal = true)}>
-											Review suggested changes
-										</Button>
-									{/if}
+							{#if documentChanges.length > 0}
+								<div class="document-changes">
+									{#each documentChanges as change (change.postVariantId)}
+										<button
+											type="button"
+											class="document-change-pill"
+											class:applied={appliedIds.has(change.postVariantId)}
+											onclick={() => openReview(change.postVariantId)}
+										>
+											<IconFileText size={12} />
+											<span>Post #{change.postVariantId}</span>
+											{#if appliedIds.has(change.postVariantId)}
+												<IconCheck size={12} />
+											{/if}
+										</button>
+									{/each}
 								</div>
 							{/if}
 						</div>
@@ -206,20 +211,20 @@
 				</Button>
 			</div>
 			<div class="disclaimer">
-				{disclaimer}
+				AI can make mistakes; please double-check.
 			</div>
 		</div>
 	</div>
 </div>
 
-{#if showDiffModal && documentChange}
-	<!-- <DiffReviewModal
-		leftContent={postVariant.content_unsaved || postVariant.content || DEFAULT_CONTENT_JSON}
-		rightContent={documentChange.content}
+{#if showDiffModal && documentChanges.length > 0}
+	<DiffReviewModal
+		changes={documentChanges}
+		initialPostVariantId={reviewPostVariantId}
 		{applying}
 		onclose={() => (showDiffModal = false)}
-		onfinish={handleFinishReview}
-	/> -->
+		onapply={handleApplyChange}
+	/>
 {/if}
 
 <style lang="scss">
@@ -291,7 +296,20 @@
 		line-height: 28px;
 	}
 
-	.post-pill {
+	.error {
+		color: var(--red);
+		font-weight: 600;
+		font-size: 14px;
+	}
+
+	.document-changes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 12px;
+	}
+
+	.document-change-pill {
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
@@ -302,27 +320,13 @@
 		background-color: var(--box-background);
 		border: 1px solid var(--border);
 		color: inherit;
-		text-decoration: none;
-		margin-bottom: 12px;
+		cursor: pointer;
 	}
 
-	.error {
-		color: var(--red);
-		font-weight: 600;
-		font-size: 14px;
-	}
-
-	.change-notice {
-		margin-top: 12px;
-	}
-
-	.applied-notice {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 13px;
-		font-weight: 600;
+	.document-change-pill.applied {
 		color: var(--green);
+		border-color: var(--green-light);
+		background-color: var(--green-light);
 	}
 
 	.message-html {

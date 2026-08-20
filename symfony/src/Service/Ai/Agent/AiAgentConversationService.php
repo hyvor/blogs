@@ -162,15 +162,15 @@ class AiAgentConversationService
 
         $documentOpsTool = $agentCallResult->getDocumentOpsTool();
 
-        if ($postVariant) {
-            $fetchedDocument = $documentOpsTool->getCachedDocuments()[$postVariant->getId()] ?? null;
+        $cachedDocuments = $documentOpsTool->getCachedDocuments();
 
-            if ($fetchedDocument !== null && count($fetchedDocument->getOps()) > 0) {
-                $finalDocument = $documentOpsTool->getFinalDocument($postVariant->getId());
+        foreach ($cachedDocuments as $postVariantId => $fetchedDocument) {
+            if ($fetchedDocument->changed()) {
+                $finalDocument = $documentOpsTool->getFinalDocument($postVariantId);
 
                 yield $this->toSseArray(
                     new DocumentChangeEvent(
-                        $postVariant->getId(),
+                        $postVariantId,
                         (string)json_encode($finalDocument->toArray()),
                     )
                 );

@@ -28,7 +28,7 @@ export type AgentEvent =
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
-	| { type: 'tool'; name: string; status: 'running' | 'done' }
+	| { type: 'tool'; name: string; }
 	| { type: 'text'; content: string }
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
@@ -77,28 +77,6 @@ export function getAgentConversations(limit = 50, offset = 0) {
 	});
 }
 
-function markLastRunningToolDone(blocks: AgentBlock[]) {
-	for (let i = blocks.length - 1; i >= 0; i--) {
-		const block = blocks[i];
-		if (block && block.type === 'tool' && block.status === 'running') {
-			block.status = 'done';
-			return;
-		}
-	}
-}
-
-// removes the generic "running tool" step once we know it was a post-variant read/edit,
-// since that activity gets its own grouped block instead
-function removeLastRunningTool(blocks: AgentBlock[]) {
-	for (let i = blocks.length - 1; i >= 0; i--) {
-		const block = blocks[i];
-		if (block && block.type === 'tool' && block.status === 'running') {
-			blocks.splice(i, 1);
-			return;
-		}
-	}
-}
-
 function trackVariantActivity(blocks: AgentBlock[], postVariantId: number, kind: 'read' | 'edit') {
 	let activity = blocks.find(
 		(b): b is Extract<AgentBlock, { type: 'variant_activity' }> =>
@@ -141,27 +119,21 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 			break;
 
 		case 'tool_call':
-			blocks.push({ type: 'tool', name: event.tool, status: 'running' });
-			break;
-
-		case 'tool_result':
-			markLastRunningToolDone(blocks);
+			blocks.push({ type: 'tool', name: event.tool, });
 			break;
 
 		case 'post_variant_read':
-			removeLastRunningTool(blocks);
 			trackVariantActivity(blocks, event.post_variant_id, 'read');
 			break;
 
 		case 'post_variant_edit_suggested':
-			removeLastRunningTool(blocks);
 			trackVariantActivity(blocks, event.post_variant_id, 'edit');
 			break;
 
 		case 'get_tags':
 		case 'get_authors':
 		case 'get_post_variants':
-			markLastRunningToolDone(blocks);
+			// markLastRunningToolDone(blocks);
 			break;
 
 		case 'text':

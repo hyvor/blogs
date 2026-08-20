@@ -2,10 +2,14 @@
 	import LicenseRequired from '../../../../../billing/LicenseRequired.svelte';
 	import AgentChat from '../../../../agent/AgentChat.svelte';
 	import { postEditor, postVariantStore } from '../../../postStore';
-	import type { AgentPostVariant, DocumentChange } from '../../../../agent/agentApi';
+	import type { DocumentChange } from '../../../../agent/agentApi';
 
-	function applyDocumentChange(change: DocumentChange, _postVariant: AgentPostVariant) {
-		$postEditor.setContent(change.content);
+	function applyDocumentChange(change: DocumentChange) {
+		// only the currently open post has a live editor session to push content into - the
+		// agent can now suggest edits to other posts too, but those aren't open here to apply to
+		if (change.postVariantId === $postVariantStore.id) {
+			$postEditor.setContent(change.content);
+		}
 	}
 </script>
 
