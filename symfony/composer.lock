@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9c59c462e84d4631567751eec071a2e",
+    "content-hash": "fa1ca065b4c47dce72e54ab7398247f2",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2080,16 +2080,16 @@
         },
         {
             "name": "hyvor/sdk-core",
-            "version": "0.1.1",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-core.git",
-                "reference": "5e39717046628731ab5568668b56ba7b07f970f7"
+                "reference": "0600078d85293d3671cf7eb689237355f2b7148d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-core/zipball/5e39717046628731ab5568668b56ba7b07f970f7",
-                "reference": "5e39717046628731ab5568668b56ba7b07f970f7",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-core/zipball/0600078d85293d3671cf7eb689237355f2b7148d",
+                "reference": "0600078d85293d3671cf7eb689237355f2b7148d",
                 "shasum": ""
             },
             "require": {
@@ -2123,9 +2123,9 @@
             ],
             "description": "Shared HTTP transport, auth, serialization, and exceptions for HYVOR product SDKs. Not intended to be required directly - installed transitively by hyvor/sdk-* product packages.",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.1"
+                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.4"
             },
-            "time": "2026-08-14T09:41:51+00:00"
+            "time": "2026-08-14T13:32:54+00:00"
         },
         {
             "name": "hyvor/sdk-post",
@@ -2261,7 +2261,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -2321,7 +2321,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -2367,7 +2367,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2415,7 +2415,7 @@
         },
         {
             "name": "illuminate/encryption",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/encryption.git",
@@ -2466,7 +2466,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -2512,7 +2512,7 @@
         },
         {
             "name": "illuminate/reflection",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/reflection.git",
@@ -2563,16 +2563,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v13.25.0",
+            "version": "v13.26.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "096840740d89aa2439b02c910c2b1c7cff76d8e5"
+                "reference": "1f963e021a251710ce81aba663311e94957c68f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/096840740d89aa2439b02c910c2b1c7cff76d8e5",
-                "reference": "096840740d89aa2439b02c910c2b1c7cff76d8e5",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/1f963e021a251710ce81aba663311e94957c68f2",
+                "reference": "1f963e021a251710ce81aba663311e94957c68f2",
                 "shasum": ""
             },
             "require": {
@@ -2638,7 +2638,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-08-10T13:19:41+00:00"
+            "time": "2026-08-14T21:23:27+00:00"
         },
         {
             "name": "intervention/gif",
@@ -4097,16 +4097,16 @@
         },
         {
             "name": "nette/schema",
-            "version": "v1.3.5",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/schema.git",
-                "reference": "f0ab1a3cda782dbc5da270d28545236aa80c4002"
+                "reference": "c54350438cd6914616f790a49cb424605f421562"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/schema/zipball/f0ab1a3cda782dbc5da270d28545236aa80c4002",
-                "reference": "f0ab1a3cda782dbc5da270d28545236aa80c4002",
+                "url": "https://api.github.com/repos/nette/schema/zipball/c54350438cd6914616f790a49cb424605f421562",
+                "reference": "c54350438cd6914616f790a49cb424605f421562",
                 "shasum": ""
             },
             "require": {
@@ -4158,9 +4158,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/schema/issues",
-                "source": "https://github.com/nette/schema/tree/v1.3.5"
+                "source": "https://github.com/nette/schema/tree/v1.3.6"
             },
-            "time": "2026-02-23T03:47:12+00:00"
+            "time": "2026-08-16T21:58:41+00:00"
         },
         {
             "name": "nette/utils",
@@ -8696,53 +8696,6 @@
             "time": "2026-08-06T09:53:08+00:00"
         },
         {
-            "name": "symfony/mercure",
-            "version": "v0.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/mercure.git",
-                "reference": "920f08c73793f37e94981e5d9fc1a84351ec8c6c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mercure/zipball/920f08c73793f37e94981e5d9fc1a84351ec8c6c",
-                "reference": "920f08c73793f37e94981e5d9fc1a84351ec8c6c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "symfony/deprecation-contracts": "^2.0|^3.0",
-                "symfony/http-client": "^6.4|^7.3|^8.0",
-                "symfony/http-foundation": "^6.4|^7.3|^8.0",
-                "symfony/web-link": "^6.4|^7.3|^8.0"
-            },
-            "require-dev": {
-                "lcobucci/jwt": "^3.4|^4.0|^5.0",
-                "symfony/event-dispatcher": "^6.4|^7.3|^8.0",
-                "symfony/http-kernel": "^6.4|^7.3|^8.0",
-                "symfony/phpunit-bridge": "^7.3.4|^8.0",
-                "symfony/stopwatch": "^6.4|^7.3|^8.0",
-                "twig/twig": "^2.0|^3.0|^4.0",
-                "web-token/jwt-library": "^4.1"
-            },
-            "suggest": {
-                "symfony/stopwatch": "Integration with the profiler performances",
-                "web-token/jwt-library": "To build Mercure protocol 1.0-compatible JSON Web Tokens with WebTokenFactory"
-            },
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/dunglas/mercure",
-                    "name": "dunglas/mercure"
-                },
-                "branch-alias": {
-                    "dev-main": "0.8.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Mercure\\": "src/"
-                }
             "name": "symfony/mailer",
             "version": "v8.1.2",
             "source": {
@@ -8791,6 +8744,94 @@
                 {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Helps sending emails",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/mailer/tree/v8.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-28T07:35:25+00:00"
+        },
+        {
+            "name": "symfony/mercure",
+            "version": "v0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/mercure.git",
+                "reference": "920f08c73793f37e94981e5d9fc1a84351ec8c6c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/mercure/zipball/920f08c73793f37e94981e5d9fc1a84351ec8c6c",
+                "reference": "920f08c73793f37e94981e5d9fc1a84351ec8c6c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "symfony/deprecation-contracts": "^2.0|^3.0",
+                "symfony/http-client": "^6.4|^7.3|^8.0",
+                "symfony/http-foundation": "^6.4|^7.3|^8.0",
+                "symfony/web-link": "^6.4|^7.3|^8.0"
+            },
+            "require-dev": {
+                "lcobucci/jwt": "^3.4|^4.0|^5.0",
+                "symfony/event-dispatcher": "^6.4|^7.3|^8.0",
+                "symfony/http-kernel": "^6.4|^7.3|^8.0",
+                "symfony/phpunit-bridge": "^7.3.4|^8.0",
+                "symfony/stopwatch": "^6.4|^7.3|^8.0",
+                "twig/twig": "^2.0|^3.0|^4.0",
+                "web-token/jwt-library": "^4.1"
+            },
+            "suggest": {
+                "symfony/stopwatch": "Integration with the profiler performances",
+                "web-token/jwt-library": "To build Mercure protocol 1.0-compatible JSON Web Tokens with WebTokenFactory"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/dunglas/mercure",
+                    "name": "dunglas/mercure"
+                },
+                "branch-alias": {
+                    "dev-main": "0.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Mercure\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kévin Dunglas",
+                    "email": "dunglas@gmail.com"
                 },
                 {
                     "name": "Symfony Community",
@@ -8903,30 +8944,6 @@
                 }
             ],
             "time": "2026-08-11T11:25:49+00:00"
-            "description": "Helps sending emails",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/mailer/tree/v8.1.2"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2026-07-28T07:35:25+00:00"
         },
         {
             "name": "symfony/messenger",
@@ -12856,16 +12873,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "6.5.3",
+            "version": "6.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "d0a5edd84dd5e116643c79e53d46814c5a5e4c04"
+                "reference": "cc81abcfffec8b2f993db64013ea3b49679341c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/d0a5edd84dd5e116643c79e53d46814c5a5e4c04",
-                "reference": "d0a5edd84dd5e116643c79e53d46814c5a5e4c04",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/cc81abcfffec8b2f993db64013ea3b49679341c9",
+                "reference": "cc81abcfffec8b2f993db64013ea3b49679341c9",
                 "shasum": ""
             },
             "require": {
@@ -12933,7 +12950,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/6.5.3"
+                "source": "https://github.com/zircote/swagger-php/tree/6.6.0"
             },
             "funding": [
                 {
@@ -12941,7 +12958,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-12T04:26:57+00:00"
+            "time": "2026-08-18T03:19:28+00:00"
         }
     ],
     "packages-dev": [
@@ -14898,5 +14915,5 @@
         "ext-zip": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
