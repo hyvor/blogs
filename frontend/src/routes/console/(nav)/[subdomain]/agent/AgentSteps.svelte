@@ -6,14 +6,13 @@
 	import IconCheck from '@hyvor/icons/IconCheck';
 	import IconEye from '@hyvor/icons/IconEye';
 	import IconPencil from '@hyvor/icons/IconPencil';
-	import type { AgentBlock, AgentPostVariant } from './agentApi';
+	import type { AgentBlock } from './agentApi';
 
 	interface Props {
 		blocks: AgentBlock[];
-		postVariant?: AgentPostVariant | null;
 	}
 
-	let { blocks, postVariant = null }: Props = $props();
+	let { blocks }: Props = $props();
 
 	// tracks user-toggled thinking blocks, keyed by block index
 	let openThinking: Record<number, boolean> = $state({});
@@ -61,11 +60,7 @@
 			</div>
 		{:else if block.type === 'variant_activity'}
 			<div class="step variant-activity-step">
-				<span class="variant-title"
-					>{postVariant && postVariant.id === block.postVariantId
-						? postVariant.title || 'Untitled post'
-						: 'Post'}</span
-				>
+				<span class="variant-title">Post #{block.postVariantId}</span>
 				{#if block.reads > 0}
 					<span class="variant-activity-icon" title="Read by the agent">
 						<IconEye size={13} />

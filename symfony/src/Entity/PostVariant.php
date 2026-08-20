@@ -45,6 +45,9 @@ class PostVariant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_unsaved = null;
 
+    #[ORM\Column(options: ['default' => 0])]
+    private int $document_version = 0;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_html = null;
 
@@ -182,6 +185,17 @@ class PostVariant
     public function setContentUnsaved(?string $content_unsaved): static
     {
         $this->content_unsaved = $content_unsaved;
+        return $this;
+    }
+
+    public function getDocumentVersion(): int
+    {
+        return $this->document_version;
+    }
+
+    public function setDocumentVersion(int $document_version): static
+    {
+        $this->document_version = $document_version;
         return $this;
     }
 

@@ -13,11 +13,13 @@ class UpdatePostVariantInput
     #[Assert\Length(max: 255)]
     public ?string $slug = null;
 
+    // false = not provided (leave untouched); null = clear; string = set to this JSON
     #[ProsemirrorJson]
-    public ?string $content = null;
+    public null|string|false $content = false;
 
+    // false = not provided (leave untouched); null = clear; string = set to this JSON
     #[ProsemirrorJson]
-    public ?string $content_unsaved = null;
+    public null|string|false $content_unsaved = false;
 
     #[Assert\Length(max: 255)]
     public ?string $title = null;

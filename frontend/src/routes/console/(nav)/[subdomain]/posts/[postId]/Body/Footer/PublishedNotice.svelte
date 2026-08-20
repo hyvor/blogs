@@ -1,17 +1,12 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import {
-		postCurrentContentKey,
-		postEditingPublished,
-		postEditor,
-		postVariantStore
-	} from '../../../postStore';
+	import { postEditingPublished, postEditor, postVariantStore } from '../../../postStore';
 	import Compare from '../Compare/Compare.svelte';
 
 	async function handleEditing() {
 		postEditingPublished.update((v) => !v);
 		await tick();
-		$postEditor.setContent($postVariantStore[$postCurrentContentKey]!);
+		$postEditor.setContent($postVariantStore.content_unsaved ?? $postVariantStore.content!);
 		$postEditor.focus();
 	}
 

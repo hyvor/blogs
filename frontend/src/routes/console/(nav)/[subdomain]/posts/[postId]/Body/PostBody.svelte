@@ -9,6 +9,7 @@
 	import PublishedNotice from './Footer/PublishedNotice.svelte';
 
 	let titleComponent: { focus: () => void } | undefined = $state();
+	let editorKey = $derived(String($postVariantStore.id));
 
 	// the editor loads its ProseMirror view asynchronously (onMount awaits a
 	// dynamic import), so it may not be ready yet right after this component mounts
@@ -41,11 +42,13 @@
         font-family: {$postVariantLanguageStore!.direction === 'rtl' ? 'sans-serif' : 'inherit'};
     "
 >
-	<div class="top">
+	<label class="top">
 		<Title bind:this={titleComponent} />
-	</div>
+	</label>
 
-	<Editor />
+	{#key editorKey}
+		<Editor />
+	{/key}
 
 	<div class="editor-footer">
 		<PublishedNotice />
@@ -71,10 +74,9 @@
 		min-height: calc(100vh - 70px);
 	}
 	.top {
-		display: flex;
-		padding: 10px 30px;
 		background: var(--hover);
 		border-radius: 20px 20px 0 0;
+		cursor: text;
 	}
 	.editor-footer {
 		border-top: 1px solid var(--border);

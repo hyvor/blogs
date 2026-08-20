@@ -11,6 +11,7 @@ use App\Service\Language\LanguageService;
 use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
+use Psr\Log\LoggerInterface;
 use Symfony\AI\Agent\Toolbox\Attribute\AsTool;
 
 #[AsTool(
@@ -40,6 +41,7 @@ class QueryTool
         private UserService $userService,
         private PostService $postService,
         private LanguageService $languageService,
+        private LoggerInterface $logger,
     ) {}
 
     /**
