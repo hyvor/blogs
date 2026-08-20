@@ -21,7 +21,7 @@ use App\Api\Console\Object\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
-use App\Service\Post\Collab\PostVariantCollabService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Tag\TagService;
@@ -48,7 +48,7 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
-        private PostVariantCollabService $collabService,
+        private DocumentService $collabService,
         private Authorization $mercureAuthorization,
     ) {}
 

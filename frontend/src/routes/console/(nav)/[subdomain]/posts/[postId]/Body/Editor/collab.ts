@@ -45,7 +45,7 @@ const activeSources = new Map<string, EventSource>();
  * caller is expected to treat this as "go fetch what I missed" (see PostVariantCollabController's
  * `sync` endpoint) rather than trusting steps to keep arriving here uninterrupted.
  */
-export function subscribeToCollabTopic(
+export function subscribeToCollabMercureTopic(
 	topic: string,
 	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[], version: number) => void,
 	onCursor: (message: CollabCursorMercureMessage) => void,

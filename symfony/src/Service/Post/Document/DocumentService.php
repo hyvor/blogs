@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Post\Collab;
+namespace App\Service\Post\Document;
 
 use App\Entity\Blog;
 use App\Entity\PostVariant;
@@ -14,22 +14,20 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
 /**
- * Real-time collaborative editing for a post variant's document, on top of prosemirror-collab.
+ * Document editing with collaboration support.
  *
- * `document_version` on PostVariant is the live, monotonically increasing collab version.
- * `post_variant_steps` holds exactly the steps not yet reflected in the `content_unsaved`
- * column - checkpoint() writes the full doc into that column and deletes the covered steps in
- * the same transaction, so "content_unsaved column + remaining steps == current doc" always
- * holds; getState() relies on this to let a freshly-loaded client fast-forward via
- * editor.collab.receiveSteps() instead of us re-implementing prosemirror step application
- * server-side.
+ * - PostVariant.content is the published version, it's immutable
+ * - PostVariant.content_unsaved is the editable version, which is used here
+ * - PostVariant.document_version is the current version of the document, which is incremented with each batch of steps submitted
+ * - PostVariantStep saves those steps in JSON format, which can be sent to other clients later
+ * - /checkpoint() updates content_unsaved with the current document
+ *  - but does not delete the steps because other clients may want to catch up
+ *  - steps are cleared after 7 days
  */
-class PostVariantCollabService
+class DocumentService
 {
     use ClockAwareTrait;
 
-    // used when a User has no cursor_color yet (e.g. a row created before this column existed) -
-    // see PostVariantCollabController::submitCursor
     public const string DEFAULT_CURSOR_COLOR = '#333333';
 
     public function __construct(
@@ -44,6 +42,7 @@ class PostVariantCollabService
     }
 
     /**
+     * @deprecated
      * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
     public function getState(PostVariant $variant): array
@@ -52,13 +51,7 @@ class PostVariantCollabService
     }
 
     /**
-     * All steps after `$sinceVersion`, in order - i.e. exactly what a client at `$sinceVersion`
-     * is missing. Backs both the stale-submission catch-up below and the standalone `sync`
-     * endpoint (see PostVariantCollabController::sync), which a client calls whenever it
-     * suspects it missed something over Mercure - e.g. on EventSource reconnect, since Mercure
-     * doesn't replay updates published while a subscriber was disconnected. Unlike Mercure, this
-     * always reflects the durable truth in `post_variant_steps`.
-     *
+     * @param int $sinceVersion gets steps where version > $sinceVersion
      * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
     public function getStepsSince(PostVariant $variant, int $sinceVersion): array
@@ -95,6 +88,10 @@ class PostVariantCollabService
      * @param array<int, array<string, mixed>> $steps
      * @return array{accepted: bool, version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
      */
+
+    /**
+     *
+     */
     public function submitSteps(
         PostVariant $variant,
         int $version,
@@ -111,10 +108,15 @@ class PostVariantCollabService
                 return false;
             }
 
+            /**
+             * Note: i first though each batch of steps should get a single version, but prosemirror-collab assigns
+             * a new version for EACH step.
+             * See https://code.haverbeke.berlin/prosemirror/website/src/branch/main/src/collab/server/instance.js#L45
+             */
             $newVersion = $version;
             foreach ($steps as $step) {
                 $newVersion++;
-                $row = (new PostVariantStep())
+                $row = new PostVariantStep()
                     ->setPostVariant($current)
                     ->setVersion($newVersion)
                     ->setClientId($clientId)

@@ -5,7 +5,7 @@ namespace App\Api\Console\Object;
 use App\Entity\Blog;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use App\Service\Post\Collab\PostVariantCollabService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 
@@ -43,7 +43,7 @@ class PostVariantObject
         Blog $blog,
         PermalinkService $permalinkService,
         ?PostContentService $postContentService = null,
-        ?PostVariantCollabService $collabService = null,
+        ?DocumentService $collabService = null,
     ) {
         $this->id = $variant->getId();
         $this->language_id = $variant->getLanguage()->getId();

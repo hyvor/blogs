@@ -8,4 +8,6 @@ class AgentPromptInput
 {
     #[Assert\NotBlank]
     public string $prompt;
+
+    public ?int $post_variant_id = null;
 }

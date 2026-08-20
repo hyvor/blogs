@@ -10,7 +10,7 @@ use App\Api\Console\Input\Post\SubmitCollabCursorInput;
 use App\Api\Console\Input\Post\SubmitCollabStepsInput;
 use App\Api\Console\Input\Post\SyncCollabStepsInput;
 use App\Entity\PostVariant;
-use App\Service\Post\Collab\PostVariantCollabService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,12 +19,13 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-class PostVariantCollabController
+// concerns about an editable document (content_unsaved in PostVariant)
+class DocumentsController
 {
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private PostService $postService,
-        private PostVariantCollabService $collabService,
+        private DocumentService $documentService,
         private UserService $userService,
     ) {}
 
@@ -41,10 +42,8 @@ class PostVariantCollabController
     }
 
     /**
-     * Submits a batch of prosemirror-collab steps. Not an error if rejected (stale version) -
-     * the response itself carries the steps the client is missing (see
-     * PostVariantCollabService::submitSteps), so the client catches up and resubmits
-     * immediately instead of waiting on Mercure, which never replays what it missed.
+     * Submit a batch of prosemirror-collab steps.
+     * If the version is stale, the response will include the steps the client is missing.
      */
     #[Route('/documents/steps', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -53,7 +52,7 @@ class PostVariantCollabController
     ): JsonResponse {
         $variant = $this->getVariantOrFail($input->post_variant_id);
 
-        $result = $this->collabService->submitSteps(
+        $result = $this->documentService->submitSteps(
             $variant,
             $input->version,
             $input->steps,
@@ -76,7 +75,7 @@ class PostVariantCollabController
     ): JsonResponse {
         $variant = $this->getVariantOrFail($input->post_variant_id);
 
-        return new JsonResponse($this->collabService->getStepsSince($variant, $input->version));
+        return new JsonResponse($this->documentService->getStepsSince($variant, $input->version));
     }
 
     /**
@@ -99,12 +98,12 @@ class PostVariantCollabController
             $variantOfUser = $this->userService->getUserVariant($blogUser, $variant->getLanguage());
             $user = [
                 'name' => $variantOfUser?->getName() ?? $blogUser->getSlug(),
-                'color' => $blogUser->getCursorColor() ?? PostVariantCollabService::DEFAULT_CURSOR_COLOR,
+                'color' => $blogUser->getCursorColor() ?? DocumentService::DEFAULT_CURSOR_COLOR,
                 'picture' => $blogUser->getPictureUrl(),
             ];
         }
 
-        $this->collabService->publishCursor($variant, $input->client_id, $input->from, $input->to, $user);
+        $this->documentService->publishCursor($variant, $input->client_id, $input->from, $input->to, $user);
 
         return new JsonResponse();
     }
@@ -121,7 +120,7 @@ class PostVariantCollabController
         $variant = $this->getVariantOrFail($input->post_variant_id);
         $blog = $this->blogAuthListener->getBlog();
 
-        $this->collabService->checkpoint($variant, $blog, $input->content, $input->version);
+        $this->documentService->checkpoint($variant, $blog, $input->content, $input->version);
 
         return new JsonResponse();
     }

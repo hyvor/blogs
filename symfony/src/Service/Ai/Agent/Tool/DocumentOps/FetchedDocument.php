@@ -47,4 +47,9 @@ class FetchedDocument
         return $this->ops;
     }
 
+    public function changed(): bool
+    {
+        return count($this->ops) > 0;
+    }
+
 }

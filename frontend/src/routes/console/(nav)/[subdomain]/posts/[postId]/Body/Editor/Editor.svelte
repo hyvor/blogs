@@ -18,21 +18,15 @@
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
-	import { subscribeToCollabTopic, collabTopic } from './collab';
+	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
+	import { onMount } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 
-	// identifies this browser tab's editor session to the collab authority/other clients -
-	// see editorConfig.collab and PostVariantCollabController on the backend
+	// unique client ID for this tab
 	const clientId = Math.random().toString(36).slice(2);
-
-	let uniqueKey = $derived(String($postVariantStore.id));
 
 	function handleChange() {
 		$postContentDirtyStore = true;
-	}
-
-	function handleEvent(name: keyof HTMLElementEventMap, event: Event) {
-		// handleEditorEventHandlers(name, event);
 	}
 
 	// Confirmed step batches can arrive redundantly through several channels - the Mercure
@@ -52,7 +46,11 @@
 	// whatever prefix of the batch is already covered by the current version - rather than just
 	// checking whether the batch as a whole is newer - makes every one of these channels safely
 	// idempotent no matter how they interleave.
-	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[], resultingVersion: number) {
+	function applyConfirmedSteps(
+		steps: CollabStepJSON[],
+		clientIds: CollabClientID[],
+		resultingVersion: number
+	) {
 		const editor = $postEditor;
 		if (!editor) return;
 		const currentVersion = editor.collab.getVersion();
@@ -72,11 +70,11 @@
 				client_id: String(sendable.clientID)
 			});
 
-			// stale - the response carries exactly the steps we're missing (see
-			// PostVariantCollabService::submitSteps), straight from post_variant_steps rather
-			// than waiting on Mercure to somehow redeliver them. Applying them rebases our
-			// still-pending steps, and prosemirror-collab automatically re-fires onSendable
-			// with the rebased batch - no manual retry needed here.
+			// if accepted, the server has already applied our steps
+
+			// if not, we have to rebase using the steps the server sent when accepted is false.
+			// prosemirror automatically refires the onSendable callback after the rebase
+			// so we don't have to retry
 			if (!response.accepted) {
 				applyConfirmedSteps(
 					response.steps as CollabStepJSON[],
@@ -85,6 +83,7 @@
 				);
 			}
 		} catch (e) {
+			// TODO: editor error handling
 			console.error('Failed to submit collab steps', e);
 		}
 	}
@@ -117,7 +116,7 @@
 		$postEditor.setEditable(isEditable);
 	});
 
-	$effect(() => {
+	onMount(() => {
 		const editor = $postEditor;
 		if (!editor) return;
 
@@ -125,9 +124,6 @@
 			applyConfirmedSteps(backlogSteps, backlogClientIds, liveVersion);
 		}
 
-		// other users' cursors for this topic - keyed by clientId, rebuilt fresh per
-		// subscription since a topic change (variant/content-type switch) makes any prior
-		// roster stale
 		const cursors = new Map<string, RemoteCursor>();
 
 		// called when the Mercure EventSource reconnects after a drop - whatever was published
@@ -152,7 +148,7 @@
 		}
 
 		const topic = collabTopic($postVariantStore.id);
-		return subscribeToCollabTopic(
+		return subscribeToCollabMercureTopic(
 			topic,
 			(steps, clientIds, version) => {
 				applyConfirmedSteps(steps, clientIds, version);
@@ -160,7 +156,12 @@
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
 
-				if (message.clear || !message.user || message.from === undefined || message.to === undefined) {
+				if (
+					message.clear ||
+					!message.user ||
+					message.from === undefined ||
+					message.to === undefined
+				) {
 					cursors.delete(message.client_id);
 				} else {
 					cursors.set(message.client_id, {
@@ -177,9 +178,6 @@
 		);
 	});
 
-	// author is fixed for this editing session (the currently logged-in console user);
-	// the mode changes are handled afterwards via postEditor.suggestions.setMode() from
-	// the footer's SuggestionModeToggle, not by recreating this config - see postSuggestionModeStore
 	let fullEditorConfig = $derived({
 		...editorConfig,
 		collab: {
@@ -200,20 +198,17 @@
 </script>
 
 <div class="editor">
-	{#key uniqueKey}
-		<div class="wrap">
-			<Editor
-				bind:this={$postEditor}
-				{value}
-				onvaluechange={handleChange}
-				ondomevent={handleEvent}
-				editable={isEditable}
-				{schema}
-				editorConfig={fullEditorConfig}
-				plugins={[wordCountPlugin()]}
-			/>
-		</div>
-	{/key}
+	<div class="wrap">
+		<Editor
+			bind:this={$postEditor}
+			{value}
+			onvaluechange={handleChange}
+			editable={isEditable}
+			{schema}
+			editorConfig={fullEditorConfig}
+			plugins={[wordCountPlugin()]}
+		/>
+	</div>
 </div>
 
 <style>
@@ -226,5 +221,7 @@
 	.wrap {
 		position: relative;
 		flex: 1;
+		/* padding-left: max(300px, calc((100% - 700px) / 2));
+		padding-right: max(0px, calc((100% - 700px - 300px) / 2)); */
 	}
 </style>

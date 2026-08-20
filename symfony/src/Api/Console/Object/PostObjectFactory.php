@@ -5,7 +5,7 @@ namespace App\Api\Console\Object;
 use App\Entity\Blog;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use App\Service\Post\Collab\PostVariantCollabService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
@@ -18,7 +18,7 @@ class PostObjectFactory
         private UserObjectFactory $userObjectFactory,
         private PostService $postService,
         private PostContentService $postContentService,
-        private PostVariantCollabService $collabService,
+        private DocumentService $collabService,
     ) {}
 
     public function create(Post $post, Blog $blog): PostObject

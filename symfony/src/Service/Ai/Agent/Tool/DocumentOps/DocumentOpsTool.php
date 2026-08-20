@@ -3,7 +3,6 @@
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Entity\Blog;
-use App\Entity\PostVariant;
 use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
@@ -71,7 +70,7 @@ class DocumentOpsTool
             return "Post variant with ID $postVariantId not found.";
         }
 
-        $content = $this->getCurrentContentFromVariant($variant);
+        $content = $variant->getContentUnsaved();
 
         try {
             $doc = $this->postContentService->getDocumentFromJson($content ?? PostContentService::DEFAULT_CONTENT_JSON);
@@ -165,11 +164,6 @@ class DocumentOpsTool
         $fetchedDocument->addOp($op);
 
         return 'Deleted node successfully.';
-    }
-
-    private function getCurrentContentFromVariant(PostVariant $variant): ?string
-    {
-        return $variant->getContentUnsaved() ?? $variant->getContent();
     }
 
     // methods to call once the agent has finished making changes to the document.
