@@ -16,7 +16,13 @@
 		onapply: (change: DocumentChange, finalContent: string) => Promise<void> | void;
 	}
 
-	let { changes, initialPostVariantId = null, applying = false, onclose, onapply }: Props = $props();
+	let {
+		changes,
+		initialPostVariantId = null,
+		applying = false,
+		onclose,
+		onapply
+	}: Props = $props();
 
 	let selectedPostVariantId = $state(initialPostVariantId ?? changes[0]?.postVariantId ?? null);
 	let appliedIds: Set<number> = $state(new Set());
@@ -29,7 +35,11 @@
 			async get(ids) {
 				const entries: Record<string, SuggestionSourceEntry | null> = {};
 				for (const id of ids) {
-					entries[id] = local.get(id) ?? { author: 'ai' as Author, timestamp: Date.now(), comments: [] };
+					entries[id] = local.get(id) ?? {
+						author: 'ai' as Author,
+						timestamp: Date.now(),
+						comments: []
+					};
 				}
 				return entries;
 			},
@@ -89,12 +99,19 @@
 	);
 	let remainingByPost: Record<number, number> = $state(
 		Object.fromEntries(
-			Object.entries(contentByPost).map(([id, content]) => [id, countRemainingSuggestions(JSON.parse(content))])
+			Object.entries(contentByPost).map(([id, content]) => [
+				id,
+				countRemainingSuggestions(JSON.parse(content))
+			])
 		)
 	);
 
-	let remaining = $derived(selectedPostVariantId !== null ? (remainingByPost[selectedPostVariantId] ?? 0) : 0);
-	let selectedApplied = $derived(selectedPostVariantId !== null && appliedIds.has(selectedPostVariantId));
+	let remaining = $derived(
+		selectedPostVariantId !== null ? (remainingByPost[selectedPostVariantId] ?? 0) : 0
+	);
+	let selectedApplied = $derived(
+		selectedPostVariantId !== null && appliedIds.has(selectedPostVariantId)
+	);
 
 	function handleValueChange(value: string) {
 		if (selectedPostVariantId === null) return;
@@ -130,7 +147,15 @@
 	}
 </script>
 
-<Modal bare width="1050px" height="calc(100% - 40px)" {onclose} show={true} appendToBody id="diff-review-modal">
+<Modal
+	bare
+	width="calc(100% - 40px)"
+	height="calc(100% - 40px)"
+	{onclose}
+	show={true}
+	appendToBody
+	id="diff-review-modal"
+>
 	<div class="inner">
 		<div class="header">
 			<span>Review suggested changes</span>
@@ -190,7 +215,6 @@
 </Modal>
 
 <style>
-
 	:global(#diff-review-modal-desc) {
 		height: 100%;
 	}
