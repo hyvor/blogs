@@ -3,11 +3,11 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
-use App\Api\Console\Controller\PostVariantCollabController;
+use App\Api\Console\Controller\DocumentsController;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Entity\PostVariantStep;
-use App\Service\Post\Collab\PostVariantCollabService;
+use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,8 +19,8 @@ use App\Tests\Factory\UserVariantFactory;
 use App\Tests\Fake\FakeHub;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(PostVariantCollabController::class)]
-#[CoversClass(PostVariantCollabService::class)]
+#[CoversClass(DocumentsController::class)]
+#[CoversClass(DocumentService::class)]
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
 class PostVariantCollabTest extends ApiTestCase
