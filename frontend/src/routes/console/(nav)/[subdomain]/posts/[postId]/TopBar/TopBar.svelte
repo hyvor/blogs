@@ -48,9 +48,8 @@
 		display: flex;
 		align-items: center;
 		height: 42px;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
 		border-bottom: 1px solid var(--border);
+		background-color: var(--box-background);
 	}
 
 	.back-button {
