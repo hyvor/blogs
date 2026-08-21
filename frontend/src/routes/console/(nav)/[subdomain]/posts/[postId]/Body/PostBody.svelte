@@ -33,7 +33,6 @@
 
 <div
 	id="post-body"
-	class="hds-box"
 	spellcheck={false}
 	dir={$postVariantLanguageStore!.direction}
 	style="
@@ -73,8 +72,10 @@
 		flex-direction: column;
 		min-height: calc(100vh - 70px);
 	}
+	#post-body :global(.ProseMirror) {
+		width: 760px !important;
+	}
 	.top {
-		background: var(--hover);
 		border-radius: 20px 20px 0 0;
 		cursor: text;
 	}

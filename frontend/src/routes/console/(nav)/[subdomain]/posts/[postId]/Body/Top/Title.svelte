@@ -58,8 +58,7 @@
 
 	onMount(() => {
 		if (!textarea) return;
-		textarea.style.height = '0';
-		textarea.style.height = textarea.scrollHeight + 'px';
+		setTimeout(handleResize, 0);
 		textarea.addEventListener('input', handleResize);
 		textarea.addEventListener('change', handleResize);
 		textarea.addEventListener('focus', handleResize);
@@ -111,10 +110,9 @@
 		font-family: var(--font-serif);
 		padding-top: 10px;
 		padding-bottom: 10px;
-		font-size: 22px;
-		font-weight: 600;
+		font-size: 34px;
+		font-weight: 800;
 		outline: none;
-		word-break: break-all;
 		resize: none;
 		border: 0;
 		display: block;
@@ -126,7 +124,7 @@
 		/**
 		* reduce width of textarea (700px)
 		*/
-		padding-inline: max(0px, calc(((100% - 700px) / 2) + 30px));
+		padding-inline: max(0px, calc(((100% - 760px) / 2) + 30px));
 	}
 
 	.unsaved-tag {

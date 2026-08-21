@@ -8,7 +8,6 @@
 		postVariantStore
 	} from '../../postStore';
 	import PostBody from '../Body/PostBody.svelte';
-	import PostSidebar from '../Sidebar/PostSidebar.svelte';
 	import TopBar from '../TopBar/TopBar.svelte';
 	import { isTempStore } from '../../../../../lib/temp';
 	import type { Unsubscriber } from 'svelte/store';
@@ -89,18 +88,14 @@
 				<div class="post-left">
 					<PostBody />
 				</div>
-
-				<div class="post-right">
-					<PostSidebar />
-				</div>
 			</div>
 		</div>
 	{/if}
 </div>
 
-<style lang="scss">
+<style>
 	#post-view {
-		background-color: var(--background);
+		background-color: white;
 		height: 100vh;
 		overflow: auto;
 	}
@@ -109,7 +104,6 @@
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
-		padding: 0 15px;
 	}
 
 	.full-loader {
@@ -143,16 +137,6 @@
 		flex: 1;
 	}
 
-	.post-right {
-		margin-left: 15px;
-		height: calc(100vh - 70px);
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		position: sticky;
-		top: 55px;
-	}
-
 	@media (max-width: 992px) {
 		.top-bar-wrap {
 			width: 100%;
@@ -163,10 +147,6 @@
 			padding: 0 15px;
 			flex-direction: column;
 			margin-top: 15px;
-		}
-		.post-right {
-			margin-left: 0;
-			width: 100%;
 		}
 		.post-left {
 			width: 100%;

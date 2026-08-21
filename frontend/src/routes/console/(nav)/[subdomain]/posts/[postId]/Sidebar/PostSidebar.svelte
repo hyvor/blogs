@@ -1,116 +1,170 @@
 <script lang="ts">
-	import Links from './Links/Links.svelte';
-	import { TabNav, TabNavItem } from '@hyvor/design/components';
+	import { Dropdown } from '@hyvor/design/components';
 	import IconGear from '@hyvor/icons/IconGear';
 	import IconLink45deg from '@hyvor/icons/IconLink45deg';
-	import IconMagic from '@hyvor/icons/IconMagic';
 	import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
 
 	import Settings from './Settings/Settings.svelte';
-	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
 	import Seo from './Seo/Seo.svelte';
-	import { variantSeoStore } from '../../seoStore';
 	import Ai from './Ai/Ai.svelte';
-	import { tab } from './sidebar';
+	import Links from './Links/Links.svelte';
 	import LinksSidebarTag from './Links/LinksSidebarTag.svelte';
+	import IconRobot from '@hyvor/icons/IconRobot';
+	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
+	import { variantSeoStore } from '../../seoStore';
+
+	type Section = 'settings' | 'seo' | 'links' | 'ai';
+
+	let openSection: Section | null = $state(null);
 </script>
 
-<div class="post-sidebar">
-	<div class="body hds-box">
-		<div class="nav">
-			<TabNav>
-				<TabNavItem
-					name="settings"
-					active={$tab === 'settings'}
-					onclick={() => ($tab = 'settings')}
-				>
-					{#snippet start()}
-						<IconGear />
-					{/snippet}
-					Settings
-				</TabNavItem>
+<div class="post-sections">
+	<Dropdown
+		align="center"
+		width={380}
+		contentPadding={0}
+		bind:show={() => openSection === 'settings', (v) => (openSection = v ? 'settings' : null)}
+	>
+		{#snippet trigger()}
+			<button class:active={openSection === 'settings'}>
+				<IconGear size={14} />
+				Settings
+			</button>
+		{/snippet}
 
-				<TabNavItem name="seo" active={$tab === 'seo'} onclick={() => ($tab = 'seo')}>
-					{#snippet start()}
-						<IconSearchHeart />
-					{/snippet}
-					SEO
-					{#snippet end()}
-						<SeoScoreTag score={$variantSeoStore.average} percentage />
-					{/snippet}
-				</TabNavItem>
+		{#snippet content()}
+			<div class="section-popover">
+				<span class="pointer"></span>
+				<div class="section-body">
+					<Settings />
+				</div>
+			</div>
+		{/snippet}
+	</Dropdown>
 
-				<TabNavItem name="links" active={$tab === 'links'} onclick={() => ($tab = 'links')}>
-					{#snippet start()}
-						<IconLink45deg />
-					{/snippet}
-					Links
-					{#snippet end()}
-						<LinksSidebarTag />
-					{/snippet}
-				</TabNavItem>
+	<Dropdown
+		align="center"
+		width={340}
+		contentPadding={0}
+		bind:show={() => openSection === 'seo', (v) => (openSection = v ? 'seo' : null)}
+	>
+		{#snippet trigger()}
+			<button class:active={openSection === 'seo'}>
+				<IconSearchHeart size={14} />
+				SEO
+				<SeoScoreTag score={$variantSeoStore.average} percentage />
+			</button>
+		{/snippet}
 
-				<TabNavItem name="ai" active={$tab === 'ai'} onclick={() => ($tab = 'ai')}>
-					{#snippet start()}
-						<IconMagic />
-					{/snippet}
-					AI Agent
-				</TabNavItem>
-			</TabNav>
-		</div>
+		{#snippet content()}
+			<div class="section-popover">
+				<span class="pointer"></span>
+				<div class="section-body">
+					<Seo />
+				</div>
+			</div>
+		{/snippet}
+	</Dropdown>
 
-		<div class="content" class:content-flush={$tab === 'ai'}>
-			{#if $tab === 'settings'}
-				<Settings />
-			{:else if $tab === 'seo'}
-				<Seo />
-			{:else if $tab === 'links'}
-				<Links />
-			{:else if $tab === 'ai'}
-				<Ai />
-			{/if}
-		</div>
-	</div>
+	<Dropdown
+		align="center"
+		width={340}
+		contentPadding={0}
+		bind:show={() => openSection === 'links', (v) => (openSection = v ? 'links' : null)}
+	>
+		{#snippet trigger()}
+			<button class:active={openSection === 'links'}>
+				<IconLink45deg size={14} />
+				Links
+			</button>
+		{/snippet}
+
+		{#snippet content()}
+			<div class="section-popover">
+				<span class="pointer"></span>
+				<div class="section-body">
+					<Links />
+				</div>
+			</div>
+		{/snippet}
+	</Dropdown>
+
+	<Dropdown
+		align="center"
+		width={420}
+		contentPadding={0}
+		bind:show={() => openSection === 'ai', (v) => (openSection = v ? 'ai' : null)}
+	>
+		{#snippet trigger()}
+			<button class:active={openSection === 'ai'}>
+				<IconRobot size={14} />
+				AI Agent
+			</button>
+		{/snippet}
+
+		{#snippet content()}
+			<div class="section-popover">
+				<span class="pointer"></span>
+				<div class="section-body flush">
+					<Ai />
+				</div>
+			</div>
+		{/snippet}
+	</Dropdown>
 </div>
 
 <style>
-	.post-sidebar {
-		height: 100%;
+	.post-sections {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		gap: 15px;
 	}
 
-	.body {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		min-height: 0;
+	.section-popover {
+		position: relative;
 	}
 
-	.nav {
-		padding: 15px 25px 0px;
+	.pointer {
+		position: absolute;
+		top: -6px;
+		left: 50%;
+		width: 12px;
+		height: 12px;
+		transform: translateX(-50%) rotate(45deg);
+		background-color: var(--box-background);
+		box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.04);
+		border-radius: 2px;
+	}
+
+	.section-body {
+		max-height: 70vh;
 		overflow: auto;
+		padding: 15px 20px;
 		font-size: 14px;
 	}
 
-	.content {
-		padding: 15px 25px;
-		flex: 1;
-		min-height: 0;
-		overflow: auto;
-	}
-
-	.content-flush {
+	.section-body.flush {
+		height: 520px;
+		max-height: 75vh;
 		padding: 0;
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 	}
 
-	@media (max-width: 992px) {
-		.post-sidebar {
-			width: 100%;
-			margin-top: 20px;
-		}
+	button {
+		font-size: 14px;
+		display: inline-flex;
+		gap: 4px;
+		align-items: center;
+		transition: color 0.2s ease;
+	}
+
+	button:hover {
+		color: var(--accent);
+	}
+
+	button.active {
+		color: var(--accent);
 	}
 </style>

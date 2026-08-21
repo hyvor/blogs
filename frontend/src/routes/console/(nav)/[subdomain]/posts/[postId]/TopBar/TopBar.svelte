@@ -6,6 +6,7 @@
 	import UnpublishButton from '../Sidebar/Top/UnpublishButton.svelte';
 	import PublishButton from '../Sidebar/Top/PublishButton.svelte';
 	import UpdateButton from '../Sidebar/Top/PublishedUpdate/UpdateButton.svelte';
+	import PostSidebar from '../Sidebar/PostSidebar.svelte';
 	import PostLanguage from './PostLanguage.svelte';
 	import CaretLeft from './CaretLeft.svelte';
 	import { goto } from '$app/navigation';
@@ -20,7 +21,7 @@
 	}
 </script>
 
-<div class="post-top-bar hds-box">
+<div class="post-top-bar">
 	<button class="back-button" onclick={handleBack}>
 		<CaretLeft />
 		Back
@@ -28,6 +29,10 @@
 
 	<div class="left">
 		<PostLanguage />
+	</div>
+
+	<div class="sections">
+		<PostSidebar />
 	</div>
 
 	<div class="right">
@@ -45,6 +50,7 @@
 		height: 42px;
 		border-top-left-radius: 0;
 		border-top-right-radius: 0;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.back-button {
@@ -69,10 +75,25 @@
 	}
 
 	.left,
-	.right {
+	.right,
+	.sections {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+
+	.left {
+		flex: 1;
+	}
+
+	.sections {
+		flex: 3;
+		justify-content: center;
+	}
+
+	.right {
+		flex: 1;
+		justify-content: flex-end;
 	}
 
 	.right {
