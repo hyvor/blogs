@@ -24,3 +24,27 @@ export const LANGUAGES_CONFIG = [
 		strings: fr
 	}
 ];
+
+export const DEFAULT_MARKETING_LANGUAGE = 'en';
+
+export function buildMarketingUrl(path: string, currentLang: string, otherLang: string) {
+	console.log(path, currentLang, otherLang);
+	let basePath = path;
+
+	// strip the current language prefix, if any, to get the language-agnostic path
+	if (currentLang !== DEFAULT_MARKETING_LANGUAGE) {
+		const prefix = `/${currentLang}`;
+		if (basePath === prefix) {
+			basePath = '/';
+		} else if (basePath.startsWith(`${prefix}/`)) {
+			basePath = basePath.slice(prefix.length);
+		}
+	}
+
+	// the default language is served without a prefix
+	if (otherLang === DEFAULT_MARKETING_LANGUAGE) {
+		return basePath === '/' ? '' : basePath;
+	}
+
+	return basePath === '/' ? `/${otherLang}` : `/${otherLang}${basePath}`;
+}

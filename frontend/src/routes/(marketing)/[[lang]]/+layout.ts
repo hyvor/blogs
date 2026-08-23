@@ -1,8 +1,8 @@
-import { LANGUAGES_CONFIG } from './marketingLang';
+import { DEFAULT_MARKETING_LANGUAGE, LANGUAGES_CONFIG } from './marketingLang';
 import { error } from '@sveltejs/kit';
 
 export function load({ params }: { params: { lang: string } }) {
-	const lang = params.lang || 'en';
+	const lang = params.lang || DEFAULT_MARKETING_LANGUAGE;
 	const languageConfig = LANGUAGES_CONFIG.find((config) => config.code === lang);
 
 	if (!languageConfig) {
@@ -10,6 +10,7 @@ export function load({ params }: { params: { lang: string } }) {
 	}
 
 	return {
-		lang: languageConfig.code
+		lang: languageConfig.code,
+		languageCodes: LANGUAGES_CONFIG.map((config) => config.code)
 	};
 }
