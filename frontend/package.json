@@ -13,13 +13,16 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"postbuild": "npx svelte-sitemap --domain https://blogs.hyvor.com -i '200.html'"
+		"postbuild": "npx svelte-sitemap --domain https://blogs.hyvor.com -i '200.html'",
+		"translate": "tsx src/translate.ts"
 	},
 	"devDependencies": {
+		"@anthropic-ai/sdk": "^0.120.0",
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.50.2",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@types/node": "^22.20.1",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"eslint": "^8.28.0",
@@ -34,6 +37,7 @@
 		"svelte-dnd-action": "^0.9.37",
 		"svelte-sitemap": "^2.6.0",
 		"tslib": "^2.4.1",
+		"tsx": "^4.23.12",
 		"typescript": "^5.9.3",
 		"vite": "^7.3",
 		"vitest": "^1.6"
