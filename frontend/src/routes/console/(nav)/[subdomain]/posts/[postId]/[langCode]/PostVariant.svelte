@@ -98,6 +98,7 @@
 		background-color: white;
 		height: 100vh;
 		overflow: auto;
+		--text-faded: #343434;
 	}
 
 	.container {

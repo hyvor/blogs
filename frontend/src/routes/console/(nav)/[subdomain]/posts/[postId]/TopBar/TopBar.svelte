@@ -87,6 +87,7 @@
 
 	.sections {
 		flex: 3;
+		height: 100%;
 		justify-content: center;
 	}
 

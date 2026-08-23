@@ -74,6 +74,7 @@
 	}
 	#post-body :global(.ProseMirror) {
 		width: 760px !important;
+		color: var(--text-faded);
 	}
 	.top {
 		border-radius: 20px 20px 0 0;

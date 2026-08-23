@@ -121,6 +121,8 @@
 		overflow: hidden;
 		position: relative;
 		padding-block: 15px;
+		color: var(--text-faded);
+		line-height: 1.5;
 		/**
 		* reduce width of textarea (700px)
 		*/

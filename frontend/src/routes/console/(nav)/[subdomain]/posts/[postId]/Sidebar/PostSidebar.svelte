@@ -1,6 +1,10 @@
 <script lang="ts">
-	import { clickOutside } from '@hyvor/design/components';
+	import IconGear from '@hyvor/icons/IconGear';
+	import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
+	import IconLink45deg from '@hyvor/icons/IconLink45deg';
+	import IconRobot from '@hyvor/icons/IconRobot';
 
+	import Popover from './Popover.svelte';
 	import Settings from './Settings/Settings.svelte';
 	import Seo from './Seo/Seo.svelte';
 	import Ai from './Ai/Ai.svelte';
@@ -12,143 +16,91 @@
 	type Section = 'settings' | 'seo' | 'links' | 'ai';
 
 	let openSection: Section | null = $state(null);
-
-	function toggle(section: Section) {
-		openSection = openSection === section ? null : section;
-	}
-
-	function closeIfOpen(section: Section) {
-		if (openSection === section) {
-			openSection = null;
-		}
-	}
 </script>
 
 <div class="post-sections">
-	<div class="section">
-		<button class:active={openSection === 'settings'} onclick={() => toggle('settings')}>
+	<Popover
+		bind:show={
+			() => openSection === 'settings',
+			(v) => (openSection = v ? 'settings' : null)
+		}
+	>
+		{#snippet trigger()}
+			<IconGear size={13} class="icon" />
 			Settings
-		</button>
+		{/snippet}
 
-		{#if openSection === 'settings'}
-			<div class="popover" use:clickOutside={{ callback: () => closeIfOpen('settings') }}>
-				<span class="pointer"></span>
-				<div class="popover-body">
-					<Settings />
-				</div>
-			</div>
-		{/if}
-	</div>
+		<Settings />
+	</Popover>
 
-	<div class="section">
-		<button class:active={openSection === 'seo'} onclick={() => toggle('seo')}>
+	<span class="divider"></span>
+
+	<Popover
+		bind:show={
+			() => openSection === 'seo',
+			(v) => (openSection = v ? 'seo' : null)
+		}
+	>
+		{#snippet trigger()}
+			<IconSearchHeart size={13} class="icon" />
 			SEO
 			<SeoScoreTag score={$variantSeoStore.average} percentage />
-		</button>
+		{/snippet}
 
-		{#if openSection === 'seo'}
-			<div class="popover" use:clickOutside={{ callback: () => closeIfOpen('seo') }}>
-				<span class="pointer"></span>
-				<div class="popover-body">
-					<Seo />
-				</div>
-			</div>
-		{/if}
-	</div>
+		<Seo />
+	</Popover>
 
-	<div class="section">
-		<button class:active={openSection === 'links'} onclick={() => toggle('links')}>
+	<span class="divider"></span>
+
+	<Popover
+		bind:show={
+			() => openSection === 'links',
+			(v) => (openSection = v ? 'links' : null)
+		}
+	>
+		{#snippet trigger()}
+			<IconLink45deg size={13} class="icon" />
 			Links
 			<LinksSidebarTag />
-		</button>
+		{/snippet}
 
-		{#if openSection === 'links'}
-			<div class="popover" use:clickOutside={{ callback: () => closeIfOpen('links') }}>
-				<span class="pointer"></span>
-				<div class="popover-body">
-					<Links />
-				</div>
-			</div>
-		{/if}
-	</div>
+		<Links />
+	</Popover>
 
-	<div class="section">
-		<button class:active={openSection === 'ai'} onclick={() => toggle('ai')}> AI Agent </button>
+	<span class="divider"></span>
 
-		{#if openSection === 'ai'}
-			<div class="popover" use:clickOutside={{ callback: () => closeIfOpen('ai') }}>
-				<span class="pointer"></span>
-				<div class="popover-body flush">
-					<Ai />
-				</div>
-			</div>
-		{/if}
-	</div>
+	<Popover
+		flush
+		bind:show={
+			() => openSection === 'ai',
+			(v) => (openSection = v ? 'ai' : null)
+		}
+	>
+		{#snippet trigger()}
+			<IconRobot size={13} class="icon" />
+			AI Agent
+		{/snippet}
+
+		<Ai />
+	</Popover>
 </div>
 
 <style>
 	.post-sections {
-		width: 760px;
+		height: 100%;
 		display: flex;
 		align-items: center;
-		justify-content: space-around;
-	}
-
-	.section {
-		position: relative;
-	}
-
-	button {
-		font-size: 14px;
-		display: inline-flex;
 		gap: 4px;
-		align-items: center;
-		transition: color 0.2s ease;
 	}
 
-	button:hover {
-		color: var(--accent);
+	.divider {
+		width: 1px;
+		height: 16px;
+		background-color: var(--border);
 	}
 
-	button.active {
-		color: var(--accent);
-	}
-
-	.popover {
-		position: absolute;
-		top: calc(100% + 10px);
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 1000;
-	}
-
-	.pointer {
-		position: absolute;
-		top: -6px;
-		left: 50%;
-		width: 12px;
-		height: 12px;
-		transform: translateX(-50%) rotate(45deg);
-		background-color: var(--box-background);
-		box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.04);
-		border-radius: 2px;
-	}
-
-	.popover-body {
-		width: 450px;
-		height: 600px;
-		overflow-y: auto;
-		padding: 15px 20px;
-		font-size: 14px;
-		background-color: var(--box-background);
-		border-radius: var(--box-radius);
-		box-shadow: var(--box-shadow);
-	}
-
-	.popover-body.flush {
-		padding: 0;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
+	:global(.icon) {
+		opacity: 0.5;
+		flex-shrink: 0;
 	}
 </style>
