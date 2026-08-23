@@ -1,7 +1,7 @@
 <script lang="ts">
-	import FullTrialSignup from './../@components/FullTrialSignup.svelte';
-	import FeatureSectionTitle from '../@homepage/FeatureSectionTitle.svelte';
-	import Faqs from '../@components/Faqs.svelte';
+	import FullTrialSignup from '../../@components/FullTrialSignup.svelte';
+	import FeatureSectionTitle from '../../@homepage/FeatureSectionTitle.svelte';
+	import Faqs from '../../@components/Faqs.svelte';
 	import PricingPlans from './PricingPlans.svelte';
 	import Features from './Features.svelte';
 	import SelfHost from './SelfHost.svelte';
