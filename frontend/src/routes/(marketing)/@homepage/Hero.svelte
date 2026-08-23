@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 </script>
 
 <section class="hero">
@@ -18,13 +21,31 @@
 			<!-- <div class="badge">Open-source</div> -->
 
 			<h1 class="anim anim-1">
-				You Publish.<br /><span class="heading-small">(We'll handle the rest)</span>
+				{I18n.t('homepage.hero.title')}<br /><span class="heading-small"
+					>({I18n.t('homepage.hero.title2')})</span
+				>
 			</h1>
 
 			<h2 class="subtitle anim anim-2">
-				Hyvor Blogs is our <span class="marker">blogging platform</span>. It's
-				<span class="hl">fast</span>, <span class="hl">simple</span>, and
-				<span class="hl">open-source</span>!
+				<I18n.T
+					key="homepage.hero.subtitle"
+					params={{
+						marker: {
+							element: 'span',
+							props: { class: 'marker' }
+						}
+					}}
+				/>
+				<br />
+				<I18n.T
+					key="homepage.hero.subtitle2"
+					params={{
+						hl: {
+							element: 'span',
+							props: { class: 'hl' }
+						}
+					}}
+				/>
 			</h2>
 
 			<div class="buttons anim anim-3">
@@ -126,15 +147,15 @@
 		   inflate the flex column's min-content sizing on mobile (percentages
 		   can't resolve during that pass), pushing the whole hero out wide and
 		   getting clipped by .hero's overflow:hidden */
-		max-width: 480px;
+		max-width: 580px;
 	}
 
-	.hl {
+	.hero :global(.hl) {
 		color: var(--accent);
 		font-weight: 700;
 	}
 
-	.marker {
+	.hero :global(.marker) {
 		position: relative;
 		font-weight: 700;
 		background-image: linear-gradient(
