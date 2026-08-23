@@ -6,11 +6,14 @@
 	import Enterprise from '../@homepage/Enterprise.svelte';
 	import AllFeatures from '../@homepage/AllFeatures/AllFeatures.svelte';
 	import FullTrialSignup from '../@components/FullTrialSignup.svelte';
+	import { getMarketingI18n } from './marketingLang';
+
+	const I18n = getMarketingI18n();
 </script>
 
 <svelte:head>
-	<title>{MARKETING_PAGE_META.title}</title>
-	<meta name="description" content={MARKETING_PAGE_META.description} />
+	<title>{I18n.t('seo.title')}</title>
+	<meta name="description" content={I18n.t('seo.description')} />
 </svelte:head>
 
 <Hero />
