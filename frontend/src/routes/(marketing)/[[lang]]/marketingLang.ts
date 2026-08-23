@@ -12,7 +12,7 @@ export function getMarketingI18n() {
 export const LANGUAGES_CONFIG = [
 	{
 		code: 'en',
-		flag: '🇺🇸',
+		flag: '🇬🇧',
 		name: 'English',
 		strings: en,
 		default: true

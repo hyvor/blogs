@@ -7,10 +7,17 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import IconList from '@hyvor/icons/IconList';
 	import IconX from '@hyvor/icons/IconX';
+	import { LANGUAGES_CONFIG, buildMarketingUrl } from './[[lang]]/marketingLang';
 
 	let resourcesDropdown = $state(false);
+	let langDropdown = $state(false);
 	let mobileOpen = $state(false);
 	let scrolled = $state(false);
+
+	const currentLang = $derived(
+		LANGUAGES_CONFIG.find((lang) => lang.code === $page.url.pathname.split('/')[1]) ??
+			LANGUAGES_CONFIG.find((lang) => lang.default)!
+	);
 
 	onMount(() => {
 		const onScroll = () => (scrolled = window.scrollY > 8);
@@ -46,11 +53,15 @@
 			<a class="nav-link" href="/docs" class:active={$page.url.pathname.startsWith('/docs')}>
 				Docs
 			</a>
-			<a class="nav-link" href="/hosting" class:active={$page.url.pathname.startsWith('/hosting')}>
+			<a
+				class="nav-link"
+				href="/hosting"
+				class:active={$page.url.pathname.startsWith('/hosting')}
+			>
 				Hosting
 			</a>
 
-			<Dropdown bind:show={resourcesDropdown} contentPadding={8}>
+			<Dropdown bind:show={resourcesDropdown} align="center" contentPadding={8}>
 				{#snippet trigger()}
 					<span class="nav-link nav-trigger" class:active={isThemesOrIntegrations}>
 						Resources
@@ -63,7 +74,11 @@
 						class="dropdown-menu"
 						onclick={(e) => closeOnLinkClick(e, () => (resourcesDropdown = false))}
 					>
-						<a href="/themes" class="dropdown-link" class:active={$page.url.pathname === '/themes'}>
+						<a
+							href="/themes"
+							class="dropdown-link"
+							class:active={$page.url.pathname === '/themes'}
+						>
 							Themes
 						</a>
 						<a
@@ -82,6 +97,39 @@
 				Github
 				<IconBoxArrowUpRight size={11} />
 			</a>
+
+			<div class="lang-toggle">
+				<Dropdown bind:show={langDropdown} align="center" contentPadding={8}>
+					{#snippet trigger()}
+						<span class="nav-link nav-trigger" aria-label="Change language">
+							<span class="lang-flag">{currentLang.flag}</span>
+						</span>
+					{/snippet}
+					{#snippet content()}
+						<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+						<div
+							class="dropdown-menu"
+							onclick={(e) => closeOnLinkClick(e, () => (langDropdown = false))}
+						>
+							{#each LANGUAGES_CONFIG as lang (lang.code)}
+								<a
+									class="dropdown-link lang-link"
+									class:active={lang.code === currentLang.code}
+									href={buildMarketingUrl(
+										$page.url.pathname,
+										currentLang.code,
+										lang.code
+									) || '/'}
+								>
+									<span class="lang-flag">{lang.flag}</span>
+									{lang.name}
+									<span class="lang-item-code">{lang.code.toUpperCase()}</span>
+								</a>
+							{/each}
+						</div>
+					{/snippet}
+				</Dropdown>
+			</div>
 		</nav>
 
 		<div class="end">
@@ -110,7 +158,11 @@
 						<a class="dropdown-link" href="/hosting">Hosting</a>
 						<a class="dropdown-link" href="/themes">Themes</a>
 						<a class="dropdown-link" href="/integrations">Integrations</a>
-						<a class="dropdown-link" href="https://github.com/hyvor/blogs" target="_blank">
+						<a
+							class="dropdown-link"
+							href="https://github.com/hyvor/blogs"
+							target="_blank"
+						>
 							Github
 						</a>
 						<div class="mobile-divider"></div>
@@ -172,6 +224,43 @@
 
 	.brand img {
 		display: block;
+	}
+
+	.lang-toggle {
+		position: relative;
+		margin-left: 12px;
+		padding-left: 12px;
+	}
+
+	/* a shorter divider than a full-height border-left — centered on the toggle */
+	.lang-toggle::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 1px;
+		height: 16px;
+		background: var(--border);
+	}
+
+	.lang-flag {
+		font-size: 18px;
+		line-height: 1;
+	}
+
+	.lang-link {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.lang-item-code {
+		margin-left: auto;
+		padding-left: 8px;
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--text-light);
 	}
 
 	.center {
