@@ -4,7 +4,7 @@
 
 	import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from '@hyvor/design/marketing';
-	import DnsInstructions from '../../../../../console/(nav)/[subdomain]/settings/hosting/DnsInstructions.svelte';
+	import DnsInstructions from '../../../../../../console/(nav)/[subdomain]/settings/hosting/DnsInstructions.svelte';
 </script>
 
 <h1>Custom Domain</h1>
