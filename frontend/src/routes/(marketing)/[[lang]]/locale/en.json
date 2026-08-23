@@ -1,4 +1,8 @@
 {
+	"seo": {
+		"title": "Hyvor Blogs - Open-source Blogging Platform. Fast & Simple.",
+		"description": "The blogging platform built for speed and simplicity. Write in a clean editor, publish on your own domain, and get SEO, themes, and APIs - all open-source."
+	},
 	"homepage": {
 		"hero": {
 			"title": "You Publish.",

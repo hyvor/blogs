@@ -97,10 +97,7 @@
 </script>
 
 <svelte:head>
-	<meta property="og:title" content={MARKETING_PAGE_META.title} />
-	<meta property="og:description" content={MARKETING_PAGE_META.description} />
 	<meta property="og:image" content={MARKETING_PAGE_META.ogImage} />
-
 	<meta property="og:url" content={MARKETING_PAGE_META.urlBasePath + pathname} />
 	<link rel="canonical" href={MARKETING_PAGE_META.urlBasePath + pathname} />
 

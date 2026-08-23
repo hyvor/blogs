@@ -40,7 +40,6 @@
 
 <svelte:head>
 	<title>Pricing - Hyvor Blogs</title>
-	<link rel="canonical" href="https://blogs.hyvor.com/pricing" />
 </svelte:head>
 
 <PricingPlans />
