@@ -10,9 +10,10 @@
 
 Hyvor Blogs is designed to be self-hosted by developers and organizations.
 
-- **Open-source**: Fully open-source codebase available on [Github](https://github.com/hyvor/blogs).
 - **Minimal dependencies**: only Docker, PostgreSQL, and an OIDC provider.
+- **Open-source**: AGPLv3 codebase available on [Github](https://github.com/hyvor/blogs).
 - **Multi-tenant**: Run multiple blogs on a single instance.
+- **Single sign-on**: OIDC-based authentication by default
 
 ## Self-hosting vs. Cloud
 
@@ -59,15 +60,38 @@ A few comparisons with other blogging platforms:
 - Hyvor Blogs is not a text-based blog engine like **Hugo** or **Jekyll**. It focuses on rich-editor based content writing with a simple and intuitive interface.
 - Hyvor Blogs provides headless CMS features (e.g. Data API), but has a narrow focus on blogging than **Strapi**, **Payload CMS**, and other general-purpose headless CMS platforms.
 
-## License
+## License & Pricing
 
-Hyvor Blogs is licensed under the AGPL-3.0 License.
+We offer three licensing options for self-hosting Hyvor Blogs:
+
+- **Open-Source**:
+  - Free, AGPLv3 license
+  - Community support
+  - Basic features, including rich editor, media, tags, authors, and more.
+  - Team collaboration
+  - Multi-language support
+  - Custom themes support
+  - In-built SEO features
+  - Custom domain and TLS support
+  - Console API, Data API, Delivery API, and Webhooks
+  - AI agent and translations
+  - Broken link detection
+- **Enterprise Unicorn** (soon):
+  - €5/user/month (billed annually), minimum 10 users
+  - Everything in Open-Source, plus:
+  - Email support from HYVOR
+  - Audit logs
+  - Custom roles and permissions
+  - Custom approval workflows
+- **Enterprise Apex** (soon):
+  - Contact us for pricing
+  - Everything in Enterprise Unicorn, plus:
+  - Priority support with SLA
+  - Invoicing
 
 ## Support
 
-- [Github Repository](https://github.com/hyvor/blogs) - issues, feature requests
+- [Github Repository](https://github.com/hyvor/blogs) for issues, feature requests
 - [Community Support](https://hyvor.community)
-
-We also offer [enterprise licenses](https://hyvor.com/enterprise) for organizations that require a commercial license, priority support, or do not wish to comply with the AGPLv3 terms. Both licenses include the same product features. See HYVOR's [Self-Hosting License FAQ](https://hyvor.com/docs/hosting-license) for more information.
 
 See the [Deploy](/hosting/deploy) page for step-by-step instructions.
