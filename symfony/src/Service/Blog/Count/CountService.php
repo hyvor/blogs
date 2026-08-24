@@ -60,9 +60,7 @@ class CountService
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
 
-        $published = $this->countVariantsByStatus($blog, $language, PostVariantStatus::PUBLISHED);
-        $draft = $this->countVariantsByStatus($blog, $language, PostVariantStatus::DRAFT);
-        $scheduled = $this->countVariantsByStatus($blog, $language, PostVariantStatus::SCHEDULED);
+        $statusCounts = $this->countVariantsByStatus($blog, $language);
 
         $featured = (int) $this->em->createQueryBuilder()
             ->select('COUNT(p.id)')
@@ -75,28 +73,40 @@ class CountService
             ->getSingleScalarResult();
 
         $this->mergeCounts($blog, [
-            'posts' => $published,
-            'posts_draft' => $draft,
-            'posts_scheduled' => $scheduled,
+            'posts' => $statusCounts[PostVariantStatus::PUBLISHED->value],
+            'posts_draft' => $statusCounts[PostVariantStatus::DRAFT->value],
+            'posts_scheduled' => $statusCounts[PostVariantStatus::SCHEDULED->value],
             'posts_featured' => $featured,
         ]);
     }
 
-    private function countVariantsByStatus(Blog $blog, Language $language, PostVariantStatus $status): int
+    /**
+     * @return array<string, int> keyed by PostVariantStatus value, always containing every status
+     */
+    private function countVariantsByStatus(Blog $blog, Language $language): array
     {
-        return (int) $this->em->createQueryBuilder()
-            ->select('COUNT(pv.id)')
+        $counts = array_fill_keys(array_map(fn(PostVariantStatus $status) => $status->value, PostVariantStatus::cases()), 0);
+
+        /** @var list<array{status: PostVariantStatus|string, count: int|string}> $rows */
+        $rows = $this->em->createQueryBuilder()
+            ->select('pv.status AS status', 'COUNT(pv.id) AS count')
             ->from(PostVariant::class, 'pv')
             ->join('pv.post', 'p')
             ->where('pv.language = :language')
             ->andWhere('p.blog = :blog')
             ->andWhere('p.is_page = false')
-            ->andWhere('pv.status = :status')
+            ->groupBy('pv.status')
             ->setParameter('language', $language)
             ->setParameter('blog', $blog)
-            ->setParameter('status', $status)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getResult();
+
+        foreach ($rows as $row) {
+            $status = $row['status'] instanceof PostVariantStatus ? $row['status']->value : $row['status'];
+            $counts[$status] = (int) $row['count'];
+        }
+
+        return $counts;
     }
 
     // this might not the most performant for large blogs
