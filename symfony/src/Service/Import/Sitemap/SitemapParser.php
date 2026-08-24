@@ -3,7 +3,6 @@
 namespace App\Service\Import\Sitemap;
 
 use App\Entity\Blog;
-use App\Service\App\HttpBot;
 use App\Service\AppConfig;
 use App\Service\Import\Importer\ImportingPost;
 use App\Service\Import\Importer\ImportingPostVariant;

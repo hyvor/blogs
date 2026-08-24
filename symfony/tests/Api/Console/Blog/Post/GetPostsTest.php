@@ -3,8 +3,8 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
-use App\Api\Console\Object\PostListObject;
-use App\Api\Console\Object\PostListObjectFactory;
+use App\Api\Console\Object\PostList\PostListObject;
+use App\Api\Console\Object\PostList\PostListObjectFactory;
 use App\Api\Console\Object\PostVariantStatusObject;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserStatus;

@@ -17,7 +17,7 @@ use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Post\UpdatePostInput;
 use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
-use App\Api\Console\Object\PostListObjectFactory;
+use App\Api\Console\Object\PostList\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Console\Object;
+namespace App\Api\Console\Object\PostList;
 
 use App\Entity\Language;
 use App\Entity\Post;

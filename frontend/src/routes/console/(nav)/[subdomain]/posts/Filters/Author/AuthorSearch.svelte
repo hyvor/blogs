@@ -78,12 +78,13 @@
 		<IconMessage empty padding={35} message="No authors found" iconSize={30} />
 	{:else}
 		{#each users as user (user.id)}
+			{@const username = user.variants[0]?.name || ''}
 			<ActionListItem
 				on:click={() => handleSelect(user)}
 				selected={$postListFiltersStore.author?.id === user.id}
 			>
 				{#snippet start()}
-					<Avatar src={user.picture_url} alt={user.variants[0]?.name || 'Unnamed'} size={20} />
+					<Avatar src={user.picture_url} alt={username} {username} size={20} />
 				{/snippet}
 				<span class="text">
 					{user.variants[0]?.name || 'Unnamed'}

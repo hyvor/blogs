@@ -4,6 +4,7 @@ namespace App\MessageHandler;
 
 use App\Entity\Import;
 use App\Message\ImportMessage;
+use App\Service\AppConfig;
 use App\Service\Import\ImportException;
 use App\Service\Import\Importer\Importer;
 use App\Service\Import\Importer\ParserException;
@@ -36,6 +37,7 @@ class ImportMessageHandler
         private PermalinkService $permalinkService,
         private PostContentService $postContentService,
         private HttpClientInterface $httpClient,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -53,6 +55,7 @@ class ImportMessageHandler
             PageScraperOptions::fromArray($message->scraperOptions),
             $this->httpClient,
             $this->postContentService,
+            $this->appConfig
         );
 
         $importer = new Importer(

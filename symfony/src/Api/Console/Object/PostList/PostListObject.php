@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Api\Console\Object;
+namespace App\Api\Console\Object\PostList;
 
+use App\Api\Console\Object\PostVariantStatusObject;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\Tag;
-use App\Entity\TagVariant;
 use App\Entity\User;
 use App\Entity\UserVariant;
 use App\Service\Route\PermalinkService;
@@ -31,9 +31,14 @@ class PostListObject
     /** @var PostVariantStatusObject[] */
     public array $variant_statuses;
 
-    /** @var string[] */
+    /**
+     * @var array<array{name: string, is_private: bool}>
+     */
     public array $tags;
-    /** @var string[] */
+
+    /**
+     * @var array<array{name: string, picture_url: ?string}>
+     */
     public array $authors;
 
     public function __construct(
@@ -68,17 +73,23 @@ class PostListObject
         $this->variant_statuses = array_map(fn($v) => new PostVariantStatusObject($v), $variants);
 
         $this->tags = array_map(
-            fn(Tag $tag) => self::primaryVariantName($tag->getVariants()->toArray()),
+            fn(Tag $tag) => [
+                'name' => self::primaryVariantName($tag->getVariants()->toArray()),
+                'is_private' => $tag->isPrivate(),
+            ],
             $post->getTags()->toArray(),
         );
         $this->authors = array_map(
-            fn(User $user) => self::primaryVariantName($user->getVariants()->toArray()),
+            fn(User $user) => [
+                'name' => self::primaryVariantName($user->getVariants()->toArray()),
+                'picture_url' => $user->getPictureUrl(),
+            ],
             $post->getAuthors()->toArray(),
         );
     }
 
     /**
-     * @param array<int, TagVariant|UserVariant> $variants
+     * @param UserVariant $variants
      */
     private static function primaryVariantName(array $variants): string
     {

@@ -8,7 +8,8 @@
 		IconButton,
 		Tag,
 		toast,
-		confirm
+		confirm,
+		Avatar
 	} from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
@@ -53,7 +54,7 @@
 		clonePost(post.id)
 			.then((clonedPost) => {
 				toast.success('Post cloned successfully', { id: toastId });
-				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}`));
+				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}/${primaryLanguage.code}`));
 			})
 			.catch((error) => {
 				toast.error(error.message || 'Failed to clone post', { id: toastId });
@@ -77,25 +78,25 @@
 				`Are you sure you want to delete this ${post.is_page ? 'page' : 'post'}? ` +
 				'This action is IRREVERSIBLE.',
 			confirmText: 'Yes, Delete',
-			danger: true
+			danger: true,
+			autoClose: false
 		});
 
 		if (!confirmed) return;
-
+		confirmed.loading('Deleting...');
 		isDeleting = true;
-
-		const toastId = toast.loading('Deleting...');
 
 		deletePostById(post.id)
 			.then(() => {
-				toast.success('Deleted', { id: toastId });
 				onDelete?.(post.id);
+				toast.success('Post deleted successfully');
 			})
 			.catch((error) => {
-				toast.error(error.message || 'Failed to delete', { id: toastId });
+				toast.error(error.message || 'Failed to delete');
 			})
 			.finally(() => {
 				isDeleting = false;
+				confirmed.close();
 			});
 	}
 </script>
@@ -104,7 +105,6 @@
 	<div class="post-main">
 		<div class="post-title-row">
 			<div class="post-title">{post.title || '(Untitled)'}</div>
-			<PostStatusTag {status} size="x-small" />
 		</div>
 
 		{#if post.slug && status === 'published'}
@@ -151,17 +151,24 @@
 		</div>
 	</div>
 
+	<div class="post-status">
+		<PostStatusTag {status} size="x-small" />
+	</div>
+
 	<div class="post-authors-tags">
 		{#if !post.is_page}
 			<div class="post-authors">
 				{#each post.authors as author}
-					<Tag size="x-small" style="padding: 4px 8px" bg="#f1f1f1">{author}</Tag>
+					<Tag size="x-small" style="padding: 4px 8px" bg="#f1f1f1">
+						<Avatar size={11} username={author.name} />&nbsp;
+						{author.name}
+					</Tag>
 				{/each}
 			</div>
 
 			<div class="post-tags">
 				{#each post.tags as tag}
-					<Tag size="x-small" bg="#f1f1f1">{tag}</Tag>
+					<Tag size="x-small" bg="#f1f1f1"><span class="hashtag">#</span>{tag.name}</Tag>
 				{/each}
 			</div>
 		{/if}
@@ -216,7 +223,9 @@
 <style lang="scss">
 	.post-list-item {
 		display: grid;
-		grid-template-columns: minmax(280px, 1.8fr) minmax(200px, 1.9fr) 100px 36px;
+		grid-template-columns:
+			minmax(280px, 1.8fr) minmax(100px, 150px) minmax(200px, 1.9fr) minmax(100px, 125px)
+			36px;
 		gap: 14px;
 		padding: 16px 30px;
 		border-bottom: 1px solid #f1f1f1;
@@ -288,6 +297,11 @@
 		flex-direction: column;
 		gap: 6px;
 		min-width: 0;
+	}
+
+	.hashtag {
+		color: color-mix(in srgb, var(--text-light) 60%, transparent 40%);
+		margin-right: 1px;
 	}
 
 	.post-authors,

@@ -241,8 +241,14 @@ export type PostListItem = {
 
 	variant_statuses: PostVariantStatusItem[];
 
-	tags: string[];
-	authors: string[];
+	tags: {
+		name: string,
+		is_private: boolean,
+	}[]
+	authors: {
+		name: string,
+		picture_url: string | null,
+	}[],
 };
 
 export type UserStatus = 'invited' | 'active' | 'blocked';
