@@ -79,7 +79,6 @@ export function updateHostingInfoStore(updates: HostingInfo) {
 	hostingInfoStore.set(updates);
 }
 
-
 // integrations
 export function setHyvorPostIntegrationState(newsletterId: number | null) {
 	integrationsStore.update((integrations) => ({

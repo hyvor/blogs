@@ -115,15 +115,15 @@
 			return false;
 		}
 
-        let blog: BlogList;
+		let blog: BlogList;
 		try {
 			const res = await createBlog(name, subdomain, dev, hyvorTalk, hyvorPost);
 			addToBlogList(res.blog);
-            blog = res.blog;
+			blog = res.blog;
 
-            res.warnings.forEach((warning) => {
-                toast.warning(warning);
-            });
+			res.warnings.forEach((warning) => {
+				toast.warning(warning);
+			});
 		} catch (e: any) {
 			toast.error(e.message);
 			return false;
@@ -152,8 +152,9 @@
 				<div>Development Blog</div>
 			{/snippet}
 			<div>
-				You are creating a development blog, which can only be used for theme development.
-				Click <Link href="/console/new">here</Link> to create a production blog.
+				You are creating a development blog, which can only be used for theme development. Click <Link
+					href="/console/new">here</Link
+				> to create a production blog.
 			</div>
 		</Callout>
 	{/if}

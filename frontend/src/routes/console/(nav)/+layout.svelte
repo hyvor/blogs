@@ -8,9 +8,7 @@
 
 	let { children }: Props = $props();
 
-	const isPostPage = $derived(
-		page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null
-	);
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
 
 	const noContentPadding = $derived(
 		page.url.pathname.match(/^\/console\/[^\/]+\/comments/) != null ||

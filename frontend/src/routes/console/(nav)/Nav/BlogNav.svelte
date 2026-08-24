@@ -93,11 +93,7 @@
 				{/snippet}
 				Comments
 				{#snippet end()}
-					<img
-						alt="Hyvor Talk"
-						class="integration-icon"
-						src="/img/services/hyvor-talk.svg"
-					/>
+					<img alt="Hyvor Talk" class="integration-icon" src="/img/services/hyvor-talk.svg" />
 				{/snippet}
 			</NavLink>
 		{/if}
@@ -112,11 +108,7 @@
 				{/snippet}
 				Newsletter
 				{#snippet end()}
-					<img
-						alt="Hyvor Post"
-						class="integration-icon"
-						src="/img/services/hyvor-post.svg"
-					/>
+					<img alt="Hyvor Post" class="integration-icon" src="/img/services/hyvor-post.svg" />
 				{/snippet}
 			</NavLink>
 		{/if}
