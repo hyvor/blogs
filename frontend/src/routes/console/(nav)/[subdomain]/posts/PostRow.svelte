@@ -226,10 +226,11 @@
 		border-bottom: 1px solid var(--border);
 		position: relative;
 		cursor: pointer;
+		transition: background-color 0.1s;
 	}
 
 	.post-list-item:hover {
-		background: var(--hover);
+		background-color: var(--hover);
 	}
 
 	.post-main {

@@ -106,5 +106,6 @@
 		font-weight: normal;
 		text-transform: capitalize;
 		vertical-align: middle;
+		white-space: nowrap;
 	}
 </style>

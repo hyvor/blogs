@@ -16,10 +16,10 @@
 	let isLoading = $state(true);
 	let tags: Tag[] = $state([]);
 	let search = $state('');
-
+	let input: HTMLInputElement;
 	let err = $state(false);
 
-	function loadUsers() {
+	function loadTags() {
 		isLoading = true;
 		tags = [];
 
@@ -48,11 +48,21 @@
 		if (timeout) clearTimeout(timeout);
 
 		timeout = setTimeout(() => {
-			loadUsers();
+			loadTags();
 		}, 500);
 	}
 
-	onMount(loadUsers);
+	onMount(() => {
+		loadTags();
+
+		if (input) {
+			input.focus();
+		}
+
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
+	});
 </script>
 
 <TextInput
@@ -60,6 +70,7 @@
 	placeholder="Search tag..."
 	autofocus
 	bind:value={search}
+	bind:input
 	on:input={handleSearchInput}
 />
 
@@ -69,7 +80,7 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if tags.length === 0}
-		<IconMessage empty padding={35} message="No tags found" iconSize={40} />
+		<IconMessage empty padding={35} message="No tags found" iconSize={30} />
 	{:else}
 		{#each tags as tag (tag.id)}
 			<ActionListItem
