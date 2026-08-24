@@ -11,6 +11,20 @@
 
 	let { show = $bindable(false), flush = false, trigger, children }: Props = $props();
 
+	let triggerEl: HTMLButtonElement | undefined = $state();
+	let popoverEl: HTMLDivElement | undefined = $state();
+	let position = $state({ top: 0, left: 0 });
+
+	function updatePosition() {
+		if (!triggerEl) return;
+		const rect = triggerEl.getBoundingClientRect();
+		const popoverWidth = popoverEl?.offsetWidth ?? 0;
+		position = {
+			top: rect.bottom + 10,
+			left: rect.left + rect.width / 2 - popoverWidth / 2
+		};
+	}
+
 	function toggle() {
 		show = !show;
 	}
@@ -18,10 +32,24 @@
 	function close() {
 		show = false;
 	}
+
+	$effect(() => {
+		if (!show) return;
+
+		updatePosition();
+
+		window.addEventListener('resize', updatePosition);
+		window.addEventListener('scroll', updatePosition, true);
+
+		return () => {
+			window.removeEventListener('resize', updatePosition);
+			window.removeEventListener('scroll', updatePosition, true);
+		};
+	});
 </script>
 
 <div class="popover-wrap">
-	<button class="trigger" class:active={show} onclick={toggle}>
+	<button bind:this={triggerEl} class="trigger" class:active={show} onclick={toggle}>
 		{@render trigger?.()}
 	</button>
 
@@ -30,10 +58,16 @@
 			class="backdrop"
 			role="presentation"
 			onclick={close}
-			transition:fade={{ duration: 120 }}
+			transition:fade={{ duration: 60 }}
 		></div>
 
-		<div class="popover" transition:scale={{ duration: 120, start: 0.96, opacity: 0.9 }}>
+		<div
+			bind:this={popoverEl}
+			class="popover"
+			style:top="{position.top}px"
+			style:left="{position.left}px"
+			transition:scale={{ duration: 60, start: 0.96, opacity: 0.9 }}
+		>
 			<span class="pointer"></span>
 			<div class="popover-body" class:flush>
 				{@render children?.()}
@@ -74,10 +108,7 @@
 	}
 
 	.popover {
-		position: absolute;
-		top: calc(100% + 10px);
-		left: 50%;
-		transform: translateX(-50%);
+		position: fixed;
 		z-index: 501;
 	}
 
