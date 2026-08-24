@@ -75,7 +75,7 @@ class PostVariant
     private ?array $link_analysis = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ts_language = null;
+    private ?string $ts_language = 'simple';
 
     public function getId(): int
     {

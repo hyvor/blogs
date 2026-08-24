@@ -104,4 +104,19 @@ class GetPostsTest extends ApiTestCase
         $this->assertIsArray($json[0]);
         $this->assertFalse($json[0]['is_page']);
     }
+
+    public function test_searches_posts(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser();
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $post1 = PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'First Post']);
+        $post2 = PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'Second Post']);
+
+        $this->consoleBlogApi('GET', $blog, '/posts?search=First', user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        dd($json);
+    }
 }

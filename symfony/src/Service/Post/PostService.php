@@ -47,6 +47,7 @@ class PostService
         private PostSlugService $postSlugService,
         private PostContentService $postContentService,
         private PostSuggestionContentChecker $postSuggestionContentChecker,
+        private FullTextSearchService $fullTextSearchService
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -270,7 +271,7 @@ class PostService
         }
 
         if ($search !== null && $search !== '') {
-            $searchQuery = $this->getSearchQuery($search);
+            $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
             $where .= " AND pv.calculated_ts @@ to_tsquery(pv.ts_language, :search)";
             $params['search'] = $searchQuery;
             $select = "p.id, ts_rank(pv.calculated_ts, to_tsquery(pv.ts_language, :search)) AS rank";
@@ -309,13 +310,6 @@ class PostService
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
 
         return ['posts' => $posts, 'total' => $total];
-    }
-
-    private function getSearchQuery(string $search): string
-    {
-        $replaced = (string)preg_replace('/[*:|&!()]/', '', $search);
-        $replaced = (string)preg_replace('/\s+/', ':* | ', $replaced);
-        return $replaced . ':*';
     }
 
     /**
@@ -504,6 +498,7 @@ class PostService
         $variant->setLinkAnalysis($linkAnalysis);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
+        $variant->setTsLanguage($this->fullTextSearchService->findClosestRegconfigByLanguageCode($language->getCode()));
 
         if ($status === PostVariantStatus::PUBLISHED || $status === PostVariantStatus::SCHEDULED) {
             if ($post->getPublishedAt() === null) {

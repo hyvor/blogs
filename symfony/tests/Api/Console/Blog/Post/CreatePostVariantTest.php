@@ -41,6 +41,10 @@ class CreatePostVariantTest extends ApiTestCase
 
         $variants = $this->getEm()->getRepository(PostVariant::class)->findBy(['post' => $post]);
         $this->assertCount(2, $variants);
+
+        $frVariant = array_find($variants, fn($v) => $v->getLanguage()->getCode() === 'fr');
+        $this->assertInstanceOf(PostVariant::class, $frVariant);
+        $this->assertSame('french', $frVariant->getTsLanguage());
     }
 
     public function test_fails_if_variant_already_exists(): void
