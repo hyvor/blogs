@@ -1,10 +1,14 @@
 {
+	"seo": {
+		"title": "Hyvor Blogs - Plateforme de blogging open-source. Rapide et simple.",
+		"description": "La plateforme de blogging conçue pour la rapidité et la simplicité. Écrivez dans un éditeur épuré, publiez sur votre propre domaine, et profitez du SEO, des thèmes et des API - le tout open-source."
+	},
 	"homepage": {
 		"hero": {
 			"title": "Vous publiez.",
-			"title2": "Nous nous occupons du reste",
-			"subtitle": "Hyvor Blogs est notre <marker>plateforme de blogs</marker>",
-			"subtitle2": "C'est <hl>rapide</hl>, <hl>simple</hl>, et <hl>open-source</hl>!"
+			"title2": "Nous gérons le reste",
+			"subtitle": "Hyvor Blogs est notre <marker>plateforme de blogging</marker>",
+			"subtitle2": "Elle est <hl>rapide</hl>, <hl>simple</hl>, et <hl>open-source</hl> !"
 		}
 	}
 }

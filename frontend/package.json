@@ -7,14 +7,14 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p tsconfig.scripts.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
 		"postbuild": "npx svelte-sitemap --domain https://blogs.hyvor.com -i '200.html'",
-		"translate": "tsx src/translate.ts"
+		"translate": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/translate.ts"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.120.0",
@@ -37,7 +37,6 @@
 		"svelte-dnd-action": "^0.9.37",
 		"svelte-sitemap": "^2.6.0",
 		"tslib": "^2.4.1",
-		"tsx": "^4.23.12",
 		"typescript": "^5.9.3",
 		"vite": "^7.3",
 		"vitest": "^1.6"

@@ -2,12 +2,14 @@
  * Translates the English source files of the marketing site into every
  * other configured language using the Anthropic API.
  *
- * Usage (run from the `frontend` directory):
+ * Usage (run from the `frontend` directory; Node's native TypeScript
+ * support needs the --experimental-strip-types flag on Node < 23.6):
  *
- *   npx tsx src/translate.ts
- *   npx tsx src/translate.ts --langs fr,es
- *   npx tsx src/translate.ts --force src/routes/(marketing)/[[lang]]/locale/en.json
- *   npx tsx src/translate.ts --force-all
+ *   node --experimental-strip-types src/translate.ts
+ *   node --experimental-strip-types src/translate.ts --langs fr,es
+ *   node --experimental-strip-types src/translate.ts --force src/routes/(marketing)/[[lang]]/locale/en.json
+ *   node --experimental-strip-types src/translate.ts --force-all
+ *   node --experimental-strip-types src/translate.ts --only src/routes/(marketing)/[[lang]]/locale/en.json
  *
  * Requires the ANTHROPIC_API_KEY environment variable to be set.
  */
@@ -24,7 +26,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Anthropic from '@anthropic-ai/sdk';
-import { LANGUAGES_CONFIG } from './routes/(marketing)/[[lang]]/marketingLang';
+import { LANGUAGES_CONFIG } from './routes/(marketing)/[[lang]]/marketingLang.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = path.resolve(__dirname, '..');
@@ -199,11 +201,12 @@ function relToFrontend(absPath: string): string {
 type Args = {
 	forceFiles: string[];
 	forceAll: boolean;
+	only: string[];
 	langs: string[] | null;
 };
 
 function parseArgs(argv: string[]): Args {
-	const args: Args = { forceFiles: [], forceAll: false, langs: null };
+	const args: Args = { forceFiles: [], forceAll: false, only: [], langs: null };
 
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
@@ -213,6 +216,10 @@ function parseArgs(argv: string[]): Args {
 			args.forceFiles.push(value);
 		} else if (arg === '--force-all') {
 			args.forceAll = true;
+		} else if (arg === '--only') {
+			const value = argv[++i];
+			if (!value) throw new Error('--only requires a file path argument');
+			args.only.push(value);
 		} else if (arg === '--langs') {
 			const value = argv[++i];
 			if (!value) throw new Error('--langs requires a comma-separated list of language codes');
@@ -228,9 +235,8 @@ function parseArgs(argv: string[]): Args {
 	return args;
 }
 
-function isForced(args: Args, relSourcePath: string, absSourcePath: string): boolean {
-	if (args.forceAll) return true;
-	return args.forceFiles.some((f) => {
+function matchesAny(patterns: string[], relSourcePath: string, absSourcePath: string): boolean {
+	return patterns.some((f) => {
 		const normalized = f.split(path.sep).join('/');
 		return (
 			normalized === relSourcePath ||
@@ -238,6 +244,11 @@ function isForced(args: Args, relSourcePath: string, absSourcePath: string): boo
 			relSourcePath.endsWith(normalized)
 		);
 	});
+}
+
+function isForced(args: Args, relSourcePath: string, absSourcePath: string): boolean {
+	if (args.forceAll) return true;
+	return matchesAny(args.forceFiles, relSourcePath, absSourcePath);
 }
 
 // ---------------------------------------------------------------------------
@@ -264,6 +275,46 @@ Rules:
 	const hint = ext === '.json' ? jsonHint : ext === '.svelte' ? svelteHint : '';
 
 	return [shared, hint].filter(Boolean).join('\n\n');
+}
+
+// ---------------------------------------------------------------------------
+// Live preview: shows the last few lines of streamed output in-place,
+// scrolling like a tiny "terminal within the terminal" instead of dumping
+// every token to the log.
+// ---------------------------------------------------------------------------
+
+const PREVIEW_ROWS = 6;
+
+class LivePreview {
+	private drawn = false;
+	private readonly enabled = process.stdout.isTTY === true;
+
+	update(text: string) {
+		if (!this.enabled) return;
+
+		const width = Math.max((process.stdout.columns || 80) - 2, 10);
+		const lines = text.split('\n').slice(-PREVIEW_ROWS);
+		while (lines.length < PREVIEW_ROWS) lines.unshift('');
+
+		if (this.drawn) {
+			process.stdout.write(`\x1b[${PREVIEW_ROWS}A`);
+		}
+		for (const line of lines) {
+			const clipped = line.length > width ? line.slice(0, width - 1) + '…' : line;
+			process.stdout.write(`\x1b[2K${clipped}\n`);
+		}
+		this.drawn = true;
+	}
+
+	clear() {
+		if (!this.enabled || !this.drawn) return;
+		process.stdout.write(`\x1b[${PREVIEW_ROWS}A`);
+		for (let i = 0; i < PREVIEW_ROWS; i++) {
+			process.stdout.write('\x1b[2K\n');
+		}
+		process.stdout.write(`\x1b[${PREVIEW_ROWS}A`);
+		this.drawn = false;
+	}
 }
 
 function stripCodeFence(text: string): string {
@@ -294,23 +345,28 @@ async function translateContent(
 	const maxAttempts = 3;
 
 	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		const preview = new LivePreview();
 		try {
-			const response = await anthropic.messages.create({
+			// Streaming is required by the API once max_tokens is high enough
+			// that a response could plausibly take longer than 10 minutes to
+			// generate; it also lets us show live progress below.
+			const stream = anthropic.messages.stream({
 				model: MODEL,
-				max_tokens: 16000,
+				max_tokens: 64000,
 				temperature: 0,
 				system,
 				messages: [{ role: 'user', content }]
 			});
 
-			const textBlock = response.content.find((block) => block.type === 'text');
-			if (!textBlock || textBlock.type !== 'text') {
-				throw new Error('Anthropic API returned no text content');
-			}
+			stream.on('text', (_delta, snapshot) => preview.update(snapshot));
 
-			const translated = stripCodeFence(textBlock.text);
+			const text = await stream.finalText();
+			preview.clear();
+
+			const translated = stripCodeFence(text);
 			return translated + (content.endsWith('\n') && !translated.endsWith('\n') ? '\n' : '');
 		} catch (err) {
+			preview.clear();
 			const status = err instanceof Anthropic.APIError ? err.status : undefined;
 			const retryable = status === undefined || status === 429 || status >= 500;
 			if (!retryable || attempt >= maxAttempts) {
@@ -333,7 +389,9 @@ async function main() {
 		args = parseArgs(process.argv.slice(2));
 	} catch (err) {
 		console.error(err instanceof Error ? err.message : err);
-		console.error('Usage: translate.ts [--force <file>] [--force-all] [--langs lang1,lang2,...]');
+		console.error(
+			'Usage: translate.ts [--force <file>] [--force-all] [--only <file>] [--langs lang1,lang2,...]'
+		);
 		process.exit(1);
 	}
 
@@ -365,6 +423,11 @@ async function main() {
 
 			for (const { source, target, nested } of pairs) {
 				const relSource = relToFrontend(source);
+
+				if (args.only.length > 0 && !matchesAny(args.only, relSource, source)) {
+					continue;
+				}
+
 				const content = readFileSync(source, 'utf-8');
 				const hash = hashContent(content);
 
