@@ -100,11 +100,7 @@
 	}
 </script>
 
-<a
-	class="post-list-item"
-	href={consoleUrlWithBlog(`/posts/${post.id}/${primaryLanguage.code}`)}
-	style:view-transition-name={`post-${post.id}`}
->
+<a class="post-list-item" href={consoleUrlWithBlog(`/posts/${post.id}/${primaryLanguage.code}`)}>
 	<div class="post-main">
 		<div class="post-title-row">
 			<div class="post-title">{post.title || '(Untitled)'}</div>
@@ -223,7 +219,7 @@
 		grid-template-columns: minmax(280px, 1.8fr) minmax(200px, 1.9fr) 100px 36px;
 		gap: 14px;
 		padding: 16px 30px;
-		border-bottom: 1px solid var(--border);
+		border-bottom: 1px solid #f1f1f1;
 		position: relative;
 		cursor: pointer;
 		transition: background-color 0.1s;
