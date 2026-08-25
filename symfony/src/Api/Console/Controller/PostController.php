@@ -55,7 +55,7 @@ class PostController
     #[Route('/posts', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
     public function getPosts(
-        #[MapQueryString] GetPostsInput $input = new GetPostsInput(),
+        #[MapQueryString] GetPostsInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
