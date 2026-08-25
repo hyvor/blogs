@@ -180,29 +180,4 @@ class ConsolePostController extends Controller
         );
     }
 
-    public function deletePostVariant(Request $request, Blog $blog, Post $post): JsonResponse
-    {
-        $request->validate([
-            'language_id' => 'required|integer',
-        ]);
-
-        $languageId = $request->integer('language_id');
-        $language = LanguageRepository::getLanguageById($blog, $languageId);
-
-        if (!$language) {
-            throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
-        }
-
-        if ($language->is_primary) {
-            throw new TrustedException(
-                'Primary language variant cannot be deleted. Delete the post instead',
-                TrustedException::ERROR_UNPROCESSABLE
-            );
-        }
-
-        PostRepository::deletePostVariant($post, $languageId);
-
-        return response()->json();
-    }
-
 }

@@ -319,7 +319,7 @@ class PostController
             throw new NotFoundHttpException('Variant not found');
         }
 
-        $this->postService->deletePostVariant($post, $language);
+        $this->postService->deletePostVariant($variant);
 
         return new JsonResponse();
     }

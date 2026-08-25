@@ -711,15 +711,11 @@ class PostService
         }
     }
 
-    public function deletePostVariant(Post $post, Language $language): void
+    public function deletePostVariant(PostVariant $variant): void
     {
-        $variant = $this->getPostVariantByPostAndLanguage($post, $language);
-        if ($variant !== null) {
-            $this->em->remove($variant);
-            $this->em->flush();
-
-            $this->ed->dispatch(new PostVariantDeletedEvent($variant));
-        }
+        $this->em->remove($variant);
+        $this->em->flush();
+        $this->ed->dispatch(new PostVariantDeletedEvent($variant));
     }
 
     /**

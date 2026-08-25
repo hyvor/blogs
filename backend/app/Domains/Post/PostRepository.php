@@ -7,11 +7,9 @@ namespace App\Domains\Post;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Content\PostContentService;
-use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantCreatedEvent;
-use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
@@ -19,8 +17,6 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Carbon\Carbon;
-use DateTimeInterface;
-use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -131,16 +127,6 @@ class PostRepository
         return new CollectionWithTotal($posts, $total);
     }
 
-    /**
-     * @param Blog $blog
-     * @return Collection<int, Post>
-     */
-    public static function getPages(Blog $blog): Collection
-    {
-        return Post::where('blog_id', $blog->id)
-            ->where('is_page', true)
-            ->get();
-    }
 
     /**
      * Getting posts with FilterQ
@@ -260,39 +246,6 @@ class PostRepository
 
     /**
      * @param array{
-     *     published_at?: DateTimeInterface|null,
-     *     featured_image_url?: ?string,
-     *     is_page?: bool,
-     *     is_featured?: bool,
-     * } $attrs
-     */
-    public static function createPost(Blog $blog, array $attrs = []): Post
-    {
-        // create post
-        $post = Post::create(array_merge([
-            'blog_id' => $blog->id
-        ], $attrs));
-
-        // create post variant (primary language)
-        self::createPostVariant($post, LanguageRepository::getPrimaryLanguage($blog));
-
-        PostCreatedEvent::dispatch($post);
-
-        /**
-         * Because Laravel doesn't fetch database default values for other columns
-         * you have to manually fetch the record again by ID to prevent
-         * status being null
-         *
-         * #ref https://github.com/laravel/framework/issues/21449
-         */
-        /** @var Post $post */
-        $post = Post::find($post->id);
-
-        return $post;
-    }
-
-    /**
-     * @param array{
      *     published_at?: int,
      *     is_featured?: bool,
      *     featured_image_url?: ?string,
@@ -328,34 +281,6 @@ class PostRepository
         PostUpdatedEvent::dispatch($post);
 
         return $post;
-    }
-
-    public static function deletePost(Post $post): void
-    {
-        $post->variants->map(fn($variant) => self::deletePostVariant($post, $variant->language_id));
-        $post->delete();
-
-        PostDeletedEvent::dispatch($post);
-    }
-
-    public static function createPostVariant(Post $post, Language $language): PostVariant
-    {
-        $fts = new FullTextSearchService();
-
-        $variant = PostVariant::create([
-            'post_id' => $post->id,
-            'language_id' => $language->id,
-            'ts_language' => $fts->findClosestRegconfigByLanguageCode($language->code),
-        ]);
-
-
-        PostVariantCreatedEvent::dispatch($variant);
-
-
-        /** @var PostVariant $variant */
-        $variant = PostVariant::find($variant->id);
-
-        return $variant;
     }
 
     /**
@@ -476,24 +401,6 @@ class PostRepository
             ->first();
     }
 
-    public static function getPostVariantById(int $id): ?PostVariant
-    {
-        return PostVariant::find($id);
-    }
-
-    public static function deletePostVariant(Post $post, int $languageId): void
-    {
-        $variant = PostVariant::where('language_id', $languageId)
-            ->where('post_id', $post->id)
-            ->first();
-
-        if (!$variant) {
-            return;
-        }
-
-        $variant->delete();
-        PostVariantDeletedEvent::dispatch($variant);
-    }
 
     public static function updateVariantHtml(PostVariant $variant): void
     {
