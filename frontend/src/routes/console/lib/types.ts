@@ -214,6 +214,12 @@ export type PostVariant = {
 	document_client_ids: string[];
 };
 
+export interface Document {
+	version: number;
+	content: string;
+	mercure_token: string;
+}
+
 export type PostVariantStatusItem = {
 	id: number;
 	language_id: number;

@@ -6,10 +6,10 @@
 		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
-	} from '../../../postStore';
+	} from '../../postStore';
 	import { onMount, tick } from 'svelte';
-	import UnsavedTag from '../../Sidebar/Settings/UnsavedTag.svelte';
-	import { updatePostVariant } from '../../../postActions';
+	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
+	import { updatePostVariant } from '../../postActions';
 
 	const handleInput: FormEventHandler<HTMLTextAreaElement> = (event) => {
 		updatePostVariantStore({

@@ -1,5 +1,6 @@
 import type { CollabClientID, CollabStepJSON, RemoteCursorUser } from '@hyvor/richtext';
 import { getConfig } from '../../../../../../lib/config';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 // must match PostVariantCollabService::topic() on the backend
 export function collabTopic(variantId: number): string {
@@ -47,6 +48,7 @@ const activeSources = new Map<string, EventSource>();
  */
 export function subscribeToCollabMercureTopic(
 	topic: string,
+	token: string,
 	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[], version: number) => void,
 	onCursor: (message: CollabCursorMercureMessage) => void,
 	onReconnect: () => void

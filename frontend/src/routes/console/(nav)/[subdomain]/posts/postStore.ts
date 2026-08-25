@@ -1,6 +1,6 @@
 import { derived, writable } from 'svelte/store';
 import { languagesStore } from '../../../lib/stores/languagesStore';
-import type { Post, PostVariant } from '../../../lib/types';
+import type { Document, Post, PostVariant } from '../../../lib/types';
 import type { Editor } from '@hyvor/richtext';
 
 // types
@@ -32,6 +32,8 @@ export const postVariantLanguageStore = derived(
 		return languages.find((l) => l.id === postVariant.language_id)!;
 	}
 );
+
+export const documentStore = writable<Document>();
 
 export interface PostEditingStatus {}
 

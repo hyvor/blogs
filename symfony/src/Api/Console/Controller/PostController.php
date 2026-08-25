@@ -34,6 +34,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Mercure\Authorization;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -50,6 +52,7 @@ class PostController
         private UserService $userService,
         private DocumentService $collabService,
         private Authorization $mercureAuthorization,
+        private HubInterface $mercureHub
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -132,27 +135,34 @@ class PostController
     ): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
+        $language = $input->variant_language_code ?
+            $this->languageService->getLanguageByCode($blog, $input->variant_language_code) :
+            $this->languageService->getPrimaryLanguage($blog);
 
-        $variant = null;
-        if ($input->variant_language_code) {
-            $language = $this->languageService->getLanguageByCode($blog, $input->variant_language_code);
-
-            if ($language === null) {
-                throw new BadRequestHttpException('Invalid variant_language_code, language not found');
-            }
-
-            $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        if ($language === null) {
+            throw new BadRequestHttpException('Invalid variant_language_code, language not found');
         }
 
-        if ($variant !== null) {
-            $this->mercureAuthorization->setCookie($request, [
-                $this->collabService->topic($variant),
-            ]);
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+
+        if ($variant === null) {
+            throw new BadRequestHttpException('Variant not found for the specified language');
         }
+
+        $this->mercureAuthorization->setCookie($request, [
+            $this->collabService->topic($variant),
+        ]);
 
         return new JsonResponse([
             'post' => $this->postObjectFactory->create($post, $blog),
-            'variant' => $variant ? $this->postObjectFactory->createVariant($variant, $post, $blog) : null,
+            'variant' => $this->postObjectFactory->createVariant($variant, $post, $blog),
+            'document' => [
+                'version' => $variant->getDocumentVersion(),
+                'content' => $variant->getContentUnsaved(),
+                'mercure_token' => $this->mercureHub->getFactory()?->create([
+                    new Grant([Grant::ACTION_SUBSCRIBE], [$this->collabService->topic($variant)])
+                ])
+            ]
         ]);
     }
 

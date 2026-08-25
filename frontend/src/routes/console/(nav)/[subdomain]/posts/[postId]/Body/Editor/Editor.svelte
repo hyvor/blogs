@@ -4,7 +4,8 @@
 		postEditor,
 		postContentDirtyStore,
 		postSuggestionModeStore,
-		postVariantStore
+		postVariantStore,
+		documentStore
 	} from '../../../postStore';
 	import {
 		Editor,
@@ -150,6 +151,7 @@
 		const topic = collabTopic($postVariantStore.id);
 		return subscribeToCollabMercureTopic(
 			topic,
+			$documentStore.mercure_token,
 			(steps, clientIds, version) => {
 				applyConfirmedSteps(steps, clientIds, version);
 			},

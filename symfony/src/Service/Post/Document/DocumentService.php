@@ -158,6 +158,7 @@ class DocumentService
                 'steps' => $steps,
                 'client_ids' => $clientIds,
             ], JSON_THROW_ON_ERROR),
+            true,
         ));
     }
 

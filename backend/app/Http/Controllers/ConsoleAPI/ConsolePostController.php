@@ -26,23 +26,6 @@ use Illuminate\Http\Request;
 class ConsolePostController extends Controller
 {
 
-    public function createPost(
-        Request $request,
-        Blog $blog,
-        ConsoleApiAccessingUser $consoleApiAccessingUser
-    ): JsonResponse {
-        $isPage = (bool)$request->input('is_page');
-        $post = PostRepository::createPost($blog, [
-            'is_page' => $isPage
-        ]);
-
-        PostTagAuthorRepository::createAuthor($post->id, $consoleApiAccessingUser->user->id);
-
-        $post->refresh();
-
-        return response()->json(new PostObject($post, $blog));
-    }
-
     // Get all the post from the database
     public function getPost(Request $request, Blog $blog): JsonResponse
     {

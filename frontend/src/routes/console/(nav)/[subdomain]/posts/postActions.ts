@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import type { Post, PostVariant, PostListItem, User, Tag } from '../../../lib/types';
+import type { Post, PostVariant, PostListItem, User, Tag, Document } from '../../../lib/types';
 import consoleApi from '../../../lib/consoleApi';
 import {
 	postStore,
@@ -38,7 +38,8 @@ export function getPages() {
 export function getPost(id: number, variantLanguageCode: string | null = null) {
 	return consoleApi.get<{
 		post: Post;
-		variant: PostVariant | null;
+		variant: PostVariant;
+		document: Document;
 	}>({
 		endpoint: `/post/${id}`,
 		data: variantLanguageCode ? { variant_language_code: variantLanguageCode } : undefined

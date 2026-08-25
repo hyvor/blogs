@@ -5,7 +5,7 @@
 	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
 	import Editor from './Editor/Editor.svelte';
 	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
-	import Title from './Top/Title.svelte';
+	import Title from './Title.svelte';
 	import PublishedNotice from './Footer/PublishedNotice.svelte';
 
 	let titleComponent: { focus: () => void } | undefined = $state();

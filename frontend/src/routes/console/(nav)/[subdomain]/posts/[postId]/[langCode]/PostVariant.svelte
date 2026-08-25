@@ -2,6 +2,7 @@
 	import { IconMessage, Loader } from '@hyvor/design/components';
 	import type { Post, PostVariant } from '../../../../../lib/types';
 	import {
+		documentStore,
 		postOriginalStore,
 		postStore,
 		postVariantOriginalStore,
@@ -49,8 +50,9 @@
 		isLoading = true;
 
 		getPost(Number(postId), langCode)
-			.then(({ post, variant }) => {
+			.then(({ post, variant, document }) => {
 				completePostLoading(post, variant);
+				documentStore.set(document);
 			})
 			.catch((e) => {
 				error = e.message || 'Failed to load post';
