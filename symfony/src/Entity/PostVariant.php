@@ -42,10 +42,18 @@ class PostVariant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = null;
 
+    // last saved (/checkpoint) content
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_unsaved = null;
 
-    #[ORM\Column(options: ['default' => 0])]
+    // version (prosemirror) of that last saved content
+    #[ORM\Column()]
+    private int $content_unsaved_version = 0;
+
+    // version (prosemirror) of the editing document
+    // this is the version that last has steps submitted to it and was accepted
+    // document_version can be > content_unsaved_version if there are steps submitted that have not yet been checkpointed
+    #[ORM\Column()]
     private int $document_version = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -185,6 +193,17 @@ class PostVariant
     public function setContentUnsaved(?string $content_unsaved): static
     {
         $this->content_unsaved = $content_unsaved;
+        return $this;
+    }
+
+    public function getContentUnsavedVersion(): int
+    {
+        return $this->content_unsaved_version;
+    }
+
+    public function setContentUnsavedVersion(int $content_unsaved_version): static
+    {
+        $this->content_unsaved_version = $content_unsaved_version;
         return $this;
     }
 

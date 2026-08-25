@@ -3,21 +3,30 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
-use App\Api\Console\Input\Post\CheckpointCollabInput;
-use App\Api\Console\Input\Post\SubmitCollabCursorInput;
-use App\Api\Console\Input\Post\SubmitCollabStepsInput;
-use App\Api\Console\Input\Post\SyncCollabStepsInput;
+use App\Api\Console\Input\Document\CheckpointCollabInput;
+use App\Api\Console\Input\Document\GetDocumentForPostInput;
+use App\Api\Console\Input\Document\SubmitCollabCursorInput;
+use App\Api\Console\Input\Document\SubmitCollabStepsInput;
+use App\Api\Console\Input\Document\SyncCollabStepsInput;
+use App\Api\Console\Object\PostObjectFactory;
+use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 // concerns about an editable document (content_unsaved in PostVariant)
 class DocumentsController
@@ -27,6 +36,9 @@ class DocumentsController
         private PostService $postService,
         private DocumentService $documentService,
         private UserService $userService,
+        private LanguageService $languageService,
+        private PostObjectFactory $postObjectFactory,
+        private HubInterface $mercureHub,
     ) {}
 
     private function getVariantOrFail(int $postVariantId): PostVariant
@@ -39,6 +51,45 @@ class DocumentsController
         }
 
         return $variant;
+    }
+
+    #[Route('/documents/post', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
+    public function getDocumentForPost(
+        #[MapQueryString] GetDocumentForPostInput $input,
+    ): JsonResponse
+    {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $post = $this->postService->getPostByBlogAndId($blog, $input->post_id);
+        if ($post === null) {
+            throw new NotFoundHttpException('Post not found');
+        }
+
+        $language = $input->variant_language_code ?
+            $this->languageService->getLanguageByCode($blog, $input->variant_language_code) :
+            $this->languageService->getPrimaryLanguage($blog);
+
+        if ($language === null) {
+            throw new BadRequestHttpException('Invalid variant_language_code, language not found');
+        }
+
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+
+        if ($variant === null) {
+            throw new BadRequestHttpException('Variant not found for the specified language');
+        }
+
+        return new JsonResponse([
+            'post' => $this->postObjectFactory->create($post, $blog),
+            'variant' => $this->postObjectFactory->createVariant($variant, $post, $blog),
+            'document' => [
+                'checkpoint_version' => $variant->getContentUnsavedVersion(),
+                'checkpoint_content' => $variant->getContentUnsaved(),
+                'pending_steps' => $this->documentService->getStepsSince($variant, $variant->getContentUnsavedVersion()),
+                'mercure_token' => $this->documentService->getMercureToken($variant)
+            ]
+        ]);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Console\Input\Post;
+namespace App\Api\Console\Input\Document;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

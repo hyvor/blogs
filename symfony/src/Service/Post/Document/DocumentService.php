@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Mercure\Update;
 
 /**
@@ -39,6 +40,13 @@ class DocumentService
     public function topic(PostVariant $variant): string
     {
         return sprintf('post_variant_collab:%d', $variant->getId());
+    }
+
+    public function getMercureToken(PostVariant $variant): string
+    {
+        return (string) $this->hub->getFactory()?->create([
+            new Grant([Grant::ACTION_SUBSCRIBE], [$this->topic($variant)])
+        ]);
     }
 
     /**
@@ -109,7 +117,7 @@ class DocumentService
             }
 
             /**
-             * Note: i first though each batch of steps should get a single version, but prosemirror-collab assigns
+             * Note: i first thought each batch of steps should get a single version, but prosemirror-collab assigns
              * a new version for EACH step.
              * See https://code.haverbeke.berlin/prosemirror/website/src/branch/main/src/collab/server/instance.js#L45
              */
@@ -216,14 +224,11 @@ class DocumentService
                 throw new ConflictHttpException('document_version has moved on - catch up via Mercure and retry');
             }
 
-            $this->postService->updatePostVariant($current, $blog, ['content_unsaved' => $json]);
+            $current->setContentUnsaved($json);
+            $current->setContentUnsavedVersion($version);
+            $current->setUpdatedAt($this->now());
 
-            $this->em->createQueryBuilder()
-                ->delete(PostVariantStep::class, 's')
-                ->where('s.post_variant = :variant')
-                ->setParameter('variant', $current)
-                ->getQuery()
-                ->execute();
+            $this->em->persist($current);
         });
     }
 }
