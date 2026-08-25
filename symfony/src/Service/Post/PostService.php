@@ -16,6 +16,7 @@ use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostTagsChangedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
 use App\Service\Post\Event\PostVariantCreatedEvent;
 use App\Service\Post\Event\PostVariantDeletedEvent;
@@ -726,6 +727,8 @@ class PostService
      */
     public function setPostTags(Post $post, array $tags, bool $flush = true): void
     {
+        $oldTags = $post->getTags()->toArray();
+
         $post->getTags()->clear();
         foreach ($tags as $tag) {
             $post->getTags()->add($tag);
@@ -735,6 +738,11 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostTagsChangedEvent(
+                $post,
+                $oldTags,
+                $post->getTags()->toArray()
+            ));
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\UserStatus;
 use App\Service\Limit;
+use App\Service\Post\Event\PostTagsChangedEvent;
 use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
@@ -40,6 +41,12 @@ class UpdatePostTagsTest extends ApiTestCase
 
         $this->getEm()->refresh($post);
         $this->assertCount(2, $post->getTags());
+
+        $event = $this->getEd()->getFirstEvent(PostTagsChangedEvent::class);
+        $this->assertNotNull($event);
+        $this->assertSame($post->getId(), $event->post->getId());
+        $this->assertCount(0, $event->oldTags);
+        $this->assertCount(2, $event->newTags);
     }
 
     public function test_clears_tags_when_empty_ids(): void
@@ -62,6 +69,12 @@ class UpdatePostTagsTest extends ApiTestCase
 
         $this->getEm()->refresh($post);
         $this->assertCount(0, $post->getTags());
+
+        $event = $this->getEd()->getFirstEvent(PostTagsChangedEvent::class);
+        $this->assertNotNull($event);
+        $this->assertSame($post->getId(), $event->post->getId());
+        $this->assertCount(1, $event->oldTags);
+        $this->assertCount(0, $event->newTags);
     }
 
     public function test_fails_if_tag_belongs_to_different_blog(): void

@@ -205,19 +205,4 @@ class ConsolePostController extends Controller
         return response()->json();
     }
 
-    public function updateTags(Request $request, Blog $blog, Post $post): JsonResponse
-    {
-        $request->validate([
-            'ids' => 'array',
-            'ids.*' => 'integer',
-        ]);
-
-        /** @var int[] $ids */
-        $ids = $request->input('ids');
-
-        PostTagAuthorRepository::updateTags($post, $ids);
-
-        return response()->json();
-    }
-
 }

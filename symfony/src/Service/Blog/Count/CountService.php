@@ -58,7 +58,7 @@ class CountService
             match ($type) {
                 CountType::POSTS_OF_BLOG => $this->recalculatePostCountsOnBlog($blog),
                 CountType::POSTS_OF_USERS => $this->recalculatePostsCountOnUsers($blog, $entityIds),
-                CountType::POSTS_OF_TAGS => $this->recalculatePostsCountOnTags($blog),
+                CountType::POSTS_OF_TAGS => $this->recalculatePostsCountOnTags($blog, $entityIds),
                 CountType::USERS_OF_BLOG => $this->recalculateUsersCountOnBlog($blog),
                 CountType::MEDIA_OF_BLOG => $this->recalculateMediaCountOnBlog($blog),
             };
@@ -125,11 +125,27 @@ class CountService
 
     /**
      * @param int[]|null $userIds
-     * this might not the most performant for large blogs
-     * we may want to optimize this to only recalculate the counts for the affected users later
-     * same for tags below
      */
     private function recalculatePostsCountOnUsers(Blog $blog, ?array $userIds = null): void
+    {
+        $this->recalculatePostAuthorsOrTags($blog, $userIds, 'users', 'post_author', 'user_id');
+    }
+
+    /**
+     * @param int[]|null $tagIds
+     */
+    private function recalculatePostsCountOnTags(Blog $blog, ?array $tagIds = null): void
+    {
+        $this->recalculatePostAuthorsOrTags($blog, $tagIds, 'tags', 'post_tag', 'tag_id');
+    }
+
+    private function recalculatePostAuthorsOrTags(
+        Blog $blog,
+        ?array $entityIds,
+        string $table,
+        string $pivotTable,
+        string $pivotColumn // 'user_id' or 'tag_id'
+    ): void
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
 
@@ -137,52 +153,29 @@ class CountService
         $types = ['integer', 'integer'];
 
         $inWhere = '';
-        if ($userIds !== null && count($userIds) > 0) {
-            $inWhere = ' AND u.id IN (?)';
-            $params[] = $userIds;
+        if ($entityIds !== null && count($entityIds) > 0) {
+            $inWhere = ' AND t.id IN (?)';
+            $params[] = $entityIds;
             $types[] = ArrayParameterType::INTEGER;
         }
 
         $this->em->getConnection()->executeStatement(
             <<<SQL
-            UPDATE users AS u SET posts_count = (
-                SELECT COUNT(post_author.id)
-                FROM post_author
-                INNER JOIN post_variants ON post_author.post_id = post_variants.post_id
+            UPDATE $table AS t SET posts_count = (
+                SELECT COUNT($pivotTable.id)
+                FROM $pivotTable
+                INNER JOIN post_variants ON $pivotTable.post_id = post_variants.post_id
                 INNER JOIN posts ON post_variants.post_id = posts.id
                 WHERE
-                    post_author.user_id = u.id AND
+                    $pivotTable.$pivotColumn = t.id AND
                     post_variants.language_id = ? AND
                     post_variants.status = 'published' AND
                     posts.is_page = false
             )
-            WHERE u.blog_id = ?{$inWhere}
+            WHERE t.blog_id = ?{$inWhere}
             SQL,
             $params,
-            $types,
-        );
-    }
-
-    private function recalculatePostsCountOnTags(Blog $blog): void
-    {
-        $language = $this->languageService->getPrimaryLanguage($blog);
-
-        $this->em->getConnection()->executeStatement(
-            <<<'SQL'
-            UPDATE tags AS t SET posts_count = (
-                SELECT COUNT(post_tag.id)
-                FROM post_tag
-                INNER JOIN post_variants ON post_tag.post_id = post_variants.post_id
-                INNER JOIN posts ON post_variants.post_id = posts.id
-                WHERE
-                    post_tag.tag_id = t.id AND
-                    post_variants.language_id = ? AND
-                    post_variants.status = 'published' AND
-                    posts.is_page = false
-            )
-            WHERE t.blog_id = ?
-            SQL,
-            [$language->getId(), $blog->getId()],
+            $types
         );
     }
 

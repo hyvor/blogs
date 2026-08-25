@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Blog\Count;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\Count\CountListener;
 use App\Service\Blog\Count\CountType;
@@ -12,6 +13,7 @@ use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostTagsChangedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
@@ -21,6 +23,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -85,11 +88,56 @@ class CountListenerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $post = PostFactory::createOneFor($blog);
+        $variant = PostVariantFactory::createone(['post' => $post, 'language' => $blog->getLanguages()[0], 'status' => PostVariantStatus::PUBLISHED]);
+        $post->getVariants()->add($variant);
+
         $oldUser = UserFactory::createOne(['blog' => $blog]);
         $newUser = UserFactory::createOne(['blog' => $blog]);
 
         $this->getEd()->dispatch(new PostAuthorsChangedEvent($post, [$oldUser], [$newUser]));
         $this->assertOnlyMessage($blog, [CountType::POSTS_OF_USERS], [[$oldUser->getId(), $newUser->getId()]]);
+    }
+
+    public function test_post_authors_with_unpublished_variant(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $post = PostFactory::createOneFor($blog);
+        $variant = PostVariantFactory::createone(['post' => $post, 'language' => $blog->getLanguages()[0], 'status' => PostVariantStatus::DRAFT]);
+        $post->getVariants()->add($variant);
+
+        $oldUser = UserFactory::createOne(['blog' => $blog]);
+        $newUser = UserFactory::createOne(['blog' => $blog]);
+
+        $this->getEd()->dispatch(new PostAuthorsChangedEvent($post, [$oldUser], [$newUser]));
+        $this->assertCount(0, $this->transport(MessageTransport::ASYNC)->queue()->messages(RecalculateCountMessage::class));
+    }
+
+    public function test_post_tags_changed(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $post = PostFactory::createOneFor($blog);
+        $variant = PostVariantFactory::createone(['post' => $post, 'language' => $blog->getLanguages()[0], 'status' => PostVariantStatus::PUBLISHED]);
+        $post->getVariants()->add($variant);
+
+        $oldTag = TagFactory::createOne(['blog' => $blog]);
+        $newTag = TagFactory::createOne(['blog' => $blog]);
+
+        $this->getEd()->dispatch(new PostTagsChangedEvent($post, [$oldTag], [$newTag]));
+        $this->assertOnlyMessage($blog, [CountType::POSTS_OF_TAGS], [[$oldTag->getId(), $newTag->getId()]]);
+    }
+
+    public function test_post_tags_with_unpublished_variant(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $post = PostFactory::createOneFor($blog);
+        $variant = PostVariantFactory::createone(['post' => $post, 'language' => $blog->getLanguages()[0], 'status' => PostVariantStatus::DRAFT]);
+        $post->getVariants()->add($variant);
+
+        $oldTag = TagFactory::createOne(['blog' => $blog]);
+        $newTag = TagFactory::createOne(['blog' => $blog]);
+
+        $this->getEd()->dispatch(new PostTagsChangedEvent($post, [$oldTag], [$newTag]));
+        $this->assertCount(0, $this->transport(MessageTransport::ASYNC)->queue()->messages(RecalculateCountMessage::class));
     }
 
     public function test_user_created_dispatches_user_recalculation(): void

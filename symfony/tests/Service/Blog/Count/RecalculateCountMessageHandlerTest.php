@@ -11,6 +11,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -55,7 +56,7 @@ class RecalculateCountMessageHandlerTest extends KernelTestCase
         $this->assertSame(42, $counts['media']);
     }
 
-    public function test_recalculates_only_given_entity_ids(): void
+    public function test_recalculates_only_given_entity_ids_users(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user1 = UserFactory::createOne(['blog' => $blog, 'posts_count' => 0]);
@@ -80,6 +81,33 @@ class RecalculateCountMessageHandlerTest extends KernelTestCase
         refresh($user2);
         $this->assertSame(1, $user1->getPostsCount());
         $this->assertSame(0, $user2->getPostsCount()); // not updated
+    }
+
+    public function test_recalculates_only_given_entity_ids_tags(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $tag1 = TagFactory::createOne(['blog' => $blog, 'posts_count' => 0]);
+        $tag2 = TagFactory::createOne(['blog' => $blog, 'posts_count' => 0]);
+
+        $post = PostFactory::createOneFor($blog);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $blog->getLanguages()[0],
+            'status' => PostVariantStatus::PUBLISHED,
+        ]);
+        $post->getTags()->add($tag1);
+        $post->getTags()->add($tag2);
+
+        $this->getEm()->flush();
+
+        $transport = $this->transport('async')->throwExceptions();
+        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::POSTS_OF_TAGS], [[$tag1->getId()]]));
+        $transport->processOrFail();
+
+        refresh($tag1);
+        refresh($tag2);
+        $this->assertSame(1, $tag1->getPostsCount());
+        $this->assertSame(0, $tag2->getPostsCount()); // not updated
     }
 
     public function test_throws_when_blog_not_found(): void

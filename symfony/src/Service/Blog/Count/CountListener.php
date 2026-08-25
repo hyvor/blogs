@@ -3,11 +3,14 @@
 namespace App\Service\Blog\Count;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
+use App\Service\Language\LanguageService;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostTagsChangedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
 use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\Event\PostVariantUnpublishedEvent;
@@ -20,6 +23,7 @@ class CountListener
 {
     public function __construct(
         private MessageBusInterface $bus,
+        private LanguageService $languageService,
     ) {}
 
     #[AsEventListener]
@@ -55,6 +59,13 @@ class CountListener
     #[AsEventListener]
     public function onPostAuthorsChanged(PostAuthorsChangedEvent $event): void
     {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($event->post->getBlog());
+        $primaryVariant = $event->post->getVariants()->filter(fn($variant) => $variant->getLanguage()->getId() === $primaryLanguage->getId())->first();
+
+        if (!$primaryVariant || $primaryVariant->getStatus() !== PostVariantStatus::PUBLISHED) {
+            return;
+        }
+
         $oldIds = array_map(fn($user) => $user->getId(), $event->oldAuthors);
         $newIds = array_map(fn($user) => $user->getId(), $event->newAuthors);
         $allIds = array_unique(array_merge($oldIds, $newIds));
@@ -62,6 +73,27 @@ class CountListener
         $this->dispatch(
             $event->post->getBlog(),
             [CountType::POSTS_OF_USERS],
+            [$allIds]
+        );
+    }
+
+    #[AsEventListener]
+    public function onPostTagsChanged(PostTagsChangedEvent $event): void
+    {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($event->post->getBlog());
+        $primaryVariant = $event->post->getVariants()->filter(fn($variant) => $variant->getLanguage()->getId() === $primaryLanguage->getId())->first();
+
+        if (!$primaryVariant || $primaryVariant->getStatus() !== PostVariantStatus::PUBLISHED) {
+            return;
+        }
+
+        $oldIds = array_map(fn($tag) => $tag->getId(), $event->oldTags);
+        $newIds = array_map(fn($tag) => $tag->getId(), $event->newTags);
+        $allIds = array_unique(array_merge($oldIds, $newIds));
+
+        $this->dispatch(
+            $event->post->getBlog(),
+            [CountType::POSTS_OF_TAGS],
             [$allIds]
         );
     }
