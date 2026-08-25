@@ -1,11 +1,5 @@
 <script lang="ts">
-	import {
-		IconMessage,
-		TableRow,
-		TableCell,
-		Tag,
-		LoadButton
-	} from '@hyvor/design/components';
+	import { IconMessage, TableRow, TableCell, Tag, LoadButton } from '@hyvor/design/components';
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
 	import SettingsTable from '../@components/SettingsTable.svelte';
