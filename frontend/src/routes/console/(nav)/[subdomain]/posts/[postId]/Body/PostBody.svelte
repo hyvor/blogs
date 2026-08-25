@@ -9,7 +9,6 @@
 	import PublishedNotice from './Footer/PublishedNotice.svelte';
 
 	let titleComponent: { focus: () => void } | undefined = $state();
-	let editorKey = $derived(String($postVariantStore.id));
 
 	// the editor loads its ProseMirror view asynchronously (onMount awaits a
 	// dynamic import), so it may not be ready yet right after this component mounts
@@ -45,9 +44,7 @@
 		<Title bind:this={titleComponent} />
 	</label>
 
-	{#key editorKey}
-		<Editor />
-	{/key}
+	<Editor />
 
 	<div class="editor-footer">
 		<PublishedNotice />

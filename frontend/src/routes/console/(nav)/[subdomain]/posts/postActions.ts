@@ -35,17 +35,6 @@ export function getPages() {
 	});
 }
 
-export function getPost(id: number, variantLanguageCode: string | null = null) {
-	return consoleApi.get<{
-		post: Post;
-		variant: PostVariant;
-		document: Document;
-	}>({
-		endpoint: `/post/${id}`,
-		data: variantLanguageCode ? { variant_language_code: variantLanguageCode } : undefined
-	});
-}
-
 export function createPost(isPage = false) {
 	return consoleApi.post<Post>({
 		endpoint: '/post',

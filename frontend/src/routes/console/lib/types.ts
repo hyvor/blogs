@@ -1,3 +1,5 @@
+import type { CollabClientID, CollabStepJSON } from "@hyvor/richtext";
+
 export interface License {
 	users: number;
 	storage: number;
@@ -198,7 +200,6 @@ export type PostVariant = {
 	url: string;
 
 	content: string | null;
-	content_unsaved: string | null;
 	title: string | null;
 	description: string | null;
 	content_updated_at: number | null;
@@ -207,16 +208,16 @@ export type PostVariant = {
 	seo_secondary_keywords: string[];
 
 	link_analysis: Record<string, number>;
-
-	// Collaborative editing state (see PostVariantCollabService) - only populated on GET /post/{id}
-	document_version: number;
-	document_steps: Record<string, unknown>[];
-	document_client_ids: string[];
 };
 
 export interface Document {
-	version: number;
-	content: string;
+	checkpoint_version: number;
+	checkpoint_content: string;
+	pending_steps: {
+		version: number;
+		steps: CollabStepJSON[];
+		client_ids: CollabClientID[],
+	};
 	mercure_token: string;
 }
 

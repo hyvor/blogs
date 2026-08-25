@@ -13,9 +13,9 @@
 	import { isTempStore } from '../../../../../lib/temp';
 	import type { Unsubscriber } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { getPost } from '../../postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
+	import { getDocumentForPost } from '../documentActions';
 
 	interface Props {
 		postId: number;
@@ -49,7 +49,7 @@
 
 		isLoading = true;
 
-		getPost(Number(postId), langCode)
+		getDocumentForPost(Number(postId), langCode)
 			.then(({ post, variant, document }) => {
 				completePostLoading(post, variant);
 				documentStore.set(document);

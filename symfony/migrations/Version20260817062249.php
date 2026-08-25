@@ -21,7 +21,8 @@ final class Version20260817062249 extends AbstractMigration
         $this->addSql(
             <<<SQL
             ALTER TABLE post_variants
-                ADD COLUMN document_version INTEGER NOT NULL DEFAULT 0
+                ADD COLUMN document_version INTEGER NOT NULL DEFAULT 0,
+                ADD COLUMN content_unsaved_version INTEGER NOT NULL DEFAULT 0
             SQL
         );
 

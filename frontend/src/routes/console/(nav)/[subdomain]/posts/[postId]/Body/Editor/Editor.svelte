@@ -20,7 +20,7 @@
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
 	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
-	import { onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 
 	// unique client ID for this tab
@@ -30,39 +30,42 @@
 		$postContentDirtyStore = true;
 	}
 
-	// Confirmed step batches can arrive redundantly through several channels - the Mercure
-	// broadcast (which echoes back to the submitting client too), a rejected submitCollabSteps's
-	// catch-up payload (fetched directly instead of waiting on Mercure), and the reconnect
-	// `sync` catch-up - and fast typing makes overlapping in-flight requests likely, so more
-	// than one of these can end up covering the same steps. Each batch is "every step since the
-	// version *that specific request* asked for", not "every step since what we've already
-	// applied from a sibling response" - so a later-arriving batch can legitimately start
-	// *before* our current version (it was computed before an earlier response caught us up) and
-	// still end *after* it. prosemirror-collab's receiveSteps() has no idempotency of its own -
-	// it just bumps its version counter by however many steps it's given, with no awareness of
-	// which ones were already applied - so passing it a batch that overlaps what's already
-	// applied double-counts the overlap, overshooting the local version past the server's true
-	// version. Once that happens, every future submission looks stale forever with nothing left
-	// to catch up on (the server has nothing newer than what it already gave us). Slicing off
-	// whatever prefix of the batch is already covered by the current version - rather than just
-	// checking whether the batch as a whole is newer - makes every one of these channels safely
-	// idempotent no matter how they interleave.
-	function applyConfirmedSteps(
-		steps: CollabStepJSON[],
-		clientIds: CollabClientID[],
-		resultingVersion: number
-	) {
+	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[]) {
 		const editor = $postEditor;
 		if (!editor) return;
-		const currentVersion = editor.collab.getVersion();
-		const alreadyApplied = currentVersion + steps.length - resultingVersion;
-		if (alreadyApplied >= steps.length) return; // nothing in this batch is new
-		const newSteps = alreadyApplied > 0 ? steps.slice(alreadyApplied) : steps;
-		const newClientIds = alreadyApplied > 0 ? clientIds.slice(alreadyApplied) : clientIds;
-		editor.collab.receiveSteps(newSteps, newClientIds);
+		editor.collab.receiveSteps(steps, clientIds);
 	}
 
-	async function handleSendable(sendable: CollabSendable) {
+	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
+	// no debounce or in-flight tracking of its own - during fast typing this would otherwise fire
+	// several overlapping submitCollabSteps requests, all based on the same not-yet-confirmed
+	// version. Only the first one the server processes can be accepted; the rest are redundant
+	// rejections. Queueing here ensures only one submission is ever in flight. A newer sendable
+	// batch always contains everything an older, not-yet-sent one had, so a fresher pending batch
+	// simply replaces whatever was queued but not yet sent rather than both being sent in turn.
+	let pendingSendable: CollabSendable | null = null;
+	let sendingSteps = false;
+
+	function handleSendable(sendable: CollabSendable) {
+		pendingSendable = sendable;
+		processSendQueue();
+	}
+
+	async function processSendQueue() {
+		if (sendingSteps) return;
+		sendingSteps = true;
+		try {
+			while (pendingSendable) {
+				const sendable = pendingSendable;
+				pendingSendable = null;
+				await submitSendable(sendable);
+			}
+		} finally {
+			sendingSteps = false;
+		}
+	}
+
+	async function submitSendable(sendable: CollabSendable) {
 		try {
 			const response = await submitCollabSteps({
 				post_variant_id: $postVariantStore.id,
@@ -79,8 +82,7 @@
 			if (!response.accepted) {
 				applyConfirmedSteps(
 					response.steps as CollabStepJSON[],
-					response.client_ids as CollabClientID[],
-					response.version
+					response.client_ids as CollabClientID[]
 				);
 			}
 		} catch (e) {
@@ -98,7 +100,7 @@
 	}
 
 	let value = $derived(
-		$postVariantStore.content_unsaved ||
+		$documentStore.checkpoint_content ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
 
@@ -106,10 +108,8 @@
 	// the ones not yet reflected in `value` (see PostVariantCollabService on the backend) - so
 	// the editor must start at the version *before* those steps, then fast-forward via
 	// collab.receiveSteps() once mounted.
-	let backlogSteps = $derived($postVariantStore.document_steps as CollabStepJSON[]);
-	let backlogClientIds = $derived($postVariantStore.document_client_ids as CollabClientID[]);
-	let liveVersion = $derived($postVariantStore.document_version);
-	let initialVersion = $derived(liveVersion - backlogSteps.length);
+	let backlogSteps = $derived($documentStore.pending_steps.steps);
+	let backlogClientIds = $derived($documentStore.pending_steps.client_ids);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
 
@@ -117,12 +117,13 @@
 		$postEditor.setEditable(isEditable);
 	});
 
-	onMount(() => {
-		const editor = $postEditor;
-		if (!editor) return;
+	let topicUnsubscriber: () => void;
+
+	function handleInit() {
+		const editor = $postEditor!;
 
 		if (backlogSteps.length > 0) {
-			applyConfirmedSteps(backlogSteps, backlogClientIds, liveVersion);
+			applyConfirmedSteps(backlogSteps, backlogClientIds);
 		}
 
 		const cursors = new Map<string, RemoteCursor>();
@@ -131,6 +132,7 @@
 		// while we were disconnected is gone from that transport's point of view (no replay), so
 		// pull the durable truth directly instead of just hoping nothing was missed
 		async function catchUp() {
+			return;
 			try {
 				const response = await syncCollabSteps({
 					post_variant_id: $postVariantStore.id,
@@ -139,8 +141,7 @@
 				if (response.steps.length > 0) {
 					applyConfirmedSteps(
 						response.steps as CollabStepJSON[],
-						response.client_ids as CollabClientID[],
-						response.version
+						response.client_ids as CollabClientID[]
 					);
 				}
 			} catch (e) {
@@ -149,11 +150,13 @@
 		}
 
 		const topic = collabTopic($postVariantStore.id);
-		return subscribeToCollabMercureTopic(
+
+		topicUnsubscriber = subscribeToCollabMercureTopic(
 			topic,
 			$documentStore.mercure_token,
 			(steps, clientIds, version) => {
-				applyConfirmedSteps(steps, clientIds, version);
+				console.log(`received collab steps (version ${version})`, steps, clientIds);
+				applyConfirmedSteps(steps, clientIds);
 			},
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
@@ -178,12 +181,12 @@
 			},
 			catchUp
 		);
-	});
+	}
 
 	let fullEditorConfig = $derived({
 		...editorConfig,
 		collab: {
-			version: initialVersion,
+			version: $documentStore.checkpoint_version,
 			clientID: clientId,
 			onSendable: handleSendable
 		},
@@ -197,6 +200,10 @@
 			source: suggestionSource
 		}
 	});
+
+	onDestroy(() => {
+		topicUnsubscriber?.();
+	});
 </script>
 
 <div class="editor">
@@ -209,6 +216,7 @@
 			{schema}
 			editorConfig={fullEditorConfig}
 			plugins={[wordCountPlugin()]}
+			oninit={handleInit}
 		/>
 	</div>
 </div>
