@@ -20,7 +20,7 @@
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
 	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 
 	// unique client ID for this tab
@@ -30,40 +30,42 @@
 		$postContentDirtyStore = true;
 	}
 
-	// Confirmed step batches can arrive redundantly through several channels - the Mercure
-	// broadcast (which echoes back to the submitting client too), a rejected submitCollabSteps's
-	// catch-up payload (fetched directly instead of waiting on Mercure), and the reconnect
-	// `sync` catch-up - and fast typing makes overlapping in-flight requests likely, so more
-	// than one of these can end up covering the same steps. Each batch is "every step since the
-	// version *that specific request* asked for", not "every step since what we've already
-	// applied from a sibling response" - so a later-arriving batch can legitimately start
-	// *before* our current version (it was computed before an earlier response caught us up) and
-	// still end *after* it. prosemirror-collab's receiveSteps() has no idempotency of its own -
-	// it just bumps its version counter by however many steps it's given, with no awareness of
-	// which ones were already applied - so passing it a batch that overlaps what's already
-	// applied double-counts the overlap, overshooting the local version past the server's true
-	// version. Once that happens, every future submission looks stale forever with nothing left
-	// to catch up on (the server has nothing newer than what it already gave us). Slicing off
-	// whatever prefix of the batch is already covered by the current version - rather than just
-	// checking whether the batch as a whole is newer - makes every one of these channels safely
-	// idempotent no matter how they interleave.
 	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[]) {
 		const editor = $postEditor;
 		if (!editor) return;
-		console.log(
-			`applying confirmed collab steps (version ${editor.collab.getVersion()})`,
-			steps,
-			clientIds
-		);
-		// const currentVersion = editor.collab.getVersion();
-		// const alreadyApplied = currentVersion + steps.length - resultingVersion;
-		// if (alreadyApplied >= steps.length) return; // nothing in this batch is new
-		// const newSteps = alreadyApplied > 0 ? steps.slice(alreadyApplied) : steps;
-		// const newClientIds = alreadyApplied > 0 ? clientIds.slice(alreadyApplied) : clientIds;
 		editor.collab.receiveSteps(steps, clientIds);
 	}
 
-	async function handleSendable(sendable: CollabSendable) {
+	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
+	// no debounce or in-flight tracking of its own - during fast typing this would otherwise fire
+	// several overlapping submitCollabSteps requests, all based on the same not-yet-confirmed
+	// version. Only the first one the server processes can be accepted; the rest are redundant
+	// rejections. Queueing here ensures only one submission is ever in flight. A newer sendable
+	// batch always contains everything an older, not-yet-sent one had, so a fresher pending batch
+	// simply replaces whatever was queued but not yet sent rather than both being sent in turn.
+	let pendingSendable: CollabSendable | null = null;
+	let sendingSteps = false;
+
+	function handleSendable(sendable: CollabSendable) {
+		pendingSendable = sendable;
+		processSendQueue();
+	}
+
+	async function processSendQueue() {
+		if (sendingSteps) return;
+		sendingSteps = true;
+		try {
+			while (pendingSendable) {
+				const sendable = pendingSendable;
+				pendingSendable = null;
+				await submitSendable(sendable);
+			}
+		} finally {
+			sendingSteps = false;
+		}
+	}
+
+	async function submitSendable(sendable: CollabSendable) {
 		try {
 			const response = await submitCollabSteps({
 				post_variant_id: $postVariantStore.id,
