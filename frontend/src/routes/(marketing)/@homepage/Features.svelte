@@ -9,16 +9,19 @@
 	import AllInOneMockup from './AllInOneMockup.svelte';
 	import AiMockup from './AiMockup.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 </script>
 
 <FeatureSplit
-	eyebrow="Own Your Content"
-	title="Your content. Your rules."
-	description="Hyvor Blogs is open-source and built so you're never locked in. Export everything whenever you want, or self-host on your own infrastructure for full control and privacy."
+	eyebrow={I18n.t('homepage.features.ownership.eyebrow')}
+	title={I18n.t('homepage.features.ownership.title')}
+	description={I18n.t('homepage.features.ownership.description')}
 	bullets={[
-		'One-click data export in JSON',
-		'AGPL-3.0 licensed - switch to self-hosting anytime',
-		'No ads, no third-party trackers on your blog'
+		I18n.t('homepage.features.ownership.bullet1'),
+		I18n.t('homepage.features.ownership.bullet2'),
+		I18n.t('homepage.features.ownership.bullet3')
 	]}
 	altBg
 >
@@ -28,13 +31,13 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="All-in-one"
-	title="No plugins.<br/>No maintenance.<br/> No nonsense."
-	description="Everything you need to run a blog is already built in. No plugins to hunt down, no upgrades to babysit, no surprise charges from third-party add-ons - just one platform that works."
+	eyebrow={I18n.t('homepage.features.allInOne.eyebrow')}
+	title={I18n.t('homepage.features.allInOne.title')}
+	description={I18n.t('homepage.features.allInOne.description')}
 	bullets={[
-		'Every feature included, no plugins required',
-		'We handle upgrades, security patches, etc. for you',
-		'No extra charges or third-party add-on costs'
+		I18n.t('homepage.features.allInOne.bullet1'),
+		I18n.t('homepage.features.allInOne.bullet2'),
+		I18n.t('homepage.features.allInOne.bullet3')
 	]}
 	flip
 >
@@ -44,17 +47,17 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Custom Themes"
-	title="Your Style, Your Way"
-	description="Choose from a library of beautiful themes or build your own with plain HTML and CSS. Every color, font, and layout detail is yours to control."
+	eyebrow={I18n.t('homepage.features.themes.eyebrow')}
+	title={I18n.t('homepage.features.themes.title')}
+	description={I18n.t('homepage.features.themes.description')}
 	bullets={[
-		'Fully open-source themes, free to use and modify',
-		'Theme development docs & API',
-		'or, set up headless mode with your own frontend'
+		I18n.t('homepage.features.themes.bullet1'),
+		I18n.t('homepage.features.themes.bullet2'),
+		I18n.t('homepage.features.themes.bullet3')
 	]}
 	button={[
-		{ href: '/themes', label: 'Browse themes', external: true },
-		{ href: '/docs/headless', label: 'Headless docs' }
+		{ href: '/themes', label: I18n.t('homepage.features.themes.button1'), external: true },
+		{ href: '/docs/headless', label: I18n.t('homepage.features.themes.button2') }
 	]}
 	altBg
 	overlap
@@ -65,15 +68,15 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="SEO & Speed"
-	title="Zero-config SEO.<br/>Lightning-fast pages."
-	description="Every blog is automatically optimised for search engines and page speed. You write; we handle the technical SEO so your content ranks."
+	eyebrow={I18n.t('homepage.features.seo.eyebrow')}
+	title={I18n.t('homepage.features.seo.title')}
+	description={I18n.t('homepage.features.seo.description')}
 	bullets={[
-		'Meta tags, Open Graph, Twitter Cards',
-		'Auto-generated sitemaps & robots.txt',
-		'In-built SEO & link analyzers',
-		'Static HTML with zero JS bloat',
-		'Automatic WebP image conversion'
+		I18n.t('homepage.features.seo.bullet1'),
+		I18n.t('homepage.features.seo.bullet2'),
+		I18n.t('homepage.features.seo.bullet3'),
+		I18n.t('homepage.features.seo.bullet4'),
+		I18n.t('homepage.features.seo.bullet5')
 	]}
 	flip
 >
@@ -83,13 +86,13 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Flexible Hosting"
-	title="Custom domain, Sub-directory, Headless"
-	description="Move to a custom domain in seconds, serve your blog from inside your existing site with a sub-directory, or go fully headless with your own frontend. Your call."
+	eyebrow={I18n.t('homepage.features.hosting.eyebrow')}
+	title={I18n.t('homepage.features.hosting.title')}
+	description={I18n.t('homepage.features.hosting.description')}
 	bullets={[
-		'Free TLS certificates on all custom domains',
-		'Cloudflare Workers, Docker, Next.js, Laravel…',
-		'Reverse proxy support for sub-directory'
+		I18n.t('homepage.features.hosting.bullet1'),
+		I18n.t('homepage.features.hosting.bullet2'),
+		I18n.t('homepage.features.hosting.bullet3')
 	]}
 	altBg
 >
@@ -99,15 +102,15 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Comments & Newsletters"
-	title="Talk & Post included"
-	description="Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected."
+	eyebrow={I18n.t('homepage.features.suite.eyebrow')}
+	title={I18n.t('homepage.features.suite.title')}
+	description={I18n.t('homepage.features.suite.description')}
 	bullets={[
-		'Hyvor Talk comments, free on every plan',
-		'Hyvor Post newsletters, free on every plan',
-		'One account and dashboard for all three'
+		I18n.t('homepage.features.suite.bullet1'),
+		I18n.t('homepage.features.suite.bullet2'),
+		I18n.t('homepage.features.suite.bullet3')
 	]}
-	button={{ href: '/pricing', label: "See what's included" }}
+	button={{ href: '/pricing', label: I18n.t('homepage.features.suite.button') }}
 	flip
 >
 	{#snippet visual()}
@@ -116,13 +119,13 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="AI Features"
-	title="AI when you need it"
-	description="Save time and effort with AI-powered features. Generate content, translate posts, and ask for suggestions - all without leaving your blog dashboard."
+	eyebrow={I18n.t('homepage.features.ai.eyebrow')}
+	title={I18n.t('homepage.features.ai.title')}
+	description={I18n.t('homepage.features.ai.description')}
 	bullets={[
-		'AI content generation',
-		'Improvement suggestions',
-		'Bulk post editing (e.g. add internal links)'
+		I18n.t('homepage.features.ai.bullet1'),
+		I18n.t('homepage.features.ai.bullet2'),
+		I18n.t('homepage.features.ai.bullet3')
 	]}
 	interactiveBullets
 	altBg
@@ -133,13 +136,13 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Multi-language"
-	title="Reach a global audience"
-	description="Translate posts, tags, author names and everything else. Add languages in one click and Hyvor Blogs handles routing, hreflang tags, and RTL layouts automatically."
+	eyebrow={I18n.t('homepage.features.multiLanguage.eyebrow')}
+	title={I18n.t('homepage.features.multiLanguage.title')}
+	description={I18n.t('homepage.features.multiLanguage.description')}
 	bullets={[
-		'RTL language support built-in',
-		'Integrated AI translator',
-		'Automatic hreflang & i18n routing'
+		I18n.t('homepage.features.multiLanguage.bullet1'),
+		I18n.t('homepage.features.multiLanguage.bullet2'),
+		I18n.t('homepage.features.multiLanguage.bullet3')
 	]}
 	flip
 >
@@ -149,13 +152,13 @@
 </FeatureSplit>
 
 <FeatureSplit
-	eyebrow="Link Analyzer"
-	title="No broken links"
-	description="Hyvor Blogs automatically fetches and checks every link in your posts on a recurring schedule, flagging broken links and redirects before your readers ever hit them."
+	eyebrow={I18n.t('homepage.features.linkAnalyzer.eyebrow')}
+	title={I18n.t('homepage.features.linkAnalyzer.title')}
+	description={I18n.t('homepage.features.linkAnalyzer.description')}
 	bullets={[
-		'Automatic, periodic checks for every link',
-		'Per-post and full-blog link reports',
-		'Instant flags for broken links, redirects & status codes'
+		I18n.t('homepage.features.linkAnalyzer.bullet1'),
+		I18n.t('homepage.features.linkAnalyzer.bullet2'),
+		I18n.t('homepage.features.linkAnalyzer.bullet3')
 	]}
 >
 	{#snippet visual()}

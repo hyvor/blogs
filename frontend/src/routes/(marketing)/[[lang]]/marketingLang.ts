@@ -27,6 +27,18 @@ export const LANGUAGES_CONFIG = [
 
 export const DEFAULT_MARKETING_LANGUAGE = 'en';
 
+// Header/Footer render outside [[lang]]/+layout.svelte's InternationalizationProvider
+// (they're rendered by the outer (marketing)/+layout.svelte, as siblings to it — see
+// that file — not as its descendants), so they can't read the "i18n" context via
+// getMarketingI18n(). They already derive the current language from the URL directly,
+// so this looks a string up in that language's own strings object instead, falling
+// back to the default language for any key that isn't translated yet.
+export function getStaticString(strings: Record<string, any>, key: string): string {
+	const dig = (obj: Record<string, any>) =>
+		key.split('.').reduce<any>((o, k) => (o && typeof o === 'object' ? o[k] : undefined), obj);
+	return dig(strings) ?? dig(en) ?? '';
+}
+
 export function buildMarketingUrl(path: string, currentLang: string, otherLang: string) {
 	console.log(path, currentLang, otherLang);
 	let basePath = path;

@@ -4,13 +4,20 @@
 	import CcpaSeal from './Seals/CcpaSeal.svelte';
 	import SsoSeal from './Seals/SsoSeal.svelte';
 	import IsoSeal from './Seals/IsoSeal.svelte';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 </script>
 
 <SpotlightSplit
-	title="Enterprise-ready."
-	description="Enterprise-grade security and compliance, without adding complexity to your publishing workflow."
-	stats={['> 99.9% Uptime', 'Priority Support']}
-	button={{ href: 'https://hyvor.com/enterprise', label: 'Contact Sales', external: true }}
+	title={I18n.t('homepage.enterprise.title')}
+	description={I18n.t('homepage.enterprise.description')}
+	stats={[I18n.t('homepage.enterprise.stat1'), I18n.t('homepage.enterprise.stat2')]}
+	button={{
+		href: 'https://hyvor.com/enterprise',
+		label: I18n.t('homepage.enterprise.button'),
+		external: true
+	}}
 	background="#574443"
 >
 	{#snippet content()}

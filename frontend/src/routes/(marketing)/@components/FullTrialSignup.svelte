@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { FullTrialSignup } from '@hyvor/design/marketing';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	interface Props {
 		title?: string;
 		[key: string]: any;
 	}
 
-	let { title = 'Start your blog today', ...rest }: Props = $props();
+	let { title = I18n.t('homepage.trialSignup.title'), ...rest }: Props = $props();
 </script>
 
 <FullTrialSignup
-	badge="Open-source & free to try"
+	badge={I18n.t('homepage.trialSignup.badge')}
 	{title}
-	description="Join hundreds of bloggers and businesses building with Hyvor Blogs."
-	button={{ href: '/console?signup', label: 'Start your blog →' }}
+	description={I18n.t('homepage.trialSignup.description')}
+	button={{ href: '/console?signup', label: I18n.t('homepage.trialSignup.button') }}
+	checks={[
+		I18n.t('homepage.trialSignup.check1'),
+		I18n.t('homepage.trialSignup.check2'),
+		I18n.t('homepage.trialSignup.check3')
+	]}
 	{...rest}
 />

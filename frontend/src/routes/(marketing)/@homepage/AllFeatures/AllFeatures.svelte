@@ -19,140 +19,138 @@
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import IconSignpost2 from '@hyvor/icons/IconSignpost2';
 	import IconTag from '@hyvor/icons/IconTag';
+	import { getMarketingI18n } from '../../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
+
+	const t = (key: string) => I18n.t(`homepage.allFeatures.categories.${key}` as never);
 
 	const categories = [
 		{
-			label: 'Post Editor',
+			label: t('postEditor.label'),
 			icon: IconPencil,
 			color: 'var(--green)',
 			features: [
 				{
 					icon: IconPencil,
-					title: 'All the basics',
-					description: 'Bold, italic, headings, lists, quotes, links, and more.'
+					title: t('postEditor.basics.title'),
+					description: t('postEditor.basics.description')
 				},
 				{
 					icon: IconImage,
-					title: 'Images',
-					description:
-						'Upload, paste, drag and drop, Unsplash, Excalidraw, and more ways to add images.'
+					title: t('postEditor.images.title'),
+					description: t('postEditor.images.description')
 				},
 				{
 					icon: IconCode,
-					title: 'Embeds',
-					description:
-						'Easily embed from Youtube, X, Facebook, Instagram, and 1000+ other platforms.'
+					title: t('postEditor.embeds.title'),
+					description: t('postEditor.embeds.description')
 				},
 				{
 					icon: IconRegex,
-					title: 'Syntax Highlighting',
-					description: 'Add code blocks with syntax highlighting for 100+ languages.'
+					title: t('postEditor.syntaxHighlighting.title'),
+					description: t('postEditor.syntaxHighlighting.description')
 				},
 				{
 					icon: IconMarkdown,
-					title: 'Markdown-friendly',
-					description: 'Markdown shortcuts for all the formatting you need.'
+					title: t('postEditor.markdown.title'),
+					description: t('postEditor.markdown.description')
 				},
 				{
 					icon: IconHourglass,
-					title: 'Drafts & Scheduling',
-					description: 'Save drafts and schedule posts to be published in the future.'
+					title: t('postEditor.drafts.title'),
+					description: t('postEditor.drafts.description')
 				}
 			]
 		},
 		{
-			label: 'Your Blog',
+			label: t('yourBlog.label'),
 			icon: IconSignpost2,
 			color: 'var(--blue)',
 			features: [
 				{
 					icon: IconTag,
-					title: 'Tags',
-					description: 'Organize your posts with tags. Tag index pages are generated automatically.'
+					title: t('yourBlog.tags.title'),
+					description: t('yourBlog.tags.description')
 				},
 				{
 					icon: IconPeople,
-					title: 'Authors',
-					description:
-						'Add one or more authors to your blog posts. Author index pages are generated automatically.'
+					title: t('yourBlog.authors.title'),
+					description: t('yourBlog.authors.description')
 				},
 				{
 					icon: IconSignpost2,
-					title: 'Navigation',
-					description:
-						'Add navigation links to your blog header and footer without writing any code.'
+					title: t('yourBlog.navigation.title'),
+					description: t('yourBlog.navigation.description')
 				},
 				{
 					icon: IconSignTurnSlightRight,
-					title: 'Redirects',
-					description: 'Set up redirects for your old blog posts to keep your SEO juice.'
+					title: t('yourBlog.redirects.title'),
+					description: t('yourBlog.redirects.description')
 				},
 				{
 					icon: IconRss,
-					title: 'Atom (RSS) Feed',
-					description: 'Atom feeds are generated automatically. No extra work needed.'
+					title: t('yourBlog.feed.title'),
+					description: t('yourBlog.feed.description')
 				},
 				{
 					icon: IconDiagram3,
-					title: 'Sitemap',
-					description: "Same for the sitemap! It's generated automatically."
+					title: t('yourBlog.sitemap.title'),
+					description: t('yourBlog.sitemap.description')
 				},
 				{
 					icon: IconBraces,
-					title: 'Custom Code',
-					description:
-						'Add custom code to the whole blog or a specific page to integrate with third-party services.'
+					title: t('yourBlog.customCode.title'),
+					description: t('yourBlog.customCode.description')
 				}
 			]
 		},
 		{
-			label: 'Optimizations',
+			label: t('optimizations.label'),
 			icon: IconLightning,
 			color: 'var(--orange)',
 			features: [
 				{
 					icon: IconSearchHeart,
-					title: 'SEO',
-					description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
+					title: t('optimizations.seo.title'),
+					description: t('optimizations.seo.description')
 				},
 				{
 					icon: IconLightning,
-					title: 'Speed',
-					description:
-						'All official themes are optimized for speed. We use caching extensively to make your blog blazing fast.'
+					title: t('optimizations.speed.title'),
+					description: t('optimizations.speed.description')
 				},
 				{
 					icon: IconArrowsAngleContract,
-					title: 'Image Optimization',
-					description: 'Automatic webp conversion and responsive images for all your images.'
+					title: t('optimizations.imageOptimization.title'),
+					description: t('optimizations.imageOptimization.description')
 				}
 			]
 		},
 		{
-			label: 'Developers',
+			label: t('developers.label'),
 			icon: IconDatabase,
 			color: 'var(--red)',
 			features: [
 				{
 					icon: IconDatabase,
-					title: 'Data API',
-					description:
-						'A REST API to access your blog data, allowing you to use Hyvor Blogs as a headless CMS.'
+					title: t('developers.dataApi.title'),
+					description: t('developers.dataApi.description')
 				},
 				{
 					icon: IconController,
-					title: 'Console API',
-					description: 'Everything you can do from the Console, you can do with the Console API.'
+					title: t('developers.consoleApi.title'),
+					description: t('developers.consoleApi.description')
 				},
 				{
 					icon: IconSend,
-					title: 'Delivery API',
-					description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
+					title: t('developers.deliveryApi.title'),
+					description: t('developers.deliveryApi.description')
 				},
 				{
 					icon: IconSend,
-					title: 'Webhooks',
-					description: 'Get notified when an event happens in your blog.'
+					title: t('developers.webhooks.title'),
+					description: t('developers.webhooks.description')
 				}
 			]
 		}
@@ -160,7 +158,7 @@
 </script>
 
 <AllFeaturesAccordion
-	title="And There's More..."
-	description="Everything you need to take your blog from idea to impact."
+	title={I18n.t('homepage.allFeatures.title')}
+	description={I18n.t('homepage.allFeatures.description')}
 	{categories}
 />

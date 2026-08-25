@@ -3,23 +3,25 @@
 	import IconGithub from '@hyvor/icons/IconGithub';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import { getMarketingI18n } from '../marketingLang';
 
-	const bullets = [
-		'Free & open-source — no license fees',
-		'Deploy with Docker in a few commands',
-		'Full ownership of your data & infrastructure',
-		'No vendor lock-in — move to the cloud anytime'
-	];
+	const I18n = getMarketingI18n();
+
+	const bullets = $derived([
+		I18n.t('pricing.selfHost.bullet1'),
+		I18n.t('pricing.selfHost.bullet2'),
+		I18n.t('pricing.selfHost.bullet3'),
+		I18n.t('pricing.selfHost.bullet4')
+	]);
 </script>
 
 <section class="self-host hds-container">
 	<div class="inner">
 		<div class="text-col">
-			<span class="eyebrow">Open Source</span>
-			<h2>Prefer to self-host?</h2>
+			<span class="eyebrow">{I18n.t('pricing.selfHost.eyebrow')}</span>
+			<h2>{I18n.t('pricing.selfHost.title')}</h2>
 			<p>
-				Hyvor Blogs is free and open-source. Deploy it on your own infrastructure and keep full
-				control over your data — no subscription required.
+				{I18n.t('pricing.selfHost.description')}
 			</p>
 
 			<ul class="bullets">
@@ -30,7 +32,7 @@
 
 			<div class="buttons">
 				<Button as="a" href="/hosting" size="large" variant="fill" color="accent">
-					Learn about self-hosting
+					{I18n.t('pricing.selfHost.button1')}
 				</Button>
 				<span class="github-btn">
 					<Button
@@ -43,7 +45,7 @@
 						color="gray"
 					>
 						{#snippet start()}<IconGithub size={14} />{/snippet}
-						View on GitHub
+						{I18n.t('pricing.selfHost.button2')}
 						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
 					</Button>
 				</span>

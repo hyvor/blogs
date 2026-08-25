@@ -4,6 +4,9 @@
 	import IconChevronLeft from '@hyvor/icons/IconChevronLeft';
 	import IconChevronRight from '@hyvor/icons/IconChevronRight';
 	import FeatureStatus from './FeatureStatus.svelte';
+	import { getMarketingI18n } from '../marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	type PlanKey = 'personal' | 'starter' | 'growth' | 'premium' | 'enterprise';
 
@@ -24,13 +27,13 @@
 
 	// drives both the desktop header row and — on mobile, where only one
 	// plan's column shows at a time — the prev/next plan switcher
-	const PLANS: { key: PlanKey; label: string; popular?: boolean }[] = [
-		{ key: 'personal', label: 'Personal' },
-		{ key: 'starter', label: 'Starter' },
-		{ key: 'growth', label: 'Growth', popular: true },
-		{ key: 'premium', label: 'Premium' },
-		{ key: 'enterprise', label: 'Enterprise' }
-	];
+	const PLANS: { key: PlanKey; label: string; popular?: boolean }[] = $derived([
+		{ key: 'personal', label: I18n.t('pricing.plans.personal') },
+		{ key: 'starter', label: I18n.t('pricing.plans.starter') },
+		{ key: 'growth', label: I18n.t('pricing.plans.growth'), popular: true },
+		{ key: 'premium', label: I18n.t('pricing.plans.premium') },
+		{ key: 'enterprise', label: I18n.t('pricing.plans.enterprise') }
+	]);
 
 	// mobile-only: which single plan's column is currently shown — starts on
 	// Growth (the popular one) since that's the one most visitors want to see
@@ -39,230 +42,232 @@
 	// prev/next buttons below), so this index access is always in range
 	const mobilePlan = $derived(PLANS[mobilePlanIndex]!);
 
-	const FEATURES: FeatureGroup[] = [
+	// per-cell VALUES (numbers, units like "tokens/m"/"credits/m", and the
+	// "Custom" placeholder) are deliberately left untranslated — cleanly
+	// i18n-ing them would mean splitting each into a {amount, unit} pair
+	// instead of one free-form string, which is a bigger data model change
+	const FEATURES: FeatureGroup[] = $derived([
 		{
-			category: 'Basic Features',
+			category: I18n.t('pricing.compare.categories.basic'),
 			features: [
 				{
-					name: 'Blogs',
+					name: I18n.t('pricing.compare.features.blogs.name'),
 					personal: '1',
 					starter: '3',
 					growth: '10',
 					premium: '20',
 					enterprise: 'Custom',
-					tooltip: 'Maximum number of blogs within your organization.'
+					tooltip: I18n.t('pricing.compare.features.blogs.tooltip')
 				},
 				{
-					name: 'Users (team members)',
+					name: I18n.t('pricing.compare.features.users.name'),
 					personal: '1',
 					starter: '5',
 					growth: '15',
 					premium: '50',
 					enterprise: 'Custom',
-					tooltip: 'Total number of users who write for your blog.'
+					tooltip: I18n.t('pricing.compare.features.users.tooltip')
 				},
 				{
-					name: 'Media Storage',
+					name: I18n.t('pricing.compare.features.mediaStorage.name'),
 					personal: '1GB',
 					starter: '5GB',
 					growth: '150GB',
 					premium: '500GB',
 					enterprise: 'Custom',
-					tooltip: 'Total storage for uploaded media files (images, etc.).'
+					tooltip: I18n.t('pricing.compare.features.mediaStorage.tooltip')
 				},
 				{
-					name: 'Custom Themes',
+					name: I18n.t('pricing.compare.features.customThemes.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Use default themes for free or build your own custom theme.'
+					tooltip: I18n.t('pricing.compare.features.customThemes.tooltip')
 				},
 				{
-					name: 'Custom Domain',
+					name: I18n.t('pricing.compare.features.customDomain.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Host your blog on your own domain.'
+					tooltip: I18n.t('pricing.compare.features.customDomain.tooltip')
 				},
 				{
-					name: 'Multi-language Support',
+					name: I18n.t('pricing.compare.features.multiLanguage.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Add multiple languages to your blog and translate your posts.'
+					tooltip: I18n.t('pricing.compare.features.multiLanguage.tooltip')
 				},
 				{
-					name: 'No Branding',
+					name: I18n.t('pricing.compare.features.noBranding.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Remove Hyvor Blogs branding from your blog.'
+					tooltip: I18n.t('pricing.compare.features.noBranding.tooltip')
 				},
 				{
-					name: 'SEO Analysis',
+					name: I18n.t('pricing.compare.features.seoAnalysis.name'),
 					personal: false,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'In-post SEO analysis (check keywords, content, readability, etc.).'
+					tooltip: I18n.t('pricing.compare.features.seoAnalysis.tooltip')
 				},
 				{
-					name: 'Link Analysis',
+					name: I18n.t('pricing.compare.features.linkAnalysis.name'),
 					personal: false,
 					starter: false,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Post link analysis, bi-weekly full-blog link analysis, and email reports.'
+					tooltip: I18n.t('pricing.compare.features.linkAnalysis.tooltip')
 				}
 			]
 		},
 		{
-			category: 'AI Features',
+			category: I18n.t('pricing.compare.categories.ai'),
 			features: [
 				{
-					name: 'GPT Writing',
+					name: I18n.t('pricing.compare.features.gptWriting.name'),
 					personal: false,
 					starter: false,
 					growth: '100k tokens/m',
 					premium: '1m tokens/m',
 					enterprise: 'Custom',
-					tooltip:
-						'Use OpenAI GPT for content writing and keyword generation. ~1,000 tokens ≈ 750 words.'
+					tooltip: I18n.t('pricing.compare.features.gptWriting.tooltip')
 				},
 				{
-					name: 'Auto-Translations',
+					name: I18n.t('pricing.compare.features.autoTranslations.name'),
 					personal: false,
 					starter: false,
 					growth: '100k chars/m',
 					premium: '500k chars/m',
 					enterprise: 'Custom',
-					tooltip: 'Automatically translate your posts into multiple languages using DeepL.'
+					tooltip: I18n.t('pricing.compare.features.autoTranslations.tooltip')
 				}
 			]
 		},
 		{
-			category: 'Developer',
+			category: I18n.t('pricing.compare.categories.developer'),
 			features: [
 				{
-					name: 'Data API',
+					name: I18n.t('pricing.compare.features.dataApi.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Access public data of your blog via API.'
+					tooltip: I18n.t('pricing.compare.features.dataApi.tooltip')
 				},
 				{
-					name: 'Console API',
+					name: I18n.t('pricing.compare.features.consoleApi.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'The same API used in the Console — great for automation.'
+					tooltip: I18n.t('pricing.compare.features.consoleApi.tooltip')
 				},
 				{
-					name: 'Delivery API',
+					name: I18n.t('pricing.compare.features.deliveryApi.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'For self-serving a blog within web frameworks.'
+					tooltip: I18n.t('pricing.compare.features.deliveryApi.tooltip')
 				},
 				{
-					name: 'Webhooks',
+					name: I18n.t('pricing.compare.features.webhooks.name'),
 					personal: true,
 					starter: true,
 					growth: true,
 					premium: true,
 					enterprise: true,
-					tooltip: 'Receive an HTTP request on events in your blog.'
+					tooltip: I18n.t('pricing.compare.features.webhooks.tooltip')
 				}
 			]
 		},
 		{
-			category: 'Integrations',
+			category: I18n.t('pricing.compare.categories.integrations'),
 			features: [
 				{
-					name: 'Hyvor Talk (Comments)',
+					name: I18n.t('pricing.compare.features.hyvorTalk.name'),
 					personal: '10k credits/m',
 					starter: '25k credits/m',
 					growth: '100k credits/m',
 					premium: '250k credits/m',
 					enterprise: 'Custom',
-					tooltip: 'Add Hyvor Talk commenting system for free. Credits are used per comment load.'
+					tooltip: I18n.t('pricing.compare.features.hyvorTalk.tooltip')
 				},
 				{
-					name: 'Hyvor Post (Newsletter)',
+					name: I18n.t('pricing.compare.features.hyvorPost.name'),
 					personal: '5k emails/m',
 					starter: '15k emails/m',
 					growth: '50k emails/m',
 					premium: '150k emails/m',
 					enterprise: 'Custom',
-					tooltip:
-						'Add Hyvor Post newsletter system for free. Includes a complimentary license for Hyvor Post.'
+					tooltip: I18n.t('pricing.compare.features.hyvorPost.tooltip')
 				}
 			]
 		},
 		{
-			category: 'Enterprise',
+			category: I18n.t('pricing.compare.categories.enterprise'),
 			features: [
 				{
-					name: 'SSO & SAML',
+					name: I18n.t('pricing.compare.features.sso.name'),
 					personal: false,
 					starter: false,
 					growth: false,
 					premium: false,
 					enterprise: true,
-					tooltip: 'Single sign-on via SAML for your organization’s identity provider.'
+					tooltip: I18n.t('pricing.compare.features.sso.tooltip')
 				},
 				{
-					name: 'GDPR, CCPA & ISO Compliance',
+					name: I18n.t('pricing.compare.features.compliance.name'),
 					personal: false,
 					starter: false,
 					growth: false,
 					premium: false,
 					enterprise: true,
-					tooltip: 'Formal compliance documentation and DPAs for regulated organizations.'
+					tooltip: I18n.t('pricing.compare.features.compliance.tooltip')
 				},
 				{
-					name: 'Priority Support',
+					name: I18n.t('pricing.compare.features.prioritySupport.name'),
 					personal: false,
 					starter: false,
 					growth: false,
 					premium: false,
 					enterprise: true,
-					tooltip: 'Dedicated, faster-response support for your team.'
+					tooltip: I18n.t('pricing.compare.features.prioritySupport.tooltip')
 				},
 				{
-					name: 'Custom Contract & SLA',
+					name: I18n.t('pricing.compare.features.customContract.name'),
 					personal: false,
 					starter: false,
 					growth: false,
 					premium: false,
 					enterprise: true,
-					tooltip: 'Custom-tailored contract terms and a service-level agreement.'
+					tooltip: I18n.t('pricing.compare.features.customContract.tooltip')
 				}
 			]
 		}
-	];
+	]);
 </script>
 
 <div class="title-wrap hds-container">
-	<div class="eyebrow">Compare</div>
-	<h2>All features, plan by plan</h2>
-	<p class="subtitle">A detailed breakdown of everything included in each plan.</p>
+	<div class="eyebrow">{I18n.t('pricing.compare.eyebrow')}</div>
+	<h2>{I18n.t('pricing.compare.title')}</h2>
+	<p class="subtitle">{I18n.t('pricing.compare.subtitle')}</p>
 </div>
 
 <div class="table-outer hds-container-max">
@@ -273,21 +278,21 @@
 			class="switch-arrow"
 			onclick={() => (mobilePlanIndex = Math.max(0, mobilePlanIndex - 1))}
 			disabled={mobilePlanIndex === 0}
-			aria-label="Previous plan"
+			aria-label={I18n.t('pricing.compare.prevPlan')}
 		>
 			<IconChevronLeft size={16} />
 		</button>
 		<span class="switch-label">
 			{mobilePlan.label}
 			{#if mobilePlan.popular}
-				<span class="popular-tag">Most Popular</span>
+				<span class="popular-tag">{I18n.t('pricing.plans.mostPopular')}</span>
 			{/if}
 		</span>
 		<button
 			class="switch-arrow"
 			onclick={() => (mobilePlanIndex = Math.min(PLANS.length - 1, mobilePlanIndex + 1))}
 			disabled={mobilePlanIndex === PLANS.length - 1}
-			aria-label="Next plan"
+			aria-label={I18n.t('pricing.compare.nextPlan')}
 		>
 			<IconChevronRight size={16} />
 		</button>
@@ -299,7 +304,9 @@
 			{#each PLANS as plan, i}
 				<div class="col" class:popular={plan.popular} class:mobile-hidden={i !== mobilePlanIndex}>
 					{#if plan.popular}
-						<span>{plan.label}</span><span class="popular-tag">Most Popular</span>
+						<span>{plan.label}</span><span class="popular-tag"
+							>{I18n.t('pricing.plans.mostPopular')}</span
+						>
 					{:else}
 						{plan.label}
 					{/if}

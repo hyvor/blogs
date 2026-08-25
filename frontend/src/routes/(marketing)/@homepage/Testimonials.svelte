@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { Testimonials } from '@hyvor/design/marketing';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	interface TextReview {
 		type: 'text';
@@ -43,4 +46,8 @@
 	];
 </script>
 
-<Testimonials title="Don't take our word for it.<br />Hear it from our customers." {reviews} />
+<Testimonials
+	label={I18n.t('homepage.testimonials.label')}
+	title={I18n.t('homepage.testimonials.title')}
+	{reviews}
+/>

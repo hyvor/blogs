@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import IconCheckLg from '@hyvor/icons/IconCheckLg';
+	import { getMarketingI18n } from '../marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	interface Props {
 		plan: 'personal' | 'starter' | 'growth' | 'premium' | 'enterprise';
@@ -17,62 +20,29 @@
 		premium: 125
 	};
 
-	const meta = {
-		personal: { tagline: 'For solo bloggers' },
-		starter: { tagline: 'For small teams' },
-		growth: { tagline: 'For growing publications' },
-		premium: { tagline: 'For large organizations' },
-		enterprise: { tagline: 'For custom, large-scale needs' }
-	};
-
 	const popular = plan === 'growth';
 	const isEnterprise = plan === 'enterprise';
 
-	function getFeatures(): string[] {
-		if (plan === 'personal') {
-			return [
-				'1 blog',
-				'1 user',
-				'1GB media storage',
-				'Custom themes & domain',
-				'Multi-language support',
-				'All APIs included'
-			];
-		}
-		if (plan === 'starter') {
-			return ['All Personal features', '3 blogs', '5 users', '5GB media storage', 'SEO Analysis'];
-		}
-		if (plan === 'growth') {
-			return [
-				'All Starter features',
-				'10 blogs',
-				'15 users',
-				'150GB media storage',
-				'Link Analysis',
-				'100k AI tokens/month',
-				'100k auto-translation chars/month'
-			];
-		}
-		if (plan === 'premium') {
-			return [
-				'All Growth features',
-				'20 blogs',
-				'50 users',
-				'500GB media storage',
-				'1m AI tokens/month',
-				'500k auto-translation chars/month'
-			];
-		}
-		return [
-			'All Premium features',
-			'SSO & SAML',
-			'GDPR, CCPA & ISO compliant',
-			'Priority support',
-			'Custom contract & SLA'
-		];
-	}
+	const planName = $derived(I18n.t(`pricing.plans.${plan}` as never));
+	const tagline = $derived(
+		I18n.t(`pricing.plans.tagline${plan.charAt(0).toUpperCase()}${plan.slice(1)}` as never)
+	);
 
-	const items = getFeatures();
+	const featureCounts: Record<typeof plan, number> = {
+		personal: 6,
+		starter: 5,
+		growth: 7,
+		premium: 6,
+		enterprise: 5
+	};
+
+	const items = $derived(
+		Array.from({ length: featureCounts[plan] }, (_, i) =>
+			I18n.t(
+				`pricing.plans.features${plan.charAt(0).toUpperCase()}${plan.slice(1)}${i + 1}` as never
+			)
+		)
+	);
 
 	let price = $derived(
 		(() => {
@@ -81,40 +51,46 @@
 		})()
 	);
 
-	let period = $derived(yearly ? 'year' : 'month');
+	let period = $derived(
+		yearly ? I18n.t('pricing.plans.perYear') : I18n.t('pricing.plans.perMonth')
+	);
 
 	let personalMonthlyNote = $derived(plan === 'personal' && !yearly);
 
-	const ctaLabel = isEnterprise ? 'Contact Sales' : 'Choose Plan';
+	const ctaLabel = $derived(
+		isEnterprise ? I18n.t('pricing.plans.ctaContactSales') : I18n.t('pricing.plans.ctaChoosePlan')
+	);
 	const ctaHref = isEnterprise ? 'https://hyvor.com/enterprise' : '/console/billing';
 </script>
 
 <div class="wrap hds-box" class:popular>
 	<div class="top">
 		<div class="header">
-			<div class="name">{plan}</div>
+			<div class="name">{planName}</div>
 			{#if popular}
-				<div class="popular-badge">Popular</div>
+				<div class="popular-badge">{I18n.t('pricing.plans.popular')}</div>
 			{/if}
 		</div>
 
 		{#if isEnterprise}
 			<div class="price-row">
-				<span class="price-amount">Custom</span>
+				<span class="price-amount">{I18n.t('pricing.plans.custom')}</span>
 			</div>
 		{:else}
 			<div class="price-row">
 				<span class="price-amount">{currency}{price}</span><span class="price-period"
-					>/{period}{personalMonthlyNote ? '*' : ''}</span
+					>{period}{personalMonthlyNote ? '*' : ''}</span
 				>
 			</div>
 		{/if}
 
 		<div class="annual-note">
-			{personalMonthlyNote ? `*Billed annually at ${currency}${prices.personal}/year` : ' '}
+			{personalMonthlyNote
+				? I18n.t('pricing.plans.billedAnnually', { currency, price: prices.personal })
+				: ' '}
 		</div>
 
-		<div class="tagline">{meta[plan].tagline}</div>
+		<div class="tagline">{tagline}</div>
 
 		<div class="cta-wrap">
 			<Button
@@ -131,7 +107,7 @@
 	</div>
 
 	<div class="bottom">
-		<div class="features-label">Features</div>
+		<div class="features-label">{I18n.t('pricing.plans.featuresLabel')}</div>
 		<div class="features-list">
 			{#each items as item}
 				<div class="feature-item">
@@ -173,7 +149,6 @@
 	.name {
 		font-weight: 700;
 		font-size: 19px;
-		text-transform: capitalize;
 		letter-spacing: -0.01em;
 	}
 

@@ -1,65 +1,98 @@
 <script lang="ts">
 	import { Footer, FooterLinkList } from '@hyvor/design/marketing';
+	import { page } from '$app/stores';
+	import { LANGUAGES_CONFIG, buildMarketingUrl, getStaticString } from './[[lang]]/marketingLang';
 
-	const columns = [
+	const currentLang = $derived(
+		LANGUAGES_CONFIG.find((lang) => lang.code === $page.url.pathname.split('/')[1]) ??
+			LANGUAGES_CONFIG.find((lang) => lang.default)!
+	);
+
+	// see getStaticString's own comment: Footer can't use the "i18n" context,
+	// so this looks the current language's strings up directly instead. Unlike
+	// the homepage sections, Footer isn't remounted on a language switch (it's
+	// rendered by the outer (marketing)/+layout.svelte, outside the [[lang]]
+	// layout's {#key data.lang} block), so `columns` below must stay reactive
+	// ($derived) rather than a plain const, or it'd go stale after a switch.
+	function t(key: string) {
+		return getStaticString(currentLang.strings, key);
+	}
+
+	// re-prefix a plain, language-agnostic path (e.g. "/pricing") with the
+	// current language, so in-site links stay on the same language
+	function localizedHref(path: string) {
+		return buildMarketingUrl(path, currentLang.code, currentLang.code) || '/';
+	}
+
+	interface FooterLink {
+		href: string;
+		label: string;
+		external?: boolean;
+		localize?: boolean;
+	}
+
+	const columns = $derived.by<{ title: string; links: FooterLink[] }[]>(() => [
 		{
-			title: 'Product',
+			title: t('nav.footer.columns.product'),
 			links: [
-				{ href: '/console', label: 'Console' },
-				{ href: '/themes', label: 'Themes' },
-				{ href: '/pricing', label: 'Pricing' },
-				{ href: '/docs', label: 'Docs' },
-				{ href: '/hosting', label: 'Hosting' }
+				// Console is a separate app, not part of this marketing site's
+				// i18n routing, so it's left unprefixed
+				{ href: '/console', label: t('nav.footer.console') },
+				{ href: '/themes', label: t('nav.header.themes.label'), localize: true },
+				{ href: '/pricing', label: t('nav.header.pricing'), localize: true },
+				{ href: '/docs', label: t('nav.header.docs'), localize: true },
+				{ href: '/hosting', label: t('nav.header.hosting'), localize: true }
 			]
 		},
 		{
-			title: 'Legal',
+			title: t('nav.footer.columns.legal'),
 			links: [
-				{ href: '/terms', label: 'Terms of Service' },
-				{ href: '/privacy', label: 'Privacy Policy' },
-				{ href: 'https://hyvor.com/compliance', label: 'Compliance', external: true }
+				{ href: '/terms', label: t('nav.footer.termsOfService') },
+				{ href: '/privacy', label: t('nav.footer.privacyPolicy') },
+				{ href: 'https://hyvor.com/compliance', label: t('nav.footer.compliance'), external: true }
 			]
 		},
 		{
 			title: 'HYVOR',
 			links: [
 				{ href: 'https://hyvor.com', label: 'hyvor.com', external: true },
-				{ href: 'https://hyvor.com/#letter', label: 'About', external: true },
-				{ href: 'https://hyvor.com/security', label: 'Security', external: true },
-				{ href: 'https://status.hyvor.com', label: 'System Status', external: true }
+				{ href: 'https://hyvor.com/#letter', label: t('nav.footer.about'), external: true },
+				{ href: 'https://hyvor.com/security', label: t('nav.footer.security'), external: true },
+				{ href: 'https://status.hyvor.com', label: t('nav.footer.systemStatus'), external: true }
 			]
 		},
 		{
-			title: 'Alternatives',
+			title: t('nav.footer.columns.alternatives'),
 			links: [
 				{
 					href: 'https://hyvor.com/compare/blogs/wordpress',
-					label: 'WordPress Alternative',
+					label: t('nav.footer.wordpressAlternative'),
 					external: true
 				},
 				{
 					href: 'https://hyvor.com/compare/blogs/ghost',
-					label: 'Ghost Alternative',
+					label: t('nav.footer.ghostAlternative'),
 					external: true
 				},
 				{
 					href: 'https://hyvor.com/compare/blogs/medium',
-					label: 'Medium Alternative',
+					label: t('nav.footer.mediumAlternative'),
 					external: true
 				},
 				{
 					href: 'https://hyvor.com/compare/blogs/blogger',
-					label: 'Blogger Alternative',
+					label: t('nav.footer.bloggerAlternative'),
 					external: true
 				}
 			]
 		}
-	];
+	]);
 </script>
 
 <Footer
 	name="Hyvor Blogs"
 	logo="/logo.svg"
+	logoAltText={t('nav.header.logo')}
 	card
 	background="#574443"
 	email="blogs.support@hyvor.com"
@@ -70,13 +103,22 @@
 	}}
 	languageToggle={false}
 	max
+	copyEmailLabel={t('nav.footer.copyEmail')}
+	copiedLabel={t('nav.footer.copied')}
+	gdprText={t('nav.footer.gdprCompliant')}
+	fromFranceText={t('nav.footer.fromFrance')}
 >
 	{#snippet center()}
 		<div class="columns">
 			{#each columns as col}
 				<FooterLinkList title={col.title}>
 					{#each col.links as link}
-						<a href={link.href} target={link.external ? '_blank' : undefined}>{link.label}</a>
+						<a
+							href={link.localize ? localizedHref(link.href) : link.href}
+							target={link.external ? '_blank' : undefined}
+						>
+							{link.label}
+						</a>
 					{/each}
 				</FooterLinkList>
 			{/each}

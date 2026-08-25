@@ -2,6 +2,9 @@
 	import PricingPlan from './PricingPlan.svelte';
 	import IconChevronLeft from '@hyvor/icons/IconChevronLeft';
 	import IconChevronRight from '@hyvor/icons/IconChevronRight';
+	import { getMarketingI18n } from '../marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	let currency = '€';
 	let yearly = $state(false);
@@ -36,17 +39,18 @@
 <section class="pricing-hero">
 	<div class="header-wrap hds-container-max">
 		<div class="header">
-			<h1 class="title">Simple &amp; transparent pricing</h1>
-			<p class="subtitle">No hidden fees. Cancel anytime.</p>
+			<h1 class="title">{I18n.t('pricing.hero.title')}</h1>
+			<p class="subtitle">{I18n.t('pricing.hero.subtitle')}</p>
 
 			<div class="toggle-wrap">
 				<div class="toggle" style="--active: {yearly ? 1 : 0}">
 					<div class="toggle-thumb"></div>
 					<button class="toggle-btn" class:active={!yearly} onclick={() => (yearly = false)}>
-						Monthly
+						{I18n.t('pricing.hero.monthly')}
 					</button>
 					<button class="toggle-btn" class:active={yearly} onclick={() => (yearly = true)}>
-						Annual <span class="save">2 months off</span>
+						{I18n.t('pricing.hero.annual')}
+						<span class="save">{I18n.t('pricing.hero.annualSave')}</span>
 					</button>
 				</div>
 			</div>
@@ -64,13 +68,21 @@
 			</div>
 
 			{#if canScrollLeft}
-				<button class="arrow left" onclick={() => scroll(-1)} aria-label="Scroll to previous plans">
+				<button
+					class="arrow left"
+					onclick={() => scroll(-1)}
+					aria-label={I18n.t('pricing.hero.scrollPrev')}
+				>
 					<IconChevronLeft size={16} />
 				</button>
 			{/if}
 
 			{#if canScrollRight}
-				<button class="arrow right" onclick={() => scroll(1)} aria-label="Scroll to more plans">
+				<button
+					class="arrow right"
+					onclick={() => scroll(1)}
+					aria-label={I18n.t('pricing.hero.scrollNext')}
+				>
 					<IconChevronRight size={16} />
 				</button>
 			{/if}
@@ -194,7 +206,11 @@
 	.toggle {
 		position: relative;
 		display: flex;
-		width: 290px;
+		/* wide enough for the longer of the two labels in any language (e.g.
+		   "Annuel 2 mois offerts") to keep its padding on both sides — at a
+		   fixed 50/50 split (see .toggle-thumb/.toggle-btn below), a narrower
+		   width let a longer translation crowd right up against the pill edge */
+		width: 330px;
 		max-width: 100%;
 		padding: 3px;
 		border-radius: 100px;

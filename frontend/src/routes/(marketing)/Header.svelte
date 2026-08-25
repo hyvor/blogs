@@ -5,7 +5,14 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconGithub from '@hyvor/icons/IconGithub';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
-	import { LANGUAGES_CONFIG, buildMarketingUrl } from './[[lang]]/marketingLang';
+	import IconPalette from '@hyvor/icons/IconPalette';
+	import IconPuzzle from '@hyvor/icons/IconPuzzle';
+	import {
+		LANGUAGES_CONFIG,
+		DEFAULT_MARKETING_LANGUAGE,
+		buildMarketingUrl,
+		getStaticString
+	} from './[[lang]]/marketingLang';
 
 	let resourcesDropdown = $state(false);
 
@@ -13,6 +20,18 @@
 		LANGUAGES_CONFIG.find((lang) => lang.code === $page.url.pathname.split('/')[1]) ??
 			LANGUAGES_CONFIG.find((lang) => lang.default)!
 	);
+
+	// see getStaticString's own comment: Header can't use the "i18n" context,
+	// so this looks the current language's strings up directly instead
+	function t(key: string) {
+		return getStaticString(currentLang.strings, `nav.header.${key}`);
+	}
+
+	// re-prefix a plain, language-agnostic path (e.g. "/pricing") with the
+	// current language, so in-site nav links stay on the same language
+	function localizedHref(path: string) {
+		return buildMarketingUrl(path, currentLang.code, currentLang.code) || '/';
+	}
 
 	// close a dropdown/menu once a link inside it is clicked
 	function closeOnLinkClick(e: MouseEvent, close: () => void) {
@@ -22,25 +41,42 @@
 		}
 	}
 
+	// the current pathname with any language prefix stripped, so active-state
+	// checks below can compare against plain routes regardless of language
+	const unlocalizedPath = $derived(
+		buildMarketingUrl($page.url.pathname, currentLang.code, DEFAULT_MARKETING_LANGUAGE) || '/'
+	);
+
 	const isThemesOrIntegrations = $derived(
-		$page.url.pathname === '/themes' || $page.url.pathname.startsWith('/integrations')
+		unlocalizedPath === '/themes' || unlocalizedPath.startsWith('/integrations')
 	);
 </script>
 
-<Header product="blogs" name="Hyvor Blogs" logo="/logo.svg" darkToggle={false} max>
+<Header
+	product="blogs"
+	name="Hyvor Blogs"
+	logo="/logo.svg"
+	logoAltText={t('logo')}
+	href={localizedHref('/')}
+	darkToggle={false}
+	max
+	menuLabel={t('menu')}
+>
 	{#snippet center()}
-		<HeaderNavLink href="/pricing" active={$page.url.pathname === '/pricing'}>
-			Pricing
+		<HeaderNavLink href={localizedHref('/pricing')} active={unlocalizedPath === '/pricing'}>
+			{t('pricing')}
 		</HeaderNavLink>
-		<HeaderNavLink href="/docs" active={$page.url.pathname.startsWith('/docs')}>Docs</HeaderNavLink>
-		<HeaderNavLink href="/hosting" active={$page.url.pathname.startsWith('/hosting')}>
-			Hosting
+		<HeaderNavLink href={localizedHref('/docs')} active={unlocalizedPath.startsWith('/docs')}>
+			{t('docs')}
+		</HeaderNavLink>
+		<HeaderNavLink href={localizedHref('/hosting')} active={unlocalizedPath.startsWith('/hosting')}>
+			{t('hosting')}
 		</HeaderNavLink>
 
-		<Dropdown bind:show={resourcesDropdown} align="center" contentPadding={8}>
+		<Dropdown bind:show={resourcesDropdown} align="center" width={320} contentPadding={8}>
 			{#snippet trigger()}
 				<HeaderNavLink active={isThemesOrIntegrations}>
-					Resources
+					{t('resources')}
 					<IconCaretDown size={11} />
 				</HeaderNavLink>
 			{/snippet}
@@ -50,15 +86,23 @@
 					class="dropdown-menu"
 					onclick={(e) => closeOnLinkClick(e, () => (resourcesDropdown = false))}
 				>
-					<HeaderNavLink href="/themes" menu active={$page.url.pathname === '/themes'}>
-						Themes
+					<HeaderNavLink
+						href={localizedHref('/themes')}
+						menu
+						active={unlocalizedPath === '/themes'}
+					>
+						{#snippet start()}<IconPalette size={18} />{/snippet}
+						{t('themes.label')}
+						{#snippet description()}{t('themes.description')}{/snippet}
 					</HeaderNavLink>
 					<HeaderNavLink
-						href="/integrations"
+						href={localizedHref('/integrations')}
 						menu
-						active={$page.url.pathname.startsWith('/integrations')}
+						active={unlocalizedPath.startsWith('/integrations')}
 					>
-						Integrations
+						{#snippet start()}<IconPuzzle size={18} />{/snippet}
+						{t('integrations.label')}
+						{#snippet description()}{t('integrations.description')}{/snippet}
 					</HeaderNavLink>
 				</div>
 			{/snippet}
@@ -74,11 +118,12 @@
 			languages={LANGUAGES_CONFIG}
 			current={currentLang.code}
 			href={(code) => buildMarketingUrl($page.url.pathname, currentLang.code, code) || '/'}
+			label={t('changeLanguage')}
 		/>
 	{/snippet}
 
 	{#snippet end()}
-		<Button href="/console" as="a">Go to Console &rarr;</Button>
+		<Button href="/console" as="a">{t('goToConsole')}</Button>
 	{/snippet}
 </Header>
 
