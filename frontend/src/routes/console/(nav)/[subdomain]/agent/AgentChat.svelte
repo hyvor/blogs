@@ -140,7 +140,7 @@
 									<Loader size="small" />
 								{/if}
 							{:else}
-								<AgentSteps {blocks}  />
+								<AgentSteps {blocks} />
 
 								{#if finalText}
 									<div class="message-html">
@@ -210,9 +210,7 @@
 					</div>
 				</Button>
 			</div>
-			<div class="disclaimer">
-				AI can make mistakes; please double-check.
-			</div>
+			<div class="disclaimer">AI can make mistakes; please double-check.</div>
 		</div>
 	</div>
 </div>

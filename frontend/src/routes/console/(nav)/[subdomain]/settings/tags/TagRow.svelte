@@ -46,7 +46,13 @@
 </script>
 
 <TableRow>
-	<div><TagName {tag} /></div>
+	<div>
+		<div class="name"><TagName {tag} /></div>
+		{#if variant?.description}
+			<div class="description">{variant.description}</div>
+		{/if}
+		<div class="meta">{tag.posts_count} {tag.posts_count === 1 ? 'post' : 'posts'}</div>
+	</div>
 	<div>
 		{#if tag.is_private}
 			{tag.slug}
@@ -56,16 +62,9 @@
 			</Link>
 		{/if}
 	</div>
-	<div>{variant?.description || ''}</div>
-	<div>{tag.posts_count}</div>
 	<div>
 		<Tooltip text="Edit tag">
-			<IconButton
-				variant="fill-light"
-				color="gray"
-				size="small"
-				on:click={() => (isEditing = true)}
-			>
+			<IconButton color="input" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
@@ -80,3 +79,17 @@
 {#if isEditing}
 	<UpdateTagModal bind:show={isEditing} {tag} on:variantCreate on:update />
 {/if}
+
+<style>
+	.description {
+		margin-top: 2px;
+		font-size: 13px;
+		color: var(--text-light);
+	}
+
+	.meta {
+		margin-top: 2px;
+		font-size: 12px;
+		color: var(--text-light);
+	}
+</style>

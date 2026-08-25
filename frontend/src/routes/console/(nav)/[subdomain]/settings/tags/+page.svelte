@@ -4,11 +4,11 @@
 		IconMessage,
 		LoadButton,
 		Loader,
-		Table,
 		TableRow,
 		toast
 	} from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { Tag, TagVariant } from '../../../../lib/types';
 	import { onMount } from 'svelte';
@@ -86,12 +86,10 @@
 		{:else if tags.length === 0}
 			<IconMessage empty message="No tags found." />
 		{:else}
-			<Table columns="2fr 2fr 3fr 1fr 70px">
+			<SettingsTable columns="2fr 2fr 70px">
 				<TableRow head>
-					<div>Name</div>
+					<div>Tag</div>
 					<div>Slug/URL</div>
-					<div>Description</div>
-					<div>Posts</div>
 					<div></div>
 				</TableRow>
 
@@ -110,7 +108,7 @@
 					on:click={() => loadTags(true)}
 					loading={isLoadingMore}
 				/>
-			</Table>
+			</SettingsTable>
 		{/if}
 	</div>
 </div>

@@ -166,10 +166,14 @@
 		</TabNav>
 	</div>
 	{#if activeTab === 'configure'}
-		<Button on:click={() => (isCreating = true)}>
-			<IconPlus />
-			Create Webhook
-		</Button>
+		<div class="filter-section">
+			<Button size="small" on:click={() => (isCreating = true)}>
+				Create Webhook
+				{#snippet end()}
+					<IconPlus />
+				{/snippet}
+			</Button>
+		</div>
 	{:else if activeTab === 'deliveries'}
 		<div class="filter-section">
 			<Dropdown bind:show={showWebhookFilter} width={300}>

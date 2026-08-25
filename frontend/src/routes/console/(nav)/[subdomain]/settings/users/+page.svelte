@@ -5,13 +5,13 @@
 		Button,
 		Loader,
 		IconMessage,
-		Table,
 		TableRow,
 		LoadButton,
 		toast,
 		Modal
 	} from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import UserRow from './UserRow.svelte';
 	import { getUsers } from './userActions';
 	import { onMount } from 'svelte';
@@ -84,7 +84,7 @@
 	{:else if users.length === 0}
 		<IconMessage empty message="No users found" />
 	{:else}
-		<Table columns="2fr 1fr 1fr 1fr 70px">
+		<SettingsTable columns="2fr 1fr 1fr 1fr 70px">
 			<TableRow head>
 				<div>Slug</div>
 				<div>Status</div>
@@ -108,7 +108,7 @@
 				on:click={() => loadUsers(true)}
 				loading={isLoadingMore}
 			/>
-		</Table>
+		</SettingsTable>
 	{/if}
 </div>
 

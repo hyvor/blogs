@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte';
 	import type { Route } from '../../../../lib/types';
 	import { getRoutes } from './routeActions';
-	import { Button, IconMessage, Loader, Table, TableRow, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, Loader, TableRow, toast } from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import RouteRow from './RouteRow.svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
@@ -63,20 +64,18 @@
 	{:else if routes.length === 0}
 		<IconMessage empty message="No Routes" />
 	{:else}
-		<Table columns="1fr 1fr 1fr 1fr 1fr 70px">
+		<SettingsTable columns="2fr 2fr 2fr 70px">
 			<TableRow head>
-				<div>Name</div>
-				<div>Match</div>
+				<div>Route</div>
 				<div>Template</div>
 				<div>Posts Filter</div>
-				<div>Content Type</div>
 				<div></div>
 			</TableRow>
 
 			{#each routes as route (route.id)}
 				<RouteRow {route} on:delete={() => handleDelete(route.id)} on:update={handleUpdate} />
 			{/each}
-		</Table>
+		</SettingsTable>
 	{/if}
 </div>
 

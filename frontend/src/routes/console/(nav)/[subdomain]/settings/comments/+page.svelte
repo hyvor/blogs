@@ -35,8 +35,8 @@
 				{#snippet title()}
 					Hyvor Talk Integration Enabled
 				{/snippet}
-				Your blog is connected to a website in Hyvor Talk. This integration will automatically
-				append the Hyvor Talk comments embed code, and
+				Your blog is connected to a website in Hyvor Talk. This integration will automatically append
+				the Hyvor Talk comments embed code, and
 				<strong>you don't generally need to add anything here</strong>.
 			</Callout>
 			<br />

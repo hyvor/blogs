@@ -51,7 +51,6 @@ export function subscribeToCollabMercureTopic(
 	onCursor: (message: CollabCursorMercureMessage) => void,
 	onReconnect: () => void
 ): () => void {
-
 	// TODO: subscribing to a public topic. This should be private
 
 	// a still-open subscription for this exact topic means someone forgot to unsubscribe (or

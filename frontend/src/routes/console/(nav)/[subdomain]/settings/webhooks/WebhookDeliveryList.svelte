@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		IconMessage,
-		Table,
 		TableRow,
 		TableCell,
 		Tag,
@@ -9,6 +8,7 @@
 	} from '@hyvor/design/components';
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 
 	interface Props {
 		deliveries: WebhookDelivery[];
@@ -40,7 +40,7 @@
 {#if deliveries.length === 0}
 	<IconMessage empty message="No webhook deliveries found" />
 {:else}
-	<Table columns="2fr 1fr 1fr 1fr" hover>
+	<SettingsTable columns="2fr 1fr 1fr 1fr">
 		<TableRow head>
 			<TableCell>URL</TableCell>
 			<TableCell>Event</TableCell>
@@ -65,7 +65,7 @@
 				</TableCell>
 			</TableRow>
 		{/each}
-	</Table>
+	</SettingsTable>
 
 	<LoadButton text="Load more" show={hasMore} loading={isLoadingMore} on:click />
 {/if}

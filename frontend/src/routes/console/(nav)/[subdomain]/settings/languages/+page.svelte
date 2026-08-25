@@ -1,10 +1,11 @@
 <script>
 	import LanguageRow from './LanguageRow.svelte';
-	import { Button, IconButton, Table, TableRow } from '@hyvor/design/components';
+	import { Button, IconButton, TableRow } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import LanguageModal from './LanguageModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 
 	let isCreating = $state(false);
 </script>
@@ -19,7 +20,7 @@
 	</SettingsTop>
 
 	<div class="table">
-		<Table columns="1fr 1fr 1fr 70px">
+		<SettingsTable columns="1fr 1fr 1fr 70px">
 			<TableRow head>
 				<div>Name</div>
 				<div>Code</div>
@@ -30,7 +31,7 @@
 			{#each $languagesStore as language}
 				<LanguageRow {language} />
 			{/each}
-		</Table>
+		</SettingsTable>
 	</div>
 </div>
 

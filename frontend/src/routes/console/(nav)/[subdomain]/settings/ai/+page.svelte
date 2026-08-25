@@ -46,7 +46,7 @@
 		<Switch checked={$blogStore.ai_translation_enabled} on:change={handleAiTranslationChange} />
 	</SplitControl>
 
-	<SplitControl label="AI Generation" caption="Enable AI-powered content generation features.">
+	<SplitControl label="AI Agent" caption="Enable AI-powered content generation features.">
 		<Switch checked={$blogStore.ai_generation_enabled} on:change={handleAiGenerationChange} />
 	</SplitControl>
 </div>
