@@ -98,7 +98,7 @@
 	}
 
 	let value = $derived(
-		$postVariantStore.content_unsaved ||
+		$documentStore.checkpoint_content ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
 
@@ -106,9 +106,9 @@
 	// the ones not yet reflected in `value` (see PostVariantCollabService on the backend) - so
 	// the editor must start at the version *before* those steps, then fast-forward via
 	// collab.receiveSteps() once mounted.
-	let backlogSteps = $derived($postVariantStore.document_steps as CollabStepJSON[]);
-	let backlogClientIds = $derived($postVariantStore.document_client_ids as CollabClientID[]);
-	let liveVersion = $derived($postVariantStore.document_version);
+	let backlogSteps = $derived($documentStore.pending_steps.steps);
+	let backlogClientIds = $derived($documentStore.pending_steps.client_ids);
+	let liveVersion = $derived($documentStore.checkpoint_version);
 	let initialVersion = $derived(liveVersion - backlogSteps.length);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
@@ -131,6 +131,7 @@
 		// while we were disconnected is gone from that transport's point of view (no replay), so
 		// pull the durable truth directly instead of just hoping nothing was missed
 		async function catchUp() {
+			return;
 			try {
 				const response = await syncCollabSteps({
 					post_variant_id: $postVariantStore.id,
