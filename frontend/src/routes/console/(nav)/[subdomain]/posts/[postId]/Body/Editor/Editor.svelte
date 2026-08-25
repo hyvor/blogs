@@ -20,7 +20,7 @@
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
 	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 
 	// unique client ID for this tab
@@ -47,19 +47,20 @@
 	// whatever prefix of the batch is already covered by the current version - rather than just
 	// checking whether the batch as a whole is newer - makes every one of these channels safely
 	// idempotent no matter how they interleave.
-	function applyConfirmedSteps(
-		steps: CollabStepJSON[],
-		clientIds: CollabClientID[],
-		resultingVersion: number
-	) {
+	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[]) {
 		const editor = $postEditor;
 		if (!editor) return;
-		const currentVersion = editor.collab.getVersion();
-		const alreadyApplied = currentVersion + steps.length - resultingVersion;
-		if (alreadyApplied >= steps.length) return; // nothing in this batch is new
-		const newSteps = alreadyApplied > 0 ? steps.slice(alreadyApplied) : steps;
-		const newClientIds = alreadyApplied > 0 ? clientIds.slice(alreadyApplied) : clientIds;
-		editor.collab.receiveSteps(newSteps, newClientIds);
+		console.log(
+			`applying confirmed collab steps (version ${editor.collab.getVersion()})`,
+			steps,
+			clientIds
+		);
+		// const currentVersion = editor.collab.getVersion();
+		// const alreadyApplied = currentVersion + steps.length - resultingVersion;
+		// if (alreadyApplied >= steps.length) return; // nothing in this batch is new
+		// const newSteps = alreadyApplied > 0 ? steps.slice(alreadyApplied) : steps;
+		// const newClientIds = alreadyApplied > 0 ? clientIds.slice(alreadyApplied) : clientIds;
+		editor.collab.receiveSteps(steps, clientIds);
 	}
 
 	async function handleSendable(sendable: CollabSendable) {
@@ -79,8 +80,7 @@
 			if (!response.accepted) {
 				applyConfirmedSteps(
 					response.steps as CollabStepJSON[],
-					response.client_ids as CollabClientID[],
-					response.version
+					response.client_ids as CollabClientID[]
 				);
 			}
 		} catch (e) {
@@ -108,8 +108,6 @@
 	// collab.receiveSteps() once mounted.
 	let backlogSteps = $derived($documentStore.pending_steps.steps);
 	let backlogClientIds = $derived($documentStore.pending_steps.client_ids);
-	let liveVersion = $derived($documentStore.checkpoint_version);
-	let initialVersion = $derived(liveVersion - backlogSteps.length);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
 
@@ -117,12 +115,13 @@
 		$postEditor.setEditable(isEditable);
 	});
 
-	onMount(() => {
-		const editor = $postEditor;
-		if (!editor) return;
+	let topicUnsubscriber: () => void;
+
+	function handleInit() {
+		const editor = $postEditor!;
 
 		if (backlogSteps.length > 0) {
-			applyConfirmedSteps(backlogSteps, backlogClientIds, liveVersion);
+			applyConfirmedSteps(backlogSteps, backlogClientIds);
 		}
 
 		const cursors = new Map<string, RemoteCursor>();
@@ -140,8 +139,7 @@
 				if (response.steps.length > 0) {
 					applyConfirmedSteps(
 						response.steps as CollabStepJSON[],
-						response.client_ids as CollabClientID[],
-						response.version
+						response.client_ids as CollabClientID[]
 					);
 				}
 			} catch (e) {
@@ -151,11 +149,12 @@
 
 		const topic = collabTopic($postVariantStore.id);
 
-		return subscribeToCollabMercureTopic(
+		topicUnsubscriber = subscribeToCollabMercureTopic(
 			topic,
 			$documentStore.mercure_token,
 			(steps, clientIds, version) => {
-				applyConfirmedSteps(steps, clientIds, version);
+				console.log(`received collab steps (version ${version})`, steps, clientIds);
+				applyConfirmedSteps(steps, clientIds);
 			},
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
@@ -180,12 +179,12 @@
 			},
 			catchUp
 		);
-	});
+	}
 
 	let fullEditorConfig = $derived({
 		...editorConfig,
 		collab: {
-			version: initialVersion,
+			version: $documentStore.checkpoint_version,
 			clientID: clientId,
 			onSendable: handleSendable
 		},
@@ -199,6 +198,10 @@
 			source: suggestionSource
 		}
 	});
+
+	onDestroy(() => {
+		topicUnsubscriber?.();
+	});
 </script>
 
 <div class="editor">
@@ -211,6 +214,7 @@
 			{schema}
 			editorConfig={fullEditorConfig}
 			plugins={[wordCountPlugin()]}
+			oninit={handleInit}
 		/>
 	</div>
 </div>

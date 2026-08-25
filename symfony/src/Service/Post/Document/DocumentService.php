@@ -221,7 +221,11 @@ class DocumentService
         $this->em->wrapInTransaction(function () use ($variant, $blog, $json, $version) {
             $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
             if ($current === null || $current->getDocumentVersion() !== $version) {
-                throw new ConflictHttpException('document_version has moved on - catch up via Mercure and retry');
+                throw new ConflictHttpException(
+                    'document_version has moved on - catch up via Mercure and retry' .
+                    ($current === null ? '' : sprintf(' (current version: %d)', $current->getDocumentVersion()))   .
+                    ' (given version: ' . $version . ')'
+                );
             }
 
             $current->setContentUnsaved($json);

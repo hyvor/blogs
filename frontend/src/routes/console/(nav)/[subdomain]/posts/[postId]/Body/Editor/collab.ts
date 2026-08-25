@@ -27,13 +27,6 @@ interface CollabCursorMercureMessage {
 
 type CollabMercureMessage = CollabStepsMercureMessage | CollabCursorMercureMessage;
 
-// Guards against two overlapping EventSources for the same topic - e.g. an effect re-running
-// (Svelte HMR, or a dependency changing) before its previous cleanup has run. Every incoming
-// Mercure message would otherwise be delivered twice, doubling every step/cursor update handled
-// downstream. Keyed by topic since each browser tab may legitimately hold subscriptions to
-// several topics (different post variants) at once.
-const activeSources = new Map<string, AbortController>();
-
 /**
  * Subscribes to a post variant's collab topic on the Mercure hub (see PostController::getPost,
  * which sets the subscription cookie this relies on) and forwards accepted step batches -
@@ -54,15 +47,10 @@ export function subscribeToCollabMercureTopic(
 	onReconnect: () => void
 ): () => void {
 
-	// a still-open subscription for this exact topic means someone forgot to unsubscribe (or
-	// hasn't yet) - abort it rather than let two subscriptions double-deliver every message
-	activeSources.get(topic)?.abort();
-
 	const url = new URL(getConfig().mercure.public_url);
 	url.searchParams.append('topic', topic);
 
 	const controller = new AbortController();
-	activeSources.set(topic, controller);
 
 	// tracks whether we've successfully opened before, so a later onopen call (after a drop) can
 	// be told apart from the initial connect
@@ -111,12 +99,6 @@ export function subscribeToCollabMercureTopic(
 	});
 
 	return () => {
-		console.log(`unsubscribing from collab topic ${topic}`);
 		controller.abort();
-		// only clear the map entry if we're still the current holder - a newer subscription for
-		// this topic may have already replaced us (see the .abort() call above)
-		if (activeSources.get(topic) === controller) {
-			activeSources.delete(topic);
-		}
 	};
 }
