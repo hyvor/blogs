@@ -73,6 +73,7 @@ export function subscribeToCollabMercureTopic(
 		headers: {
 			Authorization: `Bearer ${token}`
 		},
+		openWhenHidden: true,
 		async onopen(response) {
 			if (response.ok && response.headers.get('content-type')?.startsWith(EventStreamContentType)) {
 				if (connectedBefore) {
@@ -110,6 +111,7 @@ export function subscribeToCollabMercureTopic(
 	});
 
 	return () => {
+		console.log(`unsubscribing from collab topic ${topic}`);
 		controller.abort();
 		// only clear the map entry if we're still the current holder - a newer subscription for
 		// this topic may have already replaced us (see the .abort() call above)

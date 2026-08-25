@@ -150,6 +150,7 @@
 		}
 
 		const topic = collabTopic($postVariantStore.id);
+
 		return subscribeToCollabMercureTopic(
 			topic,
 			$documentStore.mercure_token,
