@@ -10,6 +10,7 @@ use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Lock\LockFactory;
 
@@ -31,32 +32,44 @@ class CountService
      * Recalculation is idempotent
      * Uses a lock to avoid multiple recalculations in parallel
      */
-    public function recalculate(Blog $blog, CountType $type): void
+    public function recalculate(
+        Blog $blog,
+        CountType $type,
+        ?array $entityIds = null
+    ): void
     {
-        $lock = $this->lockFactory->createLock(
-            sprintf('count_recalculate_%d_%s', $blog->getId(), $type->value),
-            self::LOCK_TTL,
-            autoRelease: false,
-        );
+        if ($entityIds === null) {
+            // when entity IDs are set, it's relatively cheap to recalculate
+            // also, messages with entity IDs are dispatched from specific events that do not tend to overlap
+            // so, lock is only used when entity IDs are not added
 
-        if (!$lock->acquire()) {
-            return;
+            $lock = $this->lockFactory->createLock(
+                sprintf('count_recalculate_%d_%s', $blog->getId(), $type->value),
+                self::LOCK_TTL,
+                autoRelease: false,
+            );
+
+            if (!$lock->acquire()) {
+                return;
+            }
         }
 
         try {
             match ($type) {
-                CountType::POSTS => $this->recalculatePostCounts($blog),
-                CountType::AUTHORS => $this->recalculateAuthorCounts($blog),
-                CountType::TAGS => $this->recalculateTagCounts($blog),
-                CountType::USERS => $this->recalculateUserCounts($blog),
-                CountType::MEDIA => $this->recalculateMediaCounts($blog),
+                CountType::POSTS_OF_BLOG => $this->recalculatePostCountsOnBlog($blog),
+                CountType::POSTS_OF_USERS => $this->recalculatePostsCountOnUsers($blog, $entityIds),
+                CountType::POSTS_OF_TAGS => $this->recalculatePostsCountOnTags($blog),
+                CountType::USERS_OF_BLOG => $this->recalculateUsersCountOnBlog($blog),
+                CountType::MEDIA_OF_BLOG => $this->recalculateMediaCountOnBlog($blog),
             };
         } finally {
-            $lock->release();
+            if (isset($lock)) {
+                $lock->release();
+            }
         }
     }
 
-    private function recalculatePostCounts(Blog $blog): void
+    private function recalculatePostCountsOnBlog(Blog $blog): void
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
 
@@ -109,15 +122,29 @@ class CountService
         return $counts;
     }
 
-    // this might not the most performant for large blogs
-    // we may want to optimize this to only recalculate the counts for the affected users later
-    // same for tags below
-    private function recalculateAuthorCounts(Blog $blog): void
+
+    /**
+     * @param int[]|null $userIds
+     * this might not the most performant for large blogs
+     * we may want to optimize this to only recalculate the counts for the affected users later
+     * same for tags below
+     */
+    private function recalculatePostsCountOnUsers(Blog $blog, ?array $userIds = null): void
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
 
+        $params = [$language->getId(), $blog->getId()];
+        $types = ['integer', 'integer'];
+
+        $inWhere = '';
+        if ($userIds !== null && count($userIds) > 0) {
+            $inWhere = ' AND u.id IN (?)';
+            $params[] = $userIds;
+            $types[] = ArrayParameterType::INTEGER;
+        }
+
         $this->em->getConnection()->executeStatement(
-            <<<'SQL'
+            <<<SQL
             UPDATE users AS u SET posts_count = (
                 SELECT COUNT(post_author.id)
                 FROM post_author
@@ -129,13 +156,14 @@ class CountService
                     post_variants.status = 'published' AND
                     posts.is_page = false
             )
-            WHERE u.blog_id = ?
+            WHERE u.blog_id = ?{$inWhere}
             SQL,
-            [$language->getId(), $blog->getId()],
+            $params,
+            $types,
         );
     }
 
-    private function recalculateTagCounts(Blog $blog): void
+    private function recalculatePostsCountOnTags(Blog $blog): void
     {
         $language = $this->languageService->getPrimaryLanguage($blog);
 
@@ -158,13 +186,13 @@ class CountService
         );
     }
 
-    private function recalculateUserCounts(Blog $blog): void
+    private function recalculateUsersCountOnBlog(Blog $blog): void
     {
         $users = $this->em->getRepository(User::class)->count(['blog' => $blog]);
         $this->mergeCounts($blog, ['users' => $users]);
     }
 
-    private function recalculateMediaCounts(Blog $blog): void
+    private function recalculateMediaCountOnBlog(Blog $blog): void
     {
         $size = (int) $this->em->createQueryBuilder()
             ->select('COALESCE(SUM(m.size), 0)')

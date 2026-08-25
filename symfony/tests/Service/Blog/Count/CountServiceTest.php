@@ -77,7 +77,7 @@ class CountServiceTest extends KernelTestCase
         // pages are excluded from every count
         $this->createPostWithVariant($blog, $language, PostVariantStatus::PUBLISHED, isFeatured: true, isPage: true);
 
-        $this->countService()->recalculate($blog, CountType::POSTS);
+        $this->countService()->recalculate($blog, CountType::POSTS_OF_BLOG);
 
         refresh($blog);
         $counts = $this->counts($blog);
@@ -93,7 +93,7 @@ class CountServiceTest extends KernelTestCase
         $blog->setCounts(['users' => 5]);
         $this->getEm()->flush();
 
-        $this->countService()->recalculate($blog, CountType::POSTS);
+        $this->countService()->recalculate($blog, CountType::POSTS_OF_BLOG);
 
         refresh($blog);
         $counts = $this->counts($blog);
@@ -116,7 +116,7 @@ class CountServiceTest extends KernelTestCase
 
         $this->getEm()->flush();
 
-        $this->countService()->recalculate($blog, CountType::AUTHORS);
+        $this->countService()->recalculate($blog, CountType::POSTS_OF_USERS);
 
         refresh($author);
         refresh($otherUser);
@@ -136,7 +136,7 @@ class CountServiceTest extends KernelTestCase
 
         $this->getEm()->flush();
 
-        $this->countService()->recalculate($blog, CountType::TAGS);
+        $this->countService()->recalculate($blog, CountType::POSTS_OF_TAGS);
 
         refresh($tag);
         refresh($otherTag);
@@ -151,7 +151,7 @@ class CountServiceTest extends KernelTestCase
         UserFactory::createOne(['blog' => $blog]);
         UserFactory::createOne();
 
-        $this->countService()->recalculate($blog, CountType::USERS);
+        $this->countService()->recalculate($blog, CountType::USERS_OF_BLOG);
 
         refresh($blog);
         $this->assertSame(2, $this->counts($blog)['users']);
@@ -164,7 +164,7 @@ class CountServiceTest extends KernelTestCase
         MediaFactory::createOne(['blog' => $blog, 'size' => 250]);
         MediaFactory::createOne();
 
-        $this->countService()->recalculate($blog, CountType::MEDIA);
+        $this->countService()->recalculate($blog, CountType::MEDIA_OF_BLOG);
 
         refresh($blog);
         $this->assertSame(350, $this->counts($blog)['media']);
@@ -176,8 +176,8 @@ class CountServiceTest extends KernelTestCase
         UserFactory::createOne(['blog' => $blog]);
 
         $service = $this->countService();
-        $service->recalculate($blog, CountType::USERS);
-        $service->recalculate($blog, CountType::USERS);
+        $service->recalculate($blog, CountType::USERS_OF_BLOG);
+        $service->recalculate($blog, CountType::USERS_OF_BLOG);
 
         refresh($blog);
         $this->assertSame(1, $this->counts($blog)['users']);
@@ -188,10 +188,10 @@ class CountServiceTest extends KernelTestCase
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         UserFactory::createOne(['blog' => $blog]);
 
-        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS));
+        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS_OF_BLOG));
         $this->assertTrue($lock->acquire());
 
-        $this->countService()->recalculate($blog, CountType::USERS);
+        $this->countService()->recalculate($blog, CountType::USERS_OF_BLOG);
 
         refresh($blog);
         $this->assertNull($blog->getCounts());
@@ -202,9 +202,9 @@ class CountServiceTest extends KernelTestCase
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         UserFactory::createOne(['blog' => $blog]);
 
-        $this->countService()->recalculate($blog, CountType::USERS);
+        $this->countService()->recalculate($blog, CountType::USERS_OF_BLOG);
 
-        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS));
+        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS_OF_BLOG));
         $this->assertTrue($lock->acquire());
     }
 
@@ -214,13 +214,32 @@ class CountServiceTest extends KernelTestCase
         UserFactory::createOne(['blog' => $blog]);
         MediaFactory::createOne(['blog' => $blog, 'size' => 10]);
 
-        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS));
+        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::USERS_OF_BLOG));
         $this->assertTrue($lock->acquire());
 
-        $this->countService()->recalculate($blog, CountType::MEDIA);
+        $this->countService()->recalculate($blog, CountType::MEDIA_OF_BLOG);
 
         refresh($blog);
         $this->assertSame(10, $this->counts($blog)['media']);
+    }
+
+    public function test_lock_does_not_block_when_entity_ids_are_provided(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $language = $this->primaryLanguage($blog);
+        $author = UserFactory::createOne(['blog' => $blog, 'posts_count' => 999]);
+
+        $published = $this->createPostWithVariant($blog, $language, PostVariantStatus::PUBLISHED);
+        $published->getAuthors()->add($author);
+        $this->getEm()->flush();
+
+        $lock = $this->lockFactory()->createLock($this->lockKey($blog, CountType::POSTS_OF_USERS));
+        $this->assertTrue($lock->acquire());
+
+        $this->countService()->recalculate($blog, CountType::POSTS_OF_USERS, [$author->getId()]);
+
+        refresh($author);
+        $this->assertSame(1, $author->getPostsCount());
     }
 
 }

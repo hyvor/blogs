@@ -22,8 +22,8 @@ class RecalculateCountMessageHandler
             throw new UnrecoverableMessageHandlingException('Blog not found for ID: ' . $message->blogId);
         }
 
-        foreach ($message->types as $type) {
-            $this->countService->recalculate($blog, $type);
+        foreach ($message->getTypesAndEntityIds() as [$type, $entityIds]) {
+            $this->countService->recalculate($blog, $type, $entityIds);
         }
     }
 }

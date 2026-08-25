@@ -2,11 +2,15 @@
 
 namespace App\Tests\Service\Blog\Count;
 
+use App\Entity\Enum\PostVariantStatus;
+use App\Service\Blog\Count\CountService;
 use App\Service\Blog\Count\CountType;
 use App\Service\Blog\Count\RecalculateCountMessage;
 use App\Service\Blog\Count\RecalculateCountMessageHandler;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -16,6 +20,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(RecalculateCountMessage::class)]
 #[CoversClass(RecalculateCountMessageHandler::class)]
+#[CoversClass(CountService::class)]
 class RecalculateCountMessageHandlerTest extends KernelTestCase
 {
 
@@ -26,7 +31,7 @@ class RecalculateCountMessageHandlerTest extends KernelTestCase
         UserFactory::createOne(['blog' => $blog]);
 
         $transport = $this->transport('async')->throwExceptions();
-        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::USERS]));
+        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::USERS_OF_BLOG]));
         $transport->processOrFail();
 
         refresh($blog);
@@ -41,7 +46,7 @@ class RecalculateCountMessageHandlerTest extends KernelTestCase
         MediaFactory::createOne(['blog' => $blog, 'size' => 42]);
 
         $transport = $this->transport('async')->throwExceptions();
-        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::USERS, CountType::MEDIA]));
+        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::USERS_OF_BLOG, CountType::MEDIA_OF_BLOG]));
         $transport->processOrFail();
 
         refresh($blog);
@@ -50,12 +55,39 @@ class RecalculateCountMessageHandlerTest extends KernelTestCase
         $this->assertSame(42, $counts['media']);
     }
 
+    public function test_recalculates_only_given_entity_ids(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user1 = UserFactory::createOne(['blog' => $blog, 'posts_count' => 0]);
+        $user2 = UserFactory::createOne(['blog' => $blog, 'posts_count' => 0]);
+
+        $post = PostFactory::createOneFor($blog);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $blog->getLanguages()[0],
+            'status' => PostVariantStatus::PUBLISHED,
+        ]);
+        $post->getAuthors()->add($user1);
+        $post->getAuthors()->add($user2);
+
+        $this->getEm()->flush();
+
+        $transport = $this->transport('async')->throwExceptions();
+        $transport->send(new RecalculateCountMessage($blog->getId(), [CountType::POSTS_OF_USERS], [[$user1->getId()]]));
+        $transport->processOrFail();
+
+        refresh($user1);
+        refresh($user2);
+        $this->assertSame(1, $user1->getPostsCount());
+        $this->assertSame(0, $user2->getPostsCount()); // not updated
+    }
+
     public function test_throws_when_blog_not_found(): void
     {
         $handler = $this->getService(RecalculateCountMessageHandler::class);
 
         $this->expectException(UnrecoverableMessageHandlingException::class);
-        $handler(new RecalculateCountMessage(-1, [CountType::USERS]));
+        $handler(new RecalculateCountMessage(-1, [CountType::USERS_OF_BLOG]));
     }
 
 }

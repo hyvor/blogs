@@ -350,11 +350,13 @@ class PostController
         $blog = $this->blogAuthListener->getBlog();
 
         $users = $this->userService->getUsersByIds($blog, $input->ids);
+
         if (count($users) !== count($input->ids)) {
             throw new UnprocessableEntityHttpException('Some author IDs are invalid');
         }
 
         $this->postService->setPostAuthors($post, $users);
+
         return new JsonResponse();
     }
 

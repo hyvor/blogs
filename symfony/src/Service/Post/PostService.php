@@ -13,6 +13,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
@@ -742,6 +743,8 @@ class PostService
      */
     public function setPostAuthors(Post $post, array $users, bool $flush = true): void
     {
+        $oldAuthors = $post->getAuthors()->toArray();
+
         $post->getAuthors()->clear();
         foreach ($users as $user) {
             $post->getAuthors()->add($user);
@@ -751,6 +754,11 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostAuthorsChangedEvent(
+                $post,
+                $oldAuthors,
+                $post->getAuthors()->toArray()
+            ));
         }
     }
 

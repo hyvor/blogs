@@ -220,46 +220,4 @@ class ConsolePostController extends Controller
         return response()->json();
     }
 
-    public function updateAuthors(Request $request, Post $post): JsonResponse
-    {
-        $request->validate([
-            'ids' => 'array',
-            'ids.*' => 'integer',
-        ]);
-
-        /** @var int[] $ids */
-        $ids = $request->input('ids');
-
-        PostTagAuthorRepository::updateAuthors($post, $ids);
-
-        return response()->json();
-    }
-
-    public function checkSlugAvailability(Request $request, Blog $blog, Post $post): JsonResponse
-    {
-        $request->validate([
-            'language_id' => 'required|integer',
-            'slug' => 'required|string',
-        ]);
-
-        $languageId = $request->integer('language_id');
-        $slug = (string)$request->string('slug');
-
-        $language = LanguageRepository::getLanguageById($blog, $languageId);
-
-        if (!$language) {
-            throw new TrustedException('Language not found');
-        }
-
-        $slugPost = PostRepository::getPostByLanguageAndSlug(
-            $language,
-            $slug
-        );
-
-        $available = $slugPost === null || $slugPost->id === $post->id;
-
-        return response()->json([
-            'available' => $available
-        ]);
-    }
 }

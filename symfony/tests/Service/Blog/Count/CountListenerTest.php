@@ -9,6 +9,7 @@ use App\Service\Blog\Count\CountType;
 use App\Service\Blog\Count\RecalculateCountMessage;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
+use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
@@ -80,6 +81,17 @@ class CountListenerTest extends KernelTestCase
         $this->assertSinglePostGroupMessage($blog);
     }
 
+    public function test_post_authors_changed(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $post = PostFactory::createOneFor($blog);
+        $oldUser = UserFactory::createOne(['blog' => $blog]);
+        $newUser = UserFactory::createOne(['blog' => $blog]);
+
+        $this->getEd()->dispatch(new PostAuthorsChangedEvent($post, [$oldUser], [$newUser]));
+        $this->assertOnlyMessage($blog, [CountType::POSTS_OF_USERS], [[$oldUser->getId(), $newUser->getId()]]);
+    }
+
     public function test_user_created_dispatches_user_recalculation(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage();
@@ -87,7 +99,7 @@ class CountListenerTest extends KernelTestCase
 
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
-        $this->assertOnlyMessage($blog, [CountType::USERS]);
+        $this->assertOnlyMessage($blog, [CountType::USERS_OF_BLOG]);
     }
 
     public function test_user_deleted_dispatches_user_recalculation(): void
@@ -97,7 +109,7 @@ class CountListenerTest extends KernelTestCase
 
         $this->getEd()->dispatch(new UserDeletedEvent($user));
 
-        $this->assertOnlyMessage($blog, [CountType::USERS]);
+        $this->assertOnlyMessage($blog, [CountType::USERS_OF_BLOG]);
     }
 
     public function test_media_created_dispatches_media_recalculation(): void
@@ -107,7 +119,7 @@ class CountListenerTest extends KernelTestCase
 
         $this->getEd()->dispatch(new MediaCreatedEvent($media));
 
-        $this->assertOnlyMessage($blog, [CountType::MEDIA]);
+        $this->assertOnlyMessage($blog, [CountType::MEDIA_OF_BLOG]);
     }
 
     public function test_media_deleted_dispatches_media_recalculation(): void
@@ -117,18 +129,23 @@ class CountListenerTest extends KernelTestCase
 
         $this->getEd()->dispatch(new MediaDeletedEvent($media));
 
-        $this->assertOnlyMessage($blog, [CountType::MEDIA]);
+        $this->assertOnlyMessage($blog, [CountType::MEDIA_OF_BLOG]);
     }
 
     private function assertSinglePostGroupMessage(Blog $blog): void
     {
-        $this->assertOnlyMessage($blog, [CountType::POSTS, CountType::AUTHORS, CountType::TAGS]);
+        $this->assertOnlyMessage($blog, [CountType::POSTS_OF_BLOG, CountType::POSTS_OF_USERS, CountType::POSTS_OF_TAGS]);
     }
 
     /**
      * @param CountType[] $expectedTypes
+     * @param array<int[]|null>|null $expectedEntityIds
      */
-    private function assertOnlyMessage(Blog $blog, array $expectedTypes): void
+    private function assertOnlyMessage(
+        Blog $blog,
+        array $expectedTypes,
+        ?array $expectedEntityIds = null
+    ): void
     {
         /** @var RecalculateCountMessage[] $messages */
         $messages = array_values(array_filter(
@@ -138,12 +155,24 @@ class CountListenerTest extends KernelTestCase
 
         $this->assertCount(1, $messages);
 
-        $sort = static fn(CountType $a, CountType $b) => $a->value <=> $b->value;
-        $actualTypes = $messages[0]->types;
-        usort($actualTypes, $sort);
-        usort($expectedTypes, $sort);
+        $message = $messages[0];
 
-        $this->assertSame($expectedTypes, $actualTypes);
+//        $sort = static fn(CountType $a, CountType $b) => $a->value <=> $b->value;
+//        $actualTypes = $message->types;
+//        usort($actualTypes, $sort);
+//        usort($expectedTypes, $sort);
+//
+//        $this->assertSame($expectedTypes, $actualTypes);
+//        $this->assertSame($expectedEntityIds, $message->getTypesAndEntityIds());
+
+        $typesAndEntities = $message->getTypesAndEntityIds();
+
+        foreach ($typesAndEntities as $index => [$type, $entityIds]) {
+            $this->assertSame($expectedTypes[$index], $type);
+            if ($expectedEntityIds !== null) {
+                $this->assertSame($expectedEntityIds[$index], $entityIds);
+            }
+        }
     }
 
 }
