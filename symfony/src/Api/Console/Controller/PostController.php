@@ -190,7 +190,8 @@ class PostController
     public function updatePostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostVariantInput $input,
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $blog = $this->blogAuthListener->getBlog();
 
         $language = $this->languageService->getLanguageById($blog, $input->language_id);
@@ -217,14 +218,6 @@ class PostController
             }
 
             $data['slug'] = $input->slug;
-        }
-
-        if ($input->content !== false) {
-            $data['content'] = $input->content;
-        }
-
-        if ($input->content_unsaved !== false) {
-            $data['content_unsaved'] = $input->content_unsaved;
         }
 
         if ($input->title !== null) {

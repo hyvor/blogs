@@ -5,6 +5,8 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
+use App\Entity\PostVariant;
+use App\Service\Post\Event\PostDeletedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -32,6 +34,9 @@ class DeletePostTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($this->getEm()->getRepository(Post::class)->find($postId));
+        $this->assertCount(0, $this->getEm()->getRepository(PostVariant::class)->findAll());
+
+        $this->getEd()->assertDispatched(PostDeletedEvent::class);
     }
 
     public function test_returns_404_for_wrong_blog(): void

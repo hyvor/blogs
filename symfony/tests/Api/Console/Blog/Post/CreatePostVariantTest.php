@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\UserStatus;
 use App\Entity\PostVariant;
+use App\Service\Post\Event\PostVariantCreatedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -45,6 +46,8 @@ class CreatePostVariantTest extends ApiTestCase
         $frVariant = array_find($variants, fn($v) => $v->getLanguage()->getCode() === 'fr');
         $this->assertInstanceOf(PostVariant::class, $frVariant);
         $this->assertSame('french', $frVariant->getTsLanguage());
+
+        $this->getEd()->assertDispatched(PostVariantCreatedEvent::class);
     }
 
     public function test_fails_if_variant_already_exists(): void

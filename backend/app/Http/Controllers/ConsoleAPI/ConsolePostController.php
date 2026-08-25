@@ -41,84 +41,6 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function deletePost(Post $post): JsonResponse
-    {
-        PostRepository::deletePost($post);
-
-        return response()->json();
-    }
-
-    public function updatePost(Request $request, Blog $blog, Post $post): JsonResponse
-    {
-        $request->validate([
-            // 'slug' => 'string|max:255|nullable',
-            'is_featured' => 'boolean',
-            'canonical_url' => 'string|max:255|nullable',
-            'featured_image_url' => 'string|max:255|nullable',
-            'code_head' => 'string|nullable',
-            'code_foot' => 'string|nullable',
-            'published_at' => 'integer'
-        ]);
-
-        $postUpdates = [];
-        $postUpdatables = [
-            // 'slug',
-            'is_featured',
-            'canonical_url',
-            'featured_image_url',
-            'code_head',
-            'code_foot',
-            'published_at'
-        ];
-
-        foreach ($postUpdatables as $postUpdatable) {
-            if ($request->has($postUpdatable)) {
-                $postUpdates[$postUpdatable] = $request->input($postUpdatable);
-            }
-        }
-
-        if (count($postUpdates) > 0) {
-            /*if (array_key_exists('slug', $postUpdates)) {
-                $bySlugPost = PostRepository::getPostByBlogIdAndSlug($blog->id, strval($postUpdates['slug']));
-                if ($bySlugPost && $bySlugPost->id !== $post->id) {
-                    throw new TrustedException('Slug has already been taken');
-                }
-            }*/
-
-            PostRepository::updatePost($post, $postUpdates);
-        }
-
-        $post->refresh();
-
-        return response()->json(new PostObject($post, $blog));
-    }
-
-    public function createPostVariant(Request $request, Blog $blog, Post $post): JsonResponse
-    {
-        $request->validate([
-            'language_id' => 'required|integer',
-        ]);
-
-        $languageId = $request->integer('language_id');
-        $language = LanguageRepository::getLanguageById($blog, $languageId);
-
-        if (!$language) {
-            throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
-        }
-
-        $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
-
-        if ($variant) {
-            throw new TrustedException('Variant already exists', TrustedException::ERROR_UNPROCESSABLE);
-        }
-
-        $variant = PostRepository::createPostVariant($post, $language);
-
-        return response()->json(
-            new PostVariantObject($variant, $post->refresh(), $blog)
-        );
-    }
-
     public function updatePostVariant(
         Request $request,
         Blog $blog,
@@ -339,12 +261,5 @@ class ConsolePostController extends Controller
         return response()->json([
             'available' => $available
         ]);
-    }
-
-    public function clonePost(Blog $blog, Post $post): JsonResponse
-    {
-        $clonedPost = PostRepository::clonePost($post);
-
-        return response()->json(new PostObject($clonedPost, $blog));
     }
 }

@@ -488,7 +488,6 @@ class PostService
         $variant->setPost($post);
         $variant->setLanguage($language);
         $variant->setStatus($status);
-        $variant->setContent($content);
         $variant->setContentUnsaved($contentUnsaved);
         $variant->setSlug($slug);
         $variant->setTitle($title);
@@ -501,14 +500,19 @@ class PostService
         $variant->setTsLanguage($this->fullTextSearchService->findClosestRegconfigByLanguageCode($language->getCode()));
 
         if ($status === PostVariantStatus::PUBLISHED || $status === PostVariantStatus::SCHEDULED) {
+            assert(
+                $variant->getSlug() !== null,
+                'Slug must be given when creating a published or scheduled post variant',
+            );
+
+            assert($content !== null, 'Content must be given when creating a published or scheduled post variant');
+
             if ($post->getPublishedAt() === null) {
                 $post->setPublishedAt($this->now());
             }
-            $variant->setContentUpdatedAt($post->getPublishedAt());
-        }
 
-        if ($status === PostVariantStatus::PUBLISHED) {
-            assert($variant->getSlug() !== null, 'Slug must be set for published post variant');
+            $variant->setContentUpdatedAt($post->getPublishedAt());
+            $variant->setContent($content);
         }
 
         $this->em->persist($variant);
@@ -766,9 +770,10 @@ class PostService
                 $clone,
                 $variant->getLanguage(),
                 flush: false,
-                content: $variant->getContent(),
+                status: PostVariantStatus::DRAFT,
+                // content null, because this is draft
                 contentUnsaved: $variant->getContentUnsaved(),
-                title: $variant->getTitle(),
+                title: '[Copy] ' . ($variant->getTitle() ?? ''),
                 description: $variant->getDescription(),
                 seoPrimaryKeyword: $variant->getSeoPrimaryKeyword(),
                 seoSecondaryKeywords: $variant->getSeoSecondaryKeywords() ?? [],

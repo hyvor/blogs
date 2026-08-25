@@ -19,4 +19,6 @@ class PostVariantUpdateContentHtmlListener
 
         PostRepository::updateVariantHtml($event->variant);
     }
+
+    // should listen ot PostVariantCreatedEvent when status !== draft
 }
