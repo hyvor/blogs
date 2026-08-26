@@ -16,6 +16,7 @@
 		type RemoteCursor
 	} from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
+	import focusTitlePlugin from './plugins/plugin-focus-title';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
@@ -215,7 +216,7 @@
 			editable={isEditable}
 			{schema}
 			editorConfig={fullEditorConfig}
-			plugins={[wordCountPlugin()]}
+			plugins={[wordCountPlugin(), focusTitlePlugin()]}
 			oninit={handleInit}
 		/>
 	</div>

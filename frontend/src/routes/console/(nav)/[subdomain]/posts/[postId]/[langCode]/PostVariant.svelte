@@ -10,7 +10,6 @@
 	} from '../../postStore';
 	import PostBody from '../Body/PostBody.svelte';
 	import TopBar from '../TopBar/TopBar.svelte';
-	import { isTempStore } from '../../../../../lib/temp';
 	import type { Unsubscriber } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -66,7 +65,7 @@
 	});
 </script>
 
-<div id="post-view" class:is-temp={$isTempStore} bind:this={postView}>
+<div id="post-view" bind:this={postView}>
 	{#if isLoading}
 		<div class="full-loader">
 			<Loader block size="large" />

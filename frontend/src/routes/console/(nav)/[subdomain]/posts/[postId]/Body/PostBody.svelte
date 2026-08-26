@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { postEditor, postVariantLanguageStore, postVariantStore } from '../../postStore';
+	import { postEditor, postTitle, postVariantLanguageStore, postVariantStore } from '../../postStore';
 	import SaveStatus from './Footer/SaveStatus.svelte';
 	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
 	import Editor from './Editor/Editor.svelte';
 	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
 	import Title from './Title.svelte';
 	import PublishedNotice from './Footer/PublishedNotice.svelte';
-
-	let titleComponent: { focus: () => void } | undefined = $state();
 
 	// the editor loads its ProseMirror view asynchronously (onMount awaits a
 	// dynamic import), so it may not be ready yet right after this component mounts
@@ -23,7 +21,7 @@
 	onMount(() => {
 		const title = ($postVariantStore.title || '').trim();
 		if (title === '') {
-			titleComponent?.focus();
+			$postTitle?.focus();
 		} else {
 			focusEditorWhenReady();
 		}
@@ -41,7 +39,7 @@
     "
 >
 	<label class="top">
-		<Title bind:this={titleComponent} />
+		<Title bind:this={$postTitle} />
 	</label>
 
 	<Editor />

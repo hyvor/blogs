@@ -10,7 +10,6 @@
 	import type { BlogList } from '../../types';
 	import { saveSort } from '../../actions/blogActions';
 	import arrowSvg from './drag-note-arrow.svg';
-	import { isTempStore } from '../../temp';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { consoleUrl } from '../../consoleUrl';
 	import BlogPlanTag from './BlogPlanTag.svelte';
@@ -221,7 +220,7 @@
 	</div>
 
 	<div class="footer">
-		<Button as="a" href="/console/new" data-sveltekit-reload={$isTempStore}>
+		<Button as="a" href="/console/new">
 			Create a new blog
 			{#snippet end()}
 				<IconPlus />

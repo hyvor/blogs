@@ -8,6 +8,7 @@
 		updatePostVariantStore
 	} from '../../postStore';
 	import { onMount, tick } from 'svelte';
+	import { TextSelection } from 'prosemirror-state';
 	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 	import { updatePostVariant } from '../../postActions';
 
@@ -42,6 +43,12 @@
 		textarea?.focus();
 	}
 
+	export function focusAtEnd() {
+		textarea?.focus();
+		const length = textarea?.value.length ?? 0;
+		textarea?.setSelectionRange(length, length);
+	}
+
 	function handleResize() {
 		if (!textarea) return;
 		textarea.style.height = '0';
@@ -53,7 +60,30 @@
 			e.preventDefault();
 			e.stopPropagation();
 			$postEditor.focus();
+			return;
 		}
+
+		if (e.key === 'ArrowRight') {
+			const target = e.currentTarget as HTMLTextAreaElement;
+			const atEnd =
+				target.selectionStart === target.value.length &&
+				target.selectionEnd === target.value.length;
+			if (!atEnd) return;
+
+			e.preventDefault();
+			e.stopPropagation();
+			focusEditorAtStart();
+		}
+	}
+
+	function focusEditorAtStart() {
+		const editor = $postEditor;
+		const view = editor?.getView();
+		if (!view) return;
+
+		const selection = TextSelection.atStart(view.state.doc);
+		view.dispatch(view.state.tr.setSelection(selection));
+		view.focus();
 	}
 
 	onMount(() => {
@@ -104,12 +134,12 @@
 		display: flex;
 		align-items: center;
 		position: relative;
+		width: 700px;
+		margin: auto;
 	}
 
 	textarea {
 		font-family: var(--font-serif);
-		padding-top: 10px;
-		padding-bottom: 10px;
 		font-size: 34px;
 		font-weight: 800;
 		outline: none;
@@ -120,18 +150,16 @@
 		background: none;
 		overflow: hidden;
 		position: relative;
-		padding-block: 15px;
+		padding-top: 15px;
+		padding-bottom: 0px;
 		color: var(--text-faded);
-		line-height: 1.5;
-		/**
-		* reduce width of textarea (700px)
-		*/
-		padding-inline: max(0px, calc(((100% - 760px) / 2) + 30px));
+		line-height: 1.1;
 	}
 
 	.unsaved-tag {
 		position: absolute;
-		bottom: 100%;
-		left: 30px;
+		top: 0;
+		left: 0;
+		margin-top: -8px;
 	}
 </style>

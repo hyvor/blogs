@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initTempSubdomain, setTempSubdomain } from './lib/temp';
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { BlogList } from './lib/types';
@@ -12,7 +11,6 @@
 	} from './lib/stores';
 	import { ConsoleLoader, toast } from '@hyvor/design/components';
 	import { getConfig, setConfig, type Config } from './lib/config';
-	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
 	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
 	import { setPreloadedPost } from './(nav)/[subdomain]/posts/[postId]/postLoader';
@@ -26,7 +24,6 @@
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
 	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
-	import { onNavigate } from '$app/navigation';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -64,19 +61,13 @@
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
 
-		const isTemp = page.url.searchParams.has('temp');
-		isTempStore.set(isTemp);
-
-		const tempSubdomain = initTempSubdomain();
-
 		consoleApi
 			.get<InitResponse>({
-				endpoint: isTemp ? 'init-temp' : 'init',
+				endpoint: 'init',
 				userApi: true,
 				data: {
-					temp_subdomain: isTemp ? tempSubdomain : undefined,
-					blog_hint: isTemp ? undefined : getBlogHint(),
-					post_hint: isTemp ? undefined : getPostHint()
+					blog_hint: getBlogHint(),
+					post_hint: getPostHint()
 				}
 			})
 			.then((res) => {
@@ -93,17 +84,6 @@
 
 				if (res.preloaded.post) {
 					setPreloadedPost(res.preloaded.post);
-				}
-
-				if (res.blogs[0]?.type === 'temp') {
-					const subdomain = res.blogs[0].subdomain;
-					setTempSubdomain(subdomain);
-					if (!tempSubdomain) {
-						const event = new CustomEvent('console:temp_blog:created', {
-							detail: { subdomain }
-						});
-						window.dispatchEvent(event);
-					}
 				}
 
 				if (switchingOrg && !page.url.pathname.startsWith('/console/new')) {
@@ -142,7 +122,7 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<svelte:window onkeydown={!isLoading && !$isTempStore ? handleGlobalKeydown : undefined} />
+<svelte:window onkeydown={!isLoading ? handleGlobalKeydown : undefined} />
 
 <main>
 	{#if isLoading}
@@ -172,15 +152,13 @@
 			}}
 			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
 		>
-			{#if !$isTempStore && !isPostPage}
+			{#if !isPostPage}
 				<HyvorBar logo="/logo.svg" />
 			{/if}
 
 			{@render children?.()}
 
-			{#if !$isTempStore}
-				<BlogSelectorModal />
-			{/if}
+			<BlogSelectorModal />
 		</CloudContext>
 	{/if}
 </main>

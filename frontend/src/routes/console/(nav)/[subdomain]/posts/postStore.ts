@@ -16,6 +16,7 @@ export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
 export const postEditingPublished = writable<boolean>(false); // whether currently editing a published post
 export const postEditor = writable<Editor>();
+export const postTitle = writable<{ focus: () => void; focusAtEnd: () => void }>();
 // whether the active editor has local steps not yet checkpointed to content_unsaved -
 // set by Editor.svelte's onvaluechange, cleared by SaveStatus.svelte after a successful
 // checkpoint. Content itself is no longer mirrored into postVariantStore on every keystroke
