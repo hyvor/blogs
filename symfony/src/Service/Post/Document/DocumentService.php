@@ -5,11 +5,13 @@ namespace App\Service\Post\Document;
 use App\Entity\Blog;
 use App\Entity\PostVariant;
 use App\Entity\PostVariantStep;
+use App\Service\Post\Document\Exception\CheckpointClientAheadException;
+use App\Service\Post\Document\Exception\CheckpointClientBehindException;
 use App\Service\Post\PostService;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Mercure\Update;
@@ -17,7 +19,7 @@ use Symfony\Component\Mercure\Update;
 /**
  * Document editing with collaboration support.
  *
- * - PostVariant.content is the published version, it's immutable
+ * - PostVariant.content is the published version, it's immutable (set when published / scheduled)
  * - PostVariant.content_unsaved is the editable version, which is used here
  * - PostVariant.document_version is the current version of the document, which is incremented with each batch of steps submitted
  * - PostVariantStep saves those steps in JSON format, which can be sent to other clients later
@@ -35,11 +37,12 @@ class DocumentService
         private EntityManagerInterface $em,
         private HubInterface $hub,
         private PostService $postService,
+        private LoggerInterface $logger
     ) {}
 
     public function topic(PostVariant $variant): string
     {
-        return sprintf('post_variant_collab:%d', $variant->getId());
+        return sprintf('document:%d', $variant->getId());
     }
 
     public function getMercureToken(PostVariant $variant): string
@@ -47,15 +50,6 @@ class DocumentService
         return (string) $this->hub->getFactory()?->create([
             new Grant([Grant::ACTION_SUBSCRIBE], [$this->topic($variant)])
         ]);
-    }
-
-    /**
-     * @deprecated
-     * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
-     */
-    public function getState(PostVariant $variant): array
-    {
-        return $this->getStepsSince($variant, 0);
     }
 
     /**
@@ -84,21 +78,13 @@ class DocumentService
     }
 
     /**
-     * Appends a batch of steps if `$version` still matches the live version, and broadcasts
-     * them to every subscriber (including the submitting client, which relies on this to
-     * confirm its pending steps - see prosemirror-collab). If the client is stale, this is
-     * still not an error - instead of leaving the client to somehow notice and recover via
-     * Mercure (which never replays what it missed), the rejection response carries the steps
-     * the client is missing directly (same shape/source as getStepsSince()/the sync endpoint),
-     * so the frontend can call editor.collab.receiveSteps() immediately and let
-     * prosemirror-collab rebase + automatically resend its still-pending local steps.
+     * appends a batch of steps from prosemirror-collab.
+     * only accepts if the version matches the current document version.
+     * if the client is behind, returns the steps the client is missing.
+     * submitted steps are broadcast to all subscribers via Mercure, including the submitting client.
      *
      * @param array<int, array<string, mixed>> $steps
      * @return array{accepted: bool, version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
-     */
-
-    /**
-     *
      */
     public function submitSteps(
         PostVariant $variant,
@@ -106,22 +92,24 @@ class DocumentService
         array $steps,
         string $clientId,
     ): array {
-        if ($steps === []) {
-            return ['accepted' => true, 'version' => $version, 'steps' => [], 'client_ids' => []];
-        }
 
-        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $version, $steps, $clientId) {
-            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
+        $newVersion = $version;
+        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $version, $steps, $clientId, &$newVersion) {
+            $current = $this->em->find(
+                PostVariant::class,
+                $variant->getId(),
+                LockMode::PESSIMISTIC_WRITE
+            );
+
             if ($current === null || $current->getDocumentVersion() !== $version) {
                 return false;
             }
 
             /**
-             * Note: i first thought each batch of steps should get a single version, but prosemirror-collab assigns
-             * a new version for EACH step.
+             * Note: first thought each batch of steps should get a single version,
+             * but prosemirror-collab assigns a new version for EACH step.
              * See https://code.haverbeke.berlin/prosemirror/website/src/branch/main/src/collab/server/instance.js#L45
              */
-            $newVersion = $version;
             foreach ($steps as $step) {
                 $newVersion++;
                 $row = new PostVariantStep()
@@ -140,34 +128,84 @@ class DocumentService
         });
 
         if ($accepted) {
-            $this->publish($variant, $version, $steps, $clientId);
-            return ['accepted' => true, 'version' => $version + count($steps), 'steps' => [], 'client_ids' => []];
+            $clientIds = array_fill(0, count($steps), $clientId);
+
+            $this->hub->publish(new Update(
+                $this->topic($variant),
+                json_encode([
+                    'type' => 'steps',
+                    'version' => $newVersion + count($steps),
+                    'steps' => $steps,
+                    'client_ids' => $clientIds,
+                ], JSON_THROW_ON_ERROR),
+                true,
+            ));
+
+            return ['accepted' => true, 'version' => $newVersion + count($steps), 'steps' => [], 'client_ids' => []];
         }
 
         return ['accepted' => false, ...$this->getStepsSince($variant, $version)];
     }
 
     /**
-     * @param array<int, array<string, mixed>> $steps
+     * Periodic full-document checkpoint.
+     * Updates content_unsaved and verified the version.
+     * On version mismatch, throws an exception with the missing steps in it.
+     *
+     * Note: here we are trusting the client to send the full document with the correct version.
+     *
+     * @throws CheckpointClientBehindException if `$version` is behind the server's version, with the missing steps in the exception
+     * @throws CheckpointClientAheadException if `$version` is ahead of the server's version
      */
-    private function publish(
+    public function checkpoint(
         PostVariant $variant,
-        int $baseVersion,
-        array $steps,
-        string $clientId,
+        Blog $blog,
+        string $json,
+        int $version,
     ): void {
-        $clientIds = array_fill(0, count($steps), $clientId);
+        $this->em->wrapInTransaction(function () use ($variant, $blog, $json, $version) {
+            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
+            assert($current !== null, 'PostVariant not found');
 
-        $this->hub->publish(new Update(
-            $this->topic($variant),
-            json_encode([
-                'type' => 'steps',
-                'version' => $baseVersion + count($steps),
-                'steps' => $steps,
-                'client_ids' => $clientIds,
-            ], JSON_THROW_ON_ERROR),
-            true,
-        ));
+            // user is behind, has to catch up
+            if ($current->getDocumentVersion() > $version) {
+                [
+                    'version' => $currentVersion,
+                    'steps' => $missingSteps,
+                    'client_ids' => $missingClientIds,
+                ] = $this->getStepsSince($variant, $version);
+                throw new CheckpointClientBehindException(
+                    $currentVersion,
+                    $missingSteps,
+                    $missingClientIds
+                );
+            }
+
+            // user is ahead, something is very wrong, alert devs as well
+            if ($current->getDocumentVersion() < $version) {
+                $this->logger->alert(
+                    'Client document version is ahead of server version',
+                    [
+                        'post_variant_id' => $variant->getId(),
+                        'client_version' => $version,
+                        'server_version' => $current->getDocumentVersion(),
+                        'blog_id' => $blog->getId(),
+                    ]
+                );
+
+                throw new CheckpointClientAheadException(sprintf(
+                    'PostVariant document_version is %d, but checkpoint version is %d',
+                    $current->getDocumentVersion(),
+                    $version
+                ));
+            }
+
+            $current->setContentUnsaved($json);
+            $current->setContentUnsavedVersion($version);
+            $current->setUpdatedAt($this->now());
+
+            $this->em->persist($current);
+        });
     }
 
     /**
@@ -202,37 +240,5 @@ class DocumentService
             $this->topic($variant),
             json_encode($payload, JSON_THROW_ON_ERROR),
         ));
-    }
-
-    /**
-     * Periodic full-document checkpoint (the "update endpoint"): persists `$json` into
-     * `content_unsaved`, verifying `$version` is exactly the current live version (not just >=)
-     * so a checkpoint never silently drops steps a client hasn't caught up on yet. On success,
-     * prunes the steps it just absorbed.
-     *
-     * @throws ConflictHttpException if `$version` is stale
-     */
-    public function checkpoint(
-        PostVariant $variant,
-        Blog $blog,
-        string $json,
-        int $version,
-    ): void {
-        $this->em->wrapInTransaction(function () use ($variant, $blog, $json, $version) {
-            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
-            if ($current === null || $current->getDocumentVersion() !== $version) {
-                throw new ConflictHttpException(
-                    'document_version has moved on - catch up via Mercure and retry' .
-                    ($current === null ? '' : sprintf(' (current version: %d)', $current->getDocumentVersion()))   .
-                    ' (given version: ' . $version . ')'
-                );
-            }
-
-            $current->setContentUnsaved($json);
-            $current->setContentUnsavedVersion($version);
-            $current->setUpdatedAt($this->now());
-
-            $this->em->persist($current);
-        });
     }
 }

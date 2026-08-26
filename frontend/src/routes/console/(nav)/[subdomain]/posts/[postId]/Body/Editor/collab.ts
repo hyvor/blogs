@@ -2,9 +2,9 @@ import type { CollabClientID, CollabStepJSON, RemoteCursorUser } from '@hyvor/ri
 import { getConfig } from '../../../../../../lib/config';
 import { fetchEventSource, EventStreamContentType } from '@microsoft/fetch-event-source';
 
-// must match PostVariantCollabService::topic() on the backend
+// must match DocumentService::topic() on the backend
 export function collabTopic(variantId: number): string {
-	return `post_variant_collab:${variantId}`;
+	return `document:${variantId}`;
 }
 
 interface CollabStepsMercureMessage {

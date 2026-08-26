@@ -86,6 +86,7 @@ function getConsoleApi() {
 			toThrow.message = error;
 			toThrow.code = response.status;
 			toThrow.data = e && e.data ? e.data : null;
+			toThrow.body = e;
 
 			throw toThrow;
 		}

@@ -9,11 +9,12 @@ use App\Api\Console\Input\Document\CheckpointCollabInput;
 use App\Api\Console\Input\Document\GetDocumentForPostInput;
 use App\Api\Console\Input\Document\SubmitCollabCursorInput;
 use App\Api\Console\Input\Document\SubmitCollabStepsInput;
-use App\Api\Console\Input\Document\SyncCollabStepsInput;
 use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\PostVariant;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
+use App\Service\Post\Document\Exception\CheckpointClientAheadException;
+use App\Service\Post\Document\Exception\CheckpointClientBehindException;
 use App\Service\Post\PostService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -91,6 +92,8 @@ class DocumentsController
     /**
      * Submit a batch of prosemirror-collab steps.
      * If the version is stale, the response will include the steps the client is missing.
+     * Simply saves the steps and updates document_version
+     * Does not touch content_unsaved, which is only updated by /checkpoint.
      */
     #[Route('/documents/steps', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -107,22 +110,6 @@ class DocumentsController
         );
 
         return new JsonResponse($result);
-    }
-
-    /**
-     * Standalone catch-up: returns every step after `version`, straight from
-     * `post_variant_steps` rather than Mercure. The frontend calls this whenever it suspects it
-     * missed a broadcast - e.g. its EventSource reconnecting after a drop (Mercure has no replay
-     * for a subscriber that was briefly disconnected) - not just after a rejected submission.
-     */
-    #[Route('/documents/sync', methods: ['GET'])]
-    #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function sync(
-        #[MapQueryString] SyncCollabStepsInput $input,
-    ): JsonResponse {
-        $variant = $this->getVariantOrFail($input->post_variant_id);
-
-        return new JsonResponse($this->documentService->getStepsSince($variant, $input->version));
     }
 
     /**
@@ -156,8 +143,8 @@ class DocumentsController
     }
 
     /**
-     * Periodic full-document checkpoint. 409s (client silently retries next interval) if
-     * `version` isn't exactly the current live version.
+     * Periodic full-document checkpoint. 409s (client silently retries next interval)
+     * if `version` isn't exactly the current live version.
      */
     #[Route('/documents/checkpoint', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -167,7 +154,21 @@ class DocumentsController
         $variant = $this->getVariantOrFail($input->post_variant_id);
         $blog = $this->blogAuthListener->getBlog();
 
-        $this->documentService->checkpoint($variant, $blog, $input->content, $input->version);
+        try {
+            $this->documentService->checkpoint($variant, $blog, $input->content, $input->version);
+        } catch (CheckpointClientBehindException $e) {
+            return new JsonResponse([
+                'message' => 'client_behind',
+                'version' => $e->version,
+                'steps' => $e->steps,
+                'client_ids' => $e->clientIds,
+            ], 409);
+        } catch (CheckpointClientAheadException $e) {
+            return new JsonResponse([
+                'message' => 'client_ahead',
+                'message_full' => $e->getMessage(),
+            ], 409);
+        }
 
         return new JsonResponse();
     }
