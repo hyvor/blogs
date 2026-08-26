@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
-	import { postStore, postVariantStore } from '../../postStore';
-	import PostStatusTag from '../../PostStatusTag.svelte';
+	import { postStore } from '../../postStore';
 	import PreviewButton from '../Sidebar/Top/PreviewButton.svelte';
 	import UnpublishButton from '../Sidebar/Top/UnpublishButton.svelte';
 	import PublishButton from '../Sidebar/Top/PublishButton.svelte';
@@ -47,9 +46,12 @@
 	.post-top-bar {
 		display: flex;
 		align-items: center;
-		height: 42px;
 		border-bottom: 1px solid var(--border);
 		background-color: var(--box-background);
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		height: 42px;
 	}
 
 	.back-button {

@@ -3,7 +3,6 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
-use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Document\CheckpointCollabInput;
@@ -12,7 +11,6 @@ use App\Api\Console\Input\Document\SubmitCollabCursorInput;
 use App\Api\Console\Input\Document\SubmitCollabStepsInput;
 use App\Api\Console\Input\Document\SyncCollabStepsInput;
 use App\Api\Console\Object\PostObjectFactory;
-use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
@@ -23,8 +21,6 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -38,20 +34,7 @@ class DocumentsController
         private UserService $userService,
         private LanguageService $languageService,
         private PostObjectFactory $postObjectFactory,
-        private HubInterface $mercureHub,
     ) {}
-
-    private function getVariantOrFail(int $postVariantId): PostVariant
-    {
-        $blog = $this->blogAuthListener->getBlog();
-
-        $variant = $this->postService->getPostVariantByBlogAndId($blog, $postVariantId);
-        if ($variant === null) {
-            throw new NotFoundHttpException('Post variant not found');
-        }
-
-        return $variant;
-    }
 
     #[Route('/documents/post', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
@@ -90,6 +73,19 @@ class DocumentsController
                 'mercure_token' => $this->documentService->getMercureToken($variant)
             ]
         ]);
+    }
+
+
+    private function getVariantOrFail(int $postVariantId): PostVariant
+    {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $variant = $this->postService->getPostVariantByBlogAndId($blog, $postVariantId);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Post variant not found');
+        }
+
+        return $variant;
     }
 
     /**

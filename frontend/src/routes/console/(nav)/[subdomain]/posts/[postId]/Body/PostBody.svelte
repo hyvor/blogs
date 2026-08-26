@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { postEditor, postTitle, postVariantLanguageStore, postVariantStore } from '../../postStore';
+	import {
+		postEditor,
+		postTitle,
+		postVariantLanguageStore,
+		postVariantStore
+	} from '../../postStore';
 	import SaveStatus from './Footer/SaveStatus.svelte';
 	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
 	import Editor from './Editor/Editor.svelte';
@@ -65,7 +70,7 @@
 	#post-body {
 		display: flex;
 		flex-direction: column;
-		min-height: calc(100vh - 70px);
+		flex: 1;
 	}
 	#post-body :global(.ProseMirror) {
 		width: 760px !important;

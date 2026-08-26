@@ -19,8 +19,8 @@ class PostObject
     public ?string $code_head;
     public ?string $code_foot;
 
-    /** @var PostVariantStatusObject[] */
-    public array $variant_statuses;
+    /** @var PostVariantSummaryObject[] */
+    public array $variants;
 
     /** @var TagObject[] */
     public array $tags;
@@ -48,7 +48,7 @@ class PostObject
 
         $variants = $post->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
-        $this->variant_statuses = array_map(fn($v) => new PostVariantStatusObject($v), $variants);
+        $this->variants = array_map(fn($v) => new PostVariantSummaryObject($v), $variants);
 
         $this->tags = array_map(fn($tag) => $tagObjectFactory->create($tag, $blog), $post->getTags()->toArray());
         $this->authors = array_map(fn($user) => $userObjectFactory->create($user, $blog), $post->getAuthors()->toArray());

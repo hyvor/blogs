@@ -2,7 +2,7 @@
 
 namespace App\Api\Console\Object\PostList;
 
-use App\Api\Console\Object\PostVariantStatusObject;
+use App\Api\Console\Object\PostVariantSummaryObject;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\Tag;
@@ -28,8 +28,8 @@ class PostListObject
     // SEO scoring is not yet computed server-side; placeholder until that lands
     public int $seo_score = 0;
 
-    /** @var PostVariantStatusObject[] */
-    public array $variant_statuses;
+    /** @var PostVariantSummaryObject[] */
+    public array $variants;
 
     /**
      * @var array<array{name: string, is_private: bool}>
@@ -70,7 +70,7 @@ class PostListObject
         $this->link_analysis = $primaryVariant?->getLinkAnalysis() ?? [];
 
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
-        $this->variant_statuses = array_map(fn($v) => new PostVariantStatusObject($v), $variants);
+        $this->variants = array_map(fn($v) => new PostVariantSummaryObject($v), $variants);
 
         $this->tags = array_map(
             fn(Tag $tag) => [

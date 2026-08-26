@@ -184,8 +184,7 @@ export type Post = {
 	code_head: string | null;
 	code_foot: string | null;
 
-	variant_statuses: PostVariantStatusItem[];
-
+	variants: PostVariantSummary[];
 	tags: Tag[];
 	authors: User[];
 };
@@ -221,7 +220,7 @@ export interface Document {
 	mercure_token: string;
 }
 
-export type PostVariantStatusItem = {
+export type PostVariantSummary = {
 	id: number;
 	language_id: number;
 	status: PostStatus;
@@ -246,7 +245,7 @@ export type PostListItem = {
 	link_analysis: Record<string, number>;
 	seo_score: number;
 
-	variant_statuses: PostVariantStatusItem[];
+	variants: PostVariantSummary[];
 
 	tags: {
 		name: string,

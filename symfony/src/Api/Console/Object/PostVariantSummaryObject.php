@@ -4,7 +4,7 @@ namespace App\Api\Console\Object;
 
 use App\Entity\PostVariant;
 
-class PostVariantStatusObject
+class PostVariantSummaryObject
 {
     public int $id;
     public int $language_id;
