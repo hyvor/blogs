@@ -7,20 +7,13 @@
 		postVariantStore,
 		documentStore
 	} from '../../../postStore';
-	import {
-		Editor,
-		type Author,
-		type CollabSendable,
-		type CollabStepJSON,
-		type CollabClientID,
-		type RemoteCursor
-	} from '@hyvor/richtext';
+	import { Editor, type Author, type CollabSendable, type RemoteCursor } from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
 	import focusTitlePlugin from './plugins/plugin-focus-title';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
-	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
+	import { subscribeToCollabMercureTopic, collabTopic, applyConfirmedSteps } from './collab';
 	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 
@@ -29,12 +22,6 @@
 
 	function handleChange() {
 		$postContentDirtyStore = true;
-	}
-
-	function applyConfirmedSteps(steps: CollabStepJSON[], clientIds: CollabClientID[]) {
-		const editor = $postEditor;
-		if (!editor) return;
-		editor.collab.receiveSteps(steps, clientIds);
 	}
 
 	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
@@ -74,18 +61,7 @@
 				steps: sendable.steps,
 				client_id: String(sendable.clientID)
 			});
-
-			// if accepted, the server has already applied our steps
-
-			// if not, we have to rebase using the steps the server sent when accepted is false.
-			// prosemirror automatically refires the onSendable callback after the rebase
-			// so we don't have to retry
-			if (!response.accepted) {
-				applyConfirmedSteps(
-					response.steps as CollabStepJSON[],
-					response.client_ids as CollabClientID[]
-				);
-			}
+			applyConfirmedSteps($postEditor!, response.steps);
 		} catch (e) {
 			// TODO: editor error handling
 			console.error('Failed to submit collab steps', e);
@@ -110,7 +86,6 @@
 	// the editor must start at the version *before* those steps, then fast-forward via
 	// collab.receiveSteps() once mounted.
 	let backlogSteps = $derived($documentStore.pending_steps.steps);
-	let backlogClientIds = $derived($documentStore.pending_steps.client_ids);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
 
@@ -124,40 +99,18 @@
 		const editor = $postEditor!;
 
 		if (backlogSteps.length > 0) {
-			applyConfirmedSteps(backlogSteps, backlogClientIds);
+			applyConfirmedSteps(editor, backlogSteps);
 		}
 
 		const cursors = new Map<string, RemoteCursor>();
-
-		// called when the Mercure EventSource reconnects after a drop - whatever was published
-		// while we were disconnected is gone from that transport's point of view (no replay), so
-		// pull the durable truth directly instead of just hoping nothing was missed
-		async function catchUp() {
-			return;
-			try {
-				const response = await syncCollabSteps({
-					post_variant_id: $postVariantStore.id,
-					version: editor.collab.getVersion()
-				});
-				if (response.steps.length > 0) {
-					applyConfirmedSteps(
-						response.steps as CollabStepJSON[],
-						response.client_ids as CollabClientID[]
-					);
-				}
-			} catch (e) {
-				console.error('Failed to sync collab steps', e);
-			}
-		}
 
 		const topic = collabTopic($postVariantStore.id);
 
 		topicUnsubscriber = subscribeToCollabMercureTopic(
 			topic,
 			$documentStore.mercure_token,
-			(steps, clientIds, version) => {
-				console.log(`received collab steps (version ${version})`, steps, clientIds);
-				applyConfirmedSteps(steps, clientIds);
+			(steps) => {
+				applyConfirmedSteps(editor, steps);
 			},
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
@@ -179,8 +132,7 @@
 				}
 
 				editor.cursors.set([...cursors.values()]);
-			},
-			catchUp
+			}
 		);
 	}
 

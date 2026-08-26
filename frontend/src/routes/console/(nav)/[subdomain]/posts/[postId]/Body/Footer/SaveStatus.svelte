@@ -14,6 +14,7 @@
 	import { toast } from '@hyvor/design/components';
 	import { beforeNavigate } from '$app/navigation';
 	import type { CollabClientID, CollabStepJSON } from '@hyvor/richtext';
+	import { applyConfirmedSteps } from '../Editor/collab';
 
 	let hasChanged = $derived($postContentDirtyStore);
 
@@ -43,10 +44,7 @@
 					// recognizes, same as a rejected submitCollabSteps (see Editor.svelte)
 					const body = e.body as CheckpointClientBehindError;
 					if (editor && body.steps.length > 0) {
-						editor.collab.receiveSteps(
-							body.steps as CollabStepJSON[],
-							body.client_ids as CollabClientID[]
-						);
+						applyConfirmedSteps(editor, body.steps as CollabStepJSON[]);
 					}
 					return;
 				}

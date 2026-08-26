@@ -1,17 +1,42 @@
-import type { CollabClientID, CollabStepJSON, RemoteCursorUser } from '@hyvor/richtext';
+import type { CollabClientID, CollabStepJSON, Editor, RemoteCursorUser } from '@hyvor/richtext';
 import { getConfig } from '../../../../../../lib/config';
-import { fetchEventSource, EventStreamContentType } from '@microsoft/fetch-event-source';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 // must match DocumentService::topic() on the backend
 export function collabTopic(variantId: number): string {
 	return `document:${variantId}`;
 }
 
+export function applyConfirmedSteps(
+	editor: Editor,
+	steps: CollabStep[],
+) {
+	const currentVersion = editor.collab.getVersion();
+	
+	if (steps.length === 0) return;
+
+	// get the steps and client IDs where the version is greater than the current version
+	const newSteps = steps.filter((step) => step.version > currentVersion);
+
+	console.log('applying confirmed steps', newSteps, 'all steps', steps, 'current version', currentVersion);
+
+	editor.collab.receiveSteps(
+		newSteps.map((step) => step.step),
+		newSteps.map((step) => step.client_id)
+	);
+}
+
+// StepDto in backend
+export interface CollabStep {
+	version: number;
+	step: CollabStepJSON;
+	client_id: CollabClientID;
+}
+
 interface CollabStepsMercureMessage {
 	type: 'steps';
 	version: number;
-	steps: CollabStepJSON[];
-	client_ids: CollabClientID[];
+	steps: CollabStep[];
 }
 
 // mirrors PostVariantCollabService::publishCursor()'s payload - `clear` means the sender
@@ -42,9 +67,8 @@ type CollabMercureMessage = CollabStepsMercureMessage | CollabCursorMercureMessa
 export function subscribeToCollabMercureTopic(
 	topic: string,
 	token: string,
-	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[], version: number) => void,
+	onSteps: (steps: CollabStep[]) => void,
 	onCursor: (message: CollabCursorMercureMessage) => void,
-	onReconnect: () => void
 ): () => void {
 
 	const url = new URL(getConfig().mercure.public_url);
@@ -63,15 +87,15 @@ export function subscribeToCollabMercureTopic(
 		},
 		openWhenHidden: true,
 		async onopen(response) {
-			if (response.ok && response.headers.get('content-type')?.startsWith(EventStreamContentType)) {
-				if (connectedBefore) {
-					onReconnect();
-				}
-				connectedBefore = true;
-				return;
-			}
+			// if (response.ok && response.headers.get('content-type')?.startsWith(EventStreamContentType)) {
+			// 	if (connectedBefore) {
+			// 		onReconnect();
+			// 	}
+			// 	connectedBefore = true;
+			// 	return;
+			// }
 
-			throw new Error(`Failed to open Mercure subscription: ${response.status}`);
+			// throw new Error(`Failed to open Mercure subscription: ${response.status}`);
 		},
 		onmessage(event) {
 			let message: CollabMercureMessage;
@@ -82,7 +106,7 @@ export function subscribeToCollabMercureTopic(
 			}
 
 			if (message.type === 'steps' && message.steps.length > 0) {
-				onSteps(message.steps, message.client_ids, message.version);
+				onSteps(message.steps);
 			} else if (message.type === 'cursor') {
 				onCursor(message);
 			}

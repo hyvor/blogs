@@ -1,5 +1,6 @@
 import consoleApi from "../../../../lib/consoleApi";
 import type { Document, Post, PostVariant } from "../../../../lib/types";
+import type { CollabStep } from "./Body/Editor/collab";
 
 export function getDocumentForPost(id: number, variantLanguageCode: string | null = null) {
 	return consoleApi.get<{
@@ -18,8 +19,7 @@ export function getDocumentForPost(id: number, variantLanguageCode: string | nul
 export interface CheckpointClientBehindError {
 	message: 'client_behind';
 	version: number;
-	steps: unknown[];
-	client_ids: string[];
+	steps: CollabStep[];
 }
 
 export interface CheckpointClientAheadError {

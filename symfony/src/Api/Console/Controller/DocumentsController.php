@@ -113,10 +113,37 @@ class DocumentsController
     }
 
     /**
-     * Broadcasts the local user's cursor position, resolved from the authenticated blog user
-     * (name/picture/color) rather than trusted client input - see resolveAuthor's docblock on
-     * PostSuggestionController for the same reasoning. Fire-and-forget: no version, nothing
-     * stored, so this never conflicts/fails - see PostVariantCollabService::publishCursor.
+     * Periodic full-document checkpoint. 409s (client silently retries next interval)
+     * if `version` isn't exactly the current live version.
+     */
+    #[Route('/documents/checkpoint', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_WRITE)]
+    public function checkpoint(
+        #[MapRequestPayload] CheckpointCollabInput $input,
+    ): JsonResponse {
+        $variant = $this->getVariantOrFail($input->post_variant_id);
+        $blog = $this->blogAuthListener->getBlog();
+
+        try {
+            $this->documentService->checkpoint($variant, $blog, $input->content, $input->version);
+        } catch (CheckpointClientBehindException $e) {
+            return new JsonResponse([
+                'message' => 'client_behind',
+                'version' => $e->version,
+                'steps' => $e->steps,
+            ], 409);
+        } catch (CheckpointClientAheadException $e) {
+            return new JsonResponse([
+                'message' => 'client_ahead',
+                'message_full' => $e->getMessage(),
+            ], 409);
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * Broadcast the current user's cursor position to other clients.
      */
     #[Route('/documents/cursor', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -138,37 +165,6 @@ class DocumentsController
         }
 
         $this->documentService->publishCursor($variant, $input->client_id, $input->from, $input->to, $user);
-
-        return new JsonResponse();
-    }
-
-    /**
-     * Periodic full-document checkpoint. 409s (client silently retries next interval)
-     * if `version` isn't exactly the current live version.
-     */
-    #[Route('/documents/checkpoint', methods: ['POST'])]
-    #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function checkpoint(
-        #[MapRequestPayload] CheckpointCollabInput $input,
-    ): JsonResponse {
-        $variant = $this->getVariantOrFail($input->post_variant_id);
-        $blog = $this->blogAuthListener->getBlog();
-
-        try {
-            $this->documentService->checkpoint($variant, $blog, $input->content, $input->version);
-        } catch (CheckpointClientBehindException $e) {
-            return new JsonResponse([
-                'message' => 'client_behind',
-                'version' => $e->version,
-                'steps' => $e->steps,
-                'client_ids' => $e->clientIds,
-            ], 409);
-        } catch (CheckpointClientAheadException $e) {
-            return new JsonResponse([
-                'message' => 'client_ahead',
-                'message_full' => $e->getMessage(),
-            ], 409);
-        }
 
         return new JsonResponse();
     }

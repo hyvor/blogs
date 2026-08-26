@@ -7,6 +7,7 @@ import {
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
+import type { CollabStep } from './[postId]/Body/Editor/collab';
 
 // API
 
@@ -200,26 +201,16 @@ export function clonePost(postId: number) {
 	});
 }
 
-// Collaborative editing (see PostVariantCollabController on the backend). These intentionally
-// don't call updatePostVariantStore themselves - submitCollabSteps's outcome is confirmed (or
-// not) synchronously in its own response now (see CollabStepsResponse), and checkpointPostVariant's
-// caller (SaveStatus.svelte) already knows exactly what it just wrote and updates the store itself.
-
-// mirrors PostVariantCollabService::submitSteps()'s return shape. When accepted is false,
-// `version`/`steps`/`client_ids` are the steps the caller is missing (not an echo of what it
-// just sent) - feed them straight into editor.collab.receiveSteps() to catch up, instead of
-// waiting on Mercure to (maybe) deliver them - see Editor.svelte's handleSendable.
 export interface CollabStepsResponse {
 	accepted: boolean;
 	version: number;
-	steps: unknown[];
-	client_ids: string[];
+	steps: CollabStep[]
 }
 
 export function submitCollabSteps(data: {
 	post_variant_id: number;
 	version: number;
-	steps: unknown[];
+	steps: CollabStep[];
 	client_id: string;
 }) {
 	return consoleApi.post<CollabStepsResponse>({

@@ -54,7 +54,7 @@ class DocumentService
 
     /**
      * @param int $sinceVersion gets steps where version > $sinceVersion
-     * @return array{version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
+     * @return array{version: int, steps: StepDto[]}
      */
     public function getStepsSince(PostVariant $variant, int $sinceVersion): array
     {
@@ -72,8 +72,11 @@ class DocumentService
 
         return [
             'version' => $variant->getDocumentVersion(),
-            'steps' => array_values(array_map(fn(PostVariantStep $s) => $s->getStep(), $rows)),
-            'client_ids' => array_values(array_map(fn(PostVariantStep $s) => $s->getClientId(), $rows)),
+            'steps' => array_values(array_map(fn(PostVariantStep $s) => new StepDto(
+                $s->getVersion(),
+                $s->getStep(),
+                $s->getClientId()
+            ), $rows)),
         ];
     }
 
@@ -94,7 +97,9 @@ class DocumentService
     ): array {
 
         $newVersion = $version;
-        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $version, $steps, $clientId, &$newVersion) {
+        $stepDtos = [];
+
+        $accepted = (bool) $this->em->wrapInTransaction(function () use ($variant, $version, $steps, $clientId, &$newVersion, &$stepDtos) {
             $current = $this->em->find(
                 PostVariant::class,
                 $variant->getId(),
@@ -119,6 +124,8 @@ class DocumentService
                     ->setStep($step)
                     ->setCreatedAt($this->now());
                 $this->em->persist($row);
+
+                $stepDtos[] = new StepDto($newVersion, $step, $clientId);
             }
 
             $current->setDocumentVersion($newVersion);
@@ -128,20 +135,21 @@ class DocumentService
         });
 
         if ($accepted) {
-            $clientIds = array_fill(0, count($steps), $clientId);
-
             $this->hub->publish(new Update(
                 $this->topic($variant),
                 json_encode([
                     'type' => 'steps',
-                    'version' => $newVersion + count($steps),
-                    'steps' => $steps,
-                    'client_ids' => $clientIds,
+                    'version' => $newVersion,
+                    'steps' => $stepDtos,
                 ], JSON_THROW_ON_ERROR),
                 true,
             ));
 
-            return ['accepted' => true, 'version' => $newVersion + count($steps), 'steps' => [], 'client_ids' => []];
+            return [
+                'accepted' => true,
+                'version' => $newVersion,
+                'steps' => $stepDtos,
+            ];
         }
 
         return ['accepted' => false, ...$this->getStepsSince($variant, $version)];
@@ -172,12 +180,11 @@ class DocumentService
                 [
                     'version' => $currentVersion,
                     'steps' => $missingSteps,
-                    'client_ids' => $missingClientIds,
                 ] = $this->getStepsSince($variant, $version);
+
                 throw new CheckpointClientBehindException(
                     $currentVersion,
                     $missingSteps,
-                    $missingClientIds
                 );
             }
 
@@ -208,17 +215,6 @@ class DocumentService
         });
     }
 
-    /**
-     * Broadcasts the local user's cursor position (or, with `$from`/`$to` null, that they blurred
-     * the editor) to everyone else subscribed to this variant's document - see @hyvor/richtext's
-     * `editorConfig.cursors`/`editor.cursors.set()`. Unlike submitSteps(), this is fire-and-forget:
-     * no version, no persistence (see PostVariantStep's docblock) - presence is ephemeral, so the
-     * latest cursor position always wins and a late-joining subscriber simply sees nothing until
-     * the other party moves again.
-     *
-     * @param array{name: string, color: string, picture: ?string}|null $user null clears the
-     *     cursor (blur, or no resolvable blog user for the requester)
-     */
     public function publishCursor(
         PostVariant $variant,
         string $clientId,

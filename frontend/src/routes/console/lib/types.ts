@@ -1,4 +1,5 @@
 import type { CollabClientID, CollabStepJSON } from "@hyvor/richtext";
+import type { CollabStep } from "../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab";
 
 export interface License {
 	users: number;
@@ -214,8 +215,7 @@ export interface Document {
 	checkpoint_content: string;
 	pending_steps: {
 		version: number;
-		steps: CollabStepJSON[];
-		client_ids: CollabClientID[],
+		steps: CollabStep[];
 	};
 	mercure_token: string;
 }
