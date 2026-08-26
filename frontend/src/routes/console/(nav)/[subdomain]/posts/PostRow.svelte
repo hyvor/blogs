@@ -31,7 +31,7 @@
 
 	const primaryLanguage = getPrimaryLanguage();
 	let status = $derived(
-		post.variant_statuses.find((v) => v.language_id === primaryLanguage.id)?.status || 'draft'
+		post.variants.find((v) => v.language_id === primaryLanguage.id)?.status || 'draft'
 	);
 	let showDropdown = $state(false);
 	let isCloning = $state(false);
@@ -145,8 +145,8 @@
 		</div>
 
 		<div class="post-languages">
-			{#each post.variant_statuses as variantStatus (variantStatus.language_id)}
-				<VariantLangTag variant={variantStatus} size="x-small" />
+			{#each post.variants as v (v.language_id)}
+				<VariantLangTag variant={v} size="x-small" />
 			{/each}
 		</div>
 	</div>
