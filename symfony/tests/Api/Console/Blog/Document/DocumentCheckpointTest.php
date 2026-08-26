@@ -98,12 +98,19 @@ class DocumentCheckpointTest extends ApiTestCase
         $this->assertSame(3, $json['version']);
         $this->assertSame(
             [
-                ['type' => 'insertText', 'position' => 0, 'text' => 'Hello,'],
-                ['type' => 'insertText', 'position' => 6, 'text' => ' world!'],
+                [
+                    'version' => 2,
+                    'step' => ['type' => 'insertText', 'position' => 0, 'text' => 'Hello,'],
+                    'client_id' => 'other-client-id',
+                ],
+                [
+                    'version' => 3,
+                    'step' => ['type' => 'insertText', 'position' => 6, 'text' => ' world!'],
+                    'client_id' => 'other-client-id',
+                ],
             ],
             $json['steps']
         );
-        $this->assertSame(['other-client-id', 'other-client-id'], $json['client_ids']);
 
         refresh($variant);
         $this->assertNull($variant->getContentUnsaved());

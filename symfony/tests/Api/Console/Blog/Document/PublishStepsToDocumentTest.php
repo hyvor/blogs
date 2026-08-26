@@ -55,8 +55,21 @@ class PublishStepsToDocumentTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertTrue($json['accepted']);
         $this->assertSame(2, $json['version']);
-        $this->assertSame([], $json['client_ids']);
-        $this->assertSame([], $json['steps']);
+        $this->assertArrayNotHasKey('client_ids', $json);
+        $this->assertSame(
+            [
+                [
+                    'version' => 2,
+                    'step' => [
+                        'type' => 'insertText',
+                        'position' => 0,
+                        'text' => 'Hello, world!',
+                    ],
+                    'client_id' => 'test-client-id',
+                ],
+            ],
+            $json['steps']
+        );
 
         $steps = $this->getEm()->getRepository(PostVariantStep::class)->findAll();
         $this->assertCount(1, $steps);
@@ -76,12 +89,15 @@ class PublishStepsToDocumentTest extends ApiTestCase
                 'version' => 2,
                 'steps' => [
                     [
-                        'type' => 'insertText',
-                        'position' => 0,
-                        'text' => 'Hello, world!',
+                        'version' => 2,
+                        'step' => [
+                            'type' => 'insertText',
+                            'position' => 0,
+                            'text' => 'Hello, world!',
+                        ],
+                        'client_id' => 'test-client-id',
                     ],
                 ],
-                'client_ids' => ['test-client-id'],
             ], JSON_THROW_ON_ERROR),
             $update->getData()
         );
@@ -127,8 +143,30 @@ class PublishStepsToDocumentTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertTrue($json['accepted']);
         $this->assertSame(3, $json['version']);
-        $this->assertSame([], $json['client_ids']);
-        $this->assertSame([], $json['steps']);
+        $this->assertArrayNotHasKey('client_ids', $json);
+        $this->assertSame(
+            [
+                [
+                    'version' => 2,
+                    'step' => [
+                        'type' => 'insertText',
+                        'position' => 0,
+                        'text' => 'Hello, world!',
+                    ],
+                    'client_id' => 'test-client-id',
+                ],
+                [
+                    'version' => 3,
+                    'step' => [
+                        'type' => 'insertText',
+                        'position' => 13,
+                        'text' => ' How are you?',
+                    ],
+                    'client_id' => 'test-client-id',
+                ],
+            ],
+            $json['steps']
+        );
 
         $steps = $this->getEm()->getRepository(PostVariantStep::class)->findAll();
         $this->assertCount(2, $steps);
@@ -180,11 +218,19 @@ class PublishStepsToDocumentTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertFalse($json['accepted']);
         $this->assertSame(3, $json['version']);
-        $this->assertSame(['other-client-id', 'other-client-id'], $json['client_ids']);
+        $this->assertArrayNotHasKey('client_ids', $json);
         $this->assertSame(
             [
-                ['type' => 'insertText', 'position' => 0, 'text' => 'Hello,'],
-                ['type' => 'insertText', 'position' => 6, 'text' => ' world!'],
+                [
+                    'version' => 2,
+                    'step' => ['type' => 'insertText', 'position' => 0, 'text' => 'Hello,'],
+                    'client_id' => 'other-client-id',
+                ],
+                [
+                    'version' => 3,
+                    'step' => ['type' => 'insertText', 'position' => 6, 'text' => ' world!'],
+                    'client_id' => 'other-client-id',
+                ],
             ],
             $json['steps']
         );
