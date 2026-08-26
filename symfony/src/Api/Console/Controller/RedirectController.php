@@ -92,7 +92,19 @@ class RedirectController
             }
         }
 
-        $redirect = $this->redirectService->updateRedirect($redirect, $input->path, $input->to, $input->type);
+        $updates = [];
+
+        if ($input->path !== null) {
+            $updates['path'] = $input->path;
+        }
+        if ($input->to !== null) {
+            $updates['to'] = $input->to;
+        }
+        if ($input->type !== null) {
+            $updates['type'] = $input->type;
+        }
+
+        $redirect = $this->redirectService->updateRedirect($redirect, $updates);
 
         return new JsonResponse(new RedirectObject($redirect));
     }

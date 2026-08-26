@@ -11,7 +11,6 @@ class PostSlugService
 {
     public function __construct(private EntityManagerInterface $em) {}
 
-
     private const SLUG_INVALID_CHARACTERS = [
         ':',
         '/',
@@ -34,9 +33,12 @@ class PostSlugService
         '%',
     ];
 
+    /**
+     * Validates a slug string, returning the first invalid character found, or null if valid.
+     */
     public function validateSlug(string $slug): ?string
     {
-        // might be better to 
+        // might be better to
         foreach (self::SLUG_INVALID_CHARACTERS as $char) {
             if (str_contains($slug, $char)) {
                 return $char;

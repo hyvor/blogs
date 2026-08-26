@@ -18,6 +18,8 @@ use App\Tests\Factory\TagVariantFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+// TODO: migrate to document test
+
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
 #[CoversClass(PostObject::class)]

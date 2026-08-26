@@ -18,6 +18,7 @@ use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
 use App\Api\Console\Object\PostList\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
@@ -30,7 +31,6 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -237,12 +237,28 @@ class PostController
         }
 
         if ($input->content_updated_at !== false) {
+            if ($variant->getStatus() === PostVariantStatus::DRAFT) {
+                throw new UnprocessableEntityHttpException('Cannot set content_updated_at for draft variant');
+            }
+
+            if ($post->getPublishedAt() === null) {
+                throw new UnprocessableEntityHttpException('Cannot set content_updated_at for unpublished post');
+            }
+
+            if ($post->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
+                throw new UnprocessableEntityHttpException('Content updated time should be after published time');
+            }
+
             $data['content_updated_at'] = $input->content_updated_at !== null
                 ? \DateTimeImmutable::createFromFormat('U', (string)$input->content_updated_at) ?: null
                 : null;
         }
 
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;
+
+        if ($redirectOnSlugChange && $variant->getStatus() === PostVariantStatus::DRAFT) {
+            throw new UnprocessableEntityHttpException('Cannot redirect on slug change for draft variant');
+        }
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
 

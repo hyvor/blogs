@@ -94,6 +94,8 @@ class RedirectService
         string $path,
         string $to,
         RedirectType $type,
+        bool $flush = true,
+        array &$events = []
     ): Redirect {
         $now = $this->now();
 
@@ -107,30 +109,48 @@ class RedirectService
         $redirect->setType($type);
 
         $this->em->persist($redirect);
-        $this->em->flush();
 
-        $this->ed->dispatch(new RedirectChangedEvent($redirect));
+        $event = new RedirectChangedEvent($redirect);
+        $events[] = $event;
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch($event);
+        }
 
         return $redirect;
     }
 
-    public function updateRedirect(Redirect $redirect, ?string $path, ?string $to, ?RedirectType $type): Redirect
+    /**
+     * @param array{path?: string, to?: string, type?: RedirectType} $updates
+     */
+    public function updateRedirect(
+        Redirect $redirect,
+        array $updates,
+        bool $flush = true,
+        array &$events = []
+    ): Redirect
     {
         $oldRedirect = clone $redirect;
 
-        if ($path !== null) {
-            $redirect->setPath($path);
+        if (array_key_exists('path', $updates)) {
+            $redirect->setPath($updates['path']);
         }
-        if ($to !== null) {
-            $redirect->setTo($to);
+        if (array_key_exists('to', $updates)) {
+            $redirect->setTo($updates['to']);
         }
-        if ($type !== null) {
-            $redirect->setType($type);
+        if (array_key_exists('type', $updates)) {
+            $redirect->setType($updates['type']);
         }
         $redirect->setUpdatedAt($this->now());
 
-        $this->em->flush();
-        $this->ed->dispatch(new RedirectChangedEvent($redirect, $oldRedirect));
+        $event = new RedirectChangedEvent($redirect, $oldRedirect);
+        $events[] = $event;
+
+        if ($flush) {
+            $this->em->flush();
+            $this->ed->dispatch($event);
+        }
 
         return $redirect;
     }

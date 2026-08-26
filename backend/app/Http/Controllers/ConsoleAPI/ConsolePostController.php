@@ -4,42 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Enums\PostStatusEnum;
-use App\Data\Enums\RedirectTypeEnum;
-use App\Data\Objects\ConsoleAPI\Post\PostObject;
-use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
-use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
-use App\Domains\Post\PostTagAuthorRepository;
-use App\Domains\Post\Rules\ProsemirrorJsonRule;
 use App\Domains\Post\SlugValidationService;
-use App\Domains\Redirect\RedirectRepository;
-use App\Domains\Route\PermalinkRepository;
-use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
-use App\Models\Blog;
-use App\Models\Post;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-
-    // Get all the post from the database
-    public function getPost(Request $request, Blog $blog): JsonResponse
-    {
-        /** @var string $postId */
-        $postId = $request->route('id');
-        $postId = intval($postId);
-        $post = PostRepository::getPostById($postId);
-
-        if (!$post) {
-            throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
-        }
-
-        return response()->json(new PostObject($post, $blog));
-    }
 
     public function updatePostVariant(
         Request $request,

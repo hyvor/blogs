@@ -548,32 +548,8 @@ class PostService
     ): PostVariant {
         $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
-        // `content` is the immutable published snapshot - it's never edited directly, only ever
-        // copied from `content_unsaved` here (the "Update" flow, re-publishing a live post) or
-        // in publishPostVariant() (draft -> published). This guard applies once it's public.
-        if (
-            array_key_exists('content', $data) &&
-            $variant->getStatus() !== PostVariantStatus::DRAFT &&
-            $this->postSuggestionContentChecker->hasPendingSuggestions($data['content'])
-        ) {
-            throw new UnprocessableEntityHttpException(
-                'This post has unresolved suggestions or comments. Resolve them before publishing.',
-            );
-        }
-
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
-        }
-
-        if (array_key_exists('content', $data)) {
-            $variant->setContent($data['content']);
-        }
-
-        if (array_key_exists('content_unsaved', $data)) {
-            $variant->setContentUnsaved($data['content_unsaved']);
-            if ($data['content_unsaved'] === null) {
-                $this->resetCollabStream($variant);
-            }
         }
 
         if (array_key_exists('title', $data)) {
@@ -599,18 +575,12 @@ class PostService
             $variant->setLinkAnalysis($data['link_analysis']);
         }
 
-        $isDraft = $variant->getStatus() === PostVariantStatus::DRAFT;
-
         if (array_key_exists('content_updated_at', $data)) {
-            $contentUpdatedAt = $data['content_updated_at'];
-            $this->assertContentUpdatedAtValid($variant, $contentUpdatedAt);
-            $variant->setContentUpdatedAt($contentUpdatedAt);
-        } elseif (array_key_exists('content', $data) && !$isDraft) {
-            $variant->setContentUpdatedAt($this->now());
+            $variant->setContentUpdatedAt($data['content_updated_at']);
         }
 
         $variant->setUpdatedAt($this->now());
-        $this->em->flush();
+        $eventsToDispatch = [new PostVariantUpdatedEvent($variant)];
 
         if ($redirectOnSlugChange) {
             $newUrl = $this->permalinkService->getPostVariantPermalink($variant);
@@ -622,14 +592,34 @@ class PostService
             if ($oldPath !== $newPath) {
                 $existingRedirect = $this->redirectService->getRedirectByPath($blog, $oldPath);
                 if ($existingRedirect !== null) {
-                    $this->redirectService->updateRedirect($existingRedirect, null, $newPath, null);
+                    $this->redirectService->updateRedirect(
+                        $existingRedirect,
+                        [
+                            'to' => $newPath,
+                            'type' => RedirectType::PERMANENT,
+                        ],
+                        flush: false,
+                        events: $eventsToDispatch
+                    );
                 } else {
-                    $this->redirectService->createRedirect($blog, false, $oldPath, $newPath, RedirectType::PERMANENT);
+                    $this->redirectService->createRedirect(
+                        $blog,
+                        false,
+                        $oldPath,
+                        $newPath,
+                        RedirectType::PERMANENT,
+                        flush: false,
+                        events: $eventsToDispatch
+                    );
                 }
             }
         }
 
-        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+        $this->em->flush();
+
+        foreach ($eventsToDispatch as $event) {
+            $this->ed->dispatch($event);
+        }
 
         return $variant;
     }
