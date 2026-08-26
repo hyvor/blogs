@@ -14,3 +14,27 @@ export function getDocumentForPost(id: number, variantLanguageCode: string | nul
         }
 	});
 }
+
+export interface CheckpointClientBehindError {
+	message: 'client_behind';
+	version: number;
+	steps: unknown[];
+	client_ids: string[];
+}
+
+export interface CheckpointClientAheadError {
+	message: 'client_ahead';
+	message_full: string;
+}
+
+
+export function saveCheckpoint(data: {
+	post_variant_id: number;
+	version: number;
+	content: string;
+}) {
+	return consoleApi.post<void>({
+		endpoint: `/documents/checkpoint`,
+		data
+	});
+}

@@ -254,14 +254,3 @@ export function submitCollabCursor(data: {
 		}
 	});
 }
-
-export function checkpointPostVariant(data: {
-	post_variant_id: number;
-	version: number;
-	content: string;
-}) {
-	return consoleApi.post<void>({
-		endpoint: `/documents/checkpoint`,
-		data
-	});
-}
