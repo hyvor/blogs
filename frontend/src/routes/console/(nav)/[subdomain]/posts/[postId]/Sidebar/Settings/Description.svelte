@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader, SplitControl, Textarea } from '@hyvor/design/components';
+	import { SplitControl, Textarea } from '@hyvor/design/components';
 	import {
 		postVariantOriginalStore,
 		postVariantStore,
@@ -45,7 +45,7 @@
 	{/snippet}
 	<Textarea
 		block
-		rows={4}
+		rows={6}
 		value={$postVariantStore.description || ''}
 		on:input={handleInput}
 		on:blur={handleBlur}

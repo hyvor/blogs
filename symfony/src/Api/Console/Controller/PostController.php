@@ -128,22 +128,22 @@ class PostController
         $blog = $this->blogAuthListener->getBlog();
         $data = [];
 
-        if ($input->is_featured !== null) {
+        if ($input->hasProperty('is_featured')) {
             $data['is_featured'] = $input->is_featured;
         }
-        if ($input->canonical_url !== null) {
+        if ($input->hasProperty('canonical_url')) {
             $data['canonical_url'] = $input->canonical_url;
         }
-        if ($input->featured_image_url !== null) {
+        if ($input->hasProperty('featured_image_url')) {
             $data['featured_image_url'] = $input->featured_image_url;
         }
-        if ($input->code_head !== null) {
+        if ($input->hasProperty('code_head')) {
             $data['code_head'] = $input->code_head;
         }
-        if ($input->code_foot !== null) {
+        if ($input->hasProperty('code_foot')) {
             $data['code_foot'] = $input->code_foot;
         }
-        if ($input->published_at !== null) {
+        if ($input->hasProperty('published_at')) {
             $data['published_at'] = \DateTimeImmutable::createFromFormat('U', (string)$input->published_at) ?: null;
         }
 
