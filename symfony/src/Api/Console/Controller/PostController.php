@@ -236,6 +236,10 @@ class PostController
             $data['seo_secondary_keywords'] = $input->seo_secondary_keywords;
         }
 
+        if ($input->seo_score !== null) {
+            $data['seo_score'] = $input->seo_score;
+        }
+
         if ($input->content_updated_at !== false) {
             if ($variant->getStatus() === PostVariantStatus::DRAFT) {
                 throw new UnprocessableEntityHttpException('Cannot set content_updated_at for draft variant');

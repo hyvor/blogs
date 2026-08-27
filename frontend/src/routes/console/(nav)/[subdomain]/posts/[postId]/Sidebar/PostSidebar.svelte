@@ -20,10 +20,7 @@
 
 <div class="post-sections">
 	<Popover
-		bind:show={
-			() => openSection === 'settings',
-			(v) => (openSection = v ? 'settings' : null)
-		}
+		bind:show={() => openSection === 'settings', (v) => (openSection = v ? 'settings' : null)}
 	>
 		{#snippet trigger()}
 			<IconGear size={13} class="icon" />
@@ -35,12 +32,7 @@
 
 	<span class="divider"></span>
 
-	<Popover
-		bind:show={
-			() => openSection === 'seo',
-			(v) => (openSection = v ? 'seo' : null)
-		}
-	>
+	<Popover bind:show={() => openSection === 'seo', (v) => (openSection = v ? 'seo' : null)}>
 		{#snippet trigger()}
 			<IconSearchHeart size={13} class="icon" />
 			SEO
@@ -52,12 +44,7 @@
 
 	<span class="divider"></span>
 
-	<Popover
-		bind:show={
-			() => openSection === 'links',
-			(v) => (openSection = v ? 'links' : null)
-		}
-	>
+	<Popover bind:show={() => openSection === 'links', (v) => (openSection = v ? 'links' : null)}>
 		{#snippet trigger()}
 			<IconLink45deg size={13} class="icon" />
 			Links
@@ -69,16 +56,10 @@
 
 	<span class="divider"></span>
 
-	<Popover
-		flush
-		bind:show={
-			() => openSection === 'ai',
-			(v) => (openSection = v ? 'ai' : null)
-		}
-	>
+	<Popover flush bind:show={() => openSection === 'ai', (v) => (openSection = v ? 'ai' : null)}>
 		{#snippet trigger()}
 			<IconRobot size={13} class="icon" />
-			AI Agent
+			Agent
 		{/snippet}
 
 		<Ai />

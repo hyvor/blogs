@@ -12,6 +12,7 @@ class PostVariantSummaryObject
     public ?int $updated_at;
     public ?int $content_updated_at;
     public ?int $words;
+    public ?int $seo_score;
 
     public function __construct(PostVariant $variant)
     {
@@ -21,5 +22,6 @@ class PostVariantSummaryObject
         $this->updated_at = $variant->getUpdatedAt()?->getTimestamp();
         $this->content_updated_at = $variant->getContentUpdatedAt()?->getTimestamp();
         $this->words = $variant->getWords();
+        $this->seo_score = $variant->getSeoScore();
     }
 }

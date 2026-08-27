@@ -575,6 +575,10 @@ class PostService
             $variant->setLinkAnalysis($data['link_analysis']);
         }
 
+        if (array_key_exists('seo_score', $data)) {
+            $variant->setSeoScore($data['seo_score']);
+        }
+
         if (array_key_exists('content_updated_at', $data)) {
             $variant->setContentUpdatedAt($data['content_updated_at']);
         }

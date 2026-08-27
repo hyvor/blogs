@@ -29,4 +29,7 @@ class UpdatePostVariantInput
 
     // false = not provided (leave untouched); null = clear; int = set to this timestamp
     public null|int|false $content_updated_at = false;
+
+    #[Assert\Range(min: 0, max: 100)]
+    public ?int $seo_score = null;
 }

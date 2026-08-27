@@ -82,6 +82,9 @@ class PostVariant
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $link_analysis = null;
 
+    #[ORM\Column()]
+    private ?int $seo_score = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $ts_language = 'simple';
 
@@ -311,6 +314,17 @@ class PostVariant
     public function setLinkAnalysis(?array $link_analysis): static
     {
         $this->link_analysis = $link_analysis;
+        return $this;
+    }
+
+    public function getSeoScore(): ?int
+    {
+        return $this->seo_score;
+    }
+
+    public function setSeoScore(?int $seo_score): static
+    {
+        $this->seo_score = $seo_score;
         return $this;
     }
 

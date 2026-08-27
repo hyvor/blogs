@@ -1,7 +1,7 @@
 import { DOMParser, Node } from 'prosemirror-model';
-// import schema from './schema';
 import { EditorView } from 'prosemirror-view';
 import { TextSelection } from 'prosemirror-state';
+import { schema } from '../../(nav)/[subdomain]/posts/[postId]/Body/Editor/editor';
 
 export function getDocFromContent(content: string | null): Node {
 	const json = content ? JSON.parse(content) : null;

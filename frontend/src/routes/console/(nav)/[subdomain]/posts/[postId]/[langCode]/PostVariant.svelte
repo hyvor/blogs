@@ -14,6 +14,7 @@
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import { getDocumentForPost } from '../documentActions';
+	import { seoService } from '../../seoStore';
 
 	interface Props {
 		postId: number;
@@ -47,6 +48,8 @@
 
 				documentStore.set(document);
 
+				seoService.start(document.checkpoint_content);
+
 				isLoading = false;
 			})
 			.catch((e) => {
@@ -57,6 +60,7 @@
 		return () => {
 			linkAnalysisLoaderUnsubscriber?.();
 			linkAnalysisLoaderUnsubscriber = null;
+			seoService.stop();
 		};
 	});
 </script>

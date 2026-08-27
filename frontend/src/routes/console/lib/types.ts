@@ -208,6 +208,7 @@ export type PostVariant = {
 	seo_secondary_keywords: string[];
 
 	link_analysis: Record<string, number>;
+	seo_score: number;
 };
 
 export interface Document {
@@ -227,6 +228,7 @@ export type PostVariantSummary = {
 	updated_at: number | null;
 	content_updated_at: number | null;
 	words: number | null;
+	seo_score: number | null;
 };
 
 // minimal shape used for listing posts/pages (GET /posts, GET /pages)
@@ -243,7 +245,6 @@ export type PostListItem = {
 	url: string | null;
 	title: string | null;
 	link_analysis: Record<string, number>;
-	seo_score: number;
 
 	variants: PostVariantSummary[];
 

@@ -22,6 +22,7 @@ class PostVariantObject
     public array $seo_secondary_keywords;
     /** @var array<string, mixed> */
     public array $link_analysis;
+    public ?int $seo_score;
 
     public function __construct(
         PostVariant $variant,
@@ -40,5 +41,6 @@ class PostVariantObject
         $this->seo_primary_keyword = $variant->getSeoPrimaryKeyword();
         $this->seo_secondary_keywords = $variant->getSeoSecondaryKeywords() ?? [];
         $this->link_analysis = $variant->getLinkAnalysis() ?? [];
+        $this->seo_score = $variant->getSeoScore();
     }
 }

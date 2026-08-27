@@ -25,9 +25,6 @@ class PostListObject
     /** @var array<string, mixed> */
     public array $link_analysis;
 
-    // SEO scoring is not yet computed server-side; placeholder until that lands
-    public int $seo_score = 0;
-
     /** @var PostVariantSummaryObject[] */
     public array $variants;
 

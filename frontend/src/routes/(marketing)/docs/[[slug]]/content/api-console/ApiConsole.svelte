@@ -1434,8 +1434,7 @@ interface PostVariant {
 	the variant of the requested (or blog's primary) language, and <code>tags</code>/<code
 		>authors</code
 	>
-	are just their primary-language names. <code>seo_score</code> is currently a placeholder and not
-	yet meaningful. Fetch <code>GET /post/{`{id}`}</code> for the full
+	are just their primary-language names. Fetch <code>GET /post/{`{id}`}</code> for the full
 	<a href="/docs/api-console#post-object">Post</a> object, including tags and authors.
 </p>
 <CodeBlock
@@ -1454,7 +1453,6 @@ interface PostListItem {
     url: string | null,
     title: string | null,
     link_analysis: Record<string, number>,
-    seo_score: number, // placeholder, not yet implemented
 
     variant_statuses: {
         language_id: number,

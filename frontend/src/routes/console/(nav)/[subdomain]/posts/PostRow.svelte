@@ -21,6 +21,7 @@
 	import { goto } from '$app/navigation';
 	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
 	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
+	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
 
 	interface Props {
 		post: PostListItem;
@@ -32,6 +33,9 @@
 	const primaryLanguage = getPrimaryLanguage();
 	let status = $derived(
 		post.variants.find((v) => v.language_id === primaryLanguage.id)?.status || 'draft'
+	);
+	let seoScore = $derived(
+		post.variants.find((v) => v.language_id === primaryLanguage.id)?.seo_score || null
 	);
 	let showDropdown = $state(false);
 	let isCloning = $state(false);
@@ -177,7 +181,11 @@
 	<div class="post-health-wrap">
 		<div class="health-item">
 			<span class="health-label">SEO</span>
-			<SeoScoreTag score={post.seo_score} percentage />
+			{#if seoScore === null}
+				<SeoPendingTag />
+			{:else}
+				<SeoScoreTag score={seoScore} percentage />
+			{/if}
 		</div>
 		<div class="health-divider"></div>
 		<div class="health-item">
