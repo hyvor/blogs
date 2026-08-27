@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import './codemirror';
 	import { CODEMIRROR_MODES, importCodemirrorAll } from './codemirror';
 
@@ -7,10 +7,12 @@
 		value: string;
 		ext: keyof typeof CODEMIRROR_MODES;
 		id?: string | number;
+		onchange?: (value: string) => void;
+		onsave?: (value: string) => void;
 		[key: string]: any;
 	}
 
-	let { value = $bindable(), ext, id = '', ...rest }: Props = $props();
+	let { value = $bindable(), ext, id = '', onchange, onsave, ...rest }: Props = $props();
 
 	let lastId = id;
 
@@ -19,18 +21,13 @@
 	let editorDiv: HTMLDivElement | undefined = $state();
 	let cm: any;
 
-	const dispatch = createEventDispatcher<{
-		save: string;
-		change: string;
-	}>();
-
 	async function initCm() {
 		await importCodemirrorAll();
 
 		editorDiv!.innerHTML = '';
 
 		function handleSave(cm: any) {
-			dispatch('save', cm.doc.getValue());
+			onsave?.(cm.doc.getValue());
 		}
 
 		function handleTab(cm: any) {
@@ -68,26 +65,46 @@
 		cm.on('change', function () {
 			const val = cm.doc.getValue();
 			value = val;
-			dispatch('change', val);
+			onchange?.(val);
 		});
 	}
 
-	onMount(initCm);
+	let readyPromise: Promise<void> | undefined;
+
+	onMount(() => {
+		readyPromise = initCm();
+	});
 
 	// re-create codemirror instance when id changes
 	$effect(() => {
 		if (lastId !== id) {
-			initCm();
+			readyPromise = initCm();
 			lastId = id;
 		}
 	});
+
+	function focusAtEnd() {
+		cm?.focus();
+	}
+
+	export async function focus() {
+		await readyPromise;
+		focusAtEnd();
+	}
+
+	function handleEditorClick(e: MouseEvent) {
+		if (e.target === editorDiv) {
+			focusAtEnd();
+		}
+	}
 </script>
 
-<div class="editor" bind:this={editorDiv} {...rest}></div>
+<div class="editor" bind:this={editorDiv} {...rest} onclick={handleEditorClick}></div>
 
 <style lang="scss">
 	.editor {
 		height: 100%;
+		cursor: text;
 	}
 
 	.editor :global(.CodeMirror) {

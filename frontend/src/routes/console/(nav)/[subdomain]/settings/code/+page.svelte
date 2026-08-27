@@ -36,7 +36,7 @@
 				value={$blogStore.code_head || ''}
 				id="comments"
 				ext="twig"
-				on:change={(e) => updateBlogStore({ code_head: e.detail })}
+				onchange={(value) => updateBlogStore({ code_head: value })}
 			/>
 		</SplitControl>
 
@@ -51,7 +51,7 @@
 				value={$blogStore.code_foot || ''}
 				id="newsletter"
 				ext="twig"
-				on:change={(e) => updateBlogStore({ code_foot: e.detail })}
+				onchange={(value) => updateBlogStore({ code_foot: value })}
 			/>
 		</SplitControl>
 	</div>
