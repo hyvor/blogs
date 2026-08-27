@@ -19,9 +19,6 @@ export const editorConfig: EditorConfig = {
 
 	fileMaxSizeInMB: 10,
 	fileUploader: async (file, name, type) => {
-		if (type !== 'image') {
-			return null;
-		}
 		const media = await uploadMedia(file, name);
 		return {
 			url: media.url

@@ -151,7 +151,8 @@
 			mode: $postSuggestionModeStore,
 			resolveAuthor,
 			source: suggestionSource
-		}
+		},
+		colorButtonBackground: 'var(--accent)'
 	});
 
 	onDestroy(() => {

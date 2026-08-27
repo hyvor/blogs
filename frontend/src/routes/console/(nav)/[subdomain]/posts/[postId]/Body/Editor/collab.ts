@@ -18,8 +18,6 @@ export function applyConfirmedSteps(
 	// get the steps and client IDs where the version is greater than the current version
 	const newSteps = steps.filter((step) => step.version > currentVersion);
 
-	console.log('applying confirmed steps', newSteps, 'all steps', steps, 'current version', currentVersion);
-
 	editor.collab.receiveSteps(
 		newSteps.map((step) => step.step),
 		newSteps.map((step) => step.client_id)
