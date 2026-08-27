@@ -71,14 +71,19 @@
 		display: flex;
 		flex-direction: column;
 		flex: 1;
+		background-color: var(--background);
 	}
 	#post-body :global(.ProseMirror) {
 		width: 760px !important;
 		color: var(--text-faded);
 	}
+	#post-body::selection {
+		background: var(--accent-light);
+	}
 	.top {
 		border-radius: 20px 20px 0 0;
 		cursor: text;
+		padding-top: 15px;
 	}
 	.editor-footer {
 		border-top: 1px solid var(--border);

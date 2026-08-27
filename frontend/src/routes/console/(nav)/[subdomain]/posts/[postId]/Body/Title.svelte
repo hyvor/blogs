@@ -89,6 +89,7 @@
 	onMount(() => {
 		if (!textarea) return;
 		setTimeout(handleResize, 0);
+		setTimeout(handleResize, 100); // give time to load fonts and stuff
 		textarea.addEventListener('input', handleResize);
 		textarea.addEventListener('change', handleResize);
 		textarea.addEventListener('focus', handleResize);

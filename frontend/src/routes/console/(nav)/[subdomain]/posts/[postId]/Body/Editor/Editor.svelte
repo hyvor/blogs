@@ -21,8 +21,8 @@
 	// unique client ID for this tab
 	const clientId = Math.random().toString(36).slice(2);
 
-	function handleChange() {
-		$postContentDirtyStore = true;
+	function handleChange(v: string) {
+		$postContentDirtyStore = v !== $documentStore.checkpoint_content;
 	}
 
 	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
