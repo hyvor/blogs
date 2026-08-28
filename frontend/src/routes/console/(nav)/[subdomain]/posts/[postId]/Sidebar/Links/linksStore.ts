@@ -24,7 +24,6 @@ export const variantLinkCountsStore = writable(getLinkCounts({}, []));
  */
 export const linksStore = writable<LinkAnalysisLink[]>([]);
 
-
 class LinksService {
 	private content: string | null = null;
 	private recalculateTimeout: ReturnType<typeof setTimeout> | null = null;

@@ -52,7 +52,7 @@ class SeoService {
 		this.content = initialContent;
 		this.lastSavedScore = get(postVariantStore)?.seo_score ?? null;
 
-		variantSeoStore.set({average: this.lastSavedScore ?? 0, tests: []});
+		variantSeoStore.set({ average: this.lastSavedScore ?? 0, tests: [] });
 
 		this.unsubscribeVariant = postVariantStore.subscribe(() => this.scheduleRecalculate());
 		this.saveInterval = setInterval(() => this.saveIfChanged(), SAVE_INTERVAL_MS);

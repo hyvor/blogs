@@ -7,12 +7,9 @@ export function collabTopic(variantId: number): string {
 	return `document:${variantId}`;
 }
 
-export function applyConfirmedSteps(
-	editor: Editor,
-	steps: CollabStep[],
-) {
+export function applyConfirmedSteps(editor: Editor, steps: CollabStep[]) {
 	const currentVersion = editor.collab.getVersion();
-	
+
 	if (steps.length === 0) return;
 
 	// get the steps and client IDs where the version is greater than the current version
@@ -66,9 +63,8 @@ export function subscribeToCollabMercureTopic(
 	topic: string,
 	token: string,
 	onSteps: (steps: CollabStep[]) => void,
-	onCursor: (message: CollabCursorMercureMessage) => void,
+	onCursor: (message: CollabCursorMercureMessage) => void
 ): () => void {
-
 	const url = new URL(getConfig().mercure.public_url);
 	url.searchParams.append('topic', topic);
 
@@ -92,7 +88,6 @@ export function subscribeToCollabMercureTopic(
 			// 	connectedBefore = true;
 			// 	return;
 			// }
-
 			// throw new Error(`Failed to open Mercure subscription: ${response.status}`);
 		},
 		onmessage(event) {

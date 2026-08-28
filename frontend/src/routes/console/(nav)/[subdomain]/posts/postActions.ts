@@ -204,7 +204,7 @@ export function clonePost(postId: number) {
 export interface CollabStepsResponse {
 	accepted: boolean;
 	version: number;
-	steps: CollabStep[]
+	steps: CollabStep[];
 }
 
 export function submitCollabSteps(data: {
