@@ -73,7 +73,9 @@ final class RouteFactory extends PersistentObjectFactory
         $createdRoutes = [];
         foreach ($routes as $route) {
             $route['blog'] = $blog;
-            $createdRoutes[] = self::createOne($route);
+            $createdRoute = self::createOne($route);
+            $createdRoutes[] = $createdRoute;
+            $blog->getRoutes()->add($createdRoute);
         }
         return $createdRoutes;
     }

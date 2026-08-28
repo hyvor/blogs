@@ -7,7 +7,7 @@ use App\Entity\Enum\JobStatus;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
 use App\Entity\LinkAnalyzerCheck;
-use App\Message\LinkAnalysisCheckMessage;
+use App\Service\LinkAnalysis\Message\LinkAnalysisCheckMessage;
 use App\Service\LinkAnalysis\MessageHandler\LinkAnalysisCheckMessageHandler;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;

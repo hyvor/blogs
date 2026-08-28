@@ -7,8 +7,8 @@ use App\Entity\Enum\LinkAnalyzerLinkStatus;
 use App\Entity\LinkAnalyzerCheck;
 use App\Entity\LinkAnalyzerLink;
 use App\Entity\PostVariant;
-use App\Message\LinkAnalysisCheckMessage;
 use App\Service\LinkAnalysis\Exception\LinkAnalysisCheckAlreadyPendingException;
+use App\Service\LinkAnalysis\Message\LinkAnalysisCheckMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**

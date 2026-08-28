@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\HardBreak;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class HardBreakTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -43,7 +49,7 @@ class HardBreakTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<p>Before<br>After</p>', $this->blog());
+        $json = $this->postSchema()->documentFromHtml('<p>Before<br>After</p>')->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',

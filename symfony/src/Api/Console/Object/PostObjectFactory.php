@@ -37,19 +37,11 @@ class PostObjectFactory
         Post $post,
         Blog $blog,
         bool $setHtml = false,
-        // Cheap (indexed lookups, no rendering) unlike $setHtml, so on by default - every
-        // endpoint returning a variant should carry accurate collab state, otherwise
-        // clients that spread the whole response into their store (e.g. publish/unpublish)
-        // would stomp it back to stale zeros. See PostVariantCollabService.
-        bool $withCollab = true,
     ): PostVariantObject {
         return new PostVariantObject(
             $variant,
             $post,
-            $blog,
             $this->permalinkService,
-            $setHtml ? $this->postContentService : null,
-            $withCollab ? $this->collabService : null,
         );
     }
 }

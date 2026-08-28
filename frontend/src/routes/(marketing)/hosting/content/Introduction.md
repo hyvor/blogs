@@ -4,16 +4,16 @@
 
 # Hosting
 
-[Hyvor Blogs](https://blogs.hyvor.com) is a fully-featured, open-source blogging platform you can
-self-host on your own infrastructure.
+[Hyvor Blogs](https://blogs.hyvor.com) is a fast and simple blogging platform that can be self-hosted on your own servers. This page will introduce you to the self-hosting process. To get started right away, see the [Deploy](/hosting/deploy) page.
 
-## What to expect
+## Self-hosting is first-class
 
-Here is a short summary of what self-hosting Hyvor Blogs looks like:
+Hyvor Blogs is designed to be self-hosted by developers and organizations.
 
-- You deploy the Hyvor Blogs container via Docker Compose. It depends on PostgreSQL for data storage, a S3-compatible storage for media, and an OIDC provider for authentication.
-- You configure two domains to point to your server: one for the app, and one for subdomain hosting for blogs. Custom domains are also supported out of the box.
-- You and your team can log in to the console and start blogging.
+- **Minimal dependencies**: only Docker, PostgreSQL, and an OIDC provider.
+- **Open-source**: AGPLv3 codebase available on [Github](https://github.com/hyvor/blogs).
+- **Multi-tenant**: Run multiple blogs on a single instance.
+- **Single sign-on**: OIDC-based authentication by default
 
 ## Self-hosting vs. Cloud
 
@@ -24,10 +24,10 @@ Here is a short summary of what self-hosting Hyvor Blogs looks like:
    </TableRow>
    <TableRow>
       <div>Your own servers. Data never leaves your infrastructure</div>
-      <div>Hosted on HYVOR's secure servers</div>
+      <div>Hosted on HYVOR's servers</div>
    </TableRow>
    <TableRow>
-      <div>Requires Docker, PostgreSQL, S3-compatible storage, and an OIDC provider</div>
+      <div>Requires Docker, PostgreSQL, and an OIDC provider</div>
       <div>No setup, start blogging immediately</div>
    </TableRow>
    <TableRow>
@@ -46,8 +46,52 @@ Here is a short summary of what self-hosting Hyvor Blogs looks like:
    </TableRow>
 </Table>
 
-## License
+## Hyvor Blogs vs other blogging platforms
 
-Hyvor Blogs is licensed under the AGPL-3.0 License. We also offer [enterprise licenses](https://hyvor.com/enterprise) for organizations that require a commercial license, priority support, or do not wish to comply with the AGPLv3 terms. Both licenses include the same product features. See HYVOR's [Self-Hosting License FAQ](https://hyvor.com/docs/hosting-license) for more information.
+A few comparisons with other blogging platforms:
+
+- Hyvor Blogs focuses entirely on blogging and is lighter than a general-purpose CMS like **WordPress**, **Drupal**, or **Joomla**. Hyvor Blogs is not extensible with plugins, but bundles the tools you need for a blog out of the box
+  - [Hyvor Blogs vs WordPress](https://hyvor.com/compare/blogs/wordpress)
+- Hyvor Blogs is comparable to **Ghost**. Hyvor Blogs does not come with in-built membership and newsletter features, but allows you to integrate with third-party services and focuses on building statically served blogs that are fast and SEO-friendly. Hyvor Blogs provides better team collaboration, approval workflows, multi-language support, etc.
+  - [Hyvor Blogs vs Ghost](https://hyvor.com/compare/blogs/ghost)
+- Hyvor Blogs gives you more control over your data and infrastructure than **Medium** or **Substack**, which are closed platforms. With Hyvor Blogs, you own your data and can host it on your own servers. Hyvor Blogs maybe more suitable for a primary blog, while Medium and Substack can be used as secondary platforms to reach a wider audience.
+  - [Hyvor Blogs vs Medium](https://hyvor.com/compare/blogs/medium)
+  - [Hyvor Blogs vs Substack](https://hyvor.com/compare/blogs/substack)
+- Hyvor Blogs is not a text-based blog engine like **Hugo** or **Jekyll**. It focuses on rich-editor based content writing with a simple and intuitive interface.
+- Hyvor Blogs provides headless CMS features (e.g. Data API), but has a narrow focus on blogging than **Strapi**, **Payload CMS**, and other general-purpose headless CMS platforms.
+
+## License & Pricing
+
+We offer three licensing options for self-hosting Hyvor Blogs:
+
+- **Open-Source**:
+  - Free, AGPLv3 license
+  - Community support
+  - Basic features, including rich editor, media, tags, authors, and more.
+  - Team collaboration
+  - Multi-language support
+  - Custom themes support
+  - In-built SEO features
+  - Custom domain and TLS support
+  - Console API, Data API, Delivery API, and Webhooks
+  - AI agent and translations
+  - Broken link detection
+- **Enterprise Unicorn** (soon):
+  - €5/user/month (billed annually), minimum 10 users
+  - Everything in Open-Source, plus:
+  - Email support from HYVOR
+  - Audit logs
+  - Custom roles and permissions
+  - Custom approval workflows
+- **Enterprise Apex** (soon):
+  - Contact us for pricing
+  - Everything in Enterprise Unicorn, plus:
+  - Priority support with SLA
+  - Invoicing
+
+## Support
+
+- [Github Repository](https://github.com/hyvor/blogs) for issues, feature requests
+- [Community Support](https://hyvor.community)
 
 See the [Deploy](/hosting/deploy) page for step-by-step instructions.

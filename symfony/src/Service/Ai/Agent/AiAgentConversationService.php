@@ -2,7 +2,6 @@
 
 namespace App\Service\Ai\Agent;
 
-use App\Api\Console\Object\PostVariantObject;
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageChunk;

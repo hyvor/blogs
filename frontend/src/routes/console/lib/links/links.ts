@@ -2,7 +2,7 @@ import { EditorView } from 'prosemirror-view';
 import { getDocFromContent, positionSelectionInMiddleOfScreen } from '../prosemirror/helpers';
 import { TextSelection } from 'prosemirror-state';
 import { parse } from 'tldts';
-import type { LinkAnalysisStatusType, PostVariant } from '../types';
+import type { LinkAnalysisStatusType } from '../types';
 
 export const LINK_STATUS = {
 	LOADING: -1,
@@ -118,16 +118,16 @@ export function getFullUrl(href: string, baseUrl: string): URL | null {
 	}
 }
 
-export function calculateLinkAnalysis(variant: PostVariant): Record<string, number> {
-	return {}; // TODO:
-	const content = variant.content_unsaved || variant.content;
-	const links = getLinksFromContent(content, variant.url);
-
+export function calculateLinkAnalysis(
+	links: Link[],
+	content: string | null,
+	linkAnalysis: Record<string, number> | null | undefined
+): Record<string, number> {
 	const linkStatuses: Record<string, number> = {};
-	const linkAnalysis = variant.link_analysis || {};
+	linkAnalysis = linkAnalysis || {};
 
 	links.forEach((link, i) => {
-		let status = linkAnalysis[link.originalHref];
+		let status = linkAnalysis![link.originalHref];
 
 		if (status === undefined) {
 			status = LINK_STATUS.LOADING;
@@ -139,7 +139,7 @@ export function calculateLinkAnalysis(variant: PostVariant): Record<string, numb
 
 			let found = false;
 
-			doc.descendants((node, pos) => {
+			doc.descendants((node) => {
 				if (node.type.name !== 'heading') return;
 				if (found) return;
 				if (node.attrs.id === anchorId) {
@@ -154,7 +154,7 @@ export function calculateLinkAnalysis(variant: PostVariant): Record<string, numb
 
 		// ignored after 100 links
 		if (i >= 100) {
-			status === LINK_STATUS.IGNORED;
+			status = LINK_STATUS.IGNORED;
 		}
 
 		// ignore links longer than 255 characters

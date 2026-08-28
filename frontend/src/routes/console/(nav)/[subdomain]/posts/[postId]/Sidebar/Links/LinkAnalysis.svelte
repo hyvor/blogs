@@ -9,7 +9,12 @@
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import { Loader } from '@hyvor/design/components';
 	import { Button } from '@hyvor/design/components';
-	import { variantLinksStore, variantLinkCountsStore, linksStore } from './linksStore';
+	import {
+		variantLinksStore,
+		variantLinkCountsStore,
+		linksStore,
+		getResultObjectFromLinks
+	} from './linksStore';
 	import LinkRow from './LinkRow.svelte';
 	import { isHttpLink } from '../../../../../../lib/links/links';
 	import {
@@ -17,7 +22,6 @@
 		getLinks
 	} from '../../../../tools/link-analysis/linkAnalysisActions';
 	import { postVariantStore, updatePostVariantStore } from '../../../postStore';
-	import { getResultObjectFromLinks } from './linkLoader';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import { onMount } from 'svelte';
 

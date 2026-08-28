@@ -81,7 +81,7 @@
 				value={$blogStore.seo_robots_txt || ''}
 				id="robots_txt"
 				ext="twig"
-				on:change={(e) => updateBlogStore({ seo_robots_txt: e.detail })}
+				onchange={(value) => updateBlogStore({ seo_robots_txt: value })}
 			/>
 		</SplitControl>
 	</div>

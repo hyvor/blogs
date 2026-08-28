@@ -18,7 +18,7 @@ class HtmlParser
 
     public function __construct(
         private string $html,
-        private PostContentService $postContentService,
+        private PostSchema $postSchema,
     ) {
         $this->html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . trim($this->html) . '</body></html>';
     }
@@ -38,7 +38,7 @@ class HtmlParser
         $this->convertIframesToEmbed();
         $this->convertAOrPImgToImg();
 
-        return $this->postContentService->getDocumentFromHtml($this->html, $blog);
+        return $this->postSchema->documentFromHtml($this->html);
     }
 
     private function getDomDocument(): \DOMDocument

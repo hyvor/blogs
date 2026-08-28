@@ -41,9 +41,10 @@
 	"type": "module",
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.2",
-		"@hyvor/design": "^2.1.5",
+		"@hyvor/design": "^2.1.9",
 		"@hyvor/icons": "^1.0.0",
-		"@hyvor/richtext": "^0.0.17",
+		"@hyvor/richtext": "^0.0.18",
+		"@microsoft/fetch-event-source": "^2.0.1",
 		"@types/react-dom": "^18.2.18",
 		"chart.js": "^4.5.1",
 		"codemirror": "^5.0.0",

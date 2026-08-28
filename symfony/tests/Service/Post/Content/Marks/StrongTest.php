@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Marks;
 use App\Entity\Blog;
 use App\Service\Post\Content\Marks\Strong;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class StrongTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -40,7 +46,7 @@ class StrongTest extends KernelTestCase
 
     public function test_b_tag_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<b>bold</b>', $this->blog(), false);
+        $document = $this->postSchema()->documentFromHtml('<b>bold</b>', false);
 
         $this->assertSame([
             'type' => 'doc',
@@ -58,7 +64,7 @@ class StrongTest extends KernelTestCase
 
     public function test_strong_tag_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<strong>bold</strong>', $this->blog(), false);
+        $document = $this->postSchema()->documentFromHtml('<strong>bold</strong>', false);
 
         $this->assertSame([
             'type' => 'doc',

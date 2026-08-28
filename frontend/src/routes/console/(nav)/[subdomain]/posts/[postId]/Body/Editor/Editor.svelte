@@ -4,64 +4,61 @@
 		postEditor,
 		postContentDirtyStore,
 		postSuggestionModeStore,
-		postVariantStore
+		postVariantStore,
+		documentStore
 	} from '../../../postStore';
-	import {
-		Editor,
-		type Author,
-		type CollabSendable,
-		type CollabStepJSON,
-		type CollabClientID,
-		type RemoteCursor
-	} from '@hyvor/richtext';
+	import { Editor, type Author, type CollabSendable, type RemoteCursor } from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
+	import focusTitlePlugin from './plugins/plugin-focus-title';
+	import scrollMarginPlugin from './plugins/plugin-scroll-margin';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
 	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
-	import { subscribeToCollabMercureTopic, collabTopic } from './collab';
-	import { onMount } from 'svelte';
+	import { subscribeToCollabMercureTopic, collabTopic, applyConfirmedSteps } from './collab';
+	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
+	import { seoService } from '../../../seoStore';
+	import { linksService } from '../../Sidebar/Links/linksStore';
 
 	// unique client ID for this tab
 	const clientId = Math.random().toString(36).slice(2);
 
-	function handleChange() {
-		$postContentDirtyStore = true;
+	function handleChange(v: string) {
+		$postContentDirtyStore = v !== $documentStore.checkpoint_content;
+		seoService.updateContent(v);
+		linksService.updateContent(v);
 	}
 
-	// Confirmed step batches can arrive redundantly through several channels - the Mercure
-	// broadcast (which echoes back to the submitting client too), a rejected submitCollabSteps's
-	// catch-up payload (fetched directly instead of waiting on Mercure), and the reconnect
-	// `sync` catch-up - and fast typing makes overlapping in-flight requests likely, so more
-	// than one of these can end up covering the same steps. Each batch is "every step since the
-	// version *that specific request* asked for", not "every step since what we've already
-	// applied from a sibling response" - so a later-arriving batch can legitimately start
-	// *before* our current version (it was computed before an earlier response caught us up) and
-	// still end *after* it. prosemirror-collab's receiveSteps() has no idempotency of its own -
-	// it just bumps its version counter by however many steps it's given, with no awareness of
-	// which ones were already applied - so passing it a batch that overlaps what's already
-	// applied double-counts the overlap, overshooting the local version past the server's true
-	// version. Once that happens, every future submission looks stale forever with nothing left
-	// to catch up on (the server has nothing newer than what it already gave us). Slicing off
-	// whatever prefix of the batch is already covered by the current version - rather than just
-	// checking whether the batch as a whole is newer - makes every one of these channels safely
-	// idempotent no matter how they interleave.
-	function applyConfirmedSteps(
-		steps: CollabStepJSON[],
-		clientIds: CollabClientID[],
-		resultingVersion: number
-	) {
-		const editor = $postEditor;
-		if (!editor) return;
-		const currentVersion = editor.collab.getVersion();
-		const alreadyApplied = currentVersion + steps.length - resultingVersion;
-		if (alreadyApplied >= steps.length) return; // nothing in this batch is new
-		const newSteps = alreadyApplied > 0 ? steps.slice(alreadyApplied) : steps;
-		const newClientIds = alreadyApplied > 0 ? clientIds.slice(alreadyApplied) : clientIds;
-		editor.collab.receiveSteps(newSteps, newClientIds);
+	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
+	// no debounce or in-flight tracking of its own - during fast typing this would otherwise fire
+	// several overlapping submitCollabSteps requests, all based on the same not-yet-confirmed
+	// version. Only the first one the server processes can be accepted; the rest are redundant
+	// rejections. Queueing here ensures only one submission is ever in flight. A newer sendable
+	// batch always contains everything an older, not-yet-sent one had, so a fresher pending batch
+	// simply replaces whatever was queued but not yet sent rather than both being sent in turn.
+	let pendingSendable: CollabSendable | null = null;
+	let sendingSteps = false;
+
+	function handleSendable(sendable: CollabSendable) {
+		pendingSendable = sendable;
+		processSendQueue();
 	}
 
-	async function handleSendable(sendable: CollabSendable) {
+	async function processSendQueue() {
+		if (sendingSteps) return;
+		sendingSteps = true;
+		try {
+			while (pendingSendable) {
+				const sendable = pendingSendable;
+				pendingSendable = null;
+				await submitSendable(sendable);
+			}
+		} finally {
+			sendingSteps = false;
+		}
+	}
+
+	async function submitSendable(sendable: CollabSendable) {
 		try {
 			const response = await submitCollabSteps({
 				post_variant_id: $postVariantStore.id,
@@ -69,19 +66,7 @@
 				steps: sendable.steps,
 				client_id: String(sendable.clientID)
 			});
-
-			// if accepted, the server has already applied our steps
-
-			// if not, we have to rebase using the steps the server sent when accepted is false.
-			// prosemirror automatically refires the onSendable callback after the rebase
-			// so we don't have to retry
-			if (!response.accepted) {
-				applyConfirmedSteps(
-					response.steps as CollabStepJSON[],
-					response.client_ids as CollabClientID[],
-					response.version
-				);
-			}
+			applyConfirmedSteps($postEditor!, response.steps);
 		} catch (e) {
 			// TODO: editor error handling
 			console.error('Failed to submit collab steps', e);
@@ -97,7 +82,7 @@
 	}
 
 	let value = $derived(
-		$postVariantStore.content_unsaved ||
+		$documentStore.checkpoint_content ||
 			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
 
@@ -105,10 +90,7 @@
 	// the ones not yet reflected in `value` (see PostVariantCollabService on the backend) - so
 	// the editor must start at the version *before* those steps, then fast-forward via
 	// collab.receiveSteps() once mounted.
-	let backlogSteps = $derived($postVariantStore.document_steps as CollabStepJSON[]);
-	let backlogClientIds = $derived($postVariantStore.document_client_ids as CollabClientID[]);
-	let liveVersion = $derived($postVariantStore.document_version);
-	let initialVersion = $derived(liveVersion - backlogSteps.length);
+	let backlogSteps = $derived($documentStore.pending_steps.steps);
 
 	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
 
@@ -116,42 +98,24 @@
 		$postEditor.setEditable(isEditable);
 	});
 
-	onMount(() => {
-		const editor = $postEditor;
-		if (!editor) return;
+	let topicUnsubscriber: () => void;
+
+	function handleInit() {
+		const editor = $postEditor!;
 
 		if (backlogSteps.length > 0) {
-			applyConfirmedSteps(backlogSteps, backlogClientIds, liveVersion);
+			applyConfirmedSteps(editor, backlogSteps);
 		}
 
 		const cursors = new Map<string, RemoteCursor>();
 
-		// called when the Mercure EventSource reconnects after a drop - whatever was published
-		// while we were disconnected is gone from that transport's point of view (no replay), so
-		// pull the durable truth directly instead of just hoping nothing was missed
-		async function catchUp() {
-			try {
-				const response = await syncCollabSteps({
-					post_variant_id: $postVariantStore.id,
-					version: editor.collab.getVersion()
-				});
-				if (response.steps.length > 0) {
-					applyConfirmedSteps(
-						response.steps as CollabStepJSON[],
-						response.client_ids as CollabClientID[],
-						response.version
-					);
-				}
-			} catch (e) {
-				console.error('Failed to sync collab steps', e);
-			}
-		}
-
 		const topic = collabTopic($postVariantStore.id);
-		return subscribeToCollabMercureTopic(
+
+		topicUnsubscriber = subscribeToCollabMercureTopic(
 			topic,
-			(steps, clientIds, version) => {
-				applyConfirmedSteps(steps, clientIds, version);
+			$documentStore.mercure_token,
+			(steps) => {
+				applyConfirmedSteps(editor, steps);
 			},
 			(message) => {
 				if (message.client_id === clientId) return; // ignore our own echo, if any
@@ -173,15 +137,14 @@
 				}
 
 				editor.cursors.set([...cursors.values()]);
-			},
-			catchUp
+			}
 		);
-	});
+	}
 
 	let fullEditorConfig = $derived({
 		...editorConfig,
 		collab: {
-			version: initialVersion,
+			version: $documentStore.checkpoint_version,
 			clientID: clientId,
 			onSendable: handleSendable
 		},
@@ -193,7 +156,12 @@
 			mode: $postSuggestionModeStore,
 			resolveAuthor,
 			source: suggestionSource
-		}
+		},
+		colorButtonBackground: 'var(--accent)'
+	});
+
+	onDestroy(() => {
+		topicUnsubscriber?.();
 	});
 </script>
 
@@ -206,7 +174,8 @@
 			editable={isEditable}
 			{schema}
 			editorConfig={fullEditorConfig}
-			plugins={[wordCountPlugin()]}
+			plugins={[wordCountPlugin(), focusTitlePlugin(), scrollMarginPlugin()]}
+			oninit={handleInit}
 		/>
 	</div>
 </div>

@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Post\Content\Nodes\Toc\Toc;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -17,6 +18,11 @@ class TocTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -31,7 +37,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',
@@ -56,7 +62,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',
@@ -102,14 +108,14 @@ class TocTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $html = '<div class="toc" data-levels="1,2,3,4"></div>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
             ],
         ], JSON_THROW_ON_ERROR), $json);
@@ -119,14 +125,14 @@ class TocTest extends KernelTestCase
     {
         $html = '<div class="toc" data-levels="1,2,3,4"><ul><li>My big heading</li></ul></div>' .
             '<ul><li>Other list</li></ul>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'bullet_list',
@@ -136,6 +142,7 @@ class TocTest extends KernelTestCase
                             'content' => [
                                 [
                                     'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
                                     'content' => [
                                         ['type' => 'text', 'text' => 'Other list'],
                                     ],
@@ -155,7 +162,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',

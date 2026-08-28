@@ -5,13 +5,14 @@ namespace App\Service\Post;
 use App\Entity\Language;
 use App\Entity\PostVariant;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\RandomException;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class PostSlugService
 {
     public function __construct(private EntityManagerInterface $em) {}
 
-
+    // https://docs.orchardcore.net/projects/O1/en/latest/Documentation/Slugs/#:~:text=%22Please%20do%20not%20use%20any,dashes%20or%20underscores%20instead).%22
     private const SLUG_INVALID_CHARACTERS = [
         ':',
         '/',
@@ -34,9 +35,12 @@ class PostSlugService
         '%',
     ];
 
+    /**
+     * Validates a slug string, returning the first invalid character found, or null if valid.
+     */
     public function validateSlug(string $slug): ?string
     {
-        // might be better to 
+        // might be better to
         foreach (self::SLUG_INVALID_CHARACTERS as $char) {
             if (str_contains($slug, $char)) {
                 return $char;

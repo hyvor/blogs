@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\Figcaption;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class FigcaptionTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -62,7 +68,7 @@ class FigcaptionTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $html = '<figure><img src="https://example.com/img.jpg"><figcaption>A caption</figcaption></figure>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -77,6 +83,7 @@ class FigcaptionTest extends KernelTestCase
                                 'alt' => null,
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                         [

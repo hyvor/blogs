@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import type { Post, PostVariant, PostListItem, User, Tag } from '../../../lib/types';
+import type { Post, PostVariant, PostListItem, User, Tag, Document } from '../../../lib/types';
 import consoleApi from '../../../lib/consoleApi';
 import {
 	postStore,
@@ -7,6 +7,7 @@ import {
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
+import type { CollabStep } from './[postId]/Body/Editor/collab';
 
 // API
 
@@ -32,16 +33,6 @@ export function getPosts(data: GetPostsData) {
 export function getPages() {
 	return consoleApi.get<PostListItem[]>({
 		endpoint: '/pages'
-	});
-}
-
-export function getPost(id: number, variantLanguageCode: string | null = null) {
-	return consoleApi.get<{
-		post: Post;
-		variant: PostVariant | null;
-	}>({
-		endpoint: `/post/${id}`,
-		data: variantLanguageCode ? { variant_language_code: variantLanguageCode } : undefined
 	});
 }
 
@@ -210,26 +201,16 @@ export function clonePost(postId: number) {
 	});
 }
 
-// Collaborative editing (see PostVariantCollabController on the backend). These intentionally
-// don't call updatePostVariantStore themselves - submitCollabSteps's outcome is confirmed (or
-// not) synchronously in its own response now (see CollabStepsResponse), and checkpointPostVariant's
-// caller (SaveStatus.svelte) already knows exactly what it just wrote and updates the store itself.
-
-// mirrors PostVariantCollabService::submitSteps()'s return shape. When accepted is false,
-// `version`/`steps`/`client_ids` are the steps the caller is missing (not an echo of what it
-// just sent) - feed them straight into editor.collab.receiveSteps() to catch up, instead of
-// waiting on Mercure to (maybe) deliver them - see Editor.svelte's handleSendable.
 export interface CollabStepsResponse {
 	accepted: boolean;
 	version: number;
-	steps: unknown[];
-	client_ids: string[];
+	steps: CollabStep[]
 }
 
 export function submitCollabSteps(data: {
 	post_variant_id: number;
 	version: number;
-	steps: unknown[];
+	steps: CollabStep[];
 	client_id: string;
 }) {
 	return consoleApi.post<CollabStepsResponse>({
@@ -262,16 +243,5 @@ export function submitCollabCursor(data: {
 			from: data.cursor?.from ?? null,
 			to: data.cursor?.to ?? null
 		}
-	});
-}
-
-export function checkpointPostVariant(data: {
-	post_variant_id: number;
-	version: number;
-	content: string;
-}) {
-	return consoleApi.post<void>({
-		endpoint: `/documents/checkpoint`,
-		data
 	});
 }

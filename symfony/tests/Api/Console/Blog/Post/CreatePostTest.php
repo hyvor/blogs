@@ -25,7 +25,7 @@ class CreatePostTest extends ApiTestCase
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-create']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-        LanguageFactory::createOnePrimaryFor($blog);
+        $lang = LanguageFactory::createOnePrimaryFor($blog);
 
         $this->consoleBlogApi('POST', $blog, '/post', [], user: $user);
 
@@ -44,6 +44,7 @@ class CreatePostTest extends ApiTestCase
 
         $variants = $this->getEm()->getRepository(PostVariant::class)->findBy(['post' => $posts[0]]);
         $this->assertCount(1, $variants);
+        $this->assertSame($lang->getId(), $variants[0]->getLanguage()->getId());
     }
 
     public function test_creates_a_page(): void

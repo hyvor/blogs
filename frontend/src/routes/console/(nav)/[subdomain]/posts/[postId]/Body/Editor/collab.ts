@@ -1,16 +1,40 @@
-import type { CollabClientID, CollabStepJSON, RemoteCursorUser } from '@hyvor/richtext';
+import type { CollabClientID, CollabStepJSON, Editor, RemoteCursorUser } from '@hyvor/richtext';
 import { getConfig } from '../../../../../../lib/config';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
-// must match PostVariantCollabService::topic() on the backend
+// must match DocumentService::topic() on the backend
 export function collabTopic(variantId: number): string {
-	return `post_variant_collab:${variantId}`;
+	return `document:${variantId}`;
+}
+
+export function applyConfirmedSteps(
+	editor: Editor,
+	steps: CollabStep[],
+) {
+	const currentVersion = editor.collab.getVersion();
+	
+	if (steps.length === 0) return;
+
+	// get the steps and client IDs where the version is greater than the current version
+	const newSteps = steps.filter((step) => step.version > currentVersion);
+
+	editor.collab.receiveSteps(
+		newSteps.map((step) => step.step),
+		newSteps.map((step) => step.client_id)
+	);
+}
+
+// StepDto in backend
+export interface CollabStep {
+	version: number;
+	step: CollabStepJSON;
+	client_id: CollabClientID;
 }
 
 interface CollabStepsMercureMessage {
 	type: 'steps';
 	version: number;
-	steps: CollabStepJSON[];
-	client_ids: CollabClientID[];
+	steps: CollabStep[];
 }
 
 // mirrors PostVariantCollabService::publishCursor()'s payload - `clear` means the sender
@@ -26,13 +50,6 @@ interface CollabCursorMercureMessage {
 
 type CollabMercureMessage = CollabStepsMercureMessage | CollabCursorMercureMessage;
 
-// Guards against two overlapping EventSources for the same topic - e.g. an effect re-running
-// (Svelte HMR, or a dependency changing) before its previous cleanup has run. Every incoming
-// Mercure message would otherwise be delivered twice, doubling every step/cursor update handled
-// downstream. Keyed by topic since each browser tab may legitimately hold subscriptions to
-// several topics (different post variants) at once.
-const activeSources = new Map<string, EventSource>();
-
 /**
  * Subscribes to a post variant's collab topic on the Mercure hub (see PostController::getPost,
  * which sets the subscription cookie this relies on) and forwards accepted step batches -
@@ -47,59 +64,63 @@ const activeSources = new Map<string, EventSource>();
  */
 export function subscribeToCollabMercureTopic(
 	topic: string,
-	onSteps: (steps: CollabStepJSON[], clientIds: CollabClientID[], version: number) => void,
+	token: string,
+	onSteps: (steps: CollabStep[]) => void,
 	onCursor: (message: CollabCursorMercureMessage) => void,
-	onReconnect: () => void
 ): () => void {
-
-	// TODO: subscribing to a public topic. This should be private
-
-	// a still-open subscription for this exact topic means someone forgot to unsubscribe (or
-	// hasn't yet) - close it rather than let two EventSources double-deliver every message
-	activeSources.get(topic)?.close();
 
 	const url = new URL(getConfig().mercure.public_url);
 	url.searchParams.append('topic', topic);
 
-	const source = new EventSource(url.toString(), { withCredentials: true });
-	activeSources.set(topic, source);
+	const controller = new AbortController();
 
-	let droppedConnection = false;
+	// tracks whether we've successfully opened before, so a later onopen call (after a drop) can
+	// be told apart from the initial connect
+	let connectedBefore = false;
 
-	source.onmessage = (event) => {
-		let message: CollabMercureMessage;
-		try {
-			message = JSON.parse(event.data);
-		} catch {
-			return;
+	fetchEventSource(url.toString(), {
+		signal: controller.signal,
+		headers: {
+			Authorization: `Bearer ${token}`
+		},
+		openWhenHidden: true,
+		async onopen(response) {
+			// if (response.ok && response.headers.get('content-type')?.startsWith(EventStreamContentType)) {
+			// 	if (connectedBefore) {
+			// 		onReconnect();
+			// 	}
+			// 	connectedBefore = true;
+			// 	return;
+			// }
+
+			// throw new Error(`Failed to open Mercure subscription: ${response.status}`);
+		},
+		onmessage(event) {
+			let message: CollabMercureMessage;
+			try {
+				message = JSON.parse(event.data);
+			} catch {
+				return;
+			}
+
+			if (message.type === 'steps' && message.steps.length > 0) {
+				onSteps(message.steps);
+			} else if (message.type === 'cursor') {
+				onCursor(message);
+			}
+		},
+		onerror(err) {
+			if (controller.signal.aborted) {
+				// rethrow to stop retrying - we're unsubscribing
+				throw err;
+			}
+			// otherwise, swallow so fetchEventSource keeps retrying with its default backoff
 		}
-
-		if (message.type === 'steps' && message.steps.length > 0) {
-			onSteps(message.steps, message.client_ids, message.version);
-		} else if (message.type === 'cursor') {
-			onCursor(message);
-		}
-	};
-
-	source.onerror = () => {
-		// EventSource retries automatically; just remember we dropped so the next successful
-		// open can be told apart from the initial one
-		droppedConnection = true;
-	};
-
-	source.onopen = () => {
-		if (droppedConnection) {
-			droppedConnection = false;
-			onReconnect();
-		}
-	};
+	}).catch(() => {
+		// intentionally unhandled: onerror already deals with retry/abort decisions above
+	});
 
 	return () => {
-		source.close();
-		// only clear the map entry if we're still the current holder - a newer subscription for
-		// this topic may have already replaced us (see the .close() call above)
-		if (activeSources.get(topic) === source) {
-			activeSources.delete(topic);
-		}
+		controller.abort();
 	};
 }

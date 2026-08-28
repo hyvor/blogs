@@ -8,8 +8,6 @@ import {
 import { languagesStore } from '../../lib/stores/languagesStore';
 import { usersStore } from '../../lib/stores/usersStore';
 import type { Blog, BlogCounts, Language, User, BlogIntegrations } from '../../lib/types';
-import { isTempStore } from '../../lib/temp';
-import { get } from 'svelte/store';
 
 export interface BlogResponse {
 	blog: Blog;
@@ -59,10 +57,6 @@ export function loadBlog(subdomain: string) {
 }
 
 function handleResponse(res: BlogResponse) {
-	if (res.blog.type === 'temp' && !get(isTempStore)) {
-		location.href = '/console';
-	}
-
 	blogStore.set(res.blog);
 	blogOriginalStore.set(res.blog);
 	blogCountsStore.set(res.counts);

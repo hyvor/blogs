@@ -10,15 +10,15 @@ use App\Api\Console\Input\Post\CheckPostSlugAvailableInput;
 use App\Api\Console\Input\Post\CreatePostInput;
 use App\Api\Console\Input\Post\CreatePostVariantInput;
 use App\Api\Console\Input\Post\DeletePostVariantInput;
-use App\Api\Console\Input\Post\GetPostInput;
 use App\Api\Console\Input\Post\GetPostsInput;
 use App\Api\Console\Input\Post\PublishPostVariantInput;
 use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Post\UpdatePostInput;
 use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
-use App\Api\Console\Object\PostListObjectFactory;
+use App\Api\Console\Object\PostList\PostListObjectFactory;
 use App\Api\Console\Object\PostObjectFactory;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
@@ -27,13 +27,10 @@ use App\Service\Post\PostSlugService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\Mercure\Authorization;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -48,14 +45,12 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
-        private DocumentService $collabService,
-        private Authorization $mercureAuthorization,
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
     public function getPosts(
-        #[MapQueryString] GetPostsInput $input = new GetPostsInput(),
+        #[MapQueryString] GetPostsInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
@@ -123,38 +118,6 @@ class PostController
         return new JsonResponse($this->postObjectFactory->create($post, $blog), 201);
     }
 
-    #[Route('/post/{id}', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
-    #[ScopeRequired(Scope::POSTS_READ)]
-    public function getPost(
-        #[MapBlogEntity] Post $post,
-        #[MapQueryString] GetPostInput $input,
-        Request $request,
-    ): JsonResponse
-    {
-        $blog = $this->blogAuthListener->getBlog();
-
-        $variant = null;
-        if ($input->variant_language_code) {
-            $language = $this->languageService->getLanguageByCode($blog, $input->variant_language_code);
-
-            if ($language === null) {
-                throw new BadRequestHttpException('Invalid variant_language_code, language not found');
-            }
-
-            $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
-        }
-
-        if ($variant !== null) {
-            $this->mercureAuthorization->setCookie($request, [
-                $this->collabService->topic($variant),
-            ]);
-        }
-
-        return new JsonResponse([
-            'post' => $this->postObjectFactory->create($post, $blog),
-            'variant' => $variant ? $this->postObjectFactory->createVariant($variant, $post, $blog) : null,
-        ]);
-    }
 
     #[Route('/post/{id}', methods: ['PATCH'], requirements: ['id' => Requirement::DIGITS])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
@@ -165,22 +128,22 @@ class PostController
         $blog = $this->blogAuthListener->getBlog();
         $data = [];
 
-        if ($input->is_featured !== null) {
+        if ($input->hasProperty('is_featured')) {
             $data['is_featured'] = $input->is_featured;
         }
-        if ($input->canonical_url !== null) {
+        if ($input->hasProperty('canonical_url')) {
             $data['canonical_url'] = $input->canonical_url;
         }
-        if ($input->featured_image_url !== null) {
+        if ($input->hasProperty('featured_image_url')) {
             $data['featured_image_url'] = $input->featured_image_url;
         }
-        if ($input->code_head !== null) {
+        if ($input->hasProperty('code_head')) {
             $data['code_head'] = $input->code_head;
         }
-        if ($input->code_foot !== null) {
+        if ($input->hasProperty('code_foot')) {
             $data['code_foot'] = $input->code_foot;
         }
-        if ($input->published_at !== null) {
+        if ($input->hasProperty('published_at')) {
             $data['published_at'] = \DateTimeImmutable::createFromFormat('U', (string)$input->published_at) ?: null;
         }
 
@@ -227,7 +190,8 @@ class PostController
     public function updatePostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostVariantInput $input,
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $blog = $this->blogAuthListener->getBlog();
 
         $language = $this->languageService->getLanguageById($blog, $input->language_id);
@@ -256,14 +220,6 @@ class PostController
             $data['slug'] = $input->slug;
         }
 
-        if ($input->content !== false) {
-            $data['content'] = $input->content;
-        }
-
-        if ($input->content_unsaved !== false) {
-            $data['content_unsaved'] = $input->content_unsaved;
-        }
-
         if ($input->title !== null) {
             $data['title'] = $input->title;
         }
@@ -280,13 +236,29 @@ class PostController
             $data['seo_secondary_keywords'] = $input->seo_secondary_keywords;
         }
 
+        if ($input->seo_score !== null) {
+            $data['seo_score'] = $input->seo_score;
+        }
+
         if ($input->content_updated_at !== false) {
+            if ($post->getPublishedAt() === null) {
+                throw new UnprocessableEntityHttpException('Cannot set content_updated_at for unpublished post');
+            }
+
+            if ($post->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
+                throw new UnprocessableEntityHttpException('Content updated time should be after published time');
+            }
+
             $data['content_updated_at'] = $input->content_updated_at !== null
                 ? \DateTimeImmutable::createFromFormat('U', (string)$input->content_updated_at) ?: null
                 : null;
         }
 
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;
+
+        if ($redirectOnSlugChange && $variant->getStatus() === PostVariantStatus::DRAFT) {
+            throw new UnprocessableEntityHttpException('Cannot redirect on slug change for draft variant');
+        }
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
 
@@ -363,7 +335,7 @@ class PostController
             throw new NotFoundHttpException('Variant not found');
         }
 
-        $this->postService->deletePostVariant($post, $language);
+        $this->postService->deletePostVariant($variant);
 
         return new JsonResponse();
     }
@@ -394,11 +366,13 @@ class PostController
         $blog = $this->blogAuthListener->getBlog();
 
         $users = $this->userService->getUsersByIds($blog, $input->ids);
+
         if (count($users) !== count($input->ids)) {
             throw new UnprocessableEntityHttpException('Some author IDs are invalid');
         }
 
         $this->postService->setPostAuthors($post, $users);
+
         return new JsonResponse();
     }
 

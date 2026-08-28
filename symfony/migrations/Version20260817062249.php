@@ -11,7 +11,7 @@ final class Version20260817062249 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Collaborative editing: post_variants.document_version, post_variant_steps table';
+        return 'Collaborative editing: post_variants.document_version, post_variant_steps table, post_variants.seo_score';
     }
 
     public function up(Schema $schema): void
@@ -21,7 +21,9 @@ final class Version20260817062249 extends AbstractMigration
         $this->addSql(
             <<<SQL
             ALTER TABLE post_variants
-                ADD COLUMN document_version INTEGER NOT NULL DEFAULT 0
+                ADD COLUMN document_version INTEGER NOT NULL DEFAULT 0,
+                ADD COLUMN content_unsaved_version INTEGER NOT NULL DEFAULT 0,
+                ADD COLUMN seo_score INTEGER NULL
             SQL
         );
 

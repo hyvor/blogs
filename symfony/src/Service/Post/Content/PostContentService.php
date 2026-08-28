@@ -4,9 +4,7 @@ namespace App\Service\Post\Content;
 
 use App\Entity\Blog;
 use App\Service\Post\Content\Html\HtmlSerializer;
-use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
-use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 
 class PostContentService
@@ -45,30 +43,6 @@ class PostContentService
     public function getText(array|string $json, Blog $blog): string
     {
         return $this->postSchema->documentFrom($json)->toText();
-    }
-
-    /**
-     * @deprecated parsing no longer needs any of this service's dependencies - use PostSchema::documentFromHtml() directly
-     */
-    public function getJsonFromHtml(string $html, Blog $blog, bool $sanitize = true): string
-    {
-        return $this->getDocumentFromHtml($html, $blog, $sanitize)->toJson();
-    }
-
-    /**
-     * @deprecated parsing no longer needs any of this service's dependencies - use PostSchema::documentFromHtml() directly
-     */
-    public function getDocumentFromHtml(string $html, Blog $blog, bool $sanitize = true): Node
-    {
-        return $this->postSchema->documentFromHtml($html, $sanitize);
-    }
-
-    /**
-     * @deprecated parsing no longer needs any of this service's dependencies - use PostSchema::getHtmlParser() directly
-     */
-    public function getHtmlParser(?Blog $blog = null): HtmlParser
-    {
-        return $this->postSchema->getHtmlParser();
     }
 
     /**
