@@ -62,6 +62,7 @@ class OrderedListTest extends KernelTestCase
                             'content' => [
                                 [
                                     'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
                                     'content' => [['type' => 'text', 'text' => 'Item 1']],
                                 ],
                             ],

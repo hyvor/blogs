@@ -3,7 +3,6 @@
 namespace App\Tests\Service\Post\Content\Nodes;
 
 use App\Entity\Blog;
-use App\Service\Delivery\MediaService;
 use App\Service\Post\Content\Nodes\Image\Image;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
@@ -23,8 +22,7 @@ class ImageTest extends KernelTestCase
     {
         parent::setUp();
         $this->filesystem = new Filesystem(new InMemoryFilesystemAdapter());
-        $mediaService = new MediaService($this->getEm(), $this->filesystem);
-        static::getContainer()->set(MediaService::class, $mediaService);
+        static::getContainer()->set(Filesystem::class, $this->filesystem);
     }
 
     private function service(): PostContentService
@@ -224,6 +222,7 @@ class ImageTest extends KernelTestCase
                                 'alt' => 'Alt',
                                 'width' => '800',
                                 'height' => '600',
+                                'suggestions' => null,
                             ],
                         ],
                     ],
@@ -252,6 +251,7 @@ class ImageTest extends KernelTestCase
                                 'alt' => null,
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                     ],

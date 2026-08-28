@@ -56,6 +56,7 @@ class CalloutTest extends KernelTestCase
                         'emoji' => '💡',
                         'bg' => '#fff0f0',
                         'fg' => '#000000',
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => 'Note'],
@@ -79,6 +80,7 @@ class CalloutTest extends KernelTestCase
                         'emoji' => Callout::DEFAULT_EMOJI,
                         'bg' => Callout::DEFAULT_BG,
                         'fg' => Callout::DEFAULT_FG,
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => 'Some '],

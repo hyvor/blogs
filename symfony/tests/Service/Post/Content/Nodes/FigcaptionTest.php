@@ -77,6 +77,7 @@ class FigcaptionTest extends KernelTestCase
                                 'alt' => null,
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                         [

@@ -154,7 +154,7 @@ class HeadingTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'heading',
-                    'attrs' => ['level' => 2, 'id' => $id],
+                    'attrs' => ['level' => 2, 'id' => $id, 'suggestions' => null],
                     'content' => [['type' => 'text', 'text' => $content]],
                 ],
             ],

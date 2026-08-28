@@ -39,6 +39,9 @@ class HtmlParserTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'figure',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'image',
@@ -47,6 +50,7 @@ class HtmlParserTest extends KernelTestCase
                                 'alt' => 'Example Image',
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                     ],
@@ -72,6 +76,9 @@ class HtmlParserTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'figure',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'image',
@@ -80,6 +87,7 @@ class HtmlParserTest extends KernelTestCase
                                 'alt' => 'Example Image',
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                     ],
@@ -123,6 +131,7 @@ class HtmlParserTest extends KernelTestCase
                                 'alt' => 'Image',
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                         [

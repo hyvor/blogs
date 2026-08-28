@@ -31,7 +31,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',
@@ -56,7 +56,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',
@@ -109,7 +109,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
             ],
         ], JSON_THROW_ON_ERROR), $json);
@@ -126,7 +126,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'bullet_list',
@@ -136,6 +136,7 @@ class TocTest extends KernelTestCase
                             'content' => [
                                 [
                                     'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
                                     'content' => [
                                         ['type' => 'text', 'text' => 'Other list'],
                                     ],
@@ -155,7 +156,7 @@ class TocTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'toc',
-                    'attrs' => ['levels' => [1, 2, 3, 4]],
+                    'attrs' => ['levels' => [1, 2, 3, 4], 'suggestions' => null],
                 ],
                 [
                     'type' => 'heading',

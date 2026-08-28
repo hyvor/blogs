@@ -64,6 +64,7 @@ class FigureTest extends KernelTestCase
                                 'alt' => 'Alt',
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                         [

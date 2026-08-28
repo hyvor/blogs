@@ -47,6 +47,9 @@ class EmTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'paragraph',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'text',
@@ -70,6 +73,9 @@ class EmTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'paragraph',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'text',

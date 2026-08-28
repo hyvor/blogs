@@ -47,7 +47,7 @@ class AudioTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'audio',
-                    'attrs' => ['src' => 'https://example.com/audio.mp3'],
+                    'attrs' => ['src' => 'https://example.com/audio.mp3', 'suggestions' => null],
                 ],
             ],
         ], JSON_THROW_ON_ERROR), $json);

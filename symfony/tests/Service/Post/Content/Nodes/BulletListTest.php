@@ -62,6 +62,7 @@ class BulletListTest extends KernelTestCase
                             'content' => [
                                 [
                                     'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
                                     'content' => [['type' => 'text', 'text' => 'Item 1']],
                                 ],
                             ],

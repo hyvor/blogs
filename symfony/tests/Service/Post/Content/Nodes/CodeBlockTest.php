@@ -107,6 +107,7 @@ class CodeBlockTest extends KernelTestCase
                         'language' => 'php',
                         'name' => $name,
                         'annotations' => $annotations,
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => $content],
@@ -130,6 +131,7 @@ class CodeBlockTest extends KernelTestCase
                         'language' => '',
                         'name' => '',
                         'annotations' => '',
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => "matchLabels:\n    app: nginx"],

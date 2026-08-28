@@ -148,6 +148,7 @@ class TableTest extends KernelTestCase
                                     'content' => [
                                         [
                                             'type' => 'paragraph',
+                                            'attrs' => ['suggestions' => null],
                                             'content' => [['type' => 'text', 'text' => 'Cell 1']],
                                         ],
                                     ],
