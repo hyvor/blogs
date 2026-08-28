@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconGithub from '@hyvor/icons/IconGithub';
-	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import IconPalette from '@hyvor/icons/IconPalette';
 	import IconPuzzle from '@hyvor/icons/IconPuzzle';
 	import {
@@ -13,6 +12,7 @@
 		buildMarketingUrl,
 		getStaticString
 	} from './[[lang]]/marketingLang';
+	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 
 	let resourcesDropdown = $state(false);
 
@@ -77,7 +77,7 @@
 			{#snippet trigger()}
 				<HeaderNavLink active={isThemesOrIntegrations}>
 					{t('resources')}
-					<IconCaretDown size={11} />
+					<IconChevronDown size={11} />
 				</HeaderNavLink>
 			{/snippet}
 			{#snippet content()}

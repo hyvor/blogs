@@ -11,7 +11,7 @@
 >
 	{#snippet title()}
 		{I18n.t('homepage.hero.title')}<br /><span class="heading-small"
-			>({I18n.t('homepage.hero.title2')})</span
+			>{I18n.t('homepage.hero.title2')}</span
 		>
 	{/snippet}
 
