@@ -8,18 +8,10 @@
 			LANGUAGES_CONFIG.find((lang) => lang.default)!
 	);
 
-	// see getStaticString's own comment: Footer can't use the "i18n" context,
-	// so this looks the current language's strings up directly instead. Unlike
-	// the homepage sections, Footer isn't remounted on a language switch (it's
-	// rendered by the outer (marketing)/+layout.svelte, outside the [[lang]]
-	// layout's {#key data.lang} block), so `columns` below must stay reactive
-	// ($derived) rather than a plain const, or it'd go stale after a switch.
 	function t(key: string) {
 		return getStaticString(currentLang.strings, key);
 	}
 
-	// re-prefix a plain, language-agnostic path (e.g. "/pricing") with the
-	// current language, so in-site links stay on the same language
 	function localizedHref(path: string) {
 		return buildMarketingUrl(path, currentLang.code, currentLang.code) || '/';
 	}
@@ -108,31 +100,21 @@
 	gdprText={t('nav.footer.gdprCompliant')}
 	fromFranceText={t('nav.footer.fromFrance')}
 >
-	{#snippet center()}
-		<div class="columns">
-			{#each columns as col}
-				<FooterLinkList title={col.title}>
-					{#each col.links as link}
-						<a
-							href={link.localize ? localizedHref(link.href) : link.href}
-							target={link.external ? '_blank' : undefined}
-						>
-							{link.label}
-						</a>
-					{/each}
-				</FooterLinkList>
+	{#each columns as col}
+		<FooterLinkList title={col.title}>
+			{#each col.links as link}
+				<a
+					href={link.localize ? localizedHref(link.href) : link.href}
+					target={link.external ? '_blank' : undefined}
+				>
+					{link.label}
+				</a>
 			{/each}
-		</div>
-	{/snippet}
+		</FooterLinkList>
+	{/each}
 </Footer>
 
 <style>
-	.columns {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 40px;
-	}
-
 	/* the design system's Footer reserves 100px above itself for the mascot
 	   (.footer-outer's own margin-top) — on this page the preceding section
 	   already has generous bottom padding for that overlap, so the reserved
