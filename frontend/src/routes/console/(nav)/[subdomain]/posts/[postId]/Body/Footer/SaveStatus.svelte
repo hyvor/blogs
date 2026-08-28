@@ -6,9 +6,15 @@
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
-	import { checkpointPostVariant } from '../../../postActions';
+	import {
+		saveCheckpoint,
+		type CheckpointClientAheadError,
+		type CheckpointClientBehindError
+	} from '../../documentActions';
 	import { toast } from '@hyvor/design/components';
 	import { beforeNavigate } from '$app/navigation';
+	import type { CollabClientID, CollabStepJSON } from '@hyvor/richtext';
+	import { applyConfirmedSteps } from '../Editor/collab';
 
 	let hasChanged = $derived($postContentDirtyStore);
 
@@ -23,7 +29,7 @@
 		const content = JSON.stringify(editor.getContent());
 		const version = editor.collab.getVersion();
 
-		checkpointPostVariant({ post_variant_id: $postVariantStore.id, version, content })
+		saveCheckpoint({ post_variant_id: $postVariantStore.id, version, content })
 			.then(() => {
 				updatePostVariantStore({ content_unsaved: content, document_version: version }, true);
 				$postContentDirtyStore = false;
@@ -31,11 +37,27 @@
 			})
 			.catch((e) => {
 				isSaving = false;
-				// stale version - document_version has moved on since this editor last caught up
-				// via Mercure; harmless, the next interval retries once it has
-				if (e.code !== 409) {
-					toast.error(`Failed to save post content: ${e.message}`);
+
+				if (e.code === 409 && e.body?.message === 'client_behind') {
+					// server moved on since this editor last caught up via Mercure - apply the
+					// steps we're missing so the next save attempt has a version the server
+					// recognizes, same as a rejected submitCollabSteps (see Editor.svelte)
+					const body = e.body as CheckpointClientBehindError;
+					if (editor && body.steps.length > 0) {
+						applyConfirmedSteps(editor, body.steps as CollabStepJSON[]);
+					}
+					return;
 				}
+
+				if (e.code === 409 && e.body?.message === 'client_ahead') {
+					// should never happen in normal operation - surface it instead of retrying
+					const body = e.body as CheckpointClientAheadError;
+					toast.error('Failed to save: your editor is out of sync. Please reload the page.');
+					console.error('checkpoint client_ahead', body.message_full);
+					return;
+				}
+
+				toast.error(`Failed to save post content: ${e.message}`);
 			});
 	}
 

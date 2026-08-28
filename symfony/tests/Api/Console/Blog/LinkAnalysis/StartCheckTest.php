@@ -5,7 +5,7 @@ namespace App\Tests\Api\Console\Blog\LinkAnalysis;
 use App\Api\Console\Controller\LinkAnalysisController;
 use App\Entity\Enum\JobStatus;
 use App\Entity\Enum\UserRole;
-use App\Message\LinkAnalysisCheckMessage;
+use App\Service\LinkAnalysis\Message\LinkAnalysisCheckMessage;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LinkAnalyzerCheckFactory;

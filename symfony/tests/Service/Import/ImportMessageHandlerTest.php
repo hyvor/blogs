@@ -4,11 +4,10 @@ namespace App\Tests\Service\Import;
 
 use App\Entity\Enum\ImportType;
 use App\Entity\Enum\JobStatus;
-use App\Entity\Import;
 use App\Entity\Post;
-use App\Message\ImportMessage;
-use App\MessageHandler\ImportMessageHandler;
 use App\Service\Import\ImportService;
+use App\Service\Import\Message\ImportMessage;
+use App\Service\Import\MessageHandler\ImportMessageHandler;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;

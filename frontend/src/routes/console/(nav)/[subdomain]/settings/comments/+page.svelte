@@ -46,7 +46,7 @@
 			value={$blogStore.comments_code || ''}
 			id="comments"
 			ext="twig"
-			on:change={(e) => updateBlogStore({ comments_code: e.detail })}
+			onchange={(value) => updateBlogStore({ comments_code: value })}
 		/>
 
 		<div style="margin-top:10px;">
@@ -94,7 +94,7 @@
 			value={$blogStore.newsletter_code || ''}
 			id="newsletter"
 			ext="twig"
-			on:change={(e) => updateBlogStore({ newsletter_code: e.detail })}
+			onchange={(value) => updateBlogStore({ newsletter_code: value })}
 		/>
 
 		<div style="margin-top:10px;">

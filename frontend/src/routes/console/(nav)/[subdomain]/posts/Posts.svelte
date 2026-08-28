@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
-	import { Button, IconMessage, LoadButton, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { PostListItem } from '../../../lib/types';
 	import PostRow from './PostRow.svelte';
@@ -81,18 +81,14 @@
 	let isCreating = $state(false);
 
 	function handleCreate() {
-		const toastId = toast.loading(`Creating ${pages ? 'page' : 'post'}...`);
 		isCreating = true;
 
 		createPost(pages)
 			.then((res) => {
-				toast.success(`${pages ? 'Page' : 'Post'} created`, { id: toastId });
 				goto(consoleUrlWithBlog(`/posts/${res.id}/${getPrimaryLanguage().code}`));
 			})
 			.catch((e) => {
-				toast.error(e.message, { id: toastId });
-			})
-			.finally(() => {
+				toast.error(e.message);
 				isCreating = false;
 			});
 	}
@@ -100,7 +96,7 @@
 	postListFiltersStore.subscribe((filters) => loadPosts(false, filters));
 </script>
 
-<div id="posts">
+<div id="posts" class="hds-box">
 	<div class="top">
 		<div class="title-wrap">
 			<div class="title">
@@ -109,7 +105,11 @@
 			<div class="">
 				<Button size="small" on:click={handleCreate} disabled={isCreating}>
 					{#snippet start()}
-						<IconPlus />
+						{#if isCreating}
+							<Loader size={14} invert />
+						{:else}
+							<IconPlus />
+						{/if}
 					{/snippet}
 					New
 				</Button>
@@ -162,18 +162,12 @@
 
 	.top {
 		padding: 20px 25px;
-		background-color: var(--box-background);
-		border-radius: var(--box-radius);
-		box-shadow: var(--box-shadow);
 		display: flex;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.middle {
-		padding: 20px 0;
-		background-color: var(--box-background);
-		border-radius: var(--box-radius);
-		box-shadow: var(--box-shadow);
-		margin-top: 15px;
+		padding: 10px 0;
 		flex: 1;
 		overflow: auto;
 	}

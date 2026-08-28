@@ -13,8 +13,8 @@
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
-	function handleChange(e: CustomEvent<string>) {
-		updatePostStore({ code_head: e.detail });
+	function handleChange(value: string) {
+		updatePostStore({ code_head: value });
 	}
 
 	function handleConfirm() {
@@ -45,7 +45,7 @@
 	<CodemirrorWithPreview
 		value={$postStore.code_head || ''}
 		title="Code Head"
-		on:change={handleChange}
-		on:confirm={handleConfirm}
+		onchange={handleChange}
+		onconfirm={handleConfirm}
 	/>
 </SplitControl>

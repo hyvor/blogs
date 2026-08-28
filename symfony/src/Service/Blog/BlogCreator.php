@@ -13,7 +13,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
 use App\Service\Navigation\NavigationService;
-use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use App\Service\Post\PostService;
 use App\Service\Route\RouteService;
 use App\Service\Tag\TagService;
@@ -98,7 +98,7 @@ class BlogCreator
         private ThemeService $themeService,
         private ThemeFilesService $themeFilesService,
         private PostService $postService,
-        private PostContentService $postContentService,
+        private PostSchema $postSchema,
         private BlogService $blogService,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
@@ -336,7 +336,7 @@ class BlogCreator
             );
 
             $content = (string) file_get_contents($this->projectDir . '/resources/posts/' . $row['file']);
-            $json = $this->postContentService->getJsonFromHtml($content, $blog);
+            $json = $this->postSchema->documentFromHtml($content)->toJson();
 
             $this->postService->createPostVariant(
                 $post,
@@ -382,7 +382,7 @@ class BlogCreator
                     $language,
                     flush: false,
                     status: PostVariantStatus::PUBLISHED,
-                    content: $this->postContentService->getJsonFromHtml($html, $blog),
+                    content: $this->postSchema->documentFromHtml($html)->toJson(),
                     slug: 'post-' . bin2hex(random_bytes(4)) . '-' . $i,
                     title: $this->getRandomTitle(),
                 );

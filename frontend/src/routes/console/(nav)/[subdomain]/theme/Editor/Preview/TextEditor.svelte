@@ -16,7 +16,7 @@
 		updateThemeFileStore(file.id, { content: val });
 	}
 
-	function handleTextSave(e: CustomEvent<string>) {
+	function handleTextSave(value: string) {
 		saveCurrentFile();
 	}
 
@@ -34,8 +34,8 @@
 		value={file.content || ''}
 		id={file.id}
 		{ext}
-		on:change={(e) => handleChange(e.detail)}
-		on:save={handleTextSave}
+		onchange={handleChange}
+		onsave={handleTextSave}
 	/>
 </div>
 

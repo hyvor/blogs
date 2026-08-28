@@ -6,6 +6,8 @@ use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
+use App\Service\Post\Event\PostCreatedEvent;
+use App\Service\Post\Event\PostVariantCreatedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -48,6 +50,7 @@ class ClonePostTest extends ApiTestCase
             'seo_secondary_keywords' => ['keyword1', 'keyword2'],
             'link_analysis' => ['https://example.com' => 1],
         ]);
+        $originalPost->getVariants()->add($originalVariant);
 
         $tag1 = TagFactory::createOne(['blog' => $blog]);
         $tag2 = TagFactory::createOne(['blog' => $blog]);
@@ -86,9 +89,9 @@ class ClonePostTest extends ApiTestCase
         $clonedVariant = $clonedPost->getVariants()->first();
         $this->assertNotFalse($clonedVariant);
 
-        $this->assertSame($originalVariant->getTitle(), $clonedVariant->getTitle());
+        $this->assertSame('[Copy] Original Title', $clonedVariant->getTitle());
         $this->assertSame($originalVariant->getDescription(), $clonedVariant->getDescription());
-        $this->assertSame($originalVariant->getContent(), $clonedVariant->getContent());
+        $this->assertNull($clonedVariant->getContent());
         $this->assertSame($originalVariant->getContentUnsaved(), $clonedVariant->getContentUnsaved());
         $this->assertSame($originalVariant->getSeoPrimaryKeyword(), $clonedVariant->getSeoPrimaryKeyword());
         $this->assertSame($originalVariant->getSeoSecondaryKeywords(), $clonedVariant->getSeoSecondaryKeywords());
@@ -110,5 +113,8 @@ class ClonePostTest extends ApiTestCase
         sort($clonedAuthorIds);
         sort($originalAuthorIds);
         $this->assertSame($originalAuthorIds, $clonedAuthorIds);
+
+        $this->getEd()->assertDispatchedCount(PostVariantCreatedEvent::class, 0);
+        $this->getEd()->assertDispatchedCount(PostCreatedEvent::class, 0);
     }
 }

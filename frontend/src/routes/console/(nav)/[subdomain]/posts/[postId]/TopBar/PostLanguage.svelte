@@ -45,7 +45,7 @@
 	}
 
 	function getVariant(languageId: number) {
-		return $postStore.variant_statuses.find((variant) => variant.language_id === languageId);
+		return $postStore.variants.find((v) => v.language_id === languageId);
 	}
 
 	function getVariantStatus(languageId: number) {

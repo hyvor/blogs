@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Marks;
 use App\Entity\Blog;
 use App\Service\Post\Content\Marks\Highlight;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class HighlightTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -40,13 +46,16 @@ class HighlightTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<mark>highlighted</mark>', $this->blog());
+        $document = $this->postSchema()->documentFromHtml('<mark>highlighted</mark>');
 
         $this->assertSame([
             'type' => 'doc',
             'content' => [
                 [
                     'type' => 'paragraph',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'text',

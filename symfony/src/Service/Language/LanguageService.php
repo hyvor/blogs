@@ -45,20 +45,25 @@ class LanguageService
         return $language;
     }
 
-    /** @return Language[] */
+    /**
+     * @return Language[] all languages of the blog, sorted with primary first, then by id
+     */
     public function getAllLanguages(Blog $blog): array
     {
-        $qb = $this->em->createQueryBuilder();
-        $qb->select('l')
-            ->from(Language::class, 'l')
-            ->where('l.blog = :blog')
-            ->setParameter('blog', $blog)
-            ->orderBy('l.is_primary', 'DESC')
-            ->addOrderBy('l.id', 'ASC');
+        $languages = $blog->getLanguages()->toArray();
 
-        /** @var Language[] $result */
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        // sort primary first, id sorted
+        usort($languages, function (Language $a, Language $b) {
+            if ($a->isPrimary() && !$b->isPrimary()) {
+                return -1;
+            } elseif (!$a->isPrimary() && $b->isPrimary()) {
+                return 1;
+            } else {
+                return $a->getId() <=> $b->getId();
+            }
+        });
+
+        return $languages;
     }
 
     public function getLanguageByCode(Blog $blog, string $code): ?Language
@@ -79,14 +84,15 @@ class LanguageService
 
     public function getPrimaryLanguage(Blog $blog): Language
     {
-        $language = $this->em->getRepository(Language::class)->findOneBy([
-            'blog' => $blog,
-            'is_primary' => true,
-        ]);
-        if ($language === null) {
-            throw new \RuntimeException('No primary language found');
+        $languages = $this->getAllLanguages($blog);
+
+        foreach ($languages as $language) {
+            if ($language->isPrimary()) {
+                return $language;
+            }
         }
-        return $language;
+
+        throw new \RuntimeException('No primary language found for blog ' . $blog->getId());
     }
 
     public function updateLanguage(Language $language, ?string $code, ?string $name, ?LanguageDirection $direction): Language

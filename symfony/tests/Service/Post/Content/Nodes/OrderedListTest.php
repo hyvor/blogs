@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\OrderedList;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class OrderedListTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -49,7 +55,7 @@ class OrderedListTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $json = $this->service()->getJsonFromHtml('<ol><li>Item 1</li></ol>', $this->blog());
+        $json = $this->postSchema()->documentFromHtml('<ol><li>Item 1</li></ol>')->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -62,6 +68,7 @@ class OrderedListTest extends KernelTestCase
                             'content' => [
                                 [
                                     'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
                                     'content' => [['type' => 'text', 'text' => 'Item 1']],
                                 ],
                             ],

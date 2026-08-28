@@ -6,7 +6,6 @@
 	import { loadBlog } from './blogLoader';
 	import { page } from '$app/state';
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
-	import { isTempStore } from '../../lib/temp';
 	import { blogListStore, resolvedLicenseStore } from '../../lib/stores';
 
 	interface Props {
@@ -44,10 +43,6 @@
 	}
 
 	let forcedShow = $derived.by(() => {
-		if ($isTempStore) {
-			return true;
-		}
-
 		if (page.url.pathname === consoleUrlWithBlog('billing')) {
 			return true;
 		}

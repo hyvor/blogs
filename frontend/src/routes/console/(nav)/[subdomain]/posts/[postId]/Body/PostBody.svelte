@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { postEditor, postVariantLanguageStore, postVariantStore } from '../../postStore';
-	import SaveStatus from './Footer/SaveStatus.svelte';
-	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
+	import {
+		postEditor,
+		postTitle,
+		postVariantLanguageStore,
+		postVariantStore
+	} from '../../postStore';
 	import Editor from './Editor/Editor.svelte';
-	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
-	import Title from './Top/Title.svelte';
-	import PublishedNotice from './Footer/PublishedNotice.svelte';
-
-	let titleComponent: { focus: () => void } | undefined = $state();
-	let editorKey = $derived(String($postVariantStore.id));
+	import Title from './Title.svelte';
+	import EditorFooter from './Footer/EditorFooter.svelte';
 
 	// the editor loads its ProseMirror view asynchronously (onMount awaits a
 	// dynamic import), so it may not be ready yet right after this component mounts
@@ -24,7 +23,7 @@
 	onMount(() => {
 		const title = ($postVariantStore.title || '').trim();
 		if (title === '') {
-			titleComponent?.focus();
+			$postTitle?.focus();
 		} else {
 			focusEditorWhenReady();
 		}
@@ -33,7 +32,6 @@
 
 <div
 	id="post-body"
-	class="hds-box"
 	spellcheck={false}
 	dir={$postVariantLanguageStore!.direction}
 	style="
@@ -43,64 +41,30 @@
     "
 >
 	<label class="top">
-		<Title bind:this={titleComponent} />
+		<Title bind:this={$postTitle} />
 	</label>
 
-	{#key editorKey}
-		<Editor />
-	{/key}
-
-	<div class="editor-footer">
-		<PublishedNotice />
-		<div class="footer-bottom">
-			<div class="footer-left">
-				<SuggestionModeToggle />
-				<AutoTranslate />
-			</div>
-
-			<div class="footer-right">
-				<!-- see plugin-wordcount.ts -->
-				<span id="pm-word-count"></span>
-				<SaveStatus />
-			</div>
-		</div>
-	</div>
+	<Editor />
+	<EditorFooter />
 </div>
 
 <style>
 	#post-body {
 		display: flex;
 		flex-direction: column;
-		min-height: calc(100vh - 70px);
+		flex: 1;
+		background-color: var(--background);
+	}
+	#post-body :global(.ProseMirror) {
+		width: 760px !important;
+		color: var(--text-faded);
+	}
+	#post-body::selection {
+		background: var(--accent-light);
 	}
 	.top {
-		background: var(--hover);
 		border-radius: 20px 20px 0 0;
 		cursor: text;
-	}
-	.editor-footer {
-		border-top: 1px solid var(--border);
-		position: sticky;
-		bottom: 0;
-		background: var(--box-background);
-		border-radius: 0 0 20px 20px;
-	}
-	.footer-bottom {
-		display: flex;
-		padding: 10px 30px;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-	}
-	.footer-left,
-	.footer-right {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-	.editor-footer #pm-word-count {
-		font-size: 12px;
-		color: var(--text-light);
-		font-weight: 600;
+		padding-top: 15px;
 	}
 </style>

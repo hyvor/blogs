@@ -1,116 +1,87 @@
 <script lang="ts">
-	import Links from './Links/Links.svelte';
-	import { TabNav, TabNavItem } from '@hyvor/design/components';
 	import IconGear from '@hyvor/icons/IconGear';
-	import IconLink45deg from '@hyvor/icons/IconLink45deg';
-	import IconMagic from '@hyvor/icons/IconMagic';
 	import IconSearchHeart from '@hyvor/icons/IconSearchHeart';
+	import IconLink45deg from '@hyvor/icons/IconLink45deg';
+	import IconRobot from '@hyvor/icons/IconRobot';
 
+	import Popover from './Popover.svelte';
 	import Settings from './Settings/Settings.svelte';
-	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
 	import Seo from './Seo/Seo.svelte';
-	import { variantSeoStore } from '../../seoStore';
 	import Ai from './Ai/Ai.svelte';
-	import { tab } from './sidebar';
+	import Links from './Links/Links.svelte';
 	import LinksSidebarTag from './Links/LinksSidebarTag.svelte';
+	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
+	import { variantSeoStore } from '../../seoStore';
+
+	type Section = 'settings' | 'seo' | 'links' | 'ai';
+
+	let openSection: Section | null = $state(null);
 </script>
 
-<div class="post-sidebar">
-	<div class="body hds-box">
-		<div class="nav">
-			<TabNav>
-				<TabNavItem
-					name="settings"
-					active={$tab === 'settings'}
-					onclick={() => ($tab = 'settings')}
-				>
-					{#snippet start()}
-						<IconGear />
-					{/snippet}
-					Settings
-				</TabNavItem>
+<div class="post-sections">
+	<Popover
+		bind:show={() => openSection === 'settings', (v) => (openSection = v ? 'settings' : null)}
+	>
+		{#snippet trigger()}
+			<IconGear size={13} class="icon" />
+			Settings
+		{/snippet}
 
-				<TabNavItem name="seo" active={$tab === 'seo'} onclick={() => ($tab = 'seo')}>
-					{#snippet start()}
-						<IconSearchHeart />
-					{/snippet}
-					SEO
-					{#snippet end()}
-						<SeoScoreTag score={$variantSeoStore.average} percentage />
-					{/snippet}
-				</TabNavItem>
+		<Settings />
+	</Popover>
 
-				<TabNavItem name="links" active={$tab === 'links'} onclick={() => ($tab = 'links')}>
-					{#snippet start()}
-						<IconLink45deg />
-					{/snippet}
-					Links
-					{#snippet end()}
-						<LinksSidebarTag />
-					{/snippet}
-				</TabNavItem>
+	<span class="divider"></span>
 
-				<TabNavItem name="ai" active={$tab === 'ai'} onclick={() => ($tab = 'ai')}>
-					{#snippet start()}
-						<IconMagic />
-					{/snippet}
-					AI Agent
-				</TabNavItem>
-			</TabNav>
-		</div>
+	<Popover bind:show={() => openSection === 'seo', (v) => (openSection = v ? 'seo' : null)}>
+		{#snippet trigger()}
+			<IconSearchHeart size={13} class="icon" />
+			SEO
+			<SeoScoreTag score={$variantSeoStore.average} percentage />
+		{/snippet}
 
-		<div class="content" class:content-flush={$tab === 'ai'}>
-			{#if $tab === 'settings'}
-				<Settings />
-			{:else if $tab === 'seo'}
-				<Seo />
-			{:else if $tab === 'links'}
-				<Links />
-			{:else if $tab === 'ai'}
-				<Ai />
-			{/if}
-		</div>
-	</div>
+		<Seo />
+	</Popover>
+
+	<span class="divider"></span>
+
+	<Popover bind:show={() => openSection === 'links', (v) => (openSection = v ? 'links' : null)}>
+		{#snippet trigger()}
+			<IconLink45deg size={13} class="icon" />
+			Links
+			<LinksSidebarTag />
+		{/snippet}
+
+		<Links />
+	</Popover>
+
+	<span class="divider"></span>
+
+	<Popover flush bind:show={() => openSection === 'ai', (v) => (openSection = v ? 'ai' : null)}>
+		{#snippet trigger()}
+			<IconRobot size={13} class="icon" />
+			Agent
+		{/snippet}
+
+		<Ai />
+	</Popover>
 </div>
 
 <style>
-	.post-sidebar {
+	.post-sections {
 		height: 100%;
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		gap: 4px;
 	}
 
-	.body {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		min-height: 0;
+	.divider {
+		width: 1px;
+		height: 16px;
+		background-color: var(--border);
 	}
 
-	.nav {
-		padding: 15px 25px 0px;
-		overflow: auto;
-		font-size: 14px;
-	}
-
-	.content {
-		padding: 15px 25px;
-		flex: 1;
-		min-height: 0;
-		overflow: auto;
-	}
-
-	.content-flush {
-		padding: 0;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-	}
-
-	@media (max-width: 992px) {
-		.post-sidebar {
-			width: 100%;
-			margin-top: 20px;
-		}
+	:global(.icon) {
+		opacity: 0.5;
+		flex-shrink: 0;
 	}
 </style>

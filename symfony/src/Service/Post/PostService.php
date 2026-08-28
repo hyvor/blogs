@@ -13,8 +13,10 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Event\PostAuthorsChangedEvent;
 use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\Event\PostDeletedEvent;
+use App\Service\Post\Event\PostTagsChangedEvent;
 use App\Service\Post\Event\PostUpdatedEvent;
 use App\Service\Post\Event\PostVariantCreatedEvent;
 use App\Service\Post\Event\PostVariantDeletedEvent;
@@ -47,6 +49,7 @@ class PostService
         private PostSlugService $postSlugService,
         private PostContentService $postContentService,
         private PostSuggestionContentChecker $postSuggestionContentChecker,
+        private FullTextSearchService $fullTextSearchService
     ) {}
 
     public function getPostById(int $id): ?Post
@@ -270,7 +273,7 @@ class PostService
         }
 
         if ($search !== null && $search !== '') {
-            $searchQuery = $this->getSearchQuery($search);
+            $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
             $where .= " AND pv.calculated_ts @@ to_tsquery(pv.ts_language, :search)";
             $params['search'] = $searchQuery;
             $select = "p.id, ts_rank(pv.calculated_ts, to_tsquery(pv.ts_language, :search)) AS rank";
@@ -309,13 +312,6 @@ class PostService
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
 
         return ['posts' => $posts, 'total' => $total];
-    }
-
-    private function getSearchQuery(string $search): string
-    {
-        $replaced = (string)preg_replace('/[*:|&!()]/', '', $search);
-        $replaced = (string)preg_replace('/\s+/', ':* | ', $replaced);
-        return $replaced . ':*';
     }
 
     /**
@@ -494,7 +490,6 @@ class PostService
         $variant->setPost($post);
         $variant->setLanguage($language);
         $variant->setStatus($status);
-        $variant->setContent($content);
         $variant->setContentUnsaved($contentUnsaved);
         $variant->setSlug($slug);
         $variant->setTitle($title);
@@ -504,16 +499,22 @@ class PostService
         $variant->setLinkAnalysis($linkAnalysis);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
+        $variant->setTsLanguage($this->fullTextSearchService->findClosestRegconfigByLanguageCode($language->getCode()));
 
         if ($status === PostVariantStatus::PUBLISHED || $status === PostVariantStatus::SCHEDULED) {
+            assert(
+                $variant->getSlug() !== null,
+                'Slug must be given when creating a published or scheduled post variant',
+            );
+
+            assert($content !== null, 'Content must be given when creating a published or scheduled post variant');
+
             if ($post->getPublishedAt() === null) {
                 $post->setPublishedAt($this->now());
             }
-            $variant->setContentUpdatedAt($post->getPublishedAt());
-        }
 
-        if ($status === PostVariantStatus::PUBLISHED) {
-            assert($variant->getSlug() !== null, 'Slug must be set for published post variant');
+            $variant->setContentUpdatedAt($post->getPublishedAt());
+            $variant->setContent($content);
         }
 
         $this->em->persist($variant);
@@ -547,32 +548,8 @@ class PostService
     ): PostVariant {
         $oldUrl = $this->permalinkService->getPostVariantPermalink($variant);
 
-        // `content` is the immutable published snapshot - it's never edited directly, only ever
-        // copied from `content_unsaved` here (the "Update" flow, re-publishing a live post) or
-        // in publishPostVariant() (draft -> published). This guard applies once it's public.
-        if (
-            array_key_exists('content', $data) &&
-            $variant->getStatus() !== PostVariantStatus::DRAFT &&
-            $this->postSuggestionContentChecker->hasPendingSuggestions($data['content'])
-        ) {
-            throw new UnprocessableEntityHttpException(
-                'This post has unresolved suggestions or comments. Resolve them before publishing.',
-            );
-        }
-
         if (array_key_exists('slug', $data)) {
             $variant->setSlug($data['slug']);
-        }
-
-        if (array_key_exists('content', $data)) {
-            $variant->setContent($data['content']);
-        }
-
-        if (array_key_exists('content_unsaved', $data)) {
-            $variant->setContentUnsaved($data['content_unsaved']);
-            if ($data['content_unsaved'] === null) {
-                $this->resetCollabStream($variant);
-            }
         }
 
         if (array_key_exists('title', $data)) {
@@ -598,18 +575,16 @@ class PostService
             $variant->setLinkAnalysis($data['link_analysis']);
         }
 
-        $isDraft = $variant->getStatus() === PostVariantStatus::DRAFT;
+        if (array_key_exists('seo_score', $data)) {
+            $variant->setSeoScore($data['seo_score']);
+        }
 
         if (array_key_exists('content_updated_at', $data)) {
-            $contentUpdatedAt = $data['content_updated_at'];
-            $this->assertContentUpdatedAtValid($variant, $contentUpdatedAt);
-            $variant->setContentUpdatedAt($contentUpdatedAt);
-        } elseif (array_key_exists('content', $data) && !$isDraft) {
-            $variant->setContentUpdatedAt($this->now());
+            $variant->setContentUpdatedAt($data['content_updated_at']);
         }
 
         $variant->setUpdatedAt($this->now());
-        $this->em->flush();
+        $eventsToDispatch = [new PostVariantUpdatedEvent($variant)];
 
         if ($redirectOnSlugChange) {
             $newUrl = $this->permalinkService->getPostVariantPermalink($variant);
@@ -621,14 +596,34 @@ class PostService
             if ($oldPath !== $newPath) {
                 $existingRedirect = $this->redirectService->getRedirectByPath($blog, $oldPath);
                 if ($existingRedirect !== null) {
-                    $this->redirectService->updateRedirect($existingRedirect, null, $newPath, null);
+                    $this->redirectService->updateRedirect(
+                        $existingRedirect,
+                        [
+                            'to' => $newPath,
+                            'type' => RedirectType::PERMANENT,
+                        ],
+                        flush: false,
+                        events: $eventsToDispatch
+                    );
                 } else {
-                    $this->redirectService->createRedirect($blog, false, $oldPath, $newPath, RedirectType::PERMANENT);
+                    $this->redirectService->createRedirect(
+                        $blog,
+                        false,
+                        $oldPath,
+                        $newPath,
+                        RedirectType::PERMANENT,
+                        flush: false,
+                        events: $eventsToDispatch
+                    );
                 }
             }
         }
 
-        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+        $this->em->flush();
+
+        foreach ($eventsToDispatch as $event) {
+            $this->ed->dispatch($event);
+        }
 
         return $variant;
     }
@@ -710,15 +705,11 @@ class PostService
         }
     }
 
-    public function deletePostVariant(Post $post, Language $language): void
+    public function deletePostVariant(PostVariant $variant): void
     {
-        $variant = $this->getPostVariantByPostAndLanguage($post, $language);
-        if ($variant !== null) {
-            $this->em->remove($variant);
-            $this->em->flush();
-
-            $this->ed->dispatch(new PostVariantDeletedEvent($variant));
-        }
+        $this->em->remove($variant);
+        $this->em->flush();
+        $this->ed->dispatch(new PostVariantDeletedEvent($variant));
     }
 
     /**
@@ -726,6 +717,8 @@ class PostService
      */
     public function setPostTags(Post $post, array $tags, bool $flush = true): void
     {
+        $oldTags = $post->getTags()->toArray();
+
         $post->getTags()->clear();
         foreach ($tags as $tag) {
             $post->getTags()->add($tag);
@@ -735,6 +728,11 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostTagsChangedEvent(
+                $post,
+                $oldTags,
+                $post->getTags()->toArray()
+            ));
         }
     }
 
@@ -743,6 +741,8 @@ class PostService
      */
     public function setPostAuthors(Post $post, array $users, bool $flush = true): void
     {
+        $oldAuthors = $post->getAuthors()->toArray();
+
         $post->getAuthors()->clear();
         foreach ($users as $user) {
             $post->getAuthors()->add($user);
@@ -752,6 +752,11 @@ class PostService
 
         if ($flush) {
             $this->em->flush();
+            $this->ed->dispatch(new PostAuthorsChangedEvent(
+                $post,
+                $oldAuthors,
+                $post->getAuthors()->toArray()
+            ));
         }
     }
 
@@ -771,9 +776,10 @@ class PostService
                 $clone,
                 $variant->getLanguage(),
                 flush: false,
-                content: $variant->getContent(),
+                status: PostVariantStatus::DRAFT,
+                // content null, because this is draft
                 contentUnsaved: $variant->getContentUnsaved(),
-                title: $variant->getTitle(),
+                title: '[Copy] ' . ($variant->getTitle() ?? ''),
                 description: $variant->getDescription(),
                 seoPrimaryKeyword: $variant->getSeoPrimaryKeyword(),
                 seoSecondaryKeywords: $variant->getSeoSecondaryKeywords() ?? [],

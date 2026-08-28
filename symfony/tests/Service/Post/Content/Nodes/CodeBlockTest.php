@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\CodeBlock\CodeBlock;
 use App\Service\Post\Content\PostContentOptions;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -15,6 +16,11 @@ class CodeBlockTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -96,7 +102,7 @@ class CodeBlockTest extends KernelTestCase
         $annotations = 'h=1';
 
         $html = "<pre class=\"language-php\" data-language=\"php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -107,6 +113,7 @@ class CodeBlockTest extends KernelTestCase
                         'language' => 'php',
                         'name' => $name,
                         'annotations' => $annotations,
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => $content],
@@ -119,7 +126,7 @@ class CodeBlockTest extends KernelTestCase
     public function test_removes_code_wrapper_from_pre(): void
     {
         $html = "<pre>\n<code>matchLabels:\n    app: nginx\n</code>\n</pre>";
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -130,6 +137,7 @@ class CodeBlockTest extends KernelTestCase
                         'language' => '',
                         'name' => '',
                         'annotations' => '',
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => "matchLabels:\n    app: nginx"],

@@ -15,6 +15,7 @@
 	let isLoading = $state(true);
 	let users: User[] = $state([]);
 	let search = $state('');
+	let input: HTMLInputElement;
 
 	let err = $state(false);
 
@@ -49,7 +50,14 @@
 		}, 500);
 	}
 
-	onMount(loadUsers);
+	onMount(() => {
+		loadUsers();
+		input?.focus();
+
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
+	});
 </script>
 
 <TextInput
@@ -57,6 +65,7 @@
 	placeholder="Search author..."
 	autofocus
 	bind:value={search}
+	bind:input
 	on:input={handleSearchInput}
 />
 
@@ -66,22 +75,23 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if users.length === 0}
-		<IconMessage empty padding={35} message="No users found" iconSize={40} />
+		<IconMessage empty padding={35} message="No authors found" iconSize={30} />
 	{:else}
 		{#each users as user (user.id)}
+			{@const username = user.variants[0]?.name || ''}
 			<ActionListItem
 				on:click={() => handleSelect(user)}
 				selected={$postListFiltersStore.author?.id === user.id}
 			>
 				{#snippet start()}
-					<Avatar src={user.picture_url} alt={user.variants[0]?.name || 'Unnamed'} size={20} />
+					<Avatar src={user.picture_url} alt={username} {username} size={20} />
 				{/snippet}
 				<span class="text">
 					{user.variants[0]?.name || 'Unnamed'}
 				</span>
 				{#snippet end()}
 					<Text light small>
-						{user.posts_count} post{user.posts_count === 1 ? '' : 's'}
+						{user.posts_count.toLocaleString()} post{user.posts_count === 1 ? '' : 's'}
 					</Text>
 				{/snippet}
 			</ActionListItem>

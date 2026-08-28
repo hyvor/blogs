@@ -10,7 +10,7 @@
         "ext-iconv": "*",
         "ext-zip": "*",
         "hyvor/doctrine-filterq": "^0.0.1",
-        "hyvor/internal": "4.1.0-beta.4",
+        "hyvor/internal": "^4.1.4",
         "hyvor/php-svg-icons": "^1.1",
         "hyvor/phrosemirror": "^1.0.6",
         "hyvor/scssphp": "^2.0.4",
@@ -86,10 +86,8 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
-        "post-install-cmd": [
-        ],
-        "post-update-cmd": [
-        ]
+        "post-install-cmd": [],
+        "post-update-cmd": []
     },
     "conflict": {
         "symfony/symfony": "*"

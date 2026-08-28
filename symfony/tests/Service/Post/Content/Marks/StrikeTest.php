@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Marks;
 use App\Entity\Blog;
 use App\Service\Post\Content\Marks\Strike;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class StrikeTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -40,7 +46,7 @@ class StrikeTest extends KernelTestCase
 
     public function test_s_tag_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<s>strikethrough</s>', $this->blog(), false);
+        $document = $this->postSchema()->documentFromHtml('<s>strikethrough</s>', false);
 
         $this->assertSame([
             'type' => 'doc',
@@ -58,7 +64,7 @@ class StrikeTest extends KernelTestCase
 
     public function test_strike_tag_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<strike>strikethrough</strike>', $this->blog(), false);
+        $document = $this->postSchema()->documentFromHtml('<strike>strikethrough</strike>', false);
 
         $this->assertSame([
             'type' => 'doc',
@@ -76,7 +82,7 @@ class StrikeTest extends KernelTestCase
 
     public function test_del_tag_to_json(): void
     {
-        $document = $this->service()->getDocumentFromHtml('<del>strikethrough</del>', $this->blog(), false);
+        $document = $this->postSchema()->documentFromHtml('<del>strikethrough</del>', false);
 
         $this->assertSame([
             'type' => 'doc',

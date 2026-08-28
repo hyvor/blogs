@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Api\Public\Input;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class UnfoldIframeInput
+{
+    #[Assert\NotBlank]
+    #[Assert\Url]
+    public string $url;
+}

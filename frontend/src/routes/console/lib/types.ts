@@ -1,3 +1,6 @@
+import type { CollabClientID, CollabStepJSON } from "@hyvor/richtext";
+import type { CollabStep } from "../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab";
+
 export interface License {
 	users: number;
 	storage: number;
@@ -182,8 +185,7 @@ export type Post = {
 	code_head: string | null;
 	code_foot: string | null;
 
-	variant_statuses: PostVariantStatusItem[];
-
+	variants: PostVariantSummary[];
 	tags: Tag[];
 	authors: User[];
 };
@@ -198,7 +200,6 @@ export type PostVariant = {
 	url: string;
 
 	content: string | null;
-	content_unsaved: string | null;
 	title: string | null;
 	description: string | null;
 	content_updated_at: number | null;
@@ -207,20 +208,27 @@ export type PostVariant = {
 	seo_secondary_keywords: string[];
 
 	link_analysis: Record<string, number>;
-
-	// Collaborative editing state (see PostVariantCollabService) - only populated on GET /post/{id}
-	document_version: number;
-	document_steps: Record<string, unknown>[];
-	document_client_ids: string[];
+	seo_score: number;
 };
 
-export type PostVariantStatusItem = {
+export interface Document {
+	checkpoint_version: number;
+	checkpoint_content: string;
+	pending_steps: {
+		version: number;
+		steps: CollabStep[];
+	};
+	mercure_token: string;
+}
+
+export type PostVariantSummary = {
 	id: number;
 	language_id: number;
 	status: PostStatus;
 	updated_at: number | null;
 	content_updated_at: number | null;
 	words: number | null;
+	seo_score: number | null;
 };
 
 // minimal shape used for listing posts/pages (GET /posts, GET /pages)
@@ -237,12 +245,17 @@ export type PostListItem = {
 	url: string | null;
 	title: string | null;
 	link_analysis: Record<string, number>;
-	seo_score: number;
 
-	variant_statuses: PostVariantStatusItem[];
+	variants: PostVariantSummary[];
 
-	tags: string[];
-	authors: string[];
+	tags: {
+		name: string,
+		is_private: boolean,
+	}[]
+	authors: {
+		name: string,
+		picture_url: string | null,
+	}[],
 };
 
 export type UserStatus = 'invited' | 'active' | 'blocked';

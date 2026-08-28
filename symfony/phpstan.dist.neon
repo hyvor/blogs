@@ -11,3 +11,5 @@ parameters:
             missingCheckedExceptionInThrows: true
         checkedExceptionRegexes:
             - '#^App\\#'
+includes:
+    - ./vendor/hyvor/internal/extension.neon

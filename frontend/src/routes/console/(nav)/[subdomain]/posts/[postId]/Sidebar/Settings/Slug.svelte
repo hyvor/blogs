@@ -17,8 +17,6 @@
 	let error: null | string = $state(null);
 	let warning: null | string = $state(null);
 
-	let isSaving = false;
-
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
 	function setErrorWarning(val: string) {
@@ -46,8 +44,8 @@
 		const slug = (e.target.value as string).trim();
 
 		if (!slug) return;
-
 		if (slug === $postVariantOriginalStore.slug) return;
+		if (error) return;
 
 		loaderState = 'loading';
 

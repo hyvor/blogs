@@ -56,4 +56,40 @@ class UpdatePostTest extends ApiTestCase
         $this->assertSame('<script>foot</script>', $post->getCodeFoot());
         $this->assertSame($timestamp, $post->getPublishedAt()?->getTimestamp());
     }
+
+    public function test_nullifies_post_fields(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'post-update-null']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne([
+            'blog' => $blog,
+            'canonical_url' => 'https://example.com',
+            'featured_image_url' => 'https://example.com/img.jpg',
+            'code_head' => '<script>head</script>',
+            'code_foot' => '<script>foot</script>',
+        ]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId(), [
+            'canonical_url' => null,
+            'featured_image_url' => null,
+            'code_head' => null,
+            'code_foot' => null,
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+
+        $this->assertNull($json['canonical_url']);
+        $this->assertNull($json['featured_image_url']);
+        $this->assertNull($json['code_head']);
+        $this->assertNull($json['code_foot']);
+
+        $post = refresh($post);
+        $this->assertNull($post->getCanonicalUrl());
+        $this->assertNull($post->getFeaturedImageUrl());
+        $this->assertNull($post->getCodeHead());
+        $this->assertNull($post->getCodeFoot());
+    }
 }

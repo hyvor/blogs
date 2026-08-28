@@ -72,7 +72,7 @@ class PreviewProcessor
                 cache: false
             );
         } catch (TemplateRenderingException $e) {
-            DeliveryResponse::forError($e->getMessage());
+            return DeliveryResponse::forError($e->getMessage());
         } catch (TemplateRenderingPageNotFoundException) {
             return null;
         }

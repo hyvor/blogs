@@ -506,11 +506,7 @@ class UserService
     }
 
     /**
-     * A random dark HSL color for this user's collab cursor caret/selection - see
-     * User::$cursor_color and PostVariantCollabService::publishCursor(). Fixed, readable
-     * saturation/lightness so any hue stays legible as white-on-color text / a caret on the
-     * editor's light background. Public so App\Command\BackfillCursorColorsCommand can reuse it
-     * for users created before the cursor_color column existed.
+     * A random dark HSL color for this user's cursor.
      */
     public function generateCursorColor(): string
     {

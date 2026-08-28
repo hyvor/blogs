@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { IconMessage, Loader } from '@hyvor/design/components';
-	import type { Post, PostVariant } from '../../../../../lib/types';
 	import {
+		documentStore,
 		postOriginalStore,
 		postStore,
 		postVariantOriginalStore,
 		postVariantStore
 	} from '../../postStore';
 	import PostBody from '../Body/PostBody.svelte';
-	import PostSidebar from '../Sidebar/PostSidebar.svelte';
 	import TopBar from '../TopBar/TopBar.svelte';
-	import { isTempStore } from '../../../../../lib/temp';
-	import type { Unsubscriber } from 'svelte/store';
 	import { onMount } from 'svelte';
-	import { getPost } from '../../postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
+	import { getDocumentForPost } from '../documentActions';
+	import { seoService } from '../../seoStore';
+	import { linksService } from '../Sidebar/Links/linksStore';
 
 	interface Props {
 		postId: number;
@@ -26,19 +25,7 @@
 
 	let isLoading = $state(true);
 	let error = $state('');
-
 	let postView: HTMLDivElement;
-	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
-
-	function completePostLoading(post: Post, variant: PostVariant | null) {
-		postOriginalStore.set({ ...post });
-		postStore.set({ ...post });
-
-		postVariantOriginalStore.set(variant ? { ...variant } : null);
-		postVariantStore.set(variant ? { ...variant } : null);
-
-		isLoading = false;
-	}
 
 	onMount(() => {
 		// const preloadedPost = getPreloadedPost(postId);
@@ -49,9 +36,20 @@
 
 		isLoading = true;
 
-		getPost(Number(postId), langCode)
-			.then(({ post, variant }) => {
-				completePostLoading(post, variant);
+		getDocumentForPost(Number(postId), langCode)
+			.then(({ post, variant, document }) => {
+				postOriginalStore.set({ ...post });
+				postStore.set({ ...post });
+
+				postVariantOriginalStore.set({ ...variant });
+				postVariantStore.set({ ...variant });
+
+				documentStore.set(document);
+
+				seoService.start(document.checkpoint_content);
+				linksService.start(document.checkpoint_content);
+
+				isLoading = false;
 			})
 			.catch((e) => {
 				error = e.message || 'Failed to load post';
@@ -59,16 +57,16 @@
 			});
 
 		return () => {
-			linkAnalysisLoaderUnsubscriber?.();
-			linkAnalysisLoaderUnsubscriber = null;
+			seoService.stop();
+			linksService.stop();
 		};
 	});
 </script>
 
-<div id="post-view" class:is-temp={$isTempStore} bind:this={postView}>
+<div id="post-view" bind:this={postView}>
 	{#if isLoading}
 		<div class="full-loader">
-			<Loader block size="large" />
+			<Loader block size="large" colorTrack="transparent">Loading post...</Loader>
 		</div>
 	{:else if error}
 		<IconMessage
@@ -81,35 +79,25 @@
 		/>
 	{:else}
 		<div class="container">
-			<div class="top-bar-wrap">
-				<TopBar />
-			</div>
-
-			<div class="post-inner">
-				<div class="post-left">
-					<PostBody />
-				</div>
-
-				<div class="post-right">
-					<PostSidebar />
-				</div>
-			</div>
+			<TopBar />
+			<PostBody />
 		</div>
 	{/if}
 </div>
 
-<style lang="scss">
+<style>
 	#post-view {
-		background-color: var(--background);
+		background-color: white;
 		height: 100vh;
+		width: 100%;
 		overflow: auto;
+		--text-faded: #343434;
 	}
 
 	.container {
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
-		padding: 0 15px;
 	}
 
 	.full-loader {
@@ -119,57 +107,5 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1;
-	}
-
-	.top-bar-wrap {
-		margin-bottom: 15px;
-		position: sticky;
-		top: 0;
-		z-index: 100;
-		height: 40px;
-	}
-
-	.post-inner {
-		flex: 1;
-		margin: auto;
-		display: flex;
-		align-items: flex-start;
-		min-height: calc(100vh - 70px);
-		width: 100%;
-	}
-
-	.post-left {
-		position: relative;
-		flex: 1;
-	}
-
-	.post-right {
-		margin-left: 15px;
-		height: calc(100vh - 70px);
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		position: sticky;
-		top: 55px;
-	}
-
-	@media (max-width: 992px) {
-		.top-bar-wrap {
-			width: 100%;
-			padding: 0 15px;
-		}
-		.post-inner {
-			width: 100%;
-			padding: 0 15px;
-			flex-direction: column;
-			margin-top: 15px;
-		}
-		.post-right {
-			margin-left: 0;
-			width: 100%;
-		}
-		.post-left {
-			width: 100%;
-		}
 	}
 </style>

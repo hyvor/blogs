@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
-	import { postStore, postVariantStore } from '../../postStore';
-	import PostStatusTag from '../../PostStatusTag.svelte';
+	import { postStore } from '../../postStore';
 	import PreviewButton from '../Sidebar/Top/PreviewButton.svelte';
 	import UnpublishButton from '../Sidebar/Top/UnpublishButton.svelte';
 	import PublishButton from '../Sidebar/Top/PublishButton.svelte';
 	import UpdateButton from '../Sidebar/Top/PublishedUpdate/UpdateButton.svelte';
+	import PostSidebar from '../Sidebar/PostSidebar.svelte';
 	import PostLanguage from './PostLanguage.svelte';
 	import CaretLeft from './CaretLeft.svelte';
 	import { goto } from '$app/navigation';
@@ -20,7 +20,7 @@
 	}
 </script>
 
-<div class="post-top-bar hds-box">
+<div class="post-top-bar">
 	<button class="back-button" onclick={handleBack}>
 		<CaretLeft />
 		Back
@@ -28,6 +28,10 @@
 
 	<div class="left">
 		<PostLanguage />
+	</div>
+
+	<div class="sections">
+		<PostSidebar />
 	</div>
 
 	<div class="right">
@@ -42,9 +46,12 @@
 	.post-top-bar {
 		display: flex;
 		align-items: center;
+		border-bottom: 1px solid var(--border);
+		background-color: var(--box-background);
+		position: sticky;
+		top: 0;
+		z-index: 100;
 		height: 42px;
-		border-top-left-radius: 0;
-		border-top-right-radius: 0;
 	}
 
 	.back-button {
@@ -69,10 +76,26 @@
 	}
 
 	.left,
-	.right {
+	.right,
+	.sections {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+
+	.left {
+		flex: 1;
+	}
+
+	.sections {
+		flex: 3;
+		height: 100%;
+		justify-content: center;
+	}
+
+	.right {
+		flex: 1;
+		justify-content: flex-end;
 	}
 
 	.right {

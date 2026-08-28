@@ -42,10 +42,18 @@ class PostVariant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = null;
 
+    // last saved (/checkpoint) content
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_unsaved = null;
 
-    #[ORM\Column(options: ['default' => 0])]
+    // version (prosemirror) of that last saved content
+    #[ORM\Column()]
+    private int $content_unsaved_version = 0;
+
+    // version (prosemirror) of the editing document
+    // this is the version that last has steps submitted to it and was accepted
+    // document_version can be > content_unsaved_version if there are steps submitted that have not yet been checkpointed
+    #[ORM\Column()]
     private int $document_version = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -74,8 +82,11 @@ class PostVariant
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $link_analysis = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $seo_score = null;
+
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ts_language = null;
+    private ?string $ts_language = 'simple';
 
     public function getId(): int
     {
@@ -188,6 +199,17 @@ class PostVariant
         return $this;
     }
 
+    public function getContentUnsavedVersion(): int
+    {
+        return $this->content_unsaved_version;
+    }
+
+    public function setContentUnsavedVersion(int $content_unsaved_version): static
+    {
+        $this->content_unsaved_version = $content_unsaved_version;
+        return $this;
+    }
+
     public function getDocumentVersion(): int
     {
         return $this->document_version;
@@ -292,6 +314,17 @@ class PostVariant
     public function setLinkAnalysis(?array $link_analysis): static
     {
         $this->link_analysis = $link_analysis;
+        return $this;
+    }
+
+    public function getSeoScore(): ?int
+    {
+        return $this->seo_score;
+    }
+
+    public function setSeoScore(?int $seo_score): static
+    {
+        $this->seo_score = $seo_score;
         return $this;
     }
 

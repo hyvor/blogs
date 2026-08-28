@@ -10,47 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PostSearchService
 {
-    private const DEFAULT_REGCONFIG = 'simple';
-
-    /**
-     * Only the PostgreSQL default regconfigs are supported.
-     * language code => regconfig
-     * @var array<string, string>
-     */
-    private const REGCONFIG_MAP = [
-        'en' => 'english',
-        'ar' => 'arabic',
-        'hy' => 'armenian',
-        'eu' => 'basque',
-        'ca' => 'catalan',
-        'da' => 'danish',
-        'nl' => 'dutch',
-        'fi' => 'finnish',
-        'fr' => 'french',
-        'de' => 'german',
-        'el' => 'greek',
-        'hi' => 'hindi',
-        'hu' => 'hungarian',
-        'id' => 'indonesian',
-        'ga' => 'irish',
-        'it' => 'italian',
-        'lt' => 'lithuanian',
-        'ne' => 'nepali',
-        'no' => 'norwegian',
-        'pt' => 'portuguese',
-        'ro' => 'romanian',
-        'ru' => 'russian',
-        'sr' => 'serbian',
-        'es' => 'spanish',
-        'sv' => 'swedish',
-        'ta' => 'tamil',
-        'tr' => 'turkish',
-        'yi' => 'yiddish',
-    ];
 
     public function __construct(
         private Connection $connection,
         private EntityManagerInterface $em,
+        private FullTextSearchService $fullTextSearchService
     ) {}
 
     /**
@@ -65,7 +29,7 @@ class PostSearchService
         bool $isPage = false,
         ?bool $isPublished = true,
     ): array {
-        $searchQuery = $this->getSearchQuery($search);
+        $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
         $isPageSql = $isPage ? 'true' : 'false';
 
         $where = "pv.calculated_ts @@ to_tsquery(pv.ts_language, :query)
@@ -117,34 +81,5 @@ class PostSearchService
         usort($posts, fn($a, $b) => ($idOrder[$a->getId()] ?? 0) <=> ($idOrder[$b->getId()] ?? 0));
 
         return ['posts' => $posts, 'total' => $total];
-    }
-
-    /**
-     * Converts a search string (usually from a user) into a query that can be used with tsquery
-     */
-    public function getSearchQuery(string $search): string
-    {
-        // replace special characters
-        $replaced = (string)preg_replace('/[*:|&!()]/', '', $search);
-        $replaced = (string)preg_replace('/\s+/', ':* | ', $replaced);
-        return $replaced . ':*';
-    }
-
-    public function findClosestRegconfigByLanguageCode(?string $languageCode): string
-    {
-        if (!$languageCode) {
-            return self::DEFAULT_REGCONFIG;
-        }
-
-        $languageCode = strtolower($languageCode);
-
-        foreach (self::REGCONFIG_MAP as $key => $value) {
-            $firstTwoChars = substr($languageCode, 0, 2);
-            if ($firstTwoChars === $key) {
-                return $value;
-            }
-        }
-
-        return self::DEFAULT_REGCONFIG;
     }
 }

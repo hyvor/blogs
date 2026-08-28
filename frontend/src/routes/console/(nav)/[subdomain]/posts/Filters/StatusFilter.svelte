@@ -32,7 +32,7 @@
 		showDropdown = false;
 	}
 
-	function getPostsCount(status: string) {
+	function getPostsCount(status: string): number {
 		return ($blogCountsStore.posts as any)[status] || 0;
 	}
 </script>
@@ -87,7 +87,7 @@
 					{/snippet}
 					{item}
 					{#snippet end()}
-						<span>{getPostsCount(item)}</span>
+						<span>{getPostsCount(item).toLocaleString()}</span>
 					{/snippet}
 				</ActionListItem>
 			{/each}
