@@ -16,12 +16,12 @@
 	} from '@hyvor/design/components';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { createEventDispatcher, tick } from 'svelte';
-	import { getPosts } from '../../../../../../postActions';
-	import type { Language, PostListItem } from '../../../../../../../../../lib/types';
+	import { getPosts } from '../../../../postActions';
+	import type { Language, PostListItem } from '../../../../../../../lib/types';
 	import {
 		languagesStore,
 		primaryLanguageStore
-	} from '../../../../../../../../../lib/stores/languagesStore';
+	} from '../../../../../../../lib/stores/languagesStore';
 
 	let input = $state('');
 	let currentLanguage = $state($primaryLanguageStore);

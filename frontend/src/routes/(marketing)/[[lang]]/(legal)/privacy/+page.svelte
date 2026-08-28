@@ -19,10 +19,14 @@
 	</p>
 
 	<Callout type="info">
-		<div slot="title">Non-binding Summary</div>
-		<span slot="icon" style="display:inline-flex;align-items:center;margin-top:8px;">
-			<IconCardChecklist size={30} />
-		</span>
+		{#snippet title()}
+			Non-binding Summary
+		{/snippet}
+		{#snippet icon()}
+			<span style="display:inline-flex;align-items:center;margin-top:8px;">
+				<IconCardChecklist size={30} />
+			</span>
+		{/snippet}
 		<ul>
 			<li>You own the content you publish.</li>
 			<li>We do not use your content to make revenue.</li>

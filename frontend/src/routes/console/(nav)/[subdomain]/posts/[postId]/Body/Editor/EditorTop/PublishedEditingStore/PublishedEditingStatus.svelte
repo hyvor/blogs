@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { confirm } from '@hyvor/design/components';
 	import {
+		documentStore,
+		postEditor,
 		postEditingStatusStore,
 		postVariantStore,
 		updatePostEditingStatusValue
@@ -8,12 +10,11 @@
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
 	import ConfirmModal from './ConfirmModal.svelte';
-	import { updatePostVariant } from '../../../../../postActions';
 
 	async function handleClick() {
 		const wordsCount = getDiffWordsCount(
 			getTextFromContent($postVariantStore.content),
-			getTextFromContent($postVariantStore.content_unsaved)
+			getTextFromContent($documentStore.checkpoint_content)
 		);
 
 		if (
@@ -26,7 +27,7 @@
 			})
 		) {
 			updatePostEditingStatusValue('isEditingPublished', false);
-			updatePostVariant({ content_unsaved: null }, true);
+			$postEditor.setContent($postVariantStore.content!);
 		}
 	}
 </script>

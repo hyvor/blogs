@@ -16,9 +16,7 @@
 
 	function handleTranslate() {
 		const primaryLanguageId = getPrimaryLanguage().id;
-		const variantId = $postStore.variant_statuses.find(
-			(v) => v.language_id === primaryLanguageId
-		)?.id;
+		const variantId = $postStore.variants.find((v) => v.language_id === primaryLanguageId)?.id;
 
 		if (!variantId) {
 			toast.error('Primary language variant not found');
@@ -31,8 +29,7 @@
 			.then((res) => {
 				const updates = {
 					title: res.title,
-					description: res.description,
-					content_unsaved: res.content
+					description: res.description
 				} as Partial<PostVariant>;
 
 				if ($postVariantStore?.slug === null) {

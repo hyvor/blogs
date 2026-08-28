@@ -1,10 +1,10 @@
 import { get } from 'svelte/store';
 import {
+	documentStore,
 	postOriginalStore,
 	postVariantOriginalStore,
 	postStore,
 	postVariantStore,
-	updatePostEditingStatusValue
 } from '../../../../postStore';
 import type { Post, PostVariant, Tag, User } from '../../../../../../../lib/types';
 import { hasIdArrayChanged } from '../../Settings/settingsHelpers';
@@ -57,11 +57,13 @@ export function getPublishedChanges() {
 		changes.authors = post.authors;
 	}
 
+	const document = get(documentStore);
+
 	if (
-		postVariant.content_unsaved !== null &&
-		postVariant.content_unsaved !== postVariantOriginal.content
+		document.checkpoint_content !== null &&
+		document.checkpoint_content !== postVariantOriginal.content
 	) {
-		changes.variant.content = postVariant.content_unsaved;
+		changes.variant.content = document.checkpoint_content;
 	}
 
 	return changes;
@@ -79,5 +81,6 @@ export function hasPublishedChanges() {
 
 export function finishUpdating() {
 	// no longer editing - content_unsaved stays populated, it's the live editable document
-	updatePostEditingStatusValue('isEditingPublished', false);
+	// TODO:
+	// updatePostEditingStatusValue('isEditingPublished', false);
 }

@@ -579,7 +579,7 @@
 	> WordPress plugin.
 </p>
 <DocsImage src="/images/docs/writing/seo.png" alt="SEO Analysis" width={400} />
-<Callout info="info">
+<Callout type="info">
 	<p><b>Important!</b></p>
 
 	<p>

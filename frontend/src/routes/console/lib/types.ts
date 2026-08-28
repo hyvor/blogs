@@ -13,7 +13,7 @@ export interface License {
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
 
-export type BlogType = 'default' | 'dev' | 'temp';
+export type BlogType = 'default' | 'dev';
 
 export interface BlogList {
 	id: number;

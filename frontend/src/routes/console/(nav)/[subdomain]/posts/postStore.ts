@@ -14,15 +14,10 @@ export const postStore = writable<Post>();
 export const postSidebarStore = writable<PostSidebar>('settings');
 export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
-export const postEditingPublished = writable<boolean>(false); // whether currently editing a published post
+export const postEditingPublished = writable<boolean>(false);
 export const postEditor = writable<Editor>();
 export const postTitle = writable<{ focus: () => void; focusAtEnd: () => void }>();
-// whether the active editor has local steps not yet checkpointed to content_unsaved -
-// set by Editor.svelte's onvaluechange, cleared by SaveStatus.svelte after a successful
-// checkpoint. Content itself is no longer mirrored into postVariantStore on every keystroke
-// (see PostVariantCollabService on the backend) - only this dirty flag is kept live.
 export const postContentDirtyStore = writable<boolean>(false);
-// 'editing' | 'suggesting' - see @hyvor/richtext's EditorConfig.suggestions / SuggestionModeToggle.svelte
 export const postSuggestionModeStore = writable<'editing' | 'suggesting'>('editing');
 
 // derived
@@ -36,24 +31,11 @@ export const postVariantLanguageStore = derived(
 
 export const documentStore = writable<Document>();
 
-export interface PostEditingStatus {}
-
-export const postEditingStatusStore = writable<PostEditingStatus>();
-
-// export function initPostEditingState(postView: HTMLDivElement, langId: number) {
-// 	postEditingStatusStore.set({
-// 		languageId: langId,
-// 		sidebar: 'settings',
-// 		isEditingPublished: false,
-// 		editorView: null,
-// 		postView,
-// 		isSaving: false,
-// 		editorVersion: 0
-// 	});
-// }
-
-export function updatePostEditingStatusValue() {
-	throw new Error('Function not implemented.');
+export function updateDocumentStore(values: Partial<Document>) {
+	documentStore.update((doc) => ({
+		...doc,
+		...values
+	}));
 }
 
 export function updatePostStore(values: Partial<Post>, original = false) {

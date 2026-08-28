@@ -14,7 +14,6 @@
 	import { changeTheme, loadThemes } from '../themeActions';
 	import type { Theme } from '../../../../lib/types';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-	import IconExclamation from '@hyvor/icons/IconExclamation';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import { setThemeFiles } from '../themeStore';
@@ -83,12 +82,14 @@
 	{#if isLoading}
 		<Loader block padding={150} />
 	{:else}
-		<Callout type="warning" style="text-align:initial;margin-bottom:20px;font-size:14px">
-			{#snippet icon()}
-				<IconExclamationCircle size={16} />
-			{/snippet}
-			Changing the theme will reset any changes you made to the current theme.
-		</Callout>
+		<div style="text-align:initial;margin-bottom:20px;font-size:14px">
+			<Callout type="warning">
+				{#snippet icon()}
+					<IconExclamationCircle size={16} />
+				{/snippet}
+				Changing the theme will reset any changes you made to the current theme.
+			</Callout>
+		</div>
 
 		<ActionList>
 			{#each themes as theme (theme.id)}
