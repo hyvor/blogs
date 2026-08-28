@@ -1,11 +1,7 @@
 <script lang="ts">
 	import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
-	import {
-		postEditingStatusStore,
-		postVariantStore,
-		updatePostVariantStore
-	} from '../../../postStore';
+	import { postEditor, postVariantStore, updatePostVariantStore } from '../../../postStore';
 	import { Tooltip, toast } from '@hyvor/design/components';
 	import IconPencilFill from '@hyvor/icons/IconPencilFill';
 	import { IconButton } from '@hyvor/design/components';
@@ -126,7 +122,7 @@
 			<IconButton
 				size={22}
 				color="input"
-				on:click={() => focusLinkInEditor(link, $postEditingStatusStore.editorView)}
+				on:click={() => focusLinkInEditor(link, $postEditor.getView())}
 			>
 				<IconPencilFill size={12} />
 			</IconButton>

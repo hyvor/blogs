@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { FormEventHandler } from 'svelte/elements';
 	import {
-		postEditingStatusStore,
 		postEditor,
 		postVariantOriginalStore,
 		postVariantStore,

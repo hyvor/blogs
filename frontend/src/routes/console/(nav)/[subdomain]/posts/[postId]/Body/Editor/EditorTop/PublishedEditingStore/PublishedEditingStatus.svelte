@@ -2,10 +2,9 @@
 	import { confirm } from '@hyvor/design/components';
 	import {
 		documentStore,
+		postEditingPublished,
 		postEditor,
-		postEditingStatusStore,
-		postVariantStore,
-		updatePostEditingStatusValue
+		postVariantStore
 	} from '../../../../../postStore';
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
@@ -26,13 +25,13 @@
 				confirmText: 'Yes, discard changes'
 			})
 		) {
-			updatePostEditingStatusValue('isEditingPublished', false);
 			$postEditor.setContent($postVariantStore.content!);
+			postEditingPublished.set(false);
 		}
 	}
 </script>
 
-{#if $postEditingStatusStore.isEditingPublished}
+{#if $postEditingPublished}
 	<span>
 		Editing published. <button onclick={handleClick}>Discard</button>
 	</span>
