@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AllFeaturesAccordion } from '@hyvor/design/marketing';
 	import IconArrowsAngleContract from '@hyvor/icons/IconArrowsAngleContract';
 	import IconBraces from '@hyvor/icons/IconBraces';
 	import IconCode from '@hyvor/icons/IconCode';
@@ -18,366 +19,146 @@
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import IconSignpost2 from '@hyvor/icons/IconSignpost2';
 	import IconTag from '@hyvor/icons/IconTag';
-	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+	import { getMarketingI18n } from '../../[[lang]]/marketingLang';
 
-	import Feature from './Feature.svelte';
+	const I18n = getMarketingI18n();
 
-	type FeatureColor = 'green' | 'blue' | 'orange' | 'red';
+	const t = (key: string) => I18n.t(`homepage.allFeatures.categories.${key}` as never);
 
-	interface FeatureItem {
-		icon: any;
-		title: string;
-		description: string;
-	}
-
-	interface Category {
-		label: string;
-		icon: any;
-		color: FeatureColor;
-		features: FeatureItem[];
-	}
-
-	const categories: Category[] = [
+	const categories = [
 		{
-			label: 'Post Editor',
+			label: t('postEditor.label'),
 			icon: IconPencil,
-			color: 'green',
+			color: 'var(--green)',
 			features: [
 				{
 					icon: IconPencil,
-					title: 'All the basics',
-					description: 'Bold, italic, headings, lists, quotes, links, and more.'
+					title: t('postEditor.basics.title'),
+					description: t('postEditor.basics.description')
 				},
 				{
 					icon: IconImage,
-					title: 'Images',
-					description:
-						'Upload, paste, drag and drop, Unsplash, Excalidraw, and more ways to add images.'
+					title: t('postEditor.images.title'),
+					description: t('postEditor.images.description')
 				},
 				{
 					icon: IconCode,
-					title: 'Embeds',
-					description:
-						'Easily embed from Youtube, X, Facebook, Instagram, and 1000+ other platforms.'
+					title: t('postEditor.embeds.title'),
+					description: t('postEditor.embeds.description')
 				},
 				{
 					icon: IconRegex,
-					title: 'Syntax Highlighting',
-					description: 'Add code blocks with syntax highlighting for 100+ languages.'
+					title: t('postEditor.syntaxHighlighting.title'),
+					description: t('postEditor.syntaxHighlighting.description')
 				},
 				{
 					icon: IconMarkdown,
-					title: 'Markdown-friendly',
-					description: 'Markdown shortcuts for all the formatting you need.'
+					title: t('postEditor.markdown.title'),
+					description: t('postEditor.markdown.description')
 				},
 				{
 					icon: IconHourglass,
-					title: 'Drafts & Scheduling',
-					description: 'Save drafts and schedule posts to be published in the future.'
+					title: t('postEditor.drafts.title'),
+					description: t('postEditor.drafts.description')
 				}
 			]
 		},
 		{
-			label: 'Your Blog',
+			label: t('yourBlog.label'),
 			icon: IconSignpost2,
-			color: 'blue',
+			color: 'var(--blue)',
 			features: [
 				{
 					icon: IconTag,
-					title: 'Tags',
-					description: 'Organize your posts with tags. Tag index pages are generated automatically.'
+					title: t('yourBlog.tags.title'),
+					description: t('yourBlog.tags.description')
 				},
 				{
 					icon: IconPeople,
-					title: 'Authors',
-					description:
-						'Add one or more authors to your blog posts. Author index pages are generated automatically.'
+					title: t('yourBlog.authors.title'),
+					description: t('yourBlog.authors.description')
 				},
 				{
 					icon: IconSignpost2,
-					title: 'Navigation',
-					description:
-						'Add navigation links to your blog header and footer without writing any code.'
+					title: t('yourBlog.navigation.title'),
+					description: t('yourBlog.navigation.description')
 				},
 				{
 					icon: IconSignTurnSlightRight,
-					title: 'Redirects',
-					description: 'Set up redirects for your old blog posts to keep your SEO juice.'
+					title: t('yourBlog.redirects.title'),
+					description: t('yourBlog.redirects.description')
 				},
 				{
 					icon: IconRss,
-					title: 'Atom (RSS) Feed',
-					description: 'Atom feeds are generated automatically. No extra work needed.'
+					title: t('yourBlog.feed.title'),
+					description: t('yourBlog.feed.description')
 				},
 				{
 					icon: IconDiagram3,
-					title: 'Sitemap',
-					description: "Same for the sitemap! It's generated automatically."
+					title: t('yourBlog.sitemap.title'),
+					description: t('yourBlog.sitemap.description')
 				},
 				{
 					icon: IconBraces,
-					title: 'Custom Code',
-					description:
-						'Add custom code to the whole blog or a specific page to integrate with third-party services.'
+					title: t('yourBlog.customCode.title'),
+					description: t('yourBlog.customCode.description')
 				}
 			]
 		},
 		{
-			label: 'Optimizations',
+			label: t('optimizations.label'),
 			icon: IconLightning,
-			color: 'orange',
+			color: 'var(--orange)',
 			features: [
 				{
 					icon: IconSearchHeart,
-					title: 'SEO',
-					description: 'Meta tags, Open Graph tags, Canonical URLs, and more SEO optimizations.'
+					title: t('optimizations.seo.title'),
+					description: t('optimizations.seo.description')
 				},
 				{
 					icon: IconLightning,
-					title: 'Speed',
-					description:
-						'All official themes are optimized for speed. We use caching extensively to make your blog blazing fast.'
+					title: t('optimizations.speed.title'),
+					description: t('optimizations.speed.description')
 				},
 				{
 					icon: IconArrowsAngleContract,
-					title: 'Image Optimization',
-					description: 'Automatic webp conversion and responsive images for all your images.'
+					title: t('optimizations.imageOptimization.title'),
+					description: t('optimizations.imageOptimization.description')
 				}
 			]
 		},
 		{
-			label: 'Developers',
+			label: t('developers.label'),
 			icon: IconDatabase,
-			color: 'red',
+			color: 'var(--red)',
 			features: [
 				{
 					icon: IconDatabase,
-					title: 'Data API',
-					description:
-						'A REST API to access your blog data, allowing you to use Hyvor Blogs as a headless CMS.'
+					title: t('developers.dataApi.title'),
+					description: t('developers.dataApi.description')
 				},
 				{
 					icon: IconController,
-					title: 'Console API',
-					description: 'Everything you can do from the Console, you can do with the Console API.'
+					title: t('developers.consoleApi.title'),
+					description: t('developers.consoleApi.description')
 				},
 				{
 					icon: IconSend,
-					title: 'Delivery API',
-					description: 'An API to learn how to "serve" your blog. Used for subdirectory hosting.'
+					title: t('developers.deliveryApi.title'),
+					description: t('developers.deliveryApi.description')
 				},
 				{
 					icon: IconSend,
-					title: 'Webhooks',
-					description: 'Get notified when an event happens in your blog.'
+					title: t('developers.webhooks.title'),
+					description: t('developers.webhooks.description')
 				}
 			]
 		}
 	];
-
-	const colorMap: Record<FeatureColor, string> = {
-		green: 'var(--green)',
-		blue: 'var(--blue)',
-		orange: 'var(--orange)',
-		red: 'var(--red)'
-	};
-
-	let openIndex = $state(0);
-
-	function toggle(i: number) {
-		openIndex = openIndex === i ? -1 : i;
-	}
 </script>
 
-<section class="all-features hds-container">
-	<div class="section-header">
-		<h2>And There's More...</h2>
-		<p>Everything you need to take your blog from idea to impact.</p>
-	</div>
-
-	<div class="accordion">
-		{#each categories as cat, i}
-			{@const CatIcon = cat.icon}
-			<div class="accordion-item" class:open={openIndex === i}>
-				<h3 class="accordion-heading">
-					<button
-						class="accordion-trigger"
-						id="accordion-trigger-{i}"
-						onclick={() => toggle(i)}
-						aria-expanded={openIndex === i}
-						aria-controls="accordion-panel-{i}"
-						style="--cat-color: {colorMap[cat.color]}"
-					>
-						<span class="cat-icon" aria-hidden="true">
-							<CatIcon size={18} />
-						</span>
-						<span class="cat-label">{cat.label}</span>
-						<span class="cat-count">{cat.features.length} features</span>
-						<span class="chevron" class:rotated={openIndex === i} aria-hidden="true">
-							<IconCaretDown size={16} />
-						</span>
-					</button>
-				</h3>
-
-				<div
-					class="accordion-body"
-					class:open={openIndex === i}
-					role="region"
-					id="accordion-panel-{i}"
-					aria-labelledby="accordion-trigger-{i}"
-				>
-					<div class="accordion-body-inner">
-						<div class="accordion-content">
-							<ul class="features-grid">
-								{#each cat.features as feat}
-									<Feature
-										icon={feat.icon}
-										title={feat.title}
-										description={feat.description}
-										color={cat.color}
-									/>
-								{/each}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		{/each}
-	</div>
-</section>
-
-<style>
-	.all-features {
-		padding: 80px 0;
-	}
-
-	.section-header {
-		text-align: center;
-		margin-bottom: 48px;
-	}
-
-	.section-header h2 {
-		font-size: 32px;
-		font-weight: 700;
-		margin: 0 0 6px;
-		font-family: var(--font-serif);
-	}
-
-	.section-header p {
-		font-size: 1rem;
-		color: var(--text-light);
-		margin: 0;
-	}
-
-	.accordion {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.accordion-item {
-		border-radius: 16px;
-		transition: background 0.2s ease;
-	}
-
-	.accordion-item.open {
-		background: var(--accent-light-mid);
-	}
-
-	.accordion-heading {
-		margin: 0;
-		font-size: inherit;
-		font-weight: inherit;
-	}
-
-	.accordion-trigger {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		gap: 14px;
-		padding: 18px 20px;
-		background: none;
-		border: none;
-		border-radius: inherit;
-		cursor: pointer;
-		text-align: left;
-		transition: background 0.15s;
-		color: var(--text);
-	}
-
-	.accordion-item:not(.open) .accordion-trigger:hover {
-		background: var(--hover);
-	}
-
-	.cat-icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 34px;
-		height: 34px;
-		border-radius: 10px;
-		color: var(--cat-color);
-		background: color-mix(in srgb, var(--cat-color) 16%, transparent);
-		flex-shrink: 0;
-	}
-
-	.cat-label {
-		font-size: 16px;
-		font-weight: 600;
-		flex: 1;
-	}
-
-	.cat-count {
-		font-size: 13px;
-		color: var(--text-light);
-	}
-
-	.chevron {
-		display: flex;
-		align-items: center;
-		color: var(--text-light);
-		transition: transform 0.2s;
-	}
-
-	.chevron.rotated {
-		transform: rotate(180deg);
-	}
-
-	/* CSS grid row trick: content stays in DOM for SEO, height animates via grid */
-	.accordion-body {
-		display: grid;
-		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.22s ease;
-	}
-
-	.accordion-body.open {
-		grid-template-rows: 1fr;
-	}
-
-	.accordion-body-inner {
-		overflow: hidden;
-	}
-
-	.accordion-content {
-		padding: 8px 20px 28px;
-	}
-
-	.features-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 28px 20px;
-		margin: 0;
-		padding: 0;
-	}
-
-	/* Override Feature.svelte width since we're using grid now */
-	.features-grid :global(.feature) {
-		width: auto;
-	}
-
-	@media (max-width: 768px) {
-		.features-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>
+<AllFeaturesAccordion
+	title={I18n.t('homepage.allFeatures.title')}
+	description={I18n.t('homepage.allFeatures.description')}
+	{categories}
+/>

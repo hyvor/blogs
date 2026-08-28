@@ -63,7 +63,9 @@ export const suggestionSource: SuggestionSource = {
 	},
 	resolve(id, decision) {
 		typeCache.delete(id);
-		resolvePostSuggestion(id, decision).catch((e) => console.error('Failed to resolve suggestion', e));
+		resolvePostSuggestion(id, decision).catch((e) =>
+			console.error('Failed to resolve suggestion', e)
+		);
 	}
 };
 

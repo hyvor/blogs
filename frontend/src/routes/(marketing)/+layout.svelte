@@ -97,10 +97,7 @@
 </script>
 
 <svelte:head>
-	<meta property="og:title" content={MARKETING_PAGE_META.title} />
-	<meta property="og:description" content={MARKETING_PAGE_META.description} />
 	<meta property="og:image" content={MARKETING_PAGE_META.ogImage} />
-
 	<meta property="og:url" content={MARKETING_PAGE_META.urlBasePath + pathname} />
 	<link rel="canonical" href={MARKETING_PAGE_META.urlBasePath + pathname} />
 
@@ -120,12 +117,22 @@
 <style>
 	/* the design system's .hds-container(-max) side padding (15px) reads too
 	   tight on phones — widen it here, once, for every marketing page rather
-	   than patching each section individually */
+	   than patching each section individually. The Header/Footer components
+	   use their own scoped Container (a plain ".container" class inside
+	   <header>/<footer>, same 15px padding) rather than .hds-container, so
+	   it needs its own selector here too — !important because that class is
+	   compiled with a Svelte scoping class we can't otherwise out-specify */
 	@media (max-width: 600px) {
 		:global(.hds-container),
 		:global(.hds-container-max) {
 			padding-left: 20px;
 			padding-right: 20px;
+		}
+
+		:global(header .container),
+		:global(footer .container) {
+			padding-left: 20px !important;
+			padding-right: 20px !important;
 		}
 	}
 </style>

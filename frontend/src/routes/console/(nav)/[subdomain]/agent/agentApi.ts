@@ -5,7 +5,6 @@ import type { PostVariant } from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
-
 export type AgentEvent =
 	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }
@@ -28,7 +27,7 @@ export type AgentEvent =
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
-	| { type: 'tool'; name: string; }
+	| { type: 'tool'; name: string }
 	| { type: 'text'; content: string }
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
@@ -119,7 +118,7 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 			break;
 
 		case 'tool_call':
-			blocks.push({ type: 'tool', name: event.tool, });
+			blocks.push({ type: 'tool', name: event.tool });
 			break;
 
 		case 'post_variant_read':

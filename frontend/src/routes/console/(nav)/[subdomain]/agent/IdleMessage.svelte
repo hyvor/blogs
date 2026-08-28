@@ -1,14 +1,14 @@
 <script>
-	import IconRobot from "@hyvor/icons/IconRobot";
-	import IconFileText from "@hyvor/icons/IconFileText";
-	import IconChatDots from "@hyvor/icons/IconChatDots";
-	import IconPencilSquare from "@hyvor/icons/IconPencilSquare";
-	import IconShieldCheck from "@hyvor/icons/IconShieldCheck";
+	import IconRobot from '@hyvor/icons/IconRobot';
+	import IconFileText from '@hyvor/icons/IconFileText';
+	import IconChatDots from '@hyvor/icons/IconChatDots';
+	import IconPencilSquare from '@hyvor/icons/IconPencilSquare';
+	import IconShieldCheck from '@hyvor/icons/IconShieldCheck';
 
 	const cans = [
-		{ icon: IconFileText, text: "Can search & read your blog posts" },
-		{ icon: IconChatDots, text: "Can answer questions about your posts" },
-		{ icon: IconPencilSquare, text: "Can suggest edits to your posts" }
+		{ icon: IconFileText, text: 'Can search & read your blog posts' },
+		{ icon: IconChatDots, text: 'Can answer questions about your posts' },
+		{ icon: IconPencilSquare, text: 'Can suggest edits to your posts' }
 	];
 </script>
 
@@ -17,9 +17,7 @@
 		<IconRobot size={32} />
 	</div>
 
-	<div class="title">
-        How can I help you today?
-    </div>
+	<div class="title">How can I help you today?</div>
 
 	<div class="cans">
 		{#each cans as can}
@@ -78,7 +76,7 @@
 		gap: 5px;
 		width: 400px;
 		max-width: 100%;
-        margin-top: 10px;
+		margin-top: 10px;
 	}
 
 	.can-item {

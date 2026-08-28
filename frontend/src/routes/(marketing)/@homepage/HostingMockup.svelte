@@ -1,24 +1,30 @@
 <script lang="ts">
-	import logoCfWorkers from './Hosting/cf-workers.svg';
-	import logoDocker from './Hosting/docker.svg';
-	import logoNext from './Hosting/next.svg';
-	import logoLaravel from './Hosting/laravel.svg';
-	import logoSymfony from './Hosting/symfony.svg';
-
 	const subDirMethods = [
 		{
 			name: 'Cloudflare Workers',
-			logo: logoCfWorkers,
+			logo: '/images/homepage/hosting/cf-workers.svg',
 			href: 'https://hyvor.com/blog/cloudflare-workers-blog'
 		},
 		{
 			name: 'Docker',
-			logo: logoDocker,
+			logo: '/images/homepage/hosting/docker.svg',
 			href: 'https://hyvor.com/blog/docker-subdirectory-blog'
 		},
-		{ name: 'Next.js', logo: logoNext, href: 'https://hyvor.com/blog/nextjs-blog' },
-		{ name: 'Laravel', logo: logoLaravel, href: 'https://hyvor.com/blog/laravel-blog' },
-		{ name: 'Symfony', logo: logoSymfony, href: 'https://hyvor.com/blog/symfony-blog' }
+		{
+			name: 'Next.js',
+			logo: '/images/homepage/hosting/next.svg',
+			href: 'https://hyvor.com/blog/nextjs-blog'
+		},
+		{
+			name: 'Laravel',
+			logo: '/images/homepage/hosting/laravel.svg',
+			href: 'https://hyvor.com/blog/laravel-blog'
+		},
+		{
+			name: 'Symfony',
+			logo: '/images/homepage/hosting/symfony.svg',
+			href: 'https://hyvor.com/blog/symfony-blog'
+		}
 	];
 
 	const hostingOptions = [

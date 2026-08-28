@@ -4,7 +4,7 @@ import { getUnfold } from '../../../../../../lib/actions/urlDataActions';
 
 // all nodes enabled
 export const schema = getSchema({
-	suggestions: true,
+	suggestions: true
 });
 
 export const editorConfig: EditorConfig = {

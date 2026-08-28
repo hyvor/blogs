@@ -25,7 +25,8 @@ const config = {
 			/* TODO: REMOVE THIS! */
 			handleMissingId: 'ignore',
 			handleHttpError: 'ignore',
-			entries: ['*', ...Object.keys(APP_REDIRECTS)]
+			// TODO: remove after toggle is added
+			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
 		}
 	},
 
