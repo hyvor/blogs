@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FeatureSplit from './FeatureSplit.svelte';
+	import { FeatureSplit } from '@hyvor/design/marketing';
 	import ThemesLivePreview from './ThemesLivePreview.svelte';
 	import SeoMockup from './SeoMockup.svelte';
 	import HostingMockup from './HostingMockup.svelte';

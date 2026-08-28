@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { InternationalizationProvider } from '@hyvor/design/components';
-	import {
-		buildMarketingUrl,
-		DEFAULT_MARKETING_LANGUAGE,
-		LANGUAGES_CONFIG
-	} from './marketingLang';
+	import { buildMarketingUrl, DEFAULT_MARKETING_LANGUAGE, LANGUAGES_CONFIG } from './marketingLang';
 	import type { PageProps } from './$types';
 	import { page } from '$app/state';
 	import { MARKETING_PAGE_META } from '../marketing';

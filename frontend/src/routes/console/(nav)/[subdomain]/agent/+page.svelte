@@ -13,10 +13,7 @@
 </script>
 
 <div class="agent-page hds-box">
-	<AgentChat
-		postVariantId={null}
-		{applyDocumentChange}
-	/>
+	<AgentChat postVariantId={null} {applyDocumentChange} />
 </div>
 
 <style>

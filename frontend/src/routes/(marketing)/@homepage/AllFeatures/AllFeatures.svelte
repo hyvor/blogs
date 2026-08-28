@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AllFeaturesAccordion } from '@hyvor/design/marketing';
 	import IconArrowsAngleContract from '@hyvor/icons/IconArrowsAngleContract';
 	import IconBraces from '@hyvor/icons/IconBraces';
 	import IconCode from '@hyvor/icons/IconCode';
@@ -18,30 +19,12 @@
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import IconSignpost2 from '@hyvor/icons/IconSignpost2';
 	import IconTag from '@hyvor/icons/IconTag';
-	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 
-	import Feature from './Feature.svelte';
-
-	type FeatureColor = 'green' | 'blue' | 'orange' | 'red';
-
-	interface FeatureItem {
-		icon: any;
-		title: string;
-		description: string;
-	}
-
-	interface Category {
-		label: string;
-		icon: any;
-		color: FeatureColor;
-		features: FeatureItem[];
-	}
-
-	const categories: Category[] = [
+	const categories = [
 		{
 			label: 'Post Editor',
 			icon: IconPencil,
-			color: 'green',
+			color: 'var(--green)',
 			features: [
 				{
 					icon: IconPencil,
@@ -80,7 +63,7 @@
 		{
 			label: 'Your Blog',
 			icon: IconSignpost2,
-			color: 'blue',
+			color: 'var(--blue)',
 			features: [
 				{
 					icon: IconTag,
@@ -125,7 +108,7 @@
 		{
 			label: 'Optimizations',
 			icon: IconLightning,
-			color: 'orange',
+			color: 'var(--orange)',
 			features: [
 				{
 					icon: IconSearchHeart,
@@ -148,7 +131,7 @@
 		{
 			label: 'Developers',
 			icon: IconDatabase,
-			color: 'red',
+			color: 'var(--red)',
 			features: [
 				{
 					icon: IconDatabase,
@@ -174,210 +157,10 @@
 			]
 		}
 	];
-
-	const colorMap: Record<FeatureColor, string> = {
-		green: 'var(--green)',
-		blue: 'var(--blue)',
-		orange: 'var(--orange)',
-		red: 'var(--red)'
-	};
-
-	let openIndex = $state(0);
-
-	function toggle(i: number) {
-		openIndex = openIndex === i ? -1 : i;
-	}
 </script>
 
-<section class="all-features hds-container">
-	<div class="section-header">
-		<h2>And There's More...</h2>
-		<p>Everything you need to take your blog from idea to impact.</p>
-	</div>
-
-	<div class="accordion">
-		{#each categories as cat, i}
-			{@const CatIcon = cat.icon}
-			<div class="accordion-item" class:open={openIndex === i}>
-				<h3 class="accordion-heading">
-					<button
-						class="accordion-trigger"
-						id="accordion-trigger-{i}"
-						onclick={() => toggle(i)}
-						aria-expanded={openIndex === i}
-						aria-controls="accordion-panel-{i}"
-						style="--cat-color: {colorMap[cat.color]}"
-					>
-						<span class="cat-icon" aria-hidden="true">
-							<CatIcon size={18} />
-						</span>
-						<span class="cat-label">{cat.label}</span>
-						<span class="cat-count">{cat.features.length} features</span>
-						<span class="chevron" class:rotated={openIndex === i} aria-hidden="true">
-							<IconCaretDown size={16} />
-						</span>
-					</button>
-				</h3>
-
-				<div
-					class="accordion-body"
-					class:open={openIndex === i}
-					role="region"
-					id="accordion-panel-{i}"
-					aria-labelledby="accordion-trigger-{i}"
-				>
-					<div class="accordion-body-inner">
-						<div class="accordion-content">
-							<ul class="features-grid">
-								{#each cat.features as feat}
-									<Feature
-										icon={feat.icon}
-										title={feat.title}
-										description={feat.description}
-										color={cat.color}
-									/>
-								{/each}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		{/each}
-	</div>
-</section>
-
-<style>
-	.all-features {
-		padding: 80px 0;
-	}
-
-	.section-header {
-		text-align: center;
-		margin-bottom: 48px;
-	}
-
-	.section-header h2 {
-		font-size: 32px;
-		font-weight: 700;
-		margin: 0 0 6px;
-		font-family: var(--font-serif);
-	}
-
-	.section-header p {
-		font-size: 1rem;
-		color: var(--text-light);
-		margin: 0;
-	}
-
-	.accordion {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.accordion-item {
-		border-radius: 16px;
-		transition: background 0.2s ease;
-	}
-
-	.accordion-item.open {
-		background: var(--accent-light-mid);
-	}
-
-	.accordion-heading {
-		margin: 0;
-		font-size: inherit;
-		font-weight: inherit;
-	}
-
-	.accordion-trigger {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		gap: 14px;
-		padding: 18px 20px;
-		background: none;
-		border: none;
-		border-radius: inherit;
-		cursor: pointer;
-		text-align: left;
-		transition: background 0.15s;
-		color: var(--text);
-	}
-
-	.accordion-item:not(.open) .accordion-trigger:hover {
-		background: var(--hover);
-	}
-
-	.cat-icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 34px;
-		height: 34px;
-		border-radius: 10px;
-		color: var(--cat-color);
-		background: color-mix(in srgb, var(--cat-color) 16%, transparent);
-		flex-shrink: 0;
-	}
-
-	.cat-label {
-		font-size: 16px;
-		font-weight: 600;
-		flex: 1;
-	}
-
-	.cat-count {
-		font-size: 13px;
-		color: var(--text-light);
-	}
-
-	.chevron {
-		display: flex;
-		align-items: center;
-		color: var(--text-light);
-		transition: transform 0.2s;
-	}
-
-	.chevron.rotated {
-		transform: rotate(180deg);
-	}
-
-	/* CSS grid row trick: content stays in DOM for SEO, height animates via grid */
-	.accordion-body {
-		display: grid;
-		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.22s ease;
-	}
-
-	.accordion-body.open {
-		grid-template-rows: 1fr;
-	}
-
-	.accordion-body-inner {
-		overflow: hidden;
-	}
-
-	.accordion-content {
-		padding: 8px 20px 28px;
-	}
-
-	.features-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 28px 20px;
-		margin: 0;
-		padding: 0;
-	}
-
-	/* Override Feature.svelte width since we're using grid now */
-	.features-grid :global(.feature) {
-		width: auto;
-	}
-
-	@media (max-width: 768px) {
-		.features-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>
+<AllFeaturesAccordion
+	title="And There's More..."
+	description="Everything you need to take your blog from idea to impact."
+	{categories}
+/>
