@@ -5,12 +5,14 @@ namespace App\Service\Post;
 use App\Entity\Language;
 use App\Entity\PostVariant;
 use Doctrine\ORM\EntityManagerInterface;
+use Random\RandomException;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class PostSlugService
 {
     public function __construct(private EntityManagerInterface $em) {}
 
+    // https://docs.orchardcore.net/projects/O1/en/latest/Documentation/Slugs/#:~:text=%22Please%20do%20not%20use%20any,dashes%20or%20underscores%20instead).%22
     private const SLUG_INVALID_CHARACTERS = [
         ':',
         '/',

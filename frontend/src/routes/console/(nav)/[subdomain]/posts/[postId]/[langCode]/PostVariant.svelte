@@ -9,12 +9,12 @@
 	} from '../../postStore';
 	import PostBody from '../Body/PostBody.svelte';
 	import TopBar from '../TopBar/TopBar.svelte';
-	import type { Unsubscriber } from 'svelte/store';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import { getDocumentForPost } from '../documentActions';
 	import { seoService } from '../../seoStore';
+	import { linksService } from '../Sidebar/Links/linksStore';
 
 	interface Props {
 		postId: number;
@@ -25,9 +25,7 @@
 
 	let isLoading = $state(true);
 	let error = $state('');
-
 	let postView: HTMLDivElement;
-	let linkAnalysisLoaderUnsubscriber: Unsubscriber | null = null;
 
 	onMount(() => {
 		// const preloadedPost = getPreloadedPost(postId);
@@ -49,6 +47,7 @@
 				documentStore.set(document);
 
 				seoService.start(document.checkpoint_content);
+				linksService.start(document.checkpoint_content);
 
 				isLoading = false;
 			})
@@ -58,9 +57,8 @@
 			});
 
 		return () => {
-			linkAnalysisLoaderUnsubscriber?.();
-			linkAnalysisLoaderUnsubscriber = null;
 			seoService.stop();
+			linksService.stop();
 		};
 	});
 </script>

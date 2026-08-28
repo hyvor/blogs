@@ -82,7 +82,7 @@ class PostVariant
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $link_analysis = null;
 
-    #[ORM\Column()]
+    #[ORM\Column(nullable: true)]
     private ?int $seo_score = null;
 
     #[ORM\Column(length: 255, nullable: true)]

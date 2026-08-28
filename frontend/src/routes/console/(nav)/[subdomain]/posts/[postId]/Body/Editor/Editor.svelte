@@ -18,6 +18,7 @@
 	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
 	import { seoService } from '../../../seoStore';
+	import { linksService } from '../../Sidebar/Links/linksStore';
 
 	// unique client ID for this tab
 	const clientId = Math.random().toString(36).slice(2);
@@ -25,6 +26,7 @@
 	function handleChange(v: string) {
 		$postContentDirtyStore = v !== $documentStore.checkpoint_content;
 		seoService.updateContent(v);
+		linksService.updateContent(v);
 	}
 
 	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with

@@ -6,12 +6,9 @@
 		postVariantLanguageStore,
 		postVariantStore
 	} from '../../postStore';
-	import SaveStatus from './Footer/SaveStatus.svelte';
-	import SuggestionModeToggle from './Footer/SuggestionModeToggle.svelte';
 	import Editor from './Editor/Editor.svelte';
-	import AutoTranslate from './Editor/EditorTop/AutoTranslate/AutoTranslate.svelte';
 	import Title from './Title.svelte';
-	import PublishedNotice from './Footer/PublishedNotice.svelte';
+	import EditorFooter from './Footer/EditorFooter.svelte';
 
 	// the editor loads its ProseMirror view asynchronously (onMount awaits a
 	// dynamic import), so it may not be ready yet right after this component mounts
@@ -48,22 +45,7 @@
 	</label>
 
 	<Editor />
-
-	<div class="editor-footer">
-		<PublishedNotice />
-		<div class="footer-bottom">
-			<div class="footer-left">
-				<SuggestionModeToggle />
-				<AutoTranslate />
-			</div>
-
-			<div class="footer-right">
-				<!-- see plugin-wordcount.ts -->
-				<span id="pm-word-count"></span>
-				<SaveStatus />
-			</div>
-		</div>
-	</div>
+	<EditorFooter />
 </div>
 
 <style>
@@ -84,30 +66,5 @@
 		border-radius: 20px 20px 0 0;
 		cursor: text;
 		padding-top: 15px;
-	}
-	.editor-footer {
-		border-top: 1px solid var(--border);
-		position: sticky;
-		bottom: 0;
-		background: var(--box-background);
-		border-radius: 0 0 20px 20px;
-	}
-	.footer-bottom {
-		display: flex;
-		padding: 10px 30px;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-	}
-	.footer-left,
-	.footer-right {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-	.editor-footer #pm-word-count {
-		font-size: 12px;
-		color: var(--text-light);
-		font-weight: 600;
 	}
 </style>

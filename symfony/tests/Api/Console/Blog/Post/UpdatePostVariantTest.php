@@ -201,9 +201,37 @@ class UpdatePostVariantTest extends ApiTestCase
         $this->getEd()->assertDispatched(RedirectChangedEvent::class);
     }
 
+    public function test_fails_when_content_updated_at_is_set_when_published_at_is_null(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-content-updated-at-unpublished']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $language->getId(),
+            'content_updated_at' => (new \DateTimeImmutable())->getTimestamp(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Cannot set content_updated_at for unpublished post');
+    }
+
     public function test_fails_when_content_updated_at_is_smaller_than_published_at(): void
     {
-        //
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-content-updated-at-too-early']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $publishedAt = new \DateTimeImmutable();
+        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $publishedAt]);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::PUBLISHED]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $language->getId(),
+            'content_updated_at' => $publishedAt->modify('-1 hour')->getTimestamp(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Content updated time should be after published time');
     }
 
 //    private function contentWithPendingSuggestion(): string
