@@ -36,6 +36,9 @@ class LicenseChangedListenerTest extends KernelTestCase
         return $this->getService(BillingFake::class);
     }
 
+    /**
+     * @throws \App\Service\Billing\FailedToGetLicenseException
+     */
     public function test_clears_caches_when_branding_changes(): void
     {
         $blog1 = BlogFactory::createOne(['organization_id' => 1]);
@@ -76,6 +79,9 @@ class LicenseChangedListenerTest extends KernelTestCase
         $this->assertEqualsCanonicalizing([$blog1->getId(), $blog2->getId()], $clearedBlogIds);
     }
 
+    /**
+     * @throws \App\Service\Billing\FailedToGetLicenseException
+     */
     public function test_does_not_clear_caches_when_branding_unchanged(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => 1]);

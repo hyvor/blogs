@@ -218,12 +218,18 @@ class CreateUserTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSame(1, $mockClient->getRequestsCount());
 
-        $requestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $body = $hpUserResponse->getRequestOptions()['body'];
+        $this->assertIsString($body);
+        $requestBody = json_decode($body, true);
+        $this->assertIsArray($requestBody);
         $this->assertSame(1250, $requestBody['user_id']);
         $this->assertSame('ignore', $requestBody['on_duplicate']);
 
-        $newsletterIdHeader = $hpUserResponse->getRequestOptions()['normalized_headers']['x-newsletter-id'][0] ?? null;
-        $this->assertSame('X-Newsletter-Id: 4242', $newsletterIdHeader);
+        $normalizedHeaders = $hpUserResponse->getRequestOptions()['normalized_headers'];
+        $this->assertIsArray($normalizedHeaders);
+        $newsletterIdHeaders = $normalizedHeaders['x-newsletter-id'] ?? null;
+        $this->assertIsArray($newsletterIdHeaders);
+        $this->assertSame('X-Newsletter-Id: 4242', $newsletterIdHeaders[0]);
     }
 
     public function test_creates_hyvor_post_user_for_editor_role(): void
@@ -247,7 +253,10 @@ class CreateUserTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSame(1, $mockClient->getRequestsCount());
 
-        $requestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $body = $hpUserResponse->getRequestOptions()['body'];
+        $this->assertIsString($body);
+        $requestBody = json_decode($body, true);
+        $this->assertIsArray($requestBody);
         $this->assertSame(1251, $requestBody['user_id']);
     }
 

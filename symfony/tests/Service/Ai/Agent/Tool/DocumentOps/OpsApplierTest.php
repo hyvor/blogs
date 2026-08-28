@@ -17,6 +17,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class OpsApplierTest extends KernelTestCase
 {
 
+    private function requireNode(?Node $node): Node
+    {
+        $this->assertNotNull($node);
+        return $node;
+    }
+
     private function basicNode(): Node
     {
         $doc = [
@@ -162,7 +168,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-1' => $doc->content->first()]
+            ['p-1' => $this->requireNode($doc->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -196,7 +202,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-1' => $doc->content->nth(1)->content->first()]
+            ['p-1' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -253,7 +259,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-1' => $doc->content->first()]
+            ['p-1' => $this->requireNode($doc->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -310,7 +316,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-2' => $doc->content->nth(1)->content->first()]
+            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -367,7 +373,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-2' => $doc->content->nth(1)->content->first()]
+            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -419,9 +425,9 @@ class OpsApplierTest extends KernelTestCase
     {
         $doc = $this->listNode();
 
-        $bulletList = $doc->content->nth(1);
-        $firstItemParagraph = $bulletList->content->nth(0)->content->first();
-        $secondItemParagraph = $bulletList->content->nth(1)->content->first();
+        $bulletList = $this->requireNode($doc->content->nth(1));
+        $firstItemParagraph = $this->requireNode($this->requireNode($bulletList->content->nth(0))->content->first());
+        $secondItemParagraph = $this->requireNode($this->requireNode($bulletList->content->nth(1))->content->first());
 
         $ops = [
             new OpInsert('p-2', 'Item one, continued.', false),
@@ -518,7 +524,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-2' => $doc->content->nth(1)->content->first()]
+            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -555,7 +561,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-1' => $doc->content->first()]
+            ['p-1' => $this->requireNode($doc->content->first())]
         );
 
         $opsApplier = new OpsApplier();
@@ -589,7 +595,7 @@ class OpsApplierTest extends KernelTestCase
 
         $fetchedDoc = new FetchedDocument(
             $doc,
-            ['p-1' => $doc->content->first()]
+            ['p-1' => $this->requireNode($doc->content->first())]
         );
 
         $opsApplier = new OpsApplier();

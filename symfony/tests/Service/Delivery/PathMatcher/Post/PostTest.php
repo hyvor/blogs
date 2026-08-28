@@ -32,7 +32,9 @@ class PostTest extends KernelTestCase
     private function createBlogWithLanguageAndRoutes(): array
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        return [$blog, $blog->getLanguages()[0]];
+        $language = $blog->getLanguages()[0];
+        $this->assertNotNull($language);
+        return [$blog, $language];
     }
 
     public function test_matches_a_post(): void

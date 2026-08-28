@@ -91,8 +91,21 @@ class UpdateMediaNameTest extends ApiTestCase
         $transport->processOrFail();
 
         refresh($variant);
-        $contentJson = json_decode($variant->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $contentJson['content'][0]['content'][0]['attrs']['src']);
+        $content = $variant->getContent();
+        $this->assertIsString($content);
+        $contentJson = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $this->assertIsArray($contentJson);
+        $topLevel = $contentJson['content'];
+        $this->assertIsArray($topLevel);
+        $nested = $topLevel[0];
+        $this->assertIsArray($nested);
+        $nestedContent = $nested['content'];
+        $this->assertIsArray($nestedContent);
+        $image = $nestedContent[0];
+        $this->assertIsArray($image);
+        $attrs = $image['attrs'];
+        $this->assertIsArray($attrs);
+        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $attrs['src']);
     }
 
     public function test_updates_to_kebab_case(): void

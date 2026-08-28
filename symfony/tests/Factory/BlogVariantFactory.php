@@ -66,6 +66,7 @@ final class BlogVariantFactory extends PersistentObjectFactory
      * If languages is not set, blog's languages will be used
      *
      * @param iterable<Language>|null $languages
+     * @param array<string, mixed> $attributes
      * @return BlogVariant[]
      */
     public static function createManyForBlogWithAllLanguages(Blog $blog, ?iterable $languages = null, array $attributes = []): array

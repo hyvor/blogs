@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6b96df46ed2366368179c3deff45791",
+    "content-hash": "5570f9a70539c17e94b147331bde10b1",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1835,16 +1835,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.4",
+            "version": "4.1.5-beta.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "c829b0a4ff2c7783f0c9426abc76a89883ce67af"
+                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/c829b0a4ff2c7783f0c9426abc76a89883ce67af",
-                "reference": "c829b0a4ff2c7783f0c9426abc76a89883ce67af",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/6979588b2c5a78d04dc8305edce8a4be2b103635",
+                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635",
                 "shasum": ""
             },
             "require": {
@@ -1891,6 +1891,7 @@
             "autoload": {
                 "psr-4": {
                     "Hyvor\\Internal\\": "src/",
+                    "Hyvor\\Internal\\Types\\": "types",
                     "Hyvor\\Internal\\Bundle\\": "bundle/src"
                 }
             },
@@ -1907,9 +1908,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.4"
+                "source": "https://github.com/hyvor/internal/tree/4.1.5-beta.0"
             },
-            "time": "2026-08-27T12:15:06+00:00"
+            "time": "2026-08-28T21:17:41+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",
@@ -14904,7 +14905,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "hyvor/internal": 10
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

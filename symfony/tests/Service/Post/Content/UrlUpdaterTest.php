@@ -47,6 +47,18 @@ class UrlUpdaterTest extends KernelTestCase
         return (new Blog())->setSubdomain('test');
     }
 
+    /**
+     * @param list<int|string> $path
+     */
+    private function dig(mixed $data, array $path): mixed
+    {
+        foreach ($path as $key) {
+            $this->assertIsArray($data);
+            $data = $data[$key];
+        }
+        return $data;
+    }
+
     public function test_updates_from_old_to_new(): void
     {
         $doc = $this->service()->getDocumentFromJson(self::DOC, $this->blog());
@@ -114,8 +126,8 @@ class UrlUpdaterTest extends KernelTestCase
         $updated = $updater->updateFromOldToNew('https://old.com', 'https://new.com');
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://other.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://other.com/page', $decoded['content'][1]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://other.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://other.com/page', $this->dig($decoded, ['content', 1, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_from_old_to_new_with_media_disabled(): void
@@ -126,9 +138,9 @@ class UrlUpdaterTest extends KernelTestCase
         $updated = $updater->updateFromOldToNew('https://old.com', 'https://new.com', updateMedia: false);
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://old.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://old.com/media/audio.mp3', $decoded['content'][1]['attrs']['src']);
-        $this->assertSame('https://new.com/page', $decoded['content'][2]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://old.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://old.com/media/audio.mp3', $this->dig($decoded, ['content', 1, 'attrs', 'src']));
+        $this->assertSame('https://new.com/page', $this->dig($decoded, ['content', 2, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_from_old_to_new_with_links_disabled(): void
@@ -139,9 +151,9 @@ class UrlUpdaterTest extends KernelTestCase
         $updated = $updater->updateFromOldToNew('https://old.com', 'https://new.com', updateLinks: false);
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://new.com/media/audio.mp3', $decoded['content'][1]['attrs']['src']);
-        $this->assertSame('https://old.com/page', $decoded['content'][2]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://new.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://new.com/media/audio.mp3', $this->dig($decoded, ['content', 1, 'attrs', 'src']));
+        $this->assertSame('https://old.com/page', $this->dig($decoded, ['content', 2, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_from_updater_with_hosting_updater(): void
@@ -172,8 +184,8 @@ class UrlUpdaterTest extends KernelTestCase
         $updated = $updater->updateFromUpdater(new HostingUpdater('https://old.com', 'https://new.com'));
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/uploads/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://new.com/page', $decoded['content'][1]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://new.com/uploads/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://new.com/page', $this->dig($decoded, ['content', 1, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_from_updater_with_media_updater(): void
@@ -199,8 +211,8 @@ class UrlUpdaterTest extends KernelTestCase
         );
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://old.com/media/other.jpg', $decoded['content'][1]['attrs']['src']);
+        $this->assertSame('https://new.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://old.com/media/other.jpg', $this->dig($decoded, ['content', 1, 'attrs', 'src']));
     }
 
     public function test_updates_from_updater_with_media_disabled(): void
@@ -214,9 +226,9 @@ class UrlUpdaterTest extends KernelTestCase
         );
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://old.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://old.com/media/audio.mp3', $decoded['content'][1]['attrs']['src']);
-        $this->assertSame('https://new.com/page', $decoded['content'][2]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://old.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://old.com/media/audio.mp3', $this->dig($decoded, ['content', 1, 'attrs', 'src']));
+        $this->assertSame('https://new.com/page', $this->dig($decoded, ['content', 2, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_from_updater_with_links_disabled(): void
@@ -230,9 +242,9 @@ class UrlUpdaterTest extends KernelTestCase
         );
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/media/image.jpg', $decoded['content'][0]['attrs']['src']);
-        $this->assertSame('https://new.com/media/audio.mp3', $decoded['content'][1]['attrs']['src']);
-        $this->assertSame('https://old.com/page', $decoded['content'][2]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://new.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
+        $this->assertSame('https://new.com/media/audio.mp3', $this->dig($decoded, ['content', 1, 'attrs', 'src']));
+        $this->assertSame('https://old.com/page', $this->dig($decoded, ['content', 2, 'marks', 0, 'attrs', 'href']));
     }
 
     public function test_updates_nested_content(): void
@@ -271,7 +283,7 @@ class UrlUpdaterTest extends KernelTestCase
         $updated = $updater->updateFromOldToNew('https://old.com', 'https://new.com');
 
         $decoded = json_decode($updated->toJson(), true);
-        $this->assertSame('https://new.com/media/image.jpg', $decoded['content'][0]['content'][0]['attrs']['src']);
-        $this->assertSame('https://new.com/page', $decoded['content'][1]['content'][0]['marks'][0]['attrs']['href']);
+        $this->assertSame('https://new.com/media/image.jpg', $this->dig($decoded, ['content', 0, 'content', 0, 'attrs', 'src']));
+        $this->assertSame('https://new.com/page', $this->dig($decoded, ['content', 1, 'content', 0, 'marks', 0, 'attrs', 'href']));
     }
 }

@@ -99,7 +99,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             {
             }
 
-            public function callAgent(PostVariant $postVariant, string $prompt): AgentCallResult
+            public function callAgent(Blog $blog, string $prompt, ?PostVariant $postVariant): AgentCallResult
             {
                 return $this->agentCallResult;
             }
@@ -136,7 +136,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new TextDelta(' world'),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', 42));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', $postVariant));
 
         $this->assertSame(
             ['post_variant', 'text', 'text', 'done'],
@@ -148,7 +148,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertCount(1, $conversations);
         $conversation = $conversations[0];
 
-        $this->assertSame(42, $conversation->getCreatedUserId());
         $this->assertSame('Say hello', $conversation->getTitle());
 
         $messageRepo = $this->getEm()->getRepository(AiMessage::class);
@@ -186,7 +185,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new TextDelta('done'),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Think about it', 42));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Think about it', $postVariant));
 
         // thinking_started is sent to the frontend, even though it's never persisted
         $this->assertSame(
@@ -226,7 +225,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new ToolCallComplete([new ToolCall('call-1', 'document_replace', $arguments)]),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', 42));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', $postVariant));
 
         // the same typed event that gets persisted is now streamed to the frontend too,
         // instead of a generic 'tool_result' array
@@ -267,7 +266,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new ToolCallComplete([new ToolCall('call-1', 'some_unmapped_tool', [])]),
         ]);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Do something', 42));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
 
         // still notifies the frontend via a generic fallback event, just doesn't persist it
         $this->assertSame(
@@ -300,7 +299,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new TextDelta('After.'),
         ]);
 
-        iterator_to_array($service->streamPrompt($blog, 'Read then continue', 42));
+        iterator_to_array($service->streamPrompt($blog, 'Read then continue', $postVariant));
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -333,7 +332,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $service = $this->buildService($postVariant, [new TextDelta('ok')], $documentOpsTool);
 
-        $events = iterator_to_array($service->streamPrompt($blog, 'Change it', 42));
+        $events = iterator_to_array($service->streamPrompt($blog, 'Change it', $postVariant));
 
         $this->assertSame(
             ['post_variant', 'text', 'document_change', 'done'],

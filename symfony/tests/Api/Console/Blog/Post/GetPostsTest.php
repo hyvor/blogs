@@ -102,6 +102,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertTrue($json[0]['is_featured']);
     }
 
@@ -146,6 +147,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -169,6 +171,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -192,6 +195,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post2->getId(), $json[0]['id']);
     }
 
@@ -208,6 +212,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -225,6 +230,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 }

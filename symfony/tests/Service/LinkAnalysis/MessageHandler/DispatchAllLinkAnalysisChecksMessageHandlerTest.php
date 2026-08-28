@@ -29,6 +29,7 @@ class DispatchAllLinkAnalysisChecksMessageHandlerTest extends KernelTestCase
             seoAnalysis: true,
             linkAnalysis: $linkAnalysis,
             blogs: 1,
+            noBranding: false,
         );
     }
 

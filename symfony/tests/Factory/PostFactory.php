@@ -55,11 +55,18 @@ final class PostFactory extends PersistentObjectFactory
         ;
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createOneFor(Blog $blog, array $attributes = []): Post
     {
         return self::new(array_merge(['blog' => $blog], $attributes))->create();
     }
 
+    /**
+     * @param array<string, mixed> $postAttributes
+     * @param array<string, mixed> $variantAttributes
+     */
     public static function createOneForWithVariants(Blog $blog, array $postAttributes = [], array $variantAttributes = []): Post
     {
         $post = self::createOneFor($blog, $postAttributes);
@@ -72,6 +79,10 @@ final class PostFactory extends PersistentObjectFactory
         return $post;
     }
 
+    /**
+     * @param array<string, mixed> $postAttributes
+     * @param array<string, mixed> $variantAttributes
+     */
     public static function createPublishedOneForWithVariants(
         Blog $blog,
         array $postAttributes = [],

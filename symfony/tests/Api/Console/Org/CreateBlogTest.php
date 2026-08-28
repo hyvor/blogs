@@ -225,6 +225,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -249,6 +250,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -273,6 +275,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -320,7 +323,14 @@ class CreateBlogTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertArrayHasKey('warnings', $json);
-        $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $json['warnings']));
+        $warnings = $json['warnings'];
+        $this->assertIsArray($warnings);
+        $warningStrings = [];
+        foreach ($warnings as $warning) {
+            $this->assertIsString($warning);
+            $warningStrings[] = $warning;
+        }
+        $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $warningStrings));
     }
 
 }

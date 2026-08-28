@@ -45,11 +45,18 @@ class SyncBlogUsersToWebsiteMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse(Fixtures::make(Mod::class, ['role' => 'admin']));
@@ -108,11 +115,18 @@ class SyncBlogUsersToWebsiteMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse(Fixtures::make(Mod::class, ['role' => 'mod']));
@@ -150,11 +164,18 @@ class SyncBlogUsersToWebsiteMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse([]);

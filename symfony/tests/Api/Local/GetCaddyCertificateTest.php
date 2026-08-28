@@ -28,9 +28,11 @@ class GetCaddyCertificateTest extends ApiTestCase
             'REMOTE_ADDR' => '127.0.0.1',
         ]);
         $this->assertResponseStatusCodeSame(404);
+        $content = $this->client->getResponse()->getContent();
+        $this->assertNotFalse($content);
         $this->assertStringContainsString(
             'domain not found',
-            $this->client->getResponse()->getContent()
+            $content
         );
     }
 
@@ -48,9 +50,11 @@ class GetCaddyCertificateTest extends ApiTestCase
             'REMOTE_ADDR' => '127.0.0.1',
         ]);
         $this->assertResponseStatusCodeSame(404);
+        $content = $this->client->getResponse()->getContent();
+        $this->assertNotFalse($content);
         $this->assertStringContainsString(
             'certificate not found',
-            $this->client->getResponse()->getContent()
+            $content
         );
     }
 

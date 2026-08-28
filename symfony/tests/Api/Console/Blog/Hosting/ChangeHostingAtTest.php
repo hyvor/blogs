@@ -52,7 +52,6 @@ class ChangeHostingAtTest extends ApiTestCase
 
         $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
 
-        $this->assertNotNull($hostingChange);
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getFromAt());
         $this->assertSame('https://hosting-update-self.hyvorblogs.io', $hostingChange->getFromUrl());
         $this->assertSame(BlogHostingAt::SELF, $hostingChange->getToAt());
@@ -92,7 +91,6 @@ class ChangeHostingAtTest extends ApiTestCase
         $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
 
         $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
-        $this->assertNotNull($hostingChange);
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
         $this->assertSame(BlogHostingAt::SELF, $hostingChange->getFromAt());
         $this->assertSame('https://old-self-hosted.com', $hostingChange->getFromUrl());
@@ -135,7 +133,6 @@ class ChangeHostingAtTest extends ApiTestCase
         $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
 
         $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
-        $this->assertNotNull($hostingChange);
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
         $this->assertSame(BlogHostingAt::DOMAIN, $hostingChange->getFromAt());
         $this->assertSame('active.com', $hostingChange->getFromDomain());
@@ -226,7 +223,6 @@ class ChangeHostingAtTest extends ApiTestCase
         $this->assertInstanceOf(HostingChangeMessage::class, $messages[0]);
 
         $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
-        $this->assertNotNull($hostingChange);
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
         $this->assertSame('active.com', $hostingChange->getFromDomain());
         $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());

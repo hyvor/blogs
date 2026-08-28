@@ -142,6 +142,7 @@ class StylesTest extends KernelTestCase
         $response = $this->pathMatcher()->match($blog, '/styles.css');
 
         $this->assertSame(200, $response->status);
+        $this->assertNotNull($response->content);
         $this->assertStringContainsString("/* Unable to fetch fonts from Bunny: Request failed */", $response->content);
         $this->assertSame(CacheControl::ONE_HOUR, $response->cacheControl);
     }

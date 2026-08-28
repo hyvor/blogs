@@ -6,6 +6,7 @@ use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use Hyvor\Phrosemirror\Document\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 
@@ -13,6 +14,15 @@ use PHPUnit\Framework\Attributes\TestWith;
 class MarkdownSerializerTest extends KernelTestCase
 {
 
+    private function requireNode(?Node $node): Node
+    {
+        $this->assertNotNull($node);
+        return $node;
+    }
+
+    /**
+     * @param array<string, mixed> $doc
+     */
     private function convertToMarkdown(array $doc): string
     {
         $doc = $this->getService(PostContentService::class)->getDocumentFromJson($doc);
@@ -76,6 +86,9 @@ class MarkdownSerializerTest extends KernelTestCase
 
     }
 
+    /**
+     * @param array<string, mixed> $markAttrs
+     */
     #[TestWith(['strong', '**test**'])]
     #[TestWith(['em', '_test_'])]
     #[TestWith(['code', '`test`'])]
@@ -144,6 +157,10 @@ class MarkdownSerializerTest extends KernelTestCase
         $this->assertSame('**_test_**', $mardown);
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $content
+     * @param array<string, mixed> $attrs
+     */
     #[TestWith([
         'type' => 'paragraph',
         'content' => [
@@ -619,8 +636,11 @@ class MarkdownSerializerTest extends KernelTestCase
 
         $doc = $this->getService(PostContentService::class)->getDocumentFromJson($docJson);
 
+        $firstParagraph = $doc->content->first();
+        $this->assertNotNull($firstParagraph);
+
         $nodeIdMap = [
-            ['node' => $doc->content->first(), 'id' => 'p-1']
+            'p-1' => $firstParagraph,
         ];
 
         $options = new MarkdownSerializationOptions($nodeIdMap);
@@ -675,14 +695,19 @@ class MarkdownSerializerTest extends KernelTestCase
 
         $doc = $this->getService(PostContentService::class)->getDocumentFromJson($docJson);
 
+        $quote1 = $this->requireNode($doc->content->first());
+        $list1 = $this->requireNode($doc->content->last());
+        $listItem1 = $this->requireNode($list1->content->first());
+        $listItem2 = $this->requireNode($list1->content->last());
+
         $nodeIdMap = [
-            ['node' => $doc->content->first(), 'id' => 'quote-1'],
-            ['node' => $doc->content->first()->content->first(), 'id' => 'p-1'],
-            ['node' => $doc->content->last(), 'id' => 'list-1'],
-            ['node' => $doc->content->last()->content->first(), 'id' => 'list-item-1'],
-            ['node' => $doc->content->last()->content->last(), 'id' => 'list-item-2'],
-            ['node' => $doc->content->last()->content->first()->content->first(), 'id' => 'p-2'],
-            ['node' => $doc->content->last()->content->last()->content->first(), 'id' => 'p-3'],
+            'quote-1' => $quote1,
+            'p-1' => $this->requireNode($quote1->content->first()),
+            'list-1' => $list1,
+            'list-item-1' => $listItem1,
+            'list-item-2' => $listItem2,
+            'p-2' => $this->requireNode($listItem1->content->first()),
+            'p-3' => $this->requireNode($listItem2->content->first()),
         ];
 
         $options = new MarkdownSerializationOptions($nodeIdMap);

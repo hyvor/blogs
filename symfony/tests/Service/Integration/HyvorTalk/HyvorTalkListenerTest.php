@@ -31,6 +31,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $pathMatcher = $this->getService(PathMatcher::class);
         $response = $pathMatcher->match($blog, '/');
 
+        $this->assertIsString($response->content);
         $this->assertStringContainsString(htmlspecialchars('hyvor-talk-comments'), $response->content);
         $this->assertStringContainsString('website-id=&quot;394&quot;', $response->content);
     }

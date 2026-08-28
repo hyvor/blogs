@@ -43,7 +43,6 @@ class UpdatePostTagsTest extends ApiTestCase
         $this->assertCount(2, $post->getTags());
 
         $event = $this->getEd()->getFirstEvent(PostTagsChangedEvent::class);
-        $this->assertNotNull($event);
         $this->assertSame($post->getId(), $event->post->getId());
         $this->assertCount(0, $event->oldTags);
         $this->assertCount(2, $event->newTags);
@@ -71,7 +70,6 @@ class UpdatePostTagsTest extends ApiTestCase
         $this->assertCount(0, $post->getTags());
 
         $event = $this->getEd()->getFirstEvent(PostTagsChangedEvent::class);
-        $this->assertNotNull($event);
         $this->assertSame($post->getId(), $event->post->getId());
         $this->assertCount(1, $event->oldTags);
         $this->assertCount(0, $event->newTags);

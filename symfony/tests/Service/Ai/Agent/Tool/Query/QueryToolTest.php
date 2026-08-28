@@ -19,6 +19,7 @@ use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(QueryTool::class)]
 class QueryToolTest extends KernelTestCase
@@ -32,6 +33,7 @@ class QueryToolTest extends KernelTestCase
             $this->getService(UserService::class),
             $this->getService(PostService::class),
             $this->getService(LanguageService::class),
+            $this->getService(LoggerInterface::class),
         );
     }
 

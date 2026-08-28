@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
-use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
@@ -13,10 +12,8 @@ use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
-use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
-use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,15 +25,6 @@ class IndexTest extends KernelTestCase
     private function pathMatcher(): PathMatcher
     {
         return $this->getService(PathMatcher::class);
-    }
-
-    private function createBlogWithLanguageAndRoutes(): Blog
-    {
-        $blog = BlogFactory::createOne();
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        BlogVariantFactory::createOne(['language' => $lang, 'blog' => $blog, 'name' => 'My Blog']);
-        RouteFactory::createDefaultsFor($blog);
-        return $blog;
     }
 
     public function test_matches_index_page(): void

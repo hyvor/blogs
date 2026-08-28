@@ -50,14 +50,22 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
         $this->assertTrue($hyvorPost->isCreatedByBlogs());
         $this->assertSame(123, $hyvorPost->getNewsletterId());
 
-        $requestBody = json_decode($hpNewsletterResponse->getRequestOptions()['body'], true);
+        $newsletterBody = $hpNewsletterResponse->getRequestOptions()['body'];
+        $this->assertIsString($newsletterBody);
+        $requestBody = json_decode($newsletterBody, true);
+        $this->assertIsArray($requestBody);
         $this->assertSame('My Blog', $requestBody['name']);
         $this->assertSame('hp-connect', $requestBody['subdomain']);
         $this->assertTrue($requestBody['autogenerate_subdomain_on_duplicate']);
-        $this->assertSame('true', $requestBody['metadata']['hyvor_blogs_integration']);
-        $this->assertSame((string) $blog->getId(), $requestBody['metadata']['hyvor_blogs_blog_id']);
+        $metadata = $requestBody['metadata'];
+        $this->assertIsArray($metadata);
+        $this->assertSame('true', $metadata['hyvor_blogs_integration']);
+        $this->assertSame((string) $blog->getId(), $metadata['hyvor_blogs_blog_id']);
 
-        $userRequestBody = json_decode($hpUserResponse->getRequestOptions()['body'], true);
+        $userBody = $hpUserResponse->getRequestOptions()['body'];
+        $this->assertIsString($userBody);
+        $userRequestBody = json_decode($userBody, true);
+        $this->assertIsArray($userRequestBody);
         $this->assertSame(543, $userRequestBody['user_id']);
         $this->assertSame('ignore', $userRequestBody['on_duplicate']);
 

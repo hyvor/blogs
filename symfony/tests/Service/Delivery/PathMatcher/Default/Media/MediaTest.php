@@ -126,6 +126,7 @@ class MediaTest extends KernelTestCase
     {
         if (!file_exists(__DIR__ . '/test-large.jpg')) {
             $content = file_get_contents('https://images.unsplash.com/photo-1782760794099-dc5a50bd55a6?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=max-bohme-cBiQfqb1BQU-unsplash.jpg');
+            $this->assertNotFalse($content);
             $this->assertSame(
                 4894632,
                 strlen($content),
