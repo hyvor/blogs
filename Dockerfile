@@ -84,8 +84,8 @@ RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-
     composer clear-cache && \
     rm /usr/local/bin/composer && \
     useradd --system --home-dir /var/www --create-home --shell /usr/sbin/nologin chef && \
-    mkdir -p /app/backend/var && \
-    chown -R chef:chef /app/backend/var
+    mkdir -p /app/backend/var /app/media /data /config && \
+    chown -R chef:chef /app/backend/var /app/media /data /config
 
 # copy configs
 COPY meta/image/Caddyfile /etc/caddy/Caddyfile
