@@ -5,13 +5,13 @@
 		IconMessage,
 		LoadButton,
 		Loader,
-		Table,
 		TableRow,
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
 	import RedirectsModal from './RedirectsModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconX from '@hyvor/icons/IconX';
 	import { getRedirect } from './redirectActions';
@@ -129,7 +129,7 @@
 	{:else if redirects.length === 0}
 		<IconMessage empty message="No Redirects configured" />
 	{:else}
-		<Table columns="1fr 2fr 1fr 70px">
+		<SettingsTable columns="1fr 2fr 1fr 70px">
 			<TableRow head>
 				<div>From</div>
 				<div>To</div>
@@ -147,7 +147,7 @@
 				loading={isLoadingMore}
 				on:click={() => loadRedirect(true)}
 			/>
-		</Table>
+		</SettingsTable>
 	{/if}
 </div>
 

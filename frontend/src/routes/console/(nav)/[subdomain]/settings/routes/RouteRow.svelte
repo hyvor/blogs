@@ -55,8 +55,13 @@
 </script>
 
 <TableRow>
-	<div>{route.name}</div>
-	<div>{route.match}</div>
+	<div>
+		<div class="name">{route.name}</div>
+		<div class="meta-row">
+			<code class="match">{route.match}</code>
+			<Tag size="x-small" color="default">{route.content_type || 'text/html'}</Tag>
+		</div>
+	</div>
 	<div>{route.template}</div>
 	<div>
 		{#if route.posts_filter === null}
@@ -67,7 +72,6 @@
 			{route.posts_filter}
 		{/if}
 	</div>
-	<div>{route.content_type || 'text/html'}</div>
 
 	<div>
 		<Tooltip text="Edit Route">
@@ -103,5 +107,22 @@
 	.filter-tag {
 		color: var(--text-light);
 		font-size: 14px;
+	}
+
+	.meta-row {
+		margin-top: 4px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+
+	.match {
+		font-family: var(--font-monospace, monospace);
+		font-size: 12px;
+		color: var(--text-light);
+		background: var(--input);
+		padding: 2px 6px;
+		border-radius: 4px;
 	}
 </style>

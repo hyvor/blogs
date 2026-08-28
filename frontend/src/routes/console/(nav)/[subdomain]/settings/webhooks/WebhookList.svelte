@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { IconMessage, Table, TableRow } from '@hyvor/design/components';
+	import { IconMessage, TableRow } from '@hyvor/design/components';
 	import type { Webhook } from '../../../../lib/types';
 	import WebhookRow from './WebhookRow.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 
 	interface Props {
 		webhooks: Webhook[];
@@ -16,7 +17,7 @@
 {#if webhooks.length === 0}
 	<IconMessage empty message="No Webhooks configured" />
 {:else}
-	<Table columns="1fr 1fr 80px 80px">
+	<SettingsTable columns="1fr 1fr 80px 80px">
 		<TableRow head>
 			<div>URL</div>
 			<div>Events</div>
@@ -27,7 +28,7 @@
 		{#each webhooks as webhook (webhook.id)}
 			<WebhookRow {webhook} {onDelete} {onUpdate} />
 		{/each}
-	</Table>
+	</SettingsTable>
 {/if}
 
 <style>
