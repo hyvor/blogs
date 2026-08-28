@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Migration;
 
 use App\Entity\User;
 use App\Service\User\UserService;
@@ -12,6 +12,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * Version 2.0.0 (2026-09-01) introduced a new cursor_color field for users.
+ * Old instances should run this command to backfill the cursor_color.
+ */
 #[AsCommand(
     name: 'users:backfill-cursor-colors',
     description: 'Backfills users.cursor_color for users that don\'t have one yet',

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\MessageHandler;
+namespace App\Service\Import\MessageHandler;
 
 use App\Entity\Import;
-use App\Message\ImportMessage;
 use App\Service\AppConfig;
-use App\Service\Import\ImportException;
 use App\Service\Import\Importer\Importer;
 use App\Service\Import\Importer\ParserException;
+use App\Service\Import\ImportException;
 use App\Service\Import\ImportService;
+use App\Service\Import\Message\ImportMessage;
 use App\Service\Import\Sitemap\PageScraper\PageScraperOptions;
 use App\Service\Import\Sitemap\SitemapParser;
 use App\Service\Language\LanguageService;
