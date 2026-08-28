@@ -4,7 +4,7 @@ import {
 	postOriginalStore,
 	postVariantOriginalStore,
 	postStore,
-	postVariantStore,
+	postVariantStore
 } from '../../../../postStore';
 import type { Post, PostVariant, Tag, User } from '../../../../../../../lib/types';
 import { hasIdArrayChanged } from '../../Settings/settingsHelpers';
