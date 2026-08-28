@@ -8,6 +8,7 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Post\Content\Marks\Link;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -33,6 +34,11 @@ class LinkTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -80,7 +86,7 @@ class LinkTest extends KernelTestCase
 
     public function test_html_to_json(): void
     {
-        $result = $this->service()->getDocumentFromHtml('<a href="https://example.com">Example Text</a>', $this->blog(), false);
+        $result = $this->postSchema()->documentFromHtml('<a href="https://example.com">Example Text</a>', false);
 
         $this->assertSame([
             'type' => 'doc',

@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Post\Content\Nodes\Heading\Heading;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -15,6 +16,11 @@ class HeadingTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -147,7 +153,7 @@ class HeadingTest extends KernelTestCase
         $content = 'A h2';
         $id = 'custom-id';
 
-        $json = $this->service()->getJsonFromHtml("<h2 id=\"$id\">$content</h2>", $this->blog());
+        $json = $this->postSchema()->documentFromHtml("<h2 id=\"$id\">$content</h2>")->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',

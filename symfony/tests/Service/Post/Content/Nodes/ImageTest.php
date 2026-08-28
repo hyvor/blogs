@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\Image\Image;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
@@ -28,6 +29,11 @@ class ImageTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -207,7 +213,7 @@ class ImageTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $html = '<figure><img src="https://example.com/img.jpg" alt="Alt" width="800" height="600"></figure>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -236,7 +242,7 @@ class ImageTest extends KernelTestCase
         $src = 'https://example.com/image.png';
         $html = "<figure><img src=\"$src\"></figure>";
 
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',

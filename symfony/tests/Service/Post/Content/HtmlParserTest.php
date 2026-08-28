@@ -4,16 +4,16 @@ namespace App\Tests\Service\Post\Content;
 
 use App\Entity\Blog;
 use App\Service\Post\Content\HtmlParser;
-use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(HtmlParser::class)]
 class HtmlParserTest extends KernelTestCase
 {
-    private function service(): PostContentService
+    private function postSchema(): PostSchema
     {
-        return $this->getService(PostContentService::class);
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -31,7 +31,7 @@ class HtmlParserTest extends KernelTestCase
             </p>
         HTML;
 
-        $parser = new HtmlParser($html, $this->service());
+        $parser = new HtmlParser($html, $this->postSchema());
         $doc = $parser->parse($this->blog());
 
         $this->assertSame([
@@ -68,7 +68,7 @@ class HtmlParserTest extends KernelTestCase
                 </a> <strong>More text</strong></p>
         HTML;
 
-        $parser = new HtmlParser($html, $this->service());
+        $parser = new HtmlParser($html, $this->postSchema());
         $doc = $parser->parse($this->blog());
 
         $this->assertSame([
@@ -116,7 +116,7 @@ class HtmlParserTest extends KernelTestCase
 </figcaption>
 </figure>';
 
-        $doc = $this->service()->getJsonFromHtml($html, $this->blog());
+        $doc = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',

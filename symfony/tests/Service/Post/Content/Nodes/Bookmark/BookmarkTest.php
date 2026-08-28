@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Post\Content\Nodes\Bookmark\Bookmark;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use App\Service\Theme\ThemeFilesService;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -24,6 +25,11 @@ class BookmarkTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -78,7 +84,7 @@ class BookmarkTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $html = '<a class="bookmark" data-url="https://talk.hyvor.com"></a>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -94,7 +100,7 @@ class BookmarkTest extends KernelTestCase
     public function test_ignores_a_tag_without_bookmark_class(): void
     {
         $html = '<a href="https://talk.hyvor.com">link text</a>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $decoded = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
         $this->assertNotSame('bookmark', $decoded['content'][0]['content'][0]['marks'][0]['type'] ?? null);

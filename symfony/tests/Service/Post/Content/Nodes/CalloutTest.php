@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\Callout\Callout;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class CalloutTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -45,7 +51,7 @@ class CalloutTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $html = '<aside style="background-color:#fff0f0;color:#000000"><span>💡</span><div>Note</div></aside>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
@@ -69,7 +75,7 @@ class CalloutTest extends KernelTestCase
     public function test_html_to_json_without_div(): void
     {
         $html = '<aside>Some <b>content</b></aside>';
-        $json = $this->service()->getJsonFromHtml($html, $this->blog());
+        $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',

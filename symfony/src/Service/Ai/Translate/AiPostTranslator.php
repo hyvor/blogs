@@ -12,6 +12,7 @@ use App\Service\Post\Content\Nodes\Figcaption;
 use App\Service\Post\Content\Nodes\Heading\Heading;
 use App\Service\Post\Content\Nodes\Paragraph;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Exception\ParserException;
 use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
@@ -59,6 +60,7 @@ PROMPT;
     public function __construct(
         private AiPlatformService $aiPlatformService,
         private PostContentService $postContentService,
+        private PostSchema $postSchema,
         private LoggerInterface $logger,
         private SerializerInterface $serializer
     ) {}
@@ -195,7 +197,7 @@ PROMPT;
      */
     private function replaceFromHtml(Node $node, string $html): void
     {
-        $htmlParser = $this->postContentService->getHtmlParser();
+        $htmlParser = $this->postSchema->getHtmlParser();
 
         try {
             $doc = $htmlParser->parse($html, sanitize: true);

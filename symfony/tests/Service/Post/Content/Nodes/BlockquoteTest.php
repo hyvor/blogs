@@ -5,6 +5,7 @@ namespace App\Tests\Service\Post\Content\Nodes;
 use App\Entity\Blog;
 use App\Service\Post\Content\Nodes\Blockquote;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -14,6 +15,11 @@ class BlockquoteTest extends KernelTestCase
     private function service(): PostContentService
     {
         return $this->getService(PostContentService::class);
+    }
+
+    private function postSchema(): PostSchema
+    {
+        return $this->getService(PostSchema::class);
     }
 
     private function blog(): Blog
@@ -44,7 +50,7 @@ class BlockquoteTest extends KernelTestCase
     public function test_html_to_json(): void
     {
         $content = 'A blockquote';
-        $json = $this->service()->getJsonFromHtml("<blockquote>$content</blockquote>", $this->blog());
+        $json = $this->postSchema()->documentFromHtml("<blockquote>$content</blockquote>")->toJson();
 
         $this->assertSame(json_encode([
             'type' => 'doc',
