@@ -1,6 +1,7 @@
 <script>
 	import { MARKETING_PAGE_META } from '../marketing';
 	import Hero from '../@homepage/Hero.svelte';
+	import LogoStrip from '../@homepage/LogoStrip.svelte';
 	import Features from '../@homepage/Features.svelte';
 	import Testimonials from '../@homepage/Testimonials.svelte';
 	import Enterprise from '../@homepage/Enterprise.svelte';
@@ -18,7 +19,7 @@
 
 <Hero />
 <!-- <StatsRow /> -->
-<!-- <LogoStrip /> -->
+<LogoStrip />
 <Features />
 <Enterprise />
 <AllFeatures />

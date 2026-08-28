@@ -112,6 +112,13 @@
 				"bullet2": "Improvement suggestions",
 				"bullet3": "Bulk post editing (e.g. add internal links)"
 			},
+			"collaboration": {
+				"eyebrow": "Collaboration",
+				"title": "Collaborate in real time",
+				"description": "Invite teammates into the same post at once. Watch their cursors move live, or switch to suggestion mode to propose edits without touching the final draft.",
+				"bullet1": "Live cursors show exactly where teammates are editing",
+				"bullet2": "Suggestion mode lets you propose edits without overwriting the original"
+			},
 			"multiLanguage": {
 				"eyebrow": "Multi-language",
 				"title": "Reach a global audience",

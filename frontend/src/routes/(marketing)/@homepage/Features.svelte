@@ -8,6 +8,7 @@
 	import OwnershipMockup from './OwnershipMockup.svelte';
 	import AllInOneMockup from './AllInOneMockup.svelte';
 	import AiMockup from './AiMockup.svelte';
+	import CollaborationMockup from './CollaborationMockup.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
 
@@ -136,6 +137,22 @@
 </FeatureSplit>
 
 <FeatureSplit
+	eyebrow={I18n.t('homepage.features.collaboration.eyebrow')}
+	title={I18n.t('homepage.features.collaboration.title')}
+	description={I18n.t('homepage.features.collaboration.description')}
+	bullets={[
+		I18n.t('homepage.features.collaboration.bullet1'),
+		I18n.t('homepage.features.collaboration.bullet2')
+	]}
+	interactiveBullets
+	flip
+>
+	{#snippet visual(active)}
+		<CollaborationMockup {active} />
+	{/snippet}
+</FeatureSplit>
+
+<FeatureSplit
 	eyebrow={I18n.t('homepage.features.multiLanguage.eyebrow')}
 	title={I18n.t('homepage.features.multiLanguage.title')}
 	description={I18n.t('homepage.features.multiLanguage.description')}
@@ -144,7 +161,7 @@
 		I18n.t('homepage.features.multiLanguage.bullet2'),
 		I18n.t('homepage.features.multiLanguage.bullet3')
 	]}
-	flip
+	altBg
 >
 	{#snippet visual()}
 		<MultiLanguageMockup />
@@ -160,6 +177,7 @@
 		I18n.t('homepage.features.linkAnalyzer.bullet2'),
 		I18n.t('homepage.features.linkAnalyzer.bullet3')
 	]}
+	flip
 >
 	{#snippet visual()}
 		<LinkAnalyzerMockup />

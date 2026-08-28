@@ -105,6 +105,13 @@
 				"bullet2": "Suggestions d'amélioration",
 				"bullet3": "Édition groupée d'articles (ex. ajout de liens internes)"
 			},
+			"collaboration": {
+				"eyebrow": "Collaboration",
+				"title": "Collaborez en temps réel",
+				"description": "Invitez vos coéquipiers sur le même article en même temps. Observez leurs curseurs bouger en direct, ou passez en mode suggestion pour proposer des modifications sans toucher à la version finale.",
+				"bullet1": "Les curseurs en direct montrent où vos coéquipiers éditent",
+				"bullet2": "Le mode suggestion permet de proposer des modifications sans écraser l'original"
+			},
 			"multiLanguage": {
 				"eyebrow": "Multilingue",
 				"title": "Touchez une audience mondiale",
