@@ -10,16 +10,6 @@ use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 class PostContentService
 {
 
-    public const array DEFAULT_CONTENT = [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [],
-            ],
-        ],
-    ];
-
     public const string DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
     public function __construct(
