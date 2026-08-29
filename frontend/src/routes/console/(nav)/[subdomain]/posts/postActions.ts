@@ -4,6 +4,7 @@ import consoleApi from '../../../lib/consoleApi';
 import {
 	postStore,
 	postVariantLanguageStore,
+	postVariantStore,
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
@@ -143,13 +144,13 @@ export function updatePostVariant(
 	return promise;
 }
 
-export function publishPostVariant(updateStore = true) {
+export function publishPostVariant(publishAt: number | null = null, updateStore = true) {
 	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
+	const variantId = get(postVariantStore).id;
 
 	const promise = consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant/publish`,
-		data: { language_id: languageId }
+		data: { post_variant_id: variantId, publish_at: publishAt }
 	});
 
 	promise.then((res) => {

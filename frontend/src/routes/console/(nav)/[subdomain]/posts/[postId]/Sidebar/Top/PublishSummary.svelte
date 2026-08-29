@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Button, Text, Validation } from '@hyvor/design/components';
+	import { Button, Tag, Text, Validation } from '@hyvor/design/components';
 	import IconGear from '@hyvor/icons/IconGear';
+	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import IconExclamationTriangle from '@hyvor/icons/IconExclamationTriangle';
 	import { postStore, postVariantStore } from '../../../postStore';
 	import AuthorTag from '../../../AuthorTag.svelte';
 	import TagChip from '../../../TagChip.svelte';
 	import { emptyPublishIssues, getPublishIssues, type PublishIssues } from './publishIssues';
+	import { emptyContentStats, getContentStats, type ContentStats } from './contentStats';
 
 	interface Props {
 		onEditSettings: () => void;
@@ -15,16 +18,40 @@
 	let { onEditSettings, onIssues }: Props = $props();
 
 	let issues: PublishIssues = $state(emptyPublishIssues);
+	let stats: ContentStats = $state(emptyContentStats);
 
 	onMount(() => {
 		issues = getPublishIssues();
 		onIssues?.(issues);
+
+		stats = getContentStats();
 	});
+
+	let errorCount = $derived(issues.titleError ? 1 : 0);
+	let warningCount = $derived((issues.slugWarning ? 1 : 0) + (issues.descriptionWarning ? 1 : 0));
 </script>
 
 <div class="summary">
 	<div class="top">
-		<div class="title">Post Summary</div>
+		<div class="title-row">
+			<div class="title">Post Summary</div>
+			{#if errorCount > 0}
+				<Tag size="x-small" color="red">
+					{#snippet start()}
+						<IconExclamationTriangle size={10} />
+					{/snippet}
+					{errorCount}
+				</Tag>
+			{/if}
+			{#if warningCount > 0}
+				<Tag size="x-small" color="orange">
+					{#snippet start()}
+						<IconExclamationCircle size={10} />
+					{/snippet}
+					{warningCount}
+				</Tag>
+			{/if}
+		</div>
 		<div class="settings">
 			<Button variant="invisible" color="input" size="small" on:click={onEditSettings}>
 				{#snippet start()}
@@ -37,30 +64,46 @@
 
 	<div class="content">
 		<div class="split">
+			<span>Content</span>
+			<div>
+				<span class="value">
+					{stats.wordCount} word{stats.wordCount === 1 ? '' : 's'}
+					{#if stats.wordCount > 0}
+						· ~{stats.readingMinutes} min read
+					{/if}
+				</span>
+			</div>
+		</div>
+
+		<div class="split" class:has-error={issues.titleError}>
 			<span>Title</span>
 			<div>
-				<span class="value" class:empty={!$postVariantStore.title}>
-					{$postVariantStore.title || 'Untitled'}
-				</span>
+				{#if $postVariantStore.title}
+					<span class="value">
+						{$postVariantStore.title}
+					</span>
+				{/if}
 				{#if issues.titleError}
 					<Validation state="error">{issues.titleError}</Validation>
 				{/if}
 			</div>
 		</div>
 
-		<div class="split">
+		<div class="split" class:has-warning={issues.slugWarning}>
 			<span>Slug</span>
 			<div>
-				<span class="value" class:empty={!$postVariantStore.slug}>
-					{$postVariantStore.slug || 'Auto-generated'}
-				</span>
+				{#if $postVariantStore.slug}
+					<span class="value">
+						{$postVariantStore.slug}
+					</span>
+				{/if}
 				{#if issues.slugWarning}
 					<Validation state="warning">{issues.slugWarning}</Validation>
 				{/if}
 			</div>
 		</div>
 
-		<div class="split">
+		<div class="split" class:has-warning={issues.descriptionWarning}>
 			<span>Description</span>
 			<div>
 				{#if $postVariantStore.description}
@@ -132,6 +175,12 @@
 		background-color: var(--hover);
 	}
 
+	.title-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
 	.title {
 		font-size: 12px;
 		font-weight: 600;
@@ -149,7 +198,7 @@
 		align-items: flex-start;
 		gap: 10px;
 		padding: 10px 20px;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.split > span {
@@ -159,6 +208,14 @@
 
 	.split > div {
 		min-width: 0;
+	}
+
+	.split.has-error {
+		background-color: color-mix(in srgb, var(--red-light) 20%, transparent);
+	}
+
+	.split.has-warning {
+		background-color: color-mix(in srgb, var(--orange-light) 20%, transparent);
 	}
 
 	.split :global(.validation) {
@@ -172,11 +229,6 @@
 	.value {
 		font-size: 14px;
 		word-break: break-word;
-	}
-
-	.value.empty {
-		color: var(--text-light);
-		font-style: italic;
 	}
 
 	.chips {
