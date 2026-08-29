@@ -10,5 +10,5 @@ class PublishPostVariantInput
     public int $post_variant_id;
 
     // null = now, timestamp = schedule at timestamp
-    public ?int $publish_at;
+    public ?int $publish_at = null;
 }

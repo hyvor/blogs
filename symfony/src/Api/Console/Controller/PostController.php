@@ -290,9 +290,13 @@ class PostController
             );
         }
 
+        if ($variant->getContentUnsaved() === null) {
+            throw new UnprocessableEntityHttpException('Cannot publish post variant with no content');
+        }
+
         $variant = $this->postService->publishPostVariant(
-            $variant,
             $blog,
+            $variant,
             $input->publish_at ?
                 \DateTimeImmutable::createFromTimestamp($input->publish_at) :
                 null,

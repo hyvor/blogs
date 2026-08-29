@@ -489,8 +489,6 @@ class PostService
 
         // required for PUBLISHED
         ?string $content = null,
-        ?string $contentHtml = null, // if null, will be generated from content
-        ?string $contentText = null, // if null, will be generated from content
         ?\DateTimeImmutable $publishedAt = null,
     ): PostVariant {
         $variant = new PostVariant();
@@ -523,8 +521,7 @@ class PostService
 
             $variant->setContentUpdatedAt($variant->getPublishedAt());
             $variant->setContent($content);
-            $variant->setContentHtml($contentHtml ?? $this->postContentService->getHtml($content, $post->getBlog()));
-            $variant->setContentText($contentText ?? $this->postContentService->getText($content, $post->getBlog()));
+            $this->cachePostVariantHtmlAndText($variant, $post->getBlog());
         }
 
         $this->em->persist($variant);
@@ -639,8 +636,8 @@ class PostService
     }
 
     public function publishPostVariant(
-        PostVariant $variant,
         Blog $blog,
+        PostVariant $variant,
         ?\DateTimeImmutable $publishedAt = null
     ): PostVariant
     {
@@ -651,15 +648,17 @@ class PostService
             $variant->setSlug($slug);
         }
 
-        $variant->setPublishedAt($publishedAt ?? $this->now());
-
-        $variant->setContentUpdatedAt($variant->getPublishedAt());
-        $variant->setContent($variant->getContentUnsaved());
         $variant->setStatus($status);
         $variant->setUpdatedAt($this->now());
-        $this->em->flush();
+        $variant->setPublishedAt($publishedAt ?? $this->now());
+        $variant->setContentUpdatedAt($variant->getPublishedAt());
 
-        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+        // copy content and cache HTML/text
+        $content = $variant->getContentUnsaved();
+        $variant->setContent($content);
+        $this->cachePostVariantHtmlAndText($variant, $blog);
+
+        $this->em->flush();
         $this->ed->dispatch(new PostVariantPublishedEvent($variant));
 
         return $variant;
@@ -809,13 +808,9 @@ class PostService
         ]);
     }
 
-    public function renderPostVariantHtml(PostVariant $variant): void
+    public function cachePostVariantHtmlAndText(PostVariant $variant, Blog $blog): void
     {
-        if (!$variant->getContent()) {
-            return;
-        }
-
-        $blog = $variant->getPost()->getBlog();
+        assert($variant->getContent() !== null);
 
         $html = $this->postContentService->getHtml($variant->getContent(), $blog);
         $text = $this->postContentService->getText($variant->getContent(), $blog);

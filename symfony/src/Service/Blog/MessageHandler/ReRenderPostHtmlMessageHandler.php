@@ -3,6 +3,7 @@
 namespace App\Service\Blog\MessageHandler;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Service\Blog\BlogService;
 use App\Service\Blog\Message\ReRenderPostHtmlMessage;
@@ -12,7 +13,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 
 #[AsMessageHandler]
-class ReRenderPostHtmlMessageHandler {
+class ReRenderPostHtmlMessageHandler
+{
 
     public function __construct(
         private BlogService $blogService,
@@ -45,10 +47,12 @@ class ReRenderPostHtmlMessageHandler {
                 ->join('pv.post', 'p')
                 ->where('p.blog = :blog')
                 ->andWhere('pv.id > :lastId')
+                ->andWhere('pv.status IN (:status)')
                 ->orderBy('pv.id', 'ASC')
                 ->setMaxResults($batchSize)
                 ->setParameter('blog', $blog)
                 ->setParameter('lastId', $lastId)
+                ->setParameter('status', [PostVariantStatus::PUBLISHED, PostVariantStatus::SCHEDULED])
                 ->getQuery()
                 ->getResult();
 
@@ -57,7 +61,10 @@ class ReRenderPostHtmlMessageHandler {
             }
 
             foreach ($variants as $variant) {
-                $this->postService->renderPostVariantHtml($variant);
+                if ($variant->getContent() === null) {
+                    continue;
+                }
+                $this->postService->cachePostVariantHtmlAndText($variant, $blog);
             }
 
             $lastId = end($variants)->getId();
