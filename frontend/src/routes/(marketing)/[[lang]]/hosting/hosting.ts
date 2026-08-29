@@ -1,6 +1,6 @@
 import type { NavSectionConfig } from '@hyvor/design/marketing';
 import Introduction from './content/Introduction.md';
-import Deploy from './content/Deploy.svelte';
+import Deploy from './content/Deploy.md';
 import Env from './content/Env.md';
 import DeliveryDomain from './content/DeliveryDomain.md';
 
