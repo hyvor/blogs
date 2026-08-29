@@ -343,10 +343,10 @@ class BlogCreator
                 $primaryLanguage,
                 flush: false,
                 status: PostVariantStatus::PUBLISHED,
-                content: $json,
                 slug: $row['slug'],
                 title: $row['title'],
-                description: $row['description'] ?? ''
+                description: $row['description'] ?? '',
+                content: $json
             );
 
             if (!$isPage) {
@@ -382,9 +382,9 @@ class BlogCreator
                     $language,
                     flush: false,
                     status: PostVariantStatus::PUBLISHED,
-                    content: $this->postSchema->documentFromHtml($html)->toJson(),
                     slug: 'post-' . bin2hex(random_bytes(4)) . '-' . $i,
                     title: $this->getRandomTitle(),
+                    content: $this->postSchema->documentFromHtml($html)->toJson(),
                 );
             }
 

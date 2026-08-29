@@ -477,7 +477,6 @@ class PostService
         Language $language,
         bool $flush = true,
         PostVariantStatus $status = PostVariantStatus::DRAFT,
-        ?string $content = null,
         ?string $contentUnsaved = null,
         ?string $slug = null,
         ?string $title = null,
@@ -485,6 +484,11 @@ class PostService
         ?string $seoPrimaryKeyword = null,
         array $seoSecondaryKeywords = [],
         ?array $linkAnalysis = null,
+
+        // required for PUBLISHED
+        ?string $content = null,
+        ?string $contentHtml = null, // if null, will be generated from content
+        ?string $contentText = null, // if null, will be generated from content
     ): PostVariant {
         $variant = new PostVariant();
         $variant->setPost($post);
@@ -515,6 +519,8 @@ class PostService
 
             $variant->setContentUpdatedAt($post->getPublishedAt());
             $variant->setContent($content);
+            $variant->setContentHtml($contentHtml ?? $this->postContentService->getHtml($content, $post->getBlog()));
+            $variant->setContentText($contentText ?? $this->postContentService->getText($content, $post->getBlog()));
         }
 
         $this->em->persist($variant);
@@ -776,8 +782,6 @@ class PostService
                 $clone,
                 $variant->getLanguage(),
                 flush: false,
-                status: PostVariantStatus::DRAFT,
-                // content null, because this is draft
                 contentUnsaved: $variant->getContentUnsaved(),
                 title: '[Copy] ' . ($variant->getTitle() ?? ''),
                 description: $variant->getDescription(),
