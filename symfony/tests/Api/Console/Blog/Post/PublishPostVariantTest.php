@@ -15,6 +15,7 @@ use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
@@ -48,6 +49,15 @@ class PublishPostVariantTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');
+    }
+
+    #[TestWith(PostVariantStatus::PUBLISHED)]
+    #[TestWith(PostVariantStatus::SCHEDULED)]
+    public function test_fails_when_already_pubslihed_or_scheduled(
+        PostVariantStatus $status
+    ): void
+    {
+        //
     }
 
     public function test_publishes_draft_variant(): void

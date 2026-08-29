@@ -33,7 +33,6 @@ use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class PostService
 {
@@ -634,13 +633,13 @@ class PostService
         return $variant;
     }
 
-    public function publishPostVariant(PostVariant $variant, Blog $blog): PostVariant
+    public function publishPostVariant(
+        PostVariant $variant,
+        Blog $blog,
+        ?\DateTimeImmutable $publishedAt = null
+    ): PostVariant
     {
-        if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContent())) {
-            throw new UnprocessableEntityHttpException(
-                'This post has unresolved suggestions or comments. Resolve them before publishing.',
-            );
-        }
+        $status = $publishedAt ? PostVariantStatus::SCHEDULED : PostVariantStatus::PUBLISHED;
 
         if ($variant->getSlug() === null) {
             $slug = $this->postSlugService->generateUniqueSlug($variant->getLanguage(), $variant->getTitle());
@@ -648,13 +647,11 @@ class PostService
         }
 
         $post = $variant->getPost();
-        if ($post->getPublishedAt() === null) {
-            $post->setPublishedAt($this->now());
-        }
+        $post->setPublishedAt($publishedAt ?? $this->now());
 
-        $variant->setContent($variant->getContentUnsaved());
-        $variant->setStatus(PostVariantStatus::PUBLISHED);
         $variant->setContentUpdatedAt($post->getPublishedAt());
+        $variant->setContent($variant->getContentUnsaved());
+        $variant->setStatus($status);
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
 
