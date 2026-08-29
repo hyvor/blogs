@@ -4,16 +4,16 @@
 
 # Delivery Domain
 
-By default, the default hosting method for a blog is through the app domain subdirectory: `https://<app-domain>/blog/<subdomain>`
+By default, a blog is hosted through the app domain subdirectory: `https://<app-domain>/blog/<subdomain>`
 
-You can configure a **Delivery Domain** to serve blogs from subdomains of a given domain. For example, on our cloud, blogs are hosted at `*.hyvorblogs.io`.
+You can configure a **Delivery Domain** to serve blogs from subdomains of a given domain instead. For example, on our cloud, blogs are hosted at `*.hyvorblogs.io`.
 
 ## Why Delivery Domain?
 
-For most cases, we recommend using our default method of hosting blogs through the app domain `/blog/*`. A Delivery Domain is recommended in a specific scenario: if your Hyvor Blogs instance hosts blogs of various users, whose content you want to keep isolated on separate subdomains to ensure proper content segregation and management (in simplier terms, you don't fully trust your users).
+For most cases, we recommend using the default method of hosting blogs through the app domain `/blog/*`. A Delivery Domain is recommended in one specific scenario: your Hyvor Blogs instance hosts blogs for various users, and you want to keep their content isolated on separate subdomains to ensure proper content segregation.
 
 <Callout type="info">
-    <strong>Delivery Domain</strong> is different feature from <a href="/docs/custom-domain">Custom Domains</a>. Delivery domain concerns about the default hosting method for a blog, while any blog may or may not set up their own custom domain.
+    <strong>Delivery Domain</strong> is a different feature from <a href="/docs/custom-domain">Custom Domains</a>. Delivery Domain concerns the default hosting method for a blog, while any blog may or may not set up its own custom domain.
 </Callout>
 
 ## Configuring a Delivery Domain
@@ -30,7 +30,7 @@ Then, configure a DNS record to point all subdomains of your delivery domain to 
 A   *.delivery.domain   1.2.3.4
 ```
 
-Finally, configure your server to terminate TLS for your delivery domain. It requires a wildcard certificate for `*.delivery.domain`, which may require a DNS-01 challenge for issuance.
+Finally, configure your server to terminate TLS for your delivery domain. This requires a wildcard certificate for `*.delivery.domain`, which may require a DNS-01 challenge for issuance.
 
 Full architecture:
 
