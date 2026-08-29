@@ -60,16 +60,9 @@ MERCURE_URL=
 MERCURE_PUBLIC_URL=
 MERCURE_JWT_SECRET=
 
-# TLS_MODE controls how HTTPS is handled for DOMAIN_APP. One of:
-# - auto (default): Caddy automatically obtains and renews a certificate (Let's Encrypt).
-#   Requires DOMAIN_APP to be publicly resolvable and ports 80/443 to be reachable.
-# - external: TLS is terminated outside the container (e.g. Nginx, Traefik, a load balancer),
-#   which connects to the container over HTTP. Internal links are still generated as https://.
-#   No http->https redirect is done by the container; handle that in your reverse proxy if needed.
-# - manual: Provide your own certificate and key by mounting them at /certs/cert.pem and
-#   /certs/key.pem in the container (see compose.yaml).
-# - disabled: TLS is fully disabled. Internal links are generated as http://.
-#   Only use this if you know what you are doing (e.g. an internal/private network).
+# TLS_MODE controls how HTTPS is handled for DOMAIN_APP. 
+# One of: auto, external, manual, or disabled
+# See https://blogs.hyvor.com/hosting/deploy#tls
 TLS_MODE=
 
 # Trusted proxy IP addresses or CIDR ranges.

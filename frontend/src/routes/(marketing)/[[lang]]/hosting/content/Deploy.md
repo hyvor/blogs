@@ -8,40 +8,35 @@ Let's deploy Hyvor Blogs on your server using Docker Compose. You can easily ada
 
 <h2 id="pre-req">Prerequisites</h2>
 
-**Server**: A Linux server with at least 2 GB RAM and 2 vCPUs. For production use, we recommend at least 4 GB RAM. OS can be any modern Linux distribution (Ubuntu, Debian, CentOS, etc.).
+**Server**: A Linux server with at least 1 GB RAM and 1 vCPUs.
 
-**Docker**: Install the latest version following the [official guide](https://docs.docker.com/engine/install/).
+**Docker**: Install Docker following the [official guide](https://docs.docker.com/engine/install/).
 
 **OpenID Connect (OIDC) Provider**: Hyvor Blogs relies on OIDC for authentication. Create an application in your OIDC provider and obtain the issuer URL, client ID, and client secret. Then, allow the following URLs:
 
 - **Callback URL**: `https://<your-app-domain>/api/oidc/callback`
 - **Logout URL**: `https://<your-app-domain>`
 
-**Domain**: At least one domain name.
+**Domain**: Domain name for your Hyvor Blogs instance. This is called the "App Domain".
 
-<h2 id="dns">DNS Routing</h2>
+<h2 id="dns">
+   DNS Routing
+</h2>
 
-Before deploying, configure your DNS records to point to your server. You need to set up two domains:
+Point your app domain to your server's IP address.
 
 <Table columns="1fr 2fr 150px" style="bordered">
    <TableRow head>
-      <div>Domain</div>
-      <div>Usage</div>
-      <div>Example</div>
+      <div>Type</div>
+      <div>Host</div>
+      <div>Value</div>
    </TableRow>
    <TableRow>
-      <div>App domain</div>
-      <div>Console, Sudo, and API access</div>
-      <div><code>blogs.example.com</code></div>
-   </TableRow>
-   <TableRow>
-      <div>Delivery domain</div>
-      <div>Subdomain hosting for blogs. Use a wildcard DNS record.</div>
-      <div><code>*.blogs.example.com</code></div>
+      <div>A</div>
+      <div>blogs.example.com</div>
+      <div>123.123.123.123</div>
    </TableRow>
 </Table>
-
-You can also use two different domains if you prefer. For example, our cloud uses `blogs.hyvor.com` as the app domain and `*.hyvorblogs.io` as the delivery domain.
 
 <h2 id="install">Install</h2>
 
@@ -52,7 +47,13 @@ curl -L https://github.com/hyvor/blogs/releases/latest/download/deploy.tar.gz | 
 cd deploy
 ```
 
-This gives you two files: `compose.yaml` and `.env`.
+This gives you two files:
+
+```
+deploy/
+   compose.yaml
+   .env
+```
 
 ## Configure
 
