@@ -5,22 +5,28 @@
 	import IconLock from '@hyvor/icons/IconLock';
 
 	interface Props {
-		tag: Tag;
+		tag: Tag | { id: undefined; name: string; is_private: boolean };
 		small?: boolean;
 	}
 
 	let { tag, small = false }: Props = $props();
 
-	let variant = $derived(tag.variants.find((v) => v.language_id === $primaryLanguageStore.id));
+	let name = $derived(
+		(tag.id !== undefined
+			? tag.variants.find((v) => v.language_id === $primaryLanguageStore.id)?.name
+			: tag.name) || 'Unnamed'
+	);
 </script>
 
 <span class="tag-name">
-	<span class="hash">#</span>{variant?.name || 'Unnamed'}
 	{#if tag.is_private}
 		<Tooltip text="Private tag">
-			<IconLock size={small ? 10 : 12} />
+			<IconLock size={small ? 9 : 12} />
 		</Tooltip>
+	{:else}
+		<span class="hash">#</span>
 	{/if}
+	{name}
 </span>
 
 <style>
