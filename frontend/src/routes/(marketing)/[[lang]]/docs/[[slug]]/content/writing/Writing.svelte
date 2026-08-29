@@ -100,7 +100,7 @@
 
 <p>Hyvor Blogs comes with a rich text editor that supports inline styles and blocks.</p>
 
-<h3 id="inline">Inline Styles</h3>
+<h3 id="inline-styles">Inline Styles</h3>
 <p>
 	To add inline styles to text, select the text. A popup will be shown with the available options.
 	Click on the inline style you want to add. The following inline styles are supported.
@@ -196,7 +196,7 @@
 	</TableRow>
 </Table>
 
-<h3 id="/docs/writing#blocks">Blocks</h3>
+<h3 id="slash-command">Blocks</h3>
 <p>
 	The term "blocks" is used to refer to block-like elements you can add to posts, such as paragraphs
 	and blockquotes. Paragraphs are the basic blocks. You can create a paragraph by pressing <code

@@ -147,7 +147,7 @@
 
 	<TableRow>
 		<div><code>navigation.changed</code></div>
-		<div><a href="/docs/navigation">Blog navigation</a> changed</div>
+		<div><a href="/docs/navigation-links">Blog navigation</a> changed</div>
 		<div>
 			<code
 				>{'{ navigation: '}<a href="/docs/api-console#navigation-object">Navigation</a
