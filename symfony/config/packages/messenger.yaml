@@ -18,6 +18,6 @@ when@test:
         messenger:
             transports:
                 async: "test://"
-                sync: "test://"
+                sync: "sync://"
                 failed: "test://"
                 scheduler_default: "test://"

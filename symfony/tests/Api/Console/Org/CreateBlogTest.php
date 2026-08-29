@@ -34,7 +34,6 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Deployment;
-use Hyvor\Internal\InternalConfig;
 use Hyvor\Sdk\Exceptions\NetworkException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,12 +79,6 @@ class CreateBlogTest extends ApiTestCase
         $this->setEnvVar('DEPLOYMENT', Deployment::ON_PREM->value);
     }
 
-    /**
-     * Only one request per test method: the test container forbids replacing a service
-     * (like AuthInterface, set internally by consoleOrgApi/AuthFake) more than once.
-     *
-     * @param array<string, mixed> $data
-     */
     private function create(array $data): Response
     {
         $user = AuthFake::generateUser(['id' => 501]);
@@ -138,6 +131,7 @@ class CreateBlogTest extends ApiTestCase
         $this->assertSame('127.0.0.1', $blog->getIp());
         $this->assertSame(501, $blog->getHyvorUserId());
         $this->assertSame(1, $blog->getOrganizationId());
+        $this->assertSame(2, $blog->getCounts()['posts']);
 
         // BlogVariant filler
         $variants = $this->getEm()->getRepository(BlogVariant::class)->findBy(['blog' => $blog]);

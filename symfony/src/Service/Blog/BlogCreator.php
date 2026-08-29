@@ -11,6 +11,7 @@ use App\Entity\Enum\UserRole;
 use App\Entity\Language;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Service\Blog\Event\BlogCreatedEvent;
 use App\Service\Language\LanguageService;
 use App\Service\Navigation\NavigationService;
 use App\Service\Post\Content\PostSchema;
@@ -30,6 +31,7 @@ use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class BlogCreator
@@ -100,6 +102,7 @@ class BlogCreator
         private PostService $postService,
         private PostSchema $postSchema,
         private BlogService $blogService,
+        private EventDispatcherInterface $ed,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
@@ -154,6 +157,8 @@ class BlogCreator
             if ($organizationId !== null && $this->internalConfig->getDeployment()->isCloud()) {
                 $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
             }
+
+            $this->ed->dispatch(new BlogCreatedEvent($blog));
 
             return [
                 'blog' => $blog,
