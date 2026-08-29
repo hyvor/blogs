@@ -9,6 +9,7 @@ use App\Entity\Enum\BlogType;
 use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Enum\UserRole;
 use App\Entity\HyvorPost;
+use App\Entity\HyvorTalkWebsite;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\Post;
@@ -18,6 +19,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Blog\BlogCreator;
 use App\Service\Integration\HyvorPost\HyvorPostService;
+use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Theme\ThemeFilesService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -347,6 +349,46 @@ class CreateBlogTest extends ApiTestCase
             $warningStrings[] = $warning;
         }
         $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $warningStrings));
+    }
+
+    public function test_creates_with_hyvor_talk(): void
+    {
+        $htMock = $this->createMock(HyvorTalkService::class);
+        $htWebsite = new HyvorTalkWebsite();
+        $htWebsite->setWebsiteId(123);
+        $htMock->expects($this->once())->method('connect')->willReturn($htWebsite);
+        $this->getContainer()->set(HyvorTalkService::class, $htMock);
+
+        $license = BlogsLicense::trial();
+        $billingFake = $this->getService(BillingFake::class);
+        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
+
+        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_sets_warning_if_hyvor_talk_fails(): void
+    {
+        $htMock = $this->createMock(HyvorTalkService::class);
+        $htMock->expects($this->once())->method('connect')->willThrowException(new NetworkException('Hyvor Post error'));
+        $this->getContainer()->set(HyvorTalkService::class, $htMock);
+
+        $license = BlogsLicense::trial();
+        $billingFake = $this->getService(BillingFake::class);
+        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
+
+        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertArrayHasKey('warnings', $json);
+        $warnings = $json['warnings'];
+        $this->assertIsArray($warnings);
+        $warningStrings = [];
+        foreach ($warnings as $warning) {
+            $this->assertIsString($warning);
+            $warningStrings[] = $warning;
+        }
+        $this->assertStringContainsString('Failed to connect to Hyvor Talk', implode(' ', $warningStrings));
     }
 
 }

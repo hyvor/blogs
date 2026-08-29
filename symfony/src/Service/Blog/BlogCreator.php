@@ -104,6 +104,9 @@ class BlogCreator
         private string $projectDir,
     ) {}
 
+    /**
+     * @return array{blog: Blog, primaryLanguage: Language, primaryUser: User}
+     */
     public function create(
         ?AuthUser $authUser,
         ?int $organizationId,
@@ -111,9 +114,12 @@ class BlogCreator
         string $subdomain,
         BlogType $type = BlogType::DEFAULT,
         ?string $ip = null,
-    ): Blog {
-        /** @var Blog $blog */
-        $blog =  $this->em->wrapInTransaction(function () use ($authUser, $organizationId, $name, $subdomain, $type, $ip) {
+    ): array {
+
+        /**
+         * @var array{blog: Blog, primaryLanguage: Language, primaryUser: User} $data
+         */
+        $data =  $this->em->wrapInTransaction(function () use ($authUser, $organizationId, $name, $subdomain, $type, $ip) {
             $now = $this->now();
 
             $blog = new Blog();
@@ -149,10 +155,14 @@ class BlogCreator
                 $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
             }
 
-            return $blog;
+            return [
+                'blog' => $blog,
+                'primaryLanguage' => $primaryLanguage,
+                'primaryUser' => $primaryUser,
+            ];
         });
 
-        return $blog;
+        return $data;
     }
 
     /**
