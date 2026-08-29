@@ -33,8 +33,9 @@ class PostsTest extends ApiTestCase
         parent::setUp();
 
         $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $this->primaryLanguage = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'en', 'is_primary' => true]);
-        $this->secondaryLanguage = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'fr', 'is_primary' => false]);
+        $this->primaryLanguage = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
+        $this->secondaryLanguage = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
+        $this->blog->getLanguages()->add($this->secondaryLanguage);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         // Create 4 posts
@@ -42,23 +43,20 @@ class PostsTest extends ApiTestCase
             $post = PostFactory::createOne([
                 'blog' => $this->blog,
                 'is_page' => false,
-                'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
             ]);
-            PostVariantFactory::createOne([
-                'post' => $post,
-                'language' => $this->primaryLanguage,
+            PostVariantFactory::createOneFor($post, [
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'post-' . $i . '-' . $post->getId(),
                 'title' => 'Post ' . $i,
                 'words' => $i * 10,
-            ]);
-            PostVariantFactory::createOne([
-                'post' => $post,
-                'language' => $this->secondaryLanguage,
+                'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
+            ], $this->primaryLanguage);
+            PostVariantFactory::createOneFor($post, [
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'post-fr-' . $i . '-' . $post->getId(),
                 'title' => 'Post FR ' . $i,
-            ]);
+                'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
+            ], $this->secondaryLanguage);
             $this->posts[] = $post;
         }
 
@@ -67,15 +65,13 @@ class PostsTest extends ApiTestCase
             $page = PostFactory::createOne([
                 'blog' => $this->blog,
                 'is_page' => true,
-                'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
             ]);
-            PostVariantFactory::createOne([
-                'post' => $page,
-                'language' => $this->primaryLanguage,
+            PostVariantFactory::createOneFor($page, [
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'page-' . $i . '-' . $page->getId(),
                 'title' => 'Page ' . $i,
-            ]);
+                'published_at' => new \DateTimeImmutable('-' . $i . ' days'),
+            ], $this->primaryLanguage);
         }
     }
 
@@ -265,7 +261,12 @@ class PostsTest extends ApiTestCase
     public function test_filters_by_published_at(): void
     {
         $post = $this->posts[0];
-        $post->setPublishedAt(new \DateTimeImmutable('yesterday'));
+        $variant = $this->getEm()->getRepository(PostVariant::class)->findOneBy([
+            'post' => $post,
+            'language' => $this->primaryLanguage,
+        ]);
+        $this->assertNotNull($variant);
+        $variant->setPublishedAt(new \DateTimeImmutable('yesterday'));
         $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'published_at=yesterday']);
@@ -276,7 +277,7 @@ class PostsTest extends ApiTestCase
         $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
-        $publishedAt = $post->getPublishedAt();
+        $publishedAt = $variant->getPublishedAt();
         $this->assertNotNull($publishedAt);
         $this->assertSame($publishedAt->getTimestamp(), $json['data'][0]['published_at']);
     }

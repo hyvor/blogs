@@ -129,8 +129,8 @@ class PostService
     ): array {
 
         $orderBys ??= $featuredFirst
-            ? [['p.is_featured', 'DESC'], ['p.published_at', 'DESC']]
-            : [['p.published_at', 'DESC']];
+            ? [['p.is_featured', 'DESC'], ['pv.published_at', 'DESC']]
+            : [['pv.published_at', 'DESC']];
 
         $qb = $this->em->createQueryBuilder();
         $qb->from(Post::class, 'p')
@@ -147,7 +147,7 @@ class PostService
                 ->queryBuilder($qb)
                 ->keys(function (\Hyvor\FilterQ\Keys $keys) {
                     $keys->add('id', 'p.id')->valueType('int');
-                    $keys->add('published_at', 'p.published_at')->valueType('date');
+                    $keys->add('published_at', 'pv.published_at')->valueType('date');
                     $keys->add('created_at', 'p.created_at')->valueType('date');
                     $keys->add('updated_at', 'pv.updated_at')->valueType('date');
                     $keys->add('is_featured', 'p.is_featured')->valueType('bool')->operators('=,!=');
@@ -195,7 +195,7 @@ class PostService
 
         $postIdRows = $qb->setMaxResults($limit)
             // need to select the columns in the WHERE clause
-            ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, p.published_at, p.created_at')
+            ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, pv.published_at, p.created_at')
             ->setFirstResult($offset)
             ->getQuery()
             ->getArrayResult();
@@ -266,7 +266,7 @@ class PostService
         }
 
         if ($startTimestamp !== null && $endTimestamp !== null) {
-            $where .= ' AND COALESCE(p.published_at, p.created_at) > :start AND COALESCE(p.published_at, p.created_at) < :end';
+            $where .= ' AND COALESCE(pv.published_at, p.created_at) > :start AND COALESCE(pv.published_at, p.created_at) < :end';
             $params['start'] = date('Y-m-d H:i:s', $startTimestamp);
             $params['end'] = date('Y-m-d H:i:s', $endTimestamp);
         }
@@ -278,8 +278,8 @@ class PostService
             $select = "p.id, ts_rank(pv.calculated_ts, to_tsquery(pv.ts_language, :search)) AS rank";
             $orderBy = "rank DESC";
         } else {
-            $select = "p.id, CASE pv.status WHEN 'draft' THEN 1 ELSE 2 END AS sort_status, p.published_at, p.created_at";
-            $orderBy = "sort_status ASC, p.published_at DESC NULLS LAST, p.created_at DESC";
+            $select = "p.id, CASE pv.status WHEN 'draft' THEN 1 ELSE 2 END AS sort_status, pv.published_at, p.created_at";
+            $orderBy = "sort_status ASC, pv.published_at DESC NULLS LAST, p.created_at DESC";
         }
 
         $totalFetch = $this->connection->fetchOne(
@@ -375,12 +375,11 @@ class PostService
             $canonicalUrl,
             $codeHead,
             $codeFoot,
-            $publishedAt,
         );
 
         if ($createVariant) {
             $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
-            $variant = $this->createPostVariant($post, $primaryLanguage, flush: false);
+            $variant = $this->createPostVariant($post, $primaryLanguage, flush: false, publishedAt: $publishedAt);
             $post->getVariants()->add($variant);
         }
 
@@ -402,7 +401,6 @@ class PostService
         ?string $canonicalUrl = null,
         ?string $codeHead = null,
         ?string $codeFoot = null,
-        ?\DateTimeImmutable $publishedAt = null,
     ): Post {
         $post = new Post();
         $post->setBlog($blog);
@@ -412,7 +410,6 @@ class PostService
         $post->setCanonicalUrl($canonicalUrl);
         $post->setCodeHead($codeHead);
         $post->setCodeFoot($codeFoot);
-        $post->setPublishedAt($publishedAt);
         $post->setCreatedAt($this->now());
         $post->setUpdatedAt($this->now());
         $this->em->persist($post);
@@ -448,7 +445,7 @@ class PostService
             $post->setCodeFoot($data['code_foot']);
         }
         if (array_key_exists('published_at', $data)) {
-            $post->setPublishedAt($data['published_at']);
+            $this->getPrimaryVariant($post)?->setPublishedAt($data['published_at']);
         }
 
         $post->setUpdatedAt($this->now());
@@ -457,6 +454,12 @@ class PostService
         $this->ed->dispatch(new PostUpdatedEvent($post));
 
         return $post;
+    }
+
+    public function getPrimaryVariant(Post $post): ?PostVariant
+    {
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($post->getBlog());
+        return $this->getPostVariantByPostAndLanguage($post, $primaryLanguage);
     }
 
     public function deletePost(Post $post): void
@@ -488,6 +491,7 @@ class PostService
         ?string $content = null,
         ?string $contentHtml = null, // if null, will be generated from content
         ?string $contentText = null, // if null, will be generated from content
+        ?\DateTimeImmutable $publishedAt = null,
     ): PostVariant {
         $variant = new PostVariant();
         $variant->setPost($post);
@@ -500,6 +504,7 @@ class PostService
         $variant->setSeoPrimaryKeyword($seoPrimaryKeyword);
         $variant->setSeoSecondaryKeywords($seoSecondaryKeywords);
         $variant->setLinkAnalysis($linkAnalysis);
+        $variant->setPublishedAt($publishedAt);
         $variant->setCreatedAt($this->now());
         $variant->setUpdatedAt($this->now());
         $variant->setTsLanguage($this->fullTextSearchService->findClosestRegconfigByLanguageCode($language->getCode()));
@@ -512,11 +517,11 @@ class PostService
 
             assert($content !== null, 'Content must be given when creating a published or scheduled post variant');
 
-            if ($post->getPublishedAt() === null) {
-                $post->setPublishedAt($this->now());
+            if ($variant->getPublishedAt() === null) {
+                $variant->setPublishedAt($this->now());
             }
 
-            $variant->setContentUpdatedAt($post->getPublishedAt());
+            $variant->setContentUpdatedAt($variant->getPublishedAt());
             $variant->setContent($content);
             $variant->setContentHtml($contentHtml ?? $this->postContentService->getHtml($content, $post->getBlog()));
             $variant->setContentText($contentText ?? $this->postContentService->getText($content, $post->getBlog()));
@@ -646,10 +651,9 @@ class PostService
             $variant->setSlug($slug);
         }
 
-        $post = $variant->getPost();
-        $post->setPublishedAt($publishedAt ?? $this->now());
+        $variant->setPublishedAt($publishedAt ?? $this->now());
 
-        $variant->setContentUpdatedAt($post->getPublishedAt());
+        $variant->setContentUpdatedAt($variant->getPublishedAt());
         $variant->setContent($variant->getContentUnsaved());
         $variant->setStatus($status);
         $variant->setUpdatedAt($this->now());
@@ -702,7 +706,7 @@ class PostService
             return;
         }
 
-        $publishedAt = $variant->getPost()->getPublishedAt();
+        $publishedAt = $variant->getPublishedAt();
         if ($publishedAt !== null && $contentUpdatedAt < $publishedAt) {
             throw new UnprocessableEntityHttpException('content_updated_at must be greater than or equal to published_at');
         }

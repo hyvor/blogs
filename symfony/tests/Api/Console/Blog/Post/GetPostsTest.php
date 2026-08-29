@@ -181,11 +181,11 @@ class GetPostsTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
-        $post1 = PostFactory::createOne(['blog' => $blog, 'published_at' => new \DateTimeImmutable('-2 days')]);
-        PostVariantFactory::createOne(['post' => $post1, 'language' => $language]);
+        $post1 = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post1, 'language' => $language, 'published_at' => new \DateTimeImmutable('-2 days')]);
 
-        $post2 = PostFactory::createOne(['blog' => $blog, 'published_at' => new \DateTimeImmutable('-1 day')]);
-        PostVariantFactory::createOne(['post' => $post2, 'language' => $language]);
+        $post2 = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post2, 'language' => $language, 'published_at' => new \DateTimeImmutable('-1 day')]);
 
         $startTimestamp = new \DateTimeImmutable('-36 hours')->getTimestamp();
         $endTimestamp = new \DateTimeImmutable('now')->getTimestamp();

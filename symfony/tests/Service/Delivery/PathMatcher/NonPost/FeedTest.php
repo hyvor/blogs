@@ -25,8 +25,7 @@ class FeedTest extends KernelTestCase
 
         $post = PostFactory::createPublishedOneForWithVariants(
             $blog,
-            ['published_at' => new \DateTimeImmutable()],
-            ['slug' => 'my-first-post']
+            variantAttributes: ['slug' => 'my-first-post'],
         );
 
         $response = $this->pathMatcher()->match($blog, '/feed');

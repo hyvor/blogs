@@ -46,7 +46,6 @@ class PostListObject
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $this->updated_at = $post->getUpdatedAt()->getTimestamp();
-        $this->published_at = $post->getPublishedAt()?->getTimestamp();
         $this->is_featured = $post->isFeatured();
         $this->is_page = $post->isPage();
 
@@ -61,6 +60,7 @@ class PostListObject
         }
         $primaryVariant ??= $variants[0] ?? null;
 
+        $this->published_at = $primaryVariant?->getPublishedAt()?->getTimestamp();
         $this->slug = $primaryVariant?->getSlug();
         $this->url = $primaryVariant !== null ? $permalinkService->getPostVariantPermalink($primaryVariant) : null;
         $this->title = $primaryVariant?->getTitle();

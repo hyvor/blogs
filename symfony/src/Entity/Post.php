@@ -21,9 +21,6 @@ class Post
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $published_at = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -104,17 +101,6 @@ class Post
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getPublishedAt(): ?\DateTimeImmutable
-    {
-        return $this->published_at;
-    }
-
-    public function setPublishedAt(?\DateTimeImmutable $published_at): static
-    {
-        $this->published_at = $published_at;
         return $this;
     }
 

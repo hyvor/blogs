@@ -123,18 +123,20 @@ class HeadTest extends KernelTestCase
         $secondary = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createDefaultsFor($blog);
 
-        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable()]);
+        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         PostVariantFactory::createOne([
             'post' => $post,
             'language' => $primary,
             'slug' => 'en-slug',
             'status' => PostVariantStatus::PUBLISHED,
+            'published_at' => new \DateTimeImmutable(),
         ]);
         PostVariantFactory::createOne([
             'post' => $post,
             'language' => $secondary,
             'slug' => 'fr-slug',
             'status' => PostVariantStatus::PUBLISHED,
+            'published_at' => new \DateTimeImmutable(),
         ]);
 
         ThemeFileFactory::createTemplateTwig($blog, 'post.twig', '{{ _head | template }}');

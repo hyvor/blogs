@@ -51,8 +51,8 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertResponseFailed(404, 'Variant not found');
     }
 
-    #[TestWith(PostVariantStatus::PUBLISHED)]
-    #[TestWith(PostVariantStatus::SCHEDULED)]
+    #[TestWith([PostVariantStatus::PUBLISHED])]
+    #[TestWith([PostVariantStatus::SCHEDULED])]
     public function test_fails_when_already_pubslihed_or_scheduled(
         PostVariantStatus $status
     ): void
@@ -67,8 +67,8 @@ class PublishPostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
-        PostVariantFactory::createOne([
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
@@ -86,8 +86,8 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertSame('published', $data['status']);
         $this->assertSame('my-post', $data['slug']);
 
-        $this->getEm()->refresh($post);
-        $this->assertNotNull($post->getPublishedAt());
+        $this->getEm()->refresh($variant);
+        $this->assertNotNull($variant->getPublishedAt());
     }
 
     public function test_generates_slug_if_missing(): void
@@ -97,7 +97,7 @@ class PublishPostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
@@ -126,12 +126,13 @@ class PublishPostVariantTest extends ApiTestCase
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
         $existingDate = new \DateTimeImmutable('2020-01-01');
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $existingDate]);
-        PostVariantFactory::createOne([
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
             'slug' => 'some-slug',
+            'published_at' => $existingDate,
         ]);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
@@ -139,8 +140,8 @@ class PublishPostVariantTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
-        $this->getEm()->refresh($post);
-        $publishedAt = $post->getPublishedAt();
+        $this->getEm()->refresh($variant);
+        $publishedAt = $variant->getPublishedAt();
         $this->assertNotNull($publishedAt);
         $this->assertSame($existingDate->getTimestamp(), $publishedAt->getTimestamp());
     }
@@ -151,7 +152,7 @@ class PublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        $post = PostFactory::createOne(['blog' => $blog]);
 
         $contentWithPendingSuggestion = json_encode([
             'type' => 'doc',
@@ -166,7 +167,7 @@ class PublishPostVariantTest extends ApiTestCase
             ]],
         ]);
 
-        PostVariantFactory::createOne([
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
@@ -180,7 +181,7 @@ class PublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseFailed(422, 'unresolved suggestions');
 
-        $this->getEm()->refresh($post);
-        $this->assertNull($post->getPublishedAt());
+        $this->getEm()->refresh($variant);
+        $this->assertNull($variant->getPublishedAt());
     }
 }

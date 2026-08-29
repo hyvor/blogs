@@ -63,8 +63,8 @@ class PostObject
         $this->id = $post->getId();
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $contentUpdatedAt = $variant->getContentUpdatedAt();
-        $this->updated_at = ($contentUpdatedAt ?? $post->getPublishedAt() ?? $post->getUpdatedAt())->getTimestamp();
-        $this->published_at = ($post->getPublishedAt() ?? $post->getCreatedAt())->getTimestamp();
+        $this->updated_at = ($contentUpdatedAt ?? $variant->getPublishedAt() ?? $post->getUpdatedAt())->getTimestamp();
+        $this->published_at = ($variant->getPublishedAt() ?? $post->getCreatedAt())->getTimestamp();
         $this->is_featured = $post->isFeatured();
         $this->is_page = $post->isPage();
         $this->slug = $variant->getSlug() ?? '';

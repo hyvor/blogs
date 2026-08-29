@@ -198,7 +198,7 @@ class TemplateRendererService
             if ($routeName === 'post' && $post->isPage()) return false;
             if ($post->getBlog()->getId() !== $blog->getId()) return false; // just in case
 
-            if (!$this->permalinkService->validatePostPermalinkParams($post, $matchedRoute->params)) {
+            if (!$this->permalinkService->validatePostPermalinkParams($variant, $matchedRoute->params)) {
                 return false;
             }
 

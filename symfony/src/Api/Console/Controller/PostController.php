@@ -243,11 +243,11 @@ class PostController
         }
 
         if ($input->content_updated_at !== false) {
-            if ($post->getPublishedAt() === null) {
+            if ($variant->getPublishedAt() === null) {
                 throw new UnprocessableEntityHttpException('Cannot set content_updated_at for unpublished post');
             }
 
-            if ($post->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
+            if ($variant->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
                 throw new UnprocessableEntityHttpException('Content updated time should be after published time');
             }
 

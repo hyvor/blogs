@@ -173,7 +173,6 @@ export type Post = {
 	preview_id: string;
 	created_at: number;
 	updated_at: number;
-	published_at: number | null;
 
 	is_featured: boolean;
 	is_page: boolean;
@@ -202,6 +201,7 @@ export type PostVariant = {
 	content: string | null;
 	title: string | null;
 	description: string | null;
+	published_at: number | null;
 	content_updated_at: number | null;
 
 	seo_primary_keyword: string | null;

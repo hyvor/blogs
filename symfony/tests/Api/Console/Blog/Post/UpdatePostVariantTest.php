@@ -206,7 +206,7 @@ class UpdatePostVariantTest extends ApiTestCase
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-content-updated-at-unpublished']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
@@ -223,8 +223,13 @@ class UpdatePostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $publishedAt = new \DateTimeImmutable();
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $publishedAt]);
-        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::PUBLISHED]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::PUBLISHED,
+            'published_at' => $publishedAt,
+        ]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
             'language_id' => $language->getId(),

@@ -30,21 +30,19 @@ class KeysTest extends ApiTestCase
         parent::setUp();
 
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        $lang = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         $post = PostFactory::createOne([
             'blog' => $blog,
             'is_page' => false,
-            'published_at' => new \DateTimeImmutable(),
         ]);
 
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $lang,
+        PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'keys-test-' . $post->getId(),
-        ]);
+            'published_at' => new \DateTimeImmutable(),
+        ], $lang);
 
         $tag = TagFactory::createOne(['blog' => $blog, 'slug' => 'keys-tag', 'is_private' => false]);
 

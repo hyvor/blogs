@@ -71,10 +71,7 @@ final class PostFactory extends PersistentObjectFactory
     {
         $post = self::createOneFor($blog, $postAttributes);
         foreach ($blog->getLanguages() as $language) {
-            PostVariantFactory::createOne(array_merge([
-                'post' => $post,
-                'language' => $language,
-            ], $variantAttributes));
+            PostVariantFactory::createOneFor($post, $variantAttributes, $language);
         }
         return $post;
     }
@@ -92,11 +89,10 @@ final class PostFactory extends PersistentObjectFactory
     {
         return self::createOneForWithVariants(
             $blog,
-            array_merge($postAttributes, [
-                'published_at' => $publishedAt,
-            ]),
+            $postAttributes,
             array_merge($variantAttributes, [
                 'status' => PostVariantStatus::PUBLISHED,
+                'published_at' => $publishedAt,
             ])
         );
     }
