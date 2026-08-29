@@ -3,6 +3,7 @@
 namespace App\Tests\Api\Console\Blog\Document;
 
 use App\Api\Console\Controller\DocumentsController;
+use App\Entity\Enum\PostVariantStatus;
 use App\Service\Post\Document\DocumentService;
 use App\Service\Post\Document\Exception\CheckpointClientAheadException;
 use App\Service\Post\Document\Exception\CheckpointClientBehindException;
@@ -54,6 +55,71 @@ class DocumentCheckpointTest extends ApiTestCase
         refresh($variant);
         $this->assertSame($content, $variant->getContentUnsaved());
         $this->assertSame(1, $variant->getContentUnsavedVersion());
+    }
+
+    public function test_updates_word_count_for_draft_variant(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser();
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOneFor($blog);
+
+        $variant = PostVariantFactory::createOneFor($post, [
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'document_version' => 1,
+            'words' => 0,
+        ]);
+
+        $content = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello, world!"}]}]}';
+
+        $this->consoleBlogApi(
+            'POST',
+            $blog,
+            '/documents/checkpoint',
+            [
+                'post_variant_id' => $variant->getId(),
+                'version' => 1,
+                'content' => $content,
+            ],
+            user: $user
+        );
+
+        $this->assertResponseIsSuccessful();
+
+        refresh($variant);
+        $this->assertSame(2, $variant->getWords());
+    }
+
+    public function test_does_not_update_word_count_for_published_variant(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser();
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOneFor($blog);
+
+        $variant = PostVariantFactory::createOnePublishedFor($post, [
+            'language' => $language,
+            'document_version' => 1,
+            'words' => 42,
+        ]);
+
+        $content = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello, world!"}]}]}';
+
+        $this->consoleBlogApi(
+            'POST',
+            $blog,
+            '/documents/checkpoint',
+            [
+                'post_variant_id' => $variant->getId(),
+                'version' => 1,
+                'content' => $content,
+            ],
+            user: $user
+        );
+
+        $this->assertResponseIsSuccessful();
+
+        refresh($variant);
+        $this->assertSame(42, $variant->getWords());
     }
 
     public function test_sends_steps_when_client_is_behind(): void

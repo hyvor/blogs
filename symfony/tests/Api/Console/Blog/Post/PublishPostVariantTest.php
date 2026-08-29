@@ -118,6 +118,7 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertSame(self::CONTENT_UNSAVED, $variant->getContent());
         $this->assertSame('<p>Hello World</p>', $variant->getContentHtml());
         $this->assertStringContainsString('Hello World', (string)$variant->getContentText());
+        $this->assertSame(2, $variant->getWords());
     }
 
     public function test_schedules_variant(): void

@@ -817,6 +817,7 @@ class PostService
 
         $variant->setContentHtml($html);
         $variant->setContentText($text);
+        $variant->setWords(str_word_count($text));
     }
 
     private const string PREVIEW_ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz123456789';
