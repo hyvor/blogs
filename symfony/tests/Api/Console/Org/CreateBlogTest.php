@@ -9,14 +9,17 @@ use App\Entity\Enum\BlogType;
 use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Enum\UserRole;
 use App\Entity\HyvorPost;
+use App\Entity\HyvorTalkWebsite;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\Post;
+use App\Entity\PostVariant;
 use App\Entity\Route;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Blog\BlogCreator;
 use App\Service\Integration\HyvorPost\HyvorPostService;
+use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Theme\ThemeFilesService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -31,7 +34,6 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Deployment;
-use Hyvor\Internal\InternalConfig;
 use Hyvor\Sdk\Exceptions\NetworkException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,12 +79,6 @@ class CreateBlogTest extends ApiTestCase
         $this->setEnvVar('DEPLOYMENT', Deployment::ON_PREM->value);
     }
 
-    /**
-     * Only one request per test method: the test container forbids replacing a service
-     * (like AuthInterface, set internally by consoleOrgApi/AuthFake) more than once.
-     *
-     * @param array<string, mixed> $data
-     */
     private function create(array $data): Response
     {
         $user = AuthFake::generateUser(['id' => 501]);
@@ -123,17 +119,19 @@ class CreateBlogTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertSame('new-blog', $json['subdomain']);
-        $this->assertSame('default', $json['type']);
-        $this->assertSame('admin', $json['role']);
+        $blogJson = $json['blog'] ?? [];
+        $this->assertSame('new-blog', $blogJson['subdomain']);
+        $this->assertSame('default', $blogJson['type']);
+        $this->assertSame('admin', $blogJson['role']);
 
-        $blogId = $json['id'];
+        $blogId = $blogJson['id'];
         $blog = $this->getEm()->getRepository(Blog::class)->find($blogId);
         $this->assertInstanceOf(Blog::class, $blog);
         $this->assertSame(BlogType::DEFAULT, $blog->getType());
         $this->assertSame('127.0.0.1', $blog->getIp());
         $this->assertSame(501, $blog->getHyvorUserId());
         $this->assertSame(1, $blog->getOrganizationId());
+        $this->assertSame(2, $blog->getCounts()['posts']);
 
         // BlogVariant filler
         $variants = $this->getEm()->getRepository(BlogVariant::class)->findBy(['blog' => $blog]);
@@ -168,6 +166,20 @@ class CreateBlogTest extends ApiTestCase
         // PostFiller: 2 posts + 3 pages
         $posts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
         $this->assertCount(5, $posts);
+        $contentStylesPostVariant = $this->getEm()->getRepository(PostVariant::class)->findOneBy(['slug' => 'content-style']);
+        $this->assertNotNull($contentStylesPostVariant);
+        $this->assertStringContainsString(
+            'learn how to add these blocks',
+            (string) $contentStylesPostVariant->getContent()
+        );
+        $this->assertStringContainsString(
+            'https://blogs.hyvor.com/docs/writing',
+            (string) $contentStylesPostVariant->getContentHtml()
+        );
+        $this->assertStringContainsString(
+            'Headings are used to write subtitles in posts',
+            (string) $contentStylesPostVariant->getContentText()
+        );
 
         // ThemeFiller: "hello" theme copied
         $themeFilesService = $this->getService(ThemeFilesService::class);
@@ -225,6 +237,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -249,6 +262,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -273,6 +287,7 @@ class CreateBlogTest extends ApiTestCase
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
+            noBranding: false,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -320,7 +335,54 @@ class CreateBlogTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertArrayHasKey('warnings', $json);
-        $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $json['warnings']));
+        $warnings = $json['warnings'];
+        $this->assertIsArray($warnings);
+        $warningStrings = [];
+        foreach ($warnings as $warning) {
+            $this->assertIsString($warning);
+            $warningStrings[] = $warning;
+        }
+        $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $warningStrings));
+    }
+
+    public function test_creates_with_hyvor_talk(): void
+    {
+        $htMock = $this->createMock(HyvorTalkService::class);
+        $htWebsite = new HyvorTalkWebsite();
+        $htWebsite->setWebsiteId(123);
+        $htMock->expects($this->once())->method('connect')->willReturn($htWebsite);
+        $this->getContainer()->set(HyvorTalkService::class, $htMock);
+
+        $license = BlogsLicense::trial();
+        $billingFake = $this->getService(BillingFake::class);
+        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
+
+        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_sets_warning_if_hyvor_talk_fails(): void
+    {
+        $htMock = $this->createMock(HyvorTalkService::class);
+        $htMock->expects($this->once())->method('connect')->willThrowException(new NetworkException('Hyvor Post error'));
+        $this->getContainer()->set(HyvorTalkService::class, $htMock);
+
+        $license = BlogsLicense::trial();
+        $billingFake = $this->getService(BillingFake::class);
+        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
+
+        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertArrayHasKey('warnings', $json);
+        $warnings = $json['warnings'];
+        $this->assertIsArray($warnings);
+        $warningStrings = [];
+        foreach ($warnings as $warning) {
+            $this->assertIsString($warning);
+            $warningStrings[] = $warning;
+        }
+        $this->assertStringContainsString('Failed to connect to Hyvor Talk', implode(' ', $warningStrings));
     }
 
 }

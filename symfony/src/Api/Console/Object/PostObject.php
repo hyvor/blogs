@@ -4,6 +4,7 @@ namespace App\Api\Console\Object;
 
 use App\Entity\Blog;
 use App\Entity\Post;
+use App\Entity\PostVariant;
 
 class PostObject
 {
@@ -11,7 +12,6 @@ class PostObject
     public string $preview_id;
     public int $created_at;
     public int $updated_at;
-    public ?int $published_at;
     public bool $is_featured;
     public bool $is_page;
     public ?string $featured_image_url;
@@ -38,7 +38,6 @@ class PostObject
         $this->preview_id = $previewId;
         $this->created_at = $post->getCreatedAt()->getTimestamp();
         $this->updated_at = $post->getUpdatedAt()->getTimestamp();
-        $this->published_at = $post->getPublishedAt()?->getTimestamp();
         $this->is_featured = $post->isFeatured();
         $this->is_page = $post->isPage();
         $this->featured_image_url = $post->getFeaturedImageUrl();

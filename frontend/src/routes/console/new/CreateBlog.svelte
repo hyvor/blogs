@@ -144,19 +144,21 @@
 	ctaDisabled={name.trim() === '' || subdomain.trim() === ''}
 >
 	{#if dev}
-		<Callout type="warning" style="margin-bottom:20px;">
-			{#snippet icon()}
-				<IconExclamationCircle />
-			{/snippet}
-			{#snippet title()}
-				<div>Development Blog</div>
-			{/snippet}
-			<div>
-				You are creating a development blog, which can only be used for theme development. Click <Link
-					href="/console/new">here</Link
-				> to create a production blog.
-			</div>
-		</Callout>
+		<div style="margin-bottom:20px;">
+			<Callout type="warning">
+				{#snippet icon()}
+					<IconExclamationCircle />
+				{/snippet}
+				{#snippet title()}
+					<div>Development Blog</div>
+				{/snippet}
+				<div>
+					You are creating a development blog, which can only be used for theme development. Click <Link
+						href="/console/new">here</Link
+					> to create a production blog.
+				</div>
+			</Callout>
+		</div>
 	{/if}
 
 	<SplitControl label="Name" caption="A name for your blog" noHorizonalPadding>

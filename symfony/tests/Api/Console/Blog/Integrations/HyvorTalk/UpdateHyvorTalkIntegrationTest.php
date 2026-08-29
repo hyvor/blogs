@@ -24,6 +24,7 @@ class UpdateHyvorTalkIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertSame('<custom-embed></custom-embed>', $data['embed_code']);
     }
 
@@ -38,7 +39,10 @@ class UpdateHyvorTalkIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
-        $this->assertStringContainsString('hyvor-talk-comments', $data['embed_code']);
+        $this->assertIsArray($data);
+        $embedCode = $data['embed_code'];
+        $this->assertIsString($embedCode);
+        $this->assertStringContainsString('hyvor-talk-comments', $embedCode);
     }
 
     public function test_404_when_not_connected(): void

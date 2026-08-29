@@ -24,7 +24,6 @@
 	<AgentChat
 		postVariantId={$postVariantStore.id}
 		emptyMessage={`Ask the agent about this post, e.g. "Fix any typos" or "Add a short FAQ section at the end".`}
-		disclaimer="The agent may suggest edits to this post."
 		{applyDocumentChange}
 	/>
 </LicenseRequired>

@@ -208,32 +208,4 @@ class PostRepository
 //        return new CollectionWithTotal($posts, $total);
 //    }
 
-    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId): ?PostVariant
-    {
-        return PostVariant::where('language_id', $languageId)
-            ->where('post_id', $postId)
-            ->first();
-    }
-
-
-    public static function updateVariantHtml(PostVariant $variant): void
-    {
-        if (!$variant->content) {
-            return;
-        }
-
-        $post = $variant->post;
-
-        $blog = $post->blog;
-        if (!$blog) {
-            return;
-        }
-
-        $html = PostContentService::getHtml($variant->content, $blog);
-        $text = PostContentService::getText($variant->content, $blog);
-
-        $variant->content_html = $html;
-        $variant->content_text = $text;
-        $variant->save();
-    }
 }

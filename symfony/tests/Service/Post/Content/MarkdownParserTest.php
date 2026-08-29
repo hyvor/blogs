@@ -6,6 +6,7 @@ use App\Service\Post\Content\Markdown\MarkdownParser;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use Hyvor\Phrosemirror\Document\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 
@@ -14,11 +15,12 @@ class MarkdownParserTest extends KernelTestCase
 {
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @return list<array<string, mixed>>
      */
     private function parse(string $markdown): array
     {
-        return new MarkdownParser()->parse($markdown);
+        $nodes = new MarkdownParser()->parse($markdown);
+        return array_values(array_map(static fn (Node $node): array => $node->toArray(), $nodes));
     }
 
     public function test_basics(): void

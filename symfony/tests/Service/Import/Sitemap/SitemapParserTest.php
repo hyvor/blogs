@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Import\Sitemap;
 
+use App\Service\AppConfig;
 use App\Service\Import\Importer\ParserException;
 use App\Service\Import\Sitemap\PageScraper\PageScraperOptions;
 use App\Service\Import\Sitemap\SitemapParser;
@@ -39,6 +40,7 @@ class SitemapParserTest extends KernelTestCase
             new PageScraperOptions(contentSelector: 'article'),
             $this->getService(HttpClientInterface::class),
             $this->getService(PostContentService::class),
+            $this->getService(AppConfig::class),
         );
     }
 

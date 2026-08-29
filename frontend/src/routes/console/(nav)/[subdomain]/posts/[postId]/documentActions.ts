@@ -1,6 +1,6 @@
-import consoleApi from "../../../../lib/consoleApi";
-import type { Document, Post, PostVariant } from "../../../../lib/types";
-import type { CollabStep } from "./Body/Editor/collab";
+import consoleApi from '../../../../lib/consoleApi';
+import type { Document, Post, PostVariant } from '../../../../lib/types';
+import type { CollabStep } from './Body/Editor/collab';
 
 export function getDocumentForPost(id: number, variantLanguageCode: string | null = null) {
 	return consoleApi.get<{
@@ -10,9 +10,9 @@ export function getDocumentForPost(id: number, variantLanguageCode: string | nul
 	}>({
 		endpoint: `/documents/post`,
 		data: {
-            post_id: id,
-            variant_language_code: variantLanguageCode
-        }
+			post_id: id,
+			variant_language_code: variantLanguageCode
+		}
 	});
 }
 
@@ -26,7 +26,6 @@ export interface CheckpointClientAheadError {
 	message: 'client_ahead';
 	message_full: string;
 }
-
 
 export function saveCheckpoint(data: {
 	post_variant_id: number;

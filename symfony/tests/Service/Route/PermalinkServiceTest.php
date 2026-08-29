@@ -226,13 +226,13 @@ class PermalinkServiceTest extends KernelTestCase {
 
         $this->assertNotNull($language);
 
-        $post = PostFactory::createOne(
-            [
-                'blog' => $blog,
-                'published_at' => new \DateTimeImmutable('2021-12-31 12:00:00')
-            ]
-        );
-        $postVariant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'slug' => 'about']);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $postVariant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'slug' => 'about',
+            'published_at' => new \DateTimeImmutable('2021-12-31 12:00:00'),
+        ]);
 
         $tag = TagFactory::createOne([
             'blog' => $blog,
@@ -277,10 +277,14 @@ class PermalinkServiceTest extends KernelTestCase {
             [
                 'blog' => $blog,
                 'is_page' => true,
-                'published_at' => new \DateTimeImmutable('2021-12-31 12:00:00'),
             ],
         );
-        $postVariant = PostVariantFactory::createOne(['post' => $page, 'language' => $language, 'slug' => 'about']);
+        $postVariant = PostVariantFactory::createOne([
+            'post' => $page,
+            'language' => $language,
+            'slug' => 'about',
+            'published_at' => new \DateTimeImmutable('2021-12-31 12:00:00'),
+        ]);
 
         $this->assertSame(
             'https://supun.hyvorblogs.io/about',
@@ -461,7 +465,10 @@ class PermalinkServiceTest extends KernelTestCase {
     {
 
         $post = PostFactory::createOne();
-        $post->setPublishedAt(new \DateTimeImmutable('2021-12-31 12:00:00'));
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'published_at' => new \DateTimeImmutable('2021-12-31 12:00:00'),
+        ]);
 
         $tag = TagFactory::createOne(['slug' => 'welcome']);
         $post->getTags()->add($tag);
@@ -470,7 +477,7 @@ class PermalinkServiceTest extends KernelTestCase {
         $post->getAuthors()->add($author);
 
         $this->assertTrue(
-            $this->getPermalinkService()->validatePostPermalinkParams($post, [
+            $this->getPermalinkService()->validatePostPermalinkParams($variant, [
                 'tag' => 'welcome',
                 'author' => 'supun',
                 'year' => '2021',
@@ -480,19 +487,19 @@ class PermalinkServiceTest extends KernelTestCase {
         );
 
         $this->assertFalse(
-            $this->getPermalinkService()->validatePostPermalinkParams($post, [
+            $this->getPermalinkService()->validatePostPermalinkParams($variant, [
                 'tag' => 'wrong-tag',
             ])
         );
 
         $this->assertFalse(
-            $this->getPermalinkService()->validatePostPermalinkParams($post, [
+            $this->getPermalinkService()->validatePostPermalinkParams($variant, [
                 'author' => 'wrong-author',
             ])
         );
 
         $this->assertFalse(
-            $this->getPermalinkService()->validatePostPermalinkParams($post, [
+            $this->getPermalinkService()->validatePostPermalinkParams($variant, [
                 'year' => '2020',
             ])
         );

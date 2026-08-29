@@ -1,5 +1,5 @@
-import type { CollabClientID, CollabStepJSON } from "@hyvor/richtext";
-import type { CollabStep } from "../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab";
+import type { CollabClientID, CollabStepJSON } from '@hyvor/richtext';
+import type { CollabStep } from '../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab';
 
 export interface License {
 	users: number;
@@ -13,7 +13,7 @@ export interface License {
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
 
-export type BlogType = 'default' | 'dev' | 'temp';
+export type BlogType = 'default' | 'dev';
 
 export interface BlogList {
 	id: number;
@@ -173,7 +173,6 @@ export type Post = {
 	preview_id: string;
 	created_at: number;
 	updated_at: number;
-	published_at: number | null;
 
 	is_featured: boolean;
 	is_page: boolean;
@@ -202,6 +201,7 @@ export type PostVariant = {
 	content: string | null;
 	title: string | null;
 	description: string | null;
+	published_at: number | null;
 	content_updated_at: number | null;
 
 	seo_primary_keyword: string | null;
@@ -249,13 +249,13 @@ export type PostListItem = {
 	variants: PostVariantSummary[];
 
 	tags: {
-		name: string,
-		is_private: boolean,
-	}[]
+		name: string;
+		is_private: boolean;
+	}[];
 	authors: {
-		name: string,
-		picture_url: string | null,
-	}[],
+		name: string;
+		picture_url: string | null;
+	}[];
 };
 
 export type UserStatus = 'invited' | 'active' | 'blocked';

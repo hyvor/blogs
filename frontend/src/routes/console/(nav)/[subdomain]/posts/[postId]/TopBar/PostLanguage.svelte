@@ -8,14 +8,14 @@
 		toast
 	} from '@hyvor/design/components';
 	import { languagesStore } from '../../../../../lib/stores/languagesStore';
-	import { postVariantLanguageStore, postStore, postVariantStore } from '../../postStore';
-	import IconCaretDown from '@hyvor/icons/IconCaretDown';
+	import { postVariantLanguageStore, postStore } from '../../postStore';
 	import type { Language } from '../../../../../lib/types';
 	import { createPostVariant } from '../../postActions';
 	import { goto } from '$app/navigation';
 	import PostStatusTag from '../../PostStatusTag.svelte';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import dayjs from 'dayjs';
+	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 
 	let showDropdown = $state(false);
 	let creatingLanguageId: number | null = $state(null);
@@ -69,18 +69,20 @@
 	}
 </script>
 
-{#if $languagesStore.length}
+{#if $languagesStore.length > 1}
 	<div class="wrap">
 		<Dropdown bind:show={showDropdown} align="center" width={290}>
 			{#snippet trigger()}
-				<Button color="input" disabled={creatingLanguageId !== null} size="small">
+				<Button
+					color="input"
+					variant="invisible"
+					disabled={creatingLanguageId !== null}
+					size="small"
+				>
 					{$postVariantLanguageStore.name}
 
-					&nbsp;
-					<PostStatusTag status={$postVariantStore.status} showIcon={false} size="x-small" />
-
 					{#snippet end()}
-						<IconCaretDown size={12} />
+						<IconChevronDown size={10} />
 					{/snippet}
 				</Button>
 			{/snippet}

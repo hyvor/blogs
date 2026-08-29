@@ -4,7 +4,7 @@
 		postContentDirtyStore,
 		postEditor,
 		postVariantStore,
-		updatePostVariantStore
+		updateDocumentStore
 	} from '../../../postStore';
 	import {
 		saveCheckpoint,
@@ -31,7 +31,7 @@
 
 		saveCheckpoint({ post_variant_id: $postVariantStore.id, version, content })
 			.then(() => {
-				updatePostVariantStore({ content_unsaved: content, document_version: version }, true);
+				updateDocumentStore({ checkpoint_content: content, checkpoint_version: version });
 				$postContentDirtyStore = false;
 				isSaving = false;
 			})

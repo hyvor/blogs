@@ -80,12 +80,17 @@ COPY --from=frontend-prod /app/frontend/build /app/static
 # install composer
 # create chef user
 # set ownership for all runtime-writable directories
+# - /app/backend/var: symfony cache
+# - /app/media: media uploads
+# - /data: caddy data (certs, etc)
+# - /config: caddy config
+# - /run: supervisor socket
 RUN composer install --no-interaction --no-dev --optimize-autoloader --classmap-authoritative && \
     composer clear-cache && \
     rm /usr/local/bin/composer && \
     useradd --system --home-dir /var/www --create-home --shell /usr/sbin/nologin chef && \
-    mkdir -p /app/backend/var && \
-    chown -R chef:chef /app/backend/var
+    mkdir -p /app/backend/var /app/media /data /config /run && \
+    chown -R chef:chef /app/backend/var /app/media /data /config /run
 
 # copy configs
 COPY meta/image/Caddyfile /etc/caddy/Caddyfile

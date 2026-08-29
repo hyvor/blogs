@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\LinkAnalysis;
 
+use App\Service\AppConfig;
 use App\Service\LinkAnalysis\Dto\StatusResult;
 use App\Service\LinkAnalysis\StatusCheck\ExternalLinkStatusCheck;
 use App\Service\LinkAnalysis\StatusCheck\IgnoreReason;
@@ -21,7 +22,7 @@ class ExternalStatusCheckTest extends TestCase
     private function check(array $mockResponses): array
     {
         $client = new MockHttpClient($mockResponses);
-        $checker = new ExternalLinkStatusCheck($client, new NullLogger());
+        $checker = new ExternalLinkStatusCheck($client, new NullLogger(), new AppConfig(version: '1.0', domainApp: 'example.com'));
         return $checker->check(array_keys($mockResponses));
     }
 
@@ -40,7 +41,7 @@ class ExternalStatusCheckTest extends TestCase
         $client = new MockHttpClient([
             new MockResponse('', ['error' => 'Connection refused']),
         ]);
-        $checker = new ExternalLinkStatusCheck($client, new NullLogger());
+        $checker = new ExternalLinkStatusCheck($client, new NullLogger(), new AppConfig(version: '1.0', domainApp: 'example.com'));
         $statuses = $checker->check(['https://example.com']);
 
         $this->assertSame(0, $statuses['https://example.com']->httpStatus);
@@ -54,7 +55,7 @@ class ExternalStatusCheckTest extends TestCase
             'response_headers' => ['cf-mitigated: challenge'],
         ]);
         $client = new MockHttpClient([$response]);
-        $checker = new ExternalLinkStatusCheck($client, new NullLogger());
+        $checker = new ExternalLinkStatusCheck($client, new NullLogger(), new AppConfig(version: '1.0', domainApp: 'example.com'));
         $statuses = $checker->check(['https://protected.example.com']);
 
         $result = $statuses['https://protected.example.com'];

@@ -109,7 +109,9 @@ class DeliveryApiEndpointTest extends ApiTestCase
         $cache = $this->getService(CacheItemPoolInterface::class);
         $item = $cache->getItem(hash('xxh3', 'blog_cache_' . $blog->getId() . '_/'));
         $this->assertTrue($item->isHit());
-        $cached = unserialize($item->get());
+        $cachedRaw = $item->get();
+        $this->assertIsString($cachedRaw);
+        $cached = unserialize($cachedRaw);
         $this->assertInstanceOf(DeliveryResponse::class, $cached);
         $this->assertSame(200, $cached->status);
         $this->assertSame('just testing', $cached->content);

@@ -6,6 +6,7 @@ use App\Service\Blog\Message\HardDeleteBlogsMessage;
 use App\Service\Hosting\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use App\Service\LinkAnalysis\Message\DispatchAllLinkAnalysisChecksMessage;
 use App\Service\Post\Document\ClearStepsMessage;
+use App\Service\Post\Message\PublishScheduledPostVariantsMessage;
 use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -30,6 +31,7 @@ class Schedule implements ScheduleProviderInterface
             ->add(RecurringMessage::every('1 day', new HardDeleteBlogsMessage()))
             ->add(RecurringMessage::every('1 day', new DispatchAllLinkAnalysisChecksMessage()))
             ->add(RecurringMessage::every('1 day', new ClearStepsMessage()))
+            ->add(RecurringMessage::every('1 minute', new PublishScheduledPostVariantsMessage()))
 
             // add your own tasks here
             // see https://symfony.com/doc/current/scheduler.html#attaching-recurring-messages-to-a-schedule

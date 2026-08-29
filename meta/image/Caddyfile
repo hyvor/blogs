@@ -1,21 +1,18 @@
 {
 	frankenphp
-
-	on_demand_tls {
-        ask http://localhost:8080/api/special/caddy/allowed-domain
-    }
-
     log {
         output stderr
         level {$LOG_LEVEL}
     }
-
     metrics
+    auto_https disable_redirects
+
+    on_demand_tls {
+        ask http://localhost:8080/api/special/caddy/allowed-domain
+    }
 }
 
-# hyvorblogs.io subdomain
-# see run script for DELIVERY_DOMAIN
-*.{$DELIVERY_DOMAIN}:80 {
+(handle_php) {
 	root * /app/backend/public
 	encode zstd gzip
 	php_server {
@@ -23,7 +20,14 @@
         worker {
 			file /app/backend/public/index.php
 		}
+        env CADDY_ROUTER {args[0]}
     }
+}
+
+# hyvorblogs.io subdomain
+# see run script for DELIVERY_DOMAIN
+*.{$DELIVERY_DOMAIN}:80 {
+	import handle_php subdomain
 }
 
 # main app
@@ -33,14 +37,7 @@
 	{$APP_TLS_DIRECTIVE}
 
 	handle /api/* {
-		root * /app/backend/public
-        encode zstd gzip
-        php_server {
-            file_server off
-            worker {
-				file /app/backend/public/index.php
-			}
-        }
+		import handle_php app
 	}
 
 	@static {
@@ -69,17 +66,15 @@
 	}
 }
 
+# local endpoints
+http://localhost:8080 {
+	import handle_php local
+}
+
 # custom domain
 :443 {
 	tls {
 		on_demand
 	}
-	root * /app/backend/public
-	encode zstd gzip
-	php_server {
-        file_server off
-        worker {
-			file /app/backend/public/index.php
-		}
-    }
+	import handle_php customdomain
 }

@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { postEditingPublished, postEditor, postVariantStore } from '../../../postStore';
+	import {
+		documentStore,
+		postEditingPublished,
+		postEditor,
+		postVariantStore
+	} from '../../../postStore';
 	import Compare from '../Compare/Compare.svelte';
 
 	async function handleEditing() {
 		postEditingPublished.update((v) => !v);
 		await tick();
-		$postEditor.setContent($postVariantStore.content_unsaved ?? $postVariantStore.content!);
 		$postEditor.focus();
 	}
 
@@ -39,7 +43,7 @@
 {#if compare}
 	<Compare
 		leftContent={$postVariantStore.content!}
-		rightContent={$postVariantStore.content_unsaved || $postVariantStore.content!}
+		rightContent={$documentStore.checkpoint_content || $postVariantStore.content!}
 		onclose={() => (compare = false)}
 	/>
 {/if}

@@ -3,8 +3,10 @@
 namespace App\Service\Post\Document;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Entity\PostVariantStep;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Document\Exception\CheckpointClientAheadException;
 use App\Service\Post\Document\Exception\CheckpointClientBehindException;
 use App\Service\Post\PostService;
@@ -37,6 +39,7 @@ class DocumentService
         private EntityManagerInterface $em,
         private HubInterface $hub,
         private PostService $postService,
+        private PostContentService $postContentService,
         private LoggerInterface $logger
     ) {}
 
@@ -210,6 +213,11 @@ class DocumentService
             $current->setContentUnsaved($json);
             $current->setContentUnsavedVersion($version);
             $current->setUpdatedAt($this->now());
+
+            if ($current->getStatus() === PostVariantStatus::DRAFT) {
+                $text = $this->postContentService->getText($json, $blog);
+                $current->setWords(str_word_count($text));
+            }
 
             $this->em->persist($current);
         });

@@ -35,7 +35,6 @@ class ClonePostTest extends ApiTestCase
             'canonical_url' => 'https://example.com/canonical',
             'code_head' => '<meta name="test" content="head">',
             'code_foot' => '<script>console.log("foot")</script>',
-            'published_at' => new \DateTimeImmutable(),
         ]);
         $originalVariant = PostVariantFactory::createOne([
             'post' => $originalPost,
@@ -49,6 +48,7 @@ class ClonePostTest extends ApiTestCase
             'seo_primary_keyword' => 'primary keyword',
             'seo_secondary_keywords' => ['keyword1', 'keyword2'],
             'link_analysis' => ['https://example.com' => 1],
+            'published_at' => new \DateTimeImmutable(),
         ]);
         $originalPost->getVariants()->add($originalVariant);
 
@@ -84,11 +84,11 @@ class ClonePostTest extends ApiTestCase
         $this->assertSame($originalPost->getCodeFoot(), $clonedPost->getCodeFoot());
 
         $this->assertFalse($clonedPost->isFeatured());
-        $this->assertNull($clonedPost->getPublishedAt());
 
         $clonedVariant = $clonedPost->getVariants()->first();
         $this->assertNotFalse($clonedVariant);
 
+        $this->assertNull($clonedVariant->getPublishedAt());
         $this->assertSame('[Copy] Original Title', $clonedVariant->getTitle());
         $this->assertSame($originalVariant->getDescription(), $clonedVariant->getDescription());
         $this->assertNull($clonedVariant->getContent());

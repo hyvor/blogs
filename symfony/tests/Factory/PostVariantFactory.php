@@ -56,6 +56,9 @@ final class PostVariantFactory extends PersistentObjectFactory
         ;
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createOneFor(Post $post, array $attributes = [], ?Language $language = null): PostVariant
     {
         $attributes['post'] = $post;
@@ -67,6 +70,9 @@ final class PostVariantFactory extends PersistentObjectFactory
         return $variant;
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createOnePublishedFor(Post $post, array $attributes = [], ?Language $language = null): PostVariant
     {
         return self::createOneFor($post, array_merge($attributes, ['status' => PostVariantStatus::PUBLISHED]), $language);

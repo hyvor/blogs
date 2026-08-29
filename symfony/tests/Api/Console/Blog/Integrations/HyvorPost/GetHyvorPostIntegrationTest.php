@@ -23,6 +23,7 @@ class GetHyvorPostIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
+        $this->assertIsArray($data);
         $this->assertNull($data['data']);
     }
 
@@ -39,8 +40,13 @@ class GetHyvorPostIntegrationTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $response->getContent(), true);
-        $this->assertSame(555, $data['data']['newsletter_id']);
-        $this->assertStringContainsString('hyvor-post-form', $data['data']['embed_code']);
+        $this->assertIsArray($data);
+        $integrationData = $data['data'];
+        $this->assertIsArray($integrationData);
+        $this->assertSame(555, $integrationData['newsletter_id']);
+        $embedCode = $integrationData['embed_code'];
+        $this->assertIsString($embedCode);
+        $this->assertStringContainsString('hyvor-post-form', $embedCode);
     }
 
     public function test_requires_integrations_manage_scope(): void

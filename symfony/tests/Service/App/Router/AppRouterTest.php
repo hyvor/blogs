@@ -15,7 +15,8 @@ class AppRouterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->originalCaddyRouter = $_ENV['CADDY_ROUTER'] ?? null;
+        $caddyRouter = $_ENV['CADDY_ROUTER'] ?? null;
+        $this->originalCaddyRouter = is_string($caddyRouter) ? $caddyRouter : null;
     }
 
     protected function tearDown(): void

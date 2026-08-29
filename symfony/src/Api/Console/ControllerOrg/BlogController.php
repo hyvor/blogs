@@ -11,6 +11,7 @@ use App\Service\Billing\UsageService;
 use App\Service\Blog\BlogCreator;
 use App\Service\Blog\BlogService;
 use App\Service\Integration\HyvorPost\HyvorPostService;
+use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
@@ -35,6 +36,7 @@ class BlogController
         private UsageService $usageService,
         private InternalConfig $internalConfig,
         private HyvorPostService $hyvorPostService,
+        private HyvorTalkService $hyvorTalkService
     ) {}
 
     #[Route('/blog', methods: ['POST'])]
@@ -73,7 +75,7 @@ class BlogController
             }
         }
 
-        $blog = $this->blogCreator->create(
+        ['blog' => $blog, 'primaryUser' => $blogUser] = $this->blogCreator->create(
             $user,
             $org->id,
             $input->name,
@@ -85,11 +87,19 @@ class BlogController
         $isCloud = $this->internalConfig->getDeployment()->isCloud();
         $warnings = [];
 
-        if ($isCloud && $input->hyvor_post) {
+        if ($isCloud && !$input->is_dev && $input->hyvor_post) {
             try {
                 $this->hyvorPostService->connect($blog, $input->name, $blog->getSubdomain(), $user);
             } catch (HyvorApiException) {
                 $warnings[] = 'Failed to connect to Hyvor Post. You can try again later from the integrations page.';
+            }
+        }
+
+        if ($isCloud && !$input->is_dev && $input->hyvor_talk) {
+            try {
+                $this->hyvorTalkService->connect($blog, $blogUser);
+            } catch (HyvorApiException) {
+                $warnings[] = 'Failed to connect to Hyvor Talk. You can try again later from the integrations page.';
             }
         }
 

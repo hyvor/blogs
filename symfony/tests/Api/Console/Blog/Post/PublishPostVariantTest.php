@@ -15,6 +15,7 @@ use App\Tests\Factory\PostVariantFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
@@ -22,32 +23,66 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostSuggestionContentChecker::class)]
 class PublishPostVariantTest extends ApiTestCase
 {
-    public function test_language_not_found(): void
-    {
-        $blog = BlogFactory::createOneWithPrimaryLanguage();
-        $user = UserFactory::createOne(['blog' => $blog]);
-        $post = PostFactory::createOne(['blog' => $blog]);
-
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => 9999,
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'Language not found');
-    }
+    private const string CONTENT_UNSAVED = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello World"}]}]}';
 
     public function test_variant_not_found(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
-        $language = $blog->getLanguages()->first();
-        $this->assertNotFalse($language);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => 999999,
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');
+    }
+
+    #[TestWith([PostVariantStatus::PUBLISHED])]
+    #[TestWith([PostVariantStatus::SCHEDULED])]
+    public function test_fails_when_already_published_or_scheduled(
+        PostVariantStatus $status
+    ): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => $status,
+            'slug' => 'my-post',
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Post variant is already ' . $status->value);
+    }
+
+    public function test_fails_when_content_unsaved_is_null(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'content_unsaved' => null,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Cannot publish post variant with no content');
     }
 
     public function test_publishes_draft_variant(): void
@@ -57,17 +92,18 @@ class PublishPostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
-        PostVariantFactory::createOne([
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
             'slug' => 'my-post',
             'title' => 'My Post',
+            'content_unsaved' => self::CONTENT_UNSAVED,
         ]);
 
         $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => $variant->getId(),
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
@@ -76,8 +112,50 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertSame('published', $data['status']);
         $this->assertSame('my-post', $data['slug']);
 
-        $this->getEm()->refresh($post);
-        $this->assertNotNull($post->getPublishedAt());
+        $this->getEm()->refresh($variant);
+        $this->assertNotNull($variant->getPublishedAt());
+
+        $this->assertSame(self::CONTENT_UNSAVED, $variant->getContent());
+        $this->assertSame('<p>Hello World</p>', $variant->getContentHtml());
+        $this->assertStringContainsString('Hello World', (string)$variant->getContentText());
+        $this->assertSame(2, $variant->getWords());
+    }
+
+    public function test_schedules_variant(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'title' => 'My Post',
+            'content_unsaved' => self::CONTENT_UNSAVED,
+        ]);
+
+        $publishAt = (new \DateTimeImmutable('+1 day'))->getTimestamp();
+
+        $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'post_variant_id' => $variant->getId(),
+            'publish_at' => $publishAt,
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
+        $this->assertSame('scheduled', $data['status']);
+
+        $this->getEm()->refresh($variant);
+        $publishedAt = $variant->getPublishedAt();
+        $this->assertNotNull($publishedAt);
+        $this->assertSame($publishAt, $publishedAt->getTimestamp());
+        $this->assertSame(PostVariantStatus::SCHEDULED, $variant->getStatus());
+        $this->assertSame(self::CONTENT_UNSAVED, $variant->getContent());
     }
 
     public function test_generates_slug_if_missing(): void
@@ -87,17 +165,18 @@ class PublishPostVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
-        PostVariantFactory::createOne([
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
             'slug' => null,
             'title' => 'My Post Title',
+            'content_unsaved' => self::CONTENT_UNSAVED,
         ]);
 
         $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => $variant->getId(),
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
@@ -105,34 +184,7 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertIsArray($data);
         $this->assertSame('published', $data['status']);
         $this->assertNotNull($data['slug']);
-        $this->assertNotEmpty($data['slug']);
-    }
-
-    public function test_does_not_overwrite_existing_published_at(): void
-    {
-        $blog = BlogFactory::createOneWithPrimaryLanguage();
-        RouteFactory::createDefaultsFor($blog);
-        $user = UserFactory::createOne(['blog' => $blog]);
-        $language = $blog->getLanguages()->first();
-        $this->assertNotFalse($language);
-        $existingDate = new \DateTimeImmutable('2020-01-01');
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => $existingDate]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $language,
-            'status' => PostVariantStatus::DRAFT,
-            'slug' => 'some-slug',
-        ]);
-
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $language->getId(),
-        ], user: $user);
-
-        $this->assertResponseIsSuccessful();
-        $this->getEm()->refresh($post);
-        $publishedAt = $post->getPublishedAt();
-        $this->assertNotNull($publishedAt);
-        $this->assertSame($existingDate->getTimestamp(), $publishedAt->getTimestamp());
+        $this->assertSame('my-post-title', $data['slug']);
     }
 
     public function test_blocks_publish_when_content_has_pending_suggestions(): void
@@ -141,7 +193,7 @@ class PublishPostVariantTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         $user = UserFactory::createOne(['blog' => $blog]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        $post = PostFactory::createOne(['blog' => $blog, 'published_at' => null]);
+        $post = PostFactory::createOne(['blog' => $blog]);
 
         $contentWithPendingSuggestion = json_encode([
             'type' => 'doc',
@@ -156,21 +208,21 @@ class PublishPostVariantTest extends ApiTestCase
             ]],
         ]);
 
-        PostVariantFactory::createOne([
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::DRAFT,
             'slug' => 'my-post',
-            'content' => $contentWithPendingSuggestion,
+            'content_unsaved' => $contentWithPendingSuggestion,
         ]);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => $variant->getId(),
         ], user: $user);
 
         $this->assertResponseFailed(422, 'unresolved suggestions');
 
-        $this->getEm()->refresh($post);
-        $this->assertNull($post->getPublishedAt());
+        $this->getEm()->refresh($variant);
+        $this->assertNull($variant->getPublishedAt());
     }
 }

@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { confirm } from '@hyvor/design/components';
 	import {
-		postEditingStatusStore,
-		postVariantStore,
-		updatePostEditingStatusValue
+		documentStore,
+		postEditingPublished,
+		postEditor,
+		postVariantStore
 	} from '../../../../../postStore';
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
 	import ConfirmModal from './ConfirmModal.svelte';
-	import { updatePostVariant } from '../../../../../postActions';
 
 	async function handleClick() {
 		const wordsCount = getDiffWordsCount(
 			getTextFromContent($postVariantStore.content),
-			getTextFromContent($postVariantStore.content_unsaved)
+			getTextFromContent($documentStore.checkpoint_content)
 		);
 
 		if (
@@ -25,13 +25,13 @@
 				confirmText: 'Yes, discard changes'
 			})
 		) {
-			updatePostEditingStatusValue('isEditingPublished', false);
-			updatePostVariant({ content_unsaved: null }, true);
+			$postEditor.setContent($postVariantStore.content!);
+			postEditingPublished.set(false);
 		}
 	}
 </script>
 
-{#if $postEditingStatusStore.isEditingPublished}
+{#if $postEditingPublished}
 	<span>
 		Editing published. <button onclick={handleClick}>Discard</button>
 	</span>

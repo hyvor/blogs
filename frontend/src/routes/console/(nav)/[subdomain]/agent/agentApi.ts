@@ -27,7 +27,7 @@ export type AgentEvent =
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
-	| { type: 'tool'; name: string }
+	| { type: 'tool'; name: string; status: 'running' | 'done' }
 	| { type: 'text'; content: string }
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
@@ -118,8 +118,21 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 			break;
 
 		case 'tool_call':
-			blocks.push({ type: 'tool', name: event.tool });
+			blocks.push({ type: 'tool', name: event.tool, status: 'running' });
 			break;
+
+		case 'tool_result': {
+			const tool = [...blocks]
+				.reverse()
+				.find(
+					(b): b is Extract<AgentBlock, { type: 'tool' }> =>
+						b.type === 'tool' && b.name === event.tool && b.status === 'running'
+				);
+			if (tool) {
+				tool.status = 'done';
+			}
+			break;
+		}
 
 		case 'post_variant_read':
 			trackVariantActivity(blocks, event.post_variant_id, 'read');
@@ -132,7 +145,6 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 		case 'get_tags':
 		case 'get_authors':
 		case 'get_post_variants':
-			// markLastRunningToolDone(blocks);
 			break;
 
 		case 'text':

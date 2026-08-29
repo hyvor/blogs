@@ -26,8 +26,8 @@ export function createBlog(
 			name,
 			subdomain,
 			is_dev: isDev,
-			hyvor_talk: hyvorTalk,
-			hyvor_post: hyvorPost
+			hyvor_talk: isDev ? false : hyvorTalk,
+			hyvor_post: isDev ? false : hyvorPost
 		},
 		userApi: true
 	});

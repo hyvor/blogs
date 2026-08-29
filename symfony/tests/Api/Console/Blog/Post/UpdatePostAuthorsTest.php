@@ -43,7 +43,6 @@ class UpdatePostAuthorsTest extends ApiTestCase
         $this->assertCount(2, $post->getAuthors());
 
         $event = $this->getEd()->getFirstEvent(PostAuthorsChangedEvent::class);
-        $this->assertNotNull($event);
         $this->assertSame($post->getId(), $event->post->getId());
         $this->assertCount(0, $event->oldAuthors);
         $this->assertCount(2, $event->newAuthors);
@@ -69,10 +68,11 @@ class UpdatePostAuthorsTest extends ApiTestCase
 
         refresh($post);
         $this->assertCount(1, $post->getAuthors());
-        $this->assertSame($user2->getId(), $post->getAuthors()[0]->getId());
+        $firstAuthor = $post->getAuthors()[0];
+        $this->assertNotNull($firstAuthor);
+        $this->assertSame($user2->getId(), $firstAuthor->getId());
 
         $event = $this->getEd()->getFirstEvent(PostAuthorsChangedEvent::class);
-        $this->assertNotNull($event);
         $this->assertSame($post->getId(), $event->post->getId());
         $this->assertCount(1, $event->oldAuthors);
         $this->assertSame($user1->getId(), $event->oldAuthors[0]->getId());

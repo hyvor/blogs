@@ -102,6 +102,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertTrue($json[0]['is_featured']);
     }
 
@@ -146,6 +147,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -169,6 +171,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -178,11 +181,11 @@ class GetPostsTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
-        $post1 = PostFactory::createOne(['blog' => $blog, 'published_at' => new \DateTimeImmutable('-2 days')]);
-        PostVariantFactory::createOne(['post' => $post1, 'language' => $language]);
+        $post1 = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post1, 'language' => $language, 'published_at' => new \DateTimeImmutable('-2 days')]);
 
-        $post2 = PostFactory::createOne(['blog' => $blog, 'published_at' => new \DateTimeImmutable('-1 day')]);
-        PostVariantFactory::createOne(['post' => $post2, 'language' => $language]);
+        $post2 = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne(['post' => $post2, 'language' => $language, 'published_at' => new \DateTimeImmutable('-1 day')]);
 
         $startTimestamp = new \DateTimeImmutable('-36 hours')->getTimestamp();
         $endTimestamp = new \DateTimeImmutable('now')->getTimestamp();
@@ -192,6 +195,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post2->getId(), $json[0]['id']);
     }
 
@@ -208,6 +212,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
@@ -225,6 +230,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 }

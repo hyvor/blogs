@@ -37,6 +37,20 @@ class BookmarkTest extends KernelTestCase
         return (new Blog())->setSubdomain('test');
     }
 
+    /**
+     * @param list<int|string> $path
+     */
+    private function digOrNull(mixed $data, array $path): mixed
+    {
+        foreach ($path as $key) {
+            if (!is_array($data) || !array_key_exists($key, $data)) {
+                return null;
+            }
+            $data = $data[$key];
+        }
+        return $data;
+    }
+
     private function mockLinkResponse(): void
     {
         $html = <<<HTML
@@ -103,7 +117,7 @@ class BookmarkTest extends KernelTestCase
         $json = $this->postSchema()->documentFromHtml($html)->toJson();
 
         $decoded = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
-        $this->assertNotSame('bookmark', $decoded['content'][0]['content'][0]['marks'][0]['type'] ?? null);
+        $this->assertNotSame('bookmark', $this->digOrNull($decoded, ['content', 0, 'content', 0, 'marks', 0, 'type']));
     }
 
     public function test_custom_template(): void

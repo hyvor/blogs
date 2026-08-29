@@ -4,6 +4,8 @@ namespace App\Service\Blog\Count;
 
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
+use App\Service\App\Messenger\MessageTransport;
+use App\Service\Blog\Event\BlogCreatedEvent;
 use App\Service\Language\LanguageService;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
@@ -17,6 +19,7 @@ use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class CountListener
@@ -25,6 +28,17 @@ class CountListener
         private MessageBusInterface $bus,
         private LanguageService $languageService,
     ) {}
+
+    #[AsEventListener]
+    public function onBlogCreated(BlogCreatedEvent $event): void
+    {
+        // update immediately to show counts right after a blog created
+        $this->dispatch(
+            $event->blog,
+            CountType::cases(), // update all
+            sync: true,
+        );
+    }
 
     #[AsEventListener]
     public function onPostCreated(PostCreatedEvent $event): void
@@ -135,8 +149,18 @@ class CountListener
         Blog $blog,
         array $types,
         array $entityIds = [],
+        bool $sync = false,
     ): void
     {
-        $this->bus->dispatch(new RecalculateCountMessage($blog->getId(), $types, $entityIds));
+        $stamps = [];
+
+        if ($sync) {
+            $stamps[] = MessageTransport::syncStamp();
+        }
+
+        $this->bus->dispatch(
+            new RecalculateCountMessage($blog->getId(), $types, $entityIds),
+            $stamps
+        );
     }
 }

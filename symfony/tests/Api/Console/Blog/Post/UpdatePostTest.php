@@ -25,7 +25,7 @@ class UpdatePostTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog, 'is_featured' => false]);
-        PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
 
         $timestamp = mktime(12, 0, 0, 1, 1, 2024);
 
@@ -54,7 +54,9 @@ class UpdatePostTest extends ApiTestCase
         $this->assertSame('https://example.com/img.jpg', $post->getFeaturedImageUrl());
         $this->assertSame('<script>head</script>', $post->getCodeHead());
         $this->assertSame('<script>foot</script>', $post->getCodeFoot());
-        $this->assertSame($timestamp, $post->getPublishedAt()?->getTimestamp());
+
+        $variant = refresh($variant);
+        $this->assertSame($timestamp, $variant->getPublishedAt()?->getTimestamp());
     }
 
     public function test_nullifies_post_fields(): void

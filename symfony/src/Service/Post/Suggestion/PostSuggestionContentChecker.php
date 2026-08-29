@@ -16,6 +16,11 @@ namespace App\Service\Post\Suggestion;
  */
 class PostSuggestionContentChecker
 {
+
+    /**
+     * Checks whether the given Document contains any pending suggestions
+     * Does not check for comments, only suggestions (insert, delete, format)
+     */
     public function hasPendingSuggestions(?string $json): bool
     {
         if ($json === null || $json === '') {

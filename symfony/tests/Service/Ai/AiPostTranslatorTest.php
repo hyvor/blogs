@@ -26,6 +26,9 @@ class AiPostTranslatorTest extends KernelTestCase
         return $this->getService(AiPostTranslator::class);
     }
 
+    /**
+     * @param array<string, mixed> $content
+     */
     private function getPostVariant(array $content): PostVariant
     {
         $blog = new Blog();
@@ -46,6 +49,9 @@ class AiPostTranslatorTest extends KernelTestCase
         return $postVariant;
     }
 
+    /**
+     * @throws \App\Service\Ai\Translate\TranslateException
+     */
     public function test_translates_post_variant_simple_paragraph(): void
     {
         $variant = $this->getPostVariant([
@@ -100,6 +106,9 @@ class AiPostTranslatorTest extends KernelTestCase
         $translator->translatePostVariant($variant, 'fr');
     }
 
+    /**
+     * @throws \App\Service\Ai\Translate\TranslateException
+     */
     public function test_translates_post_variant_complex_paragraphs(): void
     {
 

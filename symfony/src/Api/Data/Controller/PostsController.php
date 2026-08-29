@@ -23,7 +23,7 @@ use App\Entity\Enum\PostVariantStatus;
 class PostsController
 {
     public const ALLOWED_SORTS = [
-        'published_at' => 'p.published_at',
+        'published_at' => 'pv.published_at',
         'created_at' => 'p.created_at',
         'id' => 'p.id',
         'updated_at' => 'pv.updated_at',

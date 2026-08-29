@@ -24,6 +24,7 @@ use App\Service\Language\LanguageService;
 use App\Service\Post\Document\DocumentService;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,6 +46,7 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
+        private PostSuggestionContentChecker $postSuggestionContentChecker
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -241,11 +243,11 @@ class PostController
         }
 
         if ($input->content_updated_at !== false) {
-            if ($post->getPublishedAt() === null) {
+            if ($variant->getPublishedAt() === null) {
                 throw new UnprocessableEntityHttpException('Cannot set content_updated_at for unpublished post');
             }
 
-            if ($post->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
+            if ($variant->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
                 throw new UnprocessableEntityHttpException('Content updated time should be after published time');
             }
 
@@ -273,17 +275,32 @@ class PostController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        $language = $this->languageService->getLanguageById($blog, $input->language_id);
-        if ($language === null) {
-            throw new UnprocessableEntityHttpException('Language not found');
-        }
-
-        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
         if ($variant === null) {
             throw new NotFoundHttpException('Variant not found');
         }
 
-        $variant = $this->postService->publishPostVariant($variant, $blog);
+        if ($variant->getStatus() !== PostVariantStatus::DRAFT) {
+            throw new UnprocessableEntityHttpException('Post variant is already ' . $variant->getStatus()->value);
+        }
+
+        if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContentUnsaved())) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
+        if ($variant->getContentUnsaved() === null) {
+            throw new UnprocessableEntityHttpException('Cannot publish post variant with no content');
+        }
+
+        $variant = $this->postService->publishPostVariant(
+            $blog,
+            $variant,
+            $input->publish_at ?
+                \DateTimeImmutable::createFromTimestamp($input->publish_at) :
+                null,
+        );
 
         return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
     }

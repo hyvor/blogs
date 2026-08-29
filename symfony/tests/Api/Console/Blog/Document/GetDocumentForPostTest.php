@@ -54,6 +54,7 @@ class GetDocumentForPostTest extends ApiTestCase
         $json = $this->getJson();
 
         $postJson = $json['post'];
+        $this->assertIsArray($postJson);
 
         $this->assertSame($post->getId(), $postJson['id']);
         $this->assertTrue($postJson['is_featured']);
@@ -67,10 +68,12 @@ class GetDocumentForPostTest extends ApiTestCase
         $this->assertCount(1, $postJson['authors']);
 
         $variantJson = $json['variant'];
+        $this->assertIsArray($variantJson);
         $this->assertSame($language->getId(), $variantJson['language_id']);
         $this->assertSame($variant->getId(), $variantJson['id']);
 
         $documentJson = $json['document'];
+        $this->assertIsArray($documentJson);
         $this->assertSame(1, $documentJson['checkpoint_version']);
         $this->assertSame('unsaved content', $documentJson['checkpoint_content']);
         $this->assertIsString($documentJson['mercure_token']);
@@ -153,10 +156,12 @@ class GetDocumentForPostTest extends ApiTestCase
         $json = $this->getJson();
 
         $variantJson = $json['variant'];
+        $this->assertIsArray($variantJson);
         $this->assertSame($secondaryLanguage->getId(), $variantJson['language_id']);
         $this->assertSame($secondaryVariant->getId(), $variantJson['id']);
 
         $documentJson = $json['document'];
+        $this->assertIsArray($documentJson);
         $this->assertSame(2, $documentJson['checkpoint_version']);
         $this->assertSame('secondary content', $documentJson['checkpoint_content']);
     }

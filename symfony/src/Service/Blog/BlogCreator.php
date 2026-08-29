@@ -11,6 +11,7 @@ use App\Entity\Enum\UserRole;
 use App\Entity\Language;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Service\Blog\Event\BlogCreatedEvent;
 use App\Service\Language\LanguageService;
 use App\Service\Navigation\NavigationService;
 use App\Service\Post\Content\PostSchema;
@@ -30,6 +31,7 @@ use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class BlogCreator
@@ -100,10 +102,14 @@ class BlogCreator
         private PostService $postService,
         private PostSchema $postSchema,
         private BlogService $blogService,
+        private EventDispatcherInterface $ed,
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
     ) {}
 
+    /**
+     * @return array{blog: Blog, primaryLanguage: Language, primaryUser: User}
+     */
     public function create(
         ?AuthUser $authUser,
         ?int $organizationId,
@@ -111,9 +117,12 @@ class BlogCreator
         string $subdomain,
         BlogType $type = BlogType::DEFAULT,
         ?string $ip = null,
-    ): Blog {
-        /** @var Blog $blog */
-        $blog =  $this->em->wrapInTransaction(function () use ($authUser, $organizationId, $name, $subdomain, $type, $ip) {
+    ): array {
+
+        /**
+         * @var array{blog: Blog, primaryLanguage: Language, primaryUser: User} $data
+         */
+        $data =  $this->em->wrapInTransaction(function () use ($authUser, $organizationId, $name, $subdomain, $type, $ip) {
             $now = $this->now();
 
             $blog = new Blog();
@@ -149,10 +158,16 @@ class BlogCreator
                 $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
             }
 
-            return $blog;
+            $this->ed->dispatch(new BlogCreatedEvent($blog));
+
+            return [
+                'blog' => $blog,
+                'primaryLanguage' => $primaryLanguage,
+                'primaryUser' => $primaryUser,
+            ];
         });
 
-        return $blog;
+        return $data;
     }
 
     /**
@@ -343,10 +358,10 @@ class BlogCreator
                 $primaryLanguage,
                 flush: false,
                 status: PostVariantStatus::PUBLISHED,
-                content: $json,
                 slug: $row['slug'],
                 title: $row['title'],
-                description: $row['description'] ?? ''
+                description: $row['description'] ?? '',
+                content: $json
             );
 
             if (!$isPage) {
@@ -382,9 +397,9 @@ class BlogCreator
                     $language,
                     flush: false,
                     status: PostVariantStatus::PUBLISHED,
-                    content: $this->postSchema->documentFromHtml($html)->toJson(),
                     slug: 'post-' . bin2hex(random_bytes(4)) . '-' . $i,
                     title: $this->getRandomTitle(),
+                    content: $this->postSchema->documentFromHtml($html)->toJson(),
                 );
             }
 

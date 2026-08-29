@@ -8,6 +8,7 @@ use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\Count\CountListener;
 use App\Service\Blog\Count\CountType;
 use App\Service\Blog\Count\RecalculateCountMessage;
+use App\Service\Blog\Event\BlogCreatedEvent;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
 use App\Service\Post\Event\PostAuthorsChangedEvent;
@@ -31,6 +32,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CountListener::class)]
 class CountListenerTest extends KernelTestCase
 {
+
+    public function test_blog_created_dispatches_recalculation_for_all_count_types(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+
+        $this->getEd()->dispatch(new BlogCreatedEvent($blog));
+
+        $this->assertOnlyMessage($blog, CountType::cases(), transport: MessageTransport::SYNC);
+    }
 
     public function test_post_created_dispatches_one_bundled_message_for_posts_authors_and_tags(): void
     {
@@ -192,12 +202,13 @@ class CountListenerTest extends KernelTestCase
     private function assertOnlyMessage(
         Blog $blog,
         array $expectedTypes,
-        ?array $expectedEntityIds = null
+        ?array $expectedEntityIds = null,
+        string $transport = MessageTransport::ASYNC
     ): void
     {
         /** @var RecalculateCountMessage[] $messages */
         $messages = array_values(array_filter(
-            $this->transport(MessageTransport::ASYNC)->queue()->messages(RecalculateCountMessage::class),
+            $this->transport($transport)->queue()->messages(RecalculateCountMessage::class),
             static fn(RecalculateCountMessage $message) => $message->blogId === $blog->getId(),
         ));
 

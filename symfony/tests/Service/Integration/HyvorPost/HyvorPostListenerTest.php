@@ -32,6 +32,7 @@ class HyvorPostListenerTest extends KernelTestCase
         $pathMatcher = $this->getService(PathMatcher::class);
         $response = $pathMatcher->match($blog, '/');
 
+        $this->assertIsString($response->content);
         $this->assertStringContainsString(htmlspecialchars('hyvor-post-form newsletter-id="394"'), $response->content);
     }
 

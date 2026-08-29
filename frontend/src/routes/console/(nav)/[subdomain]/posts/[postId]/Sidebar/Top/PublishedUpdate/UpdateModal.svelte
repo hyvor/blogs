@@ -1,25 +1,19 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import FeaturedChange from './Changes/FeaturedChange.svelte';
-	import {
-		postEditingStatusStore,
-		postVariantLanguageStore,
-		updatePostEditingStatusValue
-	} from '../../../../postStore';
+	import { postVariantLanguageStore } from '../../../../postStore';
 	import {
 		Button,
 		ButtonGroup,
 		Modal,
 		SplitControl,
 		Switch,
-		Tag,
 		TextInput,
 		Tooltip,
 		Validation,
 		toast
 	} from '@hyvor/design/components';
 	import {
+		documentStore,
 		postOriginalStore,
 		postStore,
 		postVariantOriginalStore,
@@ -143,7 +137,7 @@
 		<SplitControl label="Content">
 			<ContentChange
 				contentOld={$postVariantOriginalStore.content}
-				contentNew={$postVariantStore.content_unsaved}
+				contentNew={$documentStore.checkpoint_content}
 				{diff}
 			/>
 

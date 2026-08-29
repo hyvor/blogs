@@ -14,8 +14,8 @@
 	let variant = $derived(tag.variants.find((v) => v.language_id === $primaryLanguageStore.id));
 </script>
 
-<span>
-	{variant?.name || 'Unnamed'}
+<span class="tag-name">
+	<span class="hash">#</span>{variant?.name || 'Unnamed'}
 	{#if tag.is_private}
 		<Tooltip text="Private tag">
 			<IconLock size={small ? 10 : 12} />
@@ -24,9 +24,12 @@
 </span>
 
 <style>
-	span {
+	.tag-name {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
+	}
+	.hash {
+		color: color-mix(in srgb, var(--text-light) 60%, transparent 40%);
 	}
 </style>

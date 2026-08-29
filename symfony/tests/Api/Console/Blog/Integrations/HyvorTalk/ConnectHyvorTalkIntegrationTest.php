@@ -50,12 +50,20 @@ class ConnectHyvorTalkIntegrationTest extends ApiTestCase
         $this->assertTrue($hyvorTalk->isCreatedByBlogs());
         $this->assertSame(123, $hyvorTalk->getWebsiteId());
 
-        $requestBody = json_decode($htWebsiteResponse->getRequestOptions()['body'], true);
+        $websiteBody = $htWebsiteResponse->getRequestOptions()['body'];
+        $this->assertIsString($websiteBody);
+        $requestBody = json_decode($websiteBody, true);
+        $this->assertIsArray($requestBody);
         $this->assertSame('My Blog', $requestBody['name']);
-        $this->assertSame('true', $requestBody['metadata']['hyvor_blogs_integration']);
-        $this->assertSame((string) $blog->getId(), $requestBody['metadata']['hyvor_blogs_blog_id']);
+        $metadata = $requestBody['metadata'];
+        $this->assertIsArray($metadata);
+        $this->assertSame('true', $metadata['hyvor_blogs_integration']);
+        $this->assertSame((string) $blog->getId(), $metadata['hyvor_blogs_blog_id']);
 
-        $modRequestBody = json_decode($htModResponse->getRequestOptions()['body'], true);
+        $modBody = $htModResponse->getRequestOptions()['body'];
+        $this->assertIsString($modBody);
+        $modRequestBody = json_decode($modBody, true);
+        $this->assertIsArray($modRequestBody);
         $this->assertSame(543, $modRequestBody['user_id']);
         $this->assertSame('admin', $modRequestBody['role']);
         $this->assertSame('ignore', $modRequestBody['on_duplicate']);

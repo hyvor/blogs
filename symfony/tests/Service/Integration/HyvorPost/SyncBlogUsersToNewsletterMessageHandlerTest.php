@@ -46,11 +46,18 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse(Fixtures::make(User::class, [
@@ -76,7 +83,9 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
             $this->assertSame('POST', $request['method']);
             $this->assertStringContainsString('/api/console/users', $request['url']);
             $this->assertSame('ignore', $request['body']['on_duplicate']);
-            $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $request['headers']['x-newsletter-id'][0]);
+            $newsletterIdHeader = $request['headers']['x-newsletter-id'];
+            $this->assertIsArray($newsletterIdHeader);
+            $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $newsletterIdHeader[0]);
         }
 
         $this->assertSame($admin->getHyvorUserId(), $requests[0]['body']['user_id']);
@@ -113,11 +122,18 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse(Fixtures::make(User::class, [
@@ -144,7 +160,9 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
         $this->assertStringContainsString('/api/console/users', $request['url']);
         $this->assertSame('ignore', $request['body']['on_duplicate']);
         $this->assertSame($user->getHyvorUserId(), $request['body']['user_id']);
-        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $request['headers']['x-newsletter-id'][0]);
+        $newsletterIdHeader = $request['headers']['x-newsletter-id'];
+        $this->assertIsArray($newsletterIdHeader);
+        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $newsletterIdHeader[0]);
     }
 
     // 3. Delete single user
@@ -159,11 +177,18 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+                $headers = $options['normalized_headers'];
+                $this->assertIsArray($headers);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
-                    'headers' => $options['normalized_headers'],
+                    'body' => $decodedBody,
+                    'headers' => $headers,
                 ];
 
                 return new JsonMockResponse([]);
@@ -185,7 +210,9 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
         $this->assertSame('DELETE', $request['method']);
         $this->assertStringContainsString('/api/console/users', $request['url']);
         $this->assertSame($user->getHyvorUserId(), $request['body']['user_id']);
-        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $request['headers']['x-newsletter-id'][0]);
+        $newsletterIdHeader = $request['headers']['x-newsletter-id'];
+        $this->assertIsArray($newsletterIdHeader);
+        $this->assertSame('X-Newsletter-Id: ' . $hyvorPost->getNewsletterId(), $newsletterIdHeader[0]);
     }
 
 }

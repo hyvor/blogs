@@ -24,40 +24,36 @@ class PostTest extends ApiTestCase
     private function createBlogWithPost(): array
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang1 = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
-        $lang2 = LanguageFactory::createOne(['blog' => $blog, 'code' => 'fr', 'is_primary' => false]);
+        $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
+        $blog->getLanguages()->add($lang2);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         $post = PostFactory::createOne([
             'blog' => $blog,
             'is_page' => false,
             'is_featured' => false,
-            'published_at' => new \DateTimeImmutable(),
         ]);
 
-        $variant1 = PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $lang1,
+        $variant1 = PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'test-post-en',
             'title' => 'Test Post',
-        ]);
+            'published_at' => new \DateTimeImmutable(),
+        ], $lang1);
 
-        $variant2 = PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $lang2,
+        $variant2 = PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'test-post-fr',
+            'published_at' => new \DateTimeImmutable(),
             'title' => 'Test Post FR',
-        ]);
+        ], $lang2);
 
         // other blog post
         $otherBlogPost = PostFactory::createOne();
-        PostVariantFactory::createOne([
-            'post' => $otherBlogPost,
-            'language' => $lang1,
+        PostVariantFactory::createOneFor($otherBlogPost, [
             'status' => PostVariantStatus::PUBLISHED,
-        ]);
+        ], $lang1);
 
         return [$blog, $lang1, $lang2, $post, $variant1, $variant2];
     }
@@ -78,7 +74,7 @@ class PostTest extends ApiTestCase
     public function test_requires_integer_id(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $this->dataApi($blog, '/post', ['id' => 'something']);
 
@@ -131,18 +127,18 @@ class PostTest extends ApiTestCase
     public function test_returns_404_for_missing_variant(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang1 = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
-        $lang2 = LanguageFactory::createOne(['blog' => $blog, 'code' => 'fr', 'is_primary' => false]);
+        $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
+        $blog->getLanguages()->add($lang2);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
-        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable()]);
+        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         // Only create EN variant, no FR
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $lang1,
+        PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'only-en-' . $post->getId(),
-        ]);
+            'published_at' => new \DateTimeImmutable(),
+        ], $lang1);
 
         $this->dataApi($blog, '/post', ['id' => $post->getId(), 'language' => 'fr']);
 
@@ -152,15 +148,13 @@ class PostTest extends ApiTestCase
     public function test_does_not_return_unpublished_posts(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $lang = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        $lang = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
-        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false, 'published_at' => new \DateTimeImmutable()]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $lang,
+        $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
+        PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::DRAFT,
             'slug' => 'draft-post-' . $post->getId(),
-        ]);
+        ], $lang);
 
         $this->dataApi($blog, '/post', ['id' => $post->getId()]);
 

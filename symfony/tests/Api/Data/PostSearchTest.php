@@ -33,15 +33,13 @@ class PostSearchTest extends ApiTestCase
         $post = PostFactory::createOne(array_merge([
             'blog' => $blog,
             'is_page' => false,
-            'published_at' => new \DateTimeImmutable(),
         ], $postAttrs));
 
-        PostVariantFactory::createOne(array_merge([
-            'post' => $post,
-            'language' => $lang,
+        PostVariantFactory::createOneFor($post, array_merge([
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'search-' . $post->getId(),
-        ], $variantAttrs));
+            'published_at' => new \DateTimeImmutable(),
+        ], $variantAttrs), $lang);
 
         return $post;
     }

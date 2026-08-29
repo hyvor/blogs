@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6b96df46ed2366368179c3deff45791",
+    "content-hash": "a71951b5808226752fe286030ed42f39",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1472,6 +1472,70 @@
             "time": "2026-02-08T16:21:46+00:00"
         },
         {
+            "name": "dragonmantank/cron-expression",
+            "version": "v3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "d61a8a9604ec1f8c3d150d09db6ce98b32675013"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/d61a8a9604ec1f8c3d150d09db6ce98b32675013",
+                "reference": "d61a8a9604ec1f8c3d150d09db6ce98b32675013",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2|^8.3|^8.4|^8.5"
+            },
+            "replace": {
+                "mtdowling/cron-expression": "^1.0"
+            },
+            "require-dev": {
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.32|^2.1.31",
+                "phpunit/phpunit": "^8.5.48|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "support": {
+                "issues": "https://github.com/dragonmantank/cron-expression/issues",
+                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-31T18:51:33+00:00"
+        },
+        {
             "name": "egulias/email-validator",
             "version": "4.0.4",
             "source": {
@@ -1835,16 +1899,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.4",
+            "version": "4.1.5-beta.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "c829b0a4ff2c7783f0c9426abc76a89883ce67af"
+                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/c829b0a4ff2c7783f0c9426abc76a89883ce67af",
-                "reference": "c829b0a4ff2c7783f0c9426abc76a89883ce67af",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/6979588b2c5a78d04dc8305edce8a4be2b103635",
+                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635",
                 "shasum": ""
             },
             "require": {
@@ -1891,6 +1955,7 @@
             "autoload": {
                 "psr-4": {
                     "Hyvor\\Internal\\": "src/",
+                    "Hyvor\\Internal\\Types\\": "types",
                     "Hyvor\\Internal\\Bundle\\": "bundle/src"
                 }
             },
@@ -1907,9 +1972,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.4"
+                "source": "https://github.com/hyvor/internal/tree/4.1.5-beta.0"
             },
-            "time": "2026-08-27T12:15:06+00:00"
+            "time": "2026-08-28T21:17:41+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",
@@ -7008,6 +7073,75 @@
                 }
             ],
             "time": "2026-07-31T12:43:13+00:00"
+        },
+        {
+            "name": "symfony/css-selector",
+            "version": "v8.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/css-selector.git",
+                "reference": "a291fb5adb65f52a4bb315db2d803698315dc64d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/a291fb5adb65f52a4bb315db2d803698315dc64d",
+                "reference": "a291fb5adb65f52a4bb315db2d803698315dc64d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Converts CSS selectors to XPath expressions",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/css-selector/tree/v8.1.5"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-08-21T17:47:34+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -14684,75 +14818,6 @@
             "time": "2026-06-09T10:54:51+00:00"
         },
         {
-            "name": "symfony/css-selector",
-            "version": "v8.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/css-selector.git",
-                "reference": "dc0e2be45c9b5588c82414f02ac574b4b986abcd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/dc0e2be45c9b5588c82414f02ac574b4b986abcd",
-                "reference": "dc0e2be45c9b5588c82414f02ac574b4b986abcd",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.4.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\CssSelector\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Jean-François Simon",
-                    "email": "jeanfrancois.simon@sensiolabs.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Converts CSS selectors to XPath expressions",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/css-selector/tree/v8.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2026-05-29T05:06:50+00:00"
-        },
-        {
             "name": "symfony/maker-bundle",
             "version": "v1.67.0",
             "source": {
@@ -14904,7 +14969,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "hyvor/internal": 10
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

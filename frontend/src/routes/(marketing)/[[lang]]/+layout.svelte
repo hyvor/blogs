@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { InternationalizationProvider } from '@hyvor/design/components';
 	import { buildMarketingUrl, DEFAULT_MARKETING_LANGUAGE, LANGUAGES_CONFIG } from './marketingLang';
-	import type { PageProps } from './$types';
+	import type { LayoutProps } from './$types';
 	import { page } from '$app/state';
 	import { MARKETING_PAGE_META } from '../marketing';
 
-	const { children, data }: PageProps = $props();
+	const { children, data }: LayoutProps = $props();
 </script>
 
 <svelte:head>

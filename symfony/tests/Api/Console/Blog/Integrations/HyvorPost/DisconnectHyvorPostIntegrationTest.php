@@ -43,8 +43,11 @@ class DisconnectHyvorPostIntegrationTest extends ApiTestCase
 
         $this->assertSame('DELETE', $hpDeleteResponse->getRequestMethod());
         $this->assertStringContainsString('/newsletter', $hpDeleteResponse->getRequestUrl());
-        $newsletterIdHeader = $hpDeleteResponse->getRequestOptions()['normalized_headers']['x-newsletter-id'][0] ?? null;
-        $this->assertSame('X-Newsletter-Id: '.$hyvorPost->getNewsletterId(), $newsletterIdHeader);
+        $normalizedHeaders = $hpDeleteResponse->getRequestOptions()['normalized_headers'];
+        $this->assertIsArray($normalizedHeaders);
+        $newsletterIdHeaders = $normalizedHeaders['x-newsletter-id'] ?? null;
+        $this->assertIsArray($newsletterIdHeaders);
+        $this->assertSame('X-Newsletter-Id: '.$hyvorPost->getNewsletterId(), $newsletterIdHeaders[0]);
     }
 
     public function test_disconnects_without_deleting_the_newsletter_when_not_created_by_blogs(): void

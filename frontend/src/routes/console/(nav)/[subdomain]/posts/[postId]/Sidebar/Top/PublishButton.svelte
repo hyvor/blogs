@@ -1,40 +1,50 @@
 <script lang="ts">
 	import {
 		Button,
-		Caption,
 		FormControl,
-		Label,
 		Modal,
 		Radio,
+		SplitControl,
 		TextInput,
-		toast
+		toast,
+		Validation
 	} from '@hyvor/design/components';
 	import IconSendFill from '@hyvor/icons/IconSendFill';
-	import { postVariantStore } from '../../../postStore';
+	import { postSidebarStore, postVariantStore } from '../../../postStore';
 	import dayjs from 'dayjs';
-	import { updatePost, publishPostVariant } from '../../../postActions';
+	import utc from 'dayjs/plugin/utc';
+	import { publishPostVariant } from '../../../postActions';
 	import PublishedToast from './Toast/PublishedToast.svelte';
+	import PublishSummary from './PublishSummary.svelte';
+	import { slide } from 'svelte/transition';
+
+	dayjs.extend(utc);
 
 	let modalOpen = $state(false);
 	let type: 'published' | 'scheduled' = $state('published');
+	let hasErrors = $state(false);
 
-	let scheduleDate = $state(dayjs().format('YYYY-MM-DD'));
+	let scheduleDateTime = $state(dayjs.utc().add(1, 'hour').format('YYYY-MM-DDTHH:mm'));
 
-	async function handlePublish() {
+	function checkIsPastSchedule() {
+		return type === 'scheduled' && dayjs.utc(scheduleDateTime).isBefore(dayjs.utc());
+	}
+
+	let isPastSchedule = $derived(checkIsPastSchedule());
+
+	function openSettings() {
+		modalOpen = false;
+		$postSidebarStore = 'settings';
+	}
+
+	function handlePublish() {
 		modalOpen = false;
 
 		const toastId = toast.loading('Publishing...');
 
-		try {
-			await updatePost({
-				published_at: type === 'published' ? dayjs().unix() : dayjs(scheduleDate).unix()
-			});
-		} catch (error) {
-			toast.error('Failed to publish post (update post)', { id: toastId });
-			return;
-		}
+		const publishAt = type === 'scheduled' ? dayjs.utc(scheduleDateTime).unix() : null;
 
-		publishPostVariant()
+		publishPostVariant(publishAt)
 			.then(() => {
 				toast.success(PublishedToast, { id: toastId, duration: 5000 });
 			})
@@ -52,26 +62,44 @@
 		{/snippet}
 	</Button>
 
-	<Modal title="Publish Post" bind:show={modalOpen} size="small">
+	<Modal title="Publish Post" bind:show={modalOpen} size="large">
 		<div class="modal-inner">
-			<div style="display:flex;justify-content:space-between">
-				<Radio name="radio" value="published" bind:group={type}>Publish now</Radio>
-				<Radio name="radio" value="scheduled" bind:group={type}>Schedule for later</Radio>
-			</div>
+			<PublishSummary
+				onEditSettings={openSettings}
+				onIssues={(issues) => (hasErrors = issues.hasErrors)}
+			/>
+
+			<SplitControl label="When">
+				<div style="display:flex;gap:10px;flex-direction: column;">
+					<Radio name="radio" value="published" bind:group={type}>Publish now</Radio>
+					<Radio name="radio" value="scheduled" bind:group={type}>Schedule for later</Radio>
+				</div>
+			</SplitControl>
 
 			{#if type === 'scheduled'}
-				<FormControl style="margin-top:25px;">
-					<Label for="publish-time">Schedule Time</Label>
-					<!-- <Caption>Choose a time to publish</Caption> -->
-					<TextInput type="date" id="publish-time" bind:value={scheduleDate} />
-				</FormControl>
+				<div transition:slide>
+					<SplitControl label="Schedule Time" caption="Time is in UTC">
+						<FormControl>
+							<TextInput
+								type="datetime-local"
+								id="publish-time"
+								min={dayjs.utc().format('YYYY-MM-DDTHH:mm')}
+								bind:value={scheduleDateTime}
+								state={isPastSchedule ? 'error' : 'default'}
+							/>
+							{#if isPastSchedule}
+								<Validation state="error">Schedule time cannot be in the past.</Validation>
+							{/if}
+						</FormControl>
+					</SplitControl>
+				</div>
 			{/if}
 		</div>
 
 		{#snippet footer()}
 			<div>
 				<Button variant="invisible" on:click={() => (modalOpen = false)}>Cancel</Button>
-				<Button color="accent" on:click={handlePublish}>
+				<Button color="accent" disabled={hasErrors || isPastSchedule} on:click={handlePublish}>
 					{type === 'published' ? 'Publish' : 'Schedule'}
 				</Button>
 			</div>

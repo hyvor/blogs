@@ -6,7 +6,6 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Entity\Media;
-use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -132,9 +131,9 @@ class PermalinkService
         $keys = array_keys(self::DATE_FORMATTERS);
         $regex = '/\{(' . implode('|', $keys) . ')}/';
 
-        $path = preg_replace_callback($regex, function ($matches) use ($post) {
-            if ($post->getPublishedAt()) {
-                return $post->getPublishedAt()->format(self::DATE_FORMATTERS[$matches[1]]);
+        $path = preg_replace_callback($regex, function ($matches) use ($variant) {
+            if ($variant->getPublishedAt()) {
+                return $variant->getPublishedAt()->format(self::DATE_FORMATTERS[$matches[1]]);
             }
             return '';
         }, $path);
@@ -204,9 +203,10 @@ class PermalinkService
      * @param string[] $params
      * MatchedRoute->params
      */
-    public function validatePostPermalinkParams(Post $post, array $params): bool
+    public function validatePostPermalinkParams(PostVariant $variant, array $params): bool
     {
-        $date = $post->getPublishedAt();
+        $post = $variant->getPost();
+        $date = $variant->getPublishedAt();
 
         foreach ($params as $key => $value) {
             if ($key === 'tag') {

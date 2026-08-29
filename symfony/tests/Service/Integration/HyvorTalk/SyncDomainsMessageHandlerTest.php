@@ -36,10 +36,15 @@ class SyncDomainsMessageHandlerTest extends KernelTestCase
 
         $mockClient = new MockHttpClient(
             function (string $method, string $url, array $options) use (&$requests): JsonMockResponse {
+                $body = $options['body'];
+                $this->assertIsString($body);
+                $decodedBody = json_decode($body, true);
+                $this->assertIsArray($decodedBody);
+
                 $requests[] = [
                     'method' => $method,
                     'url' => $url,
-                    'body' => json_decode($options['body'], true),
+                    'body' => $decodedBody,
                 ];
 
                 return new JsonMockResponse([]);
@@ -60,8 +65,9 @@ class SyncDomainsMessageHandlerTest extends KernelTestCase
         $request = $requests[0];
         $this->assertSame('POST', $request['method']);
         $this->assertStringContainsString('/777/domains', $request['url']);
-        $this->assertSame(['my-blog.hyvorblogs.io'], $request['body']['domains']);
-        $this->assertSame('add', $request['body']['operation']);
+        $body = $request['body'];
+        $this->assertSame(['my-blog.hyvorblogs.io'], $body['domains']);
+        $this->assertSame('add', $body['operation']);
     }
 
     public function test_does_nothing_when_blog_not_connected_to_hyvor_talk(): void

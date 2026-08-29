@@ -32,6 +32,9 @@ class LicenseServiceTest extends KernelTestCase
     // getLicenseForBlog
     // -----------------------------------------------------------------------
 
+    /**
+     * @throws FailedToGetLicenseException
+     */
     public function test_gets_license_for_blog(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => 1]);
@@ -42,6 +45,9 @@ class LicenseServiceTest extends KernelTestCase
         $this->assertSame($license, $this->service()->getLicenseForBlog($blog));
     }
 
+    /**
+     * @throws FailedToGetLicenseException
+     */
     public function test_throws_when_blog_has_no_organization_id(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => null]);
@@ -54,6 +60,9 @@ class LicenseServiceTest extends KernelTestCase
     // getCachedLicenseForBlog
     // -----------------------------------------------------------------------
 
+    /**
+     * @throws FailedToGetLicenseException
+     */
     public function test_gets_and_caches_license_for_blog(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => 1]);
@@ -70,6 +79,9 @@ class LicenseServiceTest extends KernelTestCase
         $this->assertEquals($license, $this->service()->getCachedLicenseForBlog($blog));
     }
 
+    /**
+     * @throws FailedToGetLicenseException
+     */
     public function test_throws_when_blog_has_no_organization_id_for_cached_license(): void
     {
         $blog = BlogFactory::createOne(['organization_id' => null]);
