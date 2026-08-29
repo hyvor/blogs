@@ -37,9 +37,6 @@
 
 	const mobilePlan = $derived(PLANS[mobilePlanIndex]!);
 
-	// per-cell values: only the amount (1, 150, "3m") lives here. The unit, and
-	// words like "Custom"/"Multiple", come from pricing.compare.values so they
-	// translate with the rest of the table
 	const val = (key: string, value?: string | number) =>
 		I18n.t(`pricing.compare.values.${key}` as never, value === undefined ? {} : { value });
 
@@ -375,12 +372,6 @@
 		max-width: 100%;
 		margin: auto;
 		overflow-x: auto;
-		/* NOTE: overflow-x:auto here forces overflow-y's *computed* value to
-		   auto too, no matter what overflow-y is set to (that's spec - one
-		   axis can't be truly 'visible' while the other is scrolling), so a
-		   real y-scrollbar appears the instant content exceeds this box. The
-		   popular column's top/bottom overshoot (see .col.popular below) must
-		   therefore fit entirely inside this padding, not rely on escaping it */
 		padding: 30px 30px 30px;
 	}
 

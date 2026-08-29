@@ -2,8 +2,6 @@
 	import FeatureSectionTitle from '../../@homepage/FeatureSectionTitle.svelte';
 	import { Box } from '@hyvor/design/components';
 	import { categories } from './integrations';
-
-	// console.log(categories)
 </script>
 
 <svelte:head>
@@ -67,16 +65,13 @@
 	.cards-wrap {
 		display: grid;
 
-		// 4 per row
 		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		gap: 15px;
 		margin-bottom: 30px;
 	}
 
 	.integration {
-		// background-color: rgb(248, 248, 248);
 		padding: 20px 15px;
-		// border-radius: 20px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -101,7 +96,6 @@
 		.subname {
 			font-size: 13px;
 			color: var(--text-light);
-			// margin-top: -10px;
 		}
 
 		.overlay {

@@ -3,13 +3,6 @@
 	import ThemesPreview from '../../@components/ThemesPreview.svelte';
 </script>
 
-<!-- <div class="hds-container theme-service">
-   <p>Need a theme that matches your brand? We can develop a theme for you at your request for your requirements.</p>
-    <Button href="/theme-service" variant="outline" size="large">
-        Request a Theme Now
-    </Button>
-</div> -->
-
 <div class="wrap">
 	<ThemesPreview />
 </div>
@@ -17,23 +10,6 @@
 <style lang="scss">
 	.wrap {
 		height: calc(100vh - var(--header-height));
-		// no hds-container-max here - its 1400px cap left huge empty gutters
-		// on wide screens for what's effectively a full-height app view, not
-		// a text-width-constrained content page
 		padding: 15px 20px;
 	}
-
-	// .theme-service {
-	//     margin-top: 50px;
-	//     text-align: center;
-
-	//     p {
-	//         font-size: 20px;
-	//         margin-bottom: 20px;
-	//     }
-
-	//     button {
-	//         margin-top: 20px;
-	//     }
-	// }
 </style>

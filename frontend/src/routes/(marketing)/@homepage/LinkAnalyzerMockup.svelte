@@ -9,7 +9,6 @@
 		return { x: +(Math.cos(rad) * radius).toFixed(1), y: +(Math.sin(rad) * radius).toFixed(1) };
 	}
 
-	// links checked around a gear that never stops turning - one of them is broken
 	const count = 5;
 	const step = 360 / count;
 	const links = Array.from({ length: count }, (_, i) => {

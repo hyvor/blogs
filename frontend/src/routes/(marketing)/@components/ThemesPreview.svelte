@@ -24,12 +24,8 @@
 
 	interface Props {
 		lockScroll?: boolean;
-		// hides the laptop/tablet device switcher (used in the compact homepage preview)
 		hideDeviceToggle?: boolean;
-		// hides the "Open in new tab" link (used in the compact homepage preview)
 		hideOpenInNewTab?: boolean;
-		// hides the "Themes are open-source" / "View Source" footer in the theme
-		// dropdown (used in the compact homepage preview)
 		hideOpenSource?: boolean;
 	}
 
@@ -52,13 +48,11 @@
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
-		//await loadConfig();
 		themes = await loadThemes();
 		isLoaded = true;
 
 		dispatch('load');
 
-		// support local
 		port = window.location.port ? `:${Number(window.location.port) + 1}` : '';
 	});
 
@@ -68,7 +62,6 @@
 		dropdownOpen = false;
 	}
 
-	// hovering for >1s unlocks it and leaving re-locks it immediately.
 	let hoverTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	function handleIframeMouseEnter() {
@@ -233,8 +226,6 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		/* keep the theme dropdown (and its popup) above any overlapping page
-		   content - e.g. the fade scrim / text column on the homepage preview */
 		position: relative;
 		z-index: 3;
 	}
@@ -249,8 +240,6 @@
 		text-transform: capitalize;
 	}
 
-	/* the group's own margin-top plus the divider's margin-bottom stack up
-	   into a double-gap around a single line; tighten so it reads as one */
 	:global(.action-list-group.has-divider) {
 		margin-top: 4px !important;
 	}

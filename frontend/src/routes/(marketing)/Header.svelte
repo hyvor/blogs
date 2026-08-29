@@ -21,19 +21,14 @@
 			LANGUAGES_CONFIG.find((lang) => lang.default)!
 	);
 
-	// see getStaticString's own comment: Header can't use the "i18n" context,
-	// so this looks the current language's strings up directly instead
 	function t(key: string) {
 		return getStaticString(currentLang.strings, `nav.header.${key}`);
 	}
 
-	// re-prefix a plain, language-agnostic path (e.g. "/pricing") with the
-	// current language, so in-site nav links stay on the same language
 	function localizedHref(path: string) {
 		return buildMarketingUrl(path, currentLang.code, currentLang.code) || '/';
 	}
 
-	// close a dropdown/menu once a link inside it is clicked
 	function closeOnLinkClick(e: MouseEvent, close: () => void) {
 		const target = e.target as HTMLElement;
 		if (target.tagName === 'A' || target.closest('a')) {
@@ -41,8 +36,6 @@
 		}
 	}
 
-	// the current pathname with any language prefix stripped, so active-state
-	// checks below can compare against plain routes regardless of language
 	const unlocalizedPath = $derived(
 		buildMarketingUrl($page.url.pathname, currentLang.code, DEFAULT_MARKETING_LANGUAGE) || '/'
 	);

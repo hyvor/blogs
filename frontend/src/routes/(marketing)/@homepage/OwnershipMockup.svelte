@@ -9,7 +9,6 @@
 </script>
 
 <div class="ownership-mockup">
-	<!-- your content, your key -->
 	<div class="content-hero">
 		<div class="content-icon">
 			<IconNewspaper size={38} />
@@ -19,14 +18,12 @@
 		</div>
 	</div>
 
-	<!-- portable between our cloud and your own server -->
 	<div class="portability-row">
 		<div class="port-icon"><IconCloud size={30} /></div>
 		<div class="port-swap"><IconArrowLeftRight size={18} /></div>
 		<div class="port-icon"><IconServer size={30} /></div>
 	</div>
 
-	<!-- private and unlocked -->
 	<div class="badges-row">
 		<span class="icon-badge"><IconShieldCheck size={24} /></span>
 		<span class="icon-badge"><IconUnlock size={24} /></span>

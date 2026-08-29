@@ -103,12 +103,6 @@
 
 	.plans-outer {
 		position: relative;
-		/* side space around the 5-card row (5 * 290px + 4 * 20px gap = 1530px).
-		   Once the viewport can hold that row plus a 15px gutter each side the
-		   inset just centers it and the scroll arrows fall away on their own
-		   (canScrollRight goes false); below that it floors at 15px and the row
-		   scrolls. Basing this on the real row width, not the 1400px container,
-		   is what stops the arrows showing permanently on wide screens. */
 		--container-inset: max(15px, calc((100vw - 1530px) / 2));
 	}
 
@@ -199,10 +193,6 @@
 	.toggle {
 		position: relative;
 		display: flex;
-		/* wide enough for the longer of the two labels in any language (e.g.
-		   "Annuel 2 mois offerts") to keep its padding on both sides - at a
-		   fixed 50/50 split (see .toggle-thumb/.toggle-btn below), a narrower
-		   width let a longer translation crowd right up against the pill edge */
 		width: 330px;
 		max-width: 100%;
 		padding: 3px;
@@ -270,8 +260,6 @@
 	}
 
 	@media (max-width: 600px) {
-		/* keep in step with the wider .hds-container gutter set globally in
-		   +layout.svelte at this same breakpoint */
 		.plans {
 			padding: 25px 20px;
 		}
