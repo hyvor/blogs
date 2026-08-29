@@ -164,11 +164,11 @@ export function publishPostVariant(publishAt: number | null = null, updateStore 
 
 export function unpublishPostVariant(updateStore = true) {
 	const postId = get(postStore).id;
-	const languageId = get(postVariantLanguageStore).id;
+	const variantId = get(postVariantStore).id;
 
 	const promise = consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant/unpublish`,
-		data: { language_id: languageId }
+		data: { post_variant_id: variantId }
 	});
 
 	promise.then((res) => {
