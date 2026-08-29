@@ -15,10 +15,9 @@
 		type: 'video';
 		name: string;
 		role: string;
-		// populate with a real clip once we have one recorded; the poster
-		// photo above is a generic stand-in, not a real customer
 		videoUrl?: string;
 		posterUrl?: string;
+		summary?: string;
 	}
 
 	type Review = TextReview | VideoReview;
@@ -33,8 +32,13 @@
 		},
 		{
 			type: 'video',
-			name: 'Video testimonial',
-			role: 'Coming soon'
+			name: 'Ashutosh Jain',
+			role: 'Senior Manager, Marketing - Enthuziastic',
+			videoUrl:
+				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788006279/blogs.hyvor.com/reviews-images/enthusiastic-review_nq9vcj.mp4',
+			posterUrl:
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788006855/blogs.hyvor.com/reviews-images/enthu-poster_bsx0za.png',
+			summary: 'Clean & Simple'
 		},
 		{
 			type: 'text',
