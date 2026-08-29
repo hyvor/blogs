@@ -150,7 +150,7 @@
 	}
 
 	/* the design system's default icon-text gap (6px) reads too tight next to
-	   the GitHub mark — widen it just for this button */
+	   the GitHub mark - widen it just for this button */
 	.github-btn :global(.slot.start) {
 		margin-right: 10px;
 	}
@@ -207,7 +207,7 @@
 
 	.line {
 		color: #d4d4d8;
-		/* no white-space:nowrap — the commands already fit on one line at the
+		/* no white-space:nowrap - the commands already fit on one line at the
 		   terminal's max-width, so this only kicks in (wraps) when the box is
 		   actually too narrow, with no breakpoint guessing needed */
 		overflow-wrap: break-word;

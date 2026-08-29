@@ -17,7 +17,7 @@
 <style lang="scss">
 	.wrap {
 		height: calc(100vh - var(--header-height));
-		// no hds-container-max here — its 1400px cap left huge empty gutters
+		// no hds-container-max here - its 1400px cap left huge empty gutters
 		// on wide screens for what's effectively a full-height app view, not
 		// a text-width-constrained content page
 		padding: 15px 20px;

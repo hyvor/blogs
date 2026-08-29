@@ -28,7 +28,7 @@
 		max-width: 100%;
 		margin: auto;
 		margin-top: 40px;
-		/* matches the docs page's own .docs { margin-bottom: 80px } — without
+		/* matches the docs page's own .docs { margin-bottom: 80px } - without
 		   it, the footer sat flush against the end of the guide content */
 		margin-bottom: 80px;
 	}

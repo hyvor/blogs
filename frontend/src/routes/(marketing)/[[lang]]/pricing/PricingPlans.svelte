@@ -103,11 +103,13 @@
 
 	.plans-outer {
 		position: relative;
-		/* distance from the true viewport edge to where the centered, max-1400px
-		   container's own content starts — keeps the row's padding (and the
-		   arrows) visually aligned with the title above, even though the row
-		   itself runs full-bleed edge to edge */
-		--container-inset: max(15px, calc((100vw - 1400px) / 2 + 15px));
+		/* side space around the 5-card row (5 * 290px + 4 * 20px gap = 1530px).
+		   Once the viewport can hold that row plus a 15px gutter each side the
+		   inset just centers it and the scroll arrows fall away on their own
+		   (canScrollRight goes false); below that it floors at 15px and the row
+		   scrolls. Basing this on the real row width, not the 1400px container,
+		   is what stops the arrows showing permanently on wide screens. */
+		--container-inset: max(15px, calc((100vw - 1530px) / 2));
 	}
 
 	.header {
@@ -138,18 +140,9 @@
 		display: flex;
 		align-items: stretch;
 		gap: 20px;
-		/* the row itself runs full viewport width (see .plans-outer, which is no
-		   longer capped to the 1400px container), with padding standing in for
-		   the container's inset — so both edges bleed the same way: a card
-		   cut off on either side reads as "continues off-screen" rather than an
-		   abrupt clip in the middle of the page */
 		padding: 25px var(--container-inset);
 		overflow-x: auto;
 		scroll-snap-type: x proximity;
-		/* without this, the snap engine auto-scrolls past the container's own
-		   left padding on load (treating the border box, not the padding box,
-		   as the snapport) — this keeps the first card's resting position at
-		   scrollLeft 0, fully visible and aligned with the padding */
 		scroll-padding: 0 var(--container-inset);
 		scrollbar-width: none;
 		-ms-overflow-style: none;
@@ -207,7 +200,7 @@
 		position: relative;
 		display: flex;
 		/* wide enough for the longer of the two labels in any language (e.g.
-		   "Annuel 2 mois offerts") to keep its padding on both sides — at a
+		   "Annuel 2 mois offerts") to keep its padding on both sides - at a
 		   fixed 50/50 split (see .toggle-thumb/.toggle-btn below), a narrower
 		   width let a longer translation crowd right up against the pill edge */
 		width: 330px;

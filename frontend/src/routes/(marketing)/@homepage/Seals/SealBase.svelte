@@ -1,7 +1,7 @@
 <script lang="ts">
 	interface Props {
 		pending?: boolean;
-		// diameter in px at the default (desktop) breakpoint — everything inside
+		// diameter in px at the default (desktop) breakpoint - everything inside
 		// (icons, rings, labels) scales with it, so callers just pick a size
 		size?: number;
 		children: import('svelte').Snippet;

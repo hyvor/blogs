@@ -91,7 +91,7 @@
 			"suite": {
 				"eyebrow": "Commentaires & Newsletters",
 				"title": "Talk & Post inclus",
-				"description": "Chaque forfait Hyvor Blogs inclut Hyvor Talk pour les commentaires et Hyvor Post pour les newsletters, entièrement gratuits. Aucun module tiers, aucun abonnement supplémentaire — un seul compte, un seul tableau de bord, tout est connecté.",
+				"description": "Chaque forfait Hyvor Blogs inclut Hyvor Talk pour les commentaires et Hyvor Post pour les newsletters, entièrement gratuits. Aucun module tiers, aucun abonnement supplémentaire. Un seul compte, un seul tableau de bord, tout est connecté.",
 				"bullet1": "Commentaires Hyvor Talk, gratuits sur tous les forfaits",
 				"bullet2": "Newsletters Hyvor Post, gratuites sur tous les forfaits",
 				"bullet3": "Un seul compte et tableau de bord pour les trois",
@@ -279,35 +279,24 @@
 			"taglineGrowth": "Pour les publications en croissance",
 			"taglinePremium": "Pour les grandes organisations",
 			"taglineEnterprise": "Pour des besoins sur mesure, à grande échelle",
-			"featuresPersonal1": "1 blog",
-			"featuresPersonal2": "1 utilisateur",
-			"featuresPersonal3": "1 Go de stockage média",
-			"featuresPersonal4": "Thèmes et domaine personnalisés",
-			"featuresPersonal5": "Support multilingue",
-			"featuresPersonal6": "Toutes les API incluses",
-			"featuresStarter1": "Toutes les fonctionnalités Personal",
-			"featuresStarter2": "3 blogs",
-			"featuresStarter3": "5 utilisateurs",
-			"featuresStarter4": "5 Go de stockage média",
-			"featuresStarter5": "Analyse SEO",
-			"featuresGrowth1": "Toutes les fonctionnalités Starter",
-			"featuresGrowth2": "10 blogs",
-			"featuresGrowth3": "15 utilisateurs",
-			"featuresGrowth4": "150 Go de stockage média",
-			"featuresGrowth5": "Analyse de liens",
-			"featuresGrowth6": "100k tokens IA/mois",
-			"featuresGrowth7": "100k caractères de traduction auto/mois",
-			"featuresPremium1": "Toutes les fonctionnalités Growth",
-			"featuresPremium2": "20 blogs",
-			"featuresPremium3": "50 utilisateurs",
-			"featuresPremium4": "500 Go de stockage média",
-			"featuresPremium5": "1M tokens IA/mois",
-			"featuresPremium6": "500k caractères de traduction auto/mois",
-			"featuresEnterprise1": "Toutes les fonctionnalités Premium",
-			"featuresEnterprise2": "SSO & SAML",
-			"featuresEnterprise3": "Conforme RGPD, CCPA & ISO",
-			"featuresEnterprise4": "Support prioritaire",
-			"featuresEnterprise5": "Contrat et SLA sur mesure"
+			"features": {
+				"inherits": "Toutes les fonctionnalités {plan}",
+				"blogs": "{value, plural, one {# blog} other {# blogs}}",
+				"blogsMultiple": "Plusieurs blogs",
+				"users": "{value, plural, one {# utilisateur} other {# utilisateurs}}",
+				"storage": "{value} Go de stockage média",
+				"customThemesDomain": "Thèmes et domaine personnalisés",
+				"multiLanguage": "Support multilingue",
+				"allApis": "Toutes les API incluses",
+				"noBranding": "Sans marque Hyvor",
+				"seoAnalysis": "Analyse SEO",
+				"linkAnalysis": "Analyse de liens",
+				"aiTokens": "{value} tokens IA/mois",
+				"sso": "SSO & SAML",
+				"compliance": "Conforme RGPD, CCPA & ISO",
+				"prioritySupport": "Support prioritaire",
+				"customContract": "Contrat et SLA sur mesure"
+			}
 		},
 		"compare": {
 			"eyebrow": "Comparer",
@@ -321,6 +310,14 @@
 				"developer": "Développeur",
 				"integrations": "Intégrations",
 				"enterprise": "Entreprise"
+			},
+			"values": {
+				"custom": "Sur mesure",
+				"multiple": "Plusieurs",
+				"storage": "{value} Go",
+				"aiTokens": "{value} tokens/mois",
+				"credits": "{value} crédits/mois",
+				"emails": "{value} e-mails/mois"
 			},
 			"features": {
 				"blogs": {
@@ -363,17 +360,13 @@
 					"name": "Rédaction GPT",
 					"tooltip": "Utilisez OpenAI GPT pour la rédaction de contenu et la génération de mots-clés. ~1 000 tokens ≈ 750 mots."
 				},
-				"autoTranslations": {
-					"name": "Traductions automatiques",
-					"tooltip": "Traduisez automatiquement vos articles en plusieurs langues grâce à DeepL."
-				},
 				"dataApi": {
 					"name": "API de données",
 					"tooltip": "Accédez aux données publiques de votre blog via l'API."
 				},
 				"consoleApi": {
 					"name": "API Console",
-					"tooltip": "La même API utilisée dans la Console — idéale pour l'automatisation."
+					"tooltip": "La même API utilisée dans la Console, idéale pour l'automatisation."
 				},
 				"deliveryApi": {
 					"name": "API de livraison",
@@ -412,11 +405,11 @@
 		"selfHost": {
 			"eyebrow": "Open Source",
 			"title": "Vous préférez l'auto-hébergement ?",
-			"description": "Hyvor Blogs est gratuit et open-source. Déployez-le sur votre propre infrastructure et gardez le contrôle total de vos données — aucun abonnement requis.",
-			"bullet1": "Gratuit et open-source — aucun frais de licence",
+			"description": "Hyvor Blogs est gratuit et open-source. Déployez-le sur votre propre infrastructure et gardez le contrôle total de vos données. Aucun abonnement requis.",
+			"bullet1": "Gratuit et open-source, aucun frais de licence",
 			"bullet2": "Déployez avec Docker en quelques commandes",
 			"bullet3": "Propriété totale de vos données et de votre infrastructure",
-			"bullet4": "Aucune dépendance à un fournisseur — passez au cloud à tout moment",
+			"bullet4": "Aucune dépendance à un fournisseur, passez au cloud à tout moment",
 			"button1": "En savoir plus sur l'auto-hébergement",
 			"button2": "Voir sur GitHub"
 		},

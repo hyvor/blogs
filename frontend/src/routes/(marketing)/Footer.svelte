@@ -116,7 +116,7 @@
 
 <style>
 	/* the design system's Footer reserves 100px above itself for the mascot
-	   (.footer-outer's own margin-top) — on this page the preceding section
+	   (.footer-outer's own margin-top) - on this page the preceding section
 	   already has generous bottom padding for that overlap, so the reserved
 	   space just shows up as a blank gap before the footer. Zero it out.
 	   !important because that class is compiled with a Svelte scoping class

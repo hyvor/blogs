@@ -5,16 +5,61 @@
 
 	const I18n = getMarketingI18n();
 
+	type PlanKey = 'personal' | 'starter' | 'growth' | 'premium' | 'enterprise';
+
 	interface Props {
-		plan: 'personal' | 'starter' | 'growth' | 'premium' | 'enterprise';
+		plan: PlanKey;
 		yearly: boolean;
 		currency: string;
 	}
 
 	let { plan, yearly, currency }: Props = $props();
 
+	type FeatureLine = { key: string; from?: PlanKey; value?: string | number };
+	const PLAN_FEATURES: Record<PlanKey, FeatureLine[]> = {
+		personal: [
+			{ key: 'blogs', value: 1 },
+			{ key: 'users', value: 1 },
+			{ key: 'storage', value: 1 },
+			{ key: 'customThemesDomain' },
+			{ key: 'multiLanguage' },
+			{ key: 'allApis' }
+		],
+		starter: [
+			{ key: 'inherits', from: 'personal' },
+			{ key: 'blogsMultiple' },
+			{ key: 'users', value: 5 },
+			{ key: 'storage', value: 5 },
+			{ key: 'noBranding' },
+			{ key: 'seoAnalysis' },
+			{ key: 'aiTokens', value: '1m' }
+		],
+		growth: [
+			{ key: 'inherits', from: 'starter' },
+			{ key: 'blogsMultiple' },
+			{ key: 'users', value: 15 },
+			{ key: 'storage', value: 150 },
+			{ key: 'linkAnalysis' },
+			{ key: 'aiTokens', value: '3m' }
+		],
+		premium: [
+			{ key: 'inherits', from: 'growth' },
+			{ key: 'blogsMultiple' },
+			{ key: 'users', value: 50 },
+			{ key: 'storage', value: 500 },
+			{ key: 'aiTokens', value: '10m' }
+		],
+		enterprise: [
+			{ key: 'inherits', from: 'premium' },
+			{ key: 'sso' },
+			{ key: 'compliance' },
+			{ key: 'prioritySupport' },
+			{ key: 'customContract' }
+		]
+	};
+
 	const prices = {
-		personal: 40,
+		personal: 50, //per year
 		starter: 12,
 		growth: 40,
 		premium: 125
@@ -28,18 +73,15 @@
 		I18n.t(`pricing.plans.tagline${plan.charAt(0).toUpperCase()}${plan.slice(1)}` as never)
 	);
 
-	const featureCounts: Record<typeof plan, number> = {
-		personal: 6,
-		starter: 5,
-		growth: 7,
-		premium: 6,
-		enterprise: 5
-	};
-
 	const items = $derived(
-		Array.from({ length: featureCounts[plan] }, (_, i) =>
+		PLAN_FEATURES[plan].map((f) =>
 			I18n.t(
-				`pricing.plans.features${plan.charAt(0).toUpperCase()}${plan.slice(1)}${i + 1}` as never
+				`pricing.plans.features.${f.key}` as never,
+				f.from
+					? { plan: I18n.t(`pricing.plans.${f.from}` as never) }
+					: f.value !== undefined
+						? { value: f.value }
+						: {}
 			)
 		)
 	);

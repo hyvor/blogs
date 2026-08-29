@@ -254,7 +254,7 @@
 		box-shadow: 0 4px 16px color-mix(in srgb, var(--text) 5%, transparent);
 	}
 
-	/* SEO score meter — just the arc + the number, no labels */
+	/* SEO score meter - just the arc + the number, no labels */
 	.seo-gauge {
 		position: relative;
 		flex: 1;
@@ -303,7 +303,7 @@
 		color: var(--text);
 	}
 
-	/* Post Link Analyzer — link + magnifying glass, no text list */
+	/* Post Link Analyzer - link + magnifying glass, no text list */
 	.link-icons {
 		flex: 1;
 		position: relative;

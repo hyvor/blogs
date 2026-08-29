@@ -1,7 +1,7 @@
 <script lang="ts">
 	interface FaqItem {
 		q: string;
-		/** answer content as HTML — also used verbatim as the rich schema's answer text */
+		/** answer content as HTML - also used verbatim as the rich schema's answer text */
 		a: string;
 	}
 
@@ -213,7 +213,7 @@
 		transition-delay: 0.08s;
 	}
 
-	/* answers are raw HTML (@html) — style plain <a> tags to match the design
+	/* answers are raw HTML (@html) - style plain <a> tags to match the design
 	   system's Link component, which the old snippet-based answers used */
 	.a :global(a) {
 		color: var(--link);

@@ -116,11 +116,11 @@
 
 <style>
 	/* the design system's .hds-container(-max) side padding (15px) reads too
-	   tight on phones — widen it here, once, for every marketing page rather
+	   tight on phones - widen it here, once, for every marketing page rather
 	   than patching each section individually. The Header/Footer components
 	   use their own scoped Container (a plain ".container" class inside
 	   <header>/<footer>, same 15px padding) rather than .hds-container, so
-	   it needs its own selector here too — !important because that class is
+	   it needs its own selector here too - !important because that class is
 	   compiled with a Svelte scoping class we can't otherwise out-specify */
 	@media (max-width: 600px) {
 		:global(.hds-container),

@@ -41,7 +41,7 @@
 <style>
 	/* the marked phrase (e.g. "blogging platform" / "plateforme de blogs")
 	   reads oddly split across two lines when a translation runs longer
-	   than English — keep it together even if that means it's the widest
+	   than English - keep it together even if that means it's the widest
 	   line in the subtitle */
 	:global(.hds-marker) {
 		white-space: nowrap;
@@ -49,7 +49,7 @@
 
 	/* the design system's .subtitle max-width (480px) is narrow enough that
 	   longer translations (e.g. French) wrap the first sentence onto two
-	   lines by itself, pushing the whole subtitle to three lines total —
+	   lines by itself, pushing the whole subtitle to three lines total -
 	   widen it so "Hyvor Blogs est notre plateforme de blogs" fits on one
 	   line, back to two lines overall. !important because that class is
 	   compiled with a Svelte scoping class we can't otherwise out-specify;

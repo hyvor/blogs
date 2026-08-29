@@ -234,7 +234,7 @@
 		align-items: center;
 		gap: 10px;
 		/* keep the theme dropdown (and its popup) above any overlapping page
-		   content — e.g. the fade scrim / text column on the homepage preview */
+		   content - e.g. the fade scrim / text column on the homepage preview */
 		position: relative;
 		z-index: 3;
 	}

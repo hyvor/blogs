@@ -10,7 +10,7 @@
 
 	let { active = 0 }: Props = $props();
 
-	// two collaborators, each with their own cursor/label color — same idea
+	// two collaborators, each with their own cursor/label color - same idea
 	// as Google Docs / Figma style presence cursors
 	const collaborators = [
 		{ name: 'Priya', color: 'var(--blue)' },
@@ -28,7 +28,7 @@
 	<div class="collab-editor">
 		{#if active === 0}
 			<!-- Real-time collaboration: a vertical text caret per collaborator,
-			     each with its own colored name tag sitting right above it —
+			     each with its own colored name tag sitting right above it -
 			     the real Console UI, not a mouse pointer -->
 			<div class="editor-line title"></div>
 			<div class="editor-line"></div>
@@ -265,7 +265,7 @@
 	}
 
 	/* a small pointer on the card's right edge, connecting it to the
-	   suggested line it belongs to — a real margin-comment detail */
+	   suggested line it belongs to - a real margin-comment detail */
 	.comment-card::after {
 		content: '';
 		position: absolute;

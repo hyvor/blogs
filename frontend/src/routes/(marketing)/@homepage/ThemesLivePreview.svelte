@@ -44,7 +44,7 @@
 	.fade-overlay {
 		position: absolute;
 		inset: 0;
-		/* must stay below .text-col's z-index (2) — the split is a flex row, so an
+		/* must stay below .text-col's z-index (2) - the split is a flex row, so an
 		   equal z-index here would tie-break on DOM order and paint over the text */
 		z-index: 1;
 		pointer-events: none;
@@ -61,7 +61,7 @@
 	@media (max-width: 900px) {
 		/* the live theme iframe doesn't work well on mobile (too small to be
 		   useful, and the dropdown/device-toggle chrome eats most of the
-		   space) — the "Browse themes" button already covers this case */
+		   space) - the "Browse themes" button already covers this case */
 		.themes-live {
 			display: none;
 		}
