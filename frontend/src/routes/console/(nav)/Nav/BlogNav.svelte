@@ -20,6 +20,7 @@
 	import IconChat from '@hyvor/icons/IconChat';
 	import { integrationsStore } from '../../lib/stores/blogStore';
 	import IconRobot from '@hyvor/icons/IconRobot';
+	import { getConfig } from '../../lib/config';
 
 	interface Props {
 		listItem: BlogList;
@@ -114,8 +115,6 @@
 			</NavLink>
 		{/if}
 
-		<div class="section-div"></div>
-
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/agent`)}
 			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
@@ -138,15 +137,17 @@
 			Theme
 		</NavLink>
 
-		<NavLink
-			href={consoleUrl(`${listItem.subdomain}/integrations`)}
-			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
-		>
-			{#snippet start()}
-				<IconPlugin />
-			{/snippet}
-			Integrations
-		</NavLink>
+		{#if getConfig().deployment === 'cloud'}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/integrations`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
+			>
+				{#snippet start()}
+					<IconPlugin />
+				{/snippet}
+				Integrations
+			</NavLink>
+		{/if}
 
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/tools`)}

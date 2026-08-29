@@ -19,7 +19,7 @@
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { clonePost, deletePostById } from './postActions';
 	import { goto } from '$app/navigation';
-	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
+	import { getPrimaryLanguage, languagesStore } from '../../../lib/stores/languagesStore';
 	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
 	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
 
@@ -148,11 +148,13 @@
 			{/if}
 		</div>
 
-		<div class="post-languages">
-			{#each post.variants as v (v.language_id)}
-				<VariantLangTag variant={v} size="x-small" />
-			{/each}
-		</div>
+		{#if $languagesStore.length > 1}
+			<div class="post-languages">
+				{#each post.variants as v (v.language_id)}
+					<VariantLangTag variant={v} size="x-small" />
+				{/each}
+			</div>
+		{/if}
 	</div>
 
 	<div class="post-status">

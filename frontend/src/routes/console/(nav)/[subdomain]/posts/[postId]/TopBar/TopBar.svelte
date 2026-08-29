@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
-	import { postStore } from '../../postStore';
+	import { postStore, postVariantStore } from '../../postStore';
 	import PreviewButton from '../Sidebar/Top/PreviewButton.svelte';
 	import UnpublishButton from '../Sidebar/Top/UnpublishButton.svelte';
 	import PublishButton from '../Sidebar/Top/PublishButton.svelte';
@@ -9,6 +9,7 @@
 	import PostLanguage from './PostLanguage.svelte';
 	import CaretLeft from './CaretLeft.svelte';
 	import { goto } from '$app/navigation';
+	import PostStatusTag from '../../PostStatusTag.svelte';
 
 	function getBackUrl() {
 		const postData = $postStore;
@@ -27,6 +28,7 @@
 	</button>
 
 	<div class="left">
+		<PostStatusTag status={$postVariantStore.status} showIcon={false} size="small" />
 		<PostLanguage />
 	</div>
 
@@ -71,16 +73,17 @@
 		color: var(--text);
 	}
 
-	.left {
-		flex: 1;
-	}
-
 	.left,
 	.right,
 	.sections {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+
+	.left {
+		flex: 1;
+		gap: 5px;
 	}
 
 	.left {
