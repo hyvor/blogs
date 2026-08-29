@@ -1,13 +1,21 @@
 <blockquote>
-    If you have any questions on how to add any of these blocks or text styles in the Editor, read our <a href="https://blogs.hyvor.com/docs/writing">Writing & Publishing documentation</a>.
+    Read our <a href="https://blogs.hyvor.com/docs/writing">Writing & Publishing</a> documentation to learn how to add these blocks and text styles in the Editor.
 </blockquote>
+
+<p>
+    Let's start with a table of contents:
+</p>
 
 <div class="toc" data-levels="2"></div>
 
 <h2 id="paragraphs">Paragraphs</h2>
 
 <p>
-Paragraphs are the default blocks. In fact, this is a paragraph.
+    Paragraphs are the default blocks. In fact, this is a paragraph.
+</p>
+
+<p>
+    You can also break a line inside the same paragraph, without starting a new one.<br>Like this.
 </p>
 
 <h2 id="text-styles">Text Styles</h2>
@@ -20,6 +28,7 @@ Paragraphs are the default blocks. In fact, this is a paragraph.
     <li>sub<sub>script</sub></li>
     <li><mark>highlight</mark></li>
     <li><code>inline code</code></li>
+    <li><a href="https://blogs.hyvor.com">link</a></li>
 </ul>
 
 <h2 id="headings">Headings</h2>
@@ -82,9 +91,17 @@ Words can be like X-rays, if you use them properly—they’ll go through anythi
 
 <h2 id="callout">Callout</h2>
 
-<aside data-emoji="💡" style="background-color:#f1f1ef;color:#000000;">
-    The only real valuable thing is intuition.
-</aside>
+<p>Callouts can be styled with a custom emoji and color.</p>
+
+<aside style="background-color:#f1f1ef;color:#000000"><span>💡</span><div>The only real valuable thing is intuition.</div></aside>
+
+<aside style="background-color:#fdecea;color:#7a271a"><span>⚠️</span><div>Callouts can use any emoji and color combination to fit the tone of your message.</div></aside>
+
+<h2 id="button">Button</h2>
+
+<p>Buttons are links styled as buttons, great for calls to action.</p>
+
+<a class="button" href="https://blogs.hyvor.com">Get Started</a>
 
 <h2 id="images">Images</h2>
 
@@ -101,28 +118,21 @@ Words can be like X-rays, if you use them properly—they’ll go through anythi
 <h2 id="code-block">Code Block</h2>
 
 <pre
-    class="language-php"
-    data-annotations="h=5-11 +=16"
-    data-name="filterq.php"
-    data-language="php"
+    class="language-javascript"
+    data-annotations="h=4 +=9"
+    data-name="talk.js"
+    data-language="javascript"
 >
-use Hyvor\FilterQ\Facades\FilterQ;
+import { TalkClient } from '@hyvor/sdk-talk';
 
-$query = FilterQ::expression('id=100|slug=hello')
-    ->builder(Post::class)
-    ->keys(function($keys) {
-        $keys->add('id')->column('posts.id');
-        $keys->add('slug');
-        $keys->add('author.name')
-            ->column('authors.name')
-            ->join('authors', 'authors.id', '=', 'posts.author_id', 'left');
-    })
-    ->addWhere();
+const talk = new TalkClient({
+    cloudApiKey: 'your-cloud-api-key',
+});
 
-$posts = $query
-    ->limit(25)
-    ->orderBy('id', 'DESC')
-    ->get();</pre>
+const newWebsite = await talk.org.websites.create({
+    name: 'My Blog',
+    domain: 'blog.example.com',
+});</pre>
 
 <h2 id="bookmark">Bookmark</h2>
 

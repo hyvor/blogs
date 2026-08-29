@@ -12,6 +12,7 @@ use App\Entity\HyvorPost;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\Post;
+use App\Entity\PostVariant;
 use App\Entity\Route;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -123,11 +124,12 @@ class CreateBlogTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertSame('new-blog', $json['subdomain']);
-        $this->assertSame('default', $json['type']);
-        $this->assertSame('admin', $json['role']);
+        $blogJson = $json['blog'] ?? [];
+        $this->assertSame('new-blog', $blogJson['subdomain']);
+        $this->assertSame('default', $blogJson['type']);
+        $this->assertSame('admin', $blogJson['role']);
 
-        $blogId = $json['id'];
+        $blogId = $blogJson['id'];
         $blog = $this->getEm()->getRepository(Blog::class)->find($blogId);
         $this->assertInstanceOf(Blog::class, $blog);
         $this->assertSame(BlogType::DEFAULT, $blog->getType());
@@ -168,6 +170,20 @@ class CreateBlogTest extends ApiTestCase
         // PostFiller: 2 posts + 3 pages
         $posts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
         $this->assertCount(5, $posts);
+        $contentStylesPostVariant = $this->getEm()->getRepository(PostVariant::class)->findOneBy(['slug' => 'content-style']);
+        $this->assertNotNull($contentStylesPostVariant);
+        $this->assertStringContainsString(
+            'learn how to add these blocks',
+            (string) $contentStylesPostVariant->getContent()
+        );
+        $this->assertStringContainsString(
+            'https://blogs.hyvor.com/docs/writing',
+            (string) $contentStylesPostVariant->getContentHtml()
+        );
+        $this->assertStringContainsString(
+            'Headings are used to write subtitles in posts',
+            (string) $contentStylesPostVariant->getContentText()
+        );
 
         // ThemeFiller: "hello" theme copied
         $themeFilesService = $this->getService(ThemeFilesService::class);
