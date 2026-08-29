@@ -11,7 +11,7 @@ export type PostSidebar = 'settings' | 'seo' | 'links' | 'ai';
 
 export const postOriginalStore = writable<Post>();
 export const postStore = writable<Post>();
-export const postSidebarStore = writable<PostSidebar>('settings');
+export const postSidebarStore = writable<PostSidebar | null>(null);
 export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
 export const postEditingPublished = writable<boolean>(false);

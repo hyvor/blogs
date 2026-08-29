@@ -12,15 +12,14 @@
 	import LinksSidebarTag from './Links/LinksSidebarTag.svelte';
 	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
 	import { variantSeoStore } from '../../seoStore';
-
-	type Section = 'settings' | 'seo' | 'links' | 'ai';
-
-	let openSection: Section | null = $state(null);
+	import { postSidebarStore } from '../../postStore';
 </script>
 
 <div class="post-sections">
 	<Popover
-		bind:show={() => openSection === 'settings', (v) => (openSection = v ? 'settings' : null)}
+		bind:show={
+			() => $postSidebarStore === 'settings', (v) => ($postSidebarStore = v ? 'settings' : null)
+		}
 	>
 		{#snippet trigger()}
 			<IconGear size={13} class="icon" />
@@ -32,7 +31,9 @@
 
 	<span class="divider"></span>
 
-	<Popover bind:show={() => openSection === 'seo', (v) => (openSection = v ? 'seo' : null)}>
+	<Popover
+		bind:show={() => $postSidebarStore === 'seo', (v) => ($postSidebarStore = v ? 'seo' : null)}
+	>
 		{#snippet trigger()}
 			<IconSearchHeart size={13} class="icon" />
 			SEO
@@ -44,7 +45,9 @@
 
 	<span class="divider"></span>
 
-	<Popover bind:show={() => openSection === 'links', (v) => (openSection = v ? 'links' : null)}>
+	<Popover
+		bind:show={() => $postSidebarStore === 'links', (v) => ($postSidebarStore = v ? 'links' : null)}
+	>
 		{#snippet trigger()}
 			<IconLink45deg size={13} class="icon" />
 			Links
@@ -56,7 +59,10 @@
 
 	<span class="divider"></span>
 
-	<Popover flush bind:show={() => openSection === 'ai', (v) => (openSection = v ? 'ai' : null)}>
+	<Popover
+		flush
+		bind:show={() => $postSidebarStore === 'ai', (v) => ($postSidebarStore = v ? 'ai' : null)}
+	>
 		{#snippet trigger()}
 			<IconRobot size={13} class="icon" />
 			Agent
@@ -80,7 +86,7 @@
 		background-color: var(--border);
 	}
 
-	:global(.icon) {
+	.post-sections :global(.icon) {
 		opacity: 0.5;
 		flex-shrink: 0;
 	}
