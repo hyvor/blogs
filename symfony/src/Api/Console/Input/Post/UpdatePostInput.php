@@ -21,6 +21,4 @@ class UpdatePostInput
     public ?string $code_head;
 
     public ?string $code_foot;
-
-    public ?int $published_at;
 }

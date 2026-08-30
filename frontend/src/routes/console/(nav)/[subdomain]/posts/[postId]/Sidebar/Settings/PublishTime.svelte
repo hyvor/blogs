@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { SplitControl, Text, TextInput } from '@hyvor/design/components';
 	import {
-		postOriginalStore,
 		postVariantOriginalStore,
-		postStore,
 		postVariantStore,
-		updatePostStore
+		updatePostVariantStore
+
 	} from '../../../postStore';
 	import UnsavedTag from './UnsavedTag.svelte';
-	import { updatePost } from '../../../postActions';
+	import { updatePostVariant } from '../../../postActions';
 	import OnlyPrimaryVariant from './OnlyPrimaryVariant.svelte';
 	import dayjs from 'dayjs';
 
@@ -25,7 +24,7 @@
 
 	function handleInput(e: any) {
 		const val = e.target.value;
-		updatePostStore({
+		updatePostVariantStore({
 			published_at: val ? getUnixTimestamp(val) : null
 		});
 	}
@@ -34,12 +33,12 @@
 		const val = e.target.value;
 		const timestamp = val ? getUnixTimestamp(val) : null;
 
-		if (timestamp === $postOriginalStore.published_at) return;
+		if (timestamp === $postVariantOriginalStore.published_at) return;
 
 		if ($postVariantStore.status !== 'published') {
 			loaderState = 'loading';
 
-			updatePost({ published_at: timestamp })
+			updatePostVariant({ published_at: timestamp })
 				.then(() => {
 					loaderState = 'success';
 				})
@@ -55,19 +54,22 @@
 		{#snippet label()}
 			<span>
 				Publish Time
+				{#if $postVariantStore.status === 'scheduled'}
+					(Scheduled)
+				{/if}
 
 				<UnsavedTag
-					show={$postStore.published_at !== $postOriginalStore.published_at}
+					show={$postVariantStore.published_at !== $postVariantOriginalStore.published_at}
 					{loaderState}
 				/>
 			</span>
 		{/snippet}
 
-		{#if $postVariantStore.status !== 'draft' || $postStore.published_at !== null}
+		{#if $postVariantStore.status !== 'draft'}
 			<TextInput
 				block
 				type="datetime-local"
-				value={timestampToDateTime($postStore.published_at)}
+				value={timestampToDateTime($postVariantStore.published_at)}
 				on:input={handleInput}
 				on:blur={handleBlur}
 			/>

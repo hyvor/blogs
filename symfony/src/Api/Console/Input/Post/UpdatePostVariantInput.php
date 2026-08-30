@@ -27,8 +27,9 @@ class UpdatePostVariantInput
 
     public bool $redirect_on_slug_change = false;
 
-    // false = not provided (leave untouched); null = clear; int = set to this timestamp
     public null|int|false $content_updated_at = false;
+
+    public null|int|false $published_at = false;
 
     #[Assert\Range(min: 0, max: 100)]
     public ?int $seo_score = null;

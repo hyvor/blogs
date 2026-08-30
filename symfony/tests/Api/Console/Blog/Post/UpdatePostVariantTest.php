@@ -23,6 +23,8 @@ use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+use function Zenstruck\Foundry\Persistence\refresh;
+
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
 #[CoversClass(ProsemirrorJson::class)]
@@ -30,26 +32,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostSuggestionContentChecker::class)]
 class UpdatePostVariantTest extends ApiTestCase
 {
-
-    // content cannot be updated via this endpoint anymore, use document operations
-//    #[TestWith(['{"invalid_json": true,}', 'Unable to decode JSON'])]
-//    #[TestWith(['{"type": "notdoc"}', 'The top node must be a doc node'])]
-//    public function test_fails_when_json_invalid(string|int $content, string $error): void
-//    {
-//        $blog = BlogFactory::createOneWithPrimaryLanguage();
-//        $user = UserFactory::createOne(['blog' => $blog]);
-//        $post = PostFactory::createOne(['blog' => $blog]);
-//        $language = $blog->getLanguages()->first();
-//        $this->assertNotFalse($language);
-//        PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
-//
-//        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
-//            'language_id' => $language->getId(),
-//            'content' => $content, // Invalid JSON
-//        ], user: $user);
-//
-//        $this->assertResponseFailed(422, 'The value must be a valid Prosemirror JSON. Error: ' . $error);
-//    }
 
     public function test_when_language_not_found(): void
     {
@@ -88,6 +70,7 @@ class UpdatePostVariantTest extends ApiTestCase
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
         PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT, 'slug' => null]);
+
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
             'language_id' => $language->getId(),
@@ -201,6 +184,34 @@ class UpdatePostVariantTest extends ApiTestCase
         $this->getEd()->assertDispatched(RedirectChangedEvent::class);
     }
 
+    public function test_updates_non_draft_attributes(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-update-non-draft']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::PUBLISHED]);
+
+        $publishedAt = new \DateTimeImmutable()->modify('+1 day');
+        $contentUpdatedAt = new \DateTimeImmutable()->modify('+2 days');
+
+        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
+            'language_id' => $language->getId(),
+            'published_at' => $publishedAt->getTimestamp(),
+            'content_updated_at' => $contentUpdatedAt->getTimestamp(),
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+
+        $this->assertSame($publishedAt->getTimestamp(), $json['published_at']);
+        $this->assertSame($contentUpdatedAt->getTimestamp(), $json['content_updated_at']);
+
+        refresh($variant);
+        $this->assertSame($publishedAt->getTimestamp(), $variant->getPublishedAt()?->getTimestamp());
+        $this->assertSame($contentUpdatedAt->getTimestamp(), $variant->getContentUpdatedAt()?->getTimestamp());
+    }
+
     public function test_fails_when_content_updated_at_is_set_when_published_at_is_null(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'post-variant-content-updated-at-unpublished']);
@@ -239,59 +250,4 @@ class UpdatePostVariantTest extends ApiTestCase
         $this->assertResponseFailed(422, 'Content updated time should be after published time');
     }
 
-//    private function contentWithPendingSuggestion(): string
-//    {
-//        $json = json_encode([
-//            'type' => 'doc',
-//            'content' => [[
-//                'type' => 'paragraph',
-//                'attrs' => ['suggestions' => null],
-//                'content' => [[
-//                    'type' => 'text',
-//                    'text' => 'hello',
-//                    'marks' => [['type' => 'suggestion', 'attrs' => ['type' => 'insert', 'id' => 'sg-1']]],
-//                ]],
-//            ]],
-//        ]);
-//        $this->assertNotFalse($json);
-//        return $json;
-//    }
-
-//    public function test_allows_saving_a_draft_with_pending_suggestions(): void
-//    {
-//        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-draft-suggestions']);
-//        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-//        $language = LanguageFactory::createOnePrimaryFor($blog);
-//        $post = PostFactory::createOne(['blog' => $blog]);
-//        PostVariantFactory::createOne(['post' => $post, 'language' => $language, 'status' => PostVariantStatus::DRAFT]);
-//
-//        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
-//            'language_id' => $language->getId(),
-//            'content' => $this->contentWithPendingSuggestion(),
-//        ], user: $user);
-//
-//        // a draft's `content` isn't public yet - autosaving with pending suggestions must not be blocked
-//        $this->assertResponseIsSuccessful();
-//    }
-
-//    public function test_blocks_updating_a_published_variants_content_with_pending_suggestions(): void
-//    {
-//        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-published-suggestions']);
-//        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-//        $language = LanguageFactory::createOnePrimaryFor($blog);
-//        $post = PostFactory::createOne(['blog' => $blog]);
-//        PostVariantFactory::createOne([
-//            'post' => $post,
-//            'language' => $language,
-//            'status' => PostVariantStatus::PUBLISHED,
-//            'slug' => 'already-published',
-//        ]);
-//
-//        $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId() . '/variant', [
-//            'language_id' => $language->getId(),
-//            'content' => $this->contentWithPendingSuggestion(),
-//        ], user: $user);
-//
-//        $this->assertResponseFailed(422, 'unresolved suggestions');
-//    }
 }

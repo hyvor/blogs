@@ -145,9 +145,6 @@ class PostController
         if ($input->hasProperty('code_foot')) {
             $data['code_foot'] = $input->code_foot;
         }
-        if ($input->hasProperty('published_at')) {
-            $data['published_at'] = \DateTimeImmutable::createFromFormat('U', (string)$input->published_at) ?: null;
-        }
 
         if (!empty($data)) {
             $post = $this->postService->updatePost($post, $data);
@@ -242,12 +239,25 @@ class PostController
             $data['seo_score'] = $input->seo_score;
         }
 
+        if ($input->published_at !== false) {
+            if ($variant->getStatus() === PostVariantStatus::DRAFT) {
+                throw new UnprocessableEntityHttpException('Cannot set published_at for unpublished post');
+            }
+
+            $data['published_at'] = \DateTimeImmutable::createFromFormat('U', (string)$input->published_at) ?: null;
+        }
+
         if ($input->content_updated_at !== false) {
-            if ($variant->getPublishedAt() === null) {
+            if ($variant->getStatus() === PostVariantStatus::DRAFT) {
                 throw new UnprocessableEntityHttpException('Cannot set content_updated_at for unpublished post');
             }
 
-            if ($variant->getPublishedAt()->getTimestamp() > $input->content_updated_at) {
+            $publishedAt = $data['published_at'] ?? $variant->getPublishedAt();
+
+            if (
+                $publishedAt &&
+                $publishedAt > $input->content_updated_at
+            ) {
                 throw new UnprocessableEntityHttpException('Content updated time should be after published time');
             }
 

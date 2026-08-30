@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { SplitControl, TextInput, Validation } from '@hyvor/design/components';
 	import {
-		postStore,
 		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
@@ -30,8 +29,8 @@
 
 	let isTooEarly = $derived(
 		$postVariantStore.content_updated_at !== null &&
-			$postStore.published_at !== null &&
-			$postVariantStore.content_updated_at < $postStore.published_at
+			$postVariantStore.published_at !== null &&
+			$postVariantStore.content_updated_at < $postVariantStore.published_at
 	);
 
 	function handleBlur(e: any) {

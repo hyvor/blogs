@@ -547,6 +547,7 @@ class PostService
      *     link_analysis?: array<string, number>,
      *     seo_score?: int|null,
      *     content_updated_at?: \DateTimeImmutable|null,
+     *     published_at?: \DateTimeImmutable|null,
      * } $data
      */
     public function updatePostVariant(
@@ -590,6 +591,10 @@ class PostService
 
         if (array_key_exists('content_updated_at', $data)) {
             $variant->setContentUpdatedAt($data['content_updated_at']);
+        }
+
+        if (array_key_exists('published_at', $data)) {
+            $variant->setPublishedAt($data['published_at']);
         }
 
         $variant->setUpdatedAt($this->now());
@@ -669,6 +674,7 @@ class PostService
     public function unpublishPostVariant(PostVariant $variant): PostVariant
     {
         $variant->setStatus(PostVariantStatus::DRAFT);
+        $variant->setPublishedAt(null);
         $variant->setContentUpdatedAt(null);
         $variant->setUpdatedAt($this->now());
         $this->em->flush();
