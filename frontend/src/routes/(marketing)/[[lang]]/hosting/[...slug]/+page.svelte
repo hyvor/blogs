@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.page.name} | Hosting | Hyvor Blogs</title>
+	<title>{data.page.name} - Hosting Hyvor Blogs</title>
 	<link rel="canonical" href="https://blogs.hyvor.com/hosting{data.slug ? '/' + data.slug : ''}" />
 </svelte:head>
 

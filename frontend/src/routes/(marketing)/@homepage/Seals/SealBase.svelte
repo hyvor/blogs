@@ -1,16 +1,12 @@
 <script lang="ts">
 	interface Props {
 		pending?: boolean;
-		// diameter in px at the default (desktop) breakpoint — everything inside
-		// (icons, rings, labels) scales with it, so callers just pick a size
 		size?: number;
 		children: import('svelte').Snippet;
 	}
 
 	let { pending = false, size = 100, children }: Props = $props();
 
-	// the original design (100px seal) is the reference scale for all the
-	// hand-tuned inner metrics (star ring radius, icon sizes, font sizes)
 	const scale = $derived(size / 100);
 </script>
 

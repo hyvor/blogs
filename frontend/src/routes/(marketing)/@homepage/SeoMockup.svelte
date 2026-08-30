@@ -10,7 +10,6 @@
 		{ name: 'Agentic Browsing', score: 100, fraction: '2/2' }
 	];
 
-	// matches the semi-circle score meter in the real SEO analyzer
 	const seoScore = 95;
 	const seoGaugeLen = 220;
 	const seoGaugeOffset = seoGaugeLen * (1 - seoScore / 100);
@@ -254,7 +253,6 @@
 		box-shadow: 0 4px 16px color-mix(in srgb, var(--text) 5%, transparent);
 	}
 
-	/* SEO score meter — just the arc + the number, no labels */
 	.seo-gauge {
 		position: relative;
 		flex: 1;
@@ -303,7 +301,6 @@
 		color: var(--text);
 	}
 
-	/* Post Link Analyzer — link + magnifying glass, no text list */
 	.link-icons {
 		flex: 1;
 		position: relative;

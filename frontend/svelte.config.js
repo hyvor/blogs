@@ -1,18 +1,13 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapter from '@sveltejs/adapter-static';
 import { APP_REDIRECTS } from './src/redirects.js';
-import { mdsvex } from 'mdsvex';
+import { markdownPlugin } from '@hyvor/design/dev';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.md'],
 
-	preprocess: [
-		mdsvex({
-			extensions: ['.md']
-		}),
-		vitePreprocess()
-	],
+	preprocess: [markdownPlugin(), vitePreprocess()],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
@@ -23,8 +18,8 @@ const config = {
 		}),
 		prerender: {
 			/* TODO: REMOVE THIS! */
-			handleMissingId: 'ignore',
-			handleHttpError: 'ignore',
+			handleMissingId: 'fail',
+			handleHttpError: 'fail',
 			// TODO: remove after toggle is added
 			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
 		}

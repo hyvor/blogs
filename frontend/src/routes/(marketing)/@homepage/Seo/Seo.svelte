@@ -23,7 +23,6 @@
 	<div class="features-one">
 		<div class="feature-title">SEO</div>
 
-		<!-- SEO -->
 		<CheckFeatures
 			features={[
 				'Meta tags (SEO, Open Graph, Twitter Cards, etc.)',
@@ -40,7 +39,6 @@
 	<div class="features-one">
 		<div class="feature-title">Speed</div>
 
-		<!-- Speed -->
 		<CheckFeatures
 			features={[
 				'Static, cached HTML pages',

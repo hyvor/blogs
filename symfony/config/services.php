@@ -25,8 +25,8 @@ return static function (ContainerConfigurator $container): void {
                 'endpoint' => '%env(default::string:S3_ENDPOINT)%',
                 'accessKeyId' => '%env(default::string:S3_ACCESS_KEY_ID)%',
                 'accessKeySecret' => '%env(default::string:S3_SECRET_ACCESS_KEY)%',
-                'region' => '%env(default::string:S3_REGION)%', 
-                'pathStyleEndpoint' => true,
+                'region' => '%env(default::string:S3_REGION)%',
+                'pathStyleEndpoint' => '%env(default::bool:S3_USE_PATH_STYLE_ENDPOINT)%',
             ]
         ]);
 

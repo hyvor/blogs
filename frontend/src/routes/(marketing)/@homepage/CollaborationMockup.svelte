@@ -10,8 +10,6 @@
 
 	let { active = 0 }: Props = $props();
 
-	// two collaborators, each with their own cursor/label color — same idea
-	// as Google Docs / Figma style presence cursors
 	const collaborators = [
 		{ name: 'Priya', color: 'var(--blue)' },
 		{ name: 'Alex', color: 'var(--orange)' }
@@ -27,9 +25,6 @@
 <div class="collab-mockup">
 	<div class="collab-editor">
 		{#if active === 0}
-			<!-- Real-time collaboration: a vertical text caret per collaborator,
-			     each with its own colored name tag sitting right above it —
-			     the real Console UI, not a mouse pointer -->
 			<div class="editor-line title"></div>
 			<div class="editor-line"></div>
 
@@ -60,9 +55,6 @@
 				<span class="presence-text">2 people editing now</span>
 			</div>
 		{:else}
-			<!-- Suggestion mode: the comment/suggestion card sits in a left
-			     margin next to the proposed edit, like the real Console UI,
-			     rather than stacked underneath it -->
 			<div class="suggestion-layout">
 				<div class="suggestion-sidebar">
 					<div class="comment-card">
@@ -140,10 +132,8 @@
 		width: 55%;
 	}
 
-	/* Real-time collaboration */
 	.cursor-line {
 		position: relative;
-		/* room above the line for the name tag riding on top of the caret */
 		margin-top: 16px;
 	}
 
@@ -207,7 +197,6 @@
 		color: var(--text-light);
 	}
 
-	/* Suggestion mode */
 	.suggestion-layout {
 		display: flex;
 		gap: 14px;
@@ -217,8 +206,6 @@
 	.suggestion-sidebar {
 		flex: 0 0 112px;
 		width: 112px;
-		/* nudge the card down so it sits roughly beside the suggested line,
-		   not the title */
 		margin-top: 40px;
 	}
 
@@ -264,8 +251,6 @@
 		border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
 	}
 
-	/* a small pointer on the card's right edge, connecting it to the
-	   suggested line it belongs to — a real margin-comment detail */
 	.comment-card::after {
 		content: '';
 		position: absolute;

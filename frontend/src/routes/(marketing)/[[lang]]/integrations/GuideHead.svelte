@@ -41,18 +41,11 @@
 				{description}
 			</h2>
 		{/if}
-
-		<!-- <div class="buttons">
-            <Button as="a" href="/console?signup" size="large">
-                Start your blog
-            </Button>
-        </div> -->
 	</div>
 </div>
 
 <style lang="scss">
 	.buttons {
-		//    center the content
 		display: flex;
 		justify-content: center;
 		margin-bottom: 30px;
@@ -63,13 +56,11 @@
 	.guide-head {
 		display: flex;
 		padding-top: 50px;
-		// //center align the whole content
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
 		.button {
 			display: flex;
-			//align the button to left
 			justify-content: flex-start;
 		}
 		.int {
@@ -109,9 +100,6 @@
 		.guide-head {
 			flex-direction: column;
 			text-align: center;
-			// .buttons {
-			//     justify-content: center;
-			// }
 		}
 		.int {
 			justify-content: center;

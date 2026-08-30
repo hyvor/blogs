@@ -36,6 +36,12 @@
 
 	{$APP_TLS_DIRECTIVE}
 
+	handle /.well-known/mercure* {
+		reverse_proxy localhost:8081 {
+			flush_interval -1
+		}
+	}
+
 	handle /api/* {
 		import handle_php app
 	}
@@ -69,6 +75,11 @@
 # local endpoints
 http://localhost:8080 {
 	import handle_php local
+}
+
+# Internal Mercure Hub
+http://localhost:8081 {
+	{$MERCURE_DIRECTIVE}
 }
 
 # custom domain

@@ -1,7 +1,6 @@
 <script lang="ts">
 	interface FaqItem {
 		q: string;
-		/** answer content as HTML — also used verbatim as the rich schema's answer text */
 		a: string;
 	}
 
@@ -14,8 +13,6 @@
 
 	const uid = $props.id();
 
-	// which items go in which column (left-to-right, top-to-bottom within each column),
-	// carrying each item's original index along so column splitting doesn't affect it
 	const cols = $derived.by(() => {
 		const indexed = items.map((item, index) => ({ item, index }));
 		if (columns === 1) return [indexed];
@@ -23,15 +20,12 @@
 		return [indexed.slice(0, mid), indexed.slice(mid)];
 	});
 
-	// independent open/close state per item, first one open by default
 	let openStates = $state(items.map((_, i) => i === 0));
 
 	function toggle(i: number) {
 		openStates[i] = !openStates[i];
 	}
 
-	// FAQPage rich schema, generated straight from the same array that renders the accordion
-	// (Google's FAQPage guidelines allow a limited set of formatting HTML in the answer text)
 	const richSchema = $derived({
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
@@ -180,7 +174,6 @@
 		opacity: 0;
 	}
 
-	/* CSS grid row trick: content stays in DOM for SEO, height animates via grid */
 	.body {
 		display: grid;
 		grid-template-rows: 0fr;
@@ -213,8 +206,6 @@
 		transition-delay: 0.08s;
 	}
 
-	/* answers are raw HTML (@html) — style plain <a> tags to match the design
-	   system's Link component, which the old snippet-based answers used */
 	.a :global(a) {
 		color: var(--link);
 		text-decoration: underline;

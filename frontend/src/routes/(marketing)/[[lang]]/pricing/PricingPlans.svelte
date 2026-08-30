@@ -103,11 +103,7 @@
 
 	.plans-outer {
 		position: relative;
-		/* distance from the true viewport edge to where the centered, max-1400px
-		   container's own content starts — keeps the row's padding (and the
-		   arrows) visually aligned with the title above, even though the row
-		   itself runs full-bleed edge to edge */
-		--container-inset: max(15px, calc((100vw - 1400px) / 2 + 15px));
+		--container-inset: max(15px, calc((100vw - 1530px) / 2));
 	}
 
 	.header {
@@ -138,18 +134,9 @@
 		display: flex;
 		align-items: stretch;
 		gap: 20px;
-		/* the row itself runs full viewport width (see .plans-outer, which is no
-		   longer capped to the 1400px container), with padding standing in for
-		   the container's inset — so both edges bleed the same way: a card
-		   cut off on either side reads as "continues off-screen" rather than an
-		   abrupt clip in the middle of the page */
 		padding: 25px var(--container-inset);
 		overflow-x: auto;
 		scroll-snap-type: x proximity;
-		/* without this, the snap engine auto-scrolls past the container's own
-		   left padding on load (treating the border box, not the padding box,
-		   as the snapport) — this keeps the first card's resting position at
-		   scrollLeft 0, fully visible and aligned with the padding */
 		scroll-padding: 0 var(--container-inset);
 		scrollbar-width: none;
 		-ms-overflow-style: none;
@@ -206,10 +193,6 @@
 	.toggle {
 		position: relative;
 		display: flex;
-		/* wide enough for the longer of the two labels in any language (e.g.
-		   "Annuel 2 mois offerts") to keep its padding on both sides — at a
-		   fixed 50/50 split (see .toggle-thumb/.toggle-btn below), a narrower
-		   width let a longer translation crowd right up against the pill edge */
 		width: 330px;
 		max-width: 100%;
 		padding: 3px;
@@ -277,8 +260,6 @@
 	}
 
 	@media (max-width: 600px) {
-		/* keep in step with the wider .hds-container gutter set globally in
-		   +layout.svelte at this same breakpoint */
 		.plans {
 			padding: 25px 20px;
 		}

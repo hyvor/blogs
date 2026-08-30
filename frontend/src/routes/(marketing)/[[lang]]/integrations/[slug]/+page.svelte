@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { Box } from '@hyvor/design/components';
-
-	// import { integrations } from '../integrations';
 	import GuideHead from '../GuideHead.svelte';
 	let { data } = $props();
 </script>
@@ -28,8 +26,6 @@
 		max-width: 100%;
 		margin: auto;
 		margin-top: 40px;
-		/* matches the docs page's own .docs { margin-bottom: 80px } — without
-		   it, the footer sat flush against the end of the guide content */
 		margin-bottom: 80px;
 	}
 

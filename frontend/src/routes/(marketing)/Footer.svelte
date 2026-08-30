@@ -27,8 +27,6 @@
 		{
 			title: t('nav.footer.columns.product'),
 			links: [
-				// Console is a separate app, not part of this marketing site's
-				// i18n routing, so it's left unprefixed
 				{ href: '/console', label: t('nav.footer.console') },
 				{ href: '/themes', label: t('nav.header.themes.label'), localize: true },
 				{ href: '/pricing', label: t('nav.header.pricing'), localize: true },
@@ -89,8 +87,6 @@
 	background="#574443"
 	email="blogs.support@hyvor.com"
 	social={{
-		// `Socials` pins each key to HYVOR's own default URL as a literal type,
-		// so overriding it for our repo needs a cast
 		github: 'https://github.com/hyvor/blogs' as any
 	}}
 	languageToggle={false}
@@ -115,12 +111,6 @@
 </Footer>
 
 <style>
-	/* the design system's Footer reserves 100px above itself for the mascot
-	   (.footer-outer's own margin-top) — on this page the preceding section
-	   already has generous bottom padding for that overlap, so the reserved
-	   space just shows up as a blank gap before the footer. Zero it out.
-	   !important because that class is compiled with a Svelte scoping class
-	   we can't otherwise out-specify */
 	:global(.footer-outer) {
 		margin-top: 0 !important;
 	}

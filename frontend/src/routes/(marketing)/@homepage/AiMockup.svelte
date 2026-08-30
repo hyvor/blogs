@@ -20,7 +20,6 @@
 <div class="ai-mockup">
 	<div class="ai-editor">
 		{#if active === 0}
-			<!-- AI content generation: a prompt turning into a draft -->
 			<div class="gen-prompt">
 				<IconMagic size={13} />
 				<span class="gen-prompt-text">Write a post about onboarding new users…</span>
@@ -30,7 +29,6 @@
 			<div class="editor-line short"></div>
 			<div class="editor-line generating"></div>
 		{:else if active === 2}
-			<!-- Bulk post editing: internal links added across several posts at once -->
 			<div class="bulk-list">
 				{#each { length: 4 } as _, i}
 					<div class="bulk-row">
@@ -41,7 +39,6 @@
 				{/each}
 			</div>
 		{:else}
-			<!-- Improvement suggestions: inline AI feedback on the current line -->
 			<div class="editor-line title"></div>
 			<div class="editor-line"></div>
 			<div class="editor-line short"></div>
@@ -152,7 +149,6 @@
 		border-radius: 100px;
 	}
 
-	/* AI content generation */
 	.gen-prompt {
 		display: flex;
 		align-items: center;
@@ -199,7 +195,6 @@
 		}
 	}
 
-	/* Bulk post editing */
 	.bulk-list {
 		display: flex;
 		flex-direction: column;
