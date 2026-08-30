@@ -54,12 +54,6 @@ MAIL_PORT=
 MAIL_USERNAME=
 MAIL_PASSWORD=
 
-# Mercure Hub configuration
-# Used for real-time communication (e.g. collaborative editing)
-MERCURE_URL=
-MERCURE_PUBLIC_URL=
-MERCURE_JWT_SECRET=
-
 # TLS_MODE controls how HTTPS is handled for DOMAIN_APP. 
 # One of: auto, external, manual, or disabled
 # See https://blogs.hyvor.com/hosting/deploy#tls
@@ -78,6 +72,16 @@ LOG_LEVEL=
 # Set this to false if you want to run migrations manually (e.g. in a CI pipeline) instead of on every startup
 # default: true
 RUN_MIGRATIONS_ON_STARTUP=
+
+# Mercure Hub configuration
+# Used for real-time communication (e.g. collaborative editing)
+# if MERCURE_INTERNAL is true (default: true), the built-in Mercure hub will be used.
+# and, you can ignore other Mercure-related settings.
+# set MERCURE_INTERNAL=false to use an external Mercure hub.
+MERCURE_INTERNAL=
+MERCURE_JWT_SECRET=           # Run: openssl rand -base64 32
+MERCURE_URL=                  # where symfony calls to publish updates (private URL)
+MERCURE_PUBLIC_URL=           # where JS clients connect to
 
 # Integrations
 # ===================

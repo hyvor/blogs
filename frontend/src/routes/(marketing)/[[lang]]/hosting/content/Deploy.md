@@ -65,6 +65,7 @@ APP_SECRET=           # Run: openssl rand -base64 32
 POSTGRES_PASSWORD=    # A strong password for the database
 DOMAIN_APP=           # e.g. blogs.example.com
 DELIVERY_URL=         # e.g. https://blogs.example.com
+MERCURE_JWT_SECRET=   # Run: openssl rand -base64 32
 
 # OIDC (on-prem authentication)
 OIDC_ISSUER_URL=      # e.g. https://accounts.google.com
