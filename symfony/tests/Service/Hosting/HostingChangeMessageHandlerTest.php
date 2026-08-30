@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\MessageHandler;
+namespace App\Tests\Service\Hosting;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;

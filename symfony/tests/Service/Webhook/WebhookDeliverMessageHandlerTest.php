@@ -40,7 +40,6 @@ class WebhookDeliverMessageHandlerTest extends KernelTestCase
         ]);
         return WebhookDeliveryFactory::createOne([
             'webhook' => $webhook,
-            'webhook_id' => $webhook->getId(),
             'url' => $url,
             'event' => WebhookEvent::CACHE_ALL,
             'data' => [],

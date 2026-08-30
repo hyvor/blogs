@@ -31,6 +31,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder as OrmQB;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Hyvor\FilterQ\FilterQ;
+use Hyvor\FilterQ\Keys;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -145,11 +146,11 @@ class PostService
         if ($filter) {
             FilterQ::expression($filter)
                 ->queryBuilder($qb)
-                ->keys(function (\Hyvor\FilterQ\Keys $keys) {
+                ->keys(function (Keys $keys) {
                     $keys->add('id', 'p.id')->valueType('int');
                     $keys->add('published_at', 'pv.published_at')->valueType('date');
                     $keys->add('created_at', 'p.created_at')->valueType('date');
-                    $keys->add('updated_at', 'pv.updated_at')->valueType('date');
+                    $keys->add('updated_at', 'pv.content_updated_at')->valueType('date');
                     $keys->add('is_featured', 'p.is_featured')->valueType('bool')->operators('=,!=');
                     $keys->add('slug', 'pv.slug')->valueType('string')->operators('=,!=');
                     $keys->add('words', 'pv.words')->valueType('int');

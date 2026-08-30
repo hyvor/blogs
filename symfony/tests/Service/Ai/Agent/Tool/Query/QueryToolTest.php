@@ -43,8 +43,7 @@ class QueryToolTest extends KernelTestCase
         $language = LanguageFactory::createOnePrimaryFor($blog);
 
         $tag = TagFactory::createOne(['blog' => $blog, 'is_private' => true, 'posts_count' => 5]);
-        TagVariantFactory::createOne([
-            'tag' => $tag,
+        TagVariantFactory::createOneFor($tag, [
             'language' => $language,
             'name' => 'My Tag',
             'description' => 'A description',

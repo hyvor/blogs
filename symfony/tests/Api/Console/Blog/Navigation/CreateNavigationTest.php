@@ -26,10 +26,8 @@ class CreateNavigationTest extends ApiTestCase
             ['subdomain' => 'nav-create'],
             ['status' => UserStatus::ACTIVE],
         );
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
 
         $this->consoleBlogApi('POST', 'nav-create', '/navigation', [
@@ -65,10 +63,8 @@ class CreateNavigationTest extends ApiTestCase
             ['subdomain' => 'nav-create-lim'],
             ['status' => UserStatus::ACTIVE],
         );
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
 
         for ($i = 0; $i < 10; $i++) {

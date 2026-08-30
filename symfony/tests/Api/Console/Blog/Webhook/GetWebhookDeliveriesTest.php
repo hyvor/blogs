@@ -30,7 +30,6 @@ class GetWebhookDeliveriesTest extends ApiTestCase
         ]);
         WebhookDeliveryFactory::createOne([
             'webhook' => $webhook,
-            'webhook_id' => $webhook->getId(),
             'event' => WebhookEvent::POST_CREATED,
             'status' => WebhookDeliveryStatus::SUCCESS,
             'url' => 'https://example.com/hook',

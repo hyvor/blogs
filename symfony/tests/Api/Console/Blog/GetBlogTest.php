@@ -36,7 +36,7 @@ class GetBlogTest extends ApiTestCase
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-get']);
         $language = LanguageFactory::createOnePrimaryFor($blog);
-        BlogVariantFactory::createOne(['blog' => $blog, 'language' => $language]);
+        BlogVariantFactory::createOneForBlog($blog);
 
         $user = UserFactory::createOne([
             'blog' => $blog,

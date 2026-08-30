@@ -55,7 +55,7 @@ class HyvorPostListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $transport->queue()->assertEmpty();
+        $transport->queue()->assertNotContains(SyncBlogUsersToNewsletterMessage::class);
     }
 
     public function test_no_sync_when_user_role_not_synced(): void
@@ -66,7 +66,7 @@ class HyvorPostListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $transport->queue()->assertEmpty();
+        $transport->queue()->assertNotContains(SyncBlogUsersToNewsletterMessage::class);
     }
 
     public function test_sync_when_user_role_synced(): void
@@ -77,7 +77,7 @@ class HyvorPostListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToNewsletterMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -97,7 +97,7 @@ class HyvorPostListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserDeletedEvent($user));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToNewsletterMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];

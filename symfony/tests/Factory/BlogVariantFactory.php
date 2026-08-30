@@ -56,10 +56,14 @@ final class BlogVariantFactory extends PersistentObjectFactory
         }
         assert($primaryLanguage !== null, 'Blog must have a primary language');
 
-        return self::createOne([
+        $variant = self::createOne([
             'blog' => $blog,
             'language' => $primaryLanguage,
         ]);
+
+        $blog->getVariants()->add($variant);
+
+        return $variant;
     }
 
     /**
@@ -75,10 +79,12 @@ final class BlogVariantFactory extends PersistentObjectFactory
 
         $variants = [];
         foreach ($languages as $language) {
-            $variants[] = self::createOne(array_merge([
+            $variant = self::createOne(array_merge([
                 'blog' => $blog,
                 'language' => $language,
             ], $attributes));
+            $blog->getVariants()->add($variant);
+            $variants[] = $variant;
         }
 
         return $variants;

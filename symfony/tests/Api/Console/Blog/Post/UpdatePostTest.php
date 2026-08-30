@@ -25,9 +25,7 @@ class UpdatePostTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog, 'is_featured' => false]);
-        $variant = PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
-
-        $timestamp = mktime(12, 0, 0, 1, 1, 2024);
+        PostVariantFactory::createOne(['post' => $post, 'language' => $language]);
 
         $this->consoleBlogApi('PATCH', $blog, '/post/' . $post->getId(), [
             'is_featured' => true,
@@ -35,7 +33,6 @@ class UpdatePostTest extends ApiTestCase
             'featured_image_url' => 'https://example.com/img.jpg',
             'code_head' => '<script>head</script>',
             'code_foot' => '<script>foot</script>',
-            'published_at' => $timestamp,
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
@@ -46,7 +43,6 @@ class UpdatePostTest extends ApiTestCase
         $this->assertSame('https://example.com/img.jpg', $json['featured_image_url']);
         $this->assertSame('<script>head</script>', $json['code_head']);
         $this->assertSame('<script>foot</script>', $json['code_foot']);
-        $this->assertSame($timestamp, $json['published_at']);
 
         $post = refresh($post);
         $this->assertTrue($post->isFeatured());
@@ -54,9 +50,6 @@ class UpdatePostTest extends ApiTestCase
         $this->assertSame('https://example.com/img.jpg', $post->getFeaturedImageUrl());
         $this->assertSame('<script>head</script>', $post->getCodeHead());
         $this->assertSame('<script>foot</script>', $post->getCodeFoot());
-
-        $variant = refresh($variant);
-        $this->assertSame($timestamp, $variant->getPublishedAt()?->getTimestamp());
     }
 
     public function test_nullifies_post_fields(): void

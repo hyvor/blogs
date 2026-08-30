@@ -26,7 +26,7 @@ class TemplateRouteTest extends KernelTestCase
     {
         $content = 'I am a custom template-based route';
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,
@@ -45,7 +45,7 @@ class TemplateRouteTest extends KernelTestCase
     public function test_sets_custom_mime_type(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,

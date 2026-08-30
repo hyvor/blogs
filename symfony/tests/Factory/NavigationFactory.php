@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
 use App\Entity\Enum\NavigationType;
 use App\Entity\Navigation;
 use App\Tests\Factory\BlogFactory;
@@ -41,6 +42,20 @@ final class NavigationFactory extends PersistentObjectFactory
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'url' => self::faker()->text(255),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Blog $blog, array $attributes = []): Navigation
+    {
+        $navigation = self::createOne(array_merge([
+            'blog' => $blog,
+        ], $attributes));
+
+        $blog->getNavigations()->add($navigation);
+
+        return $navigation;
     }
 
     /**

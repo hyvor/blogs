@@ -119,7 +119,6 @@ class UpdateRedirectTest extends ApiTestCase
         );
         $redirect = RedirectFactory::createOne([
             'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
             'dynamic' => false,
         ]);
 

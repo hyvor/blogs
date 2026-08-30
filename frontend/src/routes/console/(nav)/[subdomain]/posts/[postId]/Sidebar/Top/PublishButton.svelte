@@ -47,6 +47,10 @@
 		publishPostVariant(publishAt)
 			.then((v) => {
 				published = { status: type, url: v.url };
+
+				if (type === 'published') {
+					// confetti
+				}
 			})
 			.catch(() => {
 				toast.error('Failed to publish post');

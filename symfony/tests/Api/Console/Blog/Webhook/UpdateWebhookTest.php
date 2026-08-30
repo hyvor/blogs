@@ -75,7 +75,6 @@ class UpdateWebhookTest extends ApiTestCase
         );
         $webhook = WebhookFactory::createOne([
             'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
         ]);
 
         $this->consoleBlogApi('PATCH', 'wh-upd-b1', '/webhook/' . $webhook->getId(), [

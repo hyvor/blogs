@@ -24,11 +24,9 @@ class GetLanguagesTest extends ApiTestCase
             ['subdomain' => 'lang-list'],
             ['status' => UserStatus::ACTIVE],
         );
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
             'name' => 'English',
-            'is_primary' => true,
             'direction' => LanguageDirection::LTR,
         ]);
 

@@ -37,8 +37,7 @@ class UrlPostEntryTest extends KernelTestCase
             'code' => 'fr',
             'is_primary' => false,
         ]);
-        RouteFactory::createOne([
-            'blog' => $blog,
+        RouteFactory::createOneFor($blog, [
             'name' => 'post',
             'match' => '/{slug}',
             'template' => 'post.twig',

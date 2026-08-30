@@ -256,7 +256,8 @@ class PostController
 
             if (
                 $publishedAt &&
-                $publishedAt > $input->content_updated_at
+                $input->content_updated_at !== null &&
+                $publishedAt->getTimestamp() > $input->content_updated_at
             ) {
                 throw new UnprocessableEntityHttpException('Content updated time should be after published time');
             }

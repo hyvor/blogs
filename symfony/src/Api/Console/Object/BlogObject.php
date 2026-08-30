@@ -76,6 +76,7 @@ class BlogObject
     public LinkAnalysisEmailReport $link_analysis_email_report;
 
     public AiProvider $ai_provider;
+    public string $ai_provider_model;
     public bool $ai_translation_enabled;
     public bool $ai_generation_enabled;
 
@@ -143,6 +144,7 @@ class BlogObject
         $this->link_analysis_email_report = $meta->link_analysis_email_report;
 
         $this->ai_provider = $meta->ai_provider;
+        $this->ai_provider_model = $meta->ai_provider->model();
         $this->ai_translation_enabled = $meta->ai_translation_enabled;
         $this->ai_generation_enabled = $meta->ai_generation_enabled;
 

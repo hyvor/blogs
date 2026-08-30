@@ -79,7 +79,6 @@ class UpdateRouteTest extends ApiTestCase
         );
         $route = RouteFactory::createOne([
             'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
         ]);
 
         $this->consoleBlogApi('PATCH', 'route-upd-b1', '/route/' . $route->getId(), [

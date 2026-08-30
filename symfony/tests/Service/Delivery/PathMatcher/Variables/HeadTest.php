@@ -79,8 +79,8 @@ class HeadTest extends KernelTestCase
 
         $post = PostFactory::createPublishedOneForWithVariants(
             $blog,
-            ['code_head' => 'A post code head {{ _post.id }}', 'updated_at' => $updatedAt],
-            [],
+            ['code_head' => 'A post code head {{ _post.id }}'],
+            ['content_updated_at' => $updatedAt],
             $publishedAt,
         );
 
@@ -89,7 +89,7 @@ class HeadTest extends KernelTestCase
         $post->getAuthors()->add($user);
 
         $tag = TagFactory::createOne(['blog' => $blog]);
-        TagVariantFactory::createOne(['tag' => $tag, 'language' => $blog->getLanguages()[0], 'name' => 'My Tag']);
+        TagVariantFactory::createOneFor($tag, ['language' => $blog->getLanguages()[0], 'name' => 'My Tag']);
         $post->getTags()->add($tag);
 
         $this->getService(EntityManagerInterface::class)->flush();
@@ -124,20 +124,16 @@ class HeadTest extends KernelTestCase
         RouteFactory::createDefaultsFor($blog);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $primary,
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'en-slug',
             'status' => PostVariantStatus::PUBLISHED,
             'published_at' => new \DateTimeImmutable(),
-        ]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $secondary,
+        ], $primary);
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'fr-slug',
             'status' => PostVariantStatus::PUBLISHED,
             'published_at' => new \DateTimeImmutable(),
-        ]);
+        ], $secondary);
 
         ThemeFileFactory::createTemplateTwig($blog, 'post.twig', '{{ _head | template }}');
 

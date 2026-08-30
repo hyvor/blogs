@@ -34,10 +34,10 @@ class CreatePostTest extends ApiTestCase
 
         $this->assertFalse($json['is_page']);
         $this->assertFalse($json['is_featured']);
-        $this->assertIsArray($json['variant_statuses']);
-        $this->assertCount(1, $json['variant_statuses']);
-        $this->assertIsArray($json['variant_statuses'][0]);
-        $this->assertSame('draft', $json['variant_statuses'][0]['status']);
+        $this->assertIsArray($json['variants']);
+        $this->assertCount(1, $json['variants']);
+        $this->assertIsArray($json['variants'][0]);
+        $this->assertSame('draft', $json['variants'][0]['status']);
 
         $posts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
         $this->assertCount(1, $posts);

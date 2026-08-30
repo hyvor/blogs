@@ -30,8 +30,8 @@ class TagTest extends ApiTestCase
         parent::setUp();
 
         $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $this->lang1 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'en', 'is_primary' => true]);
-        $this->lang2 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'fr', 'is_primary' => false]);
+        $this->lang1 = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
+        $this->lang2 = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'tag', 'match' => '/tag/{slug}', 'template' => 'tag', 'is_enabled' => true]);
 
         $this->tag = TagFactory::createOne([
@@ -40,14 +40,12 @@ class TagTest extends ApiTestCase
             'is_private' => false,
         ]);
 
-        TagVariantFactory::createOne([
-            'tag' => $this->tag,
+        TagVariantFactory::createOneFor($this->tag, [
             'language' => $this->lang1,
             'name' => 'My Tag',
         ]);
 
-        TagVariantFactory::createOne([
-            'tag' => $this->tag,
+        TagVariantFactory::createOneFor($this->tag, [
             'language' => $this->lang2,
             'name' => 'Mon Tag',
         ]);

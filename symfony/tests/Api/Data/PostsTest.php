@@ -35,7 +35,6 @@ class PostsTest extends ApiTestCase
         $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $this->primaryLanguage = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
         $this->secondaryLanguage = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
-        $this->blog->getLanguages()->add($this->secondaryLanguage);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         // Create 4 posts
@@ -304,7 +303,7 @@ class PostsTest extends ApiTestCase
         $post = $this->posts[0];
         $variant = $post->getVariants()[0];
         $this->assertInstanceOf(PostVariant::class, $variant);
-        $variant->setUpdatedAt(new \DateTimeImmutable('yesterday'));
+        $variant->setContentUpdatedAt(new \DateTimeImmutable('yesterday'));
         $this->getEm()->flush();
 
         $this->dataApi($this->blog, '/posts', ['filter' => 'updated_at=yesterday']);
@@ -315,7 +314,7 @@ class PostsTest extends ApiTestCase
         $this->assertIsArray($json['data'][0]);
         $this->assertCount(1, $json['data']);
         $this->assertSame($post->getId(), $json['data'][0]['id']);
-        $updatedAt = $variant->getUpdatedAt();
+        $updatedAt = $variant->getContentUpdatedAt();
         $this->assertNotNull($updatedAt);
         $this->assertSame($updatedAt->getTimestamp(), $json['data'][0]['updated_at']);
     }

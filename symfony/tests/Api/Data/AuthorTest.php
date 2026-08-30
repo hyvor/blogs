@@ -34,8 +34,8 @@ class AuthorTest extends ApiTestCase
         parent::setUp();
 
         $this->blog = BlogFactory::createOne();
-        $this->lang1 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'en', 'is_primary' => true]);
-        $this->lang2 = LanguageFactory::createOne(['blog' => $this->blog, 'code' => 'fr', 'is_primary' => false]);
+        $this->lang1 = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
+        $this->lang2 = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author', 'is_enabled' => true]);
 
         $this->author = UserFactory::createOne([

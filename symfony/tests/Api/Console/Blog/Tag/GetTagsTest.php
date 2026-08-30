@@ -74,11 +74,11 @@ class GetTagsTest extends ApiTestCase
 
         $name = 'Thisisname';
         $tag = TagFactory::createOne(['blog' => $blog]);
-        TagVariantFactory::createOne(['tag' => $tag, 'language' => $language, 'name' => $name]);
+        TagVariantFactory::createOneFor($tag, ['language' => $language, 'name' => $name]);
 
         // another tag
         $tag2 = TagFactory::createOne(['blog' => $blog]);
-        TagVariantFactory::createOne(['tag' => $tag2, 'language' => $language, 'name' => 'Another name']);
+        TagVariantFactory::createOneFor($tag2, ['language' => $language, 'name' => 'Another name']);
 
         $this->consoleBlogApi('GET', $blog, '/tags?search=thisis', user: $user);
 
@@ -99,8 +99,8 @@ class GetTagsTest extends ApiTestCase
         $secondaryLanguage = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'name' => 'French']);
 
         $tag = TagFactory::createOne(['blog' => $blog]);
-        TagVariantFactory::createOne(['tag' => $tag, 'language' => $primaryLanguage, 'name' => 'Matching name']);
-        TagVariantFactory::createOne(['tag' => $tag, 'language' => $secondaryLanguage, 'name' => 'Nom francais']);
+        TagVariantFactory::createOneFor($tag, ['language' => $primaryLanguage, 'name' => 'Matching name']);
+        TagVariantFactory::createOneFor($tag, ['language' => $secondaryLanguage, 'name' => 'Nom francais']);
 
         $this->consoleBlogApi('GET', $blog, '/tags?search=Matching', user: $user);
 

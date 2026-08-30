@@ -25,10 +25,8 @@ class SitemapIndexTest extends KernelTestCase
     public function test_returns_sitemap_with_only_pages(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
 
         $response = $this->pathMatcher()->match($blog, '/sitemap.xml');
@@ -48,10 +46,8 @@ class SitemapIndexTest extends KernelTestCase
     public function test_adds_posts_sitemap_when_posts_exist(): void
     {
         $blog = BlogFactory::createOne();
-        $lang = LanguageFactory::createOne([
-            'blog' => $blog,
+        $lang = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
 
         // Create 5 published posts

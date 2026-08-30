@@ -60,9 +60,13 @@ final class LanguageFactory extends PersistentObjectFactory
      */
     public static function createOneFor(Blog $blog, array $attributes = []): Language
     {
-        return self::createOne(array_merge([
+        $language = self::createOne(array_merge([
             'blog' => $blog,
         ], $attributes));
+
+        $blog->getLanguages()->add($language);
+
+        return $language;
     }
 
     /**
@@ -70,14 +74,10 @@ final class LanguageFactory extends PersistentObjectFactory
      */
     public static function createOnePrimaryFor(Blog $blog, array $attributes = []): Language
     {
-        $language = self::createOneFor($blog, array_merge([
+        return self::createOneFor($blog, array_merge([
             'is_primary' => true,
             'code' => 'en',
             'name' => 'English',
         ], $attributes));
-
-        $blog->getLanguages()->add($language);
-
-        return $language;
     }
 }

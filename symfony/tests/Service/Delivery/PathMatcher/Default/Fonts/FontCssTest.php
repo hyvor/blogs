@@ -92,7 +92,12 @@ class FontCssTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $response = $this->pathMatcher()->match($blog, '/fonts/css/mulish:400');
 
-        $this->assertSame('Failed to fetch font css: Request failed', $response->content);
+        $expectedContent = <<<HTML
+        <div style=\"font-family:monospace;font-size:18px;\">
+            Failed to fetch font css: Request failed
+        </div>
+        HTML;
+        $this->assertSame($expectedContent, $response->content);
         $this->assertSame(500, $response->status);
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
