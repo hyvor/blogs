@@ -3,6 +3,7 @@
 namespace Api\Console;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\Scope;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
 use App\Entity\Enum\UserStatus;
@@ -239,6 +240,7 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
             'api_key' => 'validrawkey123456789012345678901',
             'type' => ApiKeyType::CONSOLE,
             'name' => 'Test Key',
+            'scopes' => ['api_keys.read']
         ]);
 
         $this->consoleBlogApi(

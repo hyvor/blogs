@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Navigation;
 use App\Entity\NavigationVariant;
 use App\Tests\Factory\LanguageFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -37,6 +38,20 @@ final class NavigationVariantFactory extends PersistentObjectFactory
         return [
             'language' => LanguageFactory::new(),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Navigation $navigation, array $attributes = []): NavigationVariant
+    {
+        $variant = self::createOne(array_merge([
+            'navigation' => $navigation,
+        ], $attributes));
+
+        $navigation->addVariant($variant);
+
+        return $variant;
     }
 
     /**

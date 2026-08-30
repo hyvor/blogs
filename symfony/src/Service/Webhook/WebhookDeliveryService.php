@@ -32,14 +32,14 @@ class WebhookDeliveryService
         $qb->select('d')
             ->from(WebhookDelivery::class, 'd')
             ->join('d.webhook', 'w')
-            ->where('w.blog_id = :blogId')
+            ->where('w.blog = :blogId')
             ->setParameter('blogId', $blog->getId())
             ->orderBy('d.id', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
         if ($webhookId !== null) {
-            $qb->andWhere('d.webhook_id = :webhookId')
+            $qb->andWhere('d.webhook = :webhookId')
                 ->setParameter('webhookId', $webhookId);
         }
 

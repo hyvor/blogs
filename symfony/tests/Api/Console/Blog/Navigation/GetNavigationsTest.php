@@ -34,13 +34,10 @@ class GetNavigationsTest extends ApiTestCase
             'type' => NavigationType::HEADER,
             'sort' => 0,
         ]);
-        $lang = LanguageFactory::createOne([
-            'blog' => $blog,
+        $lang = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
-        NavigationVariantFactory::createOne([
-            'navigation' => $nav,
+        NavigationVariantFactory::createOneFor($nav, [
             'language' => $lang,
             'name' => 'Main Nav',
         ]);

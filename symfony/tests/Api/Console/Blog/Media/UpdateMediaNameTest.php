@@ -44,8 +44,7 @@ class UpdateMediaNameTest extends ApiTestCase
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
 
         $post = PostFactory::createOne(['blog' => $blog]);
-        $variant = PostVariantFactory::createOne([
-            'post' => $post,
+        $variant = PostVariantFactory::createOneFor($post, [
             'content' => json_encode([
                 'type' => 'doc',
                 'content' => [

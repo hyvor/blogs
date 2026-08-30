@@ -54,7 +54,6 @@ class UpdateNavigationTest extends ApiTestCase
         );
         $nav = NavigationFactory::createOne([
             'blog' => $blog2,
-            'blog_id' => $blog2->getId(),
         ]);
 
         $this->consoleBlogApi('PATCH', 'nav-upd-b1', '/navigation/' . $nav->getId(), [

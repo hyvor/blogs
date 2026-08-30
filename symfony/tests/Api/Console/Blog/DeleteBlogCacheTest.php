@@ -11,8 +11,8 @@ use App\Service\Cache\Event\CacheClearTemplatesEvent;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\UserFactory;
-use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 
 #[CoversClass(BlogController::class)]
 #[CoversClass(BlogCacheService::class)]
@@ -42,11 +42,11 @@ class DeleteBlogCacheTest extends ApiTestCase
     {
         [$blog, $owner] = BlogFactory::createOneWithUser(['subdomain' => 'cache-clear-paths']);
 
-        $connection = $this->getService(Connection::class);
-        $connection->executeStatement(
-            "INSERT INTO cache (key, value, expiration) VALUES (?, ?, ?)",
-            ["blog_cache_{$blog->getId()}_/about", 'test-value', 2147483647],
-        );
+        $cache = $this->getService(CacheItemPoolInterface::class);
+        $cacheKey = hash('xxh3', "blog_cache_{$blog->getId()}_/about");
+        $item = $cache->getItem($cacheKey);
+        $item->set('test-value');
+        $cache->save($item);
 
         $this->consoleBlogApi('DELETE', $blog, '/blog/cache', [
             'type' => 'paths',
@@ -56,12 +56,7 @@ class DeleteBlogCacheTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $this->getEd()->assertDispatchedCount(CacheClearSingleEvent::class, 2);
 
-        /** @var int|string|false $remaining */
-        $remaining = $connection->fetchOne(
-            'SELECT COUNT(*) FROM cache WHERE key = ?',
-            ["blog_cache_{$blog->getId()}_/about"],
-        );
-        $this->assertSame(0, (int) $remaining);
+        $this->assertFalse($cache->getItem($cacheKey)->isHit());
     }
 
     public function test_requires_blog_delete_scope(): void

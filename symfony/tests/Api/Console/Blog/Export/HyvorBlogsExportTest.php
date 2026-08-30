@@ -46,11 +46,9 @@ class HyvorBlogsExportTest extends ApiTestCase
         $posts = [];
         for ($i = 0; $i < 3; $i++) {
             $post = PostFactory::createOne(['blog' => $blog]);
-            PostVariantFactory::createOne([
-                'post' => $post,
-                'language' => $language,
+            PostVariantFactory::createOneFor($post, [
                 'content' => '{"type":"doc","content":[]}',
-            ]);
+            ], $language);
             $posts[] = $post;
         }
 
@@ -72,7 +70,7 @@ class HyvorBlogsExportTest extends ApiTestCase
 
         $navigation = [];
         for ($i = 0; $i < 4; $i++) {
-            $navigation[] = NavigationFactory::createOne(['blog' => $blog, 'sort' => $i]);
+            $navigation[] = NavigationFactory::createOneFor($blog, ['sort' => $i]);
         }
 
         $routes = RouteFactory::createDefaultsFor($blog);

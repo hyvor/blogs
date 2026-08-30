@@ -45,7 +45,7 @@ class GetPostsTest extends ApiTestCase
         $this->assertCount(3, $json);
         $this->assertIsArray($json[0]);
         $this->assertArrayHasKey('id', $json[0]);
-        $this->assertArrayHasKey('variant_statuses', $json[0]);
+        $this->assertArrayHasKey('variants', $json[0]);
     }
 
     public function test_fetches_posts_with_limit_and_offset(): void
@@ -222,8 +222,10 @@ class GetPostsTest extends ApiTestCase
         $language1 = LanguageFactory::createOnePrimaryFor($blog);
         $language2 = LanguageFactory::createOne(['blog' => $blog]);
 
-        $post1 = PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'First Post', 'language' => $language1]);
-        $post2 = PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'Second Post', 'language' => $language2]);
+        $post1 = PostFactory::createOneFor($blog);
+        PostVariantFactory::createOneFor($post1, ['title' => 'First Post'], $language1);
+        $post2 = PostFactory::createOneFor($blog);
+        PostVariantFactory::createOneFor($post2, ['title' => 'Second Post'], $language2);
 
         $this->consoleBlogApi('GET', $blog, '/posts?search=Post&language_id=' . $language1->getId(), user: $user);
 
