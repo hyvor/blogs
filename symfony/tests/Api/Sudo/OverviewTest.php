@@ -6,6 +6,7 @@ use App\Api\Sudo\Controller\BlogController;
 use App\Api\Sudo\Service\SudoAnalyticsService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\CustomDomainFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(BlogController::class)]
@@ -24,13 +25,14 @@ class OverviewTest extends ApiTestCase
     {
         $now = new \DateTimeImmutable();
 
-        BlogFactory::createOne([
+        $blog = BlogFactory::createOne([
             'created_at' => $now,
-            'hosting_domain' => 'example.com',
         ]);
+        $customDomain = CustomDomainFactory::createOne(['blog' => $blog]);
+        $blog->setCustomDomain($customDomain);
+        $this->getEm()->flush();
         BlogFactory::createOne([
             'created_at' => $now,
-            'hosting_domain' => null,
         ]);
 
         $this->sudoApi('GET', '/overview', user: 123);

@@ -20,9 +20,9 @@ class SubdomainTest extends ApiTestCase
         string $path
     ): Response
     {
+        $this->setEnvVar('CADDY_ROUTER', 'subdomain');
         $this->client->request('GET', $path, [], [], [
             'HTTP_HOST' => $host,
-            'HTTP_X_ROUTER' => 'subdomain'
         ]);
 
         return $this->client->getResponse();
