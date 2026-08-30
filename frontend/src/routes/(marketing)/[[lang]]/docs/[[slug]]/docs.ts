@@ -34,8 +34,16 @@ import ImportWordPress from './content/import/ImportWordPress.svelte';
 import HyvorTalkDoc from './content/hyvor-talk/HyvorTalkDoc.svelte';
 import HyvorPostDoc from './content/hyvor-post/HyvorPostDoc.svelte';
 import type { NavSectionConfig } from '@hyvor/design/marketing';
+import type { Component } from 'svelte';
 
-export const sections: NavSectionConfig[] = [
+export async function getSections(lang: string): Promise<NavSectionConfig[]> {
+
+	async function getComponent(path: string): Promise<Component> {
+		const folder = lang ? lang.replace('/', '') : 'content';
+		return (await import(`./${folder}/${path}.svelte`)).default;
+	}
+
+	return	[
 	{
 		name: '',
 		navs: [
@@ -43,7 +51,7 @@ export const sections: NavSectionConfig[] = [
 				type: 'page',
 				slug: '',
 				name: 'Introduction',
-				content: Introduction
+				content: await getComponent('Introduction'),
 			},
 
 			{
@@ -302,3 +310,5 @@ export const sections: NavSectionConfig[] = [
 		]
 	}
 ];
+
+}

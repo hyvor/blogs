@@ -1,0 +1,8 @@
+{
+	"../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json": {
+		"fr": "f31cc0004e26cb5e338da08ba9f1e757a0ef7333b5666c52e174a29e2dd3118d"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Introduction.svelte": {
+		"fr": "dbede5e43f1773ab4ccb4bdcb589e84bacf2354a6a0e6e5221b7c20d7a789cf6"
+	}
+}

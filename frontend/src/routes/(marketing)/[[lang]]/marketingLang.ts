@@ -40,7 +40,6 @@ export function getStaticString(strings: Record<string, any>, key: string): stri
 }
 
 export function buildMarketingUrl(path: string, currentLang: string, otherLang: string) {
-	console.log(path, currentLang, otherLang);
 	let basePath = path;
 
 	// strip the current language prefix, if any, to get the language-agnostic path
