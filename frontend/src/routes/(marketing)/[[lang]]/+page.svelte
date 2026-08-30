@@ -18,7 +18,6 @@
 </svelte:head>
 
 <Hero />
-<!-- <StatsRow /> -->
 <LogoStrip />
 <Features />
 <Enterprise />

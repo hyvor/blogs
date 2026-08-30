@@ -21,11 +21,9 @@
 		IconShieldCheck
 	];
 
-	// starting formation: 7 crowded slots (6 features + the plugin, at the top)
 	const step7 = 360 / (featureIcons.length + 1);
 	const pluginStart = toXY(-90, 100);
 
-	// final formation: the 6 features settle into a roomier, evenly-spaced ring
 	const step6 = 360 / featureIcons.length;
 
 	const features = featureIcons.map((icon, i) => ({
@@ -52,7 +50,6 @@
 			</div>
 		{/each}
 
-		<!-- the plugin doesn't get to stay -->
 		<div class="rejected-plugin" style="--x0:{pluginStart.x}px; --y0:{pluginStart.y}px">
 			<IconPuzzleFill size={22} />
 		</div>

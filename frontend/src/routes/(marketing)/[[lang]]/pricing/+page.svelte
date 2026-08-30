@@ -8,11 +8,6 @@
 	import { getMarketingI18n, getStaticString } from '../marketingLang';
 
 	const I18n = getMarketingI18n();
-	// I18n.t() runs every string through ICU MessageFormat, which chokes on
-	// HTML with attributes (e.g. <a href="...">) — INVALID_TAG. The FAQ
-	// answers embed real links/markup, so they're read as raw strings from
-	// I18n's own (already locale + fallback merged) strings store instead,
-	// bypassing ICU parsing entirely, same as the original hardcoded HTML.
 	const strings = I18n.strings;
 
 	const faqs = $derived(

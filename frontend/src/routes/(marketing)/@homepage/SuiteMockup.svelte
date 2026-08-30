@@ -41,7 +41,6 @@
 			{/each}
 		</div>
 
-		<!-- these swoop in once the logos have gathered above -->
 		<div class="bottom-arrows-row">
 			{#each products as p}
 				<div class="annotate-col">
@@ -143,7 +142,6 @@
 		justify-content: center;
 	}
 
-	/* the logo hops in first, with a bouncy overshoot */
 	.satellite-col.left .satellite {
 		animation: satellite-jump-left 3.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	}
@@ -196,7 +194,6 @@
 		}
 	}
 
-	/* then the name settles in */
 	.sat-name {
 		font-size: 12px;
 		font-weight: 700;
@@ -206,7 +203,6 @@
 		animation: fade-up-in 3.4s ease-out forwards;
 	}
 
-	/* then the license tag */
 	.sat-tag {
 		font-size: 10px;
 		font-weight: 600;

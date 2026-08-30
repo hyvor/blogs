@@ -98,7 +98,7 @@
 			"suite": {
 				"eyebrow": "Comments & Newsletters",
 				"title": "Talk & Post included",
-				"description": "Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions — one account, one dashboard, everything connected.",
+				"description": "Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions. One account, one dashboard, everything connected.",
 				"bullet1": "Hyvor Talk comments, free on every plan",
 				"bullet2": "Hyvor Post newsletters, free on every plan",
 				"bullet3": "One account and dashboard for all three",
@@ -286,35 +286,24 @@
 			"taglineGrowth": "For growing publications",
 			"taglinePremium": "For large organizations",
 			"taglineEnterprise": "For custom, large-scale needs",
-			"featuresPersonal1": "1 blog",
-			"featuresPersonal2": "1 user",
-			"featuresPersonal3": "1GB media storage",
-			"featuresPersonal4": "Custom themes & domain",
-			"featuresPersonal5": "Multi-language support",
-			"featuresPersonal6": "All APIs included",
-			"featuresStarter1": "All Personal features",
-			"featuresStarter2": "3 blogs",
-			"featuresStarter3": "5 users",
-			"featuresStarter4": "5GB media storage",
-			"featuresStarter5": "SEO Analysis",
-			"featuresGrowth1": "All Starter features",
-			"featuresGrowth2": "10 blogs",
-			"featuresGrowth3": "15 users",
-			"featuresGrowth4": "150GB media storage",
-			"featuresGrowth5": "Link Analysis",
-			"featuresGrowth6": "100k AI tokens/month",
-			"featuresGrowth7": "100k auto-translation chars/month",
-			"featuresPremium1": "All Growth features",
-			"featuresPremium2": "20 blogs",
-			"featuresPremium3": "50 users",
-			"featuresPremium4": "500GB media storage",
-			"featuresPremium5": "1m AI tokens/month",
-			"featuresPremium6": "500k auto-translation chars/month",
-			"featuresEnterprise1": "All Premium features",
-			"featuresEnterprise2": "SSO & SAML",
-			"featuresEnterprise3": "GDPR, CCPA & ISO compliant",
-			"featuresEnterprise4": "Priority support",
-			"featuresEnterprise5": "Custom contract & SLA"
+			"features": {
+				"inherits": "All {plan} features",
+				"blogs": "{value, plural, one {# blog} other {# blogs}}",
+				"blogsMultiple": "Multiple blogs",
+				"users": "{value, plural, one {# user} other {# users}}",
+				"storage": "{value}GB media storage",
+				"customThemesDomain": "Custom themes & domain",
+				"multiLanguage": "Multi-language support",
+				"allApis": "All APIs included",
+				"noBranding": "No branding",
+				"seoAnalysis": "SEO Analysis",
+				"linkAnalysis": "Link Analysis",
+				"aiTokens": "{value} AI tokens/month",
+				"sso": "SSO & SAML",
+				"compliance": "GDPR, CCPA & ISO compliant",
+				"prioritySupport": "Priority support",
+				"customContract": "Custom contract & SLA"
+			}
 		},
 		"compare": {
 			"eyebrow": "Compare",
@@ -329,6 +318,14 @@
 				"integrations": "Integrations",
 				"enterprise": "Enterprise"
 			},
+			"values": {
+				"custom": "Custom",
+				"multiple": "Multiple",
+				"storage": "{value}GB",
+				"aiTokens": "{value} tokens/m",
+				"credits": "{value} credits/m",
+				"emails": "{value} emails/m"
+			},
 			"features": {
 				"blogs": {
 					"name": "Blogs",
@@ -336,7 +333,7 @@
 				},
 				"users": {
 					"name": "Users (team members)",
-					"tooltip": "Total number of users who write for your blog."
+					"tooltip": "Total number of unique users of your blog within your organization."
 				},
 				"mediaStorage": {
 					"name": "Media Storage",
@@ -370,14 +367,10 @@
 					"name": "GPT Writing",
 					"tooltip": "Use OpenAI GPT for content writing and keyword generation. ~1,000 tokens ≈ 750 words."
 				},
-				"autoTranslations": {
-					"name": "Auto-Translations",
-					"tooltip": "Automatically translate your posts into multiple languages using DeepL."
-				},
 				"dataApi": { "name": "Data API", "tooltip": "Access public data of your blog via API." },
 				"consoleApi": {
 					"name": "Console API",
-					"tooltip": "The same API used in the Console — great for automation."
+					"tooltip": "The same API used in the Console, great for automation."
 				},
 				"deliveryApi": {
 					"name": "Delivery API",
@@ -389,7 +382,7 @@
 				},
 				"hyvorTalk": {
 					"name": "Hyvor Talk (Comments)",
-					"tooltip": "Add Hyvor Talk commenting system for free. Credits are used per comment load."
+					"tooltip": "Add Hyvor Talk commenting system for free. Includes a complimentary license for Hyvor Talk."
 				},
 				"hyvorPost": {
 					"name": "Hyvor Post (Newsletter)",
@@ -416,11 +409,11 @@
 		"selfHost": {
 			"eyebrow": "Open Source",
 			"title": "Prefer to self-host?",
-			"description": "Hyvor Blogs is free and open-source. Deploy it on your own infrastructure and keep full control over your data — no subscription required.",
-			"bullet1": "Free & open-source — no license fees",
+			"description": "Hyvor Blogs is free and open-source. Deploy it on your own infrastructure and keep full control over your data. No subscription required.",
+			"bullet1": "Free & open-source, no license fees",
 			"bullet2": "Deploy with Docker in a few commands",
 			"bullet3": "Full ownership of your data & infrastructure",
-			"bullet4": "No vendor lock-in — move to the cloud anytime",
+			"bullet4": "No vendor lock-in, move to the cloud anytime",
 			"button1": "Learn about self-hosting",
 			"button2": "View on GitHub"
 		},

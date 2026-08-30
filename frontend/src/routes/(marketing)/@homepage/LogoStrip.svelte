@@ -12,7 +12,6 @@
 		{ name: 'Times of Madeira', src: logoTimesOfMadeira, height: 52 },
 		{ name: 'Subdivisions', src: logoSubdivisions },
 		{ name: 'Job Posts', src: logoJobPosts, width: 100, height: 26 },
-		// { name: 'Yoga Kiddy', src: yogakiddy, width: 36, height: 36 },
 		{ name: 'Univerbal', src: logoUniverbal, width: 110, height: 42 }
 	];
 </script>
