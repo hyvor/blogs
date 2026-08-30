@@ -61,8 +61,8 @@ Objects:
 `GET /blog`
 
 ```ts
-type Request = {}
-type Response = Blog
+type Request = {};
+type Response = Blog;
 ```
 
 <h4 id="update-blog">Update blog data</h4>
@@ -70,8 +70,8 @@ type Response = Blog
 `PATCH /blog`
 
 ```ts
-type Request = Partial<Blog> // except id and variants
-type Response = Blog
+type Request = Partial<Blog>; // except id and variants
+type Response = Blog;
 ```
 
 <h4 id="create-blog-variant">Create a blog variant</h4>
@@ -80,9 +80,9 @@ type Response = Blog
 
 ```ts
 type Request = {
-    language_id: number
-}
-type Response = BlogVariant
+	language_id: number;
+};
+type Response = BlogVariant;
 ```
 
 <h4 id="update-blog-variant">Update a blog variant</h4>
@@ -91,11 +91,11 @@ type Response = BlogVariant
 
 ```ts
 type Request = {
-    language_id: number,
-    name?: string,
-    description?: string
-}
-type Response = BlogVariant
+	language_id: number;
+	name?: string;
+	description?: string;
+};
+type Response = BlogVariant;
 ```
 
 <h3 id="posts">Posts & Pages</h3>
@@ -130,17 +130,17 @@ Get posts with filtering. The filter parameters are similar to the ones in the C
 
 ```ts
 type Request = {
-    status?: 'featured' | 'published' | 'draft' | 'scheduled',
-    author_id?: number,
-    tag_id?: number,
-    start_timestamp?: number, // unix timestamp
-    end_timestamp?: number, // unix timestamp
-    search?: string,
-    language_id?: number, // defaults to the blog's primary language
-    limit?: number, // default 50, max 100
-    offset?: number,
-}
-type Response = PostListItem[]
+	status?: 'featured' | 'published' | 'draft' | 'scheduled';
+	author_id?: number;
+	tag_id?: number;
+	start_timestamp?: number; // unix timestamp
+	end_timestamp?: number; // unix timestamp
+	search?: string;
+	language_id?: number; // defaults to the blog's primary language
+	limit?: number; // default 50, max 100
+	offset?: number;
+};
+type Response = PostListItem[];
 ```
 
 <h4 id="get-pages">Get pages</h4>
@@ -150,8 +150,8 @@ Same lightweight [PostListItem](/docs/api-console#post-list-item-object) shape a
 `GET /pages`
 
 ```ts
-type Request = {}
-type Response = PostListItem[]
+type Request = {};
+type Response = PostListItem[];
 ```
 
 <h4 id="create-post">Create a post/page</h4>
@@ -162,9 +162,9 @@ Create an empty draft post. A post variant will be created from the primary lang
 
 ```ts
 type Request = {
-    is_page?: boolean, // default to false
-}
-type Response = Post
+	is_page?: boolean; // default to false
+};
+type Response = Post;
 ```
 
 <h4 id="get-post">Get a post/page</h4>
@@ -172,8 +172,8 @@ type Response = Post
 `GET /post/{id}`
 
 ```ts
-type Request = {}
-type Response = Post
+type Request = {};
+type Response = Post;
 ```
 
 <h4 id="update-post">Update a post/page</h4>
@@ -182,14 +182,14 @@ type Response = Post
 
 ```ts
 type Request = {
-    is_featured?: boolean,
-    featured_image_url?: string | null,
-    canonical_url?: string | null,
-    code_head?: string | null,
-    code_foot?: string | null,
-    published_at?: number | null, // unix timestamp
-}
-type Response = Post
+	is_featured?: boolean;
+	featured_image_url?: string | null;
+	canonical_url?: string | null;
+	code_head?: string | null;
+	code_foot?: string | null;
+	published_at?: number | null; // unix timestamp
+};
+type Response = Post;
 ```
 
 <h4 id="delete-post">Delete a post/page</h4>
@@ -197,8 +197,8 @@ type Response = Post
 `DELETE /post/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h4 id="create-post-variant">Create a post variant</h4>
@@ -207,9 +207,9 @@ type Response = {}
 
 ```ts
 type Request = {
-    language_id: number
-}
-type Response = PostVariant
+	language_id: number;
+};
+type Response = PostVariant;
 ```
 
 <h4 id="update-post-variant">Update a post variant</h4>
@@ -218,14 +218,14 @@ type Response = PostVariant
 
 ```ts
 type Request = {
-    language_id: number,
-    slug?: string, // max 255 chars
-    content?: string | null,
-    content_unsaved?: string | null,
-    title?: string | null, // max 255 chars
-    description?: string | null, // max 255 chars
-}
-type Response = PostVariant
+	language_id: number;
+	slug?: string; // max 255 chars
+	content?: string | null;
+	content_unsaved?: string | null;
+	title?: string | null; // max 255 chars
+	description?: string | null; // max 255 chars
+};
+type Response = PostVariant;
 ```
 
 `content` and `content_unsaved` should be in ProseMirror JSON format. See [Get ProseMirror JSON endpoint](/docs/api-console#get-prosemirror-json) to convert HTML to ProseMirror JSON.
@@ -236,9 +236,9 @@ type Response = PostVariant
 
 ```ts
 type Request = {
-    language_id: number
-}
-type Response = PostVariant
+	language_id: number;
+};
+type Response = PostVariant;
 ```
 
 Publishes a post variant. If the variant does not have a slug, one is automatically generated from the title. If the post does not have a `published_at` time, it is set to now. Requires `posts.publish.own` scope.
@@ -249,9 +249,9 @@ Publishes a post variant. If the variant does not have a slug, one is automatica
 
 ```ts
 type Request = {
-    language_id: number
-}
-type Response = PostVariant
+	language_id: number;
+};
+type Response = PostVariant;
 ```
 
 Sets the variant status back to `draft`. Works on both published and scheduled variants. Requires `posts.publish.own` scope.
@@ -262,9 +262,9 @@ Sets the variant status back to `draft`. Works on both published and scheduled v
 
 ```ts
 type Request = {
-    language_id: number
-}
-type Response = {}
+	language_id: number;
+};
+type Response = {};
 ```
 
 <h4 id="update-post-tags">Update post tags</h4>
@@ -273,9 +273,9 @@ type Response = {}
 
 ```ts
 type Request = {
-    ids: number[] // tag IDs
-}
-type Response = {}
+	ids: number[]; // tag IDs
+};
+type Response = {};
 ```
 
 <h4 id="update-post-authors">Update post authors</h4>
@@ -284,9 +284,9 @@ type Response = {}
 
 ```ts
 type Request = {
-    ids: number[] // author (user) IDs
-}
-type Response = {}
+	ids: number[]; // author (user) IDs
+};
+type Response = {};
 ```
 
 <h3 id="tags">Tags</h3>
@@ -314,11 +314,11 @@ Lists tags, optionally searching by name (primary language).
 
 ```ts
 type Request = {
-    limit?: number, // default 50, max 100
-    offset?: number,
-    search?: string, // filters tags by name (primary language)
-}
-type Response = Tag[]
+	limit?: number; // default 50, max 100
+	offset?: number;
+	search?: string; // filters tags by name (primary language)
+};
+type Response = Tag[];
 ```
 
 <h4 id="create-tag">Create a tag</h4>
@@ -327,10 +327,10 @@ type Response = Tag[]
 
 ```ts
 type Request = {
-    name: string, // name for the primary language variant
-    is_private: boolean // default false
-}
-type Response = Tag
+	name: string; // name for the primary language variant
+	is_private: boolean; // default false
+};
+type Response = Tag;
 ```
 
 <h4 id="update-tag">Update a tag</h4>
@@ -339,12 +339,12 @@ type Response = Tag
 
 ```ts
 type Request = {
-	is_private?: boolean
-    slug?: string,
-    code_head?: string | null,
-    code_foot?: string | null,
-}
-type Response = Tag
+	is_private?: boolean;
+	slug?: string;
+	code_head?: string | null;
+	code_foot?: string | null;
+};
+type Response = Tag;
 ```
 
 <h4 id="delete-tag">Delete a tag</h4>
@@ -352,8 +352,8 @@ type Response = Tag
 `DELETE /tag/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h4 id="create-tag-variant">Create a tag variant</h4>
@@ -362,8 +362,8 @@ type Response = {}
 
 ```ts
 type Request = {
-    language_id: number,
-}
+	language_id: number;
+};
 ```
 
 <h4 id="update-tag-variant">Update a tag variant</h4>
@@ -372,10 +372,10 @@ type Request = {
 
 ```ts
 type Request = {
-    language_id: number,
-    name?: string,
-    description?: string | null,
-}
+	language_id: number;
+	name?: string;
+	description?: string | null;
+};
 ```
 
 <h4 id="delete-tag-variant">Delete a tag variant</h4>
@@ -384,8 +384,8 @@ type Request = {
 
 ```ts
 type Request = {
-    language_id: number,
-}
+	language_id: number;
+};
 ```
 
 <h3 id="users">Users</h3>
@@ -413,9 +413,9 @@ Objects:
 
 ```ts
 type Request = {
-    offset?: number,
-}
-type Response = User[]
+	offset?: number;
+};
+type Response = User[];
 ```
 
 <h4 id="search-users">Search users</h4>
@@ -426,9 +426,9 @@ Searches for users by name.
 
 ```ts
 type Request = {
-    search: string,
-}
-type Response = User[]
+	search: string;
+};
+type Response = User[];
 ```
 
 <h4 id="create-user">Create a user</h4>
@@ -437,10 +437,10 @@ type Response = User[]
 
 ```ts
 type Request = {
-    username_or_email: string,
-    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
-}
-type Response = User
+	username_or_email: string;
+	role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
+};
+type Response = User;
 ```
 
 <h4 id="create-guest-user">Create a guest user</h4>
@@ -449,9 +449,9 @@ type Response = User
 
 ```ts
 type Request = {
-    name: string,
-}
-type Response = User
+	name: string;
+};
+type Response = User;
 ```
 
 <h4 id="update-user">Update a user</h4>
@@ -460,22 +460,22 @@ type Response = User
 
 ```ts
 type Request = {
-    hyvor_user_id?: number,
-    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
-    status: 'active' | 'blocked',
-    slug: string,
-    email?: string,
-    website_url?: string,
-    picture_url?: string,
-    social_facebook?: string,
-    social_twitter?: string,
-    social_linkedin?: string,
-    social_youtube?: string,
-    social_tiktok?: string,
-    social_instagram?: string,
-    social_github?: string
-}
-type Response = User
+	hyvor_user_id?: number;
+	role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
+	status: 'active' | 'blocked';
+	slug: string;
+	email?: string;
+	website_url?: string;
+	picture_url?: string;
+	social_facebook?: string;
+	social_twitter?: string;
+	social_linkedin?: string;
+	social_youtube?: string;
+	social_tiktok?: string;
+	social_instagram?: string;
+	social_github?: string;
+};
+type Response = User;
 ```
 
 <h4 id="delete-user">Delete a user</h4>
@@ -483,8 +483,8 @@ type Response = User
 `DELETE /user/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h4 id="create-user-variant">Create a user variant</h4>
@@ -492,8 +492,8 @@ type Response = {}
 `POST /user/{id}/variant`
 
 ```ts
-type Request = {}
-type Response = UserVariant
+type Request = {};
+type Response = UserVariant;
 ```
 
 <h4 id="update-user-variant">Update a user variant</h4>
@@ -502,11 +502,11 @@ type Response = UserVariant
 
 ```ts
 type Request = {
-    name?: string,
-    bio?: string,
-    location?: string,
-}
-type Response = UserVariant
+	name?: string;
+	bio?: string;
+	location?: string;
+};
+type Response = UserVariant;
 ```
 
 <h4 id="delete-user-variant">Delete a user variant</h4>
@@ -514,8 +514,8 @@ type Response = UserVariant
 `DELETE /user/{id}/variant`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="media">Media</h3>
@@ -539,13 +539,13 @@ Objects:
 
 ```ts
 type Request = {
-    limit: number,
-    offset: number,
-    search?: string,
-    extensions?: string[],
-    type?: string
-}
-type Response = Media[]
+	limit: number;
+	offset: number;
+	search?: string;
+	extensions?: string[];
+	type?: string;
+};
+type Response = Media[];
 ```
 
 <h4 id="create-media">Create a media</h4>
@@ -554,10 +554,10 @@ type Response = Media[]
 
 ```ts
 type Request = {
-    file: File,
-    post_id: number
-}
-type Response = Media
+	file: File;
+	post_id: number;
+};
+type Response = Media;
 ```
 
 <h4 id="create-media-from-url">Create a media from URL</h4>
@@ -566,10 +566,10 @@ type Response = Media
 
 ```ts
 type Request = {
-    url: string,
-    post_id?: number
-}
-type Response = Media
+	url: string;
+	post_id?: number;
+};
+type Response = Media;
 ```
 
 <h4 id="delete-media">Delete a media</h4>
@@ -577,8 +577,8 @@ type Response = Media
 `DELETE /media/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h4 id="update-media">Patch a media</h4>
@@ -586,8 +586,8 @@ type Response = {}
 `PATCH /media/{id}`
 
 ```ts
-type Request = Partial<Media>
-type Response = Media
+type Request = Partial<Media>;
+type Response = Media;
 ```
 
 <h3 id="navigation">Navigation</h3>
@@ -613,8 +613,8 @@ Objects:
 `GET /navigations`
 
 ```ts
-type Request = {}
-type Response = Navigation[]
+type Request = {};
+type Response = Navigation[];
 ```
 
 <h4 id="sort-navigations">Update sort navigations</h4>
@@ -623,9 +623,9 @@ type Response = Navigation[]
 
 ```ts
 type Request = {
-    ids?: number[],
-}
-type Response = {}
+	ids?: number[];
+};
+type Response = {};
 ```
 
 <h4 id="create-navigation">Create a navigation</h4>
@@ -634,11 +634,11 @@ type Response = {}
 
 ```ts
 type Request = {
-    url: string,
-    name: string,
-    type: 'header' | 'footer'
-}
-type Response = Navigation
+	url: string;
+	name: string;
+	type: 'header' | 'footer';
+};
+type Response = Navigation;
 ```
 
 <h4 id="update-navigation">Update a navigation</h4>
@@ -647,10 +647,10 @@ type Response = Navigation
 
 ```ts
 type Request = {
-    url: string,
-    type: 'header' | 'footer',
-}
-type Response = Navigation
+	url: string;
+	type: 'header' | 'footer';
+};
+type Response = Navigation;
 ```
 
 <h4 id="delete-navigation">Delete a navigation</h4>
@@ -658,8 +658,8 @@ type Response = Navigation
 `DELETE /navigation/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h4 id="create-navigation-variant">Create a navigation variant</h4>
@@ -668,10 +668,10 @@ type Response = {}
 
 ```ts
 type Request = {
-    language_id: number,
-    name?: string,
-}
-type Response = NavigationVariant
+	language_id: number;
+	name?: string;
+};
+type Response = NavigationVariant;
 ```
 
 <h4 id="update-navigation-variant">Update a navigation variant</h4>
@@ -680,10 +680,10 @@ type Response = NavigationVariant
 
 ```ts
 type Request = {
-    language_id: number,
-    name: string,
-}
-type Response = NavigationVariant
+	language_id: number;
+	name: string;
+};
+type Response = NavigationVariant;
 ```
 
 <h4 id="delete-navigation-variant">Delete a navigation variant</h4>
@@ -692,9 +692,9 @@ type Response = NavigationVariant
 
 ```ts
 type Request = {
-    language_id: number,
-}
-type Response = {}
+	language_id: number;
+};
+type Response = {};
 ```
 
 <h3 id="language">Language</h3>
@@ -715,8 +715,8 @@ Objects:
 `GET /languages`
 
 ```ts
-type Request = {}
-type Response = Languages[]
+type Request = {};
+type Response = Languages[];
 ```
 
 <h4 id="create-language">Create a language</h4>
@@ -725,11 +725,11 @@ type Response = Languages[]
 
 ```ts
 type Request = {
-    code: string, // max 12 chars
-    name: string, // max 255 chars
-    direction: 'ltr' | 'rtl',
-}
-type Response = Language
+	code: string; // max 12 chars
+	name: string; // max 255 chars
+	direction: 'ltr' | 'rtl';
+};
+type Response = Language;
 ```
 
 <h4 id="updata-language">Update a language</h4>
@@ -738,11 +738,11 @@ type Response = Language
 
 ```ts
 type Request = {
-    code: string, // max 12 chars
-    name: string, // max 255 chars
-    direction: 'ltr' | 'rtl',
-}
-type Response = Language
+	code: string; // max 12 chars
+	name: string; // max 255 chars
+	direction: 'ltr' | 'rtl';
+};
+type Response = Language;
 ```
 
 <h4 id="delete-language">Delete a language</h4>
@@ -750,8 +750,8 @@ type Response = Language
 `DELETE /language/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="redirect">Redirect</h3>
@@ -773,11 +773,11 @@ Objects:
 
 ```ts
 type Request = {
-    search?: string,
-    limit?: number,
-    offset?: number,
-}
-type Response = Redirect[]
+	search?: string;
+	limit?: number;
+	offset?: number;
+};
+type Response = Redirect[];
 ```
 
 <h4 id="create-redirect">Create a redirect</h4>
@@ -786,12 +786,12 @@ type Response = Redirect[]
 
 ```ts
 type Request = {
-    dynamic: boolean,
-    path: string,
-    to: string,
-    type: 'temporary' | 'permanent'
-}
-type Response = Redirect
+	dynamic: boolean;
+	path: string;
+	to: string;
+	type: 'temporary' | 'permanent';
+};
+type Response = Redirect;
 ```
 
 <h4 id="update-redirect">Update a redirect</h4>
@@ -800,11 +800,11 @@ type Response = Redirect
 
 ```ts
 type Request = {
-    path?: string,
-    to?: string,
-    type?: 'temporary' | 'permanent'
-}
-type Response = Redirect
+	path?: string;
+	to?: string;
+	type?: 'temporary' | 'permanent';
+};
+type Response = Redirect;
 ```
 
 <h4 id="delete-redirect">Delete a redirect</h4>
@@ -812,8 +812,8 @@ type Response = Redirect
 `DELETE /redirect/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="webhook">Webhook</h3>
@@ -834,8 +834,8 @@ Objects:
 `GET /webhooks`
 
 ```ts
-type Request = {}
-type Response = Webhook[]
+type Request = {};
+type Response = Webhook[];
 ```
 
 <h4 id="create-webhook">Create a webhook</h4>
@@ -844,10 +844,10 @@ type Response = Webhook[]
 
 ```ts
 type Request = {
-    url: string,
-    events: 'cache.single' | 'cache.templates' | 'cache.all'[],
-}
-type Response = Webhook
+	url: string;
+	events: 'cache.single' | 'cache.templates' | 'cache.all'[];
+};
+type Response = Webhook;
 ```
 
 <h4 id="updata-webhook">Update a webhook</h4>
@@ -856,10 +856,10 @@ type Response = Webhook
 
 ```ts
 type Request = {
-    url?: string,
-    events?: 'cache.single' | 'cache.templates' | 'cache.all'[],
-}
-type Response = Webhook
+	url?: string;
+	events?: 'cache.single' | 'cache.templates' | 'cache.all'[];
+};
+type Response = Webhook;
 ```
 
 <h4 id="delete-webhook">Delete a webhook</h4>
@@ -867,8 +867,8 @@ type Response = Webhook
 `DELETE /webhook/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="theme-files">Theme Files</h3>
@@ -889,8 +889,8 @@ Objects:
 `GET /theme/files`
 
 ```ts
-type Request = {}
-type Response = FileObject[]
+type Request = {};
+type Response = FileObject[];
 ```
 
 <h4 id="create-theme-file">Create a theme file</h4>
@@ -899,12 +899,12 @@ type Response = FileObject[]
 
 ```ts
 type Request = {
-    folder: 'templates' | 'assets' | 'styles' | 'lang',
-    name: string,
-    content?: string,
-    file: File
-}
-type Response = FileObject
+	folder: 'templates' | 'assets' | 'styles' | 'lang';
+	name: string;
+	content?: string;
+	file: File;
+};
+type Response = FileObject;
 ```
 
 <h4 id="updata-theme-file">Update a theme file</h4>
@@ -913,10 +913,10 @@ type Response = FileObject
 
 ```ts
 type Request = {
-    name?: string,
-    content?: string
-}
-type Response = FileObject
+	name?: string;
+	content?: string;
+};
+type Response = FileObject;
 ```
 
 <h4 id="delete-theme-file">Delete a theme file</h4>
@@ -924,8 +924,8 @@ type Response = FileObject
 `DELETE /theme/file/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="export">Export</h3>
@@ -944,8 +944,8 @@ Objects:
 `GET /exports`
 
 ```ts
-type Request = {}
-type Response = ExportObject[]
+type Request = {};
+type Response = ExportObject[];
 ```
 
 <h4 id="create-export">Create an export</h4>
@@ -953,8 +953,8 @@ type Response = ExportObject[]
 `POST /export`
 
 ```ts
-type Request = {}
-type Response = ExportObject
+type Request = {};
+type Response = ExportObject;
 ```
 
 <h3 id="link-analysis">Link Analysis</h3>
@@ -979,11 +979,11 @@ Objects:
 
 ```ts
 type Request = {
-    post_variant_id: number,
-    urls: string[]
-    force?: boolean
-}
-type Response = LinkObject[]
+	post_variant_id: number;
+	urls: string[];
+	force?: boolean;
+};
+type Response = LinkObject[];
 ```
 
 <h4 id="ignore-link">Ignore a link</h4>
@@ -992,11 +992,11 @@ type Response = LinkObject[]
 
 ```ts
 type Request = {
-    post_variant_id: number,
-    urls: string[],
-    status: boolean
-}
-type Response = LinkObject
+	post_variant_id: number;
+	urls: string[];
+	status: boolean;
+};
+type Response = LinkObject;
 ```
 
 <h4 id="get-link-stats">Get link statistics</h4>
@@ -1004,10 +1004,10 @@ type Response = LinkObject
 `GET /link-analysis/stats`
 
 ```ts
-type Request = {}
+type Request = {};
 type Response = {
-    counts: number
-}
+	counts: number;
+};
 ```
 
 <h4 id="get-links">Get links</h4>
@@ -1016,11 +1016,11 @@ type Response = {
 
 ```ts
 type Request = {
-    type?: 'ok' | 'broken' | 'ignored' | 'redirected',
-    limit?: number,
-    offset?: number,
-}
-type Response = LinkObject[]
+	type?: 'ok' | 'broken' | 'ignored' | 'redirected';
+	limit?: number;
+	offset?: number;
+};
+type Response = LinkObject[];
 ```
 
 <h4 id="get-checks">Get checks</h4>
@@ -1029,10 +1029,10 @@ type Response = LinkObject[]
 
 ```ts
 type Request = {
-    limit?: number,
-    offset?: number,
-}
-type Response = CheckObject[]
+	limit?: number;
+	offset?: number;
+};
+type Response = CheckObject[];
 ```
 
 <h4 id="create-check">Create a check</h4>
@@ -1040,8 +1040,8 @@ type Response = CheckObject[]
 `POST /link-analysis/check`
 
 ```ts
-type Request = {}
-type Response = CheckObject
+type Request = {};
+type Response = CheckObject;
 ```
 
 <h3 id="route">Route</h3>
@@ -1062,8 +1062,8 @@ Objects:
 `GET /routes`
 
 ```ts
-type Request = {}
-type Response = Route[]
+type Request = {};
+type Response = Route[];
 ```
 
 <h4 id="create-route">Create a route</h4>
@@ -1072,13 +1072,13 @@ type Response = Route[]
 
 ```ts
 type Request = {
-    name: string,
-    match: string,
-    template: string,
-    post_filter?: string,
-    content_type?: string
-}
-type Response = Route
+	name: string;
+	match: string;
+	template: string;
+	post_filter?: string;
+	content_type?: string;
+};
+type Response = Route;
 ```
 
 <h4 id="update-route">Update a route</h4>
@@ -1087,13 +1087,13 @@ type Response = Route
 
 ```ts
 type Request = {
-    name: string,
-    match: string,
-    template: string,
-    post_filter?: string,
-    content_type?: string
-}
-type Response = Route
+	name: string;
+	match: string;
+	template: string;
+	post_filter?: string;
+	content_type?: string;
+};
+type Response = Route;
 ```
 
 <h4 id="delete-route">Delete a route</h4>
@@ -1101,8 +1101,8 @@ type Response = Route
 `DELETE /route/{id}`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h3 id="misc">Misc</h3>
@@ -1119,8 +1119,8 @@ Endpoints:
 `GET /misc/themes`
 
 ```ts
-type Request = {}
-type Response = Theme[]
+type Request = {};
+type Response = Theme[];
 ```
 
 <h4 id="get-prosemirror-json">Get prosemirror JSON from HTML</h4>
@@ -1129,11 +1129,11 @@ type Response = Theme[]
 
 ```ts
 type Request = {
-  html: string,
-}
+	html: string;
+};
 type Response = {
-  json: string,
-}
+	json: string;
+};
 ```
 
 <h4 id="delete-blog-cache">Delete blog cache</h4>
@@ -1142,10 +1142,10 @@ type Response = {
 
 ```ts
 type Request = {
-    type: 'all' | 'template' | 'paths',
-    paths?: string[],
-}
-type Response = {}
+	type: 'all' | 'template' | 'paths';
+	paths?: string[];
+};
+type Response = {};
 ```
 
 <h4 id="delete-blog">Delete the blog</h4>
@@ -1155,8 +1155,8 @@ Soft-deletes the blog. The blog and its data are permanently deleted 30 days lat
 `DELETE /blog`
 
 ```ts
-type Request = {}
-type Response = {}
+type Request = {};
+type Response = {};
 ```
 
 <h2 id="objects">Objects</h2>
@@ -1164,47 +1164,47 @@ type Response = {}
 
 ```ts
 interface Blog {
-    id: number,
-    created_at: number,
-    is_blocked: boolean,
-    subdomain: string,
-    type: 'default' | 'dev',
-    hosting_at: 'subdomain' | 'domain' | 'self',
-    hosting_domain: string | null,
-    hosting_url: string | null,
+	id: number;
+	created_at: number;
+	is_blocked: boolean;
+	subdomain: string;
+	type: 'default' | 'dev';
+	hosting_at: 'subdomain' | 'domain' | 'self';
+	hosting_domain: string | null;
+	hosting_url: string | null;
 
-    embeddable: boolean,
-    embedding_domains: string | null,
+	embeddable: boolean;
+	embedding_domains: string | null;
 
-    logo_url: string | null,
-    cover_url: string | null,
+	logo_url: string | null;
+	cover_url: string | null;
 
-    social_facebook: string | null,
-    social_twitter: string | null,
-    social_linkedin: string | null,
-    social_youtube: string | null,
-    social_tiktok: string | null,
-    social_instagram: string | null,
-    social_github: string | null,
+	social_facebook: string | null;
+	social_twitter: string | null;
+	social_linkedin: string | null;
+	social_youtube: string | null;
+	social_tiktok: string | null;
+	social_instagram: string | null;
+	social_github: string | null;
 
-    code_head: string | null,
-    code_foot: string | null,
+	code_head: string | null;
+	code_foot: string | null;
 
-    seo_indexing: boolean,
-    seo_robots_txt: string | null,
-    seo_external_links_follow: 'follow' | 'nofollow',
-    comments_code: string | null,
-    newsletter_code: string | null,
+	seo_indexing: boolean;
+	seo_robots_txt: string | null;
+	seo_external_links_follow: 'follow' | 'nofollow';
+	comments_code: string | null;
+	newsletter_code: string | null;
 
-    color_modes: 'light' | 'dark' | 'both',
-    color_mode_default: 'light' | 'dark' | 'os',
+	color_modes: 'light' | 'dark' | 'both';
+	color_mode_default: 'light' | 'dark' | 'os';
 
-    syntax_on: boolean,
-    syntax_line_numbers: boolean,
-    syntax_theme: string | null
+	syntax_on: boolean;
+	syntax_line_numbers: boolean;
+	syntax_theme: string | null;
 
-    flashload: boolean,
-    variants: BlogVariant[]
+	flashload: boolean;
+	variants: BlogVariant[];
 }
 ```
 
@@ -1212,9 +1212,9 @@ interface Blog {
 
 ```ts
 interface BlogVariant {
-    language_id: number,
-    name: string | null,
-    description: string | null,
+	language_id: number;
+	name: string | null;
+	description: string | null;
 }
 ```
 
@@ -1222,28 +1222,28 @@ interface BlogVariant {
 
 ```ts
 interface Post {
-    id: number,
-    preview_id: string,
-    created_at: number,
-    updated_at: number,
-    published_at: number | null,
+	id: number;
+	preview_id: string;
+	created_at: number;
+	updated_at: number;
+	published_at: number | null;
 
-    is_featured: boolean,
-    is_page: boolean,
+	is_featured: boolean;
+	is_page: boolean;
 
-    featured_image_url: string | null,
-    canonical_url: string | null,
-    code_head: string | null,
-    code_foot: string | null,
+	featured_image_url: string | null;
+	canonical_url: string | null;
+	code_head: string | null;
+	code_foot: string | null;
 
-    variant_statuses: {
-        id: number,
-        language_id: number,
-        status: 'draft' | 'published' | 'scheduled'
-    }[],
+	variant_statuses: {
+		id: number;
+		language_id: number;
+		status: 'draft' | 'published' | 'scheduled';
+	}[];
 
-    tags: Tag[],
-    authors: User[]
+	tags: Tag[];
+	authors: User[];
 }
 ```
 
@@ -1253,16 +1253,16 @@ interface Post {
 
 ```ts
 interface PostVariant {
-    language_id: number,
+	language_id: number;
 
-    slug: string | null,
-    status: 'draft' | 'published' | 'scheduled',
-    url: string,
+	slug: string | null;
+	status: 'draft' | 'published' | 'scheduled';
+	url: string;
 
-    content: string | null,
-    content_unsaved: string | null,
-    title: string | null,
-    description: string | null,
+	content: string | null;
+	content_unsaved: string | null;
+	title: string | null;
+	description: string | null;
 }
 ```
 
@@ -1272,26 +1272,26 @@ Returned by `GET /posts` and `GET /pages`. A lightweight per-post summary: `slug
 
 ```ts
 interface PostListItem {
-    id: number,
-    created_at: number,
-    updated_at: number,
-    published_at: number | null,
+	id: number;
+	created_at: number;
+	updated_at: number;
+	published_at: number | null;
 
-    is_featured: boolean,
-    is_page: boolean,
+	is_featured: boolean;
+	is_page: boolean;
 
-    slug: string | null,
-    url: string | null,
-    title: string | null,
-    link_analysis: Record<string, number>,
+	slug: string | null;
+	url: string | null;
+	title: string | null;
+	link_analysis: Record<string, number>;
 
-    variant_statuses: {
-        language_id: number,
-        status: 'draft' | 'published' | 'scheduled'
-    }[],
+	variant_statuses: {
+		language_id: number;
+		status: 'draft' | 'published' | 'scheduled';
+	}[];
 
-    tags: string[], // tag names, primary language
-    authors: string[] // author names, primary language
+	tags: string[]; // tag names, primary language
+	authors: string[]; // author names, primary language
 }
 ```
 
@@ -1299,16 +1299,16 @@ interface PostListItem {
 
 ```ts
 interface Tag {
-    id: number,
-    created_at: number,
-    updated_at: number,
-	is_private: boolean,
-    slug: string,
-    posts_count: number,
-    code_head: string | null,
-    code_foot: string | null,
+	id: number;
+	created_at: number;
+	updated_at: number;
+	is_private: boolean;
+	slug: string;
+	posts_count: number;
+	code_head: string | null;
+	code_foot: string | null;
 
-    variants: TagVariant[]
+	variants: TagVariant[];
 }
 ```
 
@@ -1316,10 +1316,10 @@ interface Tag {
 
 ```ts
 interface TagVariant {
-    language_id: number,
-    url: string | null,
-    name: string | null,
-    description: string | null,
+	language_id: number;
+	url: string | null;
+	name: string | null;
+	description: string | null;
 }
 ```
 
@@ -1327,30 +1327,30 @@ interface TagVariant {
 
 ```ts
 interface User {
-    id: number,
-    created_at: number,
-    updated_at: number,
+	id: number;
+	created_at: number;
+	updated_at: number;
 
-    hyvor_user_id: number | null,
+	hyvor_user_id: number | null;
 
-    status: 'invited' | 'active' | 'blocked',
-    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor',
-    slug: string,
-    posts_count: number,
-    email: string,
+	status: 'invited' | 'active' | 'blocked';
+	role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
+	slug: string;
+	posts_count: number;
+	email: string;
 
-    picture_url: string | null,
-    website_url: string | null,
+	picture_url: string | null;
+	website_url: string | null;
 
-    social_facebook: string | null,
-    social_twitter: string | null,
-    social_linkedin: string | null,
-    social_youtube: string | null,
-    social_tiktok: string | null,
-    social_instagram: string | null,
-    social_github: string | null,
+	social_facebook: string | null;
+	social_twitter: string | null;
+	social_linkedin: string | null;
+	social_youtube: string | null;
+	social_tiktok: string | null;
+	social_instagram: string | null;
+	social_github: string | null;
 
-    variants: UserVariant[]
+	variants: UserVariant[];
 }
 ```
 
@@ -1358,11 +1358,11 @@ interface User {
 
 ```ts
 interface UserVariant {
-    language_id: number,
-    url: string,
-    name: string | null,
-    bio: string | null,
-    location: string | null,
+	language_id: number;
+	url: string;
+	name: string | null;
+	bio: string | null;
+	location: string | null;
 }
 ```
 
@@ -1370,12 +1370,12 @@ interface UserVariant {
 
 ```ts
 interface Media {
-    id: number,
-    uploaded_at: number,
-    name: string,
-    url: string,
-    original_name: string,
-    extension: string
+	id: number;
+	uploaded_at: number;
+	name: string;
+	url: string;
+	original_name: string;
+	extension: string;
 }
 ```
 
@@ -1383,12 +1383,12 @@ interface Media {
 
 ```ts
 interface Navigation {
-    id: number;
-    created_at: number;
-    url: string;
-    type: NavigationType,
-    sort: number;
-    variants: NavigationVariant[]
+	id: number;
+	created_at: number;
+	url: string;
+	type: NavigationType;
+	sort: number;
+	variants: NavigationVariant[];
 }
 ```
 
@@ -1396,8 +1396,8 @@ interface Navigation {
 
 ```ts
 interface NavigationVariant {
-    language_id: number,
-    name: string | null
+	language_id: number;
+	name: string | null;
 }
 ```
 
@@ -1405,10 +1405,10 @@ interface NavigationVariant {
 
 ```ts
 interface Language {
-    id: number,
-    code: string,
-    name: string,
-    is_primary: boolean
+	id: number;
+	code: string;
+	name: string;
+	is_primary: boolean;
 }
 ```
 
@@ -1416,11 +1416,11 @@ interface Language {
 
 ```ts
 interface Redirect {
-    id: number,
-    created_at: number,
-    path: string,
-    to: string,
-    type: 'temporary' | 'permanent'
+	id: number;
+	created_at: number;
+	path: string;
+	to: string;
+	type: 'temporary' | 'permanent';
 }
 ```
 
@@ -1428,10 +1428,10 @@ interface Redirect {
 
 ```ts
 interface Webhook {
-    id: number,
-    url: string,
-    events: string[],
-    secret: string,
+	id: number;
+	url: string;
+	events: string[];
+	secret: string;
 }
 ```
 
@@ -1439,14 +1439,14 @@ interface Webhook {
 
 ```ts
 interface Route {
-    id: number,
-    created_at: number,
-    name: string,
-    match: string,
-    template: string,
-    posts_filter: string | null,
-    content_type: string | null,
-    is_enabled: boolean
+	id: number;
+	created_at: number;
+	name: string;
+	match: string;
+	template: string;
+	posts_filter: string | null;
+	content_type: string | null;
+	is_enabled: boolean;
 }
 ```
 
@@ -1454,10 +1454,10 @@ interface Route {
 
 ```ts
 interface FileObject {
-    id: number,
-    name: string,
-    content: string | null,
-    folder: 'templates' | 'assets' | 'styles' | 'lang'
+	id: number;
+	name: string;
+	content: string | null;
+	folder: 'templates' | 'assets' | 'styles' | 'lang';
 }
 ```
 
@@ -1465,12 +1465,12 @@ interface FileObject {
 
 ```ts
 interface Export {
-    id: number,
-    createdf_at: number,
-    format: 'hyvor_blogs' | 'wordpress',
-    status: 'pending' | 'completed' | 'failed',
-    url: string | null,
-    error?: string
+	id: number;
+	createdf_at: number;
+	format: 'hyvor_blogs' | 'wordpress';
+	status: 'pending' | 'completed' | 'failed';
+	url: string | null;
+	error?: string;
 }
 ```
 
@@ -1478,9 +1478,9 @@ interface Export {
 
 ```ts
 interface Theme {
-    id: number,
-    type: 'original' | 'ported',
-    name: string
+	id: number;
+	type: 'original' | 'ported';
+	name: string;
 }
 ```
 
@@ -1488,16 +1488,16 @@ interface Theme {
 
 ```ts
 interface LinkObject {
-    id: number,
-    url: string,
-    full_url: string,
-    status_code: number,
-    status_type: 'ok' | 'broken' | 'redirect' | 'ignored',
-    ignored: boolean,
-    post_id: number,
-    post_variant_id: number,
-    post_variant_language_id: number,
-    post_variant_title: string,
+	id: number;
+	url: string;
+	full_url: string;
+	status_code: number;
+	status_type: 'ok' | 'broken' | 'redirect' | 'ignored';
+	ignored: boolean;
+	post_id: number;
+	post_variant_id: number;
+	post_variant_language_id: number;
+	post_variant_title: string;
 }
 ```
 
@@ -1505,18 +1505,18 @@ interface LinkObject {
 
 ```ts
 interface CheckObject {
-    id: number,
-    created_at: number,
-    status: 'pending' | 'completed' | 'failed',
-    error: string | null,
-    post_count: number,
-    post_variants_count: number,
-    page_count: number,
-    page_variants_count: number,
-    links_total_count: number,
-    links_ok_count: number,
-    links_broken_count: number,
-    links_redirect_count: number,
-    links_ignored_count: number,
+	id: number;
+	created_at: number;
+	status: 'pending' | 'completed' | 'failed';
+	error: string | null;
+	post_count: number;
+	post_variants_count: number;
+	page_count: number;
+	page_variants_count: number;
+	links_total_count: number;
+	links_ok_count: number;
+	links_broken_count: number;
+	links_redirect_count: number;
+	links_ignored_count: number;
 }
 ```

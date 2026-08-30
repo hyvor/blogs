@@ -33,9 +33,7 @@ No API keys are required for the Data API, so you can call it directly from the 
 Use the `/posts` endpoint on your blog's Data API base path (`https://blogs.hyvor.com/api/data/v0/{subdomain}`):
 
 ```ts
-const res = await fetch(
-    'https://blogs.hyvor.com/api/data/v0/example/posts?limit=10'
-);
+const res = await fetch('https://blogs.hyvor.com/api/data/v0/example/posts?limit=10');
 const { data: posts, pagination } = await res.json();
 
 // posts[0] -> { id, slug, title, description, published_at, url, tags, authors, ... }
@@ -54,9 +52,7 @@ Pagination, filtering, and sorting all work the same way as everywhere else in t
 Use the `/post` endpoint with either `slug` or `id`:
 
 ```ts
-const res = await fetch(
-    'https://blogs.hyvor.com/api/data/v0/example/post?slug=hello-world'
-);
+const res = await fetch('https://blogs.hyvor.com/api/data/v0/example/post?slug=hello-world');
 const post = await res.json();
 
 // post.content is sanitized HTML, ready to render

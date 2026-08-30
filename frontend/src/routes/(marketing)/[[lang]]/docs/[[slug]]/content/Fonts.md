@@ -41,14 +41,15 @@ When you add this to the config.yaml, the fonts will be loaded in the `<head>` t
 	Note: If you do not see the Theme Fonts option in the UI, switch to YAML mode (top right corner)
 	and add <code>THEME_FONTS</code> option after <code>THEME_VERSION</code>.
 
-	<CodeBlock
-		code={`
+    <CodeBlock
+    	code={`
         THEME_NAME: hello
         THEME_VERSION: 1.0.0
         THEME_FONTS: "mulish:400,700"
     `}
-		language="yaml"
-	/>
+    	language="yaml"
+    />
+
 </Callout>
 
 <h3 id="use-fonts">Step 2: Use Fonts</h3>
@@ -76,12 +77,12 @@ Your custom CSS should look like this:
 
 ```css
 @font-face {
-    font-family: 'My Font';
-    src: url('/assets/my-font.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'My Font';
+	src: url('/assets/my-font.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
 }
 body {
-    font-family: 'My Font', sans-serif;
+	font-family: 'My Font', sans-serif;
 }
 ```

@@ -164,17 +164,18 @@ hyvor-blogs-cli
 		file within your theme folder, it will be synced with the theme files in your DEV blog.
 	</p>
 
-	<p>
-		<b>Security Notice 1:</b> Because all files in your theme directory are synced with our production
-		system, never add any confidential files there.
-	</p>
+    <p>
+    	<b>Security Notice 1:</b> Because all files in your theme directory are synced with our production
+    	system, never add any confidential files there.
+    </p>
 
-	<p>
-		<b>Security Notice 2:</b> Do not share your DEV subdomain publicly. It will allow other users to
-		change theme files in your DEV blog. If you are using GIT for versioning, make sure to add
-		<code>.env</code>
-		to <code>.gitignore</code>.
-	</p>
+    <p>
+    	<b>Security Notice 2:</b> Do not share your DEV subdomain publicly. It will allow other users to
+    	change theme files in your DEV blog. If you are using GIT for versioning, make sure to add
+    	<code>.env</code>
+    	to <code>.gitignore</code>.
+    </p>
+
 </Callout>
 
 <h2 id="folder-structure">Folder Structure</h2>

@@ -16,7 +16,7 @@ If possible, try to write inline Javascript to avoid HTTP requests completely.
 
 ```html
 <script>
-   // my js here
+	// my js here
 </script>
 ```
 

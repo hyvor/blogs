@@ -50,7 +50,7 @@ These tags help social media sites to generate rich previews of your blog and po
 <meta property="article:published_time" />
 <meta property="article:modified_time" />
 <meta property="article:author" />  <!-- Authors -->
-<meta property="article:author" /> 
+<meta property="article:author" />
 <meta property="article:section" />  <!-- Tags -->
 <meta property="article:section" />
 
@@ -164,7 +164,7 @@ Here is an example `sitemap-posts-[index].xml`.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset 
+<urlset
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
     xmlns:xhtml="http://www.w3.org/1999/xhtml">

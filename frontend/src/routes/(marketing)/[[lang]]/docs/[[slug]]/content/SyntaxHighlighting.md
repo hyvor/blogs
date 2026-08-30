@@ -40,51 +40,52 @@ settings, go to `Console → Settings → Post Content`.
 <div class="dynamic">
 	<h2 id="languages">Languages</h2>
 
-	{#if data === null}
-		<Loader block padding={40}>Loading languages</Loader>
-	{:else}
-		<p>
-			Our syntax highlighter supports {data.languagesCount} programming languages:
-		</p>
-		<div class="language-tags">
-			<div>Supported Languages</div>
-			{@html data.languageTags}
-		</div>
-	{/if}
+    {#if data === null}
+    	<Loader block padding={40}>Loading languages</Loader>
+    {:else}
+    	<p>
+    		Our syntax highlighter supports {data.languagesCount} programming languages:
+    	</p>
+    	<div class="language-tags">
+    		<div>Supported Languages</div>
+    		{@html data.languageTags}
+    	</div>
+    {/if}
 
-	<h2 id="themes">Themes</h2>
+    <h2 id="themes">Themes</h2>
 
-	{#if data === null}
-		<Loader block padding={40}>Loading themes</Loader>
-	{:else}
-		<p>
-			Hyvor Blogs supports {data.themesCount} VS Code themes.
-		</p>
+    {#if data === null}
+    	<Loader block padding={40}>Loading themes</Loader>
+    {:else}
+    	<p>
+    		Hyvor Blogs supports {data.themesCount} VS Code themes.
+    	</p>
 
-		<div class="language-tags themes">
-			<div>Supported Themes</div>
-			{@html data.themeTags}
-		</div>
+    	<div class="language-tags themes">
+    		<div>Supported Themes</div>
+    		{@html data.themeTags}
+    	</div>
 
-		<p>
-			<Button size="small" on:click={() => (showPreview = !showPreview)}>
-				Show theme previews
-				{#snippet end()}
-					{#if showPreview}
-						<IconCaretDown size={12} />
-					{:else}
-						<IconCaretRight size={12} />
-					{/if}
-				{/snippet}
-			</Button>
-		</p>
+    	<p>
+    		<Button size="small" on:click={() => (showPreview = !showPreview)}>
+    			Show theme previews
+    			{#snippet end()}
+    				{#if showPreview}
+    					<IconCaretDown size={12} />
+    				{:else}
+    					<IconCaretRight size={12} />
+    				{/if}
+    			{/snippet}
+    		</Button>
+    	</p>
 
-		{#if showPreview}
-			<div id="theme-previews">
-				{@html data.previews}
-			</div>
-		{/if}
-	{/if}
+    	{#if showPreview}
+    		<div id="theme-previews">
+    			{@html data.previews}
+    		</div>
+    	{/if}
+    {/if}
+
 </div>
 
 <h2 id="adding">Adding Code Blocks to Your Post</h2>
@@ -102,65 +103,66 @@ the code block in the Editor. Let's see some examples.
 		<div>Description</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>h=1</code></div>
-		<div>Highlights the first line</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>h=1</code></div>
+    	<div>Highlights the first line</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>h=1-5</code></div>
-		<div>Highlights line 1 to 5</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>h=1-5</code></div>
+    	<div>Highlights line 1 to 5</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>h=1,5,6</code></div>
-		<div>Highlights line 1, 5, and 6</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>h=1,5,6</code></div>
+    	<div>Highlights line 1, 5, and 6</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>h=1-4,7</code></div>
-		<div>Highlights line 1 to 4, and then 7</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>h=1-4,7</code></div>
+    	<div>Highlights line 1 to 4, and then 7</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>f=1</code></div>
-		<div>Focuses number 1 (Works exactly as highlight)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>f=1</code></div>
+    	<div>Focuses number 1 (Works exactly as highlight)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>+=12</code></div>
-		<div>Highlights the 12th line in green (for Diff add)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>+=12</code></div>
+    	<div>Highlights the 12th line in green (for Diff add)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>-=20</code></div>
-		<div>Highlights the 20th line in red (for Diff remove)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>-=20</code></div>
+    	<div>Highlights the 20th line in red (for Diff remove)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>renumber=4:21</code></div>
-		<div>Number of the 4th line will be changed to 21. The next line will have 22</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>renumber=4:21</code></div>
+    	<div>Number of the 4th line will be changed to 21. The next line will have 22</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>renumber=6:null</code></div>
-		<div>Number of the 6th line will be hidden</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>renumber=6:null</code></div>
+    	<div>Number of the 6th line will be hidden</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>h=1 +=12</code></div>
-		<div>You can have multiple space separated annotations</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>h=1 +=12</code></div>
+    	<div>You can have multiple space separated annotations</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>numbers=true</code></div>
-		<div>Enable line numbers (to override global settings)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>numbers=true</code></div>
+    	<div>Enable line numbers (to override global settings)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>numbers=false</code></div>
-		<div>Disable line numbers (to override global settings)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>numbers=false</code></div>
+    	<div>Disable line numbers (to override global settings)</div>
+    </TableRow>
+
 </Table>
 
 <h2 id="tips">Tips</h2>

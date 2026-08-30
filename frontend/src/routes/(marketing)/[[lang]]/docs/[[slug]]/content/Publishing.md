@@ -41,19 +41,21 @@ All the following requirements should be met in order to publish a theme to our 
 <div class="checklist-main" id="mult-line">
 	<div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
 
-	<div class="checklist-main-text">
-		Blog search must be implemented at least with post searching. Optionally, you can add search for
-		tags and authors.
-	</div>
+    <div class="checklist-main-text">
+    	Blog search must be implemented at least with post searching. Optionally, you can add search for
+    	tags and authors.
+    </div>
+
 </div>
 
 <div class="checklist-main" id="mult-line">
 	<div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
 
-	<div class="checklist-main-text">
-		All posts should have links to translated versions of them (if available). Ex: "This post is
-		also available in..." or "Translations: ..."
-	</div>
+    <div class="checklist-main-text">
+    	All posts should have links to translated versions of them (if available). Ex: "This post is
+    	also available in..." or "Translations: ..."
+    </div>
+
 </div>
 
 <div class="checklist-main">
@@ -82,10 +84,11 @@ All the following requirements should be met in order to publish a theme to our 
 <div class="checklist-main" id="mult-line">
 	<div class="checklist-main-checkbox"><Checkbox></Checkbox></div>
 
-	<div class="checklist-main-text">
-		If the blog has a logo (<code>_blog.logo_url</code>), the logo should be shown in the header
-		linking the logo to the blog homepage.
-	</div>
+    <div class="checklist-main-text">
+    	If the blog has a logo (<code>_blog.logo_url</code>), the logo should be shown in the header
+    	linking the logo to the blog homepage.
+    </div>
+
 </div>
 
 <div class="checklist-main">
@@ -231,35 +234,36 @@ All published themes should support RTL (right-to-left) languages. Follow these 
 		<div>Use this</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>padding-left</code></div>
-		<div><code>padding-inline-start</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>padding-left</code></div>
+    	<div><code>padding-inline-start</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>padding-right</code></div>
-		<div><code>padding-inline-end</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>padding-right</code></div>
+    	<div><code>padding-inline-end</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>margin-left</code></div>
-		<div><code>margin-inline-start</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>margin-left</code></div>
+    	<div><code>margin-inline-start</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>margin-right</code></div>
-		<div><code>margin-inline-end</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>margin-right</code></div>
+    	<div><code>margin-inline-end</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>border-left</code></div>
-		<div><code>border-inline-start</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>border-left</code></div>
+    	<div><code>border-inline-start</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>border-right</code></div>
-		<div><code>border-inline-end</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>border-right</code></div>
+    	<div><code>border-inline-end</code></div>
+    </TableRow>
+
 </Table>
 
 - Make sure absolute/fixed positioned elements are positioned correctly in RTL mode
@@ -284,32 +288,34 @@ HTML with ID:
 
 ```html
 <h1 id="heading-anchor">
-    <a href="#heading-anchor" class="heading-anchor">
-        My Heading
-    </a>
+	<a href="#heading-anchor" class="heading-anchor"> My Heading </a>
 </h1>
 ```
 
 These heading anchor should be **styled differently** from other links. For example, you can add a `#` or an SVG image (via `background-image`) before the anchor text.
 
 ```css
-h1, h2, h3, h4, h5, h6 {
-    a[href^="#"] {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	a[href^='#'] {
+		/* Remove usual link styles */
+		color: inherit;
+		text-decoration: none;
+		position: relative;
 
-        /* Remove usual link styles */
-        color: inherit;
-        text-decoration: none;
-        position: relative;
-
-        /* Add different styles */
-        &:hover:before {
-            content: "#";
-            position: absolute;
-            right: 100%;
-            margin-right: 5px;
-            color: var(--color-text-content-secondary);
-        }
-    }
+		/* Add different styles */
+		&:hover:before {
+			content: '#';
+			position: absolute;
+			right: 100%;
+			margin-right: 5px;
+			color: var(--color-text-content-secondary);
+		}
+	}
 }
 ```
 
@@ -324,17 +330,17 @@ And, line numbers should be absolutely positioned. Also, add left padding when l
 
 ```css
 pre {
-    position: relative;
-    tab-size: 4;
-    direction: ltr;
-    .line-number {
-        margin-right: 1rem;
-        position: absolute;
-        left: 1rem;
-    }
-    &.has-line-numbers .line {
-        padding-left: 2rem;
-    }
+	position: relative;
+	tab-size: 4;
+	direction: ltr;
+	.line-number {
+		margin-right: 1rem;
+		position: absolute;
+		left: 1rem;
+	}
+	&.has-line-numbers .line {
+		padding-left: 2rem;
+	}
 }
 ```
 
@@ -344,7 +350,7 @@ pre {
 
 ```css
 .table-container {
-    overflow-x: auto;
+	overflow-x: auto;
 }
 ```
 
@@ -354,12 +360,12 @@ Margins must be handled carefully for paragraphs inside lists, tables, and block
 
 ```css
 li {
-    p {
-        margin-top: 0;
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
+	p {
+		margin-top: 0;
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 ```
 

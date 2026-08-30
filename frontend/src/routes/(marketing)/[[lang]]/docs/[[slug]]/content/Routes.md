@@ -30,45 +30,46 @@ A new blog will have these 5 default routes.
 		<div>Post Filter</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>post</code></div>
-		<div><code>{`/{slug}`}</code></div>
-		<div>Matches a post</div>
-		<div>post</div>
-		<div></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>post</code></div>
+    	<div><code>{`/{slug}`}</code></div>
+    	<div>Matches a post</div>
+    	<div>post</div>
+    	<div></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>page</code></div>
-		<div><code>{`/{slug}`}</code></div>
-		<div>Matches a page</div>
-		<div>page,post</div>
-		<div></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>page</code></div>
+    	<div><code>{`/{slug}`}</code></div>
+    	<div>Matches a page</div>
+    	<div>page,post</div>
+    	<div></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>index</code></div>
-		<div><code>{`/`}</code></div>
-		<div>Main index page (lists all posts)</div>
-		<div>index</div>
-		<div></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>index</code></div>
+    	<div><code>{`/`}</code></div>
+    	<div>Main index page (lists all posts)</div>
+    	<div>index</div>
+    	<div></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>tag</code></div>
-		<div><code>{`/tag/{slug}`}</code></div>
-		<div>Tag index page (lists all posts of a specific tag)</div>
-		<div>tag,index</div>
-		<div><code>{`tag.slug = {slug}`}</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>tag</code></div>
+    	<div><code>{`/tag/{slug}`}</code></div>
+    	<div>Tag index page (lists all posts of a specific tag)</div>
+    	<div>tag,index</div>
+    	<div><code>{`tag.slug = {slug}`}</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>author</code></div>
-		<div><code>{`/author/{slug}`}</code></div>
-		<div>Author index page (lists all posts of a specific author)</div>
-		<div>author,index</div>
-		<div><code>{`author.slug = {slug}`}</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>author</code></div>
+    	<div><code>{`/author/{slug}`}</code></div>
+    	<div>Author index page (lists all posts of a specific author)</div>
+    	<div>author,index</div>
+    	<div><code>{`author.slug = {slug}`}</code></div>
+    </TableRow>
+
 </Table>
 
 <Callout type="info">
@@ -90,38 +91,39 @@ In addition to those default routes, there are some special, non-customizable ro
 		<div>Description</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>{`/styles.css`}</code></div>
-		<div>The main CSS file of the blog (auto-generated from SCSS files in theme styles)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`/styles.css`}</code></div>
+    	<div>The main CSS file of the blog (auto-generated from SCSS files in theme styles)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`/assets/{file_name}`}</code></div>
-		<div>To serve files in the theme assets</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`/assets/{file_name}`}</code></div>
+    	<div>To serve files in the theme assets</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`/media/{file_name}`}</code></div>
-		<div>To serve uploaded media</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`/media/{file_name}`}</code></div>
+    	<div>To serve uploaded media</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`/p/{hash}`}</code></div>
-		<div>To preview posts and pages</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`/p/{hash}`}</code></div>
+    	<div>To preview posts and pages</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`/robots.txt`}</code></div>
-		<div><a href="/docs/seo#robots">Robots.txt</a></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`/robots.txt`}</code></div>
+    	<div><a href="/docs/seo#robots">Robots.txt</a></div>
+    </TableRow>
 
-	<TableRow>
-		<div>
-			<code>{`/sitemap.xml`}</code>, <code>{`/sitemap-pages.xml`}</code>,
-			<code>{`/sitemap-posts-x.xml`}</code>
-		</div>
-		<div><a href="/docs/seo#sitemap">Sitemap</a></div>
-	</TableRow>
+    <TableRow>
+    	<div>
+    		<code>{`/sitemap.xml`}</code>, <code>{`/sitemap-pages.xml`}</code>,
+    		<code>{`/sitemap-posts-x.xml`}</code>
+    	</div>
+    	<div><a href="/docs/seo#sitemap">Sitemap</a></div>
+    </TableRow>
+
 </Table>
 
 <h2 id="permalinks">Customizing Post/Page Permalinks</h2>
@@ -142,20 +144,21 @@ Basic placeholders:
 		<div>Description</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>{`{slug}`}</code></div>
-		<div>Post slug (required always)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{slug}`}</code></div>
+    	<div>Post slug (required always)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{tag}`}</code></div>
-		<div>Slug of the first tag of the post</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{tag}`}</code></div>
+    	<div>Slug of the first tag of the post</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{author}`}</code></div>
-		<div>Slug of the author of the post</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{author}`}</code></div>
+    	<div>Slug of the author of the post</div>
+    </TableRow>
+
 </Table>
 
 <Callout type="info">
@@ -178,101 +181,102 @@ Time-based placeholders:
 		<div>Example</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>{`{year}`}</code></div>
-		<div>4-digit year</div>
-		<div><code>2022</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{year}`}</code></div>
+    	<div>4-digit year</div>
+    	<div><code>2022</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{year_short}`}</code></div>
-		<div>2-digit year</div>
-		<div><code>99</code> or <code>22</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{year_short}`}</code></div>
+    	<div>2-digit year</div>
+    	<div><code>99</code> or <code>22</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{month}`}</code></div>
-		<div>2-digit month number</div>
-		<div><code>01</code> or <code>12</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{month}`}</code></div>
+    	<div>2-digit month number</div>
+    	<div><code>01</code> or <code>12</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{month_number}`}</code></div>
-		<div>month number without leading zero</div>
-		<div><code>1</code> to <code>12</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{month_number}`}</code></div>
+    	<div>month number without leading zero</div>
+    	<div><code>1</code> to <code>12</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{month_short}`}</code></div>
-		<div>short month name</div>
-		<div><code>jan</code> to <code>dec</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{month_short}`}</code></div>
+    	<div>short month name</div>
+    	<div><code>jan</code> to <code>dec</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{month_long}`}</code></div>
-		<div>long month name</div>
-		<div><code>january</code> to <code>december</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{month_long}`}</code></div>
+    	<div>long month name</div>
+    	<div><code>january</code> to <code>december</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day}`}</code></div>
-		<div>2-digit day</div>
-		<div><code>01</code> to <code>31</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day}`}</code></div>
+    	<div>2-digit day</div>
+    	<div><code>01</code> to <code>31</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day_number}`}</code></div>
-		<div>day number without leading zero</div>
-		<div><code>1</code> to <code>31</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day_number}`}</code></div>
+    	<div>day number without leading zero</div>
+    	<div><code>1</code> to <code>31</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day_year}`}</code></div>
-		<div>ordinal day of the year</div>
-		<div><code>1</code> to <code>365</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day_year}`}</code></div>
+    	<div>ordinal day of the year</div>
+    	<div><code>1</code> to <code>365</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day_week}`}</code></div>
-		<div>3-letter weekday</div>
-		<div><code>mon</code> to <code>sun</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day_week}`}</code></div>
+    	<div>3-letter weekday</div>
+    	<div><code>mon</code> to <code>sun</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day_week_long}`}</code></div>
-		<div>weekday</div>
-		<div><code>monday</code> to <code>sunday</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day_week_long}`}</code></div>
+    	<div>weekday</div>
+    	<div><code>monday</code> to <code>sunday</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{day_week_number}`}</code></div>
-		<div>weekday as a number</div>
-		<div>from<code>1</code> to <code>7</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{day_week_number}`}</code></div>
+    	<div>weekday as a number</div>
+    	<div>from<code>1</code> to <code>7</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{hour}`}</code></div>
-		<div>hour of the day, in 24-format</div>
-		<div><code>00</code> to <code>23</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{hour}`}</code></div>
+    	<div>hour of the day, in 24-format</div>
+    	<div><code>00</code> to <code>23</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{minute}`}</code></div>
-		<div>minute of the hour</div>
-		<div><code>00</code> to <code>59</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{minute}`}</code></div>
+    	<div>minute of the hour</div>
+    	<div><code>00</code> to <code>59</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{second}`}</code></div>
-		<div>second of the minute</div>
-		<div><code>00</code> to <code>59</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{second}`}</code></div>
+    	<div>second of the minute</div>
+    	<div><code>00</code> to <code>59</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>{`{unix}`}</code></div>
-		<div>UNIX timestamp in seconds</div>
-		<div><code>1448406000</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><code>{`{unix}`}</code></div>
+    	<div>UNIX timestamp in seconds</div>
+    	<div><code>1448406000</code></div>
+    </TableRow>
+
 </Table>
 
 <h2 id="customizing-other">Customizing Other Default Routes</h2>

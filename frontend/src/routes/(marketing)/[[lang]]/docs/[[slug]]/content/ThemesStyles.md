@@ -32,7 +32,7 @@ On our side, we process `index.scss` file and generate a `styles.css`, which wil
 The easiest way to load fonts is by adding `THEME_FONTS` to the [config](/docs/themes-config) file.
 
 ```yaml
-THEME_FONTS: "mulish:400"
+THEME_FONTS: 'mulish:400'
 ```
 
 Then, you can use the font in your SCSS files. See our [fonts](/docs/fonts) page for a in-depth guide.
@@ -45,8 +45,8 @@ Then, you can use the font in your SCSS files. See our [fonts](/docs/fonts) page
 
 ```html
 <figure>
-    <img src="https://exmaple.com/image.png" />
-    <figcaption>Here goes the caption</figcaption>
+	<img src="https://exmaple.com/image.png" />
+	<figcaption>Here goes the caption</figcaption>
 </figure>
 ```
 
@@ -56,10 +56,8 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
 
 ```html
 <figure>
-    <div class="rich-embed">
-        {# embed HTML code goes here... #}
-    </div>
-    <figcaption>Here goes the caption</figcaption>
+	<div class="rich-embed">{# embed HTML code goes here... #}</div>
+	<figcaption>Here goes the caption</figcaption>
 </figure>
 ```
 
@@ -67,17 +65,17 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
 
 ```html
 <figure>
-    <a class="rich-link">
-        <div class="rich-link-details">
-            <div class="rich-link-title">{{ data.title }}</div>
-            <div class="rich-link-description">{{ data.description }}</div>
-            <div class="rich-link-domain">{{ data.domain }}</div>
-        </div>
-        <div class="rich-link-thumbnail">
-            <img src="{{ data.thumbnail }}" />
-        </div>
-    </a>
-    <figcaption>{{ data.caption }}</figcaption>
+	<a class="rich-link">
+		<div class="rich-link-details">
+			<div class="rich-link-title">{{ data.title }}</div>
+			<div class="rich-link-description">{{ data.description }}</div>
+			<div class="rich-link-domain">{{ data.domain }}</div>
+		</div>
+		<div class="rich-link-thumbnail">
+			<img src="{{ data.thumbnail }}" />
+		</div>
+	</a>
+	<figcaption>{{ data.caption }}</figcaption>
 </figure>
 ```
 
@@ -85,7 +83,7 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
 
 ```html
 <aside style="background-color:#0000000;color:#ffffff">
-    <mark></mark>
+	<mark></mark>
 </aside>
 ```
 
@@ -101,14 +99,14 @@ Default template:
 
 ```html
 <a class="bookmark" target="_blank" href="{{ data.url }}" data-url="{{ data.original_url }}">
-    <div class="bookmark-details">
-        <div class="bookmark-title">{{ data.title }}</div>
-        <div class="bookmark-description">{{ data.description }}</div>
-        <div class="bookmark-domain">{{ data.domain }}</div>
-    </div>
-    <div class="bookmark-thumbnail">
-        <img src="{{ data.thumbnail_url }}"  alt="{{ data.title }}"/>
-    </div>
+	<div class="bookmark-details">
+		<div class="bookmark-title">{{ data.title }}</div>
+		<div class="bookmark-description">{{ data.description }}</div>
+		<div class="bookmark-domain">{{ data.domain }}</div>
+	</div>
+	<div class="bookmark-thumbnail">
+		<img src="{{ data.thumbnail_url }}" alt="{{ data.title }}" />
+	</div>
 </a>
 ```
 
@@ -116,12 +114,12 @@ Default template:
 
 ```json
 {
-    "url": "https://blogs.hyvor.com",
-    "original_url": "https://blogs.hyvor.com",
-    "title": "Hyvor Blogs",
-    "description": "A simple blogging platform",
-    "domain": "blogs.hyvor.com",
-    "thumbnail_url": "https://blogs.hyvor.com/thumbnail.png",
+	"url": "https://blogs.hyvor.com",
+	"original_url": "https://blogs.hyvor.com",
+	"title": "Hyvor Blogs",
+	"description": "A simple blogging platform",
+	"domain": "blogs.hyvor.com",
+	"thumbnail_url": "https://blogs.hyvor.com/thumbnail.png"
 }
 ```
 
@@ -141,8 +139,8 @@ Example: If you want to add a heading to the TOC, you can do it as follows. The 
 
 ```html
 <div class="toc-wrap">
-    <h2>Table of Contents</h2>
-    {{ toc | raw }}
+	<h2>Table of Contents</h2>
+	{{ toc | raw }}
 </div>
 ```
 
@@ -165,12 +163,12 @@ Here's an example of how to define colors for light and dark modes.
 
 ```css
 .mode-light:root {
-    --color-background: #ffffff;
-    --color-text: #000000;
+	--color-background: #ffffff;
+	--color-text: #000000;
 }
 .mode-dark:root {
-    --color-background: #000000;
-    --color-text: #ffffff;
+	--color-background: #000000;
+	--color-text: #ffffff;
 }
 ```
 
@@ -178,8 +176,8 @@ Then, in elements, use those variables. Avoid hard coding colors values!
 
 ```css
 body {
-    background-color: var(--color-background);
-    color: var(--color-text);
+	background-color: var(--color-background);
+	color: var(--color-text);
 }
 ```
 
@@ -200,9 +198,7 @@ If you support both light and dark themes, you will mostly likely have a button 
 We mentioned above that we add a small Javascript code to help you with determining light/dark modes. It also exposes a simple API to help you with toggling modes.
 
 ```html
-_hb.changeColorMode(mode); // mode = os|light|dark
-
-_hb.getColorMode() // returns light|dark
+_hb.changeColorMode(mode); // mode = os|light|dark _hb.getColorMode() // returns light|dark
 _hb.getColorModePreference() // returns light|dark|os
 ```
 
@@ -210,8 +206,10 @@ Use these global functions in the toggle buttons - We'll handle the LocalStorage
 
 ```html
 <div class="mode-toggler">
-    <button class="toggle-dark" onclick="_hb.changeColorMode('dark')"><!-- DARK MODE ICON --></button>
-    <button class="toggle-light" onclick="_hb.changeColorMode('light')"><!-- LIGHT MODE ICON --></button>
+	<button class="toggle-dark" onclick="_hb.changeColorMode('dark')"><!-- DARK MODE ICON --></button>
+	<button class="toggle-light" onclick="_hb.changeColorMode('light')">
+		<!-- LIGHT MODE ICON -->
+	</button>
 </div>
 ```
 
@@ -219,14 +217,14 @@ You can use a SCSS like this to show buttons on the based on the theme. This wil
 
 ```css
 .mode-dark {
-    .toggle-dark {
-        display:none;
-    }
+	.toggle-dark {
+		display: none;
+	}
 }
 .mode-light {
-    .toggle-light {
-        display:none;
-    }
+	.toggle-light {
+		display: none;
+	}
 }
 ```
 
@@ -239,26 +237,30 @@ Some may also want to add OS preference option to the toggler. In that case, the
 
 ```html
 <div class="mode-toggler">
-    <button class="toggle-light" onclick="_hb.changeColorMode('dark')"><!-- LIGHT MODE ICON --></button>
-    <button class="toggle-dark" onclick="_hb.changeColorMode('os')"><!-- DARK MODE ICON --></button>
-    <button class="toggle-os" onclick="_hb.changeColorMode('light')"><!-- OS MODE ICON --></button>
+	<button class="toggle-light" onclick="_hb.changeColorMode('dark')">
+		<!-- LIGHT MODE ICON -->
+	</button>
+	<button class="toggle-dark" onclick="_hb.changeColorMode('os')"><!-- DARK MODE ICON --></button>
+	<button class="toggle-os" onclick="_hb.changeColorMode('light')"><!-- OS MODE ICON --></button>
 </div>
 ```
 
 The following SCSS code will display the currently active mode preference button.
 
 ```css
-.toggle-dark, .toggle-light, .toggle-os {
-    display:none;
+.toggle-dark,
+.toggle-light,
+.toggle-os {
+	display: none;
 }
 .mode-preference-light .toggle-light {
-    display:inline-block;
+	display: inline-block;
 }
 .mode-preference-dark .toggle-dark {
-    display:inline-block;
+	display: inline-block;
 }
 .mode-preference-os .toggle-os {
-    display:inline-block;
+	display: inline-block;
 }
 ```
 

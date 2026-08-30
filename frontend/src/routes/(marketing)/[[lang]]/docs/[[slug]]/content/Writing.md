@@ -141,35 +141,36 @@ You can also use Markdown shortcuts to create inline styles.
 		<div>Markdown Shortcut</div>
 	</TableRow>
 
-	<TableRow>
-		<div><a href="/docs/writing#links">Link</a></div>
-		<div><code>[Anchor](https://example.com)</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><a href="/docs/writing#links">Link</a></div>
+    	<div><code>[Anchor](https://example.com)</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><b>Bold</b></div>
-		<div><code>**text**</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><b>Bold</b></div>
+    	<div><code>**text**</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><i>Italic</i></div>
-		<div><code>*text*</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><i>Italic</i></div>
+    	<div><code>*text*</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div><s>Strike</s></div>
-		<div><code>~~text~~</code></div>
-	</TableRow>
+    <TableRow>
+    	<div><s>Strike</s></div>
+    	<div><code>~~text~~</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div>Super<sup>script</sup></div>
-		<div><code>^text^</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>Super<sup>script</sup></div>
+    	<div><code>^text^</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div>Sub<sub>script</sub></div>
-		<div><code>~text~</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>Sub<sub>script</sub></div>
+    	<div><code>~text~</code></div>
+    </TableRow>
+
 </Table>
 
 <h3 id="slash-command">Blocks</h3>
@@ -233,30 +234,31 @@ There are two ways to add heading IDs.
 		<div>Command</div>
 	</TableRow>
 
-	<TableRow>
-		<div>Create unordered list</div>
-		<div><code>* + space</code> or <code>- + space</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>Create unordered list</div>
+    	<div><code>* + space</code> or <code>- + space</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div>Create ordered list</div>
-		<div><code>1. + space</code>, <code>2. + space</code>,etc.</div>
-	</TableRow>
+    <TableRow>
+    	<div>Create ordered list</div>
+    	<div><code>1. + space</code>, <code>2. + space</code>,etc.</div>
+    </TableRow>
 
-	<TableRow>
-		<div>New list item</div>
-		<div><code>Enter</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>New list item</div>
+    	<div><code>Enter</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div>Decrease indent</div>
-		<div><code>Shift + Tab</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>Decrease indent</div>
+    	<div><code>Shift + Tab</code></div>
+    </TableRow>
 
-	<TableRow>
-		<div>Increase indent</div>
-		<div><code>Tab</code></div>
-	</TableRow>
+    <TableRow>
+    	<div>Increase indent</div>
+    	<div><code>Tab</code></div>
+    </TableRow>
+
 </Table>
 
 <DocsImage src="/images/docs/writing/lists.gif" alt="Lists" width={400} />
@@ -346,7 +348,7 @@ You can use Link Bookmark block to add a rich link previews to your posts. To in
 You can add code blocks in two ways:
 
 - `/` **in a new line → Code Block**
-- Type `` ```lang `` or `` ```js `` (with language code) in a new line and press `Enter`
+- Type ` ```lang ` or ` ```js ` (with language code) in a new line and press `Enter`
 
 <DocsImage src="/images/docs/writing/code-block.png" alt="Code Block" />
 
@@ -468,12 +470,13 @@ The SEO analysis tool in the post editor will give you suggestions to improve yo
 <Callout type="info">
 	<p><b>Important!</b></p>
 
-	<p>
-		SEO analysis is <b>merely a suggestion</b>. Getting a higher score alone will not make your
-		posts rank high. There are also other factors that affect your SEO, such as backlinks, domain
-		authority, etc. However, these suggestions will help you better optimize your content for search
-		engines.
-	</p>
+    <p>
+    	SEO analysis is <b>merely a suggestion</b>. Getting a higher score alone will not make your
+    	posts rank high. There are also other factors that affect your SEO, such as backlinks, domain
+    	authority, etc. However, these suggestions will help you better optimize your content for search
+    	engines.
+    </p>
+
 </Callout>
 
 To start analyzing your post, add a primary keyword for your post. You can also add secondary keywords. Hyvor Blogs will then analyze your post content and metadata and give you suggestions in real-time to improve SEO for your post.
@@ -489,77 +492,78 @@ These are the tests that Hyvor Blogs will run on your post:
 		<li>0% if the primary keyword is not in the title</li>
 	</ul>
 
-	<li><b>Primary keyword in the description</b></li>
-	<li><b>Primary keyword in the slug</b></li>
-	<p>
-		If the primary keyword is <code>blogging platforms</code>, we check for
-		<code>blogging-platforms</code>
-		in the slug. It is recommended to set a <b>short slug with hyphens</b>. In this case, the score
-		will be:
-	</p>
-	<ul>
-		<li>100% if the slug matches exactly <code>blogging-platforms</code></li>
-		<li>75% if the slug contains <code>blogging-platforms</code> with other words</li>
-	</ul>
+    <li><b>Primary keyword in the description</b></li>
+    <li><b>Primary keyword in the slug</b></li>
+    <p>
+    	If the primary keyword is <code>blogging platforms</code>, we check for
+    	<code>blogging-platforms</code>
+    	in the slug. It is recommended to set a <b>short slug with hyphens</b>. In this case, the score
+    	will be:
+    </p>
+    <ul>
+    	<li>100% if the slug matches exactly <code>blogging-platforms</code></li>
+    	<li>75% if the slug contains <code>blogging-platforms</code> with other words</li>
+    </ul>
 
-	<li><b>Primary keyword in the beginning of the content</b></li>
-	<p>
-		If your content is longer than 300 words, the primary keyword should be in the first 10% of the
-		content. If it is shorter than 300 words, it should be somewhere in the content.
-	</p>
+    <li><b>Primary keyword in the beginning of the content</b></li>
+    <p>
+    	If your content is longer than 300 words, the primary keyword should be in the first 10% of the
+    	content. If it is shorter than 300 words, it should be somewhere in the content.
+    </p>
 
-	<li><b>Content length</b></li>
-	<p>(The best content length depends on the topic, which is not considered here)</p>
-	<ul>
-		<li>0% for less than 400 words</li>
-		<li>1% for each 25 words after 400 words (2500+ words = 100%)</li>
-	</ul>
+    <li><b>Content length</b></li>
+    <p>(The best content length depends on the topic, which is not considered here)</p>
+    <ul>
+    	<li>0% for less than 400 words</li>
+    	<li>1% for each 25 words after 400 words (2500+ words = 100%)</li>
+    </ul>
 
-	<li><b>All keywords in the content</b></li>
-	<p>All keywords should be present in the post content.</p>
+    <li><b>All keywords in the content</b></li>
+    <p>All keywords should be present in the post content.</p>
 
-	<li><b>All keywords in subheadings</b></li>
-	<p>Each keyword should be present in at least one subheading (h2, h3, h4, h5, h6).</p>
+    <li><b>All keywords in subheadings</b></li>
+    <p>Each keyword should be present in at least one subheading (h2, h3, h4, h5, h6).</p>
 
-	<li><b>All keywords in image alt attributes</b></li>
-	<p>Each keyword should be present in at least one image alt attribute.</p>
+    <li><b>All keywords in image alt attributes</b></li>
+    <p>Each keyword should be present in at least one image alt attribute.</p>
 
-	<li><b>Keyword density</b></li>
-	<p>Checks for keyword density in content (<code>keywords count / total words</code>).</p>
-	<ul>
-		<li>0% for less than 0.1%</li>
-		<li>50% for 0.1% to 0.5%</li>
-		<li>100% for 0.5% to 2.5%</li>
-		<li>50% for 2.5% to 5%</li>
-		<li>0% for more than 5%</li>
-	</ul>
+    <li><b>Keyword density</b></li>
+    <p>Checks for keyword density in content (<code>keywords count / total words</code>).</p>
+    <ul>
+    	<li>0% for less than 0.1%</li>
+    	<li>50% for 0.1% to 0.5%</li>
+    	<li>100% for 0.5% to 2.5%</li>
+    	<li>50% for 2.5% to 5%</li>
+    	<li>0% for more than 5%</li>
+    </ul>
 
-	<li><b>Slug length</b></li>
-	<p>Shorter slugs are better. This test will pass if the slug is less than 50 characters.</p>
+    <li><b>Slug length</b></li>
+    <p>Shorter slugs are better. This test will pass if the slug is less than 50 characters.</p>
 
-	<li><b>External links</b></li>
-	<p>At least one external link should be present in the post.</p>
+    <li><b>External links</b></li>
+    <p>At least one external link should be present in the post.</p>
 
-	<li><b>Internal links</b></li>
-	<p>
-		At least one internal link should be present in the post. Links to any subdomain of your main
-		domain will be considered as internal links. See <a href="/docs/writing#link-types"
-			>link types</a
-		>
-		for more information. <code>internal-blog</code>, <code>internal-domain</code>, and
-		<code>internal-root-domain</code> links are considered as internal links.
-	</p>
+    <li><b>Internal links</b></li>
+    <p>
+    	At least one internal link should be present in the post. Links to any subdomain of your main
+    	domain will be considered as internal links. See <a href="/docs/writing#link-types"
+    		>link types</a
+    	>
+    	for more information. <code>internal-blog</code>, <code>internal-domain</code>, and
+    	<code>internal-root-domain</code> links are considered as internal links.
+    </p>
 
-	<li><b>Images</b></li>
-	<ul>
-		<li>70% - 1 image</li>
-		<li>80% - 2 images</li>
-		<li>90% - 3 images</li>
-		<li>100% - 4 or more images</li>
-	</ul>
+    <li><b>Images</b></li>
+    <ul>
+    	<li>70% - 1 image</li>
+    	<li>80% - 2 images</li>
+    	<li>90% - 3 images</li>
+    	<li>100% - 4 or more images</li>
+    </ul>
 
-	<li><b>All images have alt attributes</b></li>
-	<p>All images should have alt attributes</p>
+    <li><b>All images have alt attributes</b></li>
+    <p>All images should have alt attributes</p>
+
 </ul>
 
 <h2 id="link-analysis">Link Analysis</h2>
@@ -577,45 +581,46 @@ Hyvor Blogs categorizes links into the following types.
 		<div>Description</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>internal-blog</code></div>
-		<div>Links to other posts/pages in your blog</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>internal-blog</code></div>
+    	<div>Links to other posts/pages in your blog</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>internal-domain</code></div>
-		<div>Links to the same domain as your blog, but not to your blog</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>internal-domain</code></div>
+    	<div>Links to the same domain as your blog, but not to your blog</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>internal-root-domain</code></div>
-		<div>Links to any domain of the root domain, but not to your blog's domain</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>internal-root-domain</code></div>
+    	<div>Links to any domain of the root domain, but not to your blog's domain</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>external</code></div>
-		<div>Links to other domains</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>external</code></div>
+    	<div>Links to other domains</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>mail</code></div>
-		<div>Mailto links (starts with <code>mailto:</code>)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>mail</code></div>
+    	<div>Mailto links (starts with <code>mailto:</code>)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>tel</code></div>
-		<div>Tel links (starts with <code>tel:</code>)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>tel</code></div>
+    	<div>Tel links (starts with <code>tel:</code>)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>anchor</code></div>
-		<div>Links to anchors in the same page (starts with <code>#</code>)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>anchor</code></div>
+    	<div>Links to anchors in the same page (starts with <code>#</code>)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>other</code></div>
-		<div>Other links (<code>ftp:</code>, <code>data:</code>, javascript, etc.)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>other</code></div>
+    	<div>Other links (<code>ftp:</code>, <code>data:</code>, javascript, etc.)</div>
+    </TableRow>
+
 </Table>
 
 Go to **Console → Tools → Link Analysis** to

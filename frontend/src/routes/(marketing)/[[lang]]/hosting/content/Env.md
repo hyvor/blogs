@@ -54,7 +54,7 @@ MAIL_PORT=
 MAIL_USERNAME=
 MAIL_PASSWORD=
 
-# TLS_MODE controls how HTTPS is handled for DOMAIN_APP. 
+# TLS_MODE controls how HTTPS is handled for DOMAIN_APP.
 # One of: auto, external, manual, or disabled
 # See https://blogs.hyvor.com/hosting/deploy#tls
 TLS_MODE=

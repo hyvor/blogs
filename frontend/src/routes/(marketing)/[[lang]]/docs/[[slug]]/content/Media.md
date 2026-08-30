@@ -54,14 +54,14 @@ For example, if you upload a 1250px image to a post, the HTML code would look li
 
 ```html
 <img
-    src="/media/image.jpg" 
-    srcset="
-        /media/image.jpg/500w 500w, 
-        /media/image.jpg/750w 750w, 
-        /media/image.jpg/1000w 1000w,
-        /media/image.jpg 1250w
-    "
-    alt="Image"
+	src="/media/image.jpg"
+	srcset="
+		/media/image.jpg/500w   500w,
+		/media/image.jpg/750w   750w,
+		/media/image.jpg/1000w 1000w,
+		/media/image.jpg       1250w
+	"
+	alt="Image"
 />
 ```
 

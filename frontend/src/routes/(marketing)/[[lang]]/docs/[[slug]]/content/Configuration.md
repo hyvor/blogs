@@ -55,14 +55,14 @@ level.
 ```yaml
 THEME_NAME: hello
 THEME_VERSION: 1.0.0
-THEME_FONTS: "mulish:400,700"
+THEME_FONTS: 'mulish:400,700'
 POSTS_PER_PAGINATION: 15
 
 dark_theme: Yes
 accent_color: 0000000
 image_service:
-    api_key:
-    api_version: 2
+  api_key:
+  api_version: 2
 ```
 
 In this example, the first 3 lines are HB-aware configurations. Others are theme configurations.
@@ -84,30 +84,30 @@ example.
 
 ```yaml
 dark_theme:
-    $name: Dark theme
-    $description: Turn on dark theme for this blog
-    $type: checkbox
+  $name: Dark theme
+  $description: Turn on dark theme for this blog
+  $type: checkbox
 
 accent_color:
-    $name: Accent Color
-    $description: Main color of the blog
-    $type: color
+  $name: Accent Color
+  $description: Main color of the blog
+  $type: color
 
 image_service:
-    $name: Image Service API Details
+  $name: Image Service API Details
 
-    api_key:
-        $name: API Key
-        $description: ...
-        $type: text
-        $maxlength: 255
+  api_key:
+    $name: API Key
+    $description: ...
+    $type: text
+    $maxlength: 255
 
-    api_version:
-        $name: API Version
-        $description: ...
-        $type: number
-        $min: 1
-        $max: 2
+  api_version:
+    $name: API Version
+    $description: ...
+    $type: number
+    $min: 1
+    $max: 2
 ```
 
 <Callout type="info">
@@ -140,42 +140,43 @@ These are the supported types for theme configurations:
 		<div>Description</div>
 	</TableRow>
 
-	<TableRow>
-		<div><code>none</code></div>
-		<div>No input. This is useful for configurations that are not editable by the blogger</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>none</code></div>
+    	<div>No input. This is useful for configurations that are not editable by the blogger</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>text</code></div>
-		<div>Single-line text input. This is the default, if <code>$type</code> is not defined</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>text</code></div>
+    	<div>Single-line text input. This is the default, if <code>$type</code> is not defined</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>textarea</code></div>
-		<div>Multi-line text input</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>textarea</code></div>
+    	<div>Multi-line text input</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>number</code></div>
-		<div>Select a number</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>number</code></div>
+    	<div>Select a number</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>checkbox</code></div>
-		<div>Checkbox (boolean value)</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>checkbox</code></div>
+    	<div>Checkbox (boolean value)</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>radio</code></div>
-		<div>
-			Select one of several options. See examples <a href="/docs/themes-config#radio">below</a>
-		</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>radio</code></div>
+    	<div>
+    		Select one of several options. See examples <a href="/docs/themes-config#radio">below</a>
+    	</div>
+    </TableRow>
 
-	<TableRow>
-		<div><code>color</code></div>
-		<div>Select a color</div>
-	</TableRow>
+    <TableRow>
+    	<div><code>color</code></div>
+    	<div>Select a color</div>
+    </TableRow>
+
 </Table>
 
 <h4 id="radio">Radio Example</h4>
@@ -187,12 +188,12 @@ file. `label` is what the user will see.
 
 ```yaml
 some_key:
-    $title: When to use caching
-    $type: radio
-    $options: 
-        all: For All Posts and Pages
-        posts: Only Posts
-        pages: Only Pages
+  $title: When to use caching
+  $type: radio
+  $options:
+    all: For All Posts and Pages
+    posts: Only Posts
+    pages: Only Pages
 ```
 
 <h2 id="config-usage">Using Configurations in Templates</h2>
@@ -206,30 +207,30 @@ Example: Configurable CSS variables.
 
 ```yaml
 colors:
-  accent: "#896c6b"
+  accent: '#896c6b'
 
 font:
   size: 16
-  family: "Nunito, sans-serif"
+  family: 'Nunito, sans-serif'
 
 line_height: 24
 
 box:
   radius: 20
-  shadow: "0 0 30px rgba(0,0,0,0.05)"
+  shadow: '0 0 30px rgba(0,0,0,0.05)'
 ```
 
 Then, use configs in your templates.
 
 ```html
 <style>
-    :root {
-        --color-accent: {{ _config.colors.accent }};
-        --font-size: {{ _config.font.size }}px;
-        --font-family: {{ _config.font.family }};
-        --line-height: {{ _config.line_height }}px;
-        --box-radius: {{ _config.box.radius }}px;
-        --box-shadow: {{ _config.box.shadow }};
-    }
+	:root {
+	    --color-accent: {{ _config.colors.accent }};
+	    --font-size: {{ _config.font.size }}px;
+	    --font-family: {{ _config.font.family }};
+	    --line-height: {{ _config.line_height }}px;
+	    --box-radius: {{ _config.box.radius }}px;
+	    --box-shadow: {{ _config.box.shadow }};
+	}
 </style>
 ```

@@ -99,16 +99,16 @@ Example:
 
 ```yaml
 comments: Comments
-posts_num_multi: "* Posts"
-author: "by {name}"
+posts_num_multi: '* Posts'
+author: 'by {name}'
 ```
 
 `fr.yaml`
 
 ```yaml
 comments: Commentaires
-posts_num_multi: "* Articles"
-author: "par {name}"
+posts_num_multi: '* Articles'
+author: 'par {name}'
 ```
 
 <h2 id="technical-seo">Technical SEO</h2>
@@ -118,7 +118,7 @@ Here are some under the hood works that Hyvor Blogs do to make sure search engin
 HB adds the lang attribute to the `<html>` tag in all pages using the language code you set (this is why using the correct language codes are important).
 
 ```html
-<html lang="en">
+<html lang="en"></html>
 ```
 
 In addition, HB will add `hreflang` alternate tags. For example, if you have three languages (`en`, `fr`, `es`), the en index page (/) will have these tags.

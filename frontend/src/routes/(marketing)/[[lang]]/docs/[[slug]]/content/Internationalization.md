@@ -39,9 +39,9 @@ English (`en.yaml`) is the default language and it is required. You may also def
 Let's see another example:
 
 ```yaml
-welcome: "Welcome to our blog"
-usersCount: "* users"
-byAuthor: "by {authorName}"
+welcome: 'Welcome to our blog'
+usersCount: '* users'
+byAuthor: 'by {authorName}'
 ```
 
 In Twig templates, use the `lang` filter to render these strings with placeholders replaced.
@@ -74,11 +74,11 @@ Sometimes you may want to display a different message when a number is zero, one
 # en.yaml
 posts_num_zero: No Posts
 posts_num_one: 1 Post
-posts_num_multi: "* Posts"
+posts_num_multi: '* Posts'
 ```
 
 ```yaml
-Number of posts: 
+Number of posts:
 {{ _pagination.total | lang_by_number(
     zero="posts_num_zero",
     one="posts_num_one",
@@ -97,9 +97,9 @@ Let's say that the blogger changes his site's language to French (`fr`). Then, w
 Here's how an `fr` version of the above file will look like.
 
 ```yaml
-welcome: "Bienvenue sur notre blog"
-usersCount: "* utilisateurs"
-byAuthor: "par {authorName}"
+welcome: 'Bienvenue sur notre blog'
+usersCount: '* utilisateurs'
+byAuthor: 'par {authorName}'
 ```
 
 <Callout type="info">
@@ -113,21 +113,22 @@ Usually, you want to render a language switcher in multi-language blogs to allow
 ```html
 {% if _blog.languages | length > 1 %}
 <script>
-        function toggleLanguageDropdown() {
-            document.querySelector('.dropdown').classList.toggle('open');
-        }
-    </script>
-    <div class="language-switcher">
-        <a class="current-language" onclick="toggleLanguageDropdown()">{{ _lang.code }}</a>
-        <div class="dropdown">
-            {% for lang in _blog.languages %}
-                <a
-                    href="{{ lang.code | language_variant_url }}"
-                    class="{% if lang.code == _lang.code %}active{% endif %}"
-                >{{ lang.name }}</a>
-            {% endfor %}
-        </div>
-    </div>
+	function toggleLanguageDropdown() {
+		document.querySelector('.dropdown').classList.toggle('open');
+	}
+</script>
+<div class="language-switcher">
+	<a class="current-language" onclick="toggleLanguageDropdown()">{{ _lang.code }}</a>
+	<div class="dropdown">
+		{% for lang in _blog.languages %}
+		<a
+			href="{{ lang.code | language_variant_url }}"
+			class="{% if lang.code == _lang.code %}active{% endif %}"
+			>{{ lang.name }}</a
+		>
+		{% endfor %}
+	</div>
+</div>
 {% endif %}
 ```
 

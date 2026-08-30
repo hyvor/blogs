@@ -26,14 +26,14 @@ This object is returned when the path is a file.
 
 ```json
 {
-    "type": "file",
-    "at": 1661590503,
-    "cache": true,
-    "status": 200,
-    "file_type": "template",
-    "content": "SGVsbG8gV29ybGQ=",
-    "mime_type": "text/html",
-    "cache_control": "no-cache, private"
+	"type": "file",
+	"at": 1661590503,
+	"cache": true,
+	"status": 200,
+	"file_type": "template",
+	"content": "SGVsbG8gV29ybGQ=",
+	"mime_type": "text/html",
+	"cache_control": "no-cache, private"
 }
 ```
 
@@ -43,11 +43,11 @@ This object is returned when the path is a redirect.
 
 ```json
 {
-    "type": "redirect",
-    "at": 1661590503,
-    "cache": true,
-    "status": 301,
-    "to": "https://example.com"
+	"type": "redirect",
+	"at": 1661590503,
+	"cache": true,
+	"status": 301,
+	"to": "https://example.com"
 }
 ```
 
