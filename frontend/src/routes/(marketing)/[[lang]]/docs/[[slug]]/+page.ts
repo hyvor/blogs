@@ -1,5 +1,5 @@
 import { loadDocsPage } from '@hyvor/design/marketing';
-import { sections } from './docs';
+import { getSections } from './docs';
 import { DEFAULT_MARKETING_LANGUAGE } from '../../marketingLang';
 
 export async function load({ params }) {
@@ -8,7 +8,7 @@ export async function load({ params }) {
 	return loadDocsPage({
 		basepath: `${lang}/docs`,
 		rootName: 'Docs',
-		sections,
+		sections: await getSections(lang),
 		slug: params.slug ?? ''
 	});
 }

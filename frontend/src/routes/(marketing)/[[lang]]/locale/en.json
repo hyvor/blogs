@@ -434,5 +434,53 @@
 			"q7": "How to add a commenting system?",
 			"a7": "<a href=\"https://talk.hyvor.com\">Hyvor Talk</a> is available for free for all plans. You can also embed other commenting systems easily."
 		}
+	},
+	"docs": {
+		"sections": {
+			"hosting": "Hosting",
+			"features": "Features",
+			"integrations": "Integrations",
+			"developer": "Developer",
+			"data": "Data",
+			"themeDevelopment": "Theme Development"
+		},
+		"pages": {
+			"introduction": "Introduction",
+			"writing": "Writing",
+			"theme": "Theme",
+			"customDomain": "Custom Domain",
+			"subdirectory": "Subdirectory",
+			"headless": "Headless",
+			"languages": "Languages",
+			"users": "Users",
+			"tags": "Tags",
+			"media": "Media",
+			"fonts": "Fonts",
+			"seo": "SEO",
+			"navigationLinks": "Navigation Links",
+			"redirects": "Redirects",
+			"customCode": "Custom Code",
+			"services": "Services",
+			"routes": "Routes",
+			"syntaxHighlighting": "Syntax Highlighting",
+			"hyvorTalk": "Hyvor Talk",
+			"hyvorPost": "Hyvor Post",
+			"webhooks": "Webhooks",
+			"apiConsole": "Console API",
+			"apiDelivery": "Delivery API",
+			"apiData": "Data API",
+			"export": "Export Data",
+			"importData": "Import Data",
+			"importOverview": "Overview",
+			"importSitemap": "Sitemap",
+			"importWordpress": "WordPress",
+			"themesOverview": "Overview",
+			"themesTemplates": "Templates",
+			"themesStyling": "Styling",
+			"themesScripts": "Scripts",
+			"themesInternationalization": "Internationalization",
+			"themesConfig": "Configuration",
+			"themesPublishing": "Publishing"
+		}
 	}
 }

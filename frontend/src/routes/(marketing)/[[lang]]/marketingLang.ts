@@ -1,4 +1,4 @@
-import type { InternationalizationService } from '@hyvor/design/components';
+import { InternationalizationService } from '@hyvor/design/components';
 import { getContext } from 'svelte';
 import en from './locale/en.json';
 import fr from './locale/fr.json';
@@ -25,6 +25,13 @@ export const LANGUAGES_CONFIG = [
 	}
 ];
 
+export function buildI18n(lang: string) {
+	return new InternationalizationService(
+		LANGUAGES_CONFIG,
+		lang
+	);
+}
+
 export const DEFAULT_MARKETING_LANGUAGE = 'en';
 
 // Header/Footer render outside [[lang]]/+layout.svelte's InternationalizationProvider
@@ -40,7 +47,6 @@ export function getStaticString(strings: Record<string, any>, key: string): stri
 }
 
 export function buildMarketingUrl(path: string, currentLang: string, otherLang: string) {
-	console.log(path, currentLang, otherLang);
 	let basePath = path;
 
 	// strip the current language prefix, if any, to get the language-agnostic path
