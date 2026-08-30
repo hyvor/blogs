@@ -30,13 +30,10 @@ class SitemapPostsTest extends KernelTestCase
     private function createBlogWithPosts(int $count): array
     {
         $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
-        $lang = LanguageFactory::createOne([
-            'blog' => $blog,
+        $lang = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
-        RouteFactory::createOne([
-            'blog' => $blog,
+        RouteFactory::createOneFor($blog, [
             'name' => 'post',
             'match' => '/{slug}',
             'template' => 'post.twig',

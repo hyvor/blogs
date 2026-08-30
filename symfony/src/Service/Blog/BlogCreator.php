@@ -158,14 +158,16 @@ class BlogCreator
                 $this->comms->send(new ResourceCreated(Component::BLOGS, $organizationId));
             }
 
-            $this->ed->dispatch(new BlogCreatedEvent($blog));
-
             return [
                 'blog' => $blog,
                 'primaryLanguage' => $primaryLanguage,
                 'primaryUser' => $primaryUser,
             ];
         });
+
+        // sync counts for example
+        $this->ed->dispatch(new BlogCreatedEvent($blog));
+
 
         return $data;
     }

@@ -24,8 +24,7 @@ class RouteTest extends KernelTestCase
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
 
-        RouteFactory::createOne([
-            'blog' => $blog,
+        RouteFactory::createOneFor($blog, [
             'name' => $routeName,
             'match' => '/test/{slug}',
             'template' => $template,

@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Blog\MessageHandler;
 
 
+use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Message\ReRenderPostHtmlMessage;
 use App\Service\Blog\MessageHandler\ReRenderPostHtmlMessageHandler;
 use App\Tests\Factory\BlogFactory;
@@ -24,8 +25,8 @@ class ReRenderPostHtmlMessageHandlerTest extends KernelTestCase
 
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $post = PostFactory::createOne(['blog' => $blog]);
-        $variant = PostVariantFactory::createOne([
-            'post' => $post,
+        $variant = PostVariantFactory::createOneFor($post, [
+            'status' => PostVariantStatus::PUBLISHED,
             'content' => json_encode([
                 'type' => 'doc',
                 'content' => [

@@ -27,8 +27,8 @@ class CustomTest extends KernelTestCase
     {
         $content = 'I am a custom route';
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'test', 'match' => '/test', 'template' => 'test', 'posts_filter' => null, 'is_enabled' => true]);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        RouteFactory::createOneFor($blog, ['name' => 'test', 'match' => '/test', 'template' => 'test', 'posts_filter' => null, 'is_enabled' => true]);
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,

@@ -7,9 +7,9 @@ use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
 use App\Tests\Factory\BlogFactory;
-use Doctrine\DBAL\Connection;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 
 #[CoversClass(BlogCacheService::class)]
 class BlogCacheServiceTest extends KernelTestCase
@@ -19,11 +19,14 @@ class BlogCacheServiceTest extends KernelTestCase
         return $this->getService(BlogCacheService::class);
     }
 
-    private function cacheRow(string $key): mixed
+    private function cache(): CacheItemPoolInterface
     {
-        /** @var Connection $conn */
-        $conn = $this->getService(Connection::class);
-        return $conn->fetchOne('SELECT value FROM cache WHERE key = ?', [$key]);
+        return $this->getService(CacheItemPoolInterface::class);
+    }
+
+    private function cacheKey(int $blogId, string $key): string
+    {
+        return hash('xxh3', "blog_cache_{$blogId}_$key");
     }
 
     public function test_clear_template_cache_writes_timestamp_and_dispatches_event(): void
@@ -32,8 +35,8 @@ class BlogCacheServiceTest extends KernelTestCase
 
         $this->service()->clearTemplateCache($blog);
 
-        $key = "blog_cache_{$blog->getId()}_" . BlogCacheService::LAST_TEMPLATE_CACHE_CLEARED_AT;
-        $this->assertNotFalse($this->cacheRow($key));
+        $key = $this->cacheKey($blog->getId(), BlogCacheService::LAST_TEMPLATE_CACHE_CLEARED_AT);
+        $this->assertTrue($this->cache()->getItem($key)->isHit());
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }
 
@@ -43,8 +46,8 @@ class BlogCacheServiceTest extends KernelTestCase
 
         $this->service()->clearAllCache($blog);
 
-        $key = "blog_cache_{$blog->getId()}_" . BlogCacheService::LAST_ALL_CACHE_CLEARED_AT;
-        $this->assertNotFalse($this->cacheRow($key));
+        $key = $this->cacheKey($blog->getId(), BlogCacheService::LAST_ALL_CACHE_CLEARED_AT);
+        $this->assertTrue($this->cache()->getItem($key)->isHit());
         $this->getEd()->assertDispatched(CacheClearAllEvent::class);
     }
 
@@ -52,17 +55,14 @@ class BlogCacheServiceTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne();
 
-        /** @var Connection $conn */
-        $conn = $this->getService(Connection::class);
-        $key = "blog_cache_{$blog->getId()}_/test-path";
-        $conn->executeStatement(
-            'INSERT INTO cache (key, value, expiration) VALUES (?, ?, ?)',
-            [$key, base64_encode(serialize('cached')), 2147483647],
-        );
+        $key = $this->cacheKey($blog->getId(), '/test-path');
+        $item = $this->cache()->getItem($key);
+        $item->set('cached');
+        $this->cache()->save($item);
 
         $this->service()->clearSingleCache($blog, '/test-path');
 
-        $this->assertFalse($this->cacheRow($key));
+        $this->assertFalse($this->cache()->getItem($key)->isHit());
         $this->getEd()->assertDispatched(CacheClearSingleEvent::class);
     }
 

@@ -95,13 +95,11 @@ class IndexTest extends KernelTestCase
         $post2 = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
         $publishedAts = [$post1->getId() => new \DateTimeImmutable('-1 day'), $post2->getId() => new \DateTimeImmutable('-2 days')];
         foreach ([$post1, $post2] as $post) {
-            PostVariantFactory::createOne([
-                'post' => $post,
-                'language' => $blog->getLanguages()[0],
+            PostVariantFactory::createOneFor($post, [
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'post-' . $post->getId(),
                 'published_at' => $publishedAts[$post->getId()],
-            ]);
+            ], $blog->getLanguages()[0]);
         }
 
         $response = $this->pathMatcher()->match($blog, '/page/2');

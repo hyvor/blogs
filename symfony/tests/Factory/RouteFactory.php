@@ -57,6 +57,20 @@ final class RouteFactory extends PersistentObjectFactory
     }
 
     /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Blog $blog, array $attributes = []): Route
+    {
+        $route = self::createOne(array_merge([
+            'blog' => $blog,
+        ], $attributes));
+
+        $blog->getRoutes()->add($route);
+
+        return $route;
+    }
+
+    /**
      * @return Route[]
      */
     public static function createDefaultsFor(Blog $blog): array

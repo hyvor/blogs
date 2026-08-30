@@ -59,8 +59,7 @@ class TagTest extends KernelTestCase
             'content' => $content,
         ]);
         $tag = TagFactory::createOne(['blog' => $blog, 'slug' => 'my-tag', 'is_private' => false]);
-        TagVariantFactory::createOne([
-            'tag' => $tag,
+        TagVariantFactory::createOneFor($tag, [
             'language' => $blog->getLanguages()[0],
             'name' => 'My Tag',
             'description' => 'Tag page for my-tag',

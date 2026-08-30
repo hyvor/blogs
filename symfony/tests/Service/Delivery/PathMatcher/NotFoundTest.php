@@ -21,7 +21,7 @@ class NotFoundTest extends KernelTestCase
     public function test_returns_404(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $response = $this->pathMatcher()->match($blog, '/not-found');
 
@@ -32,7 +32,7 @@ class NotFoundTest extends KernelTestCase
     public function test_returns_404_twig_rendered(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         ThemeFileFactory::createOne([
             'blog' => $blog,
             'folder' => ThemeFileFolder::TEMPLATES,

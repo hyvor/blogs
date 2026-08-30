@@ -54,11 +54,16 @@ class FontFileTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $response = $this->pathMatcher()->match($blog, '/fonts/file/mulish/files/mulish-latin-400-normal.woff2');
 
-        $this->assertSame('Failed to fetch font file: Request failed', $response->content);
+        $expectedContent = <<<HTML
+        <div style=\"font-family:monospace;font-size:18px;\">
+            Failed to fetch font file: Request failed
+        </div>
+        HTML;
+        $this->assertSame($expectedContent, $response->content);
         $this->assertSame(500, $response->status);
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
-        $this->assertSame('text/plain', $response->mimeType);
+        $this->assertSame('text/html', $response->mimeType);
         $this->assertSame(CacheControl::NO_CACHE, $response->cacheControl);
     }
 }

@@ -55,7 +55,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $transport->queue()->assertEmpty();
+        $transport->queue()->assertNotContains(SyncBlogUsersToWebsiteMessage::class);
     }
 
     public function test_no_sync_when_user_role_not_synced(): void
@@ -66,7 +66,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $transport->queue()->assertEmpty();
+        $transport->queue()->assertNotContains(SyncBlogUsersToWebsiteMessage::class);
     }
 
     public function test_sync_as_mod_when_editor(): void
@@ -77,7 +77,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -96,7 +96,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserCreatedEvent($user));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -115,7 +115,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserDeletedEvent($user));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -137,7 +137,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserUpdatedEvent($user, $userOld));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -158,7 +158,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserUpdatedEvent($user, $userOld));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];
@@ -178,7 +178,7 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->getEd()->dispatch(new UserUpdatedEvent($user, $userOld));
 
         $transport = $this->transport('async');
-        $messages = $transport->queue()->messages();
+        $messages = $transport->queue()->messages(SyncBlogUsersToWebsiteMessage::class);
         $this->assertCount(1, $messages);
 
         $message = $messages[0];

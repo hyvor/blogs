@@ -70,14 +70,12 @@ class PostTest extends KernelTestCase
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false,
             'featured_image_url' => 'https://example.com/image.jpg',]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $blog->getLanguages()[0],
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'my-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
             'title' => 'My Post Title',
             'description' => 'My Post Description',
-        ]);
+        ], $blog->getLanguages()[0]);
 
         ThemeFileFactory::createOne([
             'blog' => $blog,
@@ -100,12 +98,10 @@ class PostTest extends KernelTestCase
         [$blog, $language] = $this->createBlogWithLanguageAndRoutes();
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => true]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $language,
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'my-page-slug',
             'status' => PostVariantStatus::PUBLISHED,
-        ]);
+        ], $language);
 
         ThemeFileFactory::createOne([
             'blog' => $blog,
@@ -125,25 +121,21 @@ class PostTest extends KernelTestCase
     {
         $twig = '{{ _post.id }}{{ _lang.id }}';
         $blog = BlogFactory::createOne();
-        $primaryLang = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        $secondaryLang = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
+        $primaryLang = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        $secondaryLang = LanguageFactory::createOneFor($blog, ['is_primary' => false, 'code' => 'fr']);
+        RouteFactory::createOneFor($blog, ['name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
+        RouteFactory::createOneFor($blog, ['name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
+        RouteFactory::createOneFor($blog, ['name' => 'index', 'match' => '/', 'template' => 'index', 'posts_filter' => '', 'is_enabled' => true]);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $primaryLang,
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'en-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
-        ]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $secondaryLang,
+        ], $primaryLang);
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'fr-post-slug',
             'status' => PostVariantStatus::PUBLISHED,
-        ]);
+        ], $secondaryLang);
 
         ThemeFileFactory::createOne([
             'blog' => $blog,
@@ -162,17 +154,15 @@ class PostTest extends KernelTestCase
     public function test_does_not_match_non_published_posts(): void
     {
         $blog = BlogFactory::createOne();
-        $language = LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
-        RouteFactory::createOne(['blog' => $blog, 'name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
+        $language = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        RouteFactory::createOneFor($blog, ['name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'posts_filter' => null, 'is_enabled' => true]);
+        RouteFactory::createOneFor($blog, ['name' => 'page', 'match' => '/{slug}', 'template' => 'page,post', 'posts_filter' => null, 'is_enabled' => true]);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $language,
+        PostVariantFactory::createOneFor($post, [
             'slug' => 'draft-post',
             'status' => PostVariantStatus::DRAFT,
-        ]);
+        ], $language);
 
         ThemeFileFactory::createOne([
             'blog' => $blog,

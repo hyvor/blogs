@@ -41,12 +41,10 @@ class PostsTest extends KernelTestCase
         ThemeFileFactory::createTemplateTwig($blog, 'post.twig', $content);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $blog->getLanguages()[0],
+        PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'my-post',
-        ]);
+        ], $blog->getLanguages()[0]);
 
         $response = $this->pathMatcher()->match($blog, '/my-post');
 

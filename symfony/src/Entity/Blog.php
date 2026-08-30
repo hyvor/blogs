@@ -97,7 +97,7 @@ class Blog
     private Collection $tags;
 
     /** @var Collection<int, User> */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'blogs')]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'blog')]
     private Collection $users;
 
     public function __construct()

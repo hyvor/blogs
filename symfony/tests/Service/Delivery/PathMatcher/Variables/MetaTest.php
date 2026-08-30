@@ -38,8 +38,7 @@ class MetaTest extends KernelTestCase
         $content = '_meta goes here:{% if _meta is defined %}_meta was defined{% endif %}';
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
-        RouteFactory::createOne([
-            'blog' => $blog,
+        RouteFactory::createOneFor($blog, [
             'name' => 'custom',
             'match' => '/custom',
             'template' => 'custom',

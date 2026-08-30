@@ -172,7 +172,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::LANGUAGES_CHANGED],
         ]);
-        $lang = LanguageFactory::createOne(['blog' => $blog]);
+        $lang = LanguageFactory::createOneFor($blog);
 
         $this->dispatch(new LanguageChangedEvent($lang));
 
@@ -616,6 +616,7 @@ class WebhookSubscriberListenerTest extends KernelTestCase
             'blog' => $blog,
             'events' => [WebhookEvent::POST_UPDATED],
         ]);
+        LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);
 
         $this->dispatch(new PostUpdatedEvent($post));

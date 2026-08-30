@@ -27,18 +27,14 @@ class SitemapPagesTest extends KernelTestCase
     public function test_generates_entries_for_homepage_and_variants(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'test']);
-        $primaryLang = LanguageFactory::createOne([
-            'blog' => $blog,
+        $primaryLang = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOneFor($blog, [
             'code' => 'fr',
             'is_primary' => false,
         ]);
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOneFor($blog, [
             'code' => 'de',
             'is_primary' => false,
         ]);
@@ -62,19 +58,15 @@ class SitemapPagesTest extends KernelTestCase
     public function test_generates_entries_for_pages(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'test']);
-        $primaryLanguage = LanguageFactory::createOne([
-            'blog' => $blog,
+        $primaryLanguage = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
-            'is_primary' => true,
         ]);
-        $secondaryLanguage = LanguageFactory::createOne([
-            'blog' => $blog,
+        $secondaryLanguage = LanguageFactory::createOneFor($blog, [
             'code' => 'fr',
             'is_primary' => false,
         ]);
 
-        RouteFactory::createOne([
-            'blog' => $blog,
+        RouteFactory::createOneFor($blog, [
             'name' => 'page',
             'match' => '/{slug}',
             'template' => 'page',
@@ -87,19 +79,15 @@ class SitemapPagesTest extends KernelTestCase
                 'blog' => $blog,
                 'is_page' => true,
             ]);
-            PostVariantFactory::createOne([
-                'post' => $post,
-                'language' => $primaryLanguage,
+            PostVariantFactory::createOneFor($post, [
                 'status' => PostVariantStatus::PUBLISHED,
                 'slug' => 'page-' . $i,
-            ]);
+            ], $primaryLanguage);
             if ($i === 1) {
-                PostVariantFactory::createOne([
-                    'post' => $post,
-                    'language' => $secondaryLanguage,
+                PostVariantFactory::createOneFor($post, [
                     'status' => PostVariantStatus::PUBLISHED,
                     'slug' => 'page-' . $i . '-fr',
-                ]);
+                ], $secondaryLanguage);
             }
         }
         // 1 published post (should NOT appear)
@@ -107,12 +95,10 @@ class SitemapPagesTest extends KernelTestCase
             'blog' => $blog,
             'is_page' => false,
         ]);
-        PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $primaryLanguage,
+        PostVariantFactory::createOneFor($post, [
             'status' => PostVariantStatus::PUBLISHED,
             'slug' => 'a-post',
-        ]);
+        ], $primaryLanguage);
 
         $response = $this->pathMatcher()->match($blog, '/sitemap-pages.xml');
 

@@ -120,6 +120,7 @@ class PageScraperTest extends KernelTestCase
                         'language' => '',
                         'name' => '',
                         'annotations' => '',
+                        'suggestions' => null,
                     ],
                     'content' => [
                         ['type' => 'text', 'text' => "Test code block\nin new line"],
@@ -143,11 +144,15 @@ class PageScraperTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'figure',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'embed',
                             'attrs' => [
                                 'url' => 'https://www.youtube.com/embed/1234',
+                                'suggestions' => null,
                             ],
                         ],
                     ],
@@ -172,6 +177,9 @@ class PageScraperTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'figure',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'image',
@@ -180,6 +188,7 @@ class PageScraperTest extends KernelTestCase
                                 'alt' => null,
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                     ],
@@ -202,6 +211,9 @@ class PageScraperTest extends KernelTestCase
             'content' => [
                 [
                     'type' => 'figure',
+                    'attrs' => [
+                        'suggestions' => null,
+                    ],
                     'content' => [
                         [
                             'type' => 'image',
@@ -210,6 +222,7 @@ class PageScraperTest extends KernelTestCase
                                 'alt' => null,
                                 'width' => null,
                                 'height' => null,
+                                'suggestions' => null,
                             ],
                         ],
                     ],

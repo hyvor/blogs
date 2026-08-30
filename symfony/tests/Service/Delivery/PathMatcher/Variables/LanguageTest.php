@@ -21,8 +21,8 @@ class LanguageTest extends KernelTestCase
     public function test_uses_primary_language_for_root_path(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        LanguageFactory::createOneFor($blog, ['is_primary' => false, 'code' => 'fr']);
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createIndexTwig($blog, '{{ _lang.code }}');
 
@@ -34,8 +34,8 @@ class LanguageTest extends KernelTestCase
     public function test_strips_language_prefix_from_path(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        LanguageFactory::createOneFor($blog, ['is_primary' => false, 'code' => 'fr']);
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createIndexTwig($blog, '{{ _lang.code }}');
 
@@ -46,8 +46,8 @@ class LanguageTest extends KernelTestCase
     public function test_does_not_strip_invalid_language_prefix(): void
     {
         $blog = BlogFactory::createOne();
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => true, 'code' => 'en']);
-        LanguageFactory::createOne(['blog' => $blog, 'is_primary' => false, 'code' => 'fr']);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        LanguageFactory::createOneFor($blog, ['is_primary' => false, 'code' => 'fr']);
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createTemplateTwig($blog, '404.twig', '{{ _lang.code }}');
 
