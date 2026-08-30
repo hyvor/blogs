@@ -13,6 +13,7 @@ use App\Api\Data\Resolver\MapBlogFromSubdomain;
 use App\Entity\Blog;
 use App\Service\Post\PostSearchService;
 use App\Service\Post\PostService;
+use Hyvor\FilterQ\Exceptions\FilterQException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,7 +27,7 @@ class PostsController
         'published_at' => 'pv.published_at',
         'created_at' => 'p.created_at',
         'id' => 'p.id',
-        'updated_at' => 'pv.updated_at',
+        'updated_at' => 'pv.content_updated_at',
         'is_featured' => 'p.is_featured',
         'title' => 'pv.title',
         'words' => 'pv.words',
@@ -85,15 +86,19 @@ class PostsController
         $offset = $this->dataApiHelper->getOffset($page, $limit);
         $orderBys = $this->dataApiHelper->getSort($input->sort, self::ALLOWED_SORTS);
 
-        $result = $this->postService->getPostsWithFilterQ(
-            $blog,
-            $language,
-            $input->filter,
-            $limit,
-            $offset,
-            isPage: $input->pages,
-            orderBys: $orderBys,
-        );
+        try {
+            $result = $this->postService->getPostsWithFilterQ(
+                $blog,
+                $language,
+                $input->filter,
+                $limit,
+                $offset,
+                isPage: $input->pages,
+                orderBys: $orderBys,
+            );
+        } catch (FilterQException $e) {
+            throw new UnprocessableEntityHttpException('Invalid filter: ' . $e->getMessage());
+        }
 
         $postObjects = array_map(
             fn ($post) => $this->postObjectFactory->create($blog, $post, $language),
