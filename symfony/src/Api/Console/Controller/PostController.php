@@ -184,7 +184,7 @@ class PostController
 
         $variant = $this->postService->createPostVariant($post, $language);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog), 201);
+        return new JsonResponse($this->postObjectFactory->createVariant($variant), 201);
     }
 
     #[Route('/post/{id}/variant', methods: ['PATCH'])]
@@ -264,7 +264,7 @@ class PostController
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant/publish', methods: ['POST'])]
@@ -302,7 +302,7 @@ class PostController
                 null,
         );
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
@@ -320,7 +320,7 @@ class PostController
 
         $variant = $this->postService->unpublishPostVariant($variant);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]

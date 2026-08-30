@@ -26,7 +26,6 @@ class PostVariantObject
 
     public function __construct(
         PostVariant $variant,
-        Post $post,
         PermalinkService $permalinkService,
     ) {
         $this->id = $variant->getId();

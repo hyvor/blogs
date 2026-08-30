@@ -22,7 +22,6 @@ class SitemapParser extends ParserAbstract
         private readonly string $sitemapUrl,
         private readonly PageScraperOptions $pageScraperOptions,
         private readonly HttpClientInterface $httpClient,
-        private readonly PostContentService $postContentService,
         private AppConfig $appConfig
     ) {
     }
@@ -54,7 +53,6 @@ class SitemapParser extends ParserAbstract
                 $url,
                 $this->pageScraperOptions,
                 $this->httpClient,
-                $this->postContentService,
                 $this->appConfig->getHttpBotUserAgent()
             );
             $scraper->scrape();

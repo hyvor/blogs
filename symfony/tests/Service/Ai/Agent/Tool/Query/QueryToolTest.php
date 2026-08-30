@@ -33,7 +33,7 @@ class QueryToolTest extends KernelTestCase
             $this->getService(UserService::class),
             $this->getService(PostService::class),
             $this->getService(LanguageService::class),
-            $this->getService(LoggerInterface::class),
+            // $this->getService(LoggerInterface::class),
         );
     }
 

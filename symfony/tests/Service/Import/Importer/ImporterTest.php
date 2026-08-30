@@ -82,7 +82,6 @@ class ImporterTest extends KernelTestCase
             true,
             $this->getService(Connection::class),
             $this->getService(LanguageService::class),
-            $this->getService(UserService::class),
             $this->getService(PostService::class),
             $this->getService(MediaService::class),
             $this->getService(PermalinkService::class),

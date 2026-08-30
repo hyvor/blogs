@@ -104,7 +104,7 @@ class HyvorBlogsExporter implements ExporterInterface
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
 
         return array_map(
-            fn($variant) => $this->postObjectFactory->createVariant($variant, $post, $blog, setHtml: true),
+            fn($variant) => $this->postObjectFactory->createVariant($variant), // TODO: set HTML
             $variants,
         );
     }

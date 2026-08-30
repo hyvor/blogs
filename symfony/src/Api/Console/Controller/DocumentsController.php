@@ -66,7 +66,7 @@ class DocumentsController
 
         return new JsonResponse([
             'post' => $this->postObjectFactory->create($post, $blog),
-            'variant' => $this->postObjectFactory->createVariant($variant, $post, $blog),
+            'variant' => $this->postObjectFactory->createVariant($variant),
             'document' => [
                 'checkpoint_version' => $variant->getContentUnsavedVersion(),
                 'checkpoint_content' => $variant->getContentUnsaved(),

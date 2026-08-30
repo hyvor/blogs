@@ -6,7 +6,8 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Blog\Hosting\UpdateBlogUrlsService;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
+use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
@@ -52,12 +53,11 @@ class HostingChangeServiceTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
 
-        $failingUrlsService = new class extends UpdateBlogUrlsService {
+        $failingUrlsService = new class extends UpdateBlogUrlsMessageHandler {
             public function __construct()
             {
             }
-
-            public function updateUrls(Blog $blog, string $oldUrl, string $newUrl): void
+            public function __invoke(UpdateBlogUrlsMessage $message): void
             {
                 throw new \RuntimeException('boom');
             }

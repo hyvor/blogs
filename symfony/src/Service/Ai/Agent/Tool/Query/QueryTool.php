@@ -41,7 +41,7 @@ class QueryTool
         private UserService $userService,
         private PostService $postService,
         private LanguageService $languageService,
-        private LoggerInterface $logger,
+        // private LoggerInterface $logger,
     ) {}
 
     /**

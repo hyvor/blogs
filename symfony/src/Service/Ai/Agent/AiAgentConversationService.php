@@ -38,9 +38,6 @@ class AiAgentConversationService
 
     public function __construct(
         private EntityManagerInterface $em,
-        private PostService $postService,
-        private PostContentService $postContentService,
-        private PermalinkService $permalinkService,
         private AiAgentService $aiAgentService,
         private ToolCallEventFactory $toolCallEventFactory,
     ) {}

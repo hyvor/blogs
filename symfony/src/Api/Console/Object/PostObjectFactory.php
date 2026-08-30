@@ -30,13 +30,9 @@ class PostObjectFactory
 
     public function createVariant(
         PostVariant $variant,
-        Post $post,
-        Blog $blog,
-        bool $setHtml = false,
     ): PostVariantObject {
         return new PostVariantObject(
             $variant,
-            $post,
             $this->permalinkService,
         );
     }

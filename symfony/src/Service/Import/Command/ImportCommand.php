@@ -34,7 +34,6 @@ class ImportCommand
         private PostContentService $postContentService,
         private Connection $connection,
         private LanguageService $languageService,
-        private UserService $userService,
         private PostService $postService,
         private MediaService $mediaService,
     ) {
@@ -67,8 +66,8 @@ class ImportCommand
 
         try {
             $parser = match ($from) {
-                'wordpress' => new WordPressParser($blog, $path, $log, $this->permalinkService, $this->postContentService),
-                'typepad' => new TypepadParser($blog, $path, $log, $this->permalinkService, $this->postContentService),
+                'wordpress' => new WordPressParser($blog, $path, $log, $this->permalinkService),
+                'typepad' => new TypepadParser($blog, $path, $log, $this->permalinkService),
                 default => throw new ParserException('Invalid import source: ' . $from),
             };
         } catch (ParserException $e) {
@@ -104,7 +103,6 @@ class ImportCommand
                 !$noImages,
                 $this->connection,
                 $this->languageService,
-                $this->userService,
                 $this->postService,
                 $this->mediaService,
                 $this->permalinkService,

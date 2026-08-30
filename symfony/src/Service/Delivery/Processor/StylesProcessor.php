@@ -12,6 +12,7 @@ use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Integration\Bunny\BunnyService;
 use App\Service\Integration\Bunny\UnableToFetchBunnyException;
 use App\Service\Route\PermalinkService;
+use App\Service\Theme\Exception\ThemeConfigParsingException;
 use App\Service\Theme\ThemeConfigService;
 use App\Service\Theme\ThemeFilesService;
 use MatthiasMullie\Minify;
@@ -91,7 +92,15 @@ class StylesProcessor
      */
     private function addFontCss(Blog $blog, string $css): array
     {
-        $config = $this->themeConfigService->getConfig($blog);
+        try {
+            $config = $this->themeConfigService->getConfig($blog);
+        } catch (ThemeConfigParsingException $e) {
+            return [
+                $css,
+                true,
+                $e->getMessage()
+            ];
+        }
         $themeFonts = $config['THEME_FONTS'] ?? null;
         if (!is_string($themeFonts)) {
             return [$css, false, null];

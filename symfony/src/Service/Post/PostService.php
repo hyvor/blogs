@@ -47,7 +47,6 @@ class PostService
         private EventDispatcherInterface $ed,
         private PostSlugService $postSlugService,
         private PostContentService $postContentService,
-        private PostSuggestionContentChecker $postSuggestionContentChecker,
         private FullTextSearchService $fullTextSearchService
     ) {}
 

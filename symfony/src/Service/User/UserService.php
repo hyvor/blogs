@@ -43,7 +43,6 @@ class UserService
         private AuthInterface $auth,
         private MediaService $mediaService,
         private PermalinkService $permalinkService,
-        private InternalConfig $internalConfig,
     ) {}
 
     public function getUserByBlogAndAuthUser(Blog $blog, AuthUser|int $authUserOrId): ?User
