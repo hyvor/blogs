@@ -31,7 +31,7 @@ class HtmlParserTest extends KernelTestCase
             </p>
         HTML;
 
-        $parser = new HtmlParser($html, $this->postSchema());
+        $parser = new HtmlParser($html);
         $doc = $parser->parse($this->blog());
 
         $this->assertSame([
@@ -68,7 +68,7 @@ class HtmlParserTest extends KernelTestCase
                 </a> <strong>More text</strong></p>
         HTML;
 
-        $parser = new HtmlParser($html, $this->postSchema());
+        $parser = new HtmlParser($html);
         $doc = $parser->parse($this->blog());
 
         $this->assertSame([

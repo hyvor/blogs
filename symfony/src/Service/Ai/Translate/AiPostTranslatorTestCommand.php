@@ -8,7 +8,6 @@ use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Ai\AiProvider;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -22,10 +21,12 @@ class AiPostTranslatorTestCommand
 
     public function __construct(
         private AiPostTranslator $aiPostTranslator,
-        private EntityManagerInterface $em,
     ) {}
 
-    public function __invoke()
+    /**
+     * @throws TranslateException
+     */
+    public function __invoke(): void
     {
 
         $content = [

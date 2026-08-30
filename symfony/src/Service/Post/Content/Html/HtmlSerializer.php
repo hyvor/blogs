@@ -436,7 +436,7 @@ class HtmlSerializer
 
         $isInternal = $blog && $this->isLinkInternal($blog, $href);
         $rel = $this->getLinkRel(
-            $isInternal || $blog->getMeta()->seo_external_links_follow === SeoExternalLinksFollow::FOLLOW
+            $isInternal || ($blog !== null && $blog->getMeta()->seo_external_links_follow === SeoExternalLinksFollow::FOLLOW)
         );
 
         $target = $isInternal ? '' : ' target="_blank"';

@@ -50,10 +50,10 @@ class HyvorPostController extends AbstractController
             throw new UnprocessableEntityHttpException('This blog is already connected to Hyvor Post');
         }
 
-        $blogName = $this->blogService->getBlogVariant($blog, $this->languageService->getPrimaryLanguage($blog))->getName();
+        $blogVariant = $this->blogService->getBlogVariant($blog, $this->languageService->getPrimaryLanguage($blog));
 
         try {
-            $hyvorPost = $this->hyvorPostService->connect($blog, $blogName, $blog->getSubdomain(), $user);
+            $hyvorPost = $this->hyvorPostService->connect($blog, (string) $blogVariant?->getName(), $blog->getSubdomain(), $user);
         } catch (HyvorApiException) {
             throw new UnprocessableEntityHttpException('Failed to connect to Hyvor Post. Please try again later.');
         }

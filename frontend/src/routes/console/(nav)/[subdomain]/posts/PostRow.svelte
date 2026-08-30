@@ -22,6 +22,7 @@
 	import { getPrimaryLanguage, languagesStore } from '../../../lib/stores/languagesStore';
 	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
 	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
+	import TagChip from './TagChip.svelte';
 
 	interface Props {
 		post: PostListItem;
@@ -174,7 +175,7 @@
 
 			<div class="post-tags">
 				{#each post.tags as tag}
-					<Tag size="x-small" bg="#f1f1f1"><span class="hashtag">#</span>{tag.name}</Tag>
+					<TagChip {tag} size="x-small" />
 				{/each}
 			</div>
 		{/if}

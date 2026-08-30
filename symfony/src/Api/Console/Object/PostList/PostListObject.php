@@ -6,6 +6,7 @@ use App\Api\Console\Object\PostVariantSummaryObject;
 use App\Entity\Language;
 use App\Entity\Post;
 use App\Entity\Tag;
+use App\Entity\TagVariant;
 use App\Entity\User;
 use App\Entity\UserVariant;
 use App\Service\Route\PermalinkService;
@@ -86,7 +87,7 @@ class PostListObject
     }
 
     /**
-     * @param UserVariant $variants
+     * @param array<UserVariant|TagVariant> $variants
      */
     private static function primaryVariantName(array $variants): string
     {

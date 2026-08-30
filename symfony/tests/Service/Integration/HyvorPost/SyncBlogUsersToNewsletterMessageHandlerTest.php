@@ -13,9 +13,9 @@ use App\Tests\Helper\Fixtures;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
-use Hyvor\Sdk\HyvorClient;
-use Hyvor\Sdk\Post\Dto\User\User;
-use Hyvor\Sdk\Post\Dto\User\UserMini;
+use Hyvor\Sdk\Post\Dto\User;
+use Hyvor\Sdk\Post\Dto\UserMini;
+use Hyvor\Sdk\Post\PostClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
@@ -70,7 +70,7 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->container->set(CloudApiService::class, $cloudApiServiceMock);
 
         $transport = $this->transport('async')->throwExceptions();
@@ -146,7 +146,7 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->container->set(CloudApiService::class, $cloudApiServiceMock);
 
         $transport = $this->transport('async')->throwExceptions();
@@ -197,7 +197,7 @@ class SyncBlogUsersToNewsletterMessageHandlerTest extends KernelTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->container->set(CloudApiService::class, $cloudApiServiceMock);
 
         $transport = $this->transport('async')->throwExceptions();

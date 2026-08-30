@@ -13,7 +13,7 @@ class FilesystemFactory
 
     public const string LOCAL_MEDIA_DIR = '/app/media';
 
-    /** @param 's3'|'memory' $adapterType */
+    /** @param 's3'|'file'|'memory' $adapterType */
     public static function create(
         string $adapterType,
         S3Client $s3Client,

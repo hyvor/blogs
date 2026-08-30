@@ -38,9 +38,6 @@ class AiAgentConversationService
 
     public function __construct(
         private EntityManagerInterface $em,
-        private PostService $postService,
-        private PostContentService $postContentService,
-        private PermalinkService $permalinkService,
         private AiAgentService $aiAgentService,
         private ToolCallEventFactory $toolCallEventFactory,
     ) {}
@@ -83,7 +80,10 @@ class AiAgentConversationService
         $openChunk = null;
         $openChunkType = null;
 
-        foreach ($agentCallResult->getResult()->getContent() as $delta) {
+        $content = $agentCallResult->getResult()->getContent();
+        assert(is_iterable($content));
+
+        foreach ($content as $delta) {
             if ($delta instanceof TextDelta) {
                 $text = (string) $delta;
                 $assistantText .= $text;

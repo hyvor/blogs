@@ -79,6 +79,9 @@ class CreateBlogTest extends ApiTestCase
         $this->setEnvVar('DEPLOYMENT', Deployment::ON_PREM->value);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function create(array $data): Response
     {
         $user = AuthFake::generateUser(['id' => 501]);
@@ -119,6 +122,7 @@ class CreateBlogTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
+        /** @var array<string, mixed> $blogJson */
         $blogJson = $json['blog'] ?? [];
         $this->assertSame('new-blog', $blogJson['subdomain']);
         $this->assertSame('default', $blogJson['type']);
@@ -131,7 +135,10 @@ class CreateBlogTest extends ApiTestCase
         $this->assertSame('127.0.0.1', $blog->getIp());
         $this->assertSame(501, $blog->getHyvorUserId());
         $this->assertSame(1, $blog->getOrganizationId());
-        $this->assertSame(2, $blog->getCounts()['posts']);
+        $counts = $blog->getCounts();
+        $this->assertIsArray($counts);
+        $this->assertArrayHasKey('posts', $counts);
+        $this->assertSame(2, $counts['posts']);
 
         // BlogVariant filler
         $variants = $this->getEm()->getRepository(BlogVariant::class)->findBy(['blog' => $blog]);

@@ -118,9 +118,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         return new AiAgentConversationService(
             $this->getService(EntityManagerInterface::class),
-            $fakePostService,
-            $this->getService(PostContentService::class),
-            $this->getService(PermalinkService::class),
             $fakeAiAgentService,
             new ToolCallEventFactory(),
         );

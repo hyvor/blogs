@@ -5,7 +5,7 @@
 	import TagName from '../settings/tags/TagName.svelte';
 
 	interface Props {
-		tag: TagType;
+		tag: TagType | { id?: undefined; name: string; is_private: boolean };
 		size?: 'x-small' | 'small' | 'medium';
 		end?: Snippet;
 	}

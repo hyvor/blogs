@@ -25,7 +25,6 @@ class Importer
         private readonly bool $importImages,
         private readonly Connection $connection,
         private readonly LanguageService $languageService,
-        private readonly UserService $userService,
         private readonly PostService $postService,
         private readonly MediaService $mediaService,
         private readonly PermalinkService $permalinkService,

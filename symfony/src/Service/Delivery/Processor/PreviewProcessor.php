@@ -38,6 +38,11 @@ class PreviewProcessor
         }
 
         $languageCode = $matchedRoute->param('lang');
+
+        if (!$languageCode) {
+            return null;
+        }
+
         $language = $this->languageService->getLanguageByCode($blog, $languageCode);
 
         if (!$language) {

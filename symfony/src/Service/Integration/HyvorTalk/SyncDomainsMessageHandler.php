@@ -30,6 +30,11 @@ class SyncDomainsMessageHandler
             return;
         }
 
+        $this->logger->info(
+            'Syncing domains to Hyvor Talk website',
+            ['blogId' => $blog->getId(), 'websiteId' => $hyvorTalk->getWebsiteId()]
+        );
+
         $this->hyvorTalkService->addDomains($hyvorTalk);
     }
 

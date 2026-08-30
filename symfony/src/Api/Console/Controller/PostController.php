@@ -184,7 +184,7 @@ class PostController
 
         $variant = $this->postService->createPostVariant($post, $language);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog), 201);
+        return new JsonResponse($this->postObjectFactory->createVariant($variant), 201);
     }
 
     #[Route('/post/{id}/variant', methods: ['PATCH'])]
@@ -264,7 +264,7 @@ class PostController
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant/publish', methods: ['POST'])]
@@ -284,14 +284,14 @@ class PostController
             throw new UnprocessableEntityHttpException('Post variant is already ' . $variant->getStatus()->value);
         }
 
+        if ($variant->getContentUnsaved() === null) {
+            throw new UnprocessableEntityHttpException('Cannot publish post variant with no content');
+        }
+
         if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContentUnsaved())) {
             throw new UnprocessableEntityHttpException(
                 'This post has unresolved suggestions or comments. Resolve them before publishing.',
             );
-        }
-
-        if ($variant->getContentUnsaved() === null) {
-            throw new UnprocessableEntityHttpException('Cannot publish post variant with no content');
         }
 
         $variant = $this->postService->publishPostVariant(
@@ -302,7 +302,7 @@ class PostController
                 null,
         );
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
@@ -313,19 +313,14 @@ class PostController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        $language = $this->languageService->getLanguageById($blog, $input->language_id);
-        if ($language === null) {
-            throw new UnprocessableEntityHttpException('Language not found');
-        }
-
-        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
         if ($variant === null) {
             throw new NotFoundHttpException('Variant not found');
         }
 
         $variant = $this->postService->unpublishPostVariant($variant);
 
-        return new JsonResponse($this->postObjectFactory->createVariant($variant, $post, $blog));
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]

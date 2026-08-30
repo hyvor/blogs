@@ -3,24 +3,19 @@
 namespace App\Service\Post\Suggestion;
 
 /**
- * Scans a post variant's raw content JSON (before it is parsed into a Document) for any
- * pending track-changes suggestion or open comment thread - a `suggestion` mark instance,
- * or a non-empty `suggestions` node attr (see App\Service\Post\Content\Marks\Suggestion
- * and SuggestionsAttrTrait). Used to block a post from going public (publish, or
- * "Update" on an already-published post) while it still has unresolved suggestions/
- * comments, so raw <ins>/<del>/comment markup can never leak into the public HTML.
+ * Publishing with pending suggestions is a bad idea:
+ * - <del> are not supposed to be in content
+ * - even <ins> and <format> types are buggy to have.
+ * hence, it's better to force the user to resolve suggestions before publishing.
  *
- * Deliberately walks the decoded JSON directly instead of going through PostSchema/
- * Document::fromJson - this only needs to answer a yes/no question, not build a full
- * validated document, and must also tolerate content that fails schema validation.
+ * Checks whether the given Document contains any pending suggestions
+ * Does not check for comments, only suggestions (insert, delete, format)
+ * Deliberately walks the decoded JSON directly instead of going through PostSchema
  */
 class PostSuggestionContentChecker
 {
 
-    /**
-     * Checks whether the given Document contains any pending suggestions
-     * Does not check for comments, only suggestions (insert, delete, format)
-     */
+
     public function hasPendingSuggestions(?string $json): bool
     {
         if ($json === null || $json === '') {
@@ -48,7 +43,7 @@ class PostSuggestionContentChecker
         $attrs = $node['attrs'] ?? null;
         if (is_array($attrs)) {
             $suggestions = $attrs['suggestions'] ?? null;
-            if (is_array($suggestions) && count($suggestions) > 0) {
+            if (is_array($suggestions) && $this->hasNonCommentSuggestions($suggestions) > 0) {
                 return true;
             }
         }
@@ -56,7 +51,12 @@ class PostSuggestionContentChecker
         $marks = $node['marks'] ?? null;
         if (is_array($marks)) {
             foreach ($marks as $mark) {
-                if (is_array($mark) && ($mark['type'] ?? null) === 'suggestion') {
+                if (
+                    is_array($mark) &&
+                    ($mark['type'] ?? null) === 'suggestion' &&
+                    is_array($mark['attrs'] ?? null) &&
+                    ($mark['attrs']['type'] ?? null) !== 'comment'
+                ) {
                     return true;
                 }
             }
@@ -72,5 +72,18 @@ class PostSuggestionContentChecker
         }
 
         return false;
+    }
+
+    /**
+     * @param array<mixed> $suggestionsAttrValue
+     */
+    private function hasNonCommentSuggestions(array $suggestionsAttrValue): bool
+    {
+        return count(
+            array_filter(
+                $suggestionsAttrValue,
+                fn ($suggestion) => is_array($suggestion) && ($suggestion['type'] ?? null) !== 'comment'
+            )
+        ) > 0;
     }
 }

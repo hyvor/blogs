@@ -39,7 +39,6 @@ class SitemapParserTest extends KernelTestCase
             $sitemapUrl,
             new PageScraperOptions(contentSelector: 'article'),
             $this->getService(HttpClientInterface::class),
-            $this->getService(PostContentService::class),
             $this->getService(AppConfig::class),
         );
     }

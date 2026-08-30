@@ -25,7 +25,6 @@ class TypepadParserTest extends KernelTestCase
             $path,
             new ImportLog(),
             $this->getService(PermalinkService::class),
-            $this->getService(PostContentService::class),
         );
         $parser->parse();
 

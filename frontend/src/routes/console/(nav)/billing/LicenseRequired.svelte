@@ -5,6 +5,7 @@
 	import { Button } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
 	import { resolvedLicenseStore } from '../../lib/stores';
+	import { getConfig } from '../../lib/config';
 
 	interface Props {
 		licenseProperty?: keyof License;
@@ -18,6 +19,11 @@
 	let hasLicense = $derived(licenseCheck());
 
 	function licenseCheck() {
+		// always true on on-premise
+		if (getConfig().deployment === 'on-prem') {
+			return true;
+		}
+
 		const resolvedLicense = $resolvedLicenseStore;
 
 		// not allowed in trial

@@ -88,6 +88,9 @@ class RedirectService
         ]);
     }
 
+    /**
+     * @param object[] $events
+     */
     public function createRedirect(
         Blog $blog,
         bool $dynamic,
@@ -123,6 +126,7 @@ class RedirectService
 
     /**
      * @param array{path?: string, to?: string, type?: RedirectType} $updates
+     * @param object[] $events
      */
     public function updateRedirect(
         Redirect $redirect,

@@ -200,7 +200,7 @@ class PermalinkService
      * 2. author name matches
      * 3. published date matches
      *
-     * @param string[] $params
+     * @param array<string, string> $params
      * MatchedRoute->params
      */
     public function validatePostPermalinkParams(PostVariant $variant, array $params): bool

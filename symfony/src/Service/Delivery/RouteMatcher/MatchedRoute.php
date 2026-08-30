@@ -6,7 +6,7 @@ class MatchedRoute
 {
     public readonly string $name;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     public readonly array $params;
 
     /**
@@ -24,7 +24,7 @@ class MatchedRoute
             if ($key === '_route') {
                 $name = is_string($value) ? $value : '';
             } else {
-                $params[$key] = $value;
+                $params[$key] = is_scalar($value) ? (string)$value : '';
             }
         }
         $this->name = $name;

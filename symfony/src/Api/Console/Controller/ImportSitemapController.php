@@ -67,7 +67,6 @@ class ImportSitemapController
             $input->url,
             $options,
             $this->httpClient,
-            $this->postContentService,
             $this->appConfig->getHttpBotUserAgent(),
         );
         $scraper->scrape();

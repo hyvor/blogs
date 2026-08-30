@@ -59,10 +59,16 @@ class SyncBlogUsersToWebsiteMessageHandler
 
         // paginate through users and sync them to the website
 
+        $organizationId = $hyvorTalk->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $page = 1;
         $pageSize = 25;
 
         do {
+            /** @var User[] $users */
             $users = $this->em->getRepository(User::class)
                 ->createQueryBuilder('u')
                 ->where('u.blog = :blog')
@@ -78,17 +84,18 @@ class SyncBlogUsersToWebsiteMessageHandler
 
             foreach ($users as $user) {
                 $role = HyvorTalkService::mapUserRole($user->getRole());
+                $hyvorUserId = $user->getHyvorUserId();
 
-                if ($role === null || $user->getHyvorUserId() === null) {
+                if ($role === null || $hyvorUserId === null) {
                     continue;
                 }
 
                 $this->logger->info('Syncing user to Hyvor Talk website', ['userId' => $user->getId(), 'blogId' => $hyvorTalk->getBlog()->getId()]);
 
                 $this->hyvorTalkService->addMod(
-                    $hyvorTalk->getBlog()->getOrganizationId(),
+                    $organizationId,
                     $hyvorTalk->getWebsiteId(),
-                    $user->getHyvorUserId(),
+                    $hyvorUserId,
                     $role
                 );
             }
@@ -99,15 +106,23 @@ class SyncBlogUsersToWebsiteMessageHandler
         } while (count($users) === $pageSize);
     }
 
+    /**
+     * @param 'admin'|'mod' $role
+     */
     private function syncSingleUser(HyvorTalkWebsite $hyvorTalk, int $hyvorUserId, string $role): void
     {
+        $organizationId = $hyvorTalk->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $this->logger->info(
             'Syncing single user to Hyvor Talk website',
             ['blogId' => $hyvorTalk->getBlog()->getId(), 'websiteId' => $hyvorTalk->getWebsiteId(), 'hyvorUserId' => $hyvorUserId]
         );
 
         $this->hyvorTalkService->addMod(
-            $hyvorTalk->getBlog()->getOrganizationId(),
+            $organizationId,
             $hyvorTalk->getWebsiteId(),
             $hyvorUserId,
             $role
@@ -116,13 +131,18 @@ class SyncBlogUsersToWebsiteMessageHandler
 
     private function removeUserFromHyvorTalk(HyvorTalkWebsite $hyvorTalk, int $hyvorUserId): void
     {
+        $organizationId = $hyvorTalk->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $this->logger->info(
             'Removing mod from Hyvor Talk website',
             ['blogId' => $hyvorTalk->getBlog()->getId(), 'websiteId' => $hyvorTalk->getWebsiteId(), 'hyvorUserId' => $hyvorUserId]
         );
 
         $this->hyvorTalkService->removeMod(
-            $hyvorTalk->getBlog()->getOrganizationId(),
+            $organizationId,
             $hyvorTalk->getWebsiteId(),
             $hyvorUserId
         );

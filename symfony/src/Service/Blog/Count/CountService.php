@@ -31,6 +31,8 @@ class CountService
     /**
      * Recalculation is idempotent
      * Uses a lock to avoid multiple recalculations in parallel
+     *
+     * @param int[]|null $entityIds
      */
     public function recalculate(
         Blog $blog,
@@ -139,6 +141,9 @@ class CountService
         $this->recalculatePostAuthorsOrTags($blog, $tagIds, 'tags', 'post_tag', 'tag_id');
     }
 
+    /**
+     * @param int[]|null $entityIds
+     */
     private function recalculatePostAuthorsOrTags(
         Blog $blog,
         ?array $entityIds,

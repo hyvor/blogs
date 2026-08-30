@@ -18,6 +18,7 @@ class PostSearchService
     ) {}
 
     /**
+     * search for the data API
      * @return array{posts: Post[], total: int}
      */
     public function search(
@@ -61,10 +62,13 @@ class PostSearchService
             "SELECT pv.post_id FROM post_variants pv JOIN posts p ON p.id = pv.post_id WHERE $where
             ORDER BY ts_rank(pv.calculated_ts, to_tsquery(pv.ts_language, :query)) DESC
             LIMIT :limit OFFSET :offset",
-            array_merge($params, [
-                'limit' => $limit,
-                'offset' => $offset,
-            ])
+            array_merge(
+                $params,
+                [
+                    'limit' => $limit,
+                    'offset' => $offset,
+                ]
+            )
         );
 
         /** @var array<int|string> $ids */

@@ -16,11 +16,13 @@ class HtmlParser
      */
     private array $customFilters = [];
 
+    private PostSchema $postSchema;
+
     public function __construct(
         private string $html,
-        private PostSchema $postSchema,
     ) {
         $this->html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' . trim($this->html) . '</body></html>';
+        $this->postSchema = new PostSchema();
     }
 
     /**

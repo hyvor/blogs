@@ -24,7 +24,7 @@ class HyvorTalkListener
      * add the hyvor talk embed code to the comments template
      */
     #[AsEventListener]
-    public function onTemplateRendering(TemplateRenderingEvent $event)
+    public function onTemplateRendering(TemplateRenderingEvent $event): void
     {
         $ht = $this->hyvorTalkService->getHyvorTalkWebsiteOfBlog($event->blog);
 
@@ -35,7 +35,9 @@ class HyvorTalkListener
         $variables = $event->getVariables();
 
         $code = HyvorTalkService::getEmbedCode($ht);
-        $variables['_comments'] .= $code;
+        /** @var string $comments */
+        $comments = $variables['_comments'] ?? '';
+        $variables['_comments'] = $comments . $code;
 
         $event->setVariables($variables);
     }

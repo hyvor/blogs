@@ -115,7 +115,7 @@ class BlogCacheService
 
         // when the whole blog cache is cleared
         $lastCacheAllCleared = $this->getIntItem($this->getKey($blog, self::LAST_ALL_CACHE_CLEARED_AT));
-        if (is_int($lastCacheAllCleared) && $objectCreatedAt < $lastCacheAllCleared) {
+        if ($objectCreatedAt < $lastCacheAllCleared) {
             return null;
         }
 

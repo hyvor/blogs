@@ -18,29 +18,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostService::class)]
 class UnpublishPostVariantTest extends ApiTestCase
 {
-    public function test_language_not_found(): void
-    {
-        $blog = BlogFactory::createOneWithPrimaryLanguage();
-        $user = UserFactory::createOne(['blog' => $blog]);
-        $post = PostFactory::createOne(['blog' => $blog]);
-
-        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/unpublish', [
-            'language_id' => 9999,
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'Language not found');
-    }
-
     public function test_variant_not_found(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage();
         $user = UserFactory::createOne(['blog' => $blog]);
         $post = PostFactory::createOne(['blog' => $blog]);
-        $language = $blog->getLanguages()->first();
-        $this->assertNotFalse($language);
 
         $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/unpublish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => 9999,
         ], user: $user);
 
         $this->assertResponseFailed(404, 'Variant not found');
@@ -54,7 +39,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog]);
-        PostVariantFactory::createOne([
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::PUBLISHED,
@@ -62,7 +47,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         ]);
 
         $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/unpublish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => $variant->getId(),
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
@@ -79,7 +64,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         $language = $blog->getLanguages()->first();
         $this->assertNotFalse($language);
         $post = PostFactory::createOne(['blog' => $blog]);
-        PostVariantFactory::createOne([
+        $variant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
             'status' => PostVariantStatus::SCHEDULED,
@@ -87,7 +72,7 @@ class UnpublishPostVariantTest extends ApiTestCase
         ]);
 
         $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/unpublish', [
-            'language_id' => $language->getId(),
+            'post_variant_id' => $variant->getId(),
         ], user: $user);
 
         $this->assertResponseIsSuccessful();

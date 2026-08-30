@@ -31,7 +31,6 @@ class ImportMessageHandler
         private ImportService $importService,
         private Connection $connection,
         private LanguageService $languageService,
-        private UserService $userService,
         private PostService $postService,
         private MediaService $mediaService,
         private PermalinkService $permalinkService,
@@ -54,7 +53,6 @@ class ImportMessageHandler
             $message->sitemapUrl,
             PageScraperOptions::fromArray($message->scraperOptions),
             $this->httpClient,
-            $this->postContentService,
             $this->appConfig
         );
 
@@ -64,7 +62,6 @@ class ImportMessageHandler
             $message->importImages,
             $this->connection,
             $this->languageService,
-            $this->userService,
             $this->postService,
             $this->mediaService,
             $this->permalinkService,

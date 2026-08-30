@@ -26,7 +26,6 @@ class PageScraperTest extends KernelTestCase
             'https://example.com/page',
             $options,
             $this->getService(HttpClientInterface::class),
-            $this->getService(PostContentService::class),
             'TestBot/1.0'
         );
     }

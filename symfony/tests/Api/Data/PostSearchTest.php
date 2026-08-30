@@ -7,6 +7,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Language;
 use App\Entity\Post;
+use App\Service\Post\PostSearchService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\PostFactory;
@@ -14,6 +15,7 @@ use App\Tests\Factory\PostVariantFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostsController::class)]
+#[CoversClass(PostSearchService::class)]
 class PostSearchTest extends ApiTestCase
 {
 

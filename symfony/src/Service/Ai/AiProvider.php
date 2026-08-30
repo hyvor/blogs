@@ -8,6 +8,9 @@ enum AiProvider: string
     case OPENAI = 'openai';
     case ANTHROPIC = 'anthropic';
 
+    /**
+     * @return non-empty-string
+     */
     public function model(): string
     {
         return match ($this) {

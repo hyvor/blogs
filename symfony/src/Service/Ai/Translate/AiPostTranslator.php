@@ -152,7 +152,7 @@ PROMPT;
                 'provider' => $provider,
                 'model' => $provider->model(),
                 'messages' => $messages,
-                'result' => $textResult ?? null,
+                'result' => $textResult,
                 'exception' => $e
             ]);
             throw new TranslateException('Failed to decode translation result.');
@@ -178,8 +178,9 @@ PROMPT;
                 $index = array_search($node, $nodes, true);
                 if ($index !== false) {
                     $translation = array_find($contentTranslations, fn($t) => ($t->id ?? null) === $index);
-                    $translatedHtml = $translation->html;
-                    $this->replaceFromHtml($node, $translatedHtml);
+                    if ($translation !== null) {
+                        $this->replaceFromHtml($node, $translation->html);
+                    }
                 }
             }
         });
@@ -209,14 +210,17 @@ PROMPT;
             throw new TranslateException('Failed to parse translated HTML.');
         }
 
-        if ($doc->content->count() === 1) {
-            $node->content  = $doc->content->first()->content;
+        $firstNode = $doc->content->first();
+        if ($doc->content->count() === 1 && $firstNode !== null) {
+            $node->content = $firstNode->content;
         }
     }
 
     /**
      * Symfony's structured output did not work: https://symfony.com/doc/current/ai/components/platform.html#php-classes-as-output
      * so, doing this manually here.
+     *
+     * @return array<string, mixed>
      */
     private function getOptionsForProvider(AiProvider $provider): array
     {

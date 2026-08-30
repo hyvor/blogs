@@ -2,7 +2,7 @@
 
 namespace App\Service\Post\Content\Validation;
 
-use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -12,7 +12,7 @@ class ProsemirrorJsonValidator extends ConstraintValidator
 {
 
     public function __construct(
-        private PostContentService $postContentService
+        private PostSchema $postSchema
     ) {}
 
     public function validate(mixed $value, Constraint $constraint): void
@@ -22,10 +22,7 @@ class ProsemirrorJsonValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, sprintf('Constraint must be an instance of %s', ProsemirrorJson::class));
         }
 
-        // `false` is the "not provided" sentinel used by tri-state (null|string|false)
-        // input properties - e.g. UpdatePostVariantInput's $content/$content_unsaved,
-        // where null means "explicitly clear".
-        if (null === $value || false === $value) {
+        if (null === $value) {
             return;
         }
 
@@ -37,7 +34,7 @@ class ProsemirrorJsonValidator extends ConstraintValidator
         // @codeCoverageIgnoreEnd
 
         try {
-            $this->postContentService->getDocumentFromJson($value);
+            $this->postSchema->documentFrom($value);
         } catch (PhrosemirrorException $e) {
             $this->context->buildViolation('The value must be a valid Prosemirror JSON. Error: ' . $e->getMessage())
                 ->addViolation();

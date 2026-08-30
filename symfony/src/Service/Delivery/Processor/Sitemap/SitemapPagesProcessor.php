@@ -10,6 +10,7 @@ use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\RouteMatcher\MatchedRoute;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,19 +19,14 @@ class SitemapPagesProcessor
     public function __construct(
         private LanguageService $languageService,
         private PermalinkService $permalinkService,
+        private PostContentService $postContentService,
         private EntityManagerInterface $em,
     ) {}
 
     public function process(Blog $blog): ?DeliveryResponse
     {
         $languages = $this->languageService->getAllLanguages($blog);
-        $primaryLanguage = null;
-        foreach ($languages as $lang) {
-            if ($lang->isPrimary()) {
-                $primaryLanguage = $lang;
-                break;
-            }
-        }
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
 
         $indexXML = $this->indexXML($blog, $languages);
         $pagesXML = $this->pagesXML($blog, $primaryLanguage);
@@ -85,8 +81,8 @@ class SitemapPagesProcessor
 
         $parts = [];
         foreach ($posts as $post) {
-            $entry = new UrlPostEntry($post, $this->permalinkService);
-            $parts[] = $entry->toXML();
+            $entry = new UrlPostEntry($post);
+            $parts[] = $entry->toXML($this->permalinkService, $this->postContentService);
         }
         return implode("\n", $parts);
     }

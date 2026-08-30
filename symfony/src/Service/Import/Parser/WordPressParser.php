@@ -11,7 +11,6 @@ use App\Service\Import\Importer\ParserException;
 use App\Service\Import\XmlHelper;
 use App\Service\Post\Content\DocUrlUpdater;
 use App\Service\Post\Content\HtmlParser;
-use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use Hyvor\Phrosemirror\Document\Node;
 use SimpleXMLElement;
@@ -54,7 +53,6 @@ class WordPressParser extends MediaAwareParserAbstract
 
         private ImportLog $log,
         private PermalinkService $permalinkService,
-        private PostContentService $postContentService,
     ) {
         $exportFile = $path . '/export.xml';
 
@@ -281,7 +279,7 @@ class WordPressParser extends MediaAwareParserAbstract
 
     private function getContent(string $contentHtml): string
     {
-        $parser = new HtmlParser($contentHtml, $this->postContentService);
+        $parser = new HtmlParser($contentHtml);
 
         // audio
         $parser->registerCustomFilter(

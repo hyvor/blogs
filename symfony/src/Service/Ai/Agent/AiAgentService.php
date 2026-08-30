@@ -64,7 +64,6 @@ class AiAgentService
         private TagService $tagService,
         private UserService $userService,
         private LanguageService $languageService,
-        private LoggerInterface $logger
     ) {}
 
     private function getSystemPrompt(Blog $blog, ?PostVariant $postVariant): string
@@ -97,7 +96,7 @@ class AiAgentService
                 '{markdown_schema}'
             ],
             [
-                $blog->getVariants()->first()->getName(),
+                $blog->getVariants()->toArray()[0]->getName() ?? '',
                 $currentPostPrompt,
                 MarkdownSerializer::SCHEMA_FOR_AI_AGENTS
             ],
@@ -125,7 +124,7 @@ class AiAgentService
             $this->userService,
             $this->postService,
             $this->languageService,
-            $this->logger,
+            // $this->logger,
         );
         $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
         $toolProcessor = new AgentProcessor($toolbox);

@@ -19,6 +19,37 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
+/**
+ * @phpstan-type RenderContextLanguage array{code: string, name: string}
+ * @phpstan-type RenderContext array{
+ *     _blog: array{
+ *          subdomain: string,
+ *          base_url: string,
+ *          languages: RenderContextLanguage[]
+ *     },
+ *     _lang: RenderContextLanguage,
+ *     _meta: array{url: string, title: string, featured_image?: string},
+ *     _route?: array{name: string},
+ *     _post?: array{
+ *          published_at: int,
+ *          updated_at: int,
+ *          authors: array<array{name?: string, url?: string}>,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>,
+ *          language: RenderContextLanguage,
+ *          url: string
+ *     },
+ *     _tag?: array{
+ *          language: RenderContextLanguage,
+ *          url: string,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>
+ *     },
+ *     _author?: array{
+ *          language: RenderContextLanguage,
+ *          url: string,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>
+ *     }
+ * }
+ */
 class TwigExtensions extends AbstractExtension
 {
 
@@ -69,10 +100,13 @@ class TwigExtensions extends AbstractExtension
         ];
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     private function getBlogFromContext(array $context): Blog
     {
-        $subdomain = $context['_blog']['subdomain'] ?? '';
+        $subdomain = $context['_blog']['subdomain'];
 
         if (isset($this->blogCache[$subdomain])) {
             return $this->blogCache[$subdomain];
@@ -88,14 +122,19 @@ class TwigExtensions extends AbstractExtension
         return $blog;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function assetUrlFilter(array $context, string $assetName): string
     {
-        $baseUrl = $context['_blog']['base_url'] ?? '';
+        $baseUrl = $context['_blog']['base_url'];
         return $baseUrl . '/assets/' . $assetName;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     public function assetFilter(array $context, string $assetName): string
     {
         $blog = $this->getBlogFromContext($context);
@@ -104,20 +143,22 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param string[] $args
+     * @throws Error
      */
     public function langFilter(array $context, string $key, array $args = []): ?string
     {
         $blog = $this->getBlogFromContext($context);
-        $currentLangCode = $context['_lang']['code'] ?? '';
+        $currentLangCode = $context['_lang']['code'];
 
         return $this->twigLanguage->get($blog, $currentLangCode, $key, $args);
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param mixed[] $args
+     * @throws Error
      */
     public function langByNumberFilter(array $context, ?string $value, array $args = []): ?string
     {
@@ -140,17 +181,21 @@ class TwigExtensions extends AbstractExtension
         return $this->langFilter($context, (string)$key, [(string)$intValue]);
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function templateFilter(Environment $env, array $context, string $string): string
     {
         return $env->createTemplate($string)->render($context);
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function paginationPageUrlFilter(array $context, ?int $pageNumber): string
     {
         $pageNumber ??= 1;
-        $url = $context['_meta']['url'] ?? '';
+        $url = $context['_meta']['url'];
         $url = (string) preg_replace('/\/page\/\d+$/', '', $url);
 
         $url = rtrim($url, '/');
@@ -161,7 +206,10 @@ class TwigExtensions extends AbstractExtension
         return $url;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     public function languageVariantUrlFilter(array $context, string $languageCode): string
     {
         $route = $context['_route']['name'] ?? null;
@@ -171,9 +219,9 @@ class TwigExtensions extends AbstractExtension
             $route === 'tag' || $route === 'author'
         ) {
             $object = match ($route) {
-                'post', 'page' => $context['_post'],
-                'tag' => $context['_tag'],
-                'author' => $context['_author']
+                'post', 'page' => $context['_post'] ?? throw new Error('Post not found in context'),
+                'tag' => $context['_tag'] ?? throw new Error('Tag not found in context'),
+                'author' => $context['_author'] ?? throw new Error('Author not found in context'),
             };
 
             if ($object['language']['code'] === $languageCode) {
@@ -191,7 +239,7 @@ class TwigExtensions extends AbstractExtension
 
         /** @var array<array<mixed>> $languages */
         $languages = $context['_blog']['languages'];
-        $language = collect($languages)->firstWhere('code', $languageCode);
+        $language = array_find($languages, fn($lang) => $lang['code'] === $languageCode);
 
         if (!$language) {
             return ''; // language not found?
@@ -215,7 +263,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed>|string|null $levels
+     * @param RenderContext|string|null $levels
      */
     public function tocFilter(string $content, null|array|string $levels = null): string
     {
@@ -224,11 +272,11 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
-    /** @param array<mixed> $context */
+    /** @param RenderContext $context */
     public function isCurrentUrlFunction(array $context, string $url): bool
     {
-        $currentUrl = $context['_meta']['url'] ?? '';
-        $blogBaseUrl = $context['_blog']['base_url'] ?? '';
+        $currentUrl = $context['_meta']['url'];
+        $blogBaseUrl = $context['_blog']['base_url'];
 
         $currentPath = substr($currentUrl, strlen($blogBaseUrl));
         $currentPath = trim($currentPath, '/');
@@ -250,8 +298,9 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param array<mixed> $params
+     * @throws Error
      */
     public function dataFunction(array $context, array $params = []): mixed
     {
@@ -261,15 +310,15 @@ class TwigExtensions extends AbstractExtension
         }
         unset($params['endpoint']);
 
-        $subdomain = $context['_blog']['subdomain'] ?? null;
-        if ($subdomain === null) {
-            throw new Error('Blog not found');
-        }
+        $subdomain = $context['_blog']['subdomain'];
 
         /** @var array<string, mixed> $params */
         return $this->dataApiCaller->callApi($subdomain, $endpoint, $params);
     }
 
+    /**
+     * @throws Error
+     */
     public function iconFunction(string $library, ?string $iconName, ?int $width = null, ?int $height = null): string
     {
         if (!$iconName) {
@@ -278,7 +327,8 @@ class TwigExtensions extends AbstractExtension
 
         try {
             $icon = new Icon($library, $iconName);
-            return (string) $icon->getSvg($width, $height);
+            /** @var string */
+            return $icon->getSvg($width, $height);
         } catch (InvalidLibraryException) {
             throw new Error("Invalid icon library $library for $iconName");
         } catch (IconNotFoundException) {
@@ -286,10 +336,10 @@ class TwigExtensions extends AbstractExtension
         }
     }
 
-    /** @param array<mixed> $context */
+    /** @param RenderContext $context */
     public function richSchema(array $context): string
     {
-        if (!isset($context['_meta'])) {
+        if (!isset($context['_post'])) {
             return '';
         }
 
@@ -316,8 +366,8 @@ class TwigExtensions extends AbstractExtension
             ) . "\n" . '</script>';
     }
 
-    private function getDateTimeString(string $timestamp): string
+    private function getDateTimeString(int $timestamp): string
     {
-        return (new \DateTimeImmutable('@' . $timestamp))->format(\DateTimeInterface::ATOM);
+        return \DateTimeImmutable::createFromTimestamp($timestamp)->format(\DateTimeInterface::ATOM);
     }
 }

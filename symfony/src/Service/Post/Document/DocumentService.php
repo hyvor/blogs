@@ -9,7 +9,6 @@ use App\Entity\PostVariantStep;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Document\Exception\CheckpointClientAheadException;
 use App\Service\Post\Document\Exception\CheckpointClientBehindException;
-use App\Service\Post\PostService;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -38,7 +37,6 @@ class DocumentService
     public function __construct(
         private EntityManagerInterface $em,
         private HubInterface $hub,
-        private PostService $postService,
         private PostContentService $postContentService,
         private LoggerInterface $logger
     ) {}
@@ -90,7 +88,7 @@ class DocumentService
      * submitted steps are broadcast to all subscribers via Mercure, including the submitting client.
      *
      * @param array<int, array<string, mixed>> $steps
-     * @return array{accepted: bool, version: int, steps: array<int, array<string, mixed>>, client_ids: string[]}
+     * @return array{accepted: bool, version: int, steps: StepDto[]}
      */
     public function submitSteps(
         PostVariant $variant,
@@ -223,6 +221,9 @@ class DocumentService
         });
     }
 
+    /**
+     * @param array<string, mixed>|null $user
+     */
     public function publishCursor(
         PostVariant $variant,
         string $clientId,

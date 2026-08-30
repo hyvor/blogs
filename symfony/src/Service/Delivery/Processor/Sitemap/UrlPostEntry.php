@@ -48,6 +48,9 @@ class UrlPostEntry
         return $entry->toXML();
     }
 
+    /**
+     * @return string[]
+     */
     private function findImageSrcs(
         ?string $json,
         PostContentService $postContentService,

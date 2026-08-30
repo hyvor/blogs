@@ -57,12 +57,18 @@ class SyncBlogUsersToNewsletterMessageHandler
             ['blogId' => $hyvorPost->getBlog()->getId(), 'newsletterId' => $hyvorPost->getNewsletterId()]
         );
 
-        // paginate through users and sync them to the newsletter
+        $organizationId = $hyvorPost->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            // preview blogs, etc.
+            return;
+        }
 
+        // paginate through users and sync them to the newsletter
         $page = 1;
         $pageSize = 25;
 
         do {
+            /** @var User[] $users */
             $users = $this->em->getRepository(User::class)
                 ->createQueryBuilder('u')
                 ->where('u.blog = :blog')
@@ -76,12 +82,18 @@ class SyncBlogUsersToNewsletterMessageHandler
                 ->getResult();
 
             foreach ($users as $user) {
+                $hyvorUserId = $user->getHyvorUserId();
+                if ($hyvorUserId === null) {
+                    // guests
+                    continue;
+                }
+
                 $this->logger->info('Syncing user to newsletter', ['userId' => $user->getId(), 'blogId' => $hyvorPost->getBlog()->getId()]);
 
                 $this->hyvorPostService->addUser(
-                    $hyvorPost->getBlog()->getOrganizationId(),
+                    $organizationId,
                     $hyvorPost->getNewsletterId(),
-                    $user->getHyvorUserId()
+                    $hyvorUserId
                 );
             }
 
@@ -93,13 +105,18 @@ class SyncBlogUsersToNewsletterMessageHandler
 
     private function syncSingleUser(HyvorPost $hyvorPost, int $hyvorUserId): void
     {
+        $organizationId = $hyvorPost->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $this->logger->info(
             'Syncing single user to newsletter',
             ['blogId' => $hyvorPost->getBlog()->getId(), 'newsletterId' => $hyvorPost->getNewsletterId(), 'hyvorUserId' => $hyvorUserId]
         );
 
         $this->hyvorPostService->addUser(
-            $hyvorPost->getBlog()->getOrganizationId(),
+            $organizationId,
             $hyvorPost->getNewsletterId(),
             $hyvorUserId
         );
@@ -107,13 +124,18 @@ class SyncBlogUsersToNewsletterMessageHandler
 
     private function deleteUserFromHyvorPost(HyvorPost $hyvorPost, int $hyvorUserId): void
     {
+        $organizationId = $hyvorPost->getBlog()->getOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $this->logger->info(
             'Deleting user from newsletter',
             ['blogId' => $hyvorPost->getBlog()->getId(), 'newsletterId' => $hyvorPost->getNewsletterId(), 'hyvorUserId' => $hyvorUserId]
         );
 
         $this->hyvorPostService->removeUser(
-            $hyvorPost->getBlog()->getOrganizationId(),
+            $organizationId,
             $hyvorPost->getNewsletterId(),
             $hyvorUserId
         );

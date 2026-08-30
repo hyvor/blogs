@@ -24,7 +24,7 @@ class HyvorPostListener
      * add the hyvor post embed code to the newsletter template
      */
     #[AsEventListener]
-    public function onTemplateRendering(TemplateRenderingEvent $event)
+    public function onTemplateRendering(TemplateRenderingEvent $event): void
     {
         $hp = $this->hyvorPostService->getHyvorPostOfBlog($event->blog);
 
@@ -35,7 +35,9 @@ class HyvorPostListener
         $variables = $event->getVariables();
 
         $code = HyvorPostService::getEmbedCode($hp);
-        $variables['_newsletter'] .= $code;
+        /** @var string $newsletter */
+        $newsletter = $variables['_newsletter'] ?? '';
+        $variables['_newsletter'] = $newsletter . $code;
 
         $event->setVariables($variables);
     }

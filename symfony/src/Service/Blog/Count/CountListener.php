@@ -142,8 +142,8 @@ class CountListener
     }
 
     /**
-     * @param CountType[] $types
-     * @param array<int[]> $entityIds
+     * @param array<int, CountType> $types
+     * @param array<int, int[]> $entityIds
      */
     private function dispatch(
         Blog $blog,
