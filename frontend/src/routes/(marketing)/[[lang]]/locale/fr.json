@@ -434,5 +434,53 @@
 			"q7": "Comment ajouter un système de commentaires ?",
 			"a7": "<a href=\"https://talk.hyvor.com\">Hyvor Talk</a> est disponible gratuitement pour tous les forfaits. Vous pouvez également intégrer facilement d'autres systèmes de commentaires."
 		}
+	},
+	"docs": {
+		"sections": {
+			"hosting": "Hébergement",
+			"features": "Fonctionnalités",
+			"integrations": "Intégrations",
+			"developer": "Développeur",
+			"data": "Données",
+			"themeDevelopment": "Développement de thèmes"
+		},
+		"pages": {
+			"introduction": "Introduction",
+			"writing": "Rédaction",
+			"theme": "Thème",
+			"customDomain": "Domaine personnalisé",
+			"subdirectory": "Sous-répertoire",
+			"headless": "Headless",
+			"languages": "Langues",
+			"users": "Utilisateurs",
+			"tags": "Tags",
+			"media": "Médias",
+			"fonts": "Polices",
+			"seo": "SEO",
+			"navigationLinks": "Liens de navigation",
+			"redirects": "Redirections",
+			"customCode": "Code personnalisé",
+			"services": "Services",
+			"routes": "Routes",
+			"syntaxHighlighting": "Coloration syntaxique",
+			"hyvorTalk": "Hyvor Talk",
+			"hyvorPost": "Hyvor Post",
+			"webhooks": "Webhooks",
+			"apiConsole": "API Console",
+			"apiDelivery": "API de diffusion",
+			"apiData": "API de données",
+			"export": "Exporter les données",
+			"importData": "Importer des données",
+			"importOverview": "Aperçu",
+			"importSitemap": "Plan du site",
+			"importWordpress": "WordPress",
+			"themesOverview": "Aperçu",
+			"themesTemplates": "Modèles",
+			"themesStyling": "Style",
+			"themesScripts": "Scripts",
+			"themesInternationalization": "Internationalisation",
+			"themesConfig": "Configuration",
+			"themesPublishing": "Publication"
+		}
 	}
 }
