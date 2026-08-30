@@ -42,5 +42,26 @@ esac
 export APP_ADDRESS
 export APP_TLS_DIRECTIVE
 
+# Configure FrankenPHP's built-in Mercure hub (if MERCURE_INTERNAL=true)
+# https://frankenphp.dev/docs/mercure
+MERCURE_INTERNAL="${MERCURE_INTERNAL:-true}"
+
+if [ "$MERCURE_INTERNAL" = "true" ]; then
+    if [ "$TLS_MODE" = "disabled" ]; then
+        APP_SCHEME="http"
+    else
+        APP_SCHEME="https"
+    fi
+
+    export MERCURE_URL="http://localhost:8081/.well-known/mercure"
+    export MERCURE_PUBLIC_URL="${APP_SCHEME}://${DOMAIN_APP}/.well-known/mercure"
+    export MERCURE_DIRECTIVE="mercure {
+    publisher_jwt ${MERCURE_JWT_SECRET}
+    subscriber_jwt ${MERCURE_JWT_SECRET}
+}"
+else
+    export MERCURE_DIRECTIVE=""
+fi
+
 # Run supervisor
 /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

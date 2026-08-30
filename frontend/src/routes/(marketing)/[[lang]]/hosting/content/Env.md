@@ -1,10 +1,8 @@
-# Environment variables for Hyvor Blogs
-# See: https://blogs.hyvor.com/hosting/env
-# If you update this, make sure to update the documentation (/hosting/env) as well.
+# Environment Variables
 
-# Required variables:
-# ===================
+These are the environment variables you can use to customize Hyvor Blogs:
 
+```yaml
 # Environment: prod, dev, or test
 # you probably want to use prod for a deployment
 APP_ENV=prod
@@ -31,10 +29,11 @@ OIDC_CLIENT_SECRET=
 DOMAIN_APP=
 
 # Delivery domain / URL (optional)
-# If not set, blogs will be delivered at https://domain-app/blog/{subdomain}.
+# If not set, blogs will be delivered at https://<DOMAIN_APP>/blog/{subdomain}.
 # If set, a subdomain of the delivery domain will be used for hosting the blogs
 # If the delivery URL is https://blogs.yourcompany.com, blogs will be hosted at https://<blog-subdomain>.blogs.yourcompany.com
 # TLS termination for *.deliverydomain must be handled by a reverse proxy
+# see https://blogs.hyvor.com/hosting/delivery-domain
 DELIVERY_URL=
 
 # Filesystem for media storage
@@ -55,19 +54,9 @@ MAIL_PORT=
 MAIL_USERNAME=
 MAIL_PASSWORD=
 
-# Optional variables with sensible defaults:
-===========================================
-
-# TLS_MODE controls how HTTPS is handled for DOMAIN_APP. One of:
-# - auto (default): Caddy automatically obtains and renews a certificate (Let's Encrypt).
-#   Requires DOMAIN_APP to be publicly resolvable and ports 80/443 to be reachable.
-# - external: TLS is terminated outside the container (e.g. Nginx, Traefik, a load balancer),
-#   which connects to the container over HTTP. Internal links are still generated as https://.
-#   No http->https redirect is done by the container; handle that in your reverse proxy if needed.
-# - manual: Provide your own certificate and key by mounting them at /certs/cert.pem and
-#   /certs/key.pem in the container (see compose.yaml).
-# - disabled: TLS is fully disabled. Internal links are generated as http://.
-#   Only use this if you know what you are doing (e.g. an internal/private network).
+# TLS_MODE controls how HTTPS is handled for DOMAIN_APP. 
+# One of: auto, external, manual, or disabled
+# See https://blogs.hyvor.com/hosting/deploy#tls
 TLS_MODE=
 
 # Trusted proxy IP addresses or CIDR ranges.
@@ -109,22 +98,4 @@ MISTRAL_API_KEY=
 # Sentry
 # Used for error tracking
 SENTRY_DSN=
-
-
-# Cloud-only variables
-# ====================
-
-# deployment type: "cloud" or "on-prem"
-# default: on-prem
-DEPLOYMENT=
-
-# public URL of the core (https://hyvor.com)
-HYVOR_INSTANCE=
-# private URL of the core for internal comms (optional)
-HYVOR_PRIVATE_INSTANCE=
-# Comms API key (must be the same on all components)
-COMMS_KEY=
-# Hyvor Blogs + Hyvor Talk
-HYVOR_TALK_API_KEY=
-# Github themes webhook
-GITHUB_THEMES_PUBLISH_KEY=
+```
