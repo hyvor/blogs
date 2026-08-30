@@ -26,7 +26,6 @@ export function getPublishedChanges() {
 	};
 
 	const postKeys: (keyof Post)[] = [
-		'published_at',
 		'is_featured',
 		'featured_image_url',
 		'canonical_url',
@@ -34,7 +33,7 @@ export function getPublishedChanges() {
 		'code_foot'
 	];
 
-	const postVariantKeys: (keyof PostVariant)[] = ['slug', 'title', 'description'];
+	const postVariantKeys: (keyof PostVariant)[] = ['slug', 'title', 'description', 'published_at', 'content_updated_at'];
 
 	postKeys.forEach((key) => {
 		if (post[key] !== postOriginal[key]) {

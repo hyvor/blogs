@@ -50,8 +50,8 @@
 
 	let contentUpdatedAtTooEarly = $derived(
 		setCustomContentUpdatedAt &&
-			$postStore.published_at !== null &&
-			dayjs(customContentUpdatedAt).unix() < $postStore.published_at
+			$postVariantStore.published_at !== null &&
+			dayjs(customContentUpdatedAt).unix() < $postVariantStore.published_at
 	);
 
 	$effect(() => {
@@ -225,22 +225,22 @@
 		</SplitControl>
 	{/if}
 
-	{#if changes.post.published_at !== undefined}
+	{#if changes.variant.published_at !== undefined}
 		<SplitControl label="Publish Time">
 			{#if diff}
-				{$postOriginalStore.published_at
-					? dayjs.unix($postOriginalStore.published_at).format('YYYY-MM-DD HH:mm:ss')
+				{$postVariantOriginalStore.published_at
+					? dayjs.unix($postVariantOriginalStore.published_at).format('YYYY-MM-DD HH:mm:ss')
 					: 'None'}
 				<span> → </span>
 				<strong>
-					{$postStore.published_at
-						? dayjs.unix($postStore.published_at).format('YYYY-MM-DD HH:mm:ss')
+					{$postVariantStore.published_at
+						? dayjs.unix($postVariantStore.published_at).format('YYYY-MM-DD HH:mm:ss')
 						: 'None'}
 				</strong>
 			{:else}
 				<span>
-					{$postStore.published_at
-						? dayjs.unix($postStore.published_at).format('YYYY-MM-DD HH:mm:ss')
+					{$postVariantStore.published_at
+						? dayjs.unix($postVariantStore.published_at).format('YYYY-MM-DD HH:mm:ss')
 						: 'None'}
 				</span>
 			{/if}
