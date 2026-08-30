@@ -97,7 +97,7 @@ class AiAgentService
                 '{markdown_schema}'
             ],
             [
-                $blog->getVariants()->first()->getName(),
+                $blog->getVariants()->toArray()[0]?->getName() ?? '',
                 $currentPostPrompt,
                 MarkdownSerializer::SCHEMA_FOR_AI_AGENTS
             ],

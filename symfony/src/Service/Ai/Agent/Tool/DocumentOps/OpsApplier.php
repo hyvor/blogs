@@ -21,6 +21,7 @@ class OpsApplier
                 $op instanceof OpInsert => $this->applyInsert($fetchedDocument, $op),
                 $op instanceof OpReplaceText => $this->applyReplaceText($fetchedDocument, $op),
                 $op instanceof OpDelete => $this->applyDelete($fetchedDocument, $op),
+                default => throw new \LogicException('Unhandled op type: ' . $op::class),
             };
         }
 

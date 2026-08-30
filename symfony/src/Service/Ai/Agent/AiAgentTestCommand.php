@@ -5,7 +5,6 @@ namespace App\Service\Ai\Agent;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Ai\AiProvider;
-use App\Service\Post\Content\PostContentService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -13,7 +12,6 @@ use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
 use Symfony\AI\Platform\Result\Stream\Delta;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[AsCommand('app:ai:agent', description: 'Test command for AiAgentService')]
@@ -23,7 +21,6 @@ class AiAgentTestCommand
 
     public function __construct(
         private AiAgentService $aiAgentService,
-        private PostContentService $postContentService
     ) {}
 
     public function __invoke(): int
@@ -115,10 +112,13 @@ class AiAgentTestCommand
 
         $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
 
-        $result = $this->aiAgentService->callAgent($postVariant, $prompt);
+        $result = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
         $output = '';
-        foreach ($result->getResult()->getContent() as $delta) {
+        $content = $result->getResult()->getContent();
+        assert(is_iterable($content));
+
+        foreach ($content as $delta) {
             if ($delta instanceof Delta\TextDelta) {
                 $output .= $delta->getText();
                 echo $delta->getText();
@@ -137,13 +137,6 @@ class AiAgentTestCommand
         dd(
             $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
         );
-
-        dd(
-            $output,
-            $result->getDocumentOpsTool()->getCachedDocuments()[$postVariant->getId()]->getOps()
-        );
-
-        return Command::SUCCESS;
     }
 
 }

@@ -83,7 +83,10 @@ class AiAgentConversationService
         $openChunk = null;
         $openChunkType = null;
 
-        foreach ($agentCallResult->getResult()->getContent() as $delta) {
+        $content = $agentCallResult->getResult()->getContent();
+        assert(is_iterable($content));
+
+        foreach ($content as $delta) {
             if ($delta instanceof TextDelta) {
                 $text = (string) $delta;
                 $assistantText .= $text;

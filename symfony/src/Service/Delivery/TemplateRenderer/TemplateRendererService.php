@@ -103,6 +103,7 @@ class TemplateRendererService
     }
 
     /**
+     * @param array<string, mixed> $vars
      * @param ThemeFile[] $templateFiles
      * @throws TemplateRenderingException
      */
@@ -235,6 +236,7 @@ class TemplateRendererService
     }
 
     /**
+     * @return array<string, mixed>
      * @throws TemplateRenderingException
      */
     private function getDefaultVariables(Blog $blog, Language $language): array
@@ -245,6 +247,7 @@ class TemplateRendererService
             throw new TemplateRenderingException($e->getMessage(), previous: $e);
         }
         $blogObject = $this->blogObjectFactory->create($blog, $language);
+        $blogMeta = $blog->getMeta();
 
         return [
             // internal
@@ -345,6 +348,11 @@ class TemplateRendererService
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     * @throws TemplateRenderingException
+     * @throws TemplateRenderingPageNotFoundException
+     */
     private function getPostFilterVariables(
         Blog $blog,
         Language $language,

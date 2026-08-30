@@ -15,6 +15,9 @@ class TemplateRenderingEvent
         private array $variables
     ) {}
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getVariables(): array
     {
         return $this->variables;

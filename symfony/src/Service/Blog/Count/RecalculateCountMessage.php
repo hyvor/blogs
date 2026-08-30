@@ -10,7 +10,7 @@ readonly class RecalculateCountMessage
 {
 
     /**
-     * @var array<int[]> $entityIds entity IDs for each type, same order as $types
+     * @var array<int, int[]|null> $entityIds entity IDs for each type, same order as $types
      */
     private array $entityIds;
 

@@ -10,7 +10,6 @@ use App\Service\Import\Importer\MediaAwareParserAbstract;
 use App\Service\Import\Importer\ParserException;
 use App\Service\Post\Content\DocUrlUpdater;
 use App\Service\Post\Content\HtmlParser;
-use App\Service\Post\Content\PostContentService;
 use App\Service\Route\PermalinkService;
 use Hyvor\Phrosemirror\Document\Node;
 
@@ -33,7 +32,6 @@ class TypepadParser extends MediaAwareParserAbstract
         string $path,
         private ImportLog $log,
         PermalinkService $permalinkService,
-        private PostContentService $postContentService,
     ) {
         $dataFile = $path . '/data.txt';
         if (!file_exists($dataFile)) {
@@ -128,7 +126,7 @@ class TypepadParser extends MediaAwareParserAbstract
         string $content,
         callable $onFirstImage,
     ): string {
-        $parser = new HtmlParser($content, $this->postContentService);
+        $parser = new HtmlParser($content);
         $document = $parser->parse($this->blog);
 
         $firstImageCalled = false;

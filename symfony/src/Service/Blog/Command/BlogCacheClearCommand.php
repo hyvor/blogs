@@ -2,6 +2,7 @@
 
 namespace App\Service\Blog\Command;
 
+use App\Entity\Blog;
 use App\Service\Blog\BlogService;
 use App\Service\Cache\BlogCacheService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,6 +42,7 @@ class BlogCacheClearCommand
             while (true) {
                 $query->setFirstResult($offset);
                 $query->setMaxResults($batchSize);
+                /** @var Blog[] $blogs */
                 $blogs = $query->getResult();
                 if (empty($blogs)) {
                     break;

@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class AppRouter
 {
 
+    private const array ROUTERS = ['app', 'subdomain', 'customdomain', 'local'];
+
     public function __construct(
         private RequestStack $requestStack
     ) {}
@@ -24,7 +26,9 @@ class AppRouter
             return 'app';
         }
 
-        return $_ENV['CADDY_ROUTER'] ?? 'app';
+        $value = $_ENV['CADDY_ROUTER'] ?? 'app';
+
+        return in_array($value, self::ROUTERS, true) ? $value : 'app';
     }
 
     private function isSubrequest(): bool

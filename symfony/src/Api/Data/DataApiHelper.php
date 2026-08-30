@@ -38,7 +38,7 @@ class DataApiHelper
      * Throws 422 for invalid sort.
      *
      * @param array<string, string> $allowed Map of sort key => DQL column
-     * @return array<array{0: string, 1: string}>
+     * @return list<array{0: string, 1: string}>
      */
     public function getSort(?string $sort, array $allowed): array
     {

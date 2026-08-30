@@ -32,7 +32,6 @@ class PageScraper
         private readonly string $url,
         private readonly PageScraperOptions $options,
         private readonly HttpClientInterface $httpClient,
-        private readonly PostContentService $postContentService,
         private readonly string $httpBotUserAgent,
     ) {
         libxml_use_internal_errors(true);
@@ -204,7 +203,7 @@ class PageScraper
 
         $content = $this->filterOutExcluded($content);
 
-        $htmlParser = new HtmlParser($content, $this->postContentService);
+        $htmlParser = new HtmlParser($content);
         $this->content = $htmlParser->parse($this->blog)->toJson();
     }
 

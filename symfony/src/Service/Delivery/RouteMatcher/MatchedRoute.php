@@ -6,7 +6,7 @@ class MatchedRoute
 {
     public readonly string $name;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     public readonly array $params;
 
     /**
