@@ -27,8 +27,8 @@ class HelperTest extends ApiTestCase
     public function test_returns_correct_language(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $en = LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
-        $fr = LanguageFactory::createOne(['blog' => $blog, 'code' => 'fr', 'is_primary' => false]);
+        $en = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
+        $fr = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
 
         $this->assertSame($en->getCode(), $this->helper->getLanguage($blog, 'en')->getCode());
         $this->assertSame($fr->getCode(), $this->helper->getLanguage($blog, 'fr')->getCode());
@@ -38,7 +38,7 @@ class HelperTest extends ApiTestCase
     public function test_throws_error_if_language_not_found(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $this->expectException(UnprocessableEntityHttpException::class);
         $this->helper->getLanguage($blog, 'jp');

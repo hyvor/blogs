@@ -17,7 +17,7 @@ class BlogTest extends ApiTestCase
 {
     public function test_fetches_blog(): void
     {
-        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $blog = BlogFactory::createOneWithPrimaryLanguage(variants: false);
         BlogVariantFactory::createOneForBlog($blog);
 
         $this->dataApi($blog, '/blog');
@@ -36,7 +36,7 @@ class BlogTest extends ApiTestCase
 
     public function test_fetches_blog_with_correct_primary_language(): void
     {
-        $blog = BlogFactory::createOneWithPrimaryLanguage(languageAttrs: ['code' => 'es']);
+        $blog = BlogFactory::createOneWithPrimaryLanguage(languageAttrs: ['code' => 'es'], variants: false);
         $variant = BlogVariantFactory::createOneForBlog($blog);
 
         $this->dataApi($blog, '/blog', ['language' => 'es']);
@@ -51,7 +51,7 @@ class BlogTest extends ApiTestCase
 
     public function test_fetches_blog_with_correct_non_primary_language(): void
     {
-        $blog = BlogFactory::createOneWithPrimaryLanguage(languageAttrs: ['code' => 'en']);
+        $blog = BlogFactory::createOneWithPrimaryLanguage(languageAttrs: ['code' => 'en'], variants: false);
         LanguageFactory::createOneFor($blog, ['code' => 'fr', 'name' => 'French']);
         $variants = BlogVariantFactory::createManyForBlogWithAllLanguages($blog);
 

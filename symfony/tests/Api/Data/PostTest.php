@@ -26,7 +26,6 @@ class PostTest extends ApiTestCase
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
-        $blog->getLanguages()->add($lang2);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         $post = PostFactory::createOne([
@@ -129,7 +128,6 @@ class PostTest extends ApiTestCase
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
-        $blog->getLanguages()->add($lang2);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
