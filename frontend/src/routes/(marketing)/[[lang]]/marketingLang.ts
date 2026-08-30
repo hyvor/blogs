@@ -1,4 +1,4 @@
-import type { InternationalizationService } from '@hyvor/design/components';
+import { InternationalizationService } from '@hyvor/design/components';
 import { getContext } from 'svelte';
 import en from './locale/en.json';
 import fr from './locale/fr.json';
@@ -24,6 +24,13 @@ export const LANGUAGES_CONFIG = [
 		strings: fr
 	}
 ];
+
+export function buildI18n(lang: string) {
+	return new InternationalizationService(
+		LANGUAGES_CONFIG,
+		lang
+	);
+}
 
 export const DEFAULT_MARKETING_LANGUAGE = 'en';
 
