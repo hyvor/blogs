@@ -19,6 +19,35 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
+/**
+ * @phpstan-type RenderContextLanguage array{code: string, name: string}
+ * @phpstan-type RenderContext array{
+ *     _blog: array{
+ *          subdomain: string,
+ *          base_url: string,
+ *          languages: RenderContextLanguage[]
+ *     },
+ *     _lang: RenderContextLanguage,
+ *     _meta: array{url: string, title: string, featured_image?: string},
+ *     _route: array{name: string},
+ *     _post?: array{
+ *          published_at: int,
+ *          updated_at: int,
+ *          authors: array<array{name?: string, url?: string}>,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>,
+ *     },
+ *     _tag?: array{
+ *          language: RenderContextLanguage,
+ *          url: string,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>
+ *     },
+ *     _author?: array{
+ *          language: RenderContextLanguage,
+ *          url: string,
+ *          variants: array<array{language: RenderContextLanguage, url: string}>
+ *     }
+ * }
+ */
 class TwigExtensions extends AbstractExtension
 {
 
@@ -69,7 +98,10 @@ class TwigExtensions extends AbstractExtension
         ];
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     private function getBlogFromContext(array $context): Blog
     {
         $subdomain = $context['_blog']['subdomain'] ?? '';
@@ -88,14 +120,19 @@ class TwigExtensions extends AbstractExtension
         return $blog;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function assetUrlFilter(array $context, string $assetName): string
     {
         $baseUrl = $context['_blog']['base_url'] ?? '';
         return $baseUrl . '/assets/' . $assetName;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     public function assetFilter(array $context, string $assetName): string
     {
         $blog = $this->getBlogFromContext($context);
@@ -104,8 +141,9 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param string[] $args
+     * @throws Error
      */
     public function langFilter(array $context, string $key, array $args = []): ?string
     {
@@ -116,8 +154,9 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param mixed[] $args
+     * @throws Error
      */
     public function langByNumberFilter(array $context, ?string $value, array $args = []): ?string
     {
@@ -140,13 +179,17 @@ class TwigExtensions extends AbstractExtension
         return $this->langFilter($context, (string)$key, [(string)$intValue]);
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function templateFilter(Environment $env, array $context, string $string): string
     {
         return $env->createTemplate($string)->render($context);
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     */
     public function paginationPageUrlFilter(array $context, ?int $pageNumber): string
     {
         $pageNumber ??= 1;
@@ -161,7 +204,10 @@ class TwigExtensions extends AbstractExtension
         return $url;
     }
 
-    /** @param array<mixed> $context */
+    /**
+     * @param RenderContext $context
+     * @throws Error
+     */
     public function languageVariantUrlFilter(array $context, string $languageCode): string
     {
         $route = $context['_route']['name'] ?? null;
@@ -215,7 +261,7 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed>|string|null $levels
+     * @param RenderContext|string|null $levels
      */
     public function tocFilter(string $content, null|array|string $levels = null): string
     {
@@ -224,7 +270,7 @@ class TwigExtensions extends AbstractExtension
         return $toc->htmlFromHtml($content);
     }
 
-    /** @param array<mixed> $context */
+    /** @param RenderContext $context */
     public function isCurrentUrlFunction(array $context, string $url): bool
     {
         $currentUrl = $context['_meta']['url'] ?? '';
@@ -250,8 +296,9 @@ class TwigExtensions extends AbstractExtension
     }
 
     /**
-     * @param array<mixed> $context
+     * @param RenderContext $context
      * @param array<mixed> $params
+     * @throws Error
      */
     public function dataFunction(array $context, array $params = []): mixed
     {
@@ -286,7 +333,7 @@ class TwigExtensions extends AbstractExtension
         }
     }
 
-    /** @param array<mixed> $context */
+    /** @param RenderContext $context */
     public function richSchema(array $context): string
     {
         if (!isset($context['_meta'])) {
@@ -318,6 +365,6 @@ class TwigExtensions extends AbstractExtension
 
     private function getDateTimeString(string $timestamp): string
     {
-        return (new \DateTimeImmutable('@' . $timestamp))->format(\DateTimeInterface::ATOM);
+        return new \DateTimeImmutable('@' . $timestamp)->format(\DateTimeInterface::ATOM);
     }
 }
