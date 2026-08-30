@@ -19,7 +19,7 @@ export const sections: NavSectionConfig[] = [
 				slug: 'deploy',
 				name: 'Deploy',
 				content: Deploy
-			},
+			}
 		]
 	},
 	{
@@ -38,5 +38,5 @@ export const sections: NavSectionConfig[] = [
 				content: DeliveryDomain
 			}
 		]
-	},
+	}
 ];

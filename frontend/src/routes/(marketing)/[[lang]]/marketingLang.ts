@@ -26,10 +26,7 @@ export const LANGUAGES_CONFIG = [
 ];
 
 export function buildI18n(lang: string) {
-	return new InternationalizationService(
-		LANGUAGES_CONFIG,
-		lang
-	);
+	return new InternationalizationService(LANGUAGES_CONFIG, lang);
 }
 
 export const DEFAULT_MARKETING_LANGUAGE = 'en';
