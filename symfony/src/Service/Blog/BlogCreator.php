@@ -166,7 +166,7 @@ class BlogCreator
         });
 
         // sync counts for example
-        $this->ed->dispatch(new BlogCreatedEvent($blog));
+        $this->ed->dispatch(new BlogCreatedEvent($data['blog']));
 
 
         return $data;
