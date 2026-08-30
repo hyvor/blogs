@@ -48,8 +48,8 @@ class SortBlogsTest extends ApiTestCase
 
         $userRepo = $em->getRepository(User::class);
 
-        $updatedUser1 = $userRepo->findOneBy(['blog_id' => $blog1->getId(), 'hyvor_user_id' => $hyvorUserId]);
-        $updatedUser2 = $userRepo->findOneBy(['blog_id' => $blog2->getId(), 'hyvor_user_id' => $hyvorUserId]);
+        $updatedUser1 = $userRepo->findOneBy(['blog' => $blog1, 'hyvor_user_id' => $hyvorUserId]);
+        $updatedUser2 = $userRepo->findOneBy(['blog' => $blog2, 'hyvor_user_id' => $hyvorUserId]);
 
         $this->assertNotNull($updatedUser1);
         $this->assertNotNull($updatedUser2);

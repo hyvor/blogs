@@ -201,12 +201,14 @@ class CreateBlogTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertSame('dev', $json['type']);
+        $blogJson = $json['blog'];
+        $this->assertIsArray($blogJson);
+        $this->assertSame('dev', $blogJson['type']);
         /** @var string $subdomain */
-        $subdomain = $json['subdomain'];
+        $subdomain = $blogJson['subdomain'];
         $this->assertMatchesRegularExpression('/^dev-[0-9a-f-]{36}$/i', $subdomain);
 
-        $blog = $this->getEm()->getRepository(Blog::class)->find($json['id']);
+        $blog = $this->getEm()->getRepository(Blog::class)->find($blogJson['id']);
         $this->assertInstanceOf(Blog::class, $blog);
 
         // dev blogs get 3 languages: en, fr, ar
@@ -221,9 +223,9 @@ class CreateBlogTest extends ApiTestCase
         $tags = $this->getEm()->getRepository(Tag::class)->findBy(['blog' => $blog]);
         $this->assertCount(6, $tags);
 
-        // the 5 base posts + 30 random posts
+        // the 5 base posts + 15 random posts
         $posts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
-        $this->assertCount(35, $posts);
+        $this->assertCount(20, $posts);
 
         // "blank" theme copied
         $themeFilesService = $this->getService(ThemeFilesService::class);
