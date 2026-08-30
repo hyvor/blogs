@@ -66,11 +66,11 @@
 	<li><a href="/docs/api-console#users">Users</a></li>
 	<li><a href="/docs/api-console#media">Media</a></li>
 	<li><a href="/docs/api-console#navigation">Navigation</a></li>
-	<li><a href="/docs/api-console#languages">Languages</a></li>
-	<li><a href="/docs/api-console#redirects">Redirects</a></li>
-	<li><a href="/docs/api-console#webhooks">Webhooks</a></li>
+	<li><a href="/docs/api-console#language">Languages</a></li>
+	<li><a href="/docs/api-console#redirect">Redirects</a></li>
+	<li><a href="/docs/api-console#webhook">Webhooks</a></li>
 	<li><a href="/docs/api-console#theme-files">Theme Files</a></li>
-	<li><a href="/docs/api-console#data-export">Export</a></li>
+	<li><a href="/docs/api-console#export">Export</a></li>
 	<li><a href="/docs/api-console#link-analysis">Link Analysis</a></li>
 	<li><a href="/docs/api-console#route">Route</a></li>
 	<li><a href="/docs/api-console#misc">Misc</a></li>

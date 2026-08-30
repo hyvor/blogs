@@ -69,7 +69,7 @@
 		<div>Component</div>
 		<div>
 			These templates are used to define new HTML structures for complex components like link
-			previews. See <a href="/docs/themes-templates#layouts">Embed: Link</a>.
+			previews. See <a href="/docs/writing#link-bookmark">Link Bookmark</a>.
 		</div>
 		<div><code>component-rich-link.twig</code></div>
 	</TableRow>
