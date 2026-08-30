@@ -32,7 +32,7 @@
 	let isPastSchedule = $derived(checkIsPastSchedule());
 
 	let publishing = $state(false);
-	let published: null | { status: 'published' | 'scheduled', url: string } = $state(null);
+	let published: null | { status: 'published' | 'scheduled'; url: string } = $state(null);
 
 	function openSettings() {
 		modalOpen = false;
@@ -47,6 +47,10 @@
 		publishPostVariant(publishAt)
 			.then((v) => {
 				published = { status: type, url: v.url };
+
+				if (type === 'published') {
+					// confetti
+				}
 			})
 			.catch(() => {
 				toast.error('Failed to publish post');
@@ -66,11 +70,11 @@
 	</Button>
 {/if}
 
-<Modal 
-	title="Publish Post" 
-	bind:show={modalOpen} 
-	size={published ? 'small' : 'large'} 
-	loading={publishing ? 'Publishing...' : false} 
+<Modal
+	title="Publish Post"
+	bind:show={modalOpen}
+	size={published ? 'small' : 'large'}
+	loading={publishing ? 'Publishing...' : false}
 	bare={published !== null}
 	onclose={() => {
 		if (published !== null) {
@@ -93,7 +97,11 @@
 
 		{#if type === 'scheduled'}
 			<div transition:slide>
-				<SplitControl label="Schedule Time" caption="Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone})">
+				<SplitControl
+					label="Schedule Time"
+					caption="Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions()
+						.timeZone})"
+				>
 					<FormControl>
 						<TextInput
 							type="datetime-local"
@@ -132,12 +140,12 @@
 
 	{#snippet footer()}
 		{#if published === null}
-		<div>
-			<Button variant="invisible" on:click={() => (modalOpen = false)}>Cancel</Button>
-			<Button color="accent" disabled={hasErrors || isPastSchedule} on:click={handlePublish}>
-				{type === 'published' ? 'Publish' : 'Schedule'}
-			</Button>
-		</div>
+			<div>
+				<Button variant="invisible" on:click={() => (modalOpen = false)}>Cancel</Button>
+				<Button color="accent" disabled={hasErrors || isPastSchedule} on:click={handlePublish}>
+					{type === 'published' ? 'Publish' : 'Schedule'}
+				</Button>
+			</div>
 		{/if}
 	{/snippet}
 </Modal>
