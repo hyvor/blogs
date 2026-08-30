@@ -6,10 +6,13 @@ use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Factory\BlogObjectFactory;
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\Factory\TagObjectFactory;
+use App\Api\Data\Object\AuthorObject;
 use App\Api\Data\Object\LanguageObject;
 use App\Api\Data\Object\MetaObject;
 use App\Api\Data\Object\PaginationObject;
+use App\Api\Data\Object\PostObject;
 use App\Api\Data\Object\RouteObject;
+use App\Api\Data\Object\TagObject;
 use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
@@ -270,7 +273,15 @@ class TemplateRendererService
         ];
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     _meta: MetaObject,
+     *     _featured_posts?: PostObject[],
+     *     _post?: PostObject,
+     *     _tag?: TagObject,
+     *     _author?: AuthorObject
+     * }
+     */
     private function getRouteVariables(
         Blog $blog,
         Language $language,
@@ -345,7 +356,15 @@ class TemplateRendererService
             ];
         }
 
-        return [];
+        return [
+            '_meta' => new MetaObject(
+                null,
+                null,
+                null,
+                $this->permalinkService->getBlogUrl($blog),
+                $this->permalinkService->getBlogUrl($blog)
+            )
+        ];
     }
 
     /**
