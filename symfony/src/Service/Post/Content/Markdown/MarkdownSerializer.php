@@ -93,7 +93,7 @@ class MarkdownSerializer
             $markType instanceof Marks\Strong => "**$text**",
             $markType instanceof Marks\Em => "_{$text}_",
             $markType instanceof Marks\Code => "`$text`",
-            $markType instanceof Marks\Link => '[' . $this->escapeBracketText($text) . "]({$mark->attrs->href})",
+            $markType instanceof Marks\Link => '[' . $this->escapeBracketText($text) . "]({$mark->attrs->get('href', false)})",
             $markType instanceof Marks\Strike => "~~{$text}~~",
             $markType instanceof Marks\Sub => "~{$text}~",
             $markType instanceof Marks\Sup => "^{$text}^",
@@ -110,13 +110,13 @@ class MarkdownSerializer
 
         return match (true) {
             // media
-            $node->type instanceof Nodes\Audio\Audio => "![#audio]({$node->attrs->src})\n\n",
+            $node->type instanceof Nodes\Audio\Audio => "![#audio]({$node->attrs->get('src', false)})\n\n",
             $node->type instanceof Nodes\Image\Image => $this->imageToMarkdown($node),
 
             // rich
-            $node->type instanceof Nodes\Bookmark\Bookmark => "![#bookmark]({$node->attrs->url})\n\n",
+            $node->type instanceof Nodes\Bookmark\Bookmark => "![#bookmark]({$node->attrs->get('url', false)})\n\n",
             $node->type instanceof Nodes\Button\Button => $this->buttonToMarkdown($node, $children()),
-            $node->type instanceof Nodes\Embed\Embed => "![#embed]({$node->attrs->url})\n\n",
+            $node->type instanceof Nodes\Embed\Embed => "![#embed]({$node->attrs->get('url', false)})\n\n",
 
             // text
             $node->type instanceof Nodes\Paragraph,
@@ -155,13 +155,15 @@ class MarkdownSerializer
             // would be - subject to the same global reference-definition ambiguity we're
             // using image syntax to avoid in the first place
             $node->type instanceof Nodes\Toc\Toc => "![#toc]()\n\n",
+
+            default => throw new \LogicException('Unhandled node type: ' . $node->type::class),
         };
     }
 
     private function headingToMarkdown(Node $node, string $children): string
     {
-        $level = str_repeat('#', $node->attrs->level);
-        $id = $node->attrs->id ?? null;
+        $level = str_repeat('#', (int) $node->attrs->get('level'));
+        $id = $node->attrs->get('id', false);
         $idSuffix = $id ? " {#$id}" : '';
 
         return "$level $children$idSuffix\n\n";
@@ -169,9 +171,9 @@ class MarkdownSerializer
 
     private function calloutToMarkdown(Node $node, string $children): string
     {
-        $icon = $node->attrs->emoji ?? '';
-        $fg = $node->attrs->fg ?? '';
-        $bg = $node->attrs->bg ?? '';
+        $icon = $node->attrs->get('emoji');
+        $fg = $node->attrs->get('fg', false);
+        $bg = $node->attrs->get('bg', false);
 
         $topLine = "[$icon, fg=$fg, bg=$bg]";
         return $this->blockquoteToMarkdown("$topLine\n$children");
@@ -241,10 +243,10 @@ class MarkdownSerializer
      */
     private function imageToMarkdown(Node $node): string
     {
-        $src = $node->attrs->src ?? '';
-        $alt = $this->escapeBracketText($node->attrs->alt ?? '');
-        $width = $node->attrs->width ?? '';
-        $height = $node->attrs->height ?? '';
+        $src = $node->attrs->get('src', false);
+        $alt = $this->escapeBracketText((string) $node->attrs->get('alt'));
+        $width = $node->attrs->get('width', false);
+        $height = $node->attrs->get('height', false);
         $sizePart = ($width || $height) ? " \"{$width}x{$height}\"" : '';
         return "![{$alt}]({$src}$sizePart)\n\n";
     }
@@ -260,7 +262,7 @@ class MarkdownSerializer
      */
     private function buttonToMarkdown(Node $node, string $children): string
     {
-        $href = $node->attrs->href ?? '';
+        $href = $node->attrs->get('href', false);
         $text = $this->escapeBracketText($children);
 
         return "![#button \"$text\"]($href)\n\n";
@@ -280,7 +282,7 @@ class MarkdownSerializer
 
     private function codeBlockToMarkdown(Node $node, string $children): string
     {
-        $language = $node->attrs->language ?? '';
+        $language = $node->attrs->get('language');
         return "```$language\n$children\n```\n\n";
     }
 

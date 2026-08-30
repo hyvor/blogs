@@ -15,7 +15,6 @@ class ThemeService
 
     public function __construct(
         private EntityManagerInterface $em,
-        private ThemeFilesService $themeFilesService,
     ) {
     }
 

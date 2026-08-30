@@ -74,6 +74,9 @@ class PostSuggestionContentChecker
         return false;
     }
 
+    /**
+     * @param array<mixed> $suggestionsAttrValue
+     */
     private function hasNonCommentSuggestions(array $suggestionsAttrValue): bool
     {
         return count(

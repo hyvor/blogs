@@ -98,6 +98,8 @@ class HyvorTalkService
     /**
      * Maps a Hyvor Blogs user role to a Hyvor Talk moderator role.
      * Returns null if the role does not have access to the Hyvor Talk console.
+     *
+     * @return 'admin'|'mod'|null
      */
     public static function mapUserRole(UserRole $role): ?string
     {
@@ -129,7 +131,7 @@ class HyvorTalkService
 
         try {
             $website = $this->getClient($orgId)->org->websites->create([
-                'name' => $variant->getName(),
+                'name' => $variant->getName() ?? '',
                 'domain' => $this->getDomainsOfBlog($blog)[0],
                 'metadata' => [
                     'hyvor_blogs_integration' => 'true',
@@ -202,6 +204,8 @@ class HyvorTalkService
     /**
      * Adds a Hyvor user as a Hyvor Talk website moderator. Ignores the call if the
      * user is already added.
+     *
+     * @param 'admin'|'mod' $role
      */
     public function addMod(int $organizationId, int $websiteId, int $hyvorUserId, string $role): void
     {
@@ -259,7 +263,7 @@ class HyvorTalkService
     }
 
     /**
-     * @return non-empty-array<string>
+     * @return non-empty-list<string>
      */
     private function getDomainsOfBlog(Blog $blog): array
     {
@@ -268,7 +272,10 @@ class HyvorTalkService
         ];
         // add custom domains if any
 
-        return array_map(fn($url) => parse_url($url, PHP_URL_HOST), $urls);
+        return array_map(function ($url) {
+            $host = parse_url($url, PHP_URL_HOST);
+            return is_string($host) ? $host : '';
+        }, $urls);
     }
 
 }

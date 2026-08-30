@@ -10,7 +10,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\HyvorPostFactory;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
-use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\Post\PostClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -32,7 +32,7 @@ class DisconnectHyvorPostIntegrationTest extends ApiTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-post/disconnect', user: $owner);
@@ -60,7 +60,7 @@ class DisconnectHyvorPostIntegrationTest extends ApiTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-post/disconnect', user: $owner);

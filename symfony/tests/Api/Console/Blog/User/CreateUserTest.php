@@ -25,8 +25,8 @@ use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMemberResponse;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\Deployment;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
-use Hyvor\Sdk\HyvorClient;
-use Hyvor\Sdk\Post\Dto\User\User;
+use Hyvor\Sdk\Post\Dto\User;
+use Hyvor\Sdk\Post\PostClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -106,7 +106,7 @@ class CreateUserTest extends ApiTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new PostClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         return $mockClient;

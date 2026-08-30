@@ -11,6 +11,9 @@ use PHPUnit\Framework\Attributes\TestWith;
 class PostSuggestionContentCheckerTest extends KernelTestCase
 {
 
+    /**
+     * @param array<string, mixed> $doc
+     */
     #[TestWith([
         [
             'type' => 'doc',

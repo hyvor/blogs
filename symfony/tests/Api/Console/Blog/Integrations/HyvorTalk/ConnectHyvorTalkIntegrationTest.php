@@ -15,8 +15,9 @@ use App\Tests\Factory\LanguageFactory;
 use App\Tests\Helper\Fixtures;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
-use Hyvor\Sdk\HyvorClient;
 use Hyvor\Sdk\Talk\Dto\Mod;
+use Hyvor\Sdk\Talk\Dto\Website;
+use Hyvor\Sdk\Talk\TalkClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -33,14 +34,14 @@ class ConnectHyvorTalkIntegrationTest extends ApiTestCase
         LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: ['name' => 'My Blog']);
 
-        $htWebsiteResponse = new JsonMockResponse(['id' => 123]);
+        $htWebsiteResponse = new JsonMockResponse(Fixtures::make(Website::class, ['id' => 123]));
         $htModResponse = new JsonMockResponse(Fixtures::make(Mod::class, ['role' => 'admin']));
         $mockClient = new MockHttpClient([$htWebsiteResponse, $htModResponse]);
         $this->getContainer()->set(HttpClientInterface::class, $mockClient);
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new TalkClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         $response = $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-talk/connect', user: $owner);

@@ -18,6 +18,11 @@ class PostContentService
     ) {
     }
 
+    public function getSchema(): PostSchema
+    {
+        return $this->postSchema;
+    }
+
     /**
      * @param array<mixed>|string $json
      */

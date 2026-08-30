@@ -47,7 +47,7 @@ class ThemeVersionCreator {
                     $theme->getName(),
                     $previewSubdomain,
                     BlogType::PREVIEW
-                );
+                )['blog'];
 
                 $themeVersion->setPreviewSubdomain($previewSubdomain);
                 $this->em->flush();

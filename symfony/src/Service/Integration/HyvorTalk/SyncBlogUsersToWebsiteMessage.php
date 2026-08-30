@@ -12,8 +12,11 @@ class SyncBlogUsersToWebsiteMessage
         public int $blogId,
         // by default, syncs all users, but if hyvorUserId is set, only syncs that user
         public ?int $hyvorUserId = null,
-        // the Hyvor Talk moderator role ('admin'|'mod') to sync the user with;
-        // required when hyvorUserId is set and delete is false
+        /**
+         * @var 'admin'|'mod'|null
+         * the Hyvor Talk moderator role to sync the user with
+         * required when hyvorUserId is set and delete is false
+         */
         public ?string $role = null,
         // if true, removes the user from hyvor talk instead of syncing
         public bool $delete = false,

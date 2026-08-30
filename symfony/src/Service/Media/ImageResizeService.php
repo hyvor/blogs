@@ -2,7 +2,8 @@
 
 namespace App\Service\Media;
 
-use Intervention\Image\ImageManagerStatic as Image;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class ImageResizeService
 {
@@ -19,6 +20,7 @@ class ImageResizeService
 
     public function getImageWidth(string $content): int
     {
-        return Image::make($content)->width();
+        $manager = new ImageManager(Driver::class, autoOrientation: false);
+        return $manager->decodeBinary($content)->width();
     }
 }

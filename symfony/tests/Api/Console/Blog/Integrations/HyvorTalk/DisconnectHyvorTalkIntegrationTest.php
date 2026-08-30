@@ -10,7 +10,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\InterHyvorTalkWebsiteFactory;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
-use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\Talk\TalkClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -32,7 +32,7 @@ class DisconnectHyvorTalkIntegrationTest extends ApiTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new TalkClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-talk/disconnect', user: $owner);
@@ -55,7 +55,7 @@ class DisconnectHyvorTalkIntegrationTest extends ApiTestCase
 
         $cloudApiServiceMock = $this->createStub(CloudApiService::class);
         $cloudApiServiceMock->method('getHyvorClientForOrganization')
-            ->willReturn(new HyvorClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
+            ->willReturn(new TalkClient(tokenProvider: new StaticTokenProvider('fake-jwt-token'), httpClient: new Psr18Client($mockClient)));
         $this->getContainer()->set(CloudApiService::class, $cloudApiServiceMock);
 
         $this->consoleBlogApi('POST', $blog, '/integrations/hyvor-talk/disconnect', user: $owner);

@@ -114,6 +114,7 @@ class PostService
     }
 
     /**
+     * @param array<int, array{0: string, 1: string}>|null $orderBys
      * @return array{posts: Post[], total: int}
      * @throws FilterQException
      */
@@ -193,6 +194,7 @@ class PostService
             $qb->addOrderBy($column, $direction);
         }
 
+        /** @var list<array{pid: int}> $postIdRows */
         $postIdRows = $qb->setMaxResults($limit)
             // need to select the columns in the WHERE clause
             ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, pv.published_at, p.created_at')
@@ -544,6 +546,7 @@ class PostService
      *     seo_primary_keyword?: string|null,
      *     seo_secondary_keywords?: string[],
      *     link_analysis?: array<string, number>,
+     *     seo_score?: int|null,
      *     content_updated_at?: \DateTimeImmutable|null,
      * } $data
      */
@@ -675,40 +678,6 @@ class PostService
         $this->ed->dispatch(new PostVariantUnpublishedEvent($variant));
 
         return $variant;
-    }
-
-    /**
-     * Whenever `content_unsaved` is directly overwritten/cleared outside the collab checkpoint
-     * flow (e.g. the "discard changes" action clearing it explicitly), any in-flight collab
-     * version/steps are now meaningless - reset so the next editing session starts clean at
-     * version 0. See PostVariantCollabService.
-     */
-    private function resetCollabStream(PostVariant $variant): void
-    {
-        if ($variant->getDocumentVersion() === 0) {
-            return;
-        }
-
-        $variant->setDocumentVersion(0);
-
-        $this->em->createQueryBuilder()
-            ->delete(PostVariantStep::class, 's')
-            ->where('s.post_variant = :variant')
-            ->setParameter('variant', $variant)
-            ->getQuery()
-            ->execute();
-    }
-
-    private function assertContentUpdatedAtValid(PostVariant $variant, ?\DateTimeImmutable $contentUpdatedAt): void
-    {
-        if ($contentUpdatedAt === null) {
-            return;
-        }
-
-        $publishedAt = $variant->getPublishedAt();
-        if ($publishedAt !== null && $contentUpdatedAt < $publishedAt) {
-            throw new UnprocessableEntityHttpException('content_updated_at must be greater than or equal to published_at');
-        }
     }
 
     public function deletePostVariant(PostVariant $variant): void
