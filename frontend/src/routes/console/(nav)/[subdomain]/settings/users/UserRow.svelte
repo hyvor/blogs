@@ -82,14 +82,14 @@
 	<div>{user.posts_count}</div>
 	<div>
 		<Tooltip text="Edit user data">
-			<IconButton color="input" size="small" on:click={() => (isEditing = true)}>
+			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 
 		{#if user.role !== 'owner'}
 			<Tooltip text="Delete user">
-				<IconButton color="input" size="small" on:click={handleDelete}>
+				<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
 					<IconTrash size={12} />
 				</IconButton>
 			</Tooltip>
