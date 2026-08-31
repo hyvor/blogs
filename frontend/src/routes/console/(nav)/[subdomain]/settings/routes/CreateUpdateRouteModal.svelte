@@ -11,6 +11,9 @@
 	import type { Route } from '../../../../lib/types';
 	import { createRoute, updateRoute } from './routeActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show?: boolean;
@@ -38,22 +41,22 @@
 		let isValid = true;
 
 		if (name.trim().length === 0) {
-			nameError = 'Name is required';
+			nameError = i18n.t('console.settings.routes.validation.nameRequired');
 			isValid = false;
 		}
 
 		if (match.trim().length === 0) {
-			matchError = 'Match is required';
+			matchError = i18n.t('console.settings.routes.validation.matchRequired');
 			isValid = false;
 		}
 
 		if (match[0] !== '/') {
-			matchError = 'Match must start with /';
+			matchError = i18n.t('console.settings.routes.validation.matchSlash');
 			isValid = false;
 		}
 
 		if (!template) {
-			templateError = 'Template is required';
+			templateError = i18n.t('console.settings.routes.validation.templateRequired');
 			isValid = false;
 		}
 
@@ -75,7 +78,7 @@
 			content_type: contentType
 		})
 			.then((res) => {
-				toast.success('Route created successfully');
+				toast.success(i18n.t('console.settings.routes.created'));
 				dispatch('create', res);
 			})
 			.catch((err) => {
@@ -99,7 +102,7 @@
 			content_type: contentType
 		})
 			.then((res) => {
-				toast.success('Route updated successfully');
+				toast.success(i18n.t('console.settings.routes.updated'));
 				dispatch('update', res);
 			})
 			.catch((err) => {
@@ -114,11 +117,11 @@
 </script>
 
 <Modal
-	title={route ? 'Update Route' : 'Create Route'}
+	title={route ? i18n.t('console.settings.routes.update') : i18n.t('console.settings.routes.create')}
 	bind:show
 	footer={{
 		confirm: {
-			text: route ? 'Update' : 'Create'
+			text: route ? i18n.t('console.common.update') : i18n.t('console.common.create')
 		}
 	}}
 	on:confirm={() => {
@@ -130,7 +133,11 @@
 	}}
 	loading={isCreating}
 >
-	<SplitControl {flex} label="Name" caption="Just for your reference">
+	<SplitControl
+		{flex}
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.routes.nameCaption')}
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -145,7 +152,11 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl {flex} label="Match" caption="The path or pattern to match">
+	<SplitControl
+		{flex}
+		label={i18n.t('console.settings.routes.match')}
+		caption={i18n.t('console.settings.routes.matchCaption')}
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -161,8 +172,8 @@
 
 	<SplitControl
 		{flex}
-		label="Template"
-		caption="The Twig template to render when the route matches. Add fallbacks by separating with comma."
+		label={i18n.t('console.settings.routes.template')}
+		caption={i18n.t('console.settings.routes.templateCaption')}
 	>
 		<FormControl>
 			<TextInput
@@ -179,15 +190,18 @@
 
 	<SplitControl
 		{flex}
-		label="Posts Filter"
-		caption="A FilterQ expression to filter posts for the _posts array."
+		label={i18n.t('console.settings.routes.postsFilter')}
+		caption={i18n.t('console.settings.routes.postsFilterCaption')}
 	>
 		<FormControl>
-			<Switch bind:checked={postsFilterEnabled} label="Enable posts filter" />
+			<Switch
+				bind:checked={postsFilterEnabled}
+				label={i18n.t('console.settings.routes.enablePostsFilter')}
+			/>
 			{#if postsFilterEnabled}
 				<TextInput
 					block
-					placeholder="tag.slug=new (leave empty to show all posts)"
+					placeholder={i18n.t('console.settings.routes.postsFilterPlaceholder')}
 					bind:value={postsFilter}
 					state={postsFilterError ? 'error' : undefined}
 				/>
@@ -200,8 +214,8 @@
 
 	<SplitControl
 		{flex}
-		label="Content Type"
-		caption="The content type header to send with the response"
+		label={i18n.t('console.settings.routes.contentType')}
+		caption={i18n.t('console.settings.routes.contentTypeCaption')}
 	>
 		<FormControl>
 			<TextInput

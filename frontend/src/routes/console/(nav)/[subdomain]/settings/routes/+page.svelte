@@ -7,6 +7,9 @@
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import RouteRow from './RouteRow.svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		isLoading?: boolean;
@@ -51,7 +54,8 @@
 
 <SettingsTop>
 	<Button on:click={() => (isCreating = true)}>
-		Create Route {#snippet end()}
+		{i18n.t('console.settings.routes.create')}
+		{#snippet end()}
 			<IconPlus />
 		{/snippet}
 	</Button>
@@ -61,15 +65,15 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if routes.length === 0}
-		<IconMessage empty message="No Routes" />
+		<IconMessage empty message={i18n.t('console.settings.routes.noRoutes')} />
 	{:else}
 		<Table columns="1fr 1fr 1fr 1fr 1fr 70px">
 			<TableRow head>
-				<div>Name</div>
-				<div>Match</div>
-				<div>Template</div>
-				<div>Posts Filter</div>
-				<div>Content Type</div>
+				<div>{i18n.t('console.common.name')}</div>
+				<div>{i18n.t('console.settings.routes.match')}</div>
+				<div>{i18n.t('console.settings.routes.template')}</div>
+				<div>{i18n.t('console.settings.routes.postsFilter')}</div>
+				<div>{i18n.t('console.settings.routes.contentType')}</div>
 				<div></div>
 			</TableRow>
 

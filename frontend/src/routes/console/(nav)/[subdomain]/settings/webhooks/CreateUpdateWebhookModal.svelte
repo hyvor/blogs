@@ -15,6 +15,9 @@
 	import { createWebhook, updateWebhook } from './webhookActions';
 	import { type Webhook, WebhookEventType } from '../../../../lib/types';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -56,22 +59,22 @@
 		eventsError = null;
 
 		if (!url.match(/^https:\/\/.*$/)) {
-			urlError = 'URL must start with https://';
+			urlError = i18n.t('console.settings.webhooks.validation.urlHttps');
 			return;
 		}
 
 		if (!isValidUrl(url)) {
-			urlError = 'Invalid URL';
+			urlError = i18n.t('console.settings.webhooks.validation.urlInvalid');
 			return;
 		}
 
 		if (events.length === 0) {
-			eventsError = 'Please select at least one event';
+			eventsError = i18n.t('console.settings.webhooks.validation.eventsRequired');
 			return;
 		}
 
 		if (webhook) {
-			isCreating = 'Updating webhook';
+			isCreating = i18n.t('console.settings.webhooks.updating');
 
 			const updates: Partial<Webhook> = {};
 
@@ -84,7 +87,7 @@
 
 			updateWebhook(webhook.id, updates)
 				.then((res) => {
-					toast.success('Webhook updated successfully');
+					toast.success(i18n.t('console.settings.webhooks.updated'));
 					onUpdate?.(res);
 					show = false;
 				})
@@ -95,11 +98,11 @@
 					isCreating = false;
 				});
 		} else {
-			isCreating = 'Creating webhook';
+			isCreating = i18n.t('console.settings.webhooks.creating');
 
 			createWebhook(url, events)
 				.then((res) => {
-					toast.success('Webhook created successfully');
+					toast.success(i18n.t('console.settings.webhooks.created'));
 					onCreate?.(res);
 					show = false;
 				})
@@ -114,12 +117,14 @@
 </script>
 
 <Modal
-	title={webhook ? 'Edit Webhook' : 'Create Webhook'}
+	title={webhook
+		? i18n.t('console.settings.webhooks.editWebhook')
+		: i18n.t('console.settings.webhooks.create')}
 	bind:show
 	loading={isCreating}
 	footer={{
 		confirm: {
-			text: webhook ? 'Update' : 'Create',
+			text: webhook ? i18n.t('console.common.update') : i18n.t('console.common.create'),
 			props: {
 				disabled: isButtonDisabled
 			}
@@ -127,7 +132,10 @@
 	}}
 	on:confirm={handleClick}
 >
-	<SplitControl label="Webhook URL" caption="Must be a valid HTTPS URL">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.webhookUrl')}
+		caption={i18n.t('console.settings.webhooks.webhookUrlCaption')}
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -143,7 +151,10 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Events" caption="Select the events you want to receive">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.events')}
+		caption={i18n.t('console.settings.webhooks.eventsCaption')}
+	>
 		<FormControl>
 			<InputGroup>
 				{#each Object.values(WebhookEventType) as name}
