@@ -5,19 +5,17 @@
 	import type { DocumentChange } from '../../../../agent/agentApi';
 
 	function applyDocumentChange(change: DocumentChange) {
-		// only the currently open post has a live editor session to push content into - the
-		// agent can now suggest edits to other posts too, but those aren't open here to apply to
+		// only the currently open post
 		if (change.postVariantId === $postVariantStore.id) {
 			$postEditor.setContent(change.content);
 		}
 	}
 </script>
 
-<LicenseRequired licenseProperty="aiTokens">
+<LicenseRequired licenseProperty="aiCost">
 	{#snippet upgradeText()}
 		<div>
-			AI chat is available on the <b>Growth plan</b> and above. Upgrade now to use GPT to generate and
-			improve your content.
+			AI agent is available on the <b>Starter Plan</b> and above. Upgrade your plan to unlock this feature.
 		</div>
 	{/snippet}
 

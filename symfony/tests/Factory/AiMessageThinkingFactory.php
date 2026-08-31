@@ -3,14 +3,13 @@
 namespace App\Tests\Factory;
 
 use App\Entity\AiMessage;
-use App\Entity\AiMessageChunk;
-use App\Entity\Enum\AiMessageChunkType;
+use App\Entity\AiMessageThinking;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<AiMessageChunk>
+ * @extends PersistentObjectFactory<AiMessageThinking>
  */
-final class AiMessageChunkFactory extends PersistentObjectFactory
+final class AiMessageThinkingFactory extends PersistentObjectFactory
 {
     public function __construct()
     {
@@ -19,24 +18,23 @@ final class AiMessageChunkFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return AiMessageChunk::class;
+        return AiMessageThinking::class;
     }
 
     #[\Override]
     protected function defaults(): array|callable
     {
         return [
-            'message' => AiMessageFactory::new(),
-            'type' => AiMessageChunkType::TEXT,
-            'content' => self::faker()->sentence(),
+            'ai_message' => AiMessageFactory::new(),
+            'summary' => self::faker()->sentence(),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),
         ];
     }
 
-    public static function createOneFor(AiMessage $message): AiMessageChunk
+    public static function createOneFor(AiMessage $message): AiMessageThinking
     {
-        return self::createOne(['message' => $message]);
+        return self::createOne(['ai_message' => $message]);
     }
 
     #[\Override]

@@ -6,7 +6,7 @@ use App\Entity\Enum\Blog\ColorMode;
 use App\Entity\Enum\Blog\ColorModeDefault;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 
 class BlogMeta
 {
@@ -49,9 +49,9 @@ class BlogMeta
     public bool $link_analysis_enabled = true;
     public LinkAnalysisEmailReport $link_analysis_email_report = LinkAnalysisEmailReport::BROKEN;
 
-    public AiProvider $ai_provider = AiProvider::MISTRAL;
+    public AiModel $ai_model = AiModel::GPT_5_6_LUNA;
     public bool $ai_translation_enabled = true;
-    public bool $ai_generation_enabled = true;
+    public bool $ai_agent = true;
 
     public int $cache_version_styles = 1;
 }

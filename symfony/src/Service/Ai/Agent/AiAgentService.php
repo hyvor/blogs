@@ -119,7 +119,8 @@ class AiAgentService
         ?MessageBag $history = null,
     ): AgentCallResult
     {
-        $provider = $blog->getMeta()->ai_provider;
+        $model = $blog->getMeta()->ai_model;
+        $provider = $model->getProvider();
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
         $documentOpsTool = new DocumentOpsTool(
@@ -139,7 +140,7 @@ class AiAgentService
 
         $agent = new Agent(
             $platform,
-            $provider->model(),
+            $model->value,
             name: 'hyvor-blogs-agent',
             toolbox: $toolbox
         );
@@ -154,7 +155,7 @@ class AiAgentService
 
         $callResult = $agent->call($messages, $this->getOptionsFromProvider($provider));
 
-        return new AgentCallResult($callResult, $documentOpsTool, $provider->model());
+        return new AgentCallResult($callResult, $documentOpsTool, $model->value);
     }
 
     // unfortunately, different provides have different options :(

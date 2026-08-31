@@ -4,9 +4,9 @@ namespace App\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\AiMessageChunk;
+use App\Entity\AiMessageThinking;
+use App\Entity\AiMessageToolCall;
 use App\Entity\Blog;
-use App\Entity\Enum\AiMessageChunkType;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Event\AgentErrorEvent;
@@ -21,6 +21,7 @@ use App\Service\Ai\Agent\Event\ThinkingStartedEvent;
 use App\Service\Ai\Agent\Event\ToolCallCompletedEvent;
 use App\Service\Ai\Agent\Event\ToolCallEventFactory;
 use App\Service\Ai\Agent\Event\ToolCallStartedEvent;
+use App\Service\Ai\AiModel;
 use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -83,18 +84,11 @@ class AiAgentConversationService
             $history = null;
         }
 
-        $userMessage = $this->createMessage($conversation, AiMessageRole::USER, $prompt);
-        $this->createChunk($userMessage, AiMessageChunkType::TEXT, $prompt);
+        $this->createMessage($conversation, AiMessageRole::USER, $prompt);
 
         $assistantMessage = $this->createMessage($conversation, AiMessageRole::ASSISTANT, '');
         $assistantText = '';
         $thinking = false;
-
-        // consecutive text/thinking deltas are merged into one open chunk row; any other
-        // delta (tool calls, thinking-complete) closes the run so the next text/thinking
-        // delta (if any) starts a fresh row instead of reopening an older one
-        $openChunk = null;
-        $openChunkType = null;
 
         try {
             $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant, $history);
@@ -108,17 +102,6 @@ class AiAgentConversationService
                     $text = (string) $delta;
                     $assistantText .= $text;
 
-                    if ($text !== '') {
-                        $openChunk = $this->appendOrCreateChunk(
-                            $assistantMessage,
-                            AiMessageChunkType::TEXT,
-                            $text,
-                            $openChunk,
-                            $openChunkType,
-                        );
-                        $openChunkType = AiMessageChunkType::TEXT;
-                    }
-
                     yield $this->toSseArray(new TextEvent($text));
                 } elseif ($delta instanceof ThinkingDelta) {
                     if (!$thinking) {
@@ -126,41 +109,22 @@ class AiAgentConversationService
                         yield $this->toSseArray(new ThinkingStartedEvent());
                     }
 
-                    $thinkingContent = $delta->getThinking();
-                    if ($thinkingContent !== '') {
-                        $openChunk = $this->appendOrCreateChunk(
-                            $assistantMessage,
-                            AiMessageChunkType::THINKING,
-                            $thinkingContent,
-                            $openChunk,
-                            $openChunkType,
-                        );
-                        $openChunkType = AiMessageChunkType::THINKING;
-                    }
-
-                    yield $this->toSseArray(new ThinkingEvent($thinkingContent));
+                    yield $this->toSseArray(new ThinkingEvent($delta->getThinking()));
                 } elseif ($delta instanceof ThinkingComplete) {
                     $thinking = false;
-                    $openChunk = null;
-                    $openChunkType = null;
 
-                    $thinkingDoneEvent = new ThinkingDoneEvent();
-                    $this->createEventChunk($assistantMessage, $thinkingDoneEvent);
-                    yield $this->toSseArray($thinkingDoneEvent);
+                    $this->createThinking($assistantMessage, $delta->getThinking(), $delta->getSignature());
+
+                    yield $this->toSseArray(new ThinkingDoneEvent());
                 } elseif ($delta instanceof ToolCallStart) {
-                    $openChunk = null;
-                    $openChunkType = null;
-
                     yield $this->toSseArray(new ToolCallStartedEvent($delta->getName()));
                 } elseif ($delta instanceof ToolCallComplete) {
-                    $openChunk = null;
-                    $openChunkType = null;
-
                     foreach ($delta->getToolCalls() as $toolCall) {
+                        $this->createToolCall($assistantMessage, $toolCall->getName(), $toolCall->getArguments());
+
                         $toolCallEvent = $this->toolCallEventFactory->fromToolCall($toolCall);
 
                         if ($toolCallEvent !== null) {
-                            $this->createEventChunk($assistantMessage, $toolCallEvent);
                             yield $this->toSseArray($toolCallEvent);
                         } else {
                             yield $this->toSseArray(new ToolCallCompletedEvent($toolCall->getName()));
@@ -184,7 +148,6 @@ class AiAgentConversationService
             $errorEvent = new AgentErrorEvent(
                 'The AI assistant ran into a problem and could not finish this request. Please try again.'
             );
-            $this->createEventChunk($assistantMessage, $errorEvent);
 
             $assistantMessage->setContent($assistantText);
             $assistantMessage->setUpdatedAt($this->now());
@@ -199,9 +162,22 @@ class AiAgentConversationService
 
         $tokenUsage = $agentCallResult->getResult()->getMetadata()->get('token_usage');
         if ($tokenUsage instanceof TokenUsageInterface) {
-            $assistantMessage->setInputTokens($tokenUsage->getPromptTokens());
-            $assistantMessage->setOutputTokens($tokenUsage->getCompletionTokens());
+            $inputTokens = $tokenUsage->getPromptTokens();
+            $outputTokens = $tokenUsage->getCompletionTokens();
+
+            $assistantMessage->setInputTokens($inputTokens);
+            $assistantMessage->setOutputTokens($outputTokens);
             $assistantMessage->setTotalTokens($tokenUsage->getTotalTokens());
+
+            $model = AiModel::tryFrom($agentCallResult->getModel());
+            if ($model !== null && $inputTokens !== null && $outputTokens !== null) {
+                $inputCostCents = $model->getInputCostCents($inputTokens);
+                $outputCostCents = $model->getOutputCostCents($outputTokens);
+
+                $assistantMessage->setInputTokensUsdCost($inputCostCents);
+                $assistantMessage->setOutputTokensUsdCost($outputCostCents);
+                $assistantMessage->setTotalTokensUsdCost($inputCostCents + $outputCostCents);
+            }
         }
 
         $assistantMessage->setContent($assistantText);
@@ -243,52 +219,30 @@ class AiAgentConversationService
         return $message;
     }
 
-    private function createChunk(AiMessage $message, AiMessageChunkType $type, string $content): AiMessageChunk
+    private function createThinking(AiMessage $message, string $summary, ?string $signature): void
     {
-        $chunk = new AiMessageChunk();
-        $chunk->setMessage($message);
-        $chunk->setType($type);
-        $chunk->setContent($content);
-        $chunk->setCreatedAt($this->now());
-        $chunk->setUpdatedAt($this->now());
-        $this->em->persist($chunk);
+        $thinking = new AiMessageThinking();
+        $thinking->setAiMessage($message);
+        $thinking->setSummary($summary);
+        $thinking->setSignature($signature);
+        $thinking->setCreatedAt($this->now());
+        $thinking->setUpdatedAt($this->now());
+        $this->em->persist($thinking);
         $this->em->flush();
-
-        return $chunk;
     }
 
     /**
-     * Appends to the currently open chunk if it's still the same type (text/thinking),
-     * otherwise starts a new one.
+     * @param array<string, mixed> $arguments
      */
-    private function appendOrCreateChunk(
-        AiMessage $message,
-        AiMessageChunkType $type,
-        string $content,
-        ?AiMessageChunk $openChunk,
-        ?AiMessageChunkType $openChunkType,
-    ): AiMessageChunk {
-        if ($openChunk !== null && $openChunkType === $type) {
-            $openChunk->setContent($openChunk->getContent() . $content);
-            $openChunk->setUpdatedAt($this->now());
-            $this->em->flush();
-
-            return $openChunk;
-        }
-
-        return $this->createChunk($message, $type, $content);
-    }
-
-    private function createEventChunk(AiMessage $message, AgentEvent $event): void
+    private function createToolCall(AiMessage $message, string $toolName, array $arguments): void
     {
-        $chunk = new AiMessageChunk();
-        $chunk->setMessage($message);
-        $chunk->setType(AiMessageChunkType::EVENT);
-        $chunk->setContent($event->getType());
-        $chunk->setEventPayload(['type' => $event->getType(), ...$event->getPayload()]);
-        $chunk->setCreatedAt($this->now());
-        $chunk->setUpdatedAt($this->now());
-        $this->em->persist($chunk);
+        $toolCall = new AiMessageToolCall();
+        $toolCall->setAiMessage($message);
+        $toolCall->setToolName($toolName);
+        $toolCall->setArguments($arguments);
+        $toolCall->setCreatedAt($this->now());
+        $toolCall->setUpdatedAt($this->now());
+        $this->em->persist($toolCall);
         $this->em->flush();
     }
 

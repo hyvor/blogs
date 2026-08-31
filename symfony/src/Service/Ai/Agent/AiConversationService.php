@@ -4,11 +4,17 @@ namespace App\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\AiMessageChunk;
+use App\Entity\AiMessageThinking;
+use App\Entity\AiMessageToolCall;
 use App\Entity\Blog;
-use App\Entity\Enum\AiMessageChunkType;
 use App\Entity\Enum\AiMessageRole;
+use App\Service\Ai\Agent\Event\AgentEvent;
+use App\Service\Ai\Agent\Event\ThinkingDoneEvent;
+use App\Service\Ai\Agent\Event\ThinkingStartedEvent;
+use App\Service\Ai\Agent\Event\ToolCallCompletedEvent;
+use App\Service\Ai\Agent\Event\ToolCallEventFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\AI\Platform\Result\ToolCall;
 
 /**
  * Reads and manages persisted conversations for display in the Console (listing, deleting,
@@ -19,6 +25,7 @@ class AiConversationService
 {
     public function __construct(
         private EntityManagerInterface $em,
+        private ToolCallEventFactory $toolCallEventFactory,
     ) {}
 
     /**
@@ -54,7 +61,10 @@ class AiConversationService
      * Reconstructs a conversation's turns from the database into the same event shapes used
      * while streaming live (see AiAgentConversationService::toSseArray), so the frontend can
      * replay a loaded conversation through the exact same block-building logic it already has
-     * for a live stream.
+     * for a live stream. Only the completed thinking summary and the raw tool calls are kept
+     * per message (not the live per-delta stream), so a reconstructed turn always renders its
+     * thinking blocks, then its tool calls, then its final text - not necessarily the exact
+     * live interleaving of a turn that thought/called-tools/wrote-text more than once.
      *
      * @return list<array<string, mixed>>
      */
@@ -69,18 +79,32 @@ class AiConversationService
             return [];
         }
 
-        /** @var AiMessageChunk[] $chunks */
-        $chunks = $this->em->getRepository(AiMessageChunk::class)->createQueryBuilder('c')
-            ->where('c.message IN (:messages)')
+        /** @var AiMessageThinking[] $thinkingRows */
+        $thinkingRows = $this->em->getRepository(AiMessageThinking::class)->createQueryBuilder('t')
+            ->where('t.ai_message IN (:messages)')
+            ->setParameter('messages', $messages)
+            ->orderBy('t.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        /** @var array<int, AiMessageThinking[]> $thinkingByMessageId */
+        $thinkingByMessageId = [];
+        foreach ($thinkingRows as $thinking) {
+            $thinkingByMessageId[$thinking->getAiMessage()->getId()][] = $thinking;
+        }
+
+        /** @var AiMessageToolCall[] $toolCallRows */
+        $toolCallRows = $this->em->getRepository(AiMessageToolCall::class)->createQueryBuilder('c')
+            ->where('c.ai_message IN (:messages)')
             ->setParameter('messages', $messages)
             ->orderBy('c.id', 'ASC')
             ->getQuery()
             ->getResult();
 
-        /** @var array<int, AiMessageChunk[]> $chunksByMessageId */
-        $chunksByMessageId = [];
-        foreach ($chunks as $chunk) {
-            $chunksByMessageId[$chunk->getMessage()->getId()][] = $chunk;
+        /** @var array<int, AiMessageToolCall[]> $toolCallsByMessageId */
+        $toolCallsByMessageId = [];
+        foreach ($toolCallRows as $toolCall) {
+            $toolCallsByMessageId[$toolCall->getAiMessage()->getId()][] = $toolCall;
         }
 
         $turns = [];
@@ -95,23 +119,24 @@ class AiConversationService
             }
 
             $events = [];
-            $thinkingOpen = false;
 
-            foreach ($chunksByMessageId[$message->getId()] ?? [] as $chunk) {
-                if ($chunk->getType() === AiMessageChunkType::TEXT) {
-                    $events[] = ['type' => 'text', 'content' => $chunk->getContent()];
-                } elseif ($chunk->getType() === AiMessageChunkType::THINKING) {
-                    if (!$thinkingOpen) {
-                        $thinkingOpen = true;
-                        $events[] = ['type' => 'thinking_started'];
-                    }
-                    $events[] = ['type' => 'thinking', 'content' => $chunk->getContent()];
-                } elseif ($chunk->getType() === AiMessageChunkType::EVENT) {
-                    if ($chunk->getContent() === 'thinking_done') {
-                        $thinkingOpen = false;
-                    }
-                    $events[] = $chunk->getEventPayload() ?? ['type' => $chunk->getContent()];
-                }
+            foreach ($thinkingByMessageId[$message->getId()] ?? [] as $thinking) {
+                $events[] = $this->toSseArray(new ThinkingStartedEvent());
+                $events[] = ['type' => 'thinking', 'content' => $thinking->getSummary()];
+                $events[] = $this->toSseArray(new ThinkingDoneEvent());
+            }
+
+            foreach ($toolCallsByMessageId[$message->getId()] ?? [] as $toolCall) {
+                $reconstructed = new ToolCall('', $toolCall->getToolName(), $toolCall->getArguments());
+                $toolCallEvent = $this->toolCallEventFactory->fromToolCall($reconstructed);
+
+                $events[] = $toolCallEvent !== null
+                    ? $this->toSseArray($toolCallEvent)
+                    : $this->toSseArray(new ToolCallCompletedEvent($toolCall->getToolName()));
+            }
+
+            if ($message->getContent() !== '') {
+                $events[] = ['type' => 'text', 'content' => $message->getContent()];
             }
 
             $turns[] = [
@@ -125,5 +150,13 @@ class AiConversationService
         }
 
         return $turns;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function toSseArray(AgentEvent $event): array
+    {
+        return ['type' => $event->getType(), ...$event->getPayload()];
     }
 }

@@ -13,7 +13,8 @@ use Symfony\AI\Platform\Message\MessageBag;
  * Reconstructs a conversation's prior turns from the database into a MessageBag, so a
  * continued conversation can be sent back to the model with full context. AiMessage rows
  * already hold each turn's final, complete text (see AiAgentConversationService), so this
- * just replays them back into platform message objects - no need to touch ai_message_chunks.
+ * just replays them back into platform message objects - no need to touch thinking/tool-call
+ * rows.
  */
 class AiAgentHistoryService
 {

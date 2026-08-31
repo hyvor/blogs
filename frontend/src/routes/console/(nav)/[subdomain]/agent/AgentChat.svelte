@@ -356,9 +356,9 @@
 				<div class="disclaimer">
 					AI can make mistakes; please double-check. Conversations are deleted after 30 days.
 				</div>
-				{#if $blogStore?.ai_provider_model}
+				{#if $blogStore?.ai_model}
 					<button type="button" class="model-info" onclick={openAiSettings}>
-						{$blogStore.ai_provider_model}
+						{$blogStore.ai_model}
 					</button>
 				{/if}
 			</div>

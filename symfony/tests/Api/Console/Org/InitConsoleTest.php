@@ -7,7 +7,7 @@ use App\Api\Console\Object\AuthUserObject;
 use App\Api\Console\Object\BlogListObject;
 use App\Api\Console\Object\BlogListObjectFactory;
 use App\Entity\Enum\UserRole;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use App\Service\CodeHighlight\Highlighter;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -16,7 +16,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(AiProvider::class)]
+#[CoversClass(AiModel::class)]
 #[CoversClass(AuthUserObject::class)]
 #[CoversClass(BlogListObject::class)]
 #[CoversClass(BlogListObjectFactory::class)]
@@ -68,15 +68,15 @@ class InitConsoleTest extends ApiTestCase
         $this->assertArrayHasKey('limits', $json['config']);
         $this->assertArrayHasKey('highlight_themes', $json['config']);
 
-        $this->assertIsArray($json['config']['ai_providers']);
+        $this->assertIsArray($json['config']['ai_models']);
         $this->assertSame(
-            ['mistral', 'openai', 'anthropic'],
-            array_column($json['config']['ai_providers'], 'value'),
+            array_map(fn(AiModel $model) => $model->value, AiModel::cases()),
+            array_column($json['config']['ai_models'], 'value'),
         );
-        $firstProvider = $json['config']['ai_providers'][0];
-        $this->assertIsArray($firstProvider);
-        $this->assertArrayHasKey('label', $firstProvider);
-        $this->assertArrayHasKey('model', $firstProvider);
+        $firstModel = $json['config']['ai_models'][0];
+        $this->assertIsArray($firstModel);
+        $this->assertArrayHasKey('provider', $firstModel);
+        $this->assertArrayHasKey('usage_percent', $firstModel);
     }
 
     public function test_returns_empty_blogs_if_no_organization(): void

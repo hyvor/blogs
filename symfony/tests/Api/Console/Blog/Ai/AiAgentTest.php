@@ -4,13 +4,9 @@ namespace App\Tests\Api\Console\Blog\Ai;
 
 use App\Api\Console\Controller\AiController;
 use App\Entity\AiConversation;
-use App\Entity\Enum\AiMessageChunkType;
-use App\Entity\Enum\AiMessageRole;
 use App\Entity\Enum\UserStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\AiConversationFactory;
-use App\Tests\Factory\AiMessageChunkFactory;
-use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\UserFactory;
 use PHPUnit\Framework\Attributes\CoversClass;

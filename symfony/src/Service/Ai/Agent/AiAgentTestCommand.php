@@ -4,7 +4,7 @@ namespace App\Service\Ai\Agent;
 
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -26,7 +26,7 @@ class AiAgentTestCommand
     public function __invoke(): int
     {
         $meta = new BlogMeta();
-        $meta->ai_provider = AiProvider::OPENAI;
+        $meta->ai_model = AiModel::GPT_5_6_LUNA;
         $blog = BlogFactory::createOne([
             'meta' => $meta
         ]);

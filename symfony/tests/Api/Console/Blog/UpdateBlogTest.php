@@ -57,17 +57,16 @@ class UpdateBlogTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'ai_provider' => 'anthropic',
+            'ai_model' => 'claude-sonnet-5',
             'ai_translation_enabled' => true,
-            'ai_generation_enabled' => true,
+            'ai_agent' => true,
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertSame('anthropic', $json['ai_provider']);
-        $this->assertSame('claude-sonnet-5', $json['ai_provider_model']);
+        $this->assertSame('claude-sonnet-5', $json['ai_model']);
         $this->assertTrue($json['ai_translation_enabled']);
-        $this->assertTrue($json['ai_generation_enabled']);
+        $this->assertTrue($json['ai_agent']);
     }
 
     public function test_validates_urls(): void

@@ -4,12 +4,14 @@ namespace App\Tests\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\Enum\AiMessageChunkType;
+use App\Entity\AiMessageThinking;
+use App\Entity\AiMessageToolCall;
 use App\Entity\Enum\AiMessageRole;
 use App\Service\Ai\Agent\AiConversationService;
 use App\Tests\Factory\AiConversationFactory;
-use App\Tests\Factory\AiMessageChunkFactory;
 use App\Tests\Factory\AiMessageFactory;
+use App\Tests\Factory\AiMessageThinkingFactory;
+use App\Tests\Factory\AiMessageToolCallFactory;
 use App\Tests\Factory\BlogFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -66,14 +68,17 @@ class AiConversationServiceTest extends KernelTestCase
         $this->assertFalse($secondPage['has_more']);
     }
 
-    public function test_deleting_a_conversation_cascades_to_its_messages_and_chunks(): void
+    public function test_deleting_a_conversation_cascades_to_its_messages_thinking_and_tool_calls(): void
     {
         $blog = BlogFactory::createOne();
         $conversation = AiConversationFactory::createOneFor($blog);
         $conversationId = $conversation->getId();
         $message = AiMessageFactory::createOneFor($conversation);
         $messageId = $message->getId();
-        AiMessageChunkFactory::createOneFor($message);
+        $thinking = AiMessageThinkingFactory::createOneFor($message);
+        $thinkingId = $thinking->getId();
+        $toolCall = AiMessageToolCallFactory::createOneFor($message);
+        $toolCallId = $toolCall->getId();
 
         $this->service()->deleteConversation($conversation);
 
@@ -81,9 +86,11 @@ class AiConversationServiceTest extends KernelTestCase
         $em->clear();
         $this->assertNull($em->getRepository(AiConversation::class)->find($conversationId));
         $this->assertNull($em->getRepository(AiMessage::class)->find($messageId));
+        $this->assertNull($em->getRepository(AiMessageThinking::class)->find($thinkingId));
+        $this->assertNull($em->getRepository(AiMessageToolCall::class)->find($toolCallId));
     }
 
-    public function test_reconstructs_turns_from_messages_and_chunks(): void
+    public function test_reconstructs_turns_from_messages_thinking_and_tool_calls(): void
     {
         $blog = BlogFactory::createOne();
         $conversation = AiConversationFactory::createOneFor($blog);
@@ -94,29 +101,17 @@ class AiConversationServiceTest extends KernelTestCase
 
         $assistantMessage = AiMessageFactory::createOneFor($conversation);
         $assistantMessage->setRole(AiMessageRole::ASSISTANT);
-        $assistantMessage->setContent('Hi! thinking... done');
+        $assistantMessage->setContent('Hi!');
         $assistantMessage->setModel('claude-sonnet-5');
         $assistantMessage->setInputTokens(10);
         $assistantMessage->setOutputTokens(20);
         $assistantMessage->setTotalTokens(30);
 
-        AiMessageChunkFactory::createOneFor($assistantMessage)
-            ->setType(AiMessageChunkType::THINKING)
-            ->setContent('thinking...');
+        AiMessageThinkingFactory::createOneFor($assistantMessage)->setSummary('thinking...');
 
-        AiMessageChunkFactory::createOneFor($assistantMessage)
-            ->setType(AiMessageChunkType::EVENT)
-            ->setContent('thinking_done')
-            ->setEventPayload(['type' => 'thinking_done']);
-
-        AiMessageChunkFactory::createOneFor($assistantMessage)
-            ->setType(AiMessageChunkType::TEXT)
-            ->setContent('Hi!');
-
-        AiMessageChunkFactory::createOneFor($assistantMessage)
-            ->setType(AiMessageChunkType::EVENT)
-            ->setContent('post_variant_read')
-            ->setEventPayload(['type' => 'post_variant_read', 'post_variant_id' => 42]);
+        AiMessageToolCallFactory::createOneFor($assistantMessage)
+            ->setToolName('document_get')
+            ->setArguments(['postVariantId' => 42]);
 
         $this->getEm()->flush();
 
@@ -134,14 +129,14 @@ class AiConversationServiceTest extends KernelTestCase
         $events = $turns[1]['events'];
         $this->assertIsArray($events);
         $this->assertSame(
-            ['thinking_started', 'thinking', 'thinking_done', 'text', 'post_variant_read'],
+            ['thinking_started', 'thinking', 'thinking_done', 'post_variant_read', 'text'],
             array_column($events, 'type'),
         );
         $this->assertIsArray($events[1]);
         $this->assertSame('thinking...', $events[1]['content']);
         $this->assertIsArray($events[3]);
-        $this->assertSame('Hi!', $events[3]['content']);
+        $this->assertSame(42, $events[3]['post_variant_id']);
         $this->assertIsArray($events[4]);
-        $this->assertSame(42, $events[4]['post_variant_id']);
+        $this->assertSame('Hi!', $events[4]['content']);
     }
 }

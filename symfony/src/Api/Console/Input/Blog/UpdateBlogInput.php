@@ -6,7 +6,7 @@ use App\Entity\Enum\Blog\ColorMode;
 use App\Entity\Enum\Blog\ColorModeDefault;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use App\Service\Blog\BlogService;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -84,9 +84,9 @@ class UpdateBlogInput
 
     public ?LinkAnalysisEmailReport $link_analysis_email_report = null;
 
-    public ?AiProvider $ai_provider = null;
+    public ?AiModel $ai_model = null;
 
     public ?bool $ai_translation_enabled = null;
 
-    public ?bool $ai_generation_enabled = null;
+    public ?bool $ai_agent = null;
 }

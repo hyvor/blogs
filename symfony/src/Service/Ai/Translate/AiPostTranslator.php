@@ -117,7 +117,8 @@ PROMPT;
             self::SYSTEM_PROMPT_TEMPLATE
         );
 
-        $provider = $blog->getMeta()->ai_provider;
+        $model = $blog->getMeta()->ai_model;
+        $provider = $model->getProvider();
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
         // Note: AI was confused with escaped slashes in the JSON, so added JSON_UNESCAPED_SLASHES
@@ -130,7 +131,7 @@ PROMPT;
 
 
         $result = $platform->invoke(
-            $provider->model(),
+            $model->value,
             $messages,
             $this->getOptionsForProvider($provider)
         );
@@ -142,7 +143,7 @@ PROMPT;
         } catch (ExceptionInterface $e) {
             $this->logger->error('Failed to invoke AI platform: ' . $e->getMessage(), [
                 'provider' => $provider,
-                'model' => $provider->model(),
+                'model' => $model->value,
                 'messages' => $messages,
                 'exception' => $e
             ]);
@@ -150,7 +151,7 @@ PROMPT;
         } catch (\Symfony\Component\Serializer\Exception\ExceptionInterface $e) {
             $this->logger->error('Failed to decode translation result: ' . $e->getMessage(), [
                 'provider' => $provider,
-                'model' => $provider->model(),
+                'model' => $model->value,
                 'messages' => $messages,
                 'result' => $textResult,
                 'exception' => $e
@@ -163,7 +164,7 @@ PROMPT;
         if (count($contentTranslations) !== count($translatables['content'])) {
             $this->logger->error('Translation result count does not match input', [
                 'provider' => $provider,
-                'model' => $provider->model(),
+                'model' => $model->value,
                 'messages' => $messages,
                 'result' => $textResult,
                 'decoded_result' => $response,

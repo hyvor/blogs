@@ -4,8 +4,7 @@ namespace App\Service\Ai\Agent\Event;
 
 /**
  * A chunk of the assistant's final text response. Sent to the frontend for every delta;
- * persisted as an `ai_message_chunks` row of type 'text' (consecutive deltas are merged
- * into a single row rather than saved one-by-one).
+ * the full accumulated text is persisted once, as the assistant AiMessage's content.
  */
 readonly class TextEvent implements AgentEvent
 {

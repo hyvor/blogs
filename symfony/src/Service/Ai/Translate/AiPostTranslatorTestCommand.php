@@ -7,7 +7,7 @@ use App\Entity\Language;
 use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -102,7 +102,7 @@ class AiPostTranslatorTestCommand
         ];
 
         $meta = new BlogMeta();
-        $meta->ai_provider = AiProvider::ANTHROPIC;
+        $meta->ai_model = AiModel::CLAUDE_SONNET_5;
         $blog = new Blog();
         $blog->setMeta($meta);
 

@@ -11,7 +11,7 @@ use App\Api\Console\Object\BlogListObjectFactory;
 use App\Service\AppConfig;
 use App\Service\Billing\UsageService;
 use App\Service\CodeHighlight\Highlighter;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use App\Service\Limit;
 use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
@@ -111,11 +111,11 @@ class ConsoleController
                     'max_asset_file_size' => Limit::MAX_ASSET_FILE_SIZE,
                 ],
                 'highlight_themes' => $this->highlighter->getAllThemes(),
-                'ai_providers' => array_map(fn(AiProvider $provider) => [
-                    'value' => $provider->value,
-                    'label' => $provider->label(),
-                    'model' => $provider->model(),
-                ], AiProvider::cases()),
+                'ai_models' => array_map(fn(AiModel $model) => [
+                    'value' => $model->value,
+                    'provider' => $model->getProvider()->label(),
+                    'usage_percent' => $model->getRelativeCostPercent(),
+                ], AiModel::cases()),
             ],
             'preloaded' => [
                 'blog' => $preloadedBlog ? json_decode((string) $preloadedBlog->getContent(), true) : null,
@@ -147,13 +147,9 @@ class ConsoleController
                 'used' => $this->usageService->getStorageUsageBytes($org->id),
                 'limit' => $bl->storage ?? 0,
             ],
-            'auto_translate_chars' => [
-                'used' => $this->usageService->getAutoTranslateCharsUsageThisMonth($org->id),
-                'limit' => $bl->autoTranslationsChars ?? 0,
-            ],
-            'ai_tokens' => [
-                'used' => $this->usageService->getAiTokensUsage($org->id),
-                'limit' => $bl->aiTokens ?? 0,
+            'ai' => [
+                'used' => ($bl->aiCost ?? 0) > 0 ? $this->usageService->getAiTokensUsage($org->id, $bl) : 0,
+                'limit' => ($bl->aiCost ?? 0) > 0 ? 100 : 0,
             ],
             'blogs' => [
                 'used' => $this->usageService->getBlogsUsage($org->id),

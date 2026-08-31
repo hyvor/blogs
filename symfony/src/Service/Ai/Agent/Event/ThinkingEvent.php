@@ -3,9 +3,8 @@
 namespace App\Service\Ai\Agent\Event;
 
 /**
- * A chunk of the assistant's reasoning. Sent to the frontend for every delta; persisted
- * as an `ai_message_chunks` row of type 'thinking' (consecutive deltas are merged into a
- * single row rather than saved one-by-one).
+ * A chunk of the assistant's reasoning. Sent to the frontend for every delta; only the
+ * completed block's summary (see ThinkingComplete) is persisted, as an AiMessageThinking row.
  */
 readonly class ThinkingEvent implements AgentEvent
 {

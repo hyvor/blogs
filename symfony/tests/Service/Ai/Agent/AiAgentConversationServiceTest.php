@@ -4,9 +4,9 @@ namespace App\Tests\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\AiMessageChunk;
+use App\Entity\AiMessageThinking;
+use App\Entity\AiMessageToolCall;
 use App\Entity\Blog;
-use App\Entity\Enum\AiMessageChunkType;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\AiAgentConversationService;
@@ -146,7 +146,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', $postVariant));
 
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'text', 'text', 'done'],
+            ['conversation_created', 'text', 'text', 'done'],
             array_column($events, 'type'),
         );
         $this->assertSame('Say hello', $events[0]['title']);
@@ -167,37 +167,25 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $this->assertSame(AiMessageRole::ASSISTANT, $messages[1]->getRole());
         $this->assertSame('Hello world', $messages[1]->getContent());
-
-        $chunkRepo = $this->getEm()->getRepository(AiMessageChunk::class);
-
-        $userChunks = $chunkRepo->findBy(['message' => $messages[0]]);
-        $this->assertCount(1, $userChunks);
-        $this->assertSame(AiMessageChunkType::TEXT, $userChunks[0]->getType());
-        $this->assertSame('Say hello', $userChunks[0]->getContent());
-
-        // consecutive TextDelta chunks are merged into a single row
-        $assistantChunks = $chunkRepo->findBy(['message' => $messages[1]], ['id' => 'ASC']);
-        $this->assertCount(1, $assistantChunks);
-        $this->assertSame(AiMessageChunkType::TEXT, $assistantChunks[0]->getType());
-        $this->assertSame('Hello world', $assistantChunks[0]->getContent());
     }
 
-    public function test_persists_thinking_done_event_but_not_thinking_started(): void
+    public function test_persists_a_thinking_row_on_thinking_complete(): void
     {
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
 
         $service = $this->buildService($postVariant, [
             new ThinkingDelta('reasoning about it...'),
-            new ThinkingComplete('reasoning about it...'),
+            new ThinkingComplete('reasoning about it...', 'sig-123'),
             new TextDelta('done'),
         ]);
 
         $events = iterator_to_array($service->streamPrompt($blog, 'Think about it', $postVariant));
 
-        // thinking_started is sent to the frontend, even though it's never persisted
+        // the per-delta thinking stream is sent to the frontend live, even though only the
+        // completed summary is persisted
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'thinking_started', 'thinking', 'thinking_done', 'text', 'done'],
+            ['conversation_created', 'thinking_started', 'thinking', 'thinking_done', 'text', 'done'],
             array_column($events, 'type'),
         );
 
@@ -205,20 +193,12 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
-            ->findBy(['message' => $assistantMessage], ['id' => 'ASC']);
+        $thinkingRows = $this->getEm()->getRepository(AiMessageThinking::class)
+            ->findBy(['ai_message' => $assistantMessage]);
 
-        $this->assertCount(3, $chunks);
-
-        $this->assertSame(AiMessageChunkType::THINKING, $chunks[0]->getType());
-        $this->assertSame('reasoning about it...', $chunks[0]->getContent());
-
-        $this->assertSame(AiMessageChunkType::EVENT, $chunks[1]->getType());
-        $this->assertSame('thinking_done', $chunks[1]->getContent());
-        $this->assertSame(['type' => 'thinking_done'], $chunks[1]->getEventPayload());
-
-        $this->assertSame(AiMessageChunkType::TEXT, $chunks[2]->getType());
-        $this->assertSame('done', $chunks[2]->getContent());
+        $this->assertCount(1, $thinkingRows);
+        $this->assertSame('reasoning about it...', $thinkingRows[0]->getSummary());
+        $this->assertSame('sig-123', $thinkingRows[0]->getSignature());
     }
 
     public function test_persists_typed_event_for_document_edit_tool_call(): void
@@ -235,10 +215,8 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', $postVariant));
 
-        // the same typed event that gets persisted is now streamed to the frontend too,
-        // instead of a generic 'tool_result' array
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'tool_call', 'post_variant_edit_suggested', 'done'],
+            ['conversation_created', 'tool_call', 'post_variant_edit_suggested', 'done'],
             array_column($events, 'type'),
         );
 
@@ -249,80 +227,50 @@ class AiAgentConversationServiceTest extends KernelTestCase
             'arguments' => $arguments,
         ];
 
-        $this->assertSame($expectedPayload, $events[3]);
+        $this->assertSame($expectedPayload, $events[2]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
-            ->findBy(['message' => $assistantMessage]);
+        $toolCalls = $this->getEm()->getRepository(AiMessageToolCall::class)
+            ->findBy(['ai_message' => $assistantMessage]);
 
-        $this->assertCount(1, $chunks);
-        $this->assertSame(AiMessageChunkType::EVENT, $chunks[0]->getType());
-        $this->assertSame('post_variant_edit_suggested', $chunks[0]->getContent());
-        $this->assertSame($expectedPayload, $chunks[0]->getEventPayload());
+        $this->assertCount(1, $toolCalls);
+        $this->assertSame('document_replace', $toolCalls[0]->getToolName());
+        $this->assertSame($arguments, $toolCalls[0]->getArguments());
     }
 
-    public function test_ignores_tool_calls_with_no_matching_event(): void
+    public function test_still_persists_a_tool_call_with_no_matching_typed_event(): void
     {
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
 
         $service = $this->buildService($postVariant, [
             new ToolCallStart('call-1', 'some_unmapped_tool'),
-            new ToolCallComplete([new ToolCall('call-1', 'some_unmapped_tool', [])]),
+            new ToolCallComplete([new ToolCall('call-1', 'some_unmapped_tool', ['foo' => 'bar'])]),
         ]);
 
         $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
 
-        // still notifies the frontend via a generic fallback event, just doesn't persist it
+        // still notifies the frontend via a generic fallback event
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'tool_call', 'tool_result', 'done'],
+            ['conversation_created', 'tool_call', 'tool_result', 'done'],
             array_column($events, 'type'),
         );
-        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[3]);
+        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[2]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
-            ->findBy(['message' => $assistantMessage]);
+        // the raw tool call is always persisted, even with no domain event mapping for it
+        $toolCalls = $this->getEm()->getRepository(AiMessageToolCall::class)
+            ->findBy(['ai_message' => $assistantMessage]);
 
-        $this->assertCount(0, $chunks);
-    }
-
-    public function test_starts_a_new_chunk_after_a_break_instead_of_merging(): void
-    {
-        $postVariant = $this->createPostVariant();
-        $blog = $postVariant->getPost()->getBlog();
-
-        $arguments = ['postVariantId' => $postVariant->getId()];
-
-        $service = $this->buildService($postVariant, [
-            new TextDelta('Before.'),
-            new ToolCallStart('call-1', 'document_get'),
-            new ToolCallComplete([new ToolCall('call-1', 'document_get', $arguments)]),
-            new TextDelta('After.'),
-        ]);
-
-        iterator_to_array($service->streamPrompt($blog, 'Read then continue', $postVariant));
-
-        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
-            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
-        $this->assertNotNull($assistantMessage);
-
-        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
-            ->findBy(['message' => $assistantMessage], ['id' => 'ASC']);
-
-        $this->assertCount(3, $chunks);
-        $this->assertSame(AiMessageChunkType::TEXT, $chunks[0]->getType());
-        $this->assertSame('Before.', $chunks[0]->getContent());
-        $this->assertSame(AiMessageChunkType::EVENT, $chunks[1]->getType());
-        $this->assertSame('post_variant_read', $chunks[1]->getContent());
-        $this->assertSame(AiMessageChunkType::TEXT, $chunks[2]->getType());
-        $this->assertSame('After.', $chunks[2]->getContent());
+        $this->assertCount(1, $toolCalls);
+        $this->assertSame('some_unmapped_tool', $toolCalls[0]->getToolName());
+        $this->assertSame(['foo' => 'bar'], $toolCalls[0]->getArguments());
     }
 
     public function test_yields_document_change_when_ops_were_made(): void
@@ -343,7 +291,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Change it', $postVariant));
 
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'text', 'document_change', 'done'],
+            ['conversation_created', 'text', 'document_change', 'done'],
             array_column($events, 'type'),
         );
     }
@@ -424,7 +372,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertNull($fakeAiAgentService->capturedHistories[0]);
 
         $conversationStarted = $firstEvents[0];
-        $this->assertSame('conversation_started', $conversationStarted['type']);
+        $this->assertSame('conversation_created', $conversationStarted['type']);
         $conversationId = $conversationStarted['conversation_id'];
 
         $conversation = $this->getEm()->getRepository(AiConversation::class)->find($conversationId);
@@ -454,23 +402,23 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
 
         $this->assertSame(
-            ['conversation_started', 'post_variant', 'error', 'done'],
+            ['conversation_created', 'error', 'done'],
             array_column($events, 'type'),
         );
         $this->assertSame(
             'The AI assistant ran into a problem and could not finish this request. Please try again.',
-            $events[2]['message'],
+            $events[1]['message'],
         );
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
-            ->findBy(['message' => $assistantMessage]);
-        $this->assertCount(1, $chunks);
-        $this->assertSame(AiMessageChunkType::EVENT, $chunks[0]->getType());
-        $this->assertSame('error', $chunks[0]->getContent());
+        // the error itself is not persisted anywhere - just sent to the frontend and logged
+        $this->assertCount(0, $this->getEm()->getRepository(AiMessageThinking::class)
+            ->findBy(['ai_message' => $assistantMessage]));
+        $this->assertCount(0, $this->getEm()->getRepository(AiMessageToolCall::class)
+            ->findBy(['ai_message' => $assistantMessage]));
     }
 
     public function test_persists_token_usage_on_the_assistant_message(): void
@@ -509,6 +457,53 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
         $this->assertSame('claude-sonnet-5', $assistantMessage->getModel());
+    }
+
+    public function test_persists_token_usd_cost_on_the_assistant_message(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        // claude-sonnet-5: $2.00/M input, $10.00/M output
+        $tokenUsage = new TokenUsage(promptTokens: 500_000, completionTokens: 200_000, totalTokens: 700_000);
+
+        $service = $this->buildService(
+            $postVariant,
+            [new TextDelta('Hi')],
+            metadata: new Metadata(['token_usage' => $tokenUsage]),
+            model: 'claude-sonnet-5',
+        );
+
+        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+        $this->assertSame(100, $assistantMessage->getInputTokensUsdCost());
+        $this->assertSame(200, $assistantMessage->getOutputTokensUsdCost());
+        $this->assertSame(300, $assistantMessage->getTotalTokensUsdCost());
+    }
+
+    public function test_does_not_persist_token_usd_cost_for_an_unknown_model(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $tokenUsage = new TokenUsage(promptTokens: 100, completionTokens: 50, totalTokens: 150);
+
+        $service = $this->buildService(
+            $postVariant,
+            [new TextDelta('Hi')],
+            metadata: new Metadata(['token_usage' => $tokenUsage]),
+            model: 'test-model',
+        );
+
+        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+        $this->assertNull($assistantMessage->getTotalTokensUsdCost());
     }
 
 }

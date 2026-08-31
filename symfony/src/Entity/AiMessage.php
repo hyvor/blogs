@@ -42,6 +42,15 @@ class AiMessage
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $model = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $input_tokens_usd_cost = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $output_tokens_usd_cost = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $total_tokens_usd_cost = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -149,6 +158,39 @@ class AiMessage
     public function setModel(?string $model): static
     {
         $this->model = $model;
+        return $this;
+    }
+
+    public function getInputTokensUsdCost(): ?int
+    {
+        return $this->input_tokens_usd_cost;
+    }
+
+    public function setInputTokensUsdCost(?int $input_tokens_usd_cost): static
+    {
+        $this->input_tokens_usd_cost = $input_tokens_usd_cost;
+        return $this;
+    }
+
+    public function getOutputTokensUsdCost(): ?int
+    {
+        return $this->output_tokens_usd_cost;
+    }
+
+    public function setOutputTokensUsdCost(?int $output_tokens_usd_cost): static
+    {
+        $this->output_tokens_usd_cost = $output_tokens_usd_cost;
+        return $this;
+    }
+
+    public function getTotalTokensUsdCost(): ?int
+    {
+        return $this->total_tokens_usd_cost;
+    }
+
+    public function setTotalTokensUsdCost(?int $total_tokens_usd_cost): static
+    {
+        $this->total_tokens_usd_cost = $total_tokens_usd_cost;
         return $this;
     }
 }
