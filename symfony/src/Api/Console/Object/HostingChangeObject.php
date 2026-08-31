@@ -30,11 +30,11 @@ class HostingChangeObject
         $this->from_at = $hostingChange->getFromAt();
         $this->from_subdomain = $hostingChange->getFromSubdomain();
         $this->from_domain = $hostingChange->getFromDomain();
-        $this->from_url = $hostingChange->getFromUrl();
+        $this->from_url = $hostingChange->getFromHostingUrl();
         $this->to_at = $hostingChange->getToAt();
         $this->to_subdomain = $hostingChange->getToSubdomain();
         $this->to_domain = $hostingChange->getToDomain();
-        $this->to_url = $hostingChange->getToUrl();
+        $this->to_url = $hostingChange->getToHostingUrl();
         $this->status = $hostingChange->getStatus();
         $this->error_message = $hostingChange->getErrorMessage();
     }

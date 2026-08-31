@@ -43,27 +43,51 @@ class HostingChangeService
     public function startHostingChange(
         Blog $blog,
         BlogHostingAt $toAt,
+        ?string $toSubdomain = null,
         ?string $toHostingUrl = null,
         ?string $toDomain = null
     ): HostingChange
     {
+
+        match ($toAt) {
+            BlogHostingAt::SUBDOMAIN => assert($toSubdomain !== null, 'toSubdomain must be provided when changing to SUBDOMAIN'),
+            BlogHostingAt::SELF => assert($toHostingUrl !== null, 'toHostingUrl must be provided when changing to SELF'),
+            BlogHostingAt::DOMAIN => assert($toDomain !== null, 'toDomain must be provided when changing to DOMAIN'),
+        };
+
         if ($this->hasPendingChange($blog)) {
             throw new PendingHostingChangeException($blog);
         }
 
-        $fromDomain = $blog->getCustomDomain()?->getDomain();
-
         $hostingChange = new HostingChange();
         $hostingChange->setBlog($blog);
-        $hostingChange->setFromAt($blog->getHostingAt());
-        $hostingChange->setFromDomain($fromDomain);
-        $hostingChange->setFromUrl($this->permalinkService->getBlogUrl($blog));
-        $hostingChange->setToAt($toAt);
-        $hostingChange->setToDomain($toDomain);
-        $hostingChange->setToUrl($this->permalinkService->buildUrlForHosting($blog, $toAt, $toHostingUrl, $toDomain));
         $hostingChange->setStatus(HostingChangeStatus::CHANGING);
         $hostingChange->setCreatedAt($this->now());
         $hostingChange->setUpdatedAt($this->now());
+
+        $hostingChange->setFromAt($blog->getHostingAt());
+        if ($hostingChange->getFromAt() === BlogHostingAt::SUBDOMAIN) {
+            assert($blog->getSubdomain());
+            $hostingChange->setFromSubdomain($blog->getSubdomain());
+        } elseif ($hostingChange->getFromAt() === BlogHostingAt::SELF) {
+            assert($blog->getHostingUrl());
+            $hostingChange->setFromHostingUrl($blog->getHostingUrl());
+        } elseif ($hostingChange->getFromAt() === BlogHostingAt::DOMAIN) {
+            assert($blog->getCustomDomain()?->getDomain());
+            $hostingChange->setFromDomain($blog->getCustomDomain()?->getDomain());
+        }
+
+        $hostingChange->setToAt($toAt);
+        if ($toAt === BlogHostingAt::SUBDOMAIN) {
+            assert($toSubdomain !== null);
+            $hostingChange->setToSubdomain($toSubdomain);
+        } elseif ($toAt === BlogHostingAt::SELF) {
+            assert($toHostingUrl !== null);
+            $hostingChange->setToHostingUrl($toHostingUrl);
+        } elseif ($toAt === BlogHostingAt::DOMAIN) {
+            assert($toDomain !== null);
+            $hostingChange->setToDomain($toDomain);
+        }
 
         $this->em->persist($hostingChange);
 
@@ -128,8 +152,8 @@ class HostingChangeService
             $blog->getId(),
             UpdateBlogUrlEvent::HOSTING_CHANGED,
             lockKeys: [],
-            blogOldUrl: $hostingChange->getFromUrl(),
-            blogNewUrl: $hostingChange->getToUrl()
+            blogOldUrl: $hostingChange->getFromHostingUrl(),
+            blogNewUrl: $hostingChange->getToHostingUrl()
         );
 
         ($this->updateBlogUrlsMessageHandler)($message);
@@ -144,7 +168,7 @@ class HostingChangeService
         }
 
         $blog->setHostingAt($toAt);
-        $blog->setHostingUrl($toAt === BlogHostingAt::SELF ? $hostingChange->getToUrl() : null);
+        $blog->setHostingUrl($toAt === BlogHostingAt::SELF ? $hostingChange->getToHostingUrl() : null);
 
         $this->em->flush();
     }

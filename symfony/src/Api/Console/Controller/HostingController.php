@@ -80,18 +80,30 @@ class HostingController extends AbstractController
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
         $hostingAt = $input->hosting_at;
-        $hostingUrl = $input->hosting_url;
+        $inputSubdomain = $input->subdomain ?? $blog->getSubdomain();
 
         if ($hostingAt === BlogHostingAt::DOMAIN) {
             throw new BadRequestHttpException('Use custom domain endpoints to set hosting at domain');
         }
 
-        if ($hostingAt === BlogHostingAt::SELF && $hostingUrl === null) {
+        if ($hostingAt === BlogHostingAt::SELF && $input->hosting_url === null) {
             throw new BadRequestHttpException('Hosting URL is required when self-hosting');
         }
 
-        if ($blog->getHostingAt() === $hostingAt) {
-            throw new BadRequestHttpException('Hosting at is already set to the requested value: ' . $hostingAt->value);
+        if (
+            $blog->getHostingAt() === $hostingAt &&
+            $hostingAt === BlogHostingAt::SUBDOMAIN &&
+            $blog->getSubdomain() === $inputSubdomain
+        ) {
+            throw new BadRequestHttpException('You are already hosting at subdomain: ' . $inputSubdomain);
+        }
+
+        if (
+            $blog->getHostingAt() === $hostingAt &&
+            $hostingAt === BlogHostingAt::SELF &&
+            $blog->getHostingUrl() === $input->hosting_url
+        ) {
+            throw new BadRequestHttpException('You are already hosting at self-hosted URL: ' . $blog->getHostingUrl());
         }
 
         if ($this->hostingChangeService->hasPendingChange($blog)) {
@@ -99,7 +111,12 @@ class HostingController extends AbstractController
         }
 
         try {
-            $this->hostingChangeService->startHostingChange($blog, $hostingAt, $hostingUrl);
+            $this->hostingChangeService->startHostingChange(
+                $blog,
+                $hostingAt,
+                toSubdomain: $inputSubdomain,
+                toHostingUrl: $input->hosting_url
+            );
         } catch (PendingHostingChangeException) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }

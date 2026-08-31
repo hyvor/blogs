@@ -35,9 +35,8 @@ class HostingChange
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $from_domain = null;
 
-    // absolute URL of the blog before the change
     #[ORM\Column(length: 1024, nullable: true)]
-    private string $from_url;
+    private ?string $from_hosting_url = null;
 
     #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
     private BlogHostingAt $to_at;
@@ -48,9 +47,8 @@ class HostingChange
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $to_domain = null;
 
-    // absolute URL of the blog after the change
     #[ORM\Column(length: 1024, nullable: true)]
-    private string $to_url;
+    private ?string $to_hosting_url = null;
 
     #[ORM\Column(length: 255, enumType: HostingChangeStatus::class, options: ['default' => 'changing'])]
     private HostingChangeStatus $status = HostingChangeStatus::CHANGING;
@@ -138,14 +136,14 @@ class HostingChange
         return $this;
     }
 
-    public function getFromUrl(): string
+    public function getFromHostingUrl(): ?string
     {
-        return $this->from_url;
+        return $this->from_hosting_url;
     }
 
-    public function setFromUrl(string $from_url): static
+    public function setFromHostingUrl(?string $from_hosting_url): static
     {
-        $this->from_url = $from_url;
+        $this->from_hosting_url = $from_hosting_url;
         return $this;
     }
 
@@ -182,14 +180,14 @@ class HostingChange
         return $this;
     }
 
-    public function getToUrl(): string
+    public function getToHostingUrl(): ?string
     {
-        return $this->to_url;
+        return $this->to_hosting_url;
     }
 
-    public function setToUrl(string $to_url): static
+    public function setToHostingUrl(?string $to_hosting_url): static
     {
-        $this->to_url = $to_url;
+        $this->to_hosting_url = $to_hosting_url;
         return $this;
     }
 
