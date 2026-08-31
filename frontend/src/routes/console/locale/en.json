@@ -448,6 +448,7 @@
 				"setupCustomDomain": "Setup Custom Domain",
 				"configureDomain": "Configure Domain",
 				"continueSetup": "Continue Setup",
+				"pendingDns": "Pending DNS",
 				"copiedToClipboard": "Copied to clipboard",
 				"changeApplying": "Your hosting change is being applied. This may take a few minutes depending on the number of posts on your blog. You can leave this page and come back later to check the status.",
 				"changeApplied": "Your hosting change has been successfully applied.",

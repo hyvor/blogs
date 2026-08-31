@@ -27,10 +27,11 @@
 		{/if}
 	</div>
 
+	<p class="hosting-option-subtitle">
+		{i18n.t('console.settings.hosting.customDomainDesc')}
+	</p>
+
 	{#if !customDomain && !intent}
-		<p class="hosting-option-subtitle">
-			{i18n.t('console.settings.hosting.customDomainDesc')}
-		</p>
 		<div class="button-wrap">
 			<Button size="small" variant="outline" {disabled} on:click={onSetup}>
 				{i18n.t('console.settings.hosting.setupCustomDomain')}
@@ -53,7 +54,7 @@
 				<div class="domain-row">
 					<div class="domain-row-info">
 						<span class="domain-row-domain">{intent.domain}</span>
-						<Tag color="orange" size="small">Pending DNS Validation</Tag>
+						<Tag color="orange" size="small">{i18n.t('console.settings.hosting.pendingDns')}</Tag>
 					</div>
 					<Button size="small" variant="outline" {disabled} on:click={onContinueSetup}>
 						{i18n.t('console.settings.hosting.continueSetup')}

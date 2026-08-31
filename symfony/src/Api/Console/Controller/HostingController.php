@@ -139,6 +139,14 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
 
+        /**
+         * note:
+         * if tls provider is custom, custom domain is set up immediately and
+         * hosting change is initiated.
+         *
+         * otherwise, we create an intent.
+         */
+
         if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
             if ($input->tls_private_key === null || $input->tls_certificate === null) {
                 throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
@@ -168,8 +176,7 @@ class HostingController extends AbstractController
             ]);
         }
 
-        // auto TLS: DNS ownership has to be verified before this can go live, so it starts as
-        // an intent rather than touching the blog's hosting at all
+
         $intent = $this->customDomainService->createOrUpdateIntent($blog, $input->domain);
 
         return new JsonResponse([

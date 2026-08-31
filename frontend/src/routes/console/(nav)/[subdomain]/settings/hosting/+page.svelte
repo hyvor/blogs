@@ -18,7 +18,8 @@
 	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
-	import SetupCustomDomainModal from './SetupCustomDomainModal.svelte';
+	import CreateCustomDomainModal from './CreateCustomDomainModal.svelte';
+	import CustomDomainIntentModal from './CustomDomainIntentModal.svelte';
 	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
 	import HostingOption from './HostingOption.svelte';
 	import CustomDomainOption from './CustomDomainOption.svelte';
@@ -32,14 +33,9 @@
 	let subdomain = $state($blogStore.subdomain);
 
 	let subdomainError: null | string = $state(null);
-	let showCustomDomainModal = $state(false);
-	let customDomainModalStartEditing = $state(false);
+	let showCreateCustomDomainModal = $state(false);
+	let showCustomDomainIntentModal = $state(false);
 	let showSelfHostingModal = $state(false);
-
-	function openCustomDomainModal(startEditing: boolean) {
-		customDomainModalStartEditing = startEditing;
-		showCustomDomainModal = true;
-	}
 
 	let isLoading = $state(true);
 
@@ -119,9 +115,9 @@
 				/>
 				<CustomDomainOption
 					disabled={isHostingChangeInProgress}
-					onSetup={() => openCustomDomainModal(true)}
-					onContinueSetup={() => openCustomDomainModal(false)}
-					onConfigure={() => openCustomDomainModal(true)}
+					onSetup={() => (showCreateCustomDomainModal = true)}
+					onContinueSetup={() => (showCustomDomainIntentModal = true)}
+					onConfigure={() => (showCreateCustomDomainModal = true)}
 				/>
 				<HostingOption
 					title={i18n.t('console.settings.hosting.selfHosted')}
@@ -182,9 +178,13 @@
 		{/if}
 	</div>
 
-	<SetupCustomDomainModal
-		bind:show={showCustomDomainModal}
-		startEditing={customDomainModalStartEditing}
+	<CreateCustomDomainModal
+		bind:show={showCreateCustomDomainModal}
+		onSaved={() => (showCustomDomainIntentModal = true)}
+	/>
+	<CustomDomainIntentModal
+		bind:show={showCustomDomainIntentModal}
+		onEdit={() => (showCreateCustomDomainModal = true)}
 	/>
 	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
 {/if}
@@ -197,8 +197,9 @@
 	}
 	.hosting-options {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 12px;
 		width: 100%;
 	}
+
 </style>

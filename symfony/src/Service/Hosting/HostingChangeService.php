@@ -38,14 +38,18 @@ class HostingChangeService
      * Creates the HostingChange record and dispatches the job to handle it asynchronously.
      * @throws PendingHostingChangeException if the blog already has a change in progress
      */
-    public function startHostingChange(Blog $blog, BlogHostingAt $toAt, ?string $toHostingUrl = null): HostingChange
+    public function startHostingChange(
+        Blog $blog,
+        BlogHostingAt $toAt,
+        ?string $toHostingUrl = null,
+        ?string $toDomain = null
+    ): HostingChange
     {
         if ($this->hasPendingChange($blog)) {
             throw new PendingHostingChangeException($blog);
         }
 
         $fromDomain = $blog->getCustomDomain()?->getDomain();
-        $toDomain = $toAt === BlogHostingAt::DOMAIN ? $fromDomain : null;
 
         $hostingChange = new HostingChange();
         $hostingChange->setBlog($blog);
