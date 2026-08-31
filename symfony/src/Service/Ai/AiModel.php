@@ -13,7 +13,7 @@ enum AiModel: string
     // Anthropic
     case CLAUDE_SONNET_5 = 'claude-sonnet-5';
     case CLAUDE_OPUS_5 = 'claude-opus-5';
-    case CLAUDE_HAIKU_4_5 = 'claude-haiku-4.5';
+    case CLAUDE_HAIKU_4_5 = 'claude-haiku-4-5';
 
     // Mistral
     case MISTRAL_SMALL_LATEST = 'mistral-small-latest';

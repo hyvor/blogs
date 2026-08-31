@@ -20,6 +20,7 @@
 	import IdleMessage from './IdleMessage.svelte';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import UserMessage from './Message/UserMessage.svelte';
 
 	interface UserTurn {
 		role: 'user';
@@ -271,10 +272,7 @@
 			{:else}
 				{#each turns as turn}
 					{#if turn.role === 'user'}
-						<div class="message-wrap user">
-							<div class="avatar user-avatar"><span>You</span></div>
-							<div class="message">{turn.content}</div>
-						</div>
+						<UserMessage content={turn.content} />
 					{:else}
 						<div class="message-wrap ai">
 							<div class="avatar ai-avatar"><IconRobot size={16} /></div>
@@ -376,7 +374,7 @@
 	/>
 {/if}
 
-<style lang="scss">
+<style>
 	.agent-chat {
 		display: flex;
 		flex-direction: column;

@@ -5,6 +5,7 @@ namespace App\Service\Ai\Agent;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Ai\AiModel;
+use App\Service\Post\Content\PostContentService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -21,12 +22,13 @@ class AiAgentTestCommand
 
     public function __construct(
         private AiAgentService $aiAgentService,
+        private PostContentService $postContentService
     ) {}
 
     public function __invoke(): int
     {
         $meta = new BlogMeta();
-        $meta->ai_model = AiModel::GPT_5_6_LUNA;
+        $meta->ai_model = AiModel::MISTRAL_SMALL_LATEST;
         $blog = BlogFactory::createOne([
             'meta' => $meta
         ]);
@@ -63,7 +65,7 @@ class AiAgentTestCommand
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => 'Paris is the capital of Germany'
+                            'text' => 'Paris is the capital city of Germany.'
                         ],
                     ]
                 ],
@@ -110,7 +112,8 @@ class AiAgentTestCommand
             'status' => PostVariantStatus::DRAFT
         ]);
 
-        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
+        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative. Fix any factual errors.';
+        // $prompt = 'fix factual errors in the content. Make sure the content is accurate and informative';
 
         $result = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
@@ -137,8 +140,9 @@ class AiAgentTestCommand
             }
         }
 
+        $content = $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray();
         dd(
-            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
+            $this->postContentService->getHtml($content, $blog)
         );
     }
 

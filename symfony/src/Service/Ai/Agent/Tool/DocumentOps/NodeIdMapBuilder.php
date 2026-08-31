@@ -5,30 +5,76 @@ namespace App\Service\Ai\Agent\Tool\DocumentOps;
 use Hyvor\Phrosemirror\Document\Node;
 use App\Service\Post\Content\Nodes;
 
+/**
+ * Assigns stable, ever-increasing node IDs (e.g. "p-1", "p-2") to addressable nodes in a document.
+ *
+ * One instance is owned by a single FetchedDocument for its whole lifetime. As ops are applied to
+ * the document, newly created nodes are registered here so they get their own ID, and nodes removed
+ * from the document are unregistered. Per-prefix counters never reset or decrease, so an ID that was
+ * ever used is never reused for a different (e.g. later-created) node.
+ */
 class NodeIdMapBuilder
 {
 
     /**
-     * @return array<string, Node>
+     * @var array<string, Node>
      */
-    public static function build(Node $node): array
-    {
-        $nodeIdMap = [];
-        $counts = [];
+    private array $nodeIdMap = [];
 
-        $node->traverse(function (Node $node) use (&$nodeIdMap, &$counts) {
-            $prefix = self::getPrefix($node);
+    /**
+     * @var array<string, int>
+     */
+    private array $counts = [];
+
+    /**
+     * Registers the given node and all of its addressable descendants that don't already have an ID.
+     * Used both for the initial full-document build and to assign IDs to nodes newly introduced by an op.
+     */
+    public function register(Node $node): void
+    {
+        $node->traverse(function (Node $current) {
+            if ($this->idFor($current) !== null) {
+                return;
+            }
+
+            $prefix = self::getPrefix($current);
             if ($prefix === null) {
                 return;
             }
 
-            $counts[$prefix] = ($counts[$prefix] ?? 0) + 1;
-            $nodeId = "$prefix-{$counts[$prefix]}";
+            $this->counts[$prefix] = ($this->counts[$prefix] ?? 0) + 1;
+            $nodeId = "$prefix-{$this->counts[$prefix]}";
 
-            $nodeIdMap[$nodeId] = $node;
+            $this->nodeIdMap[$nodeId] = $current;
         });
+    }
 
-        return $nodeIdMap;
+    /**
+     * Removes the mapping for the given node and its descendants, e.g. after it is deleted or replaced.
+     * Counters are not decremented, so a future new node is never assigned an ID that used to belong to
+     * a since-removed node.
+     */
+    public function unregister(Node $node): void
+    {
+        $node->traverse(function (Node $current) {
+            $id = $this->idFor($current);
+            if ($id !== null) {
+                unset($this->nodeIdMap[$id]);
+            }
+        });
+    }
+
+    private function idFor(Node $node): ?string
+    {
+        return array_find_key($this->nodeIdMap, fn($mapped) => $mapped === $node);
+    }
+
+    /**
+     * @return array<string, Node>
+     */
+    public function getMap(): array
+    {
+        return $this->nodeIdMap;
     }
 
     private static function getPrefix(Node $node): ?string

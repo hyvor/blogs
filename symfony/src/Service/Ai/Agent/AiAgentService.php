@@ -126,7 +126,6 @@ class AiAgentService
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->postService,
-            $this->postContentService
         );
         $queryTool = new QueryTool(
             $blog,
@@ -178,6 +177,10 @@ class AiAgentService
                     'type' => 'adaptive'
                 ],
             ],
+            AiProvider::MISTRAL => [
+                'stream' => true,
+                'max_tokens' => self::MAX_OUTPUT_TOKENS,
+            ]
         };
     }
 

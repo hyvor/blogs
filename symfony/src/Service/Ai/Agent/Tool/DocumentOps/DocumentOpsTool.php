@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Service\Post\Content\Markdown\MarkdownSerializationOptions;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
+use App\Service\Post\Content\PostSchema;
 use App\Service\Post\PostService;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
@@ -51,7 +52,6 @@ class DocumentOpsTool
 
         // deps
         private PostService $postService,
-        private PostContentService $postContentService
     ) {}
 
     /**
@@ -62,34 +62,43 @@ class DocumentOpsTool
         return $this->documentCache;
     }
 
-    public function get(int $postVariantId): string
+    public function get(
+        int $postVariantId
+    ): string
     {
-        $variant = $this->postService->getPostVariantByBlogAndId($this->blog, $postVariantId);
+        $fetchedDocument = $this->documentCache[$postVariantId] ?? null;
 
-        if (!$variant) {
-            return "Post variant with ID $postVariantId not found.";
+        // only fetch from the database the first time - after that, keep serving (and editing)
+        // the in-memory document so that ops applied earlier in the conversation are reflected
+        if ($fetchedDocument === null) {
+            $variant = $this->postService->getPostVariantByBlogAndId($this->blog, $postVariantId);
+
+            if (!$variant) {
+                return "Post variant with ID $postVariantId not found.";
+            }
+
+            $content = $variant->getContentUnsaved();
+
+            try {
+                $postSchema = new PostSchema();
+                $doc = $postSchema->documentFrom($content ?? PostContentService::DEFAULT_CONTENT_JSON);
+            } catch (PhrosemirrorException $e) {
+                return "Failed to parse document content for post variant ID $postVariantId: " . $e->getMessage();
+            }
+
+            $nodeIdMapBuilder = new NodeIdMapBuilder();
+            $nodeIdMapBuilder->register($doc);
+
+            $fetchedDocument = new FetchedDocument($doc, $nodeIdMapBuilder);
+            $this->documentCache[$postVariantId] = $fetchedDocument;
         }
-
-        $content = $variant->getContentUnsaved();
-
-        try {
-            $doc = $this->postContentService->getDocumentFromJson($content ?? PostContentService::DEFAULT_CONTENT_JSON);
-        } catch (PhrosemirrorException $e) {
-            return "Failed to parse document content for post variant ID $postVariantId: " . $e->getMessage();
-        }
-
-        $nodeIdMap = NodeIdMapBuilder::build($doc);
-
-        $this->documentCache[$postVariantId] = new FetchedDocument(
-            $doc,
-            $nodeIdMap
-        );
 
         $markdownSerializer = new MarkdownSerializer();
 
-        $markdown = $markdownSerializer->serialize($doc, new MarkdownSerializationOptions($nodeIdMap));
-
-        return $markdown;
+        return $markdownSerializer->serialize(
+            $fetchedDocument->getDocument(),
+            new MarkdownSerializationOptions($fetchedDocument->getNodeIdMap())
+        );
     }
 
     public function replace(
@@ -105,7 +114,10 @@ class DocumentOpsTool
         }
 
         $op = new OpReplace($nodeId, $contentMarkdown);
-        $fetchedDocument->addOp($op);
+
+        if (!$fetchedDocument->applyOp($op)) {
+            return "Node ID $nodeId not found in the document.";
+        }
 
         return 'Replaced node successfully.';
     }
@@ -124,7 +136,10 @@ class DocumentOpsTool
         }
 
         $op = new OpInsert($afterNodeId, $contentMarkdown, $insertBefore);
-        $fetchedDocument->addOp($op);
+
+        if (!$fetchedDocument->applyOp($op)) {
+            return "Node ID $afterNodeId not found in the document.";
+        }
 
         return 'Inserted paragraph successfully.';
     }
@@ -144,7 +159,10 @@ class DocumentOpsTool
         }
 
         $op = new OpReplaceText($nodeId, $search, $replace, $limit);
-        $fetchedDocument->addOp($op);
+
+        if (!$fetchedDocument->applyOp($op)) {
+            return "Node ID $nodeId not found in the document.";
+        }
 
         return 'Replaced text successfully.';
     }
@@ -161,12 +179,13 @@ class DocumentOpsTool
         }
 
         $op = new OpDelete($nodeId);
-        $fetchedDocument->addOp($op);
+
+        if (!$fetchedDocument->applyOp($op)) {
+            return "Node ID $nodeId not found in the document.";
+        }
 
         return 'Deleted node successfully.';
     }
-
-    // methods to call once the agent has finished making changes to the document.
 
     public function getFinalDocument(int $postVariantId): Node
     {
@@ -175,11 +194,7 @@ class DocumentOpsTool
             throw new \RuntimeException("Document for post variant ID $postVariantId not fetched. Please call document_get first.");
         }
 
-        $fetchedDocument = $this->documentCache[$postVariantId];
-        $ops = $fetchedDocument->getOps();
-
-        $opsApplier = new OpsApplier();
-        return $opsApplier->apply($fetchedDocument, $ops);
+        return $this->documentCache[$postVariantId]->getDocument();
     }
 
 }
