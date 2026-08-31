@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
-	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
-	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
+	import { uploadImage } from '../../../../lib/fileUploader';
 	import { createEventDispatcher } from 'svelte';
 	import { getI18n } from '../../../../lib/i18n';
 
@@ -14,13 +13,13 @@
 
 	let { src = null, uploadText = 'Upload' }: Props = $props();
 
-	let isUploading = $state(false);
-
 	const dispatch = createEventDispatcher<{ change: string | null }>();
 
-	function handleSelect(file: SelectedFile) {
-		isUploading = false;
-		dispatch('change', file.url as string);
+	async function handleUpload() {
+		const file = await uploadImage();
+		if (file) {
+			dispatch('change', file.url);
+		}
 	}
 
 	function handleRemove() {
@@ -29,7 +28,7 @@
 </script>
 
 {#if !src}
-	<Button size="small" on:click={() => (isUploading = true)}>
+	<Button size="small" on:click={handleUpload}>
 		{uploadText}
 	</Button>
 {:else}
@@ -38,17 +37,13 @@
 	</div>
 
 	<div class="buttons">
-		<Button on:click={() => (isUploading = true)} size="x-small" variant="fill-light">
+		<Button on:click={handleUpload} size="x-small" variant="fill-light">
 			{i18n.t('console.theme.change')}
 		</Button>
 		<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">
 			{i18n.t('console.common.remove')}
 		</Button>
 	</div>
-{/if}
-
-{#if isUploading}
-	<FileUploader onselect={handleSelect} bind:show={isUploading} />
 {/if}
 
 <style>

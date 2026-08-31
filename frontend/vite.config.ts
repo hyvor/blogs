@@ -14,11 +14,6 @@ export default defineConfig({
 
 	envDir: '../',
 
-	define: {
-		// https://docs.excalidraw.com/docs/@excalidraw/excalidraw/integration#preact
-		'process.env.IS_PREACT': JSON.stringify('true')
-	},
-
 	// @ts-ignore
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],

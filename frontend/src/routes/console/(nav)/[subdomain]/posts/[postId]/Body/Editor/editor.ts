@@ -1,13 +1,6 @@
 import { getSchema, type EditorConfig } from '@hyvor/richtext';
-import {
-	AUDIO_EXTENSIONS,
-	getMedia,
-	IMAGE_EXTENSIONS,
-	uploadMedia
-} from '../../../../tools/media/mediaActions';
+import { editorUploadFileConfig } from '../../../../../../lib/fileUploader';
 import { getUnfold } from '../../../../../../lib/actions/urlDataActions';
-import consoleApi from '../../../../../../lib/consoleApi';
-import type { UnsplashImage } from '../../../../../../lib/types';
 
 // all nodes enabled
 export const schema = getSchema({
@@ -29,26 +22,7 @@ export const editorConfig: EditorConfig = {
 		oversizedNoteText: 'Image size is larger than the image preview in the editor.'
 	},
 
-	uploadFileConfig: {
-		uploader: async (file, name, type) => {
-			const media = await uploadMedia(file, name);
-			return {
-				url: media.url
-			};
-		},
-		maxFileSizeInMB: 10,
-		mediaLoad: (page, type) =>
-			getMedia(type === 'audio' ? AUDIO_EXTENSIONS : IMAGE_EXTENSIONS, null, 50, (page - 1) * 50),
-		unsplashSearch: (search, page) =>
-			consoleApi.get<UnsplashImage[]>({
-				endpoint: '/media/unsplash/search',
-				data: {
-					search,
-					page
-				}
-			}),
-		excalidraw: true
-	},
+	uploadFileConfig: editorUploadFileConfig,
 
 	embed: async (url) => {
 		try {

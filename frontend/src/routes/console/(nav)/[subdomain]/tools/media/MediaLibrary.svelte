@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
 	import MediaFilter from './MediaFilter.svelte';
-	import { getMedia, type FileType, uploadMedia } from './mediaActions';
+	import { getMedia, type FileType } from './mediaActions';
 	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	import type { Media } from '../../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
-	import { getConfig } from '../../../../lib/config';
-	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
-	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
-	import { mount, unmount } from 'svelte';
+	import { uploadToMediaLibrary } from '../../../../lib/fileUploader';
 	import { getI18n } from '../../../../lib/i18n';
 
 	const i18n = getI18n();
@@ -32,62 +29,13 @@
 	let hasMore = $state(false);
 	let mediaFiles: Media[] = $state([]);
 
-	let uploadInput: HTMLInputElement | undefined = $state();
-	let isUploading = false;
-
 	let extensions: string[] = [];
 	let search: string | null = null;
 
-	function handleUpload() {
-		const files = uploadInput?.files;
-
-		if (!files || !files.length) {
-			return toast.error(i18n.t('console.theme.selectFile'));
-		}
-
-		const file = files[0];
-
-		if (!file) {
-			return toast.error(i18n.t('console.theme.selectFile'));
-		}
-
-		if (file.size > getConfig().limits.max_upload_size) {
-			return toast.error(i18n.t('console.tools.media.fileTooLarge'));
-		}
-
-		const toastId = toast.loading(i18n.t('console.tools.media.uploading'));
-		isUploading = true;
-
-		uploadMedia(file, file.name)
-			.then((media) => {
-				toast.success(i18n.t('console.tools.media.uploaded'), { id: toastId });
-				mediaFiles = [media, ...mediaFiles];
-			})
-			.catch((err) => toast.error(err.message, { id: toastId }))
-			.finally(() => (isUploading = false));
-	}
-
-	function handleClickUpload() {
-		const div = document.createElement('div');
-		document.body.appendChild(div);
-
-		const selector = mount(FileUploader, {
-			target: div,
-			props: {
-				type: 'any',
-				onselect: () => {
-					destroy();
-					load();
-				},
-				onclose: () => {
-					destroy();
-				}
-			}
-		});
-
-		function destroy() {
-			unmount(selector);
-			div.remove();
+	async function handleClickUpload() {
+		const file = await uploadToMediaLibrary();
+		if (file) {
+			load();
 		}
 	}
 
@@ -134,7 +82,6 @@
 		/>
 
 		{#if showUpload}
-			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
 			<Button on:click={handleClickUpload}>
 				{#snippet start()}
 					<IconCloudUpload />
