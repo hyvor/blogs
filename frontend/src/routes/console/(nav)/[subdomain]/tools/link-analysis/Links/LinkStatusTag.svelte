@@ -8,6 +8,9 @@
 	import { getStatusType } from '../../../../../lib/links/links';
 	import type { LinkAnalysisIgnoreReason, LinkAnalysisStatusType } from '../../../../../lib/types';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		status?: number;
@@ -37,47 +40,55 @@
 
 	$effect(() => {
 		if (statusType === 'ok') {
-			statusDisplay = 'OK';
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.ok');
 
 			if (isAnchor) {
-				tooltip = 'Heading ID found';
+				tooltip = i18n.t('console.tools.linkAnalysis.tooltip.headingIdFound');
 			} else if (status) {
-				tooltip = 'OK - HTTP status ' + status;
+				tooltip = i18n.t('console.tools.linkAnalysis.tooltip.okStatus', { status });
 			} else {
-				tooltip = 'Link is OK';
+				tooltip = i18n.t('console.tools.linkAnalysis.tooltip.ok');
 			}
 
 			color = 'green';
 		} else if (statusType === 'redirect') {
-			statusDisplay = 'Redirect';
-			tooltip = status ? 'Redirect status ' + status : 'Redirecting to another page';
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.redirect');
+			tooltip = status
+				? i18n.t('console.tools.linkAnalysis.tooltip.redirectStatus', { status })
+				: i18n.t('console.tools.linkAnalysis.tooltip.redirect');
 			color = 'blue';
 		} else if (statusType === 'broken') {
-			statusDisplay = 'Broken';
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.broken');
 
 			if (isAnchor) {
-				tooltip = 'Heading ID not found';
+				tooltip = i18n.t('console.tools.linkAnalysis.tooltip.headingIdNotFound');
 			} else if (status !== undefined) {
-				tooltip = status === 0 ? 'Broken - Connection issue' : 'Broken - HTTP status ' + status;
+				tooltip =
+					status === 0
+						? i18n.t('console.tools.linkAnalysis.tooltip.brokenConnection')
+						: i18n.t('console.tools.linkAnalysis.tooltip.brokenStatus', { status });
 			} else {
-				tooltip = 'Link is broken';
+				tooltip = i18n.t('console.tools.linkAnalysis.tooltip.broken');
 			}
 
 			color = 'red';
 		} else if (statusType === 'risky') {
-			statusDisplay = 'Risky';
-			tooltip =
-				'Link is risky, we recommend manually checking it' +
-				(status ? ' - HTTP status ' + status : '');
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.risky');
+			tooltip = status
+				? i18n.t('console.tools.linkAnalysis.tooltip.riskyStatus', { status })
+				: i18n.t('console.tools.linkAnalysis.tooltip.risky');
 			color = 'orange';
 		} else if (statusType === 'ignored') {
-			statusDisplay = 'Ignored';
-			tooltip =
-				'Link Ignored' + (ignoreReason ? ' (' + getReadableIgnoreReason(ignoreReason) + ')' : '');
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.ignored');
+			tooltip = ignoreReason
+				? i18n.t('console.tools.linkAnalysis.tooltip.ignoredWithReason', {
+						reason: getReadableIgnoreReason(ignoreReason)
+					})
+				: i18n.t('console.tools.linkAnalysis.tooltip.ignored');
 			color = 'default';
 		} else if (statusType === 'error') {
-			statusDisplay = 'Error';
-			tooltip = 'Error (on our side)';
+			statusDisplay = i18n.t('console.tools.linkAnalysis.status.error');
+			tooltip = i18n.t('console.tools.linkAnalysis.tooltip.error');
 			color = 'red';
 		}
 	});

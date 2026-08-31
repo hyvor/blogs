@@ -7,6 +7,9 @@
 	import { getNavigations } from './navigationActions';
 	import CreateNavigationModal from './CreateNavigationModal.svelte';
 	import NavTable from './NavTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -60,12 +63,14 @@
 			<TabNavItem
 				name="header"
 				active={activeTab === 'header'}
-				onclick={() => (activeTab = 'header')}>Header</TabNavItem
+				onclick={() => (activeTab = 'header')}
+				>{i18n.t('console.settings.navigation.header')}</TabNavItem
 			>
 			<TabNavItem
 				name="footer"
 				active={activeTab === 'footer'}
-				onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
+				onclick={() => (activeTab = 'footer')}
+				>{i18n.t('console.settings.navigation.footer')}</TabNavItem
 			>
 		</TabNav>
 	</div>
@@ -83,7 +88,7 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if activeItems.length === 0}
-		<IconMessage empty message="No navigation links configured" />
+		<IconMessage empty message={i18n.t('console.settings.navigation.noItems')} />
 	{:else}
 		<NavTable
 			items={activeItems}

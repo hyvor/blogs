@@ -3,6 +3,9 @@
 	import { page } from '$app/stores';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -25,7 +28,7 @@
 				{/snippet}
 				Hyvor Talk
 				{#snippet end()}
-					<span class="service">Comments</span>
+					<span class="service">{i18n.t('console.integrations.hyvorTalk.comments.label')}</span>
 				{/snippet}
 			</NavLink>
 			<NavLink
@@ -37,7 +40,7 @@
 				{/snippet}
 				Hyvor Post
 				{#snippet end()}
-					<span class="service">Newsletter</span>
+					<span class="service">{i18n.t('console.integrations.hyvorTalk.newsletter.label')}</span>
 				{/snippet}
 			</NavLink>
 		</NavLinkGroup>

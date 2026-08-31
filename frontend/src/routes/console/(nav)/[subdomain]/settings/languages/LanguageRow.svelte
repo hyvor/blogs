@@ -16,6 +16,9 @@
 	import { deleteLanguage } from './languageActions';
 	import { languageStoreRemove } from '../../../../lib/stores/languagesStore';
 	import DeleteConfirm from './DeleteConfirm.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		language: Language;
@@ -28,20 +31,20 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete language',
+				title: i18n.t('console.settings.languages.deleteLanguage'),
 				content: DeleteConfirm,
 				contentProps: {
 					language
 				},
-				confirmText: 'Yes, delete',
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting language...');
+			const toastId = toast.loading(i18n.t('console.settings.languages.deleting'));
 
 			deleteLanguage(language.id)
 				.then(() => {
-					toast.success('Language deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.languages.deleted'), { id: toastId });
 					languageStoreRemove(language.id);
 				})
 				.catch((err) => {
@@ -55,13 +58,15 @@
 	<div>
 		{language.name}
 		{#if language.is_primary}
-			<Tag size="x-small" color="accent">PRIMARY</Tag>
+			<Tag size="x-small" color="accent"
+				>{i18n.t('console.settings.languages.primary').toUpperCase()}</Tag
+			>
 		{/if}
 	</div>
 	<div>{language.code}</div>
 	<div>{language.direction.toUpperCase()}</div>
 	<div>
-		<Tooltip text="Edit language">
+		<Tooltip text={i18n.t('console.settings.languages.editLanguage')}>
 			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>

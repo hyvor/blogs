@@ -19,6 +19,9 @@
 		selectedThemeFileIdStore,
 		updateThemeFileStore
 	} from '../../themeStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		open?: boolean;
@@ -36,33 +39,33 @@
 	let error: string | null = $state(null);
 
 	function handleUpdate() {
-		const toastId = toast.loading('Updating file name...');
+		const toastId = toast.loading(i18n.t('console.theme.updatingFileName'));
 		open = false;
 
 		updateFile(file.id!, {
 			name: fileName
 		})
 			.then(() => {
-				toast.success('File name updated', { id: toastId });
+				toast.success(i18n.t('console.theme.fileNameUpdated'), { id: toastId });
 				updateThemeFileStore(file.id!, { name: fileName }, true);
 			})
 			.catch(() => {
-				toast.error('Failed to update file name', { id: toastId });
+				toast.error(i18n.t('console.theme.failedToUpdateFileName'), { id: toastId });
 			});
 	}
 
 	function handleCreate() {
-		const toastId = toast.loading('Creating file...');
+		const toastId = toast.loading(i18n.t('console.theme.creatingFile'));
 		open = false;
 
 		createFile(file.folder, fileName)
 			.then((res) => {
-				toast.success('File created', { id: toastId });
+				toast.success(i18n.t('console.theme.fileCreated'), { id: toastId });
 				addThemeFileToStore(res);
 				selectedThemeFileIdStore.set(res.id);
 			})
 			.catch(() => {
-				toast.error('Failed to create file', { id: toastId });
+				toast.error(i18n.t('console.theme.failedToCreateFile'), { id: toastId });
 			});
 	}
 
@@ -110,7 +113,7 @@
 		if (value.trim() === '') {
 			loaderState = 'none';
 			inputState = 'error';
-			error = 'File name cannot be empty';
+			error = i18n.t('console.theme.validation.nameEmpty');
 			return;
 		}
 
@@ -145,7 +148,7 @@
 					} else {
 						loaderState = 'error';
 						inputState = 'error';
-						error = 'File name already exists';
+						error = i18n.t('console.theme.validation.nameExists');
 					}
 				})
 				.catch((e) => {
@@ -166,11 +169,11 @@
 </script>
 
 <Modal bind:show={open} title={isCreate ? 'Create new file' : 'Update file name'}>
-	<SplitControl label="Folder">
+	<SplitControl label={i18n.t('console.theme.folder')}>
 		<Text light>/{file.folder || ''}</Text>
 	</SplitControl>
 
-	<SplitControl label="File Name">
+	<SplitControl label={i18n.t('console.theme.fileName')}>
 		<FormControl>
 			<TextInput block autofocus on:input={handleInput} bind:value={fileName} state={inputState}>
 				{#snippet end()}
@@ -184,7 +187,9 @@
 	</SplitControl>
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (open = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
 		<Button
 			color="accent"

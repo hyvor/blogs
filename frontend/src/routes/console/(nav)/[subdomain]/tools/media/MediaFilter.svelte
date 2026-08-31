@@ -10,6 +10,9 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { getExtensionsByFileType, type FileType } from './mediaActions';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		defaultType?: null | FileType;
@@ -86,7 +89,7 @@
 		{#snippet trigger()}
 			<Button color="input" disabled={typeDisabled}>
 				{#snippet start()}
-					<Text small light>File type</Text>
+					<Text small light>{i18n.t('console.tools.media.fileType')}</Text>
 				{/snippet}
 				{selectedFileName}
 
@@ -122,7 +125,9 @@
 							autofocus
 							placeholder="svg, gif..."
 						/>
-						<Button size="small" on:click={handleChooseCustomExt}>Choose</Button>
+						<Button size="small" on:click={handleChooseCustomExt}
+							>{i18n.t('console.tools.media.choose')}</Button
+						>
 					</div>
 				{/if}
 			</ActionList>
@@ -130,7 +135,7 @@
 	</Dropdown>
 
 	<TextInput
-		placeholder="Search..."
+		placeholder={i18n.t('console.common.searchPlaceholder')}
 		style="width: 130px"
 		bind:value={search}
 		on:input={handleSearchInput}

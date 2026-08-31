@@ -2,6 +2,9 @@
 	import { TabNav, TabNavItem } from '@hyvor/design/components';
 	import NewImport from './NewImport/NewImport.svelte';
 	import ImportHistory from './History/ImportHistory.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let tab: 'new' | 'history' = $state('new');
 
@@ -13,11 +16,11 @@
 <div class="import hds-box">
 	<TabNav>
 		<TabNavItem name="new" active={tab === 'new'} onclick={() => (tab = 'new')}
-			>New Import</TabNavItem
+			>{i18n.t('console.tools.import.newImport')}</TabNavItem
 		>
 
 		<TabNavItem name="history" active={tab === 'history'} onclick={() => (tab = 'history')}
-			>History</TabNavItem
+			>{i18n.t('console.tools.history')}</TabNavItem
 		>
 	</TabNav>
 

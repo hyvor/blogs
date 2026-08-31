@@ -3,6 +3,9 @@
 	import type { Export } from '../../../../../lib/types';
 	import JobStatusTag from '../../../../../lib/components/Tags/JobStatusTag.svelte';
 	import dayjs from 'dayjs';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		data: Export;
@@ -23,7 +26,9 @@
 	<div><JobStatusTag status={data.status} /></div>
 	<div>
 		{#if data.url}
-			<Link href={data.url} download={fileNameFromUrl(data.url)} target="_blank">Download</Link>
+			<Link href={data.url} download={fileNameFromUrl(data.url)} target="_blank"
+				>{i18n.t('console.theme.download')}</Link
+			>
 		{/if}
 	</div>
 </TableRow>

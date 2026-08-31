@@ -9,7 +9,8 @@
 		blogSelectorOpenStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { ConsoleLoader, toast } from '@hyvor/design/components';
+	import { ConsoleLoader, InternationalizationProvider, toast } from '@hyvor/design/components';
+	import { CONSOLE_LANGUAGES } from './lib/i18n';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { page } from '$app/state';
 	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
@@ -124,44 +125,46 @@
 
 <svelte:window onkeydown={!isLoading ? handleGlobalKeydown : undefined} />
 
-<main>
-	{#if isLoading}
-		<ConsoleLoader logo="/logo.svg" size={80} />
-	{:else}
-		<CloudContext
-			context={{
-				component: 'blogs',
-				deployment: getConfig().deployment,
-				instance: getConfig().hyvor.instance,
-				user: get(authUserStore),
-				organization: get(authOrganizationStore),
-				license: get(resolvedLicenseStore),
-				callbacks: {
-					onOrganizationSwitch: (switcher) => {
-						isLoading = true;
+<InternationalizationProvider languages={CONSOLE_LANGUAGES}>
+	<main>
+		{#if isLoading}
+			<ConsoleLoader logo="/logo.svg" size={80} />
+		{:else}
+			<CloudContext
+				context={{
+					component: 'blogs',
+					deployment: getConfig().deployment,
+					instance: getConfig().hyvor.instance,
+					user: get(authUserStore),
+					organization: get(authOrganizationStore),
+					license: get(resolvedLicenseStore),
+					callbacks: {
+						onOrganizationSwitch: (switcher) => {
+							isLoading = true;
 
-						switcher
-							.then(() => {
-								startConsole(true);
-							})
-							.catch(() => {
-								isLoading = false;
-							});
+							switcher
+								.then(() => {
+									startConsole(true);
+								})
+								.catch(() => {
+									isLoading = false;
+								});
+						}
 					}
-				}
-			}}
-			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
-		>
-			{#if !isPostPage}
-				<HyvorBar logo="/logo.svg" />
-			{/if}
+				}}
+				style="display:flex; flex-direction: column; width: 100%; height: 100vh"
+			>
+				{#if !isPostPage}
+					<HyvorBar logo="/logo.svg" />
+				{/if}
 
-			{@render children?.()}
+				{@render children?.()}
 
-			<BlogSelectorModal />
-		</CloudContext>
-	{/if}
-</main>
+				<BlogSelectorModal />
+			</CloudContext>
+		{/if}
+	</main>
+</InternationalizationProvider>
 
 <style>
 	main {

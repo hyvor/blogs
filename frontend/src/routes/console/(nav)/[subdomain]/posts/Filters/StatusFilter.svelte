@@ -16,6 +16,9 @@
 
 	import { postListFiltersStore, setFilter } from '../postListStore';
 	import { blogCountsStore } from '../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const status = ['draft', 'published', 'scheduled', 'featured'];
 
@@ -41,7 +44,7 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Status</Text>
+				<Text bold>{i18n.t('console.common.status')}</Text>
 			{/snippet}
 
 			<span class="text">

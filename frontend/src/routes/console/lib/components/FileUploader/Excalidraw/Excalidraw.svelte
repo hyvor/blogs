@@ -11,6 +11,9 @@
 	import IconArrowRight from '@hyvor/icons/IconArrowRight';
 	import IconArrowRightCircle from '@hyvor/icons/IconArrowRightCircle';
 	import IconSendFill from '@hyvor/icons/IconSendFill';
+	import { getI18n } from '../../../i18n';
+
+	const i18n = getI18n();
 
 	if (browser) (window as any).process = { env: { IS_PREACT: false } };
 
@@ -28,12 +31,12 @@
 
 	async function handleFinish() {
 		if (!excalidrawAPI) {
-			return toast.error('Excalidraw is not ready yet');
+			return toast.error(i18n.t('console.fileUploader.excalidrawNotReady'));
 		}
 		const elements = excalidrawAPI.getSceneElements();
 
 		if (!elements || !elements.length) {
-			return toast.error('No elements found');
+			return toast.error(i18n.t('console.fileUploader.noElementsFound'));
 		}
 
 		const svg = await exportToSvg({

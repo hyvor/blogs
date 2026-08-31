@@ -7,6 +7,9 @@
 	import IconEye from '@hyvor/icons/IconEye';
 	import IconPencil from '@hyvor/icons/IconPencil';
 	import type { AgentBlock } from './agentApi';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		blocks: AgentBlock[];
@@ -62,13 +65,13 @@
 			<div class="step variant-activity-step">
 				<span class="variant-title">Post #{block.postVariantId}</span>
 				{#if block.reads > 0}
-					<span class="variant-activity-icon" title="Read by the agent">
+					<span class="variant-activity-icon" title={i18n.t('console.agent.readByAgent')}>
 						<IconEye size={13} />
 						{#if block.reads > 1}<span class="variant-activity-count">{block.reads}</span>{/if}
 					</span>
 				{/if}
 				{#if block.edits > 0}
-					<span class="variant-activity-icon" title="Edits suggested by the agent">
+					<span class="variant-activity-icon" title={i18n.t('console.agent.editsSuggested')}>
 						<IconPencil size={13} />
 						{#if block.edits > 1}<span class="variant-activity-count">{block.edits}</span>{/if}
 					</span>

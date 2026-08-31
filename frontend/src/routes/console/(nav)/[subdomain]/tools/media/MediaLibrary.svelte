@@ -9,6 +9,9 @@
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
 	import { mount, unmount } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		showUpload?: boolean;
@@ -39,25 +42,25 @@
 		const files = uploadInput?.files;
 
 		if (!files || !files.length) {
-			return toast.error('Please select a file');
+			return toast.error(i18n.t('console.theme.selectFile'));
 		}
 
 		const file = files[0];
 
 		if (!file) {
-			return toast.error('Please select a file');
+			return toast.error(i18n.t('console.theme.selectFile'));
 		}
 
 		if (file.size > getConfig().limits.max_upload_size) {
-			return toast.error('File size is too large. Max file size is 50MB');
+			return toast.error(i18n.t('console.tools.media.fileTooLarge'));
 		}
 
-		const toastId = toast.loading('Uploading...');
+		const toastId = toast.loading(i18n.t('console.tools.media.uploading'));
 		isUploading = true;
 
 		uploadMedia(file, file.name)
 			.then((media) => {
-				toast.success('Uploaded', { id: toastId });
+				toast.success(i18n.t('console.tools.media.uploaded'), { id: toastId });
 				mediaFiles = [media, ...mediaFiles];
 			})
 			.catch((err) => toast.error(err.message, { id: toastId }))
@@ -136,7 +139,7 @@
 				{#snippet start()}
 					<IconCloudUpload />
 				{/snippet}
-				Upload
+				{i18n.t('console.theme.upload')}
 			</Button>
 		{/if}
 	</div>
@@ -145,7 +148,7 @@
 		{#if isLoading}
 			<Loader full />
 		{:else if !mediaFiles.length}
-			<IconMessage empty message="No Media Found" />
+			<IconMessage empty message={i18n.t('console.tools.media.noMedia')} />
 		{:else}
 			{#each mediaFiles as media (media.id)}
 				<MediaFile
@@ -159,7 +162,12 @@
 		{/if}
 	</div>
 
-	<LoadButton text="Load More" loading={isLoadingMore} show={hasMore} on:click={() => load(true)} />
+	<LoadButton
+		text={i18n.t('console.common.loadMore')}
+		loading={isLoadingMore}
+		show={hasMore}
+		on:click={() => load(true)}
+	/>
 </div>
 
 <style>

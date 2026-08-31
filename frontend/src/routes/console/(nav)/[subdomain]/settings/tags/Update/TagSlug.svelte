@@ -8,6 +8,9 @@
 		toast
 	} from '@hyvor/design/components';
 	import { checkSlugAvailability } from '../tagActions';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		id: number;
@@ -43,7 +46,7 @@
 		if (val === '') {
 			validation = {
 				state: 'error',
-				message: 'Slug cannot be empty'
+				message: i18n.t('console.common.slugEmpty')
 			};
 			return;
 		}
@@ -62,19 +65,19 @@
 					if (res.available) {
 						validation = {
 							state: 'success',
-							message: 'Slug is available'
+							message: i18n.t('console.common.slugAvailable')
 						};
 					} else {
 						validation = {
 							state: 'error',
-							message: 'Slug is not available'
+							message: i18n.t('console.common.slugNotAvailable')
 						};
 					}
 				})
 				.catch(() => {
 					if (abortController?.signal.aborted) return;
 
-					toast.error('Failed to check slug availability');
+					toast.error(i18n.t('console.common.slugCheckFailed'));
 				})
 				.finally(() => {
 					isLoading = false;
@@ -83,7 +86,10 @@
 	}
 </script>
 
-<SplitControl label="Slug" caption="The slug of the tag">
+<SplitControl
+	label={i18n.t('console.common.slug')}
+	caption={i18n.t('console.settings.tags.slugCaption')}
+>
 	<FormControl>
 		<TextInput
 			bind:value={slug}

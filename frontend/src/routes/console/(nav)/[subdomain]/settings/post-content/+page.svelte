@@ -13,6 +13,9 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { getConfig } from '../../../../lib/config';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleSyntaxOnChange(e: any) {
 		updateBlogStore({ syntax_on: e.target.checked });
@@ -37,14 +40,17 @@
 <BlogSettingsSave keys={['syntax_on', 'syntax_line_numbers', 'syntax_theme', 'heading_anchors']} />
 
 <div class="settings">
-	<SplitControl label="Syntax Highlighting" caption="Highlight code blocks in your posts.">
+	<SplitControl
+		label={i18n.t('console.settings.postContent.syntaxHighlighting')}
+		caption={i18n.t('console.settings.postContent.syntaxHighlightingCaption')}
+	>
 		{#snippet nested()}
 			<div>
-				<SplitControl label="Enabled">
+				<SplitControl label={i18n.t('console.common.enabled')}>
 					<Switch checked={$blogStore.syntax_on} on:change={handleSyntaxOnChange} />
 				</SplitControl>
 
-				<SplitControl label="Theme">
+				<SplitControl label={i18n.t('console.nav.theme')}>
 					<Dropdown width={275} bind:show={showSyntaxThemes}>
 						{#snippet trigger()}
 							<Button color="input">
@@ -72,7 +78,7 @@
 					</Dropdown>
 				</SplitControl>
 
-				<SplitControl label="Line Numbers">
+				<SplitControl label={i18n.t('console.settings.postContent.lineNumbers')}>
 					<Switch
 						checked={$blogStore.syntax_line_numbers}
 						on:change={handleSyntaxLineNumbersOnChange}
@@ -82,7 +88,10 @@
 		{/snippet}
 	</SplitControl>
 
-	<SplitControl label="Heading Anchors" caption="Add anchors to headings with IDs">
+	<SplitControl
+		label={i18n.t('console.settings.postContent.headingAnchors')}
+		caption={i18n.t('console.settings.postContent.headingAnchorsCaption')}
+	>
 		<Switch checked={$blogStore.heading_anchors} on:change={handleHeadingAnchorsOnChange} />
 	</SplitControl>
 </div>

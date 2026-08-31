@@ -3,6 +3,9 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleColorModeChange(value: 'light' | 'dark' | 'both') {
 		updateBlogStore({ color_modes: value });
@@ -17,8 +20,8 @@
 
 <div class="settings">
 	<SplitControl
-		label="Color Mode(s)"
-		caption="Which color mode(s) should be available to your readers?"
+		label={i18n.t('console.settings.colorMode.modes')}
+		caption={i18n.t('console.settings.colorMode.modesCaption')}
 	>
 		<InputGroup>
 			<Radio
@@ -26,7 +29,7 @@
 				group={$blogStore.color_modes}
 				on:change={(e) => handleColorModeChange('light')}
 			>
-				Light
+				{i18n.t('console.settings.colorMode.light')}
 			</Radio>
 
 			<Radio
@@ -34,7 +37,7 @@
 				group={$blogStore.color_modes}
 				on:change={(e) => handleColorModeChange('dark')}
 			>
-				Dark
+				{i18n.t('console.settings.colorMode.dark')}
 			</Radio>
 
 			<Radio
@@ -42,19 +45,22 @@
 				group={$blogStore.color_modes}
 				on:change={(e) => handleColorModeChange('both')}
 			>
-				Both
+				{i18n.t('console.settings.colorMode.both')}
 			</Radio>
 		</InputGroup>
 	</SplitControl>
 
-	<SplitControl label="Default Color Mode" caption="Which color mode should be the default?">
+	<SplitControl
+		label={i18n.t('console.settings.colorMode.default')}
+		caption={i18n.t('console.settings.colorMode.defaultCaption')}
+	>
 		<InputGroup>
 			<Radio
 				value="os"
 				group={$blogStore.color_mode_default}
 				on:change={(e) => handleColorModeDefaultChange('os')}
 			>
-				User's Operating System (OS) Preference
+				{i18n.t('console.settings.colorMode.osPreference')}
 			</Radio>
 
 			<Radio
@@ -62,7 +68,7 @@
 				group={$blogStore.color_mode_default}
 				on:change={(e) => handleColorModeDefaultChange('light')}
 			>
-				Light
+				{i18n.t('console.settings.colorMode.light')}
 			</Radio>
 
 			<Radio
@@ -70,7 +76,7 @@
 				group={$blogStore.color_mode_default}
 				on:change={(e) => handleColorModeDefaultChange('dark')}
 			>
-				Dark
+				{i18n.t('console.settings.colorMode.dark')}
 			</Radio>
 		</InputGroup>
 	</SplitControl>

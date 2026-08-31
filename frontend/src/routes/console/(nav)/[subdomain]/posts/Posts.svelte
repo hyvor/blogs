@@ -14,6 +14,9 @@
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		pages?: boolean;
@@ -47,7 +50,7 @@
 					posts = res;
 				})
 				.catch(() => {
-					error = 'Failed to load pages';
+					error = i18n.t('console.posts.failedToLoadPages');
 				})
 				.finally(() => {
 					isLoading = false;
@@ -68,8 +71,8 @@
 					hasMore = res.length === limit;
 				})
 				.catch(() => {
-					if (more) toast.error('Failed to load more posts');
-					else error = 'Failed to load posts';
+					if (more) toast.error(i18n.t('console.posts.failedToLoadMorePosts'));
+					else error = i18n.t('console.posts.failedToLoadPosts');
 				})
 				.finally(() => {
 					isLoading = false;
@@ -111,7 +114,7 @@
 							<IconPlus />
 						{/if}
 					{/snippet}
-					New
+					{i18n.t('console.posts.new')}
 				</Button>
 			</div>
 		</div>
@@ -135,7 +138,7 @@
 		{:else if error}
 			<IconMessage error message={error} />
 		{:else if posts.length === 0}
-			<IconMessage empty message="No posts found" />
+			<IconMessage empty message={i18n.t('console.posts.noPostsFound')} />
 		{:else}
 			{#each posts as post (post.id)}
 				<PostRow {post} onDelete={(postId) => (posts = posts.filter((p) => p.id !== postId))} />
@@ -143,7 +146,7 @@
 
 			<div class="load-more-wrap">
 				<LoadButton
-					text="Load more"
+					text={i18n.t('console.common.loadMore')}
 					show={hasMore}
 					loading={isLoadingMore}
 					on:click={() => loadPosts(true)}

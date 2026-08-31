@@ -3,6 +3,9 @@
 	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		src?: string | null;
@@ -31,14 +34,16 @@
 	</Button>
 {:else}
 	<div class="img-wrap">
-		<img {src} alt="Uploaded" />
+		<img {src} alt={i18n.t('console.tools.media.uploaded')} />
 	</div>
 
 	<div class="buttons">
 		<Button on:click={() => (isUploading = true)} size="x-small" variant="fill-light">
-			Change
+			{i18n.t('console.theme.change')}
 		</Button>
-		<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">Remove</Button>
+		<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">
+			{i18n.t('console.common.remove')}
+		</Button>
 	</div>
 {/if}
 

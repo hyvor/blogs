@@ -3,6 +3,9 @@
 	import type { ThemeFile } from '../../../../../lib/types';
 	import { deleteFile } from '../../themeActions';
 	import { removeThemeFileStore, selectedThemeFileIdStore } from '../../themeStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		open?: boolean;
@@ -13,22 +16,24 @@
 
 	function handleDelete() {
 		open = false;
-		const toastId = toast.loading('Deleting file...');
+		const toastId = toast.loading(i18n.t('console.theme.deletingFile'));
 
 		deleteFile(file.id).then(() => {
-			toast.success('File deleted successfully', { id: toastId });
+			toast.success(i18n.t('console.theme.fileDeleted'), { id: toastId });
 			removeThemeFileStore(file.id);
 			selectedThemeFileIdStore.set(null);
 		});
 	}
 </script>
 
-<Modal size="small" bind:show={open} title="Delete file">
-	Are you sure to delete this file?
+<Modal size="small" bind:show={open} title={i18n.t('console.theme.deleteFile')}>
+	{i18n.t('console.theme.deleteFileConfirm')}
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (open = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-		<Button color="red" on:click={handleDelete}>Delete</Button>
+		<Button color="red" on:click={handleDelete}>{i18n.t('console.common.delete')}</Button>
 	{/snippet}
 </Modal>

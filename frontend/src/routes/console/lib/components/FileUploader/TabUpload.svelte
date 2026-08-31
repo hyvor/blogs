@@ -7,6 +7,9 @@
 	import { isValidUrl } from '../../helper/is-valid-url';
 	import { getConfig } from '../../config';
 	import byteFormatter from '../../helper/byte-formatter';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		isUploading?: boolean;
@@ -45,12 +48,12 @@
 			.then((blob) => {
 				// check if valid image or audio
 				if (type === 'image' && blob.type.indexOf('image') !== 0) {
-					toast.error('The URL is not an image');
+					toast.error(i18n.t('console.fileUploader.notAnImage'));
 					return;
 				}
 
 				if (type === 'audio' && blob.type.indexOf('audio') !== 0) {
-					toast.error('The URL is not an audio');
+					toast.error(i18n.t('console.fileUploader.notAnAudio'));
 					return;
 				}
 
@@ -151,18 +154,18 @@
 
 	function getFileFromFiles(files: FileList | null): File | null {
 		if (!files || files.length === 0) {
-			toast.error('No files selected');
+			toast.error(i18n.t('console.fileUploader.noFilesSelected'));
 			return null;
 		}
 		const file = files[0];
 		if (!file) {
-			toast.error('No files selected');
+			toast.error(i18n.t('console.fileUploader.noFilesSelected'));
 			return null;
 		}
 
 		const max = getConfig().limits.max_upload_size;
 		if (file.size > max) {
-			toast.error('File size exceeds the limit of ' + byteFormatter(max));
+			toast.error(i18n.t('console.fileUploader.sizeExceeds', { size: byteFormatter(max) }));
 			return null;
 		}
 
@@ -218,7 +221,7 @@
 				onkeyup={(e) => e.key === 'Enter' && handleUploadClick()}
 			>
 				{#if isDragging}
-					Drop here!
+					{i18n.t('console.fileUploader.dropHere')}
 				{:else}
 					Drag and drop, paste ({getCtrl()} + v), or click to upload
 				{/if}
@@ -232,7 +235,7 @@
 				<div class="input-button">
 					<TextInput
 						block
-						placeholder="Enter image URL"
+						placeholder={i18n.t('console.fileUploader.enterImageUrl')}
 						bind:value={byUrl}
 						on:keyup={(e) => e.key === 'Enter' && handleFetch()}
 						bind:input={byUrlInputEl}

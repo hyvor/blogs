@@ -19,6 +19,9 @@
 	import RedirectRow from './RedirectRow.svelte';
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 	import type { Redirect } from '../../../../lib/types';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -97,7 +100,7 @@
 	<div class="search-wrap">
 		<TextInput
 			bind:value={searchVal}
-			placeholder="Search"
+			placeholder={i18n.t('console.common.search')}
 			style="width:200px;"
 			on:keydown={searchActions.onKeydown}
 			size="small"
@@ -127,13 +130,13 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if redirects.length === 0}
-		<IconMessage empty message="No Redirects configured" />
+		<IconMessage empty message={i18n.t('console.settings.redirects.noRedirects')} />
 	{:else}
 		<SettingsTable columns="1fr 2fr 1fr 70px">
 			<TableRow head>
-				<div>From</div>
+				<div>{i18n.t('console.settings.redirects.from')}</div>
 				<div>To</div>
-				<div>Type</div>
+				<div>{i18n.t('console.tools.import.type')}</div>
 				<div></div>
 			</TableRow>
 
@@ -142,7 +145,7 @@
 			{/each}
 
 			<LoadButton
-				text="Load more"
+				text={i18n.t('console.common.loadMore')}
 				show={hasMore}
 				loading={isLoadingMore}
 				on:click={() => loadRedirect(true)}

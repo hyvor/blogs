@@ -3,6 +3,10 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	function handleFlashloadChange(e: any) {
 		updateBlogStore({ flashload: e.target.checked });
@@ -14,22 +18,35 @@
 <div class="settings">
 	<div class="intro">
 		<Callout type="info">
-			Head and foot code will be applied to your <strong>whole blog</strong>. See <Link
-				href="https://blogs.hyvor.com/docs/custom-code"
-				target="_blank">docs</Link
-			> for other ways to add custom code. You can use HTML or <Link
-				href="/docs/themes-templates#twig"
-				target="_blank">Twig</Link
-			> in the code fields. <Link href="/docs/themes-templates#variables" target="_blank"
-				>These variables</Link
-			> are available in Twig.
+			<T
+				key="console.settings.code.intro"
+				params={{
+					strong: { element: 'strong' },
+					docsLink: {
+						element: 'a',
+						props: {
+							href: 'https://blogs.hyvor.com/docs/custom-code',
+							target: '_blank',
+							class: 'hds-link'
+						}
+					},
+					twigLink: {
+						element: 'a',
+						props: { href: '/docs/themes-templates#twig', target: '_blank', class: 'hds-link' }
+					},
+					variablesLink: {
+						element: 'a',
+						props: { href: '/docs/themes-templates#variables', target: '_blank', class: 'hds-link' }
+					}
+				}}
+			/>
 		</Callout>
 	</div>
 
 	<div class="code">
-		<SplitControl label="Head Code">
+		<SplitControl label={i18n.t('console.settings.code.headCode')}>
 			{#snippet caption()}
-				<div>Added right before the &lt;/head&gt; tag. Best place for styles and meta tags.</div>
+				<div>{i18n.t('console.settings.code.headCodeCaption')}</div>
 			{/snippet}
 
 			<CodemirrorEditor
@@ -40,11 +57,9 @@
 			/>
 		</SplitControl>
 
-		<SplitControl label="Foot Code">
+		<SplitControl label={i18n.t('console.settings.code.footCode')}>
 			{#snippet caption()}
-				<div>
-					Added right before the &lt;/body&gt; tag. Best place for scripts (analytics, etc.).
-				</div>
+				<div>{i18n.t('console.settings.code.footCodeCaption')}</div>
 			{/snippet}
 
 			<CodemirrorEditor
@@ -56,12 +71,22 @@
 		</SplitControl>
 	</div>
 
-	<SplitControl label="Flashload">
+	<SplitControl label={i18n.t('console.settings.code.flashload')}>
 		{#snippet caption()}
 			<div>
-				<Link href="https://github.com/hyvor/flashload" target="_blank">Flashload</Link> adds a script
-				to make navigation between pages faster by preloading pages when hovering over links. You may
-				want to disable this if you are using other Javascript-heavy features.
+				<T
+					key="console.settings.code.flashloadCaption"
+					params={{
+						link: {
+							element: 'a',
+							props: {
+								href: 'https://github.com/hyvor/flashload',
+								target: '_blank',
+								class: 'hds-link'
+							}
+						}
+					}}
+				/>
 			</div>
 		{/snippet}
 

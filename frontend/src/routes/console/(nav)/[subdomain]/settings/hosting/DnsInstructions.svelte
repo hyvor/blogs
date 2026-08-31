@@ -2,6 +2,9 @@
 	import { TabNav, TabNavItem, Table, TableRow, Tag, toast } from '@hyvor/design/components';
 	import { parse } from 'tldts';
 	import { getConfig, loadConfig } from '../../../../lib/config';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		// the full custom domain (e.g. "blog.example.com"). When omitted, generic
@@ -52,7 +55,7 @@
 
 	function copy(value: string) {
 		navigator.clipboard.writeText(value);
-		toast.success('Copied to clipboard');
+		toast.success(i18n.t('console.settings.hosting.copiedToClipboard'));
 	}
 </script>
 
@@ -69,9 +72,9 @@
 
 <Table columns="1fr 1fr 1fr" style="bordered">
 	<TableRow head>
-		<div>Type</div>
+		<div>{i18n.t('console.tools.import.type')}</div>
 		<div>Host/Name</div>
-		<div>Content</div>
+		<div>{i18n.t('console.tools.import.content')}</div>
 	</TableRow>
 	{#each records as record}
 		<TableRow>
@@ -103,7 +106,7 @@
 			</div>
 		</TableRow>
 		<TableRow>
-			<div>Content</div>
+			<div>{i18n.t('console.tools.import.content')}</div>
 			<div>
 				<code>{cnameTarget}</code>
 				<Button

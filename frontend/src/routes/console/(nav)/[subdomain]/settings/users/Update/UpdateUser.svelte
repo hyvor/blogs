@@ -6,6 +6,9 @@
 	import UserSlug from './UserSlug.svelte';
 	import { updateUser, updateUserVariant } from '../userActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		user: User;
@@ -97,7 +100,7 @@
 
 		updateUser(user.id, updates)
 			.then((res) => {
-				toast.success('User updated');
+				toast.success(i18n.t('console.settings.users.updated'));
 				show = false;
 				dispatch('update', res);
 			})
@@ -113,31 +116,37 @@
 </script>
 
 <Modal
-	title="Update User"
+	title={i18n.t('console.settings.users.updateUser')}
 	bind:show
 	closeOnOutsideClick={false}
 	closeOnEscape={false}
 	footer={{
 		confirm: {
-			text: 'Update'
+			text: i18n.t('console.common.update')
 		}
 	}}
 	on:confirm={handleUpdate}
 	loading={isUpdating}
 >
-	<SplitControl label="Profile Picture" caption="Recommended to use a square image">
+	<SplitControl
+		label={i18n.t('console.settings.users.profilePicture')}
+		caption={i18n.t('console.settings.users.profilePictureCaption')}
+	>
 		<ImageSetting src={pictureUrl} on:change={(e) => (pictureUrl = e.detail)} />
 	</SplitControl>
 
 	<UserSlug id={user.id} bind:slug slugOriginal={user.slug} />
 
-	<SplitControl label="Email" caption="User's email address">
+	<SplitControl
+		label={i18n.t('console.settings.users.email')}
+		caption={i18n.t('console.settings.users.emailCaption')}
+	>
 		<TextInput bind:value={email} block />
 	</SplitControl>
 
 	<VariantInput
-		label="Name"
-		caption="User's name"
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.users.nameCaption')}
 		type="user"
 		obj={user}
 		key="name"
@@ -150,9 +159,9 @@
 		obj={user}
 		type="user"
 		key="bio"
-		label="Bio"
+		label={i18n.t('console.settings.users.bio')}
 		maxlength={255}
-		caption="User's bio"
+		caption={i18n.t('console.settings.users.bioCaption')}
 		on:variantCreate
 		on:change={(e) => handleVariantChange('bio', e)}
 	/>
@@ -161,18 +170,24 @@
 		obj={user}
 		type="user"
 		key="location"
-		label="Location"
-		caption="User's location"
+		label={i18n.t('console.settings.users.location')}
+		caption={i18n.t('console.settings.users.locationCaption')}
 		maxlength={255}
 		on:variantCreate
 		on:change={(e) => handleVariantChange('location', e)}
 	/>
 
-	<SplitControl label="Website URL" caption="User's website URL">
+	<SplitControl
+		label={i18n.t('console.settings.users.websiteUrl')}
+		caption={i18n.t('console.settings.users.websiteUrlCaption')}
+	>
 		<TextInput bind:value={websiteUrl} block maxlength={255} />
 	</SplitControl>
 
-	<SplitControl label="Social Links" caption="Add absolute URLs with protocol (https://)">
+	<SplitControl
+		label={i18n.t('console.settings.users.socialLinks')}
+		caption={i18n.t('console.settings.users.socialLinksCaption')}
+	>
 		{#snippet nested()}
 			<div>
 				<SplitControl label="Facebook">

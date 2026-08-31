@@ -10,6 +10,9 @@
 	} from '@hyvor/design/components';
 	import { createApiKey } from './apiKeysActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -27,11 +30,11 @@
 	function handleClick() {
 		show = false;
 
-		const toastId = toast.loading('Creating API Key...');
+		const toastId = toast.loading(i18n.t('console.settings.apiKeys.creating'));
 
 		createApiKey(name, api)
 			.then((res) => {
-				toast.success('API Key created successfully', { id: toastId });
+				toast.success(i18n.t('console.settings.apiKeys.created'), { id: toastId });
 				dispatch('create', res);
 			})
 			.catch((err) => {
@@ -40,22 +43,39 @@
 	}
 </script>
 
-<Modal title="Create API Key" bind:show>
-	<SplitControl label="API">
+<Modal title={i18n.t('console.settings.apiKeys.create')} bind:show>
+	<SplitControl label={i18n.t('console.settings.apiKeys.api')}>
 		<InputGroup>
-			<Radio value="console" bind:group={api}>Console API</Radio>
+			<Radio value="console" bind:group={api}
+				>{i18n.t('console.settings.apiKeys.types.console')}</Radio
+			>
 
-			<Radio value="delivery" bind:group={api}>Delivery API</Radio>
+			<Radio value="delivery" bind:group={api}
+				>{i18n.t('console.settings.apiKeys.types.delivery')}</Radio
+			>
 		</InputGroup>
 	</SplitControl>
 
-	<SplitControl label="Name" caption="Just for your reference">
-		<TextInput bind:value={name} block placeholder="My API Key" autofocus maxlength={50} />
+	<SplitControl
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.common.justForReference')}
+	>
+		<TextInput
+			bind:value={name}
+			block
+			placeholder={i18n.t('console.settings.apiKeys.namePlaceholder')}
+			autofocus
+			maxlength={50}
+		/>
 	</SplitControl>
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-		<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
+		<Button on:click={handleClick} disabled={isButtonDisabled}
+			>{i18n.t('console.common.create')}</Button
+		>
 	{/snippet}
 </Modal>

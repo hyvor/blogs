@@ -11,6 +11,10 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	function handleAllowIndexingChange(e: any) {
 		updateBlogStore({ seo_indexing: e.target.checked });
@@ -30,18 +34,24 @@
 />
 
 <div class="settings">
-	<SplitControl label="Allow indexing" caption="Allow search engines to index your blog">
+	<SplitControl
+		label={i18n.t('console.settings.seo.allowIndexing')}
+		caption={i18n.t('console.settings.seo.allowIndexingCaption')}
+	>
 		<Switch checked={$blogStore.seo_indexing} on:change={handleAllowIndexingChange} />
 	</SplitControl>
 
-	<SplitControl label="External links type" caption="Should search engines follow external links?">
+	<SplitControl
+		label={i18n.t('console.settings.seo.externalLinks')}
+		caption={i18n.t('console.settings.seo.externalLinksCaption')}
+	>
 		<FormControl>
 			<Radio
 				value="follow"
 				group={$blogStore.seo_external_links_follow}
 				on:change={(e) => handleExternalLinksFollowChange(e, 'follow')}
 			>
-				Follow
+				{i18n.t('console.settings.seo.follow')}
 			</Radio>
 
 			<Radio
@@ -49,23 +59,34 @@
 				group={$blogStore.seo_external_links_follow}
 				on:change={(e) => handleExternalLinksFollowChange(e, 'nofollow')}
 			>
-				No follow
+				{i18n.t('console.settings.seo.noFollow')}
 			</Radio>
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Rich Schema">
+	<SplitControl label={i18n.t('console.settings.seo.richSchema')}>
 		{#snippet caption()}
-			<Caption
-				>Add <Link href="/docs/seo#rich-schema" target="_blank">rich schema</Link> to posts</Caption
-			>
+			<Caption>
+				<T
+					key="console.settings.seo.richSchemaCaption"
+					params={{
+						link: {
+							element: 'a',
+							props: { href: '/docs/seo#rich-schema', target: '_blank', class: 'hds-link' }
+						}
+					}}
+				/>
+			</Caption>
 		{/snippet}
 
 		<Switch checked={$blogStore.seo_rich_schema} on:change={handleRichSchemaChange} />
 	</SplitControl>
 
 	<div class="robots-split">
-		<SplitControl label="Robots.txt" caption="Customize your robots.txt file">
+		<SplitControl
+			label={i18n.t('console.settings.seo.robotsTxt')}
+			caption={i18n.t('console.settings.seo.robotsTxtCaption')}
+		>
 			<CodemirrorEditor
 				value={$blogStore.seo_robots_txt || ''}
 				id="robots_txt"

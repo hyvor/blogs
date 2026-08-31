@@ -13,6 +13,9 @@
 	import { postListFiltersStore, setFilter } from '../../postListStore';
 	import dayjs from 'dayjs';
 	import { OPTIONS, dateFilterStore } from './date';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const options = Object.entries(OPTIONS) as [keyof typeof OPTIONS, string][];
 
@@ -62,7 +65,7 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Date</Text>
+				<Text bold>{i18n.t('console.posts.filters.dateLabel')}</Text>
 			{/snippet}
 
 			<span class="text">
