@@ -157,7 +157,11 @@
 	label={i18n.t('console.tools.import.test')}
 	caption={i18n.t('console.tools.import.testCaption')}
 >
-	<TextInput block bind:value={testUrl} placeholder={i18n.t('console.tools.import.testUrlPlaceholder')} />
+	<TextInput
+		block
+		bind:value={testUrl}
+		placeholder={i18n.t('console.tools.import.testUrlPlaceholder')}
+	/>
 
 	<div style="margin-top:10px;">
 		<Button size="small" on:click={startTesting}>

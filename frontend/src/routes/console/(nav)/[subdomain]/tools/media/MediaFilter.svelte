@@ -30,8 +30,16 @@
 
 	let fileTypes = [
 		{ name: i18n.t('console.common.all'), value: 'all', extensions: '' },
-		{ name: i18n.t('console.tools.media.types.images'), value: 'images', extensions: 'jpg, png...' },
-		{ name: i18n.t('console.tools.media.types.videos'), value: 'videos', extensions: 'mp4, avi...' },
+		{
+			name: i18n.t('console.tools.media.types.images'),
+			value: 'images',
+			extensions: 'jpg, png...'
+		},
+		{
+			name: i18n.t('console.tools.media.types.videos'),
+			value: 'videos',
+			extensions: 'mp4, avi...'
+		},
 		{
 			name: i18n.t('console.tools.media.types.documents'),
 			value: 'documents',

@@ -72,9 +72,7 @@
 			{/snippet}
 
 			<span class="text">
-				{$dateFilterStore
-					? i18n.t(OPTIONS[$dateFilterStore])
-					: i18n.t('console.common.any')}
+				{$dateFilterStore ? i18n.t(OPTIONS[$dateFilterStore]) : i18n.t('console.common.any')}
 			</span>
 
 			{#if $dateFilterStore}

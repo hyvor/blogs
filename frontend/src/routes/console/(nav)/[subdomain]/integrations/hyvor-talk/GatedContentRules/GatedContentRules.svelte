@@ -49,11 +49,7 @@
 	{#snippet label()}
 		<Label>
 			{i18n.t('console.integrations.hyvorTalk.gatedContent.title')}
-			<Button
-				size="small"
-				on:click={() => (creating = true)}
-				disabled={rules.length >= MAX_RULES}
-			>
+			<Button size="small" on:click={() => (creating = true)} disabled={rules.length >= MAX_RULES}>
 				+ {i18n.t('console.common.create')}
 			</Button>
 		</Label>

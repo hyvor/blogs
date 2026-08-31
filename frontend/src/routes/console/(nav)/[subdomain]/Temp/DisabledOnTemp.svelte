@@ -19,11 +19,7 @@
 	{#if $isTempStore}
 		<div class="temp-notice">
 			<div class="overlay"></div>
-			<IconMessage
-				message={i18n.t('console.temp.featureDisabled')}
-				icon={IconLock}
-				iconSize={50}
-			/>
+			<IconMessage message={i18n.t('console.temp.featureDisabled')} icon={IconLock} iconSize={50} />
 		</div>
 	{/if}
 </div>

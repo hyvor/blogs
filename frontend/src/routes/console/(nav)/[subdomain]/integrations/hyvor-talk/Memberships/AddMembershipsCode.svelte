@@ -32,7 +32,9 @@
 
 		updateBlog({ code_foot: codeFoot })
 			.then(() => {
-				toast.success(i18n.t('console.integrations.hyvorTalk.memberships.updated'), { id: toastId });
+				toast.success(i18n.t('console.integrations.hyvorTalk.memberships.updated'), {
+					id: toastId
+				});
 				open = false;
 			})
 			.catch(() => {

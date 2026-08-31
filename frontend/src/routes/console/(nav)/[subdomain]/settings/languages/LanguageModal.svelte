@@ -115,7 +115,7 @@
 		<FormControl>
 			<TextInput
 				bind:value={name}
-				placeholder="English"
+				placeholder={i18n.t('console.settings.languages.namePlaceholder')}
 				block
 				state={nameError ? 'error' : undefined}
 				autofocus

@@ -17,4 +17,8 @@
 	}
 </script>
 
-<TextInput bind:value on:input={handleInput} placeholder={i18n.t('console.common.searchPlaceholder')} />
+<TextInput
+	bind:value
+	on:input={handleInput}
+	placeholder={i18n.t('console.common.searchPlaceholder')}
+/>

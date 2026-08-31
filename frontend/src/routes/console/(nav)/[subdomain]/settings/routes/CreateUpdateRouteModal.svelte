@@ -117,7 +117,9 @@
 </script>
 
 <Modal
-	title={route ? i18n.t('console.settings.routes.update') : i18n.t('console.settings.routes.create')}
+	title={route
+		? i18n.t('console.settings.routes.update')
+		: i18n.t('console.settings.routes.create')}
 	bind:show
 	footer={{
 		confirm: {
@@ -141,7 +143,7 @@
 		<FormControl>
 			<TextInput
 				block
-				placeholder="New Route"
+				placeholder={i18n.t('console.settings.routes.namePlaceholder')}
 				bind:value={name}
 				state={nameError ? 'error' : undefined}
 				autofocus

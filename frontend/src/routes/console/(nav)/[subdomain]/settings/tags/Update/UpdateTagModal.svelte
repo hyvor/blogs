@@ -175,10 +175,7 @@
 
 		{#if customCode}
 			<p style="color:var(--text-light);font-size:14px;">
-				<T
-					key="console.settings.tags.customCodeNote"
-					params={{ strong: { element: 'strong' } }}
-				/>
+				<T key="console.settings.tags.customCodeNote" params={{ strong: { element: 'strong' } }} />
 			</p>
 		{/if}
 	</div>

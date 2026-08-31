@@ -53,7 +53,12 @@
 		caption={i18n.t('console.settings.tags.nameCaption')}
 	>
 		<FormControl>
-			<TextInput bind:value={name} placeholder="Blogging" block autofocus />
+			<TextInput
+				bind:value={name}
+				placeholder={i18n.t('console.settings.tags.namePlaceholder')}
+				block
+				autofocus
+			/>
 		</FormControl>
 	</SplitControl>
 

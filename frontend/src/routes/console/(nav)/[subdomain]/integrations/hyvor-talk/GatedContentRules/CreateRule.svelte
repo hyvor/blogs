@@ -183,7 +183,9 @@
 				{#if gateType === 'custom'}
 					<Textarea
 						bind:value={gateContent}
-						placeholder={i18n.t('console.integrations.hyvorTalk.gatedContent.customGatePlaceholder')}
+						placeholder={i18n.t(
+							'console.integrations.hyvorTalk.gatedContent.customGatePlaceholder'
+						)}
 					/>
 				{/if}
 			</FormControl>

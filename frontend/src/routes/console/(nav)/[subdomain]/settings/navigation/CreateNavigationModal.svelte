@@ -72,7 +72,7 @@
 		<FormControl>
 			<TextInput
 				bind:value={name}
-				placeholder="About us"
+				placeholder={i18n.t('console.settings.navigation.namePlaceholder')}
 				block
 				state={nameError ? 'error' : undefined}
 				autofocus
