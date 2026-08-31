@@ -22,7 +22,7 @@
 <div class="hosting-option" class:active>
 	<div class="hosting-option-header">
 		<span class="hosting-option-title">{i18n.t('console.settings.hosting.optionDomain')}</span>
-		{#if active && !intent}
+		{#if active}
 			<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 		{/if}
 	</div>
@@ -38,30 +38,35 @@
 			</Button>
 		</div>
 	{:else}
-		<div class="domain-rows">
-			{#if customDomain}
-				<div class="domain-row">
-					<div class="domain-row-info">
-						<span class="domain-row-domain">{customDomain.domain}</span>
-						<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
-					</div>
-					<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
-						{i18n.t('console.settings.hosting.configureDomain')}
-					</Button>
+		{#if customDomain}
+			<div class="configured-domain">
+				<div class="domain-row-info">
+					<span class="domain-row-domain">{customDomain.domain}</span>
 				</div>
-			{/if}
-			{#if intent}
-				<div class="domain-row">
-					<div class="domain-row-info">
-						<span class="domain-row-domain">{intent.domain}</span>
-						<Tag color="orange" size="small">{i18n.t('console.settings.hosting.pendingDns')}</Tag>
-					</div>
-					<Button size="small" variant="outline" {disabled} on:click={onContinueSetup}>
-						{i18n.t('console.settings.hosting.continueSetup')}
-					</Button>
+				<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
+					{i18n.t('console.settings.hosting.changeDomain')}
+				</Button>
+			</div>
+		{/if}
+		{#if intent}
+			<div class="intent">
+				<div class="note">
+					{#if customDomain}
+						{i18n.t('console.settings.hosting.newDomainSetupInProgress')}
+					{:else}
+						{i18n.t('console.settings.hosting.domainSetupInProgress')}
+					{/if}
 				</div>
-			{/if}
-		</div>
+				<div class="domain">
+					{intent.domain}
+				</div>
+				<div class="button">
+				<Button size="x-small" variant="outline" {disabled} on:click={onContinueSetup}>
+					{i18n.t('console.settings.hosting.continueSetup')}
+				</Button>
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>
 
@@ -118,5 +123,23 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.intent {
+		padding: 10px 20px;
+		margin-top: 15px;
+		background-color: var(--blue-light);
+		border-radius: 20px;
+	}
+	.intent .note {
+		font-size: 14px;
+		color: var(--text-light);
+	}
+	.intent .domain {
+		font-size: 14px;
+		font-weight: 600;
+	}
+	.intent .button {
+		margin-top: 10px;
 	}
 </style>

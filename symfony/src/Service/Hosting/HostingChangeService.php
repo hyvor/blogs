@@ -132,7 +132,11 @@ class HostingChangeService
 
         ($this->updateBlogUrlsMessageHandler)($message);
 
-        if ($blog->getHostingAt() === BlogHostingAt::DOMAIN && $toAt !== BlogHostingAt::DOMAIN && $blog->getCustomDomain()) {
+        if (
+            $blog->getHostingAt() === BlogHostingAt::DOMAIN &&
+            $toAt !== BlogHostingAt::DOMAIN &&
+            $blog->getCustomDomain()
+        ) {
             $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);
             $blog->setCustomDomain(null);
         }

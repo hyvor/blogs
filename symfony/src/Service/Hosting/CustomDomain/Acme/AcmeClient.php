@@ -223,7 +223,7 @@ class AcmeClient implements LoggerAwareInterface
 
         // Finalize order
         $this->logger?->info('Authorization valid, proceeding to finalize order');
-        $csr = openssl_csr_new(['CN' => $order->domain], $privateKey, ['digest_alg' => 'sha256']);
+        $csr = $this->createCsr($order->domain, $privateKey);
         if (!$csr instanceof \OpenSSLCertificateSigningRequest) {
             throw new AcmeException('Failed to generate CSR: ' . openssl_error_string()); // @codeCoverageIgnore
         }
@@ -449,6 +449,40 @@ class AcmeClient implements LoggerAwareInterface
         }
 
         return $nonce;
+    }
+
+    /**
+     * ACME servers require the CSR's subjectAltName to list the same DNS identifiers
+     * as the order. openssl_csr_new() only accepts extensions via an actual openssl config file,
+     * so one is generated on the fly with a SAN matching the order's domain.
+     */
+    private function createCsr(string $domain, \OpenSSLAsymmetricKey $privateKey): \OpenSSLCertificateSigningRequest|false
+    {
+        $configPath = tempnam(sys_get_temp_dir(), 'acme_csr_');
+        if ($configPath === false) {
+            return false; // @codeCoverageIgnore
+        }
+
+        file_put_contents($configPath, <<<CNF
+            [req]
+            distinguished_name = req_distinguished_name
+            req_extensions = v3_req
+            [req_distinguished_name]
+            [v3_req]
+            subjectAltName = DNS:{$domain}
+            CNF);
+
+        try {
+            $csr = openssl_csr_new(['CN' => $domain], $privateKey, [
+                'digest_alg' => 'sha256',
+                'config' => $configPath,
+                'req_extensions' => 'v3_req',
+            ]);
+
+            return $csr instanceof \OpenSSLCertificateSigningRequest ? $csr : false;
+        } finally {
+            unlink($configPath);
+        }
     }
 
     private function csrPemToDer(string $pem): string

@@ -176,7 +176,6 @@ class HostingController extends AbstractController
             ]);
         }
 
-
         $intent = $this->customDomainService->createOrUpdateIntent($blog, $input->domain);
 
         return new JsonResponse([
@@ -293,7 +292,7 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/custom-domain/verify', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function verifyCustomDomain(): JsonResponse
+    public function verifyCustomDomainIntent(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
         $intent = $this->customDomainService->getBlogCustomDomainIntent($blog);
@@ -309,13 +308,13 @@ class HostingController extends AbstractController
         $domain = $intent->getDomain();
 
         // first verify internally before attempting ACME
-        try {
-            $this->internalCustomDomainVerificationService->verify($domain);
-        } catch (InternalCustomDomainVerificationException) {
-            throw new BadRequestHttpException(
-                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
-            );
-        }
+//        try {
+//            $this->internalCustomDomainVerificationService->verify($domain);
+//        } catch (InternalCustomDomainVerificationException) {
+//            throw new BadRequestHttpException(
+//                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
+//            );
+//        }
 
         // capture before mutating: promoteIntentToCustomDomain() edits blog's existing
         // CustomDomain entity in place, so the current domain has to be read first

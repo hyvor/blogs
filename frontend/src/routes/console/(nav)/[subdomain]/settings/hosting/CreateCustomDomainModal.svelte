@@ -19,7 +19,8 @@
 	import type {
 		CustomDomainIntent,
 		CustomDomainSetup,
-		CustomDomainTlsProvider
+		CustomDomainTlsProvider,
+		HostingInfo
 	} from '../../../../lib/types';
 
 	interface Props {
@@ -62,7 +63,7 @@
 	function applyMutationResult(result: {
 		custom_domain: CustomDomainSetup | null;
 		custom_domain_intent: CustomDomainIntent | null;
-		hosting_info: import('../../../../lib/types').HostingInfo | null;
+		hosting_info: HostingInfo | null;
 	}) {
 		if (result.hosting_info) {
 			updateHostingInfoStore(result.hosting_info);
@@ -146,7 +147,11 @@
 	}
 </script>
 
-<Modal title="Custom Domain" {loading} bind:show>
+<Modal 
+	title={customDomain ? 'Change Custom Domain / TLS' : 'Create Custom Domain'}
+	{loading} 
+	bind:show
+>
 	<SplitControl label="Custom Domain" noHorizonalPadding>
 		<FormControl>
 			<TextInput

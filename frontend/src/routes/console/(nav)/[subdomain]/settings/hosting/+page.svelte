@@ -182,10 +182,7 @@
 		bind:show={showCreateCustomDomainModal}
 		onSaved={() => (showCustomDomainIntentModal = true)}
 	/>
-	<CustomDomainIntentModal
-		bind:show={showCustomDomainIntentModal}
-		onEdit={() => (showCreateCustomDomainModal = true)}
-	/>
+	<CustomDomainIntentModal bind:show={showCustomDomainIntentModal} />
 	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
 {/if}
 
