@@ -10,10 +10,12 @@
 	const I18n = getMarketingI18n();
 	const strings = I18n.strings;
 
+	const faqTopics = ['Trial', 'Themes', 'Discounts', 'Ownership', 'Limits', 'Ads', 'Comments'];
+
 	const faqs = $derived(
-		[1, 2, 3, 4, 5, 6, 7].map((n) => ({
-			q: I18n.t(`pricing.faq.q${n}` as never),
-			a: getStaticString($strings, `pricing.faq.a${n}`)
+		faqTopics.map((topic) => ({
+			q: I18n.t(`pricing.faq.question${topic}` as never),
+			a: getStaticString($strings, `pricing.faq.answer${topic}`)
 		}))
 	);
 </script>
