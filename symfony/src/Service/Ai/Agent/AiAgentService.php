@@ -108,6 +108,7 @@ class AiAgentService
         Blog $blog,
         string $prompt,
         ?PostVariant $postVariant,
+        ?MessageBag $history = null,
     ): AgentCallResult
     {
         $provider = $blog->getMeta()->ai_provider;
@@ -139,10 +140,11 @@ class AiAgentService
 
         $systemPrompt = $this->getSystemPrompt($blog, $postVariant);
 
-        $messages = new MessageBag(
-            Message::forSystem($systemPrompt),
-            Message::ofUser($prompt),
-        );
+        $messages = new MessageBag(Message::forSystem($systemPrompt));
+        foreach ($history ?? [] as $historyMessage) {
+            $messages->add($historyMessage);
+        }
+        $messages->add(Message::ofUser($prompt));
 
         $callResult = $agent->call($messages, [
             'stream' => true,

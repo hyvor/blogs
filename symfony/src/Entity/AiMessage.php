@@ -30,6 +30,15 @@ class AiMessage
     #[ORM\Column(type: 'text')]
     private string $content;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $prompt_tokens = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $completion_tokens = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $total_tokens = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -93,6 +102,39 @@ class AiMessage
     public function setContent(string $content): static
     {
         $this->content = $content;
+        return $this;
+    }
+
+    public function getPromptTokens(): ?int
+    {
+        return $this->prompt_tokens;
+    }
+
+    public function setPromptTokens(?int $prompt_tokens): static
+    {
+        $this->prompt_tokens = $prompt_tokens;
+        return $this;
+    }
+
+    public function getCompletionTokens(): ?int
+    {
+        return $this->completion_tokens;
+    }
+
+    public function setCompletionTokens(?int $completion_tokens): static
+    {
+        $this->completion_tokens = $completion_tokens;
+        return $this;
+    }
+
+    public function getTotalTokens(): ?int
+    {
+        return $this->total_tokens;
+    }
+
+    public function setTotalTokens(?int $total_tokens): static
+    {
+        $this->total_tokens = $total_tokens;
         return $this;
     }
 }

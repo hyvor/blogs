@@ -34,6 +34,7 @@
 	let status: 'idle' | 'streaming' | 'done' | 'error' = $state('idle');
 	let error: string | null = $state(null);
 	let sentPrompt = $state('');
+	let conversationId: number | null = $state(null);
 	let blocks: AgentBlock[] = $state([]);
 	let documentChanges: DocumentChange[] = $state([]);
 	let appliedIds: Set<number> = $state(new Set());
@@ -66,9 +67,17 @@
 		appliedIds = new Set();
 		showDiffModal = false;
 
+		let hadError = false;
+
 		try {
-			await callAgent(userPrompt, postVariantId, (event) => {
-				if (event.type === 'document_change') {
+			await callAgent(userPrompt, postVariantId, conversationId, (event) => {
+				if (event.type === 'conversation_started') {
+					conversationId = event.conversation_id;
+				} else if (event.type === 'error') {
+					hadError = true;
+					status = 'error';
+					error = event.message;
+				} else if (event.type === 'document_change') {
 					const existingIndex = documentChanges.findIndex(
 						(c) => c.postVariantId === event.post_variant_id
 					);
@@ -82,11 +91,14 @@
 					applyAgentEvent(blocks, event);
 				}
 			});
-			status = 'done';
 
-			const firstChange = documentChanges[0];
-			if (firstChange) {
-				openReview(firstChange.postVariantId);
+			if (!hadError) {
+				status = 'done';
+
+				const firstChange = documentChanges[0];
+				if (firstChange) {
+					openReview(firstChange.postVariantId);
+				}
 			}
 		} catch (err) {
 			status = 'error';
@@ -102,6 +114,7 @@
 		documentChanges = [];
 		appliedIds = new Set();
 		showDiffModal = false;
+		conversationId = null;
 	}
 
 	function openReview(postVariantId: number) {

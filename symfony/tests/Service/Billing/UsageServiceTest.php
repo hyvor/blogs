@@ -2,7 +2,10 @@
 
 namespace App\Tests\Service\Billing;
 
+use App\Entity\Enum\AiMessageRole;
 use App\Service\Billing\UsageService;
+use App\Tests\Factory\AiConversationFactory;
+use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\AutoTranslationFactory;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -119,9 +122,64 @@ class UsageServiceTest extends KernelTestCase
     // AI tokens usage (current month only)
     // -----------------------------------------------------------------------
 
-    public function test_ai_tokens_usage_is_not_tracked(): void
+    public function test_ai_tokens_usage(): void
     {
-        // TODO:
+        self::mockTime('2025-02-20');
+
+        $blog1 = BlogFactory::createOne(['organization_id' => 1]);
+        $conversation1 = AiConversationFactory::createOneFor($blog1);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation1,
+            'total_tokens' => 1000,
+            'created_at' => new \DateTimeImmutable('2025-02-10'),
+        ]);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation1,
+            'total_tokens' => 2000,
+            'created_at' => new \DateTimeImmutable('2025-02-15'),
+        ]);
+
+        // old — should NOT count
+        AiMessageFactory::createOne([
+            'conversation' => $conversation1,
+            'total_tokens' => 1000,
+            'created_at' => new \DateTimeImmutable('2025-01-01'),
+        ]);
+
+        // user messages have no token usage - should count as 0, not break the sum
+        AiMessageFactory::createOne([
+            'conversation' => $conversation1,
+            'role' => AiMessageRole::USER,
+            'total_tokens' => null,
+            'created_at' => new \DateTimeImmutable('2025-02-16'),
+        ]);
+
+        $blog2 = BlogFactory::createOne(['organization_id' => 1]);
+        $conversation2 = AiConversationFactory::createOneFor($blog2);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation2,
+            'total_tokens' => 3000,
+            'created_at' => new \DateTimeImmutable('2025-02-20'),
+        ]);
+
+        // other org — should NOT count
+        $blog3 = BlogFactory::createOne(['organization_id' => 2]);
+        $conversation3 = AiConversationFactory::createOneFor($blog3);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation3,
+            'total_tokens' => 3000,
+            'created_at' => new \DateTimeImmutable('2025-02-20'),
+        ]);
+
+        $this->assertSame(6000, $this->usage()->getAiTokensUsage(1));
+    }
+
+    public function test_ai_tokens_usage_without_records(): void
+    {
         $this->assertSame(0, $this->usage()->getAiTokensUsage(1));
     }
 }

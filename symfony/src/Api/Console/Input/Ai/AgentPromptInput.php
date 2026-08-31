@@ -10,4 +10,6 @@ class AgentPromptInput
     public string $prompt;
 
     public ?int $post_variant_id = null;
+
+    public ?int $conversation_id = null;
 }

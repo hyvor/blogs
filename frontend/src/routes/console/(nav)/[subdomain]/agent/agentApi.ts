@@ -6,6 +6,8 @@ import type { PostVariant } from '../../../lib/types';
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
+	| { type: 'conversation_started'; conversation_id: number }
+	| ({ type: 'post_variant' } & Record<string, unknown>)
 	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }
 	| { type: 'thinking_done' }
@@ -23,6 +25,7 @@ export type AgentEvent =
 	| ({ type: 'get_post_variants' } & Record<string, unknown>)
 	| { type: 'text'; content: string }
 	| { type: 'document_change'; post_variant_id: number; content: string }
+	| { type: 'error'; message: string }
 	| { type: 'done' };
 
 export type AgentBlock =
@@ -145,6 +148,7 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 		case 'get_tags':
 		case 'get_authors':
 		case 'get_post_variants':
+		case 'post_variant':
 			break;
 
 		case 'text':
@@ -160,6 +164,7 @@ export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
 export async function callAgent(
 	prompt: string,
 	postVariantId: number | null,
+	conversationId: number | null,
 	onEvent: (event: AgentEvent) => void
 ) {
 	const response = await fetch(getConsoleBlogBaseUrl() + '/ai/agent', {
@@ -168,7 +173,11 @@ export async function callAgent(
 			'Content-Type': 'application/json',
 			'X-Organization-Id': String(get(authOrganizationStore)?.id)
 		},
-		body: JSON.stringify({ prompt, post_variant_id: postVariantId }),
+		body: JSON.stringify({
+			prompt,
+			post_variant_id: postVariantId,
+			conversation_id: conversationId
+		}),
 		credentials: 'same-origin'
 	});
 

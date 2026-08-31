@@ -10,6 +10,7 @@ use App\Entity\Enum\AiMessageChunkType;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\AiAgentConversationService;
+use App\Service\Ai\Agent\AiAgentHistoryService;
 use App\Service\Ai\Agent\AiAgentService;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
@@ -24,6 +25,8 @@ use App\Tests\Factory\PostVariantFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Log\NullLogger;
+use Symfony\AI\Platform\Message\MessageBag;
 use Symfony\AI\Platform\Metadata\Metadata;
 use Symfony\AI\Platform\Result\RawResultInterface;
 use Symfony\AI\Platform\Result\ResultInterface;
@@ -33,6 +36,7 @@ use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
 use Symfony\AI\Platform\Result\Stream\Delta\ToolCallComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ToolCallStart;
 use Symfony\AI\Platform\Result\ToolCall;
+use Symfony\AI\Platform\TokenUsage\TokenUsage;
 
 #[CoversClass(AiAgentConversationService::class)]
 class AiAgentConversationServiceTest extends KernelTestCase
@@ -53,15 +57,20 @@ class AiAgentConversationServiceTest extends KernelTestCase
     /**
      * @param array<int, object> $deltas
      */
-    private function buildService(PostVariant $postVariant, array $deltas, ?DocumentOpsTool $documentOpsTool = null): AiAgentConversationService
-    {
-        $result = new class ($deltas) implements ResultInterface {
+    private function buildService(
+        PostVariant $postVariant,
+        array $deltas,
+        ?DocumentOpsTool $documentOpsTool = null,
+        ?Metadata $metadata = null,
+        ?\Throwable $throws = null,
+    ): AiAgentConversationService {
+        $result = new class ($deltas, $metadata ?? new Metadata()) implements ResultInterface {
             private ?RawResultInterface $rawResult = null;
 
             /**
              * @param array<int, object> $deltas
              */
-            public function __construct(private array $deltas)
+            public function __construct(private array $deltas, private Metadata $metadata)
             {
             }
 
@@ -82,7 +91,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
             public function getMetadata(): Metadata
             {
-                return new Metadata();
+                return $this->metadata;
             }
         };
 
@@ -94,25 +103,22 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $agentCallResult = new AgentCallResult($result, $documentOpsTool);
 
-        $fakeAiAgentService = new class ($agentCallResult) extends AiAgentService {
-            public function __construct(private AgentCallResult $agentCallResult)
+        $fakeAiAgentService = new class ($agentCallResult, $throws) extends AiAgentService {
+            public function __construct(private AgentCallResult $agentCallResult, private ?\Throwable $throws)
             {
             }
 
-            public function callAgent(Blog $blog, string $prompt, ?PostVariant $postVariant): AgentCallResult
-            {
+            public function callAgent(
+                Blog $blog,
+                string $prompt,
+                ?PostVariant $postVariant,
+                ?MessageBag $history = null,
+            ): AgentCallResult {
+                if ($this->throws !== null) {
+                    throw $this->throws;
+                }
+
                 return $this->agentCallResult;
-            }
-        };
-
-        $fakePostService = new class ($postVariant) extends PostService {
-            public function __construct(private PostVariant $postVariant)
-            {
-            }
-
-            public function getPostVariantByBlogAndId(Blog $blog, int $id): PostVariant
-            {
-                return $this->postVariant;
             }
         };
 
@@ -120,6 +126,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
             $this->getService(EntityManagerInterface::class),
             $fakeAiAgentService,
             new ToolCallEventFactory(),
+            new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
+            $this->getService(PermalinkService::class),
+            new NullLogger(),
         );
     }
 
@@ -136,7 +145,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', $postVariant));
 
         $this->assertSame(
-            ['post_variant', 'text', 'text', 'done'],
+            ['conversation_started', 'post_variant', 'text', 'text', 'done'],
             array_column($events, 'type'),
         );
 
@@ -186,7 +195,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         // thinking_started is sent to the frontend, even though it's never persisted
         $this->assertSame(
-            ['post_variant', 'thinking_started', 'thinking', 'thinking_done', 'text', 'done'],
+            ['conversation_started', 'post_variant', 'thinking_started', 'thinking', 'thinking_done', 'text', 'done'],
             array_column($events, 'type'),
         );
 
@@ -227,7 +236,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         // the same typed event that gets persisted is now streamed to the frontend too,
         // instead of a generic 'tool_result' array
         $this->assertSame(
-            ['post_variant', 'tool_call', 'post_variant_edit_suggested', 'done'],
+            ['conversation_started', 'post_variant', 'tool_call', 'post_variant_edit_suggested', 'done'],
             array_column($events, 'type'),
         );
 
@@ -238,7 +247,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             'arguments' => $arguments,
         ];
 
-        $this->assertSame($expectedPayload, $events[2]);
+        $this->assertSame($expectedPayload, $events[3]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -267,10 +276,10 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         // still notifies the frontend via a generic fallback event, just doesn't persist it
         $this->assertSame(
-            ['post_variant', 'tool_call', 'tool_result', 'done'],
+            ['conversation_started', 'post_variant', 'tool_call', 'tool_result', 'done'],
             array_column($events, 'type'),
         );
-        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[2]);
+        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[3]);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -332,9 +341,157 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Change it', $postVariant));
 
         $this->assertSame(
-            ['post_variant', 'text', 'document_change', 'done'],
+            ['conversation_started', 'post_variant', 'text', 'document_change', 'done'],
             array_column($events, 'type'),
         );
+    }
+
+    public function test_continues_an_existing_conversation_with_prior_history_sent_to_the_agent(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $result = new class ([new TextDelta('Second reply')]) implements ResultInterface {
+            private ?RawResultInterface $rawResult = null;
+
+            /**
+             * @param array<int, object> $deltas
+             */
+            public function __construct(private array $deltas)
+            {
+            }
+
+            public function getContent(): iterable
+            {
+                return $this->deltas;
+            }
+
+            public function getRawResult(): ?RawResultInterface
+            {
+                return $this->rawResult;
+            }
+
+            public function setRawResult(RawResultInterface $rawResult): void
+            {
+                $this->rawResult = $rawResult;
+            }
+
+            public function getMetadata(): Metadata
+            {
+                return new Metadata();
+            }
+        };
+
+        $documentOpsTool = new DocumentOpsTool(
+            $blog,
+            $this->getService(PostService::class),
+            $this->getService(PostContentService::class),
+        );
+        $agentCallResult = new AgentCallResult($result, $documentOpsTool);
+
+        $fakeAiAgentService = new class ($agentCallResult) extends AiAgentService {
+            /** @var array<int, ?MessageBag> */
+            public array $capturedHistories = [];
+
+            public function __construct(private AgentCallResult $agentCallResult)
+            {
+            }
+
+            public function callAgent(
+                Blog $blog,
+                string $prompt,
+                ?PostVariant $postVariant,
+                ?MessageBag $history = null,
+            ): AgentCallResult {
+                $this->capturedHistories[] = $history;
+                return $this->agentCallResult;
+            }
+        };
+
+        $service = new AiAgentConversationService(
+            $this->getService(EntityManagerInterface::class),
+            $fakeAiAgentService,
+            new ToolCallEventFactory(),
+            new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
+            $this->getService(PermalinkService::class),
+            new NullLogger(),
+        );
+
+        // first turn starts a brand new conversation - no history to send
+        $firstEvents = iterator_to_array($service->streamPrompt($blog, 'First message', $postVariant));
+        $this->assertNull($fakeAiAgentService->capturedHistories[0]);
+
+        $conversationStarted = $firstEvents[0];
+        $this->assertSame('conversation_started', $conversationStarted['type']);
+        $conversationId = $conversationStarted['conversation_id'];
+
+        $conversation = $this->getEm()->getRepository(AiConversation::class)->find($conversationId);
+        $this->assertNotNull($conversation);
+
+        // second turn continues the same conversation - the first turn's messages are sent as history
+        iterator_to_array($service->streamPrompt($blog, 'Second message', $postVariant, $conversation));
+
+        $secondHistory = $fakeAiAgentService->capturedHistories[1];
+        $this->assertNotNull($secondHistory);
+        $this->assertSame(2, $secondHistory->count());
+
+        $messages = $this->getEm()->getRepository(AiMessage::class)
+            ->findBy(['conversation' => $conversation], ['id' => 'ASC']);
+        $this->assertCount(4, $messages);
+        $this->assertSame('First message', $messages[0]->getContent());
+        $this->assertSame('Second message', $messages[2]->getContent());
+    }
+
+    public function test_yields_error_event_and_persists_it_when_the_agent_call_fails(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $service = $this->buildService($postVariant, [], throws: new \RuntimeException('provider exploded'));
+
+        $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
+
+        $this->assertSame(
+            ['conversation_started', 'post_variant', 'error', 'done'],
+            array_column($events, 'type'),
+        );
+        $this->assertSame(
+            'The AI assistant ran into a problem and could not finish this request. Please try again.',
+            $events[2]['message'],
+        );
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+
+        $chunks = $this->getEm()->getRepository(AiMessageChunk::class)
+            ->findBy(['message' => $assistantMessage]);
+        $this->assertCount(1, $chunks);
+        $this->assertSame(AiMessageChunkType::EVENT, $chunks[0]->getType());
+        $this->assertSame('error', $chunks[0]->getContent());
+    }
+
+    public function test_persists_token_usage_on_the_assistant_message(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $tokenUsage = new TokenUsage(promptTokens: 100, completionTokens: 50, totalTokens: 150);
+
+        $service = $this->buildService(
+            $postVariant,
+            [new TextDelta('Hi')],
+            metadata: new Metadata(['token_usage' => $tokenUsage]),
+        );
+
+        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+        $this->assertSame(100, $assistantMessage->getPromptTokens());
+        $this->assertSame(50, $assistantMessage->getCompletionTokens());
+        $this->assertSame(150, $assistantMessage->getTotalTokens());
     }
 
 }

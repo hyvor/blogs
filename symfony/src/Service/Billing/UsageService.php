@@ -107,8 +107,20 @@ class UsageService
 
     public function getAiTokensUsage(int $organizationId): int
     {
-        // TODO:
-        return 0;
+        $startOfMonth = $this->now()->modify('first day of this month midnight')->format('Y-m-d H:i:s');
+
+        /** @var ?int $result */
+        $result = $this->connection->fetchOne(
+            "SELECT SUM(COALESCE(ai_messages.total_tokens, 0)) AS count
+             FROM ai_messages
+             INNER JOIN ai_conversations ON ai_messages.conversation_id = ai_conversations.id
+             INNER JOIN blogs ON ai_conversations.blog_id = blogs.id
+             WHERE blogs.organization_id = ?
+             AND ai_messages.created_at >= ?",
+            [$organizationId, $startOfMonth],
+        );
+
+        return (int)$result;
     }
 
     public function getBlogsUsage(int $organizationId): int

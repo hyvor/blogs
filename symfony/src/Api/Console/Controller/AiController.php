@@ -44,8 +44,16 @@ class AiController extends AbstractController
             }
         }
 
-        $response = new StreamedResponse(function () use ($blog, $prompt, $postVariant) {
-            foreach ($this->aiAgentConversationService->streamPrompt($blog, $prompt, $postVariant) as $event) {
+        $conversation = null;
+        if ($input->conversation_id) {
+            $conversation = $this->aiAgentConversationService->getConversationForBlog($blog, $input->conversation_id);
+            if ($conversation === null) {
+                throw new BadRequestHttpException('Conversation not found');
+            }
+        }
+
+        $response = new StreamedResponse(function () use ($blog, $prompt, $postVariant, $conversation) {
+            foreach ($this->aiAgentConversationService->streamPrompt($blog, $prompt, $postVariant, $conversation) as $event) {
                 echo 'data: '.json_encode($event)."\n\n";
                 flush();
             }
