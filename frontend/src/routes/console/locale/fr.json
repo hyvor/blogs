@@ -29,7 +29,9 @@
 			"slugAvailable": "Ce slug est disponible",
 			"slugNotAvailable": "Ce slug n'est pas disponible",
 			"slugCheckFailed": "Échec de la vérification de la disponibilité du slug",
-			"justForReference": "Uniquement pour votre référence"
+			"justForReference": "Uniquement pour votre référence",
+			"any": "Tous",
+			"unnamed": "Sans nom"
 		},
 		"failedToLoadBlog": "Impossible de charger le blog",
 		"nav": {
@@ -72,6 +74,9 @@
 			"cloningPost": "Duplication de l'article...",
 			"postCloned": "Article dupliqué avec succès",
 			"status": {
+				"draft": "Brouillon",
+				"published": "Publié",
+				"scheduled": "Programmé",
 				"featured": "Mis en avant"
 			},
 			"langTag": {
@@ -91,7 +96,13 @@
 				"dateLabel": "Date",
 				"searchAuthorPlaceholder": "Rechercher un auteur...",
 				"searchTagPlaceholder": "Rechercher un tag...",
-				"postsCount": "{count} {count, plural, one {article} other {articles}}"
+				"postsCount": "{count} {count, plural, one {article} other {articles}}",
+				"dateOptions": {
+					"today": "Aujourd'hui",
+					"last_week": "La semaine dernière",
+					"last_month": "Le mois dernier",
+					"last_year": "L'année dernière"
+				}
 			},
 			"noAuthorsFound": "Aucun auteur trouvé",
 			"postDeleted": "Article supprimé avec succès"
@@ -207,7 +218,9 @@
 				"export": "Exporter"
 			},
 			"jobStatus": {
-				"pending": "En attente"
+				"pending": "En attente",
+				"completed": "Terminé",
+				"failed": "Échoué"
 			},
 			"export": {
 				"newExport": "Nouvel export",
@@ -591,6 +604,7 @@
 					"guest": "Invité"
 				},
 				"roles": {
+					"owner": "Propriétaire",
 					"admin": "Administrateur",
 					"editor": "Éditeur",
 					"writer": "Rédacteur",
@@ -719,7 +733,12 @@
 					"eventsRequired": "Veuillez sélectionner au moins un événement"
 				},
 				"selectAll": "Tout sélectionner",
-				"deselectAll": "Tout désélectionner"
+				"deselectAll": "Tout désélectionner",
+				"deliveryStatus": {
+					"pending": "En attente",
+					"success": "Réussie",
+					"failed": "Échouée"
+				}
 			},
 			"ai": {
 				"provider": "Fournisseur d'IA préféré",

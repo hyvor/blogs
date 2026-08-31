@@ -19,6 +19,14 @@
 
 	const i18n = getI18n();
 
+	const ROLE_KEYS = {
+		owner: 'console.settings.users.roles.owner',
+		admin: 'console.settings.users.roles.admin',
+		editor: 'console.settings.users.roles.editor',
+		writer: 'console.settings.users.roles.writer',
+		contributor: 'console.settings.users.roles.contributor'
+	} as const;
+
 	interface Props {
 		user: User;
 	}
@@ -86,7 +94,7 @@
 	</div>
 	<div>
 		{#if user.hyvor_user_id}
-			<Tag size="x-small">{user.role.toUpperCase()}</Tag>
+			<Tag size="x-small">{i18n.t(ROLE_KEYS[user.role]).toUpperCase()}</Tag>
 		{/if}
 	</div>
 	<div>{user.posts_count}</div>

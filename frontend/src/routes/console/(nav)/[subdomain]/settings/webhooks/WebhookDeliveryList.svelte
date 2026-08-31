@@ -7,6 +7,12 @@
 
 	const i18n = getI18n();
 
+	const DELIVERY_STATUS_KEYS = {
+		pending: 'console.settings.webhooks.deliveryStatus.pending',
+		success: 'console.settings.webhooks.deliveryStatus.success',
+		failed: 'console.settings.webhooks.deliveryStatus.failed'
+	} as const;
+
 	interface Props {
 		deliveries: WebhookDelivery[];
 		hasMore?: boolean;
@@ -54,7 +60,7 @@
 				</TableCell>
 				<TableCell>
 					<Tag color={getStatusColor(delivery.status)} size="small">
-						{delivery.status}
+						{i18n.t(DELIVERY_STATUS_KEYS[delivery.status])}
 					</Tag>
 				</TableCell>
 				<TableCell>

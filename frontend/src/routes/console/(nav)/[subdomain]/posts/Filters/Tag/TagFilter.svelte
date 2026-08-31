@@ -33,8 +33,8 @@
 
 			<span class="text">
 				{$postListFiltersStore.tag
-					? $postListFiltersStore.tag.variants[0]?.name || 'Unnamed'
-					: 'Any'}
+					? $postListFiltersStore.tag.variants[0]?.name || i18n.t('console.common.unnamed')
+					: i18n.t('console.common.any')}
 			</span>
 
 			{#if $postListFiltersStore.tag}
@@ -60,7 +60,6 @@
 	.text {
 		display: inline-block;
 		font-weight: normal;
-		text-transform: capitalize;
 		vertical-align: middle;
 		max-width: 125px;
 		overflow: hidden;

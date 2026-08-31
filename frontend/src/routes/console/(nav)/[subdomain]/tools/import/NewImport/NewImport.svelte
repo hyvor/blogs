@@ -234,7 +234,10 @@
 		<!-- Featured Image -->
 		<SplitControl label={i18n.t('console.tools.import.featuredImage')} flex={[1, 4]}>
 			{#if testData.data.featured_image_url}
-				<img src={testData.data.featured_image_url} alt={i18n.t('console.posts.status.featured')} />
+				<img
+					src={testData.data.featured_image_url}
+					alt={i18n.t('console.tools.import.featuredImage')}
+				/>
 			{/if}
 		</SplitControl>
 	</Modal>
