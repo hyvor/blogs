@@ -5,6 +5,9 @@
 	import EmbeddedConsole from '../@components/EmbeddedConsole/EmbeddedConsole.svelte';
 	import { onMount } from 'svelte';
 	import { getConfig } from '../../../lib/config';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	onMount(() => {
 		if (!$integrationsStore.hyvor_post) {
@@ -17,6 +20,6 @@
 	<EmbeddedConsole
 		url="{getConfig().hyvor.hyvor_post_url}/console?embedded=true&newsletter_id={$integrationsStore
 			.hyvor_post.newsletter_id}"
-		title="Hyvor Post Newsletter Console"
+		title={i18n.t('console.newsletter.consoleTitle')}
 	/>
 {/if}

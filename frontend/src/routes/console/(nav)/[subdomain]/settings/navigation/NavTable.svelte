@@ -10,6 +10,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import UpdateNavigationModal from './UpdateNavigationModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		items: Navigation[];
@@ -27,17 +30,17 @@
 	async function handleDelete(id: number) {
 		if (
 			await confirm({
-				title: 'Delete navigation',
-				content: 'Are you sure you want to delete this navigation?',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.navigation.deleteNavigation'),
+				content: i18n.t('console.settings.navigation.deleteContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting navigation...');
+			const toastId = toast.loading(i18n.t('console.settings.navigation.deleting'));
 
 			deleteNavigation(id)
 				.then(() => {
-					toast.success('Navigation deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.navigation.deleted'), { id: toastId });
 					dispatch('delete', id);
 				})
 				.catch((e) => {
@@ -92,8 +95,8 @@
 	<Table columns="70px 1fr 1fr 70px">
 		<TableRow head>
 			<div></div>
-			<div>Name</div>
-			<div>URL</div>
+			<div>{i18n.t('console.common.name')}</div>
+			<div>{i18n.t('console.tools.import.url')}</div>
 			<div></div>
 		</TableRow>
 
@@ -128,7 +131,7 @@
 					<div>{item.variants[0]?.name || 'Unnamed'}</div>
 					<div>{item.url}</div>
 					<div>
-						<Tooltip text="Edit navigation">
+						<Tooltip text={i18n.t('console.settings.navigation.editNavigation')}>
 							<IconButton
 								variant="fill-light"
 								color="gray"
@@ -141,7 +144,7 @@
 								<IconPencilFill size={12} />
 							</IconButton>
 						</Tooltip>
-						<Tooltip text="Delete navigation">
+						<Tooltip text={i18n.t('console.settings.navigation.deleteNavigation')}>
 							<IconButton
 								variant="fill-light"
 								color="red"

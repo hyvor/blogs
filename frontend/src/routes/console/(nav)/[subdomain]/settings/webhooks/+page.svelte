@@ -23,6 +23,9 @@
 	import CreateWebhookModal from './CreateUpdateWebhookModal.svelte';
 	import WebhookList from './WebhookList.svelte';
 	import WebhookDeliveryList from './WebhookDeliveryList.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let webhooks: Webhook[] = $state([]);
 	let deliveries: WebhookDelivery[] = $state([]);
@@ -76,7 +79,7 @@
 				webhooksLoaded = true;
 			})
 			.catch((error) => {
-				toast.error('Failed to load webhooks: ' + error.message);
+				toast.error(i18n.t('console.settings.webhooks.failedToLoad', { message: error.message }));
 			})
 			.finally(() => {
 				isWebhooksLoading = false;
@@ -102,9 +105,9 @@
 			})
 			.catch((error) => {
 				if (more) {
-					toast.error('Failed to load more deliveries');
+					toast.error(i18n.t('console.settings.webhooks.failedToLoadMoreDeliveries'));
 				} else {
-					toast.error('Failed to load webhook deliveries');
+					toast.error(i18n.t('console.settings.webhooks.failedToLoadDeliveries'));
 				}
 			})
 			.finally(() => {
@@ -156,19 +159,21 @@
 			<TabNavItem
 				name="configure"
 				active={activeTab === 'configure'}
-				onclick={() => (activeTab = 'configure')}>Configure</TabNavItem
+				onclick={() => (activeTab = 'configure')}
+				>{i18n.t('console.settings.webhooks.configure')}</TabNavItem
 			>
 			<TabNavItem
 				name="deliveries"
 				active={activeTab === 'deliveries'}
-				onclick={() => (activeTab = 'deliveries')}>Deliveries</TabNavItem
+				onclick={() => (activeTab = 'deliveries')}
+				>{i18n.t('console.settings.webhooks.deliveries')}</TabNavItem
 			>
 		</TabNav>
 	</div>
 	{#if activeTab === 'configure'}
 		<div class="filter-section">
 			<Button size="small" on:click={() => (isCreating = true)}>
-				Create Webhook
+				{i18n.t('console.settings.webhooks.create')}
 				{#snippet end()}
 					<IconPlus />
 				{/snippet}
@@ -191,7 +196,7 @@
 							selected={selectedWebhookId === null}
 							on:select={() => handleWebhookFilterSelect(null)}
 						>
-							All Webhooks
+							{i18n.t('console.settings.webhooks.allWebhooks')}
 						</ActionListItem>
 						{#each webhooks as webhook (webhook.id)}
 							<ActionListItem

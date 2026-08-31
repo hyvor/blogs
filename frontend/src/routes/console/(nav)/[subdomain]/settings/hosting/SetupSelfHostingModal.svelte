@@ -13,6 +13,9 @@
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import { blogStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import { updateHostedAt } from './hostingActions';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -39,7 +42,7 @@
 		const urlTrimmed = url.trim();
 
 		if (urlTrimmed === '') {
-			error = 'Self-Hosting URL is required';
+			error = i18n.t('console.settings.hosting.validation.selfUrlRequired');
 			return;
 		}
 		if (!isValidUrl(urlTrimmed)) {
@@ -64,8 +67,11 @@
 	}
 </script>
 
-<Modal title="Setup Self-hosting" {loading} bind:show>
-	<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
+<Modal title={i18n.t('console.settings.hosting.setupSelfHostingTitle')} {loading} bind:show>
+	<SplitControl
+		label={i18n.t('console.settings.hosting.selfUrl')}
+		caption={i18n.t('console.settings.hosting.selfUrlCaption')}
+	>
 		<FormControl>
 			<TextInput
 				bind:value={url}
@@ -82,8 +88,12 @@
 
 	{#snippet footer()}
 		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)} disabled={loading}>Cancel</Button>
-			<Button on:click={handleConfirm} disabled={loading}>Confirm</Button>
+			<Button variant="invisible" on:click={() => (show = false)} disabled={loading}
+				>{i18n.t('console.common.cancel')}</Button
+			>
+			<Button on:click={handleConfirm} disabled={loading}
+				>{i18n.t('console.integrations.hyvorTalk.confirm')}</Button
+			>
 		</ButtonGroup>
 	{/snippet}
 </Modal>

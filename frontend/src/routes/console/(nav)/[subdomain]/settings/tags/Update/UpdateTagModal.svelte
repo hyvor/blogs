@@ -20,6 +20,10 @@
 	import { updateTag, updateTagVariant } from '../tagActions';
 	import { createEventDispatcher } from 'svelte';
 	import TagSlug from './TagSlug.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		show?: boolean;
@@ -64,13 +68,13 @@
 	async function handleUpdate() {
 		isUpdating = true;
 
-		const toastId = toast.loading('Updating tag');
+		const toastId = toast.loading(i18n.t('console.settings.tags.updating'));
 
 		for (const [languageId, changes] of Object.entries(variantChanges)) {
 			try {
 				await updateTagVariant(tag.id, Number(languageId), changes);
 			} catch (e) {
-				toast.error('Failed to update tag variant', { id: toastId });
+				toast.error(i18n.t('console.settings.tags.failedToUpdateVariant'), { id: toastId });
 				isUpdating = false;
 				return;
 			}
@@ -93,12 +97,12 @@
 
 		updateTag(tag.id, updates)
 			.then((res) => {
-				toast.success('Tag updated', { id: toastId });
+				toast.success(i18n.t('console.settings.tags.updated'), { id: toastId });
 				show = false;
 				dispatch('update', res);
 			})
 			.catch((e) => {
-				toast.error('Failed to update tag', { id: toastId });
+				toast.error(i18n.t('console.settings.tags.failedToUpdate'), { id: toastId });
 			})
 			.finally(() => {
 				isUpdating = false;
@@ -106,12 +110,19 @@
 	}
 </script>
 
-<Modal title="Edit tag" bind:show>
-	<SplitControl label="Private">
+<Modal title={i18n.t('console.settings.tags.editTag')} bind:show>
+	<SplitControl label={i18n.t('console.settings.tags.private')}>
 		{#snippet caption()}
 			<Caption>
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
-				pages - only for internal use.
+				<T
+					key="console.settings.tags.privateCaption"
+					params={{
+						link: {
+							element: 'a',
+							props: { href: '/docs/tags#private', target: '_blank', class: 'hds-link' }
+						}
+					}}
+				/>
 			</Caption>
 		{/snippet}
 		<Switch bind:checked={isPrivate} />
@@ -121,8 +132,8 @@
 		obj={tag}
 		type="tag"
 		key="name"
-		label="Name"
-		caption="Name of the tag"
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.tags.nameCaption')}
 		maxlength={255}
 		on:variantCreate
 		on:change={handleNameChange}
@@ -132,8 +143,8 @@
 		obj={tag}
 		type="tag"
 		key="description"
-		label="Description"
-		caption="A short description of the tag"
+		label={i18n.t('console.tools.import.description')}
+		caption={i18n.t('console.settings.tags.descriptionCaption')}
 		maxlength={255}
 		on:variantCreate
 		on:change={handleDescriptionChange}
@@ -149,7 +160,7 @@
 				customCode = !customCode;
 			}}
 		>
-			Custom Code
+			{i18n.t('console.settings.nav.code')}
 
 			{#snippet end()}
 				<span>
@@ -164,15 +175,14 @@
 
 		{#if customCode}
 			<p style="color:var(--text-light);font-size:14px;">
-				Custom code is added to <strong>all posts</strong> that have this tag. It is not added to the
-				tag page.
+				<T key="console.settings.tags.customCodeNote" params={{ strong: { element: 'strong' } }} />
 			</p>
 		{/if}
 	</div>
 
 	{#if customCode}
 		<div class="custom-code-input">
-			<SplitControl label="Head Code" column>
+			<SplitControl label={i18n.t('console.settings.code.headCode')} column>
 				<CodemirrorEditor
 					id="tag-head-code"
 					ext="twig"
@@ -181,7 +191,7 @@
 				/>
 			</SplitControl>
 
-			<SplitControl label="Foot Code" column>
+			<SplitControl label={i18n.t('console.settings.code.footCode')} column>
 				<CodemirrorEditor
 					id="tag-head-code"
 					ext="twig"
@@ -194,9 +204,13 @@
 
 	{#snippet footer()}
 		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+			<Button variant="invisible" on:click={() => (show = false)}
+				>{i18n.t('console.common.cancel')}</Button
+			>
 
-			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
+			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}
+				>{i18n.t('console.common.update')}</Button
+			>
 		</ButtonGroup>
 	{/snippet}
 </Modal>

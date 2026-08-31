@@ -4,6 +4,9 @@
 	import JobStatusTag from '../../../../../lib/components/Tags/JobStatusTag.svelte';
 	import dayjs from 'dayjs';
 	import IconThreeDots from '@hyvor/icons/IconThreeDots';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 	let showMore = $state(false);
 
 	interface Props {
@@ -21,7 +24,9 @@
 		<JobStatusTag status={data.status} />
 	</div>
 	<div>
-		{data.status === 'completed' ? data.imported_counts.posts + ' posts' : '-'}
+		{data.status === 'completed'
+			? i18n.t('console.tools.import.postsCount', { count: data.imported_counts.posts })
+			: '-'}
 	</div>
 	<div>
 		<IconButton size={20} variant="invisible" on:click={() => (showMore = !showMore)}>
@@ -32,48 +37,48 @@
 
 <Modal
 	bind:show={showMore}
-	title="Import Details"
+	title={i18n.t('console.tools.import.details')}
 	footer={{
 		cancel: {
-			text: 'Close'
+			text: i18n.t('console.common.close')
 		},
 		confirm: false
 	}}
 	on:close={() => (showMore = false)}
 >
-	<SplitControl label="Name">
+	<SplitControl label={i18n.t('console.common.name')}>
 		<span style="word-break:break-all">{data.name}</span>
 	</SplitControl>
 
-	<SplitControl label="Type">
+	<SplitControl label={i18n.t('console.tools.import.type')}>
 		<span style="text-transform:capitalize">{data.type}</span>
 	</SplitControl>
 
-	<SplitControl label="Status">
+	<SplitControl label={i18n.t('console.common.status')}>
 		<JobStatusTag status={data.status} />
 	</SplitControl>
 
-	<SplitControl label="Started At">
+	<SplitControl label={i18n.t('console.tools.import.startedAt')}>
 		{dayjs.unix(data.created_at).format('YYYY-MM-DD HH:mm')}
 	</SplitControl>
 
-	<SplitControl label="Options">
+	<SplitControl label={i18n.t('console.tools.import.options')}>
 		<pre>{JSON.stringify(data.options, null, 2)}</pre>
 	</SplitControl>
 
-	<SplitControl label="Imported Counts">
+	<SplitControl label={i18n.t('console.tools.import.importedCounts')}>
 		<div class="imported-counts">
 			<div>
-				<span>Posts</span><span>{data.imported_counts.posts}</span>
+				<span>{i18n.t('console.nav.posts')}</span><span>{data.imported_counts.posts}</span>
 			</div>
 			<div>
-				<span>Pages</span><span>{data.imported_counts.pages}</span>
+				<span>{i18n.t('console.nav.pages')}</span><span>{data.imported_counts.pages}</span>
 			</div>
 			<div>
-				<span>Users</span><span>{data.imported_counts.users}</span>
+				<span>{i18n.t('console.settings.nav.users')}</span><span>{data.imported_counts.users}</span>
 			</div>
 			<div>
-				<span>Tags</span><span>{data.imported_counts.tags}</span>
+				<span>{i18n.t('console.settings.nav.tags')}</span><span>{data.imported_counts.tags}</span>
 			</div>
 		</div>
 	</SplitControl>

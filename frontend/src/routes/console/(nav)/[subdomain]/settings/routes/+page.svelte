@@ -8,6 +8,9 @@
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import RouteRow from './RouteRow.svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		isLoading?: boolean;
@@ -62,13 +65,13 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if routes.length === 0}
-		<IconMessage empty message="No Routes" />
+		<IconMessage empty message={i18n.t('console.settings.routes.noRoutes')} />
 	{:else}
 		<SettingsTable columns="2fr 2fr 2fr 70px">
 			<TableRow head>
 				<div>Route</div>
-				<div>Template</div>
-				<div>Posts Filter</div>
+				<div>{i18n.t('console.settings.danger.cache.typeTemplate')}</div>
+				<div>{i18n.t('console.settings.routes.postsFilter')}</div>
 				<div></div>
 			</TableRow>
 

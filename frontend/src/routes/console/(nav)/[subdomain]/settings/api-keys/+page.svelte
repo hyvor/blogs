@@ -7,6 +7,9 @@
 	import type { ApiKey } from '../../../../lib/types';
 	import { onMount } from 'svelte';
 	import { getApiKeys } from './apiKeysActions';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -56,12 +59,12 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if apiKeys.length === 0}
-		<IconMessage empty message="No API Keys Found" />
+		<IconMessage empty message={i18n.t('console.settings.apiKeys.noKeys')} />
 	{:else}
 		<Table columns="1fr 1fr 140px">
 			<TableRow head>
-				<div>Name</div>
-				<div>API</div>
+				<div>{i18n.t('console.common.name')}</div>
+				<div>{i18n.t('console.settings.apiKeys.api')}</div>
 				<div></div>
 			</TableRow>
 

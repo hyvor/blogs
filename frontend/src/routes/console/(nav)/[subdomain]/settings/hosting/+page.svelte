@@ -24,6 +24,9 @@
 	import CustomDomainOption from './CustomDomainOption.svelte';
 	import HostingChangeStatus from './HostingChangeStatus.svelte';
 	import { onMount } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
@@ -67,11 +70,10 @@
 
 	async function handleRevertToSubdomain() {
 		const confirmed = await confirm({
-			title: 'Revert to Subdomain Hosting',
-			content:
-				'Are you sure you want to revert to subdomain hosting? This will change the URL of your blog back to your hyvorblogs.io subdomain.',
-			confirmText: 'Revert',
-			cancelText: 'Cancel',
+			title: i18n.t('console.settings.hosting.revertTitle'),
+			content: i18n.t('console.settings.hosting.revertContent'),
+			confirmText: i18n.t('console.settings.hosting.revert'),
+			cancelText: i18n.t('console.common.cancel'),
 			danger: true
 		});
 
@@ -79,11 +81,11 @@
 			return;
 		}
 
-		const toastId = toast.loading('Reverting to subdomain hosting...');
+		const toastId = toast.loading(i18n.t('console.settings.hosting.reverting'));
 		try {
 			const updates = await updateHostedAt('subdomain');
 			updateHostingInfoStore(updates);
-			toast.success('Successfully reverted to subdomain hosting.', { id: toastId });
+			toast.success(i18n.t('console.settings.hosting.reverted'), { id: toastId });
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to revert to subdomain', { id: toastId });
 		}
@@ -105,13 +107,13 @@
 	<Loader block />
 {:else}
 	<div class="hosting">
-		<SplitControl label="Hosting Configuration" column>
+		<SplitControl label={i18n.t('console.settings.hosting.configuration')} column>
 			<div class="hosting-options">
 				<HostingOption
-					title="Subdomain"
+					title={i18n.t('console.settings.hosting.subdomain')}
 					subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
 					active={$hostingInfoStore.hosting_at === 'subdomain'}
-					buttonLabel="Revert to Subdomain"
+					buttonLabel={i18n.t('console.settings.hosting.revertToSubdomain')}
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={handleRevertToSubdomain}
 				/>
@@ -122,9 +124,9 @@
 					onConfigure={() => openCustomDomainModal(true)}
 				/>
 				<HostingOption
-					title="Self-Hosted"
+					title={i18n.t('console.settings.hosting.selfHosted')}
 					active={$hostingInfoStore.hosting_at === 'self'}
-					buttonLabel="Setup Self-Hosting"
+					buttonLabel={i18n.t('console.settings.hosting.setupSelfHosting')}
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={() => (showSelfHostingModal = true)}
 				>
@@ -145,8 +147,8 @@
 		</SplitControl>
 
 		<SplitControl
-			label="Subdomain"
-			caption="Unique subdomain for your blog. This will be used for subdomain hosting as well as in APIs to identify your blog."
+			label={i18n.t('console.settings.hosting.subdomain')}
+			caption={i18n.t('console.settings.hosting.subdomainCaption2')}
 		>
 			<FormControl>
 				<TextInput
@@ -163,9 +165,14 @@
 
 		{#if $blogStore.hosting_at !== 'subdomain'}
 			<SplitControl
-				label="Redirect Subdomain"
-				caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
-					($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+				label={i18n.t('console.settings.hosting.redirectSubdomain')}
+				caption={i18n.t('console.settings.hosting.redirectSubdomainCaption', {
+					subdomain: $blogStore.subdomain,
+					target:
+						$blogStore.hosting_at === 'domain'
+							? i18n.t('console.settings.hosting.customDomainLower')
+							: i18n.t('console.settings.hosting.selfUrlLower')
+				})}
 			>
 				<Switch
 					checked={$blogStore.hosting_redirect_subdomain}

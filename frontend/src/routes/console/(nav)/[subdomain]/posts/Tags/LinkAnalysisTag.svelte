@@ -6,6 +6,9 @@
 	import IconQuestionCircle from '@hyvor/icons/IconQuestionCircle';
 	import IconQuestionCircleFill from '@hyvor/icons/IconQuestionCircleFill';
 	import IconXCircleFill from '@hyvor/icons/IconXCircleFill';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		linkAnalysis: Record<string, number>;
@@ -16,19 +19,19 @@
 </script>
 
 {#if counts.loading > 0}
-	<Tooltip text="Link analysis outdated. Open the post to analyze again">
+	<Tooltip text={i18n.t('console.posts.linkAnalysis.outdated')}>
 		<IconQuestionCircleFill size={12} />
 	</Tooltip>
 {:else if counts.broken > 0}
-	<Tooltip text="Broken links found">
+	<Tooltip text={i18n.t('console.posts.linkAnalysis.broken')}>
 		<IconXCircleFill size={12} style="color:var(--red)" />
 	</Tooltip>
 {:else if counts.redirect > 0}
-	<Tooltip text="Redirect links found">
+	<Tooltip text={i18n.t('console.posts.linkAnalysis.redirect')}>
 		<IconExclamationCircleFill size={12} style="color:var(--orange)" />
 	</Tooltip>
 {:else}
-	<Tooltip text="All links are healthy">
+	<Tooltip text={i18n.t('console.posts.linkAnalysis.healthy')}>
 		<IconCheckCircleFill size={12} color="var(--green)" />
 	</Tooltip>
 {/if}

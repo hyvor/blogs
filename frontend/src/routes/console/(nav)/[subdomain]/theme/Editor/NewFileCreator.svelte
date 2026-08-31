@@ -9,6 +9,9 @@
 	import byteFormatter from '../../../../lib/helper/byte-formatter';
 	import { createFile } from '../themeActions';
 	import { addThemeFileToStore, selectedThemeFileIdStore } from '../themeStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		folder: ThemeFolder;
@@ -24,19 +27,19 @@
 		const files = uploadInput?.files;
 		const file = files?.[0] || null;
 		if (!file) {
-			return toast.error('Please select a file to upload');
+			return toast.error(i18n.t('console.theme.selectFileToUpload'));
 		}
 
 		const maxSize = getConfig().limits.max_asset_file_size;
 		if (file.size > maxSize) {
-			return toast.error('File too large. Max size is ' + byteFormatter(maxSize));
+			return toast.error(i18n.t('console.theme.fileTooLarge', { size: byteFormatter(maxSize) }));
 		}
 
-		const toastId = toast.loading('Uploading file...');
+		const toastId = toast.loading(i18n.t('console.theme.uploadingFile'));
 
 		createFile(folder, file.name, file)
 			.then((res) => {
-				toast.success('File uploaded', { id: toastId });
+				toast.success(i18n.t('console.theme.fileUploaded'), { id: toastId });
 				addThemeFileToStore(res);
 				selectedThemeFileIdStore.set(res.id);
 			})
@@ -57,7 +60,7 @@
 		{#snippet start()}
 			<IconPlus size={11} />
 		{/snippet}
-		New
+		{i18n.t('console.posts.new')}
 	</Button>
 
 	{#if folder === 'assets'}
@@ -65,7 +68,7 @@
 			{#snippet start()}
 				<IconCloudUpload size={11} />
 			{/snippet}
-			Upload
+			{i18n.t('console.theme.upload')}
 		</Button>
 	{/if}
 </div>

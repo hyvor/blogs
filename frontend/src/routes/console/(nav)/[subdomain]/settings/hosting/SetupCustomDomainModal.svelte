@@ -29,6 +29,9 @@
 		CustomDomainSetup,
 		CustomDomainTlsProvider
 	} from '../../../../lib/types';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -91,20 +94,19 @@
 		const domainTrimmed = domain.trim();
 
 		if (domainTrimmed === '') {
-			error = 'Custom Domain is required';
+			error = i18n.t('console.settings.hosting.validation.domainRequired');
 			return;
 		}
 		if (domainTrimmed.match(' ')) {
-			error = 'Custom Domain cannot contain spaces';
+			error = i18n.t('console.settings.hosting.validation.domainSpaces');
 			return;
 		}
 		if (domainTrimmed.match(/^https?:\/\//)) {
-			error = 'Add the domain without the protocol (https://)';
+			error = i18n.t('console.settings.hosting.validation.domainProtocol');
 			return;
 		}
 		if (domainTrimmed.match('/')) {
-			error =
-				'Custom Domain cannot contain /. Use self-hosting to host your blog in a subdirectory';
+			error = i18n.t('console.settings.hosting.validation.domainSlash');
 			return;
 		}
 
@@ -123,7 +125,7 @@
 		}
 
 		loading = true;
-		const saveToastId = toast.loading('Saving custom domain...');
+		const saveToastId = toast.loading(i18n.t('console.settings.hosting.savingCustomDomain'));
 
 		try {
 			if (!hasExisting) {
@@ -146,7 +148,7 @@
 					tlsCertificate: tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
 				});
 				applyMutationResult(result);
-				toast.success('Custom domain updated!', { id: saveToastId });
+				toast.success(i18n.t('console.settings.hosting.customDomainUpdated'), { id: saveToastId });
 			}
 
 			isEditing = false;
@@ -158,12 +160,12 @@
 
 	async function handleVerify() {
 		loading = true;
-		const verifyToastId = toast.loading('Verifying DNS records...');
+		const verifyToastId = toast.loading(i18n.t('console.settings.hosting.verifyingDns'));
 
 		try {
 			const result = await verifyCustomDomainSetup();
 			updateHostingInfoStore(result.hosting_info);
-			toast.success('Custom domain is verified and active!', { id: verifyToastId });
+			toast.success(i18n.t('console.settings.hosting.customDomainVerified'), { id: verifyToastId });
 		} catch (err: any) {
 			toast.warning(
 				err.message || 'DNS verification failed. Please check your DNS settings and try again.',
@@ -177,12 +179,12 @@
 		const stillHasActiveDomain = Boolean(customDomain);
 
 		const confirmAbort = await confirm({
-			title: 'Abort Custom Domain Setup',
+			title: i18n.t('console.settings.hosting.abortTitle'),
 			content: stillHasActiveDomain
 				? `Are you sure you want to abort this setup? Your blog will keep using ${customDomain!.domain} as before.`
 				: 'Are you sure you want to abort the custom domain setup? This will revert back to default subdomain setup (hyvorblogs.io) and you will have to start from scratch if you want to set it up again.',
-			confirmText: 'Yes, Abort',
-			cancelText: 'No, Keep It',
+			confirmText: i18n.t('console.settings.hosting.abortConfirm'),
+			cancelText: i18n.t('console.settings.hosting.abortCancel'),
 			danger: true
 		});
 
@@ -191,12 +193,12 @@
 		}
 
 		loading = true;
-		const abortToastId = toast.loading('Aborting custom domain setup...');
+		const abortToastId = toast.loading(i18n.t('console.settings.hosting.abortingSetup'));
 
 		try {
 			await deleteCustomDomainIntent();
 			hostingInfoStore.update((info) => ({ ...info, custom_domain_intent: null }));
-			toast.success('Custom domain setup aborted', { id: abortToastId });
+			toast.success(i18n.t('console.settings.hosting.setupAborted'), { id: abortToastId });
 			if (!stillHasActiveDomain) {
 				show = false;
 			}
@@ -221,9 +223,9 @@
 	}
 </script>
 
-<Modal title="Custom Domain" {loading} bind:show>
+<Modal title={i18n.t('console.settings.hosting.optionDomain')} {loading} bind:show>
 	{#if isEditing}
-		<SplitControl label="Custom Domain" noHorizonalPadding>
+		<SplitControl label={i18n.t('console.settings.hosting.optionDomain')} noHorizonalPadding>
 			<FormControl>
 				<TextInput
 					bind:value={domain}
@@ -239,20 +241,18 @@
 			</FormControl>
 		</SplitControl>
 
-		<SplitControl label="TLS Certificate" noHorizonalPadding>
+		<SplitControl label={i18n.t('console.settings.hosting.tlsCertificate')} noHorizonalPadding>
 			<FormControl>
 				<Radio name="tls-provider" bind:group={tlsProvider} value="auto">
 					Automatic (Recommended)&nbsp;
-					<Tooltip
-						text="Your TLS certificate will be automatically generated and renewed by Hyvor Blogs using Let's Encrypt."
-					>
+					<Tooltip text={i18n.t('console.settings.hosting.tlsAuto')}>
 						<IconInfoCircle size={14} />
 					</Tooltip>
 				</Radio>
 
 				<Radio name="tls-provider" bind:group={tlsProvider} value="custom">
 					Bring Your Own&nbsp;
-					<Tooltip text="You can bring your own TLS certificate and private key.">
+					<Tooltip text={i18n.t('console.settings.hosting.tlsOwn')}>
 						<IconInfoCircle size={14} />
 					</Tooltip>
 				</Radio>
@@ -262,8 +262,8 @@
 		{#if tlsProvider === 'custom'}
 			<div transition:slide>
 				<SplitControl
-					label="Private Key"
-					caption="In PEM format, including the BEGIN and END lines"
+					label={i18n.t('console.settings.hosting.privateKey')}
+					caption={i18n.t('console.settings.hosting.privateKeyCaption')}
 					noHorizonalPadding
 				>
 					<FormControl>
@@ -280,8 +280,8 @@
 				</SplitControl>
 
 				<SplitControl
-					label="Certificate"
-					caption="Full certificate chain in PEM format, including the BEGIN and END lines"
+					label={i18n.t('console.settings.hosting.certificate')}
+					caption={i18n.t('console.settings.hosting.certificateCaption')}
 					noHorizonalPadding
 				>
 					<FormControl>
@@ -308,7 +308,7 @@
 			<div class="section">
 				<div class="section-header">
 					<span class="section-domain">{customDomain.domain}</span>
-					<Tag color="green" size="small">Active</Tag>
+					<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 					<span class="section-provider"
 						>{customDomain.tls_provider === 'custom' ? 'Bring your own TLS' : 'Automatic TLS'}</span
 					>
@@ -336,21 +336,25 @@
 	{#snippet footer()}
 		{#if isEditing}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={handleCancelEdit} disabled={loading}>Cancel</Button>
-				<Button on:click={handleSave} disabled={loading}>Save</Button>
+				<Button variant="invisible" on:click={handleCancelEdit} disabled={loading}
+					>{i18n.t('console.common.cancel')}</Button
+				>
+				<Button on:click={handleSave} disabled={loading}>{i18n.t('console.common.save')}</Button>
 			</ButtonGroup>
 		{:else}
 			<ButtonGroup>
 				{#if intent}
 					<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
-						Abort
+						{i18n.t('console.settings.hosting.abort')}
 					</Button>
 				{/if}
 				<Button variant="invisible" on:click={handleEdit} disabled={loading}>Edit</Button>
 				{#if intent}
 					<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
 				{:else}
-					<Button on:click={() => (show = false)} disabled={loading}>Close</Button>
+					<Button on:click={() => (show = false)} disabled={loading}
+						>{i18n.t('console.common.close')}</Button
+					>
 				{/if}
 			</ButtonGroup>
 		{/if}

@@ -15,6 +15,9 @@
 	import { deleteRoute } from './routeActions';
 	import { createEventDispatcher } from 'svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		route: Route;
@@ -29,17 +32,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete Route',
-				content: 'Are you sure you want to delete this route?',
-				confirmText: 'Yes, Delete',
+				title: i18n.t('console.settings.routes.deleteRoute'),
+				content: i18n.t('console.settings.routes.deleteContent'),
+				confirmText: i18n.t('console.tools.media.delete.confirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting route');
+			const toastId = toast.loading(i18n.t('console.settings.routes.deleting'));
 
 			deleteRoute(route.id)
 				.then(() => {
-					toast.success('Route deleted', { id: toastId });
+					toast.success(i18n.t('console.settings.routes.deleted'), { id: toastId });
 				})
 				.catch((err) => {
 					toast.error(err.message, { id: toastId });
@@ -65,16 +68,16 @@
 	<div>{route.template}</div>
 	<div>
 		{#if route.posts_filter === null}
-			<span class="filter-tag">Disabled</span>
+			<span class="filter-tag">{i18n.t('console.common.disabled')}</span>
 		{:else if route.posts_filter === ''}
-			<span class="filter-tag">All posts</span>
+			<span class="filter-tag">{i18n.t('console.settings.routes.allPosts')}</span>
 		{:else}
 			{route.posts_filter}
 		{/if}
 	</div>
 
 	<div>
-		<Tooltip text="Edit Route">
+		<Tooltip text={i18n.t('console.settings.routes.editRoute')}>
 			<IconButton
 				size="small"
 				variant="fill-light"

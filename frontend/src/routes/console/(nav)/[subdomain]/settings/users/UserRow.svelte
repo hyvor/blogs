@@ -15,6 +15,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import { deleteUser } from './userActions';
 	import UpdateUser from './Update/UpdateUser.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		user: User;
@@ -31,18 +34,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Remove user',
-				content:
-					'Are you sure you want to remove this user? This user will be removed as an author from all posts, and will no longer be able to access the blog. Posts created by this user will not be deleted.',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.users.removeTitle'),
+				content: i18n.t('console.settings.users.removeContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting user...');
+			const toastId = toast.loading(i18n.t('console.settings.users.deleting'));
 
 			deleteUser(user.id)
 				.then(() => {
-					toast.success('User deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.users.deleted'), { id: toastId });
 					dispatch('delete', user.id);
 				})
 				.catch((e) => {
@@ -64,14 +66,22 @@
 	<div>
 		{#if user.hyvor_user_id}
 			{#if user.status === 'active'}
-				<Tag size="x-small" color="green">ACTIVE</Tag>
+				<Tag size="x-small" color="green"
+					>{i18n.t('console.settings.users.status.active').toUpperCase()}</Tag
+				>
 			{:else if user.status === 'invited'}
-				<Tag size="x-small" color="blue">PENDING</Tag>
+				<Tag size="x-small" color="blue"
+					>{i18n.t('console.tools.jobStatus.pending').toUpperCase()}</Tag
+				>
 			{:else if user.status === 'blocked'}
-				<Tag size="x-small" color="red">BLOCKED</Tag>
+				<Tag size="x-small" color="red"
+					>{i18n.t('console.settings.users.status.blocked').toUpperCase()}</Tag
+				>
 			{/if}
 		{:else}
-			<Tag size="x-small" color="orange">GUEST</Tag>
+			<Tag size="x-small" color="orange"
+				>{i18n.t('console.settings.users.status.guest').toUpperCase()}</Tag
+			>
 		{/if}
 	</div>
 	<div>
@@ -81,14 +91,14 @@
 	</div>
 	<div>{user.posts_count}</div>
 	<div>
-		<Tooltip text="Edit user data">
+		<Tooltip text={i18n.t('console.settings.users.editUser')}>
 			<IconButton color="input" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 
 		{#if user.role !== 'owner'}
-			<Tooltip text="Delete user">
+			<Tooltip text={i18n.t('console.settings.users.deleteUser')}>
 				<IconButton color="input" size="small" on:click={handleDelete}>
 					<IconTrash size={12} />
 				</IconButton>

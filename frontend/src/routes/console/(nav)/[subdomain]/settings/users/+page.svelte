@@ -16,6 +16,9 @@
 	import { getUsers } from './userActions';
 	import { onMount } from 'svelte';
 	import AddUser from './AddUser.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let isCreating = $state(false);
@@ -82,14 +85,14 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if users.length === 0}
-		<IconMessage empty message="No users found" />
+		<IconMessage empty message={i18n.t('console.common.noUsersFound')} />
 	{:else}
 		<SettingsTable columns="2fr 1fr 1fr 1fr 70px">
 			<TableRow head>
-				<div>Slug</div>
-				<div>Status</div>
-				<div>Role</div>
-				<div>Posts</div>
+				<div>{i18n.t('console.common.slug')}</div>
+				<div>{i18n.t('console.common.status')}</div>
+				<div>{i18n.t('console.settings.users.role')}</div>
+				<div>{i18n.t('console.nav.posts')}</div>
 				<div></div>
 			</TableRow>
 
@@ -103,7 +106,7 @@
 			{/each}
 
 			<LoadButton
-				text="Load More"
+				text={i18n.t('console.common.loadMore')}
 				show={hasMore}
 				on:click={() => loadUsers(true)}
 				loading={isLoadingMore}

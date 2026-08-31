@@ -4,6 +4,9 @@
 	import { updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import { getHostingInfo } from './hostingActions';
 	import { onDestroy } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		change: HostingChange;
@@ -80,13 +83,12 @@
 		if (change.status === 'changing') {
 			return {
 				type: 'info',
-				content:
-					'Your hosting change is being applied. This may take a few minutes depending on the number of posts on your blog. You can leave this page and come back later to check the status.'
+				content: i18n.t('console.settings.hosting.changeApplying')
 			};
 		} else if (change.status === 'success') {
 			return {
 				type: 'success',
-				content: 'Your hosting change has been successfully applied.'
+				content: i18n.t('console.settings.hosting.changeApplied')
 			};
 		}
 

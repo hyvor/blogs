@@ -5,6 +5,9 @@
 	import EmbeddedConsole from '../@components/EmbeddedConsole/EmbeddedConsole.svelte';
 	import { onMount } from 'svelte';
 	import { getConfig } from '../../../lib/config';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	onMount(() => {
 		if (!$integrationsStore.hyvor_talk) {
@@ -17,6 +20,6 @@
 	<EmbeddedConsole
 		url="{getConfig().hyvor.hyvor_talk_url}/console/{$integrationsStore.hyvor_talk
 			?.website_id}/comments?embedded=true&website_id={$integrationsStore.hyvor_talk?.website_id}"
-		title="Hyvor Talk Comments Console"
+		title={i18n.t('console.comments.consoleTitle')}
 	/>
 {/if}

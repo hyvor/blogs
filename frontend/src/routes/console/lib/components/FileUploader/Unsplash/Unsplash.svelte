@@ -15,6 +15,9 @@
 	import { searchUnsplash } from './unsplashActions';
 	import { createEventDispatcher } from 'svelte';
 	import type { SelectedFile } from '../image-uploader';
+	import { getI18n } from '../../../i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		search?: string;
@@ -84,7 +87,7 @@
 	<div class="search-wrap">
 		<TextInput
 			bind:value={search}
-			placeholder="Search Unsplash"
+			placeholder={i18n.t('console.fileUploader.searchUnsplash')}
 			autofocus
 			autocomplete="off"
 			on:keyup={handleKeyup}
@@ -102,7 +105,7 @@
 		{#if isLoading}
 			<Loader full />
 		{:else if images.length === 0 && search.trim() !== '' && hasLoaded}
-			<IconMessage empty message="No images found" />
+			<IconMessage empty message={i18n.t('console.fileUploader.noImagesFound')} />
 		{:else}
 			<div class="cols">
 				{#each [0, 1, 2] as col (col)}
@@ -125,7 +128,12 @@
 			</div>
 		{/if}
 
-		<LoadButton text="Load More" show={hasMore} loading={isLoadingMore} on:click={handleLoadMore} />
+		<LoadButton
+			text={i18n.t('console.common.loadMore')}
+			show={hasMore}
+			loading={isLoadingMore}
+			on:click={handleLoadMore}
+		/>
 	</div>
 </div>
 

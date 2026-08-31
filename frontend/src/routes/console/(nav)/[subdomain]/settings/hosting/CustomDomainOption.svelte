@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button, Tag } from '@hyvor/design/components';
 	import { hostingInfoStore } from '../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		disabled?: boolean;
@@ -18,19 +21,19 @@
 
 <div class="hosting-option" class:active>
 	<div class="hosting-option-header">
-		<span class="hosting-option-title">Custom Domain</span>
+		<span class="hosting-option-title">{i18n.t('console.settings.hosting.optionDomain')}</span>
 		{#if active && !intent}
-			<Tag color="green" size="small">Active</Tag>
+			<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 		{/if}
 	</div>
 
 	{#if !customDomain && !intent}
 		<p class="hosting-option-subtitle">
-			Your blog will be hosted at your own custom domain (e.g., blog.example.com)
+			{i18n.t('console.settings.hosting.customDomainDesc')}
 		</p>
 		<div class="button-wrap">
 			<Button size="small" variant="outline" {disabled} on:click={onSetup}>
-				Setup Custom Domain
+				{i18n.t('console.settings.hosting.setupCustomDomain')}
 			</Button>
 		</div>
 	{:else}
@@ -39,10 +42,10 @@
 				<div class="domain-row">
 					<div class="domain-row-info">
 						<span class="domain-row-domain">{customDomain.domain}</span>
-						<Tag color="green" size="small">Active</Tag>
+						<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 					</div>
 					<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
-						Configure Domain
+						{i18n.t('console.settings.hosting.configureDomain')}
 					</Button>
 				</div>
 			{/if}
@@ -53,7 +56,7 @@
 						<Tag color="orange" size="small">Pending DNS Validation</Tag>
 					</div>
 					<Button size="small" variant="outline" {disabled} on:click={onContinueSetup}>
-						Continue Setup
+						{i18n.t('console.settings.hosting.continueSetup')}
 					</Button>
 				</div>
 			{/if}

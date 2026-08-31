@@ -19,6 +19,9 @@
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
+	import { getI18n } from '../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		dev?: boolean;
@@ -102,7 +105,7 @@
 		let valid = true;
 
 		if (name.trim() === '') {
-			nameError = 'Name is required';
+			nameError = i18n.t('console.common.nameRequired');
 			valid = false;
 		}
 
@@ -161,7 +164,11 @@
 		</div>
 	{/if}
 
-	<SplitControl label="Name" caption="A name for your blog" noHorizonalPadding>
+	<SplitControl
+		label={i18n.t('console.common.name')}
+		caption="A name for your blog"
+		noHorizonalPadding
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -181,7 +188,11 @@
 	</SplitControl>
 
 	{#if !dev}
-		<SplitControl label="Subdomain" caption="Only a-z, 0-9, and hyphens (-)" noHorizonalPadding>
+		<SplitControl
+			label={i18n.t('console.settings.hosting.subdomain')}
+			caption="Only a-z, 0-9, and hyphens (-)"
+			noHorizonalPadding
+		>
 			<FormControl>
 				<TextInput
 					block

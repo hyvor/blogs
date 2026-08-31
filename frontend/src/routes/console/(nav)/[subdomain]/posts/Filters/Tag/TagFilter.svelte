@@ -6,6 +6,9 @@
 	import { postListFiltersStore, setFilter } from '../../postListStore';
 	import TagSearch from './TagSearch.svelte';
 	import type { Tag } from '../../../../../lib/types';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDropdown = $state(false);
 
@@ -25,7 +28,7 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Tag</Text>
+				<Text bold>{i18n.t('console.posts.filters.tagLabel')}</Text>
 			{/snippet}
 
 			<span class="text">

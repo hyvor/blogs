@@ -13,6 +13,9 @@
 	import { testSitemapUrl, type TestSitemapResponse, importSitemap } from '../importActions';
 	import dayjs from 'dayjs';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let importFrom = $state('sitemap');
 
@@ -34,7 +37,7 @@
 
 	function startTesting() {
 		if (testUrl.trim() === '') {
-			return toast.error('Please enter a URL to test');
+			return toast.error(i18n.t('console.tools.import.enterTestUrl'));
 		}
 
 		isTestLoading = true;
@@ -61,7 +64,7 @@
 	}
 
 	function handleSitemapImport() {
-		const toastId = toast.loading('Importing sitemap...');
+		const toastId = toast.loading(i18n.t('console.tools.import.importingSitemap'));
 
 		importSitemap({
 			sitemap_url: sitemapUrl,
@@ -76,7 +79,7 @@
 			import_images: importImages
 		})
 			.then(() => {
-				toast.success('Sitemap imported started. It may take a while.', { id: toastId });
+				toast.success(i18n.t('console.tools.import.sitemapImportStarted'), { id: toastId });
 				dispatchComplete();
 			})
 			.catch((err) => {
@@ -85,56 +88,80 @@
 	}
 </script>
 
-<SplitControl label="Import From" caption="Select a method to import data from">
-	<Radio name="import-from" value="sitemap" bind:group={importFrom}>Sitemap (Live Website)</Radio>
+<SplitControl
+	label={i18n.t('console.tools.import.importFrom')}
+	caption={i18n.t('console.tools.import.importFromCaption')}
+>
+	<Radio name="import-from" value="sitemap" bind:group={importFrom}
+		>{i18n.t('console.tools.import.sitemapOption')}</Radio
+	>
 </SplitControl>
 
 <SplitControl
-	label="Sitemap URL"
-	caption="XML or TXT sitemap that contains links to all your posts."
+	label={i18n.t('console.tools.import.sitemapUrl')}
+	caption={i18n.t('console.tools.import.sitemapUrlCaption')}
 >
 	<TextInput placeholder="https://..." block bind:value={sitemapUrl} />
 </SplitControl>
 
-<SplitControl label="CSS Selectors" caption="Add CSS selectors to find data in your HTML pages.">
+<SplitControl
+	label={i18n.t('console.tools.import.cssSelectors')}
+	caption={i18n.t('console.tools.import.cssSelectorsCaption')}
+>
 	{#snippet nested()}
 		<div>
-			<SplitControl label="Post Content" caption="Required">
+			<SplitControl
+				label={i18n.t('console.tools.import.postContent')}
+				caption={i18n.t('console.tools.import.required')}
+			>
 				<TextInput block bind:value={contentCssSelector} />
 			</SplitControl>
 
-			<SplitControl label="Post Title">
+			<SplitControl label={i18n.t('console.tools.import.postTitle')}>
 				<TextInput block bind:value={titleCssSelector} />
 			</SplitControl>
 
-			<SplitControl label="Post Description">
+			<SplitControl label={i18n.t('console.tools.import.postDescription')}>
 				<TextInput block bind:value={descriptionCssSelector} />
 			</SplitControl>
 
-			<SplitControl label="Post Content Exclude" caption="To exclude elements from post content">
+			<SplitControl
+				label={i18n.t('console.tools.import.postContentExclude')}
+				caption={i18n.t('console.tools.import.postContentExcludeCaption')}
+			>
 				<TextInput block bind:value={contentExcludeCssSelector} />
 			</SplitControl>
 
-			<SplitControl label="Post Published Date">
+			<SplitControl label={i18n.t('console.tools.import.postPublishedDate')}>
 				<TextInput block bind:value={publishedDateCssSelector} />
 			</SplitControl>
 		</div>
 	{/snippet}
 </SplitControl>
 
-<SplitControl label="Import Images" caption="Copy images into your media library (recommended)">
+<SplitControl
+	label={i18n.t('console.tools.import.importImages')}
+	caption={i18n.t('console.tools.import.importImagesCaption')}
+>
 	<Switch bind:checked={importImages} />
 </SplitControl>
 
-<SplitControl label="Slug Exclude" caption="Exclude a part of the URL from the slug (ex: /blog/)">
+<SplitControl
+	label={i18n.t('console.tools.import.slugExclude')}
+	caption={i18n.t('console.tools.import.slugExcludeCaption')}
+>
 	<TextInput block bind:value={slugExclude} />
 </SplitControl>
 
 <SplitControl
-	label="Test"
-	caption="Test a page to make sure CSS selectors are working (recommended)"
+	label={i18n.t('console.tools.import.test')}
+	caption={i18n.t('console.tools.import.testCaption')}
 >
-	<TextInput block bind:value={testUrl} placeholder="URL to test" />
+	<TextInput
+		block
+		bind:value={testUrl}
+		placeholder={i18n.t('console.tools.import.testUrlPlaceholder')}
+	/>
 
 	<div style="margin-top:10px;">
 		<Button size="small" on:click={startTesting}>
@@ -152,62 +179,62 @@
 
 <div class="footer">
 	<div class="note" style="margin-bottom: 20px;">
-		Please test a few pages before importing the sitemap. If you need help, feel free to contact us.
+		{i18n.t('console.tools.import.testNote')}
 	</div>
 
-	<Button on:click={handleSitemapImport}>Import Sitemap</Button>
+	<Button on:click={handleSitemapImport}>{i18n.t('console.tools.import.importSitemap')}</Button>
 </div>
 
 {#if testData}
 	<Modal
 		show={testData !== null}
-		title="Test Results"
+		title={i18n.t('console.tools.import.testResults')}
 		on:close={() => (testData = null)}
 		footer={{
 			cancel: {
-				text: 'Close'
+				text: i18n.t('console.common.close')
 			},
 			confirm: false
 		}}
 		on:cancel={() => (testData = null)}
 	>
-		<SplitControl label="URL" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.url')} flex={[1, 4]}>
 			<Link href={testData.url} target="_blank">
 				{testData.url}
 			</Link>
 		</SplitControl>
 
 		<!-- SLUG -->
-		<SplitControl label="Slug" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.common.slug')} flex={[1, 4]}>
 			{testData.data.slug}
 		</SplitControl>
 
 		<!-- Title -->
-		<SplitControl label="Title" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.title')} flex={[1, 4]}>
 			{testData.data.title}
 		</SplitControl>
 
 		<!-- Description -->
-		<SplitControl label="Description" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.description')} flex={[1, 4]}>
 			{testData.data.description}
 		</SplitControl>
 
 		<!-- Content -->
-		<SplitControl label="Content" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.content')} flex={[1, 4]}>
 			<div class="test-content">
 				{@html testData.data.content_html}
 			</div>
 		</SplitControl>
 
 		<!-- Published Date -->
-		<SplitControl label="Published Date" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.publishedDate')} flex={[1, 4]}>
 			{dayjs.unix(testData.data.published_at).format('MMMM D, YYYY')}
 		</SplitControl>
 
 		<!-- Featured Image -->
-		<SplitControl label="Featured Image" flex={[1, 4]}>
+		<SplitControl label={i18n.t('console.tools.import.featuredImage')} flex={[1, 4]}>
 			{#if testData.data.featured_image_url}
-				<img src={testData.data.featured_image_url} alt="Featured" />
+				<img src={testData.data.featured_image_url} alt={i18n.t('console.posts.status.featured')} />
 			{/if}
 		</SplitControl>
 	</Modal>

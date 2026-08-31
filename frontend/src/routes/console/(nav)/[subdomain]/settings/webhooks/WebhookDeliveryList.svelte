@@ -3,6 +3,9 @@
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
 	import SettingsTable from '../@components/SettingsTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		deliveries: WebhookDelivery[];
@@ -32,13 +35,13 @@
 </script>
 
 {#if deliveries.length === 0}
-	<IconMessage empty message="No webhook deliveries found" />
+	<IconMessage empty message={i18n.t('console.settings.webhooks.noDeliveries')} />
 {:else}
 	<SettingsTable columns="2fr 1fr 1fr 1fr">
 		<TableRow head>
-			<TableCell>URL</TableCell>
-			<TableCell>Event</TableCell>
-			<TableCell>Status</TableCell>
+			<TableCell>{i18n.t('console.tools.import.url')}</TableCell>
+			<TableCell>{i18n.t('console.settings.webhooks.event')}</TableCell>
+			<TableCell>{i18n.t('console.common.status')}</TableCell>
 			<TableCell>Created</TableCell>
 		</TableRow>
 		{#each deliveries as delivery (delivery.id)}
@@ -61,5 +64,10 @@
 		{/each}
 	</SettingsTable>
 
-	<LoadButton text="Load more" show={hasMore} loading={isLoadingMore} on:click />
+	<LoadButton
+		text={i18n.t('console.common.loadMore')}
+		show={hasMore}
+		loading={isLoadingMore}
+		on:click
+	/>
 {/if}

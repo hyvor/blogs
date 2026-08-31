@@ -2,6 +2,9 @@
 	import { InputGroup, Radio, SplitControl, Switch } from '@hyvor/design/components';
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const providers: { value: 'mistral' | 'openai' | 'anthropic'; label: string; model: string }[] = [
 		{ value: 'mistral', label: 'Mistral', model: 'mistral-medium-3.5' },
@@ -26,8 +29,8 @@
 
 <div class="settings">
 	<SplitControl
-		label="Preferred AI Provider"
-		caption="Which AI provider should be used for AI-powered features on this blog?"
+		label={i18n.t('console.settings.ai.provider')}
+		caption={i18n.t('console.settings.ai.providerCaption')}
 	>
 		<InputGroup>
 			{#each providers as provider}
@@ -42,11 +45,17 @@
 		</InputGroup>
 	</SplitControl>
 
-	<SplitControl label="AI Translation" caption="Enable AI-powered translation features.">
+	<SplitControl
+		label={i18n.t('console.settings.ai.translation')}
+		caption={i18n.t('console.settings.ai.translationCaption')}
+	>
 		<Switch checked={$blogStore.ai_translation_enabled} on:change={handleAiTranslationChange} />
 	</SplitControl>
 
-	<SplitControl label="AI Agent" caption="Enable AI-powered content generation features.">
+	<SplitControl
+		label={i18n.t('console.settings.ai.agent')}
+		caption={i18n.t('console.settings.ai.agentCaption')}
+	>
 		<Switch checked={$blogStore.ai_generation_enabled} on:change={handleAiGenerationChange} />
 	</SplitControl>
 </div>
