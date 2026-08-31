@@ -16,6 +16,7 @@ use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,7 +31,8 @@ class HostingChangeService
         private PermalinkService $permalinkService,
         private CustomDomainService $customDomainService,
         private EventDispatcherInterface $eventDispatcher,
-        private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler
+        private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler,
+        private LoggerInterface $logger
     ) {
     }
 

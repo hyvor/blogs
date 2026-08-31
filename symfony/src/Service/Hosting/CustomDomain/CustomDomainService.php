@@ -170,6 +170,9 @@ class CustomDomainService
         $customDomain->setValidTo($finalCert->validTo);
         $customDomain->setUpdatedAt($this->now());
 
+        $blog->setCustomDomain($customDomain);
+
+        $this->em->persist($blog);
         $this->em->persist($customDomain);
         $this->em->remove($intent);
         $this->em->flush();

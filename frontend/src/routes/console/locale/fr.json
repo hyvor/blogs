@@ -419,6 +419,7 @@
 			},
 			"hosting": {
 				"subdomain": "Sous-domaine",
+				"subdomainDesc": "Hébergez votre blog sur son sous-domaine par défaut, {subdomain}.hyvorblogs.io.",
 				"optionDomain": "Domaine personnalisé",
 				"customDomainLower": "domaine personnalisé",
 				"selfUrl": "URL d'auto-hébergement",
@@ -444,7 +445,7 @@
 				"revertTitle": "Revenir à l’hébergement sur sous-domaine",
 				"revertContent": "Voulez-vous vraiment revenir à l’hébergement sur sous-domaine ? L’URL de votre blog redeviendra votre sous-domaine hyvorblogs.io.",
 				"revert": "Revenir",
-				"customDomainDesc": "Votre blog sera hébergé sur votre propre domaine (ex. : blog.example.com)",
+				"customDomainDesc": "Hébergez votre blog sur votre propre domaine personnalisé (ex. : blog.example.com)",
 				"setupCustomDomain": "Configurer le domaine personnalisé",
 				"configureDomain": "Configurer le domaine",
 				"changeDomain": "Changer de domaine",

@@ -330,7 +330,11 @@ class HostingController extends AbstractController
 
         if ($needsHostingChange) {
             try {
-                $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN);
+                $this->hostingChangeService->startHostingChange(
+                    $blog,
+                    BlogHostingAt::DOMAIN,
+                    toDomain: $customDomain->getDomain()
+                );
             } catch (PendingHostingChangeException) {
                 throw new BadRequestHttpException('A hosting change is already in progress for this blog');
             }

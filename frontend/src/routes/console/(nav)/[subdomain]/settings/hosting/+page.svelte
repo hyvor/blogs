@@ -107,7 +107,9 @@
 			<div class="hosting-options">
 				<HostingOption
 					title={i18n.t('console.settings.hosting.subdomain')}
-					subtitle="Your blog will be hosted at its default subdomain, {$blogStore.subdomain}.hyvorblogs.io."
+					subtitle={i18n.t('console.settings.hosting.subdomainDesc', {
+						subdomain: $blogStore.subdomain
+					})}
 					active={$hostingInfoStore.hosting_at === 'subdomain'}
 					buttonLabel={i18n.t('console.settings.hosting.revertToSubdomain')}
 					buttonDisabled={isHostingChangeInProgress}
@@ -127,7 +129,7 @@
 					onclick={() => (showSelfHostingModal = true)}
 				>
 					{#snippet subtitle()}
-						You will serve your blog from your own server for <a
+						Serve your blog from your own server for <a
 							class="hds-link"
 							target="_blank"
 							href="/docs/subdirectory">subdirectory hosting</a
