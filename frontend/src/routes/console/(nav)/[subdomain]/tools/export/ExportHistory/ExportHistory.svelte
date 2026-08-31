@@ -3,6 +3,9 @@
 	import type { Export } from '../../../../../lib/types';
 	import ExportRow from './ExportRow.svelte';
 	import { getExports } from '../exportActions';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 
@@ -23,14 +26,14 @@
 {#if isLoading}
 	<Loader padding={100} block />
 {:else if exports.length === 0}
-	<IconMessage empty message="No exports found" padding={60} />
+	<IconMessage empty message={i18n.t('console.tools.export.noExports')} padding={60} />
 {:else}
 	<Table columns="1fr 1fr 1fr 80px">
 		<TableRow head>
-			<div>Format</div>
-			<div>Date</div>
-			<div>Status</div>
-			<div>File</div>
+			<div>{i18n.t('console.tools.export.format')}</div>
+			<div>{i18n.t('console.tools.date')}</div>
+			<div>{i18n.t('console.common.status')}</div>
+			<div>{i18n.t('console.tools.export.file')}</div>
 		</TableRow>
 
 		{#each exports as exp}

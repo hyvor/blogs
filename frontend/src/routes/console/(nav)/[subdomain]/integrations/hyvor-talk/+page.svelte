@@ -21,6 +21,10 @@
 	import Memberships from './Memberships/Memberships.svelte';
 	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
 	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let isLoading = $state(true);
 	let data: HyvorTalkIntegrationData | undefined = $state();
@@ -30,7 +34,7 @@
 
 	function handleConnect() {
 		isConnecting = false;
-		const toastId = toast.loading('Connecting to Hyvor Talk...');
+		const toastId = toast.loading(i18n.t('console.integrations.hyvorTalk.connecting'));
 
 		createHyvorTalkIntegration()
 			.then((res) => {
@@ -38,14 +42,16 @@
 					connected: true,
 					data: res
 				} as HyvorTalkIntegrationData;
-				toast.success('Hyvor Talk connected successfully', { id: toastId });
+				toast.success(i18n.t('console.integrations.hyvorTalk.connected'), { id: toastId });
 			})
-			.catch((_) => toast.error('Failed to connect to Hyvor Talk', { id: toastId }));
+			.catch((_) =>
+				toast.error(i18n.t('console.integrations.hyvorTalk.failedToConnect'), { id: toastId })
+			);
 	}
 
 	function handleDisconnect() {
 		isDisconnecting = false;
-		const toastId = toast.loading('Disconnecting from Hyvor Talk...');
+		const toastId = toast.loading(i18n.t('console.integrations.hyvorTalk.disconnecting'));
 
 		deleteHyvorTalkIntegration()
 			.then((_) => {
@@ -53,15 +59,17 @@
 					connected: false,
 					data: undefined
 				};
-				toast.success('Hyvor Talk disconnected successfully', { id: toastId });
+				toast.success(i18n.t('console.integrations.hyvorTalk.disconnected'), { id: toastId });
 			})
-			.catch((_) => toast.error('Failed to disconnect from Hyvor Talk', { id: toastId }));
+			.catch((_) =>
+				toast.error(i18n.t('console.integrations.hyvorTalk.failedToDisconnect'), { id: toastId })
+			);
 	}
 
 	onMount(() => {
 		loadHyvorTalk()
 			.then((res) => (data = res))
-			.catch((_) => toast.error('Failed to load Hyvor Talk integration data'))
+			.catch((_) => toast.error(i18n.t('console.integrations.hyvorTalk.failedToLoad')))
 			.finally(() => (isLoading = false));
 	});
 </script>
@@ -69,36 +77,53 @@
 <LicenseRequired excludeTrial={true}>
 	{#snippet upgradeText()}
 		<div>
-			This integration allows you to use <a
-				href="https://talk.hyvor.com"
-				target="_blank"
-				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
-			in the trial period.
+			<T
+				key="console.integrations.hyvorTalk.upgradeText"
+				params={{
+					link: {
+						element: 'a',
+						props: {
+							href: 'https://talk.hyvor.com',
+							target: '_blank',
+							style: 'text-decoration:underline'
+						}
+					}
+				}}
+			/>
 		</div>
 	{/snippet}
 
 	{#if isLoading}
 		<Loader full />
 	{:else if data}
-		<SplitControl label="Introduction">
+		<SplitControl label={i18n.t('console.integrations.hyvorTalk.introduction')}>
 			<div>
-				<Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first commenting,
-				newsletter, and memberships platform. You can use it for free on your blog.
+				<T
+					key="console.integrations.hyvorTalk.introText"
+					params={{
+						link: {
+							element: 'a',
+							props: { href: 'https://talk.hyvor.com', target: '_blank', class: 'hds-link' }
+						}
+					}}
+				/>
 
 				<p>
-					When you connect Hyvor Talk to your blog, we will automatically create a new website ID in
-					Hyvor Talk for this blog under your account.
+					{i18n.t('console.integrations.hyvorTalk.introNote')}
 				</p>
 			</div>
 		</SplitControl>
 
-		<SplitControl label="Connect Hyvor Talk">
+		<SplitControl label={i18n.t('console.integrations.hyvorTalk.connectTitle')}>
 			{#if data.connected}
 				<div class="connection-status">
-					This blog is connected to website ID <strong
-						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
-					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
+					<T
+						key="console.integrations.hyvorTalk.connectedTo"
+						params={{
+							strong: { element: 'strong' },
+							websiteId: (data as HyvorTalkIntegrationData<true>).data.website_id
+						}}
+					/>
 				</div>
 
 				<Button
@@ -108,22 +133,26 @@
 					size="small"
 					style="margin-right:6px;"
 				>
-					Go to Hyvor Talk Console
+					{i18n.t('console.integrations.hyvorTalk.goToConsole')}
 				</Button>
 
-				<Button color="red" size="small" on:click={() => (isDisconnecting = true)}
-					>Disconnect</Button
-				>
+				<Button color="red" size="small" on:click={() => (isDisconnecting = true)}>
+					{i18n.t('console.integrations.hyvorTalk.disconnect')}
+				</Button>
 			{:else}
-				<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
+				<div class="connection-status">
+					{i18n.t('console.integrations.hyvorTalk.notConnected')}
+				</div>
 
-				<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
+				<Button on:click={() => (isConnecting = true)}>
+					{i18n.t('console.integrations.hyvorTalk.connectNow')}
+				</Button>
 			{/if}
 		</SplitControl>
 
 		{#if data.connected}
 			<div class="embed-code">
-				<SplitControl label="Embed Codes">
+				<SplitControl label={i18n.t('console.integrations.hyvorTalk.embedCodes')}>
 					{#snippet nested()}
 						<div>
 							<Comments websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
@@ -139,41 +168,54 @@
 </LicenseRequired>
 
 {#if isConnecting}
-	<Modal title="Connect Hyvor Talk" bind:show={isConnecting}>
+	<Modal title={i18n.t('console.integrations.hyvorTalk.connectTitle')} bind:show={isConnecting}>
 		<div>
-			<p>Please confirm that you want to create a website ID in Hyvor Talk for this blog.</p>
+			<p>{i18n.t('console.integrations.hyvorTalk.connectModal.intro')}</p>
 			<ul>
-				<li>A new Hyvor Talk website ID will be created under your HYVOR account.</li>
-				<li>This new website can <b>only</b> be used on this blog.</li>
-				<li>It is free of charge.</li>
+				<li>{i18n.t('console.integrations.hyvorTalk.connectModal.point1')}</li>
 				<li>
-					If you have any other websites on Hyvor Talk, you will need a separate subscription.
+					<T
+						key="console.integrations.hyvorTalk.connectModal.point2"
+						params={{ b: { element: 'b' } }}
+					/>
 				</li>
+				<li>{i18n.t('console.integrations.hyvorTalk.connectModal.point3')}</li>
+				<li>{i18n.t('console.integrations.hyvorTalk.connectModal.point4')}</li>
 			</ul>
 		</div>
 
 		{#snippet footer()}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (isConnecting = false)}>Cancel</Button>
-				<Button on:click={handleConnect}>Confirm</Button>
+				<Button variant="invisible" on:click={() => (isConnecting = false)}>
+					{i18n.t('console.common.cancel')}
+				</Button>
+				<Button on:click={handleConnect}>{i18n.t('console.integrations.hyvorTalk.confirm')}</Button>
 			</ButtonGroup>
 		{/snippet}
 	</Modal>
 {/if}
 
 {#if isDisconnecting}
-	<Modal title="Disconnect Hyvor Talk" bind:show={isDisconnecting}>
-		<Callout type="warning">You cannot connect this blog to the same website ID again.</Callout>
+	<Modal
+		title={i18n.t('console.integrations.hyvorTalk.disconnectTitle')}
+		bind:show={isDisconnecting}
+	>
+		<Callout type="warning">
+			{i18n.t('console.integrations.hyvorTalk.disconnectWarning')}
+		</Callout>
 
 		<p>
-			Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor
-			Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
+			{i18n.t('console.integrations.hyvorTalk.disconnectConfirm')}
 		</p>
 
 		{#snippet footer()}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (isDisconnecting = false)}>Cancel</Button>
-				<Button color="red" on:click={handleDisconnect}>Disconnect</Button>
+				<Button variant="invisible" on:click={() => (isDisconnecting = false)}>
+					{i18n.t('console.common.cancel')}
+				</Button>
+				<Button color="red" on:click={handleDisconnect}>
+					{i18n.t('console.integrations.hyvorTalk.disconnect')}
+				</Button>
 			</ButtonGroup>
 		{/snippet}
 	</Modal>

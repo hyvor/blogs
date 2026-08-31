@@ -12,6 +12,7 @@ services:
       - ./frontend/package-lock.json:/app/frontend/package-lock.json
       - ./frontend/tsconfig.json:/app/frontend/tsconfig.json
       - ./frontend/svelte.config.js:/app/frontend/svelte.config.js
+      - ./shared:/app/shared
     labels:
       traefik.enable: true
       traefik.http.routers.hyvor-blogs-frontend.rule: Host(`blogs.hyvor.localhost`)

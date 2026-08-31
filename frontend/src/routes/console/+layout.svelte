@@ -9,7 +9,9 @@
 		blogListStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { Loader, toast } from '@hyvor/design/components';
+	import { InternationalizationProvider, Loader, toast } from '@hyvor/design/components';
+	import { CONSOLE_LANGUAGES } from './lib/i18n';
+	import ConsoleLoadingText from './ConsoleLoadingText.svelte';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
@@ -101,50 +103,52 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<main>
-	{#if isLoading}
-		<div class="full-loader">
-			<Loader size="large">
-				<div>
-					{#if $isTempStore}
-						Creating your temporary blog...
-					{/if}
-				</div>
-			</Loader>
-		</div>
-	{:else}
-		<CloudContext
-			context={{
-				component: 'blogs',
-				deployment: 'cloud',
-				instance: getConfig().hyvor.instance,
-				user: get(authUserStore),
-				organization: get(authOrganizationStore),
-				license: get(resolvedLicenseStore),
-				callbacks: {
-					onOrganizationSwitch: (switcher) => {
-						isLoading = true;
+<InternationalizationProvider languages={CONSOLE_LANGUAGES}>
+	<main>
+		{#if isLoading}
+			<div class="full-loader">
+				<Loader size="large">
+					<div>
+						{#if $isTempStore}
+							<ConsoleLoadingText />
+						{/if}
+					</div>
+				</Loader>
+			</div>
+		{:else}
+			<CloudContext
+				context={{
+					component: 'blogs',
+					deployment: 'cloud',
+					instance: getConfig().hyvor.instance,
+					user: get(authUserStore),
+					organization: get(authOrganizationStore),
+					license: get(resolvedLicenseStore),
+					callbacks: {
+						onOrganizationSwitch: (switcher) => {
+							isLoading = true;
 
-						switcher
-							.then(() => {
-								startConsole(true);
-							})
-							.catch(() => {
-								isLoading = false;
-							});
+							switcher
+								.then(() => {
+									startConsole(true);
+								})
+								.catch(() => {
+									isLoading = false;
+								});
+						}
 					}
-				}
-			}}
-			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
-		>
-			{#if !$isTempStore}
-				<HyvorBar />
-			{/if}
+				}}
+				style="display:flex; flex-direction: column; width: 100%; height: 100vh"
+			>
+				{#if !$isTempStore}
+					<HyvorBar />
+				{/if}
 
-			{@render children?.()}
-		</CloudContext>
-	{/if}
-</main>
+				{@render children?.()}
+			</CloudContext>
+		{/if}
+	</main>
+</InternationalizationProvider>
 
 <style>
 	main {

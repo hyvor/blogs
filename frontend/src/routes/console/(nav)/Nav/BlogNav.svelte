@@ -13,17 +13,21 @@
 	import { NavLink } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
 	import type { BlogList } from '../../lib/types';
+	import { getI18n } from '../../lib/i18n';
+
 	interface Props {
 		listItem: BlogList;
 	}
 
 	let { listItem }: Props = $props();
+
+	const i18n = getI18n();
 </script>
 
 <a class="current-blog" href={consoleUrl('/select')}>
 	<div class="name-url">
 		<div class="name">
-			{listItem.name || 'Unnamed'}
+			{listItem.name || i18n.t('console.nav.unnamedBlog')}
 		</div>
 		<div class="url">
 			{listItem.url.replace(/https?:\/\//, '')}
@@ -44,7 +48,7 @@
 			<IconHouse />
 		{/snippet}
 
-		Home
+		{i18n.t('console.nav.home')}
 
 		{#snippet end()}
 			<a class="home-link" href={listItem.url} target="_blank">
@@ -62,7 +66,7 @@
 		{#snippet start()}
 			<IconPencil />
 		{/snippet}
-		Posts
+		{i18n.t('console.nav.posts')}
 	</NavLink>
 
 	<NavLink
@@ -72,7 +76,7 @@
 		{#snippet start()}
 			<IconFiles />
 		{/snippet}
-		Pages
+		{i18n.t('console.nav.pages')}
 	</NavLink>
 
 	<div class="section-div"></div>
@@ -84,7 +88,7 @@
 		{#snippet start()}
 			<IconPalette />
 		{/snippet}
-		Theme
+		{i18n.t('console.nav.theme')}
 	</NavLink>
 
 	<NavLink
@@ -94,7 +98,7 @@
 		{#snippet start()}
 			<IconPlugin />
 		{/snippet}
-		Integrations
+		{i18n.t('console.nav.integrations')}
 	</NavLink>
 
 	<NavLink
@@ -104,7 +108,7 @@
 		{#snippet start()}
 			<IconTools />
 		{/snippet}
-		Tools
+		{i18n.t('console.nav.tools')}
 	</NavLink>
 
 	<NavLink
@@ -114,7 +118,7 @@
 		{#snippet start()}
 			<IconGear />
 		{/snippet}
-		Settings
+		{i18n.t('console.nav.settings')}
 	</NavLink>
 </div>
 

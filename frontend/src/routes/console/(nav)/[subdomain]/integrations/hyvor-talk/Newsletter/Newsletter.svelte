@@ -4,6 +4,10 @@
 	import AddNewsletterCode from './AddNewsletterCode.svelte';
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		websiteId: number;
@@ -28,36 +32,54 @@
 <SplitControl column>
 	{#snippet label()}
 		<Label>
-			Newsletter <ConfiguredTag
+			{i18n.t('console.integrations.hyvorTalk.newsletter.label')}
+			<ConfiguredTag
 				configured={$blogStore.newsletter_code?.includes('<hyvor-talk-newsletter') || false}
 			/>
 		</Label>
 	{/snippet}
 
 	<p style="margin-top:0;">
-		Add the newsletter code to <Link
-			style="display:inline;"
-			underline
-			href={consoleUrlWithBlog('/settings/comments')}>Newsletter Signup Form Code</Link
-		> setting to load the Hyvor Talk newsletter form on places supported by your theme.
+		<T
+			key="console.integrations.hyvorTalk.newsletter.description"
+			params={{
+				link: {
+					element: 'a',
+					props: {
+						href: consoleUrlWithBlog('/settings/comments'),
+						class: 'hds-link'
+					}
+				}
+			}}
+		/>
 	</p>
 
 	<CodeBlock {code} />
 
 	<div>
 		<Button size="small" on:click={() => (adding = true)}>
-			Add to "Newsletter Signup Form Code"
+			{i18n.t('console.integrations.hyvorTalk.newsletter.addTo')}
 		</Button>
 
-		<Button size="small" color="input" on:click={handleCopy}>Copy code</Button>
+		<Button size="small" color="input" on:click={handleCopy}>
+			{i18n.t('console.integrations.hyvorTalk.copyCode')}
+		</Button>
 	</div>
 
 	<p>
-		You can also add it directly into your theme files. Feel free to customize the code (see <Link
-			underline
-			href="https://talk.hyvor.com/docs/newsletters"
-			target="_blank">Hyvor Talk docs</Link
-		>).
+		<T
+			key="console.integrations.hyvorTalk.themeFilesNote"
+			params={{
+				link: {
+					element: 'a',
+					props: {
+						href: 'https://talk.hyvor.com/docs/newsletters',
+						target: '_blank',
+						class: 'hds-link'
+					}
+				}
+			}}
+		/>
 	</p>
 </SplitControl>
 

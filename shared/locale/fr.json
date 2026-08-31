@@ -1,0 +1,326 @@
+{
+    "console": {
+        "common": {
+            "loading": "Chargement...",
+            "cancel": "Annuler",
+            "close": "Fermer",
+            "save": "Enregistrer",
+            "create": "Créer",
+            "update": "Mettre à jour",
+            "delete": "Supprimer",
+            "edit": "Modifier",
+            "remove": "Retirer",
+            "add": "Ajouter",
+            "yes": "Oui",
+            "no": "Non",
+            "any": "Tous",
+            "all": "Tous",
+            "none": "Aucun",
+            "copy": "Copier",
+            "copied": "Copié",
+            "search": "Rechercher",
+            "searchPlaceholder": "Rechercher...",
+            "loadMore": "Charger plus",
+            "unnamed": "Sans nom",
+            "enabled": "Activé",
+            "disabled": "Désactivé",
+            "name": "Nom",
+            "slug": "Slug",
+            "status": "Statut",
+            "actions": "Actions",
+            "noUsersFound": "Aucun utilisateur trouvé",
+            "noTagsFound": "Aucun tag trouvé",
+            "cannotBeEmpty": "{field} ne peut pas être vide",
+            "created": "{field} créé",
+            "updated": "{field} mis à jour",
+            "deleted": "{field} supprimé",
+            "failedToLoad": "Échec du chargement de {field}",
+            "actionConfirm": {
+                "title": "Confirmation",
+                "content": "Voulez-vous vraiment effectuer cette action ?"
+            }
+        },
+        "creatingTempBlog": "Création de votre blog temporaire...",
+        "failedToLoadBlog": "Impossible de charger le blog",
+        "nav": {
+            "billing": "Facturation",
+            "home": "Accueil",
+            "posts": "Articles",
+            "pages": "Pages",
+            "theme": "Thème",
+            "integrations": "Intégrations",
+            "tools": "Outils",
+            "settings": "Paramètres",
+            "unnamedBlog": "Sans nom"
+        },
+        "home": {
+            "preview": "Aperçu"
+        },
+        "blogStatus": {
+            "banned": {
+                "title": "Blog banni",
+                "description": "Ce blog a été bloqué en raison d'une violation de nos conditions d'utilisation. Il ne sera plus accessible sur le sous-domaine hyvorblogs.io ni sur un domaine personnalisé. Si vous pensez qu'il s'agit d'une erreur, contactez-nous à blogs.support@hyvor.com. Vous pouvez annuler votre abonnement et supprimer le blog depuis les paramètres."
+            },
+            "licenseExpired": {
+                "title": "Licence expirée",
+                "description": "Votre licence a expiré. Veuillez la renouveler ou passer à une offre supérieure pour continuer à utiliser le service.",
+                "cta": "Mettre à niveau"
+            }
+        },
+        "temp": {
+            "notice": "Ceci est un <strong>blog temporaire</strong>. Il sera supprimé dans <strong>{time}</strong>.",
+            "startLiveBlog": "Créer un vrai blog maintenant",
+            "featureDisabled": "Cette fonctionnalité est désactivée sur les blogs temporaires."
+        },
+        "posts": {
+            "posts": "Articles",
+            "pages": "Pages",
+            "new": "Nouveau",
+            "untitled": "(Sans titre)",
+            "seo": "SEO",
+            "links": "Liens",
+            "creatingPost": "Création de l'article...",
+            "creatingPage": "Création de la page...",
+            "postCreated": "Article créé",
+            "pageCreated": "Page créée",
+            "noPostsFound": "Aucun article trouvé",
+            "noPagesFound": "Aucune page trouvée",
+            "failedToLoadPosts": "Échec du chargement des articles",
+            "failedToLoadPages": "Échec du chargement des pages",
+            "failedToLoadMorePosts": "Échec du chargement d'articles supplémentaires",
+            "publishedOn": "Publié le {date}",
+            "scheduledOn": "Programmé le {date}",
+            "createdOn": "Créé le {date}",
+            "updatedOn": "Mis à jour le {date}",
+            "clonePost": "Dupliquer l'article",
+            "cloningPost": "Duplication de l'article...",
+            "postCloned": "Article dupliqué avec succès",
+            "failedToClonePost": "Échec de la duplication de l'article",
+            "status": {
+                "draft": "Brouillon",
+                "published": "Publié",
+                "scheduled": "Programmé",
+                "featured": "Mis en avant"
+            },
+            "langTag": {
+                "published": "{language} - Publié",
+                "draft": "{language} - Brouillon",
+                "scheduled": "{language} - Programmé"
+            },
+            "linkAnalysis": {
+                "outdated": "Analyse des liens obsolète. Ouvrez l'article pour relancer l'analyse",
+                "broken": "Liens cassés détectés",
+                "redirect": "Liens de redirection détectés",
+                "healthy": "Tous les liens sont valides"
+            },
+            "filters": {
+                "statusLabel": "Statut",
+                "authorLabel": "Auteur",
+                "tagLabel": "Tag",
+                "dateLabel": "Date",
+                "searchAuthorPlaceholder": "Rechercher un auteur...",
+                "searchTagPlaceholder": "Rechercher un tag...",
+                "postsCount": "{count} {count, plural, one {article} other {articles}}",
+                "dateOptions": {
+                    "today": "Aujourd'hui",
+                    "last_week": "La semaine dernière",
+                    "last_month": "Le mois dernier",
+                    "last_year": "L'année dernière"
+                }
+            }
+        },
+        "tools": {
+            "history": "Historique",
+            "date": "Date",
+            "nav": {
+                "media": "Médiathèque",
+                "linkAnalysis": "Analyse des liens",
+                "import": "Importer",
+                "export": "Exporter"
+            },
+            "jobStatus": {
+                "pending": "En attente",
+                "completed": "Terminé",
+                "failed": "Échoué"
+            },
+            "export": {
+                "newExport": "Nouvel export",
+                "format": "Format d'export",
+                "file": "Fichier",
+                "download": "Télécharger",
+                "exportNow": "Exporter maintenant",
+                "exporting": "Export en cours...",
+                "started": "Export démarré, vous pouvez suivre la progression dans l'historique des exports.",
+                "failed": "Échec du démarrage de l'export. Veuillez réessayer plus tard.",
+                "noExports": "Aucun export trouvé",
+                "confirm": {
+                    "title": "Exporter les données",
+                    "content": "Vous êtes sur le point d'exporter vos données. Cela peut prendre quelques minutes. Vous pouvez suivre la progression dans l'historique des exports."
+                }
+            },
+            "import": {
+                "newImport": "Nouvel import",
+                "noImports": "Aucun import trouvé",
+                "nameUrl": "Nom / URL",
+                "type": "Type",
+                "counts": "Totaux",
+                "more": "Plus",
+                "details": "Détails de l'import",
+                "startedAt": "Démarré le",
+                "options": "Options",
+                "importedCounts": "Éléments importés",
+                "postsCount": "{count} {count, plural, one {article} other {articles}}",
+                "importFrom": "Importer depuis",
+                "importFromCaption": "Choisissez une méthode pour importer vos données",
+                "sitemapOption": "Sitemap (site en ligne)",
+                "sitemapUrl": "URL du sitemap",
+                "sitemapUrlCaption": "Sitemap XML ou TXT contenant les liens vers tous vos articles.",
+                "cssSelectors": "Sélecteurs CSS",
+                "cssSelectorsCaption": "Ajoutez des sélecteurs CSS pour localiser les données dans vos pages HTML.",
+                "postContent": "Contenu de l'article",
+                "required": "Requis",
+                "postTitle": "Titre de l'article",
+                "postDescription": "Description de l'article",
+                "postContentExclude": "Exclusion du contenu",
+                "postContentExcludeCaption": "Pour exclure des éléments du contenu de l'article",
+                "postPublishedDate": "Date de publication de l'article",
+                "importImages": "Importer les images",
+                "importImagesCaption": "Copier les images dans votre médiathèque (recommandé)",
+                "slugExclude": "Exclusion du slug",
+                "slugExcludeCaption": "Exclure une partie de l'URL du slug (ex : /blog/)",
+                "test": "Tester",
+                "testCaption": "Testez une page pour vérifier que les sélecteurs CSS fonctionnent (recommandé)",
+                "testUrlPlaceholder": "URL à tester",
+                "enterTestUrl": "Veuillez saisir une URL à tester",
+                "testNote": "Veuillez tester quelques pages avant d'importer le sitemap. Si vous avez besoin d'aide, n'hésitez pas à nous contacter.",
+                "importSitemap": "Importer le sitemap",
+                "importingSitemap": "Import du sitemap...",
+                "sitemapImportStarted": "Import du sitemap démarré. Cela peut prendre un moment.",
+                "testResults": "Résultats du test",
+                "url": "URL",
+                "title": "Titre",
+                "description": "Description",
+                "content": "Contenu",
+                "publishedDate": "Date de publication",
+                "featuredImage": "Image à la une"
+            },
+            "media": {
+                "upload": "Téléverser",
+                "uploading": "Téléversement...",
+                "uploaded": "Téléversé",
+                "selectFile": "Veuillez sélectionner un fichier",
+                "fileTooLarge": "Le fichier est trop volumineux. La taille maximale est de 50 Mo",
+                "noMedia": "Aucun média trouvé",
+                "fileType": "Type de fichier",
+                "choose": "Choisir",
+                "clickToEdit": "Cliquer pour modifier",
+                "deleting": "Suppression...",
+                "deleted": "Supprimé",
+                "fileName": "Nom du fichier",
+                "updateFileName": "Modifier le nom du fichier",
+                "fileNameUpdated": "Nom du fichier mis à jour",
+                "extensionChangeWarning": "Vous changez l'extension du fichier de <strong>{from}</strong> à <strong>{to}</strong>. Êtes-vous sûr ?",
+                "kebabNameWarning": "Le nom sera enregistré comme <strong>{name}</strong>.",
+                "delete": {
+                    "title": "Supprimer le média",
+                    "content": "Voulez-vous vraiment supprimer ce fichier média ? Cette action est irréversible !",
+                    "confirm": "Oui, supprimer"
+                },
+                "types": {
+                    "images": "Images",
+                    "videos": "Vidéos",
+                    "documents": "Documents",
+                    "audio": "Audio",
+                    "archives": "Archives",
+                    "custom": "Extension personnalisée",
+                    "customExtensions": "À vous de choisir"
+                }
+            },
+            "linkAnalysis": {
+                "upgradeText": "L'analyse des liens est disponible à partir du <b>plan Growth</b>. Passez à une offre supérieure pour analyser automatiquement tous les liens de votre blog et recevoir des rapports par e-mail.",
+                "overview": "Vue d'ensemble",
+                "links": "Liens",
+                "stats": "Statistiques",
+                "statsNote": "Les statistiques portent sur les articles déjà analysés. Certains articles ne seront analysés qu'après une analyse complète du blog.",
+                "seeLinks": "Voir les liens",
+                "analyses": "Analyses",
+                "analysesNote": "Une analyse complète du blog est effectuée automatiquement toutes les 2 semaines (seuls les articles publiés sont analysés). Vous pouvez aussi en lancer une manuellement.",
+                "startNewAnalysis": "Lancer une analyse",
+                "startingAnalysis": "Démarrage de l'analyse...",
+                "analysisStarted": "Nouvelle analyse démarrée.",
+                "failedToStartAnalysis": "Échec du démarrage de l'analyse.",
+                "failedToLoadChecks": "Échec du chargement des analyses de liens.",
+                "failedToLoadLinks": "Échec du chargement des liens.",
+                "failedToRecheck": "Échec de la revérification du lien.",
+                "failedToIgnore": "Échec de l'ignorance du lien.",
+                "noAnalyses": "Aucune analyse pour le moment",
+                "noLinks": "Aucun lien trouvé.",
+                "postsCountColumn": "Nb. articles",
+                "post": "Article",
+                "link": "Lien",
+                "noTitle": "(Sans titre)",
+                "editInEditor": "Modifier dans l'éditeur",
+                "recheck": "Revérifier",
+                "ignoreLink": "Ignorer ce lien",
+                "status": {
+                    "ok": "OK",
+                    "redirect": "Redirection",
+                    "broken": "Cassé",
+                    "risky": "À risque",
+                    "ignored": "Ignoré",
+                    "error": "Erreur"
+                },
+                "tooltip": {
+                    "ok": "Le lien est valide",
+                    "okStatus": "OK - statut HTTP {status}",
+                    "headingIdFound": "ID de titre trouvé",
+                    "headingIdNotFound": "ID de titre introuvable",
+                    "redirect": "Redirige vers une autre page",
+                    "redirectStatus": "Statut de redirection {status}",
+                    "broken": "Le lien est cassé",
+                    "brokenConnection": "Cassé - problème de connexion",
+                    "brokenStatus": "Cassé - statut HTTP {status}",
+                    "risky": "Ce lien est à risque, nous recommandons de le vérifier manuellement",
+                    "riskyStatus": "Ce lien est à risque, nous recommandons de le vérifier manuellement - statut HTTP {status}",
+                    "ignored": "Lien ignoré",
+                    "ignoredWithReason": "Lien ignoré ({reason})",
+                    "error": "Erreur (de notre côté)"
+                },
+                "ignoreReason": {
+                    "known_firewall": "Pare-feu connu",
+                    "robots_txt": "Bloqué par robots.txt",
+                    "internal_error": "Erreur interne"
+                },
+                "settings": {
+                    "automated": "Analyse automatique des liens",
+                    "automatedCaption": "Lancer automatiquement une analyse complète du blog toutes les 2 semaines.",
+                    "emailReports": "Envoyer des rapports par e-mail",
+                    "emailReportsCaption": "Envoyer un rapport par e-mail après une analyse complète du blog.",
+                    "never": "Jamais",
+                    "whenBroken": "Quand des liens cassés sont trouvés",
+                    "always": "Toujours"
+                }
+            }
+        },
+        "settings": {
+            "nav": {
+                "general": "Général",
+                "users": "Utilisateurs",
+                "tags": "Tags",
+                "languages": "Langues",
+                "hosting": "Hébergement",
+                "seo": "SEO",
+                "colorMode": "Modes clair et sombre",
+                "postContent": "Contenu des articles",
+                "navigation": "Liens de navigation",
+                "redirects": "Redirections",
+                "routes": "Routes",
+                "comments": "Commentaires et newsletter",
+                "code": "Code personnalisé",
+                "apiKeys": "Clés API",
+                "webhooks": "Webhooks",
+                "danger": "Zone de danger"
+            }
+        }
+    }
+}

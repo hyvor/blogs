@@ -12,6 +12,10 @@
 		IconMessage
 	} from '@hyvor/design/components';
 	import LinkRow from './LinkRow.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
+
 	interface Props {
 		stats: Stats;
 	}
@@ -43,7 +47,7 @@
 			})
 			.catch((e) => {
 				if (!more) links = [];
-				toast.error(e.message || 'Failed to load links.');
+				toast.error(e.message || i18n.t('console.tools.linkAnalysis.failedToLoadLinks'));
 			})
 			.finally(() => {
 				isMoreLoading = false;
@@ -61,17 +65,17 @@
 
 		switch (t) {
 			case 'ok':
-				return `OK (${stats.counts.ok})`;
+				return `${i18n.t('console.tools.linkAnalysis.status.ok')} (${stats.counts.ok})`;
 			case 'broken':
-				return `Broken (${stats.counts.broken})`;
+				return `${i18n.t('console.tools.linkAnalysis.status.broken')} (${stats.counts.broken})`;
 			case 'risky':
-				return `Risky (${stats.counts.risky})`;
+				return `${i18n.t('console.tools.linkAnalysis.status.risky')} (${stats.counts.risky})`;
 			case 'redirect':
-				return `Redirect (${stats.counts.redirect})`;
+				return `${i18n.t('console.tools.linkAnalysis.status.redirect')} (${stats.counts.redirect})`;
 			case 'ignored':
-				return `Ignored (${stats.counts.ignored})`;
+				return `${i18n.t('console.tools.linkAnalysis.status.ignored')} (${stats.counts.ignored})`;
 			default:
-				return `All (${all})`;
+				return `${i18n.t('console.common.all')} (${all})`;
 		}
 	}
 
@@ -111,10 +115,10 @@
 	{:else if links.length}
 		<Table columns="1fr 2fr 100px 100px">
 			<TableRow head>
-				<div>Post</div>
-				<div>Link</div>
-				<div>Status</div>
-				<div>Actions</div>
+				<div>{i18n.t('console.tools.linkAnalysis.post')}</div>
+				<div>{i18n.t('console.tools.linkAnalysis.link')}</div>
+				<div>{i18n.t('console.common.status')}</div>
+				<div>{i18n.t('console.common.actions')}</div>
 			</TableRow>
 
 			{#each links as link (link.post_variant_id + link.url)}
@@ -123,13 +127,13 @@
 		</Table>
 
 		<LoadButton
-			text="Load More"
+			text={i18n.t('console.common.loadMore')}
 			on:click={() => loadLinks(true)}
 			loading={isMoreLoading}
 			show={hasMore}
 		/>
 	{:else}
-		<IconMessage empty message="No links found." padding={100} />
+		<IconMessage empty message={i18n.t('console.tools.linkAnalysis.noLinks')} padding={100} />
 	{/if}
 </div>
 

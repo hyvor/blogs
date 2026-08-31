@@ -8,6 +8,7 @@
 
 	import type { PostVariant } from '../../../../lib/types';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
+	import { getI18n } from '../../../../lib/i18n';
 
 	interface Props {
 		variant: PostVariant;
@@ -15,6 +16,8 @@
 	}
 
 	let { variant, ...rest }: Props = $props();
+
+	const i18n = getI18n();
 
 	let language = $derived($languagesStore.find((v) => v.id === variant.language_id));
 
@@ -28,13 +31,13 @@
 		if (language) {
 			if (variant.status === 'published') {
 				icon = IconCheck;
-				tooltip = `${language.name} - Published`;
+				tooltip = i18n.t('console.posts.langTag.published', { language: language.name });
 			} else if (variant.status === 'draft') {
 				icon = IconJournalText;
-				tooltip = `${language.name} - Draft`;
+				tooltip = i18n.t('console.posts.langTag.draft', { language: language.name });
 			} else if (variant.status === 'scheduled') {
 				icon = IconHourglass;
-				tooltip = `${language.name} - Scheduled`;
+				tooltip = i18n.t('console.posts.langTag.scheduled', { language: language.name });
 			}
 		}
 	});

@@ -3,6 +3,9 @@
 	import { blogStore } from '../../../../../lib/stores/blogStore';
 	import { updateBlog } from '../../../../../lib/actions/blogActions';
 	import { onMount } from 'svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		open?: boolean;
@@ -14,15 +17,17 @@
 	function handleUpdate() {
 		open = false;
 
-		const toastId = toast.loading('Updating comments embed code...');
+		const toastId = toast.loading(i18n.t('console.integrations.hyvorTalk.comments.updating'));
 
 		updateBlog({ comments_code: code })
 			.then(() => {
-				toast.success('Comments embed code updated successfully', { id: toastId });
+				toast.success(i18n.t('console.integrations.hyvorTalk.comments.updated'), { id: toastId });
 				open = false;
 			})
 			.catch(() => {
-				toast.error('Failed to update comments embed code', { id: toastId });
+				toast.error(i18n.t('console.integrations.hyvorTalk.comments.failedToUpdate'), {
+					id: toastId
+				});
 			});
 	}
 
@@ -34,19 +39,21 @@
 </script>
 
 {#if open}
-	<Modal title="Update Comments Embed Code" bind:show={open}>
-		<p>Your current "Comments Embed Code" is:</p>
+	<Modal title={i18n.t('console.integrations.hyvorTalk.comments.updateTitle')} bind:show={open}>
+		<p>{i18n.t('console.integrations.hyvorTalk.comments.currentCode')}</p>
 
 		<div class="code-block-wrap">
 			<CodeBlock code={$blogStore.comments_code || ''} />
 		</div>
 
-		<p>Please confirm that you want to update it to Hyvor Talk embed code.</p>
+		<p>{i18n.t('console.integrations.hyvorTalk.comments.confirmUpdate')}</p>
 
 		{#snippet footer()}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
-				<Button on:click={handleUpdate}>Update</Button>
+				<Button variant="invisible" on:click={() => (open = false)}>
+					{i18n.t('console.common.cancel')}
+				</Button>
+				<Button on:click={handleUpdate}>{i18n.t('console.common.update')}</Button>
 			</ButtonGroup>
 		{/snippet}
 	</Modal>

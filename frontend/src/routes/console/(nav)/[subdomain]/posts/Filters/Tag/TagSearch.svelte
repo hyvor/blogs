@@ -12,6 +12,9 @@
 	import { postListFiltersStore } from '../../postListStore';
 	import { getTags, searchTags } from '../../../settings/tags/tagActions';
 	import TagName from '../../../settings/tags/TagName.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let tags: Tag[] = $state([]);
@@ -57,7 +60,7 @@
 
 <TextInput
 	block
-	placeholder="Search tag..."
+	placeholder={i18n.t('console.posts.filters.searchTagPlaceholder')}
 	autofocus
 	bind:value={search}
 	on:input={handleSearchInput}
@@ -69,7 +72,7 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if tags.length === 0}
-		<IconMessage empty padding={35} message="No tags found" iconSize={40} />
+		<IconMessage empty padding={35} message={i18n.t('console.common.noTagsFound')} iconSize={40} />
 	{:else}
 		{#each tags as tag (tag.id)}
 			<ActionListItem
@@ -81,7 +84,7 @@
 				</TagComponent>
 				{#snippet end()}
 					<Text light small>
-						{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
+						{i18n.t('console.posts.filters.postsCount', { count: tag.posts_count })}
 					</Text>
 				{/snippet}
 			</ActionListItem>

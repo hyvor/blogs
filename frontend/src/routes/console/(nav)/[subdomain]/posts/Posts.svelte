@@ -12,12 +12,15 @@
 	import { createPost, getPages, getPosts } from './postActions';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getI18n } from '../../../lib/i18n';
 
 	interface Props {
 		pages?: boolean;
 	}
 
 	let { pages = false }: Props = $props();
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let isLoadingMore = $state(false);
@@ -45,7 +48,7 @@
 					posts = res;
 				})
 				.catch(() => {
-					error = 'Failed to load pages';
+					error = i18n.t('console.posts.failedToLoadPages');
 				})
 				.finally(() => {
 					isLoading = false;
@@ -66,8 +69,8 @@
 					hasMore = res.length === limit;
 				})
 				.catch(() => {
-					if (more) toast.error('Failed to load more posts');
-					else error = 'Failed to load posts';
+					if (more) toast.error(i18n.t('console.posts.failedToLoadMorePosts'));
+					else error = i18n.t('console.posts.failedToLoadPosts');
 				})
 				.finally(() => {
 					isLoading = false;
@@ -79,12 +82,17 @@
 	let isCreating = $state(false);
 
 	function handleCreate() {
-		const toastId = toast.loading(`Creating ${pages ? 'page' : 'post'}...`);
+		const toastId = toast.loading(
+			pages ? i18n.t('console.posts.creatingPage') : i18n.t('console.posts.creatingPost')
+		);
 		isCreating = true;
 
 		createPost(pages)
 			.then((res) => {
-				toast.success(`${pages ? 'Page' : 'Post'} created`, { id: toastId });
+				toast.success(
+					pages ? i18n.t('console.posts.pageCreated') : i18n.t('console.posts.postCreated'),
+					{ id: toastId }
+				);
 				goto(consoleUrlWithBlog(`/posts/${res.id}`));
 			})
 			.catch((e) => {
@@ -102,14 +110,14 @@
 	<div class="top">
 		<div class="title-wrap">
 			<div class="title">
-				{pages ? 'Pages' : 'Posts'}
+				{pages ? i18n.t('console.posts.pages') : i18n.t('console.posts.posts')}
 			</div>
 			<div class="">
 				<Button size="small" on:click={handleCreate} disabled={isCreating}>
 					{#snippet start()}
 						<IconPlus />
 					{/snippet}
-					New
+					{i18n.t('console.posts.new')}
 				</Button>
 			</div>
 		</div>
@@ -133,14 +141,19 @@
 		{:else if error}
 			<IconMessage error message={error} />
 		{:else if posts.length === 0}
-			<IconMessage empty message="No posts found" />
+			<IconMessage
+				empty
+				message={pages
+					? i18n.t('console.posts.noPagesFound')
+					: i18n.t('console.posts.noPostsFound')}
+			/>
 		{:else}
 			{#each posts as post (post.id)}
 				<PostRow {post} />
 			{/each}
 
 			<LoadButton
-				text="Load more"
+				text={i18n.t('console.common.loadMore')}
 				show={hasMore}
 				loading={isLoadingMore}
 				on:click={() => loadPosts(true)}

@@ -10,6 +10,10 @@
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
 	import { isTempStore } from '../../lib/temp';
 	import { blogListStore, resolvedLicenseStore } from '../../lib/stores';
+	import { getI18n } from '../../lib/i18n';
+
+	const i18n = getI18n();
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -32,7 +36,7 @@
 				isLoading = false;
 			})
 			.catch(() => {
-				toast.error('Unable to load blog');
+				toast.error(i18n.t('console.failedToLoadBlog'));
 			});
 	});
 
@@ -55,7 +59,7 @@
 
 <svelte:head>
 	<title>
-		{$blogStore ? $blogStore.subdomain : 'Loading...'} · Console · Hyvor Blogs
+		{$blogStore ? $blogStore.subdomain : i18n.t('console.common.loading')} · Console · Hyvor Blogs
 	</title>
 </svelte:head>
 

@@ -10,6 +10,9 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { getExtensionsByFileType, type FileType } from './mediaActions';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		defaultType?: null | FileType;
@@ -26,13 +29,25 @@
 	const dispatch = createEventDispatcher();
 
 	let fileTypes = [
-		{ name: 'All', value: 'all', extensions: '' },
-		{ name: 'Images', value: 'images', extensions: 'jpg, png...' },
-		{ name: 'Videos', value: 'videos', extensions: 'mp4, avi...' },
-		{ name: 'Documents', value: 'documents', extensions: 'pdf, doc...' },
-		{ name: 'Audio', value: 'audio', extensions: 'mp3, wav...' },
-		{ name: 'Archives', value: 'archives', extensions: 'zip, rar...' },
-		{ name: 'Custom Extension', value: 'custom', extensions: 'You choose' }
+		{ name: i18n.t('console.common.all'), value: 'all', extensions: '' },
+		{ name: i18n.t('console.tools.media.types.images'), value: 'images', extensions: 'jpg, png...' },
+		{ name: i18n.t('console.tools.media.types.videos'), value: 'videos', extensions: 'mp4, avi...' },
+		{
+			name: i18n.t('console.tools.media.types.documents'),
+			value: 'documents',
+			extensions: 'pdf, doc...'
+		},
+		{ name: i18n.t('console.tools.media.types.audio'), value: 'audio', extensions: 'mp3, wav...' },
+		{
+			name: i18n.t('console.tools.media.types.archives'),
+			value: 'archives',
+			extensions: 'zip, rar...'
+		},
+		{
+			name: i18n.t('console.tools.media.types.custom'),
+			value: 'custom',
+			extensions: i18n.t('console.tools.media.types.customExtensions')
+		}
 	] as { name: string; value: FileType; extensions: string }[];
 
 	let selectedFileName = $derived(fileTypes.find((f) => f.value === type)!.name);
@@ -86,7 +101,7 @@
 		{#snippet trigger()}
 			<Button color="input" disabled={typeDisabled}>
 				{#snippet start()}
-					<Text small light>File type</Text>
+					<Text small light>{i18n.t('console.tools.media.fileType')}</Text>
 				{/snippet}
 				{selectedFileName}
 
@@ -122,7 +137,9 @@
 							autofocus
 							placeholder="svg, gif..."
 						/>
-						<Button size="small" on:click={handleChooseCustomExt}>Choose</Button>
+						<Button size="small" on:click={handleChooseCustomExt}>
+							{i18n.t('console.tools.media.choose')}
+						</Button>
 					</div>
 				{/if}
 			</ActionList>
@@ -130,7 +147,7 @@
 	</Dropdown>
 
 	<TextInput
-		placeholder="Search..."
+		placeholder={i18n.t('console.common.searchPlaceholder')}
 		style="width: 130px"
 		bind:value={search}
 		on:input={handleSearchInput}

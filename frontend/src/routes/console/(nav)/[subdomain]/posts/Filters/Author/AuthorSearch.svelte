@@ -11,6 +11,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { getUsers, searchUsers } from '../../../settings/users/userActions';
 	import { postListFiltersStore } from '../../postListStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let users: User[] = $state([]);
@@ -56,7 +59,7 @@
 
 <TextInput
 	block
-	placeholder="Search author..."
+	placeholder={i18n.t('console.posts.filters.searchAuthorPlaceholder')}
 	autofocus
 	bind:value={search}
 	on:input={handleSearchInput}
@@ -68,7 +71,7 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if users.length === 0}
-		<IconMessage empty padding={35} message="No users found" iconSize={40} />
+		<IconMessage empty padding={35} message={i18n.t('console.common.noUsersFound')} iconSize={40} />
 	{:else}
 		{#each users as user (user.id)}
 			<ActionListItem
@@ -76,14 +79,18 @@
 				selected={$postListFiltersStore.author?.id === user.id}
 			>
 				{#snippet start()}
-					<Avatar src={user.picture_url} alt={user.variants[0]?.name || 'Unnamed'} size={20} />
+					<Avatar
+						src={user.picture_url}
+						alt={user.variants[0]?.name || i18n.t('console.common.unnamed')}
+						size={20}
+					/>
 				{/snippet}
 				<span class="text">
-					{user.variants[0]?.name || 'Unnamed'}
+					{user.variants[0]?.name || i18n.t('console.common.unnamed')}
 				</span>
 				{#snippet end()}
 					<Text light small>
-						{user.posts_count} post{user.posts_count === 1 ? '' : 's'}
+						{i18n.t('console.posts.filters.postsCount', { count: user.posts_count })}
 					</Text>
 				{/snippet}
 			</ActionListItem>

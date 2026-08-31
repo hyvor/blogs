@@ -1,0 +1,326 @@
+{
+    "console": {
+        "common": {
+            "loading": "Loading...",
+            "cancel": "Cancel",
+            "close": "Close",
+            "save": "Save",
+            "create": "Create",
+            "update": "Update",
+            "delete": "Delete",
+            "edit": "Edit",
+            "remove": "Remove",
+            "add": "Add",
+            "yes": "Yes",
+            "no": "No",
+            "any": "Any",
+            "all": "All",
+            "none": "None",
+            "copy": "Copy",
+            "copied": "Copied",
+            "search": "Search",
+            "searchPlaceholder": "Search...",
+            "loadMore": "Load more",
+            "unnamed": "Unnamed",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "name": "Name",
+            "slug": "Slug",
+            "status": "Status",
+            "actions": "Actions",
+            "noUsersFound": "No users found",
+            "noTagsFound": "No tags found",
+            "cannotBeEmpty": "{field} cannot be empty",
+            "created": "{field} created",
+            "updated": "{field} updated",
+            "deleted": "{field} deleted",
+            "failedToLoad": "Failed to load {field}",
+            "actionConfirm": {
+                "title": "Confirmation",
+                "content": "Are you sure you want to perform this action?"
+            }
+        },
+        "creatingTempBlog": "Creating your temporary blog...",
+        "failedToLoadBlog": "Unable to load blog",
+        "nav": {
+            "billing": "Billing",
+            "home": "Home",
+            "posts": "Posts",
+            "pages": "Pages",
+            "theme": "Theme",
+            "integrations": "Integrations",
+            "tools": "Tools",
+            "settings": "Settings",
+            "unnamedBlog": "Unnamed"
+        },
+        "home": {
+            "preview": "Preview"
+        },
+        "blogStatus": {
+            "banned": {
+                "title": "Blog Banned",
+                "description": "This blog has been blocked due to a violation of our Terms of Service. It will no longer be accessible on the hyvorblogs.io subdomain or a custom domain. If you think this was a mistake, please contact us at blogs.support@hyvor.com. You may cancel your subscription and delete the blog from settings."
+            },
+            "licenseExpired": {
+                "title": "License Expired",
+                "description": "Your license has expired. Please renew or upgrade to continue using the service.",
+                "cta": "Upgrade Now"
+            }
+        },
+        "temp": {
+            "notice": "This is a <strong>temporary blog</strong>. It will be deleted in <strong>{time}</strong>.",
+            "startLiveBlog": "Start a live blog now",
+            "featureDisabled": "This feature is disabled on temporary blogs."
+        },
+        "posts": {
+            "posts": "Posts",
+            "pages": "Pages",
+            "new": "New",
+            "untitled": "(Untitled)",
+            "seo": "SEO",
+            "links": "Links",
+            "creatingPost": "Creating post...",
+            "creatingPage": "Creating page...",
+            "postCreated": "Post created",
+            "pageCreated": "Page created",
+            "noPostsFound": "No posts found",
+            "noPagesFound": "No pages found",
+            "failedToLoadPosts": "Failed to load posts",
+            "failedToLoadPages": "Failed to load pages",
+            "failedToLoadMorePosts": "Failed to load more posts",
+            "publishedOn": "Published {date}",
+            "scheduledOn": "Scheduled {date}",
+            "createdOn": "Created {date}",
+            "updatedOn": "Updated {date}",
+            "clonePost": "Clone post",
+            "cloningPost": "Cloning post...",
+            "postCloned": "Post cloned successfully",
+            "failedToClonePost": "Failed to clone post",
+            "status": {
+                "draft": "Draft",
+                "published": "Published",
+                "scheduled": "Scheduled",
+                "featured": "Featured"
+            },
+            "langTag": {
+                "published": "{language} - Published",
+                "draft": "{language} - Draft",
+                "scheduled": "{language} - Scheduled"
+            },
+            "linkAnalysis": {
+                "outdated": "Link analysis outdated. Open the post to analyze again",
+                "broken": "Broken links found",
+                "redirect": "Redirect links found",
+                "healthy": "All links are healthy"
+            },
+            "filters": {
+                "statusLabel": "Status",
+                "authorLabel": "Author",
+                "tagLabel": "Tag",
+                "dateLabel": "Date",
+                "searchAuthorPlaceholder": "Search author...",
+                "searchTagPlaceholder": "Search tag...",
+                "postsCount": "{count} {count, plural, one {post} other {posts}}",
+                "dateOptions": {
+                    "today": "Today",
+                    "last_week": "Last week",
+                    "last_month": "Last month",
+                    "last_year": "Last year"
+                }
+            }
+        },
+        "tools": {
+            "history": "History",
+            "date": "Date",
+            "nav": {
+                "media": "Media Library",
+                "linkAnalysis": "Link Analysis",
+                "import": "Import",
+                "export": "Export"
+            },
+            "jobStatus": {
+                "pending": "Pending",
+                "completed": "Completed",
+                "failed": "Failed"
+            },
+            "export": {
+                "newExport": "New Export",
+                "format": "Export Format",
+                "file": "File",
+                "download": "Download",
+                "exportNow": "Export Now",
+                "exporting": "Exporting...",
+                "started": "Export started, you can track the progress in Export History.",
+                "failed": "Failed to start export. Please try again later.",
+                "noExports": "No exports found",
+                "confirm": {
+                    "title": "Export Data",
+                    "content": "You are about to export your data. This may take a few minutes. You can track the progress in Export History."
+                }
+            },
+            "import": {
+                "newImport": "New Import",
+                "noImports": "No imports found",
+                "nameUrl": "Name/URL",
+                "type": "Type",
+                "counts": "Counts",
+                "more": "More",
+                "details": "Import Details",
+                "startedAt": "Started At",
+                "options": "Options",
+                "importedCounts": "Imported Counts",
+                "postsCount": "{count} {count, plural, one {post} other {posts}}",
+                "importFrom": "Import From",
+                "importFromCaption": "Select a method to import data from",
+                "sitemapOption": "Sitemap (Live Website)",
+                "sitemapUrl": "Sitemap URL",
+                "sitemapUrlCaption": "XML or TXT sitemap that contains links to all your posts.",
+                "cssSelectors": "CSS Selectors",
+                "cssSelectorsCaption": "Add CSS selectors to find data in your HTML pages.",
+                "postContent": "Post Content",
+                "required": "Required",
+                "postTitle": "Post Title",
+                "postDescription": "Post Description",
+                "postContentExclude": "Post Content Exclude",
+                "postContentExcludeCaption": "To exclude elements from post content",
+                "postPublishedDate": "Post Published Date",
+                "importImages": "Import Images",
+                "importImagesCaption": "Copy images into your media library (recommended)",
+                "slugExclude": "Slug Exclude",
+                "slugExcludeCaption": "Exclude a part of the URL from the slug (ex: /blog/)",
+                "test": "Test",
+                "testCaption": "Test a page to make sure CSS selectors are working (recommended)",
+                "testUrlPlaceholder": "URL to test",
+                "enterTestUrl": "Please enter a URL to test",
+                "testNote": "Please test a few pages before importing the sitemap. If you need help, feel free to contact us.",
+                "importSitemap": "Import Sitemap",
+                "importingSitemap": "Importing sitemap...",
+                "sitemapImportStarted": "Sitemap import started. It may take a while.",
+                "testResults": "Test Results",
+                "url": "URL",
+                "title": "Title",
+                "description": "Description",
+                "content": "Content",
+                "publishedDate": "Published Date",
+                "featuredImage": "Featured Image"
+            },
+            "media": {
+                "upload": "Upload",
+                "uploading": "Uploading...",
+                "uploaded": "Uploaded",
+                "selectFile": "Please select a file",
+                "fileTooLarge": "File size is too large. Max file size is 50MB",
+                "noMedia": "No Media Found",
+                "fileType": "File type",
+                "choose": "Choose",
+                "clickToEdit": "Click to edit",
+                "deleting": "Deleting...",
+                "deleted": "Deleted",
+                "fileName": "File Name",
+                "updateFileName": "Update File Name",
+                "fileNameUpdated": "File name updated",
+                "extensionChangeWarning": "You are changing the file extension from <strong>{from}</strong> to <strong>{to}</strong>. Are you sure?",
+                "kebabNameWarning": "The name will be saved as <strong>{name}</strong>.",
+                "delete": {
+                    "title": "Delete Media",
+                    "content": "Are you sure you want to delete this media file? This action cannot be undone!",
+                    "confirm": "Yes, Delete"
+                },
+                "types": {
+                    "images": "Images",
+                    "videos": "Videos",
+                    "documents": "Documents",
+                    "audio": "Audio",
+                    "archives": "Archives",
+                    "custom": "Custom Extension",
+                    "customExtensions": "You choose"
+                }
+            },
+            "linkAnalysis": {
+                "upgradeText": "Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze all links in your blog and receive email reports.",
+                "overview": "Overview",
+                "links": "Links",
+                "stats": "Stats",
+                "statsNote": "Stats are based on the currently analyzed posts. Some posts may not be analyzed until a full-blog analysis is done.",
+                "seeLinks": "See Links",
+                "analyses": "Analyses",
+                "analysesNote": "A full-blog analysis is done every 2 weeks automatically (only published posts are analyzed). You can also start one manually.",
+                "startNewAnalysis": "Start New Analysis",
+                "startingAnalysis": "Starting new analysis...",
+                "analysisStarted": "New analysis started.",
+                "failedToStartAnalysis": "Failed to start new analysis.",
+                "failedToLoadChecks": "Failed to load link analysis checks.",
+                "failedToLoadLinks": "Failed to load links.",
+                "failedToRecheck": "Failed to recheck link.",
+                "failedToIgnore": "Failed to ignore link.",
+                "noAnalyses": "No Analyses Yet",
+                "noLinks": "No links found.",
+                "postsCountColumn": "No. Posts",
+                "post": "Post",
+                "link": "Link",
+                "noTitle": "(No title)",
+                "editInEditor": "Edit in Editor",
+                "recheck": "Recheck",
+                "ignoreLink": "Ignore this link",
+                "status": {
+                    "ok": "OK",
+                    "redirect": "Redirect",
+                    "broken": "Broken",
+                    "risky": "Risky",
+                    "ignored": "Ignored",
+                    "error": "Error"
+                },
+                "tooltip": {
+                    "ok": "Link is OK",
+                    "okStatus": "OK - HTTP status {status}",
+                    "headingIdFound": "Heading ID found",
+                    "headingIdNotFound": "Heading ID not found",
+                    "redirect": "Redirecting to another page",
+                    "redirectStatus": "Redirect status {status}",
+                    "broken": "Link is broken",
+                    "brokenConnection": "Broken - Connection issue",
+                    "brokenStatus": "Broken - HTTP status {status}",
+                    "risky": "Link is risky, we recommend manually checking it",
+                    "riskyStatus": "Link is risky, we recommend manually checking it - HTTP status {status}",
+                    "ignored": "Link Ignored",
+                    "ignoredWithReason": "Link Ignored ({reason})",
+                    "error": "Error (on our side)"
+                },
+                "ignoreReason": {
+                    "known_firewall": "Known firewall",
+                    "robots_txt": "Blocked by robots.txt",
+                    "internal_error": "Internal error"
+                },
+                "settings": {
+                    "automated": "Automated Link Analysis",
+                    "automatedCaption": "Run a full-blog link analysis every 2 weeks automatically.",
+                    "emailReports": "Send Email Reports",
+                    "emailReportsCaption": "Send an email report after a full-blog analysis.",
+                    "never": "Never",
+                    "whenBroken": "When Broken Links Found",
+                    "always": "Always"
+                }
+            }
+        },
+        "settings": {
+            "nav": {
+                "general": "General",
+                "users": "Users",
+                "tags": "Tags",
+                "languages": "Languages",
+                "hosting": "Hosting",
+                "seo": "SEO",
+                "colorMode": "Light & Dark Modes",
+                "postContent": "Post Content",
+                "navigation": "Navigation Links",
+                "redirects": "Redirects",
+                "routes": "Routes",
+                "comments": "Comments & Newsletter",
+                "code": "Custom Code",
+                "apiKeys": "API Keys",
+                "webhooks": "Webhooks",
+                "danger": "Danger Zone"
+            }
+        }
+    }
+}

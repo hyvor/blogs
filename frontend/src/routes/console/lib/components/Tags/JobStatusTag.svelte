@@ -1,6 +1,16 @@
 <script lang="ts">
 	import { Tag } from '@hyvor/design/components';
 	import type { JobStatus } from '../../types';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
+
+	const STATUS_KEYS = {
+		pending: 'console.tools.jobStatus.pending',
+		completed: 'console.tools.jobStatus.completed',
+		failed: 'console.tools.jobStatus.failed'
+	} as const;
+
 	interface Props {
 		status: JobStatus;
 	}
@@ -15,5 +25,5 @@
 </script>
 
 <Tag {color} size="small">
-	{status.toUpperCase()}
+	{i18n.t(STATUS_KEYS[status]).toUpperCase()}
 </Tag>

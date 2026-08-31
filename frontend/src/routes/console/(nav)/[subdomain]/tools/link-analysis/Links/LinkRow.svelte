@@ -19,6 +19,9 @@
 	import { callIgnoreLink, callLinkAnalysisApi } from '../linkAnalysisActions';
 	import { createEventDispatcher } from 'svelte';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		link: LinkAnalysisLink;
@@ -41,7 +44,7 @@
 				dispatch('update', res[0]);
 			})
 			.catch((e) => {
-				toast.error(e.message || 'Failed to recheck link.');
+				toast.error(e.message || i18n.t('console.tools.linkAnalysis.failedToRecheck'));
 			})
 			.finally(() => {
 				isRechecking = false;
@@ -58,7 +61,7 @@
 				dispatch('update', link);
 			})
 			.catch((e) => {
-				toast.error(e.message || 'Failed to ignore link.');
+				toast.error(e.message || i18n.t('console.tools.linkAnalysis.failedToIgnore'));
 			})
 			.finally(() => {
 				isRechecking = false;
@@ -69,7 +72,7 @@
 <TableRow>
 	<div>
 		<a href={link.post_variant_url} target="_blank" class="post-url">
-			{link.post_variant_title || '(No title)'}
+			{link.post_variant_title || i18n.t('console.tools.linkAnalysis.noTitle')}
 		</a>
 		{#if $languagesStore.length > 1 && language}
 			<div class="language-tag">
@@ -96,7 +99,7 @@
 	</div>
 
 	<div class="actions">
-		<Tooltip text="Edit in Editor">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.editInEditor')}>
 			<IconButton
 				as="a"
 				href={postEditUrl}
@@ -109,7 +112,7 @@
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Recheck">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.recheck')}>
 			<IconButton
 				on:click={handleRecheck}
 				size="small"
@@ -121,7 +124,7 @@
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Ignore this link">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.ignoreLink')}>
 			<IconButton
 				on:click={handleIgnore}
 				color={link.ignored ? 'accent' : 'gray'}

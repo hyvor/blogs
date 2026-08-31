@@ -3,6 +3,10 @@
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { isTempStore } from '../../../lib/temp';
 	import { Button } from '@hyvor/design/components';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let timeRemaining = $state(0);
 
@@ -49,8 +53,10 @@
 {#if $isTempStore}
 	<div class="notice">
 		<div>
-			This is a <strong>temporary blog</strong>. It will be deleted in
-			<strong>{timeRemainingFormatted}</strong>.
+			<T
+				key="console.temp.notice"
+				params={{ strong: { element: 'strong' }, time: timeRemainingFormatted }}
+			/>
 			<Button
 				color="red"
 				variant="fill-light"
@@ -60,7 +66,7 @@
 				href="/console?signup"
 				data-sveltekit-reload
 			>
-				Start a live blog now
+				{i18n.t('console.temp.startLiveBlog')}
 			</Button>
 		</div>
 	</div>

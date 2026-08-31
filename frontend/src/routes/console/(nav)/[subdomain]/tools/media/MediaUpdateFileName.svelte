@@ -4,6 +4,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Media } from '../../../../lib/types';
 	import { toKebabCase } from './mediaUtils';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let loading = $state(false);
 
@@ -13,7 +17,7 @@
 		loading = true;
 		updateMedia(media.id, { name })
 			.then((res) => {
-				toast.success('File name updated');
+				toast.success(i18n.t('console.tools.media.fileNameUpdated'));
 				dispatch('update', res);
 				show = false;
 			})
@@ -46,13 +50,13 @@
 	<Modal
 		bind:show
 		closeOnEscape={false}
-		title="Update File Name"
+		title={i18n.t('console.tools.media.updateFileName')}
 		footer={{
 			cancel: {
-				text: 'Cancel'
+				text: i18n.t('console.common.cancel')
 			},
 			confirm: {
-				text: 'Update'
+				text: i18n.t('console.common.update')
 			}
 		}}
 		on:cancel={() => (show = false)}
@@ -63,7 +67,7 @@
 			<TextInput
 				bind:value={name}
 				autofocus
-				label="File Name"
+				label={i18n.t('console.tools.media.fileName')}
 				on:keyup={(e) => {
 					if (e.key === 'Enter') {
 						handleChangeName();
@@ -72,13 +76,18 @@
 			/>
 			{#if ext !== startExt}
 				<Validation state="warning">
-					You are changing the file extension from <strong>{startExt}</strong> to
-					<strong>{ext}</strong>. Are you sure?
+					<T
+						key="console.tools.media.extensionChangeWarning"
+						params={{ strong: { element: 'strong' }, from: startExt, to: ext }}
+					/>
 				</Validation>
 			{/if}
 			{#if name !== kebabName}
 				<Validation state="warning">
-					The name will be saved as <strong>{kebabName}</strong>.
+					<T
+						key="console.tools.media.kebabNameWarning"
+						params={{ strong: { element: 'strong' }, name: kebabName }}
+					/>
 				</Validation>
 			{/if}
 		</FormControl>

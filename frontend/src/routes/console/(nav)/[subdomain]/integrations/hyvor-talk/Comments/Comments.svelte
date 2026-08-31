@@ -4,6 +4,10 @@
 	import AddCommentsEmbedCode from './AddCommentsEmbedCode.svelte';
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		websiteId: number;
@@ -32,34 +36,54 @@
 <SplitControl column>
 	{#snippet label()}
 		<Label>
-			Comments <ConfiguredTag
+			{i18n.t('console.integrations.hyvorTalk.comments.label')}
+			<ConfiguredTag
 				configured={$blogStore.comments_code?.includes('<hyvor-talk-comments') || false}
 			/>
 		</Label>
 	{/snippet}
 
 	<p style="margin-top:0;">
-		Add the comments code to <Link
-			style="display:inline;"
-			underline
-			href={consoleUrlWithBlog('/settings/comments')}>Comments Embed Code</Link
-		> setting to load the Hyvor Talk comments on all posts.
+		<T
+			key="console.integrations.hyvorTalk.comments.description"
+			params={{
+				link: {
+					element: 'a',
+					props: {
+						href: consoleUrlWithBlog('/settings/comments'),
+						class: 'hds-link'
+					}
+				}
+			}}
+		/>
 	</p>
 
 	<CodeBlock {code} />
 
 	<div>
-		<Button size="small" on:click={() => (adding = true)}>Add to "Comments Embed Code"</Button>
+		<Button size="small" on:click={() => (adding = true)}>
+			{i18n.t('console.integrations.hyvorTalk.comments.addTo')}
+		</Button>
 
-		<Button size="small" color="input" on:click={() => handleCopy()}>Copy code</Button>
+		<Button size="small" color="input" on:click={() => handleCopy()}>
+			{i18n.t('console.integrations.hyvorTalk.copyCode')}
+		</Button>
 	</div>
 
 	<p>
-		You can also add it directly into your theme files. Feel free to customize the code (see <Link
-			underline
-			href="https://talk.hyvor.com/docs/comments"
-			target="_blank">Hyvor Talk docs</Link
-		>).
+		<T
+			key="console.integrations.hyvorTalk.themeFilesNote"
+			params={{
+				link: {
+					element: 'a',
+					props: {
+						href: 'https://talk.hyvor.com/docs/comments',
+						target: '_blank',
+						class: 'hds-link'
+					}
+				}
+			}}
+		/>
 	</p>
 </SplitControl>
 

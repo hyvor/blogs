@@ -5,6 +5,9 @@
 
 	import { blogStore } from '../../lib/stores/blogStore';
 	import { IconButton, Link, Loader } from '@hyvor/design/components';
+	import { getI18n } from '../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let type: 'laptop' | 'tablet' = $state('laptop');
 	let isLoading = $state(true);
@@ -44,7 +47,7 @@
 			style:height={type === 'laptop' ? '100%' : 740 + 'px'}
 			style:display={isLoading ? 'none' : 'block'}
 			onload={() => (isLoading = false)}
-			title="Preview"
+			title={i18n.t('console.home.preview')}
 		></iframe>
 	</div>
 </div>

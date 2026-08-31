@@ -2,6 +2,10 @@
 	import { IconMessage } from '@hyvor/design/components';
 	import { isTempStore } from '../../../lib/temp';
 	import IconLock from '@hyvor/icons/IconLock';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -16,7 +20,7 @@
 		<div class="temp-notice">
 			<div class="overlay"></div>
 			<IconMessage
-				message="This feature is disabled on temporary blogs."
+				message={i18n.t('console.temp.featureDisabled')}
 				icon={IconLock}
 				iconSize={50}
 			/>

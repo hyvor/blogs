@@ -7,6 +7,9 @@
 	import { primaryLanguageStore } from '../../../../../lib/stores/languagesStore';
 	import AuthorSearch from './AuthorSearch.svelte';
 	import type { User } from '../../../../../lib/types';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDropdown = $state(false);
 
@@ -26,13 +29,13 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Author</Text>
+				<Text bold>{i18n.t('console.posts.filters.authorLabel')}</Text>
 			{/snippet}
 
 			<span class="text">
 				{$postListFiltersStore.author
-					? $postListFiltersStore.author.variants[0]?.name || 'Unnamed'
-					: 'Any'}
+					? $postListFiltersStore.author.variants[0]?.name || i18n.t('console.common.unnamed')
+					: i18n.t('console.common.any')}
 			</span>
 
 			{#if $postListFiltersStore.author}

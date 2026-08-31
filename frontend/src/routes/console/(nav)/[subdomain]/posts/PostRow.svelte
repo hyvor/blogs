@@ -24,12 +24,15 @@
 	import TagName from '../settings/tags/TagName.svelte';
 	import { clonePost } from './postActions';
 	import { goto } from '$app/navigation';
+	import { getI18n } from '../../../lib/i18n';
 
 	interface Props {
 		post: Post;
 	}
 
 	let { post }: Props = $props();
+
+	const i18n = getI18n();
 
 	let variant = $derived(post.variants[0]!);
 	let showDropdown = $state(false);
@@ -51,15 +54,15 @@
 		showDropdown = false;
 		isCloning = true;
 
-		const toastId = toast.loading('Cloning post...');
+		const toastId = toast.loading(i18n.t('console.posts.cloningPost'));
 
 		clonePost(post.id)
 			.then((clonedPost) => {
-				toast.success('Post cloned successfully', { id: toastId });
+				toast.success(i18n.t('console.posts.postCloned'), { id: toastId });
 				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}`));
 			})
 			.catch((error) => {
-				toast.error(error.message || 'Failed to clone post', { id: toastId });
+				toast.error(error.message || i18n.t('console.posts.failedToClonePost'), { id: toastId });
 			})
 			.finally(() => {
 				isCloning = false;
@@ -69,7 +72,7 @@
 
 <a class="post-list-item" href={consoleUrlWithBlog(`/posts/${post.id}`)}>
 	<div>
-		<div class="post-title">{variant?.title || '(Untitled)'}</div>
+		<div class="post-title">{variant?.title || i18n.t('console.posts.untitled')}</div>
 
 		<div class="post-slug">
 			{#if variant?.slug && variant.status === 'published'}
@@ -83,16 +86,18 @@
 		<div class="post-data">
 			<div class="post-date">
 				{#if variant?.status === 'published'}
-					Published {publishedAtDate}
+					{i18n.t('console.posts.publishedOn', { date: publishedAtDate })}
 				{:else if variant?.status === 'scheduled'}
-					Scheduled {publishedAtDate}
+					{i18n.t('console.posts.scheduledOn', { date: publishedAtDate })}
 				{:else}
-					Created {createdAtDate}
+					{i18n.t('console.posts.createdOn', { date: createdAtDate })}
 				{/if}
 			</div>
 			{#if variant?.status === 'published' && post.updated_at !== post.published_at}
 				<div class="post-date">
-					Updated {dayjs.unix(post.updated_at).format('MMM D, YYYY')}
+					{i18n.t('console.posts.updatedOn', {
+						date: dayjs.unix(post.updated_at).format('MMM D, YYYY')
+					})}
 				</div>
 			{/if}
 		</div>
@@ -110,7 +115,7 @@
 				<div class="post-author">
 					<Avatar src={author.picture_url || undefined} size="small" />
 					<span class="post-author-name">
-						{author.variants[0]?.name || 'Unnamed'}
+						{author.variants[0]?.name || i18n.t('console.common.unnamed')}
 					</span>
 				</div>
 			{/each}
@@ -131,7 +136,7 @@
 
 	<div class="post-health-wrap">
 		<div class="seo">
-			<span class="name">SEO</span>
+			<span class="name">{i18n.t('console.posts.seo')}</span>
 			<!-- <SeoScoreTag
                 score={variant?.average} 
                 percentage={true} 
@@ -139,7 +144,7 @@
 			<SeoAnalysisTag postVariant={variant} />
 		</div>
 		<div class="links">
-			<span class="name">Links</span>
+			<span class="name">{i18n.t('console.posts.links')}</span>
 			<LinkAnalysisTag postVariant={variant} />
 		</div>
 	</div>
@@ -164,7 +169,9 @@
 
 				{#snippet content()}
 					<ActionList>
-						<ActionListItem on:click={handleClone} disabled={isCloning}>Clone post</ActionListItem>
+						<ActionListItem on:click={handleClone} disabled={isCloning}>
+							{i18n.t('console.posts.clonePost')}
+						</ActionListItem>
 					</ActionList>
 				{/snippet}
 			</Dropdown>
