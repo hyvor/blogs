@@ -36,7 +36,7 @@ class AiController extends AbstractController
 
     #[Route('/ai/agent', methods: ['POST'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function agent(
+    public function callAgent(
         #[MapRequestPayload] AgentPromptInput $input
     ): StreamedResponse
     {
@@ -76,7 +76,7 @@ class AiController extends AbstractController
 
     #[Route('/ai/conversations', methods: ['GET'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function conversations(
+    public function getConversations(
         #[MapQueryString] GetAiConversationsInput $input,
     ): JsonResponse
     {
@@ -97,7 +97,7 @@ class AiController extends AbstractController
 
     #[Route('/ai/conversation/{id}', methods: ['GET'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function conversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
+    public function getConversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
     {
         return new JsonResponse([
             'id' => $conversation->getId(),

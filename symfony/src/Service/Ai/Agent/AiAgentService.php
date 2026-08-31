@@ -8,13 +8,13 @@ use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
 use App\Service\Ai\Agent\Tool\Query\QueryTool;
 use App\Service\Ai\AiPlatformService;
+use App\Service\Ai\AiProvider;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
-use Psr\Log\LoggerInterface;
 use Symfony\AI\Agent\Agent;
 use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
@@ -23,6 +23,14 @@ use Symfony\AI\Platform\Message\MessageBag;
 
 class AiAgentService
 {
+
+    /**
+     * assuming one blog is 2000 words, taking prompts into account, this would allow around 10 blog posts to be fully
+     * processed. Our hard limit is 10 different posts to be edited per message.
+     * Agent is not going to fully edit posts, so this should be a generous limit
+     * that would allow for thinking, tool calls, etc.
+     */
+    private const int MAX_OUTPUT_TOKENS = 20_000; // allowing for thinking
 
     private const string SYSTEM_PROMPT_FOR_POST = <<<PROMPT
     You are a helpful writing assistant for the blog '{blog_name}' running on Hyvor Blogs blogging platform.
@@ -128,14 +136,12 @@ class AiAgentService
             // $this->logger,
         );
         $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
-        $toolProcessor = new AgentProcessor($toolbox);
 
         $agent = new Agent(
             $platform,
             $provider->model(),
-            inputProcessors: [$toolProcessor],
-            outputProcessors: [$toolProcessor],
-            name: 'hyvor-blogs-agent'
+            name: 'hyvor-blogs-agent',
+            toolbox: $toolbox
         );
 
         $systemPrompt = $this->getSystemPrompt($blog, $postVariant);
@@ -146,13 +152,32 @@ class AiAgentService
         }
         $messages->add(Message::ofUser($prompt));
 
-        $callResult = $agent->call($messages, [
-            'stream' => true,
-            'max_tokens' => 5000,
-            // 'reasoning' => ['summary' => 'auto'],
-        ]);
+        $callResult = $agent->call($messages, $this->getOptionsFromProvider($provider));
 
         return new AgentCallResult($callResult, $documentOpsTool, $provider->model());
+    }
+
+    // unfortunately, different provides have different options :(
+    private function getOptionsFromProvider(AiProvider $provider): array
+    {
+        return match ($provider) {
+            AiProvider::OPENAI => [
+                'stream' => true,
+                'max_output_tokens' => self::MAX_OUTPUT_TOKENS,
+                'reasoning' => [
+                    'summary' => 'auto',
+                ],
+            ],
+            AiProvider::ANTHROPIC => [
+                'stream' => true,
+                'max_tokens' => self::MAX_OUTPUT_TOKENS,
+                // adaptive is recommended
+                // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
+                'thinking' => [
+                    'type' => 'adaptive'
+                ],
+            ],
+        };
     }
 
 }

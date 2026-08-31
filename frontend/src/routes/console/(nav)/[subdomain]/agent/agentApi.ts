@@ -6,7 +6,7 @@ import type { PostVariant } from '../../../lib/types';
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
-	| { type: 'conversation_started'; conversation_id: number; title: string | null }
+	| { type: 'conversation_created'; conversation_id: number; title: string | null }
 	| ({ type: 'post_variant' } & Record<string, unknown>)
 	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }

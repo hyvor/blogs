@@ -15,7 +15,7 @@ enum AiProvider: string
     {
         return match ($this) {
             self::MISTRAL => 'mistral-large-latest',
-            self::OPENAI => 'gpt-4o',
+            self::OPENAI => 'gpt-5.6-luna',
             self::ANTHROPIC => 'claude-sonnet-5',
         };
     }

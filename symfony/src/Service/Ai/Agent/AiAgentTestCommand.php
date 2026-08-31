@@ -26,7 +26,7 @@ class AiAgentTestCommand
     public function __invoke(): int
     {
         $meta = new BlogMeta();
-        $meta->ai_provider = AiProvider::ANTHROPIC;
+        $meta->ai_provider = AiProvider::OPENAI;
         $blog = BlogFactory::createOne([
             'meta' => $meta
         ]);
@@ -49,64 +49,64 @@ class AiAgentTestCommand
                         ],
                     ]
                 ],
-//                [
-//                    'type' => 'paragraph',
-//                    'content' => [
-//                        [
-//                            'type' => 'text',
-//                            'text' => 'Hello, world!'
-//                        ],
-//                    ]
-//                ],
-//                [
-//                    'type' => 'paragraph',
-//                    'content' => [
-//                        [
-//                            'type' => 'text',
-//                            'text' => 'Paris is the capital of Germany'
-//                        ],
-//                    ]
-//                ],
-//                [
-//                    'type' => 'bullet_list',
-//                    'content' => [
-//                        [
-//                            'type' => 'list_item',
-//                            'content' => [
-//                                [
-//                                    'type' => 'paragraph',
-//                                    'content' => [
-//                                        [
-//                                            'type' => 'text',
-//                                            'text' => 'Eggs'
-//                                        ],
-//                                    ]
-//                                ]
-//                            ]
-//                        ],
-//                        [
-//                            'type' => 'list_item',
-//                            'content' => [
-//                                [
-//                                    'type' => 'paragraph',
-//                                    'content' => [
-//                                        [
-//                                            'type' => 'text',
-//                                            'text' => 'Milk'
-//                                        ],
-//                                    ]
-//                                ]
-//                            ]
-//                        ]
-//                    ]
-//                ]
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Hello, world!'
+                        ],
+                    ]
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Paris is the capital of Germany'
+                        ],
+                    ]
+                ],
+                [
+                    'type' => 'bullet_list',
+                    'content' => [
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => 'Eggs'
+                                        ],
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => 'Milk'
+                                        ],
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
 
         $postVariant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
-            'content' => json_encode($content),
+            'content_unsaved' => json_encode($content),
             'status' => PostVariantStatus::DRAFT
         ]);
 
@@ -124,7 +124,10 @@ class AiAgentTestCommand
                 echo $delta->getText();
             } elseif ($delta instanceof Delta\ThinkingDelta) {
                 $output .= '[Thinking...] ' . $delta->getThinking();
-                echo '[Thinking...] ' . $delta->getThinking();
+                echo '[Thinking...](' . $delta->getThinking() . ')';
+            } elseif ($delta instanceof Delta\ThinkingComplete) {
+                $output .= '[Thinking complete]' . $delta->getThinking();
+                echo '[Thinking complete](' . $delta->getThinking() . ')';
             } else if ($delta instanceof Delta\ToolCallStart) {
                 $output .= '[Tool call: ' . $delta->getName() . ']';
                 echo '[Tool call: ' . $delta->getName() . ']';

@@ -8,12 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-/**
- * Conversations older than the retention period are hard-deleted. ai_messages and
- * ai_message_chunks both have ON DELETE CASCADE foreign keys back to ai_conversations
- * (see Version20260501000000), so deleting the conversation row is enough to remove its
- * messages and events too - no need to delete them separately here.
- */
 #[AsMessageHandler]
 class DeleteOldAiConversationsMessageHandler
 {

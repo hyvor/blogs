@@ -177,7 +177,7 @@
 
 		try {
 			await callAgent(userPrompt, postVariantId, conversationId, (event) => {
-				if (event.type === 'conversation_started') {
+				if (event.type === 'conversation_created') {
 					const isNewConversation = conversationId === null;
 					conversationId = event.conversation_id;
 					lastLoadedConversationId = event.conversation_id;

@@ -2,7 +2,6 @@
 
 namespace App\Service\Ai\Agent;
 
-use App\Api\Console\Object\PostVariantObject;
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageChunk;
@@ -12,10 +11,9 @@ use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Event\AgentErrorEvent;
 use App\Service\Ai\Agent\Event\AgentEvent;
-use App\Service\Ai\Agent\Event\ConversationStartedEvent;
 use App\Service\Ai\Agent\Event\DocumentChangeEvent;
 use App\Service\Ai\Agent\Event\DoneEvent;
-use App\Service\Ai\Agent\Event\PostVariantSelectedEvent;
+use App\Service\Ai\Agent\Event\StreamOnly\ConversationCreatedEvent;
 use App\Service\Ai\Agent\Event\TextEvent;
 use App\Service\Ai\Agent\Event\ThinkingDoneEvent;
 use App\Service\Ai\Agent\Event\ThinkingEvent;
@@ -57,9 +55,7 @@ class AiAgentConversationService
     }
 
     /**
-     * @return iterable<array<string, mixed>> SSE-ready event payloads. These are built from
-     * the same typed AgentEvent classes that get persisted, so a conversation reconstructed
-     * from the database later can be sent to the frontend in the exact same shape.
+     * @return iterable<array<string, mixed>> SSE-ready event payloads.
      */
     public function streamPrompt(
         Blog $blog,
@@ -69,6 +65,9 @@ class AiAgentConversationService
     ): iterable
     {
         if ($existingConversation !== null) {
+            $existingConversation->setUpdatedAt($this->now());
+            $this->em->flush();
+
             $conversation = $existingConversation;
             $history = $this->aiAgentHistoryService->buildMessageHistory($conversation);
         } else {
@@ -80,14 +79,8 @@ class AiAgentConversationService
             $this->em->persist($conversation);
             $this->em->flush();
 
+            yield $this->toSseArray(new ConversationCreatedEvent($conversation->getId(), $conversation->getTitle()));
             $history = null;
-        }
-
-        yield $this->toSseArray(new ConversationStartedEvent($conversation->getId(), $conversation->getTitle()));
-
-        if ($postVariant !== null) {
-            $postVariantObject = new PostVariantObject($postVariant, $this->permalinkService);
-            yield $this->toSseArray(new PostVariantSelectedEvent($postVariantObject));
         }
 
         $userMessage = $this->createMessage($conversation, AiMessageRole::USER, $prompt);
