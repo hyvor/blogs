@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Records that a blog wants to set up (or switch to) an auto (Let's Encrypt) TLS custom domain,
  * but DNS ownership has not been verified and the certificate has not been issued yet.
  * Promoted into a CustomDomain row (and deleted) once verification succeeds.
+ * a blog can only have one intent at a time.
  */
 #[ORM\Entity(repositoryClass: CustomDomainIntentRepository::class)]
 #[ORM\Table(name: 'custom_domain_intents')]

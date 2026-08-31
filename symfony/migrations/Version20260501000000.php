@@ -79,7 +79,6 @@ final class Version20260501000000 extends AbstractMigration
             );
             SQL
         );
-        $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
 
         $this->addSql(
             <<<SQL
@@ -92,7 +91,6 @@ final class Version20260501000000 extends AbstractMigration
             );
             SQL
         );
-        $this->addSql("CREATE INDEX idx_custom_domain_intents_blog_id ON custom_domain_intents(blog_id)");
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');

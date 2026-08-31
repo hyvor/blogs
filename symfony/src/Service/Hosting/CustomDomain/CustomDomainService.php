@@ -53,7 +53,7 @@ class CustomDomainService
 
     public function getBlogCustomDomain(Blog $blog): ?CustomDomain
     {
-        return $this->em->getRepository(CustomDomain::class)->findOneBy(['blog' => $blog]);
+        return $blog->getCustomDomain(); // other way should work as well
     }
 
     public function getBlogByCustomDomain(string $domain): ?Blog
@@ -61,47 +61,6 @@ class CustomDomainService
         return $this->getCustomDomain($domain)?->getBlog();
     }
 
-    public function getCustomDomainIntent(string $domain): ?CustomDomainIntent
-    {
-        return $this->em->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => $domain]);
-    }
-
-    public function getBlogCustomDomainIntent(Blog $blog): ?CustomDomainIntent
-    {
-        return $this->em->getRepository(CustomDomainIntent::class)->findOneBy(['blog' => $blog]);
-    }
-
-    /**
-     * Records that the blog wants to set up (or switch to) an auto-TLS custom domain.
-     * DNS ownership is not verified yet - see promoteIntentToCustomDomain(). There can only be
-     * one intent per blog, so calling this again (e.g. to change the domain) simply overwrites it.
-     */
-    public function createOrUpdateIntent(Blog $blog, string $domain): CustomDomainIntent
-    {
-        $intent = $this->getBlogCustomDomainIntent($blog);
-
-        if ($intent === null) {
-            $intent = new CustomDomainIntent();
-            $intent->setBlog($blog);
-            $intent->setCreatedAt($this->now());
-        }
-
-        $intent->setDomain($domain);
-        $intent->setUpdatedAt($this->now());
-
-        $this->em->persist($intent);
-        $this->em->flush();
-
-        return $intent;
-    }
-
-    public function deleteIntent(CustomDomainIntent $intent, bool $flush = true): void
-    {
-        $this->em->remove($intent);
-        if ($flush) {
-            $this->em->flush();
-        }
-    }
 
     /**
      * Sets (creating or replacing) the blog's custom domain to a bring-your-own-certificate

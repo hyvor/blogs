@@ -16,6 +16,7 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Service\AppConfig;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
 use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
@@ -32,6 +33,7 @@ class HostingController extends AbstractController
 {
     public function __construct(
         private CustomDomainService          $customDomainService,
+        private CustomDomainIntentService $customDomainIntentService,
         private HostingChangeService         $hostingChangeService,
         private ConsoleApiAuthorizationListener $authorizationListener,
         private AppConfig $appConfig,
@@ -52,7 +54,7 @@ class HostingController extends AbstractController
     private function getHostingInfoData(Blog $blog): array
     {
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
-        $intent = $this->customDomainService->getBlogCustomDomainIntent($blog);
+        $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
         $hostingChange = $this->hostingChangeService->getLatestChange($blog);
 
         return [
@@ -113,7 +115,7 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('This custom domain is already in use by another blog');
         }
 
-        $existingIntent = $this->customDomainService->getCustomDomainIntent($domain);
+        $existingIntent = $this->customDomainIntentService->getCustomDomainIntent($domain);
         if ($existingIntent !== null && $existingIntent->getBlog()->getId() !== $blog->getId()) {
             throw new BadRequestHttpException('This custom domain is already in use by another blog');
         }
@@ -128,7 +130,7 @@ class HostingController extends AbstractController
 
         if (
             $this->customDomainService->getBlogCustomDomain($blog) !== null ||
-            $this->customDomainService->getBlogCustomDomainIntent($blog) !== null
+            $this->customDomainIntentService->getBlogCustomDomainIntent($blog) !== null
         ) {
             throw new BadRequestHttpException('A custom domain is already set up or pending for this blog. Use PATCH to change it.');
         }
@@ -176,7 +178,7 @@ class HostingController extends AbstractController
             ]);
         }
 
-        $intent = $this->customDomainService->createOrUpdateIntent($blog, $input->domain);
+        $intent = $this->customDomainIntentService->createIntent($blog, $input->domain);
 
         return new JsonResponse([
             'custom_domain' => null,
@@ -193,7 +195,7 @@ class HostingController extends AbstractController
         $blog = $this->authorizationListener->getBlog();
 
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
-        $intent = $this->customDomainService->getBlogCustomDomainIntent($blog);
+        $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
 
         if ($customDomain === null && $intent === null) {
             throw new BadRequestHttpException('Please set up a custom domain first before updating it');
@@ -246,7 +248,7 @@ class HostingController extends AbstractController
 
             if ($intent !== null) {
                 // switching to (or reconfirming) custom TLS supersedes any pending auto-TLS setup
-                $this->customDomainService->deleteIntent($intent);
+                $this->customDomainIntentService->deleteIntent($intent);
             }
 
             if ($needsHostingChange) {
@@ -265,7 +267,7 @@ class HostingController extends AbstractController
         }
 
         // target provider is auto: DNS ownership has to be (re-)verified before it can go live
-        $intent = $this->customDomainService->createOrUpdateIntent($blog, $targetDomain);
+        $intent = $this->customDomainIntentService->createIntent($blog, $targetDomain);
 
         return new JsonResponse([
             'custom_domain' => $customDomain ? new CustomDomainObject($customDomain) : null,
@@ -279,13 +281,13 @@ class HostingController extends AbstractController
     public function deleteCustomDomain(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        $intent = $this->customDomainService->getBlogCustomDomainIntent($blog);
+        $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
 
         if ($intent === null) {
             throw new BadRequestHttpException('There is no pending custom domain setup to abort. Switch to subdomain hosting instead to remove an active custom domain.');
         }
 
-        $this->customDomainService->deleteIntent($intent);
+        $this->customDomainIntentService->deleteIntent($intent);
 
         return new JsonResponse();
     }
@@ -295,7 +297,7 @@ class HostingController extends AbstractController
     public function verifyCustomDomainIntent(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
-        $intent = $this->customDomainService->getBlogCustomDomainIntent($blog);
+        $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
 
         if ($intent === null) {
             throw new BadRequestHttpException('There is no pending custom domain setup to verify');
