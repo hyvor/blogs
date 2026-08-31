@@ -11,6 +11,7 @@ readonly class AgentCallResult
     public function __construct(
         private ResultInterface $result,
         private DocumentOpsTool $documentOpsTool,
+        private string $model,
     ) {}
 
     public function getResult(): ResultInterface
@@ -21,6 +22,11 @@ readonly class AgentCallResult
     public function getDocumentOpsTool(): DocumentOpsTool
     {
         return $this->documentOpsTool;
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
     }
 
 }

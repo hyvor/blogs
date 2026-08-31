@@ -6,7 +6,7 @@ import type { PostVariant } from '../../../lib/types';
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
-	| { type: 'conversation_started'; conversation_id: number }
+	| { type: 'conversation_started'; conversation_id: number; title: string | null }
 	| ({ type: 'post_variant' } & Record<string, unknown>)
 	| { type: 'thinking_started' }
 	| { type: 'thinking'; content: string }
@@ -42,20 +42,32 @@ export interface DocumentChange {
 export interface AgentConversationListItem {
 	id: number;
 	created_at: number;
+	updated_at: number;
 	title: string | null;
-	user_id: number | null;
-}
-
-export interface AgentConversationUser {
-	id: number;
-	name: string;
-	picture_url: string | null;
-	username: string | null;
 }
 
 export interface AgentConversationsResponse {
 	conversations: AgentConversationListItem[];
-	users: Record<string, AgentConversationUser>;
+	has_more: boolean;
+}
+
+export type AgentTurn =
+	| { role: 'user'; content: string }
+	| {
+			role: 'assistant';
+			events: AgentEvent[];
+			model: string | null;
+			input_tokens: number | null;
+			output_tokens: number | null;
+			total_tokens: number | null;
+	  };
+
+export interface AgentConversationDetail {
+	id: number;
+	title: string | null;
+	created_at: number;
+	updated_at: number;
+	turns: AgentTurn[];
 }
 
 // Persists a document change directly (no collab session involved) - used by the whole-blog
@@ -72,10 +84,22 @@ export function saveAgentDocumentChange(postId: number, languageId: number, cont
 	});
 }
 
-export function getAgentConversations(limit = 50, offset = 0) {
+export function getAgentConversations(limit = 25, offset = 0) {
 	return consoleApi.get<AgentConversationsResponse>({
 		endpoint: '/ai/conversations',
 		data: { limit, offset }
+	});
+}
+
+export function getAgentConversation(conversationId: number) {
+	return consoleApi.get<AgentConversationDetail>({
+		endpoint: `/ai/conversation/${conversationId}`
+	});
+}
+
+export function deleteAgentConversation(conversationId: number) {
+	return consoleApi.delete<void>({
+		endpoint: `/ai/conversation/${conversationId}`
 	});
 }
 

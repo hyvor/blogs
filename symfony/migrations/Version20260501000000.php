@@ -203,9 +203,10 @@ final class Version20260501000000 extends AbstractMigration
                 conversation_id BIGINT NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
                 role ai_message_role NOT NULL,
                 content TEXT NOT NULL,
-                prompt_tokens INTEGER,
-                completion_tokens INTEGER,
-                total_tokens INTEGER
+                input_tokens INTEGER,
+                output_tokens INTEGER,
+                total_tokens INTEGER,
+                model VARCHAR(255)
             );
             SQL
         );

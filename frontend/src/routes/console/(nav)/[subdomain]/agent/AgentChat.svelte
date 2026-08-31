@@ -2,132 +2,247 @@
 	import { marked } from 'marked';
 	// @ts-ignore
 	import DOMPurify from 'dompurify';
-	import { Button, IconButton, Loader } from '@hyvor/design/components';
+	import { IconButton, Loader, toast } from '@hyvor/design/components';
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import IconArrowUpCircleFill from '@hyvor/icons/IconArrowUpCircleFill';
-	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import IconFileText from '@hyvor/icons/IconFileText';
 	import IconCheck from '@hyvor/icons/IconCheck';
 
 	import DiffReviewModal from './DiffReviewModal.svelte';
 	import AgentSteps from './AgentSteps.svelte';
-	import { applyAgentEvent, callAgent, type AgentBlock, type DocumentChange } from './agentApi';
+	import {
+		applyAgentEvent,
+		callAgent,
+		getAgentConversation,
+		type AgentBlock,
+		type DocumentChange
+	} from './agentApi';
 	import IdleMessage from './IdleMessage.svelte';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+
+	interface UserTurn {
+		role: 'user';
+		content: string;
+	}
+
+	interface AssistantTurn {
+		role: 'assistant';
+		blocks: AgentBlock[];
+		documentChanges: DocumentChange[];
+		appliedIds: Set<number>;
+		status: 'streaming' | 'done' | 'error';
+		error: string | null;
+	}
+
+	type Turn = UserTurn | AssistantTurn;
 
 	interface Props {
 		postVariantId: number | null;
 		placeholder?: string;
 		emptyMessage?: string;
 		applyDocumentChange: (change: DocumentChange) => Promise<void> | void;
+		initialConversationId?: number | null;
+		onConversationStarted?: (conversationId: number, title: string | null) => void;
 	}
 
 	let {
 		postVariantId,
 		placeholder = 'Type your prompt here...',
-		applyDocumentChange
+		applyDocumentChange,
+		initialConversationId = null,
+		onConversationStarted
 	}: Props = $props();
 
 	let prompt = $state('');
 	let textareaEl: HTMLTextAreaElement | undefined = $state();
-	let status: 'idle' | 'streaming' | 'done' | 'error' = $state('idle');
-	let error: string | null = $state(null);
-	let sentPrompt = $state('');
-	let conversationId: number | null = $state(null);
-	let blocks: AgentBlock[] = $state([]);
-	let documentChanges: DocumentChange[] = $state([]);
-	let appliedIds: Set<number> = $state(new Set());
+	let bodyEl: HTMLDivElement | undefined = $state();
+	let turns: Turn[] = $state([]);
+	let sending = $state(false);
+	let loadingHistory = $state(false);
+	let conversationId: number | null = $state(initialConversationId);
 	let showDiffModal = $state(false);
+	let reviewTurn: AssistantTurn | null = $state(null);
 	let reviewPostVariantId: number | null = $state(null);
 	let applying = $state(false);
+	let scrollTick = $state(0);
 
-	let finalText = $derived(
-		blocks
+	// guards the history-loading effect below against reloading a conversation this component
+	// already knows about - either because it just finished loading it, or because it just
+	// started it itself via a live prompt (see the 'conversation_started' handling below)
+	let lastLoadedConversationId: number | null = null;
+
+	function turnText(blocks: AgentBlock[]) {
+		return blocks
 			.filter((b) => b.type === 'text')
 			.map((b) => b.content)
-			.join('')
-	);
+			.join('');
+	}
 
-	let responseHtml = $derived.by(() => {
-		if (!finalText) return '';
-		return DOMPurify.sanitize(marked(finalText) as string);
+	function turnHtml(blocks: AgentBlock[]) {
+		const text = turnText(blocks);
+		if (!text) return '';
+		return DOMPurify.sanitize(marked(text) as string);
+	}
+
+	async function loadHistory(id: number) {
+		loadingHistory = true;
+		turns = [];
+
+		try {
+			const detail = await getAgentConversation(id);
+
+			turns = detail.turns.map((turn): Turn => {
+				if (turn.role === 'user') {
+					return { role: 'user', content: turn.content };
+				}
+
+				const blocks: AgentBlock[] = [];
+				let status: 'done' | 'error' = 'done';
+				let error: string | null = null;
+
+				for (const event of turn.events) {
+					if (event.type === 'error') {
+						status = 'error';
+						error = event.message;
+					} else {
+						applyAgentEvent(blocks, event);
+					}
+				}
+
+				return {
+					role: 'assistant',
+					blocks,
+					documentChanges: [],
+					appliedIds: new Set(),
+					status,
+					error
+				};
+			});
+		} catch {
+			toast.error('Failed to load this conversation.');
+		} finally {
+			loadingHistory = false;
+		}
+	}
+
+	$effect(() => {
+		const id = initialConversationId;
+		if (id === lastLoadedConversationId) return;
+		lastLoadedConversationId = id;
+		conversationId = id;
+
+		if (id === null) {
+			turns = [];
+		} else {
+			loadHistory(id);
+		}
+	});
+
+	function scrollToBottom() {
+		if (bodyEl) {
+			bodyEl.scrollTop = bodyEl.scrollHeight;
+		}
+	}
+
+	$effect(() => {
+		scrollTick;
+		scrollToBottom();
 	});
 
 	async function handleSubmit() {
 		const userPrompt = prompt.trim();
-		if (!userPrompt || status === 'streaming') return;
+		if (!userPrompt || sending) return;
 
-		sentPrompt = userPrompt;
 		prompt = '';
-		status = 'streaming';
-		error = null;
-		blocks = [];
-		documentChanges = [];
-		appliedIds = new Set();
-		showDiffModal = false;
+		sending = true;
 
-		let hadError = false;
+		turns.push(
+			{ role: 'user', content: userPrompt },
+			{
+				role: 'assistant',
+				blocks: [],
+				documentChanges: [],
+				appliedIds: new Set(),
+				status: 'streaming',
+				error: null
+			}
+		);
+		// re-read the just-pushed turn from the reactive $state array instead of keeping the
+		// plain object literal above - Svelte only wraps values in its reactive proxy the
+		// moment they're read back out of state, so mutating the literal directly (instead of
+		// this reference) would silently skip reactivity and never update the UI
+		const assistantTurn = turns[turns.length - 1] as AssistantTurn;
+		scrollTick++;
 
 		try {
 			await callAgent(userPrompt, postVariantId, conversationId, (event) => {
 				if (event.type === 'conversation_started') {
+					const isNewConversation = conversationId === null;
 					conversationId = event.conversation_id;
+					lastLoadedConversationId = event.conversation_id;
+					if (isNewConversation) {
+						onConversationStarted?.(event.conversation_id, event.title);
+					}
 				} else if (event.type === 'error') {
-					hadError = true;
-					status = 'error';
-					error = event.message;
+					assistantTurn.status = 'error';
+					assistantTurn.error = event.message;
 				} else if (event.type === 'document_change') {
-					const existingIndex = documentChanges.findIndex(
+					const existingIndex = assistantTurn.documentChanges.findIndex(
 						(c) => c.postVariantId === event.post_variant_id
 					);
 					const change = { postVariantId: event.post_variant_id, content: event.content };
 					if (existingIndex >= 0) {
-						documentChanges[existingIndex] = change;
+						assistantTurn.documentChanges[existingIndex] = change;
 					} else {
-						documentChanges.push(change);
+						assistantTurn.documentChanges.push(change);
 					}
 				} else if (event.type !== 'done') {
-					applyAgentEvent(blocks, event);
+					applyAgentEvent(assistantTurn.blocks, event);
 				}
+
+				scrollTick++;
 			});
 
-			if (!hadError) {
-				status = 'done';
+			if (assistantTurn.status !== 'error') {
+				assistantTurn.status = 'done';
 
-				const firstChange = documentChanges[0];
+				const firstChange = assistantTurn.documentChanges[0];
 				if (firstChange) {
-					openReview(firstChange.postVariantId);
+					openReview(assistantTurn, firstChange.postVariantId);
 				}
 			}
 		} catch (err) {
-			status = 'error';
-			error = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+			assistantTurn.status = 'error';
+			assistantTurn.error =
+				err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+		} finally {
+			sending = false;
 		}
 	}
 
-	function reset() {
-		sentPrompt = '';
-		status = 'idle';
-		error = null;
-		blocks = [];
-		documentChanges = [];
-		appliedIds = new Set();
-		showDiffModal = false;
-		conversationId = null;
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSubmit();
+		}
 	}
 
-	function openReview(postVariantId: number) {
+	function openReview(turn: AssistantTurn, postVariantId: number) {
+		reviewTurn = turn;
 		reviewPostVariantId = postVariantId;
 		showDiffModal = true;
 	}
 
 	async function handleApplyChange(change: DocumentChange, finalContent: string) {
+		if (!reviewTurn) return;
+		const turn = reviewTurn;
+
 		applying = true;
 		try {
 			await applyDocumentChange({ postVariantId: change.postVariantId, content: finalContent });
-			appliedIds.add(change.postVariantId);
-			appliedIds = new Set(appliedIds);
+			turn.appliedIds.add(change.postVariantId);
+			turn.appliedIds = new Set(turn.appliedIds);
 		} finally {
 			applying = false;
 		}
@@ -147,74 +262,67 @@
 </script>
 
 <div class="agent-chat">
-	<div class="body">
+	<div class="body" bind:this={bodyEl}>
 		<div class="agent-inner">
-			{#if status === 'idle'}
+			{#if loadingHistory}
+				<div class="loading-history"><Loader /></div>
+			{:else if turns.length === 0}
 				<IdleMessage />
 			{:else}
-				<div class="turn">
-					<div class="message-wrap user">
-						<div class="avatar user-avatar"><span>You</span></div>
-						<div class="message">{sentPrompt}</div>
-					</div>
-
-					<div class="message-wrap ai">
-						<div class="avatar ai-avatar"><IconRobot size={16} /></div>
-						<div class="message">
-							{#if blocks.length === 0 && !finalText}
-								{#if status === 'error'}
-									<span class="error">{error}</span>
-								{:else}
-									<Loader size="small" />
-								{/if}
-							{:else}
-								<AgentSteps {blocks} />
-
-								{#if finalText}
-									<div class="message-html">
-										{@html responseHtml}
-									</div>
-								{:else if status === 'streaming'}
-									<Loader size="small" />
-								{/if}
-
-								{#if status === 'error'}
-									<span class="error">{error}</span>
-								{/if}
-							{/if}
-
-							{#if documentChanges.length > 0}
-								<div class="document-changes">
-									{#each documentChanges as change (change.postVariantId)}
-										<button
-											type="button"
-											class="document-change-pill"
-											class:applied={appliedIds.has(change.postVariantId)}
-											onclick={() => openReview(change.postVariantId)}
-										>
-											<IconFileText size={12} />
-											<span>Post #{change.postVariantId}</span>
-											{#if appliedIds.has(change.postVariantId)}
-												<IconCheck size={12} />
-											{/if}
-										</button>
-									{/each}
-								</div>
-							{/if}
+				{#each turns as turn}
+					{#if turn.role === 'user'}
+						<div class="message-wrap user">
+							<div class="avatar user-avatar"><span>You</span></div>
+							<div class="message">{turn.content}</div>
 						</div>
-					</div>
-				</div>
+					{:else}
+						<div class="message-wrap ai">
+							<div class="avatar ai-avatar"><IconRobot size={16} /></div>
+							<div class="message">
+								{#if turn.blocks.length === 0 && !turnText(turn.blocks)}
+									{#if turn.status === 'error'}
+										<span class="error">{turn.error}</span>
+									{:else}
+										<Loader size="small" />
+									{/if}
+								{:else}
+									<AgentSteps blocks={turn.blocks} />
 
-				{#if status === 'done' || status === 'error'}
-					<div class="reset-button">
-						<Button size="small" color="input" onclick={reset}>
-							{#snippet start()}
-								<IconArrowClockwise />
-							{/snippet}
-							New request
-						</Button>
-					</div>
-				{/if}
+									{#if turnText(turn.blocks)}
+										<div class="message-html">
+											{@html turnHtml(turn.blocks)}
+										</div>
+									{:else if turn.status === 'streaming'}
+										<Loader size="small" />
+									{/if}
+
+									{#if turn.status === 'error'}
+										<span class="error">{turn.error}</span>
+									{/if}
+								{/if}
+
+								{#if turn.documentChanges.length > 0}
+									<div class="document-changes">
+										{#each turn.documentChanges as change (change.postVariantId)}
+											<button
+												type="button"
+												class="document-change-pill"
+												class:applied={turn.appliedIds.has(change.postVariantId)}
+												onclick={() => openReview(turn, change.postVariantId)}
+											>
+												<IconFileText size={12} />
+												<span>Post #{change.postVariantId}</span>
+												{#if turn.appliedIds.has(change.postVariantId)}
+													<IconCheck size={12} />
+												{/if}
+											</button>
+										{/each}
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/if}
+				{/each}
 			{/if}
 		</div>
 	</div>
@@ -226,16 +334,17 @@
 					<textarea
 						bind:this={textareaEl}
 						bind:value={prompt}
+						onkeydown={handleKeydown}
 						{placeholder}
 						rows="1"
-						disabled={status === 'streaming'}
+						disabled={sending}
 					></textarea>
 					<div class="send-button">
 						<IconButton
 							color="input"
 							size="small"
 							aria-label="Send"
-							disabled={prompt.trim() === '' || status === 'streaming'}
+							disabled={prompt.trim() === '' || sending}
 							onclick={handleSubmit}
 						>
 							<IconArrowUpCircleFill size={20} />
@@ -244,7 +353,9 @@
 				</div>
 			</div>
 			<div class="footer-row">
-				<div class="disclaimer">AI can make mistakes; please double-check.</div>
+				<div class="disclaimer">
+					AI can make mistakes; please double-check. Conversations are deleted after 30 days.
+				</div>
 				{#if $blogStore?.ai_provider_model}
 					<button type="button" class="model-info" onclick={openAiSettings}>
 						{$blogStore.ai_provider_model}
@@ -255,9 +366,9 @@
 	</div>
 </div>
 
-{#if showDiffModal && documentChanges.length > 0}
+{#if showDiffModal && reviewTurn}
 	<DiffReviewModal
-		changes={documentChanges}
+		changes={reviewTurn.documentChanges}
 		initialPostVariantId={reviewPostVariantId}
 		{applying}
 		onclose={() => (showDiffModal = false)}
@@ -282,15 +393,18 @@
 	.body {
 		flex: 1;
 		overflow: auto;
+		min-height: 0;
 	}
 
 	.body .agent-inner {
 		height: 100%;
 	}
 
-	.turn {
+	.loading-history {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
 	}
 
 	.message-wrap {
@@ -331,6 +445,7 @@
 
 	.message-wrap.user .message {
 		line-height: 28px;
+		white-space: pre-wrap;
 	}
 
 	.error {
@@ -403,10 +518,6 @@
 		}
 	}
 
-	.reset-button {
-		padding: 0 30px 20px;
-	}
-
 	.input-zone {
 		padding: 15px 30px 20px;
 		border-top: 1px solid var(--border);
@@ -474,6 +585,7 @@
 		border: none;
 		padding: 0;
 		cursor: pointer;
+		flex-shrink: 0;
 
 		&:hover {
 			color: var(--text);

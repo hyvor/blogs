@@ -3,17 +3,22 @@
 namespace App\Api\Console\Controller;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
+use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Ai\AgentPromptInput;
+use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
+use App\Entity\AiConversation;
 use App\Service\Ai\Agent\AiAgentConversationService;
+use App\Service\Ai\Agent\AiConversationService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,7 +30,8 @@ class AiController extends AbstractController
         private ConsoleApiAuthorizationListener $authListener,
         private PostService $postService,
         private AiPostTranslator $aiPostTranslator,
-        private AiAgentConversationService $aiAgentConversationService
+        private AiAgentConversationService $aiAgentConversationService,
+        private AiConversationService $aiConversationService,
     ) {}
 
     #[Route('/ai/agent', methods: ['POST'])]
@@ -52,6 +58,8 @@ class AiController extends AbstractController
             }
         }
 
+        set_time_limit(0);
+
         $response = new StreamedResponse(function () use ($blog, $prompt, $postVariant, $conversation) {
             foreach ($this->aiAgentConversationService->streamPrompt($blog, $prompt, $postVariant, $conversation) as $event) {
                 echo 'data: '.json_encode($event)."\n\n";
@@ -64,6 +72,49 @@ class AiController extends AbstractController
         $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
+    }
+
+    #[Route('/ai/conversations', methods: ['GET'])]
+    #[ScopeRequired(Scope::AI_USE)]
+    public function conversations(
+        #[MapQueryString] GetAiConversationsInput $input,
+    ): JsonResponse
+    {
+        $blog = $this->authListener->getBlog();
+
+        $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset);
+
+        return new JsonResponse([
+            'conversations' => array_map(fn(AiConversation $c) => [
+                'id' => $c->getId(),
+                'title' => $c->getTitle(),
+                'created_at' => $c->getCreatedAt()->getTimestamp(),
+                'updated_at' => $c->getUpdatedAt()->getTimestamp(),
+            ], $result['conversations']),
+            'has_more' => $result['has_more'],
+        ]);
+    }
+
+    #[Route('/ai/conversation/{id}', methods: ['GET'])]
+    #[ScopeRequired(Scope::AI_USE)]
+    public function conversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
+    {
+        return new JsonResponse([
+            'id' => $conversation->getId(),
+            'title' => $conversation->getTitle(),
+            'created_at' => $conversation->getCreatedAt()->getTimestamp(),
+            'updated_at' => $conversation->getUpdatedAt()->getTimestamp(),
+            'turns' => $this->aiConversationService->getTurns($conversation),
+        ]);
+    }
+
+    #[Route('/ai/conversation/{id}', methods: ['DELETE'])]
+    #[ScopeRequired(Scope::AI_USE)]
+    public function deleteConversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
+    {
+        $this->aiConversationService->deleteConversation($conversation);
+
+        return new JsonResponse();
     }
 
     #[Route('/ai/translate/post', methods: ['POST'])]

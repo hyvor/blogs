@@ -31,13 +31,16 @@ class AiMessage
     private string $content;
 
     #[ORM\Column(nullable: true)]
-    private ?int $prompt_tokens = null;
+    private ?int $input_tokens = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $completion_tokens = null;
+    private ?int $output_tokens = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $total_tokens = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $model = null;
 
     public function getId(): int
     {
@@ -105,25 +108,25 @@ class AiMessage
         return $this;
     }
 
-    public function getPromptTokens(): ?int
+    public function getInputTokens(): ?int
     {
-        return $this->prompt_tokens;
+        return $this->input_tokens;
     }
 
-    public function setPromptTokens(?int $prompt_tokens): static
+    public function setInputTokens(?int $input_tokens): static
     {
-        $this->prompt_tokens = $prompt_tokens;
+        $this->input_tokens = $input_tokens;
         return $this;
     }
 
-    public function getCompletionTokens(): ?int
+    public function getOutputTokens(): ?int
     {
-        return $this->completion_tokens;
+        return $this->output_tokens;
     }
 
-    public function setCompletionTokens(?int $completion_tokens): static
+    public function setOutputTokens(?int $output_tokens): static
     {
-        $this->completion_tokens = $completion_tokens;
+        $this->output_tokens = $output_tokens;
         return $this;
     }
 
@@ -135,6 +138,17 @@ class AiMessage
     public function setTotalTokens(?int $total_tokens): static
     {
         $this->total_tokens = $total_tokens;
+        return $this;
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function setModel(?string $model): static
+    {
+        $this->model = $model;
         return $this;
     }
 }

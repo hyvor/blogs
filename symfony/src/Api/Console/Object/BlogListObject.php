@@ -24,7 +24,10 @@ class BlogListObject
         $this->id = $blog->getId();
         $this->role = $user->getRole()->value;
         $this->is_blocked = $blog->isBlocked();
-        $variants = $blog->getVariants();
+
+        $variants = $blog->getVariants()->toArray();
+        usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
+
         $this->name = $variants[0]?->getName() ?? 'Unnamed';
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType();

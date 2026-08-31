@@ -63,6 +63,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         ?DocumentOpsTool $documentOpsTool = null,
         ?Metadata $metadata = null,
         ?\Throwable $throws = null,
+        string $model = 'test-model',
     ): AiAgentConversationService {
         $result = new class ($deltas, $metadata ?? new Metadata()) implements ResultInterface {
             private ?RawResultInterface $rawResult = null;
@@ -101,7 +102,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             $this->getService(PostContentService::class),
         );
 
-        $agentCallResult = new AgentCallResult($result, $documentOpsTool);
+        $agentCallResult = new AgentCallResult($result, $documentOpsTool, $model);
 
         $fakeAiAgentService = new class ($agentCallResult, $throws) extends AiAgentService {
             public function __construct(private AgentCallResult $agentCallResult, private ?\Throwable $throws)
@@ -148,6 +149,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ['conversation_started', 'post_variant', 'text', 'text', 'done'],
             array_column($events, 'type'),
         );
+        $this->assertSame('Say hello', $events[0]['title']);
 
         $conversationRepo = $this->getEm()->getRepository(AiConversation::class);
         $conversations = $conversationRepo->findBy(['blog' => $blog]);
@@ -387,7 +389,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             $this->getService(PostService::class),
             $this->getService(PostContentService::class),
         );
-        $agentCallResult = new AgentCallResult($result, $documentOpsTool);
+        $agentCallResult = new AgentCallResult($result, $documentOpsTool, 'test-model');
 
         $fakeAiAgentService = new class ($agentCallResult) extends AiAgentService {
             /** @var array<int, ?MessageBag> */
@@ -489,9 +491,24 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
-        $this->assertSame(100, $assistantMessage->getPromptTokens());
-        $this->assertSame(50, $assistantMessage->getCompletionTokens());
+        $this->assertSame(100, $assistantMessage->getInputTokens());
+        $this->assertSame(50, $assistantMessage->getOutputTokens());
         $this->assertSame(150, $assistantMessage->getTotalTokens());
+    }
+
+    public function test_persists_the_model_used_on_the_assistant_message(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $service = $this->buildService($postVariant, [new TextDelta('Hi')], model: 'claude-sonnet-5');
+
+        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+        $this->assertSame('claude-sonnet-5', $assistantMessage->getModel());
     }
 
 }

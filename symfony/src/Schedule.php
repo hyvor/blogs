@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Service\Ai\Agent\Message\DeleteOldAiConversationsMessage;
 use App\Service\Blog\Message\HardDeleteBlogsMessage;
 use App\Service\Hosting\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
 use App\Service\LinkAnalysis\Message\DispatchAllLinkAnalysisChecksMessage;
@@ -29,6 +30,7 @@ class Schedule implements ScheduleProviderInterface
             ->add(RecurringMessage::cron('0 0 * * *', new RepoSyncMessage()))
             ->add(RecurringMessage::every('1 day', new RegenerateExpiredTlsCertificatesMessage()))
             ->add(RecurringMessage::every('1 day', new HardDeleteBlogsMessage()))
+            ->add(RecurringMessage::every('1 day', new DeleteOldAiConversationsMessage()))
             ->add(RecurringMessage::every('1 day', new DispatchAllLinkAnalysisChecksMessage()))
             ->add(RecurringMessage::every('1 day', new ClearStepsMessage()))
             ->add(RecurringMessage::every('1 minute', new PublishScheduledPostVariantsMessage()))

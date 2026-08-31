@@ -83,7 +83,7 @@ class AiAgentConversationService
             $history = null;
         }
 
-        yield $this->toSseArray(new ConversationStartedEvent($conversation->getId()));
+        yield $this->toSseArray(new ConversationStartedEvent($conversation->getId(), $conversation->getTitle()));
 
         if ($postVariant !== null) {
             $postVariantObject = new PostVariantObject($postVariant, $this->permalinkService);
@@ -105,6 +105,7 @@ class AiAgentConversationService
 
         try {
             $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant, $history);
+            $assistantMessage->setModel($agentCallResult->getModel());
 
             $content = $agentCallResult->getResult()->getContent();
             assert(is_iterable($content));
@@ -205,8 +206,8 @@ class AiAgentConversationService
 
         $tokenUsage = $agentCallResult->getResult()->getMetadata()->get('token_usage');
         if ($tokenUsage instanceof TokenUsageInterface) {
-            $assistantMessage->setPromptTokens($tokenUsage->getPromptTokens());
-            $assistantMessage->setCompletionTokens($tokenUsage->getCompletionTokens());
+            $assistantMessage->setInputTokens($tokenUsage->getPromptTokens());
+            $assistantMessage->setOutputTokens($tokenUsage->getCompletionTokens());
             $assistantMessage->setTotalTokens($tokenUsage->getTotalTokens());
         }
 

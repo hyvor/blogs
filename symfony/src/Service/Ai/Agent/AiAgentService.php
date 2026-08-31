@@ -152,7 +152,7 @@ class AiAgentService
             // 'reasoning' => ['summary' => 'auto'],
         ]);
 
-        return new AgentCallResult($callResult, $documentOpsTool);
+        return new AgentCallResult($callResult, $documentOpsTool, $provider->model());
     }
 
 }
