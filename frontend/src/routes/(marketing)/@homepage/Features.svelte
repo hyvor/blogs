@@ -8,7 +8,7 @@
 	import OwnershipMockup from './OwnershipMockup.svelte';
 	import AllInOneMockup from './AllInOneMockup.svelte';
 	import AiMockup from './AiMockup.svelte';
-	import CollaborationMockup from './CollaborationMockup.svelte';
+	import SuggestionScreencast from './SuggestionScreencast.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
 
@@ -144,11 +144,11 @@
 		I18n.t('homepage.features.collaboration.bullet1'),
 		I18n.t('homepage.features.collaboration.bullet2')
 	]}
-	interactiveBullets
 	flip
+	overlap
 >
-	{#snippet visual(active)}
-		<CollaborationMockup {active} />
+	{#snippet visual()}
+		<SuggestionScreencast />
 	{/snippet}
 </FeatureSplit>
 
