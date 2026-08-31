@@ -9,7 +9,10 @@
 			"docs": "Documentation",
 			"hosting": "Hébergement",
 			"resources": "Ressources",
-			"themes": { "label": "Thèmes", "description": "Des thèmes de blog qui reflètent votre marque" },
+			"themes": {
+				"label": "Thèmes",
+				"description": "Des thèmes de blog qui reflètent votre marque"
+			},
 			"integrations": {
 				"label": "Intégrations",
 				"description": "Connectez-vous à vos outils préférés"
@@ -367,7 +370,10 @@
 					"name": "Rédaction GPT",
 					"tooltip": "Utilisez OpenAI GPT pour la rédaction de contenu et la génération de mots-clés. ~1 000 jetons ≈ 750 mots."
 				},
-				"dataApi": { "name": "API de données", "tooltip": "Accédez aux données publiques de votre blog via l'API." },
+				"dataApi": {
+					"name": "API de données",
+					"tooltip": "Accédez aux données publiques de votre blog via l'API."
+				},
 				"consoleApi": {
 					"name": "API Console",
 					"tooltip": "La même API utilisée dans la Console, idéale pour l'automatisation."
