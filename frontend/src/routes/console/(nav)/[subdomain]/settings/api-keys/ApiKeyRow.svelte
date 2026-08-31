@@ -11,6 +11,11 @@
 
 	const i18n = getI18n();
 
+	const TYPE_KEYS = {
+		console: 'console.settings.apiKeys.types.console',
+		delivery: 'console.settings.apiKeys.types.delivery'
+	} as const;
+
 	interface Props {
 		apiKey: ApiKey;
 	}
@@ -71,7 +76,7 @@
 
 <TableRow>
 	<div>{apiKey.name}</div>
-	<div class="api-type">{apiKey.type} API</div>
+	<div class="api-type">{i18n.t(TYPE_KEYS[apiKey.type])}</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.apiKeys.copyKey')}>
 			<IconButton color="gray" variant="fill-light" on:click={handleCopy}>
@@ -113,9 +118,3 @@
             : null
     } -->
 </TableRow>
-
-<style>
-	.api-type {
-		text-transform: capitalize;
-	}
-</style>

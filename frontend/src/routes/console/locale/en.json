@@ -29,7 +29,9 @@
 			"slugAvailable": "Slug is available",
 			"slugNotAvailable": "Slug is not available",
 			"slugCheckFailed": "Failed to check slug availability",
-			"justForReference": "Just for your reference"
+			"justForReference": "Just for your reference",
+			"any": "Any",
+			"unnamed": "Unnamed"
 		},
 		"failedToLoadBlog": "Unable to load blog",
 		"nav": {
@@ -72,6 +74,9 @@
 			"cloningPost": "Cloning post...",
 			"postCloned": "Post cloned successfully",
 			"status": {
+				"draft": "Draft",
+				"published": "Published",
+				"scheduled": "Scheduled",
 				"featured": "Featured"
 			},
 			"langTag": {
@@ -91,7 +96,13 @@
 				"dateLabel": "Date",
 				"searchAuthorPlaceholder": "Search author...",
 				"searchTagPlaceholder": "Search tag...",
-				"postsCount": "{count} {count, plural, one {post} other {posts}}"
+				"postsCount": "{count} {count, plural, one {post} other {posts}}",
+				"dateOptions": {
+					"today": "Today",
+					"last_week": "Last week",
+					"last_month": "Last month",
+					"last_year": "Last year"
+				}
 			},
 			"noAuthorsFound": "No authors found",
 			"postDeleted": "Post deleted successfully"
@@ -207,7 +218,9 @@
 				"export": "Export"
 			},
 			"jobStatus": {
-				"pending": "Pending"
+				"pending": "Pending",
+				"completed": "Completed",
+				"failed": "Failed"
 			},
 			"export": {
 				"newExport": "New Export",
@@ -591,6 +604,7 @@
 					"guest": "Guest"
 				},
 				"roles": {
+					"owner": "Owner",
 					"admin": "Admin",
 					"editor": "Editor",
 					"writer": "Writer",
@@ -719,7 +733,12 @@
 					"eventsRequired": "Please select at least one event"
 				},
 				"selectAll": "Select all",
-				"deselectAll": "Deselect all"
+				"deselectAll": "Deselect all",
+				"deliveryStatus": {
+					"pending": "Pending",
+					"success": "Success",
+					"failed": "Failed"
+				}
 			},
 			"ai": {
 				"provider": "Preferred AI Provider",
