@@ -3,26 +3,38 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import ClearCacheModal from './ClearCacheModal.svelte';
 	import DeleteBlogModal from './DeleteBlogModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let isCacheClearing = $state(false);
 	let isDeleting = $state(false);
 </script>
 
 <div class="danger">
-	<SplitControl label="Clear Cache">
+	<SplitControl label={i18n.t('console.settings.danger.clearCache')}>
 		{#snippet caption()}
 			<div class="caption">
-				Clear the cache of your blog. This will <strong>not</strong> delete any data.
+				<T
+					key="console.settings.danger.clearCacheCaption"
+					params={{ strong: { element: 'strong' } }}
+				/>
 			</div>
 		{/snippet}
 
-		<Button on:click={() => (isCacheClearing = true)}>Clear Cache</Button>
+		<Button on:click={() => (isCacheClearing = true)}>
+			{i18n.t('console.settings.danger.clearCache')}
+		</Button>
 	</SplitControl>
 
-	<SplitControl label="Delete Blog">
+	<SplitControl label={i18n.t('console.settings.danger.deleteBlog')}>
 		{#snippet caption()}
 			<div class="caption">
-				Completely delete the blog and all its data. This action is <strong>irreversible</strong>.
+				<T
+					key="console.settings.danger.deleteBlogCaption"
+					params={{ strong: { element: 'strong' } }}
+				/>
 			</div>
 		{/snippet}
 
@@ -30,7 +42,7 @@
 			{#snippet start()}
 				<IconTrash />
 			{/snippet}
-			Delete Blog
+			{i18n.t('console.settings.danger.deleteBlog')}
 		</Button>
 	</SplitControl>
 </div>

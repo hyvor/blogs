@@ -12,6 +12,9 @@
 	import { updateBlog } from '../../../../../lib/actions/blogActions';
 	import { onMount } from 'svelte';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		open?: boolean;
@@ -23,17 +26,19 @@
 	function handleUpdate() {
 		open = false;
 
-		const toastId = toast.loading('Updating foot code...');
+		const toastId = toast.loading(i18n.t('console.integrations.hyvorTalk.memberships.updating'));
 
 		const codeFoot = $blogStore.code_foot ? $blogStore.code_foot + '\n\n' + code : code;
 
 		updateBlog({ code_foot: codeFoot })
 			.then(() => {
-				toast.success('Head code updated successfully', { id: toastId });
+				toast.success(i18n.t('console.integrations.hyvorTalk.memberships.updated'), { id: toastId });
 				open = false;
 			})
 			.catch(() => {
-				toast.error('Failed to update foot code', { id: toastId });
+				toast.error(i18n.t('console.integrations.hyvorTalk.memberships.failedToUpdate'), {
+					id: toastId
+				});
 			});
 	}
 
@@ -45,28 +50,30 @@
 </script>
 
 {#if open}
-	<Modal title="Update Comments Embed Code" bind:show={open}>
-		<p>Your current "Foot Code" is:</p>
+	<Modal title={i18n.t('console.integrations.hyvorTalk.memberships.updateTitle')} bind:show={open}>
+		<p>{i18n.t('console.integrations.hyvorTalk.memberships.currentCode')}</p>
 
 		<div class="code-block-wrap">
 			<CodeBlock code={$blogStore.code_foot || ''} />
 		</div>
 
-		<p>Please confirm that you want to append the memberships code to the foot code.</p>
+		<p>{i18n.t('console.integrations.hyvorTalk.memberships.confirmAppend')}</p>
 
 		{#if ($blogStore.code_foot || '').includes('<hyvor-talk-memberships')}
 			<Callout type="warning">
 				{#snippet icon()}
 					<IconExclamationCircle />
 				{/snippet}
-				It seems that you already have the memberships code added.
+				{i18n.t('console.integrations.hyvorTalk.memberships.alreadyAdded')}
 			</Callout>
 		{/if}
 
 		{#snippet footer()}
 			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
-				<Button on:click={handleUpdate}>Update</Button>
+				<Button variant="invisible" on:click={() => (open = false)}>
+					{i18n.t('console.common.cancel')}
+				</Button>
+				<Button on:click={handleUpdate}>{i18n.t('console.common.update')}</Button>
 			</ButtonGroup>
 		{/snippet}
 	</Modal>

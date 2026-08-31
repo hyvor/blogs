@@ -4,6 +4,9 @@
 	import type { Blog, BlogVariant } from '../../../lib/types';
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
 	import { beforeNavigate } from '$app/navigation';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		keys?: (keyof Blog)[];
@@ -27,7 +30,7 @@
 
 	beforeNavigate((navigation) => {
 		if (should) {
-			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+			if (!confirm(i18n.t('console.settings.unsavedLeaveConfirm'))) {
 				navigation.cancel();
 			}
 		}
@@ -84,7 +87,7 @@
 			try {
 				await updateBlogVariant(Number(languageId), changes, true);
 			} catch (e) {
-				toast.error('Failed to update blog variant');
+				toast.error(i18n.t('console.settings.failedToUpdateVariant'));
 				loadingState = 'error';
 				return;
 			}
@@ -133,11 +136,11 @@
 	</span>
 
 	<ButtonGroup>
-		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}
-			>Discard</Button
-		>
+		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}>
+			{i18n.t('console.settings.discard')}
+		</Button>
 
-		<Button disabled={!should} on:click={handleSave}>Save</Button>
+		<Button disabled={!should} on:click={handleSave}>{i18n.t('console.common.save')}</Button>
 	</ButtonGroup>
 </div>
 

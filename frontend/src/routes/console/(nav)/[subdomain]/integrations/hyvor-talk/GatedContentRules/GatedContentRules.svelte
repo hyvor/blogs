@@ -5,6 +5,9 @@
 	import CreateRule from './CreateRule.svelte';
 	import { getGatedContentRules } from '../hyvorTalkActions';
 	import RuleRow from './RuleRow.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loading = $state(true);
 	let error: null | string = $state(null);
@@ -45,12 +48,13 @@
 <SplitControl column>
 	{#snippet label()}
 		<Label>
-			Gated Content Rules <Button
+			{i18n.t('console.integrations.hyvorTalk.gatedContent.title')}
+			<Button
 				size="small"
 				on:click={() => (creating = true)}
 				disabled={rules.length >= MAX_RULES}
 			>
-				+ Create
+				+ {i18n.t('console.common.create')}
 			</Button>
 		</Label>
 	{/snippet}
@@ -60,7 +64,12 @@
 	{:else if error}
 		<IconMessage iconSize={45} error message={error} />
 	{:else if rules.length === 0}
-		<IconMessage iconSize={60} padding={40} empty message="No gated content rules found." />
+		<IconMessage
+			iconSize={60}
+			padding={40}
+			empty
+			message={i18n.t('console.integrations.hyvorTalk.gatedContent.noRules')}
+		/>
 	{:else}
 		{#each rules as rule}
 			<RuleRow {rule} on:delete={onDelete} on:update={onUpdate} />

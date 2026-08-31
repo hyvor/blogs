@@ -18,6 +18,9 @@
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
 	import { setThemeFiles } from '../themeStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show?: boolean;
@@ -39,19 +42,18 @@
 	async function handleClick(name: string) {
 		if (
 			await confirm({
-				title: 'Confirm change',
-				content:
-					'Are you sure you want to change the theme? Any changes you made to the current theme will be lost.',
-				confirmText: 'Yes, Change'
+				title: i18n.t('console.theme.changeConfirm.title'),
+				content: i18n.t('console.theme.changeConfirm.content'),
+				confirmText: i18n.t('console.theme.changeConfirm.confirm')
 			})
 		) {
 			show = false;
 
-			const toastId = toast.loading('Changing theme...');
+			const toastId = toast.loading(i18n.t('console.theme.changing'));
 
 			changeTheme(name)
 				.then((files) => {
-					toast.success('Theme changed successfully', { id: toastId });
+					toast.success(i18n.t('console.theme.changed'), { id: toastId });
 					setThemeFiles(files);
 				})
 				.catch((e) => toast.error(e.message, { id: toastId }));
@@ -63,7 +65,7 @@
 	bind:show
 	footer={{
 		cancel: {
-			text: 'Close'
+			text: i18n.t('console.common.close')
 		},
 		confirm: false
 	}}
@@ -72,8 +74,10 @@
 >
 	{#snippet title()}
 		<div class="title">
-			Choose a theme <Button as="a" href="/themes" target="_blank" size="small">
-				Preview Themes {#snippet end()}
+			{i18n.t('console.theme.chooseTheme')}
+			<Button as="a" href="/themes" target="_blank" size="small">
+				{i18n.t('console.theme.previewThemes')}
+				{#snippet end()}
 					<IconBoxArrowUpRight size={12} />
 				{/snippet}
 			</Button>
@@ -87,7 +91,7 @@
 			{#snippet icon()}
 				<IconExclamationCircle size={16} />
 			{/snippet}
-			Changing the theme will reset any changes you made to the current theme.
+			{i18n.t('console.theme.changeWarning')}
 		</Callout>
 
 		<ActionList>

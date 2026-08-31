@@ -16,6 +16,9 @@
 	import VariantInput from '../@components/VariantInput/VariantInput.svelte';
 	import { updateNagivation, updateNavigationVariant } from './navigationActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show?: boolean;
@@ -47,18 +50,18 @@
 
 	async function handleUpdate() {
 		if (!url) {
-			urlError = 'URL is required.';
+			urlError = i18n.t('console.settings.navigation.urlRequired');
 			return;
 		}
 
 		isUpdating = true;
 
-		const toastId = toast.loading('Updating navigation');
+		const toastId = toast.loading(i18n.t('console.settings.navigation.updating'));
 		for (const [languageId, changes] of Object.entries(variantChanges)) {
 			try {
 				await updateNavigationVariant(navigation.id, Number(languageId), changes, type, url);
 			} catch (e) {
-				toast.error('Failed to update navigation variant', { id: toastId });
+				toast.error(i18n.t('console.settings.navigation.failedToUpdateVariant'), { id: toastId });
 				isUpdating = false;
 				return;
 			}
@@ -78,12 +81,12 @@
 
 		updateNagivation(navigation.id, updates)
 			.then((res) => {
-				toast.success('Navigation updated', { id: toastId });
+				toast.success(i18n.t('console.settings.navigation.updated'), { id: toastId });
 				show = false;
 				dispatch('update', res);
 			})
 			.catch((e) => {
-				toast.error('Failed to update navigation', { id: toastId });
+				toast.error(i18n.t('console.settings.navigation.failedToUpdate'), { id: toastId });
 			})
 			.finally(() => {
 				isUpdating = false;
@@ -91,18 +94,18 @@
 	}
 </script>
 
-<Modal title="Edit navigation" bind:show>
+<Modal title={i18n.t('console.settings.navigation.editNavigation')} bind:show>
 	<VariantInput
 		obj={navigation}
 		type="navigation"
 		key="name"
-		label="Name"
-		caption="Name of the navigation"
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.navigation.nameCaption')}
 		on:variantCreate
 		on:change={handleNameChange}
 	/>
 
-	<SplitControl label="URL">
+	<SplitControl label={i18n.t('console.settings.navigation.url')}>
 		<FormControl>
 			<TextInput
 				bind:value={url}
@@ -119,18 +122,26 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Type">
+	<SplitControl label={i18n.t('console.settings.navigation.type')}>
 		<InputGroup>
-			<Radio name="type" value="header" bind:group={type}>Header</Radio>
-			<Radio name="type" value="footer" bind:group={type}>Footer</Radio>
+			<Radio name="type" value="header" bind:group={type}>
+				{i18n.t('console.settings.navigation.header')}
+			</Radio>
+			<Radio name="type" value="footer" bind:group={type}>
+				{i18n.t('console.settings.navigation.footer')}
+			</Radio>
 		</InputGroup>
 	</SplitControl>
 
 	{#snippet footer()}
 		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+			<Button variant="invisible" on:click={() => (show = false)}>
+				{i18n.t('console.common.cancel')}
+			</Button>
 
-			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>Update</Button>
+			<Button on:click={handleUpdate} disabled={!hasChanges || isUpdating}>
+				{i18n.t('console.common.update')}
+			</Button>
 		</ButtonGroup>
 	{/snippet}
 </Modal>

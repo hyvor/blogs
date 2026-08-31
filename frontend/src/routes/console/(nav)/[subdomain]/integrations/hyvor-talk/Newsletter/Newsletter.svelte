@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, CodeBlock, Label, Link, SplitControl } from '@hyvor/design/components';
+	import { Button, CodeBlock, Label, SplitControl } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import AddNewsletterCode from './AddNewsletterCode.svelte';
 	import ConfiguredTag from '../ConfiguredTag.svelte';

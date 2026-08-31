@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { Button, CodeBlock, Label, Link, SplitControl } from '@hyvor/design/components';
+	import { Button, CodeBlock, Label, SplitControl } from '@hyvor/design/components';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import AddMembershipsCode from './AddMembershipsCode.svelte';
 	import ConfiguredTag from '../ConfiguredTag.svelte';
 	import { blogStore } from '../../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		websiteId: number;
@@ -28,27 +32,42 @@
 <SplitControl column>
 	{#snippet label()}
 		<Label>
-			Memberships <ConfiguredTag
+			{i18n.t('console.integrations.hyvorTalk.memberships.label')}
+			<ConfiguredTag
 				configured={$blogStore.code_foot?.includes('<hyvor-talk-memberships') || false}
 			/>
 		</Label>
 	{/snippet}
 
 	<p style="margin-top:0;">
-		After setting up Memberships in the <Link
-			href={'https://talk.hyvor.com/console/' + websiteId + '/settings/memberships'}
-		>
-			Hyvor Talk Console
-		</Link>, add the following code to <Link href={consoleUrlWithBlog('/settings/code')}>
-			Foot Code
-		</Link> setting to load Hyvor Talk Memberships on all pages.
+		<T
+			key="console.integrations.hyvorTalk.memberships.description"
+			params={{
+				talkLink: {
+					element: 'a',
+					props: {
+						href: 'https://talk.hyvor.com/console/' + websiteId + '/settings/memberships',
+						target: '_blank',
+						class: 'hds-link'
+					}
+				},
+				codeLink: {
+					element: 'a',
+					props: { href: consoleUrlWithBlog('/settings/code'), class: 'hds-link' }
+				}
+			}}
+		/>
 	</p>
 
 	<CodeBlock {code} />
 
 	<div>
-		<Button size="small" on:click={() => (adding = true)}>Append to "Foot Code"</Button>
-		<Button size="small" color="input" on:click={handleCopy}>Copy code</Button>
+		<Button size="small" on:click={() => (adding = true)}>
+			{i18n.t('console.integrations.hyvorTalk.memberships.appendTo')}
+		</Button>
+		<Button size="small" color="input" on:click={handleCopy}>
+			{i18n.t('console.integrations.hyvorTalk.copyCode')}
+		</Button>
 	</div>
 </SplitControl>
 

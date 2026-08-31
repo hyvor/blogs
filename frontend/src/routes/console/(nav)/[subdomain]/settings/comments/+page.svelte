@@ -4,22 +4,38 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 </script>
 
 <BlogSettingsSave keys={['comments_code', 'newsletter_code']} />
 
 <div class="settings">
-	<SplitControl label="Comments Embed Code">
+	<SplitControl label={i18n.t('console.settings.comments.commentsCode')}>
 		{#snippet caption()}
 			<div>
-				Paste the embed code from your commenting system here. You can use Twig <Link
-					href="/docs/themes-templates#variables"
-					style="display:inline"
-					target="_blank">route variables</Link
-				> if needed. To connect Hyvor Talk, go to <Link
-					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-					style="display:inline">Integrations &rarr; Hyvor Talk</Link
-				>.
+				<T
+					key="console.settings.comments.commentsCodeCaption"
+					params={{
+						varsLink: {
+							element: 'a',
+							props: {
+								href: '/docs/themes-templates#variables',
+								target: '_blank',
+								class: 'hds-link'
+							}
+						},
+						integrationsLink: {
+							element: 'a',
+							props: {
+								href: consoleUrlWithBlog('/integrations/hyvor-talk'),
+								class: 'hds-link'
+							}
+						}
+					}}
+				/>
 			</div>
 		{/snippet}
 
@@ -32,23 +48,34 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				This will be added to the end of the post content, depending on the theme.
+				{i18n.t('console.settings.comments.commentsCodeNote')}
 			</Text>
 		</div>
 	</SplitControl>
 
-	<SplitControl label="Newsletter Signup Form Code">
+	<SplitControl label={i18n.t('console.settings.comments.newsletterCode')}>
 		{#snippet caption()}
 			<div>
-				Paste the embed code provided by a email newsletter service here (for the sign up form). You
-				can use Twig <Link
-					style="display:inline;"
-					href="/docs/themes-templates#variables"
-					target="_blank">route variables</Link
-				> if needed. To connect Hyvor Talk, go to <Link
-					href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-					style="display:inline">Integrations &rarr; Hyvor Talk</Link
-				>.
+				<T
+					key="console.settings.comments.newsletterCodeCaption"
+					params={{
+						varsLink: {
+							element: 'a',
+							props: {
+								href: '/docs/themes-templates#variables',
+								target: '_blank',
+								class: 'hds-link'
+							}
+						},
+						integrationsLink: {
+							element: 'a',
+							props: {
+								href: consoleUrlWithBlog('/integrations/hyvor-talk'),
+								class: 'hds-link'
+							}
+						}
+					}}
+				/>
 			</div>
 		{/snippet}
 
@@ -61,8 +88,7 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific place,
-				you may also edit your theme files.
+				{i18n.t('console.settings.comments.newsletterCodeNote')}
 			</Text>
 		</div>
 	</SplitControl>

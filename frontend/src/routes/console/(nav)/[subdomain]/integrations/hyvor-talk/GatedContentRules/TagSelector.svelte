@@ -4,6 +4,9 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import TagsSearch from '../../../posts/[postId]/Sidebar/Settings/Tags/TagsSearch.svelte';
 	import TagName from '../../../settings/tags/TagName.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDropdown = $state(false);
 
@@ -27,7 +30,7 @@
 			{#if tag}
 				<TagName {tag} />
 			{:else}
-				Select Tag
+				{i18n.t('console.integrations.hyvorTalk.gatedContent.selectTag')}
 			{/if}
 			{#snippet end()}
 				<IconCaretDown size={14} />

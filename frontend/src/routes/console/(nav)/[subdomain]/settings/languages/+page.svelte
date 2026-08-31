@@ -5,6 +5,9 @@
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import LanguageModal from './LanguageModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 </script>
@@ -12,7 +15,8 @@
 <div class="languages">
 	<SettingsTop>
 		<Button on:click={() => (isCreating = true)}>
-			Add Language {#snippet end()}
+			{i18n.t('console.settings.languages.add')}
+			{#snippet end()}
 				<IconPlus />
 			{/snippet}
 		</Button>
@@ -21,9 +25,9 @@
 	<div class="table">
 		<Table columns="1fr 1fr 1fr 70px">
 			<TableRow head>
-				<div>Name</div>
-				<div>Code</div>
-				<div>Direction</div>
+				<div>{i18n.t('console.common.name')}</div>
+				<div>{i18n.t('console.settings.languages.code')}</div>
+				<div>{i18n.t('console.settings.languages.direction')}</div>
 				<div></div>
 			</TableRow>
 

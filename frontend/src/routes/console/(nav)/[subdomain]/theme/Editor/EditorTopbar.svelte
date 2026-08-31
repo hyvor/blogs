@@ -17,6 +17,9 @@
 	import EditModal from './Modals/CreateEditModal.svelte';
 	import DeleteModal from './Modals/DeleteModal.svelte';
 	import { fileSavingState, saveCurrentFile } from '../theme';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isUpdating = $state(false);
 	let isDeleting = $state(false);
@@ -44,13 +47,13 @@
 		</span>
 
 		<span class="buttons">
-			<Tooltip text="Edit file name" position="bottom">
+			<Tooltip text={i18n.t('console.theme.editFileName')} position="bottom">
 				<IconButton color="input" size={22} on:click={() => (isUpdating = true)}>
 					<IconPencilFill size={10} />
 				</IconButton>
 			</Tooltip>
 
-			<Tooltip text="Delete file" position="bottom">
+			<Tooltip text={i18n.t('console.theme.deleteFile')} position="bottom">
 				<IconButton color="input" size={22} on:click={() => (isDeleting = true)}>
 					<IconTrash size={10} />
 				</IconButton>
@@ -62,7 +65,11 @@
 		<Loader bind:state={$fileSavingState} size={14} style="margin-right:8px;" />
 
 		<Button disabled={!contentChanged || $fileSavingState === 'loading'} on:click={handleSave}>
-			{$fileSavingState === 'loading' ? 'Saving' : contentChanged ? 'Save' : 'Saved'}
+			{$fileSavingState === 'loading'
+				? i18n.t('console.theme.saving')
+				: contentChanged
+					? i18n.t('console.common.save')
+					: i18n.t('console.theme.saved')}
 		</Button>
 	</div>
 </div>

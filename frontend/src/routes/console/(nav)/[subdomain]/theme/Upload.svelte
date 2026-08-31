@@ -5,6 +5,9 @@
 	import byteFormatter from '../../../lib/helper/byte-formatter';
 	import { uploadTheme } from './themeActions';
 	import { setThemeFiles } from './themeStore';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let inputEl: HTMLInputElement | undefined = $state();
 
@@ -16,19 +19,19 @@
 		const file = inputEl?.files?.[0];
 
 		if (!file) {
-			return toast.error('Please select a file');
+			return toast.error(i18n.t('console.theme.selectFile'));
 		}
 
 		const max = getConfig().limits.max_theme_zip_size;
 		if (file.size > max) {
-			return toast.error('Max file size is' + byteFormatter(max));
+			return toast.error(i18n.t('console.theme.maxFileSize', { size: byteFormatter(max) }));
 		}
 
-		const toastId = toast.loading('Uploading theme...');
+		const toastId = toast.loading(i18n.t('console.theme.uploadingTheme'));
 
 		uploadTheme(file)
 			.then((files) => {
-				toast.success('Theme uploading completed', { id: toastId });
+				toast.success(i18n.t('console.theme.uploadCompleted'), { id: toastId });
 				setThemeFiles(files);
 			})
 			.catch((err) => {
@@ -37,12 +40,12 @@
 	}
 </script>
 
-<Tooltip text="Upload a theme from a zip file">
+<Tooltip text={i18n.t('console.theme.uploadTooltip')}>
 	<Button color="input" size="small" style="font-size:13px" on:click={handleClick}>
 		{#snippet start()}
 			<IconCloudUpload size={16} />
 		{/snippet}
-		Upload
+		{i18n.t('console.theme.upload')}
 	</Button>
 
 	<input

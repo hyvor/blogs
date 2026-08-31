@@ -9,6 +9,9 @@
 	import { createEventDispatcher } from 'svelte';
 	import UpdateTagModal from './Update/UpdateTagModal.svelte';
 	import TagName from './TagName.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		tag: Tag;
@@ -25,17 +28,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete tag',
-				content: 'Are you sure you want to delete this tag?',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.tags.deleteTitle'),
+				content: i18n.t('console.settings.tags.deleteContent'),
+				confirmText: i18n.t('console.settings.tags.deleteConfirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting tag...');
+			const toastId = toast.loading(i18n.t('console.settings.tags.deleting'));
 
 			deleteTag(tag.id)
 				.then(() => {
-					toast.success('Tag deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.tags.deleted'), { id: toastId });
 					dispatch('delete', tag.id);
 				})
 				.catch((e) => {
@@ -59,7 +62,7 @@
 	<div>{variant?.description || ''}</div>
 	<div>{tag.posts_count}</div>
 	<div>
-		<Tooltip text="Edit tag">
+		<Tooltip text={i18n.t('console.settings.tags.editTag')}>
 			<IconButton
 				variant="fill-light"
 				color="gray"
@@ -69,7 +72,7 @@
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
-		<Tooltip text="Delete tag">
+		<Tooltip text={i18n.t('console.settings.tags.deleteTag')}>
 			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
 				<IconTrash size={12} />
 			</IconButton>

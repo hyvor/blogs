@@ -15,6 +15,9 @@
 	import { getTags } from './tagActions';
 	import TagRow from './TagRow.svelte';
 	import CreateTagModal from './CreateTagModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -38,7 +41,7 @@
 			})
 			.catch((e) => {
 				if (!more) tags = [];
-				toast.error(e.message || 'Failed to load tags.');
+				toast.error(e.message || i18n.t('console.settings.tags.failedToLoad'));
 			})
 			.finally(() => {
 				isLoading = false;
@@ -72,26 +75,27 @@
 <div class="tags">
 	<SettingsTop>
 		<Button on:click={() => (isCreating = true)}>
-			Create Tag {#snippet end()}
+			{i18n.t('console.settings.tags.create')}
+			{#snippet end()}
 				<IconPlus />
 			{/snippet}
 		</Button>
 	</SettingsTop>
 
-	<div class="note">Tags can be used to categorize your posts.</div>
+	<div class="note">{i18n.t('console.settings.tags.note')}</div>
 
 	<div class="table">
 		{#if isLoading}
 			<Loader full />
 		{:else if tags.length === 0}
-			<IconMessage empty message="No tags found." />
+			<IconMessage empty message={i18n.t('console.settings.tags.noTags')} />
 		{:else}
 			<Table columns="2fr 2fr 3fr 1fr 70px">
 				<TableRow head>
-					<div>Name</div>
-					<div>Slug/URL</div>
-					<div>Description</div>
-					<div>Posts</div>
+					<div>{i18n.t('console.common.name')}</div>
+					<div>{i18n.t('console.settings.tags.slugUrl')}</div>
+					<div>{i18n.t('console.settings.general.description')}</div>
+					<div>{i18n.t('console.nav.posts')}</div>
 					<div></div>
 				</TableRow>
 
@@ -105,7 +109,7 @@
 				{/each}
 
 				<LoadButton
-					text="Load More"
+					text={i18n.t('console.common.loadMore')}
 					show={hasMore}
 					on:click={() => loadTags(true)}
 					loading={isLoadingMore}

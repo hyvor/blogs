@@ -3,6 +3,9 @@
 	import { primaryLanguageStore } from '../../../../lib/stores/languagesStore';
 	import type { Tag } from '../../../../lib/types';
 	import IconLock from '@hyvor/icons/IconLock';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		tag: Tag;
@@ -15,9 +18,9 @@
 </script>
 
 <span>
-	{variant?.name || 'Unnamed'}
+	{variant?.name || i18n.t('console.common.unnamed')}
 	{#if tag.is_private}
-		<Tooltip text="Private tag">
+		<Tooltip text={i18n.t('console.settings.tags.privateTag')}>
 			<IconLock size={small ? 10 : 12} />
 		</Tooltip>
 	{/if}

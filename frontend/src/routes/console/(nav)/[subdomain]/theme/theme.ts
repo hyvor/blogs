@@ -9,8 +9,12 @@ import {
 import consoleApi from '../../../lib/consoleApi';
 import { updateFile } from './themeActions';
 import { toast } from '@hyvor/design/components';
+import { getI18n } from '../../../lib/i18n';
 
 export function useIsFileEditingCheck() {
+	// read during component init, while the i18n context is still available
+	const i18n = getI18n();
+
 	beforeNavigate(async (navigation) => {
 		let hasChanges = false;
 
@@ -23,7 +27,7 @@ export function useIsFileEditingCheck() {
 
 		if (hasChanges) {
 			// TODO: Upgrade to HDS confirm
-			if (!confirm('Are you sure you want to leave this page? Some files are not saved.')) {
+			if (!confirm(i18n.t('console.theme.unsavedLeaveConfirm'))) {
 				navigation.cancel();
 			}
 		}

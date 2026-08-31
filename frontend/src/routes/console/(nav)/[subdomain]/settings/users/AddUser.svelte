@@ -15,6 +15,9 @@
 	import { createGuestUser, createHyvorUser } from './userActions';
 	import { createEventDispatcher } from 'svelte';
 	import { OrganizationMemberSearch } from '@hyvor/design/cloud';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -50,10 +53,10 @@
 			.then((res) => {
 				dispatch('add', res);
 				show = false;
-				toast.success('User added successfully');
+				toast.success(i18n.t('console.settings.users.added'));
 			})
 			.catch((e) => {
-				toast.error(e.message || 'Failed to add user');
+				toast.error(e.message || i18n.t('console.settings.users.failedToAdd'));
 			})
 			.finally(() => {
 				isLoading = false;
@@ -64,7 +67,7 @@
 		guestNameError = null;
 
 		if (guestName.trim() === '') {
-			guestNameError = 'Name is required';
+			guestNameError = i18n.t('console.settings.users.nameRequired');
 			guestNameEl?.focus();
 			return;
 		}
@@ -75,10 +78,10 @@
 			.then((res) => {
 				dispatch('add', res);
 				show = false;
-				toast.success('User added successfully');
+				toast.success(i18n.t('console.settings.users.added'));
 			})
 			.catch((e) => {
-				toast.error(e.message || 'Failed to add user');
+				toast.error(e.message || i18n.t('console.settings.users.failedToAdd'));
 			})
 			.finally(() => {
 				isLoading = false;
@@ -88,10 +91,10 @@
 
 <Modal
 	bind:show
-	title="Add User"
+	title={i18n.t('console.settings.users.add')}
 	footer={{
 		confirm: {
-			text: 'Add User',
+			text: i18n.t('console.settings.users.add'),
 			props: {
 				disabled: type === 'hyvor' && hyvorUserId === undefined
 			}
@@ -101,39 +104,56 @@
 	on:confirm={handleAdd}
 	closeOnOutsideClick={false}
 >
-	<SplitControl label="User Type" caption="Guest users cannot access the console">
+	<SplitControl
+		label={i18n.t('console.settings.users.userType')}
+		caption={i18n.t('console.settings.users.userTypeCaption')}
+	>
 		<InputGroup>
 			<Radio bind:group={type} value="hyvor">HYVOR</Radio>
-			<Radio bind:group={type} value="guest">Guest</Radio>
+			<Radio bind:group={type} value="guest">
+				{i18n.t('console.settings.users.status.guest')}
+			</Radio>
 		</InputGroup>
 	</SplitControl>
 
 	{#if type === 'hyvor'}
-		<SplitControl label="User">
+		<SplitControl label={i18n.t('console.settings.users.user')}>
 			<OrganizationMemberSearch bind:selectedUserId={hyvorUserId} />
 		</SplitControl>
-		<SplitControl label="Role" caption="The role of the user">
+		<SplitControl
+			label={i18n.t('console.settings.users.role')}
+			caption={i18n.t('console.settings.users.roleCaption')}
+		>
 			<div class="roles">
 				<div>
-					<Radio bind:group={role} value="admin">Admin</Radio>
-					<span> all permissions, except blog deletion </span>
+					<Radio bind:group={role} value="admin">
+						{i18n.t('console.settings.users.roles.admin')}
+					</Radio>
+					<span>{i18n.t('console.settings.users.roleDesc.admin')}</span>
 				</div>
 				<div>
-					<Radio bind:group={role} value="editor">Editor</Radio>
-					<span> can edit everyone's posts </span>
+					<Radio bind:group={role} value="editor">
+						{i18n.t('console.settings.users.roles.editor')}
+					</Radio>
+					<span>{i18n.t('console.settings.users.roleDesc.editor')}</span>
 				</div>
 				<div>
-					<Radio bind:group={role} value="writer">Writer</Radio>
-					<span> can create and edit their own posts </span>
+					<Radio bind:group={role} value="writer">
+						{i18n.t('console.settings.users.roles.writer')}
+					</Radio>
+					<span>{i18n.t('console.settings.users.roleDesc.writer')}</span>
 				</div>
 				<div>
-					<Radio bind:group={role} value="contributor">Contributor</Radio>
-					<span> can write posts, but cannot publish </span>
+					<Radio bind:group={role} value="contributor">
+						{i18n.t('console.settings.users.roles.contributor')}
+					</Radio>
+					<span>{i18n.t('console.settings.users.roleDesc.contributor')}</span>
 				</div>
 			</div>
 			<div class="signup-note">
-				Learn more about <Link href="/docs/users#roles" target="_blank">
-					roles
+				{i18n.t('console.settings.users.learnMore')}
+				<Link href="/docs/users#roles" target="_blank">
+					{i18n.t('console.settings.users.rolesLink')}
 					{#snippet end()}
 						<IconBoxArrowUpRight size={12} />
 					{/snippet}
@@ -141,7 +161,7 @@
 			</div>
 		</SplitControl>
 	{:else}
-		<SplitControl label="Name">
+		<SplitControl label={i18n.t('console.common.name')}>
 			<FormControl>
 				<TextInput
 					bind:value={guestName}

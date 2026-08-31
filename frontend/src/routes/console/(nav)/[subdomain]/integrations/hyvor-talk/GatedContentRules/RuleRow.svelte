@@ -8,6 +8,9 @@
 	import { deleteGatedContentRule } from '../hyvorTalkActions';
 	import { createEventDispatcher } from 'svelte';
 	import CreateRule from './CreateRule.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		rule: HyvorTalkGatedContentRule;
@@ -23,21 +26,23 @@
 
 	function getGateText(gate: string | null) {
 		if (gate === null) {
-			return 'Default';
+			return i18n.t('console.integrations.hyvorTalk.gatedContent.gateDefault');
 		}
 
 		function gateSubstr(gate: string) {
 			return gate.length > 10 ? gate.substring(0, 10) + '...' : gate;
 		}
 
-		return 'Custom (' + gateSubstr(gate) + ')';
+		return i18n.t('console.integrations.hyvorTalk.gatedContent.gateCustom', {
+			gate: gateSubstr(gate)
+		});
 	}
 
 	async function onDelete() {
 		const confirmed = await confirm({
-			title: 'Delete Gated Content Rule',
-			content: 'Are you sure you want to delete this rule?',
-			confirmText: 'Delete',
+			title: i18n.t('console.integrations.hyvorTalk.gatedContent.deleteTitle'),
+			content: i18n.t('console.integrations.hyvorTalk.gatedContent.deleteContent'),
+			confirmText: i18n.t('console.common.delete'),
 			autoClose: false,
 			danger: true
 		});
@@ -47,7 +52,7 @@
 
 			deleteGatedContentRule(rule.id)
 				.then(() => {
-					toast.success('Rule deleted successfully');
+					toast.success(i18n.t('console.integrations.hyvorTalk.gatedContent.ruleDeleted'));
 					dispatch('delete', rule.id);
 				})
 				.catch((e) => {
@@ -67,19 +72,19 @@
 				<TagName tag={rule.tag} />
 			</Tag>
 		{/if}
-		<div class="bottom">Tag</div>
+		<div class="bottom">{i18n.t('console.integrations.hyvorTalk.gatedContent.tag')}</div>
 	</div>
 	<div class="min-plan">
 		<div>
 			{rule.minimum_plan}
 		</div>
-		<div class="bottom">Minimum Plan</div>
+		<div class="bottom">{i18n.t('console.integrations.hyvorTalk.gatedContent.minimumPlan')}</div>
 	</div>
 	<div class="gate">
 		<div>
 			{getGateText(rule.gate)}
 		</div>
-		<div class="bottom">Gate</div>
+		<div class="bottom">{i18n.t('console.integrations.hyvorTalk.gatedContent.gate')}</div>
 	</div>
 	<div class="actions">
 		<IconButton color="input" size="small" on:click={() => (updating = true)}>

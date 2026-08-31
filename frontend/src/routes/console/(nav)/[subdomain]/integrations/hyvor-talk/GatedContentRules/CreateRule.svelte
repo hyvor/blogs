@@ -17,6 +17,9 @@
 	} from '../hyvorTalkActions';
 	import TagSelector from './TagSelector.svelte';
 	import type { HyvorTalkGatedContentRule, Tag } from '../../../../../lib/types';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		selectedTags?: Tag[];
@@ -55,7 +58,7 @@
 		tagError = '';
 
 		if (!tag) {
-			tagError = 'Please select a tag.';
+			tagError = i18n.t('console.integrations.hyvorTalk.gatedContent.selectTagError');
 			return;
 		}
 
@@ -66,7 +69,7 @@
 				.then((res) => {
 					show = false;
 					dispatch('update', res);
-					toast.success('Rule updated successfully');
+					toast.success(i18n.t('console.integrations.hyvorTalk.gatedContent.ruleUpdated'));
 				})
 				.catch((e) => {
 					toast.error(e.message);
@@ -79,7 +82,7 @@
 				.then((res) => {
 					show = false;
 					dispatch('create', res);
-					toast.success('Rule created successfully');
+					toast.success(i18n.t('console.integrations.hyvorTalk.gatedContent.ruleCreated'));
 				})
 				.catch((e) => {
 					toast.error(e.message);
@@ -97,8 +100,7 @@
 				plans = res.plans;
 
 				if (plans.length === 0) {
-					error =
-						'You have not created any membership plans in Hyvor Talk. Please create at least one plan to use this feature.';
+					error = i18n.t('console.integrations.hyvorTalk.gatedContent.noPlans');
 					return;
 				}
 
@@ -108,8 +110,7 @@
 				let msg = err.message;
 
 				if (msg === 'memberships_not_enabled') {
-					msg =
-						'You have not enabled memberships in Hyvor Talk. Please enable it to use this feature.';
+					msg = i18n.t('console.integrations.hyvorTalk.gatedContent.membershipsNotEnabled');
 				}
 
 				error = msg;
@@ -122,10 +123,14 @@
 
 <Modal
 	bind:show
-	title={isUpdate ? 'Update Gated Content Rule' : 'Create Gated Content Rule'}
+	title={isUpdate
+		? i18n.t('console.integrations.hyvorTalk.gatedContent.updateRuleTitle')
+		: i18n.t('console.integrations.hyvorTalk.gatedContent.createRuleTitle')}
 	footer={{
 		confirm: {
-			text: isUpdate ? 'Update Rule' : 'Create Rule'
+			text: isUpdate
+				? i18n.t('console.integrations.hyvorTalk.gatedContent.updateRule')
+				: i18n.t('console.integrations.hyvorTalk.gatedContent.createRule')
 		}
 	}}
 	{loading}
@@ -135,7 +140,10 @@
 	{#if error}
 		<IconMessage error message={error} padding={50} iconSize={60} />
 	{:else}
-		<SplitControl label="Tag" caption="Posts with this tag will be gated.">
+		<SplitControl
+			label={i18n.t('console.integrations.hyvorTalk.gatedContent.tag')}
+			caption={i18n.t('console.integrations.hyvorTalk.gatedContent.tagCaption')}
+		>
 			<FormControl>
 				<TagSelector bind:tag {selectedTags} disabled={isUpdate} />
 				{#if tagError}
@@ -144,28 +152,39 @@
 			</FormControl>
 		</SplitControl>
 		<SplitControl
-			label="Minimum Plan"
-			caption="Users with a plan lower than this will not be able to view the content."
+			label={i18n.t('console.integrations.hyvorTalk.gatedContent.minimumPlan')}
+			caption={i18n.t('console.integrations.hyvorTalk.gatedContent.minimumPlanCaption')}
 		>
 			<FormControl>
 				{#each plans as plan}
 					<Radio bind:group={minimumPlan} value={plan.name} name="minimumPlan">
 						{plan.name}
-						<span class="price">({prettyCurrency(currency)}{plan.monthly_price}/month)</span>
+						<span class="price">
+							{i18n.t('console.integrations.hyvorTalk.gatedContent.perMonth', {
+								price: prettyCurrency(currency) + plan.monthly_price
+							})}
+						</span>
 					</Radio>
 				{/each}
 			</FormControl>
 		</SplitControl>
 		<SplitControl
-			label="Gate"
-			caption="The content to show when the user is not allowed to view the content."
+			label={i18n.t('console.integrations.hyvorTalk.gatedContent.gate')}
+			caption={i18n.t('console.integrations.hyvorTalk.gatedContent.gateCaption')}
 		>
 			<FormControl>
-				<Radio bind:group={gateType} value="default" name="gate">Default Gate</Radio>
-				<Radio bind:group={gateType} value="custom" name="gate">Custom Gate</Radio>
+				<Radio bind:group={gateType} value="default" name="gate">
+					{i18n.t('console.integrations.hyvorTalk.gatedContent.defaultGate')}
+				</Radio>
+				<Radio bind:group={gateType} value="custom" name="gate">
+					{i18n.t('console.integrations.hyvorTalk.gatedContent.customGate')}
+				</Radio>
 
 				{#if gateType === 'custom'}
-					<Textarea bind:value={gateContent} placeholder="Custom gate name or HTML" />
+					<Textarea
+						bind:value={gateContent}
+						placeholder={i18n.t('console.integrations.hyvorTalk.gatedContent.customGatePlaceholder')}
+					/>
 				{/if}
 			</FormControl>
 		</SplitControl>

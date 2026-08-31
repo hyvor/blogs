@@ -7,6 +7,9 @@
 	import { getNavigations } from './navigationActions';
 	import CreateNavigationModal from './CreateNavigationModal.svelte';
 	import NavTable from './NavTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -55,7 +58,8 @@
 <div class="items">
 	<SettingsTop>
 		<Button on:click={() => (isCreating = true)}>
-			Create Navigation {#snippet end()}
+			{i18n.t('console.settings.navigation.create')}
+			{#snippet end()}
 				<IconPlus />
 			{/snippet}
 		</Button>
@@ -65,19 +69,23 @@
 		{#if isLoading}
 			<Loader full />
 		{:else if items.length === 0}
-			<IconMessage empty message="No items found." />
+			<IconMessage empty message={i18n.t('console.settings.navigation.noItems')} />
 		{:else}
 			<TabNav>
 				<TabNavItem
 					name="header"
 					active={activeTab === 'header'}
-					onclick={() => (activeTab = 'header')}>Header</TabNavItem
+					onclick={() => (activeTab = 'header')}
 				>
+					{i18n.t('console.settings.navigation.header')}
+				</TabNavItem>
 				<TabNavItem
 					name="footer"
 					active={activeTab === 'footer'}
-					onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
+					onclick={() => (activeTab = 'footer')}
 				>
+					{i18n.t('console.settings.navigation.footer')}
+				</TabNavItem>
 			</TabNav>
 
 			<NavTable

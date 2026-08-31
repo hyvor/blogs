@@ -20,6 +20,9 @@
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
@@ -56,7 +59,7 @@
 
 	function handleBeforeSave() {
 		if (subdomain !== $blogStore.subdomain && subdomainError) {
-			toast.error('Subdomain error: ' + subdomainError);
+			toast.error(i18n.t('console.settings.hosting.subdomainError', { error: subdomainError }));
 			return false;
 		}
 
@@ -66,11 +69,11 @@
 		if ($blogStore.hosting_at === 'self') {
 			const hostingUrl = ($blogStore.hosting_url || '').trim();
 			if (hostingUrl === '') {
-				hostingUrlError = 'Self-Hosting URL is required';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.selfUrlRequired');
 				return false;
 			}
 			if (!isValidUrl(hostingUrl)) {
-				hostingUrlError = 'Invalid URL. Make sure to include the protocol (https://)';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.invalidUrl');
 				return false;
 			}
 		}
@@ -78,20 +81,19 @@
 		if ($blogStore.hosting_at === 'domain') {
 			const hostingDomain = ($blogStore.hosting_domain || '').trim();
 			if (hostingDomain === '') {
-				hostingUrlError = 'Custom Domain is required';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.domainRequired');
 				return false;
 			}
 			if (hostingDomain.match(' ')) {
-				hostingUrlError = 'Custom Domain cannot contain spaces';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.domainSpaces');
 				return false;
 			}
 			if (hostingDomain.match(/^https?:\/\//)) {
-				hostingUrlError = 'Add the domain without the protocol (https://)';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.domainProtocol');
 				return false;
 			}
 			if (hostingDomain.match('/')) {
-				hostingUrlError =
-					'Custom Domain cannot contain /. Use self-hosting for to host your blog in a subdirectory';
+				hostingUrlError = i18n.t('console.settings.hosting.validation.domainSlash');
 				return false;
 			}
 		}
@@ -122,7 +124,7 @@
 
 	function handleError(message: string, code: number) {
 		if (message === 'domain_taken') {
-			hostingUrlError = 'This domain is already taken by another blog. Contact support if needed.';
+			hostingUrlError = i18n.t('console.settings.hosting.validation.domainTaken');
 		} else {
 			toast.error(message);
 		}
@@ -153,8 +155,8 @@
 
 	<div class="hosting">
 		<SplitControl
-			label="Subdomain"
-			caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
+			label={i18n.t('console.settings.hosting.subdomain')}
+			caption={i18n.t('console.settings.hosting.subdomainCaption')}
 		>
 			<FormControl>
 				<TextInput
@@ -169,30 +171,33 @@
 			</FormControl>
 		</SplitControl>
 
-		<SplitControl label="Hosted at" caption="Where do you like to host your blog?">
+		<SplitControl
+			label={i18n.t('console.settings.hosting.hostedAt')}
+			caption={i18n.t('console.settings.hosting.hostedAtCaption')}
+		>
 			<InputGroup>
 				<Radio value="subdomain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Subdomain (hyvorblogs.io)
+					{i18n.t('console.settings.hosting.optionSubdomain')}
 				</Radio>
 				<Radio value="domain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Custom Domain - &nbsp;<Link
+					{i18n.t('console.settings.hosting.optionDomain')} - &nbsp;<Link
 						href="/docs/custom-domain"
 						target="_blank"
 						style="font-size:14px;"
 					>
-						Docs
+						{i18n.t('console.settings.hosting.docs')}
 						{#snippet end()}
 							<IconBoxArrowUpRight size={10} />
 						{/snippet}
 					</Link>
 				</Radio>
 				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Self-hosting - &nbsp;<Link
+					{i18n.t('console.settings.hosting.optionSelf')} - &nbsp;<Link
 						href="/docs/self-hosting"
 						target="_blank"
 						style="font-size:14px;"
 					>
-						Docs
+						{i18n.t('console.settings.hosting.docs')}
 						{#snippet end()}
 							<IconBoxArrowUpRight size={10} />
 						{/snippet}
@@ -202,7 +207,10 @@
 		</SplitControl>
 
 		{#if $blogStore.hosting_at === 'domain'}
-			<SplitControl label="Custom Domain" caption="Your custom domain name">
+			<SplitControl
+				label={i18n.t('console.settings.hosting.customDomain')}
+				caption={i18n.t('console.settings.hosting.customDomainCaption')}
+			>
 				<FormControl>
 					<TextInput
 						value={$blogStore.hosting_domain}
@@ -222,7 +230,10 @@
 		{/if}
 
 		{#if $blogStore.hosting_at === 'self'}
-			<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
+			<SplitControl
+				label={i18n.t('console.settings.hosting.selfUrl')}
+				caption={i18n.t('console.settings.hosting.selfUrlCaption')}
+			>
 				<FormControl>
 					<TextInput
 						bind:value={$blogStore.hosting_url}
@@ -240,9 +251,14 @@
 
 		{#if $blogStore.hosting_at !== 'subdomain'}
 			<SplitControl
-				label="Redirect Subdomain"
-				caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
-					($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+				label={i18n.t('console.settings.hosting.redirectSubdomain')}
+				caption={i18n.t('console.settings.hosting.redirectSubdomainCaption', {
+					subdomain: $blogStore.subdomain,
+					target:
+						$blogStore.hosting_at === 'domain'
+							? i18n.t('console.settings.hosting.customDomainLower')
+							: i18n.t('console.settings.hosting.selfUrlLower')
+				})}
 			>
 				<Switch
 					checked={$blogStore.hosting_redirect_subdomain}
@@ -257,19 +273,13 @@
 					<IconExclamationCircle size={18} />
 				{/snippet}
 				{#snippet title()}
-					<div>URL Change</div>
+					<div>{i18n.t('console.settings.hosting.urlChange.title')}</div>
 				{/snippet}
-				You are about to change the URL of your blog!
+				{i18n.t('console.settings.hosting.urlChange.intro')}
 				<ul>
-					<li>
-						Previously shared links may break. However, when changing from hyvorblogs.io subdomain
-						to a custom domain or self-hosting, we'll redirect users to the new URL.
-					</li>
-					<li>This may impact the SEO of your blog.</li>
-					<li>
-						We'll update the media links in your post content and blog settings. This may take some
-						time.
-					</li>
+					<li>{i18n.t('console.settings.hosting.urlChange.point1')}</li>
+					<li>{i18n.t('console.settings.hosting.urlChange.point2')}</li>
+					<li>{i18n.t('console.settings.hosting.urlChange.point3')}</li>
 				</ul>
 			</Callout>
 		{/if}
