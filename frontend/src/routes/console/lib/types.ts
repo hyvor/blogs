@@ -99,6 +99,7 @@ export interface Blog {
 	link_analysis_email_report: 'always' | 'broken' | 'never';
 
 	ai_provider: 'mistral' | 'openai' | 'anthropic';
+	ai_provider_model: string;
 	ai_translation_enabled: boolean;
 	ai_generation_enabled: boolean;
 

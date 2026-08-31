@@ -19,4 +19,13 @@ enum AiProvider: string
             self::ANTHROPIC => 'claude-sonnet-5',
         };
     }
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::MISTRAL => 'Mistral',
+            self::OPENAI => 'OpenAI',
+            self::ANTHROPIC => 'Anthropic',
+        };
+    }
 }

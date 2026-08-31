@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { InputGroup, Radio, SplitControl, Switch } from '@hyvor/design/components';
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
+	import { getConfig } from '../../../../lib/config';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 
-	const providers: { value: 'mistral' | 'openai' | 'anthropic'; label: string; model: string }[] = [
-		{ value: 'mistral', label: 'Mistral', model: 'mistral-medium-3.5' },
-		{ value: 'openai', label: 'OpenAI', model: 'gpt-5.6-terra' },
-		{ value: 'anthropic', label: 'Anthropic', model: 'claude-sonnet-5' }
-	];
+	const providers = getConfig().ai_providers;
 
 	function handleAiProviderChange(value: 'mistral' | 'openai' | 'anthropic') {
 		updateBlogStore({ ai_provider: value });

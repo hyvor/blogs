@@ -1,5 +1,4 @@
 <script lang="ts">
-	import IconRobot from '@hyvor/icons/IconRobot';
 	import AgentChat from './AgentChat.svelte';
 	import type { DocumentChange } from './agentApi';
 	async function applyDocumentChange(change: DocumentChange) {
@@ -14,8 +13,6 @@
 <style>
 	.agent-page {
 		height: 100%;
-		display: flex;
-		flex-direction: column;
 		overflow: hidden;
 	}
 </style>

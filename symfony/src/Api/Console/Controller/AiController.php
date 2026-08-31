@@ -28,29 +28,6 @@ class AiController extends AbstractController
         private AiAgentConversationService $aiAgentConversationService
     ) {}
 
-    #[Route('/ai/translate/post', methods: ['POST'])]
-    #[ScopeRequired(Scope::AI_USE)]
-    public function translate(
-        #[MapRequestPayload] TranslatePostInput $input
-    ): JsonResponse
-    {
-        $blog = $this->authListener->getBlog();
-
-        $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
-
-        if (!$variant) {
-            throw new BadRequestHttpException('Post variant not found');
-        }
-
-        try {
-            $translatedData = $this->aiPostTranslator->translatePostVariant($variant, $input->target_language_code);
-        } catch (TranslateException $e) {
-            throw new BadRequestHttpException('Translation failed: ' . $e->getMessage());
-        }
-
-        return new JsonResponse($translatedData);
-    }
-
     #[Route('/ai/agent', methods: ['POST'])]
     #[ScopeRequired(Scope::AI_USE)]
     public function agent(
@@ -79,6 +56,29 @@ class AiController extends AbstractController
         $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;
+    }
+
+    #[Route('/ai/translate/post', methods: ['POST'])]
+    #[ScopeRequired(Scope::AI_USE)]
+    public function translate(
+        #[MapRequestPayload] TranslatePostInput $input
+    ): JsonResponse
+    {
+        $blog = $this->authListener->getBlog();
+
+        $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
+
+        if (!$variant) {
+            throw new BadRequestHttpException('Post variant not found');
+        }
+
+        try {
+            $translatedData = $this->aiPostTranslator->translatePostVariant($variant, $input->target_language_code);
+        } catch (TranslateException $e) {
+            throw new BadRequestHttpException('Translation failed: ' . $e->getMessage());
+        }
+
+        return new JsonResponse($translatedData);
     }
 
 }

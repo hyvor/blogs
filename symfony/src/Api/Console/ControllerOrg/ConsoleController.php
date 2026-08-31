@@ -11,6 +11,7 @@ use App\Api\Console\Object\BlogListObjectFactory;
 use App\Service\AppConfig;
 use App\Service\Billing\UsageService;
 use App\Service\CodeHighlight\Highlighter;
+use App\Service\Ai\AiProvider;
 use App\Service\Limit;
 use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
@@ -110,6 +111,11 @@ class ConsoleController
                     'max_asset_file_size' => Limit::MAX_ASSET_FILE_SIZE,
                 ],
                 'highlight_themes' => $this->highlighter->getAllThemes(),
+                'ai_providers' => array_map(fn(AiProvider $provider) => [
+                    'value' => $provider->value,
+                    'label' => $provider->label(),
+                    'model' => $provider->model(),
+                ], AiProvider::cases()),
             ],
             'preloaded' => [
                 'blog' => $preloadedBlog ? json_decode((string) $preloadedBlog->getContent(), true) : null,

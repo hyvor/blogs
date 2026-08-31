@@ -2,9 +2,9 @@
 	import { marked } from 'marked';
 	// @ts-ignore
 	import DOMPurify from 'dompurify';
-	import { Button, Loader, Textarea } from '@hyvor/design/components';
+	import { Button, IconButton, Loader } from '@hyvor/design/components';
 	import IconRobot from '@hyvor/icons/IconRobot';
-	import IconMagic from '@hyvor/icons/IconMagic';
+	import IconArrowUpCircleFill from '@hyvor/icons/IconArrowUpCircleFill';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import IconFileText from '@hyvor/icons/IconFileText';
 	import IconCheck from '@hyvor/icons/IconCheck';
@@ -13,6 +13,8 @@
 	import AgentSteps from './AgentSteps.svelte';
 	import { applyAgentEvent, callAgent, type AgentBlock, type DocumentChange } from './agentApi';
 	import IdleMessage from './IdleMessage.svelte';
+	import { blogStore } from '../../../lib/stores/blogStore';
+	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 
 	interface Props {
 		postVariantId: number | null;
@@ -28,6 +30,7 @@
 	}: Props = $props();
 
 	let prompt = $state('');
+	let textareaEl: HTMLTextAreaElement | undefined = $state();
 	let status: 'idle' | 'streaming' | 'done' | 'error' = $state('idle');
 	let error: string | null = $state(null);
 	let sentPrompt = $state('');
@@ -116,6 +119,18 @@
 			applying = false;
 		}
 	}
+
+	function openAiSettings() {
+		window.open(consoleUrlWithBlog('/settings/ai'), '_blank');
+	}
+
+	$effect(() => {
+		prompt;
+		if (textareaEl) {
+			textareaEl.style.height = 'auto';
+			textareaEl.style.height = Math.min(textareaEl.scrollHeight, 200) + 'px';
+		}
+	});
 </script>
 
 <div class="agent-chat">
@@ -195,22 +210,34 @@
 		<div class="agent-inner">
 			<div class="input-row">
 				<div class="prompt-input">
-					<Textarea
-						block={true}
-						{placeholder}
-						rows={1}
+					<textarea
+						bind:this={textareaEl}
 						bind:value={prompt}
+						{placeholder}
+						rows="1"
 						disabled={status === 'streaming'}
-					/>
-				</div>
-				<Button disabled={prompt.trim() === '' || status === 'streaming'} onclick={handleSubmit}>
-					<div class="generate-button-content">
-						Send
-						<div class="generate-icon"><IconMagic /></div>
+					></textarea>
+					<div class="send-button">
+						<IconButton
+							color="input"
+							size="small"
+							aria-label="Send"
+							disabled={prompt.trim() === '' || status === 'streaming'}
+							onclick={handleSubmit}
+						>
+							<IconArrowUpCircleFill size={20} />
+						</IconButton>
 					</div>
-				</Button>
+				</div>
 			</div>
-			<div class="disclaimer">AI can make mistakes; please double-check.</div>
+			<div class="footer-row">
+				<div class="disclaimer">AI can make mistakes; please double-check.</div>
+				{#if $blogStore?.ai_provider_model}
+					<button type="button" class="model-info" onclick={openAiSettings}>
+						{$blogStore.ai_provider_model}
+					</button>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
@@ -227,11 +254,10 @@
 
 <style lang="scss">
 	.agent-chat {
-		flex: 1;
-		min-height: 0;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		height: 100%;
 	}
 
 	.agent-inner {
@@ -374,30 +400,71 @@
 	}
 
 	.input-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 10px;
 		margin-bottom: 6px;
 	}
 
 	.prompt-input {
+		position: relative;
 		width: 100%;
 	}
 
-	.generate-button-content {
-		display: flex;
-		font-size: 12px;
-		align-items: center;
-		white-space: nowrap;
+	.prompt-input textarea {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		resize: none;
+		border: none;
+		outline: none;
+		font-family: inherit;
+		font-size: 14px;
+		line-height: 1.4;
+		color: inherit;
+		background-color: var(--input);
+		border-radius: 20px;
+		border-bottom-right-radius: 0;
+		padding: 12px 45px 12px 15px;
+		max-height: 200px;
+		overflow-y: auto;
+		transition: 0.2s box-shadow;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--accent-light);
+		}
+
+		&:disabled {
+			opacity: 0.7;
+		}
 	}
 
-	.generate-icon {
-		margin-left: 5px;
+	.send-button {
+		position: absolute;
+		right: 8px;
+		bottom: 6px;
+	}
+
+	.footer-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
 	}
 
 	.disclaimer {
 		font-size: 12px;
 		color: var(--text-light);
+	}
+
+	.model-info {
+		font-size: 12px;
+		color: var(--text-light);
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--text);
+			text-decoration: underline;
+		}
 	}
 </style>

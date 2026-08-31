@@ -18,6 +18,11 @@ export interface Config {
 		max_asset_file_size: number;
 	};
 	highlight_themes: string[];
+	ai_providers: {
+		value: 'mistral' | 'openai' | 'anthropic';
+		label: string;
+		model: string;
+	}[];
 	services: {
 		paddle: {
 			sandbox: boolean;
