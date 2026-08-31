@@ -16,4 +16,9 @@
 	];
 </script>
 
-<LogoStrip {logos} label="Trusted by 100+ bloggers & businesses" background="#574443" />
+<LogoStrip
+	{logos}
+	label="Trusted by 100+ bloggers & businesses"
+	background="#574443"
+	marquee={true}
+/>

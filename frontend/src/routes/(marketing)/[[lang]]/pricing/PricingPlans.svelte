@@ -103,7 +103,8 @@
 
 	.plans-outer {
 		position: relative;
-		--container-inset: max(15px, calc((100vw - 1530px) / 2));
+		overflow-x: clip;
+		--container-inset: max(15px, calc((100% - 1530px) / 2));
 	}
 
 	.header {
@@ -177,11 +178,11 @@
 	}
 
 	.arrow.left {
-		left: calc(var(--container-inset) - 20px);
+		left: max(6px, calc(var(--container-inset) - 20px));
 	}
 
 	.arrow.right {
-		right: calc(var(--container-inset) - 20px);
+		right: max(6px, calc(var(--container-inset) - 20px));
 	}
 
 	.toggle-wrap {

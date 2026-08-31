@@ -15,44 +15,43 @@
 
 	let { plan, yearly, currency }: Props = $props();
 
-	type FeatureLine = { key: string; from?: PlanKey; value?: string | number };
+	type FeatureLine = { key: string; from?: PlanKey; value?: string | number; summary?: boolean };
 	const PLAN_FEATURES: Record<PlanKey, FeatureLine[]> = {
 		personal: [
-			{ key: 'blogs', value: 1 },
 			{ key: 'users', value: 1 },
 			{ key: 'storage', value: 1 },
-			{ key: 'customThemesDomain' },
+			{ key: 'blogs', value: 1 },
+			{ key: 'customDomains' },
+			{ key: 'customThemes' },
 			{ key: 'multiLanguage' },
-			{ key: 'allApis' }
+			{ key: 'allApis' },
+			{ key: 'freeIntegrations' }
 		],
 		starter: [
-			{ key: 'inherits', from: 'personal' },
-			{ key: 'blogsMultiple' },
+			{ key: 'inherits', from: 'personal', summary: true },
 			{ key: 'users', value: 5 },
 			{ key: 'storage', value: 5 },
+			{ key: 'aiAgent' },
+			{ key: 'blogsMultiple' },
 			{ key: 'noBranding' },
-			{ key: 'seoAnalysis' },
-			{ key: 'aiTokens', value: '1m' }
+			{ key: 'seoAnalysis' }
 		],
 		growth: [
-			{ key: 'inherits', from: 'starter' },
-			{ key: 'blogsMultiple' },
+			{ key: 'inherits', from: 'starter', summary: true },
 			{ key: 'users', value: 15 },
 			{ key: 'storage', value: 150 },
-			{ key: 'linkAnalysis' },
-			{ key: 'aiTokens', value: '3m' }
+			{ key: 'aiAgentUsage', value: 4 },
+			{ key: 'linkAnalysis' }
 		],
 		premium: [
-			{ key: 'inherits', from: 'growth' },
-			{ key: 'blogsMultiple' },
+			{ key: 'inherits', from: 'growth', summary: true },
 			{ key: 'users', value: 50 },
 			{ key: 'storage', value: 500 },
-			{ key: 'aiTokens', value: '10m' }
+			{ key: 'aiAgentUsage', value: 12 }
 		],
 		enterprise: [
-			{ key: 'inherits', from: 'premium' },
+			{ key: 'customLimits' },
 			{ key: 'sso' },
-			{ key: 'compliance' },
 			{ key: 'prioritySupport' },
 			{ key: 'customContract' }
 		]
@@ -74,8 +73,9 @@
 	);
 
 	const items = $derived(
-		PLAN_FEATURES[plan].map((f) =>
-			I18n.t(
+		PLAN_FEATURES[plan].map((f) => ({
+			summary: !!f.summary,
+			text: I18n.t(
 				`pricing.plans.features.${f.key}` as never,
 				f.from
 					? { plan: I18n.t(`pricing.plans.${f.from}` as never) }
@@ -83,7 +83,7 @@
 						? { value: f.value }
 						: {}
 			)
-		)
+		}))
 	);
 
 	let price = $derived(
@@ -149,13 +149,18 @@
 	</div>
 
 	<div class="bottom">
-		<div class="features-label">{I18n.t('pricing.plans.featuresLabel')}</div>
 		<div class="features-list">
 			{#each items as item}
-				<div class="feature-item">
-					<span class="check"><IconCheckLg size={10} /></span>
-					<span>{item}</span>
-				</div>
+				{#if item.summary}
+					<div class="feature-item summary">
+						<span>{item.text} +</span>
+					</div>
+				{:else}
+					<div class="feature-item">
+						<span class="check"><IconCheckLg size={10} /></span>
+						<span>{item.text}</span>
+					</div>
+				{/if}
 			{/each}
 		</div>
 	</div>
@@ -246,24 +251,16 @@
 		border-radius: 0 0 var(--box-radius) var(--box-radius);
 	}
 
-	.features-label {
-		font-size: 12px;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--text-light);
-	}
-
-	.features-list {
-		margin-top: 14px;
-	}
-
 	.feature-item {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		padding: 7px 0;
 		font-size: 14px;
+	}
+
+	.feature-item.summary {
+		font-weight: 700;
 	}
 
 	.check {

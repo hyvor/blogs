@@ -31,7 +31,7 @@
 			</ul>
 
 			<div class="buttons">
-				<Button as="a" href="/hosting" size="large" variant="fill" color="accent">
+				<Button as="a" href="/hosting" size="medium" variant="fill" color="accent">
 					{I18n.t('pricing.selfHost.buttonLearn')}
 				</Button>
 				<span class="github-btn">
@@ -40,7 +40,7 @@
 						href="https://github.com/hyvor/blogs"
 						target="_blank"
 						rel="noopener"
-						size="large"
+						size="medium"
 						variant="outline"
 						color="gray"
 					>
@@ -61,12 +61,9 @@
 				</div>
 				<div class="terminal-body">
 					<div class="line">
-						<span class="prompt">$</span> git clone https://github.com/hyvor/blogs
+						<span class="prompt">$</span> docker compose up -d
 					</div>
-					<div class="line">
-						<span class="prompt">$</span> cd blogs &amp;&amp; docker compose up -d
-					</div>
-					<div class="line output">✓ Blog running at http://localhost:8080</div>
+					<div class="line output">✓ Hyvor Blogs running at https://acme.com/blog</div>
 				</div>
 			</div>
 		</div>
@@ -236,6 +233,7 @@
 
 		.buttons {
 			justify-content: center;
+			flex-wrap: wrap;
 		}
 
 		.visual-col {

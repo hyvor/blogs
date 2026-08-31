@@ -1,51 +1,56 @@
 <script lang="ts">
 	import { Testimonials } from '@hyvor/design/marketing';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+	import type { ComponentProps } from 'svelte';
 
 	const I18n = getMarketingI18n();
 
-	interface TextReview {
-		type: 'text';
-		name: string;
-		role: string;
-		quote: string;
-	}
+	const t = (key: string) => I18n.t(`homepage.testimonials.reviews.${key}` as never);
 
-	interface VideoReview {
-		type: 'video';
-		name: string;
-		role: string;
-		videoUrl?: string;
-		posterUrl?: string;
-		summary?: string;
-	}
-
-	type Review = TextReview | VideoReview;
-
-	const reviews: Review[] = [
+	const reviews: ComponentProps<typeof Testimonials>['reviews'] = [
 		{
 			type: 'text',
-			name: 'Lionel S.',
-			role: 'Blogger',
-			quote:
-				'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
+			name: 'Riccardo Padovani',
+			role: t('riccardo.role'),
+			company: 'Google',
+			summary: t('riccardo.summary'),
+			quote: t('riccardo.quote')
 		},
 		{
 			type: 'video',
 			name: 'Ashutosh Jain',
-			role: 'Senior Manager, Marketing - Enthuziastic',
+			role: t('ashutosh.role'),
+			company: 'Enthuziastic',
+			companyUrl: 'https://enthu.com',
 			videoUrl:
 				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788006279/blogs.hyvor.com/reviews-images/enthusiastic-review_nq9vcj.mp4',
 			posterUrl:
 				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788006855/blogs.hyvor.com/reviews-images/enthu-poster_bsx0za.png',
-			summary: 'Clean & Simple'
+			summary: t('ashutosh.summary')
+		},
+		{
+			type: 'text',
+			name: 'Leo Selie',
+			role: t('leo.role'),
+			company: 'Flow Digital',
+			imageUrl: '/images/homepage/testmonials/leo-s.webp',
+			summary: t('leo.summary'),
+			quote: t('leo.quote')
+		},
+		{
+			type: 'text',
+			name: 'Robert Levesque',
+			role: t('robert.role'),
+			company: 'PROinspection Québec',
+			summary: t('robert.summary'),
+			quote: t('robert.quote')
 		},
 		{
 			type: 'text',
 			name: 'Manoj P.',
-			role: 'Senior Application Engineer',
-			quote:
-				'The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
+			role: t('manoj.role'),
+			summary: t('manoj.summary'),
+			quote: t('manoj.quote')
 		}
 	];
 </script>
