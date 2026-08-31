@@ -11,7 +11,7 @@
 >
 	{#snippet title()}
 		{I18n.t('homepage.hero.title')}<br /><span class="heading-small"
-			>{I18n.t('homepage.hero.title2')}</span
+			>{I18n.t('homepage.hero.titleRest')}</span
 		>
 	{/snippet}
 
@@ -27,7 +27,7 @@
 		/>
 		<br />
 		<I18n.T
-			key="homepage.hero.subtitle2"
+			key="homepage.hero.subtitleTraits"
 			params={{
 				hl: {
 					element: 'span',

@@ -12,7 +12,7 @@
 <SpotlightSplit
 	title={I18n.t('homepage.enterprise.title')}
 	description={I18n.t('homepage.enterprise.description')}
-	stats={[I18n.t('homepage.enterprise.stat1'), I18n.t('homepage.enterprise.stat2')]}
+	stats={[I18n.t('homepage.enterprise.statUptime'), I18n.t('homepage.enterprise.statSupport')]}
 	button={{
 		href: 'https://hyvor.com/enterprise',
 		label: I18n.t('homepage.enterprise.button'),

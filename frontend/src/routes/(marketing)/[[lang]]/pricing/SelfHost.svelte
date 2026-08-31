@@ -8,10 +8,10 @@
 	const I18n = getMarketingI18n();
 
 	const bullets = $derived([
-		I18n.t('pricing.selfHost.bullet1'),
-		I18n.t('pricing.selfHost.bullet2'),
-		I18n.t('pricing.selfHost.bullet3'),
-		I18n.t('pricing.selfHost.bullet4')
+		I18n.t('pricing.selfHost.bulletFree'),
+		I18n.t('pricing.selfHost.bulletDocker'),
+		I18n.t('pricing.selfHost.bulletOwnership'),
+		I18n.t('pricing.selfHost.bulletNoLockIn')
 	]);
 </script>
 
@@ -32,7 +32,7 @@
 
 			<div class="buttons">
 				<Button as="a" href="/hosting" size="large" variant="fill" color="accent">
-					{I18n.t('pricing.selfHost.button1')}
+					{I18n.t('pricing.selfHost.buttonLearn')}
 				</Button>
 				<span class="github-btn">
 					<Button
@@ -45,7 +45,7 @@
 						color="gray"
 					>
 						{#snippet start()}<IconGithub size={14} />{/snippet}
-						{I18n.t('pricing.selfHost.button2')}
+						{I18n.t('pricing.selfHost.buttonGithub')}
 						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
 					</Button>
 				</span>
