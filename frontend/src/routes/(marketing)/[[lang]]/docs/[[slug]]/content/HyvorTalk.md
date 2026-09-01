@@ -23,6 +23,7 @@ Hyvor Blogs natively integrates with [Hyvor Talk](https://talk.hyvor.com), a pri
 
 All Hyvor Blogs plans include a <span class="info"><Tooltip text="This complimentary license allows you to use Hyvor Talk without additional cost.">complimentary license</Tooltip></span> for Hyvor Talk as follows:
 
+<!-- translator: do not translate plan names -->
 <Table columns="1fr 1fr" style="bordered">
 	<TableRow head>
 		<div>Hyvor Blogs Plan</div>

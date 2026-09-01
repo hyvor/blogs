@@ -8,7 +8,7 @@ By default, a blog is hosted through the app domain subdirectory: `https://<app-
 
 You can configure a **Delivery Domain** to serve blogs from subdomains of a given domain instead. For example, on our cloud, blogs are hosted at `*.hyvorblogs.io`.
 
-## Why Delivery Domain?
+## Why use a delivery domain?
 
 For most cases, we recommend using the default method of hosting blogs through the app domain `/blog/*`. A Delivery Domain is recommended in one specific scenario: your Hyvor Blogs instance hosts blogs for various users, and you want to keep their content isolated on separate subdomains to ensure proper content segregation.
 
