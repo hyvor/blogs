@@ -33,13 +33,6 @@ export function updateHostedAt(
 	});
 }
 
-/**
- * Both TLS providers start a pending custom domain intent. "custom" (bring-your-own
- * certificate) starts the hosting change immediately; "auto" needs a follow-up call to
- * verifyCustomDomainSetup() once DNS is pointed at Hyvor Blogs. Re-POSTing with a blog that
- * already has an active custom domain (but no pending intent) reconfigures it - there's no
- * separate "update" endpoint.
- */
 export function createCustomDomainSetup(
 	domain: string,
 	tlsProvider: CustomDomainTlsProvider = 'auto',
@@ -57,8 +50,6 @@ export function createCustomDomainSetup(
 	});
 }
 
-// aborts a pending (not yet DNS-verified) custom domain intent; active custom domains
-// can only be removed by switching hosting back to subdomain
 export function deleteCustomDomainIntent() {
 	return consoleApi.delete<void>({
 		endpoint: '/hosting/custom-domain'

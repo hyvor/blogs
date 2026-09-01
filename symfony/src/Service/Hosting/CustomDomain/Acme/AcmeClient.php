@@ -46,6 +46,19 @@ class AcmeClient implements LoggerAwareInterface
     /**
      * @throws AcmeException
      */
+    public function getCertificateFor(
+        string $domain,
+        \OpenSSLAsymmetricKey $privateKey
+    ): FinalCertificate
+    {
+        $this->init();
+        $pendingOrder = $this->newOrder($domain);
+        return $this->finalizeOrder($pendingOrder, $privateKey);
+    }
+
+    /**
+     * @throws AcmeException
+     */
     public function init(): void
     {
         $this->loadDirectory();

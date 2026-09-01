@@ -60,33 +60,6 @@ class CustomDomainService
     }
 
     /**
-     * Issues an ACME certificate for the intent's domain and attaches it to the intent (not
-     * yet to a CustomDomain - the caller starts the hosting change next, and the intent is
-     * only promoted into the blog's live custom domain once that change succeeds).
-     *
-     * @throws AcmeException
-     */
-    public function generateCertificateForIntent(CustomDomainIntent $intent): void
-    {
-        $privateKeyPem = PrivateKey::generatePrivateKeyPem();
-        $privateKey = openssl_pkey_get_private($privateKeyPem);
-        if ($privateKey === false) {
-            throw new \RuntimeException('Failed to load generated private key'); // @codeCoverageIgnore
-        }
-
-        $finalCert = $this->issueCertificateViaAcme($intent->getDomain(), $privateKey);
-
-        $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
-        $intent->setCertificate($finalCert->certificatePem);
-        $intent->setValidFrom($finalCert->validFrom);
-        $intent->setValidTo($finalCert->validTo);
-        $intent->setUpdatedAt($this->now());
-
-        $this->em->persist($intent);
-        $this->em->flush();
-    }
-
-    /**
      * Copies an intent's (already-validated/already-issued) TLS material into the blog's
      * live CustomDomain and removes the intent. Called once a hosting change to DOMAIN has
      * actually succeeded - never before, so the custom domain record and the live URL never
@@ -133,7 +106,7 @@ class CustomDomainService
     public function generateCertificate(CustomDomain $customDomain): CustomDomain
     {
         $privateKey = $this->getDecryptedPrivateKey($customDomain);
-        $finalCert = $this->issueCertificateViaAcme($customDomain->getDomain(), $privateKey);
+        $finalCert = $this->acmeClient->getCertificateFor($customDomain->getDomain(), $privateKey);
 
         $this->activateTlsCertificate(
             $customDomain,
@@ -143,16 +116,6 @@ class CustomDomainService
         );
 
         return $customDomain;
-    }
-
-    /**
-     * @throws AcmeException
-     */
-    private function issueCertificateViaAcme(string $domain, \OpenSSLAsymmetricKey $privateKey): FinalCertificate
-    {
-        $this->acmeClient->init();
-        $order = $this->acmeClient->newOrder($domain);
-        return $this->acmeClient->finalizeOrder($order, $privateKey);
     }
 
     public function activateTlsCertificate(

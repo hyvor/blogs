@@ -192,6 +192,19 @@
 						or
 						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a>.
 					{/snippet}
+					{#snippet activeContent()}
+						<div class="self-hosting-active">
+							<span class="self-hosting-url">{$blogStore.hosting_url}</span>
+							<Button
+								size="small"
+								variant="outline"
+								disabled={isHostingChangeInProgress}
+								onclick={() => (showSelfHostingModal = true)}
+							>
+								Change URL
+							</Button>
+						</div>
+					{/snippet}
 				</HostingOption>
 			</div>
 			{#if $hostingInfoStore.change}
@@ -246,5 +259,19 @@
 	}
 	.subdomain-editor :global(.form-control) {
 		flex: 1;
+	}
+	.self-hosting-active {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		margin-top: 16px;
+	}
+	.self-hosting-url {
+		font-size: 14px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
 	}
 </style>

@@ -17,6 +17,7 @@ use App\Service\AppConfig;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
+use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
 use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
@@ -211,16 +212,16 @@ class HostingController extends AbstractController
         $domain = $intent->getDomain();
 
         // first verify internally before attempting ACME
-//        try {
-//            $this->internalCustomDomainVerificationService->verify($domain);
-//        } catch (InternalCustomDomainVerificationException) {
-//            throw new BadRequestHttpException(
-//                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
-//            );
-//        }
+        try {
+            $this->internalCustomDomainVerificationService->verify($domain);
+        } catch (InternalCustomDomainVerificationException) {
+            throw new BadRequestHttpException(
+                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
+            );
+        }
 
         try {
-            $this->customDomainService->generateCertificateForIntent($intent);
+            $this->customDomainIntentService->generateCertificateAndUpdate($intent);
         } catch (AcmeException $e) {
             throw new BadRequestHttpException('Unable to generate certificate via ACME protocol: ' . $e->getMessage());
         }

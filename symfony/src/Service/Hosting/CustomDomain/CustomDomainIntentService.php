@@ -5,6 +5,8 @@ namespace App\Service\Hosting\CustomDomain;
 use App\Entity\Blog;
 use App\Entity\CustomDomainIntent;
 use App\Entity\Enum\CustomDomainTlsProvider;
+use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
+use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
@@ -17,6 +19,7 @@ class CustomDomainIntentService
     public function __construct(
         private EntityManagerInterface $em,
         private Encryption $encryption,
+        private AcmeClient $acmeClient
     ) {}
 
     public function getCustomDomainIntent(string $domain): ?CustomDomainIntent
@@ -102,6 +105,32 @@ class CustomDomainIntentService
         $intent->setCertificate($certificatePem);
         $intent->setValidFrom(new \DateTimeImmutable()->setTimestamp($validFrom));
         $intent->setValidTo(new \DateTimeImmutable()->setTimestamp($validTo));
+    }
+
+
+
+    /**
+     * Generates a TLS certificate via ACME (Let's Encrypt) and stores it in the intent.
+     * @throws AcmeException
+     */
+    public function generateCertificateAndUpdate(CustomDomainIntent $intent): void
+    {
+        $privateKeyPem = PrivateKey::generatePrivateKeyPem();
+        $privateKey = openssl_pkey_get_private($privateKeyPem);
+        if ($privateKey === false) {
+            throw new \RuntimeException('Failed to load generated private key'); // @codeCoverageIgnore
+        }
+
+        $finalCert = $this->acmeClient->getCertificateFor($intent->getDomain(), $privateKey);
+
+        $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
+        $intent->setCertificate($finalCert->certificatePem);
+        $intent->setValidFrom($finalCert->validFrom);
+        $intent->setValidTo($finalCert->validTo);
+        $intent->setUpdatedAt($this->now());
+
+        $this->em->persist($intent);
+        $this->em->flush();
     }
 
 

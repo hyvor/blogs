@@ -33,7 +33,6 @@
 	}
 
 	async function handleAbortIntent() {
-
 		const confirmAbort = await confirm({
 			title: 'Abort Custom Domain Setup',
 			content: 'Are you sure you want to abort this custom domain setup?',
@@ -62,14 +61,15 @@
 </script>
 
 <Modal title="Complete Custom Domain Setup" {loading} bind:show>
-	{#if intent && !intent.certificate}
+	{#if intent && !intent.has_certificate}
 		<div class="section">
 			<div class="section-header">
 				<span class="section-domain">{intent.domain}</span>
 				<Tag color="orange" size="small">Pending DNS Validation</Tag>
 			</div>
 			<p>
-				Please add the DNS records as instructed below. Once added, click "Verify Now" to complete the setup.
+				Please add the DNS records as instructed below. Once added, click "Verify Now" to complete
+				the setup.
 			</p>
 			<DnsInstructions domain={intent.domain} />
 		</div>
@@ -85,7 +85,7 @@
 
 	{#snippet footer()}
 		<ButtonGroup>
-			{#if intent && !intent.certificate}
+			{#if intent && !intent.has_certificate}
 				<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
 					Abort
 				</Button>

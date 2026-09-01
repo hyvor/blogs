@@ -53,7 +53,7 @@
 		{#if intent}
 			<div class="intent">
 				<div class="note">
-					{#if intent.certificate}
+					{#if intent.has_certificate}
 						{customDomain
 							? i18n.t('console.settings.hosting.switchingToNewDomain')
 							: i18n.t('console.settings.hosting.settingUpCustomDomain')}
@@ -66,7 +66,7 @@
 				<div class="domain">
 					{intent.domain}
 				</div>
-				{#if intent.certificate}
+				{#if intent.has_certificate}
 					<div class="note">{i18n.t('console.settings.hosting.waitingForHostingChange')}</div>
 				{:else}
 					<div class="button">
