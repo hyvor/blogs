@@ -42,6 +42,7 @@
 			name: 'James Yang',
 			role: t('james.role'),
 			company: 'Kyzon Solutions',
+			imageUrl: '/images/homepage/testmonials/james-yang.jpeg',
 			summary: t('james.summary'),
 			quote: t('james.quote')
 		},
