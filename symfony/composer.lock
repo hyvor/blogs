@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a71951b5808226752fe286030ed42f39",
+    "content-hash": "e5fc0372a07387e110bd679f328d6b67",
     "packages": [
         {
             "name": "async-aws/core",
@@ -2147,7 +2147,7 @@
         },
         {
             "name": "hyvor/sdk-core",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-core.git",
@@ -2190,7 +2190,7 @@
             ],
             "description": "Shared HTTP transport, auth, serialization, and exceptions for HYVOR product SDKs. Not intended to be required directly - installed transitively by hyvor/sdk-* product packages.",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.4"
+                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.5"
             },
             "time": "2026-08-14T13:32:54+00:00"
         },
@@ -2235,16 +2235,16 @@
         },
         {
             "name": "hyvor/sdk-talk",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-talk.git",
-                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f"
+                "reference": "b007fec2934fcda3f826619d3e4b04a2f903ef3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/ca56488776ff98c1f010b33e8f7c01daf174d18f",
-                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/b007fec2934fcda3f826619d3e4b04a2f903ef3d",
+                "reference": "b007fec2934fcda3f826619d3e4b04a2f903ef3d",
                 "shasum": ""
             },
             "require": {
@@ -2268,9 +2268,9 @@
             ],
             "description": "Official PHP SDK for Hyvor Talk",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.4"
+                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.5"
             },
-            "time": "2026-08-14T13:40:40+00:00"
+            "time": "2026-09-01T02:08:33+00:00"
         },
         {
             "name": "hyvor/unfold",
@@ -5083,16 +5083,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "2.3.3",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "fb19eedd2bb67ff8cf7a5502ad329e701d6398a3"
+                "reference": "148cefffaf0233e4c08cc13db8a195a56dd6dfe9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/fb19eedd2bb67ff8cf7a5502ad329e701d6398a3",
-                "reference": "fb19eedd2bb67ff8cf7a5502ad329e701d6398a3",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/148cefffaf0233e4c08cc13db8a195a56dd6dfe9",
+                "reference": "148cefffaf0233e4c08cc13db8a195a56dd6dfe9",
                 "shasum": ""
             },
             "require": {
@@ -5124,9 +5124,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.3"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.5"
             },
-            "time": "2026-07-08T07:01:06+00:00"
+            "time": "2026-08-31T16:05:28+00:00"
         },
         {
             "name": "promphp/prometheus_client_php",
@@ -9796,16 +9796,16 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "v1.38.0",
+            "version": "v1.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b"
+                "reference": "aa20edea75bd9c48cfecc8360922e5a6e5c44502"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/2d446c214bdbe5b71bde5011b060a05fece3ae6b",
-                "reference": "2d446c214bdbe5b71bde5011b060a05fece3ae6b",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-normalizer/zipball/aa20edea75bd9c48cfecc8360922e5a6e5c44502",
+                "reference": "aa20edea75bd9c48cfecc8360922e5a6e5c44502",
                 "shasum": ""
             },
             "require": {
@@ -9857,7 +9857,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.38.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.42.0"
             },
             "funding": [
                 {
@@ -9877,7 +9877,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-25T13:48:31+00:00"
+            "time": "2026-08-07T06:33:24+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -10355,16 +10355,16 @@
         },
         {
             "name": "symfony/property-info",
-            "version": "v8.1.4",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-info.git",
-                "reference": "d3b1ba3e69dd9fbfff3e00416d2fc60c600c599d"
+                "reference": "d25e1dabbaff3f91bb15ba68328cf4fbd1c43c42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/d3b1ba3e69dd9fbfff3e00416d2fc60c600c599d",
-                "reference": "d3b1ba3e69dd9fbfff3e00416d2fc60c600c599d",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/d25e1dabbaff3f91bb15ba68328cf4fbd1c43c42",
+                "reference": "d25e1dabbaff3f91bb15ba68328cf4fbd1c43c42",
                 "shasum": ""
             },
             "require": {
@@ -10417,7 +10417,7 @@
                 "validator"
             ],
             "support": {
-                "source": "https://github.com/symfony/property-info/tree/v8.1.4"
+                "source": "https://github.com/symfony/property-info/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -10437,7 +10437,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-07T15:02:39+00:00"
+            "time": "2026-08-30T08:48:43+00:00"
         },
         {
             "name": "symfony/psr-http-message-bridge",
@@ -10777,16 +10777,16 @@
         },
         {
             "name": "symfony/serializer",
-            "version": "v8.1.4",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/serializer.git",
-                "reference": "ec3ae778e49a4cee5b937a779056fa23c3e834fb"
+                "reference": "931151b12d6e2d4996ce2ce8e7b180d35455f37a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/serializer/zipball/ec3ae778e49a4cee5b937a779056fa23c3e834fb",
-                "reference": "ec3ae778e49a4cee5b937a779056fa23c3e834fb",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/931151b12d6e2d4996ce2ce8e7b180d35455f37a",
+                "reference": "931151b12d6e2d4996ce2ce8e7b180d35455f37a",
                 "shasum": ""
             },
             "require": {
@@ -10852,7 +10852,7 @@
             "description": "Handles serializing and deserializing data structures, including object graphs, into array structures or other formats like XML and JSON.",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/serializer/tree/v8.1.4"
+                "source": "https://github.com/symfony/serializer/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -10872,7 +10872,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-06T09:53:08+00:00"
+            "time": "2026-08-30T08:48:47+00:00"
         },
         {
             "name": "symfony/service-contracts",
@@ -11486,16 +11486,16 @@
         },
         {
             "name": "symfony/type-info",
-            "version": "v8.1.0",
+            "version": "v8.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/type-info.git",
-                "reference": "9f24df8a79781b9b9f030fea7dfd2f3bd1e7e7e7"
+                "reference": "ceb48db5b38d6a48640c414be0c69d53980ae5c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/type-info/zipball/9f24df8a79781b9b9f030fea7dfd2f3bd1e7e7e7",
-                "reference": "9f24df8a79781b9b9f030fea7dfd2f3bd1e7e7e7",
+                "url": "https://api.github.com/repos/symfony/type-info/zipball/ceb48db5b38d6a48640c414be0c69d53980ae5c5",
+                "reference": "ceb48db5b38d6a48640c414be0c69d53980ae5c5",
                 "shasum": ""
             },
             "require": {
@@ -11544,7 +11544,7 @@
                 "type"
             ],
             "support": {
-                "source": "https://github.com/symfony/type-info/tree/v8.1.0"
+                "source": "https://github.com/symfony/type-info/tree/v8.1.5"
             },
             "funding": [
                 {
@@ -11564,7 +11564,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T05:06:50+00:00"
+            "time": "2026-08-21T17:47:34+00:00"
         },
         {
             "name": "symfony/uid",
@@ -14979,6 +14979,10 @@
         "ext-ctype": "*",
         "ext-dom": "*",
         "ext-iconv": "*",
+        "ext-libxml": "*",
+        "ext-openssl": "*",
+        "ext-simplexml": "*",
+        "ext-xmlreader": "*",
         "ext-zip": "*"
     },
     "platform-dev": {},
