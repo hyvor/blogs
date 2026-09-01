@@ -62,12 +62,7 @@
 	<div>{language.direction.toUpperCase()}</div>
 	<div>
 		<Tooltip text="Edit language">
-			<IconButton
-				variant="fill-light"
-				color="gray"
-				size="small"
-				on:click={() => (isEditing = true)}
-			>
+			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>

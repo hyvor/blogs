@@ -64,7 +64,7 @@
 	</div>
 	<div>
 		<Tooltip text="Edit tag">
-			<IconButton color="input" size="small" on:click={() => (isEditing = true)}>
+			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>

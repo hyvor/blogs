@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup } from '@hyvor/design/components';
+	import { Button } from '@hyvor/design/components';
 	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
 	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
 	import { createEventDispatcher } from 'svelte';
@@ -35,14 +35,10 @@
 	</div>
 
 	<div class="buttons">
-		<ButtonGroup>
-			<Button on:click={() => (isUploading = true)} size="x-small" variant="fill-light">
-				Change
-			</Button>
-			<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">
-				Remove
-			</Button>
-		</ButtonGroup>
+		<Button on:click={() => (isUploading = true)} size="x-small" variant="fill-light">
+			Change
+		</Button>
+		<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">Remove</Button>
 	</div>
 {/if}
 
@@ -58,5 +54,7 @@
 	}
 	.buttons {
 		margin-top: 5px;
+		display: flex;
+		gap: 2px;
 	}
 </style>

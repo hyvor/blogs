@@ -75,12 +75,7 @@
 
 	<div>
 		<Tooltip text="Edit Route">
-			<IconButton
-				size="small"
-				variant="fill-light"
-				color="gray"
-				on:click={() => (isUpdating = true)}
-			>
+			<IconButton size="small" color="input" variant="fill" on:click={() => (isUpdating = true)}>
 				<IconPencilFill size={10} />
 			</IconButton>
 		</Tooltip>

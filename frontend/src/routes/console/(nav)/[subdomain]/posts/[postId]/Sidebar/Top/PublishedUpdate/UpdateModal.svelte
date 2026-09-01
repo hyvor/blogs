@@ -3,7 +3,6 @@
 	import { postVariantLanguageStore } from '../../../../postStore';
 	import {
 		Button,
-		ButtonGroup,
 		Modal,
 		SplitControl,
 		Switch,
@@ -270,11 +269,9 @@
 	{/if}
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleUpdate} {disabled}>Update</Button>
-		</ButtonGroup>
+		<Button on:click={handleUpdate} {disabled}>Update</Button>
 	{/snippet}
 </Modal>
 

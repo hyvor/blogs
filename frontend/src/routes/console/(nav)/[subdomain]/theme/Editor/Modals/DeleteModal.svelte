@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Modal, toast } from '@hyvor/design/components';
+	import { Button, Modal, toast } from '@hyvor/design/components';
 	import type { ThemeFile } from '../../../../../lib/types';
 	import { deleteFile } from '../../themeActions';
 	import { removeThemeFileStore, selectedThemeFileIdStore } from '../../themeStore';
@@ -27,10 +27,8 @@
 	Are you sure to delete this file?
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (open = false)}>Cancel</Button>
 
-			<Button color="red" on:click={handleDelete}>Delete</Button>
-		</ButtonGroup>
+		<Button color="red" on:click={handleDelete}>Delete</Button>
 	{/snippet}
 </Modal>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		Modal,
 		SplitControl,
@@ -335,24 +334,20 @@
 
 	{#snippet footer()}
 		{#if isEditing}
-			<ButtonGroup>
-				<Button variant="invisible" on:click={handleCancelEdit} disabled={loading}>Cancel</Button>
-				<Button on:click={handleSave} disabled={loading}>Save</Button>
-			</ButtonGroup>
+			<Button variant="invisible" on:click={handleCancelEdit} disabled={loading}>Cancel</Button>
+			<Button on:click={handleSave} disabled={loading}>Save</Button>
 		{:else}
-			<ButtonGroup>
-				{#if intent}
-					<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
-						Abort
-					</Button>
-				{/if}
-				<Button variant="invisible" on:click={handleEdit} disabled={loading}>Edit</Button>
-				{#if intent}
-					<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
-				{:else}
-					<Button on:click={() => (show = false)} disabled={loading}>Close</Button>
-				{/if}
-			</ButtonGroup>
+			{#if intent}
+				<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
+					Abort
+				</Button>
+			{/if}
+			<Button variant="invisible" on:click={handleEdit} disabled={loading}>Edit</Button>
+			{#if intent}
+				<Button on:click={handleVerify} disabled={loading}>Verify Now</Button>
+			{:else}
+				<Button on:click={() => (show = false)} disabled={loading}>Close</Button>
+			{/if}
 		{/if}
 	{/snippet}
 </Modal>
