@@ -358,7 +358,7 @@
 	.post-actions-wrap {
 		display: flex;
 		align-items: center;
-		text-align: right;
+		// text-align: right;
 		position: relative;
 		z-index: 1;
 	}
