@@ -1,7 +1,5 @@
 <script lang="ts">
 	let videoEl: HTMLVideoElement | undefined = $state();
-
-	// Pause the screencast while it's off-screen, resume when it scrolls back in.
 	$effect(() => {
 		const el = videoEl;
 		if (!el) return;
@@ -28,9 +26,6 @@
 
 <style>
 	.suggestion-screencast {
-		/* mirror of ThemesLivePreview: the collaboration split is flipped, so the
-		   visual sits on the left, bleeds off the left edge of the screen, and
-		   tucks under the text column on the right. */
 		--right-pull: 380px;
 		--left-bleed: calc(max(0px, (100vw - 1000px) / 2) + 72px);
 		position: relative;
