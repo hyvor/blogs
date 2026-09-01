@@ -15,6 +15,9 @@
 	import { getDocumentForPost } from '../documentActions';
 	import { seoService } from '../../seoStore';
 	import { linksService } from '../Sidebar/Links/linksStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		postId: number;
@@ -52,7 +55,7 @@
 				isLoading = false;
 			})
 			.catch((e) => {
-				error = e.message || 'Failed to load post';
+				error = e.message || i18n.t('console.postEditor.loadFailed');
 				isLoading = false;
 			});
 
@@ -66,14 +69,16 @@
 <div id="post-view" bind:this={postView}>
 	{#if isLoading}
 		<div class="full-loader">
-			<Loader block size="large" colorTrack="transparent">Loading post...</Loader>
+			<Loader block size="large" colorTrack="transparent"
+				>{i18n.t('console.postEditor.loading')}</Loader
+			>
 		</div>
 	{:else if error}
 		<IconMessage
 			message={error}
 			error
 			cta={{
-				text: 'Go to Posts',
+				text: i18n.t('console.postEditor.goToPosts'),
 				onClick: () => goto(consoleUrlWithBlog('/posts'))
 			}}
 		/>

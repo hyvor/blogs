@@ -16,6 +16,9 @@
 	import IconLock from '@hyvor/icons/IconLock';
 
 	import TagName from '../../../../../settings/tags/TagName.svelte';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		selectedTags?: TagType[];
@@ -86,7 +89,7 @@
 	<div class="input">
 		<TextInput
 			bind:value={search}
-			placeholder="Search tags"
+			placeholder={i18n.t('console.postEditor.settings.searchTags')}
 			size="small"
 			block
 			autofocus
@@ -109,7 +112,7 @@
 						</Tag>
 						{#snippet end()}
 							<Text small light>
-								{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
+								{i18n.t('console.postEditor.settings.posts', { count: tag.posts_count })}
 							</Text>
 						{/snippet}
 					</ActionListItem>
@@ -126,7 +129,7 @@
 							{#snippet start()}
 								<IconPlus size={15} />
 							{/snippet}
-							Create tag&nbsp;<b>{search}</b>
+							{i18n.t('console.postEditor.settings.createTag')}&nbsp;<b>{search}</b>
 							{#if createPrivate}
 								<IconLock size={12} style="margin-left:4px;" />
 							{/if}

@@ -16,6 +16,9 @@
 	import CanonicalUrl from './CanonicalUrl.svelte';
 	import CodeHead from './CodeHead.svelte';
 	import CodeFoot from './CodeFoot.svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showAdvanced = $state(false);
 </script>
@@ -38,7 +41,7 @@
 					{@const SvelteComponent = showAdvanced ? IconCaretDown : IconCaretRight}
 					<SvelteComponent size={12} />
 				{/snippet}
-				Advanced
+				{i18n.t('console.postEditor.settings.advanced')}
 			</Button>
 		</div>
 	{/if}

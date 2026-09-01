@@ -34,6 +34,10 @@
 	import AuthorChanges from './Changes/AuthorChanges.svelte';
 	import { slugGetInvalidCharater } from '../../Settings/slug';
 	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
+
 	interface Props {
 		show?: boolean;
 	}
@@ -118,22 +122,27 @@
 		isLoading = false;
 		show = false;
 
-		toast.success('Post updated successfully.');
+		toast.success(i18n.t('console.postEditor.update.updated'));
 
 		finishUpdating();
 	}
 </script>
 
-<Modal bind:show title="Update Post" size="medium" loading={isLoading}>
-	<div class="note">You are about to update the post. Please review the changes below.</div>
+<Modal
+	bind:show
+	title={i18n.t('console.postEditor.update.modalTitle')}
+	size="medium"
+	loading={isLoading}
+>
+	<div class="note">{i18n.t('console.postEditor.update.intro')}</div>
 
 	<div class="diff">
-		<span> Show Difference </span>
+		<span>{i18n.t('console.postEditor.update.showDifference')}</span>
 		<Switch bind:checked={diff} />
 	</div>
 
 	{#if changes.variant.content}
-		<SplitControl label="Content">
+		<SplitControl label={i18n.t('console.postEditor.update.content')}>
 			<ContentChange
 				contentOld={$postVariantOriginalStore.content}
 				contentNew={$documentStore.checkpoint_content}
@@ -142,7 +151,7 @@
 
 			<div class="content-updated-at">
 				<span style="display:inline-flex;align-items:center;gap:5px;">
-					Set a custom updated time
+					{i18n.t('console.postEditor.update.setCustomUpdatedTime')}
 				</span>
 				<Switch bind:checked={setCustomContentUpdatedAt} />
 			</div>
@@ -153,7 +162,9 @@
 
 					{#if contentUpdatedAtTooEarly}
 						<div style="margin-top:5px;">
-							<Validation state="error">Must be on or after the publish time.</Validation>
+							<Validation state="error"
+								>{i18n.t('console.postEditor.update.updatedAtTooEarly')}</Validation
+							>
 						</div>
 					{/if}
 				</div>
@@ -162,7 +173,7 @@
 	{/if}
 
 	{#if changes.variant.slug !== undefined}
-		<SplitControl label="Slug">
+		<SplitControl label={i18n.t('console.postEditor.update.slug')}>
 			{#if diff}
 				<Diff strOld={$postVariantOriginalStore.slug || ''} strNew={$postVariantStore.slug || ''} />
 			{:else}
@@ -171,20 +182,20 @@
 
 			<div style="margin-top:15px;">
 				{#if (changes.variant.slug || '').trim() === ''}
-					<Validation state="error">Slug cannot be empty.</Validation>
+					<Validation state="error">{i18n.t('console.postEditor.update.slugEmpty')}</Validation>
 				{/if}
 				{#if slugGetInvalidCharater(changes.variant.slug || '')}
 					<Validation state="error"
-						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
+						>{i18n.t('console.postEditor.update.slugInvalidChar', {
+							char: slugGetInvalidCharater(changes.variant.slug || '')
+						})}</Validation
 					>
 				{/if}
 			</div>
 			<div class="auto-redirects">
 				<span style="display:inline-flex;align-items:center;gap:5px;">
-					Create redirect
-					<Tooltip
-						text="Automatically create a permanent redirect from the old URL to the new URL."
-					>
+					{i18n.t('console.postEditor.update.createRedirect')}
+					<Tooltip text={i18n.t('console.postEditor.update.createRedirectTooltip')}>
 						<IconInfoCircleFill />
 					</Tooltip>
 				</span>
@@ -194,7 +205,7 @@
 	{/if}
 
 	{#if changes.variant.description !== undefined}
-		<SplitControl label="Description">
+		<SplitControl label={i18n.t('console.postEditor.update.description')}>
 			{#if diff}
 				<Diff
 					strOld={$postVariantOriginalStore.description || ''}
@@ -215,7 +226,7 @@
 	{/if}
 
 	{#if changes.post.featured_image_url !== undefined}
-		<SplitControl label="Cover Image">
+		<SplitControl label={i18n.t('console.postEditor.update.coverImage')}>
 			<CoverImageChange
 				featuredImageOld={$postOriginalStore.featured_image_url}
 				featuredImageNew={$postStore.featured_image_url}
@@ -225,29 +236,29 @@
 	{/if}
 
 	{#if changes.variant.published_at !== undefined}
-		<SplitControl label="Publish Time">
+		<SplitControl label={i18n.t('console.postEditor.update.publishTime')}>
 			{#if diff}
 				{$postVariantOriginalStore.published_at
 					? dayjs.unix($postVariantOriginalStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-					: 'None'}
+					: i18n.t('console.postEditor.update.none')}
 				<span> → </span>
 				<strong>
 					{$postVariantStore.published_at
 						? dayjs.unix($postVariantStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-						: 'None'}
+						: i18n.t('console.postEditor.update.none')}
 				</strong>
 			{:else}
 				<span>
 					{$postVariantStore.published_at
 						? dayjs.unix($postVariantStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-						: 'None'}
+						: i18n.t('console.postEditor.update.none')}
 				</span>
 			{/if}
 		</SplitControl>
 	{/if}
 
 	{#if changes.post.is_featured !== undefined}
-		<SplitControl label="Featured">
+		<SplitControl label={i18n.t('console.postEditor.update.featured')}>
 			<FeaturedChange old={$postOriginalStore.is_featured} {diff} />
 		</SplitControl>
 	{/if}
@@ -261,17 +272,23 @@
 	{/if}
 
 	{#if changes.post.code_head !== undefined}
-		<SplitControl label="Code Head">Changed</SplitControl>
+		<SplitControl label={i18n.t('console.postEditor.update.codeHead')}
+			>{i18n.t('console.postEditor.update.changed')}</SplitControl
+		>
 	{/if}
 
 	{#if changes.post.code_foot !== undefined}
-		<SplitControl label="Code Foot">Changed</SplitControl>
+		<SplitControl label={i18n.t('console.postEditor.update.codeFoot')}
+			>{i18n.t('console.postEditor.update.changed')}</SplitControl
+		>
 	{/if}
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-		<Button on:click={handleUpdate} {disabled}>Update</Button>
+		<Button on:click={handleUpdate} {disabled}>{i18n.t('console.postEditor.update.button')}</Button>
 	{/snippet}
 </Modal>
 

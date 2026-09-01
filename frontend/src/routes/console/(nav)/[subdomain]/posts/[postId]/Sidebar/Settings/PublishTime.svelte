@@ -9,6 +9,9 @@
 	import { updatePostVariant } from '../../../postActions';
 	import OnlyPrimaryVariant from './OnlyPrimaryVariant.svelte';
 	import dayjs from 'dayjs';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -52,9 +55,9 @@
 	<SplitControl>
 		{#snippet label()}
 			<span>
-				Publish Time
+				{i18n.t('console.postEditor.settings.publishTime')}
 				{#if $postVariantStore.status === 'scheduled'}
-					(Scheduled)
+					{i18n.t('console.postEditor.settings.publishTimeScheduled')}
 				{/if}
 
 				<UnsavedTag
@@ -73,7 +76,7 @@
 				on:blur={handleBlur}
 			/>
 		{:else}
-			<Text small light>Not published yet</Text>
+			<Text small light>{i18n.t('console.postEditor.settings.notPublishedYet')}</Text>
 		{/if}
 	</SplitControl>
 </OnlyPrimaryVariant>

@@ -16,6 +16,9 @@
 	import OnlyPrimaryVariant from '../OnlyPrimaryVariant.svelte';
 	import { updatePostTags } from '../../../../postActions';
 	import TagChip from '../../../../TagChip.svelte';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let dropdownOpen = $state(false);
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
@@ -56,7 +59,7 @@
 	<SplitControl>
 		{#snippet label()}
 			<span>
-				Tags
+				{i18n.t('console.postEditor.settings.tags')}
 
 				<UnsavedTag show={hasChanged} {loaderState} />
 			</span>
@@ -80,7 +83,7 @@
 						</TagChip>
 					{/each}
 				{:else}
-					<Text light small>No tags</Text>
+					<Text light small>{i18n.t('console.postEditor.settings.noTags')}</Text>
 				{/if}
 			</div>
 

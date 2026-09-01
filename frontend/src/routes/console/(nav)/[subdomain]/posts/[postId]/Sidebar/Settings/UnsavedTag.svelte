@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { Loader, Tag } from '@hyvor/design/components';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show?: boolean;
@@ -18,7 +21,7 @@
 
 <div class:add-margin={(show || loaderState !== 'none') && addMarginTop}>
 	{#if show}
-		<Tag {size} color="orange">Unsaved</Tag>
+		<Tag {size} color="orange">{i18n.t('console.postEditor.settings.unsaved')}</Tag>
 	{/if}
 	<Loader state={loaderState} size={12} />
 </div>

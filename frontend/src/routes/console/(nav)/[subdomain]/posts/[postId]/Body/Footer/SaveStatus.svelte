@@ -15,6 +15,9 @@
 	import { beforeNavigate } from '$app/navigation';
 	import type { CollabClientID, CollabStepJSON } from '@hyvor/richtext';
 	import { applyConfirmedSteps } from '../Editor/collab';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let hasChanged = $derived($postContentDirtyStore);
 
@@ -52,12 +55,12 @@
 				if (e.code === 409 && e.body?.message === 'client_ahead') {
 					// should never happen in normal operation - surface it instead of retrying
 					const body = e.body as CheckpointClientAheadError;
-					toast.error('Failed to save: your editor is out of sync. Please reload the page.');
+					toast.error(i18n.t('console.postEditor.save.outOfSync'));
 					console.error('checkpoint client_ahead', body.message_full);
 					return;
 				}
 
-				toast.error(`Failed to save post content: ${e.message}`);
+				toast.error(i18n.t('console.postEditor.save.failed', { message: e.message }));
 			});
 	}
 
@@ -80,7 +83,7 @@
 
 	beforeNavigate((navigation) => {
 		if (hasChanged) {
-			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+			if (!confirm(i18n.t('console.postEditor.save.leaveConfirm'))) {
 				navigation.cancel();
 			}
 		}
@@ -91,11 +94,11 @@
 
 <span class="save-text">
 	{#if isSaving}
-		Saving...
+		{i18n.t('console.postEditor.save.saving')}
 	{:else if hasChanged}
-		Unsaved changes
+		{i18n.t('console.postEditor.save.unsaved')}
 	{:else}
-		Saved
+		{i18n.t('console.postEditor.save.saved')}
 	{/if}
 </span>
 

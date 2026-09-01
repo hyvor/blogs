@@ -8,6 +8,9 @@
 		updatePostStore
 	} from '../../../postStore';
 	import { updatePost } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -37,7 +40,7 @@
 <SplitControl>
 	{#snippet label()}
 		<span>
-			Canonical URL
+			{i18n.t('console.postEditor.settings.canonicalUrl')}
 
 			<UnsavedTag
 				show={($postStore.canonical_url || '') !== ($postOriginalStore.canonical_url || '')}

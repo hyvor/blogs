@@ -5,6 +5,9 @@
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconCheck from '@hyvor/icons/IconCheck';
 	import { IconButton, Button } from '@hyvor/design/components';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		keyword?: string;
@@ -62,7 +65,7 @@
 			{#snippet start()}
 				<IconPlus />
 			{/snippet}
-			Add
+			{i18n.t('console.postEditor.seo.add')}
 		</Button>
 	{/if}
 </div>

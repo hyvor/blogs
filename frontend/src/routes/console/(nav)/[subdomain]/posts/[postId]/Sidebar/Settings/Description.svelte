@@ -7,6 +7,9 @@
 	} from '../../../postStore';
 	import UnsavedTag from './UnsavedTag.svelte';
 	import { updatePostVariant } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleInput(e: any) {
 		updatePostVariantStore({ description: e.target.value });
@@ -36,7 +39,7 @@
 <SplitControl>
 	{#snippet label()}
 		<span>
-			Description
+			{i18n.t('console.postEditor.settings.description')}
 			<UnsavedTag
 				show={$postVariantStore.description !== $postVariantOriginalStore.description}
 				{loaderState}

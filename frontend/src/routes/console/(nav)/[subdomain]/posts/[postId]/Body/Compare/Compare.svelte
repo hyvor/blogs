@@ -3,6 +3,9 @@
 	import { editorConfig, schema } from '../Editor/editor';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Switch } from '@hyvor/design/components';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDiff = $state(true);
 
@@ -14,8 +17,8 @@
 		onclose: () => void;
 	}
 	let {
-		leftTitle = 'Published Version',
-		rightTitle = 'Editing Version',
+		leftTitle = i18n.t('console.postEditor.compare.publishedVersion'),
+		rightTitle = i18n.t('console.postEditor.compare.editingVersion'),
 		leftContent,
 		rightContent,
 		onclose
@@ -48,7 +51,7 @@
 			<div class="header">
 				{rightTitle}
 				<span class="switch">
-					<Switch bind:checked={showDiff}>Show diff</Switch>
+					<Switch bind:checked={showDiff}>{i18n.t('console.postEditor.compare.showDiff')}</Switch>
 				</span>
 			</div>
 			<div class="editor">
@@ -62,7 +65,11 @@
 
 <style>
 	.inner {
+		position: absolute;
+		inset: 0;
 		display: flex;
+		overflow: hidden;
+		border-radius: inherit;
 	}
 
 	.part {
@@ -70,6 +77,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		min-height: 0;
 		overflow: hidden;
 	}
 
@@ -94,6 +102,7 @@
 
 	.editor {
 		flex: 1;
+		min-height: 0;
 		overflow: auto;
 		padding: 15px 30px;
 	}

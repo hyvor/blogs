@@ -9,6 +9,9 @@
 	import TagChip from '../../../TagChip.svelte';
 	import { emptyPublishIssues, getPublishIssues, type PublishIssues } from './publishIssues';
 	import { emptyContentStats, getContentStats, type ContentStats } from './contentStats';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		onEditSettings: () => void;
@@ -34,7 +37,7 @@
 <div class="summary">
 	<div class="top">
 		<div class="title-row">
-			<div class="title">Post Summary</div>
+			<div class="title">{i18n.t('console.postEditor.publish.summary.title')}</div>
 			{#if errorCount > 0}
 				<Tag size="x-small" color="red">
 					{#snippet start()}
@@ -57,26 +60,28 @@
 				{#snippet start()}
 					<IconGear size={12} />
 				{/snippet}
-				Settings
+				{i18n.t('console.postEditor.publish.summary.settings')}
 			</Button>
 		</div>
 	</div>
 
 	<div class="content">
 		<div class="split">
-			<span>Content</span>
+			<span>{i18n.t('console.postEditor.publish.summary.content')}</span>
 			<div>
 				<span class="value">
-					{stats.wordCount} word{stats.wordCount === 1 ? '' : 's'}
+					{i18n.t('console.postEditor.publish.summary.words', { count: stats.wordCount })}
 					{#if stats.wordCount > 0}
-						· ~{stats.readingMinutes} min read
+						· {i18n.t('console.postEditor.publish.summary.readTime', {
+							minutes: stats.readingMinutes
+						})}
 					{/if}
 				</span>
 			</div>
 		</div>
 
 		<div class="split" class:has-error={issues.titleError}>
-			<span>Title</span>
+			<span>{i18n.t('console.postEditor.publish.summary.titleLabel')}</span>
 			<div>
 				{#if $postVariantStore.title}
 					<span class="value">
@@ -84,13 +89,13 @@
 					</span>
 				{/if}
 				{#if issues.titleError}
-					<Validation state="error">{issues.titleError}</Validation>
+					<Validation state="error">{i18n.t(issues.titleError)}</Validation>
 				{/if}
 			</div>
 		</div>
 
 		<div class="split" class:has-warning={issues.slugWarning}>
-			<span>Slug</span>
+			<span>{i18n.t('console.postEditor.publish.summary.slug')}</span>
 			<div>
 				{#if $postVariantStore.slug}
 					<span class="value">
@@ -98,13 +103,13 @@
 					</span>
 				{/if}
 				{#if issues.slugWarning}
-					<Validation state="warning">{issues.slugWarning}</Validation>
+					<Validation state="warning">{i18n.t(issues.slugWarning)}</Validation>
 				{/if}
 			</div>
 		</div>
 
 		<div class="split" class:has-warning={issues.descriptionWarning}>
-			<span>Description</span>
+			<span>{i18n.t('console.postEditor.publish.summary.description')}</span>
 			<div>
 				{#if $postVariantStore.description}
 					<span class="value">
@@ -112,13 +117,13 @@
 					</span>
 				{/if}
 				{#if issues.descriptionWarning}
-					<Validation state="warning">{issues.descriptionWarning}</Validation>
+					<Validation state="warning">{i18n.t(issues.descriptionWarning)}</Validation>
 				{/if}
 			</div>
 		</div>
 
 		<div class="split">
-			<span>Author</span>
+			<span>{i18n.t('console.postEditor.publish.summary.authors')}</span>
 			<div>
 				{#if $postStore.authors.length}
 					<div class="chips">
@@ -127,13 +132,13 @@
 						{/each}
 					</div>
 				{:else}
-					<Text light small>No authors</Text>
+					<Text light small>{i18n.t('console.postEditor.publish.summary.noAuthors')}</Text>
 				{/if}
 			</div>
 		</div>
 
 		<div class="split">
-			<span>Tags</span>
+			<span>{i18n.t('console.postEditor.publish.summary.tags')}</span>
 			<div>
 				{#if $postStore.tags.length}
 					<div class="chips">
@@ -142,14 +147,14 @@
 						{/each}
 					</div>
 				{:else}
-					<Text light small>No tags</Text>
+					<Text light small>{i18n.t('console.postEditor.publish.summary.noTags')}</Text>
 				{/if}
 			</div>
 		</div>
 
 		{#if $postStore.canonical_url}
 			<div class="split">
-				<span>Canonical URL</span>
+				<span>{i18n.t('console.postEditor.publish.summary.canonicalUrl')}</span>
 				<div>
 					<span class="value">{$postStore.canonical_url}</span>
 				</div>

@@ -9,6 +9,9 @@
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
 	import ConfirmModal from './ConfirmModal.svelte';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	async function handleClick() {
 		const wordsCount = getDiffWordsCount(
@@ -18,11 +21,11 @@
 
 		if (
 			await confirm({
-				title: 'Discard changes?',
+				title: i18n.t('console.postEditor.publishedEditing.confirmTitle'),
 				content: ConfirmModal,
 				contentProps: { words: wordsCount },
 				danger: true,
-				confirmText: 'Yes, discard changes'
+				confirmText: i18n.t('console.postEditor.publishedEditing.confirmButton')
 			})
 		) {
 			$postEditor.setContent($postVariantStore.content!);
@@ -33,7 +36,8 @@
 
 {#if $postEditingPublished}
 	<span>
-		Editing published. <button onclick={handleClick}>Discard</button>
+		{i18n.t('console.postEditor.publishedEditing.status')}
+		<button onclick={handleClick}>{i18n.t('console.postEditor.publishedEditing.discard')}</button>
 	</span>
 {/if}
 

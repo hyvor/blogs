@@ -3,6 +3,9 @@
 	import type { Tag as TagType } from '../../../../../../../../lib/types';
 	import { postOriginalStore, postStore } from '../../../../../postStore';
 	import TagName from '../../../../../../settings/tags/TagName.svelte';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		diff: boolean;
@@ -36,7 +39,7 @@
 	}
 </script>
 
-<SplitControl label="Tags">
+<SplitControl label={i18n.t('console.postEditor.update.tags')}>
 	<div class="wrap">
 		{#if diff}
 			{#each allTags as tag (tag.id)}
@@ -51,7 +54,7 @@
 				</Tag>
 			{/each}
 		{:else}
-			<Text light small>No tags</Text>
+			<Text light small>{i18n.t('console.postEditor.update.noTags')}</Text>
 		{/if}
 	</div>
 </SplitControl>

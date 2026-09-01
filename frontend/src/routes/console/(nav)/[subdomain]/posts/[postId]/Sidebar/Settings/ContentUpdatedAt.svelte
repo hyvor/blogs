@@ -8,6 +8,9 @@
 	import UnsavedTag from './UnsavedTag.svelte';
 	import { updatePostVariant } from '../../../postActions';
 	import dayjs from 'dayjs';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -55,7 +58,7 @@
 	<SplitControl>
 		{#snippet label()}
 			<span>
-				Content Updated At
+				{i18n.t('console.postEditor.settings.contentUpdatedAt')}
 
 				<UnsavedTag
 					show={$postVariantStore.content_updated_at !==
@@ -75,7 +78,9 @@
 
 		{#if isTooEarly}
 			<div style="margin-top:5px;">
-				<Validation state="error">Must be on or after the publish time.</Validation>
+				<Validation state="error"
+					>{i18n.t('console.postEditor.settings.contentUpdatedAtTooEarly')}</Validation
+				>
 			</div>
 		{/if}
 	</SplitControl>
