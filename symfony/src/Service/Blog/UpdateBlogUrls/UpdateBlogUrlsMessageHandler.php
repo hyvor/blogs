@@ -17,9 +17,6 @@ use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * TODO: tests
- */
 #[AsMessageHandler]
 class UpdateBlogUrlsMessageHandler
 {

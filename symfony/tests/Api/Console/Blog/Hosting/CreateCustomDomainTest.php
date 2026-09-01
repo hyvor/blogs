@@ -14,6 +14,7 @@ use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\CustomDomainIntentFactory;
+use App\Tests\Factory\HostingChangeFactory;
 use App\Tests\Helper\SelfSignedCertificate;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -55,23 +56,7 @@ class CreateCustomDomainTest extends ApiTestCase
             'domain' => 'pending-elsewhere.com',
         ], user: $user);
 
-        $this->assertResponseFailed(400, 'This custom domain is already in use by another blog');
-    }
-
-    public function test_fails_when_blog_already_has_a_custom_domain(): void
-    {
-        [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-cd-create-has-domain'],
-            ['status' => UserStatus::ACTIVE],
-        );
-
-        CustomDomainFactory::createActiveFor($blog, 'existing.com');
-
-        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
-            'domain' => 'mysite.com',
-        ], user: $user);
-
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseFailed(400, 'This custom domain is already in use by another blog (pending setup)');
     }
 
     public function test_fails_when_blog_already_has_a_pending_intent(): void
@@ -88,6 +73,24 @@ class CreateCustomDomainTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function test_fails_when_blog_has_pending_hosting_change(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-cd-create-has-change'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        HostingChangeFactory::createOne([
+            'blog' => $blog,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
+            'domain' => 'mysite.com',
+        ], user: $user);
+
+        $this->assertResponseFailed(400, 'A hosting change is already in progress for this blog');
     }
 
     public function test_creates_intent_for_auto_tls(): void

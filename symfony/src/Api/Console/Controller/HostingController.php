@@ -18,7 +18,6 @@ use App\Service\AppConfig;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
-use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
 use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
@@ -134,10 +133,15 @@ class HostingController extends AbstractController
 
         $existingIntent = $this->customDomainIntentService->getCustomDomainIntent($domain);
         if ($existingIntent !== null && $existingIntent->getBlog()->getId() !== $blog->getId()) {
-            throw new BadRequestHttpException('This custom domain is already in use by another blog');
+            throw new BadRequestHttpException('This custom domain is already in use by another blog (pending setup)');
         }
     }
 
+    /**
+     * if tls provider is custom, custom domain is set up immediately and
+     *  hosting change is initiated.
+     *  otherwise, we create an intent.
+     */
     #[Route('/hosting/custom-domain', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
     public function createCustomDomain(
@@ -145,26 +149,15 @@ class HostingController extends AbstractController
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
 
-        if (
-            $this->customDomainService->getBlogCustomDomain($blog) !== null ||
-            $this->customDomainIntentService->getBlogCustomDomainIntent($blog) !== null
-        ) {
+        $this->assertDomainAvailableForBlog($input->domain, $blog);
+
+        if ($this->customDomainIntentService->getBlogCustomDomainIntent($blog) !== null) {
             throw new BadRequestHttpException('A custom domain is already set up or pending for this blog. Use PATCH to change it.');
         }
-
-        $this->assertDomainAvailableForBlog($input->domain, $blog);
 
         if ($this->hostingChangeService->hasPendingChange($blog)) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
-
-        /**
-         * note:
-         * if tls provider is custom, custom domain is set up immediately and
-         * hosting change is initiated.
-         *
-         * otherwise, we create an intent.
-         */
 
         if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
             if ($input->tls_private_key === null || $input->tls_certificate === null) {

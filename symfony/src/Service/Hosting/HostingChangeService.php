@@ -105,8 +105,15 @@ class HostingChangeService
 
     public function hasPendingChange(Blog $blog): bool
     {
-        $latest = $this->getLatestChange($blog);
-        return $latest !== null && $latest->getStatus() === HostingChangeStatus::CHANGING;
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(hc.id)')
+            ->from(HostingChange::class, 'hc')
+            ->where('hc.blog = :blog')
+            ->andWhere('hc.status = :status')
+            ->setParameter('blog', $blog)
+            ->setParameter('status', HostingChangeStatus::CHANGING)
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
     }
 
     public function getLatestChange(Blog $blog): ?HostingChange
