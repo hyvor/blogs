@@ -21,6 +21,9 @@
 	import { integrationsStore } from '../../lib/stores/blogStore';
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import { getConfig } from '../../lib/config';
+	import { getI18n } from '../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		listItem: BlogList;
@@ -54,7 +57,7 @@
 				<IconHouse />
 			{/snippet}
 
-			Home
+			{i18n.t('console.nav.home')}
 
 			{#snippet end()}
 				<a class="home-link" href={listItem.url} target="_blank">
@@ -72,7 +75,7 @@
 			{#snippet start()}
 				<IconPencil />
 			{/snippet}
-			Posts
+			{i18n.t('console.nav.posts')}
 		</NavLink>
 
 		<NavLink
@@ -82,7 +85,7 @@
 			{#snippet start()}
 				<IconFiles />
 			{/snippet}
-			Pages
+			{i18n.t('console.nav.pages')}
 		</NavLink>
 
 		{#if $integrationsStore.hyvor_talk}
@@ -93,7 +96,7 @@
 				{#snippet start()}
 					<IconChat />
 				{/snippet}
-				Comments
+				{i18n.t('console.integrations.hyvorTalk.comments.label')}
 				{#snippet end()}
 					<img alt="Hyvor Talk" class="integration-icon" src="/img/services/hyvor-talk.svg" />
 				{/snippet}
@@ -108,7 +111,7 @@
 				{#snippet start()}
 					<IconEnvelope />
 				{/snippet}
-				Newsletter
+				{i18n.t('console.integrations.hyvorTalk.newsletter.label')}
 				{#snippet end()}
 					<img alt="Hyvor Post" class="integration-icon" src="/img/services/hyvor-post.svg" />
 				{/snippet}
@@ -134,7 +137,7 @@
 			{#snippet start()}
 				<IconPalette />
 			{/snippet}
-			Theme
+			{i18n.t('console.nav.theme')}
 		</NavLink>
 
 		{#if getConfig().deployment === 'cloud'}
@@ -145,7 +148,7 @@
 				{#snippet start()}
 					<IconPlugin />
 				{/snippet}
-				Integrations
+				{i18n.t('console.nav.integrations')}
 			</NavLink>
 		{/if}
 
@@ -156,7 +159,7 @@
 			{#snippet start()}
 				<IconTools />
 			{/snippet}
-			Tools
+			{i18n.t('console.nav.tools')}
 		</NavLink>
 
 		<NavLink
@@ -166,7 +169,7 @@
 			{#snippet start()}
 				<IconGear />
 			{/snippet}
-			Settings
+			{i18n.t('console.nav.settings')}
 		</NavLink>
 	</NavLinkGroup>
 </div>

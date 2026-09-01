@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		Caption,
 		FormControl,
 		Link,
@@ -13,6 +12,10 @@
 	} from '@hyvor/design/components';
 	import { createTag } from './tagActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		show: boolean;
@@ -26,13 +29,13 @@
 	const dispatch = createEventDispatcher();
 
 	function handleClick() {
-		const toastId = toast.loading('Creating tag...');
+		const toastId = toast.loading(i18n.t('console.settings.tags.creating'));
 
 		show = false;
 
 		createTag(name, isPrivate)
 			.then((res) => {
-				toast.success('Tag created.', { id: toastId });
+				toast.success(i18n.t('console.settings.tags.created'), { id: toastId });
 				dispatch('create', res);
 			})
 			.catch((err) => {
@@ -43,28 +46,45 @@
 	let isButtonDisabled = $derived(name.trim().length === 0);
 </script>
 
-<Modal title="Create Tag" bind:show>
-	<SplitControl label="Name" caption="The name of the tag">
+<Modal title={i18n.t('console.settings.tags.create')} bind:show>
+	<SplitControl
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.tags.nameCaption')}
+	>
 		<FormControl>
-			<TextInput bind:value={name} placeholder="Blogging" block autofocus />
+			<TextInput
+				bind:value={name}
+				placeholder={i18n.t('console.settings.tags.namePlaceholder')}
+				block
+				autofocus
+			/>
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Private">
+	<SplitControl label={i18n.t('console.settings.tags.private')}>
 		{#snippet caption()}
 			<Caption>
-				<Link href="/docs/tags#private" target="_blank">Private tags</Link> are not visible on public
-				pages - only for internal use.
+				<T
+					key="console.settings.tags.privateCaption"
+					params={{
+						link: {
+							element: 'a',
+							props: { href: '/docs/tags#private', target: '_blank', class: 'hds-link' }
+						}
+					}}
+				/>
 			</Caption>
 		{/snippet}
 		<Switch bind:checked={isPrivate} />
 	</SplitControl>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-			<Button on:click={handleClick} disabled={isButtonDisabled}>Create</Button>
-		</ButtonGroup>
+		<Button on:click={handleClick} disabled={isButtonDisabled}
+			>{i18n.t('console.common.create')}</Button
+		>
 	{/snippet}
 </Modal>

@@ -8,19 +8,19 @@ import Redirect from './content/Redirect.md';
 import Media from './content/Media.md';
 import Routes from './content/Routes.md';
 import CustomCode from './content/CustomCode.md';
-import Overview from './content/Overview.md';
+import ThemesOverview from './content/ThemesOverview.md';
 import ThemeTemplates from './content/ThemesTemplates.md';
 import ThemesStyles from './content/ThemesStyles.md';
-import Scripts from './content/Scripts.md';
+import ThemeScripts from './content/ThemeScripts.md';
 import Languages from './content/Languages.md';
 import Export from './content/Export.md';
 import ImportSitemap from './content/ImportSitemap.md';
 import Webhooks from './content/Webhooks.md';
 import ApiDelivery from './content/ApiDelivery.md';
 import Theme from './content/Theme.md';
-import Internationalization from './content/Internationalization.md';
-import Configuration from './content/Configuration.md';
-import Publishing from './content/Publishing.md';
+import ThemesInternationalization from './content/ThemesInternationalization.md';
+import ThemesConfiguration from './content/ThemesConfiguration.md';
+import ThemesPublishing from './content/ThemesPublishing.md';
 import ApiConsole from './content/ApiConsole.md';
 import ApiData from './content/ApiData.md';
 import Headless from './content/Headless.md';
@@ -30,8 +30,8 @@ import Tags from './content/Tags.md';
 import NavigationLinks from './content/NavigationLinks.md';
 import Import from './content/Import.md';
 import ImportWordPress from './content/ImportWordPress.md';
-import HyvorTalkDoc from './content/HyvorTalkDoc.md';
-import HyvorPostDoc from './content/HyvorPostDoc.md';
+import HyvorTalk from './content/HyvorTalk.md';
+import HyvorPost from './content/HyvorPost.md';
 import type { NavSectionConfig } from '@hyvor/design/marketing';
 import type { Component } from 'svelte';
 import { buildI18n, DEFAULT_MARKETING_LANGUAGE } from '../../marketingLang';
@@ -61,14 +61,14 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'writing',
 					name: t('docs.pages.writing'),
-					content: Writing
+					content: await getComponent('Writing')
 				},
 
 				{
 					type: 'page',
 					slug: 'theme',
 					name: t('docs.pages.theme'),
-					content: Theme
+					content: await getComponent('Theme')
 				}
 			]
 		},
@@ -86,13 +86,13 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'subdirectory',
 					name: t('docs.pages.subdirectory'),
-					content: SubDirectoryHosting
+					content: await getComponent('SubDirectoryHosting')
 				},
 				{
 					type: 'page',
 					slug: 'headless',
 					name: t('docs.pages.headless'),
-					content: Headless
+					content: await getComponent('Headless')
 				}
 			]
 		},
@@ -104,7 +104,7 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'languages',
 					name: t('docs.pages.languages'),
-					content: Languages
+					content: await getComponent('Languages')
 				},
 				{
 					type: 'page',
@@ -116,61 +116,61 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'tags',
 					name: t('docs.pages.tags'),
-					content: Tags
+					content: await getComponent('Tags')
 				},
 				{
 					type: 'page',
 					slug: 'media',
 					name: t('docs.pages.media'),
-					content: Media
+					content: await getComponent('Media')
 				},
 				{
 					type: 'page',
 					slug: 'fonts',
 					name: t('docs.pages.fonts'),
-					content: Fonts
+					content: await getComponent('Fonts')
 				},
 				{
 					type: 'page',
 					slug: 'seo',
 					name: t('docs.pages.seo'),
-					content: Seo
+					content: await getComponent('Seo')
 				},
 				{
 					type: 'page',
 					slug: 'navigation-links',
 					name: t('docs.pages.navigationLinks'),
-					content: NavigationLinks
+					content: await getComponent('NavigationLinks')
 				},
 				{
 					type: 'page',
 					slug: 'redirects',
 					name: t('docs.pages.redirects'),
-					content: Redirect
+					content: await getComponent('Redirect')
 				},
 				{
 					type: 'page',
 					slug: 'custom-code',
 					name: t('docs.pages.customCode'),
-					content: CustomCode
+					content: await getComponent('CustomCode')
 				},
 				{
 					type: 'page',
 					slug: 'services',
 					name: t('docs.pages.services'),
-					content: Services
+					content: await getComponent('Services')
 				},
 				{
 					type: 'page',
 					slug: 'routes',
 					name: t('docs.pages.routes'),
-					content: Routes
+					content: await getComponent('Routes')
 				},
 				{
 					type: 'page',
 					slug: 'syntax-highlighting',
 					name: t('docs.pages.syntaxHighlighting'),
-					content: SyntaxHighlighting
+					content: await getComponent('SyntaxHighlighting')
 				}
 			]
 		},
@@ -182,13 +182,13 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'hyvor-talk',
 					name: t('docs.pages.hyvorTalk'),
-					content: HyvorTalkDoc
+					content: await getComponent('HyvorTalk')
 				},
 				{
 					type: 'page',
 					slug: 'hyvor-post',
 					name: t('docs.pages.hyvorPost'),
-					content: HyvorPostDoc
+					content: await getComponent('HyvorPost')
 				}
 			]
 		},
@@ -200,25 +200,25 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'webhooks',
 					name: t('docs.pages.webhooks'),
-					content: Webhooks
+					content: await getComponent('Webhooks')
 				},
 				{
 					type: 'page',
 					slug: 'api-console',
 					name: t('docs.pages.apiConsole'),
-					content: ApiConsole
+					content: await getComponent('ApiConsole')
 				},
 				{
 					type: 'page',
 					slug: 'api-delivery',
 					name: t('docs.pages.apiDelivery'),
-					content: ApiDelivery
+					content: await getComponent('ApiDelivery')
 				},
 				{
 					type: 'page',
 					slug: 'api-data',
 					name: t('docs.pages.apiData'),
-					content: ApiData
+					content: await getComponent('ApiData')
 				}
 			]
 		},
@@ -230,7 +230,7 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'export',
 					name: t('docs.pages.export'),
-					content: Export
+					content: await getComponent('Export')
 				},
 				{
 					type: 'folding-section',
@@ -240,19 +240,19 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 							type: 'page',
 							slug: 'import',
 							name: t('docs.pages.importOverview'),
-							content: Import
+							content: await getComponent('Import')
 						},
 						{
 							type: 'page',
 							slug: 'import-sitemap',
 							name: t('docs.pages.importSitemap'),
-							content: ImportSitemap
+							content: await getComponent('ImportSitemap')
 						},
 						{
 							type: 'page',
 							slug: 'import-wordpress',
 							name: t('docs.pages.importWordpress'),
-							content: ImportWordPress
+							content: await getComponent('ImportWordPress')
 						}
 					]
 				}
@@ -266,49 +266,49 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					type: 'page',
 					slug: 'themes-overview',
 					name: t('docs.pages.themesOverview'),
-					content: Overview
+					content: await getComponent('ThemesOverview')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-templates',
 					name: t('docs.pages.themesTemplates'),
-					content: ThemeTemplates
+					content: await getComponent('ThemesTemplates')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-styles',
 					name: t('docs.pages.themesStyling'),
-					content: ThemesStyles
+					content: await getComponent('ThemesStyles')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-scripts',
 					name: t('docs.pages.themesScripts'),
-					content: Scripts
+					content: await getComponent('ThemeScripts')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-internationalization',
 					name: t('docs.pages.themesInternationalization'),
-					content: Internationalization
+					content: await getComponent('ThemesInternationalization')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-config',
 					name: t('docs.pages.themesConfig'),
-					content: Configuration
+					content: await getComponent('ThemesConfiguration')
 				},
 
 				{
 					type: 'page',
 					slug: 'themes-publishing',
 					name: t('docs.pages.themesPublishing'),
-					content: Publishing
+					content: await getComponent('ThemesPublishing')
 				}
 			]
 		}

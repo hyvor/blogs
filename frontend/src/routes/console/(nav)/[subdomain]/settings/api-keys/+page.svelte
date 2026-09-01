@@ -1,12 +1,16 @@
 <script lang="ts">
 	import ApiKeyRow from './ApiKeyRow.svelte';
-	import { Button, IconMessage, Loader, Table, TableRow, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, Loader, TableRow, toast } from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import CreateApiKeyModal from './CreateApiKeyModal.svelte';
 	import type { ApiKey } from '../../../../lib/types';
 	import { onMount } from 'svelte';
 	import { getApiKeys } from './apiKeysActions';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -44,32 +48,34 @@
 	});
 </script>
 
-<SettingsTop>
-	<Button on:click={() => (isCreating = true)}>
-		Create API Key {#snippet end()}
-			<IconPlus />
-		{/snippet}
-	</Button>
-</SettingsTop>
-
 <div class="api-keys">
-	{#if isLoading}
-		<Loader full />
-	{:else if apiKeys.length === 0}
-		<IconMessage empty message="No API Keys Found" />
-	{:else}
-		<Table columns="1fr 1fr 140px">
-			<TableRow head>
-				<div>Name</div>
-				<div>API</div>
-				<div></div>
-			</TableRow>
+	<SettingsTop>
+		<Button on:click={() => (isCreating = true)}>
+			Create API Key {#snippet end()}
+				<IconPlus />
+			{/snippet}
+		</Button>
+	</SettingsTop>
 
-			{#each apiKeys as apiKey (apiKey.id)}
-				<ApiKeyRow {apiKey} on:delete={handleDeleteEvent} on:update={handleUpdateEvent} />
-			{/each}
-		</Table>
-	{/if}
+	<div class="table">
+		{#if isLoading}
+			<Loader full />
+		{:else if apiKeys.length === 0}
+			<IconMessage empty message={i18n.t('console.settings.apiKeys.noKeys')} />
+		{:else}
+			<SettingsTable columns="1fr 1fr 140px">
+				<TableRow head>
+					<div>{i18n.t('console.common.name')}</div>
+					<div>{i18n.t('console.settings.apiKeys.api')}</div>
+					<div></div>
+				</TableRow>
+
+				{#each apiKeys as apiKey (apiKey.id)}
+					<ApiKeyRow {apiKey} on:delete={handleDeleteEvent} on:update={handleUpdateEvent} />
+				{/each}
+			</SettingsTable>
+		{/if}
+	</div>
 </div>
 
 {#if isCreating}
@@ -78,8 +84,14 @@
 
 <style>
 	.api-keys {
-		padding: 15px 30px;
-		flex: 1;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
 		overflow: auto;
+	}
+
+	.table {
+		flex: 1;
+		padding: 15px 30px;
 	}
 </style>

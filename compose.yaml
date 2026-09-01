@@ -47,7 +47,7 @@ services:
       traefik.http.routers.hyvor-blogs-subdir.entrypoints: http
       traefik.http.routers.hyvor-blogs-subdir.service: hyvor-blogs-backend
 
-      # let's encrypt
+      # let's encrypt (don't think these two work / are usable)
       traefik.http.routers.lets-encrypt.rule: Host(`custom-domain.localhost`) && PathPrefix(`/.well-known/acme-challenge`)
       traefik.http.routers.lets-encrypt.entrypoints: https
       traefik.http.routers.lets-encrypt.tls: true

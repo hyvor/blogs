@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		Checkbox,
 		FormControl,
 		InputGroup,
@@ -15,6 +14,9 @@
 	import { createWebhook, updateWebhook } from './webhookActions';
 	import { type Webhook, WebhookEventType } from '../../../../lib/types';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -69,17 +71,17 @@
 		eventsError = null;
 
 		if (!url.match(/^https:\/\/.*$/)) {
-			urlError = 'URL must start with https://';
+			urlError = i18n.t('console.settings.webhooks.validation.urlHttps');
 			return;
 		}
 
 		if (!isValidUrl(url)) {
-			urlError = 'Invalid URL';
+			urlError = i18n.t('console.settings.webhooks.validation.urlInvalid');
 			return;
 		}
 
 		if (events.length === 0) {
-			eventsError = 'Please select at least one event';
+			eventsError = i18n.t('console.settings.webhooks.validation.eventsRequired');
 			return;
 		}
 
@@ -97,7 +99,7 @@
 
 			updateWebhook(webhook.id, updates)
 				.then((res) => {
-					toast.success('Webhook updated successfully');
+					toast.success(i18n.t('console.settings.webhooks.updated'));
 					onUpdate?.(res);
 					show = false;
 				})
@@ -112,7 +114,7 @@
 
 			createWebhook(url, events)
 				.then((res) => {
-					toast.success('Webhook created successfully');
+					toast.success(i18n.t('console.settings.webhooks.created'));
 					onCreate?.(res);
 					show = false;
 				})
@@ -141,7 +143,10 @@
 	}}
 	on:confirm={handleClick}
 >
-	<SplitControl label="Webhook URL" caption="Must be a valid HTTPS URL">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.webhookUrl')}
+		caption={i18n.t('console.settings.webhooks.webhookUrlCaption')}
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -157,7 +162,10 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Events" caption="Select the events you want to receive">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.events')}
+		caption={i18n.t('console.settings.webhooks.eventsCaption')}
+	>
 		<FormControl>
 			<div class="events-grid">
 				<InputGroup>
@@ -178,10 +186,10 @@
 
 			<div class="events-actions">
 				<Button size="small" color="input" disabled={allEventsSelected} on:click={selectAllEvents}>
-					Select all
+					{i18n.t('console.settings.webhooks.selectAll')}
 				</Button>
 				<Button size="small" color="input" disabled={noEventsSelected} on:click={deselectAllEvents}>
-					Deselect all
+					{i18n.t('console.settings.webhooks.deselectAll')}
 				</Button>
 			</div>
 

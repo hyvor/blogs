@@ -6,6 +6,9 @@
 	import { Callout } from '@hyvor/design/components';
 	import { addDefaultDefs } from './configUi';
 	import Object from './Object.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		config: string;
@@ -22,17 +25,17 @@
 		try {
 			configYaml = yaml.load(config);
 		} catch (e: any) {
-			error = 'Unable to parse config.yaml: ' + e.message;
+			error = i18n.t('console.theme.config.parseConfigError', { message: e.message });
 		}
 
 		try {
 			configDefYaml = yaml.load(configDef);
 		} catch (e: any) {
-			error = 'Unable to parse config.def.yaml: ' + e.message;
+			error = i18n.t('console.theme.config.parseConfigDefError', { message: e.message });
 		}
 
 		if (!error && (!configYaml || typeof configYaml !== 'object')) {
-			error = 'Invalid data type in config.yaml. Object required.';
+			error = i18n.t('console.theme.config.invalidType');
 		}
 
 		configDefYaml = addDefaultDefs(configDefYaml || {});

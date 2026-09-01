@@ -137,7 +137,6 @@ export interface HostingChange {
 	to_domain: string | null;
 	to_url: string;
 	status: HostingChangeStatus;
-	error_message: string | null;
 }
 
 export type CustomDomainTlsProvider = 'auto' | 'custom';
@@ -150,10 +149,11 @@ export interface CustomDomainSetup {
 	valid_to: number | null;
 }
 
-// a pending, not-yet-DNS-verified auto-TLS custom domain setup
 export interface CustomDomainIntent {
 	created_at: number;
 	domain: string;
+	tls_provider: CustomDomainTlsProvider;
+	has_certificate: string | null;
 }
 
 export interface BlogIntegrations {

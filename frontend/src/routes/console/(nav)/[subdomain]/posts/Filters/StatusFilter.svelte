@@ -16,12 +16,22 @@
 
 	import { postListFiltersStore, setFilter } from '../postListStore';
 	import { blogCountsStore } from '../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../lib/i18n';
 
-	const status = ['draft', 'published', 'scheduled', 'featured'];
+	const i18n = getI18n();
+
+	const STATUS_KEYS = {
+		draft: 'console.posts.status.draft',
+		published: 'console.posts.status.published',
+		scheduled: 'console.posts.status.scheduled',
+		featured: 'console.posts.status.featured'
+	} as const;
+
+	const status = Object.keys(STATUS_KEYS) as (keyof typeof STATUS_KEYS)[];
 
 	let showDropdown = $state(false);
 
-	function handleSelect(item: string) {
+	function handleSelect(item: keyof typeof STATUS_KEYS) {
 		setFilter('status', $postListFiltersStore.status === item ? null : (item as any));
 		showDropdown = false;
 	}
@@ -32,7 +42,7 @@
 		showDropdown = false;
 	}
 
-	function getPostsCount(status: string): number {
+	function getPostsCount(status: keyof typeof STATUS_KEYS): number {
 		return ($blogCountsStore.posts as any)[status] || 0;
 	}
 </script>
@@ -41,11 +51,13 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Status</Text>
+				<Text bold>{i18n.t('console.common.status')}</Text>
 			{/snippet}
 
 			<span class="text">
-				{$postListFiltersStore.status || 'Any'}
+				{$postListFiltersStore.status
+					? i18n.t(STATUS_KEYS[$postListFiltersStore.status])
+					: i18n.t('console.common.any')}
 			</span>
 
 			{#if $postListFiltersStore.status}
@@ -65,12 +77,9 @@
 			{#each status as item}
 				<ActionListItem
 					on:select={() => handleSelect(item)}
-					style="
-	                    text-transform:capitalize;
-	                    {$postListFiltersStore.status === item
+					style={$postListFiltersStore.status === item
 						? 'background-color: var(--accent-light-mid)'
 						: ''}
-	                "
 				>
 					{#snippet start()}
 						<span>
@@ -85,7 +94,7 @@
 							{/if}
 						</span>
 					{/snippet}
-					{item}
+					{i18n.t(STATUS_KEYS[item])}
 					{#snippet end()}
 						<span>{getPostsCount(item).toLocaleString()}</span>
 					{/snippet}
@@ -99,7 +108,6 @@
 	.text {
 		display: inline-block;
 		font-weight: normal;
-		text-transform: capitalize;
 		vertical-align: middle;
 	}
 </style>

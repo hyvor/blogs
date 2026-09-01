@@ -8,7 +8,7 @@
 	import OwnershipMockup from './OwnershipMockup.svelte';
 	import AllInOneMockup from './AllInOneMockup.svelte';
 	import AiMockup from './AiMockup.svelte';
-	import CollaborationMockup from './CollaborationMockup.svelte';
+	import SuggestionScreencast from './SuggestionScreencast.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
 
@@ -20,9 +20,9 @@
 	title={I18n.t('homepage.features.ownership.title')}
 	description={I18n.t('homepage.features.ownership.description')}
 	bullets={[
-		I18n.t('homepage.features.ownership.bullet1'),
-		I18n.t('homepage.features.ownership.bullet2'),
-		I18n.t('homepage.features.ownership.bullet3')
+		I18n.t('homepage.features.ownership.bulletExport'),
+		I18n.t('homepage.features.ownership.bulletLicense'),
+		I18n.t('homepage.features.ownership.bulletNoTrackers')
 	]}
 	altBg
 >
@@ -36,9 +36,9 @@
 	title={I18n.t('homepage.features.allInOne.title')}
 	description={I18n.t('homepage.features.allInOne.description')}
 	bullets={[
-		I18n.t('homepage.features.allInOne.bullet1'),
-		I18n.t('homepage.features.allInOne.bullet2'),
-		I18n.t('homepage.features.allInOne.bullet3')
+		I18n.t('homepage.features.allInOne.bulletNoPlugins'),
+		I18n.t('homepage.features.allInOne.bulletUpgrades'),
+		I18n.t('homepage.features.allInOne.bulletNoExtraCharges')
 	]}
 	flip
 >
@@ -52,13 +52,13 @@
 	title={I18n.t('homepage.features.themes.title')}
 	description={I18n.t('homepage.features.themes.description')}
 	bullets={[
-		I18n.t('homepage.features.themes.bullet1'),
-		I18n.t('homepage.features.themes.bullet2'),
-		I18n.t('homepage.features.themes.bullet3')
+		I18n.t('homepage.features.themes.bulletOpenSource'),
+		I18n.t('homepage.features.themes.bulletDocs'),
+		I18n.t('homepage.features.themes.bulletHeadless')
 	]}
 	button={[
-		{ href: '/themes', label: I18n.t('homepage.features.themes.button1'), external: true },
-		{ href: '/docs/headless', label: I18n.t('homepage.features.themes.button2') }
+		{ href: '/themes', label: I18n.t('homepage.features.themes.buttonBrowse'), external: true },
+		{ href: '/docs/headless', label: I18n.t('homepage.features.themes.buttonHeadlessDocs') }
 	]}
 	altBg
 	overlap
@@ -73,11 +73,11 @@
 	title={I18n.t('homepage.features.seo.title')}
 	description={I18n.t('homepage.features.seo.description')}
 	bullets={[
-		I18n.t('homepage.features.seo.bullet1'),
-		I18n.t('homepage.features.seo.bullet2'),
-		I18n.t('homepage.features.seo.bullet3'),
-		I18n.t('homepage.features.seo.bullet4'),
-		I18n.t('homepage.features.seo.bullet5')
+		I18n.t('homepage.features.seo.bulletMetaTags'),
+		I18n.t('homepage.features.seo.bulletSitemaps'),
+		I18n.t('homepage.features.seo.bulletAnalyzers'),
+		I18n.t('homepage.features.seo.bulletStaticHtml'),
+		I18n.t('homepage.features.seo.bulletWebp')
 	]}
 	flip
 >
@@ -91,9 +91,9 @@
 	title={I18n.t('homepage.features.hosting.title')}
 	description={I18n.t('homepage.features.hosting.description')}
 	bullets={[
-		I18n.t('homepage.features.hosting.bullet1'),
-		I18n.t('homepage.features.hosting.bullet2'),
-		I18n.t('homepage.features.hosting.bullet3')
+		I18n.t('homepage.features.hosting.bulletTls'),
+		I18n.t('homepage.features.hosting.bulletPlatforms'),
+		I18n.t('homepage.features.hosting.bulletReverseProxy')
 	]}
 	altBg
 >
@@ -107,9 +107,9 @@
 	title={I18n.t('homepage.features.suite.title')}
 	description={I18n.t('homepage.features.suite.description')}
 	bullets={[
-		I18n.t('homepage.features.suite.bullet1'),
-		I18n.t('homepage.features.suite.bullet2'),
-		I18n.t('homepage.features.suite.bullet3')
+		I18n.t('homepage.features.suite.bulletTalk'),
+		I18n.t('homepage.features.suite.bulletPost'),
+		I18n.t('homepage.features.suite.bulletOneAccount')
 	]}
 	button={{ href: '/pricing', label: I18n.t('homepage.features.suite.button') }}
 	flip
@@ -124,9 +124,9 @@
 	title={I18n.t('homepage.features.ai.title')}
 	description={I18n.t('homepage.features.ai.description')}
 	bullets={[
-		I18n.t('homepage.features.ai.bullet1'),
-		I18n.t('homepage.features.ai.bullet2'),
-		I18n.t('homepage.features.ai.bullet3')
+		I18n.t('homepage.features.ai.bulletGeneration'),
+		I18n.t('homepage.features.ai.bulletSuggestions'),
+		I18n.t('homepage.features.ai.bulletBulkEditing')
 	]}
 	interactiveBullets
 	altBg
@@ -141,14 +141,14 @@
 	title={I18n.t('homepage.features.collaboration.title')}
 	description={I18n.t('homepage.features.collaboration.description')}
 	bullets={[
-		I18n.t('homepage.features.collaboration.bullet1'),
-		I18n.t('homepage.features.collaboration.bullet2')
+		I18n.t('homepage.features.collaboration.bulletLiveCursors'),
+		I18n.t('homepage.features.collaboration.bulletSuggestionMode')
 	]}
-	interactiveBullets
 	flip
+	overlap
 >
-	{#snippet visual(active)}
-		<CollaborationMockup {active} />
+	{#snippet visual()}
+		<SuggestionScreencast />
 	{/snippet}
 </FeatureSplit>
 
@@ -157,9 +157,9 @@
 	title={I18n.t('homepage.features.multiLanguage.title')}
 	description={I18n.t('homepage.features.multiLanguage.description')}
 	bullets={[
-		I18n.t('homepage.features.multiLanguage.bullet1'),
-		I18n.t('homepage.features.multiLanguage.bullet2'),
-		I18n.t('homepage.features.multiLanguage.bullet3')
+		I18n.t('homepage.features.multiLanguage.bulletRtl'),
+		I18n.t('homepage.features.multiLanguage.bulletTranslator'),
+		I18n.t('homepage.features.multiLanguage.bulletHreflang')
 	]}
 	altBg
 >
@@ -173,9 +173,9 @@
 	title={I18n.t('homepage.features.linkAnalyzer.title')}
 	description={I18n.t('homepage.features.linkAnalyzer.description')}
 	bullets={[
-		I18n.t('homepage.features.linkAnalyzer.bullet1'),
-		I18n.t('homepage.features.linkAnalyzer.bullet2'),
-		I18n.t('homepage.features.linkAnalyzer.bullet3')
+		I18n.t('homepage.features.linkAnalyzer.bulletPeriodicChecks'),
+		I18n.t('homepage.features.linkAnalyzer.bulletReports'),
+		I18n.t('homepage.features.linkAnalyzer.bulletBrokenLinks')
 	]}
 	flip
 >

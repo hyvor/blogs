@@ -16,6 +16,9 @@
 	import { deleteRedirect } from './redirectActions';
 	import { createEventDispatcher } from 'svelte';
 	import RedirectsModal from './RedirectsModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		redirect: Redirect;
@@ -30,17 +33,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete redirect',
-				content: 'Are you sure you want to delete this redirect?',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.redirects.deleteRedirect'),
+				content: i18n.t('console.settings.redirects.deleteContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting redirect...');
+			const toastId = toast.loading(i18n.t('console.settings.redirects.deleting'));
 
 			deleteRedirect(redirect.id)
 				.then(() => {
-					toast.success('Redirect deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.redirects.deleted'), { id: toastId });
 					dispatch('delete', redirect.id);
 				})
 				.catch((e) => {
@@ -54,7 +57,7 @@
 	<div>
 		{redirect.path}
 		{#if redirect.dynamic}
-			<Tag size="small" color="orange">Dynamic</Tag>
+			<Tag size="small" color="orange">{i18n.t('console.settings.redirects.dynamic')}</Tag>
 		{/if}
 	</div>
 	<div>
@@ -62,23 +65,18 @@
 	</div>
 	<div>
 		{#if redirect.type === 'permanent'}
-			Permanent (301)
+			{i18n.t('console.settings.redirects.permanent')}
 		{:else}
-			Temporary (302)
+			{i18n.t('console.settings.redirects.temporary')}
 		{/if}
 	</div>
 	<div>
-		<Tooltip text="Edit redirect">
-			<IconButton
-				variant="fill-light"
-				color="gray"
-				size="small"
-				on:click={() => (isEditing = true)}
-			>
+		<Tooltip text={i18n.t('console.settings.redirects.editRedirect')}>
+			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
-		<Tooltip text="Delete redirect">
+		<Tooltip text={i18n.t('console.settings.redirects.deleteRedirect')}>
 			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
 				<IconTrash size={12} />
 			</IconButton>

@@ -9,6 +9,7 @@ use App\Service\Hosting\CustomDomain\Acme\Dto\FinalCertificate;
 use App\Service\Hosting\CustomDomain\Acme\Dto\OrderResponse;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\HeaderBag;
@@ -41,6 +42,23 @@ class AcmeClient implements LoggerAwareInterface
         $this->directoryUrl = $this->env === 'dev' ?
             self::DIRECTORY_URL_DEV :
             self::DIRECTORY_URL_PRODUCTION;
+    }
+
+    /**
+     * @throws AcmeException
+     */
+    public function getCertificateFor(
+        string $domain,
+        \OpenSSLAsymmetricKey $privateKey,
+        ?LoggerInterface $logger = null
+    ): FinalCertificate
+    {
+        if ($logger) {
+            $this->setLogger($logger);
+        }
+        $this->init();
+        $pendingOrder = $this->newOrder($domain);
+        return $this->finalizeOrder($pendingOrder, $privateKey);
     }
 
     /**
@@ -92,12 +110,17 @@ class AcmeClient implements LoggerAwareInterface
                 kid: null,
             );
 
-            return $this->newAccount();
+            try {
+                return $this->newAccount();
+            } catch (AcmeException $e) {
+                unset($this->account);
+                throw $e;
+            }
         });
     }
 
     /**
-     * Manages one global ACME account per Hyvor Talk instance
+     * Manages one global ACME account per Hyvor Blogs instance
      * @throws AcmeException
      */
     private function newAccount(): AccountInternalDto
@@ -114,7 +137,7 @@ class AcmeClient implements LoggerAwareInterface
 
         $kid = $headerBag->get('location');
         if (!$kid) {
-            throw new AcmeException('No KID returned from ACME server');  // @codeCoverageIgnore
+            throw new AcmeException('No KID returned from ACME server');
         }
 
         $this->account = new AccountInternalDto(
@@ -218,12 +241,22 @@ class AcmeClient implements LoggerAwareInterface
         } while ($authorization->status === 'pending' && $attempt < $maxAttempts);
 
         if ($authorization->status !== 'valid') {
-            throw new AcmeException('Authorization failed, status: ' . $authorization->status); // @codeCoverageIgnore
+            $error = $authorization->getError();
+
+            $this->logger?->error('Authorization failed', [
+                'status' => $authorization->status,
+                'error' => $error?->describe(),
+            ]);
+
+            throw new AcmeException(
+                'Authorization failed, status: ' . $authorization->status .
+                ($error ? '. ACME error: ' . $error->describe() : '')
+            );
         }
 
         // Finalize order
         $this->logger?->info('Authorization valid, proceeding to finalize order');
-        $csr = openssl_csr_new(['CN' => $order->domain], $privateKey, ['digest_alg' => 'sha256']);
+        $csr = $this->createCsr($order->domain, $privateKey);
         if (!$csr instanceof \OpenSSLCertificateSigningRequest) {
             throw new AcmeException('Failed to generate CSR: ' . openssl_error_string()); // @codeCoverageIgnore
         }
@@ -261,7 +294,15 @@ class AcmeClient implements LoggerAwareInterface
         );
 
         if ($response->status !== 'valid') {
-            throw new AcmeException('Order finalization failed, status: ' . $response->status); // @codeCoverageIgnore
+            $this->logger?->error('Order finalization failed', [
+                'status' => $response->status,
+                'error' => $response->error?->describe(),
+            ]);
+
+            throw new AcmeException(
+                'Order finalization failed, status: ' . $response->status .
+                ($response->error ? '. ACME error: ' . $response->error->describe() : '')
+            );
         }
 
         if (!$response->certificate) {
@@ -306,9 +347,11 @@ class AcmeClient implements LoggerAwareInterface
                 $options['json'] = $this->sign($payload, $url);
             }
 
-            // TODO: REMOVE BEFORE PROD
-            $options['verify_peer'] = false;
-            $options['verify_host'] = false;
+            if ($this->env === 'dev') {
+                // for local pebble
+                $options['verify_peer'] = false;
+                $options['verify_host'] = false;
+            }
 
             $response = $this->http->request(
                 $method,
@@ -341,7 +384,7 @@ class AcmeClient implements LoggerAwareInterface
                 'exception' => $e->getMessage(),
             ]);
 
-            throw new AcmeException('HTTP request failed: ' . $e->getMessage());
+            throw new AcmeException('HTTP request failed: ' . $e->getMessage(), previous: $e);
         } catch (\Symfony\Component\Serializer\Exception\ExceptionInterface $e) {
             $this->logger?->error('Failed to deserialize ACME server response', [
                 'url' => $url,
@@ -349,7 +392,7 @@ class AcmeClient implements LoggerAwareInterface
                 'exception' => $e->getMessage(),
             ]);
 
-            throw new AcmeException('Deserialization failed: ' . $e->getMessage());
+            throw new AcmeException('Deserialization failed: ' . $e->getMessage(), previous: $e);
         }
         // @codeCoverageIgnoreEnd
     }
@@ -449,6 +492,40 @@ class AcmeClient implements LoggerAwareInterface
         }
 
         return $nonce;
+    }
+
+    /**
+     * ACME servers require the CSR's subjectAltName to list the same DNS identifiers
+     * as the order. openssl_csr_new() only accepts extensions via an actual openssl config file,
+     * so one is generated on the fly with a SAN matching the order's domain.
+     */
+    private function createCsr(string $domain, \OpenSSLAsymmetricKey $privateKey): \OpenSSLCertificateSigningRequest|false
+    {
+        $configPath = tempnam(sys_get_temp_dir(), 'acme_csr_');
+        if ($configPath === false) {
+            return false; // @codeCoverageIgnore
+        }
+
+        file_put_contents($configPath, <<<CNF
+            [req]
+            distinguished_name = req_distinguished_name
+            req_extensions = v3_req
+            [req_distinguished_name]
+            [v3_req]
+            subjectAltName = DNS:{$domain}
+            CNF);
+
+        try {
+            $csr = openssl_csr_new(['CN' => $domain], $privateKey, [
+                'digest_alg' => 'sha256',
+                'config' => $configPath,
+                'req_extensions' => 'v3_req',
+            ]);
+
+            return $csr instanceof \OpenSSLCertificateSigningRequest ? $csr : false;
+        } finally {
+            unlink($configPath);
+        }
     }
 
     private function csrPemToDer(string $pem): string

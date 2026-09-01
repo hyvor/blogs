@@ -4,6 +4,15 @@
 	import IconCheck from '@hyvor/icons/IconCheck';
 	import IconHourglass from '@hyvor/icons/IconHourglass';
 	import IconDot from '@hyvor/icons/IconDot';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
+
+	const STATUS_KEYS = {
+		draft: 'console.posts.status.draft',
+		published: 'console.posts.status.published',
+		scheduled: 'console.posts.status.scheduled'
+	} as const;
 
 	interface Props {
 		status: PostStatus;
@@ -38,5 +47,5 @@
 		{/if}
 	{/snippet}
 
-	{status.toUpperCase()}
+	{i18n.t(STATUS_KEYS[status]).toUpperCase()}
 </Tag>

@@ -7,6 +7,9 @@
 	import { page } from '$app/state';
 	import LicenseExpiredNotice from './@components/BlogStatus/LicenseExpiredNotice.svelte';
 	import { blogListStore, resolvedLicenseStore } from '../../lib/stores';
+	import { getI18n } from '../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -38,7 +41,7 @@
 				isLoading = false;
 			})
 			.catch(() => {
-				toast.error('Unable to load blog');
+				toast.error(i18n.t('console.failedToLoadBlog'));
 			});
 	}
 

@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { FAQ } from '@hyvor/design/marketing';
 	import FullTrialSignup from '../../@components/FullTrialSignup.svelte';
 	import FeatureSectionTitle from '../../@homepage/FeatureSectionTitle.svelte';
-	import Faqs from '../../@components/Faqs.svelte';
 	import PricingPlans from './PricingPlans.svelte';
 	import Features from './Features.svelte';
 	import SelfHost from './SelfHost.svelte';
@@ -10,10 +10,29 @@
 	const I18n = getMarketingI18n();
 	const strings = I18n.strings;
 
+	const faqTopics = [
+		'Trial',
+		'MultipleBlogs',
+		'TeamMembers',
+		'PlanChange',
+		'Payment',
+		// 'Discounts', // kept for later use
+		'HyvorTalk',
+		'HyvorPost',
+		'MoreLimits',
+		'Overage',
+		'AiCost',
+		'Themes',
+		'Ownership',
+		'Limits',
+		'CustomDomains',
+		'Enterprise'
+	];
+
 	const faqs = $derived(
-		[1, 2, 3, 4, 5, 6, 7].map((n) => ({
-			q: I18n.t(`pricing.faq.q${n}` as never),
-			a: getStaticString($strings, `pricing.faq.a${n}`)
+		faqTopics.map((topic) => ({
+			q: I18n.t(`pricing.faq.question${topic}` as never),
+			a: getStaticString($strings, `pricing.faq.answer${topic}`)
 		}))
 	);
 </script>
@@ -27,12 +46,13 @@
 <Features />
 
 <FeatureSectionTitle
+	id="faq"
 	title={I18n.t('pricing.faq.title')}
 	h2Style="font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em;"
 />
 
 <div class="faqs-wrap hds-container">
-	<Faqs items={faqs} />
+	<FAQ items={faqs} columns={1} />
 </div>
 
 <FullTrialSignup style="margin-top:130px" />

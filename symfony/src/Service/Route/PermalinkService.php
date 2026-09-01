@@ -46,8 +46,8 @@ class PermalinkService
     public function getBlogUrl(Blog $blog): string
     {
         return $this->buildUrlForHosting(
-            $blog,
             $blog->getHostingAt(),
+            $blog->getSubdomain(),
             $blog->getHostingUrl(),
             $blog->getCustomDomain()?->getDomain()
         );
@@ -63,10 +63,15 @@ class PermalinkService
      * Computes the URL a blog would have under a given (possibly not-yet-applied)
      * hosting configuration, without mutating the blog.
      */
-    public function buildUrlForHosting(Blog $blog, BlogHostingAt $hostingAt, ?string $hostingUrl, ?string $domain): string
+    public function buildUrlForHosting(
+        BlogHostingAt $hostingAt,
+        ?string $subdomain,
+        ?string $hostingUrl,
+        ?string $domain
+    ): string
     {
         return match ($hostingAt) {
-            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($blog),
+            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain),
             BlogHostingAt::DOMAIN => 'https://' . $domain,
             BlogHostingAt::SELF => $hostingUrl ?? '',
         };
@@ -76,7 +81,7 @@ class PermalinkService
      * If there's a delivery URL (e.g., https://hyvorblogs.io), the blog URL will be https://subdomain.hyvorblogs.io
      * Othewise, it will be https://domainapp.com/blog/subdomain
      */
-    private function buildSubdomainUrl(Blog $blog): string
+    private function buildSubdomainUrl(string $subdomain): string
     {
         $url = $this->appConfig->getDeliveryUrl();
 
@@ -85,10 +90,10 @@ class PermalinkService
             $host = parse_url($url, PHP_URL_HOST) ?? '';
             $port = parse_url($url, PHP_URL_PORT);
             $portStr = $port ? ":$port" : '';
-            return "$scheme://{$blog->getSubdomain()}.$host$portStr";
+            return "$scheme://{$subdomain}.$host$portStr";
         }
 
-        return $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/blog/' . $blog->getSubdomain();
+        return $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/blog/' . $subdomain;
     }
 
     public function isLinkInBlog(string $link, Blog $blog): bool

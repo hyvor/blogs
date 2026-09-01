@@ -8,10 +8,10 @@
 	const I18n = getMarketingI18n();
 
 	const bullets = $derived([
-		I18n.t('pricing.selfHost.bullet1'),
-		I18n.t('pricing.selfHost.bullet2'),
-		I18n.t('pricing.selfHost.bullet3'),
-		I18n.t('pricing.selfHost.bullet4')
+		I18n.t('pricing.selfHost.bulletFree'),
+		I18n.t('pricing.selfHost.bulletDocker'),
+		I18n.t('pricing.selfHost.bulletOwnership'),
+		I18n.t('pricing.selfHost.bulletNoLockIn')
 	]);
 </script>
 
@@ -31,8 +31,8 @@
 			</ul>
 
 			<div class="buttons">
-				<Button as="a" href="/hosting" size="large" variant="fill" color="accent">
-					{I18n.t('pricing.selfHost.button1')}
+				<Button as="a" href="/hosting" size="medium" variant="fill" color="accent">
+					{I18n.t('pricing.selfHost.buttonLearn')}
 				</Button>
 				<span class="github-btn">
 					<Button
@@ -40,12 +40,12 @@
 						href="https://github.com/hyvor/blogs"
 						target="_blank"
 						rel="noopener"
-						size="large"
+						size="medium"
 						variant="outline"
 						color="gray"
 					>
 						{#snippet start()}<IconGithub size={14} />{/snippet}
-						{I18n.t('pricing.selfHost.button2')}
+						{I18n.t('pricing.selfHost.buttonGithub')}
 						{#snippet end()}<IconBoxArrowUpRight size={11} />{/snippet}
 					</Button>
 				</span>
@@ -61,12 +61,9 @@
 				</div>
 				<div class="terminal-body">
 					<div class="line">
-						<span class="prompt">$</span> git clone https://github.com/hyvor/blogs
+						<span class="prompt">$</span> docker compose up -d
 					</div>
-					<div class="line">
-						<span class="prompt">$</span> cd blogs &amp;&amp; docker compose up -d
-					</div>
-					<div class="line output">✓ Blog running at http://localhost:8080</div>
+					<div class="line output">✓ Hyvor Blogs running at https://acme.com/blog</div>
 				</div>
 			</div>
 		</div>
@@ -236,6 +233,7 @@
 
 		.buttons {
 			justify-content: center;
+			flex-wrap: wrap;
 		}
 
 		.visual-col {

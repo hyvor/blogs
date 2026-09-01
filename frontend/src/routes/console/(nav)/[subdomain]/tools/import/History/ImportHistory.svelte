@@ -3,6 +3,9 @@
 	import type { Import } from '../../../../../lib/types';
 	import { getImports } from '../importActions';
 	import ImportRow from './ImportRow.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 
@@ -23,16 +26,16 @@
 {#if isLoading}
 	<Loader padding={100} block />
 {:else if imports.length === 0}
-	<IconMessage empty message="No imports found" padding={60} />
+	<IconMessage empty message={i18n.t('console.tools.import.noImports')} padding={60} />
 {:else}
 	<Table columns="2fr 1fr 1fr 1fr 1fr 60px">
 		<TableRow head>
-			<div>Name/URL</div>
-			<div>Type</div>
-			<div>Date</div>
-			<div>Status</div>
-			<div>Counts</div>
-			<div>More</div>
+			<div>{i18n.t('console.tools.import.nameUrl')}</div>
+			<div>{i18n.t('console.tools.import.type')}</div>
+			<div>{i18n.t('console.posts.filters.dateLabel')}</div>
+			<div>{i18n.t('console.common.status')}</div>
+			<div>{i18n.t('console.tools.import.counts')}</div>
+			<div>{i18n.t('console.tools.import.more')}</div>
 		</TableRow>
 
 		{#each imports as imp}

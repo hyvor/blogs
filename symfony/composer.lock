@@ -2147,7 +2147,7 @@
         },
         {
             "name": "hyvor/sdk-core",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-core.git",
@@ -2190,7 +2190,7 @@
             ],
             "description": "Shared HTTP transport, auth, serialization, and exceptions for HYVOR product SDKs. Not intended to be required directly - installed transitively by hyvor/sdk-* product packages.",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.4"
+                "source": "https://github.com/hyvor/sdk-php-core/tree/0.1.5"
             },
             "time": "2026-08-14T13:32:54+00:00"
         },
@@ -2235,16 +2235,16 @@
         },
         {
             "name": "hyvor/sdk-talk",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-talk.git",
-                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f"
+                "reference": "b007fec2934fcda3f826619d3e4b04a2f903ef3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/ca56488776ff98c1f010b33e8f7c01daf174d18f",
-                "reference": "ca56488776ff98c1f010b33e8f7c01daf174d18f",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-talk/zipball/b007fec2934fcda3f826619d3e4b04a2f903ef3d",
+                "reference": "b007fec2934fcda3f826619d3e4b04a2f903ef3d",
                 "shasum": ""
             },
             "require": {
@@ -2268,9 +2268,9 @@
             ],
             "description": "Official PHP SDK for Hyvor Talk",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.4"
+                "source": "https://github.com/hyvor/sdk-php-talk/tree/0.1.5"
             },
-            "time": "2026-08-14T13:40:40+00:00"
+            "time": "2026-09-01T02:08:33+00:00"
         },
         {
             "name": "hyvor/unfold",
@@ -5083,16 +5083,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "2.3.4",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "98dbc9412932af5825e6d5aa5d6bc4de7d82538a"
+                "reference": "148cefffaf0233e4c08cc13db8a195a56dd6dfe9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/98dbc9412932af5825e6d5aa5d6bc4de7d82538a",
-                "reference": "98dbc9412932af5825e6d5aa5d6bc4de7d82538a",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/148cefffaf0233e4c08cc13db8a195a56dd6dfe9",
+                "reference": "148cefffaf0233e4c08cc13db8a195a56dd6dfe9",
                 "shasum": ""
             },
             "require": {
@@ -5124,9 +5124,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.4"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.5"
             },
-            "time": "2026-08-30T16:25:38+00:00"
+            "time": "2026-08-31T16:05:28+00:00"
         },
         {
             "name": "promphp/prometheus_client_php",

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button, Tag } from '@hyvor/design/components';
 	import type { Snippet } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		title: string;
@@ -13,6 +16,8 @@
 			color: 'green' | 'orange' | 'blue' | 'red' | 'default' | 'accent';
 			label: string;
 		} | null;
+		// rendered instead of the button/tag when active - e.g. an inline editor
+		activeContent?: Snippet;
 	}
 
 	let {
@@ -22,7 +27,8 @@
 		buttonLabel,
 		buttonDisabled = false,
 		onclick,
-		tag = null
+		tag = null,
+		activeContent
 	}: Props = $props();
 </script>
 
@@ -32,7 +38,7 @@
 
 		<span>
 			{#if active}
-				<Tag color="green" size="small">Active</Tag>
+				<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 			{:else if tag}
 				<Tag color={tag.color} size="small">{tag.label}</Tag>
 			{/if}
@@ -46,11 +52,15 @@
 		{/if}
 	</p>
 
-	<div class="button-wrap">
-		<Button size="small" variant="outline" disabled={active || buttonDisabled} {onclick}
-			>{buttonLabel}</Button
-		>
-	</div>
+	{#if active && activeContent}
+		{@render activeContent()}
+	{:else}
+		<div class="button-wrap">
+			<Button size="small" variant="outline" disabled={active || buttonDisabled} {onclick}
+				>{buttonLabel}</Button
+			>
+		</div>
+	{/if}
 </div>
 
 <style>

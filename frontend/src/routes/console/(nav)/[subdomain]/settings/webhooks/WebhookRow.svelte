@@ -15,6 +15,9 @@
 	import { deleteWebhook } from './webhookActions';
 	import { createEventDispatcher } from 'svelte';
 	import CreateUpdateWebhookModal from './CreateUpdateWebhookModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		webhook: Webhook;
@@ -26,7 +29,7 @@
 
 	function handleCopy() {
 		navigator.clipboard.writeText(webhook.secret);
-		toast.success('Copied');
+		toast.success(i18n.t('console.common.copied'));
 	}
 
 	let isUpdating = $state(false);
@@ -34,17 +37,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete Webhook',
-				content: 'Are you sure you want to delete this webhook?',
-				confirmText: 'Yes, Delete',
+				title: i18n.t('console.settings.webhooks.deleteTitle'),
+				content: i18n.t('console.settings.webhooks.deleteContent'),
+				confirmText: i18n.t('console.tools.media.delete.confirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting webhook');
+			const toastId = toast.loading(i18n.t('console.settings.webhooks.deleting'));
 
 			deleteWebhook(webhook.id)
 				.then(() => {
-					toast.success('Webhook deleted', { id: toastId });
+					toast.success(i18n.t('console.settings.webhooks.deleted'), { id: toastId });
 				})
 				.catch((err) => {
 					toast.error(err.message, { id: toastId });
@@ -63,21 +66,18 @@
 		{/each}
 	</div>
 	<div>
-		<Button size="x-small" on:click={handleCopy}>COPY</Button>
+		<Button size="x-small" on:click={handleCopy}
+			>{i18n.t('console.common.copy').toUpperCase()}</Button
+		>
 	</div>
 	<div>
-		<Tooltip text="Edit Webhook">
-			<IconButton
-				size="small"
-				variant="fill-light"
-				color="gray"
-				on:click={() => (isUpdating = true)}
-			>
+		<Tooltip text={i18n.t('console.settings.webhooks.editWebhook')}>
+			<IconButton size="small" color="input" variant="fill" on:click={() => (isUpdating = true)}>
 				<IconPencilFill size={10} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Delete Webhook">
+		<Tooltip text={i18n.t('console.settings.webhooks.deleteTitle')}>
 			<IconButton size="small" variant="fill-light" color="red" on:click={handleDelete}>
 				<IconTrash size={10} />
 			</IconButton>

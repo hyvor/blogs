@@ -8,7 +8,6 @@
 	import IconDatabase from '@hyvor/icons/IconDatabase';
 	import IconExclamationTriangle from '@hyvor/icons/IconExclamationTriangle';
 	import IconGlobe from '@hyvor/icons/IconGlobe';
-	import IconImage from '@hyvor/icons/IconImage';
 	import IconKey from '@hyvor/icons/IconKey';
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import IconLink45deg from '@hyvor/icons/IconLink45deg';
@@ -22,6 +21,9 @@
 	import IconTag from '@hyvor/icons/IconTag';
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -38,7 +40,7 @@
 				{#snippet start()}
 					<IconList />
 				{/snippet}
-				General
+				{i18n.t('console.settings.nav.general')}
 			</NavLink>
 
 			<NavLink
@@ -48,7 +50,7 @@
 				{#snippet start()}
 					<IconPeople />
 				{/snippet}
-				Users
+				{i18n.t('console.settings.nav.users')}
 			</NavLink>
 
 			<NavLink
@@ -58,7 +60,7 @@
 				{#snippet start()}
 					<IconTag />
 				{/snippet}
-				Tags
+				{i18n.t('console.settings.nav.tags')}
 			</NavLink>
 
 			<NavLink
@@ -68,7 +70,7 @@
 				{#snippet start()}
 					<IconGlobe />
 				{/snippet}
-				Languages
+				{i18n.t('console.settings.nav.languages')}
 			</NavLink>
 
 			<div class="section-div"></div>
@@ -80,7 +82,7 @@
 				{#snippet start()}
 					<IconDatabase />
 				{/snippet}
-				Hosting
+				{i18n.t('console.settings.nav.hosting')}
 			</NavLink>
 
 			<NavLink
@@ -90,7 +92,7 @@
 				{#snippet start()}
 					<IconSearchHeart />
 				{/snippet}
-				SEO
+				{i18n.t('console.posts.seo')}
 			</NavLink>
 
 			<NavLink
@@ -110,7 +112,7 @@
 				{#snippet start()}
 					<IconLightbulb />
 				{/snippet}
-				Light & Dark Modes
+				{i18n.t('console.settings.nav.colorMode')}
 			</NavLink>
 
 			<NavLink
@@ -120,7 +122,7 @@
 				{#snippet start()}
 					<IconCursorText />
 				{/snippet}
-				Post Content
+				{i18n.t('console.tools.import.postContent')}
 			</NavLink>
 
 			<NavLink
@@ -130,17 +132,7 @@
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
-				Navigation Links
-			</NavLink>
-
-			<NavLink
-				href={consoleUrlWithBlog('/settings/media')}
-				active={$page.url.pathname === `${prefix}/media`}
-			>
-				{#snippet start()}
-					<IconImage />
-				{/snippet}
-				Media
+				{i18n.t('console.settings.nav.navigation')}
 			</NavLink>
 
 			<NavLink
@@ -150,7 +142,7 @@
 				{#snippet start()}
 					<IconSignTurnSlightRight />
 				{/snippet}
-				Redirects
+				{i18n.t('console.settings.nav.redirects')}
 			</NavLink>
 
 			<NavLink
@@ -160,7 +152,7 @@
 				{#snippet start()}
 					<IconSignpost2 />
 				{/snippet}
-				Routes
+				{i18n.t('console.settings.nav.routes')}
 			</NavLink>
 
 			<div class="section-div"></div>
@@ -172,7 +164,7 @@
 				{#snippet start()}
 					<IconChatText />
 				{/snippet}
-				Comments & Newsletter
+				{i18n.t('console.settings.nav.comments')}
 			</NavLink>
 			<NavLink
 				href={consoleUrlWithBlog('/settings/code')}
@@ -181,7 +173,7 @@
 				{#snippet start()}
 					<IconCodeSlash />
 				{/snippet}
-				Custom Code
+				{i18n.t('console.settings.nav.code')}
 			</NavLink>
 			<NavLink
 				href={consoleUrlWithBlog('/settings/api-keys')}
@@ -190,7 +182,7 @@
 				{#snippet start()}
 					<IconKey />
 				{/snippet}
-				API Keys
+				{i18n.t('console.settings.nav.apiKeys')}
 			</NavLink>
 			<NavLink
 				href={consoleUrlWithBlog('/settings/webhooks')}
@@ -199,7 +191,7 @@
 				{#snippet start()}
 					<IconSend />
 				{/snippet}
-				Webhooks
+				{i18n.t('console.settings.nav.webhooks')}
 			</NavLink>
 
 			<div class="section-div"></div>
@@ -211,7 +203,7 @@
 				{#snippet start()}
 					<IconExclamationTriangle />
 				{/snippet}
-				Danger Zone
+				{i18n.t('console.settings.nav.danger')}
 			</NavLink>
 		</NavLinkGroup>
 	</div>

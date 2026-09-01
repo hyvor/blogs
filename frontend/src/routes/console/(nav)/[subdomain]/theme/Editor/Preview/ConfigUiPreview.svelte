@@ -4,6 +4,9 @@
 	import { themeFilesStore, updateThemeFileStore } from '../../themeStore';
 	import ConfigUi from '../ConfigUi/ConfigUi.svelte';
 	import TextEditor from './TextEditor.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		file: ThemeFile;
@@ -28,7 +31,7 @@
 </script>
 
 <div class="switch-wrap">
-	<Switch bind:checked={showYaml}>Show YAML</Switch>
+	<Switch bind:checked={showYaml}>{i18n.t('console.theme.showYaml')}</Switch>
 </div>
 
 {#if showYaml}

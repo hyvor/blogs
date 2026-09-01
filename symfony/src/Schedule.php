@@ -4,7 +4,7 @@ namespace App;
 
 use App\Service\Ai\Agent\Message\DeleteOldAiConversationsMessage;
 use App\Service\Blog\Message\HardDeleteBlogsMessage;
-use App\Service\Hosting\CustomDomain\Message\RegenerateExpiredTlsCertificatesMessage;
+use App\Service\Hosting\CustomDomain\Message\RegenerateExpiringTlsCertificatesMessage;
 use App\Service\LinkAnalysis\Message\DispatchAllLinkAnalysisChecksMessage;
 use App\Service\Post\Document\ClearStepsMessage;
 use App\Service\Post\Message\PublishScheduledPostVariantsMessage;
@@ -28,7 +28,7 @@ class Schedule implements ScheduleProviderInterface
             ->lock($this->lockFactory->createLock('default-schedule')) // only run on one server
 
             ->add(RecurringMessage::cron('0 0 * * *', new RepoSyncMessage()))
-            ->add(RecurringMessage::every('1 day', new RegenerateExpiredTlsCertificatesMessage()))
+            ->add(RecurringMessage::every('1 day', new RegenerateExpiringTlsCertificatesMessage()))
             ->add(RecurringMessage::every('1 day', new HardDeleteBlogsMessage()))
             ->add(RecurringMessage::every('1 day', new DeleteOldAiConversationsMessage()))
             ->add(RecurringMessage::every('1 day', new DispatchAllLinkAnalysisChecksMessage()))

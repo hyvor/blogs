@@ -37,19 +37,24 @@ final class CustomDomainFactory extends PersistentObjectFactory
         ];
     }
 
-    public static function createActiveFor(Blog $blog, string $domain = 'example.com'): CustomDomain
+    public static function createActiveFor(
+        Blog $blog,
+        string $domain = 'example.com',
+        array $attributes = []
+    ): CustomDomain
     {
-        return self::createOne([
+        $domain = self::createOne(array_merge([
             'blog' => $blog,
             'domain' => $domain,
-        ]);
+        ], $attributes));
+
+        $blog->setCustomDomain($domain);
+        return $domain;
     }
 
     public static function createActiveCustomTlsFor(Blog $blog, string $domain = 'example.com'): CustomDomain
     {
-        return self::createOne([
-            'blog' => $blog,
-            'domain' => $domain,
+        return self::createActiveFor($blog, $domain, [
             'tls_provider' => CustomDomainTlsProvider::CUSTOM,
         ]);
     }

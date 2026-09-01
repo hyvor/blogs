@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Loader, toast } from '@hyvor/design/components';
+	import { Button, Loader, toast } from '@hyvor/design/components';
 	import { blogOriginalStore, blogStore } from '../../../lib/stores/blogStore';
 	import type { Blog, BlogVariant } from '../../../lib/types';
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
 	import { beforeNavigate } from '$app/navigation';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		keys?: (keyof Blog)[];
@@ -84,7 +87,7 @@
 			try {
 				await updateBlogVariant(Number(languageId), changes, true);
 			} catch (e) {
-				toast.error('Failed to update blog variant');
+				toast.error(i18n.t('console.settings.failedToUpdateVariant'));
 				loadingState = 'error';
 				return;
 			}
@@ -132,13 +135,13 @@
 		<Loader state={loadingState} size="small" />
 	</span>
 
-	<ButtonGroup>
+	<span class="buttons">
 		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}
-			>Discard</Button
+			>{i18n.t('console.settings.discard')}</Button
 		>
 
-		<Button disabled={!should} on:click={handleSave}>Save</Button>
-	</ButtonGroup>
+		<Button disabled={!should} on:click={handleSave}>{i18n.t('console.common.save')}</Button>
+	</span>
 </div>
 
 <style>
@@ -146,6 +149,12 @@
 		padding: 15px 30px;
 		text-align: right;
 		border-bottom: 1px solid var(--border);
+	}
+	.buttons {
+		display: inline-flex;
+		align-items: center;
+		gap: 2px;
+		vertical-align: middle;
 	}
 	.loader-wrap {
 		display: inline-flex;

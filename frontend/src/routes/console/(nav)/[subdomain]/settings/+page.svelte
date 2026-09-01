@@ -5,6 +5,9 @@
 	import { blogStore, updateBlogStoreVariantValue } from '../../../lib/stores/blogStore';
 	import VariantInput from './@components/VariantInput/VariantInput.svelte';
 	import ImageSetting from './@components/ImageSetting.svelte';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
@@ -46,8 +49,8 @@
 
 <div class="settings">
 	<VariantInput
-		label="Name"
-		caption="Name of your blog"
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.general.nameCaption')}
 		type="blog"
 		obj={$blogStore}
 		key="name"
@@ -56,8 +59,8 @@
 	/>
 
 	<VariantInput
-		label="Description"
-		caption="A short description (or sub-title) for your blog"
+		label={i18n.t('console.tools.import.description')}
+		caption={i18n.t('console.settings.general.descriptionCaption')}
 		type="blog"
 		obj={$blogStore}
 		key="description"
@@ -65,14 +68,20 @@
 		on:change={handleDescriptionChange}
 	/>
 
-	<SplitControl label="Logo" caption="Your blog's logo, usually displayed in the header">
+	<SplitControl
+		label={i18n.t('console.settings.general.logo')}
+		caption={i18n.t('console.settings.general.logoCaption')}
+	>
 		<ImageSetting
 			src={$blogStore.logo_url}
 			on:change={(e) => changeBlogValue('logo_url', e.detail)}
 		/>
 	</SplitControl>
 
-	<SplitControl label="Icon" caption="Blog favicon. If not set, the logo will be used.">
+	<SplitControl
+		label={i18n.t('console.settings.general.icon')}
+		caption={i18n.t('console.settings.general.iconCaption')}
+	>
 		<ImageSetting
 			src={$blogStore.icon_url}
 			on:change={(e) => changeBlogValue('icon_url', e.detail)}
@@ -80,8 +89,8 @@
 	</SplitControl>
 
 	<SplitControl
-		label="Cover Image"
-		caption="A cover image for the blog. Placement depends on the theme."
+		label={i18n.t('console.settings.general.cover')}
+		caption={i18n.t('console.settings.general.coverCaption')}
 	>
 		<ImageSetting
 			src={$blogStore.cover_url}
@@ -114,8 +123,8 @@
 	</SplitControl> -->
 
 	<SplitControl
-		label="Social Media"
-		caption="Links to your social media channels (use full URLs with https://)"
+		label={i18n.t('console.settings.general.socialMedia')}
+		caption={i18n.t('console.settings.general.socialMediaCaption')}
 	>
 		{#snippet nested()}
 			<div>

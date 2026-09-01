@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Modal, Textarea } from '@hyvor/design/components';
 	import CodemirrorEditor from './CodemirrorEditor.svelte';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		value: string;
@@ -50,7 +53,7 @@
 		bind:show={modalOpen}
 		footer={{
 			confirm: {
-				text: 'Save'
+				text: i18n.t('console.common.save')
 			}
 		}}
 		on:confirm={handleConfirm}

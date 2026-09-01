@@ -5,151 +5,64 @@ namespace App\Tests\Service\CustomDomain;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\Acme\PendingOrder;
-use App\Tests\Case\KernelTestCase;
-use PHPUnit\Framework\Attributes\CoversNamespace;
+use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[CoversNamespace("App\Service\TlsCertificate\Acme")]
+#[CoversClass(AcmeClient::class)]
 class AcmeClientTest extends KernelTestCase
 {
     /** @throws AcmeException */
     public function test_acme_client_happy_path(): void
     {
         Clock::set(new MockClock());
-
         $this->getService(CacheItemPoolInterface::class)->clear();
-
-        $directoryResponse = new JsonMockResponse([
-            'newAccount' => 'https://acme.org/newAccount',
-            'newOrder' => 'https://acme.org/newOrder',
-            'newNonce' => 'https://acme.org/newNonce',
-            'revokeCert' => 'https://acme.org/revokeCert',
-            'keyChange' => 'https://acme.org/keyChange',
-        ]);
-
-        $nonceResponse = fn(int $num) => new MockResponse(info: [
-            'response_headers' => [
-                'Replay-Nonce' => ['test-nonce-' . $num]
-            ]
-        ]);
-
-        $newAccountResponse = new JsonMockResponse([], info: [
-            'response_headers' => [
-                'Location' => ['https://acme.org/acct/1'] // kid
-            ]
-        ]);
-        $newOrderResponse = new JsonMockResponse(
-            [
-                'status' => 'pending',
-                'authorizations' => [
-                    'https://acme.org/authz/1'
-                ],
-                'finalize' => 'https://acme.org/finalize/1',
-            ],
-            info: [
-                'response_headers' => [
-                    'Location' => ['https://acme.org/order/1']
-                ]
-            ]
-        );
-
-        $authorizationUrlFirstResponse = new JsonMockResponse([
-            'identifier' => [
-                'type' => 'dns',
-                'value' => 'myinstance.com',
-            ],
-            'status' => 'pending',
-            'expires' => '2024-12-31T23:59:59Z',
-            'challenges' => [
-                [
-                    'type' => 'http-01',
-                    'url' => 'https://acme.org/challenge/1',
-                    'status' => 'pending',
-                    'token' => 'challenge-token-123',
-                ],
-            ],
-        ]);
 
         /** @var PendingOrder|null $pendingOrder */
         $pendingOrder = null;
+        $authorizationCalls = 0;
 
-        // verifyHttpChallenge makes direct GET calls through the http client
-        $httpChallengeWrongResponse = new MockResponse('wrong-key-authorization');
-        $httpChallengeCorrectResponse = function () use (&$pendingOrder): MockResponse {
-            assert($pendingOrder !== null);
-            return new MockResponse($pendingOrder->keyAuthorization);
-        };
-
-        $challengeResponse = new JsonMockResponse([]);
-
-        $authorizationUrlSecondResponse = new JsonMockResponse([
-            'status' => 'pending',
-            'challenges' => [],
-        ]);
-
-        $authorizationUrlThirdResponse = new JsonMockResponse([
-            'status' => 'valid',
-            'challenges' => [],
-        ]);
-
-        $finalizeOrderResponse = new JsonMockResponse([]);
-
-        $orderValidResponse = new JsonMockResponse([
-            'status' => 'valid',
-            'finalize' => 'https://acme.org/finalize/1',
-            'authorizations' => [],
-            'certificate' => 'https://acme.org/cert/1',
-        ]);
-
-        $certificateResponse = new MockResponse(self::PEM_CERTIFICATE_SAMPLE);
-
-//        $this->container->set(
-//            HttpClientInterface::class,
-//            new MockHttpClient([
-//                $directoryResponse,
-//                $nonceResponse(1),
-//                $newAccountResponse,
-//                $nonceResponse(2),
-//                $newOrderResponse,
-//                $nonceResponse(3),
-//                $authorizationUrlFirstResponse,
-//                $httpChallengeWrongResponse,
-//                $httpChallengeCorrectResponse,
-//                $nonceResponse(4),
-//                $challengeResponse,
-//                $nonceResponse(5),
-//                $authorizationUrlSecondResponse,
-//                $nonceResponse(6),
-//                $authorizationUrlThirdResponse,
-//                $nonceResponse(7),
-//                $finalizeOrderResponse,
-//                $nonceResponse(8),
-//                $orderValidResponse,
-//                $nonceResponse(9),
-//                $certificateResponse,
-//            ])
-//        );
+        $mockClient = $this->mockClient(
+            authorizationResponses: function () use (&$authorizationCalls): JsonMockResponse {
+                $authorizationCalls++;
+                // 1st call: from newOrder(). 2nd/3rd: polled from finalizeOrder(),
+                // simulating the ACME server moving from pending -> valid.
+                return match ($authorizationCalls) {
+                    1, 2 => new JsonMockResponse([
+                        'status' => 'pending',
+                        'challenges' => [
+                            [
+                                'type' => 'http-01',
+                                'url' => 'https://acme.org/challenge/1',
+                                'token' => 'challenge-token-123',
+                            ],
+                        ],
+                    ]),
+                    default => new JsonMockResponse([
+                        'status' => 'valid',
+                        'challenges' => [],
+                    ]),
+                };
+            },
+            certificateResponse: new MockResponse(self::PEM_CERTIFICATE_SAMPLE),
+        );
+        static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
         $client = $this->getService(AcmeClient::class);
         $client->setLogger($this->getService(LoggerInterface::class));
         $client->init();
-        $pendingOrder = $client->newOrder('custom-domain.localhost');
-//        $pendingOrder = $client->newOrder('myinstance.com');
 
-//        $this->assertSame(
-//            'https://acme.org/challenge/1',
-//            $pendingOrder->challengeUrl
-//        );
-//        $this->assertSame(
-//            'https://acme.org/finalize/1',
-//            $pendingOrder->finalizeOrderUrl
-//        );
-//        $this->assertSame('challenge-token-123', $pendingOrder->token);
+        $pendingOrder = $client->newOrder('custom-domain.localhost');
+        $this->assertSame('https://acme.org/challenge/1', $pendingOrder->challengeUrl);
+        $this->assertSame('https://acme.org/finalize/1', $pendingOrder->finalizeOrderUrl);
+        $this->assertSame('challenge-token-123', $pendingOrder->token);
 
         $pkey = openssl_pkey_new();
         assert($pkey !== false);
@@ -159,6 +72,147 @@ class AcmeClientTest extends KernelTestCase
             "-----BEGIN CERTIFICATE-----",
             $cert->certificatePem
         );
+
+        // authorization was polled: 1 (newOrder) + 2 (finalizeOrder poll pending -> valid)
+        $this->assertSame(3, $authorizationCalls);
+    }
+
+    /**
+     * @throws AcmeException
+     */
+    public function test_finalize_order_includes_acme_error_detail_when_authorization_fails(): void
+    {
+        Clock::set(new MockClock());
+        $this->getService(CacheItemPoolInterface::class)->clear();
+
+        $mockClient = new MockHttpClient(function (string $method, string $url): MockResponse {
+            if ($method === 'GET') {
+                return $this->directoryResponse();
+            }
+            if ($method === 'HEAD') {
+                return $this->nonceResponse();
+            }
+
+            return match ($url) {
+                'https://acme.org/newAccount' => new JsonMockResponse([], info: [
+                    'response_headers' => ['Location' => ['https://acme.org/acct/1']],
+                ]),
+                'https://acme.org/newOrder' => new JsonMockResponse(
+                    [
+                        'status' => 'pending',
+                        'authorizations' => ['https://acme.org/authz/1'],
+                        'finalize' => 'https://acme.org/finalize/1',
+                    ],
+                    info: ['response_headers' => ['Location' => ['https://acme.org/order/1']]],
+                ),
+                'https://acme.org/authz/1' => new JsonMockResponse([
+                    'status' => 'invalid',
+                    'challenges' => [
+                        [
+                            'type' => 'http-01',
+                            'url' => 'https://acme.org/challenge/1',
+                            'token' => 'challenge-token-123',
+                            'status' => 'invalid',
+                            'error' => [
+                                'type' => 'urn:ietf:params:acme:error:connection',
+                                'detail' => '198.51.100.1: Fetching http://custom-domain.localhost/.well-known/acme-challenge/challenge-token-123: Connection refused',
+                                'status' => 400,
+                            ],
+                        ],
+                    ],
+                ]),
+                'https://acme.org/challenge/1' => new JsonMockResponse([]),
+                default => new MockResponse('', ['http_code' => 404]),
+            };
+        });
+        static::getContainer()->set(HttpClientInterface::class, $mockClient);
+
+        $client = $this->getService(AcmeClient::class);
+        $client->init();
+        $pendingOrder = $client->newOrder('custom-domain.localhost');
+
+        $pkey = openssl_pkey_new();
+        assert($pkey !== false);
+
+        try {
+            $client->finalizeOrder($pendingOrder, $pkey);
+            $this->fail('Expected AcmeException to be thrown');
+        } catch (AcmeException $e) {
+            $this->assertStringContainsString('status: invalid', $e->getMessage());
+            $this->assertStringContainsString('Connection refused', $e->getMessage());
+            $this->assertStringContainsString('urn:ietf:params:acme:error:connection', $e->getMessage());
+        }
+    }
+
+    /**
+     * @param \Closure(): JsonMockResponse $authorizationResponses
+     */
+    private function mockClient(
+        \Closure $authorizationResponses,
+        MockResponse $certificateResponse,
+        ?JsonMockResponse $orderResponse = null,
+    ): MockHttpClient
+    {
+        return new MockHttpClient(function (string $method, string $url) use (
+            $authorizationResponses,
+            $certificateResponse,
+            $orderResponse,
+        ): MockResponse {
+            if ($method === 'GET') {
+                return $this->directoryResponse();
+            }
+            if ($method === 'HEAD') {
+                return $this->nonceResponse();
+            }
+
+            return match ($url) {
+                'https://acme.org/newAccount' => new JsonMockResponse([], info: [
+                    'response_headers' => ['Location' => ['https://acme.org/acct/1']],
+                ]),
+                'https://acme.org/newOrder' => new JsonMockResponse(
+                    [
+                        'status' => 'pending',
+                        'authorizations' => ['https://acme.org/authz/1'],
+                        'finalize' => 'https://acme.org/finalize/1',
+                    ],
+                    info: ['response_headers' => ['Location' => ['https://acme.org/order/1']]],
+                ),
+                'https://acme.org/authz/1' => $authorizationResponses(),
+                'https://acme.org/challenge/1' => new JsonMockResponse([]),
+                'https://acme.org/finalize/1' => new JsonMockResponse([]),
+                'https://acme.org/order/1' => $orderResponse ?? new JsonMockResponse([
+                    'status' => 'valid',
+                    'finalize' => 'https://acme.org/finalize/1',
+                    'authorizations' => [],
+                    'certificate' => 'https://acme.org/cert/1',
+                ]),
+                'https://acme.org/cert/1' => $certificateResponse,
+                default => new MockResponse('', ['http_code' => 404]),
+            };
+        });
+    }
+
+    private function directoryResponse(): JsonMockResponse
+    {
+        return new JsonMockResponse([
+            'newAccount' => 'https://acme.org/newAccount',
+            'newOrder' => 'https://acme.org/newOrder',
+            'newNonce' => 'https://acme.org/newNonce',
+            'revokeCert' => 'https://acme.org/revokeCert',
+            'keyChange' => 'https://acme.org/keyChange',
+        ]);
+    }
+
+    private static int $nonceCounter = 0;
+
+    private function nonceResponse(): MockResponse
+    {
+        self::$nonceCounter++;
+        return new MockResponse('', [
+            'response_headers' => [
+                'Replay-Nonce' => ['test-nonce-' . self::$nonceCounter],
+            ],
+        ]);
     }
 
 

@@ -15,6 +15,9 @@
 	import { getTags } from './tagActions';
 	import TagRow from './TagRow.svelte';
 	import CreateTagModal from './CreateTagModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -78,18 +81,18 @@
 		</Button>
 	</SettingsTop>
 
-	<div class="note">Tags can be used to categorize your posts.</div>
+	<div class="note">{i18n.t('console.settings.tags.note')}</div>
 
 	<div class="table">
 		{#if isLoading}
 			<Loader full />
 		{:else if tags.length === 0}
-			<IconMessage empty message="No tags found." />
+			<IconMessage empty message={i18n.t('console.settings.tags.noTags')} />
 		{:else}
 			<SettingsTable columns="2fr 2fr 70px">
 				<TableRow head>
-					<div>Tag</div>
-					<div>Slug/URL</div>
+					<div>{i18n.t('console.posts.filters.tagLabel')}</div>
+					<div>{i18n.t('console.settings.tags.slugUrl')}</div>
 					<div></div>
 				</TableRow>
 
@@ -103,7 +106,7 @@
 				{/each}
 
 				<LoadButton
-					text="Load More"
+					text={i18n.t('console.common.loadMore')}
 					show={hasMore}
 					on:click={() => loadTags(true)}
 					loading={isLoadingMore}

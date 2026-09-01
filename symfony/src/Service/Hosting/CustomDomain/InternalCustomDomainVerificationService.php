@@ -37,6 +37,8 @@ class InternalCustomDomainVerificationService
         $maxAttempts = 3;
         $sleepSeconds = 3;
 
+        $lastError = null;
+
         while ($attempt < $maxAttempts) {
             try {
                 $response = $this->http->request(
@@ -52,13 +54,14 @@ class InternalCustomDomainVerificationService
                 }
 
             } catch (ExceptionInterface $e) {
+                $lastError = $e;
             } finally {
                 $attempt++;
                 $this->clock->sleep($sleepSeconds);
             }
         }
 
-        throw new InternalCustomDomainVerificationException('Domain not pointed');
+        throw new InternalCustomDomainVerificationException('Domain not pointed', previous: $lastError);
     }
 
     public function getVerificationToken(string $domain): ?string

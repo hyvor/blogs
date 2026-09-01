@@ -1,5 +1,5 @@
 import { loadDocsPage } from '@hyvor/design/marketing';
-import { sections } from '../hosting';
+import { getSections } from '../hosting';
 import { DEFAULT_MARKETING_LANGUAGE } from '../../marketingLang';
 
 export async function load({ params }: { params: { slug?: string; lang?: string } }) {
@@ -8,7 +8,7 @@ export async function load({ params }: { params: { slug?: string; lang?: string 
 	return loadDocsPage({
 		basepath: `${lang}/hosting`,
 		rootName: 'Hosting',
-		sections,
+		sections: await getSections(lang),
 		slug: params.slug ?? ''
 	});
 }

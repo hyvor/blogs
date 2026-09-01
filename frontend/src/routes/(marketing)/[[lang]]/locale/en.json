@@ -45,9 +45,9 @@
 	"homepage": {
 		"hero": {
 			"title": "You Publish.",
-			"title2": "We handle the rest",
+			"titleRest": "We handle the rest",
 			"subtitle": "Hyvor Blogs is our <marker>blogging platform</marker>",
-			"subtitle2": "It's <hl>fast</hl>, <hl>simple</hl>, and <hl>open-source</hl>!",
+			"subtitleTraits": "It's <hl>fast</hl>, <hl>simple</hl>, and <hl>open-source</hl>!",
 			"button": "Start your blog"
 		},
 		"features": {
@@ -55,92 +55,92 @@
 				"eyebrow": "Own Your Content",
 				"title": "Your content. Your rules.",
 				"description": "Hyvor Blogs is open-source and built so you're never locked in. Export everything whenever you want, or self-host on your own infrastructure for full control and privacy.",
-				"bullet1": "One-click data export in JSON",
-				"bullet2": "AGPL-3.0 licensed - switch to self-hosting anytime",
-				"bullet3": "No ads, no third-party trackers on your blog"
+				"bulletExport": "One-click data export in JSON",
+				"bulletLicense": "AGPL-3.0 licensed - switch to self-hosting anytime",
+				"bulletNoTrackers": "No ads, no third-party trackers on your blog"
 			},
 			"allInOne": {
 				"eyebrow": "All-in-one",
 				"title": "No plugins.<br/>No maintenance.<br/> No nonsense.",
 				"description": "Everything you need to run a blog is already built in. No plugins to hunt down, no upgrades to babysit, no surprise charges from third-party add-ons - just one platform that works.",
-				"bullet1": "Every feature included, no plugins required",
-				"bullet2": "We handle upgrades, security patches, etc. for you",
-				"bullet3": "No extra charges or third-party add-on costs"
+				"bulletNoPlugins": "Every feature included, no plugins required",
+				"bulletUpgrades": "We handle upgrades, security patches, etc. for you",
+				"bulletNoExtraCharges": "No extra charges or third-party add-on costs"
 			},
 			"themes": {
 				"eyebrow": "Custom Themes",
 				"title": "Your Style, Your Way",
 				"description": "Choose from a library of beautiful themes or build your own with plain HTML and CSS. Every color, font, and layout detail is yours to control.",
-				"bullet1": "Fully open-source themes, free to use and modify",
-				"bullet2": "Theme development docs & API",
-				"bullet3": "or, set up headless mode with your own frontend",
-				"button1": "Browse themes",
-				"button2": "Headless docs"
+				"bulletOpenSource": "Fully open-source themes, free to use and modify",
+				"bulletDocs": "Theme development docs & API",
+				"bulletHeadless": "or, set up headless mode with your own frontend",
+				"buttonBrowse": "Browse themes",
+				"buttonHeadlessDocs": "Headless docs"
 			},
 			"seo": {
 				"eyebrow": "SEO & Speed",
 				"title": "Zero-config SEO.<br/>Lightning-fast pages.",
 				"description": "Every blog is automatically optimised for search engines and page speed. You write; we handle the technical SEO so your content ranks.",
-				"bullet1": "Meta tags, Open Graph, Twitter Cards",
-				"bullet2": "Auto-generated sitemaps & robots.txt",
-				"bullet3": "In-built SEO & link analyzers",
-				"bullet4": "Static HTML with zero JS bloat",
-				"bullet5": "Automatic WebP image conversion"
+				"bulletMetaTags": "Meta tags, Open Graph, Twitter Cards",
+				"bulletSitemaps": "Auto-generated sitemaps & robots.txt",
+				"bulletAnalyzers": "In-built SEO & link analyzers",
+				"bulletStaticHtml": "Static HTML with zero JS bloat",
+				"bulletWebp": "Automatic WebP image conversion"
 			},
 			"hosting": {
 				"eyebrow": "Flexible Hosting",
 				"title": "Custom domain, Sub-directory, Headless",
 				"description": "Move to a custom domain in seconds, serve your blog from inside your existing site with a sub-directory, or go fully headless with your own frontend. Your call.",
-				"bullet1": "Free TLS certificates on all custom domains",
-				"bullet2": "Cloudflare Workers, Docker, Next.js, Laravel…",
-				"bullet3": "Reverse proxy support for sub-directory"
+				"bulletTls": "Free TLS certificates on all custom domains",
+				"bulletPlatforms": "Cloudflare Workers, Docker, Next.js, Laravel…",
+				"bulletReverseProxy": "Reverse proxy support for sub-directory"
 			},
 			"suite": {
 				"eyebrow": "Comments & Newsletters",
 				"title": "Talk & Post included",
 				"description": "Every Hyvor Blogs plan comes with Hyvor Talk for comments and Hyvor Post for newsletters, completely free. No third-party embeds, no extra subscriptions. One account, one dashboard, everything connected.",
-				"bullet1": "Hyvor Talk comments, free on every plan",
-				"bullet2": "Hyvor Post newsletters, free on every plan",
-				"bullet3": "One account and dashboard for all three",
+				"bulletTalk": "Hyvor Talk comments, free on every plan",
+				"bulletPost": "Hyvor Post newsletters, free on every plan",
+				"bulletOneAccount": "One account and dashboard for all three",
 				"button": "See what's included"
 			},
 			"ai": {
 				"eyebrow": "AI Features",
 				"title": "AI when you need it",
 				"description": "Save time and effort with AI-powered features. Generate content, translate posts, and ask for suggestions - all without leaving your blog dashboard.",
-				"bullet1": "AI content generation",
-				"bullet2": "Improvement suggestions",
-				"bullet3": "Bulk post editing (e.g. add internal links)"
+				"bulletGeneration": "AI content generation",
+				"bulletSuggestions": "Improvement suggestions",
+				"bulletBulkEditing": "Bulk post editing (e.g. add internal links)"
 			},
 			"collaboration": {
 				"eyebrow": "Collaboration",
 				"title": "Collaborate in real time",
 				"description": "Invite teammates into the same post at once. Watch their cursors move live, or switch to suggestion mode to propose edits without touching the final draft.",
-				"bullet1": "Live cursors show exactly where teammates are editing",
-				"bullet2": "Suggestion mode lets you propose edits without overwriting the original"
+				"bulletLiveCursors": "Live cursors show exactly where teammates are editing",
+				"bulletSuggestionMode": "Suggestion mode lets you propose edits without overwriting the original"
 			},
 			"multiLanguage": {
 				"eyebrow": "Multi-language",
 				"title": "Reach a global audience",
 				"description": "Translate posts, tags, author names and everything else. Add languages in one click and Hyvor Blogs handles routing, hreflang tags, and RTL layouts automatically.",
-				"bullet1": "RTL language support built-in",
-				"bullet2": "Integrated AI translator",
-				"bullet3": "Automatic hreflang & i18n routing"
+				"bulletRtl": "RTL language support built-in",
+				"bulletTranslator": "Integrated AI translator",
+				"bulletHreflang": "Automatic hreflang & i18n routing"
 			},
 			"linkAnalyzer": {
 				"eyebrow": "Link Analyzer",
 				"title": "No broken links",
 				"description": "Hyvor Blogs automatically fetches and checks every link in your posts on a recurring schedule, flagging broken links and redirects before your readers ever hit them.",
-				"bullet1": "Automatic, periodic checks for every link",
-				"bullet2": "Per-post and full-blog link reports",
-				"bullet3": "Instant flags for broken links, redirects & status codes"
+				"bulletPeriodicChecks": "Automatic, periodic checks for every link",
+				"bulletReports": "Per-post and full-blog link reports",
+				"bulletBrokenLinks": "Instant flags for broken links, redirects & status codes"
 			}
 		},
 		"enterprise": {
 			"title": "Enterprise-ready.",
 			"description": "Enterprise-grade security and compliance, without adding complexity to your publishing workflow.",
-			"stat1": "> 99.9% Uptime",
-			"stat2": "Priority Support",
+			"statUptime": "> 99.9% Uptime",
+			"statSupport": "Priority Support",
 			"button": "Contact Sales"
 		},
 		"allFeatures": {
@@ -246,13 +246,39 @@
 			"title": "Start your blog today",
 			"description": "Join hundreds of bloggers and businesses building with Hyvor Blogs.",
 			"button": "Start your blog →",
-			"check1": "14-day free trial",
-			"check2": "No credit card required",
-			"check3": "Cancel anytime"
+			"checkTrial": "14-day free trial",
+			"checkNoCard": "No credit card required",
+			"checkCancel": "Cancel anytime"
 		},
 		"testimonials": {
 			"label": "Testimonials",
-			"title": "Don't take our word for it.<br />Hear it from our customers."
+			"title": "Don't take our word for it.<br />Hear it from our customers.",
+			"reviews": {
+				"leo": {
+					"role": "Head of Operations",
+					"summary": "The WordPress bloat, solved",
+					"quote": "I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully."
+				},
+				"ashutosh": {
+					"role": "Senior Manager, Marketing",
+					"summary": "Clean & Simple"
+				},
+				"robert": {
+					"role": "Founder",
+					"summary": "A real pleasure to use!",
+					"quote": "I love Hyvor Blogs! It's a gem: simple, smooth, and a pleasure to use. The team is incredible — responsive and genuinely caring. A perfect combination of quality, performance, and humanity. An absolute favorite!"
+				},
+				"riccardo": {
+					"role": "Systems Development Engineer",
+					"summary": "A great platform for bloggers",
+					"quote": "Hyvor Blogs just works. Beautiful, maintenance-free, and backed by amazing support. It lets me focus on what matters: writing."
+				},
+				"manoj": {
+					"role": "Senior Application Engineer",
+					"summary": "Seamless for readers and writers",
+					"quote": "The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog."
+				}
+			}
 		}
 	},
 	"pricing": {
@@ -278,7 +304,6 @@
 			"perMonth": "/month",
 			"perYear": "/year",
 			"billedAnnually": "*Billed annually at {currency}{price}/year",
-			"featuresLabel": "Features",
 			"ctaChoosePlan": "Choose Plan",
 			"ctaContactSales": "Contact Sales",
 			"taglinePersonal": "For solo bloggers",
@@ -288,21 +313,24 @@
 			"taglineEnterprise": "For custom, large-scale needs",
 			"features": {
 				"inherits": "All {plan} features",
+				"customLimits": "Custom limits",
 				"blogs": "{value, plural, one {# blog} other {# blogs}}",
-				"blogsMultiple": "Multiple blogs",
+				"blogsMultiple": "No blogs limit",
 				"users": "{value, plural, one {# user} other {# users}}",
 				"storage": "{value}GB media storage",
-				"customThemesDomain": "Custom themes & domain",
+				"customDomains": "Custom domains",
+				"customThemes": "Custom themes",
 				"multiLanguage": "Multi-language support",
 				"allApis": "All APIs included",
+				"freeIntegrations": "Hyvor Talk & Hyvor Post",
 				"noBranding": "No branding",
 				"seoAnalysis": "SEO Analysis",
 				"linkAnalysis": "Link Analysis",
-				"aiTokens": "{value} AI tokens/month",
-				"sso": "SSO & SAML",
-				"compliance": "GDPR, CCPA & ISO compliant",
+				"aiAgent": "AI Agent",
+				"aiAgentUsage": "AI Agent (x{value} usage)",
+				"sso": "OIDC SSO",
 				"prioritySupport": "Priority support",
-				"customContract": "Custom contract & SLA"
+				"customContract": "Custom SLA"
 			}
 		},
 		"compare": {
@@ -313,18 +341,17 @@
 			"nextPlan": "Next plan",
 			"categories": {
 				"basic": "Basic Features",
-				"ai": "AI Features",
 				"developer": "Developer",
 				"integrations": "Integrations",
 				"enterprise": "Enterprise"
 			},
 			"values": {
 				"custom": "Custom",
-				"multiple": "Multiple",
+				"unlimited": "Unlimited",
 				"storage": "{value}GB",
-				"aiTokens": "{value} tokens/m",
-				"credits": "{value} credits/m",
-				"emails": "{value} emails/m"
+				"aiUsage": "×{value} usage",
+				"credits": "{value} credits/month",
+				"emails": "{value} emails/month"
 			},
 			"features": {
 				"blogs": {
@@ -344,12 +371,20 @@
 					"tooltip": "Use default themes for free or build your own custom theme."
 				},
 				"customDomain": {
-					"name": "Custom Domain",
+					"name": "Custom Domains",
 					"tooltip": "Host your blog on your own domain."
 				},
 				"multiLanguage": {
 					"name": "Multi-language Support",
 					"tooltip": "Add multiple languages to your blog and translate your posts."
+				},
+				"realtimeCollab": {
+					"name": "Real-time Collaboration",
+					"tooltip": "Edit the same post together with teammates and see their cursors move live."
+				},
+				"suggestionMode": {
+					"name": "Suggestion Mode",
+					"tooltip": "Propose edits as suggestions without overwriting the original draft."
 				},
 				"noBranding": {
 					"name": "No Branding",
@@ -363,11 +398,14 @@
 					"name": "Link Analysis",
 					"tooltip": "Post link analysis, bi-weekly full-blog link analysis, and email reports."
 				},
-				"gptWriting": {
-					"name": "GPT Writing",
-					"tooltip": "Use OpenAI GPT for content writing and keyword generation. ~1,000 tokens ≈ 750 words."
+				"aiAgent": {
+					"name": "AI Agent",
+					"tooltip": "AI Agent for content generation, improvement suggestions, and bulk post editing (e.g. adding internal links). Higher plans include more monthly usage."
 				},
-				"dataApi": { "name": "Data API", "tooltip": "Access public data of your blog via API." },
+				"dataApi": {
+					"name": "Data API / Headless",
+					"tooltip": "Serve your blog headlessly - fetch posts, pages, and other content through the Data API."
+				},
 				"consoleApi": {
 					"name": "Console API",
 					"tooltip": "The same API used in the Console, great for automation."
@@ -389,50 +427,64 @@
 					"tooltip": "Add Hyvor Post newsletter system for free. Includes a complimentary license for Hyvor Post."
 				},
 				"sso": {
-					"name": "SSO & SAML",
-					"tooltip": "Single sign-on via SAML for your organization's identity provider."
-				},
-				"compliance": {
-					"name": "GDPR, CCPA & ISO Compliance",
-					"tooltip": "Formal compliance documentation and DPAs for regulated organizations."
+					"name": "OIDC SSO",
+					"tooltip": "Single sign-on via OIDC for your organization's identity provider."
 				},
 				"prioritySupport": {
 					"name": "Priority Support",
 					"tooltip": "Dedicated, faster-response support for your team."
 				},
 				"customContract": {
-					"name": "Custom Contract & SLA",
+					"name": "Custom SLA",
 					"tooltip": "Custom-tailored contract terms and a service-level agreement."
 				}
 			}
 		},
 		"selfHost": {
-			"eyebrow": "Open Source",
+			"eyebrow": "Open-Source",
 			"title": "Prefer to self-host?",
-			"description": "Hyvor Blogs is free and open-source. Deploy it on your own infrastructure and keep full control over your data. No subscription required.",
-			"bullet1": "Free & open-source, no license fees",
-			"bullet2": "Deploy with Docker in a few commands",
-			"bullet3": "Full ownership of your data & infrastructure",
-			"bullet4": "No vendor lock-in, move to the cloud anytime",
-			"button1": "Learn about self-hosting",
-			"button2": "View on GitHub"
+			"description": "Hyvor Blogs is free and open-source. Deploy it on your own infrastructure and keep full control over your data.",
+			"bulletFree": "Free & open-source, no license fees",
+			"bulletDocker": "Deploy with Docker in a few commands",
+			"bulletOwnership": "Full ownership of your data & infrastructure",
+			"bulletNoLockIn": "No vendor lock-in, move to the cloud anytime",
+			"buttonLearn": "Learn about self-hosting",
+			"buttonGithub": "View on GitHub"
 		},
 		"faq": {
 			"title": "Frequently Asked Questions",
-			"q1": "How does the free trial work?",
-			"a1": "Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card required. All features are available during the trial (except Hyvor Talk integration). After the trial, you can upgrade to a paid plan to continue using Hyvor Blogs.",
-			"q2": "Do I have to pay for themes?",
-			"a2": "No, all official themes are <strong>free and <a href=\"https://github.com/hyvor/hyvor-blogs-themes\" target=\"_blank\" rel=\"noopener\">open-source</a></strong>. They can be easily installed on your blog with a few clicks. If you want to build your own theme, you will have to cover the development costs.",
-			"q3": "Do you offer discounts?",
-			"a3": "You get <strong>2-months off</strong> if you pay annually. In addition, we provide a 10% discount for non-profit organizations and early-stage startups. Contact us via live chat to get the coupon.",
-			"q4": "Who owns the content I write?",
-			"a4": "You own everything you write. You decide what to do with your content. You can export your content anytime and move to another platform.",
-			"q5": "Are there bandwidth/pageviews limitations?",
-			"a5": "No, we don't limit the number of pageviews or bandwidth. Due to extensive caching and optimizations, we can handle a large number of pageviews without any issues.",
-			"q6": "Can I display ads on my blog?",
-			"a6": "You decide! You are in control of your blog and the theme. You can add any ad code to your theme. You can easily add Google AdSense or any other ad network to your blog by adding the ad code to your blog/theme.",
-			"q7": "How to add a commenting system?",
-			"a7": "<a href=\"https://talk.hyvor.com\">Hyvor Talk</a> is available for free for all plans. You can also embed other commenting systems easily."
+			"questionTrial": "How does the free trial work?",
+			"answerTrial": "Anyone can signup for the <strong>14-day free trial</strong> to test Hyvor Blogs. No credit card required. All features are available during the trial. After the trial, you can upgrade to a paid plan to continue using Hyvor Blogs.",
+			"questionPlanChange": "Can I upgrade or downgrade my plan later?",
+			"answerPlanChange": "Yes. You can change your plan anytime from your console billing settings.",
+			"questionPayment": "What payment methods do you accept?",
+			"answerPayment": "We accept all major credit and debit cards through our payment processor. Enterprise customers can also pay by invoice and bank transfer. See our <a href=\"https://hyvor.com/docs/billing\" target=\"_blank\" rel=\"noopener\">billing documentation</a> for more details.",
+			"questionOverage": "What happens if I reach my plan limits?",
+			"answerOverage": "We'll notify you as you approach a limit such as team members, media storage, or AI usage. Your blog keeps running normally, and you can upgrade to a higher plan at any time to raise the limits.",
+			"questionEnterprise": "How does Enterprise pricing work?",
+			"answerEnterprise": "Enterprise plans are custom-priced around your usage, the limits you need, and your support requirements. <a href=\"https://hyvor.com/enterprise\" target=\"_blank\" rel=\"noopener\">Contact our sales team</a> for a quote.",
+			"questionThemes": "Do I have to pay for themes?",
+			"answerThemes": "No, all official themes are <strong>free and <a href=\"https://github.com/hyvor/hyvor-blogs-themes\" target=\"_blank\" rel=\"noopener\">open-source</a></strong>. They can be easily installed on your blog with a few clicks.",
+			"questionDiscounts": "Do you offer discounts?",
+			"answerDiscounts": "You get <strong>2-months off</strong> if you pay annually. In addition, we provide a 10% discount for non-profit organizations and early-stage startups. Contact us via live chat to get the coupon.",
+			"questionOwnership": "Who owns the content I write?",
+			"answerOwnership": "You own everything you write. You decide what to do with your content. You can export your content anytime and move to another platform.",
+			"questionLimits": "Are there bandwidth/pageviews limitations?",
+			"answerLimits": "No, we don't limit the number of pageviews or bandwidth. Due to extensive caching and optimizations, we can handle a large number of pageviews without any issues.",
+			"questionHyvorTalk": "Is Hyvor Talk (comments) included?",
+			"answerHyvorTalk": "Yes. Every Hyvor Blogs plan comes with a complimentary <a href=\"https://talk.hyvor.com\" target=\"_blank\" rel=\"noopener\">Hyvor Talk</a> license, so you can add comments to your blog for free. Each plan includes a monthly credit allowance, and higher plans include more credits.",
+			"questionHyvorPost": "Is Hyvor Post (newsletter) included?",
+			"answerHyvorPost": "Yes. Every plan comes with a complimentary <a href=\"https://post.hyvor.com\" target=\"_blank\" rel=\"noopener\">Hyvor Post</a> license for sending newsletters to your subscribers. Each plan includes a monthly email allowance that grows with your plan.",
+			"questionMoreLimits": "What if I need further limits on Hyvor Talk or Post?",
+			"answerMoreLimits": "You have two options: upgrade your Hyvor Blogs plan, or start a separate Hyvor Talk or Hyvor Post subscription. If you start a separate subscription, your overall allowance becomes the sum of the complimentary allowance from Hyvor Blogs and the allowance from that subscription.",
+			"questionAiCost": "Is the AI cost included?",
+			"answerAiCost": "Yes. AI features such as the AI Agent are included from the Starter plan onward, with no separate charge. Higher plans include more monthly AI usage.",
+			"questionMultipleBlogs": "Can I have multiple blogs?",
+			"answerMultipleBlogs": "Yes. From the Starter plan onward you can have multiple blogs under a single organization. The Personal plan is limited to one blog.",
+			"questionTeamMembers": "Can I add more team members?",
+			"answerTeamMembers": "Each plan has a team member limit, which is the total number of unique team members allowed across all the blogs of your organization. To add more, upgrade to a plan with a higher limit.",
+			"questionCustomDomains": "Are custom domains included?",
+			"answerCustomDomains": "Yes, custom domains are included on every plan. Hyvor Blogs automatically generates a TLS certificate for your domain with Let's Encrypt, or you can bring your own TLS certificate."
 		}
 	},
 	"docs": {

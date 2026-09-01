@@ -2,7 +2,6 @@
 	import { Callout } from '@hyvor/design/components';
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import { DocsImage } from '@hyvor/design/marketing';
-	import DnsInstructions from '../../../../../console/(nav)/[subdomain]/settings/hosting/DnsInstructions.svelte';
 </script>
 
 # Custom Domain
@@ -40,7 +39,7 @@ Learn how to set up a custom domain (e.g. `blog.example.com` or `example.com`) f
 
 Go to your domain registrar's DNS settings and create either a **CNAME** (recommended - easier and more reliable) or an **A** record with the details below.
 
-<DnsInstructions />
+<!-- TODO -->
 
 Voila! Your blog is now available at your custom domain.
 

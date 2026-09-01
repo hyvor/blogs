@@ -4,25 +4,45 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 </script>
 
 <BlogSettingsSave keys={['comments_code', 'newsletter_code']} />
 
 <div class="settings">
-	<SplitControl label="Comments Embed Code">
+	<SplitControl label={i18n.t('console.settings.comments.commentsCode')}>
 		{#snippet caption()}
 			<div>
-				Paste the embed code from your commenting system here. You can use Twig <Link
-					href="/docs/themes-templates#variables"
-					style="display:inline"
-					target="_blank">route variables</Link
-				> if needed.
+				<T
+					key="console.settings.comments.commentsCodeIntro"
+					params={{
+						varsLink: {
+							element: 'a',
+							props: {
+								href: '/docs/themes-templates#variables',
+								target: '_blank',
+								class: 'hds-link'
+							}
+						}
+					}}
+				/>
 
 				{#if !$integrationsStore.hyvor_talk}
-					To connect Hyvor Talk, go to <Link
-						href={consoleUrlWithBlog('/integrations/hyvor-talk')}
-						style="display:inline">Integrations &rarr; Hyvor Talk</Link
-					>.
+					<T
+						key="console.settings.comments.connectTalkHint"
+						params={{
+							link: {
+								element: 'a',
+								props: {
+									href: consoleUrlWithBlog('/integrations/hyvor-talk'),
+									class: 'hds-link'
+								}
+							}
+						}}
+					/>
 				{/if}
 			</div>
 		{/snippet}
@@ -33,11 +53,12 @@
 					<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk Logo" width="18" />
 				{/snippet}
 				{#snippet title()}
-					Hyvor Talk Integration Enabled
+					{i18n.t('console.settings.comments.talkEnabled')}
 				{/snippet}
-				Your blog is connected to a website in Hyvor Talk. This integration will automatically append
-				the Hyvor Talk comments embed code, and
-				<strong>you don't generally need to add anything here</strong>.
+				<T
+					key="console.settings.comments.talkEnabledBody"
+					params={{ strong: { element: 'strong' } }}
+				/>
 			</Callout>
 			<br />
 		{/if}
@@ -51,26 +72,41 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				This will be added to the end of the post content, depending on the theme.
+				{i18n.t('console.settings.comments.commentsCodeNote')}
 			</Text>
 		</div>
 	</SplitControl>
 
-	<SplitControl label="Newsletter Signup Form Code">
+	<SplitControl label={i18n.t('console.settings.comments.newsletterCode')}>
 		{#snippet caption()}
 			<div>
-				Paste the embed code provided by a email newsletter service here (for the sign up form). You
-				can use Twig <Link
-					style="display:inline;"
-					href="/docs/themes-templates#variables"
-					target="_blank">route variables</Link
-				> if needed.
+				<T
+					key="console.settings.comments.newsletterCodeIntro"
+					params={{
+						varsLink: {
+							element: 'a',
+							props: {
+								href: '/docs/themes-templates#variables',
+								target: '_blank',
+								class: 'hds-link'
+							}
+						}
+					}}
+				/>
 
 				{#if !$integrationsStore.hyvor_post}
-					To connect Hyvor Post, go to <Link
-						href={consoleUrlWithBlog('/integrations/hyvor-post')}
-						style="display:inline">Integrations &rarr; Hyvor Post</Link
-					>.
+					<T
+						key="console.settings.comments.connectPostHint"
+						params={{
+							link: {
+								element: 'a',
+								props: {
+									href: consoleUrlWithBlog('/integrations/hyvor-post'),
+									class: 'hds-link'
+								}
+							}
+						}}
+					/>
 				{/if}
 			</div>
 		{/snippet}
@@ -81,11 +117,12 @@
 					<img src="/img/services/hyvor-post.svg" alt="Hyvor Post Logo" width="18" />
 				{/snippet}
 				{#snippet title()}
-					Hyvor Post Integration Enabled
+					{i18n.t('console.settings.comments.postEnabled')}
 				{/snippet}
-				Your blog is connected to a newsletter in Hyvor Post. This integration will automatically append
-				the Hyvor Post signup form code, and
-				<strong>you don't generally need to add anything here</strong>.
+				<T
+					key="console.settings.comments.postEnabledBody"
+					params={{ strong: { element: 'strong' } }}
+				/>
 			</Callout>
 			<br />
 		{/if}
@@ -99,8 +136,7 @@
 
 		<div style="margin-top:10px;">
 			<Text light small>
-				Your theme will decide where to show this form. If you want to show it in a specific place,
-				you may also edit your theme files.
+				{i18n.t('console.settings.comments.newsletterCodeNote')}
 			</Text>
 		</div>
 	</SplitControl>

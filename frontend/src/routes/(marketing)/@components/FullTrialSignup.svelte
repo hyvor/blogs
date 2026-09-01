@@ -18,9 +18,9 @@
 	description={I18n.t('homepage.trialSignup.description')}
 	button={{ href: '/console?signup', label: I18n.t('homepage.trialSignup.button') }}
 	checks={[
-		I18n.t('homepage.trialSignup.check1'),
-		I18n.t('homepage.trialSignup.check2'),
-		I18n.t('homepage.trialSignup.check3')
+		I18n.t('homepage.trialSignup.checkTrial'),
+		I18n.t('homepage.trialSignup.checkNoCard'),
+		I18n.t('homepage.trialSignup.checkCancel')
 	]}
 	{...rest}
 />

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		Modal,
 		TextInput,
@@ -10,6 +9,10 @@
 	} from '@hyvor/design/components';
 	import { blogStore } from '../../../../lib/stores/blogStore';
 	import { deleteBlogDangerous } from './dangerActions';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		show?: boolean;
@@ -28,11 +31,11 @@
 
 		show = false;
 
-		const toastId = toast.loading('Please wait...');
+		const toastId = toast.loading(i18n.t('console.settings.danger.delete.pleaseWait'));
 
 		deleteBlogDangerous()
 			.then(() => {
-				toast.success('Blog deletion is in progress. It will take a few minutes to complete.', {
+				toast.success(i18n.t('console.settings.danger.delete.inProgress'), {
 					id: toastId
 				});
 				setTimeout(() => {
@@ -40,23 +43,29 @@
 				}, 3000);
 			})
 			.catch(() => {
-				toast.error('Something went wrong. Please try again later.', { id: toastId });
+				toast.error(i18n.t('console.settings.danger.delete.failed'), { id: toastId });
 			});
 	}
 </script>
 
-<Modal title="Delete Blog" bind:show>
-	You are about to delete your blog. This action is <strong style="color:var(--red-dark)"
-		>irreversible</strong
-	>. Make sure to backup your data before deleting the blog. Type the subdomain of this blog,
-	<strong>{$blogStore.subdomain}</strong>, to confirm.
+<Modal title={i18n.t('console.settings.danger.deleteBlog')} bind:show>
+	<T
+		key="console.settings.danger.delete.intro"
+		params={{
+			danger: { element: 'strong', props: { style: 'color:var(--red-dark)' } },
+			strong: { element: 'strong' },
+			subdomain: $blogStore.subdomain
+		}}
+	/>
 
 	<div style="margin-top:15px;">
 		<FormControl>
 			<TextInput
 				bind:value={subdomain}
 				block
-				placeholder={"Type '" + $blogStore.subdomain + "' to confirm"}
+				placeholder={i18n.t('console.settings.danger.delete.placeholder', {
+					subdomain: $blogStore.subdomain
+				})}
 				state={error
 					? 'error'
 					: subdomain === ''
@@ -73,10 +82,12 @@
 	</div>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-			<Button on:click={handleDelete} color="red">Goodbye, Blog</Button>
-		</ButtonGroup>
+		<Button on:click={handleDelete} color="red"
+			>{i18n.t('console.settings.danger.delete.confirm')}</Button
+		>
 	{/snippet}
 </Modal>

@@ -87,7 +87,10 @@
 		</Table>
 	</SplitControl>
 
-	<SplitControl label="AI Translation" caption="Enable AI-powered translation features.">
+	<SplitControl
+		label={i18n.t('console.settings.ai.translation')}
+		caption={i18n.t('console.settings.ai.translationCaption')}
+	>
 		<Switch checked={$blogStore.ai_translation_enabled} on:change={handleAiTranslationChange} />
 	</SplitControl>
 

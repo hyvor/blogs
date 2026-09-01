@@ -13,6 +13,9 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { consoleUrl } from '../../consoleUrl';
 	import BlogPlanTag from './BlogPlanTag.svelte';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
 
 	const flipDurationMs = 200;
 	let dragDisabled = $state(true);
@@ -221,7 +224,7 @@
 
 	<div class="footer">
 		<Button as="a" href="/console/new">
-			Create a new blog
+			{i18n.t('console.blogSelector.createNewBlog')}
 			{#snippet end()}
 				<IconPlus />
 			{/snippet}

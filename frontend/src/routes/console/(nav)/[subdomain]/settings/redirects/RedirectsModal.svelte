@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		InputGroup,
 		Link,
@@ -20,6 +19,9 @@
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { dynamicRedirectsStore } from './dynamicRedirect';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		redirect?: Redirect | null;
@@ -45,22 +47,22 @@
 		toError = null;
 
 		if (!from) {
-			fromError = 'From is required.';
+			fromError = i18n.t('console.settings.redirects.validation.fromRequired');
 			return;
 		}
 
 		if (!from.startsWith('/')) {
-			fromError = 'From value should be a relative path starting with /';
+			fromError = i18n.t('console.settings.redirects.validation.fromRelative');
 			return;
 		}
 
 		if (!to) {
-			toError = 'To is required.';
+			toError = i18n.t('console.settings.redirects.validation.toRequired');
 			return;
 		}
 
 		if (!isValidUrl(to)) {
-			toError = 'To value should be a valid URL.';
+			toError = i18n.t('console.settings.redirects.validation.toUrl');
 			return;
 		}
 
@@ -68,17 +70,17 @@
 			loading = true;
 			createRedirect(dynamic, from, to, type)
 				.then((res) => {
-					toast.success('Redirect created successfully');
+					toast.success(i18n.t('console.settings.redirects.created'));
 					dispatch('create', res);
 					show = false;
 				})
 				.catch((err) => {
 					if (err.message === 'invalid_path_regex') {
-						fromError = 'Invalid regex expression';
+						fromError = i18n.t('console.settings.redirects.validation.invalidRegex');
 						return;
 					}
 					if (err.message === 'path_already_exists') {
-						fromError = 'A redirect already exists for this path.';
+						fromError = i18n.t('console.settings.redirects.validation.pathExists');
 						return;
 					}
 					toast.error(err.message);
@@ -90,7 +92,7 @@
 			loading = true;
 			updateRedirect(redirect!.id, dynamic, from, to, type)
 				.then((res) => {
-					toast.success('Redirect updated.');
+					toast.success(i18n.t('console.settings.redirects.updated'));
 					dispatch('update', res);
 					show = false;
 				})
@@ -115,13 +117,18 @@
 </script>
 
 <Modal title={isCreating ? 'Add new redirect' : 'Edit redirect'} {loading} bind:show>
-	<SplitControl label="Dynamic" caption="Match a path dynamically using a pattern.">
+	<SplitControl
+		label={i18n.t('console.settings.redirects.dynamic')}
+		caption={i18n.t('console.settings.redirects.dynamicCaption')}
+	>
 		<div style="display: flex; align-items: center;">
 			<FormControl>
 				<Switch bind:checked={dynamic} disabled={isCreating ? $dynamicRedirectsStore >= 5 : true} />
 			</FormControl>
 			<Text small light style="margin-left:15px; margin-bottom: 2%"
-				>{Math.max(5 - $dynamicRedirectsStore, 0)}/5 remaining
+				>{i18n.t('console.settings.redirects.dynamicRemaining', {
+					count: Math.max(5 - $dynamicRedirectsStore, 0)
+				})}
 			</Text>
 		</div>
 
@@ -131,7 +138,10 @@
 			{/snippet}</Link
 		>
 	</SplitControl>
-	<SplitControl label="From" caption="Which path to match">
+	<SplitControl
+		label={i18n.t('console.settings.redirects.from')}
+		caption={i18n.t('console.settings.redirects.fromCaption')}
+	>
 		<FormControl>
 			<TextInput
 				bind:value={from}
@@ -149,7 +159,10 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="To" caption="An absolute URL to redirect to">
+	<SplitControl
+		label={i18n.t('console.settings.redirects.to')}
+		caption={i18n.t('console.settings.redirects.toCaption')}
+	>
 		<FormControl>
 			<TextInput
 				bind:value={to}
@@ -166,20 +179,27 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Type" caption="Permanent redirects are cached by browsers.">
+	<SplitControl
+		label={i18n.t('console.tools.import.type')}
+		caption={i18n.t('console.settings.redirects.typeCaption')}
+	>
 		<InputGroup>
-			<Radio name="type" value="permanent" bind:group={type}>Permanent (301)</Radio>
-			<Radio name="type" value="temporary" bind:group={type}>Temporary (302)</Radio>
+			<Radio name="type" value="permanent" bind:group={type}
+				>{i18n.t('console.settings.redirects.permanent')}</Radio
+			>
+			<Radio name="type" value="temporary" bind:group={type}
+				>{i18n.t('console.settings.redirects.temporary')}</Radio
+			>
 		</InputGroup>
 	</SplitControl>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-			<Button on:click={handleClick} disabled={isButtonDisabled}>
-				{isCreating ? 'Add' : 'Save'}
-			</Button>
-		</ButtonGroup>
+		<Button on:click={handleClick} disabled={isButtonDisabled}>
+			{isCreating ? 'Add' : 'Save'}
+		</Button>
 	{/snippet}
 </Modal>

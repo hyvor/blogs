@@ -1,5 +1,5 @@
 import { getSchema, type EditorConfig } from '@hyvor/richtext';
-import { uploadMedia } from '../../../../tools/media/mediaActions';
+import { editorUploadFileConfig } from '../../../../../../lib/fileUploader';
 import { getUnfold } from '../../../../../../lib/actions/urlDataActions';
 
 // all nodes enabled
@@ -18,13 +18,11 @@ export const editorConfig: EditorConfig = {
 		annotationsUrl: null
 	},
 
-	fileMaxSizeInMB: 10,
-	fileUploader: async (file, name, type) => {
-		const media = await uploadMedia(file, name);
-		return {
-			url: media.url
-		};
+	image: {
+		oversizedNoteText: 'Image size is larger than the image preview in the editor.'
 	},
+
+	uploadFileConfig: editorUploadFileConfig,
 
 	embed: async (url) => {
 		try {
