@@ -442,6 +442,7 @@
 				"subdomainCaption2": "Sous-domaine unique de votre blog. Il sert à la fois pour l’hébergement sur sous-domaine et dans les API pour identifier votre blog.",
 				"reverting": "Retour à l’hébergement sur sous-domaine...",
 				"reverted": "Retour à l’hébergement sur sous-domaine effectué.",
+				"revertStarted": "Le retour à l'hébergement sur sous-domaine a commencé. Cela peut prendre un moment.",
 				"revertTitle": "Revenir à l’hébergement sur sous-domaine",
 				"revertContent": "Voulez-vous vraiment revenir à l’hébergement sur sous-domaine ? L’URL de votre blog redeviendra votre sous-domaine hyvorblogs.io.",
 				"revert": "Revenir",

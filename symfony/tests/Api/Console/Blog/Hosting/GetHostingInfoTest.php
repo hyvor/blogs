@@ -52,6 +52,7 @@ class GetHostingInfoTest extends ApiTestCase
             'from_at' => BlogHostingAt::SUBDOMAIN,
             'to_at' => BlogHostingAt::SELF,
             'to_hosting_url' => 'https://example.com',
+            'to_url' => 'https://example.com',
         ]);
 
         $this->consoleBlogApi('GET', $blog, '/hosting', user: $user);

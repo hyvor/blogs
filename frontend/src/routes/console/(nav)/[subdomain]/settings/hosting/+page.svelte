@@ -106,7 +106,9 @@
 		try {
 			const updates = await updateHostedAt('subdomain');
 			updateHostingInfoStore(updates);
-			toast.success(i18n.t('console.settings.hosting.reverted'), { id: toastId });
+			toast.info(i18n.t('console.settings.hosting.revertStarted'), {
+				id: toastId
+			});
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to revert to subdomain', { id: toastId });
 		}
@@ -163,7 +165,7 @@
 									subdomain === $blogStore.subdomain}
 								onclick={handleSaveSubdomain}
 							>
-								Save
+								Change Subdomain
 							</Button>
 						</div>
 					{/snippet}

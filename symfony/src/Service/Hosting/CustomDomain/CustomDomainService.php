@@ -5,11 +5,9 @@ namespace App\Service\Hosting\CustomDomain;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
 use App\Entity\CustomDomainIntent;
-use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\Acme\Dto\FinalCertificate;
-use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -59,30 +57,6 @@ class CustomDomainService
     public function getBlogByCustomDomain(string $domain): ?Blog
     {
         return $this->getCustomDomain($domain)?->getBlog();
-    }
-
-
-    /**
-     * Validates the given private key/certificate and attaches them to the intent as a
-     * bring-your-own-certificate setup. Unlike the auto-TLS flow, a certificate that a CA
-     * already issued for this domain is itself proof of ownership, so the caller can start
-     * the hosting change immediately after this - no DNS verification step is needed.
-     *
-     * @throws InvalidTlsCertificateException if the private key/certificate are invalid
-     */
-    public function setIntentCustomTls(
-        CustomDomainIntent $intent,
-        string $privateKeyPem,
-        string $certificatePem
-    ): CustomDomainIntent {
-        $intent->setTlsProvider(CustomDomainTlsProvider::CUSTOM);
-        $this->applyTlsCertificate($intent, $privateKeyPem, $certificatePem);
-        $intent->setUpdatedAt($this->now());
-
-        $this->em->persist($intent);
-        $this->em->flush();
-
-        return $intent;
     }
 
     /**
@@ -195,45 +169,6 @@ class CustomDomainService
 
         $this->em->persist($tlsCertificate);
         $this->em->flush();
-    }
-
-    /**
-     * Validates that the given private key and certificate are valid PEM data and that they
-     * match each other, then attaches them to the intent.
-     *
-     * @throws InvalidTlsCertificateException
-     */
-    private function applyTlsCertificate(CustomDomainIntent $intent, string $privateKeyPem, string $certificatePem): void
-    {
-        $privateKey = openssl_pkey_get_private($privateKeyPem);
-        if ($privateKey === false) {
-            throw new InvalidTlsCertificateException('The provided private key is not a valid PEM private key.');
-        }
-
-        $cert = openssl_x509_read($certificatePem);
-        if ($cert === false) {
-            throw new InvalidTlsCertificateException('The provided certificate is not a valid PEM certificate.');
-        }
-
-        if (!openssl_x509_check_private_key($cert, $privateKey)) {
-            throw new InvalidTlsCertificateException('The provided private key does not match the certificate.');
-        }
-
-        $parsed = openssl_x509_parse($cert);
-        if ($parsed === false) {
-            throw new InvalidTlsCertificateException('Unable to parse the provided certificate.'); // @codeCoverageIgnore
-        }
-
-        $validFrom = $parsed['validFrom_time_t'] ?? null;
-        $validTo = $parsed['validTo_time_t'] ?? null;
-        if (!is_int($validFrom) || !is_int($validTo)) {
-            throw new InvalidTlsCertificateException('Unable to determine the validity period of the provided certificate.'); // @codeCoverageIgnore
-        }
-
-        $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
-        $intent->setCertificate($certificatePem);
-        $intent->setValidFrom((new \DateTimeImmutable())->setTimestamp($validFrom));
-        $intent->setValidTo((new \DateTimeImmutable())->setTimestamp($validTo));
     }
 
     public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void

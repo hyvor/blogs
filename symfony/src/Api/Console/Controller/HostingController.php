@@ -136,13 +136,6 @@ class HostingController extends AbstractController
         }
     }
 
-    /**
-     * Both TLS providers go through a CustomDomainIntent first. For "custom" (bring-your-own
-     * certificate), the certificate is itself proof of domain ownership, so the hosting change
-     * starts immediately. For "auto" (Let's Encrypt), the intent just sits pending until
-     * /verify generates the certificate. Either way, the CustomDomain record itself is only
-     * created once the hosting change actually succeeds (see HostingChangeService::process()).
-     */
     #[Route('/hosting/custom-domain', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
     public function createCustomDomain(
@@ -160,29 +153,23 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
 
-        if (
-            $input->tls_provider === CustomDomainTlsProvider::CUSTOM &&
-            ($input->tls_private_key === null || $input->tls_certificate === null)
-        ) {
-            throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
+        try {
+            $intent = $this->customDomainIntentService->createIntent(
+                $blog,
+                $input->domain,
+                $input->tls_provider,
+                $input->tls_private_key,
+                $input->tls_certificate
+            );
+        } catch (InvalidTlsCertificateException $e) {
+            throw new BadRequestHttpException($e->getMessage());
         }
-
-        $intent = $this->customDomainIntentService->createIntent($blog, $input->domain, $input->tls_provider);
 
         if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
             try {
-                $intent = $this->customDomainService->setIntentCustomTls(
-                    $intent,
-                    $input->tls_private_key,
-                    $input->tls_certificate
-                );
-            } catch (InvalidTlsCertificateException $e) {
-                throw new BadRequestHttpException($e->getMessage());
-            }
-
-            try {
                 $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN, toDomain: $input->domain);
             } catch (PendingHostingChangeException) {
+                $this->customDomainIntentService->deleteIntent($intent);
                 throw new BadRequestHttpException('A hosting change is already in progress for this blog');
             }
         }
@@ -192,7 +179,7 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/custom-domain', methods: 'DELETE')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function deleteCustomDomain(): JsonResponse
+    public function deleteCustomDomainIntent(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
         $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);

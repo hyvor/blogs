@@ -91,6 +91,19 @@ class HostingChangeService
             $hostingChange->setToDomain($toDomain);
         }
 
+        $hostingChange->setFromUrl($this->permalinkService->buildUrlForHosting(
+            $hostingChange->getFromAt(),
+            $hostingChange->getFromSubdomain(),
+            $hostingChange->getFromHostingUrl(),
+            $hostingChange->getFromDomain()
+        ));
+        $hostingChange->setToUrl($this->permalinkService->buildUrlForHosting(
+            $hostingChange->getToAt(),
+            $hostingChange->getToSubdomain(),
+            $hostingChange->getToHostingUrl(),
+            $hostingChange->getToDomain()
+        ));
+
         $this->em->persist($hostingChange);
 
         try {
@@ -145,24 +158,10 @@ class HostingChangeService
             $blog = $hostingChange->getBlog();
             $toAt = $hostingChange->getToAt();
 
-            $fromUrl = $this->permalinkService->buildUrlForHosting(
-                $hostingChange->getFromAt(),
-                $hostingChange->getFromSubdomain(),
-                $hostingChange->getFromHostingUrl(),
-                $hostingChange->getFromDomain()
-            );
-
-            $toUrl = $this->permalinkService->buildUrlForHosting(
-                $hostingChange->getToAt(),
-                $hostingChange->getToSubdomain(),
-                $hostingChange->getToHostingUrl(),
-                $hostingChange->getToDomain()
-            );
-
             $this->handleUpdateBlogUrls(
                 $blog,
-                $fromUrl,
-                $toUrl
+                $hostingChange->getFromUrl(),
+                $hostingChange->getToUrl()
             );
 
             $blog->setHostingAt($toAt);

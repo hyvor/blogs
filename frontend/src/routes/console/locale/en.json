@@ -442,6 +442,7 @@
 				"subdomainCaption2": "Unique subdomain for your blog. This will be used for subdomain hosting as well as in APIs to identify your blog.",
 				"reverting": "Reverting to subdomain hosting...",
 				"reverted": "Successfully reverted to subdomain hosting.",
+				"revertStarted": "Reverting to subdomain hosting started. It may take a moment to apply.",
 				"revertTitle": "Revert to Subdomain Hosting",
 				"revertContent": "Are you sure you want to revert to subdomain hosting? This will change the URL of your blog back to your hyvorblogs.io subdomain.",
 				"revert": "Revert",

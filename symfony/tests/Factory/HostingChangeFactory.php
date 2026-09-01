@@ -28,7 +28,9 @@ final class HostingChangeFactory extends PersistentObjectFactory
         return [
             'blog' => BlogFactory::new(),
             'from_at' => BlogHostingAt::SUBDOMAIN,
+            'from_url' => 'https://from.example.com',
             'to_at' => BlogHostingAt::SELF,
+            'to_url' => 'https://to.example.com',
             'status' => HostingChangeStatus::CHANGING,
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),

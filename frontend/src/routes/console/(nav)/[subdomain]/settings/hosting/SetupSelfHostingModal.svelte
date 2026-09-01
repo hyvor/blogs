@@ -54,9 +54,7 @@
 		try {
 			const updates = await updateHostedAt('self', urlTrimmed);
 			updateHostingInfoStore(updates);
-			toast.success(
-				'We are changing your hosting to self-hosting. It may take a few minutes to complete.'
-			);
+			toast.info('Changing your hosting to self-hosting. It may take a few minutes to complete.');
 			show = false;
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to save hosting URL');

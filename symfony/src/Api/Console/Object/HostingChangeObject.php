@@ -14,11 +14,11 @@ class HostingChangeObject
     public BlogHostingAt $from_at;
     public ?string $from_subdomain;
     public ?string $from_domain;
-    public ?string $from_url;
+    public string $from_url;
     public BlogHostingAt $to_at;
     public ?string $to_subdomain;
     public ?string $to_domain;
-    public ?string $to_url;
+    public string $to_url;
     public HostingChangeStatus $status;
 
     public function __construct(HostingChange $hostingChange)
@@ -29,11 +29,11 @@ class HostingChangeObject
         $this->from_at = $hostingChange->getFromAt();
         $this->from_subdomain = $hostingChange->getFromSubdomain();
         $this->from_domain = $hostingChange->getFromDomain();
-        $this->from_url = $hostingChange->getFromHostingUrl();
+        $this->from_url = $hostingChange->getFromUrl();
         $this->to_at = $hostingChange->getToAt();
         $this->to_subdomain = $hostingChange->getToSubdomain();
         $this->to_domain = $hostingChange->getToDomain();
-        $this->to_url = $hostingChange->getToHostingUrl();
+        $this->to_url = $hostingChange->getToUrl();
         $this->status = $hostingChange->getStatus();
     }
 }

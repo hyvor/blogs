@@ -117,10 +117,12 @@ final class Version20260501000000 extends AbstractMigration
                 from_subdomain TEXT,
                 from_domain TEXT,
                 from_hosting_url TEXT,
+                from_url TEXT NOT NULL,
                 to_at blog_hosting_at NOT NULL,
                 to_subdomain TEXT,
                 to_domain TEXT,
                 to_hosting_url TEXT,
+                to_url TEXT NOT NULL,
                 status hosting_change_status NOT NULL DEFAULT 'changing',
                 error_message TEXT,
                 retry_count INTEGER NOT NULL DEFAULT 0
