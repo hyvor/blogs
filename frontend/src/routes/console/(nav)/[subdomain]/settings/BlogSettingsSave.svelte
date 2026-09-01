@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Loader, toast } from '@hyvor/design/components';
+	import { Button, Loader, toast } from '@hyvor/design/components';
 	import { blogOriginalStore, blogStore } from '../../../lib/stores/blogStore';
 	import type { Blog, BlogVariant } from '../../../lib/types';
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
@@ -132,13 +132,13 @@
 		<Loader state={loadingState} size="small" />
 	</span>
 
-	<ButtonGroup>
+	<span class="buttons">
 		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}
 			>Discard</Button
 		>
 
 		<Button disabled={!should} on:click={handleSave}>Save</Button>
-	</ButtonGroup>
+	</span>
 </div>
 
 <style>
@@ -146,6 +146,12 @@
 		padding: 15px 30px;
 		text-align: right;
 		border-bottom: 1px solid var(--border);
+	}
+	.buttons {
+		display: inline-flex;
+		align-items: center;
+		gap: 2px;
+		vertical-align: middle;
 	}
 	.loader-wrap {
 		display: inline-flex;

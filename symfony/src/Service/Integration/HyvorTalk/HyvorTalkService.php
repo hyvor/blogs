@@ -130,7 +130,7 @@ class HyvorTalkService
         assert($hyvorUserId !== null);
 
         try {
-            $website = $this->getClient($orgId)->org->websites->create([
+            $result = $this->getClient($orgId)->org->websites->create([
                 'name' => $variant->getName() ?? '',
                 'domain' => $this->getDomainsOfBlog($blog)[0],
                 'metadata' => [
@@ -139,6 +139,7 @@ class HyvorTalkService
                 ],
                 'start_trial' => false,
             ]);
+            $website = $result->website;
 
             // we add the current user as a mod in HT so they have access to it immediately
             // then, later, we will sync users in a job to give other users of the blog access to the website as well

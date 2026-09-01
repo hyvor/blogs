@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		Modal,
 		SplitControl,
@@ -81,9 +80,7 @@
 	</SplitControl>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)} disabled={loading}>Cancel</Button>
-			<Button on:click={handleConfirm} disabled={loading}>Confirm</Button>
-		</ButtonGroup>
+		<Button variant="invisible" on:click={() => (show = false)} disabled={loading}>Cancel</Button>
+		<Button on:click={handleConfirm} disabled={loading}>Confirm</Button>
 	{/snippet}
 </Modal>

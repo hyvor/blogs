@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		InputGroup,
 		Modal,
 		Radio,
@@ -70,10 +69,8 @@
 	{/if}
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleClick}>Clear Cache</Button>
-		</ButtonGroup>
+		<Button on:click={handleClick}>Clear Cache</Button>
 	{/snippet}
 </Modal>

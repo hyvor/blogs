@@ -13,6 +13,10 @@
 	let items: Navigation[] = $state([]);
 	let isLoading = $state(true);
 
+	let activeTab: 'header' | 'footer' = $state('header');
+
+	let activeItems = $derived(items.filter((t) => t.type === activeTab));
+
 	function loadNavigation() {
 		getNavigations()
 			.then((res) => {
@@ -48,46 +52,46 @@
 	}
 
 	onMount(loadNavigation);
-
-	let activeTab: 'header' | 'footer' = $state('header');
 </script>
 
-<div class="items">
-	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+<SettingsTop>
+	<div class="tabs">
+		<TabNav>
+			<TabNavItem
+				name="header"
+				active={activeTab === 'header'}
+				onclick={() => (activeTab = 'header')}>Header</TabNavItem
+			>
+			<TabNavItem
+				name="footer"
+				active={activeTab === 'footer'}
+				onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
+			>
+		</TabNav>
+	</div>
+
+	<div class="filter-section">
+		<Button size="small" on:click={() => (isCreating = true)}>
 			Create Navigation {#snippet end()}
 				<IconPlus />
 			{/snippet}
 		</Button>
-	</SettingsTop>
-
-	<div class="table">
-		{#if isLoading}
-			<Loader full />
-		{:else if items.length === 0}
-			<IconMessage empty message="No items found." />
-		{:else}
-			<TabNav>
-				<TabNavItem
-					name="header"
-					active={activeTab === 'header'}
-					onclick={() => (activeTab = 'header')}>Header</TabNavItem
-				>
-				<TabNavItem
-					name="footer"
-					active={activeTab === 'footer'}
-					onclick={() => (activeTab = 'footer')}>Footer</TabNavItem
-				>
-			</TabNav>
-
-			<NavTable
-				items={items.filter((t) => t.type === activeTab)}
-				on:variantCreate={handleCreateVariant}
-				on:delete={handleDelete}
-				on:update={handleUpdate}
-			/>
-		{/if}
 	</div>
+</SettingsTop>
+
+<div class="table">
+	{#if isLoading}
+		<Loader full />
+	{:else if activeItems.length === 0}
+		<IconMessage empty message="No navigation links configured" />
+	{:else}
+		<NavTable
+			items={activeItems}
+			on:variantCreate={handleCreateVariant}
+			on:delete={handleDelete}
+			on:update={handleUpdate}
+		/>
+	{/if}
 </div>
 
 {#if isCreating}
@@ -95,15 +99,18 @@
 {/if}
 
 <style>
-	.items {
-		height: 100%;
+	.tabs {
+		flex: 1;
+	}
+
+	.filter-section {
 		display: flex;
-		flex-direction: column;
-		overflow: auto;
+		align-items: center;
 	}
 
 	.table {
 		flex: 1;
 		padding: 15px 30px;
+		overflow: auto;
 	}
 </style>

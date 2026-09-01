@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		InputGroup,
 		Modal,
@@ -143,12 +142,10 @@
 	</SplitControl>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleClick} disabled={isButtonDisabled}>
-				{isCreating ? 'Add' : 'Save'}
-			</Button>
-		</ButtonGroup>
+		<Button on:click={handleClick} disabled={isButtonDisabled}>
+			{isCreating ? 'Add' : 'Save'}
+		</Button>
 	{/snippet}
 </Modal>

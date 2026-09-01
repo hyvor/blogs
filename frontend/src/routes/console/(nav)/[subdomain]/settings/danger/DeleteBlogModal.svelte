@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		FormControl,
 		Modal,
 		TextInput,
@@ -73,10 +72,8 @@
 	</div>
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
 
-			<Button on:click={handleDelete} color="red">Goodbye, Blog</Button>
-		</ButtonGroup>
+		<Button on:click={handleDelete} color="red">Goodbye, Blog</Button>
 	{/snippet}
 </Modal>

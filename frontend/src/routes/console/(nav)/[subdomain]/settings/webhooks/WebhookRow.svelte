@@ -67,12 +67,7 @@
 	</div>
 	<div>
 		<Tooltip text="Edit Webhook">
-			<IconButton
-				size="small"
-				variant="fill-light"
-				color="gray"
-				on:click={() => (isUpdating = true)}
-			>
+			<IconButton size="small" color="input" variant="fill" on:click={() => (isUpdating = true)}>
 				<IconPencilFill size={10} />
 			</IconButton>
 		</Tooltip>

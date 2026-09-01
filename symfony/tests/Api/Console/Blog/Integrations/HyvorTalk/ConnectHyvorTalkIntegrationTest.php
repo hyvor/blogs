@@ -17,6 +17,7 @@ use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Sdk\Auth\StaticTokenProvider;
 use Hyvor\Sdk\Talk\Dto\Mod;
 use Hyvor\Sdk\Talk\Dto\Website;
+use Hyvor\Sdk\Talk\Dto\WebsitesCreateResponse;
 use Hyvor\Sdk\Talk\TalkClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sentry\HttpClient\HttpClientInterface;
@@ -34,7 +35,9 @@ class ConnectHyvorTalkIntegrationTest extends ApiTestCase
         LanguageFactory::createOnePrimaryFor($blog);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: ['name' => 'My Blog']);
 
-        $htWebsiteResponse = new JsonMockResponse(Fixtures::make(Website::class, ['id' => 123]));
+        $htWebsiteResponse = new JsonMockResponse(Fixtures::make(WebsitesCreateResponse::class, [
+            'website' => Fixtures::make(Website::class, ['id' => 123]),
+        ]));
         $htModResponse = new JsonMockResponse(Fixtures::make(Mod::class, ['role' => 'admin']));
         $mockClient = new MockHttpClient([$htWebsiteResponse, $htModResponse]);
         $this->getContainer()->set(HttpClientInterface::class, $mockClient);
