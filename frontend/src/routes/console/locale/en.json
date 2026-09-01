@@ -802,6 +802,313 @@
 		},
 		"blogSelector": {
 			"createNewBlog": "Create a new blog"
+		},
+		"postEditor": {
+			"loading": "Loading post...",
+			"loadFailed": "Failed to load post",
+			"goToPosts": "Go to Posts",
+			"back": "Back",
+			"titlePlaceholder": "Title...",
+			"save": {
+				"saving": "Saving...",
+				"unsaved": "Unsaved changes",
+				"saved": "Saved",
+				"outOfSync": "Failed to save: your editor is out of sync. Please reload the page.",
+				"failed": "Failed to save post content: {message}",
+				"leaveConfirm": "You have unsaved changes. Are you sure you want to leave?"
+			},
+			"suggestionMode": {
+				"editing": "Editing",
+				"suggesting": "Suggesting",
+				"suggestingInfo": "You are suggesting"
+			},
+			"publishedNotice": {
+				"editing": "You are editing a published post.",
+				"editingScheduled": "You are editing a scheduled post.",
+				"published": "This post is published.",
+				"scheduled": "This post is scheduled.",
+				"switchToView": "Switch to published view",
+				"switchToEditing": "Switch to editing mode",
+				"compare": "Compare"
+			},
+			"publishedEditing": {
+				"status": "Editing published.",
+				"discard": "Discard",
+				"confirmTitle": "Discard changes?",
+				"confirmButton": "Yes, discard changes",
+				"confirmIntro": "Are you sure you want to discard the unpublished changes.",
+				"confirmChangedWords": "You have about <strong>{words} changed words</strong>.",
+				"confirmIrreversible": "This action cannot be undone.",
+				"confirmRevert": "The content will be reverted to the last published version."
+			},
+			"compare": {
+				"publishedVersion": "Published Version",
+				"editingVersion": "Editing Version",
+				"showDiff": "Show diff"
+			},
+			"autoTranslate": {
+				"button": "Auto-Translate",
+				"primaryVariantNotFound": "Primary language variant not found",
+				"failed": "Auto-translation failed. Please try again later: {message}"
+			},
+			"wordCount": "{count, plural, one {# Word} other {# Words}}",
+			"searchPosts": {
+				"placeholder": "Search a post in your blog...",
+				"noPosts": "No posts found",
+				"noTitle": "(No title)",
+				"noUrl": "(No url)"
+			},
+			"agent": {
+				"upgradeText": "AI chat is available on the <strong>Growth plan</strong> and above. Upgrade now to use GPT to generate and improve your content.",
+				"emptyMessage": "Ask the agent about this post, e.g. \"Fix any typos\" or \"Add a short FAQ section at the end\"."
+			},
+			"language": {
+				"creating": "Creating...",
+				"notCreated": "Not created",
+				"words": "{count, plural, one {# word} other {# words}}",
+				"createFailed": "Failed to create {language} variant: {message}"
+			},
+			"sections": {
+				"settings": "Settings",
+				"seo": "SEO",
+				"links": "Links",
+				"agent": "Agent"
+			},
+			"preview": {
+				"view": "View",
+				"preview": "Preview",
+				"publishedPost": "Published Post"
+			},
+			"publish": {
+				"button": "Publish",
+				"schedule": "Schedule",
+				"modalTitle": "Publish Post",
+				"publishing": "Publishing...",
+				"failed": "Failed to publish post",
+				"when": "When",
+				"publishNow": "Publish now",
+				"scheduleForLater": "Schedule for later",
+				"scheduleTime": "Schedule Time",
+				"scheduleTimezone": "Time is in your local timezone ({timezone})",
+				"schedulePast": "Schedule time cannot be in the past.",
+				"successPublished": "Post successfully published!",
+				"successScheduled": "Post successfully scheduled!",
+				"viewPost": "View Post",
+				"summary": {
+					"title": "Post Summary",
+					"settings": "Settings",
+					"content": "Content",
+					"words": "{count, plural, one {# word} other {# words}}",
+					"readTime": "~{minutes} min read",
+					"titleLabel": "Title",
+					"slug": "Slug",
+					"description": "Description",
+					"author": "Author",
+					"tags": "Tags",
+					"canonicalUrl": "Canonical URL",
+					"noAuthors": "No authors",
+					"noTags": "No tags"
+				},
+				"issues": {
+					"titleEmpty": "Title is empty.",
+					"slugEmpty": "Slug is empty. It will be generated from the title.",
+					"descriptionEmpty": "Description is empty.",
+					"pendingSuggestions": "This post has unresolved suggestions. Resolve them before publishing."
+				}
+			},
+			"unpublish": {
+				"unpublish": "Unpublish",
+				"unschedule": "Unschedule",
+				"unpublishTitle": "Unpublish Post",
+				"unscheduleTitle": "Unschedule Post",
+				"unpublishing": "Unpublishing...",
+				"unpublished": "Post unpublished",
+				"unpublishFailed": "Failed to unpublish post",
+				"confirmUnpublish": "Are you sure to unpublish this post? Its status will be changed to draft.",
+				"confirmUnschedule": "Are you sure to unschedule this post? Its status will be changed to draft."
+			},
+			"publishedToast": {
+				"published": "Post published",
+				"viewPost": "View post"
+			},
+			"update": {
+				"button": "Update",
+				"modalTitle": "Update Post",
+				"intro": "You are about to update the post. Please review the changes below.",
+				"showDifference": "Show Difference",
+				"updated": "Post updated successfully.",
+				"content": "Content",
+				"setCustomUpdatedTime": "Set a custom updated time",
+				"updatedAtTooEarly": "Must be on or after the publish time.",
+				"slug": "Slug",
+				"slugEmpty": "Slug cannot be empty.",
+				"slugInvalidChar": "Slug cannot contain {char}.",
+				"createRedirect": "Create redirect",
+				"createRedirectTooltip": "Automatically create a permanent redirect from the old URL to the new URL.",
+				"description": "Description",
+				"coverImage": "Cover Image",
+				"publishTime": "Publish Time",
+				"featured": "Featured",
+				"codeHead": "Code Head",
+				"codeFoot": "Code Foot",
+				"changed": "Changed",
+				"none": "None",
+				"authors": "Authors",
+				"tags": "Tags",
+				"canonicalUrl": "Canonical URL",
+				"empty": "Empty",
+				"noImage": "No image",
+				"yes": "Yes",
+				"no": "No",
+				"noAuthors": "No authors",
+				"noTags": "No tags",
+				"changedWords": "About <strong>{count, plural, one {# word} other {# words}}</strong> changed",
+				"totalWords": "Total <strong>{count, plural, one {# word} other {# words}}</strong>"
+			},
+			"settings": {
+				"slug": "Slug",
+				"slugInfo": "The unique part of the URL to identify this post",
+				"slugInvalidChar": "Slug cannot contain \"{char}\"",
+				"slugSpaceTip": "Tip: Use \"-\" instead of spaces",
+				"slugTaken": "Slug is already taken",
+				"description": "Description",
+				"authors": "Authors",
+				"noAuthors": "No authors",
+				"searchAuthors": "Search authors",
+				"unknownUser": "Unknown user",
+				"posts": "{count, plural, one {# post} other {# posts}}",
+				"tags": "Tags",
+				"noTags": "No tags",
+				"searchTags": "Search tags",
+				"createTag": "Create tag",
+				"coverImage": "Cover Image",
+				"publishTime": "Publish Time",
+				"publishTimeScheduled": "(Scheduled)",
+				"notPublishedYet": "Not published yet",
+				"contentUpdatedAt": "Content Updated At",
+				"contentUpdatedAtTooEarly": "Must be on or after the publish time.",
+				"featured": "Featured",
+				"featuredInfo": "Featured posts are shown on the top of the home page",
+				"canonicalUrl": "Canonical URL",
+				"codeHead": "Code Head",
+				"codeHeadInfo": "Custom code to be added to the head tag of the post.",
+				"codeFoot": "Code Foot",
+				"codeFootInfo": "Custom code to be added before the closing body tag of the post.",
+				"advanced": "Advanced",
+				"delete": "Delete",
+				"deletePost": "Delete Post",
+				"deleteVariant": "Delete {language} Variant",
+				"deletePostTitle": "Delete Post",
+				"deleteVariantTitle": "Delete Variant",
+				"deletePostConfirm": "Are you sure you want to delete this post? This action is IRREVERSIBLE.",
+				"deleteVariantConfirm": "Are you sure you want to delete the {language} variant? This action is IRREVERSIBLE.",
+				"deleteConfirmButton": "Yes, Delete",
+				"deleteFailed": "Failed to delete",
+				"unsaved": "Unsaved"
+			},
+			"seo": {
+				"upgradeText": "The SEO analyzer is available on the <strong>Starter plan</strong> and above. Upgrade now to up your SEO game.",
+				"score": "Score",
+				"primaryKeyword": "Primary Keyword",
+				"secondaryKeywords": "Secondary Keywords",
+				"keywordAlreadyAdded": "Keyword already added",
+				"keywordAlreadyPrimary": "Keyword already added as primary keyword",
+				"add": "Add",
+				"pendingTooltip": "SEO analysis is pending. Open the post to analyze",
+				"checks": {
+					"primaryKeywordInTitle": {
+						"found": "Primary keyword found in the title",
+						"foundNotBeginning": "Primary keyword found in the title, but not at the beginning",
+						"foundNotFirst50": "Primary keyword found in the title, but not within first 50 characters",
+						"notFound": "Primary keyword not found in title",
+						"ignored": "Ignored primary keyword in title test. Add primary keyword"
+					},
+					"primaryKeywordInDescription": {
+						"found": "Primary keyword found in the description",
+						"notFound": "Primary keyword not found in the description",
+						"ignored": "Ignored primary keyword in description test. Add primary keyword"
+					},
+					"primaryKeywordInSlug": {
+						"found": "Primary keyword found in the slug",
+						"foundWithOthers": "Primary keyword found in the slug with other words",
+						"slugEmpty": "Slug is empty",
+						"notFound": "Primary keyword not found in the slug",
+						"ignored": "Ignored primary keyword in slug test. Add primary keyword"
+					},
+					"primaryKeywordInBeginning": {
+						"found": "Primary keyword found in the beginning of the content",
+						"notFound": "Primary keyword not found in the beginning of the content",
+						"ignored": "Ignored primary keyword in beginning test. Add primary keyword"
+					},
+					"contentLength": {
+						"short": "Content is {count, plural, one {# word} other {# words}} long. Consider using at least 400 words.",
+						"ok": "Content is {count, plural, one {# word} other {# words}} long"
+					},
+					"allKeywordsInContent": {
+						"allFound": "All keywords found in the content",
+						"someMissing": "Some keywords are missing in the content: {keywords}",
+						"ignored": "Ignored keywords in content test. Add keywords"
+					},
+					"allKeywordsInSubHeadings": {
+						"allFound": "All keywords found in subheadings",
+						"someMissing": "Some keywords not found in subheadings: {keywords}",
+						"noneFound": "No keywords found in subheadings",
+						"ignored": "Ignored keywords in subheadings test. Add keywords"
+					},
+					"allKeywordsInImgAlt": {
+						"allFound": "All keywords found in image alt attributes",
+						"someMissing": "Some keywords not found in image alt attributes: {keywords}",
+						"noneFound": "No keywords found in image alt attributes",
+						"ignored": "Ignored keywords in img alt test. Add keywords"
+					},
+					"keywordDensity": {
+						"tooHigh": "Keyword density is {density}%, which is too high. {count, plural, one {# keyword} other {# keywords}} found.",
+						"mayBeTooHigh": "Keyword density is {density}%, which may be too high. {count, plural, one {# keyword} other {# keywords}} found.",
+						"good": "Keyword density is {density}%, which is good. {count, plural, one {# keyword} other {# keywords}} found.",
+						"mayBeTooLow": "Keyword density is {density}%, which may be too low. {count, plural, one {# keyword} other {# keywords}} found.",
+						"tooLow": "Keyword density is {density}%, which is too low. {count, plural, one {# keyword} other {# keywords}} found.",
+						"ignored": "Ignored keywords density test. Add keywords"
+					},
+					"slugLength": {
+						"ok": "Slug is {count, plural, one {# character} other {# characters}} long",
+						"tooLong": "Slug is {count, plural, one {# character} other {# characters}} long. Consider using a shorter slug",
+						"ignoredEmpty": "Slug length test ignored because slug is empty"
+					},
+					"externalLinks": {
+						"none": "No external links found",
+						"found": "{count, plural, one {# external link} other {# external links}} found"
+					},
+					"internalLinks": {
+						"none": "No internal links found",
+						"found": "{count, plural, one {# internal link} other {# internal links}} found"
+					},
+					"imagesCount": {
+						"found": "{count, plural, one {# image} other {# images}} found"
+					},
+					"imageAlt": {
+						"allHaveAlt": "All images have alt attributes",
+						"someMissingAlt": "{count, plural, one {# image} other {# images}} missing alt attributes",
+						"ignoredNoImages": "Image alt test ignored because no images found"
+					}
+				}
+			},
+			"links": {
+				"upgradeText": "Link Analysis is available on the <strong>Growth plan</strong> and above. Upgrade now to analyze links in your posts and say goodbye to broken links.",
+				"title": "Links ({count})",
+				"recheckAll": "Recheck All",
+				"recheckFailed": "Failed to recheck links",
+				"loadFailed": "Failed to load links",
+				"noLinks": "No links found in your post",
+				"ok": "OK",
+				"broken": "Broken",
+				"risky": "Risky",
+				"redirect": "Redirect",
+				"ignored": "Ignored",
+				"editInEditor": "Edit in Editor",
+				"recheck": "Recheck",
+				"ignoreLink": "Ignore this link",
+				"unignoreLink": "Unignore this link"
+			}
 		}
 	}
 }

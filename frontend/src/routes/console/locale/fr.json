@@ -802,6 +802,313 @@
 		},
 		"blogSelector": {
 			"createNewBlog": "Créer un nouveau blog"
+		},
+		"postEditor": {
+			"loading": "Chargement de l'article...",
+			"loadFailed": "Échec du chargement de l'article",
+			"goToPosts": "Aller aux articles",
+			"back": "Retour",
+			"titlePlaceholder": "Titre...",
+			"save": {
+				"saving": "Enregistrement...",
+				"unsaved": "Modifications non enregistrées",
+				"saved": "Enregistré",
+				"outOfSync": "Échec de l'enregistrement : votre éditeur est désynchronisé. Veuillez recharger la page.",
+				"failed": "Échec de l'enregistrement du contenu de l'article : {message}",
+				"leaveConfirm": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir quitter ?"
+			},
+			"suggestionMode": {
+				"editing": "Édition",
+				"suggesting": "Suggestion",
+				"suggestingInfo": "Vous faites des suggestions"
+			},
+			"publishedNotice": {
+				"editing": "Vous modifiez un article publié.",
+				"editingScheduled": "Vous modifiez un article programmé.",
+				"published": "Cet article est publié.",
+				"scheduled": "Cet article est programmé.",
+				"switchToView": "Passer à la vue publiée",
+				"switchToEditing": "Passer en mode édition",
+				"compare": "Comparer"
+			},
+			"publishedEditing": {
+				"status": "Modification de la version publiée.",
+				"discard": "Abandonner",
+				"confirmTitle": "Abandonner les modifications ?",
+				"confirmButton": "Oui, abandonner les modifications",
+				"confirmIntro": "Êtes-vous sûr de vouloir abandonner les modifications non publiées.",
+				"confirmChangedWords": "Vous avez environ <strong>{words} mots modifiés</strong>.",
+				"confirmIrreversible": "Cette action est irréversible.",
+				"confirmRevert": "Le contenu sera restauré à la dernière version publiée."
+			},
+			"compare": {
+				"publishedVersion": "Version publiée",
+				"editingVersion": "Version en cours d'édition",
+				"showDiff": "Afficher les différences"
+			},
+			"autoTranslate": {
+				"button": "Traduction automatique",
+				"primaryVariantNotFound": "Variante de langue principale introuvable",
+				"failed": "Échec de la traduction automatique. Veuillez réessayer plus tard : {message}"
+			},
+			"wordCount": "{count, plural, one {# mot} other {# mots}}",
+			"searchPosts": {
+				"placeholder": "Rechercher un article dans votre blog...",
+				"noPosts": "Aucun article trouvé",
+				"noTitle": "(Sans titre)",
+				"noUrl": "(Sans URL)"
+			},
+			"agent": {
+				"upgradeText": "Le chat IA est disponible sur le <strong>plan Growth</strong> et au-dessus. Mettez à niveau dès maintenant pour utiliser GPT afin de générer et d'améliorer votre contenu.",
+				"emptyMessage": "Posez une question à l'agent à propos de cet article, par ex. « Corrige les fautes de frappe » ou « Ajoute une courte section FAQ à la fin »."
+			},
+			"language": {
+				"creating": "Création...",
+				"notCreated": "Non créée",
+				"words": "{count, plural, one {# mot} other {# mots}}",
+				"createFailed": "Échec de la création de la variante {language} : {message}"
+			},
+			"sections": {
+				"settings": "Paramètres",
+				"seo": "SEO",
+				"links": "Liens",
+				"agent": "Agent"
+			},
+			"preview": {
+				"view": "Voir",
+				"preview": "Aperçu",
+				"publishedPost": "Article publié"
+			},
+			"publish": {
+				"button": "Publier",
+				"schedule": "Programmer",
+				"modalTitle": "Publier l'article",
+				"publishing": "Publication...",
+				"failed": "Échec de la publication de l'article",
+				"when": "Quand",
+				"publishNow": "Publier maintenant",
+				"scheduleForLater": "Programmer pour plus tard",
+				"scheduleTime": "Heure de programmation",
+				"scheduleTimezone": "L'heure est dans votre fuseau horaire local ({timezone})",
+				"schedulePast": "L'heure de programmation ne peut pas être dans le passé.",
+				"successPublished": "Article publié avec succès !",
+				"successScheduled": "Article programmé avec succès !",
+				"viewPost": "Voir l'article",
+				"summary": {
+					"title": "Résumé de l'article",
+					"settings": "Paramètres",
+					"content": "Contenu",
+					"words": "{count, plural, one {# mot} other {# mots}}",
+					"readTime": "~{minutes} min de lecture",
+					"titleLabel": "Titre",
+					"slug": "Slug",
+					"description": "Description",
+					"author": "Auteur",
+					"tags": "Étiquettes",
+					"canonicalUrl": "URL canonique",
+					"noAuthors": "Aucun auteur",
+					"noTags": "Aucune étiquette"
+				},
+				"issues": {
+					"titleEmpty": "Le titre est vide.",
+					"slugEmpty": "Le slug est vide. Il sera généré à partir du titre.",
+					"descriptionEmpty": "La description est vide.",
+					"pendingSuggestions": "Cet article contient des suggestions non résolues. Résolvez-les avant de publier."
+				}
+			},
+			"unpublish": {
+				"unpublish": "Dépublier",
+				"unschedule": "Déprogrammer",
+				"unpublishTitle": "Dépublier l'article",
+				"unscheduleTitle": "Déprogrammer l'article",
+				"unpublishing": "Dépublication...",
+				"unpublished": "Article dépublié",
+				"unpublishFailed": "Échec de la dépublication de l'article",
+				"confirmUnpublish": "Êtes-vous sûr de vouloir dépublier cet article ? Son statut passera à brouillon.",
+				"confirmUnschedule": "Êtes-vous sûr de vouloir déprogrammer cet article ? Son statut passera à brouillon."
+			},
+			"publishedToast": {
+				"published": "Article publié",
+				"viewPost": "Voir l'article"
+			},
+			"update": {
+				"button": "Mettre à jour",
+				"modalTitle": "Mettre à jour l'article",
+				"intro": "Vous êtes sur le point de mettre à jour l'article. Veuillez vérifier les modifications ci-dessous.",
+				"showDifference": "Afficher les différences",
+				"updated": "Article mis à jour avec succès.",
+				"content": "Contenu",
+				"setCustomUpdatedTime": "Définir une heure de mise à jour personnalisée",
+				"updatedAtTooEarly": "Doit être à la date de publication ou après.",
+				"slug": "Slug",
+				"slugEmpty": "Le slug ne peut pas être vide.",
+				"slugInvalidChar": "Le slug ne peut pas contenir {char}.",
+				"createRedirect": "Créer une redirection",
+				"createRedirectTooltip": "Créer automatiquement une redirection permanente de l'ancienne URL vers la nouvelle URL.",
+				"description": "Description",
+				"coverImage": "Image de couverture",
+				"publishTime": "Heure de publication",
+				"featured": "En vedette",
+				"codeHead": "Code d'en-tête",
+				"codeFoot": "Code de pied de page",
+				"changed": "Modifié",
+				"none": "Aucun",
+				"authors": "Auteurs",
+				"tags": "Étiquettes",
+				"canonicalUrl": "URL canonique",
+				"empty": "Vide",
+				"noImage": "Aucune image",
+				"yes": "Oui",
+				"no": "Non",
+				"noAuthors": "Aucun auteur",
+				"noTags": "Aucune étiquette",
+				"changedWords": "Environ <strong>{count, plural, one {# mot} other {# mots}}</strong> modifiés",
+				"totalWords": "Total <strong>{count, plural, one {# mot} other {# mots}}</strong>"
+			},
+			"settings": {
+				"slug": "Slug",
+				"slugInfo": "La partie unique de l'URL qui identifie cet article",
+				"slugInvalidChar": "Le slug ne peut pas contenir « {char} »",
+				"slugSpaceTip": "Astuce : utilisez « - » au lieu des espaces",
+				"slugTaken": "Ce slug est déjà utilisé",
+				"description": "Description",
+				"authors": "Auteurs",
+				"noAuthors": "Aucun auteur",
+				"searchAuthors": "Rechercher des auteurs",
+				"unknownUser": "Utilisateur inconnu",
+				"posts": "{count, plural, one {# article} other {# articles}}",
+				"tags": "Étiquettes",
+				"noTags": "Aucune étiquette",
+				"searchTags": "Rechercher des étiquettes",
+				"createTag": "Créer l'étiquette",
+				"coverImage": "Image de couverture",
+				"publishTime": "Heure de publication",
+				"publishTimeScheduled": "(Programmé)",
+				"notPublishedYet": "Pas encore publié",
+				"contentUpdatedAt": "Contenu mis à jour le",
+				"contentUpdatedAtTooEarly": "Doit être à la date de publication ou après.",
+				"featured": "En vedette",
+				"featuredInfo": "Les articles en vedette sont affichés en haut de la page d'accueil",
+				"canonicalUrl": "URL canonique",
+				"codeHead": "Code d'en-tête",
+				"codeHeadInfo": "Code personnalisé à ajouter dans la balise head de l'article.",
+				"codeFoot": "Code de pied de page",
+				"codeFootInfo": "Code personnalisé à ajouter avant la balise body fermante de l'article.",
+				"advanced": "Avancé",
+				"delete": "Supprimer",
+				"deletePost": "Supprimer l'article",
+				"deleteVariant": "Supprimer la variante {language}",
+				"deletePostTitle": "Supprimer l'article",
+				"deleteVariantTitle": "Supprimer la variante",
+				"deletePostConfirm": "Êtes-vous sûr de vouloir supprimer cet article ? Cette action est IRRÉVERSIBLE.",
+				"deleteVariantConfirm": "Êtes-vous sûr de vouloir supprimer la variante {language} ? Cette action est IRRÉVERSIBLE.",
+				"deleteConfirmButton": "Oui, supprimer",
+				"deleteFailed": "Échec de la suppression",
+				"unsaved": "Non enregistré"
+			},
+			"seo": {
+				"upgradeText": "L'analyseur SEO est disponible sur le <strong>plan Starter</strong> et au-dessus. Mettez à niveau dès maintenant pour améliorer votre SEO.",
+				"score": "Score",
+				"primaryKeyword": "Mot-clé principal",
+				"secondaryKeywords": "Mots-clés secondaires",
+				"keywordAlreadyAdded": "Mot-clé déjà ajouté",
+				"keywordAlreadyPrimary": "Mot-clé déjà ajouté comme mot-clé principal",
+				"add": "Ajouter",
+				"pendingTooltip": "L'analyse SEO est en attente. Ouvrez l'article pour l'analyser",
+				"checks": {
+					"primaryKeywordInTitle": {
+						"found": "Mot-clé principal trouvé dans le titre",
+						"foundNotBeginning": "Mot-clé principal trouvé dans le titre, mais pas au début",
+						"foundNotFirst50": "Mot-clé principal trouvé dans le titre, mais pas dans les 50 premiers caractères",
+						"notFound": "Mot-clé principal introuvable dans le titre",
+						"ignored": "Test du mot-clé principal dans le titre ignoré. Ajoutez un mot-clé principal"
+					},
+					"primaryKeywordInDescription": {
+						"found": "Mot-clé principal trouvé dans la description",
+						"notFound": "Mot-clé principal introuvable dans la description",
+						"ignored": "Test du mot-clé principal dans la description ignoré. Ajoutez un mot-clé principal"
+					},
+					"primaryKeywordInSlug": {
+						"found": "Mot-clé principal trouvé dans le slug",
+						"foundWithOthers": "Mot-clé principal trouvé dans le slug avec d'autres mots",
+						"slugEmpty": "Le slug est vide",
+						"notFound": "Mot-clé principal introuvable dans le slug",
+						"ignored": "Test du mot-clé principal dans le slug ignoré. Ajoutez un mot-clé principal"
+					},
+					"primaryKeywordInBeginning": {
+						"found": "Mot-clé principal trouvé au début du contenu",
+						"notFound": "Mot-clé principal introuvable au début du contenu",
+						"ignored": "Test du mot-clé principal au début ignoré. Ajoutez un mot-clé principal"
+					},
+					"contentLength": {
+						"short": "Le contenu fait {count, plural, one {# mot} other {# mots}}. Utilisez-en au moins 400.",
+						"ok": "Le contenu fait {count, plural, one {# mot} other {# mots}}"
+					},
+					"allKeywordsInContent": {
+						"allFound": "Tous les mots-clés ont été trouvés dans le contenu",
+						"someMissing": "Certains mots-clés sont absents du contenu : {keywords}",
+						"ignored": "Test des mots-clés dans le contenu ignoré. Ajoutez des mots-clés"
+					},
+					"allKeywordsInSubHeadings": {
+						"allFound": "Tous les mots-clés ont été trouvés dans les sous-titres",
+						"someMissing": "Certains mots-clés sont absents des sous-titres : {keywords}",
+						"noneFound": "Aucun mot-clé trouvé dans les sous-titres",
+						"ignored": "Test des mots-clés dans les sous-titres ignoré. Ajoutez des mots-clés"
+					},
+					"allKeywordsInImgAlt": {
+						"allFound": "Tous les mots-clés ont été trouvés dans les attributs alt des images",
+						"someMissing": "Certains mots-clés sont absents des attributs alt des images : {keywords}",
+						"noneFound": "Aucun mot-clé trouvé dans les attributs alt des images",
+						"ignored": "Test des mots-clés dans les attributs alt ignoré. Ajoutez des mots-clés"
+					},
+					"keywordDensity": {
+						"tooHigh": "La densité de mots-clés est de {density}%, ce qui est trop élevé. {count, plural, one {# mot-clé} other {# mots-clés}} trouvés.",
+						"mayBeTooHigh": "La densité de mots-clés est de {density}%, ce qui est peut-être trop élevé. {count, plural, one {# mot-clé} other {# mots-clés}} trouvés.",
+						"good": "La densité de mots-clés est de {density}%, ce qui est bon. {count, plural, one {# mot-clé} other {# mots-clés}} trouvés.",
+						"mayBeTooLow": "La densité de mots-clés est de {density}%, ce qui est peut-être trop faible. {count, plural, one {# mot-clé} other {# mots-clés}} trouvés.",
+						"tooLow": "La densité de mots-clés est de {density}%, ce qui est trop faible. {count, plural, one {# mot-clé} other {# mots-clés}} trouvés.",
+						"ignored": "Test de densité des mots-clés ignoré. Ajoutez des mots-clés"
+					},
+					"slugLength": {
+						"ok": "Le slug fait {count, plural, one {# caractère} other {# caractères}}",
+						"tooLong": "Le slug fait {count, plural, one {# caractère} other {# caractères}}. Utilisez un slug plus court",
+						"ignoredEmpty": "Test de longueur du slug ignoré car le slug est vide"
+					},
+					"externalLinks": {
+						"none": "Aucun lien externe trouvé",
+						"found": "{count, plural, one {# lien externe trouvé} other {# liens externes trouvés}}"
+					},
+					"internalLinks": {
+						"none": "Aucun lien interne trouvé",
+						"found": "{count, plural, one {# lien interne trouvé} other {# liens internes trouvés}}"
+					},
+					"imagesCount": {
+						"found": "{count, plural, one {# image trouvée} other {# images trouvées}}"
+					},
+					"imageAlt": {
+						"allHaveAlt": "Toutes les images ont un attribut alt",
+						"someMissingAlt": "{count, plural, one {# image sans attribut alt} other {# images sans attribut alt}}",
+						"ignoredNoImages": "Test des attributs alt ignoré car aucune image trouvée"
+					}
+				}
+			},
+			"links": {
+				"upgradeText": "L'analyse des liens est disponible sur le <strong>plan Growth</strong> et au-dessus. Mettez à niveau dès maintenant pour analyser les liens de vos articles et dire adieu aux liens brisés.",
+				"title": "Liens ({count})",
+				"recheckAll": "Tout revérifier",
+				"recheckFailed": "Échec de la revérification des liens",
+				"loadFailed": "Échec du chargement des liens",
+				"noLinks": "Aucun lien trouvé dans votre article",
+				"ok": "OK",
+				"broken": "Brisé",
+				"risky": "Risqué",
+				"redirect": "Redirection",
+				"ignored": "Ignoré",
+				"editInEditor": "Modifier dans l'éditeur",
+				"recheck": "Revérifier",
+				"ignoreLink": "Ignorer ce lien",
+				"unignoreLink": "Ne plus ignorer ce lien"
+			}
 		}
 	}
 }

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { variantSeoStore } from '../../../seoStore';
 	import SeoCurveSvg from './SeoCurveSvg.svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 </script>
 
 <div class="score-wrap">
@@ -14,7 +17,7 @@
 			</div>
 		</div>
 		<div class="score-value">
-			<div class="score-name">Score</div>
+			<div class="score-name">{i18n.t('console.postEditor.seo.score')}</div>
 			<div class="score-number">
 				{Math.round($variantSeoStore.average)}%
 			</div>

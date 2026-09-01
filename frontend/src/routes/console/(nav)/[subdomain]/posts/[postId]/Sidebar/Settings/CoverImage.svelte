@@ -10,6 +10,9 @@
 	} from '../../../postStore';
 	import ImageSetting from '../../../../settings/@components/ImageSetting.svelte';
 	import { updatePost } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -31,7 +34,7 @@
 	<SplitControl>
 		{#snippet label()}
 			<span>
-				Cover Image
+				{i18n.t('console.postEditor.settings.coverImage')}
 
 				<UnsavedTag
 					show={$postStore.featured_image_url !== $postOriginalStore.featured_image_url}

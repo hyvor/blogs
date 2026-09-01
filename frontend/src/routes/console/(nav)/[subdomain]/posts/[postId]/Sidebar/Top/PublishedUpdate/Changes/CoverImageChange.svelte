@@ -1,5 +1,8 @@
 <script lang="ts">
 	import IconArrowRight from '@hyvor/icons/IconArrowRight';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		featuredImageOld: string | null;
@@ -16,7 +19,7 @@
 			{#if featuredImageOld}
 				<img src={featuredImageOld} alt="old" />
 			{:else}
-				<span class="no">No image</span>
+				<span class="no">{i18n.t('console.postEditor.update.noImage')}</span>
 			{/if}
 		</div>
 		<div class="arrow">
@@ -28,7 +31,7 @@
 		{#if featuredImageNew}
 			<img src={featuredImageNew} alt="new" />
 		{:else}
-			<span class="no">No image</span>
+			<span class="no">{i18n.t('console.postEditor.update.noImage')}</span>
 		{/if}
 	</div>
 </div>

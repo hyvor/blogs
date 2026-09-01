@@ -14,6 +14,9 @@
 		callIgnoreLink,
 		callLinkAnalysisApi
 	} from '../../../../tools/link-analysis/linkAnalysisActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isReloading = $state(false);
 
@@ -118,7 +121,7 @@
 	</div>
 
 	<div class="link-buttons">
-		<Tooltip text="Edit in Editor">
+		<Tooltip text={i18n.t('console.postEditor.links.editInEditor')}>
 			<IconButton
 				size={22}
 				color="input"
@@ -128,13 +131,17 @@
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Recheck">
+		<Tooltip text={i18n.t('console.postEditor.links.recheck')}>
 			<IconButton size={22} color="input" on:click={handleReload} disabled={!isHttp || isReloading}>
 				<IconArrowClockwise size={12} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text={(linkStatusType === 'ignored' ? 'Unignore' : 'Ignore') + ' this link'}>
+		<Tooltip
+			text={linkStatusType === 'ignored'
+				? i18n.t('console.postEditor.links.unignoreLink')
+				: i18n.t('console.postEditor.links.ignoreLink')}
+		>
 			<IconButton
 				size={22}
 				color={linkStatusType === 'ignored' ? 'accent' : 'input'}

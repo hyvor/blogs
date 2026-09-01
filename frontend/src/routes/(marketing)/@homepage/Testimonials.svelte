@@ -39,6 +39,15 @@
 		},
 		{
 			type: 'text',
+			name: 'James Yang',
+			role: t('james.role'),
+			company: 'Kyzon Solutions',
+			imageUrl: '/images/homepage/testmonials/james-yang.jpeg',
+			summary: t('james.summary'),
+			quote: t('james.quote')
+		},
+		{
+			type: 'text',
 			name: 'Robert Levesque',
 			role: t('robert.role'),
 			company: 'PROinspection Québec',

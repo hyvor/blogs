@@ -11,6 +11,9 @@
 	import { autoTranslate } from './autoTranslateActions';
 	import type { PostVariant } from '../../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../../lib/stores/languagesStore';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loading = $state(false);
 
@@ -19,7 +22,7 @@
 		const variantId = $postStore.variants.find((v) => v.language_id === primaryLanguageId)?.id;
 
 		if (!variantId) {
-			toast.error('Primary language variant not found');
+			toast.error(i18n.t('console.postEditor.autoTranslate.primaryVariantNotFound'));
 			return;
 		}
 
@@ -40,7 +43,7 @@
 				$postEditor.setContent(res.content);
 			})
 			.catch((err) => {
-				toast.error('Auto-translation failed. Please try again later: ' + err.message);
+				toast.error(i18n.t('console.postEditor.autoTranslate.failed', { message: err.message }));
 			})
 			.finally(() => {
 				loading = false;
@@ -50,7 +53,7 @@
 
 {#if $postVariantLanguageStore && $postVariantLanguageStore.is_primary === false}
 	<Button size="small" style="margin-inline-end:8px" color="input" on:click={handleTranslate}>
-		Auto-Translate
+		{i18n.t('console.postEditor.autoTranslate.button')}
 		{#snippet end()}
 			{#if loading}
 				<Loader size="small" colorTrack="transparent" />

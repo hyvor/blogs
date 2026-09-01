@@ -19,6 +19,9 @@
 	import { authUserStore } from '../../../../../../lib/stores';
 	import { seoService } from '../../../seoStore';
 	import { linksService } from '../../Sidebar/Links/linksStore';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	// unique client ID for this tab
 	const clientId = Math.random().toString(36).slice(2);
@@ -174,7 +177,11 @@
 			editable={isEditable}
 			{schema}
 			editorConfig={fullEditorConfig}
-			plugins={[wordCountPlugin(), focusTitlePlugin(), scrollMarginPlugin()]}
+			plugins={[
+				wordCountPlugin((count) => i18n.t('console.postEditor.wordCount', { count })),
+				focusTitlePlugin(),
+				scrollMarginPlugin()
+			]}
 			oninit={handleInit}
 		/>
 	</div>

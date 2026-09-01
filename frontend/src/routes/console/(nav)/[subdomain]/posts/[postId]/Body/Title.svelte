@@ -10,6 +10,9 @@
 	import { TextSelection } from 'prosemirror-state';
 	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 	import { updatePostVariant } from '../../postActions';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const handleInput: FormEventHandler<HTMLTextAreaElement> = (event) => {
 		updatePostVariantStore({
@@ -111,7 +114,7 @@
 
 <div class="title-wrap">
 	<textarea
-		placeholder="Title..."
+		placeholder={i18n.t('console.postEditor.titlePlaceholder')}
 		value={$postVariantStore.title}
 		onkeydown={handleKeydown}
 		oninput={handleInput}

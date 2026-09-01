@@ -6,8 +6,11 @@ use App\Entity\Enum\RedirectType;
 
 class DeliveryResponse implements \JsonSerializable
 {
+ 
+    public readonly int $at;
 
-    public int $at;
+    // whether the response was created from our cache
+    private bool $fromCache = false;
 
     private function __construct(
         public readonly DeliveryResponseType $type,
@@ -101,5 +104,15 @@ class DeliveryResponse implements \JsonSerializable
         }
 
         return $response;
+    }
+
+    public function setFromCache(bool $fromCache): void
+    {
+        $this->fromCache = $fromCache;
+    }
+
+    public function isFromCache(): bool
+    {
+        return $this->fromCache;
     }
 }

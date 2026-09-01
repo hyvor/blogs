@@ -13,6 +13,9 @@
 
 	import LabelWithInfo from './LabelWithInfo.svelte';
 	import { slugGetInvalidCharater } from './slug';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let error: null | string = $state(null);
 	let warning: null | string = $state(null);
@@ -28,9 +31,9 @@
 		const invalidChar = slugGetInvalidCharater(val);
 
 		if (invalidChar) {
-			error = 'Slug cannot contain "' + invalidChar + '"';
+			error = i18n.t('console.postEditor.settings.slugInvalidChar', { char: invalidChar });
 		} else if (val.includes(' ')) {
-			warning = 'Tip: Use "-" instead of spaces';
+			warning = i18n.t('console.postEditor.settings.slugSpaceTip');
 		}
 	}
 
@@ -60,7 +63,7 @@
 			.then((res) => {
 				if (!res.available) {
 					loaderState = 'error';
-					error = 'Slug is already taken';
+					error = i18n.t('console.postEditor.settings.slugTaken');
 				} else {
 					if ($postVariantStore.status !== 'published') {
 						updatePostVariant({ slug })
@@ -89,7 +92,10 @@
 <SplitControl>
 	{#snippet label()}
 		<span>
-			<LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
+			<LabelWithInfo
+				label={i18n.t('console.postEditor.settings.slug')}
+				info={i18n.t('console.postEditor.settings.slugInfo')}
+			/>
 
 			<UnsavedTag show={$postVariantStore.slug !== $postVariantOriginalStore.slug} {loaderState} />
 		</span>

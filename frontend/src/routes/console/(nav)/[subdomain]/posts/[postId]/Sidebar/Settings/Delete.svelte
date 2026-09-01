@@ -6,16 +6,21 @@
 	import { getPrimaryLanguage } from '../../../../../../lib/stores/languagesStore';
 	import { goto } from '$app/navigation';
 	import { consoleUrlWithBlog } from '../../../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	async function handleClick() {
 		const confirmed = await confirm({
-			title: $postVariantLanguageStore.is_primary ? 'Delete Post' : 'Delete Variant',
-			content:
-				($postVariantLanguageStore.is_primary
-					? 'Are you sure you want to delete this post?'
-					: 'Are you sure you want to delete the ' + $postVariantLanguageStore.name + ' variant?') +
-				' This action is IRREVERSIBLE.',
-			confirmText: 'Yes, Delete',
+			title: $postVariantLanguageStore.is_primary
+				? i18n.t('console.postEditor.settings.deletePostTitle')
+				: i18n.t('console.postEditor.settings.deleteVariantTitle'),
+			content: $postVariantLanguageStore.is_primary
+				? i18n.t('console.postEditor.settings.deletePostConfirm')
+				: i18n.t('console.postEditor.settings.deleteVariantConfirm', {
+						language: $postVariantLanguageStore.name
+					}),
+			confirmText: i18n.t('console.postEditor.settings.deleteConfirmButton'),
 			danger: true,
 			autoClose: false
 		});
@@ -40,20 +45,22 @@
 			})
 			.catch(() => {
 				confirmed.close();
-				toast.error('Failed to delete');
+				toast.error(i18n.t('console.postEditor.settings.deleteFailed'));
 			});
 	}
 </script>
 
 <SplitControl>
 	{#snippet label()}
-		<span> Delete </span>
+		<span>{i18n.t('console.postEditor.settings.delete')}</span>
 	{/snippet}
 	<Button color="red" size="small" on:click={handleClick}>
 		{#if $postVariantLanguageStore.is_primary}
-			Delete Post
+			{i18n.t('console.postEditor.settings.deletePost')}
 		{:else}
-			Delete {$postVariantLanguageStore.name} Variant
+			{i18n.t('console.postEditor.settings.deleteVariant', {
+				language: $postVariantLanguageStore.name
+			})}
 		{/if}
 		{#snippet start()}
 			<IconTrash />

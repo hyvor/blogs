@@ -3,6 +3,9 @@
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { blogStore } from '../../../../../../lib/stores/blogStore';
 	import { postVariantLanguageStore, postStore, postVariantStore } from '../../../postStore';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDropdown = $state(false);
 
@@ -28,7 +31,9 @@
 <Dropdown align="center" bind:show={showDropdown} width={200}>
 	{#snippet trigger()}
 		<Button size="small" color="input" on:click={handleClick}>
-			{$postVariantStore.status === 'published' ? 'View' : 'Preview'}
+			{$postVariantStore.status === 'published'
+				? i18n.t('console.postEditor.preview.view')
+				: i18n.t('console.postEditor.preview.preview')}
 			{#snippet end()}
 				<IconBoxArrowUpRight size={12} />
 			{/snippet}
@@ -38,14 +43,14 @@
 	{#snippet content()}
 		<div class="dropdown-content">
 			<Button block color="input" on:click={() => handleOpenNewTab(previewUrl)}>
-				Preview
+				{i18n.t('console.postEditor.preview.preview')}
 				{#snippet end()}
 					<IconBoxArrowUpRight size={12} />
 				{/snippet}
 			</Button>
 
 			<Button block on:click={() => handleOpenNewTab($postVariantStore.url)}>
-				Published Post
+				{i18n.t('console.postEditor.preview.publishedPost')}
 				{#snippet end()}
 					<IconBoxArrowUpRight size={12} />
 				{/snippet}
