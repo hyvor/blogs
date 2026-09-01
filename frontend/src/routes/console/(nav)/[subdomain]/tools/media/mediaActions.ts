@@ -17,6 +17,8 @@ export const IMAGE_EXTENSIONS = [
 	'webp'
 ];
 
+export const AUDIO_EXTENSIONS = ['mp3', 'wav', 'ogg', 'wma', 'flac', 'aac'];
+
 export function getExtensionsByFileType(fileType: FileType, customExtensions: string[]) {
 	switch (fileType) {
 		case 'all':
@@ -28,7 +30,7 @@ export function getExtensionsByFileType(fileType: FileType, customExtensions: st
 		case 'documents':
 			return ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'txt'];
 		case 'audio':
-			return ['mp3', 'wav', 'ogg', 'wma', 'flac', 'aac'];
+			return AUDIO_EXTENSIONS;
 		case 'archives':
 			return ['zip', 'rar', '7z', 'tar', 'gz', 'bz2'];
 		case 'custom':
