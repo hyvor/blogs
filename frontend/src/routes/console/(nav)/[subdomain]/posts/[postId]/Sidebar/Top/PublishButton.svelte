@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		Button,
+		confetti,
 		FormControl,
 		Modal,
 		Radio,
@@ -49,7 +50,7 @@
 				published = { status: type, url: v.url };
 
 				if (type === 'published') {
-					// confetti
+					confetti();
 				}
 			})
 			.catch(() => {

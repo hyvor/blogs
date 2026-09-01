@@ -31,7 +31,8 @@ class DeliveryService
          if ($useCache) {
              $cached = $this->blogCacheService->getResponse($blog, $path);
              if ($cached !== null) {
-                 return $cached;
+                $cached->setFromCache(true);
+                return $cached;
              }
          }
 
@@ -49,19 +50,21 @@ class DeliveryService
         $deliveryResponse = $this->getResponse($blog, $path);
 
         if ($deliveryResponse->type === DeliveryResponseType::REDIRECT) {
-            return new RedirectResponse(
+            $response = new RedirectResponse(
                 $deliveryResponse->to ?? '/',
                 $deliveryResponse->status,
             );
+        } else {
+            $response = new Response(
+                $deliveryResponse->content,
+                $deliveryResponse->status,
+            );
+            $response->headers->set('Content-Type', $deliveryResponse->mimeType);
+            $response->headers->set('Cache-Control', $deliveryResponse->cacheControl->toHeaderValue());
+            $response->headers->set('Access-Control-Allow-Origin', '*');
         }
 
-        $response = new Response(
-            $deliveryResponse->content,
-            $deliveryResponse->status,
-        );
-        $response->headers->set('Content-Type', $deliveryResponse->mimeType);
-        $response->headers->set('Cache-Control', $deliveryResponse->cacheControl->toHeaderValue());
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('X-HB-Cache', $deliveryResponse->isFromCache() ? 'HIT' : 'MISS');
 
         return $response;
     }
