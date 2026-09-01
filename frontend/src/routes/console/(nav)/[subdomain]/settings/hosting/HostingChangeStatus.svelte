@@ -17,7 +17,7 @@
 	const hostingAtLabels: Record<HostingChangeAt, string> = {
 		subdomain: 'Subdomain',
 		domain: 'Custom Domain',
-		self: 'Self-Hosted'
+		self: 'Self-Serving'
 	};
 
 	// poll faster right after the change is triggered, then back off

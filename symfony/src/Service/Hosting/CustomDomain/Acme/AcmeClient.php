@@ -9,6 +9,7 @@ use App\Service\Hosting\CustomDomain\Acme\Dto\FinalCertificate;
 use App\Service\Hosting\CustomDomain\Acme\Dto\OrderResponse;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\HeaderBag;
@@ -48,9 +49,13 @@ class AcmeClient implements LoggerAwareInterface
      */
     public function getCertificateFor(
         string $domain,
-        \OpenSSLAsymmetricKey $privateKey
+        \OpenSSLAsymmetricKey $privateKey,
+        ?LoggerInterface $logger = null
     ): FinalCertificate
     {
+        if ($logger) {
+            $this->setLogger($logger);
+        }
         $this->init();
         $pendingOrder = $this->newOrder($domain);
         return $this->finalizeOrder($pendingOrder, $privateKey);
@@ -236,7 +241,16 @@ class AcmeClient implements LoggerAwareInterface
         } while ($authorization->status === 'pending' && $attempt < $maxAttempts);
 
         if ($authorization->status !== 'valid') {
-            throw new AcmeException('Authorization failed, status: ' . $authorization->status); // @codeCoverageIgnore
+            $error = $authorization->getError();
+
+            $this->logger?->error('Authorization failed', [
+                'status' => $authorization->status,
+                'error' => $error?->describe(),
+            ]);
+
+            throw new AcmeException(
+                'Authorization failed, status: ' . $authorization->status
+            );
         }
 
         // Finalize order
@@ -279,7 +293,15 @@ class AcmeClient implements LoggerAwareInterface
         );
 
         if ($response->status !== 'valid') {
-            throw new AcmeException('Order finalization failed, status: ' . $response->status); // @codeCoverageIgnore
+            $this->logger?->error('Order finalization failed', [
+                'status' => $response->status,
+                'error' => $response->error?->describe(),
+            ]);
+
+            throw new AcmeException(
+                'Order finalization failed, status: ' . $response->status .
+                ($response->error ? '. ACME error: ' . $response->error->describe() : '')
+            );
         }
 
         if (!$response->certificate) {

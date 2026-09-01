@@ -1,8 +1,17 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Modal, confirm, toast, Tag } from '@hyvor/design/components';
+	import {
+		Button,
+		ButtonGroup,
+		Callout,
+		Modal,
+		confirm,
+		toast,
+		Tag
+	} from '@hyvor/design/components';
 	import { deleteCustomDomainIntent, verifyCustomDomainSetup } from './hostingActions';
 	import { hostingInfoStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import DnsInstructions from './DnsInstructions.svelte';
+	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 
 	interface Props {
 		show: boolean;
@@ -14,20 +23,37 @@
 
 	let intent = $derived($hostingInfoStore.custom_domain_intent);
 
+	interface VerifyError {
+		message: string;
+		data: { debug_error?: string; debug_logs?: string } | null;
+	}
+
+	let verifyError: VerifyError | null = $state(null);
+	let showDebugInfo = $state(false);
+
+	// reset the error state whenever the modal is (re)opened
+	$effect(() => {
+		if (show) {
+			verifyError = null;
+			showDebugInfo = false;
+		}
+	});
+
 	async function handleVerify() {
 		loading = 'Verifying...';
+		verifyError = null;
+		showDebugInfo = false;
 
 		try {
 			const result = await verifyCustomDomainSetup();
 			updateHostingInfoStore(result);
 			toast.success('Domain verified! Applying the certificate now...');
 		} catch (err: any) {
-			toast.warning(
-				err.message || 'DNS verification failed. Please check your DNS settings and try again.',
-				{
-					duration: 15000
-				}
-			);
+			verifyError = {
+				message:
+					err.message || 'DNS verification failed. Please check your DNS settings and try again.',
+				data: err.data ?? null
+			};
 		}
 		loading = false;
 	}
@@ -83,6 +109,30 @@
 		</div>
 	{/if}
 
+	{#if verifyError}
+		<div class="section">
+			<Callout type="danger">{verifyError.message}</Callout>
+
+			{#if verifyError.data?.debug_error}
+				<div class="debug-toggle">
+					<Button size="small" color="input" on:click={() => (showDebugInfo = !showDebugInfo)}>
+						{showDebugInfo ? 'Hide' : 'Show'} Debug Information
+						{#snippet end()}
+							<IconChevronDown size={14} />
+						{/snippet}
+					</Button>
+				</div>
+
+				{#if showDebugInfo}
+					<pre class="debug">{verifyError.data.debug_error}</pre>
+					{#if verifyError.data.debug_logs}
+						<pre class="debug">{verifyError.data.debug_logs}</pre>
+					{/if}
+				{/if}
+			{/if}
+		</div>
+	{/if}
+
 	{#snippet footer()}
 		<ButtonGroup>
 			{#if intent && !intent.has_certificate}
@@ -109,5 +159,20 @@
 	}
 	.section-domain {
 		font-weight: 600;
+	}
+	.debug-toggle {
+		margin-top: 8px;
+	}
+	.debug {
+		margin: 0;
+		padding: 12px;
+		background: var(--bg2);
+		border-radius: var(--box-radius);
+		font-family: monospace;
+		font-size: 13px;
+		white-space: pre-wrap;
+		word-break: break-word;
+		max-height: 300px;
+		overflow-y: auto;
 	}
 </style>

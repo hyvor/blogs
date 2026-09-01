@@ -10,6 +10,7 @@ use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
 class CustomDomainIntentService
@@ -113,7 +114,10 @@ class CustomDomainIntentService
      * Generates a TLS certificate via ACME (Let's Encrypt) and stores it in the intent.
      * @throws AcmeException
      */
-    public function generateCertificateAndUpdate(CustomDomainIntent $intent): void
+    public function generateCertificateAndUpdate(
+        CustomDomainIntent $intent,
+        ?LoggerInterface $logger = null
+    ): void
     {
         $privateKeyPem = PrivateKey::generatePrivateKeyPem();
         $privateKey = openssl_pkey_get_private($privateKeyPem);
@@ -121,7 +125,7 @@ class CustomDomainIntentService
             throw new \RuntimeException('Failed to load generated private key'); // @codeCoverageIgnore
         }
 
-        $finalCert = $this->acmeClient->getCertificateFor($intent->getDomain(), $privateKey);
+        $finalCert = $this->acmeClient->getCertificateFor($intent->getDomain(), $privateKey, logger: $logger);
 
         $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
         $intent->setCertificate($finalCert->certificatePem);

@@ -13,6 +13,7 @@ use App\Api\Console\Object\HostingChangeObject;
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainTlsProvider;
+use App\Service\App\Logger\RecordingLogger;
 use App\Service\AppConfig;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
@@ -22,6 +23,8 @@ use App\Service\Hosting\CustomDomain\Exception\InvalidTlsCertificateException;
 use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Hosting\HostingChangeService;
+use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -37,6 +40,7 @@ class HostingController extends AbstractController
         private ConsoleApiAuthorizationListener $authorizationListener,
         private AppConfig $appConfig,
         private InternalCustomDomainVerificationService $internalCustomDomainVerificationService,
+        private LoggerInterface $logger
     ) {}
 
     #[Route('/hosting', methods: 'GET')]
@@ -198,6 +202,8 @@ class HostingController extends AbstractController
     #[ScopeRequired(Scope::BLOG_WRITE)]
     public function verifyCustomDomainIntent(): JsonResponse
     {
+        set_time_limit(300); // 5 minutes
+
         $blog = $this->authorizationListener->getBlog();
         $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
 
@@ -212,18 +218,34 @@ class HostingController extends AbstractController
         $domain = $intent->getDomain();
 
         // first verify internally before attempting ACME
-        try {
-            $this->internalCustomDomainVerificationService->verify($domain);
-        } catch (InternalCustomDomainVerificationException) {
-            throw new BadRequestHttpException(
-                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again."
-            );
-        }
+//        try {
+//            $this->internalCustomDomainVerificationService->verify($domain);
+//        } catch (InternalCustomDomainVerificationException $e) {
+//            throw new DataCarryingHttpException(
+//                400,
+//                [
+//                    'debug_error' => $e->getPrevious()?->getMessage(),
+//                ],
+//                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again.",
+//            );
+//        }
+
+        $recodingLogger = new RecordingLogger($this->logger);
 
         try {
-            $this->customDomainIntentService->generateCertificateAndUpdate($intent);
+            $this->customDomainIntentService->generateCertificateAndUpdate(
+                $intent,
+                logger: $recodingLogger
+            );
         } catch (AcmeException $e) {
-            throw new BadRequestHttpException('Unable to generate certificate via ACME protocol: ' . $e->getMessage());
+            throw new DataCarryingHttpException(
+                400,
+                [
+                    'debug_error' => $e->getMessage(),
+                    'debug_logs' => $recodingLogger->getLogsAsString(),
+                ],
+                'Unable to generate certificate via ACME protocol: ' . $e->getMessage()
+            );
         }
 
         try {

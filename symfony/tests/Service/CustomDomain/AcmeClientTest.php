@@ -78,16 +78,85 @@ class AcmeClientTest extends KernelTestCase
     }
 
     /**
+     * @throws AcmeException
+     */
+    public function test_finalize_order_includes_acme_error_detail_when_authorization_fails(): void
+    {
+        Clock::set(new MockClock());
+        $this->getService(CacheItemPoolInterface::class)->clear();
+
+        $mockClient = new MockHttpClient(function (string $method, string $url): MockResponse {
+            if ($method === 'GET') {
+                return $this->directoryResponse();
+            }
+            if ($method === 'HEAD') {
+                return $this->nonceResponse();
+            }
+
+            return match ($url) {
+                'https://acme.org/newAccount' => new JsonMockResponse([], info: [
+                    'response_headers' => ['Location' => ['https://acme.org/acct/1']],
+                ]),
+                'https://acme.org/newOrder' => new JsonMockResponse(
+                    [
+                        'status' => 'pending',
+                        'authorizations' => ['https://acme.org/authz/1'],
+                        'finalize' => 'https://acme.org/finalize/1',
+                    ],
+                    info: ['response_headers' => ['Location' => ['https://acme.org/order/1']]],
+                ),
+                'https://acme.org/authz/1' => new JsonMockResponse([
+                    'status' => 'invalid',
+                    'challenges' => [
+                        [
+                            'type' => 'http-01',
+                            'url' => 'https://acme.org/challenge/1',
+                            'token' => 'challenge-token-123',
+                            'status' => 'invalid',
+                            'error' => [
+                                'type' => 'urn:ietf:params:acme:error:connection',
+                                'detail' => '198.51.100.1: Fetching http://custom-domain.localhost/.well-known/acme-challenge/challenge-token-123: Connection refused',
+                                'status' => 400,
+                            ],
+                        ],
+                    ],
+                ]),
+                'https://acme.org/challenge/1' => new JsonMockResponse([]),
+                default => new MockResponse('', ['http_code' => 404]),
+            };
+        });
+        static::getContainer()->set(HttpClientInterface::class, $mockClient);
+
+        $client = $this->getService(AcmeClient::class);
+        $client->init();
+        $pendingOrder = $client->newOrder('custom-domain.localhost');
+
+        $pkey = openssl_pkey_new();
+        assert($pkey !== false);
+
+        try {
+            $client->finalizeOrder($pendingOrder, $pkey);
+            $this->fail('Expected AcmeException to be thrown');
+        } catch (AcmeException $e) {
+            $this->assertStringContainsString('status: invalid', $e->getMessage());
+            $this->assertStringContainsString('Connection refused', $e->getMessage());
+            $this->assertStringContainsString('urn:ietf:params:acme:error:connection', $e->getMessage());
+        }
+    }
+
+    /**
      * @param \Closure(): JsonMockResponse $authorizationResponses
      */
     private function mockClient(
         \Closure $authorizationResponses,
         MockResponse $certificateResponse,
+        ?JsonMockResponse $orderResponse = null,
     ): MockHttpClient
     {
         return new MockHttpClient(function (string $method, string $url) use (
             $authorizationResponses,
             $certificateResponse,
+            $orderResponse,
         ): MockResponse {
             if ($method === 'GET') {
                 return $this->directoryResponse();
@@ -111,7 +180,7 @@ class AcmeClientTest extends KernelTestCase
                 'https://acme.org/authz/1' => $authorizationResponses(),
                 'https://acme.org/challenge/1' => new JsonMockResponse([]),
                 'https://acme.org/finalize/1' => new JsonMockResponse([]),
-                'https://acme.org/order/1' => new JsonMockResponse([
+                'https://acme.org/order/1' => $orderResponse ?? new JsonMockResponse([
                     'status' => 'valid',
                     'finalize' => 'https://acme.org/finalize/1',
                     'authorizations' => [],
