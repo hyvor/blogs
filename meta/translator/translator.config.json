@@ -1,18 +1,21 @@
 {
-	"languages": [
-		{ "code": "fr", "name": "French" }
-	],
-	"translatables": [
-		{
-			"source": "../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json",
-			"target": "../../frontend/src/routes/(marketing)/[[lang]]/locale/{lang}.json",
-			"shortname": "marketing"
-		},
-		{
-			"source": "../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/**/*.svelte",
-			"target": "../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/{lang}/**/*.svelte",
-			"shortname": "docs"
-		}
-	],
-	"ignore": []
+    "languages": [{ "code": "fr", "name": "French" }],
+    "translatables": [
+        {
+            "source": "../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json",
+            "target": "../../frontend/src/routes/(marketing)/[[lang]]/locale/{lang}.json",
+            "shortname": "marketing"
+        },
+        {
+            "source": "../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/*.md",
+            "target": "../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/{lang}/*.md",
+            "shortname": "docs"
+        },
+        {
+            "source": "../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/*.md",
+            "target": "../../frontend/src/routes/(marketing)/[[lang]]/hosting/{lang}/*.md",
+            "shortname": "hosting"
+        }
+    ],
+    "ignore": []
 }

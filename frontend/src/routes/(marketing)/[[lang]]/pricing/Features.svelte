@@ -47,9 +47,9 @@
 				{
 					name: I18n.t('pricing.compare.features.blogs.name'),
 					personal: '1',
-					starter: val('multiple'),
-					growth: val('multiple'),
-					premium: val('multiple'),
+					starter: val('unlimited'),
+					growth: val('unlimited'),
+					premium: val('unlimited'),
 					enterprise: val('custom'),
 					tooltip: I18n.t('pricing.compare.features.blogs.tooltip')
 				},
@@ -99,6 +99,24 @@
 					tooltip: I18n.t('pricing.compare.features.multiLanguage.tooltip')
 				},
 				{
+					name: I18n.t('pricing.compare.features.realtimeCollab.name'),
+					personal: true,
+					starter: true,
+					growth: true,
+					premium: true,
+					enterprise: true,
+					tooltip: I18n.t('pricing.compare.features.realtimeCollab.tooltip')
+				},
+				{
+					name: I18n.t('pricing.compare.features.suggestionMode.name'),
+					personal: true,
+					starter: true,
+					growth: true,
+					premium: true,
+					enterprise: true,
+					tooltip: I18n.t('pricing.compare.features.suggestionMode.tooltip')
+				},
+				{
 					name: I18n.t('pricing.compare.features.noBranding.name'),
 					personal: false,
 					starter: true,
@@ -124,20 +142,15 @@
 					premium: true,
 					enterprise: true,
 					tooltip: I18n.t('pricing.compare.features.linkAnalysis.tooltip')
-				}
-			]
-		},
-		{
-			category: I18n.t('pricing.compare.categories.ai'),
-			features: [
+				},
 				{
-					name: I18n.t('pricing.compare.features.gptWriting.name'),
+					name: I18n.t('pricing.compare.features.aiAgent.name'),
 					personal: false,
-					starter: val('aiTokens', '1m'),
-					growth: val('aiTokens', '3m'),
-					premium: val('aiTokens', '10m'),
+					starter: val('aiUsage', 1),
+					growth: val('aiUsage', 4),
+					premium: val('aiUsage', 12),
 					enterprise: val('custom'),
-					tooltip: I18n.t('pricing.compare.features.gptWriting.tooltip')
+					tooltip: I18n.t('pricing.compare.features.aiAgent.tooltip')
 				}
 			]
 		},
@@ -216,15 +229,6 @@
 					premium: false,
 					enterprise: true,
 					tooltip: I18n.t('pricing.compare.features.sso.tooltip')
-				},
-				{
-					name: I18n.t('pricing.compare.features.compliance.name'),
-					personal: false,
-					starter: false,
-					growth: false,
-					premium: false,
-					enterprise: true,
-					tooltip: I18n.t('pricing.compare.features.compliance.tooltip')
 				},
 				{
 					name: I18n.t('pricing.compare.features.prioritySupport.name'),

@@ -5,6 +5,7 @@
 		icon?: null | string;
 		h2Style?: string | undefined;
 		wrapStyle?: string | undefined;
+		id?: string | undefined;
 	}
 
 	let {
@@ -12,12 +13,13 @@
 		subtitle = undefined,
 		icon = null,
 		h2Style = undefined,
-		wrapStyle = undefined
+		wrapStyle = undefined,
+		id = undefined
 	}: Props = $props();
 </script>
 
 <div class="wrap" style={wrapStyle}>
-	<h2 style={h2Style}>
+	<h2 {id} style={h2Style}>
 		{title}
 		{#if icon}
 			<div class="img-wrap">

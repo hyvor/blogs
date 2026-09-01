@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { LogoStrip } from '@hyvor/design/marketing';
-	import logoAqeez from '$lib/img/customers/aqeez.svg';
-	import logoSubdivisions from '$lib/img/customers/subdivisions.svg';
-	import logoTimesOfMadeira from '$lib/img/customers/timesofmadeira.svg';
-	import logoJobPosts from '$lib/img/customers/jobposts.webp';
-	import yogakiddy from '$lib/img/customers/yogakiddy.png';
-	import logoUniverbal from '$lib/img/customers/univerbal.svg';
+
+	const base = '/images/homepage/logo-stripe';
 
 	const logos = [
-		{ name: 'Aqeez', src: logoAqeez },
-		{ name: 'Times of Madeira', src: logoTimesOfMadeira, height: 52 },
-		{ name: 'Subdivisions', src: logoSubdivisions },
-		{ name: 'Job Posts', src: logoJobPosts, width: 100, height: 26 },
-		{ name: 'Univerbal', src: logoUniverbal, width: 110, height: 42 }
+		{ name: 'Enthuziastic', src: `${base}/enthuziastic.svg`, width: 132, height: 22 },
+		{ name: 'OpenVM', src: `${base}/openvm.svg`, width: 96, height: 30 },
+		{ name: 'Subdivisions', src: `${base}/subdivisions.svg`, width: 135, height: 35 },
+		{ name: 'Univerbal', src: `${base}/univerbal.svg`, width: 111, height: 28 },
+		{ name: 'Organizely', src: `${base}/organizely.svg`, width: 25, height: 30 },
+		{
+			name: 'Kyzon',
+			src: `${base}/kyzon.svg`,
+			width: 120,
+			height: 30,
+			color: true
+		}
 	];
 </script>
 
-<LogoStrip {logos} label="Trusted by 100+ bloggers & businesses" background="#574443" />
+<LogoStrip
+	{logos}
+	label="Trusted by 100+ bloggers & businesses"
+	background="#574443"
+	marquee={true}
+/>

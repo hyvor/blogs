@@ -255,7 +255,33 @@
 		},
 		"testimonials": {
 			"label": "Témoignages",
-			"title": "Ne nous croyez pas sur parole.<br />Écoutez nos clients."
+			"title": "Ne nous croyez pas sur parole.<br />Écoutez nos clients.",
+			"reviews": {
+				"leo": {
+					"role": "Directeur des opérations",
+					"summary": "La lourdeur de WordPress, résolue",
+					"quote": "J'avais besoin d'un outil de blog simple, facile à utiliser, rapide, élégant et mature, qui résout la lourdeur de WordPress. Hyvor Blogs le fait à merveille."
+				},
+				"ashutosh": {
+					"role": "Responsable senior, Marketing",
+					"summary": "Clair et simple"
+				},
+				"robert": {
+					"role": "Fondateur",
+					"summary": "Un vrai plaisir à utiliser !",
+					"quote": "J'adore Hyvor Blogs ! C'est un bijou : simple, fluide et agréable. L'équipe est incroyable, réactive et bienveillante. Une combinaison parfaite entre qualité, performance et humanité. Un coup de cœur absolu !"
+				},
+				"riccardo": {
+					"role": "Ingénieur en développement de systèmes",
+					"summary": "Une excellente plateforme pour les blogueurs",
+					"quote": "Hyvor Blogs fonctionne, tout simplement. Élégant, sans maintenance et porté par une assistance formidable. Cela me permet de me concentrer sur l'essentiel : écrire."
+				},
+				"manoj": {
+					"role": "Ingénieur applicatif senior",
+					"summary": "Fluide pour les lecteurs comme pour les rédacteurs",
+					"quote": "La plateforme offre une expérience fluide et conviviale, aussi bien pour les blogueurs que pour les lecteurs. Les options de personnalisation sont nombreuses et permettent de créer un blog unique et visuellement attrayant."
+				}
+			}
 		}
 	},
 	"pricing": {
@@ -270,18 +296,17 @@
 			"scrollNext": "Faire défiler vers plus de forfaits"
 		},
 		"plans": {
-			"personal": "Personnel",
+			"personal": "Personal",
 			"starter": "Starter",
-			"growth": "Croissance",
+			"growth": "Growth",
 			"premium": "Premium",
-			"enterprise": "Entreprise",
+			"enterprise": "Enterprise",
 			"popular": "Populaire",
 			"mostPopular": "Le plus populaire",
 			"custom": "Sur mesure",
 			"perMonth": "/mois",
 			"perYear": "/an",
 			"billedAnnually": "*Facturé annuellement à {currency}{price}/an",
-			"featuresLabel": "Fonctionnalités",
 			"ctaChoosePlan": "Choisir ce forfait",
 			"ctaContactSales": "Contacter les ventes",
 			"taglinePersonal": "Pour les blogueurs indépendants",
@@ -291,21 +316,24 @@
 			"taglineEnterprise": "Pour des besoins personnalisés à grande échelle",
 			"features": {
 				"inherits": "Toutes les fonctionnalités de {plan}",
+				"customLimits": "Limites personnalisées",
 				"blogs": "{value, plural, one {# blog} other {# blogs}}",
-				"blogsMultiple": "Plusieurs blogs",
+				"blogsMultiple": "Aucune limite de blogs",
 				"users": "{value, plural, one {# utilisateur} other {# utilisateurs}}",
 				"storage": "{value} Go de stockage média",
-				"customThemesDomain": "Thèmes et domaine personnalisés",
+				"customDomains": "Domaines personnalisés",
+				"customThemes": "Thèmes personnalisés",
 				"multiLanguage": "Prise en charge multilingue",
 				"allApis": "Toutes les API incluses",
+				"freeIntegrations": "Hyvor Talk et Hyvor Post",
 				"noBranding": "Sans marque Hyvor Blogs",
 				"seoAnalysis": "Analyse SEO",
 				"linkAnalysis": "Analyse des liens",
-				"aiTokens": "{value} jetons IA/mois",
-				"sso": "SSO et SAML",
-				"compliance": "Conforme au RGPD, CCPA et ISO",
+				"aiAgent": "Agent IA",
+				"aiAgentUsage": "Agent IA (utilisation x{value})",
+				"sso": "SSO OIDC",
 				"prioritySupport": "Support prioritaire",
-				"customContract": "Contrat et SLA personnalisés"
+				"customContract": "SLA personnalisé"
 			}
 		},
 		"compare": {
@@ -316,16 +344,15 @@
 			"nextPlan": "Forfait suivant",
 			"categories": {
 				"basic": "Fonctionnalités de base",
-				"ai": "Fonctionnalités IA",
 				"developer": "Développeur",
 				"integrations": "Intégrations",
-				"enterprise": "Entreprise"
+				"enterprise": "Enterprise"
 			},
 			"values": {
 				"custom": "Sur mesure",
-				"multiple": "Plusieurs",
+				"unlimited": "Illimité",
 				"storage": "{value} Go",
-				"aiTokens": "{value} jetons/mois",
+				"aiUsage": "×{value} utilisation",
 				"credits": "{value} crédits/mois",
 				"emails": "{value} emails/mois"
 			},
@@ -347,12 +374,20 @@
 					"tooltip": "Utilisez des thèmes par défaut gratuitement ou créez votre propre thème personnalisé."
 				},
 				"customDomain": {
-					"name": "Domaine personnalisé",
+					"name": "Domaines personnalisés",
 					"tooltip": "Hébergez votre blog sur votre propre domaine."
 				},
 				"multiLanguage": {
 					"name": "Prise en charge multilingue",
 					"tooltip": "Ajoutez plusieurs langues à votre blog et traduisez vos articles."
+				},
+				"realtimeCollab": {
+					"name": "Collaboration en temps réel",
+					"tooltip": "Modifiez le même article à plusieurs et voyez les curseurs de vos coéquipiers en direct."
+				},
+				"suggestionMode": {
+					"name": "Mode suggestion",
+					"tooltip": "Proposez des modifications sous forme de suggestions sans écraser le brouillon original."
 				},
 				"noBranding": {
 					"name": "Sans marque",
@@ -366,13 +401,13 @@
 					"name": "Analyse des liens",
 					"tooltip": "Analyse des liens par article, analyse bihebdomadaire de l'ensemble du blog, et rapports par email."
 				},
-				"gptWriting": {
-					"name": "Rédaction GPT",
-					"tooltip": "Utilisez OpenAI GPT pour la rédaction de contenu et la génération de mots-clés. ~1 000 jetons ≈ 750 mots."
+				"aiAgent": {
+					"name": "Agent IA",
+					"tooltip": "Agent IA pour la génération de contenu, les suggestions d'amélioration et l'édition groupée d'articles (par ex. ajouter des liens internes). Les forfaits supérieurs incluent une utilisation mensuelle plus élevée."
 				},
 				"dataApi": {
-					"name": "API de données",
-					"tooltip": "Accédez aux données publiques de votre blog via l'API."
+					"name": "API de données / Headless",
+					"tooltip": "Servez votre blog en mode headless - récupérez articles, pages et autres contenus via l'API de données."
 				},
 				"consoleApi": {
 					"name": "API Console",
@@ -395,27 +430,23 @@
 					"tooltip": "Ajoutez gratuitement le système de newsletter Hyvor Post. Inclut une licence gratuite pour Hyvor Post."
 				},
 				"sso": {
-					"name": "SSO et SAML",
-					"tooltip": "Authentification unique via SAML pour le fournisseur d'identité de votre organisation."
-				},
-				"compliance": {
-					"name": "Conformité RGPD, CCPA et ISO",
-					"tooltip": "Documentation de conformité officielle et accords de traitement des données (DPA) pour les organisations réglementées."
+					"name": "SSO OIDC",
+					"tooltip": "Authentification unique via OIDC pour le fournisseur d'identité de votre organisation."
 				},
 				"prioritySupport": {
 					"name": "Support prioritaire",
 					"tooltip": "Un support dédié et à réponse rapide pour votre équipe."
 				},
 				"customContract": {
-					"name": "Contrat et SLA personnalisés",
+					"name": "SLA personnalisé",
 					"tooltip": "Des conditions contractuelles sur mesure et un accord de niveau de service."
 				}
 			}
 		},
 		"selfHost": {
-			"eyebrow": "Open Source",
+			"eyebrow": "Open-Source",
 			"title": "Vous préférez l'auto-hébergement ?",
-			"description": "Hyvor Blogs est gratuit et open-source. Déployez-le sur votre propre infrastructure et gardez le contrôle total de vos données. Aucun abonnement requis.",
+			"description": "Hyvor Blogs est gratuit et open-source. Déployez-le sur votre propre infrastructure et gardez le contrôle total de vos données.",
 			"bulletFree": "Gratuit et open-source, sans frais de licence",
 			"bulletDocker": "Déployez avec Docker en quelques commandes",
 			"bulletOwnership": "Propriété totale de vos données et de votre infrastructure",
@@ -426,19 +457,37 @@
 		"faq": {
 			"title": "Questions fréquentes",
 			"questionTrial": "Comment fonctionne l'essai gratuit ?",
-			"answerTrial": "Tout le monde peut s'inscrire à l'<strong>essai gratuit de 14 jours</strong> pour tester Hyvor Blogs. Aucune carte bancaire requise. Toutes les fonctionnalités sont disponibles pendant l'essai (sauf l'intégration Hyvor Talk). Après l'essai, vous pouvez passer à un forfait payant pour continuer à utiliser Hyvor Blogs.",
+			"answerTrial": "Tout le monde peut s'inscrire à l'<strong>essai gratuit de 14 jours</strong> pour tester Hyvor Blogs. Aucune carte bancaire requise. Toutes les fonctionnalités sont disponibles pendant l'essai. Après l'essai, vous pouvez passer à un forfait payant pour continuer à utiliser Hyvor Blogs.",
+			"questionPlanChange": "Puis-je changer de forfait plus tard ?",
+			"answerPlanChange": "Oui. Vous pouvez changer de forfait à tout moment depuis les paramètres de facturation de votre console.",
+			"questionPayment": "Quels moyens de paiement acceptez-vous ?",
+			"answerPayment": "Nous acceptons toutes les principales cartes de crédit et de débit via notre prestataire de paiement. Les clients Enterprise peuvent également payer par facture et virement bancaire. Consultez notre <a href=\"https://hyvor.com/docs/billing\" target=\"_blank\" rel=\"noopener\">documentation sur la facturation</a> pour plus de détails.",
+			"questionOverage": "Que se passe-t-il si j'atteins les limites de mon forfait ?",
+			"answerOverage": "Nous vous prévenons lorsque vous approchez d'une limite telle que les membres de l'équipe, le stockage média ou l'utilisation de l'IA. Votre blog continue de fonctionner normalement, et vous pouvez passer à un forfait supérieur à tout moment pour augmenter les limites.",
+			"questionEnterprise": "Comment fonctionne la tarification Enterprise ?",
+			"answerEnterprise": "Les forfaits Enterprise sont tarifés sur mesure en fonction de votre utilisation, des limites dont vous avez besoin et de vos exigences d'assistance. <a href=\"https://hyvor.com/enterprise\" target=\"_blank\" rel=\"noopener\">Contactez notre équipe commerciale</a> pour obtenir un devis.",
 			"questionThemes": "Dois-je payer pour les thèmes ?",
-			"answerThemes": "Non, tous les thèmes officiels sont <strong>gratuits et <a href=\"https://github.com/hyvor/hyvor-blogs-themes\" target=\"_blank\" rel=\"noopener\">open-source</a></strong>. Ils peuvent être facilement installés sur votre blog en quelques clics. Si vous souhaitez créer votre propre thème, vous devrez couvrir les frais de développement.",
+			"answerThemes": "Non, tous les thèmes officiels sont <strong>gratuits et <a href=\"https://github.com/hyvor/hyvor-blogs-themes\" target=\"_blank\" rel=\"noopener\">open-source</a></strong>. Ils peuvent être facilement installés sur votre blog en quelques clics.",
 			"questionDiscounts": "Proposez-vous des réductions ?",
 			"answerDiscounts": "Vous bénéficiez de <strong>2 mois offerts</strong> si vous payez annuellement. De plus, nous offrons une réduction de 10 % aux organisations à but non lucratif et aux jeunes startups. Contactez-nous via le chat en direct pour obtenir le code promo.",
 			"questionOwnership": "Qui est propriétaire du contenu que j'écris ?",
 			"answerOwnership": "Vous êtes propriétaire de tout ce que vous écrivez. Vous décidez de ce que vous faites de votre contenu. Vous pouvez exporter votre contenu à tout moment et migrer vers une autre plateforme.",
 			"questionLimits": "Y a-t-il des limitations de bande passante/pages vues ?",
 			"answerLimits": "Non, nous ne limitons pas le nombre de pages vues ni la bande passante. Grâce à une mise en cache et des optimisations poussées, nous pouvons gérer un grand nombre de pages vues sans aucun problème.",
-			"questionAds": "Puis-je afficher des publicités sur mon blog ?",
-			"answerAds": "C'est vous qui décidez ! Vous contrôlez votre blog et son thème. Vous pouvez ajouter n'importe quel code publicitaire à votre thème. Vous pouvez facilement ajouter Google AdSense ou tout autre réseau publicitaire à votre blog en ajoutant le code publicitaire à votre blog/thème.",
-			"questionComments": "Comment ajouter un système de commentaires ?",
-			"answerComments": "<a href=\"https://talk.hyvor.com\">Hyvor Talk</a> est disponible gratuitement pour tous les forfaits. Vous pouvez également intégrer facilement d'autres systèmes de commentaires."
+			"questionHyvorTalk": "Hyvor Talk (commentaires) est-il inclus ?",
+			"answerHyvorTalk": "Oui. Chaque forfait Hyvor Blogs inclut une licence <a href=\"https://talk.hyvor.com\" target=\"_blank\" rel=\"noopener\">Hyvor Talk</a> gratuite, vous pouvez donc ajouter des commentaires à votre blog sans frais. Chaque forfait comprend une allocation mensuelle de crédits, et les forfaits supérieurs en incluent davantage.",
+			"questionHyvorPost": "Hyvor Post (newsletter) est-il inclus ?",
+			"answerHyvorPost": "Oui. Chaque forfait inclut une licence <a href=\"https://post.hyvor.com\" target=\"_blank\" rel=\"noopener\">Hyvor Post</a> gratuite pour envoyer des newsletters à vos abonnés. Chaque forfait comprend une allocation mensuelle d'e-mails qui augmente avec votre forfait.",
+			"questionMoreLimits": "Que faire si j'ai besoin de limites supplémentaires pour Hyvor Talk ou Post ?",
+			"answerMoreLimits": "Vous avez deux options : mettre à niveau votre forfait Hyvor Blogs, ou souscrire un abonnement Hyvor Talk ou Hyvor Post distinct. Si vous souscrivez un abonnement distinct, votre allocation totale correspond à la somme de l'allocation gratuite de Hyvor Blogs et de l'allocation de cet abonnement.",
+			"questionAiCost": "Le coût de l'IA est-il inclus ?",
+			"answerAiCost": "Oui. Les fonctionnalités d'IA comme l'Agent IA sont incluses à partir du forfait Starter, sans frais supplémentaires. Les forfaits supérieurs incluent une utilisation mensuelle de l'IA plus élevée.",
+			"questionMultipleBlogs": "Puis-je avoir plusieurs blogs ?",
+			"answerMultipleBlogs": "Oui. À partir du forfait Starter, vous pouvez avoir plusieurs blogs au sein d'une même organisation. Le forfait Personal est limité à un seul blog.",
+			"questionTeamMembers": "Puis-je ajouter d'autres membres à mon équipe ?",
+			"answerTeamMembers": "Chaque forfait a une limite de membres d'équipe, correspondant au nombre total de membres uniques autorisés sur l'ensemble des blogs de votre organisation. Pour en ajouter davantage, passez à un forfait avec une limite plus élevée.",
+			"questionCustomDomains": "Les domaines personnalisés sont-ils inclus ?",
+			"answerCustomDomains": "Oui, les domaines personnalisés sont inclus dans tous les forfaits. Hyvor Blogs génère automatiquement un certificat TLS pour votre domaine avec Let's Encrypt, ou vous pouvez fournir votre propre certificat TLS."
 		}
 	},
 	"docs": {
