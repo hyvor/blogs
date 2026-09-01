@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		Button,
 		Callout,
 		confirm,
 		FormControl,
@@ -15,7 +16,6 @@
 		hostingInfoStore,
 		updateHostingInfoStore
 	} from '../../../../lib/stores/blogStore';
-	import type { Blog } from '../../../../lib/types';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
 	import CreateCustomDomainModal from './CreateCustomDomainModal.svelte';
@@ -29,10 +29,10 @@
 
 	const i18n = getI18n();
 
-	const originalSubdomain = $blogStore.subdomain;
 	let subdomain = $state($blogStore.subdomain);
 
 	let subdomainError: null | string = $state(null);
+	let isSavingSubdomain = $state(false);
 	let showCreateCustomDomainModal = $state(false);
 	let showCustomDomainIntentModal = $state(false);
 	let showSelfHostingModal = $state(false);
@@ -62,6 +62,31 @@
 		}
 
 		subdomainError = isSubdomainValid(val);
+	}
+
+	async function handleSaveSubdomain() {
+		const val = subdomain.trim();
+
+		if (val === $blogStore.subdomain) {
+			return;
+		}
+
+		const error = isSubdomainValid(val);
+		if (error) {
+			subdomainError = error;
+			return;
+		}
+
+		isSavingSubdomain = true;
+		const toastId = toast.loading('Updating subdomain...');
+		try {
+			const result = await updateHostedAt('subdomain', undefined, val);
+			updateHostingInfoStore(result);
+			toast.info('Subdomain change started. It may take a moment to apply.', { id: toastId });
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update subdomain', { id: toastId });
+		}
+		isSavingSubdomain = false;
 	}
 
 	async function handleRevertToSubdomain() {
@@ -114,7 +139,35 @@
 					buttonLabel={i18n.t('console.settings.hosting.revertToSubdomain')}
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={handleRevertToSubdomain}
-				/>
+				>
+					{#snippet activeContent()}
+						<div class="subdomain-editor">
+							<FormControl>
+								<TextInput
+									bind:value={subdomain}
+									block
+									state={subdomainError ? 'error' : undefined}
+									disabled={isHostingChangeInProgress || isSavingSubdomain}
+									on:input={handleSubdomainInput}
+								/>
+								{#if subdomainError}
+									<Validation state="error">{subdomainError}</Validation>
+								{/if}
+							</FormControl>
+							<Button
+								size="small"
+								variant="outline"
+								disabled={isHostingChangeInProgress ||
+									isSavingSubdomain ||
+									!!subdomainError ||
+									subdomain === $blogStore.subdomain}
+								onclick={handleSaveSubdomain}
+							>
+								Save
+							</Button>
+						</div>
+					{/snippet}
+				</HostingOption>
 				<CustomDomainOption
 					disabled={isHostingChangeInProgress}
 					onSetup={() => (showCreateCustomDomainModal = true)}
@@ -142,23 +195,6 @@
 			{#if $hostingInfoStore.change}
 				<HostingChangeStatus change={$hostingInfoStore.change} />
 			{/if}
-		</SplitControl>
-
-		<SplitControl
-			label={i18n.t('console.settings.hosting.subdomain')}
-			caption={i18n.t('console.settings.hosting.subdomainCaption2')}
-		>
-			<FormControl>
-				<TextInput
-					bind:value={subdomain}
-					block
-					state={subdomainError ? 'error' : undefined}
-					on:input={handleSubdomainInput}
-				/>
-				{#if subdomainError}
-					<Validation state="error">{subdomainError}</Validation>
-				{/if}
-			</FormControl>
 		</SplitControl>
 
 		{#if $blogStore.hosting_at !== 'subdomain'}
@@ -195,10 +231,18 @@
 		overflow-y: auto;
 	}
 	.hosting-options {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		display: flex;
+		flex-direction: column;
 		gap: 12px;
 		width: 100%;
 	}
-
+	.subdomain-editor {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin-top: 16px;
+	}
+	.subdomain-editor :global(.form-control) {
+		flex: 1;
+	}
 </style>

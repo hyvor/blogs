@@ -7,6 +7,7 @@ use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
 use App\Entity\CustomDomain;
 use App\Entity\CustomDomainIntent;
+use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Entity\Enum\UserStatus;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
@@ -109,17 +110,19 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertNull($json['custom_domain']);
         $this->assertIsArray($json['custom_domain_intent']);
         $this->assertSame('mysite.com', $json['custom_domain_intent']['domain']);
-        $this->assertNull($json['hosting_info']);
+        $this->assertSame('auto', $json['custom_domain_intent']['tls_provider']);
+        $this->assertNull($json['custom_domain_intent']['certificate']);
+        $this->assertNull($json['change']);
 
         $intent = $this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'mysite.com']);
         $this->assertNotNull($intent);
         $this->assertNull($this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'mysite.com']));
     }
 
-    public function test_creates_custom_domain_with_custom_tls(): void
+    public function test_creates_intent_with_custom_tls_and_starts_hosting_change(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-cd-create-custom-tls'],
+            ['subdomain' => 'hosting-cd-create-custom-tls', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
             ['status' => UserStatus::ACTIVE],
         );
 
@@ -134,20 +137,28 @@ class CreateCustomDomainTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json['custom_domain']);
-        $this->assertSame('byo.com', $json['custom_domain']['domain']);
-        $this->assertSame('custom', $json['custom_domain']['tls_provider']);
-        $this->assertNotNull($json['custom_domain']['certificate']);
-        $this->assertNull($json['custom_domain_intent']);
-        $this->assertIsArray($json['hosting_info']);
-        $this->assertIsArray($json['hosting_info']['change']);
-        $this->assertSame('changing', $json['hosting_info']['change']['status']);
-        $this->assertSame('domain', $json['hosting_info']['change']['to_at']);
+        $this->assertNull($json['custom_domain']);
+        $this->assertIsArray($json['custom_domain_intent']);
+        $this->assertSame('byo.com', $json['custom_domain_intent']['domain']);
+        $this->assertSame('custom', $json['custom_domain_intent']['tls_provider']);
+        $this->assertNotNull($json['custom_domain_intent']['certificate']);
+        $this->assertIsArray($json['change']);
+        $this->assertSame('changing', $json['change']['status']);
+        $this->assertSame('domain', $json['change']['to_at']);
 
-        $domain = $this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'byo.com']);
-        $this->assertNotNull($domain);
-        $this->assertSame(CustomDomainTlsProvider::CUSTOM, $domain->getTlsProvider());
-        $this->assertNotNull($domain->getPrivateKeyEncrypted());
+        // the CustomDomain record is only materialized once the hosting change succeeds -
+        // it's not processed synchronously here, only queued (see HostingChangeServiceTest
+        // for the promotion behaviour itself)
+        $this->assertNull($this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'byo.com']));
+
+        $intent = $this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'byo.com']);
+        $this->assertNotNull($intent);
+        $this->assertSame(CustomDomainTlsProvider::CUSTOM, $intent->getTlsProvider());
+        $this->assertNotNull($intent->getPrivateKeyEncrypted());
+
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
     }
 
     public function test_fails_creating_custom_tls_domain_without_key_and_cert(): void

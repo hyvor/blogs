@@ -12,7 +12,6 @@
 
 	let loading = $state(false as boolean | string);
 
-	let customDomain = $derived($hostingInfoStore.custom_domain);
 	let intent = $derived($hostingInfoStore.custom_domain_intent);
 
 	async function handleVerify() {
@@ -20,8 +19,8 @@
 
 		try {
 			const result = await verifyCustomDomainSetup();
-			updateHostingInfoStore(result.hosting_info);
-			toast.success('Custom domain is verified and active!');
+			updateHostingInfoStore(result);
+			toast.success('Domain verified! Applying the certificate now...');
 		} catch (err: any) {
 			toast.warning(
 				err.message || 'DNS verification failed. Please check your DNS settings and try again.',
@@ -63,7 +62,7 @@
 </script>
 
 <Modal title="Complete Custom Domain Setup" {loading} bind:show>
-	{#if intent}
+	{#if intent && !intent.certificate}
 		<div class="section">
 			<div class="section-header">
 				<span class="section-domain">{intent.domain}</span>
@@ -74,11 +73,19 @@
 			</p>
 			<DnsInstructions domain={intent.domain} />
 		</div>
+	{:else if intent}
+		<div class="section">
+			<div class="section-header">
+				<span class="section-domain">{intent.domain}</span>
+				<Tag color="blue" size="small">Applying</Tag>
+			</div>
+			<p>The certificate has been generated. The hosting change is now in progress.</p>
+		</div>
 	{/if}
 
 	{#snippet footer()}
 		<ButtonGroup>
-			{#if intent}
+			{#if intent && !intent.certificate}
 				<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
 					Abort
 				</Button>

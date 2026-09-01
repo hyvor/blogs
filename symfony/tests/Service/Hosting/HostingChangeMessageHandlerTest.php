@@ -14,6 +14,7 @@ use App\Tests\Factory\HostingChangeFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
@@ -156,6 +157,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
             $this->getService(ManagerRegistry::class),
             $failingService,
             $this->getService(MessageBusInterface::class),
+            $this->getService(LoggerInterface::class),
         );
 
         // attempt 1: fails, retry_count = 1, redispatched with a delay

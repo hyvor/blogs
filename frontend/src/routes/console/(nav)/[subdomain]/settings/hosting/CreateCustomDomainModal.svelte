@@ -12,16 +12,11 @@
 		Tooltip,
 		Textarea
 	} from '@hyvor/design/components';
-	import { createCustomDomainSetup, updateCustomDomain } from './hostingActions';
+	import { createCustomDomainSetup } from './hostingActions';
 	import { hostingInfoStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { slide } from 'svelte/transition';
-	import type {
-		CustomDomainIntent,
-		CustomDomainSetup,
-		CustomDomainTlsProvider,
-		HostingInfo
-	} from '../../../../lib/types';
+	import type { CustomDomainTlsProvider } from '../../../../lib/types';
 
 	interface Props {
 		show: boolean;
@@ -45,7 +40,6 @@
 
 	let customDomain = $derived($hostingInfoStore.custom_domain);
 	let intent = $derived($hostingInfoStore.custom_domain_intent);
-	let hasExisting = $derived(Boolean(customDomain || intent));
 
 	$effect(() => {
 		if (show) {
@@ -59,22 +53,6 @@
 			setTimeout(() => {domainInput?.focus();}, 0);
 		}
 	});
-
-	function applyMutationResult(result: {
-		custom_domain: CustomDomainSetup | null;
-		custom_domain_intent: CustomDomainIntent | null;
-		hosting_info: HostingInfo | null;
-	}) {
-		if (result.hosting_info) {
-			updateHostingInfoStore(result.hosting_info);
-		} else {
-			hostingInfoStore.update((info) => ({
-				...info,
-				custom_domain: result.custom_domain,
-				custom_domain_intent: result.custom_domain_intent
-			}));
-		}
-	}
 
 	async function handleSave() {
 		error = null;
@@ -115,24 +93,13 @@
 		loading = 'Creating custom domain...';
 
 		try {
-			if (!hasExisting) {
-				const result = await createCustomDomainSetup(
-					domainTrimmed,
-					tlsProvider,
-					tlsProvider === 'custom' ? tlsPrivateKey.trim() : undefined,
-					tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
-				);
-				applyMutationResult(result);
-			} else {
-				const result = await updateCustomDomain({
-					newDomain: domainTrimmed,
-					tlsProvider,
-					tlsPrivateKey: tlsProvider === 'custom' ? tlsPrivateKey.trim() : undefined,
-					tlsCertificate: tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
-				});
-				applyMutationResult(result);
-				//toast.success('Custom domain updated!', { id: saveToastId });
-			}
+			const result = await createCustomDomainSetup(
+				domainTrimmed,
+				tlsProvider,
+				tlsProvider === 'custom' ? tlsPrivateKey.trim() : undefined,
+				tlsProvider === 'custom' ? tlsCertificate.trim() : undefined
+			);
+			updateHostingInfoStore(result);
 
 			show = false;
 			onSaved?.();

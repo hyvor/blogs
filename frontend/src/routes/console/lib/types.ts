@@ -151,10 +151,16 @@ export interface CustomDomainSetup {
 	valid_to: number | null;
 }
 
-// a pending, not-yet-DNS-verified auto-TLS custom domain setup
+// a pending custom domain setup - not yet promoted into a live CustomDomain because the
+// hosting change hasn't completed yet. certificate is null until a cert has been attached
+// (immediately for tls_provider 'custom', after DNS verification for 'auto')
 export interface CustomDomainIntent {
 	created_at: number;
 	domain: string;
+	tls_provider: CustomDomainTlsProvider;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
 }
 
 export interface BlogIntegrations {

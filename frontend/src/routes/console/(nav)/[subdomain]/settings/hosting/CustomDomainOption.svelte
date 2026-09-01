@@ -43,15 +43,21 @@
 				<div class="domain-row-info">
 					<span class="domain-row-domain">{customDomain.domain}</span>
 				</div>
-				<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
-					{i18n.t('console.settings.hosting.changeDomain')}
-				</Button>
+				{#if !intent}
+					<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
+						{i18n.t('console.settings.hosting.changeDomain')}
+					</Button>
+				{/if}
 			</div>
 		{/if}
 		{#if intent}
 			<div class="intent">
 				<div class="note">
-					{#if customDomain}
+					{#if intent.certificate}
+						{customDomain
+							? i18n.t('console.settings.hosting.switchingToNewDomain')
+							: i18n.t('console.settings.hosting.settingUpCustomDomain')}
+					{:else if customDomain}
 						{i18n.t('console.settings.hosting.newDomainSetupInProgress')}
 					{:else}
 						{i18n.t('console.settings.hosting.domainSetupInProgress')}
@@ -60,11 +66,15 @@
 				<div class="domain">
 					{intent.domain}
 				</div>
-				<div class="button">
-				<Button size="x-small" variant="outline" {disabled} on:click={onContinueSetup}>
-					{i18n.t('console.settings.hosting.continueSetup')}
-				</Button>
-				</div>
+				{#if intent.certificate}
+					<div class="note">{i18n.t('console.settings.hosting.waitingForHostingChange')}</div>
+				{:else}
+					<div class="button">
+					<Button size="x-small" variant="outline" {disabled} on:click={onContinueSetup}>
+						{i18n.t('console.settings.hosting.continueSetup')}
+					</Button>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	{/if}

@@ -16,6 +16,8 @@
 			color: 'green' | 'orange' | 'blue' | 'red' | 'default' | 'accent';
 			label: string;
 		} | null;
+		// rendered instead of the button/tag when active - e.g. an inline editor
+		activeContent?: Snippet;
 	}
 
 	let {
@@ -25,7 +27,8 @@
 		buttonLabel,
 		buttonDisabled = false,
 		onclick,
-		tag = null
+		tag = null,
+		activeContent
 	}: Props = $props();
 </script>
 
@@ -49,11 +52,15 @@
 		{/if}
 	</p>
 
-	<div class="button-wrap">
-		<Button size="small" variant="outline" disabled={active || buttonDisabled} {onclick}
-			>{buttonLabel}</Button
-		>
-	</div>
+	{#if active && activeContent}
+		{@render activeContent()}
+	{:else}
+		<div class="button-wrap">
+			<Button size="small" variant="outline" disabled={active || buttonDisabled} {onclick}
+				>{buttonLabel}</Button
+			>
+		</div>
+	{/if}
 </div>
 
 <style>

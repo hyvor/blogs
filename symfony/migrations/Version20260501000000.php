@@ -87,7 +87,12 @@ final class Version20260501000000 extends AbstractMigration
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
-                domain TEXT NOT NULL
+                domain TEXT NOT NULL,
+                tls_provider custom_domain_tls_provider NOT NULL DEFAULT 'auto',
+                private_key_encrypted TEXT,
+                certificate TEXT,
+                valid_from timestamptz,
+                valid_to timestamptz
             );
             SQL
         );

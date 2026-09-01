@@ -63,56 +63,64 @@ class CustomDomainService
 
 
     /**
-     * Sets (creating or replacing) the blog's custom domain to a bring-your-own-certificate
-     * setup. Unlike the auto-TLS flow, this does not go through a CustomDomainIntent: a
-     * certificate that a CA already issued for this domain is itself proof of ownership, so
-     * this takes effect immediately.
+     * Validates the given private key/certificate and attaches them to the intent as a
+     * bring-your-own-certificate setup. Unlike the auto-TLS flow, a certificate that a CA
+     * already issued for this domain is itself proof of ownership, so the caller can start
+     * the hosting change immediately after this - no DNS verification step is needed.
      *
      * @throws InvalidTlsCertificateException if the private key/certificate are invalid
      */
-    public function setCustomDomainWithCustomTls(
-        Blog $blog,
-        string $domain,
+    public function setIntentCustomTls(
+        CustomDomainIntent $intent,
         string $privateKeyPem,
         string $certificatePem
-    ): CustomDomain {
-        $customDomain = $this->getBlogCustomDomain($blog);
+    ): CustomDomainIntent {
+        $intent->setTlsProvider(CustomDomainTlsProvider::CUSTOM);
+        $this->applyTlsCertificate($intent, $privateKeyPem, $certificatePem);
+        $intent->setUpdatedAt($this->now());
 
-        if ($customDomain === null) {
-            $customDomain = new CustomDomain();
-            $customDomain->setBlog($blog);
-            $customDomain->setCreatedAt($this->now());
-        }
-
-        $customDomain->setDomain($domain);
-        $customDomain->setTlsProvider(CustomDomainTlsProvider::CUSTOM);
-        $this->applyTlsCertificate($customDomain, $privateKeyPem, $certificatePem);
-        $customDomain->setUpdatedAt($this->now());
-
-        $this->em->persist($customDomain);
+        $this->em->persist($intent);
         $this->em->flush();
 
-        return $customDomain;
+        return $intent;
     }
 
     /**
-     * Verifies DNS ownership-independent step is done by the caller (InternalCustomDomainVerificationService);
-     * this issues the ACME certificate and promotes the intent into the blog's live custom domain.
+     * Issues an ACME certificate for the intent's domain and attaches it to the intent (not
+     * yet to a CustomDomain - the caller starts the hosting change next, and the intent is
+     * only promoted into the blog's live custom domain once that change succeeds).
      *
      * @throws AcmeException
      */
-    public function promoteIntentToCustomDomain(CustomDomainIntent $intent): CustomDomain
+    public function generateCertificateForIntent(CustomDomainIntent $intent): void
     {
-        $blog = $intent->getBlog();
-        $domain = $intent->getDomain();
-
         $privateKeyPem = PrivateKey::generatePrivateKeyPem();
         $privateKey = openssl_pkey_get_private($privateKeyPem);
         if ($privateKey === false) {
             throw new \RuntimeException('Failed to load generated private key'); // @codeCoverageIgnore
         }
 
-        $finalCert = $this->issueCertificateViaAcme($domain, $privateKey);
+        $finalCert = $this->issueCertificateViaAcme($intent->getDomain(), $privateKey);
+
+        $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
+        $intent->setCertificate($finalCert->certificatePem);
+        $intent->setValidFrom($finalCert->validFrom);
+        $intent->setValidTo($finalCert->validTo);
+        $intent->setUpdatedAt($this->now());
+
+        $this->em->persist($intent);
+        $this->em->flush();
+    }
+
+    /**
+     * Copies an intent's (already-validated/already-issued) TLS material into the blog's
+     * live CustomDomain and removes the intent. Called once a hosting change to DOMAIN has
+     * actually succeeded - never before, so the custom domain record and the live URL never
+     * disagree.
+     */
+    public function promoteIntentToCustomDomain(CustomDomainIntent $intent, bool $flush = true): CustomDomain
+    {
+        $blog = $intent->getBlog();
 
         $customDomain = $this->getBlogCustomDomain($blog);
         if ($customDomain === null) {
@@ -121,12 +129,12 @@ class CustomDomainService
             $customDomain->setCreatedAt($this->now());
         }
 
-        $customDomain->setDomain($domain);
-        $customDomain->setTlsProvider(CustomDomainTlsProvider::AUTO);
-        $customDomain->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
-        $customDomain->setCertificate($finalCert->certificatePem);
-        $customDomain->setValidFrom($finalCert->validFrom);
-        $customDomain->setValidTo($finalCert->validTo);
+        $customDomain->setDomain($intent->getDomain());
+        $customDomain->setTlsProvider($intent->getTlsProvider());
+        $customDomain->setPrivateKeyEncrypted($intent->getPrivateKeyEncrypted());
+        $customDomain->setCertificate($intent->getCertificate());
+        $customDomain->setValidFrom($intent->getValidFrom());
+        $customDomain->setValidTo($intent->getValidTo());
         $customDomain->setUpdatedAt($this->now());
 
         $blog->setCustomDomain($customDomain);
@@ -134,7 +142,10 @@ class CustomDomainService
         $this->em->persist($blog);
         $this->em->persist($customDomain);
         $this->em->remove($intent);
-        $this->em->flush();
+
+        if ($flush) {
+            $this->em->flush();
+        }
 
         return $customDomain;
     }
@@ -188,11 +199,11 @@ class CustomDomainService
 
     /**
      * Validates that the given private key and certificate are valid PEM data and that they
-     * match each other, then attaches them to the custom domain.
+     * match each other, then attaches them to the intent.
      *
      * @throws InvalidTlsCertificateException
      */
-    private function applyTlsCertificate(CustomDomain $customDomain, string $privateKeyPem, string $certificatePem): void
+    private function applyTlsCertificate(CustomDomainIntent $intent, string $privateKeyPem, string $certificatePem): void
     {
         $privateKey = openssl_pkey_get_private($privateKeyPem);
         if ($privateKey === false) {
@@ -219,10 +230,10 @@ class CustomDomainService
             throw new InvalidTlsCertificateException('Unable to determine the validity period of the provided certificate.'); // @codeCoverageIgnore
         }
 
-        $customDomain->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
-        $customDomain->setCertificate($certificatePem);
-        $customDomain->setValidFrom((new \DateTimeImmutable())->setTimestamp($validFrom));
-        $customDomain->setValidTo((new \DateTimeImmutable())->setTimestamp($validTo));
+        $intent->setPrivateKeyEncrypted($this->encryption->encryptString($privateKeyPem));
+        $intent->setCertificate($certificatePem);
+        $intent->setValidFrom((new \DateTimeImmutable())->setTimestamp($validFrom));
+        $intent->setValidTo((new \DateTimeImmutable())->setTimestamp($validTo));
     }
 
     public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void

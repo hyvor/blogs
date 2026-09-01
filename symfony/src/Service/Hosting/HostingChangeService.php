@@ -10,6 +10,7 @@ use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
+use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Hosting\Message\HostingChangeMessage;
@@ -30,6 +31,7 @@ class HostingChangeService
         private MessageBusInterface $bus,
         private PermalinkService $permalinkService,
         private CustomDomainService $customDomainService,
+        private CustomDomainIntentService $customDomainIntentService,
         private EventDispatcherInterface $eventDispatcher,
         private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler,
         private LoggerInterface $logger
@@ -171,16 +173,17 @@ class HostingChangeService
                 $blog->setSubdomain($hostingChange->getToSubdomain());
             }
 
-            // TODO: handle custom domain
-            // enabling custom domain, etc.
-//            if (
-//                $blog->getHostingAt() === BlogHostingAt::DOMAIN &&
-//                $toAt !== BlogHostingAt::DOMAIN &&
-//                $blog->getCustomDomain()
-//            ) {
-//                $this->customDomainService->deleteCustomDomain($blog->getCustomDomain(), flush: false);
-//                $blog->setCustomDomain(null);
-//            }
+            if ($toAt === BlogHostingAt::DOMAIN) {
+                $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
+                assert($intent !== null, 'CustomDomainIntent must exist when a hosting change targets DOMAIN');
+                $this->customDomainService->promoteIntentToCustomDomain($intent, flush: false);
+            } elseif ($hostingChange->getFromAt() === BlogHostingAt::DOMAIN) {
+                $existingCustomDomain = $blog->getCustomDomain();
+                if ($existingCustomDomain !== null) {
+                    $this->customDomainService->deleteCustomDomain($existingCustomDomain, flush: false);
+                    $blog->setCustomDomain(null);
+                }
+            }
 
             $hostingChange->setStatus(HostingChangeStatus::SUCCESS);
             $hostingChange->setUpdatedAt($this->now());

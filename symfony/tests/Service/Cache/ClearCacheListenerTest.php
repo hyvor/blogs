@@ -156,7 +156,7 @@ class ClearCacheListenerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $hostingChangeService = $this->getService(HostingChangeService::class);
-        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SELF, 'https://example.com');
+        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
 
         $this->dispatch(new BlogHostingChangedEvent($hostingChange));
 

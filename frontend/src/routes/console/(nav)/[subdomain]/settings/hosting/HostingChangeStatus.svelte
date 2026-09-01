@@ -40,8 +40,12 @@
 		try {
 			const info = await getHostingInfo();
 			updateHostingInfoStore(info);
-		} catch {
-			// ignore transient errors, we'll try again on the next tick
+		} catch (e: any) {
+			if (e.code === 404 && e.message === 'Blog not found') {
+				// this is when the subdomain is changed
+				location.href = '/console/' + change.to_subdomain + '/settings/hosting';
+				return;
+			}
 		}
 
 		scheduleNextPoll();

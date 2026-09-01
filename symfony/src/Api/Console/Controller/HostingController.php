@@ -6,7 +6,6 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Hosting\CreateCustomDomainInput;
-use App\Api\Console\Input\Hosting\UpdateCustomDomainInput;
 use App\Api\Console\Input\Hosting\UpdateHostingInput;
 use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
@@ -138,9 +137,11 @@ class HostingController extends AbstractController
     }
 
     /**
-     * if tls provider is custom, custom domain is set up immediately and
-     *  hosting change is initiated.
-     *  otherwise, we create an intent.
+     * Both TLS providers go through a CustomDomainIntent first. For "custom" (bring-your-own
+     * certificate), the certificate is itself proof of domain ownership, so the hosting change
+     * starts immediately. For "auto" (Let's Encrypt), the intent just sits pending until
+     * /verify generates the certificate. Either way, the CustomDomain record itself is only
+     * created once the hosting change actually succeeds (see HostingChangeService::process()).
      */
     #[Route('/hosting/custom-domain', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
@@ -152,103 +153,26 @@ class HostingController extends AbstractController
         $this->assertDomainAvailableForBlog($input->domain, $blog);
 
         if ($this->customDomainIntentService->getBlogCustomDomainIntent($blog) !== null) {
-            throw new BadRequestHttpException('A custom domain is already set up or pending for this blog. Use PATCH to change it.');
+            throw new BadRequestHttpException('A custom domain setup is already pending for this blog. Delete it first to start a new one.');
         }
 
         if ($this->hostingChangeService->hasPendingChange($blog)) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');
-        }
-
-        if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
-            if ($input->tls_private_key === null || $input->tls_certificate === null) {
-                throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
-            }
-
-            try {
-                $customDomain = $this->customDomainService->setCustomDomainWithCustomTls(
-                    $blog,
-                    $input->domain,
-                    $input->tls_private_key,
-                    $input->tls_certificate
-                );
-            } catch (InvalidTlsCertificateException $e) {
-                throw new BadRequestHttpException($e->getMessage());
-            }
-
-            try {
-                $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN);
-            } catch (PendingHostingChangeException) {
-                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
-            }
-
-            return new JsonResponse([
-                'custom_domain' => new CustomDomainObject($customDomain),
-                'custom_domain_intent' => null,
-                'hosting_info' => $this->getHostingInfoData($blog),
-            ]);
-        }
-
-        $intent = $this->customDomainIntentService->createIntent($blog, $input->domain);
-
-        return new JsonResponse([
-            'custom_domain' => null,
-            'custom_domain_intent' => new CustomDomainIntentObject($intent),
-            'hosting_info' => null,
-        ]);
-    }
-
-    #[Route('/hosting/custom-domain', methods: 'PATCH')]
-    #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function updateCustomDomain(
-        #[MapRequestPayload] UpdateCustomDomainInput $input
-    ): JsonResponse {
-        $blog = $this->authorizationListener->getBlog();
-
-        $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
-        $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
-
-        if ($customDomain === null && $intent === null) {
-            throw new BadRequestHttpException('Please set up a custom domain first before updating it');
         }
 
         if (
-            $input->new_domain === null &&
-            $input->tls_provider === null &&
-            $input->tls_private_key === null &&
-            $input->tls_certificate === null
+            $input->tls_provider === CustomDomainTlsProvider::CUSTOM &&
+            ($input->tls_private_key === null || $input->tls_certificate === null)
         ) {
-            throw new BadRequestHttpException('Nothing to update');
+            throw new BadRequestHttpException('Private key and certificate are required when TLS provider is custom');
         }
 
-        $targetDomain = $input->new_domain ?? $intent?->getDomain() ?? $customDomain?->getDomain();
-        \assert($targetDomain !== null);
+        $intent = $this->customDomainIntentService->createIntent($blog, $input->domain, $input->tls_provider);
 
-        $targetProvider = $input->tls_provider
-            ?? $customDomain?->getTlsProvider()
-            ?? CustomDomainTlsProvider::AUTO;
-
-        if ($input->new_domain !== null) {
-            $this->assertDomainAvailableForBlog($input->new_domain, $blog);
-        }
-
-        if ($this->hostingChangeService->hasPendingChange($blog)) {
-            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
-        }
-
-        if ($targetProvider === CustomDomainTlsProvider::CUSTOM) {
-            if ($input->tls_private_key === null || $input->tls_certificate === null) {
-                throw new BadRequestHttpException('Private key and certificate are required to set a custom TLS certificate');
-            }
-
-            // capture before mutating: setCustomDomainWithCustomTls() edits blog's existing
-            // CustomDomain entity in place, so the current domain has to be read first
-            $needsHostingChange = $blog->getHostingAt() !== BlogHostingAt::DOMAIN
-                || $blog->getCustomDomain()?->getDomain() !== $targetDomain;
-
+        if ($input->tls_provider === CustomDomainTlsProvider::CUSTOM) {
             try {
-                $customDomain = $this->customDomainService->setCustomDomainWithCustomTls(
-                    $blog,
-                    $targetDomain,
+                $intent = $this->customDomainService->setIntentCustomTls(
+                    $intent,
                     $input->tls_private_key,
                     $input->tls_certificate
                 );
@@ -256,34 +180,14 @@ class HostingController extends AbstractController
                 throw new BadRequestHttpException($e->getMessage());
             }
 
-            if ($intent !== null) {
-                // switching to (or reconfirming) custom TLS supersedes any pending auto-TLS setup
-                $this->customDomainIntentService->deleteIntent($intent);
+            try {
+                $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN, toDomain: $input->domain);
+            } catch (PendingHostingChangeException) {
+                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
             }
-
-            if ($needsHostingChange) {
-                try {
-                    $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN);
-                } catch (PendingHostingChangeException) {
-                    throw new BadRequestHttpException('A hosting change is already in progress for this blog');
-                }
-            }
-
-            return new JsonResponse([
-                'custom_domain' => new CustomDomainObject($customDomain),
-                'custom_domain_intent' => null,
-                'hosting_info' => $this->getHostingInfoData($blog),
-            ]);
         }
 
-        // target provider is auto: DNS ownership has to be (re-)verified before it can go live
-        $intent = $this->customDomainIntentService->createIntent($blog, $targetDomain);
-
-        return new JsonResponse([
-            'custom_domain' => $customDomain ? new CustomDomainObject($customDomain) : null,
-            'custom_domain_intent' => new CustomDomainIntentObject($intent),
-            'hosting_info' => null,
-        ]);
+        return new JsonResponse($this->getHostingInfoData($blog));
     }
 
     #[Route('/hosting/custom-domain', methods: 'DELETE')]
@@ -328,35 +232,18 @@ class HostingController extends AbstractController
 //            );
 //        }
 
-        // capture before mutating: promoteIntentToCustomDomain() edits blog's existing
-        // CustomDomain entity in place, so the current domain has to be read first
-        $needsHostingChange = $blog->getHostingAt() !== BlogHostingAt::DOMAIN
-            || $blog->getCustomDomain()?->getDomain() !== $domain;
-
-        // TODO: this is very wrong. Allow hosting change to handle all of these
-
-        // then attempt ACME generation
         try {
-            $customDomain = $this->customDomainService->promoteIntentToCustomDomain($intent);
+            $this->customDomainService->generateCertificateForIntent($intent);
         } catch (AcmeException $e) {
             throw new BadRequestHttpException('Unable to generate certificate via ACME protocol: ' . $e->getMessage());
         }
 
-        if ($needsHostingChange) {
-            try {
-                $this->hostingChangeService->startHostingChange(
-                    $blog,
-                    BlogHostingAt::DOMAIN,
-                    toDomain: $customDomain->getDomain()
-                );
-            } catch (PendingHostingChangeException) {
-                throw new BadRequestHttpException('A hosting change is already in progress for this blog');
-            }
+        try {
+            $this->hostingChangeService->startHostingChange($blog, BlogHostingAt::DOMAIN, toDomain: $domain);
+        } catch (PendingHostingChangeException) {
+            throw new BadRequestHttpException('A hosting change is already in progress for this blog');
         }
 
-        return new JsonResponse([
-            'custom_domain' => new CustomDomainObject($customDomain),
-            'hosting_info' => $this->getHostingInfoData($blog),
-        ]);
+        return new JsonResponse($this->getHostingInfoData($blog));
     }
 }

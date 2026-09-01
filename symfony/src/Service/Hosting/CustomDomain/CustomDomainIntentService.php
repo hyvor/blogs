@@ -4,6 +4,7 @@ namespace App\Service\Hosting\CustomDomain;
 
 use App\Entity\Blog;
 use App\Entity\CustomDomainIntent;
+use App\Entity\Enum\CustomDomainTlsProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
@@ -25,7 +26,17 @@ class CustomDomainIntentService
         return $this->em->getRepository(CustomDomainIntent::class)->findOneBy(['blog' => $blog]);
     }
 
-    public function createIntent(Blog $blog, string $domain): CustomDomainIntent
+    /**
+     * Creates or upserts the blog's pending custom domain intent. Always resets any TLS
+     * material from a previous attempt - an intent represents starting fresh for whatever
+     * domain/provider was just requested, so a stale cert from a different provider/domain
+     * can never survive a re-POST.
+     */
+    public function createIntent(
+        Blog $blog,
+        string $domain,
+        CustomDomainTlsProvider $tlsProvider = CustomDomainTlsProvider::AUTO
+    ): CustomDomainIntent
     {
         $intent = $this->getBlogCustomDomainIntent($blog);
 
@@ -36,6 +47,11 @@ class CustomDomainIntentService
         }
 
         $intent->setDomain($domain);
+        $intent->setTlsProvider($tlsProvider);
+        $intent->setPrivateKeyEncrypted(null);
+        $intent->setCertificate(null);
+        $intent->setValidFrom(null);
+        $intent->setValidTo(null);
         $intent->setUpdatedAt($this->now());
 
         $this->em->persist($intent);

@@ -1,16 +1,5 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type {
-	CustomDomainIntent,
-	CustomDomainSetup,
-	CustomDomainTlsProvider,
-	HostingInfo
-} from '../../../../lib/types';
-
-interface CustomDomainMutationResult {
-	custom_domain: CustomDomainSetup | null;
-	custom_domain_intent: CustomDomainIntent | null;
-	hosting_info: HostingInfo | null;
-}
+import type { CustomDomainTlsProvider, HostingInfo } from '../../../../lib/types';
 
 export function getHostingInfo() {
 	return consoleApi.get<HostingInfo>({
@@ -18,7 +7,11 @@ export function getHostingInfo() {
 	});
 }
 
-export function updateHostedAt(hostingAt: 'subdomain' | 'self', hostingUrl?: string) {
+export function updateHostedAt(
+	hostingAt: 'subdomain' | 'self',
+	hostingUrl?: string,
+	subdomain?: string
+) {
 	const data: Record<string, string> = {
 		hosting_at: hostingAt
 	};
@@ -30,47 +23,36 @@ export function updateHostedAt(hostingAt: 'subdomain' | 'self', hostingUrl?: str
 		data['hosting_url'] = hostingUrl;
 	}
 
+	if (subdomain) {
+		data['subdomain'] = subdomain;
+	}
+
 	return consoleApi.post<HostingInfo>({
 		endpoint: '/hosting',
 		data: data
 	});
 }
 
+/**
+ * Both TLS providers start a pending custom domain intent. "custom" (bring-your-own
+ * certificate) starts the hosting change immediately; "auto" needs a follow-up call to
+ * verifyCustomDomainSetup() once DNS is pointed at Hyvor Blogs. Re-POSTing with a blog that
+ * already has an active custom domain (but no pending intent) reconfigures it - there's no
+ * separate "update" endpoint.
+ */
 export function createCustomDomainSetup(
 	domain: string,
 	tlsProvider: CustomDomainTlsProvider = 'auto',
 	tlsPrivateKey?: string,
 	tlsCertificate?: string
 ) {
-	return consoleApi.post<CustomDomainMutationResult>({
+	return consoleApi.post<HostingInfo>({
 		endpoint: '/hosting/custom-domain',
 		data: {
 			domain: domain,
 			tls_provider: tlsProvider,
 			tls_private_key: tlsPrivateKey,
 			tls_certificate: tlsCertificate
-		}
-	});
-}
-
-/**
- * Reconfigures the blog's custom domain (or pending intent): the domain name, the TLS
- * provider, or both. Switching to (or staying on) "custom" requires a private key + certificate;
- * switching to "auto" only (re-)creates a pending intent that then needs DNS verification.
- */
-export function updateCustomDomain(params: {
-	newDomain?: string;
-	tlsProvider?: CustomDomainTlsProvider;
-	tlsPrivateKey?: string;
-	tlsCertificate?: string;
-}) {
-	return consoleApi.patch<CustomDomainMutationResult>({
-		endpoint: '/hosting/custom-domain',
-		data: {
-			new_domain: params.newDomain,
-			tls_provider: params.tlsProvider,
-			tls_private_key: params.tlsPrivateKey,
-			tls_certificate: params.tlsCertificate
 		}
 	});
 }
@@ -84,10 +66,7 @@ export function deleteCustomDomainIntent() {
 }
 
 export function verifyCustomDomainSetup() {
-	return consoleApi.post<{
-		custom_domain: CustomDomainSetup;
-		hosting_info: HostingInfo;
-	}>({
+	return consoleApi.post<HostingInfo>({
 		endpoint: '/hosting/custom-domain/verify'
 	});
 }
