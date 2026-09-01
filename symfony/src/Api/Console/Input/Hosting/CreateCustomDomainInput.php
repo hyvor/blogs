@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateCustomDomainInput
 {
+    #[Assert\Hostname(message: 'Enter a valid domain name (e.g., blog.example.com)')]
     public string $domain;
 
     public CustomDomainTlsProvider $tls_provider = CustomDomainTlsProvider::AUTO;

@@ -249,7 +249,8 @@ class AcmeClient implements LoggerAwareInterface
             ]);
 
             throw new AcmeException(
-                'Authorization failed, status: ' . $authorization->status
+                'Authorization failed, status: ' . $authorization->status .
+                ($error ? '. ACME error: ' . $error->describe() : '')
             );
         }
 

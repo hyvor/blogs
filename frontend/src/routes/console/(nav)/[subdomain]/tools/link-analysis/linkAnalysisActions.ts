@@ -72,7 +72,7 @@ export function callIgnoreLink(postVariantId: number, url: string, status: boole
 		data: {
 			post_variant_id: postVariantId,
 			url,
-			status: status ? 1 : 0
+			status: status ? true : false
 		}
 	});
 }

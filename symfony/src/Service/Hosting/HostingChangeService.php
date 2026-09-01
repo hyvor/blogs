@@ -145,6 +145,40 @@ class HostingChangeService
             ->getOneOrNullResult();
     }
 
+    public function getPendingChange(Blog $blog): ?HostingChange
+    {
+        /** @var HostingChange|null */
+        return $this->em->createQueryBuilder()
+            ->select('hc')
+            ->from(HostingChange::class, 'hc')
+            ->where('hc.blog = :blog')
+            ->andWhere('hc.status = :status')
+            ->setParameter('blog', $blog)
+            ->setParameter('status', HostingChangeStatus::CHANGING)
+            ->orderBy('hc.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @return HostingChange[]
+     */
+    public function getHistory(Blog $blog, int $limit, int $offset): array
+    {
+        /** @var HostingChange[] */
+        return $this->em->createQueryBuilder()
+            ->select('hc')
+            ->from(HostingChange::class, 'hc')
+            ->where('hc.blog = :blog')
+            ->setParameter('blog', $blog)
+            ->orderBy('hc.id', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Applies a hosting change within a transaction. On failure, the exception is left to
      * propagate; HostingChangeMessageHandler decides whether to retry or mark it as failed.

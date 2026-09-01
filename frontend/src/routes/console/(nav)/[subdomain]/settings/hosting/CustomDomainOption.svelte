@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Button, Tag } from '@hyvor/design/components';
+	import { Button, Tag, Tooltip } from '@hyvor/design/components';
+	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { hostingInfoStore } from '../../../../lib/stores/blogStore';
 	import { getI18n } from '../../../../lib/i18n';
 
@@ -17,6 +18,12 @@
 	let customDomain = $derived($hostingInfoStore.custom_domain);
 	let intent = $derived($hostingInfoStore.custom_domain_intent);
 	let active = $derived($hostingInfoStore.hosting_at === 'domain');
+
+	function formatDate(timestamp: number): string {
+		return new Date(timestamp * 1000).toLocaleDateString(undefined, {
+			dateStyle: 'medium'
+		});
+	}
 </script>
 
 <div class="hosting-option" class:active>
@@ -47,6 +54,29 @@
 					<Button size="small" variant="outline" {disabled} on:click={onConfigure}>
 						{i18n.t('console.settings.hosting.changeDomain')}
 					</Button>
+				{/if}
+			</div>
+			<div class="tls-details">
+				<div class="tls-row">
+					<span class="tls-label">TLS Certificate</span>
+					<span class="tls-value">
+						{customDomain.tls_provider === 'auto' ? 'Automatic' : 'Bring Your Own'}
+					</span>
+				</div>
+				{#if customDomain.valid_from && customDomain.valid_to}
+					<div class="tls-row">
+						<span class="tls-label">Valid</span>
+						<span class="tls-value">
+							{formatDate(customDomain.valid_from)} &ndash; {formatDate(customDomain.valid_to)}
+							{#if customDomain.tls_provider === 'auto'}
+								<Tooltip
+									text="Hyvor Blogs will automatically renew this certificate before it expires."
+								>
+									<IconInfoCircle size={13} />
+								</Tooltip>
+							{/if}
+						</span>
+					</div>
 				{/if}
 			</div>
 		{/if}
@@ -133,6 +163,39 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.configured-domain {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		margin-top: 16px;
+	}
+
+	.tls-details {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		margin-top: 12px;
+		padding-top: 12px;
+		border-top: 1px solid var(--border);
+	}
+	.tls-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+	}
+	.tls-label {
+		color: var(--text-light);
+		min-width: 100px;
+	}
+	.tls-value {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-weight: 500;
 	}
 
 	.intent {

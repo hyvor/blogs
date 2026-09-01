@@ -420,6 +420,10 @@
 			"hosting": {
 				"subdomain": "Sous-domaine",
 				"subdomainDesc": "Hébergez votre blog sur son sous-domaine par défaut, {subdomain}.hyvorblogs.io.",
+				"appSubdirectory": "Sous-répertoire de l'application",
+				"appSubdirectoryDesc": "Hébergez votre blog sur {app}/blog/{subdomain}",
+				"revertToAppSubdirectory": "Revenir au sous-répertoire de l'application",
+				"history": "Historique",
 				"optionDomain": "Domaine personnalisé",
 				"customDomainLower": "domaine personnalisé",
 				"selfUrl": "URL d'auto-hébergement",

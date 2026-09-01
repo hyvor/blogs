@@ -39,6 +39,14 @@
 		}
 	});
 
+	// background verification (e.g. the hosting change completing) can clear the
+	// intent while this modal is open
+	$effect(() => {
+		if (show && !intent) {
+			show = false;
+		}
+	});
+
 	async function handleVerify() {
 		loading = 'Verifying...';
 		verifyError = null;

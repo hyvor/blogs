@@ -98,6 +98,20 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertResponseFailed(400, 'A hosting change is already in progress for this blog');
     }
 
+    public function test_fails_when_domain_is_not_a_valid_hostname(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-cd-create-invalid-hostname'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
+            'domain' => 'not a domain!!',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Enter a valid domain name (e.g., blog.example.com)');
+    }
+
     public function test_creates_intent_for_auto_tls(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(

@@ -17,15 +17,19 @@
 		updateHostingInfoStore
 	} from '../../../../lib/stores/blogStore';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
+	import { updateBlog } from '../../../../lib/actions/blogActions';
+	import { getConfig } from '../../../../lib/config';
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
 	import CreateCustomDomainModal from './CreateCustomDomainModal.svelte';
 	import CustomDomainIntentModal from './CustomDomainIntentModal.svelte';
 	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
+	import HostingHistoryModal from './HostingHistoryModal.svelte';
 	import HostingOption from './HostingOption.svelte';
 	import CustomDomainOption from './CustomDomainOption.svelte';
 	import HostingChangeStatus from './HostingChangeStatus.svelte';
 	import { onMount } from 'svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import IconClockHistory from '@hyvor/icons/IconClockHistory';
 
 	const i18n = getI18n();
 
@@ -36,20 +40,25 @@
 	let showCreateCustomDomainModal = $state(false);
 	let showCustomDomainIntentModal = $state(false);
 	let showSelfHostingModal = $state(false);
+	let showHostingHistoryModal = $state(false);
 
 	let isLoading = $state(true);
+
+	let hasDeliveryDomain = Boolean(getConfig().domains.delivery);
 
 	let isHostingChangeInProgress = $derived(
 		Boolean($hostingInfoStore.change && $hostingInfoStore.change.status === 'changing')
 	);
 
-	function handleRedirectSubdomainChange() {
-		blogStore.update((b) => {
-			return {
-				...b,
-				hosting_redirect_subdomain: !b.hosting_redirect_subdomain
-			};
-		});
+	async function handleRedirectSubdomainChange() {
+		const newValue = !$blogStore.hosting_redirect_subdomain;
+		const toastId = toast.loading('Updating...');
+		try {
+			await updateBlog({ hosting_redirect_subdomain: newValue });
+			toast.info('Redirect subdomain setting updated', { id: toastId });
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update redirect subdomain setting', { id: toastId });
+		}
 	}
 
 	function handleSubdomainInput(e: any) {
@@ -130,15 +139,36 @@
 	<Loader block />
 {:else}
 	<div class="hosting">
-		<SplitControl label={i18n.t('console.settings.hosting.configuration')} column>
+		<SplitControl column>
+			{#snippet label()}
+				<div class="hosting-config-label">
+					<span class="title">{i18n.t('console.settings.hosting.configuration')}</span>
+					<Button size="small" color="input" onclick={() => (showHostingHistoryModal = true)}>
+						{#snippet start()}
+							<IconClockHistory size={12} />
+						{/snippet}
+						{i18n.t('console.settings.hosting.history')}
+					</Button>
+				</div>
+			{/snippet}
+
 			<div class="hosting-options">
 				<HostingOption
-					title={i18n.t('console.settings.hosting.subdomain')}
-					subtitle={i18n.t('console.settings.hosting.subdomainDesc', {
-						subdomain: $blogStore.subdomain
-					})}
+					title={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.subdomain')
+						: i18n.t('console.settings.hosting.appSubdirectory')}
+					subtitle={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.subdomainDesc', {
+								subdomain: $blogStore.subdomain
+							})
+						: i18n.t('console.settings.hosting.appSubdirectoryDesc', {
+								app: getConfig().domains.app,
+								subdomain: $blogStore.subdomain
+							})}
 					active={$hostingInfoStore.hosting_at === 'subdomain'}
-					buttonLabel={i18n.t('console.settings.hosting.revertToSubdomain')}
+					buttonLabel={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.revertToSubdomain')
+						: i18n.t('console.settings.hosting.revertToAppSubdirectory')}
 					buttonDisabled={isHostingChangeInProgress}
 					onclick={handleRevertToSubdomain}
 				>
@@ -194,7 +224,6 @@
 					{/snippet}
 					{#snippet activeContent()}
 						<div class="self-hosting-active">
-							<span class="self-hosting-url">{$blogStore.hosting_url}</span>
 							<Button
 								size="small"
 								variant="outline"
@@ -203,6 +232,7 @@
 							>
 								Change URL
 							</Button>
+							<span class="self-hosting-url">{$blogStore.hosting_url}</span>
 						</div>
 					{/snippet}
 				</HostingOption>
@@ -237,6 +267,7 @@
 	/>
 	<CustomDomainIntentModal bind:show={showCustomDomainIntentModal} />
 	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
+	<HostingHistoryModal bind:show={showHostingHistoryModal} />
 {/if}
 
 <style>
@@ -260,10 +291,21 @@
 	.subdomain-editor :global(.form-control) {
 		flex: 1;
 	}
-	.self-hosting-active {
+	.hosting-config-label {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		margin-bottom: 6px;
+	}
+	.title {
+		font-weight: 600;
+	}
+	.self-hosting-active {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 		gap: 8px;
 		margin-top: 16px;
 	}

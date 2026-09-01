@@ -6,6 +6,7 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Hosting\CreateCustomDomainInput;
+use App\Api\Console\Input\Hosting\GetHostingHistoryInput;
 use App\Api\Console\Input\Hosting\UpdateHostingInput;
 use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
@@ -27,6 +28,7 @@ use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -51,6 +53,17 @@ class HostingController extends AbstractController
         return new JsonResponse($this->getHostingInfoData($blog));
     }
 
+    #[Route('/hosting/history', methods: 'GET')]
+    #[ScopeRequired(Scope::BLOG_READ)]
+    public function getHostingHistory(
+        #[MapQueryString] GetHostingHistoryInput $input = new GetHostingHistoryInput(),
+    ): JsonResponse {
+        $blog = $this->authorizationListener->getBlog();
+        $history = $this->hostingChangeService->getHistory($blog, $input->limit, $input->offset);
+
+        return new JsonResponse(array_map(fn($h) => new HostingChangeObject($h), $history));
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -58,7 +71,7 @@ class HostingController extends AbstractController
     {
         $customDomain = $this->customDomainService->getBlogCustomDomain($blog);
         $intent = $this->customDomainIntentService->getBlogCustomDomainIntent($blog);
-        $hostingChange = $this->hostingChangeService->getLatestChange($blog);
+        $hostingChange = $this->hostingChangeService->getPendingChange($blog);
 
         return [
             'delivery_url' => $this->appConfig->getDeliveryUrl(),
@@ -218,17 +231,17 @@ class HostingController extends AbstractController
         $domain = $intent->getDomain();
 
         // first verify internally before attempting ACME
-//        try {
-//            $this->internalCustomDomainVerificationService->verify($domain);
-//        } catch (InternalCustomDomainVerificationException $e) {
-//            throw new DataCarryingHttpException(
-//                400,
-//                [
-//                    'debug_error' => $e->getPrevious()?->getMessage(),
-//                ],
-//                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again.",
-//            );
-//        }
+        try {
+            $this->internalCustomDomainVerificationService->verify($domain);
+        } catch (InternalCustomDomainVerificationException $e) {
+            throw new DataCarryingHttpException(
+                400,
+                [
+                    'debug_error' => $e->getPrevious()?->getMessage(),
+                ],
+                "Unable to verify that the domain $domain is pointing to Hyvor Blogs. Please ensure that the DNS records are set correctly and try again.",
+            );
+        }
 
         $recodingLogger = new RecordingLogger($this->logger);
 

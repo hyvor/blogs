@@ -50,9 +50,13 @@
 			tlsPrivateKeyError = '';
 			tlsCertificateError = '';
 			error = null;
-			setTimeout(() => {domainInput?.focus();}, 0);
+			setTimeout(() => {
+				domainInput?.focus();
+			}, 0);
 		}
 	});
+
+	const HOSTNAME_REGEX = /^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)(\.(?!-)[a-zA-Z0-9-]{1,63}(?<!-))+$/;
 
 	async function handleSave() {
 		error = null;
@@ -73,6 +77,14 @@
 		if (domainTrimmed.match('/')) {
 			error =
 				'Custom Domain cannot contain /. Use self-hosting to host your blog in a subdirectory';
+			return;
+		}
+		if (!HOSTNAME_REGEX.test(domainTrimmed)) {
+			error = 'Enter a valid domain name (e.g., blog.example.com)';
+			return;
+		}
+		if (customDomain && domainTrimmed === customDomain.domain) {
+			error = 'Enter a different domain to change it';
 			return;
 		}
 
@@ -114,11 +126,7 @@
 	}
 </script>
 
-<Modal 
-	title={customDomain ? 'Change Custom Domain / TLS' : 'Create Custom Domain'}
-	{loading} 
-	bind:show
->
+<Modal title={customDomain ? 'Change Custom Domain' : 'Create Custom Domain'} {loading} bind:show>
 	<SplitControl label="Custom Domain" noHorizonalPadding>
 		<FormControl>
 			<TextInput

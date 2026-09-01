@@ -420,6 +420,10 @@
 			"hosting": {
 				"subdomain": "Subdomain",
 				"subdomainDesc": "Host your blog at its default subdomain, {subdomain}.hyvorblogs.io.",
+				"appSubdirectory": "App Subdirectory",
+				"appSubdirectoryDesc": "Host your blog at {app}/blog/{subdomain}",
+				"revertToAppSubdirectory": "Revert to App Subdirectory",
+				"history": "History",
 				"optionDomain": "Custom Domain",
 				"customDomainLower": "custom domain",
 				"selfUrl": "Self-hosting URL",

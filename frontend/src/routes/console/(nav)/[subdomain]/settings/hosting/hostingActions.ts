@@ -1,9 +1,16 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type { CustomDomainTlsProvider, HostingInfo } from '../../../../lib/types';
+import type { CustomDomainTlsProvider, HostingChange, HostingInfo } from '../../../../lib/types';
 
 export function getHostingInfo() {
 	return consoleApi.get<HostingInfo>({
 		endpoint: '/hosting'
+	});
+}
+
+export function getHostingHistory(limit: number = 20, offset: number = 0) {
+	return consoleApi.get<HostingChange[]>({
+		endpoint: '/hosting/history',
+		data: { limit, offset }
 	});
 }
 
