@@ -16,7 +16,6 @@ use App\Service\Post\PostService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
 use Symfony\AI\Agent\Agent;
-use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
