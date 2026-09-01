@@ -340,6 +340,8 @@ class HostingController extends AbstractController
         $needsHostingChange = $blog->getHostingAt() !== BlogHostingAt::DOMAIN
             || $blog->getCustomDomain()?->getDomain() !== $domain;
 
+        // TODO: this is very wrong. Allow hosting change to handle all of these
+
         // then attempt ACME generation
         try {
             $customDomain = $this->customDomainService->promoteIntentToCustomDomain($intent);

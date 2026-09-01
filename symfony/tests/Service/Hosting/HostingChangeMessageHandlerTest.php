@@ -19,28 +19,31 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[CoversClass(HostingChangeMessageHandler::class)]
+#[CoversClass(HostingChangeMessage::class)]
+#[CoversClass(HostingChangeService::class)]
 class HostingChangeMessageHandlerTest extends KernelTestCase
 {
     public function test_throws_unrecoverable_when_hosting_change_not_found(): void
     {
         $handler = $this->getService(HostingChangeMessageHandler::class);
-
         $this->expectException(UnrecoverableMessageHandlingException::class);
         $handler(new HostingChangeMessage(999999999));
     }
 
-    public function test_processes_successfully(): void
+    public function test_subdomain_to_self(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'from-subdomain']);
         $hostingChange = HostingChangeFactory::createOne([
             'blog' => $blog,
             'from_at' => BlogHostingAt::SUBDOMAIN,
+            'from_subdomain' => 'from-subdomain',
             'to_at' => BlogHostingAt::SELF,
-            'to_url' => 'https://example.com',
+            'to_hosting_url' => 'https://example.com',
         ]);
 
-        $handler = $this->getService(HostingChangeMessageHandler::class);
-        $handler(new HostingChangeMessage($hostingChange->getId()));
+        $t = $this->transport('async')->throwExceptions();
+        $t->send(new HostingChangeMessage($hostingChange->getId()));
+        $t->processOrFail();
 
         $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChange->getId());
         $this->assertNotNull($hostingChange);
@@ -49,6 +52,32 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
         $this->assertNotNull($blog);
         $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
+        $this->assertSame('https://example.com', $blog->getHostingUrl());
+    }
+
+    public function test_self_to_subdomain(): void
+    {
+        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://from-hosting.com']);
+        $hostingChange = HostingChangeFactory::createOne([
+            'blog' => $blog,
+            'from_at' => BlogHostingAt::SELF,
+            'from_hosting_url' => 'https://from-hosting.com',
+            'to_at' => BlogHostingAt::SUBDOMAIN,
+            'to_subdomain' => 'to-subdomain',
+        ]);
+
+        $t = $this->transport('async')->throwExceptions();
+        $t->send(new HostingChangeMessage($hostingChange->getId()));
+        $t->processOrFail();
+
+        $hostingChange = $this->getEm()->find(HostingChange::class, $hostingChange->getId());
+        $this->assertNotNull($hostingChange);
+        $this->assertSame(HostingChangeStatus::SUCCESS, $hostingChange->getStatus());
+
+        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
+        $this->assertSame('to-subdomain', $blog->getSubdomain());
     }
 
     public function test_redispatches_with_increasing_delay_then_marks_failed(): void
@@ -58,7 +87,7 @@ class HostingChangeMessageHandlerTest extends KernelTestCase
             'blog' => $blog,
             'from_at' => BlogHostingAt::SUBDOMAIN,
             'to_at' => BlogHostingAt::SELF,
-            'to_url' => 'https://example.com',
+            'to_hosting_url' => 'https://example.com',
         ]);
         $hostingChangeId = $hostingChange->getId();
 

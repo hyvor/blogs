@@ -149,6 +149,74 @@ class ChangeHostingAtTest extends ApiTestCase
         $this->assertNull($hostingChange->getToHostingUrl());
     }
 
+    public function test_change_subdomain(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-update-subdomain', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        $this->consoleBlogApi('POST', $blog, '/hosting', [
+            'hosting_at' => 'subdomain',
+            'subdomain' => 'new-subdomain',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('subdomain', $json['hosting_at']);
+        $this->assertIsArray($json['change']);
+        $this->assertSame('changing', $json['change']['status']);
+        $this->assertSame('subdomain', $json['change']['from_at']);
+        $this->assertSame('subdomain', $json['change']['to_at']);
+
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getFromAt());
+        $this->assertSame('hosting-update-subdomain', $hostingChange->getFromSubdomain());
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $hostingChange->getToAt());
+        $this->assertSame('new-subdomain', $hostingChange->getToSubdomain());
+
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $message = $messages[0];
+        $this->assertInstanceOf(HostingChangeMessage::class, $message);
+        $this->assertSame($hostingChange->getId(), $message->hostingChangeId);
+    }
+
+    public function test_change_self_url(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-update-self-url', 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://old-url.com'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        $this->consoleBlogApi('POST', $blog, '/hosting', [
+            'hosting_at' => 'self',
+            'hosting_url' => 'https://new-url.com',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame('self', $json['hosting_at']);
+        $this->assertIsArray($json['change']);
+        $this->assertSame('changing', $json['change']['status']);
+        $this->assertSame('self', $json['change']['from_at']);
+        $this->assertSame('self', $json['change']['to_at']);
+
+        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findBy(['blog' => $blog])[0];
+        $this->assertSame(BlogHostingAt::SELF, $hostingChange->getFromAt());
+        $this->assertSame('https://old-url.com', $hostingChange->getFromHostingUrl());
+        $this->assertSame(BlogHostingAt::SELF, $hostingChange->getToAt());
+        $this->assertSame('https://new-url.com', $hostingChange->getToHostingUrl());
+
+        $transport = $this->transport('async');
+        $messages = $transport->queue()->messages();
+        $this->assertCount(1, $messages);
+        $message = $messages[0];
+        $this->assertInstanceOf(HostingChangeMessage::class, $message);
+        $this->assertSame($hostingChange->getId(), $message->hostingChangeId);
+    }
+
     public function test_update_to_self_requires_url(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(

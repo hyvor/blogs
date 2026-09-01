@@ -139,7 +139,6 @@ export interface HostingChange {
 	to_domain: string | null;
 	to_url: string;
 	status: HostingChangeStatus;
-	error_message: string | null;
 }
 
 export type CustomDomainTlsProvider = 'auto' | 'custom';

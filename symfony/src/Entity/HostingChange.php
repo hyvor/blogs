@@ -54,7 +54,7 @@ class HostingChange
     private HostingChangeStatus $status = HostingChangeStatus::CHANGING;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $error_message = null;
+    private ?string $error_message = null; // private
 
     #[ORM\Column(options: ['default' => 0])]
     private int $retry_count = 0;

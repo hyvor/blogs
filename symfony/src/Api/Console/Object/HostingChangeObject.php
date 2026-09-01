@@ -20,7 +20,6 @@ class HostingChangeObject
     public ?string $to_domain;
     public ?string $to_url;
     public HostingChangeStatus $status;
-    public ?string $error_message;
 
     public function __construct(HostingChange $hostingChange)
     {
@@ -36,6 +35,5 @@ class HostingChangeObject
         $this->to_domain = $hostingChange->getToDomain();
         $this->to_url = $hostingChange->getToHostingUrl();
         $this->status = $hostingChange->getStatus();
-        $this->error_message = $hostingChange->getErrorMessage();
     }
 }
