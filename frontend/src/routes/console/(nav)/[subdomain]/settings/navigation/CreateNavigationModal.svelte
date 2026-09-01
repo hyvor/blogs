@@ -14,6 +14,9 @@
 	import { createNavigation } from './navigationActions';
 	import { createEventDispatcher } from 'svelte';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show?: boolean;
@@ -36,19 +39,19 @@
 		urlError = null;
 
 		if (!name) {
-			nameError = 'Name is required.';
+			nameError = i18n.t('console.common.nameRequired');
 			return;
 		}
 
 		if (!url) {
-			urlError = 'URL is required.';
+			urlError = i18n.t('console.settings.navigation.urlRequired');
 			return;
 		}
 
 		loading = true;
 		createNavigation(name, url, type)
 			.then((res) => {
-				toast.success('Navigation created successfully');
+				toast.success(i18n.t('console.settings.navigation.created'));
 				dispatch('create', res);
 				show = false;
 			})
@@ -64,11 +67,11 @@
 </script>
 
 <Modal title={'Add new navigation'} {loading} bind:show>
-	<SplitControl label="Name">
+	<SplitControl label={i18n.t('console.common.name')}>
 		<FormControl>
 			<TextInput
 				bind:value={name}
-				placeholder="About us"
+				placeholder={i18n.t('console.settings.navigation.namePlaceholder')}
 				block
 				state={nameError ? 'error' : undefined}
 				autofocus
@@ -82,7 +85,7 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="URL">
+	<SplitControl label={i18n.t('console.tools.import.url')}>
 		<FormControl>
 			<TextInput
 				bind:value={url}
@@ -99,16 +102,24 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Type">
+	<SplitControl label={i18n.t('console.tools.import.type')}>
 		<InputGroup>
-			<Radio name="type" value="header" bind:group={type}>Header</Radio>
-			<Radio name="type" value="footer" bind:group={type}>Footer</Radio>
+			<Radio name="type" value="header" bind:group={type}
+				>{i18n.t('console.settings.navigation.header')}</Radio
+			>
+			<Radio name="type" value="footer" bind:group={type}
+				>{i18n.t('console.settings.navigation.footer')}</Radio
+			>
 		</InputGroup>
 	</SplitControl>
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-		<Button on:click={handleClick} disabled={isButtonDisabled}>Add</Button>
+		<Button on:click={handleClick} disabled={isButtonDisabled}
+			>{i18n.t('console.common.add')}</Button
+		>
 	{/snippet}
 </Modal>

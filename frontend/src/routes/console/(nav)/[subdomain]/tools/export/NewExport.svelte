@@ -2,6 +2,9 @@
 	import { Button, Radio, SplitControl, confirm, toast } from '@hyvor/design/components';
 	import { startExport } from './exportActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	const dispatch = createEventDispatcher();
 
@@ -12,34 +15,31 @@
 	async function exportNow() {
 		if (
 			await confirm({
-				title: 'Export Data',
-				content:
-					'You are about to export your data. This may take a few minutes. You can track the progress in Export History.',
-				confirmText: 'Export Now'
+				title: i18n.t('console.tools.export.confirm.title'),
+				content: i18n.t('console.tools.export.confirm.content'),
+				confirmText: i18n.t('console.tools.export.exportNow')
 			})
 		) {
-			const toastId = toast.loading('Exporting...');
+			const toastId = toast.loading(i18n.t('console.tools.export.exporting'));
 
 			startExport()
 				.then(() => {
-					toast.success('Export started, you can track the progress in Export History.', {
+					toast.success(i18n.t('console.tools.export.started'), {
 						id: toastId
 					});
 					dispatchComplete();
 				})
-				.catch(() =>
-					toast.error('Failed to start export. Please try again later.', { id: toastId })
-				);
+				.catch(() => toast.error(i18n.t('console.tools.export.failed'), { id: toastId }));
 		}
 	}
 </script>
 
-<SplitControl label="Export Format">
+<SplitControl label={i18n.t('console.tools.export.format')}>
 	<Radio checked={true}>Hyvor Blog JSON</Radio>
 </SplitControl>
 
 <div class="button-wrap">
-	<Button on:click={exportNow}>Export Now</Button>
+	<Button on:click={exportNow}>{i18n.t('console.tools.export.exportNow')}</Button>
 </div>
 
 <style>

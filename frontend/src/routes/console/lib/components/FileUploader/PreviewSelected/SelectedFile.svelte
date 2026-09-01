@@ -11,6 +11,9 @@
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import { uploadMedia } from '../../../../(nav)/[subdomain]/tools/media/mediaActions';
 	import { toKebabCase } from '../../../../(nav)/[subdomain]/tools/media/mediaUtils';
+	import { getI18n } from '../../../i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		file: SelectedFile;
@@ -94,7 +97,7 @@
 		if (shouldUpload && file.url instanceof Blob) {
 			isUploading = true;
 			if (imageName.length > 255) {
-				toast.error('Image name is too long');
+				toast.error(i18n.t('console.fileUploader.imageNameTooLong'));
 				isUploading = false;
 				return;
 			}
@@ -142,15 +145,20 @@
 
 <div class="selected-image">
 	{#if isUploading}
-		<Loader full>Uploading...</Loader>
+		<Loader full>{i18n.t('console.tools.media.uploading')}</Loader>
 	{:else}
 		<div class="img-wrap">
 			{#if file.type === 'audio'}
 				<audio src={fileUrl} controls></audio>
 			{:else if file.type === 'image'}
-				<img src={fileUrl} alt="Editing" bind:this={imgEl} onload={handleImageLoad} />
+				<img
+					src={fileUrl}
+					alt={i18n.t('console.fileUploader.editing')}
+					bind:this={imgEl}
+					onload={handleImageLoad}
+				/>
 			{:else}
-				No preview available
+				{i18n.t('console.fileUploader.noPreview')}
 			{/if}
 		</div>
 
@@ -170,7 +178,7 @@
 				</Meta>
 				<div class="name-editor">
 					<div class="name">
-						Name
+						{i18n.t('console.common.name')}
 						{#if nameError}
 							<span class="name-error">Error: {nameError}</span>
 						{/if}
@@ -178,7 +186,7 @@
 					<TextInput
 						bind:value={imageName}
 						on:input={handleNameChange}
-						placeholder="Image Name"
+						placeholder={i18n.t('console.fileUploader.imageName')}
 						state={nameError ? 'error' : 'default'}
 						disabled={!shouldUpload}
 					/>
@@ -191,7 +199,7 @@
 			</div>
 			{#if file.from !== 'media'}
 				<div class="upload-switch">
-					Upload to Media Library
+					{i18n.t('console.fileUploader.uploadToMedia')}
 					<Switch bind:checked={shouldUpload} disabled={!canChangeUpload} />
 				</div>
 			{/if}

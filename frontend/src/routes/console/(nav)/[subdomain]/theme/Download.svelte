@@ -2,14 +2,16 @@
 	import { Button, Tooltip, confirm } from '@hyvor/design/components';
 	import IconCloudDownload from '@hyvor/icons/IconCloudDownload';
 	import { blogStore } from '../../../lib/stores/blogStore';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	async function handleDownload() {
 		if (
 			await confirm({
-				title: 'Download theme',
-				content:
-					'Your theme files will be downloaded as a zip file. You can upload it to another blog.',
-				confirmText: 'Yes, download'
+				title: i18n.t('console.theme.downloadConfirm.title'),
+				content: i18n.t('console.theme.downloadConfirm.content'),
+				confirmText: i18n.t('console.theme.downloadConfirm.confirm')
 			})
 		) {
 			const url = '/api/console/v0/blog/' + $blogStore.subdomain + '/theme/download';
@@ -19,11 +21,11 @@
 	}
 </script>
 
-<Tooltip text="Download your theme files">
+<Tooltip text={i18n.t('console.theme.downloadTooltip')}>
 	<Button color="input" size="small" style="font-size:13px" on:click={handleDownload}>
 		{#snippet start()}
 			<IconCloudDownload size={16} />
 		{/snippet}
-		Download
+		{i18n.t('console.theme.download')}
 	</Button>
 </Tooltip>

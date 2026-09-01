@@ -13,6 +13,9 @@
 	import type { ThemeFile } from '../../../lib/types';
 	import ChangeTheme from './ChangeTheme/ChangeTheme.svelte';
 	import { loadThemeFiles } from './themeActions';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 
@@ -26,7 +29,7 @@
 
 <div class="theme-nav">
 	<div class="title">
-		<span>Theme</span>
+		<span>{i18n.t('console.nav.theme')}</span>
 		<ChangeTheme />
 	</div>
 

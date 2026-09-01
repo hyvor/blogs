@@ -7,6 +7,9 @@
 	import { editorConfig, schema } from '../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../posts/[postId]/Body/Editor/suggestions';
 	import { DEFAULT_CONTENT_JSON, type DocumentChange } from './agentApi';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		changes: DocumentChange[];
@@ -161,11 +164,11 @@
 			<span>Review suggested changes</span>
 			<span class="remaining">
 				{#if selectedApplied}
-					Applied
+					{i18n.t('console.agent.applied')}
 				{:else if remaining > 0}
 					{remaining} suggestion{remaining === 1 ? '' : 's'} remaining
 				{:else}
-					All suggestions resolved
+					{i18n.t('console.agent.allResolved')}
 				{/if}
 			</span>
 		</div>
@@ -200,14 +203,16 @@
 			</div>
 		</div>
 		<div class="footer">
-			<Button color="input" onclick={onclose} disabled={applying}>Close</Button>
+			<Button color="input" onclick={onclose} disabled={applying}
+				>{i18n.t('console.common.close')}</Button
+			>
 			<Button disabled={remaining > 0 || applying || selectedApplied} onclick={handleApply}>
 				{#if selectedApplied}
-					Applied
+					{i18n.t('console.agent.applied')}
 				{:else if applying}
 					Applying…
 				{:else}
-					Apply changes
+					{i18n.t('console.agent.applyChanges')}
 				{/if}
 			</Button>
 		</div>

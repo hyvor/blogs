@@ -13,6 +13,9 @@
 	import AgentSteps from './AgentSteps.svelte';
 	import { applyAgentEvent, callAgent, type AgentBlock, type DocumentChange } from './agentApi';
 	import IdleMessage from './IdleMessage.svelte';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		postVariantId: number | null;
@@ -183,7 +186,7 @@
 							{#snippet start()}
 								<IconArrowClockwise />
 							{/snippet}
-							New request
+							{i18n.t('console.agent.newRequest')}
 						</Button>
 					</div>
 				{/if}
@@ -205,7 +208,7 @@
 				</div>
 				<Button disabled={prompt.trim() === '' || status === 'streaming'} onclick={handleSubmit}>
 					<div class="generate-button-content">
-						Send
+						{i18n.t('console.agent.send')}
 						<div class="generate-icon"><IconMagic /></div>
 					</div>
 				</Button>

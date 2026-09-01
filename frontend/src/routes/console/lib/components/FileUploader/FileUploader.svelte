@@ -11,6 +11,9 @@
 	import Excalidraw from './Excalidraw/Excalidraw.svelte';
 	import Unsplash from './Unsplash/Unsplash.svelte';
 	import Media from './Media/Media.svelte';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
 
 	let tab = $state('upload');
 
@@ -56,7 +59,7 @@
 						{#snippet start()}
 							<IconCaretLeft va />
 						{/snippet}
-						Back
+						{i18n.t('console.fileUploader.back')}
 					</Button>
 				{:else if type === 'any'}
 					<TabNav>
@@ -64,7 +67,7 @@
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
-							Upload
+							{i18n.t('console.theme.upload')}
 						</TabNavItem>
 					</TabNav>
 				{:else}
@@ -73,13 +76,13 @@
 							{#snippet start()}
 								<IconCloudUpload />
 							{/snippet}
-							Upload
+							{i18n.t('console.theme.upload')}
 						</TabNavItem>
 						<TabNavItem name="media" active={tab === 'media'} onclick={() => (tab = 'media')}>
 							{#snippet start()}
 								<IconCardImage />
 							{/snippet}
-							Media Library
+							{i18n.t('console.tools.nav.media')}
 						</TabNavItem>
 
 						{#if type === 'image'}

@@ -9,6 +9,16 @@
 		toast
 	} from '@hyvor/design/components';
 	import { clearBlogCache } from './dangerActions';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+
+	const TYPE_KEYS = {
+		template: 'console.settings.danger.cache.typeTemplate',
+		paths: 'console.settings.danger.cache.typePaths',
+		all: 'console.settings.danger.cache.typeAll'
+	} as const;
+	const T = i18n.T;
 
 	interface Props {
 		show?: boolean;
@@ -20,7 +30,7 @@
 	let paths = $state('');
 
 	function handleClick() {
-		const toastId = toast.loading('Clearing cache...');
+		const toastId = toast.loading(i18n.t('console.settings.danger.cache.clearing'));
 		show = false;
 
 		clearBlogCache({
@@ -28,7 +38,7 @@
 			paths: paths.split('\n').filter((path) => path.trim() !== '')
 		})
 			.then(() => {
-				toast.success('Cache cleared.', { id: toastId });
+				toast.success(i18n.t('console.settings.danger.cache.cleared'), { id: toastId });
 			})
 			.catch((err) => {
 				toast.error(err.message, { id: toastId });
@@ -36,30 +46,33 @@
 	}
 </script>
 
-<Modal title="Clear Cache" bind:show>
-	<SplitControl label="Type">
+<Modal title={i18n.t('console.settings.danger.clearCache')} bind:show>
+	<SplitControl label={i18n.t('console.tools.import.type')}>
 		<InputGroup>
-			<Radio bind:group={type} value="template">Template</Radio>
+			<Radio bind:group={type} value="template"
+				>{i18n.t('console.settings.danger.cache.typeTemplate')}</Radio
+			>
 
-			<Radio bind:group={type} value="paths">Paths</Radio>
+			<Radio bind:group={type} value="paths"
+				>{i18n.t('console.settings.danger.cache.typePaths')}</Radio
+			>
 
-			<Radio bind:group={type} value="all">All</Radio>
+			<Radio bind:group={type} value="all">{i18n.t('console.common.all')}</Radio>
 		</InputGroup>
 
 		<p>
-			<strong style="text-transform:capitalize">{type}</strong> type will
-			{#if type === 'template'}
-				clear cache of template pages (index, posts, pages), but not media and assets
-			{:else if type === 'paths'}
-				clear cache of the paths added below.
-			{:else if type === 'all'}
-				clear all cache, including media and assets
-			{/if}
+			<T
+				key="console.settings.danger.cache.typeExplain"
+				params={{ strong: { element: 'strong' }, type: i18n.t(TYPE_KEYS[type]), which: type }}
+			/>
 		</p>
 	</SplitControl>
 
 	{#if type === 'paths'}
-		<SplitControl label="Paths" caption="Paths to clear cache">
+		<SplitControl
+			label={i18n.t('console.settings.danger.cache.typePaths')}
+			caption={i18n.t('console.settings.danger.cache.pathsCaption')}
+		>
 			<Textarea
 				bind:value={paths}
 				placeholder="/assets/script.js
@@ -69,8 +82,10 @@
 	{/if}
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
-		<Button on:click={handleClick}>Clear Cache</Button>
+		<Button on:click={handleClick}>{i18n.t('console.settings.danger.clearCache')}</Button>
 	{/snippet}
 </Modal>

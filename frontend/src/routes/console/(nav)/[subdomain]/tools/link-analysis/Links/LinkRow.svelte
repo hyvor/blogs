@@ -19,6 +19,9 @@
 	import { callIgnoreLink, callLinkAnalysisApi } from '../linkAnalysisActions';
 	import { createEventDispatcher } from 'svelte';
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		link: LinkAnalysisLink;
@@ -96,7 +99,7 @@
 	</div>
 
 	<div class="actions">
-		<Tooltip text="Edit in Editor">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.editInEditor')}>
 			<IconButton
 				as="a"
 				href={postEditUrl}
@@ -109,7 +112,7 @@
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Recheck">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.recheck')}>
 			<IconButton
 				on:click={handleRecheck}
 				size="small"
@@ -121,7 +124,7 @@
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Ignore this link">
+		<Tooltip text={i18n.t('console.tools.linkAnalysis.ignoreLink')}>
 			<IconButton
 				on:click={handleIgnore}
 				color={link.ignored ? 'accent' : 'gray'}

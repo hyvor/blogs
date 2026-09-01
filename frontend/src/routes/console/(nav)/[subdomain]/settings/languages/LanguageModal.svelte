@@ -17,6 +17,9 @@
 		languageStoreUpdate,
 		languagesStore
 	} from '../../../../lib/stores/languagesStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		language?: Language | null;
@@ -39,28 +42,28 @@
 		codeError = null;
 
 		if (!name) {
-			nameError = 'Name is required.';
+			nameError = i18n.t('console.common.nameRequired');
 			return;
 		}
 
 		if (!code) {
-			codeError = 'Code is required.';
+			codeError = i18n.t('console.settings.languages.codeRequired');
 			return;
 		}
 
 		if (isCreating) {
 			if ($languagesStore.find((l) => l.code === code)) {
-				codeError = 'Code is already in use.';
+				codeError = i18n.t('console.settings.languages.codeInUse');
 				return;
 			}
 
 			show = false;
 
-			const toastId = toast.loading('Creating language...');
+			const toastId = toast.loading(i18n.t('console.settings.languages.creating'));
 
 			createLanguage(name, code, direction)
 				.then((res) => {
-					toast.success('Language created.', { id: toastId });
+					toast.success(i18n.t('console.settings.languages.created'), { id: toastId });
 					languageStoreAdd(res);
 				})
 				.catch((err) => {
@@ -68,17 +71,17 @@
 				});
 		} else {
 			if ($languagesStore.find((l) => l.code === code && l.id !== language!.id)) {
-				codeError = 'Code is already in use.';
+				codeError = i18n.t('console.settings.languages.codeInUse');
 				return;
 			}
 
 			show = false;
 
-			const toastId = toast.loading('Updating language...');
+			const toastId = toast.loading(i18n.t('console.settings.languages.updating'));
 
 			updateLanguage(language!.id, name, code, direction)
 				.then((res) => {
-					toast.success('Language updated.', { id: toastId });
+					toast.success(i18n.t('console.settings.languages.updated'), { id: toastId });
 					languageStoreUpdate(res);
 					show = false;
 				})
@@ -99,11 +102,14 @@
 </script>
 
 <Modal title={isCreating ? 'Add new language' : 'Edit language'} bind:show>
-	<SplitControl label="Name" caption="The name of the language">
+	<SplitControl
+		label={i18n.t('console.common.name')}
+		caption={i18n.t('console.settings.languages.nameCaption')}
+	>
 		<FormControl>
 			<TextInput
 				bind:value={name}
-				placeholder="English"
+				placeholder={i18n.t('console.settings.languages.namePlaceholder')}
 				block
 				state={nameError ? 'error' : undefined}
 				autofocus
@@ -117,7 +123,10 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Code" caption="A valid HTML language code">
+	<SplitControl
+		label={i18n.t('console.settings.languages.code')}
+		caption={i18n.t('console.settings.languages.codeCaption')}
+	>
 		<FormControl>
 			<TextInput
 				bind:value={code}
@@ -134,15 +143,21 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Direction">
+	<SplitControl label={i18n.t('console.settings.languages.direction')}>
 		<InputGroup>
-			<Radio name="direction" value="ltr" bind:group={direction}>Left to Right (LTR)</Radio>
-			<Radio name="direction" value="rtl" bind:group={direction}>Right to Left (RTL)</Radio>
+			<Radio name="direction" value="ltr" bind:group={direction}
+				>{i18n.t('console.settings.languages.ltr')}</Radio
+			>
+			<Radio name="direction" value="rtl" bind:group={direction}
+				>{i18n.t('console.settings.languages.rtl')}</Radio
+			>
 		</InputGroup>
 	</SplitControl>
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		<Button variant="invisible" on:click={() => (show = false)}
+			>{i18n.t('console.common.cancel')}</Button
+		>
 
 		<Button on:click={handleClick} disabled={isButtonDisabled}>
 			{isCreating ? 'Add' : 'Save'}

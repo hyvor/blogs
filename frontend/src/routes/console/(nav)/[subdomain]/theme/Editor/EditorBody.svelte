@@ -10,6 +10,9 @@
 	import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
 
 	import { blogStore } from '../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let currentFile = $derived($selectedThemeFileStore!);
 	let ext = $derived((currentFile.name.split('.').pop() || '') as CodeMirrorMode);
@@ -43,7 +46,7 @@
 		{/snippet}
 		{#snippet message()}
 			<div>
-				No preview available.
+				{i18n.t('console.theme.noPreview')}
 
 				{#if currentFile.folder === 'assets'}
 					<div style="margin-top:5px;font-size:14px;">

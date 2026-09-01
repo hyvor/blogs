@@ -11,6 +11,9 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { getUsers } from '../../../settings/users/userActions';
 	import { postListFiltersStore } from '../../postListStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let users: User[] = $state([]);
@@ -62,7 +65,7 @@
 
 <TextInput
 	block
-	placeholder="Search author..."
+	placeholder={i18n.t('console.posts.filters.searchAuthorPlaceholder')}
 	autofocus
 	bind:value={search}
 	bind:input
@@ -75,7 +78,12 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if users.length === 0}
-		<IconMessage empty padding={35} message="No authors found" iconSize={30} />
+		<IconMessage
+			empty
+			padding={35}
+			message={i18n.t('console.posts.noAuthorsFound')}
+			iconSize={30}
+		/>
 	{:else}
 		{#each users as user (user.id)}
 			{@const username = user.variants[0]?.name || ''}
@@ -91,7 +99,7 @@
 				</span>
 				{#snippet end()}
 					<Text light small>
-						{user.posts_count.toLocaleString()} post{user.posts_count === 1 ? '' : 's'}
+						{i18n.t('console.posts.filters.postsCount', { count: user.posts_count })}
 					</Text>
 				{/snippet}
 			</ActionListItem>

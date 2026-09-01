@@ -6,6 +6,9 @@
 	import JobStatusTag from '../../../../../lib/components/Tags/JobStatusTag.svelte';
 	import { onMount } from 'svelte';
 	import { linkAnalysisChecks } from '../linkAnalysisActions';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 
@@ -15,7 +18,7 @@
 				linkAnalysisChecks.set(res);
 			})
 			.catch(() => {
-				toast.error('Failed to load link analysis checks.');
+				toast.error(i18n.t('console.tools.linkAnalysis.failedToLoadChecks'));
 			})
 			.finally(() => {
 				isLoading = false;
@@ -28,9 +31,9 @@
 {:else if $linkAnalysisChecks.length}
 	<Table columns="2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr">
 		<TableRow head>
-			<div>Date</div>
-			<div>Status</div>
-			<div>No. Posts</div>
+			<div>{i18n.t('console.posts.filters.dateLabel')}</div>
+			<div>{i18n.t('console.common.status')}</div>
+			<div>{i18n.t('console.tools.linkAnalysis.postsCountColumn')}</div>
 			<div>
 				<LinkStatusTag type="ok" showTooltip={false} />
 			</div>
@@ -87,5 +90,5 @@
 		{/each}
 	</Table>
 {:else}
-	<IconMessage empty padding={60} message="No Analyses Yet" />
+	<IconMessage empty padding={60} message={i18n.t('console.tools.linkAnalysis.noAnalyses')} />
 {/if}

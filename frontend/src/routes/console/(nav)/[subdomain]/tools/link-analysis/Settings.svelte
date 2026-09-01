@@ -3,6 +3,9 @@
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../../settings/BlogSettingsSave.svelte';
 	import DebugTool from './DebugTool.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleLinkAnalysisEnabledChange(e: any) {
 		updateBlogStore({
@@ -21,8 +24,8 @@
 
 <div class="controls">
 	<SplitControl
-		label="Automated Link Analysis"
-		caption="Run a full-blog link analysis every 2 weeks automatically."
+		label={i18n.t('console.tools.linkAnalysis.settings.automated')}
+		caption={i18n.t('console.tools.linkAnalysis.settings.automatedCaption')}
 	>
 		<Switch
 			checked={$blogStore.link_analysis_enabled}
@@ -31,8 +34,8 @@
 	</SplitControl>
 
 	<SplitControl
-		label="Send Email Reports"
-		caption="Send an email report after a full-blog analysis."
+		label={i18n.t('console.tools.linkAnalysis.settings.emailReports')}
+		caption={i18n.t('console.tools.linkAnalysis.settings.emailReportsCaption')}
 	>
 		<InputGroup>
 			<Radio
@@ -41,7 +44,7 @@
 				group={$blogStore.link_analysis_email_report}
 				on:change={handleEmailReportChange}
 			>
-				Never
+				{i18n.t('console.tools.linkAnalysis.settings.never')}
 			</Radio>
 
 			<Radio
@@ -50,7 +53,7 @@
 				group={$blogStore.link_analysis_email_report}
 				on:change={handleEmailReportChange}
 			>
-				When Broken Links Found
+				{i18n.t('console.tools.linkAnalysis.settings.whenBroken')}
 			</Radio>
 
 			<Radio
@@ -59,7 +62,7 @@
 				group={$blogStore.link_analysis_email_report}
 				on:change={handleEmailReportChange}
 			>
-				Always
+				{i18n.t('console.tools.linkAnalysis.settings.always')}
 			</Radio>
 		</InputGroup>
 	</SplitControl>

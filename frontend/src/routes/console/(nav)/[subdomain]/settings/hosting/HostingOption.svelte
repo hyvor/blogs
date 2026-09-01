@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button, Tag } from '@hyvor/design/components';
 	import type { Snippet } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		title: string;
@@ -32,7 +35,7 @@
 
 		<span>
 			{#if active}
-				<Tag color="green" size="small">Active</Tag>
+				<Tag color="green" size="small">{i18n.t('console.settings.users.status.active')}</Tag>
 			{:else if tag}
 				<Tag color={tag.color} size="small">{tag.label}</Tag>
 			{/if}

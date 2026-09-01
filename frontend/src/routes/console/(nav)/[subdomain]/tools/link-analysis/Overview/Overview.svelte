@@ -4,6 +4,9 @@
 	import Stat from './Stat.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import Analyses from './Analyses.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 	interface Props {
 		stats: Stats;
 	}
@@ -17,11 +20,11 @@
 	function handleStartNewAnalysis() {
 		isStartingNewAnalysis = true;
 
-		const toastId = toast.loading('Starting new analysis...');
+		const toastId = toast.loading(i18n.t('console.tools.linkAnalysis.startingAnalysis'));
 
 		startFullAnalysis()
 			.then((check) => {
-				toast.success('New analysis started.', { id: toastId });
+				toast.success(i18n.t('console.tools.linkAnalysis.analysisStarted'), { id: toastId });
 				linkAnalysisChecks.update((checks) => {
 					return [check, ...checks];
 				});
@@ -38,16 +41,17 @@
 <div class="stats">
 	<div class="stats-top">
 		<div class="stats-top-left">
-			<div class="stats-title">Stats</div>
+			<div class="stats-title">{i18n.t('console.tools.linkAnalysis.stats')}</div>
 
 			<div class="stats-note">
-				Stats are based on the currently analyzed posts. Some posts may not be analyzed until a
-				full-blog analysis is done.
+				{i18n.t('console.tools.linkAnalysis.statsNote')}
 			</div>
 		</div>
 
 		<div class="stats-top-right">
-			<Button size="small" on:click={() => dispatch('links')}>See Links</Button>
+			<Button size="small" on:click={() => dispatch('links')}
+				>{i18n.t('console.tools.linkAnalysis.seeLinks')}</Button
+			>
 		</div>
 	</div>
 
@@ -64,17 +68,16 @@
 	<div class="stats analyses">
 		<div class="stats-top">
 			<div class="stats-top-left">
-				<div class="stats-title">Analyses</div>
+				<div class="stats-title">{i18n.t('console.tools.linkAnalysis.analyses')}</div>
 
 				<div class="stats-note">
-					A full-blog analysis is done every 2 weeks automatically (only published posts are
-					analyzed). You can also start one manually.
+					{i18n.t('console.tools.linkAnalysis.analysesNote')}
 				</div>
 			</div>
 
 			<div class="stats-top-right">
 				<Button size="small" on:click={handleStartNewAnalysis} disabled={isStartingNewAnalysis}>
-					Start New Analysis
+					{i18n.t('console.tools.linkAnalysis.startNewAnalysis')}
 				</Button>
 			</div>
 		</div>

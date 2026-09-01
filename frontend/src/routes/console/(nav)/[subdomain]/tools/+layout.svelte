@@ -8,6 +8,9 @@
 	import IconUpload from '@hyvor/icons/IconUpload';
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -25,7 +28,7 @@
 				{#snippet start()}
 					<IconImage />
 				{/snippet}
-				Media Library
+				{i18n.t('console.tools.nav.media')}
 			</NavLink>
 
 			<NavLink
@@ -35,7 +38,7 @@
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
-				Link Analysis
+				{i18n.t('console.tools.nav.linkAnalysis')}
 			</NavLink>
 
 			<div class="div"></div>
@@ -47,7 +50,7 @@
 				{#snippet start()}
 					<IconDownload />
 				{/snippet}
-				Import
+				{i18n.t('console.tools.nav.import')}
 			</NavLink>
 
 			<NavLink
@@ -57,7 +60,7 @@
 				{#snippet start()}
 					<IconUpload />
 				{/snippet}
-				Export
+				{i18n.t('console.tools.nav.export')}
 			</NavLink>
 		</NavLinkGroup>
 	</div>

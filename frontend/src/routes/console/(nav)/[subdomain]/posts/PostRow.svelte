@@ -23,6 +23,9 @@
 	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
 	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
 	import TagChip from './TagChip.svelte';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		post: PostListItem;
@@ -54,11 +57,11 @@
 		showDropdown = false;
 		isCloning = true;
 
-		const toastId = toast.loading('Cloning post...');
+		const toastId = toast.loading(i18n.t('console.posts.cloningPost'));
 
 		clonePost(post.id)
 			.then((clonedPost) => {
-				toast.success('Post cloned successfully', { id: toastId });
+				toast.success(i18n.t('console.posts.postCloned'), { id: toastId });
 				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}/${primaryLanguage.code}`));
 			})
 			.catch((error) => {
@@ -82,7 +85,7 @@
 			content:
 				`Are you sure you want to delete this ${post.is_page ? 'page' : 'post'}? ` +
 				'This action is IRREVERSIBLE.',
-			confirmText: 'Yes, Delete',
+			confirmText: i18n.t('console.tools.media.delete.confirm'),
 			danger: true,
 			autoClose: false
 		});
@@ -94,7 +97,7 @@
 		deletePostById(post.id)
 			.then(() => {
 				onDelete?.(post.id);
-				toast.success('Post deleted successfully');
+				toast.success(i18n.t('console.posts.postDeleted'));
 			})
 			.catch((error) => {
 				toast.error(error.message || 'Failed to delete');
@@ -138,14 +141,16 @@
 
 		<div class="post-date">
 			{#if status === 'published'}
-				Published {publishedAtDate}
+				{i18n.t('console.posts.publishedOn', { date: publishedAtDate })}
 			{:else if status === 'scheduled'}
-				Scheduled {publishedAtDate}
+				{i18n.t('console.posts.scheduledOn', { date: publishedAtDate })}
 			{:else}
-				Created {createdAtDate}
+				{i18n.t('console.posts.createdOn', { date: createdAtDate })}
 			{/if}
 			{#if status === 'published' && post.updated_at !== post.published_at}
-				· Updated {dayjs.unix(post.updated_at).format('MMM D, YYYY')}
+				· {i18n.t('console.posts.updatedOn', {
+					date: dayjs.unix(post.updated_at).format('MMM D, YYYY')
+				})}
 			{/if}
 		</div>
 
@@ -183,7 +188,7 @@
 
 	<div class="post-health-wrap">
 		<div class="health-item">
-			<span class="health-label">SEO</span>
+			<span class="health-label">{i18n.t('console.posts.seo')}</span>
 			{#if seoScore === null}
 				<SeoPendingTag />
 			{:else}
@@ -192,7 +197,7 @@
 		</div>
 		<div class="health-divider"></div>
 		<div class="health-item">
-			<span class="health-label">Links</span>
+			<span class="health-label">{i18n.t('console.posts.links')}</span>
 			<LinkAnalysisTag linkAnalysis={post.link_analysis} />
 		</div>
 	</div>
@@ -220,7 +225,7 @@
 			{#snippet content()}
 				<ActionList>
 					<ActionListItem on:click={handleClone} disabled={isCloning || isDeleting}
-						>Clone post</ActionListItem
+						>{i18n.t('console.posts.clonePost')}</ActionListItem
 					>
 					<ActionListItem on:click={handleDelete} disabled={isCloning || isDeleting} type="danger"
 						>Delete post</ActionListItem
@@ -353,7 +358,7 @@
 	.post-actions-wrap {
 		display: flex;
 		align-items: center;
-		text-align: right;
+		// text-align: right;
 		position: relative;
 		z-index: 1;
 	}
