@@ -34,7 +34,7 @@ class VerifyCustomDomainTest extends ApiTestCase
 
         $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain/verify', user: $user);
 
-        $this->assertResponseFailed(400, 'No custom domain intent found for this blog');
+        $this->assertResponseFailed(400, 'There is no pending custom domain setup to verify');
     }
 
     public function test_fails_when_hosting_change_is_pending(): void

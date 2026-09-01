@@ -105,12 +105,17 @@ class AcmeClient implements LoggerAwareInterface
                 kid: null,
             );
 
-            return $this->newAccount();
+            try {
+                return $this->newAccount();
+            } catch (AcmeException $e) {
+                unset($this->account);
+                throw $e;
+            }
         });
     }
 
     /**
-     * Manages one global ACME account per Hyvor Talk instance
+     * Manages one global ACME account per Hyvor Blogs instance
      * @throws AcmeException
      */
     private function newAccount(): AccountInternalDto
@@ -127,7 +132,7 @@ class AcmeClient implements LoggerAwareInterface
 
         $kid = $headerBag->get('location');
         if (!$kid) {
-            throw new AcmeException('No KID returned from ACME server');  // @codeCoverageIgnore
+            throw new AcmeException('No KID returned from ACME server');
         }
 
         $this->account = new AccountInternalDto(
@@ -319,9 +324,11 @@ class AcmeClient implements LoggerAwareInterface
                 $options['json'] = $this->sign($payload, $url);
             }
 
-            // TODO: REMOVE BEFORE PROD
-            $options['verify_peer'] = false;
-            $options['verify_host'] = false;
+            if ($this->env === 'dev') {
+                // for local pebble
+                $options['verify_peer'] = false;
+                $options['verify_host'] = false;
+            }
 
             $response = $this->http->request(
                 $method,
@@ -354,7 +361,7 @@ class AcmeClient implements LoggerAwareInterface
                 'exception' => $e->getMessage(),
             ]);
 
-            throw new AcmeException('HTTP request failed: ' . $e->getMessage());
+            throw new AcmeException('HTTP request failed: ' . $e->getMessage(), previous: $e);
         } catch (\Symfony\Component\Serializer\Exception\ExceptionInterface $e) {
             $this->logger?->error('Failed to deserialize ACME server response', [
                 'url' => $url,
@@ -362,7 +369,7 @@ class AcmeClient implements LoggerAwareInterface
                 'exception' => $e->getMessage(),
             ]);
 
-            throw new AcmeException('Deserialization failed: ' . $e->getMessage());
+            throw new AcmeException('Deserialization failed: ' . $e->getMessage(), previous: $e);
         }
         // @codeCoverageIgnoreEnd
     }

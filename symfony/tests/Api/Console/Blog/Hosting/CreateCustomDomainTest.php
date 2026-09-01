@@ -150,7 +150,7 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertIsArray($json['custom_domain_intent']);
         $this->assertSame('byo.com', $json['custom_domain_intent']['domain']);
         $this->assertSame('custom', $json['custom_domain_intent']['tls_provider']);
-        $this->assertNotNull($json['custom_domain_intent']['certificate']);
+        $this->assertTrue($json['custom_domain_intent']['has_certificate']);
         $this->assertIsArray($json['change']);
         $this->assertSame('changing', $json['change']['status']);
         $this->assertSame('domain', $json['change']['to_at']);
