@@ -2,13 +2,16 @@
 
 namespace App\Tests\Service\CustomDomain;
 
-use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
-use App\Service\Hosting\CustomDomain\Acme\AcmeException;
-use App\Service\Hosting\CustomDomain\Acme\PendingOrder;
+use App\Entity\Enum\CustomDomainTlsProvider;
+use App\Service\Hosting\CustomDomain\Message\RegenerateExpiringTlsCertificatesMessage;
+use App\Service\Hosting\CustomDomain\MessageHandler\RegenerateExpiringTlsCertificatesMessageHandler;
+use App\Service\Hosting\CustomDomain\PrivateKey;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\CustomDomainFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use Hyvor\Internal\Util\Crypt\Encryption;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\Clock;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -16,148 +19,148 @@ use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[CoversClass(AcmeClient::class)]
-class AcmeClientTest extends KernelTestCase
+#[CoversClass(RegenerateExpiringTlsCertificatesMessageHandler::class)]
+class RegenerateExpiringTlsCertificatesMessageHandlerTest extends KernelTestCase
 {
-    /** @throws AcmeException */
-    public function test_acme_client_happy_path(): void
+    public function test_renews_certificate_expiring_within_30_days(): void
     {
         Clock::set(new MockClock());
         $this->getService(CacheItemPoolInterface::class)->clear();
 
-        /** @var PendingOrder|null $pendingOrder */
-        $pendingOrder = null;
-        $authorizationCalls = 0;
-
-        $mockClient = $this->mockClient(
-            authorizationResponses: function () use (&$authorizationCalls): JsonMockResponse {
-                $authorizationCalls++;
-                // 1st call: from newOrder(). 2nd/3rd: polled from finalizeOrder(),
-                // simulating the ACME server moving from pending -> valid.
-                return match ($authorizationCalls) {
-                    1, 2 => new JsonMockResponse([
-                        'status' => 'pending',
-                        'challenges' => [
-                            [
-                                'type' => 'http-01',
-                                'url' => 'https://acme.org/challenge/1',
-                                'token' => 'challenge-token-123',
-                            ],
-                        ],
-                    ]),
-                    default => new JsonMockResponse([
-                        'status' => 'valid',
-                        'challenges' => [],
-                    ]),
-                };
-            },
-            certificateResponse: new MockResponse(self::PEM_CERTIFICATE_SAMPLE),
-        );
-        static::getContainer()->set(HttpClientInterface::class, $mockClient);
-
-        $client = $this->getService(AcmeClient::class);
-        $client->setLogger($this->getService(LoggerInterface::class));
-        $client->init();
-
-        $pendingOrder = $client->newOrder('custom-domain.localhost');
-        $this->assertSame('https://acme.org/challenge/1', $pendingOrder->challengeUrl);
-        $this->assertSame('https://acme.org/finalize/1', $pendingOrder->finalizeOrderUrl);
-        $this->assertSame('challenge-token-123', $pendingOrder->token);
-
-        $pkey = openssl_pkey_new();
-        assert($pkey !== false);
-
-        $cert = $client->finalizeOrder($pendingOrder, $pkey);
-        $this->assertStringContainsString(
-            "-----BEGIN CERTIFICATE-----",
-            $cert->certificatePem
+        $customDomain = CustomDomainFactory::createActiveFor(
+            BlogFactory::createOne(['subdomain' => 'regen-tls-renews']),
+            'renew.example.com',
+            [
+                'tls_provider' => CustomDomainTlsProvider::AUTO,
+                'valid_to' => new \DateTimeImmutable('+10 days'),
+                'private_key_encrypted' => $this->encryptedPrivateKey(),
+            ]
         );
 
-        // authorization was polled: 1 (newOrder) + 2 (finalizeOrder poll pending -> valid)
-        $this->assertSame(3, $authorizationCalls);
+        static::getContainer()->set(
+            HttpClientInterface::class,
+            $this->acmeMockClient(fn() => $this->validAuthorizationResponse('token-renew'))
+        );
+
+        $handler = $this->getService(RegenerateExpiringTlsCertificatesMessageHandler::class);
+        $handler(new RegenerateExpiringTlsCertificatesMessage());
+
+        // the new certificate's validity comes from the (fixed) sample PEM, not from our
+        // fixture's original valid_to, so any change confirms a renewal actually happened
+        $this->assertNotEquals(new \DateTimeImmutable('+10 days'), $customDomain->getValidTo());
+        $this->assertSame(self::PEM_CERTIFICATE_SAMPLE, $customDomain->getCertificate());
     }
 
-    /**
-     * @throws AcmeException
-     */
-    public function test_finalize_order_includes_acme_error_detail_when_authorization_fails(): void
+    public function test_skips_certificates_outside_the_renewal_window_and_custom_tls(): void
     {
         Clock::set(new MockClock());
         $this->getService(CacheItemPoolInterface::class)->clear();
 
-        $mockClient = new MockHttpClient(function (string $method, string $url): MockResponse {
-            if ($method === 'GET') {
-                return $this->directoryResponse();
-            }
-            if ($method === 'HEAD') {
-                return $this->nonceResponse();
-            }
+        $blog1 = BlogFactory::createOne(['subdomain' => 'regen-tls-not-expiring']);
+        $notExpiringSoon = CustomDomainFactory::createActiveFor($blog1, 'not-expiring.example.com', [
+            'tls_provider' => CustomDomainTlsProvider::AUTO,
+            'valid_to' => new \DateTimeImmutable('+60 days'),
+            'private_key_encrypted' => $this->encryptedPrivateKey(),
+        ]);
 
-            return match ($url) {
-                'https://acme.org/newAccount' => new JsonMockResponse([], info: [
-                    'response_headers' => ['Location' => ['https://acme.org/acct/1']],
-                ]),
-                'https://acme.org/newOrder' => new JsonMockResponse(
-                    [
-                        'status' => 'pending',
-                        'authorizations' => ['https://acme.org/authz/1'],
-                        'finalize' => 'https://acme.org/finalize/1',
-                    ],
-                    info: ['response_headers' => ['Location' => ['https://acme.org/order/1']]],
-                ),
-                'https://acme.org/authz/1' => new JsonMockResponse([
+        $blog2 = BlogFactory::createOne(['subdomain' => 'regen-tls-custom']);
+        $customTls = CustomDomainFactory::createActiveFor($blog2, 'custom-tls.example.com', [
+            'tls_provider' => CustomDomainTlsProvider::CUSTOM,
+            'valid_to' => new \DateTimeImmutable('+5 days'),
+            'private_key_encrypted' => $this->encryptedPrivateKey(),
+        ]);
+
+        $calls = 0;
+        static::getContainer()->set(HttpClientInterface::class, new MockHttpClient(
+            function () use (&$calls): MockResponse {
+                $calls++;
+                return new MockResponse('', ['http_code' => 500]);
+            }
+        ));
+
+        $handler = $this->getService(RegenerateExpiringTlsCertificatesMessageHandler::class);
+        $handler(new RegenerateExpiringTlsCertificatesMessage());
+
+        $this->assertSame(0, $calls, 'Neither certificate should have been touched via ACME');
+        $this->assertSame('cert-pem-data', $notExpiringSoon->getCertificate());
+        $this->assertSame('cert-pem-data', $customTls->getCertificate());
+    }
+
+    public function test_logs_error_and_continues_with_next_domain_when_acme_fails(): void
+    {
+        Clock::set(new MockClock());
+        $this->getService(CacheItemPoolInterface::class)->clear();
+
+        $blog1 = BlogFactory::createOne(['subdomain' => 'regen-tls-fails']);
+        $failing = CustomDomainFactory::createActiveFor($blog1, 'failing.example.com', [
+            'tls_provider' => CustomDomainTlsProvider::AUTO,
+            // also within the "alert the user" window
+            'valid_to' => new \DateTimeImmutable('+3 days'),
+            'private_key_encrypted' => $this->encryptedPrivateKey(),
+        ]);
+
+        $blog2 = BlogFactory::createOne(['subdomain' => 'regen-tls-succeeds']);
+        $succeeding = CustomDomainFactory::createActiveFor($blog2, 'succeeding.example.com', [
+            'tls_provider' => CustomDomainTlsProvider::AUTO,
+            'valid_to' => new \DateTimeImmutable('+20 days'),
+            'private_key_encrypted' => $this->encryptedPrivateKey(),
+        ]);
+
+        // authorization is polled once per domain (both go straight to a terminal status,
+        // no pending->valid transition needed): calls 1-2 belong to the first (more urgent,
+        // and therefore first-processed) domain and fail; calls 3-4 belong to the second and
+        // succeed.
+        $authorizationCall = 0;
+        $mockClient = $this->acmeMockClient(function () use (&$authorizationCall): JsonMockResponse {
+            $authorizationCall++;
+            if ($authorizationCall <= 2) {
+                return new JsonMockResponse([
                     'status' => 'invalid',
                     'challenges' => [
                         [
                             'type' => 'http-01',
                             'url' => 'https://acme.org/challenge/1',
-                            'token' => 'challenge-token-123',
+                            'token' => 'token-fail',
                             'status' => 'invalid',
                             'error' => [
                                 'type' => 'urn:ietf:params:acme:error:connection',
-                                'detail' => '198.51.100.1: Fetching http://custom-domain.localhost/.well-known/acme-challenge/challenge-token-123: Connection refused',
+                                'detail' => 'Connection refused',
                                 'status' => 400,
                             ],
                         ],
                     ],
-                ]),
-                'https://acme.org/challenge/1' => new JsonMockResponse([]),
-                default => new MockResponse('', ['http_code' => 404]),
-            };
+                ]);
+            }
+
+            return $this->validAuthorizationResponse('token-succeed');
         });
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        $client = $this->getService(AcmeClient::class);
-        $client->init();
-        $pendingOrder = $client->newOrder('custom-domain.localhost');
+        $handler = $this->getService(RegenerateExpiringTlsCertificatesMessageHandler::class);
+        // should not throw, despite the first domain failing
+        $handler(new RegenerateExpiringTlsCertificatesMessage());
 
-        $pkey = openssl_pkey_new();
-        assert($pkey !== false);
+        $this->assertSame('cert-pem-data', $failing->getCertificate());
+        $this->assertSame(self::PEM_CERTIFICATE_SAMPLE, $succeeding->getCertificate());
 
-        try {
-            $client->finalizeOrder($pendingOrder, $pkey);
-            $this->fail('Expected AcmeException to be thrown');
-        } catch (AcmeException $e) {
-            $this->assertStringContainsString('status: invalid', $e->getMessage());
-            $this->assertStringContainsString('Connection refused', $e->getMessage());
-            $this->assertStringContainsString('urn:ietf:params:acme:error:connection', $e->getMessage());
-        }
+        $this->assertTrue(
+            $this->getTestLogger()->hasErrorThatContains(
+                'Failed to regenerate TLS certificate for custom domain'
+            )
+        );
+    }
+
+    private function encryptedPrivateKey(): string
+    {
+        return $this->getService(Encryption::class)->encryptString(PrivateKey::generatePrivateKeyPem());
     }
 
     /**
-     * @param \Closure(): JsonMockResponse $authorizationResponses
+     * @param \Closure(): JsonMockResponse $authorizationResponse
      */
-    private function mockClient(
-        \Closure $authorizationResponses,
-        MockResponse $certificateResponse,
-        ?JsonMockResponse $orderResponse = null,
-    ): MockHttpClient
+    private function acmeMockClient(\Closure $authorizationResponse): MockHttpClient
     {
-        return new MockHttpClient(function (string $method, string $url) use (
-            $authorizationResponses,
-            $certificateResponse,
-            $orderResponse,
-        ): MockResponse {
+        return new MockHttpClient(function (string $method, string $url) use ($authorizationResponse): MockResponse {
             if ($method === 'GET') {
                 return $this->directoryResponse();
             }
@@ -177,19 +180,33 @@ class AcmeClientTest extends KernelTestCase
                     ],
                     info: ['response_headers' => ['Location' => ['https://acme.org/order/1']]],
                 ),
-                'https://acme.org/authz/1' => $authorizationResponses(),
+                'https://acme.org/authz/1' => $authorizationResponse(),
                 'https://acme.org/challenge/1' => new JsonMockResponse([]),
                 'https://acme.org/finalize/1' => new JsonMockResponse([]),
-                'https://acme.org/order/1' => $orderResponse ?? new JsonMockResponse([
+                'https://acme.org/order/1' => new JsonMockResponse([
                     'status' => 'valid',
                     'finalize' => 'https://acme.org/finalize/1',
                     'authorizations' => [],
                     'certificate' => 'https://acme.org/cert/1',
                 ]),
-                'https://acme.org/cert/1' => $certificateResponse,
+                'https://acme.org/cert/1' => new MockResponse(self::PEM_CERTIFICATE_SAMPLE),
                 default => new MockResponse('', ['http_code' => 404]),
             };
         });
+    }
+
+    private function validAuthorizationResponse(string $token): JsonMockResponse
+    {
+        return new JsonMockResponse([
+            'status' => 'valid',
+            'challenges' => [
+                [
+                    'type' => 'http-01',
+                    'url' => 'https://acme.org/challenge/1',
+                    'token' => $token,
+                ],
+            ],
+        ]);
     }
 
     private function directoryResponse(): JsonMockResponse
@@ -214,7 +231,6 @@ class AcmeClientTest extends KernelTestCase
             ],
         ]);
     }
-
 
     // DATA
     public const string PEM_CERTIFICATE_SAMPLE = <<<EOT
@@ -282,5 +298,4 @@ s6Sg00ivj7b0LaPtVGt1eEFqX+6OofleMic4uZgiazH/87j0EhBquPEmNPeXEMq1
 SIKYbiG+Lshx0NWHFGE=
 -----END CERTIFICATE-----
 EOT;
-
 }

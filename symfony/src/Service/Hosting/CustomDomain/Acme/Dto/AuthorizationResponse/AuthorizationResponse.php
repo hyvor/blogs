@@ -3,6 +3,7 @@
 namespace App\Service\Hosting\CustomDomain\Acme\Dto\AuthorizationResponse;
 
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
+use App\Service\Hosting\CustomDomain\Acme\Dto\AcmeErrorDto;
 
 class AuthorizationResponse
 {
@@ -23,5 +24,15 @@ class AuthorizationResponse
             }
         }
         throw new AcmeException('No http-01 challenge found in authorization response'); // @codeCoverageIgnore
+    }
+
+    public function getError(): ?AcmeErrorDto
+    {
+        foreach ($this->challenges as $challenge) {
+            if ($challenge->error !== null) {
+                return $challenge->error;
+            }
+        }
+        return null;
     }
 }

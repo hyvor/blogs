@@ -2,6 +2,8 @@
 
 namespace App\Service\Hosting\CustomDomain\Acme\Dto\AuthorizationResponse;
 
+use App\Service\Hosting\CustomDomain\Acme\Dto\AcmeErrorDto;
+
 readonly class Challenge
 {
     public function __construct(
@@ -12,8 +14,9 @@ readonly class Challenge
         public ?string $token,
         public string $url,
         /**
-         * @var array<string, mixed>
+         * @var string|null 'pending'|'processing'|'valid'|'invalid'
          */
-        public array $error = [],
+        public ?string $status = null,
+        public ?AcmeErrorDto $error = null,
     ) {}
 }

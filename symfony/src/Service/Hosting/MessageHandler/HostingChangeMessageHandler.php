@@ -8,6 +8,7 @@ use App\Service\Hosting\HostingChangeService;
 use App\Service\Hosting\Message\HostingChangeMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
@@ -27,6 +28,7 @@ class HostingChangeMessageHandler
         private ManagerRegistry $registry,
         private HostingChangeService $hostingChangeService,
         private MessageBusInterface $bus,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -65,6 +67,16 @@ class HostingChangeMessageHandler
             $hostingChange->setStatus(HostingChangeStatus::FAILED);
             $hostingChange->setErrorMessage($e->getMessage());
             $em->flush();
+
+            $this->logger->error(
+                'Hosting change failed after maximum attempts',
+                [
+                    'hostingChangeId' => $message->hostingChangeId,
+                    'error' => $e->getMessage(),
+                    'exception' => $e,
+                ]
+            );
+
             return;
         }
 

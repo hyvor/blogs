@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Repository\CustomDomainIntentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Records that a blog wants to set up (or switch to) an auto (Let's Encrypt) TLS custom domain,
  * but DNS ownership has not been verified and the certificate has not been issued yet.
  * Promoted into a CustomDomain row (and deleted) once verification succeeds.
+ * a blog can only have one intent at a time.
  */
 #[ORM\Entity(repositoryClass: CustomDomainIntentRepository::class)]
 #[ORM\Table(name: 'custom_domain_intents')]
@@ -31,6 +33,21 @@ class CustomDomainIntent
 
     #[ORM\Column]
     private string $domain;
+
+    #[ORM\Column(enumType: CustomDomainTlsProvider::class)]
+    private CustomDomainTlsProvider $tls_provider = CustomDomainTlsProvider::AUTO;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $private_key_encrypted = null; # Encrypted PEM
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $certificate = null; # PEM
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $valid_from = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $valid_to = null;
 
     public function getId(): int
     {
@@ -84,6 +101,61 @@ class CustomDomainIntent
     public function setDomain(string $domain): static
     {
         $this->domain = $domain;
+        return $this;
+    }
+
+    public function getTlsProvider(): CustomDomainTlsProvider
+    {
+        return $this->tls_provider;
+    }
+
+    public function setTlsProvider(CustomDomainTlsProvider $tls_provider): static
+    {
+        $this->tls_provider = $tls_provider;
+        return $this;
+    }
+
+    public function getPrivateKeyEncrypted(): ?string
+    {
+        return $this->private_key_encrypted;
+    }
+
+    public function setPrivateKeyEncrypted(?string $private_key_encrypted): static
+    {
+        $this->private_key_encrypted = $private_key_encrypted;
+        return $this;
+    }
+
+    public function getCertificate(): ?string
+    {
+        return $this->certificate;
+    }
+
+    public function setCertificate(?string $certificate): static
+    {
+        $this->certificate = $certificate;
+        return $this;
+    }
+
+    public function getValidFrom(): ?\DateTimeImmutable
+    {
+        return $this->valid_from;
+    }
+
+    public function setValidFrom(?\DateTimeImmutable $valid_from): static
+    {
+        $this->valid_from = $valid_from;
+        return $this;
+    }
+
+    public function getValidTo(): ?\DateTimeImmutable
+    {
+        return $this->valid_to;
+    }
+
+    public function setValidTo(?\DateTimeImmutable $valid_to): static
+    {
+        $this->valid_to = $valid_to;
         return $this;
     }
 }

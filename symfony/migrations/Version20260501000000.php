@@ -79,7 +79,6 @@ final class Version20260501000000 extends AbstractMigration
             );
             SQL
         );
-        $this->addSql("CREATE INDEX idx_custom_domains_blog_id ON custom_domains(blog_id)");
 
         $this->addSql(
             <<<SQL
@@ -88,11 +87,15 @@ final class Version20260501000000 extends AbstractMigration
                 created_at timestamptz NOT NULL,
                 updated_at timestamptz NOT NULL,
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE UNIQUE,
-                domain TEXT NOT NULL
+                domain TEXT NOT NULL,
+                tls_provider custom_domain_tls_provider NOT NULL DEFAULT 'auto',
+                private_key_encrypted TEXT,
+                certificate TEXT,
+                valid_from timestamptz,
+                valid_to timestamptz
             );
             SQL
         );
-        $this->addSql("CREATE INDEX idx_custom_domain_intents_blog_id ON custom_domain_intents(blog_id)");
 
         // Blogs: custom_domain_id ====
         $this->addSql('ALTER TABLE blogs ADD COLUMN custom_domain_id BIGINT REFERENCES custom_domains(id) ON DELETE SET NULL');
@@ -113,10 +116,12 @@ final class Version20260501000000 extends AbstractMigration
                 from_at blog_hosting_at NOT NULL,
                 from_subdomain TEXT,
                 from_domain TEXT,
+                from_hosting_url TEXT,
                 from_url TEXT NOT NULL,
                 to_at blog_hosting_at NOT NULL,
                 to_subdomain TEXT,
                 to_domain TEXT,
+                to_hosting_url TEXT,
                 to_url TEXT NOT NULL,
                 status hosting_change_status NOT NULL DEFAULT 'changing',
                 error_message TEXT,

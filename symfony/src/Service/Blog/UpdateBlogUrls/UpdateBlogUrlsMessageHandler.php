@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Service\Blog\BlogService;
+use App\Service\Blog\Message\ReRenderPostHtmlMessage;
 use App\Service\Blog\UpdateBlogUrls\Updater\UpdaterInterface;
 use App\Service\Post\Content\DocUrlUpdater;
 use App\Service\Post\Content\PostContentService;
@@ -14,10 +15,8 @@ use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * TODO: tests
- */
 #[AsMessageHandler]
 class UpdateBlogUrlsMessageHandler
 {
@@ -29,7 +28,8 @@ class UpdateBlogUrlsMessageHandler
         private BlogService $blogService,
         private LoggerInterface $logger,
         private PostContentService $postContentService,
-        private LockFactory $lockFactory
+        private LockFactory $lockFactory,
+        private MessageBusInterface $bus,
     ) {}
 
     public function __invoke(UpdateBlogUrlsMessage $message): void
@@ -57,6 +57,17 @@ class UpdateBlogUrlsMessageHandler
                 $lock->release();
             }
         }
+
+        /**
+         * dispatches asynchronously to re-render post HTML
+         * in hosting change, this message handler is called synchronously, because, it is critical to update
+         * all post content in a single transaction.
+         *
+         * however, we can safely recalculate post HTML asynchronously, because, when
+         * we have content and content_unsaved saved correctly, the post HTML can be re-rendered later without any issues.
+         * if it fails, we can retry anytime.
+         */
+        $this->bus->dispatch(new ReRenderPostHtmlMessage($blog->getId()));
     }
 
     private function updateBlog(Blog $blog, UpdaterInterface $updater): void

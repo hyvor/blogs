@@ -4,7 +4,6 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { Theme } from '../../console/lib/types';
 	import { loadThemes } from '../../console/(nav)/[subdomain]/theme/themeActions';
-	import { loadConfig } from '../../console/lib/config';
 	import {
 		ActionList,
 		ActionListGroup,

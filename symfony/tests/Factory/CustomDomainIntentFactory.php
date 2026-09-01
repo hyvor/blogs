@@ -32,12 +32,12 @@ final class CustomDomainIntentFactory extends PersistentObjectFactory
         ];
     }
 
-    public static function createFor(Blog $blog, string $domain = 'example.com'): CustomDomainIntent
+    public static function createFor(Blog $blog, string $domain = 'example.com', array $attributes = []): CustomDomainIntent
     {
-        return self::createOne([
+        return self::createOne(array_merge([
             'blog' => $blog,
             'domain' => $domain,
-        ]);
+        ], $attributes));
     }
 
     #[\Override]

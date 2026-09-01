@@ -24,6 +24,14 @@
         import handle_php subdomain
     }
 
+    @customdomain {
+        host custom-domain.localhost
+    }
+
+    handle @customdomain {
+        import handle_php customdomain
+    }
+
     handle {
         import handle_php app
     }

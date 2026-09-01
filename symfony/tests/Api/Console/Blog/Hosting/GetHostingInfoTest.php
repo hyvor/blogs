@@ -7,6 +7,7 @@ use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
 use App\Api\Console\Object\HostingChangeObject;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\Enum\UserStatus;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
@@ -51,6 +52,7 @@ class GetHostingInfoTest extends ApiTestCase
             'blog' => $blog,
             'from_at' => BlogHostingAt::SUBDOMAIN,
             'to_at' => BlogHostingAt::SELF,
+            'to_hosting_url' => 'https://example.com',
             'to_url' => 'https://example.com',
         ]);
 
@@ -63,6 +65,27 @@ class GetHostingInfoTest extends ApiTestCase
         $this->assertSame('subdomain', $json['change']['from_at']);
         $this->assertSame('self', $json['change']['to_at']);
         $this->assertSame('https://example.com', $json['change']['to_url']);
+    }
+
+    public function test_does_not_return_completed_change(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-get-completed-change', 'hosting_at' => BlogHostingAt::SELF],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        HostingChangeFactory::createOne([
+            'blog' => $blog,
+            'from_at' => BlogHostingAt::SUBDOMAIN,
+            'to_at' => BlogHostingAt::SELF,
+            'status' => HostingChangeStatus::SUCCESS,
+        ]);
+
+        $this->consoleBlogApi('GET', $blog, '/hosting', user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertNull($json['change']);
     }
 
     public function test_returns_hosting_info_with_pending_intent(): void

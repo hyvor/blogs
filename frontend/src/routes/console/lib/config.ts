@@ -35,14 +35,3 @@ export function setConfig(c: Config) {
 export function getConfig() {
 	return config;
 }
-
-export async function loadConfig() {
-	if (config.domains) {
-		return;
-	}
-
-	const response = await fetch('/api/special/config');
-	const data = await response.json();
-
-	setConfig(data);
-}
