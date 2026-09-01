@@ -39,6 +39,14 @@
 		},
 		{
 			type: 'text',
+			name: 'James Yang',
+			role: t('james.role'),
+			company: 'Kyzon Solutions',
+			summary: t('james.summary'),
+			quote: t('james.quote')
+		},
+		{
+			type: 'text',
 			name: 'Robert Levesque',
 			role: t('robert.role'),
 			company: 'PROinspection Québec',

@@ -15,6 +15,13 @@
 			width: 120,
 			height: 30,
 			color: true
+		},
+		{
+			name: 'PamBnB',
+			src: `${base}/pambnb.svg`,
+			width: 120,
+			height: 30,
+			color: true
 		}
 	];
 </script>
