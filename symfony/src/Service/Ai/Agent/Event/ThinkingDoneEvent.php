@@ -4,6 +4,10 @@ namespace App\Service\Ai\Agent\Event;
 
 readonly class ThinkingDoneEvent implements AgentEvent
 {
+    public function __construct(public string $content)
+    {
+    }
+
     public function getType(): string
     {
         return 'thinking_done';
@@ -11,6 +15,6 @@ readonly class ThinkingDoneEvent implements AgentEvent
 
     public function getPayload(): array
     {
-        return [];
+        return ['content' => $this->content];
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Enum\AiMessageRole;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -50,6 +52,22 @@ class AiMessage
 
     #[ORM\Column(nullable: true)]
     private ?int $total_tokens_usd_cost = null;
+
+    /** @var Collection<int, AiMessageThinking> */
+    #[ORM\OneToMany(targetEntity: AiMessageThinking::class, mappedBy: 'ai_message')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $thinking;
+
+    /** @var Collection<int, AiMessageToolCall> */
+    #[ORM\OneToMany(targetEntity: AiMessageToolCall::class, mappedBy: 'ai_message')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $toolCalls;
+
+    public function __construct()
+    {
+        $this->thinking = new ArrayCollection();
+        $this->toolCalls = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -192,5 +210,21 @@ class AiMessage
     {
         $this->total_tokens_usd_cost = $total_tokens_usd_cost;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, AiMessageThinking>
+     */
+    public function getThinking(): Collection
+    {
+        return $this->thinking;
+    }
+
+    /**
+     * @return Collection<int, AiMessageToolCall>
+     */
+    public function getToolCalls(): Collection
+    {
+        return $this->toolCalls;
     }
 }

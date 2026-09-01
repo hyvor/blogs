@@ -12,6 +12,7 @@
 	import { getConfig } from '../../../../lib/config';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
+	import { getI18n } from '../../../../lib/i18n';
 
 	const models = getConfig().ai_models;
 
@@ -33,6 +34,8 @@
 	function handleAiAgentChange(e: any) {
 		updateBlogStore({ ai_agent: e.target.checked });
 	}
+
+	const i18n = getI18n();
 </script>
 
 <BlogSettingsSave keys={['ai_model', 'ai_translation_enabled', 'ai_agent']} />

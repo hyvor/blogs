@@ -57,6 +57,21 @@ class AiConversationService
         $this->em->flush();
     }
 
+    public function getMessages(AiConversation $conversation): array
+    {
+        return $this->em->getRepository(AiMessage::class)->createQueryBuilder('m')
+            ->select('m')
+            ->leftJoin('m.thinking', 't')
+            ->leftJoin('m.toolCalls', 'c')
+            ->addSelect('t')
+            ->addSelect('c')
+            ->where('m.conversation = :conversation')
+            ->setParameter('conversation', $conversation)
+            ->orderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Reconstructs a conversation's turns from the database into the same event shapes used
      * while streaming live (see AiAgentConversationService::toSseArray), so the frontend can

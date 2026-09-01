@@ -88,7 +88,6 @@ class AiAgentConversationService
 
         $assistantMessage = $this->createMessage($conversation, AiMessageRole::ASSISTANT, '');
         $assistantText = '';
-        $thinking = false;
 
         try {
             $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant, $history);
@@ -104,18 +103,10 @@ class AiAgentConversationService
 
                     yield $this->toSseArray(new TextEvent($text));
                 } elseif ($delta instanceof ThinkingDelta) {
-                    if (!$thinking) {
-                        $thinking = true;
-                        yield $this->toSseArray(new ThinkingStartedEvent());
-                    }
-
                     yield $this->toSseArray(new ThinkingEvent($delta->getThinking()));
                 } elseif ($delta instanceof ThinkingComplete) {
-                    $thinking = false;
-
                     $this->createThinking($assistantMessage, $delta->getThinking(), $delta->getSignature());
-
-                    yield $this->toSseArray(new ThinkingDoneEvent());
+                    yield $this->toSseArray(new ThinkingDoneEvent($delta->getThinking()));
                 } elseif ($delta instanceof ToolCallStart) {
                     yield $this->toSseArray(new ToolCallStartedEvent($delta->getName()));
                 } elseif ($delta instanceof ToolCallComplete) {

@@ -9,6 +9,8 @@ use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
+use App\Api\Console\Object\Ai\AiConversationObject;
+use App\Api\Console\Object\Ai\AiMessageObject;
 use App\Entity\AiConversation;
 use App\Service\Ai\Agent\AiAgentConversationService;
 use App\Service\Ai\Agent\AiConversationService;
@@ -81,30 +83,20 @@ class AiController extends AbstractController
     ): JsonResponse
     {
         $blog = $this->authListener->getBlog();
-
         $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset);
 
-        return new JsonResponse([
-            'conversations' => array_map(fn(AiConversation $c) => [
-                'id' => $c->getId(),
-                'title' => $c->getTitle(),
-                'created_at' => $c->getCreatedAt()->getTimestamp(),
-                'updated_at' => $c->getUpdatedAt()->getTimestamp(),
-            ], $result['conversations']),
-            'has_more' => $result['has_more'],
-        ]);
+        return new JsonResponse(array_map(fn(AiConversation $c) => new AiConversationObject($c), $result['conversations']));
     }
 
     #[Route('/ai/conversation/{id}', methods: ['GET'])]
     #[ScopeRequired(Scope::AI_USE)]
     public function getConversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
     {
+        $messages = $this->aiConversationService->getMessages($conversation);
+
         return new JsonResponse([
-            'id' => $conversation->getId(),
-            'title' => $conversation->getTitle(),
-            'created_at' => $conversation->getCreatedAt()->getTimestamp(),
-            'updated_at' => $conversation->getUpdatedAt()->getTimestamp(),
-            'turns' => $this->aiConversationService->getTurns($conversation),
+            'conversation' => new AiConversationObject($conversation),
+            'messages' => array_map(fn($m) => new AiMessageObject($m), $messages),
         ]);
     }
 

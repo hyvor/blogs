@@ -46,11 +46,6 @@ export interface AgentConversationListItem {
 	title: string | null;
 }
 
-export interface AgentConversationsResponse {
-	conversations: AgentConversationListItem[];
-	has_more: boolean;
-}
-
 export type AgentTurn =
 	| { role: 'user'; content: string }
 	| {
@@ -85,7 +80,7 @@ export function saveAgentDocumentChange(postId: number, languageId: number, cont
 }
 
 export function getAgentConversations(limit = 25, offset = 0) {
-	return consoleApi.get<AgentConversationsResponse>({
+	return consoleApi.get<AgentConversationListItem[]>({
 		endpoint: '/ai/conversations',
 		data: { limit, offset }
 	});

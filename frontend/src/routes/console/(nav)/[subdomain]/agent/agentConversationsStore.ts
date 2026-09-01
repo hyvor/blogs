@@ -31,8 +31,8 @@ function createAgentConversationsStore() {
 		try {
 			const res = await getAgentConversations(PAGE_SIZE, 0);
 			set({
-				conversations: res.conversations,
-				hasMore: res.has_more,
+				conversations: res,
+				hasMore: res.length === PAGE_SIZE,
 				loading: false,
 				loadingMore: false,
 				loaded: true
@@ -52,8 +52,8 @@ function createAgentConversationsStore() {
 			const res = await getAgentConversations(PAGE_SIZE, current.conversations.length);
 			update((s) => ({
 				...s,
-				conversations: [...s.conversations, ...res.conversations],
-				hasMore: res.has_more,
+				conversations: [...s.conversations, ...res],
+				hasMore: res.length === PAGE_SIZE,
 				loadingMore: false
 			}));
 		} catch {
