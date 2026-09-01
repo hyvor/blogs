@@ -18,8 +18,10 @@
 			.then(() => {
 				toast.success(i18n.t('console.postEditor.unpublish.unpublished'), { id: toastId });
 			})
-			.catch(() => {
-				toast.error(i18n.t('console.postEditor.unpublish.unpublishFailed'), { id: toastId });
+			.catch((e) => {
+				toast.error(e?.message || i18n.t('console.postEditor.unpublish.unpublishFailed'), {
+					id: toastId
+				});
 			});
 	}
 </script>

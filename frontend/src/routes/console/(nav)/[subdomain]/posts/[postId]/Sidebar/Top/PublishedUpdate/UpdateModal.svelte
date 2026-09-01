@@ -35,6 +35,7 @@
 	import { slugGetInvalidCharater } from '../../Settings/slug';
 	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
 	import { getI18n } from '../../../../../../../lib/i18n';
+	import { hasPendingSuggestions } from '../../../../../../../lib/prosemirror/suggestions';
 
 	const i18n = getI18n();
 
@@ -64,9 +65,14 @@
 		changes = getPublishedChanges();
 	});
 
+	let pendingSuggestions = $derived(
+		hasPendingSuggestions($documentStore?.checkpoint_content ?? null)
+	);
+
 	let disabled = $derived(
 		(changes.variant.slug !== undefined && (changes.variant.slug || '').trim() === '') ||
-			contentUpdatedAtTooEarly
+			contentUpdatedAtTooEarly ||
+			pendingSuggestions
 	);
 
 	let isLoading = $state(false);
@@ -135,6 +141,14 @@
 	loading={isLoading}
 >
 	<div class="note">{i18n.t('console.postEditor.update.intro')}</div>
+
+	{#if pendingSuggestions}
+		<div class="note">
+			<Validation state="error"
+				>{i18n.t('console.postEditor.publish.issues.pendingSuggestions')}</Validation
+			>
+		</div>
+	{/if}
 
 	<div class="diff">
 		<span>{i18n.t('console.postEditor.update.showDifference')}</span>

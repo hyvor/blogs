@@ -21,12 +21,17 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
+	{@const scheduled = $postVariantStore.status === 'scheduled'}
 	<div class="published-notice">
 		<span class="notice-text">
 			{#if $postEditingPublished}
-				{i18n.t('console.postEditor.publishedNotice.editing')}
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.editingScheduled')
+					: i18n.t('console.postEditor.publishedNotice.editing')}
 			{:else}
-				{i18n.t('console.postEditor.publishedNotice.published')}
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.scheduled')
+					: i18n.t('console.postEditor.publishedNotice.published')}
 			{/if}
 		</span>
 		<button onclick={handleEditing}>

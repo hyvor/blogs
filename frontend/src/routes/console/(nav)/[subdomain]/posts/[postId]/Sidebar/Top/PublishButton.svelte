@@ -56,8 +56,8 @@
 					confetti();
 				}
 			})
-			.catch(() => {
-				toast.error(i18n.t('console.postEditor.publish.failed'));
+			.catch((e) => {
+				toast.error(e?.message || i18n.t('console.postEditor.publish.failed'));
 			})
 			.finally(() => {
 				publishing = false;

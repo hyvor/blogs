@@ -30,7 +30,7 @@
 		stats = getContentStats();
 	});
 
-	let errorCount = $derived(issues.titleError ? 1 : 0);
+	let errorCount = $derived((issues.titleError ? 1 : 0) + (issues.suggestionsError ? 1 : 0));
 	let warningCount = $derived((issues.slugWarning ? 1 : 0) + (issues.descriptionWarning ? 1 : 0));
 </script>
 
@@ -66,7 +66,7 @@
 	</div>
 
 	<div class="content">
-		<div class="split">
+		<div class="split" class:has-error={issues.suggestionsError}>
 			<span>{i18n.t('console.postEditor.publish.summary.content')}</span>
 			<div>
 				<span class="value">
@@ -77,6 +77,9 @@
 						})}
 					{/if}
 				</span>
+				{#if issues.suggestionsError}
+					<Validation state="error">{i18n.t(issues.suggestionsError)}</Validation>
+				{/if}
 			</div>
 		</div>
 
@@ -123,7 +126,7 @@
 		</div>
 
 		<div class="split">
-			<span>{i18n.t('console.postEditor.publish.summary.authors')}</span>
+			<span>{i18n.t('console.postEditor.publish.summary.author')}</span>
 			<div>
 				{#if $postStore.authors.length}
 					<div class="chips">

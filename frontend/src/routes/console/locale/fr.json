@@ -806,7 +806,9 @@
 			},
 			"publishedNotice": {
 				"editing": "Vous modifiez un article publié.",
+				"editingScheduled": "Vous modifiez un article programmé.",
 				"published": "Cet article est publié.",
+				"scheduled": "Cet article est programmé.",
 				"switchToView": "Passer à la vue publiée",
 				"switchToEditing": "Passer en mode édition",
 				"compare": "Comparer"
@@ -883,7 +885,7 @@
 					"titleLabel": "Titre",
 					"slug": "Slug",
 					"description": "Description",
-					"authors": "Auteurs",
+					"author": "Auteur",
 					"tags": "Étiquettes",
 					"canonicalUrl": "URL canonique",
 					"noAuthors": "Aucun auteur",
@@ -892,7 +894,8 @@
 				"issues": {
 					"titleEmpty": "Le titre est vide.",
 					"slugEmpty": "Le slug est vide. Il sera généré à partir du titre.",
-					"descriptionEmpty": "La description est vide."
+					"descriptionEmpty": "La description est vide.",
+					"pendingSuggestions": "Cet article contient des suggestions non résolues. Résolvez-les avant de publier."
 				}
 			},
 			"unpublish": {

@@ -806,7 +806,9 @@
 			},
 			"publishedNotice": {
 				"editing": "You are editing a published post.",
+				"editingScheduled": "You are editing a scheduled post.",
 				"published": "This post is published.",
+				"scheduled": "This post is scheduled.",
 				"switchToView": "Switch to published view",
 				"switchToEditing": "Switch to editing mode",
 				"compare": "Compare"
@@ -883,7 +885,7 @@
 					"titleLabel": "Title",
 					"slug": "Slug",
 					"description": "Description",
-					"authors": "Authors",
+					"author": "Author",
 					"tags": "Tags",
 					"canonicalUrl": "Canonical URL",
 					"noAuthors": "No authors",
@@ -892,7 +894,8 @@
 				"issues": {
 					"titleEmpty": "Title is empty.",
 					"slugEmpty": "Slug is empty. It will be generated from the title.",
-					"descriptionEmpty": "Description is empty."
+					"descriptionEmpty": "Description is empty.",
+					"pendingSuggestions": "This post has unresolved suggestions. Resolve them before publishing."
 				}
 			},
 			"unpublish": {

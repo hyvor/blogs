@@ -2,8 +2,11 @@
 	import { IconMessage, Loader } from '@hyvor/design/components';
 	import {
 		documentStore,
+		postEditingPublished,
 		postOriginalStore,
+		postSidebarStore,
 		postStore,
+		postSuggestionModeStore,
 		postVariantOriginalStore,
 		postVariantStore
 	} from '../../postStore';
@@ -31,11 +34,9 @@
 	let postView: HTMLDivElement;
 
 	onMount(() => {
-		// const preloadedPost = getPreloadedPost(postId);
-		// if (preloadedPost) {
-		// 	handlePost(preloadedPost, null);
-		// 	return;
-		// }
+		postSidebarStore.set(null);
+		postEditingPublished.set(false);
+		postSuggestionModeStore.set('editing');
 
 		isLoading = true;
 
@@ -62,6 +63,7 @@
 		return () => {
 			seoService.stop();
 			linksService.stop();
+			postSidebarStore.set(null);
 		};
 	});
 </script>
@@ -112,5 +114,12 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1;
+	}
+
+	/* the richtext suggestions panel is position: fixed with a low z-index; keep it
+	   out of the way whenever a modal dialog (publish, update, compare, confirm) is
+	   open so it doesn't float over the modal */
+	:global(#hds-base:has([aria-modal='true']) .pm-suggestions-panel-wrap) {
+		display: none;
 	}
 </style>
