@@ -46,7 +46,6 @@ when@prod: &prod
                 path: "php://stderr"
                 level: "%env(LOG_LEVEL)%"
                 formatter: monolog.formatter.json
-            console:
                 channels: ["!cache"]
 
 when@dev: *prod
