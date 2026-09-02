@@ -14,7 +14,6 @@ export const postStore = writable<Post>();
 export const postSidebarStore = writable<PostSidebar | null>(null);
 export const postVariantOriginalStore = writable<PostVariant>();
 export const postVariantStore = writable<PostVariant>();
-export const postEditingPublished = writable<boolean>(false);
 export const postEditor = writable<Editor>();
 export const postTitle = writable<{ focus: () => void; focusAtEnd: () => void }>();
 export const postContentDirtyStore = writable<boolean>(false);

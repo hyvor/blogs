@@ -162,6 +162,24 @@ export function publishPostVariant(publishAt: number | null = null, updateStore 
 	return promise;
 }
 
+export function updatePublishedPostContent(updateStore = true) {
+	const postId = get(postStore).id;
+	const variantId = get(postVariantStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/update-content`,
+		data: { post_variant_id: variantId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
 export function unpublishPostVariant(updateStore = true) {
 	const postId = get(postStore).id;
 	const variantId = get(postVariantStore).id;

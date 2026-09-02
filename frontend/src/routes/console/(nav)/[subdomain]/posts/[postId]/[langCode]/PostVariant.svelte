@@ -2,7 +2,6 @@
 	import { IconMessage, Loader } from '@hyvor/design/components';
 	import {
 		documentStore,
-		postEditingPublished,
 		postOriginalStore,
 		postSidebarStore,
 		postStore,
@@ -35,7 +34,6 @@
 
 	onMount(() => {
 		postSidebarStore.set(null);
-		postEditingPublished.set(false);
 		postSuggestionModeStore.set('editing');
 
 		isLoading = true;
