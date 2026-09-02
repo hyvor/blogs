@@ -6,10 +6,6 @@
     }
     metrics
     auto_https disable_redirects
-
-    on_demand_tls {
-        ask http://localhost:8080/api/special/caddy/allowed-domain
-    }
 }
 
 (handle_php) {
@@ -32,9 +28,10 @@
 
 # main app
 # see run script for APP_ADDRESS / APP_TLS_DIRECTIVE (from TLS_MODE)
-{$APP_ADDRESS} {
+{$APP_ADDRESS}, http://localhost:8081 {
 
 	{$APP_TLS_DIRECTIVE}
+	{$MERCURE_DIRECTIVE}
 
 	handle /.well-known/mercure* {
 		reverse_proxy localhost:8081 {
@@ -77,15 +74,10 @@ http://localhost:8080 {
 	import handle_php local
 }
 
-# Internal Mercure Hub
-http://localhost:8081 {
-	{$MERCURE_DIRECTIVE}
-}
-
 # custom domain
-:443 {
+:443, :80 {
 	tls {
-		on_demand
+		get_certificate http http://localhost:8080/api/local/caddy-certificate
 	}
 	import handle_php customdomain
 }
