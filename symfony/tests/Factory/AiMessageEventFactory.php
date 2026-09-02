@@ -3,13 +3,14 @@
 namespace App\Tests\Factory;
 
 use App\Entity\AiMessage;
-use App\Entity\AiMessageThinking;
+use App\Entity\AiMessageEvent;
+use App\Entity\Enum\AiMessageEventType;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<AiMessageThinking>
+ * @extends PersistentObjectFactory<AiMessageEvent>
  */
-final class AiMessageThinkingFactory extends PersistentObjectFactory
+final class AiMessageEventFactory extends PersistentObjectFactory
 {
     public function __construct()
     {
@@ -18,7 +19,7 @@ final class AiMessageThinkingFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return AiMessageThinking::class;
+        return AiMessageEvent::class;
     }
 
     #[\Override]
@@ -26,13 +27,13 @@ final class AiMessageThinkingFactory extends PersistentObjectFactory
     {
         return [
             'ai_message' => AiMessageFactory::new(),
-            'summary' => self::faker()->sentence(),
+            'type' => AiMessageEventType::TEXT,
+            'content' => self::faker()->sentence(),
             'created_at' => new \DateTimeImmutable(),
-            'updated_at' => new \DateTimeImmutable(),
         ];
     }
 
-    public static function createOneFor(AiMessage $message): AiMessageThinking
+    public static function createOneFor(AiMessage $message): AiMessageEvent
     {
         return self::createOne(['ai_message' => $message]);
     }

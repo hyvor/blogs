@@ -7,6 +7,7 @@ use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Document\CheckpointCollabInput;
 use App\Api\Console\Input\Document\GetDocumentForPostInput;
+use App\Api\Console\Input\Document\GetDocumentForVariantInput;
 use App\Api\Console\Input\Document\SubmitCollabCursorInput;
 use App\Api\Console\Input\Document\SubmitCollabStepsInput;
 use App\Api\Console\Object\PostObjectFactory;
@@ -76,6 +77,25 @@ class DocumentsController
         ]);
     }
 
+
+    /**
+     * The current (content_unsaved) version and content of a post variant, keyed directly by
+     * its ID - used by the AI agent's diff review UI to compare a suggested document_change
+     * against the post's live content, without needing the post's ID or language code.
+     */
+    #[Route('/documents/variant', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
+    public function getDocumentForVariant(
+        #[MapQueryString] GetDocumentForVariantInput $input,
+    ): JsonResponse
+    {
+        $variant = $this->getVariantOrFail($input->post_variant_id);
+
+        return new JsonResponse([
+            'version' => $variant->getContentUnsavedVersion(),
+            'content' => $variant->getContentUnsaved(),
+        ]);
+    }
 
     private function getVariantOrFail(int $postVariantId): PostVariant
     {

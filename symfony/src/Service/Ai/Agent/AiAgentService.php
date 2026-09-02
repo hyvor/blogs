@@ -116,6 +116,7 @@ class AiAgentService
         string $prompt,
         ?PostVariant $postVariant,
         ?MessageBag $history = null,
+        ?\Closure $onQueryComplete = null,
     ): AgentCallResult
     {
         $model = $blog->getMeta()->ai_model;
@@ -133,6 +134,7 @@ class AiAgentService
             $this->postService,
             $this->languageService,
             // $this->logger,
+            $onQueryComplete,
         );
         $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
 

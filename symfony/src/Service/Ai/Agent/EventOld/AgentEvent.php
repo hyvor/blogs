@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Service\Ai\Agent\Event;
+namespace App\Service\Ai\Agent\EventOld;
 
+/**
+ * @deprecated
+ */
 interface AgentEvent
 {
     public function getType(): string;

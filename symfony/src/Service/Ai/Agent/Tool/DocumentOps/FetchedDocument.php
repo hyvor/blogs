@@ -16,11 +16,20 @@ class FetchedDocument
     public function __construct(
         private Node $document,
         private NodeIdMapBuilder $nodeIdMapBuilder,
+        // the post variant's content_unsaved_version at the moment this document was first
+        // fetched - captured so a persisted document_change event can record what version the
+        // agent was working from
+        private int $postVariantVersion = 0,
     ) {}
 
     public function getDocument(): Node
     {
         return $this->document;
+    }
+
+    public function getPostVariantVersion(): int
+    {
+        return $this->postVariantVersion;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
+use App\Entity\Enum\AiMessageEventType;
 use App\Entity\Enum\AiMessageRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\AI\Platform\Message\Message;
@@ -11,10 +12,9 @@ use Symfony\AI\Platform\Message\MessageBag;
 
 /**
  * Reconstructs a conversation's prior turns from the database into a MessageBag, so a
- * continued conversation can be sent back to the model with full context. AiMessage rows
- * already hold each turn's final, complete text (see AiAgentConversationService), so this
- * just replays them back into platform message objects - no need to touch thinking/tool-call
- * rows.
+ * continued conversation can be sent back to the model with full context. Each turn's text is
+ * rebuilt by concatenating its 'text'-type AiMessageEvent rows (the events table is the sole
+ * source of truth for message content) - thinking/tool-call rows are not resent.
  */
 class AiAgentHistoryService
 {
@@ -24,20 +24,39 @@ class AiAgentHistoryService
 
     public function buildMessageHistory(AiConversation $conversation): MessageBag
     {
-        $messages = $this->em->getRepository(AiMessage::class)->findBy(
-            ['conversation' => $conversation],
-            ['id' => 'ASC'],
-        );
+        /** @var AiMessage[] $messages */
+        $messages = $this->em->getRepository(AiMessage::class)->createQueryBuilder('m')
+            ->select('m')
+            ->leftJoin('m.events', 'e')
+            ->addSelect('e')
+            ->where('m.conversation = :conversation')
+            ->setParameter('conversation', $conversation)
+            ->orderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         $bag = new MessageBag();
 
         foreach ($messages as $message) {
             $bag->add(match ($message->getRole()) {
-                AiMessageRole::USER => Message::ofUser($message->getContent()),
-                AiMessageRole::ASSISTANT => Message::ofAssistant($message->getContent()),
+                AiMessageRole::USER => Message::ofUser($this->textContent($message)),
+                AiMessageRole::ASSISTANT => Message::ofAssistant($this->textContent($message)),
             });
         }
 
         return $bag;
+    }
+
+    private function textContent(AiMessage $message): string
+    {
+        $text = '';
+
+        foreach ($message->getEvents() as $event) {
+            if ($event->getType() === AiMessageEventType::TEXT) {
+                $text .= $event->getContent();
+            }
+        }
+
+        return $text;
     }
 }

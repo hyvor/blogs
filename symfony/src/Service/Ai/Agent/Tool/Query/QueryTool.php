@@ -42,6 +42,10 @@ class QueryTool
         private PostService $postService,
         private LanguageService $languageService,
         // private LoggerInterface $logger,
+        /**
+         * @var ?callable(string $toolName, array $input, mixed $output): void
+         */
+        private ?\Closure $onQueryComplete = null,
     ) {}
 
     /**
@@ -52,7 +56,7 @@ class QueryTool
         $tags = $this->tagService->getTags($this->blog, $limit, $offset, $search);
         $primaryLanguage = $this->languageService->getPrimaryLanguage($this->blog);
 
-        return array_map(function (Tag $tag) use ($primaryLanguage) {
+        $result = array_map(function (Tag $tag) use ($primaryLanguage) {
             $variant = self::primaryTagVariant($tag->getVariants()->toArray(), $primaryLanguage->getId());
 
             return [
@@ -64,6 +68,14 @@ class QueryTool
                 'posts_count' => $tag->getPostsCount(),
             ];
         }, $tags);
+
+        $this->onQueryComplete?->__invoke(
+            'get_tags',
+            ['limit' => $limit, 'offset' => $offset, 'search' => $search],
+            $result,
+        );
+
+        return $result;
     }
 
     /**
@@ -74,7 +86,7 @@ class QueryTool
         $users = $this->userService->getUsers($this->blog, $limit, $offset, $search);
         $primaryLanguage = $this->languageService->getPrimaryLanguage($this->blog);
 
-        return array_map(function (User $user) use ($primaryLanguage) {
+        $result = array_map(function (User $user) use ($primaryLanguage) {
             $variant = self::primaryUserVariant($user->getVariants()->toArray(), $primaryLanguage->getId());
 
             return [
@@ -84,6 +96,14 @@ class QueryTool
                 'posts_count' => $user->getPostsCount(),
             ];
         }, $users);
+
+        $this->onQueryComplete?->__invoke(
+            'get_authors',
+            ['limit' => $limit, 'offset' => $offset, 'search' => $search],
+            $result,
+        );
+
+        return $result;
     }
 
     /**
@@ -103,10 +123,26 @@ class QueryTool
         int $offset = 0,
     ): array|string
     {
+        $input = [
+            'languageCode' => $languageCode,
+            'status' => $status,
+            'authorId' => $authorId,
+            'tagId' => $tagId,
+            'startTimestamp' => $startTimestamp,
+            'endTimestamp' => $endTimestamp,
+            'search' => $search,
+            'id' => $id,
+            'slug' => $slug,
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
+
         $language = $this->languageService->getLanguageByCode($this->blog, $languageCode);
 
         if ($language === null) {
-            return "Language with code '$languageCode' not found.";
+            $message = "Language with code '$languageCode' not found.";
+            $this->onQueryComplete?->__invoke('get_post_variants', $input, $message);
+            return $message;
         }
 
         $result = $this->postService->getPosts(
@@ -140,6 +176,8 @@ class QueryTool
                 'description' => $variant->getDescription(),
             ];
         }
+
+        $this->onQueryComplete?->__invoke('get_post_variants', $input, $variants);
 
         return $variants;
     }

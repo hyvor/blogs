@@ -4,9 +4,10 @@ namespace App\Tests\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\AiMessageThinking;
-use App\Entity\AiMessageToolCall;
+use App\Entity\AiMessageEvent;
 use App\Entity\Blog;
+use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
+use App\Entity\Enum\AiMessageEventType;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\AiAgentConversationService;
@@ -14,7 +15,7 @@ use App\Service\Ai\Agent\AiAgentHistoryService;
 use App\Service\Ai\Agent\AiAgentService;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
-use App\Service\Ai\Agent\Event\ToolCallEventFactory;
+use App\Service\Ai\Agent\EventOld\ToolCallEventFactory;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
@@ -55,7 +56,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
     }
 
     /**
-     * @param array<int, object> $deltas
+     * Deltas are normally yielded lazily as the framework's toolbox invokes tool methods
+     * in between them - so a query tool's onQueryComplete callback can fire partway through
+     * the stream, not only before or after it. To simulate that here, a \Closure placed in
+     * $deltas is invoked with the onQueryComplete callback (instead of being yielded) when
+     * the generator reaches it, letting a test control exactly where in the sequence a query
+     * "completes" relative to the other deltas.
+     *
+     * @param array<int, object|\Closure> $deltas
      */
     private function buildService(
         PostVariant $postVariant,
@@ -65,48 +73,23 @@ class AiAgentConversationServiceTest extends KernelTestCase
         ?\Throwable $throws = null,
         string $model = 'test-model',
     ): AiAgentConversationService {
-        $result = new class ($deltas, $metadata ?? new Metadata()) implements ResultInterface {
-            private ?RawResultInterface $rawResult = null;
-
-            /**
-             * @param array<int, object> $deltas
-             */
-            public function __construct(private array $deltas, private Metadata $metadata)
-            {
-            }
-
-            public function getContent(): iterable
-            {
-                return $this->deltas;
-            }
-
-            public function getRawResult(): ?RawResultInterface
-            {
-                return $this->rawResult;
-            }
-
-            public function setRawResult(RawResultInterface $rawResult): void
-            {
-                $this->rawResult = $rawResult;
-            }
-
-            public function getMetadata(): Metadata
-            {
-                return $this->metadata;
-            }
-        };
-
         $documentOpsTool ??= new DocumentOpsTool(
             $postVariant->getPost()->getBlog(),
             $this->getService(PostService::class),
             $this->getService(PostContentService::class),
         );
 
-        $agentCallResult = new AgentCallResult($result, $documentOpsTool, $model);
-
-        $fakeAiAgentService = new class ($agentCallResult, $throws) extends AiAgentService {
-            public function __construct(private AgentCallResult $agentCallResult, private ?\Throwable $throws)
-            {
+        $fakeAiAgentService = new class ($deltas, $metadata ?? new Metadata(), $documentOpsTool, $throws, $model) extends AiAgentService {
+            /**
+             * @param array<int, object|\Closure> $deltas
+             */
+            public function __construct(
+                private array $deltas,
+                private Metadata $metadata,
+                private DocumentOpsTool $documentOpsTool,
+                private ?\Throwable $throws,
+                private string $model,
+            ) {
             }
 
             public function callAgent(
@@ -114,12 +97,56 @@ class AiAgentConversationServiceTest extends KernelTestCase
                 string $prompt,
                 ?PostVariant $postVariant,
                 ?MessageBag $history = null,
+                ?\Closure $onQueryComplete = null,
             ): AgentCallResult {
                 if ($this->throws !== null) {
                     throw $this->throws;
                 }
 
-                return $this->agentCallResult;
+                $deltas = $this->deltas;
+
+                $result = new class ($deltas, $this->metadata, $onQueryComplete) implements ResultInterface {
+                    private ?RawResultInterface $rawResult = null;
+
+                    /**
+                     * @param array<int, object|\Closure> $deltas
+                     */
+                    public function __construct(
+                        private array $deltas,
+                        private Metadata $metadata,
+                        private ?\Closure $onQueryComplete,
+                    ) {
+                    }
+
+                    public function getContent(): iterable
+                    {
+                        foreach ($this->deltas as $delta) {
+                            if ($delta instanceof \Closure) {
+                                $delta($this->onQueryComplete);
+                                continue;
+                            }
+
+                            yield $delta;
+                        }
+                    }
+
+                    public function getRawResult(): ?RawResultInterface
+                    {
+                        return $this->rawResult;
+                    }
+
+                    public function setRawResult(RawResultInterface $rawResult): void
+                    {
+                        $this->rawResult = $rawResult;
+                    }
+
+                    public function getMetadata(): Metadata
+                    {
+                        return $this->metadata;
+                    }
+                };
+
+                return new AgentCallResult($result, $this->documentOpsTool, $this->model);
             }
         };
 
@@ -163,10 +190,19 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertCount(2, $messages);
 
         $this->assertSame(AiMessageRole::USER, $messages[0]->getRole());
-        $this->assertSame('Say hello', $messages[0]->getContent());
+        $userTextEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $messages[0], 'type' => AiMessageEventType::TEXT]);
+        $this->assertCount(1, $userTextEvents);
+        $this->assertSame('Say hello', $userTextEvents[0]->getContent());
 
         $this->assertSame(AiMessageRole::ASSISTANT, $messages[1]->getRole());
-        $this->assertSame('Hello world', $messages[1]->getContent());
+
+        // consecutive TextDelta chunks are merged into a single 'text' event, saved once the
+        // stream ends (not one row per delta)
+        $textEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $messages[1], 'type' => AiMessageEventType::TEXT]);
+        $this->assertCount(1, $textEvents);
+        $this->assertSame('Hello world', $textEvents[0]->getContent());
     }
 
     public function test_persists_a_thinking_row_on_thinking_complete(): void
@@ -184,8 +220,10 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         // the per-delta thinking stream is sent to the frontend live, even though only the
         // completed summary is persisted
+        // note: a 'thinking_started' event is not actually emitted here - ThinkingStartedEvent
+        // is currently unused dead code in streamPrompt (pre-existing, unrelated to this test)
         $this->assertSame(
-            ['conversation_created', 'thinking_started', 'thinking', 'thinking_done', 'text', 'done'],
+            ['conversation_created', 'thinking', 'thinking_done', 'text', 'done'],
             array_column($events, 'type'),
         );
 
@@ -193,15 +231,57 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $thinkingRows = $this->getEm()->getRepository(AiMessageThinking::class)
-            ->findBy(['ai_message' => $assistantMessage]);
+        $thinkingRows = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage, 'type' => AiMessageEventType::THINKING]);
 
         $this->assertCount(1, $thinkingRows);
-        $this->assertSame('reasoning about it...', $thinkingRows[0]->getSummary());
+        $this->assertSame('reasoning about it...', $thinkingRows[0]->getContent());
         $this->assertSame('sig-123', $thinkingRows[0]->getSignature());
     }
 
-    public function test_persists_typed_event_for_document_edit_tool_call(): void
+    public function test_persists_interleaved_events_in_order_with_text_merged_around_them(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $service = $this->buildService($postVariant, [
+            new TextDelta('Let me check. '),
+            new ThinkingDelta('hmm'),
+            new ThinkingComplete('hmm', null),
+            new ToolCallStart('call-1', 'get_tags'),
+            // simulates the query tool's onQueryComplete callback firing partway through the
+            // stream, as it would inside the real QueryTool::getTags() call
+            function (?\Closure $onQueryComplete) {
+                $onQueryComplete?->__invoke('get_tags', ['limit' => 10], [['id' => 1, 'name' => 'News']]);
+            },
+            new ToolCallComplete([new ToolCall('call-1', 'get_tags', ['limit' => 10])]),
+            new TextDelta('Found'),
+            new TextDelta(' it.'),
+        ]);
+
+        iterator_to_array($service->streamPrompt($blog, 'Check tags', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+
+        $events = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage], ['id' => 'ASC']);
+
+        $this->assertSame(
+            [AiMessageEventType::TEXT, AiMessageEventType::THINKING, AiMessageEventType::QUERY, AiMessageEventType::TEXT],
+            array_map(fn ($e) => $e->getType(), $events),
+        );
+        $this->assertSame('Let me check. ', $events[0]->getContent());
+        $this->assertSame('hmm', $events[1]->getContent());
+        $this->assertSame('get_tags', $events[2]->getToolName());
+        $this->assertSame(['limit' => 10], $events[2]->getToolInput());
+        $this->assertSame([['id' => 1, 'name' => 'News']], $events[2]->getToolOutput());
+        // the two trailing TextDelta chunks are merged into one event
+        $this->assertSame('Found it.', $events[3]->getContent());
+    }
+
+    public function test_document_ops_tool_calls_are_not_persisted_individually(): void
     {
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
@@ -215,6 +295,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', $postVariant));
 
+        // the live SSE stream still notifies the frontend as before
         $this->assertSame(
             ['conversation_created', 'tool_call', 'post_variant_edit_suggested', 'done'],
             array_column($events, 'type'),
@@ -233,15 +314,13 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $toolCalls = $this->getEm()->getRepository(AiMessageToolCall::class)
-            ->findBy(['ai_message' => $assistantMessage]);
-
-        $this->assertCount(1, $toolCalls);
-        $this->assertSame('document_replace', $toolCalls[0]->getToolName());
-        $this->assertSame($arguments, $toolCalls[0]->getArguments());
+        // document-ops tool calls are no longer persisted one row per call - only the final
+        // document_change (once the stream ends) is - see test_yields_document_change_when_ops_were_made
+        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage]));
     }
 
-    public function test_still_persists_a_tool_call_with_no_matching_typed_event(): void
+    public function test_unmapped_tool_calls_are_not_persisted(): void
     {
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
@@ -264,13 +343,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        // the raw tool call is always persisted, even with no domain event mapping for it
-        $toolCalls = $this->getEm()->getRepository(AiMessageToolCall::class)
-            ->findBy(['ai_message' => $assistantMessage]);
-
-        $this->assertCount(1, $toolCalls);
-        $this->assertSame('some_unmapped_tool', $toolCalls[0]->getToolName());
-        $this->assertSame(['foo' => 'bar'], $toolCalls[0]->getArguments());
+        // a tool call with no query/document-ops handling is not persisted at all
+        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage]));
     }
 
     public function test_yields_document_change_when_ops_were_made(): void
@@ -294,6 +369,23 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ['conversation_created', 'text', 'document_change', 'done'],
             array_column($events, 'type'),
         );
+
+        $expectedContent = (string) json_encode($documentOpsTool->getFinalDocument($postVariant->getId())->toArray());
+        $this->assertSame($expectedContent, $events[2]['content']);
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+
+        $documentChangeEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage, 'type' => AiMessageEventType::DOCUMENT_CHANGE]);
+
+        $this->assertCount(1, $documentChangeEvents);
+        $this->assertSame($postVariant->getId(), $documentChangeEvents[0]->getPostVariant()?->getId());
+        $this->assertSame($expectedContent, $documentChangeEvents[0]->getDocumentContent());
+        $this->assertSame(AiMessageEventDocumentChangeStatus::PENDING, $documentChangeEvents[0]->getDocumentChangeStatus());
+        $this->assertSame(1, $documentChangeEvents[0]->getDocumentChangeOpsCount());
+        $this->assertSame($postVariant->getContentUnsavedVersion(), $documentChangeEvents[0]->getPostVariantVersion());
     }
 
     public function test_continues_an_existing_conversation_with_prior_history_sent_to_the_agent(): void
@@ -352,6 +444,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
                 string $prompt,
                 ?PostVariant $postVariant,
                 ?MessageBag $history = null,
+                ?\Closure $onQueryComplete = null,
             ): AgentCallResult {
                 $this->capturedHistories[] = $history;
                 return $this->agentCallResult;
@@ -388,8 +481,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $messages = $this->getEm()->getRepository(AiMessage::class)
             ->findBy(['conversation' => $conversation], ['id' => 'ASC']);
         $this->assertCount(4, $messages);
-        $this->assertSame('First message', $messages[0]->getContent());
-        $this->assertSame('Second message', $messages[2]->getContent());
+
+        $firstUserTextEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $messages[0], 'type' => AiMessageEventType::TEXT]);
+        $this->assertSame('First message', $firstUserTextEvents[0]->getContent());
+
+        $secondUserTextEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $messages[2], 'type' => AiMessageEventType::TEXT]);
+        $this->assertSame('Second message', $secondUserTextEvents[0]->getContent());
     }
 
     public function test_yields_error_event_and_persists_it_when_the_agent_call_fails(): void
@@ -415,9 +514,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertNotNull($assistantMessage);
 
         // the error itself is not persisted anywhere - just sent to the frontend and logged
-        $this->assertCount(0, $this->getEm()->getRepository(AiMessageThinking::class)
-            ->findBy(['ai_message' => $assistantMessage]));
-        $this->assertCount(0, $this->getEm()->getRepository(AiMessageToolCall::class)
+        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
             ->findBy(['ai_message' => $assistantMessage]));
     }
 

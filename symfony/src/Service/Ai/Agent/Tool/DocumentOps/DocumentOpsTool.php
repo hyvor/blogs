@@ -89,7 +89,7 @@ class DocumentOpsTool
             $nodeIdMapBuilder = new NodeIdMapBuilder();
             $nodeIdMapBuilder->register($doc);
 
-            $fetchedDocument = new FetchedDocument($doc, $nodeIdMapBuilder);
+            $fetchedDocument = new FetchedDocument($doc, $nodeIdMapBuilder, $variant->getContentUnsavedVersion());
             $this->documentCache[$postVariantId] = $fetchedDocument;
         }
 

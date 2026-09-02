@@ -28,7 +28,6 @@ final class AiMessageFactory extends PersistentObjectFactory
         return [
             'conversation' => AiConversationFactory::new(),
             'role' => AiMessageRole::ASSISTANT,
-            'content' => self::faker()->sentence(),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),
         ];

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Service\Ai\Agent\Event;
+namespace App\Service\Ai\Agent\EventOld;
 
 /**
- * Signals that the agent stream has finished. Sent to the frontend only.
+ * @deprecated
  */
 readonly class DoneEvent implements AgentEvent
 {

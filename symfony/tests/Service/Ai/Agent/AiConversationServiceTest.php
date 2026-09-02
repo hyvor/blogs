@@ -4,15 +4,17 @@ namespace App\Tests\Service\Ai\Agent;
 
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
-use App\Entity\AiMessageThinking;
-use App\Entity\AiMessageToolCall;
+use App\Entity\AiMessageEvent;
+use App\Entity\Enum\AiMessageEventType;
 use App\Entity\Enum\AiMessageRole;
 use App\Service\Ai\Agent\AiConversationService;
 use App\Tests\Factory\AiConversationFactory;
+use App\Tests\Factory\AiMessageEventFactory;
 use App\Tests\Factory\AiMessageFactory;
-use App\Tests\Factory\AiMessageThinkingFactory;
-use App\Tests\Factory\AiMessageToolCallFactory;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -68,17 +70,15 @@ class AiConversationServiceTest extends KernelTestCase
         $this->assertFalse($secondPage['has_more']);
     }
 
-    public function test_deleting_a_conversation_cascades_to_its_messages_thinking_and_tool_calls(): void
+    public function test_deleting_a_conversation_cascades_to_its_messages_and_events(): void
     {
         $blog = BlogFactory::createOne();
         $conversation = AiConversationFactory::createOneFor($blog);
         $conversationId = $conversation->getId();
         $message = AiMessageFactory::createOneFor($conversation);
         $messageId = $message->getId();
-        $thinking = AiMessageThinkingFactory::createOneFor($message);
-        $thinkingId = $thinking->getId();
-        $toolCall = AiMessageToolCallFactory::createOneFor($message);
-        $toolCallId = $toolCall->getId();
+        $event = AiMessageEventFactory::createOneFor($message);
+        $eventId = $event->getId();
 
         $this->service()->deleteConversation($conversation);
 
@@ -86,57 +86,114 @@ class AiConversationServiceTest extends KernelTestCase
         $em->clear();
         $this->assertNull($em->getRepository(AiConversation::class)->find($conversationId));
         $this->assertNull($em->getRepository(AiMessage::class)->find($messageId));
-        $this->assertNull($em->getRepository(AiMessageThinking::class)->find($thinkingId));
-        $this->assertNull($em->getRepository(AiMessageToolCall::class)->find($toolCallId));
+        $this->assertNull($em->getRepository(AiMessageEvent::class)->find($eventId));
     }
 
-    public function test_reconstructs_turns_from_messages_thinking_and_tool_calls(): void
+    public function test_gets_messages_for_a_conversation_with_their_events_in_order(): void
     {
         $blog = BlogFactory::createOne();
         $conversation = AiConversationFactory::createOneFor($blog);
 
         $userMessage = AiMessageFactory::createOneFor($conversation);
         $userMessage->setRole(AiMessageRole::USER);
-        $userMessage->setContent('Hello there');
+
+        AiMessageEventFactory::createOneFor($userMessage)
+            ->setType(AiMessageEventType::TEXT)
+            ->setContent('Hello there');
 
         $assistantMessage = AiMessageFactory::createOneFor($conversation);
         $assistantMessage->setRole(AiMessageRole::ASSISTANT);
-        $assistantMessage->setContent('Hi!');
-        $assistantMessage->setModel('claude-sonnet-5');
-        $assistantMessage->setInputTokens(10);
-        $assistantMessage->setOutputTokens(20);
-        $assistantMessage->setTotalTokens(30);
 
-        AiMessageThinkingFactory::createOneFor($assistantMessage)->setSummary('thinking...');
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::THINKING)
+            ->setContent('thinking...');
 
-        AiMessageToolCallFactory::createOneFor($assistantMessage)
-            ->setToolName('document_get')
-            ->setArguments(['postVariantId' => 42]);
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::QUERY)
+            ->setToolName('get_tags')
+            ->setToolInput(['limit' => 10])
+            ->setToolOutput([['id' => 1, 'name' => 'News']]);
+
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::TEXT)
+            ->setContent('Hi!');
+
+        $conversationId = $conversation->getId();
+
+        $this->getEm()->flush();
+        // force a fresh hydration of the messages and their events below - otherwise the
+        // already-managed $assistantMessage instance keeps the empty Collection its
+        // constructor set, since Doctrine won't repopulate an association already resident
+        // in the identity map from a fetch-join alone
+        $this->getEm()->clear();
+
+        $conversation = $this->getEm()->getRepository(AiConversation::class)->find($conversationId);
+        $this->assertNotNull($conversation);
+
+        $messages = $this->service()->getMessages($conversation);
+
+        $this->assertCount(2, $messages);
+        $this->assertSame($userMessage->getId(), $messages[0]->getId());
+        $this->assertSame($assistantMessage->getId(), $messages[1]->getId());
+
+        $events = $messages[1]->getEvents()->toArray();
+        $this->assertCount(3, $events);
+        $this->assertSame(
+            [AiMessageEventType::THINKING, AiMessageEventType::QUERY, AiMessageEventType::TEXT],
+            array_map(fn ($e) => $e->getType(), $events),
+        );
+        $this->assertSame('thinking...', $events[0]->getContent());
+        $this->assertSame('get_tags', $events[1]->getToolName());
+        $this->assertSame(['limit' => 10], $events[1]->getToolInput());
+        $this->assertSame([['id' => 1, 'name' => 'News']], $events[1]->getToolOutput());
+        $this->assertSame('Hi!', $events[2]->getContent());
+    }
+
+    public function test_gets_involved_post_variants_for_a_conversation(): void
+    {
+        $blog = BlogFactory::createOne();
+        $language = LanguageFactory::createOneFor($blog);
+        $conversation = AiConversationFactory::createOneFor($blog);
+
+        $assistantMessage = AiMessageFactory::createOneFor($conversation);
+        $assistantMessage->setRole(AiMessageRole::ASSISTANT);
+
+        $variant1 = PostVariantFactory::createOneFor(PostFactory::createOneFor($blog), language: $language);
+        $variant2 = PostVariantFactory::createOneFor(PostFactory::createOneFor($blog), language: $language);
+
+        // two document_change events on the same variant - should only appear once
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::DOCUMENT_CHANGE)
+            ->setPostVariant($variant1);
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::DOCUMENT_CHANGE)
+            ->setPostVariant($variant1);
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::DOCUMENT_CHANGE)
+            ->setPostVariant($variant2);
+
+        // a query event referencing no post variant - should not blow up or appear
+        AiMessageEventFactory::createOneFor($assistantMessage)
+            ->setType(AiMessageEventType::QUERY)
+            ->setToolName('get_tags');
+
+        // another conversation's document_change on a third variant - must not leak in
+        $otherConversation = AiConversationFactory::createOneFor($blog);
+        $otherMessage = AiMessageFactory::createOneFor($otherConversation);
+        $otherMessage->setRole(AiMessageRole::ASSISTANT);
+        $variant3 = PostVariantFactory::createOneFor(PostFactory::createOneFor($blog), language: $language);
+        AiMessageEventFactory::createOneFor($otherMessage)
+            ->setType(AiMessageEventType::DOCUMENT_CHANGE)
+            ->setPostVariant($variant3);
 
         $this->getEm()->flush();
 
-        $turns = $this->service()->getTurns($conversation);
+        $postVariants = $this->service()->getInvolvedPostVariants($conversation);
 
-        $this->assertCount(2, $turns);
-        $this->assertSame(['role' => 'user', 'content' => 'Hello there'], $turns[0]);
-
-        $this->assertSame('assistant', $turns[1]['role']);
-        $this->assertSame('claude-sonnet-5', $turns[1]['model']);
-        $this->assertSame(10, $turns[1]['input_tokens']);
-        $this->assertSame(20, $turns[1]['output_tokens']);
-        $this->assertSame(30, $turns[1]['total_tokens']);
-
-        $events = $turns[1]['events'];
-        $this->assertIsArray($events);
-        $this->assertSame(
-            ['thinking_started', 'thinking', 'thinking_done', 'post_variant_read', 'text'],
-            array_column($events, 'type'),
-        );
-        $this->assertIsArray($events[1]);
-        $this->assertSame('thinking...', $events[1]['content']);
-        $this->assertIsArray($events[3]);
-        $this->assertSame(42, $events[3]['post_variant_id']);
-        $this->assertIsArray($events[4]);
-        $this->assertSame('Hi!', $events[4]['content']);
+        $this->assertCount(2, $postVariants);
+        $ids = array_map(fn ($v) => $v->getId(), $postVariants);
+        $this->assertContains($variant1->getId(), $ids);
+        $this->assertContains($variant2->getId(), $ids);
+        $this->assertNotContains($variant3->getId(), $ids);
     }
 }

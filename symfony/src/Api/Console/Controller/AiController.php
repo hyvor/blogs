@@ -10,6 +10,7 @@ use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Api\Console\Object\Ai\AiConversationObject;
+use App\Api\Console\Object\Ai\AiConversationPostVariantObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
 use App\Entity\AiConversation;
 use App\Service\Ai\Agent\AiAgentConversationService;
@@ -93,10 +94,12 @@ class AiController extends AbstractController
     public function getConversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
     {
         $messages = $this->aiConversationService->getMessages($conversation);
+        $postVariants = $this->aiConversationService->getInvolvedPostVariants($conversation);
 
         return new JsonResponse([
             'conversation' => new AiConversationObject($conversation),
             'messages' => array_map(fn($m) => new AiMessageObject($m), $messages),
+            'post_variants' => array_map(fn($v) => new AiConversationPostVariantObject($v), $postVariants),
         ]);
     }
 

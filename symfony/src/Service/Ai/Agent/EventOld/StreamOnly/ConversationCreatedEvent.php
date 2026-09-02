@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Service\Ai\Agent\Event\StreamOnly;
+namespace App\Service\Ai\Agent\EventOld\StreamOnly;
 
-use App\Service\Ai\Agent\Event\AgentEvent;
+use App\Service\Ai\Agent\EventOld\AgentEvent;
 
+/**
+ * @deprecated
+ */
 readonly class ConversationCreatedEvent implements AgentEvent
 {
     public function __construct(

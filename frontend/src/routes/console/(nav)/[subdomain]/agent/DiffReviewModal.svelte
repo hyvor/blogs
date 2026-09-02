@@ -1,12 +1,18 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { buildDiffDoc, diffDoc, Editor } from '@hyvor/richtext';
 	import type { Author, SuggestionSource, SuggestionSourceEntry } from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
-	import { Modal, Button } from '@hyvor/design/components';
+	import { Modal, Button, Callout, Loader } from '@hyvor/design/components';
 	import IconCheck from '@hyvor/icons/IconCheck';
 	import { editorConfig, schema } from '../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../posts/[postId]/Body/Editor/suggestions';
-	import { DEFAULT_CONTENT_JSON, type DocumentChange } from './agentApi';
+	import {
+		DEFAULT_CONTENT_JSON,
+		getCurrentDocumentForVariant,
+		type CurrentDocument,
+		type DocumentChange
+	} from './agentApi';
 	import { getI18n } from '../../../lib/i18n';
 
 	const i18n = getI18n();
@@ -29,6 +35,11 @@
 
 	let selectedPostVariantId = $state(initialPostVariantId ?? changes[0]?.postVariantId ?? null);
 	let appliedIds: Set<number> = $state(new Set());
+	let loadingCurrentDocuments = $state(true);
+	// the post's actual current (content_unsaved) version/content, fetched fresh - used both to
+	// diff against (instead of a blank document) and to detect if the post changed since the
+	// agent suggested this change
+	let currentByPost: Record<number, CurrentDocument> = $state({});
 
 	// one-shot review session: everything shown here comes from a single agent-suggested diff, so
 	// the source just needs to say "these are AI's" - nothing to persist to a backend suggestions API
@@ -87,27 +98,48 @@
 		return ids.size;
 	}
 
-	// we don't have the post's content as it was before the agent's edits (only the final
-	// result comes over the wire) - so every post is diffed against a blank document for now,
-	// which shows the suggested content as a full set of additions to review
+	// diffs the agent's suggested content against the post's actual current content (fetched on
+	// mount), falling back to a blank document if the current content couldn't be loaded - in
+	// which case the suggested content shows as a full set of additions to review
 	function buildInitialContent(change: DocumentChange): string {
-		const oldNode = Node.fromJSON(schema, JSON.parse(DEFAULT_CONTENT_JSON));
+		const currentContent = currentByPost[change.postVariantId]?.content ?? DEFAULT_CONTENT_JSON;
+		const oldNode = Node.fromJSON(schema, JSON.parse(currentContent));
 		const newNode = Node.fromJSON(schema, JSON.parse(change.content));
 		const diffs = diffDoc(oldNode, newNode);
 		return JSON.stringify(buildDiffDoc(diffs, schema).doc.toJSON());
 	}
 
-	let contentByPost: Record<number, string> = $state(
-		Object.fromEntries(changes.map((change) => [change.postVariantId, buildInitialContent(change)]))
-	);
-	let remainingByPost: Record<number, number> = $state(
-		Object.fromEntries(
+	let contentByPost: Record<number, string> = $state({});
+	let remainingByPost: Record<number, number> = $state({});
+
+	onMount(async () => {
+		const entries = await Promise.all(
+			changes.map(async (change) => {
+				try {
+					const current = await getCurrentDocumentForVariant(change.postVariantId);
+					return [change.postVariantId, current] as const;
+				} catch {
+					// couldn't load the current content (e.g. the post was deleted since) - fall
+					// back to diffing against a blank document, with no staleness check
+					return [change.postVariantId, null] as const;
+				}
+			})
+		);
+		currentByPost = Object.fromEntries(
+			entries.filter((e): e is [number, CurrentDocument] => e[1] !== null)
+		);
+
+		contentByPost = Object.fromEntries(
+			changes.map((change) => [change.postVariantId, buildInitialContent(change)])
+		);
+		remainingByPost = Object.fromEntries(
 			Object.entries(contentByPost).map(([id, content]) => [
 				id,
 				countRemainingSuggestions(JSON.parse(content))
 			])
-		)
-	);
+		);
+		loadingCurrentDocuments = false;
+	});
 
 	let remaining = $derived(
 		selectedPostVariantId !== null ? (remainingByPost[selectedPostVariantId] ?? 0) : 0
@@ -115,6 +147,15 @@
 	let selectedApplied = $derived(
 		selectedPostVariantId !== null && appliedIds.has(selectedPostVariantId)
 	);
+	// the post was edited again after the agent suggested this change - review carefully, since
+	// the diff below is against the version the agent saw, not necessarily the latest
+	let selectedIsStale = $derived.by(() => {
+		if (selectedPostVariantId === null) return false;
+		const change = changes.find((c) => c.postVariantId === selectedPostVariantId);
+		const current = currentByPost[selectedPostVariantId];
+		if (!change || change.version === undefined || !current) return false;
+		return current.version > change.version;
+	});
 
 	function handleValueChange(value: string) {
 		if (selectedPostVariantId === null) return;
@@ -172,36 +213,48 @@
 				{/if}
 			</span>
 		</div>
-		<div class="body">
-			<div class="posts-sidebar">
-				{#each changes as change (change.postVariantId)}
-					<button
-						type="button"
-						class="post-item"
-						class:active={selectedPostVariantId === change.postVariantId}
-						onclick={() => (selectedPostVariantId = change.postVariantId)}
-					>
-						<span>Post #{change.postVariantId}</span>
-						{#if appliedIds.has(change.postVariantId)}
-							<IconCheck size={13} />
-						{/if}
-					</button>
-				{/each}
+		{#if loadingCurrentDocuments}
+			<div class="body loading">
+				<Loader />
 			</div>
-			<div class="editor">
-				{#if selectedPostVariantId !== null}
-					{#key selectedPostVariantId}
-						<Editor
-							value={contentByPost[selectedPostVariantId]}
-							{schema}
-							editorConfig={diffEditorConfig}
-							editable={!selectedApplied}
-							onvaluechange={handleValueChange}
-						/>
-					{/key}
-				{/if}
+		{:else}
+			<div class="body">
+				<div class="posts-sidebar">
+					{#each changes as change (change.postVariantId)}
+						<button
+							type="button"
+							class="post-item"
+							class:active={selectedPostVariantId === change.postVariantId}
+							onclick={() => (selectedPostVariantId = change.postVariantId)}
+						>
+							<span>Post #{change.postVariantId}</span>
+							{#if appliedIds.has(change.postVariantId)}
+								<IconCheck size={13} />
+							{/if}
+						</button>
+					{/each}
+				</div>
+				<div class="editor">
+					{#if selectedIsStale}
+						<Callout type="warning">
+							This post has been updated since the AI suggested this change. Please review the
+							changes carefully before applying them.
+						</Callout>
+					{/if}
+					{#if selectedPostVariantId !== null}
+						{#key selectedPostVariantId}
+							<Editor
+								value={contentByPost[selectedPostVariantId]}
+								{schema}
+								editorConfig={diffEditorConfig}
+								editable={!selectedApplied}
+								onvaluechange={handleValueChange}
+							/>
+						{/key}
+					{/if}
+				</div>
 			</div>
-		</div>
+		{/if}
 		<div class="footer">
 			<Button color="input" onclick={onclose} disabled={applying}
 				>{i18n.t('console.common.close')}</Button
@@ -252,6 +305,11 @@
 		flex: 1;
 		min-height: 0;
 		display: flex;
+	}
+
+	.body.loading {
+		align-items: center;
+		justify-content: center;
 	}
 
 	.posts-sidebar {

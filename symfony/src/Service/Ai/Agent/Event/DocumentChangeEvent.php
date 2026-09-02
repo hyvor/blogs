@@ -2,29 +2,29 @@
 
 namespace App\Service\Ai\Agent\Event;
 
-/**
- * Carries the final suggested document content once the agent has made edits. Sent to the
- * frontend only — the underlying ops are already captured as AiMessageToolCall rows, so this
- * isn't separately persisted.
- */
-readonly class DocumentChangeEvent implements AgentEvent
+use App\Entity\AiMessageEvent;
+use App\Entity\Enum\AiMessageEventType;
+
+readonly class DocumentChangeEvent extends EventAbstract
 {
+
     public function __construct(
-        public int $postVariantId,
-        public string $content,
-    ) {
+        private string $content,
+        private int $opsCount,
+        private int $postVariantVersion, // the content_unsaved_version that the agent first fetched
+    ) {}
+
+    public function getType(): AiMessageEventType
+    {
+        return AiMessageEventType::DOCUMENT_CHANGE;
     }
 
-    public function getType(): string
+    public function setEventProperties(AiMessageEvent $event): void
     {
-        return 'document_change';
+        $event->setDocumentContent($this->content);
+        $event->setDocumentChangeOpsCount($this->opsCount);
+        $event->setPostVariantVersion($this->postVariantVersion);
     }
 
-    public function getPayload(): array
-    {
-        return [
-            'post_variant_id' => $this->postVariantId,
-            'content' => $this->content,
-        ];
-    }
 }
+

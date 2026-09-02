@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LicenseRequired from '../../../../../billing/LicenseRequired.svelte';
-	import AgentChat from '../../../../agent/AgentChat.svelte';
+	import AgentChat from '../../../../agent/AgentChatOld.svelte';
 	import { postEditor, postVariantStore } from '../../../postStore';
 	import type { DocumentChange } from '../../../../agent/agentApi';
 

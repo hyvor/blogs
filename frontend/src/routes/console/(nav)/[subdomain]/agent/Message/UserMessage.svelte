@@ -21,5 +21,6 @@
 		background-color: color-mix(in srgb, var(--accent), transparent 85%);
 		padding: 8px 18px;
 		border-radius: 20px;
+		max-width: 500px;
 	}
 </style>

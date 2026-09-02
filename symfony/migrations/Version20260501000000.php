@@ -206,7 +206,6 @@ final class Version20260501000000 extends AbstractMigration
                 updated_at timestamptz NOT NULL DEFAULT NOW(),
                 conversation_id BIGINT NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
                 role ai_message_role NOT NULL,
-                content TEXT NOT NULL,
                 input_tokens INTEGER,
                 output_tokens INTEGER,
                 total_tokens INTEGER,
@@ -219,33 +218,31 @@ final class Version20260501000000 extends AbstractMigration
         );
         $this->addSql('CREATE INDEX idx_ai_messages_conversation_id ON ai_messages(conversation_id)');
 
-        $this->addSql(
-            <<<SQL
-            CREATE TABLE ai_messages_thinking (
-                id serial PRIMARY KEY,
-                created_at timestamptz NOT NULL DEFAULT NOW(),
-                updated_at timestamptz NOT NULL DEFAULT NOW(),
-                ai_message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
-                summary TEXT NOT NULL,
-                signature TEXT
-            );
-            SQL
-        );
-        $this->addSql('CREATE INDEX idx_ai_messages_thinking_ai_message_id ON ai_messages_thinking(ai_message_id)');
+        $this->addSql("CREATE TYPE ai_message_event_type AS ENUM ('text', 'thinking', 'query', 'document_change')");
+        $this->addSql("CREATE TYPE ai_message_event_document_change_status AS ENUM ('pending', 'reviewed')");
 
         $this->addSql(
             <<<SQL
-            CREATE TABLE ai_messages_tool_calls (
+            CREATE TABLE ai_message_events (
                 id serial PRIMARY KEY,
                 created_at timestamptz NOT NULL DEFAULT NOW(),
-                updated_at timestamptz NOT NULL DEFAULT NOW(),
                 ai_message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
-                tool_name VARCHAR(255) NOT NULL,
-                arguments JSON NOT NULL
+                type ai_message_event_type NOT NULL,
+                content TEXT,
+                signature TEXT,
+                tool_name VARCHAR(255),
+                tool_input JSON,
+                tool_output JSON,
+                post_variant_id BIGINT REFERENCES post_variants(id) ON DELETE SET NULL,
+                document_content TEXT,
+                document_change_status ai_message_event_document_change_status,
+                document_change_ops_count INTEGER,
+                post_variant_version INTEGER
             );
             SQL
         );
-        $this->addSql('CREATE INDEX idx_ai_messages_tool_calls_ai_message_id ON ai_messages_tool_calls(ai_message_id)');
+        $this->addSql('CREATE INDEX idx_ai_message_events_ai_message_id ON ai_message_events(ai_message_id)');
+        $this->addSql('CREATE INDEX idx_ai_message_events_post_variant_id ON ai_message_events(post_variant_id) WHERE post_variant_id IS NOT NULL');
 
         // cleanup =============
         $this->addSql('ALTER TABLE blogs DROP COLUMN trial_ends_at');

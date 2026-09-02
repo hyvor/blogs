@@ -29,9 +29,6 @@ class AiMessage
     #[ORM\Column(length: 255, enumType: AiMessageRole::class)]
     private AiMessageRole $role;
 
-    #[ORM\Column(type: 'text')]
-    private string $content;
-
     #[ORM\Column(nullable: true)]
     private ?int $input_tokens = null;
 
@@ -53,20 +50,14 @@ class AiMessage
     #[ORM\Column(nullable: true)]
     private ?int $total_tokens_usd_cost = null;
 
-    /** @var Collection<int, AiMessageThinking> */
-    #[ORM\OneToMany(targetEntity: AiMessageThinking::class, mappedBy: 'ai_message')]
+    /** @var Collection<int, AiMessageEvent> */
+    #[ORM\OneToMany(targetEntity: AiMessageEvent::class, mappedBy: 'ai_message')]
     #[ORM\OrderBy(['id' => 'ASC'])]
-    private Collection $thinking;
-
-    /** @var Collection<int, AiMessageToolCall> */
-    #[ORM\OneToMany(targetEntity: AiMessageToolCall::class, mappedBy: 'ai_message')]
-    #[ORM\OrderBy(['id' => 'ASC'])]
-    private Collection $toolCalls;
+    private Collection $events;
 
     public function __construct()
     {
-        $this->thinking = new ArrayCollection();
-        $this->toolCalls = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): int
@@ -121,17 +112,6 @@ class AiMessage
     public function setRole(AiMessageRole $role): static
     {
         $this->role = $role;
-        return $this;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): static
-    {
-        $this->content = $content;
         return $this;
     }
 
@@ -213,18 +193,10 @@ class AiMessage
     }
 
     /**
-     * @return Collection<int, AiMessageThinking>
+     * @return Collection<int, AiMessageEvent>
      */
-    public function getThinking(): Collection
+    public function getEvents(): Collection
     {
-        return $this->thinking;
-    }
-
-    /**
-     * @return Collection<int, AiMessageToolCall>
-     */
-    public function getToolCalls(): Collection
-    {
-        return $this->toolCalls;
+        return $this->events;
     }
 }
