@@ -35,7 +35,7 @@
 	interface InitResponse {
 		user: CloudContextUser;
 		organization: CloudContextOrganization;
-		resolved_license: ResolvedLicense;
+		resolved_license: ResolvedLicense | null;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
@@ -99,10 +99,11 @@
 					const url = new URL(err.data[toPage + '_url'], location.origin);
 					url.searchParams.set('redirect', location.href);
 					location.href = url.toString();
-				} else {
-					toast.error(err.message);
-				}
-			});
+			} else {
+				toast.error(err.message);
+			}
+			isLoading = false;
+		});
 	}
 
 	onMount(startConsole);

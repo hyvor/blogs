@@ -48,14 +48,12 @@ function getConsoleApi() {
                 .join('&'); */
 		}
 
-		const headers = {
-			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
-		} as Record<string, string>;
+		const headers = {} as Record<string, string>;
 
 		const currentOrg = get(authOrganizationStore);
 
 		if (currentOrg) {
-			headers['X-Organization-ID'] = String(currentOrg.id);
+			headers['X-Organization-Id'] = String(currentOrg.id);
 		}
 
 		if (!(data instanceof FormData)) {
