@@ -5,7 +5,6 @@
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 	import IconExclamationTriangle from '@hyvor/icons/IconExclamationTriangle';
 	import IconArrowRight from '@hyvor/icons/IconArrowRight';
-	import IconArrowLeftRight from '@hyvor/icons/IconArrowLeftRight';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconDash from '@hyvor/icons/IconDash';
 	import dayjs from 'dayjs';
@@ -176,17 +175,9 @@
 					{/if}
 				</div>
 				{#if diff && $postVariantStore.content}
-					<Button
-						variant="invisible"
-						color="input"
-						size="small"
-						on:click={() => (compareOpen = true)}
-					>
-						{#snippet start()}
-							<IconArrowLeftRight size={12} />
-						{/snippet}
+					<button class="compare-link" onclick={() => (compareOpen = true)}>
 						{i18n.t('console.postEditor.publishedNotice.compare')}
-					</Button>
+					</button>
 				{/if}
 			</div>
 		</div>
@@ -505,8 +496,14 @@
 		min-width: 0;
 	}
 
-	.content-cell :global(button) {
+	.compare-link {
 		flex-shrink: 0;
+		font-size: 14px;
+		text-decoration: underline;
+		color: var(--text-light);
+	}
+	.compare-link:hover {
+		color: var(--text);
 	}
 
 	.no-changes {
