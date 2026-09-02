@@ -12,7 +12,6 @@ class CaddyRouterHeaderListener
     public function onKernelResponse(ResponseEvent $event): void
     {
         $router = $_ENV['CADDY_ROUTER'] ?? 'app';
-        $event->getResponse()->headers->set('X-Caddy-Router', is_string($router) ? $router : 'app');
+        $event->getResponse()->headers->set('X-Hb-Router', is_string($router) ? $router : 'app');
     }
-
 }
