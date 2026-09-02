@@ -1,0 +1,159 @@
+<?php
+
+namespace App\Tests\Api\Console\Blog\Post;
+
+use App\Api\Console\Controller\PostController;
+use App\Entity\Enum\PostVariantStatus;
+use App\Service\Post\PostService;
+use App\Service\Post\Suggestion\PostSuggestionContentChecker;
+use App\Tests\Case\ApiTestCase;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\RouteFactory;
+use App\Tests\Factory\UserFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
+
+#[CoversClass(PostController::class)]
+#[CoversClass(PostService::class)]
+#[CoversClass(PostSuggestionContentChecker::class)]
+class UpdatePublishedPostVariantContentTest extends ApiTestCase
+{
+    private const string CONTENT_PUBLISHED = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Old"}]}]}';
+    private const string CONTENT_UNSAVED = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"New content"}]}]}';
+
+    public function test_variant_not_found(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/update-content', [
+            'post_variant_id' => 999999,
+        ], user: $user);
+
+        $this->assertResponseFailed(404, 'Variant not found');
+    }
+
+    public function test_fails_when_variant_is_draft(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'content_unsaved' => self::CONTENT_UNSAVED,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/update-content', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Post variant is not published or scheduled');
+    }
+
+    #[TestWith([PostVariantStatus::PUBLISHED])]
+    #[TestWith([PostVariantStatus::SCHEDULED])]
+    public function test_copies_content_unsaved_to_content(
+        PostVariantStatus $status
+    ): void {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => $status,
+            'slug' => 'my-post',
+            'title' => 'My Post',
+            'content' => self::CONTENT_PUBLISHED,
+            'content_unsaved' => self::CONTENT_UNSAVED,
+        ]);
+
+        $response = $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/update-content', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode((string)$response->getContent(), true);
+        $this->assertIsArray($data);
+        $this->assertSame($status->value, $data['status']);
+        $this->assertSame(self::CONTENT_UNSAVED, $data['content']);
+
+        $this->getEm()->refresh($variant);
+        $this->assertSame(self::CONTENT_UNSAVED, $variant->getContent());
+        $this->assertSame('<p>New content</p>', $variant->getContentHtml());
+        $this->assertStringContainsString('New content', (string)$variant->getContentText());
+        $this->assertNotNull($variant->getContentUpdatedAt());
+    }
+
+    public function test_fails_when_content_unsaved_is_null(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::PUBLISHED,
+            'slug' => 'my-post',
+            'content' => self::CONTENT_PUBLISHED,
+            'content_unsaved' => null,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/update-content', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'Cannot update post variant with no content');
+    }
+
+    public function test_blocks_update_when_content_has_pending_suggestions(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'update-blocked-suggestions']);
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog]);
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $contentWithPendingSuggestion = json_encode([
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
+                'content' => [[
+                    'type' => 'text',
+                    'text' => 'hello',
+                    'marks' => [['type' => 'suggestion', 'attrs' => ['type' => 'insert', 'id' => 'sg-1']]],
+                ]],
+            ]],
+        ]);
+
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::PUBLISHED,
+            'slug' => 'my-post',
+            'content' => self::CONTENT_PUBLISHED,
+            'content_unsaved' => $contentWithPendingSuggestion,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/update-content', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'unresolved suggestions');
+    }
+}

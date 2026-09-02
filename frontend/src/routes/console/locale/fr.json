@@ -823,23 +823,9 @@
 				"suggestingInfo": "Vous faites des suggestions"
 			},
 			"publishedNotice": {
-				"editing": "Vous modifiez un article publié.",
-				"editingScheduled": "Vous modifiez un article programmé.",
 				"published": "Cet article est publié.",
 				"scheduled": "Cet article est programmé.",
-				"switchToView": "Passer à la vue publiée",
-				"switchToEditing": "Passer en mode édition",
 				"compare": "Comparer"
-			},
-			"publishedEditing": {
-				"status": "Modification de la version publiée.",
-				"discard": "Abandonner",
-				"confirmTitle": "Abandonner les modifications ?",
-				"confirmButton": "Oui, abandonner les modifications",
-				"confirmIntro": "Êtes-vous sûr de vouloir abandonner les modifications non publiées.",
-				"confirmChangedWords": "Vous avez environ <strong>{words} mots modifiés</strong>.",
-				"confirmIrreversible": "Cette action est irréversible.",
-				"confirmRevert": "Le contenu sera restauré à la dernière version publiée."
 			},
 			"compare": {
 				"publishedVersion": "Version publiée",
@@ -935,11 +921,9 @@
 				"button": "Mettre à jour",
 				"modalTitle": "Mettre à jour l'article",
 				"intro": "Vous êtes sur le point de mettre à jour l'article. Veuillez vérifier les modifications ci-dessous.",
-				"showDifference": "Afficher les différences",
 				"updated": "Article mis à jour avec succès.",
+				"noChanges": "Aucune modification",
 				"content": "Contenu",
-				"setCustomUpdatedTime": "Définir une heure de mise à jour personnalisée",
-				"updatedAtTooEarly": "Doit être à la date de publication ou après.",
 				"slug": "Slug",
 				"slugEmpty": "Le slug ne peut pas être vide.",
 				"slugInvalidChar": "Le slug ne peut pas contenir {char}.",
