@@ -28,7 +28,7 @@ class FontsCssProcessor
         $blogUrl = $this->permalinkService->getBlogUrl($blog);
 
         try {
-            $css = $this->bunnyService->getCss($blog->getId(), $blogUrl, $family);
+            $css = $this->bunnyService->getCss($blogUrl, $family);
             return DeliveryResponse::forFile(
                 DeliveryFileType::ASSET,
                 $css,

@@ -108,7 +108,7 @@ class StylesProcessor
 
         try {
             $blogUrl = $this->permalinkService->getBlogUrl($blog);
-            $bunnyCss = $this->bunnyService->getCss($blog->getId(), $blogUrl, $themeFonts);
+            $bunnyCss = $this->bunnyService->getCss($blogUrl, $themeFonts);
         } catch (UnableToFetchBunnyException $e) {
             return [
                 $css,

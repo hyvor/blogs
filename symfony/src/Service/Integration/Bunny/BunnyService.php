@@ -15,12 +15,12 @@ class BunnyService
     ) {}
 
     /** @throws UnableToFetchBunnyException */
-    public function getCss(int $blogId, string $blogUrl, string $fontFamily): string
+    public function getCss(string $blogUrl, string $fontFamily): string
     {
         $url = "https://fonts.bunny.net/css?family=$fontFamily&display=swap";
-        $cacheKey = 'bunny_fonts_' . $blogId . '_' . md5($url);
+        $cacheKey = 'bunny_fonts_' . md5($url);
 
-        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($url, $blogUrl) {
+        $css = $this->cache->get($cacheKey, function (ItemInterface $item) use ($url) {
             $item->expiresAfter(30 * 24 * 60 * 60);
 
             try {
@@ -34,12 +34,13 @@ class BunnyService
                 throw new UnableToFetchBunnyException('Request failed');
             }
 
-            $css = $response->getContent();
-            return str_replace(
-                'https://fonts.bunny.net/',
-                $blogUrl . '/fonts/file/',
-                $css
-            );
+            return $response->getContent();
         });
+
+        return str_replace(
+            'https://fonts.bunny.net/',
+            $blogUrl . '/fonts/file/',
+            $css
+        );
     }
 }
