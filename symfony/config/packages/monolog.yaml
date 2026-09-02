@@ -20,22 +20,31 @@
 #                 path: "php://stderr"
 #                 formatter: monolog.formatter.json
 
+# when@prod: &prod
+#     monolog:
+#         handlers:
+#             app:
+#                 type: stream
+#                 path: "php://stderr"
+#                 level: "%env(LOG_LEVEL)%"
+#                 channels: ["app"]
+#                 formatter: monolog.formatter.json
+
+#             non_app:
+#                 type: stream
+#                 path: "php://stderr"
+#                 level: error
+#                 bubble: false
+#                 channels: ["!app"]
+#                 formatter: monolog.formatter.json
+
 when@prod: &prod
     monolog:
         handlers:
-            app:
+            main:
                 type: stream
                 path: "php://stderr"
                 level: "%env(LOG_LEVEL)%"
-                channels: ["app"]
-                formatter: monolog.formatter.json
-
-            non_app:
-                type: stream
-                path: "php://stderr"
-                level: error
-                bubble: false
-                channels: ["!app"]
                 formatter: monolog.formatter.json
 
 when@dev: *prod
