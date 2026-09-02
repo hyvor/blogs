@@ -34,7 +34,7 @@
 	let isPrivate = $state(tag.is_private);
 	let slug = $state(tag.slug);
 	let codeHead = $state(tag.code_head || '');
-	let codeFoot = tag.code_foot || '';
+	let codeFoot = $state(tag.code_foot || '');
 
 	let customCode = $state(false);
 
@@ -55,6 +55,7 @@
 
 	let hasChanges = $derived(
 		Object.keys(variantChanges).length !== 0 ||
+			isPrivate !== tag.is_private ||
 			slug !== tag.slug ||
 			codeHead !== (tag.code_head || '') ||
 			codeFoot !== (tag.code_foot || '')
@@ -192,9 +193,9 @@
 
 			<SplitControl label={i18n.t('console.settings.code.footCode')} column>
 				<CodemirrorEditor
-					id="tag-head-code"
+					id="tag-foot-code"
 					ext="twig"
-					bind:value={codeHead}
+					bind:value={codeFoot}
 					style="min-height: 200px;"
 				/>
 			</SplitControl>
