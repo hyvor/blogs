@@ -36,10 +36,6 @@
 		<div>
 			{host}
 		</div>
-		<div>{
-			getConfig().deployment === 'cloud' ?
-				CLOUD_CNAME_DOMAIN :
-				getConfig().domains.app
-			}</div>
+		<div>{getConfig().deployment === 'cloud' ? CLOUD_CNAME_DOMAIN : getConfig().domains.app}</div>
 	</TableRow>
 </Table>

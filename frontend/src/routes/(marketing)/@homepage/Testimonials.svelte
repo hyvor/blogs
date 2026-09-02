@@ -14,7 +14,20 @@
 			role: t('riccardo.role'),
 			company: 'Google',
 			summary: t('riccardo.summary'),
-			quote: t('riccardo.quote')
+			quote: t('riccardo.quote'),
+			imageUrl: '/images/homepage/testmonials/riccardo-p.webp'
+		},
+		{
+			type: 'video',
+			name: 'Christian Santos',
+			role: t('christian.role'),
+			company: 'Organizely.io',
+			companyUrl: 'https://organizely.io/blog',
+			videoUrl:
+				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788363647/organizely-review.mov',
+			posterUrl:
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788363809/organizely-thumbnail_etbmqd.png',
+			summary: t('christian.summary')
 		},
 		{
 			type: 'video',
