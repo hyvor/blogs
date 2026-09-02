@@ -27,6 +27,7 @@ class GetDocumentForVariantTest extends ApiTestCase
             [
                 'content_unsaved_version' => 3,
                 'content_unsaved' => 'current content',
+                'document_version' => 5,
             ],
             language: $language,
         );
@@ -38,6 +39,7 @@ class GetDocumentForVariantTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame(3, $json['version']);
         $this->assertSame('current content', $json['content']);
+        $this->assertSame(5, $json['document_version']);
     }
 
     public function test_when_variant_not_found(): void

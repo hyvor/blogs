@@ -5,7 +5,7 @@
 		type AiMessage,
 		type AiMessageEvent
 	} from './aiConversationApi';
-	import { callAgent, type DocumentChange } from './agentApi';
+	import { applyDocumentChange, callAgent, type DocumentChange } from './agentApi';
 	import UserMessage from './Message/UserMessage.svelte';
 	import ThinkingEvent from './Message/ThinkingEvent.svelte';
 	import QueryEvent from './Message/QueryEvent.svelte';
@@ -22,7 +22,7 @@
 		conversationId: number | null;
 	}
 
-	let { conversationId }: Props = $props();
+	let { conversationId = null }: Props = $props();
 
 	function documentChangeEvents(message: AiMessage) {
 		return message.events.filter((e) => e.type === 'document_change');
@@ -33,29 +33,30 @@
 	let messages: AiMessage[] = $state([]);
 
 	let showDiffModal = $state(false);
-	let reviewChanges: DocumentChange[] = $state([]);
-	let reviewInitialPostVariantId: number | null = $state(null);
+	let reviewChange: DocumentChange | null = $state(null);
 	let applying = $state(false);
 
-	function openReview(messageEvents: AiMessageEvent[], clickedEvent: AiMessageEvent) {
-		reviewChanges = messageEvents
-			.filter(
-				(e): e is AiMessageEvent & { post_variant_id: number; document_content: string } =>
-					e.post_variant_id !== null && e.document_content !== null
-			)
-			.map((e) => ({
-				postVariantId: e.post_variant_id,
-				content: e.document_content,
-				version: e.post_variant_version ?? undefined
-			}));
-		reviewInitialPostVariantId = clickedEvent.post_variant_id;
+	function openReview(event: AiMessageEvent) {
+		console.log(event);
+		reviewChange = {
+			postVariantId: event.post_variant_id!,
+			content: event.document_content!,
+			version: event.post_variant_version!
+		};
 		showDiffModal = true;
 	}
 
-	async function handleApply(change: DocumentChange) {
+	async function handleApply(
+		change: DocumentChange,
+		finalContent: string,
+		documentVersion: number
+	) {
 		applying = true;
 		try {
-			await applyDocumentChange(change);
+			await applyDocumentChange(change.postVariantId, finalContent, documentVersion);
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : 'Could not apply the change');
+			throw error;
 		} finally {
 			applying = false;
 		}
@@ -166,7 +167,7 @@
 									<DocumentChangeEvent
 										events={documentChangeEvents(message)}
 										postVariants={[]}
-										onReview={(event) => openReview(documentChangeEvents(message), event)}
+										onReview={openReview}
 									/>
 								</div>
 							</div>
@@ -181,10 +182,9 @@
 	</div>
 {/if}
 
-{#if showDiffModal}
+{#if showDiffModal && reviewChange}
 	<DiffReviewModal
-		changes={reviewChanges}
-		initialPostVariantId={reviewInitialPostVariantId}
+		change={reviewChange}
 		{applying}
 		onclose={() => (showDiffModal = false)}
 		onapply={handleApply}

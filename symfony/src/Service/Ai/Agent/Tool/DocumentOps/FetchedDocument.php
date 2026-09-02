@@ -2,6 +2,7 @@
 
 namespace App\Service\Ai\Agent\Tool\DocumentOps;
 
+use App\Entity\PostVariant;
 use Hyvor\Phrosemirror\Document\Node;
 
 class FetchedDocument
@@ -14,12 +15,9 @@ class FetchedDocument
     private array $ops = [];
 
     public function __construct(
+        private PostVariant $postVariant,
         private Node $document,
         private NodeIdMapBuilder $nodeIdMapBuilder,
-        // the post variant's content_unsaved_version at the moment this document was first
-        // fetched - captured so a persisted document_change event can record what version the
-        // agent was working from
-        private int $postVariantVersion = 0,
     ) {}
 
     public function getDocument(): Node
@@ -27,9 +25,9 @@ class FetchedDocument
         return $this->document;
     }
 
-    public function getPostVariantVersion(): int
+    public function getPostVariant(): PostVariant
     {
-        return $this->postVariantVersion;
+        return $this->postVariant;
     }
 
     /**

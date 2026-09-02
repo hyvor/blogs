@@ -14,8 +14,8 @@
 
 	let { events, postVariants = [], onReview }: Props = $props();
 
-	function findPostVariant(postVariantId: number | null) {
-		if (postVariantId === null) return null;
+	function findPostVariant(postVariantId: number | null | undefined) {
+		if (!postVariantId) return null;
 		return postVariants.find((v) => v.id === postVariantId) ?? null;
 	}
 </script>
@@ -27,7 +27,7 @@
 			<span>Document changes</span>
 		</div>
 		<div class="doc-changes-list">
-			{#each events as event (event.id)}
+			{#each events as event}
 				{@const variant = findPostVariant(event.post_variant_id)}
 				{@const reviewed = event.document_change_status === 'reviewed'}
 				<div class="doc-change-row">

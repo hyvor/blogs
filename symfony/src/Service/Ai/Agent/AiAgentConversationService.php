@@ -156,12 +156,7 @@ class AiAgentConversationService
                         $delta->getSignature()
                     );
 
-                    $event = $this->createEvent($assistantMessage, $thoughtEvent);
-
-                    yield [
-                        'type' => 'event',
-                        'event' => new AiMessageEventObject($event),
-                    ];
+                    $this->createEvent($assistantMessage, $thoughtEvent);
 
                 } elseif ($delta instanceof ToolCallComplete) {
 
@@ -258,9 +253,10 @@ class AiAgentConversationService
                 $event = $this->createEvent(
                     $assistantMessage,
                     new DocumentChangeEvent(
+                        $fetchedDocument->getPostVariant(),
                         $documentContent,
                         count($fetchedDocument->getOps()),
-                        $fetchedDocument->getPostVariantVersion()
+                        $fetchedDocument->getPostVariant()->getContentUnsavedVersion()
                     )
                 );
 

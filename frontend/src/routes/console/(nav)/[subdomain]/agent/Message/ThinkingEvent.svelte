@@ -2,6 +2,8 @@
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 	import type { AiMessageEvent } from '../aiConversationApi';
+	import { getPurifiedHtmlFromMarkdown } from './html';
+	import { slide } from 'svelte/transition';
 
 	interface Props {
 		event: AiMessageEvent;
@@ -21,8 +23,8 @@
 		</span>
 	</button>
 	{#if open}
-		<div class="step-content">
-			<p>{event.content}</p>
+		<div class="step-content" transition:slide={{ duration: 150 }}>
+			{@html getPurifiedHtmlFromMarkdown(event.content!)}
 		</div>
 	{/if}
 </div>
@@ -63,9 +65,15 @@
 		font-size: 12px;
 		line-height: 1.5;
 		color: var(--text-light);
+		max-height: 400px;
+		overflow: auto;
 	}
 
-	.step-content p {
+	.step-content :global(p) {
 		margin: 6px 0;
+	}
+
+	.step-content :global(p:first-child) {
+		margin-top: 0;
 	}
 </style>

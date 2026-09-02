@@ -4,7 +4,6 @@
 	import type { Author, SuggestionSource, SuggestionSourceEntry } from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Button, Callout, Loader } from '@hyvor/design/components';
-	import IconCheck from '@hyvor/icons/IconCheck';
 	import { editorConfig, schema } from '../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../posts/[postId]/Body/Editor/suggestions';
 	import {
@@ -18,28 +17,24 @@
 	const i18n = getI18n();
 
 	interface Props {
-		changes: DocumentChange[];
-		initialPostVariantId?: number | null;
+		change: DocumentChange;
 		applying?: boolean;
 		onclose: () => void;
-		onapply: (change: DocumentChange, finalContent: string) => Promise<void> | void;
+		onapply: (
+			change: DocumentChange,
+			finalContent: string,
+			documentVersion: number
+		) => Promise<void> | void;
 	}
 
-	let {
-		changes,
-		initialPostVariantId = null,
-		applying = false,
-		onclose,
-		onapply
-	}: Props = $props();
+	let { change, applying = false, onclose, onapply }: Props = $props();
 
-	let selectedPostVariantId = $state(initialPostVariantId ?? changes[0]?.postVariantId ?? null);
-	let appliedIds: Set<number> = $state(new Set());
-	let loadingCurrentDocuments = $state(true);
+	let applied = $state(false);
+	let loadingCurrentDocument = $state(true);
 	// the post's actual current (content_unsaved) version/content, fetched fresh - used both to
 	// diff against (instead of a blank document) and to detect if the post changed since the
 	// agent suggested this change
-	let currentByPost: Record<number, CurrentDocument> = $state({});
+	let currentDocument: CurrentDocument | null = $state(null);
 
 	// one-shot review session: everything shown here comes from a single agent-suggested diff, so
 	// the source just needs to say "these are AI's" - nothing to persist to a backend suggestions API
@@ -101,66 +96,42 @@
 	// diffs the agent's suggested content against the post's actual current content (fetched on
 	// mount), falling back to a blank document if the current content couldn't be loaded - in
 	// which case the suggested content shows as a full set of additions to review
-	function buildInitialContent(change: DocumentChange): string {
-		const currentContent = currentByPost[change.postVariantId]?.content ?? DEFAULT_CONTENT_JSON;
+	function buildInitialContent(): string {
+		const currentContent = currentDocument?.content ?? DEFAULT_CONTENT_JSON;
 		const oldNode = Node.fromJSON(schema, JSON.parse(currentContent));
 		const newNode = Node.fromJSON(schema, JSON.parse(change.content));
 		const diffs = diffDoc(oldNode, newNode);
 		return JSON.stringify(buildDiffDoc(diffs, schema).doc.toJSON());
 	}
 
-	let contentByPost: Record<number, string> = $state({});
-	let remainingByPost: Record<number, number> = $state({});
+	let content = $state('');
+	let remaining = $state(0);
 
 	onMount(async () => {
-		const entries = await Promise.all(
-			changes.map(async (change) => {
-				try {
-					const current = await getCurrentDocumentForVariant(change.postVariantId);
-					return [change.postVariantId, current] as const;
-				} catch {
-					// couldn't load the current content (e.g. the post was deleted since) - fall
-					// back to diffing against a blank document, with no staleness check
-					return [change.postVariantId, null] as const;
-				}
-			})
-		);
-		currentByPost = Object.fromEntries(
-			entries.filter((e): e is [number, CurrentDocument] => e[1] !== null)
-		);
+		try {
+			currentDocument = await getCurrentDocumentForVariant(change.postVariantId);
+		} catch {
+			// couldn't load the current content (e.g. the post was deleted since) - fall back to
+			// diffing against a blank document, with no staleness check
+			currentDocument = null;
+		}
 
-		contentByPost = Object.fromEntries(
-			changes.map((change) => [change.postVariantId, buildInitialContent(change)])
-		);
-		remainingByPost = Object.fromEntries(
-			Object.entries(contentByPost).map(([id, content]) => [
-				id,
-				countRemainingSuggestions(JSON.parse(content))
-			])
-		);
-		loadingCurrentDocuments = false;
+		content = buildInitialContent();
+		remaining = countRemainingSuggestions(JSON.parse(content));
+		loadingCurrentDocument = false;
 	});
 
-	let remaining = $derived(
-		selectedPostVariantId !== null ? (remainingByPost[selectedPostVariantId] ?? 0) : 0
-	);
-	let selectedApplied = $derived(
-		selectedPostVariantId !== null && appliedIds.has(selectedPostVariantId)
-	);
 	// the post was edited again after the agent suggested this change - review carefully, since
 	// the diff below is against the version the agent saw, not necessarily the latest
-	let selectedIsStale = $derived.by(() => {
-		if (selectedPostVariantId === null) return false;
-		const change = changes.find((c) => c.postVariantId === selectedPostVariantId);
-		const current = currentByPost[selectedPostVariantId];
-		if (!change || change.version === undefined || !current) return false;
-		return current.version > change.version;
+	let isStale = $derived.by(() => {
+		const changeVersion = change.version;
+		if (changeVersion === undefined || currentDocument === null) return false;
+		return currentDocument.version > changeVersion;
 	});
 
 	function handleValueChange(value: string) {
-		if (selectedPostVariantId === null) return;
-		contentByPost[selectedPostVariantId] = value;
-		remainingByPost[selectedPostVariantId] = countRemainingSuggestions(JSON.parse(value));
+		content = value;
+		remaining = countRemainingSuggestions(JSON.parse(value));
 	}
 
 	const diffEditorConfig = {
@@ -174,20 +145,10 @@
 	};
 
 	async function handleApply() {
-		if (selectedPostVariantId === null || remaining > 0 || applying || selectedApplied) return;
+		if (remaining > 0 || applying || applied) return;
 
-		const change = changes.find((c) => c.postVariantId === selectedPostVariantId);
-		const content = contentByPost[selectedPostVariantId];
-		if (!change || content === undefined) return;
-
-		await onapply(change, content);
-		appliedIds.add(selectedPostVariantId);
-		appliedIds = new Set(appliedIds);
-
-		const next = changes.find((c) => !appliedIds.has(c.postVariantId));
-		if (next) {
-			selectedPostVariantId = next.postVariantId;
-		}
+		await onapply(change, content, currentDocument?.document_version ?? 0);
+		applied = true;
 	}
 </script>
 
@@ -204,7 +165,7 @@
 		<div class="header">
 			<span>Review suggested changes</span>
 			<span class="remaining">
-				{#if selectedApplied}
+				{#if applied}
 					{i18n.t('console.agent.applied')}
 				{:else if remaining > 0}
 					{remaining} suggestion{remaining === 1 ? '' : 's'} remaining
@@ -213,45 +174,26 @@
 				{/if}
 			</span>
 		</div>
-		{#if loadingCurrentDocuments}
+		{#if loadingCurrentDocument}
 			<div class="body loading">
 				<Loader />
 			</div>
 		{:else}
 			<div class="body">
-				<div class="posts-sidebar">
-					{#each changes as change (change.postVariantId)}
-						<button
-							type="button"
-							class="post-item"
-							class:active={selectedPostVariantId === change.postVariantId}
-							onclick={() => (selectedPostVariantId = change.postVariantId)}
-						>
-							<span>Post #{change.postVariantId}</span>
-							{#if appliedIds.has(change.postVariantId)}
-								<IconCheck size={13} />
-							{/if}
-						</button>
-					{/each}
-				</div>
 				<div class="editor">
-					{#if selectedIsStale}
+					{#if isStale}
 						<Callout type="warning">
 							This post has been updated since the AI suggested this change. Please review the
 							changes carefully before applying them.
 						</Callout>
 					{/if}
-					{#if selectedPostVariantId !== null}
-						{#key selectedPostVariantId}
-							<Editor
-								value={contentByPost[selectedPostVariantId]}
-								{schema}
-								editorConfig={diffEditorConfig}
-								editable={!selectedApplied}
-								onvaluechange={handleValueChange}
-							/>
-						{/key}
-					{/if}
+					<Editor
+						value={content}
+						{schema}
+						editorConfig={diffEditorConfig}
+						editable={!applied}
+						onvaluechange={handleValueChange}
+					/>
 				</div>
 			</div>
 		{/if}
@@ -259,8 +201,8 @@
 			<Button color="input" onclick={onclose} disabled={applying}
 				>{i18n.t('console.common.close')}</Button
 			>
-			<Button disabled={remaining > 0 || applying || selectedApplied} onclick={handleApply}>
-				{#if selectedApplied}
+			<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
+				{#if applied}
 					{i18n.t('console.agent.applied')}
 				{:else if applying}
 					Applying…
@@ -310,49 +252,6 @@
 	.body.loading {
 		align-items: center;
 		justify-content: center;
-	}
-
-	.posts-sidebar {
-		width: 180px;
-		flex-shrink: 0;
-		overflow-y: auto;
-		border-right: 1px solid var(--border);
-		padding: 15px;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.post-item {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
-		width: 100%;
-		padding: 8px 10px;
-		border-radius: 6px;
-		border: none;
-		background: none;
-		font: inherit;
-		font-size: 13px;
-		color: var(--text);
-		text-align: left;
-		cursor: pointer;
-	}
-
-	.post-item:hover {
-		background-color: var(--box-background);
-	}
-
-	.post-item.active {
-		background-color: var(--accent-light-mid);
-		color: var(--accent);
-		font-weight: 600;
-	}
-
-	.post-item :global(svg) {
-		flex-shrink: 0;
-		color: var(--green);
 	}
 
 	.editor {

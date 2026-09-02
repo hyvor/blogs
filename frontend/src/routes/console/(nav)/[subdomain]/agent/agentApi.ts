@@ -25,12 +25,15 @@ export interface DocumentChange {
 	// against the live version to detect if the post was edited since (see DiffReviewModal).
 	// optional since the live SSE stream doesn't carry this yet (only the persisted
 	// document_change event, loaded via ConversationView, does).
-	version?: number;
+	version: number;
 }
 
 export interface CurrentDocument {
 	version: number;
 	content: string | null;
+	// the collab document_version - distinct from `version` (content_unsaved_version) above -
+	// needed to call applyDocumentChange below without a live collab session
+	document_version: number;
 }
 
 // used by DiffReviewModal to diff a suggested change against the post's actual current
@@ -39,6 +42,19 @@ export function getCurrentDocumentForVariant(postVariantId: number) {
 	return consoleApi.get<CurrentDocument>({
 		endpoint: '/documents/variant',
 		data: { post_variant_id: postVariantId }
+	});
+}
+
+// Persists a document change via the collab checkpoint endpoint, keyed directly by
+// post_variant_id - no post id/language id or live editor needed. 409s if `documentVersion`
+// is behind the post's live document_version (edited elsewhere since) - see
+// DocumentsController::checkpoint. Used by the whole-blog agent page (AgentChat.svelte); the
+// sidebar agent applies through the live editor's collab pipeline instead (see
+// saveAgentDocumentChange above).
+export function applyDocumentChange(postVariantId: number, content: string, documentVersion: number) {
+	return consoleApi.post<void>({
+		endpoint: '/documents/checkpoint',
+		data: { post_variant_id: postVariantId, content, version: documentVersion }
 	});
 }
 

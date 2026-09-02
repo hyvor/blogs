@@ -94,6 +94,10 @@ class DocumentsController
         return new JsonResponse([
             'version' => $variant->getContentUnsavedVersion(),
             'content' => $variant->getContentUnsaved(),
+            // the collab document_version - distinct from content_unsaved_version above (see
+            // PostVariant::$document_version) - needed to call /documents/checkpoint without a
+            // live collab session (e.g. the AI agent's diff review "apply" action)
+            'document_version' => $variant->getDocumentVersion(),
         ]);
     }
 

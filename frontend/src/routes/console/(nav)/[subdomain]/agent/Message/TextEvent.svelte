@@ -1,23 +1,16 @@
 <script lang="ts">
-	import { marked } from 'marked';
-	// @ts-ignore
-	import DOMPurify from 'dompurify';
+	import { getPurifiedHtmlFromMarkdown } from './html';
 
 	interface Props {
 		content: string;
 	}
 
 	let { content }: Props = $props();
-
-	function contentHtml(content: string) {
-		if (!content) return '';
-		return DOMPurify.sanitize(marked(content) as string);
-	}
 </script>
 
 {#if content}
 	<div class="message-html">
-		{@html contentHtml(content)}
+		{@html getPurifiedHtmlFromMarkdown(content)}
 	</div>
 {/if}
 

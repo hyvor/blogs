@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LicenseRequired from '../../../../../billing/LicenseRequired.svelte';
-	import AgentChat from '../../../../agent/AgentChatOld.svelte';
+	import AgentChat from '../../../../agent/AgentChat.svelte';
 	import { postEditor, postVariantStore } from '../../../postStore';
 	import type { DocumentChange } from '../../../../agent/agentApi';
 
@@ -19,9 +19,7 @@
 		</div>
 	{/snippet}
 
-	<AgentChat
-		postVariantId={$postVariantStore.id}
-		emptyMessage={`Ask the agent about this post, e.g. "Fix any typos" or "Add a short FAQ section at the end".`}
-		{applyDocumentChange}
-	/>
+	<!-- emptyMessage={`Ask the agent about this post, e.g. "Fix any typos" or "Add a short FAQ section at the end".`}
+		{applyDocumentChange} -->
+	<AgentChat />
 </LicenseRequired>

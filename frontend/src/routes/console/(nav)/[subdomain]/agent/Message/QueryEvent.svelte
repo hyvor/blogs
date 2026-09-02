@@ -42,7 +42,7 @@
 		</span>
 	</button>
 	{#if open}
-		<div class="step-content" transition:slide>
+		<div class="step-content" transition:slide={{ duration: 150 }}>
 			<div class="io-label">Input</div>
 			<pre>{prettyJson(event.tool_input)}</pre>
 			<div class="io-label">Output</div>

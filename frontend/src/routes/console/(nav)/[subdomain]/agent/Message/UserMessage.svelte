@@ -12,7 +12,7 @@
 
 <style>
 	.user-message {
-		padding: 35px 0 20px 0;
+		padding: 35px 30px 20px 30px;
 		display: flex;
 		justify-content: flex-end;
 	}
