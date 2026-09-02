@@ -1,12 +1,6 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
-	import {
-		documentStore,
-		postOriginalStore,
-		postStore,
-		postVariantOriginalStore,
-		postVariantStore
-	} from '../../../../postStore';
+	import { postOriginalStore, postStore, postVariantStore } from '../../../../postStore';
 	import UpdateModal from './UpdateModal.svelte';
 	import { hasPublishedChanges } from './published-changes';
 	import { getI18n } from '../../../../../../../lib/i18n';
@@ -17,17 +11,14 @@
 	let isUpdating = $state(false);
 
 	$effect(() => {
-		void $postStore;
-		void $postOriginalStore;
-		void $postVariantStore;
-		void $postVariantOriginalStore;
-		void $documentStore;
+		$postStore;
+		$postOriginalStore;
 
 		hasChanges = hasPublishedChanges();
 	});
 </script>
 
-{#if $postVariantStore.status !== 'draft'}
+{#if $postVariantStore.status === 'published'}
 	<Button disabled={!hasChanges} on:click={() => (isUpdating = true)} size="small"
 		>{i18n.t('console.postEditor.update.button')}</Button
 	>

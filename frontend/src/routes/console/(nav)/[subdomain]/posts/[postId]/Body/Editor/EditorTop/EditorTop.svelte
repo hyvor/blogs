@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import PublishedEditingStatus from './PublishedEditingStore/PublishedEditingStatus.svelte';
 	import AutoTranslate from './AutoTranslate/AutoTranslate.svelte';
 
 	let el: HTMLDivElement | undefined = $state();
@@ -30,7 +31,9 @@
 <svelte:window onscrollcapture={positionEl} />
 
 <div class="editor-top" bind:this={el}>
-	<div class="left"></div>
+	<div class="left">
+		<PublishedEditingStatus />
+	</div>
 
 	<div class="right">
 		<AutoTranslate />

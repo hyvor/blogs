@@ -1,9 +1,21 @@
 <script lang="ts">
-	import { documentStore, postVariantStore } from '../../../postStore';
+	import { tick } from 'svelte';
+	import {
+		documentStore,
+		postEditingPublished,
+		postEditor,
+		postVariantStore
+	} from '../../../postStore';
 	import Compare from '../Compare/Compare.svelte';
 	import { getI18n } from '../../../../../../lib/i18n';
 
 	const i18n = getI18n();
+
+	async function handleEditing() {
+		postEditingPublished.update((v) => !v);
+		await tick();
+		$postEditor.focus();
+	}
 
 	let compare = $state(false);
 </script>
@@ -12,13 +24,29 @@
 	{@const scheduled = $postVariantStore.status === 'scheduled'}
 	<div class="published-notice">
 		<span class="notice-text">
-			{scheduled
-				? i18n.t('console.postEditor.publishedNotice.scheduled')
-				: i18n.t('console.postEditor.publishedNotice.published')}
+			{#if $postEditingPublished}
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.editingScheduled')
+					: i18n.t('console.postEditor.publishedNotice.editing')}
+			{:else}
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.scheduled')
+					: i18n.t('console.postEditor.publishedNotice.published')}
+			{/if}
 		</span>
-		<button onclick={() => (compare = true)}
-			>{i18n.t('console.postEditor.publishedNotice.compare')}</button
-		>
+		<button onclick={handleEditing}>
+			{#if $postEditingPublished}
+				{i18n.t('console.postEditor.publishedNotice.switchToView')}
+			{:else}
+				{i18n.t('console.postEditor.publishedNotice.switchToEditing')}
+			{/if}
+		</button>
+		{#if $postEditingPublished}
+			&nbsp;&nbsp;&middot;&nbsp;
+			<button onclick={() => (compare = true)}
+				>{i18n.t('console.postEditor.publishedNotice.compare')}</button
+			>
+		{/if}
 	</div>
 {/if}
 
