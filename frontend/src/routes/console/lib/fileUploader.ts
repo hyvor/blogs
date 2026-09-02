@@ -54,6 +54,14 @@ export function uploadImage(): Promise<FileUploaderUploadedFile | null> {
 	});
 }
 
+export function uploadImageOnly(): Promise<FileUploaderUploadedFile | null> {
+	return uploadFile({
+		type: 'image',
+		uploader,
+		maxFileSizeInMB: maxUploadSizeInMB()
+	});
+}
+
 export function uploadToMediaLibrary(): Promise<FileUploaderUploadedFile | null> {
 	return uploadFile({
 		type: 'file',
