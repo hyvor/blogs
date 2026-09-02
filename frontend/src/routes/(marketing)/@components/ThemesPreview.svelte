@@ -38,7 +38,6 @@
 	let isLoaded = $state(false);
 	let themes: Theme[] = $state([]);
 
-	let port: string = $state('');
 	let type: 'laptop' | 'tablet' = $state('laptop');
 
 	let isLoading = $state(true);
@@ -51,8 +50,6 @@
 		isLoaded = true;
 
 		dispatch('load');
-
-		port = window.location.port ? `:${Number(window.location.port) + 1}` : '';
 	});
 
 	function selectTheme(theme: Theme) {
@@ -79,16 +76,12 @@
 		themes.filter((theme) => theme.type === 'original' && theme.name !== 'blank')
 	);
 	let portedThemes = $derived(themes.filter((theme) => theme.type === 'ported'));
-	let currentTheme: any = $state(null);
+	let currentTheme: Theme | null = $state(null);
 	run(() => {
 		currentTheme = originalThemes[0];
 	});
-	// TODO: revert to getConfig().domains?.delivery once /api/special/config exists in the Symfony backend
-	const deliveryDomain = 'hyvorblogs.localhost';
 
-	let currentThemeUrl = $derived(
-		`http://${currentTheme?.preview_subdomain}.${deliveryDomain}${port}`
-	);
+	let currentThemeUrl = $derived(currentTheme?.preview_url || '');
 </script>
 
 {#if isLoaded}

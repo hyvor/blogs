@@ -478,6 +478,7 @@ export interface Theme {
 	name: string;
 	latest_version: string;
 	preview_subdomain: string;
+	preview_url: string;
 }
 
 export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null;
