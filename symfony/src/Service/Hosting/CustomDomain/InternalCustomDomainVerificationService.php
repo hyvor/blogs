@@ -64,6 +64,12 @@ class InternalCustomDomainVerificationService
     public function getVerificationToken(string $domain): ?string
     {
         $item = $this->cache->getItem(self::CACHE_KEY_PREFIX . $domain);
-        return $item->isHit() ? $item->get() : null;
+
+        if (!$item->isHit()) {
+            return null;
+        }
+
+        $token = $item->get();
+        return is_string($token) ? $token : null;
     }
 }

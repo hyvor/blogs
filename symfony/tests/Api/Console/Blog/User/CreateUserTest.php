@@ -191,9 +191,11 @@ class CreateUserTest extends ApiTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(422);
+        $message = $this->getJson()['message'];
+        $this->assertIsString($message);
         $this->assertStringContainsString(
             'Max users limit exceeded. Please upgrade your organization\'s Hyvor Blogs plan',
-            (string)$this->getJson()['message'],
+            $message,
         );
     }
 

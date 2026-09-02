@@ -71,7 +71,7 @@ class PermalinkService
     ): string
     {
         return match ($hostingAt) {
-            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain),
+            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain ?? ''),
             BlogHostingAt::DOMAIN => 'https://' . $domain,
             BlogHostingAt::SELF => $hostingUrl ?? '',
         };

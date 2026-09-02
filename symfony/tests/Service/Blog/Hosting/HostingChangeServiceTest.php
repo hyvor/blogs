@@ -24,7 +24,6 @@ use App\Tests\Factory\HostingChangeFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -80,7 +79,6 @@ class HostingChangeServiceTest extends KernelTestCase
             $this->getService(CustomDomainIntentService::class),
             $this->getService(EventDispatcherInterface::class),
             $failingUrlsService,
-            $this->getService(LoggerInterface::class),
         );
 
         $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');

@@ -149,8 +149,8 @@ class VerifyCustomDomainTest extends ApiTestCase
         $this->assertIsArray($json['custom_domain_intent']);
 
         refresh($intent);
-        $this->assertSame($from->getTimestamp(), $intent->getValidFrom()->getTimestamp());
-        $this->assertSame($to->getTimestamp(), $intent->getValidTo()->getTimestamp());
+        $this->assertSame($from->getTimestamp(), $intent->getValidFrom()?->getTimestamp());
+        $this->assertSame($to->getTimestamp(), $intent->getValidTo()?->getTimestamp());
         $this->assertNotNull($intent->getPrivateKeyEncrypted());
         $this->assertSame('-----BEGIN CERTIFICATE-----', $intent->getCertificate());
 

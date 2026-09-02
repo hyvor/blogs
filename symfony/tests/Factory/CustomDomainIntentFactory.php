@@ -32,6 +32,9 @@ final class CustomDomainIntentFactory extends PersistentObjectFactory
         ];
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createFor(Blog $blog, string $domain = 'example.com', array $attributes = []): CustomDomainIntent
     {
         return self::createOne(array_merge([

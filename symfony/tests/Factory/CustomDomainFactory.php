@@ -37,6 +37,9 @@ final class CustomDomainFactory extends PersistentObjectFactory
         ];
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public static function createActiveFor(
         Blog $blog,
         string $domain = 'example.com',
