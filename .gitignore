@@ -1,5 +1,6 @@
 .idea
 !.vscode/settings.json
+backend/
 backend/.env
 .DS_Store
 testing/*
