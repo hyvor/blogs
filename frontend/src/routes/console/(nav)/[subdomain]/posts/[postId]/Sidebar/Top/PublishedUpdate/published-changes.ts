@@ -83,9 +83,3 @@ export function hasPublishedChanges() {
 		changes.authors !== undefined
 	);
 }
-
-export function finishUpdating() {
-	// no longer editing - content_unsaved stays populated, it's the live editable document
-	// TODO:
-	// updatePostEditingStatusValue('isEditingPublished', false);
-}

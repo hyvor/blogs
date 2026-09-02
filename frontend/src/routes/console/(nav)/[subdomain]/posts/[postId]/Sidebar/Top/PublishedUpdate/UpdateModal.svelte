@@ -20,7 +20,7 @@
 	} from '../../../../postStore';
 	import Diff from '$lib/components/Diff/Diff.svelte';
 	import dayjs from 'dayjs';
-	import { finishUpdating, getPublishedChanges } from './published-changes';
+	import { getPublishedChanges } from './published-changes';
 	import ContentChange from './Changes/ContentChange.svelte';
 	import {
 		updatePost,
@@ -129,8 +129,6 @@
 		show = false;
 
 		toast.success(i18n.t('console.postEditor.update.updated'));
-
-		finishUpdating();
 	}
 </script>
 
