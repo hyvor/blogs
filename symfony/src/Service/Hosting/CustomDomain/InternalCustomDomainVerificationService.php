@@ -3,25 +3,20 @@
 namespace App\Service\Hosting\CustomDomain;
 
 use App\Service\Hosting\CustomDomain\Exception\InternalCustomDomainVerificationException;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Clock\ClockInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * verifies that DNS for a given domain is correctly pointed to Hyvor Blogs
- * creates a temporary token that works the same way as the ACME challenge,
- * and checks if we can reach it via HTTP using the user's domain.
- */
 class InternalCustomDomainVerificationService
 {
 
     public const string CACHE_KEY_PREFIX = 'internal-dns-verification-';
 
     public function __construct(
-        private CacheInterface $cache,
         private HttpClientInterface $http,
-        private ClockInterface $clock
+        private ClockInterface $clock,
+        private CacheItemPoolInterface $cache,
     ) {}
 
     /**
@@ -31,7 +26,10 @@ class InternalCustomDomainVerificationService
     {
         $token = bin2hex(random_bytes(16));
         $url = "http://{$domain}/.well-known/hyvor-blogs-verification.txt";
-        $this->cache->get(self::CACHE_KEY_PREFIX . $domain, fn() => $token);
+
+        $item = $this->cache->getItem(self::CACHE_KEY_PREFIX . $domain);
+        $item->set($token);
+        $this->cache->save($item);
 
         $attempt = 0;
         $maxAttempts = 3;
@@ -52,7 +50,6 @@ class InternalCustomDomainVerificationService
                 if ($response->getContent() === $token) {
                     return;
                 }
-
             } catch (ExceptionInterface $e) {
                 $lastError = $e;
             } finally {
@@ -66,7 +63,7 @@ class InternalCustomDomainVerificationService
 
     public function getVerificationToken(string $domain): ?string
     {
-        return $this->cache->get(self::CACHE_KEY_PREFIX . $domain, fn() => null);
+        $item = $this->cache->getItem(self::CACHE_KEY_PREFIX . $domain);
+        return $item->isHit() ? $item->get() : null;
     }
-
 }
