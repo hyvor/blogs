@@ -45,9 +45,12 @@ class PermalinkService
     // the base URL
     public function getBlogUrl(Blog $blog): string
     {
+        $hostingAt = $blog->getHostingAt();
+
         return $this->buildUrlForHosting(
-            $blog->getHostingAt(),
-            $blog->getSubdomain(),
+            $hostingAt,
+            // getSubdomain() throws on an unset typed property, so only read it when it's the hosting mode
+            $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
             $blog->getHostingUrl(),
             $blog->getCustomDomain()?->getDomain()
         );

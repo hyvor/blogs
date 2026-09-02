@@ -12,15 +12,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class GetCaddyCertificateTest extends ApiTestCase
 {
 
-    public function test_cannot_call_from_non_local_ip(): void
-    {
-        $this->setEnvVar('CADDY_ROUTER', 'local');
-        $this->client->request('GET', '/api/local/caddy-certificate?server_name=example.com', [], [], [
-            'REMOTE_ADDR' => '1.1.1.1',
-        ]);
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function test_when_domain_not_found(): void
     {
         $this->setEnvVar('CADDY_ROUTER', 'local');

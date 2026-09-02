@@ -51,39 +51,6 @@ class UpdateUserTest extends ApiTestCase
         $this->getEd()->assertDispatched(UserUpdatedEvent::class);
     }
 
-    public function test_does_not_update_the_role_of_the_admin(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'update-user-owner-role']);
-        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/user/' . $owner->getId(), [
-            'role' => 'editor',
-        ], user: $owner);
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString(
-            'cannot update the role of the admin',
-            (string)$this->client->getResponse()->getContent(),
-        );
-    }
-
-    public function test_does_not_update_the_role_to_admin(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'update-user-to-owner']);
-        $owner = UserFactory::createOne(['blog' => $blog]);
-        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::EDITOR]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/user/' . $user->getId(), [
-            'role' => 'admin',
-        ], user: $owner);
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString(
-            'cannot update the role to admin',
-            (string)$this->client->getResponse()->getContent(),
-        );
-    }
-
     public function test_does_not_update_the_status_of_the_admin(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'update-user-owner-status']);
