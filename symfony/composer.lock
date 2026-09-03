@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5fc0372a07387e110bd679f328d6b67",
+    "content-hash": "d7efa3739d76a596017a989b4578252b",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1899,16 +1899,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.5-beta.0",
+            "version": "4.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635"
+                "reference": "6df1a9f0527a95323e8d71262e4a613f6346fd96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/6979588b2c5a78d04dc8305edce8a4be2b103635",
-                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/6df1a9f0527a95323e8d71262e4a613f6346fd96",
+                "reference": "6df1a9f0527a95323e8d71262e4a613f6346fd96",
                 "shasum": ""
             },
             "require": {
@@ -1972,9 +1972,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.5-beta.0"
+                "source": "https://github.com/hyvor/internal/tree/4.1.5"
             },
-            "time": "2026-08-28T21:17:41+00:00"
+            "time": "2026-09-02T19:13:26+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",
@@ -14969,9 +14969,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "hyvor/internal": 10
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
