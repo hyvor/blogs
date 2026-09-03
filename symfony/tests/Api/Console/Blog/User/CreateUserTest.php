@@ -175,10 +175,10 @@ class CreateUserTest extends ApiTestCase
         $blog = BlogFactory::createOne([
             'subdomain' => 'create-user-limit',
             'organization_id' => 3004,
-            'counts' => ['users' => 2],
         ]);
         LanguageFactory::createOnePrimaryFor($blog);
-        $owner = UserFactory::createOne(['blog' => $blog]);
+        $owner = UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => 1001]);
+        UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => 1002]);
         $hyvorUser = new AuthUser(id: 1242, username: 'user1242', name: 'User', email: 'user1242@example.com');
         $this->setUpComms();
         $this->enableBilling(3004);

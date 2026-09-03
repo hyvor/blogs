@@ -77,7 +77,7 @@ class UserController
         assert($organizationId !== null);
 
         if ($this->internalConfig->getDeployment()->isCloud()) {
-            if ($this->usageService->usersLimitReached($blog)) {
+            if ($this->usageService->usersLimitReached($blog, $input->hyvor_user_id)) {
                 throw new UnprocessableEntityHttpException('Max users limit exceeded. Please upgrade your organization\'s Hyvor Blogs plan');
             }
             try {

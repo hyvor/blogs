@@ -54,10 +54,10 @@ class CreateGuestUserTest extends ApiTestCase
         $blog = BlogFactory::createOne([
             'subdomain' => 'create-guest-user-limit',
             'organization_id' => 3102,
-            'counts' => ['users' => 2],
         ]);
         LanguageFactory::createOnePrimaryFor($blog);
-        $owner = UserFactory::createOne(['blog' => $blog]);
+        $owner = UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => 1001]);
+        UserFactory::createOne(['blog' => $blog, 'hyvor_user_id' => 1002]);
         $this->enableBilling(3102);
 
         $this->consoleBlogApi('POST', $blog, '/user/guest', [
