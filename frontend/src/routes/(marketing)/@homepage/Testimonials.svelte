@@ -51,13 +51,15 @@
 			quote: t('leo.quote')
 		},
 		{
-			type: 'text',
+			type: 'video',
 			name: 'James Yang',
 			role: t('james.role'),
 			company: 'Kyzon Solutions',
-			imageUrl: '/images/homepage/testmonials/james-yang.jpeg',
-			summary: t('james.summary'),
-			quote: t('james.quote')
+			videoUrl:
+				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788442866/kyzon-testimonial_sevpfe.mp4',
+			posterUrl:
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788442170/kyzon-review-post_nl91hf.png',
+			summary: t('james.summary')
 		},
 		{
 			type: 'text',
