@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		postEditingPublished,
 		postEditor,
 		postContentDirtyStore,
 		postSuggestionModeStore,
@@ -95,11 +94,9 @@
 	// collab.receiveSteps() once mounted.
 	let backlogSteps = $derived($documentStore.pending_steps.steps);
 
-	let isEditable = $derived($postVariantStore.status === 'draft' || $postEditingPublished);
-
-	$effect(() => {
-		$postEditor.setEditable(isEditable);
-	});
+	// the editor is always editable now - published/scheduled posts edit content_unsaved
+	// just like drafts, and the published content is only updated via the Update flow
+	const isEditable = true;
 
 	let topicUnsubscriber: () => void;
 

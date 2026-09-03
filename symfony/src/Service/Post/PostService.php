@@ -672,6 +672,22 @@ class PostService
         return $variant;
     }
 
+    public function updatePublishedPostVariantContent(
+        Blog $blog,
+        PostVariant $variant,
+        ?\DateTimeImmutable $contentUpdatedAt = null,
+    ): PostVariant {
+        $variant->setContent($variant->getContentUnsaved());
+        $variant->setContentUpdatedAt($contentUpdatedAt ?? $this->now());
+        $variant->setUpdatedAt($this->now());
+        $this->cachePostVariantHtmlAndText($variant, $blog);
+
+        $this->em->flush();
+        $this->ed->dispatch(new PostVariantUpdatedEvent($variant));
+
+        return $variant;
+    }
+
     public function unpublishPostVariant(PostVariant $variant): PostVariant
     {
         $variant->setStatus(PostVariantStatus::DRAFT);

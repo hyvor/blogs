@@ -316,6 +316,41 @@ class PostController
         return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
+    #[Route('/post/{id}/variant/update-content', methods: ['POST'])]
+    #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
+    public function updatePublishedPostVariantContent(
+        #[MapBlogEntity] Post $post,
+        #[MapRequestPayload] PublishPostVariantInput $input,
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Variant not found');
+        }
+
+        if (
+            $variant->getStatus() !== PostVariantStatus::PUBLISHED &&
+            $variant->getStatus() !== PostVariantStatus::SCHEDULED
+        ) {
+            throw new UnprocessableEntityHttpException('Post variant is not published or scheduled');
+        }
+
+        if ($variant->getContentUnsaved() === null) {
+            throw new UnprocessableEntityHttpException('Cannot update post variant with no content');
+        }
+
+        if ($this->postSuggestionContentChecker->hasPendingSuggestions($variant->getContentUnsaved())) {
+            throw new UnprocessableEntityHttpException(
+                'This post has unresolved suggestions or comments. Resolve them before publishing.',
+            );
+        }
+
+        $variant = $this->postService->updatePublishedPostVariantContent($blog, $variant);
+
+        return new JsonResponse($this->postObjectFactory->createVariant($variant));
+    }
+
     #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
     public function unpublishPostVariant(

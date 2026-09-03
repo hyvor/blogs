@@ -823,23 +823,9 @@
 				"suggestingInfo": "You are suggesting"
 			},
 			"publishedNotice": {
-				"editing": "You are editing a published post.",
-				"editingScheduled": "You are editing a scheduled post.",
 				"published": "This post is published.",
 				"scheduled": "This post is scheduled.",
-				"switchToView": "Switch to published view",
-				"switchToEditing": "Switch to editing mode",
 				"compare": "Compare"
-			},
-			"publishedEditing": {
-				"status": "Editing published.",
-				"discard": "Discard",
-				"confirmTitle": "Discard changes?",
-				"confirmButton": "Yes, discard changes",
-				"confirmIntro": "Are you sure you want to discard the unpublished changes.",
-				"confirmChangedWords": "You have about <strong>{words} changed words</strong>.",
-				"confirmIrreversible": "This action cannot be undone.",
-				"confirmRevert": "The content will be reverted to the last published version."
 			},
 			"compare": {
 				"publishedVersion": "Published Version",
@@ -935,11 +921,9 @@
 				"button": "Update",
 				"modalTitle": "Update Post",
 				"intro": "You are about to update the post. Please review the changes below.",
-				"showDifference": "Show Difference",
 				"updated": "Post updated successfully.",
+				"noChanges": "No changes",
 				"content": "Content",
-				"setCustomUpdatedTime": "Set a custom updated time",
-				"updatedAtTooEarly": "Must be on or after the publish time.",
 				"slug": "Slug",
 				"slugEmpty": "Slug cannot be empty.",
 				"slugInvalidChar": "Slug cannot contain {char}.",
