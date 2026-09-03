@@ -76,7 +76,7 @@ class RouteService
     {
         return $this->em->getRepository(Route::class)->findBy(
             ['blog' => $blog],
-            ['created_at' => 'ASC'],
+            ['created_at' => 'ASC', 'id' => 'ASC'],
         );
     }
 
