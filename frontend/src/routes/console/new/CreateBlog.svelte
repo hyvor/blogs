@@ -14,7 +14,7 @@
 	import { ResourceCreator } from '@hyvor/design/cloud';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
-	import { addToBlogList, blogListStore } from '../lib/stores';
+	import { addToBlogList, blogListStore, resolvedLicenseStore } from '../lib/stores';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
@@ -123,6 +123,10 @@
 			const res = await createBlog(name, subdomain, dev, hyvorTalk, hyvorPost);
 			addToBlogList(res.blog);
 			blog = res.blog;
+
+			if (res.resolved_license) {
+				resolvedLicenseStore.set(res.resolved_license);
+			}
 
 			res.warnings.forEach((warning) => {
 				toast.warning(warning);

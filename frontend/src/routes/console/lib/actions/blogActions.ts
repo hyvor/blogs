@@ -1,6 +1,7 @@
 import consoleApi from '../consoleApi';
 import { updateBlogStore, updateBlogStoreVariant } from '../stores/blogStore';
 import type { Blog, BlogList, BlogVariant } from '../types';
+import type { ResolvedLicense } from '@hyvor/design/cloud';
 
 export function getSubdomainAvailable(subdomain: string) {
 	return consoleApi.get<{ available: boolean }>({
@@ -20,6 +21,7 @@ export function createBlog(
 	return consoleApi.post<{
 		blog: BlogList;
 		warnings: string[];
+		resolved_license: ResolvedLicense | null;
 	}>({
 		endpoint: '/blog',
 		data: {
