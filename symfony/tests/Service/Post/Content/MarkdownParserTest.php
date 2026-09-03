@@ -36,12 +36,14 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => 'Hello, world!'],
                 ],
             ],
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => 'Bold', 'marks' => [['type' => 'strong']]],
                     ['type' => 'text', 'text' => ' and '],
@@ -65,6 +67,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => $text, 'marks' => [['type' => $markType]]],
                 ],
@@ -79,6 +82,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'text',
@@ -97,6 +101,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'text',
@@ -115,7 +120,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'heading',
-                'attrs' => ['level' => 2],
+                'attrs' => ['level' => 2, 'id' => null, 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Heading text']],
             ],
         ], $nodes);
@@ -128,7 +133,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'heading',
-                'attrs' => ['level' => 2, 'id' => 'my-id'],
+                'attrs' => ['level' => 2, 'id' => 'my-id', 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Heading text']],
             ],
         ], $nodes);
@@ -141,8 +146,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'heading',
-                'attrs' => ['level' => 2, 'id' => 'my-id'],
-                'content' => [],
+                'attrs' => ['level' => 2, 'id' => 'my-id', 'suggestions' => null],
             ],
         ], $nodes);
     }
@@ -160,7 +164,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'code_block',
-                'attrs' => ['language' => 'php'],
+                'attrs' => ['language' => 'php', 'name' => null, 'annotations' => null, 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'echo 1;']],
             ],
         ], $nodes);
@@ -175,7 +179,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'callout',
-                'attrs' => ['emoji' => '💡', 'fg' => '#000000', 'bg' => '#f1f1ef'],
+                'attrs' => ['emoji' => '💡', 'bg' => '#f1f1ef', 'fg' => '#000000', 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Note text']],
             ],
         ], $nodes);
@@ -193,17 +197,28 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'bullet_list',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 1']],
+                            ],
                         ],
                     ],
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 2']],
+                            ],
                         ],
                     ],
                 ],
@@ -223,17 +238,28 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'ordered_list',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 1']],
+                            ],
                         ],
                     ],
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 2']],
+                            ],
                         ],
                     ],
                 ],
@@ -255,24 +281,41 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'bullet_list',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 1']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 1']],
+                            ],
                             [
                                 'type' => 'ordered_list',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'list_item',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
-                                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 1']]],
+                                            [
+                                                'type' => 'paragraph',
+                                                'attrs' => ['suggestions' => null],
+                                                'content' => [['type' => 'text', 'text' => 'Subitem 1']],
+                                            ],
                                         ],
                                     ],
                                     [
                                         'type' => 'list_item',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
-                                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subitem 2']]],
+                                            [
+                                                'type' => 'paragraph',
+                                                'attrs' => ['suggestions' => null],
+                                                'content' => [['type' => 'text', 'text' => 'Subitem 2']],
+                                            ],
                                         ],
                                     ],
                                 ],
@@ -281,8 +324,13 @@ class MarkdownParserTest extends KernelTestCase
                     ],
                     [
                         'type' => 'list_item',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
-                            ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Item 2']]],
+                            [
+                                'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
+                                'content' => [['type' => 'text', 'text' => 'Item 2']],
+                            ],
                         ],
                     ],
                 ],
@@ -299,9 +347,10 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => 'Line 1'],
-                    ['type' => 'hard_break'],
+                    ['type' => 'hard_break', 'attrs' => ['suggestions' => null]],
                     ['type' => 'text', 'text' => 'Line 2'],
                 ],
             ],
@@ -321,9 +370,18 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'blockquote',
+                'attrs' => ['suggestions' => null],
                 'content' => [
-                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'This is a blockquote.']]],
-                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'It has multiple paragraphs.']]],
+                    [
+                        'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
+                        'content' => [['type' => 'text', 'text' => 'This is a blockquote.']],
+                    ],
+                    [
+                        'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
+                        'content' => [['type' => 'text', 'text' => 'It has multiple paragraphs.']],
+                    ],
                 ],
             ],
         ], $nodes);
@@ -339,33 +397,58 @@ class MarkdownParserTest extends KernelTestCase
 
         $nodes = $this->parse($markdown);
 
+        $headerAttrs = ['colspan' => 1, 'rowspan' => 1, 'colwidth' => null, 'suggestions' => null];
+
         $this->assertSame([
             [
                 'type' => 'table',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'table_row',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'table_header',
-                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 1']]]],
+                                'attrs' => $headerAttrs,
+                                'content' => [[
+                                    'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
+                                    'content' => [['type' => 'text', 'text' => 'Header 1']],
+                                ]],
                             ],
                             [
                                 'type' => 'table_header',
-                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Header 2']]]],
+                                'attrs' => $headerAttrs,
+                                'content' => [[
+                                    'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
+                                    'content' => [['type' => 'text', 'text' => 'Header 2']],
+                                ]],
                             ],
                         ],
                     ],
                     [
                         'type' => 'table_row',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'table_cell',
-                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 1']]]],
+                                'attrs' => $headerAttrs,
+                                'content' => [[
+                                    'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
+                                    'content' => [['type' => 'text', 'text' => 'Cell 1']],
+                                ]],
                             ],
                             [
                                 'type' => 'table_cell',
-                                'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Cell 2']]]],
+                                'attrs' => $headerAttrs,
+                                'content' => [[
+                                    'type' => 'paragraph',
+                                    'attrs' => ['suggestions' => null],
+                                    'content' => [['type' => 'text', 'text' => 'Cell 2']],
+                                ]],
                             ],
                         ],
                     ],
@@ -381,6 +464,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'figure',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'image',
@@ -389,6 +473,7 @@ class MarkdownParserTest extends KernelTestCase
                             'alt' => 'An image',
                             'width' => 100,
                             'height' => 200,
+                            'suggestions' => null,
                         ],
                     ],
                 ],
@@ -403,6 +488,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'figure',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'image',
@@ -410,6 +496,8 @@ class MarkdownParserTest extends KernelTestCase
                             'src' => 'https://example.com/image.png',
                             'alt' => 'An image',
                             'width' => 100,
+                            'height' => null,
+                            'suggestions' => null,
                         ],
                     ],
                 ],
@@ -424,12 +512,16 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'figure',
+                'attrs' => ['suggestions' => null],
                 'content' => [
                     [
                         'type' => 'image',
                         'attrs' => [
                             'src' => 'https://example.com/image.png',
                             'alt' => 'An image',
+                            'width' => null,
+                            'height' => null,
+                            'suggestions' => null,
                         ],
                     ],
                 ],
@@ -444,8 +536,9 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'figure',
+                'attrs' => ['suggestions' => null],
                 'content' => [
-                    ['type' => 'embed', 'attrs' => ['url' => 'https://example.com/embed']],
+                    ['type' => 'embed', 'attrs' => ['url' => 'https://example.com/embed', 'suggestions' => null]],
                 ],
             ],
         ], $nodes);
@@ -458,7 +551,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'button',
-                'attrs' => ['href' => 'https://example.com'],
+                'attrs' => ['href' => 'https://example.com', 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Click me']],
             ],
         ], $nodes);
@@ -471,7 +564,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'button',
-                'attrs' => ['href' => 'https://example.com'],
+                'attrs' => ['href' => 'https://example.com', 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Say "hi" [now]']],
             ],
         ], $nodes);
@@ -484,7 +577,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'button',
-                'attrs' => ['href' => 'https://example.com'],
+                'attrs' => ['href' => 'https://example.com', 'suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => 'Click '],
                     ['type' => 'text', 'text' => 'me', 'marks' => [['type' => 'strong']]],
@@ -500,7 +593,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'button',
-                'attrs' => ['href' => 'https://example.com'],
+                'attrs' => ['href' => 'https://example.com', 'suggestions' => null],
                 'content' => [
                     ['type' => 'text', 'text' => 'Click me', 'marks' => [['type' => 'strong']]],
                 ],
@@ -515,7 +608,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'button',
-                'attrs' => ['href' => 'https://example.com'],
+                'attrs' => ['href' => 'https://example.com', 'suggestions' => null],
                 'content' => [['type' => 'text', 'text' => '']],
             ],
         ], $nodes);
@@ -526,7 +619,7 @@ class MarkdownParserTest extends KernelTestCase
         $nodes = $this->parse('![#audio](https://example.com/audio.mp3)');
 
         $this->assertSame([
-            ['type' => 'audio', 'attrs' => ['src' => 'https://example.com/audio.mp3']],
+            ['type' => 'audio', 'attrs' => ['src' => 'https://example.com/audio.mp3', 'suggestions' => null]],
         ], $nodes);
     }
 
@@ -535,7 +628,7 @@ class MarkdownParserTest extends KernelTestCase
         $nodes = $this->parse('![#bookmark](https://example.com)');
 
         $this->assertSame([
-            ['type' => 'bookmark', 'attrs' => ['url' => 'https://example.com']],
+            ['type' => 'bookmark', 'attrs' => ['url' => 'https://example.com', 'suggestions' => null]],
         ], $nodes);
     }
 
@@ -544,7 +637,7 @@ class MarkdownParserTest extends KernelTestCase
         $nodes = $this->parse('---');
 
         $this->assertSame([
-            ['type' => 'horizontal_rule'],
+            ['type' => 'horizontal_rule', 'attrs' => ['suggestions' => null]],
         ], $nodes);
     }
 
@@ -553,7 +646,7 @@ class MarkdownParserTest extends KernelTestCase
         $nodes = $this->parse('![#toc]()');
 
         $this->assertSame([
-            ['type' => 'toc'],
+            ['type' => 'toc', 'attrs' => ['levels' => [1, 2, 3, 4, 5, 6], 'suggestions' => null]],
         ], $nodes);
     }
 
@@ -564,6 +657,7 @@ class MarkdownParserTest extends KernelTestCase
         $this->assertSame([
             [
                 'type' => 'custom_html',
+                'attrs' => ['suggestions' => null],
                 'content' => [['type' => 'text', 'text' => '<div>Custom</div>']],
             ],
         ], $nodes);
@@ -611,7 +705,33 @@ class MarkdownParserTest extends KernelTestCase
 
         $reparsed = $this->parse($markdown);
 
-        $this->assertSame($docJson['content'], $reparsed);
+        // the schema adds a nullable `suggestions` attr (and a nullable heading `id`) to every block node
+        $expected = [
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 2, 'id' => 'title', 'suggestions' => null],
+                'content' => [['type' => 'text', 'text' => 'Title']],
+            ],
+            [
+                'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
+                'content' => [
+                    ['type' => 'text', 'text' => 'Bold', 'marks' => [['type' => 'strong']]],
+                    ['type' => 'text', 'text' => ' and '],
+                    ['type' => 'text', 'text' => 'a link', 'marks' => [['type' => 'link', 'attrs' => ['href' => 'https://example.com']]]],
+                ],
+            ],
+            [
+                'type' => 'button',
+                'attrs' => ['href' => 'https://example.com/action', 'suggestions' => null],
+                'content' => [
+                    ['type' => 'text', 'text' => 'Click '],
+                    ['type' => 'text', 'text' => 'me', 'marks' => [['type' => 'strong']]],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $reparsed);
     }
 
 }

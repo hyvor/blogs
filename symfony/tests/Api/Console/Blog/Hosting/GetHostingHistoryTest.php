@@ -57,6 +57,8 @@ class GetHostingHistoryTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertCount(2, $json);
+        $this->assertIsArray($json[0]);
+        $this->assertIsArray($json[1]);
 
         // most recent first
         $this->assertSame('changing', $json[0]['status']);

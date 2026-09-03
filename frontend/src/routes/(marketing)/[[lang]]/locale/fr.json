@@ -262,6 +262,11 @@
 					"summary": "La lourdeur de WordPress, résolue",
 					"quote": "J'avais besoin d'un outil de blog simple, facile à utiliser, rapide, élégant et mature, qui résout la lourdeur de WordPress. Hyvor Blogs le fait à merveille."
 				},
+				"james": {
+					"role": "Co-fondateur et PDG",
+					"summary": "Une plateforme de blog fantastique",
+					"quote": "Nous trouvons que c’est une plateforme de blog fantastique et nous l’utilisons pour le blog de KYZON Solutions depuis le premier jour, ainsi que pour quelques clients chaque fois qu’ils ont besoin d’un blog pour leur site web"
+				},
 				"ashutosh": {
 					"role": "Responsable senior, Marketing",
 					"summary": "Clair et simple"
@@ -270,6 +275,10 @@
 					"role": "Fondateur",
 					"summary": "Un vrai plaisir à utiliser !",
 					"quote": "J'adore Hyvor Blogs ! C'est un bijou : simple, fluide et agréable. L'équipe est incroyable, réactive et bienveillante. Une combinaison parfaite entre qualité, performance et humanité. Un coup de cœur absolu !"
+				},
+				"christian": {
+					"role": "Fondateur",
+					"summary": "L'hébergement par sous-chemin est génial"
 				},
 				"riccardo": {
 					"role": "Ingénieur en développement de systèmes",

@@ -2,6 +2,9 @@
 	import { SplitControl, Tag, Text } from '@hyvor/design/components';
 	import type { User as UserType } from '../../../../../../../../lib/types';
 	import { postOriginalStore, postStore } from '../../../../../postStore';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		diff: boolean;
@@ -37,7 +40,7 @@
 	}
 </script>
 
-<SplitControl label="Authors">
+<SplitControl label={i18n.t('console.postEditor.update.authors')}>
 	<div class="wrap">
 		{#if diff}
 			{#each allAuthors as author (author.id)}
@@ -52,7 +55,7 @@
 				</Tag>
 			{/each}
 		{:else}
-			<Text light small>No authors</Text>
+			<Text light small>{i18n.t('console.postEditor.update.noAuthors')}</Text>
 		{/if}
 	</div>
 </SplitControl>

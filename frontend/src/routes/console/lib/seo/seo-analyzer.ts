@@ -63,14 +63,21 @@ export class SeoAnalyzer {
 	}
 }
 
+export type TestMessageParams = Record<string, string | number>;
+
 export interface TestResult {
 	result: any;
 	results: any;
 	name: string;
 	score: number; // 0 - 100
-	message: string;
+	/** i18n key under `console.postEditor.seo.checks.*`, resolved by the UI */
+	messageKey: string;
+	messageParams?: TestMessageParams;
 	ignore: boolean;
 }
+
+// i18n key prefix for all SEO check messages
+const K = 'console.postEditor.seo.checks';
 
 export class Test {
 	constructor(protected input: Input) {}
@@ -78,12 +85,13 @@ export class Test {
 		throw new Error('Not implemented');
 	}
 
-	protected defaultResult(message: string = ''): TestResult {
+	protected defaultResult(messageKey: string, messageParams?: TestMessageParams): TestResult {
 		return {
 			name: this.constructor.name,
 			score: 0,
 			ignore: false,
-			message: message,
+			messageKey,
+			messageParams,
 			result: null,
 			results: null
 		};
@@ -117,11 +125,11 @@ export class Test {
 
 export class PrimaryKeywordInTitleTest extends Test {
 	public run() {
-		let result = this.defaultResult('Primary keyword not found in title');
+		let result = this.defaultResult(`${K}.primaryKeywordInTitle.notFound`);
 
 		if (!this.input.primaryKeyword) {
 			result.ignore = true;
-			result.message = 'Ignored primary keyword in title test. Add primary keyword';
+			result.messageKey = `${K}.primaryKeywordInTitle.ignored`;
 			return result;
 		}
 
@@ -133,13 +141,13 @@ export class PrimaryKeywordInTitleTest extends Test {
 
 		if (title.startsWith(primaryKeyword)) {
 			result.score = 100;
-			result.message = 'Primary keyword found in the title';
+			result.messageKey = `${K}.primaryKeywordInTitle.found`;
 		} else if (primaryKeywordInFirst50Chars) {
 			result.score = 75;
-			result.message = 'Primary keyword found in the title, but not at the beginning';
+			result.messageKey = `${K}.primaryKeywordInTitle.foundNotBeginning`;
 		} else if (title.includes(primaryKeyword)) {
 			result.score = 49;
-			result.message = 'Primary keyword found in the title, but not within first 50 characters';
+			result.messageKey = `${K}.primaryKeywordInTitle.foundNotFirst50`;
 		}
 
 		return result;
@@ -148,11 +156,11 @@ export class PrimaryKeywordInTitleTest extends Test {
 
 export class PrimaryKeywordInDescriptionTest extends Test {
 	public run() {
-		let result = this.defaultResult('Primary keyword not found in the description');
+		let result = this.defaultResult(`${K}.primaryKeywordInDescription.notFound`);
 
 		if (!this.input.primaryKeyword) {
 			result.ignore = true;
-			result.message = 'Ignored primary keyword in description test. Add primary keyword';
+			result.messageKey = `${K}.primaryKeywordInDescription.ignored`;
 			return result;
 		}
 
@@ -160,7 +168,7 @@ export class PrimaryKeywordInDescriptionTest extends Test {
 
 		if (description.includes(this.input.primaryKeyword.toLowerCase())) {
 			result.score = 100;
-			result.message = 'Primary keyword found in the description';
+			result.messageKey = `${K}.primaryKeywordInDescription.found`;
 		}
 
 		return result;
@@ -169,11 +177,11 @@ export class PrimaryKeywordInDescriptionTest extends Test {
 
 export class PrimaryKeywordInSlugTest extends Test {
 	public run() {
-		let result = this.defaultResult('Primary keyword not found in the slug');
+		let result = this.defaultResult(`${K}.primaryKeywordInSlug.notFound`);
 
 		if (!this.input.primaryKeyword) {
 			result.ignore = true;
-			result.message = 'Ignored primary keyword in slug test. Add primary keyword';
+			result.messageKey = `${K}.primaryKeywordInSlug.ignored`;
 			return result;
 		}
 
@@ -183,16 +191,16 @@ export class PrimaryKeywordInSlugTest extends Test {
 
 		if (slug === '') {
 			result.score = 0;
-			result.message = 'Slug is empty';
+			result.messageKey = `${K}.primaryKeywordInSlug.slugEmpty`;
 			return result;
 		}
 
 		if (slug == slugifiedPrimaryKeyword) {
 			result.score = 100;
-			result.message = 'Primary keyword found in the slug';
+			result.messageKey = `${K}.primaryKeywordInSlug.found`;
 		} else if (slug.includes(slugifiedPrimaryKeyword)) {
 			result.score = 75;
-			result.message = 'Primary keyword found in the slug with other words';
+			result.messageKey = `${K}.primaryKeywordInSlug.foundWithOthers`;
 		}
 
 		return result;
@@ -205,11 +213,11 @@ export class PrimaryKeywordInSlugTest extends Test {
  */
 export class PrimaryKeywordInBeginningOfContentTest extends Test {
 	public run() {
-		let result = this.defaultResult('Primary keyword not found in the beginning of the content');
+		let result = this.defaultResult(`${K}.primaryKeywordInBeginning.notFound`);
 
 		if (!this.input.primaryKeyword) {
 			result.ignore = true;
-			result.message = 'Ignored primary keyword in beginning test. Add primary keyword';
+			result.messageKey = `${K}.primaryKeywordInBeginning.ignored`;
 			return result;
 		}
 
@@ -221,7 +229,7 @@ export class PrimaryKeywordInBeginningOfContentTest extends Test {
 
 		if (this.keywordInString(primaryKeyword, contentToCheck)) {
 			result.score = 100;
-			result.message = 'Primary keyword found in the beginning of the content';
+			result.messageKey = `${K}.primaryKeywordInBeginning.found`;
 		}
 
 		return result;
@@ -233,12 +241,11 @@ export class ContentLengthTest extends Test {
 		const content = this.contentText().toLowerCase().trim();
 		const wordsCount = getWordsCount(content, this.input.languageCode);
 
-		let result = this.defaultResult(
-			`Content is ${wordsCount} word${wordsCount === 1 ? '' : 's'} long. Consider using at least 400 words.`
-		);
+		let result = this.defaultResult(`${K}.contentLength.short`, { count: wordsCount });
 
 		if (wordsCount >= 400) {
-			result.message = `Content is ${wordsCount} words long`;
+			result.messageKey = `${K}.contentLength.ok`;
+			result.messageParams = { count: wordsCount };
 
 			const score = Math.floor(wordsCount / 25);
 			result.score = score > 100 ? 100 : score;
@@ -250,7 +257,7 @@ export class ContentLengthTest extends Test {
 
 export class AllKeywordsInContentTest extends Test {
 	public run() {
-		const result = this.defaultResult();
+		const result = this.defaultResult(`${K}.allKeywordsInContent.allFound`);
 		const keywords = this.allKeywords();
 
 		const content = this.contentText().toLowerCase().trim();
@@ -258,7 +265,7 @@ export class AllKeywordsInContentTest extends Test {
 
 		if (!keywords) {
 			result.ignore = true;
-			result.message = 'Ignored keywords in content test. Add keywords';
+			result.messageKey = `${K}.allKeywordsInContent.ignored`;
 			return result;
 		}
 
@@ -269,10 +276,13 @@ export class AllKeywordsInContentTest extends Test {
 		}
 
 		result.score = 100 - (missingKeywords.length * 100) / keywords.length;
-		result.message =
-			result.score === 100
-				? 'All keywords found in the content'
-				: 'Some keywords are missing in the content: ' + missingKeywords.join(', ');
+
+		if (result.score === 100) {
+			result.messageKey = `${K}.allKeywordsInContent.allFound`;
+		} else {
+			result.messageKey = `${K}.allKeywordsInContent.someMissing`;
+			result.messageParams = { keywords: missingKeywords.join(', ') };
+		}
 
 		return result;
 	}
@@ -280,12 +290,12 @@ export class AllKeywordsInContentTest extends Test {
 
 export class AllKeywordsInSubHeadingsTest extends Test {
 	public run() {
-		const result = this.defaultResult('No keywords found in subheadings');
+		const result = this.defaultResult(`${K}.allKeywordsInSubHeadings.noneFound`);
 		const keywords = this.allKeywords();
 
 		if (!keywords) {
 			result.ignore = true;
-			result.message = 'Ignored keywords in subheadings test. Add keywords';
+			result.messageKey = `${K}.allKeywordsInSubHeadings.ignored`;
 			return result;
 		}
 
@@ -311,9 +321,10 @@ export class AllKeywordsInSubHeadingsTest extends Test {
 		const notFound = keywords.filter((keyword) => !foundKeywords.includes(keyword));
 
 		if (notFound.length === 0) {
-			result.message = 'All keywords found in subheadings';
+			result.messageKey = `${K}.allKeywordsInSubHeadings.allFound`;
 		} else {
-			result.message = 'Some keywords not found in subheadings: ' + notFound.join(', ');
+			result.messageKey = `${K}.allKeywordsInSubHeadings.someMissing`;
+			result.messageParams = { keywords: notFound.join(', ') };
 		}
 
 		return result;
@@ -322,12 +333,12 @@ export class AllKeywordsInSubHeadingsTest extends Test {
 
 export class AllKeywordsInImgAltTest extends Test {
 	public run() {
-		const result = this.defaultResult('No keywords found in image alt attributes');
+		const result = this.defaultResult(`${K}.allKeywordsInImgAlt.noneFound`);
 		const keywords = this.allKeywords();
 
 		if (!keywords) {
 			result.ignore = true;
-			result.message = 'Ignored keywords in img alt test. Add keywords';
+			result.messageKey = `${K}.allKeywordsInImgAlt.ignored`;
 			return result;
 		}
 
@@ -355,9 +366,10 @@ export class AllKeywordsInImgAltTest extends Test {
 		const notFound = keywords.filter((keyword) => !foundKeywords.includes(keyword));
 
 		if (notFound.length === 0) {
-			result.message = 'All keywords found in image alt attributes';
+			result.messageKey = `${K}.allKeywordsInImgAlt.allFound`;
 		} else {
-			result.message = 'Some keywords not found in image alt attributes: ' + notFound.join(', ');
+			result.messageKey = `${K}.allKeywordsInImgAlt.someMissing`;
+			result.messageParams = { keywords: notFound.join(', ') };
 		}
 
 		return result;
@@ -366,14 +378,14 @@ export class AllKeywordsInImgAltTest extends Test {
 
 export class KeywordDensityTest extends Test {
 	public run() {
-		const result = this.defaultResult();
+		const result = this.defaultResult(`${K}.keywordDensity.good`);
 
 		const content = this.contentText().toLowerCase().trim();
 		const keywords = this.allKeywords();
 
 		if (!keywords) {
 			result.ignore = true;
-			result.message = 'Ignored keywords density test. Add keywords';
+			result.messageKey = `${K}.keywordDensity.ignored`;
 			return result;
 		}
 
@@ -386,27 +398,28 @@ export class KeywordDensityTest extends Test {
 
 		const density = (keywordsCount * 100) / wordsCount;
 
-		let message = '';
+		let variant: 'tooHigh' | 'mayBeTooHigh' | 'good' | 'mayBeTooLow' | 'tooLow';
 		let score = 0;
 
 		if (density > 5) {
-			message = ', which is too high';
+			variant = 'tooHigh';
 			score = 0;
 		} else if (density >= 2.5) {
-			message = ', which may be too high';
+			variant = 'mayBeTooHigh';
 			score = 50;
 		} else if (density >= 0.5) {
-			message = ', which is good';
+			variant = 'good';
 			score = 100;
 		} else if (density >= 0.1) {
-			message = ', which may be too low';
+			variant = 'mayBeTooLow';
 			score = 50;
 		} else {
-			message = ', which is too low';
+			variant = 'tooLow';
 			score = 0;
 		}
 
-		result.message = `Keyword density is ${density.toFixed(2)}%${message}. ${keywordsCount} keyword${keywordsCount === 1 ? '' : 's'} found.`;
+		result.messageKey = `${K}.keywordDensity.${variant}`;
+		result.messageParams = { density: density.toFixed(2), count: keywordsCount };
 		result.score = score;
 
 		return result;
@@ -415,23 +428,25 @@ export class KeywordDensityTest extends Test {
 
 export class SlugLengthTest extends Test {
 	public run(): TestResult {
-		const result = this.defaultResult();
+		const result = this.defaultResult(`${K}.slugLength.ok`);
 
 		const slug = this.input.slug.toLowerCase().trim();
-		const slugMessage = `Slug is ${slug.length} characters long`;
 
 		if (slug.length === 0) {
 			result.ignore = true;
-			result.message = 'Slug length test ignored because slug is empty';
+			result.messageKey = `${K}.slugLength.ignoredEmpty`;
 		} else if (slug.length < 35) {
 			result.score = 100;
-			result.message = slugMessage;
+			result.messageKey = `${K}.slugLength.ok`;
+			result.messageParams = { count: slug.length };
 		} else if (slug.length < 50) {
 			result.score = 50;
-			result.message = `${slugMessage}. Consider using a shorter slug`;
+			result.messageKey = `${K}.slugLength.tooLong`;
+			result.messageParams = { count: slug.length };
 		} else {
 			result.score = 0;
-			result.message = `${slugMessage}. Consider using a shorter slug`;
+			result.messageKey = `${K}.slugLength.tooLong`;
+			result.messageParams = { count: slug.length };
 		}
 
 		return result;
@@ -440,12 +455,13 @@ export class SlugLengthTest extends Test {
 
 export class ExternalLinksTest extends Test {
 	public run() {
-		const result = this.defaultResult('No external links found');
+		const result = this.defaultResult(`${K}.externalLinks.none`);
 		const externalLinksCount = this.links().filter((link) => link.type === 'external').length;
 
 		if (externalLinksCount > 0) {
 			result.score = 100;
-			result.message = `${externalLinksCount} external link${externalLinksCount === 1 ? '' : 's'} found`;
+			result.messageKey = `${K}.externalLinks.found`;
+			result.messageParams = { count: externalLinksCount };
 		}
 
 		return result;
@@ -454,7 +470,7 @@ export class ExternalLinksTest extends Test {
 
 export class InternalLinksTest extends Test {
 	public run() {
-		const result = this.defaultResult('No internal links found');
+		const result = this.defaultResult(`${K}.internalLinks.none`);
 		const internalLinksCount = this.links().filter(
 			(link) =>
 				link.type === 'internal-blog' ||
@@ -464,7 +480,8 @@ export class InternalLinksTest extends Test {
 
 		if (internalLinksCount > 0) {
 			result.score = 100;
-			result.message = `${internalLinksCount} internal link${internalLinksCount === 1 ? '' : 's'} found`;
+			result.messageKey = `${K}.internalLinks.found`;
+			result.messageParams = { count: internalLinksCount };
 		}
 
 		return result;
@@ -473,7 +490,7 @@ export class InternalLinksTest extends Test {
 
 export class ImagesCountTest extends Test {
 	public run() {
-		const result = this.defaultResult('No images found');
+		const result = this.defaultResult(`${K}.imagesCount.found`);
 		const doc = this.contentNode();
 
 		let imagesCount = 0;
@@ -494,7 +511,8 @@ export class ImagesCountTest extends Test {
 			result.score = 70;
 		}
 
-		result.message = `${imagesCount} image${imagesCount === 1 ? '' : 's'} found`;
+		result.messageKey = `${K}.imagesCount.found`;
+		result.messageParams = { count: imagesCount };
 
 		return result;
 	}
@@ -502,7 +520,7 @@ export class ImagesCountTest extends Test {
 
 export class ImageAltTest extends Test {
 	public run() {
-		const result = this.defaultResult();
+		const result = this.defaultResult(`${K}.imageAlt.allHaveAlt`);
 		const doc = this.contentNode();
 
 		let imagesMissingAltsCount = 0;
@@ -517,14 +535,14 @@ export class ImageAltTest extends Test {
 
 		if (imagesCount === 0) {
 			result.ignore = true;
-			result.message = 'Image alt test ignored because no images found';
+			result.messageKey = `${K}.imageAlt.ignoredNoImages`;
+		} else if (imagesMissingAltsCount === 0) {
+			result.messageKey = `${K}.imageAlt.allHaveAlt`;
+			result.score = 100;
 		} else {
-			result.message =
-				imagesMissingAltsCount === 0
-					? 'All images have alt attributes'
-					: `${imagesMissingAltsCount} image${imagesMissingAltsCount === 1 ? '' : 's'} missing alt attributes`;
-
-			result.score = imagesMissingAltsCount === 0 ? 100 : 0;
+			result.messageKey = `${K}.imageAlt.someMissingAlt`;
+			result.messageParams = { count: imagesMissingAltsCount };
+			result.score = 0;
 		}
 
 		return result;

@@ -7,7 +7,6 @@ use App\Api\Console\Object\LanguageObject;
 use App\Api\Console\Object\MediaObjectFactory;
 use App\Api\Console\Object\NavigationObject;
 use App\Api\Console\Object\PostObjectFactory;
-use App\Api\Console\Object\PostVariantObject;
 use App\Api\Console\Object\RedirectObject;
 use App\Api\Console\Object\RouteObject;
 use App\Api\Console\Object\TagObjectFactory;
@@ -18,6 +17,7 @@ use App\Service\Export\Exporter\ExporterInterface;
 use App\Service\Export\Writer\JsonFileWriter;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Redirect\RedirectService;
 use App\Service\Route\RouteService;
@@ -33,6 +33,7 @@ class HyvorBlogsExporter implements ExporterInterface
         private LanguageService $languageService,
         private PostService $postService,
         private PostObjectFactory $postObjectFactory,
+        private PostContentService $postContentService,
         private UserService $userService,
         private UserObjectFactory $userObjectFactory,
         private TagService $tagService,
@@ -96,7 +97,7 @@ class HyvorBlogsExporter implements ExporterInterface
     }
 
     /**
-     * @return PostVariantObject[]
+     * @return list<array<string, mixed>>
      */
     private function exportPostVariants(Post $post, Blog $blog): array
     {
@@ -104,7 +105,14 @@ class HyvorBlogsExporter implements ExporterInterface
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
 
         return array_map(
-            fn($variant) => $this->postObjectFactory->createVariant($variant), // TODO: set HTML
+            function ($variant) use ($blog): array {
+                /** @var array<string, mixed> $row */
+                $row = (array) $this->postObjectFactory->createVariant($variant);
+                $content = $variant->getContent();
+                $row['content_html'] = $content !== null ? $this->postContentService->getHtml($content, $blog) : null;
+
+                return $row;
+            },
             $variants,
         );
     }

@@ -16,6 +16,9 @@
 	import { consoleUrlWithBlog } from '../../../../../lib/consoleUrl';
 	import dayjs from 'dayjs';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let showDropdown = $state(false);
 	let creatingLanguageId: number | null = $state(null);
@@ -33,7 +36,10 @@
 				creatingLanguageId = null;
 			} catch (error) {
 				toast.error(
-					`Failed to create ${lang.name} variant: ${error instanceof Error ? error.message : String(error)}`
+					i18n.t('console.postEditor.language.createFailed', {
+						language: lang.name,
+						message: error instanceof Error ? error.message : String(error)
+					})
 				);
 				creatingLanguageId = null;
 				return;
@@ -65,7 +71,7 @@
 	}
 
 	function formatWords(words: number) {
-		return `${words.toLocaleString()} word${words === 1 ? '' : 's'}`;
+		return i18n.t('console.postEditor.language.words', { count: words });
 	}
 </script>
 
@@ -102,9 +108,9 @@
 
 							{#snippet description()}
 								{#if creatingLanguageId === language.id}
-									<Text small light>Creating...</Text>
+									<Text small light>{i18n.t('console.postEditor.language.creating')}</Text>
 								{:else if !getVariantStatus(language.id)}
-									<Text small light>Not created</Text>
+									<Text small light>{i18n.t('console.postEditor.language.notCreated')}</Text>
 								{:else}
 									{@const words = getVariantWords(language.id)}
 									{@const updatedAt = getVariantLastUpdated(language.id)}

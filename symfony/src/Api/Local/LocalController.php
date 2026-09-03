@@ -29,10 +29,6 @@ class LocalController extends AbstractController
         #[MapQueryParameter] string $server_name,
         Request $request,
     ): Response {
-        if ($request->getClientIp() !== '127.0.0.1') {
-            return new Response('forbidden', 403);
-        }
-
         $customDomain = $this->customDomainService->getCustomDomain($server_name);
 
         if ($customDomain === null) {

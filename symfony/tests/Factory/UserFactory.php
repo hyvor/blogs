@@ -38,7 +38,7 @@ final class UserFactory extends PersistentObjectFactory
             'created_at' => self::faker()->dateTime(),
             'updated_at' => self::faker()->dateTime(),
             'blog' => BlogFactory::new(),
-            'hyvor_user_id' => self::faker()->randomNumber(),
+            'hyvor_user_id' => self::faker()->unique()->randomNumber(8),
             'posts_count' => self::faker()->randomNumber(),
             'role' => UserRole::ADMIN,
             'slug' => self::faker()->slug(),

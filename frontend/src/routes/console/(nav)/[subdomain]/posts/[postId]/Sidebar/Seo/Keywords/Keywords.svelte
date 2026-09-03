@@ -4,6 +4,9 @@
 	import KeywordAdder from './KeywordAdder.svelte';
 	import { postVariantStore, updatePostVariantStore } from '../../../../postStore';
 	import { updatePostVariant } from '../../../../postActions';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function updatePrimaryKeyword(keyword: string | null) {
 		updatePostVariantStore(
@@ -24,7 +27,7 @@
 	function addPrimaryKeyword(k: string) {
 		k = k.trim().toLowerCase();
 		if ($postVariantStore.seo_secondary_keywords.find((keyword) => keyword.toLowerCase() === k)) {
-			toast.error('Keyword already added');
+			toast.error(i18n.t('console.postEditor.seo.keywordAlreadyAdded'));
 			return false;
 		}
 
@@ -45,12 +48,12 @@
 		newKeyword = newKeyword.trim().toLowerCase();
 
 		if ($postVariantStore.seo_primary_keyword === newKeyword) {
-			toast.error('Keyword already added as primary keyword');
+			toast.error(i18n.t('console.postEditor.seo.keywordAlreadyPrimary'));
 			return false;
 		}
 
 		if ($postVariantStore.seo_secondary_keywords.find((k) => k.toLowerCase() === newKeyword)) {
-			toast.error('Keyword already added');
+			toast.error(i18n.t('console.postEditor.seo.keywordAlreadyAdded'));
 			return false;
 		}
 
@@ -77,7 +80,7 @@
 
 <div class="keywords">
 	<div class="input">
-		<div class="title">Primary Keyword</div>
+		<div class="title">{i18n.t('console.postEditor.seo.primaryKeyword')}</div>
 
 		{#if $postVariantStore.seo_primary_keyword === null}
 			<KeywordAdder on:add={handlePrimaryKeywordAdd} />
@@ -91,7 +94,7 @@
 	</div>
 
 	<div class="input">
-		<div class="title">Secondary Keywords</div>
+		<div class="title">{i18n.t('console.postEditor.seo.secondaryKeywords')}</div>
 
 		{#each $postVariantStore.seo_secondary_keywords as keyword}
 			<KeywordDisplay

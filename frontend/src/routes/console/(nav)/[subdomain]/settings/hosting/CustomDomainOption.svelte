@@ -100,9 +100,9 @@
 					<div class="note">{i18n.t('console.settings.hosting.waitingForHostingChange')}</div>
 				{:else}
 					<div class="button">
-					<Button size="x-small" variant="outline" {disabled} on:click={onContinueSetup}>
-						{i18n.t('console.settings.hosting.continueSetup')}
-					</Button>
+						<Button size="x-small" variant="outline" {disabled} on:click={onContinueSetup}>
+							{i18n.t('console.settings.hosting.continueSetup')}
+						</Button>
 					</div>
 				{/if}
 			</div>

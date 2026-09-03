@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { variantSeoStore } from '../../../seoStore';
 	import SeoScoreTag from './SeoScoreTag.svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	// seo-analyzer emits i18n keys (console.postEditor.seo.checks.*) rather than formatted text
+	const t = (key: string, params?: Record<string, string | number>) => i18n.t(key as never, params);
 </script>
 
 <div class="results">
@@ -10,7 +15,7 @@
 				<SeoScoreTag score={test.score} ignore={test.ignore} />
 			</div>
 			<div class="score-message">
-				{test.message}
+				{t(test.messageKey, test.messageParams)}
 			</div>
 		</div>
 	{/each}

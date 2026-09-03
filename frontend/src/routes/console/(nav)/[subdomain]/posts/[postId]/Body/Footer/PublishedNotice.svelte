@@ -7,6 +7,9 @@
 		postVariantStore
 	} from '../../../postStore';
 	import Compare from '../Compare/Compare.svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	async function handleEditing() {
 		postEditingPublished.update((v) => !v);
@@ -18,24 +21,31 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
+	{@const scheduled = $postVariantStore.status === 'scheduled'}
 	<div class="published-notice">
 		<span class="notice-text">
 			{#if $postEditingPublished}
-				You are editing a published post.
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.editingScheduled')
+					: i18n.t('console.postEditor.publishedNotice.editing')}
 			{:else}
-				This post is published.
+				{scheduled
+					? i18n.t('console.postEditor.publishedNotice.scheduled')
+					: i18n.t('console.postEditor.publishedNotice.published')}
 			{/if}
 		</span>
 		<button onclick={handleEditing}>
 			{#if $postEditingPublished}
-				Switch to published view
+				{i18n.t('console.postEditor.publishedNotice.switchToView')}
 			{:else}
-				Switch to editing mode
+				{i18n.t('console.postEditor.publishedNotice.switchToEditing')}
 			{/if}
 		</button>
 		{#if $postEditingPublished}
 			&nbsp;&nbsp;&middot;&nbsp;
-			<button onclick={() => (compare = true)}> Compare</button>
+			<button onclick={() => (compare = true)}
+				>{i18n.t('console.postEditor.publishedNotice.compare')}</button
+			>
 		{/if}
 	</div>
 {/if}

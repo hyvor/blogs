@@ -13,6 +13,9 @@
 	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
 	import { variantSeoStore } from '../../seoStore';
 	import { postSidebarStore } from '../../postStore';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 </script>
 
 <div class="post-sections">
@@ -23,7 +26,7 @@
 	>
 		{#snippet trigger()}
 			<IconGear size={13} class="icon" />
-			Settings
+			{i18n.t('console.postEditor.sections.settings')}
 		{/snippet}
 
 		<Settings />
@@ -36,7 +39,7 @@
 	>
 		{#snippet trigger()}
 			<IconSearchHeart size={13} class="icon" />
-			SEO
+			{i18n.t('console.postEditor.sections.seo')}
 			<SeoScoreTag score={$variantSeoStore.average} percentage />
 		{/snippet}
 
@@ -50,7 +53,7 @@
 	>
 		{#snippet trigger()}
 			<IconLink45deg size={13} class="icon" />
-			Links
+			{i18n.t('console.postEditor.sections.links')}
 			<LinksSidebarTag />
 		{/snippet}
 
@@ -65,7 +68,7 @@
 	>
 		{#snippet trigger()}
 			<IconRobot size={13} class="icon" />
-			Agent
+			{i18n.t('console.postEditor.sections.agent')}
 		{/snippet}
 
 		<Ai />

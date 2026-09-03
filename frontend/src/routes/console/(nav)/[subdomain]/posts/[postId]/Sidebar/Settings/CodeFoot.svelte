@@ -10,6 +10,9 @@
 	import LabelWithInfo from './LabelWithInfo.svelte';
 	import CodemirrorWithPreview from '../../../../../../lib/components/CodemirrorEditor/CodemirrorWithPreview.svelte';
 	import { updatePost } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -38,8 +41,8 @@
 	{#snippet label()}
 		<span>
 			<LabelWithInfo
-				label="Code Foot"
-				info="Custom code to be added before the </body> tag of the post."
+				label={i18n.t('console.postEditor.settings.codeFoot')}
+				info={i18n.t('console.postEditor.settings.codeFootInfo')}
 			/>
 			<UnsavedTag show={$postStore.code_foot !== $postOriginalStore.code_foot} {loaderState} />
 		</span>
@@ -47,7 +50,7 @@
 
 	<CodemirrorWithPreview
 		value={$postStore.code_foot || ''}
-		title="Code Foot"
+		title={i18n.t('console.postEditor.settings.codeFoot')}
 		onchange={handleChange}
 		onconfirm={handleConfirm}
 	/>

@@ -45,9 +45,11 @@ class PermalinkService
     // the base URL
     public function getBlogUrl(Blog $blog): string
     {
+        $hostingAt = $blog->getHostingAt();
+
         return $this->buildUrlForHosting(
-            $blog->getHostingAt(),
-            $blog->getSubdomain(),
+            $hostingAt,
+            $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
             $blog->getHostingUrl(),
             $blog->getCustomDomain()?->getDomain()
         );
@@ -71,7 +73,7 @@ class PermalinkService
     ): string
     {
         return match ($hostingAt) {
-            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain),
+            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain ?? ''),
             BlogHostingAt::DOMAIN => 'https://' . $domain,
             BlogHostingAt::SELF => $hostingUrl ?? '',
         };

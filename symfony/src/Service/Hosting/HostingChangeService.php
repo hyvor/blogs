@@ -17,7 +17,6 @@ use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Service\Route\PermalinkService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -34,7 +33,6 @@ class HostingChangeService
         private CustomDomainIntentService $customDomainIntentService,
         private EventDispatcherInterface $eventDispatcher,
         private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler,
-        private LoggerInterface $logger
     ) {
     }
 
@@ -72,11 +70,13 @@ class HostingChangeService
             assert($blog->getSubdomain());
             $hostingChange->setFromSubdomain($blog->getSubdomain());
         } elseif ($hostingChange->getFromAt() === BlogHostingAt::SELF) {
-            assert($blog->getHostingUrl());
-            $hostingChange->setFromHostingUrl($blog->getHostingUrl());
+            $fromHostingUrl = $blog->getHostingUrl();
+            assert($fromHostingUrl !== null);
+            $hostingChange->setFromHostingUrl($fromHostingUrl);
         } elseif ($hostingChange->getFromAt() === BlogHostingAt::DOMAIN) {
-            assert($blog->getCustomDomain()?->getDomain());
-            $hostingChange->setFromDomain($blog->getCustomDomain()?->getDomain());
+            $fromCustomDomain = $blog->getCustomDomain();
+            assert($fromCustomDomain !== null);
+            $hostingChange->setFromDomain($fromCustomDomain->getDomain());
         }
 
         $hostingChange->setToAt($toAt);

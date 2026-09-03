@@ -10,6 +10,9 @@
 	import CaretLeft from './CaretLeft.svelte';
 	import { goto } from '$app/navigation';
 	import PostStatusTag from '../../PostStatusTag.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function getBackUrl() {
 		const postData = $postStore;
@@ -24,7 +27,7 @@
 <div class="post-top-bar">
 	<button class="back-button" onclick={handleBack}>
 		<CaretLeft />
-		Back
+		{i18n.t('console.postEditor.back')}
 	</button>
 
 	<div class="left">
@@ -97,7 +100,6 @@
 	}
 
 	.right {
-		flex: 1;
 		justify-content: flex-end;
 	}
 

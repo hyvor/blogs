@@ -259,6 +259,11 @@
 					"summary": "The WordPress bloat, solved",
 					"quote": "I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully."
 				},
+				"james": {
+					"role": "Co-founder and CEO",
+					"summary": "A fantastic blogging platform",
+					"quote": "We think it’s a fantastic blogging platform, and we’ve been using it for our KYZON Solutions blog since day 1 and also for a few clients whenever they need blogs for their websites"
+				},
 				"ashutosh": {
 					"role": "Senior Manager, Marketing",
 					"summary": "Clean & Simple"
@@ -267,6 +272,10 @@
 					"role": "Founder",
 					"summary": "A real pleasure to use!",
 					"quote": "I love Hyvor Blogs! It's a gem: simple, smooth, and a pleasure to use. The team is incredible — responsive and genuinely caring. A perfect combination of quality, performance, and humanity. An absolute favorite!"
+				},
+				"christian": {
+					"role": "Founder",
+					"summary": "Sub-path hosting is great"
 				},
 				"riccardo": {
 					"role": "Systems Development Engineer",

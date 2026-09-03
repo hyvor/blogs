@@ -3,6 +3,10 @@
 	import AgentChat from '../../../../agent/AgentChat.svelte';
 	import { postEditor, postVariantStore } from '../../../postStore';
 	import type { DocumentChange } from '../../../../agent/agentApi';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	function applyDocumentChange(change: DocumentChange) {
 		// only the currently open post

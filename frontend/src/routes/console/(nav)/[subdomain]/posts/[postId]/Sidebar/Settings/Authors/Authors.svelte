@@ -16,6 +16,9 @@
 	import OnlyPrimaryVariant from '../OnlyPrimaryVariant.svelte';
 	import { hasIdArrayChanged } from '../settingsHelpers';
 	import AuthorTag from '../../../../AuthorTag.svelte';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let dropdownOpen = $state(false);
 
@@ -59,7 +62,7 @@
 	<SplitControl>
 		{#snippet label()}
 			<span>
-				Authors
+				{i18n.t('console.postEditor.settings.authors')}
 
 				<UnsavedTag show={hasAuthorsChanged} {loaderState} />
 			</span>
@@ -83,7 +86,7 @@
 						</AuthorTag>
 					{/each}
 				{:else}
-					<Text light small>No authors</Text>
+					<Text light small>{i18n.t('console.postEditor.settings.noAuthors')}</Text>
 				{/if}
 			</div>
 

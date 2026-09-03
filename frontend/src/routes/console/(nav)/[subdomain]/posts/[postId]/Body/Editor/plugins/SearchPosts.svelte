@@ -22,6 +22,9 @@
 		languagesStore,
 		primaryLanguageStore
 	} from '../../../../../../../lib/stores/languagesStore';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let input = $state('');
 	let currentLanguage = $state($primaryLanguageStore);
@@ -84,7 +87,7 @@
 
 <div class="input-wrap">
 	<TextInput
-		placeholder="Search a post in your blog..."
+		placeholder={i18n.t('console.postEditor.searchPosts.placeholder')}
 		block
 		autofocus
 		bind:value={input}
@@ -126,7 +129,12 @@
 		<Loader block padding={40} />
 	{:else if input.trim().length}
 		{#if posts.length === 0}
-			<IconMessage empty message="No posts found" padding={35} iconSize={60} />
+			<IconMessage
+				empty
+				message={i18n.t('console.postEditor.searchPosts.noPosts')}
+				padding={35}
+				iconSize={60}
+			/>
 		{:else}
 			{#each posts as post}
 				<div
@@ -137,11 +145,11 @@
 					onkeyup={bubble('keyup')}
 				>
 					<div class="title">
-						{post.title || '(No title)'}
+						{post.title || i18n.t('console.postEditor.searchPosts.noTitle')}
 					</div>
 
 					<div class="url">
-						{post.url || '(No url)'}
+						{post.url || i18n.t('console.postEditor.searchPosts.noUrl')}
 					</div>
 				</div>
 			{/each}
