@@ -22,6 +22,7 @@
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	interface Props {
@@ -66,6 +67,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/languages')}
 				active={$page.url.pathname === `${prefix}/languages`}
+				disabled={cant('languages.read')}
 			>
 				{#snippet start()}
 					<IconGlobe />

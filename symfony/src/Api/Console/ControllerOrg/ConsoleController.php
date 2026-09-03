@@ -65,17 +65,22 @@ class ConsoleController
 
         $preloadedBlog = null;
         if (count($userBlogs) > 0) {
-            $blogToPreload = $userBlogs[0]->getBlog();
+            $userBlogToPreload = $userBlogs[0];
             if ($blogHint !== null) {
                 foreach ($userBlogs as $entry) {
                     if ($entry->getBlog()->getSubdomain() === $blogHint) {
-                        $blogToPreload = $entry->getBlog();
+                        $userBlogToPreload = $entry;
                         break;
                     }
                 }
             }
 
-            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint($blogToPreload, 'GET', '/blog');
+            $preloadedBlog = $this->consoleSubrequest->callBlogEndpoint(
+                $userBlogToPreload->getBlog(),
+                'GET',
+                '/blog',
+                $userBlogToPreload
+            );
         }
 
         $resolvedLicense = null;

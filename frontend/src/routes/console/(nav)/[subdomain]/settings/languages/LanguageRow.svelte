@@ -17,6 +17,7 @@
 	import { languageStoreRemove } from '../../../../lib/stores/languagesStore';
 	import DeleteConfirm from './DeleteConfirm.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -67,7 +68,13 @@
 	<div>{language.direction.toUpperCase()}</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.languages.editLanguage')}>
-			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				on:click={() => (isEditing = true)}
+				disabled={cant('languages.write')}
+			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
@@ -77,7 +84,7 @@
 				color="red"
 				size="small"
 				on:click={handleDelete}
-				disabled={language.is_primary}
+				disabled={language.is_primary || cant('languages.write')}
 			>
 				<IconTrash size={12} />
 			</IconButton>

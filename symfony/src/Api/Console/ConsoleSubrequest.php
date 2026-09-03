@@ -24,11 +24,12 @@ class ConsoleSubrequest
         Blog $blog,
         string $method,
         string $endpoint, // e.g. /blog
+        ?\App\Entity\User $blogUser = null,
     ): Response
     {
         $path = '/api/console/v0/blog/' . $blog->getSubdomain() . $endpoint;
         $request = Request::create($path, $method);
-        $this->consoleApiAuthorizationListener->setBlogToRequest($request, $blog);
+        $this->consoleApiAuthorizationListener->setBlogToRequest($request, $blog, $blogUser);
 
         try {
             $response = $this->kernel->handle($request, HttpKernelInterface::SUB_REQUEST);

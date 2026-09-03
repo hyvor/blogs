@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import LanguageRow from './LanguageRow.svelte';
 	import { Button, IconButton, TableRow } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
@@ -7,15 +8,20 @@
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import SettingsTable from '../@components/SettingsTable.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
 	let isCreating = $state(false);
+
+	onMount(() => {
+		redirectIfCant('languages.read');
+	});
 </script>
 
 <div class="languages">
 	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+		<Button disabled={cant('languages.write')} on:click={() => (isCreating = true)}>
 			Add Language {#snippet end()}
 				<IconPlus />
 			{/snippet}

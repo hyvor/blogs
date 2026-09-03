@@ -80,6 +80,12 @@ class BlogController
                     'newsletter_id' => $hyvorPost->getNewsletterId(),
                 ] : null,
             ],
+            'scopes' => array_values(
+                array_map(
+                    fn(Scope $scope) => $scope->value,
+                    $this->blogAuthListener->getScopes()
+                )
+            ),
         ]);
     }
 
