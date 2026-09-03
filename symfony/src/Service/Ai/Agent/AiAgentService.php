@@ -8,15 +8,14 @@ use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
 use App\Service\Ai\Agent\Tool\Query\QueryTool;
 use App\Service\Ai\AiPlatformService;
+use App\Service\Ai\AiProvider;
 use App\Service\Language\LanguageService;
 use App\Service\Post\Content\Markdown\MarkdownSerializer;
-use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
+use App\Service\Route\PermalinkService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
-use Psr\Log\LoggerInterface;
 use Symfony\AI\Agent\Agent;
-use Symfony\AI\Agent\Toolbox\AgentProcessor;
 use Symfony\AI\Agent\Toolbox\Toolbox;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
@@ -24,8 +23,24 @@ use Symfony\AI\Platform\Message\MessageBag;
 class AiAgentService
 {
 
+    /**
+     * assuming one blog is 2000 words, taking prompts into account, this would allow around 10 blog posts to be fully
+     * processed. Our hard limit is 10 different posts to be edited per message.
+     * Agent is not going to fully edit posts, so this should be a generous limit
+     * that would allow for thinking, tool calls, etc.
+     */
+    private const int MAX_OUTPUT_TOKENS = 20_000; // allowing for thinking
+
     private const string SYSTEM_PROMPT_FOR_POST = <<<PROMPT
     You are a helpful writing assistant for the blog '{blog_name}' running on Hyvor Blogs blogging platform.
+
+    The blog has languages, posts, tags, and authors.
+    Primary language is {primary_language}. {other_languages_prompt}
+    Each post can have multiple post variants in different languages (primary language variant is always present).
+    Each post variant has a title, description, content, etc.
+
+    Current date is: {date}
+
     {current_post_prompt}
 
     You can:
@@ -51,7 +66,7 @@ class AiAgentService
 
     private const string CURRENT_POST_PROMPT = <<<PROMPT
     Currently editing post variant ID: {post_variant_id}
-    Post is in {language} ({language_code}) language.
+    Post is in {language_code} ({language}) language.
     Post title: {title_prompt}
     PROMPT;
 
@@ -59,11 +74,11 @@ class AiAgentService
 
     public function __construct(
         private AiPlatformService $aiPlatformService,
-        private PostContentService $postContentService,
         private PostService $postService,
         private TagService $tagService,
         private UserService $userService,
         private LanguageService $languageService,
+        private PermalinkService $permalinkService,
     ) {}
 
     private function getSystemPrompt(Blog $blog, ?PostVariant $postVariant): string
@@ -89,15 +104,30 @@ class AiAgentService
             );
         }
 
+        $primaryLanguage = $this->languageService->getPrimaryLanguage($blog);
+        $otherLanguages = $this->languageService->getSecondaryLanguages($blog);
+
+        $otherLanguagesPrompt = '';
+        if (count($otherLanguages) > 0) {
+            $otherLanguagesPrompt = 'Other languages are: ' .
+                implode(', ', array_map(fn($lang) => $lang->getCode() . ' (' . $lang->getName() . ')', $otherLanguages)) . '.';
+        }
+
         return str_replace(
             [
                 '{blog_name}',
+                '{primary_language}',
+                '{other_languages_prompt}',
+                '{date}',
                 '{current_post_prompt}',
                 '{markdown_schema}'
             ],
             [
                 $blog->getVariants()->toArray()[0]->getName() ?? '',
+                $primaryLanguage->getCode() . ' (' . $primaryLanguage->getName() . ')',
                 $currentPostPrompt,
+                $otherLanguagesPrompt,
+                new \DateTimeImmutable()->format('Y-m-d'),
                 MarkdownSerializer::SCHEMA_FOR_AI_AGENTS
             ],
             self::SYSTEM_PROMPT_FOR_POST
@@ -108,15 +138,17 @@ class AiAgentService
         Blog $blog,
         string $prompt,
         ?PostVariant $postVariant,
+        ?MessageBag $history = null,
+        ?\Closure $onQueryComplete = null,
     ): AgentCallResult
     {
-        $provider = $blog->getMeta()->ai_provider;
+        $model = $blog->getMeta()->ai_model;
+        $provider = $model->getProvider();
         $platform = $this->aiPlatformService->getPlatformForProvider($provider);
 
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->postService,
-            $this->postContentService
         );
         $queryTool = new QueryTool(
             $blog,
@@ -124,33 +156,59 @@ class AiAgentService
             $this->userService,
             $this->postService,
             $this->languageService,
+            $this->permalinkService,
             // $this->logger,
+            $onQueryComplete,
         );
-        $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
-        $toolProcessor = new AgentProcessor($toolbox);
+        $toolbox = new Toolbox(
+            [$documentOpsTool, $queryTool]
+        );
 
         $agent = new Agent(
             $platform,
-            $provider->model(),
-            inputProcessors: [$toolProcessor],
-            outputProcessors: [$toolProcessor],
-            name: 'hyvor-blogs-agent'
+            $model->value,
+            name: 'hyvor-blogs-agent',
+            toolbox: $toolbox
         );
 
         $systemPrompt = $this->getSystemPrompt($blog, $postVariant);
 
-        $messages = new MessageBag(
-            Message::forSystem($systemPrompt),
-            Message::ofUser($prompt),
-        );
+        $messages = new MessageBag(Message::forSystem($systemPrompt));
+        foreach ($history ?? [] as $historyMessage) {
+            $messages->add($historyMessage);
+        }
+        $messages->add(Message::ofUser($prompt));
 
-        $callResult = $agent->call($messages, [
-            'stream' => true,
-            'max_tokens' => 5000,
-            // 'reasoning' => ['summary' => 'auto'],
-        ]);
+        $callResult = $agent->call($messages, $this->getOptionsFromProvider($provider));
 
-        return new AgentCallResult($callResult, $documentOpsTool);
+        return new AgentCallResult($callResult, $documentOpsTool, $model);
+    }
+
+    // unfortunately, different provides have different options :(
+    private function getOptionsFromProvider(AiProvider $provider): array
+    {
+        return match ($provider) {
+            AiProvider::OPENAI => [
+                'stream' => true,
+                'max_output_tokens' => self::MAX_OUTPUT_TOKENS,
+                'reasoning' => [
+                    'summary' => 'auto',
+                ],
+            ],
+            AiProvider::ANTHROPIC => [
+                'stream' => true,
+                'max_tokens' => self::MAX_OUTPUT_TOKENS,
+                // adaptive is recommended
+                // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
+                'thinking' => [
+                    'type' => 'adaptive'
+                ],
+            ],
+            AiProvider::MISTRAL => [
+                'stream' => true,
+                'max_tokens' => self::MAX_OUTPUT_TOKENS,
+            ]
+        };
     }
 
 }

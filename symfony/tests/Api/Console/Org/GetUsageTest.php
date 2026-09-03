@@ -5,7 +5,8 @@ namespace Api\Console\Org;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Service\Billing\UsageService;
 use App\Tests\Case\ApiTestCase;
-use App\Tests\Factory\AutoTranslationFactory;
+use App\Tests\Factory\AiConversationFactory;
+use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\BlogFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -38,9 +39,10 @@ class GetUsageTest extends ApiTestCase
             'counts' => ['users' => 3, 'media' => 2_000_000],
         ]);
 
-        AutoTranslationFactory::createOne([
-            'blog' => $blog,
-            'chars' => 200,
+        $conversation = AiConversationFactory::createOneFor($blog);
+        AiMessageFactory::createOne([
+            'conversation' => $conversation,
+            'total_tokens_usd_cost' => 250, // half of trial's $5.00 aiCost
             'created_at' => new \DateTimeImmutable('first day of this month +1 day'),
         ]);
 
@@ -55,8 +57,7 @@ class GetUsageTest extends ApiTestCase
 
         $this->assertIsArray($json['users']);
         $this->assertIsArray($json['storage']);
-        $this->assertIsArray($json['auto_translate_chars']);
-        $this->assertIsArray($json['ai_tokens']);
+        $this->assertIsArray($json['ai']);
 
         // users
         $this->assertSame(3, $json['users']['used']);
@@ -66,13 +67,9 @@ class GetUsageTest extends ApiTestCase
         $this->assertSame(2_000_000, $json['storage']['used']);
         $this->assertSame(BlogsLicense::trial()->storage, $json['storage']['limit']);
 
-        // auto_translate_chars (this month)
-        $this->assertSame(200, $json['auto_translate_chars']['used']);
-        $this->assertSame(BlogsLicense::trial()->autoTranslationsChars, $json['auto_translate_chars']['limit']);
-
-        // ai_tokens usage (TODO:)
-        $this->assertSame(0, $json['ai_tokens']['used']);
-        $this->assertSame(BlogsLicense::trial()->aiTokens, $json['ai_tokens']['limit']);
+        // ai usage (this month), as a percentage of the license's aiCost
+        $this->assertSame(50, $json['ai']['used']);
+        $this->assertSame(100, $json['ai']['limit']);
     }
 
     public function test_excludes_other_org_blogs(): void
@@ -107,14 +104,15 @@ class GetUsageTest extends ApiTestCase
         $this->assertSame(0, $json['storage']['used']);
     }
 
-    public function test_excludes_previous_month_gpt_and_auto_translations(): void
+    public function test_excludes_previous_month_ai_costs(): void
     {
         $orgId = 52;
         $blog = BlogFactory::createOne(['organization_id' => $orgId, 'counts' => []]);
 
-        AutoTranslationFactory::createOne([
-            'blog' => $blog,
-            'chars' => 999,
+        $conversation = AiConversationFactory::createOneFor($blog);
+        AiMessageFactory::createOne([
+            'conversation' => $conversation,
+            'total_tokens_usd_cost' => 999,
             'created_at' => new \DateTimeImmutable('-2 months'),
         ]);
 
@@ -127,10 +125,7 @@ class GetUsageTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
-        $this->assertIsArray($json['ai_tokens']);
-        $this->assertIsArray($json['auto_translate_chars']);
-
-        $this->assertSame(0, $json['ai_tokens']['used']);
-        $this->assertSame(0, $json['auto_translate_chars']['used']);
+        $this->assertIsArray($json['ai']);
+        $this->assertSame(0, $json['ai']['used']);
     }
 }

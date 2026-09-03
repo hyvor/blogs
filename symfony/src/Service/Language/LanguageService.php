@@ -68,10 +68,9 @@ class LanguageService
 
     public function getLanguageByCode(Blog $blog, string $code): ?Language
     {
-        return $this->em->getRepository(Language::class)->findOneBy([
-            'blog' => $blog,
-            'code' => $code,
-        ]);
+        $languages = $this->getAllLanguages($blog);
+
+        return array_find($languages, fn($language) => $language->getCode() === $code);
     }
 
     public function getLanguageById(Blog $blog, int $id): ?Language
@@ -93,6 +92,18 @@ class LanguageService
         }
 
         throw new \RuntimeException('No primary language found for blog ' . $blog->getId());
+    }
+
+    /**
+     * @return Language[]
+     */
+    public function getSecondaryLanguages(Blog $blog): array
+    {
+        $languages = $this->getAllLanguages($blog);
+
+        return array_filter($languages, function (Language $language) {
+            return !$language->isPrimary();
+        });
     }
 
     public function updateLanguage(Language $language, ?string $code, ?string $name, ?LanguageDirection $direction): Language

@@ -2,24 +2,24 @@
 
 namespace App\Service\Ai\Agent\Event;
 
-/**
- * A chunk of the assistant's final text response. Sent to the frontend for every delta;
- * persisted as an `ai_message_chunks` row of type 'text' (consecutive deltas are merged
- * into a single row rather than saved one-by-one).
- */
-readonly class TextEvent implements AgentEvent
+use App\Entity\AiMessageEvent;
+use App\Entity\Enum\AiMessageEventType;
+
+readonly class TextEvent extends EventAbstract
 {
-    public function __construct(public string $content)
+
+    public function __construct(
+        private string $content,
+    ) {}
+
+    public function getType(): AiMessageEventType
     {
+        return AiMessageEventType::TEXT;
     }
 
-    public function getType(): string
+    public function setEventProperties(AiMessageEvent $event): void
     {
-        return 'text';
+        $event->setContent($this->content);
     }
 
-    public function getPayload(): array
-    {
-        return ['content' => $this->content];
-    }
 }

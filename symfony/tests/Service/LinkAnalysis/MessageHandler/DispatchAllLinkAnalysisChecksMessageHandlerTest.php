@@ -24,8 +24,7 @@ class DispatchAllLinkAnalysisChecksMessageHandlerTest extends KernelTestCase
         return new BlogsLicense(
             users: 10,
             storage: 1000,
-            aiTokens: 1000,
-            autoTranslationsChars: 1000,
+            aiCost: 1000,
             seoAnalysis: true,
             linkAnalysis: $linkAnalysis,
             blogs: 1,

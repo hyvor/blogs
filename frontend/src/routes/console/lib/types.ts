@@ -1,11 +1,9 @@
-import type { CollabClientID, CollabStepJSON } from '@hyvor/richtext';
 import type { CollabStep } from '../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab';
 
 export interface License {
 	users: number;
 	storage: number;
-	aiTokens: number;
-	autoTranslationsChars: number;
+	aiCost: number;
 	seoAnalysis: boolean;
 	linkAnalysis: boolean;
 	blogs: number;
@@ -98,9 +96,9 @@ export interface Blog {
 	link_analysis_enabled: boolean;
 	link_analysis_email_report: 'always' | 'broken' | 'never';
 
-	ai_provider: 'mistral' | 'openai' | 'anthropic';
+	ai_model: string;
 	ai_translation_enabled: boolean;
-	ai_generation_enabled: boolean;
+	ai_agent: boolean;
 
 	hyvor_talk_enabled: boolean;
 	hyvor_post_enabled: boolean;

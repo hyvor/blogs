@@ -8,8 +8,7 @@ export interface Usage {
 export interface UsageData {
 	users: Usage;
 	storage: Usage;
-	auto_translate_chars: Usage;
-	ai_tokens: Usage;
+	ai: Usage;
 	blogs: Usage;
 }
 

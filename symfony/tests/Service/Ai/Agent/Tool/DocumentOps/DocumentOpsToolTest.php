@@ -6,7 +6,6 @@ use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
-use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -56,7 +55,6 @@ class DocumentOpsToolTest extends KernelTestCase
         return new DocumentOpsTool(
             $blog,
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
     }
 

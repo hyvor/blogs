@@ -7,6 +7,7 @@ use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Document\CheckpointCollabInput;
 use App\Api\Console\Input\Document\GetDocumentForPostInput;
+use App\Api\Console\Input\Document\GetDocumentForVariantInput;
 use App\Api\Console\Input\Document\SubmitCollabCursorInput;
 use App\Api\Console\Input\Document\SubmitCollabStepsInput;
 use App\Api\Console\Object\PostObjectFactory;
@@ -76,6 +77,21 @@ class DocumentsController
         ]);
     }
 
+
+    #[Route('/documents/variant', methods: ['GET'])]
+    #[ScopeRequired(Scope::POSTS_READ)]
+    public function getDocumentForVariant(
+        #[MapQueryString] GetDocumentForVariantInput $input,
+    ): JsonResponse
+    {
+        $variant = $this->getVariantOrFail($input->post_variant_id);
+
+        return new JsonResponse([
+            'version' => $variant->getContentUnsavedVersion(),
+            'content' => $variant->getContentUnsaved(),
+            'document_version' => $variant->getDocumentVersion(),
+        ]);
+    }
 
     private function getVariantOrFail(int $postVariantId): PostVariant
     {

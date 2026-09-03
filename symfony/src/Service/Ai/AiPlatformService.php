@@ -20,7 +20,7 @@ class AiPlatformService
 
     public function getPlatformForBlog(Blog $blog): PlatformInterface
     {
-        return $this->getPlatformForProvider($blog->getMeta()->ai_provider);
+        return $this->getPlatformForProvider($blog->getMeta()->ai_model->getProvider());
     }
 
     public function getPlatformForProvider(AiProvider $provider): PlatformInterface

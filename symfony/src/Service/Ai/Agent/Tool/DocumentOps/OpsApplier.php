@@ -11,38 +11,35 @@ class OpsApplier
 {
 
     /**
-     * @param Op[] $ops
+     * Applies a single op to the document immediately, updating the FetchedDocument's node ID map
+     * for any node added or removed in the process. Returns whether the op was actually applied
+     * (false if the node ID(s) it referenced no longer exist in the document).
      */
-    public function apply(FetchedDocument $fetchedDocument, array $ops): Node
+    public function apply(FetchedDocument $fetchedDocument, Op $op): bool
     {
-        foreach ($ops as $op) {
-            match (true) {
-                $op instanceof OpReplace => $this->applyReplace($fetchedDocument, $op),
-                $op instanceof OpInsert => $this->applyInsert($fetchedDocument, $op),
-                $op instanceof OpReplaceText => $this->applyReplaceText($fetchedDocument, $op),
-                $op instanceof OpDelete => $this->applyDelete($fetchedDocument, $op),
-                default => throw new \LogicException('Unhandled op type: ' . $op::class),
-            };
-        }
-
-        return $fetchedDocument->getDocument();
-
+        return match (true) {
+            $op instanceof OpReplace => $this->applyReplace($fetchedDocument, $op),
+            $op instanceof OpInsert => $this->applyInsert($fetchedDocument, $op),
+            $op instanceof OpReplaceText => $this->applyReplaceText($fetchedDocument, $op),
+            $op instanceof OpDelete => $this->applyDelete($fetchedDocument, $op),
+            default => throw new \LogicException('Unhandled op type: ' . $op::class),
+        };
     }
 
-    private function applyReplace(FetchedDocument $fetchedDocument, OpReplace $op): void
+    private function applyReplace(FetchedDocument $fetchedDocument, OpReplace $op): bool
     {
         $nodeIdMap = $fetchedDocument->getNodeIdMap();
         $document = $fetchedDocument->getDocument();
 
         if (!isset($nodeIdMap[$op->nodeId])) {
-            return; // Node ID not found, skip this operation
+            return false; // Node ID not found, skip this operation
         }
 
         $nodeToReplace = $nodeIdMap[$op->nodeId];
         $fragment = $this->findParentFragment($document, $nodeToReplace);
 
         if ($fragment === null) {
-            return;
+            return false;
         }
 
         $newNodes = $this->parseMarkdownToNodes($op->newContentMarkdown);
@@ -56,22 +53,29 @@ class OpsApplier
         }
 
         $fragment->setNodes($allNodes);
+
+        $fetchedDocument->unregisterNode($nodeToReplace);
+        foreach ($newNodes as $newNode) {
+            $fetchedDocument->registerNode($newNode);
+        }
+
+        return true;
     }
 
-    private function applyInsert(FetchedDocument $fetchedDocument, OpInsert $op): void
+    private function applyInsert(FetchedDocument $fetchedDocument, OpInsert $op): bool
     {
         $nodeIdMap = $fetchedDocument->getNodeIdMap();
         $document = $fetchedDocument->getDocument();
 
         if (!isset($nodeIdMap[$op->referenceNodeId])) {
-            return; // Reference Node ID not found, skip this operation
+            return false; // Reference Node ID not found, skip this operation
         }
 
         $referenceNode = $nodeIdMap[$op->referenceNodeId];
         $fragment = $this->findParentFragment($document, $referenceNode);
 
         if ($fragment === null) {
-            return;
+            return false;
         }
 
         $newNodes = $this->parseMarkdownToNodes($op->contentMarkdown);
@@ -89,22 +93,28 @@ class OpsApplier
         }
 
         $fragment->setNodes($allNodes);
+
+        foreach ($newNodes as $newNode) {
+            $fetchedDocument->registerNode($newNode);
+        }
+
+        return true;
     }
 
-    private function applyDelete(FetchedDocument $fetchedDocument, OpDelete $op): void
+    private function applyDelete(FetchedDocument $fetchedDocument, OpDelete $op): bool
     {
         $nodeIdMap = $fetchedDocument->getNodeIdMap();
         $document = $fetchedDocument->getDocument();
 
         if (!isset($nodeIdMap[$op->nodeId])) {
-            return; // Node ID not found, skip this operation
+            return false; // Node ID not found, skip this operation
         }
 
         $nodeToDelete = $nodeIdMap[$op->nodeId];
         $fragment = $this->findParentFragment($document, $nodeToDelete);
 
         if ($fragment === null) {
-            return;
+            return false;
         }
 
         $allNodes = $fragment->all();
@@ -116,14 +126,18 @@ class OpsApplier
         }
 
         $fragment->setNodes($allNodes);
+
+        $fetchedDocument->unregisterNode($nodeToDelete);
+
+        return true;
     }
 
-    private function applyReplaceText(FetchedDocument $fetchedDocument, OpReplaceText $op): void
+    private function applyReplaceText(FetchedDocument $fetchedDocument, OpReplaceText $op): bool
     {
         $nodeIdMap = $fetchedDocument->getNodeIdMap();
 
         if (!isset($nodeIdMap[$op->nodeId])) {
-            return; // Node ID not found, skip this operation
+            return false; // Node ID not found, skip this operation
         }
 
         $node = $nodeIdMap[$op->nodeId];
@@ -138,6 +152,8 @@ class OpsApplier
             $current->text = $this->replaceWithLimit($current->text, $op->search, $op->replace, $remaining, $replaced);
             $remaining -= $replaced;
         });
+
+        return true;
     }
 
     private function replaceWithLimit(string $subject, string $search, string $replace, int $limit, int &$count): string

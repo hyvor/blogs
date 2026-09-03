@@ -1,48 +1,93 @@
 <script lang="ts">
-	import { InputGroup, Radio, SplitControl, Switch } from '@hyvor/design/components';
+	import {
+		SplitControl,
+		Switch,
+		Table,
+		TableRow,
+		TableCell,
+		Tooltip
+	} from '@hyvor/design/components';
+	import IconCheck from '@hyvor/icons/IconCheck';
 	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
+	import { getConfig } from '../../../../lib/config';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
+	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { getI18n } from '../../../../lib/i18n';
 
-	const i18n = getI18n();
+	const models = getConfig().ai_models;
 
-	const providers: { value: 'mistral' | 'openai' | 'anthropic'; label: string; model: string }[] = [
-		{ value: 'mistral', label: 'Mistral', model: 'mistral-medium-3.5' },
-		{ value: 'openai', label: 'OpenAI', model: 'gpt-5.6-terra' },
-		{ value: 'anthropic', label: 'Anthropic', model: 'claude-sonnet-5' }
-	];
+	function handleAiModelChange(value: string) {
+		updateBlogStore({ ai_model: value });
+	}
 
-	function handleAiProviderChange(value: 'mistral' | 'openai' | 'anthropic') {
-		updateBlogStore({ ai_provider: value });
+	function handleAiModelKeydown(e: KeyboardEvent, value: string) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			handleAiModelChange(value);
+		}
 	}
 
 	function handleAiTranslationChange(e: any) {
 		updateBlogStore({ ai_translation_enabled: e.target.checked });
 	}
 
-	function handleAiGenerationChange(e: any) {
-		updateBlogStore({ ai_generation_enabled: e.target.checked });
+	function handleAiAgentChange(e: any) {
+		updateBlogStore({ ai_agent: e.target.checked });
 	}
+
+	const i18n = getI18n();
 </script>
 
-<BlogSettingsSave keys={['ai_provider', 'ai_translation_enabled', 'ai_generation_enabled']} />
+<BlogSettingsSave keys={['ai_model', 'ai_translation_enabled', 'ai_agent']} />
 
 <div class="settings">
 	<SplitControl
-		label={i18n.t('console.settings.ai.provider')}
-		caption={i18n.t('console.settings.ai.providerCaption')}
+		label="Preferred Model"
+		caption="Which AI model should be used for AI-powered features on this blog?"
+		column
 	>
-		<InputGroup>
-			{#each providers as provider}
-				<Radio
-					value={provider.value}
-					group={$blogStore.ai_provider}
-					on:change={() => handleAiProviderChange(provider.value)}
+		<Table columns="28px 1fr 1fr 2fr" style="bordered" hover>
+			<TableRow head>
+				<TableCell>&nbsp;</TableCell>
+				<TableCell>Model</TableCell>
+				<TableCell>Provider</TableCell>
+				<TableCell>
+					<span class="quota-usage-label">
+						Quota Usage
+
+						<Tooltip
+							text="Models with higher quota usage consume more of your organization's AI quota."
+						>
+							<IconInfoCircle size={14} />
+						</Tooltip>
+					</span>
+				</TableCell>
+			</TableRow>
+			{#each models as model}
+				<TableRow
+					class="model-row"
+					tabindex={0}
+					onclick={() => handleAiModelChange(model.value)}
+					onkeydown={(e: KeyboardEvent) => handleAiModelKeydown(e, model.value)}
+					aria-selected={model.value === $blogStore.ai_model}
 				>
-					{provider.label}&nbsp;<span class="model">({provider.model})</span>
-				</Radio>
+					<TableCell>
+						{#if model.value === $blogStore.ai_model}
+							<IconCheck size={14} />
+						{:else}
+							&nbsp;
+						{/if}
+					</TableCell>
+					<TableCell>{model.value}</TableCell>
+					<TableCell>{model.provider}</TableCell>
+					<TableCell>
+						<div class="usage-bar">
+							<div class="usage-bar-fill" style:width={model.usage_percent + '%'}></div>
+						</div>
+					</TableCell>
+				</TableRow>
 			{/each}
-		</InputGroup>
+		</Table>
 	</SplitControl>
 
 	<SplitControl
@@ -52,11 +97,8 @@
 		<Switch checked={$blogStore.ai_translation_enabled} on:change={handleAiTranslationChange} />
 	</SplitControl>
 
-	<SplitControl
-		label={i18n.t('console.settings.ai.agent')}
-		caption={i18n.t('console.settings.ai.agentCaption')}
-	>
-		<Switch checked={$blogStore.ai_generation_enabled} on:change={handleAiGenerationChange} />
+	<SplitControl label="AI Agent" caption="Enable AI-powered content generation features.">
+		<Switch checked={$blogStore.ai_agent} on:change={handleAiAgentChange} />
 	</SplitControl>
 </div>
 
@@ -66,8 +108,25 @@
 		overflow: auto;
 		padding: 25px 30px;
 	}
-	.model {
-		color: var(--text-light);
-		font-size: 0.9em;
+	:global(.model-row) {
+		cursor: pointer;
+	}
+	.usage-bar {
+		width: 200px;
+		max-width: 100%;
+		height: 8px;
+		background: var(--accent-light);
+		border-radius: 20px;
+		overflow: hidden;
+	}
+	.usage-bar-fill {
+		height: 100%;
+		border-radius: 20px;
+		background: var(--accent);
+	}
+	.quota-usage-label {
+		display: flex;
+		align-items: center;
+		gap: 4px;
 	}
 </style>

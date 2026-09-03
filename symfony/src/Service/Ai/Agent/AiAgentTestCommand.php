@@ -4,7 +4,8 @@ namespace App\Service\Ai\Agent;
 
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
+use App\Service\Post\Content\PostContentService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -21,12 +22,13 @@ class AiAgentTestCommand
 
     public function __construct(
         private AiAgentService $aiAgentService,
+        private PostContentService $postContentService
     ) {}
 
     public function __invoke(): int
     {
         $meta = new BlogMeta();
-        $meta->ai_provider = AiProvider::ANTHROPIC;
+        $meta->ai_model = AiModel::GPT_5_6_LUNA;
         $blog = BlogFactory::createOne([
             'meta' => $meta
         ]);
@@ -49,68 +51,70 @@ class AiAgentTestCommand
                         ],
                     ]
                 ],
-//                [
-//                    'type' => 'paragraph',
-//                    'content' => [
-//                        [
-//                            'type' => 'text',
-//                            'text' => 'Hello, world!'
-//                        ],
-//                    ]
-//                ],
-//                [
-//                    'type' => 'paragraph',
-//                    'content' => [
-//                        [
-//                            'type' => 'text',
-//                            'text' => 'Paris is the capital of Germany'
-//                        ],
-//                    ]
-//                ],
-//                [
-//                    'type' => 'bullet_list',
-//                    'content' => [
-//                        [
-//                            'type' => 'list_item',
-//                            'content' => [
-//                                [
-//                                    'type' => 'paragraph',
-//                                    'content' => [
-//                                        [
-//                                            'type' => 'text',
-//                                            'text' => 'Eggs'
-//                                        ],
-//                                    ]
-//                                ]
-//                            ]
-//                        ],
-//                        [
-//                            'type' => 'list_item',
-//                            'content' => [
-//                                [
-//                                    'type' => 'paragraph',
-//                                    'content' => [
-//                                        [
-//                                            'type' => 'text',
-//                                            'text' => 'Milk'
-//                                        ],
-//                                    ]
-//                                ]
-//                            ]
-//                        ]
-//                    ]
-//                ]
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Hello, world!'
+                        ],
+                    ]
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Paris is the capital city of Germany.'
+                        ],
+                    ]
+                ],
+                [
+                    'type' => 'bullet_list',
+                    'content' => [
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => 'Eggs'
+                                        ],
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'list_item',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => 'Milk'
+                                        ],
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
 
         $postVariant = PostVariantFactory::createOne([
             'post' => $post,
             'language' => $language,
-            'content' => json_encode($content),
+            'content_unsaved' => json_encode($content),
             'status' => PostVariantStatus::DRAFT
         ]);
 
-        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative.';
+        $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative. Fix any factual errors.';
+        // $prompt = 'fix factual errors in the content. Make sure the content is accurate and informative';
+        $prompt = 'Summarize https://blogs.hyvor.com/pricing for me';
 
         $result = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
@@ -124,19 +128,24 @@ class AiAgentTestCommand
                 echo $delta->getText();
             } elseif ($delta instanceof Delta\ThinkingDelta) {
                 $output .= '[Thinking...] ' . $delta->getThinking();
-                echo '[Thinking...] ' . $delta->getThinking();
+                echo '[Thinking...](' . $delta->getThinking() . ')';
+            } elseif ($delta instanceof Delta\ThinkingComplete) {
+                $output .= '[Thinking complete]' . $delta->getThinking();
+                echo '[Thinking complete](' . $delta->getThinking() . ')';
             } else if ($delta instanceof Delta\ToolCallStart) {
                 $output .= '[Tool call: ' . $delta->getName() . ']';
                 echo '[Tool call: ' . $delta->getName() . ']';
             } else if ($delta instanceof Delta\ToolCallComplete) {
                 $output .= '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
                 echo '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
+            } else {
+                dump($delta);
             }
         }
 
-        dd(
-            $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray()
-        );
+        dd($result->getResult()->getRawResult());
+
+        // $content = $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray();
     }
 
 }

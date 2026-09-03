@@ -184,12 +184,12 @@ final class Version20260501000000 extends AbstractMigration
         $this->addSql('DROP TABLE gpt_prompts');
 
         $this->addSql("CREATE TYPE ai_message_role AS ENUM ('user', 'assistant')");
-        $this->addSql("CREATE TYPE ai_message_chunk_type AS ENUM ('text', 'thinking', 'event')");
 
         $this->addSql(
             <<<SQL
             CREATE TABLE ai_conversations (
                 id serial PRIMARY KEY,
+                uuid UUID NOT NULL,
                 created_at timestamptz NOT NULL DEFAULT NOW(),
                 updated_at timestamptz NOT NULL DEFAULT NOW(),
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
@@ -198,6 +198,8 @@ final class Version20260501000000 extends AbstractMigration
             SQL
         );
         $this->addSql('CREATE INDEX idx_ai_conversations_blog_id ON ai_conversations(blog_id)');
+        // uuid is app-generated on creation, not a DB default (see AiAgentConversationService)
+        $this->addSql('CREATE UNIQUE INDEX idx_ai_conversations_uuid ON ai_conversations(uuid)');
 
         $this->addSql(
             <<<SQL
@@ -207,26 +209,42 @@ final class Version20260501000000 extends AbstractMigration
                 updated_at timestamptz NOT NULL DEFAULT NOW(),
                 conversation_id BIGINT NOT NULL REFERENCES ai_conversations(id) ON DELETE CASCADE,
                 role ai_message_role NOT NULL,
-                content TEXT NOT NULL
+                input_tokens INTEGER,
+                output_tokens INTEGER,
+                total_tokens INTEGER,
+                model VARCHAR(255),
+                input_tokens_usd_cost INTEGER,
+                output_tokens_usd_cost INTEGER,
+                total_tokens_usd_cost INTEGER
             );
             SQL
         );
         $this->addSql('CREATE INDEX idx_ai_messages_conversation_id ON ai_messages(conversation_id)');
 
+        $this->addSql("CREATE TYPE ai_message_event_document_change_status AS ENUM ('pending', 'reviewed')");
+
         $this->addSql(
             <<<SQL
-            CREATE TABLE ai_message_chunks (
+            CREATE TABLE ai_message_events (
                 id serial PRIMARY KEY,
                 created_at timestamptz NOT NULL DEFAULT NOW(),
-                updated_at timestamptz NOT NULL DEFAULT NOW(),
-                message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
-                type ai_message_chunk_type NOT NULL,
-                content TEXT NOT NULL,
-                event_payload JSON
+                ai_message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
+                type TEXT NOT NULL,
+                content TEXT,
+                signature TEXT,
+                tool_name VARCHAR(255),
+                tool_input JSON,
+                tool_output JSON,
+                post_variant_id BIGINT REFERENCES post_variants(id) ON DELETE SET NULL,
+                document_content TEXT,
+                document_change_status ai_message_event_document_change_status,
+                document_change_ops_count INTEGER,
+                post_variant_version INTEGER
             );
             SQL
         );
-        $this->addSql('CREATE INDEX idx_ai_message_chunks_message_id ON ai_message_chunks(message_id)');
+        $this->addSql('CREATE INDEX idx_ai_message_events_ai_message_id ON ai_message_events(ai_message_id)');
+        $this->addSql('CREATE INDEX idx_ai_message_events_post_variant_id ON ai_message_events(post_variant_id) WHERE post_variant_id IS NOT NULL');
 
         // cleanup =============
         $this->addSql('ALTER TABLE blogs DROP COLUMN trial_ends_at');

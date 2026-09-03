@@ -7,7 +7,7 @@ use App\Entity\Language;
 use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Entity\PostVariant;
-use App\Service\Ai\AiProvider;
+use App\Service\Ai\AiModel;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -32,7 +32,7 @@ class AiPostTranslatorTest extends KernelTestCase
     private function getPostVariant(array $content): PostVariant
     {
         $blog = new Blog();
-        $blog->getMeta()->ai_provider = AiProvider::OPENAI;
+        $blog->getMeta()->ai_model = AiModel::GPT_5_6_LUNA;
 
         $post = new Post();
         $post->setBlog($blog);

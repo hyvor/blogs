@@ -154,14 +154,14 @@ class BlogService
         if ($input->link_analysis_email_report !== null) {
             $meta->link_analysis_email_report = $input->link_analysis_email_report;
         }
-        if ($input->ai_provider !== null) {
-            $meta->ai_provider = $input->ai_provider;
+        if ($input->ai_model !== null) {
+            $meta->ai_model = $input->ai_model;
         }
         if ($input->ai_translation_enabled !== null) {
             $meta->ai_translation_enabled = $input->ai_translation_enabled;
         }
-        if ($input->ai_generation_enabled !== null) {
-            $meta->ai_generation_enabled = $input->ai_generation_enabled;
+        if ($input->ai_agent !== null) {
+            $meta->ai_agent = $input->ai_agent;
         }
 
         $blog->setMeta($meta);

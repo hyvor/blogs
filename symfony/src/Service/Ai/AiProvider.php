@@ -8,15 +8,12 @@ enum AiProvider: string
     case OPENAI = 'openai';
     case ANTHROPIC = 'anthropic';
 
-    /**
-     * @return non-empty-string
-     */
-    public function model(): string
+    public function label(): string
     {
         return match ($this) {
-            self::MISTRAL => 'mistral-large-latest',
-            self::OPENAI => 'gpt-4o',
-            self::ANTHROPIC => 'claude-sonnet-5',
+            self::MISTRAL => 'Mistral',
+            self::OPENAI => 'OpenAI',
+            self::ANTHROPIC => 'Anthropic',
         };
     }
 }

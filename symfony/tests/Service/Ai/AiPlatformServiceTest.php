@@ -3,8 +3,8 @@
 namespace App\Tests\Service\Ai;
 
 use App\Entity\Blog;
+use App\Service\Ai\AiModel;
 use App\Service\Ai\AiPlatformService;
-use App\Service\Ai\AiProvider;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\AI\Platform\Platform;
@@ -18,8 +18,8 @@ class AiPlatformServiceTest extends KernelTestCase
         $blog = new Blog();
         $service = $this->getService(AiPlatformService::class);
 
-        foreach (AiProvider::cases() as $provider) {
-            $blog->getMeta()->ai_provider = $provider;
+        foreach (AiModel::cases() as $model) {
+            $blog->getMeta()->ai_model = $model;
             $platform = $service->getPlatformForBlog($blog);
             $this->assertInstanceOf(Platform::class, $platform);
         }

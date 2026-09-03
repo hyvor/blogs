@@ -231,8 +231,8 @@ class PostService
         ?string $search = null,
         int $limit = 50,
         int $offset = 0,
-        ?int $id = null,
-        ?string $slug = null,
+        ?int $postId = null,
+        ?string $postVariantSlug = null,
     ): array {
         $where = 'p.blog_id = :blog AND p.is_page = false AND pv.language_id = :language';
         $params = ['blog' => $blog->getId(), 'language' => $language->getId()];
@@ -248,14 +248,14 @@ class PostService
             $params['tag_id'] = $tagId;
         }
 
-        if ($id !== null) {
+        if ($postId !== null) {
             $where .= ' AND p.id = :id';
-            $params['id'] = $id;
+            $params['id'] = $postId;
         }
 
-        if ($slug !== null) {
+        if ($postVariantSlug !== null) {
             $where .= ' AND pv.slug = :slug';
-            $params['slug'] = $slug;
+            $params['slug'] = $postVariantSlug;
         }
 
         if ($status !== null) {

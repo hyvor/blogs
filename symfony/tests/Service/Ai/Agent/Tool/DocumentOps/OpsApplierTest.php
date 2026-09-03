@@ -3,6 +3,8 @@
 namespace App\Tests\Service\Ai\Agent\Tool\DocumentOps;
 
 use App\Service\Ai\Agent\Tool\DocumentOps\FetchedDocument;
+use App\Service\Ai\Agent\Tool\DocumentOps\NodeIdMapBuilder;
+use App\Service\Ai\Agent\Tool\DocumentOps\Op;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpDelete;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpInsert;
 use App\Service\Ai\Agent\Tool\DocumentOps\OpReplace;
@@ -17,10 +19,25 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class OpsApplierTest extends KernelTestCase
 {
 
-    private function requireNode(?Node $node): Node
+    private function fetchedDocument(Node $doc): FetchedDocument
     {
-        $this->assertNotNull($node);
-        return $node;
+        $nodeIdMapBuilder = new NodeIdMapBuilder();
+        $nodeIdMapBuilder->register($doc);
+
+        return new FetchedDocument($doc, $nodeIdMapBuilder);
+    }
+
+    /**
+     * Applies each op immediately, as DocumentOpsTool would, and returns the resulting document.
+     */
+    private function applyOps(FetchedDocument $fetchedDocument, Op ...$ops): Node
+    {
+        $opsApplier = new OpsApplier();
+        foreach ($ops as $op) {
+            $opsApplier->apply($fetchedDocument, $op);
+        }
+
+        return $fetchedDocument->getDocument();
     }
 
     private function basicNode(): Node
@@ -162,17 +179,10 @@ class OpsApplierTest extends KernelTestCase
     public function test_replace(): void
     {
         $doc = $this->basicNode();
-        $ops = [
-            new OpReplace('p-1', 'Goodbye, world!')
-        ];
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-1' => $this->requireNode($doc->content->first())]
-        );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+        // top-level paragraph is registered as p-1
+        $newDoc = $this->applyOps($fetchedDoc, new OpReplace('p-1', 'Goodbye, world!'));
 
         $this->assertSame(
             [
@@ -196,17 +206,13 @@ class OpsApplierTest extends KernelTestCase
     public function test_replace_with_nested_content(): void
     {
         $doc = $this->nestedNode();
-        $ops = [
-            new OpReplace('p-1', "This is a better blockquote.\n\nwith another paragraph.")
-        ];
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-1' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
+        // registration order: p-1 (top paragraph), quote-1 (blockquote), p-2 (paragraph inside blockquote)
+        $newDoc = $this->applyOps(
+            $fetchedDoc,
+            new OpReplace('p-2', "This is a better blockquote.\n\nwith another paragraph.")
         );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
 
         $this->assertSame(
             [
@@ -253,17 +259,12 @@ class OpsApplierTest extends KernelTestCase
     public function test_insert_after(): void
     {
         $doc = $this->basicNode();
-        $ops = [
+        $fetchedDoc = $this->fetchedDocument($doc);
+
+        $newDoc = $this->applyOps(
+            $fetchedDoc,
             new OpInsert('p-1', "This is a new paragraph.\n\n>and another", false)
-        ];
-
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-1' => $this->requireNode($doc->content->first())]
         );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
 
         $this->assertSame(
             [
@@ -310,17 +311,12 @@ class OpsApplierTest extends KernelTestCase
     public function test_insert_before_with_nested_content(): void
     {
         $doc = $this->nestedNode();
-        $ops = [
+        $fetchedDoc = $this->fetchedDocument($doc);
+
+        $newDoc = $this->applyOps(
+            $fetchedDoc,
             new OpInsert('p-2', 'A blockquote intro.', true)
-        ];
-
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
 
         $this->assertSame(
             [
@@ -367,17 +363,12 @@ class OpsApplierTest extends KernelTestCase
     public function test_insert_after_with_nested_content(): void
     {
         $doc = $this->nestedNode();
-        $ops = [
+        $fetchedDoc = $this->fetchedDocument($doc);
+
+        $newDoc = $this->applyOps(
+            $fetchedDoc,
             new OpInsert('p-2', 'A blockquote outro.', false)
-        ];
-
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
         );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
 
         $this->assertSame(
             [
@@ -424,26 +415,14 @@ class OpsApplierTest extends KernelTestCase
     public function test_complex_with_nested_lists(): void
     {
         $doc = $this->listNode();
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $bulletList = $this->requireNode($doc->content->nth(1));
-        $firstItemParagraph = $this->requireNode($this->requireNode($bulletList->content->nth(0))->content->first());
-        $secondItemParagraph = $this->requireNode($this->requireNode($bulletList->content->nth(1))->content->first());
-
-        $ops = [
+        // registration order: p-1 (Intro), ul-1, li-1, p-2 (Item one), li-2, p-3 (Item two)
+        $newDoc = $this->applyOps(
+            $fetchedDoc,
             new OpInsert('p-2', 'Item one, continued.', false),
             new OpReplace('p-3', "Item two A.\n\nItem two B.")
-        ];
-
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            [
-                'p-2' => $firstItemParagraph,
-                'p-3' => $secondItemParagraph,
-            ]
         );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
 
         $this->assertSame(
             [
@@ -518,17 +497,9 @@ class OpsApplierTest extends KernelTestCase
     public function test_delete(): void
     {
         $doc = $this->nestedNode();
-        $ops = [
-            new OpDelete('p-2')
-        ];
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-2' => $this->requireNode($this->requireNode($doc->content->nth(1))->content->first())]
-        );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+        $newDoc = $this->applyOps($fetchedDoc, new OpDelete('p-2'));
 
         $this->assertSame(
             [
@@ -555,17 +526,9 @@ class OpsApplierTest extends KernelTestCase
     public function test_delete_unknown_node_id_is_noop(): void
     {
         $doc = $this->basicNode();
-        $ops = [
-            new OpDelete('p-99')
-        ];
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-1' => $this->requireNode($doc->content->first())]
-        );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+        $newDoc = $this->applyOps($fetchedDoc, new OpDelete('p-99'));
 
         $this->assertSame(
             [
@@ -589,17 +552,9 @@ class OpsApplierTest extends KernelTestCase
     public function test_replace_text(): void
     {
         $doc = $this->markedNode();
-        $ops = [
-            new OpReplaceText('p-1', 'foo', 'qux', 2)
-        ];
+        $fetchedDoc = $this->fetchedDocument($doc);
 
-        $fetchedDoc = new FetchedDocument(
-            $doc,
-            ['p-1' => $this->requireNode($doc->content->first())]
-        );
-
-        $opsApplier = new OpsApplier();
-        $newDoc = $opsApplier->apply($fetchedDoc, $ops);
+        $newDoc = $this->applyOps($fetchedDoc, new OpReplaceText('p-1', 'foo', 'qux', 2));
 
         $this->assertSame(
             [
@@ -626,6 +581,37 @@ class OpsApplierTest extends KernelTestCase
                 ]
             ],
             $newDoc->toArray()
+        );
+    }
+
+    public function test_replace_assigns_a_fresh_id_to_the_new_node_never_reusing_the_replaced_id(): void
+    {
+        $doc = $this->basicNode();
+        $fetchedDoc = $this->fetchedDocument($doc);
+
+        $opsApplier = new OpsApplier();
+        $opsApplier->apply($fetchedDoc, new OpReplace('p-1', 'First replacement.'));
+        $opsApplier->apply($fetchedDoc, new OpInsert('p-2', 'Inserted afterwards.', false));
+
+        $nodeIdMap = $fetchedDoc->getNodeIdMap();
+
+        // p-1 (the original, now-detached node) must never be handed to a new node
+        $this->assertArrayNotHasKey('p-1', $nodeIdMap);
+        $this->assertArrayHasKey('p-2', $nodeIdMap);
+        $this->assertArrayHasKey('p-3', $nodeIdMap);
+        $this->assertSame(
+            [
+                'type' => 'paragraph',
+                'content' => [['type' => 'text', 'text' => 'First replacement.']],
+            ],
+            $nodeIdMap['p-2']->toArray()
+        );
+        $this->assertSame(
+            [
+                'type' => 'paragraph',
+                'content' => [['type' => 'text', 'text' => 'Inserted afterwards.']],
+            ],
+            $nodeIdMap['p-3']->toArray()
         );
     }
 

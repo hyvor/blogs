@@ -88,27 +88,33 @@ class UsageService
         return (int)$result;
     }
 
-    public function getAutoTranslateCharsUsageThisMonth(int $organizationId): int
+    /**
+     * Percentage (0-100) of the organization's monthly AI cost allowance used so far.
+     */
+    public function getAiTokensUsage(int $organizationId, ?BlogsLicense $license): float
     {
+        $limitCents = $license->aiCost ?? 0;
+
+        if ($limitCents <= 0) {
+            return 0.0;
+        }
+
         $startOfMonth = $this->now()->modify('first day of this month midnight')->format('Y-m-d H:i:s');
 
         /** @var ?int $result */
         $result = $this->connection->fetchOne(
-            "SELECT SUM(chars) AS count
-             FROM auto_translations
-             INNER JOIN blogs ON auto_translations.blog_id = blogs.id
+            "SELECT SUM(COALESCE(ai_messages.total_tokens_usd_cost, 0)) AS cost
+             FROM ai_messages
+             INNER JOIN ai_conversations ON ai_messages.conversation_id = ai_conversations.id
+             INNER JOIN blogs ON ai_conversations.blog_id = blogs.id
              WHERE blogs.organization_id = ?
-             AND auto_translations.created_at >= ?",
+             AND ai_messages.created_at >= ?",
             [$organizationId, $startOfMonth],
         );
 
-        return (int)$result;
-    }
+        $usedCents = (int)$result;
 
-    public function getAiTokensUsage(int $organizationId): int
-    {
-        // TODO:
-        return 0;
+        return min(($usedCents / $limitCents) * 100, 100);
     }
 
     public function getBlogsUsage(int $organizationId): int

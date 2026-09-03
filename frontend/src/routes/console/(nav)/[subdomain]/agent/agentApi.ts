@@ -2,28 +2,16 @@ import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
 import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
 import type { PostVariant } from '../../../lib/types';
+import type { AiConversation, AiMessageEvent } from './aiConversationApi';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
-	| { type: 'thinking_started' }
-	| { type: 'thinking'; content: string }
-	| { type: 'thinking_done' }
-	| { type: 'tool_call'; tool: string }
-	| { type: 'tool_result'; tool: string }
-	| { type: 'post_variant_read'; post_variant_id: number }
-	| {
-			type: 'post_variant_edit_suggested';
-			post_variant_id: number;
-			operation: string;
-			arguments: Record<string, unknown>;
-	  }
-	| ({ type: 'get_tags' } & Record<string, unknown>)
-	| ({ type: 'get_authors' } & Record<string, unknown>)
-	| ({ type: 'get_post_variants' } & Record<string, unknown>)
-	| { type: 'text'; content: string }
-	| { type: 'document_change'; post_variant_id: number; content: string }
-	| { type: 'done' };
+	| { type: 'conversation_created'; conversation: AiConversation; }
+	| { type: 'text_chunk', content: string }
+	| { type: 'thinking_chunk', content: string}
+	| { type: 'event', event: AiMessageEvent }
+	| { type: 'done'};
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
@@ -34,25 +22,68 @@ export type AgentBlock =
 export interface DocumentChange {
 	postVariantId: number;
 	content: string;
+	// the post variant's content_unsaved_version the change was suggested against - compared
+	// against the live version to detect if the post was edited since (see DiffReviewModal).
+	// optional since the live SSE stream doesn't carry this yet (only the persisted
+	// document_change event, loaded via ConversationView, does).
+	version: number;
+}
+
+export interface CurrentDocument {
+	version: number;
+	content: string | null;
+	// the collab document_version - distinct from `version` (content_unsaved_version) above -
+	// needed to call applyDocumentChange below without a live collab session
+	document_version: number;
+}
+
+// used by DiffReviewModal to diff a suggested change against the post's actual current
+// content (rather than a blank document), and to detect if the post has since been edited
+export function getCurrentDocumentForVariant(postVariantId: number) {
+	return consoleApi.get<CurrentDocument>({
+		endpoint: '/documents/variant',
+		data: { post_variant_id: postVariantId }
+	});
+}
+
+// Persists a document change via the collab checkpoint endpoint, keyed directly by
+// post_variant_id - no post id/language id or live editor needed. 409s if `documentVersion`
+// is behind the post's live document_version (edited elsewhere since) - see
+// DocumentsController::checkpoint. Used by the whole-blog agent page (AgentChat.svelte); the
+// sidebar agent applies through the live editor's collab pipeline instead (see
+// saveAgentDocumentChange above).
+export function applyDocumentChange(postVariantId: number, content: string, documentVersion: number) {
+	return consoleApi.post<void>({
+		endpoint: '/documents/checkpoint',
+		data: { post_variant_id: postVariantId, content, version: documentVersion }
+	});
 }
 
 export interface AgentConversationListItem {
 	id: number;
+	uuid: string;
 	created_at: number;
+	updated_at: number;
 	title: string | null;
-	user_id: number | null;
 }
 
-export interface AgentConversationUser {
+export type AgentTurn =
+	| { role: 'user'; content: string }
+	| {
+			role: 'assistant';
+			events: AgentEvent[];
+			model: string | null;
+			input_tokens: number | null;
+			output_tokens: number | null;
+			total_tokens: number | null;
+	  };
+
+export interface AgentConversationDetail {
 	id: number;
-	name: string;
-	picture_url: string | null;
-	username: string | null;
-}
-
-export interface AgentConversationsResponse {
-	conversations: AgentConversationListItem[];
-	users: Record<string, AgentConversationUser>;
+	title: string | null;
+	created_at: number;
+	updated_at: number;
+	turns: AgentTurn[];
 }
 
 // Persists a document change directly (no collab session involved) - used by the whole-blog
@@ -69,97 +100,29 @@ export function saveAgentDocumentChange(postId: number, languageId: number, cont
 	});
 }
 
-export function getAgentConversations(limit = 50, offset = 0) {
-	return consoleApi.get<AgentConversationsResponse>({
+export function getAgentConversations(limit = 25, offset = 0) {
+	return consoleApi.get<AgentConversationListItem[]>({
 		endpoint: '/ai/conversations',
 		data: { limit, offset }
 	});
 }
 
-function trackVariantActivity(blocks: AgentBlock[], postVariantId: number, kind: 'read' | 'edit') {
-	let activity = blocks.find(
-		(b): b is Extract<AgentBlock, { type: 'variant_activity' }> =>
-			b.type === 'variant_activity' && b.postVariantId === postVariantId
-	);
-
-	if (!activity) {
-		activity = { type: 'variant_activity', postVariantId, reads: 0, edits: 0 };
-		blocks.push(activity);
-	}
-
-	if (kind === 'read') {
-		activity.reads += 1;
-	} else {
-		activity.edits += 1;
-	}
+export function getAgentConversation(conversationId: number) {
+	return consoleApi.get<AgentConversationDetail>({
+		endpoint: `/ai/conversation/${conversationId}`
+	});
 }
 
-/**
- * Folds a single SSE event from the agent stream into the turn's block list,
- * merging consecutive deltas of the same kind (thinking/text) into one block, and
- * grouping post-variant read/edit activity by post variant into one block.
- */
-export function applyAgentEvent(blocks: AgentBlock[], event: AgentEvent) {
-	const last = blocks[blocks.length - 1];
-
-	switch (event.type) {
-		case 'thinking':
-			if (last?.type === 'thinking' && !last.done) {
-				last.content += event.content;
-			} else {
-				blocks.push({ type: 'thinking', content: event.content, done: false });
-			}
-			break;
-
-		case 'thinking_done':
-			if (last?.type === 'thinking') {
-				last.done = true;
-			}
-			break;
-
-		case 'tool_call':
-			blocks.push({ type: 'tool', name: event.tool, status: 'running' });
-			break;
-
-		case 'tool_result': {
-			const tool = [...blocks]
-				.reverse()
-				.find(
-					(b): b is Extract<AgentBlock, { type: 'tool' }> =>
-						b.type === 'tool' && b.name === event.tool && b.status === 'running'
-				);
-			if (tool) {
-				tool.status = 'done';
-			}
-			break;
-		}
-
-		case 'post_variant_read':
-			trackVariantActivity(blocks, event.post_variant_id, 'read');
-			break;
-
-		case 'post_variant_edit_suggested':
-			trackVariantActivity(blocks, event.post_variant_id, 'edit');
-			break;
-
-		case 'get_tags':
-		case 'get_authors':
-		case 'get_post_variants':
-			break;
-
-		case 'text':
-			if (last?.type === 'text') {
-				last.content += event.content;
-			} else {
-				blocks.push({ type: 'text', content: event.content });
-			}
-			break;
-	}
+export function deleteAgentConversation(conversationId: number) {
+	return consoleApi.delete<void>({
+		endpoint: `/ai/conversation/${conversationId}`
+	});
 }
 
 export async function callAgent(
 	prompt: string,
 	postVariantId: number | null,
+	conversationId: number | null,
 	onEvent: (event: AgentEvent) => void
 ) {
 	const response = await fetch(getConsoleBlogBaseUrl() + '/ai/agent', {
@@ -168,7 +131,11 @@ export async function callAgent(
 			'Content-Type': 'application/json',
 			'X-Organization-Id': String(get(authOrganizationStore)?.id)
 		},
-		body: JSON.stringify({ prompt, post_variant_id: postVariantId }),
+		body: JSON.stringify({
+			prompt,
+			post_variant_id: postVariantId,
+			conversation_id: conversationId
+		}),
 		credentials: 'same-origin'
 	});
 

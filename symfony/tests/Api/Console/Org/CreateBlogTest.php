@@ -241,8 +241,7 @@ class CreateBlogTest extends ApiTestCase
         $personalLicense = new BlogsLicense(
             users: 1,
             storage: 1_000_000_000,
-            aiTokens: 0,
-            autoTranslationsChars: 0,
+            aiCost: 0,
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
@@ -266,8 +265,7 @@ class CreateBlogTest extends ApiTestCase
         $personalLicense = new BlogsLicense(
             users: 1,
             storage: 1_000_000_000,
-            aiTokens: 0,
-            autoTranslationsChars: 0,
+            aiCost: 0,
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,
@@ -291,8 +289,7 @@ class CreateBlogTest extends ApiTestCase
         $personalLicense = new BlogsLicense(
             users: 1,
             storage: 1_000_000_000,
-            aiTokens: 0,
-            autoTranslationsChars: 0,
+            aiCost: 0,
             seoAnalysis: false,
             linkAnalysis: false,
             blogs: 1,

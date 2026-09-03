@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Enum\AiMessageRole;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -27,8 +29,36 @@ class AiMessage
     #[ORM\Column(length: 255, enumType: AiMessageRole::class)]
     private AiMessageRole $role;
 
-    #[ORM\Column(type: 'text')]
-    private string $content;
+    #[ORM\Column(nullable: true)]
+    private ?int $input_tokens = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $output_tokens = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $total_tokens = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $model = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $input_tokens_usd_cost = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $output_tokens_usd_cost = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $total_tokens_usd_cost = null;
+
+    /** @var Collection<int, AiMessageEvent> */
+    #[ORM\OneToMany(targetEntity: AiMessageEvent::class, mappedBy: 'ai_message')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $events;
+
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -85,14 +115,88 @@ class AiMessage
         return $this;
     }
 
-    public function getContent(): string
+    public function getInputTokens(): ?int
     {
-        return $this->content;
+        return $this->input_tokens;
     }
 
-    public function setContent(string $content): static
+    public function setInputTokens(?int $input_tokens): static
     {
-        $this->content = $content;
+        $this->input_tokens = $input_tokens;
         return $this;
+    }
+
+    public function getOutputTokens(): ?int
+    {
+        return $this->output_tokens;
+    }
+
+    public function setOutputTokens(?int $output_tokens): static
+    {
+        $this->output_tokens = $output_tokens;
+        return $this;
+    }
+
+    public function getTotalTokens(): ?int
+    {
+        return $this->total_tokens;
+    }
+
+    public function setTotalTokens(?int $total_tokens): static
+    {
+        $this->total_tokens = $total_tokens;
+        return $this;
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function setModel(?string $model): static
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    public function getInputTokensUsdCost(): ?int
+    {
+        return $this->input_tokens_usd_cost;
+    }
+
+    public function setInputTokensUsdCost(?int $input_tokens_usd_cost): static
+    {
+        $this->input_tokens_usd_cost = $input_tokens_usd_cost;
+        return $this;
+    }
+
+    public function getOutputTokensUsdCost(): ?int
+    {
+        return $this->output_tokens_usd_cost;
+    }
+
+    public function setOutputTokensUsdCost(?int $output_tokens_usd_cost): static
+    {
+        $this->output_tokens_usd_cost = $output_tokens_usd_cost;
+        return $this;
+    }
+
+    public function getTotalTokensUsdCost(): ?int
+    {
+        return $this->total_tokens_usd_cost;
+    }
+
+    public function setTotalTokensUsdCost(?int $total_tokens_usd_cost): static
+    {
+        $this->total_tokens_usd_cost = $total_tokens_usd_cost;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AiMessageEvent>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
     }
 }

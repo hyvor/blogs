@@ -9,24 +9,21 @@
 	const T = i18n.T;
 
 	function applyDocumentChange(change: DocumentChange) {
-		// only the currently open post has a live editor session to push content into - the
-		// agent can now suggest edits to other posts too, but those aren't open here to apply to
+		// only the currently open post
 		if (change.postVariantId === $postVariantStore.id) {
 			$postEditor.setContent(change.content);
 		}
 	}
 </script>
 
-<LicenseRequired licenseProperty="aiTokens">
+<LicenseRequired licenseProperty="aiCost">
 	{#snippet upgradeText()}
 		<div>
-			<T key="console.postEditor.agent.upgradeText" params={{ strong: { element: 'strong' } }} />
+			AI agent is available on the <b>Starter Plan</b> and above. Upgrade your plan to unlock this feature.
 		</div>
 	{/snippet}
 
-	<AgentChat
-		postVariantId={$postVariantStore.id}
-		emptyMessage={i18n.t('console.postEditor.agent.emptyMessage')}
-		{applyDocumentChange}
-	/>
+	<!-- emptyMessage={`Ask the agent about this post, e.g. "Fix any typos" or "Add a short FAQ section at the end".`}
+		{applyDocumentChange} -->
+	<AgentChat />
 </LicenseRequired>

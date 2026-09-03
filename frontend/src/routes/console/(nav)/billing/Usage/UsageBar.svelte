@@ -8,9 +8,10 @@
 		data: Usage;
 		bytes?: boolean;
 		unlimitedOnZero?: boolean;
+		percent?: boolean;
 	}
 
-	let { name, data, bytes = false, unlimitedOnZero = false }: Props = $props();
+	let { name, data, bytes = false, unlimitedOnZero = false, percent = false }: Props = $props();
 
 	let isUnlimited = $derived(unlimitedOnZero && data.limit === 0);
 	let width = $state('0%');
@@ -27,6 +28,8 @@
 	if (bytes) {
 		current = byteFormatter(data.used);
 		limit = byteFormatter(data.limit);
+	} else if (percent) {
+		current = Math.round(data.used) + '%';
 	}
 
 	let color = $derived.by(() => {
@@ -55,7 +58,9 @@
 				<span class="usage-now" style:color={color === 'var(--accent)' ? 'var(--text)' : color}
 					>{current.toLocaleString()}</span
 				>
-				<span class="usage-full">/ {limit.toLocaleString()}</span>
+				{#if !percent}
+					<span class="usage-full">/ {limit.toLocaleString()}</span>
+				{/if}
 			</div>
 		{/if}
 	</div>
