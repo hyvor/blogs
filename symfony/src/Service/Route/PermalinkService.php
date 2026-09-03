@@ -49,7 +49,6 @@ class PermalinkService
 
         return $this->buildUrlForHosting(
             $hostingAt,
-            // getSubdomain() throws on an unset typed property, so only read it when it's the hosting mode
             $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
             $blog->getHostingUrl(),
             $blog->getCustomDomain()?->getDomain()
