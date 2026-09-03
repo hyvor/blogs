@@ -26,15 +26,27 @@ Learn how to set up a custom domain (e.g. `blog.example.com` or `example.com`) f
 <h2 id="blog-setitngs">Step 1: Update Blog Settings</h2>
 
 - Go to [Console](/console) &rarr; Settings &rarr; Hosting.
-- Set **Hosted at** to **Custom Domain**.
-- Then, set your custom domain name.
-- Click **Save**.
+- Click **Setup Custom Domain**
+- Enter your custom domain
+- Click Save
 
 <DocsImage
 	src="/images/docs/custom-domain/custom-domain-settings.png"
 	alt="Custom Domain Settings"
 />
 
+<Callout type="info">
+	{#snippet icon()}
+		<IconLightbulb />
+	{/snippet}
+	You can add your own TLS certificate and private key for your domain by selecting <strong>Bring Your Own</strong> option. However, we recommend you to use the <strong>Automatic</strong> option and let Hyvor Blogs handle your TLS certificate through <strong>Let's Encrypt</strong>.
+</Callout>
+
+<!--
+- Set **Hosted at** to **Custom Domain**.
+- Then, set your custom domain name.
+- Click **Save**.
+ -->
 <h2 id="dns">Step 2: Update DNS Records</h2>
 
 Go to your domain registrar's DNS settings and create either a **CNAME** (recommended - easier and more reliable) or an **A** record with the details below.
