@@ -4,10 +4,6 @@ namespace App\Api\Console\Object\Ai;
 
 use App\Entity\PostVariant;
 
-/**
- * Summary of a post variant referenced by a document_change event somewhere in a conversation -
- * enough for the frontend to show what was edited without a separate lookup per post.
- */
 class AiConversationPostVariantObject
 {
 

@@ -119,24 +119,6 @@ export function deleteAgentConversation(conversationId: number) {
 	});
 }
 
-function trackVariantActivity(blocks: AgentBlock[], postVariantId: number, kind: 'read' | 'edit') {
-	let activity = blocks.find(
-		(b): b is Extract<AgentBlock, { type: 'variant_activity' }> =>
-			b.type === 'variant_activity' && b.postVariantId === postVariantId
-	);
-
-	if (!activity) {
-		activity = { type: 'variant_activity', postVariantId, reads: 0, edits: 0 };
-		blocks.push(activity);
-	}
-
-	if (kind === 'read') {
-		activity.reads += 1;
-	} else {
-		activity.edits += 1;
-	}
-}
-
 export async function callAgent(
 	prompt: string,
 	postVariantId: number | null,

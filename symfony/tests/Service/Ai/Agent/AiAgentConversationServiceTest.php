@@ -56,12 +56,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
     }
 
     /**
-     * Deltas are normally yielded lazily as the framework's toolbox invokes tool methods
-     * in between them - so a query tool's onQueryComplete callback can fire partway through
-     * the stream, not only before or after it. To simulate that here, a \Closure placed in
-     * $deltas is invoked with the onQueryComplete callback (instead of being yielded) when
-     * the generator reaches it, letting a test control exactly where in the sequence a query
-     * "completes" relative to the other deltas.
      *
      * @param array<int, object|\Closure> $deltas
      */

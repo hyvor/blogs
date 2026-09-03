@@ -78,11 +78,6 @@ class DocumentsController
     }
 
 
-    /**
-     * The current (content_unsaved) version and content of a post variant, keyed directly by
-     * its ID - used by the AI agent's diff review UI to compare a suggested document_change
-     * against the post's live content, without needing the post's ID or language code.
-     */
     #[Route('/documents/variant', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
     public function getDocumentForVariant(
@@ -94,9 +89,6 @@ class DocumentsController
         return new JsonResponse([
             'version' => $variant->getContentUnsavedVersion(),
             'content' => $variant->getContentUnsaved(),
-            // the collab document_version - distinct from content_unsaved_version above (see
-            // PostVariant::$document_version) - needed to call /documents/checkpoint without a
-            // live collab session (e.g. the AI agent's diff review "apply" action)
             'document_version' => $variant->getDocumentVersion(),
         ]);
     }

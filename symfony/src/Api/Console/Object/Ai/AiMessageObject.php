@@ -12,7 +12,6 @@ class AiMessageObject
     public int $id;
     public int $created_at;
     public AiMessageRole $role;
-    // derived from this message's 'text'-type events - the events table is the source of truth
     public string $content;
 
     /**
