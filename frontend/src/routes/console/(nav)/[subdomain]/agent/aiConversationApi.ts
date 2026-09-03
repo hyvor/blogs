@@ -3,7 +3,7 @@ import type { PostStatus } from '../../../lib/types';
 
 export type AiMessageRole = 'user' | 'assistant';
 
-export type AiMessageEventType = 'text' | 'thinking' | 'query' | 'document_change';
+export type AiMessageEventType = 'text' | 'thinking' | 'query' | 'document_change' | 'error';
 
 export type AiMessageEventDocumentChangeStatus = 'pending' | 'reviewed';
 
@@ -37,7 +37,7 @@ export interface AiMessageFrontEndEvent extends AiMessageEvent {
 }
 
 export interface AiMessage {
-	id: number;
+	id?: number;
 	created_at: number;
 	role: AiMessageRole;
 	content: string;

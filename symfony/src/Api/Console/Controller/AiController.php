@@ -64,14 +64,29 @@ class AiController extends AbstractController
         set_time_limit(0);
 
         $response = new StreamedResponse(function () use ($blog, $prompt, $postVariant, $conversation) {
-            foreach ($this->aiAgentConversationService->streamPrompt($blog, $prompt, $postVariant, $conversation) as $event) {
-                echo 'data: '.json_encode($event)."\n\n";
+            try {
+                foreach (
+                    $this->aiAgentConversationService->streamPrompt(
+                        $blog,
+                        $prompt,
+                        $postVariant,
+                        $conversation
+                    ) as $event
+                ) {
+                    echo 'data: ' . json_encode($event) . "\n\n";
+                    flush();
+                }
+            } catch (\Throwable) {
+                // generate an error event manually
+                // this can happen if the DB fails. so, we cannot actually save this event to the DB
+                echo 'data: ' . json_encode(['type' => 'event', 'event' => ['type' => 'error']]) . "\n\n";
                 flush();
             }
         });
 
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('Cache-Control', 'no-cache');
+        // in case HB runs behind Nginx reverse proxy
         $response->headers->set('X-Accel-Buffering', 'no');
 
         return $response;

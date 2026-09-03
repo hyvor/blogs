@@ -10,7 +10,8 @@ export type AgentEvent =
 	| { type: 'conversation_created'; conversation: AiConversation; }
 	| { type: 'text_chunk', content: string }
 	| { type: 'thinking_chunk', content: string}
-	| { type: 'event', event: AiMessageEvent };
+	| { type: 'event', event: AiMessageEvent }
+	| { type: 'done'};
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }

@@ -1,22 +1,13 @@
 <script lang="ts">
-	import {
-		getAiConversation,
-		type AiConversation,
-		type AiMessage,
-		type AiMessageEvent
-	} from './aiConversationApi';
-	import { applyDocumentChange, callAgent, type DocumentChange } from './agentApi';
+	import { getAiConversation, type AiConversation, type AiMessage } from './aiConversationApi';
+	import { callAgent } from './agentApi';
 	import UserMessage from './Message/UserMessage.svelte';
-	import ThinkingEvent from './Message/ThinkingEvent.svelte';
-	import QueryEvent from './Message/QueryEvent.svelte';
-	import TextEvent from './Message/TextEvent.svelte';
-	import DocumentChangeEvent from './Message/DocumentChangeEvent.svelte';
-	import DiffReviewModal from './DiffReviewModal.svelte';
 	import Input from './Input.svelte';
 	import dayjs from 'dayjs';
 	import { onMount } from 'svelte';
 	import IdleMessage from './IdleMessage.svelte';
 	import { Loader, toast } from '@hyvor/design/components';
+	import AiMessageView from './Message/AiMessage.svelte';
 
 	interface Props {
 		conversationId: number | null;
@@ -24,45 +15,63 @@
 
 	let { conversationId = null }: Props = $props();
 
-	function documentChangeEvents(message: AiMessage) {
-		return message.events.filter((e) => e.type === 'document_change');
-	}
-
 	let loading = $state(true);
 	let conversation: null | AiConversation = $state(null);
 	let messages: AiMessage[] = $state([]);
 
-	let showDiffModal = $state(false);
-	let reviewChange: DocumentChange | null = $state(null);
-	let applying = $state(false);
+	let messagesEl: HTMLDivElement | undefined = $state();
 
-	function openReview(event: AiMessageEvent) {
-		console.log(event);
-		reviewChange = {
-			postVariantId: event.post_variant_id!,
-			content: event.document_content!,
-			version: event.post_variant_version!
-		};
-		showDiffModal = true;
+	// whether we should keep scrolling to the bottom as new content streams in.
+	// turned off when the user scrolls away from the bottom themselves.
+	let autoScroll = $state(true);
+
+	const SCROLL_BOTTOM_THRESHOLD = 60;
+
+	function isNearBottom() {
+		if (!messagesEl) return true;
+		return (
+			messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight <
+			SCROLL_BOTTOM_THRESHOLD
+		);
 	}
 
-	async function handleApply(
-		change: DocumentChange,
-		finalContent: string,
-		documentVersion: number
-	) {
-		applying = true;
-		try {
-			await applyDocumentChange(change.postVariantId, finalContent, documentVersion);
-		} catch (error) {
-			toast.error(error instanceof Error ? error.message : 'Could not apply the change');
-			throw error;
-		} finally {
-			applying = false;
+	function handleScroll() {
+		autoScroll = isNearBottom();
+	}
+
+	function scrollToBottom() {
+		if (messagesEl) {
+			messagesEl.scrollTop = messagesEl.scrollHeight;
 		}
 	}
 
+	$effect(() => {
+		if (!messagesEl) return;
+
+		const el = messagesEl;
+
+		// jump to the bottom once when the container first mounts (e.g. loading
+		// an existing conversation), before the observer below can catch anything
+		if (autoScroll) {
+			scrollToBottom();
+		}
+
+		// content (text/thinking chunks) mutates nested state deeply while streaming,
+		// which is cheaper to catch via DOM mutations than by deep-tracking every event
+		const observer = new MutationObserver(() => {
+			if (autoScroll) {
+				scrollToBottom();
+			}
+		});
+
+		observer.observe(el, { childList: true, subtree: true, characterData: true });
+
+		return () => observer.disconnect();
+	});
+
 	async function submit(prompt: string) {
+		autoScroll = true;
+
 		if (conversation === null) {
 			conversation = {
 				id: -1,
@@ -73,14 +82,12 @@
 
 		messages.push(
 			{
-				id: -1,
 				created_at: dayjs().unix(),
 				role: 'user',
 				content: prompt,
 				events: []
 			},
 			{
-				id: -2,
 				created_at: dayjs().unix(),
 				role: 'assistant',
 				content: '',
@@ -147,32 +154,16 @@
 	<div class="conversation-view">
 		<div class="conversation-inner">
 			{#if conversation}
-				<div class="messages">
-					{#each messages as message (message.id)}
-						{#if message.role === 'user'}
-							<UserMessage content={message.content} />
-						{:else}
-							<div class="message-wrap ai">
-								<div class="message">
-									{#each message.events as event}
-										{#if event.type === 'thinking'}
-											<ThinkingEvent {event} />
-										{:else if event.type === 'query'}
-											<QueryEvent {event} />
-										{:else if event.type === 'text' && event.content}
-											<TextEvent content={event.content} />
-										{/if}
-									{/each}
-
-									<DocumentChangeEvent
-										events={documentChangeEvents(message)}
-										postVariants={[]}
-										onReview={openReview}
-									/>
-								</div>
-							</div>
-						{/if}
-					{/each}
+				<div class="messages" bind:this={messagesEl} onscroll={handleScroll}>
+					<div class="messages-inner">
+						{#each messages as message}
+							{#if message.role === 'user'}
+								<UserMessage content={message.content} />
+							{:else}
+								<AiMessageView {message} />
+							{/if}
+						{/each}
+					</div>
 				</div>
 			{:else}
 				<IdleMessage />
@@ -182,24 +173,14 @@
 	</div>
 {/if}
 
-{#if showDiffModal && reviewChange}
-	<DiffReviewModal
-		change={reviewChange}
-		{applying}
-		onclose={() => (showDiffModal = false)}
-		onapply={handleApply}
-	/>
-{/if}
-
 <style>
 	.conversation-view {
 		height: 100%;
 		overflow: auto;
+		--ai-max-width: 800px;
 	}
 
 	.conversation-inner {
-		width: 800px;
-		max-width: 100%;
 		margin: auto;
 		height: 100%;
 		display: flex;
@@ -208,16 +189,13 @@
 
 	.messages {
 		flex: 1;
+		min-height: 0;
+		overflow: auto;
 	}
 
-	.message-wrap {
-		padding: 20px 30px;
-		display: flex;
-		gap: 12px;
-	}
-
-	.message {
-		min-width: 0;
-		flex: 1;
+	.messages-inner {
+		width: var(--ai-max-width);
+		max-width: 100%;
+		margin: auto;
 	}
 </style>

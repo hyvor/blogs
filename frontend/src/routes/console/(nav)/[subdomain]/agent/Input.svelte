@@ -3,6 +3,7 @@
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import IconArrowUpCircleFill from '@hyvor/icons/IconArrowUpCircleFill';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { onMount } from 'svelte';
 
 	interface Props {
 		onsubmit: (prompt: string) => void;
@@ -32,10 +33,14 @@
 			textareaEl.style.height = Math.min(textareaEl.scrollHeight, 200) + 'px';
 		}
 	}
+
+	onMount(() => {
+		textareaEl?.focus();
+	});
 </script>
 
 <div class="input-zone">
-	<div class="agent-inner">
+	<div class="input-inner">
 		<div class="input-row">
 			<div class="prompt-input">
 				<textarea
@@ -80,6 +85,12 @@
 	.input-zone {
 		padding: 15px 30px 20px;
 		border-top: 1px solid var(--border);
+	}
+
+	.input-inner {
+		width: var(--ai-max-width);
+		max-width: 100%;
+		margin: auto;
 	}
 
 	.input-row {

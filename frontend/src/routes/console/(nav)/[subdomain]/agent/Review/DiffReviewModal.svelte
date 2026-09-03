@@ -4,31 +4,26 @@
 	import type { Author, SuggestionSource, SuggestionSourceEntry } from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Button, Callout, Loader } from '@hyvor/design/components';
-	import { editorConfig, schema } from '../posts/[postId]/Body/Editor/editor';
-	import { resolveAuthor } from '../posts/[postId]/Body/Editor/suggestions';
+	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
+	import { resolveAuthor } from '../../posts/[postId]/Body/Editor/suggestions';
 	import {
 		DEFAULT_CONTENT_JSON,
 		getCurrentDocumentForVariant,
 		type CurrentDocument,
 		type DocumentChange
-	} from './agentApi';
-	import { getI18n } from '../../../lib/i18n';
+	} from '../agentApi';
+	import { getI18n } from '../../../../lib/i18n';
 
 	const i18n = getI18n();
 
 	interface Props {
 		change: DocumentChange;
-		applying?: boolean;
 		onclose: () => void;
-		onapply: (
-			change: DocumentChange,
-			finalContent: string,
-			documentVersion: number
-		) => Promise<void> | void;
 	}
 
-	let { change, applying = false, onclose, onapply }: Props = $props();
+	let { change, onclose }: Props = $props();
 
+	let applying = $state(false);
 	let applied = $state(false);
 	let loadingCurrentDocument = $state(true);
 	// the post's actual current (content_unsaved) version/content, fetched fresh - used both to

@@ -130,7 +130,7 @@ class DevSeedCommand
 
         $io->success('Database seeded successfully.');
 
-        if (!$withThemes) {
+        if ($withThemes) {
             // sync themes
             $application->doRun(new ArrayInput([
                 'command' => 'themes:sync',

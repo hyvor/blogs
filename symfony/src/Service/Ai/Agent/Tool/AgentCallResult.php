@@ -3,6 +3,7 @@
 namespace App\Service\Ai\Agent\Tool;
 
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
+use App\Service\Ai\AiModel;
 use Symfony\AI\Platform\Result\ResultInterface;
 
 readonly class AgentCallResult
@@ -11,7 +12,7 @@ readonly class AgentCallResult
     public function __construct(
         private ResultInterface $result,
         private DocumentOpsTool $documentOpsTool,
-        private string $model,
+        private AiModel $model,
     ) {}
 
     public function getResult(): ResultInterface
@@ -24,7 +25,7 @@ readonly class AgentCallResult
         return $this->documentOpsTool;
     }
 
-    public function getModel(): string
+    public function getModel(): AiModel
     {
         return $this->model;
     }

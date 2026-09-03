@@ -11,6 +11,7 @@ use App\Entity\Blog;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Event\DocumentChangeEvent;
+use App\Service\Ai\Agent\Event\ErrorEvent;
 use App\Service\Ai\Agent\Event\EventAbstract;
 use App\Service\Ai\Agent\Event\QueryEvent;
 use App\Service\Ai\Agent\Event\TextEvent;
@@ -18,6 +19,7 @@ use App\Service\Ai\Agent\Event\ThoughtEvent;
 use App\Service\Ai\Agent\EventOld\AgentErrorEvent;
 use App\Service\Ai\Agent\EventOld\AgentEvent;
 use App\Service\Ai\Agent\EventOld\DoneEvent;
+use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\AiModel;
 use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -116,8 +118,10 @@ class AiAgentConversationService
         };
 
         try {
+            throw new \Exception('Agent call failed');
+
             $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant, $history, $onQueryComplete);
-            $assistantMessage->setModel($agentCallResult->getModel());
+            $assistantMessage->setModel($agentCallResult->getModel()->value);
 
             $content = $agentCallResult->getResult()->getContent();
             assert(is_iterable($content));
@@ -158,33 +162,6 @@ class AiAgentConversationService
 
                     $this->createEvent($assistantMessage, $thoughtEvent);
 
-                } elseif ($delta instanceof ToolCallComplete) {
-
-                    $this->flushTextBuffer($assistantMessage, $textBuffer);
-
-                    foreach ($pendingQueryEvents as $queryEvent) {
-                        yield $this->sseArrayFromMessageEvent($queryEvent);
-                    }
-                    $pendingQueryEvents = [];
-
-//                    foreach ($delta->getToolCalls() as $toolCall) {
-//
-//                        if (str_starts_with($toolCall->getName(), 'document_')) {
-//                            //
-//                        }
-//
-//                        // not persisted here - query tool calls are persisted via the
-//                        // onQueryComplete callback (with their actual output), and document-ops
-//                        // tool calls are collapsed into a single 'document_change' event below,
-//                        // once the stream ends, instead of one row per op
-//                        $toolCallEvent = $this->toolCallEventFactory->fromToolCall($toolCall);
-//
-//                        if ($toolCallEvent !== null) {
-//                            yield $this->toSseArray($toolCallEvent);
-//                        } else {
-//                            yield $this->toSseArray(new ToolCallCompletedEvent($toolCall->getName()));
-//                        }
-//                    }
                 }
             }
 
@@ -202,47 +179,33 @@ class AiAgentConversationService
                 'exception' => $e,
             ]);
 
-            $errorEvent = new AgentErrorEvent(
-                'The AI assistant ran into a problem and could not finish this request. Please try again.'
-            );
+            $errorEvent = new ErrorEvent($e);
+            $ev = $this->createEvent($assistantMessage, $errorEvent);
 
             $this->flushTextBuffer($assistantMessage, $textBuffer);
             $assistantMessage->setUpdatedAt($this->now());
             $conversation->setUpdatedAt($this->now());
             $this->em->flush();
 
-            yield $this->toSseArray($errorEvent);
-            yield $this->toSseArray(new DoneEvent());
+            yield $this->sseArrayFromMessageEvent($ev);
+
+            if (isset($agentCallResult)) {
+                try {
+                    $this->recordAgentCallUsage($agentCallResult, $assistantMessage);
+                } catch (\Throwable) {}
+            }
 
             return;
         }
 
-        $tokenUsage = $agentCallResult->getResult()->getMetadata()->get('token_usage');
-        if ($tokenUsage instanceof TokenUsageInterface) {
-            $inputTokens = $tokenUsage->getPromptTokens();
-            $outputTokens = $tokenUsage->getCompletionTokens();
-
-            $assistantMessage->setInputTokens($inputTokens);
-            $assistantMessage->setOutputTokens($outputTokens);
-            $assistantMessage->setTotalTokens($tokenUsage->getTotalTokens());
-
-            $model = AiModel::tryFrom($agentCallResult->getModel());
-            if ($model !== null && $inputTokens !== null && $outputTokens !== null) {
-                $inputCostCents = $model->getInputCostCents($inputTokens);
-                $outputCostCents = $model->getOutputCostCents($outputTokens);
-
-                $assistantMessage->setInputTokensUsdCost($inputCostCents);
-                $assistantMessage->setOutputTokensUsdCost($outputCostCents);
-                $assistantMessage->setTotalTokensUsdCost($inputCostCents + $outputCostCents);
-            }
-        }
+        $this->recordAgentCallUsage($agentCallResult, $assistantMessage);
 
         $assistantMessage->setUpdatedAt($this->now());
         $conversation->setUpdatedAt($this->now());
         $this->em->flush();
 
+        // save document changes
         $documentOpsTool = $agentCallResult->getDocumentOpsTool();
-
         $cachedDocuments = $documentOpsTool->getCachedDocuments();
 
         foreach ($cachedDocuments as $postVariantId => $fetchedDocument) {
@@ -264,7 +227,9 @@ class AiAgentConversationService
             }
         }
 
-        yield $this->toSseArray(new DoneEvent());
+        yield [
+            'type' => 'done',
+        ];
     }
 
     private function createMessage(AiConversation $conversation, AiMessageRole $role): AiMessage
@@ -318,4 +283,32 @@ class AiAgentConversationService
             'event' => new AiMessageEventObject($event),
         ];
     }
+
+    private function recordAgentCallUsage(
+        AgentCallResult $agentCallResult,
+        AiMessage $assistantMessage
+    ): void
+    {
+        $tokenUsage = $agentCallResult->getResult()->getMetadata()->get('token_usage');
+        if ($tokenUsage instanceof TokenUsageInterface) {
+            $inputTokens = $tokenUsage->getPromptTokens();
+            $outputTokens = $tokenUsage->getCompletionTokens();
+
+            $assistantMessage->setInputTokens($inputTokens);
+            $assistantMessage->setOutputTokens($outputTokens);
+            $assistantMessage->setTotalTokens($tokenUsage->getTotalTokens());
+
+            if ($inputTokens !== null && $outputTokens !== null) {
+                $model = $agentCallResult->getModel();
+
+                $inputCostCents = $model->getInputCostCents($inputTokens);
+                $outputCostCents = $model->getOutputCostCents($outputTokens);
+
+                $assistantMessage->setInputTokensUsdCost($inputCostCents);
+                $assistantMessage->setOutputTokensUsdCost($outputCostCents);
+                $assistantMessage->setTotalTokensUsdCost($inputCostCents + $outputCostCents);
+            }
+        }
+    }
+
 }

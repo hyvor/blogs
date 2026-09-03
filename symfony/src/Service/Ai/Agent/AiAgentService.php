@@ -155,7 +155,7 @@ class AiAgentService
 
         $callResult = $agent->call($messages, $this->getOptionsFromProvider($provider));
 
-        return new AgentCallResult($callResult, $documentOpsTool, $model->value);
+        return new AgentCallResult($callResult, $documentOpsTool, $model);
     }
 
     // unfortunately, different provides have different options :(

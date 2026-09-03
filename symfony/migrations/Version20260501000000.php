@@ -218,7 +218,6 @@ final class Version20260501000000 extends AbstractMigration
         );
         $this->addSql('CREATE INDEX idx_ai_messages_conversation_id ON ai_messages(conversation_id)');
 
-        $this->addSql("CREATE TYPE ai_message_event_type AS ENUM ('text', 'thinking', 'query', 'document_change')");
         $this->addSql("CREATE TYPE ai_message_event_document_change_status AS ENUM ('pending', 'reviewed')");
 
         $this->addSql(
@@ -227,7 +226,7 @@ final class Version20260501000000 extends AbstractMigration
                 id serial PRIMARY KEY,
                 created_at timestamptz NOT NULL DEFAULT NOW(),
                 ai_message_id BIGINT NOT NULL REFERENCES ai_messages(id) ON DELETE CASCADE,
-                type ai_message_event_type NOT NULL,
+                type TEXT NOT NULL,
                 content TEXT,
                 signature TEXT,
                 tool_name VARCHAR(255),
