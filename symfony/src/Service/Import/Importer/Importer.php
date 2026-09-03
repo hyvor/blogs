@@ -3,6 +3,7 @@
 namespace App\Service\Import\Importer;
 
 use App\Entity\Blog;
+use App\Entity\Enum\PostVariantStatus;
 use App\Service\Language\LanguageService;
 use App\Service\Media\MediaService;
 use App\Service\Media\MediaException;
@@ -66,13 +67,21 @@ class Importer
                     continue;
                 }
 
+                $variant->setContentUnsaved($content);
+
                 $this->postService->updatePostVariant($variant, $this->blog, [
                     'slug' => $importingVariant->slug,
                     'title' => $importingVariant->title,
                     'description' => $importingVariant->description,
-                    'content' => $content,
-                    'status' => $importingVariant->status,
                 ]);
+
+                if ($importingVariant->status === PostVariantStatus::PUBLISHED) {
+                    $this->postService->publishPostVariant($this->blog, $variant);
+                    $this->postService->updatePostVariant($variant, $this->blog, [
+                        'published_at' => $importingPost->publishedAt,
+                        'content_updated_at' => $importingPost->publishedAt,
+                    ]);
+                }
             }
 
             // imported posts won't have authors
