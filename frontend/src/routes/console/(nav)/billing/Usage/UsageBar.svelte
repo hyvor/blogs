@@ -7,15 +7,14 @@
 		name: string;
 		data: Usage;
 		bytes?: boolean;
-		unlimitedOnZero?: boolean;
 		percent?: boolean;
 	}
 
-	let { name, data, bytes = false, unlimitedOnZero = false, percent = false }: Props = $props();
+	let { name, data, bytes = false, percent = false }: Props = $props();
 
-	let isUnlimited = $derived(unlimitedOnZero && data.limit === 0);
+	let isUnlimited = $derived(data.limit === -1);
 	let width = $state('0%');
-	let percentage = $derived(Math.min(data.limit === 0 ? 100 : (data.used / data.limit) * 100, 100));
+	let percentage = $derived(Math.min(data.limit <= 0 ? 100 : (data.used / data.limit) * 100, 100));
 
 	onMount(() => {
 		setTimeout(() => {
