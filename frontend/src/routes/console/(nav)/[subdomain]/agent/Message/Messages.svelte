@@ -3,12 +3,14 @@
 	import UserMessage from './UserMessage.svelte';
 	import type { AiMessage } from '../aiConversationApi';
 	import AiMessageView from './AiMessage.svelte';
+	import { Loader } from '@hyvor/design/components';
 
 	interface Props {
 		messages: AiMessage[];
+		replying?: boolean;
 	}
 
-	let { messages }: Props = $props();
+	let { messages, replying = false }: Props = $props();
 
 	let messagesEl: HTMLDivElement | undefined = $state();
 
@@ -72,6 +74,12 @@
 				<AiMessageView {message} />
 			{/if}
 		{/each}
+
+		{#if replying}
+			<div class="replying-loader">
+				<Loader size="small" colorTrack="transparent" />
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -86,5 +94,9 @@
 		width: var(--ai-max-width);
 		max-width: 100%;
 		margin: auto;
+	}
+
+	.replying-loader {
+		padding: 0 30px 20px;
 	}
 </style>

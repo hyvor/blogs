@@ -13,6 +13,7 @@ interface AgentConversationsState {
 	loading: boolean;
 	loadingMore: boolean;
 	loaded: boolean;
+	activeId: number | null;
 }
 
 function createAgentConversationsStore() {
@@ -21,22 +22,24 @@ function createAgentConversationsStore() {
 		hasMore: false,
 		loading: false,
 		loadingMore: false,
-		loaded: false
+		loaded: false,
+		activeId: null
 	});
-	const { subscribe, update, set } = store;
+	const { subscribe, update } = store;
 
 	async function load() {
 		update((s) => ({ ...s, loading: true }));
 
 		try {
 			const res = await getAgentConversations(PAGE_SIZE, 0);
-			set({
+			update((s) => ({
+				...s,
 				conversations: res,
 				hasMore: res.length === PAGE_SIZE,
 				loading: false,
 				loadingMore: false,
 				loaded: true
-			});
+			}));
 		} catch {
 			update((s) => ({ ...s, loading: false, loaded: true }));
 		}
@@ -82,7 +85,11 @@ function createAgentConversationsStore() {
 		update((s) => ({ ...s, conversations: s.conversations.filter((c) => c.id !== id) }));
 	}
 
-	return { subscribe, load, loadMore, upsert, remove };
+	function setActive(id: number | null) {
+		update((s) => (s.activeId === id ? s : { ...s, activeId: id }));
+	}
+
+	return { subscribe, load, loadMore, upsert, remove, setActive };
 }
 
 export const agentConversationsStore = createAgentConversationsStore();

@@ -14,9 +14,13 @@
 
 	let { children }: Props = $props();
 
-	let activeConversationId = $derived(
-		page.params.conversationId ? Number(page.params.conversationId) : null
-	);
+	$effect(() => {
+		agentConversationsStore.setActive(
+			page.params.conversationId ? Number(page.params.conversationId) : null
+		);
+	});
+
+	let activeConversationId = $derived($agentConversationsStore.activeId);
 
 	onMount(() => {
 		agentConversationsStore.load();
@@ -103,6 +107,13 @@
 					<div class="state-row"><Loader size="small" /></div>
 				{/if}
 			{/if}
+		</div>
+
+		<div class="footer">
+			<div class="disclaimer">
+				All editors of this blog can access all conversations. Conversations are deleted after 30
+				days.
+			</div>
 		</div>
 	</div>
 
@@ -198,5 +209,15 @@
 			height: auto;
 			max-height: 300px;
 		}
+	}
+
+	.footer {
+		padding: 0 25px;
+	}
+
+	.disclaimer {
+		color: var(--text-light);
+		font-size: 13px;
+		text-align: center;
 	}
 </style>

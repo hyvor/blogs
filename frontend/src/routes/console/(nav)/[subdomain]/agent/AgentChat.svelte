@@ -4,9 +4,12 @@
 	import Input from './Input.svelte';
 	import dayjs from 'dayjs';
 	import { onMount } from 'svelte';
+	import { replaceState } from '$app/navigation';
 	import IdleMessage from './IdleMessage.svelte';
 	import { Loader, toast } from '@hyvor/design/components';
 	import Messages from './Message/Messages.svelte';
+	import { agentConversationsStore } from './agentConversationsStore';
+	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 
 	interface Props {
 		conversationId: number | null;
@@ -18,11 +21,14 @@
 	let conversation: null | AiConversation = $state(null);
 	let messages: AiMessage[] = $state([]);
 	let messagesComponent: Messages;
+	let replying = $state(false);
 
 	async function submit(prompt: string) {
 		if (messagesComponent) {
 			messagesComponent.setAutoScroll(false);
 		}
+
+		replying = true;
 
 		if (conversation === null) {
 			conversation = {
@@ -56,6 +62,9 @@
 				if (chunk.type === 'conversation_created') {
 					conversation = chunk.conversation;
 					conversationId = conversation.id;
+					agentConversationsStore.upsert(conversation.id, conversation.title);
+					agentConversationsStore.setActive(conversation.id);
+					replaceState(consoleUrlWithBlog(`/agent/${conversation.id}`), {});
 				} else if (chunk.type === 'text_chunk') {
 					if (lastEvent && lastEvent.type === 'text') {
 						lastEvent.content += chunk.content;
@@ -76,10 +85,14 @@
 					}
 				} else if (chunk.type === 'event') {
 					assistantMessage.events.push(chunk.event);
+				} else if (chunk.type === 'done') {
+					replying = false;
 				}
 			});
 		} catch (error) {
 			console.error(error);
+		} finally {
+			replying = false;
 		}
 	}
 
@@ -106,7 +119,7 @@
 	<div class="conversation-view">
 		<div class="conversation-inner">
 			{#if conversation}
-				<Messages {messages} bind:this={messagesComponent} />
+				<Messages {messages} {replying} bind:this={messagesComponent} />
 			{:else}
 				<IdleMessage />
 			{/if}
