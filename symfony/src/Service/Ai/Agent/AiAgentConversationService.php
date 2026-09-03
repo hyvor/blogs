@@ -16,9 +16,6 @@ use App\Service\Ai\Agent\Event\EventAbstract;
 use App\Service\Ai\Agent\Event\QueryEvent;
 use App\Service\Ai\Agent\Event\TextEvent;
 use App\Service\Ai\Agent\Event\ThoughtEvent;
-use App\Service\Ai\Agent\EventOld\AgentErrorEvent;
-use App\Service\Ai\Agent\EventOld\AgentEvent;
-use App\Service\Ai\Agent\EventOld\DoneEvent;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\AiModel;
 use App\Service\Route\PermalinkService;
@@ -27,7 +24,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
-use Symfony\AI\Platform\Result\Stream\Delta\ToolCallComplete;
 use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
 
@@ -265,14 +261,6 @@ class AiAgentConversationService
         $this->em->flush();
 
         return $event;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function toSseArray(AgentEvent $event): array
-    {
-        return ['type' => $event->getType(), ...$event->getPayload()];
     }
 
     private function sseArrayFromMessageEvent(AiMessageEvent $event): array

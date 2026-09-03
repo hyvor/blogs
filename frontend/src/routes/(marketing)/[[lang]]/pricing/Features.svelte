@@ -142,7 +142,12 @@
 					premium: true,
 					enterprise: true,
 					tooltip: I18n.t('pricing.compare.features.linkAnalysis.tooltip')
-				},
+				}
+			]
+		},
+		{
+			category: 'AI',
+			features: [
 				{
 					name: I18n.t('pricing.compare.features.aiAgent.name'),
 					personal: false,
@@ -151,6 +156,24 @@
 					premium: val('aiUsage', 12),
 					enterprise: val('custom'),
 					tooltip: I18n.t('pricing.compare.features.aiAgent.tooltip')
+				},
+				{
+					name: 'Agent Web Fetch',
+					personal: false,
+					starter: false,
+					growth: true,
+					premium: true,
+					enterprise: true,
+					tooltip: 'Allow the Agent to fetch web content'
+				},
+				{
+					name: 'Agent Web Search',
+					personal: false,
+					starter: false,
+					growth: true,
+					premium: true,
+					enterprise: true,
+					tooltip: 'Allow the Agent to perform web searches'
 				}
 			]
 		},

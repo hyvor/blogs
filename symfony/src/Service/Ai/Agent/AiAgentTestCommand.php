@@ -28,7 +28,7 @@ class AiAgentTestCommand
     public function __invoke(): int
     {
         $meta = new BlogMeta();
-        $meta->ai_model = AiModel::MISTRAL_SMALL_LATEST;
+        $meta->ai_model = AiModel::GPT_5_6_LUNA;
         $blog = BlogFactory::createOne([
             'meta' => $meta
         ]);
@@ -114,6 +114,7 @@ class AiAgentTestCommand
 
         $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative. Fix any factual errors.';
         // $prompt = 'fix factual errors in the content. Make sure the content is accurate and informative';
+        $prompt = 'Summarize https://blogs.hyvor.com/pricing for me';
 
         $result = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
@@ -137,13 +138,14 @@ class AiAgentTestCommand
             } else if ($delta instanceof Delta\ToolCallComplete) {
                 $output .= '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
                 echo '[Tool call complete: ' . $delta->getToolCalls()[0]->getName() . ']';
+            } else {
+                dump($delta);
             }
         }
 
-        $content = $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray();
-        dd(
-            $this->postContentService->getHtml($content, $blog)
-        );
+        dd($result->getResult()->getRawResult());
+
+        // $content = $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray();
     }
 
 }

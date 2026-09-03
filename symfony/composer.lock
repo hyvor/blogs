@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e18f56fec13f3e9bc3b85fcd7db1720c",
+    "content-hash": "00452bbdca7df45a820c01233d390d58",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1899,16 +1899,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.5-beta.0",
+            "version": "4.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635"
+                "reference": "6df1a9f0527a95323e8d71262e4a613f6346fd96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/6979588b2c5a78d04dc8305edce8a4be2b103635",
-                "reference": "6979588b2c5a78d04dc8305edce8a4be2b103635",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/6df1a9f0527a95323e8d71262e4a613f6346fd96",
+                "reference": "6df1a9f0527a95323e8d71262e4a613f6346fd96",
                 "shasum": ""
             },
             "require": {
@@ -1972,9 +1972,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.5-beta.0"
+                "source": "https://github.com/hyvor/internal/tree/4.1.5"
             },
-            "time": "2026-08-28T21:17:41+00:00"
+            "time": "2026-09-02T19:13:26+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",
@@ -2196,16 +2196,16 @@
         },
         {
             "name": "hyvor/sdk-post",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php-post.git",
-                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3"
+                "reference": "c4684d605a2eee51db4369a52d9a365a5f84fa0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/cf4a78436fef1d9716295a549d08e9266a7916c3",
-                "reference": "cf4a78436fef1d9716295a549d08e9266a7916c3",
+                "url": "https://api.github.com/repos/hyvor/sdk-php-post/zipball/c4684d605a2eee51db4369a52d9a365a5f84fa0f",
+                "reference": "c4684d605a2eee51db4369a52d9a365a5f84fa0f",
                 "shasum": ""
             },
             "require": {
@@ -2229,9 +2229,9 @@
             ],
             "description": "Official PHP SDK for Hyvor Post",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.4"
+                "source": "https://github.com/hyvor/sdk-php-post/tree/0.1.5"
             },
-            "time": "2026-08-15T10:50:43+00:00"
+            "time": "2026-09-01T02:08:33+00:00"
         },
         {
             "name": "hyvor/sdk-talk",
@@ -2328,16 +2328,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "e89523328db4947d0a239de5607823402c414825"
+                "reference": "09fbf9c4441d1164b6178ad2f398d7e309450597"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/e89523328db4947d0a239de5607823402c414825",
-                "reference": "e89523328db4947d0a239de5607823402c414825",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/09fbf9c4441d1164b6178ad2f398d7e309450597",
+                "reference": "09fbf9c4441d1164b6178ad2f398d7e309450597",
                 "shasum": ""
             },
             "require": {
@@ -2384,11 +2384,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-08-07T13:46:56+00:00"
+            "time": "2026-08-28T14:38:21+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -2434,7 +2434,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -2482,7 +2482,7 @@
         },
         {
             "name": "illuminate/encryption",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/encryption.git",
@@ -2533,7 +2533,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -2579,7 +2579,7 @@
         },
         {
             "name": "illuminate/reflection",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/reflection.git",
@@ -2630,16 +2630,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v13.29.0",
+            "version": "v13.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "e034c3ddd544e164c3f5d8baa879798907b96a28"
+                "reference": "4eb770b5997127f54c24e297d1202a6200969f51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/e034c3ddd544e164c3f5d8baa879798907b96a28",
-                "reference": "e034c3ddd544e164c3f5d8baa879798907b96a28",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/4eb770b5997127f54c24e297d1202a6200969f51",
+                "reference": "4eb770b5997127f54c24e297d1202a6200969f51",
                 "shasum": ""
             },
             "require": {
@@ -2705,7 +2705,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-08-25T15:03:19+00:00"
+            "time": "2026-08-31T13:53:09+00:00"
         },
         {
             "name": "intervention/gif",
@@ -3175,16 +3175,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.35.3",
+            "version": "3.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "5fc8404762179ae514678487b23494fd69b2309c"
+                "reference": "f7fb152932f30072d573510cbd4dd657d6475b25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/5fc8404762179ae514678487b23494fd69b2309c",
-                "reference": "5fc8404762179ae514678487b23494fd69b2309c",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f7fb152932f30072d573510cbd4dd657d6475b25",
+                "reference": "f7fb152932f30072d573510cbd4dd657d6475b25",
                 "shasum": ""
             },
             "require": {
@@ -3252,9 +3252,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.35.3"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.36.0"
             },
-            "time": "2026-08-22T12:55:54+00:00"
+            "time": "2026-09-02T08:00:27+00:00"
         },
         {
             "name": "league/flysystem-async-aws-s3",
@@ -3774,16 +3774,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "3.10.0",
+            "version": "3.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "b321dd6749f0bf7189444158a3ce785cc16d69b0"
+                "reference": "147f303310f06334f03f409e49d7ad1e275ff05a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b321dd6749f0bf7189444158a3ce785cc16d69b0",
-                "reference": "b321dd6749f0bf7189444158a3ce785cc16d69b0",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/147f303310f06334f03f409e49d7ad1e275ff05a",
+                "reference": "147f303310f06334f03f409e49d7ad1e275ff05a",
                 "shasum": ""
             },
             "require": {
@@ -3861,7 +3861,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.10.0"
+                "source": "https://github.com/Seldaek/monolog/tree/3.11.0"
             },
             "funding": [
                 {
@@ -3873,7 +3873,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-02T08:56:05+00:00"
+            "time": "2026-09-02T12:39:56+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -13291,11 +13291,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.11",
+            "version": "2.2.12",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0eb899d48d9b784eee3f1b58a6c9dc79734cf811",
-                "reference": "0eb899d48d9b784eee3f1b58a6c9dc79734cf811",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/174b0d88710f00a42598886504dd7a146f91ace5",
+                "reference": "174b0d88710f00a42598886504dd7a146f91ace5",
                 "shasum": ""
             },
             "require": {
@@ -13351,7 +13351,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-31T10:33:10+00:00"
+            "time": "2026-08-31T19:09:43+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -14995,12 +14995,12 @@
         "ext-ctype": "*",
         "ext-dom": "*",
         "ext-iconv": "*",
-        "ext-zip": "*",
-        "ext-simplexml": "*",
-        "ext-xmlreader": "*",
         "ext-libxml": "*",
         "ext-openssl": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-simplexml": "*",
+        "ext-xmlreader": "*",
+        "ext-zip": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

@@ -66,7 +66,6 @@ class AiAgentService
 
     public function __construct(
         private AiPlatformService $aiPlatformService,
-        private PostContentService $postContentService,
         private PostService $postService,
         private TagService $tagService,
         private UserService $userService,
@@ -136,7 +135,9 @@ class AiAgentService
             // $this->logger,
             $onQueryComplete,
         );
-        $toolbox = new Toolbox([$documentOpsTool, $queryTool]);
+        $toolbox = new Toolbox(
+            [$documentOpsTool, $queryTool]
+        );
 
         $agent = new Agent(
             $platform,
@@ -170,7 +171,7 @@ class AiAgentService
                 ],
             ],
             AiProvider::ANTHROPIC => [
-                'stream' => true,
+                // 'stream' => true,
                 'max_tokens' => self::MAX_OUTPUT_TOKENS,
                 // adaptive is recommended
                 // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
