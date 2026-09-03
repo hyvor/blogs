@@ -25,7 +25,7 @@
 	<Loader padding={100} block />
 {:else}
 	<div class="usage">
-		{#if usage.blogs.limit !== 0}
+		{#if usage.blogs.limit !== -1}
 			<UsageBar name="Blogs" data={usage.blogs} />
 		{/if}
 		<UsageBar name="Users" data={usage.users} />

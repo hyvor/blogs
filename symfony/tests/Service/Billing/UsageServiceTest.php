@@ -76,7 +76,7 @@ class UsageServiceTest extends KernelTestCase
             aiCost: $aiCostCents,
             seoAnalysis: true,
             linkAnalysis: true,
-            blogs: 0,
+            blogs: -1,
             noBranding: false,
         );
     }

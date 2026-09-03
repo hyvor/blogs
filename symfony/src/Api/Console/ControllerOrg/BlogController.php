@@ -64,7 +64,7 @@ class BlogController
 
             if ($this->internalConfig->getDeployment()->isCloud()) {
                 $license = $this->billing->license($org->id)->license;
-                if ($license instanceof BlogsLicense && $license->blogs !== 0) {
+                if ($license instanceof BlogsLicense && $license->blogs !== -1) {
                     $count = $this->usageService->getBlogsUsage($org->id);
                     if ($count >= $license->blogs) {
                         throw new UnprocessableEntityHttpException(

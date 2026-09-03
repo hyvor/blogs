@@ -16,7 +16,7 @@
         "ext-zip": "*",
         "dragonmantank/cron-expression": "^3.6",
         "hyvor/doctrine-filterq": "^0.0.1",
-        "hyvor/internal": "^4.1.5",
+        "hyvor/internal": "^4.1.6",
         "hyvor/php-svg-icons": "^1.1",
         "hyvor/phrosemirror": "^1.0.6",
         "hyvor/scssphp": "^2.0.4",
