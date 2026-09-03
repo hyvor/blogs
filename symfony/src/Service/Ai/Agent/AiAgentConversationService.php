@@ -118,7 +118,6 @@ class AiAgentConversationService
         };
 
         try {
-            throw new \Exception('Agent call failed');
 
             $agentCallResult = $this->aiAgentService->callAgent($blog, $prompt, $postVariant, $history, $onQueryComplete);
             $assistantMessage->setModel($agentCallResult->getModel()->value);

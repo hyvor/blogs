@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { getAiConversation, type AiConversation, type AiMessage } from './aiConversationApi';
 	import { callAgent } from './agentApi';
-	import UserMessage from './Message/UserMessage.svelte';
 	import Input from './Input.svelte';
 	import dayjs from 'dayjs';
 	import { onMount } from 'svelte';
 	import IdleMessage from './IdleMessage.svelte';
 	import { Loader, toast } from '@hyvor/design/components';
-	import AiMessageView from './Message/AiMessage.svelte';
+	import Messages from './Message/Messages.svelte';
 
 	interface Props {
 		conversationId: number | null;
@@ -18,59 +17,12 @@
 	let loading = $state(true);
 	let conversation: null | AiConversation = $state(null);
 	let messages: AiMessage[] = $state([]);
-
-	let messagesEl: HTMLDivElement | undefined = $state();
-
-	// whether we should keep scrolling to the bottom as new content streams in.
-	// turned off when the user scrolls away from the bottom themselves.
-	let autoScroll = $state(true);
-
-	const SCROLL_BOTTOM_THRESHOLD = 60;
-
-	function isNearBottom() {
-		if (!messagesEl) return true;
-		return (
-			messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight <
-			SCROLL_BOTTOM_THRESHOLD
-		);
-	}
-
-	function handleScroll() {
-		autoScroll = isNearBottom();
-	}
-
-	function scrollToBottom() {
-		if (messagesEl) {
-			messagesEl.scrollTop = messagesEl.scrollHeight;
-		}
-	}
-
-	$effect(() => {
-		if (!messagesEl) return;
-
-		const el = messagesEl;
-
-		// jump to the bottom once when the container first mounts (e.g. loading
-		// an existing conversation), before the observer below can catch anything
-		if (autoScroll) {
-			scrollToBottom();
-		}
-
-		// content (text/thinking chunks) mutates nested state deeply while streaming,
-		// which is cheaper to catch via DOM mutations than by deep-tracking every event
-		const observer = new MutationObserver(() => {
-			if (autoScroll) {
-				scrollToBottom();
-			}
-		});
-
-		observer.observe(el, { childList: true, subtree: true, characterData: true });
-
-		return () => observer.disconnect();
-	});
+	let messagesComponent: Messages;
 
 	async function submit(prompt: string) {
-		autoScroll = true;
+		if (messagesComponent) {
+			messagesComponent.setAutoScroll(false);
+		}
 
 		if (conversation === null) {
 			conversation = {
@@ -154,17 +106,7 @@
 	<div class="conversation-view">
 		<div class="conversation-inner">
 			{#if conversation}
-				<div class="messages" bind:this={messagesEl} onscroll={handleScroll}>
-					<div class="messages-inner">
-						{#each messages as message}
-							{#if message.role === 'user'}
-								<UserMessage content={message.content} />
-							{:else}
-								<AiMessageView {message} />
-							{/if}
-						{/each}
-					</div>
-				</div>
+				<Messages {messages} bind:this={messagesComponent} />
 			{:else}
 				<IdleMessage />
 			{/if}
@@ -185,17 +127,5 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.messages {
-		flex: 1;
-		min-height: 0;
-		overflow: auto;
-	}
-
-	.messages-inner {
-		width: var(--ai-max-width);
-		max-width: 100%;
-		margin: auto;
 	}
 </style>
