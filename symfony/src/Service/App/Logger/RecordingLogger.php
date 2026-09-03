@@ -13,6 +13,9 @@ use Psr\Log\LoggerInterface;
 class RecordingLogger extends AbstractLogger
 {
 
+    /**
+     * @var list<array{level: string, message: string, context: array<mixed>}>
+     */
     private array $logs = [];
 
     public function __construct(
@@ -23,7 +26,7 @@ class RecordingLogger extends AbstractLogger
     public function log($level, \Stringable|string $message, array $context = []): void
     {
         $this->logs[] = [
-            'level' => $level,
+            'level' => is_string($level) ? $level : (string) json_encode($level),
             'message' => (string)$message,
             'context' => $context,
         ];
@@ -33,6 +36,9 @@ class RecordingLogger extends AbstractLogger
         }
     }
 
+    /**
+     * @return list<array{level: string, message: string, context: array<mixed>}>
+     */
     public function getLogs(): array
     {
         return $this->logs;

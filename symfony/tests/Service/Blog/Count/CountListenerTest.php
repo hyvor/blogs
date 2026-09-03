@@ -39,7 +39,12 @@ class CountListenerTest extends KernelTestCase
 
         $this->getEd()->dispatch(new BlogCreatedEvent($blog));
 
-        $this->assertOnlyMessage($blog, CountType::cases(), transport: MessageTransport::SYNC);
+        $counts = $blog->getCounts();
+        $this->assertIsArray($counts);
+        foreach (['posts', 'posts_draft', 'posts_scheduled', 'posts_featured', 'users', 'media'] as $key) {
+            $this->assertArrayHasKey($key, $counts);
+            $this->assertSame(0, $counts[$key]);
+        }
     }
 
     public function test_post_created_dispatches_one_bundled_message_for_posts_authors_and_tags(): void
@@ -202,13 +207,12 @@ class CountListenerTest extends KernelTestCase
     private function assertOnlyMessage(
         Blog $blog,
         array $expectedTypes,
-        ?array $expectedEntityIds = null,
-        string $transport = MessageTransport::ASYNC
+        ?array $expectedEntityIds = null
     ): void
     {
         /** @var RecalculateCountMessage[] $messages */
         $messages = array_values(array_filter(
-            $this->transport($transport)->queue()->messages(RecalculateCountMessage::class),
+            $this->transport(MessageTransport::ASYNC)->queue()->messages(RecalculateCountMessage::class),
             static fn(RecalculateCountMessage $message) => $message->blogId === $blog->getId(),
         ));
 

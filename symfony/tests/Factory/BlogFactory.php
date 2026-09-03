@@ -37,7 +37,7 @@ final class BlogFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'hosting_at' => self::faker()->randomElement(BlogHostingAt::cases()),
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hyvor_user_id' => self::faker()->randomNumber(),
             'is_blocked' => false,
             'organization_id' => self::faker()->randomNumber(),

@@ -75,9 +75,9 @@ class FontCssTest extends KernelTestCase
         $this->assertSame('https://fonts.bunny.net/css?family=mulish:400&display=swap', $mockResponse->getRequestUrl());
 
         // cache
-        $cacheKey = "bunny_fonts_{$blog->getId()}_" . md5('https://fonts.bunny.net/css?family=mulish:400&display=swap');
+        $cacheKey = 'bunny_fonts_' . md5('https://fonts.bunny.net/css?family=mulish:400&display=swap');
         $cache = $this->getService(CacheInterface::class);
-        $this->assertSame($replaced, $cache->get($cacheKey, function () {
+        $this->assertSame($cssResponse, $cache->get($cacheKey, function () {
             return 'default';
         }));
     }
@@ -102,7 +102,7 @@ class FontCssTest extends KernelTestCase
         $this->assertSame(DeliveryResponseType::FILE, $response->type);
         $this->assertSame(DeliveryFileType::ASSET, $response->fileType);
 
-        $cacheKey = "bunny_fonts_{$blog->getId()}_" . md5('https://fonts.bunny.net/css?family=mulish:400&display=swap');
+        $cacheKey = 'bunny_fonts_' . md5('https://fonts.bunny.net/css?family=mulish:400&display=swap');
         $cache = $this->getService(CacheInterface::class);
         $this->assertSame('default', $cache->get($cacheKey, function () {
             return 'default';

@@ -4,6 +4,7 @@ namespace App\Service\Media;
 
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ExceptionInterface as ImageExceptionInterface;
 
 class ImageResizeService
 {
@@ -18,9 +19,18 @@ class ImageResizeService
         return in_array($mimeType, self::SUPPORTED_MIME_TYPES);
     }
 
-    public function getImageWidth(string $content): int
+    /**
+     * Returns null when the binary cannot be decoded as an image (corrupt upload,
+     * mislabelled extension, unsupported format) so callers can degrade gracefully.
+     */
+    public function getImageWidth(string $content): ?int
     {
         $manager = new ImageManager(Driver::class, autoOrientation: false);
-        return $manager->decodeBinary($content)->width();
+
+        try {
+            return $manager->decodeBinary($content)->width();
+        } catch (ImageExceptionInterface) {
+            return null;
+        }
     }
 }

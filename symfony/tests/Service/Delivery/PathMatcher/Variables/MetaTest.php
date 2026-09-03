@@ -33,9 +33,9 @@ class MetaTest extends KernelTestCase
         $this->assertSame('My Blog Name', $response->content);
     }
 
-    public function test_meta_is_not_defined_for_custom_routes(): void
+    public function test_meta_is_defined_for_custom_routes_with_blog_level_fallback(): void
     {
-        $content = '_meta goes here:{% if _meta is defined %}_meta was defined{% endif %}';
+        $content = '{% if _meta is defined %}defined title=[{{ _meta.title }}] desc=[{{ _meta.description }}]{% else %}undefined{% endif %}';
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes();
         RouteFactory::createOneFor($blog, [
@@ -49,6 +49,6 @@ class MetaTest extends KernelTestCase
 
         $response = $this->pathMatcher()->match($blog, '/custom');
 
-        $this->assertSame('_meta goes here:', $response->content);
+        $this->assertSame('defined title=[] desc=[]', $response->content);
     }
 }

@@ -349,9 +349,8 @@ class HtmlSerializer
             // TODO: image width should be pre-stored
             if ($this->imageResizeService->isMimeTypeSupported($mimeType)) {
                 $contents = $this->mediaService->getContents($media);
-                if ($contents !== null) {
-                    $width = $this->imageResizeService->getImageWidth($contents);
-
+                $width = $contents !== null ? $this->imageResizeService->getImageWidth($contents) : null;
+                if ($width !== null) {
                     $srcset = $src . ' ' . $width . 'w';
 
                     if ($width > 500) {
