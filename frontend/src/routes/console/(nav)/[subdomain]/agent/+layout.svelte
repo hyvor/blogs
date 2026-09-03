@@ -7,6 +7,7 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { agentConversationsStore } from './agentConversationsStore';
+	import type { AgentConversationListItem } from './agentApi';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -15,12 +16,10 @@
 	let { children }: Props = $props();
 
 	$effect(() => {
-		agentConversationsStore.setActive(
-			page.params.conversationId ? Number(page.params.conversationId) : null
-		);
+		agentConversationsStore.setActive(page.params.conversationUuid ?? null);
 	});
 
-	let activeConversationId = $derived($agentConversationsStore.activeId);
+	let activeConversationUuid = $derived($agentConversationsStore.activeId);
 
 	onMount(() => {
 		agentConversationsStore.load();
@@ -33,13 +32,13 @@
 		}
 	}
 
-	async function handleDelete(e: MouseEvent, id: number) {
+	async function handleDelete(e: MouseEvent, conversation: AgentConversationListItem) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const confirmed = await confirm({
 			title: 'Delete Conversation',
-			content: 'Are you sure you want to delete this conversation? This action is IRREVERSIBLE.',
+			content: 'Are you sure you want to delete this conversation?',
 			confirmText: 'Yes, Delete',
 			danger: true,
 			autoClose: false
@@ -50,10 +49,10 @@
 		confirmed.loading();
 
 		try {
-			await agentConversationsStore.remove(id);
+			await agentConversationsStore.remove(conversation.id);
 			confirmed.close();
 
-			if (activeConversationId === id) {
+			if (activeConversationUuid === conversation.uuid) {
 				goto(consoleUrlWithBlog('/agent'));
 			}
 		} catch {
@@ -68,7 +67,7 @@
 		<a
 			href={consoleUrlWithBlog('/agent')}
 			class="conversation-link"
-			class:active={!activeConversationId}
+			class:active={!activeConversationUuid}
 		>
 			<div class="new-chat-button">
 				<IconPlus size={14} />
@@ -85,19 +84,20 @@
 				{#each $agentConversationsStore.conversations as conversation (conversation.id)}
 					<a
 						class="conversation-link"
-						href={consoleUrlWithBlog(`/agent/${conversation.id}`)}
-						class:active={activeConversationId === conversation.id}
+						href={consoleUrlWithBlog(`/agent/${conversation.uuid}`)}
+						class:active={activeConversationUuid === conversation.uuid}
 					>
 						<span class="conversation-title">{conversation.title || 'Untitled conversation'}</span>
 
 						<div class="delete-button">
 							<IconButton
 								size="small"
-								color="input"
+								color="red"
+								variant="invisible"
 								aria-label="Delete conversation"
-								onclick={(e: MouseEvent) => handleDelete(e, conversation.id)}
+								onclick={(e: MouseEvent) => handleDelete(e, conversation)}
 							>
-								<IconTrash size={12} />
+								<IconTrash size={10} />
 							</IconButton>
 						</div>
 					</a>

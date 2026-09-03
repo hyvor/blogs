@@ -13,7 +13,8 @@ interface AgentConversationsState {
 	loading: boolean;
 	loadingMore: boolean;
 	loaded: boolean;
-	activeId: number | null;
+	// uuid of the conversation currently open in AgentChat - the identifier used in the URL
+	activeId: string | null;
 }
 
 function createAgentConversationsStore() {
@@ -65,14 +66,15 @@ function createAgentConversationsStore() {
 	}
 
 	// prepends a freshly started conversation, or moves it to the top if it's already listed
-	function upsert(id: number, title: string | null) {
+	function upsert(conversation: { id: number; uuid: string; title: string | null }) {
 		const now = Math.floor(Date.now() / 1000);
 		update((s) => {
-			const existing = s.conversations.find((c) => c.id === id);
-			const conversations = s.conversations.filter((c) => c.id !== id);
+			const existing = s.conversations.find((c) => c.uuid === conversation.uuid);
+			const conversations = s.conversations.filter((c) => c.uuid !== conversation.uuid);
 			conversations.unshift({
-				id,
-				title: title ?? existing?.title ?? null,
+				id: conversation.id,
+				uuid: conversation.uuid,
+				title: conversation.title ?? existing?.title ?? null,
 				created_at: existing?.created_at ?? now,
 				updated_at: now
 			});
@@ -85,8 +87,8 @@ function createAgentConversationsStore() {
 		update((s) => ({ ...s, conversations: s.conversations.filter((c) => c.id !== id) }));
 	}
 
-	function setActive(id: number | null) {
-		update((s) => (s.activeId === id ? s : { ...s, activeId: id }));
+	function setActive(uuid: string | null) {
+		update((s) => (s.activeId === uuid ? s : { ...s, activeId: uuid }));
 	}
 
 	return { subscribe, load, loadMore, upsert, remove, setActive };

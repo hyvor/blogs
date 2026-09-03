@@ -26,6 +26,7 @@ use Symfony\AI\Platform\Result\Stream\Delta\ThinkingComplete;
 use Symfony\AI\Platform\Result\Stream\Delta\ThinkingDelta;
 use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Uid\Uuid;
 
 class AiAgentConversationService
 {
@@ -66,6 +67,7 @@ class AiAgentConversationService
         } else {
             $conversation = new AiConversation();
             $conversation->setBlog($blog);
+            $conversation->setUuid(Uuid::v4()->toRfc4122());
             $conversation->setTitle(mb_strimwidth($prompt, 0, 255, ''));
             $conversation->setCreatedAt($this->now());
             $conversation->setUpdatedAt($this->now());

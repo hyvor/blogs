@@ -13,6 +13,10 @@ class AiConversation
     #[ORM\Column]
     private int $id;
 
+    // exposed to the frontend instead of $id, to avoid leaking auto-incrementing ids
+    #[ORM\Column(type: 'guid', unique: true)]
+    private string $uuid;
+
     #[ORM\Column]
     private \DateTimeImmutable $created_at;
 
@@ -34,6 +38,17 @@ class AiConversation
     public function setId(int $id): static
     {
         $this->id = $id;
+        return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): static
+    {
+        $this->uuid = $uuid;
         return $this;
     }
 

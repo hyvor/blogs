@@ -11,16 +11,26 @@
 
 	let { event }: Props = $props();
 
+	let hasContent = $derived(event.content && event.content.trim() !== '');
+
 	let open = $state(false);
+
+	function handleClick() {
+		if (!hasContent) return;
+		open = !open;
+	}
 </script>
 
 <div class="step-block">
-	<button type="button" class="step-header" onclick={() => (open = !open)}>
+	<button type="button" class="step-header" onclick={handleClick}>
 		<IconLightbulb size={11} />
 		<span>Thought process</span>
-		<span class="chevron" class:open>
-			<IconChevronDown size={10} />
-		</span>
+
+		{#if hasContent}
+			<span class="chevron" class:open>
+				<IconChevronDown size={10} />
+			</span>
+		{/if}
 	</button>
 	{#if open}
 		<div class="step-content" transition:slide={{ duration: 150 }}>

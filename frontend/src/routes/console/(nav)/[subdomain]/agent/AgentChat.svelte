@@ -12,10 +12,10 @@
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 
 	interface Props {
-		conversationId: number | null;
+		conversationUuid: string | null;
 	}
 
-	let { conversationId = null }: Props = $props();
+	let { conversationUuid = null }: Props = $props();
 
 	let loading = $state(true);
 	let conversation: null | AiConversation = $state(null);
@@ -30,9 +30,14 @@
 
 		replying = true;
 
+		// captured before the placeholder conversation below is assigned, so a first message
+		// (no conversation yet) still sends null rather than the placeholder's fake id
+		const existingConversationId = conversation?.id ?? null;
+
 		if (conversation === null) {
 			conversation = {
 				id: -1,
+				uuid: '',
 				created_at: dayjs().unix(),
 				title: prompt.slice(0, 50)
 			};
@@ -56,15 +61,15 @@
 		const assistantMessage = messages[messages.length - 1] as AiMessage;
 
 		try {
-			await callAgent(prompt, null, conversationId, (chunk) => {
+			await callAgent(prompt, null, existingConversationId, (chunk) => {
 				const lastEvent = assistantMessage.events[assistantMessage.events.length - 1];
 
 				if (chunk.type === 'conversation_created') {
 					conversation = chunk.conversation;
-					conversationId = conversation.id;
-					agentConversationsStore.upsert(conversation.id, conversation.title);
-					agentConversationsStore.setActive(conversation.id);
-					replaceState(consoleUrlWithBlog(`/agent/${conversation.id}`), {});
+					conversationUuid = conversation.uuid;
+					agentConversationsStore.upsert(conversation);
+					agentConversationsStore.setActive(conversation.uuid);
+					replaceState(consoleUrlWithBlog(`/agent/${conversation.uuid}`), {});
 				} else if (chunk.type === 'text_chunk') {
 					if (lastEvent && lastEvent.type === 'text') {
 						lastEvent.content += chunk.content;
@@ -97,8 +102,8 @@
 	}
 
 	onMount(() => {
-		if (conversationId) {
-			getAiConversation(conversationId)
+		if (conversationUuid) {
+			getAiConversation(conversationUuid)
 				.then((res) => {
 					conversation = res.conversation;
 					messages = res.messages;

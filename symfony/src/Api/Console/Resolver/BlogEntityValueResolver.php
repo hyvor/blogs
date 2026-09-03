@@ -22,20 +22,24 @@ class BlogEntityValueResolver implements ValueResolverInterface
     /** @return iterable<mixed> */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        if (count($argument->getAttributes(MapBlogEntity::class)) === 0) {
+        $attributes = $argument->getAttributes(MapBlogEntity::class);
+        $mapBlogEntity = $attributes[0] ?? null;
+        if ($mapBlogEntity === null) {
             return [];
         }
+        assert($mapBlogEntity instanceof MapBlogEntity);
 
         $class = $argument->getType();
         if ($class === null) {
             return [];
         }
 
-        $id = $request->attributes->get('id');
+        $field = $mapBlogEntity->field;
+        $value = $request->attributes->get($field);
         $blog = $this->authorizationListener->getBlog();
 
         /** @var class-string $class */
-        $entity = $this->em->find($class, $id);
+        $entity = $this->em->getRepository($class)->findOneBy([$field => $value]);
 
         if ($entity === null) {
             throw new NotFoundHttpException('Entity not found');

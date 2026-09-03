@@ -104,9 +104,9 @@ class AiController extends AbstractController
         return new JsonResponse(array_map(fn(AiConversation $c) => new AiConversationObject($c), $result['conversations']));
     }
 
-    #[Route('/ai/conversation/{id}', methods: ['GET'])]
+    #[Route('/ai/conversation/{uuid}', methods: ['GET'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function getConversation(#[MapBlogEntity] AiConversation $conversation): JsonResponse
+    public function getConversation(#[MapBlogEntity(field: 'uuid')] AiConversation $conversation): JsonResponse
     {
         $messages = $this->aiConversationService->getMessages($conversation);
         $postVariants = $this->aiConversationService->getInvolvedPostVariants($conversation);

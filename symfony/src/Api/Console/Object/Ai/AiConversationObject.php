@@ -8,12 +8,14 @@ class AiConversationObject
 {
 
     public int $id;
+    public string $uuid;
     public int $created_at;
     public string $title;
 
     public function __construct(AiConversation $conversation)
     {
         $this->id = $conversation->getId();
+        $this->uuid = $conversation->getUuid();
         $this->created_at = $conversation->getCreatedAt()->getTimestamp();
         $this->title = $conversation->getTitle();
     }

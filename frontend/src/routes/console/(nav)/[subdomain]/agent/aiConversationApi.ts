@@ -46,6 +46,7 @@ export interface AiMessage {
 
 export interface AiConversation {
 	id: number;
+	uuid: string;
 	created_at: number;
 	title: string;
 }
@@ -71,8 +72,8 @@ export function getAiConversations(limit = 25, offset = 0) {
 	});
 }
 
-export function getAiConversation(conversationId: number) {
+export function getAiConversation(conversationUuid: string) {
 	return consoleApi.get<AiConversationDetail>({
-		endpoint: `/ai/conversation/${conversationId}`
+		endpoint: `/ai/conversation/${conversationUuid}`
 	});
 }

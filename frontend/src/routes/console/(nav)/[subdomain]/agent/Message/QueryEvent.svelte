@@ -15,7 +15,8 @@
 	const QUERY_LABELS: Record<string, string> = {
 		get_tags: 'Searched tags',
 		get_authors: 'Searched authors',
-		get_post_variants: 'Searched posts'
+		get_post_variants: 'Searched posts',
+		get_languages: 'Searched languages'
 	};
 
 	function queryLabel(toolName: string | null | undefined) {

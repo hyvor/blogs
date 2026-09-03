@@ -13,7 +13,9 @@ enum AiModel: string
     // Anthropic
     case CLAUDE_SONNET_5 = 'claude-sonnet-5';
     case CLAUDE_OPUS_5 = 'claude-opus-5';
-    case CLAUDE_HAIKU_4_5 = 'claude-haiku-4-5';
+
+    // doesn't support adaptive thinking, not included for now
+    // case CLAUDE_HAIKU_4_5 = 'claude-haiku-4-5';
 
     // Mistral
     case MISTRAL_SMALL_LATEST = 'mistral-small-latest';
@@ -44,7 +46,7 @@ enum AiModel: string
             // Anthropic: https://platform.claude.com/docs/en/about-claude/pricing
             self::CLAUDE_SONNET_5 => [2.00, 10.00],
             self::CLAUDE_OPUS_5 => [5.00, 25.00],
-            self::CLAUDE_HAIKU_4_5 => [1.00, 5.00],
+            // self::CLAUDE_HAIKU_4_5 => [1.00, 5.00],
 
             // Mistral: https://mistral.ai/pricing/api/
             self::MISTRAL_SMALL_LATEST => [0.15, 0.60],
@@ -67,7 +69,7 @@ enum AiModel: string
     {
         return match ($this) {
             self::GPT_5_6_LUNA, self::GPT_5_6_TERRA, self::GPT_5_6_SOL => AiProvider::OPENAI,
-            self::CLAUDE_SONNET_5, self::CLAUDE_OPUS_5, self::CLAUDE_HAIKU_4_5 => AiProvider::ANTHROPIC,
+            self::CLAUDE_SONNET_5, self::CLAUDE_OPUS_5 => AiProvider::ANTHROPIC,
             // glm-5.2 is hosted by Mistral
             self::MISTRAL_SMALL_LATEST, self::MISTRAL_MEDIUM_LATEST, self::MISTRAL_LARGE_LATEST, self::ZAI_GLM_5_2 => AiProvider::MISTRAL,
         };

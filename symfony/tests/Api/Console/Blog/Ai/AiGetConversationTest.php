@@ -66,7 +66,7 @@ class AiGetConversationTest extends ApiTestCase
             ->setDocumentChangeOpsCount(2)
             ->setPostVariantVersion(5);
 
-        $conversationId = $conversation->getId();
+        $conversationUuid = $conversation->getUuid();
 
         $this->getEm()->flush();
         // force a fresh hydration on the request below - otherwise the already-managed
@@ -74,13 +74,14 @@ class AiGetConversationTest extends ApiTestCase
         // since Doctrine won't repopulate an association already resident in the identity map
         $this->getEm()->clear();
 
-        $this->consoleBlogApi('GET', $blog, '/ai/conversation/' . $conversationId, user: $user);
+        $this->consoleBlogApi('GET', $blog, '/ai/conversation/' . $conversationUuid, user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
         $this->assertIsArray($json['conversation']);
         $this->assertSame($conversation->getId(), $json['conversation']['id']);
+        $this->assertSame($conversationUuid, $json['conversation']['uuid']);
         $this->assertSame('Hi there', $json['conversation']['title']);
 
         $this->assertIsArray($json['messages']);
@@ -131,7 +132,7 @@ class AiGetConversationTest extends ApiTestCase
 
         $otherConversation = AiConversationFactory::createOneFor($otherBlog);
 
-        $this->consoleBlogApi('GET', $blog, '/ai/conversation/' . $otherConversation->getId(), user: $user);
+        $this->consoleBlogApi('GET', $blog, '/ai/conversation/' . $otherConversation->getUuid(), user: $user);
 
         $this->assertResponseStatusCodeSame(404);
     }

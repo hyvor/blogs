@@ -26,6 +26,7 @@ final class AiConversationFactory extends PersistentObjectFactory
     {
         return [
             'blog' => BlogFactory::new(),
+            'uuid' => self::faker()->uuid(),
             'title' => self::faker()->sentence(),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),

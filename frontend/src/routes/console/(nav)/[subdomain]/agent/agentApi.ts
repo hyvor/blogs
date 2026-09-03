@@ -61,6 +61,7 @@ export function applyDocumentChange(postVariantId: number, content: string, docu
 
 export interface AgentConversationListItem {
 	id: number;
+	uuid: string;
 	created_at: number;
 	updated_at: number;
 	title: string | null;
