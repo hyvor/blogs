@@ -3,7 +3,7 @@
 	import { buildDiffDoc, diffDoc, Editor } from '@hyvor/richtext';
 	import type { Author, SuggestionSource, SuggestionSourceEntry } from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
-	import { Modal, Button, Callout, Loader } from '@hyvor/design/components';
+	import { Modal, Button, Callout, Loader, Tooltip } from '@hyvor/design/components';
 	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../../posts/[postId]/Body/Editor/suggestions';
 	import {
@@ -196,15 +196,20 @@
 			<Button color="input" onclick={onclose} disabled={applying}
 				>{i18n.t('console.common.close')}</Button
 			>
-			<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
-				{#if applied}
-					{i18n.t('console.agent.applied')}
-				{:else if applying}
-					Applying…
-				{:else}
-					{i18n.t('console.agent.applyChanges')}
-				{/if}
-			</Button>
+			<Tooltip
+				text={remaining > 0 ? 'Resolve remaining suggestions' : ''}
+				disabled={remaining === 0}
+			>
+				<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
+					{#if applied}
+						{i18n.t('console.agent.applied')}
+					{:else if applying}
+						Applying…
+					{:else}
+						{i18n.t('console.agent.applyChanges')}
+					{/if}
+				</Button>
+			</Tooltip>
 		</div>
 	</div>
 </Modal>

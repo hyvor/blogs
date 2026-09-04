@@ -5,18 +5,29 @@
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import type { AiConversationPostVariant, AiMessageEvent } from '../aiConversationApi';
 	import PostStatusTag from '../../posts/PostStatusTag.svelte';
+	import type { DocumentChange } from '../agentApi';
+	import DiffReviewModal from '../Review/DiffReviewModal.svelte';
 
 	interface Props {
 		events: AiMessageEvent[];
 		postVariants: AiConversationPostVariant[];
-		onReview: (event: AiMessageEvent) => void;
 	}
 
-	let { events, postVariants = [], onReview }: Props = $props();
+	let { events, postVariants = [] }: Props = $props();
 
 	function findPostVariant(postVariantId: number | null | undefined) {
 		if (!postVariantId) return null;
 		return postVariants.find((v) => v.id === postVariantId) ?? null;
+	}
+
+	let reviewChange: DocumentChange | null = $state(null);
+
+	function openReview(event: AiMessageEvent) {
+		reviewChange = {
+			postVariantId: event.post_variant_id!,
+			content: event.document_content!,
+			version: event.post_variant_version!
+		};
 	}
 </script>
 
@@ -51,11 +62,17 @@
 							</span>
 						</div>
 					</div>
-					<Button size="small" color="input" onclick={() => onReview(event)}>Review changes</Button>
+					<Button size="small" color="input" onclick={() => openReview(event)}
+						>Review changes</Button
+					>
 				</div>
 			{/each}
 		</div>
 	</div>
+{/if}
+
+{#if reviewChange}
+	<DiffReviewModal change={reviewChange} onclose={() => (reviewChange = null)} />
 {/if}
 
 <style>
@@ -63,7 +80,7 @@
 		margin-top: 16px;
 		border: 1px solid var(--accent-light-mid);
 		background-color: color-mix(in srgb, var(--accent), transparent 95%);
-		border-radius: 10px;
+		border-radius: 20px;
 		overflow: hidden;
 	}
 
@@ -71,7 +88,7 @@
 		display: flex;
 		align-items: center;
 		gap: 6px;
-		padding: 10px 14px;
+		padding: 10px 20px;
 		font-size: 12px;
 		font-weight: 600;
 		color: var(--accent);
@@ -87,17 +104,16 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
-		padding: 10px 14px;
-
-		& + & {
-			border-top: 1px solid var(--accent-light-mid);
-		}
+		padding: 10px 20px;
+	}
+	.doc-change-row {
+		border-top: 1px solid var(--accent-light-mid);
 	}
 
 	.doc-change-status {
 		flex-shrink: 0;
 		display: inline-flex;
-		color: var(--orange, #d97706);
+		color: var(--orange);
 	}
 
 	.doc-change-status.reviewed {

@@ -22,10 +22,7 @@ export type AgentBlock =
 export interface DocumentChange {
 	postVariantId: number;
 	content: string;
-	// the post variant's content_unsaved_version the change was suggested against - compared
-	// against the live version to detect if the post was edited since (see DiffReviewModal).
-	// optional since the live SSE stream doesn't carry this yet (only the persisted
-	// document_change event, loaded via ConversationView, does).
+	// post_variant's content_unsaved_version that agent edited
 	version: number;
 }
 
