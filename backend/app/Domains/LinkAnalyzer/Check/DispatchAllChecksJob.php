@@ -33,8 +33,8 @@ class DispatchAllChecksJob
             if (!$license) {
                 continue;
             }
-            // analyses are not available in the blog's plan
-            if ($license->analyses === false) {
+            // link analysis is not available in the blog's plan
+            if ($license->linkAnalysis === false) {
                 continue;
             }
 

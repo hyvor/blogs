@@ -20,8 +20,8 @@ class LanguageRepository
     public static function getAllLanguages(Blog $blog): Collection
     {
         return $blog->languages()
-            ->orderBy('is_primary', 'DESC')
-            ->orderBy('id', 'ASC')
+            ->orderBy('is_primary', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
     }
 

@@ -67,7 +67,7 @@ class SitemapPagesProcessor extends RouteProcessorAbstract
             ->where('posts.blog_id', $this->blog->id)
             ->where('posts.is_page', true)
             ->select('posts.*')
-            ->orderBy('posts.id', 'ASC')
+            ->orderBy('posts.id', 'asc')
             ->get()
             ->mapInto(UrlPostEntry::class)
             ->map(fn ($entry) => $entry->toXML())

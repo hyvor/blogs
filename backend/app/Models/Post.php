@@ -53,7 +53,7 @@ class Post extends Model
         return $this
             ->belongsToMany(Tag::class)
             ->withPivot('post_tag.id')
-            ->orderBy('post_tag.id', 'ASC');
+            ->orderBy('post_tag.id', 'asc');
     }
 
     /**
@@ -64,7 +64,7 @@ class Post extends Model
         return $this
             ->belongsToMany(User::class, 'post_author')
             ->withPivot('post_author.id')
-            ->orderBy('post_author.id', 'ASC');
+            ->orderBy('post_author.id', 'asc');
     }
 
 }

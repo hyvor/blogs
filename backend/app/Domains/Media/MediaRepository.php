@@ -68,7 +68,7 @@ class MediaRepository
             })
             ->limit($limit)
             ->offset($offset)
-            ->orderBy('id', 'DESC')
+            ->orderBy('id', 'desc')
             ->get();
     }
 

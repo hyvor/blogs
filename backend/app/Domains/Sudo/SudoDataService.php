@@ -29,7 +29,7 @@ class SudoDataService
             ->when($subdomain, fn($query, $subdomain) => $query->where('blogs.subdomain', $subdomain))
             ->when($userId, fn($query, $userId) => $query->where('blogs.hyvor_user_id', $userId))
             ->withCount('posts')
-            ->orderBy($sortBy, $sort)
+            ->orderBy($sortBy, strtolower($sort) === 'desc' ? 'desc' : 'asc')
             ->limit($limit)
             ->offset($offset)
             ->get();

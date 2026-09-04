@@ -49,7 +49,7 @@ class UserRepository
                     ->where('user_variants.language_id', '=', $language->id);
             })
             ->orderByRaw("users.role='owner' DESC")
-            ->orderBy('users.posts_count', 'DESC')
+            ->orderBy('users.posts_count', 'desc')
             ->select('users.*')
             ->limit($limit)
             ->offset($offset)
