@@ -4,18 +4,9 @@
 	import PublishedNotice from './PublishedNotice.svelte';
 	import SaveStatus from './SaveStatus.svelte';
 	import SuggestionModeToggle from './SuggestionModeToggle.svelte';
-	import { cant } from '../../../../../../lib/scope.svelte';
-	import { getI18n } from '../../../../../../lib/i18n';
-
-	const i18n = getI18n();
 </script>
 
 <div class="editor-footer" class:suggesting={$postSuggestionModeStore === 'suggesting'}>
-	{#if cant('posts.write')}
-		<div class="read-only-banner">
-			{i18n.t('console.postEditor.readOnlyBanner')}
-		</div>
-	{/if}
 	<PublishedNotice />
 	<div class="footer-bottom">
 		<div class="footer-left">
@@ -54,15 +45,6 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
-	}
-	.read-only-banner {
-		padding: 8px 30px;
-		background-color: var(--accent-light-mid);
-		color: var(--text);
-		font-size: 13px;
-		font-weight: 500;
-		border-bottom: 1px solid var(--border);
-		text-align: center;
 	}
 	.editor-footer #pm-word-count {
 		font-size: 12px;

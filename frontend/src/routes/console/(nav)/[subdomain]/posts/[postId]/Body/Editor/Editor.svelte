@@ -95,6 +95,8 @@
 	// collab.receiveSteps() once mounted.
 	let backlogSteps = $derived($documentStore.pending_steps.steps);
 
+	// the editor is always editable now - published/scheduled posts edit content_unsaved
+	// just like drafts, and the published content is only updated via the Update flow
 	let isEditable = $derived(can('posts.write'));
 
 	let topicUnsubscriber: () => void;

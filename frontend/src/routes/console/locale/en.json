@@ -822,7 +822,6 @@
 				"suggesting": "Suggesting",
 				"suggestingInfo": "You are suggesting"
 			},
-			"readOnlyBanner": "You do not have permission to edit this post. (Read-only mode)",
 			"publishedNotice": {
 				"published": "This post is published.",
 				"scheduled": "This post is scheduled.",

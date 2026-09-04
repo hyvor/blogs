@@ -4,6 +4,7 @@ namespace App\Api\Console;
 
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Entity\Blog;
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -24,7 +25,7 @@ class ConsoleSubrequest
         Blog $blog,
         string $method,
         string $endpoint, // e.g. /blog
-        ?\App\Entity\User $blogUser = null,
+        ?User $blogUser = null,
     ): Response
     {
         $path = '/api/console/v0/blog/' . $blog->getSubdomain() . $endpoint;
