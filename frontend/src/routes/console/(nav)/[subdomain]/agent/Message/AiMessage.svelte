@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AiMessage } from '../aiConversationApi';
+	import type { AiMessage } from '../../../../lib/types';
 	import DocumentChangeEvent from './DocumentChangeEvent.svelte';
 	import ErrorEvent from './ErrorEvent.svelte';
 	import QueryEvent from './QueryEvent.svelte';
@@ -31,7 +31,7 @@
 			{/if}
 		{/each}
 
-		<DocumentChangeEvent events={documentChangeEvents} postVariants={[]} />
+		<DocumentChangeEvent events={documentChangeEvents} />
 	</div>
 </div>
 

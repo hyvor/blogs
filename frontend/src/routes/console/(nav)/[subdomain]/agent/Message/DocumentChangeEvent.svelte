@@ -3,28 +3,22 @@
 	import IconFileText from '@hyvor/icons/IconFileText';
 	import IconClock from '@hyvor/icons/IconClock';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
-	import type { AiConversationPostVariant, AiMessageEvent } from '../aiConversationApi';
 	import PostStatusTag from '../../posts/PostStatusTag.svelte';
 	import type { DocumentChange } from '../agentApi';
 	import DiffReviewModal from '../Review/DiffReviewModal.svelte';
+	import type { AiMessageEvent } from '../../../../lib/types';
 
 	interface Props {
 		events: AiMessageEvent[];
-		postVariants: AiConversationPostVariant[];
 	}
 
-	let { events, postVariants = [] }: Props = $props();
-
-	function findPostVariant(postVariantId: number | null | undefined) {
-		if (!postVariantId) return null;
-		return postVariants.find((v) => v.id === postVariantId) ?? null;
-	}
+	let { events }: Props = $props();
 
 	let reviewChange: DocumentChange | null = $state(null);
 
 	function openReview(event: AiMessageEvent) {
 		reviewChange = {
-			postVariantId: event.post_variant_id!,
+			postVariant: event.post_variant!,
 			content: event.document_content!,
 			version: event.post_variant_version!
 		};
@@ -39,7 +33,7 @@
 		</div>
 		<div class="doc-changes-list">
 			{#each events as event}
-				{@const variant = findPostVariant(event.post_variant_id)}
+				{@const variant = event.post_variant!}
 				{@const reviewed = event.document_change_status === 'reviewed'}
 				<div class="doc-change-row">
 					<div class="doc-change-status" class:reviewed>
@@ -51,7 +45,7 @@
 					</div>
 					<div class="doc-change-info">
 						<div class="doc-change-title">
-							{variant?.title ?? `Post #${event.post_variant_id}`}
+							{variant.title || `Post variant #${variant.id}`}
 						</div>
 						<div class="doc-change-meta">
 							{#if variant}

@@ -109,12 +109,10 @@ class AiController extends AbstractController
     public function getConversation(#[MapBlogEntity(field: 'uuid')] AiConversation $conversation): JsonResponse
     {
         $messages = $this->aiConversationService->getMessages($conversation);
-        $postVariants = $this->aiConversationService->getInvolvedPostVariants($conversation);
 
         return new JsonResponse([
             'conversation' => new AiConversationObject($conversation),
             'messages' => array_map(fn($m) => new AiMessageObject($m), $messages),
-            'post_variants' => array_map(fn($v) => new AiConversationPostVariantObject($v), $postVariants),
         ]);
     }
 

@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { buildDiffDoc, diffDoc, Editor } from '@hyvor/richtext';
-	import type { Author, SuggestionSource, SuggestionSourceEntry } from '@hyvor/richtext';
+	import type {
+		Author,
+		EditorConfig,
+		SuggestionSource,
+		SuggestionSourceEntry
+	} from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Button, Callout, Loader, Tooltip } from '@hyvor/design/components';
 	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
@@ -135,9 +140,10 @@
 			author: 'ai' as Author,
 			mode: 'editing' as const,
 			resolveAuthor,
-			source: createEphemeralSuggestionSource()
+			source: createEphemeralSuggestionSource(),
+			disableCommenting: true
 		}
-	};
+	} as EditorConfig;
 
 	async function handleApply() {
 		if (remaining > 0 || applying || applied) return;

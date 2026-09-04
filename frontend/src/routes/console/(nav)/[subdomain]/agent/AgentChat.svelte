@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAiConversation, type AiConversation, type AiMessage } from './aiConversationApi';
+	import { getAiConversation, type AiConversation } from './aiConversationApi';
 	import { callAgent } from './agentApi';
 	import Input from './Input.svelte';
 	import dayjs from 'dayjs';
@@ -10,6 +10,7 @@
 	import Messages from './Message/Messages.svelte';
 	import { agentConversationsStore } from './agentConversationsStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import type { AiMessage } from '../../../lib/types';
 
 	interface Props {
 		conversationUuid: string | null;

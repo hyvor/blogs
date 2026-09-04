@@ -60,6 +60,8 @@ class AiConversationService
             ->select('m')
             ->leftJoin('m.events', 'e')
             ->addSelect('e')
+            ->leftJoin('e.post_variant', 'v')
+            ->addSelect('v')
             ->where('m.conversation = :conversation')
             ->setParameter('conversation', $conversation)
             ->orderBy('m.id', 'ASC')
@@ -72,6 +74,8 @@ class AiConversationService
     /**
      * Distinct post variants referenced by any document_change event in this conversation, so
      * the frontend can show what's being edited (title, status) without a separate lookup.
+     *
+     * Get post variants involved in the
      *
      * @return PostVariant[]
      */

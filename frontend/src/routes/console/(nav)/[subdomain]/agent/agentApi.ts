@@ -1,8 +1,7 @@
 import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
 import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
-import type { PostVariant } from '../../../lib/types';
-import type { AiConversation, AiMessageEvent } from './aiConversationApi';
+import type { AiConversation, AiDocumentChangePostVariant, AiMessageEvent, PostVariant } from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
@@ -20,10 +19,9 @@ export type AgentBlock =
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
 export interface DocumentChange {
-	postVariantId: number;
+	postVariant: AiDocumentChangePostVariant;
 	content: string;
-	// post_variant's content_unsaved_version that agent edited
-	version: number;
+	version: number; // version agent edited
 }
 
 export interface CurrentDocument {
@@ -53,66 +51,6 @@ export function applyDocumentChange(postVariantId: number, content: string, docu
 	return consoleApi.post<void>({
 		endpoint: '/documents/checkpoint',
 		data: { post_variant_id: postVariantId, content, version: documentVersion }
-	});
-}
-
-export interface AgentConversationListItem {
-	id: number;
-	uuid: string;
-	created_at: number;
-	updated_at: number;
-	title: string | null;
-}
-
-export type AgentTurn =
-	| { role: 'user'; content: string }
-	| {
-			role: 'assistant';
-			events: AgentEvent[];
-			model: string | null;
-			input_tokens: number | null;
-			output_tokens: number | null;
-			total_tokens: number | null;
-	  };
-
-export interface AgentConversationDetail {
-	id: number;
-	title: string | null;
-	created_at: number;
-	updated_at: number;
-	turns: AgentTurn[];
-}
-
-// Persists a document change directly (no collab session involved) - used by the whole-blog
-// agent page, which never mounts a live post editor for the post it just edited. The sidebar
-// agent instead applies changes through the live editor's collab pipeline (see Editor.svelte's
-// setContent) so the document_version counter stays in sync - this PATCH path would desync it.
-export function saveAgentDocumentChange(postId: number, languageId: number, content: string) {
-	return consoleApi.patch<PostVariant>({
-		endpoint: `/post/${postId}/variant`,
-		data: {
-			language_id: languageId,
-			content_unsaved: content
-		}
-	});
-}
-
-export function getAgentConversations(limit = 25, offset = 0) {
-	return consoleApi.get<AgentConversationListItem[]>({
-		endpoint: '/ai/conversations',
-		data: { limit, offset }
-	});
-}
-
-export function getAgentConversation(conversationId: number) {
-	return consoleApi.get<AgentConversationDetail>({
-		endpoint: `/ai/conversation/${conversationId}`
-	});
-}
-
-export function deleteAgentConversation(conversationId: number) {
-	return consoleApi.delete<void>({
-		endpoint: `/ai/conversation/${conversationId}`
 	});
 }
 
