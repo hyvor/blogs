@@ -8,10 +8,6 @@ export function setScopes(scopes: Scope[]) {
 	currentScopes = scopes;
 }
 
-export function getScopes(): Scope[] {
-	return currentScopes;
-}
-
 export function can(scope: Scope): boolean {
 	return currentScopes.includes(scope);
 }

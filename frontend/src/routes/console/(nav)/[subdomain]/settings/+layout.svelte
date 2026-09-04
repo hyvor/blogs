@@ -40,7 +40,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings')}
 				active={$page.url.pathname === `${prefix}`}
-				disabled={cant('blog.write')}
+				disabled={cant('blog.read')}
 			>
 				{#snippet start()}
 					<IconList />

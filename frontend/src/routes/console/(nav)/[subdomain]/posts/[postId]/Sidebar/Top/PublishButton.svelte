@@ -71,10 +71,9 @@
 		($postStore?.authors ?? []).some((author) => author.hyvor_user_id === $authUserStore?.id)
 	);
 
-	let canPublish = $derived(can('posts.publish.own') && (isAuthor || can('posts.publish.all')));
+	let canPublish = $derived(can('posts.publish.all') || (isAuthor && can('posts.publish.own')));
 
-	const publishPermissionTooltip =
-		"You don't have permission to publish. Please ask a colleague to publish this article for you.";
+	const publishPermissionTooltip = i18n.t('console.postEditor.publish.noPermission');
 </script>
 
 {#if $postVariantStore.status === 'draft'}

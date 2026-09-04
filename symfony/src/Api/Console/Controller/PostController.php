@@ -375,6 +375,8 @@ class PostController
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
+        $this->checkPublishPermission($post);
+
         $blog = $this->blogAuthListener->getBlog();
 
         $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);

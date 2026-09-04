@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '@hyvor/design/components';
+	import { Button, Tooltip } from '@hyvor/design/components';
 	import {
 		documentStore,
 		postOriginalStore,
@@ -10,11 +10,21 @@
 	import UpdateModal from './UpdateModal.svelte';
 	import { hasPublishedChanges } from './published-changes';
 	import { getI18n } from '../../../../../../../lib/i18n';
+	import { authUserStore } from '../../../../../../../lib/stores';
+	import { can } from '../../../../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
 	let hasChanges = $state(false);
 	let isUpdating = $state(false);
+
+	let isAuthor = $derived(
+		($postStore?.authors ?? []).some((author) => author.hyvor_user_id === $authUserStore?.id)
+	);
+
+	let canPublish = $derived(can('posts.publish.all') || (isAuthor && can('posts.publish.own')));
+
+	const publishPermissionTooltip = i18n.t('console.postEditor.publish.noPermission');
 
 	$effect(() => {
 		void $postStore;
@@ -28,9 +38,11 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
-	<Button disabled={!hasChanges} on:click={() => (isUpdating = true)} size="small"
-		>{i18n.t('console.postEditor.update.button')}</Button
-	>
+	<Tooltip text={!canPublish ? publishPermissionTooltip : ''}>
+		<Button disabled={!hasChanges || !canPublish} on:click={() => (isUpdating = true)} size="small"
+			>{i18n.t('console.postEditor.update.button')}</Button
+		>
+	</Tooltip>
 {/if}
 
 {#if isUpdating}

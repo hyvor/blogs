@@ -12,7 +12,7 @@
 	const i18n = getI18n();
 
 	onMount(() => {
-		redirectIfCant('blog.write');
+		redirectIfCant('blog.read');
 	});
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {

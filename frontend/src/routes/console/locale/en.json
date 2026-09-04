@@ -822,6 +822,7 @@
 				"suggesting": "Suggesting",
 				"suggestingInfo": "You are suggesting"
 			},
+			"readOnlyBanner": "You do not have permission to edit this post. (Read-only mode)",
 			"publishedNotice": {
 				"published": "This post is published.",
 				"scheduled": "This post is scheduled.",
@@ -867,6 +868,7 @@
 			},
 			"publish": {
 				"button": "Publish",
+				"noPermission": "You don't have permission to publish. Please ask a colleague to publish this article for you.",
 				"schedule": "Schedule",
 				"modalTitle": "Publish Post",
 				"publishing": "Publishing...",
