@@ -497,7 +497,7 @@ class PostService
         $variant->setPost($post);
         $variant->setLanguage($language);
         $variant->setStatus($status);
-        $variant->setContentUnsaved($contentUnsaved);
+        $variant->setContentUnsaved($contentUnsaved ?? $content);
         $variant->setSlug($slug);
         $variant->setTitle($title);
         $variant->setDescription($description);

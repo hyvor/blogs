@@ -16,6 +16,7 @@ use App\Service\User\UserService;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\InternalConfig;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Sdk\Exceptions\HyvorApiException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -106,9 +107,19 @@ class BlogController
         $owner = $this->userService->getUserByHyvorUserId($blog, $user->id);
         assert($owner !== null); // this cannot happen for non-preview blogs
 
+        $resolvedLicense = null;
+        if ($isCloud) {
+            try {
+                $resolvedLicense = $this->billing->license($org->id);
+            } catch (CommsApiFailedException) {
+                $warnings[] = 'Failed to resolve license.';
+            }
+        }
+
         return new JsonResponse([
             'blog' => $this->blogListObjectFactory->create($owner),
             'warnings' => $warnings,
+            'resolved_license' => $resolvedLicense,
         ], 201);
     }
 

@@ -40,7 +40,7 @@ class UsageService
         return $usage >= $limit;
     }
 
-    public function usersLimitReached(Blog $blog): bool
+    public function usersLimitReached(Blog $blog, ?int $hyvorUserId = null): bool
     {
         $organizationId = $blog->getOrganizationId();
 
@@ -57,6 +57,24 @@ class UsageService
 
         $bl = $license->license instanceof BlogsLicense ? $license->license : null;
         $limit = $bl->users ?? 0;
+
+        if ($hyvorUserId !== null) {
+            $alreadyInOrg = (bool) $this->connection->fetchOne(
+                "SELECT 1
+                 FROM users u
+                 JOIN blogs b ON b.id = u.blog_id
+                 WHERE b.organization_id = ?
+                   AND b.deleted_at IS NULL
+                   AND u.hyvor_user_id = ?
+                 LIMIT 1",
+                [$organizationId, $hyvorUserId],
+            );
+
+            if ($alreadyInOrg) {
+                return false;
+            }
+        }
+
         $usage = $this->getUsersUsage($organizationId);
 
         return $usage >= $limit;
@@ -66,9 +84,12 @@ class UsageService
     {
         /** @var ?int $result */
         $result = $this->connection->fetchOne(
-            "SELECT SUM(COALESCE((counts->>'users')::INT, 0)) AS count
-             FROM blogs
-             WHERE organization_id = ?",
+            "SELECT COUNT(DISTINCT u.hyvor_user_id) AS count
+             FROM users u
+             JOIN blogs b ON b.id = u.blog_id
+             WHERE b.organization_id = ?
+               AND b.deleted_at IS NULL
+               AND u.hyvor_user_id IS NOT NULL",
             [$organizationId],
         );
 

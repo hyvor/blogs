@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '@hyvor/design/components';
-	import { uploadImage } from '../../../../lib/fileUploader';
+	import { uploadImageOnly } from '../../../../lib/fileUploader';
 	import { createEventDispatcher } from 'svelte';
 	import { getI18n } from '../../../../lib/i18n';
 
@@ -16,7 +16,7 @@
 	const dispatch = createEventDispatcher<{ change: string | null }>();
 
 	async function handleUpload() {
-		const file = await uploadImage();
+		const file = await uploadImageOnly();
 		if (file) {
 			dispatch('change', file.url);
 		}

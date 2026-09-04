@@ -7,6 +7,7 @@ use App\Service\Billing\UsageService;
 use App\Tests\Factory\AiConversationFactory;
 use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,14 +29,29 @@ class UsageServiceTest extends KernelTestCase
 
     public function test_users_usage(): void
     {
-        BlogFactory::createOne(['organization_id' => 1, 'counts' => ['users' => 5]]);
-        BlogFactory::createOne(['organization_id' => 1, 'counts' => ['users' => 10]]);
-        BlogFactory::createOne(['organization_id' => 1]);
-        BlogFactory::createOne(['organization_id' => 1, 'counts' => ['media' => 100]]);
+        $blog1 = BlogFactory::createOne(['organization_id' => 1]);
+        $blog2 = BlogFactory::createOne(['organization_id' => 1]);
+        $blogOtherOrg = BlogFactory::createOne(['organization_id' => 2]);
+        $deletedBlog = BlogFactory::createOne(['organization_id' => 1, 'deleted_at' => new \DateTimeImmutable()]);
 
-        BlogFactory::createOne(['organization_id' => 2, 'counts' => ['users' => 20]]);
+        // User 101 should only be counted once
+        UserFactory::createOne(['blog' => $blog1, 'hyvor_user_id' => 101]);
+        UserFactory::createOne(['blog' => $blog2, 'hyvor_user_id' => 101]);
 
-        $this->assertSame(15, $this->usage()->getUsersUsage(1));
+        // User 102 in another blog
+        UserFactory::createOne(['blog' => $blog2, 'hyvor_user_id' => 102]);
+
+        // Guest user should not be counted
+        UserFactory::createOne(['blog' => $blog1, 'hyvor_user_id' => null]);
+
+        // User in deleted blog should not be counted
+        UserFactory::createOne(['blog' => $deletedBlog, 'hyvor_user_id' => 103]);
+
+        // User in another organization should not be counted
+        UserFactory::createOne(['blog' => $blogOtherOrg, 'hyvor_user_id' => 104]);
+
+        $this->assertSame(2, $this->usage()->getUsersUsage(1));
+        $this->assertSame(1, $this->usage()->getUsersUsage(2));
     }
 
     public function test_users_usage_without_blogs(): void
