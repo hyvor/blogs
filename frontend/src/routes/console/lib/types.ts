@@ -597,6 +597,7 @@ export interface AiDocumentChangePostVariant {
 	title: string | null;
 	status: PostStatus;
 	published_at: number | null;
+	language_id: number;
 }
 
 

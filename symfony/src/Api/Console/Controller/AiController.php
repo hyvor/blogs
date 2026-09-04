@@ -10,7 +10,6 @@ use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Api\Console\Object\Ai\AiConversationObject;
-use App\Api\Console\Object\Ai\AiConversationPostVariantObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
 use App\Entity\AiConversation;
 use App\Service\Ai\Agent\AiAgentConversationService;

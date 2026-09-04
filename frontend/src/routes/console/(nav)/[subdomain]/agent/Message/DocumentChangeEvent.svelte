@@ -3,10 +3,11 @@
 	import IconFileText from '@hyvor/icons/IconFileText';
 	import IconClock from '@hyvor/icons/IconClock';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
-	import PostStatusTag from '../../posts/PostStatusTag.svelte';
 	import type { DocumentChange } from '../agentApi';
 	import DiffReviewModal from '../Review/DiffReviewModal.svelte';
 	import type { AiMessageEvent } from '../../../../lib/types';
+	import { languagesStore } from '../../../../lib/stores/languagesStore';
+	import PostStatusText from '../../posts/PostStatusText.svelte';
 
 	interface Props {
 		events: AiMessageEvent[];
@@ -48,12 +49,20 @@
 							{variant.title || `Post variant #${variant.id}`}
 						</div>
 						<div class="doc-change-meta">
-							{#if variant}
-								<PostStatusTag status={variant.status} size="x-small" />
-							{/if}
 							<span class="doc-change-status-label" class:reviewed>
 								{reviewed ? 'Reviewed' : 'Needs review'}
 							</span>
+							&middot;
+							{#if variant}
+								<PostStatusText status={variant.status} />
+							{/if}
+							{#if $languagesStore.length > 1}
+								{@const language = $languagesStore.find((lang) => lang.id === variant.language_id)}
+								{#if language}
+									&middot;
+									<span class="language-label">{language.name}</span>
+								{/if}
+							{/if}
 						</div>
 					</div>
 					<Button size="small" color="input" onclick={() => openReview(event)}
@@ -132,14 +141,18 @@
 		align-items: center;
 		gap: 8px;
 		margin-top: 3px;
+		font-size: 11px;
 	}
 
 	.doc-change-status-label {
-		font-size: 11px;
 		color: var(--text-light);
 	}
 
 	.doc-change-status-label.reviewed {
 		color: var(--green);
+	}
+
+	.language-label {
+		color: var(--text-light);
 	}
 </style>
