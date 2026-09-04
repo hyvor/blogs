@@ -69,7 +69,7 @@ class Prompt
         $promptsOnPost = $this->post ?
             GptPrompt::where('post_id', $this->post->id)
                 ->limit(50)
-                ->orderBy('id', 'DESC')
+                ->orderBy('id', 'desc')
                 ->get() :
             collect();
 

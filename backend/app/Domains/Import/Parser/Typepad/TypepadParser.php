@@ -232,7 +232,7 @@ class TypepadParser extends MediaAwareParserAbstract
         }
 
         $parts = parse_url($url);
-        if (!$parts) {
+        if (!$parts || !isset($parts['scheme'], $parts['host'])) {
             throw new ParserException('Invalid Typepad blog url');
         }
 

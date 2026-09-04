@@ -236,7 +236,7 @@ class PostRepository
             ->addWhere();
 
         foreach ($orderBys as $orderBy) {
-            $builder->orderBy($orderBy[0], $orderBy[1]);
+            $builder->orderBy($orderBy[0], strtolower($orderBy[1]) === 'desc' ? 'desc' : 'asc');
         }
 
         /** @var \Illuminate\Support\Collection<int, Post> $posts */

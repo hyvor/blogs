@@ -74,7 +74,7 @@ class SitemapPostsProcessor extends RouteProcessorAbstract
             ->where('posts.blog_id', $this->blog->id)
             ->where('posts.is_page', false)
             ->select('posts.*')
-            ->orderBy('posts.id', 'ASC')
+            ->orderBy('posts.id', 'asc')
             ->limit($limit)
             ->offset(($number - 1) * $limit)
             ->get();

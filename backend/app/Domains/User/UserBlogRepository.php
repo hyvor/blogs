@@ -26,8 +26,8 @@ class UserBlogRepository
             ->join('blogs', 'blogs.id', '=', 'users.blog_id')
             ->where('blogs.organization_id', $organization->id)
             ->where('status', 'active')
-            ->orderBy('sort', 'ASC')
-            ->orderBy('users.id', 'ASC')
+            ->orderBy('sort', 'asc')
+            ->orderBy('users.id', 'asc')
             ->with('blog', 'blog.subscriptions')
             ->get();
     }

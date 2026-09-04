@@ -171,7 +171,7 @@ class Blog extends Model
      */
     public function languages()
     {
-        return $this->hasMany(Language::class)->orderBy('id', 'ASC');
+        return $this->hasMany(Language::class)->orderBy('id', 'asc');
     }
 
     /**
@@ -187,7 +187,7 @@ class Blog extends Model
      */
     public function navigations()
     {
-        return $this->hasMany(Navigation::class)->orderBy('sort', 'ASC');
+        return $this->hasMany(Navigation::class)->orderBy('sort', 'asc');
     }
 
     /**
@@ -219,7 +219,7 @@ class Blog extends Model
      */
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class)->orderBy('id', 'DESC');
+        return $this->hasMany(Subscription::class)->orderBy('id', 'desc');
     }
 
     /**
