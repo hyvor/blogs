@@ -867,7 +867,7 @@
 			},
 			"publish": {
 				"button": "Publish",
-				"noPermission": "You don't have permission to publish. Please ask a colleague to publish this article for you.",
+				"noPermission": "You don't have permission to publish.",
 				"schedule": "Schedule",
 				"modalTitle": "Publish Post",
 				"publishing": "Publishing...",
