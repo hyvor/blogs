@@ -3,7 +3,7 @@
 	import LinkAnalysis from './LinkAnalysis.svelte';
 </script>
 
-<LicenseRequired licenseProperty="analyses">
+<LicenseRequired licenseProperty="linkAnalysis">
 	{#snippet upgradeText()}
 		<div>
 			Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to analyze links in
