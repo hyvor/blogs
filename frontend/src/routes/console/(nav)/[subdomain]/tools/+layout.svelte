@@ -9,6 +9,7 @@
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	interface Props {
@@ -24,6 +25,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/tools/media')}
 				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/media`}
+				disabled={cant('media.manage')}
 			>
 				{#snippet start()}
 					<IconImage />
@@ -34,6 +36,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/tools/link-analysis')}
 				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
+				disabled={cant('link_analysis.manage')}
 			>
 				{#snippet start()}
 					<IconLink45deg />
@@ -46,6 +49,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/tools/import')}
 				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
+				disabled={cant('import.manage')}
 			>
 				{#snippet start()}
 					<IconDownload />
@@ -56,6 +60,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/tools/export')}
 				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
+				disabled={cant('export.manage')}
 			>
 				{#snippet start()}
 					<IconUpload />

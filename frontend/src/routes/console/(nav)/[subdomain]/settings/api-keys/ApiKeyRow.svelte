@@ -8,6 +8,7 @@
 	import { deleteApiKey, regenerateApiKey } from './apiKeysActions';
 	import { createEventDispatcher } from 'svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -85,13 +86,25 @@
 		</Tooltip>
 
 		<Tooltip text={i18n.t('console.settings.apiKeys.regenerateTitle')}>
-			<IconButton color="input" variant="fill" size="small" on:click={handleRegenerate}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				disabled={cant('api_keys.write')}
+				on:click={handleRegenerate}
+			>
 				<IconArrowCounterclockwise size={12} />
 			</IconButton>
 		</Tooltip>
 
 		<Tooltip text={i18n.t('console.settings.apiKeys.deleteTitle')}>
-			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				disabled={cant('api_keys.write')}
+				on:click={handleDelete}
+			>
 				<IconTrash size={12} />
 			</IconButton>
 		</Tooltip>

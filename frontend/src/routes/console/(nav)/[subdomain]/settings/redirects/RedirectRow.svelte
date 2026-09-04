@@ -17,6 +17,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import RedirectsModal from './RedirectsModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -72,12 +73,24 @@
 	</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.redirects.editRedirect')}>
-			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				disabled={cant('redirects.write')}
+				on:click={() => (isEditing = true)}
+			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 		<Tooltip text={i18n.t('console.settings.redirects.deleteRedirect')}>
-			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				disabled={cant('redirects.write')}
+				on:click={handleDelete}
+			>
 				<IconTrash size={12} />
 			</IconButton>
 		</Tooltip>

@@ -16,6 +16,7 @@
 	import { subscribeToCollabMercureTopic, collabTopic, applyConfirmedSteps } from './collab';
 	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
+	import { can } from '../../../../../../lib/scope.svelte';
 	import { seoService } from '../../../seoStore';
 	import { linksService } from '../../Sidebar/Links/linksStore';
 	import { getI18n } from '../../../../../../lib/i18n';
@@ -94,9 +95,7 @@
 	// collab.receiveSteps() once mounted.
 	let backlogSteps = $derived($documentStore.pending_steps.steps);
 
-	// the editor is always editable now - published/scheduled posts edit content_unsaved
-	// just like drafts, and the published content is only updated via the Update flow
-	const isEditable = true;
+	let isEditable = $derived(can('posts.write'));
 
 	let topicUnsubscriber: () => void;
 

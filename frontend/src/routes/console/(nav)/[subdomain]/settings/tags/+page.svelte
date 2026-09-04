@@ -16,6 +16,7 @@
 	import TagRow from './TagRow.svelte';
 	import CreateTagModal from './CreateTagModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -69,12 +70,15 @@
 		tags = tags.map((t) => (t.id === e.detail.id ? e.detail : t));
 	}
 
-	onMount(loadTags);
+	onMount(() => {
+		redirectIfCant('tags.read');
+		loadTags();
+	});
 </script>
 
 <div class="tags">
 	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+		<Button disabled={cant('tags.write')} on:click={() => (isCreating = true)}>
 			Create Tag {#snippet end()}
 				<IconPlus />
 			{/snippet}

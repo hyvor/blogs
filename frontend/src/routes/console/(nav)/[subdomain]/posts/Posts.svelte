@@ -15,6 +15,7 @@
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getPrimaryLanguage } from '../../../lib/stores/languagesStore';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -106,7 +107,7 @@
 				{pages ? 'Pages' : 'Posts'}
 			</div>
 			<div class="">
-				<Button size="small" on:click={handleCreate} disabled={isCreating}>
+				<Button size="small" on:click={handleCreate} disabled={isCreating || cant('posts.write')}>
 					{#snippet start()}
 						{#if isCreating}
 							<Loader size={14} invert />

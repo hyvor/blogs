@@ -7,11 +7,11 @@ import type { AiConversation, AiMessageEvent } from './aiConversationApi';
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
-	| { type: 'conversation_created'; conversation: AiConversation; }
-	| { type: 'text_chunk', content: string }
-	| { type: 'thinking_chunk', content: string}
-	| { type: 'event', event: AiMessageEvent }
-	| { type: 'done'};
+	| { type: 'conversation_created'; conversation: AiConversation }
+	| { type: 'text_chunk'; content: string }
+	| { type: 'thinking_chunk'; content: string }
+	| { type: 'event'; event: AiMessageEvent }
+	| { type: 'done' };
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
@@ -52,7 +52,11 @@ export function getCurrentDocumentForVariant(postVariantId: number) {
 // DocumentsController::checkpoint. Used by the whole-blog agent page (AgentChat.svelte); the
 // sidebar agent applies through the live editor's collab pipeline instead (see
 // saveAgentDocumentChange above).
-export function applyDocumentChange(postVariantId: number, content: string, documentVersion: number) {
+export function applyDocumentChange(
+	postVariantId: number,
+	content: string,
+	documentVersion: number
+) {
 	return consoleApi.post<void>({
 		endpoint: '/documents/checkpoint',
 		data: { post_variant_id: postVariantId, content, version: documentVersion }

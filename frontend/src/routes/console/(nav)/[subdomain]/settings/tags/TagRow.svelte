@@ -10,6 +10,7 @@
 	import UpdateTagModal from './Update/UpdateTagModal.svelte';
 	import TagName from './TagName.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -67,12 +68,24 @@
 	</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.tags.editTag')}>
-			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				on:click={() => (isEditing = true)}
+				disabled={cant('tags.write')}
+			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 		<Tooltip text={i18n.t('console.settings.tags.deleteTag')}>
-			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				on:click={handleDelete}
+				disabled={cant('tags.write')}
+			>
 				<IconTrash size={12} />
 			</IconButton>
 		</Tooltip>

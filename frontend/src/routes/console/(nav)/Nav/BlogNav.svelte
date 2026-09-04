@@ -22,6 +22,7 @@
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import { getConfig } from '../../lib/config';
 	import { getI18n } from '../../lib/i18n';
+	import { cant } from '../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -71,6 +72,7 @@
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/posts`)}
 			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/posts`)}
+			disabled={cant('posts.read')}
 		>
 			{#snippet start()}
 				<IconPencil />
@@ -81,6 +83,7 @@
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/pages`)}
 			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/pages`)}
+			disabled={cant('posts.read')}
 		>
 			{#snippet start()}
 				<IconFiles />
@@ -92,6 +95,7 @@
 			<NavLink
 				href={consoleUrl(`${listItem.subdomain}/comments`)}
 				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/comments`)}
+				disabled={cant('integrations.manage')}
 			>
 				{#snippet start()}
 					<IconChat />
@@ -107,6 +111,7 @@
 			<NavLink
 				href={consoleUrl(`${listItem.subdomain}/newsletter`)}
 				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/newsletter`)}
+				disabled={cant('integrations.manage')}
 			>
 				{#snippet start()}
 					<IconEnvelope />
@@ -121,6 +126,7 @@
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/agent`)}
 			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
+			disabled={cant('ai.use')}
 		>
 			{#snippet start()}
 				<IconRobot />
@@ -133,6 +139,7 @@
 		<NavLink
 			href={consoleUrl(`${listItem.subdomain}/theme`)}
 			active={$page.url.pathname === `/console/${listItem.subdomain}/theme`}
+			disabled={cant('themes.read')}
 		>
 			{#snippet start()}
 				<IconPalette />
@@ -144,6 +151,7 @@
 			<NavLink
 				href={consoleUrl(`${listItem.subdomain}/integrations`)}
 				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
+				disabled={cant('integrations.manage')}
 			>
 				{#snippet start()}
 					<IconPlugin />

@@ -4,9 +4,15 @@
 	import ClearCacheModal from './ClearCacheModal.svelte';
 	import DeleteBlogModal from './DeleteBlogModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { onMount } from 'svelte';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	const T = i18n.T;
+
+	onMount(() => {
+		redirectIfCant('blog.delete');
+	});
 
 	let isCacheClearing = $state(false);
 	let isDeleting = $state(false);
@@ -38,7 +44,7 @@
 			</div>
 		{/snippet}
 
-		<Button color="red" on:click={() => (isDeleting = true)}>
+		<Button color="red" disabled={cant('blog.delete')} on:click={() => (isDeleting = true)}>
 			{#snippet start()}
 				<IconTrash />
 			{/snippet}

@@ -12,6 +12,7 @@
 	import { flip } from 'svelte/animate';
 	import UpdateNavigationModal from './UpdateNavigationModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -53,11 +54,13 @@
 	let dragDisabled = $state(true);
 
 	function startDrag(e: any) {
+		if (cant('navigations.write')) return;
 		// preventing default to prevent lag on touch devices (because of the browser checking for screen scrolling)
 		e.preventDefault();
 		dragDisabled = false;
 	}
 	function handleKeyDown(e: any) {
+		if (cant('navigations.write')) return;
 		if ((e.key === 'Enter' || e.key === ' ') && dragDisabled) dragDisabled = false;
 	}
 
@@ -136,6 +139,7 @@
 							color="input"
 							variant="fill"
 							size="small"
+							disabled={cant('navigations.write')}
 							on:click={() => {
 								isEditing = true;
 								editingNavigation = item;
@@ -149,6 +153,7 @@
 							variant="fill-light"
 							color="red"
 							size="small"
+							disabled={cant('navigations.write')}
 							on:click={() => handleDelete(item.id)}
 						>
 							<IconTrash size={12} />

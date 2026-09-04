@@ -6,10 +6,12 @@
 	import { onMount } from 'svelte';
 	import { getConfig } from '../../../lib/config';
 	import { getI18n } from '../../../lib/i18n';
+	import { redirectIfCant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
 	onMount(() => {
+		redirectIfCant('integrations.manage');
 		if (!$integrationsStore.hyvor_post) {
 			goto(consoleUrlWithBlog('/'));
 		}

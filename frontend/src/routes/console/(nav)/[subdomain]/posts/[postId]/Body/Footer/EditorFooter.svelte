@@ -4,9 +4,15 @@
 	import PublishedNotice from './PublishedNotice.svelte';
 	import SaveStatus from './SaveStatus.svelte';
 	import SuggestionModeToggle from './SuggestionModeToggle.svelte';
+	import { cant } from '../../../../../../lib/scope.svelte';
 </script>
 
 <div class="editor-footer" class:suggesting={$postSuggestionModeStore === 'suggesting'}>
+	{#if cant('posts.write')}
+		<div class="read-only-banner">
+			You do not have permission to edit this post. (Read-only mode)
+		</div>
+	{/if}
 	<PublishedNotice />
 	<div class="footer-bottom">
 		<div class="footer-left">
@@ -45,6 +51,15 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
+	}
+	.read-only-banner {
+		padding: 6px 30px;
+		background-color: var(--yellow-light, #fffbe6);
+		color: var(--yellow-dark, #8a6d3b);
+		font-size: 13px;
+		font-weight: 500;
+		border-bottom: 1px solid var(--border);
+		text-align: center;
 	}
 	.editor-footer #pm-word-count {
 		font-size: 12px;

@@ -24,6 +24,7 @@
 	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
 	import TagChip from './TagChip.svelte';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -224,11 +225,15 @@
 
 			{#snippet content()}
 				<ActionList>
-					<ActionListItem on:click={handleClone} disabled={isCloning || isDeleting}
+					<ActionListItem
+						on:click={handleClone}
+						disabled={isCloning || isDeleting || cant('posts.write')}
 						>{i18n.t('console.posts.clonePost')}</ActionListItem
 					>
-					<ActionListItem on:click={handleDelete} disabled={isCloning || isDeleting} type="danger"
-						>Delete post</ActionListItem
+					<ActionListItem
+						on:click={handleDelete}
+						disabled={isCloning || isDeleting || cant('posts.write')}
+						type="danger">Delete post</ActionListItem
 					>
 				</ActionList>
 			{/snippet}

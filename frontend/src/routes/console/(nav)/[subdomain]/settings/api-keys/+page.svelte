@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { getApiKeys } from './apiKeysActions';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -35,6 +36,7 @@
 	}
 
 	onMount(() => {
+		redirectIfCant('api_keys.read');
 		getApiKeys()
 			.then((res) => {
 				apiKeys = res;
@@ -50,7 +52,7 @@
 
 <div class="api-keys">
 	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+		<Button disabled={cant('api_keys.write')} on:click={() => (isCreating = true)}>
 			Create API Key {#snippet end()}
 				<IconPlus />
 			{/snippet}

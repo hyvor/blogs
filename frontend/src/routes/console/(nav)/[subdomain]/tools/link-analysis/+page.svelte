@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Links from './Links/Links.svelte';
 	import { Loader, TabNav, TabNavItem } from '@hyvor/design/components';
 	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
@@ -9,6 +10,7 @@
 	import Overview from './Overview/Overview.svelte';
 	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	const T = i18n.T;
@@ -16,6 +18,10 @@
 	let tab: 'overview' | 'links' | 'settings' = $state('overview');
 
 	const statsPromise = getStats();
+
+	onMount(() => {
+		redirectIfCant('link_analysis.manage');
+	});
 </script>
 
 <div class="link-analysis hds-box">

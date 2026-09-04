@@ -16,6 +16,7 @@
 	import { deleteUser } from './userActions';
 	import UpdateUser from './Update/UpdateUser.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -100,14 +101,26 @@
 	<div>{user.posts_count}</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.users.editUser')}>
-			<IconButton color="input" variant="fill" size="small" on:click={() => (isEditing = true)}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				on:click={() => (isEditing = true)}
+				disabled={cant('users.write')}
+			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 
 		{#if user.role !== 'owner'}
 			<Tooltip text={i18n.t('console.settings.users.deleteUser')}>
-				<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
+				<IconButton
+					variant="fill-light"
+					color="red"
+					size="small"
+					on:click={handleDelete}
+					disabled={cant('users.write')}
+				>
 					<IconTrash size={12} />
 				</IconButton>
 			</Tooltip>

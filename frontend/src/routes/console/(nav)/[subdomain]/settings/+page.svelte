@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { SplitControl, TextInput } from '@hyvor/design/components';
 	import BlogSettingsSave from './BlogSettingsSave.svelte';
 	import type { Blog } from '../../../lib/types';
@@ -6,8 +7,13 @@
 	import VariantInput from './@components/VariantInput/VariantInput.svelte';
 	import ImageSetting from './@components/ImageSetting.svelte';
 	import { getI18n } from '../../../lib/i18n';
+	import { redirectIfCant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
+
+	onMount(() => {
+		redirectIfCant('blog.write');
+	});
 
 	function handleNameChange(e: CustomEvent<{ languageId: number; value: string }>) {
 		updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);

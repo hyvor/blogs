@@ -8,10 +8,13 @@
 		SplitControl,
 		TextInput,
 		toast,
+		Tooltip,
 		Validation
 	} from '@hyvor/design/components';
 	import IconSendFill from '@hyvor/icons/IconSendFill';
-	import { postSidebarStore, postVariantStore } from '../../../postStore';
+	import { postSidebarStore, postVariantStore, postStore } from '../../../postStore';
+	import { authUserStore } from '../../../../../../lib/stores';
+	import { can } from '../../../../../../lib/scope.svelte';
 	import dayjs from 'dayjs';
 	import { publishPostVariant } from '../../../postActions';
 	import PublishSummary from './PublishSummary.svelte';
@@ -63,15 +66,26 @@
 				publishing = false;
 			});
 	}
+
+	let isAuthor = $derived(
+		($postStore?.authors ?? []).some((author) => author.hyvor_user_id === $authUserStore?.id)
+	);
+
+	let canPublish = $derived(can('posts.publish.own') && (isAuthor || can('posts.publish.all')));
+
+	const publishPermissionTooltip =
+		"You don't have permission to publish. Please ask a colleague to publish this article for you.";
 </script>
 
 {#if $postVariantStore.status === 'draft'}
-	<Button color="accent" on:click={() => (modalOpen = true)} size="small">
-		{i18n.t('console.postEditor.publish.button')}
-		{#snippet end()}
-			<IconSendFill size={12} />
-		{/snippet}
-	</Button>
+	<Tooltip text={canPublish ? '' : publishPermissionTooltip}>
+		<Button color="accent" on:click={() => (modalOpen = true)} size="small" disabled={!canPublish}>
+			{i18n.t('console.postEditor.publish.button')}
+			{#snippet end()}
+				<IconSendFill size={12} />
+			{/snippet}
+		</Button>
+	</Tooltip>
 {/if}
 
 <Modal

@@ -4,6 +4,12 @@
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { onMount } from 'svelte';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
+
+	onMount(() => {
+		redirectIfCant('blog.write');
+	});
 
 	const i18n = getI18n();
 

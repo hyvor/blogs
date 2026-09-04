@@ -1,5 +1,11 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 	import MediaLibrary from './MediaLibrary.svelte';
+
+	onMount(() => {
+		redirectIfCant('media.manage');
+	});
 </script>
 
 <div class="media hds-box">
