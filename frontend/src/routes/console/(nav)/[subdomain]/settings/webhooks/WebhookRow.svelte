@@ -16,6 +16,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import CreateUpdateWebhookModal from './CreateUpdateWebhookModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -72,13 +73,25 @@
 	</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.webhooks.editWebhook')}>
-			<IconButton size="small" color="input" variant="fill" on:click={() => (isUpdating = true)}>
+			<IconButton
+				size="small"
+				color="input"
+				variant="fill"
+				disabled={cant('webhooks.write')}
+				on:click={() => (isUpdating = true)}
+			>
 				<IconPencilFill size={10} />
 			</IconButton>
 		</Tooltip>
 
 		<Tooltip text={i18n.t('console.settings.webhooks.deleteTitle')}>
-			<IconButton size="small" variant="fill-light" color="red" on:click={handleDelete}>
+			<IconButton
+				size="small"
+				variant="fill-light"
+				color="red"
+				disabled={cant('webhooks.write')}
+				on:click={handleDelete}
+			>
 				<IconTrash size={10} />
 			</IconButton>
 		</Tooltip>

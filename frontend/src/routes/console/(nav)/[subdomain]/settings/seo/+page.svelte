@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		Callout,
 		Caption,
@@ -12,9 +13,14 @@
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	const T = i18n.T;
+
+	onMount(() => {
+		redirectIfCant('blog.write');
+	});
 
 	function handleAllowIndexingChange(e: any) {
 		updateBlogStore({ seo_indexing: e.target.checked });

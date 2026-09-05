@@ -6,6 +6,7 @@
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { redirectIfCant } from '../../../lib/scope.svelte';
 	import { agentConversationsStore } from './agentConversationsStore';
 	import type { AiConversation } from '../../../lib/types';
 
@@ -22,6 +23,7 @@
 	let activeConversationUuid = $derived($agentConversationsStore.activeId);
 
 	onMount(() => {
+		redirectIfCant('ai.use');
 		agentConversationsStore.load();
 	});
 

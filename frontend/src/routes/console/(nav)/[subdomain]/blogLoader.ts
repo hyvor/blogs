@@ -7,7 +7,8 @@ import {
 } from '../../lib/stores/blogStore';
 import { languagesStore } from '../../lib/stores/languagesStore';
 import { usersStore } from '../../lib/stores/usersStore';
-import type { Blog, BlogCounts, Language, User, BlogIntegrations } from '../../lib/types';
+import type { Blog, BlogCounts, Language, User, BlogIntegrations, Scope } from '../../lib/types';
+import { setScopes } from '../../lib/scope.svelte';
 
 export interface BlogResponse {
 	blog: Blog;
@@ -15,6 +16,7 @@ export interface BlogResponse {
 	users: User[];
 	counts: BlogCounts;
 	integrations: BlogIntegrations;
+	scopes?: Scope[];
 }
 
 // to prevent multiple requests for the same subdomain
@@ -63,6 +65,7 @@ function handleResponse(res: BlogResponse) {
 	languagesStore.set(res.languages);
 	usersStore.set(res.users);
 	integrationsStore.set(res.integrations);
+	setScopes(res.scopes ?? []);
 }
 
 export function setPreloadedBlog(blogResponse: BlogResponse) {

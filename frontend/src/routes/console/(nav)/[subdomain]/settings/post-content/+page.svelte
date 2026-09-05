@@ -14,6 +14,12 @@
 	import IconCaretDown from '@hyvor/icons/IconCaretDown';
 	import { getConfig } from '../../../../lib/config';
 	import { getI18n } from '../../../../lib/i18n';
+	import { onMount } from 'svelte';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
+
+	onMount(() => {
+		redirectIfCant('blog.write');
+	});
 
 	const i18n = getI18n();
 

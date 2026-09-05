@@ -20,6 +20,7 @@
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 	import type { Redirect } from '../../../../lib/types';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -93,7 +94,10 @@
 		dynamicRedirectsStore.set(countDynamicRedirects(redirects));
 	}
 
-	onMount(loadRedirect);
+	onMount(() => {
+		redirectIfCant('redirects.read');
+		loadRedirect();
+	});
 </script>
 
 <SettingsTop>
@@ -119,7 +123,7 @@
 		{/if}
 	</div>
 
-	<Button size="small" on:click={() => (isCreating = true)}>
+	<Button size="small" disabled={cant('redirects.write')} on:click={() => (isCreating = true)}>
 		Add Redirect {#snippet end()}
 			<IconPlus />
 		{/snippet}

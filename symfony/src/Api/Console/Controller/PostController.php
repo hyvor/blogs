@@ -30,6 +30,7 @@ use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -284,6 +285,8 @@ class PostController
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
+        $this->checkPublishPermission($post);
+
         $blog = $this->blogAuthListener->getBlog();
 
         $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
@@ -322,6 +325,8 @@ class PostController
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
+        $this->checkPublishPermission($post);
+
         $blog = $this->blogAuthListener->getBlog();
 
         $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
@@ -351,12 +356,27 @@ class PostController
         return new JsonResponse($this->postObjectFactory->createVariant($variant));
     }
 
+    private function checkPublishPermission(Post $post): void
+    {
+        $blogUser = $this->blogAuthListener->getBlogUser();
+        $isAuthor = $blogUser !== null && $post->getAuthors()->contains($blogUser);
+
+        if (!$isAuthor) {
+            $scopes = $this->blogAuthListener->getScopes();
+            if (!in_array(Scope::POSTS_PUBLISH_ALL, $scopes, true)) {
+                throw new AccessDeniedHttpException('You do not have permission to publish this post because you are not an author.');
+            }
+        }
+    }
+
     #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
     public function unpublishPostVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
+        $this->checkPublishPermission($post);
+
         $blog = $this->blogAuthListener->getBlog();
 
         $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);

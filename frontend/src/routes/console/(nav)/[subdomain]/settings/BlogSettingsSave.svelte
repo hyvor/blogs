@@ -5,6 +5,7 @@
 	import { updateBlog, updateBlogVariant } from '../../../lib/actions/blogActions';
 	import { beforeNavigate } from '$app/navigation';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -136,11 +137,16 @@
 	</span>
 
 	<span class="buttons">
-		<Button color="gray" disabled={!should} variant="invisible" on:click={handleDiscard}
-			>{i18n.t('console.settings.discard')}</Button
+		<Button
+			color="gray"
+			disabled={!should || cant('blog.write')}
+			variant="invisible"
+			on:click={handleDiscard}>{i18n.t('console.settings.discard')}</Button
 		>
 
-		<Button disabled={!should} on:click={handleSave}>{i18n.t('console.common.save')}</Button>
+		<Button disabled={!should || cant('blog.write')} on:click={handleSave}
+			>{i18n.t('console.common.save')}</Button
+		>
 	</span>
 </div>
 

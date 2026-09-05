@@ -17,6 +17,7 @@
 	import { onMount } from 'svelte';
 	import AddUser from './AddUser.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -70,11 +71,14 @@
 		users = users.map((t) => (t.id === e.detail.id ? e.detail : t));
 	}
 
-	onMount(loadUsers);
+	onMount(() => {
+		redirectIfCant('users.read');
+		loadUsers();
+	});
 </script>
 
 <SettingsTop>
-	<Button on:click={() => (isCreating = true)}>
+	<Button disabled={cant('users.add')} on:click={() => (isCreating = true)}>
 		Add User {#snippet end()}
 			<IconPlus />
 		{/snippet}

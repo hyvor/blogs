@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\UserRole;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Post\Suggestion\PostSuggestionContentChecker;
@@ -222,6 +223,60 @@ class PublishPostVariantTest extends ApiTestCase
 
         $this->assertResponseFailed(422, 'unresolved suggestions');
 
+        $this->getEm()->refresh($variant);
+        $this->assertNull($variant->getPublishedAt());
+    }
+
+    public function test_author_can_publish(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $author = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::WRITER]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        $post->getAuthors()->add($author);
+        $this->getEm()->flush();
+
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'content_unsaved' => self::CONTENT_UNSAVED,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $author);
+
+        $this->assertResponseIsSuccessful();
+        $this->getEm()->refresh($variant);
+        $this->assertSame(PostVariantStatus::PUBLISHED, $variant->getStatus());
+    }
+
+    public function test_non_author_without_publish_all_cannot_publish(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage();
+        RouteFactory::createDefaultsFor($blog);
+        $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::WRITER]);
+        $language = $blog->getLanguages()->first();
+        $this->assertNotFalse($language);
+        $post = PostFactory::createOne(['blog' => $blog]);
+
+        $variant = PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::DRAFT,
+            'slug' => 'my-post',
+            'content_unsaved' => self::CONTENT_UNSAVED,
+        ]);
+
+        $this->consoleBlogApi('POST', $blog, '/post/' . $post->getId() . '/variant/publish', [
+            'post_variant_id' => $variant->getId(),
+        ], user: $user);
+
+        $this->assertResponseFailed(403, 'You do not have permission to publish this post because you are not an author.');
         $this->getEm()->refresh($variant);
         $this->assertNull($variant->getPublishedAt());
     }

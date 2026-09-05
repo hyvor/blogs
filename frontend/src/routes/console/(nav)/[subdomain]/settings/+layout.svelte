@@ -22,6 +22,7 @@
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 	interface Props {
@@ -36,7 +37,11 @@
 <div class="settings">
 	<div class="nav hds-box">
 		<NavLinkGroup activeBackground="var(--accent-light-mid)">
-			<NavLink href={consoleUrlWithBlog('/settings')} active={$page.url.pathname === `${prefix}`}>
+			<NavLink
+				href={consoleUrlWithBlog('/settings')}
+				active={$page.url.pathname === `${prefix}`}
+				disabled={cant('blog.read')}
+			>
 				{#snippet start()}
 					<IconList />
 				{/snippet}
@@ -46,6 +51,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/users')}
 				active={$page.url.pathname === `${prefix}/users`}
+				disabled={cant('users.read')}
 			>
 				{#snippet start()}
 					<IconPeople />
@@ -56,6 +62,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/tags')}
 				active={$page.url.pathname === `${prefix}/tags`}
+				disabled={cant('tags.read')}
 			>
 				{#snippet start()}
 					<IconTag />
@@ -66,6 +73,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/languages')}
 				active={$page.url.pathname === `${prefix}/languages`}
+				disabled={cant('languages.read')}
 			>
 				{#snippet start()}
 					<IconGlobe />
@@ -78,6 +86,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/hosting')}
 				active={$page.url.pathname === `${prefix}/hosting`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconDatabase />
@@ -88,6 +97,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/seo')}
 				active={$page.url.pathname === `${prefix}/seo`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconSearchHeart />
@@ -98,6 +108,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/ai')}
 				active={$page.url.pathname === `${prefix}/ai`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconRobot />
@@ -108,6 +119,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/color-mode')}
 				active={$page.url.pathname === `${prefix}/color-mode`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconLightbulb />
@@ -118,6 +130,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/post-content')}
 				active={$page.url.pathname === `${prefix}/post-content`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconCursorText />
@@ -128,6 +141,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/navigation')}
 				active={$page.url.pathname === `${prefix}/navigation`}
+				disabled={cant('navigations.read')}
 			>
 				{#snippet start()}
 					<IconLink45deg />
@@ -138,6 +152,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/redirects')}
 				active={$page.url.pathname === `${prefix}/redirects`}
+				disabled={cant('redirects.read')}
 			>
 				{#snippet start()}
 					<IconSignTurnSlightRight />
@@ -148,6 +163,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/routes')}
 				active={$page.url.pathname === `${prefix}/routes`}
+				disabled={cant('routes.read')}
 			>
 				{#snippet start()}
 					<IconSignpost2 />
@@ -160,6 +176,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/comments')}
 				active={$page.url.pathname === `${prefix}/comments`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconChatText />
@@ -169,6 +186,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/code')}
 				active={$page.url.pathname === `${prefix}/code`}
+				disabled={cant('blog.write')}
 			>
 				{#snippet start()}
 					<IconCodeSlash />
@@ -178,6 +196,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/api-keys')}
 				active={$page.url.pathname === `${prefix}/api-keys`}
+				disabled={cant('api_keys.read')}
 			>
 				{#snippet start()}
 					<IconKey />
@@ -187,6 +206,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/webhooks')}
 				active={$page.url.pathname === `${prefix}/webhooks`}
+				disabled={cant('webhooks.read')}
 			>
 				{#snippet start()}
 					<IconSend />
@@ -199,6 +219,7 @@
 			<NavLink
 				href={consoleUrlWithBlog('/settings/danger')}
 				active={$page.url.pathname === `${prefix}/danger`}
+				disabled={cant('blog.delete')}
 			>
 				{#snippet start()}
 					<IconExclamationTriangle />

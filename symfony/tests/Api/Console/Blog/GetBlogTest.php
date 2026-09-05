@@ -74,5 +74,10 @@ class GetBlogTest extends ApiTestCase
         $this->assertCount(1, $json['languages']);
         $this->assertIsArray($json['languages'][0]);
         $this->assertTrue($json['languages'][0]['is_primary']);
+
+        $this->assertIsArray($json['scopes']);
+        $this->assertContains('blog.read', $json['scopes']);
+        $this->assertContains('languages.read', $json['scopes']);
+        $this->assertContains('languages.write', $json['scopes']);
     }
 }

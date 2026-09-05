@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { TabNav, TabNavItem } from '@hyvor/design/components';
 	import NewExport from './NewExport.svelte';
 	import ExportHistory from './ExportHistory/ExportHistory.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -11,6 +13,10 @@
 	function handleComplete() {
 		tab = 'history';
 	}
+
+	onMount(() => {
+		redirectIfCant('export.manage');
+	});
 </script>
 
 <div class="export hds-box">

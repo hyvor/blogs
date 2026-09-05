@@ -11,6 +11,7 @@
 	import UnsavedTag from '../Sidebar/Settings/UnsavedTag.svelte';
 	import { updatePostVariant } from '../../postActions';
 	import { getI18n } from '../../../../../lib/i18n';
+	import { cant } from '../../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -121,6 +122,7 @@
 		bind:this={textarea}
 		onblur={handleBlur}
 		name="title"
+		readonly={cant('posts.write')}
 	></textarea>
 
 	<!-- <div class="loader-wrap">

@@ -238,10 +238,27 @@ class ConsoleApiAuthorizationListener
     }
 
     /**
+     * @return Scope[]
+     */
+    public function getScopes(): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request === null) {
+            return [];
+        }
+        $scopes = $request->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
+        return is_array($scopes) ? $scopes : [];
+    }
+
+    /**
      * ConsoleSubrequest sets this to run without authorization
      */
-    public function setBlogToRequest(Request $request, Blog $blog): void
+    public function setBlogToRequest(Request $request, Blog $blog, ?User $blogUser = null): void
     {
         $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+        if ($blogUser !== null) {
+            $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
+            $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
+        }
     }
 }

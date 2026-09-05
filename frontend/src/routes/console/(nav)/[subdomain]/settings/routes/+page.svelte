@@ -9,6 +9,7 @@
 	import RouteRow from './RouteRow.svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -22,6 +23,7 @@
 	let routes: Route[] = $state([]);
 
 	onMount(() => {
+		redirectIfCant('routes.read');
 		getRoutes()
 			.then((res) => {
 				routes = res;
@@ -54,7 +56,7 @@
 </script>
 
 <SettingsTop>
-	<Button on:click={() => (isCreating = true)}>
+	<Button disabled={cant('routes.write')} on:click={() => (isCreating = true)}>
 		Create Route {#snippet end()}
 			<IconPlus />
 		{/snippet}

@@ -30,6 +30,7 @@
 	import { onMount } from 'svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import IconClockHistory from '@hyvor/icons/IconClockHistory';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -124,6 +125,7 @@
 	}
 
 	onMount(() => {
+		redirectIfCant('blog.write');
 		getHostingInfo()
 			.then((res) => {
 				hostingInfoStore.set(res);

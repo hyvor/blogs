@@ -8,6 +8,7 @@
 	import CreateNavigationModal from './CreateNavigationModal.svelte';
 	import NavTable from './NavTable.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -54,7 +55,10 @@
 		});
 	}
 
-	onMount(loadNavigation);
+	onMount(() => {
+		redirectIfCant('navigations.read');
+		loadNavigation();
+	});
 </script>
 
 <SettingsTop>
@@ -76,7 +80,7 @@
 	</div>
 
 	<div class="filter-section">
-		<Button size="small" on:click={() => (isCreating = true)}>
+		<Button size="small" disabled={cant('navigations.write')} on:click={() => (isCreating = true)}>
 			Create Navigation {#snippet end()}
 				<IconPlus />
 			{/snippet}

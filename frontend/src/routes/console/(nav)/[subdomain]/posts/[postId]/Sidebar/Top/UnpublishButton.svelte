@@ -1,13 +1,23 @@
 <script lang="ts">
-	import { Button, Modal, toast } from '@hyvor/design/components';
-	import { postVariantStore } from '../../../postStore';
+	import { Button, Modal, Tooltip, toast } from '@hyvor/design/components';
+	import { postStore, postVariantStore } from '../../../postStore';
 	import { unpublishPostVariant } from '../../../postActions';
 	import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
 	import { getI18n } from '../../../../../../lib/i18n';
+	import { authUserStore } from '../../../../../../lib/stores';
+	import { can } from '../../../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
 	let modalOpen = $state(false);
+
+	let isAuthor = $derived(
+		($postStore?.authors ?? []).some((author) => author.hyvor_user_id === $authUserStore?.id)
+	);
+
+	let canPublish = $derived(can('posts.publish.all') || (isAuthor && can('posts.publish.own')));
+
+	const publishPermissionTooltip = i18n.t('console.postEditor.publish.noPermission');
 
 	function handleUnpublish() {
 		modalOpen = false;
@@ -27,16 +37,18 @@
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
-	<Button size="small" color="input" on:click={() => (modalOpen = true)}>
-		{#snippet start()}
-			<IconEyeSlash size={12} />
-		{/snippet}
-		{#if $postVariantStore.status === 'scheduled'}
-			{i18n.t('console.postEditor.unpublish.unschedule')}
-		{:else}
-			{i18n.t('console.postEditor.unpublish.unpublish')}
-		{/if}
-	</Button>
+	<Tooltip text={!canPublish ? publishPermissionTooltip : ''}>
+		<Button size="small" color="input" disabled={!canPublish} on:click={() => (modalOpen = true)}>
+			{#snippet start()}
+				<IconEyeSlash size={12} />
+			{/snippet}
+			{#if $postVariantStore.status === 'scheduled'}
+				{i18n.t('console.postEditor.unpublish.unschedule')}
+			{:else}
+				{i18n.t('console.postEditor.unpublish.unpublish')}
+			{/if}
+		</Button>
+	</Tooltip>
 
 	<Modal
 		title={$postVariantStore.status === 'scheduled'

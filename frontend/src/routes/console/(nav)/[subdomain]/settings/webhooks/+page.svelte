@@ -24,6 +24,7 @@
 	import WebhookList from './WebhookList.svelte';
 	import WebhookDeliveryList from './WebhookDeliveryList.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -68,6 +69,7 @@
 	});
 
 	onMount(() => {
+		redirectIfCant('webhooks.read');
 		loadWebhooks();
 	});
 
@@ -172,7 +174,7 @@
 	</div>
 	{#if activeTab === 'configure'}
 		<div class="filter-section">
-			<Button size="small" on:click={() => (isCreating = true)}>
+			<Button size="small" disabled={cant('webhooks.write')} on:click={() => (isCreating = true)}>
 				{i18n.t('console.settings.webhooks.create')}
 				{#snippet end()}
 					<IconPlus />

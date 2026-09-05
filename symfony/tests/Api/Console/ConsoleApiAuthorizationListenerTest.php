@@ -6,11 +6,13 @@ use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Entity\Enum\ApiKeyType;
+use App\Entity\Enum\UserRole;
 use App\Entity\Enum\UserStatus;
 use App\Service\ApiKey\ApiKeyService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -222,6 +224,19 @@ class ConsoleApiAuthorizationListenerTest extends ApiTestCase
         );
 
         $this->assertResponseFailed(403, 'You do not have access to this blog');
+    }
+
+    public function test_blog_level_returns_403_when_user_lacks_scope(): void
+    {
+        $blog = BlogFactory::createOne();
+        $writer = UserFactory::createOne([
+            'blog' => $blog,
+            'role' => UserRole::WRITER,
+        ]);
+
+        $this->consoleBlogApi('GET', $blog, '/api-keys', user: $writer);
+
+        $this->assertResponseFailed(403, "API key is missing the required scope 'api_keys.read'.");
     }
 
     // -----------------------------------------------------------------------

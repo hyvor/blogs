@@ -16,6 +16,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -78,7 +79,13 @@
 
 	<div>
 		<Tooltip text={i18n.t('console.settings.routes.editRoute')}>
-			<IconButton size="small" color="input" variant="fill" on:click={() => (isUpdating = true)}>
+			<IconButton
+				size="small"
+				color="input"
+				variant="fill"
+				disabled={cant('routes.write')}
+				on:click={() => (isUpdating = true)}
+			>
 				<IconPencilFill size={10} />
 			</IconButton>
 		</Tooltip>
@@ -89,7 +96,7 @@
 				variant="fill-light"
 				color="red"
 				on:click={handleDelete}
-				disabled={isDefaultRoute}
+				disabled={isDefaultRoute || cant('routes.write')}
 			>
 				<IconTrash size={10} />
 			</IconButton>

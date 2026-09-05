@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { page } from '$app/stores';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { getI18n } from '../../../lib/i18n';
+	import { redirectIfCant } from '../../../lib/scope.svelte';
 
 	const i18n = getI18n();
 
@@ -12,6 +14,10 @@
 	}
 
 	let { children }: Props = $props();
+
+	onMount(() => {
+		redirectIfCant('integrations.manage');
+	});
 </script>
 
 <div class="integrations">

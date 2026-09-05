@@ -13,6 +13,12 @@
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { getI18n } from '../../../../lib/i18n';
+	import { onMount } from 'svelte';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
+
+	onMount(() => {
+		redirectIfCant('blog.write');
+	});
 
 	const models = getConfig().ai_models;
 
