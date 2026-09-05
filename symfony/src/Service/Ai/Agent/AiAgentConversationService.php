@@ -18,7 +18,6 @@ use App\Service\Ai\Agent\Event\TextEvent;
 use App\Service\Ai\Agent\Event\ThoughtEvent;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\AiModel;
-use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
@@ -36,7 +35,6 @@ class AiAgentConversationService
         private EntityManagerInterface $em,
         private AiAgentService $aiAgentService,
         private AiAgentHistoryService $aiAgentHistoryService,
-        private PermalinkService $permalinkService,
         private LoggerInterface $logger,
     ) {}
 
@@ -105,6 +103,7 @@ class AiAgentConversationService
          * @param array<string, mixed> $input
          */
         $onQueryComplete = function (string $toolName, array $input, mixed $output) use ($assistantMessage, &$pendingQueryEvents): void {
+            /** @var array<string, mixed> $input */
             $event = $this->createEvent(
                 $assistantMessage,
                 new QueryEvent(
@@ -267,6 +266,9 @@ class AiAgentConversationService
         return $event;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function sseArrayFromMessageEvent(AiMessageEvent $event): array
     {
         return [

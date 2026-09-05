@@ -5,7 +5,6 @@ namespace App\Service\Ai\Agent;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Ai\AiModel;
-use App\Service\Post\Content\PostContentService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -23,7 +22,6 @@ class AiAgentTestCommand
 
     public function __construct(
         private AiAgentService $aiAgentService,
-        private PostContentService $postContentService
     ) {}
 
     public function __invoke(): int

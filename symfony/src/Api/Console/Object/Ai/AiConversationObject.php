@@ -11,7 +11,7 @@ class AiConversationObject
     public string $uuid;
     public int $created_at;
     public int $updated_at;
-    public string $title;
+    public ?string $title;
     public ?int $post_variant_id;
 
     public function __construct(AiConversation $conversation)

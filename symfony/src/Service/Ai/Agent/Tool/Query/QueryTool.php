@@ -49,11 +49,14 @@ class QueryTool
         private PermalinkService $permalinkService,
         // private LoggerInterface $logger,
         /**
-         * @var ?callable(string $toolName, array $input, mixed $output): void
+         * @var ?\Closure(string, array<string, mixed>, mixed): void
          */
         private ?\Closure $onQueryComplete = null,
     ) {}
 
+    /**
+     * @return array<array-key, array<string, bool|string>>
+     */
     public function getLanguages(): array
     {
         $languages = $this->languageService->getAllLanguages($this->blog);

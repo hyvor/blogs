@@ -105,6 +105,8 @@ class AiConversationService
 
     public function getEvent(Blog $blog, int $eventId): ?AiMessageEvent
     {
+
+        /** @var ?AiMessageEvent $event */
         $event = $this->em->getRepository(AiMessageEvent::class)->createQueryBuilder('e')
             ->innerJoin('e.ai_message', 'm')
             ->innerJoin('m.conversation', 'c')
