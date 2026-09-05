@@ -1,52 +1,22 @@
-# when@prod: &prod
-#     monolog:
-#         handlers:
-#             app:
-#                 type: buffer
-#                 handler: final
-#                 level: "%env(LOG_LEVEL)%"
-#                 bubble: false
-#                 channels: ["app"]
-
-#             non_app:
-#                 type: buffer
-#                 handler: final
-#                 level: error
-#                 bubble: false
-#                 channels: ["!app"]
-
-#             final:
-#                 type: stream
-#                 path: "php://stderr"
-#                 formatter: monolog.formatter.json
-
-# when@prod: &prod
-#     monolog:
-#         handlers:
-#             app:
-#                 type: stream
-#                 path: "php://stderr"
-#                 level: "%env(LOG_LEVEL)%"
-#                 channels: ["app"]
-#                 formatter: monolog.formatter.json
-
-#             non_app:
-#                 type: stream
-#                 path: "php://stderr"
-#                 level: error
-#                 bubble: false
-#                 channels: ["!app"]
-#                 formatter: monolog.formatter.json
-
 when@prod: &prod
     monolog:
         handlers:
-            main:
+            app:
                 type: stream
                 path: "php://stderr"
                 level: "%env(LOG_LEVEL)%"
                 formatter: monolog.formatter.json
-                channels: ["!cache"]
+                bubble: false
+                channels: ["app"]
+
+            non_app:
+                type: stream
+                path: "php://stderr"
+                level: error
+                formatter: monolog.formatter.json
+                bubble: false
+                channels: ["!app", "!cache"]
+
 
 when@dev: *prod
 

@@ -47,41 +47,46 @@
 		</div>
 		<div class="doc-changes-list">
 			{#each events as event}
-				{@const variant = event.post_variant!}
+				{@const variant = event.post_variant}
 				{@const reviewed = event.document_change_status === 'reviewed'}
-				<div class="doc-change-row">
-					<div class="doc-change-status" class:reviewed>
-						{#if reviewed}
-							<IconCheckCircleFill size={14} />
-						{:else}
-							<IconClock size={14} />
-						{/if}
-					</div>
-					<div class="doc-change-info">
-						<div class="doc-change-title">
-							{variant.title || `Post variant #${variant.id}`}
-						</div>
-						<div class="doc-change-meta">
-							<span class="doc-change-status-label" class:reviewed>
-								{reviewed ? 'Reviewed' : 'Needs review'}
-							</span>
-							&middot;
-							{#if variant}
-								<PostStatusText status={variant.status} />
+
+				{#if variant}
+					<div class="doc-change-row">
+						<div class="doc-change-status" class:reviewed>
+							{#if reviewed}
+								<IconCheckCircleFill size={14} />
+							{:else}
+								<IconClock size={14} />
 							{/if}
-							{#if $languagesStore.length > 1}
-								{@const language = $languagesStore.find((lang) => lang.id === variant.language_id)}
-								{#if language}
-									&middot;
-									<span class="language-label">{language.name}</span>
+						</div>
+						<div class="doc-change-info">
+							<div class="doc-change-title">
+								{variant.title || `Post variant #${variant.id}`}
+							</div>
+							<div class="doc-change-meta">
+								<span class="doc-change-status-label" class:reviewed>
+									{reviewed ? 'Reviewed' : 'Needs review'}
+								</span>
+								&middot;
+								{#if variant}
+									<PostStatusText status={variant.status} />
 								{/if}
-							{/if}
+								{#if $languagesStore.length > 1}
+									{@const language = $languagesStore.find(
+										(lang) => lang.id === variant.language_id
+									)}
+									{#if language}
+										&middot;
+										<span class="language-label">{language.name}</span>
+									{/if}
+								{/if}
+							</div>
 						</div>
+						<Button size="small" color="input" onclick={() => openReview(event)}
+							>Review changes</Button
+						>
 					</div>
-					<Button size="small" color="input" onclick={() => openReview(event)}
-						>Review changes</Button
-					>
-				</div>
+				{/if}
 			{/each}
 		</div>
 	</div>

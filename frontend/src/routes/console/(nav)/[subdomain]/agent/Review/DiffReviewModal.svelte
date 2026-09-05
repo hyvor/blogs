@@ -196,6 +196,7 @@
 	appendToBody
 	loading={loadingDocument}
 	id="diff-review-modal"
+	closeOnEscape={false}
 >
 	{#if currentDocument}
 		<div class="inner">

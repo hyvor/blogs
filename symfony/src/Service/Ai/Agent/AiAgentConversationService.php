@@ -190,6 +190,7 @@ class AiAgentConversationService
             if (isset($agentCallResult)) {
                 try {
                     $this->recordAgentCallUsage($agentCallResult, $assistantMessage);
+                    $this->em->flush();
                 } catch (\Throwable) {}
             }
 
@@ -280,6 +281,7 @@ class AiAgentConversationService
     ): void
     {
         $tokenUsage = $agentCallResult->getResult()->getMetadata()->get('token_usage');
+
         if ($tokenUsage instanceof TokenUsageInterface) {
             $inputTokens = $tokenUsage->getPromptTokens();
             $outputTokens = $tokenUsage->getCompletionTokens();
@@ -298,6 +300,11 @@ class AiAgentConversationService
                 $assistantMessage->setOutputTokensUsdCost($outputCostCents);
                 $assistantMessage->setTotalTokensUsdCost($inputCostCents + $outputCostCents);
             }
+        } else {
+            $this->logger->warning('Token usage data missing from AI agent call result', [
+                'assistant_message_id' => $assistantMessage->getId(),
+                'agent_call_result' => $agentCallResult,
+            ]);
         }
     }
 

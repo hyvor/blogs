@@ -12,6 +12,7 @@ use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
 use Symfony\AI\Platform\Result\Stream\Delta;
+use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -114,7 +115,7 @@ class AiAgentTestCommand
 
         $prompt = 'Add a couple of content to given post. Use paragraphs, blockquotes, callouts, buttons, embeds, TOC, bookmark, etc. Add images and links. Make it engaging and informative. Fix any factual errors.';
         // $prompt = 'fix factual errors in the content. Make sure the content is accurate and informative';
-        $prompt = 'Summarize https://blogs.hyvor.com/pricing for me';
+        $prompt = 'test';
 
         $result = $this->aiAgentService->callAgent($blog, $prompt, $postVariant);
 
@@ -143,7 +144,7 @@ class AiAgentTestCommand
             }
         }
 
-        dd($result->getResult()->getRawResult());
+        dd($result->getResult()->getMetadata()->get('token_usage') instanceof TokenUsageInterface);
 
         // $content = $result->getDocumentOpsTool()->getFinalDocument($postVariant->getId())->toArray();
     }
