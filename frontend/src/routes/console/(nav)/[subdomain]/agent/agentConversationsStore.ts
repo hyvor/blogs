@@ -1,8 +1,5 @@
 import { get, writable } from 'svelte/store';
-import {
-	deleteAiConversation,
-	getAiConversations,
-} from './aiConversationApi';
+import { deleteAiConversation, getAiConversations } from './aiConversationApi';
 import type { AiConversation } from '../../../lib/types';
 
 const PAGE_SIZE = 25;

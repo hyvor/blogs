@@ -105,9 +105,7 @@
 			<Dropdown bind:show={showDropdown} align="start" width={280}>
 				{#snippet trigger()}
 					<Button color="input" variant="invisible" size="small">
-						<span class="conversation-title"
-							>{activeTitle || i18n.t('console.agent.newChat')}</span
-						>
+						<span class="conversation-title">{activeTitle || i18n.t('console.agent.newChat')}</span>
 
 						{#snippet end()}
 							<IconChevronDown size={10} />

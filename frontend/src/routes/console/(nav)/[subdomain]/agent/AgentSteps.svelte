@@ -40,9 +40,7 @@
 				<button type="button" class="step-header" onclick={() => toggleThinking(i, block.done)}>
 					<IconLightbulb size={13} />
 					<span
-						>{block.done
-							? i18n.t('console.agent.thought')
-							: i18n.t('console.agent.thinking')}</span
+						>{block.done ? i18n.t('console.agent.thought') : i18n.t('console.agent.thinking')}</span
 					>
 					{#if !block.done}
 						<Loader size="small" />
