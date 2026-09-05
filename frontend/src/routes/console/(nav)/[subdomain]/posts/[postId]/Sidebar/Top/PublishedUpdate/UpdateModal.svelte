@@ -9,6 +9,8 @@
 		postVariantOriginalStore,
 		postVariantStore
 	} from '../../../../postStore';
+	import IconCheck from '@hyvor/icons/IconCheck';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import { getPublishedChanges } from './published-changes';
 	import {
 		updatePost,
@@ -57,6 +59,7 @@
 	let disabled = $derived(slugEmpty || !!slugInvalidChar || pendingSuggestions);
 
 	let isLoading = $state(false);
+	let updated: null | { url: string } = $state(null);
 
 	async function handleUpdate() {
 		isLoading = true;
@@ -70,11 +73,15 @@
 			delete variantChanges.content;
 
 			if (Object.keys(variantChanges).length) {
-				await updatePostVariant({
-					language_id: $postVariantLanguageStore.id,
-					...variantChanges,
-					redirect_on_slug_change: redirectOnSlugChange
-				});
+				await updatePostVariant(
+					{
+						language_id: $postVariantLanguageStore.id,
+						...variantChanges,
+						redirect_on_slug_change: redirectOnSlugChange
+					},
+					true,
+					['url']
+				);
 			}
 
 			if (Object.keys(changes.post).length) {
@@ -94,9 +101,7 @@
 		}
 
 		isLoading = false;
-		show = false;
-
-		toast.success(i18n.t('console.postEditor.update.updated'));
+		updated = { url: $postVariantStore.url };
 	}
 
 	function openSettings() {
@@ -108,50 +113,79 @@
 <Modal
 	bind:show
 	title={i18n.t('console.postEditor.update.modalTitle')}
-	size="medium"
+	size={updated ? 'small' : 'medium'}
 	loading={isLoading}
+	bare={updated !== null}
+	onclose={() => {
+		if (updated !== null) {
+			updated = null;
+		}
+	}}
 >
-	<div class="note">{i18n.t('console.postEditor.update.intro')}</div>
+	{#if updated === null}
+		<div class="note">{i18n.t('console.postEditor.update.intro')}</div>
 
-	{#if pendingSuggestions}
-		<div class="note">
-			<Validation state="error"
-				>{i18n.t('console.postEditor.publish.issues.pendingSuggestions')}</Validation
-			>
-		</div>
-	{/if}
-
-	<PublishSummary diff onEditSettings={openSettings} />
-
-	{#if slugChanged}
-		<div class="auto-redirects">
-			<span>
-				{i18n.t('console.postEditor.update.createRedirect')}
-				<Tooltip text={i18n.t('console.postEditor.update.createRedirectTooltip')}>
-					<IconInfoCircleFill />
-				</Tooltip>
-			</span>
-			<Switch bind:checked={redirectOnSlugChange} />
-		</div>
-
-		{#if slugEmpty}
-			<Validation state="error">{i18n.t('console.postEditor.update.slugEmpty')}</Validation>
+		{#if pendingSuggestions}
+			<div class="note">
+				<Validation state="error"
+					>{i18n.t('console.postEditor.publish.issues.pendingSuggestions')}</Validation
+				>
+			</div>
 		{/if}
-		{#if slugInvalidChar}
-			<Validation state="error"
-				>{i18n.t('console.postEditor.update.slugInvalidChar', {
-					char: slugInvalidChar
-				})}</Validation
-			>
+
+		<PublishSummary diff onEditSettings={openSettings} />
+
+		{#if slugChanged}
+			<div class="auto-redirects">
+				<span>
+					{i18n.t('console.postEditor.update.createRedirect')}
+					<Tooltip text={i18n.t('console.postEditor.update.createRedirectTooltip')}>
+						<IconInfoCircleFill />
+					</Tooltip>
+				</span>
+				<Switch bind:checked={redirectOnSlugChange} />
+			</div>
+
+			{#if slugEmpty}
+				<Validation state="error">{i18n.t('console.postEditor.update.slugEmpty')}</Validation>
+			{/if}
+			{#if slugInvalidChar}
+				<Validation state="error"
+					>{i18n.t('console.postEditor.update.slugInvalidChar', {
+						char: slugInvalidChar
+					})}</Validation
+				>
+			{/if}
 		{/if}
+	{:else}
+		<div class="published">
+			<div class="icon">
+				<IconCheck size={26} />
+			</div>
+			<div class="title">
+				{i18n.t('console.postEditor.update.updated')}
+			</div>
+			<div class="button">
+				<Button as="a" href={updated.url} target="_blank" color="accent">
+					{i18n.t('console.postEditor.publish.viewPost')}
+					{#snippet end()}
+						<IconBoxArrowUpRight size={10} />
+					{/snippet}
+				</Button>
+			</div>
+		</div>
 	{/if}
 
 	{#snippet footer()}
-		<Button variant="invisible" on:click={() => (show = false)}
-			>{i18n.t('console.common.cancel')}</Button
-		>
+		{#if updated === null}
+			<Button variant="invisible" on:click={() => (show = false)}
+				>{i18n.t('console.common.cancel')}</Button
+			>
 
-		<Button on:click={handleUpdate} {disabled}>{i18n.t('console.postEditor.update.button')}</Button>
+			<Button on:click={handleUpdate} {disabled}
+				>{i18n.t('console.postEditor.update.button')}</Button
+			>
+		{/if}
 	{/snippet}
 </Modal>
 
@@ -170,5 +204,33 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 5px;
+	}
+
+	.published {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 15px;
+		padding: 25px 0;
+	}
+
+	.published .icon {
+		width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--green-light);
+		color: var(--green-dark);
+	}
+
+	.published .title {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.published .button {
+		margin-top: 5px;
 	}
 </style>
