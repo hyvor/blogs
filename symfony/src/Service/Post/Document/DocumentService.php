@@ -9,6 +9,7 @@ use App\Entity\PostVariantStep;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Document\Exception\CheckpointClientAheadException;
 use App\Service\Post\Document\Exception\CheckpointClientBehindException;
+use App\Service\Post\Document\Exception\SetContentUnsavedVersionMismatchException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -210,15 +211,88 @@ class DocumentService
 
             $current->setContentUnsaved($json);
             $current->setContentUnsavedVersion($version);
-            $current->setUpdatedAt($this->now());
-
-            if ($current->getStatus() === PostVariantStatus::DRAFT) {
-                $text = $this->postContentService->getText($json, $blog);
-                $current->setWords(str_word_count($text));
-            }
+            $this->doAfterUpdateCalculations($current, $blog, $json);
 
             $this->em->persist($current);
         });
+    }
+
+    /**
+     * This is used when the user updates the document fully outside the normal collaborative editing flow.
+     * e.g. after reviewing AI changes.
+     *
+     * - sets content_unsaved to the new document
+     * - sets content_unsaved_version to 0
+     * - sets document_version to 0
+     * - deletes all PostVariantStep rows for this PostVariant
+     * - sends hub update with type 'new_document' to all subscribers
+     *
+     * if $force is false, throws an exception if the given $agentVersion is not equal to the current document_version
+     * to prevent overwriting changes made by other clients.
+     * if $force is true, it will overwrite the current document regardless of the version.
+     *
+     * @throws SetContentUnsavedVersionMismatchException
+     */
+    public function setContentUnsaved(
+        PostVariant $variant,
+        Blog $blog,
+        string $json,
+        int $agentVersion,
+        bool $force = false,
+    ): void
+    {
+
+        $this->em->wrapInTransaction(function () use ($variant, $blog, $json, $agentVersion, $force) {
+            $current = $this->em->find(PostVariant::class, $variant->getId(), LockMode::PESSIMISTIC_WRITE);
+            assert($current !== null, 'PostVariant not found');
+
+            if ($current->getDocumentVersion() !== $agentVersion && !$force) {
+                throw new SetContentUnsavedVersionMismatchException(sprintf(
+                    'PostVariant document_version is %d, but agent version is %d',
+                    $current->getDocumentVersion(),
+                    $agentVersion
+                ));
+            }
+
+            $current->setContentUnsaved($json);
+            $current->setContentUnsavedVersion(0);
+            $current->setDocumentVersion(0);
+            $this->doAfterUpdateCalculations($current, $blog, $json);
+
+            // delete all steps
+            $this->em->createQueryBuilder()
+                ->delete(PostVariantStep::class, 's')
+                ->where('s.post_variant = :variant')
+                ->setParameter('variant', $variant)
+                ->getQuery()
+                ->execute();
+
+            // notify all clients that the document has changed
+            $this->hub->publish(new Update(
+                $this->topic($variant),
+                json_encode([
+                    'type' => 'new_document',
+                    'document' => [
+                        'content' => json_decode($json, true, 512, JSON_THROW_ON_ERROR),
+                    ],
+                ], JSON_THROW_ON_ERROR),
+                true,
+            ));
+        });
+
+    }
+
+    private function doAfterUpdateCalculations(
+        PostVariant $variant,
+        Blog $blog,
+        string $json,
+    ): void
+    {
+        $variant->setUpdatedAt($this->now());
+        if ($variant->getStatus() === PostVariantStatus::DRAFT) {
+            $text = $this->postContentService->getText($json, $blog);
+            $variant->setWords(str_word_count($text));
+        }
     }
 
     /**

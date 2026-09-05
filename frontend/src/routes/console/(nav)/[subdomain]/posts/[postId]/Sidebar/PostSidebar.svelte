@@ -8,6 +8,7 @@
 	import Settings from './Settings/Settings.svelte';
 	import Seo from './Seo/Seo.svelte';
 	import Ai from './Ai/Ai.svelte';
+	import AgentReplyingTag from './Ai/AgentReplyingTag.svelte';
 	import Links from './Links/Links.svelte';
 	import LinksSidebarTag from './Links/LinksSidebarTag.svelte';
 	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
@@ -69,6 +70,7 @@
 		{#snippet trigger()}
 			<IconRobot size={13} class="icon" />
 			{i18n.t('console.postEditor.sections.agent')}
+			<AgentReplyingTag />
 		{/snippet}
 
 		<Ai />

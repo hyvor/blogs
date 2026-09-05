@@ -4,33 +4,67 @@
 	import Input from './Input.svelte';
 	import dayjs from 'dayjs';
 	import { onMount } from 'svelte';
-	import { replaceState } from '$app/navigation';
 	import IdleMessage from './IdleMessage.svelte';
 	import { Loader, toast } from '@hyvor/design/components';
 	import Messages from './Message/Messages.svelte';
-	import { agentConversationsStore } from './agentConversationsStore';
-	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import {
+		draftSessionKey,
+		deleteAgentChatSession,
+		getAgentChatSession,
+		setAgentChatSession,
+		replyingSessionsStore,
+		setSessionReplying,
+		setPostVariantReplying
+	} from './agentChatSessionStore';
 	import type { AiConversation, AiMessage } from '../../../lib/types';
 
 	interface Props {
 		conversationUuid?: string | null;
 		postVariantId?: number | null;
+		onConversationCreated?: (conversation: AiConversation) => void;
 	}
 
-	let { conversationUuid = null, postVariantId = null }: Props = $props();
+	let { conversationUuid = null, postVariantId = null, onConversationCreated }: Props = $props();
+
+	// while a conversation hasn't been created yet (no uuid), it's cached under a draft key
+	// scoped to this postVariantId/blog, so a fresh "new chat" doesn't inherit a finished one
+	let sessionKey = $derived(conversationUuid ?? draftSessionKey(postVariantId));
 
 	let loading = $state(true);
 	let conversation: null | AiConversation = $state(null);
 	let messages: AiMessage[] = $state([]);
 	let messagesComponent: Messages;
-	let replying = $state(false);
+	// sourced from a module-level store (not a local $state) so that a background stream
+	// started by a since-unmounted AgentChat instance (e.g. the post editor's AI popover was
+	// closed mid-reply) still shows as "replying" once this component remounts for it
+	let replying = $derived($replyingSessionsStore.has(sessionKey));
+
+	// guards the persistence effect below until the initial restore-from-cache/fetch in onMount
+	// has run, otherwise it would fire with the blank initial state and wipe out a cached session
+	// before it's read
+	let restored = $state(false);
+
+	// keeps the live conversation/messages cached under sessionKey, so this component can be
+	// unmounted (e.g. the post editor's AI popover closing) and remounted later - or the active
+	// conversation switched away and back - without losing an in-progress conversation
+	$effect(() => {
+		if (!restored) return;
+		setAgentChatSession(sessionKey, { conversation, messages });
+	});
 
 	async function submit(prompt: string) {
 		if (messagesComponent) {
 			messagesComponent.setAutoScroll(false);
 		}
 
-		replying = true;
+		// tracks this in-flight submission's session key - it moves from the draft key to the
+		// conversation's real uuid once conversation_created fires. Kept as a local variable
+		// (not re-read from the sessionKey prop) since this function keeps running - and must
+		// keep the "replying" flag and cache slot accurate - even after the component that
+		// called it unmounts
+		let replyingKey = sessionKey;
+		setSessionReplying(replyingKey, true);
+		setPostVariantReplying(postVariantId, true);
 
 		// captured before the placeholder conversation below is assigned, so a first message
 		// (no conversation yet) still sends null rather than the placeholder's fake id
@@ -71,11 +105,13 @@
 					conversation = chunk.conversation;
 					conversationUuid = conversation.uuid;
 
-					if (postVariantId === null) {
-						agentConversationsStore.upsert(conversation);
-						agentConversationsStore.setActive(conversation.uuid);
-						replaceState(consoleUrlWithBlog(`/agent/${conversation.uuid}`), {});
-					}
+					// the draft slot is now represented by the real conversation's own session key
+					deleteAgentChatSession(replyingKey);
+					setSessionReplying(replyingKey, false);
+					replyingKey = conversationUuid;
+					setSessionReplying(replyingKey, true);
+
+					onConversationCreated?.(conversation);
 				} else if (chunk.type === 'text_chunk') {
 					if (lastEvent && lastEvent.type === 'text') {
 						lastEvent.content += chunk.content;
@@ -97,18 +133,26 @@
 				} else if (chunk.type === 'event') {
 					assistantMessage.events.push(chunk.event);
 				} else if (chunk.type === 'done') {
-					replying = false;
+					setSessionReplying(replyingKey, false);
 				}
 			});
 		} catch (error) {
 			console.error(error);
 		} finally {
-			replying = false;
+			setSessionReplying(replyingKey, false);
+			setPostVariantReplying(postVariantId, false);
 		}
 	}
 
 	onMount(() => {
-		if (conversationUuid) {
+		const cached = getAgentChatSession(sessionKey);
+
+		if (cached) {
+			conversation = cached.conversation;
+			messages = cached.messages;
+			loading = false;
+			restored = true;
+		} else if (conversationUuid) {
 			getAiConversation(conversationUuid)
 				.then((res) => {
 					conversation = res.conversation;
@@ -117,9 +161,13 @@
 				})
 				.catch((e) => {
 					toast.error(e.message || 'unable to load the conversation');
+				})
+				.finally(() => {
+					restored = true;
 				});
 		} else {
 			loading = false;
+			restored = true;
 		}
 	});
 </script>

@@ -11,4 +11,6 @@ class GetAiConversationsInput
 
     #[Assert\GreaterThanOrEqual(0)]
     public int $offset = 0;
+
+    public ?int $post_variant_id = null;
 }

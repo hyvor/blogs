@@ -573,6 +573,7 @@ export interface AiConversation {
 	created_at: number;
 	updated_at: number;
 	title: string;
+	post_variant_id?: number | null;
 }
 
 export type AiMessageRole = 'user' | 'assistant';

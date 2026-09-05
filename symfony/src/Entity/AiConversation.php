@@ -30,6 +30,10 @@ class AiConversation
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $title = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'post_variant_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?PostVariant $post_variant = null;
+
     public function getId(): int
     {
         return $this->id;
@@ -93,6 +97,17 @@ class AiConversation
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+        return $this;
+    }
+
+    public function getPostVariant(): ?PostVariant
+    {
+        return $this->post_variant;
+    }
+
+    public function setPostVariant(?PostVariant $post_variant): static
+    {
+        $this->post_variant = $post_variant;
         return $this;
     }
 }

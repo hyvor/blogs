@@ -12,10 +12,10 @@ export interface AiConversationDetail {
 	messages: AiMessage[];
 }
 
-export function getAiConversations(limit = 25, offset = 0) {
+export function getAiConversations(limit = 25, offset = 0, postVariantId: number | null = null) {
 	return consoleApi.get<AiConversation[]>({
 		endpoint: '/ai/conversations',
-		data: { limit, offset }
+		data: { limit, offset, post_variant_id: postVariantId }
 	});
 }
 

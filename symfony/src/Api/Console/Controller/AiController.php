@@ -21,6 +21,7 @@ use App\Service\Ai\Translate\TranslateException;
 use App\Service\Post\Document\DocumentService;
 use App\Service\Post\Document\Exception\CheckpointClientAheadException;
 use App\Service\Post\Document\Exception\CheckpointClientBehindException;
+use App\Service\Post\Document\Exception\SetContentUnsavedVersionMismatchException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AiController extends AbstractController
@@ -104,7 +106,7 @@ class AiController extends AbstractController
     ): JsonResponse
     {
         $blog = $this->authListener->getBlog();
-        $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset);
+        $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset, $input->post_variant_id);
 
         return new JsonResponse(array_map(fn(AiConversation $c) => new AiConversationObject($c), $result['conversations']));
     }
@@ -174,16 +176,16 @@ class AiController extends AbstractController
         }
 
         try {
-            $this->documentService->checkpoint(
+            $this->documentService->setContentUnsaved(
                 $event->getPostVariant(),
                 $blog,
                 $input->content,
                 $input->agent_version
             );
-        } catch (CheckpointClientBehindException) {
-            //
-        } catch (CheckpointClientAheadException) {
-            //
+        } catch (SetContentUnsavedVersionMismatchException $e) {
+            throw new ConflictHttpException(
+                $e->getMessage(),
+            );
         }
 
         return new JsonResponse(['success' => true]);

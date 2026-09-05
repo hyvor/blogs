@@ -24,17 +24,23 @@ class AiConversationService
     /**
      * @return array{conversations: AiConversation[], has_more: bool}
      */
-    public function getConversationsForBlog(Blog $blog, int $limit, int $offset): array
+    public function getConversationsForBlog(Blog $blog, int $limit, int $offset, ?int $postVariantId = null): array
     {
-        /** @var AiConversation[] $conversations */
-        $conversations = $this->em->getRepository(AiConversation::class)->createQueryBuilder('c')
+        $queryBuilder = $this->em->getRepository(AiConversation::class)->createQueryBuilder('c')
             ->where('c.blog = :blog')
             ->setParameter('blog', $blog)
             ->orderBy('c.updated_at', 'DESC')
             ->setFirstResult($offset)
-            ->setMaxResults($limit + 1)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit + 1);
+
+        if ($postVariantId !== null) {
+            $queryBuilder
+                ->andWhere('IDENTITY(c.post_variant) = :postVariantId')
+                ->setParameter('postVariantId', $postVariantId);
+        }
+
+        /** @var AiConversation[] $conversations */
+        $conversations = $queryBuilder->getQuery()->getResult();
 
         $hasMore = count($conversations) > $limit;
         if ($hasMore) {
