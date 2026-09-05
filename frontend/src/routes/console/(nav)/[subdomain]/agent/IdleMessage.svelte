@@ -1,15 +1,19 @@
-<script>
+<script lang="ts">
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import IconFileText from '@hyvor/icons/IconFileText';
 	import IconChatDots from '@hyvor/icons/IconChatDots';
 	import IconPencilSquare from '@hyvor/icons/IconPencilSquare';
 	import IconShieldCheck from '@hyvor/icons/IconShieldCheck';
+	import { getI18n } from '../../../lib/i18n';
 
-	const cans = [
-		{ icon: IconFileText, text: 'Can search & read your blog posts' },
-		{ icon: IconChatDots, text: 'Can answer questions about your posts' },
-		{ icon: IconPencilSquare, text: 'Can suggest edits to your posts' }
-	];
+	const i18n = getI18n();
+	const T = i18n.T;
+
+	const cans = $derived([
+		{ icon: IconFileText, text: i18n.t('console.agent.idle.canSearchPosts') },
+		{ icon: IconChatDots, text: i18n.t('console.agent.idle.canAnswerQuestions') },
+		{ icon: IconPencilSquare, text: i18n.t('console.agent.idle.canSuggestEdits') }
+	]);
 </script>
 
 <div class="idle">
@@ -17,7 +21,7 @@
 		<IconRobot size={32} />
 	</div>
 
-	<div class="title">How can I help you today?</div>
+	<div class="title">{i18n.t('console.agent.idle.title')}</div>
 
 	<div class="cans">
 		{#each cans as can}
@@ -33,7 +37,7 @@
 				<IconShieldCheck size={12} />
 			</div>
 			<div class="can-text">
-				<strong>Cannot</strong> edit your posts without your approval
+				<T key="console.agent.idle.cannotEdit" params={{ strong: { element: 'strong' } }} />
 			</div>
 		</div>
 	</div>
@@ -111,7 +115,7 @@
 		color: var(--text-light);
 	}
 
-	.can-text strong {
+	.can-text :global(strong) {
 		color: var(--text);
 	}
 </style>

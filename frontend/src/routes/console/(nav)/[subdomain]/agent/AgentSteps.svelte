@@ -39,7 +39,11 @@
 			<div class="step thinking-step">
 				<button type="button" class="step-header" onclick={() => toggleThinking(i, block.done)}>
 					<IconLightbulb size={13} />
-					<span>{block.done ? 'Thought' : 'Thinking…'}</span>
+					<span
+						>{block.done
+							? i18n.t('console.agent.thought')
+							: i18n.t('console.agent.thinking')}</span
+					>
 					{#if !block.done}
 						<Loader size="small" />
 					{/if}
@@ -63,7 +67,9 @@
 			</div>
 		{:else if block.type === 'variant_activity'}
 			<div class="step variant-activity-step">
-				<span class="variant-title">Post #{block.postVariantId}</span>
+				<span class="variant-title"
+					>{i18n.t('console.agent.postVariantLabel', { id: block.postVariantId })}</span
+				>
 				{#if block.reads > 0}
 					<span class="variant-activity-icon" title={i18n.t('console.agent.readByAgent')}>
 						<IconEye size={13} />
