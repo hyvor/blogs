@@ -78,17 +78,18 @@ enum AiModel: string
     /**
      * USD cents cost for the given number of input tokens.
      */
-    public function getInputCostCents(int $tokens): int
+    public function getInputCostCents(int $tokens): float
     {
-        return (int) round($tokens / 1_000_000 * $this->getInputCost() * 100);
+        return round($tokens / 1_000_000 * $this->getInputCost() * 100, 6);
     }
 
     /**
      * USD cents cost for the given number of output tokens.
+     * Returned as a decimal, since many requests cost less than a single cent.
      */
-    public function getOutputCostCents(int $tokens): int
+    public function getOutputCostCents(int $tokens): float
     {
-        return (int) round($tokens / 1_000_000 * $this->getOutputCost() * 100);
+        return round($tokens / 1_000_000 * $this->getOutputCost() * 100, 6);
     }
 
     /**

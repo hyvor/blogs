@@ -215,9 +215,9 @@ final class Version20260501000000 extends AbstractMigration
                 output_tokens INTEGER,
                 total_tokens INTEGER,
                 model VARCHAR(255),
-                input_tokens_usd_cost INTEGER,
-                output_tokens_usd_cost INTEGER,
-                total_tokens_usd_cost INTEGER
+                input_tokens_usd_cost DOUBLE PRECISION,
+                output_tokens_usd_cost DOUBLE PRECISION,
+                total_tokens_usd_cost DOUBLE PRECISION
             );
             SQL
         );

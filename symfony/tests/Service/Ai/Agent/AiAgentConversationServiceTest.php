@@ -570,9 +570,33 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
-        $this->assertSame(100, $assistantMessage->getInputTokensUsdCost());
-        $this->assertSame(200, $assistantMessage->getOutputTokensUsdCost());
-        $this->assertSame(300, $assistantMessage->getTotalTokensUsdCost());
+        $this->assertSame(100.0, $assistantMessage->getInputTokensUsdCost());
+        $this->assertSame(200.0, $assistantMessage->getOutputTokensUsdCost());
+        $this->assertSame(300.0, $assistantMessage->getTotalTokensUsdCost());
+    }
+
+    public function test_persists_fractional_cent_cost_for_small_token_counts(): void
+    {
+        $postVariant = $this->createPostVariant();
+        $blog = $postVariant->getPost()->getBlog();
+
+        $tokenUsage = new TokenUsage(promptTokens: 100, completionTokens: 50, totalTokens: 150);
+
+        $service = $this->buildService(
+            $postVariant,
+            [new TextDelta('Hi')],
+            metadata: new Metadata(['token_usage' => $tokenUsage]),
+            model: 'claude-sonnet-5',
+        );
+
+        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
+
+        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
+            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
+        $this->assertNotNull($assistantMessage);
+        $this->assertSame(0.00002, $assistantMessage->getInputTokensUsdCost());
+        $this->assertSame(0.00005, $assistantMessage->getOutputTokensUsdCost());
+        $this->assertSame(0.00007, $assistantMessage->getTotalTokensUsdCost());
     }
 
     public function test_does_not_persist_token_usd_cost_for_an_unknown_model(): void

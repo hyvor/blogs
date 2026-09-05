@@ -122,7 +122,7 @@ class UsageService
 
         $startOfMonth = $this->now()->modify('first day of this month midnight')->format('Y-m-d H:i:s');
 
-        /** @var ?int $result */
+        /** @var ?float $result */
         $result = $this->connection->fetchOne(
             "SELECT SUM(COALESCE(ai_messages.total_tokens_usd_cost, 0)) AS cost
              FROM ai_messages
@@ -133,7 +133,7 @@ class UsageService
             [$organizationId, $startOfMonth],
         );
 
-        $usedCents = (int)$result;
+        $usedCents = (float)$result;
 
         return min(($usedCents / $limitCents) * 100, 100);
     }

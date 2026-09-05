@@ -175,6 +175,29 @@ class UsageServiceTest extends KernelTestCase
         $this->assertSame(100.0, $this->usage()->getAiTokensUsage(1, $this->license(10_000)));
     }
 
+    public function test_ai_tokens_usage_sums_fractional_cent_costs(): void
+    {
+        self::mockTime('2025-02-20');
+
+        $blog = BlogFactory::createOne(['organization_id' => 1]);
+        $conversation = AiConversationFactory::createOneFor($blog);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation,
+            'total_tokens_usd_cost' => 0.3,
+            'created_at' => new \DateTimeImmutable('2025-02-10'),
+        ]);
+
+        AiMessageFactory::createOne([
+            'conversation' => $conversation,
+            'total_tokens_usd_cost' => 0.2,
+            'created_at' => new \DateTimeImmutable('2025-02-15'),
+        ]);
+
+        // used: 0.5 cents, limit: 1 cent -> 50%
+        $this->assertSame(50.0, $this->usage()->getAiTokensUsage(1, $this->license(1)));
+    }
+
     public function test_ai_tokens_usage_is_zero_when_not_included_in_license(): void
     {
         self::mockTime('2025-02-20');

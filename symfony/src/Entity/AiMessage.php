@@ -41,14 +41,14 @@ class AiMessage
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $model = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $input_tokens_usd_cost = null;
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $input_tokens_usd_cost = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $output_tokens_usd_cost = null;
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $output_tokens_usd_cost = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $total_tokens_usd_cost = null;
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $total_tokens_usd_cost = null;
 
     /** @var Collection<int, AiMessageEvent> */
     #[ORM\OneToMany(targetEntity: AiMessageEvent::class, mappedBy: 'ai_message')]
@@ -159,34 +159,34 @@ class AiMessage
         return $this;
     }
 
-    public function getInputTokensUsdCost(): ?int
+    public function getInputTokensUsdCost(): ?float
     {
         return $this->input_tokens_usd_cost;
     }
 
-    public function setInputTokensUsdCost(?int $input_tokens_usd_cost): static
+    public function setInputTokensUsdCost(?float $input_tokens_usd_cost): static
     {
         $this->input_tokens_usd_cost = $input_tokens_usd_cost;
         return $this;
     }
 
-    public function getOutputTokensUsdCost(): ?int
+    public function getOutputTokensUsdCost(): ?float
     {
         return $this->output_tokens_usd_cost;
     }
 
-    public function setOutputTokensUsdCost(?int $output_tokens_usd_cost): static
+    public function setOutputTokensUsdCost(?float $output_tokens_usd_cost): static
     {
         $this->output_tokens_usd_cost = $output_tokens_usd_cost;
         return $this;
     }
 
-    public function getTotalTokensUsdCost(): ?int
+    public function getTotalTokensUsdCost(): ?float
     {
         return $this->total_tokens_usd_cost;
     }
 
-    public function setTotalTokensUsdCost(?int $total_tokens_usd_cost): static
+    public function setTotalTokensUsdCost(?float $total_tokens_usd_cost): static
     {
         $this->total_tokens_usd_cost = $total_tokens_usd_cost;
         return $this;
