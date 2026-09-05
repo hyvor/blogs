@@ -58,13 +58,4 @@ enum Scope: string
     {
         return Scope::cases();
     }
-
-    /**
-     * @param Scope[] $except
-     * @return Scope[]
-     */
-    public static function allExcept(array $except): array
-    {
-        return array_filter(Scope::cases(), fn(Scope $scope) => !in_array($scope, $except, true));
-    }
 }

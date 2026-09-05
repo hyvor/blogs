@@ -19,27 +19,63 @@ enum UserRole: string
     {
         return match ($this) {
             self::ADMIN => Scope::all(),
-            self::EDITOR => Scope::allExcept([
-                Scope::BLOG_DELETE,
-                Scope::USERS_WRITE,
-                Scope::ROUTES_WRITE,
-                Scope::WEBHOOKS_READ,
-                Scope::WEBHOOKS_WRITE,
-                Scope::API_KEYS_READ,
-                Scope::API_KEYS_WRITE,
-                Scope::THEMES_READ,
-                Scope::THEMES_WRITE,
-                Scope::IMPORT_MANAGE
-            ]),
-            self::WRITER => [
+            self::EDITOR => [
                 Scope::BLOG_READ,
+                Scope::BLOG_WRITE,
+
                 Scope::POSTS_READ,
                 Scope::POSTS_WRITE,
                 Scope::POSTS_PUBLISH_OWN,
+                Scope::POSTS_PUBLISH_ALL,
+
+                Scope::USERS_READ,
+                Scope::USERS_ADD,
+                Scope::USERS_WRITE,
+
                 Scope::TAGS_READ,
                 Scope::TAGS_WRITE,
+
                 Scope::LANGUAGES_READ,
+                Scope::LANGUAGES_WRITE,
+
                 Scope::MEDIA_UPLOAD,
+                Scope::MEDIA_MANAGE,
+
+                Scope::NAVIGATIONS_READ,
+                Scope::NAVIGATIONS_WRITE,
+
+                Scope::REDIRECTS_READ,
+                Scope::REDIRECTS_WRITE,
+
+                Scope::THEMES_READ,
+
+                Scope::LINK_ANALYSIS_MANAGE,
+                Scope::AI_USE,
+            ],
+            self::WRITER => [
+                Scope::BLOG_READ,
+
+                Scope::POSTS_READ,
+                Scope::POSTS_WRITE,
+                Scope::POSTS_PUBLISH_OWN,
+
+                Scope::USERS_READ,
+
+                Scope::TAGS_READ,
+                Scope::TAGS_WRITE,
+
+                Scope::LANGUAGES_READ,
+
+                Scope::MEDIA_UPLOAD,
+
+                Scope::NAVIGATIONS_READ,
+
+                Scope::REDIRECTS_READ,
+
+                Scope::THEMES_READ,
+
+                Scope::LINK_ANALYSIS_MANAGE,
+                Scope::AI_USE,
             ],
             self::CONTRIBUTOR => [
                 Scope::BLOG_READ,
