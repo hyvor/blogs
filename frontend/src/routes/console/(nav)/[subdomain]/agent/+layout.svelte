@@ -9,6 +9,9 @@
 	import { redirectIfCant } from '../../../lib/scope.svelte';
 	import { agentConversationsStore } from './agentConversationsStore';
 	import type { AiConversation } from '../../../lib/types';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -39,9 +42,9 @@
 		e.stopPropagation();
 
 		const confirmed = await confirm({
-			title: 'Delete Conversation',
-			content: 'Are you sure you want to delete this conversation?',
-			confirmText: 'Yes, Delete',
+			title: i18n.t('console.agent.deleteConversationTitle'),
+			content: i18n.t('console.agent.deleteConversationConfirm'),
+			confirmText: i18n.t('console.common.yesDelete'),
 			danger: true,
 			autoClose: false
 		});
@@ -59,7 +62,7 @@
 			}
 		} catch {
 			confirmed.close();
-			toast.error('Failed to delete conversation');
+			toast.error(i18n.t('console.agent.deleteConversationFailed'));
 		}
 	}
 </script>
@@ -73,7 +76,7 @@
 		>
 			<div class="new-chat-button">
 				<IconPlus size={14} />
-				New Chat
+				{i18n.t('console.agent.newChat')}
 			</div>
 		</a>
 
@@ -81,7 +84,7 @@
 			{#if $agentConversationsStore.loading}
 				<div class="state-row"><Loader size="small" /></div>
 			{:else if $agentConversationsStore.conversations.length === 0}
-				<div class="state-row empty">No conversations yet</div>
+				<div class="state-row empty">{i18n.t('console.agent.noConversations')}</div>
 			{:else}
 				{#each $agentConversationsStore.conversations as conversation (conversation.id)}
 					<a
@@ -89,14 +92,16 @@
 						href={consoleUrlWithBlog(`/agent/${conversation.uuid}`)}
 						class:active={activeConversationUuid === conversation.uuid}
 					>
-						<span class="conversation-title">{conversation.title || 'Untitled conversation'}</span>
+						<span class="conversation-title"
+							>{conversation.title || i18n.t('console.agent.untitledConversation')}</span
+						>
 
 						<div class="delete-button">
 							<IconButton
 								size="small"
 								color="red"
 								variant="invisible"
-								aria-label="Delete conversation"
+								aria-label={i18n.t('console.agent.deleteConversation')}
 								onclick={(e: MouseEvent) => handleDelete(e, conversation)}
 							>
 								<IconTrash size={10} />
@@ -113,8 +118,7 @@
 
 		<div class="footer">
 			<div class="disclaimer">
-				All editors of this blog can access all conversations. Conversations are deleted after 30
-				days.
+				{i18n.t('console.agent.conversationsDisclaimer')}
 			</div>
 		</div>
 	</div>

@@ -12,6 +12,10 @@
 		setRememberedConversationUuid
 	} from '../../../../agent/agentChatSessionStore';
 	import type { AiConversation } from '../../../../../../lib/types';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let postVariantId = $derived($postVariantStore.id);
 
@@ -92,7 +96,7 @@
 <LicenseRequired licenseProperty="aiCost">
 	{#snippet upgradeText()}
 		<div>
-			AI agent is available on the <b>Starter Plan</b> and above. Upgrade your plan to unlock this feature.
+			<T key="console.postEditor.agent.upgradeText" params={{ strong: { element: 'strong' } }} />
 		</div>
 	{/snippet}
 
@@ -101,7 +105,9 @@
 			<Dropdown bind:show={showDropdown} align="start" width={280}>
 				{#snippet trigger()}
 					<Button color="input" variant="invisible" size="small">
-						<span class="conversation-title">{activeTitle || 'New Chat'}</span>
+						<span class="conversation-title"
+							>{activeTitle || i18n.t('console.agent.newChat')}</span
+						>
 
 						{#snippet end()}
 							<IconChevronDown size={10} />
@@ -115,7 +121,7 @@
 							{#snippet start()}
 								<IconPlus size={12} />
 							{/snippet}
-							New Chat
+							{i18n.t('console.agent.newChat')}
 						</ActionListItem>
 
 						{#if conversations.length > 0}
@@ -128,7 +134,7 @@
 										: ''}
 								>
 									<span class="conversation-item-title">
-										{conversation.title || 'Untitled conversation'}
+										{conversation.title || i18n.t('console.agent.untitledConversation')}
 									</span>
 
 									{#snippet description()}

@@ -4,6 +4,9 @@
 	import { getPurifiedHtmlFromMarkdown } from './html';
 	import { slide } from 'svelte/transition';
 	import type { AiMessageEvent } from '../../../../lib/types';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		event: AiMessageEvent;
@@ -24,7 +27,7 @@
 <div class="step-block">
 	<button type="button" class="step-header" onclick={handleClick}>
 		<IconLightbulb size={11} />
-		<span>Thought process</span>
+		<span>{i18n.t('console.agent.thoughtProcess')}</span>
 
 		{#if hasContent}
 			<span class="chevron" class:open>

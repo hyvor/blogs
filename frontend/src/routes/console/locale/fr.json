@@ -774,7 +774,57 @@
 			"editsSuggested": "Modifications suggérées par l'agent",
 			"allResolved": "Toutes les suggestions ont été traitées",
 			"applyChanges": "Appliquer les modifications",
-			"applied": "Appliqué"
+			"applied": "Appliqué",
+			"newChat": "Nouvelle discussion",
+			"untitledConversation": "Conversation sans titre",
+			"noConversations": "Aucune conversation pour le moment",
+			"deleteConversation": "Supprimer la conversation",
+			"deleteConversationTitle": "Supprimer la conversation",
+			"deleteConversationConfirm": "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+			"deleteConversationFailed": "Échec de la suppression de la conversation",
+			"conversationsDisclaimer": "Tous les éditeurs de ce blog peuvent accéder à toutes les conversations. Les conversations sont supprimées après 30 jours.",
+			"loadConversationFailed": "Impossible de charger la conversation",
+			"promptPlaceholder": "Écrivez votre message ici",
+			"aiDisclaimer": "L'IA peut faire des erreurs ; veuillez vérifier les informations importantes.",
+			"idle": {
+				"title": "Comment puis-je vous aider aujourd'hui ?",
+				"canSearchPosts": "Peut rechercher et lire vos articles de blog",
+				"canAnswerQuestions": "Peut répondre à des questions sur vos articles",
+				"canSuggestEdits": "Peut suggérer des modifications à vos articles",
+				"cannotEdit": "<strong>Ne peut pas</strong> modifier vos articles sans votre approbation"
+			},
+			"review": {
+				"title": "Vérifier les modifications suggérées",
+				"applying": "Application en cours…",
+				"staleWarning": "Cet article a été mis à jour depuis que l'IA a suggéré cette modification. Veuillez vérifier attentivement les modifications avant de les appliquer.",
+				"resolveRemaining": "Résoudre les suggestions restantes",
+				"suggestionsRemaining": "{count} {count, plural, one {suggestion restante} other {suggestions restantes}}",
+				"forceApplyTitle": "L'article a été mis à jour",
+				"forceApplyContent": "L'article a été mis à jour depuis que l'IA a suggéré cette modification. Voulez-vous forcer l'application de vos modifications ?",
+				"applyFailed": "Échec de l'application de la modification",
+				"loadFailed": "Échec du chargement de la modification"
+			},
+			"documentChanges": {
+				"title": "Modifications du document",
+				"postVariantFallback": "Variante d'article n°{id}",
+				"reviewed": "Vérifié",
+				"needsReview": "À vérifier",
+				"reviewButton": "Vérifier les modifications"
+			},
+			"error": "Une erreur s'est produite lors du traitement de la demande. Veuillez réessayer plus tard.",
+			"query": {
+				"searchedTags": "Tags recherchés",
+				"searchedAuthors": "Auteurs recherchés",
+				"searchedPosts": "Articles recherchés",
+				"searchedLanguages": "Langues recherchées",
+				"ranQuery": "Requête exécutée",
+				"input": "Entrée",
+				"output": "Sortie"
+			},
+			"thoughtProcess": "Processus de réflexion",
+			"thought": "Réflexion terminée",
+			"thinking": "Réflexion en cours…",
+			"postVariantLabel": "Article n°{id}"
 		},
 		"comments": {
 			"consoleTitle": "Console des commentaires Hyvor Talk"
@@ -845,7 +895,7 @@
 				"noUrl": "(Sans URL)"
 			},
 			"agent": {
-				"upgradeText": "Le chat IA est disponible sur le <strong>plan Growth</strong> et au-dessus. Mettez à niveau dès maintenant pour utiliser GPT afin de générer et d'améliorer votre contenu.",
+				"upgradeText": "L'agent IA est disponible sur le <strong>plan Starter</strong> et au-dessus. Mettez à niveau votre plan pour débloquer cette fonctionnalité.",
 				"emptyMessage": "Posez une question à l'agent à propos de cet article, par ex. « Corrige les fautes de frappe » ou « Ajoute une courte section FAQ à la fin »."
 			},
 			"language": {

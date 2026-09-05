@@ -7,6 +7,7 @@
 	import IdleMessage from './IdleMessage.svelte';
 	import { Loader, toast } from '@hyvor/design/components';
 	import Messages from './Message/Messages.svelte';
+	import { getI18n } from '../../../lib/i18n';
 	import {
 		draftSessionKey,
 		deleteAgentChatSession,
@@ -25,6 +26,8 @@
 	}
 
 	let { conversationUuid = null, postVariantId = null, onConversationCreated }: Props = $props();
+
+	const i18n = getI18n();
 
 	// while a conversation hasn't been created yet (no uuid), it's cached under a draft key
 	// scoped to this postVariantId/blog, so a fresh "new chat" doesn't inherit a finished one
@@ -160,7 +163,7 @@
 					loading = false;
 				})
 				.catch((e) => {
-					toast.error(e.message || 'unable to load the conversation');
+					toast.error(e.message || i18n.t('console.agent.loadConversationFailed'));
 				})
 				.finally(() => {
 					restored = true;
