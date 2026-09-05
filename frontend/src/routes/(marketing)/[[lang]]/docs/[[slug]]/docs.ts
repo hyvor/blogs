@@ -1,37 +1,5 @@
-import Writing from './content/Writing.md';
 import CustomDomain from './content/CustomDomain.md';
-import SubDirectoryHosting from './content/SubDirectoryHosting.md';
-import Services from './content/Services.md';
-import Seo from './content/Seo.md';
-import Fonts from './content/Fonts.md';
-import Redirect from './content/Redirect.md';
-import Media from './content/Media.md';
-import Routes from './content/Routes.md';
-import CustomCode from './content/CustomCode.md';
-import ThemesOverview from './content/ThemesOverview.md';
-import ThemeTemplates from './content/ThemesTemplates.md';
-import ThemesStyles from './content/ThemesStyles.md';
-import ThemeScripts from './content/ThemeScripts.md';
-import Languages from './content/Languages.md';
-import Export from './content/Export.md';
-import ImportSitemap from './content/ImportSitemap.md';
-import Webhooks from './content/Webhooks.md';
-import ApiDelivery from './content/ApiDelivery.md';
-import Theme from './content/Theme.md';
-import ThemesInternationalization from './content/ThemesInternationalization.md';
-import ThemesConfiguration from './content/ThemesConfiguration.md';
-import ThemesPublishing from './content/ThemesPublishing.md';
-import ApiConsole from './content/ApiConsole.md';
-import ApiData from './content/ApiData.md';
-import Headless from './content/Headless.md';
 import Users from './content/Users.md';
-import SyntaxHighlighting from './content/SyntaxHighlighting.md';
-import Tags from './content/Tags.md';
-import NavigationLinks from './content/NavigationLinks.md';
-import Import from './content/Import.md';
-import ImportWordPress from './content/ImportWordPress.md';
-import HyvorTalk from './content/HyvorTalk.md';
-import HyvorPost from './content/HyvorPost.md';
 import type { NavSectionConfig } from '@hyvor/design/marketing';
 import type { Component } from 'svelte';
 import { buildI18n, DEFAULT_MARKETING_LANGUAGE } from '../../marketingLang';
@@ -58,17 +26,128 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 				},
 
 				{
-					type: 'page',
-					slug: 'writing',
-					name: t('docs.pages.writing'),
-					content: await getComponent('Writing')
+					type: 'sub-section',
+					name: 'Writing',
+					sections: [
+						{
+							name: '',
+							navs: [
+								{
+									type: 'page',
+									slug: 'writing',
+									name: t('docs.pages.writing'),
+									content: await getComponent('Writing')
+								},
+								{
+									type: 'page',
+									slug: 'editor',
+									name: 'Editor',
+									content: await getComponent('Editor')
+								},
+								{
+									type: 'page',
+									slug: 'suggestion-mode',
+									name: 'Suggestion Mode',
+									content: await getComponent('SuggestionMode')
+								},
+							]
+						},
+						{
+							name: 'Post Health',
+							navs: [
+								{
+									type: 'page',
+									slug: 'seo-analyzer',
+									name: 'SEO Analyzer',
+									content: await getComponent('SeoAnalyzer')
+								},
+								{
+									type: 'page',
+									slug: 'link-analyzer',
+									name: 'Link Analyzer',
+									content: await getComponent('LinkAnalyzer')
+								}
+							]
+						}
+					]
+				},
+
+				{
+					type: 'sub-section',
+					name: t('docs.pages.themes'),
+					sections: [
+						{
+							name: '',
+							navs: [
+								{
+									type: 'page',
+									slug: 'themes',
+									name: t('docs.pages.themes'),
+									content: await getComponent('Themes')
+								}
+							]
+						},
+						{
+							name: t('docs.sections.themeDevelopment'),
+							navs: [
+								{
+									type: 'page',
+									slug: 'themes-overview',
+									name: t('docs.pages.themesOverview'),
+									content: await getComponent('ThemesOverview')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-templates',
+									name: t('docs.pages.themesTemplates'),
+									content: await getComponent('ThemesTemplates')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-styles',
+									name: t('docs.pages.themesStyling'),
+									content: await getComponent('ThemesStyles')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-scripts',
+									name: t('docs.pages.themesScripts'),
+									content: await getComponent('ThemeScripts')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-internationalization',
+									name: t('docs.pages.themesInternationalization'),
+									content: await getComponent('ThemesInternationalization')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-config',
+									name: t('docs.pages.themesConfig'),
+									content: await getComponent('ThemesConfiguration')
+								},
+
+								{
+									type: 'page',
+									slug: 'themes-publishing',
+									name: t('docs.pages.themesPublishing'),
+									content: await getComponent('ThemesPublishing')
+								}
+							]
+						}
+					]
 				},
 
 				{
 					type: 'page',
-					slug: 'theme',
-					name: t('docs.pages.theme'),
-					content: await getComponent('Theme')
+					slug: 'agent',
+					name: 'Agent (AI)',
+					content: await getComponent('AIAgent')
 				}
 			]
 		},
@@ -93,6 +172,24 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					slug: 'headless',
 					name: t('docs.pages.headless'),
 					content: await getComponent('Headless')
+				}
+			]
+		},
+
+		{
+			name: t('docs.sections.integrations'),
+			navs: [
+				{
+					type: 'page',
+					slug: 'hyvor-talk',
+					name: t('docs.pages.hyvorTalk'),
+					content: await getComponent('HyvorTalk')
+				},
+				{
+					type: 'page',
+					slug: 'hyvor-post',
+					name: t('docs.pages.hyvorPost'),
+					content: await getComponent('HyvorPost')
 				}
 			]
 		},
@@ -176,24 +273,6 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 		},
 
 		{
-			name: t('docs.sections.integrations'),
-			navs: [
-				{
-					type: 'page',
-					slug: 'hyvor-talk',
-					name: t('docs.pages.hyvorTalk'),
-					content: await getComponent('HyvorTalk')
-				},
-				{
-					type: 'page',
-					slug: 'hyvor-post',
-					name: t('docs.pages.hyvorPost'),
-					content: await getComponent('HyvorPost')
-				}
-			]
-		},
-
-		{
 			name: t('docs.sections.developer'),
 			navs: [
 				{
@@ -259,58 +338,6 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 			]
 		},
 
-		{
-			name: t('docs.sections.themeDevelopment'),
-			navs: [
-				{
-					type: 'page',
-					slug: 'themes-overview',
-					name: t('docs.pages.themesOverview'),
-					content: await getComponent('ThemesOverview')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-templates',
-					name: t('docs.pages.themesTemplates'),
-					content: await getComponent('ThemesTemplates')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-styles',
-					name: t('docs.pages.themesStyling'),
-					content: await getComponent('ThemesStyles')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-scripts',
-					name: t('docs.pages.themesScripts'),
-					content: await getComponent('ThemeScripts')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-internationalization',
-					name: t('docs.pages.themesInternationalization'),
-					content: await getComponent('ThemesInternationalization')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-config',
-					name: t('docs.pages.themesConfig'),
-					content: await getComponent('ThemesConfiguration')
-				},
-
-				{
-					type: 'page',
-					slug: 'themes-publishing',
-					name: t('docs.pages.themesPublishing'),
-					content: await getComponent('ThemesPublishing')
-				}
-			]
-		}
+		
 	];
 }
