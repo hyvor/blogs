@@ -8,7 +8,7 @@
 		SuggestionSourceEntry
 	} from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
-	import { Modal, Button, Callout, Tooltip, toast } from '@hyvor/design/components';
+	import { Modal, Button, Callout, Tooltip, toast, confirm } from '@hyvor/design/components';
 	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../../posts/[postId]/Body/Editor/suggestions';
 	import { DEFAULT_CONTENT_JSON, type DocumentChange } from '../agentApi';
@@ -132,21 +132,40 @@
 		}
 	} as EditorConfig;
 
-	async function handleApply() {
+	function handleApply(force: boolean = false) {
 		if (remaining > 0 || applying || applied) return;
 
 		applying = true;
 
-		applyDocumentChanges(change.eventId, content, currentDocument?.version ?? 0, false)
+		applyDocumentChanges(change.eventId, content, currentDocument?.version ?? 0, force)
 			.then((res) => {
 				onapply(change.eventId);
 			})
 			.catch((e) => {
-				//
+				if (e.code === 409) {
+					handleForceApply();
+				} else {
+					toast.error(e.message || 'Failed to apply the change');
+				}
 			})
 			.finally(() => {
 				applying = false;
 			});
+	}
+
+	async function handleForceApply() {
+		const confirmed = await confirm({
+			title: 'Post has been updated',
+			content:
+				'The post has been updated since the AI suggested this change. Do you want to force apply your changes?',
+			danger: true,
+			autoClose: false
+		});
+
+		if (!confirmed) return;
+
+		handleApply(true);
+		confirmed.close();
 	}
 
 	onMount(async () => {
@@ -219,7 +238,7 @@
 				>
 					<Button
 						disabled={remaining > 0 || applying || applied}
-						onclick={handleApply}
+						onclick={() => handleApply()}
 						loading={applying}
 					>
 						{#if applied}
