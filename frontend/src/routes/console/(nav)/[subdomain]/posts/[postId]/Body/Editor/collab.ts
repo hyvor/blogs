@@ -45,7 +45,13 @@ interface CollabCursorMercureMessage {
 	user?: RemoteCursorUser;
 }
 
-type CollabMercureMessage = CollabStepsMercureMessage | CollabCursorMercureMessage;
+interface CollabNewDocumentMercureMessage {
+	type: 'new_document';
+	content: string; // JSON
+}
+
+type CollabMercureMessage =
+	CollabStepsMercureMessage | CollabCursorMercureMessage | CollabNewDocumentMercureMessage;
 
 /**
  * Subscribes to a post variant's collab topic on the Mercure hub (see PostController::getPost,
@@ -63,7 +69,8 @@ export function subscribeToCollabMercureTopic(
 	topic: string,
 	token: string,
 	onSteps: (steps: CollabStep[]) => void,
-	onCursor: (message: CollabCursorMercureMessage) => void
+	onCursor: (message: CollabCursorMercureMessage) => void,
+	onNewDocument: (message: CollabNewDocumentMercureMessage) => void
 ): () => void {
 	const url = new URL(getConfig().mercure.public_url);
 	url.searchParams.append('topic', topic);
@@ -102,6 +109,8 @@ export function subscribeToCollabMercureTopic(
 				onSteps(message.steps);
 			} else if (message.type === 'cursor') {
 				onCursor(message);
+			} else if (message.type === 'new_document') {
+				onNewDocument(message);
 			}
 		},
 		onerror(err) {

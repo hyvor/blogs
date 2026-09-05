@@ -1,9 +1,9 @@
 <script lang="ts">
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
-	import type { AiMessageEvent } from '../aiConversationApi';
 	import { getPurifiedHtmlFromMarkdown } from './html';
 	import { slide } from 'svelte/transition';
+	import type { AiMessageEvent } from '../../../../lib/types';
 
 	interface Props {
 		event: AiMessageEvent;

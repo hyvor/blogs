@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { DocumentChange } from '../agentApi';
-	import type { AiMessage, AiMessageEvent } from '../aiConversationApi';
-	import DiffReviewModal from '../Review/DiffReviewModal.svelte';
+	import type { AiMessage } from '../../../../lib/types';
 	import DocumentChangeEvent from './DocumentChangeEvent.svelte';
 	import ErrorEvent from './ErrorEvent.svelte';
 	import QueryEvent from './QueryEvent.svelte';
@@ -17,16 +15,6 @@
 	let documentChangeEvents = $derived(
 		message.events.filter((event) => event.type === 'document_change')
 	);
-
-	let reviewChange: DocumentChange | null = $state(null);
-
-	function openReview(event: AiMessageEvent) {
-		reviewChange = {
-			postVariantId: event.post_variant_id!,
-			content: event.document_content!,
-			version: event.post_variant_version!
-		};
-	}
 </script>
 
 <div class="message-wrap ai">
@@ -43,13 +31,9 @@
 			{/if}
 		{/each}
 
-		<DocumentChangeEvent events={documentChangeEvents} postVariants={[]} onReview={openReview} />
+		<DocumentChangeEvent events={documentChangeEvents} />
 	</div>
 </div>
-
-{#if reviewChange}
-	<DiffReviewModal change={reviewChange} onclose={() => (reviewChange = null)} />
-{/if}
 
 <style>
 	.message-wrap {

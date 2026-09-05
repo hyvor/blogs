@@ -4,7 +4,8 @@
 		postContentDirtyStore,
 		postSuggestionModeStore,
 		postVariantStore,
-		documentStore
+		documentStore,
+		updateDocumentStore
 	} from '../../../postStore';
 	import { Editor, type Author, type CollabSendable, type RemoteCursor } from '@hyvor/richtext';
 	import wordCountPlugin from './plugins/plugin-wordcount';
@@ -98,9 +99,14 @@
 	// just like drafts, and the published content is only updated via the Update flow
 	const isEditable = true;
 
-	let topicUnsubscriber: () => void;
+	let topicUnsubscriber: (() => void) | undefined;
+
+	// fully reset the editor (full document changes on new_document)
+	let documentKey = $state(0);
 
 	function handleInit() {
+		topicUnsubscriber?.();
+
 		const editor = $postEditor!;
 
 		if (backlogSteps.length > 0) {
@@ -137,6 +143,15 @@
 				}
 
 				editor.cursors.set([...cursors.values()]);
+			},
+			(message) => {
+				updateDocumentStore({
+					checkpoint_content: message.content,
+					checkpoint_version: 0,
+					pending_steps: { version: 0, steps: [] }
+				});
+				$postContentDirtyStore = false;
+				documentKey++;
 			}
 		);
 	}
@@ -167,20 +182,22 @@
 
 <div class="editor">
 	<div class="wrap">
-		<Editor
-			bind:this={$postEditor}
-			{value}
-			onvaluechange={handleChange}
-			editable={isEditable}
-			{schema}
-			editorConfig={fullEditorConfig}
-			plugins={[
-				wordCountPlugin((count) => i18n.t('console.postEditor.wordCount', { count })),
-				focusTitlePlugin(),
-				scrollMarginPlugin()
-			]}
-			oninit={handleInit}
-		/>
+		{#key documentKey}
+			<Editor
+				bind:this={$postEditor}
+				{value}
+				onvaluechange={handleChange}
+				editable={isEditable}
+				{schema}
+				editorConfig={fullEditorConfig}
+				plugins={[
+					wordCountPlugin((count) => i18n.t('console.postEditor.wordCount', { count })),
+					focusTitlePlugin(),
+					scrollMarginPlugin()
+				]}
+				oninit={handleInit}
+			/>
+		{/key}
 	</div>
 </div>
 
@@ -194,7 +211,5 @@
 	.wrap {
 		position: relative;
 		flex: 1;
-		/* padding-left: max(300px, calc((100% - 700px) / 2));
-		padding-right: max(0px, calc((100% - 700px - 300px) / 2)); */
 	}
 </style>

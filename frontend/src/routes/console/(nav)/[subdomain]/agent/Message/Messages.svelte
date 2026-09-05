@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import UserMessage from './UserMessage.svelte';
-	import type { AiMessage } from '../aiConversationApi';
 	import AiMessageView from './AiMessage.svelte';
 	import { Loader } from '@hyvor/design/components';
+	import type { AiMessage } from '../../../../lib/types';
 
 	interface Props {
 		messages: AiMessage[];

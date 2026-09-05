@@ -193,13 +193,15 @@ final class Version20260501000000 extends AbstractMigration
                 created_at timestamptz NOT NULL DEFAULT NOW(),
                 updated_at timestamptz NOT NULL DEFAULT NOW(),
                 blog_id BIGINT NOT NULL REFERENCES blogs(id) ON DELETE CASCADE,
-                title TEXT
+                title TEXT,
+                post_variant_id BIGINT REFERENCES post_variants(id) ON DELETE SET NULL
             );
             SQL
         );
         $this->addSql('CREATE INDEX idx_ai_conversations_blog_id ON ai_conversations(blog_id)');
         // uuid is app-generated on creation, not a DB default (see AiAgentConversationService)
         $this->addSql('CREATE UNIQUE INDEX idx_ai_conversations_uuid ON ai_conversations(uuid)');
+        $this->addSql('CREATE INDEX idx_ai_conversations_post_variant_id ON ai_conversations(post_variant_id) WHERE post_variant_id IS NOT NULL');
 
         $this->addSql(
             <<<SQL

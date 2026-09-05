@@ -6,6 +6,7 @@ use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageEvent;
 use App\Entity\Blog;
+use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
 use App\Entity\Enum\AiMessageEventType;
 use App\Entity\PostVariant;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,17 +25,23 @@ class AiConversationService
     /**
      * @return array{conversations: AiConversation[], has_more: bool}
      */
-    public function getConversationsForBlog(Blog $blog, int $limit, int $offset): array
+    public function getConversationsForBlog(Blog $blog, int $limit, int $offset, ?int $postVariantId = null): array
     {
-        /** @var AiConversation[] $conversations */
-        $conversations = $this->em->getRepository(AiConversation::class)->createQueryBuilder('c')
+        $queryBuilder = $this->em->getRepository(AiConversation::class)->createQueryBuilder('c')
             ->where('c.blog = :blog')
             ->setParameter('blog', $blog)
             ->orderBy('c.updated_at', 'DESC')
             ->setFirstResult($offset)
-            ->setMaxResults($limit + 1)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit + 1);
+
+        if ($postVariantId !== null) {
+            $queryBuilder
+                ->andWhere('IDENTITY(c.post_variant) = :postVariantId')
+                ->setParameter('postVariantId', $postVariantId);
+        }
+
+        /** @var AiConversation[] $conversations */
+        $conversations = $queryBuilder->getQuery()->getResult();
 
         $hasMore = count($conversations) > $limit;
         if ($hasMore) {
@@ -60,6 +67,8 @@ class AiConversationService
             ->select('m')
             ->leftJoin('m.events', 'e')
             ->addSelect('e')
+            ->leftJoin('e.post_variant', 'v')
+            ->addSelect('v')
             ->where('m.conversation = :conversation')
             ->setParameter('conversation', $conversation)
             ->orderBy('m.id', 'ASC')
@@ -72,6 +81,8 @@ class AiConversationService
     /**
      * Distinct post variants referenced by any document_change event in this conversation, so
      * the frontend can show what's being edited (title, status) without a separate lookup.
+     *
+     * Get post variants involved in the
      *
      * @return PostVariant[]
      */
@@ -90,6 +101,33 @@ class AiConversationService
             ->getResult();
 
         return $postVariants;
+    }
+
+    public function getEvent(Blog $blog, int $eventId): ?AiMessageEvent
+    {
+        $event = $this->em->getRepository(AiMessageEvent::class)->createQueryBuilder('e')
+            ->innerJoin('e.ai_message', 'm')
+            ->innerJoin('m.conversation', 'c')
+            ->where('e.id = :eventId')
+            ->andWhere('c.blog = :blog')
+            ->setParameter('eventId', $eventId)
+            ->setParameter('blog', $blog)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $event;
+    }
+
+    public function setEventDocumentChangeStatus(
+        AiMessageEvent $event,
+        AiMessageEventDocumentChangeStatus $status,
+    ): void
+    {
+        if ($event->getDocumentChangeStatus()) {
+            $event->setDocumentChangeStatus($status);
+            $this->em->persist($event);
+            $this->em->flush();
+        }
     }
 
 }

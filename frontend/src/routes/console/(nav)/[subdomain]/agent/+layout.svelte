@@ -7,7 +7,7 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { agentConversationsStore } from './agentConversationsStore';
-	import type { AgentConversationListItem } from './agentApi';
+	import type { AiConversation } from '../../../lib/types';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -32,7 +32,7 @@
 		}
 	}
 
-	async function handleDelete(e: MouseEvent, conversation: AgentConversationListItem) {
+	async function handleDelete(e: MouseEvent, conversation: AiConversation) {
 		e.preventDefault();
 		e.stopPropagation();
 

@@ -1,8 +1,7 @@
 import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
-import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
-import type { PostVariant } from '../../../lib/types';
-import type { AiConversation, AiMessageEvent } from './aiConversationApi';
+import { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
+import type { AiConversation, AiDocumentChangePostVariant, AiMessageEvent, PostVariant } from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
@@ -20,103 +19,10 @@ export type AgentBlock =
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
 export interface DocumentChange {
-	postVariantId: number;
+	eventId: number;
+	postVariant: AiDocumentChangePostVariant;
 	content: string;
-	// the post variant's content_unsaved_version the change was suggested against - compared
-	// against the live version to detect if the post was edited since (see DiffReviewModal).
-	// optional since the live SSE stream doesn't carry this yet (only the persisted
-	// document_change event, loaded via ConversationView, does).
-	version: number;
-}
-
-export interface CurrentDocument {
-	version: number;
-	content: string | null;
-	// the collab document_version - distinct from `version` (content_unsaved_version) above -
-	// needed to call applyDocumentChange below without a live collab session
-	document_version: number;
-}
-
-// used by DiffReviewModal to diff a suggested change against the post's actual current
-// content (rather than a blank document), and to detect if the post has since been edited
-export function getCurrentDocumentForVariant(postVariantId: number) {
-	return consoleApi.get<CurrentDocument>({
-		endpoint: '/documents/variant',
-		data: { post_variant_id: postVariantId }
-	});
-}
-
-// Persists a document change via the collab checkpoint endpoint, keyed directly by
-// post_variant_id - no post id/language id or live editor needed. 409s if `documentVersion`
-// is behind the post's live document_version (edited elsewhere since) - see
-// DocumentsController::checkpoint. Used by the whole-blog agent page (AgentChat.svelte); the
-// sidebar agent applies through the live editor's collab pipeline instead (see
-// saveAgentDocumentChange above).
-export function applyDocumentChange(postVariantId: number, content: string, documentVersion: number) {
-	return consoleApi.post<void>({
-		endpoint: '/documents/checkpoint',
-		data: { post_variant_id: postVariantId, content, version: documentVersion }
-	});
-}
-
-export interface AgentConversationListItem {
-	id: number;
-	uuid: string;
-	created_at: number;
-	updated_at: number;
-	title: string | null;
-}
-
-export type AgentTurn =
-	| { role: 'user'; content: string }
-	| {
-			role: 'assistant';
-			events: AgentEvent[];
-			model: string | null;
-			input_tokens: number | null;
-			output_tokens: number | null;
-			total_tokens: number | null;
-	  };
-
-export interface AgentConversationDetail {
-	id: number;
-	title: string | null;
-	created_at: number;
-	updated_at: number;
-	turns: AgentTurn[];
-}
-
-// Persists a document change directly (no collab session involved) - used by the whole-blog
-// agent page, which never mounts a live post editor for the post it just edited. The sidebar
-// agent instead applies changes through the live editor's collab pipeline (see Editor.svelte's
-// setContent) so the document_version counter stays in sync - this PATCH path would desync it.
-export function saveAgentDocumentChange(postId: number, languageId: number, content: string) {
-	return consoleApi.patch<PostVariant>({
-		endpoint: `/post/${postId}/variant`,
-		data: {
-			language_id: languageId,
-			content_unsaved: content
-		}
-	});
-}
-
-export function getAgentConversations(limit = 25, offset = 0) {
-	return consoleApi.get<AgentConversationListItem[]>({
-		endpoint: '/ai/conversations',
-		data: { limit, offset }
-	});
-}
-
-export function getAgentConversation(conversationId: number) {
-	return consoleApi.get<AgentConversationDetail>({
-		endpoint: `/ai/conversation/${conversationId}`
-	});
-}
-
-export function deleteAgentConversation(conversationId: number) {
-	return consoleApi.delete<void>({
-		endpoint: `/ai/conversation/${conversationId}`
-	});
+	version: number; // version agent edited
 }
 
 export async function callAgent(

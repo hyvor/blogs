@@ -69,6 +69,7 @@ class AiAgentConversationService
             $conversation->setBlog($blog);
             $conversation->setUuid(Uuid::v4()->toRfc4122());
             $conversation->setTitle(mb_strimwidth($prompt, 0, 255, ''));
+            $conversation->setPostVariant($postVariant);
             $conversation->setCreatedAt($this->now());
             $conversation->setUpdatedAt($this->now());
             $this->em->persist($conversation);

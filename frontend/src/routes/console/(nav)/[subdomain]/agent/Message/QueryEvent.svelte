@@ -1,8 +1,8 @@
 <script lang="ts">
 	import IconSearch from '@hyvor/icons/IconSearch';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
-	import type { AiMessageEvent } from '../aiConversationApi';
 	import { slide } from 'svelte/transition';
+	import type { AiMessageEvent } from '../../../../lib/types';
 
 	interface Props {
 		event: AiMessageEvent;

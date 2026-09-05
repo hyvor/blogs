@@ -554,14 +554,6 @@ export interface LinkAnalysisCheck {
 	links_ignored_count: number;
 }
 
-export interface GptPrompt {
-	id: number;
-	created_at: number;
-	post_id: number;
-
-	prompt: string;
-	gpt_response: string;
-}
 
 // === Hyvor Talk
 
@@ -570,4 +562,53 @@ export interface HyvorTalkGatedContentRule {
 	tag: Tag;
 	minimum_plan: string | null;
 	gate: string | null;
+}
+
+
+// === AI
+
+export interface AiConversation {
+	id: number;
+	uuid: string;
+	created_at: number;
+	updated_at: number;
+	title: string;
+	post_variant_id?: number | null;
+}
+
+export type AiMessageRole = 'user' | 'assistant';
+export type AiMessageEventType = 'text' | 'thinking' | 'query' | 'document_change' | 'error';
+export type AiMessageEventDocumentChangeStatus = 'pending' | 'reviewed';
+
+export interface AiMessageEvent {
+	// frontend-generated events while streaming may not have IDs
+	// backend-sent objects always have IDs, including document changes
+	id?: number;
+	type: AiMessageEventType;
+	content?: string | null;
+	tool_name?: string | null;
+	tool_input?: unknown;
+	tool_output?: unknown;
+	document_content?: string | null;
+	document_change_status?: AiMessageEventDocumentChangeStatus | null;
+	document_change_ops_count?: number | null;
+	post_variant_version?: number | null;
+	post_variant?: AiDocumentChangePostVariant | null
+}
+
+export interface AiDocumentChangePostVariant {
+	id: number;
+	title: string | null;
+	status: PostStatus;
+	published_at: number | null;
+	language_id: number;
+}
+
+
+export interface AiMessage {
+	id?: number;
+	created_at: number;
+	role: AiMessageRole;
+	content: string;
+	events: AiMessageEvent[];
 }

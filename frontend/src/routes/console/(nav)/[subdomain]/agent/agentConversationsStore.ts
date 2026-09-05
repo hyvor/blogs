@@ -1,19 +1,18 @@
 import { get, writable } from 'svelte/store';
 import {
-	deleteAgentConversation,
-	getAgentConversations,
-	type AgentConversationListItem
-} from './agentApi';
+	deleteAiConversation,
+	getAiConversations,
+} from './aiConversationApi';
+import type { AiConversation } from '../../../lib/types';
 
 const PAGE_SIZE = 25;
 
 interface AgentConversationsState {
-	conversations: AgentConversationListItem[];
+	conversations: AiConversation[];
 	hasMore: boolean;
 	loading: boolean;
 	loadingMore: boolean;
 	loaded: boolean;
-	// uuid of the conversation currently open in AgentChat - the identifier used in the URL
 	activeId: string | null;
 }
 
@@ -32,7 +31,7 @@ function createAgentConversationsStore() {
 		update((s) => ({ ...s, loading: true }));
 
 		try {
-			const res = await getAgentConversations(PAGE_SIZE, 0);
+			const res = await getAiConversations(PAGE_SIZE, 0);
 			update((s) => ({
 				...s,
 				conversations: res,
@@ -53,7 +52,7 @@ function createAgentConversationsStore() {
 		update((s) => ({ ...s, loadingMore: true }));
 
 		try {
-			const res = await getAgentConversations(PAGE_SIZE, current.conversations.length);
+			const res = await getAiConversations(PAGE_SIZE, current.conversations.length);
 			update((s) => ({
 				...s,
 				conversations: [...s.conversations, ...res],
@@ -74,7 +73,7 @@ function createAgentConversationsStore() {
 			conversations.unshift({
 				id: conversation.id,
 				uuid: conversation.uuid,
-				title: conversation.title ?? existing?.title ?? null,
+				title: conversation.title ?? existing?.title ?? '',
 				created_at: existing?.created_at ?? now,
 				updated_at: now
 			});
@@ -83,7 +82,7 @@ function createAgentConversationsStore() {
 	}
 
 	async function remove(id: number) {
-		await deleteAgentConversation(id);
+		await deleteAiConversation(id);
 		update((s) => ({ ...s, conversations: s.conversations.filter((c) => c.id !== id) }));
 	}
 

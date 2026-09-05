@@ -2,17 +2,18 @@ import consoleApi from '../../../../lib/consoleApi';
 import type { Document, Post, PostVariant } from '../../../../lib/types';
 import type { CollabStep } from './Body/Editor/collab';
 
-export function getDocumentForPost(id: number, variantLanguageCode: string | null = null) {
+export function getDocumentForPost(params: {
+	post_id?: number;
+	variant_language_code?: string | null;
+	post_variant_id?: number;
+}) {
 	return consoleApi.get<{
 		post: Post;
 		variant: PostVariant;
 		document: Document;
 	}>({
 		endpoint: `/documents/post`,
-		data: {
-			post_id: id,
-			variant_language_code: variantLanguageCode
-		}
+		data: params
 	});
 }
 

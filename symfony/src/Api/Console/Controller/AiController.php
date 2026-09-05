@@ -10,13 +10,19 @@ use App\Api\Console\Input\Ai\AgentPromptInput;
 use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Api\Console\Object\Ai\AiConversationObject;
-use App\Api\Console\Object\Ai\AiConversationPostVariantObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
+use App\Api\Console\Object\Ai\ApplyDocumentChangeInput;
 use App\Entity\AiConversation;
+use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
+use App\Entity\Enum\AiMessageEventType;
 use App\Service\Ai\Agent\AiAgentConversationService;
 use App\Service\Ai\Agent\AiConversationService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
+use App\Service\Post\Document\DocumentService;
+use App\Service\Post\Document\Exception\CheckpointClientAheadException;
+use App\Service\Post\Document\Exception\CheckpointClientBehindException;
+use App\Service\Post\Document\Exception\SetContentUnsavedVersionMismatchException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +30,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AiController extends AbstractController
@@ -35,6 +42,7 @@ class AiController extends AbstractController
         private AiPostTranslator $aiPostTranslator,
         private AiAgentConversationService $aiAgentConversationService,
         private AiConversationService $aiConversationService,
+        private DocumentService $documentService
     ) {}
 
     #[Route('/ai/agent', methods: ['POST'])]
@@ -99,7 +107,7 @@ class AiController extends AbstractController
     ): JsonResponse
     {
         $blog = $this->authListener->getBlog();
-        $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset);
+        $result = $this->aiConversationService->getConversationsForBlog($blog, $input->limit, $input->offset, $input->post_variant_id);
 
         return new JsonResponse(array_map(fn(AiConversation $c) => new AiConversationObject($c), $result['conversations']));
     }
@@ -109,12 +117,10 @@ class AiController extends AbstractController
     public function getConversation(#[MapBlogEntity(field: 'uuid')] AiConversation $conversation): JsonResponse
     {
         $messages = $this->aiConversationService->getMessages($conversation);
-        $postVariants = $this->aiConversationService->getInvolvedPostVariants($conversation);
 
         return new JsonResponse([
             'conversation' => new AiConversationObject($conversation),
             'messages' => array_map(fn($m) => new AiMessageObject($m), $messages),
-            'post_variants' => array_map(fn($v) => new AiConversationPostVariantObject($v), $postVariants),
         ]);
     }
 
@@ -148,6 +154,49 @@ class AiController extends AbstractController
         }
 
         return new JsonResponse($translatedData);
+    }
+
+    #[Route('/ai/document-changes/apply', methods: ['POST'])]
+    #[ScopeRequired(Scope::AI_USE)]
+    public function applyDocumentChanges(
+        #[MapRequestPayload] ApplyDocumentChangeInput $input,
+    ): JsonResponse
+    {
+        $blog = $this->authListener->getBlog();
+        $event = $this->aiConversationService->getEvent($blog, $input->event_id);
+
+        if (!$event) {
+            throw new BadRequestHttpException('Event not found');
+        }
+
+        if ($event->getType() !== AiMessageEventType::DOCUMENT_CHANGE) {
+            throw new BadRequestHttpException('Event is not a document change event');
+        }
+
+        if (!$event->getPostVariant()) {
+            throw new BadRequestHttpException('Event does not have a post variant');
+        }
+
+        try {
+            $this->documentService->setContentUnsaved(
+                $event->getPostVariant(),
+                $blog,
+                $input->content,
+                $input->agent_version,
+                force: $input->force,
+            );
+        } catch (SetContentUnsavedVersionMismatchException $e) {
+            throw new ConflictHttpException(
+                $e->getMessage(),
+            );
+        }
+
+        $this->aiConversationService->setEventDocumentChangeStatus(
+            $event,
+            AiMessageEventDocumentChangeStatus::REVIEWED
+        );
+
+        return new JsonResponse([]);
     }
 
 }

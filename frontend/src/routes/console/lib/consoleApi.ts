@@ -75,10 +75,13 @@ function getConsoleApi() {
 		const response = await fetch(url, options);
 
 		if (!response.ok) {
-			const e = await response.json();
+			let e;
+			try {
+				e = await response.json();
+			} catch (err) {
+				e = null;
+			}
 			const error = e && e.message ? e.message : 'Something went wrong';
-			/* toast({type: 'error', message: error});
-            throw error; */
 
 			const toThrow = new Error(error) as any;
 			toThrow.message = error;
