@@ -14,15 +14,17 @@
 	import { DEFAULT_CONTENT_JSON, type DocumentChange } from '../agentApi';
 	import { getI18n } from '../../../../lib/i18n';
 	import { getDocumentForPost } from '../../posts/[postId]/documentActions';
+	import { applyDocumentChanges } from './diffActions';
 
 	const i18n = getI18n();
 
 	interface Props {
 		change: DocumentChange;
 		onclose: () => void;
+		onapply: (eventId: number) => void;
 	}
 
-	let { change, onclose }: Props = $props();
+	let { change, onclose, onapply }: Props = $props();
 
 	let applying = $state(false);
 	let applied = $state(false);
@@ -133,8 +135,18 @@
 	async function handleApply() {
 		if (remaining > 0 || applying || applied) return;
 
-		await onapply(change, content, currentDocument?.document_version ?? 0);
-		applied = true;
+		applying = true;
+
+		applyDocumentChanges(change.eventId, content, currentDocument?.version ?? 0, false)
+			.then((res) => {
+				onapply(change.eventId);
+			})
+			.catch((e) => {
+				//
+			})
+			.finally(() => {
+				applying = false;
+			});
 	}
 
 	onMount(async () => {
@@ -205,7 +217,11 @@
 					text={remaining > 0 ? 'Resolve remaining suggestions' : ''}
 					disabled={remaining === 0}
 				>
-					<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
+					<Button
+						disabled={remaining > 0 || applying || applied}
+						onclick={handleApply}
+						loading={applying}
+					>
 						{#if applied}
 							{i18n.t('console.agent.applied')}
 						{:else if applying}

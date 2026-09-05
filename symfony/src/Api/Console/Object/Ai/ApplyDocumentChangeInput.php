@@ -18,5 +18,5 @@ class ApplyDocumentChangeInput
     public int $agent_version;
 
     // apply the change even if the post is updated after agent_version
-    public bool $force_apply = false;
+    public bool $force = false;
 }

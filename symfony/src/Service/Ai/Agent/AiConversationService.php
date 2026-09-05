@@ -6,6 +6,7 @@ use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageEvent;
 use App\Entity\Blog;
+use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
 use App\Entity\Enum\AiMessageEventType;
 use App\Entity\PostVariant;
 use Doctrine\ORM\EntityManagerInterface;
@@ -115,6 +116,18 @@ class AiConversationService
             ->getOneOrNullResult();
 
         return $event;
+    }
+
+    public function setEventDocumentChangeStatus(
+        AiMessageEvent $event,
+        AiMessageEventDocumentChangeStatus $status,
+    ): void
+    {
+        if ($event->getDocumentChangeStatus()) {
+            $event->setDocumentChangeStatus($status);
+            $this->em->persist($event);
+            $this->em->flush();
+        }
     }
 
 }

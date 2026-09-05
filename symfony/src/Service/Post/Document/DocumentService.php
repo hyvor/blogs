@@ -272,9 +272,7 @@ class DocumentService
                 $this->topic($variant),
                 json_encode([
                     'type' => 'new_document',
-                    'document' => [
-                        'content' => json_decode($json, true, 512, JSON_THROW_ON_ERROR),
-                    ],
+                    'content' => $json,
                 ], JSON_THROW_ON_ERROR),
                 true,
             ));

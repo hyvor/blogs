@@ -30,6 +30,13 @@
 			version: event.post_variant_version!
 		};
 	}
+
+	function handleApply(eventId: number) {
+		events = events.map((event) =>
+			event.id === eventId ? { ...event, document_change_status: 'reviewed' } : event
+		);
+		reviewChange = null;
+	}
 </script>
 
 {#if events.length > 0}
@@ -81,7 +88,11 @@
 {/if}
 
 {#if reviewChange}
-	<DiffReviewModal change={reviewChange} onclose={() => (reviewChange = null)} />
+	<DiffReviewModal
+		change={reviewChange}
+		onclose={() => (reviewChange = null)}
+		onapply={handleApply}
+	/>
 {/if}
 
 <style>

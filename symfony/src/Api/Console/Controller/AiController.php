@@ -13,6 +13,7 @@ use App\Api\Console\Object\Ai\AiConversationObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
 use App\Api\Console\Object\Ai\ApplyDocumentChangeInput;
 use App\Entity\AiConversation;
+use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
 use App\Entity\Enum\AiMessageEventType;
 use App\Service\Ai\Agent\AiAgentConversationService;
 use App\Service\Ai\Agent\AiConversationService;
@@ -156,6 +157,7 @@ class AiController extends AbstractController
     }
 
     #[Route('/ai/document-changes/apply', methods: ['POST'])]
+    #[ScopeRequired(Scope::AI_USE)]
     public function applyDocumentChanges(
         #[MapRequestPayload] ApplyDocumentChangeInput $input,
     ): JsonResponse
@@ -180,7 +182,8 @@ class AiController extends AbstractController
                 $event->getPostVariant(),
                 $blog,
                 $input->content,
-                $input->agent_version
+                $input->agent_version,
+                force: $input->force,
             );
         } catch (SetContentUnsavedVersionMismatchException $e) {
             throw new ConflictHttpException(
@@ -188,7 +191,12 @@ class AiController extends AbstractController
             );
         }
 
-        return new JsonResponse(['success' => true]);
+        $this->aiConversationService->setEventDocumentChangeStatus(
+            $event,
+            AiMessageEventDocumentChangeStatus::REVIEWED
+        );
+
+        return new JsonResponse([]);
     }
 
 }

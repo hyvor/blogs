@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
-import consoleApi, { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
+import { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
 import type { AiConversation, AiDocumentChangePostVariant, AiMessageEvent, PostVariant } from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
@@ -23,20 +23,6 @@ export interface DocumentChange {
 	postVariant: AiDocumentChangePostVariant;
 	content: string;
 	version: number; // version agent edited
-}
-
-
-// Persists a document change via the collab checkpoint endpoint, keyed directly by
-// post_variant_id - no post id/language id or live editor needed. 409s if `documentVersion`
-// is behind the post's live document_version (edited elsewhere since) - see
-// DocumentsController::checkpoint. Used by the whole-blog agent page (AgentChat.svelte); the
-// sidebar agent applies through the live editor's collab pipeline instead (see
-// saveAgentDocumentChange above).
-export function applyDocumentChange(postVariantId: number, content: string, documentVersion: number) {
-	return consoleApi.post<void>({
-		endpoint: '/documents/checkpoint',
-		data: { post_variant_id: postVariantId, content, version: documentVersion }
-	});
 }
 
 export async function callAgent(
