@@ -9,7 +9,12 @@
 		blogSelectorOpenStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { ConsoleLoader, InternationalizationProvider, toast } from '@hyvor/design/components';
+	import {
+		ConsoleLoader,
+		IconMessage,
+		InternationalizationProvider,
+		toast
+	} from '@hyvor/design/components';
 	import { CONSOLE_LANGUAGES } from './lib/i18n';
 	import { getConfig, setConfig, type Config } from './lib/config';
 	import { page } from '$app/state';
@@ -46,6 +51,7 @@
 	}
 
 	let isLoading = $state(true);
+	let error = $state('');
 
 	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
 
@@ -61,6 +67,7 @@
 
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
+		error = '';
 
 		consoleApi
 			.get<InitResponse>({
@@ -94,16 +101,16 @@
 				isLoading = false;
 			})
 			.catch((err) => {
-				if (err.code === 401) {
+				if (typeof err === 'object' && err.code === 401) {
 					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
 					const url = new URL(err.data[toPage + '_url'], location.origin);
 					url.searchParams.set('redirect', location.href);
 					location.href = url.toString();
-			} else {
-				toast.error(err.message);
-			}
-			isLoading = false;
-		});
+				} else {
+					error = 'We were unable to initialize the console. Please try again.';
+				}
+				isLoading = false;
+			});
 	}
 
 	onMount(startConsole);
@@ -130,6 +137,17 @@
 	<main>
 		{#if isLoading}
 			<ConsoleLoader logo="/logo.svg" size={80} />
+		{:else if error}
+			<IconMessage
+				error
+				message={error}
+				cta={{
+					text: 'Retry',
+					onClick: () => {
+						startConsole();
+					}
+				}}
+			/>
 		{:else}
 			<CloudContext
 				context={{
