@@ -507,8 +507,8 @@
 		},
 		"pages": {
 			"introduction": "Introduction",
-			"writing": "Writing",
-			"theme": "Theme",
+			"writing": "Writing (Basics)",
+			"themes": "Themes",
 			"customDomain": "Custom Domain",
 			"subdirectory": "Subdirectory",
 			"headless": "Headless",
