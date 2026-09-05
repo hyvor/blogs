@@ -8,16 +8,12 @@
 		SuggestionSourceEntry
 	} from '@hyvor/richtext';
 	import { Node } from 'prosemirror-model';
-	import { Modal, Button, Callout, Loader, Tooltip } from '@hyvor/design/components';
+	import { Modal, Button, Callout, Tooltip, toast } from '@hyvor/design/components';
 	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
 	import { resolveAuthor } from '../../posts/[postId]/Body/Editor/suggestions';
-	import {
-		DEFAULT_CONTENT_JSON,
-		getCurrentDocumentForVariant,
-		type CurrentDocument,
-		type DocumentChange
-	} from '../agentApi';
+	import { DEFAULT_CONTENT_JSON, type DocumentChange } from '../agentApi';
 	import { getI18n } from '../../../../lib/i18n';
+	import { getDocumentForPost } from '../../posts/[postId]/documentActions';
 
 	const i18n = getI18n();
 
@@ -30,11 +26,14 @@
 
 	let applying = $state(false);
 	let applied = $state(false);
-	let loadingCurrentDocument = $state(true);
-	// the post's actual current (content_unsaved) version/content, fetched fresh - used both to
-	// diff against (instead of a blank document) and to detect if the post changed since the
-	// agent suggested this change
-	let currentDocument: CurrentDocument | null = $state(null);
+	let loadingDocument = $state(true);
+
+	// the post's actual current_unsaved and version
+	// used to diff, and check if the post has changed since the agent edited
+	let currentDocument: {
+		version: number;
+		content: string | null;
+	} | null = $state(null);
 
 	// one-shot review session: everything shown here comes from a single agent-suggested diff, so
 	// the source just needs to say "these are AI's" - nothing to persist to a backend suggestions API
@@ -107,20 +106,6 @@
 	let content = $state('');
 	let remaining = $state(0);
 
-	onMount(async () => {
-		try {
-			currentDocument = await getCurrentDocumentForVariant(change.postVariantId);
-		} catch {
-			// couldn't load the current content (e.g. the post was deleted since) - fall back to
-			// diffing against a blank document, with no staleness check
-			currentDocument = null;
-		}
-
-		content = buildInitialContent();
-		remaining = countRemainingSuggestions(JSON.parse(content));
-		loadingCurrentDocument = false;
-	});
-
 	// the post was edited again after the agent suggested this change - review carefully, since
 	// the diff below is against the version the agent saw, not necessarily the latest
 	let isStale = $derived.by(() => {
@@ -151,6 +136,24 @@
 		await onapply(change, content, currentDocument?.document_version ?? 0);
 		applied = true;
 	}
+
+	onMount(async () => {
+		getDocumentForPost({
+			post_variant_id: change.postVariant.id
+		})
+			.then((res) => {
+				currentDocument = {
+					version: res.document.checkpoint_version,
+					content: res.document.checkpoint_content || DEFAULT_CONTENT_JSON
+				};
+				content = buildInitialContent();
+				remaining = countRemainingSuggestions(JSON.parse(content));
+				loadingDocument = false;
+			})
+			.catch((error) => {
+				toast.error(error.message || 'Failed to load the change');
+			});
+	});
 </script>
 
 <Modal
@@ -160,26 +163,23 @@
 	{onclose}
 	show={true}
 	appendToBody
+	loading={loadingDocument}
 	id="diff-review-modal"
 >
-	<div class="inner">
-		<div class="header">
-			<span>Review suggested changes</span>
-			<span class="remaining">
-				{#if applied}
-					{i18n.t('console.agent.applied')}
-				{:else if remaining > 0}
-					{remaining} suggestion{remaining === 1 ? '' : 's'} remaining
-				{:else}
-					{i18n.t('console.agent.allResolved')}
-				{/if}
-			</span>
-		</div>
-		{#if loadingCurrentDocument}
-			<div class="body loading">
-				<Loader />
+	{#if currentDocument}
+		<div class="inner">
+			<div class="header">
+				<span>Review suggested changes</span>
+				<span class="remaining">
+					{#if applied}
+						{i18n.t('console.agent.applied')}
+					{:else if remaining > 0}
+						{remaining} suggestion{remaining === 1 ? '' : 's'} remaining
+					{:else}
+						{i18n.t('console.agent.allResolved')}
+					{/if}
+				</span>
 			</div>
-		{:else}
 			<div class="body">
 				<div class="editor">
 					{#if isStale}
@@ -197,27 +197,27 @@
 					/>
 				</div>
 			</div>
-		{/if}
-		<div class="footer">
-			<Button color="input" onclick={onclose} disabled={applying}
-				>{i18n.t('console.common.close')}</Button
-			>
-			<Tooltip
-				text={remaining > 0 ? 'Resolve remaining suggestions' : ''}
-				disabled={remaining === 0}
-			>
-				<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
-					{#if applied}
-						{i18n.t('console.agent.applied')}
-					{:else if applying}
-						Applying…
-					{:else}
-						{i18n.t('console.agent.applyChanges')}
-					{/if}
-				</Button>
-			</Tooltip>
+			<div class="footer">
+				<Button color="input" onclick={onclose} disabled={applying}
+					>{i18n.t('console.common.close')}</Button
+				>
+				<Tooltip
+					text={remaining > 0 ? 'Resolve remaining suggestions' : ''}
+					disabled={remaining === 0}
+				>
+					<Button disabled={remaining > 0 || applying || applied} onclick={handleApply}>
+						{#if applied}
+							{i18n.t('console.agent.applied')}
+						{:else if applying}
+							Applying…
+						{:else}
+							{i18n.t('console.agent.applyChanges')}
+						{/if}
+					</Button>
+				</Tooltip>
+			</div>
 		</div>
-	</div>
+	{/if}
 </Modal>
 
 <style>
@@ -255,20 +255,11 @@
 		display: flex;
 	}
 
-	.body.loading {
-		align-items: center;
-		justify-content: center;
-	}
-
 	.editor {
 		flex: 1;
 		min-width: 0;
 		overflow: auto;
 		padding: 15px 30px;
-	}
-
-	.editor :global(.ProseMirror) {
-		padding: 0 !important;
 	}
 
 	.footer {

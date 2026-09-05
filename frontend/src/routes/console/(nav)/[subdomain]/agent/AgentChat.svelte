@@ -13,10 +13,11 @@
 	import type { AiConversation, AiMessage } from '../../../lib/types';
 
 	interface Props {
-		conversationUuid: string | null;
+		conversationUuid?: string | null;
+		postVariantId?: number | null;
 	}
 
-	let { conversationUuid = null }: Props = $props();
+	let { conversationUuid = null, postVariantId = null }: Props = $props();
 
 	let loading = $state(true);
 	let conversation: null | AiConversation = $state(null);
@@ -63,15 +64,18 @@
 		const assistantMessage = messages[messages.length - 1] as AiMessage;
 
 		try {
-			await callAgent(prompt, null, existingConversationId, (chunk) => {
+			await callAgent(prompt, postVariantId, existingConversationId, (chunk) => {
 				const lastEvent = assistantMessage.events[assistantMessage.events.length - 1];
 
 				if (chunk.type === 'conversation_created') {
 					conversation = chunk.conversation;
 					conversationUuid = conversation.uuid;
-					agentConversationsStore.upsert(conversation);
-					agentConversationsStore.setActive(conversation.uuid);
-					replaceState(consoleUrlWithBlog(`/agent/${conversation.uuid}`), {});
+
+					if (postVariantId === null) {
+						agentConversationsStore.upsert(conversation);
+						agentConversationsStore.setActive(conversation.uuid);
+						replaceState(consoleUrlWithBlog(`/agent/${conversation.uuid}`), {});
+					}
 				} else if (chunk.type === 'text_chunk') {
 					if (lastEvent && lastEvent.type === 'text') {
 						lastEvent.content += chunk.content;

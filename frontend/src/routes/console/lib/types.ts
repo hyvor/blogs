@@ -580,6 +580,9 @@ export type AiMessageEventType = 'text' | 'thinking' | 'query' | 'document_chang
 export type AiMessageEventDocumentChangeStatus = 'pending' | 'reviewed';
 
 export interface AiMessageEvent {
+	// frontend-generated events while streaming may not have IDs
+	// backend-sent objects always have IDs, including document changes
+	id?: number;
 	type: AiMessageEventType;
 	content?: string | null;
 	tool_name?: string | null;

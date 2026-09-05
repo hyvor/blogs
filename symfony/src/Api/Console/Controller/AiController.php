@@ -11,11 +11,16 @@ use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Api\Console\Object\Ai\AiConversationObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
+use App\Api\Console\Object\Ai\ApplyDocumentChangeInput;
 use App\Entity\AiConversation;
+use App\Entity\Enum\AiMessageEventType;
 use App\Service\Ai\Agent\AiAgentConversationService;
 use App\Service\Ai\Agent\AiConversationService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
+use App\Service\Post\Document\DocumentService;
+use App\Service\Post\Document\Exception\CheckpointClientAheadException;
+use App\Service\Post\Document\Exception\CheckpointClientBehindException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,6 +39,7 @@ class AiController extends AbstractController
         private AiPostTranslator $aiPostTranslator,
         private AiAgentConversationService $aiAgentConversationService,
         private AiConversationService $aiConversationService,
+        private DocumentService $documentService
     ) {}
 
     #[Route('/ai/agent', methods: ['POST'])]
@@ -145,6 +151,42 @@ class AiController extends AbstractController
         }
 
         return new JsonResponse($translatedData);
+    }
+
+    #[Route('/ai/document-changes/apply', methods: ['POST'])]
+    public function applyDocumentChanges(
+        #[MapRequestPayload] ApplyDocumentChangeInput $input,
+    ): JsonResponse
+    {
+        $blog = $this->authListener->getBlog();
+        $event = $this->aiConversationService->getEvent($blog, $input->event_id);
+
+        if (!$event) {
+            throw new BadRequestHttpException('Event not found');
+        }
+
+        if ($event->getType() !== AiMessageEventType::DOCUMENT_CHANGE) {
+            throw new BadRequestHttpException('Event is not a document change event');
+        }
+
+        if (!$event->getPostVariant()) {
+            throw new BadRequestHttpException('Event does not have a post variant');
+        }
+
+        try {
+            $this->documentService->checkpoint(
+                $event->getPostVariant(),
+                $blog,
+                $input->content,
+                $input->agent_version
+            );
+        } catch (CheckpointClientBehindException) {
+            //
+        } catch (CheckpointClientAheadException) {
+            //
+        }
+
+        return new JsonResponse(['success' => true]);
     }
 
 }

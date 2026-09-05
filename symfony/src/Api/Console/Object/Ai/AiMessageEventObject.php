@@ -9,6 +9,7 @@ use App\Entity\Enum\AiMessageEventType;
 class AiMessageEventObject
 {
 
+    public int $id;
     public AiMessageEventType $type;
     // text: the text chunk. thinking: the thinking summary.
     public ?string $content;
@@ -31,6 +32,7 @@ class AiMessageEventObject
 
     public function __construct(AiMessageEvent $event)
     {
+        $this->id = $event->getId();
         $this->type = $event->getType();
         $this->content = $event->getContent();
         $this->tool_name = $event->getToolName();

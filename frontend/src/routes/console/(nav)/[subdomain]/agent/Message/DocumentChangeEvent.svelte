@@ -18,7 +18,13 @@
 	let reviewChange: DocumentChange | null = $state(null);
 
 	function openReview(event: AiMessageEvent) {
+		if (!event.id) {
+			console.error('Event does not have an ID');
+			return;
+		}
+
 		reviewChange = {
+			eventId: event.id!,
 			postVariant: event.post_variant!,
 			content: event.document_content!,
 			version: event.post_variant_version!

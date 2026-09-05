@@ -46,27 +46,33 @@ class DocumentsController
     {
         $blog = $this->blogAuthListener->getBlog();
 
-        $post = $this->postService->getPostByBlogAndId($blog, $input->post_id);
-        if ($post === null) {
-            throw new NotFoundHttpException('Post not found');
+        if ($input->post_variant_id) {
+            $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
+        } else {
+            assert($input->post_id !== null);
+
+            $post = $this->postService->getPostByBlogAndId($blog, $input->post_id);
+            if ($post === null) {
+                throw new NotFoundHttpException('Post not found');
+            }
+
+            $language = $input->variant_language_code ?
+                $this->languageService->getLanguageByCode($blog, $input->variant_language_code) :
+                $this->languageService->getPrimaryLanguage($blog);
+
+            if ($language === null) {
+                throw new BadRequestHttpException('Invalid variant_language_code, language not found');
+            }
+
+            $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
         }
-
-        $language = $input->variant_language_code ?
-            $this->languageService->getLanguageByCode($blog, $input->variant_language_code) :
-            $this->languageService->getPrimaryLanguage($blog);
-
-        if ($language === null) {
-            throw new BadRequestHttpException('Invalid variant_language_code, language not found');
-        }
-
-        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
 
         if ($variant === null) {
-            throw new BadRequestHttpException('Variant not found for the specified language');
+            throw new NotFoundHttpException('Variant not found');
         }
 
         return new JsonResponse([
-            'post' => $this->postObjectFactory->create($post, $blog),
+            'post' => $this->postObjectFactory->create($variant->getPost(), $blog),
             'variant' => $this->postObjectFactory->createVariant($variant),
             'document' => [
                 'checkpoint_version' => $variant->getContentUnsavedVersion(),
@@ -74,22 +80,6 @@ class DocumentsController
                 'pending_steps' => $this->documentService->getStepsSince($variant, $variant->getContentUnsavedVersion()),
                 'mercure_token' => $this->documentService->getMercureToken($variant)
             ]
-        ]);
-    }
-
-
-    #[Route('/documents/variant', methods: ['GET'])]
-    #[ScopeRequired(Scope::POSTS_READ)]
-    public function getDocumentForVariant(
-        #[MapQueryString] GetDocumentForVariantInput $input,
-    ): JsonResponse
-    {
-        $variant = $this->getVariantOrFail($input->post_variant_id);
-
-        return new JsonResponse([
-            'version' => $variant->getContentUnsavedVersion(),
-            'content' => $variant->getContentUnsaved(),
-            'document_version' => $variant->getDocumentVersion(),
         ]);
     }
 

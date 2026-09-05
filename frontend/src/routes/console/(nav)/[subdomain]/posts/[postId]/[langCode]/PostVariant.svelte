@@ -38,7 +38,10 @@
 
 		isLoading = true;
 
-		getDocumentForPost(Number(postId), langCode)
+		getDocumentForPost({
+			post_id: Number(postId),
+			variant_language_code: langCode
+		})
 			.then(({ post, variant, document }) => {
 				postOriginalStore.set({ ...post });
 				postStore.set({ ...post });
@@ -112,12 +115,5 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1;
-	}
-
-	/* the richtext suggestions panel is position: fixed with a low z-index; keep it
-	   out of the way whenever a modal dialog (publish, update, compare, confirm) is
-	   open so it doesn't float over the modal */
-	:global(#hds-base:has([aria-modal='true']) .pm-suggestions-panel-wrap) {
-		display: none;
 	}
 </style>

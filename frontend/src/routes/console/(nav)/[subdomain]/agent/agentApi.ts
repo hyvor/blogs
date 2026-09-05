@@ -19,27 +19,12 @@ export type AgentBlock =
 	| { type: 'variant_activity'; postVariantId: number; reads: number; edits: number };
 
 export interface DocumentChange {
+	eventId: number;
 	postVariant: AiDocumentChangePostVariant;
 	content: string;
 	version: number; // version agent edited
 }
 
-export interface CurrentDocument {
-	version: number;
-	content: string | null;
-	// the collab document_version - distinct from `version` (content_unsaved_version) above -
-	// needed to call applyDocumentChange below without a live collab session
-	document_version: number;
-}
-
-// used by DiffReviewModal to diff a suggested change against the post's actual current
-// content (rather than a blank document), and to detect if the post has since been edited
-export function getCurrentDocumentForVariant(postVariantId: number) {
-	return consoleApi.get<CurrentDocument>({
-		endpoint: '/documents/variant',
-		data: { post_variant_id: postVariantId }
-	});
-}
 
 // Persists a document change via the collab checkpoint endpoint, keyed directly by
 // post_variant_id - no post id/language id or live editor needed. 409s if `documentVersion`
