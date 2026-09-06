@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(PostVariantCreatedEvent::class)]
 class CreatePostVariantTest extends ApiTestCase
 {
     public function test_creates_variant_for_secondary_language(): void

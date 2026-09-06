@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\UserStatus;
+use App\Service\Post\Event\PostUpdatedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -17,6 +18,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(PostUpdatedEvent::class)]
 class UpdatePostTest extends ApiTestCase
 {
     public function test_updates_post_fields(): void
@@ -50,6 +52,9 @@ class UpdatePostTest extends ApiTestCase
         $this->assertSame('https://example.com/img.jpg', $post->getFeaturedImageUrl());
         $this->assertSame('<script>head</script>', $post->getCodeHead());
         $this->assertSame('<script>foot</script>', $post->getCodeFoot());
+
+        $event = $this->getEd()->getFirstEvent(PostUpdatedEvent::class);
+        $this->assertSame($post->getId(), $event->post->getId());
     }
 
     public function test_nullifies_post_fields(): void

@@ -16,6 +16,9 @@ use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(ThemeController::class)]
 #[CoversClass(ThemeFilesService::class)]
+#[CoversClass(ConfigEditedEvent::class)]
+#[CoversClass(StylesEditedEvent::class)]
+#[CoversClass(TemplateEditedEvent::class)]
 class UpdateThemeFileTest extends ApiTestCase
 {
     public function test_updates_name(): void

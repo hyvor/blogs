@@ -4,6 +4,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
+use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -16,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(PostVariantUnpublishedEvent::class)]
 class UnpublishPostVariantTest extends ApiTestCase
 {
     public function test_variant_not_found(): void
@@ -54,6 +56,9 @@ class UnpublishPostVariantTest extends ApiTestCase
         $data = json_decode((string)$response->getContent(), true);
         $this->assertIsArray($data);
         $this->assertSame('draft', $data['status']);
+
+        $event = $this->getEd()->getFirstEvent(PostVariantUnpublishedEvent::class);
+        $this->assertSame($variant->getId(), $event->variant->getId());
     }
 
     public function test_unschedules_scheduled_variant(): void

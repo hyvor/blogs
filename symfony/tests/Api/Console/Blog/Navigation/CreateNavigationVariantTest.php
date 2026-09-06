@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(NavigationController::class)]
 #[CoversClass(NavigationService::class)]
 #[CoversClass(NavigationVariantObject::class)]
+#[CoversClass(NavigationVariantChangedEvent::class)]
 class CreateNavigationVariantTest extends ApiTestCase
 {
     public function test_create_navigation_variant(): void

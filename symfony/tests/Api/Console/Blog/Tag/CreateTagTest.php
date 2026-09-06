@@ -7,6 +7,7 @@ use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Tag;
+use App\Service\Tag\Event\TagCreatedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagService::class)]
 #[CoversClass(TagObject::class)]
 #[CoversClass(TagObjectFactory::class)]
+#[CoversClass(TagCreatedEvent::class)]
 class CreateTagTest extends ApiTestCase
 {
     public function test_creates_a_tag_with_variant(): void
@@ -46,6 +48,9 @@ class CreateTagTest extends ApiTestCase
         $this->assertCount(1, $tags);
         $this->assertFalse($tags[0]->isPrivate());
         $this->assertCount(1, $tags[0]->getVariants());
+
+        $event = $this->getEd()->getFirstEvent(TagCreatedEvent::class);
+        $this->assertSame($tags[0]->getId(), $event->tag->getId());
     }
 
     public function test_generates_unique_slug(): void

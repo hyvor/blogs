@@ -12,6 +12,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Cache\CacheItemPoolInterface;
 
 #[CoversClass(BlogCacheService::class)]
+#[CoversClass(CacheClearTemplatesEvent::class)]
+#[CoversClass(CacheClearAllEvent::class)]
+#[CoversClass(CacheClearSingleEvent::class)]
 class BlogCacheServiceTest extends KernelTestCase
 {
     private function service(): BlogCacheService

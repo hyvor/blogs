@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RouteController::class)]
 #[CoversClass(RouteService::class)]
+#[CoversClass(RouteChangedEvent::class)]
 class DeleteRouteTest extends ApiTestCase
 {
     public function test_delete_route(): void
