@@ -53,11 +53,11 @@ Webhooks are a way to get notified when an event happens on your blog.
     	<div>A post variant is published</div>
     	<div>
     		<code>
-				{'{ post: '}
-				<a href="/docs/api-console#post-object">Post</a>,
-				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
-				{' }'}
-			</code>
+    			{'{ post: '}
+    			<a href="/docs/api-console#post-object">Post</a>,
+    			variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+    			{' }'}
+    		</code>
     	</div>
     </TableRow>
     <TableRow>
@@ -65,11 +65,11 @@ Webhooks are a way to get notified when an event happens on your blog.
     	<div>A post variant is unpublished</div>
     	<div>
     		<code>
-				{'{ post: '}
-				<a href="/docs/api-console#post-object">Post</a>,
-				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
-				{' }'}
-			</code>
+    			{'{ post: '}
+    			<a href="/docs/api-console#post-object">Post</a>,
+    			variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+    			{' }'}
+    		</code>
     	</div>
     </TableRow>
 
