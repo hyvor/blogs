@@ -400,7 +400,14 @@
 		max-width: 100%;
 		margin: auto;
 		overflow-x: auto;
-		padding: 30px 30px 30px;
+		padding: 30px 0;
+	}
+
+	.plan-names,
+	.category-name,
+	.feature-row {
+		padding-left: 30px;
+		padding-right: 30px;
 	}
 
 	.col-name {
@@ -514,7 +521,14 @@
 
 	@media (max-width: 640px) {
 		.table-wrap {
-			padding: 24px 20px 30px;
+			padding: 24px 0 30px;
+		}
+
+		.plan-names,
+		.category-name,
+		.feature-row {
+			padding-left: 20px;
+			padding-right: 20px;
 		}
 	}
 
