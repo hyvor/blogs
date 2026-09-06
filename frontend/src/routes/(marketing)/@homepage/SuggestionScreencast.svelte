@@ -75,8 +75,6 @@
 		opacity: 0;
 	}
 
-	/* fade and lower the overlapping feature text while the video is hovered,
-	   and let pointer events pass through so the hover holds across the frame */
 	:global(.hds-feature-split:has(.suggestion-screencast:hover) .text-col) {
 		opacity: 0.12;
 		transform: translateY(12px);
