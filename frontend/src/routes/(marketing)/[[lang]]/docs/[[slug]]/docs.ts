@@ -49,7 +49,7 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 									slug: 'suggestion-mode',
 									name: 'Suggestion Mode',
 									content: await getComponent('SuggestionMode')
-								},
+								}
 							]
 						},
 						{
@@ -330,8 +330,6 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					]
 				}
 			]
-		},
-
-		
+		}
 	];
 }

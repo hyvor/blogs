@@ -7,7 +7,6 @@
 
 Let's learn how to use the Hyvor Blogs Editor and publish your **first post!**.
 
-
 <h2 id="posts-pages">Posts & Pages</h2>
 
 Hyvor Blogs supports two types of content: **posts** and **pages**. In most cases, you will be using posts. Pages are used for static content like About, Contact, etc.
@@ -74,7 +73,6 @@ Hyvor Blogs supports two types of content: **posts** and **pages**. In most case
     <li><a href="#link-analysis">Link Analysis</a></li>
     <li><a href="#gpt-writing">GPT Writing</a></li>
 </ul> -->
-
 
 <h2 id="metadata">Post Metadata</h2>
 

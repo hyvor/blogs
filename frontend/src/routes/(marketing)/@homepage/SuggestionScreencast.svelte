@@ -17,7 +17,10 @@
 
 <div class="suggestion-screencast">
 	<video bind:this={videoEl} muted loop playsinline preload="metadata">
-		<source src="/images/homepage/suggestion-screencast.mov" type="video/mp4" />
+		<source
+			src="https://res.cloudinary.com/dqabfne6s/video/upload/v1788726044/suggestion-screencast_yxqye6.mp4"
+			type="video/mp4"
+		/>
 		<track kind="captions" />
 	</video>
 
@@ -27,12 +30,12 @@
 <style>
 	.suggestion-screencast {
 		--right-pull: 380px;
-		--left-bleed: calc(max(0px, (100vw - 1000px) / 2) + 72px);
+		--left-bleed: min(calc(max(0px, (100vw - 1000px) / 2) + 72px), 372px);
 		position: relative;
 		z-index: 1;
 		margin-top: 64px;
 		margin-left: calc(-1 * var(--left-bleed));
-		height: 620px;
+		aspect-ratio: 2940 / 1592;
 		width: calc(100% + var(--left-bleed) + var(--right-pull));
 		border-radius: 0 20px 20px 0;
 		border: 1px solid var(--border);
@@ -86,6 +89,22 @@
 
 	@media (max-width: 900px) {
 		.suggestion-screencast {
+			--right-pull: 0px;
+			--left-bleed: 0px;
+			margin-top: 0;
+			margin-left: -15px;
+			width: calc(100% + 30px);
+			border-radius: 0;
+			border-left: none;
+			border-right: none;
+			box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 8%, transparent);
+		}
+
+		.suggestion-screencast video {
+			object-position: center top;
+		}
+
+		.fade-overlay {
 			display: none;
 		}
 	}

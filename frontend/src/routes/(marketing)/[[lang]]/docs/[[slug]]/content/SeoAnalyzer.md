@@ -13,7 +13,6 @@ The SEO analysis tool in the post editor will give you suggestions to improve yo
     	authority, etc. However, these suggestions will help you make less SEO mistakes.
 </Callout>
 
-
 <DocsImage src="/images/docs/writing/seo.png" alt="SEO Analysis" width={400} />
 
 <br />
