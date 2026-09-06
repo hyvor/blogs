@@ -85,7 +85,7 @@ These are the tests that Hyvor Blogs will run on your post:
     <li><b>Internal links</b></li>
     <p>
     	At least one internal link should be present in the post. Links to any subdomain of your main
-    	domain will be considered as internal links. See <a href="/docs/writing#link-types"
+    	domain will be considered as internal links. See <a href="/docs/link-analyzer#link-types"
     		>link types</a
     	>
     	for more information. <code>internal-blog</code>, <code>internal-domain</code>, and

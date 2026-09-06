@@ -128,6 +128,6 @@ Si vous utilisez un serveur web comme Nginx ou Caddy, vous pouvez utiliser un re
 	</TableRow>
 	<TableRow>
 		<div>Nginx</div>
-		<div>Bientôt disponible</div>
+		<div></div>
 	</TableRow>
 </Table>

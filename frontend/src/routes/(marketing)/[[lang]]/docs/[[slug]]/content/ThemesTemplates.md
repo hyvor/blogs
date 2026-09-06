@@ -52,7 +52,7 @@ This folder contains templates files. There are several types of template files
     	<div>Component</div>
     	<div>
     		These templates are used to define new HTML structures for complex components like link
-    		previews. See <a href="/docs/writing#link-bookmark">Link Bookmark</a>.
+    		previews. See <a href="/docs/editor#link-bookmark">Link Bookmark</a>.
     	</div>
     	<div><code>component-rich-link.twig</code></div>
     </TableRow>

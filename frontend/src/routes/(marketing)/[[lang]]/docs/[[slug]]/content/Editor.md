@@ -22,7 +22,7 @@ To add inline styles to text, select the text. A popup will be shown with the av
 
 ##### Adding & Removing Links
 
-Adding links is similar to adding [inline styles](/docs/writing#inline-styles). Select the text you want to link and then click the Link icon. Next, paste the URL in the input and hit Enter.
+Adding links is similar to adding [inline styles](#inline-styles). Select the text you want to link and then click the Link icon. Next, paste the URL in the input and hit Enter.
 
 <DocsImage src="/images/docs/writing/link-add.gif" alt="Adding Links" />
 
@@ -72,7 +72,7 @@ You can also use Markdown shortcuts to create inline styles.
 	</TableRow>
 
     <TableRow>
-    	<div><a href="/docs/writing#links">Link</a></div>
+    	<div><a href="#links">Link</a></div>
     	<div><code>[Anchor](https://example.com)</code></div>
     </TableRow>
 
@@ -115,15 +115,15 @@ Hyvor Blogs supports the following blocks.
 
 - Paragraph
 - Divider
-- [Heading](/docs/writing#headings)
-- [Lists](/docs/writing#lists)
-- [Quote](/docs/writing#quote)
-- [Callout](/docs/writing#callout)
-- [Image](/docs/writing#image)
-- [Embed](/docs/writing#embed)
-- [Link Bookmark](/docs/writing#link-bookmark)
-- [Code Block](/docs/writing#code-block)
-- [Custom HTML/Twig](/docs/writing#custom-html)
+- [Heading](#headings)
+- [Lists](#lists)
+- [Quote](#quote)
+- [Callout](#callout)
+- [Image](#image)
+- [Embed](#embed)
+- [Link Bookmark](#link-bookmark)
+- [Code Block](#code-block)
+- [Custom HTML/Twig](#custom-html)
 
 <h4 id="headings">Headings</h4>
 
@@ -195,7 +195,7 @@ There are two ways to add heading IDs.
 
 <h4 id="quote">Quote</h4>
 
-Quote block is usually used to quote something, while it is also generally used make text stand out. You can create a Quote block via the [slash command](/docs/writing#slash-command) or by entering `> + space` in a new line (Markdown syntax).
+Quote block is usually used to quote something, while it is also generally used make text stand out. You can create a Quote block via the [slash command](#slash-command) or by entering `> + space` in a new line (Markdown syntax).
 
 <DocsImage src="/images/docs/writing/quote.gif" alt="Quote" width={400} />
 
@@ -209,7 +209,7 @@ Callout block is used to write text that stands out from other content in the po
 
 <h4 id="image">Image</h4>
 
-To add images, use [slash command](/docs/writing#slash-command) (`/` in a new line), and choose **Image**. You can add an image in one of the following ways:
+To add images, use [slash command](#slash-command) (`/` in a new line), and choose **Image**. You can add an image in one of the following ways:
 
 <ul>
 	<li>Upload from your device</li>
@@ -255,7 +255,7 @@ The image node also allows you to:
 
 <h4 id="embed">Embed</h4>
 
-Hyvor Blogs supports embedding content from Youtube, Twitter, Instagram, Facebook, and other platforms. <a href="https://unfold.hyvor.com/" target="_blank">Hyvor Unfold</a> is used under the hood to support various platforms. You can add an embed using the [slash command](/docs/writing#slash-command) (`/` **in a new line → Embed**). Then, paste the URL you would like to embed in the input box.
+Hyvor Blogs supports embedding content from Youtube, Twitter, Instagram, Facebook, and other platforms. <a href="https://unfold.hyvor.com/" target="_blank">Hyvor Unfold</a> is used under the hood to support various platforms. You can add an embed using the [slash command](#slash-command) (`/` **in a new line → Embed**). Then, paste the URL you would like to embed in the input box.
 
 <DocsImage src="/images/docs/writing/embed.gif" alt="Embed" />
 

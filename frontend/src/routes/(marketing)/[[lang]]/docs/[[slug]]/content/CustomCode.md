@@ -45,5 +45,5 @@ For example, posts that have SVG animations will need an additional Javascript l
 	{#snippet icon()}
 		<IconBrush />
 	{/snippet}
-	You can also <a href="/docs/theme#editing">edit your theme</a> to add custom code to your blog.
+	You can also <a href="/docs/themes#editing">edit your theme</a> to add custom code to your blog.
 </Callout>

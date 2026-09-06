@@ -23,7 +23,7 @@ Vous pouvez télécharger des images dans l'éditeur d'articles, dans la bibliot
 
 <h3 id="webp">Conversion automatique en WebP</h3>
 
-Les images <a href="https://en.wikipedia.org/wiki/WebP" rel="nofollow" target="_blank">WebP</a> sont 25 à 34 % plus légères que les images JPEG/PNG de même qualité. Il est aujourd'hui recommandé d'utiliser le WebP sur les sites web dans la mesure du possible, car tous les navigateurs modernes prennent en charge les images WebP. Vous pouvez télécharger des images JPEG et PNG comme d'habitude dans vos articles. Hyvor Blogs les convertira automatiquement en images WebP à la volée. Vous n'avez rien à faire.
+Les images [WebP](https://en.wikipedia.org/wiki/WebP) sont 25 à 34 % plus légères que les images JPEG/PNG de même qualité. Il est aujourd'hui recommandé d'utiliser le WebP sur les sites web dans la mesure du possible, car tous les navigateurs modernes prennent en charge les images WebP. Vous pouvez télécharger des images JPEG et PNG comme d'habitude dans vos articles. Hyvor Blogs les convertira automatiquement en images WebP à la volée. Vous n'avez rien à faire.
 
 <Callout type="info">
 	{#snippet icon()}

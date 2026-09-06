@@ -7,21 +7,19 @@
 
 Tous les thèmes de Hyvor Blogs sont fournis avec une police par défaut. Vous pouvez facilement la changer pour n'importe quelle police de votre choix. Il existe deux façons de changer la police.
 
-- [Google Fonts](#google-fonts)
+- [Bunny Fonts (intégré)](#bunny-fonts)
 - [Polices personnalisées](#custom-fonts)
 
-<h2 id="google-fonts">1. Google Fonts en local</h2>
+<h2 id="bunny-fonts">1. Bunny Fonts (intégré)</h2>
 
-<a href="https://fonts.google.com/" target="_blank" rel="nofollow">Google Fonts</a> est le service de polices web le plus populaire. **Cependant**, il présente des problèmes connus de confidentialité et de conformité avec le RGPD et le CCPA. C'est pourquoi nous mettons en proxy Google Fonts via nos serveurs afin de vous offrir une meilleure confidentialité, conformité et performance. Tous les scripts ou feuilles de style seront servis directement depuis le domaine de votre blog.
+Hyvor Blogs prend en charge nativement <a href="https://fonts.bunny.net/" target="_blank" rel="nofollow">Bunny Fonts</a>. Toutes les polices sont chargées directement via le domaine de votre blog, ce qui évite tout problème de confidentialité, tout suivi par des tiers ou toute résolution DNS supplémentaire.
 
 - `https://[your-domain]/fonts/css/{family}` - Proxy CSS
 - `https://[your-domain]/fonts/file/{file_name}` - Proxy de fichier de police
 
-Remarque : en raison de certaines limitations dans les conditions d'utilisation de Google, en coulisses, nous utilisons un proxy vers <a href="https://fonts.bunny.net/" target="_blank" rel="nofollow">Bunny Fonts</a>, une alternative respectueuse de la vie privée à Google Fonts. Les deux services fournissent les mêmes polices avec la même API. Les polices variables ne sont pas prises en charge.
-
 <h3 id="load-fonts">Étape 1 : Charger les polices</h3>
 
-Tout d'abord, rendez-vous sur <a href="https://fonts.bunny.net/" rel="nofollow" target="_blank">Bunny Fonts</a> (ou Google Fonts) et sélectionnez les polices et variantes qui vous plaisent. Vous verrez un code CSS pour charger les polices comme ci-dessous.
+Tout d'abord, rendez-vous sur <a href="https://fonts.bunny.net/" rel="nofollow" target="_blank">Bunny Fonts</a> et sélectionnez les polices et variantes qui vous plaisent. Vous verrez un code CSS pour charger les polices comme ci-dessous.
 
 ```css
 @import url(https://fonts.bunny.net/css?family=mulish:400,700);
@@ -68,10 +66,10 @@ Si votre thème ne prend pas en charge la personnalisation des polices, vous pou
 
 <h2 id="custom-fonts">2. Polices personnalisées</h2>
 
-Si vous devez ajouter une police personnalisée qui n'est pas disponible dans Google Fonts, suivez ces étapes :
+Si vous devez ajouter une police personnalisée qui n'est pas disponible dans Bunny Fonts, suivez ces étapes :
 
 - Téléversez les fichiers de police dans **Theme → assets**
-- Ajoutez du CSS personnalisé à un fichier SCSS dans **Theme → assets**
+- Ajoutez du CSS personnalisé à un fichier SCSS dans **Theme → styles**
 
 Votre CSS personnalisé devrait ressembler à ceci :
 

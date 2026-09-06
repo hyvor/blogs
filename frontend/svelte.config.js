@@ -18,8 +18,8 @@ const config = {
 		}),
 		prerender: {
 			/* TODO: REMOVE THIS! */
-			handleMissingId: 'fail',
-			handleHttpError: 'fail',
+			handleMissingId: 'warn',
+			handleHttpError: 'warn',
 			// TODO: remove after toggle is added
 			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
 		}

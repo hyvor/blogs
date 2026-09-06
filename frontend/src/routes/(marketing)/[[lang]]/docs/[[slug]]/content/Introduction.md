@@ -22,7 +22,7 @@ Hyvor Blogs offers a wide range of features:
 
 - **[Powerful rich text editor](/docs/writing)** - You can write your posts in the built-in rich text editor. Easily add images, audio, rich media, code snippets, and more.
 - **[Multi-language support](/docs/languages)** - Everything is designed to support multiple languages, allowing you to reach a wider audience. 
-- **[Customizable Themes](/docs/theme)** - You can choose a theme from our theme library or create your own theme from scratch.
+- **[Customizable Themes](/docs/themes)** - You can choose a theme from our theme library or create your own theme from scratch.
 - **[AI Agent](/docs/agent)** - An intelligent assistant that can read your posts, provide suggestions to improve them. Of course, you can disable it anytime.
 - **[Invite your team members](/docs/users)** - Give your team members access to your blog. Multiple roles with real-time collaboration.
 - **[Suggestion Mode](/docs/suggestion-mode)** - Suggest edits to your team members' posts, discuss changes right within the editor, and collaborate effectively.

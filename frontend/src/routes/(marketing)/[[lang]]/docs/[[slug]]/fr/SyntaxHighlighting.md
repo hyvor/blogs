@@ -90,12 +90,12 @@ coloration syntaxique, allez dans `Console → Settings → Post Content`.
 
 <h2 id="adding">Ajouter des blocs de code à votre article</h2>
 
-Voir [Bloc de code](/docs/writing#code-block) dans la section Rédaction.
+Voir [Bloc de code](/docs/editor#code-block) dans l'Éditeur.
 
 <h2 id="annotations">Annotations</h2>
 
 Les annotations sont utilisées pour surligner, mettre en focus et numéroter les lignes. Vous pouvez ajouter des annotations au
-bloc de code dans l'éditeur. Voyons quelques exemples.
+bloc de code dans l'Éditeur. Voyons quelques exemples.
 
 <Table columns="2fr 3fr" hover>
 	<TableRow head>
@@ -165,10 +165,10 @@ bloc de code dans l'éditeur. Voyons quelques exemples.
 
 </Table>
 
-<h2 id="tips">Astuces</h2>
+<h2 id="notes">Notes</h2>
 
-- En interne, Hyvor Blogs utilise <a href="https://github.com/shikijs/shiki" rel="nofollow">Shiki</a> pour la coloration syntaxique. Nous pouvons donc prendre en charge tout langage ou thème compatible avec VSCode. Si vous souhaitez en ajouter un, contactez-nous.
-- Les couleurs de la syntaxe proviennent de notre côté, mais les styles comme le padding, les marges, l'espace entre les lignes et la taille de la police proviennent du [thème](/docs/theme) de votre blog.
+- Les couleurs de la syntaxe proviennent de notre côté, mais les styles comme le padding, les marges, l'espace entre les lignes et la taille de la police proviennent du [thème](/docs/themes) de votre blog.
+- En interne, nous utilisons des grammaires TextMate pour la coloration syntaxique.
 
 <style lang="scss">
 	.dynamic {

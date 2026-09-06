@@ -52,14 +52,24 @@ Les webhooks sont un moyen d'être notifié lorsqu'un événement se produit sur
     	<div><code>post.variant.published</code></div>
     	<div>Une variante d'article est publiée</div>
     	<div>
-    		<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+    		<code>
+				{'{ post: '}
+				<a href="/docs/api-console#post-object">Post</a>,
+				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+				{' }'}
+			</code>
     	</div>
     </TableRow>
     <TableRow>
     	<div><code>post.variant.unpublished</code></div>
     	<div>Une variante d'article est dépubliée</div>
     	<div>
-    		<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+    		<code>
+				{'{ post: '}
+				<a href="/docs/api-console#post-object">Post</a>,
+				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+				{' }'}
+			</code>
     	</div>
     </TableRow>
 
@@ -144,7 +154,7 @@ Les webhooks sont un moyen d'être notifié lorsqu'un événement se produit sur
 
     <TableRow>
     	<div><code>navigation.changed</code></div>
-    	<div>La <a href="/docs/navigation-links">navigation du blog</a> a changé</div>
+    	<div>Les <a href="/docs/navigation-links">liens de navigation du blog</a> ont changé</div>
     	<div>
     		<code
     			>{'{ navigation: '}<a href="/docs/api-console#navigation-object">Navigation</a
@@ -201,7 +211,7 @@ Les webhooks sont un moyen d'être notifié lorsqu'un événement se produit sur
 <h2 id="request">Requête du webhook</h2>
 
 Lorsqu'un événement se produit, une requête **POST** est envoyée à l'URL du webhook. Le corps de la
-requête est un objet JSON contenant les propriétés suivantes. La propriété `content` correspond aux
+requête est un objet JSON contenant les propriétés suivantes. La propriété `data` correspond aux
 données de l'événement. Consultez le tableau ci-dessus pour connaître la structure des données de chaque événement.
 
 ```json
@@ -220,6 +230,9 @@ du corps de la requête, signée avec la clé secrète de votre webhook. Vous tr
 dans les paramètres de votre webhook.
 
 Pour vérifier la signature :
+
+- Hachez le corps de la requête avec HMAC-SHA256 en utilisant la clé secrète de votre webhook.
+- Comparez le hachage obtenu avec la valeur de l'en-tête `X-Signature`.
 
 ```js
 const signature = request.headers['x-signature'];
@@ -244,7 +257,6 @@ le webhook 3 fois de plus après
 - 30 minutes
 
 Si toutes les tentatives échouent, nous marquerons ce webhook comme échoué et ne l'enverrons plus automatiquement.
-Cependant, vous pouvez le déclencher manuellement depuis la Console ultérieurement.
 
 <style>
 	.separator {

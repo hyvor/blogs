@@ -17,7 +17,7 @@ votre blog et les réseaux sociaux à mieux afficher votre blog.
 
 Ce sont les balises meta de base qui sont ajoutées à toutes les pages de votre blog.
 
-```
+```html
 <title>My Blog</title>
 <meta name="description" content="My Blog Description" />
 <link rel="canonical" href="https://myblog.hyvorblogs.io" />
@@ -28,7 +28,7 @@ Ce sont les balises meta de base qui sont ajoutées à toutes les pages de votre
 Si vous avez [configuré plusieurs langues](/docs/languages), Hyvor Blogs
 ajoutera automatiquement des balises `hreflang` aux pages d'index et de post.
 
-```
+```html
 <link rel="alternate" href="https://myblog.hyvorblogs.io/fr" hreflang="fr" />
 <link rel="alternate" href="https://myblog.hyvorblogs.io/es" hreflang="es" />
 ```
@@ -37,7 +37,7 @@ ajoutera automatiquement des balises `hreflang` aux pages d'index et de post.
 
 Ces balises aident les réseaux sociaux à générer des aperçus enrichis de votre blog et de vos posts.
 
-```
+```html
 <!-- FACEBOOK (OG) -->
 <meta property="og:site_name" />
 <meta property="og:type" />
@@ -69,7 +69,7 @@ Ces balises aident les réseaux sociaux à générer des aperçus enrichis de vo
 Un schéma enrichi de <a href="https://developers.google.com/search/docs/appearance/structured-data/article" target="_blank" rel="nofollow">BlogPosting</a> est ajouté à tous les posts. Cela aide les moteurs de recherche à mieux comprendre vos posts et à les afficher
 de manière plus pertinente dans les résultats de recherche.
 
-```ts
+```html
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -120,7 +120,7 @@ cas, vous pouvez définir une URL canonique personnalisée pour le post dans l'�
 Robots.txt est un fichier qui indique aux robots des moteurs de recherche quelles pages accéder ou non. Hyvor Blogs
 est livré avec un robots.txt par défaut, qui devrait suffire pour la plupart des blogs.
 
-```
+```yaml
 User-agent: *
 Sitemap: {{ _blog.base_url }}/sitemap.xml
 Disallow: /p/
@@ -144,7 +144,7 @@ votre blog plus rapidement.
 
 Format de l'index du sitemap :
 
-```
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap><loc>https://blog.hyvorblogs.io/sitemap-pages.xml</loc></sitemap>
@@ -162,7 +162,7 @@ L'index du sitemap renvoie vers d'autres sitemaps du blog.
 
 Voici un exemple de `sitemap-posts-[index].xml`.
 
-```
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -183,7 +183,7 @@ Voici un exemple de `sitemap-posts-[index].xml`.
 
 Voici la balise meta que vous pouvez utiliser pour empêcher les moteurs de recherche d'indexer une page.
 
-```
+```html
 <meta name="robots" content="noindex">
 ```
 

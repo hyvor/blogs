@@ -90,7 +90,7 @@ settings, go to `Console → Settings → Post Content`.
 
 <h2 id="adding">Adding Code Blocks to Your Post</h2>
 
-See [Code Block](/docs/writing#code-block) in Writing.
+See [Code Block](/docs/editor#code-block) in Editor.
 
 <h2 id="annotations">Annotations</h2>
 
@@ -167,7 +167,7 @@ the code block in the Editor. Let's see some examples.
 
 <h2 id="notes">Notes</h2>
 
-- Colors for syntax comes from our side, but styles like padding, margins, space between lines, and font sizes comes from the [theme](/docs/theme) of your blog.
+- Colors for syntax comes from our side, but styles like padding, margins, space between lines, and font sizes comes from the [theme](/docs/themes) of your blog.
 - Under the hood, we use TextMate grammars for syntax highlighting.
 
 <style lang="scss">
