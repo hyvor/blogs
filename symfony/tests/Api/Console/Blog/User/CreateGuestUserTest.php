@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
+#[CoversClass(UserCreatedEvent::class)]
 class CreateGuestUserTest extends ApiTestCase
 {
     private function enableBilling(int $organizationId, int $usersLimit = 2): void

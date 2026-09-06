@@ -63,7 +63,7 @@ class AiController extends AbstractController
 
         $conversation = null;
         if ($input->conversation_id) {
-            $conversation = $this->aiAgentConversationService->getConversationForBlog($blog, $input->conversation_id);
+            $conversation = $this->aiConversationService->getConversationForBlog($blog, $input->conversation_id);
             if ($conversation === null) {
                 throw new BadRequestHttpException('Conversation not found');
             }

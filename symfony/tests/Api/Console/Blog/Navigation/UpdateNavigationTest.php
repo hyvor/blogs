@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(NavigationController::class)]
 #[CoversClass(NavigationObject::class)]
 #[CoversClass(NavigationService::class)]
+#[CoversClass(NavigationChangedEvent::class)]
 class UpdateNavigationTest extends ApiTestCase
 {
     public function test_update_navigation(): void

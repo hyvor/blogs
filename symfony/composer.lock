@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "862c01c62a609948aa3ddbe325427daa",
+    "content-hash": "81df796d8b383d68204d3ba8e935c57c",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1899,16 +1899,16 @@
         },
         {
             "name": "hyvor/internal",
-            "version": "4.1.6",
+            "version": "4.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/internal.git",
-                "reference": "31cc4e3618263273c56380426400a66f4b56ff2a"
+                "reference": "c01349296e02fbf02336735cd97ed41c252018d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/internal/zipball/31cc4e3618263273c56380426400a66f4b56ff2a",
-                "reference": "31cc4e3618263273c56380426400a66f4b56ff2a",
+                "url": "https://api.github.com/repos/hyvor/internal/zipball/c01349296e02fbf02336735cd97ed41c252018d3",
+                "reference": "c01349296e02fbf02336735cd97ed41c252018d3",
                 "shasum": ""
             },
             "require": {
@@ -1972,9 +1972,9 @@
             "description": "Internal Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/internal/issues",
-                "source": "https://github.com/hyvor/internal/tree/4.1.6"
+                "source": "https://github.com/hyvor/internal/tree/4.1.7"
             },
-            "time": "2026-09-03T14:20:56+00:00"
+            "time": "2026-09-05T13:37:10+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",

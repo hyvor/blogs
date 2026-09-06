@@ -246,6 +246,10 @@ class ConsoleApiAuthorizationListener
         if ($request === null) {
             return [];
         }
+
+        /**
+         * @var array<Scope>|null $scopes
+         */
         $scopes = $request->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
         return is_array($scopes) ? $scopes : [];
     }

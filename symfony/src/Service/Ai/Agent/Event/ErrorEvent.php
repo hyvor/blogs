@@ -9,7 +9,7 @@ readonly class ErrorEvent extends EventAbstract
 {
 
     public function __construct(
-        private \Throwable $error
+        private \Throwable $error // @phpstan-ignore-line
     ) {}
 
     public function getType(): AiMessageEventType

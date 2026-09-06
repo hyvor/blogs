@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(RedirectController::class)]
 #[CoversClass(RedirectService::class)]
+#[CoversClass(RedirectChangedEvent::class)]
 class DeleteRedirectTest extends ApiTestCase
 {
     public function test_delete_redirect(): void

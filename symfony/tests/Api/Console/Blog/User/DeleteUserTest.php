@@ -20,6 +20,8 @@ use function Zenstruck\Foundry\Persistence\refresh;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
+#[CoversClass(UserDeletedEvent::class)]
+#[CoversClass(UserVariantDeletedEvent::class)]
 class DeleteUserTest extends ApiTestCase
 {
 

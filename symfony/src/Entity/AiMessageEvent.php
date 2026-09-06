@@ -38,6 +38,9 @@ class AiMessageEvent
     private ?string $tool_name = null;
 
     // query only
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     private array $tool_input = [];
 
@@ -144,12 +147,18 @@ class AiMessageEvent
         return $this;
     }
 
-    public function getToolInput(): mixed
+    /**
+     * @return array<string, mixed>
+     */
+    public function getToolInput(): array
     {
         return $this->tool_input;
     }
 
-    public function setToolInput(mixed $tool_input): static
+    /**
+     * @param array<string, mixed> $tool_input
+     */
+    public function setToolInput(array $tool_input): static
     {
         $this->tool_input = $tool_input;
         return $this;

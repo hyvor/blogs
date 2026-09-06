@@ -18,6 +18,7 @@ use App\Entity\Route;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Blog\BlogCreator;
+use App\Service\Blog\Event\BlogCreatedEvent;
 use App\Service\Integration\HyvorPost\HyvorPostService;
 use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Theme\ThemeFilesService;
@@ -40,6 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(BlogController::class)]
 #[CoversClass(BlogCreator::class)]
+#[CoversClass(BlogCreatedEvent::class)]
 class CreateBlogTest extends ApiTestCase
 {
 
@@ -192,6 +194,9 @@ class CreateBlogTest extends ApiTestCase
         $themeFilesService = $this->getService(ThemeFilesService::class);
         $files = $themeFilesService->getAllFilesOfBlog($blog);
         $this->assertNotEmpty($files);
+
+        $event = $this->getEd()->getFirstEvent(BlogCreatedEvent::class);
+        $this->assertSame($blog->getId(), $event->blog->getId());
     }
 
     public function test_creates_dev_blog(): void

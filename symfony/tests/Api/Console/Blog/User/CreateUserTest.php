@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
+#[CoversClass(UserCreatedEvent::class)]
 class CreateUserTest extends ApiTestCase
 {
     /**

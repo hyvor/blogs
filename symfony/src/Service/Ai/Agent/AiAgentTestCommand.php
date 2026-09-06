@@ -5,7 +5,6 @@ namespace App\Service\Ai\Agent;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Ai\AiModel;
-use App\Service\Post\Content\PostContentService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\BlogVariantFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -16,6 +15,9 @@ use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsCommand('app:ai:agent', description: 'Test command for AiAgentService')]
 #[When(env: 'dev')]
 class AiAgentTestCommand
@@ -23,7 +25,6 @@ class AiAgentTestCommand
 
     public function __construct(
         private AiAgentService $aiAgentService,
-        private PostContentService $postContentService
     ) {}
 
     public function __invoke(): int

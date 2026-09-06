@@ -8,6 +8,7 @@ use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Post;
 use App\Entity\PostVariant;
+use App\Service\Post\Event\PostCreatedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostService::class)]
 #[CoversClass(PostObject::class)]
 #[CoversClass(PostObjectFactory::class)]
+#[CoversClass(PostCreatedEvent::class)]
 class CreatePostTest extends ApiTestCase
 {
     public function test_creates_a_post_with_primary_language_variant(): void
@@ -45,6 +47,9 @@ class CreatePostTest extends ApiTestCase
         $variants = $this->getEm()->getRepository(PostVariant::class)->findBy(['post' => $posts[0]]);
         $this->assertCount(1, $variants);
         $this->assertSame($lang->getId(), $variants[0]->getLanguage()->getId());
+
+        $event = $this->getEd()->getFirstEvent(PostCreatedEvent::class);
+        $this->assertSame($posts[0]->getId(), $event->post->getId());
     }
 
     public function test_creates_a_page(): void

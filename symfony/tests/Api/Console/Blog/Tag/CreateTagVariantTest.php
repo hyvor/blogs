@@ -7,6 +7,7 @@ use App\Api\Console\Object\TagVariantObject;
 use App\Api\Console\Object\TagVariantObjectFactory;
 use App\Entity\Enum\UserStatus;
 use App\Entity\TagVariant;
+use App\Service\Tag\Event\TagVariantCreatedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagService::class)]
 #[CoversClass(TagVariantObject::class)]
 #[CoversClass(TagVariantObjectFactory::class)]
+#[CoversClass(TagVariantCreatedEvent::class)]
 class CreateTagVariantTest extends ApiTestCase
 {
     // this generally does not happen in practise
@@ -40,6 +42,9 @@ class CreateTagVariantTest extends ApiTestCase
 
         $variants = $this->getEm()->getRepository(TagVariant::class)->findBy(['tag' => $tag->getId()]);
         $this->assertCount(1, $variants);
+
+        $event = $this->getEd()->getFirstEvent(TagVariantCreatedEvent::class);
+        $this->assertSame($variants[0]->getId(), $event->variant->getId());
     }
 
     public function test_creates_a_tag_variant_for_second_language(): void

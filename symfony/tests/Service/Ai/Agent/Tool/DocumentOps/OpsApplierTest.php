@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Ai\Agent\Tool\DocumentOps;
 
+use App\Entity\PostVariant;
 use App\Service\Ai\Agent\Tool\DocumentOps\FetchedDocument;
 use App\Service\Ai\Agent\Tool\DocumentOps\NodeIdMapBuilder;
 use App\Service\Ai\Agent\Tool\DocumentOps\Op;
@@ -24,7 +25,7 @@ class OpsApplierTest extends KernelTestCase
         $nodeIdMapBuilder = new NodeIdMapBuilder();
         $nodeIdMapBuilder->register($doc);
 
-        return new FetchedDocument($doc, $nodeIdMapBuilder);
+        return new FetchedDocument(new PostVariant(), $doc, $nodeIdMapBuilder);
     }
 
     /**

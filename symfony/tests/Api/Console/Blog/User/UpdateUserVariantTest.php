@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
+#[CoversClass(UserVariantUpdatedEvent::class)]
 class UpdateUserVariantTest extends ApiTestCase
 {
     public function test_updates_user_variant(): void

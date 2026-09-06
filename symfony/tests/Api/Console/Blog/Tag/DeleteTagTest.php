@@ -6,6 +6,7 @@ use App\Api\Console\Controller\TagController;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Tag;
 use App\Entity\TagVariant;
+use App\Service\Tag\Event\TagDeletedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(TagController::class)]
 #[CoversClass(TagService::class)]
+#[CoversClass(TagDeletedEvent::class)]
 class DeleteTagTest extends ApiTestCase
 {
     public function test_deletes_the_tag_its_variants_and_post_tags(): void
@@ -52,6 +54,8 @@ class DeleteTagTest extends ApiTestCase
             [$tagId],
         );
         $this->assertSame(0, (int) $postTagCount);
+
+        $this->getEd()->assertDispatched(TagDeletedEvent::class);
     }
 
     public function test_entity_not_found(): void

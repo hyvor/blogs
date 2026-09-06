@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[CoversClass(ThemeController::class)]
 #[CoversClass(ThemeFilesService::class)]
+#[CoversClass(AssetEditedEvent::class)]
 class CreateThemeFileTest extends ApiTestCase
 {
     public function test_creates_a_file(): void

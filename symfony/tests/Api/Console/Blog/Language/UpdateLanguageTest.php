@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(LanguageController::class)]
 #[CoversClass(LanguageObject::class)]
 #[CoversClass(LanguageService::class)]
+#[CoversClass(LanguageChangedEvent::class)]
 class UpdateLanguageTest extends ApiTestCase
 {
     public function test_update_language(): void

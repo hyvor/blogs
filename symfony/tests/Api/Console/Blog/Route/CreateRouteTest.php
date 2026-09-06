@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(RouteController::class)]
 #[CoversClass(RouteObject::class)]
 #[CoversClass(RouteService::class)]
+#[CoversClass(RouteChangedEvent::class)]
 class CreateRouteTest extends ApiTestCase
 {
     public function test_create_route(): void

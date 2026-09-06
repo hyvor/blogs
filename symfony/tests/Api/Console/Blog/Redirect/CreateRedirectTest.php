@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(RedirectController::class)]
 #[CoversClass(RedirectObject::class)]
 #[CoversClass(RedirectService::class)]
+#[CoversClass(RedirectChangedEvent::class)]
 class CreateRedirectTest extends ApiTestCase
 {
     public function test_create_redirect(): void

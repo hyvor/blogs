@@ -18,7 +18,6 @@ use App\Service\Ai\Agent\Event\TextEvent;
 use App\Service\Ai\Agent\Event\ThoughtEvent;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\AiModel;
-use App\Service\Route\PermalinkService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\AI\Platform\Result\Stream\Delta\TextDelta;
@@ -35,18 +34,9 @@ class AiAgentConversationService
     public function __construct(
         private EntityManagerInterface $em,
         private AiAgentService $aiAgentService,
-        private AiAgentHistoryService $aiAgentHistoryService,
-        private PermalinkService $permalinkService,
+        private MessageHistoryBuilder $messageHistoryBuilder,
         private LoggerInterface $logger,
     ) {}
-
-    public function getConversationForBlog(Blog $blog, int $id): ?AiConversation
-    {
-        return $this->em->getRepository(AiConversation::class)->findOneBy([
-            'id' => $id,
-            'blog' => $blog,
-        ]);
-    }
 
     /**
      * @return iterable<array<string, mixed>> SSE-ready event payloads.
@@ -63,7 +53,7 @@ class AiAgentConversationService
             $this->em->flush();
 
             $conversation = $existingConversation;
-            $history = $this->aiAgentHistoryService->buildMessageHistory($conversation);
+            $history = $this->messageHistoryBuilder->build($conversation);
         } else {
             $conversation = new AiConversation();
             $conversation->setBlog($blog);
@@ -105,6 +95,7 @@ class AiAgentConversationService
          * @param array<string, mixed> $input
          */
         $onQueryComplete = function (string $toolName, array $input, mixed $output) use ($assistantMessage, &$pendingQueryEvents): void {
+            /** @var array<string, mixed> $input */
             $event = $this->createEvent(
                 $assistantMessage,
                 new QueryEvent(
@@ -267,6 +258,9 @@ class AiAgentConversationService
         return $event;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function sseArrayFromMessageEvent(AiMessageEvent $event): array
     {
         return [
@@ -293,8 +287,8 @@ class AiAgentConversationService
             if ($inputTokens !== null && $outputTokens !== null) {
                 $model = $agentCallResult->getModel();
 
-                $inputCostCents = $model->getInputCostCents($inputTokens);
-                $outputCostCents = $model->getOutputCostCents($outputTokens);
+                $inputCostCents = $model->getInputCostUsd($inputTokens);
+                $outputCostCents = $model->getOutputCostUsd($outputTokens);
 
                 $assistantMessage->setInputTokensUsdCost($inputCostCents);
                 $assistantMessage->setOutputTokensUsdCost($outputCostCents);

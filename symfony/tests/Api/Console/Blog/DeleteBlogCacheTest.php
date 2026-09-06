@@ -16,6 +16,9 @@ use Psr\Cache\CacheItemPoolInterface;
 
 #[CoversClass(BlogController::class)]
 #[CoversClass(BlogCacheService::class)]
+#[CoversClass(CacheClearAllEvent::class)]
+#[CoversClass(CacheClearTemplatesEvent::class)]
+#[CoversClass(CacheClearSingleEvent::class)]
 class DeleteBlogCacheTest extends ApiTestCase
 {
     public function test_clears_all_cache(): void

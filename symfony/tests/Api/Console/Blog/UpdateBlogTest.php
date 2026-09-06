@@ -7,6 +7,7 @@ use App\Api\Console\Object\BlogObject;
 use App\Api\Console\Object\BlogObjectFactory;
 use App\Entity\Enum\UserStatus;
 use App\Service\Blog\BlogService;
+use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\UserFactory;
@@ -16,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(BlogService::class)]
 #[CoversClass(BlogObject::class)]
 #[CoversClass(BlogObjectFactory::class)]
+#[CoversClass(BlogUpdatedEvent::class)]
 class UpdateBlogTest extends ApiTestCase
 {
     public function test_updates_blog_data(): void
@@ -30,6 +32,11 @@ class UpdateBlogTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
         $this->assertSame('blog-update-new', $json['subdomain']);
+
+        $event = $this->getEd()->getFirstEvent(BlogUpdatedEvent::class);
+        $this->assertSame($blog->getId(), $event->blog->getId());
+        $this->assertSame('blog-update-new', $event->blog->getSubdomain());
+        $this->assertSame('blog-update', $event->blogOld->getSubdomain());
     }
 
     public function test_update_metadata(): void

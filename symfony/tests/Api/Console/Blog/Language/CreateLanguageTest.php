@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(LanguageController::class)]
 #[CoversClass(LanguageObject::class)]
 #[CoversClass(LanguageService::class)]
+#[CoversClass(LanguageChangedEvent::class)]
 class CreateLanguageTest extends ApiTestCase
 {
     public function test_create_language(): void
@@ -44,8 +45,7 @@ class CreateLanguageTest extends ApiTestCase
             ['subdomain' => 'lang-dup'],
             ['status' => UserStatus::ACTIVE],
         );
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOneFor($blog, [
             'code' => 'en',
         ]);
 

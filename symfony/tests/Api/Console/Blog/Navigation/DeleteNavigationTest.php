@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NavigationController::class)]
 #[CoversClass(NavigationService::class)]
+#[CoversClass(NavigationChangedEvent::class)]
 class DeleteNavigationTest extends ApiTestCase
 {
     public function test_delete_navigation(): void

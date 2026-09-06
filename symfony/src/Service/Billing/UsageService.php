@@ -133,7 +133,7 @@ class UsageService
             [$organizationId, $startOfMonth],
         );
 
-        $usedCents = (float)$result;
+        $usedCents = ((float) $result) * 100;
 
         return min(($usedCents / $limitCents) * 100, 100);
     }
