@@ -253,12 +253,6 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 				},
 				{
 					type: 'page',
-					slug: 'services',
-					name: t('docs.pages.services'),
-					content: await getComponent('Services')
-				},
-				{
-					type: 'page',
 					slug: 'routes',
 					name: t('docs.pages.routes'),
 					content: await getComponent('Routes')

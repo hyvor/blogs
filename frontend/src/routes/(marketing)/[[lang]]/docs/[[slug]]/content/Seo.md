@@ -17,7 +17,7 @@ better and social media sites to display your blog better.
 
 These are the basic meta tags that are added to all pages in your blog.
 
-```
+```html
 <title>My Blog</title>
 <meta name="description" content="My Blog Description" />
 <link rel="canonical" href="https://myblog.hyvorblogs.io" />
@@ -28,7 +28,7 @@ These are the basic meta tags that are added to all pages in your blog.
 If you have [set up multiple languages](/docs/languages), Hyvor Blogs will
 automatically add `hreflang` tags to index and post pages.
 
-```
+```html
 <link rel="alternate" href="https://myblog.hyvorblogs.io/fr" hreflang="fr" />
 <link rel="alternate" href="https://myblog.hyvorblogs.io/es" hreflang="es" />
 ```
@@ -37,7 +37,7 @@ automatically add `hreflang` tags to index and post pages.
 
 These tags help social media sites to generate rich previews of your blog and posts.
 
-```
+```html
 <!-- FACEBOOK (OG) -->
 <meta property="og:site_name" />
 <meta property="og:type" />
@@ -69,7 +69,7 @@ These tags help social media sites to generate rich previews of your blog and po
 A rich schema of <a href="https://developers.google.com/search/docs/appearance/structured-data/article" target="_blank" rel="nofollow">BlogPosting</a> is added to all posts. This helps search engines to understand your posts better and display them
 in a better way in search results.
 
-```ts
+```html
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -120,7 +120,7 @@ cases, you can set a custom canonical URL for the post in the post editor.
 Robots.txt is a file that tells search engine crawlers what pages to access and not. Hyvor Blogs
 comes with a default robots.txt, which should be sufficient for most blogs.
 
-```
+```yaml
 User-agent: *
 Sitemap: {{ _blog.base_url }}/sitemap.xml
 Disallow: /p/
@@ -144,7 +144,7 @@ your blog faster.
 
 Sitemap index format:
 
-```
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap><loc>https://blog.hyvorblogs.io/sitemap-pages.xml</loc></sitemap>
@@ -162,7 +162,7 @@ The sitemap index links to other sitemaps of the blog.
 
 Here is an example `sitemap-posts-[index].xml`.
 
-```
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -183,7 +183,7 @@ Here is an example `sitemap-posts-[index].xml`.
 
 This is the meta tag you can use to prevent search engines from indexing a page.
 
-```
+```html
 <meta name="robots" content="noindex">
 ```
 
