@@ -589,7 +589,6 @@ export interface LinkAnalysisCheck {
 	links_ignored_count: number;
 }
 
-
 // === Hyvor Talk
 
 export interface HyvorTalkGatedContentRule {
@@ -598,7 +597,6 @@ export interface HyvorTalkGatedContentRule {
 	minimum_plan: string | null;
 	gate: string | null;
 }
-
 
 // === AI
 
@@ -628,7 +626,7 @@ export interface AiMessageEvent {
 	document_change_status?: AiMessageEventDocumentChangeStatus | null;
 	document_change_ops_count?: number | null;
 	post_variant_version?: number | null;
-	post_variant?: AiDocumentChangePostVariant | null
+	post_variant?: AiDocumentChangePostVariant | null;
 }
 
 export interface AiDocumentChangePostVariant {
@@ -638,7 +636,6 @@ export interface AiDocumentChangePostVariant {
 	published_at: number | null;
 	language_id: number;
 }
-
 
 export interface AiMessage {
 	id?: number;

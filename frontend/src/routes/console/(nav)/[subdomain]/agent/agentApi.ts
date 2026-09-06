@@ -1,16 +1,21 @@
 import { get } from 'svelte/store';
 import { authOrganizationStore } from '../../../lib/stores';
 import { getConsoleBlogBaseUrl } from '../../../lib/consoleApi';
-import type { AiConversation, AiDocumentChangePostVariant, AiMessageEvent, PostVariant } from '../../../lib/types';
+import type {
+	AiConversation,
+	AiDocumentChangePostVariant,
+	AiMessageEvent,
+	PostVariant
+} from '../../../lib/types';
 
 export const DEFAULT_CONTENT_JSON = '{"type":"doc","content":[{"type":"paragraph","content":[]}]}';
 
 export type AgentEvent =
-	| { type: 'conversation_created'; conversation: AiConversation; }
-	| { type: 'text_chunk', content: string }
-	| { type: 'thinking_chunk', content: string}
-	| { type: 'event', event: AiMessageEvent }
-	| { type: 'done'};
+	| { type: 'conversation_created'; conversation: AiConversation }
+	| { type: 'text_chunk'; content: string }
+	| { type: 'thinking_chunk'; content: string }
+	| { type: 'event'; event: AiMessageEvent }
+	| { type: 'done' };
 
 export type AgentBlock =
 	| { type: 'thinking'; content: string; done: boolean }
