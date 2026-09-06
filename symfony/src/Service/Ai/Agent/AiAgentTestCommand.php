@@ -15,6 +15,9 @@ use Symfony\AI\Platform\TokenUsage\TokenUsageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsCommand('app:ai:agent', description: 'Test command for AiAgentService')]
 #[When(env: 'dev')]
 class AiAgentTestCommand

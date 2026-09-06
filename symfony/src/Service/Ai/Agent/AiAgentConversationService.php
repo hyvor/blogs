@@ -34,17 +34,9 @@ class AiAgentConversationService
     public function __construct(
         private EntityManagerInterface $em,
         private AiAgentService $aiAgentService,
-        private AiAgentHistoryService $aiAgentHistoryService,
+        private MessageHistoryBuilder $messageHistoryBuilder,
         private LoggerInterface $logger,
     ) {}
-
-    public function getConversationForBlog(Blog $blog, int $id): ?AiConversation
-    {
-        return $this->em->getRepository(AiConversation::class)->findOneBy([
-            'id' => $id,
-            'blog' => $blog,
-        ]);
-    }
 
     /**
      * @return iterable<array<string, mixed>> SSE-ready event payloads.
@@ -61,7 +53,7 @@ class AiAgentConversationService
             $this->em->flush();
 
             $conversation = $existingConversation;
-            $history = $this->aiAgentHistoryService->buildMessageHistory($conversation);
+            $history = $this->messageHistoryBuilder->build($conversation);
         } else {
             $conversation = new AiConversation();
             $conversation->setBlog($blog);
@@ -295,8 +287,8 @@ class AiAgentConversationService
             if ($inputTokens !== null && $outputTokens !== null) {
                 $model = $agentCallResult->getModel();
 
-                $inputCostCents = $model->getInputCostCents($inputTokens);
-                $outputCostCents = $model->getOutputCostCents($outputTokens);
+                $inputCostCents = $model->getInputCostUsd($inputTokens);
+                $outputCostCents = $model->getOutputCostUsd($outputTokens);
 
                 $assistantMessage->setInputTokensUsdCost($inputCostCents);
                 $assistantMessage->setOutputTokensUsdCost($outputCostCents);

@@ -10,19 +10,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\AI\Platform\Message\Message;
 use Symfony\AI\Platform\Message\MessageBag;
 
-/**
- * Reconstructs a conversation's prior turns from the database into a MessageBag, so a
- * continued conversation can be sent back to the model with full context. Each turn's text is
- * rebuilt by concatenating its 'text'-type AiMessageEvent rows (the events table is the sole
- * source of truth for message content) - thinking/tool-call rows are not resent.
- */
-class AiAgentHistoryService
+class MessageHistoryBuilder
 {
     public function __construct(
         private EntityManagerInterface $em,
     ) {}
 
-    public function buildMessageHistory(AiConversation $conversation): MessageBag
+    public function build(AiConversation $conversation): MessageBag
     {
         /** @var AiMessage[] $messages */
         $messages = $this->em->getRepository(AiMessage::class)->createQueryBuilder('m')

@@ -45,8 +45,7 @@ class CreateLanguageTest extends ApiTestCase
             ['subdomain' => 'lang-dup'],
             ['status' => UserStatus::ACTIVE],
         );
-        LanguageFactory::createOne([
-            'blog' => $blog,
+        LanguageFactory::createOneFor($blog, [
             'code' => 'en',
         ]);
 

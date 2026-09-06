@@ -11,16 +11,19 @@ use App\Entity\Enum\AiMessageEventType;
 use App\Entity\PostVariant;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Reads and manages persisted conversations for display in the Console (listing, deleting,
- * fetching a conversation's messages) - separate from AiAgentConversationService, which
- * only concerns itself with running/persisting a live agent call.
- */
 class AiConversationService
 {
     public function __construct(
         private EntityManagerInterface $em,
     ) {}
+
+    public function getConversationForBlog(Blog $blog, int $id): ?AiConversation
+    {
+        return $this->em->getRepository(AiConversation::class)->findOneBy([
+            'id' => $id,
+            'blog' => $blog,
+        ]);
+    }
 
     /**
      * @return array{conversations: AiConversation[], has_more: bool}
@@ -79,11 +82,6 @@ class AiConversationService
     }
 
     /**
-     * Distinct post variants referenced by any document_change event in this conversation, so
-     * the frontend can show what's being edited (title, status) without a separate lookup.
-     *
-     * Get post variants involved in the
-     *
      * @return PostVariant[]
      */
     public function getInvolvedPostVariants(AiConversation $conversation): array

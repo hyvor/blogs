@@ -28,7 +28,7 @@ class BlogListObject
         $variants = $blog->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
 
-        $this->name = $variants[0]->getName() ?? 'Unnamed';
+        $this->name = isset($variants[0]) ? ($variants[0]->getName() ?? 'Unnamed') : 'Unnamed';
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType();
         $this->url = $url;
