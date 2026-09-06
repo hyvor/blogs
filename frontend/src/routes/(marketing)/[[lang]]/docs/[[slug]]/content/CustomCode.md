@@ -21,7 +21,7 @@ You can add custom code to customize your blog, add styles, or integrate third-p
 
 <h2 id="blog">1. Blog custom code</h2>
 
-You can add custom code to the whole blog in **Settings → Custom Code**. This way, the custom code will be added to all templates in your blog. This is useful for adding services like [analytics](/docs/services).
+You can add custom code to the whole blog in **Settings → Custom Code**. This way, the custom code will be added to all templates in your blog. This is useful for adding services like analytics.
 
 <DocsImage src="/images/docs/custom-code/custom-code-blog.png" alt="Custom code in blog settings" />
 

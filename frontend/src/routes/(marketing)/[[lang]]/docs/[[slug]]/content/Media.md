@@ -23,7 +23,7 @@ You can upload images in post editor, in the media library, or in blog settings 
 
 <h3 id="webp">Automatic WebP Conversion</h3>
 
-<a href="https://en.wikipedia.org/wiki/WebP" rel="nofollow" target="_blank">WebP</a> images are 25-34% smaller than JPEG/PNG images of the same quality. It is recommended nowadays to use WebP in websites whenever possible as all modern browsers support WebP images. You can upload JPEG and PNG as usual in your posts. Hyvor Blogs will automatically convert them to WebP images on the fly. You don't need to do anything.
+[WebP](https://en.wikipedia.org/wiki/WebP) images are 25-34% smaller than JPEG/PNG images of the same quality. It is recommended nowadays to use WebP in websites whenever possible as all modern browsers support WebP images. You can upload JPEG and PNG as usual in your posts. Hyvor Blogs will automatically convert them to WebP images on the fly. You don't need to do anything.
 
 <Callout type="info">
 	{#snippet icon()}

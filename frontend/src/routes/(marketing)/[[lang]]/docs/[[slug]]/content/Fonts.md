@@ -7,21 +7,19 @@
 
 All themes in Hyvor Blogs comes with a default font. You can easily change it to any font you want. There are two ways to change the font.
 
-- [Google Fonts](#google-fonts)
+- [Bunny Fonts (Built-in)](#bunny-fonts)
 - [Custom Fonts](#custom-fonts)
 
-<h2 id="google-fonts">1. Local Google Fonts</h2>
+<h2 id="bunny-fonts">1. Bunny Fonts (Built-in)</h2>
 
-<a href="https://fonts.google.com/" target="_blank" rel="nofollow">Google Fonts</a> is the most popular service for web fonts. **However**, it has known privacy and compliancy issues with GDPR and CCPA. Therefore, we proxy Google Fonts through our servers to provide you with better privacy, compliancy, and performance. All scripts or stylesheets will be served directly from your blog's domain.
+Hyvor Blogs has built-in support for [Bunny Fonts](https://fonts.bunny.net/). All fonts are loaded directly via your blog's domain, preventing any privacy issues, third-party tracking, or additional DNS lookups.
 
 - `https://[your-domain]/fonts/css/{family}` - CSS Proxy
 - `https://[your-domain]/fonts/file/{file_name}` - Font File Proxy
 
-Note: Due to some limitations in Google TOS, under the hood, we proxy <a href="https://fonts.bunny.net/" target="_blank" rel="nofollow">Bunny Fonts</a>, which is a privacy-focused alternative to Google Fonts. Both services provide the same fonts with the same API. Variable fonts are not supported.
-
 <h3 id="load-fonts">Step 1: Load Fonts</h3>
 
-First, head over to <a href="https://fonts.bunny.net/" rel="nofollow" target="_blank">Bunny Fonts</a> (or Google Fonts) and select the fonts and variants you like. You will see a CSS code to load the fonts as below.
+First, head over to <a href="https://fonts.bunny.net/" rel="nofollow" target="_blank">Bunny Fonts</a> and select the fonts and variants you like. You will see a CSS code to load the fonts as below.
 
 ```css
 @import url(https://fonts.bunny.net/css?family=mulish:400,700);
@@ -68,10 +66,10 @@ If your theme does not support font customization, you can use CSS to change the
 
 <h2 id="custom-fonts">2. Custom Fonts</h2>
 
-If you need to add a custom font not available in Google Fonts, follow these steps:
+If you need to add a custom font not available in Bunny Fonts, follow these steps:
 
 - Upload the font files to **Theme → assets**
-- Add custom CSS to a SCSS file in **Theme → assets**
+- Add custom CSS to a SCSS file in **Theme → styles**
 
 Your custom CSS should look like this:
 
