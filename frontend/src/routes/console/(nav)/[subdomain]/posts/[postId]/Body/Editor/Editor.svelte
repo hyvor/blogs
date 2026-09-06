@@ -158,7 +158,7 @@
 	}
 
 	let fullEditorConfig = $derived({
-		...editorConfig,
+		...editorConfig(),
 		collab: {
 			version: $documentStore.checkpoint_version,
 			clientID: clientId,

@@ -97,7 +97,7 @@
 	}
 
 	const diffEditorConfig = {
-		...editorConfig,
+		...editorConfig(),
 		suggestions: {
 			author: 'ai' as Author,
 			mode: 'editing' as const,

@@ -35,13 +35,13 @@ function maxUploadSizeInMB() {
 	return getConfig().limits.max_upload_size / (1024 * 1024);
 }
 
-export const editorUploadFileConfig: UploadFileConfig = {
+export const editorUploadFileConfig: () => UploadFileConfig = () => ({
 	uploader,
-	maxFileSizeInMB: 10,
+	maxFileSizeInMB: maxUploadSizeInMB(),
 	mediaLoad,
 	unsplashSearch,
 	excalidraw: true
-};
+});
 
 export function uploadImage(): Promise<FileUploaderUploadedFile | null> {
 	return uploadFile({
