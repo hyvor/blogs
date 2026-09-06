@@ -15,9 +15,9 @@
 	});
 </script>
 
-<div class="suggestion-screencast">
+<div class="ai-screencast">
 	<video bind:this={videoEl} muted loop playsinline preload="metadata">
-		<source src="/images/homepage/suggestion-screencast.mov" type="video/mp4" />
+		<source src="/images/homepage/ai-screencast.mp4" type="video/mp4" />
 		<track kind="captions" />
 	</video>
 
@@ -25,29 +25,29 @@
 </div>
 
 <style>
-	.suggestion-screencast {
-		--right-pull: 380px;
-		--left-bleed: calc(max(0px, (100vw - 1000px) / 2) + 72px);
+	.ai-screencast {
+		--left-pull: 380px;
+		--right-bleed: calc(max(0px, (100vw - 1000px) / 2) + 72px);
 		position: relative;
 		z-index: 1;
 		margin-top: 64px;
-		margin-left: calc(-1 * var(--left-bleed));
+		margin-left: calc(-1 * var(--left-pull));
 		height: 620px;
-		width: calc(100% + var(--left-bleed) + var(--right-pull));
-		border-radius: 0 20px 20px 0;
+		width: calc(100% + var(--left-pull) + var(--right-bleed));
+		border-radius: 20px 0 0 20px;
 		border: 1px solid var(--border);
-		border-left: none;
+		border-right: none;
 		overflow: hidden;
 		background: var(--background);
 		box-shadow: 0 16px 48px color-mix(in srgb, var(--text) 8%, transparent);
 		transition: box-shadow 0.4s ease;
 	}
-	.suggestion-screencast:hover {
+	.ai-screencast:hover {
 		z-index: 10;
 		box-shadow: 0 24px 64px color-mix(in srgb, var(--text) 14%, transparent);
 	}
 
-	.suggestion-screencast video {
+	.ai-screencast video {
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -61,7 +61,7 @@
 		z-index: 1;
 		pointer-events: none;
 		background: linear-gradient(
-			to left,
+			to right,
 			var(--background) 0%,
 			var(--background) 15%,
 			color-mix(in srgb, var(--background) 75%, transparent) 32%,
@@ -71,11 +71,13 @@
 		transition: opacity 0.4s ease;
 	}
 
-	.suggestion-screencast:hover .fade-overlay {
+	.ai-screencast:hover .fade-overlay {
 		opacity: 0;
 	}
 
-	:global(.hds-feature-split:has(.suggestion-screencast:hover) .text-col) {
+	/* fade and lower the overlapping feature text while the video is hovered,
+	   and let pointer events pass through so the hover holds across the frame */
+	:global(.hds-feature-split:has(.ai-screencast:hover) .text-col) {
 		opacity: 0.12;
 		transform: translateY(12px);
 		pointer-events: none;
@@ -85,7 +87,7 @@
 	}
 
 	@media (max-width: 900px) {
-		.suggestion-screencast {
+		.ai-screencast {
 			display: none;
 		}
 	}

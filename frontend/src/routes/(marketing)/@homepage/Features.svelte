@@ -7,7 +7,7 @@
 	import SuiteMockup from './SuiteMockup.svelte';
 	import OwnershipMockup from './OwnershipMockup.svelte';
 	import AllInOneMockup from './AllInOneMockup.svelte';
-	import AiMockup from './AiMockup.svelte';
+	import AiScreencast from './AiScreencast.svelte';
 	import SuggestionScreencast from './SuggestionScreencast.svelte';
 	import LinkAnalyzerMockup from './LinkAnalyzerMockup.svelte';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
@@ -128,11 +128,11 @@
 		I18n.t('homepage.features.ai.bulletSuggestions'),
 		I18n.t('homepage.features.ai.bulletBulkEditing')
 	]}
-	interactiveBullets
 	altBg
+	overlap
 >
-	{#snippet visual(active)}
-		<AiMockup {active} />
+	{#snippet visual()}
+		<AiScreencast />
 	{/snippet}
 </FeatureSplit>
 
