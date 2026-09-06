@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
  * This logger records log messages in memory and forwards them to symfony's normal logger if set
  * This is used in AcmeClient to save logs.
  * If this works well, we can add this to the internal lib later
+ * @codeCoverageIgnore for now
  */
 class RecordingLogger extends AbstractLogger
 {
