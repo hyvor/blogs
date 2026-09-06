@@ -128,6 +128,6 @@ If you are using a web server like Nginx or Caddy, you can use a reverse proxy t
 	</TableRow>
 	<TableRow>
 		<div>Nginx</div>
-		<div>Coming soon</div>
+		<div></div>
 	</TableRow>
 </Table>
