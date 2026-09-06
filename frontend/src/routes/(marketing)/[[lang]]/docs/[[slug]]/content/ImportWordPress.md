@@ -21,4 +21,4 @@ wordpress-export.zip
                 └── image3.jpg
 ```
 
-Send us the ZIP file and we will handle the rest. Feel free to contact us via live chat if you have any questions.
+Send us the ZIP file and we will handle the rest.
