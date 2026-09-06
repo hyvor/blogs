@@ -15,7 +15,7 @@ use App\Service\Ai\Agent\AiAgentHistoryService;
 use App\Service\Ai\Agent\AiAgentService;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
-use App\Service\Ai\Agent\EventOld\ToolCallEventFactory;
+use App\Service\Ai\AiModel;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
@@ -70,10 +70,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $documentOpsTool ??= new DocumentOpsTool(
             $postVariant->getPost()->getBlog(),
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
 
-        $fakeAiAgentService = new class ($deltas, $metadata ?? new Metadata(), $documentOpsTool, $throws, $model) extends AiAgentService {
+        $fakeAiAgentService = new class ($deltas, $metadata ?? new Metadata(), $documentOpsTool, $throws) extends AiAgentService {
             /**
              * @param array<int, object|\Closure> $deltas
              */
@@ -82,7 +81,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
                 private Metadata $metadata,
                 private DocumentOpsTool $documentOpsTool,
                 private ?\Throwable $throws,
-                private string $model,
             ) {
             }
 
@@ -140,16 +138,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
                     }
                 };
 
-                return new AgentCallResult($result, $this->documentOpsTool, $this->model);
+                return new AgentCallResult($result, $this->documentOpsTool, AiModel::CLAUDE_OPUS_5);
             }
         };
 
         return new AiAgentConversationService(
             $this->getService(EntityManagerInterface::class),
             $fakeAiAgentService,
-            new ToolCallEventFactory(),
             new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
-            $this->getService(PermalinkService::class),
             new NullLogger(),
         );
     }
@@ -350,7 +346,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
         $documentOpsTool->get($postVariant->getId());
         $documentOpsTool->replaceText($postVariant->getId(), 'p-1', 'foo', 'bar');
@@ -421,9 +416,8 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
-        $agentCallResult = new AgentCallResult($result, $documentOpsTool, 'test-model');
+        $agentCallResult = new AgentCallResult($result, $documentOpsTool, AiModel::CLAUDE_OPUS_5);
 
         $fakeAiAgentService = new class ($agentCallResult) extends AiAgentService {
             /** @var array<int, ?MessageBag> */
@@ -448,9 +442,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $service = new AiAgentConversationService(
             $this->getService(EntityManagerInterface::class),
             $fakeAiAgentService,
-            new ToolCallEventFactory(),
             new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
-            $this->getService(PermalinkService::class),
             new NullLogger(),
         );
 
