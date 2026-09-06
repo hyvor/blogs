@@ -1,6 +1,6 @@
 <?php
 
-namespace Api\Console\Org;
+namespace App\Tests\Api\Console\Org;
 
 use App\Api\Console\ControllerOrg\ConsoleController;
 use App\Api\Console\Object\AuthUserObject;
@@ -16,7 +16,6 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(AiModel::class)]
 #[CoversClass(AuthUserObject::class)]
 #[CoversClass(BlogListObject::class)]
 #[CoversClass(BlogListObjectFactory::class)]

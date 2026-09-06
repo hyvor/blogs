@@ -25,7 +25,7 @@
 {#if compare}
 	<Compare
 		leftContent={$postVariantStore.content!}
-		rightContent={$documentStore.checkpoint_content || $postVariantStore.content!}
+		rightContent={$documentStore.checkpoint_content}
 		onclose={() => (compare = false)}
 	/>
 {/if}
@@ -36,7 +36,7 @@
 		align-items: center;
 		padding-bottom: 5px;
 		border-bottom: 1px solid var(--border);
-		background-color: var(--blue-light);
+		background-color: var(--gray-light);
 		font-size: 14px;
 		padding: 8px 30px;
 	}

@@ -4,6 +4,9 @@ namespace App\Service\App\Messenger;
 
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MessageTransport
 {
     public const ASYNC = 'async';

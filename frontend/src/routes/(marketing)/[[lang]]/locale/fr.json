@@ -510,8 +510,8 @@
 		},
 		"pages": {
 			"introduction": "Introduction",
-			"writing": "Rédaction",
-			"theme": "Thème",
+			"writing": "Rédaction (Bases)",
+			"themes": "Thèmes",
 			"customDomain": "Domaine personnalisé",
 			"subdirectory": "Sous-répertoire",
 			"headless": "Headless",

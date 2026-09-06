@@ -10,7 +10,10 @@
 	import { Node } from 'prosemirror-model';
 	import { Modal, Button, Callout, Tooltip, toast, confirm } from '@hyvor/design/components';
 	import { editorConfig, schema } from '../../posts/[postId]/Body/Editor/editor';
-	import { resolveAuthor } from '../../posts/[postId]/Body/Editor/suggestions';
+	import {
+		createEphemeralSuggestionSource,
+		resolveAuthor
+	} from '../../posts/[postId]/Body/Editor/suggestions';
 	import { DEFAULT_CONTENT_JSON, type DocumentChange } from '../agentApi';
 	import { getI18n } from '../../../../lib/i18n';
 	import { getDocumentForPost } from '../../posts/[postId]/documentActions';
@@ -36,34 +39,6 @@
 		version: number;
 		content: string | null;
 	} | null = $state(null);
-
-	// one-shot review session: everything shown here comes from a single agent-suggested diff, so
-	// the source just needs to say "these are AI's" - nothing to persist to a backend suggestions API
-	function createEphemeralSuggestionSource(): SuggestionSource {
-		const local = new Map<string, SuggestionSourceEntry>();
-		return {
-			async get(ids) {
-				const entries: Record<string, SuggestionSourceEntry | null> = {};
-				for (const id of ids) {
-					entries[id] = local.get(id) ?? {
-						author: 'ai' as Author,
-						timestamp: Date.now(),
-						comments: []
-					};
-				}
-				return entries;
-			},
-			create(id, _type, author, timestamp) {
-				local.set(id, { author, timestamp, comments: [] });
-			},
-			reply(id, reply) {
-				local.get(id)?.comments.push(reply);
-			},
-			resolve() {
-				// ephemeral - resolution just lives in the doc itself (mark removed/text applied)
-			}
-		};
-	}
 
 	// @hyvor/richtext only publicly exports the Editor component + types (see its package.json
 	// "exports"), not the internal getSuggestions()/acceptAllSuggestions() commands the built-in
@@ -127,7 +102,9 @@
 			author: 'ai' as Author,
 			mode: 'editing' as const,
 			resolveAuthor,
-			source: createEphemeralSuggestionSource(),
+			source: createEphemeralSuggestionSource({
+				author: 'ai'
+			}),
 			disableCommenting: true
 		}
 	} as EditorConfig;
@@ -145,7 +122,7 @@
 				if (e.code === 409) {
 					handleForceApply();
 				} else {
-					toast.error(e.message || 'Failed to apply the change');
+					toast.error(e.message || i18n.t('console.agent.review.applyFailed'));
 				}
 			})
 			.finally(() => {
@@ -155,9 +132,8 @@
 
 	async function handleForceApply() {
 		const confirmed = await confirm({
-			title: 'Post has been updated',
-			content:
-				'The post has been updated since the AI suggested this change. Do you want to force apply your changes?',
+			title: i18n.t('console.agent.review.forceApplyTitle'),
+			content: i18n.t('console.agent.review.forceApplyContent'),
 			danger: true,
 			autoClose: false
 		});
@@ -182,7 +158,7 @@
 				loadingDocument = false;
 			})
 			.catch((error) => {
-				toast.error(error.message || 'Failed to load the change');
+				toast.error(error.message || i18n.t('console.agent.review.loadFailed'));
 			});
 	});
 </script>
@@ -201,12 +177,12 @@
 	{#if currentDocument}
 		<div class="inner">
 			<div class="header">
-				<span>Review suggested changes</span>
+				<span>{i18n.t('console.agent.review.title')}</span>
 				<span class="remaining">
 					{#if applied}
 						{i18n.t('console.agent.applied')}
 					{:else if remaining > 0}
-						{remaining} suggestion{remaining === 1 ? '' : 's'} remaining
+						{i18n.t('console.agent.review.suggestionsRemaining', { count: remaining })}
 					{:else}
 						{i18n.t('console.agent.allResolved')}
 					{/if}
@@ -216,8 +192,7 @@
 				<div class="editor">
 					{#if isStale}
 						<Callout type="warning">
-							This post has been updated since the AI suggested this change. Please review the
-							changes carefully before applying them.
+							{i18n.t('console.agent.review.staleWarning')}
 						</Callout>
 					{/if}
 					<Editor
@@ -234,7 +209,7 @@
 					>{i18n.t('console.common.close')}</Button
 				>
 				<Tooltip
-					text={remaining > 0 ? 'Resolve remaining suggestions' : ''}
+					text={remaining > 0 ? i18n.t('console.agent.review.resolveRemaining') : ''}
 					disabled={remaining === 0}
 				>
 					<Button
@@ -245,7 +220,7 @@
 						{#if applied}
 							{i18n.t('console.agent.applied')}
 						{:else if applying}
-							Applying…
+							{i18n.t('console.agent.review.applying')}
 						{:else}
 							{i18n.t('console.agent.applyChanges')}
 						{/if}

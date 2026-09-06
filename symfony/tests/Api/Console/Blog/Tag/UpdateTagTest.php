@@ -6,6 +6,7 @@ use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
 use App\Entity\Enum\UserStatus;
+use App\Service\Tag\Event\TagUpdatedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -17,13 +18,14 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagService::class)]
 #[CoversClass(TagObject::class)]
 #[CoversClass(TagObjectFactory::class)]
+#[CoversClass(TagUpdatedEvent::class)]
 class UpdateTagTest extends ApiTestCase
 {
     public function test_updates_a_tag(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'tag-update']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-        $tag = TagFactory::createOne(['blog' => $blog]);
+        $tag = TagFactory::createOne(['blog' => $blog, 'is_private' => false]);
 
         $slug = 'hello-world';
         $codeHead = 'var x = head';
@@ -42,6 +44,11 @@ class UpdateTagTest extends ApiTestCase
         $this->assertSame($slug, $json['slug']);
         $this->assertSame($codeHead, $json['code_head']);
         $this->assertSame($codeFoot, $json['code_foot']);
+
+        $event = $this->getEd()->getFirstEvent(TagUpdatedEvent::class);
+        $this->assertSame($tag->getId(), $event->tag->getId());
+        $this->assertTrue($event->tag->isPrivate());
+        $this->assertFalse($event->tagOld->isPrivate());
     }
 
     public function test_entity_not_found(): void

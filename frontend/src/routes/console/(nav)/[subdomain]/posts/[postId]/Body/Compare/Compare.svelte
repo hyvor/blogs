@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { buildDiffDoc, diffDoc, Editor } from '@hyvor/richtext';
+	import { buildDiffDoc, diffDoc, Editor, type EditorConfig } from '@hyvor/richtext';
 	import { editorConfig, schema } from '../Editor/editor';
 	import { Node } from 'prosemirror-model';
 	import { Modal, Switch } from '@hyvor/design/components';
 	import { getI18n } from '../../../../../../lib/i18n';
+	import { createEphemeralSuggestionSource, resolveAuthor } from '../Editor/suggestions';
 
 	const i18n = getI18n();
 
@@ -24,17 +25,29 @@
 		onclose
 	}: Props = $props();
 
+	const diffEditorConfig = {
+		...editorConfig,
+		suggestions: {
+			author: 'unknown',
+			resolveAuthor: resolveAuthor,
+			source: createEphemeralSuggestionSource({
+				author: 'unknown'
+			}),
+			disableCommenting: true
+		}
+	} as EditorConfig;
+
 	const diffContent = $derived.by(() => {
 		if (!showDiff) {
 			return rightContent;
 		}
 
-		const publishedContent = Node.fromJSON(schema, JSON.parse(leftContent));
-		const editingContent = Node.fromJSON(schema, JSON.parse(rightContent));
+		const leftNode = Node.fromJSON(schema, JSON.parse(leftContent));
+		const rightNode = Node.fromJSON(schema, JSON.parse(rightContent));
 
-		const diff = diffDoc(publishedContent, editingContent);
-
+		const diff = diffDoc(leftNode, rightNode);
 		const doc = buildDiffDoc(diff, schema).doc.toJSON();
+
 		return JSON.stringify(doc);
 	});
 </script>
@@ -56,7 +69,7 @@
 			</div>
 			<div class="editor">
 				{#key showDiff}
-					<Editor value={diffContent} {schema} {editorConfig} editable={false} />
+					<Editor value={diffContent} {schema} editorConfig={diffEditorConfig} editable={false} />
 				{/key}
 			</div>
 		</div>
@@ -109,5 +122,9 @@
 
 	.editor :global(.ProseMirror) {
 		padding: 0 !important;
+	}
+
+	.editor :global(.pm-suggestions-panel-wrap) {
+		display: none !important;
 	}
 </style>

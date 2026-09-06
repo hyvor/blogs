@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
+use App\Service\Post\Event\PostVariantPublishedEvent;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Post\Suggestion\PostSuggestionContentChecker;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 #[CoversClass(PostService::class)]
 #[CoversClass(PostSlugService::class)]
 #[CoversClass(PostSuggestionContentChecker::class)]
+#[CoversClass(PostVariantPublishedEvent::class)]
 class PublishPostVariantTest extends ApiTestCase
 {
     private const string CONTENT_UNSAVED = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello World"}]}]}';
@@ -120,6 +122,9 @@ class PublishPostVariantTest extends ApiTestCase
         $this->assertSame('<p>Hello World</p>', $variant->getContentHtml());
         $this->assertStringContainsString('Hello World', (string)$variant->getContentText());
         $this->assertSame(2, $variant->getWords());
+
+        $event = $this->getEd()->getFirstEvent(PostVariantPublishedEvent::class);
+        $this->assertSame($variant->getId(), $event->variant->getId());
     }
 
     public function test_schedules_variant(): void

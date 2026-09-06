@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 #[CoversClass(MediaService::class)]
 #[CoversClass(MediaObjectFactory::class)]
 #[CoversClass(UsageService::class)]
+#[CoversClass(MediaCreatedEvent::class)]
 class MediaUploadTest extends ApiTestCase
 {
     private Filesystem $filesystem;

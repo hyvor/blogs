@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Ai\Agent;
 
+use App\Api\Console\Object\Ai\AiConversationObject;
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageEvent;
@@ -11,11 +12,11 @@ use App\Entity\Enum\AiMessageEventType;
 use App\Entity\Enum\AiMessageRole;
 use App\Entity\PostVariant;
 use App\Service\Ai\Agent\AiAgentConversationService;
-use App\Service\Ai\Agent\AiAgentHistoryService;
+use App\Service\Ai\Agent\MessageHistoryBuilder;
 use App\Service\Ai\Agent\AiAgentService;
 use App\Service\Ai\Agent\Tool\AgentCallResult;
 use App\Service\Ai\Agent\Tool\DocumentOps\DocumentOpsTool;
-use App\Service\Ai\Agent\EventOld\ToolCallEventFactory;
+use App\Service\Ai\AiModel;
 use App\Service\Post\Content\PostContentService;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
@@ -40,6 +41,7 @@ use Symfony\AI\Platform\Result\ToolCall;
 use Symfony\AI\Platform\TokenUsage\TokenUsage;
 
 #[CoversClass(AiAgentConversationService::class)]
+#[CoversClass(AgentCallResult::class)]
 class AiAgentConversationServiceTest extends KernelTestCase
 {
 
@@ -48,15 +50,10 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $blog = BlogFactory::createOne();
         $language = LanguageFactory::createOneFor($blog);
         $post = PostFactory::createOneFor($blog);
-
-        return PostVariantFactory::createOne([
-            'post' => $post,
-            'language' => $language,
-        ]);
+        return PostVariantFactory::createOneFor($post, language: $language);
     }
 
     /**
-     *
      * @param array<int, object|\Closure> $deltas
      */
     private function buildService(
@@ -65,12 +62,11 @@ class AiAgentConversationServiceTest extends KernelTestCase
         ?DocumentOpsTool $documentOpsTool = null,
         ?Metadata $metadata = null,
         ?\Throwable $throws = null,
-        string $model = 'test-model',
+        AiModel $model = AiModel::CLAUDE_SONNET_5,
     ): AiAgentConversationService {
         $documentOpsTool ??= new DocumentOpsTool(
             $postVariant->getPost()->getBlog(),
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
 
         $fakeAiAgentService = new class ($deltas, $metadata ?? new Metadata(), $documentOpsTool, $throws, $model) extends AiAgentService {
@@ -82,7 +78,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
                 private Metadata $metadata,
                 private DocumentOpsTool $documentOpsTool,
                 private ?\Throwable $throws,
-                private string $model,
+                private AiModel $model,
             ) {
             }
 
@@ -147,9 +143,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         return new AiAgentConversationService(
             $this->getService(EntityManagerInterface::class),
             $fakeAiAgentService,
-            new ToolCallEventFactory(),
-            new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
-            $this->getService(PermalinkService::class),
+            new MessageHistoryBuilder($this->getService(EntityManagerInterface::class)),
             new NullLogger(),
         );
     }
@@ -167,13 +161,17 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Say hello', $postVariant));
 
         $this->assertSame(
-            ['conversation_created', 'text', 'text', 'done'],
+            ['conversation_created', 'text_chunk', 'text_chunk', 'done'],
             array_column($events, 'type'),
         );
-        $this->assertSame('Say hello', $events[0]['title']);
 
-        $conversationRepo = $this->getEm()->getRepository(AiConversation::class);
-        $conversations = $conversationRepo->findBy(['blog' => $blog]);
+        $this->assertInstanceOf(AiConversationObject::class, $events[0]['conversation']);
+        $this->assertSame('Say hello', $events[0]['conversation']->title);
+
+        $this->assertSame('Hello', $events[1]['content']);
+        $this->assertSame(' world', $events[2]['content']);
+
+        $conversations = $this->getEm()->getRepository(AiConversation::class)->findBy(['blog' => $blog]);
         $this->assertCount(1, $conversations);
         $conversation = $conversations[0];
 
@@ -184,40 +182,39 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertCount(2, $messages);
 
         $this->assertSame(AiMessageRole::USER, $messages[0]->getRole());
-        $userTextEvents = $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $messages[0], 'type' => AiMessageEventType::TEXT]);
-        $this->assertCount(1, $userTextEvents);
-        $this->assertSame('Say hello', $userTextEvents[0]->getContent());
+        $userEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $messages[0]]);
+        $this->assertCount(1, $userEvents);
+        $this->assertSame('Say hello', $userEvents[0]->getContent());
 
         $this->assertSame(AiMessageRole::ASSISTANT, $messages[1]->getRole());
 
-        // consecutive TextDelta chunks are merged into a single 'text' event, saved once the
-        // stream ends (not one row per delta)
+        // merged into one
         $textEvents = $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $messages[1], 'type' => AiMessageEventType::TEXT]);
+            ->findBy(['ai_message' => $messages[1]]);
         $this->assertCount(1, $textEvents);
         $this->assertSame('Hello world', $textEvents[0]->getContent());
     }
 
-    public function test_persists_a_thinking_row_on_thinking_complete(): void
+    public function test_thinking_and_query_tool(): void
     {
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
 
         $service = $this->buildService($postVariant, [
             new ThinkingDelta('reasoning about it...'),
-            new ThinkingComplete('reasoning about it...', 'sig-123'),
-            new TextDelta('done'),
+            new ThinkingDelta('still thinking...'),
+            new ThinkingComplete('reasoning about it... still thinking...', 'sig-123'),
+            function (?\Closure $onQueryComplete) {
+                $onQueryComplete?->__invoke('get_tags', ['limit' => 10], [['id' => 1, 'name' => 'News']]);
+            },
+            new TextDelta('just some text'),
         ]);
 
         $events = iterator_to_array($service->streamPrompt($blog, 'Think about it', $postVariant));
 
-        // the per-delta thinking stream is sent to the frontend live, even though only the
-        // completed summary is persisted
-        // note: a 'thinking_started' event is not actually emitted here - ThinkingStartedEvent
-        // is currently unused dead code in streamPrompt (pre-existing, unrelated to this test)
         $this->assertSame(
-            ['conversation_created', 'thinking', 'thinking_done', 'text', 'done'],
+            ['conversation_created', 'thinking_chunk', 'thinking_chunk', 'event', 'text_chunk', 'done'],
             array_column($events, 'type'),
         );
 
@@ -225,12 +222,27 @@ class AiAgentConversationServiceTest extends KernelTestCase
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $thinkingRows = $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $assistantMessage, 'type' => AiMessageEventType::THINKING]);
+        $assistantEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage]);
 
-        $this->assertCount(1, $thinkingRows);
-        $this->assertSame('reasoning about it...', $thinkingRows[0]->getContent());
-        $this->assertSame('sig-123', $thinkingRows[0]->getSignature());
+        $this->assertCount(3, $assistantEvents);
+
+        $thinkingEvent = $assistantEvents[0];
+        $this->assertSame(AiMessageEventType::THINKING, $thinkingEvent->getType());
+        $this->assertSame('reasoning about it... still thinking...', $thinkingEvent->getContent());
+        $this->assertSame('sig-123', $thinkingEvent->getSignature());
+
+        $queryEvent = $assistantEvents[1];
+        $this->assertSame(AiMessageEventType::QUERY, $queryEvent->getType());
+        $this->assertSame('get_tags', $queryEvent->getToolName());
+        $this->assertSame(['limit' => 10], $queryEvent->getToolInput());
+        $this->assertSame([['id' => 1, 'name' => 'News']], $queryEvent->getToolOutput());
+
+        // text persisted later
+        $textEvent = $assistantEvents[2];
+        $this->assertSame(AiMessageEventType::TEXT, $textEvent->getType());
+        $this->assertSame('just some text', $textEvent->getContent());
+
     }
 
     public function test_persists_interleaved_events_in_order_with_text_merged_around_them(): void
@@ -243,8 +255,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
             new ThinkingDelta('hmm'),
             new ThinkingComplete('hmm', null),
             new ToolCallStart('call-1', 'get_tags'),
-            // simulates the query tool's onQueryComplete callback firing partway through the
-            // stream, as it would inside the real QueryTool::getTags() call
             function (?\Closure $onQueryComplete) {
                 $onQueryComplete?->__invoke('get_tags', ['limit' => 10], [['id' => 1, 'name' => 'News']]);
             },
@@ -350,7 +360,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
         $documentOpsTool->get($postVariant->getId());
         $documentOpsTool->replaceText($postVariant->getId(), 'p-1', 'foo', 'bar');
@@ -421,9 +430,8 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $documentOpsTool = new DocumentOpsTool(
             $blog,
             $this->getService(PostService::class),
-            $this->getService(PostContentService::class),
         );
-        $agentCallResult = new AgentCallResult($result, $documentOpsTool, 'test-model');
+        $agentCallResult = new AgentCallResult($result, $documentOpsTool, AiModel::CLAUDE_OPUS_5);
 
         $fakeAiAgentService = new class ($agentCallResult) extends AiAgentService {
             /** @var array<int, ?MessageBag> */
@@ -448,9 +456,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $service = new AiAgentConversationService(
             $this->getService(EntityManagerInterface::class),
             $fakeAiAgentService,
-            new ToolCallEventFactory(),
-            new AiAgentHistoryService($this->getService(EntityManagerInterface::class)),
-            $this->getService(PermalinkService::class),
+            new MessageHistoryBuilder($this->getService(EntityManagerInterface::class)),
             new NullLogger(),
         );
 
@@ -540,14 +546,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $postVariant = $this->createPostVariant();
         $blog = $postVariant->getPost()->getBlog();
 
-        $service = $this->buildService($postVariant, [new TextDelta('Hi')], model: 'claude-sonnet-5');
+        $service = $this->buildService($postVariant, [new TextDelta('Hi')], model: AiModel::CLAUDE_OPUS_5);
 
         iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
-        $this->assertSame('claude-sonnet-5', $assistantMessage->getModel());
+        $this->assertSame('claude-opus-5', $assistantMessage->getModel());
     }
 
     public function test_persists_token_usd_cost_on_the_assistant_message(): void
@@ -562,7 +568,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             $postVariant,
             [new TextDelta('Hi')],
             metadata: new Metadata(['token_usage' => $tokenUsage]),
-            model: 'claude-sonnet-5',
+            model: AiModel::CLAUDE_SONNET_5,
         );
 
         iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
@@ -570,9 +576,14 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
-        $this->assertSame(100.0, $assistantMessage->getInputTokensUsdCost());
-        $this->assertSame(200.0, $assistantMessage->getOutputTokensUsdCost());
-        $this->assertSame(300.0, $assistantMessage->getTotalTokensUsdCost());
+
+        $this->assertSame(500_000, $assistantMessage->getInputTokens());
+        $this->assertSame(200_000, $assistantMessage->getOutputTokens());
+        $this->assertSame(700_000, $assistantMessage->getTotalTokens());
+
+        $this->assertSame(1.0, $assistantMessage->getInputTokensUsdCost());
+        $this->assertSame(2.0, $assistantMessage->getOutputTokensUsdCost());
+        $this->assertSame(3.0, $assistantMessage->getTotalTokensUsdCost());
     }
 
     public function test_persists_fractional_cent_cost_for_small_token_counts(): void
@@ -586,7 +597,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
             $postVariant,
             [new TextDelta('Hi')],
             metadata: new Metadata(['token_usage' => $tokenUsage]),
-            model: 'claude-sonnet-5',
+            model: AiModel::CLAUDE_SONNET_5,
         );
 
         iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
@@ -594,31 +605,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
-        $this->assertSame(0.00002, $assistantMessage->getInputTokensUsdCost());
-        $this->assertSame(0.00005, $assistantMessage->getOutputTokensUsdCost());
-        $this->assertSame(0.00007, $assistantMessage->getTotalTokensUsdCost());
-    }
-
-    public function test_does_not_persist_token_usd_cost_for_an_unknown_model(): void
-    {
-        $postVariant = $this->createPostVariant();
-        $blog = $postVariant->getPost()->getBlog();
-
-        $tokenUsage = new TokenUsage(promptTokens: 100, completionTokens: 50, totalTokens: 150);
-
-        $service = $this->buildService(
-            $postVariant,
-            [new TextDelta('Hi')],
-            metadata: new Metadata(['token_usage' => $tokenUsage]),
-            model: 'test-model',
-        );
-
-        iterator_to_array($service->streamPrompt($blog, 'Say hi', $postVariant));
-
-        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
-            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
-        $this->assertNotNull($assistantMessage);
-        $this->assertNull($assistantMessage->getTotalTokensUsdCost());
+        $this->assertSame(0.0002, $assistantMessage->getInputTokensUsdCost());
+        $this->assertSame(0.0005, $assistantMessage->getOutputTokensUsdCost());
+        $this->assertSame(0.0007, $assistantMessage->getTotalTokensUsdCost());
     }
 
 }

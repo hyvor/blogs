@@ -30,6 +30,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 #[CoversClass(ProsemirrorJson::class)]
 #[CoversClass(ProsemirrorJsonValidator::class)]
 #[CoversClass(PostSuggestionContentChecker::class)]
+#[CoversClass(PostVariantUpdatedEvent::class)]
 class UpdatePostVariantTest extends ApiTestCase
 {
 

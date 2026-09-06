@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Tag;
 use App\Api\Console\Controller\TagController;
 use App\Entity\Enum\UserStatus;
 use App\Entity\TagVariant;
+use App\Service\Tag\Event\TagVariantDeletedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -16,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(TagController::class)]
 #[CoversClass(TagService::class)]
+#[CoversClass(TagVariantDeletedEvent::class)]
 class DeleteTagVariantTest extends ApiTestCase
 {
     public function test_deletes_a_tag_variant(): void
@@ -36,6 +38,8 @@ class DeleteTagVariantTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($this->getEm()->getRepository(TagVariant::class)->find($secondVariantId));
+
+        $this->getEd()->assertDispatched(TagVariantDeletedEvent::class);
     }
 
     public function test_does_not_delete_primary_language_variant(): void

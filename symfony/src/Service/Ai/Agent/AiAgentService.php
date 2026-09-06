@@ -185,6 +185,9 @@ class AiAgentService
     }
 
     // unfortunately, different provides have different options :(
+    /**
+     * @return array<string, mixed>
+     */
     private function getOptionsFromProvider(AiProvider $provider): array
     {
         return match ($provider) {

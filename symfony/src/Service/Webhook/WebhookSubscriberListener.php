@@ -262,7 +262,7 @@ class WebhookSubscriberListener
         $user = $event->variant->getUser();
         $blog = $user->getBlog();
 
-        // skip if this is the primary-language variant created as part of user creation
+        // user creation
         if ($event->variant->getLanguage()->isPrimary()) {
             return;
         }
@@ -344,6 +344,7 @@ class WebhookSubscriberListener
         $post = $event->variant->getPost();
         $blog = $post->getBlog();
         $this->call($blog, WebhookEvent::POST_VARIANT_PUBLISHED, fn() => [
+            // TODO: add variant
             'post' => (array) $this->postObjectFactory->create($post, $blog),
         ]);
     }
@@ -354,6 +355,7 @@ class WebhookSubscriberListener
         $post = $event->variant->getPost();
         $blog = $post->getBlog();
         $this->call($blog, WebhookEvent::POST_VARIANT_UNPUBLISHED, fn() => [
+            // TODO: add variant
             'post' => (array) $this->postObjectFactory->create($post, $blog),
         ]);
     }

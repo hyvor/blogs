@@ -3,6 +3,9 @@
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 	import { slide } from 'svelte/transition';
 	import type { AiMessageEvent } from '../../../../lib/types';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		event: AiMessageEvent;
@@ -12,15 +15,15 @@
 
 	let open = $state(false);
 
-	const QUERY_LABELS: Record<string, string> = {
-		get_tags: 'Searched tags',
-		get_authors: 'Searched authors',
-		get_post_variants: 'Searched posts',
-		get_languages: 'Searched languages'
-	};
+	let QUERY_LABELS: Record<string, string> = $derived({
+		get_tags: i18n.t('console.agent.query.searchedTags'),
+		get_authors: i18n.t('console.agent.query.searchedAuthors'),
+		get_post_variants: i18n.t('console.agent.query.searchedPosts'),
+		get_languages: i18n.t('console.agent.query.searchedLanguages')
+	});
 
 	function queryLabel(toolName: string | null | undefined) {
-		if (!toolName) return 'Ran a query';
+		if (!toolName) return i18n.t('console.agent.query.ranQuery');
 		return QUERY_LABELS[toolName] ?? toolName.replace(/_/g, ' ');
 	}
 
@@ -44,9 +47,9 @@
 	</button>
 	{#if open}
 		<div class="step-content" transition:slide={{ duration: 150 }}>
-			<div class="io-label">Input</div>
+			<div class="io-label">{i18n.t('console.agent.query.input')}</div>
 			<pre>{prettyJson(event.tool_input)}</pre>
-			<div class="io-label">Output</div>
+			<div class="io-label">{i18n.t('console.agent.query.output')}</div>
 			<pre>{prettyJson(event.tool_output)}</pre>
 		</div>
 	{/if}

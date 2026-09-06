@@ -17,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(MediaController::class)]
 #[CoversClass(MediaService::class)]
+#[CoversClass(MediaDeletedEvent::class)]
 class DeleteMediaTest extends ApiTestCase
 {
     protected function setUp(): void

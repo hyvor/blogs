@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(UserController::class)]
 #[CoversClass(UserService::class)]
+#[CoversClass(UserVariantDeletedEvent::class)]
 class DeleteUserVariantTest extends ApiTestCase
 {
     public function test_deletes_a_user_variant(): void

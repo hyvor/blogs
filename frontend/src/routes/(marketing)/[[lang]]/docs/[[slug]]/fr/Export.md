@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { DocsImage } from '@hyvor/design/marketing';
+    import { Callout } from '@hyvor/design/components';
 </script>
 
 # Exporter les données
 
-Vous êtes propriétaire de vos données, et nous nous assurons que vous puissiez y accéder à tout moment. Vous pouvez actuellement exporter les données du blog au format JSON. Nous travaillons actuellement à l'ajout du format d'export WordPress et de l'export des médias prochainement !
+Vous pouvez exporter les données de votre blog à tout moment grâce à la fonctionnalité d'export dans la Console. Les données exportées incluront tous vos articles, tags, utilisateurs et autres informations pertinentes. L'export est fourni au format JSON.
+
+<Callout type="info" title="Exportation des médias">
+    Le fichier d'export n'inclut pas les fichiers médias (images téléchargées, vidéos, etc.) eux-mêmes, uniquement les métadonnées à leur sujet. Pour obtenir un export de tous les fichiers médias, veuillez contacter le support.
+</Callout>
 
 <h2 id="how">Comment exporter</h2>
 
@@ -76,4 +81,4 @@ Tous les objets sont dans le même format que l'[API Console](/docs/api-console)
 - [Objet Route](/docs/api-console#route-object)
 - [Objet Redirect](/docs/api-console#redirect-object)
 
-Remarque : Chaque entrée dans `posts` associe un **Objet Post** à un tableau `variants` d'**Objets PostVariant**, un par langue. Ces variantes possèdent une propriété supplémentaire `content_html` contenant le contenu converti en HTML, qui n'est pas présente lors de la récupération des variantes via l'API Console.
+Remarque : Chaque entrée dans `posts` associe un **Objet Post** à un tableau `variants` d'**Objets PostVariant**, un par langue. Ces variantes possèdent une propriété supplémentaire `content_html` contenant le contenu converti en HTML.

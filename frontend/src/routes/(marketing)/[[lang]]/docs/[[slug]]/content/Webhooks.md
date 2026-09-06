@@ -52,14 +52,24 @@ Webhooks are a way to get notified when an event happens on your blog.
     	<div><code>post.variant.published</code></div>
     	<div>A post variant is published</div>
     	<div>
-    		<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+    		<code>
+				{'{ post: '}
+				<a href="/docs/api-console#post-object">Post</a>,
+				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+				{' }'}
+			</code>
     	</div>
     </TableRow>
     <TableRow>
     	<div><code>post.variant.unpublished</code></div>
     	<div>A post variant is unpublished</div>
     	<div>
-    		<code>{'{ post: '}<a href="/docs/api-console#post-object">Post</a>{' }'}</code>
+    		<code>
+				{'{ post: '}
+				<a href="/docs/api-console#post-object">Post</a>,
+				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+				{' }'}
+			</code>
     	</div>
     </TableRow>
 
@@ -144,7 +154,7 @@ Webhooks are a way to get notified when an event happens on your blog.
 
     <TableRow>
     	<div><code>navigation.changed</code></div>
-    	<div><a href="/docs/navigation-links">Blog navigation</a> changed</div>
+    	<div><a href="/docs/navigation-links">Blog navigation links</a> changed</div>
     	<div>
     		<code
     			>{'{ navigation: '}<a href="/docs/api-console#navigation-object">Navigation</a
@@ -201,7 +211,7 @@ Webhooks are a way to get notified when an event happens on your blog.
 <h2 id="request">Webhook Request</h2>
 
 When an event happens, a **POST** request is sent to the webhook URL. The request
-body is a JSON object with the following properties. The `content` property is the event
+body is a JSON object with the following properties. The `data` property is the event
 data. See the above table for the event data structure.
 
 ```json
@@ -220,6 +230,9 @@ of the request body, signed with your webhook's secret key. You can find the sec
 your webhook settings.
 
 To verify the signature:
+
+- Hash the request body using HMAC-SHA256 with your webhook's secret key.
+- Compare the resulting hash with the value of the `X-Signature` header.
 
 ```js
 const signature = request.headers['x-signature'];
@@ -244,7 +257,6 @@ If we get any other response code or fail to reach your servers, we will retry t
 - 30 minutes
 
 If all fail, we will mark that webhook as failed and will no longer send it automatically.
-However, you can manually trigger it from the Console later.
 
 <style>
 	.separator {

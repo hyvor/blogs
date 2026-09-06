@@ -15,11 +15,9 @@ L'API Console vous permet d'effectuer des tâches administratives d'un blog. C'e
 - Les paramètres de requête peuvent être définis en JSON (recommandé) ou comme des paramètres de requête habituels (dans la chaîne de requête ou le corps HTTP)
 - Dans cette documentation, les objets, paramètres de requête et réponses sont écrits comme des interfaces <a href="https://www.typescriptlang.org/" rel="nofollow">Typescript</a> afin de rendre les déclarations de type concises.
 
-<h2 id="authenticating-user">Authentification de l'utilisateur</h2>
+<!-- <h2 id="authenticating-user">Authentification de l'utilisateur</h2>
 
-[Bientôt disponible]
-
-Actuellement, l'API Console est toujours authentifiée en tant que propriétaire du blog. Nous ajouterons prochainement l'authentification pour d'autres [utilisateurs](/docs/users).
+Actuellement, l'API Console est toujours authentifiée en tant que propriétaire du blog. Nous ajouterons prochainement l'authentification pour d'autres [utilisateurs](/docs/users). -->
 
 <h2 id="categories">Catégories</h2>
 

@@ -6,6 +6,7 @@ use App\Api\Console\Controller\TagController;
 use App\Api\Console\Object\TagVariantObject;
 use App\Api\Console\Object\TagVariantObjectFactory;
 use App\Entity\Enum\UserStatus;
+use App\Service\Tag\Event\TagVariantUpdatedEvent;
 use App\Service\Tag\TagService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(TagService::class)]
 #[CoversClass(TagVariantObject::class)]
 #[CoversClass(TagVariantObjectFactory::class)]
+#[CoversClass(TagVariantUpdatedEvent::class)]
 class UpdateTagVariantTest extends ApiTestCase
 {
     public function test_updates_tag_variant(): void
@@ -27,7 +29,7 @@ class UpdateTagVariantTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $tag = TagFactory::createOne(['blog' => $blog]);
-        TagVariantFactory::createOne(['tag' => $tag, 'language' => $language, 'name' => 'Old Name']);
+        $variant = TagVariantFactory::createOne(['tag' => $tag, 'language' => $language, 'name' => 'Old Name']);
 
         $name = 'Hey';
         $description = 'I am hey';
@@ -42,6 +44,11 @@ class UpdateTagVariantTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame($name, $json['name']);
         $this->assertSame($description, $json['description']);
+
+        $event = $this->getEd()->getFirstEvent(TagVariantUpdatedEvent::class);
+        $this->assertSame($variant->getId(), $event->variant->getId());
+        $this->assertSame($name, $event->variant->getName());
+        $this->assertSame('Old Name', $event->variantOld->getName());
     }
 
     public function test_variant_not_found(): void

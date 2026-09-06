@@ -52,7 +52,7 @@ Ce dossier contient les fichiers de modèles. Il existe plusieurs types de fichi
     	<div>Composant</div>
     	<div>
     		Ces modèles sont utilisés pour définir de nouvelles structures HTML pour des composants complexes comme les
-    		aperçus de liens. Voir <a href="/docs/writing#link-bookmark">Signet de lien</a>.
+    		aperçus de liens. Voir <a href="/docs/editor#link-bookmark">Signet de lien</a>.
     	</div>
     	<div><code>component-rich-link.twig</code></div>
     </TableRow>

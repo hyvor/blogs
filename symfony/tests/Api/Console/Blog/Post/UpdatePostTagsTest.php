@@ -20,6 +20,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
 #[CoversClass(TagService::class)]
+#[CoversClass(PostTagsChangedEvent::class)]
 class UpdatePostTagsTest extends ApiTestCase
 {
     public function test_updates_post_tags(): void

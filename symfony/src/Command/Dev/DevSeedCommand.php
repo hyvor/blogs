@@ -39,6 +39,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use function Zenstruck\Foundry\Persistence\save;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsCommand(
     name: 'dev:seed',
     description: 'Seed the database for development',

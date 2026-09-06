@@ -4,6 +4,9 @@
 	import IconArrowUpCircleFill from '@hyvor/icons/IconArrowUpCircleFill';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { onMount } from 'svelte';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		onsubmit: (prompt: string) => void;
@@ -48,7 +51,7 @@
 					bind:value={prompt}
 					onkeydown={handleKeydown}
 					oninput={handleInput}
-					placeholder="Type your prompt here"
+					placeholder={i18n.t('console.agent.promptPlaceholder')}
 					rows="1"
 					disabled={sending}
 				></textarea>
@@ -56,7 +59,7 @@
 					<IconButton
 						color="input"
 						size="small"
-						aria-label="Send"
+						aria-label={i18n.t('console.agent.send')}
 						disabled={prompt.trim() === '' || sending}
 						onclick={handleSubmit}
 					>
@@ -66,7 +69,7 @@
 			</div>
 		</div>
 		<div class="footer-row">
-			<div class="disclaimer">AI can make mistakes; please double-check.</div>
+			<div class="disclaimer">{i18n.t('console.agent.aiDisclaimer')}</div>
 			{#if $blogStore?.ai_model}
 				<a
 					type="button"

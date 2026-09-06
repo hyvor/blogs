@@ -15,11 +15,9 @@ Console API allows you to do administrative tasks of a blog. This is the same AP
 - Request params can be set as JSON (recommended) or as usual request params (in query or HTTP body)
 - In this documentation, objects, request params, and responses are written as <a href="https://www.typescriptlang.org/" rel="nofollow">Typescript</a> interfaces in order to make type declarations concise.
 
-<h2 id="authenticating-user">Authenticating User</h2>
+<!-- <h2 id="authenticating-user">Authenticating User</h2>
 
-[Coming soon]
-
-Currently, the Console API is always authenticated as the owner of the blog. We will add authentication as other [users](/docs/users) soon.
+The Console API is always authenticated as the owner of the blog. We will add authentication as other [users](/docs/users) soon. -->
 
 <h2 id="categories">Categories</h2>
 

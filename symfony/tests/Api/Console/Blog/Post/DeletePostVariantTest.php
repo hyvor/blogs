@@ -5,6 +5,7 @@ namespace App\Tests\Api\Console\Blog\Post;
 use App\Api\Console\Controller\PostController;
 use App\Entity\Enum\UserStatus;
 use App\Entity\PostVariant;
+use App\Service\Post\Event\PostVariantDeletedEvent;
 use App\Service\Post\PostService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -16,6 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(PostVariantDeletedEvent::class)]
 class DeletePostVariantTest extends ApiTestCase
 {
     public function test_deletes_secondary_language_variant(): void
@@ -37,6 +39,8 @@ class DeletePostVariantTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         $this->assertNull($this->getEm()->getRepository(PostVariant::class)->find($variant2Id));
+
+        $this->getEd()->assertDispatched(PostVariantDeletedEvent::class);
     }
 
     public function test_cannot_delete_primary_language_variant(): void

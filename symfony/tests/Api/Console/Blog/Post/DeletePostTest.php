@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(PostController::class)]
 #[CoversClass(PostService::class)]
+#[CoversClass(PostDeletedEvent::class)]
 class DeletePostTest extends ApiTestCase
 {
     public function test_deletes_post(): void

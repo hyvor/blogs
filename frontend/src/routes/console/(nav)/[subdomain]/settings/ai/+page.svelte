@@ -54,7 +54,7 @@
 	>
 		<Table columns="28px 1fr 1fr 2fr" style="bordered" hover>
 			<TableRow head>
-				<TableCell>&nbsp;</TableCell>
+				<div></div>
 				<TableCell>Model</TableCell>
 				<TableCell>Provider</TableCell>
 				<TableCell>
@@ -113,9 +113,6 @@
 		flex: 1;
 		overflow: auto;
 		padding: 25px 30px;
-	}
-	:global(.model-row) {
-		cursor: pointer;
 	}
 	.usage-bar {
 		width: 200px;

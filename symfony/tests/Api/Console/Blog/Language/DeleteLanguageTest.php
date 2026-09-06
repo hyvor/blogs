@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
 #[CoversClass(LanguageService::class)]
+#[CoversClass(LanguageChangedEvent::class)]
 class DeleteLanguageTest extends ApiTestCase
 {
     public function test_delete_language(): void

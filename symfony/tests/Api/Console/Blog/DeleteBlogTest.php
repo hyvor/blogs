@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(BlogController::class)]
 #[CoversClass(BlogService::class)]
+#[CoversClass(BlogDeletedEvent::class)]
 class DeleteBlogTest extends ApiTestCase
 {
     public function test_soft_deletes_blog(): void

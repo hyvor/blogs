@@ -2,12 +2,12 @@
 	import { Callout } from '@hyvor/design/components';
 </script>
 
-# Theme
+# Themes
 
-Hyvor Blogs comes with a few pre-built themes (see [Themes](/themes)). When you create a blog, the default theme, **Hello**, will be copied to your blog. You can change the theme or edit theme files to customize your blog.
+Hyvor Blogs comes with a few pre-built themes (see [Themes](/themes)). When you create a blog, the default theme, **Hello**, will be installed on your blog. You can change the theme or edit theme files to customize your blog.
 
-- [Changing Theme](/docs/theme#changing)
-- [Editing Theme Files](/docs/theme#editing)
+- [Changing Theme](#changing)
+- [Editing Theme Files](#editing)
 
 <Callout type="info">
 	<p>
@@ -36,6 +36,4 @@ To change the theme of your blog,
 
 You can also edit the theme files of your blog to customize it. To edit theme files, go to the **Theme** section in the [Hyvor Blogs Console](/console). You will see all the theme files listed. Click on a file to edit it.
 
-<!---image-->
-
-`config.yaml` has all theme configurations such as fonts, colors, and other settings. All template files are in the `templates` directory.
+`config.yaml` has all theme configurations such as fonts, colors, and other settings. All template files are in the `templates` directory. See Theme Development for more details.

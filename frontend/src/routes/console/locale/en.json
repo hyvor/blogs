@@ -774,7 +774,57 @@
 			"editsSuggested": "Edits suggested by the agent",
 			"allResolved": "All suggestions resolved",
 			"applyChanges": "Apply changes",
-			"applied": "Applied"
+			"applied": "Applied",
+			"newChat": "New Chat",
+			"untitledConversation": "Untitled conversation",
+			"noConversations": "No conversations yet",
+			"deleteConversation": "Delete conversation",
+			"deleteConversationTitle": "Delete Conversation",
+			"deleteConversationConfirm": "Are you sure you want to delete this conversation?",
+			"deleteConversationFailed": "Failed to delete conversation",
+			"conversationsDisclaimer": "All editors of this blog can access all conversations. Conversations are deleted after 30 days.",
+			"loadConversationFailed": "Unable to load the conversation",
+			"promptPlaceholder": "Type your prompt here",
+			"aiDisclaimer": "AI can make mistakes; please double-check.",
+			"idle": {
+				"title": "How can I help you today?",
+				"canSearchPosts": "Can search & read your blog posts",
+				"canAnswerQuestions": "Can answer questions about your posts",
+				"canSuggestEdits": "Can suggest edits to your posts",
+				"cannotEdit": "<strong>Cannot</strong> edit your posts without your approval"
+			},
+			"review": {
+				"title": "Review suggested changes",
+				"applying": "Applying…",
+				"staleWarning": "This post has been updated since the AI suggested this change. Please review the changes carefully before applying them.",
+				"resolveRemaining": "Resolve remaining suggestions",
+				"suggestionsRemaining": "{count} {count, plural, one {suggestion} other {suggestions}} remaining",
+				"forceApplyTitle": "Post has been updated",
+				"forceApplyContent": "The post has been updated since the AI suggested this change. Do you want to force apply your changes?",
+				"applyFailed": "Failed to apply the change",
+				"loadFailed": "Failed to load the change"
+			},
+			"documentChanges": {
+				"title": "Document changes",
+				"postVariantFallback": "Post variant #{id}",
+				"reviewed": "Reviewed",
+				"needsReview": "Needs review",
+				"reviewButton": "Review changes"
+			},
+			"error": "An error occurred while processing the request. Please try again later.",
+			"query": {
+				"searchedTags": "Searched tags",
+				"searchedAuthors": "Searched authors",
+				"searchedPosts": "Searched posts",
+				"searchedLanguages": "Searched languages",
+				"ranQuery": "Ran a query",
+				"input": "Input",
+				"output": "Output"
+			},
+			"thoughtProcess": "Thought process",
+			"thought": "Thought",
+			"thinking": "Thinking…",
+			"postVariantLabel": "Post #{id}"
 		},
 		"comments": {
 			"consoleTitle": "Hyvor Talk Comments Console"
@@ -823,8 +873,8 @@
 				"suggestingInfo": "You are suggesting"
 			},
 			"publishedNotice": {
-				"published": "This post is published.",
-				"scheduled": "This post is scheduled.",
+				"published": "You are editing a published post.",
+				"scheduled": "You are editing a scheduled post.",
 				"compare": "Compare"
 			},
 			"compare": {
@@ -845,7 +895,7 @@
 				"noUrl": "(No url)"
 			},
 			"agent": {
-				"upgradeText": "AI chat is available on the <strong>Growth plan</strong> and above. Upgrade now to use GPT to generate and improve your content.",
+				"upgradeText": "AI agent is available on the <strong>Starter Plan</strong> and above. Upgrade your plan to unlock this feature.",
 				"emptyMessage": "Ask the agent about this post, e.g. \"Fix any typos\" or \"Add a short FAQ section at the end\"."
 			},
 			"language": {

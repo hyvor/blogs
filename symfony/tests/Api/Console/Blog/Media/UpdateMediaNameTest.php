@@ -9,6 +9,7 @@ use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
+use App\Service\Media\Event\MediaNameUpdatedEvent;
 use App\Service\Media\MediaService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -25,6 +26,7 @@ use function Zenstruck\Foundry\Persistence\refresh;
 #[CoversClass(MediaController::class)]
 #[CoversClass(MediaService::class)]
 #[CoversClass(UpdateBlogUrlLock::class)]
+#[CoversClass(MediaNameUpdatedEvent::class)]
 class UpdateMediaNameTest extends ApiTestCase
 {
     private Filesystem $filesystem;
@@ -120,6 +122,11 @@ class UpdateMediaNameTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSame('new-name.png', $this->getJson()['name']);
+
+        $event = $this->getEd()->getFirstEvent(MediaNameUpdatedEvent::class);
+        $this->assertSame($media->getId(), $event->media->getId());
+        $this->assertStringContainsString('test.png', $event->oldUrl);
+        $this->assertStringContainsString('new-name.png', $event->newUrl);
     }
 
     public function test_handles_duplicates(): void

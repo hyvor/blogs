@@ -8,6 +8,9 @@
 	import type { AiMessageEvent } from '../../../../lib/types';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import PostStatusText from '../../posts/PostStatusText.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		events: AiMessageEvent[];
@@ -43,7 +46,7 @@
 	<div class="doc-changes-panel">
 		<div class="doc-changes-header">
 			<IconFileText size={13} />
-			<span>Document changes</span>
+			<span>{i18n.t('console.agent.documentChanges.title')}</span>
 		</div>
 		<div class="doc-changes-list">
 			{#each events as event}
@@ -61,11 +64,16 @@
 						</div>
 						<div class="doc-change-info">
 							<div class="doc-change-title">
-								{variant.title || `Post variant #${variant.id}`}
+								{variant.title ||
+									i18n.t('console.agent.documentChanges.postVariantFallback', {
+										id: variant.id
+									})}
 							</div>
 							<div class="doc-change-meta">
 								<span class="doc-change-status-label" class:reviewed>
-									{reviewed ? 'Reviewed' : 'Needs review'}
+									{reviewed
+										? i18n.t('console.agent.documentChanges.reviewed')
+										: i18n.t('console.agent.documentChanges.needsReview')}
 								</span>
 								&middot;
 								{#if variant}
@@ -83,7 +91,7 @@
 							</div>
 						</div>
 						<Button size="small" color="input" onclick={() => openReview(event)}
-							>Review changes</Button
+							>{i18n.t('console.agent.documentChanges.reviewButton')}</Button
 						>
 					</div>
 				{/if}

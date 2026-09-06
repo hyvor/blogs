@@ -2,6 +2,7 @@
 	import { DocsImage } from '@hyvor/design/marketing';
 	import IconBrush from '@hyvor/icons/IconBrush';
 	import IconPencil from '@hyvor/icons/IconPencil';
+
 	import { Callout, Divider, Tag } from '@hyvor/design/components';
 </script>
 
@@ -20,7 +21,7 @@ Vous pouvez ajouter du code personnalisé pour personnaliser votre blog, ajouter
 
 <h2 id="blog">1. Code personnalisé du blog</h2>
 
-Vous pouvez ajouter du code personnalisé à l'ensemble du blog dans **Paramètres → Code personnalisé**. Ainsi, le code personnalisé sera ajouté à tous les modèles de votre blog. Cela est utile pour ajouter des services comme les [outils d'analyse](/docs/services).
+Vous pouvez ajouter du code personnalisé à l'ensemble du blog dans **Paramètres → Code personnalisé**. Ainsi, le code personnalisé sera ajouté à tous les modèles de votre blog. Cela est utile pour ajouter des services comme les outils d'analyse.
 
 <DocsImage src="/images/docs/custom-code/custom-code-blog.png" alt="Code personnalisé dans les paramètres du blog" />
 
@@ -44,5 +45,5 @@ Par exemple, les articles ayant des animations SVG auront besoin d'une biblioth�
 	{#snippet icon()}
 		<IconBrush />
 	{/snippet}
-	Vous pouvez également <a href="/docs/theme#editing">modifier votre thème</a> pour ajouter du code personnalisé à votre blog.
+	Vous pouvez également <a href="/docs/themes#editing">modifier votre thème</a> pour ajouter du code personnalisé à votre blog.
 </Callout>
