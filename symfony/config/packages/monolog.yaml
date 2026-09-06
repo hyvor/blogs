@@ -1,7 +1,7 @@
 when@prod: &prod
-    channels:
-        - app
     monolog:
+        channels:
+            - app
         handlers:
             app:
                 type: stream
