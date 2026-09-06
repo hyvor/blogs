@@ -7,6 +7,7 @@ export interface License {
 	seoAnalysis: boolean;
 	linkAnalysis: boolean;
 	blogs: number;
+	noBranding: boolean;
 }
 
 export type Scope =
