@@ -1,4 +1,6 @@
 when@prod: &prod
+    channels:
+        - app
     monolog:
         handlers:
             app:
@@ -6,7 +8,6 @@ when@prod: &prod
                 path: "php://stderr"
                 level: "%env(LOG_LEVEL)%"
                 formatter: monolog.formatter.json
-                bubble: false
                 channels: ["app"]
 
             non_app:
@@ -15,8 +16,7 @@ when@prod: &prod
                 level: error
                 formatter: monolog.formatter.json
                 bubble: false
-                channels: ["!app", "!cache"]
-
+                channels: ["!app"]
 
 when@dev: *prod
 
