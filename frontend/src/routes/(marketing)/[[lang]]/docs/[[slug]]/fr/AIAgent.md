@@ -1,3 +1,8 @@
+<script>
+    import {DocsImage} from '@hyvor/design/marketing';
+    import { Callout } from '@hyvor/design/components';
+</script>
+
 # Agent (IA)
 
 Hyvor Blogs propose un agent IA qui peut accéder à vos articles et fournir des suggestions pour les améliorer. Vous pouvez activer ou désactiver l'agent IA à tout moment dans **Console &rarr; Paramètres &rarr; IA**.

@@ -1,3 +1,7 @@
+<script>
+	import { Callout } from '@hyvor/design/components';
+</script>
+
 # Thèmes
 
 Hyvor Blogs est livré avec quelques thèmes préconstruits (voir [Thèmes](/themes)). Lorsque vous créez un blog, le thème par défaut, **Hello**, sera installé sur votre blog. Vous pouvez changer le thème ou modifier les fichiers du thème pour personnaliser votre blog.
