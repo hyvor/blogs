@@ -33,13 +33,12 @@
 	{$APP_TLS_DIRECTIVE}
 	{$MERCURE_DIRECTIVE}
 
-	handle /.well-known/mercure* {
-		reverse_proxy localhost:8081 {
-			flush_interval -1
-		}
+	@backend {
+		path /api/*
+		path /blog/*
 	}
 
-	handle /api/* {
+	handle @backend {
 		import handle_php app
 	}
 
