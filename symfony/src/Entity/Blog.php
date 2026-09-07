@@ -268,7 +268,7 @@ class Blog
     public function getMeta(): BlogMeta
     {
         // old blogs may have null meta column
-        if (!isset($this->meta)) {
+        if (!isset($this->meta)) { // @phpstan-ignore-line
             $this->meta = new BlogMeta();
         }
         return $this->meta;
