@@ -109,6 +109,7 @@ class AiGetConversationTest extends ApiTestCase
         $documentChangeEventJson = $assistantMessageJson['events'][1];
         $this->assertIsArray($documentChangeEventJson);
         $this->assertSame('document_change', $documentChangeEventJson['type']);
+        $this->assertIsArray($documentChangeEventJson['post_variant']);
         $this->assertSame($postVariant->getId(), $documentChangeEventJson['post_variant']['id']);
         $this->assertSame('{"type":"doc","content":[]}', $documentChangeEventJson['document_content']);
         $this->assertSame('pending', $documentChangeEventJson['document_change_status']);

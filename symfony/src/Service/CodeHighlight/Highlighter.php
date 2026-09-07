@@ -8,6 +8,12 @@ use Phiki\Theme\ParsedTheme;
 use Phiki\Theme\Theme;
 use Phiki\Token\HighlightedToken;
 
+/**
+ * @phpstan-type HighlightResult array{
+ *     pre: array{style: string, class: string, onmouseenter: string, onmouseleave: string},
+ *     code: string,
+ * }
+ */
 class Highlighter
 {
     private Phiki $phiki;
@@ -18,7 +24,7 @@ class Highlighter
     }
 
     /**
-     * @return array<string, mixed>
+     * @return HighlightResult
      */
     public function highlight(
         string $code,
@@ -59,7 +65,7 @@ class Highlighter
 
     /**
      * @param array<int, array<int, HighlightedToken>> $lines
-     * @return array<string, mixed>
+     * @return HighlightResult
      */
     private function buildHtml(
         string $language,

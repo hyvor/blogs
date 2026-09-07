@@ -50,6 +50,9 @@ class AiPostTranslatorTest extends KernelTestCase
         return $postVariant;
     }
 
+    /**
+     * @param array<string, mixed> $responseJson
+     */
     private function setMockResponse(array $responseJson): void
     {
         $mockResponse = new JsonMockResponse([

@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Ai\Agent;
 
 use App\Api\Console\Object\Ai\AiConversationObject;
+use App\Api\Console\Object\Ai\AiMessageEventObject;
 use App\Entity\AiConversation;
 use App\Entity\AiMessage;
 use App\Entity\AiMessageEvent;
@@ -309,7 +310,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
         );
 
         $expectedContent = (string) json_encode($documentOpsTool->getFinalDocument($postVariant->getId())->toArray());
-        $this->assertSame($expectedContent, $events[2]['event']->document_content);
+        $documentChangeEvent = $events[2]['event'];
+        $this->assertInstanceOf(AiMessageEventObject::class, $documentChangeEvent);
+        $this->assertSame($expectedContent, $documentChangeEvent->document_content);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
@@ -403,7 +406,9 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $conversationStarted = $firstEvents[0];
         $this->assertSame('conversation_created', $conversationStarted['type']);
-        $conversationId = $conversationStarted['conversation']->id;
+        $conversationObject = $conversationStarted['conversation'];
+        $this->assertInstanceOf(AiConversationObject::class, $conversationObject);
+        $conversationId = $conversationObject->id;
 
         $conversation = $this->getEm()->getRepository(AiConversation::class)->find($conversationId);
         $this->assertNotNull($conversation);
