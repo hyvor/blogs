@@ -1,5 +1,5 @@
 <script>
-   import { Table, TableRow } from '@hyvor/design/components';
+   import { Table, TableRow, Callout } from '@hyvor/design/components';
 </script>
 
 # Deploy
@@ -14,10 +14,14 @@ Let's deploy Hyvor Blogs on your server using Docker Compose. You can easily ada
 
 **OpenID Connect (OIDC) Provider**: Hyvor Blogs relies on OIDC for authentication. Create an application in your OIDC provider and obtain the issuer URL, client ID, and client secret. Then, allow the following URLs:
 
-- **Callback URL**: `https://<your-app-domain>/api/oidc/callback`
+- **Redirect URL**: `https://<your-app-domain>/api/oidc/callback`
 - **Logout URL**: `https://<your-app-domain>`
 
 **Domain**: Domain name for your Hyvor Blogs instance. This is called the "App Domain".
+
+<Callout type="info" title="App Domain">
+   Hyvor Blogs is designed to handle multiple domains in a single installation (custom domains for individual blogs). <strong>App Domain</strong> is where the main API and Console are hosted. All other domains are considered custom domains. 
+</Callout>
 
 <h2 id="dns">
    DNS Routing
@@ -37,6 +41,8 @@ Point your app domain to your server's IP address.
       <div>123.123.123.123</div>
    </TableRow>
 </Table>
+
+See []
 
 <h2 id="install">Install</h2>
 
@@ -82,7 +88,7 @@ S3_USE_PATH_STYLE_ENDPOINT=false
 
 The `DATABASE_URL` is pre-configured to connect to the Postgres service defined in `compose.yaml` using `POSTGRES_PASSWORD`, so you do not need to change it.
 
-<h3 id="tls">TLS Configuration</h3>
+<h3 id="tls">TLS Mode</h3>
 
 `TLS_MODE` controls how HTTPS is handled for the app domain (`DOMAIN_APP`). It does not affect custom domains attached to individual blogs, which always get TLS certificates automatically. Set it to one of the following:
 
