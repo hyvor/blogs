@@ -22,7 +22,8 @@
 			type="video/mp4"
 		/>
 		<track kind="captions" />
-	</video> -->
+	</video>
+	-->
 
 	<div class="fade-overlay" aria-hidden="true"></div>
 </div>
