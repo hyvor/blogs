@@ -24,7 +24,6 @@ class DocumentOpsToolTest extends KernelTestCase
     private function createVariant(
         array $paragraphs = ['Paragraph one.', 'Paragraph two.', 'Paragraph three.'],
         PostVariantStatus $status = PostVariantStatus::DRAFT,
-        ?string $contentUnsaved = null,
     ): PostVariant {
         $blog = BlogFactory::createOne();
         $language = LanguageFactory::createOneFor($blog);
@@ -45,8 +44,7 @@ class DocumentOpsToolTest extends KernelTestCase
             'post' => $post,
             'language' => $language,
             'status' => $status,
-            'content' => $content,
-            'content_unsaved' => $contentUnsaved,
+            'content_unsaved' => $content,
         ]);
     }
 
@@ -81,46 +79,6 @@ class DocumentOpsToolTest extends KernelTestCase
         $result = $tool->get(999999);
 
         $this->assertSame('Post variant with ID 999999 not found.', $result);
-    }
-
-    public function test_get_prefers_content_unsaved_over_content_when_published(): void
-    {
-        $variant = $this->createVariant(
-            paragraphs: ['Saved content.'],
-            status: PostVariantStatus::PUBLISHED,
-            contentUnsaved: (string) json_encode([
-                'type' => 'doc',
-                'content' => [
-                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Unsaved content.']]],
-                ],
-            ]),
-        );
-        $tool = $this->createTool($variant->getPost()->getBlog());
-
-        $markdown = $tool->get($variant->getId());
-
-        $this->assertStringContainsString('Unsaved content.', $markdown);
-        $this->assertStringNotContainsString('Saved content.', $markdown);
-    }
-
-    public function test_get_prefers_content_unsaved_over_content_when_draft(): void
-    {
-        $variant = $this->createVariant(
-            paragraphs: ['Saved content.'],
-            status: PostVariantStatus::DRAFT,
-            contentUnsaved: (string) json_encode([
-                'type' => 'doc',
-                'content' => [
-                    ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Unsaved content.']]],
-                ],
-            ]),
-        );
-        $tool = $this->createTool($variant->getPost()->getBlog());
-
-        $markdown = $tool->get($variant->getId());
-
-        $this->assertStringContainsString('Unsaved content.', $markdown);
-        $this->assertStringNotContainsString('Saved content.', $markdown);
     }
 
     public function test_ops_require_document_get_first(): void
@@ -165,14 +123,17 @@ class DocumentOpsToolTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [['type' => 'text', 'text' => 'Replaced one.']],
                     ],
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [['type' => 'text', 'text' => 'Paragraph two.']],
                     ],
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [['type' => 'text', 'text' => 'Inserted after two.']],
                     ],
                 ],
@@ -198,6 +159,7 @@ class DocumentOpsToolTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [['type' => 'text', 'text' => 'qux bar foo']],
                     ],
                 ],

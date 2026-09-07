@@ -13,6 +13,7 @@
         "ext-mbstring": "*",
         "ext-simplexml": "*",
         "ext-xmlreader": "*",
+        "ext-imagick": "*",
         "ext-zip": "*",
         "dragonmantank/cron-expression": "^3.6",
         "hyvor/doctrine-filterq": "^0.0.1",

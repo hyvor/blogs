@@ -106,20 +106,20 @@ class UsageServiceTest extends KernelTestCase
 
         AiMessageFactory::createOne([
             'conversation' => $conversation1,
-            'total_tokens_usd_cost' => 1000,
+            'total_tokens_usd_cost' => 10.0,
             'created_at' => new \DateTimeImmutable('2025-02-10'),
         ]);
 
         AiMessageFactory::createOne([
             'conversation' => $conversation1,
-            'total_tokens_usd_cost' => 2000,
+            'total_tokens_usd_cost' => 20.0,
             'created_at' => new \DateTimeImmutable('2025-02-15'),
         ]);
 
         // old — should NOT count
         AiMessageFactory::createOne([
             'conversation' => $conversation1,
-            'total_tokens_usd_cost' => 1000,
+            'total_tokens_usd_cost' => 10.0,
             'created_at' => new \DateTimeImmutable('2025-01-01'),
         ]);
 
@@ -136,7 +136,7 @@ class UsageServiceTest extends KernelTestCase
 
         AiMessageFactory::createOne([
             'conversation' => $conversation2,
-            'total_tokens_usd_cost' => 3000,
+            'total_tokens_usd_cost' => 30.0,
             'created_at' => new \DateTimeImmutable('2025-02-20'),
         ]);
 
@@ -146,11 +146,11 @@ class UsageServiceTest extends KernelTestCase
 
         AiMessageFactory::createOne([
             'conversation' => $conversation3,
-            'total_tokens_usd_cost' => 3000,
+            'total_tokens_usd_cost' => 30.0,
             'created_at' => new \DateTimeImmutable('2025-02-20'),
         ]);
 
-        // used: 6000 cents, limit: 10_000 cents -> 60%
+        // used: $60 cents, limit: $100 cents -> 60%
         $this->assertSame(60.0, $this->usage()->getAiTokensUsage(1, $this->license(10_000)));
     }
 
@@ -184,13 +184,13 @@ class UsageServiceTest extends KernelTestCase
 
         AiMessageFactory::createOne([
             'conversation' => $conversation,
-            'total_tokens_usd_cost' => 0.3,
+            'total_tokens_usd_cost' => 0.003,
             'created_at' => new \DateTimeImmutable('2025-02-10'),
         ]);
 
         AiMessageFactory::createOne([
             'conversation' => $conversation,
-            'total_tokens_usd_cost' => 0.2,
+            'total_tokens_usd_cost' => 0.002,
             'created_at' => new \DateTimeImmutable('2025-02-15'),
         ]);
 

@@ -191,6 +191,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -221,6 +222,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -230,9 +232,11 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'blockquote',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -242,6 +246,7 @@ class OpsApplierTest extends KernelTestCase
                             ],
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -273,6 +278,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -282,6 +288,7 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -291,9 +298,11 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'blockquote',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -325,6 +334,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -334,9 +344,11 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'blockquote',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -346,6 +358,7 @@ class OpsApplierTest extends KernelTestCase
                             ],
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -377,6 +390,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -386,9 +400,11 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'blockquote',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -398,6 +414,7 @@ class OpsApplierTest extends KernelTestCase
                             ],
                             [
                                 'type' => 'paragraph',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'text',
@@ -431,6 +448,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -440,12 +458,15 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'bullet_list',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'list_item',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'paragraph',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
                                             [
                                                 'type' => 'text',
@@ -455,6 +476,7 @@ class OpsApplierTest extends KernelTestCase
                                     ],
                                     [
                                         'type' => 'paragraph',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
                                             [
                                                 'type' => 'text',
@@ -466,9 +488,11 @@ class OpsApplierTest extends KernelTestCase
                             ],
                             [
                                 'type' => 'list_item',
+                                'attrs' => ['suggestions' => null],
                                 'content' => [
                                     [
                                         'type' => 'paragraph',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
                                             [
                                                 'type' => 'text',
@@ -478,6 +502,7 @@ class OpsApplierTest extends KernelTestCase
                                     ],
                                     [
                                         'type' => 'paragraph',
+                                        'attrs' => ['suggestions' => null],
                                         'content' => [
                                             [
                                                 'type' => 'text',
@@ -508,6 +533,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -517,6 +543,7 @@ class OpsApplierTest extends KernelTestCase
                     ],
                     [
                         'type' => 'blockquote',
+                        'attrs' => ['suggestions' => null],
                     ]
                 ]
             ],
@@ -537,6 +564,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -563,6 +591,7 @@ class OpsApplierTest extends KernelTestCase
                 'content' => [
                     [
                         'type' => 'paragraph',
+                        'attrs' => ['suggestions' => null],
                         'content' => [
                             [
                                 'type' => 'text',
@@ -603,6 +632,7 @@ class OpsApplierTest extends KernelTestCase
         $this->assertSame(
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'First replacement.']],
             ],
             $nodeIdMap['p-2']->toArray()
@@ -610,6 +640,7 @@ class OpsApplierTest extends KernelTestCase
         $this->assertSame(
             [
                 'type' => 'paragraph',
+                'attrs' => ['suggestions' => null],
                 'content' => [['type' => 'text', 'text' => 'Inserted afterwards.']],
             ],
             $nodeIdMap['p-3']->toArray()

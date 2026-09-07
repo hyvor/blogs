@@ -7,7 +7,7 @@ export const schema = getSchema({
 	suggestions: true
 });
 
-export const editorConfig: EditorConfig = {
+export const editorConfig: () => EditorConfig = () => ({
 	colorButtonBackground: '#5A8387',
 	colorButtonText: '#ffffff',
 
@@ -22,7 +22,7 @@ export const editorConfig: EditorConfig = {
 		oversizedNoteText: 'Image size is larger than the image preview in the editor.'
 	},
 
-	uploadFileConfig: editorUploadFileConfig,
+	uploadFileConfig: editorUploadFileConfig(),
 
 	embed: async (url) => {
 		try {
@@ -55,4 +55,4 @@ export const editorConfig: EditorConfig = {
 			iconUrl: data.icon_url
 		};
 	}
-};
+});

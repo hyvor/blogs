@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { LogoStrip } from '@hyvor/design/marketing';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
 
 	const base = '/images/homepage/logo-stripe';
 
@@ -24,11 +25,8 @@
 			color: true
 		}
 	];
+
+	const i18n = getMarketingI18n();
 </script>
 
-<LogoStrip
-	{logos}
-	label="Trusted by 100+ bloggers & businesses"
-	background="#574443"
-	marquee={true}
-/>
+<LogoStrip {logos} label={i18n.t('homepage.logoStrip.title')} background="#574443" marquee={true} />

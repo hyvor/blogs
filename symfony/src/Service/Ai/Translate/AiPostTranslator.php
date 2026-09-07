@@ -6,6 +6,7 @@ use App\Entity\PostVariant;
 use App\Service\Ai\AiPlatformService;
 use App\Service\Ai\AiProvider;
 use App\Service\Ai\Translate\Dto\TranslatedResponse;
+use App\Service\Post\Content\Html\HtmlSerializer;
 use App\Service\Post\Content\Nodes\Button\Button;
 use App\Service\Post\Content\Nodes\Callout\Callout;
 use App\Service\Post\Content\Nodes\Figcaption;
@@ -59,10 +60,10 @@ PROMPT;
 
     public function __construct(
         private AiPlatformService $aiPlatformService,
-        private PostContentService $postContentService,
         private PostSchema $postSchema,
         private LoggerInterface $logger,
-        private SerializerInterface $serializer
+        private SerializerInterface $serializer,
+        private HtmlSerializer $htmlSerializer
     ) {}
 
     /**
@@ -71,7 +72,7 @@ PROMPT;
      */
     public function translatePostVariant(PostVariant $variant, string $targetLanguageCode): array
     {
-        $content = $variant->getContent();
+        $content = $variant->getContentUnsaved();
         $blog = $variant->getPost()->getBlog();
 
         if (!$content) {
@@ -79,7 +80,7 @@ PROMPT;
         }
 
         try {
-            $doc = $this->postContentService->getDocumentFromJson($content, $blog);
+            $doc =  $this->postSchema->documentFrom($content);
         } catch (PhrosemirrorException $e) {
             throw new TranslateException('Failed to parse post content: ' . $e->getMessage());
         }
@@ -105,7 +106,7 @@ PROMPT;
             $translatables['content'][] = [
                 'id' => $index,
                 'type' => $node->type->name,
-                'html' => $node->toHtml()
+                'html' => $this->htmlSerializer->serialize($node, blog: $blog)
             ];
         }
 

@@ -25,6 +25,7 @@ class ThemesSyncCommand
     public function __invoke(
         InputInterface $input,
         OutputInterface $output,
+        #[Option] bool $async = false,
         #[Option('disable seeding preview blogs')] bool $noPreviewBlogs = false,
     ): int
     {
@@ -32,7 +33,7 @@ class ThemesSyncCommand
 
         $io = new SymfonyStyle($input, $output);
         $io->note('Syncing themes...');
-        $this->bus->dispatch(new RepoSyncMessage(!$noPreviewBlogs), [MessageTransport::syncStamp()]);
+        $this->bus->dispatch(new RepoSyncMessage(!$noPreviewBlogs), $async ? [] : [MessageTransport::syncStamp()]);
         $io->success('Theme synced successfully.');
         return Command::SUCCESS;
     }

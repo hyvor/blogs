@@ -52,11 +52,11 @@ class ImageTest extends KernelTestCase
      */
     private function pngContent(int $width, int $height = 100): string
     {
-        $image = imagecreatetruecolor($width, $height);
-        ob_start();
-        imagepng($image);
-        $content = (string) ob_get_clean();
-        imagedestroy($image);
+        $image = new \Imagick();
+        $image->newImage($width, $height, new \ImagickPixel('white'));
+        $image->setImageFormat('png');
+        $content = $image->getImageBlob();
+        $image->destroy();
         return $content;
     }
 

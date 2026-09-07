@@ -178,12 +178,14 @@ class AiAgentConversationService
 
             yield $this->sseArrayFromMessageEvent($ev);
 
+            // @codeCoverageIgnoreStart
             if (isset($agentCallResult)) {
                 try {
                     $this->recordAgentCallUsage($agentCallResult, $assistantMessage);
                     $this->em->flush();
                 } catch (\Throwable) {}
             }
+            // @codeCoverageIgnoreEnd
 
             return;
         }

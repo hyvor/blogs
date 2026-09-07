@@ -109,19 +109,12 @@ class AiGetConversationTest extends ApiTestCase
         $documentChangeEventJson = $assistantMessageJson['events'][1];
         $this->assertIsArray($documentChangeEventJson);
         $this->assertSame('document_change', $documentChangeEventJson['type']);
-        $this->assertSame($postVariant->getId(), $documentChangeEventJson['post_variant_id']);
+        $this->assertIsArray($documentChangeEventJson['post_variant']);
+        $this->assertSame($postVariant->getId(), $documentChangeEventJson['post_variant']['id']);
         $this->assertSame('{"type":"doc","content":[]}', $documentChangeEventJson['document_content']);
         $this->assertSame('pending', $documentChangeEventJson['document_change_status']);
         $this->assertSame(2, $documentChangeEventJson['document_change_ops_count']);
         $this->assertSame(5, $documentChangeEventJson['post_variant_version']);
-
-        $this->assertIsArray($json['post_variants']);
-        $this->assertCount(1, $json['post_variants']);
-        $postVariantJson = $json['post_variants'][0];
-        $this->assertIsArray($postVariantJson);
-        $this->assertSame($postVariant->getId(), $postVariantJson['id']);
-        $this->assertSame('My published post', $postVariantJson['title']);
-        $this->assertSame('published', $postVariantJson['status']);
     }
 
     public function test_fails_to_get_a_conversation_belonging_to_another_blog(): void

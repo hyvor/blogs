@@ -26,7 +26,7 @@
 	}: Props = $props();
 
 	const diffEditorConfig = {
-		...editorConfig,
+		...editorConfig(),
 		suggestions: {
 			author: 'unknown',
 			resolveAuthor: resolveAuthor,
@@ -57,7 +57,7 @@
 		<div class="part left">
 			<div class="header">{leftTitle}</div>
 			<div class="editor">
-				<Editor value={leftContent} {schema} {editorConfig} editable={false} />
+				<Editor value={leftContent} {schema} editorConfig={editorConfig()} editable={false} />
 			</div>
 		</div>
 		<div class="part">

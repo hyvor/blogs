@@ -117,7 +117,7 @@ class GetDocumentForPostTest extends ApiTestCase
 
         $this->consoleBlogApi('GET', $blog, '/documents/post?post_id=' . $post->getId(), user: $user);
 
-        $this->assertResponseFailed(400, 'Variant not found for the specified language');
+        $this->assertResponseFailed(404, 'Variant not found');
     }
 
     public function test_with_another_variant(): void
