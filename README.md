@@ -45,23 +45,23 @@ also being flexible enough to support complex publishing workflows.
 
 ## Screenshots
 
-The console for managing the blog:
+Console:
 
 ![Hyvor Blogs Console](/meta/assets/screenshot-console.png)
 
-The rich-text editor for creating and editing blog posts:
+Rich-text Editor:
 
 ![Hyvor Blogs Editor](/meta/assets/screenshot-editor.png)
 
-AI agent suggesting improvements for blog posts:
+AI Agent:
 
 ![Hyvor Blogs AI Agent](/meta/assets/screenshot-agent.png)
 
 ## Architecture
 
 - **PHP + Symfony** for the API backend.
-- **SvelteKit** for the frontend.
-- **PostgreSQL** as the primary database.
+- **SvelteKit** with [Hyvor Design System](https://github.com/hyvor/design) for the frontend.
+- **PostgreSQL** as the database and queue backend.
 
 ## Self-Hosting
 
