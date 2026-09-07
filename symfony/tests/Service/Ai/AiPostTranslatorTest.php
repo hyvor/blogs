@@ -4,20 +4,21 @@ namespace App\Tests\Service\Ai;
 
 use App\Entity\Blog;
 use App\Entity\Language;
-use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Service\Ai\AiModel;
 use App\Service\Ai\Translate\AiPostTranslator;
-use App\Tests\Factory\BlogFactory;
-use App\Tests\Factory\LanguageFactory;
-use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\PostVariantFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+/**
+ * TODO: this doesn't 100% test everything.
+ * Migrate to test via the API endpoint
+ */
+#[CoversClass(AiPostTranslator::class)]
 class AiPostTranslatorTest extends KernelTestCase
 {
 
@@ -44,9 +45,45 @@ class AiPostTranslatorTest extends KernelTestCase
         $postVariant = new PostVariant();
         $postVariant->setPost($post);
         $postVariant->setLanguage($language);
-        $postVariant->setContent(json_encode($content, JSON_THROW_ON_ERROR));
+        $postVariant->setContentUnsaved(json_encode($content, JSON_THROW_ON_ERROR));
 
         return $postVariant;
+    }
+
+    private function setMockResponse(array $responseJson): void
+    {
+        $mockResponse = new JsonMockResponse([
+            'id' => 'resp_67890abcdef123456',
+            'object' => 'response',
+            'created_at' => 1712345678,
+            'status' => 'completed',
+            'error' => null,
+            'incomplete_details' => null,
+            'model' => 'gpt',
+            'output' => [
+                [
+                    'type' => 'message',
+                    'id' => 'msg_67890abcdef123456',
+                    'status' => 'completed',
+                    'role' => 'assistant',
+                    'content' => [
+                        [
+                            'type' => 'output_text',
+                            'text' => json_encode($responseJson),
+                            'annotations' => [],
+                        ],
+                    ],
+                ],
+            ],
+            'usage' => [
+                'input_tokens' => 45,
+                'output_tokens' => 12,
+                'total_tokens' => 57,
+            ],
+        ]);
+
+        $httpClient = new MockHttpClient($mockResponse);
+        $this->getContainer()->set(HttpClientInterface::class, $httpClient);
     }
 
     /**
@@ -69,41 +106,22 @@ class AiPostTranslatorTest extends KernelTestCase
             ]
         ]);
 
-        $mockResponse = new JsonMockResponse([
-            'id' => 'resp_67890abcdef123456',
-            'object' => 'response',
-            'created_at' => 1712345678,
-            'status' => 'completed',
-            'error' => null,
-            'incomplete_details' => null,
-            'model' => 'gpt',
-            'output' => [
+        $this->setMockResponse([
+            'content' => [
                 [
-                    'type' => 'message',
-                    'id' => 'msg_67890abcdef123456',
-                    'status' => 'completed',
-                    'role' => 'assistant',
-                    'content' => [
-                        [
-                            'type' => 'output_text',
-                            'text' => json_encode(['0' => '<p>Bonjour, le monde!</p>']),
-                            'annotations' => [],
-                        ],
-                    ],
-                ],
-            ],
-            'usage' => [
-                'input_tokens' => 45,
-                'output_tokens' => 12,
-                'total_tokens' => 57,
-            ],
+                    'id' => 0,
+                    'html' => '<p>bonjour, le monde!</p>'
+                ]
+            ]
         ]);
 
-        $httpClient = new MockHttpClient($mockResponse);
-        $this->getContainer()->set(HttpClientInterface::class, $httpClient);
-
         $translator = $this->getTranslator();
-        $translator->translatePostVariant($variant, 'fr');
+        $translated = $translator->translatePostVariant($variant, 'fr');
+
+        $this->assertStringContainsString(
+            'bonjour, le monde!',
+            $translated['content']
+        );
     }
 
     /**
@@ -169,8 +187,34 @@ class AiPostTranslatorTest extends KernelTestCase
             ]
         ];
 
+        $this->setMockResponse([
+            'content' => [
+                [
+                    'id' => 0,
+                    'html' => '<p>bonjour, le monde!</p>'
+                ],
+                [
+                    'id' => 1,
+                    'html' => '<p>aujourd\'hui, nous discuterons de <strong>l\'importance de l\'IA dans la technologie moderne.</strong></p>'
+                ],
+                [
+                    'id' => 2,
+                    'html' => '<h2>Histoire de l\'IA</h2>'
+                ],
+                [
+                    'id' => 3,
+                    'html' => '<p class="button-wrap"><a href="" target="_blank" class="button">Cliquez ici</a></p>'
+                ]
+            ]
+        ]);
+
         $translator = $this->getTranslator();
-        $translator->translatePostVariant($this->getPostVariant($content), 'fr');
+        $response = $translator->translatePostVariant($this->getPostVariant($content), 'fr');
+
+        $this->assertStringContainsString(
+            'aujourd\'hui, nous discuterons de',
+            $response['content']
+        );
 
     }
 

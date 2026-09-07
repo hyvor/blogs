@@ -8,6 +8,7 @@ use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\AiConversationFactory;
 use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Billing\BillingFake;
@@ -36,13 +37,15 @@ class GetUsageTest extends ApiTestCase
 
         $blog = BlogFactory::createOne([
             'organization_id' => $orgId,
-            'counts' => ['users' => 3, 'media' => 2_000_000],
+            'counts' => ['media' => 2_000_000],
         ]);
+
+        UserFactory::createMany(3, ['blog' => $blog]);
 
         $conversation = AiConversationFactory::createOneFor($blog);
         AiMessageFactory::createOne([
             'conversation' => $conversation,
-            'total_tokens_usd_cost' => 250, // half of trial's $5.00 aiCost
+            'total_tokens_usd_cost' => 2.5, // half of trial's $5.00 aiCost
             'created_at' => new \DateTimeImmutable('first day of this month +1 day'),
         ]);
 
@@ -77,10 +80,12 @@ class GetUsageTest extends ApiTestCase
         $orgId = 51;
 
         // blog in org
-        BlogFactory::createOne([
+        $blog = BlogFactory::createOne([
             'organization_id' => $orgId,
-            'counts' => ['users' => 2, 'media' => 0],
+            'counts' => ['media' => 0],
         ]);
+
+        UserFactory::createMany(2, ['blog' => $blog]);
 
         // blog in another org — should not count
         BlogFactory::createOne([

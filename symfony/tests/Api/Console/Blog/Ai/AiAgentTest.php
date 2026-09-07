@@ -59,11 +59,9 @@ class AiAgentTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json['conversations']);
-        $this->assertCount(1, $json['conversations']);
-        $this->assertTrue($json['has_more']);
-        $this->assertIsArray($json['conversations'][0]);
-        $this->assertArrayHasKey('title', $json['conversations'][0]);
+        $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
+        $this->assertArrayHasKey('title', $json[0]);
     }
 
 }
