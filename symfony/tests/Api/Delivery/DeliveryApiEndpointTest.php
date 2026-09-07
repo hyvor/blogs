@@ -144,9 +144,9 @@ class DeliveryApiEndpointTest extends ApiTestCase
         $this->assertSame('https://example.com', $json['to']);
     }
 
-    public function test_does_not_cache_preview(): void
-    {
-        // TODO: PreviewProcessor is not yet implemented (see Service/Delivery/Processor/PreviewProcessor.php)
-        $this->markTestIncomplete('PreviewProcessor is not yet implemented');
-    }
+//    public function test_does_not_cache_preview(): void
+//    {
+//        // TODO: PreviewProcessor is not yet implemented (see Service/Delivery/Processor/PreviewProcessor.php)
+//        $this->markTestIncomplete('PreviewProcessor is not yet implemented');
+//    }
 }

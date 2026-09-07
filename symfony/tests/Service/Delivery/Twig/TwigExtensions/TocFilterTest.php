@@ -2,10 +2,10 @@
 
 namespace App\Tests\Service\Delivery\Twig\TwigExtensions;
 
-use App\Service\Delivery\Twig\Toc\TocHeading;
-use App\Service\Delivery\Twig\Toc\TocHtml;
 use App\Service\Delivery\Twig\TwigExtensions;
 use App\Service\Delivery\Twig\TwigRendererService;
+use App\Service\Post\Content\Nodes\Toc\TocHeading;
+use App\Service\Post\Content\Nodes\Toc\TocHtml;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 

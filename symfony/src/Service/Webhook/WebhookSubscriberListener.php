@@ -344,8 +344,8 @@ class WebhookSubscriberListener
         $post = $event->variant->getPost();
         $blog = $post->getBlog();
         $this->call($blog, WebhookEvent::POST_VARIANT_PUBLISHED, fn() => [
-            // TODO: add variant
             'post' => (array) $this->postObjectFactory->create($post, $blog),
+            'variant' => (array) $this->postObjectFactory->createVariant($event->variant),
         ]);
     }
 
@@ -355,8 +355,8 @@ class WebhookSubscriberListener
         $post = $event->variant->getPost();
         $blog = $post->getBlog();
         $this->call($blog, WebhookEvent::POST_VARIANT_UNPUBLISHED, fn() => [
-            // TODO: add variant
             'post' => (array) $this->postObjectFactory->create($post, $blog),
+            'variant' => (array) $this->postObjectFactory->createVariant($event->variant),
         ]);
     }
 
