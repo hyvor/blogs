@@ -2,10 +2,10 @@
 
 namespace App\Tests\Service\Hosting\CustomDomain\Command;
 
+use App\Command\Migration\MigrateCaddyTlsCertificatesCommand;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
 use App\Entity\Enum\BlogHostingAt;
-use App\Service\Hosting\CustomDomain\Command\MigrateCaddyTlsCertificatesCommand;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Helper\SelfSignedCertificate;
 use Doctrine\DBAL\Connection;

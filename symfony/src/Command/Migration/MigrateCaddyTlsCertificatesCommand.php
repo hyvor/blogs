@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Hosting\CustomDomain\Command;
+namespace App\Command\Migration;
 
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
