@@ -53,11 +53,11 @@ Les webhooks sont un moyen d'être notifié lorsqu'un événement se produit sur
     	<div>Une variante d'article est publiée</div>
     	<div>
     		<code>
-				{'{ post: '}
-				<a href="/docs/api-console#post-object">Post</a>,
-				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
-				{' }'}
-			</code>
+    			{'{ post: '}
+    			<a href="/docs/api-console#post-object">Post</a>,
+    			variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+    			{' }'}
+    		</code>
     	</div>
     </TableRow>
     <TableRow>
@@ -65,11 +65,11 @@ Les webhooks sont un moyen d'être notifié lorsqu'un événement se produit sur
     	<div>Une variante d'article est dépubliée</div>
     	<div>
     		<code>
-				{'{ post: '}
-				<a href="/docs/api-console#post-object">Post</a>,
-				variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
-				{' }'}
-			</code>
+    			{'{ post: '}
+    			<a href="/docs/api-console#post-object">Post</a>,
+    			variant: <a href="/docs/api-console#post-variant-object">PostVariant</a>,
+    			{' }'}
+    		</code>
     	</div>
     </TableRow>
 

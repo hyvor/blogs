@@ -14,7 +14,6 @@ L'outil d'analyse SEO dans l'éditeur d'articles vous donnera des suggestions po
     	ces suggestions vous aideront à commettre moins d'erreurs de SEO.
 </Callout>
 
-
 <DocsImage src="/images/docs/writing/seo.png" alt="Analyse SEO" width={400} />
 
 <br />

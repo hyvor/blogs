@@ -19,7 +19,8 @@ TLS_MODE="${TLS_MODE:-auto}"
 case "$TLS_MODE" in
     auto)
         APP_ADDRESS="$DOMAIN_APP"
-        APP_TLS_DIRECTIVE=""
+        # without this, Caddy tries to use get_certificate
+        APP_TLS_DIRECTIVE="tls certificates@example.com"
         ;;
     manual)
         APP_ADDRESS="$DOMAIN_APP"
