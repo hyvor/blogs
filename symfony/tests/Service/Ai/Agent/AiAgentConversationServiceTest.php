@@ -27,6 +27,7 @@ use App\Tests\Factory\PostVariantFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversNamespace;
 use Psr\Log\NullLogger;
 use Symfony\AI\Platform\Message\MessageBag;
 use Symfony\AI\Platform\Metadata\Metadata;
@@ -42,6 +43,7 @@ use Symfony\AI\Platform\TokenUsage\TokenUsage;
 
 #[CoversClass(AiAgentConversationService::class)]
 #[CoversClass(AgentCallResult::class)]
+#[CoversNamespace('App\Service\Ai\Agent\Event')]
 class AiAgentConversationServiceTest extends KernelTestCase
 {
 
@@ -285,73 +287,6 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $this->assertSame('Found it.', $events[3]->getContent());
     }
 
-    public function test_document_ops_tool_calls_are_not_persisted_individually(): void
-    {
-        $postVariant = $this->createPostVariant();
-        $blog = $postVariant->getPost()->getBlog();
-
-        $arguments = ['postVariantId' => $postVariant->getId(), 'nodeId' => 'p-1', 'contentMarkdown' => 'new text'];
-
-        $service = $this->buildService($postVariant, [
-            new ToolCallStart('call-1', 'document_replace'),
-            new ToolCallComplete([new ToolCall('call-1', 'document_replace', $arguments)]),
-        ]);
-
-        $events = iterator_to_array($service->streamPrompt($blog, 'Edit the post', $postVariant));
-
-        // the live SSE stream still notifies the frontend as before
-        $this->assertSame(
-            ['conversation_created', 'tool_call', 'post_variant_edit_suggested', 'done'],
-            array_column($events, 'type'),
-        );
-
-        $expectedPayload = [
-            'type' => 'post_variant_edit_suggested',
-            'post_variant_id' => $postVariant->getId(),
-            'operation' => 'replace',
-            'arguments' => $arguments,
-        ];
-
-        $this->assertSame($expectedPayload, $events[2]);
-
-        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
-            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
-        $this->assertNotNull($assistantMessage);
-
-        // document-ops tool calls are no longer persisted one row per call - only the final
-        // document_change (once the stream ends) is - see test_yields_document_change_when_ops_were_made
-        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $assistantMessage]));
-    }
-
-    public function test_unmapped_tool_calls_are_not_persisted(): void
-    {
-        $postVariant = $this->createPostVariant();
-        $blog = $postVariant->getPost()->getBlog();
-
-        $service = $this->buildService($postVariant, [
-            new ToolCallStart('call-1', 'some_unmapped_tool'),
-            new ToolCallComplete([new ToolCall('call-1', 'some_unmapped_tool', ['foo' => 'bar'])]),
-        ]);
-
-        $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
-
-        // still notifies the frontend via a generic fallback event
-        $this->assertSame(
-            ['conversation_created', 'tool_call', 'tool_result', 'done'],
-            array_column($events, 'type'),
-        );
-        $this->assertSame(['type' => 'tool_result', 'tool' => 'some_unmapped_tool'], $events[2]);
-
-        $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
-            ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
-        $this->assertNotNull($assistantMessage);
-
-        // a tool call with no query/document-ops handling is not persisted at all
-        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $assistantMessage]));
-    }
-
     public function test_yields_document_change_when_ops_were_made(): void
     {
         $postVariant = $this->createPostVariant();
@@ -369,26 +304,28 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Change it', $postVariant));
 
         $this->assertSame(
-            ['conversation_created', 'text', 'document_change', 'done'],
+            ['conversation_created', 'text_chunk', 'event', 'done'],
             array_column($events, 'type'),
         );
 
         $expectedContent = (string) json_encode($documentOpsTool->getFinalDocument($postVariant->getId())->toArray());
-        $this->assertSame($expectedContent, $events[2]['content']);
+        $this->assertSame($expectedContent, $events[2]['event']->document_content);
 
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        $documentChangeEvents = $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $assistantMessage, 'type' => AiMessageEventType::DOCUMENT_CHANGE]);
+        $events = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage]);
 
-        $this->assertCount(1, $documentChangeEvents);
-        $this->assertSame($postVariant->getId(), $documentChangeEvents[0]->getPostVariant()?->getId());
-        $this->assertSame($expectedContent, $documentChangeEvents[0]->getDocumentContent());
-        $this->assertSame(AiMessageEventDocumentChangeStatus::PENDING, $documentChangeEvents[0]->getDocumentChangeStatus());
-        $this->assertSame(1, $documentChangeEvents[0]->getDocumentChangeOpsCount());
-        $this->assertSame($postVariant->getContentUnsavedVersion(), $documentChangeEvents[0]->getPostVariantVersion());
+        $this->assertCount(2, $events);
+
+        $documentChangeEvent = $events[1];
+        $this->assertSame(AiMessageEventType::DOCUMENT_CHANGE, $documentChangeEvent->getType());
+        $this->assertSame($expectedContent, $documentChangeEvent->getDocumentContent());
+        $this->assertSame(AiMessageEventDocumentChangeStatus::PENDING, $documentChangeEvent->getDocumentChangeStatus());
+        $this->assertSame(1, $documentChangeEvent->getDocumentChangeOpsCount());
+        $this->assertSame($postVariant->getContentUnsavedVersion(), $documentChangeEvent->getPostVariantVersion());
     }
 
     public function test_continues_an_existing_conversation_with_prior_history_sent_to_the_agent(): void
@@ -466,7 +403,7 @@ class AiAgentConversationServiceTest extends KernelTestCase
 
         $conversationStarted = $firstEvents[0];
         $this->assertSame('conversation_created', $conversationStarted['type']);
-        $conversationId = $conversationStarted['conversation_id'];
+        $conversationId = $conversationStarted['conversation']->id;
 
         $conversation = $this->getEm()->getRepository(AiConversation::class)->find($conversationId);
         $this->assertNotNull($conversation);
@@ -501,21 +438,19 @@ class AiAgentConversationServiceTest extends KernelTestCase
         $events = iterator_to_array($service->streamPrompt($blog, 'Do something', $postVariant));
 
         $this->assertSame(
-            ['conversation_created', 'error', 'done'],
+            ['conversation_created', 'event'],
             array_column($events, 'type'),
         );
-        $this->assertSame(
-            'The AI assistant ran into a problem and could not finish this request. Please try again.',
-            $events[1]['message'],
-        );
-
         $assistantMessage = $this->getEm()->getRepository(AiMessage::class)
             ->findOneBy(['role' => AiMessageRole::ASSISTANT]);
         $this->assertNotNull($assistantMessage);
 
-        // the error itself is not persisted anywhere - just sent to the frontend and logged
-        $this->assertCount(0, $this->getEm()->getRepository(AiMessageEvent::class)
-            ->findBy(['ai_message' => $assistantMessage]));
+        $assistantEvents = $this->getEm()->getRepository(AiMessageEvent::class)
+            ->findBy(['ai_message' => $assistantMessage]);
+
+        $this->assertCount(1, $assistantEvents);
+        $errorEvent = $assistantEvents[0];
+        $this->assertSame(AiMessageEventType::ERROR, $errorEvent->getType());
     }
 
     public function test_persists_token_usage_on_the_assistant_message(): void

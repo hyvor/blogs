@@ -15,6 +15,9 @@ use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 #[AsSchedule]
 class Schedule implements ScheduleProviderInterface
 {

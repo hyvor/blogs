@@ -33,10 +33,7 @@
 			label: 'Custom domain',
 			note: 'Free SSL certificate',
 			active: true,
-			tags: [
-				{ name: 'CNAME', recommended: true },
-				{ name: 'A Record', recommended: false }
-			]
+			tags: [{ name: 'CNAME', recommended: false }]
 		},
 		{
 			domain: 'yoursite.com/blog',
@@ -49,7 +46,7 @@
 			label: 'Headless',
 			note: 'Bring your own frontend',
 			tags: [
-				{ name: 'REST API', recommended: true },
+				{ name: 'Data API', recommended: false },
 				{ name: 'Any framework', recommended: false }
 			]
 		}

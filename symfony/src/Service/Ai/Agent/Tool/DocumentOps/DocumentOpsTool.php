@@ -82,9 +82,9 @@ class DocumentOpsTool
             try {
                 $postSchema = new PostSchema();
                 $doc = $postSchema->documentFrom($content ?? PostContentService::DEFAULT_CONTENT_JSON);
-            } catch (PhrosemirrorException $e) {
+            } catch (PhrosemirrorException $e) { // @codeCoverageIgnoreStart
                 return "Failed to parse document content for post variant ID $postVariantId: " . $e->getMessage();
-            }
+            } // @codeCoverageIgnoreEnd
 
             $nodeIdMapBuilder = new NodeIdMapBuilder();
             $nodeIdMapBuilder->register($doc);

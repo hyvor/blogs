@@ -20,6 +20,9 @@ use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 
+/**
+ * TODO: remove and test via endpoints
+ */
 #[CoversClass(AiConversationService::class)]
 class AiConversationServiceTest extends KernelTestCase
 {

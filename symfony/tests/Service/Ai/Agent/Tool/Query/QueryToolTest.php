@@ -41,6 +41,20 @@ class QueryToolTest extends KernelTestCase
         );
     }
 
+    public function test_get_languages_returns_expected_shape(): void
+    {
+        $blog = BlogFactory::createOne();
+        $language = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en', 'name' => 'English']);
+
+        $tool = $this->createTool($blog);
+        $result = $tool->getLanguages();
+
+        $this->assertCount(1, $result);
+        $this->assertSame('en', $result[0]['code']);
+        $this->assertSame('English', $result[0]['name']);
+        $this->assertTrue($result[0]['is_primary']);
+    }
+
     public function test_get_tags_returns_expected_shape(): void
     {
         $blog = BlogFactory::createOne();

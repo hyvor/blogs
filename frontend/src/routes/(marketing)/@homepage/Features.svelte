@@ -21,7 +21,7 @@
 	description={I18n.t('homepage.features.ownership.description')}
 	bullets={[
 		I18n.t('homepage.features.ownership.bulletExport'),
-		I18n.t('homepage.features.ownership.bulletLicense'),
+		I18n.t('homepage.features.ownership.bulletSelfHost'),
 		I18n.t('homepage.features.ownership.bulletNoTrackers')
 	]}
 	altBg
@@ -36,7 +36,7 @@
 	title={I18n.t('homepage.features.allInOne.title')}
 	description={I18n.t('homepage.features.allInOne.description')}
 	bullets={[
-		I18n.t('homepage.features.allInOne.bulletNoPlugins'),
+		I18n.t('homepage.features.allInOne.bulletIncluded'),
 		I18n.t('homepage.features.allInOne.bulletUpgrades'),
 		I18n.t('homepage.features.allInOne.bulletNoExtraCharges')
 	]}
@@ -93,7 +93,7 @@
 	bullets={[
 		I18n.t('homepage.features.hosting.bulletTls'),
 		I18n.t('homepage.features.hosting.bulletPlatforms'),
-		I18n.t('homepage.features.hosting.bulletReverseProxy')
+		I18n.t('homepage.features.hosting.bulletPlatformsMore')
 	]}
 	altBg
 >
@@ -109,9 +109,9 @@
 	bullets={[
 		I18n.t('homepage.features.suite.bulletTalk'),
 		I18n.t('homepage.features.suite.bulletPost'),
+		I18n.t('homepage.features.suite.bulletNative'),
 		I18n.t('homepage.features.suite.bulletOneAccount')
 	]}
-	button={{ href: '/pricing', label: I18n.t('homepage.features.suite.button') }}
 	flip
 >
 	{#snippet visual()}
@@ -130,6 +130,9 @@
 	]}
 	altBg
 	overlap
+	button={[
+		{ href: '/docs/agent', label: I18n.t('homepage.features.ai.buttonDocs'), external: true }
+	]}
 >
 	{#snippet visual()}
 		<AiScreencast />

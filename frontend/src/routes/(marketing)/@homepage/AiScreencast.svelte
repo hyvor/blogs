@@ -16,10 +16,10 @@
 </script>
 
 <div class="ai-screencast">
-	<video bind:this={videoEl} muted loop playsinline preload="metadata">
+	<!-- <video bind:this={videoEl} muted loop playsinline preload="metadata">
 		<source src="/images/homepage/ai-screencast.mp4" type="video/mp4" />
 		<track kind="captions" />
-	</video>
+	</video> -->
 
 	<div class="fade-overlay" aria-hidden="true"></div>
 </div>
