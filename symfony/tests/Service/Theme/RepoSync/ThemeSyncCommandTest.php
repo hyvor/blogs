@@ -14,13 +14,15 @@ class ThemeSyncCommandTest extends KernelTestCase
     public function test_execute(): void
     {
         $commandTester = $this->getCommandTester('themes:sync');
-        $commandTester->execute([]);
+        $commandTester->execute([
+            '--async' => true,
+        ]);
 
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Syncing themes...', $output);
         $this->assertStringContainsString('Theme synced successfully.', $output);
 
-        $transport = $this->transport('sync');
+        $transport = $this->transport('async');
         $this->assertSame(1, $transport->getMessageCount());
 
         $message = $transport->dispatched()->first()->getMessage();
