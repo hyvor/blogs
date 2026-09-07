@@ -27,27 +27,6 @@ class CustomDomainController
     }
 
     #[Route(
-        '/{path}',
-        name: 'custom_domain_delivery',
-        requirements: ['path' => '.*'],
-        methods: 'GET',
-    )]
-    public function serveBlog(string $path, Request $request): Response
-    {
-        $host = $request->getHost();
-        $blog = $this->customDomainService->getBlogByCustomDomain($host);
-
-        if ($blog === null || $blog->getDeletedAt()) {
-            return new RedirectResponse(
-                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
-                302
-            );
-        }
-
-        return $this->deliveryService->getSymfonyResponse($blog, $path);
-    }
-
-    #[Route(
         '/.well-known/hyvor-blogs-verification.txt',
         methods: 'GET',
         schemes: 'http'
@@ -68,6 +47,27 @@ class CustomDomainController
     {
         $keyAuth = $this->cache->get(AcmeClient::ACME_CHALLENGE_CACHE_PREFIX . $token, fn(): string => '');
         return new Response($keyAuth, 200, ['Content-Type' => 'text/plain']);
+    }
+
+    #[Route(
+        '/{path}',
+        name: 'custom_domain_delivery',
+        requirements: ['path' => '.*'],
+        methods: 'GET',
+    )]
+    public function serveBlog(string $path, Request $request): Response
+    {
+        $host = $request->getHost();
+        $blog = $this->customDomainService->getBlogByCustomDomain($host);
+
+        if ($blog === null || $blog->getDeletedAt()) {
+            return new RedirectResponse(
+                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
+                302
+            );
+        }
+
+        return $this->deliveryService->getSymfonyResponse($blog, $path);
     }
 
 
