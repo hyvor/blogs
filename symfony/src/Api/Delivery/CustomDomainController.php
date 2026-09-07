@@ -31,7 +31,6 @@ class CustomDomainController
         name: 'custom_domain_delivery',
         requirements: ['path' => '.*'],
         methods: 'GET',
-        schemes: 'https'
     )]
     public function serveBlog(string $path, Request $request): Response
     {
