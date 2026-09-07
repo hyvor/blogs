@@ -49,9 +49,11 @@ These tags help social media sites to generate rich previews of your blog and po
 <!-- For Posts -->
 <meta property="article:published_time" />
 <meta property="article:modified_time" />
-<meta property="article:author" />  <!-- Authors -->
 <meta property="article:author" />
-<meta property="article:section" />  <!-- Tags -->
+<!-- Authors -->
+<meta property="article:author" />
+<meta property="article:section" />
+<!-- Tags -->
 <meta property="article:section" />
 
 <!-- TWITTER -->
@@ -60,8 +62,10 @@ These tags help social media sites to generate rich previews of your blog and po
 <meta name="twitter:description" />
 <meta name="twitter:url" />
 <meta name="twitter:image" />
-<meta name="twitter:site" /> <!-- only if Twitter URL is set in blog settings -->
-<meta name="twitter:creator" /> <!-- only if Twitter URL is set for the primary author -->
+<meta name="twitter:site" />
+<!-- only if Twitter URL is set in blog settings -->
+<meta name="twitter:creator" />
+<!-- only if Twitter URL is set for the primary author -->
 ```
 
 <h2 id="rich-schema">Rich Schema</h2>
@@ -71,23 +75,21 @@ in a better way in search results.
 
 ```html
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": "How to start a blog",
-    "datePublished": "2024-01-01T00:00:00Z",
-    "dateModified": "2024-01-01T00:00:00Z",
-    "author": [
-        {
-            "type": "@Person",
-            "name": "John Doe",
-            "url": "https://blog.hyvorblogs.io/author/john-doe"
-        }
-    ],
-    "image": [
-        "https://blog.hyvorblogs.io/media/how-to-start-a-blog.png"
-    ]
-}
+	{
+		"@context": "https://schema.org",
+		"@type": "BlogPosting",
+		"headline": "How to start a blog",
+		"datePublished": "2024-01-01T00:00:00Z",
+		"dateModified": "2024-01-01T00:00:00Z",
+		"author": [
+			{
+				"type": "@Person",
+				"name": "John Doe",
+				"url": "https://blog.hyvorblogs.io/author/john-doe"
+			}
+		],
+		"image": ["https://blog.hyvorblogs.io/media/how-to-start-a-blog.png"]
+	}
 </script>
 ```
 
@@ -147,9 +149,9 @@ Sitemap index format:
 ```html
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-pages.xml</loc></sitemap>
-    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-1.xml</loc></sitemap>
-    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-2.xml</loc></sitemap>
+	<sitemap><loc>https://blog.hyvorblogs.io/sitemap-pages.xml</loc></sitemap>
+	<sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-1.xml</loc></sitemap>
+	<sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-2.xml</loc></sitemap>
 </sitemapindex>
 ```
 
@@ -165,17 +167,20 @@ Here is an example `sitemap-posts-[index].xml`.
 ```html
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
-    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml">
-    <url>
-        <loc>https://blog.hyvorblogs.io/hello-world</loc>
+	xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+	xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+	xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
+	<url>
+		<loc>https://blog.hyvorblogs.io/hello-world</loc>
 
-        <xhtml:link rel="alternate" hreflang="en" href="https://blog.hyvorblogs.io/hello-world" />
-        <xhtml:link rel="alternate" hreflang="fr" href="https://blog.hyvorblogs.io/fr/hello-world" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://blog.hyvorblogs.io/hello-world" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://blog.hyvorblogs.io/fr/hello-world" />
 
-        <image:image><image:loc>https://blog.hyvorblogs.io/media/hello-world.png</image:loc></image:image>
-    </url>
+		<image:image
+			><image:loc>https://blog.hyvorblogs.io/media/hello-world.png</image:loc></image:image
+		>
+	</url>
 </urlset>
 ```
 
@@ -184,7 +189,7 @@ Here is an example `sitemap-posts-[index].xml`.
 This is the meta tag you can use to prevent search engines from indexing a page.
 
 ```html
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex" />
 ```
 
 <h3 id="whole-blog">1. Whole blog</h3>

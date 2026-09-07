@@ -16,8 +16,11 @@
 </script>
 
 <div class="ai-screencast">
-	<!-- <video bind:this={videoEl} muted loop playsinline preload="metadata">
-		<source src="/images/homepage/ai-screencast.mp4" type="video/mp4" />
+	<video bind:this={videoEl} muted loop playsinline preload="metadata">
+		<source
+			src="https://res.cloudinary.com/dqabfne6s/video/upload/v1788727146/blogs.hyvor.com/landing-videos/ai-screencast-1280w-30fps_mkcxfg.mp4"
+			type="video/mp4"
+		/>
 		<track kind="captions" />
 	</video> -->
 
@@ -27,12 +30,12 @@
 <style>
 	.ai-screencast {
 		--left-pull: 380px;
-		--right-bleed: calc(max(0px, (100vw - 1000px) / 2) + 72px);
+		--right-bleed: min(calc(max(0px, (100vw - 1000px) / 2) + 72px), 372px);
 		position: relative;
 		z-index: 1;
 		margin-top: 64px;
 		margin-left: calc(-1 * var(--left-pull));
-		height: 620px;
+		aspect-ratio: 2940 / 1586;
 		width: calc(100% + var(--left-pull) + var(--right-bleed));
 		border-radius: 20px 0 0 20px;
 		border: 1px solid var(--border);
@@ -75,8 +78,6 @@
 		opacity: 0;
 	}
 
-	/* fade and lower the overlapping feature text while the video is hovered,
-	   and let pointer events pass through so the hover holds across the frame */
 	:global(.hds-feature-split:has(.ai-screencast:hover) .text-col) {
 		opacity: 0.12;
 		transform: translateY(12px);
@@ -88,6 +89,21 @@
 
 	@media (max-width: 900px) {
 		.ai-screencast {
+			--left-pull: 0px;
+			--right-bleed: 0px;
+			margin-top: 0;
+			margin-left: -15px;
+			width: calc(100% + 30px);
+			border-radius: 0;
+			border-left: none;
+			border-right: none;
+			box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 8%, transparent);
+		}
+
+		.ai-screencast video {
+			object-position: center top;
+		}
+		.fade-overlay {
 			display: none;
 		}
 	}

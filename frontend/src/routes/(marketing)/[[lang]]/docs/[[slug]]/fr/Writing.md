@@ -7,7 +7,6 @@
 
 Apprenons à utiliser l'éditeur Hyvor Blogs et à publier votre **premier article !**.
 
-
 <h2 id="posts-pages">Articles & Pages</h2>
 
 Hyvor Blogs prend en charge deux types de contenu : les **articles** et les **pages**. Dans la plupart des cas, vous utiliserez des articles. Les pages sont utilisées pour du contenu statique comme À propos, Contact, etc.
@@ -74,7 +73,6 @@ Hyvor Blogs prend en charge deux types de contenu : les **articles** et les **pa
     <li><a href="#link-analysis">Link Analysis</a></li>
     <li><a href="#gpt-writing">GPT Writing</a></li>
 </ul> -->
-
 
 <h2 id="metadata">Métadonnées de l'article</h2>
 

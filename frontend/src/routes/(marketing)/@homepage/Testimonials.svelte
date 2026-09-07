@@ -15,9 +15,9 @@
 			company: 'Organizely.io',
 			companyUrl: 'https://organizely.io/blog',
 			videoUrl:
-				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788363647/organizely-review.mov',
+				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788726420/blogs.hyvor.com/reviews-images/organizely-review.mp4',
 			posterUrl:
-				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788363809/organizely-thumbnail_etbmqd.png',
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788363809/blogs.hyvor.com/reviews-images/organizely-thumbnail_etbmqd.png',
 			summary: t('christian.summary')
 		},
 		{
@@ -27,7 +27,8 @@
 			company: 'Google',
 			summary: t('riccardo.summary'),
 			quote: t('riccardo.quote'),
-			imageUrl: '/images/homepage/testmonials/riccardo-p.webp'
+			imageUrl:
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788443871/blogs.hyvor.com/reviews-images/riccardo-p_tkop3r.webp'
 		},
 		{
 			type: 'video',
@@ -35,9 +36,9 @@
 			role: t('james.role'),
 			company: 'Kyzon Solutions',
 			videoUrl:
-				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788611249/kyzon-testimonial_sevpfe.mp4',
+				'https://res.cloudinary.com/dqabfne6s/video/upload/v1788611249/blogs.hyvor.com/reviews-images/kyzon-testimonial_sevpfe.mp4',
 			posterUrl:
-				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788442170/kyzon-review-post_nl91hf.png',
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788611564/blogs.hyvor.com/reviews-images/kyzon-review-post_nl91hf.png',
 			summary: t('james.summary')
 		},
 		{
@@ -45,7 +46,8 @@
 			name: 'Leo Selie',
 			role: t('leo.role'),
 			company: 'Flow Digital',
-			imageUrl: '/images/homepage/testmonials/leo-s.webp',
+			imageUrl:
+				'https://res.cloudinary.com/dqabfne6s/image/upload/v1788443872/blogs.hyvor.com/reviews-images/leo-s_vzvzyb.webp',
 			summary: t('leo.summary'),
 			quote: t('leo.quote')
 		},
