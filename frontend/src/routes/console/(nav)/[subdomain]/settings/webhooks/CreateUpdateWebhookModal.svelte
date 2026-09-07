@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
 		Checkbox,
 		FormControl,
 		InputGroup,
@@ -15,6 +14,9 @@
 	import { createWebhook, updateWebhook } from './webhookActions';
 	import { type Webhook, WebhookEventType } from '../../../../lib/types';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		show: boolean;
@@ -49,6 +51,19 @@
 		return events.includes(name as WebhookEventType);
 	}
 
+	function selectAllEvents() {
+		events = Object.values(WebhookEventType);
+	}
+
+	function deselectAllEvents() {
+		events = [];
+	}
+
+	let allEventsSelected = $derived(
+		Object.values(WebhookEventType).every((name) => events.includes(name))
+	);
+	let noEventsSelected = $derived(events.length === 0);
+
 	let isCreating: boolean | string = $state(false);
 
 	function handleClick() {
@@ -56,17 +71,17 @@
 		eventsError = null;
 
 		if (!url.match(/^https:\/\/.*$/)) {
-			urlError = 'URL must start with https://';
+			urlError = i18n.t('console.settings.webhooks.validation.urlHttps');
 			return;
 		}
 
 		if (!isValidUrl(url)) {
-			urlError = 'Invalid URL';
+			urlError = i18n.t('console.settings.webhooks.validation.urlInvalid');
 			return;
 		}
 
 		if (events.length === 0) {
-			eventsError = 'Please select at least one event';
+			eventsError = i18n.t('console.settings.webhooks.validation.eventsRequired');
 			return;
 		}
 
@@ -84,7 +99,7 @@
 
 			updateWebhook(webhook.id, updates)
 				.then((res) => {
-					toast.success('Webhook updated successfully');
+					toast.success(i18n.t('console.settings.webhooks.updated'));
 					onUpdate?.(res);
 					show = false;
 				})
@@ -99,7 +114,7 @@
 
 			createWebhook(url, events)
 				.then((res) => {
-					toast.success('Webhook created successfully');
+					toast.success(i18n.t('console.settings.webhooks.created'));
 					onCreate?.(res);
 					show = false;
 				})
@@ -114,6 +129,7 @@
 </script>
 
 <Modal
+	id="webhook-modal"
 	title={webhook ? 'Edit Webhook' : 'Create Webhook'}
 	bind:show
 	loading={isCreating}
@@ -127,7 +143,10 @@
 	}}
 	on:confirm={handleClick}
 >
-	<SplitControl label="Webhook URL" caption="Must be a valid HTTPS URL">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.webhookUrl')}
+		caption={i18n.t('console.settings.webhooks.webhookUrlCaption')}
+	>
 		<FormControl>
 			<TextInput
 				block
@@ -143,22 +162,36 @@
 		</FormControl>
 	</SplitControl>
 
-	<SplitControl label="Events" caption="Select the events you want to receive">
+	<SplitControl
+		label={i18n.t('console.settings.webhooks.events')}
+		caption={i18n.t('console.settings.webhooks.eventsCaption')}
+	>
 		<FormControl>
-			<InputGroup>
-				{#each Object.values(WebhookEventType) as name}
-					<Checkbox
-						value={name}
-						checked={isEventChecked(name)}
-						on:change={(e) => {
-							// @ts-ignore
-							handleChangeEvent(name, e);
-						}}
-					>
-						{name}
-					</Checkbox>
-				{/each}
-			</InputGroup>
+			<div class="events-grid">
+				<InputGroup>
+					{#each Object.values(WebhookEventType) as name}
+						<Checkbox
+							value={name}
+							checked={isEventChecked(name)}
+							on:change={(e) => {
+								// @ts-ignore
+								handleChangeEvent(name, e);
+							}}
+						>
+							{name}
+						</Checkbox>
+					{/each}
+				</InputGroup>
+			</div>
+
+			<div class="events-actions">
+				<Button size="small" color="input" disabled={allEventsSelected} on:click={selectAllEvents}>
+					{i18n.t('console.settings.webhooks.selectAll')}
+				</Button>
+				<Button size="small" color="input" disabled={noEventsSelected} on:click={deselectAllEvents}>
+					{i18n.t('console.settings.webhooks.deselectAll')}
+				</Button>
+			</div>
 
 			{#if eventsError}
 				<Validation state="error">{eventsError}</Validation>
@@ -166,3 +199,23 @@
 		</FormControl>
 	</SplitControl>
 </Modal>
+
+<style>
+	.events-actions {
+		display: flex;
+		gap: 8px;
+		margin-top: 12px;
+	}
+
+	.events-grid :global(.checkbox-group) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 8px;
+		column-gap: 48px !important;
+	}
+
+	:global(#webhook-modal-desc) {
+		max-height: 60vh;
+		overflow-y: auto;
+	}
+</style>

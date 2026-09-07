@@ -10,6 +10,9 @@
 	import UnsavedTag from './UnsavedTag.svelte';
 	import { updatePost } from '../../../postActions';
 	import LabelWithInfo from './LabelWithInfo.svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
@@ -39,8 +42,8 @@
 		{#snippet label()}
 			<span>
 				<LabelWithInfo
-					label="Featured"
-					info="Featured posts are shown on the top of the home page"
+					label={i18n.t('console.postEditor.settings.featured')}
+					info={i18n.t('console.postEditor.settings.featuredInfo')}
 				/>
 
 				<UnsavedTag

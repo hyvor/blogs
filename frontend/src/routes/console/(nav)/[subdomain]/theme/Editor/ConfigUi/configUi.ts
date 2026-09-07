@@ -14,7 +14,7 @@ export function addDefaultDefs(defs: object) {
 				$name: 'Theme Fonts',
 				$type: 'text',
 				$description:
-					'Load Google fonts locally. See <a href="https://blogs.hyvor.com/docs/fonts" target="_blank">docs</a> for more info.'
+					'Load Bunny fonts locally. See <a href="https://blogs.hyvor.com/docs/fonts" target="_blank">docs</a> for more info.'
 			},
 			POSTS_PER_PAGINATION: {
 				$name: 'Posts per Pagination',

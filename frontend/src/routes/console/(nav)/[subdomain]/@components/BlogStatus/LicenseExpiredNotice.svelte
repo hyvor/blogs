@@ -3,6 +3,9 @@
 	import BlogStatus from './BlogStatus.svelte';
 	import { goto } from '$app/navigation';
 	import { consoleUrl } from '../../../../lib/consoleUrl';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleUpgradeClick() {
 		goto(consoleUrl('/billing'));
@@ -11,8 +14,8 @@
 
 <BlogStatus
 	icon={IconClock}
-	title="License Expired"
-	description="Your license has expired. Please renew or upgrade to continue using the service."
-	cta="Upgrade Now"
+	title={i18n.t('console.blogStatus.licenseExpired.title')}
+	description={i18n.t('console.blogStatus.licenseExpired.description')}
+	cta={i18n.t('console.blogStatus.licenseExpired.cta')}
 	on:click={handleUpgradeClick}
 />

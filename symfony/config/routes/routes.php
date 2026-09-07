@@ -2,18 +2,32 @@
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
+/**
+ * FrankenPHP sets router env:
+ * - app: for app routes (ex: blogs.hyvor.com)
+ * - subdomain: for subdomain delivery (ex: subdomain.hyvorblogs.io)
+ * - customdomain: for custom domain delivery
+ * - local: for local endpoints (ex: caddy certificate)
+ */
 return static function (RoutingConfigurator $routes): void {
-    // console API
+    // app routes
+    // (ex: blogs.hyvor.com)
     $routes
-        ->import('../../src/Api/Console/Controller', 'attribute')
-        ->prefix('/api/v2/console')
-        ->namePrefix('api_console_');
+        ->import('./app.php')
+        ->condition('service("app_router").isApp()');
 
-    // internal API routes
-    $routes->import('@InternalBundle/src/Comms/Controller', 'attribute');
+    // subdomain delivery (ex: subdomain.hyvorblogs.io)
+    $routes
+        ->import('../../src/Api/Delivery/SubdomainController.php', 'attribute')
+        ->condition('service("app_router").isSubdomain()');
 
-    // sudo API routes
-    $routes->import('../../src/Api/Sudo/Controller', 'attribute')
-        ->prefix('/api/sudo')
-        ->namePrefix('api_sudo_');
+    // custom domain delivery
+    $routes
+        ->import('../../src/Api/Delivery/CustomDomainController.php', 'attribute')
+        ->condition('service("app_router").isCustomDomain()');
+
+    // local endpoints
+    $routes
+        ->import('../../src/Api/Local/LocalController.php', 'attribute')
+        ->condition('service("app_router").isLocal()');
 };

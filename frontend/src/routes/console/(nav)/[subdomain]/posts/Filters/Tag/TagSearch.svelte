@@ -12,14 +12,17 @@
 	import { postListFiltersStore } from '../../postListStore';
 	import { getTags, searchTags } from '../../../settings/tags/tagActions';
 	import TagName from '../../../settings/tags/TagName.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let tags: Tag[] = $state([]);
 	let search = $state('');
-
+	let input: HTMLInputElement;
 	let err = $state(false);
 
-	function loadUsers() {
+	function loadTags() {
 		isLoading = true;
 		tags = [];
 
@@ -48,18 +51,29 @@
 		if (timeout) clearTimeout(timeout);
 
 		timeout = setTimeout(() => {
-			loadUsers();
+			loadTags();
 		}, 500);
 	}
 
-	onMount(loadUsers);
+	onMount(() => {
+		loadTags();
+
+		if (input) {
+			input.focus();
+		}
+
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
+	});
 </script>
 
 <TextInput
 	block
-	placeholder="Search tag..."
+	placeholder={i18n.t('console.posts.filters.searchTagPlaceholder')}
 	autofocus
 	bind:value={search}
+	bind:input
 	on:input={handleSearchInput}
 />
 
@@ -69,7 +83,7 @@
 	{:else if err}
 		<IconMessage error padding={35} />
 	{:else if tags.length === 0}
-		<IconMessage empty padding={35} message="No tags found" iconSize={40} />
+		<IconMessage empty padding={35} message={i18n.t('console.common.noTagsFound')} iconSize={30} />
 	{:else}
 		{#each tags as tag (tag.id)}
 			<ActionListItem
@@ -81,7 +95,7 @@
 				</TagComponent>
 				{#snippet end()}
 					<Text light small>
-						{tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
+						{i18n.t('console.posts.filters.postsCount', { count: tag.posts_count })}
 					</Text>
 				{/snippet}
 			</ActionListItem>

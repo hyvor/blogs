@@ -10,12 +10,14 @@
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
          requireCoverageMetadata="true"
+         backupGlobals="true"
 >
     <php>
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+        <ini name="memory_limit" value="512M" />
     </php>
 
     <testsuites>
@@ -33,6 +35,11 @@
             <directory>src</directory>
         </include>
 
+         <exclude>
+            <directory>src/Entity</directory>
+            <directory>src/Repository</directory>
+        </exclude>
+
         <deprecationTrigger>
             <method>Doctrine\Deprecations\Deprecation::trigger</method>
             <method>Doctrine\Deprecations\Deprecation::delegateTriggerToBackend</method>
@@ -43,4 +50,11 @@
     <extensions>
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
     </extensions>
+
+<!--    <coverage>-->
+<!--        <report>-->
+<!--            <clover outputFile="coverage/clover.xml"/>-->
+<!--            <html outputDirectory="coverage/html"/>-->
+<!--        </report>-->
+<!--    </coverage>-->
 </phpunit>

@@ -9,7 +9,12 @@
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
 	import { Loader } from '@hyvor/design/components';
 	import { Button } from '@hyvor/design/components';
-	import { variantLinksStore, variantLinkCountsStore, linksStore } from './linksStore';
+	import {
+		variantLinksStore,
+		variantLinkCountsStore,
+		linksStore,
+		getResultObjectFromLinks
+	} from './linksStore';
 	import LinkRow from './LinkRow.svelte';
 	import { isHttpLink } from '../../../../../../lib/links/links';
 	import {
@@ -17,9 +22,11 @@
 		getLinks
 	} from '../../../../tools/link-analysis/linkAnalysisActions';
 	import { postVariantStore, updatePostVariantStore } from '../../../postStore';
-	import { getResultObjectFromLinks } from './linkLoader';
 	import IconSignTurnSlightRight from '@hyvor/icons/IconSignTurnSlightRight';
 	import { onMount } from 'svelte';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let linksCount = $derived($variantLinksStore.length);
 
@@ -51,7 +58,7 @@
 				});
 			})
 			.catch(() => {
-				toast.error('Failed to recheck links');
+				toast.error(i18n.t('console.postEditor.links.recheckFailed'));
 			})
 			.finally(() => {
 				isReloadingAll = false;
@@ -67,7 +74,7 @@
 				linksStore.set(res);
 			})
 			.catch(() => {
-				toast.error('Failed to load links');
+				toast.error(i18n.t('console.postEditor.links.loadFailed'));
 			});
 	});
 </script>
@@ -75,7 +82,7 @@
 <div class="wrap">
 	<div class="top">
 		<div class="title">
-			Links ({linksCount})
+			{i18n.t('console.postEditor.links.title', { count: linksCount })}
 		</div>
 
 		<div class="recheck-wrap">
@@ -84,7 +91,7 @@
 					{#snippet start()}
 						<IconArrowClockwise size={14} />
 					{/snippet}
-					Recheck All
+					{i18n.t('console.postEditor.links.recheckAll')}
 					{#snippet end()}
 						<Loader size={12} state={isReloadingAll ? 'loading' : 'none'} />
 					{/snippet}
@@ -99,7 +106,7 @@
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.ok}</Text>
 				{/snippet}
-				OK
+				{i18n.t('console.postEditor.links.ok')}
 				{#snippet end()}
 					<IconCheckCircleFill size={12} />
 				{/snippet}
@@ -111,7 +118,7 @@
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.broken}</Text>
 				{/snippet}
-				Broken
+				{i18n.t('console.postEditor.links.broken')}
 				{#snippet end()}
 					<IconXCircleFill size={12} />
 				{/snippet}
@@ -123,7 +130,7 @@
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.risky}</Text>
 				{/snippet}
-				Risky
+				{i18n.t('console.postEditor.links.risky')}
 				{#snippet end()}
 					<IconExclamationCircleFill size={12} />
 				{/snippet}
@@ -135,7 +142,7 @@
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.redirect}</Text>
 				{/snippet}
-				Redirect
+				{i18n.t('console.postEditor.links.redirect')}
 				{#snippet end()}
 					<IconSignTurnSlightRight size={12} />
 				{/snippet}
@@ -147,7 +154,7 @@
 				{#snippet start()}
 					<Text bold>{$variantLinkCountsStore.ignored}</Text>
 				{/snippet}
-				Ignored
+				{i18n.t('console.postEditor.links.ignored')}
 				{#snippet end()}
 					<IconEyeSlashFill size={12} />
 				{/snippet}
@@ -161,7 +168,12 @@
 				<LinkRow {link} />
 			{/each}
 		{:else}
-			<IconMessage empty message="No links found in your post" padding={60} iconSize={60} />
+			<IconMessage
+				empty
+				message={i18n.t('console.postEditor.links.noLinks')}
+				padding={60}
+				iconSize={60}
+			/>
 		{/if}
 	</div>
 </div>

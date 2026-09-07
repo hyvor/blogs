@@ -3,14 +3,24 @@
 	import type { PostStatus } from '../../../lib/types';
 	import IconCheck from '@hyvor/icons/IconCheck';
 	import IconHourglass from '@hyvor/icons/IconHourglass';
-	import IconJournalText from '@hyvor/icons/IconJournalText';
+	import IconDot from '@hyvor/icons/IconDot';
+	import { getI18n } from '../../../lib/i18n';
+
+	const i18n = getI18n();
+
+	const STATUS_KEYS = {
+		draft: 'console.posts.status.draft',
+		published: 'console.posts.status.published',
+		scheduled: 'console.posts.status.scheduled'
+	} as const;
 
 	interface Props {
 		status: PostStatus;
 		size?: 'x-small' | 'small' | 'medium';
+		showIcon?: boolean;
 	}
 
-	let { status, size = 'small' }: Props = $props();
+	let { status, size = 'small', showIcon = true }: Props = $props();
 
 	let color = $derived(
 		{
@@ -22,7 +32,7 @@
 
 	let icon = $derived(
 		{
-			draft: IconJournalText,
+			draft: IconDot,
 			published: IconCheck,
 			scheduled: IconHourglass
 		}[status] as any
@@ -31,9 +41,11 @@
 
 <Tag {color} {size}>
 	{#snippet start()}
-		{@const SvelteComponent = icon}
-		<SvelteComponent size={12} />
+		{#if showIcon}
+			{@const SvelteComponent = icon}
+			<SvelteComponent size={status === 'scheduled' ? 10 : 12} />
+		{/if}
 	{/snippet}
 
-	{status.toUpperCase()}
+	{i18n.t(STATUS_KEYS[status]).toUpperCase()}
 </Tag>

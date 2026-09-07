@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { Loader, SplitControl, Textarea } from '@hyvor/design/components';
+	import { SplitControl, Textarea } from '@hyvor/design/components';
 	import {
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postVariantStore,
 		updatePostVariantStore
 	} from '../../../postStore';
 	import UnsavedTag from './UnsavedTag.svelte';
 	import { updatePostVariant } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	function handleInput(e: any) {
 		updatePostVariantStore({ description: e.target.value });
@@ -17,7 +20,7 @@
 	function handleBlur(e: any) {
 		const desc = (e.target.value as string).trim();
 
-		if (desc === $postOriginalVariantStore.description) return;
+		if (desc === $postVariantOriginalStore.description) return;
 
 		if ($postVariantStore.status !== 'published') {
 			loaderState = 'loading';
@@ -36,16 +39,16 @@
 <SplitControl>
 	{#snippet label()}
 		<span>
-			Description
+			{i18n.t('console.postEditor.settings.description')}
 			<UnsavedTag
-				show={$postVariantStore.description !== $postOriginalVariantStore.description}
+				show={$postVariantStore.description !== $postVariantOriginalStore.description}
 				{loaderState}
 			/>
 		</span>
 	{/snippet}
 	<Textarea
 		block
-		rows={4}
+		rows={6}
 		value={$postVariantStore.description || ''}
 		on:input={handleInput}
 		on:blur={handleBlur}

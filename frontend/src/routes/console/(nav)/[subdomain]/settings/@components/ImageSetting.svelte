@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { Button, ButtonGroup } from '@hyvor/design/components';
-	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
-	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
+	import { Button } from '@hyvor/design/components';
+	import { uploadImageOnly } from '../../../../lib/fileUploader';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		src?: string | null;
@@ -11,13 +13,13 @@
 
 	let { src = null, uploadText = 'Upload' }: Props = $props();
 
-	let isUploading = $state(false);
-
 	const dispatch = createEventDispatcher<{ change: string | null }>();
 
-	function handleSelect(file: SelectedFile) {
-		isUploading = false;
-		dispatch('change', file.url as string);
+	async function handleUpload() {
+		const file = await uploadImageOnly();
+		if (file) {
+			dispatch('change', file.url);
+		}
 	}
 
 	function handleRemove() {
@@ -26,28 +28,22 @@
 </script>
 
 {#if !src}
-	<Button size="small" on:click={() => (isUploading = true)}>
+	<Button size="small" on:click={handleUpload}>
 		{uploadText}
 	</Button>
 {:else}
 	<div class="img-wrap">
-		<img {src} alt="Uploaded" />
+		<img {src} alt={i18n.t('console.tools.media.uploaded')} />
 	</div>
 
 	<div class="buttons">
-		<ButtonGroup>
-			<Button on:click={() => (isUploading = true)} size="x-small" variant="fill-light">
-				Change
-			</Button>
-			<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">
-				Remove
-			</Button>
-		</ButtonGroup>
+		<Button on:click={handleUpload} size="x-small" variant="fill-light">
+			{i18n.t('console.theme.change')}
+		</Button>
+		<Button on:click={handleRemove} size="x-small" color="red" variant="fill-light">
+			{i18n.t('console.common.remove')}
+		</Button>
 	</div>
-{/if}
-
-{#if isUploading}
-	<FileUploader onselect={handleSelect} bind:show={isUploading} />
 {/if}
 
 <style>
@@ -58,5 +54,7 @@
 	}
 	.buttons {
 		margin-top: 5px;
+		display: flex;
+		gap: 2px;
 	}
 </style>

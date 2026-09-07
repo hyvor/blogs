@@ -2,7 +2,10 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
+use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\ThemeFile;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,7 +37,7 @@ final class ThemeFileFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'name' => self::faker()->text(255),
         ];
     }
@@ -48,5 +51,25 @@ final class ThemeFileFactory extends PersistentObjectFactory
         return $this
             // ->afterInstantiate(function(ThemeFile $themeFile): void {})
         ;
+    }
+
+    public static function createIndexTwig(Blog $blog, string $content): ThemeFile
+    {
+        return self::createTemplateTwig($blog, 'index.twig', $content);
+    }
+
+    public static function createTemplateTwig(Blog $blog, string $name, string $content): ThemeFile
+    {
+        return self::createOneFor($blog, $name, $content, ThemeFileFolder::TEMPLATES);
+    }
+
+    public static function createOneFor(Blog $blog, string $name, string $content, ?ThemeFileFolder $folder = ThemeFileFolder::TEMPLATES): ThemeFile
+    {
+        return self::createOne([
+            'blog' => $blog,
+            'name' => $name,
+            'folder' => $folder,
+            'content' => $content,
+        ]);
     }
 }

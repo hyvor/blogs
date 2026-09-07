@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
+
+use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Enum\ThemeFileFolder;
+use App\Entity\Meta\BlogMeta;
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
+use App\Service\Delivery\PathMatcher;
+use App\Service\Delivery\TemplateRenderer\TemplateRendererService;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\BlogVariantFactory;
+use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\PostVariantFactory;
+use App\Tests\Factory\ThemeFileFactory;
+use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(PathMatcher::class)]
+#[CoversClass(TemplateRendererService::class)]
+class IndexTest extends KernelTestCase
+{
+    private function pathMatcher(): PathMatcher
+    {
+        return $this->getService(PathMatcher::class);
+    }
+
+    public function test_matches_index_page(): void
+    {
+        $content = <<<HTML
+        Title: {{ _meta.title }}
+        Description: {{ _meta.description }}
+        Featured Image: {{ _meta.featured_image }}
+        URL: {{ _meta.url }}
+        Canonical URL: {{ _meta.canonical_url }}
+        Featured Posts Count:: {{ _featured_posts|length }}
+        Featured Post Title: {{ _featured_posts[0].title }}
+        Featured Post Slug: {{ _featured_posts[0].slug }}
+        HTML;
+
+        $expected = <<<HTML
+        Title: My Blog
+        Description: My Blog Description
+        Featured Image: https://example.com/cover.jpg
+        URL: https://myblog.hyvorblogs.io
+        Canonical URL: https://myblog.hyvorblogs.io
+        Featured Posts Count:: 1
+        Featured Post Title: Featured Post
+        Featured Post Slug: featured-post
+        HTML;
+
+
+        $meta = new BlogMeta();
+        $meta->cover_url = 'https://example.com/cover.jpg';
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'subdomain' => 'myblog',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'meta' => $meta,
+        ], variants: false);
+        BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: [
+            'name' => 'My Blog',
+            'description' => 'My Blog Description',
+        ]);
+
+        $featuredPost = PostFactory::createPublishedOneForWithVariants($blog, [
+            'is_featured' => true,
+        ], [
+            'title' => 'Featured Post',
+            'slug' => 'featured-post',
+        ]);
+
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'folder' => ThemeFileFolder::TEMPLATES,
+            'name' => 'index.twig',
+            'content' => $content,
+        ]);
+
+        $response = $this->pathMatcher()->match($blog, '/');
+
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame($expected, $response->content);
+        $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
+    }
+
+    public function test_matches_index_page_with_number(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _pagination.page }}|{{ _posts[0].slug }}');
+        ThemeFileFactory::createOneFor($blog, 'config.yaml', 'POSTS_PER_PAGINATION: 1', null);
+
+        $post1 = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
+        $post2 = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);
+        $publishedAts = [$post1->getId() => new \DateTimeImmutable('-1 day'), $post2->getId() => new \DateTimeImmutable('-2 days')];
+        foreach ([$post1, $post2] as $post) {
+            PostVariantFactory::createOneFor($post, [
+                'status' => PostVariantStatus::PUBLISHED,
+                'slug' => 'post-' . $post->getId(),
+                'published_at' => $publishedAts[$post->getId()],
+            ], $blog->getLanguages()[0]);
+        }
+
+        $response = $this->pathMatcher()->match($blog, '/page/2');
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame('2|post-' . $post2->getId(), $response->content);
+    }
+}

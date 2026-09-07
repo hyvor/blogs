@@ -1,17 +1,53 @@
+import type { CollabStep } from '../(nav)/[subdomain]/posts/[postId]/Body/Editor/collab';
+
 export interface License {
 	users: number;
 	storage: number;
-	aiTokens: number;
-	autoTranslationsChars: number;
+	aiCost: number;
 	seoAnalysis: boolean;
 	linkAnalysis: boolean;
 	blogs: number;
 	noBranding: boolean;
 }
 
+export type Scope =
+	| 'blog.read'
+	| 'blog.write'
+	| 'blog.delete'
+	| 'posts.read'
+	| 'posts.write'
+	| 'posts.publish.own'
+	| 'posts.publish.all'
+	| 'users.read'
+	| 'users.add'
+	| 'users.write'
+	| 'tags.read'
+	| 'tags.write'
+	| 'languages.read'
+	| 'languages.write'
+	| 'media.upload'
+	| 'media.manage'
+	| 'navigations.read'
+	| 'navigations.write'
+	| 'routes.read'
+	| 'routes.write'
+	| 'redirects.read'
+	| 'redirects.write'
+	| 'webhooks.read'
+	| 'webhooks.write'
+	| 'api_keys.read'
+	| 'api_keys.write'
+	| 'themes.read'
+	| 'themes.write'
+	| 'import.manage'
+	| 'export.manage'
+	| 'link_analysis.manage'
+	| 'integrations.manage'
+	| 'ai.use';
+
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
 
-export type BlogType = 'default' | 'dev' | 'temp';
+export type BlogType = 'default' | 'dev';
 
 export interface BlogList {
 	id: number;
@@ -95,6 +131,13 @@ export interface Blog {
 
 	link_analysis_enabled: boolean;
 	link_analysis_email_report: 'always' | 'broken' | 'never';
+
+	ai_model: string;
+	ai_translation_enabled: boolean;
+	ai_agent: boolean;
+
+	hyvor_talk_enabled: boolean;
+	hyvor_post_enabled: boolean;
 }
 
 export interface BlogCounts {
@@ -106,13 +149,64 @@ export interface BlogCounts {
 	};
 }
 
+export interface HostingInfo {
+	hosting_at: 'subdomain' | 'domain' | 'self';
+	custom_domain?: CustomDomainSetup | null;
+	custom_domain_intent?: CustomDomainIntent | null;
+	hosting_url?: string;
+	change?: HostingChange | null;
+}
+
+export type HostingChangeAt = 'subdomain' | 'domain' | 'self';
+export type HostingChangeStatus = 'changing' | 'success' | 'failed';
+
+export interface HostingChange {
+	id: number;
+	created_at: number;
+	updated_at: number;
+	from_at: HostingChangeAt;
+	from_subdomain: string | null;
+	from_domain: string | null;
+	from_url: string;
+	to_at: HostingChangeAt;
+	to_subdomain: string | null;
+	to_domain: string | null;
+	to_url: string;
+	status: HostingChangeStatus;
+}
+
+export type CustomDomainTlsProvider = 'auto' | 'custom';
+export interface CustomDomainSetup {
+	created_at: number;
+	domain: string;
+	tls_provider: CustomDomainTlsProvider;
+	certificate: string | null;
+	valid_from: number | null;
+	valid_to: number | null;
+}
+
+export interface CustomDomainIntent {
+	created_at: number;
+	domain: string;
+	tls_provider: CustomDomainTlsProvider;
+	has_certificate: string | null;
+}
+
+export interface BlogIntegrations {
+	hyvor_talk: null | {
+		website_id: number;
+	};
+	hyvor_post: null | {
+		newsletter_id: number;
+	};
+}
+
 // == POST
 export type Post = {
 	id: number;
 	preview_id: string;
 	created_at: number;
 	updated_at: number;
-	published_at: number | null;
 
 	is_featured: boolean;
 	is_page: boolean;
@@ -124,8 +218,7 @@ export type Post = {
 	code_head: string | null;
 	code_foot: string | null;
 
-	variants: PostVariant[];
-
+	variants: PostVariantSummary[];
 	tags: Tag[];
 	authors: User[];
 };
@@ -140,14 +233,63 @@ export type PostVariant = {
 	url: string;
 
 	content: string | null;
-	content_unsaved: string | null;
 	title: string | null;
 	description: string | null;
+	published_at: number | null;
+	content_updated_at: number | null;
 
 	seo_primary_keyword: string | null;
 	seo_secondary_keywords: string[];
 
 	link_analysis: Record<string, number>;
+	seo_score: number;
+};
+
+export interface Document {
+	checkpoint_version: number;
+	checkpoint_content: string;
+	pending_steps: {
+		version: number;
+		steps: CollabStep[];
+	};
+	mercure_token: string;
+}
+
+export type PostVariantSummary = {
+	id: number;
+	language_id: number;
+	status: PostStatus;
+	updated_at: number | null;
+	content_updated_at: number | null;
+	words: number | null;
+	seo_score: number | null;
+};
+
+// minimal shape used for listing posts/pages (GET /posts, GET /pages)
+export type PostListItem = {
+	id: number;
+	created_at: number;
+	updated_at: number;
+	published_at: number | null;
+
+	is_featured: boolean;
+	is_page: boolean;
+
+	slug: string | null;
+	url: string | null;
+	title: string | null;
+	link_analysis: Record<string, number>;
+
+	variants: PostVariantSummary[];
+
+	tags: {
+		name: string;
+		is_private: boolean;
+	}[];
+	authors: {
+		name: string;
+		picture_url: string | null;
+	}[];
 };
 
 export type UserStatus = 'invited' | 'active' | 'blocked';
@@ -188,6 +330,27 @@ export type UserVariant = {
 	name: string | null;
 	bio: string | null;
 	location: string | null;
+};
+
+// === POST SUGGESTIONS (track-changes + comments, see @hyvor/richtext's EditorConfig.suggestions)
+
+export type PostSuggestionReply = {
+	id: string;
+	author: string; // `user:<hyvor_user_id>`
+	content: string;
+	timestamp: number; // ms since epoch
+};
+
+export type PostSuggestionSourceEntry = {
+	id: string;
+	author: string; // `user:<hyvor_user_id>`
+	timestamp: number; // ms since epoch
+	comments: PostSuggestionReply[];
+};
+
+export type PostSuggestionAuthor = {
+	name: string | null;
+	picture_url: string | null;
 };
 
 // === TAG
@@ -281,9 +444,8 @@ export interface Navigation {
 export type NavigationType = 'header' | 'footer';
 
 export interface NavigationVariant {
-	navigation_id: number;
 	language_id: number;
-	name: string;
+	name: string | null;
 }
 
 // API
@@ -352,6 +514,7 @@ export interface Theme {
 	name: string;
 	latest_version: string;
 	preview_subdomain: string;
+	preview_url: string;
 }
 
 export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null;
@@ -427,52 +590,6 @@ export interface LinkAnalysisCheck {
 	links_ignored_count: number;
 }
 
-export interface GptPrompt {
-	id: number;
-	created_at: number;
-	post_id: number;
-
-	prompt: string;
-	gpt_response: string;
-}
-
-/**
- * @deprecated
- */
-export interface UrlData {
-	url: string;
-	original_url: string;
-	domain: string;
-	html: string | null; // for embeds
-	title: string;
-	description: string;
-	thumbnail_url: string | null;
-	icon_url: string | null;
-	site: string | null;
-}
-
-export interface UnfoldedLink {
-	url: string;
-	lastUrl: string;
-	title: string | null;
-	description: string | null;
-	authors: unknown[];
-	tags: unknown[];
-	siteName: string | null;
-	siteUrl: string | null;
-	canonicalUrl: string | null;
-	publishedTime: number | null;
-	modifiedTime: number | null;
-	thumbnailUrl: string | null;
-	iconUrl: string | null;
-	locale: string | null;
-}
-
-export interface UnfoldedEmbed {
-	url: string;
-	embed: string;
-}
-
 // === Hyvor Talk
 
 export interface HyvorTalkGatedContentRule {
@@ -480,4 +597,51 @@ export interface HyvorTalkGatedContentRule {
 	tag: Tag;
 	minimum_plan: string | null;
 	gate: string | null;
+}
+
+// === AI
+
+export interface AiConversation {
+	id: number;
+	uuid: string;
+	created_at: number;
+	updated_at: number;
+	title: string;
+	post_variant_id?: number | null;
+}
+
+export type AiMessageRole = 'user' | 'assistant';
+export type AiMessageEventType = 'text' | 'thinking' | 'query' | 'document_change' | 'error';
+export type AiMessageEventDocumentChangeStatus = 'pending' | 'reviewed';
+
+export interface AiMessageEvent {
+	// frontend-generated events while streaming may not have IDs
+	// backend-sent objects always have IDs, including document changes
+	id?: number;
+	type: AiMessageEventType;
+	content?: string | null;
+	tool_name?: string | null;
+	tool_input?: unknown;
+	tool_output?: unknown;
+	document_content?: string | null;
+	document_change_status?: AiMessageEventDocumentChangeStatus | null;
+	document_change_ops_count?: number | null;
+	post_variant_version?: number | null;
+	post_variant?: AiDocumentChangePostVariant | null;
+}
+
+export interface AiDocumentChangePostVariant {
+	id: number;
+	title: string | null;
+	status: PostStatus;
+	published_at: number | null;
+	language_id: number;
+}
+
+export interface AiMessage {
+	id?: number;
+	created_at: number;
+	role: AiMessageRole;
+	content: string;
+	events: AiMessageEvent[];
 }

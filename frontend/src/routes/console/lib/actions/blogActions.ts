@@ -1,23 +1,35 @@
 import consoleApi from '../consoleApi';
 import { updateBlogStore, updateBlogStoreVariant } from '../stores/blogStore';
 import type { Blog, BlogList, BlogVariant } from '../types';
+import type { ResolvedLicense } from '@hyvor/design/cloud';
 
 export function getSubdomainAvailable(subdomain: string) {
 	return consoleApi.get<{ available: boolean }>({
 		endpoint: '/blog/check-subdomain',
 		data: { subdomain },
-		userApi: true,
-		v2: true
+		userApi: true
 	});
 }
 
-export function createBlog(name: string, subdomain: string, isDev = false) {
-	return consoleApi.post<BlogList>({
+export function createBlog(
+	name: string,
+	subdomain: string,
+	isDev = false,
+	hyvorTalk = false,
+	hyvorPost = false
+) {
+	return consoleApi.post<{
+		blog: BlogList;
+		warnings: string[];
+		resolved_license: ResolvedLicense | null;
+	}>({
 		endpoint: '/blog',
 		data: {
 			name,
 			subdomain,
-			is_dev: isDev
+			is_dev: isDev,
+			hyvor_talk: isDev ? false : hyvorTalk,
+			hyvor_post: isDev ? false : hyvorPost
 		},
 		userApi: true
 	});
@@ -27,8 +39,7 @@ export function saveSort(ids: number[]) {
 	return consoleApi.patch({
 		endpoint: '/blogs/sort',
 		data: { blog_ids: ids },
-		userApi: true,
-		v2: true
+		userApi: true
 	});
 }
 

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	interface Props {
 		score: number;
 		ignore?: boolean;
@@ -9,14 +7,12 @@
 
 	let { score = $bindable(), ignore = false, percentage = false }: Props = $props();
 
-	run(() => {
-		score = Math.round(score);
-	});
+	let finalScore = $derived(Math.round(score));
 	let color = $derived(score < 50 ? 'red' : score < 80 ? 'orange' : 'green');
 </script>
 
 <span class={color} class:ignore>
-	{ignore ? '?' : score}{percentage ? '%' : ''}
+	{ignore ? '?' : finalScore}{percentage ? '%' : ''}
 </span>
 
 <style>

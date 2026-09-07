@@ -3,7 +3,9 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Enum\UserRole;
+use App\Entity\Enum\UserStatus;
 use App\Entity\User;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -33,24 +35,26 @@ final class UserFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
-            'hyvor_user_id' => self::faker()->randomNumber(),
+            'created_at' => self::faker()->dateTime(),
+            'updated_at' => self::faker()->dateTime(),
+            'blog' => BlogFactory::new(),
+            'hyvor_user_id' => self::faker()->unique()->randomNumber(8),
             'posts_count' => self::faker()->randomNumber(),
             'role' => UserRole::ADMIN,
             'slug' => self::faker()->slug(),
             'sort' => self::faker()->randomNumber(),
-            'status' => 'active',
+            'status' => UserStatus::ACTIVE,
         ];
     }
 
     public function active(): static
     {
-        return $this->with(['status' => 'active']);
+        return $this->with(['status' => UserStatus::ACTIVE]);
     }
 
     public function asOwner(): static
     {
-        return $this->with(['role' => UserRole::OWNER]);
+        return $this->with(['role' => UserRole::ADMIN]);
     }
 
     /**

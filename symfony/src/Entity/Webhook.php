@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Enum\WebhookEvent;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'webhooks')]
@@ -19,9 +20,6 @@ class Webhook
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -29,8 +27,8 @@ class Webhook
     #[ORM\Column(length: 255)]
     private string $url;
 
-    /** @var string[] $events */
-    #[ORM\Column(type: 'json')]
+    /** @var WebhookEvent[] $events */
+    #[ORM\Column(type: 'webhook_event_json')]
     private array $events;
 
     #[ORM\Column(length: 32)]
@@ -69,17 +67,6 @@ class Webhook
         return $this;
     }
 
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
-        return $this;
-    }
-
     public function getBlog(): Blog
     {
         return $this->blog;
@@ -103,7 +90,7 @@ class Webhook
     }
 
     /**
-     * @return string[]
+     * @return WebhookEvent[]
      */
     public function getEvents(): array
     {
@@ -111,7 +98,7 @@ class Webhook
     }
 
     /**
-     * @param string[] $events
+     * @param WebhookEvent[] $events
      */
     public function setEvents(array $events): static
     {

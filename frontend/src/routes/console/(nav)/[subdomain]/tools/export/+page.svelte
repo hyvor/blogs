@@ -1,22 +1,31 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { TabNav, TabNavItem } from '@hyvor/design/components';
 	import NewExport from './NewExport.svelte';
 	import ExportHistory from './ExportHistory/ExportHistory.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let tab: 'new' | 'history' = $state('new');
 
 	function handleComplete() {
 		tab = 'history';
 	}
+
+	onMount(() => {
+		redirectIfCant('export.manage');
+	});
 </script>
 
 <div class="export hds-box">
 	<TabNav>
 		<TabNavItem name="new" active={tab === 'new'} onclick={() => (tab = 'new')}
-			>New Export</TabNavItem
+			>{i18n.t('console.tools.export.newExport')}</TabNavItem
 		>
 		<TabNavItem name="history" active={tab === 'history'} onclick={() => (tab = 'history')}
-			>History</TabNavItem
+			>{i18n.t('console.tools.history')}</TabNavItem
 		>
 	</TabNav>
 

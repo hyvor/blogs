@@ -2,17 +2,12 @@
 	import CheckFeatures from '../../@components/CheckFeatures.svelte';
 	import FeatureSectionTitle from '../FeatureSectionTitle.svelte';
 	import Score from './Score.svelte';
-	import iconSeo from './seo.svg';
-
-	import seoAnalyzerMov from './seo-analyzer.mov';
-	import linkAnalyzerMov from './link-analyzer.mov';
-	import linkAnalyzerSettingsPng from './link-analyzer-settings.png';
 </script>
 
 <FeatureSectionTitle
 	title="SEO & Speed"
 	subtitle="All blogs are <b>automatically</b> optimized for SEO and speed. You don't need to worry about anything."
-	icon={iconSeo}
+	icon="/images/homepage/seo/seo.svg"
 />
 
 <div class="scores">
@@ -28,7 +23,6 @@
 	<div class="features-one">
 		<div class="feature-title">SEO</div>
 
-		<!-- SEO -->
 		<CheckFeatures
 			features={[
 				'Meta tags (SEO, Open Graph, Twitter Cards, etc.)',
@@ -45,7 +39,6 @@
 	<div class="features-one">
 		<div class="feature-title">Speed</div>
 
-		<!-- Speed -->
 		<CheckFeatures
 			features={[
 				'Static, cached HTML pages',
@@ -70,7 +63,7 @@
 
 		<div class="hds-box video-wrap">
 			<video muted controls>
-				<source src={seoAnalyzerMov} type="video/mp4" />
+				<source src="/images/homepage/seo/seo-analyzer.mov" type="video/mp4" />
 				<track kind="captions" />
 			</video>
 		</div>
@@ -86,7 +79,7 @@
 
 		<div class="hds-box video-wrap">
 			<video muted controls>
-				<source src={linkAnalyzerMov} type="video/mp4" />
+				<source src="/images/homepage/seo/link-analyzer.mov" type="video/mp4" />
 				<track kind="captions" />
 			</video>
 		</div>
@@ -102,7 +95,7 @@
 	</div>
 
 	<div class="img-wrap">
-		<img src={linkAnalyzerSettingsPng} alt="Link Analyzer Settings" />
+		<img src="/images/homepage/seo/link-analyzer-settings.png" alt="Link Analyzer Settings" />
 	</div>
 </div>
 

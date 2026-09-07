@@ -1,110 +1,65 @@
 <script lang="ts">
 	import {
+		Button,
 		Callout,
+		confirm,
 		FormControl,
-		InputGroup,
-		Link,
-		Radio,
+		Loader,
 		SplitControl,
 		Switch,
 		TextInput,
-		Validation,
-		toast
+		toast,
+		Validation
 	} from '@hyvor/design/components';
-	import { blogOriginalStore, blogStore } from '../../../../lib/stores/blogStore';
-	import BlogSettingsSave from '../BlogSettingsSave.svelte';
-	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
-	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
-
-	import type { Blog } from '../../../../lib/types';
+	import {
+		blogStore,
+		hostingInfoStore,
+		updateHostingInfoStore
+	} from '../../../../lib/stores/blogStore';
 	import { isSubdomainValid } from '../../../../lib/helper/isSubdomainValid';
-	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
-	import DisabledOnTemp from '../../Temp/DisabledOnTemp.svelte';
+	import { updateBlog } from '../../../../lib/actions/blogActions';
+	import { getConfig } from '../../../../lib/config';
+	import { getHostingInfo, updateHostedAt } from './hostingActions';
+	import CreateCustomDomainModal from './CreateCustomDomainModal.svelte';
+	import CustomDomainIntentModal from './CustomDomainIntentModal.svelte';
+	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
+	import HostingHistoryModal from './HostingHistoryModal.svelte';
+	import HostingOption from './HostingOption.svelte';
+	import CustomDomainOption from './CustomDomainOption.svelte';
+	import HostingChangeStatus from './HostingChangeStatus.svelte';
+	import { onMount } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import IconClockHistory from '@hyvor/icons/IconClockHistory';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
 
-	const originalSubdomain = $blogStore.subdomain;
+	const i18n = getI18n();
+
 	let subdomain = $state($blogStore.subdomain);
 
 	let subdomainError: null | string = $state(null);
-	let hostingUrlError: null | string = $state(null);
+	let isSavingSubdomain = $state(false);
+	let showCreateCustomDomainModal = $state(false);
+	let showCustomDomainIntentModal = $state(false);
+	let showSelfHostingModal = $state(false);
+	let showHostingHistoryModal = $state(false);
 
-	function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
-		blogStore.update((b) => {
-			return {
-				...b,
-				[key]: e.target.value
-			};
-		});
-	}
+	let isLoading = $state(true);
 
-	function handleRedirectSubdomainChange() {
-		blogStore.update((b) => {
-			return {
-				...b,
-				hosting_redirect_subdomain: !b.hosting_redirect_subdomain
-			};
-		});
-	}
+	let hasDeliveryDomain = Boolean(getConfig().domains.delivery);
 
-	function handleHostedAtChange(e: any) {
-		blogStore.update((b) => {
-			return {
-				...b,
-				hosting_at: e.target.value
-			};
-		});
-	}
+	let isHostingChangeInProgress = $derived(
+		Boolean($hostingInfoStore.change && $hostingInfoStore.change.status === 'changing')
+	);
 
-	function handleBeforeSave() {
-		if (subdomain !== $blogStore.subdomain && subdomainError) {
-			toast.error('Subdomain error: ' + subdomainError);
-			return false;
+	async function handleRedirectSubdomainChange() {
+		const newValue = !$blogStore.hosting_redirect_subdomain;
+		const toastId = toast.loading('Updating...');
+		try {
+			await updateBlog({ hosting_redirect_subdomain: newValue });
+			toast.info('Redirect subdomain setting updated', { id: toastId });
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update redirect subdomain setting', { id: toastId });
 		}
-
-		subdomainError = null;
-		hostingUrlError = null;
-
-		if ($blogStore.hosting_at === 'self') {
-			const hostingUrl = ($blogStore.hosting_url || '').trim();
-			if (hostingUrl === '') {
-				hostingUrlError = 'Self-Hosting URL is required';
-				return false;
-			}
-			if (!isValidUrl(hostingUrl)) {
-				hostingUrlError = 'Invalid URL. Make sure to include the protocol (https://)';
-				return false;
-			}
-		}
-
-		if ($blogStore.hosting_at === 'domain') {
-			const hostingDomain = ($blogStore.hosting_domain || '').trim();
-			if (hostingDomain === '') {
-				hostingUrlError = 'Custom Domain is required';
-				return false;
-			}
-			if (hostingDomain.match(' ')) {
-				hostingUrlError = 'Custom Domain cannot contain spaces';
-				return false;
-			}
-			if (hostingDomain.match(/^https?:\/\//)) {
-				hostingUrlError = 'Add the domain without the protocol (https://)';
-				return false;
-			}
-			if (hostingDomain.match('/')) {
-				hostingUrlError =
-					'Custom Domain cannot contain /. Use self-hosting for to host your blog in a subdirectory';
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	function handleAfterSave(newBlog: Blog) {
-		setTimeout(() => {
-			if (newBlog.subdomain !== originalSubdomain) {
-				window.location.href = `/console/${newBlog.subdomain}/settings/hosting`;
-			}
-		}, 0);
 	}
 
 	function handleSubdomainInput(e: any) {
@@ -116,133 +71,189 @@
 			return;
 		}
 
-		const error = isSubdomainValid(val);
-		subdomainError = error;
+		subdomainError = isSubdomainValid(val);
 	}
 
-	function handleError(message: string, code: number) {
-		if (message === 'domain_taken') {
-			hostingUrlError = 'This domain is already taken by another blog. Contact support if needed.';
-		} else {
-			toast.error(message);
+	async function handleSaveSubdomain() {
+		const val = subdomain.trim();
+
+		if (val === $blogStore.subdomain) {
+			return;
+		}
+
+		const error = isSubdomainValid(val);
+		if (error) {
+			subdomainError = error;
+			return;
+		}
+
+		isSavingSubdomain = true;
+		const toastId = toast.loading('Updating subdomain...');
+		try {
+			const result = await updateHostedAt('subdomain', undefined, val);
+			updateHostingInfoStore(result);
+			toast.info('Subdomain change started. It may take a moment to apply.', { id: toastId });
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update subdomain', { id: toastId });
+		}
+		isSavingSubdomain = false;
+	}
+
+	async function handleRevertToSubdomain() {
+		const confirmed = await confirm({
+			title: i18n.t('console.settings.hosting.revertTitle'),
+			content: i18n.t('console.settings.hosting.revertContent'),
+			confirmText: i18n.t('console.settings.hosting.revert'),
+			cancelText: i18n.t('console.common.cancel'),
+			danger: true
+		});
+
+		if (!confirmed) {
+			return;
+		}
+
+		const toastId = toast.loading(i18n.t('console.settings.hosting.reverting'));
+		try {
+			const updates = await updateHostedAt('subdomain');
+			updateHostingInfoStore(updates);
+			toast.info(i18n.t('console.settings.hosting.revertStarted'), {
+				id: toastId
+			});
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to revert to subdomain', { id: toastId });
 		}
 	}
 
-	let hasUrlChanged = $derived(
-		$blogStore.subdomain !== subdomain ||
-			$blogOriginalStore.hosting_at !== $blogStore.hosting_at ||
-			$blogOriginalStore.hosting_domain !== $blogStore.hosting_domain ||
-			$blogOriginalStore.hosting_url !== $blogStore.hosting_url
-	);
+	onMount(() => {
+		redirectIfCant('blog.write');
+		getHostingInfo()
+			.then((res) => {
+				hostingInfoStore.set(res);
+				isLoading = false;
+			})
+			.catch((err) => {
+				toast.error(err.message || 'Failed to load hosting information');
+			});
+	});
 </script>
 
-<DisabledOnTemp>
-	<BlogSettingsSave
-		keys={[
-			'subdomain',
-			'hosting_at',
-			'hosting_domain',
-			'hosting_url',
-			'hosting_redirect_subdomain'
-		]}
-		outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
-		beforeSave={handleBeforeSave}
-		afterSave={handleAfterSave}
-		onError={handleError}
-	/>
-
+{#if isLoading}
+	<Loader block />
+{:else}
 	<div class="hosting">
-		<SplitControl
-			label="Subdomain"
-			caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
-		>
-			<FormControl>
-				<TextInput
-					bind:value={subdomain}
-					block
-					state={subdomainError ? 'error' : undefined}
-					on:input={handleSubdomainInput}
+		<SplitControl column>
+			{#snippet label()}
+				<div class="hosting-config-label">
+					<span class="title">{i18n.t('console.settings.hosting.configuration')}</span>
+					<Button size="small" color="input" onclick={() => (showHostingHistoryModal = true)}>
+						{#snippet start()}
+							<IconClockHistory size={12} />
+						{/snippet}
+						{i18n.t('console.settings.hosting.history')}
+					</Button>
+				</div>
+			{/snippet}
+
+			<div class="hosting-options">
+				<HostingOption
+					title={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.subdomain')
+						: i18n.t('console.settings.hosting.appSubdirectory')}
+					subtitle={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.subdomainDesc', {
+								subdomain: $blogStore.subdomain
+							})
+						: i18n.t('console.settings.hosting.appSubdirectoryDesc', {
+								app: getConfig().domains.app,
+								subdomain: $blogStore.subdomain
+							})}
+					active={$hostingInfoStore.hosting_at === 'subdomain'}
+					buttonLabel={hasDeliveryDomain
+						? i18n.t('console.settings.hosting.revertToSubdomain')
+						: i18n.t('console.settings.hosting.revertToAppSubdirectory')}
+					buttonDisabled={isHostingChangeInProgress}
+					onclick={handleRevertToSubdomain}
+				>
+					{#snippet activeContent()}
+						<div class="subdomain-editor">
+							<FormControl>
+								<TextInput
+									bind:value={subdomain}
+									block
+									state={subdomainError ? 'error' : undefined}
+									disabled={isHostingChangeInProgress || isSavingSubdomain}
+									on:input={handleSubdomainInput}
+								/>
+								{#if subdomainError}
+									<Validation state="error">{subdomainError}</Validation>
+								{/if}
+							</FormControl>
+							<Button
+								size="small"
+								variant="outline"
+								disabled={isHostingChangeInProgress ||
+									isSavingSubdomain ||
+									!!subdomainError ||
+									subdomain === $blogStore.subdomain}
+								onclick={handleSaveSubdomain}
+							>
+								Change Subdomain
+							</Button>
+						</div>
+					{/snippet}
+				</HostingOption>
+				<CustomDomainOption
+					disabled={isHostingChangeInProgress}
+					onSetup={() => (showCreateCustomDomainModal = true)}
+					onContinueSetup={() => (showCustomDomainIntentModal = true)}
+					onConfigure={() => (showCreateCustomDomainModal = true)}
 				/>
-				{#if subdomainError}
-					<Validation state="error">{subdomainError}</Validation>
-				{/if}
-			</FormControl>
+				<HostingOption
+					title={i18n.t('console.settings.hosting.selfHosted')}
+					active={$hostingInfoStore.hosting_at === 'self'}
+					buttonLabel={i18n.t('console.settings.hosting.setupSelfHosting')}
+					buttonDisabled={isHostingChangeInProgress}
+					onclick={() => (showSelfHostingModal = true)}
+				>
+					{#snippet subtitle()}
+						Serve your blog from your own server for <a
+							class="hds-link"
+							target="_blank"
+							href="/docs/subdirectory">subdirectory hosting</a
+						>
+						or
+						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a>.
+					{/snippet}
+					{#snippet activeContent()}
+						<div class="self-hosting-active">
+							<Button
+								size="small"
+								variant="outline"
+								disabled={isHostingChangeInProgress}
+								onclick={() => (showSelfHostingModal = true)}
+							>
+								Change URL
+							</Button>
+							<span class="self-hosting-url">{$blogStore.hosting_url}</span>
+						</div>
+					{/snippet}
+				</HostingOption>
+			</div>
+			{#if $hostingInfoStore.change}
+				<HostingChangeStatus change={$hostingInfoStore.change} />
+			{/if}
 		</SplitControl>
-
-		<SplitControl label="Hosted at" caption="Where do you like to host your blog?">
-			<InputGroup>
-				<Radio value="subdomain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Subdomain (hyvorblogs.io)
-				</Radio>
-				<Radio value="domain" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Custom Domain - &nbsp;<Link
-						href="/docs/custom-domain"
-						target="_blank"
-						style="font-size:14px;"
-					>
-						Docs
-						{#snippet end()}
-							<IconBoxArrowUpRight size={10} />
-						{/snippet}
-					</Link>
-				</Radio>
-				<Radio value="self" group={$blogStore.hosting_at} on:change={handleHostedAtChange}>
-					Self-hosting - &nbsp;<Link
-						href="/docs/self-hosting"
-						target="_blank"
-						style="font-size:14px;"
-					>
-						Docs
-						{#snippet end()}
-							<IconBoxArrowUpRight size={10} />
-						{/snippet}
-					</Link>
-				</Radio>
-			</InputGroup>
-		</SplitControl>
-
-		{#if $blogStore.hosting_at === 'domain'}
-			<SplitControl label="Custom Domain" caption="Your custom domain name">
-				<FormControl>
-					<TextInput
-						value={$blogStore.hosting_domain}
-						on:input={(e) => {
-							e.target.value = e.target.value.trim();
-							handleBlogValueChangeEvent(e, 'hosting_domain');
-						}}
-						block
-						placeholder="blog.example.com"
-						state={hostingUrlError ? 'error' : undefined}
-					/>
-					{#if hostingUrlError}
-						<Validation state="error">{hostingUrlError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-		{/if}
-
-		{#if $blogStore.hosting_at === 'self'}
-			<SplitControl label="Self-hosting URL" caption="Where your blog is hosted (absolute URL)">
-				<FormControl>
-					<TextInput
-						bind:value={$blogStore.hosting_url}
-						on:input={(e) => handleBlogValueChangeEvent(e, 'hosting_url')}
-						block
-						placeholder="https://example.com/blog"
-						state={hostingUrlError ? 'error' : undefined}
-					/>
-					{#if hostingUrlError}
-						<Validation state="error">{hostingUrlError}</Validation>
-					{/if}
-				</FormControl>
-			</SplitControl>
-		{/if}
 
 		{#if $blogStore.hosting_at !== 'subdomain'}
 			<SplitControl
-				label="Redirect Subdomain"
-				caption={`Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` +
-					($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')}
+				label={i18n.t('console.settings.hosting.redirectSubdomain')}
+				caption={i18n.t('console.settings.hosting.redirectSubdomainCaption', {
+					subdomain: $blogStore.subdomain,
+					target:
+						$blogStore.hosting_at === 'domain'
+							? i18n.t('console.settings.hosting.customDomainLower')
+							: i18n.t('console.settings.hosting.selfUrlLower')
+				})}
 			>
 				<Switch
 					checked={$blogStore.hosting_redirect_subdomain}
@@ -250,34 +261,61 @@
 				/>
 			</SplitControl>
 		{/if}
-
-		{#if hasUrlChanged}
-			<Callout type="warning" style="margin-top: 20px;">
-				{#snippet icon()}
-					<IconExclamationCircle size={18} />
-				{/snippet}
-				{#snippet title()}
-					<div>URL Change</div>
-				{/snippet}
-				You are about to change the URL of your blog!
-				<ul>
-					<li>
-						Previously shared links may break. However, when changing from hyvorblogs.io subdomain
-						to a custom domain or self-hosting, we'll redirect users to the new URL.
-					</li>
-					<li>This may impact the SEO of your blog.</li>
-					<li>
-						We'll update the media links in your post content and blog settings. This may take some
-						time.
-					</li>
-				</ul>
-			</Callout>
-		{/if}
 	</div>
-</DisabledOnTemp>
+
+	<CreateCustomDomainModal
+		bind:show={showCreateCustomDomainModal}
+		onSaved={() => (showCustomDomainIntentModal = true)}
+	/>
+	<CustomDomainIntentModal bind:show={showCustomDomainIntentModal} />
+	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
+	<HostingHistoryModal bind:show={showHostingHistoryModal} />
+{/if}
 
 <style>
 	.hosting {
 		padding: 20px 30px;
+		height: 90%;
+		overflow-y: auto;
+	}
+	.hosting-options {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		width: 100%;
+	}
+	.subdomain-editor {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin-top: 16px;
+	}
+	.subdomain-editor :global(.form-control) {
+		flex: 1;
+	}
+	.hosting-config-label {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		margin-bottom: 6px;
+	}
+	.title {
+		font-weight: 600;
+	}
+	.self-hosting-active {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 8px;
+		margin-top: 16px;
+	}
+	.self-hosting-url {
+		font-size: 14px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
 	}
 </style>

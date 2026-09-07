@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\JobStatus;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -19,15 +20,12 @@ class LinkAnalyzerCheck
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
-    #[ORM\Column(length: 255, options: ['default' => 'pending'])]
-    private string $status = 'pending';
+    #[ORM\Column(length: 255, enumType: JobStatus::class, options: ['default' => 'pending'])]
+    private JobStatus $status = JobStatus::PENDING;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $error = null;
@@ -95,17 +93,6 @@ class LinkAnalyzerCheck
         return $this;
     }
 
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
-        return $this;
-    }
-
     public function getBlog(): Blog
     {
         return $this->blog;
@@ -117,12 +104,12 @@ class LinkAnalyzerCheck
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): JobStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(JobStatus $status): static
     {
         $this->status = $status;
         return $this;

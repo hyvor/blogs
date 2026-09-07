@@ -1,11 +1,7 @@
 <script lang="ts">
 	import IconEyeSlashFill from '@hyvor/icons/IconEyeSlashFill';
 	import IconArrowClockwise from '@hyvor/icons/IconArrowClockwise';
-	import {
-		postEditingStatusStore,
-		postVariantStore,
-		updatePostVariantStore
-	} from '../../../postStore';
+	import { postEditor, postVariantStore, updatePostVariantStore } from '../../../postStore';
 	import { Tooltip, toast } from '@hyvor/design/components';
 	import IconPencilFill from '@hyvor/icons/IconPencilFill';
 	import { IconButton } from '@hyvor/design/components';
@@ -18,6 +14,9 @@
 		callIgnoreLink,
 		callLinkAnalysisApi
 	} from '../../../../tools/link-analysis/linkAnalysisActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isReloading = $state(false);
 
@@ -122,23 +121,27 @@
 	</div>
 
 	<div class="link-buttons">
-		<Tooltip text="Edit in Editor">
+		<Tooltip text={i18n.t('console.postEditor.links.editInEditor')}>
 			<IconButton
 				size={22}
 				color="input"
-				on:click={() => focusLinkInEditor(link, $postEditingStatusStore.editorView)}
+				on:click={() => focusLinkInEditor(link, $postEditor.getView())}
 			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Recheck">
+		<Tooltip text={i18n.t('console.postEditor.links.recheck')}>
 			<IconButton size={22} color="input" on:click={handleReload} disabled={!isHttp || isReloading}>
 				<IconArrowClockwise size={12} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text={(linkStatusType === 'ignored' ? 'Unignore' : 'Ignore') + ' this link'}>
+		<Tooltip
+			text={linkStatusType === 'ignored'
+				? i18n.t('console.postEditor.links.unignoreLink')
+				: i18n.t('console.postEditor.links.ignoreLink')}
+		>
 			<IconButton
 				size={22}
 				color={linkStatusType === 'ignored' ? 'accent' : 'input'}

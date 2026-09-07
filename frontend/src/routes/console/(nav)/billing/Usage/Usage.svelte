@@ -25,9 +25,11 @@
 	<Loader padding={100} block />
 {:else}
 	<div class="usage">
+		{#if usage.blogs.limit !== -1}
+			<UsageBar name="Blogs" data={usage.blogs} />
+		{/if}
 		<UsageBar name="Users" data={usage.users} />
 		<UsageBar name="Media Storage" data={usage.storage} bytes={true} />
-		<UsageBar name="Auto-Translate Characters (this month)" data={usage.auto_translate_chars} />
-		<UsageBar name="GPT Tokens (this month)" data={usage.ai_tokens} />
+		<UsageBar name="AI Usage (this month)" data={usage.ai} percent={true} />
 	</div>
 {/if}

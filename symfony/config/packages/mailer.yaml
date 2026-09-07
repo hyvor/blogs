@@ -1,0 +1,8 @@
+framework:
+    mailer:
+        dsn: 'smtp://%env(default::string:MAIL_USERNAME)%:%env(default::string:MAIL_PASSWORD)%@%env(default::string:MAIL_HOST)%:%env(default::string:MAIL_PORT)%'
+
+when@test:
+    framework:
+        mailer:
+            dsn: 'null://null'

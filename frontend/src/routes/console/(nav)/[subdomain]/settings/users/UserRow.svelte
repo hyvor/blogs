@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		Button,
 		IconButton,
 		Link,
 		TableRow,
@@ -14,8 +13,20 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import { createEventDispatcher } from 'svelte';
-	import { deleteUser, resendInvitation } from './userActions';
+	import { deleteUser } from './userActions';
 	import UpdateUser from './Update/UpdateUser.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
+
+	const ROLE_KEYS = {
+		owner: 'console.settings.users.roles.owner',
+		admin: 'console.settings.users.roles.admin',
+		editor: 'console.settings.users.roles.editor',
+		writer: 'console.settings.users.roles.writer',
+		contributor: 'console.settings.users.roles.contributor'
+	} as const;
 
 	interface Props {
 		user: User;
@@ -32,39 +43,18 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Remove user',
-				content:
-					'Are you sure you want to remove this user? This user will be removed as an author from all posts, and will no longer be able to access the blog. Posts created by this user will not be deleted.',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.users.removeTitle'),
+				content: i18n.t('console.settings.users.removeContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting user...');
+			const toastId = toast.loading(i18n.t('console.settings.users.deleting'));
 
 			deleteUser(user.id)
 				.then(() => {
-					toast.success('User deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.users.deleted'), { id: toastId });
 					dispatch('delete', user.id);
-				})
-				.catch((e) => {
-					toast.error(e.message, { id: toastId });
-				});
-		}
-	}
-
-	async function handelResend() {
-		if (
-			await confirm({
-				title: 'Resend Invitation',
-				content: 'Please confirm to re-send an invitation to this user.',
-				confirmText: 'Yes, resend'
-			})
-		) {
-			const toastId = toast.loading('Resending invitation...');
-
-			resendInvitation(user.id)
-				.then(() => {
-					toast.success('Invitation sent.', { id: toastId });
 				})
 				.catch((e) => {
 					toast.error(e.message, { id: toastId });
@@ -85,55 +75,57 @@
 	<div>
 		{#if user.hyvor_user_id}
 			{#if user.status === 'active'}
-				<Tag size="x-small" color="green">ACTIVE</Tag>
+				<Tag size="x-small" color="green"
+					>{i18n.t('console.settings.users.status.active').toUpperCase()}</Tag
+				>
 			{:else if user.status === 'invited'}
-				<Tag size="x-small" color="blue">PENDING</Tag>
-				<Tooltip text="Resend invitation email">
-					<Button size="x-small" on:click={handelResend} style="margin-top:8px;">Resend</Button>
-				</Tooltip>
+				<Tag size="x-small" color="blue"
+					>{i18n.t('console.tools.jobStatus.pending').toUpperCase()}</Tag
+				>
 			{:else if user.status === 'blocked'}
-				<Tag size="x-small" color="red">BLOCKED</Tag>
+				<Tag size="x-small" color="red"
+					>{i18n.t('console.settings.users.status.blocked').toUpperCase()}</Tag
+				>
 			{/if}
 		{:else}
-			<Tag size="x-small" color="orange">GUEST</Tag>
+			<Tag size="x-small" color="orange"
+				>{i18n.t('console.settings.users.status.guest').toUpperCase()}</Tag
+			>
 		{/if}
 	</div>
 	<div>
 		{#if user.hyvor_user_id}
-			<Tag size="x-small">{user.role.toUpperCase()}</Tag>
+			<Tag size="x-small">{i18n.t(ROLE_KEYS[user.role]).toUpperCase()}</Tag>
 		{/if}
 	</div>
 	<div>{user.posts_count}</div>
 	<div>
-		<Tooltip text="Edit user data">
-			<IconButton color="input" size="small" on:click={() => (isEditing = true)}>
+		<Tooltip text={i18n.t('console.settings.users.editUser')}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				on:click={() => (isEditing = true)}
+				disabled={cant('users.write')}
+			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
 
 		{#if user.role !== 'owner'}
-			<Tooltip text="Delete user">
-				<IconButton color="input" size="small" on:click={handleDelete}>
+			<Tooltip text={i18n.t('console.settings.users.deleteUser')}>
+				<IconButton
+					variant="fill-light"
+					color="red"
+					size="small"
+					on:click={handleDelete}
+					disabled={cant('users.write')}
+				>
 					<IconTrash size={12} />
 				</IconButton>
 			</Tooltip>
 		{/if}
 	</div>
-
-	<!-- {
-        isResendingEmail && <PopupConfirm
-            title="Resend Invitation"
-            text="Please confirm to re-send an invitation to this user."
-            name="Resend"
-            onClick={handleResend}
-            onCancel={() => setIsResendingEmail(false)}
-        />
-    }
-
-    {
-        isUpdating && <UpdateUserPopup user={user} onClose={() => setIsUpdating(false)} />
-    }
- -->
 </TableRow>
 
 {#if isEditing}

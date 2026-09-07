@@ -1,73 +1,216 @@
 <script lang="ts">
-	import type { EditorView } from 'prosemirror-view';
 	import {
-		postCurrentContentKey,
-		postCurrentContentStore,
-		postEditingStatusStore,
-		postLanguageStore,
-		postOriginalVariantStore,
+		postEditor,
+		postContentDirtyStore,
+		postSuggestionModeStore,
 		postVariantStore,
-		updatePostEditingStatusValue,
-		updatePostVariantStore
+		documentStore,
+		updateDocumentStore
 	} from '../../../postStore';
-	import EditorTop from './EditorTop/EditorTop.svelte';
-	import Prosemirror from './Prosemirror.svelte';
-	import PublishedOverlay from './PublishedOverlay.svelte';
-	import type { PostVariant } from '../../../../../../lib/types';
-	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from './editorEvents';
+	import { Editor, type Author, type CollabSendable, type RemoteCursor } from '@hyvor/richtext';
+	import wordCountPlugin from './plugins/plugin-wordcount';
+	import focusTitlePlugin from './plugins/plugin-focus-title';
+	import scrollMarginPlugin from './plugins/plugin-scroll-margin';
+	import { editorConfig, schema } from './editor';
+	import { resolveAuthor, suggestionSource } from './suggestions';
+	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
+	import { subscribeToCollabMercureTopic, collabTopic, applyConfirmedSteps } from './collab';
+	import { onDestroy } from 'svelte';
+	import { authUserStore } from '../../../../../../lib/stores';
+	import { can } from '../../../../../../lib/scope.svelte';
+	import { seoService } from '../../../seoStore';
+	import { linksService } from '../../Sidebar/Links/linksStore';
+	import { getI18n } from '../../../../../../lib/i18n';
 
-	let uniqueKey = $derived(
-		`${$postVariantStore.id}` +
-			`-lang-${$postEditingStatusStore.languageId}` +
-			`-key-${$postCurrentContentKey}` +
-			`-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
-			`-version-${$postEditingStatusStore.editorVersion}`
+	const i18n = getI18n();
+
+	// unique client ID for this tab
+	const clientId = Math.random().toString(36).slice(2);
+
+	function handleChange(v: string) {
+		$postContentDirtyStore = v !== $documentStore.checkpoint_content;
+		seoService.updateContent(v);
+		linksService.updateContent(v);
+	}
+
+	// checkSendable (in @hyvor/richtext) fires onSendable synchronously on every keystroke, with
+	// no debounce or in-flight tracking of its own - during fast typing this would otherwise fire
+	// several overlapping submitCollabSteps requests, all based on the same not-yet-confirmed
+	// version. Only the first one the server processes can be accepted; the rest are redundant
+	// rejections. Queueing here ensures only one submission is ever in flight. A newer sendable
+	// batch always contains everything an older, not-yet-sent one had, so a fresher pending batch
+	// simply replaces whatever was queued but not yet sent rather than both being sent in turn.
+	let pendingSendable: CollabSendable | null = null;
+	let sendingSteps = false;
+
+	function handleSendable(sendable: CollabSendable) {
+		pendingSendable = sendable;
+		processSendQueue();
+	}
+
+	async function processSendQueue() {
+		if (sendingSteps) return;
+		sendingSteps = true;
+		try {
+			while (pendingSendable) {
+				const sendable = pendingSendable;
+				pendingSendable = null;
+				await submitSendable(sendable);
+			}
+		} finally {
+			sendingSteps = false;
+		}
+	}
+
+	async function submitSendable(sendable: CollabSendable) {
+		try {
+			const response = await submitCollabSteps({
+				post_variant_id: $postVariantStore.id,
+				version: sendable.version,
+				steps: sendable.steps,
+				client_id: String(sendable.clientID)
+			});
+			applyConfirmedSteps($postEditor!, response.steps);
+		} catch (e) {
+			// TODO: editor error handling
+			console.error('Failed to submit collab steps', e);
+		}
+	}
+
+	function handleLocalCursorChange(cursor: { from: number; to: number } | null) {
+		submitCollabCursor({
+			post_variant_id: $postVariantStore.id,
+			client_id: clientId,
+			cursor
+		}).catch((e) => console.error('Failed to submit collab cursor', e));
+	}
+
+	let value = $derived(
+		$documentStore.checkpoint_content ||
+			JSON.stringify({ type: 'doc', content: [{ type: 'paragraph', content: [] }] })
 	);
 
-	function handleChange(e: CustomEvent<string>) {
-		const key = $postEditingStatusStore.isEditingPublished ? 'content_unsaved' : 'content';
+	// document_version is the live collab version; the steps returned alongside it are exactly
+	// the ones not yet reflected in `value` (see PostVariantCollabService on the backend) - so
+	// the editor must start at the version *before* those steps, then fast-forward via
+	// collab.receiveSteps() once mounted.
+	let backlogSteps = $derived($documentStore.pending_steps.steps);
 
-		const updates = {
-			[key]: e.detail
-		} as Partial<PostVariant>;
+	// the editor is always editable now - published/scheduled posts edit content_unsaved
+	// just like drafts, and the published content is only updated via the Update flow
+	let isEditable = $derived(can('posts.write'));
 
-		/* if (key === 'content_unsaved') {
-            updates.content = e.detail;
-        } */
+	let topicUnsubscriber: (() => void) | undefined;
 
-		updatePostVariantStore(updates);
+	// fully reset the editor (full document changes on new_document)
+	let documentKey = $state(0);
+
+	function handleInit() {
+		topicUnsubscriber?.();
+
+		const editor = $postEditor!;
+
+		if (backlogSteps.length > 0) {
+			applyConfirmedSteps(editor, backlogSteps);
+		}
+
+		const cursors = new Map<string, RemoteCursor>();
+
+		const topic = collabTopic($postVariantStore.id);
+
+		topicUnsubscriber = subscribeToCollabMercureTopic(
+			topic,
+			$documentStore.mercure_token,
+			(steps) => {
+				applyConfirmedSteps(editor, steps);
+			},
+			(message) => {
+				if (message.client_id === clientId) return; // ignore our own echo, if any
+
+				if (
+					message.clear ||
+					!message.user ||
+					message.from === undefined ||
+					message.to === undefined
+				) {
+					cursors.delete(message.client_id);
+				} else {
+					cursors.set(message.client_id, {
+						clientId: message.client_id,
+						from: message.from,
+						to: message.to,
+						user: message.user
+					});
+				}
+
+				editor.cursors.set([...cursors.values()]);
+			},
+			(message) => {
+				updateDocumentStore({
+					checkpoint_content: message.content,
+					checkpoint_version: 0,
+					pending_steps: { version: 0, steps: [] }
+				});
+				$postContentDirtyStore = false;
+				documentKey++;
+			}
+		);
 	}
 
-	function handleView(e: CustomEvent<EditorView>) {
-		updatePostEditingStatusValue('editorView', e.detail);
-	}
+	let fullEditorConfig = $derived({
+		...editorConfig(),
+		collab: {
+			version: $documentStore.checkpoint_version,
+			clientID: clientId,
+			onSendable: handleSendable
+		},
+		cursors: {
+			onLocalCursorChange: handleLocalCursorChange
+		},
+		suggestions: {
+			author: `user:${$authUserStore.id}` as Author,
+			mode: $postSuggestionModeStore,
+			resolveAuthor,
+			source: suggestionSource
+		},
+		colorButtonBackground: 'var(--accent)'
+	});
 
-	function handleEvent(e: CustomEvent<ProsemirrorEventDispatchType>) {
-		handleEditorEventHandlers(e.detail.name, e.detail.event);
-	}
+	onDestroy(() => {
+		topicUnsubscriber?.();
+	});
 </script>
 
-<div class="editor hds-box">
-	<EditorTop />
-
-	{#key uniqueKey}
-		<div class="wrap">
-			<Prosemirror
-				value={$postCurrentContentStore}
-				on:change={handleChange}
-				on:view={handleView}
-				on:event={handleEvent}
+<div class="editor">
+	<div class="wrap">
+		{#key documentKey}
+			<Editor
+				bind:this={$postEditor}
+				{value}
+				onvaluechange={handleChange}
+				editable={isEditable}
+				{schema}
+				editorConfig={fullEditorConfig}
+				plugins={[
+					wordCountPlugin((count) => i18n.t('console.postEditor.wordCount', { count })),
+					focusTitlePlugin(),
+					scrollMarginPlugin()
+				]}
+				oninit={handleInit}
 			/>
-			<PublishedOverlay />
-		</div>
-	{/key}
+		{/key}
+	</div>
 </div>
 
 <style>
 	.editor {
 		position: relative;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 	}
 	.wrap {
 		position: relative;
+		flex: 1;
 	}
 </style>

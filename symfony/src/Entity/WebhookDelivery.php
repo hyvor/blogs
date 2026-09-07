@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\WebhookDeliveryStatus;
+use App\Entity\Enum\WebhookEvent;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -19,21 +21,18 @@ class WebhookDelivery
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $webhook_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'webhook_id', referencedColumnName: 'id')]
     private Webhook $webhook;
 
-    #[ORM\Column(length: 255)]
-    private string $status;
+    #[ORM\Column(length: 255, enumType: WebhookDeliveryStatus::class)]
+    private WebhookDeliveryStatus $status;
 
     #[ORM\Column(length: 255)]
     private string $url;
 
-    #[ORM\Column(length: 255)]
-    private string $event;
+    #[ORM\Column(length: 255, enumType: WebhookEvent::class)]
+    private WebhookEvent $event;
 
     /** @var array<string, mixed> $data */
     #[ORM\Column(type: 'json')]
@@ -44,6 +43,12 @@ class WebhookDelivery
 
     #[ORM\Column(nullable: true)]
     private ?int $http_status = null;
+
+    #[ORM\Column]
+    private int $try_count = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $last_try_at = null;
 
     public function getId(): int
     {
@@ -78,17 +83,6 @@ class WebhookDelivery
         return $this;
     }
 
-    public function getWebhookId(): int
-    {
-        return $this->webhook_id;
-    }
-
-    public function setWebhookId(int $webhook_id): static
-    {
-        $this->webhook_id = $webhook_id;
-        return $this;
-    }
-
     public function getWebhook(): Webhook
     {
         return $this->webhook;
@@ -100,12 +94,12 @@ class WebhookDelivery
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): WebhookDeliveryStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(WebhookDeliveryStatus $status): static
     {
         $this->status = $status;
         return $this;
@@ -122,12 +116,12 @@ class WebhookDelivery
         return $this;
     }
 
-    public function getEvent(): string
+    public function getEvent(): WebhookEvent
     {
         return $this->event;
     }
 
-    public function setEvent(string $event): static
+    public function setEvent(WebhookEvent $event): static
     {
         $this->event = $event;
         return $this;
@@ -167,6 +161,28 @@ class WebhookDelivery
     public function setHttpStatus(?int $http_status): static
     {
         $this->http_status = $http_status;
+        return $this;
+    }
+
+    public function getTryCount(): int
+    {
+        return $this->try_count;
+    }
+
+    public function setTryCount(int $try_count): static
+    {
+        $this->try_count = $try_count;
+        return $this;
+    }
+
+    public function getLastTryAt(): ?\DateTimeImmutable
+    {
+        return $this->last_try_at;
+    }
+
+    public function setLastTryAt(?\DateTimeImmutable $last_try_at): static
+    {
+        $this->last_try_at = $last_try_at;
         return $this;
     }
 }

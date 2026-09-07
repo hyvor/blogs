@@ -3,6 +3,8 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Enum\PostVariantStatus;
+use App\Entity\Language;
+use App\Entity\Post;
 use App\Entity\PostVariant;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -35,9 +37,11 @@ final class PostVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
-            'post_id' => self::faker()->randomNumber(),
+            'post' => PostFactory::new(),
+            'language' => LanguageFactory::new(),
             'status' => self::faker()->randomElement(PostVariantStatus::cases()),
+            'slug' => self::faker()->slug(),
+            'title' => self::faker()->sentence(),
         ];
     }
 
@@ -50,5 +54,27 @@ final class PostVariantFactory extends PersistentObjectFactory
         return $this
             // ->afterInstantiate(function(PostVariant $postVariant): void {})
         ;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Post $post, array $attributes = [], ?Language $language = null): PostVariant
+    {
+        $attributes['post'] = $post;
+        if ($language) {
+            $attributes['language'] = $language;
+        }
+        $variant = self::createOne($attributes);
+        $post->getVariants()->add($variant);
+        return $variant;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOnePublishedFor(Post $post, array $attributes = [], ?Language $language = null): PostVariant
+    {
+        return self::createOneFor($post, array_merge($attributes, ['status' => PostVariantStatus::PUBLISHED]), $language);
     }
 }

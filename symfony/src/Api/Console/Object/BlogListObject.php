@@ -2,6 +2,7 @@
 
 namespace App\Api\Console\Object;
 
+use App\Entity\Enum\BlogType;
 use App\Entity\User;
 
 class BlogListObject
@@ -11,7 +12,7 @@ class BlogListObject
     public bool $is_blocked;
     public string $name;
     public string $subdomain;
-    public ?string $type;
+    public BlogType $type;
     public string $url;
     public ?string $logo_url;
     public int $posts_count;
@@ -23,17 +24,17 @@ class BlogListObject
         $this->id = $blog->getId();
         $this->role = $user->getRole()->value;
         $this->is_blocked = $blog->isBlocked();
-        $variants = $blog->getVariants();
-        $this->name = $variants[0]?->getName() ?? 'Unnamed';
+
+        $variants = $blog->getVariants()->toArray();
+        usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());
+
+        $this->name = isset($variants[0]) ? ($variants[0]->getName() ?? 'Unnamed') : 'Unnamed';
         $this->subdomain = $blog->getSubdomain();
-        $this->type = $blog->getType()?->value;
+        $this->type = $blog->getType();
         $this->url = $url;
 
-        /**
-         * @var array<string, string|null> $meta
-         */
-        $meta = $blog->getMeta() ?? [];
-        $this->logo_url = $meta['logo_url'] ?? null;
+        $meta = $blog->getMeta();
+        $this->logo_url = $meta->logo_url;
         $counts = $blog->getCounts() ?? [];
         $this->posts_count = (int)($counts['posts'] ?? 0);
         $this->users_count = (int)($counts['users'] ?? 0);

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initTempSubdomain, setTempSubdomain } from './lib/temp';
 	import { onMount } from 'svelte';
 	import consoleApi from './lib/consoleApi';
 	import type { BlogList } from './lib/types';
@@ -7,12 +6,21 @@
 		authOrganizationStore,
 		authUserStore,
 		blogListStore,
+		blogSelectorOpenStore,
 		resolvedLicenseStore
 	} from './lib/stores';
-	import { Loader, toast } from '@hyvor/design/components';
+	import {
+		ConsoleLoader,
+		IconMessage,
+		InternationalizationProvider,
+		toast
+	} from '@hyvor/design/components';
+	import { CONSOLE_LANGUAGES } from './lib/i18n';
 	import { getConfig, setConfig, type Config } from './lib/config';
-	import { isTempStore } from './lib/temp';
 	import { page } from '$app/state';
+	import { setPreloadedBlog, type BlogResponse } from './(nav)/[subdomain]/blogLoader';
+	import { setPreloadedPost } from './(nav)/[subdomain]/posts/[postId]/postLoader';
+	import type { Post } from './lib/types';
 	import {
 		CloudContext,
 		type CloudContextOrganization,
@@ -21,6 +29,7 @@
 		HyvorBar
 	} from '@hyvor/design/cloud';
 	import { get } from 'svelte/store';
+	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -31,29 +40,42 @@
 	interface InitResponse {
 		user: CloudContextUser;
 		organization: CloudContextOrganization;
-		resolved_license: ResolvedLicense;
+		resolved_license: ResolvedLicense | null;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
+		preloaded: {
+			blog: BlogResponse;
+			post: Post | null;
+		};
 	}
 
 	let isLoading = $state(true);
+	let error = $state('');
+
+	const isPostPage = $derived(page.url.pathname.match(/\/console\/[^\/]+\/posts\/[^\/]+/) != null);
+
+	function getBlogHint() {
+		const match = page.url.pathname.match(/^\/console\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
+
+	function getPostHint() {
+		const match = page.url.pathname.match(/^\/console\/[^\/]+\/posts\/([^\/]+)/);
+		return match ? match[1] : undefined;
+	}
 
 	function startConsole(switchingOrg = false) {
 		isLoading = true;
-
-		const isTemp = page.url.searchParams.has('temp');
-		isTempStore.set(isTemp);
-
-		const tempSubdomain = initTempSubdomain();
+		error = '';
 
 		consoleApi
 			.get<InitResponse>({
-				endpoint: isTemp ? 'init-temp' : 'init',
+				endpoint: 'init',
 				userApi: true,
-				v2: !isTemp,
 				data: {
-					temp_subdomain: isTemp ? tempSubdomain : undefined
+					blog_hint: getBlogHint(),
+					post_hint: getPostHint()
 				}
 			})
 			.then((res) => {
@@ -64,15 +86,12 @@
 				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
 
-				if (res.blogs[0]?.type === 'temp') {
-					const subdomain = res.blogs[0].subdomain;
-					setTempSubdomain(subdomain);
-					if (!tempSubdomain) {
-						const event = new CustomEvent('console:temp_blog:created', {
-							detail: { subdomain }
-						});
-						window.dispatchEvent(event);
-					}
+				if (res.preloaded.blog) {
+					setPreloadedBlog(res.preloaded.blog);
+				}
+
+				if (res.preloaded.post) {
+					setPreloadedPost(res.preloaded.post);
 				}
 
 				if (switchingOrg && !page.url.pathname.startsWith('/console/new')) {
@@ -82,69 +101,89 @@
 				isLoading = false;
 			})
 			.catch((err) => {
-				if (err.code === 401) {
+				if (typeof err === 'object' && err.code === 401) {
 					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
 					const url = new URL(err.data[toPage + '_url'], location.origin);
 					url.searchParams.set('redirect', location.href);
 					location.href = url.toString();
 				} else {
-					toast.error(err.message);
+					error = 'We were unable to initialize the console. Please try again.';
 				}
+				isLoading = false;
 			});
 	}
 
 	onMount(startConsole);
+
+	function handleGlobalKeydown(e: KeyboardEvent) {
+		const isMac = navigator.platform.toUpperCase().includes('MAC');
+		const modifierPressed = isMac ? e.metaKey : e.ctrlKey;
+
+		if (modifierPressed && e.key.toLowerCase() === 'b') {
+			e.preventDefault();
+			$blogSelectorOpenStore = true;
+		}
+	}
 </script>
 
 <svelte:head>
-	<title>Console · Hyvor Blogs</title>
+	<title>Console | Hyvor Blogs</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<main>
-	{#if isLoading}
-		<div class="full-loader">
-			<Loader size="large">
-				<div>
-					{#if $isTempStore}
-						Creating your temporary blog...
-					{/if}
-				</div>
-			</Loader>
-		</div>
-	{:else}
-		<CloudContext
-			context={{
-				component: 'blogs',
-				deployment: 'cloud',
-				instance: getConfig().hyvor.instance,
-				user: get(authUserStore),
-				organization: get(authOrganizationStore),
-				license: get(resolvedLicenseStore),
-				callbacks: {
-					onOrganizationSwitch: (switcher) => {
-						isLoading = true;
+<svelte:window onkeydown={!isLoading ? handleGlobalKeydown : undefined} />
 
-						switcher
-							.then(() => {
-								startConsole(true);
-							})
-							.catch(() => {
-								isLoading = false;
-							});
+<InternationalizationProvider languages={CONSOLE_LANGUAGES}>
+	<main>
+		{#if isLoading}
+			<ConsoleLoader logo="/logo.svg" size={80} />
+		{:else if error}
+			<IconMessage
+				error
+				message={error}
+				cta={{
+					text: 'Retry',
+					onClick: () => {
+						startConsole();
 					}
-				}
-			}}
-			style="display:flex; flex-direction: column; width: 100%; height: 100vh"
-		>
-			{#if !$isTempStore}
-				<HyvorBar />
-			{/if}
+				}}
+			/>
+		{:else}
+			<CloudContext
+				context={{
+					component: 'blogs',
+					deployment: getConfig().deployment,
+					instance: getConfig().hyvor.instance,
+					user: get(authUserStore),
+					organization: get(authOrganizationStore),
+					license: get(resolvedLicenseStore),
+					callbacks: {
+						onOrganizationSwitch: (switcher) => {
+							isLoading = true;
 
-			{@render children?.()}
-		</CloudContext>
-	{/if}
-</main>
+							switcher
+								.then(() => {
+									startConsole(true);
+								})
+								.catch(() => {
+									isLoading = false;
+								});
+						}
+					}
+				}}
+				style="display:flex; flex-direction: column; width: 100%; height: 100vh"
+			>
+				{#if !isPostPage}
+					<HyvorBar logo="/logo.svg" />
+				{/if}
+
+				{@render children?.()}
+
+				<BlogSelectorModal />
+			</CloudContext>
+		{/if}
+	</main>
+</InternationalizationProvider>
 
 <style>
 	main {
@@ -152,13 +191,6 @@
 		flex-direction: column;
 		width: 100%;
 		height: 100vh;
-	}
-	.full-loader {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 
 	@media (max-width: 992px) {

@@ -1,0 +1,108 @@
+<script lang="ts">
+	import IconBoxes from '@hyvor/icons/IconBoxes';
+	import { Button } from '@hyvor/design/components';
+	interface Props {
+		title: string;
+		description?: string | null;
+		integrationIcon?: string | null;
+	}
+
+	let { title, description = '', integrationIcon = '' }: Props = $props();
+</script>
+
+<div class="hds-container guide-head">
+	<div class="hds-container buttons">
+		<div class="button">
+			<Button as="a" href="/integrations" size="large" variant="outline">
+				{#snippet start()}
+					<IconBoxes />
+				{/snippet} View All Integrations
+			</Button>
+		</div>
+	</div>
+
+	<div class="left">
+		{#if integrationIcon}
+			<div class="int">
+				<img src={integrationIcon} alt="Integration icon" class="int-icon" />
+				<span>+</span>
+				<img src="/images/integrations/icons/hyvorblogs.png" alt="Hyvor Blogs" class="int-icon" />
+			</div>
+		{/if}
+
+		{#if title}
+			<h1>
+				{title}
+			</h1>
+		{/if}
+
+		{#if description}
+			<h2>
+				{description}
+			</h2>
+		{/if}
+	</div>
+</div>
+
+<style lang="scss">
+	.buttons {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 30px;
+		.button {
+			margin-bottom: 50px;
+		}
+	}
+	.guide-head {
+		display: flex;
+		padding-top: 50px;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		.button {
+			display: flex;
+			justify-content: flex-start;
+		}
+		.int {
+			display: flex;
+			align-items: center;
+			gap: 25px;
+			font-size: 35px;
+			margin-bottom: 30px;
+			justify-content: center;
+			span {
+				opacity: 0.2;
+			}
+		}
+		.int-icon {
+			max-width: 100px;
+			max-height: 100px;
+
+			object-fit: cover;
+		}
+		h1 {
+			margin: 0;
+			font-size: 40px;
+			text-align: center;
+		}
+		h2 {
+			font-weight: normal;
+			font-size: 20px;
+			color: var(--text-light);
+			margin: 0 auto;
+			padding-top: 20px;
+			text-align: center;
+			width: 600px;
+			max-width: 100%;
+		}
+	}
+	@media (max-width: 992px) {
+		.guide-head {
+			flex-direction: column;
+			text-align: center;
+		}
+		.int {
+			justify-content: center;
+		}
+	}
+</style>

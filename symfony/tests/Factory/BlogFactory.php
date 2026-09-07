@@ -4,6 +4,7 @@ namespace App\Tests\Factory;
 
 use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
+use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -17,7 +18,9 @@ final class BlogFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     #[\Override]
     public static function class(): string
@@ -34,12 +37,11 @@ final class BlogFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'hosting_at' => self::faker()->randomElement(BlogHostingAt::cases()),
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hyvor_user_id' => self::faker()->randomNumber(),
-            'is_blocked' => self::faker()->boolean(),
+            'is_blocked' => false,
             'organization_id' => self::faker()->randomNumber(),
             'subdomain' => bin2hex(random_bytes(20)),
-            'trial_ends_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
 
@@ -56,9 +58,52 @@ final class BlogFactory extends PersistentObjectFactory
 
         $user = UserFactory::createOne(array_merge($userAttrs, [
             'blog' => $blog,
+            'role' => UserRole::ADMIN
         ]));
 
         return [$blog, $user];
+    }
+
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $languageAttrs
+     */
+    public static function createOneWithPrimaryLanguage(
+        array $blogAttrs = [],
+        array $languageAttrs = [],
+        bool $variants = true,
+    ): Blog {
+        $blog = self::createOne($blogAttrs);
+
+        LanguageFactory::createOnePrimaryFor($blog, $languageAttrs);
+
+        if ($variants) {
+            BlogVariantFactory::createManyForBlogWithAllLanguages($blog);
+        }
+
+        return $blog;
+    }
+
+    /**
+     * @param array<string, mixed> $blogAttrs
+     * @param array<string, mixed> $languageAttrs
+     * @param array<array<string, mixed>>|null $routes
+     */
+    public static function createOneWithLanguageAndRoutes(
+        array $blogAttrs = [],
+        array $languageAttrs = [],
+        ?array $routes = null,
+        bool $variants = true,
+    ): Blog {
+        $blog = self::createOneWithPrimaryLanguage($blogAttrs, $languageAttrs, variants: $variants);
+
+        if ($routes === null) {
+            RouteFactory::createDefaultsFor($blog);
+        } else {
+            RouteFactory::createManyFromArray($blog, $routes);
+        }
+
+        return $blog;
     }
 
     public function withOrganization(int $organizationId): static
@@ -73,6 +118,6 @@ final class BlogFactory extends PersistentObjectFactory
     protected function initialize(): static
     {
         return $this// ->afterInstantiate(function(Blog $blog): void {})
-            ;
+        ;
     }
 }

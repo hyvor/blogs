@@ -1,13 +1,11 @@
 import { get } from 'svelte/store';
 import { blogStore } from './stores/blogStore';
-import { tempSubdomainStore } from './temp';
 import { authOrganizationStore } from './stores';
 
 export interface ConsoleApiOptions {
 	endpoint: string;
 	data?: Record<string, any> | FormData;
 	userApi?: boolean;
-	v2?: boolean;
 	subdomain?: string;
 	signal?: AbortSignal;
 }
@@ -16,14 +14,17 @@ interface CallOptions extends ConsoleApiOptions {
 	method: 'get' | 'post' | 'patch' | 'delete' | 'put';
 }
 
-function getConsoleApi() {
-	const baseUrl = '/api/console/v0';
-	const baseUrlV2 = '/api/v2/console';
+export const CONSOLE_API_BASE_URL = '/api/console/v0';
 
+export function getConsoleBlogBaseUrl(subdomain?: string) {
+	const blogSubdomain = subdomain || get(blogStore).subdomain;
+	return CONSOLE_API_BASE_URL + '/blog/' + blogSubdomain;
+}
+
+function getConsoleApi() {
 	async function call<T>({
 		endpoint,
 		userApi = false,
-		v2 = false,
 		method,
 		data = {},
 		subdomain,
@@ -32,13 +33,10 @@ function getConsoleApi() {
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
 		let url;
-		if (v2) {
-			url = baseUrlV2 + endpoint;
-		} else if (userApi) {
-			url = baseUrl + endpoint;
+		if (userApi) {
+			url = CONSOLE_API_BASE_URL + endpoint;
 		} else {
-			const blogSubdomain = subdomain || get(blogStore).subdomain;
-			url = baseUrl + '/blog/' + blogSubdomain + endpoint;
+			url = getConsoleBlogBaseUrl(subdomain) + endpoint;
 		}
 
 		if (method === 'get') {
@@ -50,10 +48,13 @@ function getConsoleApi() {
                 .join('&'); */
 		}
 
-		const headers = {
-			'X-TEMP-SUBDOMAIN': get(tempSubdomainStore),
-			'X-Organization-Id': get(authOrganizationStore)?.id.toString()
-		} as Record<string, string>;
+		const headers = {} as Record<string, string>;
+
+		const currentOrg = get(authOrganizationStore);
+
+		if (currentOrg) {
+			headers['X-Organization-Id'] = String(currentOrg.id);
+		}
 
 		if (!(data instanceof FormData)) {
 			headers['Content-Type'] = 'application/json';
@@ -74,15 +75,19 @@ function getConsoleApi() {
 		const response = await fetch(url, options);
 
 		if (!response.ok) {
-			const e = await response.json();
-			const error = e && e.error ? e.error : 'Something went wrong';
-			/* toast({type: 'error', message: error});
-            throw error; */
+			let e;
+			try {
+				e = await response.json();
+			} catch (err) {
+				e = null;
+			}
+			const error = e && e.message ? e.message : 'Something went wrong';
 
 			const toThrow = new Error(error) as any;
 			toThrow.message = error;
 			toThrow.code = response.status;
 			toThrow.data = e && e.data ? e.data : null;
+			toThrow.body = e;
 
 			throw toThrow;
 		}

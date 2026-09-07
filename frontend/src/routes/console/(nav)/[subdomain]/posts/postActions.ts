@@ -1,13 +1,14 @@
 import { get } from 'svelte/store';
-import type { Post, PostVariant, User, Tag } from '../../../lib/types';
+import type { Post, PostVariant, PostListItem, User, Tag, Document } from '../../../lib/types';
 import consoleApi from '../../../lib/consoleApi';
 import {
-	postLanguageStore,
 	postStore,
-	removePostVariantStore,
+	postVariantLanguageStore,
+	postVariantStore,
 	updatePostStore,
 	updatePostVariantStore
 } from './postStore';
+import type { CollabStep } from './[postId]/Body/Editor/collab';
 
 // API
 
@@ -24,14 +25,14 @@ interface GetPostsData {
 }
 
 export function getPosts(data: GetPostsData) {
-	return consoleApi.get<Post[]>({
+	return consoleApi.get<PostListItem[]>({
 		endpoint: '/posts',
 		data
 	});
 }
 
 export function getPages() {
-	return consoleApi.get<Post[]>({
+	return consoleApi.get<PostListItem[]>({
 		endpoint: '/pages'
 	});
 }
@@ -66,6 +67,12 @@ export function updatePost(data: Partial<Post>, updateStore = true) {
 export function deletePost() {
 	return consoleApi.delete({
 		endpoint: `/post/${get(postStore).id}`
+	});
+}
+
+export function deletePostById(postId: number) {
+	return consoleApi.delete({
+		endpoint: `/post/${postId}`
 	});
 }
 
@@ -114,7 +121,7 @@ export function updatePostVariant(
 	additionalKeysToUpdate: (keyof PostVariant)[] = []
 ) {
 	const postId = get(postStore).id;
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 	data.language_id = languageId;
 
 	const promise = consoleApi.patch<PostVariant>({
@@ -137,6 +144,60 @@ export function updatePostVariant(
 	return promise;
 }
 
+export function publishPostVariant(publishAt: number | null = null, updateStore = true) {
+	const postId = get(postStore).id;
+	const variantId = get(postVariantStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/publish`,
+		data: { post_variant_id: variantId, publish_at: publishAt }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
+export function updatePublishedPostContent(updateStore = true) {
+	const postId = get(postStore).id;
+	const variantId = get(postVariantStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/update-content`,
+		data: { post_variant_id: variantId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
+export function unpublishPostVariant(updateStore = true) {
+	const postId = get(postStore).id;
+	const variantId = get(postVariantStore).id;
+
+	const promise = consoleApi.post<PostVariant>({
+		endpoint: `/post/${postId}/variant/unpublish`,
+		data: { post_variant_id: variantId }
+	});
+
+	promise.then((res) => {
+		if (updateStore) {
+			updatePostVariantStore(res, true);
+		}
+	});
+
+	return promise;
+}
+
 export function createPostVariant(postId: number, languageId: number) {
 	return consoleApi.post<PostVariant>({
 		endpoint: `/post/${postId}/variant`,
@@ -145,7 +206,7 @@ export function createPostVariant(postId: number, languageId: number) {
 }
 
 export function deletePostVariant() {
-	const languageId = get(postLanguageStore).id;
+	const languageId = get(postVariantLanguageStore).id;
 
 	return consoleApi.delete({
 		endpoint: `/post/${get(postStore).id}/variant`,
@@ -156,5 +217,50 @@ export function deletePostVariant() {
 export function clonePost(postId: number) {
 	return consoleApi.post<Post>({
 		endpoint: `/post/${postId}/clone`
+	});
+}
+
+export interface CollabStepsResponse {
+	accepted: boolean;
+	version: number;
+	steps: CollabStep[];
+}
+
+export function submitCollabSteps(data: {
+	post_variant_id: number;
+	version: number;
+	steps: CollabStep[];
+	client_id: string;
+}) {
+	return consoleApi.post<CollabStepsResponse>({
+		endpoint: `/documents/steps`,
+		data
+	});
+}
+
+// Standalone catch-up (PostVariantCollabController::sync) - call whenever the client suspects
+// it missed a Mercure broadcast (e.g. its EventSource reconnecting after a drop), not only after
+// a rejected submitCollabSteps. Returns the same shape minus `accepted`, since it's not a submission.
+export function syncCollabSteps(data: { post_variant_id: number; version: number }) {
+	return consoleApi.get<Omit<CollabStepsResponse, 'accepted'>>({
+		endpoint: `/documents/sync`,
+		data
+	});
+}
+
+// cursor is null on blur - see @hyvor/richtext's CursorsPluginConfig.onLocalCursorChange
+export function submitCollabCursor(data: {
+	post_variant_id: number;
+	client_id: string;
+	cursor: { from: number; to: number } | null;
+}) {
+	return consoleApi.post<void>({
+		endpoint: `/documents/cursor`,
+		data: {
+			post_variant_id: data.post_variant_id,
+			client_id: data.client_id,
+			from: data.cursor?.from ?? null,
+			to: data.cursor?.to ?? null
+		}
 	});
 }

@@ -1,0 +1,13 @@
+<?php declare(strict_types=1);
+
+namespace App\Service\Post\Content\Nodes\Bookmark;
+
+use App\Service\Post\Content\Nodes\SuggestionsAttrTrait;
+use Hyvor\Phrosemirror\Types\AttrsType;
+
+class BookmarkAttrs extends AttrsType
+{
+    use SuggestionsAttrTrait;
+
+    public ?string $url;
+}

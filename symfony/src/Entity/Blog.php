@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
+use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,10 +18,6 @@ class Blog
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private int $id;
-
-    /** @var Collection<int, BlogVariant> */
-    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
-    private Collection $variants;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $created_at = null;
@@ -40,9 +37,6 @@ class Blog
     #[ORM\Column()]
     private ?int $hyvor_user_id = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $theme_version_id = null;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'theme_version_id', referencedColumnName: 'id')]
     private ?ThemeVersion $theme_version = null;
@@ -50,27 +44,24 @@ class Blog
     #[ORM\Column(length: 255, unique: true)]
     private string $subdomain;
 
-    #[ORM\Column]
-    private \DateTimeImmutable $trial_ends_at;
+    #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
+    private BlogType $type = BlogType::DEFAULT;
 
-    #[ORM\Column(length: 255, nullable: true, enumType: BlogType::class, options: ['default' => 'default'])]
-    private ?BlogType $type = BlogType::DEFAULT;
-
-    #[ORM\Column(length: 255, enumType: BlogHostingAt::class, options: ['default' => 'subdomain'])]
+    #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
     private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
-
-    #[ORM\Column(length: 255, unique: true, nullable: true)]
-    private ?string $hosting_domain = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
 
-    #[ORM\Column(nullable: true, options: ['default' => true])]
-    private ?bool $hosting_redirect_subdomain = true;
+    #[ORM\Column()]
+    private bool $hosting_redirect_subdomain = true;
 
-    /** @var array<string, mixed>|null $meta */
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $meta = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: 'custom_domain_id', referencedColumnName: 'id', nullable: true)]
+    private ?CustomDomain $custom_domain = null;
+
+    #[ORM\Column(type: 'blog_meta', options: ['jsonb' => true, 'default' => '{}'])]
+    private BlogMeta $meta;
 
     /** @var array<string, number>|null $counts */
     #[ORM\Column(type: 'json', nullable: true)]
@@ -79,9 +70,45 @@ class Blog
     #[ORM\Column(nullable: true)]
     private ?int $organization_id = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deleted_at = null;
+
+    /** @var Collection<int, BlogVariant> */
+    #[ORM\OneToMany(targetEntity: BlogVariant::class, mappedBy: 'blog')]
+    private Collection $variants;
+
+    /** @var Collection<int, Language> */
+    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['is_primary' => 'DESC', 'id' => 'ASC'])]
+    private Collection $languages;
+
+    /** @var Collection<int, Navigation> */
+    #[ORM\OneToMany(targetEntity: Navigation::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['sort' => 'ASC'])]
+    private Collection $navigations;
+
+    /** @var Collection<int, Route> */
+    #[ORM\OneToMany(targetEntity: Route::class, mappedBy: 'blog')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $routes;
+
+    /** @var Collection<int, Tag> */
+    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'blog')]
+    private Collection $tags;
+
+    /** @var Collection<int, User> */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'blog')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->variants = new ArrayCollection();
+        $this->languages = new ArrayCollection();
+        $this->navigations = new ArrayCollection();
+        $this->routes = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->meta = new BlogMeta();
     }
 
     public function getId(): int
@@ -161,17 +188,6 @@ class Blog
         return $this;
     }
 
-    public function getThemeVersionId(): ?int
-    {
-        return $this->theme_version_id;
-    }
-
-    public function setThemeVersionId(?int $theme_version_id): static
-    {
-        $this->theme_version_id = $theme_version_id;
-        return $this;
-    }
-
     public function getThemeVersion(): ?ThemeVersion
     {
         return $this->theme_version;
@@ -194,23 +210,12 @@ class Blog
         return $this;
     }
 
-    public function getTrialEndsAt(): \DateTimeImmutable
-    {
-        return $this->trial_ends_at;
-    }
-
-    public function setTrialEndsAt(\DateTimeImmutable $trial_ends_at): static
-    {
-        $this->trial_ends_at = $trial_ends_at;
-        return $this;
-    }
-
-    public function getType(): ?BlogType
+    public function getType(): BlogType
     {
         return $this->type;
     }
 
-    public function setType(?BlogType $type): static
+    public function setType(BlogType $type): static
     {
         $this->type = $type;
         return $this;
@@ -227,17 +232,6 @@ class Blog
         return $this;
     }
 
-    public function getHostingDomain(): ?string
-    {
-        return $this->hosting_domain;
-    }
-
-    public function setHostingDomain(?string $hosting_domain): static
-    {
-        $this->hosting_domain = $hosting_domain;
-        return $this;
-    }
-
     public function getHostingUrl(): ?string
     {
         return $this->hosting_url;
@@ -249,29 +243,34 @@ class Blog
         return $this;
     }
 
-    public function getHostingRedirectSubdomain(): ?bool
+    public function getHostingRedirectSubdomain(): bool
     {
         return $this->hosting_redirect_subdomain;
     }
 
-    public function setHostingRedirectSubdomain(?bool $hosting_redirect_subdomain): static
+    public function setHostingRedirectSubdomain(bool $hosting_redirect_subdomain): static
     {
         $this->hosting_redirect_subdomain = $hosting_redirect_subdomain;
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getMeta(): ?array
+    public function getCustomDomain(): ?CustomDomain
+    {
+        return $this->custom_domain;
+    }
+
+    public function setCustomDomain(?CustomDomain $custom_domain): static
+    {
+        $this->custom_domain = $custom_domain;
+        return $this;
+    }
+
+    public function getMeta(): BlogMeta
     {
         return $this->meta;
     }
 
-    /**
-     * @param array<string, mixed>|null $meta
-     */
-    public function setMeta(?array $meta): static
+    public function setMeta(BlogMeta $meta): static
     {
         $this->meta = $meta;
         return $this;
@@ -305,11 +304,67 @@ class Blog
         return $this;
     }
 
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deleted_at): static
+    {
+        $this->deleted_at = $deleted_at;
+        return $this;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted_at !== null;
+    }
+
     /**
      * @return Collection<int, BlogVariant>
      */
     public function getVariants(): Collection
     {
         return $this->variants;
+    }
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @return Collection<int, Navigation>
+     */
+    public function getNavigations(): Collection
+    {
+        return $this->navigations;
+    }
+
+    /**
+     * @return Collection<int, Route>
+     */
+    public function getRoutes(): Collection
+    {
+        return $this->routes;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
     }
 }

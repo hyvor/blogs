@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Api\Console\Authorization\Scope;
+use App\Entity\Enum\ApiKeyType;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -19,9 +21,6 @@ class ApiKey
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -29,11 +28,17 @@ class ApiKey
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: ApiKeyType::class)]
+    private ApiKeyType $type;
 
     #[ORM\Column(length: 32)]
     private string $api_key;
+
+    /**
+     * @var string[]
+     */
+    #[ORM\Column(type: 'json')]
+    private array $scopes = [];
 
     public function getId(): int
     {
@@ -68,17 +73,6 @@ class ApiKey
         return $this;
     }
 
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
-        return $this;
-    }
-
     public function getBlog(): Blog
     {
         return $this->blog;
@@ -101,12 +95,12 @@ class ApiKey
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ApiKeyType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ApiKeyType $type): static
     {
         $this->type = $type;
         return $this;
@@ -120,6 +114,27 @@ class ApiKey
     public function setApiKey(string $api_key): static
     {
         $this->api_key = $api_key;
+        return $this;
+    }
+
+    /**
+     * @return Scope[]
+     */
+    public function getScopes(): array
+    {
+        return array_values(
+            array_filter(
+                array_map(fn(string $scope) => Scope::tryFrom($scope), $this->scopes)
+            )
+        );
+    }
+
+    /**
+     * @param string[] $scopes
+     */
+    public function setScopes(array $scopes): static
+    {
+        $this->scopes = $scopes;
         return $this;
     }
 }

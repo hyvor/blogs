@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Links from './Links/Links.svelte';
 	import { Loader, TabNav, TabNavItem } from '@hyvor/design/components';
 	import IconCardChecklist from '@hyvor/icons/IconCardChecklist';
@@ -8,18 +9,26 @@
 	import { getStats } from './linkAnalysisActions';
 	import Overview from './Overview/Overview.svelte';
 	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let tab: 'overview' | 'links' | 'settings' = $state('overview');
 
 	const statsPromise = getStats();
+
+	onMount(() => {
+		redirectIfCant('link_analysis.manage');
+	});
 </script>
 
 <div class="link-analysis hds-box">
 	<LicenseRequired licenseProperty="linkAnalysis">
 		{#snippet upgradeText()}
 			<div>
-				Link Analysis is available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze
-				all links in your blog and receive email reports.
+				<T key="console.tools.linkAnalysis.upgradeText" params={{ b: { element: 'b' } }} />
 			</div>
 		{/snippet}
 
@@ -28,21 +37,21 @@
 				{#snippet start()}
 					<IconCardChecklist />
 				{/snippet}
-				Overview
+				{i18n.t('console.tools.linkAnalysis.overview')}
 			</TabNavItem>
 
 			<TabNavItem name="links" active={tab === 'links'} onclick={() => (tab = 'links')}>
 				{#snippet start()}
 					<IconLink45deg />
 				{/snippet}
-				Links
+				{i18n.t('console.posts.links')}
 			</TabNavItem>
 
 			<TabNavItem name="settings" active={tab === 'settings'} onclick={() => (tab = 'settings')}>
 				{#snippet start()}
 					<IconGear />
 				{/snippet}
-				Settings
+				{i18n.t('console.nav.settings')}
 			</TabNavItem>
 		</TabNav>
 

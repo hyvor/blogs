@@ -2,6 +2,8 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\WebhookDeliveryStatus;
+use App\Entity\Enum\WebhookEvent;
 use App\Entity\WebhookDelivery;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -10,11 +12,6 @@ use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
  */
 final class WebhookDeliveryFactory extends PersistentObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
     }
@@ -25,31 +22,22 @@ final class WebhookDeliveryFactory extends PersistentObjectFactory
         return WebhookDelivery::class;
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     #[\Override]
     protected function defaults(): array|callable
     {
         return [
+            'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'data' => [],
-            'event' => self::faker()->text(255),
-            'status' => self::faker()->text(255),
-            'url' => self::faker()->text(255),
-            'webhook_id' => self::faker()->randomNumber(),
+            'event' => self::faker()->randomElement(WebhookEvent::cases()),
+            'status' => self::faker()->randomElement(WebhookDeliveryStatus::cases()),
+            'url' => self::faker()->url(),
+            'webhook' => WebhookFactory::new(),
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
     #[\Override]
     protected function initialize(): static
     {
-        return $this
-            // ->afterInstantiate(function(WebhookDelivery $webhookDelivery): void {})
-        ;
+        return $this;
     }
 }

@@ -4,22 +4,12 @@ import type { User, UserRole, UserVariant } from '../../../../lib/types';
 interface GetUsersData {
 	limit?: number;
 	offset?: number;
+	search?: string | null;
 }
 
 export function getUsers(data: GetUsersData = {}) {
 	return consoleApi.get<User[]>({
 		endpoint: '/users',
-		data
-	});
-}
-
-interface SearchUsersData {
-	search: string;
-}
-
-export function searchUsers(data: SearchUsersData) {
-	return consoleApi.get<User[]>({
-		endpoint: '/users/search',
 		data
 	});
 }
@@ -84,11 +74,5 @@ export function createUserVariant(userId: number, languageId: number) {
 		data: {
 			language_id: languageId
 		}
-	});
-}
-
-export function resendInvitation(userId: number) {
-	return consoleApi.post<User>({
-		endpoint: `/user/${userId}/resend-invite`
 	});
 }

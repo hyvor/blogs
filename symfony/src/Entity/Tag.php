@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -15,13 +17,10 @@ class Tag
     private int $id;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updated_at = null;
-
-    #[ORM\Column]
-    private int $blog_id;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
@@ -31,7 +30,7 @@ class Tag
     private string $slug;
 
     #[ORM\Column(nullable: true, options: ['default' => 0])]
-    private ?int $posts_count = 0;
+    private int $posts_count = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $code_head = null;
@@ -40,7 +39,16 @@ class Tag
     private ?string $code_foot = null;
 
     #[ORM\Column(nullable: true, options: ['default' => false])]
-    private ?bool $is_private = false;
+    private bool $is_private = false;
+
+    /** @var Collection<int, TagVariant> */
+    #[ORM\OneToMany(targetEntity: TagVariant::class, mappedBy: 'tag')]
+    private Collection $variants;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -53,36 +61,25 @@ class Tag
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
@@ -108,12 +105,12 @@ class Tag
         return $this;
     }
 
-    public function getPostsCount(): ?int
+    public function getPostsCount(): int
     {
         return $this->posts_count;
     }
 
-    public function setPostsCount(?int $posts_count): static
+    public function setPostsCount(int $posts_count): static
     {
         $this->posts_count = $posts_count;
         return $this;
@@ -141,14 +138,22 @@ class Tag
         return $this;
     }
 
-    public function isPrivate(): ?bool
+    public function isPrivate(): bool
     {
         return $this->is_private;
     }
 
-    public function setIsPrivate(?bool $is_private): static
+    public function setIsPrivate(bool $is_private): static
     {
         $this->is_private = $is_private;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, TagVariant>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
     }
 }

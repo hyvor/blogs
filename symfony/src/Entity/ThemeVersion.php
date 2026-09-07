@@ -15,13 +15,10 @@ class ThemeVersion
     private int $id;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updated_at = null;
-
-    #[ORM\Column]
-    private int $theme_id;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'theme_id', referencedColumnName: 'id')]
@@ -33,8 +30,14 @@ class ThemeVersion
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $preview_subdomain = null;
 
+    /**
+     * Doctrine hydrates this as a resource when read fresh from the database,
+     * but it is set as a hex-encoded string by setContent().
+     * @var resource|string|null
+     */
     #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $zip = null;
+    /** @phpstan-ignore property.unusedType (Doctrine hydrates this as a resource; PHPStan only sees the string writes here) */
+    private $zip = null;
 
     public function getId(): int
     {
@@ -47,36 +50,25 @@ class ThemeVersion
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getThemeId(): int
-    {
-        return $this->theme_id;
-    }
-
-    public function setThemeId(int $theme_id): static
-    {
-        $this->theme_id = $theme_id;
         return $this;
     }
 
@@ -115,12 +107,29 @@ class ThemeVersion
 
     public function getZip(): ?string
     {
-        return $this->zip;
+        $zip = $this->zip;
+
+        if ($zip === null) {
+            return null;
+        }
+
+        if (is_resource($zip)) {
+            $zip = stream_get_contents($zip);
+        }
+
+        if ($zip === false) {
+            return null;
+        }
+
+        /** @phpstan-ignore argument.type (PHPStan cannot narrow `resource` out of the union via is_resource()) */
+        $decoded = hex2bin($zip);
+
+        return $decoded === false ? null : $decoded;
     }
 
     public function setZip(?string $zip): static
     {
-        $this->zip = $zip;
+        $this->zip = $zip === null ? null : bin2hex($zip);
         return $this;
     }
 }

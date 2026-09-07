@@ -1,0 +1,146 @@
+{
+	"../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json": {
+		"fr": "ba6bcaac45e312d135694d749a4885cb8a957d51cf3218219020d8bfa25e538f"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Introduction.svelte": {
+		"fr": "dbede5e43f1773ab4ccb4bdcb589e84bacf2354a6a0e6e5221b7c20d7a789cf6"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesOverview.md": {
+		"fr": "c0b0127740aa6058656ffb7bcbc9cb91f5e773550f70444c05131975e9ef5ebd"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesTemplates.md": {
+		"fr": "e1e02f24e8bab9f6cabf0f00509f7e99c89408b14154206d09f4017868b1d214"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesStyles.md": {
+		"fr": "d3a09cccf2d12ddd67ebebc16b52dcf4089da6a1c28037dea942cfa97dda9b47"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemeScripts.md": {
+		"fr": "aa9d730172f67bdf9c104ec81235eac544ab6db686ca96ded3a43566db49deb5"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesInternationalization.md": {
+		"fr": "2aa4537106f54ea316fd3eaebb1598b468959f79dc56ca51f07a9d4cf3fbe675"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesConfiguration.md": {
+		"fr": "e06751b7d2ae0d3a6b35fd4b082fac8ef3a0a1aea7fa28d68de562576ee54427"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesPublishing.md": {
+		"fr": "9ac1f79dc841be92b24db5634a1b895d21b8bf5c8776a032993265a8bac8ba35"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Env.md": {
+		"fr": "9a83073505b8351fff5a87b11498901622c733380eec4e109da3f74360fcd99a"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/DeliveryDomain.md": {
+		"fr": "7e4b25873b0b0c7a87b640c35ca4110fe77dac318c44c6e869aeb7590b4c566a"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/DataExport.md": {
+		"fr": "83793808baee8861d8bc4715829ebf6a1d7619e6cfaf1f5ff362c635937bbeb3"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Import.md": {
+		"fr": "59ab18252eb3dcf287d7326150df742aec8e8c666873f8b1edd88837a641b446"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ImportSitemap.md": {
+		"fr": "942631f7ef0cbf5cd8fffad9fbd8f7c5954ad0ba1f6f89366fe5f2ed3b5124a5"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ImportWordPress.md": {
+		"fr": "5611e7c9cfb9ebe430926ce3a46590add5f31bc147c2641fcd0e303543f5246f"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Webhooks.md": {
+		"fr": "acd63bd9322ec9e1268b5e57155f04bf015aaf48acfc85aa9c57afaefd73bc94"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ApiConsole.md": {
+		"fr": "9a35817273452dfd667867b3f7c73b248e688701f164b56f9590a8c2551fa988"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ApiDelivery.md": {
+		"fr": "35f2855a20aefa9c24b62dad3ea492b501e7e862e98190094b7fe8b3e3d70959"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ApiData.md": {
+		"fr": "8f1c93f4ecfb9ed494382228e226ed677d1d89b2ac7dea1b5a84b685f9498177"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/HyvorPost.md": {
+		"fr": "9b6f4ee1194e23f604f21aa542112f53995b8fbea83bc7898e172bade4cdbe46"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/HyvorTalk.md": {
+		"fr": "942bbd8119c23feaa6dc53b0932d3ef22f5d77cb0cc3ef882ecd1d81facbc9b3"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SyntaxHighlighting.md": {
+		"fr": "cf289a054798e8fc6bbbab1c1bf3be80befa10d0847bf705307aa27785160edf"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Routes.md": {
+		"fr": "baf80699d20567b1b15ca8e13081421c2ebbd212fdc4cdc0aef0d5945a55eafa"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Services.md": {
+		"fr": "b2d9de4722809f3fec5e04483397e0405fc4f0e99823010baa519d9dc649b470"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/CustomCode.md": {
+		"fr": "b23d0d8e37eacd97a34dbbfd9e4fd39b4203f5c48ebe2ba510f6856e3ff9c1f4"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Redirect.md": {
+		"fr": "e79d8499038f487598560e5e933291561e0cdb00204df071d26414cdeba89cef"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/NavigationLinks.md": {
+		"fr": "c6720fe4439550d69b3f3de7cff4f2aa508cd8dff8a6bd0af49e6c9185daa440"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Seo.md": {
+		"fr": "88c57ea4fb9a0bed854da29db5c46c3cee8802f70159089c095407b99cb11c3d"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Fonts.md": {
+		"fr": "ea2f945a53f68e36bbdb217ef82e344c27f864aaf7acda100cef72030dc1336c"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Media.md": {
+		"fr": "8da04126d23d0cc55a0d886197513f7adc4cf00d2b804aaf72e29ca8b4b2908a"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Tags.md": {
+		"fr": "20c202059a934575d99f74cd8bb2f8c894249eeef75b0d0fcf156f538f66d87a"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Languages.md": {
+		"fr": "a12888291efc56973527c7dc5c1a3aec7366a95ad8d1b69bf4b728ebd2530b32"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Headless.md": {
+		"fr": "49fb8226c04843617acdcbb9a03a03a558f075536dc418b14ed0a4517588798b"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SubDirectoryHosting.md": {
+		"fr": "d2ef37a34791f9d54c9a85aa8e8b0f2b41e4cca6bbeddd2dc52d80134a9c0c00"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Theme.md": {
+		"fr": "3565abe0a5ac8c29bdd59b031e9c67e8df3e7eb101762f3d55f40d734cce48cd"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Writing.md": {
+		"fr": "8beb98dfc19473bb2d3cc99da7be0002458717f3d4e63d1242156b8804b88aba"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Introduction.md": {
+		"fr": "802a976941cbee9c13a39c1cf5eb953f832d35764076d1e0ddd6f19a7a9159d8"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/AIAgent.md": {
+		"fr": "f411e8925f7a47dedef96371141bdcb9e8d6ee80c9978967851a10c22dede728"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/CustomDomain.md": {
+		"fr": "fb5c29cec011fb5864ec9a91c2f5480c8f297a83a8d52a35e453f1cb6d8d7fcc"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Editor.md": {
+		"fr": "65ba62955774ada322905ee2ad513bc6ac48e0849afe8481438d7b7d77874b23"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Export.md": {
+		"fr": "753ea29d5c8dcab2d61074ab575e3608e146fe39e0a9a79debf8e17c76237ab7"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Introduction.md": {
+		"fr": "2a0887335691110c020b4b81a5d99cb6dfb8cf038ea1a07c30af7c04887f61f1"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/LinkAnalyzer.md": {
+		"fr": "a1c5a565866e3aaced6e3f09626557033d775cf1d530c872839f64329a8e1dbd"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SeoAnalyzer.md": {
+		"fr": "4b3f50bf3a66da2e33da2ca095bca31962eeb697878d1d90931214828c37b682"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SuggestionMode.md": {
+		"fr": "cedfad73599a0041005859f43cde08dfc6bbae8a6ed9678d2e4b64490c2c0feb"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Themes.md": {
+		"fr": "6cc3d3db9c78750e8ba5f1edb18ff04f708fdbc3fd2b0086595a11d2c3540184"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Users.md": {
+		"fr": "f4c39033ec46413baa5176bc43d5c900db26d6af86bd3b5ce5e705d38c12c869"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Deploy.md": {
+		"fr": "054796d28ce44cef529859f2376a43db61cccfe25c11b89c1e63da0ebbe74085"
+	}
+}

@@ -2,7 +2,11 @@
 	import { getDiffWordsCount } from '$lib/components/Diff/diff';
 	import { getTextFromContent } from '../../../../../../../../lib/prosemirror/helpers';
 	import { getWordsCount } from '../../../../../../../../lib/seo/words';
-	import { postLanguageStore } from '../../../../../postStore';
+	import { postVariantLanguageStore } from '../../../../../postStore';
+	import { getI18n } from '../../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	interface Props {
 		contentOld: string | null;
@@ -16,13 +20,21 @@
 		getDiffWordsCount(getTextFromContent(contentOld), getTextFromContent(contentNew))
 	);
 
-	let totalWords = $derived(getWordsCount(getTextFromContent(contentNew), $postLanguageStore.code));
+	let totalWords = $derived(
+		getWordsCount(getTextFromContent(contentNew), $postVariantLanguageStore.code)
+	);
 </script>
 
 <span>
 	{#if diff}
-		About <strong>{changedWords} word{changedWords === 1 ? '' : 's'}</strong> changed
+		<T
+			key="console.postEditor.update.changedWords"
+			params={{ count: changedWords, strong: { element: 'strong' } }}
+		/>
 	{:else}
-		Total <strong>{totalWords} word{totalWords === 1 ? '' : 's'}</strong>
+		<T
+			key="console.postEditor.update.totalWords"
+			params={{ count: totalWords, strong: { element: 'strong' } }}
+		/>
 	{/if}
 </span>

@@ -7,12 +7,14 @@
 		name: string;
 		data: Usage;
 		bytes?: boolean;
+		percent?: boolean;
 	}
 
-	let { name, data, bytes = false }: Props = $props();
+	let { name, data, bytes = false, percent = false }: Props = $props();
 
+	let isUnlimited = $derived(data.limit === -1);
 	let width = $state('0%');
-	let percentage = $derived(Math.min(data.limit === 0 ? 100 : (data.used / data.limit) * 100, 100));
+	let percentage = $derived(Math.min(data.limit <= 0 ? 100 : (data.used / data.limit) * 100, 100));
 
 	onMount(() => {
 		setTimeout(() => {
@@ -25,6 +27,8 @@
 	if (bytes) {
 		current = byteFormatter(data.used);
 		limit = byteFormatter(data.limit);
+	} else if (percent) {
+		current = Math.round(data.used) + '%';
 	}
 
 	let color = $derived.by(() => {
@@ -43,17 +47,33 @@
 		<div class="usage-name">
 			{name}
 		</div>
-		{#if data.limit > 0}
+		{#if isUnlimited}
+			<div class="usage-number">
+				<span class="usage-now">{current.toLocaleString()}</span>
+				<span class="usage-full">/ Unlimited</span>
+			</div>
+		{:else if data.limit > 0}
 			<div class="usage-number">
 				<span class="usage-now" style:color={color === 'var(--accent)' ? 'var(--text)' : color}
 					>{current.toLocaleString()}</span
 				>
-				<span class="usage-full">/ {limit.toLocaleString()}</span>
+				{#if !percent}
+					<span class="usage-full">/ {limit.toLocaleString()}</span>
+				{/if}
 			</div>
 		{/if}
 	</div>
 
-	{#if data.limit === 0}
+	{#if isUnlimited}
+		<div class="usage-bar-bar">
+			<div
+				class="usage-bar-fill"
+				style:width="100%"
+				style:background="var(--accent)"
+				style:opacity="0.3"
+			></div>
+		</div>
+	{:else if data.limit === 0}
 		<div class="feature-not-included">Your license does not include this feature.</div>
 	{:else}
 		<div class="usage-bar-bar">

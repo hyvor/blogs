@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ImportType;
+use App\Entity\Enum\JobStatus;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -19,9 +21,6 @@ class Import
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
@@ -29,11 +28,11 @@ class Import
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
-    private string $type;
+    #[ORM\Column(length: 255, enumType: ImportType::class)]
+    private ImportType $type;
 
-    #[ORM\Column(length: 255, options: ['default' => 'pending'])]
-    private string $status = 'pending';
+    #[ORM\Column(length: 255, enumType: JobStatus::class, options: ['default' => 'pending'])]
+    private JobStatus $status = JobStatus::PENDING;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $error = null;
@@ -87,17 +86,6 @@ class Import
         return $this;
     }
 
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
-        return $this;
-    }
-
     public function getBlog(): Blog
     {
         return $this->blog;
@@ -120,23 +108,23 @@ class Import
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ImportType
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ImportType $type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): JobStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(JobStatus $status): static
     {
         $this->status = $status;
         return $this;

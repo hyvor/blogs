@@ -2,11 +2,12 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\InterHyvorTalkWebsite;
+use App\Entity\HyvorTalkWebsite;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<InterHyvorTalkWebsite>
+ * @extends PersistentObjectFactory<HyvorTalkWebsite>
  */
 final class InterHyvorTalkWebsiteFactory extends PersistentObjectFactory
 {
@@ -22,7 +23,7 @@ final class InterHyvorTalkWebsiteFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return InterHyvorTalkWebsite::class;
+        return HyvorTalkWebsite::class;
     }
 
     /**
@@ -34,7 +35,7 @@ final class InterHyvorTalkWebsiteFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'website_id' => self::faker()->randomNumber(),

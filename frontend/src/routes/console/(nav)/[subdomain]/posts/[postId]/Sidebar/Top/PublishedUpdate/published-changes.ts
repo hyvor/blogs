@@ -1,11 +1,10 @@
 import { get } from 'svelte/store';
 import {
+	documentStore,
 	postOriginalStore,
-	postOriginalVariantStore,
+	postVariantOriginalStore,
 	postStore,
-	postVariantStore,
-	updatePostEditingStatusValue,
-	updatePostVariantStore
+	postVariantStore
 } from '../../../../postStore';
 import type { Post, PostVariant, Tag, User } from '../../../../../../../lib/types';
 import { hasIdArrayChanged } from '../../Settings/settingsHelpers';
@@ -17,7 +16,7 @@ export function getPublishedChanges() {
 	const postOriginal = get(postOriginalStore);
 
 	const postVariant = get(postVariantStore);
-	const postVariantOriginal = get(postOriginalVariantStore);
+	const postVariantOriginal = get(postVariantOriginalStore);
 
 	const changes = {
 		post: {} as Partial<Post>,
@@ -27,7 +26,6 @@ export function getPublishedChanges() {
 	};
 
 	const postKeys: (keyof Post)[] = [
-		'published_at',
 		'is_featured',
 		'featured_image_url',
 		'canonical_url',
@@ -35,7 +33,13 @@ export function getPublishedChanges() {
 		'code_foot'
 	];
 
-	const postVariantKeys: (keyof PostVariant)[] = ['slug', 'title', 'description'];
+	const postVariantKeys: (keyof PostVariant)[] = [
+		'slug',
+		'title',
+		'description',
+		'published_at',
+		'content_updated_at'
+	];
 
 	postKeys.forEach((key) => {
 		if (post[key] !== postOriginal[key]) {
@@ -58,11 +62,13 @@ export function getPublishedChanges() {
 		changes.authors = post.authors;
 	}
 
+	const document = get(documentStore);
+
 	if (
-		postVariant.content_unsaved !== null &&
-		postVariant.content_unsaved !== postVariantOriginal.content
+		document.checkpoint_content !== null &&
+		document.checkpoint_content !== postVariantOriginal.content
 	) {
-		changes.variant.content = postVariant.content_unsaved;
+		changes.variant.content = document.checkpoint_content;
 	}
 
 	return changes;
@@ -76,12 +82,4 @@ export function hasPublishedChanges() {
 		changes.tags !== undefined ||
 		changes.authors !== undefined
 	);
-}
-
-export function finishUpdating() {
-	// no longer editing
-	updatePostEditingStatusValue('isEditingPublished', false);
-
-	// clear unsaved content
-	updatePostVariantStore({ content_unsaved: null });
 }

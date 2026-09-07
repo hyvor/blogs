@@ -6,6 +6,9 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import { createEventDispatcher } from 'svelte';
 	import MediaUpdateFileName from './MediaUpdateFileName.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	// If the user is selecting media files
 	// delete button will not be shown
@@ -40,17 +43,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete Media',
-				content: 'Are you sure you want to delete this media file? This action cannot be undone!',
-				confirmText: 'Yes, Delete',
+				title: i18n.t('console.tools.media.delete.title'),
+				content: i18n.t('console.tools.media.delete.content'),
+				confirmText: i18n.t('console.tools.media.delete.confirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting...');
+			const toastId = toast.loading(i18n.t('console.tools.media.deleting'));
 
 			deleteMedia(media.id)
 				.then(() => {
-					toast.success('Deleted', { id: toastId });
+					toast.success(i18n.t('console.tools.media.deleted'), { id: toastId });
 					dispatch('delete', media);
 				})
 				.catch((err) => toast.error(err.message, { id: toastId }));
@@ -77,7 +80,7 @@
 	</a>
 
 	<div class="footer">
-		<Tooltip text="Click to edit">
+		<Tooltip text={i18n.t('console.tools.media.clickToEdit')}>
 			<button class="media-name" title={media.name} onclick={handleFileNameClick}
 				>{media.name}</button
 			>

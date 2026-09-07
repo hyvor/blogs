@@ -1,29 +1,37 @@
 <script lang="ts">
 	import { Modal, Textarea } from '@hyvor/design/components';
 	import CodemirrorEditor from './CodemirrorEditor.svelte';
-	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		value: string;
 		title: string;
+		onchange?: (value: string) => void;
+		onconfirm?: () => void;
 	}
 
-	let { value, title }: Props = $props();
+	let { value, title, onchange, onconfirm }: Props = $props();
 
 	let modalOpen = $state(false);
-
-	const dispatch = createEventDispatcher<{
-		change: string;
-		confirm: void;
-	}>();
+	let editorRef: ReturnType<typeof CodemirrorEditor> | undefined = $state();
 
 	function handleConfirm() {
 		modalOpen = false;
-		dispatch('confirm');
+		onconfirm?.();
 	}
 
-	function handleEditorChange(e: any) {
-		dispatch('change', e.detail);
+	$effect(() => {
+		if (modalOpen) {
+			editorRef?.focus();
+		}
+	});
+
+	function handleWrapClick(e: MouseEvent) {
+		if (e.target === e.currentTarget) {
+			editorRef?.focus();
+		}
 	}
 </script>
 
@@ -45,13 +53,14 @@
 		bind:show={modalOpen}
 		footer={{
 			confirm: {
-				text: 'Save'
+				text: i18n.t('console.common.save')
 			}
 		}}
 		on:confirm={handleConfirm}
 	>
-		<div class="codemirror-wrap">
-			<CodemirrorEditor id="code" ext="twig" {value} on:change={handleEditorChange} />
+		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+		<div class="codemirror-wrap" onclick={handleWrapClick}>
+			<CodemirrorEditor bind:this={editorRef} id="code" ext="twig" {value} {onchange} />
 		</div>
 	</Modal>
 {/if}

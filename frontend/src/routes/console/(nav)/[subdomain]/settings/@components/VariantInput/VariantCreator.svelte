@@ -7,6 +7,9 @@
 	import { createBlogVariant } from '../../../../../lib/actions/blogActions';
 	import { createNavigationVariant } from '../../navigation/navigationActions';
 	import { createUserVariant } from '../../users/userActions';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		obj: AcceptableTypes;
@@ -84,15 +87,11 @@
 	<Loader />
 {:else}
 	<Button size="small" on:click={handleCreate}>
-		Create {language.name} variant
+		{i18n.t('console.settings.variant.create', { language: language.name })}
 	</Button>
 
 	<div>
-		Create a{['a', 'e', 'i', 'o', 'u'].indexOf((language.name[0] || '').toLowerCase()) === 0
-			? 'n'
-			: ''}
-		{language.name}
-		{type} variant to add translations
+		{i18n.t('console.settings.variant.hint', { language: language.name, type })}
 	</div>
 {/if}
 

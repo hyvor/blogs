@@ -1,10 +1,16 @@
 export interface Config {
+	deployment: 'cloud' | 'on-prem';
 	hyvor: {
 		instance: string;
+		hyvor_post_url: string;
+		hyvor_talk_url: string;
 	};
 	domains: {
 		app: string;
 		delivery: string;
+	};
+	mercure: {
+		public_url: string;
 	};
 	limits: {
 		max_upload_size: number;
@@ -12,6 +18,11 @@ export interface Config {
 		max_asset_file_size: number;
 	};
 	highlight_themes: string[];
+	ai_models: {
+		value: string;
+		provider: string;
+		usage_percent: number;
+	}[];
 	services: {
 		paddle: {
 			sandbox: boolean;
@@ -28,15 +39,4 @@ export function setConfig(c: Config) {
 
 export function getConfig() {
 	return config;
-}
-
-export async function loadConfig() {
-	if (config.domains) {
-		return;
-	}
-
-	const response = await fetch('/api/special/config');
-	const data = await response.json();
-
-	setConfig(data);
 }

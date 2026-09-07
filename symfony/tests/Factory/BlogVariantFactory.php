@@ -2,7 +2,11 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
 use App\Entity\BlogVariant;
+use App\Entity\Language;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,9 +38,56 @@ final class BlogVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
-            'language_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
+            'language' => LanguageFactory::new(),
+            'name' => self::faker()->name(),
+            'description' => self::faker()->sentence(),
         ];
+    }
+
+    public static function createOneForBlog(Blog $blog): BlogVariant
+    {
+        $primaryLanguage = null;
+        foreach ($blog->getLanguages() as $lang) {
+            if ($lang->isPrimary()) {
+                $primaryLanguage = $lang;
+                break;
+            }
+        }
+        assert($primaryLanguage !== null, 'Blog must have a primary language');
+
+        $variant = self::createOne([
+            'blog' => $blog,
+            'language' => $primaryLanguage,
+        ]);
+
+        $blog->getVariants()->add($variant);
+
+        return $variant;
+    }
+
+    /**
+     * If languages is not set, blog's languages will be used
+     *
+     * @param iterable<Language>|null $languages
+     * @param array<string, mixed> $attributes
+     * @return BlogVariant[]
+     */
+    public static function createManyForBlogWithAllLanguages(Blog $blog, ?iterable $languages = null, array $attributes = []): array
+    {
+        $languages = $languages ?? $blog->getLanguages();
+
+        $variants = [];
+        foreach ($languages as $language) {
+            $variant = self::createOne(array_merge([
+                'blog' => $blog,
+                'language' => $language,
+            ], $attributes));
+            $blog->getVariants()->add($variant);
+            $variants[] = $variant;
+        }
+
+        return $variants;
     }
 
     /**

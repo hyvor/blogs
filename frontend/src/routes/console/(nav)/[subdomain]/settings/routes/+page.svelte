@@ -2,11 +2,16 @@
 	import { onMount } from 'svelte';
 	import type { Route } from '../../../../lib/types';
 	import { getRoutes } from './routeActions';
-	import { Button, IconMessage, Loader, Table, TableRow, toast } from '@hyvor/design/components';
+	import { Button, IconMessage, Loader, TableRow, toast } from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import RouteRow from './RouteRow.svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	interface Props {
 		isLoading?: boolean;
@@ -18,6 +23,7 @@
 	let routes: Route[] = $state([]);
 
 	onMount(() => {
+		redirectIfCant('routes.read');
 		getRoutes()
 			.then((res) => {
 				routes = res;
@@ -50,7 +56,7 @@
 </script>
 
 <SettingsTop>
-	<Button on:click={() => (isCreating = true)}>
+	<Button disabled={cant('routes.write')} on:click={() => (isCreating = true)}>
 		Create Route {#snippet end()}
 			<IconPlus />
 		{/snippet}
@@ -61,22 +67,20 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if routes.length === 0}
-		<IconMessage empty message="No Routes" />
+		<IconMessage empty message={i18n.t('console.settings.routes.noRoutes')} />
 	{:else}
-		<Table columns="1fr 1fr 1fr 1fr 1fr 70px">
+		<SettingsTable columns="2fr 2fr 2fr 70px">
 			<TableRow head>
-				<div>Name</div>
-				<div>Match</div>
-				<div>Template</div>
-				<div>Posts Filter</div>
-				<div>Content Type</div>
+				<div>Route</div>
+				<div>{i18n.t('console.settings.danger.cache.typeTemplate')}</div>
+				<div>{i18n.t('console.settings.routes.postsFilter')}</div>
 				<div></div>
 			</TableRow>
 
 			{#each routes as route (route.id)}
 				<RouteRow {route} on:delete={() => handleDelete(route.id)} on:update={handleUpdate} />
 			{/each}
-		</Table>
+		</SettingsTable>
 	{/if}
 </div>
 

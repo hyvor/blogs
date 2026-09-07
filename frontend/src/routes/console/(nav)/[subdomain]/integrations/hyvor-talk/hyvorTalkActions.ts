@@ -1,16 +1,14 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type { HyvorTalkGatedContentRule } from '../../../../lib/types';
 
 export interface HyvorTalkIntegration {
 	id: number;
 	created_at: number;
 	website_id: number;
+	embed_code: string;
+	embed_default_code: string;
 }
 
-export type HyvorTalkIntegrationData<Connected extends boolean = boolean> = {
-	connected: Connected;
-	data: Connected extends true ? HyvorTalkIntegration : undefined;
-};
+export type HyvorTalkIntegrationData = { data: HyvorTalkIntegration | null };
 
 export function loadHyvorTalk() {
 	return consoleApi.get<HyvorTalkIntegrationData>({
@@ -18,59 +16,21 @@ export function loadHyvorTalk() {
 	});
 }
 
-export function createHyvorTalkIntegration() {
+export function connectHyvorTalk() {
 	return consoleApi.post<HyvorTalkIntegration>({
-		endpoint: '/integrations/hyvor-talk'
+		endpoint: '/integrations/hyvor-talk/connect'
 	});
 }
 
-export function deleteHyvorTalkIntegration() {
-	return consoleApi.delete({
-		endpoint: '/integrations/hyvor-talk'
+export function disconnectHyvorTalk() {
+	return consoleApi.post({
+		endpoint: '/integrations/hyvor-talk/disconnect'
 	});
 }
 
-export function getGatedContentRules() {
-	return consoleApi.get<HyvorTalkGatedContentRule[]>({
-		endpoint: `/integrations/hyvor-talk/gated-content-rules`
-	});
-}
-
-export function createGatedContentRule(tagId: number, planName: string, gate: string | null) {
-	return consoleApi.post<HyvorTalkGatedContentRule>({
-		endpoint: `/integrations/hyvor-talk/gated-content-rule`,
-		data: {
-			tag_id: tagId,
-			minimum_plan: planName,
-			gate
-		}
-	});
-}
-
-export function updateGatedContentRule(ruleId: number, planName: string, gate: string | null) {
-	return consoleApi.patch<HyvorTalkGatedContentRule>({
-		endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`,
-		data: {
-			minimum_plan: planName,
-			gate
-		}
-	});
-}
-
-export function deleteGatedContentRule(ruleId: number) {
-	return consoleApi.delete({
-		endpoint: `/integrations/hyvor-talk/gated-content-rule/${ruleId}`
-	});
-}
-
-export function getMembershipPlans() {
-	return consoleApi.get<{
-		currency: string;
-		plans: {
-			name: string;
-			monthly_price: number;
-		}[];
-	}>({
-		endpoint: `/integrations/hyvor-talk/membership-plans`
+export function updateHyvorTalkEmbedCode(embed_code: string | null) {
+	return consoleApi.patch<HyvorTalkIntegration>({
+		endpoint: '/integrations/hyvor-talk',
+		data: { embed_code }
 	});
 }

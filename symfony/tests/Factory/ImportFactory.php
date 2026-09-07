@@ -2,7 +2,10 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Enum\ImportType;
+use App\Entity\Enum\JobStatus;
 use App\Entity\Import;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,13 +37,13 @@ final class ImportFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'name' => self::faker()->text(255),
             'pages_count' => self::faker()->randomNumber(),
             'posts_count' => self::faker()->randomNumber(),
-            'status' => self::faker()->text(255),
+            'status' => JobStatus::PENDING,
             'tags_count' => self::faker()->randomNumber(),
-            'type' => self::faker()->text(255),
+            'type' => ImportType::SITEMAP,
             'users_count' => self::faker()->randomNumber(),
         ];
     }

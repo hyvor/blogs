@@ -9,6 +9,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import UpdateTagModal from './Update/UpdateTagModal.svelte';
 	import TagName from './TagName.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	interface Props {
 		tag: Tag;
@@ -25,17 +29,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete tag',
-				content: 'Are you sure you want to delete this tag?',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.tags.deleteTag'),
+				content: i18n.t('console.settings.tags.deleteContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting tag...');
+			const toastId = toast.loading(i18n.t('console.settings.tags.deleting'));
 
 			deleteTag(tag.id)
 				.then(() => {
-					toast.success('Tag deleted.', { id: toastId });
+					toast.success(i18n.t('console.settings.tags.deleted'), { id: toastId });
 					dispatch('delete', tag.id);
 				})
 				.catch((e) => {
@@ -46,7 +50,13 @@
 </script>
 
 <TableRow>
-	<div><TagName {tag} /></div>
+	<div>
+		<div class="name"><TagName {tag} /></div>
+		{#if variant?.description}
+			<div class="description">{variant.description}</div>
+		{/if}
+		<div class="meta">{tag.posts_count} {tag.posts_count === 1 ? 'post' : 'posts'}</div>
+	</div>
 	<div>
 		{#if tag.is_private}
 			{tag.slug}
@@ -56,21 +66,26 @@
 			</Link>
 		{/if}
 	</div>
-	<div>{variant?.description || ''}</div>
-	<div>{tag.posts_count}</div>
 	<div>
-		<Tooltip text="Edit tag">
+		<Tooltip text={i18n.t('console.settings.tags.editTag')}>
 			<IconButton
-				variant="fill-light"
-				color="gray"
+				color="input"
+				variant="fill"
 				size="small"
 				on:click={() => (isEditing = true)}
+				disabled={cant('tags.write')}
 			>
 				<IconPencilFill size={12} />
 			</IconButton>
 		</Tooltip>
-		<Tooltip text="Delete tag">
-			<IconButton variant="fill-light" color="red" size="small" on:click={handleDelete}>
+		<Tooltip text={i18n.t('console.settings.tags.deleteTag')}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				on:click={handleDelete}
+				disabled={cant('tags.write')}
+			>
 				<IconTrash size={12} />
 			</IconButton>
 		</Tooltip>
@@ -80,3 +95,17 @@
 {#if isEditing}
 	<UpdateTagModal bind:show={isEditing} {tag} on:variantCreate on:update />
 {/if}
+
+<style>
+	.description {
+		margin-top: 2px;
+		font-size: 13px;
+		color: var(--text-light);
+	}
+
+	.meta {
+		margin-top: 2px;
+		font-size: 12px;
+		color: var(--text-light);
+	}
+</style>

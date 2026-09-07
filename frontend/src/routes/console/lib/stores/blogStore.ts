@@ -1,9 +1,11 @@
 import { writable } from 'svelte/store';
-import type { Blog, BlogCounts, BlogVariant } from '../types';
+import type { Blog, BlogCounts, BlogVariant, HostingInfo, BlogIntegrations } from '../types';
 
 export const blogStore = writable<Blog>();
 export const blogOriginalStore = writable<Blog>();
 export const blogCountsStore = writable<BlogCounts>();
+export const hostingInfoStore = writable<HostingInfo>();
+export const integrationsStore = writable<BlogIntegrations>({ hyvor_talk: null, hyvor_post: null });
 
 export function updateBlogStore(
 	blog: Partial<Blog> | ((currentBlog: Blog) => Partial<Blog>),
@@ -65,4 +67,29 @@ export function updateBlogStoreVariant(
 			};
 		});
 	});
+}
+
+export function updateHostingInfoStore(updates: HostingInfo) {
+	blogStore.update((blog) => ({
+		...blog,
+		hosting_at: updates.hosting_at,
+		hosting_domain: updates.custom_domain?.domain ?? null,
+		hosting_url: updates.hosting_url ?? null
+	}));
+	hostingInfoStore.set(updates);
+}
+
+// integrations
+export function setHyvorPostIntegrationState(newsletterId: number | null) {
+	integrationsStore.update((integrations) => ({
+		...integrations,
+		hyvor_post: newsletterId ? { newsletter_id: newsletterId } : null
+	}));
+}
+
+export function setHyvorTalkIntegrationState(websiteId: number | null) {
+	integrationsStore.update((integrations) => ({
+		...integrations,
+		hyvor_talk: websiteId ? { website_id: websiteId } : null
+	}));
 }

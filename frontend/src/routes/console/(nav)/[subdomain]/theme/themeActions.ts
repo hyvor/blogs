@@ -8,7 +8,7 @@ export function loadThemeFiles() {
 }
 
 export async function loadThemes() {
-	const response = await fetch('/api/special/themes');
+	const response = await fetch('/api/public/themes');
 
 	if (!response.ok) {
 		throw new Error('Failed to load themes');
@@ -67,7 +67,10 @@ export function uploadTheme(zip: File) {
 	const formData = new FormData();
 	formData.append('zip', zip);
 
-	return consoleApi.post<ThemeFile[]>({
+	return consoleApi.post<{
+		files: ThemeFile[];
+		logs: string[];
+	}>({
 		endpoint: '/theme',
 		data: formData
 	});

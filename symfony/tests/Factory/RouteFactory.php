@@ -2,7 +2,10 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
 use App\Entity\Route;
+use App\Service\Route\RouteService;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -34,8 +37,8 @@ final class RouteFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
-            'is_enabled' => self::faker()->boolean(),
+            'blog' => BlogFactory::new(),
+            'is_enabled' => true,
             'match' => self::faker()->text(255),
             'name' => self::faker()->text(255),
             'template' => self::faker()->text(255),
@@ -51,5 +54,43 @@ final class RouteFactory extends PersistentObjectFactory
         return $this
             // ->afterInstantiate(function(Route $route): void {})
         ;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Blog $blog, array $attributes = []): Route
+    {
+        $route = self::createOne(array_merge([
+            'blog' => $blog,
+        ], $attributes));
+
+        $blog->getRoutes()->add($route);
+
+        return $route;
+    }
+
+    /**
+     * @return Route[]
+     */
+    public static function createDefaultsFor(Blog $blog): array
+    {
+        return self::createManyFromArray($blog, RouteService::ROUTES);
+    }
+
+    /**
+     * @param array<array<string, mixed>> $routes
+     * @return Route[]
+     */
+    public static function createManyFromArray(Blog $blog, array $routes): array
+    {
+        $createdRoutes = [];
+        foreach ($routes as $route) {
+            $route['blog'] = $blog;
+            $createdRoute = self::createOne($route);
+            $createdRoutes[] = $createdRoute;
+            $blog->getRoutes()->add($createdRoute);
+        }
+        return $createdRoutes;
     }
 }

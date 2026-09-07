@@ -1,9 +1,15 @@
 <script>
+	import { onMount } from 'svelte';
+	import { redirectIfCant } from '../../../lib/scope.svelte';
 	import Editor from './Editor/Editor.svelte';
 	import ThemeNav from './ThemeNav.svelte';
 	import { useIsFileEditingCheck } from './theme';
 
 	useIsFileEditingCheck();
+
+	onMount(() => {
+		redirectIfCant('themes.read');
+	});
 </script>
 
 <div class="theme">

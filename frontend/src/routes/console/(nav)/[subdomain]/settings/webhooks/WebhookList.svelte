@@ -1,7 +1,11 @@
 <script lang="ts">
-	import { IconMessage, Table, TableRow } from '@hyvor/design/components';
+	import { IconMessage, TableRow } from '@hyvor/design/components';
 	import type { Webhook } from '../../../../lib/types';
 	import WebhookRow from './WebhookRow.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		webhooks: Webhook[];
@@ -14,20 +18,20 @@
 </script>
 
 {#if webhooks.length === 0}
-	<IconMessage empty message="No Webhooks configured" />
+	<IconMessage empty message={i18n.t('console.settings.webhooks.noWebhooks')} />
 {:else}
-	<Table columns="1fr 1fr 80px 80px">
+	<SettingsTable columns="1fr 1fr 80px 80px">
 		<TableRow head>
-			<div>URL</div>
-			<div>Events</div>
-			<div>Secret</div>
+			<div>{i18n.t('console.tools.import.url')}</div>
+			<div>{i18n.t('console.settings.webhooks.events')}</div>
+			<div>{i18n.t('console.settings.webhooks.secret')}</div>
 			<div></div>
 		</TableRow>
 
 		{#each webhooks as webhook (webhook.id)}
 			<WebhookRow {webhook} {onDelete} {onUpdate} />
 		{/each}
-	</Table>
+	</SettingsTable>
 {/if}
 
 <style>

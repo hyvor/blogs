@@ -4,6 +4,9 @@
 	import { page } from '$app/state';
 	import IconCurrencyEuro from '@hyvor/icons/IconCurrencyEuro';
 	import { canAccessBilling } from '../../lib/orgPermission';
+	import { getI18n } from '../../lib/i18n';
+
+	const i18n = getI18n();
 </script>
 
 <div class="wrap">
@@ -15,7 +18,7 @@
 		{#snippet start()}
 			<IconCurrencyEuro />
 		{/snippet}
-		Billing
+		{i18n.t('console.nav.billing')}
 	</NavLink>
 </div>
 
@@ -24,6 +27,6 @@
 		padding: 15px 0;
 	}
 	.wrap :global(a.active) {
-		background-color: var(--accent-light-mid);
+		background-color: var(--accent-light-mid) !important;
 	}
 </style>

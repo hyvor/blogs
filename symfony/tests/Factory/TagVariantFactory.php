@@ -2,6 +2,7 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Tag;
 use App\Entity\TagVariant;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
@@ -34,9 +35,24 @@ final class TagVariantFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'language_id' => self::faker()->randomNumber(),
-            'tag_id' => self::faker()->randomNumber(),
+            'language' => LanguageFactory::new(),
+            'tag' => TagFactory::new(),
+            'name' => self::faker()->word(),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Tag $tag, array $attributes = []): TagVariant
+    {
+        $variant = self::createOne(array_merge([
+            'tag' => $tag,
+        ], $attributes));
+
+        $tag->getVariants()->add($variant);
+
+        return $variant;
     }
 
     /**

@@ -13,8 +13,14 @@
 	import { postListFiltersStore, setFilter } from '../../postListStore';
 	import dayjs from 'dayjs';
 	import { OPTIONS, dateFilterStore } from './date';
+	import { getI18n } from '../../../../../lib/i18n';
 
-	const options = Object.entries(OPTIONS) as [keyof typeof OPTIONS, string][];
+	const i18n = getI18n();
+
+	const options = Object.entries(OPTIONS) as [
+		keyof typeof OPTIONS,
+		(typeof OPTIONS)[keyof typeof OPTIONS]
+	][];
 
 	let showDropdown = $state(false);
 
@@ -62,11 +68,11 @@
 	{#snippet trigger()}
 		<Button color="input">
 			{#snippet start()}
-				<Text bold>Date</Text>
+				<Text bold>{i18n.t('console.posts.filters.dateLabel')}</Text>
 			{/snippet}
 
 			<span class="text">
-				{$dateFilterStore ? OPTIONS[$dateFilterStore] : 'Any'}
+				{$dateFilterStore ? i18n.t(OPTIONS[$dateFilterStore]) : i18n.t('console.common.any')}
 			</span>
 
 			{#if $dateFilterStore}
@@ -83,17 +89,12 @@
 
 	{#snippet content()}
 		<ActionList>
-			{#each options as [key, label] (key)}
+			{#each options as [key, labelKey] (key)}
 				<ActionListItem
 					on:select={() => handleSelect(key)}
-					style="
-                        text-transform:capitalize;
-                        {$dateFilterStore === key
-						? 'background-color: var(--accent-light-mid)'
-						: ''}
-                    "
+					style={$dateFilterStore === key ? 'background-color: var(--accent-light-mid)' : ''}
 				>
-					{label}
+					{i18n.t(labelKey)}
 				</ActionListItem>
 			{/each}
 		</ActionList>
@@ -104,7 +105,7 @@
 	.text {
 		display: inline-block;
 		font-weight: normal;
-		text-transform: capitalize;
 		vertical-align: middle;
+		white-space: nowrap;
 	}
 </style>

@@ -1,14 +1,17 @@
 <script lang="ts">
-	import {
-		IconMessage,
-		Table,
-		TableRow,
-		TableCell,
-		Tag,
-		LoadButton
-	} from '@hyvor/design/components';
+	import { IconMessage, TableRow, TableCell, Tag, LoadButton } from '@hyvor/design/components';
 	import type { WebhookDelivery } from '../../../../lib/types';
 	import dayjs from 'dayjs';
+	import SettingsTable from '../@components/SettingsTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+
+	const DELIVERY_STATUS_KEYS = {
+		pending: 'console.settings.webhooks.deliveryStatus.pending',
+		success: 'console.settings.webhooks.deliveryStatus.success',
+		failed: 'console.settings.webhooks.deliveryStatus.failed'
+	} as const;
 
 	interface Props {
 		deliveries: WebhookDelivery[];
@@ -38,13 +41,13 @@
 </script>
 
 {#if deliveries.length === 0}
-	<IconMessage empty message="No webhook deliveries found" />
+	<IconMessage empty message={i18n.t('console.settings.webhooks.noDeliveries')} />
 {:else}
-	<Table columns="2fr 1fr 1fr 1fr" hover>
+	<SettingsTable columns="2fr 1fr 1fr 1fr">
 		<TableRow head>
-			<TableCell>URL</TableCell>
-			<TableCell>Event</TableCell>
-			<TableCell>Status</TableCell>
+			<TableCell>{i18n.t('console.tools.import.url')}</TableCell>
+			<TableCell>{i18n.t('console.settings.webhooks.event')}</TableCell>
+			<TableCell>{i18n.t('console.common.status')}</TableCell>
 			<TableCell>Created</TableCell>
 		</TableRow>
 		{#each deliveries as delivery (delivery.id)}
@@ -57,7 +60,7 @@
 				</TableCell>
 				<TableCell>
 					<Tag color={getStatusColor(delivery.status)} size="small">
-						{delivery.status}
+						{i18n.t(DELIVERY_STATUS_KEYS[delivery.status])}
 					</Tag>
 				</TableCell>
 				<TableCell>
@@ -65,7 +68,12 @@
 				</TableCell>
 			</TableRow>
 		{/each}
-	</Table>
+	</SettingsTable>
 
-	<LoadButton text="Load more" show={hasMore} loading={isLoadingMore} on:click />
+	<LoadButton
+		text={i18n.t('console.common.loadMore')}
+		show={hasMore}
+		loading={isLoadingMore}
+		on:click
+	/>
 {/if}

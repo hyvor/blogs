@@ -1,46 +1,53 @@
 <script lang="ts">
 	import dayjs from 'dayjs';
-	import type { Post, PostVariant } from '../../../lib/types';
-	import { getLanguageById } from '../../../lib/actions/languageActions';
+	import type { PostListItem } from '../../../lib/types';
 	import {
-		Avatar,
-		Link,
-		Tag,
 		Dropdown,
 		ActionList,
 		ActionListItem,
 		IconButton,
+		Tag,
 		toast,
-		Button
+		confirm,
+		Avatar
 	} from '@hyvor/design/components';
 	import PostStatusTag from './PostStatusTag.svelte';
-	import { blogStore } from '../../../lib/stores/blogStore';
 	import LinkAnalysisTag from './Tags/LinkAnalysisTag.svelte';
-	import SeoAnalysisTag from './Tags/SeoAnalysisTag.svelte';
 	import VariantLangTag from './Tags/VariantLangTag.svelte';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
 	import IconThreeDotsVertical from '@hyvor/icons/IconThreeDotsVertical';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
-	import TagName from '../settings/tags/TagName.svelte';
-	import { clonePost } from './postActions';
+	import { clonePost, deletePostById } from './postActions';
 	import { goto } from '$app/navigation';
+	import { getPrimaryLanguage, languagesStore } from '../../../lib/stores/languagesStore';
+	import SeoScoreTag from './[postId]/Sidebar/Seo/SeoScoreTag.svelte';
+	import SeoPendingTag from './[postId]/Sidebar/Seo/SeoPendingTag.svelte';
+	import TagChip from './TagChip.svelte';
+	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	interface Props {
-		post: Post;
+		post: PostListItem;
+		onDelete?: (postId: number) => void;
 	}
 
-	let { post }: Props = $props();
+	let { post, onDelete }: Props = $props();
 
-	let variant = $derived(post.variants[0]!);
+	const primaryLanguage = getPrimaryLanguage();
+	let status = $derived(
+		post.variants.find((v) => v.language_id === primaryLanguage.id)?.status || 'draft'
+	);
+	let seoScore = $derived(
+		post.variants.find((v) => v.language_id === primaryLanguage.id)?.seo_score || null
+	);
 	let showDropdown = $state(false);
 	let isCloning = $state(false);
+	let isDeleting = $state(false);
 
 	const publishedAtDate = dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY');
 	const createdAtDate = dayjs.unix(post.created_at).format('MMM D, YYYY');
-
-	function getVariantLanguage(v: PostVariant) {
-		return getLanguageById(v.language_id);
-	}
 
 	function handleClone(e: Event) {
 		e.preventDefault();
@@ -51,12 +58,12 @@
 		showDropdown = false;
 		isCloning = true;
 
-		const toastId = toast.loading('Cloning post...');
+		const toastId = toast.loading(i18n.t('console.posts.cloningPost'));
 
 		clonePost(post.id)
 			.then((clonedPost) => {
-				toast.success('Post cloned successfully', { id: toastId });
-				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}`));
+				toast.success(i18n.t('console.posts.postCloned'), { id: toastId });
+				goto(consoleUrlWithBlog(`/posts/${clonedPost.id}/${primaryLanguage.code}`));
 			})
 			.catch((error) => {
 				toast.error(error.message || 'Failed to clone post', { id: toastId });
@@ -65,226 +72,298 @@
 				isCloning = false;
 			});
 	}
+
+	async function handleDelete(e: Event) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (isDeleting) return;
+
+		showDropdown = false;
+
+		const confirmed = await confirm({
+			title: post.is_page ? 'Delete Page' : 'Delete Post',
+			content:
+				`Are you sure you want to delete this ${post.is_page ? 'page' : 'post'}? ` +
+				'This action is IRREVERSIBLE.',
+			confirmText: i18n.t('console.tools.media.delete.confirm'),
+			danger: true,
+			autoClose: false
+		});
+
+		if (!confirmed) return;
+		confirmed.loading('Deleting...');
+		isDeleting = true;
+
+		deletePostById(post.id)
+			.then(() => {
+				onDelete?.(post.id);
+				toast.success(i18n.t('console.posts.postDeleted'));
+			})
+			.catch((error) => {
+				toast.error(error.message || 'Failed to delete');
+			})
+			.finally(() => {
+				isDeleting = false;
+				confirmed.close();
+			});
+	}
 </script>
 
-<a class="post-list-item" href={consoleUrlWithBlog(`/posts/${post.id}`)}>
-	<div>
-		<div class="post-title">{variant?.title || '(Untitled)'}</div>
+<a class="post-list-item" href={consoleUrlWithBlog(`/posts/${post.id}/${primaryLanguage.code}`)}>
+	<div class="post-main">
+		<div class="post-title-row">
+			<div class="post-title">{post.title || '(Untitled)'}</div>
+		</div>
 
-		<div class="post-slug">
-			{#if variant?.slug && variant.status === 'published'}
-				<a href={post.variants[0]?.url || ''} target="_blank">
-					{post.variants[0]?.slug || ''}
-					<IconBoxArrowUpRight size={10} style="margin-left: 4px;" />
-				</a>
+		{#if post.slug && status === 'published'}
+			<span class="post-slug">
+				<span
+					role="link"
+					tabindex={0}
+					onclick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						window.open(post.url || '', '_blank');
+					}}
+					onkeydown={(e) => {
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							e.stopPropagation();
+							window.open(post.url || '', '_blank');
+						}
+					}}
+				>
+					{post.slug || ''}
+					<IconBoxArrowUpRight size={10} />
+				</span>
+			</span>
+		{/if}
+
+		<div class="post-date">
+			{#if status === 'published'}
+				{i18n.t('console.posts.publishedOn', { date: publishedAtDate })}
+			{:else if status === 'scheduled'}
+				{i18n.t('console.posts.scheduledOn', { date: publishedAtDate })}
+			{:else}
+				{i18n.t('console.posts.createdOn', { date: createdAtDate })}
+			{/if}
+			{#if status === 'published' && post.updated_at !== post.published_at}
+				· {i18n.t('console.posts.updatedOn', {
+					date: dayjs.unix(post.updated_at).format('MMM D, YYYY')
+				})}
 			{/if}
 		</div>
 
-		<div class="post-data">
-			<div class="post-date">
-				{#if variant?.status === 'published'}
-					Published {publishedAtDate}
-				{:else if variant?.status === 'scheduled'}
-					Scheduled {publishedAtDate}
-				{:else}
-					Created {createdAtDate}
-				{/if}
+		{#if $languagesStore.length > 1}
+			<div class="post-languages">
+				{#each post.variants as v (v.language_id)}
+					<VariantLangTag variant={v} size="x-small" />
+				{/each}
 			</div>
-			{#if variant?.status === 'published' && post.updated_at !== post.published_at}
-				<div class="post-date">
-					Updated {dayjs.unix(post.updated_at).format('MMM D, YYYY')}
-				</div>
-			{/if}
-		</div>
+		{/if}
 	</div>
 
-	<div class="post-languages">
-		{#each post.variants as variant (variant.id)}
-			<VariantLangTag {variant} />
-		{/each}
+	<div class="post-status">
+		<PostStatusTag {status} size="x-small" />
 	</div>
 
-	{#if !post.is_page}
-		<div class="post-authors">
-			{#each post.authors as author (author.id)}
-				<div class="post-author">
-					<Avatar src={author.picture_url || undefined} size="small" />
-					<span class="post-author-name">
-						{author.variants[0]?.name || 'Unnamed'}
-					</span>
-				</div>
-			{/each}
-		</div>
-	{/if}
-
-	<div class="post-tags-wrap">
-		<div class="post-tags">
-			{#if !post.is_page}
-				{#each post.tags as tag (tag.id)}
-					<Tag size="small">
-						<TagName {tag} small />
+	<div class="post-authors-tags">
+		{#if !post.is_page}
+			<div class="post-authors">
+				{#each post.authors as author}
+					<Tag size="x-small" style="padding: 4px 8px" bg="#f1f1f1">
+						<Avatar size={11} username={author.name} />&nbsp;
+						{author.name}
 					</Tag>
 				{/each}
-			{/if}
-		</div>
+			</div>
+
+			<div class="post-tags">
+				{#each post.tags as tag}
+					<TagChip {tag} size="x-small" />
+				{/each}
+			</div>
+		{/if}
 	</div>
 
 	<div class="post-health-wrap">
-		<div class="seo">
-			<span class="name">SEO</span>
-			<!-- <SeoScoreTag
-                score={variant?.average} 
-                percentage={true} 
-            /> -->
-			<SeoAnalysisTag postVariant={variant} />
+		<div class="health-item">
+			<span class="health-label">{i18n.t('console.posts.seo')}</span>
+			{#if seoScore === null}
+				<SeoPendingTag />
+			{:else}
+				<SeoScoreTag score={seoScore} percentage />
+			{/if}
 		</div>
-		<div class="links">
-			<span class="name">Links</span>
-			<LinkAnalysisTag postVariant={variant} />
+		<div class="health-divider"></div>
+		<div class="health-item">
+			<span class="health-label">{i18n.t('console.posts.links')}</span>
+			<LinkAnalysisTag linkAnalysis={post.link_analysis} />
 		</div>
 	</div>
 
-	<div class="post-status-wrap">
-		<PostStatusTag status={variant?.status || 'draft'} />
-	</div>
+	<div
+		class="post-actions-wrap"
+		role="presentation"
+		onclick={(e) => {
+			e.preventDefault();
+			e.stopPropagation();
+		}}
+	>
+		<Dropdown bind:show={showDropdown} align="end" width={150}>
+			{#snippet trigger()}
+				<IconButton
+					size="small"
+					color="input"
+					variant="invisible"
+					disabled={isCloning || isDeleting}
+				>
+					<IconThreeDotsVertical size={16} />
+				</IconButton>
+			{/snippet}
 
-	<div class="post-actions-wrap">
-		<div
-			on:click={(e) => {
-				e.preventDefault();
-				e.stopPropagation();
-			}}
-		>
-			<Dropdown bind:show={showDropdown} align="end" width={150}>
-				{#snippet trigger()}
-					<IconButton size="small" color="input" variant="invisible" disabled={isCloning}>
-						<IconThreeDotsVertical size={16} />
-					</IconButton>
-				{/snippet}
-
-				{#snippet content()}
-					<ActionList>
-						<ActionListItem on:click={handleClone} disabled={isCloning}>Clone post</ActionListItem>
-					</ActionList>
-				{/snippet}
-			</Dropdown>
-		</div>
+			{#snippet content()}
+				<ActionList>
+					<ActionListItem
+						on:click={handleClone}
+						disabled={isCloning || isDeleting || cant('posts.write')}
+						>{i18n.t('console.posts.clonePost')}</ActionListItem
+					>
+					<ActionListItem
+						on:click={handleDelete}
+						disabled={isCloning || isDeleting || cant('posts.write')}
+						type="danger">Delete post</ActionListItem
+					>
+				</ActionList>
+			{/snippet}
+		</Dropdown>
 	</div>
 </a>
 
 <style lang="scss">
 	.post-list-item {
 		display: grid;
-		align-items: center;
-		grid-template-columns: 1fr 1fr 1fr 1fr 100px 120px 40px;
-		padding: 20px;
-		border-left: 3px solid transparent;
+		grid-template-columns:
+			minmax(280px, 1.8fr) minmax(100px, 150px) minmax(200px, 1.9fr) minmax(100px, 125px)
+			36px;
+		gap: 14px;
+		padding: 16px 30px;
+		border-bottom: 1px solid #f1f1f1;
 		position: relative;
-		border-radius: 20px;
 		cursor: pointer;
-	}
-
-	.post-list-item > div {
-		padding-right: 8px;
+		transition: background-color 0.1s;
 	}
 
 	.post-list-item:hover {
-		background: var(--hover);
+		background-color: var(--hover);
+	}
+
+	.post-main {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	.post-title-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.post-title {
-		width: 300px;
+		flex: 1;
+		min-width: 0;
 		font-weight: 600;
-		word-break: break-all;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
 	}
 
 	.post-slug {
-		margin-top: 4px;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		font-size: 12px;
-	}
-	.post-slug a {
 		color: var(--link);
-		&:hover {
-			text-decoration: underline;
-		}
+	}
+	.post-slug span:hover {
+		text-decoration: underline;
 	}
 
-	.post-data {
-		margin-top: 4px;
-	}
-
-	.post-author,
 	.post-date {
 		display: flex;
-		margin-top: 1px;
 		align-items: center;
-	}
-
-	.post-author:not(:first-child) {
-		margin-top: 6px;
-	}
-	.post-author :global(img) {
-		flex-shrink: 0;
-	}
-
-	.post-date {
 		color: var(--text-light);
 		font-size: 12px;
-	}
-
-	.post-author-name {
-		margin-left: 7px;
-		font-size: 14px;
-	}
-
-	.post-status-wrap {
-		margin-bottom: 4px;
-		text-align: right;
 	}
 
 	.post-languages {
-		margin-top: 8px;
-		display: inline-flex;
-		flex-wrap: wrap;
-		gap: 5px;
-	}
-
-	.post-tags-wrap {
 		display: flex;
+		flex-wrap: wrap;
+		align-content: center;
+		gap: 5px;
 	}
 
-	.post-status-wrap {
-		text-align: right;
+	.post-authors-tags {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;
 	}
 
+	.hashtag {
+		color: color-mix(in srgb, var(--text-light) 60%, transparent 40%);
+		margin-right: 1px;
+	}
+
+	.post-authors,
 	.post-tags {
-		flex: 1;
-		display: inline-flex;
+		display: flex;
 		flex-wrap: wrap;
 		gap: 5px;
+		min-width: 0;
 	}
 
 	.post-health-wrap {
-		display: inline-flex;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.health-item {
+		display: flex;
 		flex-direction: column;
-	}
-
-	.post-health-wrap .name {
-		font-size: 12px;
-		color: var(--text-light);
-		margin-right: 5px;
-	}
-
-	.post-health-wrap .links {
-		margin-top: 4px;
-		display: inline-flex;
 		align-items: center;
 		gap: 4px;
 	}
 
+	.health-label {
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: var(--text-light);
+	}
+
+	.health-divider {
+		width: 1px;
+		height: 22px;
+		background: var(--border);
+	}
+
 	.post-actions-wrap {
-		text-align: right;
-		padding-right: 0;
+		display: flex;
+		align-items: center;
+		// text-align: right;
 		position: relative;
 		z-index: 1;
 	}
@@ -297,9 +376,16 @@
 		.post-list-item {
 			display: flex;
 			flex-direction: column;
+			align-items: stretch;
+			gap: 10px;
+		}
+
+		.post-health-wrap {
 			justify-content: flex-start;
-			align-items: flex-start;
-			gap: 5px;
+		}
+
+		.post-actions-wrap {
+			text-align: left;
 		}
 	}
 </style>

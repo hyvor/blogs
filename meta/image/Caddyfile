@@ -1,77 +1,45 @@
-# Taken from here:
-# https://github.com/laravel/octane/blob/2.x/src/Commands/stubs/Caddyfile
-# ENV variables are coming from here: https://github.com/laravel/octane/blob/2.x/src/Commands/StartFrankenPhpCommand.php#L92
-
 {
 	frankenphp
-
-	on_demand_tls {
-        ask http://localhost:8989/api/special/caddy/allowed-domain
-    }
-
     log {
         output stderr
         level {$LOG_LEVEL}
     }
-
     metrics
+    auto_https disable_redirects
 }
 
-:9666 {
-    metrics
-}
-
-:9667 {
-    root * /app/backend/public
-    php_server {
-        root /app/backend/public
-        file_server off
-        env HYVOR_METRICS_SERVER 1
-        worker frankenphp-worker.php 1
-    }
-}
-
-# hyvorblogs.io subdomain
-*.{$DELIVERY_DOMAIN}:80 {
+(handle_php) {
 	root * /app/backend/public
 	encode zstd gzip
 	php_server {
         file_server off
-        root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
+        worker {
+			file /app/backend/public/index.php
+		}
+        env CADDY_ROUTER {args[0]}
     }
 }
 
-# main app
-{$DOMAIN_APP}:80, :8989 {
-    @symfony {
-        path /api/comms/*
-        path /api/sudo/*
-    }
-    handle @symfony {
-        root * /app/symfony/public
-        encode zstd gzip
-        php_server {
-            file_server off
-            try_files index.php
-        }
-    }
+# hyvorblogs.io subdomain
+# see run script for DELIVERY_DOMAIN
+*.{$DELIVERY_DOMAIN}:80 {
+	import handle_php subdomain
+}
 
-    @laravel {
-        path /api/*
-    }
-	handle @laravel {
-		root * /app/backend/public
-		encode zstd gzip
-		php_server {
-            file_server off
-            root /app/backend/public/
-            env LARAVEL_OCTANE 1
-            env FRANKENPHP_WORKER 1
-            worker frankenphp-worker.php
-        }
+# main app
+# see run script for APP_ADDRESS / APP_TLS_DIRECTIVE (from TLS_MODE)
+{$APP_ADDRESS}, http://localhost:8081 {
+
+	{$APP_TLS_DIRECTIVE}
+	{$MERCURE_DIRECTIVE}
+
+	@backend {
+		path /api/*
+		path /blog/*
+	}
+
+	handle @backend {
+		import handle_php app
 	}
 
 	@static {
@@ -96,23 +64,19 @@
 		encode zstd gzip
 		file_server
 		header Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-		rewrite * /200.html
+		rewrite * /fallback.html
 	}
 }
 
-# custom domain
-http://, https:// {
-	tls {
-		on_demand
-	}
+# local endpoints
+http://localhost:8080 {
+	import handle_php local
+}
 
-	root * /app/backend/public
-	encode zstd gzip
-	php_server {
-        file_server off
-        root /app/backend/public/
-        env LARAVEL_OCTANE 1
-        env FRANKENPHP_WORKER 1
-        worker frankenphp-worker.php
-    }
+# custom domain
+:443, :80 {
+	tls {
+		get_certificate http http://localhost:8080/api/local/caddy-certificate
+	}
+	import handle_php customdomain
 }

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { Button, IconMessage, LoadButton, Loader, toast } from '@hyvor/design/components';
 	import MediaFilter from './MediaFilter.svelte';
-	import { getMedia, type FileType, uploadMedia } from './mediaActions';
+	import { getMedia, type FileType } from './mediaActions';
 	import IconCloudUpload from '@hyvor/icons/IconCloudUpload';
 	import type { Media } from '../../../../lib/types';
 	import MediaFile from './MediaFile.svelte';
-	import { getConfig } from '../../../../lib/config';
-	import type { SelectedFile } from '../../../../lib/components/FileUploader/image-uploader';
-	import FileUploader from '../../../../lib/components/FileUploader/FileUploader.svelte';
-	import { mount, unmount } from 'svelte';
+	import { uploadToMediaLibrary } from '../../../../lib/fileUploader';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		showUpload?: boolean;
@@ -29,62 +29,13 @@
 	let hasMore = $state(false);
 	let mediaFiles: Media[] = $state([]);
 
-	let uploadInput: HTMLInputElement | undefined = $state();
-	let isUploading = false;
-
 	let extensions: string[] = [];
 	let search: string | null = null;
 
-	function handleUpload() {
-		const files = uploadInput?.files;
-
-		if (!files || !files.length) {
-			return toast.error('Please select a file');
-		}
-
-		const file = files[0];
-
-		if (!file) {
-			return toast.error('Please select a file');
-		}
-
-		if (file.size > getConfig().limits.max_upload_size) {
-			return toast.error('File size is too large. Max file size is 50MB');
-		}
-
-		const toastId = toast.loading('Uploading...');
-		isUploading = true;
-
-		uploadMedia(file, file.name)
-			.then((media) => {
-				toast.success('Uploaded', { id: toastId });
-				mediaFiles = [media, ...mediaFiles];
-			})
-			.catch((err) => toast.error(err.message, { id: toastId }))
-			.finally(() => (isUploading = false));
-	}
-
-	function handleClickUpload() {
-		const div = document.createElement('div');
-		document.body.appendChild(div);
-
-		const selector = mount(FileUploader, {
-			target: div,
-			props: {
-				type: 'any',
-				onselect: () => {
-					destroy();
-					load();
-				},
-				onclose: () => {
-					destroy();
-				}
-			}
-		});
-
-		function destroy() {
-			unmount(selector);
-			div.remove();
+	async function handleClickUpload() {
+		const file = await uploadToMediaLibrary();
+		if (file) {
+			load();
 		}
 	}
 
@@ -131,12 +82,11 @@
 		/>
 
 		{#if showUpload}
-			<input type="file" bind:this={uploadInput} style="display:none" onchange={handleUpload} />
 			<Button on:click={handleClickUpload}>
 				{#snippet start()}
 					<IconCloudUpload />
 				{/snippet}
-				Upload
+				{i18n.t('console.theme.upload')}
 			</Button>
 		{/if}
 	</div>
@@ -145,7 +95,7 @@
 		{#if isLoading}
 			<Loader full />
 		{:else if !mediaFiles.length}
-			<IconMessage empty message="No Media Found" />
+			<IconMessage empty message={i18n.t('console.tools.media.noMedia')} />
 		{:else}
 			{#each mediaFiles as media (media.id)}
 				<MediaFile
@@ -159,7 +109,12 @@
 		{/if}
 	</div>
 
-	<LoadButton text="Load More" loading={isLoadingMore} show={hasMore} on:click={() => load(true)} />
+	<LoadButton
+		text={i18n.t('console.common.loadMore')}
+		loading={isLoadingMore}
+		show={hasMore}
+		on:click={() => load(true)}
+	/>
 </div>
 
 <style>

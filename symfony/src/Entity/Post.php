@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -18,12 +20,6 @@ class Post
 
     #[ORM\Column]
     private \DateTimeImmutable $updated_at;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $published_at = null;
-
-    #[ORM\Column]
-    private int $blog_id;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
@@ -46,6 +42,34 @@ class Post
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $code_foot = null;
+
+
+    /** @var Collection<int, PostVariant> */
+    #[ORM\OneToMany(targetEntity: PostVariant::class, mappedBy: 'post')]
+    private Collection $variants;
+
+    /** @var Collection<int, Tag> */
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    #[ORM\JoinTable(name: 'post_tag')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $tags;
+
+    /** @var Collection<int, User> */
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'post_author')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $authors;
+
+    public function __construct()
+    {
+        $this->variants = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->authors = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -77,28 +101,6 @@ class Post
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getPublishedAt(): ?\DateTimeImmutable
-    {
-        return $this->published_at;
-    }
-
-    public function setPublishedAt(?\DateTimeImmutable $published_at): static
-    {
-        $this->published_at = $published_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
@@ -177,5 +179,23 @@ class Post
     {
         $this->code_foot = $code_foot;
         return $this;
+    }
+
+    /** @return Collection<int, PostVariant> */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
+    }
+
+    /** @return Collection<int, Tag> */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /** @return Collection<int, User> */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
     }
 }

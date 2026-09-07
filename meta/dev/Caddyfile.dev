@@ -1,34 +1,58 @@
 {
 	frankenphp
     metrics
+    auto_https disable_redirects
 }
 
+(handle_php) {
+    root /app/backend/public
+    php_server {
+        file_server off
+        try_files index.php
+        env CADDY_ROUTER {args[0]}
+    }
+}
+
+# the main app
 :80 {
 
-    @symfony {
-        path /api/comms/*
-        path /api/sudo/*
-        path /api/v2/*
-    }
-    handle @symfony {
-        root /app/symfony/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
+    @subdomain {
+        host *.hyvorblogs.localhost
     }
 
-    # laravel
+    handle @subdomain {
+        import handle_php subdomain
+    }
+
+    @customdomain {
+        host custom-domain.localhost
+    }
+
+    handle @customdomain {
+        import handle_php customdomain
+    }
+
     handle {
-        root /app/backend/public
-        php_server {
-            file_server off
-            try_files index.php
-        }
+        import handle_php app
     }
 
 	log {
-        output file /var/log/caddy.log
+        output stderr
+        level DEBUG
     }
 
+}
+
+# local endpoints
+http://localhost:8080 {
+    import handle_php local
+}
+
+# custom domain testing
+:443 {
+    tls {
+        get_certificate http http://localhost:8080/api/local/caddy-certificate
+    }
+
+    import handle_php customdomain
 }

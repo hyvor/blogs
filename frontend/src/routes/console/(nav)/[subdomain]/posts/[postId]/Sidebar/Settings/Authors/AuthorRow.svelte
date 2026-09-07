@@ -3,6 +3,9 @@
 	import type { User } from '../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../lib/stores/languagesStore';
 	import { postStore } from '../../../../postStore';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	interface Props {
 		user: User;
@@ -27,12 +30,12 @@
 	<div class="left">
 		<Avatar size={16} src={user.picture_url} alt={variant.name || ''} />
 		<span class="name">
-			{variant.name || 'Unknown user'}
+			{variant.name || i18n.t('console.postEditor.settings.unknownUser')}
 		</span>
 	</div>
 	<div class="right">
 		<span class="posts-count">
-			{user.posts_count} post{user.posts_count === 1 ? '' : 's'}
+			{i18n.t('console.postEditor.settings.posts', { count: user.posts_count })}
 		</span>
 	</div>
 </div>

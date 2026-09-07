@@ -4,17 +4,21 @@
 		IconMessage,
 		LoadButton,
 		Loader,
-		Table,
 		TableRow,
 		toast
 	} from '@hyvor/design/components';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import type { Tag, TagVariant } from '../../../../lib/types';
 	import { onMount } from 'svelte';
 	import { getTags } from './tagActions';
 	import TagRow from './TagRow.svelte';
 	import CreateTagModal from './CreateTagModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -66,32 +70,33 @@
 		tags = tags.map((t) => (t.id === e.detail.id ? e.detail : t));
 	}
 
-	onMount(loadTags);
+	onMount(() => {
+		redirectIfCant('tags.read');
+		loadTags();
+	});
 </script>
 
 <div class="tags">
 	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+		<Button disabled={cant('tags.write')} on:click={() => (isCreating = true)}>
 			Create Tag {#snippet end()}
 				<IconPlus />
 			{/snippet}
 		</Button>
 	</SettingsTop>
 
-	<div class="note">Tags can be used to categorize your posts.</div>
+	<div class="note">{i18n.t('console.settings.tags.note')}</div>
 
 	<div class="table">
 		{#if isLoading}
 			<Loader full />
 		{:else if tags.length === 0}
-			<IconMessage empty message="No tags found." />
+			<IconMessage empty message={i18n.t('console.settings.tags.noTags')} />
 		{:else}
-			<Table columns="2fr 2fr 3fr 1fr 70px">
+			<SettingsTable columns="2fr 2fr 70px">
 				<TableRow head>
-					<div>Name</div>
-					<div>Slug/URL</div>
-					<div>Description</div>
-					<div>Posts</div>
+					<div>{i18n.t('console.posts.filters.tagLabel')}</div>
+					<div>{i18n.t('console.settings.tags.slugUrl')}</div>
 					<div></div>
 				</TableRow>
 
@@ -105,12 +110,12 @@
 				{/each}
 
 				<LoadButton
-					text="Load More"
+					text={i18n.t('console.common.loadMore')}
 					show={hasMore}
 					on:click={() => loadTags(true)}
 					loading={isLoadingMore}
 				/>
-			</Table>
+			</SettingsTable>
 		{/if}
 	</div>
 </div>

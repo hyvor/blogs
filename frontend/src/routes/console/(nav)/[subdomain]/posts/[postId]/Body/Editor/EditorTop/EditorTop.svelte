@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import SaveStatus from './SaveStatus.svelte';
-	import PublishedEditingStatus from './PublishedEditingStore/PublishedEditingStatus.svelte';
 	import AutoTranslate from './AutoTranslate/AutoTranslate.svelte';
 
 	let el: HTMLDivElement | undefined = $state();
@@ -32,15 +30,10 @@
 <svelte:window onscrollcapture={positionEl} />
 
 <div class="editor-top" bind:this={el}>
-	<div class="left">
-		<SaveStatus />
-		<PublishedEditingStatus />
-	</div>
+	<div class="left"></div>
 
 	<div class="right">
 		<AutoTranslate />
-		<!-- see plugin-wordocount.ts -->
-		<span id="pm-word-count"></span>
 	</div>
 </div>
 
@@ -67,10 +60,5 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-	}
-	#pm-word-count {
-		font-size: 12px;
-		color: var(--text-light);
-		font-weight: 600;
 	}
 </style>

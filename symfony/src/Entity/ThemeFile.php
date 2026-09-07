@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\ThemeFileFolder;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -20,21 +21,25 @@ class ThemeFile
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $blog_id;
-
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $folder = null;
+    private ?ThemeFileFolder $folder = null;
 
     #[ORM\Column(length: 255)]
     private string $name;
 
+    /**
+     * Doctrine hydrates this as a resource when read fresh from the database,
+     * but it is set as a hex-encoded string by setContent().
+     *
+     * @var resource|string|null
+     */
     #[ORM\Column(type: 'blob', nullable: true)]
-    private ?string $content = null;
+    /** @phpstan-ignore property.unusedType (Doctrine hydrates this as a resource; PHPStan only sees the string writes here) */
+    private $content = null;
 
     public function getId(): int
     {
@@ -69,17 +74,6 @@ class ThemeFile
         return $this;
     }
 
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
-        return $this;
-    }
-
     public function getBlog(): Blog
     {
         return $this->blog;
@@ -91,12 +85,12 @@ class ThemeFile
         return $this;
     }
 
-    public function getFolder(): ?string
+    public function getFolder(): ?ThemeFileFolder
     {
         return $this->folder;
     }
 
-    public function setFolder(?string $folder): static
+    public function setFolder(?ThemeFileFolder $folder): static
     {
         $this->folder = $folder;
         return $this;
@@ -115,12 +109,29 @@ class ThemeFile
 
     public function getContent(): ?string
     {
-        return $this->content;
+        $content = $this->content;
+
+        if ($content === null) {
+            return null;
+        }
+
+        if (is_resource($content)) {
+            $content = stream_get_contents($content);
+        }
+
+        if ($content === false) {
+            return null;
+        }
+
+        /** @phpstan-ignore argument.type (PHPStan cannot narrow `resource` out of the union via is_resource()) */
+        $decoded = hex2bin($content);
+
+        return $decoded === false ? null : $decoded;
     }
 
     public function setContent(?string $content): static
     {
-        $this->content = $content;
+        $this->content = $content === null ? null : bin2hex($content);
         return $this;
     }
 }

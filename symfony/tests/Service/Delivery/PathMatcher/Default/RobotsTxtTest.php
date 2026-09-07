@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Tests\Service\Delivery\PathMatcher\Default;
+
+use App\Service\Delivery\Dto\DeliveryFileType;
+use App\Service\Delivery\Dto\DeliveryResponseType;
+use App\Service\Delivery\PathMatcher;
+use App\Service\Delivery\Processor\RobotsTxtProcessor;
+use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
+use Hyvor\Internal\Bundle\Testing\KernelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+
+#[CoversClass(PathMatcher::class)]
+#[CoversClass(RobotsTxtProcessor::class)]
+class RobotsTxtTest extends KernelTestCase
+{
+    private function pathMatcher(): PathMatcher
+    {
+        return $this->getService(PathMatcher::class);
+    }
+
+    public function test_returns_robots_txt(): void
+    {
+        $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
+        LanguageFactory::createOnePrimaryFor($blog, [
+            'code' => 'en',
+        ]);
+
+        $response = $this->pathMatcher()->match($blog, '/robots.txt');
+
+        $blogUrl = $this->getService(\App\Service\Route\PermalinkService::class)->getBlogUrl($blog);
+
+        $this->assertSame(DeliveryResponseType::FILE, $response->type);
+        $this->assertSame(DeliveryFileType::TEMPLATE, $response->fileType);
+        $this->assertSame('text/plain', $response->mimeType);
+        $this->assertSame(200, $response->status);
+        $this->assertSame(
+            "User-agent: *\nSitemap: $blogUrl/sitemap.xml\nDisallow: /p/",
+            $response->content
+        );
+    }
+}

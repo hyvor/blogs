@@ -1,59 +1,26 @@
 <script lang="ts">
-	import { Button } from '@hyvor/design/components';
-	import TrialChecks from './TrialChecks.svelte';
+	import { FullTrialSignup } from '@hyvor/design/marketing';
+	import { getMarketingI18n } from '../[[lang]]/marketingLang';
+
+	const I18n = getMarketingI18n();
 
 	interface Props {
 		title?: string;
 		[key: string]: any;
 	}
 
-	let {
-		title = 'Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?',
-		...rest
-	}: Props = $props();
+	let { title = I18n.t('homepage.trialSignup.title'), ...rest }: Props = $props();
 </script>
 
-<div class="wrap" {...rest}>
-	<div class="hds-container inner">
-		<h3>
-			{title}
-		</h3>
-
-		<div class="button-wrap">
-			<Button as="a" size="large" href="/console?signup">Start your blog</Button>
-		</div>
-
-		<div class="trial-checks">
-			<TrialChecks style="display:flex;justify-content:space-around" />
-		</div>
-	</div>
-</div>
-
-<style>
-	.wrap {
-		background-color: var(--accent-light-mid);
-		padding: 80px 15px;
-		margin: 30px 0;
-	}
-
-	.inner {
-		width: 700px;
-		max-width: 100%;
-		margin: auto;
-	}
-
-	h3 {
-		text-align: center;
-		font-size: 25px;
-		font-weight: 600;
-	}
-
-	.button-wrap {
-		padding: 20px;
-		text-align: center;
-	}
-
-	.trial-checks {
-		margin-top: 15px;
-	}
-</style>
+<FullTrialSignup
+	badge={I18n.t('homepage.trialSignup.badge')}
+	{title}
+	description={I18n.t('homepage.trialSignup.description')}
+	button={{ href: '/console?signup', label: I18n.t('homepage.trialSignup.button') }}
+	checks={[
+		I18n.t('homepage.trialSignup.checkTrial'),
+		I18n.t('homepage.trialSignup.checkNoCard'),
+		I18n.t('homepage.trialSignup.checkCancel')
+	]}
+	{...rest}
+/>

@@ -22,15 +22,15 @@ class PostVariant
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private int $post_id;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $content_updated_at = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $published_at = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
     private Post $post;
-
-    #[ORM\Column]
-    private int $language_id;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'language_id', referencedColumnName: 'id')]
@@ -45,8 +45,19 @@ class PostVariant
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content = null;
 
+    // last saved (/checkpoint) content
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_unsaved = null;
+
+    // version (prosemirror) of that last saved content
+    #[ORM\Column()]
+    private int $content_unsaved_version = 0;
+
+    // version (prosemirror) of the editing document
+    // this is the version that last has steps submitted to it and was accepted
+    // document_version can be > content_unsaved_version if there are steps submitted that have not yet been checkpointed
+    #[ORM\Column()]
+    private int $document_version = 0;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content_html = null;
@@ -74,8 +85,11 @@ class PostVariant
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $link_analysis = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $seo_score = null;
+
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ts_language = null;
+    private ?string $ts_language = 'simple';
 
     public function getId(): int
     {
@@ -110,14 +124,25 @@ class PostVariant
         return $this;
     }
 
-    public function getPostId(): int
+    public function getContentUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->post_id;
+        return $this->content_updated_at;
     }
 
-    public function setPostId(int $post_id): static
+    public function setContentUpdatedAt(?\DateTimeImmutable $content_updated_at): static
     {
-        $this->post_id = $post_id;
+        $this->content_updated_at = $content_updated_at;
+        return $this;
+    }
+
+    public function getPublishedAt(): ?\DateTimeImmutable
+    {
+        return $this->published_at;
+    }
+
+    public function setPublishedAt(?\DateTimeImmutable $published_at): static
+    {
+        $this->published_at = $published_at;
         return $this;
     }
 
@@ -132,16 +157,6 @@ class PostVariant
         return $this;
     }
 
-    public function getLanguageId(): int
-    {
-        return $this->language_id;
-    }
-
-    public function setLanguageId(int $language_id): static
-    {
-        $this->language_id = $language_id;
-        return $this;
-    }
 
     public function getLanguage(): Language
     {
@@ -195,6 +210,28 @@ class PostVariant
     public function setContentUnsaved(?string $content_unsaved): static
     {
         $this->content_unsaved = $content_unsaved;
+        return $this;
+    }
+
+    public function getContentUnsavedVersion(): int
+    {
+        return $this->content_unsaved_version;
+    }
+
+    public function setContentUnsavedVersion(int $content_unsaved_version): static
+    {
+        $this->content_unsaved_version = $content_unsaved_version;
+        return $this;
+    }
+
+    public function getDocumentVersion(): int
+    {
+        return $this->document_version;
+    }
+
+    public function setDocumentVersion(int $document_version): static
+    {
+        $this->document_version = $document_version;
         return $this;
     }
 
@@ -291,6 +328,17 @@ class PostVariant
     public function setLinkAnalysis(?array $link_analysis): static
     {
         $this->link_analysis = $link_analysis;
+        return $this;
+    }
+
+    public function getSeoScore(): ?int
+    {
+        return $this->seo_score;
+    }
+
+    public function setSeoScore(?int $seo_score): static
+    {
+        $this->seo_score = $seo_score;
         return $this;
     }
 

@@ -10,9 +10,22 @@
 	import IconTools from '@hyvor/icons/IconTools';
 
 	import { page } from '$app/stores';
-	import { NavLink } from '@hyvor/design/components';
+	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { consoleUrl } from '../../lib/consoleUrl';
+	import { blogSelectorOpenStore } from '../../lib/stores';
 	import type { BlogList } from '../../lib/types';
+
+	import IconEnvelope from '@hyvor/icons/IconEnvelope';
+
+	import IconChat from '@hyvor/icons/IconChat';
+	import { integrationsStore } from '../../lib/stores/blogStore';
+	import IconRobot from '@hyvor/icons/IconRobot';
+	import { getConfig } from '../../lib/config';
+	import { getI18n } from '../../lib/i18n';
+	import { cant } from '../../lib/scope.svelte';
+
+	const i18n = getI18n();
+
 	interface Props {
 		listItem: BlogList;
 	}
@@ -20,7 +33,7 @@
 	let { listItem }: Props = $props();
 </script>
 
-<a class="current-blog" href={consoleUrl('/select')}>
+<button type="button" class="current-blog" onclick={() => ($blogSelectorOpenStore = true)}>
 	<div class="name-url">
 		<div class="name">
 			{listItem.name || 'Unnamed'}
@@ -33,99 +46,157 @@
 	<div class="current-icon">
 		<IconChevronExpand />
 	</div>
-</a>
+</button>
 
 <div class="nav-items">
-	<NavLink
-		href={consoleUrl(listItem.subdomain)}
-		active={$page.url.pathname === `/console/${listItem.subdomain}`}
-	>
-		{#snippet start()}
-			<IconHouse />
-		{/snippet}
+	<NavLinkGroup activeBackground="var(--accent-light-mid)">
+		<NavLink
+			href={consoleUrl(listItem.subdomain)}
+			active={$page.url.pathname === `/console/${listItem.subdomain}`}
+		>
+			{#snippet start()}
+				<IconHouse />
+			{/snippet}
 
-		Home
+			{i18n.t('console.nav.home')}
 
-		{#snippet end()}
-			<a class="home-link" href={listItem.url} target="_blank">
-				<IconBoxArrowUpRight size={12} />
-			</a>
-		{/snippet}
-	</NavLink>
+			{#snippet end()}
+				<a class="home-link" href={listItem.url} target="_blank">
+					<IconBoxArrowUpRight size={12} />
+				</a>
+			{/snippet}
+		</NavLink>
 
-	<div class="section-div"></div>
+		<div class="section-div"></div>
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/posts`)}
-		active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/posts`)}
-	>
-		{#snippet start()}
-			<IconPencil />
-		{/snippet}
-		Posts
-	</NavLink>
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/posts`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/posts`)}
+			disabled={cant('posts.read')}
+		>
+			{#snippet start()}
+				<IconPencil />
+			{/snippet}
+			{i18n.t('console.nav.posts')}
+		</NavLink>
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/pages`)}
-		active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/pages`)}
-	>
-		{#snippet start()}
-			<IconFiles />
-		{/snippet}
-		Pages
-	</NavLink>
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/pages`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/pages`)}
+			disabled={cant('posts.read')}
+		>
+			{#snippet start()}
+				<IconFiles />
+			{/snippet}
+			{i18n.t('console.nav.pages')}
+		</NavLink>
 
-	<div class="section-div"></div>
+		{#if $integrationsStore.hyvor_talk}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/comments`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/comments`)}
+				disabled={cant('integrations.manage')}
+			>
+				{#snippet start()}
+					<IconChat />
+				{/snippet}
+				{i18n.t('console.integrations.hyvorTalk.comments.label')}
+				{#snippet end()}
+					<img alt="Hyvor Talk" class="integration-icon" src="/img/services/hyvor-talk.svg" />
+				{/snippet}
+			</NavLink>
+		{/if}
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/theme`)}
-		active={$page.url.pathname === `/console/${listItem.subdomain}/theme`}
-	>
-		{#snippet start()}
-			<IconPalette />
-		{/snippet}
-		Theme
-	</NavLink>
+		{#if $integrationsStore.hyvor_post}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/newsletter`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/newsletter`)}
+				disabled={cant('integrations.manage')}
+			>
+				{#snippet start()}
+					<IconEnvelope />
+				{/snippet}
+				{i18n.t('console.integrations.hyvorTalk.newsletter.label')}
+				{#snippet end()}
+					<img alt="Hyvor Post" class="integration-icon" src="/img/services/hyvor-post.svg" />
+				{/snippet}
+			</NavLink>
+		{/if}
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/integrations`)}
-		active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
-	>
-		{#snippet start()}
-			<IconPlugin />
-		{/snippet}
-		Integrations
-	</NavLink>
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/agent`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
+			disabled={cant('ai.use')}
+		>
+			{#snippet start()}
+				<IconRobot />
+			{/snippet}
+			Agent
+		</NavLink>
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/tools`)}
-		active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/tools`)}
-	>
-		{#snippet start()}
-			<IconTools />
-		{/snippet}
-		Tools
-	</NavLink>
+		<div class="section-div"></div>
 
-	<NavLink
-		href={consoleUrl(`${listItem.subdomain}/settings`)}
-		active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/settings`)}
-	>
-		{#snippet start()}
-			<IconGear />
-		{/snippet}
-		Settings
-	</NavLink>
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/theme`)}
+			active={$page.url.pathname === `/console/${listItem.subdomain}/theme`}
+			disabled={cant('themes.read')}
+		>
+			{#snippet start()}
+				<IconPalette />
+			{/snippet}
+			{i18n.t('console.nav.theme')}
+		</NavLink>
+
+		{#if getConfig().deployment === 'cloud'}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/integrations`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/integrations`)}
+				disabled={cant('integrations.manage')}
+			>
+				{#snippet start()}
+					<IconPlugin />
+				{/snippet}
+				{i18n.t('console.nav.integrations')}
+			</NavLink>
+		{/if}
+
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/tools`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/tools`)}
+		>
+			{#snippet start()}
+				<IconTools />
+			{/snippet}
+			{i18n.t('console.nav.tools')}
+		</NavLink>
+
+		<NavLink
+			href={consoleUrl(`${listItem.subdomain}/settings`)}
+			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/settings`)}
+		>
+			{#snippet start()}
+				<IconGear />
+			{/snippet}
+			{i18n.t('console.nav.settings')}
+		</NavLink>
+	</NavLinkGroup>
 </div>
 
 <style lang="scss">
 	.current-blog {
 		display: flex;
 		align-items: center;
+		width: calc(100% - 20px);
 		padding: 10px 20px;
 		cursor: pointer;
 		border-radius: var(--box-radius);
 		margin: 10px;
+		font-family: inherit;
+		font-size: inherit;
+		text-align: left;
+		background: none;
+		border: none;
+		color: inherit;
 	}
 
 	.current-blog:hover {
@@ -155,10 +226,6 @@
 		padding-top: 10px;
 	}
 
-	.nav-items :global(a.active) {
-		background-color: var(--accent-light-mid);
-	}
-
 	.home-link {
 		display: inline-flex;
 		align-items: center;
@@ -176,6 +243,11 @@
 
 	.section-div {
 		height: 25px;
+	}
+
+	.integration-icon {
+		width: 16px;
+		height: 16px;
 	}
 
 	@media (max-width: 992px) {

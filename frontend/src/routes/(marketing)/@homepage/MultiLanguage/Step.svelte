@@ -61,7 +61,6 @@
 	.title {
 		font-size: 20px;
 		font-weight: 600;
-		// margin-top: 10px;
 	}
 	.description {
 		margin-top: 10px;

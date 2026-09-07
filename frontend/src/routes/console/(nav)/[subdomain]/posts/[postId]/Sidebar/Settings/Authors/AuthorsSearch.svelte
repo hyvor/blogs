@@ -3,7 +3,10 @@
 	import { Loader, Text, TextInput } from '@hyvor/design/components';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import type { User } from '../../../../../../../lib/types';
-	import { getUsers, searchUsers } from '../../../../../settings/users/userActions';
+	import { getUsers } from '../../../../../settings/users/userActions';
+	import { getI18n } from '../../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let isLoading = $state(true);
 	let users: User[] = $state([]);
@@ -29,7 +32,7 @@
 		}
 
 		setTimeout(() => {
-			searchUsers({ search }).then((res) => {
+			getUsers({ search }).then((res) => {
 				isLoading = false;
 				searchedUsers = res;
 			});
@@ -54,7 +57,7 @@
 	<div class="input">
 		<TextInput
 			bind:value={search}
-			placeholder="Search authors"
+			placeholder={i18n.t('console.postEditor.settings.searchAuthors')}
 			size="small"
 			block
 			autofocus
@@ -71,7 +74,7 @@
 			{/each}
 		{:else}
 			<div style="padding:30px;text-align:center">
-				<Text small light>No authors</Text>
+				<Text small light>{i18n.t('console.postEditor.settings.noAuthors')}</Text>
 			</div>
 		{/if}
 	</div>

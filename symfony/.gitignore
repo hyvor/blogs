@@ -8,6 +8,7 @@
 /var/
 /vendor/
 /node_modules
+/coverage
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -18,3 +19,5 @@
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+src/InternalFake.php

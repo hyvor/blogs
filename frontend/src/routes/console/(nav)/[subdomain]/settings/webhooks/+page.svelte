@@ -23,6 +23,10 @@
 	import CreateWebhookModal from './CreateUpdateWebhookModal.svelte';
 	import WebhookList from './WebhookList.svelte';
 	import WebhookDeliveryList from './WebhookDeliveryList.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let webhooks: Webhook[] = $state([]);
 	let deliveries: WebhookDelivery[] = $state([]);
@@ -65,6 +69,7 @@
 	});
 
 	onMount(() => {
+		redirectIfCant('webhooks.read');
 		loadWebhooks();
 	});
 
@@ -76,7 +81,7 @@
 				webhooksLoaded = true;
 			})
 			.catch((error) => {
-				toast.error('Failed to load webhooks: ' + error.message);
+				toast.error(i18n.t('console.settings.webhooks.failedToLoad', { message: error.message }));
 			})
 			.finally(() => {
 				isWebhooksLoading = false;
@@ -102,9 +107,9 @@
 			})
 			.catch((error) => {
 				if (more) {
-					toast.error('Failed to load more deliveries');
+					toast.error(i18n.t('console.settings.webhooks.failedToLoadMoreDeliveries'));
 				} else {
-					toast.error('Failed to load webhook deliveries');
+					toast.error(i18n.t('console.settings.webhooks.failedToLoadDeliveries'));
 				}
 			})
 			.finally(() => {
@@ -156,20 +161,26 @@
 			<TabNavItem
 				name="configure"
 				active={activeTab === 'configure'}
-				onclick={() => (activeTab = 'configure')}>Configure</TabNavItem
+				onclick={() => (activeTab = 'configure')}
+				>{i18n.t('console.settings.webhooks.configure')}</TabNavItem
 			>
 			<TabNavItem
 				name="deliveries"
 				active={activeTab === 'deliveries'}
-				onclick={() => (activeTab = 'deliveries')}>Deliveries</TabNavItem
+				onclick={() => (activeTab = 'deliveries')}
+				>{i18n.t('console.settings.webhooks.deliveries')}</TabNavItem
 			>
 		</TabNav>
 	</div>
 	{#if activeTab === 'configure'}
-		<Button on:click={() => (isCreating = true)}>
-			<IconPlus />
-			Create Webhook
-		</Button>
+		<div class="filter-section">
+			<Button size="small" disabled={cant('webhooks.write')} on:click={() => (isCreating = true)}>
+				{i18n.t('console.settings.webhooks.create')}
+				{#snippet end()}
+					<IconPlus />
+				{/snippet}
+			</Button>
+		</div>
 	{:else if activeTab === 'deliveries'}
 		<div class="filter-section">
 			<Dropdown bind:show={showWebhookFilter} width={300}>
@@ -187,7 +198,7 @@
 							selected={selectedWebhookId === null}
 							on:select={() => handleWebhookFilterSelect(null)}
 						>
-							All Webhooks
+							{i18n.t('console.settings.webhooks.allWebhooks')}
 						</ActionListItem>
 						{#each webhooks as webhook (webhook.id)}
 							<ActionListItem

@@ -12,6 +12,9 @@
 		IconMessage
 	} from '@hyvor/design/components';
 	import LinkRow from './LinkRow.svelte';
+	import { getI18n } from '../../../../../lib/i18n';
+
+	const i18n = getI18n();
 	interface Props {
 		stats: Stats;
 	}
@@ -111,10 +114,10 @@
 	{:else if links.length}
 		<Table columns="1fr 2fr 100px 100px">
 			<TableRow head>
-				<div>Post</div>
-				<div>Link</div>
-				<div>Status</div>
-				<div>Actions</div>
+				<div>{i18n.t('console.tools.linkAnalysis.post')}</div>
+				<div>{i18n.t('console.tools.linkAnalysis.link')}</div>
+				<div>{i18n.t('console.common.status')}</div>
+				<div>{i18n.t('console.common.actions')}</div>
 			</TableRow>
 
 			{#each links as link (link.post_variant_id + link.url)}
@@ -123,13 +126,13 @@
 		</Table>
 
 		<LoadButton
-			text="Load More"
+			text={i18n.t('console.common.loadMore')}
 			on:click={() => loadLinks(true)}
 			loading={isMoreLoading}
 			show={hasMore}
 		/>
 	{:else}
-		<IconMessage empty message="No links found." padding={100} />
+		<IconMessage empty message={i18n.t('console.tools.linkAnalysis.noLinks')} padding={100} />
 	{/if}
 </div>
 

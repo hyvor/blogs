@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
+use App\Entity\Enum\UserStatus;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,26 +21,27 @@ class User
     private int $id;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $created_at = null;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updated_at = null;
-
-    #[ORM\Column]
-    private int $blog_id;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     private Blog $blog;
 
+    /**
+     * This is HYVOR user ID in cloud
+     * and OIDC user ID in self-hosted
+     */
     #[ORM\Column(nullable: true)]
     private ?int $hyvor_user_id = null;
 
     #[ORM\Column(enumType: UserRole::class)]
     private UserRole $role;
 
-    #[ORM\Column(options: ['default' => 'invited'])]
-    private string $status = 'invited';
+    #[ORM\Column(enumType: UserStatus::class, options: ['default' => 'invited'])]
+    private UserStatus $status = UserStatus::INVITED;
 
     #[ORM\Column()]
     private string $slug;
@@ -52,6 +54,9 @@ class User
 
     #[ORM\Column()]
     private ?string $picture_url = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $cursor_color = null;
 
     #[ORM\Column()]
     private ?string $social_facebook = null;
@@ -102,36 +107,25 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
         $this->created_at = $created_at;
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updated_at;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function getBlogId(): int
-    {
-        return $this->blog_id;
-    }
-
-    public function setBlogId(int $blog_id): static
-    {
-        $this->blog_id = $blog_id;
         return $this;
     }
 
@@ -168,12 +162,12 @@ class User
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): UserStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(UserStatus $status): static
     {
         $this->status = $status;
         return $this;
@@ -220,6 +214,17 @@ class User
     public function setPictureUrl(?string $picture_url): static
     {
         $this->picture_url = $picture_url;
+        return $this;
+    }
+
+    public function getCursorColor(): ?string
+    {
+        return $this->cursor_color;
+    }
+
+    public function setCursorColor(?string $cursor_color): static
+    {
+        $this->cursor_color = $cursor_color;
         return $this;
     }
 

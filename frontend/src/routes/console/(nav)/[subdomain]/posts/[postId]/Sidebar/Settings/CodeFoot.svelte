@@ -10,11 +10,14 @@
 	import LabelWithInfo from './LabelWithInfo.svelte';
 	import CodemirrorWithPreview from '../../../../../../lib/components/CodemirrorEditor/CodemirrorWithPreview.svelte';
 	import { updatePost } from '../../../postActions';
+	import { getI18n } from '../../../../../../lib/i18n';
+
+	const i18n = getI18n();
 
 	let loaderState: 'none' | 'loading' | 'success' | 'error' = $state('none');
 
-	function handleChange(e: CustomEvent<string>) {
-		updatePostStore({ code_foot: e.detail });
+	function handleChange(value: string) {
+		updatePostStore({ code_foot: value });
 	}
 
 	function handleConfirm() {
@@ -38,8 +41,8 @@
 	{#snippet label()}
 		<span>
 			<LabelWithInfo
-				label="Code Foot"
-				info="Custom code to be added before the </body> tag of the post."
+				label={i18n.t('console.postEditor.settings.codeFoot')}
+				info={i18n.t('console.postEditor.settings.codeFootInfo')}
 			/>
 			<UnsavedTag show={$postStore.code_foot !== $postOriginalStore.code_foot} {loaderState} />
 		</span>
@@ -47,8 +50,8 @@
 
 	<CodemirrorWithPreview
 		value={$postStore.code_foot || ''}
-		title="Code Head"
-		on:change={handleChange}
-		on:confirm={handleConfirm}
+		title={i18n.t('console.postEditor.settings.codeFoot')}
+		onchange={handleChange}
+		onconfirm={handleConfirm}
 	/>
 </SplitControl>

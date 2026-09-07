@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, IconButton, TableRow, Tooltip, confirm, toast } from '@hyvor/design/components';
+	import { IconButton, TableRow, Tooltip, confirm, toast } from '@hyvor/design/components';
 	import type { ApiKey } from '../../../../lib/types';
 	import IconArrowCounterclockwise from '@hyvor/icons/IconArrowCounterclockwise';
 	import IconCopy from '@hyvor/icons/IconCopy';
@@ -7,6 +7,15 @@
 
 	import { deleteApiKey, regenerateApiKey } from './apiKeysActions';
 	import { createEventDispatcher } from 'svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
+
+	const TYPE_KEYS = {
+		console: 'console.settings.apiKeys.types.console',
+		delivery: 'console.settings.apiKeys.types.delivery'
+	} as const;
 
 	interface Props {
 		apiKey: ApiKey;
@@ -18,24 +27,24 @@
 
 	function handleCopy() {
 		navigator.clipboard.writeText(apiKey.api_key);
-		toast.success('Copied');
+		toast.success(i18n.t('console.common.copied'));
 	}
 
 	async function handleRegenerate() {
 		if (
 			await confirm({
-				title: 'Regenerate API Key',
-				content: 'Are you sure to regenerate this API Key? This will invalidate the old API Key.',
-				confirmText: 'Yes, regenerate',
+				title: i18n.t('console.settings.apiKeys.regenerateTitle'),
+				content: i18n.t('console.settings.apiKeys.regenerateContent'),
+				confirmText: i18n.t('console.settings.apiKeys.regenerateConfirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Regenerating...');
+			const toastId = toast.loading(i18n.t('console.settings.apiKeys.regenerating'));
 
 			regenerateApiKey(apiKey.id)
 				.then((newApiKey) => {
 					dispatch('update', newApiKey);
-					toast.success('Regenerated', { id: toastId });
+					toast.success(i18n.t('console.settings.apiKeys.regenerated'), { id: toastId });
 				})
 				.catch((err) => {
 					toast.error(err.message, { id: toastId });
@@ -46,17 +55,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete API Key',
-				content: 'Are you sure to delete this API Key? This cannot be undone.',
-				confirmText: 'Yes, delete',
+				title: i18n.t('console.settings.apiKeys.deleteTitle'),
+				content: i18n.t('console.settings.apiKeys.deleteContent'),
+				confirmText: i18n.t('console.common.yesDelete'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting...');
+			const toastId = toast.loading(i18n.t('console.tools.media.deleting'));
 
 			deleteApiKey(apiKey.id)
 				.then(() => {
-					toast.success('Deleted', { id: toastId });
+					toast.success(i18n.t('console.tools.media.deleted'), { id: toastId });
 					dispatch('delete', apiKey.id);
 				})
 				.catch((err) => {
@@ -68,51 +77,36 @@
 
 <TableRow>
 	<div>{apiKey.name}</div>
-	<div class="api-type">{apiKey.type} API</div>
+	<div class="api-type">{i18n.t(TYPE_KEYS[apiKey.type])}</div>
 	<div>
-		<Tooltip text="Copy API Key">
-			<IconButton color="gray" variant="fill-light" on:click={handleCopy}>
+		<Tooltip text={i18n.t('console.settings.apiKeys.copyKey')}>
+			<IconButton color="input" variant="fill" size="small" on:click={handleCopy}>
 				<IconCopy size={12} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Regenerate API Key">
-			<IconButton color="gray" variant="fill-light" on:click={handleRegenerate}>
+		<Tooltip text={i18n.t('console.settings.apiKeys.regenerateTitle')}>
+			<IconButton
+				color="input"
+				variant="fill"
+				size="small"
+				disabled={cant('api_keys.write')}
+				on:click={handleRegenerate}
+			>
 				<IconArrowCounterclockwise size={12} />
 			</IconButton>
 		</Tooltip>
 
-		<Tooltip text="Delete API Key">
-			<IconButton color="red" variant="fill-light" on:click={handleDelete}>
+		<Tooltip text={i18n.t('console.settings.apiKeys.deleteTitle')}>
+			<IconButton
+				variant="fill-light"
+				color="red"
+				size="small"
+				disabled={cant('api_keys.write')}
+				on:click={handleDelete}
+			>
 				<IconTrash size={12} />
 			</IconButton>
 		</Tooltip>
 	</div>
-
-	<div></div>
-
-	<!-- <div>
-        <button
-            class="icon-button"
-            onClick={() => setIsDeleting(true)}><Trash size={10} /></button>
-    </div> -->
-
-	<!-- {
-        isDeleting ?
-            <PopupConfirm
-                title="Delete API Key"
-                text="Please confirm to delete this API Key"
-                name="Delete"
-                buttonClass="danger"
-                onClick={handleDelete}
-                onCancel={() => setIsDeleting(false)}
-            />
-            : null
-    } -->
 </TableRow>
-
-<style>
-	.api-type {
-		text-transform: capitalize;
-	}
-</style>

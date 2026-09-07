@@ -1,53 +1,75 @@
 <script lang="ts">
-	import { Button, Modal, toast } from '@hyvor/design/components';
-	import { postVariantStore } from '../../../postStore';
-	import { updatePostVariant } from '../../../postActions';
+	import { Button, Modal, Tooltip, toast } from '@hyvor/design/components';
+	import { postStore, postVariantStore } from '../../../postStore';
+	import { unpublishPostVariant } from '../../../postActions';
 	import IconEyeSlash from '@hyvor/icons/IconEyeSlash';
+	import { getI18n } from '../../../../../../lib/i18n';
+	import { authUserStore } from '../../../../../../lib/stores';
+	import { can } from '../../../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let modalOpen = $state(false);
+
+	let isAuthor = $derived(
+		($postStore?.authors ?? []).some((author) => author.hyvor_user_id === $authUserStore?.id)
+	);
+
+	let canPublish = $derived(can('posts.publish.all') || (isAuthor && can('posts.publish.own')));
+
+	const publishPermissionTooltip = i18n.t('console.postEditor.publish.noPermission');
 
 	function handleUnpublish() {
 		modalOpen = false;
 
-		const toastId = toast.loading('Unpublishing...');
+		const toastId = toast.loading(i18n.t('console.postEditor.unpublish.unpublishing'));
 
-		updatePostVariant({
-			status: 'draft'
-		})
+		unpublishPostVariant()
 			.then(() => {
-				toast.success('Post unpublished', { id: toastId });
+				toast.success(i18n.t('console.postEditor.unpublish.unpublished'), { id: toastId });
 			})
-			.catch(() => {
-				toast.error('Failed to unpublish post', { id: toastId });
+			.catch((e) => {
+				toast.error(e?.message || i18n.t('console.postEditor.unpublish.unpublishFailed'), {
+					id: toastId
+				});
 			});
 	}
 </script>
 
 {#if $postVariantStore.status !== 'draft'}
-	<Button size="small" color="input" on:click={() => (modalOpen = true)}>
-		{#snippet start()}
-			<IconEyeSlash size={12} />
-		{/snippet}
-		{#if $postVariantStore.status === 'scheduled'}
-			Unschedule
-		{:else}
-			Unpublish
-		{/if}
-	</Button>
+	<Tooltip text={!canPublish ? publishPermissionTooltip : ''}>
+		<Button size="small" color="input" disabled={!canPublish} on:click={() => (modalOpen = true)}>
+			{#snippet start()}
+				<IconEyeSlash size={12} />
+			{/snippet}
+			{#if $postVariantStore.status === 'scheduled'}
+				{i18n.t('console.postEditor.unpublish.unschedule')}
+			{:else}
+				{i18n.t('console.postEditor.unpublish.unpublish')}
+			{/if}
+		</Button>
+	</Tooltip>
 
 	<Modal
-		title={$postVariantStore.status === 'scheduled' ? 'Unschedule Post' : 'Unpublish Post'}
+		title={$postVariantStore.status === 'scheduled'
+			? i18n.t('console.postEditor.unpublish.unscheduleTitle')
+			: i18n.t('console.postEditor.unpublish.unpublishTitle')}
 		bind:show={modalOpen}
 		size="small"
 	>
-		Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this post?
-		It's status will be changed to draft.
+		{$postVariantStore.status === 'scheduled'
+			? i18n.t('console.postEditor.unpublish.confirmUnschedule')
+			: i18n.t('console.postEditor.unpublish.confirmUnpublish')}
 
 		{#snippet footer()}
 			<div>
-				<Button variant="invisible" on:click={() => (modalOpen = false)}>Cancel</Button>
+				<Button variant="invisible" on:click={() => (modalOpen = false)}
+					>{i18n.t('console.common.cancel')}</Button
+				>
 				<Button color="red" on:click={handleUnpublish}>
-					{$postVariantStore.status === 'scheduled' ? 'Unschedule' : 'Unpublish'}
+					{$postVariantStore.status === 'scheduled'
+						? i18n.t('console.postEditor.unpublish.unschedule')
+						: i18n.t('console.postEditor.unpublish.unpublish')}
 				</Button>
 			</div>
 		{/snippet}

@@ -51,7 +51,7 @@
         "version": "4.0.0-beta.12"
     },
     "nelmio/api-doc-bundle": {
-        "version": "5.12",
+        "version": "5.11",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
@@ -63,16 +63,16 @@
             "config/routes/nelmio_api_doc.yaml"
         ]
     },
-    "nyholm/psr7": {
-        "version": "1.8",
+    "php-http/discovery": {
+        "version": "1.20",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "1.0",
-            "ref": "4a8c0345442dcca1d8a2c65633dcf0285dd5a5a2"
+            "version": "1.18",
+            "ref": "f45b5dd173a27873ab19f5e3180b2f661c21de02"
         },
         "files": [
-            "config/packages/nyholm_psr7.yaml"
+            "config/packages/http_discovery.yaml"
         ]
     },
     "phpstan/phpstan": {
@@ -100,6 +100,66 @@
             "phpunit.dist.xml",
             "tests/bootstrap.php",
             "bin/phpunit"
+        ]
+    },
+    "sentry/sentry-symfony": {
+        "version": "5.10",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "5.0",
+            "ref": "aac2bc5220e9ab5b9e3838a7a4da90e7f74e6148"
+        },
+        "files": [
+            "config/packages/sentry.yaml"
+        ]
+    },
+    "symfony/ai-anthropic-platform": {
+        "version": "0.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "169d966953a6b9aeca111cb7f0ac2da72e050159"
+        },
+        "files": [
+            "config/packages/ai_anthropic_platform.yaml"
+        ]
+    },
+    "symfony/ai-generic-platform": {
+        "version": "0.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "f38913b87380322d4c40c302b41626e811516bc4"
+        },
+        "files": [
+            "config/packages/ai_generic_platform.yaml"
+        ]
+    },
+    "symfony/ai-mistral-platform": {
+        "version": "0.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "2487d366905f51cc768093e51385be66c3d38f76"
+        },
+        "files": [
+            "config/packages/ai_mistral_platform.yaml"
+        ]
+    },
+    "symfony/ai-open-ai-platform": {
+        "version": "0.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "4f925d48b69c145cde2286e2cabfc7bd5eb4aca9"
+        },
+        "files": [
+            "config/packages/ai_open_ai_platform.yaml"
         ]
     },
     "symfony/console": {
@@ -147,6 +207,30 @@
             ".editorconfig"
         ]
     },
+    "symfony/lock": {
+        "version": "8.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.2",
+            "ref": "8e937ff2b4735d110af1770f242c1107fdab4c8e"
+        },
+        "files": [
+            "config/packages/lock.yaml"
+        ]
+    },
+    "symfony/mailer": {
+        "version": "8.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.3",
+            "ref": "09051cfde49476e3c12cd3a0e44289ace1c75a4f"
+        },
+        "files": [
+            "config/packages/mailer.yaml"
+        ]
+    },
     "symfony/maker-bundle": {
         "version": "1.65",
         "recipe": {
@@ -155,6 +239,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/mercure-bundle": {
+        "version": "0.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.4",
+            "ref": "b141b8c8f13bc8c31d718a5488039b712c0d3592"
+        },
+        "files": [
+            "config/packages/mercure.yaml"
+        ]
     },
     "symfony/messenger": {
         "version": "8.0",
@@ -166,6 +262,18 @@
         },
         "files": [
             "config/packages/messenger.yaml"
+        ]
+    },
+    "symfony/monolog-bundle": {
+        "version": "4.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.7",
+            "ref": "1b9efb10c54cb51c713a9391c9300ff8bceda459"
+        },
+        "files": [
+            "config/packages/monolog.yaml"
         ]
     },
     "symfony/property-info": {
@@ -275,6 +383,20 @@
         "files": [
             "config/packages/zenstruck_foundry.yaml",
             "src/Story/AppStory.php"
+        ]
+    },
+    "zenstruck/messenger-monitor-bundle": {
+        "version": "0.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.5",
+            "ref": "e830a96e19aef36b23c63a4f8884fe51815f06d8"
+        },
+        "files": [
+            "config/packages/zenstruck_messenger_monitor.yaml",
+            "src/Controller/Admin/MessengerMonitorController.php",
+            "src/Entity/ProcessedMessage.php"
         ]
     },
     "zenstruck/messenger-test": {

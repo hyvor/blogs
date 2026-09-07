@@ -1,20 +1,13 @@
 <script>
 	import { Tag } from '@hyvor/design/components';
 	import FeatureSectionTitle from '../FeatureSectionTitle.svelte';
-
-	import logoCfWorkers from './cf-workers.svg';
-	import logoLaravel from './laravel.svg';
-	import logoNext from './next.svg';
-	import logoDocker from './docker.svg';
-	import logoSymfony from './symfony.svg';
 	import Type from './Type.svelte';
-	import iconHosting from './host-anywhere.svg';
 </script>
 
 <FeatureSectionTitle
 	title="Host Anywhere"
 	subtitle="Subdomain, custom domain, sub-directory... anywhere!"
-	icon={iconHosting}
+	icon="/images/homepage/hosting/host-anywhere.svg"
 />
 
 <div class="types hds-container">
@@ -59,7 +52,7 @@
 
 		<div class="methods">
 			<a href="https://hyvor.com/blog/cloudflare-workers-blog" target="_blank">
-				<img src={logoCfWorkers} alt="Cloudflare Workers Logo" />
+				<img src="/images/homepage/hosting/cf-workers.svg" alt="Cloudflare Workers Logo" />
 				<span>
 					Cloudflare <br /> Workers <br />
 					<Tag color="blue" size="small">No-code</Tag>
@@ -67,22 +60,22 @@
 			</a>
 
 			<a href="https://hyvor.com/blog/docker-subdirectory-blog" target="_blank">
-				<img src={logoDocker} alt="Docker Logo" />
+				<img src="/images/homepage/hosting/docker.svg" alt="Docker Logo" />
 				<span> Docker </span>
 			</a>
 
 			<a href="https://hyvor.com/blog/nextjs-blog" target="_blank">
-				<img src={logoNext} alt="Next.js Logo" />
+				<img src="/images/homepage/hosting/next.svg" alt="Next.js Logo" />
 				<span> Next.js </span>
 			</a>
 
 			<a href="https://hyvor.com/blog/laravel-blog" target="_blank">
-				<img src={logoLaravel} alt="Laravel Logo" />
+				<img src="/images/homepage/hosting/laravel.svg" alt="Laravel Logo" />
 				<span> Laravel </span>
 			</a>
 
 			<a href="https://hyvor.com/blog/symfony-blog" target="_blank">
-				<img src={logoSymfony} alt="Symfony Logo" />
+				<img src="/images/homepage/hosting/symfony.svg" alt="Symfony Logo" />
 				<span> Symfony </span>
 			</a>
 		</div>

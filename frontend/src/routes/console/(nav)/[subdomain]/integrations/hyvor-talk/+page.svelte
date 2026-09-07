@@ -1,182 +1,237 @@
 <script lang="ts">
 	import {
 		Button,
-		ButtonGroup,
-		Callout,
-		Link,
 		Loader,
-		Modal,
 		SplitControl,
-		toast
+		Textarea,
+		confirm,
+		toast,
+		Tag
 	} from '@hyvor/design/components';
 	import {
 		loadHyvorTalk,
-		type HyvorTalkIntegrationData,
-		createHyvorTalkIntegration,
-		deleteHyvorTalkIntegration
+		connectHyvorTalk,
+		disconnectHyvorTalk,
+		updateHyvorTalkEmbedCode,
+		type HyvorTalkIntegration
 	} from './hyvorTalkActions';
 	import { onMount } from 'svelte';
-	import Newsletter from './Newsletter/Newsletter.svelte';
-	import Comments from './Comments/Comments.svelte';
-	import Memberships from './Memberships/Memberships.svelte';
-	import GatedContentRules from './GatedContentRules/GatedContentRules.svelte';
-	import LicenseRequired from '../../../billing/LicenseRequired.svelte';
+	import IntergrationTopNotice from '../components/IntergrationTopNotice.svelte';
+	import IntegrationConfigContent from '../components/IntegrationConfigContent.svelte';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
+	import { getConfig } from '../../../../lib/config';
+	import IntegrationNotAvailable from '../components/IntegrationNotAvailable.svelte';
+	import { setHyvorTalkIntegrationState } from '../../../../lib/stores/blogStore';
+	import DisconnectConfirm from './DisconnectConfirm.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+
+	const i18n = getI18n();
+	const T = i18n.T;
 
 	let isLoading = $state(true);
-	let data: HyvorTalkIntegrationData | undefined = $state();
+	let data: HyvorTalkIntegration | null = $state(null);
+	let embedCode = $state('');
 
-	let isConnecting = $state(false);
-	let isDisconnecting = $state(false);
+	async function handleConnect() {
+		const confirmed = await confirm({
+			title: i18n.t('console.integrations.hyvorTalk.connectTitle'),
+			content: i18n.t('console.integrations.hyvorTalk.connectContent'),
+			confirmText: i18n.t('console.integrations.hyvorTalk.connectConfirm'),
+			autoClose: false
+		});
 
-	function handleConnect() {
-		isConnecting = false;
-		const toastId = toast.loading('Connecting to Hyvor Talk...');
+		if (!confirmed) return;
 
-		createHyvorTalkIntegration()
+		confirmed.loading('Creating a website on Hyvor Talk...');
+
+		connectHyvorTalk()
 			.then((res) => {
-				data = {
-					connected: true,
-					data: res
-				} as HyvorTalkIntegrationData;
-				toast.success('Hyvor Talk connected successfully', { id: toastId });
+				setFromIntegration(res);
+				setHyvorTalkIntegrationState(res.website_id);
+				toast.success(i18n.t('console.integrations.hyvorTalk.connected'));
 			})
-			.catch((_) => toast.error('Failed to connect to Hyvor Talk', { id: toastId }));
+			.catch((err) => toast.error(err.message || 'Failed to connect to Hyvor Talk'))
+			.finally(() => confirmed.close());
 	}
 
-	function handleDisconnect() {
-		isDisconnecting = false;
-		const toastId = toast.loading('Disconnecting from Hyvor Talk...');
+	async function handleDisconnect() {
+		const confirmed = await confirm({
+			title: i18n.t('console.integrations.hyvorTalk.disconnectTitle2'),
+			content: DisconnectConfirm,
+			confirmText: i18n.t('console.integrations.hyvorTalk.disconnectConfirm'),
+			danger: true
+		});
 
-		deleteHyvorTalkIntegration()
-			.then((_) => {
-				data = {
-					connected: false,
-					data: undefined
-				};
-				toast.success('Hyvor Talk disconnected successfully', { id: toastId });
+		if (!confirmed) return;
+
+		const toastId = toast.loading(i18n.t('console.integrations.hyvorTalk.disconnecting'));
+
+		disconnectHyvorTalk()
+			.then(() => {
+				setFromIntegration(null);
+				setHyvorTalkIntegrationState(null);
+				toast.success(i18n.t('console.integrations.hyvorTalk.disconnected'), { id: toastId });
 			})
-			.catch((_) => toast.error('Failed to disconnect from Hyvor Talk', { id: toastId }));
+			.catch((err) =>
+				toast.error(err.message || 'Failed to disconnect from Hyvor Talk', { id: toastId })
+			);
 	}
+
+	function handleSaveEmbedCode() {
+		const toastId = toast.loading(i18n.t('console.integrations.common.savingEmbedCode'));
+
+		updateHyvorTalkEmbedCode(embedCode)
+			.then((res) => {
+				setFromIntegration(res);
+				toast.success(i18n.t('console.integrations.common.embedCodeSaved'), { id: toastId });
+			})
+			.catch((err) => toast.error(err.message || 'Failed to save embed code', { id: toastId }));
+	}
+
+	function handleResetEmbedCode() {
+		embedCode = data!.embed_default_code;
+	}
+
+	let isEmbedCodeDirty = $derived.by(() => data && embedCode !== data.embed_code);
+	let isEmbedCodeDefault = $derived.by(() => embedCode === data?.embed_default_code);
 
 	onMount(() => {
 		loadHyvorTalk()
-			.then((res) => (data = res))
-			.catch((_) => toast.error('Failed to load Hyvor Talk integration data'))
+			.then((res) => {
+				setFromIntegration(res.data);
+			})
+			.catch(() => toast.error(i18n.t('console.integrations.hyvorTalk.failedToLoad')))
 			.finally(() => (isLoading = false));
 	});
+
+	function setFromIntegration(int: HyvorTalkIntegration | null) {
+		data = int;
+		if (int) {
+			embedCode = int.embed_code;
+		}
+	}
+
+	function handleCopy() {
+		navigator.clipboard.writeText(embedCode).then(() => {
+			toast.success(i18n.t('console.integrations.common.embedCodeCopied'));
+		});
+	}
 </script>
 
-<LicenseRequired excludeTrial={true}>
-	{#snippet upgradeText()}
-		<div>
-			This integration allows you to use <a
-				href="https://talk.hyvor.com"
-				target="_blank"
-				style="text-decoration:underline">Hyvor Talk</a
-			> on your blog for FREE. Upgrade to any plan to use this integration. This integration is not available
-			in the trial period.
-		</div>
-	{/snippet}
+{#if getConfig().deployment === 'on-prem'}
+	<IntegrationNotAvailable>
+		<T
+			key="console.integrations.hyvorTalk.notAvailable"
+			params={{
+				link: {
+					element: 'a',
+					props: { href: consoleUrlWithBlog('/settings/comments'), class: 'hds-link' }
+				}
+			}}
+		/>
+	</IntegrationNotAvailable>
+{:else}
+	<IntergrationTopNotice>
+		<T
+			key="console.integrations.hyvorTalk.topNotice"
+			params={{
+				link: {
+					element: 'a',
+					props: { href: 'https://talk.hyvor.com', target: '_blank', class: 'hds-link' }
+				}
+			}}
+		/>
+	</IntergrationTopNotice>
 
-	{#if isLoading}
-		<Loader full />
-	{:else if data}
-		<SplitControl label="Introduction">
-			<div>
-				<Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first commenting,
-				newsletter, and memberships platform. You can use it for free on your blog.
+	<IntegrationConfigContent>
+		{#if isLoading}
+			<Loader full />
+		{:else}
+			<SplitControl label={i18n.t('console.integrations.hyvorTalk.connection')}>
+				{#if data}
+					<div class="connection-status">
+						<T
+							key="console.integrations.hyvorTalk.connectedToWebsite"
+							params={{ strong: { element: 'strong' }, websiteId: data.website_id }}
+						/>
+					</div>
 
-				<p>
-					When you connect Hyvor Talk to your blog, we will automatically create a new website ID in
-					Hyvor Talk for this blog under your account.
-				</p>
-			</div>
-		</SplitControl>
+					<Button
+						as="a"
+						href={consoleUrlWithBlog('/comments')}
+						size="small"
+						style="margin-right:6px;"
+					>
+						{i18n.t('console.integrations.hyvorTalk.manageComments')}
+						{#snippet end()}
+							&rarr;
+						{/snippet}
+					</Button>
 
-		<SplitControl label="Connect Hyvor Talk">
-			{#if data.connected}
-				<div class="connection-status">
-					This blog is connected to website ID <strong
-						>{(data as HyvorTalkIntegrationData<true>).data.website_id}</strong
-					> in Hyvor Talk. Visit the Hyvor Talk Console to manage comments and memberships.
-				</div>
+					<Button
+						as="a"
+						href={`${getConfig().hyvor.hyvor_talk_url}/console/${data.website_id}`}
+						target="_blank"
+						size="small"
+						style="margin-right:6px;"
+						variant="outline"
+					>
+						{i18n.t('console.integrations.hyvorTalk.talkConsole')}
+						{#snippet end()}
+							<IconBoxArrowUpRight size={10} />
+						{/snippet}
+					</Button>
 
-				<Button
-					as="a"
-					href={`https://talk.hyvor.com/console/${(data as HyvorTalkIntegrationData<true>).data.website_id}/comments`}
-					target="_blank"
-					size="small"
-					style="margin-right:6px;"
-				>
-					Go to Hyvor Talk Console
-				</Button>
+					<Button color="red" size="small" on:click={handleDisconnect}
+						>{i18n.t('console.integrations.hyvorTalk.disconnect')}</Button
+					>
+				{:else}
+					<Button onclick={handleConnect}
+						>{i18n.t('console.integrations.hyvorTalk.connectNow')}</Button
+					>
+				{/if}
+			</SplitControl>
 
-				<Button color="red" size="small" on:click={() => (isDisconnecting = true)}
-					>Disconnect</Button
-				>
-			{:else}
-				<div class="connection-status">This blog is not connected to a website in Hyvor Talk.</div>
+			{#if data}
+				<div class="embed-code">
+					<SplitControl label={i18n.t('console.integrations.common.embedCode')} column>
+						{#snippet caption()}
+							<div>
+								This code is automatically added to your blog's <a
+									href="/docs/themes-templates#placeholders"
+									class="hds-link"
+									target="_blank"
+									><code>_comments</code>
+									variable</a
+								>, which is usually placed below the post content (depending on the theme).
+							</div>
+						{/snippet}
 
-				<Button on:click={() => (isConnecting = true)}>Connect Now</Button>
-			{/if}
-		</SplitControl>
+						<Textarea bind:value={embedCode} rows={10} block />
 
-		{#if data.connected}
-			<div class="embed-code">
-				<SplitControl label="Embed Codes">
-					{#snippet nested()}
-						<div>
-							<Comments websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
-							<Newsletter websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
-							<Memberships websiteId={(data as HyvorTalkIntegrationData<true>).data.website_id} />
+						<div class="embed-code-actions">
+							<div class="actions-left">
+								{#if isEmbedCodeDirty}
+									<Button size="small" on:click={handleSaveEmbedCode}
+										>{i18n.t('console.common.save')}</Button
+									>
+								{/if}
+								{#if !isEmbedCodeDefault}
+									<Button size="small" variant="invisible" on:click={handleResetEmbedCode}
+										>Reset to default</Button
+									>
+								{/if}
+							</div>
+							<Button size="small" color="input" onclick={handleCopy}
+								>{i18n.t('console.common.copy')}</Button
+							>
 						</div>
-					{/snippet}
-				</SplitControl>
-			</div>
-			<GatedContentRules />
+					</SplitControl>
+				</div>
+			{/if}
 		{/if}
-	{/if}
-</LicenseRequired>
-
-{#if isConnecting}
-	<Modal title="Connect Hyvor Talk" bind:show={isConnecting}>
-		<div>
-			<p>Please confirm that you want to create a website ID in Hyvor Talk for this blog.</p>
-			<ul>
-				<li>A new Hyvor Talk website ID will be created under your HYVOR account.</li>
-				<li>This new website can <b>only</b> be used on this blog.</li>
-				<li>It is free of charge.</li>
-				<li>
-					If you have any other websites on Hyvor Talk, you will need a separate subscription.
-				</li>
-			</ul>
-		</div>
-
-		{#snippet footer()}
-			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (isConnecting = false)}>Cancel</Button>
-				<Button on:click={handleConnect}>Confirm</Button>
-			</ButtonGroup>
-		{/snippet}
-	</Modal>
-{/if}
-
-{#if isDisconnecting}
-	<Modal title="Disconnect Hyvor Talk" bind:show={isDisconnecting}>
-		<Callout type="warning">You cannot connect this blog to the same website ID again.</Callout>
-
-		<p>
-			Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor
-			Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
-		</p>
-
-		{#snippet footer()}
-			<ButtonGroup>
-				<Button variant="invisible" on:click={() => (isDisconnecting = false)}>Cancel</Button>
-				<Button color="red" on:click={handleDisconnect}>Disconnect</Button>
-			</ButtonGroup>
-		{/snippet}
-	</Modal>
+	</IntegrationConfigContent>
 {/if}
 
 <style>
@@ -190,5 +245,21 @@
 
 	.embed-code {
 		margin-bottom: 20px;
+	}
+
+	.embed-code-actions {
+		display: flex;
+		margin-top: 10px;
+	}
+
+	.actions-left {
+		flex: 1;
+		display: flex;
+		gap: 6px;
+	}
+
+	code {
+		font-family: monospace;
+		font-size: 0.9em;
 	}
 </style>

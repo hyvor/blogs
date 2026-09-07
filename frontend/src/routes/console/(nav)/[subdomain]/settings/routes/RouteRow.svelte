@@ -15,6 +15,10 @@
 	import { deleteRoute } from './routeActions';
 	import { createEventDispatcher } from 'svelte';
 	import CreateUpdateRouteModal from './CreateUpdateRouteModal.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	interface Props {
 		route: Route;
@@ -29,17 +33,17 @@
 	async function handleDelete() {
 		if (
 			await confirm({
-				title: 'Delete Route',
-				content: 'Are you sure you want to delete this route?',
-				confirmText: 'Yes, Delete',
+				title: i18n.t('console.settings.routes.deleteRoute'),
+				content: i18n.t('console.settings.routes.deleteContent'),
+				confirmText: i18n.t('console.tools.media.delete.confirm'),
 				danger: true
 			})
 		) {
-			const toastId = toast.loading('Deleting route');
+			const toastId = toast.loading(i18n.t('console.settings.routes.deleting'));
 
 			deleteRoute(route.id)
 				.then(() => {
-					toast.success('Route deleted', { id: toastId });
+					toast.success(i18n.t('console.settings.routes.deleted'), { id: toastId });
 				})
 				.catch((err) => {
 					toast.error(err.message, { id: toastId });
@@ -55,26 +59,31 @@
 </script>
 
 <TableRow>
-	<div>{route.name}</div>
-	<div>{route.match}</div>
+	<div>
+		<div class="name">{route.name}</div>
+		<div class="meta-row">
+			<code class="match">{route.match}</code>
+			<Tag size="x-small" color="default">{route.content_type || 'text/html'}</Tag>
+		</div>
+	</div>
 	<div>{route.template}</div>
 	<div>
 		{#if route.posts_filter === null}
-			<span class="filter-tag">Disabled</span>
+			<span class="filter-tag">{i18n.t('console.common.disabled')}</span>
 		{:else if route.posts_filter === ''}
-			<span class="filter-tag">All posts</span>
+			<span class="filter-tag">{i18n.t('console.settings.routes.allPosts')}</span>
 		{:else}
 			{route.posts_filter}
 		{/if}
 	</div>
-	<div>{route.content_type || 'text/html'}</div>
 
 	<div>
-		<Tooltip text="Edit Route">
+		<Tooltip text={i18n.t('console.settings.routes.editRoute')}>
 			<IconButton
 				size="small"
-				variant="fill-light"
-				color="gray"
+				color="input"
+				variant="fill"
+				disabled={cant('routes.write')}
 				on:click={() => (isUpdating = true)}
 			>
 				<IconPencilFill size={10} />
@@ -87,7 +96,7 @@
 				variant="fill-light"
 				color="red"
 				on:click={handleDelete}
-				disabled={isDefaultRoute}
+				disabled={isDefaultRoute || cant('routes.write')}
 			>
 				<IconTrash size={10} />
 			</IconButton>
@@ -103,5 +112,22 @@
 	.filter-tag {
 		color: var(--text-light);
 		font-size: 14px;
+	}
+
+	.meta-row {
+		margin-top: 4px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+
+	.match {
+		font-family: var(--font-monospace, monospace);
+		font-size: 12px;
+		color: var(--text-light);
+		background: var(--input);
+		padding: 2px 6px;
+		border-radius: 4px;
 	}
 </style>

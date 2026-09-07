@@ -2,7 +2,10 @@
 
 namespace App\Tests\Factory;
 
+use App\Entity\Blog;
+use App\Entity\Enum\NavigationType;
 use App\Entity\Navigation;
+use App\Tests\Factory\BlogFactory;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
@@ -15,9 +18,7 @@ final class NavigationFactory extends PersistentObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     #[\Override]
     public static function class(): string
@@ -34,13 +35,27 @@ final class NavigationFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'blog_id' => self::faker()->randomNumber(),
+            'blog' => BlogFactory::new(),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'sort' => self::faker()->randomNumber(),
-            'type' => self::faker()->text(255),
+            'type' => self::faker()->randomElement(NavigationType::cases()),
             'updated_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'url' => self::faker()->text(255),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public static function createOneFor(Blog $blog, array $attributes = []): Navigation
+    {
+        $navigation = self::createOne(array_merge([
+            'blog' => $blog,
+        ], $attributes));
+
+        $blog->getNavigations()->add($navigation);
+
+        return $navigation;
     }
 
     /**

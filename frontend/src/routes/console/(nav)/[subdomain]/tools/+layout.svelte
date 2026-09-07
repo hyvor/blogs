@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NavLink } from '@hyvor/design/components';
+	import { NavLink, NavLinkGroup } from '@hyvor/design/components';
 	import { page } from '$app/stores';
 	import { blogStore } from '../../../lib/stores/blogStore';
 	import IconDownload from '@hyvor/icons/IconDownload';
@@ -8,6 +8,10 @@
 	import IconUpload from '@hyvor/icons/IconUpload';
 
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
+	import { getI18n } from '../../../lib/i18n';
+	import { cant } from '../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -17,47 +21,53 @@
 
 <div class="tools">
 	<div class="nav hds-box">
-		<NavLink
-			href={consoleUrlWithBlog('/tools/media')}
-			active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/media`}
-		>
-			{#snippet start()}
-				<IconImage />
-			{/snippet}
-			Media Library
-		</NavLink>
+		<NavLinkGroup activeBackground="var(--accent-light-mid)">
+			<NavLink
+				href={consoleUrlWithBlog('/tools/media')}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/media`}
+				disabled={cant('media.manage')}
+			>
+				{#snippet start()}
+					<IconImage />
+				{/snippet}
+				{i18n.t('console.tools.nav.media')}
+			</NavLink>
 
-		<NavLink
-			href={consoleUrlWithBlog('/tools/link-analysis')}
-			active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
-		>
-			{#snippet start()}
-				<IconLink45deg />
-			{/snippet}
-			Link Analysis
-		</NavLink>
+			<NavLink
+				href={consoleUrlWithBlog('/tools/link-analysis')}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
+				disabled={cant('link_analysis.manage')}
+			>
+				{#snippet start()}
+					<IconLink45deg />
+				{/snippet}
+				{i18n.t('console.tools.nav.linkAnalysis')}
+			</NavLink>
 
-		<div class="div"></div>
+			<div class="div"></div>
 
-		<NavLink
-			href={consoleUrlWithBlog('/tools/import')}
-			active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
-		>
-			{#snippet start()}
-				<IconDownload />
-			{/snippet}
-			Import
-		</NavLink>
+			<NavLink
+				href={consoleUrlWithBlog('/tools/import')}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
+				disabled={cant('import.manage')}
+			>
+				{#snippet start()}
+					<IconDownload />
+				{/snippet}
+				{i18n.t('console.tools.nav.import')}
+			</NavLink>
 
-		<NavLink
-			href={consoleUrlWithBlog('/tools/export')}
-			active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
-		>
-			{#snippet start()}
-				<IconUpload />
-			{/snippet}
-			Export
-		</NavLink>
+			<NavLink
+				href={consoleUrlWithBlog('/tools/export')}
+				active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
+				disabled={cant('export.manage')}
+			>
+				{#snippet start()}
+					<IconUpload />
+				{/snippet}
+				{i18n.t('console.tools.nav.export')}
+			</NavLink>
+		</NavLinkGroup>
 	</div>
 
 	<div class="content">
@@ -78,9 +88,6 @@
 		flex-shrink: 0;
 		height: 100%;
 		padding: 25px 0;
-	}
-	.nav :global(a.active) {
-		background-color: var(--accent-light-mid);
 	}
 	.content {
 		flex: 1;

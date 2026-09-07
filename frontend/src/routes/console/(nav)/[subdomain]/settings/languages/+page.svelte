@@ -1,17 +1,27 @@
 <script>
+	import { onMount } from 'svelte';
 	import LanguageRow from './LanguageRow.svelte';
-	import { Button, IconButton, Table, TableRow } from '@hyvor/design/components';
+	import { Button, IconButton, TableRow } from '@hyvor/design/components';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import { languagesStore } from '../../../../lib/stores/languagesStore';
 	import LanguageModal from './LanguageModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
+
+	onMount(() => {
+		redirectIfCant('languages.read');
+	});
 </script>
 
 <div class="languages">
 	<SettingsTop>
-		<Button on:click={() => (isCreating = true)}>
+		<Button disabled={cant('languages.write')} on:click={() => (isCreating = true)}>
 			Add Language {#snippet end()}
 				<IconPlus />
 			{/snippet}
@@ -19,18 +29,18 @@
 	</SettingsTop>
 
 	<div class="table">
-		<Table columns="1fr 1fr 1fr 70px">
+		<SettingsTable columns="1fr 1fr 1fr 70px">
 			<TableRow head>
-				<div>Name</div>
-				<div>Code</div>
-				<div>Direction</div>
+				<div>{i18n.t('console.common.name')}</div>
+				<div>{i18n.t('console.settings.languages.code')}</div>
+				<div>{i18n.t('console.settings.languages.direction')}</div>
 				<div></div>
 			</TableRow>
 
 			{#each $languagesStore as language}
 				<LanguageRow {language} />
 			{/each}
-		</Table>
+		</SettingsTable>
 	</div>
 </div>
 

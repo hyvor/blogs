@@ -5,13 +5,13 @@
 		IconMessage,
 		LoadButton,
 		Loader,
-		Table,
 		TableRow,
 		TextInput,
 		toast
 	} from '@hyvor/design/components';
 	import RedirectsModal from './RedirectsModal.svelte';
 	import SettingsTop from '../@components/SettingsTop.svelte';
+	import SettingsTable from '../@components/SettingsTable.svelte';
 	import IconPlus from '@hyvor/icons/IconPlus';
 	import IconX from '@hyvor/icons/IconX';
 	import { getRedirect } from './redirectActions';
@@ -19,6 +19,10 @@
 	import RedirectRow from './RedirectRow.svelte';
 	import { dynamicRedirectsStore } from './dynamicRedirect';
 	import type { Redirect } from '../../../../lib/types';
+	import { getI18n } from '../../../../lib/i18n';
+	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+
+	const i18n = getI18n();
 
 	let isCreating = $state(false);
 
@@ -90,14 +94,17 @@
 		dynamicRedirectsStore.set(countDynamicRedirects(redirects));
 	}
 
-	onMount(loadRedirect);
+	onMount(() => {
+		redirectIfCant('redirects.read');
+		loadRedirect();
+	});
 </script>
 
 <SettingsTop>
 	<div class="search-wrap">
 		<TextInput
 			bind:value={searchVal}
-			placeholder="Search"
+			placeholder={i18n.t('console.common.search')}
 			style="width:200px;"
 			on:keydown={searchActions.onKeydown}
 			size="small"
@@ -116,7 +123,7 @@
 		{/if}
 	</div>
 
-	<Button size="small" on:click={() => (isCreating = true)}>
+	<Button size="small" disabled={cant('redirects.write')} on:click={() => (isCreating = true)}>
 		Add Redirect {#snippet end()}
 			<IconPlus />
 		{/snippet}
@@ -127,13 +134,13 @@
 	{#if isLoading}
 		<Loader full />
 	{:else if redirects.length === 0}
-		<IconMessage empty message="No Redirects configured" />
+		<IconMessage empty message={i18n.t('console.settings.redirects.noRedirects')} />
 	{:else}
-		<Table columns="1fr 2fr 1fr 70px">
+		<SettingsTable columns="1fr 2fr 1fr 70px">
 			<TableRow head>
-				<div>From</div>
+				<div>{i18n.t('console.settings.redirects.from')}</div>
 				<div>To</div>
-				<div>Type</div>
+				<div>{i18n.t('console.tools.import.type')}</div>
 				<div></div>
 			</TableRow>
 
@@ -142,12 +149,12 @@
 			{/each}
 
 			<LoadButton
-				text="Load more"
+				text={i18n.t('console.common.loadMore')}
 				show={hasMore}
 				loading={isLoadingMore}
 				on:click={() => loadRedirect(true)}
 			/>
-		</Table>
+		</SettingsTable>
 	{/if}
 </div>
 

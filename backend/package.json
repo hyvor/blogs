@@ -1,6 +1,0 @@
-{
-    "type": "module",
-    "dependencies": {
-        "shiki": "^0.14.7"
-    }
-}

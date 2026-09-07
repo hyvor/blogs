@@ -1,78 +1,117 @@
 <script lang="ts">
-	import { FooterLinkList, Footer } from '@hyvor/design/marketing';
+	import { Footer, FooterLinkList } from '@hyvor/design/marketing';
+	import { page } from '$app/stores';
+	import { LANGUAGES_CONFIG, buildMarketingUrl, getStaticString } from './[[lang]]/marketingLang';
+
+	const currentLang = $derived(
+		LANGUAGES_CONFIG.find((lang) => lang.code === $page.url.pathname.split('/')[1]) ??
+			LANGUAGES_CONFIG.find((lang) => lang.default)!
+	);
+
+	function t(key: string) {
+		return getStaticString(currentLang.strings, key);
+	}
+
+	function localizedHref(path: string) {
+		return buildMarketingUrl(path, currentLang.code, currentLang.code) || '/';
+	}
+
+	interface FooterLink {
+		href: string;
+		label: string;
+		external?: boolean;
+		localize?: boolean;
+	}
+
+	const columns = $derived.by<{ title: string; links: FooterLink[] }[]>(() => [
+		{
+			title: t('nav.footer.columns.product'),
+			links: [
+				{ href: '/console', label: t('nav.footer.console') },
+				{ href: '/themes', label: t('nav.header.themes.label'), localize: true },
+				{ href: '/pricing', label: t('nav.header.pricing'), localize: true },
+				{ href: '/docs', label: t('nav.header.docs'), localize: true },
+				{ href: '/hosting', label: t('nav.header.hosting'), localize: true }
+			]
+		},
+		{
+			title: t('nav.footer.columns.legal'),
+			links: [
+				{ href: '/terms', label: t('nav.footer.termsOfService') },
+				{ href: '/privacy', label: t('nav.footer.privacyPolicy') },
+				{ href: 'https://hyvor.com/compliance', label: t('nav.footer.compliance'), external: true }
+			]
+		},
+		{
+			title: 'HYVOR',
+			links: [
+				{ href: 'https://hyvor.com', label: 'hyvor.com', external: true },
+				{ href: 'https://hyvor.com/#letter', label: t('nav.footer.about'), external: true },
+				{ href: 'https://hyvor.com/security', label: t('nav.footer.security'), external: true },
+				{ href: 'https://status.hyvor.com', label: t('nav.footer.systemStatus'), external: true }
+			]
+		},
+		{
+			title: t('nav.footer.columns.alternatives'),
+			links: [
+				{
+					href: 'https://hyvor.com/compare/blogs/wordpress',
+					label: t('nav.footer.wordpressAlternative'),
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/ghost',
+					label: t('nav.footer.ghostAlternative'),
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/medium',
+					label: t('nav.footer.mediumAlternative'),
+					external: true
+				},
+				{
+					href: 'https://hyvor.com/compare/blogs/blogger',
+					label: t('nav.footer.bloggerAlternative'),
+					external: true
+				}
+			]
+		}
+	]);
 </script>
 
-<Footer email="blogs.support@hyvor.com">
-	{#snippet center()}
-		<div>
-			<div class="row first">
-				<FooterLinkList title="Product">
-					<a href="/console">Console</a>
-					<a href="/themes">Themes</a>
-					<a href="/pricing">Pricing</a>
-					<a href="/docs">Docs</a>
-					<a href="/customers">Customers</a>
-				</FooterLinkList>
-
-				<FooterLinkList title="Legal">
-					<a href="/terms">Terms of Service</a>
-					<a href="/privacy">Privacy Policy</a>
-					<a href="https://hyvor.com/compliance" target="_blank">Compliance</a>
-				</FooterLinkList>
-
-				<FooterLinkList title="HYVOR">
-					<a href="https://hyvor.com" target="_blank">hyvor.com</a>
-					<a href="https://hyvor.com/#letter" target="_blank">About</a>
-					<a href="https://hyvor.com/security" target="_blank">Security</a>
-					<a href="https://status.hyvor.com" target="_blank">System Status</a>
-				</FooterLinkList>
-			</div>
-
-			<div class="row">
-				<FooterLinkList title="Platforms">
-					<a href="/for/squarespace">Blog for Squarespace</a>
-					<a href="/for/wix">Blog for Wix</a>
-					<a href="/for/shopify">Blog for Shopify</a>
-					<a href="/for/wordpress">Blog for WordPress</a>
-					<a href="/for/webflow">Blog for Webflow</a>
-					<a href="/for/bubble">Blog for Bubble</a>
-				</FooterLinkList>
-				<FooterLinkList title="Alternatives">
-					<a href="https://hyvor.com/blog/wordpress-alternatives" target="_blank"
-						>WordPress Alternatives</a
-					>
-					<a href="https://hyvor.com/blog/ghost-alternatives" target="_blank">Ghost Alternatives</a>
-					<a href="https://hyvor.com/blog/medium-alternatives" target="_blank"
-						>Medium Alternatives</a
-					>
-					<a href="https://hyvor.com/blog/blogger-alternatives" target="_blank"
-						>Blogger Alternatives</a
-					>
-				</FooterLinkList>
-				<FooterLinkList title="Use Cases">
-					<a href="/for/saas">For SaaS</a>
-					<a href="/for/ecommerce">For E-commerce</a>
-				</FooterLinkList>
-			</div>
-		</div>
-	{/snippet}
+<Footer
+	name="Hyvor Blogs"
+	logo="/logo.svg"
+	logoAltText={t('nav.header.logo')}
+	card
+	background="#574443"
+	email="blogs.support@hyvor.com"
+	social={{
+		github: 'https://github.com/hyvor/blogs' as any
+	}}
+	languageToggle={false}
+	max
+	copyEmailLabel={t('nav.footer.copyEmail')}
+	copiedLabel={t('nav.footer.copied')}
+	gdprText={t('nav.footer.gdprCompliant')}
+	fromFranceText={t('nav.footer.fromFrance')}
+>
+	{#each columns as col}
+		<FooterLinkList title={col.title}>
+			{#each col.links as link}
+				<a
+					href={link.localize ? localizedHref(link.href) : link.href}
+					target={link.external ? '_blank' : undefined}
+				>
+					{link.label}
+				</a>
+			{/each}
+		</FooterLinkList>
+	{/each}
 </Footer>
 
 <style>
-	.row {
-		display: flex;
-	}
-	.row:not(.first) {
-		margin-top: 60px;
-	}
-
-	@media (max-width: 992px) {
-		.row {
-			flex-direction: column;
-			gap: 35px;
-		}
-		.row:not(.first) {
-			margin-top: 35px;
-		}
+	:global(.footer-outer) {
+		margin-top: 0 !important;
 	}
 </style>

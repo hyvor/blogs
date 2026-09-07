@@ -5,3 +5,11 @@ parameters:
         - config/
         - src/
         - tests/
+    exceptions:
+        # make sure that all App\ exceptions are checked exceptions
+        check:
+            missingCheckedExceptionInThrows: true
+        checkedExceptionRegexes:
+            - '#^App\\#'
+includes:
+    - ./vendor/hyvor/internal/extension.neon

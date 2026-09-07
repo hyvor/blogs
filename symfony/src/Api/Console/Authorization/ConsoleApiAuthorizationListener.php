@@ -2,6 +2,11 @@
 
 namespace App\Api\Console\Authorization;
 
+use App\Entity\Blog;
+use App\Entity\User;
+use App\Service\ApiKey\ApiKeyService;
+use App\Service\Blog\BlogService;
+use App\Service\User\UserService;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
@@ -10,34 +15,129 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-#[AsEventListener(event: KernelEvents::CONTROLLER, priority: 200)]
+
 class ConsoleApiAuthorizationListener
 {
-    const string RESOLVED_USER_KEY = 'console_api_resolved_user';
-    const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
+    private const string RESOLVED_USER_KEY = 'console_api_resolved_user';
+    private const string RESOLVED_ORGANIZATION_KEY = 'console_api_resolved_organization';
+    private const string RESOLVED_BLOG_KEY = 'console_api_resolved_blog';
+    private const string RESOLVED_BLOG_USER_KEY = 'console_api_resolved_blog_user';
+    private const string RESOLVED_API_KEY_SCOPES_KEY = 'console_api_resolved_api_key_scopes';
 
-    public function __construct(private AuthInterface $auth, private RequestStack $requestStack) {}
+    public function __construct(
+        private AuthInterface $auth,
+        private BlogService $blogService,
+        private ApiKeyService $apiKeyService,
+        private RequestStack $requestStack,
+        private UserService $userService,
+    ) {}
 
-    public function __invoke(ControllerEvent $event): void
+    #[AsEventListener(event: KernelEvents::CONTROLLER, priority: 200)]
+    public function onController(ControllerEvent $event): void
     {
         // @codeCoverageIgnoreStart
-        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/v2/console')) {
+        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/console/v0')) {
             return;
         }
         if (!$event->isMainRequest()) {
             return;
         }
         // @codeCoverageIgnoreEnd
-        $this->handleSession($event);
+
+        $request = $event->getRequest();
+        $subdomain = $request->attributes->get('subdomain');
+
+        if (is_string($subdomain) && $subdomain !== '') {
+            $this->handleBlogLevel($event, $subdomain);
+        } else {
+            $this->handleOrgLevel($event);
+        }
     }
 
-    private function handleSession(ControllerEvent $event): void
+    #[AsEventListener(event: KernelEvents::RESPONSE, priority: 200)]
+    public function onResponse(ResponseEvent $event): void
+    {
+        $response = $event->getResponse();
+        $response->headers->set('Symfony', 'Performing');
+    }
+
+    private function handleBlogLevel(ControllerEvent $event, string $subdomain): void
     {
         $request = $event->getRequest();
-        $isOrgLevel = count($event->getAttributes(OrganizationLevelEndpoint::class)) > 0;
+
+        $blog = $this->blogService->getBlogBySubdomain($subdomain);
+        if ($blog === null || $blog->getDeletedAt()) {
+            throw new NotFoundHttpException('Blog not found');
+        }
+
+        if ($request->headers->has('x-api-key')) {
+            $this->handleApiKeyAuth($request, $blog);
+        } else {
+            $this->handleBlogSessionAuth($request, $blog);
+        }
+
+        $this->verifyScope($event);
+    }
+
+    private function handleApiKeyAuth(Request $request, Blog $blog): void
+    {
+        $apiKeyHeader = $request->headers->get('x-api-key');
+        assert(is_string($apiKeyHeader));
+
+        $apiKey = $this->apiKeyService->getByRawKey($blog, $apiKeyHeader);
+        if ($apiKey === null) {
+            throw new AccessDeniedHttpException('Invalid API key.');
+        }
+
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $apiKey->getScopes());
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+    }
+
+    private function handleBlogSessionAuth(Request $request, Blog $blog): void
+    {
+        $me = $this->auth->me($request);
+        if ($me === null) {
+            throw new DataCarryingHttpException(401, [
+                'login_url' => $this->auth->authUrl('login'),
+                'signup_url' => $this->auth->authUrl('signup'),
+            ], 'Unauthorized');
+        }
+
+        $authUser = $me->getUser();
+        $authOrganization = $me->getOrganization();
+
+        if ($authOrganization === null) {
+            throw new AccessDeniedHttpException('Organization is required');
+        }
+
+        if ($blog->getOrganizationId() !== $authOrganization->id) {
+            throw new AccessDeniedHttpException('This project does not belong to your current organization.');
+        }
+
+        if ((int)$request->headers->get('X-Organization-Id') !== $authOrganization->id) {
+            throw new AccessDeniedHttpException('org_mismatch');
+        }
+
+        $blogUser = $this->userService->getUserByBlogAndAuthUser($blog, $authUser);
+
+        if ($blogUser === null) {
+            throw new AccessDeniedHttpException('You do not have access to this blog');
+        }
+
+        $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+        $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
+        $request->attributes->set(self::RESOLVED_USER_KEY, $authUser);
+    }
+
+    private function handleOrgLevel(ControllerEvent $event): void
+    {
+        $request = $event->getRequest();
         $orgOptional = count($event->getAttributes(OrganizationOptional::class)) > 0;
 
         $me = $this->auth->me($request);
@@ -52,7 +152,6 @@ class ConsoleApiAuthorizationListener
         $request->attributes->set(self::RESOLVED_ORGANIZATION_KEY, $me->getOrganization());
 
         if ($orgOptional) {
-            assert($isOrgLevel === true);
             return;
         }
 
@@ -66,6 +165,36 @@ class ConsoleApiAuthorizationListener
         }
     }
 
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    private function verifyScope(ControllerEvent $event): void
+    {
+        $attributes = $event->getAttributes(ScopeRequired::class);
+        $scopeRequiredAttribute = $attributes[0] ?? null;
+
+        assert(
+            $scopeRequiredAttribute instanceof ScopeRequired,
+            'ScopeRequired attribute must be set on all blog-level controller methods'
+        );
+
+        /** @var array<Scope>|null $scopes */
+        $scopes = $event->getRequest()->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
+        assert(is_array($scopes));
+
+        $requiredScope = $scopeRequiredAttribute->scope;
+        if (!in_array($requiredScope, $scopes, true)) {
+            throw new AccessDeniedHttpException(
+                "API key is missing the required scope '{$requiredScope->value}'."
+            );
+        }
+    }
+
+    // helpers
+
+    /**
+     * only use in org-level endpoints
+     */
     public function getUser(): AuthUser
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -89,5 +218,51 @@ class ConsoleApiAuthorizationListener
         $org = $request->attributes->get(self::RESOLVED_ORGANIZATION_KEY);
         assert($org instanceof AuthUserOrganization);
         return $org;
+    }
+
+    public function getBlog(): Blog
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        assert($request !== null);
+        $blog = $request->attributes->get(self::RESOLVED_BLOG_KEY);
+        assert($blog instanceof Blog);
+        return $blog;
+    }
+
+    public function getBlogUser(): ?User
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        assert($request !== null);
+        $user = $request->attributes->get(self::RESOLVED_BLOG_USER_KEY);
+        return $user instanceof User ? $user : null;
+    }
+
+    /**
+     * @return Scope[]
+     */
+    public function getScopes(): array
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request === null) {
+            return [];
+        }
+
+        /**
+         * @var array<Scope>|null $scopes
+         */
+        $scopes = $request->attributes->get(self::RESOLVED_API_KEY_SCOPES_KEY);
+        return is_array($scopes) ? $scopes : [];
+    }
+
+    /**
+     * ConsoleSubrequest sets this to run without authorization
+     */
+    public function setBlogToRequest(Request $request, Blog $blog, ?User $blogUser = null): void
+    {
+        $request->attributes->set(self::RESOLVED_BLOG_KEY, $blog);
+        if ($blogUser !== null) {
+            $request->attributes->set(self::RESOLVED_BLOG_USER_KEY, $blogUser);
+            $request->attributes->set(self::RESOLVED_API_KEY_SCOPES_KEY, $blogUser->getRole()->scopes());
+        }
     }
 }

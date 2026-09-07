@@ -1,45 +1,32 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
-	import FeaturedChange from './Changes/FeaturedChange.svelte';
+	import { postVariantLanguageStore } from '../../../../postStore';
+	import { Button, Modal, Switch, Tooltip, Validation, toast } from '@hyvor/design/components';
 	import {
-		postEditingStatusStore,
-		postLanguageStore,
-		updatePostEditingStatusValue
-	} from '../../../../postStore';
-	import {
-		Button,
-		ButtonGroup,
-		Modal,
-		SplitControl,
-		Switch,
-		Tag,
-		Tooltip,
-		Validation,
-		toast
-	} from '@hyvor/design/components';
-	import {
+		documentStore,
 		postOriginalStore,
+		postSidebarStore,
 		postStore,
-		postOriginalVariantStore,
+		postVariantOriginalStore,
 		postVariantStore
 	} from '../../../../postStore';
-	import Diff from '$lib/components/Diff/Diff.svelte';
-	import dayjs from 'dayjs';
-	import { finishUpdating, getPublishedChanges } from './published-changes';
-	import ContentChange from './Changes/ContentChange.svelte';
+	import IconCheck from '@hyvor/icons/IconCheck';
+	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import { getPublishedChanges } from './published-changes';
 	import {
 		updatePost,
 		updatePostAuthors,
 		updatePostTags,
-		updatePostVariant
+		updatePostVariant,
+		updatePublishedPostContent
 	} from '../../../../postActions';
-	import CoverImageChange from './Changes/CoverImageChange.svelte';
-	import CanonicalUrlChange from './Changes/CanonicalUrlChange.svelte';
-	import TagChanges from './Changes/TagChanges.svelte';
-	import AuthorChanges from './Changes/AuthorChanges.svelte';
+	import PublishSummary from '../PublishSummary.svelte';
 	import { slugGetInvalidCharater } from '../../Settings/slug';
 	import IconInfoCircleFill from '@hyvor/icons/IconInfoCircleFill';
+	import { getI18n } from '../../../../../../../lib/i18n';
+	import { hasPendingSuggestions } from '../../../../../../../lib/prosemirror/suggestions';
+
+	const i18n = getI18n();
+
 	interface Props {
 		show?: boolean;
 	}
@@ -47,207 +34,158 @@
 	let { show = $bindable(false) }: Props = $props();
 
 	let changes: ReturnType<typeof getPublishedChanges> = $state(getPublishedChanges());
-	let diff = $state(true);
 	let redirectOnSlugChange = $state(true);
 
 	$effect(() => {
-		$postStore;
-		$postOriginalStore;
+		void $postStore;
+		void $postOriginalStore;
+		void $postVariantStore;
+		void $postVariantOriginalStore;
+		void $documentStore;
 
 		changes = getPublishedChanges();
 	});
 
-	let disabled = $derived(
-		changes.variant.slug !== undefined && (changes.variant.slug || '').trim() === ''
+	let pendingSuggestions = $derived(
+		hasPendingSuggestions($documentStore?.checkpoint_content ?? null)
 	);
 
+	let slugChanged = $derived(changes.variant.slug !== undefined);
+	let slugEmpty = $derived(slugChanged && (changes.variant.slug || '').trim() === '');
+	let slugInvalidChar = $derived(
+		slugChanged ? slugGetInvalidCharater(changes.variant.slug || '') : null
+	);
+
+	let disabled = $derived(slugEmpty || !!slugInvalidChar || pendingSuggestions);
+
 	let isLoading = $state(false);
+	let updated: null | { url: string } = $state(null);
 
 	async function handleUpdate() {
 		isLoading = true;
 
-		if (Object.keys(changes.variant).length) {
-			try {
-				await updatePostVariant({
-					language_id: $postLanguageStore.id,
-					...changes.variant,
-					redirect_on_slug_change: redirectOnSlugChange
-				});
-			} catch (e: any) {
-				isLoading = false;
-				return toast.error(e.message);
+		try {
+			if (changes.variant.content !== undefined) {
+				await updatePublishedPostContent();
 			}
-		}
 
-		if (Object.keys(changes.post).length) {
-			try {
-				await updatePost({
-					...changes.post
-				});
-			} catch (e: any) {
-				isLoading = false;
-				return toast.error(e.message);
+			const variantChanges = { ...changes.variant };
+			delete variantChanges.content;
+
+			if (Object.keys(variantChanges).length) {
+				await updatePostVariant(
+					{
+						language_id: $postVariantLanguageStore.id,
+						...variantChanges,
+						redirect_on_slug_change: redirectOnSlugChange
+					},
+					true,
+					['url']
+				);
 			}
-		}
 
-		if (changes.authors !== undefined) {
-			try {
+			if (Object.keys(changes.post).length) {
+				await updatePost({ ...changes.post });
+			}
+
+			if (changes.authors !== undefined) {
 				await updatePostAuthors(changes.authors);
-			} catch (e: any) {
-				isLoading = false;
-				return toast.error(e.message);
 			}
-		}
 
-		if (changes.tags !== undefined) {
-			try {
+			if (changes.tags !== undefined) {
 				await updatePostTags(changes.tags);
-			} catch (e: any) {
-				isLoading = false;
-				return toast.error(e.message);
 			}
+		} catch (e: any) {
+			isLoading = false;
+			return toast.error(e.message);
 		}
 
 		isLoading = false;
+		updated = { url: $postVariantStore.url };
+	}
+
+	function openSettings() {
 		show = false;
-
-		toast.success('Post updated successfully.');
-
-		finishUpdating();
+		$postSidebarStore = 'settings';
 	}
 </script>
 
-<Modal bind:show title="Update Post" size="medium" loading={isLoading}>
-	<div class="note">You are about to update the post. Please review the changes below.</div>
+<Modal
+	bind:show
+	title={i18n.t('console.postEditor.update.modalTitle')}
+	size={updated ? 'small' : 'medium'}
+	loading={isLoading}
+	bare={updated !== null}
+	onclose={() => {
+		if (updated !== null) {
+			updated = null;
+		}
+	}}
+>
+	{#if updated === null}
+		<div class="note">{i18n.t('console.postEditor.update.intro')}</div>
 
-	<div class="diff">
-		<span> Show Difference </span>
-		<Switch bind:checked={diff} />
-	</div>
-
-	{#if changes.variant.content}
-		<SplitControl label="Content">
-			<ContentChange
-				contentOld={$postOriginalVariantStore.content}
-				contentNew={$postVariantStore.content_unsaved}
-				{diff}
-			/>
-		</SplitControl>
-	{/if}
-
-	{#if changes.variant.slug !== undefined}
-		<SplitControl label="Slug">
-			{#if diff}
-				<Diff strOld={$postOriginalVariantStore.slug || ''} strNew={$postVariantStore.slug || ''} />
-			{:else}
-				<span>{$postVariantStore.slug}</span>
-			{/if}
-
-			<div style="margin-top:15px;">
-				{#if (changes.variant.slug || '').trim() === ''}
-					<Validation state="error">Slug cannot be empty.</Validation>
-				{/if}
-				{#if slugGetInvalidCharater(changes.variant.slug || '')}
-					<Validation state="error"
-						>Slug cannot contain {slugGetInvalidCharater(changes.variant.slug || '')}.</Validation
-					>
-				{/if}
+		{#if pendingSuggestions}
+			<div class="note">
+				<Validation state="error"
+					>{i18n.t('console.postEditor.publish.issues.pendingSuggestions')}</Validation
+				>
 			</div>
+		{/if}
+
+		<PublishSummary diff onEditSettings={openSettings} />
+
+		{#if slugChanged}
 			<div class="auto-redirects">
-				<span style="display:inline-flex;align-items:center;gap:5px;">
-					Create redirect
-					<Tooltip
-						text="Automatically create a permanent redirect from the old URL to the new URL."
-					>
+				<span>
+					{i18n.t('console.postEditor.update.createRedirect')}
+					<Tooltip text={i18n.t('console.postEditor.update.createRedirectTooltip')}>
 						<IconInfoCircleFill />
 					</Tooltip>
 				</span>
 				<Switch bind:checked={redirectOnSlugChange} />
 			</div>
-		</SplitControl>
-	{/if}
 
-	{#if changes.variant.description !== undefined}
-		<SplitControl label="Description">
-			{#if diff}
-				<Diff
-					strOld={$postOriginalVariantStore.description || ''}
-					strNew={$postVariantStore.description || ''}
-				/>
-			{:else}
-				<span>{$postVariantStore.description}</span>
+			{#if slugEmpty}
+				<Validation state="error">{i18n.t('console.postEditor.update.slugEmpty')}</Validation>
 			{/if}
-		</SplitControl>
-	{/if}
-
-	{#if changes.authors !== undefined}
-		<AuthorChanges {diff} />
-	{/if}
-
-	{#if changes.tags !== undefined}
-		<TagChanges {diff} />
-	{/if}
-
-	{#if changes.post.featured_image_url !== undefined}
-		<SplitControl label="Cover Image">
-			<CoverImageChange
-				featuredImageOld={$postOriginalStore.featured_image_url}
-				featuredImageNew={$postStore.featured_image_url}
-				{diff}
-			/>
-		</SplitControl>
-	{/if}
-
-	{#if changes.post.published_at !== undefined}
-		<SplitControl label="Publish Time">
-			{#if diff}
-				{$postOriginalStore.published_at
-					? dayjs.unix($postOriginalStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-					: 'None'}
-				<span> → </span>
-				<strong>
-					{$postStore.published_at
-						? dayjs.unix($postStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-						: 'None'}
-				</strong>
-			{:else}
-				<span>
-					{$postStore.published_at
-						? dayjs.unix($postStore.published_at).format('YYYY-MM-DD HH:mm:ss')
-						: 'None'}
-				</span>
+			{#if slugInvalidChar}
+				<Validation state="error"
+					>{i18n.t('console.postEditor.update.slugInvalidChar', {
+						char: slugInvalidChar
+					})}</Validation
+				>
 			{/if}
-		</SplitControl>
-	{/if}
-
-	{#if changes.post.is_featured !== undefined}
-		<SplitControl label="Featured">
-			<FeaturedChange old={$postOriginalStore.is_featured} {diff} />
-		</SplitControl>
-	{/if}
-
-	{#if changes.post.canonical_url !== undefined}
-		<CanonicalUrlChange
-			canonicalUrlOld={$postOriginalStore.canonical_url}
-			canonicalUrlNew={$postStore.canonical_url}
-			{diff}
-		/>
-	{/if}
-
-	{#if changes.post.code_head !== undefined}
-		<SplitControl label="Code Head">Changed</SplitControl>
-	{/if}
-
-	{#if changes.post.code_foot !== undefined}
-		<SplitControl label="Code Foot">Changed</SplitControl>
+		{/if}
+	{:else}
+		<div class="published">
+			<div class="icon">
+				<IconCheck size={26} />
+			</div>
+			<div class="title">
+				{i18n.t('console.postEditor.update.updated')}
+			</div>
+			<div class="button">
+				<Button as="a" href={updated.url} target="_blank" color="accent">
+					{i18n.t('console.postEditor.publish.viewPost')}
+					{#snippet end()}
+						<IconBoxArrowUpRight size={10} />
+					{/snippet}
+				</Button>
+			</div>
+		</div>
 	{/if}
 
 	{#snippet footer()}
-		<ButtonGroup>
-			<Button variant="invisible" on:click={() => (show = false)}>Cancel</Button>
+		{#if updated === null}
+			<Button variant="invisible" on:click={() => (show = false)}
+				>{i18n.t('console.common.cancel')}</Button
+			>
 
-			<Button on:click={handleUpdate} {disabled}>Update</Button>
-		</ButtonGroup>
+			<Button on:click={handleUpdate} {disabled}
+				>{i18n.t('console.postEditor.update.button')}</Button
+			>
+		{/if}
 	{/snippet}
 </Modal>
 
@@ -255,19 +193,44 @@
 	.note {
 		margin-bottom: 15px;
 	}
-	.diff {
-		text-align: center;
-		padding: 10px 15px;
-		font-size: 14px;
-		color: var(--text-light);
-	}
-	.diff span {
-		margin-right: 10px;
-	}
 	.auto-redirects {
 		font-size: 14px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
 	}
 	.auto-redirects span {
-		margin-right: 10px;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.published {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 15px;
+		padding: 25px 0;
+	}
+
+	.published .icon {
+		width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--green-light);
+		color: var(--green-dark);
+	}
+
+	.published .title {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.published .button {
+		margin-top: 5px;
 	}
 </style>
