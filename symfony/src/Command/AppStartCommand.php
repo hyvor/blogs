@@ -28,7 +28,7 @@ class AppStartCommand
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->syncThemesIfEmpty();
+        $this->syncThemesIfEmpty($io);
 
         $process = new Process([
             'frankenphp',
@@ -51,7 +51,7 @@ class AppStartCommand
         return Command::SUCCESS;
     }
 
-    public function syncThemesIfEmpty(): void
+    public function syncThemesIfEmpty(?SymfonyStyle $io = null): void
     {
         $count = $this->em->getRepository(Theme::class)->count([]);
 
@@ -59,6 +59,12 @@ class AppStartCommand
             return;
         }
 
-        $this->bus->dispatch(new RepoSyncMessage());
+        $io?->note('No themes found in the database. Dispatching job to sync themes...');
+
+        try {
+            $this->bus->dispatch(new RepoSyncMessage());
+        } catch (\Throwable $e) {
+            $io?->warning('Failed to dispatch job to sync themes (skipping). Error: ' . $e->getMessage());
+        }
     }
 }
