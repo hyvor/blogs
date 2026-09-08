@@ -154,9 +154,9 @@
 					component: 'blogs',
 					deployment: getConfig().deployment,
 					instance: getConfig().hyvor.instance,
-					user: get(authUserStore),
-					organization: get(authOrganizationStore),
-					license: get(resolvedLicenseStore),
+					user: $authUserStore,
+					organization: $authOrganizationStore,
+					license: $resolvedLicenseStore,
 					callbacks: {
 						onOrganizationSwitch: (switcher) => {
 							isLoading = true;
