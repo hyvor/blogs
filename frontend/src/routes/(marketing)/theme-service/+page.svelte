@@ -87,7 +87,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.title {
 		font-size: 38px;
 		font-weight: 700;

@@ -85,7 +85,7 @@
 	{/each}
 </div>
 
-<style lang="scss">
+<style>
 	.steps {
 		display: flex;
 		flex-direction: column;

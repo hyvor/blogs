@@ -7,7 +7,7 @@
 	<ThemesPreview />
 </div>
 
-<style lang="scss">
+<style>
 	.wrap {
 		height: calc(100vh - var(--header-height));
 		padding: 15px 20px;

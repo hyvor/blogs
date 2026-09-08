@@ -29,7 +29,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.post-list-item {
 		display: grid;
 		grid-template-columns: minmax(280px, 1.8fr) minmax(200px, 1.9fr) 100px 36px;

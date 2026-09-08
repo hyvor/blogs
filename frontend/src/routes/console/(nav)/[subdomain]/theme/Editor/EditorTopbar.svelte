@@ -75,7 +75,7 @@
 	<DeleteModal bind:open={isDeleting} file={currentFile} />
 {/key}
 
-<style lang="scss">
+<style>
 	.editor-top-bar {
 		display: flex;
 		color: var(--text-light);

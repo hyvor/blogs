@@ -190,7 +190,7 @@
 	</div>
 {/if}
 
-<style lang="scss">
+<style>
 	.preview {
 		width: 100%;
 		height: 100%;

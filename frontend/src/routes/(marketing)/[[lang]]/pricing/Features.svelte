@@ -361,7 +361,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.title-wrap {
 		padding-top: 100px;
 		text-align: center;

@@ -30,7 +30,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	#nav-wrap {
 		display: flex;
 		flex-direction: column;

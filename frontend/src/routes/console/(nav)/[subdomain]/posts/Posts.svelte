@@ -157,7 +157,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	#posts {
 		display: flex;
 		flex-direction: column;

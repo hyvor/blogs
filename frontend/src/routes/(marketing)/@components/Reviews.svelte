@@ -144,7 +144,7 @@
 	{/if}
 </div>
 
-<style lang="scss">
+<style>
 	.wrap {
 		padding: 60px 15px;
 	}

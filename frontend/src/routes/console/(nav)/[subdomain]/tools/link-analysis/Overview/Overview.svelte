@@ -88,7 +88,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.stats {
 		.stats-top {
 			display: flex;

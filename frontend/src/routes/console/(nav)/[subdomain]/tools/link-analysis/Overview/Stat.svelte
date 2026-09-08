@@ -22,7 +22,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.stat {
 		padding: 15px 25px;
 		text-align: center;

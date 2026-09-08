@@ -44,7 +44,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.buttons {
 		display: flex;
 		justify-content: center;

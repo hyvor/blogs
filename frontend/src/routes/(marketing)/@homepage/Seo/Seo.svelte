@@ -99,7 +99,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.scores {
 		margin: 60px auto;
 		background-color: #f1f6f1;
