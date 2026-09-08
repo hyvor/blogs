@@ -18,12 +18,11 @@
 <div class="suggestion-screencast">
 	<video bind:this={videoEl} muted loop playsinline preload="metadata">
 		<source
-			src="https://res.cloudinary.com/dqabfne6s/video/upload/v1788726044/suggestion-screencast_yxqye6.mp4"
+			src="https://res.cloudinary.com/dqabfne6s/video/upload/v1788731787/blogs.hyvor.com/landing-videos/hb-suggestion-1280w-30fps_yosjlz.mp4"
 			type="video/mp4"
 		/>
 		<track kind="captions" />
 	</video>
-	-->
 
 	<div class="fade-overlay" aria-hidden="true"></div>
 </div>
