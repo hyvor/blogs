@@ -18,7 +18,7 @@
 	});
 </script>
 
-{#if $integrationsStore.hyvor_post}
+{#if $integrationsStore.hyvor_talk}
 	<EmbeddedConsole
 		url="{getConfig().hyvor.hyvor_talk_url}/console/{$integrationsStore.hyvor_talk
 			?.website_id}/comments?embedded=true&website_id={$integrationsStore.hyvor_talk?.website_id}"
