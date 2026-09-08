@@ -57,6 +57,7 @@ class ConnectHyvorPostIntegrationTest extends ApiTestCase
         $this->assertSame('My Blog', $requestBody['name']);
         $this->assertSame('hp-connect', $requestBody['subdomain']);
         $this->assertTrue($requestBody['autogenerate_subdomain_on_duplicate']);
+        $this->assertFalse($requestBody['start_trial']);
         $metadata = $requestBody['metadata'];
         $this->assertIsArray($metadata);
         $this->assertSame('true', $metadata['hyvor_blogs_integration']);
