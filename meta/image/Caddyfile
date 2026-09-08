@@ -80,3 +80,8 @@ http://localhost:8080 {
 	}
 	import handle_php customdomain
 }
+
+# caddy / frankenphp metrics
+:9666 {
+    metrics
+}
