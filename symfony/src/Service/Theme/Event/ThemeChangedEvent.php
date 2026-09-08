@@ -2,4 +2,9 @@
 
 namespace App\Service\Theme\Event;
 
-class ThemeChangedEvent {}
+use App\Entity\Blog;
+
+readonly class ThemeChangedEvent
+{
+    public function __construct(public Blog $blog) {}
+}

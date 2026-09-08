@@ -334,7 +334,7 @@ class BlogCreator
             throw new UnprocessableEntityHttpException('Theme version not found');
         }
 
-        $this->themeFilesService->updateFilesFromThemeVersion($blog, $version);
+        $this->themeFilesService->updateFilesFromThemeVersion($blog, $version, event: false);
     }
 
     private function fillPosts(Blog $blog, User $primaryUser, Tag $welcomeTag, Language $primaryLanguage): void

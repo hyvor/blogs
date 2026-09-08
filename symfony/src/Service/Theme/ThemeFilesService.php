@@ -11,6 +11,7 @@ use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
 use App\Service\Theme\Event\StylesEditedEvent;
 use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Theme\Event\ThemeChangedEvent;
 use App\Service\Theme\Exception\ThemeExportException;
 use App\Service\Theme\Exception\ThemeImportException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -148,7 +149,7 @@ class ThemeFilesService
      */
     public function updateFilesFromZip(Blog $blog, string $zipContent): ThemeImporter
     {
-        return $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
+        $importer = $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
             $this->deleteAllFiles($blog);
 
             $importer = new ThemeImporter($blog, $zipContent, $this);
@@ -156,14 +157,22 @@ class ThemeFilesService
 
             return $importer;
         });
+
+        $this->ed->dispatch(new ThemeChangedEvent($blog));
+
+        return $importer;
     }
 
     /**
      * @throws ThemeImportException
      */
-    public function updateFilesFromThemeVersion(Blog $blog, ThemeVersion $version): ThemeImporter
+    public function updateFilesFromThemeVersion(
+        Blog $blog,
+        ThemeVersion $version,
+        bool $event = true, // for cache clearing mostly
+    ): ThemeImporter
     {
-        return $this->em->wrapInTransaction(function () use ($blog, $version) {
+        $importer = $this->em->wrapInTransaction(function () use ($blog, $version) {
             $importer = $this->updateFilesFromZip($blog, $version->getZip() ?? '');
 
             $blog->setThemeVersion($version);
@@ -172,6 +181,12 @@ class ThemeFilesService
 
             return $importer;
         });
+
+        if ($event) {
+            $this->ed->dispatch(new ThemeChangedEvent($blog));
+        }
+
+        return $importer;
     }
 
     public function isFileAllowedInFolder(?ThemeFileFolder $folder, string $fileName): bool

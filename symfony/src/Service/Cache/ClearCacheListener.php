@@ -32,6 +32,7 @@ use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Post\PostService;
 use App\Service\Route\PermalinkService;
+use App\Service\Theme\Event\ThemeChangedEvent;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
 use App\Service\User\Event\UserUpdatedEvent;
@@ -229,6 +230,12 @@ class ClearCacheListener
         $meta->cache_version_styles++;
         $event->blog->setMeta($meta);
         $this->em->flush();
+    }
+
+    #[AsEventListener]
+    public function onThemeChanged(ThemeChangedEvent $event): void
+    {
+        $this->cacheService->clearAllCache($event->blog);
     }
 
     #[AsEventListener]
