@@ -1,4 +1,4 @@
-import { bench, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { getOccurrencesOfKeywordInContent, getWords } from './words';
 
 test('get words', () => {
