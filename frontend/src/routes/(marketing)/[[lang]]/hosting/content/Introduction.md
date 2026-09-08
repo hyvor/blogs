@@ -13,7 +13,7 @@ Hyvor Blogs is designed to be self-hosted by developers and organizations.
 - **Minimal dependencies**: only Docker, PostgreSQL, and an OIDC provider.
 - **Open-source**: AGPLv3 codebase available on [Github](https://github.com/hyvor/blogs).
 - **Multi-tenant**: Run multiple blogs on a single instance.
-- **Single sign-on**: OIDC-based authentication by default
+- **Single sign-on**: OIDC-based authentication by default.
 
 ## Self-hosting vs. Cloud
 
@@ -62,9 +62,9 @@ A few comparisons with other blogging platforms:
 
 ## License & Pricing
 
-We offer three licensing options for self-hosting Hyvor Blogs:
+We currently offer the following licensing option for self-hosting Hyvor Blogs:
 
-- **Open-Source**:
+- **Open-Source (AGPLv3)**:
   - Free, AGPLv3 license
   - Community support
   - Basic features, including rich editor, media, tags, authors, and more.
@@ -76,7 +76,10 @@ We offer three licensing options for self-hosting Hyvor Blogs:
   - Console API, Data API, Delivery API, and Webhooks
   - AI agent and translations
   - Broken link detection
-- **Enterprise Unicorn** (soon):
+
+Enterprise plans with support from HYVOR are not yet available, but we plan to offer them in the future.
+
+<!-- - **Enterprise Unicorn** (soon):
   - €5/user/month (billed annually), minimum 10 users
   - Everything in Open-Source, plus:
   - Email support from HYVOR
@@ -87,7 +90,7 @@ We offer three licensing options for self-hosting Hyvor Blogs:
   - Contact us for pricing
   - Everything in Enterprise Unicorn, plus:
   - Priority support with SLA
-  - Invoicing
+  - Invoicing -->
 
 ## Support
 

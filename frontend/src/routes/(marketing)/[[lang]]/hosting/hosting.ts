@@ -31,6 +31,12 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 					slug: 'deploy',
 					name: 'Deploy',
 					content: Deploy
+				},
+				{
+					type: 'page',
+					slug: 'reverse-proxy',
+					name: 'Reverse Proxy',
+					content: await getComponent('ReverseProxy')
 				}
 			]
 		},
