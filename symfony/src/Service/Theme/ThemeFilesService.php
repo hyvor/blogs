@@ -11,6 +11,8 @@ use App\Service\Theme\Event\ConfigEditedEvent;
 use App\Service\Theme\Event\LangEditedEvent;
 use App\Service\Theme\Event\StylesEditedEvent;
 use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Theme\Event\ThemeChangedEvent;
+use App\Service\Theme\Exception\ThemeExportException;
 use App\Service\Theme\Exception\ThemeImportException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -147,7 +149,7 @@ class ThemeFilesService
      */
     public function updateFilesFromZip(Blog $blog, string $zipContent): ThemeImporter
     {
-        return $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
+        $importer = $this->em->wrapInTransaction(function () use ($blog, $zipContent) {
             $this->deleteAllFiles($blog);
 
             $importer = new ThemeImporter($blog, $zipContent, $this);
@@ -155,14 +157,22 @@ class ThemeFilesService
 
             return $importer;
         });
+
+        $this->ed->dispatch(new ThemeChangedEvent($blog));
+
+        return $importer;
     }
 
     /**
      * @throws ThemeImportException
      */
-    public function updateFilesFromThemeVersion(Blog $blog, ThemeVersion $version): ThemeImporter
+    public function updateFilesFromThemeVersion(
+        Blog $blog,
+        ThemeVersion $version,
+        bool $event = true, // for cache clearing mostly
+    ): ThemeImporter
     {
-        return $this->em->wrapInTransaction(function () use ($blog, $version) {
+        $importer = $this->em->wrapInTransaction(function () use ($blog, $version) {
             $importer = $this->updateFilesFromZip($blog, $version->getZip() ?? '');
 
             $blog->setThemeVersion($version);
@@ -171,6 +181,12 @@ class ThemeFilesService
 
             return $importer;
         });
+
+        if ($event) {
+            $this->ed->dispatch(new ThemeChangedEvent($blog));
+        }
+
+        return $importer;
     }
 
     public function isFileAllowedInFolder(?ThemeFileFolder $folder, string $fileName): bool
@@ -184,6 +200,10 @@ class ThemeFilesService
         };
     }
 
+    /**
+     * @throws ThemeExportException known errors
+     * @throws \RuntimeException for unexpected errors
+     */
     public function exportFilesToZip(Blog $blog): string
     {
         $tmpPath = tempnam(sys_get_temp_dir(), 'theme-export-');
@@ -195,7 +215,13 @@ class ThemeFilesService
             $zip = new \ZipArchive();
             $zip->open($tmpPath, \ZipArchive::OVERWRITE);
 
-            foreach ($this->getAllFilesOfBlog($blog) as $file) {
+            $files = $this->getAllFilesOfBlog($blog);
+
+            if (count($files) === 0) {
+                throw new ThemeExportException('No theme files found to export');
+            }
+
+            foreach ($files as $file) {
                 $folder = $file->getFolder();
                 $entryName = $folder === null ? $file->getName() : $folder->value . '/' . $file->getName();
                 $zip->addFromString($entryName, $file->getContent() ?? '');
@@ -210,7 +236,9 @@ class ThemeFilesService
 
             return $content;
         } finally {
-            unlink($tmpPath);
+            if (file_exists($tmpPath)) {
+                unlink($tmpPath);
+            }
         }
     }
 

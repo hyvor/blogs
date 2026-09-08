@@ -52,7 +52,7 @@ class ThemeVersionCreator {
                 $themeVersion->setPreviewSubdomain($previewSubdomain);
                 $this->em->flush();
 
-                $this->themeFilesService->updateFilesFromThemeVersion($blog, $themeVersion);
+                $this->themeFilesService->updateFilesFromThemeVersion($blog, $themeVersion, event: false);
             }
 
             return $themeVersion;

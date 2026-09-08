@@ -27,11 +27,18 @@ use App\Service\Post\Event\PostVariantUnpublishedEvent;
 use App\Service\Post\Event\PostVariantUpdatedEvent;
 use App\Service\Redirect\Event\RedirectChangedEvent;
 use App\Service\Route\Event\RouteChangedEvent;
+use App\Service\Route\PermalinkService;
 use App\Service\Tag\Event\TagCreatedEvent;
 use App\Service\Tag\Event\TagDeletedEvent;
 use App\Service\Tag\Event\TagUpdatedEvent;
 use App\Service\Tag\Event\TagVariantDeletedEvent;
 use App\Service\Tag\Event\TagVariantUpdatedEvent;
+use App\Service\Theme\Event\AssetEditedEvent;
+use App\Service\Theme\Event\ConfigEditedEvent;
+use App\Service\Theme\Event\LangEditedEvent;
+use App\Service\Theme\Event\StylesEditedEvent;
+use App\Service\Theme\Event\TemplateEditedEvent;
+use App\Service\Theme\Event\ThemeChangedEvent;
 use App\Service\User\Event\UserCreatedEvent;
 use App\Service\User\Event\UserDeletedEvent;
 use App\Service\User\Event\UserUpdatedEvent;
@@ -49,6 +56,7 @@ use App\Tests\Factory\RedirectFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\TagVariantFactory;
+use App\Tests\Factory\ThemeFileFactory;
 use App\Tests\Factory\UserFactory;
 use App\Tests\Factory\UserVariantFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -429,5 +437,101 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->dispatch(new PostUpdatedEvent($post));
 
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_redirect_changed_also_clears_old_path_cache_when_path_updated(): void
+    {
+        $blog = BlogFactory::createOne();
+        $oldRedirect = RedirectFactory::createOne([
+            'blog' => $blog,
+            'path' => '/old-path',
+            'dynamic' => false,
+        ]);
+        $oldRedirectClone = clone $oldRedirect;
+        $redirect = RedirectFactory::createOne([
+            'blog' => $blog,
+            'path' => '/new-path',
+            'dynamic' => false,
+        ]);
+
+        $this->dispatch(new RedirectChangedEvent($redirect, $oldRedirectClone));
+
+        $this->getEd()->assertDispatchedCount(CacheClearSingleEvent::class, 2);
+    }
+
+    public function test_template_edited_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $file = ThemeFileFactory::createTemplateTwig($blog, 'index.twig', '<html></html>');
+
+        $this->dispatch(new TemplateEditedEvent($file));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_config_edited_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $file = ThemeFileFactory::createOneFor($blog, 'config.yml', 'key: value');
+
+        $this->dispatch(new ConfigEditedEvent($file));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_lang_edited_clears_template_cache(): void
+    {
+        $blog = BlogFactory::createOne();
+        $file = ThemeFileFactory::createOneFor($blog, 'en.yml', 'key: value');
+
+        $this->dispatch(new LangEditedEvent($file));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+    }
+
+    public function test_asset_edited_clears_single_cache_for_asset_path(): void
+    {
+        $blog = BlogFactory::createOne();
+
+        $this->dispatch(new AssetEditedEvent($blog, 'logo.png'));
+
+        $this->getEd()->assertDispatched(CacheClearSingleEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+
+        $permalinkService = $this->getService(PermalinkService::class);
+        $expectedPath = $permalinkService->getAssetPermalink('logo.png', $blog, true);
+
+        /** @var CacheClearSingleEvent $event */
+        $event = $this->getEd()->getFirstEvent(CacheClearSingleEvent::class);
+        $this->assertSame($expectedPath, $event->path);
+    }
+
+    public function test_styles_edited_clears_styles_and_template_cache_and_bumps_styles_version(): void
+    {
+        $blog = BlogFactory::createOne();
+        $versionBefore = $blog->getMeta()->cache_version_styles;
+
+        $this->dispatch(new StylesEditedEvent($blog));
+
+        $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+
+        /** @var CacheClearSingleEvent $event */
+        $event = $this->getEd()->getFirstEvent(CacheClearSingleEvent::class);
+        $this->assertSame('/styles.css', $event->path);
+
+        $this->assertSame($versionBefore + 1, $blog->getMeta()->cache_version_styles);
+    }
+
+    public function test_theme_changed_clears_all_cache_and_bumps_styles_version(): void
+    {
+        $blog = BlogFactory::createOne();
+        $versionBefore = $blog->getMeta()->cache_version_styles;
+
+        $this->dispatch(new ThemeChangedEvent($blog));
+
+        $this->getEd()->assertDispatched(CacheClearAllEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+
+        $this->assertSame($versionBefore + 1, $blog->getMeta()->cache_version_styles);
     }
 }

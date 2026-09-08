@@ -52,4 +52,15 @@ class DownloadThemeTest extends ApiTestCase
         $zip->close();
         unlink((string) $tmp);
     }
+
+    public function test_throws_when_no_theme_files(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'theme-download'],
+        );
+
+        $response = $this->consoleBlogApi('GET', $blog, '/theme/download', user: $user);
+
+        $this->assertResponseFailed(422, 'No theme files found to export');
+    }
 }

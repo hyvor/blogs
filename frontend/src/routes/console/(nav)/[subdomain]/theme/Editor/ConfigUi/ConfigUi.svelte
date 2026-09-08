@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	// @ts-ignore
-	import yaml from 'js-yaml';
+	import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 	import deepmerge from 'deepmerge';
 	import { Callout } from '@hyvor/design/components';
 	import { addDefaultDefs } from './configUi';
@@ -23,13 +22,13 @@
 		let error: null | string = null;
 
 		try {
-			configYaml = yaml.load(config) as object;
+			configYaml = yamlLoad(config) as object;
 		} catch (e: any) {
 			error = i18n.t('console.theme.config.parseConfigError', { message: e.message });
 		}
 
 		try {
-			configDefYaml = yaml.load(configDef) as object;
+			configDefYaml = yamlLoad(configDef) as object;
 		} catch (e: any) {
 			error = i18n.t('console.theme.config.parseConfigDefError', { message: e.message });
 		}
@@ -78,7 +77,7 @@
 		const newConfig = getNewConfig(configYaml, e.detail.parentKeys, e.detail.key, e.detail.value);
 
 		// configYaml = newConfig;
-		dispatch('change', yaml.dump(newConfig));
+		dispatch('change', yamlDump(newConfig));
 	}
 </script>
 
