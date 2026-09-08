@@ -1,6 +1,6 @@
 ###################################################
 # Alias for deppendencies
-FROM node:22.12.0 AS node
+FROM node:26-alpine AS node
 FROM composer:2.8.4 AS composer
 FROM dunglas/frankenphp:1.12-php8.4 AS frankenphp
 

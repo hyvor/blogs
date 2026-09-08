@@ -5,14 +5,12 @@ import DOMPurify from 'dompurify';
 export function getPurifiedHtmlFromMarkdown(content: string) {
 	if (!content) return '';
 
-	const renderer = {
-		link(href: string, title: string | null | undefined, text: string) {
-			return `<a href="${href}" target="_blank" rel="noreferrer noopener">${text}</a>`;
-		}
-	};
-
 	const m = marked.use({
-		renderer
+		renderer: {
+			link(link) {
+				return `<a href="${link.href}" target="_blank" rel="noreferrer noopener">${link.text}</a>`;
+			}
+		}
 	});
 
 	return DOMPurify.sanitize(m(content) as string, {

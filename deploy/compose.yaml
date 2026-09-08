@@ -14,6 +14,7 @@ services:
       - "443:443"
     volumes:
       - blog_media:/app/media
+      - caddy_data:/data
       # Uncomment if TLS_MODE=manual.
       # - /path/to/your/certs/cert.pem:/certs/cert.pem:ro
       # - /path/to/your/certs/key.pem:/certs/key.pem:ro
@@ -37,3 +38,4 @@ services:
 volumes:
   postgres_data:
   blog_media:
+  caddy_data:

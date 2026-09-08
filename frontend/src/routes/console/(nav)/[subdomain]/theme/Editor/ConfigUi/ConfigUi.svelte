@@ -23,13 +23,13 @@
 		let error: null | string = null;
 
 		try {
-			configYaml = yaml.load(config);
+			configYaml = yaml.load(config) as object;
 		} catch (e: any) {
 			error = i18n.t('console.theme.config.parseConfigError', { message: e.message });
 		}
 
 		try {
-			configDefYaml = yaml.load(configDef);
+			configDefYaml = yaml.load(configDef) as object;
 		} catch (e: any) {
 			error = i18n.t('console.theme.config.parseConfigDefError', { message: e.message });
 		}
