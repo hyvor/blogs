@@ -30,23 +30,8 @@ class AppStartCommand
 
         $this->syncThemesIfEmpty($io);
 
-        $process = new Process([
-            'frankenphp',
-            'run',
-            '--config',
-            '/etc/caddy/Caddyfile',
-        ]);
-
         $io->note('Starting FrankenPHP...');
-
-        $process->setTimeout(null);
-        $process->run(function (string $type, string $buffer): void {
-            if ($type === Process::OUT) {
-                echo $buffer;
-            } else {
-                fwrite(STDERR, $buffer);
-            }
-        });
+        pcntl_exec('/usr/local/bin/frankenphp', ['run', '--config', '/etc/caddy/Caddyfile']);
 
         return Command::SUCCESS;
     }

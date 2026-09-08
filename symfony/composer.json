@@ -15,6 +15,7 @@
         "ext-xmlreader": "*",
         "ext-imagick": "*",
         "ext-zip": "*",
+        "ext-pcntl": "*",
         "dragonmantank/cron-expression": "^3.6",
         "hyvor/doctrine-filterq": "^0.0.1",
         "hyvor/internal": "^4.1.7",
