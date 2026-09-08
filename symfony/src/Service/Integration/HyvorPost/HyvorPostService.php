@@ -94,7 +94,7 @@ class HyvorPostService
                 'hyvor_blogs_integration' => 'true',
                 'hyvor_blogs_blog_id' => (string) $blog->getId(),
             ],
-            'start_trial' => false,
+            'start_trial' => false
         ]);
 
         // we add the current user to the newsletter so he has access to it immediately
