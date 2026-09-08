@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tests\Command;
+namespace App\Tests\Command\App;
 
-use App\Command\AppStartCommand;
+use App\Command\App\AppStartCommand;
 use App\Entity\Enum\ThemeCreationType;
 use App\Service\Theme\RepoSync\Message\RepoSyncMessage;
 use App\Tests\Factory\ThemeFactory;

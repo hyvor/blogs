@@ -39,6 +39,11 @@ readonly class AppConfig
     ) {
     }
 
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
     public function getDomainApp(): string
     {
         return $this->domainApp;

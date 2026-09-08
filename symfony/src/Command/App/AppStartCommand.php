@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\App;
 
 use App\Entity\Theme;
 use App\Service\Theme\RepoSync\Message\RepoSyncMessage;

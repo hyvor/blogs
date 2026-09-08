@@ -42,7 +42,7 @@ Point your app domain to your server's IP address.
    </TableRow>
 </Table>
 
-See []
+See [Reverse Proxy](/hosting/reverse-proxy) if you are running Hyvor Blogs behind a reverse proxy.
 
 <h2 id="install">Install</h2>
 
@@ -65,28 +65,18 @@ deploy/
 
 Edit the `.env` file and fill in the required values:
 
-```yaml
-# Required
-APP_SECRET=           # Run: openssl rand -base64 32
-POSTGRES_PASSWORD=    # A strong password for the database
-DOMAIN_APP=           # e.g. blogs.example.com
-DELIVERY_URL=         # e.g. https://blogs.example.com
-MERCURE_JWT_SECRET=   # Run: openssl rand -base64 32
+- `APP_SECRET`: A strong random string. You can generate one using the following command:
+  ```bash
+  openssl rand -base64 32
+  ```
+- `POSTGRES_PASSWORD`: Use a strong, URL-safe password for the Postgres database. You can generate one using the following command:
+  ```bash
+  openssl rand -base64 32 | tr '+/' '-_' | tr -d '='
+  ```
+- `DOMAIN_APP`: The main domain where your Hyvor Blogs instance is hosted (e.g., blogs.example.com). This is where you access the Console, Sudo, and APIs.
+- `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`: Set these variables based on your OIDC provider configuration.
 
-# OIDC (on-prem authentication)
-OIDC_ISSUER_URL=      # e.g. https://accounts.google.com
-OIDC_CLIENT_ID=
-OIDC_CLIENT_SECRET=
-
-# S3-compatible storage
-S3_ACCESS_KEY_ID=
-S3_SECRET_ACCESS_KEY=
-S3_ENDPOINT=          # e.g. https://s3.amazonaws.com
-S3_BUCKET=
-S3_USE_PATH_STYLE_ENDPOINT=false
-```
-
-The `DATABASE_URL` is pre-configured to connect to the Postgres service defined in `compose.yaml` using `POSTGRES_PASSWORD`, so you do not need to change it.
+See [Environment Variables](/hosting/env) for all available environment variables.
 
 <h3 id="tls">TLS Mode</h3>
 
@@ -131,6 +121,8 @@ The `DATABASE_URL` is pre-configured to connect to the Postgres service defined 
    </TableRow>
 </Table>
 
+If you are running Hyvor Blogs behind a reverse proxy, see [Reverse Proxy](/hosting/reverse-proxy).
+
 ## Start
 
 ```bash
@@ -142,16 +134,29 @@ Hyvor Blogs will start and run database migrations automatically on the first la
 To check logs:
 
 ```bash
-docker compose logs -f
+docker compose logs -f blogs
+```
+
+To verify your config:
+
+```bash
+docker compose exec blogs bin/console app:verify
 ```
 
 ## Upgrading
 
-To upgrade to the latest version, pull the new image and restart the container:
+To upgrade to the latest version, replace the image version in `compose.yaml`:
+
+```yaml
+services:
+  blogs:
+    image: hyvor/blogs:<version>
+```
+
+Then, run:
 
 ```bash
-docker compose pull
 docker compose up -d
 ```
 
-Migrations are applied automatically on startup.
+Migrations will be applied automatically on startup.
