@@ -12,8 +12,7 @@
 	import {
 		ConsoleLoader,
 		IconMessage,
-		InternationalizationProvider,
-		toast
+		InternationalizationProvider
 	} from '@hyvor/design/components';
 	import { CONSOLE_LANGUAGES } from './lib/i18n';
 	import { getConfig, setConfig, type Config } from './lib/config';
@@ -28,7 +27,6 @@
 		type ResolvedLicense,
 		HyvorBar
 	} from '@hyvor/design/cloud';
-	import { get } from 'svelte/store';
 	import BlogSelectorModal from './lib/components/BlogSelector/BlogSelectorModal.svelte';
 
 	interface Props {
@@ -105,7 +103,7 @@
 					const toPage = page.url.searchParams.has('signup') ? 'signup' : 'login';
 					const url = new URL(err.data[toPage + '_url'], location.origin);
 					url.searchParams.set('redirect', location.href);
-					location.href = url.toString();
+					location.replace(url.toString());
 				} else {
 					error = 'We were unable to initialize the console. Please try again.';
 				}
