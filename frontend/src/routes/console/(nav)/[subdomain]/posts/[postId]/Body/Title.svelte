@@ -122,8 +122,7 @@
 		bind:this={textarea}
 		onblur={handleBlur}
 		name="title"
-		readonly={cant('posts.write')}
-	></textarea>
+		readonly={cant('posts.write')}></textarea>
 
 	<!-- <div class="loader-wrap">
         <Loader state={loaderState} size="small" />

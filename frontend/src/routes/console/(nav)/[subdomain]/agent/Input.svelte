@@ -53,8 +53,7 @@
 					oninput={handleInput}
 					placeholder={i18n.t('console.agent.promptPlaceholder')}
 					rows="1"
-					disabled={sending}
-				></textarea>
+					disabled={sending}></textarea>
 				<div class="send-button">
 					<IconButton
 						color="input"
