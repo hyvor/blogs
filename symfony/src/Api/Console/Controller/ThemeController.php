@@ -14,6 +14,7 @@ use App\Api\Console\Object\ThemeFileObject;
 use App\Entity\Blog;
 use App\Entity\ThemeFile;
 use App\Service\Limit;
+use App\Service\Theme\Exception\ThemeExportException;
 use App\Service\Theme\Exception\ThemeImportException;
 use App\Service\Theme\ThemeFilesService;
 use App\Service\Theme\ThemeService;
@@ -108,6 +109,8 @@ class ThemeController
 
         try {
             $zipContent = $this->themeFilesService->exportFilesToZip($blog);
+        } catch (ThemeExportException $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
         } catch (\RuntimeException $e) {
             $this->logger->error('Failed to export theme zip', ['exception' => $e]);
             throw new UnprocessableEntityHttpException('Unable to export the theme as a zip file. Please try again later.');

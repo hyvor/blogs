@@ -8,6 +8,7 @@ export interface ConsoleApiOptions {
 	userApi?: boolean;
 	subdomain?: string;
 	signal?: AbortSignal;
+	raw?: boolean;
 }
 
 interface CallOptions extends ConsoleApiOptions {
@@ -28,7 +29,8 @@ function getConsoleApi() {
 		method,
 		data = {},
 		subdomain,
-		signal
+		signal,
+		raw = false
 	}: CallOptions): Promise<T> {
 		if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
@@ -90,6 +92,10 @@ function getConsoleApi() {
 			toThrow.body = e;
 
 			throw toThrow;
+		}
+
+		if (raw) {
+			return response as T;
 		}
 
 		const json = await response.json();

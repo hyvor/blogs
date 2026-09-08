@@ -1,16 +1,10 @@
 <script lang="ts">
-	import { Button, Loader } from '@hyvor/design/components';
+	import { Loader } from '@hyvor/design/components';
 	import { onMount } from 'svelte';
-	import {
-		selectedThemeFileIdStore,
-		setThemeFiles,
-		themeFilesOriginalStore,
-		themeFilesStore
-	} from './themeStore';
+	import { setThemeFiles } from './themeStore';
 	import Folder from './Folder.svelte';
 	import Upload from './Upload.svelte';
 	import Download from './Download.svelte';
-	import type { ThemeFile } from '../../../lib/types';
 	import ChangeTheme from './ChangeTheme/ChangeTheme.svelte';
 	import { loadThemeFiles } from './themeActions';
 	import { getI18n } from '../../../lib/i18n';
