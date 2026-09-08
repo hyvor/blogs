@@ -206,7 +206,9 @@
 					state={subdomainError ? 'error' : subdomainSuccess ? 'success' : undefined}
 				>
 					{#snippet end()}
-						.hyvorblogs.io
+						{#if getConfig().deployment === 'cloud'}
+							.hyvorblogs.io
+						{/if}
 					{/snippet}
 				</TextInput>
 

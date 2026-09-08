@@ -7,6 +7,7 @@
 	import { getI18n } from '../../../../lib/i18n';
 	import { onMount } from 'svelte';
 	import { redirectIfCant } from '../../../../lib/scope.svelte';
+	import { getConfig } from '../../../../lib/config';
 
 	onMount(() => {
 		redirectIfCant('blog.write');
@@ -36,7 +37,7 @@
 					}}
 				/>
 
-				{#if !$integrationsStore.hyvor_talk}
+				{#if !$integrationsStore.hyvor_talk && getConfig().deployment === 'cloud'}
 					<T
 						key="console.settings.comments.connectTalkHint"
 						params={{
@@ -100,7 +101,7 @@
 					}}
 				/>
 
-				{#if !$integrationsStore.hyvor_post}
+				{#if !$integrationsStore.hyvor_post && getConfig().deployment === 'cloud'}
 					<T
 						key="console.settings.comments.connectPostHint"
 						params={{
