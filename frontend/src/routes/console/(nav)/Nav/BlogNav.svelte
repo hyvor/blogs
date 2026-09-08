@@ -182,7 +182,7 @@
 	</NavLinkGroup>
 </div>
 
-<style lang="scss">
+<style>
 	.current-blog {
 		display: flex;
 		align-items: center;

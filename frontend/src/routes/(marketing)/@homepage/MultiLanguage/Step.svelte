@@ -29,7 +29,7 @@
 	<div class="description">{description}</div>
 </div>
 
-<style lang="scss">
+<style>
 	.step {
 		display: flex;
 		flex-direction: column;

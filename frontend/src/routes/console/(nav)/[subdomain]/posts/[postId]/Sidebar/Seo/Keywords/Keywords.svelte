@@ -110,7 +110,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.keywords {
 		flex: 1;
 		margin-left: 15px;

@@ -166,7 +166,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.wrap {
 		flex: 1;
 		display: flex;

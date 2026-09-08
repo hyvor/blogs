@@ -17,7 +17,7 @@
 	{/each}
 </div>
 
-<style lang="scss">
+<style>
 	.features {
 		margin-top: 15px;
 	}

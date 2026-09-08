@@ -66,7 +66,7 @@
 	{/snippet}
 </SplitControl>
 
-<style lang="scss">
+<style>
 	.caption {
 		font-size: 14px;
 		color: var(--text-light);

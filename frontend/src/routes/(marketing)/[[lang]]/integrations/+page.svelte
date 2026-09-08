@@ -43,7 +43,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.items-wrap {
 		margin-top: 50px;
 		margin-bottom: 80px;

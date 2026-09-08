@@ -243,7 +243,7 @@
 	</Modal>
 {/if}
 
-<style lang="scss">
+<style>
 	.footer {
 		padding: 20px 100px;
 		text-align: center;

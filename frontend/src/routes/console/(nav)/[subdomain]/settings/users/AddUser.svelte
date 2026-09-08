@@ -175,7 +175,7 @@
 	{/if}
 </Modal>
 
-<style lang="scss">
+<style>
 	.signup-note {
 		font-size: 14px;
 		color: var(--text-light);

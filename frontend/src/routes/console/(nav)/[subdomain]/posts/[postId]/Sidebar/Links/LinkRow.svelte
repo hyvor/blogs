@@ -154,7 +154,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.link-wrap {
 		display: flex;
 		padding: 10px 0;

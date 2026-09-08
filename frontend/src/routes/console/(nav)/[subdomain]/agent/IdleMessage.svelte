@@ -43,7 +43,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.idle {
 		width: 100%;
 		height: 100%;

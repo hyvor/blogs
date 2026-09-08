@@ -84,7 +84,7 @@
 	</SplitControl>
 </Modal>
 
-<style lang="scss">
+<style>
 	.imported-counts {
 		div {
 			margin-bottom: 10px;

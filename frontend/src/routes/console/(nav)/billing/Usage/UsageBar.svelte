@@ -82,7 +82,7 @@
 	{/if}
 </div>
 
-<style lang="scss">
+<style>
 	.usage-bar-top {
 		display: flex;
 

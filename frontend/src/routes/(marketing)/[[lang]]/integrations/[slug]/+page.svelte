@@ -20,7 +20,7 @@
 	</Box>
 </div>
 
-<style lang="scss">
+<style>
 	.content-wrap {
 		width: 850px;
 		max-width: 100%;

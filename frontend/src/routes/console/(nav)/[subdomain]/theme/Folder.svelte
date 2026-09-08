@@ -46,7 +46,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.folder {
 		margin-bottom: 2px;
 		.folder-name {

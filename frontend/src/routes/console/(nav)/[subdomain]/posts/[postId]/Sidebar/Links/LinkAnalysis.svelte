@@ -178,7 +178,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.wrap {
 		display: flex;
 		flex-direction: column;

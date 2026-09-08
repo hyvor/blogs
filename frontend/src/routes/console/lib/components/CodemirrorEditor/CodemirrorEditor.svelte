@@ -101,7 +101,7 @@
 
 <div class="editor" bind:this={editorDiv} {...rest} onclick={handleEditorClick}></div>
 
-<style lang="scss">
+<style>
 	.editor {
 		height: 100%;
 		cursor: text;

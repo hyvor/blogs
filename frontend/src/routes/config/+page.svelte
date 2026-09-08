@@ -41,7 +41,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style>
 	.demo-view {
 		display: flex;
 		height: 100vh;
