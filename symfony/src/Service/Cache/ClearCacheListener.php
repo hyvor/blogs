@@ -2,6 +2,7 @@
 
 namespace App\Service\Cache;
 
+use App\Entity\Blog;
 use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
@@ -224,18 +225,14 @@ class ClearCacheListener
     {
         $this->cacheService->clearSingleCache($event->blog, '/styles.css');
         $this->cacheService->clearTemplateCache($event->blog);
-
-        // update style version to force cache busting for styles.css
-        $meta = clone $event->blog->getMeta();
-        $meta->cache_version_styles++;
-        $event->blog->setMeta($meta);
-        $this->em->flush();
+        $this->updateStylesVersion($event->blog);
     }
 
     #[AsEventListener]
     public function onThemeChanged(ThemeChangedEvent $event): void
     {
         $this->cacheService->clearAllCache($event->blog);
+        $this->updateStylesVersion($event->blog);
     }
 
     #[AsEventListener]
@@ -284,5 +281,16 @@ class ClearCacheListener
         $blog = $media->getBlog();
         $path = $this->permalinkService->getMediaPermalink($media, $blog, true);
         $this->cacheService->clearSingleCache($blog, $path);
+    }
+
+    /**
+     * update style version to force cache busting for styles.css
+     */
+    private function updateStylesVersion(Blog $blog): void
+    {
+        $meta = clone $blog->getMeta();
+        $meta->cache_version_styles++;
+        $blog->setMeta($meta);
+        $this->em->flush();
     }
 }
