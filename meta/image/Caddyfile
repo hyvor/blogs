@@ -46,7 +46,6 @@
 		file
 		path *.ico *.css *.js *.gif *.webp *.avif *.jpg *.jpeg *.png *.svg *.woff *.woff2 *.mov
 	}
-	header @static Cache-Control max-age=5184000
 
 	# static files
 	handle {
@@ -56,6 +55,7 @@
 		}
 		encode zstd gzip
 		try_files {path} {path}.html
+		header @static Cache-Control max-age=5184000
 	}
 
 	# fallback
