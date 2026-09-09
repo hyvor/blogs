@@ -1,5 +1,5 @@
 <script>
-   import { Table, TableRow } from '@hyvor/design/components';
+   import { Table, TableRow, Callout } from '@hyvor/design/components';
 </script>
 
 # Déployer
@@ -19,6 +19,10 @@ Déployons Hyvor Blogs sur votre serveur en utilisant Docker Compose. Vous pouve
 
 **Domaine** : Nom de domaine pour votre instance Hyvor Blogs. On l'appelle le « domaine de l'application » (App Domain).
 
+<Callout type="info" title="Domaine de l'application">
+   Hyvor Blogs est conçu pour gérer plusieurs domaines dans une seule installation (domaines personnalisés pour des blogs individuels). Le <strong>domaine de l'application</strong> est l'endroit où l'API principale et la Console sont hébergées. Tous les autres domaines sont considérés comme des domaines personnalisés.
+</Callout>
+
 <h2 id="dns">
    Routage DNS
 </h2>
@@ -37,6 +41,8 @@ Pointez votre domaine d'application vers l'adresse IP de votre serveur.
       <div>123.123.123.123</div>
    </TableRow>
 </Table>
+
+Consultez [Reverse Proxy](/hosting/reverse-proxy) si vous exécutez Hyvor Blogs derrière un reverse proxy.
 
 <h2 id="install">Installer</h2>
 
@@ -59,30 +65,20 @@ deploy/
 
 Modifiez le fichier `.env` et renseignez les valeurs requises :
 
-```yaml
-# Required
-APP_SECRET=           # Run: openssl rand -base64 32
-POSTGRES_PASSWORD=    # A strong password for the database
-DOMAIN_APP=           # e.g. blogs.example.com
-DELIVERY_URL=         # e.g. https://blogs.example.com
-MERCURE_JWT_SECRET=   # Run: openssl rand -base64 32
+- `APP_SECRET` : Une chaîne aléatoire robuste. Vous pouvez en générer une avec la commande suivante :
+  ```bash
+  openssl rand -base64 32
+  ```
+- `POSTGRES_PASSWORD` : Utilisez un mot de passe robuste et compatible avec les URL pour la base de données Postgres. Vous pouvez en générer un avec la commande suivante :
+  ```bash
+  openssl rand -base64 32 | tr '+/' '-_' | tr -d '='
+  ```
+- `DOMAIN_APP` : Le domaine principal où votre instance Hyvor Blogs est hébergée (par exemple, blogs.example.com). C'est ici que vous accédez à la Console, à Sudo et aux API.
+- `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` : Définissez ces variables en fonction de la configuration de votre fournisseur OIDC.
 
-# OIDC (on-prem authentication)
-OIDC_ISSUER_URL=      # e.g. https://accounts.google.com
-OIDC_CLIENT_ID=
-OIDC_CLIENT_SECRET=
+Consultez [Variables d'environnement](/hosting/env) pour toutes les variables d'environnement disponibles.
 
-# S3-compatible storage
-S3_ACCESS_KEY_ID=
-S3_SECRET_ACCESS_KEY=
-S3_ENDPOINT=          # e.g. https://s3.amazonaws.com
-S3_BUCKET=
-S3_USE_PATH_STYLE_ENDPOINT=false
-```
-
-Le `DATABASE_URL` est préconfiguré pour se connecter au service Postgres défini dans `compose.yaml` en utilisant `POSTGRES_PASSWORD`, vous n'avez donc pas besoin de le modifier.
-
-<h3 id="tls">Configuration TLS</h3>
+<h3 id="tls">Mode TLS</h3>
 
 `TLS_MODE` contrôle la manière dont HTTPS est géré pour le domaine de l'application (`DOMAIN_APP`). Cela n'affecte pas les domaines personnalisés attachés à des blogs individuels, qui obtiennent toujours des certificats TLS automatiquement. Définissez-le sur l'une des valeurs suivantes :
 
@@ -125,6 +121,8 @@ Le `DATABASE_URL` est préconfiguré pour se connecter au service Postgres défi
    </TableRow>
 </Table>
 
+Si vous exécutez Hyvor Blogs derrière un reverse proxy, consultez [Reverse Proxy](/hosting/reverse-proxy).
+
 ## Démarrer
 
 ```bash
@@ -136,15 +134,28 @@ Hyvor Blogs démarrera et exécutera automatiquement les migrations de base de d
 Pour vérifier les journaux (logs) :
 
 ```bash
-docker compose logs -f
+docker compose logs -f blogs
+```
+
+Pour vérifier votre configuration :
+
+```bash
+docker compose exec blogs bin/console app:verify
 ```
 
 ## Mise à niveau
 
-Pour effectuer une mise à niveau vers la dernière version, récupérez la nouvelle image et redémarrez le conteneur :
+Pour effectuer une mise à niveau vers la dernière version, remplacez la version de l'image dans `compose.yaml` :
+
+```yaml
+services:
+  blogs:
+    image: hyvor/blogs:<version>
+```
+
+Puis, exécutez :
 
 ```bash
-docker compose pull
 docker compose up -d
 ```
 

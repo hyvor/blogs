@@ -48,25 +48,28 @@
 	"homepage": {
 		"hero": {
 			"title": "Vous publiez.",
-			"titleRest": "Nous gérons le reste",
+			"titleRest": "Nous gérons le reste.",
 			"subtitle": "Hyvor Blogs est notre <marker>plateforme de blogging</marker>",
 			"subtitleTraits": "Elle est <hl>rapide</hl>, <hl>simple</hl> et <hl>open-source</hl> !",
 			"button": "Créez votre blog"
+		},
+		"logoStrip": {
+			"title": "Utilisé par des éditeurs du monde entier"
 		},
 		"features": {
 			"ownership": {
 				"eyebrow": "Propriété de votre contenu",
 				"title": "Votre contenu. Vos règles.",
-				"description": "Hyvor Blogs est open-source et conçu pour que vous ne soyez jamais lié. Exportez tout quand vous le souhaitez, ou auto-hébergez sur votre propre infrastructure pour un contrôle total et une confidentialité complète.",
-				"bulletExport": "Export des données en un clic au format JSON",
-				"bulletLicense": "Sous licence AGPL-3.0 - passez à l'auto-hébergement à tout moment",
+				"description": "Pas d'enfermement propriétaire. Pas de clauses cachées. Et aucun pop-up forcé ni paywall sur vos articles. C'est votre blog, votre thème, vos règles.",
+				"bulletExport": "Exportez tout en un clic, à tout moment",
+				"bulletSelfHost": "Auto-hébergez sur votre propre serveur quand vous le souhaitez",
 				"bulletNoTrackers": "Aucune publicité, aucun traceur tiers sur votre blog"
 			},
 			"allInOne": {
 				"eyebrow": "Tout-en-un",
-				"title": "Pas de plugins.<br/>Pas de maintenance.<br/> Pas de complications.",
+				"title": "Pas de plugins.<br/>Pas de maintenance.<br/> Pas de tracas.",
 				"description": "Tout ce dont vous avez besoin pour gérer un blog est déjà intégré. Pas de plugins à chercher, pas de mises à jour à surveiller, pas de frais surprises liés à des modules complémentaires tiers - juste une plateforme qui fonctionne.",
-				"bulletNoPlugins": "Toutes les fonctionnalités incluses, sans plugins",
+				"bulletIncluded": "Toutes les fonctionnalités incluses, sans plugins",
 				"bulletUpgrades": "Nous gérons les mises à jour, les correctifs de sécurité, etc. pour vous",
 				"bulletNoExtraCharges": "Aucun frais supplémentaire ni coût de module tiers"
 			},
@@ -76,7 +79,7 @@
 				"description": "Choisissez parmi une bibliothèque de thèmes élégants ou créez le vôtre en HTML et CSS simples. Chaque couleur, police et détail de mise en page est sous votre contrôle.",
 				"bulletOpenSource": "Thèmes entièrement open-source, libres d'utilisation et de modification",
 				"bulletDocs": "Documentation et API de développement de thèmes",
-				"bulletHeadless": "ou optez pour le mode headless avec votre propre frontend",
+				"bulletHeadless": "Ou passez en mode headless et utilisez entièrement votre propre frontend",
 				"buttonBrowse": "Parcourir les thèmes",
 				"buttonHeadlessDocs": "Documentation headless"
 			},
@@ -92,28 +95,29 @@
 			},
 			"hosting": {
 				"eyebrow": "Hébergement flexible",
-				"title": "Domaine personnalisé, sous-répertoire, headless",
+				"title": "Domaine personnalisé.<br />Sous-répertoire.<br />Headless.<br />",
 				"description": "Passez à un domaine personnalisé en quelques secondes, servez votre blog depuis votre site existant via un sous-répertoire, ou optez pour le mode headless avec votre propre frontend. À vous de choisir.",
 				"bulletTls": "Certificats TLS gratuits sur tous les domaines personnalisés",
-				"bulletPlatforms": "Cloudflare Workers, Docker, Next.js, Laravel…",
-				"bulletReverseProxy": "Prise en charge du proxy inverse pour les sous-répertoires"
+				"bulletPlatforms": "Hébergement en sous-répertoire avec Cloudflare Workers, Docker",
+				"bulletPlatformsMore": "Next.js, Symfony, Laravel, et d'autres intégrations pour l'hébergement en sous-répertoire"
 			},
 			"suite": {
 				"eyebrow": "Commentaires et newsletters",
 				"title": "Talk et Post inclus",
-				"description": "Chaque forfait Hyvor Blogs inclut Hyvor Talk pour les commentaires et Hyvor Post pour les newsletters, entièrement gratuits. Pas d'intégrations tierces, pas d'abonnements supplémentaires. Un compte, un tableau de bord, tout est connecté.",
-				"bulletTalk": "Commentaires Hyvor Talk, gratuits sur tous les forfaits",
-				"bulletPost": "Newsletters Hyvor Post, gratuites sur tous les forfaits",
-				"bulletOneAccount": "Un seul compte et tableau de bord pour les trois",
-				"button": "Voir ce qui est inclus"
+				"description": "Avec Hyvor Blogs, vous obtenez toute la famille - Hyvor Talk pour les commentaires et Hyvor Post pour les newsletters, offerts sur tous les forfaits. Tout est connecté dans un seul tableau de bord.",
+				"bulletTalk": "Hyvor Talk pour les commentaires",
+				"bulletPost": "Hyvor Post pour les newsletters",
+				"bulletNative": "Intégration directe et native",
+				"bulletOneAccount": "Un seul compte et tableau de bord pour les trois"
 			},
 			"ai": {
 				"eyebrow": "Fonctionnalités IA",
 				"title": "L'IA quand vous en avez besoin",
-				"description": "Gagnez du temps et des efforts grâce aux fonctionnalités alimentées par l'IA. Générez du contenu, traduisez vos articles et demandez des suggestions - sans jamais quitter votre tableau de bord.",
+				"description": "Gagnez du temps et des efforts grâce à l'agent IA intégré. Générez du contenu, traduisez vos articles et demandez des suggestions.",
 				"bulletGeneration": "Génération de contenu par IA",
 				"bulletSuggestions": "Suggestions d'amélioration",
-				"bulletBulkEditing": "Modification groupée d'articles (ex. ajout de liens internes)"
+				"bulletBulkEditing": "Outils de modification groupée, comme l'ajout de liens internes",
+				"buttonDocs": "En savoir plus sur l'agent IA"
 			},
 			"collaboration": {
 				"eyebrow": "Collaboration",

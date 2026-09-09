@@ -13,7 +13,7 @@ Hyvor Blogs est conçu pour être auto-hébergé par des développeurs et des or
 - **Dépendances minimales** : uniquement Docker, PostgreSQL et un fournisseur OIDC.
 - **Open-source** : code source AGPLv3 disponible sur [Github](https://github.com/hyvor/blogs).
 - **Multi-tenant** : exécutez plusieurs blogs sur une seule instance.
-- **Authentification unique** : authentification basée sur OIDC par défaut
+- **Authentification unique** : authentification basée sur OIDC par défaut.
 
 ## Auto-hébergement vs. Cloud
 
@@ -62,9 +62,9 @@ Quelques comparaisons avec d'autres plateformes de blog :
 
 ## Licence et tarification
 
-Nous proposons trois options de licence pour l'auto-hébergement de Hyvor Blogs :
+Nous proposons actuellement l'option de licence suivante pour l'auto-hébergement de Hyvor Blogs :
 
-- **Open-Source** :
+- **Open-Source (AGPLv3)** :
   - Gratuit, licence AGPLv3
   - Support communautaire
   - Fonctionnalités de base, incluant l'éditeur riche, les médias, les tags, les auteurs, et plus encore.
@@ -76,18 +76,21 @@ Nous proposons trois options de licence pour l'auto-hébergement de Hyvor Blogs 
   - API Console, API de données, API de livraison, et Webhooks
   - Agent IA et traductions
   - Détection des liens brisés
-- **Enterprise Unicorn** (bientôt) :
-  - 5 €/utilisateur/mois (facturé annuellement), minimum 10 utilisateurs
-  - Tout ce qui est inclus dans Open-Source, plus :
-  - Support par e-mail de HYVOR
-  - Journaux d'audit
-  - Rôles et permissions personnalisés
-  - Flux d'approbation personnalisés
-- **Enterprise Apex** (bientôt) :
-  - Contactez-nous pour la tarification
-  - Tout ce qui est inclus dans Enterprise Unicorn, plus :
-  - Support prioritaire avec SLA
-  - Facturation
+
+Les plans Enterprise avec support de HYVOR ne sont pas encore disponibles, mais nous prévoyons de les proposer à l'avenir.
+
+<!-- - **Enterprise Unicorn** (soon):
+  - €5/user/month (billed annually), minimum 10 users
+  - Everything in Open-Source, plus:
+  - Email support from HYVOR
+  - Audit logs
+  - Custom roles and permissions
+  - Custom approval workflows
+- **Enterprise Apex** (soon):
+  - Contact us for pricing
+  - Everything in Enterprise Unicorn, plus:
+  - Priority support with SLA
+  - Invoicing -->
 
 ## Support
 

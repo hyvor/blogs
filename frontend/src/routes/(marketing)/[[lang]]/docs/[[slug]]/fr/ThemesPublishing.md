@@ -381,7 +381,7 @@ Ajoutez un fichier `CHANGELOG.md` à votre dossier de thème et ajoutez les modi
 
 Une fois tout terminé, envoyez-nous une pull request vers le dépôt <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a>. Lorsque la PR est fusionnée, la liste des thèmes se mettra automatiquement à jour avec votre nouveau thème.
 
-<style lang="scss">
+<style>
 	.checklist-main {
 		margin-bottom: 15px;
 		margin-top: 15px;
