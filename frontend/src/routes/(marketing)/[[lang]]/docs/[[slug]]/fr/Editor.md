@@ -137,7 +137,7 @@ HB prend en charge les titres de `<h1>` à `<h6>`. La commande slash propose seu
 <DocsImage src="/images/docs/writing/headings.gif" alt="Titres" width={400} />
 <Callout type="info">
 	<p>
-		Veuillez noter que la raison pour laquelle le <b>Grand titre</b> utilise <code>{`<h2>`}</code> est que
+		Veuillez noter que la raison pour laquelle le <b>Grand titre</b> utilise <code>{`<h2>`}</code>est que
 		<code>{`<h1>`}</code> est réservé au titre de l'article dans votre thème. Cependant, vous pouvez utiliser h1 dans
 		vos articles si nécessaire.
 	</p>

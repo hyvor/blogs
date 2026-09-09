@@ -379,7 +379,7 @@ Add a `CHANGELOG.md` file to your theme folder and add the changes for each vers
 
 Once everything is completed, send us a pull request to <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a> repository. When the PR is merged, the themes list will automatically update with your new theme.
 
-<style lang="scss">
+<style>
 	.checklist-main {
 		margin-bottom: 15px;
 		margin-top: 15px;

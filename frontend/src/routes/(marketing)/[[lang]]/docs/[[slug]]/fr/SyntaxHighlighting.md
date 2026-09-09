@@ -170,7 +170,7 @@ bloc de code dans l'Éditeur. Voyons quelques exemples.
 - Les couleurs de la syntaxe proviennent de notre côté, mais les styles comme le padding, les marges, l'espace entre les lignes et la taille de la police proviennent du [thème](/docs/themes) de votre blog.
 - En interne, nous utilisons des grammaires TextMate pour la coloration syntaxique.
 
-<style lang="scss">
+<style>
 	.dynamic {
 		:global(.language-tags) {
 			background: #fafafa;

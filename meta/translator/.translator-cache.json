@@ -1,6 +1,6 @@
 {
 	"../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json": {
-		"fr": "ba6bcaac45e312d135694d749a4885cb8a957d51cf3218219020d8bfa25e538f"
+		"fr": "9f5485cd6c20e269f05834d5856fc860964cd5ed3ea376eabdf50fe27b1a8be2"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Introduction.svelte": {
 		"fr": "dbede5e43f1773ab4ccb4bdcb589e84bacf2354a6a0e6e5221b7c20d7a789cf6"
@@ -24,7 +24,7 @@
 		"fr": "e06751b7d2ae0d3a6b35fd4b082fac8ef3a0a1aea7fa28d68de562576ee54427"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ThemesPublishing.md": {
-		"fr": "9ac1f79dc841be92b24db5634a1b895d21b8bf5c8776a032993265a8bac8ba35"
+		"fr": "238bf0b8bffe03bf0aea182159fee70f4d5fd34df9cc38882d7e0f4a3f173ae9"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Env.md": {
 		"fr": "9a83073505b8351fff5a87b11498901622c733380eec4e109da3f74360fcd99a"
@@ -45,7 +45,7 @@
 		"fr": "5611e7c9cfb9ebe430926ce3a46590add5f31bc147c2641fcd0e303543f5246f"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Webhooks.md": {
-		"fr": "acd63bd9322ec9e1268b5e57155f04bf015aaf48acfc85aa9c57afaefd73bc94"
+		"fr": "a2c0fd634a2b6b04a613614c8279feb7225fd699579cde61645d97fedcd68d1a"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/ApiConsole.md": {
 		"fr": "9a35817273452dfd667867b3f7c73b248e688701f164b56f9590a8c2551fa988"
@@ -63,7 +63,7 @@
 		"fr": "942bbd8119c23feaa6dc53b0932d3ef22f5d77cb0cc3ef882ecd1d81facbc9b3"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SyntaxHighlighting.md": {
-		"fr": "cf289a054798e8fc6bbbab1c1bf3be80befa10d0847bf705307aa27785160edf"
+		"fr": "bdd8d9c94812754f322105f484100e13725a7ef2fe63e4e59e3f00fe8894f9c2"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Routes.md": {
 		"fr": "baf80699d20567b1b15ca8e13081421c2ebbd212fdc4cdc0aef0d5945a55eafa"
@@ -81,7 +81,7 @@
 		"fr": "c6720fe4439550d69b3f3de7cff4f2aa508cd8dff8a6bd0af49e6c9185daa440"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Seo.md": {
-		"fr": "88c57ea4fb9a0bed854da29db5c46c3cee8802f70159089c095407b99cb11c3d"
+		"fr": "24ea212984cad3d26b0559ec30c5a9285915a3c14a54a090bf6530d3cee4bf00"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Fonts.md": {
 		"fr": "ea2f945a53f68e36bbdb217ef82e344c27f864aaf7acda100cef72030dc1336c"
@@ -105,34 +105,34 @@
 		"fr": "3565abe0a5ac8c29bdd59b031e9c67e8df3e7eb101762f3d55f40d734cce48cd"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Writing.md": {
-		"fr": "8beb98dfc19473bb2d3cc99da7be0002458717f3d4e63d1242156b8804b88aba"
+		"fr": "0b3638adc460f9774843957073424463fa32d00bf4391c81c35ec1f8a2a83090"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Introduction.md": {
-		"fr": "802a976941cbee9c13a39c1cf5eb953f832d35764076d1e0ddd6f19a7a9159d8"
+		"fr": "ad32c48aa48a1d171b51783d69ccd6e3a4dcddd5f83f68681c587994197496fe"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/AIAgent.md": {
-		"fr": "f411e8925f7a47dedef96371141bdcb9e8d6ee80c9978967851a10c22dede728"
+		"fr": "f7605c0b277036d2c072a3df14bd16a3201f549b2fb8eefb374da8e6b6030833"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/CustomDomain.md": {
 		"fr": "fb5c29cec011fb5864ec9a91c2f5480c8f297a83a8d52a35e453f1cb6d8d7fcc"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Editor.md": {
-		"fr": "65ba62955774ada322905ee2ad513bc6ac48e0849afe8481438d7b7d77874b23"
+		"fr": "58786ec0945582879bc8646b212336ae682938b40506938f8201eefae0274960"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Export.md": {
 		"fr": "753ea29d5c8dcab2d61074ab575e3608e146fe39e0a9a79debf8e17c76237ab7"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Introduction.md": {
-		"fr": "2a0887335691110c020b4b81a5d99cb6dfb8cf038ea1a07c30af7c04887f61f1"
+		"fr": "f49e7bc34a85556014fabff867d75a6947c23799dcb84ac08347313c2f81ee2a"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/LinkAnalyzer.md": {
-		"fr": "a1c5a565866e3aaced6e3f09626557033d775cf1d530c872839f64329a8e1dbd"
+		"fr": "4b6791dcdb38182bfe4beb570ad2e8f6f7226457cf05ca56bad5a7fe9459eaa9"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SeoAnalyzer.md": {
-		"fr": "4b3f50bf3a66da2e33da2ca095bca31962eeb697878d1d90931214828c37b682"
+		"fr": "41ff48a8effc1d38a5f600e6a37c146308c56ca8166d5a33c9b445a8a037479a"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/SuggestionMode.md": {
-		"fr": "cedfad73599a0041005859f43cde08dfc6bbae8a6ed9678d2e4b64490c2c0feb"
+		"fr": "0f6a1cf6f0c317a2faa8992353ad7da432c9bfcf17eed478621a2e183f8cc574"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/docs/[[slug]]/content/Themes.md": {
 		"fr": "6cc3d3db9c78750e8ba5f1edb18ff04f708fdbc3fd2b0086595a11d2c3540184"
@@ -141,6 +141,9 @@
 		"fr": "f4c39033ec46413baa5176bc43d5c900db26d6af86bd3b5ce5e705d38c12c869"
 	},
 	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/Deploy.md": {
-		"fr": "054796d28ce44cef529859f2376a43db61cccfe25c11b89c1e63da0ebbe74085"
+		"fr": "64ad73379e41af560354441351a0db3375d8df77d26d0819634d2ee9ddfc44eb"
+	},
+	"../../frontend/src/routes/(marketing)/[[lang]]/hosting/content/ReverseProxy.md": {
+		"fr": "4f84792892f9d58468c0f7609fc27479e7432eecb92b3a744f9171cfaa170279"
 	}
 }
