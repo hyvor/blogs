@@ -1,0 +1,77 @@
+# Hyvor Blogs
+
+> Hyvor Blogs is an all-in-one, open-source blogging platform: a rich-text editor with AI assistance, customizable Twig-based themes, multi-language support, built-in SEO, custom domains, and native integrations with Hyvor Talk (comments) and Hyvor Post (newsletters). It can also be used headless via a public Data API, or self-hosted.
+
+Docs base URL: https://blogs.hyvor.com/docs.
+Console: https://blogs.hyvor.com/console.
+Source: https://github.com/hyvor/blogs.
+
+## Getting Started
+
+- [Introduction](https://blogs.hyvor.com/docs): What Hyvor Blogs is, how to get started, and an overview of all features.
+
+## Writing
+
+- [Writing Basics](https://blogs.hyvor.com/docs/writing): Posts vs. pages, and how to publish your first post.
+- [Editor](https://blogs.hyvor.com/docs/editor): The rich-text editor's inline styles, blocks, and links.
+- [Suggestion Mode](https://blogs.hyvor.com/docs/suggestion-mode): Suggest edits to other authors' posts and discuss changes inline.
+- [SEO Analyzer](https://blogs.hyvor.com/docs/seo-analyzer): Real-time, rule-based SEO suggestions while writing a post.
+- [Link Analyzer](https://blogs.hyvor.com/docs/link-analyzer): Detects broken, risky, and redirecting links in a post as you write.
+- [Agent (AI)](https://blogs.hyvor.com/docs/agent): The AI agent that reads posts and suggests approval-gated edits; supported providers/models and pricing.
+
+## Themes
+
+- [Themes](https://blogs.hyvor.com/docs/themes): Choosing a pre-built theme and editing theme files for your blog.
+- [Theme Development Overview](https://blogs.hyvor.com/docs/themes-overview): Core concepts (theme developer, blogger, subdomain, route, rendering) for building a theme.
+- [Templates](https://blogs.hyvor.com/docs/themes-templates): Twig templates, template types, inheritance, and calling the Data API from templates.
+- [Styling Themes](https://blogs.hyvor.com/docs/themes-styles): SCSS "chunk-css" file conventions, compiled to a single `styles.css`.
+- [Scripts](https://blogs.hyvor.com/docs/themes-scripts): Writing plain JS assets and Flashload-safe script placement.
+- [Internationalization](https://blogs.hyvor.com/docs/themes-internationalization): Making template strings translatable.
+- [Configuration](https://blogs.hyvor.com/docs/themes-config): Defining blogger-customizable options in `config.yaml`.
+- [Publishing Themes](https://blogs.hyvor.com/docs/themes-publishing): Requirements and checklist to submit a theme to the official theme list.
+
+## Hosting
+
+- [Custom Domain](https://blogs.hyvor.com/docs/custom-domain): Setting up a custom domain (DNS records, TLS, Cloudflare, troubleshooting).
+- [Subdirectory Hosting](https://blogs.hyvor.com/docs/subdirectory): Hosting a blog at a path like `/blog` via Docker or other methods.
+- [Headless](https://blogs.hyvor.com/docs/headless): Using Hyvor Blogs as a headless CMS with your own frontend via the Data API.
+
+## Integrations
+
+- [Hyvor Talk](https://blogs.hyvor.com/docs/hyvor-talk): Native comments integration, pricing credits, connecting, embed code, and role/access mapping.
+- [Hyvor Post](https://blogs.hyvor.com/docs/hyvor-post): Native newsletter integration, pricing, connecting, and role/access mapping.
+
+## Features
+
+- [Languages](https://blogs.hyvor.com/docs/languages): Configuring multi-language support and the primary language.
+- [Users](https://blogs.hyvor.com/docs/users): Adding collaborators and the 5 user roles and their permissions.
+- [Tags](https://blogs.hyvor.com/docs/tags): Grouping posts with tags and tag index pages.
+- [Media](https://blogs.hyvor.com/docs/media): Uploading and managing images, video, audio, and other files.
+- [Fonts](https://blogs.hyvor.com/docs/fonts): Using built-in Bunny Fonts or adding custom fonts to a theme.
+- [SEO](https://blogs.hyvor.com/docs/seo): Automatic technical SEO (meta tags, sitemaps, etc.) handled by the platform.
+- [Navigation Links](https://blogs.hyvor.com/docs/navigation-links): Configuring header/footer navigation links.
+- [Redirects](https://blogs.hyvor.com/docs/redirects): Creating static and dynamic (regex) redirects.
+- [Custom Code](https://blogs.hyvor.com/docs/custom-code): Adding head/foot HTML or Twig code at the blog, post, or tag level.
+- [Routes](https://blogs.hyvor.com/docs/routes): How request paths map to templates, permalinks, and multiple post collections.
+- [Syntax Highlighting](https://blogs.hyvor.com/docs/syntax-highlighting): Supported languages and themes for code block highlighting.
+
+## Developer
+
+- [Webhooks](https://blogs.hyvor.com/docs/webhooks): Subscribing to blog events and their payloads.
+- [Console API](https://blogs.hyvor.com/docs/api-console): Authenticated API for administrative tasks (posts, users, tags, media, etc.), the same API the Console uses.
+- [Delivery API](https://blogs.hyvor.com/docs/api-delivery): Resolves a request path to a file or redirect; backs subdirectory hosting.
+- [Data API](https://blogs.hyvor.com/docs/api-data): Public, unauthenticated, read-only JSON API for public blog data; used for headless setups and in templates.
+
+## Data
+
+- [Export](https://blogs.hyvor.com/docs/export): Exporting all blog data (posts, tags, users, etc.) as JSON.
+- [Import Overview](https://blogs.hyvor.com/docs/import): Ways to import an existing blog's data.
+- [Import from Sitemap](https://blogs.hyvor.com/docs/import-sitemap): Importing posts from any platform via a sitemap and CSS selectors.
+- [Import from WordPress](https://blogs.hyvor.com/docs/import-wordpress): Importing a WordPress export via support.
+
+## Optional
+
+- [Self-hosting](https://blogs.hyvor.com/hosting): Hyvor Blogs is open-source and can be self-hosted.
+- [Pricing](https://blogs.hyvor.com/pricing): Plans and quotas (AI usage, Hyvor Talk credits, Hyvor Post emails).
+- [Themes gallery](https://blogs.hyvor.com/themes): Official, installable themes.
+- [Support](https://hyvor.com/support): Contact support.
