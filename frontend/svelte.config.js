@@ -17,14 +17,14 @@ const config = {
 			handleMissingId: 'warn',
 			handleHttpError: 'warn',
 			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
-		},
+		}
 	},
 
 	compilerOptions: {
 		experimental: {
 			async: true
 		}
-	},
+	}
 };
 
 export default config;
