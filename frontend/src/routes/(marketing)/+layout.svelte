@@ -107,9 +107,7 @@
 </svelte:head>
 
 <Header />
-
 {@render children?.()}
-
 {#if page.url.pathname !== '/themes'}
 	<Footer />
 {/if}

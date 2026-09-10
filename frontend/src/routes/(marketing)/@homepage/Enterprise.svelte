@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { SpotlightSplit } from '@hyvor/design/marketing';
-	import GdprSeal from './Seals/GdprSeal.svelte';
-	import CcpaSeal from './Seals/CcpaSeal.svelte';
-	import SsoSeal from './Seals/SsoSeal.svelte';
-	import IsoSeal from './Seals/IsoSeal.svelte';
+	import { SpotlightSplit, GdprSeal, CcpaSeal, SsoSeal, IsoSeal } from '@hyvor/design/marketing';
 	import { getMarketingI18n } from '../[[lang]]/marketingLang';
 
 	const I18n = getMarketingI18n();
