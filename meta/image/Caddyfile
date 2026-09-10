@@ -33,6 +33,12 @@
 	{$APP_TLS_DIRECTIVE}
 	{$MERCURE_DIRECTIVE}
 
+	@noindex {
+		path /console*
+		path /sudo*
+	}
+	header @noindex X-Robots-Tag "noindex, nofollow"
+
 	@backend {
 		path /api/*
 		path /blog/*
