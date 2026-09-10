@@ -49,8 +49,12 @@
 				url: 'https://blogs.hyvor.com',
 				description: MARKETING_PAGE_META.description,
 				offers: {
-					'@type': 'Offer',
-					url: 'https://blogs.hyvor.com/pricing'
+					'@type': 'AggregateOffer',
+					url: 'https://blogs.hyvor.com/pricing',
+					priceCurrency: 'EUR',
+					lowPrice: '5',
+					highPrice: '125',
+					offerCount: '4'
 				}
 				// TODO: research this (whether to include or not)
 				// "aggregateRating": {
