@@ -1,8 +1,5 @@
 import type { NavSectionConfig } from '@hyvor/design/marketing';
-import Introduction from './content/Introduction.md';
 import Deploy from './content/Deploy.md';
-import Env from './content/Env.md';
-import DeliveryDomain from './content/DeliveryDomain.md';
 import type { Component } from 'svelte';
 import { buildI18n, DEFAULT_MARKETING_LANGUAGE } from '../marketingLang';
 
@@ -23,36 +20,36 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
 				{
 					type: 'page',
 					slug: '',
-					name: 'Introduction',
+					name: t('hosting.pages.introduction'),
 					content: await getComponent('Introduction')
 				},
 				{
 					type: 'page',
 					slug: 'deploy',
-					name: 'Deploy',
+					name: t('hosting.pages.deploy'),
 					content: Deploy
 				},
 				{
 					type: 'page',
 					slug: 'reverse-proxy',
-					name: 'Reverse Proxy',
+					name: t('hosting.pages.reverseProxy'),
 					content: await getComponent('ReverseProxy')
 				}
 			]
 		},
 		{
-			name: 'Configuration',
+			name: t('hosting.sections.configuration'),
 			navs: [
 				{
 					type: 'page',
 					slug: 'env',
-					name: 'Environment Variables',
+					name: t('hosting.pages.env'),
 					content: await getComponent('Env')
 				},
 				{
 					type: 'page',
 					slug: 'delivery-domain',
-					name: 'Delivery Domain',
+					name: t('hosting.pages.deliveryDomain'),
 					content: await getComponent('DeliveryDomain')
 				}
 			]

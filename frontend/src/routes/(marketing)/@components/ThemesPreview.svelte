@@ -41,13 +41,30 @@
 	let isLoading = $state(true);
 	let dropdownOpen = $state(false);
 
+	let container: HTMLDivElement;
+
 	const dispatch = createEventDispatcher();
 
-	onMount(async () => {
-		themes = await loadThemes();
-		isLoaded = true;
+	onMount(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (!entries[0]?.isIntersecting) return;
 
-		dispatch('load');
+				observer.disconnect();
+
+				loadThemes().then((loadedThemes) => {
+					themes = loadedThemes;
+					isLoaded = true;
+
+					dispatch('load');
+				});
+			},
+			{ rootMargin: '200px' }
+		);
+
+		observer.observe(container);
+
+		return () => observer.disconnect();
 	});
 
 	function selectTheme(theme: Theme) {
@@ -79,118 +96,125 @@
 	let currentThemeUrl = $derived(currentTheme?.preview_url || '');
 </script>
 
-{#if isLoaded}
-	<div class="preview hds-box">
-		<div class="navi">
-			<div class="left">
-				<Dropdown bind:show={dropdownOpen} width={220}>
-					{#snippet trigger()}
-						<Button color="input">
-							{#snippet start()}
-								<Text bold>Theme</Text>
-							{/snippet}
+<div class="observer-root" bind:this={container}>
+	{#if isLoaded}
+		<div class="preview hds-box">
+			<div class="navi">
+				<div class="left">
+					<Dropdown bind:show={dropdownOpen} width={220}>
+						{#snippet trigger()}
+							<Button color="input">
+								{#snippet start()}
+									<Text bold>Theme</Text>
+								{/snippet}
 
-							<span class="theme-name">{currentTheme?.name}</span>
+								<span class="theme-name">{currentTheme?.name}</span>
 
-							{#snippet end()}
-								<IconCaretDown size={14} />
-							{/snippet}
-						</Button>
-					{/snippet}
-
-					{#snippet content()}
-						<ActionList>
-							{#each [originalThemes, portedThemes] as group, i}
-								<ActionListGroup title={i === 0 ? 'Original' : 'Ported'} divider={i > 0}>
-									{#each group as theme (theme.name)}
-										{#if theme.name !== 'blank'}
-											<ActionListItem
-												on:select={() => selectTheme(theme)}
-												style={currentTheme?.name === theme.name
-													? 'background-color: var(--accent-light-mid)'
-													: ''}
-											>
-												<span class="theme-item-name">{theme.name}</span>
-											</ActionListItem>
-										{/if}
-									{/each}
-								</ActionListGroup>
-							{/each}
-						</ActionList>
-
-						{#if !hideOpenSource}
-							<div class="open-source">
-								<Text small>Themes are open-source</Text>
-								<Button
-									size="small"
-									as="a"
-									href="https://github.com/hyvor/hyvor-blogs-themes"
-									target="_blank"
-								>
-									View Source
-									{#snippet end()}
-										<IconGithub size={14} />
-									{/snippet}
-								</Button>
-							</div>
-						{/if}
-					{/snippet}
-				</Dropdown>
-			</div>
-
-			<div class="right">
-				{#if !hideOpenInNewTab}
-					<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
-						Open in new tab
-						{#snippet end()}
-							<IconBoxArrowUpRight size={14} />
+								{#snippet end()}
+									<IconCaretDown size={14} />
+								{/snippet}
+							</Button>
 						{/snippet}
-					</Link>
-				{/if}
 
-				{#if !hideDeviceToggle}
-					<div class="device-toggle">
-						<IconButton
-							on:click={() => (type = 'laptop')}
-							variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
-						>
+						{#snippet content()}
+							<ActionList>
+								{#each [originalThemes, portedThemes] as group, i}
+									<ActionListGroup title={i === 0 ? 'Original' : 'Ported'} divider={i > 0}>
+										{#each group as theme (theme.name)}
+											{#if theme.name !== 'blank'}
+												<ActionListItem
+													on:select={() => selectTheme(theme)}
+													style={currentTheme?.name === theme.name
+														? 'background-color: var(--accent-light-mid)'
+														: ''}
+												>
+													<span class="theme-item-name">{theme.name}</span>
+												</ActionListItem>
+											{/if}
+										{/each}
+									</ActionListGroup>
+								{/each}
+							</ActionList>
 
-						<IconButton
-							on:click={() => (type = 'tablet')}
-							variant={type == 'tablet' ? 'fill' : 'invisible'}><IconTablet /></IconButton
-						>
-					</div>
-				{/if}
+							{#if !hideOpenSource}
+								<div class="open-source">
+									<Text small>Themes are open-source</Text>
+									<Button
+										size="small"
+										as="a"
+										href="https://github.com/hyvor/hyvor-blogs-themes"
+										target="_blank"
+									>
+										View Source
+										{#snippet end()}
+											<IconGithub size={14} />
+										{/snippet}
+									</Button>
+								</div>
+							{/if}
+						{/snippet}
+					</Dropdown>
+				</div>
+
+				<div class="right">
+					{#if !hideOpenInNewTab}
+						<Link href={currentThemeUrl} target="_blank" underline={false} color="text">
+							Open in new tab
+							{#snippet end()}
+								<IconBoxArrowUpRight size={14} />
+							{/snippet}
+						</Link>
+					{/if}
+
+					{#if !hideDeviceToggle}
+						<div class="device-toggle">
+							<IconButton
+								on:click={() => (type = 'laptop')}
+								variant={type == 'laptop' ? 'fill' : 'invisible'}><IconLaptop /></IconButton
+							>
+
+							<IconButton
+								on:click={() => (type = 'tablet')}
+								variant={type == 'tablet' ? 'fill' : 'invisible'}><IconTablet /></IconButton
+							>
+						</div>
+					{/if}
+				</div>
 			</div>
+
+			{#if currentTheme}
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					class="iframe"
+					style="padding: {type === 'laptop' ? 0 : 15}px"
+					onmouseenter={handleIframeMouseEnter}
+					onmouseleave={handleIframeMouseLeave}
+				>
+					{#if isLoading}
+						<Loader full />
+					{/if}
+
+					<iframe
+						src={currentThemeUrl}
+						title={currentTheme.name}
+						style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
+						style:height={type === 'laptop' ? '100%' : 740 + 'px'}
+						style:pointer-events={lockScroll ? 'none' : 'auto'}
+						onload={() => (isLoading = false)}
+						style:display={isLoading ? 'none' : 'block'}
+					></iframe>
+				</div>
+			{/if}
 		</div>
-
-		{#if currentTheme}
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				class="iframe"
-				style="padding: {type === 'laptop' ? 0 : 15}px"
-				onmouseenter={handleIframeMouseEnter}
-				onmouseleave={handleIframeMouseLeave}
-			>
-				{#if isLoading}
-					<Loader full />
-				{/if}
-
-				<iframe
-					src={currentThemeUrl}
-					title={currentTheme.name}
-					style:width={type === 'laptop' ? '100%' : (type === 'tablet' ? 540 : 360) + 'px'}
-					style:height={type === 'laptop' ? '100%' : 740 + 'px'}
-					style:pointer-events={lockScroll ? 'none' : 'auto'}
-					onload={() => (isLoading = false)}
-					style:display={isLoading ? 'none' : 'block'}
-				></iframe>
-			</div>
-		{/if}
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style>
+	.observer-root {
+		width: 100%;
+		height: 100%;
+	}
+
 	.preview {
 		width: 100%;
 		height: 100%;

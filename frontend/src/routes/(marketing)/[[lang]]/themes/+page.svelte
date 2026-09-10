@@ -1,7 +1,10 @@
 <script>
-	import { Button } from '@hyvor/design/components';
 	import ThemesPreview from '../../@components/ThemesPreview.svelte';
 </script>
+
+<svelte:head>
+	<title>Themes - Hyvor Blogs</title>
+</svelte:head>
 
 <div class="wrap">
 	<ThemesPreview />

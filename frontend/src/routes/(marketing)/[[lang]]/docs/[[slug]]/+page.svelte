@@ -7,7 +7,6 @@
 	<title>
 		{data.page.name} - Hyvor Blogs Docs
 	</title>
-	<link rel="canonical" href="https://blogs.hyvor.com/docs{data.slug ? '/' + data.slug : ''}" />
 </svelte:head>
 
 <div class="docs">
