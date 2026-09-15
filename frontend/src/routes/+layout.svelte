@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { Base } from '@hyvor/design/components';
 	import '../app.css';
-
 	import relativeTime from 'dayjs/plugin/relativeTime';
 	import dayjs from 'dayjs';
+	import { page } from '$app/state';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -13,6 +14,6 @@
 	dayjs.extend(relativeTime);
 </script>
 
-<Base>
+<Base marketing={page.route.id?.includes('(marketing)')}>
 	{@render children?.()}
 </Base>

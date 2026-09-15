@@ -2,6 +2,8 @@ This builds locally and runs a self-contained instance that works with hyvor/dev
 
 ```bash
 docker compose -f meta/build.local/compose.build.yaml up --build
+
+# visit https://blogs.build.hyvor.localhost
 ```
 
 This depends on one shared service from `../dev` (not started by `compose.build.yaml` itself,
@@ -9,9 +11,9 @@ since it doesn't persist any data and it's simpler to share one instance):
 
 - **dex** (OIDC provider) - NOT started by `./services` by default. Start it manually first, from
   the `../dev` directory:
-  ```bash
-  docker compose --profile external up -d hyvor-service-dex
-  ```
+    ```bash
+    docker compose --profile external up -d hyvor-service-dex
+    ```
 
 Notes:
 

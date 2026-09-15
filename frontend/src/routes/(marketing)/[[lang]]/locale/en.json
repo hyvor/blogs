@@ -23,7 +23,8 @@
 			"columns": {
 				"product": "Product",
 				"legal": "Legal",
-				"alternatives": "Alternatives"
+				"alternatives": "Alternatives",
+				"whyHyvorBlogs": "Why Hyvor Blogs"
 			},
 			"console": "Console",
 			"termsOfService": "Terms of Service",
@@ -36,6 +37,9 @@
 			"ghostAlternative": "Ghost Alternative",
 			"mediumAlternative": "Medium Alternative",
 			"bloggerAlternative": "Blogger Alternative",
+			"europeanHosted": "European-Hosted",
+			"selfHosted": "Self-Hosted",
+			"multiLanguage": "Multi-Language",
 			"copyEmail": "Copy email",
 			"copied": "Copied!",
 			"gdprCompliant": "GDPR Compliant",
@@ -558,6 +562,169 @@
 			"reverseProxy": "Reverse Proxy",
 			"env": "Environment Variables",
 			"deliveryDomain": "Delivery Domain"
+		}
+	},
+	"eu": {
+		"seo": {
+			"title": "European Blogging Platform - Hosted in the EU | Hyvor Blogs",
+			"description": "Hyvor Blogs is a European blogging platform, built in the EU and hosted in Germany. GDPR by design, full data sovereignty, and self-hosting available."
+		},
+		"hero": {
+			"badge": "🇪🇺 Made in the EU",
+			"title": "The European Blogging Platform",
+			"subtitle": "GDPR by design, EU-hosted, and open-source.",
+			"buttonStart": "Get started",
+			"buttonLearn": "Explore Hyvor Blogs"
+		},
+		"residency": {
+			"eyebrow": "Data Residency",
+			"title": "Your data stays in Europe",
+			"description": "As a European blogging platform, every Hyvor Blogs server runs on Hetzner infrastructure in Germany. There's no US cloud in the loop, no cross-border transfer to think about, and no Schrems II grey area to navigate.",
+			"bulletHetzner": "Hosted exclusively on Hetzner servers in Germany",
+			"bulletCompany": "HYVOR is an EU-based company, governed by EU law",
+			"bulletNoTransfer": "Your data simply never leaves the EU",
+			"locationTitle": "Hetzner Datacenter",
+			"locationSubtitle": "🇩🇪 Germany"
+		},
+		"gdpr": {
+			"eyebrow": "Privacy by Design",
+			"title": "GDPR isn't an afterthought.<br/>It's the foundation.",
+			"description": "We use GDPR as the baseline for every product decision, not a checkbox ticked after launch. That means clear privacy policies, data minimization, and full control over what happens to your data.",
+			"bulletDpa": "A Data Processing Agreement (DPA) is available for any customer (no Enterprise contract needed)",
+			"bulletRights": "Full user rights - access, correct, export, or delete your data anytime",
+			"bulletSubprocessors": "We work only with carefully vetted, GDPR-compliant sub-processors",
+			"buttonCompliance": "Read HYVOR's compliance policy"
+		},
+		"ownership": {
+			"eyebrow": "Own Your Content",
+			"title": "Your content. Your rules. Your data.",
+			"description": "No lock-in, no dark patterns, and no third-party trackers riding along on your posts. Export everything whenever you want, or move to your own server entirely.",
+			"bulletExport": "Export everything in one click, anytime",
+			"bulletSelfHost": "Self-host on your own infrastructure if you prefer",
+			"bulletNoTrackers": "No ads, no third-party trackers on your blog"
+		},
+		"selfHost": {
+			"eyebrow": "Open-Source",
+			"title": "Prefer full control? Self-host it.",
+			"description": "Hyvor Blogs is free and open-source. Deploy it on your own servers, anywhere in the EU or beyond, and keep everything in-house.",
+			"bulletFree": "Free & open-source, no license fees",
+			"bulletDocker": "Deploy with Docker in a few commands",
+			"bulletOwnership": "Full ownership of your data & infrastructure",
+			"buttonLearn": "Learn about self-hosting",
+			"buttonGithub": "View on GitHub"
+		},
+		"faq": {
+			"title": "Frequently Asked Questions",
+			"questionHosting": "Where is Hyvor Blogs hosted?",
+			"answerHosting": "Hyvor Blogs runs entirely on Hetzner infrastructure in Germany. So, your data and your readers' data stay inside the EU.",
+			"questionGdpr": "Is Hyvor Blogs GDPR compliant?",
+			"answerGdpr": "Yes. We use GDPR as our primary guideline when designing every product and feature, and we offer a Data Processing Agreement (DPA) to any customer who needs one. Read more on our <a href=\"https://hyvor.com/compliance\" target=\"_blank\" rel=\"noopener\">compliance page</a>.",
+			"questionSelfHost": "Can I self-host Hyvor Blogs instead of using the cloud version?",
+			"answerSelfHost": "Yes. Hyvor Blogs is free and open-source. If you'd rather keep everything on your own servers, <a href=\"/hosting\">deploy it yourself with Docker</a> in a few commands.",
+			"questionTrackers": "Do you sell or share my data with advertisers?",
+			"answerTrackers": "No. Hyvor Blogs does not inject ads or third-party trackers to your blog. We don't sell your data or your readers' data to anyone.",
+			"questionCompany": "Where is HYVOR, the company, based?",
+			"answerCompany": "HYVOR, the company behind Hyvor Blogs, is based in France, in the EU, and operates under EU law.",
+			"questionExport": "Can I export my content if I switch providers later?",
+			"answerExport": "Yes, anytime. Export your entire blog in one click - no lock-in."
+		},
+		"trialSignup": {
+			"title": "Start your European blog today"
+		}
+	},
+	"selfHosted": {
+		"seo": {
+			"title": "Self-Hosted Blogging Platform - Deploy with Docker | Hyvor Blogs",
+			"description": "Hyvor Blogs is a self-hosted blogging platform. Deploy it on your own server with Docker in minutes - free, open-source, and yours to control."
+		},
+		"hero": {
+			"badge": "🐳 Deploy with Docker",
+			"title": "Self-Hosted Blogging Platform",
+			"subtitle": "Hyvor Blogs is free, open-source, and yours to run - on your own server, your own terms.",
+			"buttonDeploy": "Deploy now",
+			"buttonGithub": "View on GitHub"
+		},
+		"deploy": {
+			"eyebrow": "Deploy in Minutes",
+			"title": "Easy Deployment",
+			"description": "Download the release, fill in a few environment variables, and run a single command. Hyvor Blogs starts up and runs its own database migrations automatically.",
+			"bulletCompose": "Deploy Compose file",
+			"bulletServer": "One instance, unlimited blogs - for your whole team",
+			"buttonDocs": "Read the deploy guide"
+		},
+		"ownership": {
+			"eyebrow": "Full Ownership",
+			"title": "Your server. Your data. Your rules.",
+			"description": "Self-hosting means nothing sits between you and your blog. No license fees, no usage limits, and no one else holding your data.",
+			"bulletFree": "Free & open-source, no license fees",
+			"bulletOwnership": "Full ownership of your data & infrastructure",
+			"bulletNoLockIn": "No vendor lock-in - move to the cloud version anytime"
+		},
+		"production": {
+			"eyebrow": "Production-Ready",
+			"title": "HTTPS and custom domains, built in",
+			"description": "Hyvor Blogs automatically obtains and renews TLS certificates with Let's Encrypt, and a single installation can serve unlimited custom domains for your blogs.",
+			"bulletTls": "Automatic TLS via Let's Encrypt, or bring your own certificate",
+			"bulletMultiDomain": "One installation, unlimited custom domains",
+			"bulletReverseProxy": "Works behind Nginx, Traefik, or any reverse proxy"
+		},
+		"trialSignup": {
+			"title": "Prefer not to manage a server?"
+		}
+	},
+	"multiLanguage": {
+		"seo": {
+			"title": "Multi-Language Blogging Platform - No Plugins Needed | Hyvor Blogs",
+			"description": "Hyvor Blogs supports multi-language blogging by design - no plugins required. Translate posts, tags, authors, and themes, with automatic hreflang and RTL support."
+		},
+		"hero": {
+			"badge": "🌍 No plugins needed",
+			"title": "The Multi-Language Blogging Platform",
+			"subtitle": "Translate posts, tags, authors, and your entire theme - built in from day one.",
+			"buttonStart": "Get started",
+			"buttonDocs": "View docs"
+		},
+		"builtIn": {
+			"eyebrow": "No Plugins Needed",
+			"title": "Multi-language, by design",
+			"description": "Every Hyvor Blogs plan supports unlimited languages out of the box. No plugins to install, no add-ons to configure - just add a language and start writing.",
+			"bulletAddLanguage": "Add a language in one click from Settings",
+			"bulletCodeNameDirection": "Each language has its own code, name, and direction (LTR/RTL)",
+			"bulletRouting": "Automatic routing for every language"
+		},
+		"translate": {
+			"eyebrow": "Full Translation",
+			"title": "Translate everything, not just posts",
+			"description": "Every piece of content can be translated - posts, tags, authors, navigation, and your blog's name and description. Each translation is its own independent variant.",
+			"bulletPosts": "Translate post title, slug, content, and description",
+			"bulletData": "Translate authors, tags, navigation, and blog details",
+			"bulletSeo": "Each language variant gets its own SEO-friendly URL"
+		},
+		"technicalSeo": {
+			"eyebrow": "Technical SEO",
+			"title": "Hreflang and RTL, handled automatically",
+			"description": "Hyvor Blogs adds the correct html lang attribute and hreflang alternate tags to every page automatically, and every official theme ships with full RTL support.",
+			"bulletHreflang": "Automatic hreflang alternate tags for every language",
+			"bulletLangAttribute": "Correct html lang attribute on every page",
+			"bulletRtl": "RTL layout support built into every official theme"
+		},
+		"faq": {
+			"title": "Frequently Asked Questions",
+			"questionPlugin": "Do I need a plugin for multi-language support?",
+			"answerPlugin": "No. Multi-language support is built into Hyvor Blogs by design - no plugins or add-ons required.",
+			"questionRtl": "Can I add right-to-left languages like Arabic or Hebrew?",
+			"answerRtl": "Yes. RTL layout support is built into every official theme.",
+			"questionUrl": "Do translated posts get their own URL?",
+			"answerUrl": "Yes. Each translated post has its own slug, for example <code>/fr/bonjour-monde</code> for a French variant.",
+			"questionSeo": "Is multi-language content good for SEO?",
+			"answerSeo": "Yes. Hyvor Blogs automatically adds hreflang alternate tags and the correct html lang attribute, so search engines understand every language variant. See our <a href=\"/docs/languages\">languages guide</a> for details.",
+			"questionTheme": "Can I translate my theme too?",
+			"answerTheme": "Yes. Official themes ship with YAML language files you can translate, in addition to your posts and data.",
+			"questionHowMany": "How many languages can I add?",
+			"answerHowMany": "As many as you need. There's no limit - add each one in a single click."
+		},
+		"trialSignup": {
+			"title": "Start your multi-language blog today"
 		}
 	}
 }

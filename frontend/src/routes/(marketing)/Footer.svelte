@@ -75,6 +75,26 @@
 					external: true
 				}
 			]
+		},
+		{
+			title: t('nav.footer.columns.whyHyvorBlogs'),
+			links: [
+				{
+					href: '/eu',
+					label: t('nav.footer.europeanHosted'),
+					localize: true
+				},
+				{
+					href: '/self-hosted',
+					label: t('nav.footer.selfHosted'),
+					localize: true
+				},
+				{
+					href: '/multi-language',
+					label: t('nav.footer.multiLanguage'),
+					localize: true
+				}
+			]
 		}
 	]);
 </script>
