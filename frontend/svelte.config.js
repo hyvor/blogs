@@ -17,7 +17,8 @@ const config = {
 			handleMissingId: 'warn',
 			handleHttpError: 'warn',
 			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
-		}
+		},
+		inlineStyleThreshold: 2048
 	},
 
 	compilerOptions: {
