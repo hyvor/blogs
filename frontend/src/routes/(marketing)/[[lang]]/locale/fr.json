@@ -562,5 +562,73 @@
 			"env": "Variables d'environnement",
 			"deliveryDomain": "Domaine de diffusion"
 		}
+	},
+	"eu": {
+		"seo": {
+			"title": "Plateforme de blogging européenne - Hébergée dans l'UE | Hyvor Blogs",
+			"description": "Hyvor Blogs est une plateforme de blogging européenne, conçue dans l'UE et hébergée en Allemagne. RGPD par conception, souveraineté des données et auto-hébergement disponible."
+		},
+		"hero": {
+			"badge": "🇪🇺 Conçu dans l'UE",
+			"title": "La plateforme de blogging européenne",
+			"subtitle": "Conforme au RGPD, hébergée dans l'UE, et open-source.",
+			"buttonStart": "Commencer",
+			"buttonLearn": "En savoir plus"
+		},
+		"residency": {
+			"eyebrow": "Résidence des données",
+			"title": "Vos données restent en Europe",
+			"description": "Chaque serveur de Hyvor Blogs fonctionne sur l'infrastructure Hetzner en Allemagne. Pas de cloud américain dans la boucle, pas de transfert transfrontalier à gérer, et pas de zone grise Schrems II à naviguer.",
+			"bulletHetzner": "Hébergé exclusivement sur des serveurs Hetzner en Allemagne",
+			"bulletCompany": "HYVOR est une entreprise basée dans l'UE, régie par le droit européen",
+			"bulletNoTransfer": "Vos données ne quittent tout simplement jamais l'UE",
+			"locationTitle": "Centre de données Hetzner",
+			"locationSubtitle": "🇩🇪 Allemagne"
+		},
+		"gdpr": {
+			"eyebrow": "Confidentialité dès la conception",
+			"title": "Le RGPD n'est pas une réflexion après coup.<br/>C'est le fondement.",
+			"description": "Nous utilisons le RGPD comme référence pour chaque décision produit, pas comme une case à cocher après le lancement. Cela signifie des politiques de confidentialité claires, une minimisation des données, et un contrôle total sur ce qu'il advient de vos données.",
+			"bulletDpa": "Un accord de traitement des données (DPA) est disponible pour tout client (sans contrat Enterprise nécessaire)",
+			"bulletRights": "Droits complets des utilisateurs - accès, correction, export ou suppression de vos données à tout moment",
+			"bulletSubprocessors": "Nous travaillons uniquement avec des sous-traitants soigneusement sélectionnés et conformes au RGPD",
+			"buttonCompliance": "Lire la politique de conformité de HYVOR"
+		},
+		"ownership": {
+			"eyebrow": "Possédez votre contenu",
+			"title": "Votre contenu. Vos règles. Vos données.",
+			"description": "Pas d'enfermement propriétaire, pas de pratiques trompeuses, et pas de traceurs tiers accrochés à vos articles. Exportez tout quand vous le souhaitez, ou déménagez entièrement vers votre propre serveur.",
+			"bulletExport": "Exportez tout en un clic, à tout moment",
+			"bulletSelfHost": "Auto-hébergez sur votre propre infrastructure si vous préférez",
+			"bulletNoTrackers": "Pas de publicités, pas de traceurs tiers sur votre blog"
+		},
+		"selfHost": {
+			"eyebrow": "Open-Source",
+			"title": "Vous préférez le contrôle total ? Auto-hébergez.",
+			"description": "Hyvor Blogs est gratuit et open-source. Déployez-le sur vos propres serveurs, n'importe où dans l'UE ou ailleurs, et gardez tout en interne.",
+			"bulletFree": "Gratuit et open-source, sans frais de licence",
+			"bulletDocker": "Déployez avec Docker en quelques commandes",
+			"bulletOwnership": "Propriété complète de vos données et de votre infrastructure",
+			"buttonLearn": "En savoir plus sur l'auto-hébergement",
+			"buttonGithub": "Voir sur GitHub"
+		},
+		"faq": {
+			"title": "Questions fréquentes",
+			"questionHosting": "Où Hyvor Blogs est-il hébergé ?",
+			"answerHosting": "Hyvor Blogs fonctionne entièrement sur l'infrastructure Hetzner en Allemagne. Ainsi, vos données et celles de vos lecteurs restent au sein de l'UE.",
+			"questionGdpr": "Hyvor Blogs est-il conforme au RGPD ?",
+			"answerGdpr": "Oui. Nous utilisons le RGPD comme principale ligne directrice pour concevoir chaque produit et fonctionnalité, et nous proposons un accord de traitement des données (DPA) à tout client qui en a besoin. En savoir plus sur notre <a href=\"https://hyvor.com/compliance\" target=\"_blank\" rel=\"noopener\">page de conformité</a>.",
+			"questionSelfHost": "Puis-je auto-héberger Hyvor Blogs au lieu d'utiliser la version cloud ?",
+			"answerSelfHost": "Oui. Hyvor Blogs est gratuit et open-source. Si vous préférez tout garder sur vos propres serveurs, <a href=\"/hosting\">déployez-le vous-même avec Docker</a> en quelques commandes.",
+			"questionTrackers": "Vendez-vous ou partagez-vous mes données avec des annonceurs ?",
+			"answerTrackers": "Non. Hyvor Blogs n'injecte pas de publicités ni de traceurs tiers dans votre blog. Nous ne vendons vos données ni celles de vos lecteurs à personne.",
+			"questionCompany": "Où HYVOR, l'entreprise, est-elle basée ?",
+			"answerCompany": "HYVOR, l'entreprise derrière Hyvor Blogs, est basée en France, dans l'UE, et opère sous le droit européen.",
+			"questionExport": "Puis-je exporter mon contenu si je change de fournisseur plus tard ?",
+			"answerExport": "Oui, à tout moment. Exportez tout votre blog en un clic - aucun enfermement propriétaire."
+		},
+		"trialSignup": {
+			"title": "Démarrez votre blog européen dès aujourd'hui"
+		}
 	}
 }

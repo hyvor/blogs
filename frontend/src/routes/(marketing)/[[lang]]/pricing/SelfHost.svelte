@@ -3,6 +3,7 @@
 	import IconGithub from '@hyvor/icons/IconGithub';
 	import IconCheckCircleFill from '@hyvor/icons/IconCheckCircleFill';
 	import IconBoxArrowUpRight from '@hyvor/icons/IconBoxArrowUpRight';
+	import TerminalMockup from '../../@components/TerminalMockup.svelte';
 	import { getMarketingI18n } from '../marketingLang';
 
 	const I18n = getMarketingI18n();
@@ -53,19 +54,7 @@
 		</div>
 
 		<div class="visual-col">
-			<div class="terminal">
-				<div class="terminal-bar">
-					<span class="dot red"></span>
-					<span class="dot yellow"></span>
-					<span class="dot green"></span>
-				</div>
-				<div class="terminal-body">
-					<div class="line">
-						<span class="prompt">$</span> docker compose up -d
-					</div>
-					<div class="line output">✓ Hyvor Blogs running at https://acme.com/blog</div>
-				</div>
-			</div>
+			<TerminalMockup output="Hyvor Blogs running at https://acme.com/blog" />
 		</div>
 	</div>
 </section>
@@ -153,63 +142,6 @@
 	.visual-col {
 		display: flex;
 		justify-content: center;
-	}
-
-	.terminal {
-		width: 100%;
-		max-width: 420px;
-		border-radius: 12px;
-		overflow: hidden;
-		background: #16161a;
-		box-shadow: var(--box-shadow);
-	}
-
-	.terminal-bar {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		padding: 10px 14px;
-		background: #1f1f24;
-	}
-
-	.dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-	}
-
-	.dot.red {
-		background: #ff5f57;
-	}
-
-	.dot.yellow {
-		background: #febc2e;
-	}
-
-	.dot.green {
-		background: #28c840;
-	}
-
-	.terminal-body {
-		padding: 20px 18px;
-		font-family: var(--font-mono, monospace);
-		font-size: 13px;
-		line-height: 2;
-		text-align: left;
-	}
-
-	.line {
-		color: #d4d4d8;
-		overflow-wrap: break-word;
-	}
-
-	.prompt {
-		color: #7dd3fc;
-		margin-right: 6px;
-	}
-
-	.line.output {
-		color: #4ade80;
 	}
 
 	@media (max-width: 900px) {
