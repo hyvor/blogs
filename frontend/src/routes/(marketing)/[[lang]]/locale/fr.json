@@ -26,7 +26,8 @@
 			"columns": {
 				"product": "Produit",
 				"legal": "Légal",
-				"alternatives": "Alternatives"
+				"alternatives": "Alternatives",
+				"whyHyvorBlogs": "Pourquoi Hyvor Blogs"
 			},
 			"console": "Console",
 			"termsOfService": "Conditions d'utilisation",
@@ -39,6 +40,9 @@
 			"ghostAlternative": "Alternative à Ghost",
 			"mediumAlternative": "Alternative à Medium",
 			"bloggerAlternative": "Alternative à Blogger",
+			"europeanHosted": "Hébergé en Europe",
+			"selfHosted": "Auto-hébergé",
+			"multiLanguage": "Multilingue",
 			"copyEmail": "Copier l'email",
 			"copied": "Copié !",
 			"gdprCompliant": "Conforme au RGPD",
@@ -578,7 +582,7 @@
 		"residency": {
 			"eyebrow": "Résidence des données",
 			"title": "Vos données restent en Europe",
-			"description": "Chaque serveur de Hyvor Blogs fonctionne sur l'infrastructure Hetzner en Allemagne. Pas de cloud américain dans la boucle, pas de transfert transfrontalier à gérer, et pas de zone grise Schrems II à naviguer.",
+			"description": "En tant que plateforme de blogging européenne, chaque serveur de Hyvor Blogs fonctionne sur l'infrastructure Hetzner en Allemagne. Pas de cloud américain dans la boucle, pas de transfert transfrontalier à gérer, et pas de zone grise Schrems II à naviguer.",
 			"bulletHetzner": "Hébergé exclusivement sur des serveurs Hetzner en Allemagne",
 			"bulletCompany": "HYVOR est une entreprise basée dans l'UE, régie par le droit européen",
 			"bulletNoTransfer": "Vos données ne quittent tout simplement jamais l'UE",
@@ -629,6 +633,101 @@
 		},
 		"trialSignup": {
 			"title": "Démarrez votre blog européen dès aujourd'hui"
+		}
+	},
+	"selfHosted": {
+		"seo": {
+			"title": "Plateforme de blogging auto-hébergée - Déployez avec Docker | Hyvor Blogs",
+			"description": "Hyvor Blogs est une plateforme de blogging auto-hébergée. Déployez-la sur votre propre serveur avec Docker en quelques minutes - gratuite, open-source, et sous votre contrôle."
+		},
+		"hero": {
+			"badge": "🐳 Déployez avec Docker",
+			"title": "Plateforme de blogging auto-hébergée",
+			"subtitle": "Hyvor Blogs est gratuite, open-source, et à vous de gérer - sur votre propre serveur, à vos conditions.",
+			"buttonDeploy": "Déployer maintenant",
+			"buttonGithub": "Voir sur GitHub"
+		},
+		"deploy": {
+			"eyebrow": "Déployez en quelques minutes",
+			"title": "Déploiement facile",
+			"description": "Téléchargez la version, renseignez quelques variables d'environnement, et lancez une seule commande. Hyvor Blogs démarre et exécute automatiquement ses propres migrations de base de données.",
+			"bulletCompose": "Déployez avec un fichier Compose",
+			"bulletServer": "Une instance, blogs illimités - pour toute votre équipe",
+			"buttonDocs": "Lire le guide de déploiement"
+		},
+		"ownership": {
+			"eyebrow": "Propriété complète",
+			"title": "Votre serveur. Vos données. Vos règles.",
+			"description": "L'auto-hébergement signifie que rien ne se place entre vous et votre blog. Pas de frais de licence, pas de limites d'utilisation, et personne d'autre ne détient vos données.",
+			"bulletFree": "Gratuit et open-source, sans frais de licence",
+			"bulletOwnership": "Propriété complète de vos données et de votre infrastructure",
+			"bulletNoLockIn": "Aucun enfermement propriétaire - passez à la version cloud à tout moment"
+		},
+		"production": {
+			"eyebrow": "Prêt pour la production",
+			"title": "HTTPS et domaines personnalisés, inclus",
+			"description": "Hyvor Blogs obtient et renouvelle automatiquement les certificats TLS avec Let's Encrypt, et une seule installation peut servir un nombre illimité de domaines personnalisés pour vos blogs.",
+			"bulletTls": "TLS automatique via Let's Encrypt, ou apportez votre propre certificat",
+			"bulletMultiDomain": "Une seule installation, des domaines personnalisés illimités",
+			"bulletReverseProxy": "Fonctionne derrière Nginx, Traefik, ou tout autre proxy inverse"
+		},
+		"trialSignup": {
+			"title": "Vous préférez ne pas gérer de serveur ?"
+		}
+	},
+	"multiLanguage": {
+		"seo": {
+			"title": "Plateforme de blogging multilingue - Sans plugins | Hyvor Blogs",
+			"description": "Hyvor Blogs prend en charge le blogging multilingue par conception - aucun plugin requis. Traduisez articles, tags, auteurs et thèmes, avec hreflang et support RTL automatiques."
+		},
+		"hero": {
+			"badge": "🌍 Aucun plugin requis",
+			"title": "La plateforme de blogging multilingue",
+			"subtitle": "Traduisez articles, tags, auteurs et tout votre thème - intégré dès le départ.",
+			"buttonStart": "Commencer",
+			"buttonDocs": "Voir la documentation"
+		},
+		"builtIn": {
+			"eyebrow": "Aucun plugin requis",
+			"title": "Multilingue, par conception",
+			"description": "Chaque plan Hyvor Blogs prend en charge un nombre illimité de langues dès le départ. Aucun plugin à installer, aucun module à configurer - ajoutez simplement une langue et commencez à écrire.",
+			"bulletAddLanguage": "Ajoutez une langue en un clic depuis les paramètres",
+			"bulletCodeNameDirection": "Chaque langue a son propre code, nom et sens d'écriture (LTR/RTL)",
+			"bulletRouting": "Routage automatique pour chaque langue"
+		},
+		"translate": {
+			"eyebrow": "Traduction complète",
+			"title": "Traduisez tout, pas seulement les articles",
+			"description": "Chaque élément de contenu peut être traduit - articles, tags, auteurs, navigation, ainsi que le nom et la description de votre blog. Chaque traduction est une variante indépendante.",
+			"bulletPosts": "Traduisez le titre, le slug, le contenu et la description des articles",
+			"bulletData": "Traduisez les auteurs, les tags, la navigation et les détails du blog",
+			"bulletSeo": "Chaque variante linguistique obtient sa propre URL optimisée pour le SEO"
+		},
+		"technicalSeo": {
+			"eyebrow": "SEO technique",
+			"title": "Hreflang et RTL, gérés automatiquement",
+			"description": "Hyvor Blogs ajoute automatiquement l'attribut html lang correct et les balises alternate hreflang à chaque page, et chaque thème officiel est livré avec un support RTL complet.",
+			"bulletHreflang": "Balises alternate hreflang automatiques pour chaque langue",
+			"bulletLangAttribute": "Attribut html lang correct sur chaque page",
+			"bulletRtl": "Support RTL intégré à chaque thème officiel"
+		},
+		"faq": {
+			"title": "Questions fréquentes",
+			"questionPlugin": "Ai-je besoin d'un plugin pour le support multilingue ?",
+			"answerPlugin": "Non. Le support multilingue est intégré à Hyvor Blogs par conception - aucun plugin ni module complémentaire requis.",
+			"questionRtl": "Puis-je ajouter des langues de droite à gauche comme l'arabe ou l'hébreu ?",
+			"answerRtl": "Oui. Le support RTL est intégré à chaque thème officiel.",
+			"questionUrl": "Les articles traduits ont-ils leur propre URL ?",
+			"answerUrl": "Oui. Chaque article traduit a son propre slug, par exemple <code>/fr/bonjour-monde</code> pour une variante française.",
+			"questionSeo": "Le contenu multilingue est-il bon pour le SEO ?",
+			"answerSeo": "Oui. Hyvor Blogs ajoute automatiquement des balises alternate hreflang et l'attribut html lang correct, afin que les moteurs de recherche comprennent chaque variante linguistique. Consultez notre <a href=\"/docs/languages\">guide des langues</a> pour plus de détails.",
+			"questionTheme": "Puis-je aussi traduire mon thème ?",
+			"answerTheme": "Oui. Les thèmes officiels sont livrés avec des fichiers de langue YAML que vous pouvez traduire, en plus de vos articles et données.",
+			"questionHowMany": "Combien de langues puis-je ajouter ?",
+			"answerHowMany": "Autant que nécessaire. Il n'y a aucune limite - ajoutez-en une en un seul clic."
+		},
+		"trialSignup": {
+			"title": "Démarrez votre blog multilingue dès aujourd'hui"
 		}
 	}
 }
