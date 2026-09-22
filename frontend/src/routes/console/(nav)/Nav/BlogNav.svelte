@@ -123,7 +123,7 @@
 			</NavLink>
 		{/if}
 
-		{#if $blogStore.ai_agent}
+		{#if $blogStore?.ai_agent}
 			<NavLink
 				href={consoleUrl(`${listItem.subdomain}/agent`)}
 				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
