@@ -18,7 +18,7 @@
 	import IconEnvelope from '@hyvor/icons/IconEnvelope';
 
 	import IconChat from '@hyvor/icons/IconChat';
-	import { integrationsStore } from '../../lib/stores/blogStore';
+	import { blogStore, integrationsStore } from '../../lib/stores/blogStore';
 	import IconRobot from '@hyvor/icons/IconRobot';
 	import { getConfig } from '../../lib/config';
 	import { getI18n } from '../../lib/i18n';
@@ -123,16 +123,18 @@
 			</NavLink>
 		{/if}
 
-		<NavLink
-			href={consoleUrl(`${listItem.subdomain}/agent`)}
-			active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
-			disabled={cant('ai.use')}
-		>
-			{#snippet start()}
-				<IconRobot />
-			{/snippet}
-			Agent
-		</NavLink>
+		{#if $blogStore.ai_agent}
+			<NavLink
+				href={consoleUrl(`${listItem.subdomain}/agent`)}
+				active={$page.url.pathname.startsWith(`/console/${listItem.subdomain}/agent`)}
+				disabled={cant('ai.use')}
+			>
+				{#snippet start()}
+					<IconRobot />
+				{/snippet}
+				Agent
+			</NavLink>
+		{/if}
 
 		<div class="section-div"></div>
 
