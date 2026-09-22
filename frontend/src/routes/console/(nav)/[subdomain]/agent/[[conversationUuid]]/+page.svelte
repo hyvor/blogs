@@ -8,6 +8,8 @@
 
 	let conversationUuid = $derived(page.params.conversationUuid ?? null);
 
+	let chatKey = $derived(conversationUuid ?? `new-${$agentConversationsStore.resetNonce}`);
+
 	function handleConversationCreated(conversation: AiConversation) {
 		agentConversationsStore.upsert(conversation);
 		agentConversationsStore.setActive(conversation.uuid);
@@ -15,6 +17,6 @@
 	}
 </script>
 
-{#key conversationUuid}
+{#key chatKey}
 	<AgentChat {conversationUuid} onConversationCreated={handleConversationCreated} />
 {/key}
