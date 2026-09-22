@@ -34,5 +34,7 @@ jobs:
           context: .
           push: true
           target: final
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
