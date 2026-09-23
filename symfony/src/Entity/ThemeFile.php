@@ -111,19 +111,14 @@ class ThemeFile
     {
         $content = $this->content;
 
-        if ($content === null) {
-            return null;
-        }
-
         if (is_resource($content)) {
-            $content = stream_get_contents($content);
+            $content = stream_get_contents($content, -1, 0);
         }
 
-        if ($content === false) {
+        if (!is_string($content)) {
             return null;
         }
 
-        /** @phpstan-ignore argument.type (PHPStan cannot narrow `resource` out of the union via is_resource()) */
         $decoded = hex2bin($content);
 
         return $decoded === false ? null : $decoded;

@@ -71,9 +71,10 @@ class TwigLanguage
 
         if ($langFileName !== $defaultFileName) {
             $langFile = array_find($files, fn($f) => $f->getName() === $langFileName);
+            $langFileContent = $langFile?->getContent();
 
-            if ($langFile && $langFile->getContent()) {
-                $newStrings = $this->parseYaml($langFile->getContent());
+            if ($langFileContent) {
+                $newStrings = $this->parseYaml($langFileContent);
                 foreach ($newStrings as $key => $value) {
                     $strings[$key] = $value;
                 }
