@@ -28,7 +28,7 @@
 
 # main app
 # see run script for APP_ADDRESS / APP_TLS_DIRECTIVE (from TLS_MODE)
-{$APP_ADDRESS}, http://localhost:8081 {
+{$APP_ADDRESS}, http://localhost:8081{$APP_ADDRESS_ADDITIONAL} {
 
 	{$APP_TLS_DIRECTIVE}
 	{$MERCURE_DIRECTIVE}
