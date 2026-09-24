@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -52,6 +53,11 @@ class AiController extends AbstractController
     ): StreamedResponse
     {
         $blog = $this->authListener->getBlog();
+
+        if (!$blog->getMeta()->ai_agent) {
+            throw new AccessDeniedHttpException('AI agent is disabled for this blog');
+        }
+
         $prompt = $input->prompt;
         $postVariant = null;
         if ($input->post_variant_id) {
@@ -140,6 +146,10 @@ class AiController extends AbstractController
     ): JsonResponse
     {
         $blog = $this->authListener->getBlog();
+
+        if (!$blog->getMeta()->ai_translation_enabled) {
+            throw new AccessDeniedHttpException('AI translation is disabled for this blog');
+        }
 
         $variant = $this->postService->getPostVariantByBlogAndId($blog, $input->post_variant_id);
 

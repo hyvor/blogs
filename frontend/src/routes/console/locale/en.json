@@ -889,10 +889,12 @@
 			},
 			"wordCount": "{count, plural, one {# Word} other {# Words}}",
 			"searchPosts": {
+				"label": "Posts",
 				"placeholder": "Search a post in your blog...",
 				"noPosts": "No posts found",
 				"noTitle": "(No title)",
-				"noUrl": "(No url)"
+				"noUrl": "(No url)",
+				"failed": "Could not load posts"
 			},
 			"agent": {
 				"upgradeText": "AI agent is available on the <strong>Starter Plan</strong> and above. Upgrade your plan to unlock this feature.",
