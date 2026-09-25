@@ -11,6 +11,7 @@ interface AgentConversationsState {
 	loadingMore: boolean;
 	loaded: boolean;
 	activeId: string | null;
+	resetNonce: number;
 }
 
 function createAgentConversationsStore() {
@@ -20,7 +21,8 @@ function createAgentConversationsStore() {
 		loading: false,
 		loadingMore: false,
 		loaded: false,
-		activeId: null
+		activeId: null,
+		resetNonce: 0
 	});
 	const { subscribe, update } = store;
 
@@ -87,7 +89,11 @@ function createAgentConversationsStore() {
 		update((s) => (s.activeId === uuid ? s : { ...s, activeId: uuid }));
 	}
 
-	return { subscribe, load, loadMore, upsert, remove, setActive };
+	function resetActive() {
+		update((s) => ({ ...s, activeId: null, resetNonce: s.resetNonce + 1 }));
+	}
+
+	return { subscribe, load, loadMore, upsert, remove, setActive, resetActive };
 }
 
 export const agentConversationsStore = createAgentConversationsStore();

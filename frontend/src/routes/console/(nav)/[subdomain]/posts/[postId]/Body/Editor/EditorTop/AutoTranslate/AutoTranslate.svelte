@@ -11,6 +11,7 @@
 	import { autoTranslate } from './autoTranslateActions';
 	import type { PostVariant } from '../../../../../../../../lib/types';
 	import { getPrimaryLanguage } from '../../../../../../../../lib/stores/languagesStore';
+	import { blogStore } from '../../../../../../../../lib/stores/blogStore';
 	import { getI18n } from '../../../../../../../../lib/i18n';
 
 	const i18n = getI18n();
@@ -51,7 +52,7 @@
 	}
 </script>
 
-{#if $postVariantLanguageStore && $postVariantLanguageStore.is_primary === false}
+{#if $blogStore.ai_translation_enabled && $postVariantLanguageStore && $postVariantLanguageStore.is_primary === false}
 	<Button size="small" style="margin-inline-end:8px" color="input" on:click={handleTranslate}>
 		{i18n.t('console.postEditor.autoTranslate.button')}
 		{#snippet end()}

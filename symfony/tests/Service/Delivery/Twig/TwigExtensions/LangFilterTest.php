@@ -9,6 +9,7 @@ use App\Service\Delivery\Twig\TwigRendererService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\ThemeFileFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -104,6 +105,34 @@ class LangFilterTest extends KernelTestCase
             ['_blog' => ['subdomain' => $blog->getSubdomain()], '_lang' => ['code' => 'fr']]
         );
         $this->assertSame('english-testfrench', $result);
+    }
+
+    public function test_loads_translation_file_of_current_language(): void
+    {
+        $blog = BlogFactory::createOne();
+        LanguageFactory::createOne(['blog' => $blog, 'code' => 'en', 'is_primary' => true]);
+        LanguageFactory::createOne(['blog' => $blog, 'code' => 'fr', 'is_primary' => false]);
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'folder' => ThemeFileFolder::LANG,
+            'name' => 'en.yaml',
+            'content' => 'test2: english',
+        ]);
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'folder' => ThemeFileFolder::LANG,
+            'name' => 'fr.yaml',
+            'content' => 'test2: french',
+        ]);
+
+        // Force doctrine to load content from db
+        $this->getService(EntityManagerInterface::class)->clear();
+
+        $result = $this->render(
+            "{{ 'test2' | lang }}",
+            ['_blog' => ['subdomain' => $blog->getSubdomain()], '_lang' => ['code' => 'fr']]
+        );
+        $this->assertSame('french', $result);
     }
 
     public function test_works_when_two_blogs_are_rendered_one_after_another(): void

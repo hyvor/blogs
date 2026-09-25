@@ -64,4 +64,35 @@ class AiAgentTest extends ApiTestCase
         $this->assertArrayHasKey('title', $json[0]);
     }
 
+    public function test_fails_when_the_agent_is_disabled_for_the_blog(): void
+    {
+        $blog = BlogFactory::createOne();
+        $blog->getMeta()->ai_agent = false;
+        $this->getEm()->flush();
+
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('POST', $blog, '/ai/agent', [
+            'prompt' => 'write a blog post about cats',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function test_fails_translation_when_translation_is_disabled_for_the_blog(): void
+    {
+        $blog = BlogFactory::createOne();
+        $blog->getMeta()->ai_translation_enabled = false;
+        $this->getEm()->flush();
+
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('POST', $blog, '/ai/translate/post', [
+            'post_variant_id' => 1,
+            'target_language_code' => 'fr',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
 }

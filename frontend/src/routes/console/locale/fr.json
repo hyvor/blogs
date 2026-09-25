@@ -889,10 +889,12 @@
 			},
 			"wordCount": "{count, plural, one {# mot} other {# mots}}",
 			"searchPosts": {
+				"label": "Articles",
 				"placeholder": "Rechercher un article dans votre blog...",
 				"noPosts": "Aucun article trouvé",
 				"noTitle": "(Sans titre)",
-				"noUrl": "(Sans URL)"
+				"noUrl": "(Sans URL)",
+				"failed": "Impossible de charger les publications"
 			},
 			"agent": {
 				"upgradeText": "L'agent IA est disponible sur le <strong>plan Starter</strong> et au-dessus. Mettez à niveau votre plan pour débloquer cette fonctionnalité.",

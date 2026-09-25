@@ -13,7 +13,16 @@
 	import scrollMarginPlugin from './plugins/plugin-scroll-margin';
 	import { editorConfig, schema } from './editor';
 	import { resolveAuthor, suggestionSource } from './suggestions';
-	import { submitCollabSteps, submitCollabCursor, syncCollabSteps } from '../../../postActions';
+	import {
+		submitCollabSteps,
+		submitCollabCursor,
+		syncCollabSteps,
+		getPosts
+	} from '../../../postActions';
+	import {
+		languagesStore,
+		primaryLanguageStore
+	} from '../../../../../../lib/stores/languagesStore';
 	import { subscribeToCollabMercureTopic, collabTopic, applyConfirmedSteps } from './collab';
 	import { onDestroy } from 'svelte';
 	import { authUserStore } from '../../../../../../lib/stores';
@@ -159,6 +168,29 @@
 
 	let fullEditorConfig = $derived({
 		...editorConfig(),
+		linkSearch: [
+			{
+				label: i18n.t('console.postEditor.searchPosts.label'),
+				placeholder: i18n.t('console.postEditor.searchPosts.placeholder'),
+				noResultsText: i18n.t('console.postEditor.searchPosts.noPosts'),
+				errorText: i18n.t('console.postEditor.searchPosts.failed'),
+				scopes: $languagesStore.map((l) => ({ id: l.id, name: l.name })),
+				defaultScopeId: $primaryLanguageStore.id,
+				search: async (query: string, languageId?: string | number) => {
+					const posts = await getPosts({
+						search: query,
+						language_id: Number(languageId),
+						status: 'published',
+						limit: 30
+					});
+					return posts.map((post) => ({
+						title: post.title || i18n.t('console.postEditor.searchPosts.noTitle'),
+						url: post.url || '',
+						description: post.url || i18n.t('console.postEditor.searchPosts.noUrl')
+					}));
+				}
+			}
+		],
 		collab: {
 			version: $documentStore.checkpoint_version,
 			clientID: clientId,

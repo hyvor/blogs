@@ -14,6 +14,7 @@
 	import SeoScoreTag from './Seo/SeoScoreTag.svelte';
 	import { variantSeoStore } from '../../seoStore';
 	import { postSidebarStore } from '../../postStore';
+	import { blogStore } from '../../../../../lib/stores/blogStore';
 	import { getI18n } from '../../../../../lib/i18n';
 
 	const i18n = getI18n();
@@ -61,20 +62,22 @@
 		<Links />
 	</Popover>
 
-	<span class="divider"></span>
+	{#if $blogStore.ai_agent}
+		<span class="divider"></span>
 
-	<Popover
-		flush
-		bind:show={() => $postSidebarStore === 'ai', (v) => ($postSidebarStore = v ? 'ai' : null)}
-	>
-		{#snippet trigger()}
-			<IconRobot size={13} class="icon" />
-			{i18n.t('console.postEditor.sections.agent')}
-			<AgentReplyingTag />
-		{/snippet}
+		<Popover
+			flush
+			bind:show={() => $postSidebarStore === 'ai', (v) => ($postSidebarStore = v ? 'ai' : null)}
+		>
+			{#snippet trigger()}
+				<IconRobot size={13} class="icon" />
+				{i18n.t('console.postEditor.sections.agent')}
+				<AgentReplyingTag />
+			{/snippet}
 
-		<Ai />
-	</Popover>
+			<Ai />
+		</Popover>
+	{/if}
 </div>
 
 <style>

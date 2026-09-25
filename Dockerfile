@@ -73,6 +73,9 @@ CMD ["/app/run"]
 ###################################################
 FROM backend-base AS final
 
+ARG APP_VERSION=0.0.0
+ENV APP_VERSION=${APP_VERSION}
+
 # copy files
 COPY symfony ./
 COPY --from=frontend-prod /app/frontend/build /app/static

@@ -7,7 +7,9 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 	import { consoleUrlWithBlog } from '../../../lib/consoleUrl';
 	import { redirectIfCant } from '../../../lib/scope.svelte';
+	import { blogStore } from '../../../lib/stores/blogStore';
 	import { agentConversationsStore } from './agentConversationsStore';
+	import { deleteAgentChatSession } from './agentChatSessionStore';
 	import type { AiConversation } from '../../../lib/types';
 	import { getI18n } from '../../../lib/i18n';
 
@@ -26,6 +28,11 @@
 	let activeConversationUuid = $derived($agentConversationsStore.activeId);
 
 	onMount(() => {
+		if (!$blogStore.ai_agent) {
+			goto(consoleUrlWithBlog('/'));
+			return;
+		}
+
 		redirectIfCant('ai.use');
 		agentConversationsStore.load();
 	});
@@ -57,7 +64,10 @@
 			await agentConversationsStore.remove(conversation.id);
 			confirmed.close();
 
+			deleteAgentChatSession(conversation.uuid);
+
 			if (activeConversationUuid === conversation.uuid) {
+				agentConversationsStore.resetActive();
 				goto(consoleUrlWithBlog('/agent'));
 			}
 		} catch {
