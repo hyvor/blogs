@@ -319,6 +319,27 @@ class PostsTest extends ApiTestCase
         $this->assertSame($updatedAt->getTimestamp(), $json['data'][0]['updated_at']);
     }
 
+    public function test_sorts_by_updated_at(): void
+    {
+        // content_updated_at in reverse order of published_at
+        foreach ($this->posts as $i => $post) {
+            foreach ($post->getVariants() as $variant) {
+                $variant->setContentUpdatedAt(new \DateTimeImmutable('-' . (3 - $i) . ' days'));
+            }
+        }
+        $this->getEm()->flush();
+
+        $this->dataApi($this->blog, '/posts', ['sort' => 'updated_at', 'limit' => 3]);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertIsArray($json['data']);
+        $this->assertSame(
+            [$this->posts[3]->getId(), $this->posts[2]->getId(), $this->posts[1]->getId()],
+            array_map(fn($p) => is_array($p) ? $p['id'] : null, $json['data'])
+        );
+    }
+
     public function test_filters_by_is_featured(): void
     {
         $this->posts[1]->setIsFeatured(true);

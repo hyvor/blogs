@@ -32,14 +32,13 @@ export function createRedirect(
 
 export function updateRedirect(
 	id: number,
-	dynamic: boolean,
 	path: string,
 	to: string,
 	type: 'temporary' | 'permanent'
 ) {
-	return consoleApi.put<Redirect>({
+	return consoleApi.patch<Redirect>({
 		endpoint: `/redirect/${id}`,
-		data: { dynamic, path, to, type }
+		data: { path, to, type }
 	});
 }
 

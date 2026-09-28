@@ -9,6 +9,7 @@
 
 	const DELIVERY_STATUS_KEYS = {
 		pending: 'console.settings.webhooks.deliveryStatus.pending',
+		retrying: 'console.settings.webhooks.deliveryStatus.retrying',
 		success: 'console.settings.webhooks.deliveryStatus.success',
 		failed: 'console.settings.webhooks.deliveryStatus.failed'
 	} as const;
@@ -28,6 +29,7 @@
 			case 'failed':
 				return 'red';
 			case 'pending':
+			case 'retrying':
 				return 'orange';
 			default:
 				return 'default';
