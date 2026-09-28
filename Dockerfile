@@ -20,6 +20,7 @@ COPY frontend/package.json frontend/package-lock.json \
 # copy code
 COPY frontend/src /app/frontend/src
 COPY frontend/static /app/frontend/static
+COPY docs /app/docs
 
 ###################################################
 FROM frontend-base AS frontend-dev

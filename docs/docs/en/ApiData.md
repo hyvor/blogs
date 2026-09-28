@@ -1346,7 +1346,7 @@ These HTTP codes are possible:
   - Check the query params
   - You can find more details in the JSON output of the error
 
-5xx errors means something is wrong on our side. Check our [status page](https://status.hyvor.com/) for any downtimes. If the issue persists, [contact us](/docs/support).
+5xx errors means something is wrong on our side. Check our [status page](https://status.hyvor.com/) for any downtimes. If the issue persists, [contact us](mailto:blogs.support@hyvor.com).
 
 <h2 id="pages">Pages</h2>
 

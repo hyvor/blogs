@@ -1345,7 +1345,7 @@ Ces codes HTTP sont possibles :
   - Vérifiez les paramètres de requête
   - Vous pouvez trouver plus de détails dans la sortie JSON de l'erreur
 
-Les erreurs 5xx signifient qu'un problème est survenu de notre côté. Consultez notre [page de statut](https://status.hyvor.com/) pour toute interruption de service. Si le problème persiste, [contactez-nous](/docs/support).
+Les erreurs 5xx signifient qu'un problème est survenu de notre côté. Consultez notre [page de statut](https://status.hyvor.com/) pour toute interruption de service. Si le problème persiste, [contactez-nous](mailto:blogs.support@hyvor.com).
 
 <h2 id="pages">Pages</h2>
 

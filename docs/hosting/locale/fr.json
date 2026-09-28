@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "configuration": "Configuration"
+  },
+  "pages": {
+    "introduction": "Introduction",
+    "deploy": "Déployer",
+    "reverseProxy": "Proxy inverse",
+    "env": "Variables d'environnement",
+    "deliveryDomain": "Domaine de diffusion"
+  }
+}
