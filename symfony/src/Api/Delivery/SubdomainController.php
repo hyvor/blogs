@@ -46,12 +46,12 @@ class SubdomainController
 
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
 
-        if ($blog === null) {
-            throw new HttpException(404, 'Blog not found for subdomain: ' . $subdomain);
-        }
-
-        if ($blog->getDeletedAt()) {
-            throw new HttpException(404, 'Blog is deleted.');
+        if ($blog === null || $blog->getDeletedAt()) {
+            return new RedirectResponse(
+                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() .
+                '/?via=subdomain&host=' . $host . '&status=' . ($blog === null ? 'notfound' : 'deleted'),
+                302
+            );
         }
 
         if (

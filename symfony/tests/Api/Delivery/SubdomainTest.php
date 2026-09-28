@@ -54,11 +54,11 @@ class SubdomainTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        $response = $this->call('nonexistent.hyvorblogs.io', '/');
-        $this->assertResponseStatusCodeSame(404);
-        $content = $response->getContent();
-        $this->assertNotFalse($content);
-        $this->assertStringContainsString('Blog not found for subdomain: nonexistent', $content);
+        $this->call('nonexistent.hyvorblogs.io', '/some/path');
+        $this->assertResponseRedirects(
+            'https://blogs.hyvor.com/?via=subdomain&host=nonexistent.hyvorblogs.io&status=notfound',
+            302
+        );
     }
 
     public function test_when_blog_deleted(): void
@@ -69,11 +69,11 @@ class SubdomainTest extends ApiTestCase
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createIndexTwig($blog, '<h1>Hello World</h1>');
 
-        $response = $this->call('testblog.hyvorblogs.io', '/');
-        $this->assertResponseStatusCodeSame(404);
-        $content = $response->getContent();
-        $this->assertNotFalse($content);
-        $this->assertStringContainsString('Blog is deleted.', $content);
+        $this->call('testblog.hyvorblogs.io', '/');
+        $this->assertResponseRedirects(
+            'https://blogs.hyvor.com/?via=subdomain&host=testblog.hyvorblogs.io&status=deleted',
+            302
+        );
     }
 
     public function test_successful_request(): void
