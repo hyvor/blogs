@@ -46,6 +46,51 @@ class HyvorPostListenerTest extends KernelTestCase
         $this->assertSame('', $response->content);
     }
 
+    public function test_replaces_newsletter_code_when_hp_integration_enabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->newsletter_code = 'manual newsletter code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _newsletter }}');
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 394]);
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertIsString($response->content);
+        $this->assertStringNotContainsString('manual newsletter code', $response->content);
+        $this->assertSame(1, substr_count($response->content, htmlspecialchars('<hyvor-post-form')));
+    }
+
+    public function test_uses_custom_embed_code_when_hp_integration_enabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->newsletter_code = 'manual newsletter code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _newsletter }}');
+        HyvorPostFactory::createOne(['blog' => $blog, 'newsletter_id' => 394, 'embed_code' => 'custom embed code']);
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertIsString($response->content);
+        $this->assertStringNotContainsString('manual newsletter code', $response->content);
+        $this->assertSame('custom embed code', $response->content);
+    }
+
+    public function test_uses_newsletter_code_when_hp_integration_disabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->newsletter_code = 'manual newsletter code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _newsletter }}');
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertSame('manual newsletter code', $response->content);
+    }
+
     // 2. User create
 
     public function test_no_sync_no_integration(): void

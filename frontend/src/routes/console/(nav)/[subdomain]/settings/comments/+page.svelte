@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { Callout, Link, SplitControl, Text } from '@hyvor/design/components';
-	import { blogStore, integrationsStore, updateBlogStore } from '../../../../lib/stores/blogStore';
+	import {
+		blogStore,
+		integrationsStore,
+		updateBlogStore
+	} from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
@@ -64,24 +68,31 @@
 				{/snippet}
 				<T
 					key="console.settings.comments.talkEnabledBody"
-					params={{ strong: { element: 'strong' } }}
+					params={{
+						link: {
+							element: 'a',
+							props: {
+								href: consoleUrlWithBlog('/integrations/hyvor-talk'),
+								class: 'hds-link'
+							}
+						}
+					}}
 				/>
 			</Callout>
-			<br />
+		{:else}
+			<CodemirrorEditor
+				value={$blogStore.comments_code || ''}
+				id="comments"
+				ext="twig"
+				onchange={(value) => updateBlogStore({ comments_code: value })}
+			/>
+
+			<div style="margin-top:10px;">
+				<Text light small>
+					{i18n.t('console.settings.comments.commentsCodeNote')}
+				</Text>
+			</div>
 		{/if}
-
-		<CodemirrorEditor
-			value={$blogStore.comments_code || ''}
-			id="comments"
-			ext="twig"
-			onchange={(value) => updateBlogStore({ comments_code: value })}
-		/>
-
-		<div style="margin-top:10px;">
-			<Text light small>
-				{i18n.t('console.settings.comments.commentsCodeNote')}
-			</Text>
-		</div>
 	</SplitControl>
 
 	<SplitControl label={i18n.t('console.settings.comments.newsletterCode')}>
@@ -128,24 +139,31 @@
 				{/snippet}
 				<T
 					key="console.settings.comments.postEnabledBody"
-					params={{ strong: { element: 'strong' } }}
+					params={{
+						link: {
+							element: 'a',
+							props: {
+								href: consoleUrlWithBlog('/integrations/hyvor-post'),
+								class: 'hds-link'
+							}
+						}
+					}}
 				/>
 			</Callout>
-			<br />
+		{:else}
+			<CodemirrorEditor
+				value={$blogStore.newsletter_code || ''}
+				id="newsletter"
+				ext="twig"
+				onchange={(value) => updateBlogStore({ newsletter_code: value })}
+			/>
+
+			<div style="margin-top:10px;">
+				<Text light small>
+					{i18n.t('console.settings.comments.newsletterCodeNote')}
+				</Text>
+			</div>
 		{/if}
-
-		<CodemirrorEditor
-			value={$blogStore.newsletter_code || ''}
-			id="newsletter"
-			ext="twig"
-			onchange={(value) => updateBlogStore({ newsletter_code: value })}
-		/>
-
-		<div style="margin-top:10px;">
-			<Text light small>
-				{i18n.t('console.settings.comments.newsletterCodeNote')}
-			</Text>
-		</div>
 	</SplitControl>
 </div>
 

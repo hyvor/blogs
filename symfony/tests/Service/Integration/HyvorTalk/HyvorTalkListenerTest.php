@@ -46,6 +46,51 @@ class HyvorTalkListenerTest extends KernelTestCase
         $this->assertSame('', $response->content);
     }
 
+    public function test_replaces_comments_code_when_ht_integration_enabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->comments_code = 'manual comments code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _comments }}');
+        InterHyvorTalkWebsiteFactory::createOne(['blog' => $blog, 'website_id' => 394]);
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertIsString($response->content);
+        $this->assertStringNotContainsString('manual comments code', $response->content);
+        $this->assertSame(1, substr_count($response->content, htmlspecialchars('<hyvor-talk-comments')));
+    }
+
+    public function test_uses_custom_embed_code_when_ht_integration_enabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->comments_code = 'manual comments code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _comments }}');
+        InterHyvorTalkWebsiteFactory::createOne(['blog' => $blog, 'website_id' => 394, 'embed_code' => 'custom embed code']);
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertIsString($response->content);
+        $this->assertStringNotContainsString('manual comments code', $response->content);
+        $this->assertSame('custom embed code', $response->content);
+    }
+
+    public function test_uses_comments_code_when_ht_integration_disabled(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes();
+        $blog->getMeta()->comments_code = 'manual comments code';
+        $this->getEm()->flush();
+        ThemeFileFactory::createIndexTwig($blog, '{{ _comments }}');
+
+        $pathMatcher = $this->getService(PathMatcher::class);
+        $response = $pathMatcher->match($blog, '/');
+
+        $this->assertSame('manual comments code', $response->content);
+    }
+
     // 2. User create
 
     public function test_no_sync_no_integration(): void

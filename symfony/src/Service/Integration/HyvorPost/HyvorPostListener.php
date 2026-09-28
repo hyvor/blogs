@@ -34,10 +34,7 @@ class HyvorPostListener
 
         $variables = $event->getVariables();
 
-        $code = HyvorPostService::getEmbedCode($hp);
-        /** @var string $newsletter */
-        $newsletter = $variables['_newsletter'] ?? '';
-        $variables['_newsletter'] = $newsletter . $code;
+        $variables['_newsletter'] = HyvorPostService::getEmbedCode($hp);
 
         $event->setVariables($variables);
     }

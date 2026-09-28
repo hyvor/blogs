@@ -34,10 +34,7 @@ class HyvorTalkListener
 
         $variables = $event->getVariables();
 
-        $code = HyvorTalkService::getEmbedCode($ht);
-        /** @var string $comments */
-        $comments = $variables['_comments'] ?? '';
-        $variables['_comments'] = $comments . $code;
+        $variables['_comments'] = HyvorTalkService::getEmbedCode($ht);
 
         $event->setVariables($variables);
     }
