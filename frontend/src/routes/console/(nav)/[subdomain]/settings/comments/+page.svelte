@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { Callout, Link, SplitControl, Text } from '@hyvor/design/components';
-	import {
-		blogStore,
-		integrationsStore,
-		updateBlogStore
-	} from '../../../../lib/stores/blogStore';
+	import { blogStore, integrationsStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import BlogSettingsSave from '../BlogSettingsSave.svelte';
 	import CodemirrorEditor from '../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte';
 	import { consoleUrlWithBlog } from '../../../../lib/consoleUrl';
