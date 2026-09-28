@@ -11,6 +11,7 @@ use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,6 +62,31 @@ class CustomDomainTest extends ApiTestCase
             302
         );
     }
+
+    #[TestWith(['auto'])]
+    #[TestWith(['manual'])]
+    #[TestWith(['external'])]
+    public function test_redirects_http_app_domain_to_https(string $tlsMode): void
+    {
+        $this->setEnvVar('TLS_MODE', $tlsMode);
+
+        $this->call('blogs.hyvor.com', '/console/10?tab=posts', https: false);
+
+        $this->assertResponseRedirects('https://blogs.hyvor.com/console/10?tab=posts', 308);
+    }
+
+    public function test_does_not_redirect_app_domain_to_https_when_tls_disabled(): void
+    {
+        $this->setEnvVar('TLS_MODE', 'disabled');
+
+        $this->call('blogs.hyvor.com', '/console', https: false);
+
+        $this->assertResponseRedirects(
+            'http://blogs.hyvor.com/?via=custom_domain&host=blogs.hyvor.com',
+            302
+        );
+    }
+
 
     public function test_returns_response_when_blog_found(): void
     {

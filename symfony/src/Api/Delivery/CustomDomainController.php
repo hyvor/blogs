@@ -2,6 +2,7 @@
 
 namespace App\Api\Delivery;
 
+use App\Entity\Enum\TlsMode;
 use App\Service\AppConfig;
 use App\Service\Delivery\DeliveryService;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
@@ -58,6 +59,16 @@ class CustomDomainController
     public function serveBlog(string $path, Request $request): Response
     {
         $host = $request->getHost();
+
+        // this happens on port 80 only
+        if (
+            $host === $this->appConfig->getDomainApp() &&
+            !$request->isSecure() &&
+            $this->appConfig->getTlsMode() !== TlsMode::DISABLED
+        ) {
+            return new RedirectResponse('https://' . $host . $request->getRequestUri(), 308);
+        }
+
         $blog = $this->customDomainService->getBlogByCustomDomain($host);
 
         if ($blog === null || $blog->getDeletedAt()) {
