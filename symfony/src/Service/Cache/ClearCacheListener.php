@@ -203,7 +203,9 @@ class ClearCacheListener
     public function onConfigEdited(ConfigEditedEvent $event): void
     {
         $blog = $event->file->getBlog();
+        $this->cacheService->clearSingleCache($blog, '/styles.css');
         $this->cacheService->clearTemplateCache($blog);
+        $this->updateStylesVersion($blog);
     }
 
     #[AsEventListener]

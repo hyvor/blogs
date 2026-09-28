@@ -469,14 +469,21 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
     }
 
-    public function test_config_edited_clears_template_cache(): void
+    public function test_config_edited_clears_template_and_styles_cache_and_bumps_styles_version(): void
     {
         $blog = BlogFactory::createOne();
+        $versionBefore = $blog->getMeta()->cache_version_styles;
         $file = ThemeFileFactory::createOneFor($blog, 'config.yml', 'key: value');
 
         $this->dispatch(new ConfigEditedEvent($file));
 
         $this->getEd()->assertDispatched(CacheClearTemplatesEvent::class);
+
+        /** @var CacheClearSingleEvent $event */
+        $event = $this->getEd()->getFirstEvent(CacheClearSingleEvent::class);
+        $this->assertSame('/styles.css', $event->path);
+
+        $this->assertSame($versionBefore + 1, $blog->getMeta()->cache_version_styles);
     }
 
     public function test_lang_edited_clears_template_cache(): void
