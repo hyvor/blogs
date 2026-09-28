@@ -754,6 +754,7 @@
 				"deselectAll": "Deselect all",
 				"deliveryStatus": {
 					"pending": "Pending",
+					"retrying": "Retrying",
 					"success": "Success",
 					"failed": "Failed"
 				}

@@ -493,7 +493,7 @@ export interface Webhook {
 	secret: string;
 }
 
-export type WebhookDeliveryStatus = 'pending' | 'success' | 'failed';
+export type WebhookDeliveryStatus = 'pending' | 'retrying' | 'success' | 'failed';
 
 export interface WebhookDelivery {
 	id: number;
