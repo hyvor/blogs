@@ -197,7 +197,7 @@ class PostService
         /** @var list<array{pid: int}> $postIdRows */
         $postIdRows = $qb->setMaxResults($limit)
             // need to select the columns in the WHERE clause
-            ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.updated_at, p.is_featured, pv.published_at, p.created_at')
+            ->select('DISTINCT p.id as pid, pv.title, pv.words, pv.content_updated_at, p.is_featured, pv.published_at, p.created_at')
             ->setFirstResult($offset)
             ->getQuery()
             ->getArrayResult();
