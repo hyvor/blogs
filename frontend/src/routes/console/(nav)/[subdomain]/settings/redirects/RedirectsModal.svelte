@@ -90,7 +90,7 @@
 				});
 		} else {
 			loading = true;
-			updateRedirect(redirect!.id, dynamic, from, to, type)
+			updateRedirect(redirect!.id, from, to, type)
 				.then((res) => {
 					toast.success(i18n.t('console.settings.redirects.updated'));
 					dispatch('update', res);
