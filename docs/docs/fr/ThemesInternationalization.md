@@ -4,7 +4,7 @@
 
 # Internationalisation
 
-Nous ne nous attendons pas à ce que vous traduisiez les thèmes dans plusieurs langues, mais le thème doit être traduisible. Cela signifie que toutes les chaînes de caractères dans les fichiers de template **doivent être traduisibles**. C'est une exigence si vous prévoyez de [publier](https://blogs.hyvor.com/docs/themes-publishing) le thème.
+Nous ne nous attendons pas à ce que vous traduisiez les thèmes dans plusieurs langues, mais le thème doit être traduisible. Cela signifie que toutes les chaînes de caractères dans les fichiers de template **doivent être traduisibles**. C'est une exigence si vous prévoyez de [publier](https://hyvor.com/blogs/docs/themes-publishing) le thème.
 
 <Callout type="info">
 	<p>Si vous créez un thème privé pour un blog dans une seule langue, vous pouvez sauter cette partie.</p>

@@ -4,7 +4,7 @@
 
 # Hyvor Talk Integration
 
-Hyvor Blogs natively integrates with [Hyvor Talk](https://talk.hyvor.com), a privacy-first commenting platform, to add comments to your blog posts.
+Hyvor Blogs natively integrates with [Hyvor Talk](https://hyvor.com/talk), a privacy-first commenting platform, to add comments to your blog posts.
 
 - [Features](#features)
 - [Pricing](#pricing)
@@ -57,7 +57,7 @@ If you need more credits, you have two options: either upgrade your Hyvor Blogs 
 
 To connect Hyvor Talk to your blog, go to **Settings &rarr; Integrations &rarr; Hyvor Talk** and click **Connect Now**.
 
-When you connect, a new website is created within your organization on Hyvor Talk, and your blog is linked to it. You can manage comments from the Hyvor Blogs Console or directly from the [Hyvor Talk Console](https://talk.hyvor.com).
+When you connect, a new website is created within your organization on Hyvor Talk, and your blog is linked to it. You can manage comments from the Hyvor Blogs Console or directly from the [Hyvor Talk Console](https://talk.hyvor.com/console).
 
 Disconnecting removes the website from Hyvor Talk entirely, along with all its comments, moderators, and settings, so make sure this is what you want before disconnecting.
 
@@ -65,7 +65,7 @@ Disconnecting removes the website from Hyvor Talk entirely, along with all its c
 
 Once connected, Hyvor Blogs automatically adds the Hyvor Talk embed code to your blog's [`_comments` variable](/docs/themes-templates#placeholders), which themes typically render below the post content.
 
-You can customize the embed code at **Settings &rarr; Integrations &rarr; Hyvor Talk** - for example, to change comment sorting or other [embed options](https://talk.hyvor.com/docs/embed). You can reset it back to the default at any time.
+You can customize the embed code at **Settings &rarr; Integrations &rarr; Hyvor Talk** - for example, to change comment sorting or other [embed options](https://hyvor.com/talk/docs/embed). You can reset it back to the default at any time.
 
 <h2 id="access">Access Mapping</h2>
 

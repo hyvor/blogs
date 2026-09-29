@@ -138,7 +138,7 @@
 			params={{
 				link: {
 					element: 'a',
-					props: { href: 'https://talk.hyvor.com', target: '_blank', class: 'hds-link' }
+					props: { href: 'https://hyvor.com/talk', target: '_blank', class: 'hds-link' }
 				}
 			}}
 		/>

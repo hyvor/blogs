@@ -33,7 +33,7 @@ DOMAIN_APP=
 # Si défini, un sous-domaine du domaine de livraison sera utilisé pour héberger les blogs
 # Si l'URL de livraison est https://blogs.yourcompany.com, les blogs seront hébergés à l'adresse https://<blog-subdomain>.blogs.yourcompany.com
 # La terminaison TLS pour *.deliverydomain doit être gérée par un reverse proxy
-# voir https://blogs.hyvor.com/hosting/delivery-domain
+# voir https://hyvor.com/blogs/hosting/delivery-domain
 DELIVERY_URL=
 
 # Système de fichiers pour le stockage des médias
@@ -56,7 +56,7 @@ MAIL_PASSWORD=
 
 # TLS_MODE contrôle la façon dont HTTPS est géré pour DOMAIN_APP.
 # L'une des valeurs suivantes : auto, external, manual, ou disabled
-# Voir https://blogs.hyvor.com/hosting/deploy#tls
+# Voir https://hyvor.com/blogs/hosting/deploy#tls
 TLS_MODE=
 
 # Adresses IP ou plages CIDR des proxys de confiance.
