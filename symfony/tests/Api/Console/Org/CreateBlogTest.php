@@ -182,7 +182,7 @@ class CreateBlogTest extends ApiTestCase
             (string) $contentStylesPostVariant->getContent()
         );
         $this->assertStringContainsString(
-            'https://blogs.hyvor.com/docs/writing',
+            'https://hyvor.com/blogs/docs/writing',
             (string) $contentStylesPostVariant->getContentHtml()
         );
         $this->assertStringContainsString(

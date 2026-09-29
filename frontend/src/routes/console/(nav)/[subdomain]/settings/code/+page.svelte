@@ -31,7 +31,7 @@
 					docsLink: {
 						element: 'a',
 						props: {
-							href: 'https://blogs.hyvor.com/docs/custom-code',
+							href: 'https://hyvor.com/blogs/docs/custom-code',
 							target: '_blank',
 							class: 'hds-link'
 						}

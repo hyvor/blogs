@@ -4,7 +4,7 @@ namespace App\Entity\Enum;
 
 /**
  * How TLS is handled for the app domain (DOMAIN_APP).
- * https://blogs.hyvor.com/hosting/deploy#tls
+ * https://hyvor.com/blogs/hosting/deploy#tls
  */
 enum TlsMode: string
 {

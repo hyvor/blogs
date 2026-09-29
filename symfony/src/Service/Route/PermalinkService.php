@@ -13,7 +13,7 @@ use App\Service\AppConfig;
 
 /**
  * Manages permalinks of the blog
- * https://blogs.hyvor.com/docs/routes#permalinks
+ * https://hyvor.com/blogs/docs/routes#permalinks
  */
 class PermalinkService
 {
