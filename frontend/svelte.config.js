@@ -1,6 +1,5 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapter from '@sveltejs/adapter-static';
-import { APP_REDIRECTS } from './src/redirects.js';
 import { markdownPlugin } from '@hyvor/design/dev';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -16,7 +15,7 @@ const config = {
 		prerender: {
 			handleMissingId: 'warn',
 			handleHttpError: 'warn',
-			entries: ['*', '/fr/docs', '/fr/hosting', ...Object.keys(APP_REDIRECTS)]
+			entries: ['*']
 		},
 		inlineStyleThreshold: 2048,
 		alias: {

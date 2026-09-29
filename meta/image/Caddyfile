@@ -20,6 +20,43 @@
     }
 }
 
+(marketing_redirects) {
+	# ?query of the request, to be appended to the redirect URL
+	@has_query expression {query} != ""
+	vars @has_query query_suffix ?{query}
+
+	import docs_redirects
+	import marketing_redirects_{$DEPLOYMENT:on-prem}
+}
+
+# docs are served at hyvor.com/blogs/docs and hyvor.com/blogs/hosting (in all deployments)
+# they are only rendered in this app in dev
+(docs_redirects) {
+	# /fr/docs/tags -> https://hyvor.com/fr/blogs/docs/tags
+	@docs path_regexp docs ^(/fr)?/(docs|hosting)((?:/[^/]+)*)/?$
+	redir @docs https://hyvor.com{re.docs.1}/blogs/{re.docs.2}{re.docs.3}{vars.query_suffix} 301
+}
+
+# old marketing pages moved to hyvor.com/blogs
+(marketing_redirects_cloud) {
+	# translated pages keep the language (/fr/pricing -> https://hyvor.com/fr/blogs/pricing)
+	@marketing path_regexp marketing ^(/fr)?(/pricing|/eu|/multi-language|/self-hosted)?/?$
+	redir @marketing https://hyvor.com{re.marketing.1}/blogs{re.marketing.2}{vars.query_suffix} 301
+
+	# English-only pages (/fr/terms -> https://hyvor.com/blogs/terms)
+	@marketing_en path_regexp marketing_en ^(?:/fr)?(/themes|/terms|/privacy)/?$
+	redir @marketing_en https://hyvor.com/blogs{re.marketing_en.1}{vars.query_suffix} 301
+
+	# integrations pages were removed
+	@marketing_integrations path_regexp ^(?:/fr)?/integrations(?:/.*)?$
+	redir @marketing_integrations https://hyvor.com/blogs{vars.query_suffix} 301
+}
+
+(marketing_redirects_on-prem) {
+	# self-hosted instances only serve the console
+	redir / /console{vars.query_suffix} 302
+}
+
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
@@ -38,6 +75,8 @@
 		path /sudo*
 	}
 	header @noindex X-Robots-Tag "noindex, nofollow"
+
+	import marketing_redirects
 
 	@backend {
 		path /api/*
