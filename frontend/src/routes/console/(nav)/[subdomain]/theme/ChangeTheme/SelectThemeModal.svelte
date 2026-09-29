@@ -73,7 +73,7 @@
 >
 	{#snippet title()}
 		<div class="title">
-			Choose a theme <Button as="a" href="/themes" target="_blank" size="small">
+			Choose a theme <Button as="a" href="https://hyvor.com/blogs/themes" target="_blank" size="small">
 				Preview Themes {#snippet end()}
 					<IconBoxArrowUpRight size={12} />
 				{/snippet}

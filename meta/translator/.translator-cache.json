@@ -1,7 +1,4 @@
 {
-	"../../frontend/src/routes/(marketing)/[[lang]]/locale/en.json": {
-		"fr": "9f5485cd6c20e269f05834d5856fc860964cd5ed3ea376eabdf50fe27b1a8be2"
-	},
 	"../../docs/docs/en/Introduction.svelte": {
 		"fr": "dbede5e43f1773ab4ccb4bdcb589e84bacf2354a6a0e6e5221b7c20d7a789cf6"
 	},
@@ -24,7 +21,7 @@
 		"fr": "72ffcbddbfec246ce77a7213d80c01d543ebf488e3702a896841b37bd36a1fe5"
 	},
 	"../../docs/docs/en/ThemesPublishing.md": {
-		"fr": "09b2d4ae496fd3303425a8922ea60279bc1262696caef7b35e1507de5a02424b"
+		"fr": "96928a466091f13a972a7d28b19702246519c365809919a11ae46b255715ecdc"
 	},
 	"../../docs/hosting/en/Env.md": {
 		"fr": "9a83073505b8351fff5a87b11498901622c733380eec4e109da3f74360fcd99a"
@@ -111,7 +108,7 @@
 		"fr": "ad32c48aa48a1d171b51783d69ccd6e3a4dcddd5f83f68681c587994197496fe"
 	},
 	"../../docs/docs/en/AIAgent.md": {
-		"fr": "fd80065f52e10182c7c2918c96f1f493ee2ab9eb991632c59fc63979b817e286"
+		"fr": "475a44fa26bb652fe1b835579c81a75fda1693e10b5299ed6a844c1dd6afd5e2"
 	},
 	"../../docs/docs/en/CustomDomain.md": {
 		"fr": "ca49bd0e9ae0e3b1da7639cf9856a51d8e5f5e85762f253e40ed4e53c8795e57"
@@ -135,7 +132,7 @@
 		"fr": "0f6a1cf6f0c317a2faa8992353ad7da432c9bfcf17eed478621a2e183f8cc574"
 	},
 	"../../docs/docs/en/Themes.md": {
-		"fr": "7d752c5c55219ea3e6e3ea519d95c5b6b9768b47a6323bed097878efa2e5991f"
+		"fr": "47f2c0c58b111c5b3caffc3a74f4667ad36f5e7bf08f147b1dbce9d911302b07"
 	},
 	"../../docs/docs/en/Users.md": {
 		"fr": "3bb4b46a79fff178df5c577fa117ddd6d3e96894e480b4027542222e13867beb"

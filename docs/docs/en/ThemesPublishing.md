@@ -4,7 +4,7 @@
 
 <h1 id="publishing-themes">Publishing Themes</h1>
 
-Are you ready to publish your newly built theme to our [themes list](/themes)? To do that, your theme should be developed within a fork of our <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a> repository. After everything is completed, send us a pull request to the `main` branch. If merged, your theme will be automatically added to our theme list, and other bloggers can install it easily.
+Are you ready to publish your newly built theme to our [themes list](https://hyvor.com/blogs/themes)? To do that, your theme should be developed within a fork of our <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a> repository. After everything is completed, send us a pull request to the `main` branch. If merged, your theme will be automatically added to our theme list, and other bloggers can install it easily.
 
 <Callout type="info">
 	<p>

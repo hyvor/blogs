@@ -4,7 +4,7 @@
 
 # Themes
 
-Hyvor Blogs comes with a few pre-built themes (see [Themes](/themes)). When you create a blog, the default theme, **Hello**, will be installed on your blog. You can change the theme or edit theme files to customize your blog.
+Hyvor Blogs comes with a few pre-built themes (see [Themes](https://hyvor.com/blogs/themes)). When you create a blog, the default theme, **Hello**, will be installed on your blog. You can change the theme or edit theme files to customize your blog.
 
 - [Changing Theme](#changing)
 - [Editing Theme Files](#editing)

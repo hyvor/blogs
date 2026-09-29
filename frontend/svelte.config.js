@@ -16,7 +16,7 @@ const config = {
 		prerender: {
 			handleMissingId: 'warn',
 			handleHttpError: 'warn',
-			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
+			entries: ['*', '/fr/docs', '/fr/hosting', ...Object.keys(APP_REDIRECTS)]
 		},
 		inlineStyleThreshold: 2048,
 		alias: {

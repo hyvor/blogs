@@ -80,7 +80,7 @@ Une fois terminé, cliquez sur « Appliquer les modifications » pour enregistre
 
 <h2 id="pricing">Tarification</h2>
 
-Chaque [plan tarifaire](/pricing) est accompagné d'un quota d'utilisation IA pour votre organisation, qui sera utilisé par tous les blogs de cette organisation. Dans **Console & Facturation**, vous pouvez consulter votre utilisation actuelle et le quota restant. Il se réinitialise le premier jour de chaque mois.
+Chaque [plan tarifaire](https://hyvor.com/blogs/pricing) est accompagné d'un quota d'utilisation IA pour votre organisation, qui sera utilisé par tous les blogs de cette organisation. Dans **Console & Facturation**, vous pouvez consulter votre utilisation actuelle et le quota restant. Il se réinitialise le premier jour de chaque mois.
 
 Les modèles plus grands et plus coûteux consomment davantage votre quota d'utilisation IA. **Console &rarr; Paramètres &rarr; IA** affiche une comparaison relative de la consommation des modèles. Nous recommandons de commencer avec des modèles plus petits et de n'utiliser des modèles plus grands que lorsque cela est nécessaire.
 

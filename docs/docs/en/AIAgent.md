@@ -80,7 +80,7 @@ Once done, click "Apply Changes" to save the post.
 
 <h2 id="pricing">Pricing</h2>
 
-Each [pricing plan](/pricing) comes with an AI usage quota for your organization that will be used by all blogs under that organization. In **Console & Billing**, you can view your current usage and remaining quota. It resets on the first day of each month.
+Each [pricing plan](https://hyvor.com/blogs/pricing) comes with an AI usage quota for your organization that will be used by all blogs under that organization. In **Console & Billing**, you can view your current usage and remaining quota. It resets on the first day of each month.
 
 Larger, expensive models consume more of your AI usage quota. **Console &rarr; Settings &rarr; AI** shows a relative comparison of the models' consumption. We recommend starting with smaller models and only using larger models when necessary.
 

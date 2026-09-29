@@ -4,7 +4,7 @@
 
 <h1 id="publishing-themes">Publier des thèmes</h1>
 
-Êtes-vous prêt à publier votre thème nouvellement créé dans notre [liste de thèmes](/themes) ? Pour ce faire, votre thème doit être développé dans un fork de notre dépôt <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a>. Une fois tout terminé, envoyez-nous une pull request vers la branche `main`. Si elle est fusionnée, votre thème sera automatiquement ajouté à notre liste de thèmes, et les autres blogueurs pourront l'installer facilement.
+Êtes-vous prêt à publier votre thème nouvellement créé dans notre [liste de thèmes](https://hyvor.com/blogs/themes) ? Pour ce faire, votre thème doit être développé dans un fork de notre dépôt <a href="https://github.com/hyvor/hyvor-blogs-themes">hyvor-blogs-themes</a>. Une fois tout terminé, envoyez-nous une pull request vers la branche `main`. Si elle est fusionnée, votre thème sera automatiquement ajouté à notre liste de thèmes, et les autres blogueurs pourront l'installer facilement.
 
 <Callout type="info">
 	<p>

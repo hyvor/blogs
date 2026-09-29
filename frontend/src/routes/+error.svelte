@@ -1,11 +1,7 @@
 <script>
-	import Footer from './(marketing)/Footer.svelte';
-	import Header from './(marketing)/Header.svelte';
-
 	import { Button } from '@hyvor/design/components';
 </script>
 
-<Header />
 <main>
 	<h1 class="heading">404 - Page Not Found</h1>
 	<p class="description">
@@ -14,8 +10,6 @@
 	</p>
 	<Button as="a" size="small" href="/">Go to Home</Button>
 </main>
-
-<Footer />
 
 <style>
 	main {
