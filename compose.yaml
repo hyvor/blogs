@@ -7,6 +7,7 @@ services:
     volumes:
       - ./frontend/src:/app/frontend/src
       - ./frontend/static:/app/frontend/static
+      - ./docs:/app/docs
       - ./frontend/vite.config.ts:/app/frontend/vite.config.ts
       - ./frontend/package.json:/app/frontend/package.json
       - ./frontend/package-lock.json:/app/frontend/package-lock.json

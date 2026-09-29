@@ -14,6 +14,11 @@ export default defineConfig({
 
 	envDir: '../',
 
+	resolve: {
+		// ../docs (outside this directory) imports these
+		dedupe: ['@hyvor/design', '@hyvor/icons']
+	},
+
 	// @ts-ignore
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],

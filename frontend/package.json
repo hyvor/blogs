@@ -12,8 +12,7 @@
 		"lint": "prettier --check .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest",
-		"postbuild": "npx svelte-sitemap --domain https://blogs.hyvor.com -i '200.html'"
+		"test:unit": "vitest"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.10",
@@ -25,7 +24,6 @@
 		"svelte": "^5.57.0",
 		"svelte-check": "^4.7.6",
 		"svelte-dnd-action": "^0.9.79",
-		"svelte-sitemap": "^4.0.4",
 		"typescript": "^6.0.0",
 		"vite": "^8.2.2",
 		"vitest": "^5.0.0"

@@ -1,6 +1,5 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapter from '@sveltejs/adapter-static';
-import { APP_REDIRECTS } from './src/redirects.js';
 import { markdownPlugin } from '@hyvor/design/dev';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -16,9 +15,22 @@ const config = {
 		prerender: {
 			handleMissingId: 'warn',
 			handleHttpError: 'warn',
-			entries: ['*', '/fr', ...Object.keys(APP_REDIRECTS)]
+			entries: ['*']
 		},
-		inlineStyleThreshold: 2048
+		inlineStyleThreshold: 2048,
+		alias: {
+			// docs are kept in the repo root, and synced to hyvor/core
+			$docs: '../docs'
+		},
+		typescript: {
+			config(config) {
+				// ../docs has no node_modules, resolve its types from here
+				config.compilerOptions.paths['@hyvor/design/marketing'] = [
+					'../node_modules/@hyvor/design/dist/marketing/index.d.ts'
+				];
+				config.include.push('../../docs/**/*.ts');
+			}
+		}
 	},
 
 	compilerOptions: {

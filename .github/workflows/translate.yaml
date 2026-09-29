@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'frontend/src/routes/(marketing)/\[\[lang\]\]/locale/en.json'
-      - 'frontend/src/routes/(marketing)/\[\[lang\]\]/docs/\[\[slug\]\]/content/**'
+      - 'docs/*/en/**'
+      - 'docs/*/locale/en.json'
   workflow_dispatch:
     inputs:
       langs:
