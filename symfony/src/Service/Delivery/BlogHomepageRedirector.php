@@ -54,13 +54,15 @@ class BlogHomepageRedirector
             return $this->redirect($via, $host, 'blocked');
         }
 
-        try {
-            $license = $this->licenseService->getCachedLicenseForBlog($blog);
-            if ($license->license === null) {
-                return $this->redirect($via, $host, 'license_expired');
+        if ($this->internalConfig->getDeployment()->isCloud()) {
+            try {
+                $license = $this->licenseService->getCachedLicenseForBlog($blog);
+                if ($license->license === null) {
+                    return $this->redirect($via, $host, 'license_expired');
+                }
+            } catch (FailedToGetLicenseException) {
+                // fail open: do not take blogs down when the license cannot be resolved
             }
-        } catch (FailedToGetLicenseException) {
-            // fail open: do not take blogs down when the license cannot be resolved
         }
 
         return null;
