@@ -155,15 +155,12 @@ class Blog
         return $this;
     }
 
+    /**
+     * @deprecated use getBlockedAt() !== null
+     */
     public function isBlocked(): bool
     {
         return $this->is_blocked;
-    }
-
-    public function setIsBlocked(bool $is_blocked): static
-    {
-        $this->is_blocked = $is_blocked;
-        return $this;
     }
 
     public function getBlockedAt(): ?\DateTimeImmutable
@@ -174,6 +171,7 @@ class Blog
     public function setBlockedAt(?\DateTimeImmutable $blocked_at): static
     {
         $this->blocked_at = $blocked_at;
+        $this->is_blocked = $blocked_at !== null; // legacy column, kept in sync
         return $this;
     }
 

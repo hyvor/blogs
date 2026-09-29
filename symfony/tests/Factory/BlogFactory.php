@@ -39,7 +39,7 @@ final class BlogFactory extends PersistentObjectFactory
         return [
             'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hyvor_user_id' => self::faker()->randomNumber(),
-            'is_blocked' => false,
+            'blocked_at' => null,
             'organization_id' => self::faker()->randomNumber(),
             'subdomain' => bin2hex(random_bytes(20)),
         ];

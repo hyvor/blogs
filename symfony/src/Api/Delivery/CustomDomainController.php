@@ -4,6 +4,7 @@ namespace App\Api\Delivery;
 
 use App\Entity\Enum\TlsMode;
 use App\Service\AppConfig;
+use App\Service\Delivery\BlogHomepageRedirector;
 use App\Service\Delivery\DeliveryService;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
@@ -22,7 +23,8 @@ class CustomDomainController
         private CustomDomainService $customDomainService,
         private DeliveryService $deliveryService,
         private InternalCustomDomainVerificationService $internalCustomDomainVerificationService,
-        private CacheInterface $cache
+        private CacheInterface $cache,
+        private BlogHomepageRedirector $homepageRedirector,
     )
     {
     }
@@ -71,11 +73,13 @@ class CustomDomainController
 
         $blog = $this->customDomainService->getBlogByCustomDomain($host);
 
-        if ($blog === null || $blog->getDeletedAt()) {
-            return new RedirectResponse(
-                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/?via=custom_domain&host=' . $host,
-                302
-            );
+        if ($blog === null) {
+            return $this->homepageRedirector->redirect('custom_domain', $host, 'notfound');
+        }
+
+        $redirect = $this->homepageRedirector->redirectIfUnavailable($blog, 'custom_domain', $host);
+        if ($redirect !== null) {
+            return $redirect;
         }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);

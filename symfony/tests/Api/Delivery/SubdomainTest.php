@@ -8,12 +8,34 @@ use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(SubdomainController::class)]
 class SubdomainTest extends ApiTestCase
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // by default, blogs have a valid license
+        $this->billing()->setLicenses(
+            /** @param int[] $ids */
+            fn(array $ids) => array_fill_keys(
+                $ids,
+                new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, BlogsLicense::trial())
+            )
+        );
+    }
+
+    private function billing(): BillingFake
+    {
+        return $this->getService(BillingFake::class);
+    }
 
     private function call(
         string $host,
@@ -56,7 +78,7 @@ class SubdomainTest extends ApiTestCase
 
         $this->call('nonexistent.hyvorblogs.io', '/some/path');
         $this->assertResponseRedirects(
-            'https://blogs.hyvor.com/?via=subdomain&host=nonexistent.hyvorblogs.io&status=notfound',
+            'https://hyvor.com/blogs?via=subdomain&host=nonexistent.hyvorblogs.io&status=notfound',
             302
         );
     }
@@ -71,7 +93,36 @@ class SubdomainTest extends ApiTestCase
 
         $this->call('testblog.hyvorblogs.io', '/');
         $this->assertResponseRedirects(
-            'https://blogs.hyvor.com/?via=subdomain&host=testblog.hyvorblogs.io&status=deleted',
+            'https://hyvor.com/blogs?via=subdomain&host=testblog.hyvorblogs.io&status=deleted',
+            302
+        );
+    }
+
+    public function test_when_blog_blocked(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
+
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'blocked_at' => new \DateTimeImmutable()]);
+
+        $this->call('testblog.hyvorblogs.io', '/');
+        $this->assertResponseRedirects(
+            'https://hyvor.com/blogs?via=subdomain&host=testblog.hyvorblogs.io&status=blocked',
+            302
+        );
+    }
+
+    public function test_when_license_expired(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
+
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'organization_id' => 1]);
+        $this->billing()->setLicenses([
+            1 => new ResolvedLicense(ResolvedLicenseType::EXPIRED),
+        ]);
+
+        $this->call('testblog.hyvorblogs.io', '/');
+        $this->assertResponseRedirects(
+            'https://hyvor.com/blogs?via=subdomain&host=testblog.hyvorblogs.io&status=license_expired',
             302
         );
     }
