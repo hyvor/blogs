@@ -4,7 +4,7 @@
 
 # Hébergement
 
-[Hyvor Blogs](https://blogs.hyvor.com) est une plateforme de blog rapide et simple qui peut être auto-hébergée sur vos propres serveurs. Cette page vous présentera le processus d'auto-hébergement. Pour commencer immédiatement, consultez la page [Déploiement](/hosting/deploy).
+[Hyvor Blogs](https://hyvor.com/blogs) est une plateforme de blog rapide et simple qui peut être auto-hébergée sur vos propres serveurs. Cette page vous présentera le processus d'auto-hébergement. Pour commencer immédiatement, consultez la page [Déploiement](/hosting/deploy).
 
 ## L'auto-hébergement est une priorité
 

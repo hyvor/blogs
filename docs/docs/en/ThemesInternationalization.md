@@ -4,7 +4,7 @@
 
 # Internationalization
 
-We do not expect you to translate themes to multiple languages, but the theme should be translatable. It means that all strings in the template files **should be translatable**. This is a requirement if you are planning to [publish](https://blogs.hyvor.com/docs/themes-publishing) the theme.
+We do not expect you to translate themes to multiple languages, but the theme should be translatable. It means that all strings in the template files **should be translatable**. This is a requirement if you are planning to [publish](https://hyvor.com/blogs/docs/themes-publishing) the theme.
 
 <Callout type="info">
 	<p>If you are creating a private theme for a single language blog, you may skip this part.</p>

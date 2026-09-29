@@ -4,7 +4,7 @@
 
 # Intégration Hyvor Talk
 
-Hyvor Blogs s'intègre nativement avec [Hyvor Talk](https://talk.hyvor.com), une plateforme de commentaires respectueuse de la vie privée, pour ajouter des commentaires à vos articles de blog.
+Hyvor Blogs s'intègre nativement avec [Hyvor Talk](https://hyvor.com/talk), une plateforme de commentaires respectueuse de la vie privée, pour ajouter des commentaires à vos articles de blog.
 
 - [Fonctionnalités](#features)
 - [Tarification](#pricing)
@@ -57,7 +57,7 @@ Si vous avez besoin de plus de crédits, vous avez deux options : soit mettre à
 
 Pour connecter Hyvor Talk à votre blog, allez dans **Paramètres &rarr; Intégrations &rarr; Hyvor Talk** et cliquez sur **Se connecter maintenant**.
 
-Lorsque vous vous connectez, un nouveau site web est créé au sein de votre organisation sur Hyvor Talk, et votre blog y est lié. Vous pouvez gérer les commentaires depuis la console Hyvor Blogs ou directement depuis la [console Hyvor Talk](https://talk.hyvor.com).
+Lorsque vous vous connectez, un nouveau site web est créé au sein de votre organisation sur Hyvor Talk, et votre blog y est lié. Vous pouvez gérer les commentaires depuis la console Hyvor Blogs ou directement depuis la [console Hyvor Talk](https://hyvor.com/talk).
 
 La déconnexion supprime entièrement le site web de Hyvor Talk, ainsi que tous ses commentaires, modérateurs et paramètres. Assurez-vous donc que c'est bien ce que vous souhaitez avant de vous déconnecter.
 
@@ -65,7 +65,7 @@ La déconnexion supprime entièrement le site web de Hyvor Talk, ainsi que tous 
 
 Une fois connecté, Hyvor Blogs ajoute automatiquement le code d'intégration Hyvor Talk à la [variable `_comments`](/docs/themes-templates#placeholders) de votre blog, que les thèmes affichent généralement sous le contenu de l'article.
 
-Vous pouvez personnaliser le code d'intégration dans **Paramètres &rarr; Intégrations &rarr; Hyvor Talk** - par exemple, pour modifier le tri des commentaires ou d'autres [options d'intégration](https://talk.hyvor.com/docs/embed). Vous pouvez le réinitialiser à tout moment à sa valeur par défaut.
+Vous pouvez personnaliser le code d'intégration dans **Paramètres &rarr; Intégrations &rarr; Hyvor Talk** - par exemple, pour modifier le tri des commentaires ou d'autres [options d'intégration](https://hyvor.com/talk/docs/embed). Vous pouvez le réinitialiser à tout moment à sa valeur par défaut.
 
 <h2 id="access">Correspondance des accès</h2>
 

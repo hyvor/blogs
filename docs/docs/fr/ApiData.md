@@ -909,7 +909,7 @@ Disons que vous souhaitez uniquement obtenir l'ID de l'article et l'ID de l'éti
 
 <Callout type="info">
 	<p>
-		Un auteur est un <a href="https://blogs.hyvor.com/docs/users">utilisateur</a> qui a écrit au moins un article
+		Un auteur est un <a href="https://hyvor.com/blogs/docs/users">utilisateur</a> qui a écrit au moins un article
 	</p>
 </Callout>
 

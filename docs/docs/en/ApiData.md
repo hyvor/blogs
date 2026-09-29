@@ -910,7 +910,7 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 
 <Callout type="info">
 	<p>
-		Author is a <a href="https://blogs.hyvor.com/docs/users">user</a> who has written at least one post
+		Author is a <a href="https://hyvor.com/blogs/docs/users">user</a> who has written at least one post
 	</p>
 </Callout>
 
