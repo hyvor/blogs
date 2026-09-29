@@ -14,6 +14,6 @@
 	dayjs.extend(relativeTime);
 </script>
 
-<Base marketing={page.route.id?.includes('(docs)')}>
+<Base>
 	{@render children?.()}
 </Base>
