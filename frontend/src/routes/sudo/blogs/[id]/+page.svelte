@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { SplitControl, Loader, CodeBlock, toast, IconButton, Button, confirm } from '@hyvor/design/components';
+	import {
+		SplitControl,
+		Loader,
+		CodeBlock,
+		toast,
+		IconButton,
+		Button,
+		confirm
+	} from '@hyvor/design/components';
 	import IconCopy from '@hyvor/icons/IconCopy';
 	import { page } from '$app/stores';
 	import dayjs from 'dayjs';
