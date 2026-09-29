@@ -105,7 +105,7 @@ COPY meta/image/run /app/run
 
 USER chef
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD curl -f http://localhost/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD curl -f http://localhost:8081/api/health || exit 1
 
 EXPOSE 80
 EXPOSE 443
