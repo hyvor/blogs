@@ -1,10 +1,10 @@
 <script>
-	import imgTagsTagAssign from '../images/tags/tag-assign.png';
-	import imgTagsTagPostCreate from '../images/tags/tag-post-create.png';
-	import imgTagsTagsCreateSettings from '../images/tags/tags-create-settings.png';
-	import imgTagsTagsPrivate from '../images/tags/tags-private.png';
-	import imgTagsTagEdit from '../images/tags/tag-edit.png';
-	import imgTagsTagDelete from '../images/tags/tag-delete.png';
+	const imgTagsTagAssign = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tag-assign.png';
+	const imgTagsTagPostCreate = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tag-post-create.png';
+	const imgTagsTagsCreateSettings = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tags-create-settings.png';
+	const imgTagsTagsPrivate = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tags-private.png';
+	const imgTagsTagEdit = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tag-edit.png';
+	const imgTagsTagDelete = 'https://media.hyvor.com/blogs.hyvor.com/docs/tags/tag-delete.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>
 

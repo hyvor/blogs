@@ -1,7 +1,7 @@
 <script lang="ts">
-	import imgLanguagesAddLanguage from '../images/languages/add-language.png';
-	import imgLanguagesTranslatePostVariant from '../images/languages/translate-post-variant.gif';
-	import imgLanguagesTranslateData from '../images/languages/translate-data.gif';
+	const imgLanguagesAddLanguage = 'https://media.hyvor.com/blogs.hyvor.com/docs/languages/add-language.png';
+	const imgLanguagesTranslatePostVariant = 'https://media.hyvor.com/blogs.hyvor.com/docs/languages/translate-post-variant.gif';
+	const imgLanguagesTranslateData = 'https://media.hyvor.com/blogs.hyvor.com/docs/languages/translate-data.gif';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Table, TableRow } from '@hyvor/design/components';
 </script>

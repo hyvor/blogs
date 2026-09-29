@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgWritingSeo from '../images/writing/seo.png';
+	const imgWritingSeo = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/seo.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout } from '@hyvor/design/components';
 </script>

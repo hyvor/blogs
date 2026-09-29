@@ -1,6 +1,6 @@
 <script>
-	import imgRedirectCreateRedirect from '../images/redirect/create-redirect.png';
-	import imgRedirectDynamicRedirect from '../images/redirect/dynamic-redirect.png';
+	const imgRedirectCreateRedirect = 'https://media.hyvor.com/blogs.hyvor.com/docs/redirect/create-redirect.png';
+	const imgRedirectDynamicRedirect = 'https://media.hyvor.com/blogs.hyvor.com/docs/redirect/dynamic-redirect.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout } from '@hyvor/design/components';
 	import IconExclamationOctagonFill from '@hyvor/icons/IconExclamationOctagonFill';

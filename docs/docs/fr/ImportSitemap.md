@@ -1,5 +1,5 @@
 <script>
-	import imgImportCssSelectors from '../images/import/css-selectors.png';
+	const imgImportCssSelectors = 'https://media.hyvor.com/blogs.hyvor.com/docs/import/css-selectors.png';
 	import { Table, TableRow } from '@hyvor/design/components';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>

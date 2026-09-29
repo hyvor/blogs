@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgCustomDomainCustomDomainSettings from '../images/custom-domain/custom-domain-settings.png';
+	const imgCustomDomainCustomDomainSettings = 'https://media.hyvor.com/blogs.hyvor.com/docs/custom-domain/custom-domain-settings.png';
 	import { Callout } from '@hyvor/design/components';
 	import IconLightbulb from '@hyvor/icons/IconLightbulb';
 	import { DocsImage } from '@hyvor/design/marketing';

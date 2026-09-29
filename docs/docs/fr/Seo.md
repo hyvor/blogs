@@ -1,6 +1,6 @@
 <script lang="ts">
-	import imgSeoRichSchemaTags from '../images/seo/rich-schema-tags.png';
-	import imgSeoCanonicalSetting from '../images/seo/canonical-setting.png';
+	const imgSeoRichSchemaTags = 'https://media.hyvor.com/blogs.hyvor.com/docs/seo/rich-schema-tags.png';
+	const imgSeoCanonicalSetting = 'https://media.hyvor.com/blogs.hyvor.com/docs/seo/canonical-setting.png';
 	import { Table, TableRow } from '@hyvor/design/components';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>

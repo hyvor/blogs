@@ -1,8 +1,8 @@
 <script>
-	import imgFontsFontsSelect from '../images/fonts/fonts-select.png';
-	import imgFontsFontsConfig from '../images/fonts/fonts-config.png';
-	import imgFontsFontsEmbedCss from '../images/fonts/fonts-embed-css.png';
-	import imgFontsFontsUse from '../images/fonts/fonts-use.png';
+	const imgFontsFontsSelect = 'https://media.hyvor.com/blogs.hyvor.com/docs/fonts/fonts-select.png';
+	const imgFontsFontsConfig = 'https://media.hyvor.com/blogs.hyvor.com/docs/fonts/fonts-config.png';
+	const imgFontsFontsEmbedCss = 'https://media.hyvor.com/blogs.hyvor.com/docs/fonts/fonts-embed-css.png';
+	const imgFontsFontsUse = 'https://media.hyvor.com/blogs.hyvor.com/docs/fonts/fonts-use.png';
 	import { Callout, CodeBlock } from '@hyvor/design/components';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgOverviewThemeDevRendering from '../images/overview/theme-dev-rendering.png';
+	const imgOverviewThemeDevRendering = 'https://media.hyvor.com/blogs.hyvor.com/docs/overview/theme-dev-rendering.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout } from '@hyvor/design/components';
 </script>

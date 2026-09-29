@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgExportExport from '../images/export/export.gif';
+	const imgExportExport = 'https://media.hyvor.com/blogs.hyvor.com/docs/export/export.gif';
 	import { DocsImage } from '@hyvor/design/marketing';
     import { Callout } from '@hyvor/design/components';
 </script>

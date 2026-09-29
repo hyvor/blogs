@@ -23,6 +23,6 @@ These directories are synced to [hyvor/core](https://github.com/hyvor/core), whi
 Each section is copied as-is to another repo, so it must be self-contained:
 
 - Only import from within this directory, `svelte`, `@hyvor/design`, and `@hyvor/icons`.
-- Import images relatively (`import img from '../images/foo.png'`), never reference `/static` files.
+- Host images on R2 (`hyvor-media` bucket, `blogs.hyvor.com/docs/` prefix) and reference them by URL (`const img = 'https://media.hyvor.com/blogs.hyvor.com/docs/foo.png'`), never reference `/static` files.
 - Link to other docs pages with root-relative paths as they are served in this repo (`/docs/routes`, `/hosting/env`). The sync prefixes them with the product path (`/blogs/docs/routes`).
 - Link to marketing pages with absolute URLs (`https://hyvor.com/blogs/pricing`), and to the app with `https://blogs.hyvor.com/console`.

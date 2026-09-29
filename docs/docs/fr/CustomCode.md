@@ -1,7 +1,7 @@
 <script lang="ts">
-	import imgCustomCodeCustomCodeBlog from '../images/custom-code/custom-code-blog.png';
-	import imgCustomCodeCustomCodePost from '../images/custom-code/custom-code-post.png';
-	import imgCustomCodeCustomCodeTag from '../images/custom-code/custom-code-tag.png';
+	const imgCustomCodeCustomCodeBlog = 'https://media.hyvor.com/blogs.hyvor.com/docs/custom-code/custom-code-blog.png';
+	const imgCustomCodeCustomCodePost = 'https://media.hyvor.com/blogs.hyvor.com/docs/custom-code/custom-code-post.png';
+	const imgCustomCodeCustomCodeTag = 'https://media.hyvor.com/blogs.hyvor.com/docs/custom-code/custom-code-tag.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import IconBrush from '@hyvor/icons/IconBrush';
 	import IconPencil from '@hyvor/icons/IconPencil';

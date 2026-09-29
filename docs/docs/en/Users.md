@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgUsersAddUser from '../images/users/add-user.png';
+	const imgUsersAddUser = 'https://media.hyvor.com/blogs.hyvor.com/docs/users/add-user.png';
 	import { Table, TableRow } from '@hyvor/design/components';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>

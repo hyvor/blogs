@@ -1,7 +1,7 @@
 <script>
-	import imgAgentAgentInEditor from '../images/agent/agent-in-editor.png';
-	import imgAgentReviewChangesButton from '../images/agent/review-changes-button.png';
-	import imgAgentReviewModal from '../images/agent/review-modal.png';
+	const imgAgentAgentInEditor = 'https://media.hyvor.com/blogs.hyvor.com/docs/agent/agent-in-editor.png';
+	const imgAgentReviewChangesButton = 'https://media.hyvor.com/blogs.hyvor.com/docs/agent/review-changes-button.png';
+	const imgAgentReviewModal = 'https://media.hyvor.com/blogs.hyvor.com/docs/agent/review-modal.png';
     import {DocsImage} from '@hyvor/design/marketing';
     import { Callout } from '@hyvor/design/components';
 </script>

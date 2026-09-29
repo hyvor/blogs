@@ -1,14 +1,14 @@
 <script lang="ts">
-	import imgWritingPostsPagesConsole from '../images/writing/posts-pages-console.png';
-	import imgWritingPostMetaData from '../images/writing/post-meta-data.png';
-	import imgWritingPostMetadataAdvanced from '../images/writing/post-metadata-advanced.png';
-	import imgWritingPublishing from '../images/writing/publishing.gif';
-	import imgWritingPublishSchedule from '../images/writing/publish-schedule.gif';
-	import imgWritingUnpublish from '../images/writing/unpublish.gif';
-	import imgWritingDelete from '../images/writing/delete.gif';
-	import imgWritingSaving from '../images/writing/saving.gif';
-	import imgWritingEditor from '../images/writing/editor.png';
-	import imgWritingAi from '../images/writing/ai.gif';
+	const imgWritingPostsPagesConsole = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/posts-pages-console.png';
+	const imgWritingPostMetaData = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/post-meta-data.png';
+	const imgWritingPostMetadataAdvanced = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/post-metadata-advanced.png';
+	const imgWritingPublishing = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/publishing.gif';
+	const imgWritingPublishSchedule = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/publish-schedule.gif';
+	const imgWritingUnpublish = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/unpublish.gif';
+	const imgWritingDelete = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/delete.gif';
+	const imgWritingSaving = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/saving.gif';
+	const imgWritingEditor = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/editor.png';
+	const imgWritingAi = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/ai.gif';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout, Table, TableRow } from '@hyvor/design/components';
 </script>

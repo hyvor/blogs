@@ -1,5 +1,5 @@
 <script lang="ts">
-	import imgWritingLinkAnalysis from '../images/writing/link-analysis.png';
+	const imgWritingLinkAnalysis = 'https://media.hyvor.com/blogs.hyvor.com/docs/writing/link-analysis.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 	import { Callout, Table, TableRow } from '@hyvor/design/components';
 </script>

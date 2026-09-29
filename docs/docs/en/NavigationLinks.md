@@ -1,5 +1,5 @@
 <script>
-	import imgNavigationNavigationCreate from '../images/navigation/navigation-create.png';
+	const imgNavigationNavigationCreate = 'https://media.hyvor.com/blogs.hyvor.com/docs/navigation/navigation-create.png';
 	import { DocsImage } from '@hyvor/design/marketing';
 </script>
 
