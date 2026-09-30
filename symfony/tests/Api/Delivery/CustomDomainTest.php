@@ -62,7 +62,7 @@ class CustomDomainTest extends ApiTestCase
         $response = $this->call('nonexistent.customdomain.com', '/some/path');
 
         $this->assertResponseRedirects(
-            'https://hyvor.com/blogs?via=custom_domain&host=nonexistent.customdomain.com&status=notfound',
+            'https://hyvor.com/blogs?via=custom_domain&host=nonexistent.customdomain.com&status=not_found',
             302
         );
     }
@@ -143,7 +143,7 @@ class CustomDomainTest extends ApiTestCase
         $this->call('blogs.hyvor.com', '/console', https: false);
 
         $this->assertResponseRedirects(
-            'https://hyvor.com/blogs?via=custom_domain&host=blogs.hyvor.com&status=notfound',
+            'https://hyvor.com/blogs?via=custom_domain&host=blogs.hyvor.com&status=not_found',
             302
         );
     }

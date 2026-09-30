@@ -101,12 +101,7 @@ class BlogController extends AbstractController
     public function getBlog(
         #[MapEntity] Blog $blog,
     ): JsonResponse {
-        return new JsonResponse(
-            $this->sudoObjectFactory->create(
-                $blog,
-                [Blog::class => ['variants']],
-            ),
-        );
+        return $this->blogResponse($blog);
     }
 
     #[Route('/blogs/{id}/block', methods: 'POST')]

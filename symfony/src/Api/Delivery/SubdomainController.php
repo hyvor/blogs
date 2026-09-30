@@ -49,7 +49,7 @@ class SubdomainController
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
 
         if ($blog === null) {
-            return $this->homepageRedirector->redirect('subdomain', $host, 'notfound');
+            return $this->homepageRedirector->redirect('subdomain', $host, 'not_found');
         }
 
         $redirect = $this->homepageRedirector->redirectIfUnavailable($blog, 'subdomain', $host);

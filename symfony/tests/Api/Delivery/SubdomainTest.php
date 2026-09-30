@@ -78,7 +78,7 @@ class SubdomainTest extends ApiTestCase
 
         $this->call('nonexistent.hyvorblogs.io', '/some/path');
         $this->assertResponseRedirects(
-            'https://hyvor.com/blogs?via=subdomain&host=nonexistent.hyvorblogs.io&status=notfound',
+            'https://hyvor.com/blogs?via=subdomain&host=nonexistent.hyvorblogs.io&status=not_found',
             302
         );
     }

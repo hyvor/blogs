@@ -74,7 +74,7 @@ class CustomDomainController
         $blog = $this->customDomainService->getBlogByCustomDomain($host);
 
         if ($blog === null) {
-            return $this->homepageRedirector->redirect('custom_domain', $host, 'notfound');
+            return $this->homepageRedirector->redirect('custom_domain', $host, 'not_found');
         }
 
         $redirect = $this->homepageRedirector->redirectIfUnavailable($blog, 'custom_domain', $host);

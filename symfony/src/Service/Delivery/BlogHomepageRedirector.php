@@ -30,7 +30,7 @@ class BlogHomepageRedirector
         if ($this->internalConfig->getDeployment()->isCloud()) {
             $base = rtrim($this->internalConfig->getInstance(), '/') . '/blogs';
         } else {
-            $base = $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/';
+            $base = $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp();
         }
 
         return new RedirectResponse(
