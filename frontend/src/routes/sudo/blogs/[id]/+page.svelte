@@ -1,12 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { SplitControl, Loader, CodeBlock, toast, IconButton } from '@hyvor/design/components';
+	import {
+		SplitControl,
+		Loader,
+		CodeBlock,
+		toast,
+		IconButton,
+		Button,
+		confirm
+	} from '@hyvor/design/components';
 	import IconCopy from '@hyvor/icons/IconCopy';
 	import { page } from '$app/stores';
 	import dayjs from 'dayjs';
 	import type { Blog } from '../../types';
 	import sudoApi from '../../lib/sudoApi';
 	import { getHostingUrl } from '../../lib/blogUrl';
+	import { blockBlog, unblockBlog } from '../../lib/sudoActions';
 
 	let blog: Blog | undefined = $state();
 
@@ -23,6 +32,26 @@
 			.catch((err) => {
 				toast.error(err.message);
 			});
+	}
+
+	async function setBlocked(blocked: boolean) {
+		const confirmed = await confirm({
+			title: blocked ? 'Block blog' : 'Unblock blog',
+			content: blocked
+				? 'Visitors of this blog will be redirected to the homepage. Continue?'
+				: 'This blog will be served again. Continue?',
+			confirmText: blocked ? 'Block' : 'Unblock',
+			danger: blocked
+		});
+
+		if (!confirmed) return;
+
+		try {
+			blog = await (blocked ? blockBlog(id) : unblockBlog(id));
+			toast.success(blocked ? 'Blog blocked' : 'Blog unblocked');
+		} catch (err: any) {
+			toast.error(err.message);
+		}
 	}
 
 	function copyId() {
@@ -82,6 +111,14 @@
 			{:else}
 				No
 			{/if}
+			<Button
+				size="small"
+				color={blog.is_blocked ? 'input' : 'red'}
+				style="margin-left:10px;"
+				on:click={() => setBlocked(!blog!.is_blocked)}
+			>
+				{blog.is_blocked ? 'Unblock' : 'Block'}
+			</Button>
 		</SplitControl>
 
 		<SplitControl column label="Blog Object">

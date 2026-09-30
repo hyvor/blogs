@@ -4,7 +4,7 @@
 
 # Hosting
 
-[Hyvor Blogs](https://blogs.hyvor.com) is a fast and simple blogging platform that can be self-hosted on your own servers. This page will introduce you to the self-hosting process. To get started right away, see the [Deploy](/hosting/deploy) page.
+[Hyvor Blogs](https://hyvor.com/blogs) is a fast and simple blogging platform that can be self-hosted on your own servers. This page will introduce you to the self-hosting process. To get started right away, see the [Deploy](/hosting/deploy) page.
 
 ## Self-hosting is first-class
 

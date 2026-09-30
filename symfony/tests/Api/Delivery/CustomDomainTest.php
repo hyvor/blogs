@@ -10,6 +10,10 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use Psr\Cache\CacheItemPoolInterface;
@@ -19,6 +23,24 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(CustomDomainService::class)]
 class CustomDomainTest extends ApiTestCase
 {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // by default, blogs have a valid license
+        $this->billing()->setLicenses(
+            /** @param int[] $ids */
+            fn(array $ids) => array_fill_keys(
+                $ids,
+                new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, BlogsLicense::trial())
+            )
+        );
+    }
+
+    private function billing(): BillingFake
+    {
+        return $this->getService(BillingFake::class);
+    }
 
     private function call(
         string $host,
@@ -40,7 +62,7 @@ class CustomDomainTest extends ApiTestCase
         $response = $this->call('nonexistent.customdomain.com', '/some/path');
 
         $this->assertResponseRedirects(
-            'https://blogs.hyvor.com/?via=custom_domain&host=nonexistent.customdomain.com',
+            'https://hyvor.com/blogs?via=custom_domain&host=nonexistent.customdomain.com&status=not_found',
             302
         );
     }
@@ -58,7 +80,46 @@ class CustomDomainTest extends ApiTestCase
         $response = $this->call('deleted.customdomain.com', '/some/path');
 
         $this->assertResponseRedirects(
-            'https://blogs.hyvor.com/?via=custom_domain&host=deleted.customdomain.com',
+            'https://hyvor.com/blogs?via=custom_domain&host=deleted.customdomain.com&status=deleted',
+            302
+        );
+    }
+
+    public function test_redirects_when_blog_blocked(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage([
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'blocked_at' => new \DateTimeImmutable(),
+        ]);
+        $customDomain = CustomDomainFactory::createActiveFor($blog, 'blocked.customdomain.com');
+        $blog->setCustomDomain($customDomain);
+        $this->getEm()->flush();
+
+        $this->call('blocked.customdomain.com', '/');
+
+        $this->assertResponseRedirects(
+            'https://hyvor.com/blogs?via=custom_domain&host=blocked.customdomain.com&status=blocked',
+            302
+        );
+    }
+
+    public function test_redirects_when_license_expired(): void
+    {
+        $blog = BlogFactory::createOneWithPrimaryLanguage([
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'organization_id' => 1,
+        ]);
+        $customDomain = CustomDomainFactory::createActiveFor($blog, 'expired.customdomain.com');
+        $blog->setCustomDomain($customDomain);
+        $this->getEm()->flush();
+        $this->billing()->setLicenses([
+            1 => new ResolvedLicense(ResolvedLicenseType::EXPIRED),
+        ]);
+
+        $this->call('expired.customdomain.com', '/');
+
+        $this->assertResponseRedirects(
+            'https://hyvor.com/blogs?via=custom_domain&host=expired.customdomain.com&status=license_expired',
             302
         );
     }
@@ -82,7 +143,7 @@ class CustomDomainTest extends ApiTestCase
         $this->call('blogs.hyvor.com', '/console', https: false);
 
         $this->assertResponseRedirects(
-            'http://blogs.hyvor.com/?via=custom_domain&host=blogs.hyvor.com',
+            'https://hyvor.com/blogs?via=custom_domain&host=blogs.hyvor.com&status=not_found',
             302
         );
     }

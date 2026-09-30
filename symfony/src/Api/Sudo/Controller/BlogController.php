@@ -5,6 +5,7 @@ namespace App\Api\Sudo\Controller;
 use App\Api\Sudo\Input\BlogListInput;
 use App\Api\Sudo\Service\SudoAnalyticsService;
 use App\Entity\Blog;
+use App\Service\Blog\BlogService;
 use App\Service\Sudo\SudoPermission;
 use Hyvor\Internal\Auth\AuthInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +24,7 @@ class BlogController extends AbstractController
         private SudoObjectFactory $sudoObjectFactory,
         private SudoAnalyticsService $analyticsService,
         private AuthInterface $auth,
+        private BlogService $blogService,
     ) {
     }
 
@@ -99,6 +101,29 @@ class BlogController extends AbstractController
     public function getBlog(
         #[MapEntity] Blog $blog,
     ): JsonResponse {
+        return $this->blogResponse($blog);
+    }
+
+    #[Route('/blogs/{id}/block', methods: 'POST')]
+    #[SudoPermissionRequired(SudoPermission::WRITE_BLOGS)]
+    public function blockBlog(
+        #[MapEntity] Blog $blog,
+    ): JsonResponse {
+        $this->blogService->blockBlog($blog);
+        return $this->blogResponse($blog);
+    }
+
+    #[Route('/blogs/{id}/unblock', methods: 'POST')]
+    #[SudoPermissionRequired(SudoPermission::WRITE_BLOGS)]
+    public function unblockBlog(
+        #[MapEntity] Blog $blog,
+    ): JsonResponse {
+        $this->blogService->unblockBlog($blog);
+        return $this->blogResponse($blog);
+    }
+
+    private function blogResponse(Blog $blog): JsonResponse
+    {
         return new JsonResponse(
             $this->sudoObjectFactory->create(
                 $blog,

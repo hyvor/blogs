@@ -88,7 +88,7 @@ class BlogObject
     {
         $this->id = $blog->getId();
         $this->created_at = $blog->getCreatedAt()?->getTimestamp() ?? 0;
-        $this->is_blocked = $blog->isBlocked();
+        $this->is_blocked = $blog->getBlockedAt() !== null;
         $this->theme_version_id = $blog->getThemeVersion()?->getId();
 
         $this->subdomain = $blog->getSubdomain();

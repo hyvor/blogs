@@ -4,7 +4,7 @@
 
 # Intégration Hyvor Post
 
-Hyvor Blogs s'intègre nativement avec [Hyvor Post](https://post.hyvor.com) pour offrir un système de newsletter pour vos blogs.
+Hyvor Blogs s'intègre nativement avec [Hyvor Post](https://hyvor.com/post) pour offrir un système de newsletter pour vos blogs.
 
 - [Fonctionnalités](#features)
 - [Tarification](#pricing)
@@ -55,7 +55,7 @@ Si vous devez envoyer plus d'emails, vous avez deux options : mettre à niveau v
 
 Pour connecter Hyvor Post à votre blog, vous disposez de deux méthodes : activer l'intégration lors de la création du blog ou la connecter plus tard dans **Paramètres → Intégrations → Hyvor Post**.
 
-Lorsque vous connectez Hyvor Post, une nouvelle newsletter sera créée au sein de votre organisation. Vous pouvez gérer la newsletter depuis la Console Hyvor Blogs ou directement depuis la [Console Hyvor Post](https://post.hyvor.com).
+Lorsque vous connectez Hyvor Post, une nouvelle newsletter sera créée au sein de votre organisation. Vous pouvez gérer la newsletter depuis la Console Hyvor Blogs ou directement depuis la [Console Hyvor Post](https://hyvor.com/post).
 
 <h2 id="access">Correspondance des accès</h2>
 

@@ -1,23 +1,23 @@
 # Hyvor Blogs
 
-[Hyvor Blogs](https://blogs.hyvor.com) is a self-hosted, open-source blogging platform designed to make creating and managing a blog simple. It’s built for speed and simplicity, while remaining flexible enough to support everything from straightforward personal blogs to more complex publishing workflows.
+[Hyvor Blogs](https://hyvor.com/blogs) is a self-hosted, open-source blogging platform designed to make creating and managing a blog simple. It’s built for speed and simplicity, while remaining flexible enough to support everything from straightforward personal blogs to more complex publishing workflows.
 
 <p align="center">
-  <a href="https://blogs.hyvor.com">
+  <a href="https://hyvor.com/blogs">
     <img src="https://hyvor.com/api/public/logo/blogs.png" alt="Hyvor Blogs Logo" width="110"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://blogs.hyvor.com">
+  <a href="https://hyvor.com/blogs">
     Open-Source Blogging Platform
   </a>
     <span> | </span>
-    <a href="https://blogs.hyvor.com/hosting">
+    <a href="https://hyvor.com/blogs/hosting">
     Self-Hosting Docs
   </a>
     <span> | </span>
-    <a href="https://blogs.hyvor.com/docs">
+    <a href="https://hyvor.com/blogs/docs">
     Product Docs
   </a>
 </p>
@@ -63,7 +63,7 @@ AI Agent:
 
 ## Self-Hosting
 
-See the [self-hosting documentation](https://blogs.hyvor.com/hosting) for instructions on how to
+See the [self-hosting documentation](https://hyvor.com/blogs/hosting) for instructions on how to
 deploy Hyvor Blogs using Docker Compose.
 
 ## Development

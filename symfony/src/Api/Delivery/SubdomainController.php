@@ -5,6 +5,7 @@ namespace App\Api\Delivery;
 use App\Entity\Enum\BlogHostingAt;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
+use App\Service\Delivery\BlogHomepageRedirector;
 use App\Service\Delivery\DeliveryService;
 use App\Service\Route\PermalinkService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,7 +20,8 @@ class SubdomainController
         private DeliveryService $deliveryService,
         private AppConfig $appConfig,
         private BlogService $blogService,
-        private PermalinkService $permalinkService
+        private PermalinkService $permalinkService,
+        private BlogHomepageRedirector $homepageRedirector,
     ) {}
 
     #[Route(
@@ -46,12 +48,13 @@ class SubdomainController
 
         $blog = $this->blogService->getBlogBySubdomain($subdomain);
 
-        if ($blog === null || $blog->getDeletedAt()) {
-            return new RedirectResponse(
-                $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() .
-                '/?via=subdomain&host=' . $host . '&status=' . ($blog === null ? 'notfound' : 'deleted'),
-                302
-            );
+        if ($blog === null) {
+            return $this->homepageRedirector->redirect('subdomain', $host, 'not_found');
+        }
+
+        $redirect = $this->homepageRedirector->redirectIfUnavailable($blog, 'subdomain', $host);
+        if ($redirect !== null) {
+            return $redirect;
         }
 
         if (

@@ -23,7 +23,7 @@ class BlogListObject
         $blog = $user->getBlog();
         $this->id = $blog->getId();
         $this->role = $user->getRole()->value;
-        $this->is_blocked = $blog->isBlocked();
+        $this->is_blocked = $blog->getBlockedAt() !== null;
 
         $variants = $blog->getVariants()->toArray();
         usort($variants, fn($a, $b) => $a->getLanguage()->getId() <=> $b->getLanguage()->getId());

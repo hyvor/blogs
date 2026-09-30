@@ -56,6 +56,20 @@ class BlogService
         return $this->customDomainService->getBlogByCustomDomain($customDomain);
     }
 
+    public function blockBlog(Blog $blog): void
+    {
+        $blog->setBlockedAt($this->now());
+        $this->em->persist($blog);
+        $this->em->flush();
+    }
+
+    public function unblockBlog(Blog $blog): void
+    {
+        $blog->setBlockedAt(null);
+        $this->em->persist($blog);
+        $this->em->flush();
+    }
+
     public function updateBlog(Blog $blog, UpdateBlogInput $input): Blog
     {
         $blogOld = clone $blog;

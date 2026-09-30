@@ -38,7 +38,7 @@ class FeedTest extends KernelTestCase
             '<id>https://myblog.hyvorblogs.io/</id>',
             '<link rel="self" href="https://myblog.hyvorblogs.io/feed"/>',
             '<link href="https://myblog.hyvorblogs.io"/>',
-            '<generator uri="https://blogs.hyvor.com">Hyvor Blogs</generator>',
+            '<generator uri="https://hyvor.com/blogs">Hyvor Blogs</generator>',
             '<id>https://myblog.hyvorblogs.io/my-first-post</id>',
         ];
 

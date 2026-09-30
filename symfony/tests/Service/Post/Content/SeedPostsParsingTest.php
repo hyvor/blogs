@@ -102,7 +102,7 @@ class SeedPostsParsingTest extends KernelTestCase
         $attrs = $buttons[0]->attrs;
         $this->assertInstanceOf(ButtonAttrs::class, $attrs);
 
-        $this->assertSame('https://blogs.hyvor.com', $attrs->href);
+        $this->assertSame('https://hyvor.com/blogs', $attrs->href);
         $this->assertSame('Get Started', $buttons[0]->allText());
     }
 
