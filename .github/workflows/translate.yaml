@@ -1,11 +1,11 @@
 name: Translate Content
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/*/en/**'
-      - 'docs/*/locale/en.json'
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'docs/*/en/**'
+  #     - 'docs/*/locale/en.json'
   workflow_dispatch:
     inputs:
       langs:
