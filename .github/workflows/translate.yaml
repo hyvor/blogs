@@ -42,7 +42,7 @@ jobs:
       - name: Run translation
         id: translate
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.HYVOR_ORG_ANTHROPIC_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.HYVOR_ORG_ANTHROPIC_API_KEY_FOR_TRANSLATIONS }}
         continue-on-error: true
         run: |
           ARGS=(--config meta/translator/translator.config.json)

@@ -21,11 +21,9 @@ class ThemeControllerTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         /** @var list<array<string, mixed>> $json */
         $json = json_decode((string) $this->client->getResponse()->getContent(), true);
-        $names = array_column($json, 'name');
-        $this->assertContains('my-theme', $names);
-
-        $row = $json[array_search('my-theme', $names, true)];
-        $this->assertSame('1.0.0', $row['latest_version']);
+        $rows = array_values(array_filter($json, fn($row) => $row['name'] === 'my-theme'));
+        $this->assertCount(1, $rows);
+        $this->assertSame('1.0.0', $rows[0]['latest_version']);
     }
 
     public function test_has_cors_header_for_any_origin(): void

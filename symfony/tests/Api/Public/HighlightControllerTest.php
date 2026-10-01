@@ -20,6 +20,7 @@ class HighlightControllerTest extends ApiTestCase
         $this->assertGreaterThan(0, $json['themesCount']);
         $this->assertNotEmpty($json['languageTags']);
         $this->assertNotEmpty($json['themeTags']);
+        $this->assertIsString($json['previews']);
         $this->assertStringContainsString('<pre', $json['previews']);
     }
 
