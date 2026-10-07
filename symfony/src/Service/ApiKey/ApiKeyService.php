@@ -2,6 +2,7 @@
 
 namespace App\Service\ApiKey;
 
+use App\Api\Console\Authorization\Scope;
 use App\Entity\ApiKey;
 use App\Entity\Blog;
 use App\Entity\Enum\ApiKeyType;
@@ -34,6 +35,7 @@ class ApiKeyService
         $apiKey->setName($name);
         $apiKey->setType($type);
         $apiKey->setApiKey(bin2hex(random_bytes(16)));
+        $apiKey->setScopes(Scope::all());   // TODO: get scopes from user
         $now = $this->now();
         $apiKey->setCreatedAt($now);
         $apiKey->setUpdatedAt($now);
