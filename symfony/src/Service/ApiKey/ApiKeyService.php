@@ -35,7 +35,11 @@ class ApiKeyService
         $apiKey->setName($name);
         $apiKey->setType($type);
         $apiKey->setApiKey(bin2hex(random_bytes(16)));
-        $apiKey->setScopes(array_map(fn(Scope $scope) => $scope->value, Scope::all()));   // TODO: get scopes from user
+
+        if ($type === ApiKeyType::CONSOLE) {
+            $apiKey->setScopes(array_map(fn(Scope $scope) => $scope->value, Scope::all()));   // TODO: get scopes from user (frontend)
+        }
+
         $now = $this->now();
         $apiKey->setCreatedAt($now);
         $apiKey->setUpdatedAt($now);
