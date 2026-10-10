@@ -196,8 +196,15 @@ class LinkAnalyzerRepository
         $existingLinksByUrl = $shouldClear ? [] : $this->findLinksIndexedByUrl($variant);
 
         $links = [];
+        $seenUrls = [];
 
         foreach ($results as $result) {
+            // the same URL can appear multiple times in a post; (post_variant_id, url) is unique
+            if (isset($seenUrls[$result->originalUrl])) {
+                continue;
+            }
+            $seenUrls[$result->originalUrl] = true;
+
             $link = $existingLinksByUrl[$result->originalUrl] ?? null;
 
             if ($link === null) {
