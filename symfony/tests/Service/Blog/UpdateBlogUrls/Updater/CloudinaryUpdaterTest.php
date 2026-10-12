@@ -24,13 +24,17 @@ class CloudinaryUpdaterTest extends TestCase
             'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images/post-featured-images/1.webp',
             'https://media.hyvor.com/blogs.hyvor.com/filler-images/post-featured-images/1.webp',
         ];
-        yield 'no version' => [
-            'https://res.cloudinary.com/dqabfne6s/image/upload/blogs.hyvor.com/a.png',
-            'https://media.hyvor.com/blogs.hyvor.com/a.png',
-        ];
-        yield 'other cloudinary account' => [
-            'https://res.cloudinary.com/other/image/upload/v1/a.png',
+        yield 'unknown version' => [
+            'https://res.cloudinary.com/dqabfne6s/image/upload/v1/blogs.hyvor.com/filler-images/post-featured-images/1.webp',
             false,
+        ];
+        yield 'filler image out of range' => [
+            'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images/post-featured-images/21.webp',
+            false,
+        ];
+        yield 'author image' => [
+            'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images/author-images/5.webp',
+            'https://media.hyvor.com/blogs.hyvor.com/filler-images/author-images/5.webp',
         ];
         yield 'other host' => ['https://example.com/a.png', false];
         yield 'already migrated' => ['https://media.hyvor.com/blogs.hyvor.com/a.png', false];
@@ -42,17 +46,22 @@ class CloudinaryUpdaterTest extends TestCase
         $this->assertSame($expected, new CloudinaryUpdater()->update($url));
     }
 
-    public function test_counts_updates(): void
+    public function test_tracks_matched_and_unknown(): void
     {
+        $known = 'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images/post-featured-images/2.webp';
+        $unknown = 'https://res.cloudinary.com/dqabfne6s/image/upload/v1/other.png';
+
         $updater = new CloudinaryUpdater();
-        $updater->update('https://res.cloudinary.com/dqabfne6s/image/upload/v1/a.png');
+        $updater->update($known);
         $updater->update('https://example.com/a.png');
-        $updater->update('https://res.cloudinary.com/dqabfne6s/image/upload/v1/b.png');
-        $this->assertSame(2, $updater->getUpdatedCount());
+        $updater->update($unknown);
+        $updater->update($unknown);
+
+        $this->assertSame(1, $updater->getUpdatedCount());
         $this->assertSame([
-            'https://res.cloudinary.com/dqabfne6s/image/upload/v1/a.png' => 'https://media.hyvor.com/a.png',
-            'https://res.cloudinary.com/dqabfne6s/image/upload/v1/b.png' => 'https://media.hyvor.com/b.png',
+            $known => 'https://media.hyvor.com/blogs.hyvor.com/filler-images/post-featured-images/2.webp',
         ], $updater->getMatched());
+        $this->assertSame([$unknown], $updater->getUnknown());
     }
 
 }
