@@ -20,8 +20,6 @@ class BlogService
 
     public const string SUBDOMAIN_REGEX = '/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i';
 
-    // private const FEATURED_IMAGE_URL = 'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images/post-featured-images';
-
     public function __construct(
         private EntityManagerInterface $em,
         private EventDispatcherInterface $ed,

@@ -45,11 +45,7 @@ class UpdateBlogUrlsMessageHandler
             UpdateBlogUrlEvent::MEDIA_URL_CHANGED => new Updater\MediaUpdater((string) $message->mediaOldUrl, (string) $message->mediaNewUrl),
         };
 
-        $this->em->wrapInTransaction(function() use ($blog, $updater, $message) {
-            $this->updateBlog($blog, $updater);
-            $this->updatePosts($blog, $updater, $message->event === UpdateBlogUrlEvent::HOSTING_CHANGED);
-            $this->updateUsers($blog, $updater);
-        });
+        $this->updateBlogUrls($blog, $updater, $message->event === UpdateBlogUrlEvent::HOSTING_CHANGED);
 
         foreach ($message->lockKeys as $lockKey) {
             $lock = $this->lockFactory->createLockFromKey($lockKey);
@@ -68,6 +64,19 @@ class UpdateBlogUrlsMessageHandler
          * if it fails, we can retry anytime.
          */
         $this->bus->dispatch(new ReRenderPostHtmlMessage($blog->getId()));
+    }
+
+    /**
+     * Applies the updater to the blog meta, all posts (featured image + content), and users.
+     * Does not dispatch the HTML re-render. The caller is responsible for that.
+     */
+    public function updateBlogUrls(Blog $blog, UpdaterInterface $updater, bool $updateLinks = false): void
+    {
+        $this->em->wrapInTransaction(function () use ($blog, $updater, $updateLinks) {
+            $this->updateBlog($blog, $updater);
+            $this->updatePosts($blog, $updater, $updateLinks);
+            $this->updateUsers($blog, $updater);
+        });
     }
 
     private function updateBlog(Blog $blog, UpdaterInterface $updater): void
