@@ -8,5 +8,12 @@
     "reverseProxy": "Proxy inverse",
     "env": "Variables d'environnement",
     "deliveryDomain": "Domaine de diffusion"
+  },
+  "descriptions": {
+    "introduction": "Auto-hébergez Hyvor Blogs sur vos propres serveurs : dépendances minimales, déploiement Docker, authentification OIDC et contrôle total de votre plateforme.",
+    "deploy": "Déployez Hyvor Blogs auto-hébergé avec Docker Compose : prérequis, PostgreSQL, OpenID Connect (OIDC) et démarrage de l'application, étape par étape.",
+    "reverseProxy": "Configurez un reverse proxy pour Hyvor Blogs auto-hébergé avec Traefik, Caddy ou NGINX : domaine de l'application, domaines personnalisés et HTTPS automatique.",
+    "env": "Toutes les variables d'environnement de Hyvor Blogs auto-hébergé : secret, URL PostgreSQL, domaines, OIDC, e-mail et stockage.",
+    "deliveryDomain": "Servez les blogs Hyvor Blogs auto-hébergés depuis des sous-domaines avec un domaine de diffusion : pourquoi l'utiliser, DNS et SSL wildcard."
   }
 }
