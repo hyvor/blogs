@@ -3,19 +3,9 @@
 	import IconTrash from '@hyvor/icons/IconTrash';
 
 	import type { Language } from '../../../../lib/types';
-	import {
-		IconButton,
-		Modal,
-		TableRow,
-		Tag,
-		Tooltip,
-		confirm,
-		toast
-	} from '@hyvor/design/components';
+	import { IconButton, TableRow, Tag, Tooltip } from '@hyvor/design/components';
 	import LanguageModal from './LanguageModal.svelte';
-	import { deleteLanguage } from './languageActions';
-	import { languageStoreRemove } from '../../../../lib/stores/languagesStore';
-	import DeleteConfirm from './DeleteConfirm.svelte';
+	import DeleteConfirmModal from './DeleteConfirmModal.svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import { cant } from '../../../../lib/scope.svelte';
 
@@ -29,30 +19,7 @@
 
 	let isEditing = $state(false);
 
-	async function handleDelete() {
-		if (
-			await confirm({
-				title: i18n.t('console.settings.languages.deleteLanguage'),
-				content: DeleteConfirm,
-				contentProps: {
-					language
-				},
-				confirmText: i18n.t('console.common.yesDelete'),
-				danger: true
-			})
-		) {
-			const toastId = toast.loading(i18n.t('console.settings.languages.deleting'));
-
-			deleteLanguage(language.id)
-				.then(() => {
-					toast.success(i18n.t('console.settings.languages.deleted'), { id: toastId });
-					languageStoreRemove(language.id);
-				})
-				.catch((err) => {
-					toast.error(err.message, { id: toastId });
-				});
-		}
-	}
+	let isDeleting = $state(false);
 </script>
 
 <TableRow>
@@ -83,7 +50,7 @@
 				variant="fill-light"
 				color="red"
 				size="small"
-				on:click={handleDelete}
+				on:click={() => (isDeleting = true)}
 				disabled={language.is_primary || cant('languages.write')}
 			>
 				<IconTrash size={12} />
@@ -93,3 +60,4 @@
 </TableRow>
 
 <LanguageModal {language} bind:show={isEditing} />
+<DeleteConfirmModal {language} bind:show={isDeleting} />
