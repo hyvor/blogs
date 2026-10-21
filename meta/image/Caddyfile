@@ -1,5 +1,7 @@
 {
-	frankenphp
+	frankenphp {
+		php_ini session.upload_progress.enabled 0
+	}
     log {
         output stderr
         level {$LOG_LEVEL}
@@ -60,12 +62,21 @@
 # hyvorblogs.io subdomain
 # see run script for DELIVERY_DOMAIN
 *.{$DELIVERY_DOMAIN}:80 {
+	@unauthorized_multipart_exploit {
+        header_regexp Content-Type (?i)multipart/form-data
+    }
+    respond @unauthorized_multipart_exploit "bad request" 400
+
 	import handle_php subdomain
 }
 
 # main app
 # see run script for APP_ADDRESS / APP_TLS_DIRECTIVE (from TLS_MODE)
 {$APP_ADDRESS}, http://localhost:8081{$APP_ADDRESS_ADDITIONAL} {
+	@unauthorized_multipart_exploit {
+        header_regexp Content-Type (?i)multipart/form-data
+    }
+    respond @unauthorized_multipart_exploit "bad request" 400
 
 	{$APP_TLS_DIRECTIVE}
 	{$MERCURE_DIRECTIVE}
@@ -120,6 +131,11 @@ http://localhost:8080 {
 
 # custom domain
 :443, :80 {
+	@unauthorized_multipart_exploit {
+        header_regexp Content-Type (?i)multipart/form-data
+    }
+    respond @unauthorized_multipart_exploit "bad request" 400
+
 	tls {
 		get_certificate http http://localhost:8080/api/local/caddy-certificate
 	}
