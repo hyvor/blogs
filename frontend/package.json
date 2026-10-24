@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@hyvor/design": "^2.1.23",
+		"@hyvor/design": "^2.2.1",
 		"@hyvor/icons": "^1.1.1",
 		"@hyvor/richtext": "^0.0.24",
 		"@microsoft/fetch-event-source": "^2.0.1",

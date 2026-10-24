@@ -8,5 +8,12 @@
     "reverseProxy": "Reverse Proxy",
     "env": "Environment Variables",
     "deliveryDomain": "Delivery Domain"
+  },
+  "descriptions": {
+    "introduction": "Self-host Hyvor Blogs on your own servers. Minimal dependencies, Docker-based deployment, OIDC authentication, and full control of your blogging platform.",
+    "deploy": "Deploy self-hosted Hyvor Blogs with Docker Compose. Step-by-step guide covering prerequisites, PostgreSQL, OpenID Connect (OIDC), and starting the app.",
+    "reverseProxy": "Configure a reverse proxy for self-hosted Hyvor Blogs with Traefik, Caddy, or NGINX. Handle the app domain and custom domains with automatic HTTPS.",
+    "env": "All environment variables for self-hosted Hyvor Blogs: app secret, PostgreSQL database URL, domains, OIDC, mail, and storage configuration reference.",
+    "deliveryDomain": "Serve self-hosted Hyvor Blogs from subdomains with a delivery domain. Learn why and how to configure DNS and wildcard SSL for blog subdomains."
   }
 }
