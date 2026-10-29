@@ -50,6 +50,16 @@ class FullTextSearchServiceTest extends TestCase
             'test:* | what:* | open?:*',
             $service->getSearchQuery('(test | what) : open?')
         );
+        $this->assertSame('its:* | a-b:*', $service->getSearchQuery("it's a<->b\\"));
+
+        // leading, trailing and multiple spaces
+        $this->assertSame('famous:*', $service->getSearchQuery('famous '));
+        $this->assertSame('famous:*', $service->getSearchQuery(' famous'));
+        $this->assertSame('famous:* | cake:*', $service->getSearchQuery("  famous \t cake  "));
+
+        // nothing searchable
+        $this->assertSame('', $service->getSearchQuery(' '));
+        $this->assertSame('', $service->getSearchQuery('!!! :'));
     }
 
 }

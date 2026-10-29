@@ -65,9 +65,12 @@ class FullTextSearchService
     public function getSearchQuery(string $search): string
     {
         // replace special characters
-        $replaced = (string)preg_replace('/[*:|&!()]/', '', $search);
-        $replaced = (string)preg_replace('/\s+/', ':* | ', $replaced);
-        return $replaced . ':*';
+        $replaced = (string)preg_replace('/[*:|&!()<>\'\\\\]/', '', $search);
+
+        // split by whitespace, ignoring empty words (ex: leading/trailing spaces)
+        $words = preg_split('/\s+/', $replaced, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return implode(' | ', array_map(fn(string $word) => $word . ':*', $words));
     }
 
 }
