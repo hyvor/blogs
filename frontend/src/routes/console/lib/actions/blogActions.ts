@@ -11,11 +11,7 @@ export function getSubdomainAvailable(subdomain: string) {
 	});
 }
 
-export function createBlog(
-	name: string,
-	subdomain: string,
-	isDev = false
-) {
+export function createBlog(name: string, subdomain: string, isDev = false) {
 	return consoleApi.post<{
 		blog: BlogList;
 		warnings: string[];

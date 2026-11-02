@@ -38,7 +38,6 @@
 	let subdomainCheckTimeout: null | ReturnType<typeof setTimeout> = null;
 	let subdomainCheckAbortController: AbortController | null = null;
 
-
 	function checkSubdomain() {
 		if (subdomainCheckTimeout) {
 			clearTimeout(subdomainCheckTimeout);
