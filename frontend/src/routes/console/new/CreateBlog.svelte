@@ -5,9 +5,7 @@
 		FormControl,
 		Link,
 		SplitControl,
-		Switch,
 		TextInput,
-		Tooltip,
 		Validation,
 		toast
 	} from '@hyvor/design/components';
@@ -18,7 +16,6 @@
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
-	import IconInfoCircle from '@hyvor/icons/IconInfoCircle';
 	import { getI18n } from '../lib/i18n';
 
 	const i18n = getI18n();
@@ -41,8 +38,6 @@
 	let subdomainCheckTimeout: null | ReturnType<typeof setTimeout> = null;
 	let subdomainCheckAbortController: AbortController | null = null;
 
-	let hyvorTalk = $state(true);
-	let hyvorPost = $state(true);
 
 	function checkSubdomain() {
 		if (subdomainCheckTimeout) {
@@ -120,7 +115,7 @@
 
 		let blog: BlogList;
 		try {
-			const res = await createBlog(name, subdomain, dev, hyvorTalk, hyvorPost);
+			const res = await createBlog(name, subdomain, dev);
 			addToBlogList(res.blog);
 			blog = res.blog;
 
@@ -225,48 +220,5 @@
 				{/if}
 			</FormControl>
 		</SplitControl>
-
-		{#if getConfig().deployment === 'cloud'}
-			<SplitControl noHorizonalPadding caption="Comments Integration">
-				{#snippet label()}
-					<span class="product-brand">
-						<img src="/img/services/hyvor-talk.svg" alt="Hyvor Talk" width="18" />
-						Hyvor Talk
-						<Tooltip
-							text="All Hyvor Blogs plans include a free complimentary license to Hyvor Talk. Disable this if you want to use a different commenting system."
-						>
-							<IconInfoCircle size={14} />
-						</Tooltip>
-					</span>
-				{/snippet}
-
-				<Switch bind:checked={hyvorTalk} />
-			</SplitControl>
-			<SplitControl noHorizonalPadding caption="Newsletter Integration">
-				{#snippet label()}
-					<span class="product-brand">
-						<img src="/img/services/hyvor-post.svg" alt="Hyvor Post" width="18" />
-						Hyvor Post
-
-						<Tooltip
-							text="All Hyvor Blogs plans include a free complimentary license to Hyvor Post. Disable this if you want to use a different newsletter platform."
-						>
-							<IconInfoCircle size={14} />
-						</Tooltip>
-					</span>
-				{/snippet}
-
-				<Switch bind:checked={hyvorPost} />
-			</SplitControl>
-		{/if}
 	{/if}
 </ResourceCreator>
-
-<style>
-	.product-brand {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font-weight: 600;
-	}
-</style>
