@@ -11,13 +11,7 @@ export function getSubdomainAvailable(subdomain: string) {
 	});
 }
 
-export function createBlog(
-	name: string,
-	subdomain: string,
-	isDev = false,
-	hyvorTalk = false,
-	hyvorPost = false
-) {
+export function createBlog(name: string, subdomain: string, isDev = false) {
 	return consoleApi.post<{
 		blog: BlogList;
 		warnings: string[];
@@ -27,9 +21,7 @@ export function createBlog(
 		data: {
 			name,
 			subdomain,
-			is_dev: isDev,
-			hyvor_talk: isDev ? false : hyvorTalk,
-			hyvor_post: isDev ? false : hyvorPost
+			is_dev: isDev
 		},
 		userApi: true
 	});
