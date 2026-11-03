@@ -104,6 +104,8 @@ class BlogCreator
 
     /**
      * @return array{blog: Blog, primaryLanguage: Language, primaryUser: User}
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
      */
     public function create(
         ?AuthUser $authUser,

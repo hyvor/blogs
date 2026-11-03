@@ -22,6 +22,8 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
+use App\Service\Theme\Exception\ThemeImportException;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 
 class BlogController
 {
@@ -37,6 +39,10 @@ class BlogController
         private AuthInterface $auth,
     ) {}
 
+    /**
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     #[Route('/blog', methods: ['POST'])]
     public function create(
         #[MapRequestPayload] CreateBlogInput $input,
