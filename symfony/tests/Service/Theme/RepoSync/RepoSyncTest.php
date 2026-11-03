@@ -14,6 +14,8 @@ use App\Tests\Factory\ThemeFactory;
 use App\Tests\Factory\ThemeVersionFactory;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use App\Service\Theme\Exception\ThemeImportException;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 
 #[CoversClass(RepoSyncService::class)]
 #[CoversClass(ThemeVersionCreator::class)]
@@ -29,7 +31,11 @@ class RepoSyncTest extends KernelTestCase
         return $this->getService(RepoSyncService::class);
     }
 
-    /** @throws RepoSyncException */
+    /**
+     * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     public function test_adds_new_themes_and_versions(): void
     {
         $this->service()->syncFromFile($this->zipPath(), true);
@@ -49,7 +55,11 @@ class RepoSyncTest extends KernelTestCase
         $this->assertGreaterThan(0, count($blogs));
     }
 
-    /** @throws RepoSyncException */
+    /**
+     * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     public function test_updates_theme_when_version_is_new(): void
     {
         ThemeFactory::createOne(['name' => 'hello', 'type' => ThemeCreationType::ORIGINAL]);
@@ -69,7 +79,11 @@ class RepoSyncTest extends KernelTestCase
         $this->assertSame(0, count($blogs));
     }
 
-    /** @throws RepoSyncException */
+    /**
+     * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     public function test_does_not_update_when_version_is_the_same(): void
     {
         ThemeFactory::createOne(['name' => 'hello', 'type' => ThemeCreationType::ORIGINAL]);
@@ -85,7 +99,11 @@ class RepoSyncTest extends KernelTestCase
         $this->assertSame(1, $count);
     }
 
-    /** @throws RepoSyncException */
+    /**
+     * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     public function test_break_into_themes_parses_zip_correctly(): void
     {
         $service = $this->service();

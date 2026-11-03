@@ -11,6 +11,7 @@ use App\Service\Billing\UsageService;
 use App\Service\Blog\BlogCreator;
 use App\Service\Blog\BlogService;
 use App\Service\User\UserService;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\InternalConfig;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
+use App\Service\Theme\Exception\ThemeImportException;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 
 class BlogController
 {
@@ -33,8 +36,13 @@ class BlogController
         private BillingInterface $billing,
         private UsageService $usageService,
         private InternalConfig $internalConfig,
+        private AuthInterface $auth,
     ) {}
 
+    /**
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     #[Route('/blog', methods: ['POST'])]
     public function create(
         #[MapRequestPayload] CreateBlogInput $input,
@@ -44,6 +52,16 @@ class BlogController
         $org = $this->authListener->getOrganization();
 
         $subdomain = $input->subdomain;
+
+        if ($this->internalConfig->getDeployment()->isCloud()) {
+            $organization = $this->auth->organizations([$org->id], includeBillingInfo: true)[$org->id] ?? null;
+
+            if ($organization === null || !$organization->hasPaymentMethod()) {
+                throw new UnprocessableEntityHttpException(
+                    'A payment method is required to create a blog. Please add a card and try again.',
+                );
+            }
+        }
 
         if ($input->is_dev) {
             $subdomain = 'dev-' . Uuid::v4();
