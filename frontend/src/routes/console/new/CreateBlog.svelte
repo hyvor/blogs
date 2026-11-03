@@ -12,7 +12,13 @@
 	import { ResourceCreator } from '@hyvor/design/cloud';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
 
-	import { addToBlogList, blogListStore, resolvedLicenseStore } from '../lib/stores';
+	import {
+		addToBlogList,
+		blogListStore,
+		hasPaymentMethodStore,
+		resolvedLicenseStore
+	} from '../lib/stores';
+	import CardRequired from './CardRequired.svelte';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
@@ -25,6 +31,12 @@
 	}
 
 	let { dev = false }: Props = $props();
+
+	const cardRequired = $derived($hasPaymentMethodStore === false);
+
+	let cardRequiredComponent: CardRequired | undefined = $state();
+	let cardCanSubmit = $state(false);
+	let cardBusy = $state(false);
 
 	let name = $state('');
 	let subdomain = $state('');
@@ -96,6 +108,11 @@
 	}
 
 	async function handleCreate() {
+		if (cardRequired) {
+			await cardRequiredComponent?.submit();
+			return false;
+		}
+
 		let valid = true;
 
 		if (name.trim() === '') {
@@ -138,86 +155,96 @@
 
 <ResourceCreator
 	title="Start a blog"
-	resourceTitle="Blog"
-	cta="Create Blog"
+	resourceTitle={cardRequired ? 'Card Confirmation' : 'Blog'}
+	cta={cardRequired ? 'Confirm Card' : 'Create Blog'}
 	onback={handleBack}
 	oncreate={handleCreate}
-	ctaDisabled={name.trim() === '' || subdomain.trim() === ''}
+	ctaDisabled={cardRequired
+		? !cardCanSubmit || cardBusy
+		: name.trim() === '' || subdomain.trim() === ''}
 >
-	{#if dev}
-		<div style="margin-bottom:20px;">
-			<Callout type="warning">
-				{#snippet icon()}
-					<IconExclamationCircle />
-				{/snippet}
-				{#snippet title()}
-					<div>Development Blog</div>
-				{/snippet}
-				<div>
-					You are creating a development blog, which can only be used for theme development. Click <Link
-						href="/console/new">here</Link
-					> to create a production blog.
-				</div>
-			</Callout>
-		</div>
-	{/if}
+	{#if cardRequired}
+		<CardRequired
+			bind:this={cardRequiredComponent}
+			bind:canSubmit={cardCanSubmit}
+			bind:busy={cardBusy}
+		/>
+	{:else}
+		{#if dev}
+			<div style="margin-bottom:20px;">
+				<Callout type="warning">
+					{#snippet icon()}
+						<IconExclamationCircle />
+					{/snippet}
+					{#snippet title()}
+						<div>Development Blog</div>
+					{/snippet}
+					<div>
+						You are creating a development blog, which can only be used for theme development. Click <Link
+							href="/console/new">here</Link
+						> to create a production blog.
+					</div>
+				</Callout>
+			</div>
+		{/if}
 
-	<SplitControl
-		label={i18n.t('console.common.name')}
-		caption="A name for your blog"
-		noHorizonalPadding
-	>
-		<FormControl>
-			<TextInput
-				block
-				bind:value={name}
-				oninput={handleNameInput}
-				maxlength={50}
-				state={nameError ? 'error' : undefined}
-				autofocus
-			/>
-
-			{#if nameError}
-				<Validation state="error">
-					{nameError}
-				</Validation>
-			{/if}
-		</FormControl>
-	</SplitControl>
-
-	{#if !dev}
 		<SplitControl
-			label={i18n.t('console.settings.hosting.subdomain')}
-			caption="Only a-z, 0-9, and hyphens (-)"
+			label={i18n.t('console.common.name')}
+			caption="A name for your blog"
 			noHorizonalPadding
 		>
 			<FormControl>
 				<TextInput
 					block
-					bind:value={subdomain}
-					oninput={handleSubdomainInput}
+					bind:value={name}
+					oninput={handleNameInput}
 					maxlength={50}
-					state={subdomainError ? 'error' : subdomainSuccess ? 'success' : undefined}
-				>
-					{#snippet end()}
-						{#if getConfig().deployment === 'cloud'}
-							.hyvorblogs.io
-						{/if}
-					{/snippet}
-				</TextInput>
+					state={nameError ? 'error' : undefined}
+					autofocus
+				/>
 
-				{#if subdomainError}
+				{#if nameError}
 					<Validation state="error">
-						{subdomainError}
-					</Validation>
-				{/if}
-
-				{#if subdomainSuccess}
-					<Validation state="success">
-						{subdomainSuccess}
+						{nameError}
 					</Validation>
 				{/if}
 			</FormControl>
 		</SplitControl>
+
+		{#if !dev}
+			<SplitControl
+				label={i18n.t('console.settings.hosting.subdomain')}
+				caption="Only a-z, 0-9, and hyphens (-)"
+				noHorizonalPadding
+			>
+				<FormControl>
+					<TextInput
+						block
+						bind:value={subdomain}
+						oninput={handleSubdomainInput}
+						maxlength={50}
+						state={subdomainError ? 'error' : subdomainSuccess ? 'success' : undefined}
+					>
+						{#snippet end()}
+							{#if getConfig().deployment === 'cloud'}
+								.hyvorblogs.io
+							{/if}
+						{/snippet}
+					</TextInput>
+
+					{#if subdomainError}
+						<Validation state="error">
+							{subdomainError}
+						</Validation>
+					{/if}
+
+					{#if subdomainSuccess}
+						<Validation state="success">
+							{subdomainSuccess}
+						</Validation>
+					{/if}
+				</FormControl>
+			</SplitControl>
+		{/if}
 	{/if}
 </ResourceCreator>

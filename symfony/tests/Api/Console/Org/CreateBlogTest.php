@@ -79,11 +79,14 @@ class CreateBlogTest extends ApiTestCase
     /**
      * @param array<string, mixed> $data
      */
-    private function create(array $data): Response
+    private function create(array $data, bool $hasPaymentMethod = true): Response
     {
         $user = AuthFake::generateUser(['id' => 501]);
         $org = new AuthUserOrganization(1, 'Test Org', 'admin');
-        return $this->consoleOrgApi('POST', '/blog', $data, user: $user, organization: $org);
+        return $this->consoleOrgApi('POST', '/blog', $data, user: $user,
+            organization: $org,
+            organizationsDatabase: [['id' => 1, 'has_payment_method' => $hasPaymentMethod]],
+        );
     }
 
     public function test_requires_name(): void
@@ -254,6 +257,31 @@ class CreateBlogTest extends ApiTestCase
 
         // deployment defaults to on-prem in tests, so the license limit is not enforced
         $this->create(['name' => 'Second', 'subdomain' => 'blog-limit-on-prem']);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_requires_payment_method_on_cloud(): void
+    {
+        $this->create(['name' => 'No Card', 'subdomain' => 'no-card-cloud'], hasPaymentMethod: false);
+
+        $this->assertResponseFailed(
+            422,
+            'A payment method is required to create a blog. Please add a card and try again.',
+        );
+    }
+
+    public function test_allows_blog_creation_with_payment_method_on_cloud(): void
+    {
+
+        $this->create(['name' => 'With Card', 'subdomain' => 'with-card-cloud']);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_does_not_require_payment_method_on_prem(): void
+    {
+        $this->enableOnPremise();
+
+        $this->create(['name' => 'On Prem', 'subdomain' => 'no-card-on-prem'], hasPaymentMethod: false);
         $this->assertResponseIsSuccessful();
     }
 
