@@ -98,13 +98,27 @@ class CreateApiKeyTest extends ApiTestCase
         ], server: ['HTTP_X_API_KEY' => 'escalationkey1234567890123456789']);
 
         $this->assertResponseFailed(422, "You cannot grant the scope 'posts.write' as you do not have it");
+    }
 
-        // same or fewer scopes are allowed
-        $this->consoleBlogApi('POST', 'ak-escalation', '/api-key', [
+    public function test_api_key_can_create_api_key_with_its_own_scopes(): void
+    {
+        [$blog] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'ak-same-scopes'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        ApiKeyFactory::createOne([
+            'blog' => $blog,
+            'api_key' => 'samescopeskey1234567890123456789',
+            'type' => ApiKeyType::CONSOLE,
+            'scopes' => ['api_keys.write'],
+        ]);
+
+        $this->consoleBlogApi('POST', 'ak-same-scopes', '/api-key', [
             'name' => 'Same Key',
             'type' => 'console',
             'scopes' => ['api_keys.write'],
-        ], server: ['HTTP_X_API_KEY' => 'escalationkey1234567890123456789']);
+        ], server: ['HTTP_X_API_KEY' => 'samescopeskey1234567890123456789']);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertSame(['api_keys.write'], $this->getJson()['scopes']);
