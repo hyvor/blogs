@@ -78,6 +78,17 @@
 <TableRow>
 	<div>{apiKey.name}</div>
 	<div class="api-type">{i18n.t(TYPE_KEYS[apiKey.type])}</div>
+	<div class="scopes">
+		{#if apiKey.type === 'console'}
+			<Tooltip text={apiKey.scopes.join(', ')}>
+				<span class="scopes-count">
+					{i18n.t('console.settings.apiKeys.scopesCount', { count: apiKey.scopes.length })}
+				</span>
+			</Tooltip>
+		{:else}
+			<span class="scopes-none">—</span>
+		{/if}
+	</div>
 	<div>
 		<Tooltip text={i18n.t('console.settings.apiKeys.copyKey')}>
 			<IconButton color="input" variant="fill" size="small" on:click={handleCopy}>
@@ -110,3 +121,9 @@
 		</Tooltip>
 	</div>
 </TableRow>
+
+<style>
+	.scopes-none {
+		color: var(--text-light);
+	}
+</style>

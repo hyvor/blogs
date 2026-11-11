@@ -50,7 +50,6 @@ class ApiKeyController extends AbstractController
 
         $scopes = [];
         if ($input->type === ApiKeyType::CONSOLE) {
-            // de-duplicate, keeping the request order
             $uniqueScopes = [];
             foreach ($input->scopes as $scope) {
                 $uniqueScopes[$scope->value] = $scope;

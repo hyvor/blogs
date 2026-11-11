@@ -1,12 +1,13 @@
 import consoleApi from '../../../../lib/consoleApi';
-import type { ApiKey, ApiKeyType } from '../../../../lib/types';
+import type { ApiKey, ApiKeyType, Scope } from '../../../../lib/types';
 
-export function createApiKey(name: string, type: ApiKeyType) {
+export function createApiKey(name: string, type: ApiKeyType, scopes: Scope[]) {
 	return consoleApi.post<ApiKey>({
 		endpoint: '/api-key',
 		data: {
 			name,
-			type
+			type,
+			scopes
 		}
 	});
 }
